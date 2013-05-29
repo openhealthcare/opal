@@ -1,0 +1,17 @@
+ul {
+	margin-left: 0;
+	margin-bottom: 0;
+}
+
+li {
+	list-style: none;
+	padding: 4px;
+}
+
+.table td {
+	padding: 0px;
+}
+
+.table tr.selected {
+	background-color: #eee;
+}

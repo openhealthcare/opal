@@ -1,0 +1,31 @@
+<!doctype html>
+<html ng-app="opalApp" ng-controller="TableCtrl" ng-keydown="keypress($event)">
+	<head>
+		<meta charset="utf-8">
+		<title>OPaL: Open Patient List</title>
+		<script src="assets/js/jquery-1.9.1.js"></script>
+		<script src="assets/js/angular-1.1.5.js"></script>
+		<script src="assets/js/opal.js"></script>
+		<link href="assets/css/bootstrap-2.3.1.css" rel="stylesheet" media="screen">
+		<link href="assets/css/opal.css" rel="stylesheet" media="screen">
+	</head>
+	<body>
+		<h1>OPaL: Open Patient List</h1>
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th>Location</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="row in rows" ng-class="{selected: row.selected}">
+					<td>
+						<li>{{row._data.location.category}}</li>
+						<li><span ng-hide="row._data.location.hospital=='UCH'">{{row._data.location.hospital}}</span>{{row._data.location.ward}} {{row._data.location.bed}}</li>
+						<li>Admitted: {{row._data.location.dateOfAdmission}}</li>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</body>
+</html>
