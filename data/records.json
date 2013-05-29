@@ -1,0 +1,192 @@
+[
+    {
+        "antibiotics": [
+            {
+                "endDate": null, 
+                "name": "Cefuroxime", 
+                "startDate": "21 May 2013"
+            }
+        ], 
+        "demographics": {
+            "dateOfBirth": "1 Jan 1985", 
+            "hospitalNumber": "ABCD1234", 
+            "name": "John White"
+        }, 
+        "diagnosis": [
+            {
+                "condition": "Pyelonephritis", 
+                "status": "confirmed"
+            }
+        ], 
+        "discharge": "PKGB1 in 2/52", 
+        "location": {
+            "bed": "32", 
+            "category": "inpatient", 
+            "dateOfAdmission": "11 May 2013", 
+            "hospital": "UCH", 
+            "ward": "T8"
+        }, 
+        "microbiology": [
+            "Urine culture: pending", 
+            "Blood culture: pending"
+        ], 
+        "pastMedicalHistory": [], 
+        "plan": "Chase cultures\n?Switch to oral abx\nAim home Friday", 
+        "travel": []
+    }, 
+    {
+        "antibiotics": [
+            {
+                "endDate": null, 
+                "name": "Atripla", 
+                "startDate": null
+            }
+        ], 
+        "demographics": {
+            "dateOfBirth": "2 Jan 1985", 
+            "hospitalNumber": "BCDE2345", 
+            "name": "Sarah Brown"
+        }, 
+        "diagnosis": [
+            {
+                "condition": "TB", 
+                "status": "suspected"
+            }, 
+            {
+                "condition": "HIV", 
+                "details": "Viral Load 250, CD4 325", 
+                "status": "confirmed"
+            }
+        ], 
+        "discharge": null, 
+        "location": {
+            "bed": "33", 
+            "category": "inpatient", 
+            "dateOfAdmission": "12 May 2013", 
+            "hospital": "UCH", 
+            "ward": "T8"
+        }, 
+        "microbiology": [
+            "Urine culture: pending"
+        ], 
+        "pastMedicalHistory": [
+            {
+                "condition": "PCP", 
+                "year": "2010"
+            }
+        ], 
+        "plan": "Chase CT report\n?Bronchoscopy", 
+        "travel": []
+    }, 
+    {
+        "antibiotics": [
+            {
+                "endDate": null, 
+                "name": "Riamet", 
+                "startDate": "13 May 2013"
+            }
+        ], 
+        "demographics": {
+            "dateOfBirth": "3 Jan 1985", 
+            "hospitalNumber": "CDEF3456", 
+            "name": "Jack Green"
+        }, 
+        "diagnosis": [
+            {
+                "condition": "Falciparum Malaria", 
+                "status": "confirmed"
+            }
+        ], 
+        "discharge": "nil", 
+        "location": {
+            "bed": "21", 
+            "category": "inpatient", 
+            "dateOfAdmission": "13 May 2013", 
+            "hospital": "UCH", 
+            "ward": "T6"
+        }, 
+        "microbiology": [
+            "2% Parasitaemia"
+        ], 
+        "pastMedicalHistory": [
+            {
+                "condition": "Type 2 Diabetes", 
+                "year": "2005"
+            }
+        ], 
+        "plan": "Home if parasitaemia falling", 
+        "travel": [
+            {
+                "dates": "Early May 2013", 
+                "destination": "Gambia", 
+                "reason": "Tourism", 
+                "specificExposures": "Did not take anti-malarials"
+            }
+        ]
+    }, 
+    {
+        "antibiotics": [
+            {
+                "endDate": null, 
+                "name": "Flucloxacillin", 
+                "route": "Oral", 
+                "startDate": "15 May 2013"
+            }
+        ], 
+        "demographics": {
+            "dateOfBirth": "4 Jan 1985", 
+            "hospitalNumber": "DEFG4567", 
+            "name": "Jess Black"
+        }, 
+        "diagnosis": [
+            {
+                "condition": "Osteomylitis", 
+                "status": "suspected"
+            }
+        ], 
+        "discharge": null, 
+        "location": {
+            "bed": "34", 
+            "category": "review", 
+            "dateOfAdmission": "14 May 2013", 
+            "hospital": "UCH", 
+            "ward": "T8"
+        }, 
+        "microbiology": [], 
+        "pastMedicalHistory": [
+            {
+                "condition": "Vascular Disease", 
+                "year": "2012"
+            }
+        ], 
+        "plan": "Advised needs MRI for ?OM", 
+        "travel": []
+    }, 
+    {
+        "antibiotics": [], 
+        "demographics": {
+            "dateOfBirth": "5 Jan 1985", 
+            "hospitalNumber": "EFGH5678", 
+            "name": "David Grey"
+        }, 
+        "diagnosis": [
+            {
+                "condition": "Glandular fever", 
+                "status": "suspected"
+            }
+        ], 
+        "discharge": null, 
+        "hospital": "UCH", 
+        "location": {
+            "bed": null, 
+            "category": "followup", 
+            "dateOfAdmission": "15 May 2013", 
+            "hospital": null, 
+            "ward": null
+        }, 
+        "microbiology": [], 
+        "pastMedicalHistory": [], 
+        "plan": "Serology pending - call with result", 
+        "travel": []
+    }
+]
