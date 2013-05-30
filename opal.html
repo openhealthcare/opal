@@ -20,6 +20,7 @@
 					<th>Diagnosis</th>
 					<th>Past Medical History</th>
 					<th>Travel</th>
+					<th>Antibiotics</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -74,6 +75,21 @@
 								</span>
 								<span ng-show="row._selected && trip._new">
 									<a href="#">Add trip</a>
+								</span>
+							</li>
+						</ul>
+					</td>
+
+					<td ng-class="{selected: selectedColumnName == 'antibiotics'}">
+						<ul>
+							<li ng-repeat="antibiotic in row.antibiotics" ng-class="{selected: antibiotic._selected}">
+								<span ng-hide="antibiotic._new">
+									{{antibiotic.name}}
+									<span ng-show="antibiotic.route">/ {{antibiotic.route}}</span>
+									({{antibiotic.startDate}} - {{antibiotic.endDate}})
+								</span>
+								<span ng-show="row._selected && antibiotic._new">
+									<a href="#">Add antibiotic</a>
 								</span>
 							</li>
 						</ul>
@@ -243,6 +259,45 @@
 						<label class="control-label">Specific exposures</label>
 						<div class="controls">
 							<input type="text" ng-model="editing.specificExposures">
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" ng-click="cancelEdit()">Cancel</button>
+				<button class="btn btn-primary" data-dismiss="modal" ng-click="saveEdit()">Save changes</button>
+			</div>
+		</div>
+		
+		<div id="antibiotics-modal" class="modal hide" tabindex="-1" role="dialog">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" ng-click="cancelEdit()">×</button>
+				<h3>Antibiotics</h3>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal">
+					<div class="control-group">
+						<label class="control-label">Drug</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.name">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">Route</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.route">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">Start date</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.startDate">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">End date</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.endDate">
 						</div>
 					</div>
 				</form>

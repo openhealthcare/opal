@@ -4,6 +4,8 @@ var columns = [
 	{name: 'diagnosis', multi: true},
 	{name: 'pastMedicalHistory', multi: true},
 	{name: 'travel', multi: true},
+//	{name: 'microbiology', multi: true}, TODO: awaiting details of structure
+	{name: 'antibiotics', multi: true},
 ];
 
 function clone(obj) {
