@@ -16,14 +16,25 @@
 			<thead>
 				<tr>
 					<th>Location</th>
+					<th>Demographics</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="row in rows" ng-class="{selected: row.selected}">
-					<td>
-						<li>{{row._data.location.category}}</li>
-						<li><span ng-hide="row._data.location.hospital=='UCH'">{{row._data.location.hospital}} </span>{{row._data.location.ward}} {{row._data.location.bed}}</li>
-						<li>Admitted: {{row._data.location.dateOfAdmission}}</li>
+				<tr ng-repeat="row in rows" ng-class="{selected: row.selected && selectedColumnName == null}">
+					<td ng-class="{selected: row.selected && selectedColumnName == 'location'}">
+						<ul>
+							<li>{{row._data.location.category}}</li>
+							<li><span ng-hide="row._data.location.hospital=='UCH'">{{row._data.location.hospital}} </span>{{row._data.location.ward}} {{row._data.location.bed}}</li>
+							<li>Admitted: {{row._data.location.dateOfAdmission}}</li>
+						</ul>
+					</td>
+
+					<td ng-class="{selected: row.selected && selectedColumnName == 'demographics'}">
+						<ul>
+							<li>{{row._data.demographics.name}}</li>
+							<li>{{row._data.demographics.hospitalNumber}}</li>
+							<li>{{row._data.demographics.dateOfBirth}}</li>
+						</ul>
 					</td>
 				</tr>
 			</tbody>
@@ -39,25 +50,58 @@
 					<div class="control-group">
 						<label class="control-label">Hospital</label>
 						<div class="controls">
-							<input type="text" ng-model="currentLocation.hospital">
+							<input type="text" ng-model="editing.hospital">
 						</div>
 					</div>
 					<div class="control-group">
 						<label class="control-label">Ward</label>
 						<div class="controls">
-							<input type="text" ng-model="currentLocation.ward">
+							<input type="text" ng-model="editing.ward">
 						</div>
 					</div>
 					<div class="control-group">
 						<label class="control-label">Bed</label>
 						<div class="controls">
-							<input type="text" ng-model="currentLocation.bed">
+							<input type="text" ng-model="editing.bed">
 						</div>
 					</div>
 					<div class="control-group">
 						<label class="control-label">Date of admission</label>
 						<div class="controls">
-							<input type="text" ng-model="currentLocation.dateOfAdmission">
+							<input type="text" ng-model="editing.dateOfAdmission">
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal">Cancel</button>
+				<button class="btn btn-primary" data-dismiss="modal" ng-click="saveEdit()">Save changes</button>
+			</div>
+		</div>
+		
+		<div id="demographics-modal" class="modal hide" tabindex="-1" role="dialog">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">×</button>
+				<h3>Demographics</h3>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal">
+					<div class="control-group">
+						<label class="control-label">Name</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.name">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">Hospital number</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.hospitalNumber">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">Date of birth</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.dateOfBirth">
 						</div>
 					</div>
 				</form>
