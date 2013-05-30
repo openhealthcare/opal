@@ -17,6 +17,7 @@
 				<tr>
 					<th>Location</th>
 					<th>Demographics</th>
+					<th>Diagnosis</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -34,6 +35,12 @@
 							<li>{{row._data.demographics.name}}</li>
 							<li>{{row._data.demographics.hospitalNumber}}</li>
 							<li>{{row._data.demographics.dateOfBirth}}</li>
+						</ul>
+					</td>
+
+					<td ng-class="{selected: row.selected && selectedColumnName == 'diagnosis'}">
+						<ul>
+								<li ng-repeat="diagnosis in row._data.diagnosis"><span ng-show="diagnosis.status == 'suspected'">?</span> {{diagnosis.condition}}</li>
 						</ul>
 					</td>
 				</tr>

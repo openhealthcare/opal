@@ -1,4 +1,4 @@
-var columns = ['location', 'demographics'];
+var columns = ['location', 'demographics', 'diagnosis'];
 
 function clone(obj) {
 	if (typeof obj == 'object') {
