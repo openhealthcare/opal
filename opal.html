@@ -18,6 +18,7 @@
 					<th>Location</th>
 					<th>Demographics</th>
 					<th>Diagnosis</th>
+					<th>Past Medical History</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -42,6 +43,19 @@
 								</span>
 								<span ng-show="row._selected && diagnosis._new">
 									<a href="#">Add diagnosis</a>
+								</span>
+							</li>
+						</ul>
+					</td>
+
+					<td ng-class="{selected: selectedColumnName == 'pastMedicalHistory'}">
+						<ul>
+							<li ng-repeat="pmh in row.pastMedicalHistory" ng-class="{selected: pmh._selected}">
+								<span ng-hide="pmh._new">
+									{{pmh.condition}} <span ng-show="pmh.year">({{pmh.year}})</span>
+								</span>
+								<span ng-show="row._selected && pmh._new">
+									<a href="#">Add condition</a>
 								</span>
 							</li>
 						</ul>
@@ -145,6 +159,33 @@
 						<label class="control-label">Details</label>
 						<div class="controls">
 							<input type="text" ng-model="editing.details">
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" ng-click="cancelEdit()">Cancel</button>
+				<button class="btn btn-primary" data-dismiss="modal" ng-click="saveEdit()">Save changes</button>
+			</div>
+		</div>
+		
+		<div id="pastMedicalHistory-modal" class="modal hide" tabindex="-1" role="dialog">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" ng-click="cancelEdit()">×</button>
+				<h3>Past Medical History</h3>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal">
+					<div class="control-group">
+						<label class="control-label">Condition</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.condition">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">Year</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.year">
 						</div>
 					</div>
 				</form>
