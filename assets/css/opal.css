@@ -19,3 +19,8 @@ li {
 .table tr.selected td.selected li.selected {
 	background-color: #ddd;
 }
+
+.preserve-whitespace {
+	white-space: pre;
+}
+

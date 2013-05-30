@@ -21,6 +21,7 @@
 					<th>Past Medical History</th>
 					<th>Travel</th>
 					<th>Antibiotics</th>
+					<th>Plan</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -92,6 +93,12 @@
 									<a href="#">Add antibiotic</a>
 								</span>
 							</li>
+						</ul>
+					</td>
+
+					<td ng-class="{selected: selectedColumnName == 'plan'}">
+						<ul>
+							<li class="selected preserve-whitespace">{{row.plan}}</li>
 						</ul>
 					</td>
 				</tr>
@@ -300,6 +307,22 @@
 							<input type="text" ng-model="editing.endDate">
 						</div>
 					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" ng-click="cancelEdit()">Cancel</button>
+				<button class="btn btn-primary" data-dismiss="modal" ng-click="saveEdit()">Save changes</button>
+			</div>
+		</div>
+		
+		<div id="plan-modal" class="modal hide" tabindex="-1" role="dialog">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" ng-click="cancelEdit()">×</button>
+				<h3>Plan</h3>
+			</div>
+			<div class="modal-body">
+				<form>
+					<textarea ng-model="editing" rows="10"></textarea>
 				</form>
 			</div>
 			<div class="modal-footer">
