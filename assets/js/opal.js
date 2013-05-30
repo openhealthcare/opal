@@ -80,6 +80,7 @@ app.controller('TableCtrl', function($scope, $http) {
 			$scope.editing = clone($scope.rows[rix][$scope.selectedColumnName]);
 		}
 		$('#' + $scope.selectedColumnName + '-modal').modal()
+		$('#' + $scope.selectedColumnName + '-modal').find('input').first().focus();
 	};
 
 	$scope.saveEdit = function() {
