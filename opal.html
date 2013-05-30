@@ -38,7 +38,7 @@
 						<ul>
 							<li ng-repeat="diagnosis in row.diagnosis" ng-class="{selected: diagnosis._selected}">
 								<span ng-hide="diagnosis._new">
-									<span ng-show="diagnosis.status == 'suspected'">?</span> {{diagnosis.condition}}
+									<span ng-hide="diagnosis.confirmed">?</span> {{diagnosis.condition}}
 								</span>
 								<span ng-show="row._selected && diagnosis._new">
 									<a href="#">Add diagnosis</a>
@@ -52,7 +52,7 @@
 
 		<div id="location-modal" class="modal hide" tabindex="-1" role="dialog">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal">×</button>
+				<button type="button" class="close" data-dismiss="modal" ng-click="cancelEdit()">×</button>
 				<h3>Location</h3>
 			</div>
 			<div class="modal-body">
@@ -91,7 +91,7 @@
 		
 		<div id="demographics-modal" class="modal hide" tabindex="-1" role="dialog">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal">×</button>
+				<button type="button" class="close" data-dismiss="modal" ng-click="cancelEdit()">×</button>
 				<h3>Demographics</h3>
 			</div>
 			<div class="modal-body">
@@ -124,7 +124,7 @@
 		
 		<div id="diagnosis-modal" class="modal hide" tabindex="-1" role="dialog">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal">×</button>
+				<button type="button" class="close" data-dismiss="modal" ng-click="cancelEdit()">×</button>
 				<h3>Diagnosis</h3>
 			</div>
 			<div class="modal-body">
@@ -133,6 +133,18 @@
 						<label class="control-label">Condition</label>
 						<div class="controls">
 							<input type="text" ng-model="editing.condition">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">Confirmed?</label>
+						<div class="controls">
+							<input type="checkbox" ng-model="editing.confirmed">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">Details</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.details">
 						</div>
 					</div>
 				</form>

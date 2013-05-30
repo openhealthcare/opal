@@ -15,7 +15,7 @@
         "diagnosis": [
             {
                 "condition": "Pyelonephritis", 
-                "status": "confirmed"
+                "confirmed": true
             }
         ], 
         "discharge": "PKGB1 in 2/52", 
@@ -50,12 +50,12 @@
         "diagnosis": [
             {
                 "condition": "TB", 
-                "status": "suspected"
+                "confirmed": false
             }, 
             {
                 "condition": "HIV", 
-                "details": "Viral Load 250, CD4 325", 
-                "status": "confirmed"
+                "confirmed": true, 
+                "details": "Viral Load 250, CD4 325"
             }
         ], 
         "discharge": null, 
@@ -94,7 +94,7 @@
         "diagnosis": [
             {
                 "condition": "Falciparum Malaria", 
-                "status": "confirmed"
+                "confirmed": true
             }
         ], 
         "discharge": "nil", 
@@ -141,7 +141,7 @@
         "diagnosis": [
             {
                 "condition": "Osteomylitis", 
-                "status": "suspected"
+                "confirmed": false
             }
         ], 
         "discharge": null, 
@@ -172,7 +172,7 @@
         "diagnosis": [
             {
                 "condition": "Glandular fever", 
-                "status": "suspected"
+                "confirmed": false
             }
         ], 
         "discharge": null, 
