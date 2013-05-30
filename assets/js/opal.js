@@ -1,4 +1,8 @@
-var columns = ['location', 'demographics', 'diagnosis'];
+var columns = [
+	{name: 'location', multi: false},
+	{name: 'demographics', multi: false}, 
+	{name: 'diagnosis', multi: true}
+];
 
 function clone(obj) {
 	if (typeof obj == 'object') {
@@ -20,6 +24,13 @@ app.controller('TableCtrl', function($scope, $http) {
 	var editing = false;
 
 	$http.get('data/records.json').success(function(rows) {
+		for (var rix = 0; rix < rows.length; rix++) {
+			for (var cix = 0; cix < columns.length; cix++) {
+				if (columns[cix].multi) {
+					rows[rix][columns[cix]['name']].push({'_new': true});
+				}
+			}
+		}
 		$scope.rows = rows;
 		selectRow();
 	});
@@ -33,8 +44,8 @@ app.controller('TableCtrl', function($scope, $http) {
 	};
 
 	function selectColumn() {
-		$scope.selectedColumnName = columns[cix];
-		if ($scope.rows[rix][$scope.selectedColumnName] instanceof Array) {
+		$scope.selectedColumnName = columns[cix]['name'];
+		if (columns[cix]['multi']) {
 			iix = 0;
 			selectItem();
 		} else {
@@ -56,7 +67,7 @@ app.controller('TableCtrl', function($scope, $http) {
 
 	function doEdit() {
 		editing = true;
-		if ($scope.rows[rix][$scope.selectedColumnName] instanceof Array) {
+		if (columns[cix]['multi']) {
 			$scope.editing = clone($scope.rows[rix][$scope.selectedColumnName][iix]);
 		} else {
 			$scope.editing = clone($scope.rows[rix][$scope.selectedColumnName]);
@@ -66,7 +77,12 @@ app.controller('TableCtrl', function($scope, $http) {
 
 	$scope.saveEdit = function() {
 		editing = false;
-		if ($scope.rows[rix][$scope.selectedColumnName] instanceof Array) {
+		if (columns[cix]['multi']) {
+			if ($scope.editing._new) {
+				delete $scope.editing._new;
+				$scope.rows[rix][$scope.selectedColumnName].push({'_new': true});
+			}
+
 			$scope.rows[rix][$scope.selectedColumnName][iix] = clone($scope.editing);
 		} else {
 			$scope.rows[rix][$scope.selectedColumnName] = clone($scope.editing);

@@ -36,7 +36,14 @@
 
 					<td ng-class="{selected: selectedColumnName == 'diagnosis'}">
 						<ul>
-							<li ng-repeat="diagnosis in row.diagnosis" ng-class="{selected: diagnosis._selected}"><span ng-show="diagnosis.status == 'suspected'">?</span> {{diagnosis.condition}}</li>
+							<li ng-repeat="diagnosis in row.diagnosis" ng-class="{selected: diagnosis._selected}">
+								<span ng-hide="diagnosis._new">
+									<span ng-show="diagnosis.status == 'suspected'">?</span> {{diagnosis.condition}}
+								</span>
+								<span ng-show="row._selected && diagnosis._new">
+									<a href="#">Add diagnosis</a>
+								</span>
+							</li>
 						</ul>
 					</td>
 				</tr>
