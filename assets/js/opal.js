@@ -3,6 +3,7 @@ var columns = [
 	{name: 'demographics', multi: false}, 
 	{name: 'diagnosis', multi: true},
 	{name: 'pastMedicalHistory', multi: true},
+	{name: 'travel', multi: true},
 ];
 
 function clone(obj) {

@@ -19,6 +19,7 @@
 					<th>Demographics</th>
 					<th>Diagnosis</th>
 					<th>Past Medical History</th>
+					<th>Travel</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -56,6 +57,23 @@
 								</span>
 								<span ng-show="row._selected && pmh._new">
 									<a href="#">Add condition</a>
+								</span>
+							</li>
+						</ul>
+					</td>
+
+					<td ng-class="{selected: selectedColumnName == 'travel'}">
+						<ul>
+							<li ng-repeat="trip in row.travel" ng-class="{selected: trip._selected}">
+								<span ng-hide="trip._new">
+									{{trip.destination}}
+								   	<span ng-show="trip.dates">({{trip.dates}})</span>
+								   	{{trip.reason}}
+									<span ng-show="trip.reason && trip.specificExposures">/</span>
+								   	{{trip.specificExposures}}
+								</span>
+								<span ng-show="row._selected && trip._new">
+									<a href="#">Add trip</a>
 								</span>
 							</li>
 						</ul>
@@ -186,6 +204,45 @@
 						<label class="control-label">Year</label>
 						<div class="controls">
 							<input type="text" ng-model="editing.year">
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" ng-click="cancelEdit()">Cancel</button>
+				<button class="btn btn-primary" data-dismiss="modal" ng-click="saveEdit()">Save changes</button>
+			</div>
+		</div>
+		
+		<div id="travel-modal" class="modal hide" tabindex="-1" role="dialog">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" ng-click="cancelEdit()">×</button>
+				<h3>Travel</h3>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal">
+					<div class="control-group">
+						<label class="control-label">Destination</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.destination">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">Dates</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.dates">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">Reason for travel</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.reason">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">Specific exposures</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.specificExposures">
 						</div>
 					</div>
 				</form>
