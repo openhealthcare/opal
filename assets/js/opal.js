@@ -14,92 +14,136 @@ app.controller('TableCtrl', function($scope, $http) {
 	$scope.rows = [];
 	$scope.selectedColumnName = null;
 
-	var selectedRowIx = 0;
-	var selectedColumnIx = -1;
+	var rix = 0;
+	var cix = -1;
+	var iix = -1;
+	var editing = false;
 
-	$http.get('data/records.json').success(function(records) {
-		$scope.records = records;
-
-		for (var rix = 0; rix < records.length; rix++) {
-			$scope.rows.push({_data: records[rix]});
-		};
-
-		selectRow(selectedRowIx);
+	$http.get('data/records.json').success(function(rows) {
+		$scope.rows = rows;
+		selectRow();
 	});
 
-	function selectRow(rix) {
-		$scope.rows[rix]['selected'] = true;
+	function selectRow() {
+		$scope.rows[rix]['_selected'] = true;
 	};
 
-	function deselectRow(rix) {
-		delete $scope.rows[rix]['selected'];
+	function deselectRow() {
+		delete $scope.rows[rix]['_selected'];
 	};
 
-	function selectColumn(cix) {
+	function selectColumn() {
 		$scope.selectedColumnName = columns[cix];
+		if ($scope.rows[rix][$scope.selectedColumnName] instanceof Array) {
+			iix = 0;
+			selectItem();
+		} else {
+			iix = -1;
+		}
 	};
 
 	function deselectColumn(cir) {
 		$scope.selectedColumnName = null;
-	}
+	};
 
-	function editRow(rix) {
-		$scope.editing = clone($scope.rows[rix]._data[$scope.selectedColumnName]);
+	function selectItem() {
+		$scope.rows[rix][$scope.selectedColumnName][iix]['_selected'] = true;
+	};
+
+	function deselectItem() {
+		delete $scope.rows[rix][$scope.selectedColumnName][iix]['_selected'];
+	};
+
+	function doEdit() {
+		editing = true;
+		if ($scope.rows[rix][$scope.selectedColumnName] instanceof Array) {
+			$scope.editing = clone($scope.rows[rix][$scope.selectedColumnName][iix]);
+		} else {
+			$scope.editing = clone($scope.rows[rix][$scope.selectedColumnName]);
+		}
 		$('#' + $scope.selectedColumnName + '-modal').modal()
 	};
 
 	$scope.saveEdit = function() {
-		$scope.rows[selectedRowIx]._data[$scope.selectedColumnName] = clone($scope.editing);
+		editing = false;
+		if ($scope.rows[rix][$scope.selectedColumnName] instanceof Array) {
+			$scope.rows[rix][$scope.selectedColumnName][iix] = clone($scope.editing);
+		} else {
+			$scope.rows[rix][$scope.selectedColumnName] = clone($scope.editing);
+		}
+	};
+
+	$scope.cancelEdit = function() {
+		editing = false;
 	};
 
 	$scope.keypress = function(e) {
-		if (selectedColumnIx == -1) {
+		if (editing) {
+			return;
+		}
+		if (cix == -1) {
 			switch (e.keyCode) {
 				case 38: // up
 				case 75: // k
-					if (selectedRowIx > 0) {
-						deselectRow(selectedRowIx);
-						selectedRowIx--;
-						selectRow(selectedRowIx);
+					if (rix > 0) {
+						deselectRow();
+						rix--;
+						selectRow();
 					}
 					break;
 				case 40: // down
 				case 74: // j
-					if (selectedRowIx < $scope.rows.length-1) {
-						deselectRow(selectedRowIx);
-						selectedRowIx++;
-						selectRow(selectedRowIx);
+					if (rix < $scope.rows.length-1) {
+						deselectRow();
+						rix++;
+						selectRow();
 					}
 					break;
 				case 32: // space
-					selectedColumnIx = 0;
-					selectColumn(selectedColumnIx);
+					cix = 0;
+					selectColumn();
 					break;
 			}
 		} else {
 			switch (e.keyCode) {
 				case 37: // left
 				case 72: // h
-					if (selectedColumnIx > 0) {
-						deselectColumn(selectedColumnIx);
-						selectedColumnIx--;
-						selectColumn(selectedColumnIx);
+					if (cix > 0) {
+						deselectColumn();
+						cix--;
+						selectColumn();
 					}
 					break;
 				case 39: // right
 				case 76: // l
-					if (selectedColumnIx < columns.length-1) {
-						deselectColumn(selectedColumnIx);
-						selectedColumnIx++;
-						selectColumn(selectedColumnIx);
+					if (cix < columns.length-1) {
+						deselectColumn();
+						cix++;
+						selectColumn();
 					}
 				break;
+				case 38: // up
+				case 75: // k
+					if (iix > 0) {
+						deselectItem();
+						iix--;
+						selectItem();
+					}
+					break;
+				case 40: // down
+				case 74: // j
+					if (iix < $scope.rows[rix][$scope.selectedColumnName].length-1) {
+						deselectItem();
+						iix++;
+						selectItem();
+					}
+					break;
 				case 13: // return
-					editRow(selectedRowIx);
+					doEdit();
 					break;
 				case 32: // space
-					deselectColumn(selectedColumnIx);
-					selectedColumnIx = -1;
+					deselectColumn();
+					cix = -1;
 					break;
 			}
 		}

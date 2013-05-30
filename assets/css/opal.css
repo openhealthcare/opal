@@ -16,6 +16,6 @@ li {
 	background-color: #eee;
 }
 
-.table td.selected {
+.table tr.selected td.selected li.selected {
 	background-color: #ddd;
 }

@@ -21,26 +21,22 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="row in rows" ng-class="{selected: row.selected && selectedColumnName == null}">
-					<td ng-class="{selected: row.selected && selectedColumnName == 'location'}">
+				<tr ng-repeat="row in rows" ng-class="{selected: row._selected}">
+					<td ng-class="{selected: selectedColumnName == 'location'}">
 						<ul>
-							<li>{{row._data.location.category}}</li>
-							<li><span ng-hide="row._data.location.hospital=='UCH'">{{row._data.location.hospital}} </span>{{row._data.location.ward}} {{row._data.location.bed}}</li>
-							<li>Admitted: {{row._data.location.dateOfAdmission}}</li>
+							<li class="selected">{{row.location.category}}<br /><span ng-hide="row.location.hospital=='UCH'">{{row.location.hospital}} </span>{{row.location.ward}} {{row.location.bed}}<br />Admitted: {{row.location.dateOfAdmission}}</li>
 						</ul>
 					</td>
 
-					<td ng-class="{selected: row.selected && selectedColumnName == 'demographics'}">
+					<td ng-class="{selected: selectedColumnName == 'demographics'}">
 						<ul>
-							<li>{{row._data.demographics.name}}</li>
-							<li>{{row._data.demographics.hospitalNumber}}</li>
-							<li>{{row._data.demographics.dateOfBirth}}</li>
+							<li class="selected">{{row.demographics.name}}<br />{{row.demographics.hospitalNumber}}<br />{{row.demographics.dateOfBirth}}</li>
 						</ul>
 					</td>
 
-					<td ng-class="{selected: row.selected && selectedColumnName == 'diagnosis'}">
+					<td ng-class="{selected: selectedColumnName == 'diagnosis'}">
 						<ul>
-								<li ng-repeat="diagnosis in row._data.diagnosis"><span ng-show="diagnosis.status == 'suspected'">?</span> {{diagnosis.condition}}</li>
+							<li ng-repeat="diagnosis in row.diagnosis" ng-class="{selected: diagnosis._selected}"><span ng-show="diagnosis.status == 'suspected'">?</span> {{diagnosis.condition}}</li>
 						</ul>
 					</td>
 				</tr>
@@ -81,7 +77,7 @@
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button class="btn" data-dismiss="modal">Cancel</button>
+				<button class="btn" data-dismiss="modal" ng-click="cancelEdit()">Cancel</button>
 				<button class="btn btn-primary" data-dismiss="modal" ng-click="saveEdit()">Save changes</button>
 			</div>
 		</div>
@@ -114,7 +110,28 @@
 				</form>
 			</div>
 			<div class="modal-footer">
-				<button class="btn" data-dismiss="modal">Cancel</button>
+				<button class="btn" data-dismiss="modal" ng-click="cancelEdit()">Cancel</button>
+				<button class="btn btn-primary" data-dismiss="modal" ng-click="saveEdit()">Save changes</button>
+			</div>
+		</div>
+		
+		<div id="diagnosis-modal" class="modal hide" tabindex="-1" role="dialog">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">×</button>
+				<h3>Diagnosis</h3>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal">
+					<div class="control-group">
+						<label class="control-label">Condition</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.condition">
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal" ng-click="cancelEdit()">Cancel</button>
 				<button class="btn btn-primary" data-dismiss="modal" ng-click="saveEdit()">Save changes</button>
 			</div>
 		</div>
