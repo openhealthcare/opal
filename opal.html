@@ -5,6 +5,7 @@
 		<title>OPaL: Open Patient List</title>
 		<script src="assets/js/jquery-1.9.1.js"></script>
 		<script src="assets/js/angular-1.1.5.js"></script>
+		<script src="assets/js/bootstrap-2.3.1.js"></script>
 		<script src="assets/js/opal.js"></script>
 		<link href="assets/css/bootstrap-2.3.1.css" rel="stylesheet" media="screen">
 		<link href="assets/css/opal.css" rel="stylesheet" media="screen">
@@ -21,11 +22,50 @@
 				<tr ng-repeat="row in rows" ng-class="{selected: row.selected}">
 					<td>
 						<li>{{row._data.location.category}}</li>
-						<li><span ng-hide="row._data.location.hospital=='UCH'">{{row._data.location.hospital}}</span>{{row._data.location.ward}} {{row._data.location.bed}}</li>
+						<li><span ng-hide="row._data.location.hospital=='UCH'">{{row._data.location.hospital}} </span>{{row._data.location.ward}} {{row._data.location.bed}}</li>
 						<li>Admitted: {{row._data.location.dateOfAdmission}}</li>
 					</td>
 				</tr>
 			</tbody>
 		</table>
+
+		<div id="location-modal" class="modal hide" tabindex="-1" role="dialog">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">×</button>
+				<h3>Location</h3>
+			</div>
+			<div class="modal-body">
+				<form class="form-horizontal">
+					<div class="control-group">
+						<label class="control-label">Hospital</label>
+						<div class="controls">
+							<input type="text" ng-model="currentLocation.hospital">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">Ward</label>
+						<div class="controls">
+							<input type="text" ng-model="currentLocation.ward">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">Bed</label>
+						<div class="controls">
+							<input type="text" ng-model="currentLocation.bed">
+						</div>
+					</div>
+					<div class="control-group">
+						<label class="control-label">Date of admission</label>
+						<div class="controls">
+							<input type="text" ng-model="currentLocation.dateOfAdmission">
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button class="btn" data-dismiss="modal">Cancel</button>
+				<button class="btn btn-primary" data-dismiss="modal" ng-click="saveEdit()">Save changes</button>
+			</div>
+		</div>
 	</body>
 </html>
