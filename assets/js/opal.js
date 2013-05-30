@@ -6,6 +6,7 @@ var columns = [
 	{name: 'travel', multi: true},
 //	{name: 'microbiology', multi: true}, TODO: awaiting details of structure
 	{name: 'antibiotics', multi: true},
+	{name: 'microbiologyComments', multi: true},
 	{name: 'plan', multi: false},
 	{name: 'discharge', multi: false},
 ];

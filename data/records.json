@@ -30,6 +30,13 @@
             "Urine culture: pending", 
             "Blood culture: pending"
         ], 
+        "microbiologyComments": [
+            {
+                "comment": "This is a comment", 
+                "date": "16/5", 
+                "initials": "ABC"
+            }
+        ], 
         "pastMedicalHistory": [], 
         "plan": "Chase cultures\n?Switch to oral abx\nAim home Friday", 
         "travel": []
@@ -69,6 +76,7 @@
         "microbiology": [
             "Urine culture: pending"
         ], 
+        "microbiologyComments": [], 
         "pastMedicalHistory": [
             {
                 "condition": "PCP", 
@@ -108,6 +116,7 @@
         "microbiology": [
             "2% Parasitaemia"
         ], 
+        "microbiologyComments": [], 
         "pastMedicalHistory": [
             {
                 "condition": "Type 2 Diabetes", 
@@ -153,6 +162,7 @@
             "ward": "T8"
         }, 
         "microbiology": [], 
+        "microbiologyComments": [], 
         "pastMedicalHistory": [
             {
                 "condition": "Vascular Disease", 
@@ -185,6 +195,7 @@
             "ward": null
         }, 
         "microbiology": [], 
+        "microbiologyComments": [], 
         "pastMedicalHistory": [], 
         "plan": "Serology pending - call with result", 
         "travel": []
