@@ -19,7 +19,7 @@ function clone(obj) {
 	}
 };
 
-var app = angular.module('opalApp', []);
+var app = angular.module('opalApp', ['$strap.directives']);
 
 app.controller('TableCtrl', function($scope, $http) {
 	$scope.rows = [];
