@@ -94,6 +94,7 @@ app.controller('TableCtrl', function($scope, $http) {
 	};
 
 	$scope.saveEdit = function() {
+		$('#' + $scope.selectedColumnName + '-modal').modal('hide')
 		editing = false;
 		if (columns[cix]['multi']) {
 			if ($scope.editing._new) {
@@ -108,77 +109,86 @@ app.controller('TableCtrl', function($scope, $http) {
 	};
 
 	$scope.cancelEdit = function() {
+		$('#' + $scope.selectedColumnName + '-modal').modal('hide')
 		editing = false;
 	};
 
 	$scope.keypress = function(e) {
 		if (editing) {
-			return;
-		}
-		if (cix == -1) {
 			switch (e.keyCode) {
-				case 38: // up
-				case 75: // k
-					if (rix > 0) {
-						deselectRow();
-						rix--;
-						selectRow();
-					}
-					break;
-				case 40: // down
-				case 74: // j
-					if (rix < $scope.rows.length-1) {
-						deselectRow();
-						rix++;
-						selectRow();
-					}
-					break;
-				case 32: // space
-					cix = 0;
-					selectColumn();
-					break;
+				case 27: // escape
+					$scope.cancelEdit();
+					break
+				case 13: // return
+					$scope.saveEdit();
+					break
 			}
 		} else {
-			switch (e.keyCode) {
-				case 37: // left
-				case 72: // h
-					if (cix > 0) {
-						deselectColumn();
-						cix--;
+			if (cix == -1) {
+				switch (e.keyCode) {
+					case 38: // up
+					case 75: // k
+						if (rix > 0) {
+							deselectRow();
+							rix--;
+							selectRow();
+						}
+						break;
+					case 40: // down
+					case 74: // j
+						if (rix < $scope.rows.length-1) {
+							deselectRow();
+							rix++;
+							selectRow();
+						}
+						break;
+					case 32: // space
+						cix = 0;
 						selectColumn();
-					}
+						break;
+				}
+			} else {
+				switch (e.keyCode) {
+					case 37: // left
+					case 72: // h
+						if (cix > 0) {
+							deselectColumn();
+							cix--;
+							selectColumn();
+						}
+						break;
+					case 39: // right
+					case 76: // l
+						if (cix < columns.length-1) {
+							deselectColumn();
+							cix++;
+							selectColumn();
+						}
 					break;
-				case 39: // right
-				case 76: // l
-					if (cix < columns.length-1) {
+					case 38: // up
+					case 75: // k
+						if (iix > 0) {
+							deselectItem();
+							iix--;
+							selectItem();
+						}
+						break;
+					case 40: // down
+					case 74: // j
+						if (iix < $scope.rows[rix][$scope.selectedColumnName].length-1) {
+							deselectItem();
+							iix++;
+							selectItem();
+						}
+						break;
+					case 13: // return
+						doEdit();
+						break;
+					case 32: // space
 						deselectColumn();
-						cix++;
-						selectColumn();
-					}
-				break;
-				case 38: // up
-				case 75: // k
-					if (iix > 0) {
-						deselectItem();
-						iix--;
-						selectItem();
-					}
-					break;
-				case 40: // down
-				case 74: // j
-					if (iix < $scope.rows[rix][$scope.selectedColumnName].length-1) {
-						deselectItem();
-						iix++;
-						selectItem();
-					}
-					break;
-				case 13: // return
-					doEdit();
-					break;
-				case 32: // space
-					deselectColumn();
-					cix = -1;
-					break;
+						cix = -1;
+						break;
+				}
 			}
 		}
 	}
