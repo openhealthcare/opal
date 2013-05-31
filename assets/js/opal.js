@@ -172,4 +172,7 @@ app.controller('TableCtrl', function($scope, $http) {
 			}
 		}
 	}
+
+	// data for typeaheads
+	$scope.destinations = ['Africa', 'America', 'Antarctica', 'Asia', 'Australia'];
 });
