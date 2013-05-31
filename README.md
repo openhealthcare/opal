@@ -1,4 +1,4 @@
 OPAL
 ====
 
-The Open Patient List
+Opal is not a Patient Activity List
