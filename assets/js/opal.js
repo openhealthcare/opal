@@ -52,6 +52,22 @@ app.controller('TableCtrl', function($scope, $http) {
 		selectRow();
 	});
 
+	$http.get('data/conditions.json').success(function(conditions) {
+		$scope.conditions = conditions;
+	});
+
+	$http.get('data/countries.json').success(function(countries) {
+		$scope.destinations = countries;
+	});
+
+	$http.get('data/antibiotics.json').success(function(antibiotics) {
+		$scope.antibiotics = antibiotics;
+	});
+
+	$scope.categories = ['Inpatient', 'Review', 'Followup'];
+	$scope.routes = ['Oral', 'IV'];
+	$scope.travelReasones = ['Visiting Friends and Relatives', 'Business', 'Military', 'Holiday'];
+
 	function selectRow() {
 		$scope.rows[rix]['_selected'] = true;
 	};
@@ -192,16 +208,4 @@ app.controller('TableCtrl', function($scope, $http) {
 			}
 		}
 	}
-
-	// data for typeaheads
-	var conditions = {
-		Cold: ['Common', 'Uncommon'],
-		Flu: ['Bird', 'Swine', 'Spanish', 'Portuguese'],
-	};
-	$scope.conditions = getKeys(conditions);
-	$scope.subconditions = function() {
-		return conditions[$scope.editing.condition];
-	};
-	$scope.destinations = ['Africa', 'America', 'Antarctica', 'Asia', 'Australia'];
-	$scope.categories = ['Inpatient', 'Review', 'Followup'];
 });

@@ -281,7 +281,7 @@
 					<div class="control-group">
 						<label class="control-label">Reason for travel</label>
 						<div class="controls">
-							<input type="text" ng-model="editing.reason">
+							<input type="text" ng-model="editing.reason" bs-typeahead="travelReasones" data-provide="typeahead">
 						</div>
 					</div>
 					<div class="control-group">
@@ -308,13 +308,13 @@
 					<div class="control-group">
 						<label class="control-label">Drug</label>
 						<div class="controls">
-							<input type="text" ng-model="editing.name">
+							<input type="text" ng-model="editing.name" bs-typeahead="antibiotics" data-provide="typeahead">
 						</div>
 					</div>
 					<div class="control-group">
 						<label class="control-label">Route</label>
 						<div class="controls">
-							<input type="text" ng-model="editing.route">
+							<input type="text" ng-model="editing.route" bs-typeahead="routes" data-provide="typeahead">
 						</div>
 					</div>
 					<div class="control-group">
