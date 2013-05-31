@@ -45,7 +45,9 @@
 						<ul>
 							<li ng-repeat="diagnosis in row.diagnosis" ng-class="{selected: diagnosis._selected}">
 								<span ng-hide="diagnosis._new">
-									<span ng-hide="diagnosis.confirmed">?</span> {{diagnosis.condition}}
+									<span ng-hide="diagnosis.confirmed">?</span>
+									{{diagnosis.condition}}
+									<span ng-show="diagnosis.details">({{diagnosis.details}})</span>
 								</span>
 								<span ng-show="row._selected && diagnosis._new">
 									<a href="#">Add diagnosis</a>
@@ -211,7 +213,7 @@
 					<div class="control-group">
 						<label class="control-label">Condition</label>
 						<div class="controls">
-							<input type="text" ng-model="editing.condition">
+							<input type="text" ng-model="editing.condition" bs-typeahead="conditions" data-provide="typeahead">
 						</div>
 					</div>
 					<div class="control-group">
@@ -223,7 +225,7 @@
 					<div class="control-group">
 						<label class="control-label">Details</label>
 						<div class="controls">
-							<input type="text" ng-model="editing.details">
+							<input type="text" ng-model="editing.details" bs-typeahead="subconditions" data-provide="typeahead">
 						</div>
 					</div>
 				</form>

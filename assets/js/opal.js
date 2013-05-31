@@ -19,6 +19,16 @@ function clone(obj) {
 	}
 };
 
+function getKeys(obj) {
+    var keys = [];
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+                    keys.push(key);
+        }
+    }
+    return keys;
+}
+
 var app = angular.module('opalApp', ['$strap.directives']);
 
 app.controller('TableCtrl', function($scope, $http) {
@@ -174,5 +184,13 @@ app.controller('TableCtrl', function($scope, $http) {
 	}
 
 	// data for typeaheads
+	var conditions = {
+		Cold: ['Common', 'Uncommon'],
+		Flu: ['Bird', 'Swine', 'Spanish', 'Portuguese'],
+	};
+	$scope.conditions = getKeys(conditions);
+	$scope.subconditions = function() {
+		return conditions[$scope.editing.condition];
+	};
 	$scope.destinations = ['Africa', 'America', 'Antarctica', 'Asia', 'Australia'];
 });
