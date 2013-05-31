@@ -49,9 +49,7 @@
 									{{diagnosis.condition}}
 									<span ng-show="diagnosis.details">({{diagnosis.details}})</span>
 								</span>
-								<span ng-show="row._selected && diagnosis._new">
-									<a href="#">Add diagnosis</a>
-								</span>
+								<span ng-show="row._selected && diagnosis._new">[Add diagnosis]</span>
 							</li>
 						</ul>
 					</td>
@@ -62,9 +60,7 @@
 								<span ng-hide="pmh._new">
 									{{pmh.condition}} <span ng-show="pmh.year">({{pmh.year}})</span>
 								</span>
-								<span ng-show="row._selected && pmh._new">
-									<a href="#">Add condition</a>
-								</span>
+								<span ng-show="row._selected && pmh._new">[Add condition]</span>
 							</li>
 						</ul>
 					</td>
@@ -79,9 +75,7 @@
 									<span ng-show="trip.reason && trip.specificExposures">/</span>
 								   	{{trip.specificExposures}}
 								</span>
-								<span ng-show="row._selected && trip._new">
-									<a href="#">Add trip</a>
-								</span>
+								<span ng-show="row._selected && trip._new">[Add trip]</span>
 							</li>
 						</ul>
 					</td>
@@ -94,9 +88,7 @@
 									<span ng-show="antibiotic.route">/ {{antibiotic.route}}</span>
 									({{antibiotic.startDate}} - {{antibiotic.endDate}})
 								</span>
-								<span ng-show="row._selected && antibiotic._new">
-									<a href="#">Add antibiotic</a>
-								</span>
+								<span ng-show="row._selected && antibiotic._new">[Add antibiotic]</span>
 							</li>
 						</ul>
 					</td>
@@ -109,9 +101,7 @@
 									[{{comment.initials}}]
 									{{comment.comment}}
 								</span>
-								<span ng-show="row._selected && comment._new">
-									<a href="#">Add comment</a>
-								</span>
+								<span ng-show="row._selected && comment._new">[Add comment]</span>
 							</li>
 						</ul>
 					</td>
