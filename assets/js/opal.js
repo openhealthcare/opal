@@ -203,4 +203,5 @@ app.controller('TableCtrl', function($scope, $http) {
 		return conditions[$scope.editing.condition];
 	};
 	$scope.destinations = ['Africa', 'America', 'Antarctica', 'Asia', 'Australia'];
+	$scope.categories = ['Inpatient', 'Review', 'Followup'];
 });

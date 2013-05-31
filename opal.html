@@ -129,6 +129,12 @@
 			<div class="modal-body">
 				<form class="form-horizontal">
 					<div class="control-group">
+						<label class="control-label">Category</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.category" bs-typeahead="categories" data-provide="typeahead" data-min-length=0>
+						</div>
+					</div>
+					<div class="control-group">
 						<label class="control-label">Hospital</label>
 						<div class="controls">
 							<input type="text" ng-model="editing.hospital">

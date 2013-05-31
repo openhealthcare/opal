@@ -21,7 +21,7 @@
         "discharge": "PKGB1 in 2/52", 
         "location": {
             "bed": "32", 
-            "category": "inpatient", 
+            "category": "Inpatient", 
             "dateOfAdmission": "11 May 2013", 
             "hospital": "UCH", 
             "ward": "T8"
@@ -68,7 +68,7 @@
         "discharge": null, 
         "location": {
             "bed": "33", 
-            "category": "inpatient", 
+            "category": "Inpatient", 
             "dateOfAdmission": "12 May 2013", 
             "hospital": "UCH", 
             "ward": "T8"
@@ -108,7 +108,7 @@
         "discharge": "nil", 
         "location": {
             "bed": "21", 
-            "category": "inpatient", 
+            "category": "Inpatient", 
             "dateOfAdmission": "13 May 2013", 
             "hospital": "UCH", 
             "ward": "T6"
@@ -156,7 +156,7 @@
         "discharge": null, 
         "location": {
             "bed": "34", 
-            "category": "review", 
+            "category": "Review", 
             "dateOfAdmission": "14 May 2013", 
             "hospital": "UCH", 
             "ward": "T8"
@@ -189,7 +189,7 @@
         "hospital": "UCH", 
         "location": {
             "bed": null, 
-            "category": "followup", 
+            "category": "Followup", 
             "dateOfAdmission": "15 May 2013", 
             "hospital": null, 
             "ward": null
