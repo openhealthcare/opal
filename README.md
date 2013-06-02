@@ -7,7 +7,7 @@ We'd love you to get involved by using what we make, reporting bugs/suggesting i
 
 Opal is an open (open governance + open source) commercial NHS IT product by Open Health Care UK
 
-Open governance
+Open governance 
 ======
 Access: availability of the latest source code, developer
 support mechanisms, public roadmap, and transparency of
@@ -17,11 +17,15 @@ Development: the ability of developers to influence the content
 and direction of the project
 
 Derivatives: the ability for developers to create and distribute
-derivatives of the source code in the form of spin-o projects,
+derivatives of the source code in the form of spin-off projects,
 handsets or applications.
 
 Community: a community structure that does not discriminate
 between developers
+
+(from http://www.visionmobile.com/blog/2011/07/the-open-
+governance-index-measuring-openness-from-android-to-
+webkit/)
 
 Open source
 ======
