@@ -7,7 +7,8 @@ We'd love you to get involved by using what we make, reporting bugs/suggesting i
 
 Opal is an open (open governance + open source) commercial NHS IT product by Open Health Care UK
 
-Open governance:
+Open governance
+===
 Access: availability of the latest source code, developer
 support mechanisms, public roadmap, and transparency of
 decision-making
@@ -22,14 +23,18 @@ handsets or applications.
 Community: a community structure that does not discriminate
 between developers
 
-Open source:
+Open source
+===
 GPLv3
 
-Communications:
+Communications
+===
 https://twitter.com/ohcuk
 hello@openhealthcare.org.uk
 http://www.openhealthcare.org.uk
 https://groups.google.com/forum/?ohc-dev#!forum/ohc-dev
 channel ohc_dev on freenode
 
+Demo
+===
 A demo is here http://openhealthcare.github.io/opal/opal.html
