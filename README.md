@@ -9,7 +9,7 @@ Opal is an open (open governance + open source) commercial NHS IT product by Ope
 
 What problem does Opal solve?
 ======
-Opal aims to solve the patient list problem (with video explanation crowd-sourced from rival solutions...)
+Opal aims to solve the patient list problem.
 
 The patient list problem is this: Doctors need ready access to core information needed to look after their patients such as who their patients are and where they are, what's wrong with them, what the plan is, and what progress has been made against the plan.... The widespread, but suboptimal, solution to this problem is to use a table in a Microsoft Word Document.
 
