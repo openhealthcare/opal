@@ -29,15 +29,15 @@ GPLv3
 
 Communications
 ======
-https://twitter.com/ohcuk
-
 hello@openhealthcare.org.uk
 
 http://www.openhealthcare.org.uk
 
 https://groups.google.com/forum/?ohc-dev#!forum/ohc-dev
 
-channel ohc_dev on freenode
+https://twitter.com/ohcuk
+
+channel #ohc_dev on freenode
 
 Demo
 ======
