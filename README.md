@@ -3,7 +3,7 @@ OPAL
 
 Opal is not a Patient Activity List
 
-We'd love you to get involved by using what we make, reporting bugs/suggesting improvements, and fixing bugs/making improvements. 
+We'd love you to get involved by using what we make, reporting bugs/suggesting improvements, and fixing bugs/making improvements.  Please refer to the CONTRIBUTING file.
 
 Opal is an open (open governance + open source) commercial NHS IT product by Open Health Care UK
 
