@@ -27,7 +27,7 @@ between developers
 
 Open source
 ======
-GPLv3
+GNU Affero GPLv3
 
 Communications
 ======
