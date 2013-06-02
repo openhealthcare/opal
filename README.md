@@ -23,9 +23,9 @@ handsets or applications.
 Community: a community structure that does not discriminate
 between developers
 
-(from http://www.visionmobile.com/blog/2011/07/the-open-
+(from "http://www.visionmobile.com/blog/2011/07/the-open-
 governance-index-measuring-openness-from-android-to-
-webkit/)
+webkit/")
 
 Open source
 ======
