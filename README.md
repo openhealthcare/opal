@@ -35,9 +35,9 @@ hello@openhealthcare.org.uk
 
 http://www.openhealthcare.org.uk
 
-https://groups.google.com/forum/?ohc-dev#!forum/ohc-dev
-
 https://twitter.com/ohcuk
+
+https://groups.google.com/forum/?ohc-dev#!forum/ohc-dev
 
 channel #ohc_dev on freenode
 
