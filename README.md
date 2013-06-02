@@ -7,6 +7,16 @@ We'd love you to get involved by using what we make, reporting bugs/suggesting i
 
 Opal is an open (open governance + open source) commercial NHS IT product by Open Health Care UK
 
+What problem does Opal solve?
+======
+Opal aims to solve the patient list problem (with video explanation crowd-sourced from rival solutions...)
+
+The patient list problem is this: Doctors need ready access to core information needed to look after their patients such as who their patients are and where they are, what's wrong with them, what the plan is, and what progress has been made against the plan.... The widespread, but suboptimal, solution to this problem is to use a table in a Microsoft Word Document.
+
+NHS Hack Day 2012 http://www.youtube.com/watch?v=8x1yZQP4eoA
+
+Smart Ward 2013 http://www.youtube.com/watch?v=pxS0q1NJwZY
+
 Open governance 
 ======
 Access: availability of the latest source code, developer
