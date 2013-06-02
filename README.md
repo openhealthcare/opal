@@ -26,10 +26,10 @@ Open source:
 GPLv3
 
 Communications:
-@ohcuk
+https://twitter.com/ohcuk
 hello@openhealthcare.org.uk
 http://www.openhealthcare.org.uk
 https://groups.google.com/forum/?ohc-dev#!forum/ohc-dev
-#ohc_dev on freenode
+channel ohc_dev on freenode
 
 A demo is here http://openhealthcare.github.io/opal/opal.html
