@@ -1,0 +1,26 @@
+<form class="form-horizontal">
+	<div class="control-group">
+		<label class="control-label">Destination</label>
+		<div class="controls">
+			<input type="text" ng-model="editing.destination" bs-typeahead="destinations" data-provide="typeahead">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Dates</label>
+		<div class="controls">
+			<input type="text" ng-model="editing.dates">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Reason for travel</label>
+		<div class="controls">
+			<input type="text" ng-model="editing.reason" bs-typeahead="travelReasones" data-provide="typeahead">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Specific exposures</label>
+		<div class="controls">
+			<input type="text" ng-model="editing.specificExposures">
+		</div>
+	</div>
+</form>

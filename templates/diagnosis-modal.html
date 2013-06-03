@@ -1,0 +1,20 @@
+<form class="form-horizontal">
+	<div class="control-group">
+		<label class="control-label">Condition</label>
+		<div class="controls">
+			<input type="text" ng-model="editing.condition" bs-typeahead="conditions" data-provide="typeahead">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Confirmed?</label>
+		<div class="controls">
+			<input type="checkbox" ng-model="editing.confirmed">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Details</label>
+		<div class="controls">
+			<input type="text" ng-model="editing.details" bs-typeahead="subconditions" data-provide="typeahead">
+		</div>
+	</div>
+</form>

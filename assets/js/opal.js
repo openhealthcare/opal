@@ -27,8 +27,8 @@ app.controller('TableCtrl', function($scope, $http) {
 	$scope.cix = 0; // column index
 	$scope.iix = 0; // item index
 
-	$scope.mouseRix = -1;
-	$scope.mouseCix = -1;
+	$scope.mouseRix = -1; // index of row mouse is currently over
+	$scope.mouseCix = -1; // index of column mouse is currently over
 
 	$http.get('data/records.json').success(function(rows) {
 		for (var rix = 0; rix < rows.length; rix++) {
@@ -275,4 +275,34 @@ app.directive('fielditem', function() {
 	}
 });
 
+app.directive('modal', function() {
+	return {
+		restrict: 'E',
+		template: function(tElement, tAttrs) {
+			var column = tAttrs.column;
+			console.debug('modal - getting: ' + column);
+			return '' +
+			  '<div id="' + column + '-modal" class="modal hide" tabindex="-1" role="dialog">' +
+			    '<div class="modal-header">' +
+			      '<button type="button" class="close" data-dismiss="modal" ng-click="cancelEdit()">×</button>' +
+			      '<h3>{{columns[getCix("' + column + '")].title}}</h3>' +
+			    '</div>' +
+			    '<div class="modal-body"><modalform column="' + column + '" /></div>' +
+			    '<div class="modal-footer">' +
+			      '<button class="btn" data-dismiss="modal" ng-click="cancelEdit()">Cancel</button>' +
+			      '<button class="btn btn-primary" data-dismiss="modal" ng-click="saveEdit()">Save changes</button>' +
+			    '</div>' +
+			  '</div>'
 
+		},
+	}
+});
+
+app.directive('modalform', function() {
+	return {
+		restrict: 'E',
+		templateUrl: function(tElement, tAttrs) {
+			return 'templates/' + tAttrs.column + '-modal.html'
+		},
+	}
+});
