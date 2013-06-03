@@ -19,6 +19,13 @@
             }
         ], 
         "discharge": "PKGB1 in 2/52", 
+        "generalNotes": [
+            {
+                "comment": "This is a general note", 
+                "date": "16/5", 
+                "initials": "XYZ"
+            }
+        ], 
         "location": {
             "bed": "32", 
             "category": "Inpatient", 
@@ -66,6 +73,7 @@
             }
         ], 
         "discharge": null, 
+        "generalNotes": [], 
         "location": {
             "bed": "33", 
             "category": "Inpatient", 
@@ -106,6 +114,7 @@
             }
         ], 
         "discharge": "nil", 
+        "generalNotes": [], 
         "location": {
             "bed": "21", 
             "category": "Inpatient", 
@@ -154,6 +163,7 @@
             }
         ], 
         "discharge": null, 
+        "generalNotes": [], 
         "location": {
             "bed": "34", 
             "category": "Review", 
@@ -186,6 +196,7 @@
             }
         ], 
         "discharge": null, 
+        "generalNotes": [], 
         "hospital": "UCH", 
         "location": {
             "bed": null, 

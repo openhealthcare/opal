@@ -49,6 +49,7 @@ app.controller('TableCtrl', function($scope, $http) {
 		{name: 'travel', title: 'Travel', multi: true},
 		//	{name: 'microbiology', title: '', multi: true}, TODO: awaiting details of structure
 		{name: 'antibiotics', title: 'Antibiotics', multi: true},
+		{name: 'generalNotes', title: 'General Notes', multi: true},
 		{name: 'microbiologyComments', title: 'Microbiology Comments', multi: true},
 		{name: 'plan', title: 'Plan', multi: false},
 		{name: 'discharge', title: 'Discharge', multi: false},
@@ -280,7 +281,6 @@ app.directive('modal', function() {
 		restrict: 'E',
 		template: function(tElement, tAttrs) {
 			var column = tAttrs.column;
-			console.debug('modal - getting: ' + column);
 			return '' +
 			  '<div id="' + column + '-modal" class="modal hide" tabindex="-1" role="dialog">' +
 			    '<div class="modal-header">' +
