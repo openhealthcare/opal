@@ -8,19 +8,7 @@ li {
 	padding: 4px;
 }
 
-.table td {
-	padding: 0px;
-}
-
-.table tr.selected {
-	background-color: #eee;
-}
-
-.table tr.selected td.selected li.selected {
-	background-color: #ddd;
-}
-
-.preserve-whitespace {
-	white-space: pre;
+li.selected {
+	background-color: #cee;
 }
 
