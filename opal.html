@@ -29,16 +29,16 @@
 			</thead>
 			<tbody>
 				<tr ng-repeat="row in rows">
-					<td><field row="row" column="location" single="yes" /></td>
-					<td><field row="row" column="demographics" single="yes" /></td>
-					<td><field row="row" column="diagnosis" single="no" /></td>
-					<td><field row="row" column="pastMedicalHistory" single="no" /></td>
-					<td><field row="row" column="travel" single="no" /></td>
-					<td><field row="row" column="antibiotics" single="no" /></td>
-					<td><field row="row" column="microbiologyComments" single="no" /></td>
-					<td><field row="row" column="plan" single="yes" /></td>
-					<td><field row="row" column="discharge" single="yes" /></td>
-				</tr>
+<td ng-mouseenter="mouseEnter($index, 'location')" ng-mouseleave="mouseLeave()"><field row="row" column="location" single="yes" /></td>
+<td ng-mouseenter="mouseEnter($index, 'demographics')" ng-mouseleave="mouseLeave()"><field row="row" column="demographics" single="yes" /></td>
+<td ng-mouseenter="mouseEnter($index, 'diagnosis')" ng-mouseleave="mouseLeave()"><field row="row" column="diagnosis" single="no" /></td>
+<td ng-mouseenter="mouseEnter($index, 'pastMedicalHistory')" ng-mouseleave="mouseLeave()"><field row="row" column="pastMedicalHistory" single="no" /></td>
+<td ng-mouseenter="mouseEnter($index, 'travel')" ng-mouseleave="mouseLeave()"><field row="row" column="travel" single="no" /></td>
+<td ng-mouseenter="mouseEnter($index, 'antibiotics')" ng-mouseleave="mouseLeave()"><field row="row" column="antibiotics" single="no" /></td>
+<td ng-mouseenter="mouseEnter($index, 'microbiologyComments')" ng-mouseleave="mouseLeave()"><field row="row" column="microbiologyComments" single="no" /></td>
+<td ng-mouseenter="mouseEnter($index, 'plan')" ng-mouseleave="mouseLeave()"><field row="row" column="plan" single="yes" /></td>
+<td ng-mouseenter="mouseEnter($index, 'discharge')" ng-mouseleave="mouseLeave()"><field row="row" column="discharge" single="yes" /></td>
+</tr>
 			</tbody>
 		</table>
 

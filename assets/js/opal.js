@@ -27,6 +27,9 @@ app.controller('TableCtrl', function($scope, $http) {
 	$scope.cix = 0; // column index
 	$scope.iix = 0; // item index
 
+	$scope.mouseRix = -1;
+	$scope.mouseCix = -1;
+
 	$http.get('data/records.json').success(function(rows) {
 		for (var rix = 0; rix < rows.length; rix++) {
 			for (var cix = 0; cix < $scope.columns.length; cix++) {
@@ -103,7 +106,9 @@ app.controller('TableCtrl', function($scope, $http) {
 
 		if ($scope.columns[cix]['multi']) {
 			$scope.rows[rix][columnName][iix] = clone($scope.editing);
-			$scope.rows[rix][columnName].push({});
+			if (iix + 1 == getNumItems(rix, cix)) {
+				$scope.rows[rix][columnName].push({});
+			}
 		} else {
 			$scope.rows[rix][columnName] = clone($scope.editing);
 		}
@@ -116,6 +121,27 @@ app.controller('TableCtrl', function($scope, $http) {
 		$('#' + columnName + '-modal').modal('hide')
 		editing = false;
 	};
+
+	$scope.selectItem = function(rix, cix, iix) {
+		$scope.rix = rix;
+		$scope.cix = cix;
+		$scope.iix = iix;
+	}
+
+	$scope.editItem = function(rix, cix, iix) {
+		$scope.selectItem(rix, cix, iix);
+		startEdit();
+	}
+
+	$scope.mouseEnter = function(rix, columnName) {
+		$scope.mouseRix = rix;
+		$scope.mouseCix = $scope.getCix(columnName);
+	}
+
+	$scope.mouseLeave = function() {
+		$scope.mouseRix = -1;
+		$scope.mouseCix = -1;
+	}
 
 	function getNumItems(rix, cix) {
 		var column = $scope.columns[cix];
@@ -212,15 +238,24 @@ app.directive('field', function() {
 				       '<fielditem column="' + column + '"/>' +
 				     '</span>' +
 				     '<span ng-show="$last">' +
-				       '<span ng-show="$parent.$index == rix && getCix(\'' + column + '\') == cix">Add</span>&nbsp;' + // the nbsp is so that row heights don't change when Add is visible
+				       '<span ng-show="($parent.$index == rix && ' + // $parent.$index is the row index
+						       'getCix(\'' + column + '\') == cix) ||' +
+						      '($parent.$index == mouseRix && ' +
+						       'getCix(\'' + column + '\') == mouseCix)">' +
+					 'Add' +
+				       '</span>&nbsp;' + // the nbsp is so that row heights don't change when Add is visible
 				     '</span>'
 			}
 
-			// $parent.$index is the row index
-			// $index is the item index
 			return '' + 
 			  '<ul>' +
 			    '<li ng-repeat="item in ' + iterable + '"' + 
+			        'ng-click="selectItem($parent.$index,' + // $parent.$index is the row index
+				                     'getCix(\'' + column + '\'),' +
+						     '$index)"' + // $index is the item index
+			        'ng-dblclick="editItem($parent.$index,' +
+				                      'getCix(\'' + column + '\'),' +
+						      '$index)"' +
 			        'ng-class="{selected: $parent.$index == rix && ' + 
 				                     'getCix(\'' + column + '\') == cix && ' +
 						     '$index == iix}">' +
