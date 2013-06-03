@@ -46,10 +46,10 @@ app.controller('TableCtrl', function($scope, $http) {
 		{name: 'demographics', title: 'Demographics', multi: false}, 
 		{name: 'diagnosis', title: 'Diagnosis', multi: true},
 		{name: 'pastMedicalHistory', title: 'Past Medical History', multi: true},
+		{name: 'generalNotes', title: 'Notes', multi: true},
 		{name: 'travel', title: 'Travel', multi: true},
 		//	{name: 'microbiology', title: '', multi: true}, TODO: awaiting details of structure
 		{name: 'antimicrobials', title: 'Antimicrobials', multi: true},
-		{name: 'generalNotes', title: 'General Notes', multi: true},
 		{name: 'microbiologyComments', title: 'Microbiology Comments', multi: true},
 		{name: 'plan', title: 'Plan', multi: false},
 		{name: 'discharge', title: 'Discharge', multi: false},
