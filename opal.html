@@ -1,6 +1,14 @@
 <!doctype html>
-<html ng-app="opalApp" ng-controller="TableCtrl" ng-keydown="keypress($event)">
+<html xmlns:ng="http://angularjs.org" id="ng-app" ng-app="opalApp" ng-controller="TableCtrl" ng-keydown="keypress($event)">
 	<head>
+		<!--[if lte IE 8]>
+		<script src="assets/js/json3.min.js"></script>
+		<script>
+			document.createElement('field');
+			document.createElement('fielditem');
+			document.createElement('modal');
+			document.createElement('modalform');
+		<![endif]-->
 		<meta charset="utf-8">
 		<title>OPAL is not a Patient Activity List</title>
 		<script src="assets/js/jquery-1.9.1.js"></script>
