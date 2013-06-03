@@ -41,13 +41,13 @@ app.controller('TableCtrl', function($scope, $http) {
 	var editing = false;
 
 	$http.get('data/records.json').success(function(rows) {
-		for (var rix = 0; rix < rows.length; rix++) {
-			for (var cix = 0; cix < columns.length; cix++) {
-				if (columns[cix].multi) {
-					rows[rix][columns[cix]['name']].push({'_new': true});
-				}
-			}
-		}
+//		for (var rix = 0; rix < rows.length; rix++) {
+//			for (var cix = 0; cix < columns.length; cix++) {
+//				if (columns[cix].multi) {
+//					rows[rix][columns[cix]['name']].push({'_new': true});
+//				}
+//			}
+//		}
 		$scope.rows = rows;
 		selectRow();
 	});
@@ -207,5 +207,30 @@ app.controller('TableCtrl', function($scope, $http) {
 				}
 			}
 		}
+	}
+});
+
+app.directive('field', function() {
+	return {
+		restrict: 'E',
+		template: function(tElement, tAttrs) {
+			var column = tAttrs.column;
+			var iterable = 'row.' + column;
+
+			if (tAttrs.single == 'yes') {
+				iterable = '[' + iterable + ']';
+			}
+
+			return '<td><ul><li ng-repeat="item in ' + iterable + '"><fielditem column="' + column + '"/></ul></td>';
+		},
+	}
+});
+
+app.directive('fielditem', function() {
+	return {
+		restrict: 'E',
+		templateUrl: function(tElement, tAttrs) {
+			return 'templates/' + tAttrs.column + '.html'
+		},
 	}
 });

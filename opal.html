@@ -28,95 +28,16 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr ng-repeat="row in rows" ng-class="{selected: row._selected}">
-					<td ng-class="{selected: selectedColumnName == 'location'}">
-						<ul>
-							<li class="selected">{{row.location.category}}<br /><span ng-hide="row.location.hospital=='UCH'">{{row.location.hospital}} </span>{{row.location.ward}} {{row.location.bed}}<br />Admitted: {{row.location.dateOfAdmission}}</li>
-						</ul>
-					</td>
-
-					<td ng-class="{selected: selectedColumnName == 'demographics'}">
-						<ul>
-							<li class="selected">{{row.demographics.name}}<br />{{row.demographics.hospitalNumber}}<br />{{row.demographics.dateOfBirth}}</li>
-						</ul>
-					</td>
-
-					<td ng-class="{selected: selectedColumnName == 'diagnosis'}">
-						<ul>
-							<li ng-repeat="diagnosis in row.diagnosis" ng-class="{selected: diagnosis._selected}">
-								<span ng-hide="diagnosis._new">
-									<span ng-hide="diagnosis.confirmed">?</span>
-									{{diagnosis.condition}}
-									<span ng-show="diagnosis.details">({{diagnosis.details}})</span>
-								</span>
-								<span ng-show="row._selected && diagnosis._new">[Add diagnosis]</span>
-							</li>
-						</ul>
-					</td>
-
-					<td ng-class="{selected: selectedColumnName == 'pastMedicalHistory'}">
-						<ul>
-							<li ng-repeat="pmh in row.pastMedicalHistory" ng-class="{selected: pmh._selected}">
-								<span ng-hide="pmh._new">
-									{{pmh.condition}} <span ng-show="pmh.year">({{pmh.year}})</span>
-								</span>
-								<span ng-show="row._selected && pmh._new">[Add condition]</span>
-							</li>
-						</ul>
-					</td>
-
-					<td ng-class="{selected: selectedColumnName == 'travel'}">
-						<ul>
-							<li ng-repeat="trip in row.travel" ng-class="{selected: trip._selected}">
-								<span ng-hide="trip._new">
-									{{trip.destination}}
-								   	<span ng-show="trip.dates">({{trip.dates}})</span>
-								   	{{trip.reason}}
-									<span ng-show="trip.reason && trip.specificExposures">/</span>
-								   	{{trip.specificExposures}}
-								</span>
-								<span ng-show="row._selected && trip._new">[Add trip]</span>
-							</li>
-						</ul>
-					</td>
-
-					<td ng-class="{selected: selectedColumnName == 'antibiotics'}">
-						<ul>
-							<li ng-repeat="antibiotic in row.antibiotics" ng-class="{selected: antibiotic._selected}">
-								<span ng-hide="antibiotic._new">
-									{{antibiotic.name}}
-									<span ng-show="antibiotic.route">/ {{antibiotic.route}}</span>
-									({{antibiotic.startDate}} - {{antibiotic.endDate}})
-								</span>
-								<span ng-show="row._selected && antibiotic._new">[Add antibiotic]</span>
-							</li>
-						</ul>
-					</td>
-
-					<td ng-class="{selected: selectedColumnName == 'microbiologyComments'}">
-						<ul>
-							<li ng-repeat="comment in row.microbiologyComments" ng-class="{selected: comment._selected}">
-								<span ng-hide="comment._new">
-									{{comment.date}}
-									[{{comment.initials}}]
-									{{comment.comment}}
-								</span>
-								<span ng-show="row._selected && comment._new">[Add comment]</span>
-							</li>
-						</ul>
-					</td>
-
-					<td ng-class="{selected: selectedColumnName == 'plan'}">
-						<ul>
-							<li class="selected preserve-whitespace">{{row.plan}}</li>
-						</ul>
-					</td>
-
-					<td ng-class="{selected: selectedColumnName == 'discharge'}">
-						<ul>
-							<li class="selected preserve-whitespace">{{row.discharge}}</li>
-						</ul>
-					</td>
+				<tr ng-repeat="row in rows">
+					<td><field row="row" column="location" single="yes" /></td>
+					<td><field row="row" column="demographics" single="yes" /></td>
+					<td><field row="row" column="diagnosis" single="no" /></td>
+					<td><field row="row" column="pastMedicalHistory" single="no" /></td>
+					<td><field row="row" column="travel" single="no" /></td>
+					<td><field row="row" column="antibiotics" single="no" /></td>
+					<td><field row="row" column="microbiologyComments" single="no" /></td>
+					<td><field row="row" column="plan" single="yes" /></td>
+					<td><field row="row" column="discharge" single="yes" /></td>
 				</tr>
 			</tbody>
 		</table>
