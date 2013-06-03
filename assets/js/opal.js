@@ -96,13 +96,20 @@ app.controller('TableCtrl', function($scope, $http) {
 		$('#' + columnName + '-modal').find('input,textarea').first().focus();
 	};
 
+	function clearModal(columnName) {
+		$('#' + columnName + '-modal').modal('hide')
+
+		// See https://github.com/openhealthcare/opal/issues/28
+		document.activeElement.blur();
+	};
+
 	$scope.saveEdit = function() {
 		var rix = $scope.rix;
 		var cix = $scope.cix;
 		var iix = $scope.iix;
 		var columnName = $scope.columns[cix].name;
 
-		$('#' + columnName + '-modal').modal('hide')
+		clearModal(columnName);
 		editing = false;
 
 		if ($scope.columns[cix]['multi']) {
@@ -119,7 +126,7 @@ app.controller('TableCtrl', function($scope, $http) {
 		var cix = $scope.cix;
 		var columnName = $scope.columns[cix].name;
 
-		$('#' + columnName + '-modal').modal('hide')
+		clearModal(columnName);
 		editing = false;
 	};
 
