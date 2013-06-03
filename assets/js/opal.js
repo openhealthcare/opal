@@ -48,7 +48,7 @@ app.controller('TableCtrl', function($scope, $http) {
 		{name: 'pastMedicalHistory', title: 'Past Medical History', multi: true},
 		{name: 'travel', title: 'Travel', multi: true},
 		//	{name: 'microbiology', title: '', multi: true}, TODO: awaiting details of structure
-		{name: 'antibiotics', title: 'Antibiotics', multi: true},
+		{name: 'antimicrobials', title: 'Antimicrobials', multi: true},
 		{name: 'generalNotes', title: 'General Notes', multi: true},
 		{name: 'microbiologyComments', title: 'Microbiology Comments', multi: true},
 		{name: 'plan', title: 'Plan', multi: false},
@@ -72,8 +72,8 @@ app.controller('TableCtrl', function($scope, $http) {
 		$scope.destinations = countries;
 	});
 
-	$http.get('data/antibiotics.json').success(function(antibiotics) {
-		$scope.antibiotics = antibiotics;
+	$http.get('data/antimicrobials.json').success(function(antimicrobials) {
+		$scope.antimicrobials = antimicrobials;
 	});
 
 	$scope.categories = ['Inpatient', 'Review', 'Followup'];

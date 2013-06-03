@@ -1,6 +1,6 @@
 [
     {
-        "antibiotics": [
+        "antimicrobials": [
             {
                 "endDate": null, 
                 "name": "Cefuroxime", 
@@ -49,7 +49,7 @@
         "travel": []
     }, 
     {
-        "antibiotics": [
+        "antimicrobials": [
             {
                 "endDate": null, 
                 "name": "Atripla", 
@@ -95,7 +95,7 @@
         "travel": []
     }, 
     {
-        "antibiotics": [
+        "antimicrobials": [
             {
                 "endDate": null, 
                 "name": "Riamet", 
@@ -143,7 +143,7 @@
         ]
     }, 
     {
-        "antibiotics": [
+        "antimicrobials": [
             {
                 "endDate": null, 
                 "name": "Flucloxacillin", 
@@ -183,7 +183,7 @@
         "travel": []
     }, 
     {
-        "antibiotics": [], 
+        "antimicrobials": [], 
         "demographics": {
             "dateOfBirth": "5 Jan 1985", 
             "hospitalNumber": "EFGH5678", 
