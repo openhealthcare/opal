@@ -28,13 +28,13 @@ app.controller('TableCtrl', function($scope, $http) {
 	$scope.iix = 0; // item index
 
 	$http.get('data/records.json').success(function(rows) {
-//		for (var rix = 0; rix < rows.length; rix++) {
-//			for (var cix = 0; cix < columns.length; cix++) {
-//				if (columns[cix].multi) {
-//					rows[rix][columns[cix]['name']].push({'_new': true});
-//				}
-//			}
-//		}
+		for (var rix = 0; rix < rows.length; rix++) {
+			for (var cix = 0; cix < $scope.columns.length; cix++) {
+				if ($scope.columns[cix].multi) {
+					rows[rix][$scope.columns[cix].name].push({});
+				}
+			}
+		}
 		$scope.rows = rows;
 	});
 
@@ -100,13 +100,10 @@ app.controller('TableCtrl', function($scope, $http) {
 
 		$('#' + columnName + '-modal').modal('hide')
 		editing = false;
-		if ($scope.columns[cix]['multi']) {
-			if ($scope.editing._new) {
-				delete $scope.editing._new;
-				$scope.rows[rix][columnName].push({'_new': true});
-			}
 
+		if ($scope.columns[cix]['multi']) {
 			$scope.rows[rix][columnName][iix] = clone($scope.editing);
+			$scope.rows[rix][columnName].push({});
 		} else {
 			$scope.rows[rix][columnName] = clone($scope.editing);
 		}
@@ -204,14 +201,32 @@ app.directive('field', function() {
 		template: function(tElement, tAttrs) {
 			var column = tAttrs.column;
 			var iterable = 'row.' + column;
+			var contents;
 
 			if (tAttrs.single == 'yes') {
 				iterable = '[' + iterable + ']';
+				contents = '<fielditem column="' + column + '"/>';
+			} else {
+				contents = '' +
+				     '<span ng-hide="$last">' +
+				       '<fielditem column="' + column + '"/>' +
+				     '</span>' +
+				     '<span ng-show="$last">' +
+				       '<span ng-show="$parent.$index == rix && getCix(\'' + column + '\') == cix">Add</span>&nbsp;' + // the nbsp is so that row heights don't change when Add is visible
+				     '</span>'
 			}
 
 			// $parent.$index is the row index
 			// $index is the item index
-			return '<ul><li ng-repeat="item in ' + iterable + '" ng-class="{selected: $parent.$index == rix && getCix(\'' + column + '\') == cix && $index == iix}"><fielditem column="' + column + '"/></li></ul>';
+			return '' + 
+			  '<ul>' +
+			    '<li ng-repeat="item in ' + iterable + '"' + 
+			        'ng-class="{selected: $parent.$index == rix && ' + 
+				                     'getCix(\'' + column + '\') == cix && ' +
+						     '$index == iix}">' +
+			       contents +
+			   '</li>' +
+			 '</ul>';
 		},
 	}
 });
