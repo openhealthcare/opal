@@ -2,6 +2,7 @@
     {
         "antimicrobials": [
             {
+		"dose": "250 mg",
                 "endDate": null, 
                 "name": "Cefuroxime", 
                 "startDate": "21 May 2013"
@@ -51,6 +52,7 @@
     {
         "antimicrobials": [
             {
+		"dose": "125 mg",
                 "endDate": null, 
                 "name": "Atripla", 
                 "startDate": null
@@ -97,6 +99,7 @@
     {
         "antimicrobials": [
             {
+		"dose": "300 mg",
                 "endDate": null, 
                 "name": "Riamet", 
                 "startDate": "13 May 2013"
@@ -145,6 +148,7 @@
     {
         "antimicrobials": [
             {
+		"dose": "250 mg",
                 "endDate": null, 
                 "name": "Flucloxacillin", 
                 "route": "Oral", 
