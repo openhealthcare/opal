@@ -104,6 +104,22 @@ app.controller('TableCtrl', function($scope, $http) {
 		document.activeElement.blur();
 	};
 
+	$scope.addRecord = function() {
+		var newRecord = {};
+		var column;
+
+		for (var cix = 0; cix < $scope.columns.length; cix++) {
+			column = $scope.columns[cix];
+			if (column.multi) {
+				newRecord[column.name] = [{}];
+			}
+		}
+
+		$scope.rows.push(newRecord);
+		$scope.selectItem($scope.rows.length - 1, 0, 0);
+		startEdit();
+	};
+
 	$scope.saveEdit = function() {
 		var rix = $scope.rix;
 		var cix = $scope.cix;
