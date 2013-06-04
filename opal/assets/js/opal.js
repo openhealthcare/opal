@@ -19,7 +19,8 @@ function getKeys(obj) {
 var app = angular.module('opalApp', ['$strap.directives']);
 
 app.controller('TableCtrl', function($scope, $http) {
-	var editing;
+	var editing = false;
+	var deleting = false;
 
 	$scope.rows = [];
 
@@ -93,8 +94,27 @@ app.controller('TableCtrl', function($scope, $http) {
 		} else {
 			$scope.editing = clone($scope.rows[rix][columnName]);
 		}
-		$('#' + columnName + '-modal').modal()
+		$('#' + columnName + '-modal').modal();
 		$('#' + columnName + '-modal').find('input,textarea').first().focus();
+	};
+
+	function startDelete() {
+		var rix = $scope.rix;
+		var cix = $scope.cix;
+		var iix = $scope.iix;
+		var column = $scope.columns[cix];
+
+		if (!column.multi) {
+			return;
+		}
+
+		if ($scope.rows[rix][column.name].length == 1) {
+			return;
+		}
+
+		deleting = true;
+		$('#delete-confirmation').modal();
+		$('#delete-confirmation').find('.btn-primary').focus();
 	};
 
 	function clearModal(columnName) {
@@ -147,6 +167,20 @@ app.controller('TableCtrl', function($scope, $http) {
 		editing = false;
 	};
 
+	$scope.doDelete = function() {
+		var rix = $scope.rix;
+		var cix = $scope.cix;
+		var iix = $scope.iix;
+		var column = $scope.columns[cix];
+
+		$scope.rows[rix][column.name].splice(iix, 1);
+		deleting = false;
+	};
+
+	$scope.cancelDelete = function() {
+		deleting = false;
+	};
+
 	$scope.selectItem = function(rix, cix, iix) {
 		$scope.rix = rix;
 		$scope.cix = cix;
@@ -184,6 +218,8 @@ app.controller('TableCtrl', function($scope, $http) {
 					$scope.cancelEdit();
 					break;
 			}
+		} else if (deleting) {
+			// ignore all keystrokes here
 		} else {
 			switch (e.keyCode) {
 				case 37: // left
@@ -204,6 +240,9 @@ app.controller('TableCtrl', function($scope, $http) {
 					break;
 				case 13: // enter
 					startEdit();
+					break;
+				case 46: // delete
+					startDelete();
 					break;
 			}
 		}
