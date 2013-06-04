@@ -23,8 +23,7 @@
         "generalNotes": [
             {
                 "comment": "This is a general note", 
-                "date": "16/5", 
-                "initials": "XYZ"
+                "date": "16/5" 
             }
         ], 
         "location": {
