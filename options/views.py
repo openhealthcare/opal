@@ -1,11 +1,8 @@
 import json
 from django.http import HttpResponse
-from options.models import Antimicrobial, Destination
+from options.models import option_models
 
-def antimicrobials(request):
-    data = [antimicrobial.name for antimicrobial in Antimicrobial.objects.all()]
-    return HttpResponse(json.dumps(data), content_type="application/json")
-
-def destinations(request):
-    data = [destination.name for destination in Destination.objects.all()]
+def options_view(request, model_name):
+    model = option_models[model_name]
+    data = [instance.name for instance in model.objects.all()]
     return HttpResponse(json.dumps(data), content_type="application/json")

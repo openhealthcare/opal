@@ -1,13 +1,9 @@
 from django.contrib import admin
-from options.models import Antimicrobial, Destination
+from options.models import option_models
 
-class AntimicrobialAdmin(admin.ModelAdmin):
+class OptionAdmin(admin.ModelAdmin):
     ordering = ['name']
     search_fields = ['name']
 
-class DestinationAdmin(admin.ModelAdmin):
-    ordering = ['name']
-    search_fields = ['name']
-
-admin.site.register(Antimicrobial, AntimicrobialAdmin)
-admin.site.register(Destination, DestinationAdmin)
+for model in option_models.values():
+    admin.site.register(model, OptionAdmin)
