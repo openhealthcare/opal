@@ -2,3 +2,4 @@ django==1.5.1
 psycopg2==2.5
 gunicorn==0.17.4
 dj-database-url==0.2.1
+south==0.8.1
