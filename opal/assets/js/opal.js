@@ -30,7 +30,7 @@ app.controller('TableCtrl', function($scope, $http) {
 	$scope.mouseRix = -1; // index of row mouse is currently over
 	$scope.mouseCix = -1; // index of column mouse is currently over
 
-	$http.get('data/records.json').success(function(rows) {
+	$http.get('assets/records.json').success(function(rows) {
 		for (var rix = 0; rix < rows.length; rix++) {
 			for (var cix = 0; cix < $scope.columns.length; cix++) {
 				if ($scope.columns[cix].multi) {
@@ -64,15 +64,15 @@ app.controller('TableCtrl', function($scope, $http) {
 		throw 'Unexpected column name: ' + name
 	};
 
-	$http.get('data/conditions.json').success(function(conditions) {
+	$http.get('options/condition_list/').success(function(conditions) {
 		$scope.conditions = conditions;
 	});
 
-	$http.get('data/countries.json').success(function(countries) {
-		$scope.destinations = countries;
+	$http.get('options/destination_list/').success(function(destinations) {
+		$scope.destinations = destinations;
 	});
 
-	$http.get('data/antimicrobials.json').success(function(antimicrobials) {
+	$http.get('options/antimicrobial_list').success(function(antimicrobials) {
 		$scope.antimicrobials = antimicrobials;
 	});
 
@@ -278,7 +278,7 @@ app.directive('fielditem', function() {
 	return {
 		restrict: 'E',
 		templateUrl: function(tElement, tAttrs) {
-			return 'templates/' + tAttrs.column + '.html'
+			return 'assets/templates/' + tAttrs.column + '.html'
 		},
 	}
 });
@@ -309,7 +309,7 @@ app.directive('modalform', function() {
 	return {
 		restrict: 'E',
 		templateUrl: function(tElement, tAttrs) {
-			return 'templates/' + tAttrs.column + '-modal.html'
+			return 'assets/templates/' + tAttrs.column + '-modal.html'
 		},
 	}
 });
