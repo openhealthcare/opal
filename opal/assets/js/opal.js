@@ -64,21 +64,22 @@ app.controller('TableCtrl', function($scope, $http) {
 		throw 'Unexpected column name: ' + name
 	};
 
-	$http.get('options/condition_list/').success(function(conditions) {
-		$scope.conditions = conditions;
-	});
+	var option_lists = [
+		'antimicrobial',
+		'antimicrobial_route',
+		'condition',
+		'destination',
+		'patient_category',
+		'travel_reason',
+	];
 
-	$http.get('options/destination_list/').success(function(destinations) {
-		$scope.destinations = destinations;
-	});
-
-	$http.get('options/antimicrobial_list').success(function(antimicrobials) {
-		$scope.antimicrobials = antimicrobials;
-	});
-
-	$scope.categories = ['Inpatient', 'Review', 'Followup'];
-	$scope.routes = ['Oral', 'IV'];
-	$scope.travelReasones = ['Visiting Friends and Relatives', 'Business', 'Military', 'Holiday'];
+	for (var i = 0; i < option_lists.length; i++) {
+		(function(option) {
+			$http.get('options/' + option + '_list/').success(function(data) {
+				$scope[option + '_list'] = data;
+			});
+		})(option_lists[i]);
+	}
 
 	function startEdit() {
 		var rix = $scope.rix;
