@@ -1,50 +1,413 @@
-Alzheimer's disease
+Achalasia
+Acne vulgaris
+Actinomycosis
+Acute CMV
+Acute EBV
+Acute Kidney Injury
+Acute Liver Failure
+Acute Lymphocytic Leukaemia
+Acute Myelod Leukaemia
+Acute Pancreatitis
+Acute Respiratory Distress Syndrome
+Acute Sinusitis
+Adhesions
+African Tick Bite Fever
+Alcohol Dependence
+Alcohol Withdrawal
+Alopecia
+Alzheimer's Disease
+Amoebic brain abscess
+Amoebic Dysentry
+Amoebic liver abscess
+Amoebic lung abscess
+Amyloid
+Anaemia
+Anaemia of Chronic Disease
+Anisakiasis
+Ankylosing Spondylitis
+Anthrax
+Aphthous ulcer
+Aplastic anemia
+Appendicitis
+Asbestosis
+Ascariasis
+Aspiration Pneumonia
 Asthma
-benign prostatic hypertrophy
-coeliac disease
-chicken pox
-colon cancer
-COPD
-Crohn's disease
-Cystic fibrosis
+Avascular Necrosis
+Babesiosis
+Bacterial Meningitis
+Balanitis
+Barrett's Oesophagus
+Basal Cell Carcinoma
+Behcet's Syndrome
+Bell's Palsy
+Benign Intracranial Hypertension
+Benign Prostatic Hypertrophy
+Beri-beri
+Bipolar disorder
+Bladder Cancer
+Blind
+Boil
+Brainstem encephalitis
+Breast Cancer
+Bronchiectasis
+Brucellosis
+Burkitts Lymphoma
+Candidiaemia
+Carcinoid
+Cat-scratch disease
+Cauda Equina
+Cellulitis 
+Cerebellar Syndrome
+Cervical Cancer
+Cervicitis
+Chagas Disease
+Chancroid
+Chickenpox
+Cholangitis
+Cholecystitis
+Cholera
+Chronic Kidney Disease
+Chronic Lymphocytic Leukaemia
+Chronic Myeloid Leukaema
+Chronic Obstructive Pulmonary Disease
+Chronic Pancreatitis
+Chronic Sinusitis
+Chronic venous ulcer
+Cirrhosis
+CJD
+Coccidioidomycosis
+Coeliac Disease
+Colon Cancer
+Community Acquired Pneumonia
+Conjuncitivitis
+Contact Dermatitis
+Conyloma acuminata
+Cord Compression
+Cowpox
+Crimean-congo Haemorrhagic fever
+Crohn's Disease
+Cryptococcal Meningitis
+Cryptosporidium
+Cushings Syndrome
+Cutaneous Leishmaniasis
+Cystic Fibrosis
+Dehydration
+Delirium
+Delusional parasitosis
 Dementia
+Dengue fever
+Dental Abscess
+Depression
+Dermatitis herpetiformis
+Dermatomyositis
+Dermatophytosis
+Diabetes Insipidus
+Diabetic Ketoacidosis
+Diphtheria
+Disc Prolapse
+Disciitis
+Diverticular Disease
+Drug induced psychosis
+Duodenal ulcer
+East African Trypanosomiasis
+Ebola
+Eclampsia
+Ectopic Pregnancy
+Eczema
+Eczema herpeticum
+Ehrlichosis
+Empyema
+Encephalitis
+Endometrial Cancer
+Endometriosis
+Endophtalmitis
+Enteric Fever
+Eosinophilia
+Eosinophilic Meninigitis
+Epidemic Typhus
+Epididymitis
+Epiglottitis
+Epilepsy
+Episcleritis
+Erysipelas
+Erythema Multiforme
+Erythema Nodousm
+Extrinsic allergic alveolitis
+Falciparum Malaria
+Familial Meiterranean Fever
+Folate Deficiency
+G6PD Deficiency
+Gallbladder Cancer
+Gallstones
+Gastric Cancer
+Gastric ulcer
+Gastritis
+Gastro-oesophageal refulx
+Gastroenteritis
+Gastroparesis
+Genital herpes
+Giardia
+Glanders
+Glaucoma
+Glomerulonephritis
+Goiter
+Gonoccoal arthritis
+Gonorrhea
+Gout
+Graft-versus host disease
+Graves Disease
+Groin Abscess
+Guillain-Barré syndrome
+Haematuria
+Haemolytic Anaemia
+Haemophagocytic Syndrome
+Haemophilia
+Hand, foot and mouth disease
+Henoch-Schönlein purpura
+Hepatitis A
+Hepatitis B
+Hepatitis C
+Hepatitis D
+Hepatitis E
+Hepatitits
+Hepatorenal syndrome
+Hereditary spherocytosis
+Hernia
+Herpangina
+Herpes Encephalitis
+Herpes simplex
+Herpes zoster
+Herpetic gingivostomatitis
+Hidranitits suppurative
+Histoplasmosis
+HIV
+Hodgkins Lymphoma
+Hospital Acquired Pneumonia
+Huntingdon's
+Hydatid Disease
+Hyper-emesis gravidarum
+Hypercalcaemia
+Hyperlipidaemia
+Hyperosmolar Non-Ketotic Coma
+Hyperparathyroidism
+Hypersplenism
+Hypogammaglobulinaemia
+Hypoparathyroidism
+Hypothyroidism
+Immune Thrombocytopenia
+Impetigo
+Infectious mononucleosis
+Inflammatory Bowel Disease
+Influenza
+Injecting drug user
+Intestinal Malabsorption
+Intracranial abscess
+Iron deficiency anaemia
+Irritable Bowel Syndrome
+Ischaemic Colitis
+Kaposi's Sarcoma
+Keratitis
+Knowlesi Malaria
+Laryngeal Cancer
+Laryngitis
+Lassa
+Leprosy
+Leptospirosis
+Leucopenia
+Lichen planus
+Listeriosis
+Liver Cancer
+Loa loa
+Lower GI Bleed
+Lung Absces
+Lung Cancer
+Lyme Disease
+Lymphatic filariasis
+Lymphogranuloma venereum
+Lymphopenia
+Malariae Malaria
+Mastoiditis
+Measles
+Mediterranean spotted fever
+Megaloblastic Anaemia
+Melanoma
+Melioidosis
+Ménière’s disease
+Meningitis
+Meningococcal meningitis
+Meningoencepahlitis
+Mesothelioma
+Migraine
+Molluscum contagiosum
+Mononeuritis multiplex
+Motor Neuron Disease
+Mucocutaenous Leishmaniasis
+Multiple Myeloma
+Multiple sclerosis
+Mumps
+Murine Typhus
+Muscular dystrophy
+Myasthenia gravia
+Mycosis Fungoides
+Myelofibrosis
+Myositis
+Necrotising Fasciitis
+Nephr
+Neurofibromatosis
+Non-Hodgkins Lymphoma
+Non-Typhoidal Salmonella
+Normal pressure hydrocephalus
+Norovirus
+Oesophageal cancer
+Oesophageal Candidia
+Oesophagitis
+Onchocerciasis
+Oophritis
+Opthalmic Herpes Simplex
+Optic Neuritis
+Oral cancer
+Oral Candidia
+Oral Heairy Leukoplakia
+Orbital cellulits
+Orchitis
+Osteoarthritis
+Osteomyelitis
+Osteoporosis
+Otitis Externa
+Otitis Media
+Ovale Malaria
+Ovarian Cancer
+Pancreatic Cancer
+Pancytopenia
+Papillodema
+Parkinson's disease
+Pellagra
+Pelvic Inflammatory Disease
+Pemphigoid
+Pemphigus
+Penile Cancer
+Perforation
+Peri-anal abscess
+Peritonitis
+Pernicious Anaemia
+Pharyngitis
+Pinta
+Pituitary Adenoma
+Plague
+Pleural Effusion
+Pneumococcal septicemia
+Pneumocytis jirovecii pneumonia
+Pneumothorax
+Polio
+Polycythaemia rubra vera
+Polymyalgia rheumatica
+Polymyositis
+Postherpetic neuralgia
+Pre-eclampsia
+Pregnant
+Primary Biliary Cirrhosis
+Primary CNS Lymphoma
+Primary Syphilis
+Prostate Cancer
+Prostatits
+Protein losing enteropathy
+Pseudogout
+Psoas abcess
+Psoriasis
+Pulmonary Fibrosis
+Pulmonary Odema
+Pyelonephritis
+Pyoderma gangrenosum
+Pyogenic Granuloma
+Q Fever
+Rabies
+Rat-bite fever
+Reactive Arthritis
+Renal Calculi
+Renal Cancer
+Renal Tubular Acidosis
+Rhabdomyolysis
+Rheumatoid Arthtitis
+Rickettsialpox
+Rocky mountain spotted fever
+Rosacea
+Roseola infantum
+Rotavirus
+Rubella
+Sacroiliitis
+Sarcoid
+SARS
+Scabies
+Scarlet Fever
+Schistosomiasis
+Schizophrenia
+Sciatica
+Scleritis
+Scrub Typhus
+Seborrheic dermatitis
+Secondary Syphilis
+Septic Arthtitis
+Septicaemia
+Shigella
+Short Bowel Syndrome
+SIADH
+Sickle-cell anemia
+Sickle-cell trait
+Sjögren's syndrome
+Sleep apnea
+Smallpox
+Spinal Abscess
+Spontaneous Bacterial Peritonitis
+Stevens-Johnsons Syndrome
+Still'd Disease
+Streptococcal throat infection
+Strongyloidiasis
+Synovitis
+Systemic lupus erythematosus
+Tension headache
+Tertiary Syphilis
+Testicular Cancer
+Testicular Torsion
+Tetanus
+Thrombocytopenia
+Thyroid Cancer
+Thyroiditis
+Thyrotoxicosis
+Tick-borne encephalitis
+Tonsillitis
+Toxoplasma
+Trachoma
+Transverse myelitis
+Trench Fever
+Tropical Sprue
+Tuberculosis
+Tularemia
 Type 1 Diabetes
 Type 2 Diabetes
-depression
-Eczema
-fibromyalgia
-influenza
-Gallstones
-gonorrhea
-Graves' disease
-Hashimoto's thyroiditis
-hepatitis
-encephalitis
-HSV Encephalitis
-HIV
-Hodgkin's disease
-hypertension
-IBS
-Malaria - Falciparum Malaria - Ovale
-Malaria - Vivax
-Malaria - Malariae
-Community Acquired Pneumonia
-Hospital Acquired Pneumonia
-SLE
-Lyme disease
-lymphoma
-meningitis
-meningococcal septicaemia
-migraine
-multiple sclerosis
-muscular dystrophy
-narcolepsy
-Non-Hodgkin's lymphoma
-osteoporosis
-otitis media
-ovarian cancer
-Parkinson's disease
-pelvic inflammatory disease
-prostate cancer
-sexually transmitted diseases
-TB
+Ulcerative Colitis
+Upper GI Bleed
+Urethritis
+Urinary Tract Infection
+URTI
+Urticaria
+Uveitis
+Vascular Dementia
+Venous sinus thrombosis
+Ventilator Associated Pneumonia
+Vincent's angina
+Viral Exanthem
+Viral Haemorrhagic Fever
+Viral Meningitis
+Viral URTI
+Visceral Leishmaniasis
+Vitiligo
+Vivax Malaria
+Von Willebrand's disease
+Wernicke's encephalopathy
+West African Trypanosomiasis
+West Nile 
+Whooping cough
+Wilson's Disease
+Yaws
+Yellow fever
