@@ -49,8 +49,8 @@ app.controller('TableCtrl', function($scope, $http) {
 		{name: 'pastMedicalHistory', title: 'Past Medical History', multi: true},
 		{name: 'generalNotes', title: 'Notes', multi: true},
 		{name: 'travel', title: 'Travel', multi: true},
-		//	{name: 'microbiology', title: '', multi: true}, TODO: awaiting details of structure
 		{name: 'antimicrobials', title: 'Antimicrobials', multi: true},
+		{name: 'microbiology', title: 'Microbiology', multi: true},
 		{name: 'microbiologyComments', title: 'Microbiology Comments', multi: true},
 		{name: 'plan', title: 'Plan', multi: false},
 		{name: 'discharge', title: 'Discharge', multi: false},
@@ -81,6 +81,24 @@ app.controller('TableCtrl', function($scope, $http) {
 			});
 		})(option_lists[i]);
 	}
+
+	$scope.microbiology_type_list = [
+		'Culture',
+		'Dengue PCR',
+		'Serology',
+		'Malaria film'
+	];
+
+	$scope.microbiology_culture_type_list = [
+		'Blood',
+		'Urine',
+		'Sputum'
+	];
+
+	$scope.serology_condition_list = [
+		'Hepatitis A',
+		'Dengue'
+	];
 
 	function startEdit() {
 		var rix = $scope.rix;

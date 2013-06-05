@@ -1,0 +1,124 @@
+<form class="form-horizontal">
+	<div class="control-group">
+		<label class="control-label">Type</label>
+		<div class="controls">
+			<input type="text" ng-model="editing.type" bs-typeahead="microbiology_type_list" data-provide="typeahead">
+		</div>
+	</div>
+	<span ng-show="editing.type == 'Culture'">
+		<div class="control-group">
+			<label class="control-label">Culture type</label>
+			<div class="controls">
+				<input type="text" ng-model="editing.cultureType" bs-typeahead="microbiology_culture_type_list" data-provide="typeahead">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Date</label>
+			<div class="controls">
+				<input type="text" ng-model="editing.date">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Microscopy</label>
+			<div class="controls">
+				<input type="text" ng-model="editing.microscopy">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Organism</label>
+			<div class="controls">
+				<input type="text" ng-model="editing.organism">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Notes</label>
+			<div class="controls">
+				<input type="text" ng-model="editing.notes">
+			</div>
+		</div>
+	</span>
+	<span ng-show="editing.type == 'Dengue PCR'">
+		<div class="control-group">
+			<label class="control-label">Date</label>
+			<div class="controls">
+				<input type="text" ng-model="editing.date">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">PCR Positive?</label>
+			<div class="controls">
+				<input type="checkbox" ng-model="editing.pcr_positive">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Notes</label>
+			<div class="controls">
+				<input type="text" ng-model="editing.notes">
+			</div>
+		</div>
+	</span>
+	<span ng-show="editing.type == 'Serology'">
+		<div class="control-group">
+			<label class="control-label">Condition</label>
+			<div class="controls">
+				<input type="text" ng-model="editing.serologyCondition" bs-typeahead="serology_condition_list" data-provide="typeahead">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Date</label>
+			<div class="controls">
+				<input type="text" ng-model="editing.date">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">IgM Titre</label>
+			<div class="controls">
+				<input type="text" ng-model="editing.igm_titre">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">IgM Positive?</label>
+			<div class="controls">
+				<input type="checkbox" ng-model="editing.igm_positive">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">IgG Titre</label>
+			<div class="controls">
+				<input type="text" ng-model="editing.igg_titre">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">IgG Positive?</label>
+			<div class="controls">
+				<input type="checkbox" ng-model="editing.igg_positive">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Notes</label>
+			<div class="controls">
+				<input type="text" ng-model="editing.notes">
+			</div>
+		</div>
+	</span>
+	<span ng-show="editing.type == 'Malaria film'">
+		<div class="control-group">
+			<label class="control-label">Date</label>
+			<div class="controls">
+				<input type="text" ng-model="editing.date">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Parasitaemia</label>
+			<div class="controls">
+				<input type="text" ng-model="editing.parasitaemia">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label">Notes</label>
+			<div class="controls">
+				<input type="text" ng-model="editing.notes">
+			</div>
+		</div>
+	</span>
+</form>

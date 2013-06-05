@@ -2,7 +2,7 @@
     {
         "antimicrobials": [
             {
-		"dose": "250 mg",
+                "dose": "250 mg", 
                 "endDate": null, 
                 "name": "Cefuroxime", 
                 "startDate": "21 May 2013"
@@ -23,7 +23,7 @@
         "generalNotes": [
             {
                 "comment": "This is a general note", 
-                "date": "16/5" 
+                "date": "16/5"
             }
         ], 
         "location": {
@@ -34,8 +34,18 @@
             "ward": "T8"
         }, 
         "microbiology": [
-            "Urine culture: pending", 
-            "Blood culture: pending"
+            {
+                "cultureType": "Blood", 
+                "date": "16/5", 
+                "microscopy": "microscopy", 
+                "organism": "sharks", 
+                "type": "Culture"
+            }, 
+            {
+                "cultureType": "Urine", 
+                "date": "17/5", 
+                "type": "Culture"
+            }
         ], 
         "microbiologyComments": [
             {
@@ -51,7 +61,7 @@
     {
         "antimicrobials": [
             {
-		"dose": "125 mg",
+                "dose": "125 mg", 
                 "endDate": null, 
                 "name": "Atripla", 
                 "startDate": null
@@ -83,7 +93,11 @@
             "ward": "T8"
         }, 
         "microbiology": [
-            "Urine culture: pending"
+            {
+                "date": "13/5", 
+                "pcr_positive": true, 
+                "type": "Dengue PCR"
+            }
         ], 
         "microbiologyComments": [], 
         "pastMedicalHistory": [
@@ -98,7 +112,7 @@
     {
         "antimicrobials": [
             {
-		"dose": "300 mg",
+                "dose": "300 mg", 
                 "endDate": null, 
                 "name": "Riamet", 
                 "startDate": "13 May 2013"
@@ -125,7 +139,15 @@
             "ward": "T6"
         }, 
         "microbiology": [
-            "2% Parasitaemia"
+            {
+                "date": "16/5", 
+                "igg_positive": true, 
+                "igg_titre": "IgG titre", 
+                "igm_positive": false, 
+                "igm_titre": "IgM titre", 
+                "serologyCondition": "Dengue", 
+                "type": "Serology"
+            }
         ], 
         "microbiologyComments": [], 
         "pastMedicalHistory": [
@@ -147,7 +169,7 @@
     {
         "antimicrobials": [
             {
-		"dose": "250 mg",
+                "dose": "250 mg", 
                 "endDate": null, 
                 "name": "Flucloxacillin", 
                 "route": "Oral", 
