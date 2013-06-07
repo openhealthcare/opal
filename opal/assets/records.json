@@ -33,20 +33,7 @@
             "hospital": "UCH", 
             "ward": "T8"
         }, 
-        "microbiology": [
-            {
-                "cultureType": "Blood", 
-                "date": "16/5", 
-                "microscopy": "microscopy", 
-                "organism": "sharks", 
-                "type": "Culture"
-            }, 
-            {
-                "cultureType": "Urine", 
-                "date": "17/5", 
-                "type": "Culture"
-            }
-        ], 
+        "microbiology": [], 
         "microbiologyComments": [
             {
                 "comment": "This is a comment", 
@@ -79,8 +66,8 @@
             }, 
             {
                 "condition": "HIV", 
-                "suspected": false, 
-                "details": "Viral Load 250, CD4 325"
+                "details": "Viral Load 250, CD4 325", 
+                "suspected": false
             }
         ], 
         "discharge": null, 
@@ -92,13 +79,7 @@
             "hospital": "UCH", 
             "ward": "T8"
         }, 
-        "microbiology": [
-            {
-                "date": "13/5", 
-                "pcr_result": "pending", 
-                "type": "Dengue PCR"
-            }
-        ], 
+        "microbiology": [], 
         "microbiologyComments": [], 
         "pastMedicalHistory": [
             {
@@ -138,17 +119,7 @@
             "hospital": "UCH", 
             "ward": "T6"
         }, 
-        "microbiology": [
-            {
-                "date": "16/5", 
-                "igg_result": "positive", 
-                "igg_titre": "IgG titre", 
-                "igm_result": "negative", 
-                "igm_titre": "IgM titre", 
-                "serologyCondition": "Dengue", 
-                "type": "Serology"
-            }
-        ], 
+        "microbiology": [], 
         "microbiologyComments": [], 
         "pastMedicalHistory": [
             {
