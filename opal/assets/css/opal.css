@@ -12,3 +12,6 @@ li.selected {
 	background-color: #cee;
 }
 
+ .modal-body {
+	height: 400px;
+}
