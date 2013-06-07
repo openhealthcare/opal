@@ -45,9 +45,20 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">PCR Positive?</label>
+			<label class="control-label">PCR Result</label>
 			<div class="controls">
-				<input type="checkbox" ng-model="editing.pcr_positive">
+				<label class="radio inline">
+					<input type="radio" value="pending" ng-model="editing.pcr_result">
+					Pending
+				</label>
+				<label class="radio inline">
+					<input type="radio" value="positive" ng-model="editing.pcr_result">
+					Positive
+				</label>
+				<label class="radio inline">
+					<input type="radio" value="negative" ng-model="editing.pcr_result">
+					Negative
+				</label>
 			</div>
 		</div>
 		<div class="control-group">
@@ -77,9 +88,20 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">IgM Positive?</label>
+			<label class="control-label">IgM Result</label>
 			<div class="controls">
-				<input type="checkbox" ng-model="editing.igm_positive">
+				<label class="radio inline">
+					<input type="radio" value="pending" ng-model="editing.igm_result">
+					Pending
+				</label>
+				<label class="radio inline">
+					<input type="radio" value="positive" ng-model="editing.igm_result">
+					Positive
+				</label>
+				<label class="radio inline">
+					<input type="radio" value="negative" ng-model="editing.igm_result">
+					Negative
+				</label>
 			</div>
 		</div>
 		<div class="control-group">
@@ -89,9 +111,20 @@
 			</div>
 		</div>
 		<div class="control-group">
-			<label class="control-label">IgG Positive?</label>
+			<label class="control-label">IgG Result</label>
 			<div class="controls">
-				<input type="checkbox" ng-model="editing.igg_positive">
+				<label class="radio inline">
+					<input type="radio" value="pending" ng-model="editing.igg_result">
+					Pending
+				</label>
+				<label class="radio inline">
+					<input type="radio" value="positive" ng-model="editing.igg_result">
+					Positive
+				</label>
+				<label class="radio inline">
+					<input type="radio" value="negative" ng-model="editing.igg_result">
+					Negative
+				</label>
 			</div>
 		</div>
 		<div class="control-group">

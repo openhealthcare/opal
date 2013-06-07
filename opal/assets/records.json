@@ -95,7 +95,7 @@
         "microbiology": [
             {
                 "date": "13/5", 
-                "pcr_positive": true, 
+                "pcr_result": "pending", 
                 "type": "Dengue PCR"
             }
         ], 
@@ -141,9 +141,9 @@
         "microbiology": [
             {
                 "date": "16/5", 
-                "igg_positive": true, 
+                "igg_result": "positive", 
                 "igg_titre": "IgG titre", 
-                "igm_positive": false, 
+                "igm_result": "negative", 
                 "igm_titre": "IgM titre", 
                 "serologyCondition": "Dengue", 
                 "type": "Serology"

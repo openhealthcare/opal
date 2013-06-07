@@ -8,18 +8,15 @@
 <span ng-show="item.type == 'Dengue PCR'">
 	{{item.type}}:
 	{{item.date}}
-	<span ng-show="item.pcr_positive">Positive</span>
-	<span ng-hide="item.pcr_positive">Negative</span>
+	({{item.pcr_result}})
 	{{item.notes}}
 </span>
 <span ng-show="item.type == 'Serology'">
 	{{item.serologyCondition}} {{item.type}}:
 	{{item.date}}
-	<span ng-show="item.igm_positive">IgM Positive</span>
-	<span ng-hide="item.igm_positive">IgM Negative</span>
+	(IgM {{item.igm_result}})
 	{{item.igm_titre}}
-	<span ng-show="item.igg_positive">IgG Positive</span>
-	<span ng-hide="item.igg_positive">IgG Negative</span>
+	(IgG {{item.igg_result}})
 	{{item.igg_titre}}
 	{{item.notes}}
 </span>
