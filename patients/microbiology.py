@@ -342,6 +342,33 @@ form_html = form_template.format(tests=tests_html)
 with open(os.path.join(os.path.dirname(__file__), '../opal/assets/templates/microbiology-modal.html'), 'w') as f:
     f.write(form_html)
 
+table_item_template = '''
+'''
+
+field_template = '<li>{key}: {value}</li>'
+
+tests_html = ''
+
+for test in micro_tests:
+    fields_html = ''
+    for field in test['fields']:
+        key = make_slug(field['name'])
+        fields_html += field_template.format(key=field['name'], value='{{item.%s}}' % key)
+    show_conditions = ' || '.join("item.test == '%s'" % test_name for test_name in test['test_names'])
+    tests_html += test_template.format(show_conditions=show_conditions, fields=fields_html)
+
+table_item_html = '''
+{{item.test}}
+({{item.date}})
+{{item.details}}
+<ul>
+''' + tests_html + '''
+</ul>
+'''
+
+with open(os.path.join(os.path.dirname(__file__), '../opal/assets/templates/microbiology.html'), 'w') as f:
+    f.write(table_item_html)
+
 print "Copy the following into the definition of $scope.microbiology_test_list in opal/assets/js/opal.js"
 
 for test in micro_tests:

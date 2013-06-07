@@ -1,1 +1,83 @@
+
 {{item.test}}
+({{item.date}})
+{{item.details}}
+<ul>
+
+    <span ng-show="item.test == 'Broncheoalveolar lavage MC&S' || item.test == 'Blood Culture' || item.test == 'CSF AFB microscopy & TB culture' || item.test == 'CSF MC&S' || item.test == 'Fluid MC&S' || item.test == 'Lymph Node MC&S' || item.test == 'Pleural MC&S' || item.test == 'Sputum AFB microscopy & TB culture' || item.test == 'Sputum MC&S' || item.test == 'Stool MC&S' || item.test == 'Stool OCP' || item.test == 'Throat Swab MC&S' || item.test == 'Tissue AFB microscopy & TB culture' || item.test == 'Tissue MC&S' || item.test == 'Urine AFB microscopy & TB culture' || item.test == 'Urine MC&S' || item.test == 'Wound swab MC&S'">
+<li>Microscopy: {{item.microscopy}}</li><li>Organism: {{item.organism}}</li><li>Sensitive antibiotics: {{item.sensitive_antibiotics}}</li><li>Resistant antibiotics: {{item.resistant_antibiotics}}</li>
+    </span>
+
+    <span ng-show="item.test == 'CMV Serology' || item.test == 'Dengue Serology' || item.test == 'Hepatitis A Serology' || item.test == 'Hepatitis E Serology' || item.test == 'Measles Serology' || item.test == 'Rubella Serology' || item.test == 'Toxoplasmosis Serology' || item.test == 'VZV Serology' || item.test == 'Brucella Serology'">
+<li>IgM: {{item.igm}}</li><li>IgG: {{item.igg}}</li>
+    </span>
+
+    <span ng-show="item.test == 'EBV Serology'">
+<li>VCA IgM: {{item.vca_igm}}</li><li>VCA IgG: {{item.vca_igg}}</li><li>EBNA IgG: {{item.ebna_igg}}</li>
+    </span>
+
+    <span ng-show="item.test == 'HIV'">
+<li>Result: {{item.result}}</li>
+    </span>
+
+    <span ng-show="item.test == 'Hepatitis B Serology'">
+<li>HBsAg: {{item.hbsag}}</li><li>anti-HbS: {{item.anti_hbs}}</li><li>anti-HbCore IgM: {{item.anti_hbcore_igm}}</li><li>anti-HbCore IgG: {{item.anti_hbcore_igg}}</li>
+    </span>
+
+    <span ng-show="item.test == 'Syphilis Serology'">
+<li>RPR: {{item.rpr}}</li><li>TPPA: {{item.tppa}}</li>
+    </span>
+
+    <span ng-show="item.test == 'Cryptococcal antigen' || item.test == 'Dengue PCR' || item.test == 'JC Virus PCR' || item.test == 'MRSA PCR' || item.test == 'Rickettsia PCR' || item.test == 'Scrub Typhus PCR' || item.test == 'Borrleia Screening Serology' || item.test == 'Brorleia Reference Serology' || item.test == 'Viral Haemorrhagic Fever PCR'">
+<li>Result: {{item.result}}</li>
+    </span>
+
+    <span ng-show="item.test == 'Amoebic Serology' || item.test == 'Cystercicosis Serology' || item.test == 'Fasciola Serology' || item.test == 'Filaria Serology' || item.test == 'Hydatid Serology' || item.test == 'Strongyloides Serology' || item.test == 'Toxcocara Serology' || item.test == 'Trypanosomiasis brucei Serology' || item.test == 'Trypanosomiasis cruzi serology'">
+<li>Result: {{item.result}}</li>
+    </span>
+
+    <span ng-show="item.test == 'Hepatitis C Serology' || item.test == 'Hepatitis D Serology' || item.test == 'HHV-6 Serology' || item.test == 'HHV-7 Serology' || item.test == 'HTLV Serology'">
+<li>IgG: {{item.igg}}</li>
+    </span>
+
+    <span ng-show="item.test == 'CMV Viral Load' || item.test == 'EBV Viral Load ' || item.test == 'HBV Viral Load' || item.test == 'HCV Viral Load' || item.test == 'HHV-6 Viral Load' || item.test == 'HHV-7 Viral Load' || item.test == 'HHV-8 Viral Load' || item.test == 'HIV Viral Load' || item.test == 'Measles PCR' || item.test == 'VZV Viral Load'">
+<li>Viral load: {{item.viral_load}}</li>
+    </span>
+
+    <span ng-show="item.test == 'Babesia Film' || item.test == 'Malaria Film' || item.test == 'Microfilarial Film'">
+<li>Parasitaemia: {{item.parasitaemia}}</li>
+    </span>
+
+    <span ng-show="item.test == 'Swab PCR'">
+<li>HSV: {{item.hsv}}</li><li>VZV: {{item.vzv}}</li><li>Syphilis: {{item.syphilis}}</li>
+    </span>
+
+    <span ng-show="item.test == 'C. difficile'">
+<li>C. difficile antigen: {{item.c_difficile_antigen}}</li><li>C. difficile toxin: {{item.c_difficile_toxin}}</li>
+    </span>
+
+    <span ng-show="item.test == 'Leishmaniasis PCR'">
+<li>Species: {{item.species}}</li><li>Result: {{item.result}}</li>
+    </span>
+
+    <span ng-show="item.test == 'CSF PCR'">
+<li>HSV-1: {{item.hsv_1}}</li><li>HSV-1: {{item.hsv_1}}</li><li>Enterovirus: {{item.enterovirus}}</li><li>CMV: {{item.cmv}}</li><li>EBV: {{item.ebv}}</li><li>VZV: {{item.vzv}}</li>
+    </span>
+
+    <span ng-show="item.test == 'Respiratory Virus PCR'">
+<li>Influenza-A: {{item.influenza_a}}</li><li>Influenza-B: {{item.influenza_b}}</li><li>Parainfluenza: {{item.parainfluenza}}</li><li>Metapneumovirus: {{item.metapneumovirus}}</li><li>RSV: {{item.rsv}}</li><li>Adenovirus: {{item.adenovirus}}</li>
+    </span>
+
+    <span ng-show="item.test == 'Stool PCR'">
+<li>Norovirus: {{item.norovirus}}</li><li>Rotavirus: {{item.rotavirus}}</li><li>Adenovirus: {{item.adenovirus}}</li>
+    </span>
+
+    <span ng-show="item.test == 'Stool Parasitology PCR'">
+<li>Giardia: {{item.giardia}}</li><li>Entamoeba Histolytica: {{item.entamoeba_histolytica}}</li><li>Cryptosporidium: {{item.cryptosporidium}}</li>
+    </span>
+
+    <span ng-show="item.test == 'Other'">
+<li>Result: {{item.result}}</li>
+    </span>
+
+</ul>
