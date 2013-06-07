@@ -257,7 +257,7 @@ micro_tests = [
             'Other'
         ],
         'fields': [
-            {'name': 'details'}
+            {'name': 'Result'}
         ],
     },
 ]
@@ -324,7 +324,7 @@ def make_slug(s):
     return s
 
 for test in micro_tests:
-    fields_html = date_template
+    fields_html = date_template + text_input_template.format(title='Details', field_name='details')
     for field in test['fields']:
         key = make_slug(field['name'])
         if 'choices' in field:
