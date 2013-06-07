@@ -282,7 +282,7 @@ test_template = '''
 
 date_template = '''
         <div class="control-group">
-            <label class="control-label">Date</label>
+            <label class="control-label">Date ordered</label>
             <div class="controls">
                 <input type="text" ng-model="editing.date">
             </div>
@@ -345,7 +345,13 @@ with open(os.path.join(os.path.dirname(__file__), '../opal/assets/templates/micr
 table_item_template = '''
 '''
 
-field_template = '<li>{key}: {value}</li>'
+field_template_with_key = '''
+<li ng-show="{value} && {value} != 'pending'">{key}: {value_with_braces}</li>
+'''
+
+field_template_without_key = '''
+<li ng-show="{value} && {value} != 'pending'">{value_with_braces}</li>
+'''
 
 tests_html = ''
 
@@ -353,13 +359,16 @@ for test in micro_tests:
     fields_html = ''
     for field in test['fields']:
         key = make_slug(field['name'])
-        fields_html += field_template.format(key=field['name'], value='{{item.%s}}' % key)
+        if key == 'result':
+            fields_html += field_template_without_key.format(value='item.%s' % key, value_with_braces='{{item.%s}}' % key)
+        else:
+            fields_html += field_template_with_key.format(key=field['name'], value='item.%s' % key, value_with_braces='{{item.%s}}' % key)
     show_conditions = ' || '.join("item.test == '%s'" % test_name for test_name in test['test_names'])
     tests_html += test_template.format(show_conditions=show_conditions, fields=fields_html)
 
 table_item_html = '''
+{{item.date}}
 {{item.test}}
-({{item.date}})
 {{item.details}}
 <ul>
 ''' + tests_html + '''
