@@ -36,8 +36,11 @@
         "microbiology": [], 
         "microbiologyComments": [
             {
-                "comment": "This is a comment", 
+                "agreedPlan": "Keep on Keeping On", 
+                "clinicalAdviceGiven": true, 
+                "clinicalDiscussion": "We discussed clinical things", 
                 "date": "16/5", 
+                "discussedWith": "XYZ", 
                 "initials": "ABC"
             }
         ], 

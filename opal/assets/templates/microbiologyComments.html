@@ -1,3 +1,32 @@
-{{item.date}}
-[{{item.initials}}]
-{{item.comment}}
+<ul>
+	<li>
+		{{item.date}}
+		[{{item.initials}}<span ng-show="item.discussedWith"> with {{item.discussedWith}}</span>]
+	</li>
+	<li>
+		{{item.clinicalDiscussion}}
+	</li>
+	<li>
+		Plan: {{item.agreedPlan}}
+	</li>
+	<li>
+		<span ng-hide="item.clinicalAdviceGiven">&#x2610;</span>
+		<span ng-show="item.clinicalAdviceGiven">&#x2611;</span>
+		Clinical advice given
+	</li>
+	<li>
+		<span ng-hide="item.givingResult">&#x2610;</span>
+		<span ng-show="item.givingResult">&#x2611;</span>
+		Giving result
+	</li>
+	<li>
+		<span ng-hide="item.infectionControlAdviceGiven">&#x2610;</span>
+		<span ng-show="item.infectionControlAdviceGiven">&#x2611;</span>
+		Infection control advice given
+	</li>
+	<li>
+		<span ng-hide="item.changeInAntibioticPrescription">&#x2610;</span>
+		<span ng-show="item.changeInAntibioticPrescription">&#x2611;</span>
+		Change in antibiotic prescription
+	</li>
+</ul>

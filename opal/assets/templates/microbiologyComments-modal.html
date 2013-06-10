@@ -12,9 +12,45 @@
 		</div>
 	</div>
 	<div class="control-group">
-		<label class="control-label">Comment</label>
+		<label class="control-label">Clinical discussion</label>
 		<div class="controls">
-			<input type="text" ng-model="editing.comment">
+			<textarea ng-model="editing.clinicalDiscussion" rows="5" />
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Agreed plan</label>
+		<div class="controls">
+			<textarea ng-model="editing.agreedPlan" rows="5" />
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Discussed with</label>
+		<div class="controls">
+			<input type="text" ng-model="editing.discussedWith">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Clinical advice given?</label>
+		<div class="controls">
+			<input type="checkbox" ng-model="editing.clinicalAdviceGiven">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Giving result?</label>
+		<div class="controls">
+			<input type="checkbox" ng-model="editing.givingResult">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Infection control advice given?</label>
+		<div class="controls">
+			<input type="checkbox" ng-model="editing.infectionControlAdviceGiven">
+		</div>
+	</div>
+	<div class="control-group">
+		<label class="control-label">Change in antibiotic prescription?</label>
+		<div class="controls">
+			<input type="checkbox" ng-model="editing.changeInAntibioticPrescription">
 		</div>
 	</div>
 </form>
