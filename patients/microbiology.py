@@ -29,7 +29,7 @@ micro_tests = [
         ],
         'fields': [
             {'name': 'Microscopy'},
-            {'name': 'Organism'},
+            {'name': 'Organism', 'dropdown': 'microbiology_organism'},
             {'name': 'Sensitive antibiotics'},
             {'name': 'Resistant antibiotics'},
         ],
@@ -289,6 +289,15 @@ date_template = '''
         </div>
 '''
 
+dropdown_input_template = '''
+        <div class="control-group">
+            <label class="control-label">{title}</label>
+            <div class="controls">
+                <input type="text" ng-model="editing.{field_name}" bs-typeahead="{typeahead_source}_list" data-provide="typeahead">
+            </div>
+        </div>
+'''
+
 text_input_template = '''
         <div class="control-group">
             <label class="control-label">{title}</label>
@@ -332,6 +341,8 @@ for test in micro_tests:
             for option in field['choices']:
                 inputs += radio_input_template.format(value=option, field_name=key)
             fields_html += radio_inputs_template.format(inputs=inputs, title=field['name'])
+        elif 'dropdown' in field:
+            fields_html += dropdown_input_template.format(typeahead_source=field['dropdown'], title=field['name'], field_name=key)
         else:
             fields_html += text_input_template.format(title=field['name'], field_name=key)
     show_conditions = ' || '.join("editing.test == '%s'" % test_name for test_name in test['test_names'])

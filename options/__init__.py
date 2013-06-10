@@ -3,6 +3,7 @@ model_names = [
     'antimicrobial_route',
     'condition',
     'destination',
+    'microbiology_organism',
     'patient_category',
     'travel_reason',
 ]

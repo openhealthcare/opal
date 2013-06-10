@@ -70,6 +70,7 @@ app.controller('TableCtrl', function($scope, $http) {
 		'antimicrobial_route',
 		'condition',
 		'destination',
+		'microbiology_organism',
 		'patient_category',
 		'travel_reason',
 	];
