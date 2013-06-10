@@ -78,7 +78,12 @@ app.controller('TableCtrl', function($scope, $http) {
 	for (var i = 0; i < option_lists.length; i++) {
 		(function(option) {
 			$http.get('options/' + option + '_list/').success(function(data) {
-				$scope[option + '_list'] = data;
+				$scope[option + '_list'] = [];
+				$scope[option + '_synonyms'] = {};
+				for (var j = 0; j < data.length; j++) {
+					$scope[option + '_list'].push(data[j][0]);
+					$scope[option + '_synonyms'][data[j][0]] = data[j][1];
+				};
 			});
 		})(option_lists[i]);
 	}
@@ -159,6 +164,20 @@ app.controller('TableCtrl', function($scope, $http) {
 		'Stool Parasitology PCR',
 		'Other',
 	];
+
+	$scope.getSynonymn = function(option, term) {
+		var synonyms = $scope[option + '_synonyms'];
+		if (synonyms !== undefined) {
+			// The list of synonyms may not have loaded yet.
+			// This would be a problem if we serve non-canonical
+			// data and try an canonicalise before the synonyms are
+			// loaded.  I think we shouldn't serve non-canonical
+			// data but there might be a good reason to.
+			return synonyms[term] || term;
+		} else {
+			return term;
+		}
+	};
 
 	function startEdit() {
 		var rix = $scope.rix;

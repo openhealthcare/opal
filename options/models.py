@@ -11,6 +11,7 @@ for name in model_names:
     bases = (models.Model,)
     attrs = {
         'name': models.CharField(max_length=255, unique=True),
+        'synonyms': generic.GenericRelation('Synonym'),
         'Meta': type('Meta', (object,), {'ordering': ['name']}),
         '__unicode__': lambda self: self.name,
         '__module__': __name__,
