@@ -1,13 +1,13 @@
 <ul>
 	<li>
-		{{item.date}}
-		[{{item.initials}}<span ng-show="item.discussedWith"> with {{item.discussedWith}}</span>]
+		[[item.date]]
+		([[item.initials]]<span ng-show="item.discussedWith"> with [[item.discussedWith]]</span>)
 	</li>
 	<li>
-		{{item.clinicalDiscussion}}
+		[[item.clinicalDiscussion]]
 	</li>
 	<li>
-		Plan: {{item.agreedPlan}}
+		Plan: [[item.agreedPlan]]
 	</li>
 	<li>
 		<span ng-hide="item.clinicalAdviceGiven">&#x2610;</span>

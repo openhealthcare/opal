@@ -18,6 +18,12 @@ function getKeys(obj) {
 
 var app = angular.module('opalApp', ['$strap.directives']);
 
+// See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags
+app.config(function($interpolateProvider) {
+	$interpolateProvider.startSymbol('[[');
+	$interpolateProvider.endSymbol(']]');
+});
+
 app.controller('TableCtrl', function($scope, $http) {
 	var editing = false;
 	var deleting = false;
@@ -379,90 +385,5 @@ app.controller('TableCtrl', function($scope, $http) {
 				$scope.iix = 0;
 			}
 		}
-	}
-});
-
-app.directive('field', function() {
-	return {
-		restrict: 'E',
-		template: function(tElement, tAttrs) {
-			var column = tAttrs.column;
-			var iterable = 'row.' + column;
-			var contents;
-
-			if (tAttrs.single == 'yes') {
-				iterable = '[' + iterable + ']';
-				contents = '<fielditem column="' + column + '"/>';
-			} else {
-				contents = '' +
-				     '<span ng-hide="$last">' +
-				       '<fielditem column="' + column + '"/>' +
-				     '</span>' +
-				     '<span ng-show="$last">' +
-				       '<span ng-show="($parent.$index == rix && ' + // $parent.$index is the row index
-						       'getCix(\'' + column + '\') == cix) ||' +
-						      '($parent.$index == mouseRix && ' +
-						       'getCix(\'' + column + '\') == mouseCix)">' +
-					 'Add' +
-				       '</span>&nbsp;' + // the nbsp is so that row heights don't change when Add is visible
-				     '</span>'
-			}
-
-			return '' + 
-			  '<ul>' +
-			    '<li ng-repeat="item in ' + iterable + '"' + 
-			        'ng-click="selectItem($parent.$index,' + // $parent.$index is the row index
-				                     'getCix(\'' + column + '\'),' +
-						     '$index)"' + // $index is the item index
-			        'ng-dblclick="editItem($parent.$index,' +
-				                      'getCix(\'' + column + '\'),' +
-						      '$index)"' +
-			        'ng-class="{selected: $parent.$index == rix && ' + 
-				                     'getCix(\'' + column + '\') == cix && ' +
-						     '$index == iix}">' +
-			       contents +
-			   '</li>' +
-			 '</ul>';
-		},
-	}
-});
-
-app.directive('fielditem', function() {
-	return {
-		restrict: 'E',
-		templateUrl: function(tElement, tAttrs) {
-			return 'assets/templates/' + tAttrs.column + '.html'
-		},
-	}
-});
-
-app.directive('modal', function() {
-	return {
-		restrict: 'E',
-		template: function(tElement, tAttrs) {
-			var column = tAttrs.column;
-			return '' +
-			  '<div id="' + column + '-modal" class="modal hide" tabindex="-1" role="dialog">' +
-			    '<div class="modal-header">' +
-			      '<button type="button" class="close" data-dismiss="modal" ng-click="cancelEdit()">×</button>' +
-			      '<h3>{{columns[getCix("' + column + '")].title}}</h3>' +
-			    '</div>' +
-			    '<div class="modal-body"><modalform column="' + column + '" /></div>' +
-			    '<div class="modal-footer">' +
-			      '<button class="btn" data-dismiss="modal" ng-click="cancelEdit()">Cancel</button>' +
-			      '<button class="btn btn-primary" data-dismiss="modal" ng-click="saveEdit()">Save changes</button>' +
-			    '</div>' +
-			  '</div>'
-
-		},
-	}
-});
-
-app.directive('modalform', function() {
-	return {
-		restrict: 'E',
-		templateUrl: function(tElement, tAttrs) {
-			return 'assets/templates/' + tAttrs.column + '-modal.html'
-		},
 	}
 });
