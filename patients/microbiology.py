@@ -28,8 +28,8 @@ micro_tests = [
             'Wound swab MC&S',
         ],
         'fields': [
-            {'name': 'Microscopy'},
-            {'name': 'Organism', 'dropdown': 'microbiology_organism'},
+            {'name': 'Microscopy', 'show_key': False},
+            {'name': 'Organism', 'dropdown': 'microbiology_organism', 'show_key': False},
             {'name': 'Sensitive antibiotics'},
             {'name': 'Resistant antibiotics'},
         ],
@@ -370,10 +370,11 @@ for test in micro_tests:
     fields_html = ''
     for field in test['fields']:
         key = make_slug(field['name'])
-        if key == 'result':
-            fields_html += field_template_without_key.format(value='item.%s' % key, value_with_braces='{{item.%s}}' % key)
+        value_with_braces = '{{item.%s}}' % key
+        if key == 'result' or not field.get('show_key', True):
+            fields_html += field_template_without_key.format(value='item.%s' % key, value_with_braces=value_with_braces)
         else:
-            fields_html += field_template_with_key.format(key=field['name'], value='item.%s' % key, value_with_braces='{{item.%s}}' % key)
+            fields_html += field_template_with_key.format(key=field['name'], value='item.%s' % key, value_with_braces=value_with_braces)
     show_conditions = ' || '.join("item.test == '%s'" % test_name for test_name in test['test_names'])
     tests_html += test_template.format(show_conditions=show_conditions, fields=fields_html)
 
