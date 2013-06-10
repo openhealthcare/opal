@@ -50,7 +50,7 @@ app.controller('TableCtrl', function($scope, $http) {
 		{name: 'generalNotes', title: 'Notes', multi: true},
 		{name: 'travel', title: 'Travel', multi: true},
 		{name: 'antimicrobials', title: 'Antimicrobials', multi: true},
-		{name: 'microbiology', title: 'Microbiology', multi: true},
+		{name: 'microbiology', title: 'Microbiology Results', multi: true},
 		{name: 'microbiologyComments', title: 'Microbiology Input', multi: true},
 		{name: 'plan', title: 'Plan', multi: false},
 		{name: 'discharge', title: 'Discharge', multi: false},
