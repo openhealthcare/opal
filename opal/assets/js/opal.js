@@ -59,7 +59,7 @@ app.controller('TableCtrl', function($scope, $http) {
 		{name: 'microbiology', title: 'Microbiology Results', multi: true},
 		{name: 'microbiologyComments', title: 'Microbiology Input', multi: true},
 		{name: 'plan', title: 'Plan', multi: false},
-		{name: 'discharge', title: 'Discharge', multi: false},
+		{name: 'discharge', title: 'Discharge', multi: false}
 	];
 
 	$scope.getCix = function(name) {
