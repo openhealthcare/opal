@@ -1,5 +1,3 @@
-// Hello Gabriele!
-
 function clone(obj) {
 	if (typeof obj == 'object') {
 		return $.extend(true, {}, obj);
