@@ -3,14 +3,14 @@
         "antimicrobials": [
             {
                 "dose": "250 mg", 
-                "endDate": null, 
+                "end_date": null, 
                 "name": "Cefuroxime", 
-                "startDate": "21 May 2013"
+                "start_date": "21 May 2013"
             }
         ], 
         "demographics": {
-            "dateOfBirth": "1 Jan 1985", 
-            "hospitalNumber": "ABCD1234", 
+            "date_of_birth": "1 Jan 1985", 
+            "hospital_number": "ABCD1234", 
             "name": "John White"
         }, 
         "diagnosis": [
@@ -20,7 +20,7 @@
             }
         ], 
         "discharge": "PKGB1 in 2/52", 
-        "generalNotes": [
+        "general_notes": [
             {
                 "comment": "This is a general note", 
                 "date": "16/5"
@@ -29,22 +29,22 @@
         "location": {
             "bed": "32", 
             "category": "Inpatient", 
-            "dateOfAdmission": "11 May 2013", 
+            "date_of_admission": "11 May 2013", 
             "hospital": "UCH", 
             "ward": "T8"
         }, 
         "microbiology": [], 
-        "microbiologyComments": [
+        "microbiology_comments": [
             {
-                "agreedPlan": "Keep on Keeping On", 
-                "clinicalAdviceGiven": true, 
-                "clinicalDiscussion": "We discussed clinical things", 
+                "agreed_plan": "Keep on Keeping On", 
+                "clinical_advice_given": true, 
+                "clinical_discussion": "We discussed clinical things", 
                 "date": "16/5", 
-                "discussedWith": "XYZ", 
+                "discussed_with": "XYZ", 
                 "initials": "ABC"
             }
         ], 
-        "pastMedicalHistory": [], 
+        "past_medical_history": [], 
         "plan": "Chase cultures\n?Switch to oral abx\nAim home Friday", 
         "travel": []
     }, 
@@ -52,14 +52,14 @@
         "antimicrobials": [
             {
                 "dose": "125 mg", 
-                "endDate": null, 
+                "end_date": null, 
                 "name": "Atripla", 
-                "startDate": null
+                "start_date": null
             }
         ], 
         "demographics": {
-            "dateOfBirth": "2 Jan 1985", 
-            "hospitalNumber": "BCDE2345", 
+            "date_of_birth": "2 Jan 1985", 
+            "hospital_number": "BCDE2345", 
             "name": "Sarah Brown"
         }, 
         "diagnosis": [
@@ -74,17 +74,17 @@
             }
         ], 
         "discharge": null, 
-        "generalNotes": [], 
+        "general_notes": [], 
         "location": {
             "bed": "33", 
             "category": "Inpatient", 
-            "dateOfAdmission": "12 May 2013", 
+            "date_of_admission": "12 May 2013", 
             "hospital": "UCH", 
             "ward": "T8"
         }, 
         "microbiology": [], 
-        "microbiologyComments": [], 
-        "pastMedicalHistory": [
+        "microbiology_comments": [], 
+        "past_medical_history": [
             {
                 "condition": "PCP", 
                 "year": "2010"
@@ -97,14 +97,14 @@
         "antimicrobials": [
             {
                 "dose": "300 mg", 
-                "endDate": null, 
+                "end_date": null, 
                 "name": "Riamet", 
-                "startDate": "13 May 2013"
+                "start_date": "13 May 2013"
             }
         ], 
         "demographics": {
-            "dateOfBirth": "3 Jan 1985", 
-            "hospitalNumber": "CDEF3456", 
+            "date_of_birth": "3 Jan 1985", 
+            "hospital_number": "CDEF3456", 
             "name": "Jack Green"
         }, 
         "diagnosis": [
@@ -114,17 +114,17 @@
             }
         ], 
         "discharge": "nil", 
-        "generalNotes": [], 
+        "general_notes": [], 
         "location": {
             "bed": "21", 
             "category": "Inpatient", 
-            "dateOfAdmission": "13 May 2013", 
+            "date_of_admission": "13 May 2013", 
             "hospital": "UCH", 
             "ward": "T6"
         }, 
         "microbiology": [], 
-        "microbiologyComments": [], 
-        "pastMedicalHistory": [
+        "microbiology_comments": [], 
+        "past_medical_history": [
             {
                 "condition": "Type 2 Diabetes", 
                 "year": "2005"
@@ -136,7 +136,7 @@
                 "dates": "Early May 2013", 
                 "destination": "Gambia", 
                 "reason": "Tourism", 
-                "specificExposures": "Did not take anti-malarials"
+                "specific_exposures": "Did not take anti-malarials"
             }
         ]
     }, 
@@ -144,15 +144,15 @@
         "antimicrobials": [
             {
                 "dose": "250 mg", 
-                "endDate": null, 
+                "end_date": null, 
                 "name": "Flucloxacillin", 
                 "route": "Oral", 
-                "startDate": "15 May 2013"
+                "start_date": "15 May 2013"
             }
         ], 
         "demographics": {
-            "dateOfBirth": "4 Jan 1985", 
-            "hospitalNumber": "DEFG4567", 
+            "date_of_birth": "4 Jan 1985", 
+            "hospital_number": "DEFG4567", 
             "name": "Jess Black"
         }, 
         "diagnosis": [
@@ -162,17 +162,17 @@
             }
         ], 
         "discharge": null, 
-        "generalNotes": [], 
+        "general_notes": [], 
         "location": {
             "bed": "34", 
             "category": "Review", 
-            "dateOfAdmission": "14 May 2013", 
+            "date_of_admission": "14 May 2013", 
             "hospital": "UCH", 
             "ward": "T8"
         }, 
         "microbiology": [], 
-        "microbiologyComments": [], 
-        "pastMedicalHistory": [
+        "microbiology_comments": [], 
+        "past_medical_history": [
             {
                 "condition": "Vascular Disease", 
                 "year": "2012"
@@ -184,8 +184,8 @@
     {
         "antimicrobials": [], 
         "demographics": {
-            "dateOfBirth": "5 Jan 1985", 
-            "hospitalNumber": "EFGH5678", 
+            "date_of_birth": "5 Jan 1985", 
+            "hospital_number": "EFGH5678", 
             "name": "David Grey"
         }, 
         "diagnosis": [
@@ -195,18 +195,18 @@
             }
         ], 
         "discharge": null, 
-        "generalNotes": [], 
+        "general_notes": [], 
         "hospital": "UCH", 
         "location": {
             "bed": null, 
             "category": "Followup", 
-            "dateOfAdmission": "15 May 2013", 
+            "date_of_admission": "15 May 2013", 
             "hospital": null, 
             "ward": null
         }, 
         "microbiology": [], 
-        "microbiologyComments": [], 
-        "pastMedicalHistory": [], 
+        "microbiology_comments": [], 
+        "past_medical_history": [], 
         "plan": "Serology pending - call with result", 
         "travel": []
     }

@@ -1,0 +1,32 @@
+<ul>
+	<li>
+		[[item.date]]
+		([[item.initials]]<span ng-show="item.discussed_with"> with [[item.discussed_with]]</span>)
+	</li>
+	<li>
+		[[item.clinical_discussion]]
+	</li>
+	<li>
+		Plan: [[item.agreed_plan]]
+	</li>
+	<li>
+		<span ng-hide="item.clinical_advice_given">&#x2610;</span>
+		<span ng-show="item.clinical_advice_given">&#x2611;</span>
+		Clinical advice given
+	</li>
+	<li>
+		<span ng-hide="item.giving_result">&#x2610;</span>
+		<span ng-show="item.giving_result">&#x2611;</span>
+		Giving result
+	</li>
+	<li>
+		<span ng-hide="item.infection_control_advice_given">&#x2610;</span>
+		<span ng-show="item.infection_control_advice_given">&#x2611;</span>
+		Infection control advice given
+	</li>
+	<li>
+		<span ng-hide="item.change_in_antibiotic_prescription">&#x2610;</span>
+		<span ng-show="item.change_in_antibiotic_prescription">&#x2611;</span>
+		Change in antibiotic prescription
+	</li>
+</ul>

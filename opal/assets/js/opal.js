@@ -52,12 +52,12 @@ app.controller('TableCtrl', function($scope, $http) {
 		{name: 'location', title: 'Location', multi: false},
 		{name: 'demographics', title: 'Demographics', multi: false}, 
 		{name: 'diagnosis', title: 'Diagnosis', multi: true},
-		{name: 'pastMedicalHistory', title: 'Past Medical History', multi: true},
-		{name: 'generalNotes', title: 'Notes', multi: true},
+		{name: 'past_medical_history', title: 'Past Medical History', multi: true},
+		{name: 'general_notes', title: 'Notes', multi: true},
 		{name: 'travel', title: 'Travel', multi: true},
 		{name: 'antimicrobials', title: 'Antimicrobials', multi: true},
 		{name: 'microbiology', title: 'Microbiology Results', multi: true},
-		{name: 'microbiologyComments', title: 'Microbiology Input', multi: true},
+		{name: 'microbiology_comments', title: 'Microbiology Input', multi: true},
 		{name: 'plan', title: 'Plan', multi: false},
 		{name: 'discharge', title: 'Discharge', multi: false}
 	];
