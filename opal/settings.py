@@ -119,6 +119,7 @@ INSTALLED_APPS = (
     'south',
     'options',
     'patients',
+    'utils',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -153,3 +154,9 @@ LOGGING = {
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 # (Heroku requirement)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    )
+}

@@ -10,6 +10,7 @@ urlpatterns = patterns('',
     url(r'^contact/$', ContactView.as_view()),
     url(r'^options/', include('options.urls')),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^patient/', include('patients.urls')),
 )
 
 urlpatterns += staticfiles_urlpatterns()

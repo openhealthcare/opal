@@ -1,4 +1,29 @@
 from django.views.generic import TemplateView
+from rest_framework import generics
+from patients import models, serializers
+
+class PatientList(generics.ListCreateAPIView):
+    queryset = models.Patient.objects.all()
+    serializer_class = serializers.PatientSerializer
+
+class SingletonView(object):
+    def get_serializer_class(self):
+        return serializers.build_subrecord_serializer(self.model)
+
+    @property
+    def patient(self):
+        return models.Patient.objects.get(pk=self.kwargs['patient_id'])
+
+class SingletonSubrecordDetail(SingletonView, generics.RetrieveUpdateAPIView):
+    def get_object(self, queryset=None):
+        return getattr(self.patient, self.model.__name__.lower())
+
+class SubrecordList(SingletonView, generics.ListCreateAPIView):
+    pass
+
+class SubrecordDetail(SingletonView, generics.RetrieveUpdateAPIView):
+    def get_object(self, queryset=None):
+        return getattr(self.patient, self.model.__name__.lower() + '_set').get(pk=self.kwargs['id'])
 
 class IndexView(TemplateView):
     template_name = "opal.html"
