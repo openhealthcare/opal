@@ -29,6 +29,9 @@ class ForeignKeyOrFreeTextTest(TestCase):
     def test_can_create_with_unknown_name(self):
         models.Person.objects.create(favorite_colour='green')
 
+    def test_can_create_with_field_not_set(self):
+        models.Person.objects.create()
+
     def test_can_lookup_with_known_name(self):
         person = models.Person.objects.create(favorite_colour='red')
         person = models.Person.objects.get(pk=person.id)
