@@ -132,7 +132,7 @@ app.controller('TableCtrl', function($scope, $http) {
 			for (var rix = 0; rix < rows.length; rix++) {
 				for (var cix = 0; cix < $scope.columns.length; cix++) {
 					if (!$scope.columns[cix].single) {
-						rows[rix][$scope.columns[cix].name].push({});
+						rows[rix][$scope.columns[cix].name].push({patient: rows[rix].id});
 					}
 				}
 			}
@@ -224,16 +224,21 @@ app.controller('TableCtrl', function($scope, $http) {
 		var newRecord = {};
 		var column;
 
-		for (var cix = 0; cix < $scope.columns.length; cix++) {
-			column = $scope.columns[cix];
-			if (!column.single) {
-				newRecord[column.name] = [{}];
+		$http.post('patient/').success(function(patient) {
+			newRecord.id = patient.id;
+			for (var cix = 0; cix < $scope.columns.length; cix++) {
+				column = $scope.columns[cix];
+				if (column.single) {
+					newRecord[column.name] = {patient: patient.id};
+				} else {
+					newRecord[column.name] = [{patient: patient.id}];
+				}
 			}
-		}
 
-		$scope.rows.push(newRecord);
-		$scope.selectItem($scope.rows.length - 1, 0, 0);
-		startEdit();
+			$scope.rows.push(newRecord);
+			$scope.selectItem($scope.rows.length - 1, 0, 0);
+			startEdit();
+		});
 	};
 
 	$scope.saveEdit = function() {
@@ -241,16 +246,26 @@ app.controller('TableCtrl', function($scope, $http) {
 		var cix = $scope.cix;
 		var iix = $scope.iix;
 		var columnName = $scope.columns[cix].name;
+		var url;
 
 		clearModal(columnName);
 		editing = false;
 
 		if ($scope.columns[cix]['single']) {
 			$scope.rows[rix][columnName] = clone($scope.editing);
+			url = 'patient/' + $scope.rows[rix].id + '/' + columnName + '/';
+			$http.put(url, $scope.editing);
 		} else {
 			$scope.rows[rix][columnName][iix] = clone($scope.editing);
+			if (typeof($scope.editing.id) == 'undefined') {
+				url = 'patient/' + $scope.rows[rix].id + '/' + columnName + '/';
+				$http.post(url, $scope.editing);
+			} else {
+				url = 'patient/' + $scope.rows[rix].id + '/' + columnName + '/' + $scope.editing.id + '/';
+				$http.put(url, $scope.editing);
+			}
 			if (iix + 1 == getNumItems(rix, cix)) {
-				$scope.rows[rix][columnName].push({});
+				$scope.rows[rix][columnName].push({patient: $scope.rows[rix].id});
 			}
 		}
 	};
