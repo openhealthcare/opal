@@ -24,7 +24,7 @@ class SingletonSubrecordDetail(SingletonView, generics.RetrieveUpdateAPIView):
 class SubrecordList(SingletonView, generics.ListCreateAPIView):
     pass
 
-class SubrecordDetail(SingletonView, generics.RetrieveUpdateAPIView):
+class SubrecordDetail(SingletonView, generics.RetrieveUpdateDestroyAPIView):
     def get_object(self, queryset=None):
         return getattr(self.patient, camelcase_to_underscore(self.model.__name__)).get(pk=self.kwargs['id'])
 

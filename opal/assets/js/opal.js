@@ -282,9 +282,13 @@ app.controller('TableCtrl', function($scope, $http) {
 		var rix = $scope.rix;
 		var cix = $scope.cix;
 		var iix = $scope.iix;
-		var column = $scope.columns[cix];
+		var columnName = $scope.columns[cix].name;
+		var id = $scope.rows[rix][columnName][iix].id
 
-		$scope.rows[rix][column.name].splice(iix, 1);
+		url = 'patient/' + $scope.rows[rix].id + '/' + columnName + '/' + id + '/';
+		$http.delete(url);
+
+		$scope.rows[rix][columnName].splice(iix, 1);
 		deleting = false;
 	};
 
