@@ -41,16 +41,18 @@ class PastMedicalHistory(Subrecord):
     year = models.CharField(max_length=4, blank=True)
 
 class GeneralNote(Subrecord):
+    _title = 'General Notes'
     date = models.DateField(null=True, blank=True)
     comment = models.TextField()
 
-class Destination(Subrecord):
+class Travel(Subrecord):
     destination = ForeignKeyOrFreeText(option_models['destination'])
     dates = models.CharField(max_length=255, blank=True)
     reason_for_travel = ForeignKeyOrFreeText(option_models['travel_reason'])
     specific_exposures = models.CharField(max_length=255, blank=True)
 
 class Antimicrobial(Subrecord):
+    _title = 'Antimicrobials'
     drug = ForeignKeyOrFreeText(option_models['antimicrobial'])
     dose = models.CharField(max_length=255, blank=True)
     route = ForeignKeyOrFreeText(option_models['antimicrobial_route'])

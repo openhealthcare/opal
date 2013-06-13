@@ -1,3 +1,90 @@
+var option_lists = [
+	'antimicrobial',
+	'antimicrobial_route',
+	'condition',
+	'destination',
+	'microbiology_organism',
+	'patient_category',
+	'travel_reason',
+];
+
+var microbiology_test_list = [
+	'Broncheoalveolar lavage MC&S',
+	'Blood Culture',
+	'CSF AFB microscopy & TB culture',
+	'CSF MC&S',
+	'Fluid MC&S',
+	'Lymph Node MC&S',
+	'Pleural MC&S',
+	'Sputum AFB microscopy & TB culture',
+	'Sputum MC&S',
+	'Stool MC&S',
+	'Stool OCP',
+	'Throat Swab MC&S',
+	'Tissue AFB microscopy & TB culture',
+	'Tissue MC&S',
+	'Urine AFB microscopy & TB culture',
+	'Urine MC&S',
+	'Wound swab MC&S',
+	'CMV Serology',
+	'Dengue Serology',
+	'Hepatitis A Serology',
+	'Hepatitis E Serology',
+	'Measles Serology',
+	'Rubella Serology',
+	'Toxoplasmosis Serology',
+	'VZV Serology',
+	'Brucella Serology',
+	'EBV Serology',
+	'HIV',
+	'Hepatitis B Serology',
+	'Syphilis Serology',
+	'Cryptococcal antigen',
+	'Dengue PCR',
+	'JC Virus PCR',
+	'MRSA PCR',
+	'Rickettsia PCR',
+	'Scrub Typhus PCR',
+	'Borrleia Screening Serology',
+	'Brorleia Reference Serology',
+	'Viral Haemorrhagic Fever PCR',
+	'Amoebic Serology',
+	'Cystercicosis Serology',
+	'Fasciola Serology',
+	'Filaria Serology',
+	'Hydatid Serology',
+	'Strongyloides Serology',
+	'Toxcocara Serology',
+	'Trypanosomiasis brucei Serology',
+	'Trypanosomiasis cruzi serology',
+	'Hepatitis C Serology',
+	'Hepatitis D Serology',
+	'HHV-6 Serology',
+	'HHV-7 Serology',
+	'HTLV Serology',
+	'CMV Viral Load',
+	'EBV Viral Load ',
+	'HBV Viral Load',
+	'HCV Viral Load',
+	'HHV-6 Viral Load',
+	'HHV-7 Viral Load',
+	'HHV-8 Viral Load',
+	'HIV Viral Load',
+	'Measles PCR',
+	'VZV Viral Load',
+	'Babesia Film',
+	'Malaria Film',
+	'Microfilarial Film',
+	'Swab PCR',
+	'C. difficile',
+	'Leishmaniasis PCR',
+	'CSF PCR',
+	'Respiratory Virus PCR',
+	'Stool PCR',
+	'Stool Parasitology PCR',
+	'Other',
+];
+
 function clone(obj) {
 	if (typeof obj == 'object') {
 		return $.extend(true, {}, obj);
@@ -37,30 +124,23 @@ app.controller('TableCtrl', function($scope, $http) {
 	$scope.mouseRix = -1; // index of row mouse is currently over
 	$scope.mouseCix = -1; // index of column mouse is currently over
 
-	$http.get('assets/records.json').success(function(rows) {
-		for (var rix = 0; rix < rows.length; rix++) {
-			for (var cix = 0; cix < $scope.columns.length; cix++) {
-				if ($scope.columns[cix].multi) {
-					rows[rix][$scope.columns[cix].name].push({});
+
+	$http.get('schema/').success(function(columns) {
+		$scope.columns = columns;
+
+		$http.get('assets/records.json').success(function(rows) {
+			for (var rix = 0; rix < rows.length; rix++) {
+				console.log(rows[rix]);
+				for (var cix = 0; cix < $scope.columns.length; cix++) {
+					if ($scope.columns[cix].multi) {
+						console.log($scope.columns[cix].name);
+						rows[rix][$scope.columns[cix].name].push({});
+					}
 				}
 			}
-		}
-		$scope.rows = rows;
-	});
-
-	$scope.columns = [
-		{name: 'location', title: 'Location', multi: false},
-		{name: 'demographics', title: 'Demographics', multi: false}, 
-		{name: 'diagnosis', title: 'Diagnosis', multi: true},
-		{name: 'past_medical_history', title: 'Past Medical History', multi: true},
-		{name: 'general_notes', title: 'Notes', multi: true},
-		{name: 'travel', title: 'Travel', multi: true},
-		{name: 'antimicrobials', title: 'Antimicrobials', multi: true},
-		{name: 'microbiology', title: 'Microbiology Results', multi: true},
-		{name: 'microbiology_comments', title: 'Microbiology Input', multi: true},
-		{name: 'plan', title: 'Plan', multi: false},
-		{name: 'discharge', title: 'Discharge', multi: false}
-	];
+			$scope.rows = rows;
+		});
+	})
 
 	$scope.getCix = function(name) {
 		for (var cix = 0; cix < $scope.columns.length; cix++) {
@@ -71,15 +151,6 @@ app.controller('TableCtrl', function($scope, $http) {
 		throw 'Unexpected column name: ' + name
 	};
 
-	var option_lists = [
-		'antimicrobial',
-		'antimicrobial_route',
-		'condition',
-		'destination',
-		'microbiology_organism',
-		'patient_category',
-		'travel_reason',
-	];
 
 	for (var i = 0; i < option_lists.length; i++) {
 		(function(option) {
@@ -94,82 +165,6 @@ app.controller('TableCtrl', function($scope, $http) {
 		})(option_lists[i]);
 	}
 
-	$scope.microbiology_test_list = [
-		'Broncheoalveolar lavage MC&S',
-		'Blood Culture',
-		'CSF AFB microscopy & TB culture',
-		'CSF MC&S',
-		'Fluid MC&S',
-		'Lymph Node MC&S',
-		'Pleural MC&S',
-		'Sputum AFB microscopy & TB culture',
-		'Sputum MC&S',
-		'Stool MC&S',
-		'Stool OCP',
-		'Throat Swab MC&S',
-		'Tissue AFB microscopy & TB culture',
-		'Tissue MC&S',
-		'Urine AFB microscopy & TB culture',
-		'Urine MC&S',
-		'Wound swab MC&S',
-		'CMV Serology',
-		'Dengue Serology',
-		'Hepatitis A Serology',
-		'Hepatitis E Serology',
-		'Measles Serology',
-		'Rubella Serology',
-		'Toxoplasmosis Serology',
-		'VZV Serology',
-		'Brucella Serology',
-		'EBV Serology',
-		'HIV',
-		'Hepatitis B Serology',
-		'Syphilis Serology',
-		'Cryptococcal antigen',
-		'Dengue PCR',
-		'JC Virus PCR',
-		'MRSA PCR',
-		'Rickettsia PCR',
-		'Scrub Typhus PCR',
-		'Borrleia Screening Serology',
-		'Brorleia Reference Serology',
-		'Viral Haemorrhagic Fever PCR',
-		'Amoebic Serology',
-		'Cystercicosis Serology',
-		'Fasciola Serology',
-		'Filaria Serology',
-		'Hydatid Serology',
-		'Strongyloides Serology',
-		'Toxcocara Serology',
-		'Trypanosomiasis brucei Serology',
-		'Trypanosomiasis cruzi serology',
-		'Hepatitis C Serology',
-		'Hepatitis D Serology',
-		'HHV-6 Serology',
-		'HHV-7 Serology',
-		'HTLV Serology',
-		'CMV Viral Load',
-		'EBV Viral Load ',
-		'HBV Viral Load',
-		'HCV Viral Load',
-		'HHV-6 Viral Load',
-		'HHV-7 Viral Load',
-		'HHV-8 Viral Load',
-		'HIV Viral Load',
-		'Measles PCR',
-		'VZV Viral Load',
-		'Babesia Film',
-		'Malaria Film',
-		'Microfilarial Film',
-		'Swab PCR',
-		'C. difficile',
-		'Leishmaniasis PCR',
-		'CSF PCR',
-		'Respiratory Virus PCR',
-		'Stool PCR',
-		'Stool Parasitology PCR',
-		'Other',
-	];
 
 	$scope.getSynonymn = function(option, term) {
 		var synonyms = $scope[option + '_synonyms'];

@@ -66,8 +66,8 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'patients', ['GeneralNote'])
 
-        # Adding model 'Destination'
-        db.create_table(u'patients_destination', (
+        # Adding model 'Travel'
+        db.create_table(u'patients_travel', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('patient', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Patient'])),
             ('dates', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
@@ -77,7 +77,7 @@ class Migration(SchemaMigration):
             ('reason_for_travel_fk', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['options.Travel_reason'], null=True, blank=True)),
             ('reason_for_travel_ft', self.gf('django.db.models.fields.CharField')(max_length=255, blank=True)),
         ))
-        db.send_create_signal(u'patients', ['Destination'])
+        db.send_create_signal(u'patients', ['Travel'])
 
         # Adding model 'Antimicrobial'
         db.create_table(u'patients_antimicrobial', (
@@ -145,8 +145,8 @@ class Migration(SchemaMigration):
         # Deleting model 'GeneralNote'
         db.delete_table(u'patients_generalnote')
 
-        # Deleting model 'Destination'
-        db.delete_table(u'patients_destination')
+        # Deleting model 'Travel'
+        db.delete_table(u'patients_travel')
 
         # Deleting model 'Antimicrobial'
         db.delete_table(u'patients_antimicrobial')
@@ -221,17 +221,6 @@ class Migration(SchemaMigration):
             'name': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'patient': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['patients.Patient']", 'unique': 'True'})
         },
-        u'patients.destination': {
-            'Meta': {'object_name': 'Destination'},
-            'dates': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'destination_fk': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['options.Destination']", 'null': 'True', 'blank': 'True'}),
-            'destination_ft': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'patient': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['patients.Patient']"}),
-            'reason_for_travel_fk': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['options.Travel_reason']", 'null': 'True', 'blank': 'True'}),
-            'reason_for_travel_ft': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'specific_exposures': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'})
-        },
         u'patients.diagnosis': {
             'Meta': {'object_name': 'Diagnosis'},
             'condition_fk': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['options.Condition']", 'null': 'True', 'blank': 'True'}),
@@ -295,6 +284,17 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'patient': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['patients.Patient']", 'unique': 'True'}),
             'plan': ('django.db.models.fields.TextField', [], {'blank': 'True'})
+        },
+        u'patients.travel': {
+            'Meta': {'object_name': 'Travel'},
+            'dates': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
+            'destination_fk': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['options.Destination']", 'null': 'True', 'blank': 'True'}),
+            'destination_ft': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'patient': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['patients.Patient']"}),
+            'reason_for_travel_fk': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['options.Travel_reason']", 'null': 'True', 'blank': 'True'}),
+            'reason_for_travel_ft': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
+            'specific_exposures': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'})
         }
     }
 

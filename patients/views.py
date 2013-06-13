@@ -1,6 +1,9 @@
+import json
+from django.http import HttpResponse
 from django.views.generic import TemplateView
 from rest_framework import generics
-from patients import models, serializers
+from utils import camelcase_to_underscore
+from patients import models, serializers, schema
 
 class PatientList(generics.ListCreateAPIView):
     queryset = models.Patient.objects.all()
@@ -30,25 +33,29 @@ class IndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
-        context['columns'] = [
-            {'name': 'location', 'title': 'Location', 'single': 'yes'},
-            {'name': 'demographics', 'title': 'Demographics', 'single': 'yes'}, 
-            {'name': 'diagnosis', 'title': 'Diagnosis', 'single': 'no'},
-            {'name': 'past_medical_history', 'title': 'Past Medical History', 'single': 'no'},
-            {'name': 'general_notes', 'title': 'Notes', 'single': 'no'},
-            {'name': 'travel', 'title': 'Travel', 'single': 'no'},
-            {'name': 'antimicrobials', 'title': 'Antimicrobials', 'single': 'no'},
-            {'name': 'microbiology', 'title': 'Microbiology Results', 'single': 'no'},
-            {'name': 'microbiology_comments', 'title': 'Microbiology Input', 'single': 'no'},
-            {'name': 'plan', 'title': 'Plan', 'single': 'yes'},
-            {'name': 'discharge', 'title': 'Discharge', 'single': 'yes'},
-        ]
-        for column in context['columns']:
-            column['template_path'] = column['name'] + '.html'
-            column['modal_template_path'] = column['name'] + '_modal.html'
+        context['columns'] = []
+
+        for column in schema.columns:
+            column_context = {}
+            name = camelcase_to_underscore(column.__name__)
+            column_context['name'] = name
+            column_context['title'] = getattr(column, '_title', name.replace('_', ' ').title())
+            column_context['single'] = 'yes' if issubclass(column, models.SingletonSubrecord) else 'no'
+            column_context['template_path'] = name + '.html'
+            column_context['modal_template_path'] = name + '_modal.html'
+            context['columns'].append(column_context)
 
         return context
 
 # This probably doesn't belong here
 class ContactView(TemplateView):
     template_name = "contact.html"
+
+def schema_view(request):
+    data = []
+    for column in schema.columns:
+        data.append({
+            'name': camelcase_to_underscore(column.__name__),
+            'multi': not issubclass(column, models.SingletonSubrecord)
+        })
+    return HttpResponse(json.dumps(data), mimetype='application/json')

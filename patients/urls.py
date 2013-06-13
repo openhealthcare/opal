@@ -1,8 +1,6 @@
-import re
 from django.conf.urls import patterns, url
+from utils import camelcase_to_underscore
 from patients import models, views
-
-camelcase_to_underscore = lambda str: re.sub('(((?<=[a-z])[A-Z])|([A-Z](?![A-Z]|$)))', '_\\1', str).lower().strip('_')
 
 urlpatterns = patterns('',
     url(r'^$', views.PatientList.as_view()),

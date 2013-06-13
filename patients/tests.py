@@ -132,25 +132,25 @@ class PatientTest(TestCase):
         rsp = self.get('general_note/%d/' % rsp.data['id'])
         self.assertEqual(200, rsp.status_code)
 
-    def test_can_create_destination(self):
+    def test_can_create_travel(self):
         data = {
             'destination': 'Solomon Islands',
             'dates': 'May 2013',
             'reason_for_travel': 'Holiday',
             'specific_exposures': 'Bitten by water snake'
         }
-        rsp = self.post('destination/', data)
+        rsp = self.post('travel/', data)
         self.assertEqual(201, rsp.status_code)
 
-    def test_can_access_destination(self):
+    def test_can_access_travel(self):
         data = {
             'destination': 'Solomon Islands',
             'dates': 'May 2013',
             'reason_for_travel': 'Holiday',
             'specific_exposures': 'Bitten by water snake'
         }
-        rsp = self.post('destination/', data)
-        rsp = self.get('destination/%d/' % rsp.data['id'])
+        rsp = self.post('travel/', data)
+        rsp = self.get('travel/%d/' % rsp.data['id'])
         self.assertEqual(200, rsp.status_code)
 
     def test_can_create_antimicrobial(self):

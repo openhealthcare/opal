@@ -1,6 +1,6 @@
 [
     {
-        "antimicrobials": [
+        "antimicrobial": [
             {
                 "dose": "250 mg", 
                 "end_date": null, 
@@ -20,7 +20,7 @@
             }
         ], 
         "discharge": "PKGB1 in 2/52", 
-        "general_notes": [
+        "general_note": [
             {
                 "comment": "This is a general note", 
                 "date": "16/5"
@@ -34,7 +34,7 @@
             "ward": "T8"
         }, 
         "microbiology": [], 
-        "microbiology_comments": [
+        "microbiology_input": [
             {
                 "agreed_plan": "Keep on Keeping On", 
                 "clinical_advice_given": true, 
@@ -49,7 +49,7 @@
         "travel": []
     }, 
     {
-        "antimicrobials": [
+        "antimicrobial": [
             {
                 "dose": "125 mg", 
                 "end_date": null, 
@@ -74,7 +74,7 @@
             }
         ], 
         "discharge": null, 
-        "general_notes": [], 
+        "general_note": [], 
         "location": {
             "bed": "33", 
             "category": "Inpatient", 
@@ -83,7 +83,7 @@
             "ward": "T8"
         }, 
         "microbiology": [], 
-        "microbiology_comments": [], 
+        "microbiology_input": [], 
         "past_medical_history": [
             {
                 "condition": "PCP", 
@@ -94,7 +94,7 @@
         "travel": []
     }, 
     {
-        "antimicrobials": [
+        "antimicrobial": [
             {
                 "dose": "300 mg", 
                 "end_date": null, 
@@ -114,7 +114,7 @@
             }
         ], 
         "discharge": "nil", 
-        "general_notes": [], 
+        "general_note": [], 
         "location": {
             "bed": "21", 
             "category": "Inpatient", 
@@ -123,7 +123,7 @@
             "ward": "T6"
         }, 
         "microbiology": [], 
-        "microbiology_comments": [], 
+        "microbiology_input": [], 
         "past_medical_history": [
             {
                 "condition": "Type 2 Diabetes", 
@@ -141,7 +141,7 @@
         ]
     }, 
     {
-        "antimicrobials": [
+        "antimicrobial": [
             {
                 "dose": "250 mg", 
                 "end_date": null, 
@@ -162,7 +162,7 @@
             }
         ], 
         "discharge": null, 
-        "general_notes": [], 
+        "general_note": [], 
         "location": {
             "bed": "34", 
             "category": "Review", 
@@ -171,7 +171,7 @@
             "ward": "T8"
         }, 
         "microbiology": [], 
-        "microbiology_comments": [], 
+        "microbiology_input": [], 
         "past_medical_history": [
             {
                 "condition": "Vascular Disease", 
@@ -182,7 +182,7 @@
         "travel": []
     }, 
     {
-        "antimicrobials": [], 
+        "antimicrobial": [], 
         "demographics": {
             "date_of_birth": "5 Jan 1985", 
             "hospital_number": "EFGH5678", 
@@ -195,7 +195,7 @@
             }
         ], 
         "discharge": null, 
-        "general_notes": [], 
+        "general_note": [], 
         "hospital": "UCH", 
         "location": {
             "bed": null, 
@@ -205,7 +205,7 @@
             "ward": null
         }, 
         "microbiology": [], 
-        "microbiology_comments": [], 
+        "microbiology_input": [], 
         "past_medical_history": [], 
         "plan": "Serology pending - call with result", 
         "travel": []
