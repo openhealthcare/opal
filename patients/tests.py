@@ -65,7 +65,7 @@ class PatientTest(TestCase):
         }
         rsp = self.post('diagnosis/', data)
         self.assertEqual(201, rsp.status_code)
-        diagnosis = self.patient.diagnosis_set.get(pk=rsp.data['id'])
+        diagnosis = self.patient.diagnosis.get(pk=rsp.data['id'])
         self.assertIsNotNone(diagnosis.condition_fk)
         self.assertEqual('', diagnosis.condition_ft)
 
@@ -77,7 +77,7 @@ class PatientTest(TestCase):
         }
         rsp = self.post('diagnosis/', data)
         self.assertEqual(201, rsp.status_code)
-        diagnosis = self.patient.diagnosis_set.get(pk=rsp.data['id'])
+        diagnosis = self.patient.diagnosis.get(pk=rsp.data['id'])
         self.assertIsNone(diagnosis.condition_fk)
         self.assertEqual('New Condition', diagnosis.condition_ft)
 
@@ -94,7 +94,7 @@ class PatientTest(TestCase):
         }
         rsp = self.put('diagnosis/%d/' % rsp.data['id'], data)
         self.assertEqual(200, rsp.status_code)
-        diagnosis = self.patient.diagnosis_set.get(pk=rsp.data['id'])
+        diagnosis = self.patient.diagnosis.get(pk=rsp.data['id'])
         self.assertIsNone(diagnosis.condition_fk)
         self.assertEqual('New Condition', diagnosis.condition_ft)
 

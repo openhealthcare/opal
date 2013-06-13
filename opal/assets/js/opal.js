@@ -128,7 +128,7 @@ app.controller('TableCtrl', function($scope, $http) {
 	$http.get('schema/').success(function(columns) {
 		$scope.columns = columns;
 
-		$http.get('assets/records.json').success(function(rows) {
+		$http.get('patient/').success(function(rows) {
 			for (var rix = 0; rix < rows.length; rix++) {
 				console.log(rows[rix]);
 				for (var cix = 0; cix < $scope.columns.length; cix++) {

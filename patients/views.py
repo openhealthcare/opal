@@ -26,7 +26,7 @@ class SubrecordList(SingletonView, generics.ListCreateAPIView):
 
 class SubrecordDetail(SingletonView, generics.RetrieveUpdateAPIView):
     def get_object(self, queryset=None):
-        return getattr(self.patient, self.model.__name__.lower() + '_set').get(pk=self.kwargs['id'])
+        return getattr(self.patient, camelcase_to_underscore(self.model.__name__)).get(pk=self.kwargs['id'])
 
 class IndexView(TemplateView):
     template_name = "opal.html"

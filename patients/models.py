@@ -2,22 +2,35 @@ from django.db import models
 from django.dispatch import receiver
 
 from utils.fields import ForeignKeyOrFreeText
+from utils import camelcase_to_underscore
 from options.models import option_models
 
 class Patient(models.Model):
     pass
 
-class SingletonSubrecord(models.Model):
-    patient = models.OneToOneField(Patient)
+class SingletonSubrecordBase(models.base.ModelBase):
+    def __new__(cls, name, bases, attrs):
+        if name == 'SingletonSubrecord':
+            attrs['Meta'] = type('Meta', (object,), {'abstract': True})
+        else:
+            related_name = camelcase_to_underscore(name)
+            attrs['patient'] = models.OneToOneField(Patient, related_name=related_name)
+        return super(SingletonSubrecordBase, cls).__new__(cls, name, bases, attrs)
 
-    class Meta:
-        abstract = True
+class SubrecordBase(models.base.ModelBase):
+    def __new__(cls, name, bases, attrs):
+        if name == 'Subrecord':
+            attrs['Meta'] = type('Meta', (object,), {'abstract': True})
+        else:
+            related_name = camelcase_to_underscore(name)
+            attrs['patient'] = models.ForeignKey(Patient, related_name=related_name)
+        return super(SubrecordBase, cls).__new__(cls, name, bases, attrs)
+
+class SingletonSubrecord(models.Model):
+    __metaclass__ = SingletonSubrecordBase
 
 class Subrecord(models.Model):
-    patient = models.ForeignKey(Patient)
-
-    class Meta:
-        abstract = True
+    __metaclass__ = SubrecordBase
 
 class Demographics(SingletonSubrecord):
     name = models.CharField(max_length=255, blank=True)

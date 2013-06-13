@@ -1,10 +1,7 @@
 from rest_framework import serializers
 from patients import models
 from utils.fields import ForeignKeyOrFreeText
-
-class PatientSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = models.Patient
+from utils import camelcase_to_underscore
 
 def build_subrecord_serializer(model):
     '''Builds a serializer for a Subrecord, handling ForeignKeyOrFreeText correctly.
@@ -24,3 +21,13 @@ def build_subrecord_serializer(model):
     attrs = {name: serializers.WritableField(required=False) for name in fkft_field_names}
     attrs['Meta'] = type('Meta', (object,), {'model': model, 'exclude': field_names_to_exclude})
     return type(model.__name__ + 'Serializer', (serializers.ModelSerializer,), attrs)
+
+attrs = {'Meta': type('Meta', (object,), {'model': models.Patient})}
+
+for model in models.SingletonSubrecord.__subclasses__():
+    attrs[camelcase_to_underscore(model._meta.object_name)] = build_subrecord_serializer(model)(required=False)
+
+for model in models.Subrecord.__subclasses__():
+    attrs[camelcase_to_underscore(model._meta.object_name)] = build_subrecord_serializer(model)(many=True, required=False)
+
+PatientSerializer = type('PatientSerializer', (serializers.ModelSerializer,), attrs)
