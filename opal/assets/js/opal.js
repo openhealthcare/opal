@@ -401,3 +401,10 @@ app.controller('TableCtrl', function($scope, $http) {
 		}
 	}
 });
+
+app.value('$strapConfig', {
+	datepicker: {
+		format: 'yyyy-mm-dd',
+		type: 'string'
+	}
+});
