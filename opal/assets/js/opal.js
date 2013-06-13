@@ -130,10 +130,8 @@ app.controller('TableCtrl', function($scope, $http) {
 
 		$http.get('patient/').success(function(rows) {
 			for (var rix = 0; rix < rows.length; rix++) {
-				console.log(rows[rix]);
 				for (var cix = 0; cix < $scope.columns.length; cix++) {
-					if ($scope.columns[cix].multi) {
-						console.log($scope.columns[cix].name);
+					if (!$scope.columns[cix].single) {
 						rows[rix][$scope.columns[cix].name].push({});
 					}
 				}
@@ -187,10 +185,10 @@ app.controller('TableCtrl', function($scope, $http) {
 		var columnName = $scope.columns[cix].name;
 
 		editing = true;
-		if ($scope.columns[cix]['multi']) {
-			$scope.editing = clone($scope.rows[rix][columnName][iix]);
-		} else {
+		if ($scope.columns[cix]['single']) {
 			$scope.editing = clone($scope.rows[rix][columnName]);
+		} else {
+			$scope.editing = clone($scope.rows[rix][columnName][iix]);
 		}
 		$('#' + columnName + '-modal').modal();
 		$('#' + columnName + '-modal').find('input,textarea').first().focus();
@@ -202,7 +200,7 @@ app.controller('TableCtrl', function($scope, $http) {
 		var iix = $scope.iix;
 		var column = $scope.columns[cix];
 
-		if (!column.multi) {
+		if (column.single) {
 			return;
 		}
 
@@ -228,7 +226,7 @@ app.controller('TableCtrl', function($scope, $http) {
 
 		for (var cix = 0; cix < $scope.columns.length; cix++) {
 			column = $scope.columns[cix];
-			if (column.multi) {
+			if (!column.single) {
 				newRecord[column.name] = [{}];
 			}
 		}
@@ -247,13 +245,13 @@ app.controller('TableCtrl', function($scope, $http) {
 		clearModal(columnName);
 		editing = false;
 
-		if ($scope.columns[cix]['multi']) {
+		if ($scope.columns[cix]['single']) {
+			$scope.rows[rix][columnName] = clone($scope.editing);
+		} else {
 			$scope.rows[rix][columnName][iix] = clone($scope.editing);
 			if (iix + 1 == getNumItems(rix, cix)) {
 				$scope.rows[rix][columnName].push({});
 			}
-		} else {
-			$scope.rows[rix][columnName] = clone($scope.editing);
 		}
 	};
 
@@ -302,10 +300,10 @@ app.controller('TableCtrl', function($scope, $http) {
 
 	function getNumItems(rix, cix) {
 		var column = $scope.columns[cix];
-		if (column.multi) {
-			return $scope.rows[rix][column.name].length;
-		} else {
+		if (column.single) {
 			return 1;
+		} else {
+			return $scope.rows[rix][column.name].length;
 		}
 	};
 

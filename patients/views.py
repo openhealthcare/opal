@@ -40,7 +40,7 @@ class IndexView(TemplateView):
             name = camelcase_to_underscore(column.__name__)
             column_context['name'] = name
             column_context['title'] = getattr(column, '_title', name.replace('_', ' ').title())
-            column_context['single'] = 'yes' if issubclass(column, models.SingletonSubrecord) else 'no'
+            column_context['single'] = issubclass(column, models.SingletonSubrecord)
             column_context['template_path'] = name + '.html'
             column_context['modal_template_path'] = name + '_modal.html'
             context['columns'].append(column_context)
@@ -56,6 +56,6 @@ def schema_view(request):
     for column in schema.columns:
         data.append({
             'name': camelcase_to_underscore(column.__name__),
-            'multi': not issubclass(column, models.SingletonSubrecord)
+            'single': issubclass(column, models.SingletonSubrecord)
         })
     return HttpResponse(json.dumps(data), mimetype='application/json')
