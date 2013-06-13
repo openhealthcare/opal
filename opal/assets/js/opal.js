@@ -332,7 +332,6 @@ app.controller('TableCtrl', function($scope, $http) {
 		} else if (deleting) {
 			// ignore all keystrokes here
 		} else {
-			console.log(e.keyCode);
 			switch (e.keyCode) {
 				case 37: // left
 				case 72: // h
