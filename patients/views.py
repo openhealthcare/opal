@@ -4,6 +4,7 @@ from django.views.generic import TemplateView
 from rest_framework import generics
 from utils import camelcase_to_underscore
 from patients import models, serializers, schema
+import options
 
 class PatientList(generics.ListCreateAPIView):
     queryset = models.Patient.objects.all()
@@ -52,10 +53,14 @@ class ContactView(TemplateView):
     template_name = "contact.html"
 
 def schema_view(request):
-    data = []
+    columns = []
     for column in schema.columns:
-        data.append({
+        columns.append({
             'name': camelcase_to_underscore(column.__name__),
             'single': issubclass(column, models.SingletonSubrecord)
         })
+    data = {
+        'columns': columns,
+        'option_lists': options.model_names
+    }
     return HttpResponse(json.dumps(data), mimetype='application/json')
