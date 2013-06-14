@@ -85,8 +85,8 @@
 			</div>
 			<div class="modal-body">{% include column.modal_template_path %}</div>
 			<div class="modal-footer">
+				<button class="btn btn-primary" data-dismiss="modal" ng-click="saveEdit()">Save</button>
 				<button class="btn" data-dismiss="modal" ng-click="cancelEdit()">Cancel</button>
-				<button class="btn btn-primary" data-dismiss="modal" ng-click="saveEdit()">Save changes</button>
 			</div>
 		</div>
 		{% endfor %}
@@ -146,8 +146,8 @@
 					</div>
 				</div>
 				<div class="modal-footer">
+					<button class="btn btn-primary" data-dismiss="modal" ng-click="saveAdd()">Save record</button>
 					<button class="btn" data-dismiss="modal" ng-click="cancelEdit()">Cancel</button>
-					<button class="btn btn-primary" data-dismiss="modal" ng-click="saveAdd()">Save changes</button>
 				</div>
 			</form>
 		</div>
