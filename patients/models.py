@@ -6,7 +6,13 @@ from utils import camelcase_to_underscore
 from options.models import option_models
 
 class Patient(models.Model):
-    pass
+    def microbiology_test(self):
+        microbiology_test_classes = MicrobiologyTest.__subclasses__()
+        tests = []
+        for cls in microbiology_test_classes:
+            tests.extend(getattr(self, cls.__name__.lower() + '_set').all())
+        return tests
+
 
 class SingletonSubrecordBase(models.base.ModelBase):
     def __new__(cls, name, bases, attrs):
@@ -88,6 +94,51 @@ class Plan(SingletonSubrecord):
 
 class Discharge(SingletonSubrecord):
     plan = models.TextField(blank=True)
+
+class MicrobiologyTest(Subrecord):
+    test = models.CharField(max_length=255)
+    date_ordered = models.DateField(null=True, blank=True)
+    details = models.CharField(max_length=255, blank=True)
+    microscopy = models.CharField(max_length=255, blank=True)
+    organism = models.CharField(max_length=255, blank=True)
+    sensitive_antibiotics = models.CharField(max_length=255, blank=True)
+    resistant_antibiotics = models.CharField(max_length=255, blank=True)
+    result = models.CharField(max_length=20, blank=True)
+    igm = models.CharField(max_length=20, blank=True)
+    igg = models.CharField(max_length=20, blank=True)
+    vca_igm = models.CharField(max_length=20, blank=True)
+    vca_igg = models.CharField(max_length=20, blank=True)
+    ebna_igg = models.CharField(max_length=20, blank=True)
+    hbsag = models.CharField(max_length=20, blank=True)
+    anti_hbs = models.CharField(max_length=20, blank=True)
+    anti_hbcore_igm = models.CharField(max_length=20, blank=True)
+    anti_hbcore_igg = models.CharField(max_length=20, blank=True)
+    rpr = models.CharField(max_length=20, blank=True)
+    tppa = models.CharField(max_length=20, blank=True)
+    viral_load = models.CharField(max_length=20, blank=True)
+    parasitaemia = models.CharField(max_length=20, blank=True)
+    hsv = models.CharField(max_length=20, blank=True)
+    vzv = models.CharField(max_length=20, blank=True)
+    syphilis = models.CharField(max_length=20, blank=True)
+    c_difficile_antigenl = models.CharField(max_length=20, blank=True)
+    c_difficile_toxin = models.CharField(max_length=20, blank=True)
+    species = models.CharField(max_length=20, blank=True)
+    hsv_1 = models.CharField(max_length=20, blank=True)
+    hsv_2 = models.CharField(max_length=20, blank=True)
+    enterovirus = models.CharField(max_length=20, blank=True)
+    cmv = models.CharField(max_length=20, blank=True)
+    ebv = models.CharField(max_length=20, blank=True)
+    influenza_a = models.CharField(max_length=20, blank=True)
+    influenza_b = models.CharField(max_length=20, blank=True)
+    parainfluenza = models.CharField(max_length=20, blank=True)
+    metapneumovirus = models.CharField(max_length=20, blank=True)
+    rsv = models.CharField(max_length=20, blank=True)
+    adenovirus = models.CharField(max_length=20, blank=True)
+    norovirus = models.CharField(max_length=20, blank=True)
+    rotavirus = models.CharField(max_length=20, blank=True)
+    giardia = models.CharField(max_length=20, blank=True)
+    entamoeba_histolytica = models.CharField(max_length=20, blank=True)
+    cryptosporidium = models.CharField(max_length=20, blank=True)
 
 @receiver(models.signals.post_save, sender=Patient)
 def create_singletons(sender, **kwargs):

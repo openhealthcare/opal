@@ -1,4 +1,3 @@
-
 <form class="form-horizontal">
     <div class="control-group">
         <label class="control-label">Test</label>
@@ -7,21 +6,21 @@
         </div>
     </div>
 
+    <div class="control-group">
+	    <label class="control-label">Date ordered</label>
+	    <div class="controls">
+		    <input type="text" ng-model="editing.date_ordered" bs-datepicker>
+	    </div>
+    </div>
+
+    <div class="control-group">
+	    <label class="control-label">Details</label>
+	    <div class="controls">
+		    <input type="text" ng-model="editing.details">
+	    </div>
+    </div>
+
     <span ng-show="editing.test == 'Broncheoalveolar lavage MC&S' || editing.test == 'Blood Culture' || editing.test == 'CSF AFB microscopy & TB culture' || editing.test == 'CSF MC&S' || editing.test == 'Fluid MC&S' || editing.test == 'Lymph Node MC&S' || editing.test == 'Pleural MC&S' || editing.test == 'Sputum AFB microscopy & TB culture' || editing.test == 'Sputum MC&S' || editing.test == 'Stool MC&S' || editing.test == 'Stool OCP' || editing.test == 'Throat Swab MC&S' || editing.test == 'Tissue AFB microscopy & TB culture' || editing.test == 'Tissue MC&S' || editing.test == 'Urine AFB microscopy & TB culture' || editing.test == 'Urine MC&S' || editing.test == 'Wound swab MC&S'">
-
-        <div class="control-group">
-            <label class="control-label">Date ordered</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.date">
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">Details</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.details">
-            </div>
-        </div>
 
         <div class="control-group">
             <label class="control-label">Microscopy</label>
@@ -54,20 +53,6 @@
     </span>
 
     <span ng-show="editing.test == 'CMV Serology' || editing.test == 'Dengue Serology' || editing.test == 'Hepatitis A Serology' || editing.test == 'Hepatitis E Serology' || editing.test == 'Measles Serology' || editing.test == 'Rubella Serology' || editing.test == 'Toxoplasmosis Serology' || editing.test == 'VZV Serology' || editing.test == 'Brucella Serology'">
-
-        <div class="control-group">
-            <label class="control-label">Date ordered</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.date">
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">Details</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.details">
-            </div>
-        </div>
 
         <div class="control-group">
             <label class="control-label">IgM</label>
@@ -126,20 +111,6 @@
     </span>
 
     <span ng-show="editing.test == 'EBV Serology'">
-
-        <div class="control-group">
-            <label class="control-label">Date ordered</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.date">
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">Details</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.details">
-            </div>
-        </div>
 
         <div class="control-group">
             <label class="control-label">VCA IgM</label>
@@ -227,20 +198,6 @@
     <span ng-show="editing.test == 'HIV'">
 
         <div class="control-group">
-            <label class="control-label">Date ordered</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.date">
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">Details</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.details">
-            </div>
-        </div>
-
-        <div class="control-group">
             <label class="control-label">Result</label>
             <div class="controls">
 
@@ -270,20 +227,6 @@
     </span>
 
     <span ng-show="editing.test == 'Hepatitis B Serology'">
-
-        <div class="control-group">
-            <label class="control-label">Date ordered</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.date">
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">Details</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.details">
-            </div>
-        </div>
 
         <div class="control-group">
             <label class="control-label">HBsAg</label>
@@ -398,20 +341,6 @@
     <span ng-show="editing.test == 'Syphilis Serology'">
 
         <div class="control-group">
-            <label class="control-label">Date ordered</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.date">
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">Details</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.details">
-            </div>
-        </div>
-
-        <div class="control-group">
             <label class="control-label">RPR</label>
             <div class="controls">
                 <input type="text" ng-model="editing.rpr">
@@ -445,20 +374,6 @@
     <span ng-show="editing.test == 'Cryptococcal antigen' || editing.test == 'Dengue PCR' || editing.test == 'JC Virus PCR' || editing.test == 'MRSA PCR' || editing.test == 'Rickettsia PCR' || editing.test == 'Scrub Typhus PCR' || editing.test == 'Borrleia Screening Serology' || editing.test == 'Brorleia Reference Serology' || editing.test == 'Viral Haemorrhagic Fever PCR'">
 
         <div class="control-group">
-            <label class="control-label">Date ordered</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.date">
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">Details</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.details">
-            </div>
-        </div>
-
-        <div class="control-group">
             <label class="control-label">Result</label>
             <div class="controls">
 
@@ -483,20 +398,6 @@
     </span>
 
     <span ng-show="editing.test == 'Amoebic Serology' || editing.test == 'Cystercicosis Serology' || editing.test == 'Fasciola Serology' || editing.test == 'Filaria Serology' || editing.test == 'Hydatid Serology' || editing.test == 'Strongyloides Serology' || editing.test == 'Toxcocara Serology' || editing.test == 'Trypanosomiasis brucei Serology' || editing.test == 'Trypanosomiasis cruzi serology'">
-
-        <div class="control-group">
-            <label class="control-label">Date ordered</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.date">
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">Details</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.details">
-            </div>
-        </div>
 
         <div class="control-group">
             <label class="control-label">Result</label>
@@ -530,20 +431,6 @@
     <span ng-show="editing.test == 'Hepatitis C Serology' || editing.test == 'Hepatitis D Serology' || editing.test == 'HHV-6 Serology' || editing.test == 'HHV-7 Serology' || editing.test == 'HTLV Serology'">
 
         <div class="control-group">
-            <label class="control-label">Date ordered</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.date">
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">Details</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.details">
-            </div>
-        </div>
-
-        <div class="control-group">
             <label class="control-label">IgG</label>
             <div class="controls">
 
@@ -575,20 +462,6 @@
     <span ng-show="editing.test == 'CMV Viral Load' || editing.test == 'EBV Viral Load ' || editing.test == 'HBV Viral Load' || editing.test == 'HCV Viral Load' || editing.test == 'HHV-6 Viral Load' || editing.test == 'HHV-7 Viral Load' || editing.test == 'HHV-8 Viral Load' || editing.test == 'HIV Viral Load' || editing.test == 'Measles PCR' || editing.test == 'VZV Viral Load'">
 
         <div class="control-group">
-            <label class="control-label">Date ordered</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.date">
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">Details</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.details">
-            </div>
-        </div>
-
-        <div class="control-group">
             <label class="control-label">Viral load</label>
             <div class="controls">
                 <input type="text" ng-model="editing.viral_load">
@@ -600,20 +473,6 @@
     <span ng-show="editing.test == 'Babesia Film' || editing.test == 'Malaria Film' || editing.test == 'Microfilarial Film'">
 
         <div class="control-group">
-            <label class="control-label">Date ordered</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.date">
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">Details</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.details">
-            </div>
-        </div>
-
-        <div class="control-group">
             <label class="control-label">Parasitaemia</label>
             <div class="controls">
                 <input type="text" ng-model="editing.parasitaemia">
@@ -623,20 +482,6 @@
     </span>
 
     <span ng-show="editing.test == 'Swab PCR'">
-
-        <div class="control-group">
-            <label class="control-label">Date ordered</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.date">
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">Details</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.details">
-            </div>
-        </div>
 
         <div class="control-group">
             <label class="control-label">HSV</label>
@@ -709,20 +554,6 @@
     <span ng-show="editing.test == 'C. difficile'">
 
         <div class="control-group">
-            <label class="control-label">Date ordered</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.date">
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">Details</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.details">
-            </div>
-        </div>
-
-        <div class="control-group">
             <label class="control-label">C. difficile antigen</label>
             <div class="controls">
 
@@ -771,20 +602,6 @@
     <span ng-show="editing.test == 'Leishmaniasis PCR'">
 
         <div class="control-group">
-            <label class="control-label">Date ordered</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.date">
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">Details</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.details">
-            </div>
-        </div>
-
-        <div class="control-group">
             <label class="control-label">Species</label>
             <div class="controls">
                 <input type="text" ng-model="editing.species">
@@ -816,20 +633,6 @@
     </span>
 
     <span ng-show="editing.test == 'CSF PCR'">
-
-        <div class="control-group">
-            <label class="control-label">Date ordered</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.date">
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">Details</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.details">
-            </div>
-        </div>
 
         <div class="control-group">
             <label class="control-label">HSV-1</label>
@@ -968,20 +771,6 @@
     <span ng-show="editing.test == 'Respiratory Virus PCR'">
 
         <div class="control-group">
-            <label class="control-label">Date ordered</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.date">
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">Details</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.details">
-            </div>
-        </div>
-
-        <div class="control-group">
             <label class="control-label">Influenza-A</label>
             <div class="controls">
 
@@ -1118,20 +907,6 @@
     <span ng-show="editing.test == 'Stool PCR'">
 
         <div class="control-group">
-            <label class="control-label">Date ordered</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.date">
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">Details</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.details">
-            </div>
-        </div>
-
-        <div class="control-group">
             <label class="control-label">Norovirus</label>
             <div class="controls">
 
@@ -1202,20 +977,6 @@
     <span ng-show="editing.test == 'Stool Parasitology PCR'">
 
         <div class="control-group">
-            <label class="control-label">Date ordered</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.date">
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">Details</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.details">
-            </div>
-        </div>
-
-        <div class="control-group">
             <label class="control-label">Giardia</label>
             <div class="controls">
 
@@ -1284,20 +1045,6 @@
     </span>
 
     <span ng-show="editing.test == 'Other'">
-
-        <div class="control-group">
-            <label class="control-label">Date ordered</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.date">
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">Details</label>
-            <div class="controls">
-                <input type="text" ng-model="editing.details">
-            </div>
-        </div>
 
         <div class="control-group">
             <label class="control-label">Result</label>

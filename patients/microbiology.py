@@ -1,3 +1,4 @@
+raise Exception("Don't run me at the moment!")
 import os
 import re
 
@@ -345,12 +346,12 @@ for test in micro_tests:
             fields_html += dropdown_input_template.format(typeahead_source=field['dropdown'], title=field['name'], field_name=key)
         else:
             fields_html += text_input_template.format(title=field['name'], field_name=key)
-    show_conditions = ' || '.join("editing.test == '%s'" % test_name for test_name in test['test_names'])
+    show_conditions = "getCategory(editing.test) == 'micro_test_%s'" % test['category']
     tests_html += test_template.format(show_conditions=show_conditions, fields=fields_html)
 
 form_html = form_template.format(tests=tests_html)
 
-with open(os.path.join(os.path.dirname(__file__), '../opal/assets/templates/microbiology-modal.html'), 'w') as f:
+with open(os.path.join(os.path.dirname(__file__), '../opal/templates/microbiology_test_modal.html'), 'w') as f:
     f.write(form_html)
 
 table_item_template = '''
@@ -370,24 +371,24 @@ for test in micro_tests:
     fields_html = ''
     for field in test['fields']:
         key = make_slug(field['name'])
-        value_with_braces = '{{item.%s}}' % key
+        value_with_braces = '[[item.%s]]' % key
         if key == 'result' or not field.get('show_key', True):
             fields_html += field_template_without_key.format(value='item.%s' % key, value_with_braces=value_with_braces)
         else:
             fields_html += field_template_with_key.format(key=field['name'], value='item.%s' % key, value_with_braces=value_with_braces)
-    show_conditions = ' || '.join("item.test == '%s'" % test_name for test_name in test['test_names'])
+    show_conditions = "item.category == '%s'" % test['category']
     tests_html += test_template.format(show_conditions=show_conditions, fields=fields_html)
 
 table_item_html = '''
-{{item.date}}
-{{item.test}}
-{{item.details}}
+[[item.date]]
+[[item.test]]
+[[item.details]]
 <ul>
 ''' + tests_html + '''
 </ul>
 '''
 
-with open(os.path.join(os.path.dirname(__file__), '../opal/assets/templates/microbiology.html'), 'w') as f:
+with open(os.path.join(os.path.dirname(__file__), '../opal/templates/microbiology_test.html'), 'w') as f:
     f.write(table_item_html)
 
 print "Copy the following into the definition of $scope.microbiology_test_list in opal/assets/js/opal.js"

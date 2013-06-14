@@ -8,7 +8,7 @@ columns = [
     models.GeneralNote,
     models.Travel,
     models.Antimicrobial,
-#    models.Microbiology,
+    models.MicrobiologyTest,
     models.MicrobiologyInput,
     models.Plan,
     models.Discharge
