@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 from rest_framework import generics
 from utils import camelcase_to_underscore
 from patients import models, serializers, schema
-import options
+from options.models import option_models
 
 class PatientList(generics.ListCreateAPIView):
     queryset = models.Patient.objects.all()
@@ -59,8 +59,16 @@ def schema_view(request):
             'name': camelcase_to_underscore(column.__name__),
             'single': issubclass(column, models.SingletonSubrecord)
         })
+    option_lists = {}
+    for name, model in option_models.items():
+        synonyms = []
+        for instance in model.objects.all():
+            synonyms.append([instance.name, instance.name])
+            for synonym in instance.synonyms.all():
+                synonyms.append([synonym.name, instance.name])
+        option_lists[name] = synonyms
     data = {
         'columns': columns,
-        'option_lists': options.model_names
+        'option_lists': option_lists
     }
     return HttpResponse(json.dumps(data), mimetype='application/json')

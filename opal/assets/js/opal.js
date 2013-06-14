@@ -40,6 +40,9 @@ app.controller('TableCtrl', function($scope, $http) {
 
 	$http.get('schema/').success(function(data) {
 		var option_lists = data.option_lists;
+		var option_names = getKeys(option_lists);
+		var option_name;
+
 		$scope.columns = data.columns;
 
 		$http.get('patient/').success(function(rows) {
@@ -53,18 +56,24 @@ app.controller('TableCtrl', function($scope, $http) {
 			$scope.rows = rows;
 		});
 
-		for (var i = 0; i < option_lists.length; i++) {
-			(function(option) {
-				$http.get('options/' + option + '_list/').success(function(data) {
-					$scope[option + '_list'] = [];
-					$scope[option + '_synonyms'] = {};
-					for (var j = 0; j < data.length; j++) {
-						$scope[option + '_list'].push(data[j][0]);
-						$scope[option + '_synonyms'][data[j][0]] = data[j][1];
-					};
-				});
-			})(option_lists[i]);
+		$scope.microbiology_test_list = [];
+		$scope.microbiology_test_lookup = {};
+
+		for (var kix = 0; kix < option_names.length; kix++) {
+			option_name = option_names[kix];
+			$scope[option_name + '_list'] = [];
+			$scope[option_name + '_synonyms'] = {};
+			for (var j = 0; j < option_lists[option_name].length; j++) {
+				$scope[option_name + '_list'].push(option_lists[option_name][j][0]);
+				$scope[option_name + '_synonyms'][option_lists[option_name][j][0]] = option_lists[option_name][j][1];
+				if (option_name.indexOf('micro_test') == 0) {
+					$scope.microbiology_test_list.push(option_lists[option_name][j][0]);
+					$scope.microbiology_test_lookup[option_lists[option_name][j][0]] = option_name;
+				}
+			};
 		}
+
+		$scope.microbiology_test_list.sort();
 	})
 
 	$scope.getCix = function(name) {
@@ -76,7 +85,11 @@ app.controller('TableCtrl', function($scope, $http) {
 		throw 'Unexpected column name: ' + name
 	};
 
-
+	$scope.getCategory = function(testName) {
+		if ($scope.microbiology_test_lookup !== undefined) {
+			return $scope.microbiology_test_lookup[testName];
+		}
+	};
 
 	$scope.getSynonymn = function(option, term) {
 		var synonyms = $scope[option + '_synonyms'];
