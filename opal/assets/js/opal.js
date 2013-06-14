@@ -176,6 +176,7 @@ app.controller('TableCtrl', function($scope, $http) {
 	};
 
 	$scope.saveAdd = function() {
+		clearModal('add-new');
 		editing = false;
 		$http.post('patient/', $scope.editing).success(function(patient) {
 			for (var cix = 0; cix < $scope.columns.length; cix++) {
@@ -184,7 +185,6 @@ app.controller('TableCtrl', function($scope, $http) {
 					patient[column.name] = [{patient: patient.id}];
 				}
 			}
-			console.debug(patient);
 			$scope.rows.push(patient);
 			$scope.selectItem($scope.rows.length - 1, 0, 0);
 		});
@@ -217,6 +217,17 @@ app.controller('TableCtrl', function($scope, $http) {
 				$scope.rows[rix][columnName].push({patient: $scope.rows[rix].id});
 			}
 		}
+	};
+
+	$scope.saveEditAndAdd = function() {
+		$scope.saveEdit();
+		$scope.iix = getNumItems($scope.rix, $scope.cix) - 1;
+		startEdit();
+	}
+
+	$scope.cancelAdd = function() {
+		clearModal('add-new');
+		editing = false;
 	};
 
 	$scope.cancelEdit = function() {

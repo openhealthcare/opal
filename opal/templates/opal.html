@@ -85,15 +85,18 @@
 			</div>
 			<div class="modal-body">{% include column.modal_template_path %}</div>
 			<div class="modal-footer">
-				<button class="btn btn-primary" data-dismiss="modal" ng-click="saveEdit()">Save</button>
-				<button class="btn" data-dismiss="modal" ng-click="cancelEdit()">Cancel</button>
+				<button class="btn btn-primary" ng-click="saveEdit()">Save</button>
+				{% if not column.single %}
+				<button class="btn btn" ng-click="saveEditAndAdd(e)">Save and add another</button>
+				{% endif %}
+				<button class="btn" ng-click="cancelEdit()">Cancel</button>
 			</div>
 		</div>
 		{% endfor %}
 
 		<div id="add-new-modal" class="modal hide" tabindex="-1" role="dialog">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" ng-click="cancelEdit()">×</button>
+				<button type="button" class="close" ng-click="cancelAdd()">×</button>
 				<h3>New record</h3>
 			</div>
 			<form class="form-horizontal">
@@ -146,8 +149,8 @@
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-primary" data-dismiss="modal" ng-click="saveAdd()">Save record</button>
-					<button class="btn" data-dismiss="modal" ng-click="cancelEdit()">Cancel</button>
+					<button class="btn btn-primary" ng-click="saveAdd()">Save record</button>
+					<button class="btn" ng-click="cancelAdd()">Cancel</button>
 				</div>
 			</form>
 		</div>
