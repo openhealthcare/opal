@@ -1873,6 +1873,12 @@
 
   , select: function () {
       var val = this.$menu.find('.active').attr('data-value')
+      var ix = this.$element.val().lastIndexOf(',');
+
+      if (ix != -1) {
+        val = this.$element.val().substr(0, ix) + ', ' + val;
+      }
+
       this.$element
         .val(this.updater(val))
         .change()
@@ -1937,7 +1943,9 @@
     }
 
   , matcher: function (item) {
-      return ~item.toLowerCase().indexOf(this.query.toLowerCase())
+      var tokens = this.query.split(',');
+      var token = tokens[tokens.length - 1].replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+      return ~item.toLowerCase().indexOf(token.toLowerCase())
     }
 
   , sorter: function (items) {

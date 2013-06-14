@@ -1,14 +1,26 @@
 import json
 from django.http import HttpResponse
 from django.views.generic import TemplateView
-from rest_framework import generics
+from rest_framework import generics, response, status
 from utils import camelcase_to_underscore
 from patients import models, serializers, schema
 from options.models import option_models
 
-class PatientList(generics.ListCreateAPIView):
+class PatientList(generics.ListAPIView):
     queryset = models.Patient.objects.all()
     serializer_class = serializers.PatientSerializer
+
+    # TODO use DRF for this
+    def post(self, request, *args, **kwargs):
+        patient = models.Patient.objects.create()
+        location = patient.location
+        location.__dict__.update(request.DATA['location'])
+        location.save()
+        demographics = patient.demographics
+        demographics.__dict__.update(request.DATA['demographics'])
+        demographics.save()
+        serializer = serializers.PatientSerializer(patient)
+        return response.Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class SingletonView(object):
     def get_serializer_class(self):
