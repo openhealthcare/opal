@@ -121,6 +121,13 @@ app.controller('TableCtrl', function($scope, $http) {
 		$('#' + columnName + '-modal').find('input,textarea').first().focus();
 	};
 
+	$scope.startAdd = function() {
+		editing = true;
+		$scope.editing = {location: {}, demographics: {}};
+		$('#add-new-modal').modal();
+		$('#add-new-modal').find('input,textarea').first().focus();
+	};
+
 	function startDelete() {
 		var rix = $scope.rix;
 		var cix = $scope.cix;
@@ -165,6 +172,21 @@ app.controller('TableCtrl', function($scope, $http) {
 			$scope.rows.push(newRecord);
 			$scope.selectItem($scope.rows.length - 1, 0, 0);
 			startEdit();
+		});
+	};
+
+	$scope.saveAdd = function() {
+		editing = false;
+		$http.post('patient/', $scope.editing).success(function(patient) {
+			for (var cix = 0; cix < $scope.columns.length; cix++) {
+				column = $scope.columns[cix];
+				if (!column.single) {
+					patient[column.name] = [{patient: patient.id}];
+				}
+			}
+			console.debug(patient);
+			$scope.rows.push(patient);
+			$scope.selectItem($scope.rows.length - 1, 0, 0);
 		});
 	};
 
