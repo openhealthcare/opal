@@ -1,8 +1,8 @@
 from patients import models
 
 columns = [
-    models.Location,
     models.Demographics,
+    models.Location,
     models.Diagnosis,
     models.PastMedicalHistory,
     models.GeneralNote,
