@@ -1,12 +1,27 @@
 import json
 from django.http import HttpResponse
 from django.views.generic import TemplateView
+from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 from rest_framework import generics, response, status
 from utils import camelcase_to_underscore
 from patients import models, serializers, schema
 from options.models import option_models
 
-class PatientList(generics.ListAPIView):
+class LoginRequiredMixin(object):
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
+
+class SingletonMixin(object):
+    def get_serializer_class(self):
+        return serializers.build_subrecord_serializer(self.model)
+
+    @property
+    def patient(self):
+        return models.Patient.objects.get(pk=self.kwargs['patient_id'])
+
+class PatientList(LoginRequiredMixin, generics.ListAPIView):
     queryset = models.Patient.objects.all()
     serializer_class = serializers.PatientSerializer
 
@@ -22,26 +37,18 @@ class PatientList(generics.ListAPIView):
         serializer = serializers.PatientSerializer(patient)
         return response.Response(serializer.data, status=status.HTTP_201_CREATED)
 
-class SingletonView(object):
-    def get_serializer_class(self):
-        return serializers.build_subrecord_serializer(self.model)
-
-    @property
-    def patient(self):
-        return models.Patient.objects.get(pk=self.kwargs['patient_id'])
-
-class SingletonSubrecordDetail(SingletonView, generics.RetrieveUpdateAPIView):
+class SingletonSubrecordDetail(LoginRequiredMixin, SingletonMixin, generics.RetrieveUpdateAPIView):
     def get_object(self, queryset=None):
         return getattr(self.patient, self.model.__name__.lower())
 
-class SubrecordList(SingletonView, generics.ListCreateAPIView):
+class SubrecordList(LoginRequiredMixin, SingletonMixin, generics.ListCreateAPIView):
     pass
 
-class SubrecordDetail(SingletonView, generics.RetrieveUpdateDestroyAPIView):
+class SubrecordDetail(LoginRequiredMixin, SingletonMixin, generics.RetrieveUpdateDestroyAPIView):
     def get_object(self, queryset=None):
         return getattr(self.patient, camelcase_to_underscore(self.model.__name__)).get(pk=self.kwargs['id'])
 
-class IndexView(TemplateView):
+class IndexView(LoginRequiredMixin, TemplateView):
     template_name = "opal.html"
 
     def get_context_data(self, **kwargs):

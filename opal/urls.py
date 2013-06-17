@@ -12,6 +12,8 @@ urlpatterns = patterns('',
     url(r'^options/', include('options.urls')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^patient/', include('patients.urls')),
+    url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
+    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}),
 )
 
 urlpatterns += staticfiles_urlpatterns()

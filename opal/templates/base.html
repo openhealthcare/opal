@@ -1,0 +1,31 @@
+{% load staticfiles %}
+<!doctype html>
+<html>
+	<head>
+		<!--[if lte IE 8]>
+			<script src="/assets/js/json3.min.js"></script>
+		<![endif]-->
+		<meta charset="utf-8">
+		<title>OPAL is not a Patient Activity List</title>
+		<script src="/assets/js/jquery-1.9.1.js"></script>
+		<script src="/assets/js/bootstrap-2.3.2.js"></script>
+		<link href="/assets/css/bootstrap-2.3.2.css" rel="stylesheet" media="all">
+		<link href="/assets/css/opal.css" rel="stylesheet" media="all">
+                <link href="/assets/css/print.css" rel="stylesheet" media="print">
+	</head>
+	<body>
+		<div class="navbar">
+			<div class="navbar-inner">
+				<a class="brand pull-left" href="/">OPAL is not a Patient Activity List</a>
+				<ul class="nav pull-right">
+					<li><a href="/">Home</a></li>
+					<li><a href="/admin">Admin</a></li>
+					<li><a href="/contact">Feedback</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="container">
+			{% block content %}{% endblock %}
+		</div>
+	</body>
+</html>
