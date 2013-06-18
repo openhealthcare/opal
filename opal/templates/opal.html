@@ -46,7 +46,7 @@
 			<tbody>
 				<tr ng-repeat="row in rows">
 					{% for column in columns %}
-					<td ng-mouseenter="mouseEnter($index, '{{ column.name }}')"
+					<td ng-mouseenter="mouseEnter($index, {{ forloop.counter0 }})"
 						ng-mouseleave="mouseLeave()">
 						<ul>
 							{% if column.single %}

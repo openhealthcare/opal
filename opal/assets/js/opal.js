@@ -76,15 +76,6 @@ app.controller('TableCtrl', function($scope, $http) {
 		$scope.microbiology_test_list.sort();
 	})
 
-	$scope.getCix = function(name) {
-		for (var cix = 0; cix < $scope.columns.length; cix++) {
-			if ($scope.columns[cix].name == name) {
-				return cix;
-			}
-		}
-		throw 'Unexpected column name: ' + name
-	};
-
 	$scope.getCategory = function(testName) {
 		if ($scope.microbiology_test_lookup !== undefined) {
 			return $scope.microbiology_test_lookup[testName];
@@ -267,9 +258,9 @@ app.controller('TableCtrl', function($scope, $http) {
 		startEdit();
 	}
 
-	$scope.mouseEnter = function(rix, columnName) {
+	$scope.mouseEnter = function(rix, cix) {
 		$scope.mouseRix = rix;
-		$scope.mouseCix = $scope.getCix(columnName);
+		$scope.mouseCix = cix;
 	}
 
 	$scope.mouseLeave = function() {
