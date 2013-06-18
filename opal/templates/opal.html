@@ -152,6 +152,17 @@
 							<input type="text" ng-model="editing.demographics.date_of_birth" bs-datepicker>
 						</div>
 					</div>
+					<div class="control-group">
+						<label class="control-label">Tags</label>
+						<div class="controls">
+							{% for key, name in tags.items %}
+							<label class="checkbox">
+								<input type="checkbox" ng-model="editing.tags.{{key}}">
+								{{name}}
+							</label>
+							{% endfor %}
+						</div>
+					</div>
 				</form>
 			</div>
 			<div class="modal-footer">

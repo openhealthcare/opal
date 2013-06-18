@@ -1,11 +1,20 @@
+from collections import OrderedDict
+
 from django.db import models
 from django.dispatch import receiver
+from django.contrib import auth
 
 from utils.fields import ForeignKeyOrFreeText
 from utils import camelcase_to_underscore
 from options.models import option_models
 
+TAG_NAMES = ['Infectious Diseases', 'Microbiology', 'Mine']
+TAGS = OrderedDict((camelcase_to_underscore(name.replace(' ', '')), name) for name in TAG_NAMES)
+
 class Patient(models.Model):
+    def __unicode__(self):
+        return '%s | %s' % (self.demographics.hospital_number, self.demographics.name)
+
     def microbiology_test(self):
         microbiology_test_classes = MicrobiologyTest.__subclasses__()
         tests = []
@@ -13,6 +22,16 @@ class Patient(models.Model):
             tests.extend(getattr(self, cls.__name__.lower() + '_set').all())
         return tests
 
+class Tagging(models.Model):
+    tag_name = models.CharField(max_length=255, blank=True)
+    user = models.ForeignKey(auth.models.User, null=True, blank=True)
+    patient = models.ForeignKey(Patient)
+
+    def __unicode__(self):
+        if self.user is not None:
+            return 'User: %s' % self.user.username
+        else:
+            return self.tag_name
 
 class SingletonSubrecordBase(models.base.ModelBase):
     def __new__(cls, name, bases, attrs):

@@ -34,6 +34,12 @@ class PatientList(LoginRequiredMixin, generics.ListAPIView):
         demographics = patient.demographics
         demographics.__dict__.update(request.DATA['demographics'])
         demographics.save()
+        for tag_key in request.DATA['tags']:
+            tagging = models.Tagging(tag_name=models.TAGS[tag_key])
+            if tag_key == 'mine':
+                tagging.user = request.user
+            patient.tagging_set.add(tagging)
+
         serializer = serializers.PatientSerializer(patient)
         return response.Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -53,6 +59,8 @@ class IndexView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
+        context['tags'] = models.TAGS
+
         context['columns'] = []
 
         for column in schema.columns:
