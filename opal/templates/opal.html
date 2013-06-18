@@ -102,60 +102,62 @@
 				<button type="button" class="close" ng-click="cancelAdd()">×</button>
 				<h3>New record</h3>
 			</div>
-			<form class="form-horizontal">
-				<div class="control-group">
-					<label class="control-label">Category</label>
-					<div class="controls">
-						<input type="text" ng-model="editing.location.category" bs-typeahead="patient_category_list" data-provide="typeahead" data-min-length=0>
+			<div class="modal-body">
+				<form class="form-horizontal">
+					<div class="control-group">
+						<label class="control-label">Category</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.location.category" bs-typeahead="patient_category_list" data-provide="typeahead" data-min-length=0>
+						</div>
 					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label">Hospital</label>
-					<div class="controls">
-						<input type="text" ng-model="editing.location.hospital">
+					<div class="control-group">
+						<label class="control-label">Hospital</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.location.hospital">
+						</div>
 					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label">Ward</label>
-					<div class="controls">
-						<input type="text" ng-model="editing.location.ward">
+					<div class="control-group">
+						<label class="control-label">Ward</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.location.ward">
+						</div>
 					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label">Bed</label>
-					<div class="controls">
-						<input type="text" ng-model="editing.location.bed">
+					<div class="control-group">
+						<label class="control-label">Bed</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.location.bed">
+						</div>
 					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label">Date of admission</label>
-					<div class="controls">
-						<input type="text" ng-model="editing.location.date_of_admission" bs-datepicker>
+					<div class="control-group">
+						<label class="control-label">Date of admission</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.location.date_of_admission" bs-datepicker>
+						</div>
 					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label">Name</label>
-					<div class="controls">
-						<input type="text" ng-model="editing.demographics.name">
+					<div class="control-group">
+						<label class="control-label">Name</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.demographics.name">
+						</div>
 					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label">Hospital number</label>
-					<div class="controls">
-						<input type="text" ng-model="editing.demographics.hospital_number">
+					<div class="control-group">
+						<label class="control-label">Hospital number</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.demographics.hospital_number">
+						</div>
 					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label">Date of birth</label>
-					<div class="controls">
-						<input type="text" ng-model="editing.demographics.date_of_birth" bs-datepicker>
+					<div class="control-group">
+						<label class="control-label">Date of birth</label>
+						<div class="controls">
+							<input type="text" ng-model="editing.demographics.date_of_birth" bs-datepicker>
+						</div>
 					</div>
-				</div>
-				<div class="modal-footer">
-					<button class="btn btn-primary" ng-click="saveAdd()">Save record</button>
-					<button class="btn" ng-click="cancelAdd()">Cancel</button>
-				</div>
-			</form>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button class="btn btn-primary" ng-click="saveAdd()">Save record</button>
+				<button class="btn" ng-click="cancelAdd()">Cancel</button>
+			</div>
 		</div>
 
 		<div id="delete-confirmation" class="modal hide" tabindex="-1" role="dialog">
