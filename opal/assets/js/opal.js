@@ -76,26 +76,6 @@ app.controller('TableCtrl', function($scope, $http) {
 		$scope.microbiology_test_list.sort();
 	})
 
-	$scope.getCategory = function(testName) {
-		if ($scope.microbiology_test_lookup !== undefined) {
-			return $scope.microbiology_test_lookup[testName];
-		}
-	};
-
-	$scope.getSynonymn = function(option, term) {
-		var synonyms = $scope[option + '_synonyms'];
-		if (synonyms !== undefined) {
-			// The list of synonyms may not have loaded yet.
-			// This would be a problem if we serve non-canonical
-			// data and try an canonicalise before the synonyms are
-			// loaded.  I think we shouldn't serve non-canonical
-			// data but there might be a good reason to.
-			return synonyms[term] || term;
-		} else {
-			return term;
-		}
-	};
-
 	function startEdit() {
 		var rix = $scope.rix;
 		var cix = $scope.cix;
@@ -110,13 +90,6 @@ app.controller('TableCtrl', function($scope, $http) {
 		}
 		$('#' + columnName + '-modal').modal();
 		$('#' + columnName + '-modal').find('input,textarea').first().focus();
-	};
-
-	$scope.startAdd = function() {
-		editing = true;
-		$scope.editing = {location: {}, demographics: {}};
-		$('#add-new-modal').modal();
-		$('#add-new-modal').find('input,textarea').first().focus();
 	};
 
 	function startDelete() {
@@ -145,25 +118,40 @@ app.controller('TableCtrl', function($scope, $http) {
 		document.activeElement.blur();
 	};
 
-	$scope.addRecord = function() {
-		var newRecord = {};
-		var column;
+	function getNumItems(rix, cix) {
+		var column = $scope.columns[cix];
+		if (column.single) {
+			return 1;
+		} else {
+			return $scope.rows[rix][column.name].length;
+		}
+	};
 
-		$http.post('patient/').success(function(patient) {
-			newRecord.id = patient.id;
-			for (var cix = 0; cix < $scope.columns.length; cix++) {
-				column = $scope.columns[cix];
-				if (column.single) {
-					newRecord[column.name] = {patient: patient.id};
-				} else {
-					newRecord[column.name] = [{patient: patient.id}];
-				}
-			}
+	$scope.getCategory = function(testName) {
+		if ($scope.microbiology_test_lookup !== undefined) {
+			return $scope.microbiology_test_lookup[testName];
+		}
+	};
 
-			$scope.rows.push(newRecord);
-			$scope.selectItem($scope.rows.length - 1, 0, 0);
-			startEdit();
-		});
+	$scope.getSynonymn = function(option, term) {
+		var synonyms = $scope[option + '_synonyms'];
+		if (synonyms !== undefined) {
+			// The list of synonyms may not have loaded yet.
+			// This would be a problem if we serve non-canonical
+			// data and try an canonicalise before the synonyms are
+			// loaded.  I think we shouldn't serve non-canonical
+			// data but there might be a good reason to.
+			return synonyms[term] || term;
+		} else {
+			return term;
+		}
+	};
+
+	$scope.startAdd = function() {
+		editing = true;
+		$scope.editing = {location: {}, demographics: {}};
+		$('#add-new-modal').modal();
+		$('#add-new-modal').find('input,textarea').first().focus();
 	};
 
 	$scope.saveAdd = function() {
@@ -267,15 +255,6 @@ app.controller('TableCtrl', function($scope, $http) {
 		$scope.mouseRix = -1;
 		$scope.mouseCix = -1;
 	}
-
-	function getNumItems(rix, cix) {
-		var column = $scope.columns[cix];
-		if (column.single) {
-			return 1;
-		} else {
-			return $scope.rows[rix][column.name].length;
-		}
-	};
 
 	$scope.keypress = function(e) {
 		if (editing) {
