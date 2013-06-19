@@ -112,7 +112,7 @@ class Plan(SingletonSubrecord):
     plan = models.TextField(blank=True)
 
 class Discharge(SingletonSubrecord):
-    plan = models.TextField(blank=True)
+    discharge = models.TextField(blank=True)
 
 class MicrobiologyTest(Subrecord):
     test = models.CharField(max_length=255)
