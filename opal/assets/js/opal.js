@@ -1,3 +1,5 @@
+var ORDERING =  '[location[0].category, location[0].hospital, location[0].ward, location[0].bed]';
+
 function clone(obj) {
 	if (typeof obj == 'object') {
 		return $.extend(true, {}, obj);
@@ -24,7 +26,7 @@ app.config(function($interpolateProvider) {
 	$interpolateProvider.endSymbol(']]');
 });
 
-app.controller('TableCtrl', function($scope, $http) {
+app.controller('TableCtrl', function($scope, $http, $filter) {
 	var state = 'normal';
 
 	$scope.rows = [];
@@ -56,6 +58,7 @@ app.controller('TableCtrl', function($scope, $http) {
 					}
 				}
 			}
+			rows = $filter('orderBy')(rows, ORDERING);
 			$scope.rows = rows;
 		});
 
@@ -78,6 +81,15 @@ app.controller('TableCtrl', function($scope, $http) {
 
 		$scope.microbiology_test_list.sort();
 	})
+
+	function getRowIxFromPatientId(patientId) {
+		for (var rix = 0; rix < $scope.rows.length; rix++) {
+			if ($scope.rows[rix].id == patientId) {
+				return rix;
+			}
+		};
+		throw 'Could not find row for patient ' + patient.id;
+	};
 
 	function getNumItems(rix, cix) {
 		var column = $scope.columns[cix];
@@ -174,7 +186,8 @@ app.controller('TableCtrl', function($scope, $http) {
 				}
 			}
 			$scope.rows.push(patient);
-			$scope.selectItem($scope.rows.length - 1, 0, 0);
+			$scope.rows = $filter('orderBy')($scope.rows, ORDERING);
+			$scope.selectItem(getRowIxFromPatientId(patient.id), 0, 0);
 		});
 	};
 
@@ -191,6 +204,10 @@ app.controller('TableCtrl', function($scope, $http) {
 
 		if (isSingleColumn($scope.cix)) {
 			$http.put(url, $scope.editing);
+			if (columnName == 'location') {
+				$scope.rows = $filter('orderBy')($scope.rows, ORDERING);
+				$scope.selectItem(getRowIxFromPatientId(patientId), $scope.cix, 0);
+			}
 		} else {
 			if (typeof($scope.editing.id) == 'undefined') {
 				// This is a new item
