@@ -42,14 +42,18 @@ app.controller('TableCtrl', function($scope, $http) {
 		var option_lists = data.option_lists;
 		var option_names = getKeys(option_lists);
 		var option_name;
+		var columnName;
 
 		$scope.columns = data.columns;
 
 		$http.get('patient/').success(function(rows) {
 			for (var rix = 0; rix < rows.length; rix++) {
 				for (var cix = 0; cix < $scope.columns.length; cix++) {
-					if (!$scope.columns[cix].single) {
-						rows[rix][$scope.columns[cix].name].push({patient: rows[rix].id});
+					columnName = $scope.columns[cix].name;
+					if ($scope.columns[cix].single) {
+						rows[rix][columnName] = [rows[rix][columnName]];
+					} else {
+						rows[rix][columnName].push({patient: rows[rix].id});
 					}
 				}
 			}
@@ -76,33 +80,47 @@ app.controller('TableCtrl', function($scope, $http) {
 		$scope.microbiology_test_list.sort();
 	})
 
-	function startEdit() {
-		var rix = $scope.rix;
-		var cix = $scope.cix;
-		var iix = $scope.iix;
-		var columnName = $scope.columns[cix].name;
+	function getNumItems(rix, cix) {
+		var column = $scope.columns[cix];
+		return $scope.rows[rix][column.name].length;
+	};
 
+	function isSingleColumn(cix) {
+		return $scope.columns[cix].single;
+	};
+
+	function getColumnName(cix) {
+		return $scope.columns[cix].name;
+	};
+
+	function getCurrentColumnName(cix) {
+		return getColumnName($scope.cix);
+	};
+
+	function getItem(rix, cix, iix) {
+		var columnName = $scope.columns[cix].name;
+		return $scope.rows[rix][columnName][iix];
+	};
+
+	function getCurrentItem() {
+		return getItem($scope.rix, $scope.cix, $scope.iix);
+	};
+
+	function startEdit() {
 		editing = true;
-		if ($scope.columns[cix]['single']) {
-			$scope.editing = clone($scope.rows[rix][columnName]);
-		} else {
-			$scope.editing = clone($scope.rows[rix][columnName][iix]);
-		}
-		$('#' + columnName + '-modal').modal();
-		$('#' + columnName + '-modal').find('input,textarea').first().focus();
+		$scope.editing = clone(getCurrentItem());
+		$('#' + getCurrentColumnName() + '-modal').modal();
+		$('#' + getCurrentColumnName() + '-modal').find('input,textarea').first().focus();
 	};
 
 	function startDelete() {
-		var rix = $scope.rix;
-		var cix = $scope.cix;
-		var iix = $scope.iix;
-		var column = $scope.columns[cix];
-
-		if (column.single) {
+		if (isSingleColumn($scope.cix)) {
+			// Cannot delete singleton
 			return;
 		}
 
-		if ($scope.rows[rix][column.name].length == 1) {
+		if (getNumItems($scope.rix, $scope.cix) == $scope.iix + 1) {
+			// Cannot delete 'Add'
 			return;
 		}
 
@@ -116,15 +134,6 @@ app.controller('TableCtrl', function($scope, $http) {
 
 		// See https://github.com/openhealthcare/opal/issues/28
 		document.activeElement.blur();
-	};
-
-	function getNumItems(rix, cix) {
-		var column = $scope.columns[cix];
-		if (column.single) {
-			return 1;
-		} else {
-			return $scope.rows[rix][column.name].length;
-		}
 	};
 
 	$scope.getCategory = function(testName) {
@@ -159,9 +168,10 @@ app.controller('TableCtrl', function($scope, $http) {
 		editing = false;
 		$http.post('patient/', $scope.editing).success(function(patient) {
 			for (var cix = 0; cix < $scope.columns.length; cix++) {
-				column = $scope.columns[cix];
-				if (!column.single) {
-					patient[column.name] = [{patient: patient.id}];
+				if (isSingleColumn(cix)) {
+					patient[getColumnName(cix)] = [patient[getColumnName(cix)]];
+				} else {
+					patient[getColumnName(cix)] = [{patient: patient.id}];
 				}
 			}
 			$scope.rows.push(patient);
@@ -170,30 +180,26 @@ app.controller('TableCtrl', function($scope, $http) {
 	};
 
 	$scope.saveEdit = function() {
-		var rix = $scope.rix;
-		var cix = $scope.cix;
-		var iix = $scope.iix;
-		var columnName = $scope.columns[cix].name;
-		var url;
+		var columnName = getCurrentColumnName();
+		var patientId = $scope.rows[$scope.rix].id;
+		var url = 'patient/' + patientId + '/' + columnName + '/';
+		var items = $scope.rows[$scope.rix][columnName];
 
 		clearModal(columnName);
 		editing = false;
 
-		if ($scope.columns[cix]['single']) {
-			$scope.rows[rix][columnName] = clone($scope.editing);
-			url = 'patient/' + $scope.rows[rix].id + '/' + columnName + '/';
+		items[$scope.iix] = clone($scope.editing);
+
+		if (isSingleColumn($scope.cix)) {
 			$http.put(url, $scope.editing);
 		} else {
-			$scope.rows[rix][columnName][iix] = clone($scope.editing);
 			if (typeof($scope.editing.id) == 'undefined') {
-				url = 'patient/' + $scope.rows[rix].id + '/' + columnName + '/';
+				// This is a new item
 				$http.post(url, $scope.editing);
+				items.push({patient: patientId});
 			} else {
-				url = 'patient/' + $scope.rows[rix].id + '/' + columnName + '/' + $scope.editing.id + '/';
+				url = url + $scope.editing.id + '/';
 				$http.put(url, $scope.editing);
-			}
-			if (iix + 1 == getNumItems(rix, cix)) {
-				$scope.rows[rix][columnName].push({patient: $scope.rows[rix].id});
 			}
 		}
 	};
@@ -210,24 +216,20 @@ app.controller('TableCtrl', function($scope, $http) {
 	};
 
 	$scope.cancelEdit = function() {
-		var cix = $scope.cix;
-		var columnName = $scope.columns[cix].name;
-
-		clearModal(columnName);
+		clearModal(getCurrentColumnName());
 		editing = false;
 	};
 
 	$scope.doDelete = function() {
-		var rix = $scope.rix;
-		var cix = $scope.cix;
-		var iix = $scope.iix;
-		var columnName = $scope.columns[cix].name;
-		var id = $scope.rows[rix][columnName][iix].id
+		var patientId = $scope.rows[$scope.rix].id;
+		var columnName = getCurrentColumnName();
+		var itemId = items[iix].id;
+		var url = 'patient/' + patientId + '/' + columnName + '/' + itemId + '/';
+		var items = $scope.rows[$scope.rix][columnName];
 
-		url = 'patient/' + $scope.rows[rix].id + '/' + columnName + '/' + id + '/';
 		$http.delete(url);
 
-		$scope.rows[rix][columnName].splice(iix, 1);
+		items.splice($scope.iix, 1);
 		deleting = false;
 	};
 

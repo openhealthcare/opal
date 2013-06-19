@@ -49,11 +49,7 @@
 					<td ng-mouseenter="mouseEnter($index, {{ forloop.counter0 }})"
 						ng-mouseleave="mouseLeave()">
 						<ul>
-							{% if column.single %}
-							<li ng-repeat="item in [row.{{column.name}}]"
-							{% else %}
 							<li ng-repeat="item in row.{{column.name}}"
-							{% endif %}
 								ng-click="selectItem($parent.$index, {{ forloop.counter0 }}, $index)"
 								ng-dblclick="editItem($parent.$index, {{ forloop.counter0 }}, $index)"
 								ng-class="{selected: rix == $parent.$index && cix == {{ forloop.counter0 }} && iix == $index}">
