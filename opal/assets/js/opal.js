@@ -25,8 +25,7 @@ app.config(function($interpolateProvider) {
 });
 
 app.controller('TableCtrl', function($scope, $http) {
-	var editing = false;
-	var deleting = false;
+	var state = 'normal';
 
 	$scope.rows = [];
 
@@ -107,7 +106,7 @@ app.controller('TableCtrl', function($scope, $http) {
 	};
 
 	function startEdit() {
-		editing = true;
+		state = 'editing';
 		$scope.editing = clone(getCurrentItem());
 		$('#' + getCurrentColumnName() + '-modal').modal();
 		$('#' + getCurrentColumnName() + '-modal').find('input,textarea').first().focus();
@@ -124,7 +123,7 @@ app.controller('TableCtrl', function($scope, $http) {
 			return;
 		}
 
-		deleting = true;
+		state = 'deleting';
 		$('#delete-confirmation').modal();
 		$('#delete-confirmation').find('.btn-primary').focus();
 	};
@@ -157,15 +156,15 @@ app.controller('TableCtrl', function($scope, $http) {
 	};
 
 	$scope.startAdd = function() {
-		editing = true;
+		state = 'adding';
 		$scope.editing = {location: {}, demographics: {}};
 		$('#add-new-modal').modal();
 		$('#add-new-modal').find('input,textarea').first().focus();
 	};
 
 	$scope.saveAdd = function() {
+		state = 'normal';
 		clearModal('add-new');
-		editing = false;
 		$http.post('patient/', $scope.editing).success(function(patient) {
 			for (var cix = 0; cix < $scope.columns.length; cix++) {
 				if (isSingleColumn(cix)) {
@@ -185,8 +184,8 @@ app.controller('TableCtrl', function($scope, $http) {
 		var url = 'patient/' + patientId + '/' + columnName + '/';
 		var items = $scope.rows[$scope.rix][columnName];
 
+		state = 'normal';
 		clearModal(columnName);
-		editing = false;
 
 		items[$scope.iix] = clone($scope.editing);
 
@@ -195,8 +194,10 @@ app.controller('TableCtrl', function($scope, $http) {
 		} else {
 			if (typeof($scope.editing.id) == 'undefined') {
 				// This is a new item
-				$http.post(url, $scope.editing);
-				items.push({patient: patientId});
+				$http.post(url, $scope.editing).success(function(item) {
+					items[$scope.iix].id = item.id;
+					items.push({patient: patientId});
+				});
 			} else {
 				url = url + $scope.editing.id + '/';
 				$http.put(url, $scope.editing);
@@ -211,30 +212,30 @@ app.controller('TableCtrl', function($scope, $http) {
 	}
 
 	$scope.cancelAdd = function() {
+		state = 'normal';
 		clearModal('add-new');
-		editing = false;
 	};
 
 	$scope.cancelEdit = function() {
+		state = 'normal';
 		clearModal(getCurrentColumnName());
-		editing = false;
 	};
 
 	$scope.doDelete = function() {
 		var patientId = $scope.rows[$scope.rix].id;
 		var columnName = getCurrentColumnName();
-		var itemId = items[iix].id;
-		var url = 'patient/' + patientId + '/' + columnName + '/' + itemId + '/';
 		var items = $scope.rows[$scope.rix][columnName];
+		var itemId = items[$scope.iix].id;
+		var url = 'patient/' + patientId + '/' + columnName + '/' + itemId + '/';
 
 		$http.delete(url);
 
 		items.splice($scope.iix, 1);
-		deleting = false;
+		state = 'normal';
 	};
 
 	$scope.cancelDelete = function() {
-		deleting = false;
+		state = 'normal';
 	};
 
 	$scope.selectItem = function(rix, cix, iix) {
@@ -259,41 +260,69 @@ app.controller('TableCtrl', function($scope, $http) {
 	}
 
 	$scope.keypress = function(e) {
-		if (editing) {
-			switch (e.keyCode) {
-				case 27: // escape
-					$scope.cancelEdit();
-					break;
-			}
-		} else if (deleting) {
-			// ignore all keystrokes here
-		} else {
-			switch (e.keyCode) {
-				case 37: // left
-				case 72: // h
-					goLeft();
-					break;
-				case 39: // right
-				case 76: // l
-					goRight();
-					break;
-				case 38: // up
-				case 75: // k
-					goUp();
-					break;
-				case 40: // down
-				case 74: // j
-					goDown();
-					break;
-				case 13: // enter
-					startEdit();
-					break;
-				case 8: // backspace
-					e.preventDefault();
-				case 46: // delete
-					startDelete();
-					break;
-			}
+		switch (state) {
+			case 'adding':
+				handleKeypressAdd(e);
+				break;
+			case 'editing':
+				handleKeypressEdit(e);
+				break;
+			case 'deleting':
+				handleKeypressDelete(e);
+				break;
+			case 'normal':
+				handleKeypressNormal(e);
+				break;
+		}
+	}
+
+	function handleKeypressAdd(e) {
+		if (e.keyCode == 27) { // escape
+			$scope.cancelAdd();
+		}
+	}
+
+
+	function handleKeypressEdit(e) {
+		if (e.keyCode == 27) { // escape
+			$scope.cancelEdit();
+		}
+	}
+
+
+	function handleKeypressDelete(e) {
+		if (e.keyCode == 27) { // escape
+			$scope.cancelDelete();
+		}
+	}
+
+
+	function handleKeypressNormal(e) {
+		switch (e.keyCode) {
+			case 37: // left
+			case 72: // h
+				goLeft();
+				break;
+			case 39: // right
+			case 76: // l
+				goRight();
+				break;
+			case 38: // up
+			case 75: // k
+				goUp();
+				break;
+			case 40: // down
+			case 74: // j
+				goDown();
+				break;
+			case 13: // enter
+				startEdit();
+				break;
+			case 8: // backspace
+				e.preventDefault();
+			case 46: // delete
+				startDelete();
+				break;
 		}
 	}
 
