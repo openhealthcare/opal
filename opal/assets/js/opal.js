@@ -18,7 +18,7 @@ function getKeys(obj) {
 	return keys;
 }
 
-var app = angular.module('opalApp', ['$strap.directives']);
+var app = angular.module('opalApp', ['$strap.directives', 'ui.event']);
 
 // See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags
 app.config(function($interpolateProvider) {
@@ -39,6 +39,7 @@ app.controller('TableCtrl', function($scope, $http, $filter) {
 	$scope.mouseCix = -1; // index of column mouse is currently over
 
 	$scope.currentTag = 'mine'; // initially retrieve patients of interest to current user
+	$scope.query = {hospital: '', ward: ''};
 
 	$http.get('schema/').success(function(data) {
 		var option_lists = data.option_lists;
@@ -266,6 +267,7 @@ app.controller('TableCtrl', function($scope, $http, $filter) {
 		$scope.rix = rix;
 		$scope.cix = cix;
 		$scope.iix = iix;
+		state = 'normal';
 	}
 
 	$scope.editItem = function(rix, cix, iix) {
@@ -283,6 +285,21 @@ app.controller('TableCtrl', function($scope, $http, $filter) {
 		$scope.mouseCix = -1;
 	}
 
+	$scope.focusOnQuery = function() {
+		$scope.selectItem(-1, -1, -1);
+		state = 'searching';
+	}
+
+	$scope.search = function (patient) {
+		if (patient.location[0].hospital.toLowerCase().indexOf($scope.query.hospital.toLowerCase()) == -1) {
+			return false;
+		}
+		if (patient.location[0].ward.toLowerCase().indexOf($scope.query.ward.toLowerCase()) == -1) {
+			return false;
+		}
+		return true;
+	}
+
 	$scope.keypress = function(e) {
 		switch (state) {
 			case 'adding':
@@ -293,6 +310,9 @@ app.controller('TableCtrl', function($scope, $http, $filter) {
 				break;
 			case 'deleting':
 				handleKeypressDelete(e);
+				break;
+			case 'searching':
+				// nothing special
 				break;
 			case 'normal':
 				handleKeypressNormal(e);
@@ -319,7 +339,6 @@ app.controller('TableCtrl', function($scope, $http, $filter) {
 			$scope.cancelDelete();
 		}
 	}
-
 
 	function handleKeypressNormal(e) {
 		switch (e.keyCode) {
