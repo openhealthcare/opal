@@ -34,7 +34,7 @@ class PatientList(LoginRequiredMixin, generics.ListAPIView):
         demographics = patient.demographics
         demographics.__dict__.update(request.DATA['demographics'])
         demographics.save()
-        for tag_key in request.DATA['tags']:
+        for tag_key in request.DATA.get('tags', []):
             tagging = models.Tagging(tag_name=models.TAGS[tag_key])
             if tag_key == 'mine':
                 tagging.user = request.user
