@@ -38,6 +38,7 @@ app.controller('TableCtrl', function($scope, $http, $filter) {
 	$scope.mouseRix = -1; // index of row mouse is currently over
 	$scope.mouseCix = -1; // index of column mouse is currently over
 
+	$scope.currentTag = 'mine'; // initially retrieve patients of interest to current user
 
 	$http.get('schema/').success(function(data) {
 		var option_lists = data.option_lists;
@@ -46,21 +47,9 @@ app.controller('TableCtrl', function($scope, $http, $filter) {
 		var columnName;
 
 		$scope.columns = data.columns;
+		$scope.$watch('currentTag', getPatients);
 
-		$http.get('patient/').success(function(rows) {
-			for (var rix = 0; rix < rows.length; rix++) {
-				for (var cix = 0; cix < $scope.columns.length; cix++) {
-					columnName = $scope.columns[cix].name;
-					if ($scope.columns[cix].single) {
-						rows[rix][columnName] = [rows[rix][columnName]];
-					} else {
-						rows[rix][columnName].push({patient: rows[rix].id});
-					}
-				}
-			}
-			rows = $filter('orderBy')(rows, ORDERING);
-			$scope.rows = rows;
-		});
+		getPatients();
 
 		$scope.microbiology_test_list = [];
 		$scope.microbiology_test_lookup = {};
@@ -81,6 +70,23 @@ app.controller('TableCtrl', function($scope, $http, $filter) {
 
 		$scope.microbiology_test_list.sort();
 	})
+
+	function getPatients() {
+		$http.get('patient/?tag=' + $scope.currentTag).success(function(rows) {
+			for (var rix = 0; rix < rows.length; rix++) {
+				for (var cix = 0; cix < $scope.columns.length; cix++) {
+					columnName = $scope.columns[cix].name;
+					if ($scope.columns[cix].single) {
+						rows[rix][columnName] = [rows[rix][columnName]];
+					} else {
+						rows[rix][columnName].push({patient: rows[rix].id});
+					}
+				}
+			}
+			rows = $filter('orderBy')(rows, ORDERING);
+			$scope.rows = rows;
+		});
+	};
 
 	function getRowIxFromPatientId(patientId) {
 		for (var rix = 0; rix < $scope.rows.length; rix++) {
@@ -169,7 +175,8 @@ app.controller('TableCtrl', function($scope, $http, $filter) {
 
 	$scope.startAdd = function() {
 		state = 'adding';
-		$scope.editing = {location: {}, demographics: {}};
+		$scope.editing = {location: {}, demographics: {}, tags: {}};
+		$scope.editing.tags[$scope.currentTag] = true;
 		$('#add-new-modal').modal();
 		$('#add-new-modal').find('input,textarea').first().focus();
 	};

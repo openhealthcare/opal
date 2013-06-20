@@ -32,8 +32,17 @@
 			</div>
 		</div>
 
-		<button class="btn" ng-click="startAdd()">Add record</button>
+		<div class="row">
+			<div class="span12">
+				<button class="btn" ng-click="startAdd()">Add record</button>
 
+				<div class="btn-group" ng-model="currentTag" bs-buttons-radio>
+					{% for name, title in tags.items %}
+					<button type="button" class="btn" value="{{name}}">{{title}}</button>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
 
 		<table class="table table-bordered">
 			<thead>
@@ -74,7 +83,17 @@
 			</tbody>
 		</table>
 
-		<button class="btn" ng-click="startAdd()">Add record</button>
+		<div class="row">
+			<div class="span12">
+				<button class="btn" ng-click="startAdd()">Add record</button>
+
+				<div class="btn-group" ng-model="currentTag" bs-buttons-radio>
+					{% for name, title in tags.items %}
+					<button type="button" class="btn" value="{{name}}">{{title}}</button>
+					{% endfor %}
+				</div>
+			</div>
+		</div>
 
 		{% for column in columns %}
 		<div id="{{column.name}}-modal" class="modal hide" tabindex="-1" role="dialog">

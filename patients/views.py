@@ -22,8 +22,14 @@ class SingletonMixin(object):
         return models.Patient.objects.get(pk=self.kwargs['patient_id'])
 
 class PatientList(LoginRequiredMixin, generics.ListAPIView):
-    queryset = models.Patient.objects.all()
     serializer_class = serializers.PatientSerializer
+
+    def get_queryset(self):
+        tag = self.request.GET.get('tag', 'mine')
+        if tag == 'mine':
+            return models.Patient.objects.filter(tagging__user=self.request.user)
+        else:
+            return models.Patient.objects.filter(tagging__tag_name=tag)
 
     # TODO use DRF for this
     def post(self, request, *args, **kwargs):
@@ -34,9 +40,9 @@ class PatientList(LoginRequiredMixin, generics.ListAPIView):
         demographics = patient.demographics
         demographics.__dict__.update(request.DATA['demographics'])
         demographics.save()
-        for tag_key in request.DATA.get('tags', []):
-            tagging = models.Tagging(tag_name=models.TAGS[tag_key])
-            if tag_key == 'mine':
+        for tag_name in request.DATA.get('tags', []):
+            tagging = models.Tagging(tag_name=tag_name)
+            if tag_name == 'mine':
                 tagging.user = request.user
             patient.tagging_set.add(tagging)
 

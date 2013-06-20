@@ -8,8 +8,13 @@ from utils.fields import ForeignKeyOrFreeText
 from utils import camelcase_to_underscore
 from options.models import option_models
 
-TAG_NAMES = ['Infectious Diseases', 'Microbiology', 'Mine']
-TAGS = OrderedDict((camelcase_to_underscore(name.replace(' ', '')), name) for name in TAG_NAMES)
+TAGS = OrderedDict([
+    ('microbiology', 'Micro'),
+    ('infectious_diseases', 'ID'),
+    ('hiv', 'HIV'),
+    ('tropical_diseases', 'Tropical'),
+    ('mine', 'Mine'),
+])
 
 class Patient(models.Model):
     def __unicode__(self):
