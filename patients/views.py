@@ -31,20 +31,40 @@ class PatientList(LoginRequiredMixin, generics.ListAPIView):
         else:
             return models.Patient.objects.filter(tagging__tag_name=tag)
 
-    # TODO use DRF for this
     def post(self, request, *args, **kwargs):
-        patient = models.Patient.objects.create()
+        try:
+            hospital_number = request.DATA['demographics']['hospital_number']
+            patient = models.Patient.objects.get(demographics__hospital_number=hospital_number)
+        except models.Patient.DoesNotExist:
+            patient = models.Patient.objects.create()
+
         location = patient.location
-        location.__dict__.update(request.DATA['location'])
+        for field in location._meta.fields:
+            field_name = field.name
+            if field_name not in ['id', 'patient'] and field_name in request.DATA['location']:
+                setattr(location, field_name, request.DATA['location'][field_name])
         location.save()
+
         demographics = patient.demographics
-        demographics.__dict__.update(request.DATA['demographics'])
+        for field in demographics._meta.fields:
+            field_name = field.name
+            if field_name not in ['id', 'patient'] and field_name in request.DATA['demographics']:
+                setattr(demographics, field_name, request.DATA['demographics'][field_name])
         demographics.save()
-        for tag_name in request.DATA.get('tags', []):
-            tagging = models.Tagging(tag_name=tag_name)
-            if tag_name == 'mine':
-                tagging.user = request.user
-            patient.tagging_set.add(tagging)
+
+        tags = request.DATA.get('tags', {})
+        for tagging in patient.tagging_set.all():
+            if not tags.get(tagging.tag_name, False):
+                tagging.delete()
+
+        for tag_name, value in tags.items():
+            if not value:
+                continue
+            if tag_name not in [t.tag_name for t in patient.tagging_set.all()]:
+                tagging = models.Tagging(tag_name=tag_name)
+                if tag_name == 'mine':
+                    tagging.user = request.user
+                patient.tagging_set.add(tagging)
 
         serializer = serializers.PatientSerializer(patient)
         return response.Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -123,5 +143,11 @@ class SearchView(LoginRequiredMixin, views.APIView):
             queryset = models.Patient.objects.none()
         serializer = serializers.PatientSearchSerializer(queryset, many=True)
         data = {'patients': serializer.data}
+
+        # We cannot get the tags in the serializer because this requires the user
+        for patient in data['patients']:
+            taggings = models.Tagging.objects.filter(patient_id=patient['id'])
+            patient['tags'] = {t.tag_name: True for t in taggings if t.user is None or t.user == request.user}
+
         data['search_terms'] = search_terms
         return response.Response(data)

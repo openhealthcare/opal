@@ -123,7 +123,7 @@ app.controller('TableCtrl', function($scope, $http, $filter) {
 				return rix;
 			}
 		};
-		throw 'Could not find row for patient ' + patient.id;
+		return -1;
 	};
 
 	function getNumItems(rix, cix) {
@@ -205,13 +205,30 @@ app.controller('TableCtrl', function($scope, $http, $filter) {
 
 	$scope.startAdd = function() {
 		state = 'adding';
+		$scope.foundPatient = false; // Display rest of form when true
+		$scope.findingPatient = false; // Disable Search button when true
 		$scope.editing = {location: {}, demographics: {}, tags: {}};
-		$scope.editing.tags[$scope.currentTag] = true;
 		$('#add-new-modal').modal();
 		$('#add-new-modal').find('input,textarea').first().focus();
 	};
 
+	$scope.findByHospitalNumber = function() {
+		var hospitalNumber = $scope.editing.demographics.hospital_number
+		$scope.findingPatient = true;
+		$http.get('search/?hospital_number=' + hospitalNumber).success(function(results) {
+			$scope.findingPatient = false;
+			$scope.foundPatient = true; // misnomer: might not actually have found a patient!
+			if (results.patients.length == 1) {
+				$scope.editing.demographics = clone(results.patients[0].demographics);
+				$scope.editing.location = clone(results.patients[0].location);
+				$scope.editing.tags = clone(results.patients[0].tags);
+			}
+			$scope.editing.tags[$scope.currentTag] = true;
+		});
+	};
+
 	$scope.saveAdd = function() {
+		var rix;
 		state = 'normal';
 		clearModal('add-new');
 		$http.post('patient/', $scope.editing).success(function(patient) {
@@ -221,6 +238,12 @@ app.controller('TableCtrl', function($scope, $http, $filter) {
 				} else {
 					patient[getColumnName(cix)] = [{patient: patient.id}];
 				}
+			}
+			rix = getRowIxFromPatientId(patient.id);
+			if (rix != -1) {
+				// If patient is already in table, remove the corresponding row.
+				// This guards against user changing patient data in add form.
+				$scope.rows.splice(rix, 1);
 			}
 			$scope.rows.push(patient);
 			$scope.rows.sort(comparePatients);

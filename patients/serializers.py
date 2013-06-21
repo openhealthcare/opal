@@ -37,3 +37,4 @@ class PatientSearchSerializer(serializers.ModelSerializer):
         model = models.Patient
 
     demographics = build_subrecord_serializer(models.Demographics)()
+    location = build_subrecord_serializer(models.Location)()
