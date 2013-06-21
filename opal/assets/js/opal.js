@@ -1,4 +1,4 @@
-var ORDERING =  '[location[0].category, location[0].hospital, location[0].ward, location[0].bed]';
+var CATEGORIES = ['Inpatient', 'Followup', 'Review'];
 
 function clone(obj) {
 	if (typeof obj == 'object') {
@@ -84,9 +84,37 @@ app.controller('TableCtrl', function($scope, $http, $filter) {
 					}
 				}
 			}
-			rows = $filter('orderBy')(rows, ORDERING);
+			rows.sort(comparePatients);
 			$scope.rows = rows;
 		});
+	};
+
+	function comparePatients(p1, p2) {
+		var v1, v2;
+		var comparators = [
+			function(p) { return CATEGORIES.indexOf(p.location[0].category) },
+			function(p) { return p.location[0].hospital },
+			function(p) {
+				if (p.location[0].hospital == 'UCH' && p.location[0].ward.match(/^T\d+/)) {
+					return parseInt(p.location[0].ward.substring(1));
+				} else {
+					return p.location[0].ward
+			       	}
+			},
+			function(p) { return parseInt(p.location[0].bed) },
+		];
+
+		for (var ix = 0; ix < comparators.length; ix++) {
+			v1 = comparators[ix](p1);
+			v2 = comparators[ix](p2);
+			if (v1 < v2) {
+				return -1;
+			} else if (v1 > v2) {
+				return 1;
+			}
+		}
+
+		return 0;
 	};
 
 	function getRowIxFromPatientId(patientId) {
@@ -194,7 +222,7 @@ app.controller('TableCtrl', function($scope, $http, $filter) {
 				}
 			}
 			$scope.rows.push(patient);
-			$scope.rows = $filter('orderBy')($scope.rows, ORDERING);
+			$scope.rows.sort(comparePatients);
 			$scope.selectItem(getRowIxFromPatientId(patient.id), 0, 0);
 		});
 	};
@@ -213,7 +241,7 @@ app.controller('TableCtrl', function($scope, $http, $filter) {
 		if (isSingleColumn($scope.cix)) {
 			$http.put(url, $scope.editing);
 			if (columnName == 'location') {
-				$scope.rows = $filter('orderBy')($scope.rows, ORDERING);
+				$scope.rows.sort(comparePatients);
 				$scope.selectItem(getRowIxFromPatientId(patientId), $scope.cix, 0);
 			}
 		} else {
