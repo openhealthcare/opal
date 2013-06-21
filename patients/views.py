@@ -3,7 +3,7 @@ from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
-from rest_framework import generics, response, status
+from rest_framework import generics, response, status, renderers, views
 from utils import camelcase_to_underscore
 from patients import models, serializers, schema
 from options.models import option_models
@@ -61,7 +61,7 @@ class SubrecordDetail(LoginRequiredMixin, SingletonMixin, generics.RetrieveUpdat
         return getattr(self.patient, camelcase_to_underscore(self.model.__name__)).get(pk=self.kwargs['id'])
 
 class IndexView(LoginRequiredMixin, TemplateView):
-    template_name = "opal.html"
+    template_name = 'opal.html'
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
@@ -83,7 +83,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
 
 # This probably doesn't belong here
 class ContactView(TemplateView):
-    template_name = "contact.html"
+    template_name = 'contact.html'
 
 def schema_view(request):
     columns = []
@@ -105,3 +105,23 @@ def schema_view(request):
         'option_lists': option_lists
     }
     return HttpResponse(json.dumps(data), mimetype='application/json')
+
+class SearchView(LoginRequiredMixin, views.APIView):
+    renderer_classes = [renderers.TemplateHTMLRenderer, renderers.JSONRenderer]
+    serializer_class = serializers.PatientSearchSerializer
+
+    def get_template_names(self):
+        return ['search_results.html']
+
+    def get(self, request, *args, **kwargs):
+        search_keys = ['hospital_number', 'name']
+        search_terms = {key: self.request.GET.get(key, '') for key in search_keys}
+        filter_dict = {'demographics__' + key: term for key, term in search_terms.items() if term}
+        if filter_dict:
+            queryset = models.Patient.objects.filter(**filter_dict)
+        else:
+            queryset = models.Patient.objects.none()
+        serializer = serializers.PatientSearchSerializer(queryset, many=True)
+        data = {'patients': serializer.data}
+        data['search_terms'] = search_terms
+        return response.Response(data)

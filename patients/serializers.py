@@ -31,3 +31,9 @@ for model in models.Subrecord.__subclasses__():
     attrs[camelcase_to_underscore(model._meta.object_name)] = build_subrecord_serializer(model)(many=True, required=False)
 
 PatientSerializer = type('PatientSerializer', (serializers.ModelSerializer,), attrs)
+
+class PatientSearchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Patient
+
+    demographics = build_subrecord_serializer(models.Demographics)()
