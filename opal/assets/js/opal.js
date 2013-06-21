@@ -155,6 +155,7 @@ app.controller('TableCtrl', function($scope, $http, $filter) {
 	function startEdit() {
 		state = 'editing';
 		$scope.editing = clone(getCurrentItem());
+		$scope.editingName = $scope.rows[$scope.rix].demographics[0].name;
 		$('#' + getCurrentColumnName() + '-modal').modal();
 		$('#' + getCurrentColumnName() + '-modal').find('input,textarea').first().focus();
 	};

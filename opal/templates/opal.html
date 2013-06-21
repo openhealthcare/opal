@@ -134,7 +134,7 @@
 		<div id="{{column.name}}-modal" class="modal hide" tabindex="-1" role="dialog">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" ng-click="cancelEdit()">×</button>
-				<h3>{{column.title}}</h3>
+				<h3>{{column.title}} ([[editingName]])</h3>
 			</div>
 			<div class="modal-body">{% include column.modal_template_path %}</div>
 			<div class="modal-footer">
