@@ -31,6 +31,13 @@ class PatientList(LoginRequiredMixin, generics.ListAPIView):
         else:
             return models.Patient.objects.filter(tagging__tag_name=tag)
 
+    def get(self, request, *args, **kwargs):
+        response = super(PatientList, self).get(request, *args, **kwargs)
+        for patient in response.data:
+            taggings = models.Tagging.objects.filter(patient_id=patient['id'])
+            patient['tags'] = {t.tag_name: True for t in taggings if t.user is None or t.user == request.user}
+        return response
+
     def post(self, request, *args, **kwargs):
         try:
             hospital_number = request.DATA['demographics']['hospital_number']
@@ -53,18 +60,7 @@ class PatientList(LoginRequiredMixin, generics.ListAPIView):
         demographics.save()
 
         tags = request.DATA.get('tags', {})
-        for tagging in patient.tagging_set.all():
-            if not tags.get(tagging.tag_name, False):
-                tagging.delete()
-
-        for tag_name, value in tags.items():
-            if not value:
-                continue
-            if tag_name not in [t.tag_name for t in patient.tagging_set.all()]:
-                tagging = models.Tagging(tag_name=tag_name)
-                if tag_name == 'mine':
-                    tagging.user = request.user
-                patient.tagging_set.add(tagging)
+        patient.set_tags(tags)
 
         serializer = serializers.PatientSerializer(patient)
         return response.Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -72,6 +68,13 @@ class PatientList(LoginRequiredMixin, generics.ListAPIView):
 class SingletonSubrecordDetail(LoginRequiredMixin, SingletonMixin, generics.RetrieveUpdateAPIView):
     def get_object(self, queryset=None):
         return getattr(self.patient, self.model.__name__.lower())
+
+    def put(self, request, *args, **kwargs):
+        response = super(SingletonSubrecordDetail, self).put(request, *args, **kwargs)
+        if 'tags' in request.DATA:
+            patient = models.Patient.objects.get(pk=request.DATA['patient'])
+            patient.set_tags(request.DATA['tags'])
+        return response
 
 class SubrecordList(LoginRequiredMixin, SingletonMixin, generics.ListCreateAPIView):
     pass
@@ -128,7 +131,6 @@ def schema_view(request):
 
 class SearchView(LoginRequiredMixin, views.APIView):
     renderer_classes = [renderers.TemplateHTMLRenderer, renderers.JSONRenderer]
-    serializer_class = serializers.PatientSearchSerializer
 
     def get_template_names(self):
         return ['search_results.html']
