@@ -20,13 +20,6 @@ class Patient(models.Model):
     def __unicode__(self):
         return '%s | %s' % (self.demographics.hospital_number, self.demographics.name)
 
-    def microbiology_test(self):
-        microbiology_test_classes = MicrobiologyTest.__subclasses__()
-        tests = []
-        for cls in microbiology_test_classes:
-            tests.extend(getattr(self, cls.__name__.lower() + '_set').all())
-        return tests
-
 class Tagging(models.Model):
     tag_name = models.CharField(max_length=255, blank=True)
     user = models.ForeignKey(auth.models.User, null=True, blank=True)
