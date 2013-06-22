@@ -4,6 +4,7 @@ from patients import models, views
 
 urlpatterns = patterns('',
     url(r'^$', views.PatientList.as_view()),
+    url(r'^(?P<pk>\d+)/$', views.PatientDetailView.as_view()),
 )
 
 for subrecord_model in models.SingletonSubrecord.__subclasses__():

@@ -461,6 +461,39 @@ app.controller('TableCtrl', function($scope, $http, $filter) {
 	}
 });
 
+// This is unlikely to be idiomatic
+app.controller('PatientCtrl', function($scope, $http) {
+	var patientId = window.location.href.split('/').slice(-2)[0];
+
+	$http.get('/schema/').success(function(data) {
+		$scope.columns = data.columns;
+
+		$http.get('/patient/').success(function(patients) {
+			var patient;
+			var columnName;
+
+			for (var pix = 0; pix < patients.length; pix++) {
+				if (patients[pix].id == patientId) {
+					patient = patients[pix];
+					break;
+				}
+			}
+
+			for (var cix = 0; cix < $scope.columns.length; cix++) {
+				columnName = $scope.columns[cix].name;
+				if ($scope.columns[cix].single) {
+					patient[columnName] = [patient[columnName]];
+				}
+			}
+			$scope.patient = patient;
+		});
+	})
+
+	$scope.getSynonymn = function(option, term) {
+		return term;
+	};
+});
+
 app.value('$strapConfig', {
 	datepicker: {
 		format: 'yyyy-mm-dd',

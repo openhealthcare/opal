@@ -104,6 +104,27 @@ class IndexView(LoginRequiredMixin, TemplateView):
 
         return context
 
+class PatientDetailView(LoginRequiredMixin, TemplateView):
+    template_name = 'patient_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(PatientDetailView, self).get_context_data(**kwargs)
+        context['tags'] = models.TAGS
+
+        context['columns'] = []
+
+        for column in schema.columns:
+            column_context = {}
+            name = camelcase_to_underscore(column.__name__)
+            column_context['name'] = name
+            column_context['title'] = getattr(column, '_title', name.replace('_', ' ').title())
+            column_context['single'] = issubclass(column, models.SingletonSubrecord)
+            column_context['template_path'] = name + '.html'
+            column_context['modal_template_path'] = name + '_modal.html'
+            context['columns'].append(column_context)
+
+        return context
+
 # This probably doesn't belong here
 class ContactView(TemplateView):
     template_name = 'contact.html'
