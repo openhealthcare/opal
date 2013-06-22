@@ -465,7 +465,7 @@ app.controller('TableCtrl', function($scope, $http, $filter) {
 app.controller('PatientCtrl', function($scope, $http) {
 	var patientId = window.location.href.split('/').slice(-2)[0];
 
-	$http.get('/schema/').success(function(data) {
+	$http.get('/schema/?columns-only=yes').success(function(data) {
 		$scope.columns = data.columns;
 
 		$http.get('/patient/').success(function(patients) {

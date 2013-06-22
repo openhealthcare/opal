@@ -138,18 +138,22 @@ def schema_view(request):
             'name': camelcase_to_underscore(column.__name__),
             'single': issubclass(column, models.SingletonSubrecord)
         })
-    option_lists = {}
-    for name, model in option_models.items():
-        synonyms = []
-        for instance in model.objects.all():
-            synonyms.append([instance.name, instance.name])
-            for synonym in instance.synonyms.all():
-                synonyms.append([synonym.name, instance.name])
-        option_lists[name] = synonyms
-    data = {
-        'columns': columns,
-        'option_lists': option_lists
-    }
+
+    if request.GET.get('columns-only', 'no') == 'yes':
+        data = {'columns': columns}
+    else:
+        option_lists = {}
+        for name, model in option_models.items():
+            synonyms = []
+            for instance in model.objects.all():
+                synonyms.append([instance.name, instance.name])
+                for synonym in instance.synonyms.all():
+                    synonyms.append([synonym.name, instance.name])
+            option_lists[name] = synonyms
+        data = {
+            'columns': columns,
+            'option_lists': option_lists
+        }
     return HttpResponse(json.dumps(data), mimetype='application/json')
 
 class SearchView(LoginRequiredMixin, views.APIView):
