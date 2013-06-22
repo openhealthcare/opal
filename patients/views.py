@@ -25,8 +25,10 @@ class PatientList(LoginRequiredMixin, generics.ListAPIView):
     serializer_class = serializers.PatientSerializer
 
     def get_queryset(self):
-        tag = self.request.GET.get('tag', 'mine')
-        if tag == 'mine':
+        tag = self.request.GET.get('tag')
+        if tag is None:
+            return models.Patient.objects.all()
+        elif tag == 'mine':
             return models.Patient.objects.filter(tagging__user=self.request.user)
         else:
             return models.Patient.objects.filter(tagging__tag_name=tag)
