@@ -3,6 +3,7 @@ model_names = [
     'antimicrobial_route',
     'condition',
     'destination',
+    'hospital',
     'micro_test_c_difficile',
     'micro_test_csf_pcr',
     'micro_test_ebv_serology',
