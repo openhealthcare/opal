@@ -20,7 +20,7 @@ class Patient(models.Model):
     def __unicode__(self):
         return '%s | %s' % (self.demographics.hospital_number, self.demographics.name)
 
-    def set_tags(self, tags):
+    def set_tags(self, tags, user):
         # tags is a dictionary mapping tag names to a boolean
         for tagging in self.tagging_set.all():
             if not tags.get(tagging.tag_name, False):
@@ -32,7 +32,7 @@ class Patient(models.Model):
             if tag_name not in [t.tag_name for t in self.tagging_set.all()]:
                 tagging = Tagging(tag_name=tag_name)
                 if tag_name == 'mine':
-                    tagging.user = request.user
+                    tagging.user = user
                 self.tagging_set.add(tagging)
 
 class Tagging(models.Model):

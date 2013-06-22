@@ -60,7 +60,7 @@ class PatientList(LoginRequiredMixin, generics.ListAPIView):
         demographics.save()
 
         tags = request.DATA.get('tags', {})
-        patient.set_tags(tags)
+        patient.set_tags(tags, request.user)
 
         serializer = serializers.PatientSerializer(patient)
         return response.Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -73,7 +73,7 @@ class SingletonSubrecordDetail(LoginRequiredMixin, SingletonMixin, generics.Retr
         response = super(SingletonSubrecordDetail, self).put(request, *args, **kwargs)
         if 'tags' in request.DATA:
             patient = models.Patient.objects.get(pk=request.DATA['patient'])
-            patient.set_tags(request.DATA['tags'])
+            patient.set_tags(request.DATA['tags'], request.user)
         return response
 
 class SubrecordList(LoginRequiredMixin, SingletonMixin, generics.ListCreateAPIView):
