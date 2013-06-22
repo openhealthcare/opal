@@ -8,6 +8,7 @@
 		<form>
 			<td><input type="text" name="hospital_number" value="{{search_terms.hospital_number}}" placeholder="Hospital Number"></td>
 			<td><input type="text" name="name" value="{{search_terms.name}}" placeholder="Name"></td>
+			<td></td>
 			<td><button type="submit" class="btn">Search</button></td>
 		</form>
 	</tr>
@@ -16,6 +17,7 @@
 		<td>{{ patient.demographics.hospital_number }}</td>
 		<td>{{ patient.demographics.name }}</td>
 		<td>{{ patient.demographics.date_of_birth }}</td>
+		<td><a href="/patient/{{ patient.id }}">View</a></td>
 	</tr>
 	{% endfor %}
 </table>
