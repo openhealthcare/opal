@@ -257,6 +257,7 @@ app.controller('TableCtrl', function($scope, $http, $filter) {
 		var patientId = $scope.rows[$scope.rix].id;
 		var url = 'patient/' + patientId + '/' + columnName + '/';
 		var items = $scope.rows[$scope.rix][columnName];
+		var newItemIx;
 
 		state = 'normal';
 		clearModal(columnName);
@@ -272,9 +273,10 @@ app.controller('TableCtrl', function($scope, $http, $filter) {
 		} else {
 			if (typeof($scope.editing.id) == 'undefined') {
 				// This is a new item
+				items.push({patient: patientId});
+				newItemIx = $scope.iix;
 				$http.post(url, $scope.editing).success(function(item) {
-					items[$scope.iix].id = item.id;
-					items.push({patient: patientId});
+					items[newItemIx].id = item.id;
 				});
 			} else {
 				url = url + $scope.editing.id + '/';
