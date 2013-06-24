@@ -16,7 +16,17 @@ TAGS = OrderedDict([
     ('mine', 'Mine'),
 ])
 
+class PatientManager(models.Manager):
+    def get_query_set(self):
+        queryset = super(PatientManager, self).get_query_set()
+        values = queryset.values('demographics__hospital_number').annotate(id=models.Max('id')).values('id')
+        ids = [d['id'] for d in values]
+        return queryset.filter(id__in=ids)
+
 class Patient(models.Model):
+    # We normally only want the most recent record for each hospital number
+    objects = PatientManager()
+
     def __unicode__(self):
         return '%s | %s' % (self.demographics.hospital_number, self.demographics.name)
 

@@ -205,7 +205,7 @@ app.controller('TableCtrl', function($scope, $http, $filter) {
 		$('#' + columnName + '-modal').modal('hide')
 
 		// See https://github.com/openhealthcare/opal/issues/28
-		document.activeElement.blur();
+		$(".btn").blur();
 	};
 
 	$scope.getCategory = function(testName) {
