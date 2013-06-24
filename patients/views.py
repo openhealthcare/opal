@@ -165,7 +165,7 @@ class SearchView(LoginRequiredMixin, views.APIView):
     def get(self, request, *args, **kwargs):
         search_keys = ['hospital_number', 'name']
         search_terms = {key: self.request.GET.get(key, '') for key in search_keys}
-        filter_dict = {'demographics__' + key: term for key, term in search_terms.items() if term}
+        filter_dict = {'demographics__' + key + '__iexact': term for key, term in search_terms.items() if term}
         if filter_dict:
             queryset = models.Patient.objects.filter(**filter_dict)
         else:
