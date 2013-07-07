@@ -67,6 +67,10 @@ class PatientList(LoginRequiredMixin, generics.ListAPIView):
         serializer = serializers.PatientSerializer(patient)
         return response.Response(serializer.data, status=status.HTTP_201_CREATED)
 
+class PatientDetailView(LoginRequiredMixin, generics.RetrieveAPIView):
+    model = models.Patient
+    serializer_class = serializers.PatientSerializer
+
 class SingletonSubrecordDetail(LoginRequiredMixin, SingletonMixin, generics.RetrieveUpdateAPIView):
     def get_object(self, queryset=None):
         return getattr(self.patient, self.model.__name__.lower())
@@ -90,27 +94,6 @@ class IndexView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
-        context['tags'] = models.TAGS
-
-        context['columns'] = []
-
-        for column in schema.columns:
-            column_context = {}
-            name = camelcase_to_underscore(column.__name__)
-            column_context['name'] = name
-            column_context['title'] = getattr(column, '_title', name.replace('_', ' ').title())
-            column_context['single'] = issubclass(column, models.SingletonSubrecord)
-            column_context['template_path'] = name + '.html'
-            column_context['modal_template_path'] = name + '_modal.html'
-            context['columns'].append(column_context)
-
-        return context
-
-class PatientDetailView(LoginRequiredMixin, TemplateView):
-    template_name = 'patient_detail.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(PatientDetailView, self).get_context_data(**kwargs)
         context['tags'] = models.TAGS
 
         context['columns'] = []
