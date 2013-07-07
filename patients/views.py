@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from rest_framework import generics, response, status, renderers, views
 from utils import camelcase_to_underscore
 from patients import models, serializers, schema
-from options.models import option_models
+from options.models import option_models, Synonym
 
 class LoginRequiredMixin(object):
     @method_decorator(login_required)
@@ -89,11 +89,11 @@ class SubrecordDetail(LoginRequiredMixin, SingletonMixin, generics.RetrieveUpdat
     def get_object(self, queryset=None):
         return getattr(self.patient, camelcase_to_underscore(self.model.__name__)).get(pk=self.kwargs['id'])
 
-class IndexView(LoginRequiredMixin, TemplateView):
-    template_name = 'opal.html'
+class PatientListTemplateView(TemplateView):
+    template_name = 'patient_list.html'
 
     def get_context_data(self, **kwargs):
-        context = super(IndexView, self).get_context_data(**kwargs)
+        context = super(PatientListTemplateView, self).get_context_data(**kwargs)
         context['tags'] = models.TAGS
 
         context['columns'] = []
@@ -110,6 +110,12 @@ class IndexView(LoginRequiredMixin, TemplateView):
 
         return context
 
+class PatientDetailTemplateView(TemplateView):
+    template_name = 'patient_detail.html'
+
+class IndexView(LoginRequiredMixin, TemplateView):
+    template_name = 'opal.html'
+
 # This probably doesn't belong here
 class ContactView(TemplateView):
     template_name = 'contact.html'
@@ -122,21 +128,23 @@ def schema_view(request):
             'single': issubclass(column, models.SingletonSubrecord)
         })
 
-    if request.GET.get('columns-only', 'no') == 'yes':
-        data = {'columns': columns}
-    else:
-        option_lists = {}
+    data = {'columns': columns}
+
+    if request.GET.get('columns-only', 'no') == 'no':
+        data['option_lists'] = {}
+        data['synonyms'] = {}
+
         for name, model in option_models.items():
-            synonyms = []
+            option_list = []
+            synonyms = {}
             for instance in model.objects.all():
-                synonyms.append([instance.name, instance.name])
+                option_list.append(instance.name)
                 for synonym in instance.synonyms.all():
-                    synonyms.append([synonym.name, instance.name])
-            option_lists[name] = synonyms
-        data = {
-            'columns': columns,
-            'option_lists': option_lists
-        }
+                    option_list.append(synonym.name)
+                    synonyms[synonym.name] = instance.name
+            data['option_lists'][name] = option_list
+            data['synonyms'][name] = synonyms
+
     return HttpResponse(json.dumps(data), mimetype='application/json')
 
 class SearchView(LoginRequiredMixin, views.APIView):
