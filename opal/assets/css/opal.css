@@ -15,3 +15,9 @@ li.selected {
  .modal-body {
 	height: 400px;
 }
+
+
+thead {
+    background: #fafafa;
+    border-bottom: 1px solid #ddd;
+}

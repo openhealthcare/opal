@@ -524,3 +524,7 @@ app.value('$strapConfig', {
 		type: 'string'
 	}
 });
+
+$(document).ready( function(){
+    $('table').stickyTableHeaders();
+});
