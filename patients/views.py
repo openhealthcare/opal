@@ -89,11 +89,9 @@ class SubrecordDetail(LoginRequiredMixin, SingletonMixin, generics.RetrieveUpdat
     def get_object(self, queryset=None):
         return getattr(self.patient, camelcase_to_underscore(self.model.__name__)).get(pk=self.kwargs['id'])
 
-class PatientListTemplateView(TemplateView):
-    template_name = 'patient_list.html'
-
+class PatientTemplateView(TemplateView):
     def get_context_data(self, **kwargs):
-        context = super(PatientListTemplateView, self).get_context_data(**kwargs)
+        context = super(PatientTemplateView, self).get_context_data(**kwargs)
         context['tags'] = models.TAGS
 
         context['columns'] = []
@@ -110,7 +108,10 @@ class PatientListTemplateView(TemplateView):
 
         return context
 
-class PatientDetailTemplateView(TemplateView):
+class PatientListTemplateView(PatientTemplateView):
+    template_name = 'patient_list.html'
+
+class PatientDetailTemplateView(PatientTemplateView):
     template_name = 'patient_detail.html'
 
 class IndexView(LoginRequiredMixin, TemplateView):

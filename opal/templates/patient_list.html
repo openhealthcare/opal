@@ -33,6 +33,7 @@
 			{% for column in columns %}
 			<th>{{ column.title }}</th>
 			{% endfor %}
+			<th></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -62,6 +63,7 @@
 			</ul>
 		</td>
 		{% endfor %}
+		<td><a href="#/patient/[[row.id]]">View</a></td>
 	</tr>
 	</tbody>
 </table>

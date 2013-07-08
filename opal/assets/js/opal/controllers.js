@@ -31,7 +31,14 @@ app.config(function($routeProvider) {
 			templateUrl: '/patient/templates/patient_list.html'
 		}).when('/patient/:patientId', {
 			controller: 'PatientDetailCtrl',
-			resolve: {},
+			resolve: {
+				schema: function(SchemaLoader) {
+					return SchemaLoader();
+				},
+				patient: function(PatientLoader) {
+					return PatientLoader();
+				}
+			},
 			templateUrl: '/patient/templates/patient_detail.html'
 		}).otherwise({redirectTo: '/'});
 });
@@ -443,4 +450,19 @@ app.controller('PatientListCtrl', function($scope, $http, schema, patients) {
 			};
 		};
 	};
+});
+
+app.controller('PatientDetailCtrl', function($scope, $http, schema, patient) {
+	var columnName;
+
+	$scope.columns = schema.columns;
+
+	for (var cix = 0; cix < $scope.columns.length; cix++) {
+		columnName = $scope.columns[cix].name;
+		if ($scope.columns[cix].single) {
+			patient[columnName] = [patient[columnName]];
+		}
+	}
+
+	$scope.patient = patient;
 });

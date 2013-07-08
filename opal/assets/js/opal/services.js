@@ -27,3 +27,15 @@ services.factory('PatientsLoader', ['Patient', '$q', function(Patient, $q) {
 		return delay.promise;
 	};
 }]);
+
+services.factory('PatientLoader', ['Patient', '$route', '$q', function(Patient, $route, $q) {
+	return function() {
+		var delay = $q.defer();
+		Patient.get({id: $route.current.params.patientId}, function(patient) {
+			delay.resolve(patient);
+		}, function() {
+			delay.reject('There was a problem fetching record '  + $route.current.params.patientId);
+		});
+		return delay.promise;
+	};
+}]);
