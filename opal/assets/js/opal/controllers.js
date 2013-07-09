@@ -271,6 +271,7 @@ app.controller('PatientListCtrl', function($scope, $http, schema, patients) {
 		if (isSingleColumn($scope.cix)) {
 			$http.put(url, $scope.editing);
 			if (columnName == 'location') {
+				$scope.rows[$scope.rix].tags = $scope.editing.tags;
 				$scope.rows.sort(comparePatients);
 				$scope.selectItem(getRowIxFromPatientId(patientId), $scope.cix, 0);
 			}
