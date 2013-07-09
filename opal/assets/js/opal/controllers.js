@@ -1,6 +1,6 @@
 var CATEGORIES = ['Inpatient', 'Followup', 'Review'];
 
-var app = angular.module('opal', ['opal.services', '$strap.directives', 'ui.event']);
+var app = angular.module('opal', ['ngCookies', 'opal.services', '$strap.directives', 'ui.event']);
 
 // See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags
 app.config(function($interpolateProvider) {
@@ -49,7 +49,7 @@ app.controller('RootCtrl', function($scope) {
 	};
 });
 
-app.controller('PatientListCtrl', function($scope, $http, schema, patients) {
+app.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, patients) {
 	var state = 'normal';
 	var columnName;
 
@@ -61,7 +61,7 @@ app.controller('PatientListCtrl', function($scope, $http, schema, patients) {
 	$scope.mouseCix = -1; // index of column mouse is currently over
 
 	$scope.query = {hospital: '', ward: ''};
-	$scope.currentTag = 'mine'; // initially display patients of interest to current user
+	$scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine'; // initially display patients of interest to current user
 
 	$scope.columns = []
 	for (var cix = 0; cix < schema.columns.length; cix++) {
@@ -121,6 +121,7 @@ app.controller('PatientListCtrl', function($scope, $http, schema, patients) {
 	};
 
 	$scope.$watch('currentTag', function() {
+		$cookieStore.put('opal.currentTag', $scope.currentTag);
 		$scope.rows = getVisiblePatients();
 		$scope.rix = 0;
 	});
