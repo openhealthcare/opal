@@ -387,19 +387,15 @@ app.controller('PatientListCtrl', function($scope, $http, schema, patients) {
 	function handleKeypressNormal(e) {
 		switch (e.keyCode) {
 			case 37: // left
-			case 72: // h
 				goLeft();
 				break;
 			case 39: // right
-			case 76: // l
 				goRight();
 				break;
 			case 38: // up
-			case 75: // k
 				goUp();
 				break;
 			case 40: // down
-			case 74: // j
 				goDown();
 				break;
 			case 13: // enter
@@ -648,11 +644,9 @@ app.controller('PatientDetailCtrl', function($scope, $http, schema, patient) {
 	function handleKeypressNormal(e) {
 		switch (e.keyCode) {
 			case 38: // up
-			case 75: // k
 				goUp();
 				break;
 			case 40: // down
-			case 74: // j
 				goDown();
 				break;
 			case 13: // enter
