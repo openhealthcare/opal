@@ -602,7 +602,7 @@ app.controller('PatientDetailCtrl', function($scope, $http, schema, patient) {
 		if (isSingleColumn($scope.cix)) {
 			$http.put(url, $scope.editing);
 			if (columnName == 'location') {
-				$scope.selectItem(getRowIxFromPatientId(patientId), $scope.cix, 0);
+				$scope.patient.tags = $scope.editing.tags;
 			}
 		} else {
 			if (typeof($scope.editing.id) == 'undefined') {

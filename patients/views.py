@@ -76,6 +76,13 @@ class PatientDetailView(LoginRequiredMixin, generics.RetrieveAPIView):
     model = models.Patient
     serializer_class = serializers.PatientSerializer
 
+    def get(self, request, *args, **kwargs):
+        response = super(PatientDetailView, self).get(request, *args, **kwargs)
+        # We can't do this in the serializer because the serializer doesn't know about the user
+        taggings = models.Tagging.objects.filter(patient_id=response.data['id'])
+        response.data['tags'] = {t.tag_name: True for t in taggings if t.user is None or t.user == request.user}
+        return response
+
 class SingletonSubrecordDetail(LoginRequiredMixin, SingletonMixin, generics.RetrieveUpdateAPIView):
     def get_object(self, queryset=None):
         return getattr(self.patient, self.model.__name__.lower())
