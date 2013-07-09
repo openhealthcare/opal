@@ -356,6 +356,16 @@ app.controller('PatientListCtrl', function($scope, $http, schema, patients) {
 		return true;
 	}
 
+	function getNumVisibleRows() {
+		var num = 0;
+		for (var rix = 0; rix < $scope.rows.length; rix++) {
+			if ($scope.search($scope.rows[rix])) {
+				num++;
+			}
+		}
+		return num;
+	}
+
 	$scope.mouseEnter = function(rix, cix) {
 		$scope.mouseRix = rix;
 		$scope.mouseCix = cix;
@@ -438,7 +448,7 @@ app.controller('PatientListCtrl', function($scope, $http, schema, patients) {
 		if ($scope.iix < getNumItems($scope.rix, $scope.cix) - 1) {
 			$scope.iix++;
 		} else {
-			if ($scope.rix < $scope.rows.length - 1) {
+			if ($scope.rix < getNumVisibleRows() - 1) {
 				$scope.rix++;
 				$scope.iix = 0;
 			};
