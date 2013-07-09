@@ -35,6 +35,7 @@ class PatientList(LoginRequiredMixin, generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
         response = super(PatientList, self).get(request, *args, **kwargs)
+        # We can't do this in the serializer because the serializer doesn't know about the user
         for patient in response.data:
             taggings = models.Tagging.objects.filter(patient_id=patient['id'])
             patient['tags'] = {t.tag_name: True for t in taggings if t.user is None or t.user == request.user}
@@ -65,6 +66,10 @@ class PatientList(LoginRequiredMixin, generics.ListAPIView):
         patient.set_tags(tags, request.user)
 
         serializer = serializers.PatientSerializer(patient)
+
+        # We can't do this in the serializer because the serializer doesn't know about the user
+        serializer.data['tags'] = tags
+
         return response.Response(serializer.data, status=status.HTTP_201_CREATED)
 
 class PatientDetailView(LoginRequiredMixin, generics.RetrieveAPIView):
