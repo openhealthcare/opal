@@ -104,6 +104,8 @@ class PatientTemplateView(TemplateView):
         for column in schema.columns:
             column_context = {}
             name = camelcase_to_underscore(column.__name__)
+            if isinstance(self, PatientListTemplateView) and name == 'microbiology_input':
+                continue
             column_context['name'] = name
             column_context['title'] = getattr(column, '_title', name.replace('_', ' ').title())
             column_context['single'] = issubclass(column, models.SingletonSubrecord)

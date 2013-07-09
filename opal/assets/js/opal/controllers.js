@@ -63,7 +63,13 @@ app.controller('PatientListCtrl', function($scope, $http, schema, patients) {
 	$scope.query = {hospital: '', ward: ''};
 	$scope.currentTag = 'mine'; // initially display patients of interest to current user
 
-	$scope.columns = schema.columns;
+	$scope.columns = []
+	for (var cix = 0; cix < schema.columns.length; cix++) {
+		if (schema.columns[cix].name != 'microbiology_input') {
+			$scope.columns.push(schema.columns[cix]);
+		}
+	}
+
 	$scope.synonyms = schema.synonyms;
 
 	$scope.microbiology_test_list = [];
