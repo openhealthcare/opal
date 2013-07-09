@@ -372,13 +372,11 @@ app.controller('PatientListCtrl', function($scope, $http, schema, patients) {
 		};
 	};
 
-
 	function handleKeypressEdit(e) {
 		if (e.keyCode == 27) { // escape
 			$scope.cancelEdit();
 		};
 	};
-
 
 	function handleKeypressDelete(e) {
 		if (e.keyCode == 27) { // escape
@@ -453,16 +451,236 @@ app.controller('PatientListCtrl', function($scope, $http, schema, patients) {
 });
 
 app.controller('PatientDetailCtrl', function($scope, $http, schema, patient) {
+	var state = 'normal';
 	var columnName;
 
+	$scope.cix = 0; // column index (although columns are arranged vertically...)
+	$scope.iix = 0; // item index
+
+	$scope.mouseCix = -1; // index of column mouse is currently over
+
 	$scope.columns = schema.columns;
+	$scope.synonyms = schema.synonyms;
+
+	$scope.microbiology_test_list = [];
+
+	// The following could be done on the server
+	for (var optionName in schema.option_lists) {
+		if (optionName.indexOf('micro_test') == 0) {
+			for (var oix = 0; oix < schema.option_lists[optionName].length; oix++) {
+				$scope.microbiology_test_list.push(schema.option_lists[optionName][oix]);
+			}
+		} else {
+			$scope[optionName + '_list'] = schema.option_lists[optionName];
+		}
+	};
 
 	for (var cix = 0; cix < $scope.columns.length; cix++) {
 		columnName = $scope.columns[cix].name;
 		if ($scope.columns[cix].single) {
 			patient[columnName] = [patient[columnName]];
-		}
+		} else {
+			patient[columnName].push({patient: patient.id});
+		};
 	}
 
 	$scope.patient = patient;
+
+	$scope.$on('keydown', function(event, originalEvent) {
+		switch (state) {
+			case 'editing':
+				handleKeypressEdit(originalEvent);
+				break;
+			case 'deleting':
+				handleKeypressDelete(originalEvent);
+				break;
+			case 'searching':
+				// nothing special
+				break;
+			case 'normal':
+				handleKeypressNormal(originalEvent);
+				break;
+		};
+	});
+
+	$scope.getSynonymn = function(option, term) {
+		return $scope.synonyms[option][term] || term;
+	};
+
+	function isSingleColumn(cix) {
+		return $scope.columns[cix].single;
+	};
+
+	function getColumnName(cix) {
+		return $scope.columns[cix].name;
+	};
+
+	function getCurrentColumnName(cix) {
+		return getColumnName($scope.cix);
+	};
+
+	function getItem(cix, iix) {
+		var columnName = $scope.columns[cix].name;
+		return $scope.patient[columnName][iix];
+	};
+
+	function getCurrentItem() {
+		return getItem($scope.cix, $scope.iix);
+	};
+
+	function getNumItems(cix) {
+		var column = $scope.columns[cix];
+		return $scope.patient[column.name].length;
+	};
+
+	function clearModal(columnName) {
+		$('#' + columnName + '-modal').modal('hide')
+
+		// See https://github.com/openhealthcare/opal/issues/28
+		$(".btn").blur();
+	};
+
+	$scope.mouseEnter = function(cix) {
+		$scope.mouseCix = cix;
+	}
+
+	$scope.mouseLeave = function() {
+		$scope.mouseRix = -1;
+		$scope.mouseCix = -1;
+	}
+
+	function startEdit() {
+		state = 'editing';
+		$scope.editing = clone(getCurrentItem());
+		$scope.editing.tags = clone($scope.patient.tags);
+		$scope.editingName = $scope.patient.demographics[0].name;
+		$('#' + getCurrentColumnName() + '-modal').modal();
+		$('#' + getCurrentColumnName() + '-modal').find('input,textarea').first().focus();
+	};
+
+	$scope.saveEdit = function() {
+		var columnName = getCurrentColumnName();
+		var patientId = $scope.patient.id;
+		var url = 'patient/' + patientId + '/' + columnName + '/';
+		var items = $scope.patient[columnName];
+		var newItemIx;
+
+		state = 'normal';
+		clearModal(columnName);
+
+		items[$scope.iix] = clone($scope.editing);
+
+		if (isSingleColumn($scope.cix)) {
+			$http.put(url, $scope.editing);
+			if (columnName == 'location') {
+				$scope.rows.sort(comparePatients);
+				$scope.selectItem(getRowIxFromPatientId(patientId), $scope.cix, 0);
+			}
+		} else {
+			if (typeof($scope.editing.id) == 'undefined') {
+				// This is a new item
+				items.push({patient: patientId});
+				newItemIx = $scope.iix;
+				$http.post(url, $scope.editing).success(function(item) {
+					items[newItemIx].id = item.id;
+				});
+			} else {
+				url = url + $scope.editing.id + '/';
+				$http.put(url, $scope.editing);
+			}
+		}
+	};
+
+	$scope.cancelEdit = function() {
+		state = 'normal';
+		clearModal(getCurrentColumnName());
+	};
+
+	function startDelete() {
+		if (isSingleColumn($scope.cix)) {
+			// Cannot delete singleton
+			return;
+		}
+
+		if (getNumItems($scope.cix) == $scope.iix + 1) {
+			// Cannot delete 'Add'
+			return;
+		}
+
+		state = 'deleting';
+		$('#delete-confirmation').modal();
+		$('#delete-confirmation').find('.btn-primary').focus();
+	};
+
+	$scope.doDelete = function() {
+		var patientId = $scope.patient.id;
+		var columnName = getCurrentColumnName();
+		var items = $scope.patient[columnName];
+		var itemId = items[$scope.iix].id;
+		var url = 'patient/' + patientId + '/' + columnName + '/' + itemId + '/';
+
+		$http['delete'](url);
+
+		items.splice($scope.iix, 1);
+		state = 'normal';
+	};
+
+	$scope.cancelDelete = function() {
+		state = 'normal';
+	};
+
+	function handleKeypressEdit(e) {
+		if (e.keyCode == 27) { // escape
+			$scope.cancelEdit();
+		};
+	};
+
+	function handleKeypressDelete(e) {
+		if (e.keyCode == 27) { // escape
+			$scope.cancelDelete();
+		};
+	};
+
+	function handleKeypressNormal(e) {
+		switch (e.keyCode) {
+			case 38: // up
+			case 75: // k
+				goUp();
+				break;
+			case 40: // down
+			case 74: // j
+				goDown();
+				break;
+			case 13: // enter
+				startEdit();
+				break;
+			case 8: // backspace
+				e.preventDefault();
+			case 46: // delete
+				startDelete();
+				break;
+		};
+	};
+
+	function goUp() {
+		if ($scope.iix > 0) {
+			$scope.iix--;
+		} else {
+			if ($scope.cix > 0) {
+				$scope.cix--;
+				$scope.iix = getNumItems($scope.cix) - 1;
+			};
+		};
+	};
+
+	function goDown() {
+		if ($scope.iix < getNumItems($scope.cix) - 1) {
+			$scope.iix++;
+		} else {
+			if ($scope.cix < $scope.columns.length - 1) {
+				$scope.cix++;
+				$scope.iix = 0;
+			};
+		};
+	};
 });
