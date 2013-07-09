@@ -1,0 +1,204 @@
+<div class="navbar">
+	<div class="navbar-inner">
+		<button class="btn pull-left" ng-click="startAdd()">Add record</button>
+
+		<ul class="nav">
+			<li class="divider-vertical"></li>
+		</ul>
+
+		<div class="btn-group pull-left" ng-model="currentTag" bs-buttons-radio>
+			{% for name, title in tags.items %}
+			<button type="button" class="btn" value="{{name}}">{{title}}</button>
+			{% endfor %}
+		</div>
+
+		<ul class="nav">
+			<li class="divider-vertical"></li>
+		</ul>
+
+		<form class="navbar-search pull-right">
+			<input ng-model="query.hospital" ui-event="{focus: 'focusOnQuery()'}" type="text" class="input-small" placeholder="Hospital">
+			<input ng-model="query.ward" ui-event="{focus: 'focusOnQuery()'}" type="text" class="input-small" placeholder="Ward">
+		</form>
+
+		<ul class="nav pull-right">
+			<li class="divider-vertical"></li>
+		</ul>
+	</div>
+</div>
+
+<table class="table table-bordered">
+	<thead>
+		<tr>
+			{% for column in columns %}
+			<th>{{ column.title }}</th>
+			{% endfor %}
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+	<tr ng-repeat="row in rows | filter: search">
+		{% for column in columns %}
+		<td ng-mouseenter="mouseEnter($index, {{ forloop.counter0 }})"
+			ng-mouseleave="mouseLeave()">
+			<ul>
+				<li ng-repeat="item in row.{{column.name}}"
+				ng-click="selectItem($parent.$index, {{ forloop.counter0 }}, $index)"
+				ng-dblclick="editItem($parent.$index, {{ forloop.counter0 }}, $index)"
+				ng-class="{selected: rix == $parent.$index && cix == {{ forloop.counter0 }} && iix == $index}">
+				{% if column.single %}
+				{% include column.template_path %}
+				{% else %}
+				<span ng-hide="$last">
+					{% include column.template_path %}
+				</span>
+				<span ng-show="$last">
+					<span ng-show="(rix == $parent.$index && cix == {{ forloop.counter0 }}) ||
+						(mouseRix == $parent.$index && mouseCix == {{ forloop.counter0 }})">
+						Add
+					</span>&nbsp;
+				</span>
+				{% endif %}
+				</li>
+			</ul>
+		</td>
+		{% endfor %}
+		<td><a href="#/patient/[[row.id]]">View</a></td>
+	</tr>
+	</tbody>
+</table>
+
+<div class="navbar">
+	<div class="navbar-inner">
+		<button class="btn pull-left" ng-click="startAdd()">Add record</button>
+
+		<ul class="nav">
+			<li class="divider-vertical"></li>
+		</ul>
+
+		<div class="btn-group pull-left" ng-model="currentTag" bs-buttons-radio>
+			{% for name, title in tags.items %}
+			<button type="button" class="btn" value="{{name}}">{{title}}</button>
+			{% endfor %}
+		</div>
+
+		<ul class="nav">
+			<li class="divider-vertical"></li>
+		</ul>
+
+		<form class="navbar-search pull-right">
+			<input ng-model="query.hospital" ui-event="{focus: 'focusOnQuery()'}" type="text" class="input-small" placeholder="Hospital">
+			<input ng-model="query.ward" ui-event="{focus: 'focusOnQuery()'}" type="text" class="input-small" placeholder="Ward">
+		</form>
+
+		<ul class="nav pull-right">
+			<li class="divider-vertical"></li>
+		</ul>
+	</div>
+</div>
+
+{% for column in columns %}
+<div id="{{column.name}}-modal" class="modal hide" tabindex="-1" role="dialog">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" ng-click="cancelEdit()">×</button>
+		<h3>{{column.title}} ([[editingName]])</h3>
+	</div>
+	<div class="modal-body">{% include column.modal_template_path %}</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="saveEdit()">Save</button>
+		{% if not column.single %}
+		<button class="btn btn" ng-click="saveEditAndAdd(e)">Save and add another</button>
+		{% endif %}
+		<button class="btn" ng-click="cancelEdit()">Cancel</button>
+	</div>
+</div>
+{% endfor %}
+
+<div id="add-new-modal" class="modal hide" tabindex="-1" role="dialog">
+	<div class="modal-header">
+		<button type="button" class="close" ng-click="cancelAdd()">×</button>
+		<h3>New record</h3>
+	</div>
+	<div class="modal-body">
+		<form class="form-horizontal">
+			<div class="control-group">
+				<label class="control-label">Hospital number</label>
+				<div class="controls">
+					<input type="text" ng-model="editing.demographics.hospital_number">
+					<button class="btn" ng-click="findByHospitalNumber()" ng-hide="foundPatient" ng-disabled="findingPatient">Search</button>
+				</div>
+			</div>
+			<div ng-show="foundPatient">
+				<div class="control-group">
+					<label class="control-label">Name</label>
+					<div class="controls">
+						<input type="text" ng-model="editing.demographics.name">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">Date of birth</label>
+					<div class="controls">
+						<input type="text" ng-model="editing.demographics.date_of_birth" placeholder="yyyy-mm-dd">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">Category</label>
+					<div class="controls">
+						<input type="text" ng-model="editing.location.category" bs-typeahead="patient_category_list" data-provide="typeahead" data-min-length=0>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">Hospital</label>
+					<div class="controls">
+						<input type="text" ng-model="editing.location.hospital" bs-typeahead="hospital_list" data-provide="typeahead">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">Ward</label>
+					<div class="controls">
+						<input type="text" ng-model="editing.location.ward">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">Bed</label>
+					<div class="controls">
+						<input type="text" ng-model="editing.location.bed">
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">Date of admission</label>
+					<div class="controls">
+						<input type="text" ng-model="editing.location.date_of_admission" bs-datepicker>
+					</div>
+				</div>
+				<div class="control-group">
+					<label class="control-label">Tags</label>
+					<div class="controls">
+						{% for key, name in tags.items %}
+						<label class="checkbox">
+							<input type="checkbox" ng-model="editing.tags.{{key}}">
+							{{name}}
+						</label>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-show="foundPatient" ng-click="saveAdd()">Save record</button>
+		<button class="btn" ng-click="cancelAdd()">Cancel</button>
+	</div>
+</div>
+
+<div id="delete-confirmation" class="modal hide" tabindex="-1" role="dialog">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" ng-click="cancelDelete()">
+		</div>
+		<div class="modal-body"><p>Do you want to delete this item?</p></div>
+		<div class="modal-footer">
+			<button class="btn btn-primary" data-dismiss="modal" ng-click="doDelete()">Yes</button>
+			<button class="btn" data-dismiss="modal" ng-click="cancelDelete()">No</button>
+		</div>
+	</div>
+</div>

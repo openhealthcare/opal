@@ -1,48 +1,53 @@
-{% load staticfiles %}
-<!doctype html>
-<html xmlns:ng="http://angularjs.org" id="ng-app" ng-app="opalApp" ng-controller="PatientCtrl">
-	<head>
-		<!--[if lte IE 8]>
-			<script src="/assets/js/json3.min.js"></script>
-		<![endif]-->
-		<meta charset="utf-8">
-		<title>OPAL is not a Patient Activity List</title>
-		<script src="/assets/js/jquery-1.9.1.js"></script>
-		<script src="/assets/js/angular-1.1.5.js"></script>
-		<script src="/assets/js/bootstrap-2.3.2.js"></script>
-		<script src="/assets/js/angular-strap-0.7.4.js"></script>
-		<script src="/assets/js/bootstrap-datepicker.js"></script>
-		<script src="/assets/js/angular-ui-utils-0.0.3.js"></script>
-		<script src="/assets/js/opal.js"></script>
-		<link href="/assets/css/bootstrap-2.3.2.css" rel="stylesheet" media="all">
-		<link href="/assets/css/bootstrap-datepicker.css" rel="stylesheet" media="all">
-		<link href="/assets/css/opal.css" rel="stylesheet" media="all">
-                <link href="/assets/css/print.css" rel="stylesheet" media="print">
-	</head>
-	<body>
-		<div class="navbar">
-			<div class="navbar-inner">
-				<a class="brand pull-left" href="/">OPAL is not a Patient Activity List</a>
-				<ul class="nav pull-right">
-					<li class="navbar-text">Hi, {{ request.user.first_name }}</li>
-					<li><a href="/">Home</a></li>
-					<li><a href="/admin">Admin</a></li>
-					<li><a href="/search">Search</a></li>
-					<li><a href="/contact">Feedback</a></li>
-					<li><a href="{% url 'django.contrib.auth.views.logout' %}">Log out</a></li>
-				</ul>
-			</div>
-		</div>
+<div class="container">
+	<h4>[[ patient.demographics[0].name ]]</h4>
 
-		<div class="container">
-			<h4>[[ patient.demographics[0].name ]]</h4>
+	{% for column in columns %}
+	<h5>{{ column.title }}</h5>
+	<ul ng-mouseenter="mouseEnter({{ forloop.counter0 }})" ng-mouseleave="mouseLeave()">
+		<li ng-repeat="item in patient.{{column.name}}"
+		ng-class="{selected: cix == {{ forloop.counter0 }} && iix == $index}">
+		{% if column.single %}
+		{% include column.template_path %}
+		{% else %}
+		<span ng-hide="$last">
+			{% include column.template_path %}
+		</span>
+		<span ng-show="$last">
+			<span ng-show="(cix == {{ forloop.counter0 }}) || (mouseCix == {{ forloop.counter0 }})">
+				Add
+			</span>&nbsp;
+		</span>
+		{% endif %}
+		</li>
+	</ul>
+	{% endfor %}
+</div>
 
-			{% for column in columns %}
-			<h5>{{ column.title }}</h5>
-			<div ng-repeat="item in patient.{{column.name}}">
-				{% include column.template_path %}
-			</div>
-			{% endfor %}
+{% for column in columns %}
+<div id="{{column.name}}-modal" class="modal hide" tabindex="-1" role="dialog">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" ng-click="cancelEdit()">×</button>
+		<h3>{{column.title}} ([[editingName]])</h3>
+	</div>
+	<div class="modal-body">{% include column.modal_template_path %}</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="saveEdit()">Save</button>
+		{% if not column.single %}
+		<button class="btn btn" ng-click="saveEditAndAdd(e)">Save and add another</button>
+		{% endif %}
+		<button class="btn" ng-click="cancelEdit()">Cancel</button>
+	</div>
+</div>
+{% endfor %}
+
+<div id="delete-confirmation" class="modal hide" tabindex="-1" role="dialog">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" ng-click="cancelDelete()">
 		</div>
-	</body>
-</html>
+		<div class="modal-body"><p>Do you want to delete this item?</p></div>
+		<div class="modal-footer">
+			<button class="btn btn-primary" data-dismiss="modal" ng-click="doDelete()">Yes</button>
+			<button class="btn" data-dismiss="modal" ng-click="cancelDelete()">No</button>
+		</div>
+	</div>
+</div>

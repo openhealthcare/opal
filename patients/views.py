@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from rest_framework import generics, response, status, renderers, views
 from utils import camelcase_to_underscore
 from patients import models, serializers, schema
-from options.models import option_models
+from options.models import option_models, Synonym
 
 class LoginRequiredMixin(object):
     @method_decorator(login_required)
@@ -35,6 +35,7 @@ class PatientList(LoginRequiredMixin, generics.ListAPIView):
 
     def get(self, request, *args, **kwargs):
         response = super(PatientList, self).get(request, *args, **kwargs)
+        # We can't do this in the serializer because the serializer doesn't know about the user
         for patient in response.data:
             taggings = models.Tagging.objects.filter(patient_id=patient['id'])
             patient['tags'] = {t.tag_name: True for t in taggings if t.user is None or t.user == request.user}
@@ -65,7 +66,15 @@ class PatientList(LoginRequiredMixin, generics.ListAPIView):
         patient.set_tags(tags, request.user)
 
         serializer = serializers.PatientSerializer(patient)
+
+        # We can't do this in the serializer because the serializer doesn't know about the user
+        serializer.data['tags'] = tags
+
         return response.Response(serializer.data, status=status.HTTP_201_CREATED)
+
+class PatientDetailView(LoginRequiredMixin, generics.RetrieveAPIView):
+    model = models.Patient
+    serializer_class = serializers.PatientSerializer
 
 class SingletonSubrecordDetail(LoginRequiredMixin, SingletonMixin, generics.RetrieveUpdateAPIView):
     def get_object(self, queryset=None):
@@ -85,11 +94,9 @@ class SubrecordDetail(LoginRequiredMixin, SingletonMixin, generics.RetrieveUpdat
     def get_object(self, queryset=None):
         return getattr(self.patient, camelcase_to_underscore(self.model.__name__)).get(pk=self.kwargs['id'])
 
-class IndexView(LoginRequiredMixin, TemplateView):
-    template_name = 'opal.html'
-
+class PatientTemplateView(TemplateView):
     def get_context_data(self, **kwargs):
-        context = super(IndexView, self).get_context_data(**kwargs)
+        context = super(PatientTemplateView, self).get_context_data(**kwargs)
         context['tags'] = models.TAGS
 
         context['columns'] = []
@@ -106,26 +113,14 @@ class IndexView(LoginRequiredMixin, TemplateView):
 
         return context
 
-class PatientDetailView(LoginRequiredMixin, TemplateView):
+class PatientListTemplateView(PatientTemplateView):
+    template_name = 'patient_list.html'
+
+class PatientDetailTemplateView(PatientTemplateView):
     template_name = 'patient_detail.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(PatientDetailView, self).get_context_data(**kwargs)
-        context['tags'] = models.TAGS
-
-        context['columns'] = []
-
-        for column in schema.columns:
-            column_context = {}
-            name = camelcase_to_underscore(column.__name__)
-            column_context['name'] = name
-            column_context['title'] = getattr(column, '_title', name.replace('_', ' ').title())
-            column_context['single'] = issubclass(column, models.SingletonSubrecord)
-            column_context['template_path'] = name + '.html'
-            column_context['modal_template_path'] = name + '_modal.html'
-            context['columns'].append(column_context)
-
-        return context
+class IndexView(LoginRequiredMixin, TemplateView):
+    template_name = 'opal.html'
 
 # This probably doesn't belong here
 class ContactView(TemplateView):
@@ -139,21 +134,23 @@ def schema_view(request):
             'single': issubclass(column, models.SingletonSubrecord)
         })
 
-    if request.GET.get('columns-only', 'no') == 'yes':
-        data = {'columns': columns}
-    else:
-        option_lists = {}
+    data = {'columns': columns}
+
+    if request.GET.get('columns-only', 'no') == 'no':
+        data['option_lists'] = {}
+        data['synonyms'] = {}
+
         for name, model in option_models.items():
-            synonyms = []
+            option_list = []
+            synonyms = {}
             for instance in model.objects.all():
-                synonyms.append([instance.name, instance.name])
+                option_list.append(instance.name)
                 for synonym in instance.synonyms.all():
-                    synonyms.append([synonym.name, instance.name])
-            option_lists[name] = synonyms
-        data = {
-            'columns': columns,
-            'option_lists': option_lists
-        }
+                    option_list.append(synonym.name)
+                    synonyms[synonym.name] = instance.name
+            data['option_lists'][name] = option_list
+            data['synonyms'][name] = synonyms
+
     return HttpResponse(json.dumps(data), mimetype='application/json')
 
 class SearchView(LoginRequiredMixin, views.APIView):
