@@ -8,6 +8,8 @@
 			<h5>{{ column.title }}</h5>
 			<ul ng-mouseenter="mouseEnter({{ forloop.counter0 }})" ng-mouseleave="mouseLeave()">
 				<li ng-repeat="item in patient.{{column.name}}"
+				ng-click="selectItem({{ forloop.counter0 }}, $index)"
+				ng-dblclick="editItem({{ forloop.counter0 }}, $index)"
 				ng-class="{selected: cix == {{ forloop.counter0 }} && iix == $index}">
 				{% if column.single %}
 				{% include column.template_path %}

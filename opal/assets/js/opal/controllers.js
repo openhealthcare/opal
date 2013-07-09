@@ -657,6 +657,17 @@ app.controller('PatientDetailCtrl', function($scope, $http, schema, patient) {
 		state = 'normal';
 	};
 
+	$scope.selectItem = function(cix, iix) {
+		$scope.cix = cix;
+		$scope.iix = iix;
+		state = 'normal';
+	};
+
+	$scope.editItem = function(cix, iix) {
+		$scope.selectItem(cix, iix);
+		startEdit();
+	}
+
 	function handleKeypressEdit(e) {
 		if (e.keyCode == 27) { // escape
 			$scope.cancelEdit();
