@@ -37,7 +37,7 @@
 		</tr>
 	</thead>
 	<tbody>
-	<tr ng-repeat="row in rows | filter: search">
+	<tr ng-repeat="row in rows">
 		{% for column in columns %}
 		<td ng-mouseenter="mouseEnter($index, {{ forloop.counter0 }})"
 			ng-mouseleave="mouseLeave()">

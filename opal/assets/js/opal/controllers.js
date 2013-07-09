@@ -96,8 +96,42 @@ app.controller('PatientListCtrl', function($scope, $http, schema, patients) {
 		};
 	};
 
-	patients.sort(comparePatients);
-	$scope.rows = patients;
+	$scope.patients = patients;
+
+	$scope.rows = getVisiblePatients();
+
+	function getVisiblePatients() {
+		var patient;
+		var patients = []
+		for (var pix = 0; pix < $scope.patients.length; pix++) {
+			patient = $scope.patients[pix]
+			if (patient.tags[$scope.currentTag] != true) {
+				continue;
+			}
+			if (patient.location[0].hospital.toLowerCase().indexOf($scope.query.hospital.toLowerCase()) == -1) {
+				continue;
+			}
+			if (patient.location[0].ward.toLowerCase().indexOf($scope.query.ward.toLowerCase()) == -1) {
+				continue;
+			}
+			patients.push(patient);
+		}
+		patients.sort(comparePatients);
+		return patients;
+	};
+
+	$scope.$watch('currentTag', function() {
+		$scope.rows = getVisiblePatients();
+		$scope.rix = 0;
+	});
+
+	$scope.$watch('query.hospital', function() {
+		$scope.rows = getVisiblePatients();
+	});
+
+	$scope.$watch('query.ward', function() {
+		$scope.rows = getVisiblePatients();
+	});
 
 	$scope.$on('keydown', function(event, originalEvent) {
 		switch (state) {
@@ -242,8 +276,8 @@ app.controller('PatientListCtrl', function($scope, $http, schema, patients) {
 				// This guards against user changing patient data in add form.
 				$scope.rows.splice(rix, 1);
 			}
-			$scope.rows.push(patient);
-			$scope.rows.sort(comparePatients);
+			$scope.patients.push(patient);
+			$scope.rows = getVisiblePatients();
 			$scope.selectItem(getRowIxFromPatientId(patient.id), 0, 0);
 		});
 	};
@@ -278,7 +312,7 @@ app.controller('PatientListCtrl', function($scope, $http, schema, patients) {
 			$http.put(url, $scope.editing);
 			if (columnName == 'location') {
 				$scope.rows[$scope.rix].tags = $scope.editing.tags;
-				$scope.rows.sort(comparePatients);
+				$scope.rows = getVisiblePatients();
 				$scope.selectItem(getRowIxFromPatientId(patientId), $scope.cix, 0);
 			}
 		} else {
@@ -348,29 +382,6 @@ app.controller('PatientListCtrl', function($scope, $http, schema, patients) {
 	$scope.editItem = function(rix, cix, iix) {
 		$scope.selectItem(rix, cix, iix);
 		startEdit();
-	}
-
-	$scope.search = function (patient) {
-		if (patient.tags[$scope.currentTag] != true) {
-			return false;
-		}
-		if (patient.location[0].hospital.toLowerCase().indexOf($scope.query.hospital.toLowerCase()) == -1) {
-			return false;
-		}
-		if (patient.location[0].ward.toLowerCase().indexOf($scope.query.ward.toLowerCase()) == -1) {
-			return false;
-		}
-		return true;
-	}
-
-	function getNumVisibleRows() {
-		var num = 0;
-		for (var rix = 0; rix < $scope.rows.length; rix++) {
-			if ($scope.search($scope.rows[rix])) {
-				num++;
-			}
-		}
-		return num;
 	}
 
 	$scope.mouseEnter = function(rix, cix) {
@@ -455,7 +466,7 @@ app.controller('PatientListCtrl', function($scope, $http, schema, patients) {
 		if ($scope.iix < getNumItems($scope.rix, $scope.cix) - 1) {
 			$scope.iix++;
 		} else {
-			if ($scope.rix < getNumVisibleRows() - 1) {
+			if ($scope.rix < $scope.rows.length - 1) {
 				$scope.rix++;
 				$scope.iix = 0;
 			};
@@ -590,7 +601,6 @@ app.controller('PatientDetailCtrl', function($scope, $http, schema, patient) {
 		if (isSingleColumn($scope.cix)) {
 			$http.put(url, $scope.editing);
 			if (columnName == 'location') {
-				$scope.rows.sort(comparePatients);
 				$scope.selectItem(getRowIxFromPatientId(patientId), $scope.cix, 0);
 			}
 		} else {
