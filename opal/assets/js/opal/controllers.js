@@ -381,11 +381,20 @@ app.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, 
 	$scope.startDischarge = function(rix) {
 		var patient = $scope.rows[rix];
 		var currentCategory = patient.location[0].category;
+		var newCategory;
+
+		if (currentCategory == 'Inpatient') {
+			newCategory = 'Discharged';
+		} else if (currentCategory == 'Review' || currentCategory == 'Followup') {
+			newCategory = 'Unfollow';
+		} else {
+			newCategory = currentCategory;
+		}
 
 		state = 'discharging';
 		$scope.discharge = {
 			rix: rix,
-			category: (CATEGORIES.indexOf(currentCategory) == -1) ? currentCategory : 'Discharged',
+			category: newCategory,
 			date: getTodaysDate()
 		};
 		$('#discharge-confirmation-modal').modal();
