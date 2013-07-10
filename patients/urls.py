@@ -7,6 +7,7 @@ urlpatterns = patterns('',
     url(r'^(?P<pk>\d+)/$', views.PatientDetailView.as_view()),
     url(r'^templates/patient_list.html/$', views.PatientListTemplateView.as_view()),
     url(r'^templates/patient_detail.html/$', views.PatientDetailTemplateView.as_view()),
+    url(r'^templates/search.html/$', views.SearchTemplateView.as_view()),
 )
 
 for subrecord_model in models.SingletonSubrecord.__subclasses__():

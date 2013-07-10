@@ -128,6 +128,9 @@ class PatientListTemplateView(PatientTemplateView):
 class PatientDetailTemplateView(PatientTemplateView):
     template_name = 'patient_detail.html'
 
+class SearchTemplateView(TemplateView):
+    template_name = 'search.html'
+
 class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'opal.html'
 
@@ -162,21 +165,29 @@ def schema_view(request):
 
     return HttpResponse(json.dumps(data), mimetype='application/json')
 
-class SearchView(LoginRequiredMixin, views.APIView):
-    renderer_classes = [renderers.TemplateHTMLRenderer, renderers.JSONRenderer]
-
-    def get_template_names(self):
-        return ['search_results.html']
+class SearchResultsView(LoginRequiredMixin, views.APIView):
+    renderer_classes = [renderers.JSONRenderer]
 
     def get(self, request, *args, **kwargs):
-        search_keys = ['hospital_number', 'name']
-        search_terms = {key: self.request.GET.get(key, '') for key in search_keys}
-        filter_dict = {'demographics__' + key + '__iexact': term for key, term in search_terms.items() if term}
+        GET = self.request.GET
+
+        search_terms = {}
+        filter_dict = {}
+
+        if 'hospital_number' in GET:
+            search_terms['hospital_number'] = GET['hospital_number']
+            filter_dict['demographics__hospital_number__iexact'] = GET['hospital_number']
+
+        if 'name' in GET:
+            search_terms['name'] = GET['name']
+            filter_dict['demographics__name__icontains'] = GET['name']
+
         if filter_dict:
             queryset = models.Patient.objects.filter(**filter_dict)
         else:
             queryset = models.Patient.objects.none()
-        serializer = serializers.PatientSearchSerializer(queryset, many=True)
+
+        serializer = serializers.PatientSerializer(queryset, many=True)
         data = {'patients': serializer.data}
 
         # We cannot get the tags in the serializer because this requires the user

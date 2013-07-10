@@ -40,6 +40,9 @@ app.config(function($routeProvider) {
 				}
 			},
 			templateUrl: '/patient/templates/patient_detail.html'
+		}).when('/search', {
+			controller: 'SearchCtrl',
+			templateUrl: '/patient/templates/search.html'
 		}).otherwise({redirectTo: '/'});
 });
 
@@ -783,6 +786,35 @@ app.controller('PatientDetailCtrl', function($scope, $http, schema, patient) {
 		};
 	};
 });
+
+app.controller('SearchCtrl', function($scope, $http) {
+	$scope.searchTerms = {
+		hospital_number: '',
+		name: '',
+	};
+	$scope.results = [];
+
+	$scope.doSearch = function() {
+		var queryParams = [];
+		var queryString;
+
+		for (var term in $scope.searchTerms) {
+			if ($scope.searchTerms[term] != '') {
+				queryParams.push(term + '=' + $scope.searchTerms[term]);
+			};
+		};
+
+		if (queryParams.length == 0) {
+			return;
+		};
+
+		queryString = queryParams.join('&');
+
+		$http.get('search/?' + queryString).success(function(results) {
+			$scope.results = results.patients;
+		});
+	};
+})
 
 app.directive("freezePanes", function () {
     return function (scope, element, attrs) {
