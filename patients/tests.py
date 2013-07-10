@@ -202,4 +202,3 @@ class PatientTest(TestCase):
         data = {'discharge': 'Go home'}
         rsp = self.put('discharge/', data)
         self.assertEqual(200, rsp.status_code)
-
