@@ -12,12 +12,16 @@ li.selected {
 	background-color: #cee;
 }
 
- .modal-body {
+.modal-body {
 	height: 400px;
 }
 
 
 thead {
-    background: #fafafa;
-    border-bottom: 1px solid #ddd;
+	background: #fafafa;
+	border-bottom: 1px solid #ddd;
+}
+
+table {
+	font-size: 12px;
 }
