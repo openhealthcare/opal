@@ -132,11 +132,8 @@ class MicrobiologyInput(Subrecord):
     infection_control_advice_given = models.BooleanField()
     change_in_antibiotic_prescription = models.BooleanField()
 
-class Plan(SingletonSubrecord):
-    plan = models.TextField(blank=True)
-
-class Discharge(SingletonSubrecord):
-    discharge = models.TextField(blank=True)
+class ToDo(SingletonSubrecord):
+    details = models.TextField(blank=True)
 
 class MicrobiologyTest(Subrecord):
     test = models.CharField(max_length=255)

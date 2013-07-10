@@ -10,7 +10,6 @@ columns = [
     models.Antimicrobial,
     models.MicrobiologyTest,
     models.MicrobiologyInput,
-    models.Plan,
-    models.Discharge
+    models.ToDo,
 ]
 
