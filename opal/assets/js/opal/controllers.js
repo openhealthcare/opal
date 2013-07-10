@@ -535,11 +535,8 @@ app.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, 
 				$scope.iix = 0;
 			};
 		};
-	
-		// Ensure the headers stick.  Putting this here is hacky, but there 
-		// doesn't seem to be anywhere else to put it.
-		$('table').stickyTableHeaders();
 	};
+
 });
 
 app.controller('PatientDetailCtrl', function($scope, $http, schema, patient) {
@@ -783,4 +780,12 @@ app.controller('PatientDetailCtrl', function($scope, $http, schema, patient) {
 			};
 		};
 	};
+});
+
+app.directive("freezePanes", function () {
+    return function (scope, element, attrs) {
+        scope.$watch("assignments", function () {
+            $('table').stickyTableHeaders();
+        });
+    };
 });
