@@ -91,6 +91,7 @@ class Location(SingletonSubrecord):
     ward = models.CharField(max_length=255, blank=True)
     bed = models.CharField(max_length=255, blank=True)
     date_of_admission = models.DateField(null=True, blank=True)
+    discharge_date = models.DateField(null=True, blank=True)
 
 class Diagnosis(Subrecord):
     condition = ForeignKeyOrFreeText(option_models['condition'])

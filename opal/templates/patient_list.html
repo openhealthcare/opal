@@ -65,8 +65,7 @@
 		{% endfor %}
 		<td>
 			<li><a href="#/patient/[[row.id]]" class="btn">View</a></li>
-			<li ng-show="canDischarge($index)"><button ng-click="startDischarge($index)" class="btn">Discharge</button></li>
-			<li ng-hide="canDischarge($index)"><button ng-click="removeFromList($index)" class="btn">Remove from list</button></li>
+			<li><button ng-click="startDischarge($index)" class="btn">Remove from list</button></li>
 		</td>
 	</tr>
 	</tbody>
@@ -215,22 +214,34 @@
 	<div class="modal-body">
 		<p>What text would you like here?</p>
 		<form>
-			<label class="radio">
-				<input type="radio" name="dischargeRadios" value="Discharged" checked>
-				Discharged
-			</label>
-			<label class="radio">
-				<input type="radio" name="dischargeRadios" value="Followup">
-				Discharged with outstanding issues
-			</label>
-			<label class="radio">
-				<input type="radio" name="dischargeRadios" value="Transferred">
-				Transferred
-			</label>
-			<label class="radio">
-				<input type="radio" name="dischargeRadios" value="Died">
-				Died
-			</label>
+			<div>
+				<label class="radio">
+					<input type="radio" ng-model="discharge.category" value="Discharged">
+					Discharged
+				</label>
+				<label class="radio">
+					<input type="radio" ng-model="discharge.category" value="Followup">
+					Discharged with outstanding issues
+				</label>
+				<label class="radio">
+					<input type="radio" ng-model="discharge.category" value="Deceased">
+					Deceased
+				</label>
+				<label class="radio">
+					<input type="radio" ng-model="discharge.category" value="Transferred">
+					Transferred
+				</label>
+				<label class="radio">
+					<input type="radio" ng-model="discharge.category" value="Unfollow">
+					No longer under active review
+				</label>
+			</div>
+			<div ng-hide="discharge.category=='Unfollow'" class="control-group">
+				<label class="control-label">Date of admission</label>
+				<div class="controls">
+					<input type="text" ng-model="discharge.date" bs-datepicker>
+				</div>
+			</div>
 		</form>
 	</div>
 	<div class="modal-footer">

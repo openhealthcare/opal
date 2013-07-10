@@ -51,7 +51,6 @@ app.controller('RootCtrl', function($scope) {
 
 app.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, patients) {
 	var state = 'normal';
-	var dischargingRix = -1; // a bit of unpleasantness
 	var columnName;
 
 	$scope.rix = 0; // row index
@@ -379,26 +378,34 @@ app.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, 
 		state = 'normal';
 	};
 
-	$scope.canDischarge = function(rix) {
-		var patient = $scope.rows[rix];
-		return (patient.location[0].category == 'Inpatient');
-	};
-
 	$scope.startDischarge = function(rix) {
+		var patient = $scope.rows[rix];
+		var currentCategory = patient.location[0].category;
+
 		state = 'discharging';
-		dischargingRix = rix;
+		$scope.discharge = {
+			rix: rix,
+			category: (CATEGORIES.indexOf(currentCategory) == -1) ? currentCategory : 'Discharged',
+			date: getTodaysDate()
+		};
 		$('#discharge-confirmation-modal').modal();
+		$('#discharge-confirmation-modal').find('input,textarea').first().focus();
 	};
 
 	$scope.doDischarge = function() {
-		var patient = $scope.rows[dischargingRix];
+		var discharge = $scope.discharge;
+		var patient = $scope.rows[discharge.rix];
 		var location = patient.location[0];
 		var editing = clone(location);
 		var url = 'patient/' + patient.id + '/location/';
 
-		editing.category = $('input[name=dischargeRadios]:checked').val();
+		if (discharge.category != 'Unfollow') {
+			editing.category = discharge.category;
+			editing.discharge_date = discharge.date;
+		};
+
 		editing.tags = clone(patient.tags);
-		if (editing.category != 'Followup') {
+		if (discharge.category != 'Followup') {
 			editing.tags[$scope.currentTag] = false;
 		};
 
@@ -406,30 +413,16 @@ app.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, 
 			state = 'normal';
 			clearModal('discharge-confirmation');
 			location.category = editing.category;
+			location.discharge_date = editing.discharge_date;
 			patient.tags = clone(editing.tags);
 			$scope.rows = getVisiblePatients();
 			$scope.selectItem(0, $scope.cix, 0);
 		});
 	};
 
-	$scope.removeFromList = function(rix) {
-		var patient = $scope.rows[rix];
-		var location = patient.location[0];
-		var editing = clone(location);
-		var url = 'patient/' + patient.id + '/location/';
-
-		editing.tags = clone(patient.tags);
-		editing.tags[$scope.currentTag] = false;
-
-		$http.put(url, editing).success(function(response) {
-			patient.tags = clone(editing.tags);
-			$scope.rows = getVisiblePatients();
-			$scope.selectItem(0, $scope.cix, 0);
-		});
-	}
-
 	$scope.cancelDischarge = function() {
 		state = 'normal';
+		clearModal('discharge-confirmation');
 	};
 
 	$scope.focusOnQuery = function() {
