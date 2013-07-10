@@ -24,6 +24,5 @@ model_names = [
     'micro_test_syphilis_serology',
     'micro_test_viral_load',
     'microbiology_organism',
-    'patient_category',
     'travel_reason',
 ]

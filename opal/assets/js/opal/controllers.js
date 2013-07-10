@@ -1,4 +1,4 @@
-var CATEGORIES = ['Inpatient', 'Followup', 'Review'];
+var CATEGORIES = ['Inpatient', 'Review', 'Followup', 'Transferred', 'Discharged', 'Deceased'];
 
 var app = angular.module('opal', ['ngCookies', 'opal.services', '$strap.directives', 'ui.event']);
 
@@ -87,6 +87,8 @@ app.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, 
 			$scope[optionName + '_list'] = schema.option_lists[optionName];
 		}
 	};
+
+	$scope.patient_category_list = ['Inpatient', 'Review'];
 
 	for (var pix = 0; pix < patients.length; pix++) {
 		for (var cix = 0; cix < $scope.columns.length; cix++) {
@@ -381,10 +383,12 @@ app.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, 
 		state = 'normal';
 	};
 
-	$scope.startDischarge = function(rix) {
+	$scope.startDischarge = function(rix, event) {
 		var patient = $scope.rows[rix];
 		var currentCategory = patient.location[0].category;
 		var newCategory;
+
+		event.preventDefault();
 
 		if (currentCategory == 'Inpatient') {
 			newCategory = 'Discharged';

@@ -70,8 +70,8 @@
 		</td>
 		{% endfor %}
 		<td>
-			<li><a href="#/patient/[[row.id]]" class="btn">View</a></li>
-			<li><button ng-click="startDischarge($index)" class="btn">Remove from list</button></li>
+			<li><a href="#/patient/[[row.id]]">View</a></li>
+			<li><a href="#" ng-click="startDischarge($index, $event)">Discharge / Remove</a></li>
 		</td>
 	</tr>
 	</tbody>
@@ -224,7 +224,6 @@
 		<h3>Discharge</h3>
 	</div>
 	<div class="modal-body">
-		<p>What text would you like here?</p>
 		<form>
 			<div>
 				<label class="radio">
@@ -249,7 +248,7 @@
 				</label>
 			</div>
 			<div ng-hide="discharge.category=='Unfollow'" class="control-group">
-				<label class="control-label">Date of admission</label>
+				<label class="control-label">Date of discharge</label>
 				<div class="controls">
 					<input type="text" ng-model="discharge.date" bs-datepicker>
 				</div>
