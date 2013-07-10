@@ -51,6 +51,7 @@ app.controller('RootCtrl', function($scope) {
 
 app.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, patients) {
 	var state = 'normal';
+	var dischargingRix = -1; // a bit of unpleasantness
 	var columnName;
 
 	$scope.rix = 0; // row index
@@ -144,6 +145,9 @@ app.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, 
 				break;
 			case 'deleting':
 				handleKeypressDelete(originalEvent);
+				break;
+			case 'discharging':
+				handleKeypressDischarge(originalEvent);
 				break;
 			case 'searching':
 				// nothing special
@@ -375,6 +379,59 @@ app.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, 
 		state = 'normal';
 	};
 
+	$scope.canDischarge = function(rix) {
+		var patient = $scope.rows[rix];
+		return (patient.location[0].category == 'Inpatient');
+	};
+
+	$scope.startDischarge = function(rix) {
+		state = 'discharging';
+		dischargingRix = rix;
+		$('#discharge-confirmation-modal').modal();
+	};
+
+	$scope.doDischarge = function() {
+		var patient = $scope.rows[dischargingRix];
+		var location = patient.location[0];
+		var editing = clone(location);
+		var url = 'patient/' + patient.id + '/location/';
+
+		editing.category = $('input[name=dischargeRadios]:checked').val();
+		editing.tags = clone(patient.tags);
+		if (editing.category != 'Followup') {
+			editing.tags[$scope.currentTag] = false;
+		};
+
+		$http.put(url, editing).success(function(response) {
+			state = 'normal';
+			clearModal('discharge-confirmation');
+			location.category = editing.category;
+			patient.tags = clone(editing.tags);
+			$scope.rows = getVisiblePatients();
+			$scope.selectItem(0, $scope.cix, 0);
+		});
+	};
+
+	$scope.removeFromList = function(rix) {
+		var patient = $scope.rows[rix];
+		var location = patient.location[0];
+		var editing = clone(location);
+		var url = 'patient/' + patient.id + '/location/';
+
+		editing.tags = clone(patient.tags);
+		editing.tags[$scope.currentTag] = false;
+
+		$http.put(url, editing).success(function(response) {
+			patient.tags = clone(editing.tags);
+			$scope.rows = getVisiblePatients();
+			$scope.selectItem(0, $scope.cix, 0);
+		});
+	}
+
+	$scope.cancelDischarge = function() {
+		state = 'normal';
+	};
+
 	$scope.focusOnQuery = function() {
 		$scope.selectItem(-1, -1, -1);
 		state = 'searching';
@@ -410,6 +467,12 @@ app.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, 
 	function handleKeypressDelete(e) {
 		if (e.keyCode == 27) { // escape
 			$scope.cancelDelete();
+		};
+	};
+
+	function handleKeypressDischarge(e) {
+		if (e.keyCode == 27) { // escape
+			$scope.cancelDischarge();
 		};
 	};
 

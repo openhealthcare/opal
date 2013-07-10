@@ -63,7 +63,11 @@
 			</ul>
 		</td>
 		{% endfor %}
-		<td><a href="#/patient/[[row.id]]">View</a></td>
+		<td>
+			<li><a href="#/patient/[[row.id]]" class="btn">View</a></li>
+			<li ng-show="canDischarge($index)"><button ng-click="startDischarge($index)" class="btn">Discharge</button></li>
+			<li ng-hide="canDischarge($index)"><button ng-click="removeFromList($index)" class="btn">Remove from list</button></li>
+		</td>
 	</tr>
 	</tbody>
 </table>
@@ -193,12 +197,44 @@
 
 <div id="delete-confirmation" class="modal hide" tabindex="-1" role="dialog">
 	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" ng-click="cancelDelete()">
-		</div>
-		<div class="modal-body"><p>Do you want to delete this item?</p></div>
-		<div class="modal-footer">
-			<button class="btn btn-primary" data-dismiss="modal" ng-click="doDelete()">Yes</button>
-			<button class="btn" data-dismiss="modal" ng-click="cancelDelete()">No</button>
-		</div>
+		<button type="button" class="close" data-dismiss="modal" ng-click="cancelDelete()">×</button>
+		<h3>Delete item?</h3>
+	</div>
+	<div class="modal-body"><p>Do you want to delete this item?</p></div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" data-dismiss="modal" ng-click="doDelete()">Yes</button>
+		<button class="btn" data-dismiss="modal" ng-click="cancelDelete()">No</button>
+	</div>
+</div>
+
+<div id="discharge-confirmation-modal" class="modal hide" tabindex="-1" role="dialog">
+	<div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal" ng-click="cancelDischarge()">×</button>
+		<h3>Discharge</h3>
+	</div>
+	<div class="modal-body">
+		<p>What text would you like here?</p>
+		<form>
+			<label class="radio">
+				<input type="radio" name="dischargeRadios" value="Discharged" checked>
+				Discharged
+			</label>
+			<label class="radio">
+				<input type="radio" name="dischargeRadios" value="Followup">
+				Discharged with outstanding issues
+			</label>
+			<label class="radio">
+				<input type="radio" name="dischargeRadios" value="Transferred">
+				Transferred
+			</label>
+			<label class="radio">
+				<input type="radio" name="dischargeRadios" value="Died">
+				Died
+			</label>
+		</form>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="doDischarge()">Discharge</button>
+		<button class="btn" ng-click="cancelDischarge()">Cancel</button>
 	</div>
 </div>
