@@ -10,6 +10,6 @@ columns = [
     models.MicrobiologyTest,
     models.MicrobiologyInput,
     models.GeneralNote,
-    models.ToDo,
+    models.Todo,
 ]
 
