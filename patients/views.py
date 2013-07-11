@@ -128,7 +128,7 @@ class PatientListTemplateView(PatientTemplateView):
 class PatientDetailTemplateView(PatientTemplateView):
     template_name = 'patient_detail.html'
 
-class SearchTemplateView(TemplateView):
+class SearchTemplateView(PatientTemplateView):
     template_name = 'search.html'
 
 class IndexView(LoginRequiredMixin, TemplateView):

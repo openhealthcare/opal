@@ -791,12 +791,16 @@ app.controller('PatientDetailCtrl', function($scope, $http, schema, patient) {
 	};
 });
 
-app.controller('SearchCtrl', function($scope, $http) {
+app.controller('SearchCtrl', function($scope, $http, $location) {
 	$scope.searchTerms = {
 		hospital_number: '',
 		name: '',
 	};
 	$scope.results = [];
+	$scope.searched = false;
+
+	$scope.patient_category_list = ['Inpatient', 'Review'];
+	$scope.hospital_list = ['Heart Hospital', 'NHNN', 'UCH'];
 
 	$scope.doSearch = function() {
 		var queryParams = [];
@@ -815,8 +819,55 @@ app.controller('SearchCtrl', function($scope, $http) {
 		queryString = queryParams.join('&');
 
 		$http.get('search/?' + queryString).success(function(results) {
+			$scope.searched = true;
 			$scope.results = results.patients;
 		});
+	};
+
+	$scope.startAdd = function() {
+		$scope.editing = {
+			location: {date_of_admission: getTodaysDate()},
+		       	demographics: {},
+		       	tags: {}
+		};
+		if ($scope.results.length == 0) {
+			$scope.editing.demographics.name = $scope.searchTerms.name;
+			$scope.editing.demographics.hospital_number = $scope.searchTerms.hospital_number;
+		}
+		$('#add-new-modal').modal();
+		$('#add-new-modal').find('input,textarea').first().focus();
+	}
+
+	$scope.findByHospitalNumber = function() {
+		var hospitalNumber = $scope.editing.demographics.hospital_number
+		$http.get('search/?hospital_number=' + hospitalNumber).success(function(results) {
+			$scope.foundPatient = true; // misnomer: might not actually have found a patient!
+			if (results.patients.length == 1) {
+				$scope.editing.demographics = clone(results.patients[0].demographics);
+				$scope.editing.location = clone(results.patients[0].location);
+				$scope.editing.tags = clone(results.patients[0].tags);
+			}
+			$scope.editing.tags[$scope.currentTag] = true;
+		});
+	};
+	
+	function clearModal(columnName) {
+		$('#' + columnName + '-modal').modal('hide')
+
+		// See https://github.com/openhealthcare/opal/issues/28
+		$(".btn").blur();
+	};
+
+	$scope.saveAdd = function() {
+		clearModal('add-new');
+		$http.post('patient/', $scope.editing).success(function(patient) {
+			$location.path('patient/' + patient.id);
+		});
+	};
+
+	$scope.cancelAdd = function() {
+		state = 'normal';
+		clearModal('add-new');
 	};
 })
 
