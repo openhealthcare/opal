@@ -688,6 +688,12 @@ app.controller('PatientDetailCtrl', function($scope, $http, schema, patient) {
 		}
 	};
 
+	$scope.saveEditAndAdd = function() {
+		$scope.saveEdit();
+		$scope.iix = getNumItems($scope.cix) - 1;
+		startEdit();
+	}
+
 	$scope.cancelEdit = function() {
 		state = 'normal';
 		clearModal(getCurrentColumnName());
@@ -869,7 +875,7 @@ app.controller('SearchCtrl', function($scope, $http, $location) {
 		state = 'normal';
 		clearModal('add-new');
 	};
-})
+});
 
 app.directive("freezePanes", function () {
     return function (scope, element, attrs) {
