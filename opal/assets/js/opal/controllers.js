@@ -55,6 +55,7 @@ app.controller('RootCtrl', function($scope) {
 app.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, patients) {
 	var state = 'normal';
 	var columnName;
+	var newItem;
 
 	$scope.rix = 0; // row index
 	$scope.cix = 0; // column index
@@ -96,7 +97,17 @@ app.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, 
 			if ($scope.columns[cix].single) {
 				patients[pix][columnName] = [patients[pix][columnName]];
 			} else {
-				patients[pix][columnName].push({patient: patients[pix].id});
+				newItem = {patient: patients[pix].id};
+				if (columnName == 'microbiology_test') {
+					newItem.date_ordered = getTodaysDate();
+				}
+				if (columnName == 'general_note') {
+					newItem.date = getTodaysDate();
+				}
+				if (columnName == 'antimicrobial') {
+					newItem.start_date = getTodaysDate();
+				}
+				patients[pix][columnName].push(newItem);
 			};
 		};
 	};
@@ -240,7 +251,11 @@ app.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, 
 		state = 'adding';
 		$scope.foundPatient = false; // Display rest of form when true
 		$scope.findingPatient = false; // Disable Search button when true
-		$scope.editing = {location: {}, demographics: {}, tags: {}};
+		$scope.editing = {
+			location: {date_of_admission: getTodaysDate()},
+			demographics: {},
+			tags: {}
+		};
 		$('#add-new-modal').modal();
 		$('#add-new-modal').find('input,textarea').first().focus();
 	};
@@ -551,6 +566,7 @@ app.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, 
 app.controller('PatientDetailCtrl', function($scope, $http, schema, patient) {
 	var state = 'normal';
 	var columnName;
+	var newItem;
 
 	$scope.cix = 0; // column index (although columns are arranged vertically...)
 	$scope.iix = 0; // item index
@@ -573,12 +589,27 @@ app.controller('PatientDetailCtrl', function($scope, $http, schema, patient) {
 		}
 	};
 
+	$scope.patient_category_list = ['Inpatient', 'Review'];
+
 	for (var cix = 0; cix < $scope.columns.length; cix++) {
 		columnName = $scope.columns[cix].name;
 		if ($scope.columns[cix].single) {
 			patient[columnName] = [patient[columnName]];
 		} else {
-			patient[columnName].push({patient: patient.id});
+			newItem = {patient: patient.ix};
+			if (columnName == 'microbiology_test') {
+				newItem.date_ordered = getTodaysDate();
+			}
+			if (columnName == 'general_note') {
+				newItem.date = getTodaysDate();
+			}
+			if (columnName == 'antimicrobial') {
+				newItem.start_date = getTodaysDate();
+			}
+			if (columnName == 'microbiology_input') {
+				newItem.date = getTodaysDate();
+			}
+			patient[columnName].push(newItem);
 		};
 	}
 
