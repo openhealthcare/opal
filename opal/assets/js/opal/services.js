@@ -7,7 +7,7 @@ services.factory('Patient', ['$resource', function($resource) {
 services.factory('SchemaLoader', ['$q', '$http', function($q, $http) {
 	return function() {
 		var delay = $q.defer();
-		$http.get('schema/').then(function(response) {
+		$http.get('schema/', {cache: true}).then(function(response) {
 			delay.resolve(response.data);
 		}, function() {
 			delay.reject('There was a problem fetching the schema');
