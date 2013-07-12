@@ -30,3 +30,7 @@ thead {
 table {
 	font-size: 12px;
 }
+
+.preserve-whitespace {
+    white-space: pre;
+}
