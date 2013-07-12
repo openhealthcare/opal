@@ -13,7 +13,7 @@ class Patient(models.Model):
         data['admissions'] = [admission.serialize() for admission in self.admission_set.all()]
         for model in PatientSubrecord.__subclasses__():
             name = model.__name__.lower()
-            subrecord_set = getattr(self, name + '_set').all() 
+            subrecord_set = getattr(self, name + '_set').all()
             data[name] = [subrecord.serialize() for subrecord in subrecord_set]
         return data
 
@@ -25,7 +25,7 @@ class Admission(models.Model):
         data = {'id': self.id}
         for model in AdmissionSubrecord.__subclasses__():
             name = model.__name__.lower()
-            subrecord_set = getattr(self, name + '_set').all() 
+            subrecord_set = getattr(self, name + '_set').all()
             data[name] = [subrecord.serialize() for subrecord in subrecord_set]
         return data
 
@@ -62,7 +62,7 @@ class Subrecord(models.Model):
         try:
             model_form_class = self._build_model_form_class(data)
         except FieldError as e:
-            raise exceptions.APIError(*e.args)
+           raise exceptions.APIError(*e.args)
 
         model_form = model_form_class(instance=self, data=data)
 

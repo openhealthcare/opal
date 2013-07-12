@@ -107,6 +107,9 @@ app.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, 
 				if (columnName == 'antimicrobial') {
 					newItem.start_date = getTodaysDate();
 				}
+                                if (columnName == 'diagnosis') {
+                                        newItem.date_of_diagnosis = getTodaysDate();
+                                }
 				patients[pix][columnName].push(newItem);
 			};
 		};
@@ -887,7 +890,7 @@ app.controller('SearchCtrl', function($scope, $http, $location) {
 			$scope.editing.tags[$scope.currentTag] = true;
 		});
 	};
-	
+
 	function clearModal(columnName) {
 		$('#' + columnName + '-modal').modal('hide')
 

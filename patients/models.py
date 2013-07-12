@@ -97,6 +97,7 @@ class Diagnosis(Subrecord):
     condition = ForeignKeyOrFreeText(option_models['condition'])
     provisional = models.BooleanField()
     details = models.CharField(max_length=255, blank=True)
+    date_of_diagnosis = models.DateField(blank=True, null=True)
 
 class PastMedicalHistory(Subrecord):
     condition = ForeignKeyOrFreeText(option_models['condition'])
