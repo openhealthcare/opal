@@ -1,5 +1,5 @@
 [[item.category]]
-<span ng-show="item.discharge_date">(</span>[[item.discharge_date | date:'d/M']]<span ng-show="item.discharge_date">)</span>
+<span ng-show="item.discharge_date">(</span>[[item.discharge_date | opalDate]]<span ng-show="item.discharge_date">)</span>
 <br />
 <span ng-hide="item.hospital=='UCH'">[[item.hospital]] </span>[[item.ward]] [[item.bed]]<br />
-Admitted: [[item.date_of_admission | date:'d/M']]
+Admitted: [[item.date_of_admission | opalDate]]

@@ -30,12 +30,9 @@ function clone(obj) {
 
 function getTodaysDate() {
 	var today = new Date();
-	var dd = today.getDate();
-	var mm = today.getMonth() + 1;
-	var yyyy = today.getFullYear();
+	var day = today.getDate();
+	var month = today.getMonth() + 1;
+	var year = today.getFullYear();
 
-	dd = (dd < 10) ? '0' + dd : dd;
-	mm = (mm < 10) ? '0' + mm : mm;
-
-	return yyyy + '-' + mm + '-' + dd;
+	return day + '/' + month + '/' + year;
 }
