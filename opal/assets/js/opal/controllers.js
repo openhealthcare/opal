@@ -328,6 +328,7 @@ app.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, 
 		var patientId = $scope.rows[$scope.rix].id;
 		var url = 'patient/' + patientId + '/' + columnName + '/';
 		var items = $scope.rows[$scope.rix][columnName];
+		var newItem;
 		var newItemIx;
 
 		state = 'normal';
@@ -345,7 +346,20 @@ app.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, 
 		} else {
 			if (typeof($scope.editing.id) == 'undefined') {
 				// This is a new item
-				items.push({patient: patientId});
+				newItem = {patient: patientId};
+				if (columnName == 'microbiology_test') {
+					newItem.date_ordered = getTodaysDate();
+				}
+				if (columnName == 'general_note') {
+					newItem.date = getTodaysDate();
+				}
+				if (columnName == 'antimicrobial') {
+					newItem.start_date = getTodaysDate();
+				}
+                                if (columnName == 'diagnosis') {
+                                        newItem.date_of_diagnosis = getTodaysDate();
+                                }
+				items.push(newItem);
 				newItemIx = $scope.iix;
 				$http.post(url, $scope.editing).success(function(item) {
 					items[newItemIx].id = item.id;
