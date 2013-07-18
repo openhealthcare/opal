@@ -1,4 +1,5 @@
 import json
+import datetime
 from django.http import HttpResponse
 from django.views.generic import TemplateView
 from django.utils.decorators import method_decorator
@@ -42,6 +43,7 @@ class PatientList(LoginRequiredMixin, generics.ListAPIView):
         return response
 
     def post(self, request, *args, **kwargs):
+        # I am not proud of this code
         try:
             hospital_number = request.DATA['demographics']['hospital_number']
             patient = models.Patient.objects.get(demographics__hospital_number=hospital_number)
@@ -52,14 +54,24 @@ class PatientList(LoginRequiredMixin, generics.ListAPIView):
         for field in location._meta.fields:
             field_name = field.name
             if field_name not in ['id', 'patient'] and field_name in request.DATA['location']:
-                setattr(location, field_name, request.DATA['location'][field_name])
+                if field_name == 'date_of_admission':
+                    value = request.DATA['location'][field_name]
+                    date_of_admission = datetime.datetime.strptime(value, '%d/%m/%Y').date()
+                    setattr(location, field_name, date_of_admission)
+                else:
+                    setattr(location, field_name, request.DATA['location'][field_name])
         location.save()
 
         demographics = patient.demographics
         for field in demographics._meta.fields:
             field_name = field.name
             if field_name not in ['id', 'patient'] and field_name in request.DATA['demographics']:
-                setattr(demographics, field_name, request.DATA['demographics'][field_name])
+                if field_name == 'date_of_birth':
+                    value = request.DATA['demographics'][field_name]
+                    date_of_birth = datetime.datetime.strptime(value, '%d/%m/%Y').date()
+                    setattr(demographics, field_name, date_of_birth)
+                else:
+                    setattr(demographics, field_name, request.DATA['demographics'][field_name])
         demographics.save()
 
         tags = request.DATA.get('tags', {})

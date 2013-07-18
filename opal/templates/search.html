@@ -55,7 +55,10 @@
 				<div class="control-group">
 					<label class="control-label">Date of birth</label>
 					<div class="controls">
-						<input type="text" ng-model="editing.demographics.date_of_birth" placeholder="yyyy-mm-dd">
+						<input type="text"
+							ng-model="editing.demographics.date_of_birth"
+							ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
+							placeholder="dd/mm/yyyy">
 					</div>
 				</div>
 				<div class="control-group">
