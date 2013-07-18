@@ -13,14 +13,12 @@
 			</tr>
 		</thead>
 
-		<div ng-show="results.length">
-			<tr ng-repeat="patient in results">
-				<td>[[patient.demographics.hospital_number]]</td>
-				<td>[[patient.demographics.name]]</td>
-				<td>[[patient.location.category]]</td>
-				<td><a href="#/patient/[[ patient.id ]]">View</a></td>
-			</tr>
-		</div>
+		<tr ng-repeat="patient in results">
+			<td>[[patient.demographics.hospital_number]]</td>
+			<td>[[patient.demographics.name]]</td>
+			<td>[[patient.location.category]]</td>
+			<td><a href="#/patient/[[ patient.id ]]">View</a></td>
+		</tr>
 
 	</table>
 
