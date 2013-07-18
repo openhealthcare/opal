@@ -34,3 +34,7 @@ table {
 .preserve-whitespace {
     white-space: pre;
 }
+
+input.ng-invalid {
+	background-color : #fcc; 
+};
