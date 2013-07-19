@@ -2,9 +2,9 @@ import json
 from django.db import IntegrityError
 from django.core import serializers
 from django.core.exceptions import ValidationError
+from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse, HttpResponseNotFound
 from django.views.decorators.http import require_http_methods
-from rest_framework.utils.encoders import JSONEncoder
 from records import models, exceptions
 
 @require_http_methods(["POST"])
@@ -69,7 +69,7 @@ def _get_request_data(request):
 def _build_json_response(data, status_code=200):
     response = HttpResponse()
     response['Content-Type'] = 'application/json'
-    response.content = json.dumps(data, cls=JSONEncoder)
+    response.content = json.dumps(data, cls=DjangoJSONEncoder)
     response.status_code = status_code
     return response
 

@@ -3,7 +3,6 @@ import random
 from django.core.exceptions import FieldError
 from django.db import models
 from django.forms.models import ModelForm
-from rest_framework.utils.encoders import JSONEncoder
 
 from records import exceptions
 
