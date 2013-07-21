@@ -613,7 +613,7 @@ app.controller('PatientDetailCtrl', function($scope, $http, schema, patient) {
 		if ($scope.columns[cix].single) {
 			patient[columnName] = [patient[columnName]];
 		} else {
-			newItem = {patient: patient.ix};
+			newItem = {patient: patient.id};
 			if (columnName == 'microbiology_test') {
 				newItem.date_ordered = getTodaysDate();
 			}
