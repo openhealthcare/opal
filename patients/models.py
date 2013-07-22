@@ -134,6 +134,7 @@ class MicrobiologyInput(Subrecord):
     change_in_antibiotic_prescription = models.BooleanField()
 
 class Todo(SingletonSubrecord):
+    _title = 'To Do'
     details = models.TextField(blank=True)
 
 class MicrobiologyTest(Subrecord):
