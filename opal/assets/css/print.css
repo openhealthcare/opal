@@ -4,6 +4,11 @@
 	}
 }
 
+li {
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
+
 .screen-only {
 	display: none;
 }
