@@ -21,7 +21,6 @@ li.selected {
 	height: 400px;
 }
 
-
 thead {
 	background: #fafafa;
 	border-bottom: 1px solid #ddd;
@@ -29,10 +28,6 @@ thead {
 
 table {
 	font-size: 12px;
-}
-
-.preserve-whitespace {
-	white-space: pre;
 }
 
 input.ng-invalid {

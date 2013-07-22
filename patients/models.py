@@ -133,7 +133,7 @@ class MicrobiologyInput(Subrecord):
     infection_control_advice_given = models.BooleanField()
     change_in_antibiotic_prescription = models.BooleanField()
 
-class Todo(SingletonSubrecord):
+class Todo(Subrecord):
     _title = 'To Do'
     details = models.TextField(blank=True)
 
