@@ -30,6 +30,10 @@ table {
 	font-size: 12px;
 }
 
+.table td {
+	padding: 1px;
+}
+
 input.ng-invalid {
 	background-color : #fcc; 
-};
+}
