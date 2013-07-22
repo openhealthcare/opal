@@ -950,6 +950,30 @@ app.directive('loadingbar', function($rootScope) {
 	};
 });
 
+app.directive('placeholder', function($timeout){
+	if ($.support.placeholder) {
+		return {};
+	}
+	return {
+		link: function(scope, elm, attrs){
+			if (attrs.type === 'password') {
+				return;
+			}
+			$timeout(function(){
+				elm.val(attrs.placeholder).focus(function(){
+					if ($(this).val() == $(this).attr('placeholder')) {
+						$(this).val('');
+					}
+				}).blur(function(){
+					if ($(this).val() == '') {
+						$(this).val($(this).attr('placeholder'));
+					}
+				});
+			});
+		}
+	}
+});
+
 app.filter('opalDate', function() {
 	return function(input) {
 		// Converts a date to format 'dd/MM'.
