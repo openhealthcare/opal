@@ -29,7 +29,14 @@
 			<div class="navbar-inner">
 				<a class="brand pull-left" href="/">OPAL-UCH</a>
 				<ul class="nav pull-right">
-					<li class="navbar-text">Hi, {{ request.user.first_name }}</li>
+					<li class="navbar-text">
+                                          Hi,
+                                          {% if request.user.first_name %}
+                                            {{ request.user.first_name }}
+                                          {% else %}
+                                            {{ request.user.username }}
+                                          {% endif %}
+                                        </li>
 					<li><a href="#">Home</a></li>
 					<li><a href="/admin">Admin</a></li>
 					<li><a href="/#/search">Search</a></li>
