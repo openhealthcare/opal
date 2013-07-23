@@ -1,58 +1,19 @@
 var CATEGORIES = ['Inpatient', 'Review', 'Followup', 'Transferred', 'Discharged', 'Deceased'];
 
-var app = angular.module('opal', ['ngCookies', 'opal.services', '$strap.directives', 'ui.event']);
+var controllers = angular.module('opal.controllers', [
+	'ngCookies',
+       	'opal.services',
+       	'$strap.directives',
+       	'ui.event'
+]);
 
-// See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags
-app.config(function($interpolateProvider) {
-	$interpolateProvider.startSymbol('[[');
-	$interpolateProvider.endSymbol(']]');
-});
-
-
-app.value('$strapConfig', {
-	datepicker: {
-		format: 'dd/mm/yyyy',
-		type: 'string'
-	}
-});
-
-app.config(function($routeProvider) {
-	$routeProvider.
-		when('/', {
-			controller: 'PatientListCtrl',
-			resolve: {
-				schema: function(SchemaLoader) {
-					return SchemaLoader();
-				},
-				patients: function(PatientsLoader) {
-					return PatientsLoader();
-				}
-			},
-			templateUrl: '/patient/templates/patient_list.html'
-		}).when('/patient/:patientId', {
-			controller: 'PatientDetailCtrl',
-			resolve: {
-				schema: function(SchemaLoader) {
-					return SchemaLoader();
-				},
-				patient: function(PatientLoader) {
-					return PatientLoader();
-				}
-			},
-			templateUrl: '/patient/templates/patient_detail.html'
-		}).when('/search', {
-			controller: 'SearchCtrl',
-			templateUrl: '/patient/templates/search.html'
-		}).otherwise({redirectTo: '/'});
-});
-
-app.controller('RootCtrl', function($scope) {
+controllers.controller('RootCtrl', function($scope) {
 	$scope.keydown = function(e) {
 		$scope.$broadcast('keydown', e);
 	};
 });
 
-app.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, patients) {
+controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, patients) {
 	var state = 'normal';
 	var columnName;
 	var newItem;
@@ -584,7 +545,7 @@ app.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, 
 
 });
 
-app.controller('PatientDetailCtrl', function($scope, $http, schema, patient) {
+controllers.controller('PatientDetailCtrl', function($scope, $http, schema, patient) {
 	var state = 'normal';
 	var columnName;
 	var newItem;
@@ -849,7 +810,7 @@ app.controller('PatientDetailCtrl', function($scope, $http, schema, patient) {
 	};
 });
 
-app.controller('SearchCtrl', function($scope, $http, $location) {
+controllers.controller('SearchCtrl', function($scope, $http, $location) {
 	$scope.searchTerms = {
 		hospital_number: '',
 		name: '',
@@ -929,68 +890,3 @@ app.controller('SearchCtrl', function($scope, $http, $location) {
 	};
 });
 
-app.directive("freezePanes", function () {
-    return function (scope, element, attrs) {
-        scope.$watch("assignments", function () {
-            $('table').stickyTableHeaders();
-        });
-    };
-});
-
-
-app.directive('loadingbar', function($rootScope) {
-	return {
-		link: function(scope, element, attrs) {
-			element.addClass('hide');
-
-			$rootScope.$on('$routeChangeStart', function() {
-				element.removeClass('hide');
-			});
-
-			$rootScope.$on('$routeChangeSuccess', function() {
-				element.addClass('hide');
-			});
-		}
-	};
-});
-
-app.directive('placeholder', function($timeout){
-	if ($.support.placeholder) {
-		return {};
-	}
-	return {
-		link: function(scope, elm, attrs){
-			if (attrs.type === 'password') {
-				return;
-			}
-			$timeout(function(){
-				elm.val(attrs.placeholder).focus(function(){
-					if ($(this).val() == $(this).attr('placeholder')) {
-						$(this).val('');
-					}
-				}).blur(function(){
-					if ($(this).val() == '') {
-						$(this).val($(this).attr('placeholder'));
-					}
-				});
-			});
-		}
-	}
-});
-
-app.filter('opalDate', function() {
-	return function(input) {
-		// Converts a date to format 'dd/MM'.
-		//
-		// We can't use angular's built in date formatter because that only handles Date objects
-		// or strings of the form 'yyyy-mm-dd'.  At some point we should convert all dates to Date
-		// objects in client code.
-		//
-		// This assumes that if called with a string, the string will be of form dd/mm/yyyy
-		if (typeof(input) == 'string') {
-			return parseInt(input.split('/')[0], 10) + '/' + parseInt(input.split('/')[1]);
-		} else {
-			return input;
-		}
-	}
-});
