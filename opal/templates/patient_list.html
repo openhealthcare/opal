@@ -1,37 +1,4 @@
-<div class="navbar screen-only">
-	<div class="navbar-inner">
-		<a class="btn btn-info pull-left" href="#/search">Search</a>
-
-		<ul class="nav">
-			<li class="divider-vertical"></li>
-		</ul>
-
-		<button class="btn pull-left" ng-click="startAdd()">Add record</button>
-
-		<ul class="nav">
-			<li class="divider-vertical"></li>
-		</ul>
-
-		<div class="btn-group pull-left" ng-model="currentTag" bs-buttons-radio>
-			{% for name, title in tags.items %}
-			<button type="button" class="btn" value="{{name}}">{{title}}</button>
-			{% endfor %}
-		</div>
-
-		<ul class="nav">
-			<li class="divider-vertical"></li>
-		</ul>
-
-		<form class="navbar-search pull-right">
-			<input ng-model="query.hospital" ui-event="{focus: 'focusOnQuery()'}" type="text" class="input-small" placeholder="Hospital">
-			<input ng-model="query.ward" ui-event="{focus: 'focusOnQuery()'}" type="text" class="input-small" placeholder="Ward">
-		</form>
-
-		<ul class="nav pull-right">
-			<li class="divider-vertical"></li>
-		</ul>
-	</div>
-</div>
+{% include 'patient_list_navbar.html' %}
 
 <table class="table table-bordered" freeze-panes>
 	<thead>
@@ -77,40 +44,7 @@
 	</tbody>
 </table>
 
-<div class="navbar screen-only">
-	<div class="navbar-inner">
-		<a class="btn btn-info pull-left" href="#/search">Search</a>
-
-		<ul class="nav">
-			<li class="divider-vertical"></li>
-		</ul>
-
-		<button class="btn pull-left" ng-click="startAdd()">Add record</button>
-
-		<ul class="nav">
-			<li class="divider-vertical"></li>
-		</ul>
-
-		<div class="btn-group pull-left" ng-model="currentTag" bs-buttons-radio>
-			{% for name, title in tags.items %}
-			<button type="button" class="btn" value="{{name}}">{{title}}</button>
-			{% endfor %}
-		</div>
-
-		<ul class="nav">
-			<li class="divider-vertical"></li>
-		</ul>
-
-		<form class="navbar-search pull-right">
-			<input ng-model="query.hospital" ui-event="{focus: 'focusOnQuery()'}" type="text" class="input-small" placeholder="Hospital">
-			<input ng-model="query.ward" ui-event="{focus: 'focusOnQuery()'}" type="text" class="input-small" placeholder="Ward">
-		</form>
-
-		<ul class="nav pull-right">
-			<li class="divider-vertical"></li>
-		</ul>
-	</div>
-</div>
+{% include 'patient_list_navbar.html' %}
 
 {% for column in columns %}
 <div id="{{column.name}}-modal" class="modal hide" tabindex="-1" role="dialog">

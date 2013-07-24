@@ -250,6 +250,10 @@ app.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, 
 		$(".btn").blur();
 	};
 
+	$scope.print = function() {
+		window.print();
+	};
+
 	$scope.startAdd = function() {
 		state = 'adding';
 		$scope.foundPatient = false; // Display rest of form when true
