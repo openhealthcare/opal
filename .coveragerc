@@ -1,0 +1,9 @@
+[run]
+source =
+    patients
+    options
+    utils
+omit =
+    */tests.py
+    */migrations/*
+    patients/microbiology.py
