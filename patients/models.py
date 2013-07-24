@@ -56,36 +56,31 @@ class Tagging(models.Model):
         else:
             return self.tag_name
 
-class SingletonSubrecordBase(models.base.ModelBase):
-    def __new__(cls, name, bases, attrs):
-        if name == 'SingletonSubrecord':
-            attrs['Meta'] = type('Meta', (object,), {'abstract': True})
-        else:
-            related_name = camelcase_to_underscore(name)
-            attrs['patient'] = models.OneToOneField(Patient, related_name=related_name)
-        return super(SingletonSubrecordBase, cls).__new__(cls, name, bases, attrs)
-
 class SubrecordBase(models.base.ModelBase):
     def __new__(cls, name, bases, attrs):
-        if name == 'Subrecord':
-            attrs['Meta'] = type('Meta', (object,), {'abstract': True})
-        else:
+        if name != 'Subrecord':
             related_name = camelcase_to_underscore(name)
             attrs['patient'] = models.ForeignKey(Patient, related_name=related_name)
         return super(SubrecordBase, cls).__new__(cls, name, bases, attrs)
 
-class SingletonSubrecord(models.Model):
-    __metaclass__ = SingletonSubrecordBase
-
 class Subrecord(models.Model):
     __metaclass__ = SubrecordBase
 
-class Demographics(SingletonSubrecord):
+    _is_singleton = False
+
+    class Meta:
+        abstract = True
+
+class Demographics(Subrecord):
+    _is_singleton = True
+
     name = models.CharField(max_length=255, blank=True)
     hospital_number = models.CharField(max_length=255, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
 
-class Location(SingletonSubrecord):
+class Location(Subrecord):
+    _is_singleton = True
+
     category = models.CharField(max_length=255, blank=True)
     hospital = models.CharField(max_length=255, blank=True)
     ward = models.CharField(max_length=255, blank=True)
@@ -184,9 +179,11 @@ class MicrobiologyTest(Subrecord):
     entamoeba_histolytica = models.CharField(max_length=20, blank=True)
     cryptosporidium = models.CharField(max_length=20, blank=True)
 
+# TODO
 @receiver(models.signals.post_save, sender=Patient)
 def create_singletons(sender, **kwargs):
     if kwargs['created']:
         patient = kwargs['instance']
-        for subclass in SingletonSubrecord.__subclasses__():
-            subclass.objects.create(patient=patient)
+        for subclass in Subrecord.__subclasses__():
+            if subclass._is_singleton:
+                subclass.objects.create(patient=patient)

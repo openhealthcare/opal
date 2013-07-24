@@ -67,9 +67,7 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 	for (var pix = 0; pix < patients.length; pix++) {
 		for (var cix = 0; cix < $scope.columns.length; cix++) {
 			columnName = $scope.columns[cix].name;
-			if ($scope.columns[cix].single) {
-				patients[pix][columnName] = [patients[pix][columnName]];
-			} else {
+			if (!isSingleColumn(cix)) {
 				newItem = {patient: patients[pix].id};
 				if (columnName == 'microbiology_test') {
 					newItem.date_ordered = getTodaysDate();
@@ -268,9 +266,8 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 		clearModal('add-new');
 		$http.post('patient/', $scope.editing).success(function(patient) {
 			for (var cix = 0; cix < $scope.columns.length; cix++) {
-				if (isSingleColumn(cix)) {
-					patient[getColumnName(cix)] = [patient[getColumnName(cix)]];
-				} else {
+				if (!isSingleColumn(cix)) {
+					// TODO ensure date fields are set up
 					patient[getColumnName(cix)] = [{patient: patient.id}];
 				}
 			}
@@ -314,6 +311,7 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 		items[$scope.iix] = clone($scope.editing);
 
 		if (isSingleColumn($scope.cix)) {
+			url = url + $scope.editing.id + '/';
 			$http.put(url, $scope.editing);
 			if (columnName == 'location') {
 				$scope.rows[$scope.rix].tags = $scope.editing.tags;
@@ -589,9 +587,7 @@ controllers.controller('PatientDetailCtrl', function($scope, $http, schema, pati
 
 	for (var cix = 0; cix < $scope.columns.length; cix++) {
 		columnName = $scope.columns[cix].name;
-		if ($scope.columns[cix].single) {
-			patient[columnName] = [patient[columnName]];
-		} else {
+		if (!isSingleColumn(cix)) {
 			newItem = {patient: patient.id};
 			if (columnName == 'microbiology_test') {
 				newItem.date_ordered = getTodaysDate();
@@ -696,6 +692,7 @@ controllers.controller('PatientDetailCtrl', function($scope, $http, schema, pati
 		items[$scope.iix] = clone($scope.editing);
 
 		if (isSingleColumn($scope.cix)) {
+			url = url + $scope.editing.id + '/';
 			$http.put(url, $scope.editing);
 			if (columnName == 'location') {
 				$scope.patient.tags = $scope.editing.tags;

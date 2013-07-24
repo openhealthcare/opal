@@ -24,9 +24,6 @@ def build_subrecord_serializer(model):
 
 attrs = {'Meta': type('Meta', (object,), {'model': models.Patient})}
 
-for model in models.SingletonSubrecord.__subclasses__():
-    attrs[camelcase_to_underscore(model._meta.object_name)] = build_subrecord_serializer(model)(required=False)
-
 for model in models.Subrecord.__subclasses__():
     attrs[camelcase_to_underscore(model._meta.object_name)] = build_subrecord_serializer(model)(many=True, required=False)
 

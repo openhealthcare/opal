@@ -14,7 +14,7 @@ class LoginRequiredMixin(object):
     def dispatch(self, *args, **kwargs):
         return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
 
-class SingletonMixin(object):
+class SubrecordMixin(object):
     def get_serializer_class(self):
         return serializers.build_subrecord_serializer(self.model)
 
@@ -50,7 +50,7 @@ class PatientList(LoginRequiredMixin, generics.ListAPIView):
         except models.Patient.DoesNotExist:
             patient = models.Patient.objects.create()
 
-        location = patient.location
+        location = patient.location.all()[0]
         for field in location._meta.fields:
             field_name = field.name
             if field_name not in ['id', 'patient'] and field_name in request.DATA['location']:
@@ -62,7 +62,7 @@ class PatientList(LoginRequiredMixin, generics.ListAPIView):
                     setattr(location, field_name, request.DATA['location'][field_name])
         location.save()
 
-        demographics = patient.demographics
+        demographics = patient.demographics.all()[0]
         for field in demographics._meta.fields:
             field_name = field.name
             if field_name not in ['id', 'patient'] and field_name in request.DATA['demographics']:
@@ -95,23 +95,19 @@ class PatientDetailView(LoginRequiredMixin, generics.RetrieveAPIView):
         response.data['tags'] = {t.tag_name: True for t in taggings if t.user is None or t.user == request.user}
         return response
 
-class SingletonSubrecordDetail(LoginRequiredMixin, SingletonMixin, generics.RetrieveUpdateAPIView):
+class SubrecordList(LoginRequiredMixin, SubrecordMixin, generics.CreateAPIView):
+    pass
+
+class SubrecordDetail(LoginRequiredMixin, SubrecordMixin, generics.RetrieveUpdateDestroyAPIView):
     def get_object(self, queryset=None):
-        return getattr(self.patient, self.model.__name__.lower())
+        return getattr(self.patient, camelcase_to_underscore(self.model.__name__)).get(pk=self.kwargs['id'])
 
     def put(self, request, *args, **kwargs):
-        response = super(SingletonSubrecordDetail, self).put(request, *args, **kwargs)
+        response = super(SubrecordDetail, self).put(request, *args, **kwargs)
         if 'tags' in request.DATA:
             patient = models.Patient.objects.get(pk=request.DATA['patient'])
             patient.set_tags(request.DATA['tags'], request.user)
         return response
-
-class SubrecordList(LoginRequiredMixin, SingletonMixin, generics.ListCreateAPIView):
-    pass
-
-class SubrecordDetail(LoginRequiredMixin, SingletonMixin, generics.RetrieveUpdateDestroyAPIView):
-    def get_object(self, queryset=None):
-        return getattr(self.patient, camelcase_to_underscore(self.model.__name__)).get(pk=self.kwargs['id'])
 
 class PatientTemplateView(TemplateView):
     def get_context_data(self, **kwargs):
@@ -127,7 +123,7 @@ class PatientTemplateView(TemplateView):
                 continue
             column_context['name'] = name
             column_context['title'] = getattr(column, '_title', name.replace('_', ' ').title())
-            column_context['single'] = issubclass(column, models.SingletonSubrecord)
+            column_context['single'] = column._is_singleton
             column_context['template_path'] = name + '.html'
             column_context['modal_template_path'] = name + '_modal.html'
             context['columns'].append(column_context)
@@ -155,7 +151,7 @@ def schema_view(request):
     for column in schema.columns:
         columns.append({
             'name': camelcase_to_underscore(column.__name__),
-            'single': issubclass(column, models.SingletonSubrecord)
+            'single': column._is_singleton
         })
 
     data = {'columns': columns}

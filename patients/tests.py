@@ -38,21 +38,21 @@ class PatientTest(TestCase):
         self.assertEqual(201, rsp.status_code)
 
     def test_can_access_demographics(self):
-        rsp = self.get('demographics/')
+        rsp = self.get('demographics/%s/' % self.patient.demographics.all()[0].id)
         self.assertEqual(200, rsp.status_code)
 
     def test_can_update_demographics(self):
         data = {'name': 'John Smith', 'date_of_birth': '01/06/1980'}
-        rsp = self.put('demographics/', data)
+        rsp = self.put('demographics/%s/' % self.patient.demographics.all()[0].id, data)
         self.assertEqual(200, rsp.status_code)
 
     def test_can_access_location(self):
-        rsp = self.get('location/')
+        rsp = self.get('location/%s/' % self.patient.location.all()[0].id)
         self.assertEqual(200, rsp.status_code)
 
     def test_can_update_location(self):
         data = {'hospital': 'UCH', 'date_of_admission': '01/06/2013'}
-        rsp = self.put('location/', data)
+        rsp = self.put('location/%s/' % self.patient.location.all()[0].id, data)
         self.assertEqual(200, rsp.status_code)
 
     def test_can_access_diagnosis(self):

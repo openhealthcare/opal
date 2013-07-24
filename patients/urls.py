@@ -10,10 +10,6 @@ urlpatterns = patterns('',
     url(r'^templates/search.html/$', views.SearchTemplateView.as_view()),
 )
 
-for subrecord_model in models.SingletonSubrecord.__subclasses__():
-    sub_url = camelcase_to_underscore(subrecord_model.__name__)
-    urlpatterns += patterns('', url(r'^(?P<patient_id>\d+)/%s/$' % sub_url, views.SingletonSubrecordDetail.as_view(model=subrecord_model)))
-
 for subrecord_model in models.Subrecord.__subclasses__():
     sub_url = camelcase_to_underscore(subrecord_model.__name__)
     urlpatterns += patterns('',
