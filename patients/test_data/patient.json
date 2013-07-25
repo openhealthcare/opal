@@ -1,0 +1,154 @@
+{
+    "antimicrobial": [
+        {
+            "dose": "100mg", 
+            "drug": "Some antimicrobial", 
+            "end_date": null, 
+            "id": 1, 
+            "patient": 1, 
+            "route": "Some route", 
+            "start_date": "25/07/2013"
+        }
+    ], 
+    "demographics": [
+        {
+            "date_of_birth": "20/06/1972", 
+            "hospital_number": "AA1111", 
+            "id": 1, 
+            "name": "John Smith", 
+            "patient": 1
+        }
+    ], 
+    "diagnosis": [
+        {
+            "condition": "Some condition", 
+            "date_of_diagnosis": "25/07/2013", 
+            "details": "", 
+            "id": 1, 
+            "patient": 1, 
+            "provisional": false
+        }, 
+        {
+            "condition": "Some other condition", 
+            "date_of_diagnosis": "25/07/2013", 
+            "details": "", 
+            "id": 2, 
+            "patient": 1, 
+            "provisional": true
+        }
+    ], 
+    "general_note": [
+        {
+            "comment": "A note", 
+            "date": "25/07/2013", 
+            "id": 1, 
+            "patient": 1
+        }
+    ], 
+    "id": 1, 
+    "location": [
+        {
+            "bed": "13", 
+            "category": "Inpatient", 
+            "date_of_admission": "25/07/2013", 
+            "discharge_date": null, 
+            "hospital": "UCH", 
+            "id": 1, 
+            "patient": 1, 
+            "ward": "T10"
+        }
+    ], 
+    "microbiology_input": [
+        {
+            "agreed_plan": "Plan", 
+            "change_in_antibiotic_prescription": true, 
+            "clinical_advice_given": true, 
+            "clinical_discussion": "Discussion", 
+            "date": "25/07/2013", 
+            "discussed_with": "XYZ", 
+            "giving_result": false, 
+            "id": 1, 
+            "infection_control_advice_given": false, 
+            "initials": "ABC", 
+            "patient": 1
+        }
+    ], 
+    "microbiology_test": [
+        {
+            "adenovirus": "", 
+            "anti_hbcore_igg": "", 
+            "anti_hbcore_igm": "", 
+            "anti_hbs": "", 
+            "c_difficile_antigenl": "", 
+            "c_difficile_toxin": "", 
+            "cmv": "", 
+            "cryptosporidium": "", 
+            "date_ordered": "25/07/2013", 
+            "details": "", 
+            "ebna_igg": "", 
+            "ebv": "", 
+            "entamoeba_histolytica": "", 
+            "enterovirus": "", 
+            "giardia": "", 
+            "hbsag": "", 
+            "hsv": "", 
+            "hsv_1": "", 
+            "hsv_2": "", 
+            "id": 1, 
+            "igg": "", 
+            "igm": "", 
+            "influenza_a": "", 
+            "influenza_b": "", 
+            "metapneumovirus": "", 
+            "microscopy": "", 
+            "norovirus": "", 
+            "organism": "", 
+            "parainfluenza": "", 
+            "parasitaemia": "", 
+            "patient": 1, 
+            "resistant_antibiotics": "", 
+            "result": "", 
+            "rotavirus": "", 
+            "rpr": "", 
+            "rsv": "", 
+            "sensitive_antibiotics": "", 
+            "species": "", 
+            "syphilis": "", 
+            "test": "Blood Culture", 
+            "tppa": "", 
+            "vca_igg": "", 
+            "vca_igm": "", 
+            "viral_load": "", 
+            "vzv": ""
+        }
+    ], 
+    "past_medical_history": [
+        {
+            "condition": "Some condition", 
+            "id": 1, 
+            "patient": 1, 
+            "year": "1999"
+        }
+    ], 
+    "tags": {
+        "microbiology": true, 
+        "mine": true
+    }, 
+    "todo": [
+        {
+            "details": "An action", 
+            "id": 1, 
+            "patient": 1
+        }
+    ], 
+    "travel": [
+        {
+            "dates": "", 
+            "destination": "Some destination", 
+            "id": 1, 
+            "patient": 1, 
+            "reason_for_travel": "Some reason", 
+            "specific_exposures": ""
+        }
+    ]
+}
