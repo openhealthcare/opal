@@ -27,6 +27,10 @@ class PatientTest(TestCase):
         json_data = json.dumps(data)
         return self.client.put(self.base_url + sub_url, content_type='application/json', data=json_data)
 
+    def test_can_get_patient_list(self):
+        rsp = self.client.get('/patient/')
+        self.assertEqual(200, rsp.status_code)
+
     def test_can_create_patient(self):
         data = {
             'demographics': {
