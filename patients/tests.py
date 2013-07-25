@@ -8,6 +8,9 @@ class PatientTest(TestCase):
     def setUp(self):
         self.assertTrue(self.client.login(username='superuser', password='password'))
         self.patient = Patient.objects.get(pk=1)
+        self.demographics = self.patient.demographics.all()[0]
+        self.location = self.patient.location.all()[0]
+        self.first_diagnosis = self.patient.diagnosis.all()[0]
 
     @property
     def base_url(self):
@@ -26,13 +29,20 @@ class PatientTest(TestCase):
         json_data = json.dumps(data)
         return self.client.put(self.base_url + sub_url, content_type='application/json', data=json_data)
 
+    def assert_status_code(self, expected_status_code, rsp):
+        self.assertEqual(expected_status_code, rsp.status_code)
+
+    def assert_json_content(self, expected_data, rsp):
+        content = json.loads(rsp.content)
+        self.assertEqual(expected_data, content)
+
     def test_can_access_patient_list(self):
         rsp = self.client.get('/patient/')
-        self.assertEqual(200, rsp.status_code)
+        self.assert_status_code(200, rsp)
 
     def test_can_access_patient(self):
         rsp = self.client.get('/patient/%s/' % self.patient.id)
-        self.assertEqual(200, rsp.status_code)
+        self.assert_status_code(200, rsp)
 
     def test_can_create_patient(self):
         data = {
@@ -50,44 +60,104 @@ class PatientTest(TestCase):
             }
         }
         rsp = self.client.post('/patient/', content_type='application/json', data=json.dumps(data))
-        self.assertEqual(201, rsp.status_code)
+        self.assert_status_code(201, rsp)
 
     def test_can_access_demographics(self):
-        rsp = self.get('demographics/%s/' % self.patient.demographics.all()[0].id)
-        self.assertEqual(200, rsp.status_code)
+        rsp = self.get('demographics/%s/' % self.demographics.id)
+        expected_data = {
+            'patient': self.patient.id,
+            'id': self.demographics.id,
+            'name': 'John Smith',
+            'date_of_birth': '20/06/1972',
+            'hospital_number': 'AA1111',
+        }
+        self.assert_status_code(200, rsp)
+        self.assert_json_content(expected_data, rsp)
 
     def test_can_update_demographics(self):
-        data = {'name': 'John Smith', 'date_of_birth': '01/06/1980'}
-        rsp = self.put('demographics/%s/' % self.patient.demographics.all()[0].id, data)
-        self.assertEqual(200, rsp.status_code)
+        name = 'Jan Smits'
+        date_of_birth = '21/06/1972'
+        data = {'name': name, 'date_of_birth': date_of_birth}
+        rsp = self.put('demographics/%s/' % self.demographics.id, data)
+        expected_data = {
+            'patient': self.patient.id,
+            'id': self.demographics.id,
+            'name': name,
+            'date_of_birth': date_of_birth,
+            'hospital_number': 'AA1111',
+        }
+        self.assert_status_code(200, rsp)
+        self.assert_json_content(expected_data, rsp)
 
     def test_can_access_location(self):
-        rsp = self.get('location/%s/' % self.patient.location.all()[0].id)
-        self.assertEqual(200, rsp.status_code)
+        rsp = self.get('location/%s/' % self.location.id)
+        expected_data = {
+            'patient': self.patient.id,
+            'id': self.location.id,
+            'category': 'Inpatient',
+            'hospital': 'UCH',
+            'ward': 'T10',
+            'bed': '13',
+            'date_of_admission': '25/07/2013',
+            'discharge_date': None,
+        }
+        self.assert_status_code(200, rsp)
+        self.assert_json_content(expected_data, rsp)
 
     def test_can_update_location(self):
+        ward = 'T11'
+        date_of_admission = '24/07/2013'
         data = {
-                'hospital': 'UCH',
-                'date_of_admission': '01/06/2013',
+                'ward': ward,
+                'date_of_admission': date_of_admission,
                 'tags': {'mine': True}
         }
-        rsp = self.put('location/%s/' % self.patient.location.all()[0].id, data)
-        self.assertEqual(200, rsp.status_code)
+        rsp = self.put('location/%s/' % self.location.id, data)
+        expected_data = {
+            'patient': self.patient.id,
+            'id': self.location.id,
+            'category': 'Inpatient',
+            'hospital': 'UCH',
+            'ward': ward,
+            'bed': '13',
+            'date_of_admission': date_of_admission,
+            'discharge_date': None,
+        }
+        self.assert_status_code(200, rsp)
+        self.assert_json_content(expected_data, rsp)
 
     def test_can_access_diagnosis(self):
-        diagnosis = self.patient.diagnosis.all()[0]
-        rsp = self.get('diagnosis/%d/' % diagnosis.id)
-        self.assertEqual(200, rsp.status_code)
+        rsp = self.get('diagnosis/%d/' % self.first_diagnosis.id)
+        expected_data = {
+            'patient': self.patient.id,
+            'id': self.first_diagnosis.id,
+            'condition': 'Some condition',
+            'provisional': False,
+            'details': '',
+            'date_of_diagnosis': '25/07/2013',
+        }
+        self.assert_status_code(200, rsp)
+        self.assert_json_content(expected_data, rsp)
 
     def test_can_create_diagnosis_with_existing_condition(self):
         data = {
             'condition': 'Some condition',
             'provisional': False,
-            'details': 'Have some details'
+            'details': 'Have some details',
+            'date_of_diagnosis': '25/07/2013',
         }
         rsp = self.post('diagnosis/', data)
-        self.assertEqual(201, rsp.status_code)
         diagnosis = self.patient.diagnosis.get(pk=rsp.data['id'])
+        expected_data = {
+            'patient': self.patient.id,
+            'id': diagnosis.id,
+            'condition': 'Some condition',
+            'provisional': False,
+            'details': 'Have some details',
+            'date_of_diagnosis': '25/07/2013',
+        }
+        self.assert_status_code(201, rsp)
+        self.assert_json_content(expected_data, rsp)
         self.assertIsNotNone(diagnosis.condition_fk)
         self.assertEqual('', diagnosis.condition_ft)
 
@@ -95,21 +165,39 @@ class PatientTest(TestCase):
         data = {
             'condition': 'Some other condition',
             'provisional': False,
-            'details': 'Have some details'
+            'details': 'Have some details',
+            'date_of_diagnosis': '25/07/2013',
         }
         rsp = self.post('diagnosis/', data)
-        self.assertEqual(201, rsp.status_code)
         diagnosis = self.patient.diagnosis.get(pk=rsp.data['id'])
+        expected_data = {
+            'patient': self.patient.id,
+            'id': diagnosis.id,
+            'condition': 'Some other condition',
+            'provisional': False,
+            'details': 'Have some details',
+            'date_of_diagnosis': '25/07/2013',
+        }
+        self.assert_status_code(201, rsp)
+        self.assert_json_content(expected_data, rsp)
         self.assertIsNone(diagnosis.condition_fk)
         self.assertEqual('Some other condition', diagnosis.condition_ft)
 
     def test_can_update_diagnosis(self):
-        diagnosis = self.patient.diagnosis.all()[0]
         data = {
             'condition': 'Some other condition'
         }
-        rsp = self.put('diagnosis/%d/' % diagnosis.id, data)
-        self.assertEqual(200, rsp.status_code)
-        diagnosis = self.patient.diagnosis.get(pk=rsp.data['id'])
+        rsp = self.put('diagnosis/%d/' % self.first_diagnosis.id, data)
+        expected_data = {
+            'patient': self.patient.id,
+            'id': self.first_diagnosis.id,
+            'condition': 'Some other condition',
+            'provisional': False,
+            'details': '',
+            'date_of_diagnosis': '25/07/2013',
+        }
+        diagnosis = self.patient.diagnosis.get(pk=self.first_diagnosis.id)
+        self.assert_status_code(200, rsp)
+        self.assert_json_content(expected_data, rsp)
         self.assertIsNone(diagnosis.condition_fk)
         self.assertEqual('Some other condition', diagnosis.condition_ft)
