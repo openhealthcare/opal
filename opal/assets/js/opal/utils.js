@@ -42,3 +42,8 @@ jQuery.support.placeholder = (function(){
 	var i = document.createElement('input');
 	return 'placeholder' in i;
 })();
+
+
+String.prototype.chomp = function() {
+    return this.trim();
+}
