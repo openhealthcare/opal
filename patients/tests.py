@@ -1,14 +1,13 @@
 import json
 from django.test import TestCase
-from django.contrib.auth.models import User
-from options.models import option_models
 from patients.models import Patient
 
 class PatientTest(TestCase):
+    fixtures = ['users', 'options', 'patients']
+
     def setUp(self):
-        self.user = User.objects.create_user('testuser', 'testuser@exmample.com', 'password')
-        self.client.login(username='testuser', password='password')
-        self.patient = Patient.objects.create()
+        self.assertTrue(self.client.login(username='superuser', password='password'))
+        self.patient = Patient.objects.get(pk=1)
 
     @property
     def base_url(self):
@@ -38,7 +37,7 @@ class PatientTest(TestCase):
     def test_can_create_patient(self):
         data = {
             'demographics': {
-                'hospital_number': 'AB1234',
+                'hospital_number': 'BB2222',
                 'name': 'Johann Schmidt',
                 'date_of_birth': '01/06/1970'
             },
@@ -76,19 +75,13 @@ class PatientTest(TestCase):
         self.assertEqual(200, rsp.status_code)
 
     def test_can_access_diagnosis(self):
-        data = {
-            'condition': 'New Condition',
-            'provisional': False,
-            'details': 'Have some details'
-        }
-        rsp = self.post('diagnosis/', data)
-        rsp = self.get('diagnosis/%d/' % rsp.data['id'])
+        diagnosis = self.patient.diagnosis.all()[0]
+        rsp = self.get('diagnosis/%d/' % diagnosis.id)
         self.assertEqual(200, rsp.status_code)
 
     def test_can_create_diagnosis_with_existing_condition(self):
-        option_models['condition'].objects.create(name='Existing Condition')
         data = {
-            'condition': 'Existing Condition',
+            'condition': 'Some condition',
             'provisional': False,
             'details': 'Have some details'
         }
@@ -100,7 +93,7 @@ class PatientTest(TestCase):
 
     def test_can_create_diagnosis_with_new_condition(self):
         data = {
-            'condition': 'New Condition',
+            'condition': 'Some other condition',
             'provisional': False,
             'details': 'Have some details'
         }
@@ -108,21 +101,15 @@ class PatientTest(TestCase):
         self.assertEqual(201, rsp.status_code)
         diagnosis = self.patient.diagnosis.get(pk=rsp.data['id'])
         self.assertIsNone(diagnosis.condition_fk)
-        self.assertEqual('New Condition', diagnosis.condition_ft)
+        self.assertEqual('Some other condition', diagnosis.condition_ft)
 
     def test_can_update_diagnosis(self):
-        option_models['condition'].objects.create(name='Existing Condition')
+        diagnosis = self.patient.diagnosis.all()[0]
         data = {
-            'condition': 'Existing Condition',
-            'provisional': False,
-            'details': 'Have some details'
+            'condition': 'Some other condition'
         }
-        rsp = self.post('diagnosis/', data)
-        data = {
-            'condition': 'New Condition'
-        }
-        rsp = self.put('diagnosis/%d/' % rsp.data['id'], data)
+        rsp = self.put('diagnosis/%d/' % diagnosis.id, data)
         self.assertEqual(200, rsp.status_code)
         diagnosis = self.patient.diagnosis.get(pk=rsp.data['id'])
         self.assertIsNone(diagnosis.condition_fk)
-        self.assertEqual('New Condition', diagnosis.condition_ft)
+        self.assertEqual('Some other condition', diagnosis.condition_ft)
