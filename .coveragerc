@@ -7,3 +7,7 @@ omit =
     */tests.py
     */migrations/*
     patients/microbiology.py
+
+[report]
+exclude_lines =
+    def __unicode__

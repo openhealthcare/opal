@@ -27,16 +27,28 @@ class PatientTest(TestCase):
         json_data = json.dumps(data)
         return self.client.put(self.base_url + sub_url, content_type='application/json', data=json_data)
 
-    def test_can_get_patient_list(self):
+    def test_can_access_patient_list(self):
         rsp = self.client.get('/patient/')
+        self.assertEqual(200, rsp.status_code)
+
+    def test_can_access_patient(self):
+        rsp = self.client.get('/patient/%s/' % self.patient.id)
         self.assertEqual(200, rsp.status_code)
 
     def test_can_create_patient(self):
         data = {
             'demographics': {
-                'hospital_number': 'AB1234'
+                'hospital_number': 'AB1234',
+                'name': 'Johann Schmidt',
+                'date_of_birth': '01/06/1970'
             },
-            'location': {}
+            'location': {
+                'date_of_admission': '25/06/2013',
+                'category': 'Inpatient',
+                'hospital': 'UCH',
+                'ward': 'T13',
+                'bed': 10
+            }
         }
         rsp = self.client.post('/patient/', content_type='application/json', data=json.dumps(data))
         self.assertEqual(201, rsp.status_code)
@@ -55,7 +67,11 @@ class PatientTest(TestCase):
         self.assertEqual(200, rsp.status_code)
 
     def test_can_update_location(self):
-        data = {'hospital': 'UCH', 'date_of_admission': '01/06/2013'}
+        data = {
+                'hospital': 'UCH',
+                'date_of_admission': '01/06/2013',
+                'tags': {'mine': True}
+        }
         rsp = self.put('location/%s/' % self.patient.location.all()[0].id, data)
         self.assertEqual(200, rsp.status_code)
 
