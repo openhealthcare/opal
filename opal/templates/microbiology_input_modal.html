@@ -12,6 +12,12 @@
 		</div>
 	</div>
 	<div class="control-group">
+		<label class="control-label">Reason for clinical interaction</label>
+		<div class="controls">
+			<input type="text" ng-model="editing.reason_for_interaction" bs-typeahead="clinical_advice_reason_for_interaction_list" data-provide="typeahead" data-min-length=0>
+		</div>
+	</div>
+	<div class="control-group">
 		<label class="control-label">Clinical discussion</label>
 		<div class="controls">
 			<textarea ng-model="editing.clinical_discussion" rows="5"></textarea>
@@ -36,9 +42,9 @@
 		</div>
 	</div>
 	<div class="control-group">
-		<label class="control-label">Giving result?</label>
+		<label class="control-label">Change in antibiotic prescription?</label>
 		<div class="controls">
-			<input type="checkbox" ng-model="editing.giving_result">
+			<input type="checkbox" ng-model="editing.change_in_antibiotic_prescription">
 		</div>
 	</div>
 	<div class="control-group">
@@ -48,9 +54,9 @@
 		</div>
 	</div>
 	<div class="control-group">
-		<label class="control-label">Change in antibiotic prescription?</label>
+		<label class="control-label">Referred to OPAT?</label>
 		<div class="controls">
-			<input type="checkbox" ng-model="editing.change_in_antibiotic_prescription">
+			<input type="checkbox" ng-model="editing.referred_to_opat">
 		</div>
 	</div>
 </form>

@@ -123,15 +123,17 @@ class Antimicrobial(Subrecord):
     end_date = models.DateField(null=True, blank=True)
 
 class MicrobiologyInput(Subrecord):
+    _title = 'Clinical Advice'
     date = models.DateField(null=True, blank=True)
     initials = models.CharField(max_length=255, blank=True)
+    reason_for_interaction = ForeignKeyOrFreeText(option_models['clinical_advice_reason_for_interaction'])
     clinical_discussion = models.TextField(blank=True)
     agreed_plan = models.TextField(blank=True)
     discussed_with = models.CharField(max_length=255, blank=True)
     clinical_advice_given = models.BooleanField()
-    giving_result = models.BooleanField()
     infection_control_advice_given = models.BooleanField()
     change_in_antibiotic_prescription = models.BooleanField()
+    referred_to_opat = models.BooleanField()
 
 class Todo(Subrecord):
     _title = 'To Do'

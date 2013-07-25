@@ -3,10 +3,13 @@
 		[[item.date | opalDate]]
 		([[item.initials]]<span ng-show="item.discussed_with"> with [[item.discussed_with]]</span>)
 	</li>
-	<li>
+	<li ng-show="item.reason_for_interaction">
+		[[item.reason_for_interaction]]
+	</li>
+	<li ng-show="item.clinical_discussion">
 		[[item.clinical_discussion]]
 	</li>
-	<li>
+	<li ng-show="item.agreed_plan">
 		Plan: [[item.agreed_plan]]
 	</li>
 </ul>
