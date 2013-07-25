@@ -54,7 +54,6 @@ directives.directive('markdownDetails', function ($timeout){
         $scope.$watch('item.details', function(){
             if(!_.isUndefined($scope.item.details)){
                 var converter = new Showdown.converter({extensions: [OpalDown]});
-                console.log($scope.item.details);
                 $element.html(converter.makeHtml($scope.item.details));
             }
         })

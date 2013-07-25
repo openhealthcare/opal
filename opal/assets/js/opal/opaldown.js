@@ -15,18 +15,12 @@
                 type: 'lang',
                 regex: '(.*?)[\n\r]',
                 replace: function(match, line){
-                    console.log('OpalDown')
-                    console.log(match);
-                    console.log(line)
                     var cleanline = line.chomp()
                     if(cleanline){
                         var spaced = spacey({content: cleanline});
-                        console.log('spaced')
-                        console.log(spaced + '!');
                         return spaced
                     }
                     return ""
-
                 }
             }
         ]
