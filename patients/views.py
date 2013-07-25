@@ -148,20 +148,19 @@ def schema_view(request):
 
     data = {'columns': columns}
 
-    if request.GET.get('columns-only', 'no') == 'no':
-        data['option_lists'] = {}
-        data['synonyms'] = {}
+    data['option_lists'] = {}
+    data['synonyms'] = {}
 
-        for name, model in option_models.items():
-            option_list = []
-            synonyms = {}
-            for instance in model.objects.all():
-                option_list.append(instance.name)
-                for synonym in instance.synonyms.all():
-                    option_list.append(synonym.name)
-                    synonyms[synonym.name] = instance.name
-            data['option_lists'][name] = option_list
-            data['synonyms'][name] = synonyms
+    for name, model in option_models.items():
+        option_list = []
+        synonyms = {}
+        for instance in model.objects.all():
+            option_list.append(instance.name)
+            for synonym in instance.synonyms.all():
+                option_list.append(synonym.name)
+                synonyms[synonym.name] = instance.name
+        data['option_lists'][name] = option_list
+        data['synonyms'][name] = synonyms
 
     return HttpResponse(json.dumps(data), mimetype='application/json')
 

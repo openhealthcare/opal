@@ -1,0 +1,210 @@
+{
+    "columns": [
+        {
+            "name": "demographics", 
+            "single": true
+        }, 
+        {
+            "name": "location", 
+            "single": true
+        }, 
+        {
+            "name": "diagnosis", 
+            "single": false
+        }, 
+        {
+            "name": "past_medical_history", 
+            "single": false
+        }, 
+        {
+            "name": "travel", 
+            "single": false
+        }, 
+        {
+            "name": "antimicrobial", 
+            "single": false
+        }, 
+        {
+            "name": "microbiology_test", 
+            "single": false
+        }, 
+        {
+            "name": "microbiology_input", 
+            "single": false
+        }, 
+        {
+            "name": "general_note", 
+            "single": false
+        }, 
+        {
+            "name": "todo", 
+            "single": false
+        }
+    ], 
+    "option_lists": {
+        "antimicrobial": [
+            "Some antimicrobial"
+        ], 
+        "antimicrobial_route": [
+            "Some route"
+        ], 
+        "condition": [
+            "Some condition", 
+            "Condition synonym"
+        ], 
+        "destination": [
+            "Some destination"
+        ], 
+        "hospital": [
+            "Some hospital"
+        ], 
+        "micro_test_c_difficile": [
+            "C. difficile"
+        ], 
+        "micro_test_csf_pcr": [
+            "CSF PCR"
+        ], 
+        "micro_test_ebv_serology": [
+            "EBV Serology"
+        ], 
+        "micro_test_hepititis_b_serology": [
+            "Hepatitis B Serology"
+        ], 
+        "micro_test_hiv": [
+            "HIV"
+        ], 
+        "micro_test_leishmaniasis_pcr": [
+            "Leishmaniasis PCR"
+        ], 
+        "micro_test_mcs": [
+            "Blood Culture", 
+            "Broncheoalveolar lavage MC&S", 
+            "CSF AFB microscopy & TB culture", 
+            "CSF MC&S", 
+            "Fluid MC&S", 
+            "Lymph Node MC&S", 
+            "Pleural MC&S", 
+            "Sputum AFB microscopy & TB culture", 
+            "Sputum MC&S", 
+            "Stool MC&S", 
+            "Stool OCP", 
+            "Throat Swab MC&S", 
+            "Tissue AFB microscopy & TB culture", 
+            "Tissue MC&S", 
+            "Urine AFB microscopy & TB culture", 
+            "Urine MC&S", 
+            "Wound swab MC&S"
+        ], 
+        "micro_test_other": [
+            "Other"
+        ], 
+        "micro_test_parasitaemia": [
+            "Babesia Film", 
+            "Malaria Film", 
+            "Microfilarial Film"
+        ], 
+        "micro_test_respiratory_virus_pcr": [
+            "Respiratory Virus PCR"
+        ], 
+        "micro_test_serology": [
+            "Brucella Serology", 
+            "CMV Serology", 
+            "Dengue Serology", 
+            "Hepatitis A Serology", 
+            "Hepatitis E Serology", 
+            "Measles Serology", 
+            "Rubella Serology", 
+            "Toxoplasmosis Serology", 
+            "VZV Serology"
+        ], 
+        "micro_test_single_igg_test": [
+            "HHV-6 Serology", 
+            "HHV-7 Serology", 
+            "HTLV Serology", 
+            "Hepatitis C Serology", 
+            "Hepatitis D Serology"
+        ], 
+        "micro_test_single_test_pos_neg": [
+            "Borrleia Screening Serology", 
+            "Brorleia Reference Serology", 
+            "Cryptococcal antigen", 
+            "Dengue PCR", 
+            "JC Virus PCR", 
+            "MRSA PCR", 
+            "Rickettsia PCR", 
+            "Scrub Typhus PCR", 
+            "Viral Haemorrhagic Fever PCR"
+        ], 
+        "micro_test_single_test_pos_neg_equiv": [
+            "Amoebic Serology", 
+            "Cystercicosis Serology", 
+            "Fasciola Serology", 
+            "Filaria Serology", 
+            "Hydatid Serology", 
+            "Strongyloides Serology", 
+            "Toxcocara Serology", 
+            "Trypanosomiasis brucei Serology", 
+            "Trypanosomiasis cruzi serology"
+        ], 
+        "micro_test_stool_parasitology_pcr": [
+            "Stool Parasitology PCR"
+        ], 
+        "micro_test_stool_pcr": [
+            "Stool PCR"
+        ], 
+        "micro_test_swab_pcr": [
+            "Swab PCR"
+        ], 
+        "micro_test_syphilis_serology": [
+            "Syphilis Serology"
+        ], 
+        "micro_test_viral_load": [
+            "CMV Viral Load", 
+            "EBV Viral Load", 
+            "HBV Viral Load", 
+            "HCV Viral Load", 
+            "HHV-6 Viral Load", 
+            "HHV-7 Viral Load", 
+            "HHV-8 Viral Load", 
+            "HIV Viral Load", 
+            "Measles PCR", 
+            "VZV Viral Load"
+        ], 
+        "microbiology_organism": [
+            "Some organism"
+        ], 
+        "travel_reason": [
+            "Some reason"
+        ]
+    }, 
+    "synonyms": {
+        "antimicrobial": {}, 
+        "antimicrobial_route": {}, 
+        "condition": {
+            "Condition synonym": "Some condition"
+        }, 
+        "destination": {}, 
+        "hospital": {}, 
+        "micro_test_c_difficile": {}, 
+        "micro_test_csf_pcr": {}, 
+        "micro_test_ebv_serology": {}, 
+        "micro_test_hepititis_b_serology": {}, 
+        "micro_test_hiv": {}, 
+        "micro_test_leishmaniasis_pcr": {}, 
+        "micro_test_mcs": {}, 
+        "micro_test_other": {}, 
+        "micro_test_parasitaemia": {}, 
+        "micro_test_respiratory_virus_pcr": {}, 
+        "micro_test_serology": {}, 
+        "micro_test_single_igg_test": {}, 
+        "micro_test_single_test_pos_neg": {}, 
+        "micro_test_single_test_pos_neg_equiv": {}, 
+        "micro_test_stool_parasitology_pcr": {}, 
+        "micro_test_stool_pcr": {}, 
+        "micro_test_swab_pcr": {}, 
+        "micro_test_syphilis_serology": {}, 
+        "micro_test_viral_load": {}, 
+        "microbiology_organism": {}, 
+        "travel_reason": {}
+    }
+}

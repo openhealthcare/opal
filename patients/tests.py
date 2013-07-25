@@ -12,8 +12,8 @@ class PatientTest(TestCase):
         self.location = self.patient.location.all()[0]
         self.first_diagnosis = self.patient.diagnosis.all()[0]
 
-    def load_expected_patient_data(self):
-        return json.load(open('patients/test_data/patient.json'))
+    def load_expected_data(self, filename):
+        return json.load(open('patients/test_data/%s.json' % filename))
 
     @property
     def base_url(self):
@@ -42,12 +42,12 @@ class PatientTest(TestCase):
     def test_can_access_patient_list(self):
         rsp = self.client.get('/patient/')
         self.assert_status_code(200, rsp)
-        self.assert_json_content([self.load_expected_patient_data()], rsp)
+        self.assert_json_content([self.load_expected_data('patient')], rsp)
 
     def test_can_access_patient(self):
         rsp = self.client.get('/patient/%s/' % self.patient.id)
         self.assert_status_code(200, rsp)
-        self.assert_json_content(self.load_expected_patient_data(), rsp)
+        self.assert_json_content(self.load_expected_data('patient'), rsp)
 
     def test_can_create_patient(self):
         data = {
@@ -210,7 +210,7 @@ class PatientTest(TestCase):
     def test_can_search_by_name(self):
         rsp = self.client.get('/search/?name=John')
         expected_data = {
-            'patients': [self.load_expected_patient_data()],
+            'patients': [self.load_expected_data('patient')],
             'search_terms': {'name': 'John'}
         }
         self.assert_status_code(200, rsp)
@@ -219,7 +219,7 @@ class PatientTest(TestCase):
     def test_can_search_by_hospital_number(self):
         rsp = self.client.get('/search/?hospital_number=AA1111')
         expected_data = {
-            'patients': [self.load_expected_patient_data()],
+            'patients': [self.load_expected_data('patient')],
             'search_terms': {'hospital_number': 'AA1111'}
         }
         self.assert_status_code(200, rsp)
@@ -233,3 +233,20 @@ class PatientTest(TestCase):
         }
         self.assert_status_code(200, rsp)
         self.assert_json_content(expected_data, rsp)
+
+    def test_can_access_schema(self):
+        rsp = self.client.get('/schema/')
+        self.assert_status_code(200, rsp)
+        self.assert_json_content(self.load_expected_data('schema'), rsp)
+
+    def test_can_access_patient_list_template(self):
+        rsp = self.client.get('/patient/templates/patient_list.html/')
+        self.assert_status_code(200, rsp)
+
+    def test_can_access_patient_detail_template(self):
+        rsp = self.client.get('/patient/templates/patient_detail.html/')
+        self.assert_status_code(200, rsp)
+
+    def test_can_access_search_template(self):
+        rsp = self.client.get('/patient/templates/search.html/')
+        self.assert_status_code(200, rsp)
