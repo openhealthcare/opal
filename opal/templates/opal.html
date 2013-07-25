@@ -29,11 +29,16 @@
 		<link href="/assets/css/bootstrap-datepicker.css" rel="stylesheet" media="all">
 		<link href="/assets/css/opal.css" rel="stylesheet" media="all">
                 <link href="/assets/css/print.css" rel="stylesheet" media="print">
+                <link href="/assets/css/screen.css" rel="stylesheet" media="screen">
 	</head>
 	<body>
 		<div class="navbar screen-only">
 			<div class="navbar-inner">
-				<a class="brand pull-left" href="/">OPAL-UCH</a>
+				<span class="brand pull-left">
+					<a href="/">OPAL-UCH</a>
+					{% now "DATE_FORMAT" %}
+				</span>
+
 				<ul class="nav pull-right">
 					<li class="navbar-text">
                                           Hi,
@@ -49,6 +54,14 @@
 					<li><a href="/contact">Feedback</a></li>
 					<li><a href="{% url 'django.contrib.auth.views.logout' %}">Log out</a></li>
 				</ul>
+			</div>
+		</div>
+		<div class="navbar print-only">
+			<div class="navbar-inner">
+				<span class="brand pull-left">
+					OPAL-UCH
+					{% now "DATE_FORMAT" %}
+				</span>
 			</div>
 		</div>
 		<div class="container" loadingbar>Loading...</div>
