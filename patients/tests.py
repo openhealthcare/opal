@@ -39,6 +39,10 @@ class PatientTest(TestCase):
         content = json.loads(rsp.content)
         self.assertEqual(expected_data, content)
 
+    def assert_has_tags(self, expected_tags, patient_id):
+        patient = Patient.objects.get(pk=patient_id)
+        self.assertItemsEqual(expected_tags, [t.tag_name for t in patient.tagging_set.all()])
+
     def test_can_access_patient_list(self):
         rsp = self.client.get('/patient/')
         self.assert_status_code(200, rsp)
@@ -130,6 +134,25 @@ class PatientTest(TestCase):
         }
         self.assert_status_code(200, rsp)
         self.assert_json_content(expected_data, rsp)
+
+    def test_updating_location_updates_tags(self):
+        data = {
+                'tags': {'mine': True, 'hiv': True}
+        }
+        self.put('location/%s/' % self.location.id, data)
+        self.assert_has_tags(['hiv', 'mine'], self.patient.id)
+
+        data = {
+                'tags': {'microbiology': True, 'hiv': False}
+        }
+        self.put('location/%s/' % self.location.id, data)
+        self.assert_has_tags(['microbiology'], self.patient.id)
+
+        data = {
+                'tags': {'mine': True, 'tropical_diseases': False}
+        }
+        self.put('location/%s/' % self.location.id, data)
+        self.assert_has_tags(['mine'], self.patient.id)
 
     def test_can_access_diagnosis(self):
         rsp = self.get('diagnosis/%d/' % self.first_diagnosis.id)
