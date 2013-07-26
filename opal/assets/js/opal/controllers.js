@@ -300,7 +300,7 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 	$scope.saveEdit = function() {
 		var columnName = getCurrentColumnName();
 		var patientId = $scope.rows[$scope.rix].id;
-		var url = 'patient/' + patientId + '/' + columnName + '/';
+		var url = 'patient/' + columnName + '/';
 		var items = $scope.rows[$scope.rix][columnName];
 		var newItem;
 		var newItemIx;
@@ -378,7 +378,7 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 		var columnName = getCurrentColumnName();
 		var items = $scope.rows[$scope.rix][columnName];
 		var itemId = items[$scope.iix].id;
-		var url = 'patient/' + patientId + '/' + columnName + '/' + itemId + '/';
+		var url = 'patient/' + columnName + '/' + itemId + '/';
 
 		$http['delete'](url);
 
@@ -420,7 +420,7 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 		var patient = $scope.rows[discharge.rix];
 		var location = patient.location[0];
 		var editing = clone(location);
-		var url = 'patient/' + patient.id + '/location/';
+		var url = 'patient/location/' + location.id;
 
 		if (discharge.category != 'Unfollow') {
 			editing.category = discharge.category;
@@ -682,7 +682,7 @@ controllers.controller('PatientDetailCtrl', function($scope, $http, schema, pati
 	$scope.saveEdit = function() {
 		var columnName = getCurrentColumnName();
 		var patientId = $scope.patient.id;
-		var url = 'patient/' + patientId + '/' + columnName + '/';
+		var url = 'patient/' + columnName + '/';
 		var items = $scope.patient[columnName];
 		var newItemIx;
 
@@ -744,7 +744,7 @@ controllers.controller('PatientDetailCtrl', function($scope, $http, schema, pati
 		var columnName = getCurrentColumnName();
 		var items = $scope.patient[columnName];
 		var itemId = items[$scope.iix].id;
-		var url = 'patient/' + patientId + '/' + columnName + '/' + itemId + '/';
+		var url = 'patient/' + columnName + '/' + itemId + '/';
 
 		$http['delete'](url);
 

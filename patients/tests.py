@@ -17,7 +17,7 @@ class PatientTest(TestCase):
 
     @property
     def base_url(self):
-        return '/patient/%d/' % self.patient.id
+        return '/patient/'
 
     def get(self, sub_url):
         return self.client.get(self.base_url + sub_url)

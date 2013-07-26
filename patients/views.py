@@ -91,9 +91,6 @@ class SubrecordList(LoginRequiredMixin, SubrecordMixin, generics.CreateAPIView):
     pass
 
 class SubrecordDetail(LoginRequiredMixin, SubrecordMixin, generics.RetrieveUpdateDestroyAPIView):
-    def get_object(self, queryset=None):
-        return getattr(self.patient, camelcase_to_underscore(self.model.__name__)).get(pk=self.kwargs['id'])
-
     def put(self, request, *args, **kwargs):
         response = super(SubrecordDetail, self).put(request, *args, **kwargs)
         if 'tags' in request.DATA:
