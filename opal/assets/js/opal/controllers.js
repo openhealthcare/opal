@@ -7,6 +7,18 @@ var controllers = angular.module('opal.controllers', [
        	'ui.event'
 ]);
 
+function replaceSynonym($scope, option, term){
+    if(!term){
+        return term
+    }
+    _.each(_.pairs($scope.synonyms[option]), function(synonym){
+        var possible = synonym[0];
+        var canonical = synonym[1]
+        term = term.replace(possible, canonical);
+    });
+    return term
+}
+
 controllers.controller('RootCtrl', function($scope) {
 	$scope.keydown = function(e) {
 		$scope.$broadcast('keydown', e);
@@ -166,7 +178,7 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 	};
 
 	$scope.getSynonymn = function(option, term) {
-		return $scope.synonyms[option][term] || term;
+            return replaceSynonym($scope, option, term);
 	};
 
 	function getRowIxFromPatientId(patientId) {
@@ -617,7 +629,7 @@ controllers.controller('PatientDetailCtrl', function($scope, $http, schema, pati
 	});
 
 	$scope.getSynonymn = function(option, term) {
-		return $scope.synonyms[option][term] || term;
+            return replaceSynonym($scope, option, term);
 	};
 
 	function isSingleColumn(cix) {
