@@ -4,7 +4,7 @@ import dj_database_url
 
 PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
