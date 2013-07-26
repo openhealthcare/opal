@@ -504,6 +504,8 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 			case 46: // delete
 				startDelete();
 				break;
+                        case 113: // F2
+                                startEdit();
 		};
 	};
 
@@ -889,4 +891,3 @@ controllers.controller('SearchCtrl', function($scope, $http, $location) {
 		clearModal('add-new');
 	};
 });
-
