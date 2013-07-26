@@ -66,11 +66,12 @@
             "clinical_discussion": "Discussion", 
             "date": "25/07/2013", 
             "discussed_with": "XYZ", 
-            "giving_result": false, 
             "id": 1, 
             "infection_control_advice_given": false, 
             "initials": "ABC", 
-            "patient": 1
+            "patient": 1, 
+            "reason_for_interaction": "", 
+            "referred_to_opat": true
         }
     ], 
     "microbiology_test": [

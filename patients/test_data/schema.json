@@ -48,6 +48,7 @@
         "antimicrobial_route": [
             "Some route"
         ], 
+        "clinical_advice_reason_for_interaction": [], 
         "condition": [
             "Some condition", 
             "Condition synonym"
@@ -180,6 +181,7 @@
     "synonyms": {
         "antimicrobial": {}, 
         "antimicrobial_route": {}, 
+	"clinical_advice_reason_for_interaction": {},
         "condition": {
             "Condition synonym": "Some condition"
         }, 

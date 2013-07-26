@@ -122,13 +122,15 @@
 		"patient": 1,
 		"date": "2013-07-25",
 		"initials": "ABC",
+		"reason_for_interaction_ft": "",
+		"reason_for_interaction_fk": null,
 		"clinical_discussion": "Discussion",
 		"agreed_plan": "Plan",
 		"discussed_with": "XYZ",
 		"clinical_advice_given": true,
-		"giving_result": false,
 		"infection_control_advice_given": false,
-		"change_in_antibiotic_prescription": true
+		"change_in_antibiotic_prescription": true,
+		"referred_to_opat": true
 	}
 },
 {
