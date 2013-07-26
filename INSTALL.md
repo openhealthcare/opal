@@ -16,5 +16,6 @@ mkvirtualenv -a $PWD opal
 pip install -r requirements.txt
 python manage.py syncdb --all
 python manage.py migrate --fake
-python manage.py load_seeds
+python manage.py loaddata dumps/options.json
+python manage.py createinitialrevisions
 ```
