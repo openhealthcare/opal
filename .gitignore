@@ -1,2 +1,4 @@
 *.sqlite
 *.pyc
+static/*
+/opal/local_settings.py
