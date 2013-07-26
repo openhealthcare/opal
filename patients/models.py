@@ -61,6 +61,7 @@ class SubrecordBase(models.base.ModelBase):
         if name != 'Subrecord':
             related_name = camelcase_to_underscore(name)
             attrs['patient'] = models.ForeignKey(Patient, related_name=related_name)
+            attrs['__unicode__'] = lambda s: u'{0}: {1}'.format(name, s.patient)
         return super(SubrecordBase, cls).__new__(cls, name, bases, attrs)
 
 class Subrecord(models.Model):
