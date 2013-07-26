@@ -31,18 +31,17 @@ class PatientList(LoginRequiredMixin, generics.ListAPIView):
         # We can't do this in the serializer because the serializer doesn't know about the user
         for patient in response.data:
             taggings = models.Tagging.objects.filter(patient_id=patient['id'])
-            patient['tags'] = {t.tag_name: True for t in taggings if t.user is None or t.user == request.user}
+            patient['tags'] = {t.tag_name: True for t in taggings
+                               if t.user is None or t.user == request.user}
         return response
 
     def post(self, request, *args, **kwargs):
         # I am not proud of this code
-        try:
-            hospital_number = request.DATA['demographics']['hospital_number']
-            patient = models.Patient.objects.get(demographics__hospital_number=hospital_number)
-        except models.Patient.DoesNotExist:
-            patient = models.Patient.objects.create()
+        hospital_number = request.DATA['demographics']['hospital_number']
+        patient, _ = models.Patient.objects.get_or_create(
+            demographics__hospital_number=hospital_number)
 
-        location = patient.location.all()[0]
+        location = patient.location.get()
         for field in location._meta.fields:
             field_name = field.name
             if field_name not in ['id', 'patient'] and field_name in request.DATA['location']:
@@ -54,7 +53,7 @@ class PatientList(LoginRequiredMixin, generics.ListAPIView):
                     setattr(location, field_name, request.DATA['location'][field_name])
         location.save()
 
-        demographics = patient.demographics.all()[0]
+        demographics = patient.demographics.get()
         for field in demographics._meta.fields:
             field_name = field.name
             if field_name not in ['id', 'patient'] and field_name in request.DATA['demographics']:
