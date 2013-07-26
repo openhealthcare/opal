@@ -35,28 +35,35 @@
 			<input type="text" ng-model="editing.discussed_with">
 		</div>
 	</div>
-	<div class="control-group">
-		<label class="control-label">Clinical advice given?</label>
-		<div class="controls">
-			<input type="checkbox" ng-model="editing.clinical_advice_given">
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label">Change in antibiotic prescription?</label>
-		<div class="controls">
-			<input type="checkbox" ng-model="editing.change_in_antibiotic_prescription">
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label">Infection control advice given?</label>
-		<div class="controls">
-			<input type="checkbox" ng-model="editing.infection_control_advice_given">
-		</div>
-	</div>
-	<div class="control-group">
-		<label class="control-label">Referred to OPAT?</label>
-		<div class="controls">
-			<input type="checkbox" ng-model="editing.referred_to_opat">
-		</div>
-	</div>
+	<table>
+		<tr>
+			<td>
+				<label class="checkbox inline">
+					<input type="checkbox" ng-model="editing.clinical_advice_given">
+					Clinical advice given?
+				</label>
+			</td>
+			<td>
+				<label class="checkbox inline">
+					<input type="checkbox" ng-model="editing.change_in_antibiotic_prescription">
+					Change in antibiotic prescription?
+				</label>
+			</td>
+		</tr>
+
+		<tr>
+			<td>
+				<label class="checkbox inline">
+					<input type="checkbox" ng-model="editing.infection_control_advice_given">
+					Infection control advice given?
+				</label>
+			</td>
+			<td>
+				<label class="checkbox inline">
+					<input type="checkbox" ng-model="editing.referred_to_opat">
+					Referred to OPAT?
+				</label>
+			</td>
+		</tr>
+	</table>
 </form>
