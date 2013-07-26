@@ -28,7 +28,7 @@ class Patient(models.Model):
     objects = PatientManager()
 
     def __unicode__(self):
-        return '%s | %s' % (self.demographics.hospital_number, self.demographics.name)
+        return '%s | %s' % (self.demographics.get().hospital_number, self.demographics.get().name)
 
     def set_tags(self, tags, user):
         # tags is a dictionary mapping tag names to a boolean
