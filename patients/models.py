@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from datetime import datetime
 from functools import partial
 
 from django.db import models
@@ -101,6 +102,24 @@ class Subrecord(models.Model):
 
         return fieldnames
 
+    def _get_field_type(self, name):
+        try:
+            return type(self._meta.get_field_by_name(name)[0])
+        except models.FieldDoesNotExist:
+            pass
+
+        if name == 'patient_id':
+            return models.ForeignKey
+
+        try:
+            value = vars(type(self))[name]
+            if isinstance(value, ForeignKeyOrFreeText):
+                return ForeignKeyOrFreeText
+        except KeyError:
+            pass
+
+        raise Exception
+
     def to_dict(self):
         d = {}
         for name in self._get_fieldnames_to_serialize():
@@ -116,7 +135,6 @@ class Subrecord(models.Model):
     def update_from_dict(self, data, user):
         unknown_fields = set(data.keys()) - set(self._get_fieldnames_to_serialize())
         if unknown_fields:
-            print unknown_fields
             raise Exception
 
         for name, value in data.items():
@@ -124,6 +142,8 @@ class Subrecord(models.Model):
             if setter is not None:
                 setter(value, user)
             else:
+                if self._get_field_type(name) == models.fields.DateField:
+                    value = datetime.strptime(value, '%Y-%m-%d').date()
                 setattr(self, name, value)
 
         self.save()
