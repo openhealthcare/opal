@@ -40,10 +40,10 @@ class Patient(models.Model):
         return d
 
     def update_from_dict(self, data, user):
-        demographics = self.demographics.get()
+        demographics = self.demographics_set.get()
         demographics.update_from_dict(data['demographics'], user)
 
-        location = self.location.get()
+        location = self.location_set.get()
         location.update_from_dict(data['location'], user)
 
         self.save()
@@ -74,21 +74,16 @@ class Tagging(models.Model):
         else:
             return self.tag_name
 
-class SubrecordBase(models.base.ModelBase):
-    def __new__(cls, name, bases, attrs):
-        if name != 'Subrecord':
-            related_name = camelcase_to_underscore(name)
-            attrs['patient'] = models.ForeignKey(Patient, related_name=related_name)
-            attrs['__unicode__'] = lambda s: u'{0}: {1}'.format(name, s.patient)
-        return super(SubrecordBase, cls).__new__(cls, name, bases, attrs)
-
 class Subrecord(models.Model):
-    __metaclass__ = SubrecordBase
+    patient = models.ForeignKey(Patient)
 
     _is_singleton = False
 
     class Meta:
         abstract = True
+
+    def __unicode__(self):
+        return u'{0}: {1}'.format(name, s.patient)
 
     @classmethod
     def get_api_name(cls):

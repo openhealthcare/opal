@@ -8,9 +8,9 @@ class PatientTest(TestCase):
     def setUp(self):
         self.assertTrue(self.client.login(username='superuser', password='password'))
         self.patient = Patient.objects.get(pk=1)
-        self.demographics = self.patient.demographics.all()[0]
-        self.location = self.patient.location.all()[0]
-        self.first_diagnosis = self.patient.diagnosis.all()[0]
+        self.demographics = self.patient.demographics_set.all()[0]
+        self.location = self.patient.location_set.all()[0]
+        self.first_diagnosis = self.patient.diagnosis_set.all()[0]
 
     def load_expected_data(self, filename):
         return json.load(open('patients/test_data/%s.json' % filename))
@@ -177,7 +177,7 @@ class PatientTest(TestCase):
             'date_of_diagnosis': '2013-07-25',
         }
         rsp = self.post('diagnosis/', data)
-        diagnosis = self.patient.diagnosis.get(pk=json.loads(rsp.content)['id'])
+        diagnosis = self.patient.diagnosis_set.get(pk=json.loads(rsp.content)['id'])
         expected_data = {
             'patient_id': self.patient.id,
             'id': diagnosis.id,
@@ -199,7 +199,7 @@ class PatientTest(TestCase):
             'date_of_diagnosis': '2013-07-25',
         }
         rsp = self.post('diagnosis/', data)
-        diagnosis = self.patient.diagnosis.get(pk=json.loads(rsp.content)['id'])
+        diagnosis = self.patient.diagnosis_set.get(pk=json.loads(rsp.content)['id'])
         expected_data = {
             'patient_id': self.patient.id,
             'id': diagnosis.id,
@@ -226,7 +226,7 @@ class PatientTest(TestCase):
             'details': '',
             'date_of_diagnosis': '2013-07-25',
         }
-        diagnosis = self.patient.diagnosis.get(pk=self.first_diagnosis.id)
+        diagnosis = self.patient.diagnosis_set.get(pk=self.first_diagnosis.id)
         self.assert_status_code(200, rsp)
         self.assert_json_content(expected_data, rsp)
         self.assertIsNone(diagnosis.condition_fk)
