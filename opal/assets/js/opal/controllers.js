@@ -201,7 +201,7 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 		return $scope.columns[cix].name;
 	};
 
-	function getCurrentColumnName(cix) {
+	function getCurrentColumnName() {
 		return getColumnName($scope.cix);
 	};
 
@@ -289,8 +289,15 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 	};
 
 	function startEdit() {
+		var dob;
 		state = 'editing';
 		$scope.editing = clone(getCurrentItem());
+		if (getCurrentColumnName() == 'demographics') {
+			dob = $scope.editing.date_of_birth;
+			if (dob) {
+				$scope.editing.date_of_birth = dob.getDate() + '/' + (dob.getMonth() + 1) + '/' + dob.getFullYear();
+			}
+		}
 		$scope.editing.tags = clone($scope.rows[$scope.rix].tags);
 		$scope.editingName = $scope.rows[$scope.rix].demographics[0].name;
 		$('#' + getCurrentColumnName() + '-modal').modal();
@@ -307,6 +314,13 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 
 		state = 'normal';
 		clearModal(columnName);
+
+		if (getCurrentColumnName() == 'demographics') {
+			dob = $scope.editing.date_of_birth;
+			if (dob) {
+				$scope.editing.date_of_birth = parseDate(dob);
+			}
+		}
 
 		items[$scope.iix] = clone($scope.editing);
 
@@ -636,7 +650,7 @@ controllers.controller('PatientDetailCtrl', function($scope, $http, schema, pati
 		return $scope.columns[cix].name;
 	};
 
-	function getCurrentColumnName(cix) {
+	function getCurrentColumnName() {
 		return getColumnName($scope.cix);
 	};
 
@@ -671,8 +685,15 @@ controllers.controller('PatientDetailCtrl', function($scope, $http, schema, pati
 	}
 
 	function startEdit() {
+		var dob;
 		state = 'editing';
 		$scope.editing = clone(getCurrentItem());
+		if (getCurrentColumnName() == 'demographics') {
+			dob = $scope.editing.date_of_birth;
+			if (dob) {
+				$scope.editing.date_of_birth = dob.getDate() + '/' + (dob.getMonth() + 1) + '/' + dob.getFullYear();
+			}
+		}
 		$scope.editing.tags = clone($scope.patient.tags);
 		$scope.editingName = $scope.patient.demographics[0].name;
 		$('#' + getCurrentColumnName() + '-modal').modal();
@@ -688,6 +709,13 @@ controllers.controller('PatientDetailCtrl', function($scope, $http, schema, pati
 
 		state = 'normal';
 		clearModal(columnName);
+
+		if (getCurrentColumnName() == 'demographics') {
+			dob = $scope.editing.date_of_birth;
+			if (dob) {
+				$scope.editing.date_of_birth = parseDate(dob);
+			}
+		}
 
 		items[$scope.iix] = clone($scope.editing);
 

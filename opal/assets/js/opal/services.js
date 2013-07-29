@@ -1,8 +1,62 @@
+// TODO don't hardcode this
+var DATE_FIELDS = {
+	demographics: ['date_of_birth'],
+	location: ['date_of_admission', 'discharge_date'],
+	diagnosis: ['date_of_diagnosis'],
+	past_medical_history: [],
+	general_note: ['date'],
+	travel: [],
+	antimicrobial: ['start_date', 'end_date'],
+	microbiology_input: ['date'],
+	todo: [],
+	microbiology_test: ['date_ordered'],
+}
+
+function transformDatesInResponse(response) {
+	var item, items;
+	for (var subrecordKey in response) {
+		items = response[subrecordKey];
+		for (var ix = 0; ix < items.length; ix++) {
+			item = items[ix];
+			for (var fieldName in item) {
+				if (DATE_FIELDS[subrecordKey].indexOf(fieldName) != -1) {
+					if (item[fieldName]) {
+						item[fieldName] = new Date(item[fieldName]);
+					}
+				}
+			}
+		}
+	}
+	return response;
+}
+
 var services = angular.module('opal.services', ['ngResource']);
 
-services.factory('Patient', ['$resource', function($resource) {
-	return $resource('/patient/:id/', {id: '@id'});
-}]);
+services.factory('Patient', function($resource, $http) {
+	return $resource(
+		'/patient/:id/',
+	       	{id: '@id'},
+		{
+			get: {
+				method: 'GET',
+				transformResponse: $http.defaults.transformResponse.concat([transformDatesInResponse])
+			},
+			query: {
+				method: 'GET',
+				isArray: true,
+				transformResponse: $http.defaults.transformResponse.concat([
+					function(response) {
+						var newResponse = [];
+						angular.forEach(response, function(record) {
+							newResponse.push(transformDatesInResponse(record));
+						});
+						return newResponse;
+					}
+				])
+			}
+		}
+	);
+});
 
 services.factory('SchemaLoader', ['$q', '$http', function($q, $http) {
 	return function() {

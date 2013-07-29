@@ -177,8 +177,7 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
     ),
-    'DATE_FORMAT': '%d/%m/%Y',
-    'DATE_INPUT_FORMATS': ['%d/%m/%Y'],
+    'DATE_INPUT_FORMATS': ['%Y-%m-%dT%H:%M:%S.000Z'],
 }
 
 CSRF_COOKIE_NAME = 'XSRF-TOKEN'

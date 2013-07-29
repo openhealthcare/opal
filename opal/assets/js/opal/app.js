@@ -45,7 +45,6 @@ app.config(function($routeProvider) {
 app.value('$strapConfig', {
 	datepicker: {
 		format: 'dd/mm/yyyy',
-		type: 'string'
 	}
 });
 
