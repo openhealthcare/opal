@@ -30,7 +30,8 @@ class Patient(models.Model):
     objects = PatientManager()
 
     def __unicode__(self):
-        return '%s | %s' % (self.demographics.get().hospital_number, self.demographics.get().name)
+        demographics = self.demographics_set.get()
+        return '%s | %s' % (demographics.hospital_number, demographics.name)
 
     def to_dict(self):
         d = {'id': self.id}
@@ -83,7 +84,7 @@ class Subrecord(models.Model):
         abstract = True
 
     def __unicode__(self):
-        return u'{0}: {1}'.format(name, s.patient)
+        return u'{0}: {1}'.format(self.get_api_name(), self.patient)
 
     @classmethod
     def get_api_name(cls):
