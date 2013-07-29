@@ -1,7 +1,9 @@
 from collections import OrderedDict
+from functools import partial
 
 from django.db import models
 from django.dispatch import receiver
+from django.forms.models import ModelForm
 from django.contrib import auth
 
 from utils.fields import ForeignKeyOrFreeText
@@ -30,16 +32,32 @@ class Patient(models.Model):
     def __unicode__(self):
         return '%s | %s' % (self.demographics.get().hospital_number, self.demographics.get().name)
 
+    def to_dict(self):
+        d = {'id': self.id}
+        for model in Subrecord.__subclasses__():
+            subrecords = model.objects.filter(patient_id=self.id)
+            d[model.get_api_name()] = [subrecord.to_dict() for subrecord in subrecords]
+        return d
+
+    def update_from_dict(self, data, user):
+        demographics = self.demographics.get()
+        demographics.update_from_dict(data['demographics'], user)
+
+        location = self.location.get()
+        location.update_from_dict(data['location'], user)
+
+        self.save()
+
+    def get_tag_names(self):
+        return [t.tag_name for t in self.tagging_set.all()]
+
     def set_tags(self, tags, user):
-        # tags is a dictionary mapping tag names to a boolean
         for tagging in self.tagging_set.all():
-            if not tags.get(tagging.tag_name, False):
+            if tagging.tag_name not in tags:
                 tagging.delete()
 
-        for tag_name, value in tags.items():
-            if not value:
-                continue
-            if tag_name not in [t.tag_name for t in self.tagging_set.all()]:
+        for tag_name in tags:
+            if tag_name not in self.get_tag_names():
                 tagging = Tagging(tag_name=tag_name)
                 if tag_name == 'mine':
                     tagging.user = user
@@ -72,6 +90,48 @@ class Subrecord(models.Model):
     class Meta:
         abstract = True
 
+    @classmethod
+    def get_api_name(cls):
+        return camelcase_to_underscore(cls._meta.object_name)
+
+    def _get_fieldnames_to_serialize(self):
+        fieldnames = [f.attname for f in self._meta.fields]
+
+        for name, value in vars(type(self)).items():
+            if isinstance(value, ForeignKeyOrFreeText):
+                fieldnames.append(name)
+                fieldnames.remove(name + '_ft')
+                fieldnames.remove(name + '_fk_id')
+
+        return fieldnames
+
+    def to_dict(self):
+        d = {}
+        for name in self._get_fieldnames_to_serialize():
+            getter = getattr(self, 'get_' + name, None)
+            if getter is not None:
+                value = getter()
+            else:
+                value = getattr(self, name)
+            d[name] = value
+
+        return d
+
+    def update_from_dict(self, data, user):
+        unknown_fields = set(data.keys()) - set(self._get_fieldnames_to_serialize())
+        if unknown_fields:
+            print unknown_fields
+            raise Exception
+
+        for name, value in data.items():
+            setter = getattr(self, 'set_' + name, None)
+            if setter is not None:
+                setter(value, user)
+            else:
+                setattr(self, name, value)
+
+        self.save()
+
 class Demographics(Subrecord):
     _is_singleton = True
 
@@ -81,6 +141,19 @@ class Demographics(Subrecord):
 
 class Location(Subrecord):
     _is_singleton = True
+
+    def _get_fieldnames_to_serialize(self):
+        fieldnames = super(Location, self)._get_fieldnames_to_serialize()
+        fieldnames.append('tags')
+        return fieldnames
+
+    def get_tags(self):
+        return {tag_name: True for tag_name in self.patient.get_tag_names()}
+
+    # value is a dictionary mapping tag names to a boolean
+    def set_tags(self, value, user):
+        tags = [k for k, v in value.items() if v]
+        self.patient.set_tags(tags, user)
 
     category = models.CharField(max_length=255, blank=True)
     hospital = models.CharField(max_length=255, blank=True)

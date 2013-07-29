@@ -113,7 +113,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'reversion.middleware.RevisionMiddleware',
+#    'reversion.middleware.RevisionMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -189,12 +189,8 @@ LOGGING = {
 # (Heroku requirement)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
-    ),
-    'DATE_INPUT_FORMATS': ['%Y-%m-%dT%H:%M:%SZ', '%Y-%m-%dT%H:%M:%S.000Z', '%Y-%m-%d', '%d/%m/%Y'],
-}
+DATE_FORMAT = 'Y-m-d'
+DATE_INPUT_FORMATS = ['Y-m-d']
 
 CSRF_COOKIE_NAME = 'XSRF-TOKEN'
 

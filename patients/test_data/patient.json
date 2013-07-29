@@ -5,44 +5,44 @@
             "drug": "Some antimicrobial", 
             "end_date": null, 
             "id": 1, 
-            "patient": 1, 
+            "patient_id": 1, 
             "route": "Some route", 
-            "start_date": "25/07/2013"
+            "start_date": "2013-07-25"
         }
     ], 
     "demographics": [
         {
-            "date_of_birth": "20/06/1972", 
+            "date_of_birth": "1972-06-20", 
             "hospital_number": "AA1111", 
             "id": 1, 
             "name": "John Smith", 
-            "patient": 1
+            "patient_id": 1
         }
     ], 
     "diagnosis": [
         {
             "condition": "Some condition", 
-            "date_of_diagnosis": "25/07/2013", 
+            "date_of_diagnosis": "2013-07-25", 
             "details": "", 
             "id": 1, 
-            "patient": 1, 
+            "patient_id": 1, 
             "provisional": false
         }, 
         {
             "condition": "Some other condition", 
-            "date_of_diagnosis": "25/07/2013", 
+            "date_of_diagnosis": "2013-07-25", 
             "details": "", 
             "id": 2, 
-            "patient": 1, 
+            "patient_id": 1, 
             "provisional": true
         }
     ], 
     "general_note": [
         {
             "comment": "A note", 
-            "date": "25/07/2013", 
+            "date": "2013-07-25", 
             "id": 1, 
-            "patient": 1
+            "patient_id": 1
         }
     ], 
     "id": 1, 
@@ -50,11 +50,15 @@
         {
             "bed": "13", 
             "category": "Inpatient", 
-            "date_of_admission": "25/07/2013", 
+            "date_of_admission": "2013-07-25", 
             "discharge_date": null, 
             "hospital": "UCH", 
             "id": 1, 
-            "patient": 1, 
+            "patient_id": 1, 
+            "tags": {
+                "microbiology": true, 
+                "mine": true
+            }, 
             "ward": "T10"
         }
     ], 
@@ -64,12 +68,12 @@
             "change_in_antibiotic_prescription": true, 
             "clinical_advice_given": true, 
             "clinical_discussion": "Discussion", 
-            "date": "25/07/2013", 
+            "date": "2013-07-25", 
             "discussed_with": "XYZ", 
             "id": 1, 
             "infection_control_advice_given": false, 
             "initials": "ABC", 
-            "patient": 1, 
+            "patient_id": 1, 
             "reason_for_interaction": "", 
             "referred_to_opat": true
         }
@@ -84,7 +88,7 @@
             "c_difficile_toxin": "", 
             "cmv": "", 
             "cryptosporidium": "", 
-            "date_ordered": "25/07/2013", 
+            "date_ordered": "2013-07-25", 
             "details": "", 
             "ebna_igg": "", 
             "ebv": "", 
@@ -106,7 +110,7 @@
             "organism": "", 
             "parainfluenza": "", 
             "parasitaemia": "", 
-            "patient": 1, 
+            "patient_id": 1, 
             "resistant_antibiotics": "", 
             "result": "", 
             "rotavirus": "", 
@@ -127,19 +131,15 @@
         {
             "condition": "Some condition", 
             "id": 1, 
-            "patient": 1, 
+            "patient_id": 1, 
             "year": "1999"
         }
     ], 
-    "tags": {
-        "microbiology": true, 
-        "mine": true
-    }, 
     "todo": [
         {
             "details": "An action", 
             "id": 1, 
-            "patient": 1
+            "patient_id": 1
         }
     ], 
     "travel": [
@@ -147,7 +147,7 @@
             "dates": "", 
             "destination": "Some destination", 
             "id": 1, 
-            "patient": 1, 
+            "patient_id": 1, 
             "reason_for_travel": "Some reason", 
             "specific_exposures": ""
         }

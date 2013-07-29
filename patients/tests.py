@@ -23,12 +23,12 @@ class PatientTest(TestCase):
         return self.client.get(self.base_url + sub_url)
 
     def post(self, sub_url, data):
-        data['patient'] = self.patient.id
+        data['patient_id'] = self.patient.id
         json_data = json.dumps(data)
         return self.client.post(self.base_url + sub_url, content_type='application/json', data=json_data)
 
     def put(self, sub_url, data):
-        data['patient'] = self.patient.id
+        data['patient_id'] = self.patient.id
         json_data = json.dumps(data)
         return self.client.put(self.base_url + sub_url, content_type='application/json', data=json_data)
 
@@ -58,10 +58,10 @@ class PatientTest(TestCase):
             'demographics': {
                 'hospital_number': 'BB2222',
                 'name': 'Johann Schmidt',
-                'date_of_birth': '01/06/1970'
+                'date_of_birth': '1970-06-01'
             },
             'location': {
-                'date_of_admission': '25/06/2013',
+                'date_of_admission': '2013-06-25',
                 'category': 'Inpatient',
                 'hospital': 'UCH',
                 'ward': 'T13',
@@ -74,10 +74,10 @@ class PatientTest(TestCase):
     def test_can_access_demographics(self):
         rsp = self.get('demographics/%s/' % self.demographics.id)
         expected_data = {
-            'patient': self.patient.id,
+            'patient_id': self.patient.id,
             'id': self.demographics.id,
             'name': 'John Smith',
-            'date_of_birth': '20/06/1972',
+            'date_of_birth': '1972-06-20',
             'hospital_number': 'AA1111',
         }
         self.assert_status_code(200, rsp)
@@ -85,11 +85,11 @@ class PatientTest(TestCase):
 
     def test_can_update_demographics(self):
         name = 'Jan Smits'
-        date_of_birth = '21/06/1972'
+        date_of_birth = '1972-06-21'
         data = {'name': name, 'date_of_birth': date_of_birth}
         rsp = self.put('demographics/%s/' % self.demographics.id, data)
         expected_data = {
-            'patient': self.patient.id,
+            'patient_id': self.patient.id,
             'id': self.demographics.id,
             'name': name,
             'date_of_birth': date_of_birth,
@@ -101,21 +101,22 @@ class PatientTest(TestCase):
     def test_can_access_location(self):
         rsp = self.get('location/%s/' % self.location.id)
         expected_data = {
-            'patient': self.patient.id,
+            'patient_id': self.patient.id,
             'id': self.location.id,
             'category': 'Inpatient',
             'hospital': 'UCH',
             'ward': 'T10',
             'bed': '13',
-            'date_of_admission': '25/07/2013',
+            'date_of_admission': '2013-07-25',
             'discharge_date': None,
+            'tags': {'microbiology': True, 'mine': True},
         }
         self.assert_status_code(200, rsp)
         self.assert_json_content(expected_data, rsp)
 
     def test_can_update_location(self):
         ward = 'T11'
-        date_of_admission = '24/07/2013'
+        date_of_admission = '2013-07-24'
         data = {
                 'ward': ward,
                 'date_of_admission': date_of_admission,
@@ -123,7 +124,7 @@ class PatientTest(TestCase):
         }
         rsp = self.put('location/%s/' % self.location.id, data)
         expected_data = {
-            'patient': self.patient.id,
+            'patient_id': self.patient.id,
             'id': self.location.id,
             'category': 'Inpatient',
             'hospital': 'UCH',
@@ -131,6 +132,7 @@ class PatientTest(TestCase):
             'bed': '13',
             'date_of_admission': date_of_admission,
             'discharge_date': None,
+            'tags': {'mine': True},
         }
         self.assert_status_code(200, rsp)
         self.assert_json_content(expected_data, rsp)
@@ -157,12 +159,12 @@ class PatientTest(TestCase):
     def test_can_access_diagnosis(self):
         rsp = self.get('diagnosis/%d/' % self.first_diagnosis.id)
         expected_data = {
-            'patient': self.patient.id,
+            'patient_id': self.patient.id,
             'id': self.first_diagnosis.id,
             'condition': 'Some condition',
             'provisional': False,
             'details': '',
-            'date_of_diagnosis': '25/07/2013',
+            'date_of_diagnosis': '2013-07-25',
         }
         self.assert_status_code(200, rsp)
         self.assert_json_content(expected_data, rsp)
@@ -172,17 +174,17 @@ class PatientTest(TestCase):
             'condition': 'Some condition',
             'provisional': False,
             'details': 'Have some details',
-            'date_of_diagnosis': '25/07/2013',
+            'date_of_diagnosis': '2013-07-25',
         }
         rsp = self.post('diagnosis/', data)
-        diagnosis = self.patient.diagnosis.get(pk=rsp.data['id'])
+        diagnosis = self.patient.diagnosis.get(pk=json.loads(rsp.content)['id'])
         expected_data = {
-            'patient': self.patient.id,
+            'patient_id': self.patient.id,
             'id': diagnosis.id,
             'condition': 'Some condition',
             'provisional': False,
             'details': 'Have some details',
-            'date_of_diagnosis': '25/07/2013',
+            'date_of_diagnosis': '2013-07-25',
         }
         self.assert_status_code(201, rsp)
         self.assert_json_content(expected_data, rsp)
@@ -194,17 +196,17 @@ class PatientTest(TestCase):
             'condition': 'Some other condition',
             'provisional': False,
             'details': 'Have some details',
-            'date_of_diagnosis': '25/07/2013',
+            'date_of_diagnosis': '2013-07-25',
         }
         rsp = self.post('diagnosis/', data)
-        diagnosis = self.patient.diagnosis.get(pk=rsp.data['id'])
+        diagnosis = self.patient.diagnosis.get(pk=json.loads(rsp.content)['id'])
         expected_data = {
-            'patient': self.patient.id,
+            'patient_id': self.patient.id,
             'id': diagnosis.id,
             'condition': 'Some other condition',
             'provisional': False,
             'details': 'Have some details',
-            'date_of_diagnosis': '25/07/2013',
+            'date_of_diagnosis': '2013-07-25',
         }
         self.assert_status_code(201, rsp)
         self.assert_json_content(expected_data, rsp)
@@ -217,12 +219,12 @@ class PatientTest(TestCase):
         }
         rsp = self.put('diagnosis/%d/' % self.first_diagnosis.id, data)
         expected_data = {
-            'patient': self.patient.id,
+            'patient_id': self.patient.id,
             'id': self.first_diagnosis.id,
             'condition': 'Some other condition',
             'provisional': False,
             'details': '',
-            'date_of_diagnosis': '25/07/2013',
+            'date_of_diagnosis': '2013-07-25',
         }
         diagnosis = self.patient.diagnosis.get(pk=self.first_diagnosis.id)
         self.assert_status_code(200, rsp)
@@ -231,31 +233,14 @@ class PatientTest(TestCase):
         self.assertEqual('Some other condition', diagnosis.condition_ft)
 
     def test_can_search_by_name(self):
-        rsp = self.client.get('/search/?name=John')
-        expected_data = {
-            'patients': [self.load_expected_data('patient')],
-            'search_terms': {'name': 'John'}
-        }
+        rsp = self.client.get('/patient/?name=John')
         self.assert_status_code(200, rsp)
-        self.assert_json_content(expected_data, rsp)
+        self.assert_json_content([self.load_expected_data('patient')], rsp)
 
     def test_can_search_by_hospital_number(self):
-        rsp = self.client.get('/search/?hospital_number=AA1111')
-        expected_data = {
-            'patients': [self.load_expected_data('patient')],
-            'search_terms': {'hospital_number': 'AA1111'}
-        }
+        rsp = self.client.get('/patient/?hospital_number=AA1111')
         self.assert_status_code(200, rsp)
-        self.assert_json_content(expected_data, rsp)
-
-    def test_can_search_without_terms(self):
-        rsp = self.client.get('/search/')
-        expected_data = {
-            'patients': [],
-            'search_terms': {}
-        }
-        self.assert_status_code(200, rsp)
-        self.assert_json_content(expected_data, rsp)
+        self.assert_json_content([self.load_expected_data('patient')], rsp)
 
     def test_can_access_schema(self):
         rsp = self.client.get('/schema/')
