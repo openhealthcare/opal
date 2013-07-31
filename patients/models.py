@@ -135,15 +135,21 @@ class Subrecord(models.Model):
     def update_from_dict(self, data, user):
         unknown_fields = set(data.keys()) - set(self._get_fieldnames_to_serialize())
         if unknown_fields:
-            raise Exception
+            # TODO raise APIException
+            raise Exception('Unexpected fieldname(s): %s' % list(unknown_fields))
 
         for name, value in data.items():
             setter = getattr(self, 'set_' + name, None)
             if setter is not None:
                 setter(value, user)
             else:
-                if self._get_field_type(name) == models.fields.DateField:
-                    value = datetime.strptime(value, '%Y-%m-%d').date()
+                # TODO use form here?
+                if value and self._get_field_type(name) == models.fields.DateField:
+                    try:
+                        value = datetime.strptime(value, '%Y-%m-%d').date()
+                    except ValueError:
+                        value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%fZ').date()
+
                 setattr(self, name, value)
 
         self.save()

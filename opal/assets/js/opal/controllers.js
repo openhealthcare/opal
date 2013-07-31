@@ -19,6 +19,24 @@ function replaceSynonym($scope, option, term){
     return term
 }
 
+function buildNewItem(patientId, columnName) {
+	var newItem;
+	newItem = {patient_id: patientId};
+	if (columnName == 'microbiology_test') {
+		newItem.date_ordered = new Date();
+	}
+	if (columnName == 'general_note') {
+		newItem.date = new Date();
+	}
+	if (columnName == 'antimicrobial') {
+		newItem.start_date = new Date();
+	}
+	if (columnName == 'diagnosis') {
+		newItem.date_of_diagnosis = new Date();
+	}
+	return newItem;
+}
+
 controllers.controller('RootCtrl', function($scope) {
 	$scope.keydown = function(e) {
 		$scope.$broadcast('keydown', e);
@@ -28,7 +46,6 @@ controllers.controller('RootCtrl', function($scope) {
 controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, patients) {
 	var state = 'normal';
 	var columnName;
-	var newItem;
 
 	$scope.rix = 0; // row index
 	$scope.cix = 0; // column index
@@ -66,22 +83,9 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 
 	for (var pix = 0; pix < patients.length; pix++) {
 		for (var cix = 0; cix < $scope.columns.length; cix++) {
-			columnName = $scope.columns[cix].name;
+			columnName = getColumnName(cix);
 			if (!isSingleColumn(cix)) {
-				newItem = {patient: patients[pix].id};
-				if (columnName == 'microbiology_test') {
-					newItem.date_ordered = getTodaysDate();
-				}
-				if (columnName == 'general_note') {
-					newItem.date = getTodaysDate();
-				}
-				if (columnName == 'antimicrobial') {
-					newItem.start_date = getTodaysDate();
-				}
-                                if (columnName == 'diagnosis') {
-                                        newItem.date_of_diagnosis = getTodaysDate();
-                                }
-				patients[pix][columnName].push(newItem);
+				patients[pix][columnName].push(buildNewItem(patients[pix].id, columnName));
 			};
 		};
 	};
@@ -92,16 +96,19 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 
 	function getVisiblePatients() {
 		var patient;
-		var patients = []
+		var patients = [];
+		var location;
+
 		for (var pix = 0; pix < $scope.patients.length; pix++) {
 			patient = $scope.patients[pix]
-			if (patient.tags[$scope.currentTag] != true) {
+			location = patient.location[0];
+			if (location.tags[$scope.currentTag] != true) {
 				continue;
 			}
-			if (patient.location[0].hospital.toLowerCase().indexOf($scope.query.hospital.toLowerCase()) == -1) {
+			if (location.hospital.toLowerCase().indexOf($scope.query.hospital.toLowerCase()) == -1) {
 				continue;
 			}
-			if (patient.location[0].ward.toLowerCase().indexOf($scope.query.ward.toLowerCase()) == -1) {
+			if (location.ward.toLowerCase().indexOf($scope.query.ward.toLowerCase()) == -1) {
 				continue;
 			}
 			patients.push(patient);
@@ -206,7 +213,7 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 	};
 
 	function getItem(rix, cix, iix) {
-		var columnName = $scope.columns[cix].name;
+		var columnName = getColumnName(cix);
 		return $scope.rows[rix][columnName][iix];
 	};
 
@@ -230,9 +237,11 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 		$scope.foundPatient = false; // Display rest of form when true
 		$scope.findingPatient = false; // Disable Search button when true
 		$scope.editing = {
-			location: {date_of_admission: getTodaysDate()},
+			location: {
+				date_of_admission: new Date(),
+				tags: {},
+			},
 			demographics: {},
-			tags: {}
 		};
 		$('#add-new-modal').modal();
 		$('#add-new-modal').find('input,textarea').first().focus();
@@ -249,7 +258,7 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 				$scope.editing.location = clone(results.patients[0].location);
 				$scope.editing.tags = clone(results.patients[0].tags);
 			}
-			$scope.editing.tags[$scope.currentTag] = true;
+			$scope.editing.location.tags[$scope.currentTag] = true;
 		});
 	};
 
@@ -262,13 +271,15 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 
 	$scope.saveAdd = function() {
 		var rix;
+		var columnName;
+
 		state = 'normal';
 		clearModal('add-new');
 		$http.post('patient/', $scope.editing).success(function(patient) {
 			for (var cix = 0; cix < $scope.columns.length; cix++) {
+				columnName = getColumnName(cix);
 				if (!isSingleColumn(cix)) {
-					// TODO ensure date fields are set up
-					patient[getColumnName(cix)] = [{patient: patient.id}];
+					patient[columnName] = [buildNewItem(patient.id, columnName)];
 				}
 			}
 			rix = getRowIxFromPatientId(patient.id);
@@ -298,7 +309,6 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 				$scope.editing.date_of_birth = dob.getDate() + '/' + (dob.getMonth() + 1) + '/' + dob.getFullYear();
 			}
 		}
-		$scope.editing.tags = clone($scope.rows[$scope.rix].tags);
 		$scope.editingName = $scope.rows[$scope.rix].demographics[0].name;
 		$('#' + getCurrentColumnName() + '-modal').modal();
 		$('#' + getCurrentColumnName() + '-modal').find('input,textarea').first().focus();
@@ -309,8 +319,6 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 		var patientId = $scope.rows[$scope.rix].id;
 		var url = 'patient/' + columnName + '/';
 		var items = $scope.rows[$scope.rix][columnName];
-		var newItem;
-		var newItemIx;
 
 		state = 'normal';
 		clearModal(columnName);
@@ -328,30 +336,16 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 			url = url + $scope.editing.id + '/';
 			$http.put(url, $scope.editing);
 			if (columnName == 'location') {
-				$scope.rows[$scope.rix].tags = $scope.editing.tags;
+				// User may have removed current tag
 				$scope.rows = getVisiblePatients();
 				$scope.selectItem(getRowIxFromPatientId(patientId), $scope.cix, 0);
 			}
 		} else {
 			if (typeof($scope.editing.id) == 'undefined') {
 				// This is a new item
-				newItem = {patient: patientId};
-				if (columnName == 'microbiology_test') {
-					newItem.date_ordered = getTodaysDate();
-				}
-				if (columnName == 'general_note') {
-					newItem.date = getTodaysDate();
-				}
-				if (columnName == 'antimicrobial') {
-					newItem.start_date = getTodaysDate();
-				}
-                                if (columnName == 'diagnosis') {
-                                        newItem.date_of_diagnosis = getTodaysDate();
-                                }
-				items.push(newItem);
-				newItemIx = $scope.iix;
+				items.push(buildNewItem(patientId, columnName));
 				$http.post(url, $scope.editing).success(function(item) {
-					items[newItemIx].id = item.id;
+					items[$scope.iix].id = item.id;
 				});
 			} else {
 				url = url + $scope.editing.id + '/';
@@ -423,7 +417,7 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 		$scope.discharge = {
 			rix: rix,
 			category: newCategory,
-			date: getTodaysDate()
+			date: new Date()
 		};
 		$('#discharge-confirmation-modal').modal();
 		$('#discharge-confirmation-modal').find('input,textarea').first().focus();
@@ -585,7 +579,6 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 controllers.controller('PatientDetailCtrl', function($scope, $http, schema, patient) {
 	var state = 'normal';
 	var columnName;
-	var newItem;
 
 	$scope.cix = 0; // column index (although columns are arranged vertically...)
 	$scope.iix = 0; // item index
@@ -611,22 +604,9 @@ controllers.controller('PatientDetailCtrl', function($scope, $http, schema, pati
 	$scope.patient_category_list = ['Inpatient', 'Review'];
 
 	for (var cix = 0; cix < $scope.columns.length; cix++) {
-		columnName = $scope.columns[cix].name;
+		columnName = getColumnName(cix);
 		if (!isSingleColumn(cix)) {
-			newItem = {patient: patient.id};
-			if (columnName == 'microbiology_test') {
-				newItem.date_ordered = getTodaysDate();
-			}
-			if (columnName == 'general_note') {
-				newItem.date = getTodaysDate();
-			}
-			if (columnName == 'antimicrobial') {
-				newItem.start_date = getTodaysDate();
-			}
-			if (columnName == 'microbiology_input') {
-				newItem.date = getTodaysDate();
-			}
-			patient[columnName].push(newItem);
+			patient[columnName].push(buildNewItem(patient.id, columnName));
 		};
 	}
 
@@ -666,7 +646,7 @@ controllers.controller('PatientDetailCtrl', function($scope, $http, schema, pati
 	};
 
 	function getItem(cix, iix) {
-		var columnName = $scope.columns[cix].name;
+		var columnName = getColumnName(cix);
 		return $scope.patient[columnName][iix];
 	};
 
@@ -716,7 +696,6 @@ controllers.controller('PatientDetailCtrl', function($scope, $http, schema, pati
 		var patientId = $scope.patient.id;
 		var url = 'patient/' + columnName + '/';
 		var items = $scope.patient[columnName];
-		var newItemIx;
 
 		state = 'normal';
 		clearModal(columnName);
@@ -739,10 +718,9 @@ controllers.controller('PatientDetailCtrl', function($scope, $http, schema, pati
 		} else {
 			if (typeof($scope.editing.id) == 'undefined') {
 				// This is a new item
-				items.push({patient: patientId});
-				newItemIx = $scope.iix;
+				items.push({patient_id: patientId});
 				$http.post(url, $scope.editing).success(function(item) {
-					items[newItemIx].id = item.id;
+					items[$scope.iix].id = item.id;
 				});
 			} else {
 				url = url + $scope.editing.id + '/';
@@ -896,7 +874,7 @@ controllers.controller('SearchCtrl', function($scope, $http, $location) {
 
 	$scope.startAdd = function() {
 		$scope.editing = {
-			location: {date_of_admission: getTodaysDate()},
+			location: {date_of_admission: new Date()},
 		       	demographics: {},
 		       	tags: {}
 		};

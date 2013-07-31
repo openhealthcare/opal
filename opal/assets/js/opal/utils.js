@@ -28,15 +28,6 @@ function clone(obj) {
 	}
 };
 
-function getTodaysDate() {
-	var today = new Date();
-	var day = today.getDate();
-	var month = today.getMonth() + 1;
-	var year = today.getFullYear();
-
-	return day + '/' + month + '/' + year;
-}
-
 // From http://stackoverflow.com/a/3937924/2463201
 jQuery.support.placeholder = (function(){
 	var i = document.createElement('input');
