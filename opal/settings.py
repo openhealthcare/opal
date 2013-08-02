@@ -1,8 +1,27 @@
 # Django settings for opal project.
 import os
-import dj_database_url
+
 
 PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
+
+
+try:
+    import dj_database_url
+    
+    DATABASES = {
+        'default': dj_database_url.config(default='sqlite:///' + PROJECT_PATH + '/opal.sqlite')
+    }
+except ImportError:
+    DATABASES = {
+        'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(PROJECT_PATH, 'opal.sqlite'),
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': ''
+        }
+    }
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -13,9 +32,6 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = {
-    'default': dj_database_url.config(default='sqlite:///' + PROJECT_PATH + '/opal.sqlite')
-}
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.5/ref/settings/#allowed-hosts
