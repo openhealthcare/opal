@@ -59,6 +59,21 @@ services.factory('patientsLoader', function($q, PatientResource, Patient, schema
 	};
 });
 
+services.factory('patientLoader', function($q, $route, PatientResource, Patient, schemaLoader) {
+	return function() {
+		var deferred = $q.defer();
+		schemaLoader.then(function(schema) {
+			PatientResource.get({id: $route.current.params.id}, function(resource) {
+				var patient = new Patient(resource, schema);
+				deferred.resolve(patient);
+			}, function() {
+				// handle error
+			});
+		});
+		return deferred.promise;
+	};
+});
+
 services.factory('Patient', function($http, $q, utils) {
 	return function(resource, schema) {
 		var patient = this;

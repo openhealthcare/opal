@@ -5,8 +5,12 @@ files = [
   JASMINE_ADAPTER,
   'angular*.js',
   'underscore.js',
+  'opal/directives.js',
+  'opal/filters.js',
   'opal/services.js',
-  'opaltest/servicesTest.js'
+  'opal/controllers.js',
+  'opal/app.js',
+  'opaltest/*.js'
 ];
 
 autoWatch = true;

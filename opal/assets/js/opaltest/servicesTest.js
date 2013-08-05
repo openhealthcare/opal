@@ -219,4 +219,36 @@ describe('services', function() {
 			expect(patients[0].id).toBe(123);
 		});
 	});
+
+	describe('patientLoader', function() {
+		var patientLoader, $httpBackend;
+
+		beforeEach(function() {
+			inject(function($injector) {
+				patientLoader = $injector.get('patientLoader');
+				$httpBackend = $injector.get('$httpBackend');
+				$rootScope = $injector.get('$rootScope');
+				$route = $injector.get('$route');
+			});
+		});
+
+		xit('should resolve to a single patient', function() {
+			// Skipping this, because I can't work out how to set $route.current
+			// so that patientLoader can access it.
+			var promise = patientLoader();
+			var patient;
+
+			$route.current = {params: {id: 123}};
+			$httpBackend.whenGET('/schema/').respond(columns);
+			$httpBackend.whenGET('/patient/123').respond(patientData); // TODO trailing slash?
+			promise.then(function(value) {
+				patient = value;
+			});
+
+			$httpBackend.flush();
+			$rootScope.$apply();
+
+			expect(patient.id).toBe(123);
+		});
+	});
 });

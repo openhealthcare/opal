@@ -17,22 +17,22 @@ app.config(function($routeProvider) {
 		when('/', {
 			controller: 'PatientListCtrl',
 			resolve: {
-				schema: function(SchemaLoader) {
-					return SchemaLoader();
+				schema: function(schemaLoader) {
+					return schemaLoader;
 				},
-				patients: function(PatientsLoader) {
-					return PatientsLoader();
+				patients: function(patientsLoader) {
+					return patientsLoader();
 				}
 			},
 			templateUrl: '/patient/templates/patient_list.html'
-		}).when('/patient/:patientId', {
+		}).when('/patient/:id', {
 			controller: 'PatientDetailCtrl',
 			resolve: {
-				schema: function(SchemaLoader) {
-					return SchemaLoader();
+				schema: function(schemaLoader) {
+					return schemaLoader;
 				},
-				patient: function(PatientLoader) {
-					return PatientLoader();
+				patient: function(patientLoader) {
+					return patientLoader();
 				}
 			},
 			templateUrl: '/patient/templates/patient_detail.html'
