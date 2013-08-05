@@ -183,7 +183,9 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, schema,
 	};
 
 	$scope.getSynonymn = function(option, term) {
-            return replaceSynonym($scope, option, term);
+		return term;
+		// TODO get this working again
+		//return replaceSynonym($scope, option, term);
 	};
 
 	function getRowIxFromPatientId(patientId) {
