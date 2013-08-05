@@ -14,6 +14,7 @@ columns = [
 ]
 
 detail_columns = [
+    models.Demographics,
     models.Diagnosis,
     models.PastMedicalHistory,
     models.MicrobiologyInput,
@@ -23,5 +24,4 @@ detail_columns = [
     models.Todo,
     models.Location,
     models.GeneralNote,
-    models.Demographics,
 ]

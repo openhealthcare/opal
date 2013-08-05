@@ -581,7 +581,7 @@ controllers.controller('PatientDetailCtrl', function($scope, $http, schema, pati
 
 	$scope.mouseCix = -1; // index of column mouse is currently over
 
-	$scope.columns = schema.columns;
+	$scope.columns = schema.detail_columns;
 	$scope.synonyms = schema.synonyms;
 
 	$scope.microbiology_test_list = [];

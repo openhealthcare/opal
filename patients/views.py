@@ -2,6 +2,7 @@ import json
 import datetime
 from django.http import HttpResponse
 from django.views.generic import TemplateView
+from django.template.loader import select_template
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from rest_framework import generics, response, status, renderers, views
@@ -119,6 +120,7 @@ class PatientTemplateView(TemplateView):
             column_context['single'] = column._is_singleton
             column_context['template_path'] = name + '.html'
             column_context['modal_template_path'] = name + '_modal.html'
+            column_context['detail_template_path'] = select_template([name + '_detail.html', name + '.html']).name
             context.append(column_context)
         return context
 
@@ -154,7 +156,14 @@ def schema_view(request):
             'single': column._is_singleton
         })
 
-    data = {'columns': columns}
+    detail_columns = []
+    for column in schema.detail_columns:
+        detail_columns.append({
+                'name': camelcase_to_underscore(column.__name__),
+                'single': column._is_singleton
+                })
+
+    data = {'columns': columns, 'detail_columns': detail_columns}
 
     data['option_lists'] = {}
     data['synonyms'] = {}

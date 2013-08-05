@@ -1,9 +1,9 @@
 <div class="container">
-	<h4>
-          [[ patient.demographics[0].hospital_number ]]
-          [[ patient.demographics[0].name ]]
-          ( [[ patient.demographics[0].date_of_birth | date:'d/M/yyyy' ]] )
-        </h4>
+	<!-- <h4> -->
+        <!--   [[ patient.demographics[0].hospital_number ]] -->
+        <!--   [[ patient.demographics[0].name ]] -->
+        <!--   ( [[ patient.demographics[0].date_of_birth | date:'d/M/yyyy' ]] ) -->
+        <!-- </h4> -->
 
 	<table class="table table-bordered">
 	{% for column in columns %}
@@ -16,10 +16,10 @@
 				ng-dblclick="editItem({{ forloop.counter0 }}, $index)"
 				ng-class="{selected: cix == {{ forloop.counter0 }} && iix == $index}">
 				{% if column.single %}
-				{% include column.template_path %}
+				{% include column.detail_template_path %}
 				{% else %}
 				<span ng-hide="$last">
-					{% include column.template_path %}
+					{% include column.detail_template_path %}
 				</span>
 				<span ng-show="$last">
 					<span ng-show="(cix == {{ forloop.counter0 }}) || (mouseCix == {{ forloop.counter0 }})">
