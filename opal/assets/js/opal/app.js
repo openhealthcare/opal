@@ -1,5 +1,4 @@
 var app = angular.module('opal', [
-	'$strap.directives',
 	'opal.filters',
        	'opal.services',
        	'opal.directives',

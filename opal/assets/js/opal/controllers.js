@@ -3,7 +3,6 @@ var CATEGORIES = ['Inpatient', 'Review', 'Followup', 'Transferred', 'Discharged'
 var controllers = angular.module('opal.controllers', [
 	'ngCookies',
        	'opal.services',
-       	'$strap.directives',
        	'ui.event'
 ]);
 
