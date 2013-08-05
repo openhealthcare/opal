@@ -152,11 +152,11 @@ describe('services', function() {
 
 				beforeEach(function() {
 					attrs = {id: 102, condition: 'Dengue', provisional: false};
-					$httpBackend.whenPUT('/diagnosis/102/').respond(attrs);
+					$httpBackend.whenPUT('/patient/diagnosis/102/').respond(attrs);
 				});
 
 				it('should hit server', function() {
-					$httpBackend.expectPUT('/diagnosis/102/');
+					$httpBackend.expectPUT('/patient/diagnosis/102/');
 					patient.updateItem(1, 0, attrs);
 					$httpBackend.flush();
 				});
@@ -173,11 +173,11 @@ describe('services', function() {
 
 				beforeEach(function() {
 					attrs = {id: 104, condition: 'Ebola', provisional: false};
-					$httpBackend.whenPOST('/diagnosis/').respond(attrs);
+					$httpBackend.whenPOST('/patient/diagnosis/').respond(attrs);
 				});
 
 				it('should hit server', function() {
-					$httpBackend.whenPUT('/diagnosis/');
+					$httpBackend.whenPUT('/patient/diagnosis/');
 					patient.addItem(1, _.omit(attrs, 'id'));
 					$httpBackend.flush();
 				});

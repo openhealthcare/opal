@@ -10,7 +10,8 @@ services.factory('schemaLoader', function($q, $http, Schema) {
 		var columns = response.data;
 		deferred.resolve(new Schema(columns));
 	}, function() {
-		// handle error
+		// handle error better
+		alert('Schema could not be loaded');
 	});
 
 	return deferred.promise;
@@ -52,7 +53,8 @@ services.factory('patientsLoader', function($q, PatientResource, Patient, schema
 				});
 				deferred.resolve(patients);
 			}, function() {
-				// handle error
+				// handle error better
+				alert('Patients could not be loaded');
 			});
 		});
 		return deferred.promise;
@@ -67,7 +69,8 @@ services.factory('patientLoader', function($q, $route, PatientResource, Patient,
 				var patient = new Patient(resource, schema);
 				deferred.resolve(patient);
 			}, function() {
-				// handle error
+				// handle error better
+				alert('Patient could not be loaded');
 			});
 		});
 		return deferred.promise;
@@ -107,13 +110,14 @@ services.factory('Patient', function($http, $q, utils) {
 		this.updateItem = function(cix, iix, attrs) {
 			var deferred = $q.defer();
 			var columnName = schema.getColumnName(cix);
-			var url = '/' + columnName + '/' + attrs.id + '/';
+			var url = '/patient/' + columnName + '/' + attrs.id + '/';
 
 			$http.put(url, attrs).then(function(response) {
 				patient[columnName][iix] = attrs;
 				deferred.resolve();
 			}, function(response) {
-				// handle error
+				// handle error better
+				alert('Item could not be updated');
 			});
 			return deferred.promise;
 		};
@@ -121,14 +125,15 @@ services.factory('Patient', function($http, $q, utils) {
 		this.addItem = function(cix, attrs) {
 			var deferred = $q.defer();
 			var columnName = schema.getColumnName(cix);
-			var url = '/' + columnName + '/';
+			var url = '/patient/' + columnName + '/';
 
 			$http.post(url, attrs).then(function(response) {
 				attrs.id = response.data.id;
 				patient[columnName].push(attrs);
 				deferred.resolve();
 			}, function(response) {
-				// handle error
+				// handle error better
+				alert('Item could not be added');
 			});
 			return deferred.promise;
 		};
