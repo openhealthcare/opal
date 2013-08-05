@@ -1,5 +1,5 @@
 describe('services', function() {
-	var columns;
+	var columns, patientData;
 
 	beforeEach(function() {
 		module('opal.services');
@@ -19,6 +19,23 @@ describe('services', function() {
 					{name: 'provisional', type: 'boolean'},
 				]},
 		];
+		patientData = {
+			id: 123,
+			demographics: [{
+				id: 101,
+				name: 'John Smith',
+				date_of_birth: '1980-07-31'
+			}],
+			diagnosis: [{
+				id: 102,
+				condition: 'Dengue',
+				provisional: true,
+			}, {
+				id: 103,
+				condition: 'Malaria',
+				provisional: false,
+			}]
+		}
 	});
 
 	describe('Schema', function() {
@@ -31,13 +48,21 @@ describe('services', function() {
 			schema = new Schema(columns);
 		});
 
-		it('should know whether a column is a singleton', function() {
-			expect(schema.isSingleton(0)).toBe(true);
-			expect(schema.isSingleton(1)).toBe(false);
+		it('should be able to get the number of columns', function() {
+			expect(schema.getNumberOfColumns()).toBe(2);
+		});
+
+		it('should be able to get a column', function() {
+			expect(schema.getColumn(1).name).toBe('diagnosis');
 		});
 
 		it('should be able to get the name of a column', function() {
 			expect(schema.getColumnName(1)).toBe('diagnosis');
+		});
+
+		it('should know whether a column is a singleton', function() {
+			expect(schema.isSingleton(0)).toBe(true);
+			expect(schema.isSingleton(1)).toBe(false);
 		});
 	});
 
@@ -81,25 +106,7 @@ describe('services', function() {
 			});
 
 			schema = new Schema(columns);
-
-			resource = new PatientResource({
-				id: 123,
-				demographics: [{
-					id: 101,
-					name: 'John Smith',
-					date_of_birth: '1980-07-31'
-				}],
-				diagnosis: [{
-					id: 102,
-					condition: 'Dengue',
-					provisional: true,
-				}, {
-					id: 103,
-					condition: 'Malaria',
-					provisional: false,
-				}]
-			});
-
+			resource = new PatientResource(patientData);
 			patient = new Patient(resource, schema);
 		});
 
@@ -181,6 +188,35 @@ describe('services', function() {
 					expect(patient.getItem(1, 2)).toEqual(attrs);
 				});
 			});
+		});
+	});
+
+	describe('patientsLoader', function() {
+		var patientsLoader, $httpBackend;
+
+		beforeEach(function() {
+			inject(function($injector) {
+				patientsLoader = $injector.get('patientsLoader');
+				$httpBackend = $injector.get('$httpBackend');
+				$rootScope = $injector.get('$rootScope');
+			});
+		});
+
+		it('should resolve to an array of patients', function() {
+			var promise = patientsLoader();
+			var patients;
+
+			$httpBackend.whenGET('/schema/').respond(columns);
+			$httpBackend.whenGET('/patient').respond([patientData]); // TODO trailing slash?
+			promise.then(function(value) {
+				patients = value;
+			});
+
+			$httpBackend.flush();
+			$rootScope.$apply();
+
+			expect(patients.length).toBe(1);
+			expect(patients[0].id).toBe(123);
 		});
 	});
 });

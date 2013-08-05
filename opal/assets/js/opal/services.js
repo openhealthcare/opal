@@ -4,11 +4,11 @@ services.factory('PatientResource', function($resource) {
 	return $resource('/patient/:id/', {id: '@id'})
 });
 
-services.factory('schemaLoader', function($q, $http, schemaBuilder) {
+services.factory('schemaLoader', function($q, $http, Schema) {
 	var deferred = $q.defer();
-	$http.get('schema/').then(function(response) {
-		columns = response.data.columns;
-		deferred.resolve(schemaBuilder(columns));
+	$http.get('/schema/').then(function(response) {
+		var columns = response.data;
+		deferred.resolve(new Schema(columns));
 	}, function() {
 		// handle error
 	});
@@ -18,7 +18,12 @@ services.factory('schemaLoader', function($q, $http, schemaBuilder) {
 
 services.factory('Schema', function() {
 	return function(columns) {
-		this.columns = columns;
+		this.getNumberOfColumns = function() {
+			return columns.length;
+		};
+		this.getColumn = function(cix) {
+			return columns[cix];
+		};
 		this.getColumnName = function(cix) {
 			return columns[cix].name;
 		};
@@ -43,7 +48,7 @@ services.factory('patientsLoader', function($q, PatientResource, Patient, schema
 		schemaLoader.then(function(schema) {
 			PatientResource.query(function(resources) {
 				var patients = _.map(resources, function(resource) {
-					return Patient(resource, schema);
+					return new Patient(resource, schema);
 				});
 				deferred.resolve(patients);
 			}, function() {
@@ -61,8 +66,8 @@ services.factory('Patient', function($http, $q, utils) {
 
 		angular.extend(patient, resource);
 
-		for (var cix = 0; cix < schema.columns.length; cix++) {
-			column = schema.columns[cix];
+		for (var cix = 0; cix < schema.getNumberOfColumns(); cix++) {
+			column = schema.getColumn(cix);
 
 			// Convert values of date fields to Date objects
 			for (var fix = 0; fix < column.fields.length; fix++) {
