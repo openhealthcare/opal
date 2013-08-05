@@ -138,8 +138,12 @@ services.factory('Patient', function($http, $q, utils) {
 services.factory('utils', function() {
 	return {
 		parseDate: function(dateString) {
-			var tokens = dateString.split('-');
-			return new Date(tokens[0], tokens[1] - 1, tokens[2]);
+			if (angular.isString(dateString)) {
+				var tokens = dateString.split('-');
+				return new Date(tokens[0], tokens[1] - 1, tokens[2]);
+			} else {
+				return dateString;
+			};
 		}
 	};
 });
