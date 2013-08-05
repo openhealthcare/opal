@@ -43,7 +43,7 @@ controllers.controller('RootCtrl', function($scope) {
 	};
 });
 
-controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, schema, patients) {
+controllers.controller('PatientListCtrl', function($scope, $cookieStore, schema, patients) {
 	var state = 'normal';
 	var columnName;
 
@@ -58,9 +58,9 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 	$scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine'; // initially display patients of interest to current user
 
 	$scope.columns = []
-	for (var cix = 0; cix < schema.columns.length; cix++) {
-		if (schema.columns[cix].name != 'microbiology_input') {
-			$scope.columns.push(schema.columns[cix]);
+	for (var cix = 0; cix < schema.getNumberOfColumns(); cix++) {
+		if (schema.getColumnName(cix) != 'microbiology_input') {
+			$scope.columns.push(schema.getColumn(cix));
 		}
 	}
 
@@ -83,8 +83,8 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 
 	for (var pix = 0; pix < patients.length; pix++) {
 		for (var cix = 0; cix < $scope.columns.length; cix++) {
-			columnName = getColumnName(cix);
-			if (!isSingleColumn(cix)) {
+			columnName = schema.getColumnName(cix);
+			if (!schema.isSingleton(cix)) {
 				patients[pix][columnName].push(buildNewItem(patients[pix].id, columnName));
 			};
 		};
@@ -200,20 +200,12 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 		return $scope.rows[rix][column.name].length;
 	};
 
-	function isSingleColumn(cix) {
-		return $scope.columns[cix].single;
-	};
-
-	function getColumnName(cix) {
-		return $scope.columns[cix].name;
-	};
-
 	function getCurrentColumnName() {
-		return getColumnName($scope.cix);
+		return schema.columnName($scope.cix);
 	};
 
 	function getItem(rix, cix, iix) {
-		var columnName = getColumnName(cix);
+		var columnName = schema.columnName(cix);
 		return $scope.rows[rix][columnName][iix];
 	};
 
@@ -277,8 +269,8 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 		clearModal('add-new');
 		$http.post('patient/', $scope.editing).success(function(patient) {
 			for (var cix = 0; cix < $scope.columns.length; cix++) {
-				columnName = getColumnName(cix);
-				if (!isSingleColumn(cix)) {
+				columnName = schema.columnName(cix);
+				if (!schema.isSingleton(cix)) {
 					patient[columnName] = [buildNewItem(patient.id, columnName)];
 				}
 			}
@@ -332,25 +324,21 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 
 		items[$scope.iix] = clone($scope.editing);
 
-		if (isSingleColumn($scope.cix)) {
+		if (typeof($scope.editing.id) == 'undefined') {
+			// This is a new item
+			items.push(buildNewItem(patientId, columnName));
+			$http.post(url, $scope.editing).success(function(item) {
+				items[$scope.iix].id = item.id;
+			});
+		} else {
 			url = url + $scope.editing.id + '/';
 			$http.put(url, $scope.editing);
-			if (columnName == 'location') {
-				// User may have removed current tag
-				$scope.rows = getVisiblePatients();
-				$scope.selectItem(getRowIxFromPatientId(patientId), $scope.cix, 0);
-			}
-		} else {
-			if (typeof($scope.editing.id) == 'undefined') {
-				// This is a new item
-				items.push(buildNewItem(patientId, columnName));
-				$http.post(url, $scope.editing).success(function(item) {
-					items[$scope.iix].id = item.id;
-				});
-			} else {
-				url = url + $scope.editing.id + '/';
-				$http.put(url, $scope.editing);
-			}
+		}
+
+		if (columnName == 'location') {
+			// User may have removed current tag
+			$scope.rows = getVisiblePatients();
+			$scope.selectItem(getRowIxFromPatientId(patientId), $scope.cix, 0);
 		}
 	};
 
@@ -366,7 +354,7 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 	};
 
 	function startDelete() {
-		if (isSingleColumn($scope.cix)) {
+		if (schema.isSingleton($scope.cix)) {
 			// Cannot delete singleton
 			return;
 		}
