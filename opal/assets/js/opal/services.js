@@ -1,96 +1,125 @@
-// TODO don't hardcode this
-var DATE_FIELDS = {
-	demographics: ['date_of_birth'],
-	location: ['date_of_admission', 'discharge_date'],
-	diagnosis: ['date_of_diagnosis'],
-	past_medical_history: [],
-	general_note: ['date'],
-	travel: [],
-	antimicrobial: ['start_date', 'end_date'],
-	microbiology_input: ['date'],
-	todo: [],
-	microbiology_test: ['date_ordered'],
-}
-
-function transformDatesInResponse(response) {
-	var item, items;
-	for (var subrecordKey in response) {
-		items = response[subrecordKey];
-		for (var ix = 0; ix < items.length; ix++) {
-			item = items[ix];
-			for (var fieldName in item) {
-				if (DATE_FIELDS[subrecordKey].indexOf(fieldName) != -1) {
-					if (item[fieldName]) {
-                                                dt = moment(item[fieldName], 'YYYY-MM-DD');
-						item[fieldName] = dt._d;
-					}
-				}
-			}
-		}
-	}
-	return response;
-}
-
 var services = angular.module('opal.services', ['ngResource']);
 
-services.factory('Patient', function($resource, $http) {
-	return $resource(
-		'/patient/:id/',
-	       	{id: '@id'},
-		{
-			get: {
-				method: 'GET',
-				transformResponse: $http.defaults.transformResponse.concat([transformDatesInResponse])
-			},
-			query: {
-				method: 'GET',
-				isArray: true,
-				transformResponse: $http.defaults.transformResponse.concat([
-					function(response) {
-						var newResponse = [];
-						angular.forEach(response, function(record) {
-							newResponse.push(transformDatesInResponse(record));
-						});
-						return newResponse;
-					}
-				])
-			}
-		}
-	);
+services.factory('PatientResource', function($resource) {
+	return $resource('/patient/:id/', {id: '@id'})
 });
 
-services.factory('SchemaLoader', ['$q', '$http', function($q, $http) {
-	return function() {
-		var delay = $q.defer();
-		$http.get('schema/', {cache: true}).then(function(response) {
-			delay.resolve(response.data);
-		}, function() {
-			delay.reject('There was a problem fetching the schema');
-		});
-		return delay.promise;
-	};
-}]);
+services.factory('schemaLoader', function($q, $http, schemaBuilder) {
+	var deferred = $q.defer();
+	$http.get('schema/').then(function(response) {
+		columns = response.data.columns;
+		deferred.resolve(schemaBuilder(columns));
+	}, function() {
+		// handle error
+	});
 
-services.factory('PatientsLoader', ['Patient', '$q', function(Patient, $q) {
-	return function() {
-		var delay = $q.defer();
-		Patient.query(function(patients) {
-			delay.resolve(patients);
-		}, function() {
-			delay.reject('There was a problem fetching records');
-		});
-		return delay.promise;
-	};
-}]);
+	return deferred.promise;
+});
 
-services.factory('PatientLoader', ['Patient', '$route', '$q', function(Patient, $route, $q) {
-	return function() {
-		var delay = $q.defer();
-		Patient.get({id: $route.current.params.patientId}, function(patient) {
-			delay.resolve(patient);
-		}, function() {
-			delay.reject('There was a problem fetching record '  + $route.current.params.patientId);
-		});
-		return delay.promise;
+services.factory('Schema', function() {
+	return function(columns) {
+		this.columns = columns;
+		this.getColumnName = function(cix) {
+			return columns[cix].name;
+		};
+		this.isSingleton = function(cix) {
+			return columns[cix].single;
+		};
 	};
-}]);
+});
+
+services.factory('Options', function() {
+	return function(options) {
+		this.options = options,
+		this.getSynonymn = function(list, term) {
+			return options[list].synonyms[term] || term;
+		};
+	};
+});
+
+services.factory('patientsLoader', function($q, PatientResource, Patient, schemaLoader) {
+	return function() {
+		var deferred = $q.defer();
+		schemaLoader.then(function(schema) {
+			PatientResource.query(function(resources) {
+				var patients = _.map(resources, function(resource) {
+					return Patient(resource, schema);
+				});
+				deferred.resolve(patients);
+			}, function() {
+				// handle error
+			});
+		});
+		return deferred.promise;
+	};
+});
+
+services.factory('Patient', function($http, $q, utils) {
+	return function(resource, schema) {
+		var patient = this;
+	   	var column, field, item;
+
+		angular.extend(patient, resource);
+
+		for (var cix = 0; cix < schema.columns.length; cix++) {
+			column = schema.columns[cix];
+
+			// Convert values of date fields to Date objects
+			for (var fix = 0; fix < column.fields.length; fix++) {
+				field = column.fields[fix];
+				if (field.type == 'date') {
+					for (var iix = 0; iix < patient[column.name].length; iix++) {
+						item = patient[column.name][iix];
+						item[field.name] = utils.parseDate(item[field.name]);
+					};
+				};
+			};
+		};
+
+		this.getItem = function(cix, iix) {
+			return patient[schema.getColumnName(cix)][iix];
+		};
+
+		this.copyItem = function(cix, iix) {
+			return _.clone(this.getItem(cix, iix));
+		};
+
+		this.updateItem = function(cix, iix, attrs) {
+			var deferred = $q.defer();
+			var columnName = schema.getColumnName(cix);
+			var url = '/' + columnName + '/' + attrs.id + '/';
+
+			$http.put(url, attrs).then(function(response) {
+				patient[columnName][iix] = attrs;
+				deferred.resolve();
+			}, function(response) {
+				// handle error
+			});
+			return deferred.promise;
+		};
+
+		this.addItem = function(cix, attrs) {
+			var deferred = $q.defer();
+			var columnName = schema.getColumnName(cix);
+			var url = '/' + columnName + '/';
+
+			$http.post(url, attrs).then(function(response) {
+				attrs.id = response.data.id;
+				patient[columnName].push(attrs);
+				deferred.resolve();
+			}, function(response) {
+				// handle error
+			});
+			return deferred.promise;
+		};
+	};
+});
+
+services.factory('utils', function() {
+	return {
+		parseDate: function(dateString) {
+			var tokens = dateString.split('-');
+			return new Date(tokens[0], tokens[1] - 1, tokens[2]);
+		}
+	};
+});
