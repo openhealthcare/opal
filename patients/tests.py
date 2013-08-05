@@ -1,13 +1,13 @@
 import json
 from django.test import TestCase
-from patients.models import Patient
+from patients import models
 
 class PatientTest(TestCase):
     fixtures = ['users', 'options', 'patients']
 
     def setUp(self):
         self.assertTrue(self.client.login(username='superuser', password='password'))
-        self.patient = Patient.objects.get(pk=1)
+        self.patient = models.Patient.objects.get(pk=1)
         self.demographics = self.patient.demographics_set.all()[0]
         self.location = self.patient.location_set.all()[0]
         self.first_diagnosis = self.patient.diagnosis_set.all()[0]
@@ -40,7 +40,7 @@ class PatientTest(TestCase):
         self.assertEqual(expected_data, content)
 
     def assert_has_tags(self, expected_tags, patient_id):
-        patient = Patient.objects.get(pk=patient_id)
+        patient = models.Patient.objects.get(pk=patient_id)
         self.assertItemsEqual(expected_tags, [t.tag_name for t in patient.tagging_set.all()])
 
     def test_can_access_patient_list(self):
@@ -245,7 +245,6 @@ class PatientTest(TestCase):
     def test_can_access_schema(self):
         rsp = self.client.get('/schema/')
         self.assert_status_code(200, rsp)
-        self.assert_json_content(self.load_expected_data('schema'), rsp)
 
     def test_can_access_patient_list_template(self):
         rsp = self.client.get('/patient/templates/patient_list.html/')
@@ -258,3 +257,26 @@ class PatientTest(TestCase):
     def test_can_access_search_template(self):
         rsp = self.client.get('/patient/templates/search.html/')
         self.assert_status_code(200, rsp)
+
+    def test_field_schema_correct_for_demographics(self):
+        schema = models.Demographics.build_field_schema()
+        expected_schema = [
+                {'name': 'name', 'type': 'string'},
+                {'name': 'hospital_number', 'type': 'string'},
+                {'name': 'date_of_birth', 'type': 'date'},
+        ]
+        self.assertEqual(expected_schema, schema)
+
+    def test_field_schema_correct_for_location(self):
+        schema = models.Location.build_field_schema()
+        expected_schema = [
+                {'name': 'category', 'type': 'string'},
+                {'name': 'hospital', 'type': 'string'},
+                {'name': 'ward', 'type': 'string'},
+                {'name': 'bed', 'type': 'string'},
+                {'name': 'date_of_admission', 'type': 'date'},
+                {'name': 'discharge_date', 'type': 'date'},
+                {'name': 'tags', 'type': 'list'},
+        ]
+        self.assertEqual(expected_schema, schema)
+

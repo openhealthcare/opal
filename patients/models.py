@@ -91,10 +91,32 @@ class Subrecord(models.Model):
     def get_api_name(cls):
         return camelcase_to_underscore(cls._meta.object_name)
 
-    def _get_fieldnames_to_serialize(self):
-        fieldnames = [f.attname for f in self._meta.fields]
+    @classmethod
+    def build_field_schema(cls):
+        field_schema = []
+        for fieldname in cls._get_fieldnames_to_serialize():
+            if fieldname in ['id', 'patient_id']:
+                continue
 
-        for name, value in vars(type(self)).items():
+            getter = getattr(cls, 'get_field_type_for_' + fieldname, None)
+            if getter is None:
+                field = cls._get_field_type(fieldname)
+                if field in [models.CharField, ForeignKeyOrFreeText]:
+                    field_type = 'string'
+                else:
+                    field_type = camelcase_to_underscore(field.__name__[:-5])
+            else:
+                field_type = getter()
+
+            field_schema.append({'name': fieldname, 'type': field_type})
+
+        return field_schema
+
+    @classmethod
+    def _get_fieldnames_to_serialize(cls):
+        fieldnames = [f.attname for f in cls._meta.fields]
+
+        for name, value in vars(cls).items():
             if isinstance(value, ForeignKeyOrFreeText):
                 fieldnames.append(name)
                 fieldnames.remove(name + '_ft')
@@ -102,9 +124,10 @@ class Subrecord(models.Model):
 
         return fieldnames
 
-    def _get_field_type(self, name):
+    @classmethod
+    def _get_field_type(cls, name):
         try:
-            return type(self._meta.get_field_by_name(name)[0])
+            return type(cls._meta.get_field_by_name(name)[0])
         except models.FieldDoesNotExist:
             pass
 
@@ -112,13 +135,13 @@ class Subrecord(models.Model):
             return models.ForeignKey
 
         try:
-            value = vars(type(self))[name]
+            value = vars(cls)[name]
             if isinstance(value, ForeignKeyOrFreeText):
                 return ForeignKeyOrFreeText
         except KeyError:
             pass
 
-        raise Exception
+        raise Exception('Unexpected fieldname: %s' % name)
 
     def to_dict(self):
         d = {}
@@ -164,10 +187,15 @@ class Demographics(Subrecord):
 class Location(Subrecord):
     _is_singleton = True
 
-    def _get_fieldnames_to_serialize(self):
-        fieldnames = super(Location, self)._get_fieldnames_to_serialize()
+    @classmethod
+    def _get_fieldnames_to_serialize(cls):
+        fieldnames = super(Location, cls)._get_fieldnames_to_serialize()
         fieldnames.append('tags')
         return fieldnames
+
+    @classmethod
+    def get_field_type_for_tags(cls):
+        return 'list'
 
     def get_tags(self):
         return {tag_name: True for tag_name in self.patient.get_tag_names()}
@@ -182,7 +210,7 @@ class Location(Subrecord):
     ward = models.CharField(max_length=255, blank=True)
     bed = models.CharField(max_length=255, blank=True)
     date_of_admission = models.DateField(null=True, blank=True)
-    discharge_date = models.DateField(null=True, blank=True)
+    discharge_date = models.DateField(null=True, blank=True) # TODO rename to date_of_discharge?
 
 class Diagnosis(Subrecord):
     condition = ForeignKeyOrFreeText(option_models['condition'])

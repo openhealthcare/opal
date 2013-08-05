@@ -135,31 +135,9 @@ def schema_view(request):
     columns = []
     for column in schema.columns:
         columns.append({
-            'name': camelcase_to_underscore(column.__name__),
-            'single': column._is_singleton
+            'name': column.get_api_name(),
+            'single': column._is_singleton,
+            'fields': column.build_field_schema()
         })
 
-    detail_columns = []
-    for column in schema.detail_columns:
-        detail_columns.append({
-                'name': camelcase_to_underscore(column.__name__),
-                'single': column._is_singleton
-                })
-
-    data = {'columns': columns, 'detail_columns': detail_columns}
-
-    data['option_lists'] = {}
-    data['synonyms'] = {}
-
-    for name, model in option_models.items():
-        option_list = []
-        synonyms = {}
-        for instance in model.objects.all():
-            option_list.append(instance.name)
-            for synonym in instance.synonyms.all():
-                option_list.append(synonym.name)
-                synonyms[synonym.name] = instance.name
-        data['option_lists'][name] = option_list
-        data['synonyms'][name] = synonyms
-
-    return HttpResponse(json.dumps(data), mimetype='application/json')
+    return _build_json_response(columns)
