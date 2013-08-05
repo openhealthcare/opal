@@ -6,7 +6,6 @@
 			{% for column in columns %}
 			<th>{{ column.title }}</th>
 			{% endfor %}
-			<th class="screen-only"></th>
 		</tr>
 	</thead>
 	<tbody>
@@ -36,10 +35,6 @@
 			</ul>
 		</td>
 		{% endfor %}
-		<td class="screen-only">
-			<li><a href="#/patient/[[row.id]]">View</a></li>
-			<li><a href="#" ng-click="startDischarge($index, $event)">Discharge / Remove</a></li>
-		</td>
 	</tr>
 	</tbody>
 </table>
