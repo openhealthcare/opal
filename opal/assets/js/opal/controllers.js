@@ -81,15 +81,6 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, schema,
 
 	$scope.patient_category_list = ['Inpatient', 'Review'];
 
-	for (var pix = 0; pix < patients.length; pix++) {
-		for (var cix = 0; cix < $scope.columns.length; cix++) {
-			columnName = schema.getColumnName(cix);
-			if (!schema.isSingleton(cix)) {
-				patients[pix][columnName].push(buildNewItem(patients[pix].id, columnName));
-			};
-		};
-	};
-
 	$scope.patients = patients;
 
 	$scope.rows = getVisiblePatients();
@@ -202,17 +193,9 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, schema,
 		return $scope.rows[rix][column.name].length;
 	};
 
-	function getCurrentColumnName() {
-		return schema.columnName($scope.cix);
-	};
 
-	function getItem(rix, cix, iix) {
-		var columnName = schema.columnName(cix);
-		return $scope.rows[rix][columnName][iix];
-	};
-
-	function getCurrentItem() {
-		return getItem($scope.rix, $scope.cix, $scope.iix);
+	function getPatient(rix) {
+		return $scope.rows[rix];
 	};
 
 	function clearModal(columnName) {
@@ -294,47 +277,46 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, schema,
 	};
 
 	function startEdit() {
+		var patient = getPatient($scope.rix);
+		var columnName = schema.getColumnName($scope.cix);
 		var dob;
+
 		state = 'editing';
-		$scope.editing = clone(getCurrentItem());
-		if (getCurrentColumnName() == 'demographics') {
+		$scope.editing = patient.copyItem($scope.cix, $scope.iix);
+
+		if (columnName == 'demographics') {
 			dob = $scope.editing.date_of_birth;
 			if (dob) {
 				$scope.editing.date_of_birth = dob.getDate() + '/' + (dob.getMonth() + 1) + '/' + dob.getFullYear();
 			}
 		}
 		$scope.editingName = $scope.rows[$scope.rix].demographics[0].name;
-		$('#' + getCurrentColumnName() + '-modal').modal();
-		$('#' + getCurrentColumnName() + '-modal').find('input,textarea').first().focus();
+
+		$('#' + columnName + '-modal').modal();
+		$('#' + columnName + '-modal').find('input,textarea').first().focus();
 	};
 
 	$scope.saveEdit = function() {
-		var columnName = getCurrentColumnName();
-		var patientId = $scope.rows[$scope.rix].id;
-		var url = 'patient/' + columnName + '/';
-		var items = $scope.rows[$scope.rix][columnName];
+		var patient = getPatient($scope.rix);
+		var columnName = schema.getColumnName($scope.cix);
+		var dob;
 
 		state = 'normal';
 		clearModal(columnName);
 
-		if (getCurrentColumnName() == 'demographics') {
+		if (columnName == 'demographics') {
 			dob = $scope.editing.date_of_birth;
 			if (dob) {
 				$scope.editing.date_of_birth = parseDate(dob);
 			}
 		}
 
-		items[$scope.iix] = clone($scope.editing);
-
-		if (typeof($scope.editing.id) == 'undefined') {
+		if (angular.isUndefined($scope.editing.id)) {
 			// This is a new item
-			items.push(buildNewItem(patientId, columnName));
-			$http.post(url, $scope.editing).success(function(item) {
-				items[$scope.iix].id = item.id;
-			});
+			$scope.editing.patient_id = patient.id;
+			patient.addItem($scope.cix, $scope.editing);
 		} else {
-			url = url + $scope.editing.id + '/';
-			$http.put(url, $scope.editing);
+			patient.updateItem($scope.cix, $scope.iix, $scope.editing);
 		}
 
 		if (columnName == 'location') {
@@ -554,7 +536,8 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, schema,
 	};
 
 	function goDown() {
-		if ($scope.iix < getNumItems($scope.rix, $scope.cix) - 1) {
+		if (!schema.isSingleton($scope.cix) &&
+			($scope.iix < getNumItems($scope.rix, $scope.cix))) {
 			$scope.iix++;
 		} else {
 			if ($scope.rix < $scope.rows.length - 1) {
