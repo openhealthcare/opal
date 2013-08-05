@@ -4,3 +4,4 @@ static/*
 /opal/local_settings.py
 .coverage
 htmlcov
+/opal/assets/js/opal/libpeerconnection.log

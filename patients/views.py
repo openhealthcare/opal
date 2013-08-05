@@ -89,6 +89,7 @@ class PatientDetailView(LoginRequiredMixin, generics.RetrieveAPIView):
 class SubrecordList(LoginRequiredMixin, SubrecordMixin, generics.CreateAPIView):
     pass
 
+
 class SubrecordDetail(LoginRequiredMixin, SubrecordMixin, generics.RetrieveUpdateDestroyAPIView):
     def put(self, request, *args, **kwargs):
         response = super(SubrecordDetail, self).put(request, *args, **kwargs)
@@ -97,32 +98,43 @@ class SubrecordDetail(LoginRequiredMixin, SubrecordMixin, generics.RetrieveUpdat
             patient.set_tags(request.DATA['tags'], request.user)
         return response
 
+
 class PatientTemplateView(TemplateView):
-    def get_context_data(self, **kwargs):
-        context = super(PatientTemplateView, self).get_context_data(**kwargs)
-        context['tags'] = models.TAGS
 
-        context['columns'] = []
+    column_schema = schema.columns
 
-        for column in schema.columns:
+    def get_column_context(self):
+        """
+        Return the context for our columns
+        """
+        context = []
+        for column in self.column_schema:
             column_context = {}
             name = camelcase_to_underscore(column.__name__)
             if isinstance(self, PatientListTemplateView) and name == 'microbiology_input':
                 continue
             column_context['name'] = name
-            column_context['title'] = getattr(column, '_title', name.replace('_', ' ').title())
+            column_context['title'] = getattr(column, '_title',
+                                              name.replace('_', ' ').title())
             column_context['single'] = column._is_singleton
             column_context['template_path'] = name + '.html'
             column_context['modal_template_path'] = name + '_modal.html'
-            context['columns'].append(column_context)
-
+            context.append(column_context)
         return context
+
+    def get_context_data(self, **kwargs):
+        context = super(PatientTemplateView, self).get_context_data(**kwargs)
+        context['tags'] = models.TAGS
+        context['columns'] = self.get_column_context()
+        return context
+
 
 class PatientListTemplateView(PatientTemplateView):
     template_name = 'patient_list.html'
 
 class PatientDetailTemplateView(PatientTemplateView):
     template_name = 'patient_detail.html'
+    column_schema = schema.detail_columns
 
 class SearchTemplateView(PatientTemplateView):
     template_name = 'search.html'

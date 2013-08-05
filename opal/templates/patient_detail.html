@@ -1,5 +1,9 @@
 <div class="container">
-	<h4>[[ patient.demographics[0].name ]]</h4>
+	<h4>
+          [[ patient.demographics[0].hospital_number ]]
+          [[ patient.demographics[0].name ]]
+          ( [[ patient.demographics[0].date_of_birth | date:'d/M/yyyy' ]] )
+        </h4>
 
 	<table class="table table-bordered">
 	{% for column in columns %}

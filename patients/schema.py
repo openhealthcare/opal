@@ -13,3 +13,15 @@ columns = [
     models.Todo,
 ]
 
+detail_columns = [
+    models.Diagnosis,
+    models.PastMedicalHistory,
+    models.MicrobiologyInput,
+    models.MicrobiologyTest,
+    models.Antimicrobial,
+    models.Travel,
+    models.Todo,
+    models.Location,
+    models.GeneralNote,
+    models.Demographics,
+]
