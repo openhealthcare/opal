@@ -41,6 +41,12 @@
 
 {% include 'patient_list_navbar.html' %}
 
+<center>
+  <a href="#keyboard-shortcuts" role="button" data-toggle="modal">
+    <i class="icon-keyboard"></i> Keyboard shortcuts available
+  </a>
+</center>
+
 {% for column in columns %}
 <div id="{{column.name}}-modal" class="modal hide" tabindex="-1" role="dialog">
 	<div class="modal-header">

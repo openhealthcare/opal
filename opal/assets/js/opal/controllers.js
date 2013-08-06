@@ -531,8 +531,18 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 				break;
                         case 113: // F2
                                 startEdit();
+                                break;
+                        case 191: // ?
+                                if(e.shiftKey){
+                                    showKeyboardShortcuts();
+                                }
+                                break;
 		};
 	};
+
+        function showKeyboardShortcuts(){
+                $('#keyboard-shortcuts').modal();
+        };
 
 	function goLeft() {
 		if ($scope.cix > 0) {
