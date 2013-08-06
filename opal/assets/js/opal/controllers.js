@@ -521,6 +521,7 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 				goDown();
 				break;
 			case 13: // enter
+                                e.preventDefault();
 				startEdit();
 				break;
 			case 8: // backspace
@@ -816,6 +817,7 @@ controllers.controller('PatientDetailCtrl', function($scope, $http, schema, pati
 				goDown();
 				break;
 			case 13: // enter
+                                e.preventDefault()
 				startEdit();
 				break;
 			case 8: // backspace
