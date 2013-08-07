@@ -127,6 +127,21 @@ class SearchTemplateView(PatientTemplateView):
 class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'opal.html'
 
+class ModalTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = 'modal_base.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ModalTemplateView, self).get_context_data(**kwargs)
+        column = self.kwargs['model']
+        name = camelcase_to_underscore(column.__name__)
+
+        context['name'] = name
+        context['title'] = getattr(column, '_title', name.replace('_', ' ').title())
+        context['single'] = column._is_singleton
+        context['modal_template_path'] = name + '_modal.html'
+
+        return context
+
 # This probably doesn't belong here
 class ContactView(TemplateView):
     template_name = 'contact.html'

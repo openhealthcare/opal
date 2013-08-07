@@ -23,7 +23,7 @@ app.config(function($routeProvider) {
 					return patientsLoader();
 				}
 			},
-			templateUrl: '/patient/templates/patient_list.html'
+			templateUrl: '/templates/patient_list.html'
 		}).when('/patient/:id', {
 			controller: 'PatientDetailCtrl',
 			resolve: {
@@ -34,10 +34,10 @@ app.config(function($routeProvider) {
 					return patientLoader();
 				}
 			},
-			templateUrl: '/patient/templates/patient_detail.html'
+			templateUrl: '/templates/patient_detail.html'
 		}).when('/search', {
 			controller: 'SearchCtrl',
-			templateUrl: '/patient/templates/search.html'
+			templateUrl: '/templates/search.html'
 		}).otherwise({redirectTo: '/'});
 });
 
