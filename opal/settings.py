@@ -7,7 +7,7 @@ PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 
 try:
     import dj_database_url
-    
+
     DATABASES = {
         'default': dj_database_url.config(default='sqlite:///' + PROJECT_PATH + '/opal.sqlite')
     }
@@ -193,7 +193,7 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
     ),
-    'DATE_INPUT_FORMATS': ['%Y-%m-%dT%H:%M:%S.000Z', '%Y-%m-%d', '%d/%m/%Y'],
+    'DATE_INPUT_FORMATS': ['%Y-%m-%dT%H:%M:%SZ', '%Y-%m-%dT%H:%M:%S.000Z', '%Y-%m-%d', '%d/%m/%Y'],
 }
 
 CSRF_COOKIE_NAME = 'XSRF-TOKEN'

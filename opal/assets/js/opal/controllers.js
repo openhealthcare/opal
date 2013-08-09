@@ -434,7 +434,7 @@ controllers.controller('PatientListCtrl', function($scope, $http, $cookieStore, 
 		var patient = $scope.rows[discharge.rix];
 		var location = patient.location[0];
 		var editing = clone(location);
-		var url = 'patient/location/' + location.id;
+		var url = 'patient/location/' + location.id + '/';
 
 		if (discharge.category != 'Unfollow') {
 			editing.category = discharge.category;
