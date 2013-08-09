@@ -2,11 +2,13 @@
 <!doctype html>
 <html xmlns:ng="http://angularjs.org" id="ng-app" ng-app="opal" ng-controller="RootCtrl" ng-keydown="keydown($event)">
 	<head>
+
 		<!--[if lte IE 8]>
 			<script type="text/javascript" src="{% static "js/json3.min.js"></script>
 		<![endif]-->
 		<meta charset="utf-8">
 		<title>OPAL-UCH</title>
+                <!-- 3rd party -->
 		<script type="text/javascript" src="{% static "js/jquery-1.9.1.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/angular-1.1.5.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/angular-resource-1.1.5.js" %}"></script>
@@ -18,6 +20,9 @@
 		<script type="text/javascript" src="{% static "js/jquery.stickytableheaders.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/underscore.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/showdown.js" %}"></script>
+		<script type="text/javascript" src="{% static "js/moment.js" %}"></script>
+
+                <!-- Application -->
 		<script type="text/javascript" src="{% static "js/opal/utils.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/opal/opaldown.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/opal/directives.js" %}"></script>
@@ -25,6 +30,7 @@
 		<script type="text/javascript" src="{% static "js/opal/services.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/opal/controllers.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/opal/app.js" %}"></script>
+
 		<link href="{% static "css/bootstrap-2.3.2.css" %}" rel="stylesheet" media="all">
 		<link href="{% static "css/bootstrap-datepicker.css" %}" rel="stylesheet" media="all">
 		<link href="{% static "css/font-awesome/css/font-awesome.css" %}" rel="stylesheet" media="all">

@@ -21,7 +21,8 @@ function transformDatesInResponse(response) {
 			for (var fieldName in item) {
 				if (DATE_FIELDS[subrecordKey].indexOf(fieldName) != -1) {
 					if (item[fieldName]) {
-						item[fieldName] = new Date(item[fieldName]);
+                                                dt = moment(item[fieldName], 'YYYY-MM-DD');
+						item[fieldName] = dt._d;
 					}
 				}
 			}
@@ -65,7 +66,7 @@ services.factory('SchemaLoader', ['$q', '$http', function($q, $http) {
 			delay.resolve(response.data);
 		}, function() {
 			delay.reject('There was a problem fetching the schema');
-		});		
+		});
 		return delay.promise;
 	};
 }]);
