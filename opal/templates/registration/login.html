@@ -6,7 +6,7 @@
 <p>Your username and password didn't match. Please try again.</p>
 {% endif %}
 
-<form method="post" action="{% url 'django.contrib.auth.views.login' %}" class="form-horizontal">
+<form method="post" action="{% url 'login' %}" class="form-horizontal">
 	{% csrf_token %}
 	<div class="control-group">
 		<label class="control-label"{{ form.username.label_tag }}</label>
@@ -30,5 +30,11 @@
 
 	<input type="hidden" name="next" value="{{ next }}" />
 </form>
+
+<script type="text/javascript">
+$(document).ready(function() {
+  $('#id_username').focus();
+});
+</script>
 
 {% endblock %}

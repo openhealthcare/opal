@@ -149,6 +149,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'accounts',
     'reversion',
     'south',
     'options',
@@ -197,6 +198,7 @@ REST_FRAMEWORK = {
 }
 
 CSRF_COOKIE_NAME = 'XSRF-TOKEN'
+AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 
 try:
     from local_settings import *
