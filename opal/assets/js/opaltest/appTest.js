@@ -11,9 +11,9 @@ describe('app', function() {
 		});
 
 		$httpBackend.whenGET('/schema/').respond([]);
-		$httpBackend.whenGET('/patient/templates/patient_list.html').respond();
-		$httpBackend.whenGET('/patient/templates/patient_detail.html').respond();
-		$httpBackend.whenGET('/patient/templates/search.html').respond();
+		$httpBackend.whenGET('/templates/patient_list.html').respond();
+		$httpBackend.whenGET('/templates/patient_detail.html').respond();
+		$httpBackend.whenGET('/templates/search.html').respond();
 	});
 
 	describe('request to /', function() {
@@ -21,7 +21,7 @@ describe('app', function() {
 			$location.path('/');
 			$rootScope.$apply();
 
-			expect($route.current.templateUrl).toBe('/patient/templates/patient_list.html');
+			expect($route.current.templateUrl).toBe('/templates/patient_list.html');
 			expect($route.current.controller).toBe('PatientListCtrl');
 		});
 	});
@@ -31,7 +31,7 @@ describe('app', function() {
 			$location.path('/patient/123');
 			$rootScope.$apply();
 
-			expect($route.current.templateUrl).toBe('/patient/templates/patient_detail.html');
+			expect($route.current.templateUrl).toBe('/templates/patient_detail.html');
 			expect($route.current.controller).toBe('PatientDetailCtrl');
 		});
 	});
@@ -41,7 +41,7 @@ describe('app', function() {
 			$location.path('/search');
 			$rootScope.$apply();
 
-			expect($route.current.templateUrl).toBe('/patient/templates/search.html');
+			expect($route.current.templateUrl).toBe('/templates/search.html');
 			expect($route.current.controller).toBe('SearchCtrl');
 		});
 	});

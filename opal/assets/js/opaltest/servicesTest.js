@@ -96,13 +96,14 @@ describe('services', function() {
 	});
 
 	describe('Patient', function() {
-		var Patient, patient, PatientResource, resource, Schema, schema;
+		var Patient, patient, PatientResource, resource, Schema, schema, Item;
 
 		beforeEach(function() {
 			inject(function($injector) {
 				PatientResource = $injector.get('PatientResource');
 				Patient = $injector.get('Patient');
 				Schema = $injector.get('Schema');
+				Item = $injector.get('Item');
 			});
 
 			schema = new Schema(columns);
@@ -110,26 +111,68 @@ describe('services', function() {
 			patient = new Patient(resource, schema);
 		});
 
-		it('should have attributes of resource', function() {
+		it('should create Items', function() {
+			expect(patient.demographics[0].constructor).toBe(Item);
+			expect(patient.diagnosis[0].constructor).toBe(Item);
+			expect(patient.diagnosis[1].constructor).toBe(Item);
+		});
+
+		it('should have access to attributes of items', function() {
 			expect(patient.id).toBe(123);
 			expect(patient.demographics[0].name).toBe('John Smith');
 		});
 
-		it('should convert values of date fields to Date objects', function() {
-			expect(patient.demographics[0].date_of_birth).toEqual(new Date(1980, 6, 31));
-		});
-
 		it('should be able to get specific item', function() {
-			expect(patient.getItem(1, 1)).toEqual({id: 103, condition: 'Malaria', provisional: false});
+			expect(patient.getItem(1, 1).id).toEqual(103);
 		});
 
-		describe('copying item', function() {
-			it('should produce attributes of item', function() {
-				expect(patient.copyItem(1, 1)).toEqual(patient.getItem(1, 1));
+		it('should know how many items it has in each column', function() {
+			expect(patient.getNumberOfItems(0)).toBe(1);
+			expect(patient.getNumberOfItems(1)).toBe(2);
+		});
+
+		it('should be able to add a new item', function() {
+			var item = new Item(
+				{id: 104, condition: 'Ebola', provisional: false},
+			       	patient,
+			       	schema.getColumn(1)
+			);
+			patient.addItem(item);
+			expect(patient.getNumberOfItems(1)).toBe(3);
+			expect(patient.getItem(1, 2).id).toBe(104);
+		});
+	});
+
+	describe('Item', function() {
+		var Item, item;
+		var mockPatient = {
+			addItem: function(item) {},
+			demographics: [{name: 'Name'}]
+		};
+
+		beforeEach(function() {
+			inject(function($injector) {
+				Item = $injector.get('Item');
 			});
 
-			it('should produce a new object', function() {
-				expect(patient.copyItem(1, 1)).not.toBe(patient.getItem(1, 1));
+			item = new Item(patientData.demographics[0], mockPatient, columns[0]);
+		});
+
+		it('should have correct attributes', function() {
+			expect(item.id).toBe(101)
+			expect(item.name).toBe('John Smith');
+
+		});
+
+		it('should convert values of date fields to Date objects', function() {
+			expect(item.date_of_birth).toEqual(new Date(1980, 6, 31));
+		});
+
+		it('should be able to produce copy of attributes', function() {
+			expect(item.makeCopy()).toEqual({
+				id: 101,
+				name: 'John Smith',
+//				date_of_birth: new Date(1980, 6, 31)
 			});
 		});
 
@@ -147,45 +190,58 @@ describe('services', function() {
 				$httpBackend.verifyNoOutstandingRequest();
 			});
 
-			describe('updating item', function() {
+			describe('saving existing item', function() {
 				var attrs;
 
 				beforeEach(function() {
 					attrs = {id: 102, condition: 'Dengue', provisional: false};
+					item = new Item(patientData.diagnosis[1], mockPatient, columns[1]);
 					$httpBackend.whenPUT('/patient/diagnosis/102/').respond(attrs);
 				});
 
 				it('should hit server', function() {
 					$httpBackend.expectPUT('/patient/diagnosis/102/');
-					patient.updateItem(1, 0, attrs);
+					item.save(attrs);
 					$httpBackend.flush();
 				});
 
-				it('should update item', function() {
-					patient.updateItem(1, 0, attrs);
+				it('should update item attributes', function() {
+					item.save(attrs);
 					$httpBackend.flush();
-					expect(patient.getItem(1, 0)).toEqual(attrs);
+					expect(item.id).toBe(102);
+					expect(item.condition).toBe('Dengue');
+					expect(item.provisional).toBe(false);
 				});
 			});
 
-			describe('adding item', function() {
+			describe('saving new item', function() {
 				var attrs;
 
 				beforeEach(function() {
 					attrs = {id: 104, condition: 'Ebola', provisional: false};
+					item = new Item({}, mockPatient, columns[1]);
 					$httpBackend.whenPOST('/patient/diagnosis/').respond(attrs);
 				});
 
 				it('should hit server', function() {
-					$httpBackend.whenPUT('/patient/diagnosis/');
-					patient.addItem(1, _.omit(attrs, 'id'));
+					$httpBackend.expectPOST('/patient/diagnosis/');
+					item.save(attrs);
 					$httpBackend.flush();
 				});
 
-				it('should create item', function() {
-					patient.addItem(1, _.omit(attrs, 'id'));
+				it('should set item attributes', function() {
+					item.save(attrs);
 					$httpBackend.flush();
-					expect(patient.getItem(1, 2)).toEqual(attrs);
+					expect(item.id).toBe(104);
+					expect(item.condition).toBe('Ebola');
+					expect(item.provisional).toBe(false);
+				});
+
+				it('should notify patient', function() {
+					spyOn(mockPatient, 'addItem');
+					item.save(attrs);
+					$httpBackend.flush();
+					expect(mockPatient.addItem).toHaveBeenCalled();
 				});
 			});
 		});
@@ -233,6 +289,7 @@ describe('services', function() {
 		});
 
 		xit('should resolve to a single patient', function() {
+			// TODO unskip this
 			// Skipping this, because I can't work out how to set $route.current
 			// so that patientLoader can access it.
 			var promise = patientLoader();

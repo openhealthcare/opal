@@ -43,7 +43,7 @@ describe('controllers', function() {
 				ward: 'T10',
 				bed: '15',
 				date_of_admission: '2013-08-01',
-				tags: ['mine', 'tropical']
+				tags: {'mine': true, 'tropical': true}
 			}],
 			diagnosis: [{
 				id: 102,
@@ -65,24 +65,108 @@ describe('controllers', function() {
 	});
 
 	describe('PatientListCtrl', function() {
-		var $scope, $cookieStore, $controller, patients;
+		var $scope, $cookieStore, $controller, $q, $dialog;
+		var patients, controller;
 
 		beforeEach(function() {
 			inject(function($injector) {
 				$rootScope = $injector.get('$rootScope');
+				$scope = $rootScope.$new();
 				$cookieStore = $injector.get('$cookieStore');
 				$controller = $injector.get('$controller');
+				$q = $injector.get('$q');
+				$dialog = $injector.get('$dialog');
 			});
 
 			patients = [new Patient(patientData, schema)];
-		});
 
-		it('should be createable', function() {
-			var controller = $controller('PatientListCtrl', {
-				$scope: $rootScope.$new(),
+			controller = $controller('PatientListCtrl', {
+				$scope: $scope,
 				$cookieStore: $cookieStore,
 				schema: schema,
 				patients: patients
+			});
+		});
+
+		describe('newly-created controller', function() {
+			it('should have state "normal"', function() {
+				expect($scope.state).toBe('normal');
+			});
+		});
+
+		describe('editing an item', function() {
+			beforeEach(function() {
+				inject(function($injector) {
+				});
+			});
+
+			it('should select that item', function() {
+				$scope.editItem(0, 0, 0);
+				expect([$scope.rix, $scope.cix, $scope.iix]).toEqual([0, 0, 0]);
+			});
+
+			it('should change state to "editing"', function() {
+				$scope.editItem(0, 0, 0);
+				expect($scope.state).toBe('editing');
+			});
+
+			it('should set up the demographics modal', function() {
+				var callArgs;
+
+				spyOn($dialog, 'dialog').andCallThrough();
+
+				$scope.editItem(0, 0, 0);
+
+				callArgs = $dialog.dialog.mostRecentCall.args;
+				expect(callArgs.length).toBe(1);
+				expect(callArgs[0].templateUrl).toBe('/templates/modals/demographics.html/');
+				expect(callArgs[0].controller).toBe('EditItemModalCtrl');
+				expect(callArgs[0].resolve.item()).toEqual($scope.patients[0].demographics[0]);
+			});
+
+			it('should open the demographics modal', function() {
+				var modalSpy;
+
+				modalSpy = {open: function() {}};
+				spyOn($dialog, 'dialog').andReturn(modalSpy);
+				spyOn(modalSpy, 'open').andReturn({then: function() {}});
+
+				$scope.editItem(0, 0, 0);
+
+				expect(modalSpy.open).toHaveBeenCalled();
+			});
+
+			it('should change state to "normal" when the modal is closed', function() {
+				var deferred, modalSpy;
+
+				deferred = $q.defer();
+				modalSpy = {open: function() {}};
+				spyOn($dialog, 'dialog').andReturn(modalSpy);
+				spyOn(modalSpy, 'open').andReturn(deferred.promise);
+
+				$scope.editItem(0, 0, 0);
+
+				deferred.resolve('save');
+				$rootScope.$apply();
+
+				expect($scope.state).toBe('normal');
+			});
+
+			it('should add a new item if result is "add-another"', function() {
+				var deferred, modalSpy;
+
+				deferred = $q.defer();
+				modalSpy = {open: function() {}};
+				spyOn($dialog, 'dialog').andReturn(modalSpy);
+				spyOn(modalSpy, 'open').andReturn(deferred.promise);
+
+				$scope.editItem(0, 0, 0);
+
+				spyOn($scope, 'editItem');
+				deferred.resolve('add-another');
+				$rootScope.$apply();
+
+				expect($scope.editItem).toHaveBeenCalledWith(0, 0, 1);
 			});
 		});
 	});

@@ -1,14 +1,12 @@
-<div class="modal hide" tabindex="-1" role="dialog">
-        <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" ng-click="cancelEdit()">×</button>
-                <h3>{{title}} ([[editingName]])</h3>
-        </div>
-        <div class="modal-body">{% include modal_template_path %}</div>
-        <div class="modal-footer">
-                <button class="btn btn-primary" ng-click="saveEdit()">Save</button>
-                {% if not single %}
-                <button class="btn btn" ng-click="saveEditAndAdd(e)">Save and add another</button>
-                {% endif %}
-                <button class="btn" ng-click="cancelEdit()">Cancel</button>
-        </div>
+<div class="modal-header">
+	<button type="button" class="close" ng-click="cancel()">×</button>
+	<h3>{{title}} ([[editingName]])</h3>
+</div>
+<div class="modal-body">{% include modal_template_path %}</div>
+<div class="modal-footer">
+	<button class="btn btn-primary" ng-click="save('save')">Save</button>
+	{% if not single %}
+	<button class="btn btn" ng-click="save('save-and-add-another')">Save and add another</button>
+	{% endif %}
+	<button class="btn" ng-click="cancel()">Cancel</button>
 </div>

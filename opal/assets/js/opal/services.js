@@ -77,63 +77,97 @@ services.factory('patientLoader', function($q, $route, PatientResource, Patient,
 	};
 });
 
-services.factory('Patient', function($http, $q, utils) {
+services.factory('Patient', function($http, $q, Item, utils) {
 	return function(resource, schema) {
 		var patient = this;
-	   	var column, field, item;
+	   	var column, field, attrs;
 
 		angular.extend(patient, resource);
 
 		for (var cix = 0; cix < schema.getNumberOfColumns(); cix++) {
 			column = schema.getColumn(cix);
 
-			// Convert values of date fields to Date objects
-			for (var fix = 0; fix < column.fields.length; fix++) {
-				field = column.fields[fix];
-				if (field.type == 'date') {
-					for (var iix = 0; iix < patient[column.name].length; iix++) {
-						item = patient[column.name][iix];
-						item[field.name] = utils.parseDate(item[field.name]);
-					};
-				};
+			for (var iix = 0; iix < patient[column.name].length; iix++) {
+				attrs = patient[column.name][iix];
+				patient[column.name][iix] = new Item(attrs, patient, column);
 			};
+		};
+
+		this.getNumberOfItems = function(cix) {
+			return patient[schema.getColumnName(cix)].length;
+		};
+
+		this.newItem = function(cix) {
+			return new Item({}, patient, schema.getColumn(cix));
 		};
 
 		this.getItem = function(cix, iix) {
 			return patient[schema.getColumnName(cix)][iix];
 		};
 
-		this.copyItem = function(cix, iix) {
-			return _.clone(this.getItem(cix, iix));
+		this.addItem = function(item) {
+			patient[item.columnName].push(item);
+		};
+	};
+});
+
+services.factory('Item', function($http, $q, utils) {
+	return function(attrs, patient, columnSchema) {
+		var item = this;
+		var field;
+
+		angular.extend(item, attrs);
+
+		// Convert values of date fields to Date objects
+		for (var fix = 0; fix < columnSchema.fields.length; fix++) {
+			field = columnSchema.fields[fix];
+			if (field.type == 'date') {
+				item[field.name] = utils.parseDate(item[field.name]);
+			};
 		};
 
-		this.updateItem = function(cix, iix, attrs) {
-			var deferred = $q.defer();
-			var columnName = schema.getColumnName(cix);
-			var url = '/patient/' + columnName + '/' + attrs.id + '/';
+		this.columnName = columnSchema.name;
 
-			$http.put(url, attrs).then(function(response) {
-				patient[columnName][iix] = attrs;
+		this.patientName = patient.demographics[0].name;
+
+		this.makeCopy = function() {
+			var field;
+			var copy = {id: item.id};
+
+			for (var fix = 0; fix < columnSchema.fields.length; fix++) {
+				field = columnSchema.fields[fix];
+				if (field.type != 'date') {
+					// Currently cannot display date objects in form inputs
+					// TODO fix this
+					copy[field.name] = _.clone(item[field.name]);
+				};
+			};
+
+			return copy;
+		};
+
+		this.save = function(attrs) {
+			var deferred = $q.defer();
+			var url = '/patient/' + this.columnName + '/';
+			var method;
+
+			if (angular.isDefined(item.id)) {
+				method = 'put';
+				url += attrs.id + '/';
+			} else {
+				method = 'post';
+				attrs['patient_id'] = patient.id;
+			}
+
+			$http[method](url, attrs).then(function(response) {
+				angular.extend(item, attrs);
+				if (method == 'post') {
+					patient.addItem(item);
+				};
 				deferred.resolve();
 			}, function(response) {
 				// handle error better
-				alert('Item could not be updated');
-			});
-			return deferred.promise;
-		};
-
-		this.addItem = function(cix, attrs) {
-			var deferred = $q.defer();
-			var columnName = schema.getColumnName(cix);
-			var url = '/patient/' + columnName + '/';
-
-			$http.post(url, attrs).then(function(response) {
-				attrs.id = response.data.id;
-				patient[columnName].push(attrs);
-				deferred.resolve();
-			}, function(response) {
-				// handle error better
-				alert('Item could not be added');
+				alert('Item could not be saved');
 			});
 			return deferred.promise;
 		};

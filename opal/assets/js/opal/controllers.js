@@ -1,40 +1,12 @@
+// TODO make this a service
 var CATEGORIES = ['Inpatient', 'Review', 'Followup', 'Transferred', 'Discharged', 'Deceased'];
 
 var controllers = angular.module('opal.controllers', [
 	'ngCookies',
-       	'opal.services',
-       	'ui.event'
+	'opal.services',
+	'ui.event',
+	'ui.bootstrap',
 ]);
-
-function replaceSynonym($scope, option, term){
-    if(!term){
-        return term
-    }
-    _.each(_.pairs($scope.synonyms[option]), function(synonym){
-        var possible = synonym[0];
-        var canonical = synonym[1]
-        term = term.replace(possible, canonical);
-    });
-    return term
-}
-
-function buildNewItem(patientId, columnName) {
-	var newItem;
-	newItem = {patient_id: patientId};
-	if (columnName == 'microbiology_test') {
-		newItem.date_ordered = new Date();
-	}
-	if (columnName == 'general_note') {
-		newItem.date = new Date();
-	}
-	if (columnName == 'antimicrobial') {
-		newItem.start_date = new Date();
-	}
-	if (columnName == 'diagnosis') {
-		newItem.date_of_diagnosis = new Date();
-	}
-	return newItem;
-}
 
 controllers.controller('RootCtrl', function($scope) {
 	$scope.keydown = function(e) {
@@ -42,9 +14,10 @@ controllers.controller('RootCtrl', function($scope) {
 	};
 });
 
-controllers.controller('PatientListCtrl', function($scope, $cookieStore, schema, patients) {
-	var state = 'normal';
+controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog, schema, patients) {
 	var columnName;
+
+	$scope.state = 'normal';
 
 	$scope.rix = 0; // row index
 	$scope.cix = 0; // column index
@@ -62,8 +35,6 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, schema,
 			$scope.columns.push(schema.getColumn(cix));
 		}
 	}
-
-	$scope.synonyms = schema.synonyms;
 
 	$scope.microbiology_test_list = [];
 
@@ -121,26 +92,36 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, schema,
 		$scope.rows = getVisiblePatients();
 	});
 
-	$scope.$on('keydown', function(event, originalEvent) {
-		switch (state) {
-			case 'adding':
-				handleKeypressAdd(originalEvent);
-				break;
-			case 'editing':
-				handleKeypressEdit(originalEvent);
-				break;
-			case 'deleting':
-				handleKeypressDelete(originalEvent);
-				break;
-			case 'discharging':
-				handleKeypressDischarge(originalEvent);
-				break;
-			case 'searching':
-				// nothing special
-				break;
-			case 'normal':
-				handleKeypressNormal(originalEvent);
-				break;
+	$scope.$on('keydown', function(event, e) {
+		if ($scope.state == 'normal') {
+			switch (e.keyCode) {
+				case 37: // left
+					goLeft();
+					break;
+				case 39: // right
+					goRight();
+					break;
+				case 38: // up
+					goUp();
+					break;
+				case 40: // down
+					goDown();
+					break;
+				case 13: // enter
+				case 113: // F2
+					$scope.editItem($scope.rix, $scope.cix, $scope.iix);
+					break;
+				case 8: // backspace
+					e.preventDefault();
+				case 46: // delete
+					startDelete();
+					break;
+				case 191: // question mark
+					if(e.shiftKey){
+						showKeyboardShortcuts();
+					}
+					break;
+			};
 		};
 	});
 
@@ -170,12 +151,6 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, schema,
 		}
 
 		return 0;
-	};
-
-	$scope.getSynonymn = function(option, term) {
-		return term;
-		// TODO get this working again
-		//return replaceSynonym($scope, option, term);
 	};
 
 	function getRowIxFromPatientId(patientId) {
@@ -275,67 +250,6 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, schema,
 		clearModal('add-new');
 	};
 
-	function startEdit() {
-		var patient = getPatient($scope.rix);
-		var columnName = schema.getColumnName($scope.cix);
-		var dob;
-
-		state = 'editing';
-		$scope.editing = patient.copyItem($scope.cix, $scope.iix);
-
-		if (columnName == 'demographics') {
-			dob = $scope.editing.date_of_birth;
-			if (dob) {
-				$scope.editing.date_of_birth = dob.getDate() + '/' + (dob.getMonth() + 1) + '/' + dob.getFullYear();
-			}
-		}
-		$scope.editingName = $scope.rows[$scope.rix].demographics[0].name;
-
-		$('#' + columnName + '-modal').modal();
-		$('#' + columnName + '-modal').find('input,textarea').first().focus();
-	};
-
-	$scope.saveEdit = function() {
-		var patient = getPatient($scope.rix);
-		var columnName = schema.getColumnName($scope.cix);
-		var dob;
-
-		state = 'normal';
-		clearModal(columnName);
-
-		if (columnName == 'demographics') {
-			dob = $scope.editing.date_of_birth;
-			if (dob) {
-				$scope.editing.date_of_birth = parseDate(dob);
-			}
-		}
-
-		if (angular.isUndefined($scope.editing.id)) {
-			// This is a new item
-			$scope.editing.patient_id = patient.id;
-			patient.addItem($scope.cix, $scope.editing);
-		} else {
-			patient.updateItem($scope.cix, $scope.iix, $scope.editing);
-		}
-
-		if (columnName == 'location') {
-			// User may have removed current tag
-			$scope.rows = getVisiblePatients();
-			$scope.selectItem(getRowIxFromPatientId(patientId), $scope.cix, 0);
-		}
-	};
-
-	$scope.saveEditAndAdd = function() {
-		$scope.saveEdit();
-		$scope.iix = getNumItems($scope.rix, $scope.cix) - 1;
-		startEdit();
-	}
-
-	$scope.cancelEdit = function() {
-		state = 'normal';
-		clearModal(getCurrentColumnName());
-	};
-
 	function startDelete() {
 		if (schema.isSingleton($scope.cix)) {
 			// Cannot delete singleton
@@ -433,8 +347,39 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, schema,
 	}
 
 	$scope.editItem = function(rix, cix, iix) {
+		var modal;
+		var columnName = schema.getColumnName(cix);
+		var patient = getPatient(rix);
+		var item;
+
+		if (iix == patient.getNumberOfItems(cix)) {
+			item = patient.newItem(cix);
+		} else {
+			item = patient.getItem(cix, iix);
+		}
+
+		$scope.state = 'editing';
 		$scope.selectItem(rix, cix, iix);
-		startEdit();
+
+		modal = $dialog.dialog({
+			templateUrl: '/templates/modals/' + columnName + '.html/',
+			controller: 'EditItemModalCtrl',
+			resolve: {item: function() { return item; }},
+		});
+
+		modal.open().then(function(result) {
+			$scope.state = 'normal';
+
+			if (columnName == 'location') {
+				// User may have removed current tag
+				$scope.rows = getVisiblePatients();
+				$scope.selectItem(getRowIxFromPatientId(patient.id), $scope.cix, 0);
+			}
+
+			if (result == 'add-another') {
+				$scope.editItem(rix, cix, patient.getNumberOfItems(cix));
+			};
+		});
 	}
 
 	$scope.mouseEnter = function(rix, cix) {
@@ -447,67 +392,10 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, schema,
 		$scope.mouseCix = -1;
 	}
 
-	function handleKeypressAdd(e) {
-		if (e.keyCode == 27) { // escape
-			$scope.cancelAdd();
-		};
-	};
-
-	function handleKeypressEdit(e) {
-		if (e.keyCode == 27) { // escape
-			$scope.cancelEdit();
-		};
-	};
-
-	function handleKeypressDelete(e) {
-		if (e.keyCode == 27) { // escape
-			$scope.cancelDelete();
-		};
-	};
-
-	function handleKeypressDischarge(e) {
-		if (e.keyCode == 27) { // escape
-			$scope.cancelDischarge();
-		};
-	};
-
-	function handleKeypressNormal(e) {
-		switch (e.keyCode) {
-			case 37: // left
-				goLeft();
-				break;
-			case 39: // right
-				goRight();
-				break;
-			case 38: // up
-				goUp();
-				break;
-			case 40: // down
-				goDown();
-				break;
-			case 13: // enter
-                                e.preventDefault();
-				startEdit();
-				break;
-			case 8: // backspace
-				e.preventDefault();
-			case 46: // delete
-				startDelete();
-				break;
-                        case 113: // F2
-                                startEdit();
-                                break;
-                        case 191: // ?
-                                if(e.shiftKey){
-                                    showKeyboardShortcuts();
-                                }
-                                break;
-		};
-	};
-
         function showKeyboardShortcuts(){
                 $('#keyboard-shortcuts').modal();
         };
+
 
 	function goLeft() {
 		if ($scope.cix > 0) {
@@ -629,5 +517,19 @@ controllers.controller('SearchCtrl', function($scope, $http, $location) {
 	$scope.cancelAdd = function() {
 		state = 'normal';
 		clearModal('add-new');
+	};
+});
+
+controllers.controller('EditItemModalCtrl', function($scope, dialog, item) {
+	$scope.editing = item.makeCopy();
+	$scope.editingName = item.patientName;
+
+	$scope.save = function(result) {
+		item.save($scope.editing);
+		dialog.close(result);
+	};
+
+	$scope.cancel = function() {
+		dialog.close('cancel');
 	};
 });

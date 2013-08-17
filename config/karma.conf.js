@@ -9,6 +9,7 @@ files = [
   'angular-1.1.5/angular-mocks.js',
   'angular-1.1.5/angular-mocks.js',
   'angular-ui-utils-0.0.4/ui-utils.js',
+  'angular-ui-bootstrap-0.4.0/ui-bootstrap-tpls.js',
   'utils/underscore.js',
   'opal/directives.js',
   'opal/filters.js',
