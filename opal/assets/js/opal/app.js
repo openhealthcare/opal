@@ -40,10 +40,3 @@ app.config(function($routeProvider) {
 			templateUrl: '/templates/search.html'
 		}).otherwise({redirectTo: '/'});
 });
-
-app.value('$strapConfig', {
-	datepicker: {
-		format: 'dd/mm/yyyy',
-	}
-});
-
