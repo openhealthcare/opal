@@ -2,7 +2,7 @@
 	<div class="control-group">
 		<label class="control-label">Condition</label>
 		<div class="controls">
-			<input type="text" ng-model="editing.condition" bs-typeahead="condition_list" data-provide="typeahead">
+			<input type="text" ng-model="editing.condition" typeahead="item for item in options.condition | filter:$viewValue | limitTo:8">
 		</div>
 	</div>
 	<div class="control-group">
@@ -14,7 +14,7 @@
 	<div class="control-group">
 		<label class="control-label">Details</label>
 		<div class="controls">
-			<input type="text" ng-model="editing.details" bs-typeahead="subcondition_list" data-provide="typeahead">
+			<input type="text" ng-model="editing.details">
 		</div>
 	</div>
 	<div class="control-group">

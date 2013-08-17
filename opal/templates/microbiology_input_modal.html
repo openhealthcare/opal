@@ -14,7 +14,7 @@
 	<div class="control-group">
 		<label class="control-label">Reason for clinical interaction</label>
 		<div class="controls">
-			<input type="text" ng-model="editing.reason_for_interaction" bs-typeahead="clinical_advice_reason_for_interaction_list" data-provide="typeahead" data-min-length=0>
+			<input type="text" ng-model="editing.reason_for_interaction" typeahead="item for item in clinical_advice_reason_for_interaction | filter:$viewValue | limitTo:8">
 		</div>
 	</div>
 	<div class="control-group">

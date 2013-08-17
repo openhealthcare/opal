@@ -1,5 +1,5 @@
 describe('controllers', function() {
-	var columns, patientData, Schema, schema, Patient;
+	var columns, patientData, optionsData, Schema, schema, Patient;
 
 	beforeEach(function() {
 		module('opal.controllers');
@@ -30,6 +30,7 @@ describe('controllers', function() {
 					{name: 'provisional', type: 'boolean'},
 				]},
 		];
+
 		patientData = {
 			id: 123,
 			demographics: [{
@@ -56,6 +57,10 @@ describe('controllers', function() {
 			}]
 		};
 
+		optionsData = {
+			condition: ['Another condition', 'Some condition']
+		}
+
 		inject(function($injector) {
 			Schema = $injector.get('Schema');
 			Patient = $injector.get('Patient');
@@ -79,12 +84,14 @@ describe('controllers', function() {
 			});
 
 			patients = [new Patient(patientData, schema)];
+			options = optionsData;
 
 			controller = $controller('PatientListCtrl', {
 				$scope: $scope,
 				$cookieStore: $cookieStore,
 				schema: schema,
-				patients: patients
+				patients: patients,
+				options: options
 			});
 		});
 

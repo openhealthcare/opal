@@ -34,6 +34,18 @@ services.factory('Schema', function() {
 	};
 });
 
+services.factory('Options', function($q, $http) {
+	var deferred = $q.defer();
+	$http.get('/options/').then(function(response) {
+		deferred.resolve(response.data);
+	}, function() {
+		// handle error better
+		alert('Options could not be loaded');
+	});
+
+	return deferred.promise;
+});
+
 services.factory('patientsLoader', function($q, PatientResource, Patient, schemaLoader) {
 	return function() {
 		var deferred = $q.defer();

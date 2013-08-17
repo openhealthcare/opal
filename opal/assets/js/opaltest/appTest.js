@@ -11,6 +11,7 @@ describe('app', function() {
 		});
 
 		$httpBackend.whenGET('/schema/').respond([]);
+		$httpBackend.whenGET('/options/').respond([]);
 		$httpBackend.whenGET('/templates/patient_list.html').respond();
 		$httpBackend.whenGET('/templates/patient_detail.html').respond();
 		$httpBackend.whenGET('/templates/search.html').respond();

@@ -2,7 +2,7 @@
 	<div class="control-group">
 		<label class="control-label">Destination</label>
 		<div class="controls">
-			<input type="text" ng-model="editing.destination" bs-typeahead="destination_list" data-provide="typeahead">
+			<input type="text" ng-model="editing.destination" typeahead="item for item in options.destination | filter:$viewValue | limitTo:8">
 		</div>
 	</div>
 	<div class="control-group">
@@ -14,7 +14,7 @@
 	<div class="control-group">
 		<label class="control-label">Reason for travel</label>
 		<div class="controls">
-			<input type="text" ng-model="editing.reason_for_travel" bs-typeahead="travel_reason_list" data-provide="typeahead">
+			<input type="text" ng-model="editing.reason_for_travel" typeahead="item for item in options.travel_reason | filter:$viewValue | limitTo:8">
 		</div>
 	</div>
 	<div class="control-group">

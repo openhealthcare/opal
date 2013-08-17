@@ -21,6 +21,9 @@ app.config(function($routeProvider) {
 				},
 				patients: function(patientsLoader) {
 					return patientsLoader();
+				},
+				options: function(Options) {
+					return Options;
 				}
 			},
 			templateUrl: '/templates/patient_list.html'

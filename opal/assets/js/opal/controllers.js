@@ -14,7 +14,7 @@ controllers.controller('RootCtrl', function($scope) {
 	};
 });
 
-controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog, schema, patients) {
+controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog, schema, patients, options) {
 	var columnName;
 
 	$scope.state = 'normal';
@@ -35,19 +35,6 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 			$scope.columns.push(schema.getColumn(cix));
 		}
 	}
-
-	$scope.microbiology_test_list = [];
-
-	// The following could be done on the server
-	for (var optionName in schema.option_lists) {
-		if (optionName.indexOf('micro_test') == 0) {
-			for (var oix = 0; oix < schema.option_lists[optionName].length; oix++) {
-				$scope.microbiology_test_list.push(schema.option_lists[optionName][oix]);
-			}
-		} else {
-			$scope[optionName + '_list'] = schema.option_lists[optionName];
-		}
-	};
 
 	$scope.patient_category_list = ['Inpatient', 'Review'];
 
@@ -364,7 +351,10 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 		modal = $dialog.dialog({
 			templateUrl: '/templates/modals/' + columnName + '.html/',
 			controller: 'EditItemModalCtrl',
-			resolve: {item: function() { return item; }},
+			resolve: {
+				item: function() { return item; },
+				options: function() { return options; },
+			},
 		});
 
 		modal.open().then(function(result) {
@@ -520,7 +510,8 @@ controllers.controller('SearchCtrl', function($scope, $http, $location) {
 	};
 });
 
-controllers.controller('EditItemModalCtrl', function($scope, dialog, item) {
+controllers.controller('EditItemModalCtrl', function($scope, dialog, item, options) {
+	$scope.options = options;
 	$scope.editing = item.makeCopy();
 	$scope.editingName = item.patientName;
 
