@@ -123,6 +123,14 @@ class PatientDetailTemplateView(PatientTemplateView):
 class SearchTemplateView(PatientTemplateView):
     template_name = 'search.html'
 
+class AddPatientTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = 'add_patient_modal.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(AddPatientTemplateView, self).get_context_data(**kwargs)
+        context['tags'] = models.TAGS
+        return context
+
 class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'opal.html'
 

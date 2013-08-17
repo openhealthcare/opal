@@ -14,7 +14,7 @@ controllers.controller('RootCtrl', function($scope) {
 	};
 });
 
-controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog, schema, patients, options) {
+controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog, Patient, schema, patients, options) {
 	var columnName;
 
 	$scope.state = 'normal';
@@ -35,8 +35,6 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 			$scope.columns.push(schema.getColumn(cix));
 		}
 	}
-
-	$scope.patient_category_list = ['Inpatient', 'Review'];
 
 	$scope.patients = patients;
 
@@ -170,35 +168,6 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 		window.print();
 	};
 
-	$scope.startAdd = function() {
-		state = 'adding';
-		$scope.foundPatient = false; // Display rest of form when true
-		$scope.findingPatient = false; // Disable Search button when true
-		$scope.editing = {
-			location: {
-				date_of_admission: new Date(),
-				tags: {},
-			},
-			demographics: {},
-		};
-		$('#add-new-modal').modal();
-		$('#add-new-modal').find('input,textarea').first().focus();
-	};
-
-	$scope.findByHospitalNumber = function() {
-		var hospitalNumber = $scope.editing.demographics.hospital_number
-		$scope.findingPatient = true;
-		$http.get('search/?hospital_number=' + hospitalNumber).success(function(results) {
-			$scope.findingPatient = false;
-			$scope.foundPatient = true; // misnomer: might not actually have found a patient!
-			if (results.patients.length == 1) {
-				$scope.editing.demographics = clone(results.patients[0].demographics);
-				$scope.editing.location = clone(results.patients[0].location);
-				$scope.editing.tags = clone(results.patients[0].tags);
-			}
-			$scope.editing.location.tags[$scope.currentTag] = true;
-		});
-	};
 
 	$scope.selectItem = function(rix, cix, iix) {
 		$scope.rix = rix;
@@ -206,36 +175,6 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 		$scope.iix = iix;
 		state = 'normal';
 	}
-
-	$scope.saveAdd = function() {
-		var rix;
-		var columnName;
-
-		state = 'normal';
-		clearModal('add-new');
-		$http.post('patient/', $scope.editing).success(function(patient) {
-			for (var cix = 0; cix < $scope.columns.length; cix++) {
-				columnName = schema.columnName(cix);
-				if (!schema.isSingleton(cix)) {
-					patient[columnName] = [buildNewItem(patient.id, columnName)];
-				}
-			}
-			rix = getRowIxFromPatientId(patient.id);
-			if (rix != -1) {
-				// If patient is already in table, remove the corresponding row.
-				// This guards against user changing patient data in add form.
-				$scope.rows.splice(rix, 1);
-			}
-			$scope.patients.push(patient);
-			$scope.rows = getVisiblePatients();
-			$scope.selectItem(getRowIxFromPatientId(patient.id), 0, 0);
-		});
-	};
-
-	$scope.cancelAdd = function() {
-		state = 'normal';
-		clearModal('add-new');
-	};
 
 	function startDelete() {
 		if (schema.isSingleton($scope.cix)) {
@@ -332,6 +271,39 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 		$scope.selectItem(-1, -1, -1);
 		state = 'searching';
 	}
+
+	$scope.addPatient = function() {
+		var modal;
+		$scope.state = 'editing';
+
+		modal = $dialog.dialog({
+			templateUrl: '/templates/modals/add_patient.html/',
+			controller: 'AddPatientModalCtrl',
+			resolve: {
+				currentTag: function() { return $scope.currentTag; },
+				options: function() { return options; },
+			}
+		});
+
+		modal.open().then(function(result) {
+			var patient;
+			$scope.state = 'normal';
+
+			if (angular.isDefined(result)) {
+				// result is attributes of patient
+				patient = new Patient(result, schema)
+				rix = getRowIxFromPatientId(patient.id);
+				if (rix != -1) {
+					// If patient is already in table, remove the corresponding row.
+					// This guards against user changing patient data in add form.
+					$scope.rows.splice(rix, 1);
+				}
+				$scope.patients.push(patient);
+				$scope.rows = getVisiblePatients();
+				$scope.selectItem(getRowIxFromPatientId(patient.id), 0, 0);
+			}
+		});
+	};
 
 	$scope.editItem = function(rix, cix, iix) {
 		var modal;
@@ -522,5 +494,44 @@ controllers.controller('EditItemModalCtrl', function($scope, dialog, item, optio
 
 	$scope.cancel = function() {
 		dialog.close('cancel');
+	};
+});
+
+controllers.controller('AddPatientModalCtrl', function($scope, $http, dialog, options, currentTag) {
+	console.log(currentTag);
+	$scope.options = options;
+
+	$scope.foundPatient = false; // Display rest of form when true
+	$scope.findingPatient = false; // Disable Search button when true
+	$scope.editing = {
+		location: {
+			date_of_admission: new Date(),
+			tags: {},
+		},
+		demographics: {},
+	};
+
+	$scope.findByHospitalNumber = function() {
+		var hospitalNumber = $scope.editing.demographics.hospital_number
+		$scope.findingPatient = true;
+		$http.get('patient/?hospital_number=' + hospitalNumber).success(function(results) {
+			$scope.findingPatient = false;
+			$scope.foundPatient = true; // misnomer: might not actually have found a patient!
+			if (results.length == 1) {
+				$scope.editing.demographics = results[0].demographics[0];
+				$scope.editing.location = results[0].location[0]
+			}
+			$scope.editing.location.tags[currentTag] = true;
+		});
+	};
+
+	$scope.save = function() {
+		$http.post('patient/', $scope.editing).success(function(patient) {
+			dialog.close(patient);
+		});
+	};
+
+	$scope.cancel = function() {
+		dialog.close();
 	};
 });
