@@ -247,15 +247,15 @@ class PatientTest(TestCase):
         self.assert_status_code(200, rsp)
 
     def test_can_access_patient_list_template(self):
-        rsp = self.client.get('/patient/templates/patient_list.html/')
+        rsp = self.client.get('/templates/patient_list.html/')
         self.assert_status_code(200, rsp)
 
     def test_can_access_patient_detail_template(self):
-        rsp = self.client.get('/patient/templates/patient_detail.html/')
+        rsp = self.client.get('/templates/patient_detail.html/')
         self.assert_status_code(200, rsp)
 
     def test_can_access_search_template(self):
-        rsp = self.client.get('/patient/templates/search.html/')
+        rsp = self.client.get('/templates/search.html/')
         self.assert_status_code(200, rsp)
 
     def test_field_schema_correct_for_demographics(self):
