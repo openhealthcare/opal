@@ -1,16 +1,27 @@
-"""
-This file demonstrates writing tests using the unittest module. These will pass
-when you run "manage.py test".
-
-Replace this with more appropriate tests for your application.
-"""
+import json
 
 from django.test import TestCase
+from django.test.client import RequestFactory
 
+from options.views import options_view
 
-class SimpleTest(TestCase):
-    def test_basic_addition(self):
-        """
-        Tests that 1 + 1 always equals 2.
-        """
-        self.assertEqual(1 + 1, 2)
+class OptionsTest(TestCase):
+    fixtures = ['options_options']
+
+    def test_options_view(self):
+        request = RequestFactory().get('/options')
+        response = options_view(request)
+        self.assertEqual(200, response.status_code)
+        data = json.loads(response.content)
+        expected_data = {
+            'condition': ['Condition synonym', 'Some condition'],
+            'antimicrobial': ['Another antimicrobial', 'Some antimicrobial'],
+            'antimicrobial_route': [],
+            'clinical_advice_reason_for_interaction': [],
+            'destination': [],
+            'hospital': [],
+            'microbiology_organism': [],
+            'travel_reason': []
+        }
+        self.assertEqual(expected_data, data)
+

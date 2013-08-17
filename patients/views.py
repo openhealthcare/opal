@@ -10,7 +10,6 @@ from django.utils import formats
 from django.contrib.auth.decorators import login_required
 from utils import camelcase_to_underscore
 from patients import models, schema
-from options.models import option_models, Synonym
 
 class LoginRequiredMixin(object):
     @method_decorator(login_required)

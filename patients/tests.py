@@ -3,7 +3,7 @@ from django.test import TestCase
 from patients import models
 
 class PatientTest(TestCase):
-    fixtures = ['users', 'options', 'patients']
+    fixtures = ['patients_users', 'patients_options', 'patients_patients']
 
     def setUp(self):
         self.assertTrue(self.client.login(username='superuser', password='password'))
