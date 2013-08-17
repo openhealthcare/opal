@@ -7,6 +7,7 @@ urlpatterns = patterns('',
     url(r'^patient_detail.html/$', views.PatientDetailTemplateView.as_view()),
     url(r'^search.html/$', views.SearchTemplateView.as_view()),
     url(r'^modals/add_patient.html/$', views.AddPatientTemplateView.as_view()),
+    url(r'^modals/delete_item_confirmation.html/$', views.DeleteItemConfirmationView.as_view()),
 )
 
 for subrecord_model in models.Subrecord.__subclasses__():

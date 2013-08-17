@@ -58,11 +58,15 @@ def subrecord_detail_view(request, model, pk):
     except model.DoesNotExist:
         return HttpResponseNotFound
 
-    if request.method == 'PUT':
+    if request.method == 'GET':
+        return _build_json_response(subrecord.to_dict())
+    elif request.method == 'PUT':
         data = _get_request_data(request)
         subrecord.update_from_dict(data, request.user)
-
-    return _build_json_response(subrecord.to_dict())
+        return _build_json_response(subrecord.to_dict())
+    elif request.method == 'DELETE':
+        subrecord.delete()
+        return _build_json_response('')
 
 def subrecord_create_view(request, model):
     subrecord = model()
@@ -130,6 +134,9 @@ class AddPatientTemplateView(LoginRequiredMixin, TemplateView):
         context = super(AddPatientTemplateView, self).get_context_data(**kwargs)
         context['tags'] = models.TAGS
         return context
+
+class DeleteItemConfirmationView(LoginRequiredMixin, TemplateView):
+    template_name = 'delete_item_confirmation_modal.html'
 
 class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'opal.html'

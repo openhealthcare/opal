@@ -111,6 +111,16 @@ services.factory('Patient', function($http, $q, Item, utils) {
 		this.addItem = function(item) {
 			patient[item.columnName].push(item);
 		};
+
+		this.removeItem = function(item) {
+			var items = patient[item.columnName];
+			for (iix = 0; iix < items.length; iix++) {
+				if (item.id == items[iix].id) {
+					items.splice(iix, 1);
+					break;
+				};
+			};
+		};
 	};
 });
 
@@ -171,6 +181,20 @@ services.factory('Item', function($http, $q, utils) {
 			}, function(response) {
 				// handle error better
 				alert('Item could not be saved');
+			});
+			return deferred.promise;
+		};
+
+		this.destroy = function() {
+			var deferred = $q.defer();
+			var url = '/patient/' + item.columnName + '/' + item.id + '/';
+
+			$http['delete'](url).then(function(response) {
+				patient.removeItem(item);
+				deferred.resolve();
+			}, function(response) {
+				// handle error better
+				alert('Item could not be deleted');
 			});
 			return deferred.promise;
 		};

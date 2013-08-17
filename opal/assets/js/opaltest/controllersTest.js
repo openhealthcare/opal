@@ -102,9 +102,9 @@ describe('controllers', function() {
 		});
 
 		describe('adding a patient', function() {
-			it('should change stated to "editing"', function() {
+			it('should change stated to "modal"', function() {
 				$scope.addPatient();
-				expect($scope.state).toBe('editing');
+				expect($scope.state).toBe('modal');
 			});
 
 			it('should set up the add patient modal', function() {
@@ -117,7 +117,7 @@ describe('controllers', function() {
 				callArgs = $dialog.dialog.mostRecentCall.args;
 				expect(callArgs.length).toBe(1);
 				expect(callArgs[0].templateUrl).toBe('/templates/modals/add_patient.html/');
-				expect(callArgs[0].controller).toBe('AddPatientModalCtrl');
+				expect(callArgs[0].controller).toBe('AddPatientCtrl');
 			});
 
 			it('should open the add patient modal', function() {
@@ -155,9 +155,9 @@ describe('controllers', function() {
 				expect([$scope.rix, $scope.cix, $scope.iix]).toEqual([0, 0, 0]);
 			});
 
-			it('should change state to "editing"', function() {
+			it('should change state to "modal"', function() {
 				$scope.editItem(0, 0, 0);
-				expect($scope.state).toBe('editing');
+				expect($scope.state).toBe('modal');
 			});
 
 			it('should set up the demographics modal', function() {
@@ -170,7 +170,7 @@ describe('controllers', function() {
 				callArgs = $dialog.dialog.mostRecentCall.args;
 				expect(callArgs.length).toBe(1);
 				expect(callArgs[0].templateUrl).toBe('/templates/modals/demographics.html/');
-				expect(callArgs[0].controller).toBe('EditItemModalCtrl');
+				expect(callArgs[0].controller).toBe('EditItemCtrl');
 				expect(callArgs[0].resolve.item()).toEqual($scope.patients[0].demographics[0]);
 			});
 

@@ -112,12 +112,20 @@ describe('services', function() {
 			expect(patient.getNumberOfItems(1)).toBe(3);
 			expect(patient.getItem(1, 2).id).toBe(104);
 		});
+
+		it('should be able to remove an item', function() {
+			var item = patient.getItem(1, 0);
+			patient.removeItem(item);
+			expect(patient.getNumberOfItems(1)).toBe(1);
+			expect(patient.getItem(1, 0).id).toBe(103);
+		});
 	});
 
 	describe('Item', function() {
 		var Item, item;
 		var mockPatient = {
 			addItem: function(item) {},
+			removeItem: function(item) {},
 			demographics: [{name: 'Name'}]
 		};
 
@@ -148,7 +156,7 @@ describe('services', function() {
 		});
 
 		describe('communicating with server', function() {
-			var $httpBackend;
+			var $httpBackend, item;
 
 			beforeEach(function() {
 				inject(function($injector) {
@@ -213,6 +221,26 @@ describe('services', function() {
 					item.save(attrs);
 					$httpBackend.flush();
 					expect(mockPatient.addItem).toHaveBeenCalled();
+				});
+			});
+
+			describe('deleting item', function() {
+				beforeEach(function() {
+					item = new Item(patientData.diagnosis[1], mockPatient, columns[1]);
+					$httpBackend.whenDELETE('/patient/diagnosis/103/').respond();
+				});
+
+				it('should hit server', function() {
+					$httpBackend.expectDELETE('/patient/diagnosis/103/');
+					item.destroy();
+					$httpBackend.flush();
+				});
+
+				it('should notify patient', function() {
+					spyOn(mockPatient, 'removeItem');
+					item.destroy();
+					$httpBackend.flush();
+					expect(mockPatient.removeItem).toHaveBeenCalled();
 				});
 			});
 		});

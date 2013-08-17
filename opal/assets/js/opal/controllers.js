@@ -99,7 +99,7 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 				case 8: // backspace
 					e.preventDefault();
 				case 46: // delete
-					startDelete();
+					$scope.deleteItem($scope.rix, $scope.cix, $scope.iix);
 					break;
 				case 191: // question mark
 					if(e.shiftKey){
@@ -176,39 +176,6 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 		state = 'normal';
 	}
 
-	function startDelete() {
-		if (schema.isSingleton($scope.cix)) {
-			// Cannot delete singleton
-			return;
-		}
-
-		if (getNumItems($scope.rix, $scope.cix) == $scope.iix + 1) {
-			// Cannot delete 'Add'
-			return;
-		}
-
-		state = 'deleting';
-		$('#delete-confirmation').modal();
-		$('#delete-confirmation').find('.btn-primary').focus();
-	};
-
-	$scope.doDelete = function() {
-		var patientId = $scope.rows[$scope.rix].id;
-		var columnName = getCurrentColumnName();
-		var items = $scope.rows[$scope.rix][columnName];
-		var itemId = items[$scope.iix].id;
-		var url = 'patient/' + columnName + '/' + itemId + '/';
-
-		$http['delete'](url);
-
-		items.splice($scope.iix, 1);
-		state = 'normal';
-	};
-
-	$scope.cancelDelete = function() {
-		state = 'normal';
-	};
-
 	$scope.startDischarge = function(rix, event) {
 		var patient = $scope.rows[rix];
 		var currentCategory = patient.location[0].category;
@@ -274,11 +241,11 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 
 	$scope.addPatient = function() {
 		var modal;
-		$scope.state = 'editing';
+		$scope.state = 'modal';
 
 		modal = $dialog.dialog({
 			templateUrl: '/templates/modals/add_patient.html/',
-			controller: 'AddPatientModalCtrl',
+			controller: 'AddPatientCtrl',
 			resolve: {
 				currentTag: function() { return $scope.currentTag; },
 				options: function() { return options; },
@@ -289,7 +256,7 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 			var patient;
 			$scope.state = 'normal';
 
-			if (angular.isDefined(result)) {
+			if (angular.isObject(result)) {
 				// result is attributes of patient
 				patient = new Patient(result, schema)
 				rix = getRowIxFromPatientId(patient.id);
@@ -317,12 +284,12 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 			item = patient.getItem(cix, iix);
 		}
 
-		$scope.state = 'editing';
+		$scope.state = 'modal';
 		$scope.selectItem(rix, cix, iix);
 
 		modal = $dialog.dialog({
 			templateUrl: '/templates/modals/' + columnName + '.html/',
-			controller: 'EditItemModalCtrl',
+			controller: 'EditItemCtrl',
 			resolve: {
 				item: function() { return item; },
 				options: function() { return options; },
@@ -342,7 +309,35 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 				$scope.editItem(rix, cix, patient.getNumberOfItems(cix));
 			};
 		});
-	}
+	};
+
+	$scope.deleteItem = function(rix, cix, iix) {
+		var patient = getPatient(rix);
+		var item = patient.getItem(cix, iix);
+
+		if (schema.isSingleton(cix)) {
+			// Cannot delete singleton
+			return;
+		}
+
+		if (patient.getNumberOfItems(cix) == iix) {
+			// Cannot delete 'Add'
+			return;
+		}
+
+		$scope.state = 'modal'
+		modal = $dialog.dialog({
+			templateUrl: '/templates/modals/delete_item_confirmation.html/',
+			controller: 'DeleteItemConfirmationCtrl',
+			resolve: {
+				item: function() { return item; },
+			},
+		});
+
+		modal.open().then(function(result) {
+			$scope.state = 'normal';
+		});
+	};
 
 	$scope.mouseEnter = function(rix, cix) {
 		$scope.mouseRix = rix;
@@ -482,23 +477,7 @@ controllers.controller('SearchCtrl', function($scope, $http, $location) {
 	};
 });
 
-controllers.controller('EditItemModalCtrl', function($scope, dialog, item, options) {
-	$scope.options = options;
-	$scope.editing = item.makeCopy();
-	$scope.editingName = item.patientName;
-
-	$scope.save = function(result) {
-		item.save($scope.editing);
-		dialog.close(result);
-	};
-
-	$scope.cancel = function() {
-		dialog.close('cancel');
-	};
-});
-
-controllers.controller('AddPatientModalCtrl', function($scope, $http, dialog, options, currentTag) {
-	console.log(currentTag);
+controllers.controller('AddPatientCtrl', function($scope, $http, dialog, options, currentTag) {
 	$scope.options = options;
 
 	$scope.foundPatient = false; // Display rest of form when true
@@ -532,6 +511,34 @@ controllers.controller('AddPatientModalCtrl', function($scope, $http, dialog, op
 	};
 
 	$scope.cancel = function() {
-		dialog.close();
+		dialog.close('cancel');
+	};
+});
+
+controllers.controller('EditItemCtrl', function($scope, dialog, item, options) {
+	$scope.options = options;
+	$scope.editing = item.makeCopy();
+	$scope.editingName = item.patientName;
+
+	$scope.save = function() {
+		item.save($scope.editing).then(function() {
+			dialog.close('saved');
+		});
+	};
+
+	$scope.cancel = function() {
+		dialog.close('cancel');
+	};
+});
+
+controllers.controller('DeleteItemConfirmationCtrl', function($scope, $http, dialog, item) {
+	$scope.destroy = function() {
+		item.destroy().then(function() {
+			dialog.close('deleted');
+		});
+	};
+
+	$scope.cancel = function() {
+		dialog.close('cancel');
 	};
 });
