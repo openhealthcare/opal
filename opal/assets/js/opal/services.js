@@ -34,15 +34,6 @@ services.factory('Schema', function() {
 	};
 });
 
-services.factory('Options', function() {
-	return function(options) {
-		this.options = options,
-		this.getSynonymn = function(list, term) {
-			return options[list].synonyms[term] || term;
-		};
-	};
-});
-
 services.factory('patientsLoader', function($q, PatientResource, Patient, schemaLoader) {
 	return function() {
 		var deferred = $q.defer();

@@ -66,35 +66,6 @@ describe('services', function() {
 		});
 	});
 
-	describe('Options', function() {
-		var Options, options;
-		var data = {
-			condition: {
-				options: ['CAP', 'Community Acquired Pneumonia', 'Dengue'],
-				synonyms: {'Community Acquired Pneumonia': 'CAP'}
-			},
-			destination: {
-				options: ['Canada', 'Denmark'],
-				synonyms: {}
-			}
-		};
-
-		beforeEach(function() {
-			inject(function($injector) {
-				Options = $injector.get('Options');
-				options = new Options(data);
-			});
-		});
-
-		it('should find a synonym if it exists', function() {
-			expect(options.getSynonymn('condition', 'Community Acquired Pneumonia')).toBe('CAP');
-		});
-
-		it('should return original term if no synonym exists', function() {
-			expect(options.getSynonymn('condition', 'Dengue')).toBe('Dengue');
-		});
-	});
-
 	describe('Patient', function() {
 		var Patient, patient, PatientResource, resource, Schema, schema, Item;
 
