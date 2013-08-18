@@ -121,10 +121,12 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 		$scope.rix = rix;
 		$scope.cix = cix;
 		$scope.iix = iix;
+		$scope.state = 'normal';
 	}
 
 	$scope.focusOnQuery = function() {
 		$scope.selectItem(-1, -1, -1);
+		$scope.state = 'search';
 	}
 
 	$scope.addPatient = function() {
