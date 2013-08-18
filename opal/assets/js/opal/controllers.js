@@ -331,19 +331,25 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 	};
 
 	function goUp() {
+		var patient = getPatient($scope.rix);
+
 		if ($scope.iix > 0) {
 			$scope.iix--;
 		} else {
 			if ($scope.rix > 0) {
 				$scope.rix--;
-				$scope.iix = getNumItems($scope.rix, $scope.cix) - 1;
+				if (!schema.isSingleton($scope.cix)) {
+					$scope.iix = patient.getNumberOfItems($scope.cix);
+				};
 			};
 		};
 	};
 
 	function goDown() {
+		var patient = getPatient($scope.rix);
+
 		if (!schema.isSingleton($scope.cix) &&
-			($scope.iix < getNumItems($scope.rix, $scope.cix))) {
+			($scope.iix < patient.getNumberOfItems($scope.cix))) {
 			$scope.iix++;
 		} else {
 			if ($scope.rix < $scope.rows.length - 1) {
