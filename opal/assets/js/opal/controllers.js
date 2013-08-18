@@ -125,13 +125,19 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 		$scope.rix = rix;
 		$scope.cix = cix;
 		$scope.iix = iix;
-		$scope.state = 'normal';
-	}
+	};
 
 	$scope.focusOnQuery = function() {
 		$scope.selectItem(-1, -1, -1);
 		$scope.state = 'search';
-	}
+	};
+
+	$scope.blurOnQuery = function() {
+		if ($scope.rix == -1) {
+			$scope.selectItem(0, 0, 0);
+		};
+		$scope.state = 'normal';
+	};
 
 	$scope.addPatient = function() {
 		var modal;
