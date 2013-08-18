@@ -1,3 +1,6 @@
+// TODO make this a service
+var CATEGORIES = ['Inpatient', 'Review', 'Followup', 'Transferred', 'Discharged', 'Deceased'];
+
 var services = angular.module('opal.services', ['ngResource']);
 
 services.factory('PatientResource', function($resource) {
@@ -120,6 +123,48 @@ services.factory('Patient', function($http, $q, Item, utils) {
 					break;
 				};
 			};
+		};
+
+		this.isVisible = function(tag, hospital, ward) {
+			var location = patient.location[0];
+			if (location.tags[tag] != true) {
+				return false;
+			}
+			if (location.hospital.toLowerCase().indexOf(hospital.toLowerCase()) == -1) {
+				return false;
+			}
+			if (location.ward.toLowerCase().indexOf(ward.toLowerCase()) == -1) {
+				return false;
+			}
+			return true;
+		};
+
+		this.compare = function(other) {
+			var v1, v2;
+			var comparators = [
+				function(p) { return CATEGORIES.indexOf(p.location[0].category) },
+				function(p) { return p.location[0].hospital },
+				function(p) {
+					if (p.location[0].hospital == 'UCH' && p.location[0].ward.match(/^T\d+/)) {
+						return parseInt(p.location[0].ward.substring(1));
+					} else {
+						return p.location[0].ward
+					}
+				},
+				function(p) { return parseInt(p.location[0].bed) },
+			];
+
+			for (var ix = 0; ix < comparators.length; ix++) {
+				v1 = comparators[ix](patient);
+				v2 = comparators[ix](other);
+				if (v1 < v2) {
+					return -1;
+				} else if (v1 > v2) {
+					return 1;
+				}
+			}
+
+			return 0;
 		};
 	};
 });

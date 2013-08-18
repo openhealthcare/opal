@@ -1,6 +1,3 @@
-// TODO make this a service
-var CATEGORIES = ['Inpatient', 'Review', 'Followup', 'Transferred', 'Discharged', 'Deceased'];
-
 var controllers = angular.module('opal.controllers', [
 	'ngCookies',
 	'opal.services',
@@ -15,8 +12,6 @@ controllers.controller('RootCtrl', function($scope) {
 });
 
 controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog, Patient, schema, patients, options) {
-	var columnName;
-
 	$scope.state = 'normal';
 
 	$scope.rix = 0; // row index
@@ -43,24 +38,19 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 	function getVisiblePatients() {
 		var patient;
 		var patients = [];
-		var location;
 
 		for (var pix = 0; pix < $scope.patients.length; pix++) {
 			patient = $scope.patients[pix]
-			location = patient.location[0];
-			if (location.tags[$scope.currentTag] != true) {
-				continue;
-			}
-			if (location.hospital.toLowerCase().indexOf($scope.query.hospital.toLowerCase()) == -1) {
-				continue;
-			}
-			if (location.ward.toLowerCase().indexOf($scope.query.ward.toLowerCase()) == -1) {
-				continue;
-			}
-			patients.push(patient);
-		}
+			if (patient.isVisible($scope.currentTag, $scope.query.hospital, $scope.query.ward)) {
+				patients.push(patient);
+			};
+		};
 		patients.sort(comparePatients);
 		return patients;
+	};
+
+	function comparePatients(p1, p2) {
+		return p1.compare(p2);
 	};
 
 	$scope.$watch('currentTag', function() {
@@ -110,34 +100,6 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 		};
 	});
 
-	function comparePatients(p1, p2) {
-		var v1, v2;
-		var comparators = [
-			function(p) { return CATEGORIES.indexOf(p.location[0].category) },
-			function(p) { return p.location[0].hospital },
-			function(p) {
-				if (p.location[0].hospital == 'UCH' && p.location[0].ward.match(/^T\d+/)) {
-					return parseInt(p.location[0].ward.substring(1));
-				} else {
-					return p.location[0].ward
-			       	}
-			},
-			function(p) { return parseInt(p.location[0].bed) },
-		];
-
-		for (var ix = 0; ix < comparators.length; ix++) {
-			v1 = comparators[ix](p1);
-			v2 = comparators[ix](p2);
-			if (v1 < v2) {
-				return -1;
-			} else if (v1 > v2) {
-				return 1;
-			}
-		}
-
-		return 0;
-	};
-
 	function getRowIxFromPatientId(patientId) {
 		for (var rix = 0; rix < $scope.rows.length; rix++) {
 			if ($scope.rows[rix].id == patientId) {
@@ -146,12 +108,6 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 		};
 		return -1;
 	};
-
-	function getNumItems(rix, cix) {
-		var column = $scope.columns[cix];
-		return $scope.rows[rix][column.name].length;
-	};
-
 
 	function getPatient(rix) {
 		return $scope.rows[rix];
@@ -165,12 +121,10 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 		$scope.rix = rix;
 		$scope.cix = cix;
 		$scope.iix = iix;
-		state = 'normal';
 	}
 
 	$scope.focusOnQuery = function() {
 		$scope.selectItem(-1, -1, -1);
-		state = 'searching';
 	}
 
 	$scope.addPatient = function() {
@@ -315,7 +269,6 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
                 $('#keyboard-shortcuts').modal();
         };
 
-
 	function goLeft() {
 		if ($scope.cix > 0) {
 			$scope.cix--;
@@ -354,7 +307,6 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 			$scope.iix = 0;
 		};
 	};
-
 });
 
 controllers.controller('PatientDetailCtrl', function($scope, $http, schema, patient) {
