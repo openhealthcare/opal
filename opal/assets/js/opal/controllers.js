@@ -335,12 +335,10 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 
 		if ($scope.iix > 0) {
 			$scope.iix--;
-		} else {
-			if ($scope.rix > 0) {
-				$scope.rix--;
-				if (!schema.isSingleton($scope.cix)) {
-					$scope.iix = patient.getNumberOfItems($scope.cix);
-				};
+		} else if ($scope.rix > 0) {
+			$scope.rix--;
+			if (!schema.isSingleton($scope.cix)) {
+				$scope.iix = patient.getNumberOfItems($scope.cix);
 			};
 		};
 	};
@@ -349,13 +347,11 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 		var patient = getPatient($scope.rix);
 
 		if (!schema.isSingleton($scope.cix) &&
-			($scope.iix < patient.getNumberOfItems($scope.cix))) {
+		    ($scope.iix < patient.getNumberOfItems($scope.cix))) {
 			$scope.iix++;
-		} else {
-			if ($scope.rix < $scope.rows.length - 1) {
-				$scope.rix++;
-				$scope.iix = 0;
-			};
+		} else if ($scope.rix < $scope.rows.length - 1) {
+			$scope.rix++;
+			$scope.iix = 0;
 		};
 	};
 
