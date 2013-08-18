@@ -1,8 +1,9 @@
 var app = angular.module('opal', [
-	'opal.filters',
-       	'opal.services',
-       	'opal.directives',
-       	'opal.controllers'
+	 'opal.filters',
+	 'opal.services',
+	 'opal.directives',
+	 'opal.controllers',
+	 '$strap.directives',
 ]);
 
 // See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags
@@ -42,4 +43,11 @@ app.config(function($routeProvider) {
 			controller: 'SearchCtrl',
 			templateUrl: '/templates/search.html'
 		}).otherwise({redirectTo: '/'});
+});
+
+app.value('$strapConfig', {
+	datepicker: {
+		type: 'string',
+		format: 'dd/mm/yyyy',
+	}
 });

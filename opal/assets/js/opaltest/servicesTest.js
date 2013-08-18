@@ -151,7 +151,7 @@ describe('services', function() {
 			expect(item.makeCopy()).toEqual({
 				id: 101,
 				name: 'John Smith',
-//				date_of_birth: new Date(1980, 6, 31)
+				date_of_birth: '31/07/1980',
 			});
 		});
 
@@ -170,26 +170,35 @@ describe('services', function() {
 			});
 
 			describe('saving existing item', function() {
-				var attrs;
+				var attrsWithJsonDate, attrsWithHumanDate;
 
 				beforeEach(function() {
-					attrs = {id: 102, condition: 'Dengue', provisional: false};
-					item = new Item(patientData.diagnosis[1], mockPatient, columns[1]);
-					$httpBackend.whenPUT('/patient/diagnosis/102/').respond(attrs);
+					attrsWithJsonDate = {
+						id: 101,
+						name: 'John Smythe',
+						date_of_birth: '1980-07-30',
+					}; 
+					attrsWithHumanDate = {
+						id: 101,
+						name: 'John Smythe',
+						date_of_birth: '30/07/1980',
+					}; 
+					item = new Item(patientData.demographics[0], mockPatient, columns[0]);
+					$httpBackend.whenPUT('/patient/demographics/101/').respond(attrsWithJsonDate);
 				});
 
 				it('should hit server', function() {
-					$httpBackend.expectPUT('/patient/diagnosis/102/');
-					item.save(attrs);
+					$httpBackend.expectPUT('/patient/demographics/101/', attrsWithJsonDate);
+					item.save(attrsWithHumanDate);
 					$httpBackend.flush();
 				});
 
 				it('should update item attributes', function() {
-					item.save(attrs);
+					item.save(attrsWithHumanDate);
 					$httpBackend.flush();
-					expect(item.id).toBe(102);
-					expect(item.condition).toBe('Dengue');
-					expect(item.provisional).toBe(false);
+					expect(item.id).toBe(101);
+					expect(item.name).toBe('John Smythe');
+					expect(item.date_of_birth).toEqual(new Date(1980, 6, 30));
 				});
 			});
 

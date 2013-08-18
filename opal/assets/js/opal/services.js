@@ -94,7 +94,7 @@ services.factory('patientLoader', function($q, $route, PatientResource, Patient,
 	};
 });
 
-services.factory('Patient', function($http, $q, Item, utils) {
+services.factory('Patient', function($http, $q, Item) {
 	return function(resource, schema) {
 		var patient = this;
 	   	var column, field, attrs;
@@ -180,18 +180,22 @@ services.factory('Patient', function($http, $q, Item, utils) {
 	};
 });
 
-services.factory('Item', function($http, $q, utils) {
+services.factory('Item', function($http, $q) {
 	return function(attrs, patient, columnSchema) {
 		var item = this;
-		var field;
 
-		angular.extend(item, attrs);
+		this.initialise = function(attrs) {
+			// Copy all attributes to item, and change any date fields to Date objects
+			var field, value;
 
-		// Convert values of date fields to Date objects
-		for (var fix = 0; fix < columnSchema.fields.length; fix++) {
-			field = columnSchema.fields[fix];
-			if (field.type == 'date') {
-				item[field.name] = utils.parseDate(item[field.name]);
+			angular.extend(item, attrs);
+			for (var fix = 0; fix < columnSchema.fields.length; fix++) {
+				field = columnSchema.fields[fix];
+				value = item[field.name];
+				if (field.type == 'date' && item[field.name]) {
+					// Convert values of date fields to Date objects
+					item[field.name] = moment(item[field.name], 'YYYY-MM-DD')._d;
+				};
 			};
 		};
 
@@ -200,15 +204,17 @@ services.factory('Item', function($http, $q, utils) {
 		this.patientName = patient.demographics[0].name;
 
 		this.makeCopy = function() {
-			var field;
+			var field, value;
 			var copy = {id: item.id};
 
 			for (var fix = 0; fix < columnSchema.fields.length; fix++) {
 				field = columnSchema.fields[fix];
-				if (field.type != 'date') {
-					// Currently cannot display date objects in form inputs
-					// TODO fix this
-					copy[field.name] = _.clone(item[field.name]);
+				value = item[field.name];
+				if (field.type == 'date' && item[field.name]) {
+					// Convert values of date fields to strings of format DD/MM/YYYY
+					copy[field.name] = moment(value).format('DD/MM/YYYY');
+				} else {
+					copy[field.name] = _.clone(value);
 				};
 			};
 
@@ -216,9 +222,24 @@ services.factory('Item', function($http, $q, utils) {
 		};
 
 		this.save = function(attrs) {
+			var field, value;
 			var deferred = $q.defer();
 			var url = '/patient/' + this.columnName + '/';
 			var method;
+
+			for (var fix = 0; fix < columnSchema.fields.length; fix++) {
+				field = columnSchema.fields[fix];
+				value = attrs[field.name];
+				if (field.type == 'date' && attrs[field.name]) {
+					// Convert values of date fields to strings of format YYYY-MM-DD
+					if (angular.isString(value)) {
+						value = moment(value, 'DD/MM/YYYY');
+					} else {
+						value = moment(value);
+					};
+					attrs[field.name] = value.format('YYYY-MM-DD');
+				};
+			};
 
 			if (angular.isDefined(item.id)) {
 				method = 'put';
@@ -229,7 +250,7 @@ services.factory('Item', function($http, $q, utils) {
 			}
 
 			$http[method](url, attrs).then(function(response) {
-				angular.extend(item, attrs);
+				item.initialise(attrs);
 				if (method == 'post') {
 					patient.addItem(item);
 				};
@@ -254,18 +275,7 @@ services.factory('Item', function($http, $q, utils) {
 			});
 			return deferred.promise;
 		};
-	};
-});
 
-services.factory('utils', function() {
-	return {
-		parseDate: function(dateString) {
-			if (angular.isString(dateString)) {
-				var tokens = dateString.split('-');
-				return new Date(tokens[0], tokens[1] - 1, tokens[2]);
-			} else {
-				return dateString;
-			};
-		}
+		this.initialise(attrs);
 	};
 });

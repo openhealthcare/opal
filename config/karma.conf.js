@@ -11,6 +11,7 @@ files = [
   'angular-ui-utils-0.0.4/ui-utils.js',
   'angular-ui-bootstrap-0.4.0/ui-bootstrap-tpls.js',
   'utils/underscore.js',
+  'utils/moment.js',
   'opal/directives.js',
   'opal/filters.js',
   'opal/services.js',
