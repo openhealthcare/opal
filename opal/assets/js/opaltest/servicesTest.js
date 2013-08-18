@@ -52,17 +52,17 @@ describe('services', function() {
 			expect(schema.getNumberOfColumns()).toBe(2);
 		});
 
-		it('should be able to get a column', function() {
-			expect(schema.getColumn(1).name).toBe('diagnosis');
+		it('should be able to get a column by index', function() {
+			expect(schema.getColumnByIx(1).name).toBe('diagnosis');
 		});
 
-		it('should be able to get the name of a column', function() {
-			expect(schema.getColumnName(1)).toBe('diagnosis');
+		it('should be able to get a column', function() {
+			expect(schema.getColumn('diagnosis').name).toBe('diagnosis');
 		});
 
 		it('should know whether a column is a singleton', function() {
-			expect(schema.isSingleton(0)).toBe(true);
-			expect(schema.isSingleton(1)).toBe(false);
+			expect(schema.isSingleton('demographics')).toBe(true);
+			expect(schema.isSingleton('diagnosis')).toBe(false);
 		});
 	});
 
@@ -94,30 +94,30 @@ describe('services', function() {
 		});
 
 		it('should be able to get specific item', function() {
-			expect(patient.getItem(1, 1).id).toEqual(103);
+			expect(patient.getItem('diagnosis', 1).id).toEqual(103);
 		});
 
 		it('should know how many items it has in each column', function() {
-			expect(patient.getNumberOfItems(0)).toBe(1);
-			expect(patient.getNumberOfItems(1)).toBe(2);
+			expect(patient.getNumberOfItems('demographics')).toBe(1);
+			expect(patient.getNumberOfItems('diagnosis')).toBe(2);
 		});
 
 		it('should be able to add a new item', function() {
 			var item = new Item(
 				{id: 104, condition: 'Ebola', provisional: false},
 			       	patient,
-			       	schema.getColumn(1)
+			       	schema.getColumn('diagnosis')
 			);
 			patient.addItem(item);
-			expect(patient.getNumberOfItems(1)).toBe(3);
-			expect(patient.getItem(1, 2).id).toBe(104);
+			expect(patient.getNumberOfItems('diagnosis')).toBe(3);
+			expect(patient.getItem('diagnosis', 2).id).toBe(104);
 		});
 
 		it('should be able to remove an item', function() {
-			var item = patient.getItem(1, 0);
+			var item = patient.getItem('diagnosis', 0);
 			patient.removeItem(item);
-			expect(patient.getNumberOfItems(1)).toBe(1);
-			expect(patient.getItem(1, 0).id).toBe(103);
+			expect(patient.getNumberOfItems('diagnosis')).toBe(1);
+			expect(patient.getItem('diagnosis', 0).id).toBe(103);
 		});
 	});
 

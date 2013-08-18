@@ -26,8 +26,8 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 
 	$scope.columns = []
 	for (var cix = 0; cix < schema.getNumberOfColumns(); cix++) {
-		if (schema.getColumnName(cix) != 'microbiology_input') {
-			$scope.columns.push(schema.getColumn(cix));
+		if (schema.getColumnByIx(cix).name != 'microbiology_input') {
+			$scope.columns.push(schema.getColumnByIx(cix));
 		}
 	}
 
@@ -99,6 +99,10 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 			};
 		};
 	});
+
+	function getColumnName(cix) {
+		return $scope.columns[cix].name;
+	};
 
 	function getRowIxFromPatientId(patientId) {
 		for (var rix = 0; rix < $scope.rows.length; rix++) {
@@ -192,18 +196,18 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 
 	$scope.editItem = function(rix, cix, iix) {
 		var modal;
-		var columnName = schema.getColumnName(cix);
+		var columnName = getColumnName(cix);
 		var patient = getPatient(rix);
 		var item;
 
-		if (iix == patient.getNumberOfItems(cix)) {
-			item = patient.newItem(cix);
+		if (iix == patient.getNumberOfItems(columnName)) {
+			item = patient.newItem(columnName);
 		} else {
-			item = patient.getItem(cix, iix);
+			item = patient.getItem(columnName, iix);
 		}
 
-		$scope.state = 'modal';
 		$scope.selectItem(rix, cix, iix);
+		$scope.state = 'modal';
 
 		modal = $dialog.dialog({
 			templateUrl: '/templates/modals/' + columnName + '.html/',
@@ -224,21 +228,23 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 			}
 
 			if (result == 'add-another') {
-				$scope.editItem(rix, cix, patient.getNumberOfItems(cix));
+				$scope.editItem(rix, cix, patient.getNumberOfItems(columnName));
 			};
 		});
 	};
 
 	$scope.deleteItem = function(rix, cix, iix) {
+		var modal;
+		var columnName = getColumnName(cix);
 		var patient = getPatient(rix);
-		var item = patient.getItem(cix, iix);
+		var item = patient.getItem(columnName, iix);
 
-		if (schema.isSingleton(cix)) {
+		if (schema.isSingleton(columnName)) {
 			// Cannot delete singleton
 			return;
 		}
 
-		if (patient.getNumberOfItems(cix) == iix) {
+		if (!angular.isDefined(item)) {
 			// Cannot delete 'Add'
 			return;
 		}
@@ -268,6 +274,7 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 	}
 
         function showKeyboardShortcuts(){
+		// TODO fix this
                 $('#keyboard-shortcuts').modal();
         };
 
@@ -287,22 +294,24 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 
 	function goUp() {
 		var patient = getPatient($scope.rix);
+		var columnName = getColumnName($scope.cix);
 
 		if ($scope.iix > 0) {
 			$scope.iix--;
 		} else if ($scope.rix > 0) {
 			$scope.rix--;
-			if (!schema.isSingleton($scope.cix)) {
-				$scope.iix = patient.getNumberOfItems($scope.cix);
+			if (!schema.isSingleton(columnName)) {
+				$scope.iix = patient.getNumberOfItems(columnName);
 			};
 		};
 	};
 
 	function goDown() {
 		var patient = getPatient($scope.rix);
+		var columnName = getColumnName($scope.cix);
 
-		if (!schema.isSingleton($scope.cix) &&
-		    ($scope.iix < patient.getNumberOfItems($scope.cix))) {
+		if (!schema.isSingleton(columnName) &&
+		    ($scope.iix < patient.getNumberOfItems(columnName))) {
 			$scope.iix++;
 		} else if ($scope.rix < $scope.rows.length - 1) {
 			$scope.rix++;

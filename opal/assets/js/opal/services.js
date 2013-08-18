@@ -25,14 +25,25 @@ services.factory('Schema', function() {
 		this.getNumberOfColumns = function() {
 			return columns.length;
 		};
-		this.getColumn = function(cix) {
+
+		this.getColumnByIx = function(cix) {
 			return columns[cix];
 		};
-		this.getColumnName = function(cix) {
-			return columns[cix].name;
+
+		this.getColumn = function(columnName) {
+			var column;
+			for (cix = 0; cix < this.getNumberOfColumns(); cix++) {
+				column = this.getColumnByIx(cix);
+				if (column.name == columnName) {
+					return column;
+				}
+			}
+			throw 'No such column with name: "' + columnName + '"';
 		};
-		this.isSingleton = function(cix) {
-			return columns[cix].single;
+
+		this.isSingleton = function(columnName) {
+			var column = this.getColumn(columnName);
+			return column.single;
 		};
 	};
 });
@@ -91,7 +102,7 @@ services.factory('Patient', function($http, $q, Item, utils) {
 		angular.extend(patient, resource);
 
 		for (var cix = 0; cix < schema.getNumberOfColumns(); cix++) {
-			column = schema.getColumn(cix);
+			column = schema.getColumnByIx(cix);
 
 			for (var iix = 0; iix < patient[column.name].length; iix++) {
 				attrs = patient[column.name][iix];
@@ -99,16 +110,16 @@ services.factory('Patient', function($http, $q, Item, utils) {
 			};
 		};
 
-		this.getNumberOfItems = function(cix) {
-			return patient[schema.getColumnName(cix)].length;
+		this.getNumberOfItems = function(columnName) {
+			return patient[columnName].length;
 		};
 
-		this.newItem = function(cix) {
-			return new Item({}, patient, schema.getColumn(cix));
+		this.newItem = function(columnName) {
+			return new Item({}, patient, schema.getColumn(columnName));
 		};
 
-		this.getItem = function(cix, iix) {
-			return patient[schema.getColumnName(cix)][iix];
+		this.getItem = function(columnName, iix) {
+			return patient[columnName][iix];
 		};
 
 		this.addItem = function(item) {

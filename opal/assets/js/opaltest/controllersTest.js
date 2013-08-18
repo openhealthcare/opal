@@ -219,5 +219,54 @@ describe('controllers', function() {
 				expect($scope.editItem).toHaveBeenCalledWith(0, 0, 1);
 			});
 		});
+
+		describe('adding an item', function() {
+			var iix;
+
+			beforeEach(function() {
+				iix = patientData.diagnosis.length;
+			});
+
+			it('should select "Add"', function() {
+				$scope.editItem(0, 2, iix);
+				expect([$scope.rix, $scope.cix, $scope.iix]).toEqual([0, 2, iix]);
+			});
+
+			it('should change state to "modal"', function() {
+				$scope.editItem(0, 2, iix);
+				expect($scope.state).toBe('modal');
+			});
+
+			it('should set up the modal', function() {
+				var callArgs;
+
+				spyOn($dialog, 'dialog').andCallThrough();
+
+				$scope.editItem(0, 2, iix);
+
+				callArgs = $dialog.dialog.mostRecentCall.args;
+				expect(callArgs.length).toBe(1);
+				expect(callArgs[0].templateUrl).toBe('/templates/modals/diagnosis.html/');
+				expect(callArgs[0].controller).toBe('EditItemCtrl');
+				expect(callArgs[0].resolve.item().id).toBeUndefined();
+			});
+		});
+
+		describe('deleting an item', function() {
+			it('should do nothing if item is singleton', function() {
+				$scope.deleteItem(0, 0, 0);
+				expect($scope.state).toBe('normal');
+			});
+
+			it('should do nothing if item is new item', function() {
+				$scope.deleteItem(0, 2, 2);
+				expect($scope.state).toBe('normal');
+			});
+
+			it('should change state to "modal"', function() {
+				$scope.deleteItem(0, 2, 1);
+				expect($scope.state).toBe('modal');
+			});
+		});
 	});
 });
