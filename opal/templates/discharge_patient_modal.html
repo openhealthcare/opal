@@ -1,0 +1,40 @@
+<div class="modal-header">
+	<button type="button" class="close" ng-click="cancel()">×</button>
+	<h3>Discharge</h3>
+</div>
+<div class="modal-body">
+	<form>
+		<div>
+			<label class="radio">
+				<input type="radio" ng-model="editing.category" value="Discharged">
+				Discharge
+			</label>
+			<label class="radio">
+				<input type="radio" ng-model="editing.category" value="Followup">
+				Discharge with follow-up
+			</label>
+			<label class="radio">
+				<input type="radio" ng-model="editing.category" value="Deceased">
+				Deceased
+			</label>
+			<label class="radio">
+				<input type="radio" ng-model="editing.category" value="Transferred">
+				Transferred
+			</label>
+			<label class="radio">
+				<input type="radio" ng-model="editing.category" value="Unfollow">
+				No longer under active review
+			</label>
+		</div>
+		<div ng-hide="editing.category=='Unfollow'" class="control-group">
+			<label class="control-label">Date of discharge</label>
+			<div class="controls">
+				<input type="text" ng-model="editing.date" bs-datepicker>
+			</div>
+		</div>
+	</form>
+</div>
+<div class="modal-footer">
+	<button class="btn btn-primary" ng-click="discharge()">Discharge</button>
+	<button class="btn" ng-click="cancel()">Cancel</button>
+</div>

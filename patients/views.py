@@ -2,7 +2,7 @@ import json
 import datetime
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseNotFound
 from django.views.generic import TemplateView
 from django.template.loader import select_template
 from django.utils.decorators import method_decorator
@@ -20,7 +20,7 @@ def patient_detail_view(request, pk):
     try:
         patient = models.Patient.objects.get(pk=pk)
     except models.Patient.DoesNotExist:
-        return HttpResponseNotFound
+        return HttpResponseNotFound()
 
     return _build_json_response(patient.to_dict(), 200)
 
@@ -56,7 +56,7 @@ def subrecord_detail_view(request, model, pk):
     try:
         subrecord = model.objects.get(pk=pk)
     except model.DoesNotExist:
-        return HttpResponseNotFound
+        return HttpResponseNotFound()
 
     if request.method == 'GET':
         return _build_json_response(subrecord.to_dict())
@@ -135,6 +135,9 @@ class AddPatientTemplateView(LoginRequiredMixin, TemplateView):
         context['tags'] = models.TAGS
         return context
 
+class DischargePatientTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = 'discharge_patient_modal.html'
+
 class DeleteItemConfirmationView(LoginRequiredMixin, TemplateView):
     template_name = 'delete_item_confirmation_modal.html'
 
@@ -153,6 +156,9 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         context['title'] = getattr(column, '_title', name.replace('_', ' ').title())
         context['single'] = column._is_singleton
         context['modal_template_path'] = name + '_modal.html'
+
+        if name == 'location':
+            context['tags'] = models.TAGS
 
         return context
 

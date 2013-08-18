@@ -157,17 +157,9 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 		return $scope.rows[rix];
 	};
 
-	function clearModal(columnName) {
-		$('#' + columnName + '-modal').modal('hide')
-
-		// See https://github.com/openhealthcare/opal/issues/28
-		$(".btn").blur();
-	};
-
 	$scope.print = function() {
 		window.print();
 	};
-
 
 	$scope.selectItem = function(rix, cix, iix) {
 		$scope.rix = rix;
@@ -175,64 +167,6 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 		$scope.iix = iix;
 		state = 'normal';
 	}
-
-	$scope.startDischarge = function(rix, event) {
-		var patient = $scope.rows[rix];
-		var currentCategory = patient.location[0].category;
-		var newCategory;
-
-		event.preventDefault();
-
-		if (currentCategory == 'Inpatient') {
-			newCategory = 'Discharged';
-		} else if (currentCategory == 'Review' || currentCategory == 'Followup') {
-			newCategory = 'Unfollow';
-		} else {
-			newCategory = currentCategory;
-		}
-
-		state = 'discharging';
-		$scope.discharge = {
-			rix: rix,
-			category: newCategory,
-			date: new Date()
-		};
-		$('#discharge-confirmation-modal').modal();
-		$('#discharge-confirmation-modal').find('input,textarea').first().focus();
-	};
-
-	$scope.doDischarge = function() {
-		var discharge = $scope.discharge;
-		var patient = $scope.rows[discharge.rix];
-		var location = patient.location[0];
-		var editing = clone(location);
-		var url = 'patient/location/' + location.id + '/';
-
-		if (discharge.category != 'Unfollow') {
-			editing.category = discharge.category;
-			editing.discharge_date = discharge.date;
-		};
-
-		editing.tags = clone(patient.tags);
-		if (discharge.category != 'Followup') {
-			editing.tags[$scope.currentTag] = false;
-		};
-
-		$http.put(url, editing).success(function(response) {
-			state = 'normal';
-			clearModal('discharge-confirmation');
-			location.category = editing.category;
-			location.discharge_date = editing.discharge_date;
-			patient.tags = clone(editing.tags);
-			$scope.rows = getVisiblePatients();
-			$scope.selectItem(0, $scope.cix, 0);
-		});
-	};
-
-	$scope.cancelDischarge = function() {
-		state = 'normal';
-		clearModal('discharge-confirmation');
-	};
 
 	$scope.focusOnQuery = function() {
 		$scope.selectItem(-1, -1, -1);
@@ -269,6 +203,34 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 				$scope.rows = getVisiblePatients();
 				$scope.selectItem(getRowIxFromPatientId(patient.id), 0, 0);
 			}
+		});
+	};
+
+	$scope.dischargePatient = function(rix, event) {
+		var modal;
+		var patient = getPatient(rix);
+
+		// This is required to prevent the page reloading
+		event.preventDefault();
+
+		$scope.state = 'modal';
+
+		modal = $dialog.dialog({
+			templateUrl: '/templates/modals/discharge_patient.html/',
+			controller: 'DischargePatientCtrl',
+			resolve: {
+				patient: function() { return patient; },
+				currentTag: function() { return $scope.currentTag; },
+			}
+		});
+
+		modal.open().then(function(result) {
+			$scope.state = 'normal';
+
+			if (result == 'discharged') {
+				$scope.rows = getVisiblePatients();
+				$scope.selectItem(0, $scope.cix, 0);
+			};
 		});
 	};
 
@@ -535,6 +497,46 @@ controllers.controller('DeleteItemConfirmationCtrl', function($scope, $http, dia
 	$scope.destroy = function() {
 		item.destroy().then(function() {
 			dialog.close('deleted');
+		});
+	};
+
+	$scope.cancel = function() {
+		dialog.close('cancel');
+	};
+});
+
+controllers.controller('DischargePatientCtrl', function($scope, $http, dialog, patient, currentTag) {
+	var currentCategory = patient.location[0].category;
+	var newCategory;
+
+	if (currentCategory == 'Inpatient') {
+		newCategory = 'Discharged';
+	} else if (currentCategory == 'Review' || currentCategory == 'Followup') {
+		newCategory = 'Unfollow';
+	} else {
+		newCategory = currentCategory;
+	}
+
+	$scope.editing = {
+		category: newCategory,
+		//date: new Date()
+	};
+
+	$scope.discharge = function() {
+		var location = patient.getItem(1, 0); // TODO don't hardcode this
+		var attrs = location.makeCopy();
+
+		if ($scope.editing.category != 'Unfollow') {
+			attrs.category = $scope.editing.category;
+			attrs.discharge_date = $scope.editing.discharge_date;
+		}
+
+		if ($scope.editing.category != 'Followup') {
+			attrs.tags[currentTag] = false;
+		}
+
+		location.save(attrs).then(function() {
+			dialog.close('discharged');
 		});
 	};
 
