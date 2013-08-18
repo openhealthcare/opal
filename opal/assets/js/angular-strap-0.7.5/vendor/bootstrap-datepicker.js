@@ -1,3 +1,7 @@
+// This is a slightly amended version of bootstrap-datepicker.js
+//
+// Differences to the original are marked in comments containing "@@@".
+
 /* =========================================================
  * bootstrap-datepicker.js
  * http://www.eyecon.ro/bootstrap-datepicker
@@ -786,6 +790,12 @@
 					}
 					break;
 				case 13: // enter
+					// @@@ Beginning of alteration
+					// If user hits enter when no date in input, use the currently chosen date
+					this.setValue();
+					this.update();
+					dateChanged = true;
+					// @@@ End of alteration
 					this.hide();
 					e.preventDefault();
 					break;
