@@ -417,7 +417,7 @@ controllers.controller('AddPatientCtrl', function($scope, $http, dialog, options
 	$scope.findingPatient = false; // Disable Search button when true
 	$scope.editing = {
 		location: {
-			date_of_admission: new Date(),
+			date_of_admission: moment().format('DD/MM/YYYY'),
 			tags: {},
 		},
 		demographics: {},
@@ -438,6 +438,19 @@ controllers.controller('AddPatientCtrl', function($scope, $http, dialog, options
 	};
 
 	$scope.save = function() {
+		var value;
+
+		// This is a bit mucky but will do for now
+		value = $scope.editing.location.date_of_admission;
+		if (value) {
+			$scope.editing.location.date_of_admission = moment(value, 'DD/MM/YYYY').format('YYYY-MM-DD');
+		}
+
+		value = $scope.editing.demographics.date_of_birth;
+		if (value) {
+			$scope.editing.demographics.date_of_birth = moment(value, 'DD/MM/YYYY').format('YYYY-MM-DD');
+		}
+
 		$http.post('patient/', $scope.editing).success(function(patient) {
 			dialog.close(patient);
 		});

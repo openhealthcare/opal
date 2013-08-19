@@ -115,7 +115,21 @@ services.factory('Patient', function($http, $q, Item) {
 		};
 
 		this.newItem = function(columnName) {
-			return new Item({}, patient, schema.getColumn(columnName));
+			var attrs = {};
+			// TODO don't hardcode this
+			if (columnName == 'microbiology_test') {
+				attrs.date_ordered = moment().format('YYYY-MM-DD');
+			}
+			if (columnName == 'general_note') {
+				attrs.date = moment().format('YYYY-MM-DD');
+			}
+			if (columnName == 'antimicrobial') {
+				attrs.start_date = moment().format('YYYY-MM-DD');
+			}
+			if (columnName == 'diagnosis') {
+				attrs.date_of_diagnosis = moment().format('YYYY-MM-DD');
+			}
+			return new Item(attrs, patient, schema.getColumn(columnName));
 		};
 
 		this.getItem = function(columnName, iix) {
