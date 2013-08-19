@@ -142,7 +142,7 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 			templateUrl: '/templates/modals/add_patient.html/',
 			controller: 'AddPatientCtrl',
 			resolve: {
-				currentTag: function() { return $scope.currentTag; },
+				details: function() { return { currentTag: $scope.currentTag };},
 				options: function() { return options; },
 			}
 		});
@@ -472,7 +472,7 @@ controllers.controller('PatientDetailCtrl', function($scope, $http, $dialog, sch
 	};
 });
 
-controllers.controller('SearchCtrl', function($scope, $http, $location) {
+controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog, options) {
 	$scope.searchTerms = {
 		hospital_number: '',
 		name: '',
@@ -483,7 +483,7 @@ controllers.controller('SearchCtrl', function($scope, $http, $location) {
 	$scope.patient_category_list = ['Inpatient', 'Review'];
 	$scope.hospital_list = ['Heart Hospital', 'NHNN', 'UCH'];
 
-	$scope.doSearch = function() {
+	$scope.search = function() {
 		var queryParams = [];
 		var queryString;
 
@@ -499,60 +499,46 @@ controllers.controller('SearchCtrl', function($scope, $http, $location) {
 
 		queryString = queryParams.join('&');
 
-		$http.get('search/?' + queryString).success(function(results) {
+		$http.get('patient/?' + queryString).success(function(results) {
 			$scope.searched = true;
-			$scope.results = results.patients;
+			$scope.results = results;
 		});
 	};
 
-	$scope.startAdd = function() {
-		$scope.editing = {
-			location: {date_of_admission: new Date()},
-		       	demographics: {},
-		       	tags: {}
-		};
+	$scope.addPatient = function() {
+		var modal, details;
+		$scope.state = 'modal';
+
 		if ($scope.results.length == 0) {
-			$scope.editing.demographics.name = $scope.searchTerms.name;
-			$scope.editing.demographics.hospital_number = $scope.searchTerms.hospital_number;
-		}
-		$('#add-new-modal').modal();
-		$('#add-new-modal').find('input,textarea').first().focus();
-	}
+			details = {
+				name: $scope.searchTerms.name,
+				hospitalNumber: $scope.searchTerms.hospital_number,
+			};
+		} else {
+			details = {};
+		};
 
-	$scope.findByHospitalNumber = function() {
-		var hospitalNumber = $scope.editing.demographics.hospital_number
-		$http.get('search/?hospital_number=' + hospitalNumber).success(function(results) {
-			$scope.foundPatient = true; // misnomer: might not actually have found a patient!
-			if (results.patients.length == 1) {
-				$scope.editing.demographics = clone(results.patients[0].demographics);
-				$scope.editing.location = clone(results.patients[0].location);
-				$scope.editing.tags = clone(results.patients[0].tags);
+		modal = $dialog.dialog({
+			templateUrl: '/templates/modals/add_patient.html/',
+			controller: 'AddPatientCtrl',
+			resolve: {
+				details: function() { return details; },
+				options: function() { return options; },
 			}
-			$scope.editing.tags[$scope.currentTag] = true;
 		});
-	};
 
-	function clearModal(columnName) {
-		$('#' + columnName + '-modal').modal('hide')
+		modal.open().then(function(result) {
+			$scope.state = 'normal';
 
-		// See https://github.com/openhealthcare/opal/issues/28
-		$(".btn").blur();
-	};
-
-	$scope.saveAdd = function() {
-		clearModal('add-new');
-		$http.post('patient/', $scope.editing).success(function(patient) {
-			$location.path('patient/' + patient.id);
+			if (angular.isObject(result)) {
+				// result is attributes of patient
+				$location.path('patient/' + result.id);
+			}
 		});
-	};
-
-	$scope.cancelAdd = function() {
-		state = 'normal';
-		clearModal('add-new');
 	};
 });
 
-controllers.controller('AddPatientCtrl', function($scope, $http, dialog, options, currentTag) {
+controllers.controller('AddPatientCtrl', function($scope, $http, dialog, options, details) {
 	for (var name in options) {
 		$scope[name + '_list'] = options[name];
 	};
@@ -560,16 +546,20 @@ controllers.controller('AddPatientCtrl', function($scope, $http, dialog, options
 
 	$scope.foundPatient = false; // Display rest of form when true
 	$scope.findingPatient = false; // Disable Search button when true
+
 	$scope.editing = {
 		location: {
 			date_of_admission: moment().format('DD/MM/YYYY'),
 			tags: {},
 		},
-		demographics: {},
+		demographics: {
+			hospital_number: details.hospitalNumber,
+			name: details.name,
+		},
 	};
 
 	$scope.findByHospitalNumber = function() {
-		var hospitalNumber = $scope.editing.demographics.hospital_number
+		var hospitalNumber = $scope.editing.demographics.hospital_number;
 		$scope.findingPatient = true;
 		$http.get('patient/?hospital_number=' + hospitalNumber).success(function(results) {
 			$scope.findingPatient = false;
@@ -578,7 +568,9 @@ controllers.controller('AddPatientCtrl', function($scope, $http, dialog, options
 				$scope.editing.demographics = results[0].demographics[0];
 				$scope.editing.location = results[0].location[0]
 			}
-			$scope.editing.location.tags[currentTag] = true;
+			if (details.currentTag) {
+				$scope.editing.location.tags[details.currentTag] = true;
+			};
 		});
 	};
 

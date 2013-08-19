@@ -128,8 +128,13 @@ class PatientDetailTemplateView(PatientTemplateView):
     template_name = 'patient_detail.html'
     column_schema = schema.detail_columns
 
-class SearchTemplateView(PatientTemplateView):
+class SearchTemplateView(TemplateView):
     template_name = 'search.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(SearchTemplateView, self).get_context_data(**kwargs)
+        context['tags'] = models.TAGS
+        return context
 
 class AddPatientTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'add_patient_modal.html'

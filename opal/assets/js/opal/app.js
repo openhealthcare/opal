@@ -44,7 +44,12 @@ app.config(function($routeProvider) {
 			templateUrl: '/templates/patient_detail.html'
 		}).when('/search', {
 			controller: 'SearchCtrl',
-			templateUrl: '/templates/search.html'
+			templateUrl: '/templates/search.html',
+			resolve: {
+				options: function(Options) {
+					return Options;
+				},
+			},
 		}).otherwise({redirectTo: '/'});
 });
 
