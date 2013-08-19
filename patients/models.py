@@ -1,12 +1,13 @@
 from collections import OrderedDict
 from datetime import datetime
-from functools import partial
+import random
 
 from django.db import models
 from django.dispatch import receiver
 from django.forms.models import ModelForm
 from django.contrib import auth
 
+from patients import exceptions
 from utils.fields import ForeignKeyOrFreeText
 from utils import camelcase_to_underscore
 from options.models import option_models
@@ -78,6 +79,7 @@ class Tagging(models.Model):
 
 class Subrecord(models.Model):
     patient = models.ForeignKey(Patient)
+    consistency_token = models.CharField(max_length=8)
 
     _is_singleton = False
 
@@ -111,6 +113,10 @@ class Subrecord(models.Model):
             field_schema.append({'name': fieldname, 'type': field_type})
 
         return field_schema
+
+    @classmethod
+    def get_field_type_for_consistency_token(cls):
+        return 'token'
 
     @classmethod
     def _get_fieldnames_to_serialize(cls):
@@ -156,10 +162,18 @@ class Subrecord(models.Model):
         return d
 
     def update_from_dict(self, data, user):
+        if self.consistency_token:
+            try:
+                consistency_token = data.pop('consistency_token')
+            except KeyError:
+                raise exceptions.APIError('Missing field (consistency_token)')
+
+            if consistency_token != self.consistency_token:
+                raise exceptions.ConsistencyError
+
         unknown_fields = set(data.keys()) - set(self._get_fieldnames_to_serialize())
         if unknown_fields:
-            # TODO raise APIException
-            raise Exception('Unexpected fieldname(s): %s' % list(unknown_fields))
+            raise APIException('Unexpected fieldname(s): %s' % list(unknown_fields))
 
         for name, value in data.items():
             setter = getattr(self, 'set_' + name, None)
@@ -175,7 +189,11 @@ class Subrecord(models.Model):
 
                 setattr(self, name, value)
 
+        self.set_consistency_token()
         self.save()
+
+    def set_consistency_token(self):
+        self.consistency_token = '%08x' % random.randrange(16**8)
 
 class Demographics(Subrecord):
     _is_singleton = True

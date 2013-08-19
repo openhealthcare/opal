@@ -35,8 +35,13 @@ class PatientTest(TestCase):
     def assert_status_code(self, expected_status_code, rsp):
         self.assertEqual(expected_status_code, rsp.status_code)
 
-    def assert_json_content(self, expected_data, rsp):
+    def assert_json_content(self, expected_data, rsp, expect_consistency_token=False):
         content = json.loads(rsp.content)
+        if expect_consistency_token:
+            try:
+                content.pop('consistency_token')
+            except KeyError:
+                raise AssertionError('No consistency token')
         self.assertEqual(expected_data, content)
 
     def assert_has_tags(self, expected_tags, patient_id):
@@ -81,12 +86,12 @@ class PatientTest(TestCase):
             'hospital_number': 'AA1111',
         }
         self.assert_status_code(200, rsp)
-        self.assert_json_content(expected_data, rsp)
+        self.assert_json_content(expected_data, rsp, expect_consistency_token=True)
 
     def test_can_update_demographics(self):
         name = 'Jan Smits'
         date_of_birth = '1972-06-21'
-        data = {'name': name, 'date_of_birth': date_of_birth}
+        data = {'name': name, 'date_of_birth': date_of_birth, 'consistency_token': '12345678'}
         rsp = self.put('demographics/%s/' % self.demographics.id, data)
         expected_data = {
             'patient_id': self.patient.id,
@@ -96,7 +101,7 @@ class PatientTest(TestCase):
             'hospital_number': 'AA1111',
         }
         self.assert_status_code(200, rsp)
-        self.assert_json_content(expected_data, rsp)
+        self.assert_json_content(expected_data, rsp, expect_consistency_token=True)
 
     def test_can_access_location(self):
         rsp = self.get('location/%s/' % self.location.id)
@@ -112,15 +117,16 @@ class PatientTest(TestCase):
             'tags': {'microbiology': True, 'mine': True},
         }
         self.assert_status_code(200, rsp)
-        self.assert_json_content(expected_data, rsp)
+        self.assert_json_content(expected_data, rsp, expect_consistency_token=True)
 
     def test_can_update_location(self):
         ward = 'T11'
         date_of_admission = '2013-07-24'
         data = {
-                'ward': ward,
-                'date_of_admission': date_of_admission,
-                'tags': {'mine': True}
+            'consistency_token': '12345678',
+            'ward': ward,
+            'date_of_admission': date_of_admission,
+            'tags': {'mine': True}
         }
         rsp = self.put('location/%s/' % self.location.id, data)
         expected_data = {
@@ -135,22 +141,27 @@ class PatientTest(TestCase):
             'tags': {'mine': True},
         }
         self.assert_status_code(200, rsp)
-        self.assert_json_content(expected_data, rsp)
+        self.assert_json_content(expected_data, rsp, expect_consistency_token=True)
 
-    def test_updating_location_updates_tags(self):
+    def test_updating_location_updates_tags_1(self):
         data = {
+                'consistency_token': '12345678',
                 'tags': {'mine': True, 'hiv': True}
         }
         self.put('location/%s/' % self.location.id, data)
         self.assert_has_tags(['hiv', 'mine'], self.patient.id)
 
+    def test_updating_location_updates_tags_2(self):
         data = {
+                'consistency_token': '12345678',
                 'tags': {'microbiology': True, 'hiv': False}
         }
         self.put('location/%s/' % self.location.id, data)
         self.assert_has_tags(['microbiology'], self.patient.id)
 
+    def test_updating_location_updates_tags_3(self):
         data = {
+                'consistency_token': '12345678',
                 'tags': {'mine': True, 'tropical_diseases': False}
         }
         self.put('location/%s/' % self.location.id, data)
@@ -167,7 +178,7 @@ class PatientTest(TestCase):
             'date_of_diagnosis': '2013-07-25',
         }
         self.assert_status_code(200, rsp)
-        self.assert_json_content(expected_data, rsp)
+        self.assert_json_content(expected_data, rsp, expect_consistency_token=True)
 
     def test_can_create_diagnosis_with_existing_condition(self):
         data = {
@@ -187,7 +198,7 @@ class PatientTest(TestCase):
             'date_of_diagnosis': '2013-07-25',
         }
         self.assert_status_code(201, rsp)
-        self.assert_json_content(expected_data, rsp)
+        self.assert_json_content(expected_data, rsp, expect_consistency_token=True)
         self.assertIsNotNone(diagnosis.condition_fk)
         self.assertEqual('', diagnosis.condition_ft)
 
@@ -209,12 +220,13 @@ class PatientTest(TestCase):
             'date_of_diagnosis': '2013-07-25',
         }
         self.assert_status_code(201, rsp)
-        self.assert_json_content(expected_data, rsp)
+        self.assert_json_content(expected_data, rsp, expect_consistency_token=True)
         self.assertIsNone(diagnosis.condition_fk)
         self.assertEqual('Some other condition', diagnosis.condition_ft)
 
     def test_can_update_diagnosis(self):
         data = {
+            'consistency_token': '12345678',
             'condition': 'Some other condition'
         }
         rsp = self.put('diagnosis/%d/' % self.first_diagnosis.id, data)
@@ -228,9 +240,17 @@ class PatientTest(TestCase):
         }
         diagnosis = self.patient.diagnosis_set.get(pk=self.first_diagnosis.id)
         self.assert_status_code(200, rsp)
-        self.assert_json_content(expected_data, rsp)
+        self.assert_json_content(expected_data, rsp, expect_consistency_token=True)
         self.assertIsNone(diagnosis.condition_fk)
         self.assertEqual('Some other condition', diagnosis.condition_ft)
+
+    def test_updating_with_wrong_consistency_token_gives_409(self):
+        data = {
+            'consistency_token': '87654321',
+            'condition': 'Some other condition'
+        }
+        rsp = self.put('diagnosis/%d/' % self.first_diagnosis.id, data)
+        self.assert_status_code(409, rsp)
 
     def test_can_search_by_name(self):
         rsp = self.client.get('/patient/?name=John')
@@ -261,6 +281,7 @@ class PatientTest(TestCase):
     def test_field_schema_correct_for_demographics(self):
         schema = models.Demographics.build_field_schema()
         expected_schema = [
+                {'name': 'consistency_token', 'type': 'token'},
                 {'name': 'name', 'type': 'string'},
                 {'name': 'hospital_number', 'type': 'string'},
                 {'name': 'date_of_birth', 'type': 'date'},
@@ -270,6 +291,7 @@ class PatientTest(TestCase):
     def test_field_schema_correct_for_location(self):
         schema = models.Location.build_field_schema()
         expected_schema = [
+                {'name': 'consistency_token', 'type': 'token'},
                 {'name': 'category', 'type': 'string'},
                 {'name': 'hospital', 'type': 'string'},
                 {'name': 'ward', 'type': 'string'},

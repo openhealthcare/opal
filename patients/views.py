@@ -4,18 +4,20 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotFound
 from django.views.generic import TemplateView
+from django.views.decorators.http import require_http_methods
 from django.template.loader import select_template
 from django.utils.decorators import method_decorator
 from django.utils import formats
 from django.contrib.auth.decorators import login_required
 from utils import camelcase_to_underscore
-from patients import models, schema
+from patients import models, schema, exceptions
 
 class LoginRequiredMixin(object):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
 
+@require_http_methods(['GET'])
 def patient_detail_view(request, pk):
     try:
         patient = models.Patient.objects.get(pk=pk)
@@ -24,6 +26,7 @@ def patient_detail_view(request, pk):
 
     return _build_json_response(patient.to_dict(), 200)
 
+@require_http_methods(['GET', 'POST'])
 def patient_list_and_create_view(request):
     if request.method == 'GET':
         GET = request.GET
@@ -52,6 +55,7 @@ def patient_list_and_create_view(request):
         patient.update_from_dict(data, request.user)
         return _build_json_response(patient.to_dict(), 201)
 
+@require_http_methods(['GET', 'PUT', 'DELETE'])
 def subrecord_detail_view(request, model, pk):
     try:
         subrecord = model.objects.get(pk=pk)
@@ -62,12 +66,16 @@ def subrecord_detail_view(request, model, pk):
         return _build_json_response(subrecord.to_dict())
     elif request.method == 'PUT':
         data = _get_request_data(request)
-        subrecord.update_from_dict(data, request.user)
-        return _build_json_response(subrecord.to_dict())
+        try:
+            subrecord.update_from_dict(data, request.user)
+            return _build_json_response(subrecord.to_dict())
+        except exceptions.ConsistencyError:
+            return _build_json_response({'error': 'Item has changed'}, 409)
     elif request.method == 'DELETE':
         subrecord.delete()
         return _build_json_response('')
 
+@require_http_methods(['POST'])
 def subrecord_create_view(request, model):
     subrecord = model()
     data = _get_request_data(request)

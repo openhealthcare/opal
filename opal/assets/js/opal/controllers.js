@@ -507,7 +507,7 @@ controllers.controller('DischargePatientCtrl', function($scope, $http, dialog, p
 	};
 
 	$scope.discharge = function() {
-		var location = patient.getItem(1, 0); // TODO don't hardcode this
+		var location = patient.getItem('location', 0);
 		var attrs = location.makeCopy();
 
 		if ($scope.editing.category != 'Unfollow') {

@@ -1,6 +1,7 @@
 {
     "antimicrobial": [
         {
+            "consistency_token": "12345678",
             "dose": "100mg", 
             "drug": "Some antimicrobial", 
             "end_date": null, 
@@ -12,6 +13,7 @@
     ], 
     "demographics": [
         {
+            "consistency_token": "12345678",
             "date_of_birth": "1972-06-20", 
             "hospital_number": "AA1111", 
             "id": 1, 
@@ -21,6 +23,7 @@
     ], 
     "diagnosis": [
         {
+            "consistency_token": "12345678",
             "condition": "Some condition", 
             "date_of_diagnosis": "2013-07-25", 
             "details": "", 
@@ -29,6 +32,7 @@
             "provisional": false
         }, 
         {
+            "consistency_token": "12345678",
             "condition": "Some other condition", 
             "date_of_diagnosis": "2013-07-25", 
             "details": "", 
@@ -39,6 +43,7 @@
     ], 
     "general_note": [
         {
+            "consistency_token": "12345678",
             "comment": "A note", 
             "date": "2013-07-25", 
             "id": 1, 
@@ -48,6 +53,7 @@
     "id": 1, 
     "location": [
         {
+            "consistency_token": "12345678",
             "bed": "13", 
             "category": "Inpatient", 
             "date_of_admission": "2013-07-25", 
@@ -64,6 +70,7 @@
     ], 
     "microbiology_input": [
         {
+            "consistency_token": "12345678",
             "agreed_plan": "Plan", 
             "change_in_antibiotic_prescription": true, 
             "clinical_advice_given": true, 
@@ -80,6 +87,7 @@
     ], 
     "microbiology_test": [
         {
+            "consistency_token": "12345678",
             "adenovirus": "", 
             "anti_hbcore_igg": "", 
             "anti_hbcore_igm": "", 
@@ -129,6 +137,7 @@
     ], 
     "past_medical_history": [
         {
+            "consistency_token": "12345678",
             "condition": "Some condition", 
             "id": 1, 
             "patient_id": 1, 
@@ -137,6 +146,7 @@
     ], 
     "todo": [
         {
+            "consistency_token": "12345678",
             "details": "An action", 
             "id": 1, 
             "patient_id": 1
@@ -144,6 +154,7 @@
     ], 
     "travel": [
         {
+            "consistency_token": "12345678",
             "dates": "", 
             "destination": "Some destination", 
             "id": 1, 

@@ -264,14 +264,18 @@ services.factory('Item', function($http, $q) {
 			}
 
 			$http[method](url, attrs).then(function(response) {
-				item.initialise(attrs);
+				item.initialise(response.data);
 				if (method == 'post') {
 					patient.addItem(item);
 				};
 				deferred.resolve();
 			}, function(response) {
 				// handle error better
-				alert('Item could not be saved');
+				if (response.status == 409) {
+					alert('Item could not be saved because somebody else has recently changed it - refresh the page and try again');
+				} else {
+					alert('Item could not be saved');
+				};
 			});
 			return deferred.promise;
 		};
