@@ -469,8 +469,30 @@ controllers.controller('EditItemCtrl', function($scope, dialog, item, options) {
 	$scope.editingName = item.patientName;
 
 	for (var name in options) {
-		$scope[name + '_list'] = options[name];
+		if (name.indexOf('micro_test') != 0) {
+			$scope[name + '_list'] = options[name];
+		};
 	};
+
+	if (item.columnName == 'microbiology_test') {
+		$scope.microbiology_test_list = [];
+		$scope.microbiology_test_lookup = {};
+
+		for (var name in options) {
+			if (name.indexOf('micro_test') == 0) {
+				for (var ix = 0; ix < options[name].length; ix++) {
+					$scope.microbiology_test_list.push(options[name][ix]);
+					$scope.microbiology_test_lookup[options[name][ix]] = name;
+				};
+			};
+		};
+
+		$scope.$watch('editing.test', function(testName) {
+			$scope.testType = $scope.microbiology_test_lookup[testName];
+		});
+	};
+
+
 	$scope.patient_category_list = ['Inpatient', 'Review'];
 
 	$scope.save = function() {
