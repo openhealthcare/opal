@@ -940,3 +940,9 @@ controllers.controller('SearchCtrl', function($scope, $http, $location) {
 		clearModal('add-new');
 	};
 });
+
+controllers.controller('AccountCtrl', function($scope) {
+	$scope.keydown = function(e) {
+		$scope.$broadcast('keydown', e);
+	};
+});

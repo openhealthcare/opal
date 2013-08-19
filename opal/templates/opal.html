@@ -48,13 +48,14 @@
 				</span>
 
 				<ul class="nav pull-right">
-					<li class="navbar-text">
-                                          Hi,
+					<li>
+                                          <a href="/#/account">
                                           {% if request.user.first_name %}
                                             {{ request.user.first_name }}
                                           {% else %}
                                             {{ request.user.username }}
                                           {% endif %}
+                                          </a>
                                         </li>
 					<li><a href="#">Home</a></li>
 					<li><a href="/admin">Admin</a></li>

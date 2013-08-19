@@ -3,6 +3,7 @@ OPAL System level views
 """
 from django.contrib.auth.views import login
 from django.shortcuts import redirect
+from django.views.generic import TemplateView
 
 from accounts.models import UserProfile
 
@@ -22,3 +23,6 @@ def check_password_reset(request, *args, **kwargs):
             UserProfile.objects.create(user=request.user, force_password_change=True)
             return redirect('django.contrib.auth.views.password_change')
     return response
+
+class AccountDetailTemplateView(TemplateView):
+    template_name = 'accounts/account_detail.html'

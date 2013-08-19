@@ -39,6 +39,9 @@ app.config(function($routeProvider) {
 		}).when('/search', {
 			controller: 'SearchCtrl',
 			templateUrl: '/patient/templates/search.html'
+                }).when('/account', {
+                        controller: 'AccountCtrl',
+                        templateUrl: '/accounts/templates/account_detail.html'
 		}).otherwise({redirectTo: '/'});
 });
 
@@ -47,4 +50,3 @@ app.value('$strapConfig', {
 		format: 'dd/mm/yyyy',
 	}
 });
-
