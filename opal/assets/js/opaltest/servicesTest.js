@@ -52,10 +52,6 @@ describe('services', function() {
 			expect(schema.getNumberOfColumns()).toBe(2);
 		});
 
-		it('should be able to get a column by index', function() {
-			expect(schema.getColumnByIx(1).name).toBe('diagnosis');
-		});
-
 		it('should be able to get a column', function() {
 			expect(schema.getColumn('diagnosis').name).toBe('diagnosis');
 		});
@@ -270,7 +266,7 @@ describe('services', function() {
 			var promise = patientsLoader();
 			var patients;
 
-			$httpBackend.whenGET('/schema/').respond(columns);
+			$httpBackend.whenGET('/schema/list/').respond(columns);
 			$httpBackend.whenGET('/patient').respond([patientData]); // TODO trailing slash?
 			promise.then(function(value) {
 				patients = value;

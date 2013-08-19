@@ -10,7 +10,8 @@ describe('app', function() {
 			$httpBackend = $injector.get('$httpBackend');
 		});
 
-		$httpBackend.whenGET('/schema/').respond([]);
+		$httpBackend.whenGET('/schema/list/').respond([]);
+		$httpBackend.whenGET('/schema/detail/').respond([]);
 		$httpBackend.whenGET('/options/').respond([]);
 		$httpBackend.whenGET('/templates/patient_list.html').respond();
 		$httpBackend.whenGET('/templates/patient_detail.html').respond();

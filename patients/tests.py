@@ -262,8 +262,12 @@ class PatientTest(TestCase):
         self.assert_status_code(200, rsp)
         self.assert_json_content([self.load_expected_data('patient')], rsp)
 
-    def test_can_access_schema(self):
-        rsp = self.client.get('/schema/')
+    def test_can_access_list_schema(self):
+        rsp = self.client.get('/schema/list/')
+        self.assert_status_code(200, rsp)
+
+    def test_can_access_detail_schema(self):
+        rsp = self.client.get('/schema/detail/')
         self.assert_status_code(200, rsp)
 
     def test_can_access_patient_list_template(self):
