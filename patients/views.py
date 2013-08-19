@@ -95,9 +95,6 @@ def _build_json_response(data, status_code=200):
 
 
 class PatientTemplateView(TemplateView):
-
-    column_schema = schema.columns
-
     def get_column_context(self):
         """
         Return the context for our columns
@@ -106,8 +103,6 @@ class PatientTemplateView(TemplateView):
         for column in self.column_schema:
             column_context = {}
             name = camelcase_to_underscore(column.__name__)
-            if isinstance(self, PatientListTemplateView) and name == 'microbiology_input':
-                continue
             column_context['name'] = name
             column_context['title'] = getattr(column, '_title',
                                               name.replace('_', ' ').title())
@@ -127,6 +122,7 @@ class PatientTemplateView(TemplateView):
 
 class PatientListTemplateView(PatientTemplateView):
     template_name = 'patient_list.html'
+    column_schema = schema.list_columns
 
 class PatientDetailTemplateView(PatientTemplateView):
     template_name = 'patient_detail.html'
@@ -174,9 +170,20 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
 class ContactView(TemplateView):
     template_name = 'contact.html'
 
-def schema_view(request):
+def list_schema_view(request):
     columns = []
-    for column in schema.columns:
+    for column in schema.list_columns:
+        columns.append({
+            'name': column.get_api_name(),
+            'single': column._is_singleton,
+            'fields': column.build_field_schema()
+        })
+
+    return _build_json_response(columns)
+
+def detail_schema_view(request):
+    columns = []
+    for column in schema.detail_columns:
         columns.append({
             'name': column.get_api_name(),
             'single': column._is_singleton,

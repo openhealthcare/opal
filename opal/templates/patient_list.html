@@ -18,11 +18,12 @@
 				ng-click="selectItem($parent.$index, {{ forloop.counter0 }}, $index)"
 				ng-dblclick="editItem($parent.$index, {{ forloop.counter0 }}, $index)"
 				ng-class="{selected: rix == $parent.$index && cix == {{ forloop.counter0 }} && iix == $index}">
-				{% include column.template_path %}
+					{% include column.template_path %}
+				</li>
 
 				{% if not column.single %}
 				<li ng-click="selectItem($index, {{ forloop.counter0 }}, row.{{column.name}}.length)"
-				ng-dblclick="editItem($index, {{ forloop.counter0 }})"
+				ng-dblclick="editItem($index, {{ forloop.counter0 }}, row.{{column.name}}.length)"
 				ng-class="{selected: rix == $index && cix == {{ forloop.counter0 }} && iix == row.{{column.name}}.length}">
 					<span ng-show="(rix == $index && cix == {{ forloop.counter0 }}) ||
 						(mouseRix == $index && mouseCix == {{ forloop.counter0 }})">
@@ -31,7 +32,6 @@
 					&nbsp;
 				</li>
 				{% endif %}
-				</li>
 			</ul>
 		</td>
 		{% endfor %}

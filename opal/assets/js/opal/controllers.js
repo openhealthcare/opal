@@ -24,12 +24,7 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 	$scope.query = {hospital: '', ward: ''};
 	$scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine'; // initially display patients of interest to current user
 
-	$scope.columns = []
-	for (var cix = 0; cix < schema.getNumberOfColumns(); cix++) {
-		if (schema.getColumnByIx(cix).name != 'microbiology_input') {
-			$scope.columns.push(schema.getColumnByIx(cix));
-		}
-	}
+	$scope.columns = schema.columns;
 
 	$scope.patients = patients;
 
@@ -299,14 +294,17 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 	};
 
 	function goUp() {
-		var patient = getPatient($scope.rix);
+		var patient;
 		var columnName = getColumnName($scope.cix);
 
 		if ($scope.iix > 0) {
 			$scope.iix--;
 		} else if ($scope.rix > 0) {
 			$scope.rix--;
-			if (!schema.isSingleton(columnName)) {
+			if (schema.isSingleton(columnName)) {
+				$scope.iix = 0;
+			} else {
+				patient = getPatient($scope.rix);
 				$scope.iix = patient.getNumberOfItems(columnName);
 			};
 		};
@@ -326,8 +324,152 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 	};
 });
 
-controllers.controller('PatientDetailCtrl', function($scope, $http, schema, patient) {
-	// TODO reinstate some of this
+controllers.controller('PatientDetailCtrl', function($scope, $http, $dialog, schema, patient, options) {
+	$scope.state = 'normal';
+
+	$scope.cix = 0; // column index
+	$scope.iix = 0; // item index
+
+	$scope.mouseCix = -1; // index of column mouse is currently over
+
+	$scope.columns = schema.columns;
+
+	$scope.patient = patient;
+
+	$scope.$on('keydown', function(event, e) {
+		if ($scope.state == 'normal') {
+			switch (e.keyCode) {
+				case 38: // up
+					goUp();
+					break;
+				case 40: // down
+					goDown();
+					break;
+				case 13: // enter
+				case 113: // F2
+					$scope.editItem($scope.cix, $scope.iix);
+					break;
+				case 8: // backspace
+					e.preventDefault();
+				case 46: // delete
+					$scope.deleteItem($scope.cix, $scope.iix);
+					break;
+				case 191: // question mark
+					if(e.shiftKey){
+						showKeyboardShortcuts();
+					}
+					break;
+			};
+		};
+	});
+
+	function getColumnName(cix) {
+		return $scope.columns[cix].name;
+	};
+
+	$scope.selectItem = function(cix, iix) {
+		$scope.cix = cix;
+		$scope.iix = iix;
+	};
+
+	$scope.editItem = function(cix, iix) {
+		var modal;
+		var columnName = getColumnName(cix);
+		var item;
+
+		if (iix == patient.getNumberOfItems(columnName)) {
+			item = patient.newItem(columnName);
+		} else {
+			item = patient.getItem(columnName, iix);
+		}
+
+		$scope.selectItem(cix, iix);
+		$scope.state = 'modal';
+
+		modal = $dialog.dialog({
+			templateUrl: '/templates/modals/' + columnName + '.html/',
+			controller: 'EditItemCtrl',
+			resolve: {
+				item: function() { return item; },
+				options: function() { return options; },
+			},
+		});
+
+		modal.open().then(function(result) {
+			$scope.state = 'normal';
+
+			if (result == 'add-another') {
+				$scope.editItem(cix, patient.getNumberOfItems(columnName));
+			};
+		});
+	};
+
+	$scope.deleteItem = function(cix, iix) {
+		var modal;
+		var columnName = getColumnName(cix);
+		var item = patient.getItem(columnName, iix);
+
+		if (schema.isSingleton(columnName)) {
+			// Cannot delete singleton
+			return;
+		}
+
+		if (!angular.isDefined(item)) {
+			// Cannot delete 'Add'
+			return;
+		}
+
+		$scope.state = 'modal'
+		modal = $dialog.dialog({
+			templateUrl: '/templates/modals/delete_item_confirmation.html/',
+			controller: 'DeleteItemConfirmationCtrl',
+			resolve: {
+				item: function() { return item; },
+			},
+		});
+
+		modal.open().then(function(result) {
+			$scope.state = 'normal';
+		});
+	};
+
+	$scope.mouseEnter = function(cix) {
+		$scope.mouseCix = cix;
+	}
+
+	$scope.mouseLeave = function() {
+		$scope.mouseCix = -1;
+	}
+
+	function goUp() {
+		var columnName;
+
+		if ($scope.iix > 0) {
+			$scope.iix--;
+		} else {
+			if ($scope.cix > 0) {
+				$scope.cix--;
+				columnName = getColumnName($scope.cix);
+				if (schema.isSingleton(columnName)) {
+					$scope.iix = 0;
+				} else {
+					$scope.iix = patient.getNumberOfItems(columnName);
+				};
+			};
+		};
+	};
+
+	function goDown() {
+		var columnName = getColumnName($scope.cix);
+
+		if (!schema.isSingleton(columnName) &&
+		    ($scope.iix < patient.getNumberOfItems(columnName))) {
+			$scope.iix++;
+		} else if ($scope.cix < $scope.columns.length - 1) {
+			$scope.cix++;
+			$scope.iix = 0;
+		};
+	};
 });
 
 controllers.controller('SearchCtrl', function($scope, $http, $location) {

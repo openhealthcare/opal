@@ -15,19 +15,20 @@
 				ng-click="selectItem({{ forloop.counter0 }}, $index)"
 				ng-dblclick="editItem({{ forloop.counter0 }}, $index)"
 				ng-class="{selected: cix == {{ forloop.counter0 }} && iix == $index}">
-				{% if column.single %}
-				{% include column.detail_template_path %}
-				{% else %}
-				<span ng-hide="$last">
 					{% include column.detail_template_path %}
-				</span>
-				<span ng-show="$last">
+				</li>
+
+
+				{% if not column.single %}
+				<li ng-click="selectItem({{ forloop.counter0 }}, patient.{{column.name}}.length)"
+				ng-dblclick="editItem({{ forloop.counter0 }}, patient.{{column.name}}.length)"
+				ng-class="{selected: cix == {{ forloop.counter0 }} && iix == patient.{{column.name}}.length}">
 					<span ng-show="(cix == {{ forloop.counter0 }}) || (mouseCix == {{ forloop.counter0 }})">
 						Add
-					</span>&nbsp;
-				</span>
-				{% endif %}
+					</span>
+					&nbsp;
 				</li>
+				{% endif %}
 			</ul>
 		</td>
 	</tr>

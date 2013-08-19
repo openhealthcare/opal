@@ -7,14 +7,27 @@ services.factory('PatientResource', function($resource) {
 	return $resource('/patient/:id/', {id: '@id'})
 });
 
-services.factory('schemaLoader', function($q, $http, Schema) {
+services.factory('listSchemaLoader', function($q, $http, Schema) {
 	var deferred = $q.defer();
-	$http.get('/schema/').then(function(response) {
+	$http.get('/schema/list/').then(function(response) {
 		var columns = response.data;
 		deferred.resolve(new Schema(columns));
 	}, function() {
 		// handle error better
-		alert('Schema could not be loaded');
+		alert('List schema could not be loaded');
+	});
+
+	return deferred.promise;
+});
+
+services.factory('detailSchemaLoader', function($q, $http, Schema) {
+	var deferred = $q.defer();
+	$http.get('/schema/detail/').then(function(response) {
+		var columns = response.data;
+		deferred.resolve(new Schema(columns));
+	}, function() {
+		// handle error better
+		alert('Detail schema could not be loaded');
 	});
 
 	return deferred.promise;
@@ -22,18 +35,16 @@ services.factory('schemaLoader', function($q, $http, Schema) {
 
 services.factory('Schema', function() {
 	return function(columns) {
+		this.columns = columns;
+
 		this.getNumberOfColumns = function() {
 			return columns.length;
-		};
-
-		this.getColumnByIx = function(cix) {
-			return columns[cix];
 		};
 
 		this.getColumn = function(columnName) {
 			var column;
 			for (cix = 0; cix < this.getNumberOfColumns(); cix++) {
-				column = this.getColumnByIx(cix);
+				column = columns[cix];
 				if (column.name == columnName) {
 					return column;
 				}
@@ -60,10 +71,10 @@ services.factory('Options', function($q, $http) {
 	return deferred.promise;
 });
 
-services.factory('patientsLoader', function($q, PatientResource, Patient, schemaLoader) {
+services.factory('patientsLoader', function($q, PatientResource, Patient, listSchemaLoader) {
 	return function() {
 		var deferred = $q.defer();
-		schemaLoader.then(function(schema) {
+		listSchemaLoader.then(function(schema) {
 			PatientResource.query(function(resources) {
 				var patients = _.map(resources, function(resource) {
 					return new Patient(resource, schema);
@@ -78,10 +89,10 @@ services.factory('patientsLoader', function($q, PatientResource, Patient, schema
 	};
 });
 
-services.factory('patientLoader', function($q, $route, PatientResource, Patient, schemaLoader) {
+services.factory('patientLoader', function($q, $route, PatientResource, Patient, detailSchemaLoader) {
 	return function() {
 		var deferred = $q.defer();
-		schemaLoader.then(function(schema) {
+		detailSchemaLoader.then(function(schema) {
 			PatientResource.get({id: $route.current.params.id}, function(resource) {
 				var patient = new Patient(resource, schema);
 				deferred.resolve(patient);
@@ -102,7 +113,7 @@ services.factory('Patient', function($http, $q, Item) {
 		angular.extend(patient, resource);
 
 		for (var cix = 0; cix < schema.getNumberOfColumns(); cix++) {
-			column = schema.getColumnByIx(cix);
+			column = schema.columns[cix];
 
 			for (var iix = 0; iix < patient[column.name].length; iix++) {
 				attrs = patient[column.name][iix];
