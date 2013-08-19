@@ -1,3 +1,7 @@
+// This is a slightly amended version of bootstrap.js
+//
+// Differences to the original are marked in comments containing "@@@".
+
 /* ===================================================
  * bootstrap-transition.js v2.3.2
  * http://getbootstrap.com/2.3.2/javascript.html#transitions
@@ -1873,6 +1877,21 @@
 
   , select: function () {
       var val = this.$menu.find('.active').attr('data-value')
+
+      // @@@ Beginning of alteration (1/2)
+      // We split the text in the input into tokens, identify the current token by cursor position,
+      // and replace it with the value selected from the typeahead.
+      var tokenIx = this.query.substr(0, this.$element.getCursorPosition()).split(',').length - 1;
+      var tokens = this.query.split(',');
+      tokens[tokenIx] = val;
+
+      for (var ix = 0; ix < tokens.length; ix++) {
+        tokens[ix] = tokens[ix].trim();
+      };
+
+      val = tokens.join(', ')
+      // @@@ End of alteration (1/2)
+
       this.$element
         .val(this.updater(val))
         .change()
@@ -1937,7 +1956,14 @@
     }
 
   , matcher: function (item) {
-      return ~item.toLowerCase().indexOf(this.query.toLowerCase())
+      // @@@ Beginning of alteration (2/2)
+      // We split the text in the input into tokens, identify the current token by cursor position,
+      // and match against it.
+      var tokenIx = this.query.substr(0, this.$element.getCursorPosition()).split(',').length - 1;
+      var tokens = this.query.split(',');
+      var token = tokens[tokenIx].replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+      return ~item.toLowerCase().indexOf(token.toLowerCase())
+      // @@@ End of alteration (2/2)
     }
 
   , sorter: function (items) {
