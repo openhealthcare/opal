@@ -538,7 +538,11 @@ controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog,
 	};
 });
 
-controllers.controller('AddPatientCtrl', function($scope, $http, dialog, options, details) {
+controllers.controller('AddPatientCtrl', function($scope, $http, $timeout, dialog, options, details) {
+	$timeout(function() {
+		dialog.modalEl.find('input,textarea').first().focus();
+	});
+
 	for (var name in options) {
 		$scope[name + '_list'] = options[name];
 	};
@@ -598,9 +602,13 @@ controllers.controller('AddPatientCtrl', function($scope, $http, dialog, options
 	};
 });
 
-controllers.controller('EditItemCtrl', function($scope, dialog, item, options) {
+controllers.controller('EditItemCtrl', function($scope, $timeout, dialog, item, options) {
 	$scope.editing = item.makeCopy();
 	$scope.editingName = item.patientName;
+
+	$timeout(function() {
+		dialog.modalEl.find('input,textarea').first().focus();
+	});
 
 	for (var name in options) {
 		if (name.indexOf('micro_test') != 0) {
@@ -640,7 +648,11 @@ controllers.controller('EditItemCtrl', function($scope, dialog, item, options) {
 	};
 });
 
-controllers.controller('DeleteItemConfirmationCtrl', function($scope, $http, dialog, item) {
+controllers.controller('DeleteItemConfirmationCtrl', function($scope, $http, $timeout, dialog, item) {
+	$timeout(function() {
+		dialog.modalEl.find('button.btn-primary').first().focus();
+	});
+
 	$scope.destroy = function() {
 		item.destroy().then(function() {
 			dialog.close('deleted');
@@ -652,7 +664,11 @@ controllers.controller('DeleteItemConfirmationCtrl', function($scope, $http, dia
 	};
 });
 
-controllers.controller('DischargePatientCtrl', function($scope, $http, dialog, patient, currentTag) {
+controllers.controller('DischargePatientCtrl', function($scope, $http, $timeout, dialog, patient, currentTag) {
+	$timeout(function() {
+		dialog.modalEl.find('input,textarea').first().focus();
+	});
+
 	var currentCategory = patient.location[0].category;
 	var newCategory;
 
