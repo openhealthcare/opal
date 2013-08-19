@@ -411,7 +411,10 @@ controllers.controller('SearchCtrl', function($scope, $http, $location) {
 });
 
 controllers.controller('AddPatientCtrl', function($scope, $http, dialog, options, currentTag) {
-	$scope.options = options;
+	for (var name in options) {
+		$scope[name + '_list'] = options[name];
+	};
+	$scope.patient_category_list = ['Inpatient', 'Review'];
 
 	$scope.foundPatient = false; // Display rest of form when true
 	$scope.findingPatient = false; // Disable Search button when true
@@ -462,9 +465,13 @@ controllers.controller('AddPatientCtrl', function($scope, $http, dialog, options
 });
 
 controllers.controller('EditItemCtrl', function($scope, dialog, item, options) {
-	$scope.options = options;
 	$scope.editing = item.makeCopy();
 	$scope.editingName = item.patientName;
+
+	for (var name in options) {
+		$scope[name + '_list'] = options[name];
+	};
+	$scope.patient_category_list = ['Inpatient', 'Review'];
 
 	$scope.save = function() {
 		item.save($scope.editing).then(function() {

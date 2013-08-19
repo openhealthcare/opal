@@ -30,13 +30,13 @@
 			<div class="control-group">
 				<label class="control-label">Category</label>
 				<div class="controls">
-					<input type="text" ng-model="editing.location.category" typeahead="item for item in ['Inpatient', 'Review'] | filter:$viewValue">
+					<input type="text" ng-model="editing.location.category" bs-typeahead="patient_category_list">
 				</div>
 			</div>
 			<div class="control-group">
 				<label class="control-label">Hospital</label>
 				<div class="controls">
-					<input type="text" ng-model="editing.location.hospital" typeahead="item for item in options.hospital | filter:$viewValue | limitTo:8">
+					<input type="text" ng-model="editing.location.hospital" bs-typeahead="hospital_list">
 				</div>
 			</div>
 			<div class="control-group">
