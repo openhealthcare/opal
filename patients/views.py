@@ -50,8 +50,16 @@ def patient_list_and_create_view(request):
         return _build_json_response([patient.to_dict() for patient in patients])
 
     elif request.method == 'POST':
-        patient = models.Patient.objects.create()
         data = _get_request_data(request)
+        hospital_number = data['demographics'].get('hospital_number', '')
+        if hospital_number:
+            try:
+                patient = models.Patient.objects.get(demographics__hospital_number=hospital_number)
+            except models.Patient.DoesNotExist:
+                patient = models.Patient.objects.create()
+        else:
+            patient = models.Patient.objects.create()
+
         patient.update_from_dict(data, request.user)
         return _build_json_response(patient.to_dict(), 201)
 

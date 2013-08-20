@@ -76,8 +76,9 @@ services.factory('patientsLoader', function($q, PatientResource, Patient, listSc
 		var deferred = $q.defer();
 		listSchemaLoader.then(function(schema) {
 			PatientResource.query(function(resources) {
-				var patients = _.map(resources, function(resource) {
-					return new Patient(resource, schema);
+				var patients = {};
+				_.each(resources, function(resource) {
+					patients[resource.id] = new Patient(resource, schema);
 				});
 				deferred.resolve(patients);
 			}, function() {
