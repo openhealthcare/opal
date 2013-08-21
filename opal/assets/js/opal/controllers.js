@@ -707,9 +707,3 @@ controllers.controller('DischargePatientCtrl', function($scope, $http, $timeout,
 		dialog.close('cancel');
 	};
 });
-
-controllers.controller('AccountCtrl', function($scope) {
-	$scope.keydown = function(e) {
-		$scope.$broadcast('keydown', e);
-	};
-});
