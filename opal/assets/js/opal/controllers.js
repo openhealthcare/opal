@@ -324,6 +324,8 @@ controllers.controller('PatientDetailCtrl', function($scope, $http, $dialog, sch
 
 	$scope.mouseCix = -1; // index of column mouse is currently over
 
+	$scope.patient = patient;
+
 	$scope.columns = schema.columns;
 
 	$scope.$on('keydown', function(event, e) {
