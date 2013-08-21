@@ -149,6 +149,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'accounts',
     'reversion',
     'south',
     'options',
@@ -198,6 +199,8 @@ DATE_FORMAT = 'Y-m-d'
 DATE_INPUT_FORMATS = ['Y-m-d']
 
 CSRF_COOKIE_NAME = 'XSRF-TOKEN'
+AUTH_PROFILE_MODULE = 'accounts.UserProfile'
+APPEND_SLASH = False
 
 try:
     from local_settings import *

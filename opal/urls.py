@@ -7,14 +7,13 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', views.IndexView.as_view()),
-    url(r'^accounts/login/$', 'django.contrib.auth.views.login'),
-    url(r'^accounts/logout/$', 'django.contrib.auth.views.logout', {'next_page': '/'}),
+    url(r'^accounts/', include('accounts.urls')),
     url(r'^contact/$', views.ContactView.as_view()),
     url(r'^schema/list/$', views.list_schema_view),
     url(r'^schema/detail/$', views.detail_schema_view),
     url(r'^options/$', 'options.views.options_view'),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^patient/', include('patients.urls.records')),
+    url(r'^patient/?', include('patients.urls.records')),
     url(r'^templates/', include('patients.urls.templates')),
 )
 

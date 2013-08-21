@@ -53,6 +53,10 @@ app.config(function($routeProvider) {
 					return Options;
 				},
 			},
+                }).when('/account', {
+                        controller: 'AccountCtrl',
+                        templateUrl: '/accounts/templates/account_detail.html'
+
 		}).otherwise({redirectTo: '/'});
 });
 
