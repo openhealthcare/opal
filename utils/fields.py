@@ -42,6 +42,7 @@ class ForeignKeyOrFreeText(property):
             setattr(inst, self.ft_field_name, ', '.join(vals))
             setattr(inst, self.fk_field_name, None)
         else:
+            val = vals[0]
             try:
                 foreign_obj = self.foreign_model.objects.get(name=val)
                 setattr(inst, self.fk_field_name, foreign_obj)

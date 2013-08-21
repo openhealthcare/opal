@@ -2,7 +2,7 @@ var controllers = angular.module('opal.controllers', [
 	'ngCookies',
 	'opal.services',
 	'ui.event',
-	'ui.bootstrap',
+	'ui.bootstrap'
 ]);
 
 controllers.controller('RootCtrl', function($scope) {
@@ -26,22 +26,19 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 
 	$scope.columns = schema.columns;
 
-	$scope.patients = patients;
-
 	$scope.rows = getVisiblePatients();
 
 	function getVisiblePatients() {
-		var patient;
-		var patients = [];
+		var visiblePatients = [];
 
-		for (var pix = 0; pix < $scope.patients.length; pix++) {
-			patient = $scope.patients[pix]
-			if (patient.isVisible($scope.currentTag, $scope.query.hospital, $scope.query.ward)) {
-				patients.push(patient);
+		for (var pix in patients) {
+			if (patients[pix].isVisible($scope.currentTag, $scope.query.hospital, $scope.query.ward)) {
+				visiblePatients.push(patients[pix]);
 			};
 		};
-		patients.sort(comparePatients);
-		return patients;
+
+		visiblePatients.sort(comparePatients);
+		return visiblePatients;
 	};
 
 	function comparePatients(p1, p2) {
@@ -143,6 +140,7 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 			controller: 'AddPatientCtrl',
 			resolve: {
 				details: function() { return { currentTag: $scope.currentTag };},
+				schema: function() { return schema; },
 				options: function() { return options; },
 			}
 		});
@@ -154,13 +152,7 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 			if (angular.isObject(result)) {
 				// result is attributes of patient
 				patient = new Patient(result, schema)
-				rix = getRowIxFromPatientId(patient.id);
-				if (rix != -1) {
-					// If patient is already in table, remove the corresponding row.
-					// This guards against user changing patient data in add form.
-					$scope.rows.splice(rix, 1);
-				}
-				$scope.patients.push(patient);
+				patients[patient.id] = patient;
 				$scope.rows = getVisiblePatients();
 				$scope.selectItem(getRowIxFromPatientId(patient.id), 0, 0);
 			}
@@ -332,9 +324,9 @@ controllers.controller('PatientDetailCtrl', function($scope, $http, $dialog, sch
 
 	$scope.mouseCix = -1; // index of column mouse is currently over
 
-	$scope.columns = schema.columns;
-
 	$scope.patient = patient;
+
+	$scope.columns = schema.columns;
 
 	$scope.$on('keydown', function(event, e) {
 		if ($scope.state == 'normal') {
@@ -472,7 +464,7 @@ controllers.controller('PatientDetailCtrl', function($scope, $http, $dialog, sch
 	};
 });
 
-controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog, options) {
+controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog, schema, options) {
 	$scope.searchTerms = {
 		hospital_number: '',
 		name: '',
@@ -523,6 +515,7 @@ controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog,
 			controller: 'AddPatientCtrl',
 			resolve: {
 				details: function() { return details; },
+				schema: function() { return schema; },
 				options: function() { return options; },
 			}
 		});
@@ -538,7 +531,7 @@ controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog,
 	};
 });
 
-controllers.controller('AddPatientCtrl', function($scope, $http, $timeout, dialog, options, details) {
+controllers.controller('AddPatientCtrl', function($scope, $http, $timeout, dialog, Patient, schema, options, details) {
 	$timeout(function() {
 		dialog.modalEl.find('input,textarea').first().focus();
 	});
@@ -563,14 +556,16 @@ controllers.controller('AddPatientCtrl', function($scope, $http, $timeout, dialo
 	};
 
 	$scope.findByHospitalNumber = function() {
+		var patient;
 		var hospitalNumber = $scope.editing.demographics.hospital_number;
 		$scope.findingPatient = true;
 		$http.get('patient/?hospital_number=' + hospitalNumber).success(function(results) {
 			$scope.findingPatient = false;
 			$scope.foundPatient = true; // misnomer: might not actually have found a patient!
 			if (results.length == 1) {
-				$scope.editing.demographics = results[0].demographics[0];
-				$scope.editing.location = results[0].location[0]
+				patient = new Patient(results[0], schema);
+				$scope.editing.demographics = patient.getItem('demographics', 0).makeCopy();
+				$scope.editing.location = patient.getItem('location', 0).makeCopy();
 			}
 			if (details.currentTag) {
 				$scope.editing.location.tags[details.currentTag] = true;
@@ -633,7 +628,6 @@ controllers.controller('EditItemCtrl', function($scope, $timeout, dialog, item, 
 			$scope.testType = $scope.microbiology_test_lookup[testName];
 		});
 	};
-
 
 	$scope.patient_category_list = ['Inpatient', 'Review'];
 
