@@ -200,6 +200,7 @@ DATE_INPUT_FORMATS = ['Y-m-d']
 
 CSRF_COOKIE_NAME = 'XSRF-TOKEN'
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
+APPEND_SLASH = False
 
 try:
     from local_settings import *

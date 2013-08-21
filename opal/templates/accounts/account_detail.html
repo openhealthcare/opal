@@ -1,0 +1,16 @@
+<div class="container">
+  <h2>Your Account</h2>
+  <h3>
+    {% if request.user.first_name %}
+      {{ request.user.first_name }}
+    {% else %}
+      {{ request.user.username }}
+    {% endif %}
+  </h3>
+  <br />
+  <h4>
+    <a href="{% url 'change-password' %}">
+      Reset Password
+    </a>
+  </h4>
+</div>
