@@ -60,7 +60,9 @@
                                           </a>
                                         </li>
 					<li><a href="#">Home</a></li>
-					<li><a href="/admin">Admin</a></li>
+                                        {% if request.user.is_staff %}
+					  <li><a href="/admin">Admin</a></li>
+                                        {% endif %}
 					<li><a href="/#/search">Search</a></li>
 					<li><a href="/contact">Feedback</a></li>
 					<li><a href="{% url 'django.contrib.auth.views.logout' %}">Log out</a></li>
