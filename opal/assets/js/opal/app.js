@@ -46,6 +46,9 @@ app.config(function($routeProvider) {
 			controller: 'SearchCtrl',
 			templateUrl: '/templates/search.html',
 			resolve: {
+				schema: function(listSchemaLoader) {
+					return listSchemaLoader;
+				},
 				options: function(Options) {
 					return Options;
 				},

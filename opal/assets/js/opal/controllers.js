@@ -464,7 +464,7 @@ controllers.controller('PatientDetailCtrl', function($scope, $http, $dialog, sch
 	};
 });
 
-controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog, options) {
+controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog, schema, options) {
 	$scope.searchTerms = {
 		hospital_number: '',
 		name: '',
