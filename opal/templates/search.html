@@ -8,15 +8,15 @@
 					<td><input type="text" name="hospital_number" ng-model="searchTerms.hospital_number" placeholder="Hospital Number"></td>
 					<td><input type="text" name="name" ng-model="searchTerms.name" placeholder="Name"></td>
 					<td></td>
-					<td><button ng-click="doSearch()" class="btn">Search</button></td>
+					<td><button ng-click="search()" class="btn">Search</button></td>
 				</form>
 			</tr>
 		</thead>
 
 		<tr ng-repeat="patient in results">
-			<td>[[patient.demographics.hospital_number]]</td>
-			<td>[[patient.demographics.name]]</td>
-			<td>[[patient.location.category]]</td>
+			<td>[[patient.demographics[0].hospital_number]]</td>
+			<td>[[patient.demographics[0].name]]</td>
+			<td>[[patient.location[0].category]]</td>
 			<td><a href="#/patient/[[ patient.id ]]">View</a></td>
 		</tr>
 
@@ -27,84 +27,5 @@
 	</div>
 
 	<br />
-	<button class="btn" ng-click="startAdd()">Add record</button>
-</div>
-
-<div id="add-new-modal" class="modal hide" tabindex="-1" role="dialog">
-	<div class="modal-header">
-		<button type="button" class="close" ng-click="cancelAdd()">×</button>
-		<h3>New record</h3>
-	</div>
-	<div class="modal-body">
-		<form class="form-horizontal">
-			<div class="control-group">
-				<label class="control-label">Hospital number</label>
-				<div class="controls">
-					<input type="text" ng-model="editing.demographics.hospital_number">
-				</div>
-			</div>
-			<div>
-				<div class="control-group">
-					<label class="control-label">Name</label>
-					<div class="controls">
-						<input type="text" ng-model="editing.demographics.name">
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label">Date of birth</label>
-					<div class="controls">
-						<input type="text"
-							ng-model="editing.demographics.date_of_birth"
-							ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
-							placeholder="dd/mm/yyyy">
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label">Category</label>
-					<div class="controls">
-						<input type="text" ng-model="editing.location.category" bs-typeahead="patient_category_list" data-provide="typeahead" data-min-length=0>
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label">Hospital</label>
-					<div class="controls">
-						<input type="text" ng-model="editing.location.hospital" bs-typeahead="hospital_list" data-provide="typeahead">
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label">Ward</label>
-					<div class="controls">
-						<input type="text" ng-model="editing.location.ward">
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label">Bed</label>
-					<div class="controls">
-						<input type="text" ng-model="editing.location.bed">
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label">Date of admission</label>
-					<div class="controls">
-						<input type="text" ng-model="editing.location.date_of_admission" bs-datepicker>
-					</div>
-				</div>
-				<div class="control-group">
-					<label class="control-label">Tags</label>
-					<div class="controls">
-						{% for key, name in tags.items %}
-						<label class="checkbox">
-							<input type="checkbox" ng-model="editing.tags.{{key}}">
-							{{name}}
-						</label>
-						{% endfor %}
-					</div>
-				</div>
-			</div>
-		</form>
-	</div>
-	<div class="modal-footer">
-		<button class="btn btn-primary" ng-click="saveAdd()">Save record</button>
-		<button class="btn" ng-click="cancelAdd()">Cancel</button>
-	</div>
+	<button class="btn" ng-click="addPatient()">Add record</button>
 </div>

@@ -1,9 +1,13 @@
 from collections import OrderedDict
+from datetime import datetime
+import random
 
 from django.db import models
 from django.dispatch import receiver
+from django.forms.models import ModelForm
 from django.contrib import auth
 
+from patients import exceptions
 from utils.fields import ForeignKeyOrFreeText
 from utils import camelcase_to_underscore
 from options.models import option_models
@@ -28,18 +32,35 @@ class Patient(models.Model):
     objects = PatientManager()
 
     def __unicode__(self):
-        return '%s | %s' % (self.demographics.get().hospital_number, self.demographics.get().name)
+        demographics = self.demographics_set.get()
+        return '%s | %s' % (demographics.hospital_number, demographics.name)
+
+    def to_dict(self):
+        d = {'id': self.id}
+        for model in Subrecord.__subclasses__():
+            subrecords = model.objects.filter(patient_id=self.id)
+            d[model.get_api_name()] = [subrecord.to_dict() for subrecord in subrecords]
+        return d
+
+    def update_from_dict(self, data, user):
+        demographics = self.demographics_set.get()
+        demographics.update_from_dict(data['demographics'], user)
+
+        location = self.location_set.get()
+        location.update_from_dict(data['location'], user)
+
+        self.save()
+
+    def get_tag_names(self):
+        return [t.tag_name for t in self.tagging_set.all()]
 
     def set_tags(self, tags, user):
-        # tags is a dictionary mapping tag names to a boolean
         for tagging in self.tagging_set.all():
-            if not tags.get(tagging.tag_name, False):
+            if tagging.tag_name not in tags:
                 tagging.delete()
 
-        for tag_name, value in tags.items():
-            if not value:
-                continue
-            if tag_name not in [t.tag_name for t in self.tagging_set.all()]:
+        for tag_name in tags:
+            if tag_name not in self.get_tag_names():
                 tagging = Tagging(tag_name=tag_name)
                 if tag_name == 'mine':
                     tagging.user = user
@@ -56,21 +77,123 @@ class Tagging(models.Model):
         else:
             return self.tag_name
 
-class SubrecordBase(models.base.ModelBase):
-    def __new__(cls, name, bases, attrs):
-        if name != 'Subrecord':
-            related_name = camelcase_to_underscore(name)
-            attrs['patient'] = models.ForeignKey(Patient, related_name=related_name)
-            attrs['__unicode__'] = lambda s: u'{0}: {1}'.format(name, s.patient)
-        return super(SubrecordBase, cls).__new__(cls, name, bases, attrs)
-
 class Subrecord(models.Model):
-    __metaclass__ = SubrecordBase
+    patient = models.ForeignKey(Patient)
+    consistency_token = models.CharField(max_length=8)
 
     _is_singleton = False
 
     class Meta:
         abstract = True
+
+    def __unicode__(self):
+        return u'{0}: {1}'.format(self.get_api_name(), self.patient)
+
+    @classmethod
+    def get_api_name(cls):
+        return camelcase_to_underscore(cls._meta.object_name)
+
+    @classmethod
+    def build_field_schema(cls):
+        field_schema = []
+        for fieldname in cls._get_fieldnames_to_serialize():
+            if fieldname in ['id', 'patient_id']:
+                continue
+
+            getter = getattr(cls, 'get_field_type_for_' + fieldname, None)
+            if getter is None:
+                field = cls._get_field_type(fieldname)
+                if field in [models.CharField, ForeignKeyOrFreeText]:
+                    field_type = 'string'
+                else:
+                    field_type = camelcase_to_underscore(field.__name__[:-5])
+            else:
+                field_type = getter()
+
+            field_schema.append({'name': fieldname, 'type': field_type})
+
+        return field_schema
+
+    @classmethod
+    def get_field_type_for_consistency_token(cls):
+        return 'token'
+
+    @classmethod
+    def _get_fieldnames_to_serialize(cls):
+        fieldnames = [f.attname for f in cls._meta.fields]
+
+        for name, value in vars(cls).items():
+            if isinstance(value, ForeignKeyOrFreeText):
+                fieldnames.append(name)
+                fieldnames.remove(name + '_ft')
+                fieldnames.remove(name + '_fk_id')
+
+        return fieldnames
+
+    @classmethod
+    def _get_field_type(cls, name):
+        try:
+            return type(cls._meta.get_field_by_name(name)[0])
+        except models.FieldDoesNotExist:
+            pass
+
+        if name == 'patient_id':
+            return models.ForeignKey
+
+        try:
+            value = vars(cls)[name]
+            if isinstance(value, ForeignKeyOrFreeText):
+                return ForeignKeyOrFreeText
+        except KeyError:
+            pass
+
+        raise Exception('Unexpected fieldname: %s' % name)
+
+    def to_dict(self):
+        d = {}
+        for name in self._get_fieldnames_to_serialize():
+            getter = getattr(self, 'get_' + name, None)
+            if getter is not None:
+                value = getter()
+            else:
+                value = getattr(self, name)
+            d[name] = value
+
+        return d
+
+    def update_from_dict(self, data, user):
+        if self.consistency_token:
+            try:
+                consistency_token = data.pop('consistency_token')
+            except KeyError:
+                raise exceptions.APIError('Missing field (consistency_token)')
+
+            if consistency_token != self.consistency_token:
+                raise exceptions.ConsistencyError
+
+        unknown_fields = set(data.keys()) - set(self._get_fieldnames_to_serialize())
+        if unknown_fields:
+            raise APIException('Unexpected fieldname(s): %s' % list(unknown_fields))
+
+        for name, value in data.items():
+            setter = getattr(self, 'set_' + name, None)
+            if setter is not None:
+                setter(value, user)
+            else:
+                # TODO use form here?
+                if value and self._get_field_type(name) == models.fields.DateField:
+                    try:
+                        value = datetime.strptime(value, '%Y-%m-%d').date()
+                    except ValueError:
+                        value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%fZ').date()
+
+                setattr(self, name, value)
+
+        self.set_consistency_token()
+        self.save()
+
+    def set_consistency_token(self):
+        self.consistency_token = '%08x' % random.randrange(16**8)
 
 class Demographics(Subrecord):
     _is_singleton = True
@@ -82,12 +205,30 @@ class Demographics(Subrecord):
 class Location(Subrecord):
     _is_singleton = True
 
+    @classmethod
+    def _get_fieldnames_to_serialize(cls):
+        fieldnames = super(Location, cls)._get_fieldnames_to_serialize()
+        fieldnames.append('tags')
+        return fieldnames
+
+    @classmethod
+    def get_field_type_for_tags(cls):
+        return 'list'
+
+    def get_tags(self):
+        return {tag_name: True for tag_name in self.patient.get_tag_names()}
+
+    # value is a dictionary mapping tag names to a boolean
+    def set_tags(self, value, user):
+        tags = [k for k, v in value.items() if v]
+        self.patient.set_tags(tags, user)
+
     category = models.CharField(max_length=255, blank=True)
     hospital = models.CharField(max_length=255, blank=True)
     ward = models.CharField(max_length=255, blank=True)
     bed = models.CharField(max_length=255, blank=True)
     date_of_admission = models.DateField(null=True, blank=True)
-    discharge_date = models.DateField(null=True, blank=True)
+    discharge_date = models.DateField(null=True, blank=True) # TODO rename to date_of_discharge?
 
 class Diagnosis(Subrecord):
     condition = ForeignKeyOrFreeText(option_models['condition'])

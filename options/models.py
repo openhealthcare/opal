@@ -20,10 +20,13 @@ for name in model_names:
 
 
 class Synonym(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255)
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
+
+    class Meta:
+        unique_together = (('name', 'content_type'))
 
     def __unicode__(self):
         return self.name

@@ -1,9 +1,9 @@
 var app = angular.module('opal', [
-	'$strap.directives',
-	'opal.filters',
-       	'opal.services',
-       	'opal.directives',
-       	'opal.controllers'
+	 'opal.filters',
+	 'opal.services',
+	 'opal.directives',
+	 'opal.controllers',
+	 '$strap.directives',
 ]);
 
 // See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags
@@ -17,36 +17,49 @@ app.config(function($routeProvider) {
 		when('/', {
 			controller: 'PatientListCtrl',
 			resolve: {
-				schema: function(SchemaLoader) {
-					return SchemaLoader();
+				schema: function(listSchemaLoader) {
+					return listSchemaLoader;
 				},
-				patients: function(PatientsLoader) {
-					return PatientsLoader();
-				}
+				patients: function(patientsLoader) {
+					return patientsLoader();
+				},
+				options: function(Options) {
+					return Options;
+				},
 			},
-			templateUrl: '/patient/templates/patient_list.html'
-		}).when('/patient/:patientId', {
+			templateUrl: '/templates/patient_list.html'
+		}).when('/patient/:id', {
 			controller: 'PatientDetailCtrl',
 			resolve: {
-				schema: function(SchemaLoader) {
-					return SchemaLoader();
+				schema: function(detailSchemaLoader) {
+					return detailSchemaLoader;
 				},
-				patient: function(PatientLoader) {
-					return PatientLoader();
-				}
+				patient: function(patientLoader) {
+					return patientLoader();
+				},
+				options: function(Options) {
+					return Options;
+				},
 			},
-			templateUrl: '/patient/templates/patient_detail.html'
+			templateUrl: '/templates/patient_detail.html'
 		}).when('/search', {
 			controller: 'SearchCtrl',
-			templateUrl: '/patient/templates/search.html'
+			templateUrl: '/templates/search.html',
+			resolve: {
+				options: function(Options) {
+					return Options;
+				},
+			},
                 }).when('/account', {
                         controller: 'AccountCtrl',
                         templateUrl: '/accounts/templates/account_detail.html'
+
 		}).otherwise({redirectTo: '/'});
 });
 
 app.value('$strapConfig', {
 	datepicker: {
+		type: 'string',
 		format: 'dd/mm/yyyy',
 	}
 });

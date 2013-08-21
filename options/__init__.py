@@ -5,6 +5,10 @@ model_names = [
     'condition',
     'destination',
     'hospital',
+    'microbiology_organism',
+    'travel_reason',
+
+    # Types of microbiology test
     'micro_test_c_difficile',
     'micro_test_csf_pcr',
     'micro_test_ebv_serology',
@@ -24,6 +28,4 @@ model_names = [
     'micro_test_swab_pcr',
     'micro_test_syphilis_serology',
     'micro_test_viral_load',
-    'microbiology_organism',
-    'travel_reason',
 ]

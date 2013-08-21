@@ -15,42 +15,26 @@
 				ng-click="selectItem({{ forloop.counter0 }}, $index)"
 				ng-dblclick="editItem({{ forloop.counter0 }}, $index)"
 				ng-class="{selected: cix == {{ forloop.counter0 }} && iix == $index}">
-				{% if column.single %}
-				{% include column.detail_template_path %}
-				{% else %}
-				<span ng-hide="$last">
 					{% include column.detail_template_path %}
-				</span>
-				<span ng-show="$last">
+				</li>
+
+
+				{% if not column.single %}
+				<li ng-click="selectItem({{ forloop.counter0 }}, patient.{{column.name}}.length)"
+				ng-dblclick="editItem({{ forloop.counter0 }}, patient.{{column.name}}.length)"
+				ng-class="{selected: cix == {{ forloop.counter0 }} && iix == patient.{{column.name}}.length}">
 					<span ng-show="(cix == {{ forloop.counter0 }}) || (mouseCix == {{ forloop.counter0 }})">
 						Add
-					</span>&nbsp;
-				</span>
-				{% endif %}
+					</span>
+					&nbsp;
 				</li>
+				{% endif %}
 			</ul>
 		</td>
 	</tr>
 	{% endfor %}
 	</table>
 </div>
-
-{% for column in columns %}
-<div id="{{column.name}}-modal" class="modal hide" tabindex="-1" role="dialog">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" ng-click="cancelEdit()">×</button>
-		<h3>{{column.title}} ([[editingName]])</h3>
-	</div>
-	<div class="modal-body">{% include column.modal_template_path %}</div>
-	<div class="modal-footer">
-		<button class="btn btn-primary" ng-click="saveEdit()">Save</button>
-		{% if not column.single %}
-		<button class="btn btn" ng-click="saveEditAndAdd(e)">Save and add another</button>
-		{% endif %}
-		<button class="btn" ng-click="cancelEdit()">Cancel</button>
-	</div>
-</div>
-{% endfor %}
 
 <div id="delete-confirmation" class="modal hide" tabindex="-1" role="dialog">
 	<div class="modal-header">

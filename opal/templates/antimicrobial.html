@@ -1,4 +1,4 @@
 <span ng-show="item.start_date">[[item.start_date | date:'d/M']]-[[item.end_date | date:'d/M']]</span>
-[[getSynonymn("antimicrobial", item.drug)]]
+[[item.drug]]
 <span ng-show="item.dose">/ [[item.dose]]</span>
-<span ng-show="item.route">/ [[getSynonymn("antimicrobial_route", item.route)]]</span>
+<span ng-show="item.route">/ [[item.route]]</span>

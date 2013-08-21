@@ -28,15 +28,6 @@ function clone(obj) {
 	}
 };
 
-function getTodaysDate() {
-	var today = new Date();
-	var day = today.getDate();
-	var month = today.getMonth() + 1;
-	var year = today.getFullYear();
-
-	return day + '/' + month + '/' + year;
-}
-
 // From http://stackoverflow.com/a/3937924/2463201
 jQuery.support.placeholder = (function(){
 	var i = document.createElement('input');
@@ -48,7 +39,19 @@ String.prototype.chomp = function() {
     return this.trim();
 }
 
-function parseDate(dateString) {
-	var parts = dateString.split('/');
-	return new Date(parts[2], parts[1] - 1, parts[0]);
+// From http://stackoverflow.com/a/2897510/2463201
+jQuery.fn.getCursorPosition = function() {
+	var input = this.get(0);
+	if (!input) return; // No (input) element found
+	if ('selectionStart' in input) {
+		// Standard-compliant browsers
+		return input.selectionStart;
+	} else if (document.selection) {
+		// IE
+		input.focus();
+		var sel = document.selection.createRange();
+		var selLen = document.selection.createRange().text.length;
+		sel.moveStart('character', -input.value.length);
+		return sel.text.length - selLen;
+	}
 }

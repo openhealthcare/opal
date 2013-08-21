@@ -1,6 +1,6 @@
 from patients import models
 
-columns = [
+list_columns = [
     models.Demographics,
     models.Location,
     models.Diagnosis,
@@ -8,7 +8,6 @@ columns = [
     models.Travel,
     models.Antimicrobial,
     models.MicrobiologyTest,
-    models.MicrobiologyInput,
     models.GeneralNote,
     models.Todo,
 ]

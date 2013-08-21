@@ -1,4 +1,7 @@
 from django.db.models import ForeignKey, CharField
+from django.contrib.contenttypes.models import ContentType
+
+from options.models import Synonym
 
 class ForeignKeyOrFreeText(property):
     """Field-like object that stores either foreign key or free text.
@@ -10,9 +13,8 @@ class ForeignKeyOrFreeText(property):
     field.  If found, references foreign model in ForeignKey, otherwise stores
     string in CharField.
     """
-    def __init__(self, foreign_model, foreign_field='name'):
+    def __init__(self, foreign_model):
         self.foreign_model = foreign_model
-        self.foreign_field = foreign_field
 
     def contribute_to_class(self, cls, name):
         self.name = name
@@ -25,14 +27,28 @@ class ForeignKeyOrFreeText(property):
         ft_field.contribute_to_class(cls, self.ft_field_name)
 
     def __set__(self, inst, val):
-        lookup = {self.foreign_field: val}
-        try:
-            foreign_obj = self.foreign_model.objects.get(**lookup)
-            setattr(inst, self.fk_field_name, foreign_obj)
-            setattr(inst, self.ft_field_name, '')
-        except self.foreign_model.DoesNotExist:
-            setattr(inst, self.ft_field_name, val)
+        # This is totally not the right place to look up synonyms...
+        vals = []
+        content_type = ContentType.objects.get_for_model(self.foreign_model)
+        for val in val.split(','):
+            val = val.strip()
+            try:
+                synonym = Synonym.objects.get(content_type=content_type, name=val)
+                vals.append(synonym.content_object.name)
+            except Synonym.DoesNotExist:
+                vals.append(val)
+
+        if len(vals) > 1:
+            setattr(inst, self.ft_field_name, ', '.join(vals))
             setattr(inst, self.fk_field_name, None)
+        else:
+            try:
+                foreign_obj = self.foreign_model.objects.get(name=val)
+                setattr(inst, self.fk_field_name, foreign_obj)
+                setattr(inst, self.ft_field_name, '')
+            except self.foreign_model.DoesNotExist:
+                setattr(inst, self.ft_field_name, val)
+                setattr(inst, self.fk_field_name, None)
 
     def __get__(self, inst, cls):
         if inst is None:
@@ -41,4 +57,4 @@ class ForeignKeyOrFreeText(property):
         if foreign_obj is None:
             return getattr(inst, self.ft_field_name)
         else:
-            return getattr(foreign_obj, self.foreign_field)
+            return foreign_obj.name

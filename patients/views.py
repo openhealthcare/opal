@@ -1,109 +1,100 @@
 import json
 import datetime
-from django.http import HttpResponse
+from django.core.serializers.json import DjangoJSONEncoder
+from django.conf import settings
+from django.http import HttpResponse, HttpResponseNotFound
 from django.views.generic import TemplateView
+from django.views.decorators.http import require_http_methods
 from django.template.loader import select_template
 from django.utils.decorators import method_decorator
+from django.utils import formats
 from django.contrib.auth.decorators import login_required
-from rest_framework import generics, response, status, renderers, views
 from utils import camelcase_to_underscore
-from patients import models, serializers, schema
-from options.models import option_models, Synonym
+from patients import models, schema, exceptions
 
 class LoginRequiredMixin(object):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
 
-class SubrecordMixin(object):
-    def get_serializer_class(self):
-        return serializers.build_subrecord_serializer(self.model)
+@require_http_methods(['GET'])
+def patient_detail_view(request, pk):
+    try:
+        patient = models.Patient.objects.get(pk=pk)
+    except models.Patient.DoesNotExist:
+        return HttpResponseNotFound()
 
-    @property
-    def patient(self):
-        return models.Patient.objects.get(pk=self.kwargs['patient_id'])
+    return _build_json_response(patient.to_dict(), 200)
 
-class PatientList(LoginRequiredMixin, generics.ListAPIView):
-    model = models.Patient
-    serializer_class = serializers.PatientSerializer
+@require_http_methods(['GET', 'POST'])
+def patient_list_and_create_view(request):
+    if request.method == 'GET':
+        GET = request.GET
 
-    def get(self, request, *args, **kwargs):
-        response = super(PatientList, self).get(request, *args, **kwargs)
-        # We can't do this in the serializer because the serializer doesn't know about the user
-        for patient in response.data:
-            taggings = models.Tagging.objects.filter(patient_id=patient['id'])
-            patient['tags'] = {t.tag_name: True for t in taggings
-                               if t.user is None or t.user == request.user}
-        return response
+        search_terms = {}
+        filter_dict = {}
 
-    def post(self, request, *args, **kwargs):
-        # I am not proud of this code
-        hospital_number = request.DATA['demographics']['hospital_number']
-        patient, _ = models.Patient.objects.get_or_create(
-            demographics__hospital_number=hospital_number)
+        if 'hospital_number' in GET:
+            search_terms['hospital_number'] = GET['hospital_number']
+            filter_dict['demographics__hospital_number__iexact'] = GET['hospital_number']
 
-        location = patient.location.get()
-        for field in location._meta.fields:
-            field_name = field.name
-            if field_name not in ['id', 'patient'] and field_name in request.DATA['location']:
-                if field_name == 'date_of_admission':
-                    value = request.DATA['location'][field_name]
-                    date_of_admission = datetime.datetime.strptime(value, '%d/%m/%Y').date()
-                    setattr(location, field_name, date_of_admission)
-                else:
-                    setattr(location, field_name, request.DATA['location'][field_name])
-        location.save()
+        if 'name' in GET:
+            search_terms['name'] = GET['name']
+            filter_dict['demographics__name__icontains'] = GET['name']
 
-        demographics = patient.demographics.get()
-        for field in demographics._meta.fields:
-            field_name = field.name
-            if field_name not in ['id', 'patient'] and field_name in request.DATA['demographics']:
-                if field_name == 'date_of_birth':
-                    value = request.DATA['demographics'][field_name]
-                    date_of_birth = datetime.datetime.strptime(value, '%d/%m/%Y').date()
-                    setattr(demographics, field_name, date_of_birth)
-                else:
-                    setattr(demographics, field_name, request.DATA['demographics'][field_name])
-        demographics.save()
+        if filter_dict:
+            patients = models.Patient.objects.filter(**filter_dict)
+        else:
+            patients = models.Patient.objects.all()
 
-        tags = request.DATA.get('tags', {})
-        patient.set_tags(tags, request.user)
+        return _build_json_response([patient.to_dict() for patient in patients])
 
-        serializer = serializers.PatientSerializer(patient)
+    elif request.method == 'POST':
+        patient = models.Patient.objects.create()
+        data = _get_request_data(request)
+        patient.update_from_dict(data, request.user)
+        return _build_json_response(patient.to_dict(), 201)
 
-        # We can't do this in the serializer because the serializer doesn't know about the user
-        serializer.data['tags'] = tags
+@require_http_methods(['GET', 'PUT', 'DELETE'])
+def subrecord_detail_view(request, model, pk):
+    try:
+        subrecord = model.objects.get(pk=pk)
+    except model.DoesNotExist:
+        return HttpResponseNotFound()
 
-        return response.Response(serializer.data, status=status.HTTP_201_CREATED)
+    if request.method == 'GET':
+        return _build_json_response(subrecord.to_dict())
+    elif request.method == 'PUT':
+        data = _get_request_data(request)
+        try:
+            subrecord.update_from_dict(data, request.user)
+            return _build_json_response(subrecord.to_dict())
+        except exceptions.ConsistencyError:
+            return _build_json_response({'error': 'Item has changed'}, 409)
+    elif request.method == 'DELETE':
+        subrecord.delete()
+        return _build_json_response('')
 
-class PatientDetailView(LoginRequiredMixin, generics.RetrieveAPIView):
-    model = models.Patient
-    serializer_class = serializers.PatientSerializer
+@require_http_methods(['POST'])
+def subrecord_create_view(request, model):
+    subrecord = model()
+    data = _get_request_data(request)
+    subrecord.update_from_dict(data, request.user)
+    return _build_json_response(subrecord.to_dict(), 201)
 
-    def get(self, request, *args, **kwargs):
-        response = super(PatientDetailView, self).get(request, *args, **kwargs)
-        # We can't do this in the serializer because the serializer doesn't know about the user
-        taggings = models.Tagging.objects.filter(patient_id=response.data['id'])
-        response.data['tags'] = {t.tag_name: True for t in taggings if t.user is None or t.user == request.user}
-        return response
+def _get_request_data(request):
+    data = request.read()
+    return json.loads(data)
 
-class SubrecordList(LoginRequiredMixin, SubrecordMixin, generics.CreateAPIView):
-    pass
-
-
-class SubrecordDetail(LoginRequiredMixin, SubrecordMixin, generics.RetrieveUpdateDestroyAPIView):
-    def put(self, request, *args, **kwargs):
-        response = super(SubrecordDetail, self).put(request, *args, **kwargs)
-        if 'tags' in request.DATA:
-            patient = models.Patient.objects.get(pk=request.DATA['patient'])
-            patient.set_tags(request.DATA['tags'], request.user)
-        return response
+def _build_json_response(data, status_code=200):
+    response = HttpResponse()
+    response['Content-Type'] = 'application/json'
+    response.content = json.dumps(data, cls=DjangoJSONEncoder)
+    response.status_code = status_code
+    return response
 
 
 class PatientTemplateView(TemplateView):
-
-    column_schema = schema.columns
-
     def get_column_context(self):
         """
         Return the context for our columns
@@ -112,8 +103,6 @@ class PatientTemplateView(TemplateView):
         for column in self.column_schema:
             column_context = {}
             name = camelcase_to_underscore(column.__name__)
-            if isinstance(self, PatientListTemplateView) and name == 'microbiology_input':
-                continue
             column_context['name'] = name
             column_context['title'] = getattr(column, '_title',
                                               name.replace('_', ' ').title())
@@ -133,83 +122,77 @@ class PatientTemplateView(TemplateView):
 
 class PatientListTemplateView(PatientTemplateView):
     template_name = 'patient_list.html'
+    column_schema = schema.list_columns
 
 class PatientDetailTemplateView(PatientTemplateView):
     template_name = 'patient_detail.html'
     column_schema = schema.detail_columns
 
-class SearchTemplateView(PatientTemplateView):
+class SearchTemplateView(TemplateView):
     template_name = 'search.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(SearchTemplateView, self).get_context_data(**kwargs)
+        context['tags'] = models.TAGS
+        return context
+
+class AddPatientTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = 'add_patient_modal.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(AddPatientTemplateView, self).get_context_data(**kwargs)
+        context['tags'] = models.TAGS
+        return context
+
+class DischargePatientTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = 'discharge_patient_modal.html'
+
+class DeleteItemConfirmationView(LoginRequiredMixin, TemplateView):
+    template_name = 'delete_item_confirmation_modal.html'
 
 class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'opal.html'
+
+class ModalTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = 'modal_base.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ModalTemplateView, self).get_context_data(**kwargs)
+        column = self.kwargs['model']
+        name = camelcase_to_underscore(column.__name__)
+
+        context['name'] = name
+        context['title'] = getattr(column, '_title', name.replace('_', ' ').title())
+        context['single'] = column._is_singleton
+        context['modal_template_path'] = name + '_modal.html'
+
+        if name == 'location':
+            context['tags'] = models.TAGS
+
+        return context
 
 # This probably doesn't belong here
 class ContactView(TemplateView):
     template_name = 'contact.html'
 
-def schema_view(request):
+def list_schema_view(request):
     columns = []
-    for column in schema.columns:
+    for column in schema.list_columns:
         columns.append({
-            'name': camelcase_to_underscore(column.__name__),
-            'single': column._is_singleton
+            'name': column.get_api_name(),
+            'single': column._is_singleton,
+            'fields': column.build_field_schema()
         })
 
-    detail_columns = []
+    return _build_json_response(columns)
+
+def detail_schema_view(request):
+    columns = []
     for column in schema.detail_columns:
-        detail_columns.append({
-                'name': camelcase_to_underscore(column.__name__),
-                'single': column._is_singleton
-                })
+        columns.append({
+            'name': column.get_api_name(),
+            'single': column._is_singleton,
+            'fields': column.build_field_schema()
+        })
 
-    data = {'columns': columns, 'detail_columns': detail_columns}
-
-    data['option_lists'] = {}
-    data['synonyms'] = {}
-
-    for name, model in option_models.items():
-        option_list = []
-        synonyms = {}
-        for instance in model.objects.all():
-            option_list.append(instance.name)
-            for synonym in instance.synonyms.all():
-                option_list.append(synonym.name)
-                synonyms[synonym.name] = instance.name
-        data['option_lists'][name] = option_list
-        data['synonyms'][name] = synonyms
-
-    return HttpResponse(json.dumps(data), mimetype='application/json')
-
-class SearchResultsView(LoginRequiredMixin, views.APIView):
-    renderer_classes = [renderers.JSONRenderer]
-
-    def get(self, request, *args, **kwargs):
-        GET = self.request.GET
-
-        search_terms = {}
-        filter_dict = {}
-
-        if 'hospital_number' in GET:
-            search_terms['hospital_number'] = GET['hospital_number']
-            filter_dict['demographics__hospital_number__iexact'] = GET['hospital_number']
-
-        if 'name' in GET:
-            search_terms['name'] = GET['name']
-            filter_dict['demographics__name__icontains'] = GET['name']
-
-        if filter_dict:
-            queryset = models.Patient.objects.filter(**filter_dict)
-        else:
-            queryset = models.Patient.objects.none()
-
-        serializer = serializers.PatientSerializer(queryset, many=True)
-        data = {'patients': serializer.data}
-
-        # We cannot get the tags in the serializer because this requires the user
-        for patient in data['patients']:
-            taggings = models.Tagging.objects.filter(patient_id=patient['id'])
-            patient['tags'] = {t.tag_name: True for t in taggings if t.user is None or t.user == request.user}
-
-        data['search_terms'] = search_terms
-        return response.Response(data)
+    return _build_json_response(columns)

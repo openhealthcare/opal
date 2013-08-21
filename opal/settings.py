@@ -171,6 +171,11 @@ LOGGING = {
         }
     },
     'handlers': {
+        'console': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'logging.StreamHandler'
+        },
         'mail_admins': {
             'level': 'ERROR',
             'filters': ['require_debug_false'],
@@ -179,7 +184,7 @@ LOGGING = {
     },
     'loggers': {
         'django.request': {
-            'handlers': ['mail_admins'],
+            'handlers': ['console', 'mail_admins'],
             'level': 'ERROR',
             'propagate': True,
         },
@@ -190,12 +195,8 @@ LOGGING = {
 # (Heroku requirement)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-REST_FRAMEWORK = {
-    'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.JSONRenderer',
-    ),
-    'DATE_INPUT_FORMATS': ['%Y-%m-%dT%H:%M:%SZ', '%Y-%m-%dT%H:%M:%S.000Z', '%Y-%m-%d', '%d/%m/%Y'],
-}
+DATE_FORMAT = 'Y-m-d'
+DATE_INPUT_FORMATS = ['Y-m-d']
 
 CSRF_COOKIE_NAME = 'XSRF-TOKEN'
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
