@@ -2,7 +2,7 @@ var controllers = angular.module('opal.controllers', [
 	'ngCookies',
 	'opal.services',
 	'ui.event',
-	'ui.bootstrap',
+	'ui.bootstrap'
 ]);
 
 controllers.controller('RootCtrl', function($scope) {

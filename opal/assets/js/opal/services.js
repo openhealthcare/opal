@@ -188,7 +188,7 @@ services.factory('Patient', function($http, $q, Item) {
 						return p.location[0].ward
 					}
 				},
-				function(p) { return parseInt(p.location[0].bed) },
+				function(p) { return parseInt(p.location[0].bed) }
 			];
 
 			for (var ix = 0; ix < comparators.length; ix++) {

@@ -35,6 +35,14 @@ jQuery.support.placeholder = (function(){
 })();
 
 
+// Fuck you Internet Explorer 8
+if (typeof String.prototype.trim !== 'function') {
+	String.prototype.trim = function() {
+		return this.replace(/^\s+|\s+$/g, '');
+	}
+}
+
+// Not sure why this is here
 String.prototype.chomp = function() {
     return this.trim();
 }
