@@ -614,6 +614,7 @@ controllers.controller('EditItemCtrl', function($scope, $timeout, dialog, item, 
 	if (item.columnName == 'microbiology_test') {
 		$scope.microbiology_test_list = [];
 		$scope.microbiology_test_lookup = {};
+        $scope.micro_test_defaults =  options.micro_test_defaults;
 
 		for (var name in options) {
 			if (name.indexOf('micro_test') == 0) {
@@ -626,6 +627,16 @@ controllers.controller('EditItemCtrl', function($scope, $timeout, dialog, item, 
 
 		$scope.$watch('editing.test', function(testName) {
 			$scope.testType = $scope.microbiology_test_lookup[testName];
+            if( _.isUndefined(testName) || _.isUndefined($scope.testType) ){
+                return;
+            }
+            if($scope.testType in $scope.micro_test_defaults){
+                _.each(_.pairs($scope.micro_test_defaults[$scope.testType]), function(values){
+                    var field =  values[0];
+                    var _default =  values[1];
+                    $scope.editing[field] =  $scope.editing[field] ? $scope.editing[field] : _default;
+                });
+            }
 		});
 	};
 
