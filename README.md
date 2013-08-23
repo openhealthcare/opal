@@ -7,6 +7,8 @@ We'd love you to get involved by using what we make, reporting bugs/suggesting i
 
 Opal is an open (open governance + open source) commercial NHS IT product by Open Health Care UK
 
+http://opal.openhealthcare.org.uk
+
 What problem does Opal solve?
 ======
 Opal aims to solve the patient list problem.
@@ -17,8 +19,13 @@ NHS Hack Day 2012 http://www.youtube.com/watch?v=8x1yZQP4eoA
 
 Smart Ward 2013 http://www.youtube.com/watch?v=pxS0q1NJwZY
 
-Open governance 
+Open governance
 ======
+
+Roadmap: https://github.com/openhealthcare/opal/wiki/Roadmap
+
+Discussion List: https://groups.google.com/forum/?ohc-dev#!forum/ohc-opal
+
 Access: availability of the latest source code, developer
 support mechanisms, public roadmap, and transparency of
 decision-making
@@ -47,7 +54,7 @@ http://www.openhealthcare.org.uk
 
 https://twitter.com/ohcuk
 
-https://groups.google.com/forum/?ohc-dev#!forum/ohc-dev
+https://groups.google.com/forum/?ohc-dev#!forum/ohc-opal
 
 channel #ohc_dev on freenode
 
