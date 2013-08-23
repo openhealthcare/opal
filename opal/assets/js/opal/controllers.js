@@ -220,7 +220,7 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 				$scope.selectItem(getRowIxFromPatientId(patient.id), $scope.cix, 0);
 			}
 
-			if (result == 'add-another') {
+			if (result == 'save-and-add-another') {
 				$scope.editItem(rix, cix, patient.getNumberOfItems(columnName));
 			};
 		});
@@ -631,9 +631,9 @@ controllers.controller('EditItemCtrl', function($scope, $timeout, dialog, item, 
 
 	$scope.patient_category_list = ['Inpatient', 'Review'];
 
-	$scope.save = function() {
+	$scope.save = function(result) {
 		item.save($scope.editing).then(function() {
-			dialog.close('saved');
+			dialog.close(result);
 		});
 	};
 
