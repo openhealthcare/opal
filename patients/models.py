@@ -42,9 +42,12 @@ class Patient(models.Model):
         demographics = self.demographics_set.get()
         return '%s | %s' % (demographics.hospital_number, demographics.name)
 
+    def create_episode(self):
+        return self.episode_set.create()
+
     def to_dict(self):
         d = {'id': self.id}
-        for model in Subrecord.__subclasses__():
+        for model in PatientSubrecord.__subclasses__():
             subrecords = model.objects.filter(patient_id=self.id)
             d[model.get_api_name()] = [subrecord.to_dict() for subrecord in subrecords]
         return d
@@ -74,10 +77,40 @@ class Patient(models.Model):
                 self.tagging_set.add(tagging)
 
 
-class Tagging(models.Model):
-    tag_name = models.CharField(max_length=255, blank=True)
-    user = models.ForeignKey(auth.models.User, null=True, blank=True)
+class Episode(models.Model):
     patient = models.ForeignKey(Patient)
+
+    def __unicode__(self):
+        demographics = self.patient.demographics_set.get()
+        location = self.location_set.get()
+
+        return '%s | %s | %s' % (demographics.hospital_number, demographics.name, location.date_of_admission)
+
+    def set_tags(self, tag_names, user):
+        import pdb; pdb.set_trace()
+        taggings = self.tagging_set.all()
+        orig_tag_names = [t.tag_name for t in taggings]
+
+        for t in taggings:
+            if t.tag_name != 'mine' and t.tag_name not in tag_names:
+                t.delete()
+
+        for tag_name in tag_names:
+            if tag_name not in orig_tag_names:
+                tagging = Tagging(tag_name=tag_name)
+                if tag_name == 'mine':
+                    tagging.user = user
+                self.tagging_set.add(tagging)
+
+    def get_tags(self, user):
+        return [t.tag_name for t in self.tagging_set.all()]
+
+
+
+class Tagging(models.Model):
+    tag_name = models.CharField(max_length=255)
+    user = models.ForeignKey(auth.models.User, null=True)
+    episode = models.ForeignKey(Episode, null=True) # TODO make null=False
 
     def __unicode__(self):
         if self.user is not None:
@@ -87,7 +120,6 @@ class Tagging(models.Model):
 
 
 class Subrecord(models.Model):
-    patient = models.ForeignKey(Patient)
     consistency_token = models.CharField(max_length=8)
 
     _is_singleton = False
@@ -205,15 +237,28 @@ class Subrecord(models.Model):
         self.consistency_token = '%08x' % random.randrange(16**8)
 
 
-class Demographics(Subrecord):
+class PatientSubrecord(Subrecord):
+    patient = models.ForeignKey(Patient)
+
+    class Meta:
+        abstract = True
+
+
+class EpisodeSubrecord(Subrecord):
+    patient = models.ForeignKey(Episode)
+
+    class Meta:
+        abstract = True
+
+
+class Demographics(PatientSubrecord):
     _is_singleton = True
 
     name = models.CharField(max_length=255, blank=True)
     hospital_number = models.CharField(max_length=255, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
 
-
-class Location(Subrecord):
+class Location(EpisodeSubrecord):
     _is_singleton = True
 
     @classmethod
@@ -241,33 +286,28 @@ class Location(Subrecord):
     date_of_admission = models.DateField(null=True, blank=True)
     discharge_date = models.DateField(null=True, blank=True) # TODO rename to date_of_discharge?
 
-
-class Diagnosis(Subrecord):
+class Diagnosis(EpisodeSubrecord):
     condition = ForeignKeyOrFreeText(option_models['condition'])
     provisional = models.BooleanField()
     details = models.CharField(max_length=255, blank=True)
     date_of_diagnosis = models.DateField(blank=True, null=True)
 
-
-class PastMedicalHistory(Subrecord):
+class PastMedicalHistory(EpisodeSubrecord):
     condition = ForeignKeyOrFreeText(option_models['condition'])
     year = models.CharField(max_length=4, blank=True)
 
-
-class GeneralNote(Subrecord):
+class GeneralNote(EpisodeSubrecord):
     _title = 'General Notes'
     date = models.DateField(null=True, blank=True)
     comment = models.TextField()
 
-
-class Travel(Subrecord):
+class Travel(EpisodeSubrecord):
     destination = ForeignKeyOrFreeText(option_models['destination'])
     dates = models.CharField(max_length=255, blank=True)
     reason_for_travel = ForeignKeyOrFreeText(option_models['travel_reason'])
     specific_exposures = models.CharField(max_length=255, blank=True)
 
-
-class Antimicrobial(Subrecord):
+class Antimicrobial(EpisodeSubrecord):
     _title = 'Antimicrobials'
     drug = ForeignKeyOrFreeText(option_models['antimicrobial'])
     dose = models.CharField(max_length=255, blank=True)
@@ -275,8 +315,7 @@ class Antimicrobial(Subrecord):
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
 
-
-class MicrobiologyInput(Subrecord):
+class MicrobiologyInput(EpisodeSubrecord):
     _title = 'Clinical Advice'
     date = models.DateField(null=True, blank=True)
     initials = models.CharField(max_length=255, blank=True)
@@ -289,13 +328,11 @@ class MicrobiologyInput(Subrecord):
     change_in_antibiotic_prescription = models.BooleanField()
     referred_to_opat = models.BooleanField()
 
-
-class Todo(Subrecord):
+class Todo(EpisodeSubrecord):
     _title = 'To Do'
     details = models.TextField(blank=True)
 
-
-class MicrobiologyTest(Subrecord):
+class MicrobiologyTest(EpisodeSubrecord):
     test = models.CharField(max_length=255)
     date_ordered = models.DateField(null=True, blank=True)
     details = models.CharField(max_length=255, blank=True)
@@ -340,11 +377,20 @@ class MicrobiologyTest(Subrecord):
     entamoeba_histolytica = models.CharField(max_length=20, blank=True)
     cryptosporidium = models.CharField(max_length=20, blank=True)
 
-# TODO
+
 @receiver(models.signals.post_save, sender=Patient)
-def create_singletons(sender, **kwargs):
+def create_patient_singletons(sender, **kwargs):
     if kwargs['created']:
         patient = kwargs['instance']
-        for subclass in Subrecord.__subclasses__():
+        for subclass in PatientSubrecord.__subclasses__():
+            if subclass._is_singleton:
+                subclass.objects.create(patient=patient)
+
+
+@receiver(models.signals.post_save, sender=Episode)
+def create_episode_singletons(sender, **kwargs):
+    if kwargs['created']:
+        patient = kwargs['instance']
+        for subclass in EpisodeSubrecord.__subclasses__():
             if subclass._is_singleton:
                 subclass.objects.create(patient=patient)

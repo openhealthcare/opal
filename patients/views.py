@@ -15,10 +15,12 @@ from utils.http import with_no_caching
 from utils import camelcase_to_underscore
 from patients import models, schema, exceptions
 
+
 class LoginRequiredMixin(object):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
+
 
 @require_http_methods(['GET'])
 def patient_detail_view(request, pk):
@@ -29,33 +31,51 @@ def patient_detail_view(request, pk):
 
     return _build_json_response(patient.to_dict(), 200)
 
+
 @with_no_caching
-@require_http_methods(['GET', 'POST'])
-def patient_list_and_create_view(request):
-    if request.method == 'GET':
-        GET = request.GET
+@require_http_methods(['GET'])
+def patient_list_view(request):
+    GET = request.GET
 
-        search_terms = {}
-        filter_dict = {}
+    search_terms = {}
+    filter_dict = {}
 
-        if 'hospital_number' in GET:
-            search_terms['hospital_number'] = GET['hospital_number']
-            filter_dict['demographics__hospital_number__iexact'] = GET['hospital_number']
+    if 'hospital_number' in GET:
+        search_terms['hospital_number'] = GET['hospital_number']
+        filter_dict['demographics__hospital_number__iexact'] = GET['hospital_number']
 
-        if 'name' in GET:
-            search_terms['name'] = GET['name']
-            filter_dict['demographics__name__icontains'] = GET['name']
+    if 'name' in GET:
+        search_terms['name'] = GET['name']
+        filter_dict['demographics__name__icontains'] = GET['name']
 
-        if filter_dict:
-            patients = models.Patient.objects.filter(**filter_dict).order_by('demographics__date_of_birth')
-        else:
-            patients = models.Patient.objects.all().order_by('demographics__date_of_birth')
-
+    if filter_dict:
+        # TODO maybe limit/paginate results?
+        patients = models.Patient.objects.filter(**filter_dict)
+        patients = models.Patient.objects.filter(**filter_dict).order_by('demographics__date_of_birth')
         return _build_json_response([patient.to_dict() for patient in patients])
+    else:
+        return _build_json_response({'error': 'No search terms'}, 400)
+
+
+@require_http_methods(['GET'])
+def episode_detail_view(request, pk):
+    try:
+        episode = models.Episode.objects.get(pk=pk)
+    except models.Episode.DoesNotExist:
+        return HttpResponseNotFound()
+
+    return _build_json_response(episode.to_dict(), 200)
+
+
+@require_http_methods(['GET', 'POST'])
+def episode_list_and_create_view(request):
+    if request.method == 'GET':
+        episodes = models.Episode.current.all()
+        return _build_json_response([episode.to_dict() for episode in episodes])
 
     elif request.method == 'POST':
         data = _get_request_data(request)
-        hospital_number = data['demographics'].get('hospital_number', '')
+        hospital_number = data['demographics'].get('hospital_number')
         if hospital_number:
             try:
                 patient = models.Patient.objects.get(demographics__hospital_number=hospital_number)
@@ -64,8 +84,14 @@ def patient_list_and_create_view(request):
         else:
             patient = models.Patient.objects.create()
 
+        # TODO check patient does not have active episode
+
         patient.update_from_dict(data, request.user)
-        return _build_json_response(patient.to_dict(), 201)
+        episode = patient.build_new_episode()
+        episode.update_from_dict(data, request.user)
+
+        return _build_json_response(episode.to_dict(), 201)
+
 
 @require_http_methods(['GET', 'PUT', 'DELETE'])
 def subrecord_detail_view(request, model, pk):
@@ -87,6 +113,7 @@ def subrecord_detail_view(request, model, pk):
         subrecord.delete()
         return _build_json_response('')
 
+
 @require_http_methods(['POST'])
 def subrecord_create_view(request, model):
     subrecord = model()
@@ -94,9 +121,11 @@ def subrecord_create_view(request, model):
     subrecord.update_from_dict(data, request.user)
     return _build_json_response(subrecord.to_dict(), 201)
 
+
 def _get_request_data(request):
     data = request.read()
     return json.loads(data)
+
 
 def _build_json_response(data, status_code=200):
     response = HttpResponse()

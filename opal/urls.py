@@ -13,7 +13,7 @@ urlpatterns = patterns('',
     url(r'^schema/detail/$', views.detail_schema_view),
     url(r'^options/$', 'options.views.options_view'),
     url(r'^admin/?', include(admin.site.urls)),
-    url(r'^patient/?', include('patients.urls.records')),
+    url(r'^records/?', include('patients.urls.records')),
     url(r'^templates/', include('patients.urls.templates')),
 )
 
