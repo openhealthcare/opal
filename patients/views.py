@@ -47,7 +47,11 @@ def patient_list_and_create_view(request):
         else:
             patients = models.Patient.objects.all()
 
-        return _build_json_response([patient.to_dict() for patient in patients])
+        response = _build_json_response([patient.to_dict() for patient in patients])
+        response['Cache-Control'] = 'no-cache'
+        response['Pragma'] = 'no-cache'
+        response['Expires'] = '-1'
+        return response
 
     elif request.method == 'POST':
         data = _get_request_data(request)
