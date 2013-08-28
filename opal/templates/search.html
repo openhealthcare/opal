@@ -7,6 +7,7 @@
 				<form>
 					<td><input type="text" name="hospital_number" ng-model="searchTerms.hospital_number" placeholder="Hospital Number"></td>
 					<td><input type="text" name="name" ng-model="searchTerms.name" placeholder="Name"></td>
+                    <td></td>
 					<td></td>
 					<td><button ng-click="search()" class="btn">Search</button></td>
 				</form>
@@ -16,6 +17,7 @@
 		<tr ng-repeat="patient in results">
 			<td>[[patient.demographics[0].hospital_number]]</td>
 			<td>[[patient.demographics[0].name]]</td>
+            <td>[[patient.demographics[0].date_of_birth]]<td>
 			<td>[[patient.location[0].category]]</td>
 			<td><a href="#/patient/[[ patient.id ]]">View</a></td>
 		</tr>

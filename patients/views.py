@@ -43,9 +43,9 @@ def patient_list_and_create_view(request):
             filter_dict['demographics__name__icontains'] = GET['name']
 
         if filter_dict:
-            patients = models.Patient.objects.filter(**filter_dict)
+            patients = models.Patient.objects.filter(**filter_dict).order_by('demographics__date_of_birth')
         else:
-            patients = models.Patient.objects.all()
+            patients = models.Patient.objects.all().order_by('demographics__date_of_birth')
 
         response = _build_json_response([patient.to_dict() for patient in patients])
         response['Cache-Control'] = 'no-cache'
