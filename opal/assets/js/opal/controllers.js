@@ -77,6 +77,7 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 				case 13: // enter
 				case 113: // F2
 					$scope.editItem($scope.rix, $scope.cix, $scope.iix);
+                    e.preventDefault()
 					break;
 				case 8: // backspace
 					e.preventDefault();
