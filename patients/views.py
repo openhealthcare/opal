@@ -1,5 +1,6 @@
 import json
 import datetime
+
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotFound
@@ -9,6 +10,8 @@ from django.template.loader import select_template
 from django.utils.decorators import method_decorator
 from django.utils import formats
 from django.contrib.auth.decorators import login_required
+
+from utils.http import with_no_caching
 from utils import camelcase_to_underscore
 from patients import models, schema, exceptions
 
@@ -26,6 +29,7 @@ def patient_detail_view(request, pk):
 
     return _build_json_response(patient.to_dict(), 200)
 
+@with_no_caching
 @require_http_methods(['GET', 'POST'])
 def patient_list_and_create_view(request):
     if request.method == 'GET':
@@ -47,11 +51,7 @@ def patient_list_and_create_view(request):
         else:
             patients = models.Patient.objects.all().order_by('demographics__date_of_birth')
 
-        response = _build_json_response([patient.to_dict() for patient in patients])
-        response['Cache-Control'] = 'no-cache'
-        response['Pragma'] = 'no-cache'
-        response['Expires'] = '-1'
-        return response
+        return _build_json_response([patient.to_dict() for patient in patients])
 
     elif request.method == 'POST':
         data = _get_request_data(request)
