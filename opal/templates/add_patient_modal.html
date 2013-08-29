@@ -57,6 +57,7 @@
 		  <input type="text" ng-model="editing.location.date_of_admission" bs-datepicker>
 		</div>
 	  </div>
+
 	  <div class="control-group">
 		<label class="control-label">Tags</label>
 		<div class="controls">
@@ -68,6 +69,7 @@
 		  {% endfor %}
 		</div>
 	  </div>
+
       <div class="control-group"
            ng-show="showSubtags([{% for tag in tags %}{% if tag.subtags %}'{{tag.name}}'{% if not forloop.last%},{% endif %}{% endif %}{% endfor %} ''])"
            >
