@@ -23,7 +23,7 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 
 	$scope.query = {hospital: '', ward: ''};
 	$scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine'; // initially display patients of interest to current user
-    $scope.currentSubTag = $cookieStore.get('opal.currentSubTag') || 'all'; // initially display patients of interest to current user
+    $scope.currentSubTag = 'all';
 
 	$scope.columns = schema.columns;
 
@@ -57,7 +57,6 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 	});
 
     $scope.$watch('currentSubTag', function(){
-        $cookieStore.put('opal.currentSubTag',  $scope.currentSubTag);
         $scope.rows =  getVisiblePatients();
         $scope.rix =  0;
     });
@@ -550,7 +549,7 @@ controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog,
 
 controllers.controller('AddPatientCtrl', function($scope, $http, $cookieStore, $timeout, dialog, Patient, schema, options, details) {
     $scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine'; // initially display patients of interest to current user
-    $scope.currentSubTag = $cookieStore.get('opal.currentSubTag') || 'all'; // initially display patients of interest to current user
+    $scope.currentSubTag = 'all'; // initially display patients of interest to current user
 
 	$timeout(function() {
 		dialog.modalEl.find('input,textarea').first().focus();
@@ -627,7 +626,7 @@ controllers.controller('EditItemCtrl', function($scope, $cookieStore, $timeout, 
 	$scope.editing = item.makeCopy();
 	$scope.editingName = item.patientName;
     $scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine'; // initially display patients of interest to current user
-    $scope.currentSubTag = $cookieStore.get('opal.currentSubTag') || 'all'; // initially display patients of interest to current user
+    $scope.currentSubTag = 'all'; // initially display patients of interest to current user
 
     $scope.showSubtags = function(withsubtags){
         var show =  _.contains(withsubtags, $scope.currentTag);
