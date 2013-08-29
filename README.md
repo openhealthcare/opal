@@ -19,6 +19,25 @@ NHS Hack Day 2012 http://www.youtube.com/watch?v=8x1yZQP4eoA
 
 Smart Ward 2013 http://www.youtube.com/watch?v=pxS0q1NJwZY
 
+
+## Adapting OPAL for Your Ward
+
+WARNING: OPAL is under rapid, active development to become a framework for building Patient List type applications rather than an application.
+e.g. at this stage the codebase is likely to be significantly refactored to allow multiple customised instances. 
+Anyone looking to adapt OPAL to their specific ward should get in touch with the friendly OPals [(Opal Stering group)](https://groups.google.com/forum/#!forum/ohc-opal) !
+
+* We're very friendly
+* We can save you headaches
+* We are absolutely committed to adapting OPAL to new clinical settings
+* We can help getting improvements rolled into OPAL core so that the rest of the community can benefit
+
+
+## Helpful note to the wise
+
+Forking at this point going to cause a *lot* of extra work if you want to continue benefiting from the features, bug & security fixes from upstream - seriously, come chat to us about it.
+In the future the process and documentation for that kind of customisation will be freely available. (Yay!)
+
+
 Open governance
 ======
 
