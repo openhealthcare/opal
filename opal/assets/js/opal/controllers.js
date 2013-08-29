@@ -574,6 +574,7 @@ controllers.controller('AddPatientCtrl', function($scope, $http, $cookieStore, $
 			name: details.name,
 		},
 	};
+    $scope.editing.location.tags[$scope.currentTag] = true;
 
     $scope.showSubtags = function(withsubtags){
         var show =  _.some(withsubtags, function(tag){ return $scope.editing.location.tags[tag] });
