@@ -28,7 +28,7 @@ TAGS = [
             Tag('id_inpatients', 'ID Inpatients', None),
             Tag('id_liaison', 'ID Liaison', None)
             ]),
-    Tag('hiv', 'HIV', None),
+    Tag('hiv', 'Immune', None),
     Tag('tropical_diseases', 'Tropical', None),
     Tag('mine', 'Mine', None),
 ]
