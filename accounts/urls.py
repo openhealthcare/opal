@@ -14,4 +14,5 @@ urlpatterns = patterns(
         {'post_change_redirect': '/', 'password_change_form': ChangePasswordForm},
         name='change-password'),
     url(r'^templates/account_detail.html', views.AccountDetailTemplateView.as_view()),
+    url(r'^banned', views.BannedView.as_view(), name='banned')
 )

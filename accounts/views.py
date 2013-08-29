@@ -6,6 +6,7 @@ from django.shortcuts import redirect
 from django.views.generic import TemplateView
 
 from accounts.models import UserProfile
+from accounts.banned_passwords import banned
 
 def check_password_reset(request, *args, **kwargs):
     """
@@ -26,3 +27,11 @@ def check_password_reset(request, *args, **kwargs):
 
 class AccountDetailTemplateView(TemplateView):
     template_name = 'accounts/account_detail.html'
+
+class BannedView(TemplateView):
+    template_name = 'accounts/banned.html'
+
+    def get_context_data(self, *a, **k):
+        data = super(BannedView, self).get_context_data(*a, **k)
+        data['banned'] = banned
+        return data
