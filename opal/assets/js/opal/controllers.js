@@ -629,7 +629,7 @@ controllers.controller('EditItemCtrl', function($scope, $cookieStore, $timeout, 
     $scope.currentSubTag = 'all'; // initially display patients of interest to current user
 
     $scope.showSubtags = function(withsubtags){
-        var show =  _.contains(withsubtags, $scope.currentTag);
+        var show =  _.some(withsubtags, function(tag){ return $scope.editing.location.tags[tag] });
         return show
     };
 
