@@ -32,13 +32,30 @@
 	<div class="control-group">
 		<label class="control-label">Tags</label>
 		<div class="controls">
-			{% for key, name in tags.items %}
+			{% for tag in tags %}
 			<label class="checkbox">
-				<input type="checkbox" ng-model="editing.tags.{{key}}">
-				{{name}}
+				<input type="checkbox" ng-model="editing.tags.{{tag.name}}">
+				{{tag.title}}
 			</label>
 			{% endfor %}
 		</div>
 	</div>
+    <div class="control-group"
+         ng-show="showSubtags([{% for tag in tags %}{% if tag.subtags %}'{{tag.name}}'{% if not forloop.last%},{% endif %}{% endif %}{% endfor %} ''])"
+         >
+      <label class="control-label">Sub Tags</label>
+      <div class="controls">
+        {% for tag in tags %}
+          {% if tag.subtags %}
+            {% for subtag in tag.subtags %}
+			  <label class="checkbox"
+                     ng-show="currentTag == '{{tag.name}}'">
+				<input type="checkbox" ng-model="editing.tags.{{subtag.name}}">
+				{{subtag.title}}
+			  </label>
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
 </form>
-

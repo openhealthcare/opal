@@ -40,5 +40,9 @@ table {
 }
 
 input.ng-invalid {
-	background-color : #fcc; 
+	background-color : #fcc;
+}
+
+#subtags-nav {
+    margin-top: -22px;
 }

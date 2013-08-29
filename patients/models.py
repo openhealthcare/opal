@@ -1,4 +1,4 @@
-from collections import OrderedDict
+from collections import namedtuple
 from datetime import datetime
 import random
 
@@ -12,13 +12,26 @@ from utils.fields import ForeignKeyOrFreeText
 from utils import camelcase_to_underscore
 from options.models import option_models
 
-TAGS = OrderedDict([
-    ('microbiology', 'Micro'),
-    ('infectious_diseases', 'ID'),
-    ('hiv', 'HIV'),
-    ('tropical_diseases', 'Tropical'),
-    ('mine', 'Mine'),
-])
+Tag = namedtuple('Tag', 'name title subtags')
+
+TAGS = [
+    Tag('microbiology', 'Micro', [
+            Tag('micro_ortho', 'Micro-Ortho', None),
+            Tag('micro_icu', 'Micro-ICU', None),
+            Tag('micro_haem', 'Micro-Haem', None),
+            Tag('micro_nhnn', 'Micro-NHNN', None),
+            Tag('micro_heart', 'Micro-Heart', None),
+            Tag('micro_tower_review', 'Tower Review', None),
+            Tag('micro_handover', 'Micro-Handover', None),
+            ]),
+    Tag('infectious_diseases', 'ID', [
+            Tag('id_inpatients', 'ID Inpatients', None),
+            Tag('id_liaison', 'ID Liaison', None)
+            ]),
+    Tag('hiv', 'HIV', None),
+    Tag('tropical_diseases', 'Tropical', None),
+    Tag('mine', 'Mine', None),
+]
 
 class Patient(models.Model):
     def __unicode__(self):
@@ -56,6 +69,7 @@ class Patient(models.Model):
                     tagging.user = user
                 self.tagging_set.add(tagging)
 
+
 class Tagging(models.Model):
     tag_name = models.CharField(max_length=255, blank=True)
     user = models.ForeignKey(auth.models.User, null=True, blank=True)
@@ -66,6 +80,7 @@ class Tagging(models.Model):
             return 'User: %s' % self.user.username
         else:
             return self.tag_name
+
 
 class Subrecord(models.Model):
     patient = models.ForeignKey(Patient)
@@ -185,12 +200,14 @@ class Subrecord(models.Model):
     def set_consistency_token(self):
         self.consistency_token = '%08x' % random.randrange(16**8)
 
+
 class Demographics(Subrecord):
     _is_singleton = True
 
     name = models.CharField(max_length=255, blank=True)
     hospital_number = models.CharField(max_length=255, blank=True)
     date_of_birth = models.DateField(null=True, blank=True)
+
 
 class Location(Subrecord):
     _is_singleton = True
@@ -220,26 +237,31 @@ class Location(Subrecord):
     date_of_admission = models.DateField(null=True, blank=True)
     discharge_date = models.DateField(null=True, blank=True) # TODO rename to date_of_discharge?
 
+
 class Diagnosis(Subrecord):
     condition = ForeignKeyOrFreeText(option_models['condition'])
     provisional = models.BooleanField()
     details = models.CharField(max_length=255, blank=True)
     date_of_diagnosis = models.DateField(blank=True, null=True)
 
+
 class PastMedicalHistory(Subrecord):
     condition = ForeignKeyOrFreeText(option_models['condition'])
     year = models.CharField(max_length=4, blank=True)
+
 
 class GeneralNote(Subrecord):
     _title = 'General Notes'
     date = models.DateField(null=True, blank=True)
     comment = models.TextField()
 
+
 class Travel(Subrecord):
     destination = ForeignKeyOrFreeText(option_models['destination'])
     dates = models.CharField(max_length=255, blank=True)
     reason_for_travel = ForeignKeyOrFreeText(option_models['travel_reason'])
     specific_exposures = models.CharField(max_length=255, blank=True)
+
 
 class Antimicrobial(Subrecord):
     _title = 'Antimicrobials'
@@ -248,6 +270,7 @@ class Antimicrobial(Subrecord):
     route = ForeignKeyOrFreeText(option_models['antimicrobial_route'])
     start_date = models.DateField(null=True, blank=True)
     end_date = models.DateField(null=True, blank=True)
+
 
 class MicrobiologyInput(Subrecord):
     _title = 'Clinical Advice'
@@ -262,9 +285,11 @@ class MicrobiologyInput(Subrecord):
     change_in_antibiotic_prescription = models.BooleanField()
     referred_to_opat = models.BooleanField()
 
+
 class Todo(Subrecord):
     _title = 'To Do'
     details = models.TextField(blank=True)
+
 
 class MicrobiologyTest(Subrecord):
     test = models.CharField(max_length=255)

@@ -23,6 +23,7 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 
 	$scope.query = {hospital: '', ward: ''};
 	$scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine'; // initially display patients of interest to current user
+    $scope.currentSubTag = $cookieStore.get('opal.currentSubTag') || 'all'; // initially display patients of interest to current user
 
 	$scope.columns = schema.columns;
 
@@ -32,7 +33,8 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 		var visiblePatients = [];
 
 		for (var pix in patients) {
-			if (patients[pix].isVisible($scope.currentTag, $scope.query.hospital, $scope.query.ward)) {
+			if (patients[pix].isVisible($scope.currentTag, $scope.currentSubTag,
+                                        $scope.query.hospital, $scope.query.ward)) {
 				visiblePatients.push(patients[pix]);
 			};
 		};
@@ -47,9 +49,23 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 
 	$scope.$watch('currentTag', function() {
 		$cookieStore.put('opal.currentTag', $scope.currentTag);
+        if(options.tag_hierarchy[$scope.currentTag].length == 0){
+            $scope.currentSubTag = 'all';
+        }
 		$scope.rows = getVisiblePatients();
 		$scope.rix = 0;
 	});
+
+    $scope.$watch('currentSubTag', function(){
+        $cookieStore.put('opal.currentSubTag',  $scope.currentSubTag);
+        $scope.rows =  getVisiblePatients();
+        $scope.rix =  0;
+    });
+
+    $scope.showSubtags = function(withsubtags){
+        var show =  _.contains(withsubtags, $scope.currentTag);
+        return show
+    };
 
 	$scope.$watch('query.hospital', function() {
 		$scope.rows = getVisiblePatients();
@@ -77,7 +93,7 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 				case 13: // enter
 				case 113: // F2
 					$scope.editItem($scope.rix, $scope.cix, $scope.iix);
-                    e.preventDefault()
+                    e.preventDefault();
 					break;
 				case 8: // backspace
 					e.preventDefault();
@@ -532,10 +548,14 @@ controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog,
 	};
 });
 
-controllers.controller('AddPatientCtrl', function($scope, $http, $timeout, dialog, Patient, schema, options, details) {
+controllers.controller('AddPatientCtrl', function($scope, $http, $cookieStore, $timeout, dialog, Patient, schema, options, details) {
+    $scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine'; // initially display patients of interest to current user
+    $scope.currentSubTag = $cookieStore.get('opal.currentSubTag') || 'all'; // initially display patients of interest to current user
+
 	$timeout(function() {
 		dialog.modalEl.find('input,textarea').first().focus();
 	});
+
 
 	for (var name in options) {
 		$scope[name + '_list'] = options[name];
@@ -556,7 +576,12 @@ controllers.controller('AddPatientCtrl', function($scope, $http, $timeout, dialo
 		},
 	};
 
-	$scope.findByHospitalNumber = function() {
+    $scope.showSubtags = function(withsubtags){
+        var show =  _.some(withsubtags, function(tag){ return $scope.editing.location.tags[tag] });
+        return show
+    };
+
+    $scope.findByHospitalNumber = function() {
 		var patient;
 		var hospitalNumber = $scope.editing.demographics.hospital_number;
 		$scope.findingPatient = true;
@@ -598,9 +623,17 @@ controllers.controller('AddPatientCtrl', function($scope, $http, $timeout, dialo
 	};
 });
 
-controllers.controller('EditItemCtrl', function($scope, $timeout, dialog, item, options) {
+controllers.controller('EditItemCtrl', function($scope, $cookieStore, $timeout, dialog, item, options) {
 	$scope.editing = item.makeCopy();
 	$scope.editingName = item.patientName;
+    $scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine'; // initially display patients of interest to current user
+    $scope.currentSubTag = $cookieStore.get('opal.currentSubTag') || 'all'; // initially display patients of interest to current user
+
+    $scope.showSubtags = function(withsubtags){
+        var show =  _.contains(withsubtags, $scope.currentTag);
+        return show
+    };
+
 
 	$timeout(function() {
 		dialog.modalEl.find('input,textarea').first().focus();
