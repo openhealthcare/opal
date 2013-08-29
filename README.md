@@ -79,4 +79,6 @@ channel #ohc_dev on freenode
 
 Demo
 ======
-A demo is here http://ohc-opal.herokuapp.com
+A screencast and demo are here http://opal.openhealthcare.org.uk
+
+
