@@ -24,6 +24,7 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 	$scope.query = {hospital: '', ward: ''};
 	$scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine'; // initially display patients of interest to current user
     $scope.currentSubTag = 'all';
+    $cookieStore.put('opal.currentSubTag', 'all');
 
 	$scope.columns = schema.columns;
 
@@ -49,14 +50,13 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 
 	$scope.$watch('currentTag', function() {
 		$cookieStore.put('opal.currentTag', $scope.currentTag);
-        if(options.tag_hierarchy[$scope.currentTag].length == 0){
-            $scope.currentSubTag = 'all';
-        }
+        $scope.currentSubTag = 'all';
 		$scope.rows = getVisiblePatients();
 		$scope.rix = 0;
 	});
 
     $scope.$watch('currentSubTag', function(){
+		$cookieStore.put('opal.currentSubTag', $scope.currentSubTag);
         $scope.rows =  getVisiblePatients();
         $scope.rix =  0;
     });
@@ -547,9 +547,12 @@ controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog,
 	};
 });
 
-controllers.controller('AddPatientCtrl', function($scope, $http, $cookieStore, $timeout, dialog, Patient, schema, options, details) {
-    $scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine'; // initially display patients of interest to current user
-    $scope.currentSubTag = 'all'; // initially display patients of interest to current user
+controllers.controller('AddPatientCtrl', function($scope, $http, $cookieStore,
+                                                  $timeout, dialog, Patient,
+                                                  schema, options, details) {
+    // initially display patients of interest to current user
+    $scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine';
+    $scope.currentSubTag = $cookieStore.get('opal.currentSubTag') || 'all';
 
 	$timeout(function() {
 		dialog.modalEl.find('input,textarea').first().focus();
@@ -575,6 +578,9 @@ controllers.controller('AddPatientCtrl', function($scope, $http, $cookieStore, $
 		},
 	};
     $scope.editing.location.tags[$scope.currentTag] = true;
+    if($scope.currentSubTag != 'all'){
+        $scope.editing.location.tags[$scope.currentSubTag] = true;
+    }
 
     $scope.showSubtags = function(withsubtags){
         var show =  _.some(withsubtags, function(tag){ return $scope.editing.location.tags[tag] });
