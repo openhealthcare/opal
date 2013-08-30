@@ -488,7 +488,7 @@ controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog,
 	$scope.results = [];
 	$scope.searched = false;
 
-	$scope.patient_category_list = ['Inpatient', 'Review'];
+	$scope.patient_category_list = ['Inpatient', 'Outpatient', 'Review'];
 	$scope.hospital_list = ['Heart Hospital', 'NHNN', 'UCH'];
 
 	$scope.search = function() {
@@ -559,7 +559,7 @@ controllers.controller('AddPatientCtrl', function($scope, $http, $cookieStore, $
 	for (var name in options) {
 		$scope[name + '_list'] = options[name];
 	};
-	$scope.patient_category_list = ['Inpatient', 'Review'];
+	$scope.patient_category_list = ['Inpatient', 'Outpatient', 'Review'];
 
 	$scope.foundPatient = false; // Display rest of form when true
 	$scope.findingPatient = false; // Disable Search button when true
@@ -674,7 +674,7 @@ controllers.controller('EditItemCtrl', function($scope, $cookieStore, $timeout, 
 		});
 	};
 
-	$scope.patient_category_list = ['Inpatient', 'Review'];
+	$scope.patient_category_list = ['Inpatient', 'Outpatient', 'Review'];
 
 	$scope.save = function(result) {
 		item.save($scope.editing).then(function() {
