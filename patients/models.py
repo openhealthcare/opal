@@ -12,6 +12,8 @@ from utils.fields import ForeignKeyOrFreeText
 from utils import camelcase_to_underscore
 from options.models import option_models
 
+class APIException(Exception): pass
+
 Tag = namedtuple('Tag', 'name title subtags')
 
 TAGS = [
@@ -316,7 +318,7 @@ class MicrobiologyTest(Subrecord):
     hsv = models.CharField(max_length=20, blank=True)
     vzv = models.CharField(max_length=20, blank=True)
     syphilis = models.CharField(max_length=20, blank=True)
-    c_difficile_antigenl = models.CharField(max_length=20, blank=True)
+    c_difficile_antigen = models.CharField(max_length=20, blank=True)
     c_difficile_toxin = models.CharField(max_length=20, blank=True)
     species = models.CharField(max_length=20, blank=True)
     hsv_1 = models.CharField(max_length=20, blank=True)
