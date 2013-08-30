@@ -25,6 +25,8 @@ TAGS = [
             Tag('micro_heart', 'Micro-Heart', None),
             Tag('micro_tower_review', 'Tower Review', None),
             Tag('micro_handover', 'Micro-Handover', None),
+            Tag('micro_c_diff_new', 'Micro-C diff NEW', None),
+            Tag('micro_c_diff_review', 'Micro-C diff REVIEW', None),
             ]),
     Tag('infectious_diseases', 'ID', [
             Tag('id_inpatients', 'ID Inpatients', None),
