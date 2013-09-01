@@ -62,7 +62,7 @@ def episode_list_and_create_view(request):
     if request.method == 'GET':
         # This finds all taggings which either belong to this user or no user,
         # and loads the related episode.
-        taggings = models.Tagging.objects.filter(user__in=[request.user, None]).select_related('episode')
+        taggings = models.Tagging.objects.filter(user_id__in=[request.user.id, None])#.select_related('episode')
         episodes = set(tagging.episode for tagging in taggings)
         return _build_json_response([episode.to_dict(request.user) for episode in episodes])
 
