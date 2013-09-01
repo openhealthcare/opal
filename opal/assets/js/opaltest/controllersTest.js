@@ -1,5 +1,5 @@
 describe('controllers', function() {
-	var columns, patientData, optionsData, Schema, schema, Patient;
+	var columns, episodeData, optionsData, Schema, schema, Episode;
 
 	beforeEach(function() {
 		module('opal.controllers');
@@ -31,7 +31,7 @@ describe('controllers', function() {
 				]},
 		];
 
-		patientData = {
+		episodeData = {
 			id: 123,
 			demographics: [{
 				id: 101,
@@ -39,7 +39,7 @@ describe('controllers', function() {
 				date_of_birth: '1980-07-31'
 			}],
 			location: [{
-				category: 'Inpatient',
+				category: 'Inepisode',
 				hospital: 'UCH',
 				ward: 'T10',
 				bed: '15',
@@ -63,15 +63,15 @@ describe('controllers', function() {
 
 		inject(function($injector) {
 			Schema = $injector.get('Schema');
-			Patient = $injector.get('Patient');
+			Episode = $injector.get('Episode');
 		});
 
 		schema = new Schema(columns);
 	});
 
-	describe('PatientListCtrl', function() {
+	describe('EpisodeListCtrl', function() {
 		var $scope, $cookieStore, $controller, $q, $dialog;
-		var patients, controller;
+		var episodes, controller;
 
 		beforeEach(function() {
 			inject(function($injector) {
@@ -83,14 +83,14 @@ describe('controllers', function() {
 				$dialog = $injector.get('$dialog');
 			});
 
-			patients = [new Patient(patientData, schema)];
+			episodes = [new Episode(episodeData, schema)];
 			options = optionsData;
 
-			controller = $controller('PatientListCtrl', {
+			controller = $controller('EpisodeListCtrl', {
 				$scope: $scope,
 				$cookieStore: $cookieStore,
 				schema: schema,
-				patients: patients,
+				episodes: episodes,
 				options: options
 			});
 		});
@@ -101,33 +101,33 @@ describe('controllers', function() {
 			});
 		});
 
-		describe('adding a patient', function() {
+		describe('adding a episode', function() {
 			it('should change stated to "modal"', function() {
-				$scope.addPatient();
+				$scope.addEpisode();
 				expect($scope.state).toBe('modal');
 			});
 
-			it('should set up the add patient modal', function() {
+			it('should set up the add episode modal', function() {
 				var callArgs;
 
 				spyOn($dialog, 'dialog').andCallThrough();
 
-				$scope.addPatient();
+				$scope.addEpisode();
 
 				callArgs = $dialog.dialog.mostRecentCall.args;
 				expect(callArgs.length).toBe(1);
-				expect(callArgs[0].templateUrl).toBe('/templates/modals/add_patient.html/');
-				expect(callArgs[0].controller).toBe('AddPatientCtrl');
+				expect(callArgs[0].templateUrl).toBe('/templates/modals/add_episode.html/');
+				expect(callArgs[0].controller).toBe('AddEpisodeCtrl');
 			});
 
-			it('should open the add patient modal', function() {
+			it('should open the add episode modal', function() {
 				var modalSpy;
 
 				modalSpy = {open: function() {}};
 				spyOn($dialog, 'dialog').andReturn(modalSpy);
 				spyOn(modalSpy, 'open').andReturn({then: function() {}});
 
-				$scope.addPatient();
+				$scope.addEpisode();
 
 				expect(modalSpy.open).toHaveBeenCalled();
 			});
@@ -140,7 +140,7 @@ describe('controllers', function() {
 				spyOn($dialog, 'dialog').andReturn(modalSpy);
 				spyOn(modalSpy, 'open').andReturn(deferred.promise);
 
-				$scope.addPatient();
+				$scope.addEpisode();
 
 				deferred.resolve('save');
 				$rootScope.$apply();
@@ -223,7 +223,7 @@ describe('controllers', function() {
 			var iix;
 
 			beforeEach(function() {
-				iix = patientData.diagnosis.length;
+				iix = episodeData.diagnosis.length;
 			});
 
 			it('should select "Add"', function() {

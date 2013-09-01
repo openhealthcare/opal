@@ -13,28 +13,28 @@ describe('app', function() {
 		$httpBackend.whenGET('/schema/list/').respond([]);
 		$httpBackend.whenGET('/schema/detail/').respond([]);
 		$httpBackend.whenGET('/options/').respond([]);
-		$httpBackend.whenGET('/templates/patient_list.html').respond();
-		$httpBackend.whenGET('/templates/patient_detail.html').respond();
+		$httpBackend.whenGET('/templates/episode_list.html').respond();
+		$httpBackend.whenGET('/templates/episode_detail.html').respond();
 		$httpBackend.whenGET('/templates/search.html').respond();
 	});
 
 	describe('request to /', function() {
-		it('should load PatientListCtrl', function() {
+		it('should load EpisodeListCtrl', function() {
 			$location.path('/');
 			$rootScope.$apply();
 
-			expect($route.current.templateUrl).toBe('/templates/patient_list.html');
-			expect($route.current.controller).toBe('PatientListCtrl');
+			expect($route.current.templateUrl).toBe('/templates/episode_list.html');
+			expect($route.current.controller).toBe('EpisodeListCtrl');
 		});
 	});
 
-	describe('request to /patient/123', function() {
-		it('should load PatientDetailCtrl', function() {
-			$location.path('/patient/123');
+	describe('request to /episode/123', function() {
+		it('should load EpisodeDetailCtrl', function() {
+			$location.path('/episode/123');
 			$rootScope.$apply();
 
-			expect($route.current.templateUrl).toBe('/templates/patient_detail.html');
-			expect($route.current.controller).toBe('PatientDetailCtrl');
+			expect($route.current.templateUrl).toBe('/templates/episode_detail.html');
+			expect($route.current.controller).toBe('EpisodeDetailCtrl');
 		});
 	});
 

@@ -1,5 +1,5 @@
 describe('services', function() {
-	var columns, patientData;
+	var columns, episodeData;
 
 	beforeEach(function() {
 		module('opal.services');
@@ -19,7 +19,7 @@ describe('services', function() {
 					{name: 'provisional', type: 'boolean'},
 				]},
 		];
-		patientData = {
+		episodeData = {
 			id: 123,
 			demographics: [{
 				id: 101,
@@ -62,64 +62,64 @@ describe('services', function() {
 		});
 	});
 
-	describe('Patient', function() {
-		var Patient, patient, PatientResource, resource, Schema, schema, Item;
+	describe('Episode', function() {
+		var Episode, episode, EpisodeResource, resource, Schema, schema, Item;
 
 		beforeEach(function() {
 			inject(function($injector) {
-				PatientResource = $injector.get('PatientResource');
-				Patient = $injector.get('Patient');
+				EpisodeResource = $injector.get('EpisodeResource');
+				Episode = $injector.get('Episode');
 				Schema = $injector.get('Schema');
 				Item = $injector.get('Item');
 			});
 
 			schema = new Schema(columns);
-			resource = new PatientResource(patientData);
-			patient = new Patient(resource, schema);
+			resource = new EpisodeResource(episodeData);
+			episode = new Episode(resource, schema);
 		});
 
 		it('should create Items', function() {
-			expect(patient.demographics[0].constructor).toBe(Item);
-			expect(patient.diagnosis[0].constructor).toBe(Item);
-			expect(patient.diagnosis[1].constructor).toBe(Item);
+			expect(episode.demographics[0].constructor).toBe(Item);
+			expect(episode.diagnosis[0].constructor).toBe(Item);
+			expect(episode.diagnosis[1].constructor).toBe(Item);
 		});
 
 		it('should have access to attributes of items', function() {
-			expect(patient.id).toBe(123);
-			expect(patient.demographics[0].name).toBe('John Smith');
+			expect(episode.id).toBe(123);
+			expect(episode.demographics[0].name).toBe('John Smith');
 		});
 
 		it('should be able to get specific item', function() {
-			expect(patient.getItem('diagnosis', 1).id).toEqual(103);
+			expect(episode.getItem('diagnosis', 1).id).toEqual(103);
 		});
 
 		it('should know how many items it has in each column', function() {
-			expect(patient.getNumberOfItems('demographics')).toBe(1);
-			expect(patient.getNumberOfItems('diagnosis')).toBe(2);
+			expect(episode.getNumberOfItems('demographics')).toBe(1);
+			expect(episode.getNumberOfItems('diagnosis')).toBe(2);
 		});
 
 		it('should be able to add a new item', function() {
 			var item = new Item(
 				{id: 104, condition: 'Ebola', provisional: false},
-			       	patient,
+			       	episode,
 			       	schema.getColumn('diagnosis')
 			);
-			patient.addItem(item);
-			expect(patient.getNumberOfItems('diagnosis')).toBe(3);
-			expect(patient.getItem('diagnosis', 2).id).toBe(104);
+			episode.addItem(item);
+			expect(episode.getNumberOfItems('diagnosis')).toBe(3);
+			expect(episode.getItem('diagnosis', 2).id).toBe(104);
 		});
 
 		it('should be able to remove an item', function() {
-			var item = patient.getItem('diagnosis', 0);
-			patient.removeItem(item);
-			expect(patient.getNumberOfItems('diagnosis')).toBe(1);
-			expect(patient.getItem('diagnosis', 0).id).toBe(103);
+			var item = episode.getItem('diagnosis', 0);
+			episode.removeItem(item);
+			expect(episode.getNumberOfItems('diagnosis')).toBe(1);
+			expect(episode.getItem('diagnosis', 0).id).toBe(103);
 		});
 	});
 
 	describe('Item', function() {
 		var Item, item;
-		var mockPatient = {
+		var mockEpisode = {
 			addItem: function(item) {},
 			removeItem: function(item) {},
 			demographics: [{name: 'Name'}]
@@ -130,7 +130,7 @@ describe('services', function() {
 				Item = $injector.get('Item');
 			});
 
-			item = new Item(patientData.demographics[0], mockPatient, columns[0]);
+			item = new Item(episodeData.demographics[0], mockEpisode, columns[0]);
 		});
 
 		it('should have correct attributes', function() {
@@ -179,12 +179,12 @@ describe('services', function() {
 						name: 'John Smythe',
 						date_of_birth: '30/07/1980',
 					}; 
-					item = new Item(patientData.demographics[0], mockPatient, columns[0]);
-					$httpBackend.whenPUT('/patient/demographics/101/').respond(attrsWithJsonDate);
+					item = new Item(episodeData.demographics[0], mockEpisode, columns[0]);
+					$httpBackend.whenPUT('/episode/demographics/101/').respond(attrsWithJsonDate);
 				});
 
 				it('should hit server', function() {
-					$httpBackend.expectPUT('/patient/demographics/101/', attrsWithJsonDate);
+					$httpBackend.expectPUT('/episode/demographics/101/', attrsWithJsonDate);
 					item.save(attrsWithHumanDate);
 					$httpBackend.flush();
 				});
@@ -203,12 +203,12 @@ describe('services', function() {
 
 				beforeEach(function() {
 					attrs = {id: 104, condition: 'Ebola', provisional: false};
-					item = new Item({}, mockPatient, columns[1]);
-					$httpBackend.whenPOST('/patient/diagnosis/').respond(attrs);
+					item = new Item({}, mockEpisode, columns[1]);
+					$httpBackend.whenPOST('/episode/diagnosis/').respond(attrs);
 				});
 
 				it('should hit server', function() {
-					$httpBackend.expectPOST('/patient/diagnosis/');
+					$httpBackend.expectPOST('/episode/diagnosis/');
 					item.save(attrs);
 					$httpBackend.flush();
 				});
@@ -221,94 +221,94 @@ describe('services', function() {
 					expect(item.provisional).toBe(false);
 				});
 
-				it('should notify patient', function() {
-					spyOn(mockPatient, 'addItem');
+				it('should notify episode', function() {
+					spyOn(mockEpisode, 'addItem');
 					item.save(attrs);
 					$httpBackend.flush();
-					expect(mockPatient.addItem).toHaveBeenCalled();
+					expect(mockEpisode.addItem).toHaveBeenCalled();
 				});
 			});
 
 			describe('deleting item', function() {
 				beforeEach(function() {
-					item = new Item(patientData.diagnosis[1], mockPatient, columns[1]);
-					$httpBackend.whenDELETE('/patient/diagnosis/103/').respond();
+					item = new Item(episodeData.diagnosis[1], mockEpisode, columns[1]);
+					$httpBackend.whenDELETE('/episode/diagnosis/103/').respond();
 				});
 
 				it('should hit server', function() {
-					$httpBackend.expectDELETE('/patient/diagnosis/103/');
+					$httpBackend.expectDELETE('/episode/diagnosis/103/');
 					item.destroy();
 					$httpBackend.flush();
 				});
 
-				it('should notify patient', function() {
-					spyOn(mockPatient, 'removeItem');
+				it('should notify episode', function() {
+					spyOn(mockEpisode, 'removeItem');
 					item.destroy();
 					$httpBackend.flush();
-					expect(mockPatient.removeItem).toHaveBeenCalled();
+					expect(mockEpisode.removeItem).toHaveBeenCalled();
 				});
 			});
 		});
 	});
 
-	describe('patientsLoader', function() {
-		var patientsLoader, $httpBackend;
+	describe('episodesLoader', function() {
+		var episodesLoader, $httpBackend;
 
 		beforeEach(function() {
 			inject(function($injector) {
-				patientsLoader = $injector.get('patientsLoader');
+				episodesLoader = $injector.get('episodesLoader');
 				$httpBackend = $injector.get('$httpBackend');
 				$rootScope = $injector.get('$rootScope');
 			});
 		});
 
-		it('should resolve to an object of patients', function() {
-			var promise = patientsLoader();
-			var patients;
+		it('should resolve to an object of episodes', function() {
+			var promise = episodesLoader();
+			var episodes;
 
 			$httpBackend.whenGET('/schema/list/').respond(columns);
-			$httpBackend.whenGET('/patient').respond([patientData]); // TODO trailing slash?
+			$httpBackend.whenGET('/episode').respond([episodeData]); // TODO trailing slash?
 			promise.then(function(value) {
-				patients = value;
+				episodes = value;
 			});
 
 			$httpBackend.flush();
 			$rootScope.$apply();
 
-			expect(patients[123].id).toBe(123);
+			expect(episodes[123].id).toBe(123);
 		});
 	});
 
-	describe('patientLoader', function() {
-		var patientLoader, $httpBackend;
+	describe('episodeLoader', function() {
+		var episodeLoader, $httpBackend;
 
 		beforeEach(function() {
 			inject(function($injector) {
-				patientLoader = $injector.get('patientLoader');
+				episodeLoader = $injector.get('episodeLoader');
 				$httpBackend = $injector.get('$httpBackend');
 				$rootScope = $injector.get('$rootScope');
 				$route = $injector.get('$route');
 			});
 		});
 
-		xit('should resolve to a single patient', function() {
+		xit('should resolve to a single episode', function() {
 			// TODO unskip this
 			// Skipping this, because I can't work out how to set $route.current
-			// so that patientLoader can access it.
-			var promise = patientLoader();
-			var patient;
+			// so that episodeLoader can access it.
+			var promise = episodeLoader();
+			var episode;
 
 			$route.current = {params: {id: 123}};
 			$httpBackend.whenGET('/schema/').respond(columns);
-			$httpBackend.whenGET('/patient/123').respond(patientData); // TODO trailing slash?
+			$httpBackend.whenGET('/episode/123').respond(episodeData); // TODO trailing slash?
 			promise.then(function(value) {
-				patient = value;
+				episode = value;
 			});
 
 			$httpBackend.flush();
 			$rootScope.$apply();
 
-			expect(patient.id).toBe(123);
+			expect(episode.id).toBe(123);
 		});
 	});
 });
