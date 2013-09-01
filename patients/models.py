@@ -43,38 +43,26 @@ class Patient(models.Model):
         return '%s | %s' % (demographics.hospital_number, demographics.name)
 
     def create_episode(self):
-        return self.episode_set.create()
+        if self.get_active_episode() is None:
+            return self.episode_set.create()
+        else:
+            raise exceptions.APIError('Patient %s already has active episode' % self)
 
-    def to_dict(self):
-        d = {'id': self.id}
-        for model in PatientSubrecord.__subclasses__():
-            subrecords = model.objects.filter(patient_id=self.id)
-            d[model.get_api_name()] = [subrecord.to_dict() for subrecord in subrecords]
-        return d
+    def get_active_episode(self):
+        for episode in self.episode_set.order_by('id').reverse():
+            if episode.is_active():
+                return episode
+        return None
 
-    def update_from_dict(self, data, user):
+    def to_dict(self, user):
+        return {
+            'id': self.id,
+            'episodes': [episode.to_dict(user) for episode in self.episode_set.all()]
+        }
+
+    def update_from_demographics_dict(self, demographics_data, user):
         demographics = self.demographics_set.get()
-        demographics.update_from_dict(data['demographics'], user)
-
-        location = self.location_set.get()
-        location.update_from_dict(data['location'], user)
-
-        self.save()
-
-    def get_tag_names(self):
-        return [t.tag_name for t in self.tagging_set.all()]
-
-    def set_tags(self, tags, user):
-        for tagging in self.tagging_set.all():
-            if tagging.tag_name not in tags:
-                tagging.delete()
-
-        for tag_name in tags:
-            if tag_name not in self.get_tag_names():
-                tagging = Tagging(tag_name=tag_name)
-                if tag_name == 'mine':
-                    tagging.user = user
-                self.tagging_set.add(tagging)
+        demographics.update_from_dict(demographics_data, user)
 
 
 class Episode(models.Model):
@@ -86,31 +74,48 @@ class Episode(models.Model):
 
         return '%s | %s | %s' % (demographics.hospital_number, demographics.name, location.date_of_admission)
 
-    def set_tags(self, tag_names, user):
-        import pdb; pdb.set_trace()
-        taggings = self.tagging_set.all()
-        orig_tag_names = [t.tag_name for t in taggings]
+    def is_active(self):
+        return bool(self.get_tag_names(None))
 
-        for t in taggings:
-            if t.tag_name != 'mine' and t.tag_name not in tag_names:
-                t.delete()
+    def set_tag_names(self, tag_names, user):
+        original_tag_names = self.get_tag_names(user)
+
+        for tag_name in original_tag_names:
+            if tag_name not in tag_names:
+                params = {'tag_name': tag_name}
+                if tag_name == 'mine':
+                    params['user'] = user
+                self.tagging_set.get(**params).delete()
 
         for tag_name in tag_names:
-            if tag_name not in orig_tag_names:
-                tagging = Tagging(tag_name=tag_name)
+            if tag_name not in original_tag_names:
+                params = {'tag_name': tag_name}
                 if tag_name == 'mine':
-                    tagging.user = user
-                self.tagging_set.add(tagging)
+                    params['user'] = user
+                self.tagging_set.create(**params)
 
-    def get_tags(self, user):
-        return [t.tag_name for t in self.tagging_set.all()]
+    def get_tag_names(self, user):
+        return [t.tag_name for t in self.tagging_set.all() if t.user in (None, user)]
 
+    def to_dict(self, user):
+        d = {'id': self.id}
+        for model in PatientSubrecord.__subclasses__():
+            subrecords = model.objects.filter(patient_id=self.patient.id)
+            d[model.get_api_name()] = [subrecord.to_dict(user) for subrecord in subrecords]
+        for model in EpisodeSubrecord.__subclasses__():
+            subrecords = model.objects.filter(episode_id=self.id)
+            d[model.get_api_name()] = [subrecord.to_dict(user) for subrecord in subrecords]
+        return d
+
+    def update_from_location_dict(self, location_data, user):
+        location = self.location_set.get()
+        location.update_from_dict(location_data, user)
 
 
 class Tagging(models.Model):
     tag_name = models.CharField(max_length=255)
     user = models.ForeignKey(auth.models.User, null=True)
-    episode = models.ForeignKey(Episode, null=True) # TODO make null=False
+    episode = models.ForeignKey(Episode, null=True)  # TODO make null=False
 
     def __unicode__(self):
         if self.user is not None:
@@ -128,7 +133,7 @@ class Subrecord(models.Model):
         abstract = True
 
     def __unicode__(self):
-        return u'{0}: {1}'.format(self.get_api_name(), self.patient)
+        return u'{0}: {1}'.format(self.get_api_name(), self.id)
 
     @classmethod
     def get_api_name(cls):
@@ -138,7 +143,7 @@ class Subrecord(models.Model):
     def build_field_schema(cls):
         field_schema = []
         for fieldname in cls._get_fieldnames_to_serialize():
-            if fieldname in ['id', 'patient_id']:
+            if fieldname in ['id', 'patient_id', 'episode_id']:
                 continue
 
             getter = getattr(cls, 'get_field_type_for_' + fieldname, None)
@@ -178,7 +183,7 @@ class Subrecord(models.Model):
         except models.FieldDoesNotExist:
             pass
 
-        if name == 'patient_id':
+        if name in ['patient_id', 'episode_id']:
             return models.ForeignKey
 
         try:
@@ -190,12 +195,12 @@ class Subrecord(models.Model):
 
         raise Exception('Unexpected fieldname: %s' % name)
 
-    def to_dict(self):
+    def to_dict(self, user):
         d = {}
         for name in self._get_fieldnames_to_serialize():
             getter = getattr(self, 'get_' + name, None)
             if getter is not None:
-                value = getter()
+                value = getter(user)
             else:
                 value = getattr(self, name)
             d[name] = value
@@ -223,10 +228,7 @@ class Subrecord(models.Model):
             else:
                 # TODO use form here?
                 if value and self._get_field_type(name) == models.fields.DateField:
-                    try:
-                        value = datetime.strptime(value, '%Y-%m-%d').date()
-                    except ValueError:
-                        value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%fZ').date()
+                    value = datetime.strptime(value, '%Y-%m-%d').date()
 
                 setattr(self, name, value)
 
@@ -245,7 +247,7 @@ class PatientSubrecord(Subrecord):
 
 
 class EpisodeSubrecord(Subrecord):
-    patient = models.ForeignKey(Episode)
+    episode = models.ForeignKey(Episode, null=True)  # TODO make null=False
 
     class Meta:
         abstract = True
@@ -271,13 +273,13 @@ class Location(EpisodeSubrecord):
     def get_field_type_for_tags(cls):
         return 'list'
 
-    def get_tags(self):
-        return {tag_name: True for tag_name in self.patient.get_tag_names()}
+    def get_tags(self, user):
+        return {tag_name: True for tag_name in self.episode.get_tag_names(user)}
 
     # value is a dictionary mapping tag names to a boolean
     def set_tags(self, value, user):
-        tags = [k for k, v in value.items() if v]
-        self.patient.set_tags(tags, user)
+        tag_names = [k for k, v in value.items() if v]
+        self.episode.set_tag_names(tag_names, user)
 
     category = models.CharField(max_length=255, blank=True)
     hospital = models.CharField(max_length=255, blank=True)
@@ -390,7 +392,7 @@ def create_patient_singletons(sender, **kwargs):
 @receiver(models.signals.post_save, sender=Episode)
 def create_episode_singletons(sender, **kwargs):
     if kwargs['created']:
-        patient = kwargs['instance']
+        episode = kwargs['instance']
         for subclass in EpisodeSubrecord.__subclasses__():
             if subclass._is_singleton:
-                subclass.objects.create(patient=patient)
+                subclass.objects.create(episode=episode)

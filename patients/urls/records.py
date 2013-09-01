@@ -3,10 +3,9 @@ from utils import camelcase_to_underscore
 from patients import models, views
 
 urlpatterns = patterns('',
-    url(r'^patient/?$', views.patient_list_view),
+    url(r'^patient/?$', views.patient_search_view),
     url(r'^patient/(?P<pk>\d+)/?$', views.patient_detail_view),
     url(r'^episode/?$', views.episode_list_and_create_view),
-    url(r'^episode/(?P<pk>\d+)/?$', views.episode_detail_view),
 )
 
 subrecord_models = models.PatientSubrecord.__subclasses__() + models.EpisodeSubrecord.__subclasses__()

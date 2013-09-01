@@ -3,20 +3,20 @@ import reversion
 
 from patients import models
 
+# TODO why can't we use use reversion.VersionAdmin?
 class MyAdmin(reversion.VersionAdmin): pass
 
-class SubRecordAdmin(reversion.VersionAdmin):
-    list_filter =['patient']
+class PatientSubRecordAdmin(reversion.VersionAdmin):
+    list_filter = ['patient']
+
+class EpisodeSubRecordAdmin(reversion.VersionAdmin):
+    list_filter = ['episode']
 
 admin.site.register(models.Patient, MyAdmin)
-admin.site.register(models.Tagging, SubRecordAdmin)
-admin.site.register(models.Demographics, SubRecordAdmin)
-admin.site.register(models.Location, SubRecordAdmin)
-admin.site.register(models.Diagnosis, SubRecordAdmin)
-admin.site.register(models.PastMedicalHistory, SubRecordAdmin)
-admin.site.register(models.GeneralNote, SubRecordAdmin)
-admin.site.register(models.Travel, SubRecordAdmin)
-admin.site.register(models.Antimicrobial, SubRecordAdmin)
-admin.site.register(models.MicrobiologyInput, SubRecordAdmin)
-admin.site.register(models.Todo, SubRecordAdmin)
-admin.site.register(models.MicrobiologyTest, SubRecordAdmin)
+admin.site.register(models.Episode, MyAdmin)
+
+for subclass in models.PatientSubrecord.__subclasses__():
+    admin.site.register(subclass, PatientSubRecordAdmin)
+
+for subclass in models.EpisodeSubrecord.__subclasses__():
+    admin.site.register(subclass, EpisodeSubRecordAdmin)

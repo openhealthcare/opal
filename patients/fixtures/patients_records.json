@@ -6,9 +6,16 @@
 },
 {
 	"pk": 1,
+	"model": "patients.episode",
+	"fields": {
+		"patient": 1
+	}
+},
+{
+	"pk": 1,
 	"model": "patients.tagging",
 	"fields": {
-		"patient": 1,
+		"episode": 1,
 		"tag_name": "microbiology",
 		"user": null
 	}
@@ -17,7 +24,7 @@
 	"pk": 2,
 	"model": "patients.tagging",
 	"fields": {
-		"patient": 1,
+		"episode": 1,
 		"tag_name": "mine",
 		"user": 1
 	}
@@ -38,7 +45,7 @@
 	"model": "patients.location",
 	"fields": {
                 "consistency_token": "12345678",
-		"patient": 1,
+		"episode": 1,
 		"category": "Inpatient",
 		"hospital": "UCH",
 		"ward": "T10",
@@ -52,7 +59,7 @@
 	"model": "patients.diagnosis",
 	"fields": {
                 "consistency_token": "12345678",
-		"patient": 1,
+		"episode": 1,
 		"condition_ft": "",
 		"condition_fk": 1,
 		"details": "",
@@ -65,7 +72,7 @@
 	"model": "patients.diagnosis",
 	"fields": {
                 "consistency_token": "12345678",
-		"patient": 1,
+		"episode": 1,
 		"condition_ft": "Some other condition",
 		"condition_fk": null,
 		"details": "",
@@ -78,7 +85,7 @@
 	"model": "patients.pastmedicalhistory",
 	"fields": {
                 "consistency_token": "12345678",
-		"patient": 1,
+		"episode": 1,
 		"condition_ft": "",
 		"condition_fk": 1,
 		"year": "1999"
@@ -89,7 +96,7 @@
 	"model": "patients.generalnote",
 	"fields": {
                 "consistency_token": "12345678",
-		"patient": 1,
+		"episode": 1,
 		"date": "2013-07-25",
 		"comment": "A note"
 	}
@@ -99,7 +106,7 @@
 	"model": "patients.travel",
 	"fields": {
                 "consistency_token": "12345678",
-		"patient": 1,
+		"episode": 1,
 		"destination_ft": "",
 		"destination_fk": 1,
 		"dates": "",
@@ -113,7 +120,7 @@
 	"model": "patients.antimicrobial",
 	"fields": {
                 "consistency_token": "12345678",
-		"patient": 1,
+		"episode": 1,
 		"drug_ft": "",
 		"drug_fk": 1,
 		"dose": "100mg",
@@ -128,7 +135,7 @@
 	"model": "patients.microbiologyinput",
 	"fields": {
                 "consistency_token": "12345678",
-		"patient": 1,
+		"episode": 1,
 		"date": "2013-07-25",
 		"initials": "ABC",
 		"reason_for_interaction_ft": "",
@@ -147,7 +154,7 @@
 	"model": "patients.todo",
 	"fields": {
                 "consistency_token": "12345678",
-		"patient": 1,
+		"episode": 1,
 		"details": "An action"
 	}
 },
@@ -156,7 +163,7 @@
 	"model": "patients.microbiologytest",
 	"fields": {
                 "consistency_token": "12345678",
-		"patient": 1,
+		"episode": 1,
 		"test": "Blood Culture",
 		"date_ordered": "2013-07-25",
 		"details": "",
@@ -181,7 +188,7 @@
 		"hsv": "",
 		"vzv": "",
 		"syphilis": "",
-		"c_difficile_antigenl": "",
+		"c_difficile_antigen": "",
 		"c_difficile_toxin": "",
 		"species": "",
 		"hsv_1": "",

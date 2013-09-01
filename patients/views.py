@@ -29,12 +29,12 @@ def patient_detail_view(request, pk):
     except models.Patient.DoesNotExist:
         return HttpResponseNotFound()
 
-    return _build_json_response(patient.to_dict(), 200)
+    return _build_json_response(patient.to_dict(request.user), 200)
 
 
 @with_no_caching
 @require_http_methods(['GET'])
-def patient_list_view(request):
+def patient_search_view(request):
     GET = request.GET
 
     search_terms = {}
@@ -52,26 +52,19 @@ def patient_list_view(request):
         # TODO maybe limit/paginate results?
         patients = models.Patient.objects.filter(**filter_dict)
         patients = models.Patient.objects.filter(**filter_dict).order_by('demographics__date_of_birth')
-        return _build_json_response([patient.to_dict() for patient in patients])
+        return _build_json_response([patient.to_dict(request.user) for patient in patients])
     else:
         return _build_json_response({'error': 'No search terms'}, 400)
-
-
-@require_http_methods(['GET'])
-def episode_detail_view(request, pk):
-    try:
-        episode = models.Episode.objects.get(pk=pk)
-    except models.Episode.DoesNotExist:
-        return HttpResponseNotFound()
-
-    return _build_json_response(episode.to_dict(), 200)
 
 
 @require_http_methods(['GET', 'POST'])
 def episode_list_and_create_view(request):
     if request.method == 'GET':
-        episodes = models.Episode.current.all()
-        return _build_json_response([episode.to_dict() for episode in episodes])
+        # This finds all taggings which either belong to this user or no user,
+        # and loads the related episode.
+        taggings = models.Tagging.objects.filter(user__in=[request.user, None]).select_related('episode')
+        episodes = set(tagging.episode for tagging in taggings)
+        return _build_json_response([episode.to_dict(request.user) for episode in episodes])
 
     elif request.method == 'POST':
         data = _get_request_data(request)
@@ -84,29 +77,30 @@ def episode_list_and_create_view(request):
         else:
             patient = models.Patient.objects.create()
 
-        # TODO check patient does not have active episode
+        patient.update_from_demographics_dict(data['demographics'], request.user)
 
-        patient.update_from_dict(data, request.user)
-        episode = patient.build_new_episode()
-        episode.update_from_dict(data, request.user)
+        try:
+            episode = patient.create_episode()
+        except exceptions.APIError:
+            return _build_json_response({'error': 'Patient already has active episode'}, 400)
 
-        return _build_json_response(episode.to_dict(), 201)
+        episode.update_from_location_dict(data['location'], request.user)
+
+        return _build_json_response(episode.to_dict(request.user), 201)
 
 
-@require_http_methods(['GET', 'PUT', 'DELETE'])
+@require_http_methods(['PUT', 'DELETE'])
 def subrecord_detail_view(request, model, pk):
     try:
         subrecord = model.objects.get(pk=pk)
     except model.DoesNotExist:
         return HttpResponseNotFound()
 
-    if request.method == 'GET':
-        return _build_json_response(subrecord.to_dict())
-    elif request.method == 'PUT':
+    if request.method == 'PUT':
         data = _get_request_data(request)
         try:
             subrecord.update_from_dict(data, request.user)
-            return _build_json_response(subrecord.to_dict())
+            return _build_json_response(subrecord.to_dict(request.user))
         except exceptions.ConsistencyError:
             return _build_json_response({'error': 'Item has changed'}, 409)
     elif request.method == 'DELETE':
@@ -119,7 +113,7 @@ def subrecord_create_view(request, model):
     subrecord = model()
     data = _get_request_data(request)
     subrecord.update_from_dict(data, request.user)
-    return _build_json_response(subrecord.to_dict(), 201)
+    return _build_json_response(subrecord.to_dict(request.user), 201)
 
 
 def _get_request_data(request):

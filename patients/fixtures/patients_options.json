@@ -21,6 +21,13 @@
     }
 },
 {
+    "pk": 2,
+    "model": "options.condition",
+    "fields": {
+        "name": "Some other condition"
+    }
+},
+{
     "pk": 1,
     "model": "options.destination",
     "fields": {
@@ -57,7 +64,7 @@
             "options", 
             "condition"
 	],
-        "object_id": 1
+        "object_id": 2
     }
 }
 ]

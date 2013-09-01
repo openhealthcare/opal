@@ -1,12 +1,18 @@
+import datetime
 import json
+from django.core.serializers.json import DjangoJSONEncoder
 from django.test import TestCase
 from django.contrib.auth.models import User
 from patients import models
 from patients.models import Patient, Episode
+from patients import exceptions
 
 
 class PatientTest(TestCase):
+    fixtures = ['patients_users', 'patients_records']
+
     def setUp(self):
+        self.user = User.objects.get(pk=1)
         self.patient = Patient.objects.create()
 
     def test_demographics_subrecord_created(self):
@@ -16,359 +22,454 @@ class PatientTest(TestCase):
         episode = self.patient.create_episode()
         self.assertEqual(Episode, type(episode))
 
+    def test_get_active_episode(self):
+        episode1 = self.patient.create_episode()
+        episode2 = self.patient.create_episode()
+        episode2.set_tag_names(['microbiology'], None)
+        self.assertEqual(episode2.id, self.patient.get_active_episode().id)
+
+    def test_get_active_episode_with_no_episodes(self):
+        self.assertIsNone(self.patient.get_active_episode())
+
+    def test_get_active_episode_with_no_active_episodes(self):
+        self.patient.create_episode()
+        self.patient.create_episode()
+        self.assertIsNone(self.patient.get_active_episode())
+
     def test_cannot_create_episode_if_has_active_episode(self):
-        pass
+        episode = self.patient.create_episode()
+        episode.set_tag_names(['microbiology'], None)
+        with self.assertRaises(Exception):
+            self.patient.create_episode()
+
+    def test_to_dict(self):
+        expected_data = {
+            'id': self.patient.id,
+            'episodes': [],
+        }
+        self.assertEqual(expected_data, self.patient.to_dict(self.user))
+
 
 class EpisodeTest(TestCase):
-    fixtures = ['patients_users']
+    fixtures = ['patients_users', 'patients_records']
 
     def setUp(self):
+        self.user = User.objects.get(pk=1)
         self.patient = Patient.objects.create()
         self.episode = self.patient.create_episode()
 
     def test_location_subrecord_created(self):
         self.assertEqual(1, self.episode.location_set.count())
 
-    def test_can_set_tags(self):
-        user = User.objects.get(pk=1)
-
+    def test_can_set_tag_names(self):
         for tag_names in [
             ['microbiology', 'mine'],
             ['microbiology', 'hiv'],
+            ['hiv', 'mine'],
         ]:
-            self.episode.set_tags(tag_names, user)
-            self.assertEqual(tag_names, self.episode.get_tags(user))
+            self.episode.set_tag_names(tag_names, self.user)
+            self.assertEqual(set(tag_names),
+                             set(self.episode.get_tag_names(self.user)))
 
     def test_user_cannot_see_other_users_mine_tag(self):
-        user1 = User.objects.get(pk=1)
-        user2 = User.objects.get(pk=2)
+        other_user = User.objects.get(pk=2)
 
-        self.episode.set_tags(['hiv', 'mine'], user1)
-        self.assertEqual(['hiv'], self.episode.get_tags(user2))
-
-
-
+        self.episode.set_tag_names(['hiv', 'mine'], self.user)
+        self.assertEqual(['hiv'], self.episode.get_tag_names(other_user))
 
     def test_active_if_tagged_by_non_mine_tag(self):
-        pass
+        self.episode.set_tag_names(['microbiology'], self.user)
+        self.assertTrue(self.episode.is_active())
+
+    def test_inactive_if_only_tagged_by_mine_tag(self):
+        self.episode.set_tag_names(['mine'], self.user)
+        self.assertFalse(self.episode.is_active())
+
+    def test_to_dict(self):
+        expected_data = {
+            'id': self.episode.id,
+            'demographics': [{
+                'id': self.patient.demographics_set.get().id,
+                'patient_id': self.patient.id,
+                'consistency_token': '',
+                'date_of_birth': None,
+                'hospital_number': '',
+                'name': '',
+                }],
+            'location': [{
+                'id': self.episode.location_set.get().id,
+                'episode_id': self.episode.id,
+                'bed': '',
+                'category': '',
+                'consistency_token': '',
+                'date_of_admission': None,
+                'discharge_date': None,
+                'hospital': '',
+                'tags': {},
+                'ward': '',
+                }],
+            'diagnosis': [],
+            'past_medical_history': [],
+            'general_note': [],
+            'travel': [],
+            'antimicrobial': [],
+            'microbiology_input': [],
+            'todo': [],
+            'microbiology_test': [],
+        }
+        self.assertEqual(expected_data, self.episode.to_dict(self.user))
 
 
-#class PatientTest(TestCase):
-#    fixtures = ['patients_users', 'patients_options', 'patients_patients']
-#
-#    def setUp(self):
-#        self.assertTrue(self.client.login(username='superuser', password='password'))
-#        self.patient = models.Patient.objects.get(pk=1)
-#        self.demographics = self.patient.demographics_set.all()[0]
-#        self.location = self.patient.location_set.all()[0]
-#        self.first_diagnosis = self.patient.diagnosis_set.all()[0]
-#
-#    def load_expected_data(self, filename):
-#        return json.load(open('patients/test_data/%s.json' % filename))
-#
-#    @property
-#    def base_url(self):
-#        return '/records/'
-#
-#    def get(self, sub_url):
-#        return self.client.get(self.base_url + sub_url)
-#
-#    def post(self, sub_url, data):
-#        data['patient_id'] = self.patient.id
-#        json_data = json.dumps(data)
-#        return self.client.post(self.base_url + sub_url, content_type='application/json', data=json_data)
-#
-#    def put(self, sub_url, data):
-#        data['patient_id'] = self.patient.id
-#        json_data = json.dumps(data)
-#        return self.client.put(self.base_url + sub_url, content_type='application/json', data=json_data)
-#
-#    def assert_status_code(self, expected_status_code, rsp):
-#        self.assertEqual(expected_status_code, rsp.status_code)
-#
-#    def assert_json_content(self, expected_data, rsp, expect_consistency_token=False):
-#        content = json.loads(rsp.content)
-#        if expect_consistency_token:
-#            try:
-#                content.pop('consistency_token')
-#            except KeyError:
-#                raise AssertionError('No consistency token')
-#        self.assertEqual(expected_data, content)
-#
-#    def assert_has_tags(self, expected_tags, patient_id):
-#        patient = models.Patient.objects.get(pk=patient_id)
-#        self.assertItemsEqual(expected_tags, [t.tag_name for t in patient.tagging_set.all()])
-#
-#
-#    def test_can_access_patient(self):
-#        rsp = self.client.get('/records/patient/%s/' % self.patient.id)
-#        self.assert_status_code(200, rsp)
-#        self.assert_json_content(self.load_expected_data('patient'), rsp)
-#
-#    def test_can_access_episode(self):
-#        rsp = self.client.get('/records/episode/%s/' % self.episode.id)
-#        self.assert_status_code(200, rsp)
-#        self.assert_json_content(self.load_expected_data('episode'), rsp)
-#
-#    def test_can_create_episode_for_new_patient(self):
-#        pass
-#
-#    def test_can_create_episode_for_existing_patient(self):
-#        pass
-#
-#    def test_cannot_create_episode_for_existing_patient_with_active_episode(self):
-#        pass
-#
-#
-#    def test_can_create_episode(self):
-#        data = {
-#            'demographics': {
-#                'hospital_number': 'BB2222',
-#                'name': 'Johann Schmidt',
-#                'date_of_birth': '1970-06-01'
-#            },
-#            'location': {
-#                'date_of_admission': '2013-06-25',
-#                'category': 'Inpatient',
-#                'hospital': 'UCH',
-#                'ward': 'T13',
-#                'bed': 10
-#            }
-#        }
-#        rsp = self.client.post('/records/episode/', content_type='application/json', data=json.dumps(data))
-#        self.assert_status_code(201, rsp)
-#
-#    def test_can_access_demographics(self):
-#        rsp = self.get('demographics/%s/' % self.demographics.id)
-#        expected_data = {
-#            'patient_id': self.patient.id,
-#            'id': self.demographics.id,
-#            'name': 'John Smith',
-#            'date_of_birth': '1972-06-20',
-#            'hospital_number': 'AA1111',
-#        }
-#        self.assert_status_code(200, rsp)
-#        self.assert_json_content(expected_data, rsp, expect_consistency_token=True)
-#
-#    def test_can_update_demographics(self):
-#        name = 'Jan Smits'
-#        date_of_birth = '1972-06-21'
-#        data = {'name': name, 'date_of_birth': date_of_birth, 'consistency_token': '12345678'}
-#        rsp = self.put('demographics/%s/' % self.demographics.id, data)
-#        expected_data = {
-#            'patient_id': self.patient.id,
-#            'id': self.demographics.id,
-#            'name': name,
-#            'date_of_birth': date_of_birth,
-#            'hospital_number': 'AA1111',
-#        }
-#        self.assert_status_code(200, rsp)
-#        self.assert_json_content(expected_data, rsp, expect_consistency_token=True)
-#
-#    def test_can_access_location(self):
-#        rsp = self.get('location/%s/' % self.location.id)
-#        expected_data = {
-#            'patient_id': self.patient.id,
-#            'id': self.location.id,
-#            'category': 'Inpatient',
-#            'hospital': 'UCH',
-#            'ward': 'T10',
-#            'bed': '13',
-#            'date_of_admission': '2013-07-25',
-#            'discharge_date': None,
-#            'tags': {'microbiology': True, 'mine': True},
-#        }
-#        self.assert_status_code(200, rsp)
-#        self.assert_json_content(expected_data, rsp, expect_consistency_token=True)
-#
-#    def test_can_update_location(self):
-#        ward = 'T11'
-#        date_of_admission = '2013-07-24'
-#        data = {
-#            'consistency_token': '12345678',
-#            'ward': ward,
-#            'date_of_admission': date_of_admission,
-#            'tags': {'mine': True}
-#        }
-#        rsp = self.put('location/%s/' % self.location.id, data)
-#        expected_data = {
-#            'patient_id': self.patient.id,
-#            'id': self.location.id,
-#            'category': 'Inpatient',
-#            'hospital': 'UCH',
-#            'ward': ward,
-#            'bed': '13',
-#            'date_of_admission': date_of_admission,
-#            'discharge_date': None,
-#            'tags': {'mine': True},
-#        }
-#        self.assert_status_code(200, rsp)
-#        self.assert_json_content(expected_data, rsp, expect_consistency_token=True)
-#
-#    def test_updating_location_updates_tags_1(self):
-#        data = {
-#                'consistency_token': '12345678',
-#                'tags': {'mine': True, 'hiv': True}
-#        }
-#        self.put('location/%s/' % self.location.id, data)
-#        self.assert_has_tags(['hiv', 'mine'], self.patient.id)
-#
-#    def test_updating_location_updates_tags_2(self):
-#        data = {
-#                'consistency_token': '12345678',
-#                'tags': {'microbiology': True, 'hiv': False}
-#        }
-#        self.put('location/%s/' % self.location.id, data)
-#        self.assert_has_tags(['microbiology'], self.patient.id)
-#
-#    def test_updating_location_updates_tags_3(self):
-#        data = {
-#                'consistency_token': '12345678',
-#                'tags': {'mine': True, 'tropical_diseases': False}
-#        }
-#        self.put('location/%s/' % self.location.id, data)
-#        self.assert_has_tags(['mine'], self.patient.id)
-#
-#    def test_can_access_diagnosis(self):
-#        rsp = self.get('diagnosis/%d/' % self.first_diagnosis.id)
-#        expected_data = {
-#            'patient_id': self.patient.id,
-#            'id': self.first_diagnosis.id,
-#            'condition': 'Some condition',
-#            'provisional': False,
-#            'details': '',
-#            'date_of_diagnosis': '2013-07-25',
-#        }
-#        self.assert_status_code(200, rsp)
-#        self.assert_json_content(expected_data, rsp, expect_consistency_token=True)
-#
-#    def test_can_create_diagnosis_with_existing_condition(self):
-#        data = {
-#            'condition': 'Some condition',
-#            'provisional': False,
-#            'details': 'Have some details',
-#            'date_of_diagnosis': '2013-07-25',
-#        }
-#        rsp = self.post('diagnosis/', data)
-#        diagnosis = self.patient.diagnosis_set.get(pk=json.loads(rsp.content)['id'])
-#        expected_data = {
-#            'patient_id': self.patient.id,
-#            'id': diagnosis.id,
-#            'condition': 'Some condition',
-#            'provisional': False,
-#            'details': 'Have some details',
-#            'date_of_diagnosis': '2013-07-25',
-#        }
-#        self.assert_status_code(201, rsp)
-#        self.assert_json_content(expected_data, rsp, expect_consistency_token=True)
-#        self.assertIsNotNone(diagnosis.condition_fk)
-#        self.assertEqual('', diagnosis.condition_ft)
-#
-#    def test_can_create_diagnosis_with_new_condition(self):
-#        data = {
-#            'condition': 'Some other condition',
-#            'provisional': False,
-#            'details': 'Have some details',
-#            'date_of_diagnosis': '2013-07-25',
-#        }
-#        rsp = self.post('diagnosis/', data)
-#        diagnosis = self.patient.diagnosis_set.get(pk=json.loads(rsp.content)['id'])
-#        expected_data = {
-#            'patient_id': self.patient.id,
-#            'id': diagnosis.id,
-#            'condition': 'Some other condition',
-#            'provisional': False,
-#            'details': 'Have some details',
-#            'date_of_diagnosis': '2013-07-25',
-#        }
-#        self.assert_status_code(201, rsp)
-#        self.assert_json_content(expected_data, rsp, expect_consistency_token=True)
-#        self.assertIsNone(diagnosis.condition_fk)
-#        self.assertEqual('Some other condition', diagnosis.condition_ft)
-#
-#    def test_can_update_diagnosis(self):
-#        data = {
-#            'consistency_token': '12345678',
-#            'condition': 'Some other condition'
-#        }
-#        rsp = self.put('diagnosis/%d/' % self.first_diagnosis.id, data)
-#        expected_data = {
-#            'patient_id': self.patient.id,
-#            'id': self.first_diagnosis.id,
-#            'condition': 'Some other condition',
-#            'provisional': False,
-#            'details': '',
-#            'date_of_diagnosis': '2013-07-25',
-#        }
-#        diagnosis = self.patient.diagnosis_set.get(pk=self.first_diagnosis.id)
-#        self.assert_status_code(200, rsp)
-#        self.assert_json_content(expected_data, rsp, expect_consistency_token=True)
-#        self.assertIsNone(diagnosis.condition_fk)
-#        self.assertEqual('Some other condition', diagnosis.condition_ft)
-#
-#    def test_updating_with_wrong_consistency_token_gives_409(self):
-#        data = {
-#            'consistency_token': '87654321',
-#            'condition': 'Some other condition'
-#        }
-#        rsp = self.put('diagnosis/%d/' % self.first_diagnosis.id, data)
-#        self.assert_status_code(409, rsp)
-#
-#    def test_searching_without_search_terms_is_client_error(self):
-#        rsp = self.client.get('/records/patient/')
-#        self.assert_status_code(400, rsp)
-#
-#    def test_can_search_by_name(self):
-#        rsp = self.client.get('/records/patient/?name=John')
-#        self.assert_status_code(200, rsp)
-#        self.assert_json_content([self.load_expected_data('patient')], rsp)
-#
-#    def test_can_search_by_hospital_number(self):
-#        rsp = self.client.get('/records/patient/?hospital_number=AA1111')
-#        self.assert_status_code(200, rsp)
-#        self.assert_json_content([self.load_expected_data('patient')], rsp)
-#
-#    def test_can_access_list_schema(self):
-#        rsp = self.client.get('/schema/list/')
-#        self.assert_status_code(200, rsp)
-#
-#    def test_can_access_detail_schema(self):
-#        rsp = self.client.get('/schema/detail/')
-#        self.assert_status_code(200, rsp)
-#
-#    def test_can_access_patient_list_template(self):
-#        rsp = self.client.get('/templates/patient_list.html/')
-#        self.assert_status_code(200, rsp)
-#
-#    def test_can_access_patient_detail_template(self):
-#        rsp = self.client.get('/templates/patient_detail.html/')
-#        self.assert_status_code(200, rsp)
-#
-#    def test_can_access_search_template(self):
-#        rsp = self.client.get('/templates/search.html/')
-#        self.assert_status_code(200, rsp)
-#
-#    def test_field_schema_correct_for_demographics(self):
-#        schema = models.Demographics.build_field_schema()
-#        expected_schema = [
-#                {'name': 'consistency_token', 'type': 'token'},
-#                {'name': 'name', 'type': 'string'},
-#                {'name': 'hospital_number', 'type': 'string'},
-#                {'name': 'date_of_birth', 'type': 'date'},
-#        ]
-#        self.assertEqual(expected_schema, schema)
-#
-#    def test_field_schema_correct_for_location(self):
-#        schema = models.Location.build_field_schema()
-#        expected_schema = [
-#                {'name': 'consistency_token', 'type': 'token'},
-#                {'name': 'category', 'type': 'string'},
-#                {'name': 'hospital', 'type': 'string'},
-#                {'name': 'ward', 'type': 'string'},
-#                {'name': 'bed', 'type': 'string'},
-#                {'name': 'date_of_admission', 'type': 'date'},
-#                {'name': 'discharge_date', 'type': 'date'},
-#                {'name': 'tags', 'type': 'list'},
-#        ]
-#        self.assertEqual(expected_schema, schema)
-#
+class DemographicsTest(TestCase):
+    fixtures = ['patients_users', 'patients_records']
+
+    def setUp(self):
+        self.user = User.objects.get(pk=1)
+        self.patient = models.Patient.objects.get(pk=1)
+        self.demographics = self.patient.demographics_set.get()
+
+    def test_to_dict(self):
+        expected_data = {
+            'consistency_token': '12345678',
+            'patient_id': self.patient.id,
+            'id': self.demographics.id,
+            'name': 'John Smith',
+            'date_of_birth': datetime.date(1972, 6, 20),
+            'hospital_number': 'AA1111',
+        }
+        self.assertEqual(expected_data, self.demographics.to_dict(self.user))
+
+    def test_update_from_dict(self):
+        data = {
+            'consistency_token': '12345678',
+            'id': self.demographics.id,
+            'name': 'Johann Schmidt',
+            'date_of_birth': '1972-6-21',
+            'hospital_number': 'AA1112',
+        }
+        self.demographics.update_from_dict(data, self.user)
+        demographics = self.patient.demographics_set.get()
+
+        self.assertEqual('Johann Schmidt', demographics.name)
+        self.assertEqual(datetime.date(1972, 6, 21), demographics.date_of_birth)
+        self.assertEqual('AA1112', demographics.hospital_number)
+
+    def test_update_from_dict_with_missing_consistency_token(self):
+        with self.assertRaises(exceptions.APIError):
+            self.demographics.update_from_dict({}, self.user)
+
+    def test_update_from_dict_with_incorrect_consistency_token(self):
+        with self.assertRaises(exceptions.ConsistencyError):
+            self.demographics.update_from_dict({'consistency_token': '87654321'}, self.user)
+
+    def test_field_schema(self):
+        schema = models.Demographics.build_field_schema()
+        expected_schema = [
+                {'name': 'consistency_token', 'type': 'token'},
+                {'name': 'name', 'type': 'string'},
+                {'name': 'hospital_number', 'type': 'string'},
+                {'name': 'date_of_birth', 'type': 'date'},
+        ]
+        self.assertEqual(expected_schema, schema)
+
+
+class LocationTest(TestCase):
+    fixtures = ['patients_users', 'patients_records']
+
+    def setUp(self):
+        self.user = User.objects.get(pk=1)
+        self.episode = models.Episode.objects.get(pk=1)
+        self.location = self.episode.location_set.get()
+
+    def test_to_dict(self):
+        expected_data = {
+            'consistency_token': '12345678',
+            'episode_id': self.episode.id,
+            'id': self.location.id,
+            'category': 'Inpatient',
+            'hospital': 'UCH',
+            'ward': 'T10',
+            'bed': '13',
+            'date_of_admission': datetime.date(2013, 7, 25),
+            'discharge_date': None,
+            'tags': {'microbiology': True, 'mine': True},
+        }
+        self.assertEqual(expected_data, self.location.to_dict(self.user))
+
+    def test_update_from_dict(self):
+        data = {
+            'consistency_token': '12345678',
+            'id': self.location.id,
+            'category': 'Inpatient',
+            'hospital': 'UCH',
+            'ward': 'T10',
+            'bed': '13',
+            'date_of_admission': '2013-7-25',
+            'discharge_date':  '2013-8-25',
+            'tags': {'microbiology': False, 'mine': True},
+        }
+        self.location.update_from_dict(data, self.user)
+        location = self.episode.location_set.get()
+
+        self.assertEqual(datetime.date(2013, 8, 25), location.discharge_date)
+        self.assertEqual({'mine': True}, location.get_tags(self.user))
+
+    def test_field_schema(self):
+        schema = models.Location.build_field_schema()
+        expected_schema = [
+                {'name': 'consistency_token', 'type': 'token'},
+                {'name': 'category', 'type': 'string'},
+                {'name': 'hospital', 'type': 'string'},
+                {'name': 'ward', 'type': 'string'},
+                {'name': 'bed', 'type': 'string'},
+                {'name': 'date_of_admission', 'type': 'date'},
+                {'name': 'discharge_date', 'type': 'date'},
+                {'name': 'tags', 'type': 'list'},
+        ]
+        self.assertEqual(expected_schema, schema)
+
+
+class DiagnosisTest(TestCase):
+    fixtures = ['patients_users', 'patients_records', 'patients_options']
+
+    def setUp(self):
+        self.user = User.objects.get(pk=1)
+        self.episode = models.Episode.objects.get(pk=1)
+        self.diagnosis = self.episode.diagnosis_set.all()[0]
+
+    def test_to_dict(self):
+        expected_data = {
+            'consistency_token': '12345678',
+            'episode_id': self.episode.id,
+            'id': self.diagnosis.id,
+            'condition': 'Some condition',
+            'provisional': False,
+            'details': '',
+            'date_of_diagnosis': datetime.date(2013, 7, 25),
+        }
+        self.assertEqual(expected_data, self.diagnosis.to_dict(self.user))
+
+    def test_update_from_dict_with_existing_condition(self):
+        data = {
+            'consistency_token': '12345678',
+            'id': self.diagnosis.id,
+            'condition': 'Some other condition',
+        }
+        self.diagnosis.update_from_dict(data, self.user)
+        diagnosis = self.episode.diagnosis_set.all()[0]
+        self.assertEqual('Some other condition', diagnosis.condition)
+
+    def test_update_from_dict_with_synonym_for_condition(self):
+        data = {
+            'consistency_token': '12345678',
+            'id': self.diagnosis.id,
+            'condition': 'Condition synonym',
+        }
+        self.diagnosis.update_from_dict(data, self.user)
+        diagnosis = self.episode.diagnosis_set.all()[0]
+        self.assertEqual('Some other condition', diagnosis.condition)
+
+    def test_update_from_dict_with_new_condition(self):
+        data = {
+            'consistency_token': '12345678',
+            'id': self.diagnosis.id,
+            'condition': 'New condition',
+        }
+        self.diagnosis.update_from_dict(data, self.user)
+        diagnosis = self.episode.diagnosis_set.all()[0]
+        self.assertEqual('New condition', diagnosis.condition)
+    
+    def test_field_schema(self):
+        schema = models.Diagnosis.build_field_schema()
+        expected_schema = [
+                {'name': 'consistency_token', 'type': 'token'},
+                {'name': 'provisional', 'type': 'boolean'},
+                {'name': 'details', 'type': 'string'},
+                {'name': 'date_of_diagnosis', 'type': 'date'},
+                {'name': 'condition', 'type': 'string'},
+        ]
+        self.assertEqual(expected_schema, schema)
+
+
+class ViewsTest(TestCase):
+    fixtures = ['patients_users', 'patients_options', 'patients_records']
+    
+    def setUp(self):
+        self.user = User.objects.get(pk=1)
+        self.assertTrue(self.client.login(username=self.user.username, password='password'))
+        self.patient = models.Patient.objects.get(pk=1)
+
+    def assertStatusCode(self, path, expected_status_code):
+        response = self.client.get(path)
+        self.assertEqual(expected_status_code, response.status_code)
+
+    def post_json(self, path, data):
+        json_data = json.dumps(data, cls=DjangoJSONEncoder)
+        return self.client.post(path, content_type='application/json', data=json_data)
+
+    def put_json(self, path, data):
+        json_data = json.dumps(data, cls=DjangoJSONEncoder)
+        return self.client.put(path, content_type='application/json', data=json_data)
+
+    def test_get_patient_detail(self):
+        self.assertStatusCode('/records/patient/%s' % self.patient.id, 200)
+
+    def test_try_to_get_patient_detail_for_nonexistent_patient(self):
+        self.assertStatusCode('/records/patient/%s' % 1234, 404)
+
+    def test_search_with_hospital_number(self):
+        self.assertStatusCode('/records/patient/?hospital_number=AA1111', 200)
+
+    def test_search_with_name(self):
+        self.assertStatusCode('/records/patient/?name=John', 200)
+
+    def test_try_to_search_with_no_search_terms(self):
+        self.assertStatusCode('/records/patient/', 400)
+
+    def test_get_episode_list(self):
+        self.assertStatusCode('/records/episode/', 200)
+
+    def test_create_episode_for_existing_patient(self):
+        # First, remove tags from patient's existing episode so it is not
+        # active anymore.
+        episode = self.patient.episode_set.get()
+        episode.set_tag_names([], self.user)
+
+        data = {
+            'demographics': self.patient.demographics_set.get().to_dict(self.user),
+            'location': {
+                'date_of_admission': '2013-08-25',
+                'category': 'Inpatient',
+                'hospital': 'UCH',
+                'ward': 'T13',
+                'bed': 10
+            }
+        }
+
+        response = self.post_json('/records/episode/', data)
+        self.assertEqual(201, response.status_code)
+
+    def test_try_to_create_episode_for_existing_patient_with_active_episode(self):
+        data = {
+            'demographics': self.patient.demographics_set.get().to_dict(self.user),
+            'location': {
+                'date_of_admission': '2013-08-25',
+                'category': 'Inpatient',
+                'hospital': 'UCH',
+                'ward': 'T13',
+                'bed': 10
+            }
+        }
+
+        response = self.post_json('/records/episode/', data)
+        self.assertEqual(400, response.status_code)
+
+    def test_create_episode_for_new_patient(self):
+        data = {
+            'demographics': {
+                'hospital_number': 'BB2222',
+                'name': 'Johann Schmidt',
+                'date_of_birth': '1970-06-01'
+            },
+            'location': {
+                'date_of_admission': '2013-06-25',
+                'category': 'Inpatient',
+                'hospital': 'UCH',
+                'ward': 'T13',
+                'bed': 10
+            }
+        }
+        response = self.post_json('/records/episode/', data)
+        self.assertEqual(201, response.status_code)
+
+    def test_create_episode_for_patient_without_hospital_number(self):
+        data = {
+            'demographics': {
+                'hospital_number': '',
+                'name': 'Johann Schmidt',
+                'date_of_birth': '1970-06-01'
+            },
+            'location': {
+                'date_of_admission': '2013-06-25',
+                'category': 'Inpatient',
+                'hospital': 'UCH',
+                'ward': 'T13',
+                'bed': 10
+            }
+        }
+        response = self.post_json('/records/episode/', data)
+        self.assertEqual(201, response.status_code)
+
+    def test_update_demographics_subrecord(self):
+        demographics = self.patient.demographics_set.get()
+        data = {
+            'consistency_token': '12345678',
+            'id': demographics.id,
+            'name': 'Johann Schmidt',
+            'date_of_birth': '1972-6-21',
+            'hospital_number': 'AA1112',
+        }
+        response = self.put_json('/records/demographics/%s' % demographics.id, data)
+        self.assertEqual(200, response.status_code)
+
+    def test_try_to_update_nonexistent_demographics_subrecord(self):
+        response = self.put_json('/records/demographics/1234', {})
+        self.assertEqual(404, response.status_code)
+
+    def test_try_to_update_demographics_subrecord_with_old_consistency_token(self):
+        demographics = self.patient.demographics_set.get()
+        data = {
+            'consistency_token': '87654321',
+            'id': demographics.id,
+            'name': 'Johann Schmidt',
+            'date_of_birth': '1972-6-21',
+            'hospital_number': 'AA1112',
+        }
+        response = self.put_json('/records/demographics/%s' % demographics.id, data)
+        self.assertEqual(409, response.status_code)
+
+    def test_delete_demographics_subrecord(self):
+        # In real application, client prevents deletion of demographics
+        # subrecord.
+        demographics = self.patient.demographics_set.get()
+        response = self.client.delete('/records/demographics/%s' % demographics.id)
+        self.assertEqual(200, response.status_code)
+
+    def test_create_demographics_subrecord(self):
+        # In real application, client prevents creation of demographics
+        # subrecord.
+        data = {
+            'patient_id': self.patient.id,
+            'name': 'Johann Schmidt',
+            'date_of_birth': '1972-6-21',
+            'hospital_number': 'AA1112',
+        }
+        response = self.post_json('/records/demographics/', data)
+        self.assertEqual(201, response.status_code)
+
+    def test_patient_list_tepmlate_view(self):
+        self.assertStatusCode('/templates/patient_list.html/', 200)
+
+    def test_patient_detail_tepmlate_view(self):
+        self.assertStatusCode('/templates/patient_detail.html/', 200)
+
+    def test_search_template_view(self):
+        self.assertStatusCode('/templates/search.html/', 200)
+
+    def test_add_patient_template_view(self):
+        self.assertStatusCode('/templates/modals/add_patient.html/', 200)
+
+    def test_discharge_patient_template_view(self):
+        self.assertStatusCode('/templates/modals/discharge_patient.html/', 200)
+
+    def test_delete_item_confirmation_template_view(self):
+        self.assertStatusCode('/templates/modals/delete_item_confirmation.html/', 200)
+
+    def test_location_modal_template_view(self):
+        self.assertStatusCode('/templates/modals/location.html/', 200)
+
+    def test_list_schema_view(self):
+        self.assertStatusCode('/schema/list/', 200)
+
+    def test_detail_schema_view(self):
+        self.assertStatusCode('/schema/detail/', 200)

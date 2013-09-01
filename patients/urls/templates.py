@@ -11,7 +11,9 @@ urlpatterns = patterns('',
     url(r'^modals/delete_item_confirmation.html/?$', views.DeleteItemConfirmationView.as_view()),
 )
 
-for subrecord_model in models.Subrecord.__subclasses__():
+subrecord_models = models.PatientSubrecord.__subclasses__() + models.EpisodeSubrecord.__subclasses__()
+
+for subrecord_model in subrecord_models:
     sub_url = camelcase_to_underscore(subrecord_model.__name__)
     urlpatterns += patterns('',
         url(r'^modals/%s.html/?$' % sub_url, views.ModalTemplateView.as_view(), {'model': subrecord_model}),

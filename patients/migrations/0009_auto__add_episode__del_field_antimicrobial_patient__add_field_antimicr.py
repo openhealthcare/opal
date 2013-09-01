@@ -8,15 +8,37 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
+        # Adding model 'Episode'
+        db.create_table(u'patients_episode', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('patient', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Patient'])),
+        ))
+        db.send_create_signal(u'patients', ['Episode'])
 
-        # Changing field 'Antimicrobial.patient'
-        db.alter_column(u'patients_antimicrobial', 'patient_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Episode']))
+        # Deleting field 'Antimicrobial.patient'
+        db.delete_column(u'patients_antimicrobial', 'patient_id')
 
-        # Changing field 'Travel.patient'
-        db.alter_column(u'patients_travel', 'patient_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Episode']))
+        # Adding field 'Antimicrobial.episode'
+        db.add_column(u'patients_antimicrobial', 'episode',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Episode'], null=True),
+                      keep_default=False)
 
-        # Changing field 'GeneralNote.patient'
-        db.alter_column(u'patients_generalnote', 'patient_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Episode']))
+        # Deleting field 'Travel.patient'
+        db.delete_column(u'patients_travel', 'patient_id')
+
+        # Adding field 'Travel.episode'
+        db.add_column(u'patients_travel', 'episode',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Episode'], null=True),
+                      keep_default=False)
+
+        # Deleting field 'GeneralNote.patient'
+        db.delete_column(u'patients_generalnote', 'patient_id')
+
+        # Adding field 'GeneralNote.episode'
+        db.add_column(u'patients_generalnote', 'episode',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Episode'], null=True),
+                      keep_default=False)
+
         # Deleting field 'Tagging.patient'
         db.delete_column(u'patients_tagging', 'patient_id')
 
@@ -25,35 +47,85 @@ class Migration(SchemaMigration):
                       self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Episode'], null=True),
                       keep_default=False)
 
+        # Deleting field 'PastMedicalHistory.patient'
+        db.delete_column(u'patients_pastmedicalhistory', 'patient_id')
 
-        # Changing field 'PastMedicalHistory.patient'
-        db.alter_column(u'patients_pastmedicalhistory', 'patient_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Episode']))
+        # Adding field 'PastMedicalHistory.episode'
+        db.add_column(u'patients_pastmedicalhistory', 'episode',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Episode'], null=True),
+                      keep_default=False)
 
-        # Changing field 'Diagnosis.patient'
-        db.alter_column(u'patients_diagnosis', 'patient_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Episode']))
+        # Deleting field 'Diagnosis.patient'
+        db.delete_column(u'patients_diagnosis', 'patient_id')
 
-        # Changing field 'MicrobiologyInput.patient'
-        db.alter_column(u'patients_microbiologyinput', 'patient_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Episode']))
+        # Adding field 'Diagnosis.episode'
+        db.add_column(u'patients_diagnosis', 'episode',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Episode'], null=True),
+                      keep_default=False)
 
-        # Changing field 'MicrobiologyTest.patient'
-        db.alter_column(u'patients_microbiologytest', 'patient_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Episode']))
+        # Deleting field 'MicrobiologyInput.patient'
+        db.delete_column(u'patients_microbiologyinput', 'patient_id')
 
-        # Changing field 'Todo.patient'
-        db.alter_column(u'patients_todo', 'patient_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Episode']))
+        # Adding field 'MicrobiologyInput.episode'
+        db.add_column(u'patients_microbiologyinput', 'episode',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Episode'], null=True),
+                      keep_default=False)
 
-        # Changing field 'Location.patient'
-        db.alter_column(u'patients_location', 'patient_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Episode']))
+        # Deleting field 'MicrobiologyTest.c_difficile_antigenl'
+        db.delete_column(u'patients_microbiologytest', 'c_difficile_antigenl')
+
+        # Deleting field 'MicrobiologyTest.patient'
+        db.delete_column(u'patients_microbiologytest', 'patient_id')
+
+        # Adding field 'MicrobiologyTest.episode'
+        db.add_column(u'patients_microbiologytest', 'episode',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Episode'], null=True),
+                      keep_default=False)
+
+        # Adding field 'MicrobiologyTest.c_difficile_antigen'
+        db.add_column(u'patients_microbiologytest', 'c_difficile_antigen',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=20, blank=True),
+                      keep_default=False)
+
+        # Deleting field 'Todo.patient'
+        db.delete_column(u'patients_todo', 'patient_id')
+
+        # Adding field 'Todo.episode'
+        db.add_column(u'patients_todo', 'episode',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Episode'], null=True),
+                      keep_default=False)
+
+        # Deleting field 'Location.patient'
+        db.delete_column(u'patients_location', 'patient_id')
+
+        # Adding field 'Location.episode'
+        db.add_column(u'patients_location', 'episode',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Episode'], null=True),
+                      keep_default=False)
+
 
     def backwards(self, orm):
+        # Deleting model 'Episode'
+        db.delete_table(u'patients_episode')
 
-        # Changing field 'Antimicrobial.patient'
-        db.alter_column(u'patients_antimicrobial', 'patient_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Patient']))
 
-        # Changing field 'Travel.patient'
-        db.alter_column(u'patients_travel', 'patient_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Patient']))
+        # User chose to not deal with backwards NULL issues for 'Antimicrobial.patient'
+        raise RuntimeError("Cannot reverse this migration. 'Antimicrobial.patient' and its values cannot be restored.")
+        # Deleting field 'Antimicrobial.episode'
+        db.delete_column(u'patients_antimicrobial', 'episode_id')
 
-        # Changing field 'GeneralNote.patient'
-        db.alter_column(u'patients_generalnote', 'patient_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Patient']))
+
+        # User chose to not deal with backwards NULL issues for 'Travel.patient'
+        raise RuntimeError("Cannot reverse this migration. 'Travel.patient' and its values cannot be restored.")
+        # Deleting field 'Travel.episode'
+        db.delete_column(u'patients_travel', 'episode_id')
+
+
+        # User chose to not deal with backwards NULL issues for 'GeneralNote.patient'
+        raise RuntimeError("Cannot reverse this migration. 'GeneralNote.patient' and its values cannot be restored.")
+        # Deleting field 'GeneralNote.episode'
+        db.delete_column(u'patients_generalnote', 'episode_id')
+
 
         # User chose to not deal with backwards NULL issues for 'Tagging.patient'
         raise RuntimeError("Cannot reverse this migration. 'Tagging.patient' and its values cannot be restored.")
@@ -61,23 +133,49 @@ class Migration(SchemaMigration):
         db.delete_column(u'patients_tagging', 'episode_id')
 
 
-        # Changing field 'PastMedicalHistory.patient'
-        db.alter_column(u'patients_pastmedicalhistory', 'patient_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Patient']))
+        # User chose to not deal with backwards NULL issues for 'PastMedicalHistory.patient'
+        raise RuntimeError("Cannot reverse this migration. 'PastMedicalHistory.patient' and its values cannot be restored.")
+        # Deleting field 'PastMedicalHistory.episode'
+        db.delete_column(u'patients_pastmedicalhistory', 'episode_id')
 
-        # Changing field 'Diagnosis.patient'
-        db.alter_column(u'patients_diagnosis', 'patient_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Patient']))
 
-        # Changing field 'MicrobiologyInput.patient'
-        db.alter_column(u'patients_microbiologyinput', 'patient_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Patient']))
+        # User chose to not deal with backwards NULL issues for 'Diagnosis.patient'
+        raise RuntimeError("Cannot reverse this migration. 'Diagnosis.patient' and its values cannot be restored.")
+        # Deleting field 'Diagnosis.episode'
+        db.delete_column(u'patients_diagnosis', 'episode_id')
 
-        # Changing field 'MicrobiologyTest.patient'
-        db.alter_column(u'patients_microbiologytest', 'patient_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Patient']))
 
-        # Changing field 'Todo.patient'
-        db.alter_column(u'patients_todo', 'patient_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Patient']))
+        # User chose to not deal with backwards NULL issues for 'MicrobiologyInput.patient'
+        raise RuntimeError("Cannot reverse this migration. 'MicrobiologyInput.patient' and its values cannot be restored.")
+        # Deleting field 'MicrobiologyInput.episode'
+        db.delete_column(u'patients_microbiologyinput', 'episode_id')
 
-        # Changing field 'Location.patient'
-        db.alter_column(u'patients_location', 'patient_id', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['patients.Patient']))
+        # Adding field 'MicrobiologyTest.c_difficile_antigenl'
+        db.add_column(u'patients_microbiologytest', 'c_difficile_antigenl',
+                      self.gf('django.db.models.fields.CharField')(default='', max_length=20, blank=True),
+                      keep_default=False)
+
+
+        # User chose to not deal with backwards NULL issues for 'MicrobiologyTest.patient'
+        raise RuntimeError("Cannot reverse this migration. 'MicrobiologyTest.patient' and its values cannot be restored.")
+        # Deleting field 'MicrobiologyTest.episode'
+        db.delete_column(u'patients_microbiologytest', 'episode_id')
+
+        # Deleting field 'MicrobiologyTest.c_difficile_antigen'
+        db.delete_column(u'patients_microbiologytest', 'c_difficile_antigen')
+
+
+        # User chose to not deal with backwards NULL issues for 'Todo.patient'
+        raise RuntimeError("Cannot reverse this migration. 'Todo.patient' and its values cannot be restored.")
+        # Deleting field 'Todo.episode'
+        db.delete_column(u'patients_todo', 'episode_id')
+
+
+        # User chose to not deal with backwards NULL issues for 'Location.patient'
+        raise RuntimeError("Cannot reverse this migration. 'Location.patient' and its values cannot be restored.")
+        # Deleting field 'Location.episode'
+        db.delete_column(u'patients_location', 'episode_id')
+
 
     models = {
         u'auth.group': {
@@ -160,8 +258,8 @@ class Migration(SchemaMigration):
             'drug_fk': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['options.Antimicrobial']", 'null': 'True', 'blank': 'True'}),
             'drug_ft': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'end_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'episode': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['patients.Episode']", 'null': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'patient': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['patients.Episode']"}),
             'route_fk': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['options.Antimicrobial_route']", 'null': 'True', 'blank': 'True'}),
             'route_ft': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'start_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'})
@@ -182,8 +280,8 @@ class Migration(SchemaMigration):
             'consistency_token': ('django.db.models.fields.CharField', [], {'max_length': '8'}),
             'date_of_diagnosis': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'details': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
+            'episode': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['patients.Episode']", 'null': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'patient': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['patients.Episode']"}),
             'provisional': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
         },
         u'patients.episode': {
@@ -196,8 +294,8 @@ class Migration(SchemaMigration):
             'comment': ('django.db.models.fields.TextField', [], {}),
             'consistency_token': ('django.db.models.fields.CharField', [], {'max_length': '8'}),
             'date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'patient': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['patients.Episode']"})
+            'episode': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['patients.Episode']", 'null': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         },
         u'patients.location': {
             'Meta': {'object_name': 'Location'},
@@ -206,9 +304,9 @@ class Migration(SchemaMigration):
             'consistency_token': ('django.db.models.fields.CharField', [], {'max_length': '8'}),
             'date_of_admission': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'discharge_date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
+            'episode': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['patients.Episode']", 'null': 'True'}),
             'hospital': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'patient': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['patients.Episode']"}),
             'ward': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'})
         },
         u'patients.microbiologyinput': {
@@ -220,10 +318,10 @@ class Migration(SchemaMigration):
             'consistency_token': ('django.db.models.fields.CharField', [], {'max_length': '8'}),
             'date': ('django.db.models.fields.DateField', [], {'null': 'True', 'blank': 'True'}),
             'discussed_with': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
+            'episode': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['patients.Episode']", 'null': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'infection_control_advice_given': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'initials': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
-            'patient': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['patients.Episode']"}),
             'reason_for_interaction_fk': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['options.Clinical_advice_reason_for_interaction']", 'null': 'True', 'blank': 'True'}),
             'reason_for_interaction_ft': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'referred_to_opat': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
@@ -234,7 +332,7 @@ class Migration(SchemaMigration):
             'anti_hbcore_igg': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
             'anti_hbcore_igm': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
             'anti_hbs': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
-            'c_difficile_antigenl': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
+            'c_difficile_antigen': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
             'c_difficile_toxin': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
             'cmv': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
             'consistency_token': ('django.db.models.fields.CharField', [], {'max_length': '8'}),
@@ -245,6 +343,7 @@ class Migration(SchemaMigration):
             'ebv': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
             'entamoeba_histolytica': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
             'enterovirus': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
+            'episode': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['patients.Episode']", 'null': 'True'}),
             'giardia': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
             'hbsag': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
             'hsv': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
@@ -261,7 +360,6 @@ class Migration(SchemaMigration):
             'organism': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'parainfluenza': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
             'parasitaemia': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
-            'patient': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['patients.Episode']"}),
             'resistant_antibiotics': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'result': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
             'rotavirus': ('django.db.models.fields.CharField', [], {'max_length': '20', 'blank': 'True'}),
@@ -282,8 +380,8 @@ class Migration(SchemaMigration):
             'condition_fk': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['options.Condition']", 'null': 'True', 'blank': 'True'}),
             'condition_ft': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'consistency_token': ('django.db.models.fields.CharField', [], {'max_length': '8'}),
+            'episode': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['patients.Episode']", 'null': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'patient': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['patients.Episode']"}),
             'year': ('django.db.models.fields.CharField', [], {'max_length': '4', 'blank': 'True'})
         },
         u'patients.patient': {
@@ -301,8 +399,8 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Todo'},
             'consistency_token': ('django.db.models.fields.CharField', [], {'max_length': '8'}),
             'details': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'patient': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['patients.Episode']"})
+            'episode': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['patients.Episode']", 'null': 'True'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         },
         u'patients.travel': {
             'Meta': {'object_name': 'Travel'},
@@ -310,8 +408,8 @@ class Migration(SchemaMigration):
             'dates': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'destination_fk': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['options.Destination']", 'null': 'True', 'blank': 'True'}),
             'destination_ft': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
+            'episode': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['patients.Episode']", 'null': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'patient': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['patients.Episode']"}),
             'reason_for_travel_fk': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['options.Travel_reason']", 'null': 'True', 'blank': 'True'}),
             'reason_for_travel_ft': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'}),
             'specific_exposures': ('django.db.models.fields.CharField', [], {'max_length': '255', 'blank': 'True'})
