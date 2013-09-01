@@ -262,7 +262,7 @@ describe('services', function() {
 			});
 		});
 
-		it('should resolve to an array of patients', function() {
+		it('should resolve to an object of patients', function() {
 			var promise = patientsLoader();
 			var patients;
 
@@ -275,8 +275,7 @@ describe('services', function() {
 			$httpBackend.flush();
 			$rootScope.$apply();
 
-			expect(patients.length).toBe(1);
-			expect(patients[0].id).toBe(123);
+			expect(patients[123].id).toBe(123);
 		});
 	});
 

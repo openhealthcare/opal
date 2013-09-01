@@ -213,7 +213,7 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
 			item = patient.newItem(columnName);
 		} else {
 			item = patient.getItem(columnName, iix);
-		}
+		};
 
 		$scope.selectItem(rix, cix, iix);
 		$scope.state = 'modal';
@@ -406,7 +406,7 @@ controllers.controller('PatientDetailCtrl', function($scope, $http, $dialog, sch
 		modal.open().then(function(result) {
 			$scope.state = 'normal';
 
-			if (result == 'add-another') {
+			if (result == 'save-and-add-another') {
 				$scope.editItem(cix, patient.getNumberOfItems(columnName));
 			};
 		});

@@ -171,7 +171,6 @@ describe('controllers', function() {
 				expect(callArgs.length).toBe(1);
 				expect(callArgs[0].templateUrl).toBe('/templates/modals/demographics.html/');
 				expect(callArgs[0].controller).toBe('EditItemCtrl');
-				expect(callArgs[0].resolve.item()).toEqual($scope.patients[0].demographics[0]);
 			});
 
 			it('should open the demographics modal', function() {
@@ -202,7 +201,7 @@ describe('controllers', function() {
 				expect($scope.state).toBe('normal');
 			});
 
-			it('should add a new item if result is "add-another"', function() {
+			it('should add a new item if result is "save-and-add-another"', function() {
 				var deferred, modalSpy;
 
 				deferred = $q.defer();
@@ -213,7 +212,7 @@ describe('controllers', function() {
 				$scope.editItem(0, 0, 0);
 
 				spyOn($scope, 'editItem');
-				deferred.resolve('add-another');
+				deferred.resolve('save-and-add-another');
 				$rootScope.$apply();
 
 				expect($scope.editItem).toHaveBeenCalledWith(0, 0, 1);
