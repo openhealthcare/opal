@@ -3,4 +3,4 @@
 <br />
 <span ng-hide="item.hospital=='UCH'">[[item.hospital]] </span>[[item.ward]] [[item.bed]]<br />
 Admitted: [[item.date_of_admission | date:'d/M']]<br />
-<a class="screen-only" href="#" ng-click="dischargePatient($parent.$index, $event)">Discharge / Remove</a>
+<a class="screen-only" href="#" ng-click="dischargeEpisode($parent.$index, $event)">Discharge / Remove</a>

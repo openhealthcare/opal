@@ -55,10 +55,18 @@ class Patient(models.Model):
         return None
 
     def to_dict(self, user):
-        return {
+        active_episode = self.get_active_episode()
+        d = {
             'id': self.id,
-            'episodes': [episode.to_dict(user) for episode in self.episode_set.all()]
+            'episodes': {episode.id: episode.to_dict(user) for episode in self.episode_set.all()},
+            'active_episode_id': active_episode.id if active_episode else None,
         }
+
+        for model in PatientSubrecord.__subclasses__():
+            subrecords = model.objects.filter(patient_id=self.id)
+            d[model.get_api_name()] = [subrecord.to_dict(user) for subrecord in subrecords]
+
+        return d
 
     def update_from_demographics_dict(self, demographics_data, user):
         demographics = self.demographics_set.get()

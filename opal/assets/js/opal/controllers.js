@@ -11,7 +11,7 @@ controllers.controller('RootCtrl', function($scope) {
 	};
 });
 
-controllers.controller('EpisodeListCtrl', function($scope, $cookieStore, $dialog, Episode, schema, episodes, options) {
+controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieStore, $dialog, Episode, schema, episodes, options) {
 	$scope.state = 'normal';
 
 	$scope.rix = 0; // row index
@@ -50,16 +50,20 @@ controllers.controller('EpisodeListCtrl', function($scope, $cookieStore, $dialog
 
 	$scope.$watch('currentTag', function() {
 		$cookieStore.put('opal.currentTag', $scope.currentTag);
-        $scope.currentSubTag = 'all';
+		$scope.currentSubTag = 'all';
 		$scope.rows = getVisibleEpisodes();
-		$scope.rix = 0;
+		if ($scope.rows.length < $scope.rix) {
+			$scope.rix = $scope.rows.length - 1;
+		};
 	});
 
-    $scope.$watch('currentSubTag', function(){
+	$scope.$watch('currentSubTag', function(){
 		$cookieStore.put('opal.currentSubTag', $scope.currentSubTag);
-        $scope.rows =  getVisibleEpisodes();
-        $scope.rix =  0;
-    });
+		$scope.rows =  getVisibleEpisodes();
+		if ($scope.rows.length < $scope.rix) {
+			$scope.rix = $scope.rows.length - 1;
+		};
+	});
 
     $scope.showSubtags = function(withsubtags){
         var show =  _.contains(withsubtags, $scope.currentTag);
@@ -148,30 +152,153 @@ controllers.controller('EpisodeListCtrl', function($scope, $cookieStore, $dialog
 	};
 
 	$scope.addEpisode = function() {
-		var modal;
+		var hospitalNumberModal, addEpisodeModal;
+		var promise1, promise2, promise3;
+
 		$scope.state = 'modal';
 
-		modal = $dialog.dialog({
-			templateUrl: '/templates/modals/add_episode.html/',
-			controller: 'AddEpisodeCtrl',
-			resolve: {
-				details: function() { return { currentTag: $scope.currentTag };},
-				schema: function() { return schema; },
-				options: function() { return options; },
-			}
+		hospitalNumberModal = $dialog.dialog({
+			templateUrl: '/templates/modals/hospital_number.html/',
+			controller: 'HospitalNumberCtrl',
 		});
 
-		modal.open().then(function(result) {
-			var episode;
-			$scope.state = 'normal';
+		// At first we ask the user for a hospital number
+		promise1 = hospitalNumberModal.open();
 
-			if (angular.isObject(result)) {
-				// result is attributes of episode
-				episode = new Episode(result, schema)
+		promise2 = promise1.then(function(hospitalNumber) {
+			var deferred = $q.defer();
+
+			if (hospitalNumber) {
+				// The user entered a hospital number
+				$http.get('records/patient/?hospital_number=' + hospitalNumber).success(function(response) {
+					// We have retrieved patient records matching that hospital number
+					deferred.resolve({
+						patients: response,
+						hospitalNumber: hospitalNumber,
+					});
+				});
+			} else {
+				// The user didn't enter a hospital number
+				deferred.resolve({
+					patients: [],
+					hospitalNumber: hospitalNumber,
+				});
+			};
+
+			return deferred.promise;
+		});
+
+		promise3 = promise2.then(function(result) {
+			var patient, episode;
+			var deferred = $q.defer();
+			var modal;
+
+			if (result.patients.length == 0) {
+				// There is no patient with this hospital number
+				// Show user the form for creating a new episode, with the hospital number
+				// pre-populated
+				modal = $dialog.dialog({
+					templateUrl: '/templates/modals/add_episode.html/',
+					controller: 'AddEpisodeCtrl',
+					resolve: {
+						schema: function() { return schema; },
+						options: function() { return options; },
+						demographics: function() {
+						       	return {
+								hospital_number: result.hospitalNumber,
+							} 
+						},
+					},
+				});
+				modal.open().then(function(result) {
+					// The user has created the episode, or cancelled
+					deferred.resolve(result);
+				});
+			} else if (result.patients.length == 1) {
+				// There is a single patient with this hospital number
+				patient = result.patients[0];
+				if (patient.active_episode_id) {
+					// This patient has an active episode
+					episode = new Episode(patient.episodes[patient.active_episode_id], schema)
+
+					if (episode.location[0].tags[$scope.currentTag]) {
+						// There is already an active episode for this patient with the current tag
+						deferred.resolve(episode);
+					} else {
+						// There is already an active episode for this patient but it doesn't have the current tag
+						// Arbitrarily choose one the episode's tags and set the current tag to this
+						for (var tag in episode.location[0].tags) {
+							$scope.currentTag = tag;
+						};
+						deferred.resolve(episode);
+					}
+				} else {
+					// This patient has no active episode
+					// Convert episodes to Episodes - it'd be better if this happened when the patient was retrieved
+					for (var eix in patient.episodes) {
+						patient.episodes[eix] = new Episode(patient.episodes[eix], schema);
+					}
+
+					// Ask user if they want to reopen an episode, or open a new one
+					modal = $dialog.dialog({
+						templateUrl: '/templates/modals/reopen_episode.html/',
+						controller: 'ReopenEpisodeCtrl',
+						resolve: {
+							patient: function() { return patient; },
+							tag: function() { return $scope.currentTag; },
+						},
+					});
+
+					modal.open().then(function(result) {
+						var demographics;
+
+						if (result == 'open-new') {
+							// User has chosen to open a new episode
+							demographics = patient.demographics[0];
+							demographics.date_of_birth = moment(demographics.date_of_birth, 'YYYY-MM-DD').format('DD/MM/YYYY'),
+
+							modal = $dialog.dialog({
+								templateUrl: '/templates/modals/add_episode.html/',
+								controller: 'AddEpisodeCtrl',
+								resolve: {
+									schema: function() { return schema; },
+									options: function() { return options; },
+									demographics: function() { return demographics; },
+								},
+							});
+							modal.open().then(function(result) {
+								// User has created new episode, or cancelled
+								deferred.resolve(result);
+							});
+						} else {
+							// User has chosen to reopen an episode, or cancelled
+							deferred.resolve(result);
+						};
+					});
+				};
+			} else {
+				// This shouldn't happen, but we should probably handle it better
+				alert('ERROR: More than one patient found with hospital number');
+				deferred.resolve(null);
+			};
+
+			return deferred.promise;
+		});
+
+		promise3.then(function(episode) {
+			// User has either retrieved an existing episode or created a new one,
+			// or has cancelled the process at some point.
+			//
+			// This ensures that the relevant episode is added to the table and
+			// selected.
+			var rowIx;
+			$scope.state = 'normal';
+			if (episode) {
 				episodes[episode.id] = episode;
 				$scope.rows = getVisibleEpisodes();
-				$scope.selectItem(getRowIxFromEpisodeId(episode.id), 0, 0);
-			}
+				rowIx = getRowIxFromEpisodeId(episode.id);
+				$scope.selectItem(rowIx, 0, 0);
+			};
 		});
 	};
 
@@ -332,7 +459,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $cookieStore, $dialog
 	};
 });
 
-controllers.controller('EpisodeDetailCtrl', function($scope, $http, $dialog, schema, episode, options) {
+controllers.controller('EpisodeDetailCtrl', function($scope, $dialog, schema, episode, options) {
 	$scope.state = 'normal';
 
 	$scope.cix = 0; // column index
@@ -488,7 +615,7 @@ controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog,
 	$scope.results = [];
 	$scope.searched = false;
 
-	$scope.episode_category_list = ['Inepisode', 'Outepisode', 'Review'];
+	$scope.episode_category_list = ['Inpatient', 'Outpatient', 'Review'];
 	$scope.hospital_list = ['Heart Hospital', 'NHNN', 'UCH'];
 
 	$scope.search = function() {
@@ -507,7 +634,7 @@ controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog,
 
 		queryString = queryParams.join('&');
 
-		$http.get('episode/?' + queryString).success(function(results) {
+		$http.get('records/episode/?' + queryString).success(function(results) {
 			$scope.searched = true;
 			$scope.results = results;
 		});
@@ -547,12 +674,21 @@ controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog,
 	};
 });
 
-controllers.controller('AddEpisodeCtrl', function($scope, $http, $cookieStore,
-                                                  $timeout, dialog, Episode,
-                                                  schema, options, details) {
-    // initially display episodes of interest to current user
-    $scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine';
-    $scope.currentSubTag = $cookieStore.get('opal.currentSubTag') || 'all';
+
+controllers.controller('HospitalNumberCtrl', function($scope, $timeout, dialog) {
+	$timeout(function() {
+		dialog.modalEl.find('input,textarea').first().focus();
+	});
+
+	$scope.findByHospitalNumber = function() {
+		dialog.close($scope.hospitalNumber);
+	};
+});
+
+
+controllers.controller('AddEpisodeCtrl', function($scope, $http, $cookieStore, $timeout, dialog, Episode, schema, options, demographics) {
+	$scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine';
+	$scope.currentSubTag = $cookieStore.get('opal.currentSubTag') || 'all';
 
 	$timeout(function() {
 		dialog.modalEl.find('input,textarea').first().focus();
@@ -562,47 +698,24 @@ controllers.controller('AddEpisodeCtrl', function($scope, $http, $cookieStore,
 	for (var name in options) {
 		$scope[name + '_list'] = options[name];
 	};
-	$scope.episode_category_list = ['Inepisode', 'Outepisode', 'Review'];
 
-	$scope.foundEpisode = false; // Display rest of form when true
-	$scope.findingEpisode = false; // Disable Search button when true
+	$scope.episode_category_list = ['Inpatient', 'Outpatient', 'Review'];
 
 	$scope.editing = {
 		location: {
 			date_of_admission: moment().format('DD/MM/YYYY'),
 			tags: {},
 		},
-		demographics: {
-			hospital_number: details.hospitalNumber,
-			name: details.name,
-		},
+		demographics: demographics,
 	};
-    $scope.editing.location.tags[$scope.currentTag] = true;
-    if($scope.currentSubTag != 'all'){
-        $scope.editing.location.tags[$scope.currentSubTag] = true;
-    }
+	$scope.editing.location.tags[$scope.currentTag] = true;
+	if($scope.currentSubTag != 'all'){
+		$scope.editing.location.tags[$scope.currentSubTag] = true;
+	}
 
-    $scope.showSubtags = function(withsubtags){
-        var show =  _.some(withsubtags, function(tag){ return $scope.editing.location.tags[tag] });
-        return show
-    };
-
-    $scope.findByHospitalNumber = function() {
-		var episode;
-		var hospitalNumber = $scope.editing.demographics.hospital_number;
-		$scope.findingEpisode = true;
-		$http.get('episode/?hospital_number=' + hospitalNumber).success(function(results) {
-			$scope.findingEpisode = false;
-			$scope.foundEpisode = true; // misnomer: might not actually have found a episode!
-			if (results.length == 1) {
-				episode = new Episode(results[0], schema);
-				$scope.editing.demographics = episode.getItem('demographics', 0).makeCopy();
-				$scope.editing.location = episode.getItem('location', 0).makeCopy();
-			}
-			if (details.currentTag) {
-				$scope.editing.location.tags[details.currentTag] = true;
-			};
-		});
+	$scope.showSubtags = function(withsubtags){
+		var show =  _.some(withsubtags, function(tag){ return $scope.editing.location.tags[tag] });
+		return show
 	};
 
 	$scope.save = function() {
@@ -619,13 +732,59 @@ controllers.controller('AddEpisodeCtrl', function($scope, $http, $cookieStore,
 			$scope.editing.demographics.date_of_birth = moment(value, 'DD/MM/YYYY').format('YYYY-MM-DD');
 		}
 
-		$http.post('episode/', $scope.editing).success(function(episode) {
+		$http.post('records/episode/', $scope.editing).success(function(episode) {
+			episode = new Episode(episode, schema);
 			dialog.close(episode);
 		});
 	};
 
 	$scope.cancel = function() {
-		dialog.close('cancel');
+		dialog.close(null);
+	};
+});
+
+controllers.controller('ReopenEpisodeCtrl', function($scope, $http, $timeout, dialog, patient, tag) {
+	$timeout(function() {
+		dialog.modalEl.find('input,textarea').first().focus();
+	});
+
+	$scope.episodes = [];
+	$scope.episodeId = 'None';
+
+	for (var eix in patient.episodes) {
+		$scope.episodes.push(patient.episodes[eix]);
+	}
+
+	$scope.episodes.sort(function(e1, e2) {
+		var date1 = e1.location[0].date_of_admission;
+		var date2 = e2.location[0].date_of_admission;
+
+		if (angular.isUndefined(date1)) {
+			return -1;
+		} else if (date2) {
+			return 1;
+		} else if (date1 < date2) {
+			return -1;
+		} else if (date2 < date1) {
+			return 1;
+		} else {
+			return 0;
+		};
+	});
+
+	$scope.openNew = function() {
+		dialog.close('open-new');
+	};
+
+	$scope.reopen = function() {
+		var episode = patient.episodes[parseInt($scope.episodeId, 10)];
+		var location = episode.getItem('location', 0);
+		var attrs = location.makeCopy();
+
+		attrs.tags[tag] = true;
+		location.save(attrs).then(function(result) {
+			dialog.close(episode);
+		});
 	};
 });
 
@@ -636,8 +795,11 @@ controllers.controller('EditItemCtrl', function($scope, $cookieStore, $timeout, 
     $scope.currentSubTag = 'all'; // initially display episodes of interest to current user
 
     $scope.showSubtags = function(withsubtags){
-        var show =  _.some(withsubtags, function(tag){ return $scope.editing.location.tags[tag] });
-        return show
+	    if (item.columnName == 'location') {
+		    return _.some(withsubtags, function(tag){ return item.tags[tag] });
+	    } else {
+		    return false;
+	    };
     };
 
 
@@ -654,7 +816,7 @@ controllers.controller('EditItemCtrl', function($scope, $cookieStore, $timeout, 
 	if (item.columnName == 'microbiology_test') {
 		$scope.microbiology_test_list = [];
 		$scope.microbiology_test_lookup = {};
-        $scope.micro_test_defaults =  options.micro_test_defaults;
+		$scope.micro_test_defaults =  options.micro_test_defaults;
 
 		for (var name in options) {
 			if (name.indexOf('micro_test') == 0) {
@@ -680,7 +842,7 @@ controllers.controller('EditItemCtrl', function($scope, $cookieStore, $timeout, 
 		});
 	};
 
-	$scope.episode_category_list = ['Inepisode', 'Outepisode', 'Review'];
+	$scope.episode_category_list = ['Inpatient', 'Outpatient', 'Review'];
 
 	$scope.save = function(result) {
 		item.save($scope.editing).then(function() {
@@ -693,7 +855,7 @@ controllers.controller('EditItemCtrl', function($scope, $cookieStore, $timeout, 
 	};
 });
 
-controllers.controller('DeleteItemConfirmationCtrl', function($scope, $http, $timeout, dialog, item) {
+controllers.controller('DeleteItemConfirmationCtrl', function($scope, $timeout, dialog, item) {
 	$timeout(function() {
 		dialog.modalEl.find('button.btn-primary').first().focus();
 	});
@@ -709,7 +871,7 @@ controllers.controller('DeleteItemConfirmationCtrl', function($scope, $http, $ti
 	};
 });
 
-controllers.controller('DischargeEpisodeCtrl', function($scope, $http, $timeout, dialog, episode, currentTag) {
+controllers.controller('DischargeEpisodeCtrl', function($scope, $timeout, dialog, episode, currentTag) {
 	$timeout(function() {
 		dialog.modalEl.find('input,textarea').first().focus();
 	});
@@ -717,7 +879,7 @@ controllers.controller('DischargeEpisodeCtrl', function($scope, $http, $timeout,
 	var currentCategory = episode.location[0].category;
 	var newCategory;
 
-	if (currentCategory == 'Inepisode') {
+	if (currentCategory == 'Inpatient') {
 		newCategory = 'Discharged';
 	} else if (currentCategory == 'Review' || currentCategory == 'Followup') {
 		newCategory = 'Unfollow';

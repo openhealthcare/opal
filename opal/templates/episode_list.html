@@ -1,8 +1,9 @@
-{% include 'patient_list_navbar.html' %}
+{% include 'episode_list_navbar.html' %}
 
 <table class="table table-bordered" freeze-panes>
 	<thead>
 		<tr>
+			<th></th>
 			{% for column in columns %}
 			<th>{{ column.title }}</th>
 			{% endfor %}
@@ -10,6 +11,7 @@
 	</thead>
 	<tbody>
 	<tr ng-repeat="row in rows">
+		<td>Index: [[$index]]</td>
 		{% for column in columns %}
 		<td ng-mouseenter="mouseEnter($index, {{ forloop.counter0 }})"
 			ng-mouseleave="mouseLeave()">
@@ -39,7 +41,7 @@
 	</tbody>
 </table>
 
-{% include 'patient_list_navbar.html' %}
+{% include 'episode_list_navbar.html' %}
 
 <center>
   <a href="#keyboard-shortcuts" role="button" data-toggle="modal" class="screen-only">

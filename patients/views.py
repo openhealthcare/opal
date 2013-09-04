@@ -23,10 +23,10 @@ class LoginRequiredMixin(object):
 
 
 @require_http_methods(['GET'])
-def patient_detail_view(request, pk):
+def episode_detail_view(request, pk):
     try:
-        patient = models.Patient.objects.get(pk=pk)
-    except models.Patient.DoesNotExist:
+        patient = models.Episode.objects.get(pk=pk)
+    except models.Episode.DoesNotExist:
         return HttpResponseNotFound()
 
     return _build_json_response(patient.to_dict(request.user), 200)
@@ -50,7 +50,7 @@ def patient_search_view(request):
 
     if filter_dict:
         # TODO maybe limit/paginate results?
-        patients = models.Patient.objects.filter(**filter_dict)
+        # TODO maybe only return demographics & location
         patients = models.Patient.objects.filter(**filter_dict).order_by('demographics__date_of_birth')
         return _build_json_response([patient.to_dict(request.user) for patient in patients])
     else:
@@ -129,7 +129,7 @@ def _build_json_response(data, status_code=200):
     return response
 
 
-class PatientTemplateView(TemplateView):
+class EpisodeTemplateView(TemplateView):
     def get_column_context(self):
         """
         Return the context for our columns
@@ -149,18 +149,18 @@ class PatientTemplateView(TemplateView):
         return context
 
     def get_context_data(self, **kwargs):
-        context = super(PatientTemplateView, self).get_context_data(**kwargs)
+        context = super(EpisodeTemplateView, self).get_context_data(**kwargs)
         context['tags'] = models.TAGS
         context['columns'] = self.get_column_context()
         return context
 
 
-class PatientListTemplateView(PatientTemplateView):
-    template_name = 'patient_list.html'
+class EpisodeListTemplateView(EpisodeTemplateView):
+    template_name = 'episode_list.html'
     column_schema = schema.list_columns
 
-class PatientDetailTemplateView(PatientTemplateView):
-    template_name = 'patient_detail.html'
+class EpisodeDetailTemplateView(EpisodeTemplateView):
+    template_name = 'episode_detail.html'
     column_schema = schema.detail_columns
 
 class SearchTemplateView(TemplateView):
@@ -171,19 +171,25 @@ class SearchTemplateView(TemplateView):
         context['tags'] = models.TAGS
         return context
 
-class AddPatientTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'add_patient_modal.html'
+class AddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = 'add_episode_modal.html'
 
     def get_context_data(self, **kwargs):
-        context = super(AddPatientTemplateView, self).get_context_data(**kwargs)
+        context = super(AddEpisodeTemplateView, self).get_context_data(**kwargs)
         context['tags'] = models.TAGS
         return context
 
-class DischargePatientTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'discharge_patient_modal.html'
+class DischargeEpisodeTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = 'discharge_episode_modal.html'
 
 class DeleteItemConfirmationView(LoginRequiredMixin, TemplateView):
     template_name = 'delete_item_confirmation_modal.html'
+
+class HospitalNumberTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = 'hospital_number_modal.html'
+
+class ReopenEpisodeTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = 'reopen_episode_modal.html'
 
 class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'opal.html'

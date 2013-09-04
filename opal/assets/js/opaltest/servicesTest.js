@@ -180,11 +180,11 @@ describe('services', function() {
 						date_of_birth: '30/07/1980',
 					}; 
 					item = new Item(episodeData.demographics[0], mockEpisode, columns[0]);
-					$httpBackend.whenPUT('/episode/demographics/101/').respond(attrsWithJsonDate);
+					$httpBackend.whenPUT('/records/demographics/101/').respond(attrsWithJsonDate);
 				});
 
 				it('should hit server', function() {
-					$httpBackend.expectPUT('/episode/demographics/101/', attrsWithJsonDate);
+					$httpBackend.expectPUT('/records/demographics/101/', attrsWithJsonDate);
 					item.save(attrsWithHumanDate);
 					$httpBackend.flush();
 				});
@@ -204,11 +204,11 @@ describe('services', function() {
 				beforeEach(function() {
 					attrs = {id: 104, condition: 'Ebola', provisional: false};
 					item = new Item({}, mockEpisode, columns[1]);
-					$httpBackend.whenPOST('/episode/diagnosis/').respond(attrs);
+					$httpBackend.whenPOST('/records/diagnosis/').respond(attrs);
 				});
 
 				it('should hit server', function() {
-					$httpBackend.expectPOST('/episode/diagnosis/');
+					$httpBackend.expectPOST('/records/diagnosis/');
 					item.save(attrs);
 					$httpBackend.flush();
 				});
@@ -232,11 +232,11 @@ describe('services', function() {
 			describe('deleting item', function() {
 				beforeEach(function() {
 					item = new Item(episodeData.diagnosis[1], mockEpisode, columns[1]);
-					$httpBackend.whenDELETE('/episode/diagnosis/103/').respond();
+					$httpBackend.whenDELETE('/records/diagnosis/103/').respond();
 				});
 
 				it('should hit server', function() {
-					$httpBackend.expectDELETE('/episode/diagnosis/103/');
+					$httpBackend.expectDELETE('/records/diagnosis/103/');
 					item.destroy();
 					$httpBackend.flush();
 				});
@@ -267,7 +267,7 @@ describe('services', function() {
 			var episodes;
 
 			$httpBackend.whenGET('/schema/list/').respond(columns);
-			$httpBackend.whenGET('/episode').respond([episodeData]); // TODO trailing slash?
+			$httpBackend.whenGET('/records/episode').respond([episodeData]); // TODO trailing slash?
 			promise.then(function(value) {
 				episodes = value;
 			});
@@ -300,7 +300,7 @@ describe('services', function() {
 
 			$route.current = {params: {id: 123}};
 			$httpBackend.whenGET('/schema/').respond(columns);
-			$httpBackend.whenGET('/episode/123').respond(episodeData); // TODO trailing slash?
+			$httpBackend.whenGET('/records/episode/123').respond(episodeData); // TODO trailing slash?
 			promise.then(function(value) {
 				episode = value;
 			});

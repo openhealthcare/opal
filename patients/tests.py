@@ -9,7 +9,8 @@ from patients import exceptions
 
 
 class PatientTest(TestCase):
-    fixtures = ['patients_users', 'patients_records']
+    fixtures = ['patients_users', 'patients_records', 'patients_options']
+    maxDiff = None
 
     def setUp(self):
         self.user = User.objects.get(pk=1)
@@ -43,11 +44,11 @@ class PatientTest(TestCase):
             self.patient.create_episode()
 
     def test_to_dict(self):
-        expected_data = {
-            'id': self.patient.id,
-            'episodes': [],
-        }
-        self.assertEqual(expected_data, self.patient.to_dict(self.user))
+        patient = Patient.objects.get(pk=1)
+        expected_data = json.load(open('patients/test_data/patient.json'))
+        # We serialize and deserialize to allow us to compare dates easily
+        patient_data = json.loads(json.dumps(patient.to_dict(self.user), cls=DjangoJSONEncoder))
+        self.assertEqual(expected_data, patient_data)
 
 
 class EpisodeTest(TestCase):
@@ -311,9 +312,6 @@ class ViewsTest(TestCase):
         json_data = json.dumps(data, cls=DjangoJSONEncoder)
         return self.client.put(path, content_type='application/json', data=json_data)
 
-    def test_get_patient_detail(self):
-        self.assertStatusCode('/records/patient/%s' % self.patient.id, 200)
-
     def test_try_to_get_patient_detail_for_nonexistent_patient(self):
         self.assertStatusCode('/records/patient/%s' % 1234, 404)
 
@@ -447,20 +445,20 @@ class ViewsTest(TestCase):
         response = self.post_json('/records/demographics/', data)
         self.assertEqual(201, response.status_code)
 
-    def test_patient_list_tepmlate_view(self):
-        self.assertStatusCode('/templates/patient_list.html/', 200)
+    def test_patient_list_template_view(self):
+        self.assertStatusCode('/templates/episode_list.html/', 200)
 
-    def test_patient_detail_tepmlate_view(self):
-        self.assertStatusCode('/templates/patient_detail.html/', 200)
+    def test_patient_detail_template_view(self):
+        self.assertStatusCode('/templates/episode_detail.html/', 200)
 
     def test_search_template_view(self):
         self.assertStatusCode('/templates/search.html/', 200)
 
     def test_add_patient_template_view(self):
-        self.assertStatusCode('/templates/modals/add_patient.html/', 200)
+        self.assertStatusCode('/templates/modals/add_episode.html/', 200)
 
     def test_discharge_patient_template_view(self):
-        self.assertStatusCode('/templates/modals/discharge_patient.html/', 200)
+        self.assertStatusCode('/templates/modals/discharge_episode.html/', 200)
 
     def test_delete_item_confirmation_template_view(self):
         self.assertStatusCode('/templates/modals/delete_item_confirmation.html/', 200)

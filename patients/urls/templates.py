@@ -3,11 +3,13 @@ from utils import camelcase_to_underscore
 from patients import models, views
 
 urlpatterns = patterns('',
-    url(r'^patient_list.html/?$', views.PatientListTemplateView.as_view()),
-    url(r'^patient_detail.html/?$', views.PatientDetailTemplateView.as_view()),
+    url(r'^episode_list.html/?$', views.EpisodeListTemplateView.as_view()),
+    url(r'^episode_detail.html/?$', views.EpisodeDetailTemplateView.as_view()),
     url(r'^search.html/?$', views.SearchTemplateView.as_view()),
-    url(r'^modals/add_patient.html/?$', views.AddPatientTemplateView.as_view()),
-    url(r'^modals/discharge_patient.html/?$', views.DischargePatientTemplateView.as_view()),
+    url(r'^modals/add_episode.html/?$', views.AddEpisodeTemplateView.as_view()),
+    url(r'^modals/hospital_number.html/?$', views.HospitalNumberTemplateView.as_view()),
+    url(r'^modals/reopen_episode.html/?$', views.ReopenEpisodeTemplateView.as_view()),
+    url(r'^modals/discharge_episode.html/?$', views.DischargeEpisodeTemplateView.as_view()),
     url(r'^modals/delete_item_confirmation.html/?$', views.DeleteItemConfirmationView.as_view()),
 )
 

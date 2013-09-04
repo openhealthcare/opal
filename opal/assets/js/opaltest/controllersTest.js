@@ -101,13 +101,13 @@ describe('controllers', function() {
 			});
 		});
 
-		describe('adding a episode', function() {
+		describe('adding an episode', function() {
 			it('should change stated to "modal"', function() {
 				$scope.addEpisode();
 				expect($scope.state).toBe('modal');
 			});
 
-			it('should set up the add episode modal', function() {
+			it('should set up the hospital number modal', function() {
 				var callArgs;
 
 				spyOn($dialog, 'dialog').andCallThrough();
@@ -116,36 +116,8 @@ describe('controllers', function() {
 
 				callArgs = $dialog.dialog.mostRecentCall.args;
 				expect(callArgs.length).toBe(1);
-				expect(callArgs[0].templateUrl).toBe('/templates/modals/add_episode.html/');
-				expect(callArgs[0].controller).toBe('AddEpisodeCtrl');
-			});
-
-			it('should open the add episode modal', function() {
-				var modalSpy;
-
-				modalSpy = {open: function() {}};
-				spyOn($dialog, 'dialog').andReturn(modalSpy);
-				spyOn(modalSpy, 'open').andReturn({then: function() {}});
-
-				$scope.addEpisode();
-
-				expect(modalSpy.open).toHaveBeenCalled();
-			});
-
-			xit('should change state to "normal" when the modal is closed', function() {
-				var deferred, modalSpy;
-
-				deferred = $q.defer();
-				modalSpy = {open: function() {}};
-				spyOn($dialog, 'dialog').andReturn(modalSpy);
-				spyOn(modalSpy, 'open').andReturn(deferred.promise);
-
-				$scope.addEpisode();
-
-				deferred.resolve('save');
-				$rootScope.$apply();
-
-				expect($scope.state).toBe('normal');
+				expect(callArgs[0].templateUrl).toBe('/templates/modals/hospital_number.html/');
+				expect(callArgs[0].controller).toBe('HospitalNumberCtrl');
 			});
 		});
 

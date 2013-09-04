@@ -14,12 +14,12 @@
 			</tr>
 		</thead>
 
-		<tr ng-repeat="patient in results">
-			<td>[[patient.demographics[0].hospital_number]]</td>
-			<td>[[patient.demographics[0].name]]</td>
-            <td>[[patient.demographics[0].date_of_birth]]<td>
-			<td>[[patient.location[0].category]]</td>
-			<td><a href="#/patient/[[ patient.id ]]">View</a></td>
+		<tr ng-repeat="episode in results">
+			<td>[[episode.demographics[0].hospital_number]]</td>
+			<td>[[episode.demographics[0].name]]</td>
+			<td>[[episode.demographics[0].date_of_birth]]<td>
+			<td>[[episode.location[0].category]]</td>
+			<td><a href="#/episode/[[ episode.id ]]">View</a></td>
 		</tr>
 
 	</table>
@@ -29,5 +29,5 @@
 	</div>
 
 	<br />
-	<button class="btn" ng-click="addPatient()">Add record</button>
+	<button class="btn" ng-click="addEpisode()">Add record</button>
 </div>
