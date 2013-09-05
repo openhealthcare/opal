@@ -3,7 +3,6 @@
 <table class="table table-bordered" freeze-panes>
 	<thead>
 		<tr>
-			<th></th>
 			{% for column in columns %}
 			<th>{{ column.title }}</th>
 			{% endfor %}
@@ -11,8 +10,7 @@
 	</thead>
 	<tbody>
 	<tr ng-repeat="row in rows">
-		<td>Index: [[$index]]</td>
-		{% for column in columns %}
+ 		{% for column in columns %}
 		<td ng-mouseenter="mouseEnter($index, {{ forloop.counter0 }})"
 			ng-mouseleave="mouseLeave()">
 			<ul>
