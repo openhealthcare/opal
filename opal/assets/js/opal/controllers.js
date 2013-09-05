@@ -682,6 +682,7 @@ controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog,
 				details: function() { return details; },
 				schema: function() { return schema; },
 				options: function() { return options; },
+                demographics: function(){ return {} },
 			}
 		});
 
