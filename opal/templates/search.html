@@ -14,12 +14,17 @@
 			</tr>
 		</thead>
 
-		<tr ng-repeat="episode in results">
-			<td>[[episode.demographics[0].hospital_number]]</td>
-			<td>[[episode.demographics[0].name]]</td>
-			<td>[[episode.demographics[0].date_of_birth]]<td>
-			<td>[[episode.location[0].category]]</td>
-			<td><a href="#/episode/[[ episode.id ]]">View</a></td>
+		<tr ng-repeat="patient in results">
+			<td>[[patient.demographics[0].hospital_number]]</td>
+			<td>[[patient.demographics[0].name]]</td>
+			<td>[[patient.demographics[0].date_of_birth]]<td>
+			<td>[[patient.location[0].category]]</td>
+			<td>
+              <a href="#/episode/[[ patient.active_episode_id ]]"
+                 ng-show="patient.active_episode_id">
+                View
+              </a>
+            </td>
 		</tr>
 
 	</table>
