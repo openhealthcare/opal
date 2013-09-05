@@ -54,9 +54,6 @@ def patient_search_view(request):
         patients = models.Patient.objects.filter(
             **filter_dict).order_by('demographics__date_of_birth')
 
-        for p in patients:
-            print p.to_dict(request.user)
-
         return _build_json_response([patient.to_dict(request.user)
                                      for patient in patients])
     else:
