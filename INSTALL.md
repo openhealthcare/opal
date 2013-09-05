@@ -19,3 +19,26 @@ python manage.py migrate --fake
 python manage.py loaddata dumps/options.json
 python manage.py createinitialrevisions
 ```
+
+
+Installing the development tools
+================================
+
+```bash
+npm install -g karma
+```
+
+Running the tests
+=================
+
+Start the karma server:
+
+```bash
+karma start config/karma.conf.js
+```
+
+Run the tests:
+
+```bash
+./runtests.sh
+```
