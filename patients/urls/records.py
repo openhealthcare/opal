@@ -13,6 +13,8 @@ subrecord_models = models.PatientSubrecord.__subclasses__() + models.EpisodeSubr
 for subrecord_model in subrecord_models:
     sub_url = camelcase_to_underscore(subrecord_model.__name__)
     urlpatterns += patterns('',
-        url(r'^%s/?$' % sub_url, views.subrecord_create_view, {'model': subrecord_model}),
-        url(r'^%s/(?P<pk>\d+)/?$' % sub_url, views.subrecord_detail_view, {'model': subrecord_model}),
+        url(r'^%s/?$' % sub_url, views.subrecord_create_view,
+            {'model': subrecord_model}),
+        url(r'^%s/(?P<pk>\d+)/?$' % sub_url, views.subrecord_detail_view,
+            {'model': subrecord_model}),
     )
