@@ -51,8 +51,14 @@ def patient_search_view(request):
     if filter_dict:
         # TODO maybe limit/paginate results?
         # TODO maybe only return demographics & location
-        patients = models.Patient.objects.filter(**filter_dict).order_by('demographics__date_of_birth')
-        return _build_json_response([patient.to_dict(request.user) for patient in patients])
+        patients = models.Patient.objects.filter(
+            **filter_dict).order_by('demographics__date_of_birth')
+
+        for p in patients:
+            print p.to_dict(request.user)
+
+        return _build_json_response([patient.to_dict(request.user)
+                                     for patient in patients])
     else:
         return _build_json_response({'error': 'No search terms'}, 400)
 
@@ -60,20 +66,15 @@ def patient_search_view(request):
 @require_http_methods(['GET', 'POST'])
 def episode_list_and_create_view(request):
     if request.method == 'GET':
-        # This finds all taggings which either belong to this user or no user,
-        # and loads the related episode.
-        taggings = models.Tagging.objects.filter(user_id__in=[request.user.id, None])#.select_related('episode')
-        episodes = set(tagging.episode for tagging in taggings)
-        return _build_json_response([episode.to_dict(request.user) for episode in episodes])
+        episodes = models.Episode.objects.filter(active=True)
+        return _build_json_response([episode.to_dict(request.user)
+                                     for episode in episodes])
 
     elif request.method == 'POST':
         data = _get_request_data(request)
         hospital_number = data['demographics'].get('hospital_number')
         if hospital_number:
-            try:
-                patient = models.Patient.objects.get(demographics__hospital_number=hospital_number)
-            except models.Patient.DoesNotExist:
-                patient = models.Patient.objects.create()
+            patient, _ = models.Patient.objects.get_or_create(demographics__hospital_number=hospital_number)
         else:
             patient = models.Patient.objects.create()
 
@@ -85,7 +86,6 @@ def episode_list_and_create_view(request):
             return _build_json_response({'error': 'Patient already has active episode'}, 400)
 
         episode.update_from_location_dict(data['location'], request.user)
-
         return _build_json_response(episode.to_dict(request.user), 201)
 
 

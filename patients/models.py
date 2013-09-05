@@ -75,6 +75,7 @@ class Patient(models.Model):
 
 class Episode(models.Model):
     patient = models.ForeignKey(Patient)
+    active  = models.BooleanField(default=False)
 
     def __unicode__(self):
         demographics = self.patient.demographics_set.get()
@@ -83,9 +84,17 @@ class Episode(models.Model):
         return '%s | %s | %s' % (demographics.hospital_number, demographics.name, location.date_of_admission)
 
     def is_active(self):
-        return bool(self.get_tag_names(None))
+        # This is only here for API compatability.
+        # Don't use me!
+        return self.active
 
     def set_tag_names(self, tag_names, user):
+        """
+        1. Blitz dangling tags not in our current dict.
+        2. Add new tags.
+        3. Make sure that we set the Active boolean appropriately
+        4. There is no step 4.
+        """
         original_tag_names = self.get_tag_names(user)
 
         for tag_name in original_tag_names:
@@ -101,6 +110,13 @@ class Episode(models.Model):
                 if tag_name == 'mine':
                     params['user'] = user
                 self.tagging_set.create(**params)
+
+        if len(tag_names) < 1:
+            self.active = False
+            self.save()
+        elif not self.active:
+            self.active = True
+            self.save()
 
     def get_tag_names(self, user):
         return [t.tag_name for t in self.tagging_set.all() if t.user in (None, user)]
