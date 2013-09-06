@@ -113,6 +113,14 @@ services.factory('Patient', function($http, $q, Item) {
 
 		angular.extend(patient, resource);
 
+        var dateSorters = {
+            'diagnosis':            'date_of_diagnosis',
+            'past_medical_history': 'year',
+            'antimicrobials':       'start_date',
+            'microbiology_test':    'date_ordered',
+            'general_note':         'date'
+        };
+
 		for (var cix = 0; cix < schema.getNumberOfColumns(); cix++) {
 			column = schema.columns[cix];
 
@@ -120,7 +128,12 @@ services.factory('Patient', function($http, $q, Item) {
 				attrs = patient[column.name][iix];
 				patient[column.name][iix] = new Item(attrs, patient, column);
 			};
-		};
+
+            if(column.name in dateSorters){
+                patient[column.name] =  _.sortBy(patient[column.name],
+                                                 dateSorters[column.name]).reverse();
+            }
+        };
 
 		this.getNumberOfItems = function(columnName) {
 			return patient[columnName].length;
@@ -150,6 +163,10 @@ services.factory('Patient', function($http, $q, Item) {
 
 		this.addItem = function(item) {
 			patient[item.columnName].push(item);
+            if(item.columnName in dateSorters){
+                patient[item.columnName] =  _.sortBy(patient[item.columnName],
+                                                 dateSorters[item.columnName]).reverse();
+            }
 		};
 
 		this.removeItem = function(item) {
@@ -260,7 +277,8 @@ services.factory('Item', function($http, $q) {
 				field = columnSchema.fields[fix];
 				value = attrs[field.name];
 				if (field.type == 'date' && attrs[field.name]) {
-					// Convert values of date fields to strings of format YYYY-MM-DD
+
+                    // Convert values of date fields to strings of format YYYY-MM-DD
 					if (angular.isString(value)) {
 						value = moment(value, 'DD/MM/YYYY');
 					} else {
