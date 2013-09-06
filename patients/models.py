@@ -243,6 +243,7 @@ class Location(Subrecord):
 
 
 class Diagnosis(Subrecord):
+    _title = 'Diagnosis / Issues'
     condition = ForeignKeyOrFreeText(option_models['condition'])
     provisional = models.BooleanField()
     details = models.CharField(max_length=255, blank=True)
@@ -250,6 +251,7 @@ class Diagnosis(Subrecord):
 
 
 class PastMedicalHistory(Subrecord):
+    _title = 'PMH'
     condition = ForeignKeyOrFreeText(option_models['condition'])
     year = models.CharField(max_length=4, blank=True)
 
