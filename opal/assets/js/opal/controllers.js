@@ -27,6 +27,7 @@ controllers.controller('PatientListCtrl', function($scope, $cookieStore, $dialog
     $cookieStore.put('opal.currentSubTag', 'all');
 
 	$scope.columns = schema.columns;
+    $scope.tagDisplay =  options.tag_display
 
 	$scope.rows = getVisiblePatients();
 

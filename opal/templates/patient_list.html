@@ -1,42 +1,52 @@
+<div class="navbar print-only">
+  <div class="navbar-inner">
+	<span class="brand pull-left">
+	  OPAL-UCH
+	  {% now "DATE_FORMAT" %}
+      [[ tagDisplay[currentTag] ]] [[ tagDisplay[currentSubTag] ]]
+	</span>
+  </div>
+</div>
+
 {% include 'patient_list_navbar.html' %}
 
 <table class="table table-bordered" freeze-panes>
-	<thead>
-		<tr>
-			{% for column in columns %}
-			<th>{{ column.title }}</th>
-			{% endfor %}
-		</tr>
-	</thead>
-	<tbody>
+  <thead>
+	<tr>
+	  {% for column in columns %}
+		<th>{{ column.title }}</th>
+	  {% endfor %}
+	</tr>
+  </thead>
+  <tbody>
 	<tr ng-repeat="row in rows">
-		{% for column in columns %}
+	  {% for column in columns %}
 		<td ng-mouseenter="mouseEnter($index, {{ forloop.counter0 }})"
 			ng-mouseleave="mouseLeave()">
 			<ul>
-				<li ng-repeat="item in row.{{column.name}}"
-				ng-click="selectItem($parent.$index, {{ forloop.counter0 }}, $index)"
-				ng-dblclick="editItem($parent.$index, {{ forloop.counter0 }}, $index)"
-				ng-class="{selected: rix == $parent.$index && cix == {{ forloop.counter0 }} && iix == $index}">
-					{% include column.template_path %}
-				</li>
+			  <li ng-repeat="item in row.{{column.name}}"
+				  ng-click="selectItem($parent.$index, {{ forloop.counter0 }}, $index)"
+				  ng-dblclick="editItem($parent.$index, {{ forloop.counter0 }}, $index)"
+				  ng-class="{selected: rix == $parent.$index && cix == {{ forloop.counter0 }} && iix == $index}">
+				  {% include column.template_path %}
+			  </li>
 
-				{% if not column.single %}
+			  {% if not column.single %}
 				<li ng-click="selectItem($index, {{ forloop.counter0 }}, row.{{column.name}}.length)"
-				ng-dblclick="editItem($index, {{ forloop.counter0 }}, row.{{column.name}}.length)"
-				ng-class="{selected: rix == $index && cix == {{ forloop.counter0 }} && iix == row.{{column.name}}.length}">
+				    ng-dblclick="editItem($index, {{ forloop.counter0 }}, row.{{column.name}}.length)"
+				    ng-class="{selected: rix == $index && cix == {{ forloop.counter0 }} && iix == row.{{column.name}}.length}">
 					<span ng-show="(rix == $index && cix == {{ forloop.counter0 }}) ||
-						(mouseRix == $index && mouseCix == {{ forloop.counter0 }})">
-						Add
+						           (mouseRix == $index && mouseCix == {{ forloop.counter0 }})">
+						           Add
 					</span>
 					&nbsp;
 				</li>
-				{% endif %}
+			  {% endif %}
 			</ul>
 		</td>
-		{% endfor %}
+	  {% endfor %}
 	</tr>
-	</tbody>
+  </tbody>
 </table>
 
 {% include 'patient_list_navbar.html' %}

@@ -30,11 +30,16 @@ def options_view(request):
     data['micro_test_defaults'] = micro_test_defaults
 
     tag_hierarchy = {}
+    tag_display = {}
     for tag in TAGS:
+        tag_display[tag.name] = tag.title
         if tag.subtags:
             tag_hierarchy[tag.name] = [st.name for st in tag.subtags]
+            for t in tag.subtags:
+                tag_display[t.name] = t.title
         else:
             tag_hierarchy[tag.name] = []
     data['tag_hierarchy'] = tag_hierarchy
+    data['tag_display'] = tag_display
 
     return _build_json_response(data)
