@@ -114,6 +114,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'reversion.middleware.RevisionMiddleware',
+    'axes.middleware.FailedLoginMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
@@ -149,6 +150,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
+    'axes',
     'accounts',
     'reversion',
     'south',
@@ -201,6 +203,8 @@ DATE_INPUT_FORMATS = ['Y-m-d']
 CSRF_COOKIE_NAME = 'XSRF-TOKEN'
 AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 APPEND_SLASH = False
+
+AXES_LOCK_OUT_AT_FAILURE = False
 
 try:
     from local_settings import *
