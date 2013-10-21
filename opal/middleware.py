@@ -1,3 +1,6 @@
+"""
+OPAL Middlewares
+"""
 # Hat tip: http://kevinzhang.org/posts/django-angularjs-and-csrf-xsrf-protection.html
 
 ANGULAR_HEADER_NAME = 'HTTP_X_XSRF_TOKEN'

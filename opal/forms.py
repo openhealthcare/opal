@@ -1,10 +1,10 @@
 """
-Custom forms for user accounts
+Custom forms for OPAL!
 """
 from django.forms import ValidationError
 from django.contrib.auth.forms import AdminPasswordChangeForm
 
-from accounts.banned_passwords import banned
+from opal.utils.banned_passwords import banned
 
 class ChangePasswordForm(AdminPasswordChangeForm):
     """

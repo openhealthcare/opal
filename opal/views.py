@@ -1,6 +1,10 @@
+"""
+OPAL Viewz!
+"""
 import json
 import datetime
 
+from django.contrib.auth.views import login
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotFound
@@ -10,10 +14,22 @@ from django.template.loader import select_template
 from django.utils.decorators import method_decorator
 from django.utils import formats
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import redirect
 
-from utils.http import with_no_caching
-from utils import camelcase_to_underscore
-from patients import models, schema, exceptions
+from opal.utils.http import with_no_caching
+from opal.utils import camelcase_to_underscore, stringport
+from opal.utils.banned_passwords import banned
+from opal import models, exceptions
+
+schema = stringport(settings.OPAL_SCHEMA_MODULE)
+options = stringport(settings.OPAL_OPTIONS_MODULE)
+micro_test_defaults = options.micro_test_defaults
+option_models = models.option_models
+Synonym = models.Synonym
+tags = stringport(settings.OPAL_TAGS_MODULE)
+TAGS = tags.TAGS
+
+
 
 class LoginRequiredMixin(object):
     @method_decorator(login_required)
@@ -47,7 +63,8 @@ def patient_list_and_create_view(request):
             filter_dict['demographics__name__icontains'] = GET['name']
 
         if filter_dict:
-            patients = models.Patient.objects.filter(**filter_dict).order_by('demographics__date_of_birth')
+            patients = models.Patient.objects.filter(
+                **filter_dict).order_by('demographics__date_of_birth')
         else:
             patients = models.Patient.objects.all().order_by('demographics__date_of_birth')
 
@@ -58,7 +75,8 @@ def patient_list_and_create_view(request):
         hospital_number = data['demographics'].get('hospital_number', '')
         if hospital_number:
             try:
-                patient = models.Patient.objects.get(demographics__hospital_number=hospital_number)
+                patient = models.Patient.objects.get(
+                    demographics__hospital_number=hospital_number)
             except models.Patient.DoesNotExist:
                 patient = models.Patient.objects.create()
         else:
@@ -127,7 +145,7 @@ class PatientTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(PatientTemplateView, self).get_context_data(**kwargs)
-        context['tags'] = models.TAGS
+        context['tags'] = TAGS
         context['columns'] = self.get_column_context()
         return context
 
@@ -145,7 +163,7 @@ class SearchTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(SearchTemplateView, self).get_context_data(**kwargs)
-        context['tags'] = models.TAGS
+        context['tags'] = TAGS
         return context
 
 class AddPatientTemplateView(LoginRequiredMixin, TemplateView):
@@ -153,7 +171,7 @@ class AddPatientTemplateView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(AddPatientTemplateView, self).get_context_data(**kwargs)
-        context['tags'] = models.TAGS
+        context['tags'] = TAGS
         return context
 
 class DischargePatientTemplateView(LoginRequiredMixin, TemplateView):
@@ -179,7 +197,7 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         context['modal_template_path'] = name + '_modal.html'
 
         if name == 'location':
-            context['tags'] = models.TAGS
+            context['tags'] = TAGS
 
         return context
 
@@ -208,3 +226,64 @@ def detail_schema_view(request):
         })
 
     return _build_json_response(columns)
+
+
+
+def check_password_reset(request, *args, **kwargs):
+    """
+    Check to see if the user needs to reset their password
+    """
+    response = login(request, *args, **kwargs)
+    if response.status_code == 302:
+        try:
+            profile = request.user.get_profile()
+            print profile
+            if profile and profile.force_password_change:
+                return redirect('django.contrib.auth.views.password_change')
+        except models.UserProfile.DoesNotExist:
+            print 'creatin'
+            models.UserProfile.objects.create(user=request.user, force_password_change=True)
+            return redirect('django.contrib.auth.views.password_change')
+    return response
+
+class AccountDetailTemplateView(TemplateView):
+    template_name = 'accounts/account_detail.html'
+
+class BannedView(TemplateView):
+    template_name = 'accounts/banned.html'
+
+    def get_context_data(self, *a, **k):
+        data = super(BannedView, self).get_context_data(*a, **k)
+        data['banned'] = banned
+        return data
+
+
+def options_view(request):
+    data = {}
+    for name, model in option_models.items():
+        options = [instance.name for instance in model.objects.all()]
+        data[name] = options
+
+    for synonym in Synonym.objects.all():
+        name = type(synonym.content_object).__name__.lower()
+        data[name].append(synonym.name)
+
+    for name in data:
+        data[name].sort()
+
+    data['micro_test_defaults'] = micro_test_defaults
+
+    tag_hierarchy = {}
+    tag_display = {}
+    for tag in TAGS:
+        tag_display[tag.name] = tag.title
+        if tag.subtags:
+            tag_hierarchy[tag.name] = [st.name for st in tag.subtags]
+            for t in tag.subtags:
+                tag_display[t.name] = t.title
+        else:
+            tag_hierarchy[tag.name] = []
+    data['tag_hierarchy'] = tag_hierarchy
+    data['tag_display'] = tag_display
+
+    return _build_json_response(data)

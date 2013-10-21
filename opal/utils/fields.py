@@ -1,8 +1,6 @@
 from django.db.models import ForeignKey, CharField
 from django.contrib.contenttypes.models import ContentType
 
-from options.models import Synonym
-
 class ForeignKeyOrFreeText(property):
     """Field-like object that stores either foreign key or free text.
 
@@ -33,6 +31,7 @@ class ForeignKeyOrFreeText(property):
         for val in val.split(','):
             val = val.strip()
             try:
+                from opal.models import Synonym
                 synonym = Synonym.objects.get(content_type=content_type, name=val)
                 vals.append(synonym.content_object.name)
             except Synonym.DoesNotExist:
