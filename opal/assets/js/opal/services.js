@@ -187,7 +187,7 @@ services.factory('Patient', function($http, $q, Item) {
             if (subtag != 'all' && location.tags[subtag] != true){
                 return false;
             }
-			if (location.hospital.toLowerCase().indexOf(hospital.toLowerCase()) == -1) {
+			if (_.has(location, 'hospital') && location.hospital.toLowerCase().indexOf(hospital.toLowerCase()) == -1) {
 				return false;
 			}
 			if (location.ward.toLowerCase().indexOf(ward.toLowerCase()) == -1) {
