@@ -1,0 +1,2 @@
+recursive-include opal/static *
+recursive-include opal/templates *
