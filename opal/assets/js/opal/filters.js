@@ -13,3 +13,12 @@ filters.filter('microresult', function() {
 		};
 	};
 });
+
+filters.filter('boxed',  function(){
+    return function(input){
+        if(input == true){
+            return '[X]'
+        }
+        return '[ ]'
+    }
+})
