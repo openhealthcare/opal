@@ -9,7 +9,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 setup(
     name='opal',
     version='0.1',
-    packages=['opal'],
+    packages=['opal', 'opal.utils'],
     include_package_data=True,
     license='GPL3',  # example license
     description='Patient list framework.',
