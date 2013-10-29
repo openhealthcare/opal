@@ -181,6 +181,11 @@ class DeleteItemConfirmationView(LoginRequiredMixin, TemplateView):
     template_name = 'delete_item_confirmation_modal.html'
 
 class IndexView(LoginRequiredMixin, TemplateView):
+    def get_context_data(self, **kwargs):
+        context = super(IndexView, self).get_context_data(**kwargs)
+        context['brand_name'] = getattr(settings, 'OPAL_BRAND_NAME', 'OPAL')
+        return context
+
     template_name = 'opal.html'
 
 class ModalTemplateView(LoginRequiredMixin, TemplateView):

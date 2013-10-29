@@ -119,7 +119,6 @@ class Subrecord(models.Model):
     @classmethod
     def _get_fieldnames_to_serialize(cls):
         fieldnames = [f.attname for f in cls._meta.fields]
-
         for name, value in vars(cls).items():
             if isinstance(value, ForeignKeyOrFreeText):
                 fieldnames.append(name)
@@ -192,6 +191,29 @@ class Subrecord(models.Model):
 
     def set_consistency_token(self):
         self.consistency_token = '%08x' % random.randrange(16**8)
+
+
+class TaggedSubrecordMixin(object):
+    # _is_singleton = True
+
+    @classmethod
+    def _get_fieldnames_to_serialize(cls):
+        fieldnames = super(TaggedSubrecordMixin, cls)._get_fieldnames_to_serialize()
+        fieldnames.append('tags')
+        return fieldnames
+
+    @classmethod
+    def get_field_type_for_tags(cls):
+        return 'list'
+
+    def get_tags(self):
+        return {tag_name: True for tag_name in self.patient.get_tag_names()}
+
+    # value is a dictionary mapping tag names to a boolean
+    def set_tags(self, value, user):
+        tags = [k for k, v in value.items() if v]
+        self.patient.set_tags(tags, user)
+
 
 class Synonym(models.Model):
     name = models.CharField(max_length=255)
