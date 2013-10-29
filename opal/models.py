@@ -170,7 +170,7 @@ class Subrecord(models.Model):
 
         unknown_fields = set(data.keys()) - set(self._get_fieldnames_to_serialize())
         if unknown_fields:
-            raise APIException('Unexpected fieldname(s): %s' % list(unknown_fields))
+            raise exceptions.APIError('Unexpected fieldname(s): %s' % list(unknown_fields))
 
         for name, value in data.items():
             setter = getattr(self, 'set_' + name, None)
