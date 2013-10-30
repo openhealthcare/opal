@@ -22,3 +22,9 @@ filters.filter('boxed',  function(){
         return '[ ]'
     }
 })
+
+filters.filter('daysSince', function(){
+    return function(input){
+        return moment().diff(moment(input), 'days')
+    }
+})
