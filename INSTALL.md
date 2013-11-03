@@ -26,6 +26,8 @@ Installing the development tools
 
 ```bash
 npm install -g karma
+npm install -g karma-coverage
+npm install -g istanbul
 ```
 
 Running the tests

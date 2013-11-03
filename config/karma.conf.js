@@ -24,6 +24,18 @@ module.exports =  function(config){
             'opal/app.js',
             'opaltest/*.js'
         ],
+
+        preprocessors: {
+            '**/opal/*.js': 'coverage'
+        },
+
+        reporters: ['dots', 'coverage'],
+
         autoWatch: true,
+
+        coverageReporter: {
+            type : 'text',
+            dir : '../../../coverage-js/',
+        },
     })
 }
