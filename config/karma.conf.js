@@ -34,7 +34,7 @@ module.exports =  function(config){
         autoWatch: true,
 
         coverageReporter: {
-            type : 'text',
+            type : 'html',
             dir : '../../../coverage-js/',
         },
     })
