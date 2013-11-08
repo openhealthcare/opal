@@ -10,6 +10,9 @@ Do this once:
 
 ```bash
 sudo apt-get install python-dev postgresql-server-dev-9.1 virtualenvwrapper
+
+TODO: Update these to reflect the new "Appy" status of this code.
+
 git clone git@github.com:openhealthcare/opal
 cd opal
 mkvirtualenv -a $PWD opal

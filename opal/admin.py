@@ -24,8 +24,11 @@ class UserProfileAdmin(UserAdmin):
 
 class MyAdmin(reversion.VersionAdmin): pass
 
-class SubRecordAdmin(reversion.VersionAdmin):
-    list_filter =['patient']
+class PatientSubRecordAdmin(reversion.VersionAdmin):
+    list_filter = ['patient']
+
+class EpisodeSubRecordAdmin(reversion.VersionAdmin):
+    list_filter = ['episode']
 
 class SynonymInline(generic.GenericTabularInline):
     model = Synonym
@@ -40,4 +43,10 @@ for model in option_models.values():
 
 admin.site.register(User, UserProfileAdmin)
 admin.site.register(models.Patient, MyAdmin)
-admin.site.register(models.Tagging, SubRecordAdmin)
+admin.site.register(models.Episode, MyAdmin)i
+
+for subclass in models.PatientSubrecord.__subclasses__():
+    admin.site.register(subclass, PatientSubRecordAdmin)
+
+for subclass in models.EpisodeSubrecord.__subclasses__():
+    admin.site.register(subclass, EpisodeSubRecordAdmin)

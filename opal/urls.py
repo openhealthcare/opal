@@ -25,8 +25,8 @@ urlpatterns = patterns('',
     url(r'^admin/?', include(admin.site.urls)),
 
     # url(r'^patient/?', include('patients.urls.records')),
-    url(r'^patient/?$', views.patient_list_and_create_view),
-    url(r'^patient/(?P<pk>\d+)/?$', views.patient_detail_view),
+    url(r'^records/?$', views.patient_list_and_create_view),
+    url(r'^records/(?P<pk>\d+)/?$', views.patient_detail_view),
 
     # url(r'^templates/', include('patients.urls.templates')),
     url(r'^templates/patient_list.html/?$', views.PatientListTemplateView.as_view()),

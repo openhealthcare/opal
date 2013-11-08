@@ -1,10 +1,10 @@
 // TODO make this a service
-var CATEGORIES = ['Inpatient', 'Review', 'Followup', 'Transferred', 'Discharged', 'Deceased'];
+var CATEGORIES = ['Inepisode', 'Review', 'Followup', 'Transferred', 'Discharged', 'Deceased'];
 
 var services = angular.module('opal.services', ['ngResource']);
 
-services.factory('PatientResource', function($resource) {
-	return $resource('/patient/:id/', {id: '@id'})
+services.factory('EpisodeResource', function($resource) {
+	return $resource('/records/episode/:id/', {id: '@id'})
 });
 
 services.factory('listSchemaLoader', function($q, $http, Schema) {
@@ -71,72 +71,58 @@ services.factory('Options', function($q, $http) {
 	return deferred.promise;
 });
 
-services.factory('patientsLoader', function($q, PatientResource, Patient, listSchemaLoader) {
+services.factory('episodesLoader', function($q, EpisodeResource, Episode, listSchemaLoader) {
 	return function() {
 		var deferred = $q.defer();
 		listSchemaLoader.then(function(schema) {
-			PatientResource.query(function(resources) {
-				var patients = {};
+			EpisodeResource.query(function(resources) {
+				var episodes = {};
 				_.each(resources, function(resource) {
-					patients[resource.id] = new Patient(resource, schema);
+					episodes[resource.id] = new Episode(resource, schema);
 				});
-				deferred.resolve(patients);
+				deferred.resolve(episodes);
 			}, function() {
 				// handle error better
-				alert('Patients could not be loaded');
+				alert('Episodes could not be loaded');
 			});
 		});
 		return deferred.promise;
 	};
 });
 
-services.factory('patientLoader', function($q, $route, PatientResource, Patient, detailSchemaLoader) {
+services.factory('episodeLoader', function($q, $route, EpisodeResource, Episode, detailSchemaLoader) {
 	return function() {
 		var deferred = $q.defer();
 		detailSchemaLoader.then(function(schema) {
-			PatientResource.get({id: $route.current.params.id}, function(resource) {
-				var patient = new Patient(resource, schema);
-				deferred.resolve(patient);
+			EpisodeResource.get({id: $route.current.params.id}, function(resource) {
+				var episode = new Episode(resource, schema);
+				deferred.resolve(episode);
 			}, function() {
 				// handle error better
-				alert('Patient could not be loaded');
+				alert('Episode could not be loaded');
 			});
 		});
 		return deferred.promise;
 	};
 });
 
-services.factory('Patient', function($http, $q, Item) {
+services.factory('Episode', function($http, $q, Item) {
 	return function(resource, schema) {
-		var patient = this;
+		var episode = this;
 	   	var column, field, attrs;
 
-		angular.extend(patient, resource);
-
-        var dateSorters = {
-            'diagnosis':            'date_of_diagnosis',
-            'past_medical_history': 'year',
-            'antimicrobials':       'start_date',
-            'microbiology_test':    'date_ordered',
-            'general_note':         'date'
-        };
+		angular.extend(episode, resource);
 
 		for (var cix = 0; cix < schema.getNumberOfColumns(); cix++) {
 			column = schema.columns[cix];
-
-			for (var iix = 0; iix < patient[column.name].length; iix++) {
-				attrs = patient[column.name][iix];
-				patient[column.name][iix] = new Item(attrs, patient, column);
+			for (var iix = 0; iix < episode[column.name].length; iix++) {
+				attrs = episode[column.name][iix];
+				episode[column.name][iix] = new Item(attrs, episode, column);
 			};
-
-            if(column.name in dateSorters){
-                patient[column.name] =  _.sortBy(patient[column.name],
-                                                 dateSorters[column.name]).reverse();
-            }
-        };
+		};
 
 		this.getNumberOfItems = function(columnName) {
-			return patient[columnName].length;
+			return episode[columnName].length;
 		};
 
 		this.newItem = function(columnName) {
@@ -154,23 +140,19 @@ services.factory('Patient', function($http, $q, Item) {
 			if (columnName == 'diagnosis') {
 				attrs.date_of_diagnosis = moment().format('YYYY-MM-DD');
 			}
-			return new Item(attrs, patient, schema.getColumn(columnName));
+			return new Item(attrs, episode, schema.getColumn(columnName));
 		};
 
 		this.getItem = function(columnName, iix) {
-			return patient[columnName][iix];
+			return episode[columnName][iix];
 		};
 
 		this.addItem = function(item) {
-			patient[item.columnName].push(item);
-            if(item.columnName in dateSorters){
-                patient[item.columnName] =  _.sortBy(patient[item.columnName],
-                                                 dateSorters[item.columnName]).reverse();
-            }
+			episode[item.columnName].push(item);
 		};
 
 		this.removeItem = function(item) {
-			var items = patient[item.columnName];
+			var items = episode[item.columnName];
 			for (iix = 0; iix < items.length; iix++) {
 				if (item.id == items[iix].id) {
 					items.splice(iix, 1);
@@ -179,15 +161,15 @@ services.factory('Patient', function($http, $q, Item) {
 			};
 		};
 
-        this.isVisible = function(tag, subtag, hospital, ward) {
-			var location = patient.location[0];
+		this.isVisible = function(tag, subtag, hospital, ward) {
+			var location = episode.location[0];
 			if (location.tags[tag] != true) {
 				return false;
 			}
-            if (subtag != 'all' && location.tags[subtag] != true){
-                return false;
-            }
-			if (_.has(location, 'hospital') && location.hospital.toLowerCase().indexOf(hospital.toLowerCase()) == -1) {
+			if (subtag != 'all' && location.tags[subtag] != true){
+				return false;
+			}
+			if (location.hospital.toLowerCase().indexOf(hospital.toLowerCase()) == -1) {
 				return false;
 			}
 			if (location.ward.toLowerCase().indexOf(ward.toLowerCase()) == -1) {
@@ -212,7 +194,7 @@ services.factory('Patient', function($http, $q, Item) {
 			];
 
 			for (var ix = 0; ix < comparators.length; ix++) {
-				v1 = comparators[ix](patient);
+				v1 = comparators[ix](episode);
 				v2 = comparators[ix](other);
 				if (v1 < v2) {
 					return -1;
@@ -227,7 +209,7 @@ services.factory('Patient', function($http, $q, Item) {
 });
 
 services.factory('Item', function($http, $q) {
-	return function(attrs, patient, columnSchema) {
+	return function(attrs, episode, columnSchema) {
 		var item = this;
 
 		this.initialise = function(attrs) {
@@ -247,7 +229,7 @@ services.factory('Item', function($http, $q) {
 
 		this.columnName = columnSchema.name;
 
-		this.patientName = patient.demographics[0].name;
+		this.episodeName = episode.demographics[0].name;
 
 		this.makeCopy = function() {
 			var field, value;
@@ -270,15 +252,14 @@ services.factory('Item', function($http, $q) {
 		this.save = function(attrs) {
 			var field, value;
 			var deferred = $q.defer();
-			var url = '/patient/' + this.columnName + '/';
+			var url = '/records/' + this.columnName + '/';
 			var method;
 
 			for (var fix = 0; fix < columnSchema.fields.length; fix++) {
 				field = columnSchema.fields[fix];
 				value = attrs[field.name];
 				if (field.type == 'date' && attrs[field.name]) {
-
-                    // Convert values of date fields to strings of format YYYY-MM-DD
+					// Convert values of date fields to strings of format YYYY-MM-DD
 					if (angular.isString(value)) {
 						value = moment(value, 'DD/MM/YYYY');
 					} else {
@@ -293,13 +274,13 @@ services.factory('Item', function($http, $q) {
 				url += attrs.id + '/';
 			} else {
 				method = 'post';
-				attrs['patient_id'] = patient.id;
+				attrs['episode_id'] = episode.id;
 			}
 
 			$http[method](url, attrs).then(function(response) {
 				item.initialise(response.data);
 				if (method == 'post') {
-					patient.addItem(item);
+					episode.addItem(item);
 				};
 				deferred.resolve();
 			}, function(response) {
@@ -315,10 +296,10 @@ services.factory('Item', function($http, $q) {
 
 		this.destroy = function() {
 			var deferred = $q.defer();
-			var url = '/patient/' + item.columnName + '/' + item.id + '/';
+			var url = '/records/' + item.columnName + '/' + item.id + '/';
 
 			$http['delete'](url).then(function(response) {
-				patient.removeItem(item);
+				episode.removeItem(item);
 				deferred.resolve();
 			}, function(response) {
 				// handle error better

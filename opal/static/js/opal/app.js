@@ -15,33 +15,33 @@ app.config(function($interpolateProvider) {
 app.config(function($routeProvider) {
 	$routeProvider.
 		when('/', {
-			controller: 'PatientListCtrl',
+			controller: 'EpisodeListCtrl',
 			resolve: {
 				schema: function(listSchemaLoader) {
 					return listSchemaLoader;
 				},
-				patients: function(patientsLoader) {
-					return patientsLoader();
+				episodes: function(episodesLoader) {
+					return episodesLoader();
 				},
 				options: function(Options) {
 					return Options;
 				},
 			},
-			templateUrl: '/templates/patient_list.html'
-		}).when('/patient/:id', {
-			controller: 'PatientDetailCtrl',
+			templateUrl: '/templates/episode_list.html'
+		}).when('/episode/:id', {
+			controller: 'EpisodeDetailCtrl',
 			resolve: {
 				schema: function(detailSchemaLoader) {
 					return detailSchemaLoader;
 				},
-				patient: function(patientLoader) {
-					return patientLoader();
+				episode: function(episodeLoader) {
+					return episodeLoader();
 				},
 				options: function(Options) {
 					return Options;
 				},
 			},
-			templateUrl: '/templates/patient_detail.html'
+			templateUrl: '/templates/episode_detail.html'
 		}).when('/search', {
 			controller: 'SearchCtrl',
 			templateUrl: '/templates/search.html',

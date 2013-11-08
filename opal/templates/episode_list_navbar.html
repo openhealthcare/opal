@@ -12,7 +12,7 @@
 	  <li class="divider-vertical"></li>
 	</ul>
 
-	<button class="btn pull-left" ng-click="addPatient()">Add record</button>
+	<button class="btn pull-left" ng-click="addEpisode()">Add record</button>
 
 	<ul class="nav">
 	  <li class="divider-vertical"></li>
@@ -29,8 +29,10 @@
 	</ul>
 
 	<form class="navbar-search pull-right">
-	  <input ng-model="query.hospital" ui-event="{focus: 'focusOnQuery()', blur: 'blurOnQuery()'}" type="text" class="input-small" placeholder="Hospital">
-	  <input ng-model="query.ward" ui-event="{focus: 'focusOnQuery()', blur: 'blurOnQuery()'}" type="text" class="input-small" placeholder="Ward">
+	  <input ng-model="query.hospital" ui-event="{focus: 'focusOnQuery()', blur: 'blurOnQuery()'}"
+             type="text" class="input-small" placeholder="Hospital">
+	  <input ng-model="query.ward" ui-event="{focus: 'focusOnQuery()', blur: 'blurOnQuery()'}"
+             type="text" class="input-small" placeholder="Ward">
 	</form>
 
 	<ul class="nav pull-right">

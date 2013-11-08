@@ -1,8 +1,8 @@
 <div class="container">
 	<!-- <h4> -->
-        <!--   [[ patient.demographics[0].hospital_number ]] -->
-        <!--   [[ patient.demographics[0].name ]] -->
-        <!--   ( [[ patient.demographics[0].date_of_birth | date:'d/M/yyyy' ]] ) -->
+        <!--   [[ episode.demographics[0].hospital_number ]] -->
+        <!--   [[ episode.demographics[0].name ]] -->
+        <!--   ( [[ episode.demographics[0].date_of_birth | date:'d/M/yyyy' ]] ) -->
         <!-- </h4> -->
 
 	<table class="table table-bordered">
@@ -11,7 +11,7 @@
 		<td>
 			<h5>{{ column.title }}</h5>
 			<ul ng-mouseenter="mouseEnter({{ forloop.counter0 }})" ng-mouseleave="mouseLeave()">
-				<li ng-repeat="item in patient.{{column.name}}"
+				<li ng-repeat="item in episode.{{column.name}}"
 				ng-click="selectItem({{ forloop.counter0 }}, $index)"
 				ng-dblclick="editItem({{ forloop.counter0 }}, $index)"
 				ng-class="{selected: cix == {{ forloop.counter0 }} && iix == $index}">
@@ -20,9 +20,9 @@
 
 
 				{% if not column.single %}
-				<li ng-click="selectItem({{ forloop.counter0 }}, patient.{{column.name}}.length)"
-				ng-dblclick="editItem({{ forloop.counter0 }}, patient.{{column.name}}.length)"
-				ng-class="{selected: cix == {{ forloop.counter0 }} && iix == patient.{{column.name}}.length}">
+				<li ng-click="selectItem({{ forloop.counter0 }}, episode.{{column.name}}.length)"
+				ng-dblclick="editItem({{ forloop.counter0 }}, episode.{{column.name}}.length)"
+				ng-class="{selected: cix == {{ forloop.counter0 }} && iix == episode.{{column.name}}.length}">
 					<span ng-show="(cix == {{ forloop.counter0 }}) || (mouseCix == {{ forloop.counter0 }})">
 						Add
 					</span>
