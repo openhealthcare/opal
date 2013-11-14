@@ -37,68 +37,80 @@ class LoginRequiredMixin(object):
         return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
 
 @require_http_methods(['GET'])
-def patient_detail_view(request, pk):
+def episode_detail_view(request, pk):
     try:
-        patient = models.Patient.objects.get(pk=pk)
-    except models.Patient.DoesNotExist:
+        patient = models.Episode.objects.get(pk=pk)
+    except models.Episode.DoesNotExist:
         return HttpResponseNotFound()
 
-    return _build_json_response(patient.to_dict(), 200)
+    return _build_json_response(patient.to_dict(request.user), 200)
+
 
 @with_no_caching
+@require_http_methods(['GET'])
+def patient_search_view(request):
+    GET = request.GET
+
+    search_terms = {}
+    filter_dict = {}
+
+    if 'hospital_number' in GET:
+        search_terms['hospital_number'] = GET['hospital_number']
+        filter_dict['demographics__hospital_number__iexact'] = GET['hospital_number']
+
+    if 'name' in GET:
+        search_terms['name'] = GET['name']
+        filter_dict['demographics__name__icontains'] = GET['name']
+
+    if filter_dict:
+        # TODO maybe limit/paginate results?
+        # TODO maybe only return demographics & location
+        patients = models.Patient.objects.filter(
+            **filter_dict).order_by('demographics__date_of_birth')
+
+        return _build_json_response([patient.to_dict(request.user)
+                                     for patient in patients])
+    else:
+        return _build_json_response({'error': 'No search terms'}, 400)
+
+
 @require_http_methods(['GET', 'POST'])
-def patient_list_and_create_view(request):
+def episode_list_and_create_view(request):
     if request.method == 'GET':
-        GET = request.GET
-
-        search_terms = {}
-        filter_dict = {}
-
-        if 'hospital_number' in GET:
-            search_terms['hospital_number'] = GET['hospital_number']
-            filter_dict['demographics__hospital_number__iexact'] = GET['hospital_number']
-
-        if 'name' in GET:
-            search_terms['name'] = GET['name']
-            filter_dict['demographics__name__icontains'] = GET['name']
-
-        if filter_dict:
-            patients = models.Patient.objects.filter(
-                **filter_dict).order_by('demographics__date_of_birth')
-        else:
-            patients = models.Patient.objects.all().order_by('demographics__date_of_birth')
-
-        return _build_json_response([patient.to_dict() for patient in patients])
+        episodes = models.Episode.objects.filter(active=True)
+        return _build_json_response([episode.to_dict(request.user)
+                                     for episode in episodes])
 
     elif request.method == 'POST':
         data = _get_request_data(request)
-        hospital_number = data['demographics'].get('hospital_number', '')
+        hospital_number = data['demographics'].get('hospital_number')
         if hospital_number:
-            try:
-                patient = models.Patient.objects.get(
-                    demographics__hospital_number=hospital_number)
-            except models.Patient.DoesNotExist:
-                patient = models.Patient.objects.create()
+            patient, _ = models.Patient.objects.get_or_create(demographics__hospital_number=hospital_number)
         else:
             patient = models.Patient.objects.create()
 
-        patient.update_from_dict(data, request.user)
-        return _build_json_response(patient.to_dict(), 201)
+        patient.update_from_demographics_dict(data['demographics'], request.user)
 
-@require_http_methods(['GET', 'PUT', 'DELETE'])
+        try:
+            episode = patient.create_episode()
+        except exceptions.APIError:
+            return _build_json_response({'error': 'Patient already has active episode'}, 400)
+
+        episode.update_from_location_dict(data['location'], request.user)
+        return _build_json_response(episode.to_dict(request.user), 201)
+
+@require_http_methods(['PUT', 'DELETE'])
 def subrecord_detail_view(request, model, pk):
     try:
         subrecord = model.objects.get(pk=pk)
     except model.DoesNotExist:
         return HttpResponseNotFound()
 
-    if request.method == 'GET':
-        return _build_json_response(subrecord.to_dict())
-    elif request.method == 'PUT':
+    if request.method == 'PUT':
         data = _get_request_data(request)
         try:
             subrecord.update_from_dict(data, request.user)
-            return _build_json_response(subrecord.to_dict())
+            return _build_json_response(subrecord.to_dict(request.user))
         except exceptions.ConsistencyError:
             return _build_json_response({'error': 'Item has changed'}, 409)
     elif request.method == 'DELETE':
@@ -110,7 +122,7 @@ def subrecord_create_view(request, model):
     subrecord = model()
     data = _get_request_data(request)
     subrecord.update_from_dict(data, request.user)
-    return _build_json_response(subrecord.to_dict(), 201)
+    return _build_json_response(subrecord.to_dict(request.user), 201)
 
 def _get_request_data(request):
     data = request.read()
@@ -124,7 +136,7 @@ def _build_json_response(data, status_code=200):
     return response
 
 
-class PatientTemplateView(TemplateView):
+class EpisodeTemplateView(TemplateView):
     def get_column_context(self):
         """
         Return the context for our columns
@@ -144,19 +156,21 @@ class PatientTemplateView(TemplateView):
         return context
 
     def get_context_data(self, **kwargs):
-        context = super(PatientTemplateView, self).get_context_data(**kwargs)
+        context = super(EpisodeTemplateView, self).get_context_data(**kwargs)
         context['tags'] = TAGS
         context['columns'] = self.get_column_context()
         return context
 
 
-class PatientListTemplateView(PatientTemplateView):
-    template_name = 'patient_list.html'
+class EpisodeListTemplateView(EpisodeTemplateView):
+    template_name = 'episode_list.html'
     column_schema = schema.list_columns
 
-class PatientDetailTemplateView(PatientTemplateView):
-    template_name = 'patient_detail.html'
+
+class EpisodeDetailTemplateView(EpisodeTemplateView):
+    template_name = 'episode_detail.html'
     column_schema = schema.detail_columns
+
 
 class SearchTemplateView(TemplateView):
     template_name = 'search.html'
@@ -166,19 +180,29 @@ class SearchTemplateView(TemplateView):
         context['tags'] = TAGS
         return context
 
-class AddPatientTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'add_patient_modal.html'
+class AddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = 'add_episode_modal.html'
 
     def get_context_data(self, **kwargs):
-        context = super(AddPatientTemplateView, self).get_context_data(**kwargs)
+        context = super(AddEpisodeTemplateView, self).get_context_data(**kwargs)
         context['tags'] = TAGS
         return context
 
-class DischargePatientTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'discharge_patient_modal.html'
+class DischargeEpisodeTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = 'discharge_episode_modal.html'
+
 
 class DeleteItemConfirmationView(LoginRequiredMixin, TemplateView):
     template_name = 'delete_item_confirmation_modal.html'
+
+
+class HospitalNumberTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = 'hospital_number_modal.html'
+
+
+class ReopenEpisodeTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = 'reopen_episode_modal.html'
+
 
 class IndexView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):

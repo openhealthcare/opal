@@ -171,7 +171,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 
 			if (hospitalNumber) {
 				// The user entered a hospital number
-				$http.get('records/patient/?hospital_number=' + hospitalNumber).success(function(response) {
+				$http.get('patient/?hospital_number=' + hospitalNumber).success(function(response) {
 					// We have retrieved patient records matching that hospital number
 					deferred.resolve({
 						patients: response,
@@ -656,7 +656,7 @@ controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog,
 
 		queryString = queryParams.join('&');
 
-		$http.get('records/patient/?' + queryString).success(function(results) {
+		$http.get('patient/?' + queryString).success(function(results) {
 			$scope.searched = true;
 			$scope.results = results;
 		});
@@ -756,7 +756,7 @@ controllers.controller('AddEpisodeCtrl', function($scope, $http, $cookieStore,
 			$scope.editing.demographics.date_of_birth = moment(value, 'DD/MM/YYYY').format('YYYY-MM-DD');
 		}
 
-		$http.post('records/episode/', $scope.editing).success(function(episode) {
+		$http.post('episode/', $scope.editing).success(function(episode) {
 			episode = new Episode(episode, schema);
 			dialog.close(episode);
 		});

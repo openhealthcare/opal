@@ -6,3 +6,5 @@ static/*
 htmlcov
 libpeerconnection.log
 old
+dist
+opal.egg-info

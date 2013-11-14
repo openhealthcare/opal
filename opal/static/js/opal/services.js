@@ -4,7 +4,7 @@ var CATEGORIES = ['Inepisode', 'Review', 'Followup', 'Transferred', 'Discharged'
 var services = angular.module('opal.services', ['ngResource']);
 
 services.factory('EpisodeResource', function($resource) {
-	return $resource('/records/episode/:id/', {id: '@id'})
+	return $resource('/episode/:id/', {id: '@id'})
 });
 
 services.factory('listSchemaLoader', function($q, $http, Schema) {
@@ -115,6 +115,10 @@ services.factory('Episode', function($http, $q, Item) {
 
 		for (var cix = 0; cix < schema.getNumberOfColumns(); cix++) {
 			column = schema.columns[cix];
+            if(_.isUndefined(episode[column.name])){
+                console.log(column.name)
+                console.log(episode)
+            }
 			for (var iix = 0; iix < episode[column.name].length; iix++) {
 				attrs = episode[column.name][iix];
 				episode[column.name][iix] = new Item(attrs, episode, column);
@@ -252,7 +256,7 @@ services.factory('Item', function($http, $q) {
 		this.save = function(attrs) {
 			var field, value;
 			var deferred = $q.defer();
-			var url = '/records/' + this.columnName + '/';
+			var url = '/' + this.columnName + '/';
 			var method;
 
 			for (var fix = 0; fix < columnSchema.fields.length; fix++) {
@@ -296,7 +300,7 @@ services.factory('Item', function($http, $q) {
 
 		this.destroy = function() {
 			var deferred = $q.defer();
-			var url = '/records/' + item.columnName + '/' + item.id + '/';
+			var url = '/' + item.columnName + '/' + item.id + '/';
 
 			$http['delete'](url).then(function(response) {
 				episode.removeItem(item);
