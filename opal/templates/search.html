@@ -19,7 +19,7 @@
 			<td>[[patient.demographics[0].name]]</td>
             <td>[[patient.demographics[0].date_of_birth]]<td>
 			<td>[[patient.location[0].category]]</td>
-			<td><a href="#/patient/[[ patient.id ]]">View</a></td>
+			<td><a href="#/episode/[[ patient.active_episode_id ]]">View</a></td>
 		</tr>
 
 	</table>
@@ -29,5 +29,5 @@
 	</div>
 
 	<br />
-	<button class="btn" ng-click="addPatient()">Add record</button>
+	<button class="btn" ng-click="addEpisode()">Add record</button>
 </div>

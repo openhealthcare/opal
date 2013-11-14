@@ -5,3 +5,6 @@ static/*
 .coverage
 htmlcov
 libpeerconnection.log
+old
+dist
+opal.egg-info

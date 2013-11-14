@@ -151,12 +151,13 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'axes',
-    'accounts',
-    'reversion',
+    # 'accounts',
+    # 'reversion',
     'south',
-    'options',
-    'patients',
-    'utils',
+    'opal'
+    # 'options',
+    # 'patients',
+    # 'utils',
 )
 
 # A sample logging configuration. The only tangible logging
@@ -205,6 +206,9 @@ AUTH_PROFILE_MODULE = 'accounts.UserProfile'
 APPEND_SLASH = False
 
 AXES_LOCK_OUT_AT_FAILURE = False
+
+OPAL_OPTIONS_MODULE#
+
 
 try:
     from local_settings import *
