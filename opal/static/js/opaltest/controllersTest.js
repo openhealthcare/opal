@@ -119,6 +119,7 @@ describe('controllers', function() {
                                 expect(callArgs[0].templateUrl).toBe('/templates/modals/hospital_number.html/');
                                 expect(callArgs[0].controller).toBe('HospitalNumberCtrl');
                         });
+
                 });
 
                 describe('editing an item', function() {

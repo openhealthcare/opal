@@ -220,21 +220,19 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 				patient = result.patients[0];
 				if (patient.active_episode_id) {
 					// This patient has an active episode
-					episode = new Episode(patient.episodes[patient.active_episode_id], schema)
+					episode = new Episode(patient.episodes[patient.active_episode_id],
+                                          schema)
 
 					if (episode.location[0].tags[$scope.currentTag]) {
-						// There is already an active episode for this patient with the current tag
+						// There is already an active episode for this patient
+                        // with the current tag
 						deferred.resolve(episode);
 					} else {
-                        // TODO:
-                        //
-                        // Tell the user this is what you're doing?
-                        //
-						// There is already an active episode for this patient but it doesn't have the current tag
-						// Arbitrarily choose one the episode's tags and set the current tag to this
-						for (var tag in episode.location[0].tags) {
-							$scope.currentTag = tag;
-						};
+						// There is already an active episode for this patient but
+                        // it doesn't have the current tag.
+                        // Add the current Tag.
+                        episode.location[0].tags[$scope.currentTag] = true;
+                        episode.location[0].save(episode.location[0].makeCopy());
 						deferred.resolve(episode);
 					}
 				} else {
@@ -243,8 +241,9 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
                     newForPatient = function(){
                         demographics = patient.demographics[0];
                         if(demographics.date_of_birth){
-						    demographics.date_of_birth = moment(demographics.date_of_birth,
-                                                                'YYYY-MM-DD').format('DD/MM/YYYY');
+                            var dob = moment(demographics.date_of_birth, 'YYYY-MM-DD')
+                                .format('DD/MM/YYYY');
+						    demographics.date_of_birth = dob;
                         }
 
 						modal = $dialog.dialog({
@@ -267,9 +266,12 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
                         newForPatient()
                     }else {
 
-					    // Convert episodes to Episodes - it'd be better if this happened when the patient was retrieved
+					    // Convert episodes to Episodes -
+                        // it'd be better if this happened when the patient
+                        // was retrieved
 					    for (var eix in patient.episodes) {
-						    patient.episodes[eix] = new Episode(patient.episodes[eix], schema);
+						    patient.episodes[eix] = new Episode(patient.episodes[eix],
+                                                                schema);
 					    }
 
 					    // Ask user if they want to reopen an episode, or open a new one
@@ -738,7 +740,9 @@ controllers.controller('AddEpisodeCtrl', function($scope, $http, $cookieStore,
 	}
 
 	$scope.showSubtags = function(withsubtags){
-		var show =  _.some(withsubtags, function(tag){ return $scope.editing.location.tags[tag] });
+		var show =  _.some(withsubtags, function(tag){
+            return $scope.editing.location.tags[tag]
+        });
 		return show
 	};
 
@@ -748,12 +752,14 @@ controllers.controller('AddEpisodeCtrl', function($scope, $http, $cookieStore,
 		// This is a bit mucky but will do for now
 		value = $scope.editing.location.date_of_admission;
 		if (value) {
-			$scope.editing.location.date_of_admission = moment(value, 'DD/MM/YYYY').format('YYYY-MM-DD');
+            var doa = moment(value, 'DD/MM/YYYY').format('YYYY-MM-DD');
+			$scope.editing.location.date_of_admission = doa;
 		}
 
 		value = $scope.editing.demographics.date_of_birth;
 		if (value) {
-			$scope.editing.demographics.date_of_birth = moment(value, 'DD/MM/YYYY').format('YYYY-MM-DD');
+            var dob = moment(value, 'DD/MM/YYYY').format('YYYY-MM-DD');
+			$scope.editing.demographics.date_of_birth = dob;
 		}
 
 		$http.post('episode/', $scope.editing).success(function(episode) {
@@ -767,7 +773,8 @@ controllers.controller('AddEpisodeCtrl', function($scope, $http, $cookieStore,
 	};
 });
 
-controllers.controller('ReopenEpisodeCtrl', function($scope, $http, $timeout, dialog, patient, tag) {
+controllers.controller('ReopenEpisodeCtrl', function($scope, $http, $timeout,
+                                                     dialog, patient, tag) {
 	$timeout(function() {
 		dialog.modalEl.find('input,textarea').first().focus();
 	});
@@ -812,11 +819,14 @@ controllers.controller('ReopenEpisodeCtrl', function($scope, $http, $timeout, di
 	};
 });
 
-controllers.controller('EditItemCtrl', function($scope, $cookieStore, $timeout, dialog, item, options) {
+controllers.controller('EditItemCtrl', function($scope, $cookieStore,
+                                                $timeout, dialog, item, options) {
 	$scope.editing = item.makeCopy();
 	$scope.editingName = item.episodeName;
-    $scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine'; // initially display episodes of interest to current user
-    $scope.currentSubTag = 'all'; // initially display episodes of interest to current user
+    // initially display episodes of interest to current user
+    $scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine';
+    // initially display episodes of interest to current user
+    $scope.currentSubTag = 'all';
 
     $scope.showSubtags = function(withsubtags){
 	    if (item.columnName == 'location') {
@@ -857,11 +867,13 @@ controllers.controller('EditItemCtrl', function($scope, $cookieStore, $timeout, 
                 return;
             }
             if($scope.testType in $scope.micro_test_defaults){
-                _.each(_.pairs($scope.micro_test_defaults[$scope.testType]), function(values){
-                    var field =  values[0];
-                    var _default =  values[1];
-                    $scope.editing[field] =  $scope.editing[field] ? $scope.editing[field] : _default;
-                });
+                _.each(
+                    _.pairs($scope.micro_test_defaults[$scope.testType]),
+                    function(values){
+                        var field =  values[0];
+                        var _default =  values[1];
+                        $scope.editing[field] =  $scope.editing[field] ? $scope.editing[field] : _default;
+                    });
             }
 		});
 	};
