@@ -23,7 +23,7 @@ Smart Ward 2013 http://www.youtube.com/watch?v=pxS0q1NJwZY
 ## Adapting OPAL for Your Ward
 
 WARNING: OPAL is under rapid, active development to become a framework for building Patient List type applications rather than an application.
-e.g. at this stage the codebase is likely to be significantly refactored to allow multiple customised instances. 
+e.g. at this stage the codebase is likely to be significantly refactored to allow multiple customised instances.
 Anyone looking to adapt OPAL to their specific ward should get in touch with the friendly OPals [(Opal Steering group)](https://groups.google.com/forum/#!forum/ohc-opal) !
 
 * We're very friendly
@@ -39,7 +39,7 @@ In the future the process and documentation for that kind of customisation will 
 
 
 Open governance
-======
+===============
 
 Roadmap: https://github.com/openhealthcare/opal/wiki/Roadmap
 
@@ -80,5 +80,3 @@ channel #ohc_dev on freenode
 Demo
 ======
 A screencast and demo are here http://opal.openhealthcare.org.uk
-
-
