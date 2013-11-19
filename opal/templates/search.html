@@ -21,7 +21,11 @@
       <td>[[patient.demographics[0].date_of_birth]]<td>
 	  <td>[[patient.location[0].category]]</td>
       <td>[[patient.active_episode_id ? 'active': 'inactive' ;]]</td>
-	  <td><a href="#/episode/[[ patient.active_episode_id ]]">View</a></td>
+	  <td>
+        <a href="#/episode/[[  getEpisodeID(patient) ]]">
+          View
+        </a>
+      </td>
 	</tr>
 
   </table>

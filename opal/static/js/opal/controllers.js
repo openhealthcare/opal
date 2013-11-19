@@ -11,7 +11,8 @@ controllers.controller('RootCtrl', function($scope) {
 	};
 });
 
-controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieStore, $dialog,
+controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieStore,
+                                                   $dialog,
                                                    Episode, schema, episodes, options) {
 	$scope.state = 'normal';
 
@@ -631,7 +632,8 @@ controllers.controller('EpisodeDetailCtrl', function($scope, $dialog, schema,
 	};
 });
 
-controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog, schema, options) {
+controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog,
+                                              schema, options) {
 	$scope.searchTerms = {
 		hospital_number: '',
 		name: '',
@@ -663,6 +665,14 @@ controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog,
 			$scope.results = results;
 		});
 	};
+
+    $scope.getEpisodeID = function(patient){
+        var epid = patient.active_episode_id;
+        if(!epid){
+            epid = _.first(_.keys(patient.episodes));
+        }
+        return epid;
+    }
 
 	$scope.addEpisode = function() {
 		var modal, details;
