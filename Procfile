@@ -1,1 +1,0 @@
-web: gunicorn opal.wsgi

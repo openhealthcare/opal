@@ -85,7 +85,8 @@ def episode_list_and_create_view(request):
         data = _get_request_data(request)
         hospital_number = data['demographics'].get('hospital_number')
         if hospital_number:
-            patient, _ = models.Patient.objects.get_or_create(demographics__hospital_number=hospital_number)
+            patient, _ = models.Patient.objects.get_or_create(
+                demographics__hospital_number=hospital_number)
         else:
             patient = models.Patient.objects.create()
 

@@ -56,37 +56,9 @@ class Patient(models.Model):
             d[model.get_api_name()] = [subrecord.to_dict(user) for subrecord in subrecords]
         return d
 
-    # def to_dict(self):
-    #     d = {'id': self.id}
-    #     for model in Subrecord.__subclasses__():
-    #         subrecords = model.objects.filter(patient_id=self.id)
-    #         d[model.get_api_name()] = [subrecord.to_dict() for subrecord in subrecords]
-    #     return d
-
-    # def update_from_dict(self, data, user):
     def update_from_demographics_dict(self, demographics_data, user):
         demographics = self.demographics_set.get()
         demographics.update_from_dict(demographics_data, user)
-
-        # location = self.location_set.get()
-        # location.update_from_dict(data['location'], user)
-
-        # self.save()
-
-    # def get_tag_names(self):
-    #     return [t.tag_name for t in self.tagging_set.all()]
-
-    # def set_tags(self, tags, user):
-    #     for tagging in self.tagging_set.all():
-    #         if tagging.tag_name not in tags:
-    #             tagging.delete()
-
-    #     for tag_name in tags:
-    #         if tag_name not in self.get_tag_names():
-    #             tagging = Tagging(tag_name=tag_name)
-    #             if tag_name == 'mine':
-    #                 tagging.user = user
-    #             self.tagging_set.add(tagging)
 
 
 class Episode(models.Model):
@@ -97,7 +69,9 @@ class Episode(models.Model):
         demographics = self.patient.demographics_set.get()
         location = self.location_set.get()
 
-        return '%s | %s | %s' % (demographics.hospital_number, demographics.name, location.date_of_admission)
+        return '%s | %s | %s' % (demographics.hospital_number,
+                                 demographics.name,
+                                 location.date_of_admission)
 
     def is_active(self):
         # This is only here for API compatability.
@@ -129,10 +103,12 @@ class Episode(models.Model):
 
         if len(tag_names) < 1:
             self.active = False
-            self.save()
+        elif tag_names == ['mine']:
+            self.active = False
         elif not self.active:
             self.active = True
-            self.save()
+
+        self.save()
 
     def get_tag_names(self, user):
         return [t.tag_name for t in self.tagging_set.all() if t.user in (None, user)]
@@ -166,7 +142,6 @@ class Tagging(models.Model):
 
 
 class Subrecord(models.Model):
-#    patient = models.ForeignKey(Patient)
     consistency_token = models.CharField(max_length=8)
 
     _is_singleton = False
@@ -269,10 +244,6 @@ class Subrecord(models.Model):
             else:
                 # TODO use form here?
                 if value and self._get_field_type(name) == models.fields.DateField:
-                    # try:
-                    #     value = datetime.strptime(value, '%Y-%m-%d').date()
-                    # except ValueError:
-                    #     value = datetime.strptime(value, '%Y-%m-%dT%H:%M:%S.%fZ').date()
                     value = datetime.strptime(value, '%Y-%m-%d').date()
 
                 setattr(self, name, value)
@@ -351,7 +322,6 @@ for name in model_names:
     option_models[name] = type(class_name, bases, attrs)
 
 # TODO
-
 @receiver(models.signals.post_save, sender=Patient)
 def create_patient_singletons(sender, **kwargs):
     if kwargs['created']:
