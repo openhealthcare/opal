@@ -1,33 +1,35 @@
 <div class="container">
-	<h2>Patient Search</h2>
+  <h2>Patient Search</h2>
 
-	<table class="table">
-		<thead>
-			<tr>
-				<form>
-					<td><input type="text" name="hospital_number" ng-model="searchTerms.hospital_number" placeholder="Hospital Number"></td>
-					<td><input type="text" name="name" ng-model="searchTerms.name" placeholder="Name"></td>
-                    <td></td>
-					<td></td>
-					<td><button ng-click="search()" class="btn">Search</button></td>
-				</form>
-			</tr>
-		</thead>
+  <table class="table">
+	<thead>
+	  <tr>
+		<form>
+		  <td><input type="text" name="hospital_number" ng-model="searchTerms.hospital_number" placeholder="Hospital Number"></td>
+		  <td><input type="text" name="name" ng-model="searchTerms.name" placeholder="Name"></td>
+          <td></td> <!-- DOB -->
+		  <td></td> <!-- Category -->
+          <td></td>
+		  <td><button ng-click="search()" class="btn">Search</button></td>
+		</form>
+	  </tr>
+	</thead>
 
-		<tr ng-repeat="patient in results">
-			<td>[[patient.demographics[0].hospital_number]]</td>
-			<td>[[patient.demographics[0].name]]</td>
-            <td>[[patient.demographics[0].date_of_birth]]<td>
-			<td>[[patient.location[0].category]]</td>
-			<td><a href="#/episode/[[ patient.active_episode_id ]]">View</a></td>
-		</tr>
+	<tr ng-repeat="patient in results">
+	  <td>[[patient.demographics[0].hospital_number]]</td>
+	  <td>[[patient.demographics[0].name]]</td>
+      <td>[[patient.demographics[0].date_of_birth]]<td>
+	  <td>[[patient.location[0].category]]</td>
+      <td>[[patient.active_episode_id ? 'active': 'inactive' ;]]</td>
+	  <td><a href="#/episode/[[ patient.active_episode_id ]]">View</a></td>
+	</tr>
 
-	</table>
+  </table>
 
-	<div ng-hide="!searched || results.length">
-		No Results
-	</div>
+  <div ng-hide="!searched || results.length">
+	No Results
+  </div>
 
-	<br />
-	<button class="btn" ng-click="addEpisode()">Add record</button>
+  <br />
+  <button class="btn" ng-click="addEpisode()">Add record</button>
 </div>

@@ -53,7 +53,7 @@ app.config(function($routeProvider) {
 					return Options;
 				},
 			},
-                }).when('/account', {
+        }).when('/account', {
                         controller: 'AccountCtrl',
                         templateUrl: '/accounts/templates/account_detail.html'
 
