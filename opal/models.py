@@ -64,14 +64,16 @@ class Patient(models.Model):
 class Episode(models.Model):
     patient = models.ForeignKey(Patient)
     active  = models.BooleanField(default=False)
+    date_of_admission = models.DateField(null=True, blank=True)
+    # TODO rename to date_of_discharge?
+    discharge_date = models.DateField(null=True, blank=True)
 
     def __unicode__(self):
         demographics = self.patient.demographics_set.get()
-        location = self.location_set.get()
 
         return '%s | %s | %s' % (demographics.hospital_number,
                                  demographics.name,
-                                 location.date_of_admission)
+                                 self.date_of_admission)
 
     def is_active(self):
         # This is only here for API compatability.
@@ -114,13 +116,22 @@ class Episode(models.Model):
         return [t.tag_name for t in self.tagging_set.all() if t.user in (None, user)]
 
     def to_dict(self, user):
-        d = {'id': self.id}
+        """
+        Serialisation to JSON for Episodes
+        """
+        d = {
+            'id': self.id,
+            'date_of_admission': self.date_of_admission,
+            'discharge_date': self.discharge_date,
+            }
         for model in PatientSubrecord.__subclasses__():
             subrecords = model.objects.filter(patient_id=self.patient.id)
             d[model.get_api_name()] = [subrecord.to_dict(user) for subrecord in subrecords]
         for model in EpisodeSubrecord.__subclasses__():
             subrecords = model.objects.filter(episode_id=self.id)
             d[model.get_api_name()] = [subrecord.to_dict(user) for subrecord in subrecords]
+        d['prev_episodes'] = []
+        d['next_episodes'] = []
         return d
 
     def update_from_location_dict(self, location_data, user):

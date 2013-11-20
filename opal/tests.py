@@ -50,6 +50,9 @@ class EpisodeTest(TestCase):
         self.patient = Patient.objects.create()
         self.episode = self.patient.create_episode()
 
+    def test_unicode(self):
+        self.assertEqual(' |  | None', self.episode.__unicode__())
+
     def test_location_subrecord_created(self):
         self.assertEqual(1, self.episode.location_set.count())
 
@@ -78,8 +81,13 @@ class EpisodeTest(TestCase):
         self.assertFalse(self.episode.is_active())
 
     def test_to_dict(self):
+        self.maxDiff = None
         expected_data = {
             'id': self.episode.id,
+            'prev_episodes': [],
+            'next_episodes': [],
+            'date_of_admission': None,
+            'discharge_date': None,
             'demographics': [{
                 'id': self.patient.demographics_set.get().id,
                 'patient_id': self.patient.id,
@@ -94,8 +102,6 @@ class EpisodeTest(TestCase):
                 'bed': '',
                 'category': '',
                 'consistency_token': '',
-                'date_of_admission': None,
-                'discharge_date': None,
                 'hospital': '',
                 'tags': {},
                 'ward': '',

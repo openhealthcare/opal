@@ -1,5 +1,5 @@
 describe('controllers', function() {
-    var columns, episodeData, optionsData, patientData, Schema, schema, Episode;
+    var columns, episodeData, optionsData, patientData, Schema, schema, Episode, Item;
 
     beforeEach(function() {
         module('opal.controllers');
@@ -165,6 +165,7 @@ describe('controllers', function() {
         inject(function($injector) {
             Schema = $injector.get('Schema');
             Episode = $injector.get('Episode');
+            Item = $injector.get('Item');
         });
 
         schema = new Schema(columns);
@@ -344,6 +345,85 @@ describe('controllers', function() {
     });
 
 
+    describe('EditItemCtrl', function (){
+        var $scope, $cookieStore, $timeout;
+        var dialog, item, options, episode;
+
+        beforeEach(function(){
+            inject(function($injector){
+                $httpBackend = $injector.get('$httpBackend');
+
+                $rootScope   = $injector.get('$rootScope');
+                $scope       = $rootScope.$new();
+                $controller  = $injector.get('$controller');
+                $cookieStore = $injector.get('$cookieStore');
+                $dialog      = $injector.get('$dialog');
+                $timeout     = $injector.get('$timeout');
+            });
+
+            options = optionsData;
+            episode = new Episode(episodeData, schema);
+            item    = new Item({columnName: 'diagnosis'}, episode, schema.columns[0])
+            dialog = $dialog.dialog()
+
+            controller = $controller('EditItemCtrl', {
+                $scope      : $scope,
+                $cookieStore: $cookieStore,
+                $timeout    : $timeout,
+                dialog      : dialog,
+                item        : item,
+                options     : options,
+                episode     : episode,
+            });
+
+        });
+
+        describe('newly-created-controller', function (){
+            it('Should have subtag "all"', function () {
+                expect($scope.currentSubTag).toBe('all')
+                expect($scope.columnName).toBe('diagnosis');
+            });
+        });
+
+
+        describe('Saving items', function (){
+
+            it('Should save the current item', function () {
+                var callArgs;
+
+                spyOn(item, 'save').andCallThrough();
+
+                $scope.save('save');
+
+                callArgs = item.save.mostRecentCall.args;
+
+                expect(callArgs.length).toBe(1);
+                expect(callArgs[0]).toBe($scope.editing)
+            });
+
+            it('Should save the episode if the column is location', function () {
+                var callArgs;
+
+                spyOn(episode, 'save').andCallThrough();
+
+                $scope.columnName = 'location';
+
+                $httpBackend.expectPOST('/diagnosis/', {episode_id: 123})
+                $httpBackend.whenPOST('/diagnosis/').respond(
+                    {episode_id: 123, consistency_token: "123465"}
+                )
+
+                $scope.save('save');
+                $httpBackend.flush();
+
+                callArgs = episode.save.mostRecentCall.args;
+
+                expect(callArgs.length).toBe(1);
+                expect(callArgs[0]).toBe($scope.episode)
+            });
+        });
+
+    });
 
     describe('SearchCtrl', function (){
         var $scope, $http, $location, $dialog;
@@ -354,14 +434,16 @@ describe('controllers', function() {
                 $rootScope = $injector.get('$rootScope');
                 $scope = $rootScope.$new();
                 $controller = $injector.get('$controller');
+                $timeout = $injector.get('$timeout');
                 $dialog = $injector.get('$dialog');
             });
 
-            options = optionsData
+            options = optionsData;
 
             controller = $controller('SearchCtrl', {
                 $scope: $scope,
                 $dialog: $dialog,
+                $timeout: $timeout,
                 schema: schema,
                 options: options,
             });
@@ -382,5 +464,6 @@ describe('controllers', function() {
         });
 
     });
+
 
 });

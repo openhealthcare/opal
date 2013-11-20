@@ -24,7 +24,8 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 	$scope.mouseCix = -1; // index of column mouse is currently over
 
 	$scope.query = {hospital: '', ward: ''};
-	$scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine'; // initially display episodes of interest to current user
+    // initially display episodes of interest to current user
+	$scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine';
     $scope.currentSubTag = 'all';
     $cookieStore.put('opal.currentSubTag', 'all');
 
@@ -375,6 +376,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 			resolve: {
 				item: function() { return item; },
 				options: function() { return options; },
+                episode: function() { return episode; }
 			},
 		});
 
@@ -552,6 +554,7 @@ controllers.controller('EpisodeDetailCtrl', function($scope, $dialog, schema,
 			resolve: {
 				item: function() { return item; },
 				options: function() { return options; },
+                episode: function() { return $scope.episode },
 			},
 		});
 
@@ -643,6 +646,10 @@ controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog,
 
 	$scope.episode_category_list = ['Inpatient', 'Outpatient', 'Review'];
 	$scope.hospital_list = ['Heart Hospital', 'NHNN', 'UCH'];
+
+	$timeout(function() {
+		dialog.modalEl.find('input,textarea').first().focus();
+	});
 
 	$scope.search = function() {
 		var queryParams = [];
@@ -829,10 +836,12 @@ controllers.controller('ReopenEpisodeCtrl', function($scope, $http, $timeout,
 	};
 });
 
-controllers.controller('EditItemCtrl', function($scope, $cookieStore,
-                                                $timeout, dialog, item, options) {
+controllers.controller('EditItemCtrl', function($scope, $cookieStore, $timeout,
+                                                dialog, item, options, episode) {
+    $scope.episode = episode.makeCopy();
 	$scope.editing = item.makeCopy();
 	$scope.editingName = item.episodeName;
+    $scope.columnName = item.columnName;
     // initially display episodes of interest to current user
     $scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine';
     // initially display episodes of interest to current user
@@ -845,7 +854,6 @@ controllers.controller('EditItemCtrl', function($scope, $cookieStore,
 		    return false;
 	    };
     };
-
 
 	$timeout(function() {
 		dialog.modalEl.find('input,textarea').first().focus();
@@ -882,7 +890,11 @@ controllers.controller('EditItemCtrl', function($scope, $cookieStore,
                     function(values){
                         var field =  values[0];
                         var _default =  values[1];
-                        $scope.editing[field] =  $scope.editing[field] ? $scope.editing[field] : _default;
+                        var val = _default
+                        if($scope.editing[field]){
+                            val = $scope.editing[field]
+                        }
+                        $scope.editing[field] =  val;
                     });
             }
 		});
@@ -892,7 +904,13 @@ controllers.controller('EditItemCtrl', function($scope, $cookieStore,
 
 	$scope.save = function(result) {
 		item.save($scope.editing).then(function() {
-			dialog.close(result);
+            if($scope.columnName == 'location'){
+                episode.save($scope.episode).then(function(){
+                    dialog.close(result)
+                });
+            }else{
+			    dialog.close(result);
+            }
 		});
 	};
 
@@ -901,7 +919,8 @@ controllers.controller('EditItemCtrl', function($scope, $cookieStore,
 	};
 });
 
-controllers.controller('DeleteItemConfirmationCtrl', function($scope, $timeout, dialog, item) {
+controllers.controller('DeleteItemConfirmationCtrl', function($scope, $timeout,
+                                                              dialog, item) {
 	$timeout(function() {
 		dialog.modalEl.find('button.btn-primary').first().focus();
 	});
@@ -917,7 +936,8 @@ controllers.controller('DeleteItemConfirmationCtrl', function($scope, $timeout, 
 	};
 });
 
-controllers.controller('DischargeEpisodeCtrl', function($scope, $timeout, dialog, episode, currentTag) {
+controllers.controller('DischargeEpisodeCtrl', function($scope, $timeout,
+                                                        dialog, episode, currentTag) {
 	$timeout(function() {
 		dialog.modalEl.find('input,textarea').first().focus();
 	});

@@ -115,15 +115,20 @@ services.factory('Episode', function($http, $q, Item) {
 
 		for (var cix = 0; cix < schema.getNumberOfColumns(); cix++) {
 			column = schema.columns[cix];
-            if(_.isUndefined(episode[column.name])){
-                console.log(column.name)
-                console.log(episode)
-            }
 			for (var iix = 0; iix < episode[column.name].length; iix++) {
 				attrs = episode[column.name][iix];
 				episode[column.name][iix] = new Item(attrs, episode, column);
 			};
 		};
+
+        // Convert string-serialised dates into native JavaScriptz
+        // TODO - Pull these from the schema?
+        var date_fields = ['date_of_admission', 'discharge_date'];
+        _.each(date_fields, function(field){
+            if(episode[field]){
+                episode[field] = moment(episode[field], 'YYYY-MM-DD')._d;
+            }
+        });
 
 		this.getNumberOfItems = function(columnName) {
 			return episode[columnName].length;
@@ -182,6 +187,16 @@ services.factory('Episode', function($http, $q, Item) {
 			return true;
 		};
 
+        this.makeCopy = function(){
+            var copy = {
+                id: episode.id,
+                date_of_admission: episode.date_of_admission,
+                active: episode.active,
+                discharge_date: episode.discharge_date
+            }
+            return copy
+        };
+
 		this.compare = function(other) {
 			var v1, v2;
 			var comparators = [
@@ -209,7 +224,16 @@ services.factory('Episode', function($http, $q, Item) {
 
 			return 0;
 		};
+
+
+        this.save = function(attrs){
+            var deferred = $q.defer();
+            return deferred.promise;
+        };
+
+
 	};
+
 });
 
 services.factory('Item', function($http, $q) {
