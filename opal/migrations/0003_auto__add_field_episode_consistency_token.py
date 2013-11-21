@@ -10,7 +10,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'Episode.consistency_token'
         db.add_column(u'opal_episode', 'consistency_token',
-                      self.gf('django.db.models.fields.CharField')(default='EEEEEEEEEEEEEEEEEEEEEEe', max_length=8),
+                      self.gf('django.db.models.fields.CharField')(default='EEE', max_length=8),
                       keep_default=False)
 
 
