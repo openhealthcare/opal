@@ -29,7 +29,7 @@ module.exports =  function(config){
             '**/opal/*.js': 'coverage'
         },
 
-        reporters: ['dots', 'coverage'],
+        reporters: ['progress', 'coverage'],
 
         autoWatch: true,
 
