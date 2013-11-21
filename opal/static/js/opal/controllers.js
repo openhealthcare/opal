@@ -636,6 +636,7 @@ controllers.controller('EpisodeDetailCtrl', function($scope, $dialog, schema,
 });
 
 controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog,
+                                              $timeout,
                                               schema, options) {
 	$scope.searchTerms = {
 		hospital_number: '',
