@@ -748,8 +748,8 @@ controllers.controller('AddEpisodeCtrl', function($scope, $http, $cookieStore,
 
     // TODO - this is no longer the way location/admission date works.
 	$scope.editing = {
+		date_of_admission: moment().format('DD/MM/YYYY'),
 		location: {
-			date_of_admission: moment().format('DD/MM/YYYY'),
 			tags: {},
 		},
 		demographics: demographics,
@@ -771,10 +771,10 @@ controllers.controller('AddEpisodeCtrl', function($scope, $http, $cookieStore,
 
 		// This is a bit mucky but will do for now
         // TODO - this is obviously broken now that location is not like this.
-		value = $scope.editing.location.date_of_admission;
+		value = $scope.editing.date_of_admission;
 		if (value) {
             var doa = moment(value, 'DD/MM/YYYY').format('YYYY-MM-DD');
-			$scope.editing.location.date_of_admission = doa;
+			$scope.editing.date_of_admission = doa;
 		}
 
 		value = $scope.editing.demographics.date_of_birth;

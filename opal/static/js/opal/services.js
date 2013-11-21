@@ -118,10 +118,12 @@ services.factory('Episode', function($http, $q, Item) {
 
 		for (var cix = 0; cix < schema.getNumberOfColumns(); cix++) {
 			column = schema.columns[cix];
-			for (var iix = 0; iix < episode[column.name].length; iix++) {
-				attrs = episode[column.name][iix];
-				episode[column.name][iix] = new Item(attrs, episode, column);
-			};
+            if(episode[column.name]){
+			    for (var iix = 0; iix < episode[column.name].length; iix++) {
+				    attrs = episode[column.name][iix];
+				    episode[column.name][iix] = new Item(attrs, episode, column);
+			    };
+            }
 		};
 
         // Constructor to update from attrs and parse datish fields

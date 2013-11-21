@@ -152,6 +152,12 @@ class Patient(models.Model):
 
 
 class Episode(UpdatesFromDictMixin, models.Model):
+    """
+    An individual episode of care.
+
+    A patient may have many episodes of care, but this maps to one occasion
+    on which they found themselves on "The List".
+    """
     patient = models.ForeignKey(Patient)
     active  = models.BooleanField(default=False)
     date_of_admission = models.DateField(null=True, blank=True)
@@ -167,6 +173,8 @@ class Episode(UpdatesFromDictMixin, models.Model):
                                  self.date_of_admission)
 
     def is_active(self):
+        # TODO Depreciate this.
+        #
         # This is only here for API compatability.
         # Don't use me!
         return self.active
@@ -200,7 +208,6 @@ class Episode(UpdatesFromDictMixin, models.Model):
             self.active = False
         elif not self.active:
             self.active = True
-
         self.save()
 
     def get_tag_names(self, user):
@@ -222,12 +229,27 @@ class Episode(UpdatesFromDictMixin, models.Model):
 
         for model in PatientSubrecord.__subclasses__():
             subrecords = model.objects.filter(patient_id=self.patient.id)
-            d[model.get_api_name()] = [subrecord.to_dict(user) for subrecord in subrecords]
+            d[model.get_api_name()] = [subrecord.to_dict(user)
+                                       for subrecord in subrecords]
         for model in EpisodeSubrecord.__subclasses__():
             subrecords = model.objects.filter(episode_id=self.id)
-            d[model.get_api_name()] = [subrecord.to_dict(user) for subrecord in subrecords]
+            d[model.get_api_name()] = [subrecord.to_dict(user)
+                                       for subrecord in subrecords]
         d['prev_episodes'] = []
         d['next_episodes'] = []
+
+        if self.date_of_admission:
+            eset = self.patient.episode_set
+
+            d['prev_episodes'] = [
+                e.to_dict(user, shallow=True)
+                for e in
+                eset.filter(date_of_admission__lt=self.date_of_admission)]
+            d['next_episodes'] = [
+                e.to_dict(user, shallow=True)
+                for e in
+                eset.filter(date_of_admission__gt=self.date_of_admission)]
+
         return d
 
     def update_from_location_dict(self, location_data, user):

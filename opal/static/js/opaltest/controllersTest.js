@@ -470,5 +470,50 @@ describe('controllers', function() {
 
     });
 
+    describe('AddEpisodeCtrl', function (){
+        var $scope, $http, $cookieStore, $timeout, $dialog;
+        var dialog, episode, options, demographics;
+
+        beforeEach(function(){
+            inject(function($injector){
+                $rootScope = $injector.get('$rootScope');
+                $scope = $rootScope.$new();
+                $controller = $injector.get('$controller');
+                $cookieStore = $injector.get('$cookieStore');
+                $timeout = $injector.get('$timeout');
+                $dialog = $injector.get('$dialog');
+            });
+
+            options = optionsData;
+            dialog = $dialog.dialog({template: 'notatemplate'});
+            dialog.open();
+
+            episode = new Episode({}, schema);
+            demographics = {};
+
+            controller = $controller('AddEpisodeCtrl', {
+                $scope: $scope,
+                $cookieStore: $cookieStore,
+                $timeout: $timeout,
+                dialog: dialog,
+                Episode: episode,
+                schema: schema,
+                options: options,
+                demographics: demographics
+            });
+        });
+
+
+        describe('Adding an episode', function (){
+
+            it('Should set up the initial editing situation', function () {
+                expect($scope.editing.location.tags).toEqual({mine: true});
+                expect($scope.editing.date_of_admission).toEqual(moment().format('DD/MM/YYYY'));
+            });
+
+        });
+
+    });
+
 
 });

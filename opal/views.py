@@ -114,6 +114,13 @@ def episode_list_and_create_view(request):
 
         try:
             episode = patient.create_episode()
+            episode_fields = models.Episode._get_fieldnames_to_serialize()
+            episode_data = {}
+            for fname in episode_fields:
+                if fname in data:
+                    episode_data[fname] = data[fname]
+            episode.update_from_dict(episode_data, request.user)
+
         except exceptions.APIError:
             return _build_json_response({'error': 'Patient already has active episode'}, 400)
 

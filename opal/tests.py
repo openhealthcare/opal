@@ -47,7 +47,7 @@ class PatientTest(TestCase):
 
 
 class EpisodeTest(TestCase):
-    fixtures = ['patients_users', 'patients_records']
+    fixtures = ['patients_users', 'patients_records', 'patients_options']
 
     def setUp(self):
         self.user = User.objects.get(pk=1)
@@ -88,7 +88,8 @@ class EpisodeTest(TestCase):
         self.maxDiff = None
         expected_data = {
             'id': self.episode.id,
-            'prev_episodes': [],
+            'prev_episodes': [
+                ],
             'next_episodes': [],
             'active': False,
             'date_of_admission': None,
@@ -122,6 +123,14 @@ class EpisodeTest(TestCase):
             'microbiology_test': [],
         }
         self.assertEqual(expected_data, self.episode.to_dict(self.user))
+
+    def test_to_dict_with_multiple_episodes(self):
+        episode = Episode.objects.get(pk=1)
+        serialised = episode.to_dict(self.user)
+        self.assertEqual(1, len(serialised['prev_episodes']))
+        self.assertEqual(datetime.date(2012, 7, 25),
+                         serialised['prev_episodes'][0]['date_of_admission'])
+
 
 
 class EpisodeDetailViewTest(TestCase):
