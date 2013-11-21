@@ -5,35 +5,63 @@
   <!--   ( [[ episode.demographics[0].date_of_birth | date:'d/M/yyyy' ]] ) -->
   <!-- </h4> -->
 
-  <table class="table table-bordered">
-	{% for column in columns %}
-	  <tr>
-		<td>
-		  <h5>{{ column.title }}</h5>
-		  <ul ng-mouseenter="mouseEnter({{ forloop.counter0 }})" ng-mouseleave="mouseLeave()">
-			<li ng-repeat="item in episode.{{column.name}}"
-				ng-click="selectItem({{ forloop.counter0 }}, $index)"
-				ng-dblclick="editItem({{ forloop.counter0 }}, $index)"
-				ng-class="{selected: cix == {{ forloop.counter0 }} && iix == $index}">
-				{% include column.detail_template_path %}
-			</li>
+  <div class="row">
+    <div class="span2">
+      <h4>Previous Episodes</h4>
+      <p ng-repeat="ep in episode.prev_episodes">
+        <a href="/#/episode/[[ep.id]]">
+          [[ ep.date_of_admission ]]
+          <br />
+          [[ ep.discharge_date ]]
+        </a>
+        <hr />
+      </p>
+    </div>
+    <div class="span8">
+      <table class="table table-bordered">
+	    {% for column in columns %}
+	      <tr>
+		    <td>
+		      <h5>{{ column.title }}</h5>
+		      <ul ng-mouseenter="mouseEnter({{ forloop.counter0 }})" ng-mouseleave="mouseLeave()">
+			    <li ng-repeat="item in episode.{{column.name}}"
+				    ng-click="selectItem({{ forloop.counter0 }}, $index)"
+				    ng-dblclick="editItem({{ forloop.counter0 }}, $index)"
+				    ng-class="{selected: cix == {{ forloop.counter0 }} && iix == $index}">
+				    {% include column.detail_template_path %}
+			    </li>
 
 
-			{% if not column.single %}
-			  <li ng-click="selectItem({{ forloop.counter0 }}, episode.{{column.name}}.length)"
-				  ng-dblclick="editItem({{ forloop.counter0 }}, episode.{{column.name}}.length)"
-				  ng-class="{selected: cix == {{ forloop.counter0 }} && iix == episode.{{column.name}}.length}">
-				  <span ng-show="(cix == {{ forloop.counter0 }}) || (mouseCix == {{ forloop.counter0 }})">
-					Add
-				  </span>
-				  &nbsp;
-			  </li>
-			{% endif %}
-		  </ul>
-		</td>
-	  </tr>
-	{% endfor %}
-  </table>
+			    {% if not column.single %}
+			      <li ng-click="selectItem({{ forloop.counter0 }}, episode.{{column.name}}.length)"
+				      ng-dblclick="editItem({{ forloop.counter0 }}, episode.{{column.name}}.length)"
+				      ng-class="{selected: cix == {{ forloop.counter0 }} && iix == episode.{{column.name}}.length}">
+				      <span ng-show="(cix == {{ forloop.counter0 }}) || (mouseCix == {{ forloop.counter0 }})">
+					    Add
+				      </span>
+				      &nbsp;
+			      </li>
+			    {% endif %}
+		      </ul>
+		    </td>
+	      </tr>
+	    {% endfor %}
+      </table>
+
+    </div>
+    <div class="span2">
+      <h4>Subsequent Episodes</h4>
+      <p ng-repeat="ep in episode.next_episodes">
+        <a href="/#/episode/[[ep.id]]">
+          [[ ep.date_of_admission ]]
+          <br />
+          [[ ep.discharge_date ]]
+        </a>
+        <hr />
+      </p>
+    </div>
+  </div>
+
 </div>
 
 <div id="delete-confirmation" class="modal hide" tabindex="-1" role="dialog">
