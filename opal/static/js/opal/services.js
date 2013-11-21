@@ -111,6 +111,9 @@ services.factory('Episode', function($http, $q, Item) {
 		var episode = this;
 	   	var column, field, attrs;
 
+        // TODO - Pull these from the schema?
+        var date_fields = ['date_of_admission', 'discharge_date'];
+
 		angular.extend(episode, resource);
 
 		for (var cix = 0; cix < schema.getNumberOfColumns(); cix++) {
@@ -121,14 +124,18 @@ services.factory('Episode', function($http, $q, Item) {
 			};
 		};
 
-        // Convert string-serialised dates into native JavaScriptz
-        // TODO - Pull these from the schema?
-        var date_fields = ['date_of_admission', 'discharge_date'];
-        _.each(date_fields, function(field){
-            if(episode[field]){
-                episode[field] = moment(episode[field], 'YYYY-MM-DD')._d;
-            }
-        });
+        // Constructor to update from attrs and parse datish fields
+        this.initialise = function(attrs){
+            angular.extend(episode, attrs)
+
+            // Convert string-serialised dates into native JavaScriptz
+            _.each(date_fields, function(field){
+                if(attrs[field]){
+                    var parsed = moment(attrs[field], 'YYYY-MM-DD');
+                    episode[field] = parsed._d;
+                }
+            });
+        }
 
 		this.getNumberOfItems = function(columnName) {
 			return episode[columnName].length;
@@ -189,10 +196,11 @@ services.factory('Episode', function($http, $q, Item) {
 
         this.makeCopy = function(){
             var copy = {
-                id: episode.id,
+                id               : episode.id,
                 date_of_admission: episode.date_of_admission,
-                active: episode.active,
-                discharge_date: episode.discharge_date
+                active           : episode.active,
+                discharge_date   : episode.discharge_date,
+                consistency_token: episode.consistency_token
             }
             return copy
         };
@@ -203,7 +211,8 @@ services.factory('Episode', function($http, $q, Item) {
 				function(p) { return CATEGORIES.indexOf(p.location[0].category) },
 				function(p) { return p.location[0].hospital },
 				function(p) {
-					if (p.location[0].hospital == 'UCH' && p.location[0].ward.match(/^T\d+/)) {
+					if (p.location[0].hospital == 'UC4H' &&
+                        p.location[0].ward.match(/^T\d+/)) {
 						return parseInt(p.location[0].ward.substring(1));
 					} else {
 						return p.location[0].ward
@@ -225,13 +234,50 @@ services.factory('Episode', function($http, $q, Item) {
 			return 0;
 		};
 
-
+        //
+        //  Save our Episode.
+        //
+        //  1. Convert datey values to server-style
+        //  2. Send our data to the server
+        //  3. Handle the response.
+        //
         this.save = function(attrs){
+            var value;
             var deferred = $q.defer();
+            var url = '/episode/' + attrs.id + '/';
+            method = 'put'
+
+            _.each(date_fields, function(field){
+                if(attrs[field]){
+                    if(angular.isString(attrs[field])){
+                        value = moment(attrs[field], 'DD/MM/YYYY')
+                    }else{
+                        value = moment(attrs[field])
+                    }
+                    attrs[field] = value.format('YYYY-MM-DD');
+                }
+            });
+
+            $http[method](url, attrs).then(
+                function(response){
+                    episode.initialise(response.data);
+				    deferred.resolve();
+                },
+                function(response) {
+				// TODO handle error better
+				    if (response.status == 409) {
+					    alert('Item could not be saved because somebody else has \
+recently changed it - refresh the page and try again');
+				    } else {
+					    alert('Item could not be saved');
+				    };
+			    }
+            );
+
             return deferred.promise;
         };
 
-
+        this.initialise(resource)
 	};
 
 });
@@ -277,6 +323,9 @@ services.factory('Item', function($http, $q) {
 			return copy;
 		};
 
+        //
+        // Save our Item to the server
+        //
 		this.save = function(attrs) {
 			var field, value;
 			var deferred = $q.defer();

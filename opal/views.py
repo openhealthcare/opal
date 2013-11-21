@@ -29,6 +29,16 @@ Synonym = models.Synonym
 tags = stringport(settings.OPAL_TAGS_MODULE)
 TAGS = tags.TAGS
 
+def _get_request_data(request):
+    data = request.read()
+    return json.loads(data)
+
+def _build_json_response(data, status_code=200):
+    response = HttpResponse()
+    response['Content-Type'] = 'application/json'
+    response.content = json.dumps(data, cls=DjangoJSONEncoder)
+    response.status_code = status_code
+    return response
 
 
 class LoginRequiredMixin(object):
@@ -36,14 +46,24 @@ class LoginRequiredMixin(object):
     def dispatch(self, *args, **kwargs):
         return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
 
-@require_http_methods(['GET'])
+@require_http_methods(['GET', 'PUT'])
 def episode_detail_view(request, pk):
     try:
-        patient = models.Episode.objects.get(pk=pk)
+        episode = models.Episode.objects.get(pk=pk)
     except models.Episode.DoesNotExist:
         return HttpResponseNotFound()
 
-    return _build_json_response(patient.to_dict(request.user), 200)
+    if request.method == 'GET':
+        return _build_json_response(episode.to_dict(request.user))
+
+    data = _get_request_data(request)
+
+    try:
+        episode.update_from_dict(data, request.user)
+        return _build_json_response(episode.to_dict(request.user, shallow=True))
+    except exceptions.ConsistencyError:
+        return _build_json_response({'error': 'Item has changed'}, 409)
+
 
 
 @with_no_caching
@@ -124,18 +144,6 @@ def subrecord_create_view(request, model):
     data = _get_request_data(request)
     subrecord.update_from_dict(data, request.user)
     return _build_json_response(subrecord.to_dict(request.user), 201)
-
-def _get_request_data(request):
-    data = request.read()
-    return json.loads(data)
-
-def _build_json_response(data, status_code=200):
-    response = HttpResponse()
-    response['Content-Type'] = 'application/json'
-    response.content = json.dumps(data, cls=DjangoJSONEncoder)
-    response.status_code = status_code
-    return response
-
 
 class EpisodeTemplateView(TemplateView):
     def get_column_context(self):

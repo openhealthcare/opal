@@ -1,7 +1,11 @@
 """
 Unit tests for OPAL.
 """
+import datetime
+import json
+
 from django.contrib.auth.models import User
+from django.core.serializers.json import DjangoJSONEncoder
 from django.test import TestCase
 
 from opal.models import Patient, Episode
@@ -86,8 +90,10 @@ class EpisodeTest(TestCase):
             'id': self.episode.id,
             'prev_episodes': [],
             'next_episodes': [],
+            'active': False,
             'date_of_admission': None,
             'discharge_date': None,
+            'consistency_token': '',
             'demographics': [{
                 'id': self.patient.demographics_set.get().id,
                 'patient_id': self.patient.id,
@@ -116,3 +122,42 @@ class EpisodeTest(TestCase):
             'microbiology_test': [],
         }
         self.assertEqual(expected_data, self.episode.to_dict(self.user))
+
+
+class EpisodeDetailViewTest(TestCase):
+    fixtures = ['patients_users', 'patients_options', 'patients_records']
+
+    def setUp(self):
+        self.user = User.objects.get(pk=1)
+        self.assertTrue(self.client.login(username=self.user.username,
+                                          password='password'))
+        self.patient = Patient.objects.get(pk=1)
+        self.episode = self.patient.episode_set.all()[0]
+
+    def post_json(self, path, data):
+        json_data = json.dumps(data, cls=DjangoJSONEncoder)
+        return self.client.post(path, content_type='application/json', data=json_data)
+
+    def put_json(self, path, data):
+        json_data = json.dumps(data, cls=DjangoJSONEncoder)
+        return self.client.put(path, content_type='application/json', data=json_data)
+
+    def test_update_nonexistent_episode(self):
+        data = {
+            'consistency_token': '456456',
+            'id': 4561325,
+            }
+        response = self.put_json('/episode/4561325', data)
+        self.assertEqual(404, response.status_code)
+
+    def test_update_episode(self):
+        episode = self.patient.episode_set.all()[0]
+        today = datetime.date.today()
+        data = episode.to_dict(self.user, shallow=True)
+        data['discharge_date'] = today
+        self.assertNotEqual(episode.discharge_date, today)
+        response = self.put_json('/episode/{0}'.format(episode.id), data)
+
+        self.assertEqual(200, response.status_code)
+        episode = self.patient.episode_set.all()[0]
+        self.assertEqual(episode.discharge_date, today)

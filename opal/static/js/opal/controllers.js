@@ -729,7 +729,9 @@ controllers.controller('HospitalNumberCtrl', function($scope, $timeout, dialog) 
 
 
 controllers.controller('AddEpisodeCtrl', function($scope, $http, $cookieStore,
-                                                  $timeout, dialog, Episode, schema, options, demographics) {
+                                                  $timeout,
+                                                  dialog, Episode, schema, options,
+                                                  demographics) {
 	$scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine';
 	$scope.currentSubTag = $cookieStore.get('opal.currentSubTag') || 'all';
 
@@ -744,6 +746,7 @@ controllers.controller('AddEpisodeCtrl', function($scope, $http, $cookieStore,
 
 	$scope.episode_category_list = ['Inpatient', 'Outpatient', 'Review'];
 
+    // TODO - this is no longer the way location/admission date works.
 	$scope.editing = {
 		location: {
 			date_of_admission: moment().format('DD/MM/YYYY'),
@@ -767,6 +770,7 @@ controllers.controller('AddEpisodeCtrl', function($scope, $http, $cookieStore,
 		var value;
 
 		// This is a bit mucky but will do for now
+        // TODO - this is obviously broken now that location is not like this.
 		value = $scope.editing.location.date_of_admission;
 		if (value) {
             var doa = moment(value, 'DD/MM/YYYY').format('YYYY-MM-DD');

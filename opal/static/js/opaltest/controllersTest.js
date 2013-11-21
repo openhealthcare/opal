@@ -364,7 +364,8 @@ describe('controllers', function() {
             options = optionsData;
             episode = new Episode(episodeData, schema);
             item    = new Item({columnName: 'diagnosis'}, episode, schema.columns[0])
-            dialog = $dialog.dialog()
+            dialog = $dialog.dialog({template: 'notarealtemplate!'})
+            dialog.open()
 
             controller = $controller('EditItemCtrl', {
                 $scope      : $scope,
@@ -412,6 +413,10 @@ describe('controllers', function() {
                 $httpBackend.whenPOST('/diagnosis/').respond(
                     {episode_id: 123, consistency_token: "123465"}
                 )
+                $httpBackend.expectPUT('/episode/123/', {
+                    id: 123,
+                });
+                $httpBackend.whenPUT('/episode/123/').respond(episode.makeCopy());
 
                 $scope.save('save');
                 $httpBackend.flush();

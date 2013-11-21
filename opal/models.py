@@ -26,6 +26,96 @@ class UserProfile(models.Model):
     force_password_change = models.BooleanField(default=True)
 
 
+class TaggedSubrecordMixin(object):
+
+    @classmethod
+    def _get_fieldnames_to_serialize(cls):
+        fieldnames = super(TaggedSubrecordMixin, cls)._get_fieldnames_to_serialize()
+        fieldnames.append('tags')
+        return fieldnames
+
+    @classmethod
+    def get_field_type_for_tags(cls):
+        return 'list'
+
+    def get_tags(self, user):
+        return {tag_name: True for tag_name in self.episode.get_tag_names(user)}
+
+    # value is a dictionary mapping tag names to a boolean
+    def set_tags(self, value, user):
+        tag_names = [k for k, v in value.items() if v]
+        self.episode.set_tag_names(tag_names, user)
+
+
+class UpdatesFromDictMixin(object):
+
+    @classmethod
+    def _get_fieldnames_to_serialize(cls):
+        fieldnames = [f.attname for f in cls._meta.fields]
+        for name, value in vars(cls).items():
+            if isinstance(value, ForeignKeyOrFreeText):
+                fieldnames.append(name)
+                fieldnames.remove(name + '_ft')
+                fieldnames.remove(name + '_fk_id')
+
+        return fieldnames
+
+    @classmethod
+    def _get_field_type(cls, name):
+        try:
+            return type(cls._meta.get_field_by_name(name)[0])
+        except models.FieldDoesNotExist:
+            pass
+
+        if name in ['patient_id', 'episode_id']:
+            return models.ForeignKey
+
+        try:
+            value = vars(cls)[name]
+            if isinstance(value, ForeignKeyOrFreeText):
+                return ForeignKeyOrFreeText
+        except KeyError:
+            pass
+
+        raise Exception('Unexpected fieldname: %s' % name)
+
+    @classmethod
+    def get_field_type_for_consistency_token(cls):
+        return 'token'
+
+    def set_consistency_token(self):
+        self.consistency_token = '%08x' % random.randrange(16**8)
+
+    def update_from_dict(self, data, user):
+        if self.consistency_token:
+            try:
+                consistency_token = data.pop('consistency_token')
+            except KeyError:
+                raise exceptions.APIError('Missing field (consistency_token)')
+
+            if consistency_token != self.consistency_token:
+                raise exceptions.ConsistencyError
+
+        unknown_fields = set(data.keys()) - set(self._get_fieldnames_to_serialize())
+        if unknown_fields:
+            raise exceptions.APIError(
+                'Unexpected fieldname(s): %s' % list(unknown_fields))
+
+        for name, value in data.items():
+            setter = getattr(self, 'set_' + name, None)
+            if setter is not None:
+                setter(value, user)
+            else:
+                # TODO use form here?
+                if value and self._get_field_type(name) == models.fields.DateField:
+                    value = datetime.strptime(value, '%Y-%m-%d').date()
+
+                setattr(self, name, value)
+
+        self.set_consistency_token()
+        self.save()
+
+
 class Patient(models.Model):
     def __unicode__(self):
         demographics = self.demographics_set.get()
@@ -61,12 +151,13 @@ class Patient(models.Model):
         demographics.update_from_dict(demographics_data, user)
 
 
-class Episode(models.Model):
+class Episode(UpdatesFromDictMixin, models.Model):
     patient = models.ForeignKey(Patient)
     active  = models.BooleanField(default=False)
     date_of_admission = models.DateField(null=True, blank=True)
     # TODO rename to date_of_discharge?
     discharge_date = models.DateField(null=True, blank=True)
+    consistency_token = models.CharField(max_length=8)
 
     def __unicode__(self):
         demographics = self.patient.demographics_set.get()
@@ -115,15 +206,20 @@ class Episode(models.Model):
     def get_tag_names(self, user):
         return [t.tag_name for t in self.tagging_set.all() if t.user in (None, user)]
 
-    def to_dict(self, user):
+    def to_dict(self, user, shallow=False):
         """
         Serialisation to JSON for Episodes
         """
         d = {
-            'id': self.id,
+            'id'               : self.id,
+            'active'           : self.active,
             'date_of_admission': self.date_of_admission,
-            'discharge_date': self.discharge_date,
+            'discharge_date'   : self.discharge_date,
+            'consistency_token': self.consistency_token
             }
+        if shallow:
+            return d
+
         for model in PatientSubrecord.__subclasses__():
             subrecords = model.objects.filter(patient_id=self.patient.id)
             d[model.get_api_name()] = [subrecord.to_dict(user) for subrecord in subrecords]
@@ -135,9 +231,9 @@ class Episode(models.Model):
         return d
 
     def update_from_location_dict(self, location_data, user):
+        # TODO Completely depreciate this.
         location = self.location_set.get()
         location.update_from_dict(location_data, user)
-
 
 
 class Tagging(models.Model):
@@ -152,7 +248,7 @@ class Tagging(models.Model):
             return self.tag_name
 
 
-class Subrecord(models.Model):
+class Subrecord(UpdatesFromDictMixin, models.Model):
     consistency_token = models.CharField(max_length=8)
 
     _is_singleton = False
@@ -188,40 +284,6 @@ class Subrecord(models.Model):
 
         return field_schema
 
-    @classmethod
-    def get_field_type_for_consistency_token(cls):
-        return 'token'
-
-    @classmethod
-    def _get_fieldnames_to_serialize(cls):
-        fieldnames = [f.attname for f in cls._meta.fields]
-        for name, value in vars(cls).items():
-            if isinstance(value, ForeignKeyOrFreeText):
-                fieldnames.append(name)
-                fieldnames.remove(name + '_ft')
-                fieldnames.remove(name + '_fk_id')
-
-        return fieldnames
-
-    @classmethod
-    def _get_field_type(cls, name):
-        try:
-            return type(cls._meta.get_field_by_name(name)[0])
-        except models.FieldDoesNotExist:
-            pass
-
-        if name in ['patient_id', 'episode_id']:
-            return models.ForeignKey
-
-        try:
-            value = vars(cls)[name]
-            if isinstance(value, ForeignKeyOrFreeText):
-                return ForeignKeyOrFreeText
-        except KeyError:
-            pass
-
-        raise Exception('Unexpected fieldname: %s' % name)
-
     def to_dict(self, user):
         d = {}
         for name in self._get_fieldnames_to_serialize():
@@ -233,37 +295,6 @@ class Subrecord(models.Model):
             d[name] = value
 
         return d
-
-    def update_from_dict(self, data, user):
-        if self.consistency_token:
-            try:
-                consistency_token = data.pop('consistency_token')
-            except KeyError:
-                raise exceptions.APIError('Missing field (consistency_token)')
-
-            if consistency_token != self.consistency_token:
-                raise exceptions.ConsistencyError
-
-        unknown_fields = set(data.keys()) - set(self._get_fieldnames_to_serialize())
-        if unknown_fields:
-            raise exceptions.APIError('Unexpected fieldname(s): %s' % list(unknown_fields))
-
-        for name, value in data.items():
-            setter = getattr(self, 'set_' + name, None)
-            if setter is not None:
-                setter(value, user)
-            else:
-                # TODO use form here?
-                if value and self._get_field_type(name) == models.fields.DateField:
-                    value = datetime.strptime(value, '%Y-%m-%d').date()
-
-                setattr(self, name, value)
-
-        self.set_consistency_token()
-        self.save()
-
-    def set_consistency_token(self):
-        self.consistency_token = '%08x' % random.randrange(16**8)
 
 
 class PatientSubrecord(Subrecord):
@@ -278,29 +309,6 @@ class EpisodeSubrecord(Subrecord):
 
     class Meta:
         abstract = True
-
-
-
-class TaggedSubrecordMixin(object):
-    # _is_singleton = True
-
-    @classmethod
-    def _get_fieldnames_to_serialize(cls):
-        fieldnames = super(TaggedSubrecordMixin, cls)._get_fieldnames_to_serialize()
-        fieldnames.append('tags')
-        return fieldnames
-
-    @classmethod
-    def get_field_type_for_tags(cls):
-        return 'list'
-
-    def get_tags(self, user):
-        return {tag_name: True for tag_name in self.episode.get_tag_names(user)}
-
-    # value is a dictionary mapping tag names to a boolean
-    def set_tags(self, value, user):
-        tag_names = [k for k, v in value.items() if v]
-        self.episode.set_tag_names(tag_names, user)
 
 
 class Synonym(models.Model):

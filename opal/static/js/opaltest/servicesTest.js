@@ -136,6 +136,63 @@ describe('services', function() {
             });
         });
 
+
+        describe('communicating with server', function (){
+            var $httpBackend, episode;
+
+            beforeEach(function(){
+                inject(function($injector){
+                    $httpBackend = $injector.get('$httpBackend');
+                });
+            });
+
+            afterEach(function(){
+                $httpBackend.verifyNoOutstandingExpectation();
+                $httpBackend.verifyNoOutstandingRequest();
+            });
+
+
+            describe('saving an existing episode', function (){
+                var attrsJsonDate, attrsHumanDate;
+
+                beforeEach(function(){
+                    attrsJsonDate = {
+                        id               : 555,
+                        active           : true,
+                        date_of_admission: '2013-11-20',
+                        discharge_date   : null
+                    };
+                    attrsHumanDate = {
+                        id               : 555,
+                        active           : true,
+                        date_of_admission: '20/11/2013',
+                        discharge_date   : null
+                    }
+
+                    episode = new Episode(episodeData, schema);
+
+                    $httpBackend.whenPUT('/episode/555/')
+                        .respond(attrsJsonDate);
+
+                });
+
+                it('Should hit server', function () {
+                    $httpBackend.expectPUT('/episode/555/', attrsJsonDate);
+                    episode.save(attrsHumanDate);
+                    $httpBackend.flush();
+                });
+
+                it('Should update item attributes', function () {
+                    $httpBackend.expectPUT('/episode/555/', attrsJsonDate);
+                    episode.save(attrsHumanDate);
+                    $httpBackend.flush();
+                    expect(episode.date_of_admission).toEqual(new Date(2013, 10, 20))
+                });
+
+            });
+
+        });
+
     });
 
     describe('Item', function() {
@@ -200,8 +257,11 @@ describe('services', function() {
                         name: 'John Smythe',
                         date_of_birth: '30/07/1980',
                     };
-                    item = new Item(episodeData.demographics[0], mockEpisode, columns[0]);
-                    $httpBackend.whenPUT('/demographics/101/').respond(attrsWithJsonDate);
+                    item = new Item(episodeData.demographics[0],
+                                    mockEpisode,
+                                    columns[0]);
+                    $httpBackend.whenPUT('/demographics/101/')
+                        .respond(attrsWithJsonDate);
                 });
 
                 it('should hit server', function() {
@@ -288,7 +348,8 @@ describe('services', function() {
             var episodes;
 
             $httpBackend.whenGET('/schema/list/').respond(columns);
-            $httpBackend.whenGET('/episode').respond([episodeData]); // TODO trailing slash?
+            // TODO trailing slash?
+            $httpBackend.whenGET('/episode').respond([episodeData]);
             promise.then(function(value) {
                 episodes = value;
             });
@@ -321,7 +382,8 @@ describe('services', function() {
 
             $route.current = {params: {id: 123}};
             $httpBackend.whenGET('/schema/').respond(columns);
-            $httpBackend.whenGET('/episode/123').respond(episodeData); // TODO trailing slash?
+            // TODO trailing slash?
+            $httpBackend.whenGET('/episode/123').respond(episodeData);
             promise.then(function(value) {
                 episode = value;
             });
