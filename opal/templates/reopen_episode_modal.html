@@ -12,9 +12,9 @@
 	  <label ng-repeat="episode in episodes" class="radio">
 		<input type="radio" ng-model="$parent.episodeId" value="[[ episode.id ]]">
 		<span ng-show="episode.location[0].hospital">[[ episode.location[0].hospital ]]</span>
-		<span ng-show="episode.location[0].date_of_admission">[[ episode.location[0].date_of_admission | date:'d/M/yy' ]]</span>
+		<span ng-show="episode.date_of_admission">[[ episode.date_of_admission | date:'d/M/yy' ]]</span>
 		-
-		<span ng-show="episode.location[0].discharge_date">[[ episode.location[0].discharge_date | date:'d/M/yy' ]]</span>
+		<span ng-show="episode.discharge_date">[[ episode.discharge_date | date:'d/M/yy' ]]</span>
 	  </label>
 	  <label class="radio">
 		<input type="radio" ng-model="episodeId" value="None">

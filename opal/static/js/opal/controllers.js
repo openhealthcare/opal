@@ -962,13 +962,15 @@ controllers.controller('DischargeEpisodeCtrl', function($scope, $timeout,
 		//date: new Date()
 	};
 
+    $scope.episode = episode.makeCopy();
+    $scope.episode.discharge_date = moment().format('DD/MM/YYYY');
+
 	$scope.discharge = function() {
 		var location = episode.getItem('location', 0);
 		var attrs = location.makeCopy();
 
 		if ($scope.editing.category != 'Unfollow') {
 			attrs.category = $scope.editing.category;
-			attrs.discharge_date = $scope.editing.discharge_date;
 		}
 
 		if ($scope.editing.category != 'Followup') {
@@ -976,7 +978,10 @@ controllers.controller('DischargeEpisodeCtrl', function($scope, $timeout,
 		}
 
 		location.save(attrs).then(function() {
-			dialog.close('discharged');
+            $scope.episode.active = false;
+            episode.save($scope.episode).then(function(){
+			    dialog.close('discharged');
+            });
 		});
 	};
 
