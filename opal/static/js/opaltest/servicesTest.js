@@ -14,7 +14,9 @@ describe('services', function() {
             {
                 name: 'diagnosis',
                 single: false,
+                sort: 'date_of_diagnosis',
                 fields: [
+                    {name: 'date_of_diagnosis', type: 'date'},
                     {name: 'condition', type: 'string'},
                     {name: 'provisional', type: 'boolean'},
                 ]},

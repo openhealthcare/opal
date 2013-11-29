@@ -20,8 +20,8 @@ urlpatterns = patterns(
     url(r'^accounts/banned', views.BannedView.as_view(), name='banned'),
 
     url(r'^contact/$', views.ContactView.as_view()),
-    url(r'^schema/list/$', views.list_schema_view),
-    url(r'^schema/detail/$', views.detail_schema_view),
+    url(r'^schema/list/$', views.ListSchemaView.as_view()),
+    url(r'^schema/detail/$', views.DetailSchemaView.as_view()),
     url(r'^options/$', views.options_view),
     url(r'^admin/?', include(admin.site.urls)),
 

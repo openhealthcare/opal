@@ -8,7 +8,7 @@ from django.contrib.auth.views import login
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotFound
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, View
 from django.views.decorators.http import require_http_methods
 from django.template.loader import select_template
 from django.utils.decorators import method_decorator
@@ -250,28 +250,28 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
 class ContactView(TemplateView):
     template_name = 'contact.html'
 
-def list_schema_view(request):
-    columns = []
-    for column in schema.list_columns:
-        columns.append({
-            'name': column.get_api_name(),
-            'single': column._is_singleton,
-            'fields': column.build_field_schema()
-        })
 
-    return _build_json_response(columns)
+class SchemaBuilderView(View):
+    def get(self, *args, **kw):
+        cols = []
+        for column in self.columns:
+            col = {
+                'name': column.get_api_name(),
+                'single': column._is_singleton,
+                'fields': column.build_field_schema()
+                }
+            if hasattr(column, '_sort'):
+                col['sort'] = column._sort
+            cols.append(col)
+        return _build_json_response(cols)
 
-def detail_schema_view(request):
-    columns = []
-    for column in schema.detail_columns:
-        columns.append({
-            'name': column.get_api_name(),
-            'single': column._is_singleton,
-            'fields': column.build_field_schema()
-        })
 
-    return _build_json_response(columns)
+class ListSchemaView(SchemaBuilderView):
+    columns = schema.detail_columns
 
+
+class DetailSchemaView(SchemaBuilderView):
+    columns = schema.detail_columns
 
 
 def check_password_reset(request, *args, **kwargs):

@@ -170,3 +170,20 @@ class EpisodeDetailViewTest(TestCase):
         self.assertEqual(200, response.status_code)
         episode = self.patient.episode_set.all()[0]
         self.assertEqual(episode.discharge_date, today)
+
+
+class ListSchemaViewTest(TestCase):
+    fixtures = ['patients_users', 'patients_options', 'patients_records']
+
+    def setUp(self):
+        self.user = User.objects.get(pk=1)
+        self.assertTrue(self.client.login(username=self.user.username,
+                                          password='password'))
+        self.patient = Patient.objects.get(pk=1)
+
+    def assertStatusCode(self, path, expected_status_code):
+        response = self.client.get(path)
+        self.assertEqual(expected_status_code, response.status_code)
+
+    def test_list_schema_view(self):
+        self.assertStatusCode('/schema/list/', 200)

@@ -122,6 +122,10 @@ services.factory('Episode', function($http, $q, Item) {
 			    for (var iix = 0; iix < episode[column.name].length; iix++) {
 				    attrs = episode[column.name][iix];
 				    episode[column.name][iix] = new Item(attrs, episode, column);
+                    var schemacol = _.findWhere(schema.columns, {name: column.name});
+                    if(schemacol.sort){
+                        _.sortBy(episode[column.name], schemacol.sort).reverse();
+                    }
 			    };
             }
 		};
