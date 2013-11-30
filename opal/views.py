@@ -267,7 +267,7 @@ class SchemaBuilderView(View):
 
 
 class ListSchemaView(SchemaBuilderView):
-    columns = schema.detail_columns
+    columns = schema.list_columns
 
 
 class DetailSchemaView(SchemaBuilderView):
