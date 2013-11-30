@@ -90,7 +90,8 @@ services.factory('episodesLoader', function($q, EpisodeResource, Episode, listSc
 	};
 });
 
-services.factory('episodeLoader', function($q, $route, EpisodeResource, Episode, detailSchemaLoader) {
+services.factory('episodeLoader', function($q, $route,
+                                           EpisodeResource, Episode, detailSchemaLoader) {
 	return function() {
 		var deferred = $q.defer();
 		detailSchemaLoader.then(function(schema) {
@@ -114,17 +115,28 @@ services.factory('Episode', function($http, $q, Item) {
         // TODO - Pull these from the schema?
         var date_fields = ['date_of_admission', 'discharge_date'];
 
-		angular.extend(episode, resource);
-
 		for (var cix = 0; cix < schema.getNumberOfColumns(); cix++) {
 			column = schema.columns[cix];
-            if(episode[column.name]){
-			    for (var iix = 0; iix < episode[column.name].length; iix++) {
-				    attrs = episode[column.name][iix];
-				    episode[column.name][iix] = new Item(attrs, episode, column);
+            if(resource[column.name]){
+                var schemacol = _.findWhere(schema.columns, {name: column.name});
+			    for (var iix = 0; iix < resource[column.name].length; iix++) {
+				    attrs = resource[column.name][iix];
+				    resource[column.name][iix] = new Item(attrs, resource, column);
+
 			    };
+                // Now we've instantiated, see if we want to sort
+                // by any particular field
+                if(schemacol.sort){
+                    resource[column.name] = _.sortBy(resource[column.name],
+                                                    schemacol.sort);
+                }
             }
 		};
+
+        // Sort a particular column according to schema params.
+        this.sortColumn = function(columnName, sortBy){
+            episode[columnName] = _.sortBy(episode[columnName], sortBy);
+        }
 
         // Constructor to update from attrs and parse datish fields
         this.initialise = function(attrs){
@@ -167,6 +179,9 @@ services.factory('Episode', function($http, $q, Item) {
 
 		this.addItem = function(item) {
 			episode[item.columnName].push(item);
+            if(item.sort){
+                this.sortColumn(item.columnName, item.sort);
+            }
 		};
 
 		this.removeItem = function(item) {
@@ -304,7 +319,7 @@ services.factory('Item', function($http, $q) {
 		};
 
 		this.columnName = columnSchema.name;
-
+        this.sort = columnSchema.sort
 		this.episodeName = episode.demographics[0].name;
 
 		this.makeCopy = function() {
