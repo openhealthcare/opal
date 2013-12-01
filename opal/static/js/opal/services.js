@@ -128,14 +128,14 @@ services.factory('Episode', function($http, $q, Item) {
                 // by any particular field
                 if(schemacol.sort){
                     resource[column.name] = _.sortBy(resource[column.name],
-                                                    schemacol.sort);
+                                                    schemacol.sort).reverse();
                 }
             }
 		};
 
         // Sort a particular column according to schema params.
         this.sortColumn = function(columnName, sortBy){
-            episode[columnName] = _.sortBy(episode[columnName], sortBy);
+            episode[columnName] = _.sortBy(episode[columnName], sortBy).reverse();
         }
 
         // Constructor to update from attrs and parse datish fields
