@@ -35,10 +35,12 @@ describe('services', function() {
                 id: 102,
                 condition: 'Dengue',
                 provisional: true,
+                date_of_diagnosis: '2007-04-20'
             }, {
                 id: 103,
                 condition: 'Malaria',
                 provisional: false,
+                date_of_diagnosis: '2006-03-19'
             }]
         }
     });
@@ -113,7 +115,8 @@ describe('services', function() {
 
         it('should be able to add a new item', function() {
             var item = new Item(
-                {id: 104, condition: 'Ebola', provisional: false},
+                {id: 104, condition: 'Ebola', provisional: false,
+                date_of_diagnosis: '2005-02-18'},
                 episode,
                 schema.getColumn('diagnosis')
             );
