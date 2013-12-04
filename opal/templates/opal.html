@@ -24,7 +24,7 @@
 		<script type="text/javascript" src="{% static "js/utils/showdown.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/utils/moment.js" %}"></script>
 
-                <!-- Application -->
+        <!-- Application -->
 		<script type="text/javascript" src="{% static "js/opal/utils.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/opal/opaldown.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/opal/directives.js" %}"></script>
@@ -33,15 +33,18 @@
 		<script type="text/javascript" src="{% static "js/opal/controllers.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/opal/app.js" %}"></script>
 
+        {% if extra_application %}{% include extra_application %}{% endif %}
+
 		<link href="{% static "bootstrap-2.3.2/css/bootstrap.css" %}" rel="stylesheet" media="all">
 		<link href="{% static "css/bootstrap-datepicker.css" %}" rel="stylesheet" media="all">
 		<link href="{% static "css/font-awesome/css/font-awesome.css" %}" rel="stylesheet" media="all">
 		<link href="{% static "css/opal.css" %}" rel="stylesheet" media="all">
-                <link href="{% static "css/print.css" %}" rel="stylesheet" media="print">
-                <link href="{% static "css/screen.css" %}" rel="stylesheet" media="screen">
-                <link rel="shortcut icon" href="{% static 'img/ohc-icon.png' %}">
+        <link href="{% static "css/print.css" %}" rel="stylesheet" media="print">
+        <link href="{% static "css/screen.css" %}" rel="stylesheet" media="screen">
+        <link rel="shortcut icon" href="{% static 'img/ohc-icon.png' %}">
 	</head>
 	<body>
+      {{ extra_application }}
 		<div class="navbar screen-only">
 			<div class="navbar-inner">
 				<span class="brand pull-left">
