@@ -265,7 +265,7 @@ class Tagging(models.Model):
 
     def __unicode__(self):
         if self.user is not None:
-            return 'User: %s' % self.user.username
+            return 'User: %s - %s' % (self.user.username, self.tag_name)
         else:
             return self.tag_name
 

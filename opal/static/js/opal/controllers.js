@@ -979,7 +979,10 @@ controllers.controller('DischargeEpisodeCtrl', function($scope, $timeout,
 		}
 
 		location.save(attrs).then(function() {
-            $scope.episode.active = false;
+            // TODO: Don't hard code workflow in OPAL.
+            if($scope.editing.category!= 'Followup'){
+                $scope.episode.active = false;
+            }
             episode.save($scope.episode).then(function(){
 			    dialog.close('discharged');
             });
