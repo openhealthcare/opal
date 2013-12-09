@@ -633,6 +633,38 @@ controllers.controller('EpisodeDetailCtrl', function($scope, $dialog, schema,
 			$scope.iix = 0;
 		};
 	};
+
+
+	$scope.dischargeEpisode = function(rix, event) {
+		var modal;
+		var episode = $scope.episode;
+
+		// This is required to prevent the page reloading
+		event.preventDefault();
+
+		$scope.state = 'modal';
+
+		modal = $dialog.dialog({
+			templateUrl: '/templates/modals/discharge_episode.html/',
+			controller: 'DischargeEpisodeCtrl',
+			resolve: {
+				episode: function() { return episode; },
+				currentTag: function() { return $scope.currentTag; },
+			}
+		});
+
+		modal.open().then(function(result) {
+			$scope.state = 'normal';
+
+			if (result == 'discharged') {
+				// $scope.rows = getVisibleEpisodes();
+				// $scope.selectItem(0, $scope.cix, 0);
+			};
+		});
+	};
+
+
+
 });
 
 controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog,
