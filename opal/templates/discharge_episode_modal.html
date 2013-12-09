@@ -4,7 +4,7 @@
 </div>
 <div class="modal-body">
 	<form>
-		<div>
+		<div ng-show="currentCategory != 'Followup'">
 			<label class="radio">
 				<input type="radio" ng-model="editing.category" value="Discharged">
 				Discharge
@@ -26,6 +26,12 @@
 				No longer under active review
 			</label>
 		</div>
+        <div ng-show="currentCategory == 'Followup'">
+          <input type="hidden" ng-model="editing.category" value="Discharged">
+          <p>
+            Confirm discharge and no further follow-up is required.
+          </p>
+        </div>
 		<div ng-hide="editing.category=='Unfollow'" class="control-group">
 			<label class="control-label">Date of discharge</label>
 			<div class="controls">
