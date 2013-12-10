@@ -19,7 +19,6 @@ urlpatterns = patterns(
     url(r'^accounts/templates/account_detail.html', views.AccountDetailTemplateView.as_view()),
     url(r'^accounts/banned', views.BannedView.as_view(), name='banned'),
 
-    url(r'^contact/$', views.ContactView.as_view()),
     url(r'^schema/list/$', views.ListSchemaView.as_view()),
     url(r'^schema/detail/$', views.DetailSchemaView.as_view()),
     url(r'^options/$', views.options_view),

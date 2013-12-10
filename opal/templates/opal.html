@@ -44,33 +44,7 @@
         <link rel="shortcut icon" href="{% static 'img/ohc-icon.png' %}">
 	</head>
 	<body>
-		<div class="navbar screen-only">
-			<div class="navbar-inner">
-				<span class="brand pull-left">
-					<a href="/">{{brand_name}}</a>
-					{% now "DATE_FORMAT" %}
-				</span>
-
-				<ul class="nav pull-right">
-					<li>
-                                          <a href="/#/account">
-                                          {% if request.user.first_name %}
-                                            {{ request.user.first_name }}
-                                          {% else %}
-                                            {{ request.user.username }}
-                                          {% endif %}
-                                          </a>
-                                        </li>
-					<li><a href="#">Home</a></li>
-                                        {% if request.user.is_staff %}
-					  <li><a href="/admin">Admin</a></li>
-                                        {% endif %}
-					<li><a href="/#/search">Search</a></li>
-					<li><a href="/contact">Feedback</a></li>
-					<li><a href="{% url 'django.contrib.auth.views.logout' %}">Log out</a></li>
-				</ul>
-			</div>
-		</div>
+      {% include 'navbar.html' %}
 		<div class="container" loadingbar>Loading...</div>
 		<div ng-view></div>
                 {% include 'keyboard_shortcuts_modal.html' %}

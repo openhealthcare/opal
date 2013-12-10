@@ -11,19 +11,10 @@
 		<script src="{% static "bootstrap-2.3.2/js/bootstrap.js" %}"></script>
 		<link href="{% static "bootstrap-2.3.2/css/bootstrap.css" %}" rel="stylesheet" media="all">
 		<link href="{% static "css/opal.css" %}" rel="stylesheet" media="all">
-                <link href="{% static "css/print.css" %}" rel="stylesheet" media="print">
+        <link href="{% static "css/print.css" %}" rel="stylesheet" media="print">
 	</head>
 	<body>
-		<div class="navbar">
-			<div class="navbar-inner">
-				<a class="brand pull-left" href="/">OPAL is not a Patient Activity List</a>
-				<ul class="nav pull-right">
-					<li><a href="/">Home</a></li>
-					<li><a href="/admin">Admin</a></li>
-					<li><a href="/contact">Feedback</a></li>
-				</ul>
-			</div>
-		</div>
+      {% include 'navbar.html' %}
 		<div class="container">
 			{% block content %}{% endblock %}
 		</div>

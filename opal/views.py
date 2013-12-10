@@ -248,11 +248,6 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
 
         return context
 
-# This probably doesn't belong here
-class ContactView(TemplateView):
-    template_name = 'contact.html'
-
-
 class SchemaBuilderView(View):
     def get(self, *args, **kw):
         cols = []
