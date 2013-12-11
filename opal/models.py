@@ -244,11 +244,11 @@ class Episode(UpdatesFromDictMixin, models.Model):
             d['prev_episodes'] = [
                 e.to_dict(user, shallow=True)
                 for e in
-                eset.filter(date_of_admission__lt=self.date_of_admission)]
+                eset.filter(date_of_admission__lt=self.date_of_admission).order_by('date_of_admission')]
             d['next_episodes'] = [
                 e.to_dict(user, shallow=True)
                 for e in
-                eset.filter(date_of_admission__gt=self.date_of_admission)]
+                eset.filter(date_of_admission__gt=self.date_of_admission).order_by('date_of_admission')]
 
         return d
 

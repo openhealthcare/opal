@@ -131,6 +131,20 @@ class EpisodeTest(TestCase):
         self.assertEqual(datetime.date(2012, 7, 25),
                          serialised['prev_episodes'][0]['date_of_admission'])
 
+    def test_to_dict_episode_ordering(self):
+        episode = Episode.objects.get(pk=1)
+        patient = episode.patient
+        admitted = datetime.date(2011, 7, 25)
+        new_episode = Episode(patient=patient, date_of_admission=admitted)
+        new_episode.save()
+
+        serialised = episode.to_dict(self.user)
+        self.assertEqual(2, len(serialised['prev_episodes']))
+        self.assertEqual(datetime.date(2011, 7, 25),
+                         serialised['prev_episodes'][0]['date_of_admission'])
+        self.assertEqual(datetime.date(2012, 7, 25),
+                         serialised['prev_episodes'][1]['date_of_admission'])
+
 
 
 class EpisodeDetailViewTest(TestCase):
