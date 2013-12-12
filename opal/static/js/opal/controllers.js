@@ -828,6 +828,7 @@ controllers.controller('AddEpisodeCtrl', function($scope, $http, $cookieStore,
 });
 
 controllers.controller('ReopenEpisodeCtrl', function($scope, $http, $timeout,
+
                                                      dialog, patient, tag) {
 	$timeout(function() {
 		dialog.modalEl.find('input,textarea').first().focus();
@@ -840,13 +841,13 @@ controllers.controller('ReopenEpisodeCtrl', function($scope, $http, $timeout,
 		$scope.episodes.push(patient.episodes[eix]);
 	}
 
-	$scope.episodes.sort(function(e1, e2) {
+    $scope.sortEpisodes = function(e1, e2) {
 		var date1 = e1.date_of_admission;
 		var date2 = e2.date_of_admission;
 
 		if (angular.isUndefined(date1)) {
 			return -1;
-		} else if (date2) {
+		} else if (angular.isUndefined(date2)) {
 			return 1;
 		} else if (date1 < date2) {
 			return -1;
@@ -855,7 +856,9 @@ controllers.controller('ReopenEpisodeCtrl', function($scope, $http, $timeout,
 		} else {
 			return 0;
 		};
-	});
+	}
+
+	$scope.episodes.sort($scope.sortEpisodes);
 
 	$scope.openNew = function() {
 		dialog.close('open-new');

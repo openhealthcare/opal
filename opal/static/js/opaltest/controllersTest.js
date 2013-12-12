@@ -345,6 +345,68 @@ describe('controllers', function() {
     });
 
 
+    describe('ReopenEpisodeCtrl', function (){
+        var $scope,  $timeout;
+        var dialog, patient, tag;
+
+        beforeEach(function(){
+            inject(function($injector){
+                $rootScope   = $injector.get('$rootScope');
+                $scope       = $rootScope.$new();
+                $controller  = $injector.get('$controller');
+                $dialog      = $injector.get('$dialog');
+                $timeout     = $injector.get('$timeout');
+            });
+
+            dialog = $dialog.dialog({template: 'notarealtemplate!'});
+            dialog.open();
+            patient = patientData;
+            tag: 'mine';
+
+            controller = $controller('ReopenEpisodeCtrl', {
+                $scope  : $scope,
+                $timeout: $timeout,
+                dialog  : dialog,
+                patient : patient,
+                tag     : tag,
+            });
+
+        });
+
+
+        describe('Sorting episodes', function (){
+            it('Should deal with unset admission dates', function () {
+                expect($scope.sortEpisodes({}, {})).toEqual(-1)
+            });
+
+            it('Should know which episode was frist', function () {
+                var e1 = {date_of_admission: new Date(2012, 10, 24)};
+                var e2 = {};
+                expect($scope.sortEpisodes(e1, e2)).toEqual(1)
+            });
+
+            it('Should know which episode was frist', function () {
+                var e1 = {date_of_admission: new Date(2012, 10, 24)};
+                var e2 = {date_of_admission: new Date(2013, 10, 24)};
+                expect($scope.sortEpisodes(e1, e2)).toEqual(-1)
+            });
+
+            it('Should know which episode was frist', function () {
+                var e1 = {date_of_admission: new Date(2013, 10, 24)};
+                var e2 = {date_of_admission: new Date(2012, 10, 24)};
+                expect($scope.sortEpisodes(e1, e2)).toEqual(1)
+            });
+
+            it('Should know when episodes are sorted the same', function () {
+                var e1 = {date_of_admission: new Date(2012, 10, 24)};
+                var e2 = {date_of_admission: new Date(2012, 10, 24)};
+                expect($scope.sortEpisodes(e1, e2)).toEqual(0)
+            });
+
+        });
+
+    });
+
     describe('EditItemCtrl', function (){
         var $scope, $cookieStore, $timeout;
         var dialog, item, options, episode;
@@ -429,6 +491,7 @@ describe('controllers', function() {
         });
 
     });
+
 
     describe('SearchCtrl', function (){
         var $scope, $http, $location, $dialog;
