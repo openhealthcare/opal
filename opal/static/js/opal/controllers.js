@@ -841,8 +841,8 @@ controllers.controller('ReopenEpisodeCtrl', function($scope, $http, $timeout,
 	}
 
 	$scope.episodes.sort(function(e1, e2) {
-		var date1 = e1.location[0].date_of_admission;
-		var date2 = e2.location[0].date_of_admission;
+		var date1 = e1.date_of_admission;
+		var date2 = e2.date_of_admission;
 
 		if (angular.isUndefined(date1)) {
 			return -1;
