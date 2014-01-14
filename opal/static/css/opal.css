@@ -46,3 +46,7 @@ input.ng-invalid {
 #subtags-nav {
     margin-top: -22px;
 }
+
+.underline {
+    text-decoration: underline;
+}
