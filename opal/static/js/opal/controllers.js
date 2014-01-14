@@ -217,6 +217,9 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 		promise1 = hospitalNumberModal.open();
 
 		promise2 = promise1.then(function(hospitalNumber) {
+            if(hospitalNumber == null){
+                return $q.reject('cancelled');
+            }
 			var deferred = $q.defer();
 
 			if (hospitalNumber) {
@@ -831,6 +834,11 @@ controllers.controller('HospitalNumberCtrl', function($scope, $timeout, dialog) 
 	$scope.findByHospitalNumber = function() {
 		dialog.close($scope.hospitalNumber);
 	};
+
+	$scope.cancel = function() {
+		dialog.close(null);
+	};
+
 });
 
 
