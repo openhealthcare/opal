@@ -28,7 +28,11 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
     // initially display episodes of interest to current user
 	$scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine';
     $scope.currentSubTag = 'all';
-    $cookieStore.put('opal.currentSubTag', 'all');
+    if($cookieStore.get('opal.nextSubTag')){
+        $scope.nextSubTag = $cookieStore.get('opal.nextSubTag');
+        $cookieStore.remove('opal.nextSubTag');
+    }
+    $cookieStore.put('opal.currentSubTag', $scope.currentSubTag);
 
 	$scope.columns = schema.columns;
 
@@ -53,13 +57,55 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 		return p1.compare(p2);
 	};
 
+    $scope.jumpToTag = function(tag){
+        if(_.contains(_.keys(options.tag_hierarchy), tag)){
+            if($scope.currentTag == tag){
+                $scope.currentSubTag = 'all';
+            }else{
+                $scope.currentTag = tag;
+            }
+            return;
+        }else{
+            for(var prop in options.tag_hierarchy){
+                if(options.tag_hierarchy.hasOwnProperty(prop)){
+                    if(_.contains(_.values(options.tag_hierarchy[prop]), tag)){
+                        if($scope.currentTag == prop){
+                            $scope.currentSubTag = tag;
+                        }else{
+                            $scope.nextSubTag = tag;
+                            $scope.currentTag = prop;
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    $scope.otherTags = function(item){
+        var active = $scope.currentSubTag == 'all'? $scope.currentTag : $scope.currentSubTag;
+
+        return _.filter(_.keys(item.tags), function(tag){
+            if(tag == active){
+                return false;
+            }
+            return true;
+        });
+    }
+
 	$scope.$watch('currentTag', function() {
 		$cookieStore.put('opal.currentTag', $scope.currentTag);
-		$scope.currentSubTag = 'all';
-		$scope.rows = getVisibleEpisodes();
-		if ($scope.rows.length < $scope.rix) {
-			$scope.rix = $scope.rows.length - 1;
-		};
+        console.log($scope.nextSubTag);
+        if($scope.nextSubTag){
+            $scope.currentSubTag = $scope.nextSubTag;
+            $scope.nextSubTag = undefined;
+        }else{
+		    $scope.currentSubTag = 'all';
+		    $scope.rows = getVisibleEpisodes();
+		    if ($scope.rows.length < $scope.rix) {
+			    $scope.rix = $scope.rows.length - 1;
+		    };
+        }
 	});
 
 	$scope.$watch('currentSubTag', function(){
@@ -487,7 +533,8 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 	};
 });
 
-controllers.controller('EpisodeDetailCtrl', function($scope, $dialog, schema,
+controllers.controller('EpisodeDetailCtrl', function($scope, $dialog, $cookieStore,
+                                                     schema,
                                                      episode, options) {
     $scope._ = _;
 	$scope.state = 'normal';
@@ -667,6 +714,28 @@ controllers.controller('EpisodeDetailCtrl', function($scope, $dialog, schema,
 		});
 	};
 
+    $scope.jumpToTag = function(tag){
+        var currentTag, currentSubTag;
+
+        currentTag = $cookieStore.get('opal.currentTag') || 'mine';
+        currentSubTag = $cookieStore.get('opal.currentSubTag') || 'all';
+
+        if(_.contains(_.keys(options.tag_hierarchy), tag)){
+            $cookieStore.put('opal.currentTag', tag)
+        }else{
+            for(var prop in options.tag_hierarchy){
+                if(options.tag_hierarchy.hasOwnProperty(prop)){
+                    if(_.contains(_.values(options.tag_hierarchy[prop]), tag)){
+
+                        $cookieStore.put('opal.currentTag', prop);
+                        $cookieStore.put('opal.nextSubTag', tag);
+                    }
+                }
+            }
+        }
+        // Jump to scope.
+        window.location.hash = '#/'
+    }
 
 
 });
