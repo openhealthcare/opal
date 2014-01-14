@@ -33,6 +33,10 @@
 		<script type="text/javascript" src="{% static "js/opal/controllers.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/opal/app.js" %}"></script>
 
+        <script type="text/javascript">
+          var initials = "{{request.user.first_name|slice:":1"}}{{request.user.last_name|slice:":1"}}"
+        </script>
+
         {% if extra_application %}{% include extra_application %}{% endif %}
 
 		<link href="{% static "bootstrap-2.3.2/css/bootstrap.css" %}" rel="stylesheet" media="all">

@@ -170,6 +170,9 @@ services.factory('Episode', function($http, $q, Item) {
 			if (columnName == 'diagnosis') {
 				attrs.date_of_diagnosis = moment().format('YYYY-MM-DD');
 			}
+                        if (columnName == 'microbiology_input'){
+                                attrs.initials = window.initials
+                        }
 			return new Item(attrs, episode, schema.getColumn(columnName));
 		};
 
