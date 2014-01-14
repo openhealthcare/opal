@@ -34,7 +34,7 @@
 		<script type="text/javascript" src="{% static "js/opal/app.js" %}"></script>
 
         <script type="text/javascript">
-          var initials = "{{request.user.first_name|slice:":1"}}{{request.user.last_name|slice:":1"}}"
+          var initials = "{{request.user.first_name|slice:":1"}}{{request.user.last_name}}"
         </script>
 
         {% if extra_application %}{% include extra_application %}{% endif %}
