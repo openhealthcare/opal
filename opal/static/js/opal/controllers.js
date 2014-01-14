@@ -23,7 +23,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 	$scope.mouseRix = -1; // index of row mouse is currently over
 	$scope.mouseCix = -1; // index of column mouse is currently over
     $scope._ =  _;
-    console.log(_)
+
 	$scope.query = {hospital_number: '', ward: ''};
     // initially display episodes of interest to current user
 	$scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine';
@@ -489,6 +489,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 
 controllers.controller('EpisodeDetailCtrl', function($scope, $dialog, schema,
                                                      episode, options) {
+    $scope._ = _;
 	$scope.state = 'normal';
 
 	$scope.cix = 0; // column index
@@ -499,6 +500,7 @@ controllers.controller('EpisodeDetailCtrl', function($scope, $dialog, schema,
 	$scope.episode = episode;
 
 	$scope.columns = schema.columns;
+    $scope.tag_display = options.tag_display;
 
 	$scope.$on('keydown', function(event, e) {
 		if ($scope.state == 'normal') {
