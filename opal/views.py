@@ -188,6 +188,11 @@ class EpisodeListTemplateView(EpisodeTemplateView):
     template_name = 'episode_list.html'
     column_schema = schema.list_columns
 
+    def get_context_data(self, *a, **k):
+        context = super(EpisodeListTemplateView, self).get_context_data(*a, **k)
+        context['settings'] = settings
+        return context
+
 
 class EpisodeDetailTemplateView(EpisodeTemplateView):
     template_name = 'episode_detail.html'

@@ -1,9 +1,9 @@
 <div class="navbar print-only">
   <div class="navbar-inner">
 	<span class="brand pull-left">
-	  OPAL-UCH
+	  {{ settings.OPAL_BRAND_NAME }}
 	  {% now "DATE_FORMAT" %}
-      [[ tagDisplay[currentTag] ]] [[ tagDisplay[currentSubTag] ]]
+      [[ tag_display[currentTag] ]] [[ tag_display[currentSubTag] ]]
 	</span>
   </div>
 </div>
