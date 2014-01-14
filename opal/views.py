@@ -243,19 +243,27 @@ class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'opal.html'
 
 class ModalTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'modal_base.html'
+    # template_name = 'modal_base.html'
+
+    def dispatch(self, *a, **kw):
+        """
+        Set the context for what this modal is for so
+        it can be accessed by all subsequent methods
+        """
+        self.column = kw['model']
+        self.name = camelcase_to_underscore(self.column.__name__)
+        return super(ModalTemplateView, self).dispatch(*a, **kw)
+
+    def get_template_names(self):
+        return [self.name + '_modal.html']
 
     def get_context_data(self, **kwargs):
         context = super(ModalTemplateView, self).get_context_data(**kwargs)
-        column = self.kwargs['model']
-        name = camelcase_to_underscore(column.__name__)
+        context['name'] = self.name
+        context['title'] = getattr(self.column, '_title', self.name.replace('_', ' ').title())
+        context['single'] = self.column._is_singleton
 
-        context['name'] = name
-        context['title'] = getattr(column, '_title', name.replace('_', ' ').title())
-        context['single'] = column._is_singleton
-        context['modal_template_path'] = name + '_modal.html'
-
-        if name == 'location':
+        if self.name == 'location':
             context['tags'] = TAGS
 
         return context

@@ -3,7 +3,7 @@
 	<h3>New record</h3>
 </div>
 <div class="modal-body">
-	<form class="form-horizontal">
+	<form class="form-horizontal" name="newEpisodeForm">
 		<div class="control-group">
 			<label class="control-label">Hospital number</label>
 			<div class="controls"><label>[[editing.demographics.hospital_number]]</label></div>
@@ -18,9 +18,10 @@
 			<label class="control-label">Date of birth</label>
 			<div class="controls">
 				<input type="text"
-				ng-model="editing.demographics.date_of_birth"
-				ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
-				placeholder="dd/mm/yyyy">
+                       name="date_of_birth"
+				       ng-model="editing.demographics.date_of_birth"
+				       ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
+				       placeholder="dd/mm/yyyy">
 			</div>
 		</div>
 		<div class="control-group">
@@ -87,6 +88,6 @@
 	</form>
 </div>
 <div class="modal-footer">
-	<button class="btn btn-primary" ng-click="save()">Save record</button>
+	<button class="btn btn-primary" ng-click="save()" ng-disabled="newEpisodeForm.date_of_birth.$invalid">Save record</button>
 	<button class="btn" ng-click="cancel()">Cancel</button>
 </div>
