@@ -147,8 +147,14 @@ def subrecord_detail_view(request, model, pk):
 
 @require_http_methods(['POST'])
 def subrecord_create_view(request, model):
-    subrecord = model()
     data = _get_request_data(request)
+    subrecord = model()
+    if isinstance(subrecord, models.PatientSubrecord):
+        episode_id = data['episode_id']
+        del data['episode_id']
+        patient_id = models.Episode.objects.get(pk=episode_id).patient.pk
+        data['patient_id'] = patient_id
+
     subrecord.update_from_dict(data, request.user)
     return _build_json_response(subrecord.to_dict(request.user), 201)
 
