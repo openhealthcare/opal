@@ -362,6 +362,7 @@ for name in model_names:
     }
     option_models[name] = type(class_name, bases, attrs)
 
+
 # TODO
 @receiver(models.signals.post_save, sender=Patient)
 def create_patient_singletons(sender, **kwargs):

@@ -224,6 +224,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
         context['brand_name'] = getattr(settings, 'OPAL_BRAND_NAME', 'OPAL')
+        context['settings'] = settings
         if hasattr(settings, 'OPAL_EXTRA_APPLICATION'):
             context['extra_application'] = settings.OPAL_EXTRA_APPLICATION
         return context
