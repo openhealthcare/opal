@@ -22,8 +22,9 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 
 	$scope.mouseRix = -1; // index of row mouse is currently over
 	$scope.mouseCix = -1; // index of column mouse is currently over
-
-	$scope.query = {hospital: '', ward: ''};
+    $scope._ =  _;
+    console.log(_)
+	$scope.query = {hospital_number: '', ward: ''};
     // initially display episodes of interest to current user
 	$scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine';
     $scope.currentSubTag = 'all';
@@ -38,7 +39,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 
 		for (var pix in episodes) {
 			if (episodes[pix].isVisible($scope.currentTag, $scope.currentSubTag,
-                                        $scope.query.hospital, $scope.query.ward)) {
+                                        $scope.query.hospital_number, $scope.query.ward)) {
 				visibleEpisodes.push(episodes[pix]);
 			};
 		};
@@ -73,7 +74,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
         return show
     };
 
-	$scope.$watch('query.hospital', function() {
+	$scope.$watch('query.hospital_number', function() {
 		$scope.rows = getVisibleEpisodes();
 	});
 

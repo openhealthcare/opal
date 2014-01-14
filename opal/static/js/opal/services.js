@@ -194,15 +194,16 @@ services.factory('Episode', function($http, $q, Item) {
 			};
 		};
 
-		this.isVisible = function(tag, subtag, hospital, ward) {
+		this.isVisible = function(tag, subtag, hospital_number, ward) {
 			var location = episode.location[0];
+            var demographics = episode.demographics[0];
 			if (location.tags[tag] != true) {
 				return false;
 			}
 			if (subtag != 'all' && location.tags[subtag] != true){
 				return false;
 			}
-			if (location.hospital.toLowerCase().indexOf(hospital.toLowerCase()) == -1) {
+			if (demographics.hospital_number.toLowerCase().indexOf(hospital_number.toLowerCase()) == -1) {
 				return false;
 			}
 			if (location.ward.toLowerCase().indexOf(ward.toLowerCase()) == -1) {
