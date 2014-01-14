@@ -33,6 +33,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 	$scope.columns = schema.columns;
 
 	$scope.rows = getVisibleEpisodes();
+    $scope.tag_display = options.tag_display;
 
 	function getVisibleEpisodes() {
 		var visibleEpisodes = [];
