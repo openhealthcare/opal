@@ -224,7 +224,6 @@ services.factory('Episode', function($http, $q, Item) {
             var copy = {
                 id               : episode.id,
                 date_of_admission: episode.date_of_admission,
-                active           : episode.active,
                 discharge_date   : episode.discharge_date,
                 consistency_token: episode.consistency_token
             }
