@@ -65,7 +65,6 @@ def episode_detail_view(request, pk):
         return _build_json_response({'error': 'Item has changed'}, 409)
 
 
-
 @with_no_caching
 @require_http_methods(['GET'])
 def patient_search_view(request):
@@ -97,7 +96,11 @@ def patient_search_view(request):
 @require_http_methods(['GET', 'POST'])
 def episode_list_and_create_view(request):
     if request.method == 'GET':
-        episodes = models.Episode.objects.filter(active=True)
+        episodes = set(
+            list(models.Episode.objects.filter(active=True)) +
+            list(models.Episode.objects.filter(tagging__tag_name='mine',
+                                               tagging__user=request.user))
+            )
         return _build_json_response([episode.to_dict(request.user)
                                      for episode in episodes])
 

@@ -151,69 +151,72 @@ services.factory('Episode', function($http, $q, Item) {
             });
         }
 
-		this.getNumberOfItems = function(columnName) {
-			return episode[columnName].length;
-		};
+	this.getNumberOfItems = function(columnName) {
+	    return episode[columnName].length;
+	};
 
-		this.newItem = function(columnName) {
-			var attrs = {};
-			// TODO don't hardcode this
-			if (columnName == 'microbiology_test') {
-				attrs.date_ordered = moment().format('YYYY-MM-DD');
-			}
-			if (columnName == 'general_note') {
-				attrs.date = moment().format('YYYY-MM-DD');
-			}
-			if (columnName == 'antimicrobial') {
-				attrs.start_date = moment().format('YYYY-MM-DD');
-			}
-			if (columnName == 'diagnosis') {
-				attrs.date_of_diagnosis = moment().format('YYYY-MM-DD');
-			}
-                        if (columnName == 'microbiology_input'){
-                                attrs.initials = window.initials
-                        }
-			return new Item(attrs, episode, schema.getColumn(columnName));
-		};
+	this.newItem = function(columnName) {
+	    var attrs = {};
+	    // TODO don't hardcode this
+	    if (columnName == 'microbiology_test') {
+		attrs.date_ordered = moment().format('YYYY-MM-DD');
+	    }
+	    if (columnName == 'general_note') {
+		attrs.date = moment().format('YYYY-MM-DD');
+	    }
+	    if (columnName == 'antimicrobial') {
+		attrs.start_date = moment().format('YYYY-MM-DD');
+	    }
+	    if (columnName == 'diagnosis') {
+		attrs.date_of_diagnosis = moment().format('YYYY-MM-DD');
+	    }
+            if (columnName == 'microbiology_input'){
+                attrs.initials = window.initials
+            }
+	    return new Item(attrs, episode, schema.getColumn(columnName));
+	};
 
-		this.getItem = function(columnName, iix) {
-			return episode[columnName][iix];
-		};
+	this.getItem = function(columnName, iix) {
+	    return episode[columnName][iix];
+	};
 
-		this.addItem = function(item) {
-			episode[item.columnName].push(item);
+	this.addItem = function(item) {
+	    episode[item.columnName].push(item);
             if(item.sort){
                 this.sortColumn(item.columnName, item.sort);
             }
-		};
+	};
 
-		this.removeItem = function(item) {
-			var items = episode[item.columnName];
-			for (iix = 0; iix < items.length; iix++) {
-				if (item.id == items[iix].id) {
-					items.splice(iix, 1);
-					break;
-				};
-			};
+	this.removeItem = function(item) {
+	    var items = episode[item.columnName];
+	    for (iix = 0; iix < items.length; iix++) {
+		if (item.id == items[iix].id) {
+		    items.splice(iix, 1);
+		    break;
 		};
+	    };
+	};
 
-		this.isVisible = function(tag, subtag, hospital_number, ward) {
-			var location = episode.location[0];
+	this.isVisible = function(tag, subtag, hospital_number, ward) {
+	    var location = episode.location[0];
             var demographics = episode.demographics[0];
-			if (location.tags[tag] != true) {
-				return false;
-			}
-			if (subtag != 'all' && location.tags[subtag] != true){
-				return false;
-			}
-			if (demographics.hospital_number.toLowerCase().indexOf(hospital_number.toLowerCase()) == -1) {
-				return false;
-			}
-			if (location.ward.toLowerCase().indexOf(ward.toLowerCase()) == -1) {
-				return false;
-			}
-			return true;
-		};
+            if(!episode.active && tag != 'mine'){
+                return false;
+            }
+	    if (location.tags[tag] != true) {
+		return false;
+	    }
+	    if (subtag != 'all' && location.tags[subtag] != true){
+		return false;
+	    }
+	    if (demographics.hospital_number.toLowerCase().indexOf(hospital_number.toLowerCase()) == -1) {
+		return false;
+	    }
+	    if (location.ward.toLowerCase().indexOf(ward.toLowerCase()) == -1) {
+		return false;
+	    }
+	    return true;
+	};
 
         this.makeCopy = function(){
             var copy = {
