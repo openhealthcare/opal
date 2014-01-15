@@ -95,7 +95,6 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 
 	$scope.$watch('currentTag', function() {
 		$cookieStore.put('opal.currentTag', $scope.currentTag);
-        console.log($scope.nextSubTag);
         if($scope.nextSubTag){
             $scope.currentSubTag = $scope.nextSubTag;
             $scope.nextSubTag = undefined;
