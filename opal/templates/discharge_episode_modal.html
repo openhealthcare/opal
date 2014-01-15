@@ -4,7 +4,7 @@
 </div>
 <div class="modal-body">
 	<form>
-		<div ng-show="currentCategory != 'Followup'">
+		<div ng-show="currentCategory != 'Followup' && currentCategory != 'Discharged' ">
 			<label class="radio">
 				<input type="radio" ng-model="editing.category" value="Discharged">
 				Discharge
@@ -32,12 +32,15 @@
             Confirm discharge and no further follow-up is required.
           </p>
         </div>
-		<div ng-hide="editing.category=='Unfollow'" class="control-group">
+		<div ng-hide="editing.category=='Unfollow' || currentCategory=='Discharged'" class="control-group">
 			<label class="control-label">Date of discharge</label>
 			<div class="controls">
 				<input type="text" ng-model="episode.discharge_date" bs-datepicker>
 			</div>
 		</div>
+        <div ng-show="currentCategory == 'Discharged'">
+          <p>Confirm discharge.</p>
+        </div>
 	</form>
 </div>
 <div class="modal-footer">
