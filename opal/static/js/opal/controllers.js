@@ -405,6 +405,20 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 		});
 	};
 
+    $scope.removeFromMine = function(rix, event){
+        event.preventDefault();
+
+        var modal;
+        var episode = getEpisode(rix);
+        var location = episode.location[0];
+        editing = location.makeCopy();
+        delete editing.tags.mine;
+        location.save(editing).then(function(result){
+            $scope.rows = getVisibleEpisodes();
+        })
+
+    };
+
 	$scope.editItem = function(rix, cix, iix) {
 		var modal;
 		var columnName = getColumnName(cix);
