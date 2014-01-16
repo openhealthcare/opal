@@ -19,10 +19,18 @@
 		<script type="text/javascript" src="{% static "bootstrap-2.3.2/js/bootstrap.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/angular-strap-0.7.5/angular-strap.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/angular-strap-0.7.5/vendor/bootstrap-datepicker.js" %}"></script>
+		<script type="text/javascript" src="{% static "js/jquery-plugins/idle-timer.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/jquery-plugins/jquery.stickytableheaders.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/utils/underscore.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/utils/showdown.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/utils/moment.js" %}"></script>
+
+        <script type="text/javascript">
+          var initials = "{{request.user.first_name|slice:":1"}} {{request.user.last_name}}"
+          var settings = {
+              LOG_OUT_DURATION: {{settings.OPAL_LOG_OUT_DURATION}}
+          }
+        </script>
 
         <!-- Application -->
 		<script type="text/javascript" src="{% static "js/opal/utils.js" %}"></script>
@@ -32,10 +40,7 @@
 		<script type="text/javascript" src="{% static "js/opal/services.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/opal/controllers.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/opal/app.js" %}"></script>
-
-        <script type="text/javascript">
-          var initials = "{{request.user.first_name|slice:":1"}} {{request.user.last_name}}"
-        </script>
+        <script type="text/javascript" src="{% static "js/opal/timer.js" %}"></script>
 
         {% if extra_application %}{% include extra_application %}{% endif %}
 
@@ -52,6 +57,6 @@
 		<div class="container" loadingbar>Loading...</div>
 		<div ng-view></div>
                 {% include 'keyboard_shortcuts_modal.html' %}
-
+        {% include 'logout_modal.html' %}
 	</body>
 </html>
