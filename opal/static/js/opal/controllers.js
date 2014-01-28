@@ -392,6 +392,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 			resolve: {
 				episode: function() { return episode; },
 				currentTag: function() { return $scope.currentTag; },
+                currentSubTag: function() { return $scope.currentSubTag; }
 			}
 		});
 
@@ -717,6 +718,7 @@ controllers.controller('EpisodeDetailCtrl', function($scope, $dialog, $cookieSto
 			resolve: {
 				episode: function() { return episode; },
 				currentTag: function() { return $scope.currentTag; },
+				currentSubTag: function() { return $scope.currentSubTag; }
 			}
 		});
 
