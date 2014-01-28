@@ -7,8 +7,13 @@
 li {
 	padding-top: 0px;
 	padding-bottom: 0px;
+    line-height: 12px;
 }
 
 .screen-only {
 	display: none;
+}
+
+table {
+    font-size: 8px
 }
