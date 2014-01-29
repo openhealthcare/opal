@@ -1110,7 +1110,9 @@ controllers.controller('ReopenEpisodeCtrl', function($scope, $http, $timeout,
 
 		attrs.tags[tag] = true;
 		location.save(attrs).then(function(result) {
-			dialog.close(episode);
+            episode.save(episode.makeCopy()).then(function(result){
+			    dialog.close(episode);
+            });
 		});
 	};
 });
