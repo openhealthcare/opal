@@ -483,7 +483,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 			controller: 'DeleteItemConfirmationCtrl',
 			resolve: {
 				item: function() { return item; }
-			},
+			}
 		});
 
 		modal.open().then(function(result) {
