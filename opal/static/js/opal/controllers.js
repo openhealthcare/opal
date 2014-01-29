@@ -259,10 +259,10 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 						options: function() { return options; },
 						demographics: function() {
 						    return {
-								hospital_number: result.hospitalNumber,
+								hospital_number: result.hospitalNumber
 							}
-						},
-					},
+						}
+					}
 				});
 				modal.open().then(function(result) {
 					// The user has created the episode, or cancelled
@@ -305,8 +305,8 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 							resolve: {
 								schema: function() { return schema; },
 								options: function() { return options; },
-								demographics: function() { return demographics; },
-							},
+								demographics: function() { return demographics; }
+							}
 						});
 						modal.open().then(function(result) {
 							// User has created new episode, or cancelled
@@ -333,7 +333,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 						    controller: 'ReopenEpisodeCtrl',
 						    resolve: {
 							    patient: function() { return patient; },
-							    tag: function() { return $scope.currentTag; },
+							    tag: function() { return $scope.currentTag; }
 						    },
 					    });
 
@@ -482,7 +482,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 			templateUrl: '/templates/modals/delete_item_confirmation.html/',
 			controller: 'DeleteItemConfirmationCtrl',
 			resolve: {
-				item: function() { return item; },
+				item: function() { return item; }
 			},
 		});
 
@@ -623,8 +623,8 @@ controllers.controller('EpisodeDetailCtrl', function($scope, $dialog, $cookieSto
 			resolve: {
 				item: function() { return item; },
 				options: function() { return options; },
-                episode: function() { return $scope.episode },
-			},
+                episode: function() { return $scope.episode }
+			}
 		});
 
 		modal.open().then(function(result) {
@@ -657,7 +657,7 @@ controllers.controller('EpisodeDetailCtrl', function($scope, $dialog, $cookieSto
 			controller: 'DeleteItemConfirmationCtrl',
 			resolve: {
 				item: function() { return item; },
-			},
+			}
 		});
 
 		modal.open().then(function(result) {
@@ -764,7 +764,7 @@ controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog,
                                               schema, options) {
 	$scope.searchTerms = {
 		hospital_number: '',
-		name: '',
+		name: ''
 	};
 	$scope.results = [];
 	$scope.searched = false;
@@ -866,8 +866,8 @@ controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog,
 						    return {
 								hospital_number: result.hospitalNumber,
 							}
-						},
-					},
+						}
+					}
 				});
 				modal.open().then(function(result) {
 					// The user has created the episode, or cancelled
@@ -910,8 +910,8 @@ controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog,
 							resolve: {
 								schema: function() { return schema; },
 								options: function() { return options; },
-								demographics: function() { return demographics; },
-							},
+								demographics: function() { return demographics; }
+							}
 						});
 						modal.open().then(function(result) {
 							// User has created new episode, or cancelled
@@ -938,8 +938,8 @@ controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog,
 						    controller: 'ReopenEpisodeCtrl',
 						    resolve: {
 							    patient: function() { return patient; },
-							    tag: function() { return $scope.currentTag; },
-						    },
+							    tag: function() { return $scope.currentTag; }
+						    }
 					    });
 
 					    modal.open().then(function(result) {
@@ -1024,7 +1024,7 @@ controllers.controller('AddEpisodeCtrl', function($scope, $http, $cookieStore,
 		location: {
 			tags: {},
 		},
-		demographics: demographics,
+		demographics: demographics
 	};
 	$scope.editing.location.tags[$scope.currentTag] = true;
 	if($scope.currentSubTag != 'all'){

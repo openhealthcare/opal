@@ -25,7 +25,7 @@ app.config(function($routeProvider) {
 				},
 				options: function(Options) {
 					return Options;
-				},
+				}
 			},
 			templateUrl: '/templates/episode_list.html'
 		}).when('/episode/:id', {
@@ -39,7 +39,7 @@ app.config(function($routeProvider) {
 				},
 				options: function(Options) {
 					return Options;
-				},
+				}
 			},
 			templateUrl: '/templates/episode_detail.html'
 		}).when('/search', {
@@ -51,8 +51,8 @@ app.config(function($routeProvider) {
 				},
 				options: function(Options) {
 					return Options;
-				},
-			},
+				}
+			}
         }).when('/account', {
                         controller: 'AccountCtrl',
                         templateUrl: '/accounts/templates/account_detail.html'
@@ -63,6 +63,6 @@ app.config(function($routeProvider) {
 app.value('$strapConfig', {
 	datepicker: {
 		type: 'string',
-		format: 'dd/mm/yyyy',
+		format: 'dd/mm/yyyy'
 	}
 });
