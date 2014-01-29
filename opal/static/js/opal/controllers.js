@@ -864,7 +864,7 @@ controllers.controller('SearchCtrl', function($scope, $http, $location, $dialog,
 						options: function() { return options; },
 						demographics: function() {
 						    return {
-								hospital_number: result.hospitalNumber,
+								hospital_number: result.hospitalNumber
 							}
 						}
 					}
