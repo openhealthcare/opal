@@ -443,7 +443,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 				item: function() { return item; },
 				options: function() { return options; },
                 episode: function() { return episode; }
-			},
+			}
 		});
 
 		modal.open().then(function(result) {
