@@ -1022,7 +1022,7 @@ controllers.controller('AddEpisodeCtrl', function($scope, $http, $cookieStore,
 	$scope.editing = {
 		date_of_admission: moment().format('DD/MM/YYYY'),
 		location: {
-			tags: {},
+			tags: {}
 		},
 		demographics: demographics
 	};
