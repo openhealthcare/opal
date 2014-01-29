@@ -656,7 +656,7 @@ controllers.controller('EpisodeDetailCtrl', function($scope, $dialog, $cookieSto
 			templateUrl: '/templates/modals/delete_item_confirmation.html/',
 			controller: 'DeleteItemConfirmationCtrl',
 			resolve: {
-				item: function() { return item; },
+				item: function() { return item; }
 			}
 		});
 
