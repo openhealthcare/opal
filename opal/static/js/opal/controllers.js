@@ -334,7 +334,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 						    resolve: {
 							    patient: function() { return patient; },
 							    tag: function() { return $scope.currentTag; }
-						    },
+						    }
 					    });
 
 					    modal.open().then(function(result) {
