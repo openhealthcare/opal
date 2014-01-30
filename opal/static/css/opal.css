@@ -50,3 +50,7 @@ input.ng-invalid {
 .underline {
     text-decoration: underline;
 }
+
+.break-word {
+    word-wrap: break-word;
+}
