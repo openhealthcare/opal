@@ -8,3 +8,4 @@ libpeerconnection.log
 old
 dist
 opal.egg-info
+coverage-js
