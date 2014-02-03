@@ -43,8 +43,10 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 		var visibleEpisodes = [];
 
 		for (var pix in episodes) {
-			if (episodes[pix].isVisible($scope.currentTag, $scope.currentSubTag,
-                                        $scope.query.hospital_number, $scope.query.ward)) {
+			if (episodes[pix].isVisible($scope.currentTag,
+                                        $scope.currentSubTag,
+                                        $scope.query.hospital_number,
+                                        $scope.query.ward)) {
 				visibleEpisodes.push(episodes[pix]);
 			};
 		};

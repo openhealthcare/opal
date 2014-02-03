@@ -137,7 +137,6 @@ describe('services', function() {
                 id: 123,
                 date_of_admission: new Date(2013, 10, 19),
                 discharge_date: null,
-                active: true
             });
         });
 

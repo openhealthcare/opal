@@ -344,7 +344,6 @@ describe('controllers', function() {
         });
     });
 
-
     describe('ReopenEpisodeCtrl', function (){
         var $scope,  $timeout;
         var dialog, patient, tag;
