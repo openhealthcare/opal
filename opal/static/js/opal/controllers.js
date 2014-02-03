@@ -14,7 +14,16 @@ controllers.controller('RootCtrl', function($scope) {
 controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieStore,
                                                    $dialog,
                                                    Episode, schema, episodes, options) {
-	$scope.state = 'normal';
+    var version = window.version;
+    if($cookieStore.get('opal.seenVersion') !=  version){
+        $('#changelogTooltip').tooltip('show');
+        $('#changelog').on('hidden', function(){
+            $cookieStore.put('opal.seenVersion', version)
+            $('#changelogTooltip').tooltip('hide');
+        });
+    }
+
+    $scope.state = 'normal';
 
 	$scope.rix = 0; // row index
 	$scope.cix = 0; // column index
