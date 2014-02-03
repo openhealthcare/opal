@@ -124,8 +124,7 @@ services.factory('Episode', function($http, $q, Item) {
                 var schemacol = _.findWhere(schema.columns, {name: column.name});
 		        for (var iix = 0; iix < resource[column.name].length; iix++) {
 		            attrs = resource[column.name][iix];
-		            resource[column.name][iix] = new Item(attrs, resource, column);
-
+		            resource[column.name][iix] = new Item(attrs, episode, column);
 		        };
                 // Now we've instantiated, see if we want to sort
                 // by any particular field
@@ -331,7 +330,9 @@ services.factory('Item', function($http, $q) {
 
 	    this.columnName = columnSchema.name;
         this.sort = columnSchema.sort
-	    this.episodeName = episode.demographics[0].name;
+
+        // TODO: FTWLarry? What is this used for?
+	    this.episodeName = episode.demographics ? episode.demographics[0].name : '';
 
 	    this.makeCopy = function() {
 	        var field, value;

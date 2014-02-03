@@ -1124,7 +1124,10 @@ controllers.controller('EditItemCtrl', function($scope, $cookieStore, $timeout,
                                                 dialog, item, options, episode) {
     $scope.episode = episode.makeCopy();
 	$scope.editing = item.makeCopy();
+
+    // TODO: FTWLarry? What is this used for?
 	$scope.editingName = item.episodeName;
+
     $scope.columnName = item.columnName;
     // initially display episodes of interest to current user
     $scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine';

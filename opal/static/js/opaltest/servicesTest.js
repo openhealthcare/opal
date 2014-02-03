@@ -94,6 +94,7 @@ describe('services', function() {
         });
 
         it('should create Items', function() {
+
             expect(episode.demographics[0].constructor).toBe(Item);
             expect(episode.diagnosis[0].constructor).toBe(Item);
             expect(episode.diagnosis[1].constructor).toBe(Item);
