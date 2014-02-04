@@ -1,20 +1,20 @@
-<div class="navbar screen-only">
+<div class="navbar navbar-default screen-only">
   <div class="navbar-inner">
 	<a class="btn btn-info pull-left" href="#/search">Search</a>
 
-	<ul class="nav">
+	<ul class="nav navbar-nav">
 	  <li class="divider-vertical"></li>
 	</ul>
 
 	<button class="btn pull-left" ng-click="print()">Print</button>
 
-	<ul class="nav">
+	<ul class="nav navbar-nav">
 	  <li class="divider-vertical"></li>
 	</ul>
 
 	<button class="btn pull-left" ng-click="addEpisode()">Add Patient</button>
 
-	<ul class="nav">
+	<ul class="nav navbar-nav">
 	  <li class="divider-vertical"></li>
 	</ul>
 
@@ -24,7 +24,7 @@
 	  {% endfor %}
 	</div>
 
-	<ul class="nav">
+	<ul class="nav navbar-nav">
 	  <li class="divider-vertical"></li>
 	</ul>
 
@@ -35,14 +35,14 @@
              type="text" class="input-small" placeholder="Ward">
 	</form>
 
-	<ul class="nav pull-right">
+	<ul class="nav navbar-nav pull-right">
 	  <li class="divider-vertical"></li>
 	</ul>
   </div>
 </div>
 
 
-<div class="navbar screen-only" id="subtags-nav"
+<div class="navbar navbar-nav screen-only" id="subtags-nav"
      ng-show="showSubtags([{% for tag in tags %}{% if tag.subtags %}'{{tag.name}}'{% if not forloop.last%},{% endif %}{% endif %}{% endfor %} ''])">
      <div class="navbar-inner">
 
