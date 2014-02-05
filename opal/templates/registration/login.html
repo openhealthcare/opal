@@ -8,21 +8,21 @@
 
 <form method="post" action="{% url 'login' %}" class="form-horizontal">
 	{% csrf_token %}
-	<div class="control-group">
+	<div class="form-group">
 		<label class="control-label"{{ form.username.label_tag }}</label>
 		<div class="controls">
 			{{ form.username }}
 		</div>
 	</div>
 
-	<div class="control-group">
+	<div class="form-group">
 		<label class="control-label"{{ form.password.label_tag }}</label>
 		<div class="controls">
 			{{ form.password }}
 		</div>
 	</div>
 
-	<div class="control-group">
+	<div class="form-group">
 		<div class="controls">
 			<button type="submit" class="btn">Sign in</button>
 		</div>

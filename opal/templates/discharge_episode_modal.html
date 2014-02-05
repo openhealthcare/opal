@@ -1,49 +1,55 @@
-<div class="modal-header">
-	<button type="button" class="close" ng-click="cancel()">×</button>
-	<h3>Discharge</h3>
-</div>
-<div class="modal-body">
-	<form>
-		<div ng-show="currentCategory != 'Followup' && currentCategory != 'Discharged' ">
+<div class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+	    <button type="button" class="close" ng-click="cancel()">×</button>
+	    <h3>Discharge</h3>
+      </div>
+      <div class="modal-body">
+	    <form>
+		  <div ng-show="currentCategory != 'Followup' && currentCategory != 'Discharged' ">
 			<label class="radio">
-				<input type="radio" ng-model="editing.category" value="Discharged">
-				Discharge
+			  <input type="radio" ng-model="editing.category" value="Discharged">
+			  Discharge
 			</label>
 			<label class="radio">
-				<input type="radio" ng-model="editing.category" value="Followup">
-				Discharge - Outstanding Results for Follow-Up
+			  <input type="radio" ng-model="editing.category" value="Followup">
+			  Discharge - Outstanding Results for Follow-Up
 			</label>
 			<label class="radio">
-				<input type="radio" ng-model="editing.category" value="Deceased">
-				Deceased
+			  <input type="radio" ng-model="editing.category" value="Deceased">
+			  Deceased
 			</label>
 			<label class="radio">
-				<input type="radio" ng-model="editing.category" value="Transferred">
-				Transferred
+			  <input type="radio" ng-model="editing.category" value="Transferred">
+			  Transferred
 			</label>
 			<label class="radio">
-				<input type="radio" ng-model="editing.category" value="Unfollow">
-				No longer under active review
+			  <input type="radio" ng-model="editing.category" value="Unfollow">
+			  No longer under active review
 			</label>
-		</div>
-        <div ng-show="currentCategory == 'Followup'">
-          <input type="hidden" ng-model="editing.category" value="Discharged">
-          <p>
-            Confirm discharge and no further follow-up is required.
-          </p>
-        </div>
-		<div ng-hide="editing.category=='Unfollow' || currentCategory=='Discharged'" class="control-group">
+		  </div>
+          <div ng-show="currentCategory == 'Followup'">
+            <input type="hidden" ng-model="editing.category" value="Discharged">
+            <p>
+              Confirm discharge and no further follow-up is required.
+            </p>
+          </div>
+		  <div ng-hide="editing.category=='Unfollow' || currentCategory=='Discharged'" class="control-group">
 			<label class="control-label">Date of discharge</label>
 			<div class="controls">
-				<input type="text" ng-model="episode.discharge_date" bs-datepicker>
+			  <input type="text" ng-model="episode.discharge_date" bs-datepicker>
 			</div>
-		</div>
-        <div ng-show="currentCategory == 'Discharged'">
-          <p>Confirm discharge.</p>
-        </div>
-	</form>
-</div>
-<div class="modal-footer">
-	<button class="btn btn-primary" ng-click="discharge()">Discharge</button>
-	<button class="btn" ng-click="cancel()">Cancel</button>
-</div>
+		  </div>
+          <div ng-show="currentCategory == 'Discharged'">
+            <p>Confirm discharge.</p>
+          </div>
+	    </form>
+      </div>
+      <div class="modal-footer">
+	    <button class="btn btn-primary" ng-click="discharge()">Discharge</button>
+	    <button class="btn" ng-click="cancel()">Cancel</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

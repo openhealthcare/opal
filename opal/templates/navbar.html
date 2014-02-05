@@ -9,41 +9,47 @@
               data-title="{{OPAL_BRAND_NAME}} has been updated - click here to view the changes"
               data-placement="bottom"
               >
-        {{ VERSION_NUMBER }}
+              {{ VERSION_NUMBER }}
         </span>
       </a>
 	  {% now "DATE_FORMAT" %}
 	</span>
   </div>
 
-	<ul class="nav navbar-nav pull-right">
-	  <li>
-        <a href="/#/account">
-          {% if request.user.first_name %}
-            {{ request.user.first_name }}
-          {% else %}
-            {{ request.user.username }}
-          {% endif %}
-        </a>
-      </li>
-	  <li><a href="#">Home</a></li>
-      {% if request.user.is_staff %}
-		<li><a href="/admin">Admin</a></li>
-      {% endif %}
-      {% if request.user.is_authenticated %}
-	    <li><a href="/#/search">Search</a></li>
-        <li><a href="{% url 'feedback' %}">Feedback</a></li>
-	    <li><a href="{% url 'django.contrib.auth.views.logout' %}">Log out</a></li>
-      {% endif %}
-	</ul>
+  <ul class="nav navbar-nav pull-right">
+	<li>
+      <a href="/#/account">
+        {% if request.user.first_name %}
+          {{ request.user.first_name }}
+        {% else %}
+          {{ request.user.username }}
+        {% endif %}
+      </a>
+    </li>
+	<li><a href="#">Home</a></li>
+    {% if request.user.is_staff %}
+	  <li><a href="/admin">Admin</a></li>
+    {% endif %}
+    {% if request.user.is_authenticated %}
+	  <li><a href="/#/search">Search</a></li>
+    <li><a href="{% url 'feedback' %}">Feedback</a></li>
+	<li><a href="{% url 'django.contrib.auth.views.logout' %}">Log out</a></li>
+  {% endif %}
+  </ul>
 </div>
 
-<div id="changelog" class="modal hide" tabindex="-1" role="dialog">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal">×</button>
-		<h3>Changelog</h3>
-	</div>
-	<div class="modal-body">
-      {% include 'changelog.html' %}
-    </div>
-</div>
+<div class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div id="changelog" class="modal hide" tabindex="-1" role="dialog">
+	    <div class="modal-header">
+		  <button type="button" class="close" data-dismiss="modal">×</button>
+		  <h3>Changelog</h3>
+	    </div>
+	    <div class="modal-body">
+          {% include 'changelog.html' %}
+        </div>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

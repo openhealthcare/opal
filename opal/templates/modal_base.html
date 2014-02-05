@@ -1,17 +1,16 @@
-<div class="modal-header">
-	<button type="button" class="close" ng-click="cancel()">×</button>
-	<h3>{{title}} ([[editingName]])</h3>
-</div>
-<div class="modal-body">{% block modal_body %}{% endblock %}</div>
-<div class="modal-footer">
-    {% block modal_save %}
-	  <button class="btn btn-primary" ng-click="save('save')">Save</button>
-    {% endblock %}
-	{% if not single %}
-	<button class="btn btn" ng-click="save('save-and-add-another')">
-      Save and add another
-    </button>
-	{% endif %}
-
-	<button class="btn" ng-click="cancel()">Cancel</button>
-</div>
+      <div class="modal-header">
+	    <button type="button" class="close" ng-click="cancel()">×</button>
+	    <h3>{{title}} ([[editingName]])</h3>
+      </div>
+      <div class="modal-body">{% block modal_body %}{% endblock %}</div>
+      <div class="modal-footer">
+        {% block modal_save %}
+	      <button class="btn btn-primary" ng-click="save('save')">Save</button>
+        {% endblock %}
+	    {% if not single %}
+	      <button class="btn btn" ng-click="save('save-and-add-another')">
+            Save and add another
+          </button>
+	    {% endif %}
+	    <button class="btn" ng-click="cancel()">Cancel</button>
+      </div>

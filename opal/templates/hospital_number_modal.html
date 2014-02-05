@@ -1,18 +1,24 @@
-<div class="modal-header">
-  <button type="button" class="close" ng-click="cancel()">×</button>
-  <h3>New episode</h3>
-</div>
-<div class="modal-body">
-  <form class="form-horizontal">
-	<div class="control-group">
-	  <label class="control-label">Hospital number</label>
-	  <div class="controls">
-		<input type="text" ng-model="hospitalNumber">
-	  </div>
-	</div>
-  </form>
-</div>
-<div class="modal-footer">
-  <button class="btn btn-primary" ng-click="findByHospitalNumber()">Search</button>
-  <button class="btn" ng-click="cancel()">Cancel</button>
-</div>
+<div class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" ng-click="cancel()">×</button>
+        <h3>New episode</h3>
+      </div>
+      <div class="modal-body">
+        <form class="form-horizontal">
+	      <div class="control-group">
+	        <label class="control-label">Hospital number</label>
+	        <div class="controls">
+		      <input type="text" ng-model="hospitalNumber">
+	        </div>
+	      </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="findByHospitalNumber()">Search</button>
+        <button class="btn" ng-click="cancel()">Cancel</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

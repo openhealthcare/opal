@@ -1,10 +1,18 @@
 var app = angular.module('opal', [
-	 'opal.filters',
-	 'opal.services',
-	 'opal.directives',
-	 'opal.controllers',
-	 '$strap.directives'
+    'ngRoute',
+	'opal.filters',
+	'opal.services',
+	'opal.directives',
+	'opal.controllers',
+    'ui.bootstrap',
+	// 'mgcrea.ngStrap'
 ]);
+
+
+// angular.module('myApp', ['ngRoute']).
+//     config(['$routeProvider', function($routeProvider) {
+//         $routeProvider.otherwise({redirectTo: '/home'});
+//     }]);
 
 // See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags
 app.config(function($interpolateProvider) {
@@ -12,7 +20,8 @@ app.config(function($interpolateProvider) {
 	$interpolateProvider.endSymbol(']]');
 });
 
-app.config(function($routeProvider) {
+app.config(['$routeProvider',
+    function($routeProvider) {
 	$routeProvider.
 		when('/', {
 			controller: 'EpisodeListCtrl',
@@ -58,7 +67,7 @@ app.config(function($routeProvider) {
                         templateUrl: '/accounts/templates/account_detail.html'
 
 		}).otherwise({redirectTo: '/'});
-});
+}]);
 
 app.value('$strapConfig', {
 	datepicker: {

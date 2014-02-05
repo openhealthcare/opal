@@ -12,7 +12,7 @@ controllers.controller('RootCtrl', function($scope) {
 });
 
 controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieStore,
-                                                   $dialog,
+                                                   $modal,
                                                    Episode, schema, episodes, options) {
     var version = window.version;
     if($cookieStore.get('opal.seenVersion') !=  version){
@@ -447,7 +447,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 		$scope.selectItem(rix, cix, iix);
 		$scope.state = 'modal';
 
-		modal = $dialog.dialog({
+		modal = $modal.open({
 			templateUrl: '/templates/modals/' + columnName + '.html/',
 			controller: 'EditItemCtrl',
 			resolve: {
@@ -457,7 +457,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 			}
 		});
 
-		modal.open().then(function(result) {
+		modal.result.then(function(result) {
 			$scope.state = 'normal';
 
 			if (columnName == 'location') {
@@ -1130,7 +1130,7 @@ controllers.controller('ReopenEpisodeCtrl', function($scope, $http, $timeout,
 });
 
 controllers.controller('EditItemCtrl', function($scope, $cookieStore, $timeout,
-                                                dialog, item, options, episode) {
+                                                $modalInstance, item, options, episode) {
     $scope.episode = episode.makeCopy();
 	$scope.editing = item.makeCopy();
 
@@ -1151,9 +1151,10 @@ controllers.controller('EditItemCtrl', function($scope, $cookieStore, $timeout,
 	    };
     };
 
-	$timeout(function() {
-		dialog.modalEl.find('input,textarea').first().focus();
-	});
+    // TODO - reimplement this
+	// $timeout(function() {
+	// 	$modalInstance.modalEl.find('input,textarea').first().focus();
+	// });
 
 	for (var name in options) {
 		if (name.indexOf('micro_test') != 0) {
@@ -1202,16 +1203,16 @@ controllers.controller('EditItemCtrl', function($scope, $cookieStore, $timeout,
 		item.save($scope.editing).then(function() {
             if($scope.columnName == 'location'){
                 episode.save($scope.episode).then(function(){
-                    dialog.close(result)
+                    $modalInstance.close(result)
                 });
             }else{
-			    dialog.close(result);
+			    $modalInstance.close(result);
             }
 		});
 	};
 
 	$scope.cancel = function() {
-		dialog.close('cancel');
+		$modalInstance.close('cancel');
 	};
 });
 
