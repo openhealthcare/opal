@@ -26,6 +26,12 @@ describe('services', function() {
             date_of_admission: "2013-11-19",
             active: true,
             discharge_date: null,
+            location: [{
+                tags: {
+                    mine: true,
+                    hiv: true
+                }
+            }],
             demographics: [{
                 id: 101,
                 name: 'John Smith',
@@ -114,6 +120,10 @@ describe('services', function() {
             expect(episode.getNumberOfItems('diagnosis')).toBe(2);
         });
 
+        it('should get the current tags', function(){
+            expect(episode.getTags()).toEqual(['mine', 'hiv'])
+        });
+
         it('should be able to add a new item', function() {
             var item = new Item(
                 {id: 104, condition: 'Ebola', provisional: false,
@@ -197,7 +207,6 @@ describe('services', function() {
             });
 
         });
-
     });
 
     describe('Item', function() {

@@ -59,3 +59,13 @@ directives.directive('markdown', function () {
 		})
 	}
 });
+
+directives.directive('focusOnThis', function($timeout){
+    return {
+        link: function(scope, elem, attr){
+            $timeout(function(){
+                elem[0].focus();
+            });
+        }
+    }
+});

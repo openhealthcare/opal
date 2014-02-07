@@ -114,7 +114,6 @@ services.factory('Episode', function($http, $q, Item) {
     return function(resource, schema) {
 	    var episode = this;
 	    var column, field, attrs;
-
         // TODO - Pull these from the schema?
         var date_fields = ['date_of_admission', 'discharge_date'];
 
@@ -134,7 +133,6 @@ services.factory('Episode', function($http, $q, Item) {
                 }
             }
 	    };
-
         // Sort a particular column according to schema params.
         this.sortColumn = function(columnName, sortBy){
             episode[columnName] = _.sortBy(episode[columnName], sortBy).reverse();
@@ -143,7 +141,6 @@ services.factory('Episode', function($http, $q, Item) {
         // Constructor to update from attrs and parse datish fields
         this.initialise = function(attrs){
             angular.extend(episode, attrs)
-
             // Convert string-serialised dates into native JavaScriptz
             _.each(date_fields, function(field){
                 if(attrs[field]){
@@ -156,6 +153,12 @@ services.factory('Episode', function($http, $q, Item) {
 	    this.getNumberOfItems = function(columnName) {
 	        return episode[columnName].length;
 	    };
+
+        // Getter function to return active episode tags.
+        // Default implementation just hits location.
+        this.getTags = function(){
+            return _.keys(this.location[0].tags);
+        };
 
 	    this.newItem = function(columnName) {
 	        var attrs = {};
@@ -321,7 +324,7 @@ services.factory('Item', function($http, $q) {
 	        for (var fix = 0; fix < columnSchema.fields.length; fix++) {
 		        field = columnSchema.fields[fix];
 		        value = item[field.name];
-		        if (field.type == 'date' && item[field.name]) {
+		        if (field.type == 'date' && item[field.name] &&  !_.isDate(item[field.name])) {
 		            // Convert values of date fields to Date objects
 		            item[field.name] = moment(item[field.name], 'YYYY-MM-DD')._d;
 		        };

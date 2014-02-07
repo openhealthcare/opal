@@ -182,7 +182,7 @@ describe('controllers', function() {
                 $cookieStore = $injector.get('$cookieStore');
                 $controller = $injector.get('$controller');
                 $q = $injector.get('$q');
-                $dialog = $injector.get('$dialog');
+                $modal = $injector.get('$modal');
             });
 
             episodes = [new Episode(episodeData, schema)];
@@ -212,14 +212,60 @@ describe('controllers', function() {
             it('should set up the hospital number modal', function() {
                 var callArgs;
 
-                spyOn($dialog, 'dialog').andCallThrough();
+                spyOn($modal, 'open').andCallThrough();
 
                 $scope.addEpisode();
 
-                callArgs = $dialog.dialog.mostRecentCall.args;
+                callArgs = $modal.open.mostRecentCall.args;
                 expect(callArgs.length).toBe(1);
-                expect(callArgs[0].templateUrl).toBe('/templates/modals/hospital_number.html/');
+                expect(callArgs[0].templateUrl).toBe(
+                    '/templates/modals/hospital_number.html/');
                 expect(callArgs[0].controller).toBe('HospitalNumberCtrl');
+            });
+
+            it('should set the state to normal if the modal is cancelled', function(){
+                var deferred;
+
+                deferred = $q.defer();
+                spyOn($modal, 'open').andReturn({result: deferred.promise});
+
+                $scope.addEpisode();
+
+                expect($scope.state).toBe('modal');
+                deferred.reject('howdy');
+
+                $rootScope.$apply();
+                expect($scope.state).toBe('normal');
+            });
+
+            it('should set the state to normal if the modal is resolved', function(){
+                var deferred;
+
+                deferred = $q.defer();
+                spyOn($modal, 'open').andReturn({result: deferred.promise});
+
+                $scope.addEpisode();
+
+                expect($scope.state).toBe('modal');
+                deferred.resolve(episodes[0]);
+
+                $rootScope.$apply();
+                expect($scope.state).toBe('normal');
+            });
+
+            it('should select the episode when we close the modal', function(){
+                var deferred;
+
+                deferred = $q.defer();
+                spyOn($modal, 'open').andReturn({result: deferred.promise});
+                spyOn($scope, 'selectItem');
+
+                $scope.addEpisode();
+
+                deferred.resolve(episodes[0]);
+
+                $rootScope.$apply();
+                expect($scope.selectItem).toHaveBeenCalledWith(0, 0, 0)
             });
 
         });
@@ -238,11 +284,11 @@ describe('controllers', function() {
             it('should set up the demographics modal', function() {
                 var callArgs;
 
-                spyOn($dialog, 'dialog').andCallThrough();
+                spyOn($modal, 'open').andCallThrough();
 
                 $scope.editItem(0, 0, 0);
 
-                callArgs = $dialog.dialog.mostRecentCall.args;
+                callArgs = $modal.open.mostRecentCall.args;
                 expect(callArgs.length).toBe(1);
                 expect(callArgs[0].templateUrl).toBe('/templates/modals/demographics.html/');
                 expect(callArgs[0].controller).toBe('EditItemCtrl');
@@ -252,21 +298,18 @@ describe('controllers', function() {
                 var modalSpy;
 
                 modalSpy = {open: function() {}};
-                spyOn($dialog, 'dialog').andReturn(modalSpy);
-                spyOn(modalSpy, 'open').andReturn({then: function() {}});
+                spyOn($modal, 'open').andReturn({result:  {then: function() {}}});
 
                 $scope.editItem(0, 0, 0);
 
-                expect(modalSpy.open).toHaveBeenCalled();
+                expect($modal.open).toHaveBeenCalled();
             });
 
             it('should change state to "normal" when the modal is closed', function() {
-                var deferred, modalSpy;
+                var deferred;
 
                 deferred = $q.defer();
-                modalSpy = {open: function() {}};
-                spyOn($dialog, 'dialog').andReturn(modalSpy);
-                spyOn(modalSpy, 'open').andReturn(deferred.promise);
+                spyOn($modal, 'open').andReturn({result: deferred.promise});
 
                 $scope.editItem(0, 0, 0);
 
@@ -277,12 +320,10 @@ describe('controllers', function() {
             });
 
             it('should add a new item if result is "save-and-add-another"', function() {
-                var deferred, modalSpy;
+                var deferred;
 
                 deferred = $q.defer();
-                modalSpy = {open: function() {}};
-                spyOn($dialog, 'dialog').andReturn(modalSpy);
-                spyOn(modalSpy, 'open').andReturn(deferred.promise);
+                spyOn($modal, 'open').andReturn({result: deferred.promise});
 
                 $scope.editItem(0, 0, 0);
 
@@ -314,11 +355,11 @@ describe('controllers', function() {
             it('should set up the modal', function() {
                 var callArgs;
 
-                spyOn($dialog, 'dialog').andCallThrough();
+                spyOn($modal, 'open').andCallThrough();
 
                 $scope.editItem(0, 2, iix);
 
-                callArgs = $dialog.dialog.mostRecentCall.args;
+                callArgs = $modal.open.mostRecentCall.args;
                 expect(callArgs.length).toBe(1);
                 expect(callArgs[0].templateUrl).toBe('/templates/modals/diagnosis.html/');
                 expect(callArgs[0].controller).toBe('EditItemCtrl');
@@ -353,12 +394,11 @@ describe('controllers', function() {
                 $rootScope   = $injector.get('$rootScope');
                 $scope       = $rootScope.$new();
                 $controller  = $injector.get('$controller');
-                $dialog      = $injector.get('$dialog');
+                $modal      = $injector.get('$modal');
                 $timeout     = $injector.get('$timeout');
             });
 
-            dialog = $dialog.dialog({template: 'notarealtemplate!'});
-            dialog.open();
+            dialog = $modal.open({template: 'notarealtemplate!'});
             patient = patientData;
             tag: 'mine';
 
@@ -371,7 +411,6 @@ describe('controllers', function() {
             });
 
         });
-
 
         describe('Sorting episodes', function (){
             it('Should deal with unset admission dates', function () {
@@ -418,21 +457,20 @@ describe('controllers', function() {
                 $scope       = $rootScope.$new();
                 $controller  = $injector.get('$controller');
                 $cookieStore = $injector.get('$cookieStore');
-                $dialog      = $injector.get('$dialog');
+                $modal       = $injector.get('$modal');
                 $timeout     = $injector.get('$timeout');
             });
 
             options = optionsData;
             episode = new Episode(episodeData, schema);
             item    = new Item({columnName: 'diagnosis'}, episode, schema.columns[0])
-            dialog = $dialog.dialog({template: 'notarealtemplate!'})
-            dialog.open()
+            dialog = $modal.open({template: 'notarealtemplate!'})
 
             controller = $controller('EditItemCtrl', {
                 $scope      : $scope,
                 $cookieStore: $cookieStore,
                 $timeout    : $timeout,
-                dialog      : dialog,
+                $modalInstance: dialog,
                 item        : item,
                 options     : options,
                 episode     : episode,
@@ -498,25 +536,24 @@ describe('controllers', function() {
 
         beforeEach(function(){
             inject(function($injector){
-                $rootScope = $injector.get('$rootScope');
-                $scope = $rootScope.$new();
-                $controller = $injector.get('$controller');
-                $timeout = $injector.get('$timeout');
-                $dialog = $injector.get('$dialog');
+                $rootScope   = $injector.get('$rootScope');
+                $scope       = $rootScope.$new();
+                $controller  = $injector.get('$controller');
+                $timeout     = $injector.get('$timeout');
+                $modal       = $injector.get('$modal');
             });
 
             options = optionsData;
 
             controller = $controller('SearchCtrl', {
-                $scope: $scope,
-                $dialog: $dialog,
+                $scope:   $scope,
+                $dialog:  $dialog,
                 $timeout: $timeout,
-                schema: schema,
-                options: options,
+                schema:   schema,
+                options:  options,
             });
 
         });
-
 
         describe('get relevant episode id', function (){
             it('Should default to the active id', function () {
@@ -532,6 +569,134 @@ describe('controllers', function() {
 
     });
 
+    describe('HospitalNumberCtrl', function(){
+        var $scope, $timeout, $modal, $modalInstance, $http, $q;
+        var Episode, schema, options, tags;
+
+        beforeEach(function(){
+            inject(function($injector){
+                $httpBackend = $injector.get('$httpBackend');
+                $rootScope   = $injector.get('$rootScope');
+                $scope       = $rootScope.$new();
+                $q           = $injector.get('$q');
+                $controller  = $injector.get('$controller');
+                $timeout     = $injector.get('$timeout');
+                $modal       = $injector.get('$modal');
+            });
+
+            options = optionsData;
+            modalInstance = $modal.open({template: 'notatemplate'});
+
+            controller = $controller('HospitalNumberCtrl', {
+                $scope:         $scope,
+                $timeout:       $timeout,
+                $modal:         $modal,
+                $modalInstance: modalInstance,
+                schema:         schema,
+                options:        options,
+                tags:           {tag: 'mine', subtag: 'all'}
+            });
+        });
+
+        describe('newly created controller', function(){
+
+            it('should have set up the model', function(){
+                expect($scope.model).toEqual({});
+            });
+
+        });
+
+        describe('finding hospital number', function(){
+
+            it('should be empty with no hospital number', function(){
+                var expected;
+
+                spyOn($scope, 'addForHospitalNumber')
+                $scope.findByHospitalNumber();
+                expected = {patients: [], hospitalNumber: undefined}
+
+                $rootScope.$apply();
+                expect($scope.addForHospitalNumber).toHaveBeenCalledWith(expected);
+            });
+
+            it('should pass through results of search', function(){
+
+                $httpBackend.expectGET('patient/?hospital_number=2');
+                $httpBackend.whenGET('patient/?hospital_number=2').respond(
+                    [patientData]
+                );
+
+                spyOn($scope, 'addForHospitalNumber');
+                $scope.model.hospitalNumber = 2;
+
+                $scope.findByHospitalNumber();
+                expected = {patients: [patientData], hospitalNumber: 2}
+
+                $httpBackend.flush();
+                $rootScope.$apply();
+                expect($scope.addForHospitalNumber).toHaveBeenCalledWith(expected);
+
+            });
+
+        });
+
+        describe('add for hospital number', function(){
+
+            it('should call new patient if there are no results', function(){
+                var result;
+
+                result = {patients: [], hospitalNumber: undefined};
+                spyOn($scope, 'newPatient');
+                $scope.addForHospitalNumber(result);
+                expect($scope.newPatient).toHaveBeenCalledWith(result)
+            });
+
+            it('should call new for patient if we have one', function(){
+                var result;
+
+                result = {patients: [patientData], hospitalNumber: 2};
+                spyOn($scope, 'newForPatient');
+                $scope.addForHospitalNumber(result);
+                expect($scope.newForPatient).toHaveBeenCalledWith(patientData);
+            });
+
+        });
+
+        describe('new patient', function(){
+
+            it('should open AddEpisodeCtrl', function(){
+                var deferred, callArgs;
+
+                deferred = $q.defer();
+
+                spyOn($modal, 'open').andReturn({result: deferred.promise});
+                $scope.newPatient({patients: [], hospitalNumber: 123})
+
+                callArgs = $modal.open.mostRecentCall.args;
+                expect(callArgs.length).toBe(1);
+                expect(callArgs[0].controller).toBe('AddEpisodeCtrl');
+            });
+
+            it('should close the modal with a new patient', function(){
+                var deferred;
+
+                deferred = $q.defer();
+
+                spyOn($modal, 'open').andReturn({result: deferred.promise});
+                spyOn(modalInstance, 'close');
+                $scope.newPatient({patients: [], hospitalNumber: 123});
+
+                deferred.resolve(patientData);
+
+                $rootScope.$apply();
+                expect(modalInstance.close).toHaveBeenCalledWith(patientData);
+            })
+
+        });
+
+
+    });
+
     describe('AddEpisodeCtrl', function (){
         var $scope, $http, $cookieStore, $timeout, $dialog;
         var dialog, episode, options, demographics;
@@ -543,12 +708,11 @@ describe('controllers', function() {
                 $controller = $injector.get('$controller');
                 $cookieStore = $injector.get('$cookieStore');
                 $timeout = $injector.get('$timeout');
-                $dialog = $injector.get('$dialog');
+                $modal = $injector.get('$modal');
             });
 
             options = optionsData;
-            dialog = $dialog.dialog({template: 'notatemplate'});
-            dialog.open();
+            dialog = $modal.open({template: 'notatemplate'});
 
             episode = new Episode({}, schema);
             demographics = {};
@@ -557,14 +721,13 @@ describe('controllers', function() {
                 $scope: $scope,
                 $cookieStore: $cookieStore,
                 $timeout: $timeout,
-                dialog: dialog,
+                $modalInstance: dialog,
                 Episode: episode,
                 schema: schema,
                 options: options,
                 demographics: demographics
             });
         });
-
 
         describe('Adding an episode', function (){
 
