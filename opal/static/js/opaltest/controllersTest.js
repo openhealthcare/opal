@@ -571,7 +571,7 @@ describe('controllers', function() {
 
     describe('HospitalNumberCtrl', function(){
         var $scope, $timeout, $modal, $modalInstance, $http, $q;
-        var Episode, schema, options, tags;
+        var tags;
 
         beforeEach(function(){
             inject(function($injector){
@@ -691,9 +691,144 @@ describe('controllers', function() {
                 $rootScope.$apply();
                 expect(modalInstance.close).toHaveBeenCalledWith(patientData);
             })
+        });
+
+        describe('new for patient', function(){
+
+            it('should call through if there is an active episode.', function(){
+                var patient;
+
+                spyOn($scope, 'newForPatientWithActiveEpisode');
+                patient = angular.copy(patientData);
+                patient.active_episode_id = 3;
+
+                $scope.newForPatient(patient);
+                expect($scope.newForPatientWithActiveEpisode)
+                    .toHaveBeenCalledWith(patient);
+            });
+
+            it('should call through if there are no active episodes', function(){
+                var patient;
+
+                spyOn($scope, 'addForPatient');
+                patient = angular.copy(patientData)
+                patient.episodes = {};
+
+                $scope.newForPatient(patient);
+                expect($scope.addForPatient).toHaveBeenCalledWith(patient);
+            });
+
+            it('should offer to reopen episodes', function(){
+                var deferred, callArgs;
+
+                deferred = $q.defer();
+                spyOn($modal, 'open').andReturn({result: deferred.promise});
+
+                $scope.newForPatient(patientData);
+
+                callArgs = $modal.open.mostRecentCall.args;
+                expect(callArgs.length).toBe(1);
+                expect(callArgs[0].controller).toBe('ReopenEpisodeCtrl');
+            });
 
         });
 
+        describe('new for patient with active episode', function(){
+
+            it('should close the modal if already tagged.', function(){
+                var patient, episode, callArgs;
+
+                patient = angular.copy(patientData);
+                patient.active_episode_id = 3;
+                patient.episodes[3].location[0].tags['mine'] = true;
+                episode = new Episode(patient.episodes[3], schema);
+
+                spyOn(modalInstance, 'close');
+
+                $scope.newForPatientWithActiveEpisode(patient);
+
+                callArgs = modalInstance.close.mostRecentCall.args;
+                expect(callArgs[0].id).toEqual(3);
+            });
+
+            it('should add the current tag', function(){
+                var patient, callArgs;
+
+                patient = angular.copy(patientData);
+                patient.active_episode_id = 3;
+
+                spyOn(modalInstance, 'close');
+                $httpBackend.expectPUT('/location/3/');
+                $httpBackend.whenPUT('/location/3/').respond('')
+
+                $scope.newForPatientWithActiveEpisode(patient);
+
+                $httpBackend.flush()
+                $rootScope.$apply();
+
+                callArgs = modalInstance.close.mostRecentCall.args;
+                expect(callArgs[0].location[0].tags.mine).toBe(true);
+            });
+        });
+
+        describe('adding for a patient', function(){
+
+            it('should open AddEpisodeCtrl', function(){
+                var deferred, callArgs;
+
+                deferred = $q.defer();
+
+                spyOn($modal, 'open').andReturn({result: deferred.promise});
+
+                $scope.addForPatient(patientData);
+
+                callArgs = $modal.open.mostRecentCall.args;
+                expect(callArgs.length).toBe(1);
+                expect(callArgs[0].controller).toBe('AddEpisodeCtrl');
+            });
+
+            it('should pass through demographics', function(){
+                var deferred, callArgs;
+
+                deferred = $q.defer();
+
+                spyOn($modal, 'open').andReturn({result: deferred.promise});
+
+                $scope.addForPatient(patientData);
+
+                callArgs = $modal.open.mostRecentCall.args;
+                expect(callArgs.length).toBe(1);
+                expect(callArgs[0].resolve.demographics())
+                    .toEqual(patientData.demographics[0]);
+            });
+
+            it('should close the dialog with the new episode', function(){
+                var deferred, episode, callArgs;
+
+                deferred = $q.defer();
+                episode = new Episode({id: 3}, schema);
+
+                spyOn($modal, 'open').andReturn({result: deferred.promise});
+                spyOn(modalInstance, 'close');
+
+                $scope.addForPatient(patientData);
+
+                deferred.resolve(episode)
+                $rootScope.$apply();
+
+                callArgs = modalInstance.close.mostRecentCall.args;
+                expect(callArgs[0].makeCopy()).toEqual(episode.makeCopy());
+            });
+
+        })
+
+        describe('cancelling the modal', function(){
+            it('should close with null', function(){
+                spyOn(modalInstance, 'close');
+                $scope.cancel()
+                expect(modalInstance.close).toHaveBeenCalledWith(null)
+            })
+        });
 
     });
 

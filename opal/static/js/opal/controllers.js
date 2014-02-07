@@ -942,44 +942,16 @@ controllers.controller(
 			});
         };
 
-        // TODO
-        // NEXT
-        // THIS IS BROKEN
-        // OUCH
         $scope.newForPatient = function(patient){
 			if (patient.active_episode_id) {
 				// This patient has an active episode
                 $scope.newForPatientWithActiveEpisode(patient);
-			} else {
-				// This patient has no active episode
-                newForPatient = function(){
-                    demographics = patient.demographics[0];
-                    if(demographics.date_of_birth){
-                        var dob = moment(demographics.date_of_birth, 'YYYY-MM-DD')
-                            .format('DD/MM/YYYY');
-						demographics.date_of_birth = dob;
-                    }
-
-					modal = $dialog.dialog({
-						templateUrl: '/templates/modals/add_episode.html/',
-						controller: 'AddEpisodeCtrl',
-						resolve: {
-							schema: function() { return schema; },
-							options: function() { return options; },
-							demographics: function() { return demographics; }
-						}
-					});
-					modal.open().then(function(result) {
-						// User has created new episode, or cancelled
-						deferred.resolve(result);
-					});
-                }
-
+			} else { // This patient has no active episode
                 // Check to see if the patient has *any* episodes
                 if (_.keys(patient.episodes).length ==  0){
-                    newForPatient()
+                    $scope.addForPatient(patient);
                 }else {
-					// Convert episodes to Episodes -
+					// Convert episodes to Episodes - TODO
                     // it'd be better if this happened when the patient
                     // was retrieved
 					for (var eix in patient.episodes) {
@@ -987,7 +959,7 @@ controllers.controller(
                                                             schema);
 					}
 					// Ask user if they want to reopen an episode, or open a new one
-					modal = $dialog.dialog({
+					modal = $modal.open({
 						templateUrl: '/templates/modals/reopen_episode.html/',
 						controller: 'ReopenEpisodeCtrl',
 						resolve: {
@@ -996,7 +968,10 @@ controllers.controller(
 						}
 					});
 
-					modal.open().then(function(result) {
+                    // TODO NEXT
+                    // TEST THIS PLEASE
+
+			        modal.result.then(function(result) {
 						var demographics;
 						if (result == 'open-new') {
 							// User has chosen to open a new episode
@@ -1013,8 +988,7 @@ controllers.controller(
         $scope.newForPatientWithActiveEpisode = function(patient){
 			episode = new Episode(patient.episodes[patient.active_episode_id],
                                   schema)
-
-			if (episode.location[0].tags[$scope.tags.current] &&
+			if (episode.location[0].tags[$scope.tags.tag] &&
                 ($scope.tags.subtag == 'all' ||
                  episode.location[0].tags[$scope.tags.subtag])) {
 				// There is already an active episode for this patient
@@ -1024,7 +998,7 @@ controllers.controller(
 				// There is already an active episode for this patient but
                 // it doesn't have the current tag.
                 // Add the current Tag.
-                episode.location[0].tags[$scope.tags.current] = true;
+                episode.location[0].tags[$scope.tags.tag] = true;
                 if($scope.tags.subtag != 'all'){
                     episode.location[0].tags[$scope.tags.subtag] = true;
                 }
@@ -1033,7 +1007,28 @@ controllers.controller(
 				        $modalInstance.close(episode);
                     });
 			}
-        }
+        };
+
+        $scope.addForPatient = function(patient){
+            demographics = patient.demographics[0];
+            if(demographics.date_of_birth){
+                var dob = moment(demographics.date_of_birth, 'YYYY-MM-DD')
+                    .format('DD/MM/YYYY');
+				demographics.date_of_birth = dob;
+            }
+
+            modal = $modal.open({
+				templateUrl: '/templates/modals/add_episode.html/',
+				controller: 'AddEpisodeCtrl',
+				resolve: {
+					schema: function() { return schema; },
+					options: function() { return options; },
+					demographics: function() { return demographics; }
+				}
+			}).result.then(function(result){
+                $modalInstance.close(episode);
+            });
+        };
 
 	    $scope.cancel = function() {
 		    $modalInstance.close(null);
@@ -1044,7 +1039,8 @@ controllers.controller(
 
 controllers.controller('AddEpisodeCtrl', function($scope, $http, $cookieStore,
                                                   $timeout,
-                                                  $modalInstance, Episode, schema, options,
+                                                  $modalInstance, Episode, schema,
+                                                  options,
                                                   demographics) {
 	$scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine';
 	$scope.currentSubTag = $cookieStore.get('opal.currentSubTag') || 'all';
