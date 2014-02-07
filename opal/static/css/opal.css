@@ -1,6 +1,7 @@
 ul {
 	margin-left: 0;
 	margin-bottom: 0;
+    padding-left: 0px
 }
 
 li {
@@ -17,8 +18,20 @@ li.selected {
 	background-color: #cee;
 }
 
+.navbar {
+    margin-bottom: 3px;
+    border-bottom: 0px;
+    min-height: 1px;
+}
+#main-navbar ul li {
+	padding: 0px;
+}
+.modal-header {
+    padding-left: 0px 0px 0px 15px;
+}
 .modal-body {
 	height: 400px;
+    overflow-y: scroll;
 }
 
 thead {
@@ -34,7 +47,7 @@ table {
 	max-width: 150px;
 }
 
-.table td {
+.table tbody tr td {
 	padding: 1px;
 	max-width: 150px;
 }
@@ -43,8 +56,8 @@ input.ng-invalid {
 	background-color : #fcc;
 }
 
-#subtags-nav {
-    margin-top: -22px;
+#subtags {
+    margin-left: 260px;
 }
 
 .underline {
