@@ -42,20 +42,20 @@
 </div>
 
 
-<div class="navbar navbar-nav screen-only" id="subtags-nav"
+<div class="navbar navbar-nav navbar-default screen-only" id="subtags-nav"
      ng-show="showSubtags([{% for tag in tags %}{% if tag.subtags %}'{{tag.name}}'{% if not forloop.last%},{% endif %}{% endif %}{% endfor %} ''])">
      <div class="navbar-inner">
 
        <div class="btn-group" id="subtags">
 	     {% for tag in tags %}
            {% if tag.subtags %}
-               <button type="button" class="btn btn-small"
+               <button type="button" class="btn btn-sm"
                        ng-show="currentTag == '{{tag.name}}'"
                        ng-model="currentSubTag" btn-radio="'all'">
                        All
                </button>
              {% for subtag in tag.subtags %}
-               <button type="button" class="btn btn-small"
+               <button type="button" class="btn btn-sm"
                        ng-show="currentTag == '{{tag.name}}'"
                        ng-model="currentSubTag" btn-radio="'{{subtag.name}}'">
                        {{subtag.title}}
