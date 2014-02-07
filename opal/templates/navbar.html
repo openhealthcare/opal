@@ -1,6 +1,6 @@
-<div class="navbar navbar-default screen-only" role="navigation">
+<div class="navbar navbar-default screen-only" role="navigation" id="main-navbar">
   <div class="navbar-header">
-	<span class="brand pull-left">
+	<span class="navbar-brand">
 	  <a href="/">{{OPAL_BRAND_NAME}}</a>
       <a href="#changelog" role="button" data-toggle="modal">
         <span id="changelogTooltip"
@@ -38,10 +38,9 @@
   </ul>
 </div>
 
-<div class="modal fade">
+<div class="modal" id="changelog">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div id="changelog" class="modal hide" tabindex="-1" role="dialog">
 	    <div class="modal-header">
 		  <button type="button" class="close" data-dismiss="modal">×</button>
 		  <h3>Changelog</h3>
@@ -49,7 +48,6 @@
 	    <div class="modal-body">
           {% include 'changelog.html' %}
         </div>
-      </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
