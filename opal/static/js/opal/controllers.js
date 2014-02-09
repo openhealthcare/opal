@@ -94,11 +94,11 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
                 }
             }
         }
-
     }
 
     $scope.otherTags = function(item){
-        var active = $scope.currentSubTag == 'all'? $scope.currentTag : $scope.currentSubTag;
+        var active = $scope.currentSubTag == 'all'?
+            $scope.currentTag : $scope.currentSubTag;
 
         return _.filter(_.keys(item.tags), function(tag){
             if(tag == active){
@@ -269,7 +269,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 
 		$scope.state = 'modal';
 
-		modal = $dialog.dialog({
+		modal = $modal.open({
 			templateUrl: '/templates/modals/discharge_episode.html/',
 			controller: 'DischargeEpisodeCtrl',
 			resolve: {
@@ -277,9 +277,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 				currentTag: function() { return $scope.currentTag; },
                 currentSubTag: function() { return $scope.currentSubTag; }
 			}
-		});
-
-		modal.open().then(function(result) {
+		}).result.then(function(result) {
 			$scope.state = 'normal';
 
 			if (result == 'discharged') {
@@ -289,6 +287,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 		});
 	};
 
+    // TODO: Test This!
     $scope.removeFromMine = function(rix, event){
         event.preventDefault();
 
@@ -931,9 +930,7 @@ controllers.controller(
 					schema: function() { return schema; },
 					options: function() { return options; },
 					demographics: function() {
-						return {
-							hospital_number: result.hospitalNumber
-						}
+						return { hospital_number: result.hospitalNumber }
 					}
 				}
 			}).result.then(function(result) {
@@ -964,21 +961,16 @@ controllers.controller(
 						controller: 'ReopenEpisodeCtrl',
 						resolve: {
 							patient: function() { return patient; },
-							tag: function() { return $scope.currentTag; }
+							tag: function() { return $scope.tags.tag; }
 						}
-					});
-
-                    // TODO NEXT
-                    // TEST THIS PLEASE
-
-			        modal.result.then(function(result) {
+					}).result.then(function(result) {
 						var demographics;
 						if (result == 'open-new') {
 							// User has chosen to open a new episode
-                            newForPatient();
+                            $scope.addForPatient(patient);
 						} else {
 							// User has chosen to reopen an episode, or cancelled
-							deferred.resolve(result);
+							$modalInstance.close(result);
 						};
 					});
                 }
@@ -1026,7 +1018,7 @@ controllers.controller(
 					demographics: function() { return demographics; }
 				}
 			}).result.then(function(result){
-                $modalInstance.close(episode);
+                $modalInstance.close(result);
             });
         };
 
@@ -1107,18 +1099,15 @@ controllers.controller('AddEpisodeCtrl', function($scope, $http, $cookieStore,
 });
 
 controllers.controller('ReopenEpisodeCtrl', function($scope, $http, $timeout,
+                                                     $modalInstance, patient, tag) {
+    // TODO: Reimplement this.
+    //
+	// $timeout(function() {
+	// 	dialog.modalEl.find('input,textarea').first().focus();
+	// });
 
-                                                     dialog, patient, tag) {
-	$timeout(function() {
-		dialog.modalEl.find('input,textarea').first().focus();
-	});
-
-	$scope.episodes = [];
-	$scope.episodeId = 'None';
-
-	for (var eix in patient.episodes) {
-		$scope.episodes.push(patient.episodes[eix]);
-	}
+	$scope.episodes = _.values(patient.episodes);
+	$scope.model = {episodeId: 'None'};
 
     $scope.sortEpisodes = function(e1, e2) {
 		var date1 = e1.date_of_admission;
@@ -1140,25 +1129,26 @@ controllers.controller('ReopenEpisodeCtrl', function($scope, $http, $timeout,
 	$scope.episodes.sort($scope.sortEpisodes);
 
 	$scope.openNew = function() {
-		dialog.close('open-new');
+		$modalInstance.close('open-new');
 	};
 
 	$scope.reopen = function() {
-		var episode = patient.episodes[parseInt($scope.episodeId, 10)];
+		var episode = patient.episodes[parseInt($scope.model.episodeId, 10)];
 		var location = episode.getItem('location', 0);
 		var attrs = location.makeCopy();
 
 		attrs.tags[tag] = true;
 		location.save(attrs).then(function(result) {
             episode.save(episode.makeCopy()).then(function(result){
-			    dialog.close(episode);
+			    $modalInstance.close(episode);
             });
 		});
 	};
 });
 
 controllers.controller('EditItemCtrl', function($scope, $cookieStore, $timeout,
-                                                $modalInstance, item, options, episode) {
+                                                $modalInstance,
+                                                item, options, episode) {
     $scope.episode = episode.makeCopy();
 	$scope.editing = item.makeCopy();
 

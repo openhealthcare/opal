@@ -270,6 +270,33 @@ describe('controllers', function() {
 
         });
 
+        describe('discharging an episode', function(){
+            var mockEvent;
+
+            beforeEach(function(){
+                mockEvent = {preventDefault: function(){}};
+            });
+
+            it('should prevent the link from continuing', function(){
+                spyOn(mockEvent, 'preventDefault');
+                $scope.dischargeEpisode(0, mockEvent)
+            })
+
+            it('should open the discharge episode controller', function(){
+                var deferred, callArgs;
+
+                deferred = $q.defer();
+                spyOn($modal, 'open').andReturn({result: deferred.promise});
+
+                $scope.dischargeEpisode(0, mockEvent);
+
+                callArgs = $modal.open.mostRecentCall.args;
+                expect(callArgs.length).toBe(1);
+                expect(callArgs[0].controller).toBe('DischargeEpisodeCtrl');
+            });
+
+        });
+
         describe('editing an item', function() {
             it('should select that item', function() {
                 $scope.editItem(0, 0, 0);
@@ -398,18 +425,25 @@ describe('controllers', function() {
                 $timeout     = $injector.get('$timeout');
             });
 
-            dialog = $modal.open({template: 'notarealtemplate!'});
+            modalInstance = $modal.open({template: 'notarealtemplate!'});
             patient = patientData;
             tag: 'mine';
 
             controller = $controller('ReopenEpisodeCtrl', {
                 $scope  : $scope,
                 $timeout: $timeout,
-                dialog  : dialog,
+                $modalInstance  : modalInstance,
                 patient : patient,
                 tag     : tag,
             });
 
+        });
+
+        describe('initialization', function(){
+            it('should set up state', function(){
+                expect($scope.episodes).toEqual(_.values(patientData.episodes));
+                expect($scope.model.episodeId).toEqual('None');
+            });
         });
 
         describe('Sorting episodes', function (){
@@ -440,7 +474,14 @@ describe('controllers', function() {
                 var e2 = {date_of_admission: new Date(2012, 10, 24)};
                 expect($scope.sortEpisodes(e1, e2)).toEqual(0)
             });
+        });
 
+        describe('Opening a new episode', function(){
+            it('should close with the appropriate value', function(){
+                spyOn(modalInstance, 'close');
+                $scope.openNew();
+                expect(modalInstance.close).toHaveBeenCalledWith('open-new');
+            });
         });
 
     });
@@ -729,6 +770,38 @@ describe('controllers', function() {
                 callArgs = $modal.open.mostRecentCall.args;
                 expect(callArgs.length).toBe(1);
                 expect(callArgs[0].controller).toBe('ReopenEpisodeCtrl');
+                expect(callArgs[0].resolve.tag()).toBe('mine');
+            });
+
+            it('should open a new episode', function(){
+                var deferred;
+
+                deferred = $q.defer();
+                spyOn($modal, 'open').andReturn({result: deferred.promise});
+                spyOn($scope, 'addForPatient');
+
+                $scope.newForPatient(patientData);
+                deferred.resolve('open-new');
+
+                $rootScope.$apply();
+
+                expect($scope.addForPatient).toHaveBeenCalledWith(patientData);
+            });
+
+            it('should pass through the reopened episode', function(){
+                var deferred;
+
+                deferred = $q.defer();
+                spyOn($modal, 'open').andReturn({result: deferred.promise});
+                spyOn(modalInstance, 'close');
+
+                $scope.newForPatient(patientData);
+                deferred.resolve(patientData.episodes[3]);
+
+                $rootScope.$apply();
+
+                expect(modalInstance.close).toHaveBeenCalledWith(
+                    patientData.episodes[3]);
             });
 
         });
