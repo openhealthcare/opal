@@ -221,8 +221,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 	};
 
 	$scope.addEpisode = function() {
-		var hospitalNumberModal, addEpisodeModal;
-		var promise1, promise2, promise3;
+		var hospitalNumberModal;
 
 		$scope.state = 'modal';
 
@@ -432,7 +431,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 	};
 });
 
-controllers.controller('EpisodeDetailCtrl', function($scope, $dialog, $cookieStore,
+controllers.controller('EpisodeDetailCtrl', function($scope, $modal, $cookieStore,
                                                      schema,
                                                      episode, options) {
     $scope._ = _;
@@ -498,7 +497,7 @@ controllers.controller('EpisodeDetailCtrl', function($scope, $dialog, $cookieSto
 		$scope.selectItem(cix, iix);
 		$scope.state = 'modal';
 
-		modal = $dialog.dialog({
+		modal = $modal.open({
 			templateUrl: '/templates/modals/' + columnName + '.html/',
 			controller: 'EditItemCtrl',
 			resolve: {
@@ -506,9 +505,7 @@ controllers.controller('EpisodeDetailCtrl', function($scope, $dialog, $cookieSto
 				options: function() { return options; },
                 episode: function() { return $scope.episode }
 			}
-		});
-
-		modal.open().then(function(result) {
+		}).result.then(function(result) {
 			$scope.state = 'normal';
 
 			if (result == 'save-and-add-another') {
@@ -526,22 +523,19 @@ controllers.controller('EpisodeDetailCtrl', function($scope, $dialog, $cookieSto
 			// Cannot delete singleton
 			return;
 		}
-
 		if (!angular.isDefined(item)) {
 			// Cannot delete 'Add'
 			return;
 		}
 
 		$scope.state = 'modal'
-		modal = $dialog.dialog({
+		modal = $modal.open({
 			templateUrl: '/templates/modals/delete_item_confirmation.html/',
 			controller: 'DeleteItemConfirmationCtrl',
 			resolve: {
 				item: function() { return item; }
 			}
-		});
-
-		modal.open().then(function(result) {
+		}).result.then(function(result) {
 			$scope.state = 'normal';
 		});
 	};
@@ -584,8 +578,7 @@ controllers.controller('EpisodeDetailCtrl', function($scope, $dialog, $cookieSto
 		};
 	};
 
-
-	$scope.dischargeEpisode = function(rix, event) {
+	$scope.dischargeEpisode = function(event) {
 		var modal;
 		var episode = $scope.episode;
 
@@ -594,7 +587,7 @@ controllers.controller('EpisodeDetailCtrl', function($scope, $dialog, $cookieSto
 
 		$scope.state = 'modal';
 
-		modal = $dialog.dialog({
+		modal = $modal.open({
 			templateUrl: '/templates/modals/discharge_episode.html/',
 			controller: 'DischargeEpisodeCtrl',
 			resolve: {
@@ -602,15 +595,8 @@ controllers.controller('EpisodeDetailCtrl', function($scope, $dialog, $cookieSto
 				currentTag: function() { return $scope.currentTag; },
 				currentSubTag: function() { return $scope.currentSubTag; }
 			}
-		});
-
-		modal.open().then(function(result) {
+		}).result.then(function(result) {
 			$scope.state = 'normal';
-
-			if (result == 'discharged') {
-				// $scope.rows = getVisibleEpisodes();
-				// $scope.selectItem(0, $scope.cix, 0);
-			};
 		});
 	};
 
@@ -636,8 +622,6 @@ controllers.controller('EpisodeDetailCtrl', function($scope, $dialog, $cookieSto
         // Jump to scope.
         window.location.hash = '#/'
     }
-
-
 });
 
 controllers.controller('SearchCtrl', function($scope, $http, $location, $modal,
@@ -687,178 +671,35 @@ controllers.controller('SearchCtrl', function($scope, $http, $location, $modal,
         return epid;
     }
 
+
 	$scope.addEpisode = function() {
-		var hospitalNumberModal, addEpisodeModal;
-		var promise1, promise2, promise3;
+		var hospitalNumberModal;
 
 		$scope.state = 'modal';
 
-		hospitalNumberModal = $dialog.dialog({
+		hospitalNumberModal = $modal.open({
 			templateUrl: '/templates/modals/hospital_number.html/',
-			controller: 'HospitalNumberCtrl'
-		});
-
-		// At first we ask the user for a hospital number
-		promise1 = hospitalNumberModal.open();
-
-		promise2 = promise1.then(function(hospitalNumber) {
-            if(hospitalNumber == null){
-                return $q.reject('cancelled');
+			controller: 'HospitalNumberCtrl',
+            resolve: {
+                schema: function(){ return schema },
+                options: function(){ return options },
+                tags: function(){ return {tag: 'mine', subtag: 'all'}}}
+		}).result.then(
+            function(episode) {
+			    // User has either retrieved an existing episode or created a new one,
+			    // or has cancelled the process at some point.
+			    //
+			    // This ensures that the relevant episode is added to the table and
+			    // selected.
+			    $scope.state = 'normal';
+			    if (episode) {
+                    window.location.href = '#/episode/' + episode.id;
+			    };
+		    },
+            function(reason){
+                $scope.state = 'normal';
             }
-			var deferred = $q.defer();
-
-			if (hospitalNumber) {
-				// The user entered a hospital number
-				$http.get('patient/?hospital_number=' + hospitalNumber)
-                    .success(function(response) {
-					    // We have retrieved patient records matching that hospital number
-					    deferred.resolve({
-						    patients: response,
-						    hospitalNumber: hospitalNumber
-					    });
-				    });
-			} else {
-				// The user didn't enter a hospital number
-				deferred.resolve({
-					patients: [],
-					hospitalNumber: hospitalNumber
-				});
-			};
-
-			return deferred.promise;
-		});
-
-		promise3 = promise2.then(function(result) {
-			var patient, episode;
-			var deferred = $q.defer();
-			var modal;
-
-			if (result.patients.length == 0) {
-				// There is no patient with this hospital number
-				// Show user the form for creating a new episode,
-                // with the hospital number pre-populated
-				modal = $dialog.dialog({
-					templateUrl: '/templates/modals/add_episode.html/',
-					controller: 'AddEpisodeCtrl',
-					resolve: {
-						schema: function() { return schema; },
-						options: function() { return options; },
-						demographics: function() {
-						    return {
-								hospital_number: result.hospitalNumber
-							}
-						}
-					}
-				});
-				modal.open().then(function(result) {
-					// The user has created the episode, or cancelled
-					deferred.resolve(result);
-				});
-			} else if (result.patients.length == 1) {
-				// There is a single patient with this hospital number
-				patient = result.patients[0];
-				if (patient.active_episode_id) {
-					// This patient has an active episode
-					episode = new Episode(patient.episodes[patient.active_episode_id],
-                                          schema)
-
-					if (episode.location[0].tags[$scope.currentTag]) {
-						// There is already an active episode for this patient
-                        // with the current tag
-						deferred.resolve(episode);
-					} else {
-						// There is already an active episode for this patient but
-                        // it doesn't have the current tag.
-                        // Add the current Tag.
-                        episode.location[0].tags[$scope.currentTag] = true;
-                        episode.location[0].save(episode.location[0].makeCopy());
-						deferred.resolve(episode);
-					}
-				} else {
-					// This patient has no active episode
-
-                    newForPatient = function(){
-                        demographics = patient.demographics[0];
-                        if(demographics.date_of_birth){
-                            var dob = moment(demographics.date_of_birth, 'YYYY-MM-DD')
-                                .format('DD/MM/YYYY');
-						    demographics.date_of_birth = dob;
-                        }
-
-						modal = $dialog.dialog({
-							templateUrl: '/templates/modals/add_episode.html/',
-							controller: 'AddEpisodeCtrl',
-							resolve: {
-								schema: function() { return schema; },
-								options: function() { return options; },
-								demographics: function() { return demographics; }
-							}
-						});
-						modal.open().then(function(result) {
-							// User has created new episode, or cancelled
-							deferred.resolve(result);
-						});
-                    }
-
-                    // Check to see if the patient has *any* episodes
-                    if (_.keys(patient.episodes).length ==  0){
-                        newForPatient()
-                    }else {
-
-					    // Convert episodes to Episodes -
-                        // it'd be better if this happened when the patient
-                        // was retrieved
-					    for (var eix in patient.episodes) {
-						    patient.episodes[eix] = new Episode(patient.episodes[eix],
-                                                                schema);
-					    }
-
-					    // Ask user if they want to reopen an episode, or open a new one
-					    modal = $dialog.dialog({
-						    templateUrl: '/templates/modals/reopen_episode.html/',
-						    controller: 'ReopenEpisodeCtrl',
-						    resolve: {
-							    patient: function() { return patient; },
-							    tag: function() { return $scope.currentTag; }
-						    }
-					    });
-
-					    modal.open().then(function(result) {
-						    var demographics;
-
-						    if (result == 'open-new') {
-							    // User has chosen to open a new episode
-                                newForPatient();
-						    } else {
-							    // User has chosen to reopen an episode, or cancelled
-							    deferred.resolve(result);
-						    };
-					    });
-                    }
-
-
-				};
-			} else {
-				// This shouldn't happen, but we should probably handle it better
-				alert('ERROR: More than one patient found with hospital number');
-				deferred.resolve(null);
-			};
-
-			return deferred.promise;
-		});
-
-		promise3.then(function(episode) {
-			// User has either retrieved an existing episode or created a new one,
-			// or has cancelled the process at some point.
-			//
-			// This ensures that the relevant episode is added to the table and
-			// selected.
-			var rowIx;
-			$scope.state = 'normal';
-			if (episode) {
-                window.location.href = '#/episode/' + episode.id;
-			};
-		});
+        );
 	};
 
 });
@@ -1235,18 +1076,20 @@ controllers.controller('EditItemCtrl', function($scope, $cookieStore, $timeout,
 });
 
 controllers.controller('DeleteItemConfirmationCtrl', function($scope, $timeout,
-                                                              dialog, item) {
-	$timeout(function() {
-		dialog.modalEl.find('button.btn-primary').first().focus();
-	});
+                                                              $modalInstance, item) {
+    // TODO: Reimplement this!
+    //
+	// $timeout(function() {
+	// 	dialog.modalEl.find('button.btn-primary').first().focus();
+	// });
 
 	$scope.destroy = function() {
 		item.destroy().then(function() {
-			dialog.close('deleted');
+			$modalInstance.close('deleted');
 		});
 	};
 
 	$scope.cancel = function() {
-		dialog.close('cancel');
+		$modalInstance.close('cancel');
 	};
 });

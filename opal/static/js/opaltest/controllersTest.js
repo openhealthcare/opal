@@ -412,6 +412,104 @@ describe('controllers', function() {
         });
     });
 
+    describe('EpisodeDetailCtrl', function(){
+        var $scope, $cookieStore, $modal;
+        var episode;
+
+        beforeEach(function(){
+            inject(function($injector){
+                $rootScope   = $injector.get('$rootScope');
+                $scope       = $rootScope.$new();
+                $q           = $injector.get('$q');
+                $controller  = $injector.get('$controller');
+                $cookieStore = $injector.get('$cookieStore');
+                $modal       = $injector.get('$modal');
+            });
+
+            episode = new Episode(episodeData, schema);
+
+            controller = $controller('EpisodeDetailCtrl', {
+                $scope: $scope,
+                $modal: $modal,
+                $cookieStore: $cookieStore,
+                schema: schema,
+                episode: episode,
+                options: options
+            });
+        });
+
+        describe('initialization', function(){
+            it('should set up state', function(){
+                expect($scope.episode).toEqual(episode);
+            });
+        });
+
+        describe('selecting an item', function(){
+            it('should select the item', function(){
+                $scope.selectItem(1, 34);
+                expect($scope.cix).toBe(1);
+                expect($scope.iix).toBe(34);
+            });
+        })
+
+        describe('editing an item', function(){
+            it('should open the EditItemCtrl', function(){
+                var deferred, callArgs;
+
+                deferred = $q.defer();
+                spyOn($modal, 'open').andReturn({result: deferred.promise});
+
+                $scope.editItem(0, 0);
+
+                callArgs = $modal.open.mostRecentCall.args;
+                expect(callArgs.length).toBe(1);
+                expect(callArgs[0].controller).toBe('EditItemCtrl');
+            });
+        });
+
+        describe('deleting an item', function(){
+            it('should open the DeleteItemConfirmationCtrl', function(){
+                var deferred, callArgs;
+
+                deferred = $q.defer();
+                spyOn($modal, 'open').andReturn({result: deferred.promise});
+
+                $scope.deleteItem(2, 0);
+
+                callArgs = $modal.open.mostRecentCall.args;
+                expect(callArgs.length).toBe(1);
+                expect(callArgs[0].controller).toBe('DeleteItemConfirmationCtrl');
+            });
+        });
+
+        describe('discharging an episode', function(){
+            var mockEvent;
+
+            beforeEach(function(){
+                mockEvent = {preventDefault: function(){}};
+            });
+
+            it('should open the DischargeEpisodeCtrl controller', function(){
+                var deferred, callArgs;
+
+                deferred = $q.defer();
+                spyOn($modal, 'open').andReturn({result: deferred.promise});
+
+                $scope.dischargeEpisode(mockEvent);
+
+                callArgs = $modal.open.mostRecentCall.args;
+                expect(callArgs.length).toBe(1);
+                expect(callArgs[0].controller).toBe('DischargeEpisodeCtrl');
+            });
+        });
+
+    });
+
+    // TODO: Actual Tests Here Please
+    describe('SearchCtrl', function(){
+
+    });
+
     describe('ReopenEpisodeCtrl', function (){
         var $scope,  $timeout;
         var dialog, patient, tag;
@@ -421,7 +519,7 @@ describe('controllers', function() {
                 $rootScope   = $injector.get('$rootScope');
                 $scope       = $rootScope.$new();
                 $controller  = $injector.get('$controller');
-                $modal      = $injector.get('$modal');
+                $modal       = $injector.get('$modal');
                 $timeout     = $injector.get('$timeout');
             });
 
@@ -948,5 +1046,56 @@ describe('controllers', function() {
 
     });
 
+    describe('DeleteItemConfirmationCtrl', function(){
+        var $scope, $timeout;
+        var item;
+
+        beforeEach(function(){
+            inject(function($injector){
+                $rootScope  = $injector.get('$rootScope');
+                $scope      = $rootScope.$new();
+                $controller = $injector.get('$controller');
+                $timeout    = $injector.get('$timeout');
+                $modal      = $injector.get('$modal');
+                $q          = $injector.get('$q')
+            });
+
+            $modalInstance = $modal.open({template: 'notarealtemplate'});
+            item = { destroy: function(){} };
+
+            controller = $controller('DeleteItemConfirmationCtrl', {
+                $scope        : $scope,
+                $timeout      : $timeout,
+                $modalInstance: $modalInstance,
+                item          : item
+            });
+        });
+
+        describe('deleting', function(){
+            it('should call destroy on the modal', function(){
+                var deferred;
+
+                deferred = $q.defer();
+                spyOn(item, 'destroy').andReturn(deferred.promise);
+                spyOn($modalInstance, 'close');
+
+                $scope.destroy();
+                deferred.resolve();
+                $rootScope.$apply();
+
+                expect(item.destroy).toHaveBeenCalledWith();
+                expect($modalInstance.close).toHaveBeenCalledWith('deleted');
+            })
+        });
+
+        describe('cancelling', function(){
+            it('should close the modal', function(){
+                spyOn($modalInstance, 'close');
+                $scope.cancel();
+                expect($modalInstance.close).toHaveBeenCalledWith('cancel')
+            })
+        });
+
+    });
 
 });
