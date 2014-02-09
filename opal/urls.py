@@ -35,6 +35,7 @@ urlpatterns = patterns(
     url(r'^templates/episode_list.html/?$', views.EpisodeListTemplateView.as_view()),
     url(r'^templates/episode_detail.html/?$', views.EpisodeDetailTemplateView.as_view()),
     url(r'^templates/search.html/?$', views.SearchTemplateView.as_view()),
+    url(r'^templates/extract.html/?$', views.ExtractTemplateView.as_view()),
 
     # url(r'^templates/modals/add_patient.html/?$', views.AddPatientTemplateView.as_view()),
     # url(r'^templates/modals/discharge_patient.html/?$', views.DischargePatientTemplateView.as_view()),

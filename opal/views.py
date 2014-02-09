@@ -210,6 +210,9 @@ class SearchTemplateView(TemplateView):
         context['tags'] = TAGS
         return context
 
+class ExtractTemplateView(TemplateView):
+    template_name = 'extract.html'
+
 class AddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'add_episode_modal.html'
 

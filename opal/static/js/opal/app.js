@@ -56,10 +56,13 @@ app.config(['$routeProvider',
 				}
 			}
         }).when('/account', {
-                        controller: 'AccountCtrl',
-                        templateUrl: '/accounts/templates/account_detail.html'
+            controller: 'AccountCtrl',
+            templateUrl: '/accounts/templates/account_detail.html'
 
-		}).otherwise({redirectTo: '/'});
+		}).when('/extract', {
+            controller: 'ExtractCtrl',
+            templateUrl: '/templates/extract.html'
+        }).otherwise({redirectTo: '/'});
 }]);
 
 app.value('$strapConfig', {
