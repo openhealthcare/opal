@@ -10,15 +10,27 @@
 		<title>{{brand_name}}</title>
 
                 <!-- 3rd party -->
-		<script type="text/javascript" src="{% static "js/jquery-1.9.1/jquery.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/angular-1.1.5/angular.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/angular-1.1.5/angular-cookies.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/angular-1.1.5/angular-resource.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/angular-ui-utils-0.0.4/ui-utils.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/angular-ui-bootstrap-0.4.0/ui-bootstrap-tpls.js" %}"></script>
-		<script type="text/javascript" src="{% static "bootstrap-2.3.2/js/bootstrap.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/angular-strap-0.7.5/angular-strap.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/angular-strap-0.7.5/vendor/bootstrap-datepicker.js" %}"></script>
+		<script type="text/javascript" src="{% static "js/jquery-1.11.0/jquery.js" %}"></script>
+		<script type="text/javascript" src="{% static "js/angular-1.2.11/angular.js" %}"></script>
+		<script type="text/javascript" src="{% static "js/angular-1.2.11/angular-route.js" %}"></script>
+		<script type="text/javascript" src="{% static "js/angular-1.2.11/angular-cookies.js" %}"></script>
+		<script type="text/javascript" src="{% static "js/angular-1.2.11/angular-resource.js" %}"></script>
+
+		<script type="text/javascript" src="{% static "js/angular-ui-utils-0.1.0/ui-utils.js" %}"></script>
+		<script type="text/javascript" src="{% static "js/angular-ui-bootstrap-0.10.0/ui-bootstrap-tpls.js" %}"></script>
+
+		<script type="text/javascript" src="{% static "bootstrap-3.1.0/js/bootstrap.js" %}"></script>
+		<!-- <script type="text/javascript" src="{% static "js/angular-strap-2.0.0-rc.2/angular-strap.js" %}"></script> -->
+		<!-- <script type="text/javascript" src="{% static "js/angular-strap-2.0.0-rc.2/angular-strap.tpl.js" %}"></script> -->
+		<script type="text/javascript" src="{% static "js/angular-strap-2.0.0-rc.2/modules/tooltip.js" %}"></script>
+		<script type="text/javascript" src="{% static "js/angular-strap-2.0.0-rc.2/modules/tooltip.tpl.js" %}"></script>
+		<script type="text/javascript" src="{% static "js/angular-strap-2.0.0-rc.2/modules/dimensions.js" %}"></script>
+		<script type="text/javascript" src="{% static "js/angular-strap-2.0.0-rc.2/modules/parse-options.js" %}"></script>
+
+
+		<script type="text/javascript" src="{% static "js/angular-strap-2.0.0-rc.2/modules/typeahead.js" %}"></script>
+		<script type="text/javascript" src="{% static "js/angular-strap-2.0.0-rc.2/modules/typeahead.tpl.js" %}"></script>
+		<!-- <script type="text/javascript" src="{% static "js/angular-strap-0.7.5/vendor/bootstrap-datepicker.js" %}"></script> -->
 		<script type="text/javascript" src="{% static "js/jquery-plugins/idle-timer.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/jquery-plugins/jquery.stickytableheaders.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/utils/underscore.js" %}"></script>
@@ -45,7 +57,7 @@
 
         {% if extra_application %}{% include extra_application %}{% endif %}
 
-		<link href="{% static "bootstrap-2.3.2/css/bootstrap.css" %}" rel="stylesheet" media="all">
+		<link href="{% static "bootstrap-3.1.0/css/bootstrap.css" %}" rel="stylesheet" media="all">
 		<link href="{% static "css/bootstrap-datepicker.css" %}" rel="stylesheet" media="all">
 		<link href="{% static "css/font-awesome/css/font-awesome.css" %}" rel="stylesheet" media="all">
 		<link href="{% static "css/opal.css" %}" rel="stylesheet" media="all">

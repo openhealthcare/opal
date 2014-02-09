@@ -3,14 +3,12 @@
   <h3>New episode</h3>
 </div>
 <div class="modal-body">
-  <form class="form-horizontal">
 	<div class="control-group">
 	  <label class="control-label">Hospital number</label>
 	  <div class="controls">
-		<input type="text" ng-model="hospitalNumber">
+		<input ng-model="model.hospitalNumber" focus-on-this>
 	  </div>
 	</div>
-  </form>
 </div>
 <div class="modal-footer">
   <button class="btn btn-primary" ng-click="findByHospitalNumber()">Search</button>
