@@ -1,20 +1,77 @@
 <div class="container">
   <div class="row">
     {% if not request.user.get_profile.can_extract %}
-    <div class="col-md-4 col-md-offset-4">
-      <h2>Data Extract</h2>
-      <p>
-        Sorry, you don't have permission to extract data.
-        Please contact your local administrator to request permission.
-      </p>
-    </div>
+      <div class="col-md-4 col-md-offset-4">
+        <h2>Data Extract</h2>
+        <p>
+          Sorry, you don't have permission to extract data.
+          Please contact your local administrator to request permission.
+        </p>
+      </div>
     {% else %}
-    <div class="col-md-4 col-md-offset-4">
-      <h2>Data Extract</h2>
-      <p>
-        This is where the data extract interface will go.
-      </p>
-    </div>
+      <div class="col-md-12">
+        <h2>Data Extract</h2>
+
+        <form class="form-inline">
+
+        <select class="form-control" ng-model="model.column">
+          <option ng-repeat="name in column_names">[[name]]</option>
+        </select>
+
+        <span ng-repeat="col in columns" ng-show="model.column == col.name.underscoreToCapWords()">
+          <select class="form-control" ng-model="model.field" >
+            <option ng-repeat="field in searchableFields(col)">[[field]]</option>
+          </select>
+        </span>
+
+        <select class="form-control"
+                ng-show="model.field != null"
+                ng-model="model.queryType" >
+          <option>Equals</option>
+          <option>Contains</option>
+        </select>
+
+        <input type="text"
+               ng-model="model.query"
+               ng-show="model.field != null"
+               />
+
+        </form>
+
+        <p></p>
+        <p>
+          <button type="button"
+                  class="btn btn-primary btn-lg"
+                  ng-click="search()"
+                  >
+                  Search
+          </button>
+        </p>
+      </div>
+
+      <div ng-show="state=='pending'">
+        <img src="/assets/img/loading.gif">
+      </div>
+
+      <div ng-show="state=='normal' && results.length > 1">
+        <p ng-repeat="result in results">
+          <a href="#/episode/[[result.id]]">
+            [[ result.date_of_admission ]] [[ result.demographics[0].name ]]
+          </a>
+        </p>
+      </div>
+
+        <ul class="hide">
+          <li ng-repeat="col in columns">
+            [[ col.name ]] (Single=[[col.single]])
+            <ul>
+              <li ng-repeat="f in col.fields">
+                [[f.name]]: [[ f.type ]]
+              </li>
+            </ul>
+          </li>
+        </ul>
+
     {% endif %}
   </div>
 </div>

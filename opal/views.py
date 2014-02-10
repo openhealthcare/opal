@@ -297,6 +297,10 @@ class DetailSchemaView(SchemaBuilderView):
     columns = schema.detail_columns
 
 
+class ExtractSchemaView(SchemaBuilderView):
+    columns = schema.extract_columns
+
+
 def check_password_reset(request, *args, **kwargs):
     """
     Check to see if the user needs to reset their password
@@ -314,8 +318,10 @@ def check_password_reset(request, *args, **kwargs):
             return redirect('django.contrib.auth.views.password_change')
     return response
 
+
 class AccountDetailTemplateView(TemplateView):
     template_name = 'accounts/account_detail.html'
+
 
 class BannedView(TemplateView):
     template_name = 'accounts/banned.html'
@@ -355,3 +361,9 @@ def options_view(request):
     data['tag_display'] = tag_display
 
     return _build_json_response(data)
+
+class ExtractSearchView(View):
+    def post(self, *args, **kwargs):
+
+        return _build_json_response([episode.to_dict(self.request.user)
+                                     for episode in models.Episode.objects.all()])
