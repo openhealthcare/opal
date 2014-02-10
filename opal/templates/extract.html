@@ -53,7 +53,7 @@
         <img src="/assets/img/loading.gif">
       </div>
 
-      <div ng-show="state=='normal' && results.length > 1">
+      <div ng-show="state=='normal' && results.length > 0">
         <p ng-repeat="result in results">
           <a href="#/episode/[[result.id]]">
             [[ result.date_of_admission ]] [[ result.demographics[0].name ]]

@@ -362,8 +362,38 @@ def options_view(request):
 
     return _build_json_response(data)
 
+
 class ExtractSearchView(View):
     def post(self, *args, **kwargs):
+        query = _get_request_data(self.request)
+        print query
 
-        return _build_json_response([episode.to_dict(self.request.user)
-                                     for episode in models.Episode.objects.all()])
+        # model = query['column'].replace(' ', '')
+        # from django.db import models as m
+        # for mod in  m.get_models():
+        #     if mod.__name__ == model:
+        #         break
+        # print mod
+
+        model = query['column'].replace(' ', '_').lower()
+        field = query['field'].replace(' ', '_').lower()
+        kw_fk = {'{0}__{1}_fk__name'.format(model, field): query['query']}
+        kw_ft = {'{0}__{1}_ft'.format(model, field): query['query']}
+        qs_fk = models.Episode.objects.filter(**kw_fk)
+        qs_ft = models.Episode.objects.filter(**kw_ft)
+
+        eps = set(list(qs_fk) + list(qs_ft))
+        return _build_json_response([e.to_dict(self.request.user) for e in eps])
+
+        # if query['queryType'] == 'Equals':
+        #     kw = {field: query['query'] }
+        # else:
+        #     kw = {'{0}_icontains'.format(field): query['query'] }
+
+        # qs = mod.objects.filter(**kw)
+
+        # for q in qs:
+        #     print q
+
+        # return _build_json_response([episode.to_dict(self.request.user)
+        #                              for episode in models.Episode.objects.all()])
