@@ -51,6 +51,153 @@ describe('services', function() {
         }
     });
 
+    describe('listSchemaLoader', function(){
+        var mock;
+
+        beforeEach(function(){
+            mock = { alert: jasmine.createSpy() };
+
+            module(function($provide) {
+                $provide.value('$window', mock);
+            });
+
+            inject(function($injector){
+                listSchemaLoader = $injector.get('listSchemaLoader');
+                Schema           =  $injector.get('Schema');
+                $httpBackend     = $injector.get('$httpBackend');
+                $rootScope       = $injector.get('$rootScope');
+                $q               = $injector.get('$q');
+            });
+        });
+
+        it('should fetch the schema', function(){
+            var result
+
+            $httpBackend.expectGET('/schema/list/');
+            $httpBackend.whenGET('/schema/list/').respond(columns);
+
+            listSchemaLoader.then(
+                function(r){ result = r}
+            );
+            $rootScope.$apply();
+            $httpBackend.flush();
+
+            expect(result.columns).toEqual(columns);
+        });
+
+        it('should alert if the http request errors', function(){
+            var result
+
+            $httpBackend.expectGET('/schema/list/');
+            $httpBackend.whenGET('/schema/list/').respond(500, 'NO');
+
+            listSchemaLoader.then( function(r){ result = r } );
+            $rootScope.$apply();
+            $httpBackend.flush()
+
+            expect(mock.alert).toHaveBeenCalledWith(
+                'List schema could not be loaded');
+        });
+    })
+
+    describe('detailSchemaLoader', function(){
+        var mock;
+
+        beforeEach(function(){
+            mock = { alert: jasmine.createSpy() };
+
+            module(function($provide) {
+                $provide.value('$window', mock);
+            });
+
+            inject(function($injector){
+                detailSchemaLoader = $injector.get('detailSchemaLoader');
+                Schema             =  $injector.get('Schema');
+                $httpBackend       = $injector.get('$httpBackend');
+                $rootScope         = $injector.get('$rootScope');
+                $q                 = $injector.get('$q');
+            });
+        });
+
+        it('should fetch the schema', function(){
+            var result
+
+            $httpBackend.expectGET('/schema/detail/');
+            $httpBackend.whenGET('/schema/detail/').respond(columns);
+
+            detailSchemaLoader.then(
+                function(r){ result = r}
+            );
+            $rootScope.$apply();
+            $httpBackend.flush();
+
+            expect(result.columns).toEqual(columns);
+        });
+
+        it('should alert if the http request errors', function(){
+            var result
+
+            $httpBackend.expectGET('/schema/detail/');
+            $httpBackend.whenGET('/schema/detail/').respond(500, 'NO');
+
+            detailSchemaLoader.then( function(r){ result = r } );
+            $rootScope.$apply();
+            $httpBackend.flush()
+
+            expect(mock.alert).toHaveBeenCalledWith(
+                'Detail schema could not be loaded');
+        });
+    })
+
+    describe('extractSchemaLoader', function(){
+        var mock;
+
+        beforeEach(function(){
+            mock = { alert: jasmine.createSpy() };
+
+            module(function($provide) {
+                $provide.value('$window', mock);
+            });
+
+            inject(function($injector){
+                extractSchemaLoader = $injector.get('extractSchemaLoader');
+                Schema             =  $injector.get('Schema');
+                $httpBackend       = $injector.get('$httpBackend');
+                $rootScope         = $injector.get('$rootScope');
+                $q                 = $injector.get('$q');
+            });
+        });
+
+        it('should fetch the schema', function(){
+            var result
+
+            $httpBackend.expectGET('/schema/extract/');
+            $httpBackend.whenGET('/schema/extract/').respond(columns);
+
+            extractSchemaLoader.then(
+                function(r){ result = r}
+            );
+            $rootScope.$apply();
+            $httpBackend.flush();
+
+            expect(result.columns).toEqual(columns);
+        });
+
+        it('should alert if the http request errors', function(){
+            var result
+
+            $httpBackend.expectGET('/schema/extract/');
+            $httpBackend.whenGET('/schema/extract/').respond(500, 'NO');
+
+            extractSchemaLoader.then( function(r){ result = r } );
+            $rootScope.$apply();
+            $httpBackend.flush()
+
+            expect(mock.alert).toHaveBeenCalledWith(
+                'Extract schema could not be loaded');
+        });
+    });
+
     describe('Schema', function() {
         var Schema, schema;
 

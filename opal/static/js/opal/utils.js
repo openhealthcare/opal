@@ -42,9 +42,9 @@ if (typeof String.prototype.trim !== 'function') {
 	}
 }
 
-// Not sure why this is here
-String.prototype.chomp = function() {
-    return this.trim();
+String.prototype.underscoreToCapWords = function() {
+    return this.toLowerCase().replace(/_/g, ' ').replace(
+            /(?:\b)(\w)/g, function(s, p){ return p.toUpperCase() });
 }
 
 // From http://stackoverflow.com/a/2897510/2463201

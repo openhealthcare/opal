@@ -9,27 +9,40 @@ services.factory('EpisodeResource', function($resource) {
     return $resource('/episode/:id/', {id: '@id'})
 });
 
-services.factory('listSchemaLoader', function($q, $http, Schema) {
+services.factory('listSchemaLoader', function($q, $http, $window, Schema) {
     var deferred = $q.defer();
     $http.get('/schema/list/').then(function(response) {
 	    var columns = response.data;
 	    deferred.resolve(new Schema(columns));
     }, function() {
 	    // handle error better
-	    alert('List schema could not be loaded');
+	    $window.alert('List schema could not be loaded');
     });
 
     return deferred.promise;
 });
 
-services.factory('detailSchemaLoader', function($q, $http, Schema) {
+services.factory('detailSchemaLoader', function($q, $http, $window, Schema) {
     var deferred = $q.defer();
     $http.get('/schema/detail/').then(function(response) {
 	    var columns = response.data;
 	    deferred.resolve(new Schema(columns));
     }, function() {
 	    // handle error better
-	    alert('Detail schema could not be loaded');
+	    $window.alert('Detail schema could not be loaded');
+    });
+
+    return deferred.promise;
+});
+
+services.factory('extractSchemaLoader', function($q, $http, $window, Schema){
+    var deferred = $q.defer();
+    $http.get('/schema/extract/').then(function(response) {
+	    var columns = response.data;
+	    deferred.resolve(new Schema(columns));
+    }, function() {
+	    // handle error better
+	    $window.alert('Extract schema could not be loaded');
     });
 
     return deferred.promise;

@@ -1095,6 +1095,59 @@ describe('controllers', function() {
                 expect($modalInstance.close).toHaveBeenCalledWith('cancel')
             })
         });
+    });
+
+    describe('ExtractCtrl', function(){
+        beforeEach(function(){
+            inject(function($injector){
+                $rootScope  = $injector.get('$rootScope');
+                $scope      = $rootScope.$new();
+                $controller = $injector.get('$controller');
+                $httpBackend = $injector.get('$httpBackend');
+            });
+
+            controller = $controller('ExtractCtrl',  {
+                $scope: $scope,
+                schema: schema
+            });
+        });
+
+        describe('Initialization', function(){
+            it('should set up initial state', function(){
+                expect($scope.columns).toEqual(columns);
+            });
+        });
+
+        describe('Getting searchable fields', function(){
+            it('should exclude token fields', function(){
+                var col = {fields: [
+                    {name: 'consistency_token', type: 'token'},
+                    {name: 'hospital', type: 'string'},
+                ]}
+                expect($scope.searchableFields(col)).toEqual(['Hospital'])
+            });
+            it('should capitalze the field names', function(){
+                var col = {fields: [
+                    {name: 'hospital_number', type: 'string'},
+                    {name: 'hospital', type: 'string'},
+                ]}
+                expect($scope.searchableFields(col)).toEqual(['Hospital Number',
+                                                              'Hospital']);
+            });
+        });
+
+        describe('Search', function(){
+            it('should ask the server for results', function(){
+                $httpBackend.expectPOST("/search/extract/");
+                $httpBackend.whenPOST("/search/extract/").respond(patientData.episodes);
+
+                $scope.search();
+                expect($scope.state).toBe('pending');
+                $httpBackend.flush();
+                expect($scope.results).toEqual(patientData.episodes);
+                expect($scope.state).toBe('normal');
+            });
+        });
 
     });
 

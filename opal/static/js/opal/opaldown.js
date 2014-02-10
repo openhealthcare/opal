@@ -15,7 +15,7 @@
                 type: 'lang',
                 regex: '(.*?)[\n\r]',
                 replace: function(match, line){
-                    var cleanline = line.chomp()
+                    var cleanline = line.trim()
                     if(cleanline){
                         var spaced = spacey({content: cleanline});
                         return spaced
