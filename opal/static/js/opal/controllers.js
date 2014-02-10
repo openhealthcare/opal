@@ -1094,6 +1094,36 @@ controllers.controller('DeleteItemConfirmationCtrl', function($scope, $timeout,
 	};
 });
 
-controllers.controller('ExtractCtrl', function($scope){
+controllers.controller('ExtractCtrl', function($scope, $http, schema){
+    $scope.state =  'normal';
+    $scope.columns = schema.columns;
+    $scope.column_names = _.map(schema.columns, function(c){
+        return c.name.underscoreToCapWords();
+    });
+
+    $scope.model = {
+        column   : null,
+        field    : null,
+        queryType: "Equals",
+        query    : null
+    };
+
+    $scope.searchableFields = function(column){
+        return _.map(
+            _.reject(
+                column.fields,
+                function(c){ return c.type == 'token' ||  c.type == 'date' ||  c.type ==  'list' ||  c.type == 'boolean'; }),
+            function(c){ return c.name.underscoreToCapWords(); }
+        );
+    }
+
+    $scope.search = function(){
+        $scope.state = 'pending';
+        $http.post('/search/extract/', $scope.model).success(
+            function(results){
+                $scope.results = results;
+                $scope.state = 'normal';
+            });
+    }
 
 });
