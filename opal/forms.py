@@ -21,7 +21,6 @@ class ChangePasswordForm(AdminPasswordChangeForm):
             raise ValidationError("The new password must be at least %d characters long." % self.MIN_LENGTH)
 
         # Must not be a banned word
-        print password1
         if password1 in banned:
             raise ValidationError("Sorry, %s is too common a password." % password1)
 
