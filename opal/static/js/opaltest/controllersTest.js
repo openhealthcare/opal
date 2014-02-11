@@ -193,7 +193,8 @@ describe('controllers', function() {
                 $cookieStore: $cookieStore,
                 schema: schema,
                 episodes: episodes,
-                options: options
+                options: options,
+                viewDischarged: false
             });
         });
 

@@ -96,13 +96,29 @@ def patient_search_view(request):
 @require_http_methods(['GET', 'POST'])
 def episode_list_and_create_view(request):
     if request.method == 'GET':
-        episodes = set(
-            list(models.Episode.objects.filter(active=True)) +
-            list(models.Episode.objects.filter(tagging__tag_name='mine',
-                                               tagging__user=request.user))
-            )
-        return _build_json_response([episode.to_dict(request.user)
-                                     for episode in episodes])
+        GET = request.GET
+        if 'discharged' in GET:
+            today = datetime.date.today()
+            one_week_ago = today - datetime.timedelta(days=7)
+
+            episodes = models.Episode.objects.filter(discharge_date__gte=one_week_ago)
+            episode_ids = [e.id for e in episodes]
+            historic = models.Tagging.historic_tags_for_episodes(episode_ids)
+            serialised = [episode.to_dict(request.user)
+                          for episode in episodes]
+            for episode in serialised:
+                if episode['id'] in historic:
+                    episode['location'][0]['tags'] = historic[episode['id']]
+
+        else:
+            episodes = set(
+                list(models.Episode.objects.filter(active=True)) +
+                list(models.Episode.objects.filter(tagging__tag_name='mine',
+                                                   tagging__user=request.user))
+                )
+            serialised = [episode.to_dict(request.user)
+                          for episode in episodes]
+        return _build_json_response(serialised)
 
     elif request.method == 'POST':
         data = _get_request_data(request)
@@ -191,10 +207,9 @@ class EpisodeListTemplateView(EpisodeTemplateView):
     template_name = 'episode_list.html'
     column_schema = schema.list_columns
 
-    def get_context_data(self, *a, **k):
-        context = super(EpisodeListTemplateView, self).get_context_data(*a, **k)
-        context['settings'] = settings
-        return context
+class DischargeListTemplateView(EpisodeTemplateView):
+    template_name = 'discharge_list.html'
+    column_schema = schema.list_columns
 
 
 class EpisodeDetailTemplateView(EpisodeTemplateView):
