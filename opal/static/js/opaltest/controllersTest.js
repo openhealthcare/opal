@@ -194,7 +194,7 @@ describe('controllers', function() {
                 schema: schema,
                 episodes: episodes,
                 options: options,
-                viewInactive: false
+                viewDischarged: false
             });
         });
 

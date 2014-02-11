@@ -17,31 +17,22 @@ app.config(function($routeProvider) {
 		when('/', {
 			controller: 'EpisodeListCtrl',
 			resolve: {
-				schema: function(listSchemaLoader) {
-					return listSchemaLoader;
-				},
-				episodes: function(episodesLoader) {
-					return episodesLoader();
-				},
-				options: function(Options) {
-					return Options;
-				},
-                viewInactive: function(){ return false }
+				schema: function(listSchemaLoader) { return listSchemaLoader; },
+				episodes: function(episodesLoader) { return episodesLoader(); },
+				options: function(Options) { return Options; },
+                viewDischarged: function(){ return false },
+                episodeVisibility: function(episodeVisibility){
+                    return episodeVisibility
+                }
 			},
 			templateUrl: '/templates/episode_list.html'
 		})
         .when('/episode/:id', {
 			controller: 'EpisodeDetailCtrl',
 			resolve: {
-				schema: function(detailSchemaLoader) {
-					return detailSchemaLoader;
-				},
-				episode: function(episodeLoader) {
-					return episodeLoader();
-				},
-				options: function(Options) {
-					return Options;
-				}
+				schema: function(detailSchemaLoader) { return detailSchemaLoader; },
+				episode: function(episodeLoader) { return episodeLoader(); },
+				options: function(Options) { return Options; }
 			},
 			templateUrl: '/templates/episode_detail.html'
 		})
@@ -49,12 +40,8 @@ app.config(function($routeProvider) {
 			controller: 'SearchCtrl',
 			templateUrl: '/templates/search.html',
 			resolve: {
-				schema: function(listSchemaLoader) {
-					return listSchemaLoader;
-				},
-				options: function(Options) {
-					return Options;
-				}
+				schema: function(listSchemaLoader) { return listSchemaLoader; },
+				options: function(Options) { return Options; }
 			}
         })
         .when('/discharge', {
@@ -66,7 +53,10 @@ app.config(function($routeProvider) {
                 episodes: function(dischargedEpisodesLoader){
                     return dischargedEpisodesLoader()
                 },
-                viewInactive: function(){ return true }
+                episodeVisibility: function(episodeVisibility){
+                    return episodeVisibility
+                },
+                viewDischarged: function(){ return true }
             }
         })
         .when('/account', {

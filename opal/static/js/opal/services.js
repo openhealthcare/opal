@@ -97,8 +97,8 @@ services.factory('episodesLoader', function($q, $window,
 
 
 services.factory('dischargedEpisodesLoader', function($q, $window,
-                                            EpisodeResource, Episode,
-                                            listSchemaLoader) {
+                                                      EpisodeResource, Episode,
+                                                      listSchemaLoader) {
     return function() {
 	    var deferred = $q.defer();
 	    listSchemaLoader.then(function(schema) {
@@ -136,6 +136,44 @@ services.factory('episodeLoader', function($q, $route,
     };
 });
 
+services.factory('episodeVisibility', function(){
+    return function(episode, $scope, viewDischarged) {
+
+        var location = episode.location[0];
+        var demographics = episode.demographics[0];
+        var hospital_number = $scope.query.hospital_number;
+        var ward = $scope.query.ward;
+
+        // Not active (no tags) - hide it.
+        if(!episode.active && $scope.currentTag != 'mine' && !viewDischarged){
+            return false;
+        }
+
+        // Not in the top level tag - hide it
+	    if (location.tags[$scope.currentTag] != true) {
+		    return false;
+	    }
+
+        // Not in the current subtag
+	    if ($scope.currentSubTag != 'all' &&
+            location.tags[$scope.currentSubTag] != true){
+		    return false;
+	    }
+
+        // filtered out by hospital number
+	    if (demographics.hospital_number &&
+            demographics.hospital_number.toLowerCase().indexOf(
+                hospital_number.toLowerCase()) == -1) {
+		    return false;
+	    }
+
+        // Filtered out by ward.
+        if (location.ward.toLowerCase().indexOf(ward.toLowerCase()) == -1) {
+		    return false;
+	    }
+        return true;
+	}
+});
 
 services.factory('Episode', function($http, $q, Item) {
     return function(resource, schema) {
@@ -224,36 +262,6 @@ services.factory('Episode', function($http, $q, Item) {
 		            break;
 		        };
 	        };
-	    };
-
-        // TODO: Test isVisible
-	    this.isVisible = function(tag, subtag, hospital_number, ward, viewInactive) {
-	        var location = episode.location[0];
-            var demographics = episode.demographics[0];
-            if(!episode.active && tag != 'mine' &&  !viewInactive){
-                return false;
-            }
-            if(episode.discharge_date &&  viewInactive){
-                return true;
-            }
-            if(episode.active && viewInactive){
-                return false;
-            }
-	        if (location.tags[tag] != true) {
-		        return false;
-	        }
-	        if (subtag != 'all' && location.tags[subtag] != true){
-		        return false;
-	        }
-	        if (demographics.hospital_number &&
-                demographics.hospital_number.toLowerCase().indexOf(
-                    hospital_number.toLowerCase()) == -1) {
-		        return false;
-	        }
-	        if (location.ward.toLowerCase().indexOf(ward.toLowerCase()) == -1) {
-		        return false;
-	        }
-	        return true;
 	    };
 
         this.makeCopy = function(){

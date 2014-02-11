@@ -29,7 +29,16 @@ describe('services', function() {
             demographics: [{
                 id: 101,
                 name: 'John Smith',
-                date_of_birth: '1980-07-31'
+                date_of_birth: '1980-07-31',
+                hospital_number: '555'
+            }],
+            location: [{
+                category: 'Inepisode',
+                hospital: 'UCH',
+                ward: 'T10',
+                bed: '15',
+                date_of_admission: '2013-08-01',
+                tags: {'mine': true, 'tropical': true}
             }],
             diagnosis: [{
                 id: 102,
@@ -181,6 +190,65 @@ describe('services', function() {
 
             expect(mock.alert).toHaveBeenCalledWith('Episodes could not be loaded');
         });
+    });
+
+    describe('episodeVisibility', function(){
+        var $scope, episode;
+
+        beforeEach(function(){
+            inject(function($injector){
+                episodeVisibility = $injector.get('episodeVisibility');
+            });
+
+            $scope = {
+                currentTag: 'micro',
+                currentSubTag: 'all',
+                query: {
+                    hospital_number: '',
+                    ward: ''
+                }
+            }
+            episode = episodeData;
+        });
+        it('should allow inactive episodes on mine', function(){
+            episode.active = false;
+            $scope.currentTag = 'mine';
+            expect(episodeVisibility(episode, $scope, false)).toBe(true);
+        });
+        it('should reject inactive episodes', function(){
+            episode.active = false;
+            expect(episodeVisibility(episode, $scope, false)).toBe(false);
+        });
+        it('should reject if the current tag is not true', function(){
+            expect(episodeVisibility(episode, $scope, false)).toBe(false);
+        });
+        it('should reject if the current subtag is not true', function(){
+            $scope.currentTag = 'tropical';
+            $scope.currentSubTag = 'tropical_outpatients';
+            expect(episodeVisibility(episode, $scope, false)).toBe(false);
+        });
+        it('should reject if the hospital number filter fails', function(){
+            $scope.currentTag = 'tropical';
+            $scope.query.hospital_number = '123'
+            expect(episodeVisibility(episode, $scope, false)).toBe(false);
+        });
+        it('should allow if the hospital number filter passes', function(){
+            $scope.currentTag = 'tropical';
+            expect(episodeVisibility(episode, $scope, false)).toBe(true);
+        });
+        it('should reject if the ward filter fails', function(){
+            $scope.currentTag = 'tropical';
+            $scope.query.ward = 'fake ward';
+            expect(episodeVisibility(episode, $scope, false)).toBe(false);
+        });
+        it('should allow if the ward filter passes', function(){
+            $scope.currentTag = 'tropical';
+            expect(episodeVisibility(episode, $scope, false)).toBe(true);
+        });
+        it('should allow if in the tag & unfiltered', function(){
+            $scope.currentTag = 'tropical';
+            expect(episodeVisibility(episode, $scope, false)).toBe(true);
+        })
     });
 
     describe('Episode', function() {
