@@ -5,8 +5,9 @@ var CATEGORIES = [
 
 var services = angular.module('opal.services', ['ngResource']);
 
-services.factory('EpisodeResource', function($resource) {
-    return $resource('/episode/:id/', {id: '@id'})
+services.factory('EpisodeResource', function($resource, $q) {
+    resource = $resource('/episode/:id/', {id: '@id'});
+    return resource
 });
 
 services.factory('listSchemaLoader', function($q, $http, Schema) {
@@ -73,7 +74,9 @@ services.factory('Options', function($q, $http) {
     return deferred.promise;
 });
 
-services.factory('episodesLoader', function($q, EpisodeResource, Episode, listSchemaLoader) {
+services.factory('episodesLoader', function($q, $window,
+                                            EpisodeResource, Episode,
+                                            listSchemaLoader) {
     return function() {
 	    var deferred = $q.defer();
 	    listSchemaLoader.then(function(schema) {
@@ -85,15 +88,39 @@ services.factory('episodesLoader', function($q, EpisodeResource, Episode, listSc
 		        deferred.resolve(episodes);
 	        }, function() {
 		        // handle error better
-		        alert('Episodes could not be loaded');
+		        $window.alert('Episodes could not be loaded');
 	        });
 	    });
 	    return deferred.promise;
     };
 });
 
+
+services.factory('dischargedEpisodesLoader', function($q, $window,
+                                            EpisodeResource, Episode,
+                                            listSchemaLoader) {
+    return function() {
+	    var deferred = $q.defer();
+	    listSchemaLoader.then(function(schema) {
+	        EpisodeResource.query({discharged: true}, function(resources) {
+		        var episodes = {};
+		        _.each(resources, function(resource) {
+		            episodes[resource.id] = new Episode(resource, schema);
+		        });
+		        deferred.resolve(episodes);
+	        }, function() {
+		        // handle error better
+		        $window.alert('Episodes could not be loaded');
+	        });
+	    });
+	    return deferred.promise;
+    };
+});
+
+
 services.factory('episodeLoader', function($q, $route,
-                                           EpisodeResource, Episode, detailSchemaLoader) {
+                                           EpisodeResource,
+                                           Episode, detailSchemaLoader) {
     return function() {
 	    var deferred = $q.defer();
 	    detailSchemaLoader.then(function(schema) {
@@ -199,10 +226,14 @@ services.factory('Episode', function($http, $q, Item) {
 	        };
 	    };
 
-	    this.isVisible = function(tag, subtag, hospital_number, ward) {
+        // TODO: Test isVisible
+	    this.isVisible = function(tag, subtag, hospital_number, ward, viewInactive) {
 	        var location = episode.location[0];
             var demographics = episode.demographics[0];
-            if(!episode.active && tag != 'mine'){
+            if(!episode.active && tag != 'mine' &&  !viewInactive){
+                return false;
+            }
+            if(episode.active && viewInactive){
                 return false;
             }
 	        if (location.tags[tag] != true) {

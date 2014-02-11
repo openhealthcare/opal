@@ -1,8 +1,10 @@
 """
 OPAL Models!
 """
-import random
+import collections
 from datetime import datetime
+import json
+import random
 
 from django.conf import settings
 from django.db import models
@@ -11,6 +13,7 @@ from django.contrib import auth
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.dispatch import receiver
+import reversion
 
 from opal.utils import stringport, camelcase_to_underscore
 from opal.utils.fields import ForeignKeyOrFreeText
@@ -268,6 +271,20 @@ class Tagging(models.Model):
             return 'User: %s - %s' % (self.user.username, self.tag_name)
         else:
             return self.tag_name
+
+    @classmethod
+    def historic_tags_for_episodes(cls, episodes):
+        """
+        Given a list of episodes, return a dict indexed by episode id
+        that contains historic tags for those episodes.
+        """
+        deleted = reversion.get_deleted(cls)
+        historic = collections.defaultdict(dict)
+        for d in deleted:
+            data = json.loads(d.serialized_data)[0]['fields']
+            if data['episode'] in episodes:
+                historic[data['episode']][data['tag_name']] = True
+        return historic
 
 
 class Subrecord(UpdatesFromDictMixin, models.Model):

@@ -33,6 +33,7 @@ urlpatterns = patterns(
 
     # url(r'^templates/', include('patients.urls.templates')),
     url(r'^templates/episode_list.html/?$', views.EpisodeListTemplateView.as_view()),
+    url(r'^templates/discharge_list.html/?$', views.DischargeListTemplateView.as_view()),
     url(r'^templates/episode_detail.html/?$', views.EpisodeDetailTemplateView.as_view()),
     url(r'^templates/search.html/?$', views.SearchTemplateView.as_view()),
 

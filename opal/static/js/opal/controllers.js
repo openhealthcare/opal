@@ -13,7 +13,8 @@ controllers.controller('RootCtrl', function($scope) {
 
 controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieStore,
                                                    $dialog,
-                                                   Episode, schema, episodes, options) {
+                                                   Episode, schema, episodes, options,
+                                                   viewInactive) {
     var version = window.version;
     if($cookieStore.get('opal.seenVersion') !=  version){
         $('#changelogTooltip').tooltip('show');
@@ -55,7 +56,8 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 			if (episodes[pix].isVisible($scope.currentTag,
                                         $scope.currentSubTag,
                                         $scope.query.hospital_number,
-                                        $scope.query.ward)) {
+                                        $scope.query.ward,
+                                        viewInactive)) {
 				visibleEpisodes.push(episodes[pix]);
 			};
 		};

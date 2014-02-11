@@ -25,10 +25,12 @@ app.config(function($routeProvider) {
 				},
 				options: function(Options) {
 					return Options;
-				}
+				},
+                viewInactive: function(){ return false }
 			},
 			templateUrl: '/templates/episode_list.html'
-		}).when('/episode/:id', {
+		})
+        .when('/episode/:id', {
 			controller: 'EpisodeDetailCtrl',
 			resolve: {
 				schema: function(detailSchemaLoader) {
@@ -42,7 +44,8 @@ app.config(function($routeProvider) {
 				}
 			},
 			templateUrl: '/templates/episode_detail.html'
-		}).when('/search', {
+		})
+        .when('/search', {
 			controller: 'SearchCtrl',
 			templateUrl: '/templates/search.html',
 			resolve: {
@@ -53,11 +56,25 @@ app.config(function($routeProvider) {
 					return Options;
 				}
 			}
-        }).when('/account', {
+        })
+        .when('/discharge', {
+            controller: 'EpisodeListCtrl',
+            templateUrl  : '/templates/discharge_list.html',
+            resolve   : {
+                schema: function(listSchemaLoader){ return listSchemaLoader },
+                options: function(Options){ return Options },
+                episodes: function(dischargedEpisodesLoader){
+                    return dischargedEpisodesLoader()
+                },
+                viewInactive: function(){ return true }
+            }
+        })
+        .when('/account', {
                         controller: 'AccountCtrl',
                         templateUrl: '/accounts/templates/account_detail.html'
 
-		}).otherwise({redirectTo: '/'});
+		})
+        .otherwise({redirectTo: '/'});
 });
 
 app.value('$strapConfig', {
