@@ -32,6 +32,9 @@ class EpisodeAdmin(reversion.VersionAdmin):
 class PatientAdmin(reversion.VersionAdmin):
     search_fields = ['demographics__name', 'demographics__hospital_number']
 
+class TaggingAdmin(reversion.VersionAdmin):
+    pass
+
 class PatientSubRecordAdmin(reversion.VersionAdmin):
     list_filter = ['patient']
 
@@ -52,6 +55,7 @@ for model in option_models.values():
 admin.site.register(User, UserProfileAdmin)
 admin.site.register(models.Patient, PatientAdmin)
 admin.site.register(models.Episode, EpisodeAdmin)
+admin.site.register(models.Tagging, TaggingAdmin)
 
 for subclass in models.PatientSubrecord.__subclasses__():
     admin.site.register(subclass, PatientSubRecordAdmin)
