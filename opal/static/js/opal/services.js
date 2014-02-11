@@ -233,6 +233,9 @@ services.factory('Episode', function($http, $q, Item) {
             if(!episode.active && tag != 'mine' &&  !viewInactive){
                 return false;
             }
+            if(episode.discharge_date &&  viewInactive){
+                return true;
+            }
             if(episode.active && viewInactive){
                 return false;
             }
