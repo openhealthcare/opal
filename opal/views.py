@@ -101,8 +101,7 @@ def episode_list_and_create_view(request):
             today = datetime.date.today()
             one_week_ago = today - datetime.timedelta(days=7)
 
-            episodes = models.Episode.objects.filter(active=False,
-                                                     discharge_date__gte=one_week_ago)
+            episodes = models.Episode.objects.filter(discharge_date__gte=one_week_ago)
             episode_ids = [e.id for e in episodes]
             historic = models.Tagging.historic_tags_for_episodes(episode_ids)
             serialised = [episode.to_dict(request.user)
