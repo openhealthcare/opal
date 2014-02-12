@@ -29,7 +29,8 @@ urlpatterns = patterns(
     url(r'^patient/?$', views.patient_search_view),
     url(r'^episode/?$', views.episode_list_and_create_view),
     url(r'^episode/(?P<pk>\d+)/?$', views.episode_detail_view),
-    url(r'^search/extract/', views.ExtractSearchView.as_view()),
+    url(r'^search/extract/$', views.ExtractSearchView.as_view()),
+    url(r'^search/extract/download$', views.DownloadSearchView.as_view()),
 
     url(r'^templates/episode_list.html/?$', views.EpisodeListTemplateView.as_view()),
     url(r'^templates/episode_detail.html/?$',

@@ -1101,10 +1101,11 @@ describe('controllers', function() {
     describe('ExtractCtrl', function(){
         beforeEach(function(){
             inject(function($injector){
-                $rootScope  = $injector.get('$rootScope');
-                $scope      = $rootScope.$new();
-                $controller = $injector.get('$controller');
+                $rootScope   = $injector.get('$rootScope');
+                $scope       = $rootScope.$new();
+                $controller  = $injector.get('$controller');
                 $httpBackend = $injector.get('$httpBackend');
+                $window      = $injector.get('$window');
             });
 
             controller = $controller('ExtractCtrl',  {
@@ -1147,6 +1148,19 @@ describe('controllers', function() {
                 $httpBackend.flush();
                 expect($scope.results).toEqual(patientData.episodes);
                 expect($scope.state).toBe('normal');
+            });
+        });
+
+        describe('Download', function(){
+            it('should ask the server for a file URL', function(){
+                $httpBackend.expectPOST("/search/extract/download");
+                $httpBackend.whenPOST("/search/extract/download").respond({fileUrl: '/this'});
+
+                spyOn($window, 'open');
+                $scope.download();
+                $httpBackend.flush();
+
+                expect($window.open).toHaveBeenCalledWith('/this')
             });
         });
 

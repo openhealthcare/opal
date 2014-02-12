@@ -1092,7 +1092,7 @@ controllers.controller('DeleteItemConfirmationCtrl', function($scope, $timeout,
 	};
 });
 
-controllers.controller('ExtractCtrl', function($scope, $http, schema){
+controllers.controller('ExtractCtrl', function($scope, $http, $window, schema){
     $scope.state =  'normal';
     $scope.columns = schema.columns;
     $scope.column_names = _.map(schema.columns, function(c){
@@ -1113,7 +1113,7 @@ controllers.controller('ExtractCtrl', function($scope, $http, schema){
                 function(c){ return c.type == 'token' ||  c.type == 'date' ||  c.type ==  'list' ||  c.type == 'boolean'; }),
             function(c){ return c.name.underscoreToCapWords(); }
         );
-    }
+    };
 
     $scope.search = function(){
         $scope.state = 'pending';
@@ -1122,6 +1122,14 @@ controllers.controller('ExtractCtrl', function($scope, $http, schema){
                 $scope.results = results;
                 $scope.state = 'normal';
             });
-    }
+    };
+
+    $scope.download = function(){
+        $http.post('/search/extract/download', $scope.model).success(
+            function(results){
+                $window.open(results.fileUrl);
+            }
+        );
+    };
 
 });

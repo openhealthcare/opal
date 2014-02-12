@@ -17,7 +17,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 
 from opal.utils.http import with_no_caching
-from opal.utils import camelcase_to_underscore, stringport
+from opal.utils import camelcase_to_underscore, stringport, fields
 from opal.utils.banned_passwords import banned
 from opal import models, exceptions
 
@@ -380,35 +380,59 @@ def options_view(request):
 
 class ExtractSearchView(View):
     def post(self, *args, **kwargs):
+        from django.db import models as m
         query = _get_request_data(self.request)
+
+        querytype = query['queryType']
+        contains = ''
+        if querytype == 'Contains':
+            contains = '__icontains'
+
         print query
 
-        # model = query['column'].replace(' ', '')
-        # from django.db import models as m
-        # for mod in  m.get_models():
-        #     if mod.__name__ == model:
-        #         break
-        # print mod
-
-        model = query['column'].replace(' ', '_').lower()
+        model_name = query['column'].replace(' ', '')
         field = query['field'].replace(' ', '_').lower()
-        kw_fk = {'{0}__{1}_fk__name'.format(model, field): query['query']}
-        kw_ft = {'{0}__{1}_ft'.format(model, field): query['query']}
-        qs_fk = models.Episode.objects.filter(**kw_fk)
-        qs_ft = models.Episode.objects.filter(**kw_ft)
 
-        eps = set(list(qs_fk) + list(qs_ft))
+        Mod = None
+        for m in m.get_models():
+            if m.__name__ == model_name:
+                Mod = m
+
+        if hasattr(Mod, field) and isinstance(getattr(Mod, field), fields.ForeignKeyOrFreeText):
+            model = query['column'].replace(' ', '_').lower()
+
+            kw_fk = {'{0}__{1}_fk__name{2}'.format(model, field, contains): query['query']}
+            kw_ft = {'{0}__{1}_ft{2}'.format(model, field, contains): query['query']}
+
+            if issubclass(Mod, models.EpisodeSubrecord):
+
+                qs_fk = models.Episode.objects.filter(**kw_fk)
+                qs_ft = models.Episode.objects.filter(**kw_ft)
+                eps = set(list(qs_fk) + list(qs_ft))
+
+            elif issubclass(Mod, models.PatientSubrecord):
+                qs_fk = models.Patient.objects.filter(**kw_fk)
+                qs_ft = models.Patient.objects.filter(**kw_ft)
+                pats = set(list(qs_fk) + list(qs_ft))
+                eps = []
+                for p in pats:
+                    eps += list(p.episode_set.all())
+
+        else:
+            model = query['column'].replace(' ', '_').lower()
+            kw = {'{0}__{1}{2}'.format(model, field, contains): query['query']}
+
+            if issubclass(Mod, models.EpisodeSubrecord):
+                eps = models.Episode.objects.filter(**kw)
+            elif issubclass(Mod, models.PatientSubrecord):
+                pats = models.Patient.objects.filter(**kw)
+                eps = []
+                for p in pats:
+                    eps += list(p.episode_set.all())
+
         return _build_json_response([e.to_dict(self.request.user) for e in eps])
 
-        # if query['queryType'] == 'Equals':
-        #     kw = {field: query['query'] }
-        # else:
-        #     kw = {'{0}_icontains'.format(field): query['query'] }
 
-        # qs = mod.objects.filter(**kw)
-
-        # for q in qs:
-        #     print q
-
-        # return _build_json_response([episode.to_dict(self.request.user)
-        #                              for episode in models.Episode.objects.all()])
+class DownloadSearchView(View):
+    def post(self, *args, **kwargs):
+        return _build_json_response(dict(fileUrl='/downloads/here'))

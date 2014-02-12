@@ -55,9 +55,22 @@
 
       <div ng-show="state=='normal' && results.length > 0">
         <p ng-repeat="result in results">
-          <a href="#/episode/[[result.id]]">
+          <a href="#/episode/[[result.id]]" target="_blank">
             [[ result.date_of_admission ]] [[ result.demographics[0].name ]]
           </a>
+        </p>
+        <p> Results 1- [[  results.length >= 10 && 10 || results.length ]] of [[ results.length ]]</p>
+        <button type="button"
+                class="btn btn-info btn-lg"
+                ng-click="download()"
+                >
+                Download these results
+        </button>
+      </div>
+
+      <div ng-show="state=='normal' && results.length == 0">
+        <p>
+          Sorry, no results match your search.
         </p>
       </div>
 
