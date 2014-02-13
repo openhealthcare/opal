@@ -418,8 +418,7 @@ class Extractor(View):
         contains = ''
         if querytype == 'Contains':
             contains = '__icontains'
-
-        print query
+#        print query
 
         model_name = query['column'].replace(' ', '')
         field = query['field'].replace(' ', '_').lower()

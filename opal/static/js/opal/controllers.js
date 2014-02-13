@@ -1092,12 +1092,16 @@ controllers.controller('DeleteItemConfirmationCtrl', function($scope, $timeout,
 	};
 });
 
-controllers.controller('ExtractCtrl', function($scope, $http, $window, schema){
+controllers.controller('ExtractCtrl', function($scope, $http, $window, options, schema){
     $scope.state =  'normal';
     $scope.columns = schema.columns;
     $scope.column_names = _.map(schema.columns, function(c){
         return c.name.underscoreToCapWords();
     });
+
+	for (var name in options) {
+		$scope[name + '_list'] = options[name];
+	};
 
     $scope.model = {
         column   : null,

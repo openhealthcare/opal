@@ -66,7 +66,8 @@ app.config(
             controller: 'ExtractCtrl',
             templateUrl: '/templates/extract.html',
             resolve: {
-                schema: function(extractSchemaLoader){ return extractSchemaLoader }
+                schema: function(extractSchemaLoader){ return extractSchemaLoader },
+				options: function(Options) { return Options; }
             }
         })
         .when('/account', {
