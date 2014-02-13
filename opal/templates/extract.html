@@ -11,44 +11,58 @@
     {% else %}
       <div class="col-md-12">
         <h2>Data Extract</h2>
-
         <form class="form-inline">
-
+      </div>
+      <div class="col-md-2">
         <select class="form-control" ng-model="model.column">
           <option ng-repeat="name in column_names">[[name]]</option>
         </select>
-
+        <p ng-show="model.column == null">
+          1. Select a Column
+        </p>
+      </div>
+      <div class="col-md-2">
         <span ng-repeat="col in columns" ng-show="model.column == col.name.underscoreToCapWords()">
           <select class="form-control" ng-model="model.field" >
             <option ng-repeat="field in searchableFields(col)">[[field]]</option>
           </select>
         </span>
-
+        <p ng-show="model.column != null && model.field == null">
+          2. Select a field
+        </p>
+      </div>
+      <div class="col-md-2">
         <select class="form-control"
                 ng-show="model.field != null"
                 ng-model="model.queryType" >
-          <option>Equals</option>
-          <option>Contains</option>
+                <option>Equals</option>
+                <option>Contains</option>
         </select>
-
+        <p ng-show="model.column != null && model.field != null && model.queryType == null">
+          3. Select a query type
+        </p>
+      </div>
+      <div class="col-md-2">
         <input type="text"
                ng-model="model.query"
                ng-show="model.field != null"
                />
-
-        </form>
-
-        <p></p>
-        <p>
-          <button type="button"
-                  class="btn btn-primary btn-lg"
-                  ng-click="search()"
-                  >
-                  Search
-          </button>
-        </p>
+        <p ng-show="model.queryType != null && model.query == null && model.field != null">4. Add your value</p>
       </div>
-
+      </form>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <p>
+        <button type="button"
+                class="btn btn-primary btn-lg"
+                ng-click="search()"
+                >
+                Search
+        </button>
+      </p>
+    </div>
+    <div class="col-md-12">
       <div ng-show="state=='pending'">
         <img src="/assets/img/loading.gif">
       </div>
@@ -74,17 +88,17 @@
         </p>
       </div>
 
-        <ul class="hide">
-          <li ng-repeat="col in columns">
-            [[ col.name ]] (Single=[[col.single]])
-            <ul>
-              <li ng-repeat="f in col.fields">
-                [[f.name]]: [[ f.type ]]
-              </li>
-            </ul>
-          </li>
-        </ul>
+      <ul class="hide">
+        <li ng-repeat="col in columns">
+          [[ col.name ]] (Single=[[col.single]])
+          <ul>
+            <li ng-repeat="f in col.fields">
+              [[f.name]]: [[ f.type ]]
+            </li>
+          </ul>
+        </li>
+      </ul>
 
-    {% endif %}
+{% endif %}
+    </div>
   </div>
-</div>
