@@ -17,7 +17,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 
 from opal.utils.http import with_no_caching
-from opal.utils import camelcase_to_underscore, stringport, fields
+from opal.utils import camelcase_to_underscore, stringport, fields, json_to_csv
 from opal.utils.banned_passwords import banned
 from opal import models, exceptions
 
@@ -39,6 +39,38 @@ def _build_json_response(data, status_code=200):
     response.content = json.dumps(data, cls=DjangoJSONEncoder)
     response.status_code = status_code
     return response
+
+def serve_maybe(meth):
+    """
+    Decorator to figure out if we want to serve files
+    ourselves (DEBUG) or hand off to Nginx
+    """
+    # Originally from Open Prescribing raw.views
+
+    def handoff(self, *args, **kwargs):
+        """
+        Internal wrapper function to figure out
+        the logic
+        """
+        filename = meth(self, *args, **kwargs)
+
+        # When we're running locally, just take the hit, otherwise
+        # offload the serving of the datafile to Nginx
+        if settings.DEBUG:
+            resp = HttpResponse(
+                open(filename, 'rb').read(),
+                mimetype='application/force-download'
+                )
+            return resp
+
+        resp = HttpResponse()
+        url = '/protected/{0}'.format(filename)
+        # let nginx determine the correct content type
+        resp['Content-Type']=""
+        resp['X-Accel-Redirect'] = url
+        return resp
+
+    return handoff
 
 
 class LoginRequiredMixin(object):
@@ -377,9 +409,8 @@ def options_view(request):
 
     return _build_json_response(data)
 
-
-class ExtractSearchView(View):
-    def post(self, *args, **kwargs):
+class Extractor(View):
+    def episodes_as_json(self):
         from django.db import models as m
         query = _get_request_data(self.request)
 
@@ -429,10 +460,22 @@ class ExtractSearchView(View):
                 eps = []
                 for p in pats:
                     eps += list(p.episode_set.all())
+        return [e.to_dict(self.request.user) for e in eps]
 
-        return _build_json_response([e.to_dict(self.request.user) for e in eps])
 
-
-class DownloadSearchView(View):
+class ExtractSearchView(Extractor):
     def post(self, *args, **kwargs):
-        return _build_json_response(dict(fileUrl='/downloads/here'))
+        eps = self.episodes_as_json()
+        return _build_json_response(eps)
+
+
+class DownloadSearchView(Extractor):
+    def post(self, *args, **kwargs):
+        eps = self.episodes_as_json()
+        fname = json_to_csv(eps)
+        return _build_json_response(dict(fileUrl='/search/extract/download'+fname))
+
+class DownloadArchiveView(View):
+    @serve_maybe
+    def get(self, *args, **kwargs):
+        return kwargs['fname']

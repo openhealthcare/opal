@@ -31,6 +31,8 @@ urlpatterns = patterns(
     url(r'^episode/(?P<pk>\d+)/?$', views.episode_detail_view),
     url(r'^search/extract/$', views.ExtractSearchView.as_view()),
     url(r'^search/extract/download$', views.DownloadSearchView.as_view()),
+    url(r'^search/extract/download(?P<fname>.*)$',
+        views.DownloadArchiveView.as_view()),
 
     url(r'^templates/episode_list.html/?$', views.EpisodeListTemplateView.as_view()),
     url(r'^templates/episode_detail.html/?$',
