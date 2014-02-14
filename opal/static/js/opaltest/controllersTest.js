@@ -1109,8 +1109,9 @@ describe('controllers', function() {
             });
 
             controller = $controller('ExtractCtrl',  {
-                $scope: $scope,
-                schema: schema
+                $scope : $scope,
+                options: optionsData,
+                schema : schema
             });
         });
 
