@@ -140,7 +140,9 @@ def episode_list_and_create_view(request):
                           for episode in episodes]
             for episode in serialised:
                 if episode['id'] in historic:
-                    episode['location'][0]['tags'] = historic[episode['id']]
+                    historic_tags = historic[episode['id']]
+                    for t in historic_tags.keys():
+                        episode['location'][0]['tags'][t] = True
 
         else:
             episodes = set(

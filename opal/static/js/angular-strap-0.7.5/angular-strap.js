@@ -845,7 +845,19 @@ angular.module('$strap.directives').directive('bsTypeahead', [
             }
             scope.$emit('typeahead-updated', value);
             return value;
-          }
+          },
+                /// @@@ Alteration (1/1)
+            matcher: function (item) {
+                // @@@ Beginning of alteration (2/2)
+                // We split the text in the input into tokens, identify the current token by cursor position,
+                // and match against it.
+                var tokenIx = this.query.substr(0, this.$element.getCursorPosition()).split(' ').length - 1;
+                var tokens = this.query.split(' ');
+                var token = tokens[tokenIx].replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+                return ~item.toLowerCase().indexOf(token.toLowerCase())
+                // @@@ End of alteration (2/2)
+            }
+            // @@@ End of alteration (1/1)
         });
         var typeahead = element.data('typeahead');
         typeahead.lookup = function (ev) {
