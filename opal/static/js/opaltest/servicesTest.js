@@ -1,5 +1,5 @@
 describe('services', function() {
-    var columns, episodeData;
+    var columns, episodeData, options;
 
     beforeEach(function() {
         module('opal.services');
@@ -57,7 +57,27 @@ describe('services', function() {
                 provisional: false,
                 date_of_diagnosis: '2006-03-19'
             }]
-        }
+        };
+        options =  {
+            travel_reason: [
+                "British Armed Forces",
+                "Business",
+                "Child visiting family",
+                "Civilian sea/air crew",
+                "Foreign Student",
+                "Foreign Visitor",
+                "Holiday",
+                "Migrant",
+                "Military",
+                "New Entrant to UK",
+                "Professional",
+                "Tourism",
+                "UK Citizen Living Abroad",
+                "VFR",
+                "Visiting Friends and Relatives",
+                "Work"
+        ]
+    }
     });
 
     describe('listSchemaLoader', function(){
@@ -231,6 +251,50 @@ describe('services', function() {
         });
     });
 
+    describe('Options', function(){
+        var mock;
+
+        beforeEach(function(){
+            mock = { alert: jasmine.createSpy() };
+
+            module(function($provide){
+                $provide.value('$window', mock);
+            });
+
+            inject(function($injector){
+                Options        = $injector.get('Options');
+                $q             = $injector.get('$q');
+                $httpBackend   = $injector.get('$httpBackend');
+                $rootScope     = $injector.get('$rootScope');
+            });
+        });
+
+        it('should fetch the options', function(){
+            var result
+
+            $httpBackend.expectGET('/options/');
+            $httpBackend.whenGET('/options/').respond(options);
+
+            Options.then(function(r){ result = r; });
+
+            $rootScope.$apply();
+            $httpBackend.flush();
+
+            expect(result).toEqual(options);
+        });
+
+        it('should alert if the HTTP request errors', function(){
+            var result;
+
+            $httpBackend.expectGET('/options/');
+            $httpBackend.whenGET('/options/').respond(500, 'NO');
+
+            $rootScope.$apply();
+            $httpBackend.flush();
+
+            expect(mock.alert).toHaveBeenCalledWith('Options could not be loaded');
+        });
+    });
 
     describe('episodesLoader', function(){
         var mock;
@@ -287,7 +351,6 @@ describe('services', function() {
             expect(mock.alert).toHaveBeenCalledWith('Episodes could not be loaded');
         });
     });
-
 
     describe('dischargedEpisodesLoader', function(){
         var mock;
@@ -736,4 +799,51 @@ describe('services', function() {
             expect(episode.id).toBe(123);
         });
     });
+
+    describe('UserProfile', function(){
+        var mock;
+
+        beforeEach(function(){
+            mock = { alert: jasmine.createSpy() };
+
+            module(function($provide){
+                $provide.value('$window', mock);
+            });
+
+            inject(function($injector){
+                UserProfile    = $injector.get('UserProfile');
+                $q             = $injector.get('$q');
+                $httpBackend   = $injector.get('$httpBackend');
+                $rootScope     = $injector.get('$rootScope');
+            });
+        });
+
+        it('should fetch the options', function(){
+            var result
+
+            $httpBackend.expectGET('/userprofile/');
+            $httpBackend.whenGET('/userprofile/').respond(options);
+
+            UserProfile.then(function(r){ result = r; });
+
+            $rootScope.$apply();
+            $httpBackend.flush();
+
+            expect(result).toEqual(options);
+        });
+
+        it('should alert if the HTTP request errors', function(){
+            var result;
+
+            $httpBackend.expectGET('/userprofile/');
+            $httpBackend.whenGET('/userprofile/').respond(500, 'NO');
+
+            $rootScope.$apply();
+            $httpBackend.flush();
+
+            expect(mock.alert).toHaveBeenCalledWith('UserProfile could not be loaded');
+        });
+    });
+
+
 });

@@ -75,15 +75,14 @@ services.factory('Schema', function() {
     };
 });
 
-services.factory('Options', function($q, $http) {
+services.factory('Options', function($q, $http, $window) {
     var deferred = $q.defer();
     $http.get('/options/').then(function(response) {
 	    deferred.resolve(response.data);
     }, function() {
 	    // handle error better
-	    alert('Options could not be loaded');
+	    $window.alert('Options could not be loaded');
     });
-
     return deferred.promise;
 });
 
@@ -475,4 +474,16 @@ recently changed it - refresh the page and try again');
 
 	    this.initialise(attrs);
     };
+});
+
+
+services.factory('UserProfile', function($q, $http, $window) {
+    var deferred = $q.defer();
+    $http.get('/userprofile/').then(function(response) {
+	    deferred.resolve(response.data);
+    }, function() {
+	    // handle error better
+	    $window.alert('UserProfile could not be loaded');
+    });
+    return deferred.promise;
 });
