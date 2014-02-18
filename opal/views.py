@@ -411,6 +411,14 @@ def options_view(request):
 
     return _build_json_response(data)
 
+def userprofile_view(request):
+    profile = request.user.get_profile()
+    data = dict(
+        readonly=profile.readonly,
+        can_extract=profile.can_extract
+        )
+    return _build_json_response(data)
+
 class Extractor(View):
     def episodes_as_json(self):
         from django.db import models as m

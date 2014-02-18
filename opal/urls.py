@@ -24,6 +24,7 @@ urlpatterns = patterns(
     url(r'^schema/detail/$', views.DetailSchemaView.as_view()),
     url(r'^schema/extract/$', views.ExtractSchemaView.as_view()),
     url(r'^options/$', views.options_view),
+    url(r'^userprofile/$', views.userprofile_view),
     url(r'^admin/?', include(admin.site.urls)),
 
     url(r'^patient/?$', views.patient_search_view),
