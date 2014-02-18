@@ -10,3 +10,8 @@ class AngularCSRFRename(object):
         if ANGULAR_HEADER_NAME in request.META:
             request.META['HTTP_X_CSRFTOKEN'] = request.META[ANGULAR_HEADER_NAME]
             del request.META[ANGULAR_HEADER_NAME]
+
+
+class DjangoReversionWorkaround(object):
+    def process_request(self, request):
+        access = request.user.is_authenticated()
