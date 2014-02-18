@@ -12,7 +12,11 @@
 	  <li class="divider-vertical"></li>
 	</ul>
 
-	<button class="btn pull-left" ng-click="addEpisode()">Add Patient</button>
+	<button class="btn pull-left"
+            ng-show="!profile.readonly"
+            ng-click="addEpisode()">
+            Add Patient
+    </button>
 
 	<ul class="nav navbar-nav">
 	  <li class="divider-vertical"></li>

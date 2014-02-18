@@ -1,7 +1,7 @@
 <div class="container">
 
   <div class="row">
-    <div class="span2">
+    <div class="col-md-2">
       <h4>Previous Episodes</h4>
       <p ng-repeat="ep in episode.prev_episodes">
         <a href="/#/episode/[[ep.id]]">
@@ -12,7 +12,7 @@
         <hr />
       </p>
     </div>
-    <div class="span8">
+    <div class="col-md-8">
       <table class="table table-bordered">
 	    {% for column in columns %}
 	      <tr>
@@ -31,7 +31,7 @@
 			      <li ng-click="selectItem({{ forloop.counter0 }}, episode.{{column.name}}.length)"
 				      ng-dblclick="editItem({{ forloop.counter0 }}, episode.{{column.name}}.length)"
 				      ng-class="{selected: cix == {{ forloop.counter0 }} && iix == episode.{{column.name}}.length}">
-				      <span ng-show="(cix == {{ forloop.counter0 }}) || (mouseCix == {{ forloop.counter0 }})">
+				      <span ng-show="!profile.readonly && ((cix == {{ forloop.counter0 }}) || (mouseCix == {{ forloop.counter0 }}))">
 					    Add
 				      </span>
 				      &nbsp;
@@ -44,7 +44,7 @@
       </table>
 
     </div>
-    <div class="span2">
+    <div class="col-md-2">
       <h4>Subsequent Episodes</h4>
       <p ng-repeat="ep in episode.next_episodes">
         <a href="/#/episode/[[ep.id]]">

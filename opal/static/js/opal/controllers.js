@@ -50,6 +50,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
     $cookieStore.put('opal.currentSubTag', $scope.currentSubTag);
 
 	$scope.columns = schema.columns;
+    $scope.profile = profile;
 
 	$scope.rows = getVisibleEpisodes();
     $scope.tag_display = options.tag_display;
@@ -451,7 +452,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 
 controllers.controller('EpisodeDetailCtrl', function($scope, $modal, $cookieStore,
                                                      schema,
-                                                     episode, options) {
+                                                     episode, options, profile) {
     $scope._ = _;
 	$scope.state = 'normal';
 
@@ -461,6 +462,7 @@ controllers.controller('EpisodeDetailCtrl', function($scope, $modal, $cookieStor
 	$scope.mouseCix = -1; // index of column mouse is currently over
 
 	$scope.episode = episode;
+    $scope.profile =  profile;
 
 	$scope.columns = schema.columns;
     $scope.tag_display = options.tag_display;
@@ -506,6 +508,10 @@ controllers.controller('EpisodeDetailCtrl', function($scope, $modal, $cookieStor
 		var columnName = getColumnName(cix);
 		var item;
 
+        if(profile.readonly){
+            return null;
+        };
+
 		if (iix == episode.getNumberOfItems(columnName)) {
 			item = episode.newItem(columnName);
 		} else {
@@ -536,6 +542,10 @@ controllers.controller('EpisodeDetailCtrl', function($scope, $modal, $cookieStor
 		var modal;
 		var columnName = getColumnName(cix);
 		var item = episode.getItem(columnName, iix);
+
+        if(profile.readonly){
+            return null;
+        };
 
 		if (schema.isSingleton(columnName)) {
 			// Cannot delete singleton
@@ -599,6 +609,10 @@ controllers.controller('EpisodeDetailCtrl', function($scope, $modal, $cookieStor
 	$scope.dischargeEpisode = function(event) {
 		var modal;
 		var episode = $scope.episode;
+
+        if(profile.readonly){
+            return null;
+        };
 
 		// This is required to prevent the page reloading
 		event.preventDefault();

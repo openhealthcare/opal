@@ -454,7 +454,7 @@ describe('controllers', function() {
                 });
 
                 it('should return null', function(){
-                   expect($scope.editItem(0,  0, 0)).toBe(null);
+                   expect($scope.deleteItem(0,  0, 0)).toBe(null);
                 });
             });
 
@@ -478,12 +478,13 @@ describe('controllers', function() {
             episode = new Episode(episodeData, schema);
 
             controller = $controller('EpisodeDetailCtrl', {
-                $scope: $scope,
-                $modal: $modal,
+                $scope      : $scope,
+                $modal      : $modal,
                 $cookieStore: $cookieStore,
-                schema: schema,
-                episode: episode,
-                options: options
+                schema      : schema,
+                episode     : episode,
+                options     : options,
+                profile     : profile
             });
         });
 
@@ -514,6 +515,17 @@ describe('controllers', function() {
                 expect(callArgs.length).toBe(1);
                 expect(callArgs[0].controller).toBe('EditItemCtrl');
             });
+
+            describe('for a readonly user', function(){
+                beforeEach(function(){
+                    profile.readonly = true;
+                });
+
+                it('should return null', function(){
+                   expect($scope.editItem(0, 0)).toBe(null);
+                });
+            });
+
         });
 
         describe('deleting an item', function(){
@@ -529,6 +541,17 @@ describe('controllers', function() {
                 expect(callArgs.length).toBe(1);
                 expect(callArgs[0].controller).toBe('DeleteItemConfirmationCtrl');
             });
+
+            describe('for a readonly user', function(){
+                beforeEach(function(){
+                    profile.readonly = true;
+                });
+
+                it('should return null', function(){
+                   expect($scope.deleteItem(0, 0)).toBe(null);
+                });
+            });
+
         });
 
         describe('discharging an episode', function(){
@@ -550,6 +573,17 @@ describe('controllers', function() {
                 expect(callArgs.length).toBe(1);
                 expect(callArgs[0].controller).toBe('DischargeEpisodeCtrl');
             });
+
+            describe('for a readonly user', function(){
+                beforeEach(function(){
+                    profile.readonly = true;
+                });
+
+                it('should return null', function(){
+                   expect($scope.dischargeEpisode(mockEvent)).toBe(null);
+                });
+            })
+
         });
 
     });

@@ -32,8 +32,8 @@
     {% if request.user.is_authenticated %}
       {% if request.user.get_profile.can_extract %}
         <li><a href="/#/extract">Extract</a></li>
-        <li><a href="/#/discharge">Discharged</a></li>
       {% endif %}
+      <li><a href="/#/discharge">Discharged</a></li>
 	  <li><a href="/#/search">Search</a></li>
     <li><a href="{% url 'feedback' %}">Feedback</a></li>
 	<li><a href="{% url 'django.contrib.auth.views.logout' %}">Log out</a></li>

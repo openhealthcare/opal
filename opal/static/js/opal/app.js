@@ -36,7 +36,8 @@ app.config(
 			resolve: {
 				schema: function(detailSchemaLoader) { return detailSchemaLoader; },
 				episode: function(episodeLoader) { return episodeLoader(); },
-				options: function(Options) { return Options; }
+				options: function(Options) { return Options; },
+                profile: function(UserProfile){ return UserProfile }
 			},
 			templateUrl: '/templates/episode_detail.html'
 		})
@@ -60,6 +61,7 @@ app.config(
                 episodeVisibility: function(episodeVisibility){
                     return episodeVisibility
                 },
+                profile: function(UserProfile){ return UserProfile },
                 viewDischarged: function(){ return true }
             }
         })

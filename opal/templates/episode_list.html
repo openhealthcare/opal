@@ -35,8 +35,8 @@
 				<li ng-click="selectItem($index, {{ forloop.counter0 }}, row.{{column.name}}.length)"
 				    ng-dblclick="editItem($index, {{ forloop.counter0 }}, row.{{column.name}}.length)"
 				    ng-class="{selected: rix == $index && cix == {{ forloop.counter0 }} && iix == row.{{column.name}}.length}">
-					<span ng-show="(rix == $index && cix == {{ forloop.counter0 }}) ||
-						           (mouseRix == $index && mouseCix == {{ forloop.counter0 }})">
+					<span ng-show="(!profile.readonly && rix == $index && cix == {{ forloop.counter0 }}) ||
+						           (!profile.readonly && mouseRix == $index && mouseCix == {{ forloop.counter0 }})">
 						           Add
 					</span>
 					&nbsp;
