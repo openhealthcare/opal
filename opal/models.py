@@ -28,6 +28,7 @@ class UserProfile(models.Model):
     user                  = models.ForeignKey(User, unique=True)
     force_password_change = models.BooleanField(default=True)
     can_extract           = models.BooleanField(default=False)
+    readonly              = models.BooleanField(default=False)
 
 class TaggedSubrecordMixin(object):
 
