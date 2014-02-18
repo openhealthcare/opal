@@ -23,6 +23,7 @@ app.config(
 				schema: function(listSchemaLoader) { return listSchemaLoader; },
 				episodes: function(episodesLoader) { return episodesLoader(); },
 				options: function(Options) { return Options; },
+                profile: function(UserProfile){ return UserProfile },
                 viewDischarged: function(){ return false },
                 episodeVisibility: function(episodeVisibility){
                     return episodeVisibility

@@ -1,5 +1,6 @@
 describe('controllers', function() {
     var columns, episodeData, optionsData, patientData, Schema, schema, Episode, Item;
+    var profile;
 
     beforeEach(function() {
         module('opal.controllers');
@@ -169,6 +170,10 @@ describe('controllers', function() {
         });
 
         schema = new Schema(columns);
+        profile = {
+            readonly   : false,
+            can_extract: true
+        }
     });
 
     describe('EpisodeListCtrl', function() {
@@ -193,6 +198,7 @@ describe('controllers', function() {
                 $cookieStore: $cookieStore,
                 schema: schema,
                 episodes: episodes,
+                profile: profile,
                 options: options,
                 viewDischarged: false
             });
@@ -269,6 +275,16 @@ describe('controllers', function() {
                 expect($scope.selectItem).toHaveBeenCalledWith(0, 0, 0)
             });
 
+            describe('for a readonly user', function(){
+                beforeEach(function(){
+                    profile.readonly = true;
+                });
+
+                it('should return null', function(){
+                   expect($scope.addEpisode()).toBe(null);
+                });
+            });
+
         });
 
         describe('discharging an episode', function(){
@@ -294,6 +310,16 @@ describe('controllers', function() {
                 callArgs = $modal.open.mostRecentCall.args;
                 expect(callArgs.length).toBe(1);
                 expect(callArgs[0].controller).toBe('DischargeEpisodeCtrl');
+            });
+
+            describe('for a readonly user', function(){
+                beforeEach(function(){
+                    profile.readonly = true;
+                });
+
+                it('should return null', function(){
+                   expect($scope.dischargeEpisode(0,  mockEvent)).toBe(null);
+                });
             });
 
         });
@@ -361,6 +387,17 @@ describe('controllers', function() {
 
                 expect($scope.editItem).toHaveBeenCalledWith(0, 0, 1);
             });
+
+            describe('for a readonly user', function(){
+                beforeEach(function(){
+                    profile.readonly = true;
+                });
+
+                it('should return null', function(){
+                   expect($scope.editItem(0,  0, 0)).toBe(null);
+                });
+            });
+
         });
 
         describe('adding an item', function() {
@@ -410,6 +447,17 @@ describe('controllers', function() {
                 $scope.deleteItem(0, 2, 1);
                 expect($scope.state).toBe('modal');
             });
+
+            describe('for a readonly user', function(){
+                beforeEach(function(){
+                    profile.readonly = true;
+                });
+
+                it('should return null', function(){
+                   expect($scope.editItem(0,  0, 0)).toBe(null);
+                });
+            });
+
         });
     });
 

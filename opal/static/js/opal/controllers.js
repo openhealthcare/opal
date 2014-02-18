@@ -18,6 +18,7 @@ controllers.controller('RootCtrl', function($scope) {
 controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieStore,
                                                    $modal,
                                                    Episode, schema, episodes, options,
+                                                   profile,
                                                    episodeVisibility, viewDischarged){
     var version = window.version;
     if($cookieStore.get('opal.seenVersion') !=  version){
@@ -219,6 +220,9 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 	};
 
 	$scope.addEpisode = function() {
+        if(profile.readonly){
+            return null;
+        };
 		var hospitalNumberModal;
 
 		$scope.state = 'modal';
@@ -261,6 +265,10 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 		var modal;
 		var episode = getEpisode(rix);
 
+        if(profile.readonly){
+            return null;
+        };
+
 		// This is required to prevent the page reloading
 		event.preventDefault();
 
@@ -286,6 +294,10 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 
     // TODO: Test This!
     $scope.removeFromMine = function(rix, event){
+        if(profile.readonly){
+            return null;
+        };
+
         event.preventDefault();
 
         var modal;
@@ -304,6 +316,10 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 		var columnName = getColumnName(cix);
 		var episode = getEpisode(rix);
 		var item;
+
+        if(profile.readonly){
+            return null;
+        };
 
 		if (iix == episode.getNumberOfItems(columnName)) {
 			item = episode.newItem(columnName);
@@ -344,6 +360,10 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 		var columnName = getColumnName(cix);
 		var episode = getEpisode(rix);
 		var item = episode.getItem(columnName, iix);
+
+        if(profile.readonly){
+            return null;
+        };
 
 		if (schema.isSingleton(columnName)) {
 			// Cannot delete singleton
