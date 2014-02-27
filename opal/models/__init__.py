@@ -187,6 +187,8 @@ class Episode(UpdatesFromDictMixin, models.Model):
 
 
 class Tagging(models.Model):
+    _is_singleton = False
+
     tag_name = models.CharField(max_length=255)
     user = models.ForeignKey(auth.models.User, null=True)
     episode = models.ForeignKey(Episode, null=True) # TODO make null=False
@@ -196,6 +198,14 @@ class Tagging(models.Model):
             return 'User: %s - %s' % (self.user.username, self.tag_name)
         else:
             return self.tag_name
+
+    @staticmethod
+    def get_api_name():
+        return 'tags'
+
+    @staticmethod
+    def build_field_schema():
+        return [dict(name='tag_name', type='string')]
 
     @classmethod
     def historic_tags_for_episodes(cls, episodes):

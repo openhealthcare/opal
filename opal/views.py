@@ -437,6 +437,9 @@ class Extractor(View):
         for m in m.get_models():
             if m.__name__ == model_name:
                 Mod = m
+        if model_name == 'Tags':
+            Mod = models.Tagging
+        print field
 
         if hasattr(Mod, field) and isinstance(getattr(Mod, field), fields.ForeignKeyOrFreeText):
             model = query['column'].replace(' ', '_').lower()
@@ -462,7 +465,11 @@ class Extractor(View):
             model = query['column'].replace(' ', '_').lower()
             kw = {'{0}__{1}{2}'.format(model, field, contains): query['query']}
 
-            if issubclass(Mod, models.EpisodeSubrecord):
+            if Mod == models.Tagging:
+                kw = {'tagging__tag_name{0}'.format(contains): query['query']}
+                eps = models.Episode.objects.filter(**kw)
+
+            elif issubclass(Mod, models.EpisodeSubrecord):
                 eps = models.Episode.objects.filter(**kw)
             elif issubclass(Mod, models.PatientSubrecord):
                 pats = models.Patient.objects.filter(**kw)
