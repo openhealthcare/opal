@@ -29,7 +29,7 @@ def json_to_csv(episodes):
     target = str(ffs.Path.newfile())
 
     episode_csv = [['id', 'date of admission', 'discharge date',
-                   'name', 'hospital number', 'date of birth',
+                   'hospital number', 'date of birth',
                    'country of birth', 'ethnicity', 'category',
                    'tags', 'hospital', 'ward', 'bed']]
     diagnosis_csv = [['episode_id', 'condition', 'provisional',
@@ -103,7 +103,6 @@ def json_to_csv(episodes):
                 str(e['id']),
                 str(e['date_of_admission']),
                 str(e['discharge_date']),
-                str(e['demographics'][0]['name']),
                 str(e['demographics'][0]['hospital_number']),
                 str(e['demographics'][0]['date_of_birth']),
                 str(e['demographics'][0]['country_of_birth']),
