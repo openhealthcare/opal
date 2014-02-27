@@ -48,6 +48,7 @@ def json_to_csv(episodes):
                             'change_in_antibiotic_prescription',
                             'referred_to_opat']]
     investigations_csv = [[
+            'episode_id',
             'test',
             'date_ordered',
             'details',
