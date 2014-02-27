@@ -1170,4 +1170,8 @@ controllers.controller('ExtractCtrl', function($scope, $http, $window, options, 
         );
     };
 
+    $scope.save = function(){
+        null;
+    };
+
 });

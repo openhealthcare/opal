@@ -415,7 +415,8 @@ def userprofile_view(request):
     profile = request.user.get_profile()
     data = dict(
         readonly=profile.readonly,
-        can_extract=profile.can_extract
+        can_extract=profile.can_extract,
+        filters=[f.to_dict() for f in profile.user.filter_set.all()]
         )
     return _build_json_response(data)
 
@@ -428,7 +429,6 @@ class Extractor(View):
         contains = ''
         if querytype == 'Contains':
             contains = '__icontains'
-#        print query
 
         model_name = query['column'].replace(' ', '')
         field = query['field'].replace(' ', '_').lower()
@@ -483,6 +483,7 @@ class DownloadSearchView(Extractor):
         eps = self.episodes_as_json()
         fname = json_to_csv(eps)
         return _build_json_response(dict(fileUrl='/search/extract/download'+fname))
+
 
 class DownloadArchiveView(View):
     @serve_maybe
