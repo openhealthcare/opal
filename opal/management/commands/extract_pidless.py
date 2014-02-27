@@ -14,7 +14,7 @@ class Command(dumpdata.Command):
         self._stdout = self.stdout
         self.stdout = StringIO.StringIO()
 
-        app_labels = ['elcid', 'opal']
+        app_labels = ['elcid', 'opal', 'auth']
         options['use_natural_keys'] = True
 
         model_list = dumpdata.Command.handle(self, *app_labels, **options)
