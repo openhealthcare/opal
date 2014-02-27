@@ -426,7 +426,7 @@ class Extractor(View):
         query = _get_request_data(self.request)
 
         querytype = query['queryType']
-        contains = ''
+        contains = '__iexact'
         if querytype == 'Contains':
             contains = '__icontains'
 
