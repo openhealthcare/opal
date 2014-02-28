@@ -439,7 +439,6 @@ class Extractor(View):
                 Mod = m
         if model_name == 'Tags':
             Mod = models.Tagging
-        print field
 
         if hasattr(Mod, field) and isinstance(getattr(Mod, field), fields.ForeignKeyOrFreeText):
             model = query['column'].replace(' ', '_').lower()
@@ -462,7 +461,8 @@ class Extractor(View):
                     eps += list(p.episode_set.all())
 
         else:
-            model = query['column'].replace(' ', '_').lower()
+            model = query['column'].replace(' ', '').lower()
+            # modname = model.replace.('_', '')
             kw = {'{0}__{1}{2}'.format(model, field, contains): query['query']}
 
             if Mod == models.Tagging:
