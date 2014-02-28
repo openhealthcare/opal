@@ -496,3 +496,17 @@ class DownloadArchiveView(View):
     @serve_maybe
     def get(self, *args, **kwargs):
         return kwargs['fname']
+
+
+class ReportView(TemplateView):
+    """
+    Base class for reports.
+    """
+
+    def get_data(self):
+        return {}
+
+    def get_context_data(self, *a, **kw):
+        ctx = super(ReportView, self).get_context_data(*a, **kw)
+        ctx.update(self.get_data())
+        return ctx
