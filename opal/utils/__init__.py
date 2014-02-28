@@ -216,14 +216,14 @@ def json_to_csv(episodes):
                     ])
 
 
-    episode_csv = "\n".join([",".join(r) for r in episode_csv])
-    diagnosis_csv = "\n".join([",".join(r) for r in diagnosis_csv])
-    pmh_csv = "\n".join([",".join(r) for r in pmh_csv])
-    antimicrobials_csv = "\n".join([",".join(r) for r in antimicrobials_csv])
-    allergies_csv = "\n".join([",".join(r) for r in allergies_csv])
-    travel_csv = "\n".join([",".join(r) for r in travel_csv])
-    clinical_advice_csv = "\n".join([",".join(r) for r in clinical_advice_csv])
-    investigations_csv = "\n".join([",".join(r) for r in investigations_csv])
+    episode_csv = "\n".join([",".join(['"'+x+'"' for x in r]) for r in episode_csv])
+    diagnosis_csv = "\n".join([",".join(['"'+x+'"' for x in r]) for r in diagnosis_csv])
+    pmh_csv = "\n".join([",".join(['"'+x+'"' for x in r]) for r in pmh_csv])
+    antimicrobials_csv = "\n".join([",".join(['"'+x+'"' for x in r]) for r in antimicrobials_csv])
+    allergies_csv = "\n".join([",".join(['"'+x+'"' for x in r]) for r in allergies_csv])
+    travel_csv = "\n".join([",".join(['"'+x+'"' for x in r]) for r in travel_csv])
+    clinical_advice_csv = "\n".join([",".join(['"'+x+'"' for x in r]) for r in clinical_advice_csv])
+    investigations_csv = "\n".join([",".join(['"'+x+'"' for x in r]) for r in investigations_csv])
 
     with ffs.Path.temp() as tempdir:
         with tempdir:
