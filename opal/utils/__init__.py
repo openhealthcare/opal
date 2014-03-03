@@ -232,8 +232,9 @@ def json_to_csv(episodes):
             zipfile/'diagnosis.csv' << diagnosis_csv
             zipfile/'past_medical_history.csv' << pmh_csv
             zipfile/'antimicrobials.csv' << antimicrobials_csv
+            zipfile/'allergies.csv' << allergies_csv
             zipfile/'travel.csv' << travel_csv
-            zipfile/'clinical_advice.csv' << clinical_advice_csv
+            zipfile/'clinical_advice.csv' << clinical_advice_csv.encode('UTF-8')
             zipfile/'investigations.csv' << investigations_csv
             ffs.mv(zipfile, target)
     return target
