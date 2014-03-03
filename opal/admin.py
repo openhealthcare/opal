@@ -25,8 +25,8 @@ class UserProfileAdmin(UserAdmin):
 class MyAdmin(reversion.VersionAdmin): pass
 
 class EpisodeAdmin(reversion.VersionAdmin):
-    list_display = ['patient', 'active', 'date_of_admission', 'discharge_date']
-    list_filter = ['active', 'patient', ]
+    list_display = ['patient', 'active', 'date_of_admission', 'discharge_date',]
+    list_filter = ['active', ]
     search_fields = ['patient__demographics__name', ]
 
 class PatientAdmin(reversion.VersionAdmin):

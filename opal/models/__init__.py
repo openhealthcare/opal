@@ -100,6 +100,7 @@ class Episode(UpdatesFromDictMixin, models.Model):
                                  demographics.name,
                                  self.date_of_admission)
 
+
     def is_active(self):
         # TODO Depreciate this.
         #
