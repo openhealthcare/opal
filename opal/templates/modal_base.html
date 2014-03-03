@@ -2,7 +2,15 @@
 	    <button type="button" class="close" ng-click="cancel()">×</button>
 	    <h3>{{title}} ([[editingName]])</h3>
       </div>
-      <div class="modal-body">{% block modal_body %}{% endblock %}</div>
+      <div class="modal-body" ng-show="state=='editing'">
+        {% block modal_body %}{% endblock %}
+      </div>
+      <div class="modal-body" ng-show="state=='saving'">
+        <center>
+          <h3>Saving...</h3>
+          <img src="/assets/img/loading.gif" />
+        </center>
+      </div>
       <div class="modal-footer">
         {% block modal_save %}
 	      <button class="btn btn-primary" ng-click="save('save')">Save</button>

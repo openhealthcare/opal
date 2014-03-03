@@ -1024,6 +1024,7 @@ controllers.controller('EditItemCtrl', function($scope, $cookieStore, $timeout,
                                                 item, options, episode) {
     $scope.episode = episode.makeCopy();
 	$scope.editing = item.makeCopy();
+    $scope.state = 'editing';
 
     // TODO: FTWLarry? What is this used for?
 	$scope.editingName = item.episodeName;
@@ -1091,6 +1092,7 @@ controllers.controller('EditItemCtrl', function($scope, $cookieStore, $timeout,
 	$scope.episode_category_list = ['Inpatient', 'Outpatient', 'Review'];
 
 	$scope.save = function(result) {
+        $scope.state = 'saving';
 		item.save($scope.editing).then(function() {
             if($scope.columnName == 'location'){
                 episode.save($scope.episode).then(function(){
