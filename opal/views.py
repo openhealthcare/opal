@@ -421,10 +421,10 @@ def userprofile_view(request):
     return _build_json_response(data)
 
 class Extractor(View):
-    def episodes_as_json(self):
+    def episodes_for_criteria(self, criteria):
         from django.db import models as m
-        query = _get_request_data(self.request)
 
+        query = criteria
         querytype = query['queryType']
         contains = '__iexact'
         if querytype == 'Contains':
@@ -476,6 +476,26 @@ class Extractor(View):
                 eps = []
                 for p in pats:
                     eps += list(p.episode_set.all())
+        return eps
+
+    def episodes_as_json(self):
+        query = _get_request_data(self.request)
+        all_matches = [(q['combine'], self.episodes_for_criteria(q)) for q in query]
+
+        for match in  all_matches:
+            print match
+
+        working = set(all_matches[0][1])
+        rest = all_matches[1:]
+
+        print working
+        print rest
+
+        for combine, episodes in rest:
+            methods = {'and': 'intersection', 'or': 'union', 'not': 'difference'}
+            working = getattr(set(episodes), methods[combine])(working)
+
+        eps = working
         return [e.to_dict(self.request.user) for e in eps]
 
 

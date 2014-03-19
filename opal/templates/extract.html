@@ -13,42 +13,65 @@
         <h2>Data Extract</h2>
         <form class="form-inline">
       </div>
-      <div class="col-md-2">
-        <select class="form-control" ng-model="model.column">
-          <option ng-repeat="name in column_names">[[name]]</option>
-        </select>
-        <p ng-show="model.column == null">
-          1. Select a Column
-        </p>
-      </div>
-      <div class="col-md-2">
-        <span ng-repeat="col in columns" ng-show="model.column == col.name.underscoreToCapWords()">
-          <select class="form-control" ng-model="model.field" >
-            <option ng-repeat="field in searchableFields(col)">[[field]]</option>
+
+      <span ng-repeat="query in criteria">
+        <div class="row">
+          <div class="col-md-2">
+            <select class="form-control" ng-model="query.combine"
+                    ng-hide="$index == 0">
+              <option>and</option>
+              <option>or</option>
+              <option>not</option>
+            </select>
+          </div>
+        <div class="col-md-2">
+          <select class="form-control" ng-model="query.column">
+            <option ng-repeat="name in column_names">[[name]]</option>
           </select>
-        </span>
-        <p ng-show="model.column != null && model.field == null">
-          2. Select a field
-        </p>
-      </div>
-      <div class="col-md-2">
-        <select class="form-control"
-                ng-show="model.field != null"
-                ng-model="model.queryType" >
-                <option>Equals</option>
-                <option>Contains</option>
-        </select>
-        <p ng-show="model.column != null && model.field != null && model.queryType == null">
-          3. Select a query type
-        </p>
-      </div>
-      <div class="col-md-2">
-        <input type="text"
-               ng-model="model.query"
-               ng-show="model.field != null"
-               />
-        <p ng-show="model.queryType != null && model.query == null && model.field != null">4. Add your value</p>
-      </div>
+          <p ng-show="query.column == null">
+            1. Select a Column
+          </p>
+        </div>
+        <div class="col-md-2">
+          <span ng-repeat="col in columns"
+                ng-show="query.column == col.name.underscoreToCapWords()">
+                <select class="form-control" ng-model="query.field" >
+                  <option ng-repeat="field in searchableFields(col)">[[field]]</option>
+                </select>
+          </span>
+          <p ng-show="query.column != null && query.field == null">
+            2. Select a field
+          </p>
+        </div>
+        <div class="col-md-2">
+          <select class="form-control"
+                  ng-show="query.field != null"
+                  ng-model="query.queryType" >
+                  <option>Equals</option>
+                  <option>Contains</option>
+          </select>
+          <p ng-show="query.column != null && query.field != null && query.queryType == null">
+            3. Select a query type
+          </p>
+        </div>
+        <div class="col-md-2">
+          <input type="text"
+                 ng-model="query.query"
+                 ng-show="query.field != null"
+                 />
+                 <p ng-show="query.queryType != null && query.query == null && query.field != null">4. Add your value</p>
+        </div>
+        <div class="col-md-2">
+          <button type="button" class="btn btn-success"
+                  ng-show="query.field != null"
+                  ng-click="addFilter()"
+                  >
+            <span ng-click="addFilter" class="glyphicon glyphicon-plus"></span>
+          </button>
+        </div>
+        </div>
+      </span>
+
       </form>
   </div>
   <div class="row">

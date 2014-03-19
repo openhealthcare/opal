@@ -1140,11 +1140,14 @@ controllers.controller('ExtractCtrl', function($scope, $http, $window, options, 
 	};
 
     $scope.model = {
+        combine  : "and",
         column   : null,
         field    : null,
         queryType: "Equals",
         query    : null
     };
+
+    $scope.criteria = [_.clone($scope.model)];
 
     $scope.searchableFields = function(column){
         return _.map(
@@ -1155,9 +1158,13 @@ controllers.controller('ExtractCtrl', function($scope, $http, $window, options, 
         );
     };
 
+    $scope.addFilter = function(){
+        $scope.criteria.push(_.clone($scope.model));
+    };
+
     $scope.search = function(){
         $scope.state = 'pending';
-        $http.post('/search/extract/', $scope.model).success(
+        $http.post('/search/extract/', $scope.criteria).success(
             function(results){
                 $scope.results = results;
                 $scope.state = 'normal';
