@@ -2,6 +2,7 @@
 Generic OPAL utilities
 """
 from collections import namedtuple
+import datetime
 import importlib
 import re
 
@@ -20,13 +21,14 @@ def stringport(module):
 
 Tag = namedtuple('Tag', 'name title subtags')
 
-def json_to_csv(episodes, description):
+def json_to_csv(episodes, description, user):
     """
     Given a list of episodes as JSON, write these to our CSV
     format.
     """
     from opal import models
-    target = str(ffs.Path.newfile())
+    target_dir = str(ffs.Path.newdir())
+    target = target_dir + '/extract.zip'
 
     episode_csv = [['id', 'date of admission', 'discharge date',
                    'hospital number', 'date of birth',
@@ -228,16 +230,17 @@ def json_to_csv(episodes, description):
     investigations_csv = "\n".join([",".join(['"'+x+'"' for x in r]) for r in investigations_csv])
 
     with ffs.Path.temp() as tempdir:
+        zipfolder = '{0}.{1}/'.format(user, datetime.date.today())
         with tempdir:
             zipfile = archive.ZipPath('episodes.zip')
-            zipfile/'episodes.csv' << episode_csv
-            zipfile/'diagnosis.csv' << diagnosis_csv
-            zipfile/'past_medical_history.csv' << pmh_csv
-            zipfile/'antimicrobials.csv' << antimicrobials_csv
-            zipfile/'allergies.csv' << allergies_csv
-            zipfile/'travel.csv' << travel_csv
-            zipfile/'clinical_advice.csv' << clinical_advice_csv.encode('UTF-8')
-            zipfile/'investigations.csv' << investigations_csv
-            zipfile/'filter.txt' << description
+            zipfile/(zipfolder+'episodes.csv') << episode_csv
+            zipfile/(zipfolder+'diagnosis.csv') << diagnosis_csv
+            zipfile/(zipfolder+'past_medical_history.csv') << pmh_csv
+            zipfile/(zipfolder+'antimicrobials.csv') << antimicrobials_csv
+            zipfile/(zipfolder+'allergies.csv') << allergies_csv
+            zipfile/(zipfolder+'travel.csv') << travel_csv
+            zipfile/(zipfolder+'clinical_advice.csv') << clinical_advice_csv.encode('UTF-8')
+            zipfile/(zipfolder+'investigations.csv') << investigations_csv
+            zipfile/(zipfolder+'filter.txt') << description
             ffs.mv(zipfile, target)
     return target
