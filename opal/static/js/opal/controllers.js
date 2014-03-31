@@ -1153,10 +1153,27 @@ controllers.controller('ExtractCtrl', function($scope, $http, $window, options, 
         return _.map(
             _.reject(
                 column.fields,
-                function(c){ return c.type == 'token' ||  c.type == 'date' ||  c.type ==  'list' ||  c.type == 'boolean'; }),
+                function(c){ return c.type == 'token' ||  c.type == 'date' ||  c.type ==  'list'; }),
             function(c){ return c.name.underscoreToCapWords(); }
         );
     };
+
+    $scope.isType = function(column, field, type){
+        if(!column || !field){
+            return false;
+        }
+        var col = _.find($scope.columns, function(item){return item.name == column.toLowerCase()});
+        var theField =  _.find(col.fields, function(f){return f.name == field.toLowerCase()});
+        return theField.type == type;
+    };
+
+    $scope.isBoolean = function(column, field){
+        return $scope.isType(column, field, "boolean");
+    };
+
+    $scope.isText = function(column, field){
+        return $scope.isType(column, field, "string");
+    }
 
     $scope.addFilter = function(){
         $scope.criteria.push(_.clone($scope.model));
