@@ -20,7 +20,7 @@ def stringport(module):
 
 Tag = namedtuple('Tag', 'name title subtags')
 
-def json_to_csv(episodes):
+def json_to_csv(episodes, description):
     """
     Given a list of episodes as JSON, write these to our CSV
     format.
@@ -238,5 +238,6 @@ def json_to_csv(episodes):
             zipfile/'travel.csv' << travel_csv
             zipfile/'clinical_advice.csv' << clinical_advice_csv.encode('UTF-8')
             zipfile/'investigations.csv' << investigations_csv
+            zipfile/'filter.txt' << description
             ffs.mv(zipfile, target)
     return target

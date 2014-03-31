@@ -421,6 +421,16 @@ def userprofile_view(request):
     return _build_json_response(data)
 
 class Extractor(View):
+
+    def __init__(self, *a, **k):
+        self.query = None
+        return super(Extractor, self).__init__(*a, **k)
+
+    def get_query(self):
+        if not self.query:
+            self.query = _get_request_data(self.request)
+        return self.query
+
     def episodes_for_criteria(self, criteria):
         from django.db import models as m
         djangomodels = m
@@ -492,7 +502,8 @@ class Extractor(View):
         return eps
 
     def episodes_as_json(self):
-        query = _get_request_data(self.request)
+        query = self.get_query()
+        print query
         all_matches = [(q['combine'], self.episodes_for_criteria(q)) for q in query]
 
         for match in  all_matches:
@@ -501,15 +512,24 @@ class Extractor(View):
         working = set(all_matches[0][1])
         rest = all_matches[1:]
 
-        print working
-        print rest
-
         for combine, episodes in rest:
             methods = {'and': 'intersection', 'or': 'union', 'not': 'difference'}
             working = getattr(set(episodes), methods[combine])(working)
 
         eps = working
         return [e.to_dict(self.request.user) for e in eps]
+
+    def description(self):
+        """
+        Provide a textual description of the current search
+        """
+        query = self.get_query()
+        print query
+        filters = "\n".join("{combine} {column} {field} {queryType} {query}".format(**f) for f in query)
+        return """{username} ({date})
+Searching for:
+{filters}
+""".format(username=self.request.user.username, date=datetime.datetime.now(), filters=filters)
 
 
 class ExtractSearchView(Extractor):
@@ -521,7 +541,7 @@ class ExtractSearchView(Extractor):
 class DownloadSearchView(Extractor):
     def post(self, *args, **kwargs):
         eps = self.episodes_as_json()
-        fname = json_to_csv(eps)
+        fname = json_to_csv(eps, self.description())
         return _build_json_response(dict(fileUrl='/search/extract/download'+fname))
 
 

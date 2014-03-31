@@ -1193,7 +1193,7 @@ controllers.controller('ExtractCtrl', function($scope, $http, $window, options, 
     };
 
     $scope.download = function(){
-        $http.post('/search/extract/download', $scope.model).success(
+        $http.post('/search/extract/download', $scope.criteria).success(
             function(results){
                 $window.open(results.fileUrl);
             }
