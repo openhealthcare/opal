@@ -423,6 +423,7 @@ def userprofile_view(request):
 class Extractor(View):
     def episodes_for_criteria(self, criteria):
         from django.db import models as m
+        djangomodels = m
 
         query = criteria
         querytype = query['queryType']
@@ -440,7 +441,19 @@ class Extractor(View):
         if model_name == 'Tags':
             Mod = models.Tagging
 
-        if hasattr(Mod, field) and isinstance(getattr(Mod, field), fields.ForeignKeyOrFreeText):
+        named_fields = [f for f in Mod._meta.fields if f.name == field]
+
+        # Do Boolean fields here
+        if len(named_fields) == 1 and isinstance(named_fields[0],
+                                                 djangomodels.BooleanField):
+            model = query['column'].replace(' ', '_').lower()
+            val = query['query'] == 'true'
+            kw = {'{0}__{1}'.format(model, field): val}
+            eps = models.Episode.objects.filter(**kw)
+
+
+        # FK / FT fields
+        elif hasattr(Mod, field) and isinstance(getattr(Mod, field), fields.ForeignKeyOrFreeText):
             model = query['column'].replace(' ', '_').lower()
 
             kw_fk = {'{0}__{1}_fk__name{2}'.format(model, field, contains): query['query']}

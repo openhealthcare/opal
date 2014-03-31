@@ -48,18 +48,24 @@
                   ng-show="query.field != null"
                   ng-model="query.queryType" >
                   <option>Equals</option>
-                  <option>Contains</option>
+                  <option ng-show="isText(query.column, query.field)">Contains</option>
           </select>
           <p ng-show="query.column != null && query.field != null && query.queryType == null">
             3. Select a query type
           </p>
         </div>
         <div class="col-md-2">
+          <select class="form-control" ng-model="query.query" ng-show="isBoolean(query.column, query.field) && query.field != null">
+            <option>true</option>
+            <option>false</option>
+          </select>
           <input type="text"
                  ng-model="query.query"
-                 ng-show="query.field != null"
+                 ng-show="isText(query.column, query.field) && query.field != null"
                  />
-                 <p ng-show="query.queryType != null && query.query == null && query.field != null">4. Add your value</p>
+                 <p ng-show="query.queryType != null && query.query == null && query.field != null">
+                   4. Add your value
+                 </p>
         </div>
         <div class="col-md-2">
           <button type="button" class="btn btn-success"
