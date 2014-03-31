@@ -21,7 +21,6 @@
                     ng-hide="$index == 0">
               <option>and</option>
               <option>or</option>
-              <option>not</option>
             </select>
           </div>
         <div class="col-md-2">
@@ -74,7 +73,12 @@
                   >
             <span ng-click="addFilter" class="glyphicon glyphicon-plus"></span>
           </button>
-        </div>
+          <button type="button" class="btn btn-danger"
+                  ng-show="query.field != null && criteria.length > 1"
+                  ng-click="removeFilter($index)"
+                  >
+            <span ng-click="removeFilter($index)" class="glyphicon glyphicon-minus"></span>
+          </button>        </div>
         </div>
       </span>
 

@@ -1179,6 +1179,10 @@ controllers.controller('ExtractCtrl', function($scope, $http, $window, options, 
         $scope.criteria.push(_.clone($scope.model));
     };
 
+    $scope.removeFilter = function(index){
+        $scope.criteria.splice(index, 1);
+    };
+
     $scope.search = function(){
         $scope.state = 'pending';
         $http.post('/search/extract/', $scope.criteria).success(
