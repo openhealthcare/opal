@@ -21,6 +21,7 @@ def stringport(module):
 
 Tag = namedtuple('Tag', 'name title subtags')
 
+# TODO - make this non-UCLH specific.
 def json_to_csv(episodes, description, user):
     """
     Given a list of episodes as JSON, write these to our CSV

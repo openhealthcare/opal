@@ -6,7 +6,11 @@ var controllers = angular.module('opal.controllers', [
 	'opal.services',
 	'ui.event',
 	'ui.bootstrap',
-    'mgcrea.ngStrap.typeahead'
+    'mgcrea.ngStrap.typeahead',
+    'mgcrea.ngStrap.helpers.dimensions',
+    'mgcrea.ngStrap.tooltip',
+    'mgcrea.ngStrap.helpers.dateParser',
+    'mgcrea.ngStrap.datepicker',
 ]);
 
 controllers.controller('RootCtrl', function($scope) {
@@ -1153,7 +1157,7 @@ controllers.controller('ExtractCtrl', function($scope, $http, $window, options, 
         return _.map(
             _.reject(
                 column.fields,
-                function(c){ return c.type == 'token' ||  c.type == 'date' ||  c.type ==  'list'; }),
+                function(c){ return c.type == 'token' ||  c.type ==  'list'; }),
             function(c){ return c.name.underscoreToCapWords(); }
         );
     };
@@ -1162,8 +1166,8 @@ controllers.controller('ExtractCtrl', function($scope, $http, $window, options, 
         if(!column || !field){
             return false;
         }
-        var col = _.find($scope.columns, function(item){return item.name == column.toLowerCase()});
-        var theField =  _.find(col.fields, function(f){return f.name == field.toLowerCase()});
+        var col = _.find($scope.columns, function(item){return item.name == column.toLowerCase().replace(' ',  '_')});
+        var theField =  _.find(col.fields, function(f){return f.name == field.toLowerCase().replace(' ',  '_')});
         return theField.type == type;
     };
 
@@ -1174,6 +1178,10 @@ controllers.controller('ExtractCtrl', function($scope, $http, $window, options, 
     $scope.isText = function(column, field){
         return $scope.isType(column, field, "string");
     }
+
+    $scope.isDate = function(column, field){
+        return $scope.isType(column, field, "date");
+    };
 
     $scope.addFilter = function(){
         $scope.criteria.push(_.clone($scope.model));

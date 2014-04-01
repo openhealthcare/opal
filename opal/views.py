@@ -461,6 +461,17 @@ class Extractor(View):
             kw = {'{0}__{1}'.format(model, field): val}
             eps = models.Episode.objects.filter(**kw)
 
+        # Do Date fields here
+        elif len(named_fields) == 1 and isinstance(named_fields[0], djangomodels.DateField):
+            model = query['column'].replace(' ', '').lower()
+            qtype = ''
+            val = datetime.datetime.strptime(query['query'], "%d/%m/%Y")
+            if query['queryType'] == 'Before':
+                qtype = '__lte'
+            elif query['queryType'] == 'After':
+                qtype = '__gte'
+            kw = {'{0}__{1}{2}'.format(model, field, qtype): val}
+            eps = models.Episode.objects.filter(**kw)
 
         # FK / FT fields
         elif hasattr(Mod, field) and isinstance(getattr(Mod, field), fields.ForeignKeyOrFreeText):
