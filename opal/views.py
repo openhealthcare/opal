@@ -512,7 +512,7 @@ class Extractor(View):
                     eps += list(p.episode_set.all())
         return eps
 
-    def episodes_as_json(self):
+    def get_episodes(self):
         query = self.get_query()
         print query
         all_matches = [(q['combine'], self.episodes_for_criteria(q)) for q in query]
@@ -528,6 +528,10 @@ class Extractor(View):
             working = getattr(set(episodes), methods[combine])(working)
 
         eps = working
+        return eps
+
+    def episodes_as_json(self):
+        eps = self.get_episodes()
         return [e.to_dict(self.request.user) for e in eps]
 
     def description(self):
@@ -551,8 +555,7 @@ class ExtractSearchView(Extractor):
 
 class DownloadSearchView(Extractor):
     def post(self, *args, **kwargs):
-        eps = self.episodes_as_json()
-        fname = json_to_csv(eps, self.description(), self.request.user.username)
+        fname = json_to_csv(self.get_episodes(), self.description(), self.request.user)
         return _build_json_response(dict(fileUrl='/search/extract/download'+fname))
 
 

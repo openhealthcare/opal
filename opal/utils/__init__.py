@@ -22,6 +22,7 @@ def stringport(module):
 Tag = namedtuple('Tag', 'name title subtags')
 
 # TODO - make this non-UCLH specific.
+# TODO - pick up FT/FK fields from introspection not hardcodings.
 def json_to_csv(episodes, description, user):
     """
     Given a list of episodes as JSON, write these to our CSV
@@ -35,15 +36,15 @@ def json_to_csv(episodes, description, user):
                    'hospital number', 'date of birth',
                    'country of birth', 'ethnicity', 'category',
                    'tags', 'hospital', 'ward', 'bed']]
-    diagnosis_csv = [['episode_id', 'condition', 'provisional',
+    diagnosis_csv = [['episode_id', 'condition', 'condition_freetext', 'provisional',
                       'details', 'date_of_diagnosis']]
-    pmh_csv = [['episode_id', 'condition', 'year', 'details']]
-    antimicrobials_csv = [['episode_id', 'drug', 'dose', 'route',
+    pmh_csv = [['episode_id', 'condition', 'condition_freetext', 'year', 'details']]
+    antimicrobials_csv = [['episode_id', 'drug', 'drug_freetext', 'dose', 'route',
                            'start_date', 'end_date']]
     allergies_csv = [['episode_id', 'drug', 'provisional',
                       'details']]
-    travel_csv = [['episode_id', 'destination', 'dates',
-                   'reason_for_travel', 'specific_exposures']]
+    travel_csv = [['episode_id', 'destination', 'destination_freetext', 'dates',
+                   'reason_for_travel', 'reason_for_travel_freetext', 'specific_exposures']]
     clinical_advice_csv = [['episode_id', 'initials', 'reason_for_interaction',
                             'clinical_discussion', 'agreed_plan',
                             'discussed_with', 'clinical_advice_given',
@@ -97,7 +98,8 @@ def json_to_csv(episodes, description, user):
             'cryptosporidium'
             ]]
 
-    for e in episodes:
+    for episode in episodes:
+        e = episode.to_dict(user)
         try:
             historic = models.Tagging.historic_tags_for_episodes([e['id']])[e['id']].keys()
             current = e['location'][0]['tags'].keys()
@@ -119,24 +121,38 @@ def json_to_csv(episodes, description, user):
                     str(e['location'][0]['bed']),
                     ])
             for diagnosis in e['diagnosis']:
+                coded = ''
+                if diagnosis['condition_fk_id']:
+                    coded = diagnosis['condition']
+
                 diagnosis_csv.append([
                         str(e['id']),
-                        str(diagnosis['condition']),
+                        coded,
+                        str(diagnosis['condition_ft']),
                         str(diagnosis['provisional']),
                         str(diagnosis['details']),
                         str(diagnosis['date_of_diagnosis'])
                         ])
             for pmh in e['past_medical_history']:
+                coded = ''
+                if pmh['condition_fk_id']:
+                    coded = pmh['condition']
                 pmh_csv.append([
                         str(e['id']),
-                        str(pmh['condition']),
+                        coded,
+                        str(pmh['condition_ft']),
                         str(pmh['year']),
                         str(pmh['details'])
                         ])
             for antimicrobial in e['antimicrobial']:
+                coded = ''
+                if antimicrobial['drug_fk_id']:
+                    coded = antimicrobial['drug']
+
                 antimicrobials_csv.append([
                         str(e['id']),
-                        str(antimicrobial['drug']),
+                        coded,
+                        str(antimicrobial['drug_ft']),
                         str(antimicrobial['dose']),
                         str(antimicrobial['route']),
                         str(antimicrobial['start_date']),
@@ -150,13 +166,22 @@ def json_to_csv(episodes, description, user):
                         str(allergy['details'])
                         ])
             for travel in e['travel']:
+                coded_dest, coded_reason = '', ''
+                if travel['destination_fk_id']:
+                    coded_dest = travel['destination']
+                if travel['reason_for_travel_fk_id']:
+                    coded_reason = travel['reason_for_travel']
+
                 travel_csv.append([
                         str(e['id']),
-                        str(travel['destination']),
+                        coded_dest,
+                        str(travel['destination_ft']),
                         str(travel['dates']),
-                        str(travel['reason_for_travel']),
+                        coded_reason,
+                        str(travel['reason_for_travel_ft']),
                         str(travel['specific_exposures'])
                         ])
+
             for advice in e['microbiology_input']:
                 clinical_advice_csv.append([
                         str(e['id']),
@@ -172,6 +197,7 @@ def json_to_csv(episodes, description, user):
                         str(advice['referred_to_opat']),
                         ])
             for test in e['microbiology_test']:
+
                 investigations_csv.append([
                         str(e['id']),
                         str(test['test']),
@@ -231,7 +257,7 @@ def json_to_csv(episodes, description, user):
     investigations_csv = "\n".join([",".join(['"'+x+'"' for x in r]) for r in investigations_csv])
 
     with ffs.Path.temp() as tempdir:
-        zipfolder = '{0}.{1}/'.format(user, datetime.date.today())
+        zipfolder = '{0}.{1}/'.format(user.username, datetime.date.today())
         with tempdir:
             zipfile = archive.ZipPath('episodes.zip')
             zipfile/(zipfolder+'episodes.csv') << episode_csv
