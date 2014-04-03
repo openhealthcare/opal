@@ -560,6 +560,9 @@ class ExtractSearchView(Extractor):
 class DownloadSearchView(Extractor):
     def post(self, *args, **kwargs):
         fname = json_to_csv(self.get_episodes(), self.description(), self.request.user)
+        print fname
+        import ffs
+        print ffs.stat(fname)
         return _build_json_response(dict(fileUrl='/search/extract/download'+fname))
 
 
