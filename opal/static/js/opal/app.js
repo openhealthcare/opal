@@ -70,7 +70,8 @@ app.config(
             templateUrl: '/templates/extract.html',
             resolve: {
                 schema: function(extractSchemaLoader){ return extractSchemaLoader },
-				options: function(Options) { return Options; }
+				options: function(Options) { return Options; },
+                filters: function(filtersLoader){ return filtersLoader() }
             }
         })
         .when('/account', {

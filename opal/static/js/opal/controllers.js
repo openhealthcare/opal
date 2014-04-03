@@ -1132,8 +1132,10 @@ controllers.controller('DeleteItemConfirmationCtrl', function($scope, $timeout,
 	};
 });
 
-controllers.controller('ExtractCtrl', function($scope, $http, $window, options, schema){
+controllers.controller('ExtractCtrl', function($scope, $http, $window, $modal,
+                                               filters, options, schema){
     $scope.state =  'normal';
+    $scope.filters = filters;
     $scope.columns = schema.columns;
     $scope.column_names = _.map(schema.columns, function(c){
         return c.name.underscoreToCapWords();
@@ -1212,6 +1214,24 @@ controllers.controller('ExtractCtrl', function($scope, $http, $window, options, 
             });
     };
 
+    $scope.jumpToFilter = function($event, filter){
+        $event.preventDefault()
+        $scope.criteria = filter.criteria;
+    }
+
+    $scope.editFilter = function($event, filter, $index){
+        $event.preventDefault();
+		modal = $modal.open({
+			templateUrl: '/templates/modals/save_filter_modal.html/',
+			controller: 'SaveFilterCtrl',
+			resolve: {
+				params: function() { return $scope.filters[$index]; },
+			}
+		}).result.then(function(result){
+            $scope.filters[$index] = result;
+        });
+    }
+
     $scope.download = function(){
         $http.post('/search/extract/download', $scope.criteria).success(
             function(results){
@@ -1221,7 +1241,35 @@ controllers.controller('ExtractCtrl', function($scope, $http, $window, options, 
     };
 
     $scope.save = function(){
-        null;
+
+		modal = $modal.open({
+			templateUrl: '/templates/modals/save_filter_modal.html/',
+			controller: 'SaveFilterCtrl',
+			resolve: {
+				params: function() { return {name: null, criteria: $scope.criteria}; },
+			}
+		}).result.then(function(result){
+            $scope.filters.push(result);
+        });
     };
 
 });
+
+controllers.controller('SaveFilterCtrl', function($scope, $modalInstance, Filter, params) {
+    $scope.state = 'editing';
+    $scope.model = params;
+
+	$scope.save = function(result) {
+        $scope.state = 'saving';
+        var filter = new Filter($scope.model);
+		filter.save($scope.model).then(function(result) {
+			$modalInstance.close(result);
+		});
+	};
+
+
+	$scope.cancel = function() {
+		$modalInstance.close('cancel');
+	};
+
+})

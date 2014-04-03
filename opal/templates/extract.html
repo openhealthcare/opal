@@ -1,4 +1,5 @@
 <div class="container">
+  <div class="col-md-10">
   <div class="row">
     {% if not request.user.get_profile.can_extract %}
       <div class="col-md-4 col-md-offset-4">
@@ -67,10 +68,12 @@
             <option>false</option>
           </select>
           <input type="text"
+                 class="form-control"
                  ng-model="query.query"
                  ng-show="isText(query.column, query.field) && query.field != null"
                  />
 	      <input type="text" ng-model="query.query"
+                 class="form-control"
                  ng-show="isDate(query.column, query.field) && query.field != null"
 			     ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
 			     placeholder="dd/mm/yyyy"
@@ -160,4 +163,19 @@
 {% endif %}
 {% include 'extract_footer.html' %}
     </div>
+
   </div>
+</div>
+    <div class="md-col-2">
+      <h3>Saved Searches</h3>
+      <ul>
+        <li ng-repeat="f in filters">
+          <a href="#" ng-click="jumpToFilter($event, f)">
+            [[f.name]]
+          </a>
+          <a href="#" ng-click="editFilter($event, f, $index)" >
+            <span class="glyphicon glyphicon-edit"></span>
+          </a>
+        </li>
+      </ul>
+    </div>

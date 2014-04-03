@@ -37,6 +37,7 @@ def _build_json_response(data, status_code=200):
     response = HttpResponse()
     response['Content-Type'] = 'application/json'
     response.content = json.dumps(data, cls=DjangoJSONEncoder)
+    # response.content = '<html><body>'+json.dumps(data, cls=DjangoJSONEncoder)+'</body></html>'
     response.status_code = status_code
     return response
 
@@ -152,6 +153,7 @@ def episode_list_and_create_view(request):
                 )
             serialised = [episode.to_dict(request.user)
                           for episode in episodes]
+#            serialised = [models.Episode.objects.all()[0].to_dict(request.user)]
         return _build_json_response(serialised)
 
     elif request.method == 'POST':
@@ -245,6 +247,8 @@ class DischargeListTemplateView(EpisodeTemplateView):
     template_name = 'discharge_list.html'
     column_schema = schema.list_columns
 
+class SaveFilterModalView(TemplateView):
+    template_name = 'save_filter_modal.html'
 
 class EpisodeDetailTemplateView(EpisodeTemplateView):
     template_name = 'episode_detail.html'
@@ -577,3 +581,37 @@ class ReportView(TemplateView):
         ctx = super(ReportView, self).get_context_data(*a, **kw)
         ctx.update(self.get_data())
         return ctx
+
+class FilterView(LoginRequiredMixin, View):
+    def get(self, *args, **kwargs):
+        filters = models.Filter.objects.filter(user=self.request.user);
+        return _build_json_response([f.to_dict() for f in filters])
+
+    def post(self, *args, **kwargs):
+        data = _get_request_data(self.request)
+        self.filter = models.Filter(user=self.request.user)
+        self.filter.update_from_dict(data)
+        return _build_json_response(self.filter.to_dict())
+
+class FilterDetailView(LoginRequiredMixin, View):
+    def dispatch(self, *args, **kwargs):
+        try:
+            self.filter = models.Filter.objects.get(pk=kwargs['pk'])
+        except models.Episode.DoesNotExist:
+            return HttpResponseNotFound()
+        return super(FilterDetailView, self).dispatch(*args, **kwargs)
+
+    def get(self, *args, **kwargs):
+         return _build_json_response(self.filter)
+
+    def put(self, *args, **kwargs):
+        print 'putting'
+        data = _get_request_data(self.request)
+        print self.filter.name
+        self.filter.update_from_dict(data)
+        print self.filter.name
+        return _build_json_response(self.filter.to_dict())
+
+    def delete(self, *args, **kwargs):
+        self.filter.delete()
+        return _build_json_response('')

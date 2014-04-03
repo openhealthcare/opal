@@ -35,6 +35,9 @@ urlpatterns = patterns(
     url(r'^search/extract/download(?P<fname>.*)$',
         views.DownloadArchiveView.as_view()),
 
+    url(r'^filters/?$', views.FilterView.as_view()),
+    url(r'^filters/(?P<pk>\d+)/?$', views.FilterDetailView.as_view()),
+
     url(r'^templates/episode_list.html/?$', views.EpisodeListTemplateView.as_view()),
     url(r'^templates/episode_detail.html/?$',
         views.EpisodeDetailTemplateView.as_view()),
@@ -52,6 +55,8 @@ urlpatterns = patterns(
         views.DischargeEpisodeTemplateView.as_view()),
     url(r'^templates/modals/delete_item_confirmation.html/?$',
         views.DeleteItemConfirmationView.as_view()),
+    url(r'^templates/modals/save_filter_modal.html/?$',
+        views.SaveFilterModalView.as_view()),
 )
 
 subrecord_models = models.PatientSubrecord.__subclasses__() + models.EpisodeSubrecord.__subclasses__()

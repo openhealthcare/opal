@@ -19,8 +19,11 @@ admin.site.unregister(User)
 class UserProfileInline(admin.StackedInline):
     model = UserProfile
 
+class FilterInline(admin.StackedInline):
+    model = models.Filter
+
 class UserProfileAdmin(UserAdmin):
-    inlines = [ UserProfileInline, ]
+    inlines = [ UserProfileInline, FilterInline,]
 
 class MyAdmin(reversion.VersionAdmin): pass
 

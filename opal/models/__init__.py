@@ -35,6 +35,7 @@ class UserProfile(models.Model):
     can_extract           = models.BooleanField(default=False)
     readonly              = models.BooleanField(default=False)
 
+
 class Filter(models.Model):
     """
     Saved filters for users extracting data.
@@ -42,6 +43,15 @@ class Filter(models.Model):
     user     = models.ForeignKey(User)
     name     = models.CharField(max_length=200)
     criteria = models.TextField()
+
+    def to_dict(self):
+        return dict(id=self.pk, name=self.name, criteria=json.loads(self.criteria))
+
+    def update_from_dict(self, data):
+        print data
+        self.criteria = json.dumps(data['criteria'])
+        self.name = data['name']
+        self.save()
 
 
 class Patient(models.Model):
