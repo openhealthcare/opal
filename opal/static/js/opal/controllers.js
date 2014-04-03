@@ -1134,6 +1134,7 @@ controllers.controller('DeleteItemConfirmationCtrl', function($scope, $timeout,
 
 controllers.controller('ExtractCtrl', function($scope, $http, $window, $modal,
                                                filters, options, schema){
+    $scope.JSON = window.JSON;
     $scope.state =  'normal';
     $scope.filters = filters;
     $scope.columns = schema.columns;
@@ -1231,14 +1232,6 @@ controllers.controller('ExtractCtrl', function($scope, $http, $window, $modal,
             $scope.filters[$index] = result;
         });
     }
-
-    $scope.download = function(){
-        $http.post('/search/extract/download', $scope.criteria).success(
-            function(results){
-                $window.open(results.fileUrl);
-            }
-        );
-    };
 
     $scope.save = function(){
 

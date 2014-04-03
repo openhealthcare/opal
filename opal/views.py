@@ -558,18 +558,20 @@ class ExtractSearchView(Extractor):
 
 
 class DownloadSearchView(Extractor):
+    def get_query(self):
+        if not self.query:
+            self.query = json.loads(self.request.POST['criteria'])
+        return self.query
+
     def post(self, *args, **kwargs):
         fname = json_to_csv(self.get_episodes(), self.description(), self.request.user)
-        print fname
-        import ffs
-        print ffs.stat(fname)
-        return _build_json_response(dict(fileUrl='/search/extract/download'+fname))
-
-
-class DownloadArchiveView(View):
-    @serve_maybe
-    def get(self, *args, **kwargs):
-        return kwargs['fname']
+        resp = HttpResponse(
+            open(fname, 'rb').read(),
+            mimetype='application/force-download'
+            )
+        resp['Content-Disposition'] = 'attachment; filename="{0}extract{1}.zip"'.format(
+            settings.OPAL_BRAND_NAME, datetime.datetime.now().isoformat())
+        return resp
 
 
 class ReportView(TemplateView):
