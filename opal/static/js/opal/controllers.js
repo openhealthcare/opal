@@ -1154,6 +1154,18 @@ controllers.controller('ExtractCtrl', function($scope, $http, $window, options, 
     $scope.criteria = [_.clone($scope.model)];
 
     $scope.searchableFields = function(column){
+        // TODO - don't hard-code this
+        if(column.name == 'microbiology_test'){
+            return [
+                'Test',
+                'Date Ordered',
+                'Details',
+                'Microscopy',
+                'Organism',
+                'Sensitive Antibiotics',
+                'Resistant Antibiotics'
+            ]
+        }
         return _.map(
             _.reject(
                 column.fields,
