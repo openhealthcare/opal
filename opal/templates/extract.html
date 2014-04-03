@@ -25,7 +25,9 @@
           </div>
         <div class="col-md-2">
           <select class="form-control" ng-model="query.column">
-            <option ng-repeat="name in column_names">[[name]]</option>
+            <option ng-repeat="col in columns" value="[[col.name]]">
+              [[col.display_name]]
+            </option>
           </select>
           <p ng-show="query.column == null">
             1. Select a Column
@@ -33,7 +35,7 @@
         </div>
         <div class="col-md-2">
           <span ng-repeat="col in columns"
-                ng-show="query.column == col.name.underscoreToCapWords()">
+                ng-show="query.column == col.name">
                 <select class="form-control" ng-model="query.field" >
                   <option ng-repeat="field in searchableFields(col)">[[field]]</option>
                 </select>

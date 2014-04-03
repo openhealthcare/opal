@@ -329,6 +329,7 @@ class SchemaBuilderView(View):
         for column in self.columns:
             col = {
                 'name': column.get_api_name(),
+                'display_name': column.get_display_name(),
                 'single': column._is_singleton,
                 'fields': column.build_field_schema()
                 }
@@ -441,12 +442,13 @@ class Extractor(View):
         if querytype == 'Contains':
             contains = '__icontains'
 
-        model_name = query['column'].replace(' ', '')
+        model_name = query['column'].replace(' ', '').replace('_', '')
         field = query['field'].replace(' ', '_').lower()
 
         Mod = None
+        print model_name
         for m in m.get_models():
-            if m.__name__ == model_name:
+            if m.__name__.lower() == model_name:
                 Mod = m
         if model_name == 'Tags':
             Mod = models.Tagging
@@ -496,8 +498,7 @@ class Extractor(View):
 
         else:
             model = query['column'].replace(' ', '').lower()
-            # modname = model.replace.('_', '')
-            kw = {'{0}__{1}{2}'.format(model, field, contains): query['query']}
+            kw = {'{0}__{1}{2}'.format(model_name, field, contains): query['query']}
 
             if Mod == models.Tagging:
                 kw = {'tagging__tag_name{0}'.format(contains): query['query']}
@@ -514,7 +515,6 @@ class Extractor(View):
 
     def get_episodes(self):
         query = self.get_query()
-        print query
         all_matches = [(q['combine'], self.episodes_for_criteria(q)) for q in query]
 
         for match in  all_matches:
