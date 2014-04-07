@@ -1181,8 +1181,8 @@ controllers.controller('ExtractCtrl', function($scope, $http, $window, $modal,
         if(!column || !field){
             return false;
         }
-        var col = _.find($scope.columns, function(item){return item.name == column.toLowerCase().replace(' ',  '_')});
-        var theField =  _.find(col.fields, function(f){return f.name == field.toLowerCase().replace(' ',  '_')});
+        var col = _.find($scope.columns, function(item){return item.name == column.toLowerCase().replace( / /g,  '_')});
+        var theField =  _.find(col.fields, function(f){return f.name == field.toLowerCase().replace( / /g,  '_')});
         return theField.type == type;
     };
 
