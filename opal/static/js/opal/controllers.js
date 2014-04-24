@@ -666,7 +666,7 @@ controllers.controller('SearchCtrl', function($scope, $http, $location, $modal,
 	$scope.results = [];
 	$scope.searched = false;
 
-	$scope.episode_category_list = ['Inpatient', 'Outpatient', 'Review'];
+	$scope.episode_category_list = ['OPAT', 'Inpatient', 'Outpatient', 'Review'];
 	$scope.hospital_list = ['Heart Hospital', 'NHNN', 'UCH'];
 
 	// $timeout(function() {
@@ -920,7 +920,7 @@ controllers.controller('AddEpisodeCtrl', function($scope, $http, $cookieStore,
 		$scope[name + '_list'] = options[name];
 	};
 
-	$scope.episode_category_list = ['Inpatient', 'Outpatient', 'Review'];
+	$scope.episode_category_list = ['OPAT', 'Inpatient', 'Outpatient', 'Review'];
 
     // TODO - this is no longer the way location/admission date works.
 	$scope.editing = {
@@ -1089,7 +1089,7 @@ controllers.controller('EditItemCtrl', function($scope, $cookieStore, $timeout,
 		});
 	};
 
-	$scope.episode_category_list = ['Inpatient', 'Outpatient', 'Review'];
+	$scope.episode_category_list = ['OPAT',  'Inpatient', 'Outpatient', 'Review'];
 
 	$scope.save = function(result) {
         $scope.state = 'saving';
