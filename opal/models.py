@@ -17,7 +17,7 @@ import reversion
 
 from opal.utils import stringport, camelcase_to_underscore
 from opal.utils.fields import ForeignKeyOrFreeText
-from opal import exceptions
+from opal import exceptions, managers
 
 options = stringport(settings.OPAL_OPTIONS_MODULE)
 
@@ -32,12 +32,6 @@ class UserProfile(models.Model):
 class TaggedSubrecordMixin(object):
 
     @classmethod
-    def _get_fieldnames_to_serialize(cls):
-        fieldnames = super(TaggedSubrecordMixin, cls)._get_fieldnames_to_serialize()
-        fieldnames.append('tags')
-        return fieldnames
-
-    @classmethod
     def get_field_type_for_tags(cls):
         return 'list'
 
@@ -48,6 +42,23 @@ class TaggedSubrecordMixin(object):
     def set_tags(self, value, user):
         tag_names = [k for k, v in value.items() if v]
         self.episode.set_tag_names(tag_names, user)
+
+    def to_dict(self, user, tags=None):
+        """
+        When we query large numbers of episodes we pass in the
+        possible tags here.
+        """
+        fieldnames = self._get_fieldnames_to_serialize()
+        if not tags:
+            # We haven't pre-loaded the tags, so we can run the
+            # expensive query route
+            fieldnames.append('tags')
+            return self._to_dict(user, fieldnames)
+
+        d = self._to_dict(user, fieldnames)
+        d['tags'] = {t.tag_name: True for t in tags[self.episode_id]}
+        return d
+
 
 
 class UpdatesFromDictMixin(object):
@@ -167,6 +178,8 @@ class Episode(UpdatesFromDictMixin, models.Model):
     # TODO rename to date_of_discharge?
     discharge_date = models.DateField(null=True, blank=True)
     consistency_token = models.CharField(max_length=8)
+
+    objects = managers.EpisodeManager()
 
     def __unicode__(self):
         demographics = self.patient.demographics_set.get()
@@ -323,9 +336,12 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
 
         return field_schema
 
-    def to_dict(self, user):
+    def _to_dict(self, user, fieldnames):
+        """
+        Allow a subset of FIELDNAMES
+        """
         d = {}
-        for name in self._get_fieldnames_to_serialize():
+        for name in fieldnames:
             getter = getattr(self, 'get_' + name, None)
             if getter is not None:
                 value = getter(user)
@@ -334,6 +350,9 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
             d[name] = value
 
         return d
+
+    def to_dict(self, user):
+        return self._to_dict(user, self._get_fieldnames_to_serialize())
 
 
 class PatientSubrecord(Subrecord):

@@ -113,13 +113,7 @@ def episode_list_and_create_view(request):
                         episode['location'][0]['tags'][t] = True
 
         else:
-            episodes = set(
-                list(models.Episode.objects.filter(active=True)) +
-                list(models.Episode.objects.filter(tagging__tag_name='mine',
-                                                   tagging__user=request.user))
-                )
-            serialised = [episode.to_dict(request.user)
-                          for episode in episodes]
+            serialised = models.Episode.objects.serialised_active(request.user)
         return _build_json_response(serialised)
 
     elif request.method == 'POST':

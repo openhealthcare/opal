@@ -50,15 +50,41 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 	$scope.rows = getVisibleEpisodes();
     $scope.tag_display = options.tag_display;
 
+    $scope.episode_lookup = {};
+    _.each(episodes,  function(e){
+        _.each(e.location[0].tags, function(value, key){
+            if(!_.has($scope.episode_lookup, key)){
+                $scope.episode_lookup[key] = [];
+            };
+            $scope.episode_lookup[key].push(e.id);
+        })
+    });
+
 	function getVisibleEpisodes() {
 		var visibleEpisodes = [];
+        var episode_list;
 
-		for (var pix in episodes) {
-            if(episodeVisibility(episodes[pix], $scope, viewDischarged)){
-				visibleEpisodes.push(episodes[pix]);
-			};
-		};
+        if($scope.episode_lookup){
+            console.log('using lookup')
+            if($scope.currentSubTag == 'all'){
+                episode_list = $scope.episode_lookup[$scope.currentTag];
+            }else{
+                episode_list = $scope.episode_lookup[$scope.currentSubTag];
+            }
+        }else{
+            console.log('non lookup')
+            episode_list = [];
+        }
 
+        console.log(episode_list.length)
+
+        visibleEpisodes = _.map(
+            _.filter(episode_list, function(id){
+                return episodeVisibility(episodes[id], $scope, viewDischarged)
+            }),
+            function(id){
+                return episodes[id];
+            })
 		visibleEpisodes.sort(compareEpisodes);
 		return visibleEpisodes;
 	};
@@ -89,7 +115,6 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
                 }
             }
         }
-
     }
 
     $scope.otherTags = function(item){
