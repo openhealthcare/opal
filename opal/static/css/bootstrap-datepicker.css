@@ -70,7 +70,9 @@
 .datepicker td,
 .datepicker th {
   text-align: center;
-  width: 20px;
+
+  /* Something is conflicting uglily w. datepickers. this gives us at least passable */
+  /* width: 20px; */
   height: 20px;
   -webkit-border-radius: 4px;
   -moz-border-radius: 4px;
