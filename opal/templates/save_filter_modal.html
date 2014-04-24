@@ -1,0 +1,28 @@
+<div class="modal-header">
+  <button type="button" class="close" ng-click="cancel()">×</button>
+  <h3>
+    Save this search
+    <span class="glyphicon glyphicon-floppy-disk"></span>
+  </h3>
+</div>
+<div class="modal-body" ng-show="state=='editing'">
+  <form role="form">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" class="form-control"
+             id="name" placeholder="Name for this search"
+             ng-model="model.name">
+    </div>
+  </form>
+
+</div>
+<div class="modal-body" ng-show="state=='saving'">
+  <center>
+    <h3>Saving...</h3>
+    <img src="/assets/img/loading.gif" />
+  </center>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" ng-click="save('save')">Save</button>
+  <button class="btn" ng-click="cancel()">Cancel</button>
+</div>

@@ -24,7 +24,9 @@
 		<script type="text/javascript" src="{% static "js/angular-strap-2.0.0-rc.2/modules/tooltip.tpl.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/angular-strap-2.0.0-rc.2/modules/dimensions.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/angular-strap-2.0.0-rc.2/modules/parse-options.js" %}"></script>
-
+		<script type="text/javascript" src="{% static "js/angular-strap-2.0.0-rc.2/modules/date-parser.js" %}"></script>
+		<script type="text/javascript" src="{% static "js/angular-strap-2.0.0-rc.2/modules/datepicker.js" %}"></script>
+		<script type="text/javascript" src="{% static "js/angular-strap-2.0.0-rc.2/modules/datepicker.tpl.js" %}"></script>
 
 		<script type="text/javascript" src="{% static "js/angular-strap-2.0.0-rc.2/modules/typeahead.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/angular-strap-2.0.0-rc.2/modules/typeahead.tpl.js" %}"></script>
@@ -66,7 +68,7 @@
       {% include 'navbar.html' %}
 		<div class="container" loadingbar>Loading...</div>
 		<div ng-view></div>
-                {% include 'keyboard_shortcuts_modal.html' %}
+        {% include 'keyboard_shortcuts_modal.html' %}
         {% include 'logout_modal.html' %}
 	</body>
 </html>

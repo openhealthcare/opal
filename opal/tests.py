@@ -102,6 +102,8 @@ class EpisodeTest(TestCase):
                 'consistency_token': '',
                 'date_of_birth': None,
                 'country_of_birth': '',
+                'country_of_birth_fk_id': None,
+                'country_of_birth_ft': '',
                 'ethnicity': None,
                 'hospital_number': '',
                 'name': u'',

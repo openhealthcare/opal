@@ -1193,6 +1193,7 @@ describe('controllers', function() {
             controller = $controller('ExtractCtrl',  {
                 $scope : $scope,
                 options: optionsData,
+                filters: [],
                 schema : schema
             });
         });

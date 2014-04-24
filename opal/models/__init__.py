@@ -35,6 +35,7 @@ class UserProfile(models.Model):
     can_extract           = models.BooleanField(default=False)
     readonly              = models.BooleanField(default=False)
 
+
 class Filter(models.Model):
     """
     Saved filters for users extracting data.
@@ -42,6 +43,15 @@ class Filter(models.Model):
     user     = models.ForeignKey(User)
     name     = models.CharField(max_length=200)
     criteria = models.TextField()
+
+    def to_dict(self):
+        return dict(id=self.pk, name=self.name, criteria=json.loads(self.criteria))
+
+    def update_from_dict(self, data):
+        print data
+        self.criteria = json.dumps(data['criteria'])
+        self.name = data['name']
+        self.save()
 
 
 class Patient(models.Model):
@@ -205,6 +215,10 @@ class Tagging(models.Model):
         return 'tags'
 
     @staticmethod
+    def get_display_name():
+        return 'Tags'
+
+    @staticmethod
     def build_field_schema():
         return [dict(name='tag_name', type='string')]
 
@@ -239,10 +253,21 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
         return camelcase_to_underscore(cls._meta.object_name)
 
     @classmethod
+    def get_display_name(cls):
+        if hasattr(cls, '_title'):
+            return cls._title
+        else:
+            return cls._meta.object_name
+
+    @classmethod
     def build_field_schema(cls):
         field_schema = []
         for fieldname in cls._get_fieldnames_to_serialize():
             if fieldname in ['id', 'patient_id', 'episode_id']:
+                continue
+            elif fieldname.endswith('_fk_id'):
+                continue
+            elif fieldname.endswith('_ft'):
                 continue
 
             getter = getattr(cls, 'get_field_type_for_' + fieldname, None)
@@ -254,9 +279,7 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
                     field_type = camelcase_to_underscore(field.__name__[:-5])
             else:
                 field_type = getter()
-
             field_schema.append({'name': fieldname, 'type': field_type})
-
         return field_schema
 
     def to_dict(self, user):

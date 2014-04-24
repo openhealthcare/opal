@@ -37,6 +37,7 @@ def _build_json_response(data, status_code=200):
     response = HttpResponse()
     response['Content-Type'] = 'application/json'
     response.content = json.dumps(data, cls=DjangoJSONEncoder)
+    # response.content = '<html><body>'+json.dumps(data, cls=DjangoJSONEncoder)+'</body></html>'
     response.status_code = status_code
     return response
 
@@ -152,6 +153,7 @@ def episode_list_and_create_view(request):
                 )
             serialised = [episode.to_dict(request.user)
                           for episode in episodes]
+#            serialised = [models.Episode.objects.all()[0].to_dict(request.user)]
         return _build_json_response(serialised)
 
     elif request.method == 'POST':
@@ -245,6 +247,8 @@ class DischargeListTemplateView(EpisodeTemplateView):
     template_name = 'discharge_list.html'
     column_schema = schema.list_columns
 
+class SaveFilterModalView(TemplateView):
+    template_name = 'save_filter_modal.html'
 
 class EpisodeDetailTemplateView(EpisodeTemplateView):
     template_name = 'episode_detail.html'
@@ -329,6 +333,7 @@ class SchemaBuilderView(View):
         for column in self.columns:
             col = {
                 'name': column.get_api_name(),
+                'display_name': column.get_display_name(),
                 'single': column._is_singleton,
                 'fields': column.build_field_schema()
                 }
@@ -421,26 +426,61 @@ def userprofile_view(request):
     return _build_json_response(data)
 
 class Extractor(View):
-    def episodes_as_json(self):
-        from django.db import models as m
-        query = _get_request_data(self.request)
 
+    def __init__(self, *a, **k):
+        self.query = None
+        return super(Extractor, self).__init__(*a, **k)
+
+    def get_query(self):
+        if not self.query:
+            self.query = _get_request_data(self.request)
+        return self.query
+
+    def episodes_for_criteria(self, criteria):
+        from django.db import models as m
+        djangomodels = m
+
+        query = criteria
         querytype = query['queryType']
         contains = '__iexact'
         if querytype == 'Contains':
             contains = '__icontains'
 
-        model_name = query['column'].replace(' ', '')
+        model_name = query['column'].replace(' ', '').replace('_', '')
         field = query['field'].replace(' ', '_').lower()
 
         Mod = None
+        print model_name
         for m in m.get_models():
-            if m.__name__ == model_name:
+            if m.__name__.lower() == model_name:
                 Mod = m
         if model_name == 'Tags':
             Mod = models.Tagging
 
-        if hasattr(Mod, field) and isinstance(getattr(Mod, field), fields.ForeignKeyOrFreeText):
+        named_fields = [f for f in Mod._meta.fields if f.name == field]
+
+        # Do Boolean fields here
+        if len(named_fields) == 1 and isinstance(named_fields[0],
+                                                 djangomodels.BooleanField):
+            model = query['column'].replace(' ', '_').lower()
+            val = query['query'] == 'true'
+            kw = {'{0}__{1}'.format(model, field): val}
+            eps = models.Episode.objects.filter(**kw)
+
+        # Do Date fields here
+        elif len(named_fields) == 1 and isinstance(named_fields[0], djangomodels.DateField):
+            model = query['column'].replace(' ', '').lower()
+            qtype = ''
+            val = datetime.datetime.strptime(query['query'], "%d/%m/%Y")
+            if query['queryType'] == 'Before':
+                qtype = '__lte'
+            elif query['queryType'] == 'After':
+                qtype = '__gte'
+            kw = {'{0}__{1}{2}'.format(model, field, qtype): val}
+            eps = models.Episode.objects.filter(**kw)
+
+        # FK / FT fields
+        elif hasattr(Mod, field) and isinstance(getattr(Mod, field), fields.ForeignKeyOrFreeText):
             model = query['column'].replace(' ', '_').lower()
 
             kw_fk = {'{0}__{1}_fk__name{2}'.format(model, field, contains): query['query']}
@@ -462,8 +502,7 @@ class Extractor(View):
 
         else:
             model = query['column'].replace(' ', '').lower()
-            # modname = model.replace.('_', '')
-            kw = {'{0}__{1}{2}'.format(model, field, contains): query['query']}
+            kw = {'{0}__{1}{2}'.format(model_name, field, contains): query['query']}
 
             if Mod == models.Tagging:
                 kw = {'tagging__tag_name{0}'.format(contains): query['query']}
@@ -476,7 +515,40 @@ class Extractor(View):
                 eps = []
                 for p in pats:
                     eps += list(p.episode_set.all())
+        return eps
+
+    def get_episodes(self):
+        query = self.get_query()
+        all_matches = [(q['combine'], self.episodes_for_criteria(q)) for q in query]
+
+        for match in  all_matches:
+            print match
+
+        working = set(all_matches[0][1])
+        rest = all_matches[1:]
+
+        for combine, episodes in rest:
+            methods = {'and': 'intersection', 'or': 'union', 'not': 'difference'}
+            working = getattr(set(episodes), methods[combine])(working)
+
+        eps = working
+        return eps
+
+    def episodes_as_json(self):
+        eps = self.get_episodes()
         return [e.to_dict(self.request.user) for e in eps]
+
+    def description(self):
+        """
+        Provide a textual description of the current search
+        """
+        query = self.get_query()
+        print query
+        filters = "\n".join("{combine} {column} {field} {queryType} {query}".format(**f) for f in query)
+        return """{username} ({date})
+Searching for:
+{filters}
+""".format(username=self.request.user.username, date=datetime.datetime.now(), filters=filters)
 
 
 class ExtractSearchView(Extractor):
@@ -486,16 +558,20 @@ class ExtractSearchView(Extractor):
 
 
 class DownloadSearchView(Extractor):
+    def get_query(self):
+        if not self.query:
+            self.query = json.loads(self.request.POST['criteria'])
+        return self.query
+
     def post(self, *args, **kwargs):
-        eps = self.episodes_as_json()
-        fname = json_to_csv(eps)
-        return _build_json_response(dict(fileUrl='/search/extract/download'+fname))
-
-
-class DownloadArchiveView(View):
-    @serve_maybe
-    def get(self, *args, **kwargs):
-        return kwargs['fname']
+        fname = json_to_csv(self.get_episodes(), self.description(), self.request.user)
+        resp = HttpResponse(
+            open(fname, 'rb').read(),
+            mimetype='application/force-download'
+            )
+        resp['Content-Disposition'] = 'attachment; filename="{0}extract{1}.zip"'.format(
+            settings.OPAL_BRAND_NAME, datetime.datetime.now().isoformat())
+        return resp
 
 
 class ReportView(TemplateView):
@@ -510,3 +586,37 @@ class ReportView(TemplateView):
         ctx = super(ReportView, self).get_context_data(*a, **kw)
         ctx.update(self.get_data())
         return ctx
+
+class FilterView(LoginRequiredMixin, View):
+    def get(self, *args, **kwargs):
+        filters = models.Filter.objects.filter(user=self.request.user);
+        return _build_json_response([f.to_dict() for f in filters])
+
+    def post(self, *args, **kwargs):
+        data = _get_request_data(self.request)
+        self.filter = models.Filter(user=self.request.user)
+        self.filter.update_from_dict(data)
+        return _build_json_response(self.filter.to_dict())
+
+class FilterDetailView(LoginRequiredMixin, View):
+    def dispatch(self, *args, **kwargs):
+        try:
+            self.filter = models.Filter.objects.get(pk=kwargs['pk'])
+        except models.Episode.DoesNotExist:
+            return HttpResponseNotFound()
+        return super(FilterDetailView, self).dispatch(*args, **kwargs)
+
+    def get(self, *args, **kwargs):
+         return _build_json_response(self.filter)
+
+    def put(self, *args, **kwargs):
+        print 'putting'
+        data = _get_request_data(self.request)
+        print self.filter.name
+        self.filter.update_from_dict(data)
+        print self.filter.name
+        return _build_json_response(self.filter.to_dict())
+
+    def delete(self, *args, **kwargs):
+        self.filter.delete()
+        return _build_json_response('')

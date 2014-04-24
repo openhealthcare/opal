@@ -38,8 +38,8 @@ class UpdatesFromDictMixin(object):
         for name, value in vars(cls).items():
             if isinstance(value, ForeignKeyOrFreeText):
                 fieldnames.append(name)
-                fieldnames.remove(name + '_ft')
-                fieldnames.remove(name + '_fk_id')
+#                fieldnames.remove(name + '_ft')
+ #               fieldnames.remove(name + '_fk_id')
 
         return fieldnames
 
