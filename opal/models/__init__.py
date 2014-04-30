@@ -48,7 +48,6 @@ class Filter(models.Model):
         return dict(id=self.pk, name=self.name, criteria=json.loads(self.criteria))
 
     def update_from_dict(self, data):
-        print data
         self.criteria = json.dumps(data['criteria'])
         self.name = data['name']
         self.save()
@@ -320,6 +319,33 @@ class Synonym(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class LocatedModel(models.Model):
+    address_line1 = models.CharField("Address line 1", max_length = 45,
+                                     blank=True, null=True)
+    address_line2 = models.CharField("Address line 2", max_length = 45,
+                                     blank=True, null=True)
+    city = models.CharField(max_length = 50, blank = True)
+    county = models.CharField("County", max_length = 40,
+                              blank=True, null=True)
+    post_code = models.CharField("Post Code", max_length = 10,
+                                 blank=True, null=True)
+
+    class Meta:
+        abstract = True
+
+
+class GP(LocatedModel):
+    name = models.CharField(blank=True, null=True, max_length=255)
+    tel1 = models.CharField(blank=True, null=True, max_length=50)
+    tel2 = models.CharField(blank=True, null=True, max_length=50)
+
+
+class CommunityNurse(LocatedModel):
+    name = models.CharField(blank=True, null=True, max_length=255)
+    tel1 = models.CharField(blank=True, null=True, max_length=50)
+    tel2 = models.CharField(blank=True, null=True, max_length=50)
 
 
 option_models = {}

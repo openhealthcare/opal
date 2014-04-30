@@ -255,6 +255,9 @@ services.factory('Episode', function($http, $q, Item) {
             if (columnName == 'microbiology_input'){
                 attrs.initials = window.initials
             }
+            if (columnName == 'line'){
+                attrs.inserted_by = window.initials
+            }
 	        return new Item(attrs, episode, schema.getColumn(columnName));
 	    };
 

@@ -24,7 +24,25 @@ filters.filter('boxed',  function(){
 })
 
 filters.filter('daysSince', function(){
+    return function(input, change){
+        diff = moment().diff(moment(input), 'days')
+        if(change){
+            return diff + change
+        }
+        return diff
+    }
+})
+
+filters.filter('hoursSince', function(){
     return function(input){
-        return moment().diff(moment(input), 'days')
+        if(!input){
+            return null;
+        }
+        t = input.toString()
+        target = moment()
+        target.hour(t.substr(0, 2))
+        target.minutes(t.substr(2))
+        diff =  moment().diff(target, 'hours')
+        return diff
     }
 })
