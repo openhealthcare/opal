@@ -35,6 +35,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
     }
 
     $scope.state = 'normal';
+    console.log($scope.state)
 
 	$scope.rix = 0; // row index
 	$scope.cix = 0; // column index
@@ -131,14 +132,23 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 
 	$scope.$watch('currentTag', function() {
 		$cookieStore.put('opal.currentTag', $scope.currentTag);
+        if($scope.currentTag != $routeParams.tag){
+            $scope.state = 'reloading'
+        }
         $location.path('/list/' +  $scope.currentTag);
 	});
 
 	$scope.$watch('currentSubTag', function(){
 		$cookieStore.put('opal.currentSubTag', $scope.currentSubTag);
         if($scope.currentSubTag == 'all'){
+            if($routeParams.subtag && $scope.currentSubTag != $routeParams.subtag){
+                $scope.state = 'reloading'
+            }
             $location.path('/list/' +  $scope.currentTag);
         }else{
+            if($scope.currentSubTag != $routeParams.subtag){
+                $scope.state = 'reloading'
+            }
             $location.path('/list/' +  $scope.currentTag + '/' +  $scope.currentSubTag);
         }
 	});
