@@ -65,3 +65,6 @@ for subclass in models.PatientSubrecord.__subclasses__():
 
 for subclass in models.EpisodeSubrecord.__subclasses__():
     admin.site.register(subclass, EpisodeSubRecordAdmin)
+
+admin.site.register(models.GP, MyAdmin)
+admin.site.register(models.CommunityNurse, MyAdmin)
