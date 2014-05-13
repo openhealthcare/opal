@@ -31,7 +31,6 @@ app.config(
                      }
 			     },
 			     templateUrl: function(params){
-                     console.log(params);
                      var target =  '/templates/episode_list.html';
                      if(params.tag){
                          target += '/' + params.tag;

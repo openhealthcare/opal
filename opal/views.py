@@ -175,6 +175,22 @@ def episode_list_and_create_view(request):
         episode.update_from_location_dict(data['location'], request.user)
         return _build_json_response(episode.to_dict(request.user), 201)
 
+
+class EpisodeListView(View):
+    """
+    Return serialised subsets of active episodes by tag.
+    """
+    def get(self, *args, **kwargs):
+        tag, subtag = kwargs.get('tag', None), kwargs.get('subtag', None)
+        filter_kwargs = {}
+        if subtag:
+            filter_kwargs['tagging__tag_name'] = subtag
+        elif tag:
+            filter_kwargs['tagging__tag_name'] = tag
+        serialised = models.Episode.objects.serialised_active(self.request.user, **filter_kwargs)
+        return _build_json_response(serialised)
+
+
 @require_http_methods(['PUT', 'DELETE'])
 def subrecord_detail_view(request, model, pk):
     try:
@@ -213,8 +229,6 @@ class EpisodeTemplateView(TemplateView):
         Return the context for our columns
         """
         active_schema = self.column_schema
-
-
 
         if 'tag' in kwargs and kwargs['tag'] in schema.list_schemas:
             if 'subtag' in kwargs and kwargs['subtag'] in schema.list_schemas[kwargs['tag']]:

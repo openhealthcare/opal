@@ -79,12 +79,14 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 
     $scope.episode_lookup = {};
     _.each(episodes,  function(e){
+        if(e.location){         // Shouldn't be needed but occasionally happens in migration breakage
         _.each(e.location[0].tags, function(value, key){
             if(!_.has($scope.episode_lookup, key)){
                 $scope.episode_lookup[key] = [];
             };
             $scope.episode_lookup[key].push(e.id);
         })
+            }
     });
 
 	function getVisibleEpisodes() {
@@ -102,8 +104,6 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
             console.log('non lookup')
             episode_list = [];
         }
-
-        console.log(episode_list.length)
 
         visibleEpisodes = _.map(
             _.filter(episode_list, function(id){

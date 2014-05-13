@@ -26,9 +26,10 @@ urlpatterns = patterns(
     url(r'^options/$', views.options_view),
     url(r'^userprofile/$', views.userprofile_view),
     url(r'^admin/?', include(admin.site.urls)),
-
     url(r'^patient/?$', views.patient_search_view),
     url(r'^episode/?$', views.episode_list_and_create_view),
+    url(r'^episode/(?P<tag>[a-z_]+)/?$', views.EpisodeListView.as_view()),
+    url(r'^episode/(?P<tag>[a-z_]+)/(?P<subtag>[a-z_]+)/?$', views.EpisodeListView.as_view()),
     url(r'^episode/(?P<pk>\d+)/?$', views.episode_detail_view),
     url(r'^search/extract/$', views.ExtractSearchView.as_view()),
     url(r'^search/extract/download$', views.DownloadSearchView.as_view()),

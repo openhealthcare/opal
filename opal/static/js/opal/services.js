@@ -10,6 +10,7 @@ services.factory('EpisodeResource', function($resource, $q) {
     return resource
 });
 
+
 services.factory('listSchemaLoader', function($q, $http, $window, $routeParams,
                                               Schema) {
     var deferred = $q.defer();
@@ -98,18 +99,30 @@ services.factory('Options', function($q, $http, $window) {
 });
 
 services.factory('episodesLoader', function($q, $window,
+                                            $http,
+                                            $route,
                                             EpisodeResource, Episode,
                                             listSchemaLoader) {
     return function() {
 	    var deferred = $q.defer();
+
+        console.log($route.current.params)
+        if(!$route.current.params.tag){
+            deferred.resolve([])
+        }
 	    listSchemaLoader.then(function(schema) {
-	        EpisodeResource.query(function(resources) {
-		        var episodes = {};
-		        _.each(resources, function(resource) {
-		            episodes[resource.id] = new Episode(resource, schema);
-		        });
-		        deferred.resolve(episodes);
-	        }, function() {
+            var target = '/episode/' + $route.current.params.tag;
+            if($route.current.params.subtag){
+                target += '/' + $route.current.params.subtag;
+            }
+            $http.get(target).then(
+                function(resources) {
+	                var episodes = {};
+		            _.each(resources.data, function(resource) {
+		                episodes[resource.id] = new Episode(resource, schema);
+		            });
+		            deferred.resolve(episodes);
+                }, function() {
 		        // handle error better
 		        $window.alert('Episodes could not be loaded');
 	        });
