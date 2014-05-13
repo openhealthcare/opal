@@ -6,7 +6,7 @@
 	<div class="control-group">
 	  <label class="control-label">Hospital number</label>
 	  <div class="controls">
-		<input ng-model="model.hospitalNumber" focus-on-this>
+		<input ng-model="model.hospitalNumber" ng-keypress="$event.keyCode == 13 && findByHospitalNumber()">
 	  </div>
 	</div>
 </div>
