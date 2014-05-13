@@ -383,8 +383,8 @@ class DetailSchemaView(SchemaBuilderView):
 
 
 class ExtractSchemaView(SchemaBuilderView):
-    columns = schema.extract_columns
-
+    def get(self, *args, **kw):
+        return _build_json_response(self.serialize_schema(schema.extract_columns))
 
 def check_password_reset(request, *args, **kwargs):
     """
@@ -485,7 +485,7 @@ class Extractor(View):
         for m in m.get_models():
             if m.__name__.lower() == model_name:
                 Mod = m
-        if model_name == 'Tags':
+        if model_name.lower() == 'tags':
             Mod = models.Tagging
 
         named_fields = [f for f in Mod._meta.fields if f.name == field]
