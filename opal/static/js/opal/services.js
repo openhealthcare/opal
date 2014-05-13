@@ -10,11 +10,23 @@ services.factory('EpisodeResource', function($resource, $q) {
     return resource
 });
 
-services.factory('listSchemaLoader', function($q, $http, $window, Schema) {
+services.factory('listSchemaLoader', function($q, $http, $window, $routeParams,
+                                              Schema) {
     var deferred = $q.defer();
     $http.get('/schema/list/').then(function(response) {
-	    var columns = response.data;
-	    deferred.resolve(new Schema(columns));
+	    var schemas = response.data;
+        var schema = {default: new Schema(schemas.default)};
+
+        _.each(_.reject(_.keys(schemas), function(k){ return k == 'default' }),
+               function(key){
+                   schema[key] = {default: new Schema(schemas[key].default)}
+                   _.each(_.reject(_.keys(schemas), function(k){ return k == 'default' }),
+                          function(subkey){
+                              schema[key][subkey] = new Schema(schemas[key][subkey]);
+                          });
+        });
+
+	    deferred.resolve(schema);
     }, function() {
 	    // handle error better
 	    $window.alert('List schema could not be loaded');
@@ -26,8 +38,7 @@ services.factory('listSchemaLoader', function($q, $http, $window, Schema) {
 services.factory('detailSchemaLoader', function($q, $http, $window, Schema) {
     var deferred = $q.defer();
     $http.get('/schema/detail/').then(function(response) {
-	    var columns = response.data;
-	    deferred.resolve(new Schema(columns));
+        deferred.resolve(new Schema(response.data))
     }, function() {
 	    // handle error better
 	    $window.alert('Detail schema could not be loaded');
@@ -189,6 +200,12 @@ services.factory('episodeVisibility', function(){
 
 services.factory('Episode', function($http, $q, Item) {
     return function(resource, schema) {
+
+
+        // AAAAAHCHAHK THIS COULD BREAK EVERYTHING:
+        // TODO NOW - WE NEED A BETTER WAY TO PASS THE SCHEMA IN.
+        schema = schema.default
+
 	    var episode = this;
 	    var column, field, attrs;
         // TODO - Pull these from the schema?
@@ -237,7 +254,11 @@ services.factory('Episode', function($http, $q, Item) {
             return _.keys(this.location[0].tags);
         };
 
-	    this.newItem = function(columnName) {
+	    this.newItem = function(columnName, opts) {
+            if(!opts.schema){
+                opts.schema = schema;
+            }
+
 	        var attrs = {};
 	        // TODO don't hardcode this
 	        if (columnName == 'microbiology_test') {
@@ -258,7 +279,7 @@ services.factory('Episode', function($http, $q, Item) {
             if (columnName == 'line'){
                 attrs.inserted_by = window.initials
             }
-	        return new Item(attrs, episode, schema.getColumn(columnName));
+	        return new Item(attrs, episode, opts.schema.getColumn(columnName));
 	    };
 
 	    this.getItem = function(columnName, iix) {

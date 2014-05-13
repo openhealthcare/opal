@@ -213,13 +213,24 @@ def subrecord_create_view(request, model):
     subrecord.update_from_dict(data, request.user)
     return _build_json_response(subrecord.to_dict(request.user), 201)
 
+
 class EpisodeTemplateView(TemplateView):
-    def get_column_context(self):
+    def get_column_context(self, **kwargs):
         """
         Return the context for our columns
         """
+        active_schema = self.column_schema
+
+
+
+        if 'tag' in kwargs and kwargs['tag'] in schema.list_schemas:
+            if 'subtag' in kwargs and kwargs['subtag'] in schema.list_schemas[kwargs['tag']]:
+                active_schema = schema.list_schemas[kwargs['tag']][kwargs['subtag']]
+            else:
+                active_schema = schema.list_schemas[kwargs['tag']]['default']
+
         context = []
-        for column in self.column_schema:
+        for column in active_schema:
             column_context = {}
             name = camelcase_to_underscore(column.__name__)
             column_context['name'] = name
@@ -235,13 +246,13 @@ class EpisodeTemplateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(EpisodeTemplateView, self).get_context_data(**kwargs)
         context['tags'] = TAGS
-        context['columns'] = self.get_column_context()
+        context['columns'] = self.get_column_context(**kwargs)
         return context
 
 
 class EpisodeListTemplateView(EpisodeTemplateView):
     template_name = 'episode_list.html'
-    column_schema = schema.list_columns
+    column_schema = schema.list_schemas['default']
 
 class DischargeListTemplateView(EpisodeTemplateView):
     template_name = 'discharge_list.html'
@@ -328,9 +339,10 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         return context
 
 class SchemaBuilderView(View):
-    def get(self, *args, **kw):
+
+    def serialize_schema(self, schema):
         cols = []
-        for column in self.columns:
+        for column in schema:
             col = {
                 'name': column.get_api_name(),
                 'display_name': column.get_display_name(),
@@ -340,11 +352,23 @@ class SchemaBuilderView(View):
             if hasattr(column, '_sort'):
                 col['sort'] = column._sort
             cols.append(col)
-        return _build_json_response(cols)
+        return cols
+
+    def get(self, *args, **kw):
+        scheme = {}
+        for name, s in self.columns.items():
+            if isinstance(s, list):
+                scheme[name] = self.serialize_schema(s)
+            else:
+                scheme[name] = {}
+                for n, c in s.items():
+                    scheme[name][n] = self.serialize_schema(c)
+
+        return _build_json_response(scheme)
 
 
 class ListSchemaView(SchemaBuilderView):
-    columns = schema.list_columns
+    columns = schema.list_schemas
 
 
 class DetailSchemaView(SchemaBuilderView):

@@ -25,6 +25,9 @@ filters.filter('boxed',  function(){
 
 filters.filter('daysSince', function(){
     return function(input, change){
+        if(!input){
+            return;
+        }
         diff = moment().diff(moment(input), 'days')
         if(change){
             return diff + change

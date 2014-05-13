@@ -20,6 +20,7 @@ controllers.controller('RootCtrl', function($scope) {
 });
 
 controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieStore,
+                                                   $location, $routeParams,
                                                    $modal,
                                                    Episode, schema, episodes, options,
                                                    profile,
@@ -44,16 +45,32 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
     $scope._ =  _;
 
 	$scope.query = {hospital_number: '', ward: ''};
-    // initially display episodes of interest to current user
-	$scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine';
-    $scope.currentSubTag = 'all';
-    if($cookieStore.get('opal.nextSubTag')){
-        $scope.nextSubTag = $cookieStore.get('opal.nextSubTag');
-        $cookieStore.remove('opal.nextSubTag');
-    }
-    $cookieStore.put('opal.currentSubTag', $scope.currentSubTag);
 
-	$scope.columns = schema.columns;
+    if(!$routeParams.tag){
+        var tag =  $cookieStore.get('opal.currentTag') || 'mine';
+        $location.path("/list/" + tag);
+        return
+    }
+    $scope.currentTag = $routeParams.tag;
+
+    if(!$routeParams.subtag){
+        $scope.currentSubTag = 'all';
+    }else{
+        $scope.currentSubTag = $routeParams.subtag;
+    }
+
+    if(!_.has(schema, $scope.currentTag)){
+        $scope.current_schema = schema.default;
+    }else{
+        if(!_.has(schema[$scope.currentTag], $scope.currentSubTag)){
+            $scope.current_schema = schema[$scope.currentTag].default
+        }else{
+            $scope.current_schema = schema[$scope.currentTag];
+        }
+    }
+    $scope.columns = $scope.current_schema.columns;
+
+
     $scope.profile = profile;
 
 	$scope.rows = getVisibleEpisodes();
@@ -114,24 +131,16 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 
 	$scope.$watch('currentTag', function() {
 		$cookieStore.put('opal.currentTag', $scope.currentTag);
-        if($scope.nextSubTag){
-            $scope.currentSubTag = $scope.nextSubTag;
-            $scope.nextSubTag = undefined;
-        }else{
-		    $scope.currentSubTag = 'all';
-		    $scope.rows = getVisibleEpisodes();
-		    if ($scope.rows.length < $scope.rix) {
-			    $scope.rix = $scope.rows.length - 1;
-		    };
-        }
+        $location.path('/list/' +  $scope.currentTag);
 	});
 
 	$scope.$watch('currentSubTag', function(){
 		$cookieStore.put('opal.currentSubTag', $scope.currentSubTag);
-		$scope.rows =  getVisibleEpisodes();
-		if ($scope.rows.length < $scope.rix) {
-			$scope.rix = $scope.rows.length - 1;
-		};
+        if($scope.currentSubTag == 'all'){
+            $location.path('/list/' +  $scope.currentTag);
+        }else{
+            $location.path('/list/' +  $scope.currentTag + '/' +  $scope.currentSubTag);
+        }
 	});
 
     $scope.showSubtags = function(withsubtags){
@@ -327,7 +336,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
         };
 
 		if (iix == episode.getNumberOfItems(columnName)) {
-			item = episode.newItem(columnName);
+			item = episode.newItem(columnName, {schema: $scope.current_schema});
 		} else {
 			item = episode.getItem(columnName, iix);
 		};
