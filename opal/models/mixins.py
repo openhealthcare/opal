@@ -29,6 +29,22 @@ class TaggedSubrecordMixin(object):
         tag_names = [k for k, v in value.items() if v]
         self.episode.set_tag_names(tag_names, user)
 
+    def to_dict(self, user, tags=None):
+        """
+        When we query large numbers of episodes we pass in the
+        possible tags here.
+        """
+        fieldnames = self._get_fieldnames_to_serialize()
+        if not tags:
+            # We haven't pre-loaded the tags, so we can run the
+            # expensive query route
+            fieldnames.append('tags')
+            return self._to_dict(user, fieldnames)
+
+        d = self._to_dict(user, fieldnames)
+        d['tags'] = {t.tag_name: True for t in tags[self.episode_id]}
+        return d
+
 
 class UpdatesFromDictMixin(object):
 
