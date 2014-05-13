@@ -14,7 +14,7 @@ import reversion
 
 from opal.utils import stringport, camelcase_to_underscore
 from opal.utils.fields import ForeignKeyOrFreeText
-from opal import exceptions
+from opal import exceptions, managers
 
 # Imported models from module.
 
@@ -101,6 +101,8 @@ class Episode(UpdatesFromDictMixin, models.Model):
     # TODO rename to date_of_discharge?
     discharge_date = models.DateField(null=True, blank=True)
     consistency_token = models.CharField(max_length=8)
+
+    objects = managers.EpisodeManager()
 
     def __unicode__(self):
         demographics = self.patient.demographics_set.get()
@@ -281,9 +283,12 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
             field_schema.append({'name': fieldname, 'type': field_type})
         return field_schema
 
-    def to_dict(self, user):
+    def _to_dict(self, user, fieldnames):
+        """
+        Allow a subset of FIELDNAMES
+        """
         d = {}
-        for name in self._get_fieldnames_to_serialize():
+        for name in fieldnames:
             getter = getattr(self, 'get_' + name, None)
             if getter is not None:
                 value = getter(user)
@@ -292,6 +297,9 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
             d[name] = value
 
         return d
+
+    def to_dict(self, user):
+        return self._to_dict(user, self._get_fieldnames_to_serialize())
 
 
 class PatientSubrecord(Subrecord):
