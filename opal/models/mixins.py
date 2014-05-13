@@ -38,9 +38,6 @@ class UpdatesFromDictMixin(object):
         for name, value in vars(cls).items():
             if isinstance(value, ForeignKeyOrFreeText):
                 fieldnames.append(name)
-#                fieldnames.remove(name + '_ft')
- #               fieldnames.remove(name + '_fk_id')
-
         return fieldnames
 
     @classmethod
@@ -50,7 +47,8 @@ class UpdatesFromDictMixin(object):
         except models.FieldDoesNotExist:
             pass
 
-        if name in ['patient_id', 'episode_id']:
+        # TODO: Make this dynamic
+        if name in ['patient_id', 'episode_id', 'gp_id', 'nurse_id']:
             return models.ForeignKey
 
         try:
