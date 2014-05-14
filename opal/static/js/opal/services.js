@@ -11,21 +11,34 @@ services.factory('EpisodeResource', function($resource, $q) {
 });
 
 
-services.factory('listSchemaLoader', function($q, $http, $window, $routeParams,
+services.factory('listSchemaLoader', function($q, $http, $window, $route,
                                               Schema) {
     var deferred = $q.defer();
+    var tagparams = $route.current.params;
     $http.get('/schema/list/').then(function(response) {
+        var schema;
 	    var schemas = response.data;
-        var schema = {default: new Schema(schemas.default)};
+        if(tagparams.subtag){
+            if(schemas[tagparams.tag][tagparams.subtag]){
+                schema =  new Schema(schemas[tagparams.tag][tagparams.subtag]);
+                }
+        }
+        if(schemas[tagparams.tag]){
+            schema = new Schema(schemas[tagparams.tag].default);
+        }else{
+            schema = new Schema(schemas.default);
+        }
 
-        _.each(_.reject(_.keys(schemas), function(k){ return k == 'default' }),
-               function(key){
-                   schema[key] = {default: new Schema(schemas[key].default)}
-                   _.each(_.reject(_.keys(schemas), function(k){ return k == 'default' }),
-                          function(subkey){
-                              schema[key][subkey] = new Schema(schemas[key][subkey]);
-                          });
-        });
+        // var schema = {default: new Schema(schemas.default)};
+
+        // _.each(_.reject(_.keys(schemas), function(k){ return k == 'default' }),
+        //        function(key){
+        //            schema[key] = {default: new Schema(schemas[key].default)}
+        //            _.each(_.reject(_.keys(schemas), function(k){ return k == 'default' }),
+        //                   function(subkey){
+        //                       schema[key][subkey] = new Schema(schemas[key][subkey]);
+        //                   });
+        // });
 
 	    deferred.resolve(schema);
     }, function() {
@@ -214,11 +227,6 @@ services.factory('episodeVisibility', function(){
 services.factory('Episode', function($http, $q, Item) {
     return function(resource, schema) {
 
-
-        // AAAAAHCHAHK THIS COULD BREAK EVERYTHING:
-        // TODO NOW - WE NEED A BETTER WAY TO PASS THE SCHEMA IN.
-        schema = schema.default
-
 	    var episode = this;
 	    var column, field, attrs;
         // TODO - Pull these from the schema?
@@ -238,7 +246,10 @@ services.factory('Episode', function($http, $q, Item) {
                     resource[column.name] = _.sortBy(resource[column.name],
                                                      schemacol.sort).reverse();
                 }
+            }else{
+                resource[column.name] = [];
             }
+
 	    };
         // Sort a particular column according to schema params.
         this.sortColumn = function(columnName, sortBy){

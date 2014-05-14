@@ -60,16 +60,16 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
         $scope.currentSubTag = $routeParams.subtag;
     }
 
-    if(!_.has(schema, $scope.currentTag)){
-        $scope.current_schema = schema.default;
-    }else{
-        if(!_.has(schema[$scope.currentTag], $scope.currentSubTag)){
-            $scope.current_schema = schema[$scope.currentTag].default
-        }else{
-            $scope.current_schema = schema[$scope.currentTag];
-        }
-    }
-    $scope.columns = $scope.current_schema.columns;
+    // if(!_.has(schema, $scope.currentTag)){
+    //     $scope.current_schema = schema.default;
+    // }else{
+    //     if(!_.has(schema[$scope.currentTag], $scope.currentSubTag)){
+    //         $scope.current_schema = schema[$scope.currentTag].default
+    //     }else{
+    //         $scope.current_schema = schema[$scope.currentTag];
+    //     }
+    // }
+    $scope.columns = schema.columns;
 
 
     $scope.profile = profile;
@@ -94,14 +94,12 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
         var episode_list;
 
         if($scope.episode_lookup){
-            console.log('using lookup')
             if($scope.currentSubTag == 'all'){
                 episode_list = $scope.episode_lookup[$scope.currentTag];
             }else{
                 episode_list = $scope.episode_lookup[$scope.currentSubTag];
             }
         }else{
-            console.log('non lookup')
             episode_list = [];
         }
 
@@ -297,6 +295,10 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 		        $scope.state = 'normal';
 		        if (episode) {
 			        episodes[episode.id] = episode;
+                    $scope.episode_lookup[$scope.currentTag].push(episode.id);
+                    if($scope.currentSubTag != 'all'){
+                        $scope.episode_lookup[$scope.currentSubTag].push(episode.id)
+                    }
 			        $scope.rows = getVisibleEpisodes();
 			        rowIx = getRowIxFromEpisodeId(episode.id);
 			        $scope.selectItem(rowIx, 0, 0);
@@ -372,7 +374,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
         };
 
 		if (iix == episode.getNumberOfItems(columnName)) {
-			item = episode.newItem(columnName, {schema: $scope.current_schema});
+			item = episode.newItem(columnName, {schema: schema});
 		} else {
 			item = episode.getItem(columnName, iix);
 		};
