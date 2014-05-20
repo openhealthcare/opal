@@ -45,7 +45,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 	$scope.mouseCix = -1; // index of column mouse is currently over
     $scope._ =  _;
 
-	$scope.query = {hospital_number: '', ward: ''};
+	$scope.query = {hospital_number: '', name: ''};
 
     if(!$routeParams.tag){
         var tag =  $cookieStore.get('opal.currentTag') || 'mine';
@@ -59,16 +59,6 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
     }else{
         $scope.currentSubTag = $routeParams.subtag;
     }
-
-    // if(!_.has(schema, $scope.currentTag)){
-    //     $scope.current_schema = schema.default;
-    // }else{
-    //     if(!_.has(schema[$scope.currentTag], $scope.currentSubTag)){
-    //         $scope.current_schema = schema[$scope.currentTag].default
-    //     }else{
-    //         $scope.current_schema = schema[$scope.currentTag];
-    //     }
-    // }
     $scope.columns = schema.columns;
 
 
@@ -186,7 +176,7 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 		$scope.rows = getVisibleEpisodes();
 	});
 
-	$scope.$watch('query.ward', function() {
+	$scope.$watch('query.name', function() {
 		$scope.rows = getVisibleEpisodes();
 	});
 

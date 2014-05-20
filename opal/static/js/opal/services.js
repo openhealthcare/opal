@@ -183,7 +183,7 @@ services.factory('episodeVisibility', function(){
         var location = episode.location[0];
         var demographics = episode.demographics[0];
         var hospital_number = $scope.query.hospital_number;
-        var ward = $scope.query.ward;
+        var name = $scope.query.name;
 
         // Not active (no tags) - hide it.
         if(!episode.active && $scope.currentTag != 'mine' && !viewDischarged){
@@ -208,8 +208,8 @@ services.factory('episodeVisibility', function(){
 		    return false;
 	    }
 
-        // Filtered out by ward.
-        if (location.ward.toLowerCase().indexOf(ward.toLowerCase()) == -1) {
+        // Filtered out by name.
+        if (demographics.name.toLowerCase().indexOf(name.toLowerCase()) == -1) {
 		    return false;
 	    }
         return true;
