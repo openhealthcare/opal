@@ -207,7 +207,7 @@ class ContactNumber(models.Model):
 
 
 class Team(models.Model):
-    name = models.CharField(max_length=250)
+    name = models.CharField(max_length=250, help_text="This should only have letters and underscores")
     title = models.CharField(max_length=250)
     parent = models.ForeignKey('self', blank=True, null=True)
     active = models.BooleanField(default=True)
