@@ -41,6 +41,7 @@ class TaggingAdmin(reversion.VersionAdmin):
 class TeamAdmin(reversion.VersionAdmin):
     list_display = ['title', 'name', 'active', 'order']
     list_editable = ['active', 'order']
+    filter_horizontal = ('useful_numbers',)
 
 class PatientSubRecordAdmin(reversion.VersionAdmin):
     list_filter = ['patient']
@@ -72,4 +73,5 @@ for subclass in models.EpisodeSubrecord.__subclasses__():
 
 admin.site.register(models.GP, MyAdmin)
 admin.site.register(models.CommunityNurse, MyAdmin)
+admin.site.register(models.ContactNumber, MyAdmin)
 admin.site.register(models.Team, TeamAdmin)

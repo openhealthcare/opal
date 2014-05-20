@@ -253,6 +253,8 @@ class EpisodeTemplateView(TemplateView):
         # todo rename/refactor this accordingly
         context['tags'] = models.Team.to_TAGS()
         context['columns'] = self.get_column_context(**kwargs)
+        if 'tag' in kwargs:
+            context['team'] = models.Team.objects.get(name=kwargs['tag'])
         return context
 
 

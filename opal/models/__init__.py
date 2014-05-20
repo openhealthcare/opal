@@ -198,12 +198,21 @@ class Episode(UpdatesFromDictMixin, models.Model):
         location.update_from_dict(location_data, user)
 
 
+class ContactNumber(models.Model):
+    name = models.CharField(max_length=255)
+    number = models.CharField(max_length=255)
+
+    def __unicode__(self):
+        return u'{0}: {1}'.format(self.name, self.number)
+
+
 class Team(models.Model):
     name = models.CharField(max_length=250)
     title = models.CharField(max_length=250)
     parent = models.ForeignKey('self', blank=True, null=True)
     active = models.BooleanField(default=True)
     order = models.IntegerField(blank=True, null=True)
+    useful_numbers = models.ManyToManyField(ContactNumber)
 
     def __unicode__(self):
         return self.name
@@ -381,6 +390,7 @@ class CommunityNurse(LocatedModel):
     name = models.CharField(blank=True, null=True, max_length=255)
     tel1 = models.CharField(blank=True, null=True, max_length=50)
     tel2 = models.CharField(blank=True, null=True, max_length=50)
+
 
 
 option_models = {}
