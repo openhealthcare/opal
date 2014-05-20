@@ -215,7 +215,7 @@ class Team(models.Model):
     useful_numbers = models.ManyToManyField(ContactNumber, blank=True)
 
     def __unicode__(self):
-        return self.name
+        return self.title
 
     # TODO depreciate this and refactor accordingly
     @classmethod
