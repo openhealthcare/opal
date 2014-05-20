@@ -19,6 +19,7 @@ def stringport(module):
                    (Is it on sys.path? Does it have syntax errors?):\
                     %s" % (module, e))
 
+# TODO depreciate this entirely
 Tag = namedtuple('Tag', 'name title subtags')
 
 # TODO - make this non-UCLH specific.

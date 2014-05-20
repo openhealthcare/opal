@@ -26,8 +26,6 @@ options = stringport(settings.OPAL_OPTIONS_MODULE)
 micro_test_defaults = options.micro_test_defaults
 option_models = models.option_models
 Synonym = models.Synonym
-tags = stringport(settings.OPAL_TAGS_MODULE)
-TAGS = tags.TAGS
 
 def _get_request_data(request):
     data = request.read()
@@ -46,8 +44,6 @@ def serve_maybe(meth):
     Decorator to figure out if we want to serve files
     ourselves (DEBUG) or hand off to Nginx
     """
-    # Originally from Open Prescribing raw.views
-
     def handoff(self, *args, **kwargs):
         """
         Internal wrapper function to figure out
@@ -78,6 +74,7 @@ class LoginRequiredMixin(object):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
+
 
 @require_http_methods(['GET', 'PUT'])
 def episode_detail_view(request, pk):
@@ -184,9 +181,9 @@ class EpisodeListView(View):
         tag, subtag = kwargs.get('tag', None), kwargs.get('subtag', None)
         filter_kwargs = {}
         if subtag:
-            filter_kwargs['tagging__tag_name'] = subtag
+            filter_kwargs['tagging__team__name'] = subtag
         elif tag:
-            filter_kwargs['tagging__tag_name'] = tag
+            filter_kwargs['tagging__team__name'] = tag
         serialised = models.Episode.objects.serialised_active(self.request.user, **filter_kwargs)
         return _build_json_response(serialised)
 
@@ -248,11 +245,13 @@ class EpisodeTemplateView(TemplateView):
             column_context['modal_template_path'] = name + '_modal.html'
             column_context['detail_template_path'] = select_template([name + '_detail.html', name + '.html']).name
             context.append(column_context)
+
         return context
 
     def get_context_data(self, **kwargs):
         context = super(EpisodeTemplateView, self).get_context_data(**kwargs)
-        context['tags'] = TAGS
+        # todo rename/refactor this accordingly
+        context['tags'] = models.Team.to_TAGS()
         context['columns'] = self.get_column_context(**kwargs)
         return context
 
@@ -278,7 +277,7 @@ class SearchTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(SearchTemplateView, self).get_context_data(**kwargs)
-        context['tags'] = TAGS
+        context['tags'] = models.Team.to_TAGS()
         return context
 
 class ExtractTemplateView(TemplateView):
@@ -289,7 +288,7 @@ class AddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(AddEpisodeTemplateView, self).get_context_data(**kwargs)
-        context['tags'] = TAGS
+        context['tags'] = models.Team.to_TAGS()
         return context
 
 class DischargeEpisodeTemplateView(LoginRequiredMixin, TemplateView):
@@ -341,7 +340,7 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         context['single'] = self.column._is_singleton
 
         if self.name == 'location':
-            context['tags'] = TAGS
+            context['tags'] = models.Team.to_TAGS()
 
         return context
 
@@ -435,7 +434,7 @@ def options_view(request):
 
     tag_hierarchy = {}
     tag_display = {}
-    for tag in TAGS:
+    for tag in models.Team.to_TAGS():
         tag_display[tag.name] = tag.title
         if tag.subtags:
             tag_hierarchy[tag.name] = [st.name for st in tag.subtags]

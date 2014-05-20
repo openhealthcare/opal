@@ -26,7 +26,7 @@ class TaggedSubrecordMixin(object):
 
     # value is a dictionary mapping tag names to a boolean
     def set_tags(self, value, user):
-        tag_names = [k for k, v in value.items() if v]
+        tag_names = [k for k, v in value.items() if v and k]
         self.episode.set_tag_names(tag_names, user)
 
     def to_dict(self, user, tags=None):
@@ -42,7 +42,7 @@ class TaggedSubrecordMixin(object):
             return self._to_dict(user, fieldnames)
 
         d = self._to_dict(user, fieldnames)
-        d['tags'] = {t.tag_name: True for t in tags[self.episode_id]}
+        d['tags'] = {t.team.name: True for t in tags[self.episode_id]}
         return d
 
 

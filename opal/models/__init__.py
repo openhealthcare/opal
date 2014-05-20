@@ -22,8 +22,6 @@ from opal.models.mixins import TaggedSubrecordMixin, UpdatesFromDictMixin
 
 options = stringport(settings.OPAL_OPTIONS_MODULE)
 
-
-
 from django.contrib.auth.models import User
 
 class UserProfile(models.Model):
@@ -127,17 +125,19 @@ class Episode(UpdatesFromDictMixin, models.Model):
         4. There is no step 4.
         """
         original_tag_names = self.get_tag_names(user)
+        print original_tag_names
 
         for tag_name in original_tag_names:
             if tag_name not in tag_names:
-                params = {'tag_name': tag_name}
+                params = {'team__name': tag_name}
                 if tag_name == 'mine':
                     params['user'] = user
                 self.tagging_set.get(**params).delete()
 
         for tag_name in tag_names:
             if tag_name not in original_tag_names:
-                params = {'tag_name': tag_name}
+                print tag_name, tag_names
+                params = {'team': Team.objects.get(name=tag_name)}
                 if tag_name == 'mine':
                     params['user'] = user
                 self.tagging_set.create(**params)
@@ -151,7 +151,7 @@ class Episode(UpdatesFromDictMixin, models.Model):
         self.save()
 
     def get_tag_names(self, user):
-        return [t.tag_name for t in self.tagging_set.all() if t.user in (None, user)]
+        return [t.team.name for t in self.tagging_set.all() if t.user in (None, user)]
 
     def to_dict(self, user, shallow=False):
         """
@@ -198,18 +198,43 @@ class Episode(UpdatesFromDictMixin, models.Model):
         location.update_from_dict(location_data, user)
 
 
+class Team(models.Model):
+    name = models.CharField(max_length=250)
+    title = models.CharField(max_length=250)
+    parent = models.ForeignKey('self', blank=True, null=True)
+    active = models.BooleanField(default=True)
+    order = models.IntegerField(blank=True, null=True)
+
+    def __unicode__(self):
+        return self.name
+
+    # TODO depreciate this and refactor accordingly
+    @classmethod
+    def to_TAGS(klass):
+        from opal.utils import Tag
+        teams = klass.objects.filter(active=True).order_by('order')
+        tags = collections.OrderedDict()
+        for team in teams:
+            if not team.parent:
+                tags[team.name] = Tag(team.name, team.title, [])
+        for team in teams:
+            if team.parent:
+                tags[team.parent.name].subtags.append(Tag(team.name, team.title, None))
+        return tags.values()
+
+
 class Tagging(models.Model):
     _is_singleton = False
 
-    tag_name = models.CharField(max_length=255)
+    team = models.ForeignKey(Team, blank=True, null=True)
     user = models.ForeignKey(auth.models.User, null=True)
     episode = models.ForeignKey(Episode, null=True) # TODO make null=False
 
     def __unicode__(self):
         if self.user is not None:
-            return 'User: %s - %s' % (self.user.username, self.tag_name)
+            return 'User: %s - %s' % (self.user.username, self.team.name)
         else:
-            return self.tag_name
+            return self.team.name
 
     @staticmethod
     def get_api_name():
@@ -229,12 +254,14 @@ class Tagging(models.Model):
         Given a list of episodes, return a dict indexed by episode id
         that contains historic tags for those episodes.
         """
+        teams = {t.id: t.name for t in Team.objects.all()}
         deleted = reversion.get_deleted(cls)
         historic = collections.defaultdict(dict)
         for d in deleted:
             data = json.loads(d.serialized_data)[0]['fields']
             if data['episode'] in episodes:
-                historic[data['episode']][data['tag_name']] = True
+                tag_name = teams[data['team']]
+                historic[data['episode']][tag_name] = True
         return historic
 
 
