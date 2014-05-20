@@ -19,26 +19,18 @@ services.factory('listSchemaLoader', function($q, $http, $window, $route,
         var schema;
 	    var schemas = response.data;
         if(tagparams.subtag){
-            if(schemas[tagparams.tag][tagparams.subtag]){
+            if(!schemas[tagparams.tag]){
+                schema = new Schema(schemas.default);
+            }
+            else if(schemas[tagparams.tag][tagparams.subtag]){
                 schema =  new Schema(schemas[tagparams.tag][tagparams.subtag]);
-                }
+            }
         }
         if(schemas[tagparams.tag]){
             schema = new Schema(schemas[tagparams.tag].default);
         }else{
             schema = new Schema(schemas.default);
         }
-
-        // var schema = {default: new Schema(schemas.default)};
-
-        // _.each(_.reject(_.keys(schemas), function(k){ return k == 'default' }),
-        //        function(key){
-        //            schema[key] = {default: new Schema(schemas[key].default)}
-        //            _.each(_.reject(_.keys(schemas), function(k){ return k == 'default' }),
-        //                   function(subkey){
-        //                       schema[key][subkey] = new Schema(schemas[key][subkey]);
-        //                   });
-        // });
 
 	    deferred.resolve(schema);
     }, function() {
@@ -136,9 +128,9 @@ services.factory('episodesLoader', function($q, $window,
 		            });
 		            deferred.resolve(episodes);
                 }, function() {
-		        // handle error better
-		        $window.alert('Episodes could not be loaded');
-	        });
+		            // handle error better
+		            $window.alert('Episodes could not be loaded');
+	            });
 	    });
 	    return deferred.promise;
     };
