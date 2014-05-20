@@ -9,9 +9,10 @@
     </div>
   </div>
 
-  {% include 'episode_list_navbar.html' %}
-
-  <table class="table table-bordered" freeze-panes>
+  {% with top=True %}
+    {% include 'episode_list_navbar.html' %}
+  {% endwith %}
+  <table class="table table-bordered content-offset" freeze-panes>
     <thead>
 	  <tr>
 	    {% for column in columns %}

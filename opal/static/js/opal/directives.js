@@ -3,7 +3,8 @@ var directives = angular.module('opal.directives', []);
 directives.directive("freezePanes", function () {
     return function (scope, element, attrs) {
         scope.$watch("assignments", function () {
-            $('table').stickyTableHeaders();
+            $('table').stickyTableHeaders({fixedOffset: 114});
+                //$('table').stickyTableHeaders()
         });
     };
 });

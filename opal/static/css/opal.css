@@ -67,3 +67,16 @@ input.ng-invalid {
 .break-word {
     word-wrap: break-word;
 }
+
+.navbar-2 {
+    top: 50px;
+}
+
+.navbar-3 {
+    top: 84px;
+    min-height: 30px;
+}
+
+.content-offset {
+    margin-top: 114px;
+}

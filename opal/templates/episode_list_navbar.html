@@ -1,4 +1,4 @@
-<div class="navbar navbar-default screen-only">
+<div class="navbar navbar-default {% if top %} navbar-fixed-top navbar-2{% endif %} screen-only">
   <div class="navbar-inner">
 	<a class="btn btn-info pull-left" href="#/search">Search</a>
 
@@ -46,8 +46,7 @@
 </div>
 
 
-<div class="navbar navbar-nav navbar-default screen-only" id="subtags-nav"
-     ng-show="showSubtags([{% for tag in tags %}{% if tag.subtags %}'{{tag.name}}'{% if not forloop.last%},{% endif %}{% endif %}{% endfor %} ''])">
+<div class="navbar navbar-nav navbar-default {% if top %}navbar-fixed-top navbar-3{% endif %} screen-only" id="subtags-nav">
      <div class="navbar-inner">
 
        <div class="btn-group" id="subtags">
