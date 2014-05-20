@@ -379,7 +379,8 @@ class ListSchemaView(SchemaBuilderView):
 
 
 class DetailSchemaView(SchemaBuilderView):
-    columns = schema.detail_columns
+    def get(self, *args, **kw):
+        return _build_json_response(self.serialize_schema(schema.detail_columns))
 
 
 class ExtractSchemaView(SchemaBuilderView):
