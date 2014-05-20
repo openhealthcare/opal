@@ -212,7 +212,7 @@ class Team(models.Model):
     parent = models.ForeignKey('self', blank=True, null=True)
     active = models.BooleanField(default=True)
     order = models.IntegerField(blank=True, null=True)
-    useful_numbers = models.ManyToManyField(ContactNumber)
+    useful_numbers = models.ManyToManyField(ContactNumber, blank=True)
 
     def __unicode__(self):
         return self.name
