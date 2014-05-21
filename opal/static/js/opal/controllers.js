@@ -1228,7 +1228,7 @@ controllers.controller('ExtractCtrl', function($scope, $http, $window, $modal,
     };
 
     $scope.isText = function(column, field){
-        return $scope.isType(column, field, "string");
+        return $scope.isType(column, field, "string") || $scope.isType(column, field, "text");
     }
 
     $scope.isDate = function(column, field){
