@@ -46,7 +46,7 @@ def json_to_csv(episodes, description, user):
                       'details']]
     travel_csv = [['episode_id', 'destination', 'destination_freetext', 'dates',
                    'reason_for_travel', 'reason_for_travel_freetext', 'specific_exposures']]
-    clinical_advice_csv = [['episode_id', 'initials', 'reason_for_interaction',
+    clinical_advice_csv = [['episode_id', 'date', 'initials', 'reason_for_interaction',
                             'clinical_discussion', 'agreed_plan',
                             'discussed_with', 'clinical_advice_given',
                             'infection_control_advice_given',
