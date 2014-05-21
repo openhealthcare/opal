@@ -255,7 +255,7 @@ class Tagging(models.Model):
 
     @staticmethod
     def build_field_schema():
-        return [dict(name='tag_name', type='string')]
+        return [dict(name='team__name', type='string')]
 
     @classmethod
     def historic_tags_for_episodes(cls, episodes):

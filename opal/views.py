@@ -388,6 +388,7 @@ class ExtractSchemaView(SchemaBuilderView):
     def get(self, *args, **kw):
         return _build_json_response(self.serialize_schema(schema.extract_columns))
 
+
 def check_password_reset(request, *args, **kwargs):
     """
     Check to see if the user needs to reset their password
@@ -449,6 +450,7 @@ def options_view(request):
 
     return _build_json_response(data)
 
+
 def userprofile_view(request):
     profile = request.user.get_profile()
     data = dict(
@@ -457,6 +459,7 @@ def userprofile_view(request):
         filters=[f.to_dict() for f in profile.user.filter_set.all()]
         )
     return _build_json_response(data)
+
 
 class Extractor(View):
 
@@ -483,7 +486,6 @@ class Extractor(View):
         field = query['field'].replace(' ', '_').lower()
 
         Mod = None
-        print model_name
         for m in m.get_models():
             if m.__name__.lower() == model_name:
                 Mod = m
@@ -538,7 +540,7 @@ class Extractor(View):
             kw = {'{0}__{1}{2}'.format(model_name, field, contains): query['query']}
 
             if Mod == models.Tagging:
-                kw = {'tagging__tag_name{0}'.format(contains): query['query']}
+                kw = {'tagging__team__name{0}'.format(contains): query['query']}
                 eps = models.Episode.objects.filter(**kw)
 
             elif issubclass(Mod, models.EpisodeSubrecord):
@@ -620,6 +622,7 @@ class ReportView(TemplateView):
         ctx.update(self.get_data())
         return ctx
 
+
 class FilterView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         filters = models.Filter.objects.filter(user=self.request.user);
@@ -630,6 +633,7 @@ class FilterView(LoginRequiredMixin, View):
         self.filter = models.Filter(user=self.request.user)
         self.filter.update_from_dict(data)
         return _build_json_response(self.filter.to_dict())
+
 
 class FilterDetailView(LoginRequiredMixin, View):
     def dispatch(self, *args, **kwargs):
@@ -643,11 +647,8 @@ class FilterDetailView(LoginRequiredMixin, View):
          return _build_json_response(self.filter)
 
     def put(self, *args, **kwargs):
-        print 'putting'
         data = _get_request_data(self.request)
-        print self.filter.name
         self.filter.update_from_dict(data)
-        print self.filter.name
         return _build_json_response(self.filter.to_dict())
 
     def delete(self, *args, **kwargs):
