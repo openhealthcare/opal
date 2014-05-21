@@ -20,7 +20,7 @@ class EpisodeManager(models.Manager):
         episode_subs = defaultdict(lambda: defaultdict(list))
 
         tag_dict = defaultdict(list)
-        tags = Tagging.objects.filter(episode__in=episodes)
+        tags = Tagging.objects.select_related('team').filter(episode__in=episodes)
         for t in tags:
             tag_dict[t.episode_id].append(t)
 
@@ -75,6 +75,7 @@ class EpisodeManager(models.Manager):
         patient_subs = defaultdict(lambda: defaultdict(list))
 
         episode_subs = self.serialised_episode_subrecords(episodes, user)
+
         for model in PatientSubrecord.__subclasses__():
             name = model.get_api_name()
             subrecords = model.objects.filter(patient__in=patient_ids)
