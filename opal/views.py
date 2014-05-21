@@ -516,8 +516,8 @@ class Extractor(View):
         elif hasattr(Mod, field) and isinstance(getattr(Mod, field), fields.ForeignKeyOrFreeText):
             model = query['column'].replace(' ', '_').lower()
 
-            kw_fk = {'{0}__{1}_fk__name{2}'.format(model, field, contains): query['query']}
-            kw_ft = {'{0}__{1}_ft{2}'.format(model, field, contains): query['query']}
+            kw_fk = {'{0}__{1}_fk__name{2}'.format(model.replace('_', ''), field, contains): query['query']}
+            kw_ft = {'{0}__{1}_ft{2}'.format(model.replace('_', ''), field, contains): query['query']}
 
             if issubclass(Mod, models.EpisodeSubrecord):
 
