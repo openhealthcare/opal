@@ -397,11 +397,9 @@ def check_password_reset(request, *args, **kwargs):
     if response.status_code == 302:
         try:
             profile = request.user.get_profile()
-            print profile
             if profile and profile.force_password_change:
                 return redirect('django.contrib.auth.views.password_change')
         except models.UserProfile.DoesNotExist:
-            print 'creatin'
             models.UserProfile.objects.create(user=request.user, force_password_change=True)
             return redirect('django.contrib.auth.views.password_change')
     return response
@@ -556,9 +554,6 @@ class Extractor(View):
         query = self.get_query()
         all_matches = [(q['combine'], self.episodes_for_criteria(q)) for q in query]
 
-        for match in  all_matches:
-            print match
-
         working = set(all_matches[0][1])
         rest = all_matches[1:]
 
@@ -578,7 +573,6 @@ class Extractor(View):
         Provide a textual description of the current search
         """
         query = self.get_query()
-        print query
         filters = "\n".join("{combine} {column} {field} {queryType} {query}".format(**f) for f in query)
         return """{username} ({date})
 Searching for:
