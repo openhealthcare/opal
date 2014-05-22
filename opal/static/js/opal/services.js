@@ -13,6 +13,7 @@ services.factory('EpisodeResource', function($resource, $q) {
 
 services.factory('listSchemaLoader', function($q, $http, $window, $route,
                                               Schema) {
+    return function() {
     var deferred = $q.defer();
     var tagparams = $route.current.params;
     $http.get('/schema/list/').then(function(response) {
@@ -39,6 +40,7 @@ services.factory('listSchemaLoader', function($q, $http, $window, $route,
     });
 
     return deferred.promise;
+        }
 });
 
 services.factory('detailSchemaLoader', function($q, $http, $window, Schema) {
@@ -115,7 +117,7 @@ services.factory('episodesLoader', function($q, $window,
         if(!$route.current.params.tag){
             deferred.resolve([])
         }
-	    listSchemaLoader.then(function(schema) {
+	    listSchemaLoader().then(function(schema) {
             var target = '/episode/' + $route.current.params.tag;
             if($route.current.params.subtag){
                 target += '/' + $route.current.params.subtag;

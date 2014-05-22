@@ -21,7 +21,7 @@ app.config(
              .when('/list/:tag?/:subtag?', {
 			     controller: 'EpisodeListCtrl',
 			     resolve: {
-				     schema: function(listSchemaLoader) { return listSchemaLoader; },
+				     schema: function(listSchemaLoader) { return listSchemaLoader(); },
 				     episodes: function(episodesLoader) { return episodesLoader(); },
 				     options: function(Options) { return Options; },
                      profile: function(UserProfile){ return UserProfile },

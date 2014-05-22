@@ -285,6 +285,9 @@ controllers.controller('EpisodeListCtrl', function($scope, $q, $http, $cookieSto
 		        $scope.state = 'normal';
 		        if (episode) {
 			        episodes[episode.id] = episode;
+                    if($scope.episode_lookup[$scope.currentTag] === undefined){
+                        $scope.episode_lookup[$scope.currentTag] = [];
+                    }
                     $scope.episode_lookup[$scope.currentTag].push(episode.id);
                     if($scope.currentSubTag != 'all'){
                         $scope.episode_lookup[$scope.currentSubTag].push(episode.id)
