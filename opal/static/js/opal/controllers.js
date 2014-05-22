@@ -1249,6 +1249,9 @@ controllers.controller('ExtractCtrl', function($scope, $http, $window, $modal,
             function(results){
                 $scope.results = results;
                 $scope.state = 'normal';
+            }).error(function(){
+                $scope.state = 'normal';
+                $window.alert('ERROR: Could not process this search. Please report it to the OPAL team')
             });
     };
 
