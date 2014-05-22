@@ -269,7 +269,10 @@ class Tagging(models.Model):
         for d in deleted:
             data = json.loads(d.serialized_data)[0]['fields']
             if data['episode'] in episodes:
-                tag_name = teams[data['team']]
+                try:
+                    tag_name = teams[data['team']]
+                except:
+                    print data
                 historic[data['episode']][tag_name] = True
         return historic
 
