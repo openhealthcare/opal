@@ -486,7 +486,12 @@ class Extractor(View):
         Mod = None
         for m in m.get_models():
             if m.__name__.lower() == model_name:
-                Mod = m
+                if not Mod:
+                    Mod = m
+                elif (issubclass(m, models.EpisodeSubrecord) or issubclass(m, models.PatientSubrecord)):
+                    Mod = m
+
+
         if model_name.lower() == 'tags':
             Mod = models.Tagging
 
