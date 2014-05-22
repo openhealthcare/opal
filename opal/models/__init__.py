@@ -417,7 +417,7 @@ def create_patient_singletons(sender, **kwargs):
         patient = kwargs['instance']
         for subclass in PatientSubrecord.__subclasses__():
             if subclass._is_singleton:
-                subclass.objects.create(patient=patient)
+                obj = subclass.objects.create(patient=patient)
 
 
 @receiver(models.signals.post_save, sender=Episode)
