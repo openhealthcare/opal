@@ -84,7 +84,7 @@ class UpdatesFromDictMixin(object):
         self.consistency_token = '%08x' % random.randrange(16**8)
 
     def update_from_dict(self, data, user):
-        if self.consistency_token is not None:
+        if self.consistency_token:
             try:
                 consistency_token = data.pop('consistency_token')
             except KeyError:
@@ -99,7 +99,8 @@ class UpdatesFromDictMixin(object):
                 'Unexpected fieldname(s): %s' % list(unknown_fields))
 
         for name, value in data.items():
-            print name, value
+            if name == 'consistency_token':
+                continue # shouldn't be needed - Javascripts bug?
             setter = getattr(self, 'set_' + name, None)
             if setter is not None:
                 setter(value, user)
