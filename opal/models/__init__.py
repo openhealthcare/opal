@@ -271,8 +271,8 @@ class Tagging(models.Model):
             if data['episode'] in episodes:
                 try:
                     tag_name = teams[data['team']]
-                except:
-                    print data
+                except KeyError:
+                    tag_name = data['tag_name']
                 historic[data['episode']][tag_name] = True
         return historic
 
