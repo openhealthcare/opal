@@ -497,7 +497,7 @@ class Extractor(View):
                                                  djangomodels.BooleanField):
             model = query['column'].replace(' ', '_').lower()
             val = query['query'] == 'true'
-            kw = {'{0}__{1}'.format(model, field): val}
+            kw = {'{0}__{1}'.format(model.replace('_', ''), field): val}
             eps = models.Episode.objects.filter(**kw)
 
         # Do Date fields here
