@@ -273,6 +273,9 @@ services.factory('Episode', function($http, $q, Item) {
         };
 
 	    this.newItem = function(columnName, opts) {
+            if(!opts){
+                opts = {};
+            }
             if(!opts.schema){
                 opts.schema = schema;
             }
