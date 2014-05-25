@@ -84,10 +84,11 @@ class UpdatesFromDictMixin(object):
         self.consistency_token = '%08x' % random.randrange(16**8)
 
     def update_from_dict(self, data, user):
-        if self.consistency_token is not None:
+        if self.consistency_token:
             try:
                 consistency_token = data.pop('consistency_token')
             except KeyError:
+                print self.consistency_token, data
                 raise exceptions.APIError('Missing field (consistency_token)')
 
             if consistency_token != self.consistency_token:
