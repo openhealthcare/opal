@@ -6,15 +6,16 @@ angular.module('opal.services')
                                         listSchemaLoader) {
     return function() {
 	    var deferred = $q.defer();
+        var params = $route.current.params;
 
-        console.log($route.current.params)
         if(!$route.current.params.tag){
             deferred.resolve([])
         }
+
 	    listSchemaLoader().then(function(schema) {
-            var target = '/episode/' + $route.current.params.tag;
-            if($route.current.params.subtag){
-                target += '/' + $route.current.params.subtag;
+            var target = '/episode/' + params.tag;
+            if(params.subtag){
+                target += '/' + params.subtag;
             }
             $http.get(target).then(
                 function(resources) {

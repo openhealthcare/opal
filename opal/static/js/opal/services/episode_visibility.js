@@ -31,7 +31,8 @@ angular.module('opal.services')
 	    }
 
         // Filtered out by name.
-        if (demographics.name.toLowerCase().indexOf(name.toLowerCase()) == -1) {
+        if (name &&  demographics.name && // Was it passed in?
+            demographics.name.toLowerCase().indexOf(name.toLowerCase()) == -1) {
 		    return false;
 	    }
         return true;

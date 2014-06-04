@@ -5,7 +5,7 @@ angular.module('opal.services')
                       listSchemaLoader) {
                  return function() {
 	                 var deferred = $q.defer();
-	                 listSchemaLoader.then(function(schema) {
+	                 listSchemaLoader().then(function(schema) {
 	                     EpisodeResource.query({discharged: true}, function(resources) {
 		                     var episodes = {};
 		                     _.each(resources, function(resource) {

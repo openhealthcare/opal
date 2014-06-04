@@ -8,6 +8,7 @@ describe('app', function() {
             $route = $injector.get('$route');
             $rootScope = $injector.get('$rootScope');
             $httpBackend = $injector.get('$httpBackend');
+
         });
 
         $httpBackend.whenGET('/schema/list/').respond([]);
@@ -21,10 +22,9 @@ describe('app', function() {
 
     describe('request to /', function() {
         it('should load EpisodeListCtrl', function() {
-            $location.path('/');
+            $location.path('/list/micro');
+            $httpBackend.whenGET('/templates/episode_list.html/micro').respond();
             $rootScope.$apply();
-
-            expect($route.current.templateUrl).toBe('/templates/episode_list.html');
             expect($route.current.controller).toBe('EpisodeListCtrl');
         });
     });

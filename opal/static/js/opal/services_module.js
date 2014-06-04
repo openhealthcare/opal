@@ -3,4 +3,4 @@ var CATEGORIES = [
     'Inepisode', 'Review', 'Followup', 'Transferred', 'Discharged', 'Deceased'
 ];
 
-var services = angular.module('opal.services', ['ngResource']);
+var services = angular.module('opal.services', ['ngResource', 'ngRoute']);

@@ -1,8 +1,9 @@
-angular.module('opal.controllers').controller('AddEpisodeCtrl', function($scope, $http, $cookieStore,
-                                                  $timeout,
-                                                  $modalInstance, Episode, schema,
-                                                  options,
-                                                  demographics) {
+angular.module('opal.controllers')
+    .controller('AddEpisodeCtrl', function($scope, $http, $cookieStore,
+                                           $timeout,
+                                           $modalInstance, Episode, schema,
+                                           options,
+                                           demographics) {
 	$scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine';
 	$scope.currentSubTag = $cookieStore.get('opal.currentSubTag') || 'all';
 
@@ -10,7 +11,6 @@ angular.module('opal.controllers').controller('AddEpisodeCtrl', function($scope,
 	// $timeout(function() {
 	// 	dialog.modalEl.find('input,textarea').first().focus();
 	// });
-
 
 	for (var name in options) {
 		$scope[name + '_list'] = options[name];

@@ -50,7 +50,7 @@ angular.module('opal.services')
         // Getter function to return active episode tags.
         // Default implementation just hits location.
         this.getTags = function(){
-            return _.keys(this.location[0].tagging);
+            return _.keys(this.tagging);
         };
 
 

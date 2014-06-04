@@ -125,7 +125,6 @@ class Episode(UpdatesFromDictMixin, models.Model):
         4. There is no step 4.
         """
         original_tag_names = self.get_tag_names(user)
-        print original_tag_names
 
         for tag_name in original_tag_names:
             if tag_name not in tag_names:
@@ -136,7 +135,6 @@ class Episode(UpdatesFromDictMixin, models.Model):
 
         for tag_name in tag_names:
             if tag_name not in original_tag_names:
-                print tag_name, tag_names
                 params = {'team': Team.objects.get(name=tag_name)}
                 if tag_name == 'mine':
                     params['user'] = user
@@ -233,52 +231,6 @@ class Team(models.Model):
         return tags.values()
 
 
-class Tagging(models.Model):
-    _is_singleton = False
-    _title = 'Teams'
-
-    team = models.ForeignKey(Team, blank=True, null=True)
-    user = models.ForeignKey(auth.models.User, null=True)
-    episode = models.ForeignKey(Episode, null=True) # TODO make null=False
-
-    def __unicode__(self):
-        if self.user is not None:
-            return 'User: %s - %s' % (self.user.username, self.team.name)
-        else:
-            return self.team.name
-
-    @staticmethod
-    def get_api_name():
-        return 'tags'
-
-    @staticmethod
-    def get_display_name():
-        return 'Tags'
-
-    @staticmethod
-    def build_field_schema():
-        return [dict(name='team__name', type='string')]
-
-    @classmethod
-    def historic_tags_for_episodes(cls, episodes):
-        """
-        Given a list of episodes, return a dict indexed by episode id
-        that contains historic tags for those episodes.
-        """
-        teams = {t.id: t.name for t in Team.objects.all()}
-        deleted = reversion.get_deleted(cls)
-        historic = collections.defaultdict(dict)
-        for d in deleted:
-            data = json.loads(d.serialized_data)[0]['fields']
-            if data['episode'] in episodes:
-                try:
-                    tag_name = teams[data['team']]
-                except KeyError:
-                    tag_name = data['tag_name']
-                historic[data['episode']][tag_name] = True
-        return historic
-
-
 class Subrecord(UpdatesFromDictMixin, models.Model):
     consistency_token = models.CharField(max_length=8)
 
@@ -355,6 +307,51 @@ class EpisodeSubrecord(Subrecord):
 
     class Meta:
         abstract = True
+
+class Tagging(models.Model):
+    _is_singleton = False
+    _title = 'Teams'
+
+    team = models.ForeignKey(Team, blank=True, null=True)
+    user = models.ForeignKey(auth.models.User, null=True)
+    # episode = models.ForeignKey(Episode, null=True) # TODO make null=False
+
+    def __unicode__(self):
+        if self.user is not None:
+            return 'User: %s - %s' % (self.user.username, self.team.name)
+        else:
+            return self.team.name
+
+    @staticmethod
+    def get_api_name():
+        return 'tags'
+
+    @staticmethod
+    def get_display_name():
+        return 'Tags'
+
+    @staticmethod
+    def build_field_schema():
+        return [dict(name='team__name', type='string')]
+
+    @classmethod
+    def historic_tags_for_episodes(cls, episodes):
+        """
+        Given a list of episodes, return a dict indexed by episode id
+        that contains historic tags for those episodes.
+        """
+        teams = {t.id: t.name for t in Team.objects.all()}
+        deleted = reversion.get_deleted(cls)
+        historic = collections.defaultdict(dict)
+        for d in deleted:
+            data = json.loads(d.serialized_data)[0]['fields']
+            if data['episode'] in episodes:
+                try:
+                    tag_name = teams[data['team']]
+                except KeyError:
+                    tag_name = data['tag_name']
+                historic[data['episode']][tag_name] = True
+        return historic
 
 
 class Synonym(models.Model):
