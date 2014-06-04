@@ -167,7 +167,8 @@ def episode_list_and_create_view(request):
             episode.update_from_dict(episode_data, request.user)
 
         except exceptions.APIError:
-            return _build_json_response({'error': 'Patient already has active episode'}, 400)
+            return _build_json_response(
+                {'error': 'Patient already has active episode'}, 400)
 
         episode.update_from_location_dict(data['location'], request.user)
         return _build_json_response(episode.to_dict(request.user), 201)
@@ -184,7 +185,8 @@ class EpisodeListView(View):
             filter_kwargs['tagging__team__name'] = subtag
         elif tag:
             filter_kwargs['tagging__team__name'] = tag
-        serialised = models.Episode.objects.serialised_active(self.request.user, **filter_kwargs)
+        serialised = models.Episode.objects.serialised_active(
+            self.request.user, **filter_kwargs)
         return _build_json_response(serialised)
 
 

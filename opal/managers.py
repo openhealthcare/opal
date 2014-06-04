@@ -82,6 +82,7 @@ class EpisodeManager(models.Manager):
             for sub in subrecords:
                 patient_subs[sub.patient_id][name].append(sub.to_dict(user))
 
+
         serialised = []
         for e in episodes:
             d = {
@@ -91,10 +92,12 @@ class EpisodeManager(models.Manager):
                 'discharge_date'   : e.discharge_date,
                 'consistency_token': e.consistency_token
                 }
-            serialised.append(d)
 
             for key, value in episode_subs[e.id].items():
                 d[key] = value
             for key, value in patient_subs[e.patient_id].items():
                 d[key] = value
+            d['tagging'] = {t.team.name: True for t in e.tagging_set.all()}
+            serialised.append(d)
+
         return serialised

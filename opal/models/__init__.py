@@ -153,7 +153,7 @@ class Episode(UpdatesFromDictMixin, models.Model):
     def get_tag_names(self, user):
         return [t.team.name for t in self.tagging_set.all() if t.user in (None, user)]
 
-    def to_dict(self, user, shallow=False):
+    def to_dict(self, user, shallow=False, with_context=False):
         """
         Serialisation to JSON for Episodes
         """
@@ -175,6 +175,7 @@ class Episode(UpdatesFromDictMixin, models.Model):
             subrecords = model.objects.filter(episode_id=self.id)
             d[model.get_api_name()] = [subrecord.to_dict(user)
                                        for subrecord in subrecords]
+
         d['prev_episodes'] = []
         d['next_episodes'] = []
 
@@ -234,6 +235,7 @@ class Team(models.Model):
 
 class Tagging(models.Model):
     _is_singleton = False
+    _title = 'Teams'
 
     team = models.ForeignKey(Team, blank=True, null=True)
     user = models.ForeignKey(auth.models.User, null=True)
