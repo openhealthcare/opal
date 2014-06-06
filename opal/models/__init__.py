@@ -314,7 +314,7 @@ class Tagging(models.Model):
 
     team = models.ForeignKey(Team, blank=True, null=True)
     user = models.ForeignKey(auth.models.User, null=True)
-    # episode = models.ForeignKey(Episode, null=True) # TODO make null=False
+    episode = models.ForeignKey(Episode, null=True) # TODO make null=False
 
     def __unicode__(self):
         if self.user is not None:
