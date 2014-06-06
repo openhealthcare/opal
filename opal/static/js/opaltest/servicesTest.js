@@ -29,10 +29,10 @@ describe('services', function() {
             date_of_admission: "2013-11-19",
             active: true,
             discharge_date: null,
-            tagging: {
+            tagging: [{
                 mine: true,
                 tropical: true
-                },
+                }],
             demographics: [{
                 id: 101,
                 name: 'John Smith',
@@ -521,6 +521,7 @@ describe('services', function() {
         });
 
         it('should get the current tags', function(){
+            console.log(episode.tagging)
             expect(episode.getTags()).toEqual(['mine', 'tropical'])
         });
 

@@ -9,7 +9,6 @@ angular.module('opal.services')
 
 	    for (var cix = 0; cix < schema.getNumberOfColumns(); cix++) {
 	        column = schema.columns[cix];
-            console.log(column.name)
             if(resource[column.name]){
                 var schemacol = _.findWhere(schema.columns, {name: column.name});
 		        for (var iix = 0; iix < resource[column.name].length; iix++) {
@@ -51,7 +50,13 @@ angular.module('opal.services')
         // Getter function to return active episode tags.
         // Default implementation just hits location.
         this.getTags = function(){
-            return _.keys(this.tags);
+            if(this.tagging[0].makeCopy){
+                var tags =  this.tagging[0].makeCopy()
+            }else{
+                var tags = this.tagging[0]
+            }
+            delete tags.id
+            return _.filter(_.keys(tags),  function(t){return tags[t]})
         };
 
 

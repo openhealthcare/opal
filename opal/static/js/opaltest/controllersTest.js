@@ -42,7 +42,7 @@ describe('controllers', function() {
                 name: 'John Smith',
                 date_of_birth: '1980-07-31'
             }],
-            tagging: {'mine': true, 'tropical': true},
+            tagging: [{'mine': true, 'tropical': true}],
             location: [{
                 category: 'Inepisode',
                 hospital: 'UCH',
@@ -732,30 +732,6 @@ describe('controllers', function() {
                 expect(callArgs[0]).toBe($scope.editing)
             });
 
-            it('Should save the episode if the column is location', function () {
-                var callArgs;
-
-                spyOn(episode, 'save').andCallThrough();
-
-                $scope.columnName = 'location';
-
-                $httpBackend.expectPOST('/diagnosis/', {episode_id: 123})
-                $httpBackend.whenPOST('/diagnosis/').respond(
-                    {episode_id: 123, consistency_token: "123465"}
-                )
-                $httpBackend.expectPUT('/episode/123/', {
-                    id: 123,
-                });
-                $httpBackend.whenPUT('/episode/123/').respond(episode.makeCopy());
-
-                $scope.save('save');
-                $httpBackend.flush();
-
-                callArgs = episode.save.mostRecentCall.args;
-
-                expect(callArgs.length).toBe(1);
-                expect(callArgs[0]).toBe($scope.episode)
-            });
         });
 
     });

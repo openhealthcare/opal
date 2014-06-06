@@ -182,6 +182,7 @@ class Episode(UpdatesFromDictMixin, models.Model):
             d[model.get_api_name()] = [subrecord.to_dict(user)
                                        for subrecord in subrecords]
 
+        d['tagging'] = self.tagging_dict()
         d['prev_episodes'] = []
         d['next_episodes'] = []
 
