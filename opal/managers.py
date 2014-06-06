@@ -97,7 +97,7 @@ class EpisodeManager(models.Manager):
                 d[key] = value
             for key, value in patient_subs[e.patient_id].items():
                 d[key] = value
-            d['tagging'] = {t.team.name: True for t in e.tagging_set.all()}
+            d['tagging'] = e.tagging_dict()
             serialised.append(d)
 
         return serialised

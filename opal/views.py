@@ -208,6 +208,20 @@ def subrecord_detail_view(request, model, pk):
         subrecord.delete()
         return _build_json_response('')
 
+
+class TaggingView(View):
+    def put(self, *args, **kwargs):
+        episode = models.Episode.objects.get(pk=kwargs['pk'])
+        data = _get_request_data(self.request)
+        if 'id' in data:
+            data.pop('id')
+        tag_names = []
+        for n, v in data.items():
+            if v:
+                tag_names.append(n)
+        episode.set_tag_names(tag_names, self.request.user)
+        return _build_json_response(episode.tagging_dict()[0])
+
 @require_http_methods(['POST'])
 def subrecord_create_view(request, model):
     data = _get_request_data(request)
@@ -274,6 +288,14 @@ class SaveFilterModalView(TemplateView):
 class EpisodeDetailTemplateView(EpisodeTemplateView):
     template_name = 'episode_detail.html'
     column_schema = schema.detail_columns
+
+class TagsTemplateView(TemplateView):
+    template_name = 'tagging_modal.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(TagsTemplateView, self).get_context_data(**kwargs)
+        context['tags'] = models.Team.to_TAGS()
+        return context
 
 
 class SearchTemplateView(TemplateView):

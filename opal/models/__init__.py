@@ -125,6 +125,7 @@ class Episode(UpdatesFromDictMixin, models.Model):
         4. There is no step 4.
         """
         original_tag_names = self.get_tag_names(user)
+        print tag_names
 
         for tag_name in original_tag_names:
             if tag_name not in tag_names:
@@ -135,6 +136,7 @@ class Episode(UpdatesFromDictMixin, models.Model):
 
         for tag_name in tag_names:
             if tag_name not in original_tag_names:
+                print tag_name
                 params = {'team': Team.objects.get(name=tag_name)}
                 if tag_name == 'mine':
                     params['user'] = user
@@ -147,6 +149,12 @@ class Episode(UpdatesFromDictMixin, models.Model):
         elif not self.active:
             self.active = True
         self.save()
+
+    def tagging_dict(self):
+        td = [{t.team.name: True for t in self.tagging_set.all()}]
+        td[0]['id'] = self.id
+        return td
+
 
     def get_tag_names(self, user):
         return [t.team.name for t in self.tagging_set.all() if t.user in (None, user)]
@@ -309,7 +317,7 @@ class EpisodeSubrecord(Subrecord):
         abstract = True
 
 class Tagging(models.Model):
-    _is_singleton = False
+    _is_singleton = True
     _title = 'Teams'
 
     team = models.ForeignKey(Team, blank=True, null=True)
@@ -324,15 +332,17 @@ class Tagging(models.Model):
 
     @staticmethod
     def get_api_name():
-        return 'tags'
+        return 'tagging'
 
     @staticmethod
     def get_display_name():
-        return 'Tags'
+        return 'Teams'
 
     @staticmethod
     def build_field_schema():
-        return [dict(name='team__name', type='string')]
+        teams = [{'name': t.name, 'type':'boolean'} for t in Team.objects.filter(active=True)]
+        return teams
+#        return [dict(name='team__name', type='string')]
 
     @classmethod
     def historic_tags_for_episodes(cls, episodes):

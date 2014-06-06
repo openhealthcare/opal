@@ -49,11 +49,11 @@ angular.module('opal.controllers').controller(
         $scope.episode_lookup = {};
         _.each(episodes,  function(e){
             if(e.tagging){         // Shouldn't be needed but occasionally happens in migration breakage
-                _.each(e.tagging, function(value, key){
-                    if(!_.has($scope.episode_lookup, key)){
-                        $scope.episode_lookup[key] = [];
+                _.each(_.keys(e.tagging[0]), function(tag_name){
+                    if(tag_name && !_.has($scope.episode_lookup, tag_name)){
+                        $scope.episode_lookup[tag_name] = [];
                     };
-                    $scope.episode_lookup[key].push(e.id);
+                    $scope.episode_lookup[tag_name].push(e.id);
                 })
                     }
         });
@@ -115,14 +115,8 @@ angular.module('opal.controllers').controller(
         }
 
         $scope.otherTags = function(item){
-            var active = $scope.currentSubTag == 'all'?
-                $scope.currentTag : $scope.currentSubTag;
-
-            return _.filter(_.keys(item.episode.tagging), function(tag){
-                if(tag == active){
-                    return false;
-                }
-                return true;
+            return _.filter(_.keys(item.makeCopy()), function(tag){
+                return item[tag];
             });
         }
 

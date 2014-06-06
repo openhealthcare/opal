@@ -8,6 +8,11 @@ angular.module('opal.services')
 	        // Copy all attributes to item, and change any date fields to Date objects
 	        var field, value;
 
+            _.each(columnSchema.fields, function(field){
+                delete item[field.name];
+            })
+
+
 	        angular.extend(item, attrs);
 	        for (var fix = 0; fix < columnSchema.fields.length; fix++) {
 		        field = columnSchema.fields[fix];

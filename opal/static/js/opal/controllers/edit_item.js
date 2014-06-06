@@ -16,11 +16,7 @@ angular.module('opal.controllers').controller(
     $scope.currentSubTag = 'all';
 
     $scope.showSubtags = function(withsubtags){
-	    if (item.columnName == 'location') {
-		    return _.some(withsubtags, function(tag){ return item.tags[tag] });
-	    } else {
-		    return false;
-	    };
+		return _.some(withsubtags, function(tag){ return item[tag] });
     };
 
     // TODO - reimplement this
@@ -74,13 +70,13 @@ angular.module('opal.controllers').controller(
 	$scope.save = function(result) {
         $scope.state = 'saving';
 		item.save($scope.editing).then(function() {
-            if($scope.columnName == 'location'){
-                episode.save($scope.episode).then(function(){
-                    $modalInstance.close(result)
-                });
-            }else{
+            // if($scope.columnName == 'location'){
+            //     episode.save($scope.episode).then(function(){
+            //         $modalInstance.close(result)
+            //     });
+            // }else{
 			    $modalInstance.close(result);
-            }
+            // }
 		});
 	};
 
