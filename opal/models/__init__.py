@@ -18,7 +18,7 @@ from opal import exceptions, managers
 
 # Imported models from module.
 
-from opal.models.mixins import TaggedSubrecordMixin, UpdatesFromDictMixin
+from opal.models.mixins import UpdatesFromDictMixin
 
 options = stringport(settings.OPAL_OPTIONS_MODULE)
 

@@ -21,13 +21,13 @@ angular.module('opal.controllers')
     // TODO - this is no longer the way location/admission date works.
 	$scope.editing = {
 		date_of_admission: moment().format('DD/MM/YYYY'),
-        tagging: {},
+        tagging: [{}],
 		location: {
             hospital: 'UCLH'
 		},
 		demographics: demographics
 	};
-	$scope.editing.tagging[$scope.currentTag] = true;
+	$scope.editing.tagging[0][$scope.currentTag] = true;
 	if($scope.currentSubTag != 'all'){
 		$scope.editing.tagging[$scope.currentSubTag] = true;
 	}

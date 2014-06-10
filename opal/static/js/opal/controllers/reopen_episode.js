@@ -36,14 +36,12 @@ angular.module('opal.controllers').controller(
 
 	$scope.reopen = function() {
 		var episode = patient.episodes[parseInt($scope.model.episodeId, 10)];
-		var location = episode.getItem('location', 0);
-		var attrs = location.makeCopy();
+		var tagging = episode.getItem('tagging', 0);
+		var attrs = tagging.makeCopy();
 
-		attrs.tags[tag] = true;
-		location.save(attrs).then(function(result) {
-            episode.save(episode.makeCopy()).then(function(result){
+		attrs[tag] = true;
+		tagging.save(attrs).then(function(result) {
 			    $modalInstance.close(episode);
-            });
 		});
 	};
 });
