@@ -27,9 +27,6 @@ angular.module('opal.services')
 	    this.columnName = columnSchema.name;
         this.sort = columnSchema.sort
 
-        // TODO: FTWLarry? What is this used for?
-	    this.episodeName = episode.demographics ? episode.demographics[0].name : '';
-
 	    this.makeCopy = function() {
 	        var field, value;
 	        var copy = {id: item.id};

@@ -375,7 +375,9 @@ angular.module('opal.controllers').controller(
 			    if (result == 'save-and-add-another') {
 				    $scope.editItem(rix, cix, episode.getNumberOfItems(columnName));
 			    };
-		    });
+		    }, function(){
+                $scope.state = 'normal';
+            });
 	    };
 
 	    $scope.deleteItem = function(rix, cix, iix) {

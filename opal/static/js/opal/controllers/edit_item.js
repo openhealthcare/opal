@@ -6,8 +6,8 @@ angular.module('opal.controllers').controller(
 	$scope.editing = item.makeCopy();
     $scope.state = 'editing';
 
-    // TODO: FTWLarry? What is this used for?
-	$scope.editingName = item.episodeName;
+    // This is the patientname displayed in the modal header
+	$scope.editingName = item.episode.demographics[0].name;
 
     $scope.columnName = item.columnName;
     // initially display episodes of interest to current user
@@ -20,9 +20,9 @@ angular.module('opal.controllers').controller(
     };
 
     // TODO - reimplement this
-	// $timeout(function() {
-	// 	$modalInstance.modalEl.find('input,textarea').first().focus();
-	// });
+	$timeout(function() {
+		$modalInstance.modalEl.find('input,textarea').first().focus();
+	});
 
 	for (var name in options) {
 		if (name.indexOf('micro_test') != 0) {

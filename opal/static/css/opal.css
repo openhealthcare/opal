@@ -30,8 +30,8 @@ li.selected {
     padding-left: 0px 0px 0px 15px;
 }
 .modal-body {
-	height: 400px;
-    overflow-y: scroll;
+	/* height: 400px; */
+    /* overflow-y: scroll; */
 }
 
 thead {
