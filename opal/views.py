@@ -13,12 +13,12 @@ from django.views.decorators.http import require_http_methods
 from django.template.loader import select_template
 from django.utils.decorators import method_decorator
 from django.utils import formats
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 
 from opal.utils.http import with_no_caching
 from opal.utils import camelcase_to_underscore, stringport, fields, json_to_csv
 from opal.utils.banned_passwords import banned
+from opal.utils.views import LoginRequiredMixin
 from opal import models, exceptions
 
 schema = stringport(settings.OPAL_SCHEMA_MODULE)
@@ -68,12 +68,6 @@ def serve_maybe(meth):
         return resp
 
     return handoff
-
-
-class LoginRequiredMixin(object):
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
 
 
 @require_http_methods(['GET', 'PUT'])

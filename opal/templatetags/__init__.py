@@ -1,0 +1,3 @@
+"""
+Templatetags for OPAL
+"""

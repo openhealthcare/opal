@@ -80,3 +80,8 @@ for subrecord_model in subrecord_models:
     )
 
 urlpatterns += staticfiles_urlpatterns()
+
+from opal.utils import OpalPlugin
+
+for plugin in OpalPlugin.__subclasses__():
+    urlpatterns += plugin.urls
