@@ -272,3 +272,8 @@ def json_to_csv(episodes, description, user):
             zipfile/(zipfolder+'filter.txt') << description.encode('UTF-8')
             ffs.mv(zipfile, target)
     return target
+
+class OpalPlugin(object):
+    def get_urls():
+        from django.conf.urls import patterns
+        return patterns()

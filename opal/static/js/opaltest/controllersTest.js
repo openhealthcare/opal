@@ -4,48 +4,51 @@ describe('controllers', function() {
 
     beforeEach(function() {
         module('opal.controllers');
-        columns = [
-            {
-                name: 'demographics',
-                single: true,
-                fields: [
-                    {name: 'name', type: 'string'},
-                    {name: 'date_of_birth', type: 'date'},
-                ]},
-            {
-                name: 'location',
-                single: true,
-                fields: [
-                    {name: 'category', type: 'string'},
-                    {name: 'hospital', type: 'string'},
-                    {name: 'ward', type: 'string'},
-                    {name: 'bed', type: 'string'},
-                    {name: 'date_of_admission', type: 'date'},
-                    {name: 'tags', type: 'list'},
-                ]},
-            {
-                name: 'diagnosis',
-                single: false,
-                fields: [
-                    {name: 'condition', type: 'string'},
-                    {name: 'provisional', type: 'boolean'},
-                ]},
-        ];
+        columns = {
+            "default": [
+                {
+                    name: 'demographics',
+                    single: true,
+                    fields: [
+                        {name: 'name', type: 'string'},
+                        {name: 'date_of_birth', type: 'date'},
+                    ]},
+                {
+                    name: 'location',
+                    single: true,
+                    fields: [
+                        {name: 'category', type: 'string'},
+                        {name: 'hospital', type: 'string'},
+                        {name: 'ward', type: 'string'},
+                        {name: 'bed', type: 'string'},
+                        {name: 'date_of_admission', type: 'date'},
+                        {name: 'tags', type: 'list'},
+                    ]},
+                {
+                    name: 'diagnosis',
+                    single: false,
+                    fields: [
+                        {name: 'condition', type: 'string'},
+                        {name: 'provisional', type: 'boolean'},
+                    ]},
+            ]
+        };
 
         episodeData = {
             id: 123,
+            active: true,
             demographics: [{
                 id: 101,
                 name: 'John Smith',
                 date_of_birth: '1980-07-31'
             }],
+            tagging: [{'mine': true, 'tropical': true}],
             location: [{
                 category: 'Inepisode',
                 hospital: 'UCH',
                 ward: 'T10',
                 bed: '15',
                 date_of_admission: '2013-08-01',
-                tags: {'mine': true, 'tropical': true}
             }],
             diagnosis: [{
                 id: 102,
@@ -59,105 +62,105 @@ describe('controllers', function() {
         };
 
         patientData = {
-                "active_episode_id": null,
-                "demographics": [
-                    {
-                        "consistency_token": "0beb0d46",
-                        "date_of_birth": "1999-12-12",
-                        "hospital_number": "",
-                        "id": 2,
-                        "name": "Mr WAT",
-                        "patient_id": 2
-                    }
-                ],
-                "episodes": {
-                    "3": {
-                        "antimicrobial": [],
-                        "demographics": [
-                            {
-                                "consistency_token": "0beb0d46",
-                                "date_of_birth": "1999-12-12",
-                                "hospital_number": "",
-                                "id": 2,
-                                "name": "Mr WAT",
-                                "patient_id": 2
-                            }
-                        ],
-                        "diagnosis": [],
-                        "general_note": [],
-                        "id": 3,
-                        "location": [
-                            {
-                                "bed": "",
-                                "category": "Discharged",
-                                "consistency_token": "bd4f5db6",
-                                "date_of_admission": "2013-11-14",
-                                "discharge_date": null,
-                                "episode_id": 3,
-                                "hospital": "",
-                                "id": 3,
-                                "tags": {},
-                                "ward": ""
-                            }
-                        ],
-                        "microbiology_input": [],
-                        "microbiology_test": [
-                            {
-                                "adenovirus": "",
-                                "anti_hbcore_igg": "",
-                                "anti_hbcore_igm": "",
-                                "anti_hbs": "",
-                                "c_difficile_antigen": "",
-                                "c_difficile_toxin": "",
-                                "cmv": "",
-                                "consistency_token": "29429ebf",
-                                "cryptosporidium": "",
-                                "date_ordered": "2013-11-14",
-                                "details": "",
-                                "ebna_igg": "",
-                                "ebv": "",
-                                "entamoeba_histolytica": "",
-                                "enterovirus": "",
-                                "episode_id": 3,
-                                "giardia": "",
-                                "hbsag": "",
-                                "hsv": "",
-                                "hsv_1": "",
-                                "hsv_2": "",
-                                "id": 1,
-                                "igg": "",
-                                "igm": "",
-                                "influenza_a": "",
-                                "influenza_b": "",
-                                "metapneumovirus": "",
-                                "microscopy": "",
-                                "norovirus": "",
-                                "organism": "",
-                                "parainfluenza": "",
-                                "parasitaemia": "",
-                                "resistant_antibiotics": "",
-                                "result": "pending",
-                                "rotavirus": "",
-                                "rpr": "",
-                                "rsv": "",
-                                "sensitive_antibiotics": "",
-                                "species": "",
-                                "syphilis": "",
-                                "test": "Fasciola Serology",
-                                "tppa": "",
-                                "vca_igg": "",
-                                "vca_igm": "",
-                                "viral_load": "",
-                                "vzv": ""
-                            }
-                        ],
-                        "past_medical_history": [],
-                        "todo": [],
-                        "travel": []
-                    }
-                },
-                "id": 2
-            }
+            "active_episode_id": null,
+            "demographics": [
+                {
+                    "consistency_token": "0beb0d46",
+                    "date_of_birth": "1999-12-12",
+                    "hospital_number": "",
+                    "id": 2,
+                    "name": "Mr WAT",
+                    "patient_id": 2
+                }
+            ],
+            "episodes": {
+                "3": {
+                    "antimicrobial": [],
+                    "demographics": [
+                        {
+                            "consistency_token": "0beb0d46",
+                            "date_of_birth": "1999-12-12",
+                            "hospital_number": "",
+                            "id": 2,
+                            "name": "Mr WAT",
+                            "patient_id": 2
+                        }
+                    ],
+                    "diagnosis": [],
+                    "general_note": [],
+                    "id": 3,
+                    "tagging": {},
+                    "location": [
+                        {
+                            "bed": "",
+                            "category": "Discharged",
+                            "consistency_token": "bd4f5db6",
+                            "date_of_admission": "2013-11-14",
+                            "discharge_date": null,
+                            "episode_id": 3,
+                            "hospital": "",
+                            "id": 3,
+                            "ward": ""
+                        }
+                    ],
+                    "microbiology_input": [],
+                    "microbiology_test": [
+                        {
+                            "adenovirus": "",
+                            "anti_hbcore_igg": "",
+                            "anti_hbcore_igm": "",
+                            "anti_hbs": "",
+                            "c_difficile_antigen": "",
+                            "c_difficile_toxin": "",
+                            "cmv": "",
+                            "consistency_token": "29429ebf",
+                            "cryptosporidium": "",
+                            "date_ordered": "2013-11-14",
+                            "details": "",
+                            "ebna_igg": "",
+                            "ebv": "",
+                            "entamoeba_histolytica": "",
+                            "enterovirus": "",
+                            "episode_id": 3,
+                            "giardia": "",
+                            "hbsag": "",
+                            "hsv": "",
+                            "hsv_1": "",
+                            "hsv_2": "",
+                            "id": 1,
+                            "igg": "",
+                            "igm": "",
+                            "influenza_a": "",
+                            "influenza_b": "",
+                            "metapneumovirus": "",
+                            "microscopy": "",
+                            "norovirus": "",
+                            "organism": "",
+                            "parainfluenza": "",
+                            "parasitaemia": "",
+                            "resistant_antibiotics": "",
+                            "result": "pending",
+                            "rotavirus": "",
+                            "rpr": "",
+                            "rsv": "",
+                            "sensitive_antibiotics": "",
+                            "species": "",
+                            "syphilis": "",
+                            "test": "Fasciola Serology",
+                            "tppa": "",
+                            "vca_igg": "",
+                            "vca_igm": "",
+                            "viral_load": "",
+                            "vzv": ""
+                        }
+                    ],
+                    "past_medical_history": [],
+                    "todo": [],
+                    "travel": []
+                }
+            },
+            "id": 2
+        }
 
         optionsData = {
             condition: ['Another condition', 'Some condition']
@@ -169,7 +172,7 @@ describe('controllers', function() {
             Item = $injector.get('Item');
         });
 
-        schema = new Schema(columns);
+        schema = new Schema(columns.default);
         profile = {
             readonly   : false,
             can_extract: true
@@ -182,16 +185,18 @@ describe('controllers', function() {
 
         beforeEach(function() {
             inject(function($injector) {
-                $rootScope = $injector.get('$rootScope');
-                $scope = $rootScope.$new();
+                $rootScope   = $injector.get('$rootScope');
+                $scope       = $rootScope.$new();
                 $cookieStore = $injector.get('$cookieStore');
-                $controller = $injector.get('$controller');
-                $q = $injector.get('$q');
-                $modal = $injector.get('$modal');
+                $controller  = $injector.get('$controller');
+                $q           = $injector.get('$q');
+                $modal       = $injector.get('$modal');
+                $routeParams = $injector.get('$routeParams');
             });
 
-            episodes = [new Episode(episodeData, schema)];
+            episodes = {123: new Episode(episodeData, schema)};
             options = optionsData;
+            $routeParams.tag = 'tropical';
 
             controller = $controller('EpisodeListCtrl', {
                 $scope: $scope,
@@ -269,7 +274,7 @@ describe('controllers', function() {
 
                 $scope.addEpisode();
 
-                deferred.resolve(episodes[0]);
+                deferred.resolve(episodes[123]);
 
                 $rootScope.$apply();
                 expect($scope.selectItem).toHaveBeenCalledWith(0, 0, 0)
@@ -281,7 +286,7 @@ describe('controllers', function() {
                 });
 
                 it('should return null', function(){
-                   expect($scope.addEpisode()).toBe(null);
+                    expect($scope.addEpisode()).toBe(null);
                 });
             });
 
@@ -318,7 +323,7 @@ describe('controllers', function() {
                 });
 
                 it('should return null', function(){
-                   expect($scope.dischargeEpisode(0,  mockEvent)).toBe(null);
+                    expect($scope.dischargeEpisode(0,  mockEvent)).toBe(null);
                 });
             });
 
@@ -394,7 +399,7 @@ describe('controllers', function() {
                 });
 
                 it('should return null', function(){
-                   expect($scope.editItem(0,  0, 0)).toBe(null);
+                    expect($scope.editItem(0,  0, 0)).toBe(null);
                 });
             });
 
@@ -454,7 +459,7 @@ describe('controllers', function() {
                 });
 
                 it('should return null', function(){
-                   expect($scope.deleteItem(0,  0, 0)).toBe(null);
+                    expect($scope.deleteItem(0, 0, 0)).toBe(null);
                 });
             });
 
@@ -522,7 +527,7 @@ describe('controllers', function() {
                 });
 
                 it('should return null', function(){
-                   expect($scope.editItem(0, 0)).toBe(null);
+                    expect($scope.editItem(0, 0)).toBe(null);
                 });
             });
 
@@ -548,7 +553,7 @@ describe('controllers', function() {
                 });
 
                 it('should return null', function(){
-                   expect($scope.deleteItem(0, 0)).toBe(null);
+                    expect($scope.deleteItem(0, 0)).toBe(null);
                 });
             });
 
@@ -580,7 +585,7 @@ describe('controllers', function() {
                 });
 
                 it('should return null', function(){
-                   expect($scope.dischargeEpisode(mockEvent)).toBe(null);
+                    expect($scope.dischargeEpisode(mockEvent)).toBe(null);
                 });
             })
 
@@ -685,7 +690,11 @@ describe('controllers', function() {
 
             options = optionsData;
             episode = new Episode(episodeData, schema);
-            item    = new Item({columnName: 'diagnosis'}, episode, schema.columns[0])
+            item    = new Item(
+                {columnName: 'diagnosis'},
+                episode,
+                schema.columns[0]
+            )
             dialog = $modal.open({template: 'notarealtemplate!'})
 
             controller = $controller('EditItemCtrl', {
@@ -723,30 +732,6 @@ describe('controllers', function() {
                 expect(callArgs[0]).toBe($scope.editing)
             });
 
-            it('Should save the episode if the column is location', function () {
-                var callArgs;
-
-                spyOn(episode, 'save').andCallThrough();
-
-                $scope.columnName = 'location';
-
-                $httpBackend.expectPOST('/diagnosis/', {episode_id: 123})
-                $httpBackend.whenPOST('/diagnosis/').respond(
-                    {episode_id: 123, consistency_token: "123465"}
-                )
-                $httpBackend.expectPUT('/episode/123/', {
-                    id: 123,
-                });
-                $httpBackend.whenPUT('/episode/123/').respond(episode.makeCopy());
-
-                $scope.save('save');
-                $httpBackend.flush();
-
-                callArgs = episode.save.mostRecentCall.args;
-
-                expect(callArgs.length).toBe(1);
-                expect(callArgs[0]).toBe($scope.episode)
-            });
         });
 
     });
@@ -994,7 +979,7 @@ describe('controllers', function() {
 
                 patient = angular.copy(patientData);
                 patient.active_episode_id = 3;
-                patient.episodes[3].location[0].tags['mine'] = true;
+                patient.episodes[3].tagging['mine'] = true;
                 episode = new Episode(patient.episodes[3], schema);
 
                 spyOn(modalInstance, 'close');
@@ -1021,7 +1006,7 @@ describe('controllers', function() {
                 $rootScope.$apply();
 
                 callArgs = modalInstance.close.mostRecentCall.args;
-                expect(callArgs[0].location[0].tags.mine).toBe(true);
+                expect(callArgs[0].tagging.mine).toBe(true);
             });
         });
 
@@ -1121,7 +1106,7 @@ describe('controllers', function() {
         describe('Adding an episode', function (){
 
             it('Should set up the initial editing situation', function () {
-                expect($scope.editing.location.tags).toEqual({mine: true});
+                expect($scope.editing.tagging).toEqual({mine: true});
                 expect($scope.editing.date_of_admission).toEqual(moment().format('DD/MM/YYYY'));
             });
 
@@ -1200,7 +1185,7 @@ describe('controllers', function() {
 
         describe('Initialization', function(){
             it('should set up initial state', function(){
-                expect($scope.columns).toEqual(columns);
+                expect($scope.columns).toEqual(columns.default);
             });
         });
 
@@ -1232,19 +1217,6 @@ describe('controllers', function() {
                 $httpBackend.flush();
                 expect($scope.results).toEqual(patientData.episodes);
                 expect($scope.state).toBe('normal');
-            });
-        });
-
-        describe('Download', function(){
-            it('should ask the server for a file URL', function(){
-                $httpBackend.expectPOST("/search/extract/download");
-                $httpBackend.whenPOST("/search/extract/download").respond({fileUrl: '/this'});
-
-                spyOn($window, 'open');
-                $scope.download();
-                $httpBackend.flush();
-
-                expect($window.open).toHaveBeenCalledWith('/this')
             });
         });
 

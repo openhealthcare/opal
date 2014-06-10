@@ -13,12 +13,12 @@ from django.views.decorators.http import require_http_methods
 from django.template.loader import select_template
 from django.utils.decorators import method_decorator
 from django.utils import formats
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 
 from opal.utils.http import with_no_caching
 from opal.utils import camelcase_to_underscore, stringport, fields, json_to_csv
 from opal.utils.banned_passwords import banned
+from opal.utils.views import LoginRequiredMixin
 from opal import models, exceptions
 
 schema = stringport(settings.OPAL_SCHEMA_MODULE)
@@ -68,12 +68,6 @@ def serve_maybe(meth):
         return resp
 
     return handoff
-
-
-class LoginRequiredMixin(object):
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
 
 
 @require_http_methods(['GET', 'PUT'])
@@ -167,7 +161,8 @@ def episode_list_and_create_view(request):
             episode.update_from_dict(episode_data, request.user)
 
         except exceptions.APIError:
-            return _build_json_response({'error': 'Patient already has active episode'}, 400)
+            return _build_json_response(
+                {'error': 'Patient already has active episode'}, 400)
 
         episode.update_from_location_dict(data['location'], request.user)
         return _build_json_response(episode.to_dict(request.user), 201)
@@ -184,7 +179,8 @@ class EpisodeListView(View):
             filter_kwargs['tagging__team__name'] = subtag
         elif tag:
             filter_kwargs['tagging__team__name'] = tag
-        serialised = models.Episode.objects.serialised_active(self.request.user, **filter_kwargs)
+        serialised = models.Episode.objects.serialised_active(
+            self.request.user, **filter_kwargs)
         return _build_json_response(serialised)
 
 
@@ -205,6 +201,20 @@ def subrecord_detail_view(request, model, pk):
     elif request.method == 'DELETE':
         subrecord.delete()
         return _build_json_response('')
+
+
+class TaggingView(View):
+    def put(self, *args, **kwargs):
+        episode = models.Episode.objects.get(pk=kwargs['pk'])
+        data = _get_request_data(self.request)
+        if 'id' in data:
+            data.pop('id')
+        tag_names = []
+        for n, v in data.items():
+            if v:
+                tag_names.append(n)
+        episode.set_tag_names(tag_names, self.request.user)
+        return _build_json_response(episode.tagging_dict()[0])
 
 @require_http_methods(['POST'])
 def subrecord_create_view(request, model):
@@ -272,6 +282,14 @@ class SaveFilterModalView(TemplateView):
 class EpisodeDetailTemplateView(EpisodeTemplateView):
     template_name = 'episode_detail.html'
     column_schema = schema.detail_columns
+
+class TagsTemplateView(TemplateView):
+    template_name = 'tagging_modal.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(TagsTemplateView, self).get_context_data(**kwargs)
+        context['tags'] = models.Team.to_TAGS()
+        return context
 
 
 class SearchTemplateView(TemplateView):

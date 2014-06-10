@@ -16,25 +16,26 @@ class EpisodeManager(models.Manager):
         the inner key the subrecord API name.
         """
         # CircularImport - This is used as a manager by models in this module
-        from opal.models import EpisodeSubrecord, PatientSubrecord, TaggedSubrecordMixin, Tagging
+        from opal.models import EpisodeSubrecord, PatientSubrecord
+#, TaggedSubrecordMixin, Tagging
         episode_subs = defaultdict(lambda: defaultdict(list))
 
-        tag_dict = defaultdict(list)
-        tags = Tagging.objects.select_related('team').filter(episode__in=episodes)
-        for t in tags:
-            tag_dict[t.episode_id].append(t)
+        # tag_dict = defaultdict(list)
+        # tags = Tagging.objects.select_related('team').filter(episode__in=episodes)
+        # for t in tags:
+        #     tag_dict[t.episode_id].append(t)
 
         for model in EpisodeSubrecord.__subclasses__():
             name = model.get_api_name()
             subrecords = model.objects.filter(episode__in=episodes)
 
             for sub in subrecords:
-                if issubclass(model, TaggedSubrecordMixin):
-                    episode_subs[sub.episode_id][name].append(
-                        sub.to_dict(user, tags=tag_dict)
-                        )
-                else:
-                    episode_subs[sub.episode_id][name].append(sub.to_dict(user))
+                # if issubclass(model, TaggedSubrecordMixin):
+                #     episode_subs[sub.episode_id][name].append(
+                #         sub.to_dict(user, tags=tag_dict)
+                #         )
+                # else:
+                episode_subs[sub.episode_id][name].append(sub.to_dict(user))
         return episode_subs
 
     def serialised_legacy(self, user):
@@ -82,6 +83,7 @@ class EpisodeManager(models.Manager):
             for sub in subrecords:
                 patient_subs[sub.patient_id][name].append(sub.to_dict(user))
 
+
         serialised = []
         for e in episodes:
             d = {
@@ -91,10 +93,12 @@ class EpisodeManager(models.Manager):
                 'discharge_date'   : e.discharge_date,
                 'consistency_token': e.consistency_token
                 }
-            serialised.append(d)
 
             for key, value in episode_subs[e.id].items():
                 d[key] = value
             for key, value in patient_subs[e.patient_id].items():
                 d[key] = value
+            d['tagging'] = e.tagging_dict()
+            serialised.append(d)
+
         return serialised

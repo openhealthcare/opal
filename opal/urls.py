@@ -31,6 +31,9 @@ urlpatterns = patterns(
     url(r'^episode/(?P<tag>[a-z_]+)/?$', views.EpisodeListView.as_view()),
     url(r'^episode/(?P<tag>[a-z_]+)/(?P<subtag>[a-z_]+)/?$', views.EpisodeListView.as_view()),
     url(r'^episode/(?P<pk>\d+)/?$', views.episode_detail_view),
+
+    url(r'^tagging/(?P<pk>\d+)/?', views.TaggingView.as_view()),
+
     url(r'^search/extract/$', views.ExtractSearchView.as_view()),
     url(r'^search/extract/download$', views.DownloadSearchView.as_view()),
 
@@ -46,6 +49,7 @@ urlpatterns = patterns(
     url(r'^templates/discharge_list.html/?$', views.DischargeListTemplateView.as_view()),
     url(r'^templates/search.html/?$', views.SearchTemplateView.as_view()),
     url(r'^templates/extract.html/?$', views.ExtractTemplateView.as_view()),
+    url(r'^templates/modals/tagging.html/?$', views.TagsTemplateView.as_view()),
 
     url(r'^templates/modals/add_episode.html/?$',
         views.AddEpisodeTemplateView.as_view()),
@@ -59,6 +63,7 @@ urlpatterns = patterns(
         views.DeleteItemConfirmationView.as_view()),
     url(r'^templates/modals/save_filter_modal.html/?$',
         views.SaveFilterModalView.as_view()),
+
 )
 
 subrecord_models = models.PatientSubrecord.__subclasses__() + models.EpisodeSubrecord.__subclasses__()
@@ -75,3 +80,8 @@ for subrecord_model in subrecord_models:
     )
 
 urlpatterns += staticfiles_urlpatterns()
+
+from opal.utils import OpalPlugin
+
+for plugin in OpalPlugin.__subclasses__():
+    urlpatterns += plugin.urls

@@ -3,35 +3,36 @@ describe('services', function() {
 
     beforeEach(function() {
         module('opal.services');
-        columns = [
-            {
-                name: 'demographics',
-                single: true,
-                fields: [
-                    {name: 'name', type: 'string'},
-                    {name: 'date_of_birth', type: 'date'},
-                ]},
-            {
-                name: 'diagnosis',
-                single: false,
-                sort: 'date_of_diagnosis',
-                fields: [
-                    {name: 'date_of_diagnosis', type: 'date'},
-                    {name: 'condition', type: 'string'},
-                    {name: 'provisional', type: 'boolean'},
-                ]},
-        ];
+        columns = {
+            "default": [
+                {
+                    name: 'demographics',
+                    single: true,
+                    fields: [
+                        {name: 'name', type: 'string'},
+                        {name: 'date_of_birth', type: 'date'},
+                    ]},
+                {
+                    name: 'diagnosis',
+                    single: false,
+                    sort: 'date_of_diagnosis',
+                    fields: [
+                        {name: 'date_of_diagnosis', type: 'date'},
+                        {name: 'condition', type: 'string'},
+                        {name: 'provisional', type: 'boolean'},
+                    ]}
+                ]
+            };
+
         episodeData = {
             id: 123,
             date_of_admission: "2013-11-19",
             active: true,
             discharge_date: null,
-            location: [{
-                tags: {
-                    mine: true,
-                    hiv: true
-                }
-            }],
+            tagging: [{
+                mine: true,
+                tropical: true
+                }],
             demographics: [{
                 id: 101,
                 name: 'John Smith',
@@ -44,7 +45,6 @@ describe('services', function() {
                 ward: 'T10',
                 bed: '15',
                 date_of_admission: '2013-08-01',
-                tags: {'mine': true, 'tropical': true}
             }],
             diagnosis: [{
                 id: 102,
@@ -76,8 +76,8 @@ describe('services', function() {
                 "VFR",
                 "Visiting Friends and Relatives",
                 "Work"
-        ]
-    }
+            ]
+        }
     });
 
     describe('listSchemaLoader', function(){
@@ -96,7 +96,9 @@ describe('services', function() {
                 $httpBackend     = $injector.get('$httpBackend');
                 $rootScope       = $injector.get('$rootScope');
                 $q               = $injector.get('$q');
+                $route           = $injector.get('$route');
             });
+            $route.current = {params: {tag: 'micro'}};
         });
 
         it('should fetch the schema', function(){
@@ -105,13 +107,13 @@ describe('services', function() {
             $httpBackend.expectGET('/schema/list/');
             $httpBackend.whenGET('/schema/list/').respond(columns);
 
-            listSchemaLoader.then(
+            listSchemaLoader().then(
                 function(r){ result = r}
             );
             $rootScope.$apply();
             $httpBackend.flush();
 
-            expect(result.columns).toEqual(columns);
+            expect(result.columns).toEqual(columns.default);
         });
 
         it('should alert if the http request errors', function(){
@@ -120,7 +122,7 @@ describe('services', function() {
             $httpBackend.expectGET('/schema/list/');
             $httpBackend.whenGET('/schema/list/').respond(500, 'NO');
 
-            listSchemaLoader.then( function(r){ result = r } );
+            listSchemaLoader().then( function(r){ result = r } );
             $rootScope.$apply();
             $httpBackend.flush()
 
@@ -234,7 +236,7 @@ describe('services', function() {
             inject(function($injector) {
                 Schema = $injector.get('Schema');
             });
-            schema = new Schema(columns);
+            schema = new Schema(columns.default);
         });
 
         it('should be able to get the number of columns', function() {
@@ -311,10 +313,12 @@ describe('services', function() {
                 $q             = $injector.get('$q');
                 $httpBackend   = $injector.get('$httpBackend');
                 $rootScope     = $injector.get('$rootScope');
+                $route         = $injector.get('$route');
                 Episode        = $injector.get('Episode');
                 Schema         = $injector.get('Schema');
             });
             schema = new Schema(columns);
+            $route.current = {params: {tag: 'micro'}};
         });
 
         it('should fetch the episodes', function(){
@@ -322,8 +326,8 @@ describe('services', function() {
 
             $httpBackend.expectGET('/schema/list/');
             $httpBackend.whenGET('/schema/list/').respond(columns);
-            $httpBackend.expectGET('/episode');
-            $httpBackend.whenGET('/episode').respond([episodeData]);
+            $httpBackend.expectGET('/episode/micro');
+            $httpBackend.whenGET('/episode/micro').respond([episodeData]);
 
             episodesLoader().then(function(r){ result = r; });
 
@@ -340,8 +344,8 @@ describe('services', function() {
 
             $httpBackend.expectGET('/schema/list/');
             $httpBackend.whenGET('/schema/list/').respond(columns);
-            $httpBackend.expectGET('/episode');
-            $httpBackend.whenGET('/episode').respond(500, 'NO');
+            $httpBackend.expectGET('/episode/micro');
+            $httpBackend.whenGET('/episode/micro').respond(500, 'NO');
 
             episodesLoader()
 
@@ -364,13 +368,16 @@ describe('services', function() {
 
             inject(function($injector){
                 dischargedEpisodesLoader = $injector.get('dischargedEpisodesLoader');
-                $q             = $injector.get('$q');
-                $httpBackend   = $injector.get('$httpBackend');
-                $rootScope     = $injector.get('$rootScope');
-                Episode        = $injector.get('Episode');
-                Schema         = $injector.get('Schema');
+                listSchemaLoader         = $injector.get('listSchemaLoader');
+                $q                       = $injector.get('$q');
+                $httpBackend             = $injector.get('$httpBackend');
+                $route                   = $injector.get('$route');
+                $rootScope               = $injector.get('$rootScope');
+                Episode                  = $injector.get('Episode');
+                Schema                   = $injector.get('Schema');
             });
             schema = new Schema(columns);
+            $route.current = {params: {tag: 'micro'}};
         });
 
         it('should query for discharged episodes', function(){
@@ -452,13 +459,14 @@ describe('services', function() {
             $scope.currentTag = 'tropical';
             expect(episodeVisibility(episode, $scope, false)).toBe(true);
         });
-        it('should reject if the ward filter fails', function(){
+        it('should reject if the name filter fails', function(){
             $scope.currentTag = 'tropical';
-            $scope.query.ward = 'fake ward';
+            $scope.query.name = 'Fake Name';
             expect(episodeVisibility(episode, $scope, false)).toBe(false);
         });
-        it('should allow if the ward filter passes', function(){
+        it('should allow if the name filter passes', function(){
             $scope.currentTag = 'tropical';
+            $scope.query.name = 'john'
             expect(episodeVisibility(episode, $scope, false)).toBe(true);
         });
         it('should allow if in the tag & unfiltered', function(){
@@ -478,7 +486,7 @@ describe('services', function() {
                 Item = $injector.get('Item');
             });
 
-            schema = new Schema(columns);
+            schema = new Schema(columns.default);
             resource = new EpisodeResource(episodeData);
             episode = new Episode(resource, schema);
         });
@@ -513,13 +521,14 @@ describe('services', function() {
         });
 
         it('should get the current tags', function(){
+            console.log(episode.tagging)
             expect(episode.getTags()).toEqual(['mine', 'tropical'])
         });
 
         it('should be able to add a new item', function() {
             var item = new Item(
                 {id: 104, condition: 'Ebola', provisional: false,
-                date_of_diagnosis: '2005-02-18'},
+                 date_of_diagnosis: '2005-02-18'},
                 episode,
                 schema.getColumn('diagnosis')
             );
@@ -613,7 +622,7 @@ describe('services', function() {
                 Item = $injector.get('Item');
             });
 
-            item = new Item(episodeData.demographics[0], mockEpisode, columns[0]);
+            item = new Item(episodeData.demographics[0], mockEpisode, columns.default[0]);
         });
 
         it('should have correct attributes', function() {
@@ -664,7 +673,7 @@ describe('services', function() {
                     };
                     item = new Item(episodeData.demographics[0],
                                     mockEpisode,
-                                    columns[0]);
+                                    columns.default[0]);
                     $httpBackend.whenPUT('/demographics/101/')
                         .respond(attrsWithJsonDate);
                 });
@@ -689,7 +698,7 @@ describe('services', function() {
 
                 beforeEach(function() {
                     attrs = {id: 104, condition: 'Ebola', provisional: false};
-                    item = new Item({}, mockEpisode, columns[1]);
+                    item = new Item({}, mockEpisode, columns.default[1]);
                     $httpBackend.whenPOST('/diagnosis/').respond(attrs);
                 });
 
@@ -717,7 +726,7 @@ describe('services', function() {
 
             describe('deleting item', function() {
                 beforeEach(function() {
-                    item = new Item(episodeData.diagnosis[1], mockEpisode, columns[1]);
+                    item = new Item(episodeData.diagnosis[1], mockEpisode, columns.default[1]);
                     $httpBackend.whenDELETE('/diagnosis/103/').respond();
                 });
 
@@ -742,10 +751,13 @@ describe('services', function() {
 
         beforeEach(function() {
             inject(function($injector) {
-                episodesLoader = $injector.get('episodesLoader');
-                $httpBackend = $injector.get('$httpBackend');
-                $rootScope = $injector.get('$rootScope');
+                listSchemaLoader = $injector.get('listSchemaLoader');
+                episodesLoader   = $injector.get('episodesLoader');
+                $route           = $injector.get('$route');
+                $httpBackend     = $injector.get('$httpBackend');
+                $rootScope       = $injector.get('$rootScope');
             });
+            $route.current = {params: {tag: 'micro'}}
         });
 
         it('should resolve to an object of episodes', function() {
@@ -754,7 +766,7 @@ describe('services', function() {
 
             $httpBackend.whenGET('/schema/list/').respond(columns);
             // TODO trailing slash?
-            $httpBackend.whenGET('/episode').respond([episodeData]);
+            $httpBackend.whenGET('/episode/micro').respond([episodeData]);
             promise.then(function(value) {
                 episodes = value;
             });

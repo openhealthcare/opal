@@ -1,103 +1,104 @@
-      <div class="modal-header">
-	    <button type="button" class="close" ng-click="cancel()">×</button>
-	    <h3>New record</h3>
-      </div>
-      <div class="modal-body">
-	    <form class="form-horizontal" name="newEpisodeForm">
-		  <div class="control-group">
-			<label class="control-label">Hospital number</label>
-			<div class="controls"><label>[[editing.demographics.hospital_number]]</label></div>
-		  </div>
-		  <div class="control-group">
-			<label class="control-label">Name</label>
-			<div class="controls">
-			  <input type="text" ng-model="editing.demographics.name">
-			</div>
-		  </div>
-		  <div class="control-group">
-			<label class="control-label">Date of birth</label>
-			<div class="controls">
-			  <input type="text"
-                     name="date_of_birth"
-				     ng-model="editing.demographics.date_of_birth"
-				     ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
-				     placeholder="dd/mm/yyyy" />
-                     <span class="help-block" ng-show="newEpisodeForm.date_of_birth.$invalid">
-                       Date of Birth must be dd/mm/yyyy
-                     </span>
+<div class="modal-header">
+  <button type="button" class="close" ng-click="cancel()">×</button>
+  <h3>New record</h3>
+</div>
+<div class="modal-body">
+  <form class="form-horizontal" name="newEpisodeForm">
+	<div class="control-group">
+	  <label class="control-label">Hospital number</label>
+	  <div class="controls"><label>[[editing.demographics.hospital_number]]</label></div>
+	</div>
+	<div class="control-group">
+	  <label class="control-label">Name</label>
+	  <div class="controls">
+		<input type="text" ng-model="editing.demographics.name">
+	  </div>
+	</div>
+	<div class="control-group">
+	  <label class="control-label">Date of birth</label>
+	  <div class="controls">
+		<input type="text"
+               name="date_of_birth"
+			   ng-model="editing.demographics.date_of_birth"
+			   ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
+			   placeholder="dd/mm/yyyy" />
+               <span class="help-block" ng-show="newEpisodeForm.date_of_birth.$invalid">
+                 Date of Birth must be dd/mm/yyyy
+               </span>
 
-			</div>
-		  </div>
-		  <div class="control-group">
-			<label class="control-label">Category</label>
-			<div class="controls">
-              <select class="form-control" ng-model="editing.location.category">
-                <option value="">---------</option>
-                <option ng-repeat="category in episode_category_list">[[category]]</option>
-              </select>
-			</div>
-		  </div>
-		  <div class="control-group">
-			<label class="control-label">Hospital</label>
-			<div class="controls">
-			  <input type="text"
-                     ng-model="editing.location.hospital"
-                     ng-options="h for h in hospital_list"
-                     bs-typeahead>
-			</div>
-		  </div>
-		  <div class="control-group">
-			<label class="control-label">Ward</label>
-			<div class="controls">
-			  <input type="text" ng-model="editing.location.ward">
-			</div>
-		  </div>
-		  <div class="control-group">
-			<label class="control-label">Bed</label>
-			<div class="controls">
-			  <input type="text" ng-model="editing.location.bed">
-			</div>
-		  </div>
-		  <div class="control-group">
-			<label class="control-label">Date of admission</label>
-			<div class="controls">
-			  <input type="text" ng-model="editing.date_of_admission" bs-datepicker>
-			</div>
-		  </div>
-
-		  <div class="control-group">
-			<label class="control-label">Tags</label>
-			<div class="controls">
-			  {% for tag in tags %}
-				<label class="checkbox">
-				  <input type="checkbox" ng-model="editing.location.tags.{{tag.name}}">
-				  {{tag.title}}
-				</label>
-			  {% endfor %}
-			</div>
-		  </div>
-
-		  <div class="control-group"
-			   ng-show="showSubtags([{% for tag in tags %}{% if tag.subtags %}'{{tag.name}}'{% if not forloop.last%},{% endif %}{% endif %}{% endfor %} ''])"
-			   >
-			   <label class="control-label">Sub Tags</label>
-			   <div class="controls">
-				 {% for tag in tags %}
-				   {% if tag.subtags %}
-				     {% for subtag in tag.subtags %}
-				       <label class="checkbox"
-					          ng-show="editing.location.tags.{{tag.name}} == true">
-					          <input type="checkbox" ng-model="editing.location.tags.{{subtag.name}}">
-					          {{subtag.title}}
-				       </label>
-				     {% endfor %}
-				   {% endif %}
-				 {% endfor %}
-			   </div>
-		  </div>
-	    </form>
+	  </div>
+	</div>
+	<div class="control-group">
+	  <label class="control-label">Category</label>
+	  <div class="controls">
+        <select class="form-control" ng-model="editing.location.category">
+          <option value="">---------</option>
+          <option ng-repeat="category in episode_category_list">[[category]]</option>
+        </select>
+	  </div>
+	</div>
+    <div class="control-group">
+      <label class="control-label">Hospital</label>
+      <div class="controls">
+        <select class="form-control" ng-model="editing.hospital">
+          <option value="">---------</option>
+          <option ng-repeat="hospital in hospital_list">[[hospital]]</option>
+          <option>Other</option>
+        </select>
       </div>
-      <div class="modal-footer">
-	    <button class="btn btn-primary" ng-click="save()" ng-disabled="newEpisodeForm.date_of_birth.$invalid">Save record</button>
-	    <button class="btn" ng-click="cancel()">Cancel</button>
-      </div>
+    </div>
+	<div class="control-group">
+	  <label class="control-label">Ward</label>
+	  <div class="controls">
+		<input type="text" ng-model="editing.location.ward">
+	  </div>
+	</div>
+	<div class="control-group">
+	  <label class="control-label">Bed</label>
+	  <div class="controls">
+		<input type="text" ng-model="editing.location.bed">
+	  </div>
+	</div>
+	<div class="control-group">
+	  <label class="control-label">Date of admission</label>
+	  <div class="controls">
+		<input type="text" ng-model="editing.date_of_admission" bs-datepicker>
+	  </div>
+	</div>
+
+	<div class="control-group">
+	  <label class="control-label">Tags</label>
+	  <div class="controls">
+		{% for tag in tags %}
+		  <label class="checkbox">
+			<input type="checkbox" ng-model="editing.location.tags.{{tag.name}}">
+			{{tag.title}}
+		  </label>
+		{% endfor %}
+	  </div>
+	</div>
+
+	<div class="control-group"
+		 ng-show="showSubtags([{% for tag in tags %}{% if tag.subtags %}'{{tag.name}}'{% if not forloop.last%},{% endif %}{% endif %}{% endfor %} ''])"
+		 >
+		 <label class="control-label">Sub Tags</label>
+		 <div class="controls">
+		   {% for tag in tags %}
+			 {% if tag.subtags %}
+			   {% for subtag in tag.subtags %}
+				 <label class="checkbox"
+					    ng-show="editing.location.tags.{{tag.name}} == true">
+					    <input type="checkbox" ng-model="editing.location.tags.{{subtag.name}}">
+					    {{subtag.title}}
+				 </label>
+			   {% endfor %}
+			 {% endif %}
+		   {% endfor %}
+		 </div>
+	</div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" ng-click="save()" ng-disabled="newEpisodeForm.date_of_birth.$invalid">Save record</button>
+  <button class="btn" ng-click="cancel()">Cancel</button>
+</div>
