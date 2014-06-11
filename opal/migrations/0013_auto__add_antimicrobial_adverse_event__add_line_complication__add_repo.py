@@ -15,12 +15,12 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'opal', ['Antimicrobial_adverse_event'])
 
-        # Adding model 'Line_complication'
-        db.create_table(u'opal_line_complication', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Line_complication'])
+        # # Adding model 'Line_complication'
+        # db.create_table(u'opal_line_complication', (
+        #     (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+        #     ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
+        # ))
+        # db.send_create_signal(u'opal', ['Line_complication'])
 
         # Adding model 'Reported_infections'
         db.create_table(u'opal_reported_infections', (
