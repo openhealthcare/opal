@@ -50,6 +50,16 @@ class UpdatesFromDictMixin(object):
 
     @classmethod
     def _get_fieldnames_to_serialize(cls):
+        """
+        Return the list of field names we want to serialize.
+        """
+        if hasattr(cls, '_fieldnames'):
+            fn = cls._fieldnames
+            for mandatory in ['id', 'consistency_token']:
+                if mandatory not in fn:
+                    fn.append(mandatory)
+            return fn
+
         fieldnames = [f.attname for f in cls._meta.fields]
         for name, value in vars(cls).items():
             if isinstance(value, ForeignKeyOrFreeText):

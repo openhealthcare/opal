@@ -125,7 +125,6 @@ class Episode(UpdatesFromDictMixin, models.Model):
         4. There is no step 4.
         """
         original_tag_names = self.get_tag_names(user)
-        print tag_names
 
         for tag_name in original_tag_names:
             if tag_name not in tag_names:
@@ -136,7 +135,6 @@ class Episode(UpdatesFromDictMixin, models.Model):
 
         for tag_name in tag_names:
             if tag_name not in original_tag_names:
-                print tag_name
                 params = {'team': Team.objects.get(name=tag_name)}
                 if tag_name == 'mine':
                     params['user'] = user
@@ -265,6 +263,7 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
     @classmethod
     def build_field_schema(cls):
         field_schema = []
+        print cls._get_fieldnames_to_serialize()
         for fieldname in cls._get_fieldnames_to_serialize():
             if fieldname in ['id', 'patient_id', 'episode_id']:
                 continue
