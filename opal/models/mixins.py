@@ -9,42 +9,6 @@ from django.db import models
 from opal import exceptions
 from opal.utils.fields import ForeignKeyOrFreeText
 
-# class TaggedSubrecordMixin(object):
-
-#     @classmethod
-#     def _get_fieldnames_to_serialize(cls):
-#         fieldnames = super(TaggedSubrecordMixin, cls)._get_fieldnames_to_serialize()
-#         fieldnames.append('tags')
-#         return fieldnames
-
-#     @classmethod
-#     def get_field_type_for_tags(cls):
-#         return 'list'
-
-#     def get_tags(self, user):
-#         return {tag_name: True for tag_name in self.episode.get_tag_names(user)}
-
-#     # value is a dictionary mapping tag names to a boolean
-#     def set_tags(self, value, user):
-#         tag_names = [k for k, v in value.items() if v and k]
-#         self.episode.set_tag_names(tag_names, user)
-
-#     def to_dict(self, user, tags=None):
-#         """
-#         When we query large numbers of episodes we pass in the
-#         possible tags here.
-#         """
-#         fieldnames = self._get_fieldnames_to_serialize()
-#         if not tags:
-#             # We haven't pre-loaded the tags, so we can run the
-#             # expensive query route
-#             fieldnames.append('tags')
-#             return self._to_dict(user, fieldnames)
-
-#         d = self._to_dict(user, fieldnames)
-#         d['tags'] = {t.team.name: True for t in tags[self.episode_id]}
-#         return d
-
 
 class UpdatesFromDictMixin(object):
 
