@@ -24,6 +24,15 @@ angular.module('opal.controllers').controller(
 
     $scope.criteria = [_.clone($scope.model)];
 
+    $scope.completeCriteria =  function(){
+        return _.filter($scope.criteria, function(c){
+            if(c.column &&  c.field &&  c.query){
+                return true
+            }
+            return false
+        })
+    };
+
     $scope.searchableFields = function(column){
         // TODO - don't hard-code this
         if(column.name == 'microbiology_test'){
@@ -76,7 +85,7 @@ angular.module('opal.controllers').controller(
 
     $scope.search = function(){
         $scope.state = 'pending';
-        $http.post('/search/extract/', $scope.criteria).success(
+        $http.post('/search/extract/', $scope.completeCriteria()).success(
             function(results){
                 $scope.results = results;
                 $scope.state = 'normal';
