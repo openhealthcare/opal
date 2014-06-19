@@ -71,6 +71,8 @@
                  class="form-control"
                  ng-model="query.query"
                  ng-show="isText(query.column, query.field) && query.field != null"
+                 ng-options="x for x in query.lookup_list"
+                 bs-typeahead
                  />
 	      <input type="text" ng-model="query.query"
                  class="form-control"
