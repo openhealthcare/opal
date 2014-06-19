@@ -263,7 +263,6 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
     @classmethod
     def build_field_schema(cls):
         field_schema = []
-        print cls._get_fieldnames_to_serialize()
         for fieldname in cls._get_fieldnames_to_serialize():
             if fieldname in ['id', 'patient_id', 'episode_id']:
                 continue
@@ -281,7 +280,13 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
                     field_type = camelcase_to_underscore(field.__name__[:-5])
             else:
                 field_type = getter()
-            field_schema.append({'name': fieldname, 'type': field_type})
+            lookup_list = None
+            if cls._get_field_type(fieldname) == ForeignKeyOrFreeText:
+                fld = getattr(cls, fieldname)
+                lookup_list = camelcase_to_underscore(fld.foreign_model.__name__)
+            field_schema.append({'name': fieldname,
+                                 'type': field_type,
+                                 'lookup_list': lookup_list})
         return field_schema
 
     def _to_dict(self, user, fieldnames):
