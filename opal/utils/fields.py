@@ -21,7 +21,7 @@ class ForeignKeyOrFreeText(property):
         setattr(cls, name, self)
         fk_field = ForeignKey(self.foreign_model, blank=True, null=True)
         fk_field.contribute_to_class(cls, self.fk_field_name)
-        ft_field = CharField(max_length=255, blank=True)
+        ft_field = CharField(max_length=255, blank=True, null=True, default='')
         ft_field.contribute_to_class(cls, self.ft_field_name)
 
     def __set__(self, inst, val):
