@@ -98,6 +98,7 @@
         <link rel="shortcut icon" href="{% static 'img/ohc-icon.png' %}">
 	</head>
 	<body>
+      {% if OPAL_EXTRA_HEADER %}{% include OPAL_EXTRA_HEADER %}{% endif %}
       {% block navbar %}{% include 'navbar.html' %}{% endblock %}
 		<div class="container content-offset" loadingbar>
           <h3>Loading...</h3>
