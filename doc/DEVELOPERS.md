@@ -6,6 +6,17 @@ Your implementation should be a Django project that includes OPAL as a Django ap
 OPAL settings
 -------------
 
+OPAL_LOG_OUT_DURATION = The number of milliseconds after which to log out our user
+
+OPAL_TAGS_MODULE = DEPRECIATED  TODO: Kill all references to this.
+
+OPAL_BRAND_NAME = The branding to be displayed as the masthead
+
+OPAL_EXTRA_APPLICATION = A template to include in the HEAD
+
+OPAL_EXTRA_HEADER = A template to include above the main nav
+
+
 TODO
 
 Defining Models
