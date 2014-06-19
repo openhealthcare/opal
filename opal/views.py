@@ -5,6 +5,7 @@ import json
 import datetime
 
 from django.contrib.auth.views import login
+from django.contrib.contenttypes.models import ContentType
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotFound
@@ -488,9 +489,61 @@ class Extractor(View):
             self.query = _get_request_data(self.request)
         return self.query
 
+    def _episodes_for_boolean_fields(self, query, field, contains):
+        model = query['column'].replace(' ', '_').lower()
+        val = query['query'] == 'true'
+        kw = {'{0}__{1}'.format(model.replace('_', ''), field): val}
+        eps = models.Episode.objects.filter(**kw)
+        return eps
+
+    def _episodes_for_date_fields(self, query, field, contains):
+        model = query['column'].replace(' ', '').lower()
+        qtype = ''
+        val = datetime.datetime.strptime(query['query'], "%d/%m/%Y")
+        if query['queryType'] == 'Before':
+            qtype = '__lte'
+        elif query['queryType'] == 'After':
+            qtype = '__gte'
+        kw = {'{0}__{1}{2}'.format(model, field, qtype): val}
+        eps = models.Episode.objects.filter(**kw)
+        return eps
+
+    def _episodes_for_fkorft_fields(self, query, field, contains, Mod):
+        model = query['column'].replace(' ', '_').lower()
+
+        # Look up to see if there is a synonym.
+        content_type = ContentType.objects.get_for_model(getattr(Mod, field).foreign_model)
+        name = query['query']
+        try:
+            from opal.models import Synonym
+            synonym = Synonym.objects.get(content_type=content_type, name=name)
+            name = synonym.content_object.name
+        except Synonym.DoesNotExist: # maybe this is pointless exception bouncing?
+            pass # That's fine.
+
+        kw_fk = {'{0}__{1}_fk__name{2}'.format(model.replace('_', ''), field, contains): name}
+        kw_ft = {'{0}__{1}_ft{2}'.format(model.replace('_', ''), field, contains): query['query']}
+
+        if issubclass(Mod, models.EpisodeSubrecord):
+
+            qs_fk = models.Episode.objects.filter(**kw_fk)
+            qs_ft = models.Episode.objects.filter(**kw_ft)
+            eps = set(list(qs_fk) + list(qs_ft))
+
+        elif issubclass(Mod, models.PatientSubrecord):
+            qs_fk = models.Patient.objects.filter(**kw_fk)
+            qs_ft = models.Patient.objects.filter(**kw_ft)
+            pats = set(list(qs_fk) + list(qs_ft))
+            eps = []
+            for p in pats:
+                eps += list(p.episode_set.all())
+        return eps
+
     def episodes_for_criteria(self, criteria):
-        from django.db import models as m
-        djangomodels = m
+        """
+        Given one set of criteria, return episodes that match it.
+        """
+        from django.db import models as djangomodels
 
         query = criteria
         querytype = query['queryType']
@@ -502,59 +555,26 @@ class Extractor(View):
         field = query['field'].replace(' ', '_').lower()
 
         Mod = None
-        for m in m.get_models():
+        for m in djangomodels.get_models():
             if m.__name__.lower() == model_name:
                 if not Mod:
                     Mod = m
                 elif (issubclass(m, models.EpisodeSubrecord) or issubclass(m, models.PatientSubrecord)):
                     Mod = m
 
-
         if model_name.lower() == 'tags':
             Mod = models.Tagging
 
         named_fields = [f for f in Mod._meta.fields if f.name == field]
 
-        # Do Boolean fields here
-        if len(named_fields) == 1 and isinstance(named_fields[0],
-                                                 djangomodels.BooleanField):
-            model = query['column'].replace(' ', '_').lower()
-            val = query['query'] == 'true'
-            kw = {'{0}__{1}'.format(model.replace('_', ''), field): val}
-            eps = models.Episode.objects.filter(**kw)
+        if len(named_fields) == 1 and isinstance(named_fields[0],djangomodels.BooleanField):
+            eps = self._episodes_for_boolean_fields(query, field, contains)
 
-        # Do Date fields here
         elif len(named_fields) == 1 and isinstance(named_fields[0], djangomodels.DateField):
-            model = query['column'].replace(' ', '').lower()
-            qtype = ''
-            val = datetime.datetime.strptime(query['query'], "%d/%m/%Y")
-            if query['queryType'] == 'Before':
-                qtype = '__lte'
-            elif query['queryType'] == 'After':
-                qtype = '__gte'
-            kw = {'{0}__{1}{2}'.format(model, field, qtype): val}
-            eps = models.Episode.objects.filter(**kw)
+            eps = self._episodes_for_date_fields(query, field, contains)
 
-        # FK / FT fields
         elif hasattr(Mod, field) and isinstance(getattr(Mod, field), fields.ForeignKeyOrFreeText):
-            model = query['column'].replace(' ', '_').lower()
-
-            kw_fk = {'{0}__{1}_fk__name{2}'.format(model.replace('_', ''), field, contains): query['query']}
-            kw_ft = {'{0}__{1}_ft{2}'.format(model.replace('_', ''), field, contains): query['query']}
-
-            if issubclass(Mod, models.EpisodeSubrecord):
-
-                qs_fk = models.Episode.objects.filter(**kw_fk)
-                qs_ft = models.Episode.objects.filter(**kw_ft)
-                eps = set(list(qs_fk) + list(qs_ft))
-
-            elif issubclass(Mod, models.PatientSubrecord):
-                qs_fk = models.Patient.objects.filter(**kw_fk)
-                qs_ft = models.Patient.objects.filter(**kw_ft)
-                pats = set(list(qs_fk) + list(qs_ft))
-                eps = []
-                for p in pats:
-                    eps += list(p.episode_set.all())
+            eps = self._episodes_for_fkorft_fields(query, field, contains, Mod)
 
         else:
             model = query['column'].replace(' ', '').lower()
