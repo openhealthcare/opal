@@ -20,39 +20,34 @@ angular.module('opal.controllers').controller(
         $scope.tags = tags;
 
 	    $scope.findByHospitalNumber = function() {
-            var deferred = $q.defer();
-            var result = {
-				patients: [],
-				hospitalNumber: $scope.model.hospitalNumber
-			};
 
-            deferred.promise.then($scope.addForHospitalNumber);
+            Episode.findByHospitalNumber(
+                $scope.model.hospitalNumber,
+                {
+                    newPatient: $scope.newPatient,
+                    newForPatient: $scope.newForPatient,
+                    error: function(){
+			            // This shouldn't happen, but we should probably handle it better
+			            alert('ERROR: More than one patient found with hospital number');
+                        $modalInstance.close(null)
+                    }
+                }
+            );
 
-            if($scope.model.hospitalNumber){
-			    // The user entered a hospital number
-			    $http.get('patient/?hospital_number=' + $scope.model.hospitalNumber)
-                    .success(function(response) {
-					    // We have retrieved patient records matching the hospital number
-					    result.patients = response;
-                        deferred.resolve(result);
-				    });
-            }else{
-                deferred.resolve(result);
-            }
 	    };
 
-        $scope.addForHospitalNumber = function(result){
-		    if (result.patients.length == 0) {
-                $scope.newPatient(result);
-		    } else if (result.patients.length == 1) {
-			    // There is a single patient with this hospital number
-                $scope.newForPatient(result.patients[0]);
-		    } else {
-			    // This shouldn't happen, but we should probably handle it better
-			    alert('ERROR: More than one patient found with hospital number');
-			    $modalInstance.close(null);
-		    };
-        };
+        // $scope.addForHospitalNumber = function(result){
+		//     if (result.patients.length == 0) {
+        //         $scope.newPatient(result);
+		//     } else if (result.patients.length == 1) {
+		// 	    // There is a single patient with this hospital number
+        //         $scope.newForPatient(result.patients[0]);
+		//     } else {
+		// 	    // This shouldn't happen, but we should probably handle it better
+		// 	    alert('ERROR: More than one patient found with hospital number');
+		// 	    $modalInstance.close(null);
+		//     };
+        // };
 
         $scope.newPatient = function(result){
 			// There is no patient with this hospital number

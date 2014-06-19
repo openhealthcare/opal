@@ -1,8 +1,12 @@
-Your implemntation
-==================
+Your implementation
+===================
 
 Your implementation should be a Django project that includes OPAL as a Django app.
 
+OPAL settings
+-------------
+
+TODO
 
 Defining Models
 ---------------
