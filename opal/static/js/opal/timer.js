@@ -12,14 +12,14 @@
                 $( document ).idleTimer("destroy");
                 $('#logout-modal').modal().idleTimer(10000)
                 $('#logout-modal').on('idle.idleTimer', function(){
-                        window.location.pathname = '/accounts/logout/';
-                    });
+                    window.location.pathname = '/accounts/logout/';
+                });
             });
         },
 
         initialize: function(){
             $(document).ready( function(){
-                $('#logout-modal').on('hide', function(){
+                $('#logout-modal').on('hidden.bs.modal', function(){
                     $('#logout-modal').idleTimer('destroy')
                     Timer.start()
                 })

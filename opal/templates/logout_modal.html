@@ -1,12 +1,13 @@
-<div id="logout-modal" class="modal hide fade">
-  <div class="modal fade">
+
+
+<div id="logout-modal" class="modal" tabindex="-1" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" data-dismiss="modal" class="close">×</button>
+	    <div class="modal-header">
+		  <button type="button" class="close" data-dismiss="modal" ng-click="cancelDelete()">×</button>
           <h3>Inactivity Alert!</h3>
-        </div>
-        <div class="modal-body">
+	    </div>
+	    <div class="modal-body">
           <p>You have been inactive for quite some time - we're about to log you out!</p>
         </div>
         <div class="modal-footer">
@@ -15,4 +16,3 @@
       </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
   </div><!-- /.modal -->
-</div><!--logout-modal-->
