@@ -52,12 +52,23 @@ directives.directive('placeholder', function($timeout){
 
 directives.directive('markdown', function () {
 	return function postLink (scope, element, attrs) {
-		scope.$watch('item.' + attrs.markdown, function(){
-			if(!_.isUndefined(scope.item[attrs.markdown])){
-				var converter = new Showdown.converter({extensions: [OpalDown]});
-				element.html(converter.makeHtml(scope.item[attrs.markdown]));
-			}
-		})
+	    
+	    var prefix = 'item';
+	    if( _.isUndefined(scope['item']) ){
+		if(! _.isUndefined(scope['editing']) )
+		    {
+			prefix = 'editing';
+		    }
+		else
+		    {
+			return;
+		    }
+	    }
+	    scope.$watch(prefix + '.' + attrs.markdown, function(){
+		    var converter = new Showdown.converter({extensions: [OpalDown]});
+		    element.html(converter.makeHtml(scope[prefix][attrs.markdown]));
+		}
+		);
 	}
 });
 
