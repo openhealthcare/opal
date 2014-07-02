@@ -33,10 +33,10 @@ angular.module('opal.controllers')
 	}
 
 	$scope.showSubtags = function(withsubtags){
-		var show =  _.some(withsubtags, function(tag){
-            return $scope.editing.tagging[tag]
-        });
-		return show
+	    var show =  _.some(withsubtags, function(tag){
+			return $scope.editing.tagging[0][tag]
+		});
+	    return show
 	};
 
 	$scope.save = function() {
