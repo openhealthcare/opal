@@ -46,7 +46,7 @@ angular.module('opal.controllers')
         // TODO - this is obviously broken now that location is not like this.
 		value = $scope.editing.date_of_admission;
 		if (value) {
-            var doa = moment(value, 'DD/MM/YYYY').format('YYYY-MM-DD');
+            var doa = moment(value).format('YYYY-MM-DD');
 			$scope.editing.date_of_admission = doa;
 		}
 
@@ -55,6 +55,11 @@ angular.module('opal.controllers')
             var dob = moment(value, 'DD/MM/YYYY').format('YYYY-MM-DD');
 			$scope.editing.demographics.date_of_birth = dob;
 		}
+
+        // TODO: Un-hard code this as part of elcid#192
+        if($scope.editing.tagging[0].opat){
+            $scope.editing.tagging[0].opat_referrals = true;
+        }
 
 		$http.post('episode/', $scope.editing).success(function(episode) {
 			episode = new Episode(episode, schema);
