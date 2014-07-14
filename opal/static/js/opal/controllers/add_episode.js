@@ -46,13 +46,21 @@ angular.module('opal.controllers')
         // TODO - this is obviously broken now that location is not like this.
 		value = $scope.editing.date_of_admission;
 		if (value) {
-            var doa = moment(value).format('YYYY-MM-DD');
+            if(typeof value == 'string'){
+                var doa = moment(value, 'DD/MM/YYYY').format('YYYY-MM-DD');
+            }else{
+                var doa = moment(value).format('YYYY-MM-DD');
+            }
 			$scope.editing.date_of_admission = doa;
 		}
 
 		value = $scope.editing.demographics.date_of_birth;
 		if (value) {
-            var dob = moment(value, 'DD/MM/YYYY').format('YYYY-MM-DD');
+            if(typeof value == 'string'){
+                var dob = moment(value, 'DD/MM/YYYY').format('YYYY-MM-DD');
+            }else{
+                var dob = moment(value).format('YYYY-MM-DD');
+            }
 			$scope.editing.demographics.date_of_birth = dob;
 		}
 
