@@ -103,7 +103,7 @@ def json_to_csv(episodes, description, user):
         e = episode.to_dict(user)
         try:
             historic = models.Tagging.historic_tags_for_episodes([e['id']])[e['id']].keys()
-            current = e['location'][0]['tags'].keys()
+            current = e['tagging'][0].keys()
             current = set(current + historic)
             tags = ";".join(current)
 
