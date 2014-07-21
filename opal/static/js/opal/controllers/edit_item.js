@@ -20,9 +20,9 @@ angular.module('opal.controllers').controller(
     };
 
     // TODO - reimplement this
-	$timeout(function() {
-		$modalInstance.modalEl.find('input,textarea').first().focus();
-	});
+	// $timeout(function() {
+	// 	$modalInstance.modalEl.find('input,textarea').first().focus();
+	// });
 
 	for (var name in options) {
 		if (name.indexOf('micro_test') != 0) {

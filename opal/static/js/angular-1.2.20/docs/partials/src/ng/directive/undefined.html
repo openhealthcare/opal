@@ -1,0 +1,46 @@
+
+
+<div>
+  <a ng-click="openPlunkr('examples/example-example48')" class="btn pull-right">
+    <i class="glyphicon glyphicon-edit">&nbsp;</i>
+    Edit in Plunker</a>
+  <div class="runnable-example"
+      path="examples/example-example48"
+      module="selectExample">
+
+   
+    <div class="runnable-example-file" 
+      name="index.html"
+      language="html"
+      type="html">
+      <pre><code>&lt;script&gt;&#10;angular.module(&#39;selectExample&#39;, [])&#10;  .controller(&#39;ExampleController&#39;, [&#39;$scope&#39;, function($scope) {&#10;    $scope.colors = [&#10;      {name:&#39;black&#39;, shade:&#39;dark&#39;},&#10;      {name:&#39;white&#39;, shade:&#39;light&#39;},&#10;      {name:&#39;red&#39;, shade:&#39;dark&#39;},&#10;      {name:&#39;blue&#39;, shade:&#39;dark&#39;},&#10;      {name:&#39;yellow&#39;, shade:&#39;light&#39;}&#10;    ];&#10;    $scope.myColor = $scope.colors[2]; // red&#10;  }]);&#10;&lt;/script&gt;&#10;&lt;div ng-controller=&quot;ExampleController&quot;&gt;&#10;  &lt;ul&gt;&#10;    &lt;li ng-repeat=&quot;color in colors&quot;&gt;&#10;      Name: &lt;input ng-model=&quot;color.name&quot;&gt;&#10;      [&lt;a href ng-click=&quot;colors.splice($index, 1)&quot;&gt;X&lt;/a&gt;]&#10;    &lt;/li&gt;&#10;    &lt;li&gt;&#10;      [&lt;a href ng-click=&quot;colors.push({})&quot;&gt;add&lt;/a&gt;]&#10;    &lt;/li&gt;&#10;  &lt;/ul&gt;&#10;  &lt;hr/&gt;&#10;  Color (null not allowed):&#10;  &lt;select ng-model=&quot;myColor&quot; ng-options=&quot;color.name for color in colors&quot;&gt;&lt;/select&gt;&lt;br&gt;&#10;&#10;  Color (null allowed):&#10;  &lt;span  class=&quot;nullable&quot;&gt;&#10;    &lt;select ng-model=&quot;myColor&quot; ng-options=&quot;color.name for color in colors&quot;&gt;&#10;      &lt;option value=&quot;&quot;&gt;-- choose color --&lt;/option&gt;&#10;    &lt;/select&gt;&#10;  &lt;/span&gt;&lt;br/&gt;&#10;&#10;  Color grouped by shade:&#10;  &lt;select ng-model=&quot;myColor&quot; ng-options=&quot;color.name group by color.shade for color in colors&quot;&gt;&#10;  &lt;/select&gt;&lt;br/&gt;&#10;&#10;&#10;  Select &lt;a href ng-click=&quot;myColor = { name:&#39;not in list&#39;, shade: &#39;other&#39; }&quot;&gt;bogus&lt;/a&gt;.&lt;br&gt;&#10;  &lt;hr/&gt;&#10;  Currently selected: {{ {selected_color:myColor}  }}&#10;  &lt;div style=&quot;border:solid 1px black; height:20px&quot;&#10;       ng-style=&quot;{&#39;background-color&#39;:myColor.name}&quot;&gt;&#10;  &lt;/div&gt;&#10;&lt;/div&gt;</code></pre>
+    </div>
+  
+    <div class="runnable-example-file" 
+      name="protractor.js"
+      type="protractor"
+      language="js">
+      <pre><code>it(&#39;should check ng-options&#39;, function() {&#10;  expect(element(by.binding(&#39;{selected_color:myColor}&#39;)).getText()).toMatch(&#39;red&#39;);&#10;  element.all(by.model(&#39;myColor&#39;)).first().click();&#10;  element.all(by.css(&#39;select[ng-model=&quot;myColor&quot;] option&#39;)).first().click();&#10;  expect(element(by.binding(&#39;{selected_color:myColor}&#39;)).getText()).toMatch(&#39;black&#39;);&#10;  element(by.css(&#39;.nullable select[ng-model=&quot;myColor&quot;]&#39;)).click();&#10;  element.all(by.css(&#39;.nullable select[ng-model=&quot;myColor&quot;] option&#39;)).first().click();&#10;  expect(element(by.binding(&#39;{selected_color:myColor}&#39;)).getText()).toMatch(&#39;null&#39;);&#10;});</code></pre>
+    </div>
+  
+
+    <iframe class="runnable-example-frame" src="examples/example-example48/index.html" name="example-example48"></iframe>
+  </div>
+</div>
+
+&#10;&#10;  countInput.clear();&#10;  countInput.sendKeys(&#39;4&#39;);&#10;&#10;  expect(withoutOffset.getText()).toEqual(&#39;4 people are viewing.&#39;);&#10;  expect(withOffset.getText()).toEqual(&#39;Igor, Misko and 2 other people are viewing.&#39;);&#10;});&#10;it(&#39;should show data-bound names&#39;, function() {&#10;  var withOffset = element.all(by.css(&#39;ng-pluralize&#39;)).get(1);&#10;  var personCount = element(by.model(&#39;personCount&#39;));&#10;  var person1 = element(by.model(&#39;person1&#39;));&#10;  var person2 = element(by.model(&#39;person2&#39;));&#10;  personCount.clear();&#10;  personCount.sendKeys(&#39;4&#39;);&#10;  person1.clear();&#10;  person1.sendKeys(&#39;Di&#39;);&#10;  person2.clear();&#10;  person2.sendKeys(&#39;Vojta&#39;);&#10;  expect(withOffset.getText()).toEqual(&#39;Di, Vojta and 2 other people are viewing.&#39;);&#10;});</code></pre>
+    </div>
+  
+
+    <iframe class="runnable-example-frame" src="examples/example-example40/index.html" name="example-example40"></iframe>
+  </div>
+</div>
+
+nger than max length&#39;, function() {&#10;  userLastInput.clear();&#10;  userLastInput.sendKeys(&#39;some ridiculously long name&#39;);&#10;&#10;  expect(user.getText()).toContain(&#39;{&quot;name&quot;:&quot;guest&quot;}&#39;);&#10;  expect(lastNameValid.getText()).toContain(&#39;false&#39;);&#10;  expect(lastNameError.getText()).toContain(&#39;maxlength&#39;);&#10;  expect(formValid.getText()).toContain(&#39;false&#39;);&#10;});</code></pre>
+    </div>
+  
+
+    <iframe class="runnable-example-frame" src="examples/example-input-directive/index.html" name="example-input-directive"></iframe>
+  </div>
+</div>
+

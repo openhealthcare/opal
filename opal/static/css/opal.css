@@ -80,3 +80,8 @@ input.ng-invalid {
 .content-offset {
     margin-top: 114px;
 }
+
+.datepicker table tr td span {
+	height: 20px;
+	line-height: 12px;
+}
