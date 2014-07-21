@@ -102,18 +102,6 @@ angular.module('opal.controllers').controller(
             });
         }, true);
 
-        // $scope.geLookupValues = function(query){
-        //     var column = _.findWhere($scope.columns, {name: c.column});
-        //     if(!column){return []}
-        //     if(!c.field){return []}
-        //     var field = _.findWhere(column.fields, {name: c.field.toLowerCase()});
-        //     if(field.lookup_list){
-        //         return $scope[field.lookup_list + '_list'];
-        //     }else{
-        //         return []
-        //     }
-        // }
-
         $scope.search = function(){
             $scope.state = 'pending';
             $http.post('/search/extract/', $scope.completeCriteria()).success(
@@ -150,7 +138,7 @@ angular.module('opal.controllers').controller(
 			    templateUrl: '/templates/modals/save_filter_modal.html/',
 			    controller: 'SaveFilterCtrl',
 			    resolve: {
-				    params: function() { return {name: null, criteria: $scope.criteria}; },
+				    params: function() { return {name: null, criteria: $scope.completeCriteria()}; },
 			    }
 		    }).result.then(function(result){
                 $scope.filters.push(result);
