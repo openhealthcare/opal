@@ -9,22 +9,24 @@
 
 <form method="post" action="{% url 'login' %}" class="form-horizontal">
 	{% csrf_token %}
-	<div class="control-group">
-		<label class="control-label"{{ form.username.label_tag }}</label>
-		<div class="controls">
-			{{ form.username }}
+	<div class="form-group">
+		<label class="control-label col-sm-3"{{ form.username.label_tag }}</label>
+		<div class="col-sm-8">
+          <input type="text" id="username" name="username"  placeholder="Username" 
+                 autocomplete="off"
+                 class="form-control">
 		</div>
 	</div>
 
-	<div class="control-group">
-		<label class="control-label"{{ form.password.label_tag }}</label>
-		<div class="controls">
-			{{ form.password }}
+	<div class="form-group">
+		<label class="control-label col-sm-3"{{ form.password.label_tag }}</label>
+		<div class="col-sm-8">
+          <input type="password" name="password" id="password" placeholder="Password" class="form-control">
 		</div>
 	</div>
 
-	<div class="control-group">
-		<div class="controls">
+	<div class="form-group">
+		<div class="col-sm-8">
 			<button type="submit" class="btn">Sign in</button>
 		</div>
 	</div>
