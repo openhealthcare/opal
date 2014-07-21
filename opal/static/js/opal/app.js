@@ -13,9 +13,3 @@ app.config(function($interpolateProvider) {
 	$interpolateProvider.endSymbol(']]');
 });
 
-app.value('$strapConfig', {
-	datepicker: {
-		type: 'string',
-		format: 'dd/mm/yyyy'
-	}
-});

@@ -22,8 +22,10 @@ angular.module('mgcrea.ngStrap.datepicker', [
       delay: 0,
       useNative: false,
       dateType: 'date',
-      dateFormat: 'shortDate',
-      autoclose: false,
+      // We're setting these: 
+      dateFormat: 'dd/mm/yyyy',
+      autoclose: true,
+      // End edits
       minDate: -Infinity,
       maxDate: +Infinity,
       startView: 0,
