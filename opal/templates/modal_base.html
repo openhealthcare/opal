@@ -16,9 +16,13 @@
 	      <button class="btn btn-primary" ng-click="save('save')">Save</button>
         {% endblock %}
 	    {% if not single %}
+          {% block modal_another %}
 	      <button class="btn btn" ng-click="save('save-and-add-another')">
             Save and add another
           </button>
+          {% endblock %}
 	    {% endif %}
-	    <button class="btn" ng-click="cancel()">Cancel</button>
+          {% block modal_cancel %}
+	      <button class="btn" ng-click="cancel()">Cancel</button>
+          {% endblock %}
       </div>
