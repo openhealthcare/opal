@@ -45,7 +45,8 @@
             2. Select a field
           </p>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-4" ng-show="query.column == 'tagging'"></div>
+        <div class="col-md-2" ng-hide="query.column == 'tagging'">
           <select class="form-control"
                   ng-show="query.field != null && !isDate(query.column, query.field)"
                   ng-model="query.queryType" >
@@ -62,7 +63,7 @@
             3. Select a query type
           </p>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-2" ng-hide="query.column == 'tagging'">
           <select class="form-control" ng-model="query.query" ng-show="isBoolean(query.column, query.field) && query.field != null">
             <option>true</option>
             <option>false</option>

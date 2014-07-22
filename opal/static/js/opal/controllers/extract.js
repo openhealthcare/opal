@@ -27,9 +27,15 @@ angular.module('opal.controllers').controller(
 
         $scope.completeCriteria =  function(){
             return _.filter($scope.criteria, function(c){
+                // Teams are a special case - they are essentially boolean
+                if(c.column == 'tagging' && c.field){
+                    return true
+                }
+                // Ensure we have a query otherwise
                 if(c.column &&  c.field &&  c.query){
                     return true
                 }
+                // If not, we ignore this clause
                 return false
             })
         };

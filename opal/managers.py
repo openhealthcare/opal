@@ -17,7 +17,7 @@ class EpisodeManager(models.Manager):
         """
         # CircularImport - This is used as a manager by models in this module
         from opal.models import EpisodeSubrecord, PatientSubrecord
-#, TaggedSubrecordMixin, Tagging
+        #, TaggedSubrecordMixin, Tagging
         episode_subs = defaultdict(lambda: defaultdict(list))
 
         # tag_dict = defaultdict(list)
@@ -102,3 +102,15 @@ class EpisodeManager(models.Manager):
             serialised.append(d)
 
         return serialised
+
+    def ever_tagged(self, team):
+        """
+        Return a list of episodes that were ever tagged to TEAM
+        """
+        from opal.models import Tagging
+
+        team_name = team.lower().replace(' ', '_')
+        current = self.filter(tagging__team__name=team_name)
+        historic = Tagging.historic_episodes_for_tag(team_name)
+        return list(historic) + list(current)
+

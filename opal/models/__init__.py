@@ -368,7 +368,28 @@ class Tagging(models.Model):
                 historic[data['episode']][tag_name] = True
         return historic
 
+    @classmethod
+    def historic_episodes_for_tag(cls, tag):
+        """
+        Given a TAG return a list of episodes that have historically been 
+        tagged with it.
+        """
+        teams = {t.id: t.name for t in Team.objects.all()}
+        deleted = reversion.get_deleted(cls)
+        eids = set()
+        for d in deleted:
+            data = json.loads(d.serialized_data)[0]['fields']
+            try:
+                tag_name = teams[data['team']]
+            except KeyError:
+                tag_name = data['tag_name']
+            if tag_name == tag:
+                eids.add(data['episode'])
 
+        historic = Episode.objects.filter(id__in=eids)
+        return historic
+
+    
 class Synonym(models.Model):
     name = models.CharField(max_length=255)
     content_type = models.ForeignKey(ContentType)

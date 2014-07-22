@@ -215,9 +215,11 @@ class TaggingView(View):
         for n, v in data.items():
             if v:
                 tag_names.append(n)
+        print tag_names
         episode.set_tag_names(tag_names, self.request.user)
         return _build_json_response(episode.tagging_dict()[0])
 
+    
 @require_http_methods(['POST'])
 def subrecord_create_view(request, model):
     data = _get_request_data(request)
@@ -560,7 +562,8 @@ class Extractor(View):
             if m.__name__.lower() == model_name:
                 if not Mod:
                     Mod = m
-                elif (issubclass(m, models.EpisodeSubrecord) or issubclass(m, models.PatientSubrecord)):
+                elif (issubclass(m, models.EpisodeSubrecord) or
+                      issubclass(m, models.PatientSubrecord)):
                     Mod = m
 
         if model_name.lower() == 'tags':
@@ -582,8 +585,13 @@ class Extractor(View):
             kw = {'{0}__{1}{2}'.format(model_name, field, contains): query['query']}
 
             if Mod == models.Tagging:
-                kw = {'tagging__team__name{0}'.format(contains): query['query']}
-                eps = models.Episode.objects.filter(**kw)
+                print 'Tagggging'
+                print query
+                # kw = {'tagging__team__name{0}'.format(contains): query['query']}
+                # eps = models.Episode.objects.filter(**kw)
+                eps = models.Episode.objects.ever_tagged(query['field'])
+                print eps
+                
 
             elif issubclass(Mod, models.EpisodeSubrecord):
                 eps = models.Episode.objects.filter(**kw)
@@ -597,6 +605,8 @@ class Extractor(View):
     def get_episodes(self):
         query = self.get_query()
         all_matches = [(q['combine'], self.episodes_for_criteria(q)) for q in query]
+        if not all_matches:
+            return []
 
         working = set(all_matches[0][1])
         rest = all_matches[1:]
