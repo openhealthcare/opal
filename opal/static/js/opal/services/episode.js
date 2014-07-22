@@ -87,7 +87,8 @@ angular.module('opal.services')
 		            attrs.date_of_diagnosis = moment().format('YYYY-MM-DD');
 	            }
                 if (columnName == 'microbiology_input'){
-                    attrs.initials = window.initials
+                    attrs.initials = window.initials;
+		            attrs.date = moment().format('YYYY-MM-DD');
                 }
                 if (columnName == 'line'){
                     attrs.inserted_by = window.initials
