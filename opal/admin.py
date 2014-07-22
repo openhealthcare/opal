@@ -36,7 +36,7 @@ class PatientAdmin(reversion.VersionAdmin):
     search_fields = ['demographics__name', 'demographics__hospital_number']
 
 class TaggingAdmin(reversion.VersionAdmin):
-    pass
+    list_display = ['team', 'episode']
 
 class TeamAdmin(reversion.VersionAdmin):
     list_display = ['title', 'name', 'active', 'order']
