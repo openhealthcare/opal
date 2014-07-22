@@ -36,19 +36,6 @@ angular.module('opal.controllers').controller(
 
 	    };
 
-        // $scope.addForHospitalNumber = function(result){
-		//     if (result.patients.length == 0) {
-        //         $scope.newPatient(result);
-		//     } else if (result.patients.length == 1) {
-		// 	    // There is a single patient with this hospital number
-        //         $scope.newForPatient(result.patients[0]);
-		//     } else {
-		// 	    // This shouldn't happen, but we should probably handle it better
-		// 	    alert('ERROR: More than one patient found with hospital number');
-		// 	    $modalInstance.close(null);
-		//     };
-        // };
-
         $scope.newPatient = function(result){
 			// There is no patient with this hospital number
 			// Show user the form for creating a new episode,
@@ -110,9 +97,9 @@ angular.module('opal.controllers').controller(
         $scope.newForPatientWithActiveEpisode = function(patient){
 			episode = new Episode(patient.episodes[patient.active_episode_id],
                                   schema)
-			if (episode.tagging[$scope.tags.tag] &&
+			if (episode.tagging[0][$scope.tags.tag] &&
                 ($scope.tags.subtag == 'all' ||
-                 episode.tagging[$scope.tags.subtag])) {
+                 episode.tagging[0][$scope.tags.subtag])) {
 				// There is already an active episode for this patient
                 // with the current tag
 				$modalInstance.close(episode);
@@ -120,9 +107,9 @@ angular.module('opal.controllers').controller(
 				// There is already an active episode for this patient but
                 // it doesn't have the current tag.
                 // Add the current Tag.
-                episode.tagging[$scope.tags.tag] = true;
+                episode.tagging[0][$scope.tags.tag] = true;
                 if($scope.tags.subtag != 'all'){
-                    episode.tagging[$scope.tags.subtag] = true;
+                    episode.tagging[0][$scope.tags.subtag] = true;
                 }
                 episode.location[0].save(episode.location[0].makeCopy()).then(
                     function(){
