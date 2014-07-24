@@ -50,6 +50,13 @@ Marks a field as read only if True
 
 _.fieldnames allows you to specify the list of fieldnames to serialize. This is particularly useful in order to specify ordering within column entry schemas.
 
+# Adding a controller
+
+Create the controller file in static/js/opal/controllers.
+Use the angular module opal.controllers
+Include this file in templates/opal.html
+Create a template url in the django layer
+
 # Writing Plugins
 
 Plugins should subclass opal.utils.plugins.OpalPlugin

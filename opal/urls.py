@@ -51,6 +51,8 @@ urlpatterns = patterns(
     url(r'^templates/extract.html/?$', views.ExtractTemplateView.as_view()),
     url(r'^templates/modals/tagging.html/?$', views.TagsTemplateView.as_view()),
 
+    url(r'^templates/modals/undischarge.html/?$',
+        views.UndischargeTemplateView.as_view()),
     url(r'^templates/modals/add_episode.html/?$',
         views.AddEpisodeTemplateView.as_view()),
     url(r'^templates/modals/hospital_number.html/?$',

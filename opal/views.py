@@ -336,6 +336,9 @@ class ReopenEpisodeTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'reopen_episode_modal.html'
 
 
+class UndischargeTemplateView(TemplateView):
+    template_name = 'undischarge_modal.html'
+
 class IndexView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)

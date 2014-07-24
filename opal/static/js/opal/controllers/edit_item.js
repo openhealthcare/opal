@@ -1,6 +1,6 @@
 angular.module('opal.controllers').controller(
     'EditItemCtrl', function($scope, $cookieStore, $timeout,
-                             $modalInstance,
+                             $modalInstance, $modal,
                              item, options, episode) {
         $scope.episode = episode.makeCopy();
 	    $scope.editing = item.makeCopy();
@@ -85,13 +85,13 @@ angular.module('opal.controllers').controller(
 	    };
 
         $scope.undischarge = function() {
-            $scope.episode.discharge_date = null;
-            episode.save($scope.episode).then(function(){
-                $scope.editing.category = 'Inpatient';
-                item.save($scope.editing).then(function(){
-                    $modalInstance.close('undischarged');
-                });
+            undischargeMoadal = $modal.open({
+                templateUrl: '/templates/modals/undischarge.html/',
+                controller: 'UndischargeCtrl',
+                resolve: {episode: function(){ return episode } }
+            }
+            ).result.then(function(result){
+                $modalInstance.close(episode.location[0])
             });
-
         };
     });

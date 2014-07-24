@@ -10,3 +10,5 @@ dist
 opal.egg-info
 coverage-js
 bower_components
+*~
+*#
