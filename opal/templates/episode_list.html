@@ -16,7 +16,7 @@
     <thead>
 	  <tr>
 	    {% for column in columns %}
-		  <th>{{ column.title }}</th>
+		  <th {% ifequal column.title "Teams" %}class="screen-only"{% endifequal %}>{{ column.title }}</th>
 	    {% endfor %}
 	  </tr>
     </thead>
@@ -24,7 +24,8 @@
 	  <tr ng-repeat="row in rows">
 	    {% for column in columns %}
 		  <td ng-mouseenter="mouseEnter($index, {{ forloop.counter0 }})"
-			  ng-mouseleave="mouseLeave()">
+			  ng-mouseleave="mouseLeave()"
+              {% ifequal column.title "Teams" %}class="screen-only"{% endifequal %} >
 			  <ul>
 			    <li ng-repeat="item in row.{{column.name}}"
 				    ng-click="selectItem($parent.$index, {{ forloop.counter0 }}, $index)"
