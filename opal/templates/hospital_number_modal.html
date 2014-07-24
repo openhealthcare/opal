@@ -1,14 +1,16 @@
 <divclass="modal-header">
   <button type="button" class="close" ng-click="cancel()">×</button>
-  <h3>New episode</h3>
 </div>
 <div class="modal-body">
-	<div class="form-group">
-	  <label class="control-label col-sm-3">Hospital number</label>
-	  <div class="col-sm-8">
-		<input class="form-control" ng-model="model.hospitalNumber" ng-keypress="$event.keyCode == 13 && findByHospitalNumber()">
-	  </div>
+  <h3>Add Patient</h3>
+  <div class="form-group">
+	<label class="control-label col-sm-3">Hospital number</label>
+	<div class="col-sm-8">
+	  <input class="form-control" 
+             ng-model="model.hospitalNumber" 
+             ng-keypress="$event.keyCode == 13 && findByHospitalNumber()">
 	</div>
+  </div>
 </div>
 <div class="modal-footer">
   <button class="btn btn-primary" ng-click="findByHospitalNumber()">Search</button>
