@@ -89,7 +89,10 @@ angular.module('opal.controllers').controller(
 							// User has chosen to reopen an episode, or cancelled
 							$modalInstance.close(result);
 						};
-					});
+					},
+                                   function(result){
+                                       $modalInstance.close(result);
+                                   });
                 }
 			};
         };
@@ -134,9 +137,13 @@ angular.module('opal.controllers').controller(
 					options: function() { return options; },
 					demographics: function() { return demographics; }
 				}
-			}).result.then(function(result){
-                $modalInstance.close(result);
-            });
+			}).result.then(
+                function(result){
+                    $modalInstance.close(result);
+                },
+                function(result){
+                    $modalInstance.close(result);
+                });
         };
 
 	    $scope.cancel = function() {
