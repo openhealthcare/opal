@@ -390,6 +390,11 @@ angular.module('opal.controllers').controller(
                 return null;
             };
 
+            if (schema.isReadOnly(columnName)) {
+                // Cannont delete readonly columns
+                return;
+            }
+            
 		    if (schema.isSingleton(columnName)) {
 			    // Cannot delete singleton
 			    return;

@@ -42,6 +42,10 @@ Effectively this defaults to camel_case_to_underscore() on the class name.
 
 _sort names a field by which we would like to sorth the display of subrecords.
 
+### _read_only
+
+Marks a field as read only if True
+
 ### _fieldnames
 
 _.fieldnames allows you to specify the list of fieldnames to serialize. This is particularly useful in order to specify ordering within column entry schemas.

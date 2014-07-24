@@ -381,6 +381,9 @@ class SchemaBuilderView(View):
                 }
             if hasattr(column, '_sort'):
                 col['sort'] = column._sort
+            if hasattr(column, '_read_only'):
+                col['readOnly'] = column._read_only
+            
             cols.append(col)
         return cols
 

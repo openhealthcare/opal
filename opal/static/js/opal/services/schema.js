@@ -21,5 +21,10 @@ angular.module('opal.services').factory('Schema', function() {
 	        var column = this.getColumn(columnName);
 	        return column.single;
 	    };
+
+        this.isReadOnly = function(columnName) {
+            var column = this.getColumn(columnName);
+            return column.readOnly;
+        }
     };
 });
