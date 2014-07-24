@@ -66,7 +66,10 @@ directives.directive('markdown', function () {
 	    }
 	    scope.$watch(prefix + '.' + attrs.markdown, function(){
 		    var converter = new Showdown.converter({extensions: [OpalDown]});
-		    element.html(converter.makeHtml(scope[prefix][attrs.markdown]));
+            if(scope[prefix][attrs.markdown]){
+                var contents = converter.makeHtml(scope[prefix][attrs.markdown]);
+		        element.html(contents);
+            }
 		}
 		);
 	}
