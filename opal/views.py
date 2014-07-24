@@ -206,6 +206,11 @@ def subrecord_detail_view(request, model, pk):
 
 
 class TaggingView(View):
+    """
+    Provide an API for updating the teams to which an episode is
+    tagged. 
+    """
+
     def put(self, *args, **kwargs):
         episode = models.Episode.objects.get(pk=kwargs['pk'])
         data = _get_request_data(self.request)

@@ -41,7 +41,8 @@ angular.module('opal.controllers').controller(
 
 		attrs[tag] = true;
 		tagging.save(attrs).then(function(result) {
-			    $modalInstance.close(episode);
+            episode.active = true;
+			$modalInstance.close(episode);
 		});
 	};
 });

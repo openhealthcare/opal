@@ -68,6 +68,17 @@ angular.module('opal.services')
 		        };
 	        };
 
+            // Tagging to teams are represented as a pseudo subrecord. 
+            // Fake the ID attribute so we can know what episode we're tagging to.
+            // 
+            // We can't do this at initialization time because the episode has
+            // not fully initialized itself at that point.
+            // TODO: Refactor episode initialization.
+            if (this.columnName == 'tagging') {
+                item.id = episode.id;
+                attrs.id = episode.id;
+            }
+            
 	        if (angular.isDefined(item.id)) {
 		        method = 'put';
 		        url += attrs.id + '/';
