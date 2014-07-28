@@ -66,6 +66,13 @@ You can access the list in an angular template (For autocompletion) where it wil
 e.g. The conditions lookup list is condition_list and used by the elCID Diagnosis model
 (https://github.com/openhealthcare/elcid/blob/master/elcid/models.py#L109)
 
+The lookup list can then be added to the admin - as an OPAL model.
+
+Currently you create a migration on OPAL for all lookup lists. 
+(This is scheduled to change)
+
+so e.g. $ python manage.py schemamigration --atuo opal
+
 # Writing Plugins
 
 Plugins should subclass opal.utils.plugins.OpalPlugin
