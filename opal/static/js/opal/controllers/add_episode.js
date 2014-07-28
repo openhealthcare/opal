@@ -6,7 +6,6 @@ angular.module('opal.controllers')
                                            demographics) {
 	$scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine';
 	$scope.currentSubTag = $cookieStore.get('opal.currentSubTag') || 'all';
-
     // TODO - find a way to reimplement this
 	// $timeout(function() {
 	// 	dialog.modalEl.find('input,textarea').first().focus();
@@ -15,9 +14,8 @@ angular.module('opal.controllers')
 	for (var name in options) {
 		$scope[name + '_list'] = options[name];
 	};
-
+        
 	$scope.episode_category_list = ['OPAT', 'Inpatient', 'Outpatient', 'Review'];
-
     // TODO - this is no longer the way location/admission date works.
 	$scope.editing = {
 		date_of_admission: moment().format('DD/MM/YYYY'),
@@ -27,6 +25,8 @@ angular.module('opal.controllers')
 		},
 		demographics: demographics
 	};
+
+
 	$scope.editing.tagging[0][$scope.currentTag] = true;
 	if($scope.currentSubTag != 'all'){
 		$scope.editing.tagging[$scope.currentSubTag] = true;
@@ -78,4 +78,5 @@ angular.module('opal.controllers')
 	$scope.cancel = function() {
 		$modalInstance.close(null);
 	};
+
 });
