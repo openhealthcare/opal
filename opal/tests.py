@@ -99,6 +99,7 @@ class EpisodeTest(TestCase):
         self.assertFalse(self.episode.is_active())
 
     def test_to_dict(self):
+        # TODO: Decouple this from the elCID implementation/move to elCID
         self.maxDiff = None
         expected_data = {
             'id': self.episode.id,
@@ -109,6 +110,7 @@ class EpisodeTest(TestCase):
             'opat_review': [],
             'active': False,
             'allergies': [],
+            'appointment': [],
             'date_of_admission': None,
             'discharge_date': None,
             'consistency_token': '',
@@ -148,12 +150,14 @@ class EpisodeTest(TestCase):
                     'opat_referral': None,
                     'opat_referral_route': None,
                     'opat_referral_team': None,
+                    'opat_referral_team_address': None,
 
 
                     }],
             'diagnosis': [],
             'past_medical_history': [],
             'general_note': [],
+            'opat_line_assessment': [],
             'travel': [],
             'antimicrobial': [],
             'carers': [{'consistency_token': u'',
@@ -164,7 +168,7 @@ class EpisodeTest(TestCase):
             'line': [],
             'microbiology_input': [],
             'todo': [],
-            'tagging': [{'id': 3}],
+            'tagging': [{}],
             'microbiology_test': [],
             }
         self.assertEqual(expected_data, self.episode.to_dict(self.user))
