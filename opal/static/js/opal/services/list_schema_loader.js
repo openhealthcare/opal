@@ -14,6 +14,9 @@ angular.module('opal.services')
             else if(schemas[tagparams.tag][tagparams.subtag]){
                 schema =  new Schema(schemas[tagparams.tag][tagparams.subtag]);
             }
+            else {
+                schema = new Schema(schemas[tagparams.tag].default);
+            }
         }else if(schemas[tagparams.tag]){
             schema = new Schema(schemas[tagparams.tag].default);
         }else{
