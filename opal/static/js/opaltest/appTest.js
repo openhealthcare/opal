@@ -6,7 +6,6 @@ describe('app', function() {
 
         inject(function($injector) {
             $location = $injector.get('$location');
-            console.log($injector)
             $route = $injector.get('$route');
             $rootScope = $injector.get('$rootScope');
             $httpBackend = $injector.get('$httpBackend');
