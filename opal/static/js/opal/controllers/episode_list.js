@@ -92,25 +92,18 @@ angular.module('opal.controllers').controller(
 
         $scope.jumpToTag = function(tag){
             if(_.contains(_.keys(options.tag_hierarchy), tag)){
-                if($scope.currentTag == tag){
-                    $scope.currentSubTag = 'all';
-                }else{
-                    $scope.currentTag = tag;
-                }
-                return;
+                $location.path('/list/'+tag)
             }else{
+
                 for(var prop in options.tag_hierarchy){
                     if(options.tag_hierarchy.hasOwnProperty(prop)){
                         if(_.contains(_.values(options.tag_hierarchy[prop]), tag)){
-                            if($scope.currentTag == prop){
-                                $scope.currentSubTag = tag;
-                            }else{
-                                $scope.nextSubTag = tag;
-                                $scope.currentTag = prop;
+                            $location.path('/list/'+ prop + '/' + tag)
                             }
                         }
                     }
                 }
+                
             }
         }
 
