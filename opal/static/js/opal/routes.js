@@ -42,6 +42,7 @@ app.config(
 			     controller: 'SearchCtrl',
 			     templateUrl: '/templates/search.html',
 			     resolve: {
+                     profile: function(UserProfile){ return UserProfile },
 				     schema: function(listSchemaLoader) { return listSchemaLoader; },
 				     options: function(Options) { return Options; }
 			     }

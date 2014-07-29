@@ -151,4 +151,8 @@ angular.module('opal.controllers').controller(
             });
         };
 
+        $scope.jumpToEpisode = function(episode){
+            window.open('#/episode/'+episode.id, '_blank');
+        }
+        
     });
