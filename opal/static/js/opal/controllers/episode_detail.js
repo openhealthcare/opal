@@ -1,5 +1,5 @@
 angular.module('opal.controllers').controller(
-    'EpisodeDetailCtrl', function($scope, $modal, $cookieStore,
+    'EpisodeDetailCtrl', function($scope, $modal, $cookieStore, $location,
                                                      schema,
                                                      episode, options, profile) {
     $scope._ = _;
@@ -193,14 +193,14 @@ angular.module('opal.controllers').controller(
         currentSubTag = $cookieStore.get('opal.currentSubTag') || 'all';
 
         if(_.contains(_.keys(options.tag_hierarchy), tag)){
-            $cookieStore.put('opal.currentTag', tag)
+            $location.path('/list/'+tag)
+            return
         }else{
             for(var prop in options.tag_hierarchy){
                 if(options.tag_hierarchy.hasOwnProperty(prop)){
                     if(_.contains(_.values(options.tag_hierarchy[prop]), tag)){
-
-                        $cookieStore.put('opal.currentTag', prop);
-                        $cookieStore.put('opal.nextSubTag', tag);
+                        $location.path('/list/'+ prop + '/' + tag)
+                        return
                     }
                 }
             }
