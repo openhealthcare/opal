@@ -99,7 +99,6 @@ angular.module('opal.controllers').controller(
                     if(options.tag_hierarchy.hasOwnProperty(prop)){
                         if(_.contains(_.values(options.tag_hierarchy[prop]), tag)){
                             $location.path('/list/'+ prop + '/' + tag)
-                            }
                         }
                     }
                 }
