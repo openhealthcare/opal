@@ -57,6 +57,22 @@ Use the angular module opal.controllers
 Include this file in templates/opal.html
 Create a template url in the django layer
 
+# Adding a lookup list
+
+Add the lookup list by name to options.py in your project.
+You can then reference the list in a django model by using a ForeignKeyOrFreeTextField 
+You can access the list in an angular template (For autocompletion) where it will be $NAME_list.
+
+e.g. The conditions lookup list is condition_list and used by the elCID Diagnosis model
+(https://github.com/openhealthcare/elcid/blob/master/elcid/models.py#L109)
+
+The lookup list can then be added to the admin - as an OPAL model.
+
+Currently you create a migration on OPAL for all lookup lists. 
+(This is scheduled to change)
+
+so e.g. $ python manage.py schemamigration --atuo opal
+
 # Writing Plugins
 
 Plugins should subclass opal.utils.plugins.OpalPlugin

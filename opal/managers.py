@@ -15,26 +15,16 @@ class EpisodeManager(models.Manager):
         in a nested hashtable where the outer key is the episode id,
         the inner key the subrecord API name.
         """
-        # CircularImport - This is used as a manager by models in this module
+        # CircularImport - SELF is used as a manager by models in this module
         from opal.models import EpisodeSubrecord, PatientSubrecord
-        #, TaggedSubrecordMixin, Tagging
-        episode_subs = defaultdict(lambda: defaultdict(list))
 
-        # tag_dict = defaultdict(list)
-        # tags = Tagging.objects.select_related('team').filter(episode__in=episodes)
-        # for t in tags:
-        #     tag_dict[t.episode_id].append(t)
+        episode_subs = defaultdict(lambda: defaultdict(list))
 
         for model in EpisodeSubrecord.__subclasses__():
             name = model.get_api_name()
             subrecords = model.objects.filter(episode__in=episodes)
 
             for sub in subrecords:
-                # if issubclass(model, TaggedSubrecordMixin):
-                #     episode_subs[sub.episode_id][name].append(
-                #         sub.to_dict(user, tags=tag_dict)
-                #         )
-                # else:
                 episode_subs[sub.episode_id][name].append(sub.to_dict(user))
         return episode_subs
 
