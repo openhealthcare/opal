@@ -129,6 +129,24 @@ describe('services', function() {
             expect(mock.alert).toHaveBeenCalledWith(
                 'List schema could not be loaded');
         });
+
+        it('should provide the default schema on a sublist', function(){
+            $route.current.params.subtag = 'micro_haem';
+
+            var mycols = angular.copy(columns);
+            mycols.micro = {};
+            mycols.micro.default = mycols.default
+            
+            // console.log($route.current.params.subtag)
+            // expect(1).toEqual(2)
+            $httpBackend.expectGET('/schema/list/');
+            $httpBackend.whenGET('/schema/list/').respond(mycols);
+
+            listSchemaLoader().then(function(r){result=r});
+            $rootScope.$apply();
+            $httpBackend.flush();
+            expect(result.columns).toEqual(columns.default);
+        });
     })
 
     describe('detailSchemaLoader', function(){
