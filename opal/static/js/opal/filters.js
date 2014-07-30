@@ -23,6 +23,20 @@ filters.filter('boxed',  function(){
     }
 })
 
+filters.filter('shortDate', function(){
+    return function(input){
+        if(!input){
+            return
+        }
+        var d = moment(input)
+        if (d.year() == moment().year()) {
+            // if the date was this year, don't show the year
+            return d.format('DD/MM')
+        }
+        return d.format('DD/MM/YY')
+    }
+})
+
 filters.filter('daysSince', function(){
     return function(input, change){
         if(!input){
