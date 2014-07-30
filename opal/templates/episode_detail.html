@@ -15,7 +15,7 @@
     <div class="col-md-8">
       <table class="table table-bordered">
 	    {% for column in columns %}
-	      <tr>
+	      <tr {% if column.episode_category %} ng-show="episode.location[0].category == '{{column.episode_category}}'"{% endif %}>
 		    <td>
 		      <h5>{{ column.title }}</h5>
 		      <ul ng-mouseenter="mouseEnter({{ forloop.counter0 }})" ng-mouseleave="mouseLeave()">
