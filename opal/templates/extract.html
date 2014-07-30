@@ -29,7 +29,9 @@
                     </select>
                   </div>
                   <div class="col-md-2">
-                    <select class="form-control" ng-model="query.column">
+                    <select class="form-control" ng-model="query.column"
+                    ng-change="criteria[$index].field = null"
+                    >
                       <option ng-repeat="col in columns" value="[[col.name]]">
                         [[col.display_name]]
                       </option>
