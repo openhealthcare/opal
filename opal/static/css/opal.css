@@ -23,6 +23,14 @@ li.selected {
     border-bottom: 0px;
     min-height: 1px;
 }
+#main-navbar {
+    color: #8a6d3b;
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+}
+#main-navbar .navbar-nav li:hover {
+	background-color: #f0ad4e;
+}
 #main-navbar ul li {
 	padding: 0px;
 }
