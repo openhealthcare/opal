@@ -103,7 +103,7 @@ angular.module('opal.controllers').controller(
                     }
                 }
                 
-            }
+            };
         }
 
         $scope.otherTags = function(item){
@@ -358,7 +358,7 @@ angular.module('opal.controllers').controller(
 		    modal.result.then(function(result) {
 			    $scope.state = 'normal';
 
-			    if (columnName == 'location') {
+			    if (columnName == 'tagging') {
 				    // User may have removed current tag
 				    $scope.rows = getVisibleEpisodes();
 				    $scope.selectItem(getRowIxFromEpisodeId(episode.id), $scope.cix, 0);
@@ -367,6 +367,9 @@ angular.module('opal.controllers').controller(
 			    if (result == 'save-and-add-another') {
 				    $scope.editItem(rix, cix, episode.getNumberOfItems(columnName));
 			    };
+                if (item.sort){
+                    episode.sortColumn(item.columnName, item.sort);
+                };
 		    }, function(){
                 $scope.state = 'normal';
             });

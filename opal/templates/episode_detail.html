@@ -5,9 +5,9 @@
       <h4>Previous Episodes</h4>
       <p ng-repeat="ep in episode.prev_episodes">
         <a href="/#/episode/[[ep.id]]">
-          Admit: [[ ep.date_of_admission | date:'d/M/y' ]]
+          Admit: [[ ep.date_of_admission | shortDate ]]
           <br />
-          Disch: [[ ep.discharge_date | date:'d/M/y' ]]
+          Disch: [[ ep.discharge_date | shortDate ]]
         </a>
         <hr />
       </p>
@@ -15,7 +15,7 @@
     <div class="col-md-8">
       <table class="table table-bordered">
 	    {% for column in columns %}
-	      <tr>
+	      <tr {% if column.episode_category %} ng-show="episode.location[0].category == '{{column.episode_category}}'"{% endif %}>
 		    <td>
 		      <h5>{{ column.title }}</h5>
 		      <ul ng-mouseenter="mouseEnter({{ forloop.counter0 }})" ng-mouseleave="mouseLeave()">
@@ -48,9 +48,9 @@
       <h4>Subsequent Episodes</h4>
       <p ng-repeat="ep in episode.next_episodes">
         <a href="/#/episode/[[ep.id]]">
-          Admit: [[ ep.date_of_admission | date:'d/M/y' ]]
+          Admit: [[ ep.date_of_admission | shortDate ]]
           <br />
-          Disch: [[ ep.discharge_date | date:'d/M/y' ]]
+          Disch: [[ ep.discharge_date | shortDate ]]
         </a>
         <hr />
       </p>
