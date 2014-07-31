@@ -15,9 +15,6 @@ OPAL_EXTRA_APPLICATION = A template to include in the HEAD
 
 OPAL_EXTRA_HEADER = A template to include above the main nav
 
-
-TODO
-
 ## Defining Models
 
 Models should be defined in your project.
@@ -57,6 +54,26 @@ Use the angular module opal.controllers
 Include this file in templates/opal.html
 Create a template url in the django layer
 
+# Teams 
+
+Teams are the core concept around patient flow - broadly a tab in the list view.
+
+Teams have one level of nesting.
+
+Teams may be inactive, in which case they are not displayed.
+
+Teams may be restricted in which they only appear for a subset of users.
+
+The logic for showing restricted teams is implemented via plugins.
+
+# Users
+
+Users have various settings:
+
+Can extract
+Readonly
+Only restricted teams
+
 # Adding a lookup list
 
 Add the lookup list by name to options.py in your project.
@@ -73,10 +90,6 @@ Currently you create a migration on OPAL for all lookup lists.
 
 so e.g. $ python manage.py schemamigration --atuo opal
 
-# Writing Plugins
-
-Plugins should subclass opal.utils.plugins.OpalPlugin
-
 # Creating a Heroku test server
 
     $ heroku create $YOUR_APP_NAME
@@ -88,3 +101,44 @@ Plugins should subclass opal.utils.plugins.OpalPlugin
     $ heroku run python manage.py syncdb --migrate --app $YOUR_APP_NAME
     $ heroku run python manage.py loaddata dumps/options.json --app $YOUR_APP_NAME
     $ heroku run python manage.py createinitialrevisions --app $YOUR_APP_NAME
+
+
+# Writing Plugins
+
+Plugins are Django apps with some extra hooks.
+
+Plugins should subclass opal.utils.plugins.OpalPlugin
+
+## Defining models
+
+Define in your models.py - just as you would for an implementation.
+
+## Defining Lookup lists
+
+TBD !
+
+## Defining teams
+
+As a signal is fine.
+Data migrations might work.
+
+Defining restricted team access.
+
+## Defining Schemas 
+
+TBD !
+
+## Adding URLS
+
+Add an urls.py, then add to your plugin class as YourPlugin.urls
+
+Naturally, these can point to views in your plugin! 
+
+## Adding Javascript
+
+add to static, then add to your plugin class as YourPlugin.javascripts
+
+## Installing plugins 
+
+Add to installed apps
+Add to requirements if appropriate
