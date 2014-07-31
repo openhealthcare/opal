@@ -12,11 +12,9 @@ from django.contrib.contenttypes import generic
 from django.dispatch import receiver
 import reversion
 
-from opal.utils import stringport, camelcase_to_underscore
+from opal.utils import stringport, camelcase_to_underscore, OpalPlugin
 from opal.utils.fields import ForeignKeyOrFreeText
 from opal import exceptions, managers
-
-# Imported models from module.
 
 from opal.models.mixins import UpdatesFromDictMixin
 
@@ -215,21 +213,39 @@ class ContactNumber(models.Model):
 
 
 class Team(models.Model):
-    name = models.CharField(max_length=250, help_text="This should only have letters and underscores")
-    title = models.CharField(max_length=250)
-    parent = models.ForeignKey('self', blank=True, null=True)
-    active = models.BooleanField(default=True)
-    order = models.IntegerField(blank=True, null=True)
+    """
+    A team to which an episode may be tagged
+    
+    Represents either teams or stages in patient flow.
+    """
+    HELP_RESTRICTED = "Whether this team is restricted to only a subset of users"
+
+    name           = models.CharField(max_length=250, 
+                                      help_text="This should only have letters and underscores")
+    title          = models.CharField(max_length=250)
+    parent         = models.ForeignKey('self', blank=True, null=True)
+    active         = models.BooleanField(default=True)
+    order          = models.IntegerField(blank=True, null=True)
     useful_numbers = models.ManyToManyField(ContactNumber, blank=True)
+    restricted     = models.BooleanField(default=False, 
+                                         help_text=HELP_RESTRICTED)
 
     def __unicode__(self):
         return self.title
 
     # TODO depreciate this and refactor accordingly
     @classmethod
-    def to_TAGS(klass):
+    def to_TAGS(klass, user):
+        """
+        Given a USER, return the teams this user can access, as TAGS.
+        """
         from opal.utils import Tag
-        teams = klass.objects.filter(active=True).order_by('order')
+        teams = klass.objects.filter(active=True, restricted=False).order_by('order')
+        restricted_teams = []
+        for plugin in OpalPlugin.__subclasses__():
+            if plugin.restricted_teams:
+                restricted_teams += plugin().restricted_teams(user)
+        teams = set(list(teams) + restricted_teams)
         tags = collections.OrderedDict()
         for team in teams:
             if not team.parent:
@@ -238,7 +254,6 @@ class Team(models.Model):
             if team.parent:
                 tags[team.parent.name].subtags.append(Tag(team.name, team.title, None))
         return tags.values()
-
 
 class Subrecord(UpdatesFromDictMixin, models.Model):
     consistency_token = models.CharField(max_length=8)

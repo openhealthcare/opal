@@ -6,6 +6,7 @@ import datetime
 import importlib
 import re
 
+from django.conf.urls import patterns
 import ffs
 from ffs.contrib import archive
 
@@ -274,6 +275,9 @@ def json_to_csv(episodes, description, user):
     return target
 
 class OpalPlugin(object):
+    urls = []
+    restricted_teams = None
+
     def get_urls():
         from django.conf.urls import patterns
         return patterns()

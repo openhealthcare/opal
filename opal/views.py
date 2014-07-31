@@ -271,7 +271,7 @@ class EpisodeTemplateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(EpisodeTemplateView, self).get_context_data(**kwargs)
         # todo rename/refactor this accordingly
-        context['tags'] = models.Team.to_TAGS()
+        context['tags'] = models.Team.to_TAGS(self.request.user)
         context['columns'] = self.get_column_context(**kwargs)
         if 'tag' in kwargs:
             context['team'] = models.Team.objects.get(name=kwargs['tag'])
@@ -298,7 +298,7 @@ class TagsTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(TagsTemplateView, self).get_context_data(**kwargs)
-        context['tags'] = models.Team.to_TAGS()
+        context['tags'] = models.Team.to_TAGS(self.request.user)
         return context
 
 
@@ -307,7 +307,7 @@ class SearchTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(SearchTemplateView, self).get_context_data(**kwargs)
-        context['tags'] = models.Team.to_TAGS()
+        context['tags'] = models.Team.to_TAGS(self.request.user)
         return context
 
 class ExtractTemplateView(TemplateView):
@@ -318,7 +318,7 @@ class AddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(AddEpisodeTemplateView, self).get_context_data(**kwargs)
-        context['tags'] = models.Team.to_TAGS()
+        context['tags'] = models.Team.to_TAGS(self.request.user)
         return context
 
 class DischargeEpisodeTemplateView(LoginRequiredMixin, TemplateView):
@@ -373,7 +373,7 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         context['single'] = self.column._is_singleton
 
         if self.name == 'location':
-            context['tags'] = models.Team.to_TAGS()
+            context['tags'] = models.Team.to_TAGS(self.request.user)
 
         return context
 
@@ -469,7 +469,7 @@ def options_view(request):
 
     tag_hierarchy = {}
     tag_display = {}
-    for tag in models.Team.to_TAGS():
+    for tag in models.Team.to_TAGS(request.user):
         tag_display[tag.name] = tag.title
         if tag.subtags:
             tag_hierarchy[tag.name] = [st.name for st in tag.subtags]
