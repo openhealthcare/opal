@@ -358,7 +358,7 @@ angular.module('opal.controllers').controller(
 		    modal.result.then(function(result) {
 			    $scope.state = 'normal';
 
-			    if (columnName == 'location') {
+			    if (columnName == 'tagging') {
 				    // User may have removed current tag
 				    $scope.rows = getVisibleEpisodes();
 				    $scope.selectItem(getRowIxFromEpisodeId(episode.id), $scope.cix, 0);
