@@ -3,6 +3,9 @@ angular.module('opal.controllers').controller(
                              $modalInstance, $modal,
                              item, options, episode) {
         $scope.episode = episode.makeCopy();
+        // Some fields should only be shown for certain categories.
+        // Make that category available to the template.
+        $scope.episode_category = episode.location[0].category
 	    $scope.editing = item.makeCopy();
         $scope.state = 'editing';
 

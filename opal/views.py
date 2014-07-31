@@ -260,6 +260,7 @@ class EpisodeTemplateView(TemplateView):
             column_context['title'] = getattr(column, '_title',
                                               name.replace('_', ' ').title())
             column_context['single'] = column._is_singleton
+            column_context['episode_category'] = getattr(column, '_episode_category', None)
             column_context['template_path'] = name + '.html'
             column_context['modal_template_path'] = name + '_modal.html'
             column_context['detail_template_path'] = select_template([name + '_detail.html', name + '.html']).name
