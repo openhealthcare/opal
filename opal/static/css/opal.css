@@ -52,6 +52,10 @@ table {
 	max-width: 150px;
 }
 
+.table.search tbody tr td {
+    padding: 8px;
+}
+
 input.ng-invalid {
 	background-color : #fcc;
 }
@@ -84,4 +88,12 @@ input.ng-invalid {
 .datepicker table tr td span {
 	height: 20px;
 	line-height: 12px;
+}
+
+.pointer:hover {
+    cursor: pointer;
+}
+
+.push-left-12 {
+    margin-left: 12px;
 }
