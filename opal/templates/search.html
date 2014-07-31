@@ -27,13 +27,15 @@
         </div>
 
         <div class="col-sm-1">
-	      <button ng-click="search()" class="btn btn-warning">Search</button>
+	      <button ng-click="search()" class="btn btn-warning">
+          <span class="glyphicon glyphicon-search"></span>
+          Search
+        </button>
         </div>
         <div class="col-sm-1">
           <p ng-show="profile.can_extract">
             <a href="#/extract" class="btn btn-info">
-              <i class="glyphicon glyphicon-download-alt"></i>
-              Extract
+              Advanced
             </a>
           </p>
         </div>

@@ -3,7 +3,7 @@
   <div class="panel panel-warning">
     <!-- Default panel contents -->
     <div class="panel-heading">
-      <h2>Data Extract</h2>
+      <h2>Patient Search</h2>
     </div>
     <div class="panel-body">
       {% if not request.user.get_profile.can_extract %}
@@ -30,7 +30,7 @@
                   </div>
                   <div class="col-md-2">
                     <select class="form-control" ng-model="query.column"
-                    ng-change="criteria[$index].field = null"
+                    ng-change="resetFilter($index, ['combine', 'column'])"
                     >
                       <option ng-repeat="col in columns" value="[[col.name]]">
                         [[col.display_name]]
@@ -126,44 +126,41 @@
       </div> <!-- Row -->
       <br />
       <div class="row">
-        <div class="col-md-2 col-md-offset-1">
-          <button type="button"
-                  class="btn btn-warning pull-left"
-                  ng-click="search()"
-                  >
-            <span class="glyphicon glyphicon-search"></span>
-            Filter
-          </button>
-        </div>
-        <div class="col-md-5">
+        <div class="col-md-5 col-md-offset-3">
 
           <!-- <div class="row" ng-show="state=='normal' && results.length > 0"> -->
           <form action="/search/extract/download" method="post" target="_blank"
-                ng-show="state=='normal' && results.length > 0">
+                >
             <input name="criteria" type="hidden" value="[[ JSON.stringify(criteria) ]]">
             {% csrf_token %}
             <button type="submit"
                     class="btn btn-info pull-left"
-                    >
-              Download these results
+                    ng-show="state=='normal' && results.length > 0">
               <span class="glyphicon glyphicon-download"></span>
+              Download these results
             </button>
           </form>
           <button type="button"
                   class="btn btn-info pull-left push-left-12"
                   ng-click="save()"
                   ng-show="state=='normal' && results.length > 0">
-            
-            Save this search
+
             <span class="glyphicon glyphicon-floppy-disk"></span>
+            Save this search
           </button>
 
           
         </div>
         <div class="col-md-4">
-          <a href="#/search" class="btn btn-info pull-right">
-            <i class="glyphicon glyphicon-search"></i>
+          <button type="button"
+                  class="btn btn-warning"
+                  ng-click="search()"
+                  >
+            <span class="glyphicon glyphicon-search"></span>
             Search
+          </button>
+          <a href="#/search" class="btn btn-info">
+            Basic
           </a>
         </div>
       </div>
@@ -213,7 +210,7 @@
     {% endif %}
   </div>
 
-<p> Results 1- [[  results.length >= 10 && 10 || results.length ]] of [[ results.length ]]</p>
+<p ng-show="state=='normal' && results.length > 0"> Results 1- [[  results.length >= 10 && 10 || results.length ]] of [[ results.length ]]</p>
 </div>
 
 {% include 'extract_footer.html' %}
