@@ -122,11 +122,15 @@ TBD !
 As a signal is fine.
 Data migrations might work.
 
-Defining restricted team access.
+Defining restricted team access is done by:
+
+Adding a method to your pluigin that takes one argument, a User object, and returning a set of
+extra teams that this user is allowed to see.
 
 ## Defining Schemas 
 
-TBD !
+Plugins can define list schemas. They should return a dictionary of lists of models from the
+list_schemas() method of the plugin class.
 
 ## Adding URLS
 

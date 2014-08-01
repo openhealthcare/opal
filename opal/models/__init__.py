@@ -233,6 +233,17 @@ class Team(models.Model):
     def __unicode__(self):
         return self.title
 
+    @classmethod
+    def restricted_teams(klass, user):
+        """
+        Given a USER, return the restricted teams this user can access.
+        """
+        restricted_teams = []
+        for plugin in OpalPlugin.__subclasses__():
+            if plugin.restricted_teams:
+                restricted_teams += plugin().restricted_teams(user)
+        return restricted_teams
+    
     # TODO depreciate this and refactor accordingly
     @classmethod
     def to_TAGS(klass, user):
@@ -241,10 +252,7 @@ class Team(models.Model):
         """
         from opal.utils import Tag
         teams = klass.objects.filter(active=True, restricted=False).order_by('order')
-        restricted_teams = []
-        for plugin in OpalPlugin.__subclasses__():
-            if plugin.restricted_teams:
-                restricted_teams += plugin().restricted_teams(user)
+        restricted_teams = klass.restricted_teams(user)
         teams = set(list(teams) + restricted_teams)
         tags = collections.OrderedDict()
         for team in teams:
