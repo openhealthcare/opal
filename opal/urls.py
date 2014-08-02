@@ -41,7 +41,7 @@ urlpatterns = patterns(
     url(r'^filters/(?P<pk>\d+)/?$', views.FilterDetailView.as_view()),
 
     url(r'^templates/episode_list.html/?$', views.EpisodeListTemplateView.as_view()),
-    url(r'^templates/episode_list.html/(?P<tag>[a-z_]+)/?$', views.EpisodeListTemplateView.as_view()),
+    url(r'^templates/episode_list.html/(?P<tag>[a-z_\-]+)/?$', views.EpisodeListTemplateView.as_view()),
     url(r'^templates/episode_list.html/(?P<tag>[a-z_]+)/(?P<subtag>[a-z_]+)/?$', views.EpisodeListTemplateView.as_view()),
 
     url(r'^templates/episode_detail.html/?$',

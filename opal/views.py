@@ -15,6 +15,7 @@ from django.template.loader import select_template
 from django.utils.decorators import method_decorator
 from django.utils import formats
 from django.shortcuts import redirect
+from django.template.loader import select_template
 
 from opal.utils.http import with_no_caching
 from opal.utils import (camelcase_to_underscore, stringport, fields, 
@@ -269,7 +270,18 @@ class EpisodeTemplateView(TemplateView):
                                               name.replace('_', ' ').title())
             column_context['single'] = column._is_singleton
             column_context['episode_category'] = getattr(column, '_episode_category', None)
-            column_context['template_path'] = name + '.html'
+            
+            list_display_templates = [name + '.html']
+            if 'tag' in kwargs:
+                list_display_templates.insert(
+                    0, 'list_display/{0}/{1}.html'.format(kwargs['tag'], name))
+            if 'subtag' in kwargs:
+                list_display_templates.insert(
+                    0, 'list_display/{0}/{1}/{2}.html'.format(kwargs['subtag'],
+                                                              kwargs['tag'],
+                                                              name))
+            column_context['template_path'] = select_template(list_display_templates).name
+
             column_context['modal_template_path'] = name + '_modal.html'
             column_context['detail_template_path'] = select_template([name + '_detail.html', name + '.html']).name
             context.append(column_context)
