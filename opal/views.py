@@ -166,7 +166,8 @@ def episode_list_and_create_view(request):
                 {'error': 'Patient already has active episode'}, 400)
 
         episode.update_from_location_dict(data['location'], request.user)
-        episode.set_tag_names(data['tagging'][0].keys(), request.user)
+        tags = [k for k, v in data['tagging'][0].items() if v is True]
+        episode.set_tag_names(tags, request.user)
         return _build_json_response(episode.to_dict(request.user), 201)
 
 
