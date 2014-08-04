@@ -166,8 +166,8 @@ def episode_list_and_create_view(request):
                 {'error': 'Patient already has active episode'}, 400)
 
         episode.update_from_location_dict(data['location'], request.user)
-        tags = [k for k, v in data['tagging'][0].items() if v is True]
-        episode.set_tag_names(tags, request.user)
+        tag_names = [n for n, v in data['tagging'][0].items() if v]
+        episode.set_tag_names(tag_names, request.user)
         return _build_json_response(episode.to_dict(request.user), 201)
 
 
@@ -217,11 +217,7 @@ class TaggingView(View):
         data = _get_request_data(self.request)
         if 'id' in data:
             data.pop('id')
-        tag_names = []
-        for n, v in data.items():
-            if v:
-                tag_names.append(n)
-        print tag_names
+        tag_names = [n for n, v in data.items() if v]
         episode.set_tag_names(tag_names, self.request.user)
         return _build_json_response(episode.tagging_dict()[0])
 
