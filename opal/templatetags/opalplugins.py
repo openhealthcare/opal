@@ -15,7 +15,3 @@ def plugin_javascripts(namespace):
                 for javascript in plugin.javascripts:
                     yield javascript
     return dict(javascripts=scripts)
-
-@register.filter
-def tag_list(tags):
-    return ','.join(["'" + tag.name + "'" for tag in tags if tag.subtags])

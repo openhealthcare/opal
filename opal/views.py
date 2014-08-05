@@ -315,7 +315,9 @@ class AddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(AddEpisodeTemplateView, self).get_context_data(**kwargs)
-        context['tags'] = models.Team.to_TAGS()
+        tags = models.Team.to_TAGS()
+        context['tags'] = tags
+        context['with_subtags'] = ','.join(["'" + tag.name + "'" for tag in tags if tag.subtags])
         return context
 
 class DischargeEpisodeTemplateView(LoginRequiredMixin, TemplateView):
