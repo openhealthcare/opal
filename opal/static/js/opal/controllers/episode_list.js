@@ -46,40 +46,13 @@ angular.module('opal.controllers').controller(
         $scope.profile = profile;
         $scope.tag_display = options.tag_display;
 
-        $scope.episode_lookup = {};
-        _.each(episodes,  function(e){
-            if(e.tagging){         // Shouldn't be needed but occasionally happens in migration breakage
-                _.each(_.keys(e.tagging[0]), function(tag_name){
-                    if(tag_name && !_.has($scope.episode_lookup, tag_name)){
-                        $scope.episode_lookup[tag_name] = [];
-                    };
-                    $scope.episode_lookup[tag_name].push(e.id);
-                })
-                    }
-        });
-
-
 	    function getVisibleEpisodes() {
 		    var visibleEpisodes = [];
-            var episode_list;
+            var episode_list = [];
 
-            if($scope.episode_lookup){
-                if($scope.currentSubTag == 'all'){
-                    episode_list = $scope.episode_lookup[$scope.currentTag];
-                }else{
-                    episode_list = $scope.episode_lookup[$scope.currentSubTag];
-                }
-            }else{
-                episode_list = [];
-            }
-
-            visibleEpisodes = _.map(
-                _.filter(episode_list, function(id){
-                    return episodeVisibility(episodes[id], $scope, viewDischarged)
-                }),
-                function(id){
-                    return episodes[id];
-                })
+            visibleEpisodes = _.filter(episodes, function(episode){
+                return episodeVisibility(episode, $scope, viewDischarged)
+            });
 		    visibleEpisodes.sort(compareEpisodes);
 		    return visibleEpisodes;
 	    };
@@ -253,13 +226,6 @@ angular.module('opal.controllers').controller(
 		            $scope.state = 'normal';
 		            if (episode) {
 			            episodes[episode.id] = episode;
-                        if($scope.episode_lookup[$scope.currentTag] === undefined){
-                            $scope.episode_lookup[$scope.currentTag] = [];
-                        }
-                        $scope.episode_lookup[$scope.currentTag].push(episode.id);
-                        if($scope.currentSubTag != 'all'){
-                            $scope.episode_lookup[$scope.currentSubTag].push(episode.id)
-                        }
 			            $scope.rows = getVisibleEpisodes();
 			            rowIx = getRowIxFromEpisodeId(episode.id);
 			            $scope.selectItem(rowIx, 0, 0);
