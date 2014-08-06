@@ -9,7 +9,8 @@ angular.module('opal.controllers').controller(
              Episode,
              schema,
              options,
-             tags) {
+             tags,
+            hospital_number) {
 
         // TODO- reimplement this
 	    // $timeout(function() {
@@ -17,6 +18,9 @@ angular.module('opal.controllers').controller(
 	    // });
 
         $scope.model = {}
+        if(hospital_number){
+            $scope.model.hospitalNumber = hospital_number;
+        }
         $scope.tags = tags;
 
 	    $scope.findByHospitalNumber = function() {

@@ -217,7 +217,8 @@ angular.module('opal.controllers').controller(
                     schema: function(){ return schema },
                     options: function(){ return options },
                     tags: function(){ return {tag: $scope.currentTag,
-                                              subtag: $scope.currentSubTag}}
+                                              subtag: $scope.currentSubTag}},
+                    hospital_number: function(){ return null; }
                 }
 		    }).result.then(
                 function(episode) {

@@ -68,7 +68,9 @@ angular.module('opal.controllers').controller(
                 resolve: {
                     schema: function(){ return schema },
                     options: function(){ return options },
-                    tags: function(){ return {tag: 'mine', subtag: 'all'}}}
+                    tags: function(){ return {tag: 'mine', subtag: 'all'}},
+                    hospital_number: function(){ return $scope.searchTerms.hospital_number; }
+                }
 		    }).result.then(
                 function(episode) {
 			        // User has either retrieved an existing episode or created a new one,

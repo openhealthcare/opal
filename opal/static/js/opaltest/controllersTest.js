@@ -803,7 +803,8 @@ describe('controllers', function() {
                 $modalInstance: modalInstance,
                 schema:         schema,
                 options:        options,
-                tags:           {tag: 'mine', subtag: 'all'}
+                tags:           {tag: 'mine', subtag: 'all'},
+                hospital_number: null
             });
         });
 
