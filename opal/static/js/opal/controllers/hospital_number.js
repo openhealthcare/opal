@@ -116,7 +116,7 @@ angular.module('opal.controllers').controller(
                 if($scope.tags.subtag != 'all'){
                     episode.tagging[0][$scope.tags.subtag] = true;
                 }
-                episode.location[0].save(episode.location[0].makeCopy()).then(
+                episode.tagging[0].save(episode.tagging[0].makeCopy()).then(
                     function(){
 				        $modalInstance.close(episode);
                     });
