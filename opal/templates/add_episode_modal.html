@@ -78,9 +78,7 @@
 	  </div>
 	</div>
 
-	<div class="control-group"
-		 ng-show="showSubtags([{% for tag in tags %}{% if tag.subtags %}'{{tag.name}}'{% if not forloop.last%},{% endif %}{% endif %}{% endfor %}])"
-		 >
+	<div class="control-group" ng-show="showSubtags([{{with_subtags|safe}}])">
 		 <label class="control-label">Sub Teams</label>
 		 <div class="controls">
 		   {% for tag in tags %}
