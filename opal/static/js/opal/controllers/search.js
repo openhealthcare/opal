@@ -2,10 +2,10 @@ angular.module('opal.controllers').controller(
     'SearchCtrl', function($scope, $http, $location, $modal,
                            $timeout, ngProgressLite,
                            $q, Episode,
-                           UserProfile,
+                           profile,
                            schema, options) {
 
-        $scope.profile = UserProfile;
+        $scope.profile = profile;
 	    $scope.searchTerms = {
 		    hospital_number: '',
 		    name: ''
