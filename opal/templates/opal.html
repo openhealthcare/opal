@@ -23,7 +23,7 @@
 		<script type="text/javascript" src="{% static "js/angular-1.2.20/angular-resource.js" %}"></script>
 
 
-        
+
 		<script type="text/javascript" src="{% static "js/angular-ui-utils-0.1.0/ui-utils.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/angular-ui-bootstrap-0.10.0/ui-bootstrap-tpls.js" %}"></script>
 
@@ -44,12 +44,13 @@
 		<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/typeahead.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/typeahead.tpl.js" %}"></script>
 
-        
+
 		<script type="text/javascript" src="{% static "js/jquery-plugins/idle-timer.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/jquery-plugins/jquery.stickytableheaders.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/utils/underscore.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/utils/showdown.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/utils/moment.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/ngprogress-lite/ngprogress-lite.js" %}"></script>
 
         <script type="text/javascript">
           var initials = "{{request.user.first_name|slice:":1"}} {{request.user.last_name}}"
@@ -108,6 +109,7 @@
 		<link href="{% static "bootstrap-3.1.0/css/bootstrap.css" %}" rel="stylesheet" media="all">
 		<link href="{% static "css/bootstrap-datepicker.css" %}" rel="stylesheet" media="all">
 		<link href="{% static "css/font-awesome/css/font-awesome.css" %}" rel="stylesheet" media="all">
+    <link href="{% static "css/ngprogress-lite.css" %}" rel="stylesheet" media="screen">
 		<link href="{% static "css/opal.css" %}" rel="stylesheet" media="all">
         <link href="{% static "css/print.css" %}" rel="stylesheet" media="print">
         <link href="{% static "css/screen.css" %}" rel="stylesheet" media="screen">
@@ -116,10 +118,6 @@
 	<body>
       {% if OPAL_EXTRA_HEADER %}{% include OPAL_EXTRA_HEADER %}{% endif %}
       {% block navbar %}{% include 'navbar.html' %}{% endblock %}
-		<div class="container content-offset" loadingbar>
-          <h3>Loading...</h3>
-          <img src="/assets/img/loading.gif" />
-        </div>
 		<div ng-view autoscroll="true"></div>
         {% include 'keyboard_shortcuts_modal.html' %}
         {% include 'logout_modal.html' %}

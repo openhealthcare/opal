@@ -26,7 +26,8 @@ li.selected {
 #main-navbar {
     color: #8a6d3b;
     background-color: #fcf8e3;
-    border-color: #faebcc;
+    border: solid #faebcc;
+    border-width: 0 0 2px 0;
 }
 #main-navbar .navbar-nav li:hover {
 	background-color: #f0ad4e;
@@ -82,7 +83,7 @@ input.ng-invalid {
 }
 
 .navbar-2 {
-    top: 50px;
+    top: 52px;
     padding-top: 4px;
 	background-color: white;
 }
@@ -125,4 +126,15 @@ input.ng-invalid {
 
 .navbar-nav.nav-tabs {
 	background: #fafafa
+}
+
+/* ngProgress overrides */
+.ngProgressLiteBar {
+  background-color: firebrick;
+  box-shadow: 0 0 10px 0; /* Inherits the font color */
+  top: 50px;
+}
+
+.ngProgressLite .ngProgressLiteBarShadow {
+  display: none;
 }

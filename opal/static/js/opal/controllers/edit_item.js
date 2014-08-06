@@ -1,13 +1,12 @@
 angular.module('opal.controllers').controller(
     'EditItemCtrl', function($scope, $cookieStore, $timeout,
                              $modalInstance, $modal,
-                             item, options, episode) {
+                             ngProgressLite, item, options, episode) {
         $scope.episode = episode.makeCopy();
         // Some fields should only be shown for certain categories.
         // Make that category available to the template.
         $scope.episode_category = episode.location[0].category
 	    $scope.editing = item.makeCopy();
-        $scope.state = 'editing';
 
         // This is the patientname displayed in the modal header
 	    $scope.editingName = item.episode.demographics[0].name;
@@ -71,8 +70,10 @@ angular.module('opal.controllers').controller(
 	    $scope.episode_category_list = ['OPAT',  'Inpatient', 'Outpatient', 'Review'];
 
 	    $scope.save = function(result) {
-            $scope.state = 'saving';
+            ngProgressLite.set(0);
+            ngProgressLite.start();
 		    item.save($scope.editing).then(function() {
+                ngProgressLite.done();
                 // if($scope.columnName == 'location'){
                 //     episode.save($scope.episode).then(function(){
                 //         $modalInstance.close(result)
