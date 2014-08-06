@@ -29,6 +29,10 @@ li.selected {
     border: solid #faebcc;
     border-width: 0 0 2px 0;
 }
+
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus,    
 #main-navbar .navbar-nav li:hover {
 	background-color: #f0ad4e;
 }
@@ -117,7 +121,8 @@ input.ng-invalid {
 }
 .navbar-nav.nav-tabs li:hover a,
 .navbar-nav.nav-tabs li.active:hover a,
-.navbar-nav.nav-tabs li.active a {
+.navbar-nav.nav-tabs li.active a,
+.navbar-nav.nav-tabs li.active{
 	background: #fcf8e3;
 }
 .navbar-nav.nav-tabs li a {

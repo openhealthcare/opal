@@ -47,6 +47,9 @@ urlpatterns = patterns(
     url(r'^templates/episode_detail.html/?$',
         views.EpisodeDetailTemplateView.as_view()),
     url(r'^templates/discharge_list.html/?$', views.DischargeListTemplateView.as_view()),
+    url(r'^templates/discharge_list.html/(?P<tag>[a-z_]+)/?$', views.DischargeListTemplateView.as_view()),
+    url(r'^templates/discharge_list.html/(?P<tag>[a-z_]+)/(?P<subtag>[a-z_]+)/?$', views.DischargeListTemplateView.as_view()),
+
     url(r'^templates/search.html/?$', views.SearchTemplateView.as_view()),
     url(r'^templates/extract.html/?$', views.ExtractTemplateView.as_view()),
     url(r'^templates/modals/tagging.html/?$', views.TagsTemplateView.as_view()),

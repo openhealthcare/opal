@@ -135,7 +135,7 @@ def episode_list_and_create_view(request):
                 if episode['id'] in historic:
                     historic_tags = historic[episode['id']]
                     for t in historic_tags.keys():
-                        episode['location'][0]['tags'][t] = True
+                        episode['tagging'][0][t] = True
 
         else:
             serialised = models.Episode.objects.serialised_active(request.user)
