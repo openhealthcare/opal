@@ -8,21 +8,21 @@
     <div class="panel-body">
       <form class="form form-horizontal">
         <div class="col-sm-6">
-          <input type="text" 
-                 name="name" 
-                 ng-model="searchTerms.name" 
-                 placeholder="Name" 
-                 class="form-control" 
-                 ng-keypress="$event.keyCode == 13 && search()" 
+          <input type="text"
+                 name="name"
+                 ng-model="searchTerms.name"
+                 placeholder="Name"
+                 class="form-control"
+                 ng-keypress="$event.keyCode == 13 && search()"
                  focus-on-this
                  />
         </div>
         <div class="col-sm-3">
-          <input type="text" 
-                 name="hospital_number" 
-                 ng-model="searchTerms.hospital_number" 
-                 placeholder="Hospital Number" 
-                 class="form-control" 
+          <input type="text"
+                 name="hospital_number"
+                 ng-model="searchTerms.hospital_number"
+                 placeholder="Hospital Number"
+                 class="form-control"
                  ng-keypress="$event.keyCode == 13 && search()" />
         </div>
 

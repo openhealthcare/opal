@@ -1,9 +1,8 @@
 angular.module('opal.controllers').controller(
     'ExtractCtrl', function($scope, $http, $window, $modal,
-                            filters, options, schema){
+                            ngProgressLite, filters, options, schema){
 
         $scope.JSON = window.JSON;
-        $scope.state =  'normal';
         $scope.filters = filters;
         $scope.columns = schema.columns;
         $scope.column_names = _.map(schema.columns, function(c){
@@ -117,13 +116,14 @@ angular.module('opal.controllers').controller(
         }, true);
 
         $scope.search = function(){
-            $scope.state = 'pending';
+            ngProgressLite.set(0);
+            ngProgressLite.start();
             $http.post('/search/extract/', $scope.completeCriteria()).success(
                 function(results){
                     $scope.results = results;
-                    $scope.state = 'normal';
+                    ngProgressLite.done();
                 }).error(function(){
-                    $scope.state = 'normal';
+                    ngProgressLite.set(0);
                     $window.alert('ERROR: Could not process this search. Please report it to the OPAL team')
                 });
         };
@@ -162,5 +162,5 @@ angular.module('opal.controllers').controller(
         $scope.jumpToEpisode = function(episode){
             window.open('#/episode/'+episode.id, '_blank');
         }
-        
+
     });

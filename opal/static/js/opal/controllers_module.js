@@ -6,6 +6,7 @@ var controllers = angular.module('opal.controllers', [
 	'opal.services',
 	'ui.event',
 	'ui.bootstrap',
+  'ngProgressLite',
     'mgcrea.ngStrap.typeahead',
     'mgcrea.ngStrap.helpers.dimensions',
     'mgcrea.ngStrap.helpers.parseOptions',

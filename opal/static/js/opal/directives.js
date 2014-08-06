@@ -9,23 +9,6 @@ directives.directive("freezePanes", function () {
     };
 });
 
-
-directives.directive('loadingbar', function($rootScope) {
-	return {
-		link: function(scope, element, attrs) {
-			element.addClass('hide');
-
-			$rootScope.$on('$routeChangeStart', function() {
-				element.removeClass('hide');
-			});
-
-			$rootScope.$on('$routeChangeSuccess', function() {
-				element.addClass('hide');
-			});
-		}
-	};
-});
-
 directives.directive('placeholder', function($timeout){
 	if ($.support.placeholder) {
 		return {};
@@ -52,7 +35,7 @@ directives.directive('placeholder', function($timeout){
 
 directives.directive('markdown', function () {
 	return function postLink (scope, element, attrs) {
-	    
+
 	    var prefix = 'item';
 	    if( _.isUndefined(scope['item']) ){
 		if(! _.isUndefined(scope['editing']) )
