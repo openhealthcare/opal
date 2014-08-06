@@ -15,9 +15,7 @@ angular.module('opal.controllers').controller(
         //     });
         // }
 
-
         $scope.state = 'normal';
-
 
 	    $scope.rix = 0; // row index
 	    $scope.cix = 0; // column index
@@ -29,9 +27,15 @@ angular.module('opal.controllers').controller(
 
 	    $scope.query = {hospital_number: '', name: ''};
 
+        if(viewDischarged){
+            $scope.path_base = '/discharge/';
+        }else{
+            $scope.path_base = '/list/';
+        }
+        
         if(!$routeParams.tag){
             var tag =  $cookieStore.get('opal.currentTag') || 'mine';
-            $location.path("/list/" + tag);
+            $location.path($scope.path_base + tag);                
             return
         }
         $scope.currentTag = $routeParams.tag;
@@ -65,13 +69,13 @@ angular.module('opal.controllers').controller(
 
         $scope.jumpToTag = function(tag){
             if(_.contains(_.keys(options.tag_hierarchy), tag)){
-                $location.path('/list/'+tag)
+                $location.path($scope.path_base + tag)
             }else{
 
                 for(var prop in options.tag_hierarchy){
                     if(options.tag_hierarchy.hasOwnProperty(prop)){
                         if(_.contains(_.values(options.tag_hierarchy[prop]), tag)){
-                            $location.path('/list/'+ prop + '/' + tag)
+                            $location.path($scope.path_base + prop + '/' + tag)
                         }
                     }
                 }
@@ -90,7 +94,7 @@ angular.module('opal.controllers').controller(
             if($scope.currentTag != $routeParams.tag){
                 $scope.state = 'reloading'
             }
-            $location.path('/list/' +  $scope.currentTag);
+            $location.path($scope.path_base +  $scope.currentTag);
 	    });
 
 	    $scope.$watch('currentSubTag', function(){
@@ -99,12 +103,12 @@ angular.module('opal.controllers').controller(
                 if($routeParams.subtag && $scope.currentSubTag != $routeParams.subtag){
                     $scope.state = 'reloading'
                 }
-                $location.path('/list/' +  $scope.currentTag);
+                $location.path($scope.path_base +  $scope.currentTag);
             }else{
                 if($scope.currentSubTag != $routeParams.subtag){
                     $scope.state = 'reloading'
                 }
-                $location.path('/list/' +  $scope.currentTag + '/' +  $scope.currentSubTag);
+                $location.path($scope.path_base +  $scope.currentTag + '/' +  $scope.currentSubTag);
             }
 	    });
 

@@ -14,7 +14,9 @@ var controllers = angular.module('opal.controllers', [
     'mgcrea.ngStrap.datepicker',
 ]);
 
-controllers.controller('RootCtrl', function($scope) {
+controllers.controller('RootCtrl', function($scope, $location) {
+    $scope.$location = $location;
+    
 	$scope.keydown = function(e) {
 		$scope.$broadcast('keydown', e);
 	};
