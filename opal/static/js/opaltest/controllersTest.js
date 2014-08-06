@@ -759,6 +759,7 @@ describe('controllers', function() {
                 $timeout: $timeout,
                 schema:   schema,
                 options:  options,
+                profile:  profile
             });
 
         });

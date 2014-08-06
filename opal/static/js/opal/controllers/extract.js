@@ -139,7 +139,7 @@ angular.module('opal.controllers').controller(
 			    templateUrl: '/templates/modals/save_filter_modal.html/',
 			    controller: 'SaveFilterCtrl',
 			    resolve: {
-				    params: function() { return $scope.filters[$index]; },
+				    params: function() { return $scope.filters[$index]; }
 			    }
 		    }).result.then(function(result){
                 $scope.filters[$index] = result;
@@ -152,7 +152,7 @@ angular.module('opal.controllers').controller(
 			    templateUrl: '/templates/modals/save_filter_modal.html/',
 			    controller: 'SaveFilterCtrl',
 			    resolve: {
-				    params: function() { return {name: null, criteria: $scope.completeCriteria()}; },
+				    params: function() { return {name: null, criteria: $scope.completeCriteria()}; }
 			    }
 		    }).result.then(function(result){
                 $scope.filters.push(result);

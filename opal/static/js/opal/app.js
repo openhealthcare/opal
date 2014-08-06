@@ -5,7 +5,7 @@ var app = angular.module('opal', [
 	'opal.services',
 	'opal.directives',
 	'opal.controllers',
-    'ui.bootstrap',
+    'ui.bootstrap'
 ]);
 
 // See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags
