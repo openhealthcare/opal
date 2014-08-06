@@ -29,10 +29,17 @@ filters.filter('shortDate', function(){
             return
         }
         var d = moment(input)
-        if (d.year() == moment().year()) {
-            // if the date was this year, don't show the year
+        if (d.year() <= 2000) {
+            // if the date was before 1/1/2001,
+            // show the full year
+            return d.format('DD/MM/YYYY')
+        }
+        else if (d.year() == moment().year()) {
+            // if the date was this year,
+            // don't show the year
             return d.format('DD/MM')
         }
+        // show the year as two digits
         return d.format('DD/MM/YY')
     }
 })

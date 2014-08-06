@@ -1,39 +1,85 @@
-<div class="container">
-  <h2>Patient Search</h2>
+<div class="container content-offset">
 
-  <table class="table">
-	<thead>
-	  <tr>
-		<form>
-		  <td><input type="text" name="hospital_number" ng-model="searchTerms.hospital_number" placeholder="Hospital Number" class="form-control" ng-keypress="$event.keyCode == 13 && search()"></td>
-		  <td><input type="text" name="name" ng-model="searchTerms.name" placeholder="Name" class="form-control" ng-keypress="$event.keyCode == 13 && search()"></td>
-          <td></td> <!-- DOB -->
-		  <td></td> <!-- Category -->
+  <div class="panel panel-warning">
+    <!-- Default panel contents -->
+    <div class="panel-heading">
+      <h2>Patient Search</h2>
+    </div>
+    <div class="panel-body">
+      <form class="form form-horizontal">
+        <div class="col-sm-6">
+          <input type="text" 
+                 name="name" 
+                 ng-model="searchTerms.name" 
+                 placeholder="Name" 
+                 class="form-control" 
+                 ng-keypress="$event.keyCode == 13 && search()" 
+                 focus-on-this
+                 />
+        </div>
+        <div class="col-sm-3">
+          <input type="text" 
+                 name="hospital_number" 
+                 ng-model="searchTerms.hospital_number" 
+                 placeholder="Hospital Number" 
+                 class="form-control" 
+                 ng-keypress="$event.keyCode == 13 && search()" />
+        </div>
+
+        <div class="col-sm-1">
+	      <button ng-click="search()" class="btn btn-warning">
+            <i class="glyphicon glyphicon-search"></i>
+            Search
+          </button>
+        </div>
+        <div class="col-sm-1">
+          <p ng-show="profile.can_extract">
+            <a href="#/extract" class="btn btn-info">
+              Advanced
+            </a>
+          </p>
+        </div>
+
+      </form>
+      <p>
+      </p>
+    </div>
+    <table class="table table-bordered table-hover search" ng-hide="!searched">
+      <thead>
+        <tr>
+          <td>Hospital #</td>
+          <td>Name</td>
+          <td>DOB</td>
+          <td>Admitted</td>
+          <td>Discharged</td>
           <td></td>
-		  <td><button ng-click="search()" class="btn">Search</button></td>
-		</form>
-	  </tr>
-	</thead>
+        </tr>
+      </thead>
+      <tbody>
+	    <tr class="pointer"
+            ng-click="jumpToEpisode(patient)"
+            ng-repeat="patient in results"
+            >
+	      <td>[[patient.demographics[0].hospital_number]]</td>
+	      <td>[[patient.demographics[0].name]]</td>
+          <td>[[patient.demographics[0].date_of_birth]]</td>
+	      <td>[[ patient.episodes[getEpisodeID(patient)].date_of_admission ]]</td>
+          <td>[[ patient.episodes[getEpisodeID(patient)].discharge_date ]]</td>
+	      <td>
+            <i class="glyphicon glyphicon-new-window"></i>
+          </td>
+	    </tr>
+      </tbody>
 
-	<tr ng-repeat="patient in results">
-	  <td>[[patient.demographics[0].hospital_number]]</td>
-	  <td>[[patient.demographics[0].name]]</td>
-      <td>[[patient.demographics[0].date_of_birth]]<td>
-	  <td>[[patient.location[0].category]]</td>
-      <td>[[patient.active_episode_id ? 'active': 'inactive' ;]]</td>
-	  <td>
-        <a href="#/episode/[[  getEpisodeID(patient) ]]" class="btn btn-small">
-          View
-        </a>
-      </td>
-	</tr>
+    </table>
 
-  </table>
+    <!-- Table -->
+  </div>
 
   <div ng-hide="!searched || results.length">
 	No Results
+    <br /><br />
+    <button class="btn btn-info" ng-click="addEpisode()">Add patient</button>
   </div>
 
-  <br />
-  <button class="btn" ng-click="addEpisode()">Add patient</button>
 </div>

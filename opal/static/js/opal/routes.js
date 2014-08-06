@@ -42,13 +42,13 @@ app.config(
 			     controller: 'SearchCtrl',
 			     templateUrl: '/templates/search.html',
 			     resolve: {
+                     profile: function(UserProfile){ return UserProfile },
 				     schema: function(listSchemaLoader) { return listSchemaLoader; },
 				     options: function(Options) { return Options; }
 			     }
              })
-             .when('/discharge', {
+             .when('/discharge/:tag?/:subtag?', {
                  controller: 'EpisodeListCtrl',
-                 templateUrl  : '/templates/discharge_list.html',
                  resolve   : {
                      schema: function(listSchemaLoader){ return listSchemaLoader },
                      options: function(Options){ return Options },
@@ -60,6 +60,17 @@ app.config(
                      },
                      profile: function(UserProfile){ return UserProfile },
                      viewDischarged: function(){ return true }
+                 },
+
+			     templateUrl: function(params){
+                     var target =  '/templates/discharge_list.html';
+                     if(params.tag){
+                         target += '/' + params.tag;
+                         if(params.subtag){
+                             target += '/' + params.subtag;
+                         }
+                     }
+                     return target
                  }
              })
              .when('/extract', {

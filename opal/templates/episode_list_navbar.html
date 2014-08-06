@@ -1,33 +1,41 @@
 <div class="navbar navbar-default {% if top %} navbar-fixed-top navbar-2{% endif %} screen-only">
+
   <div class="navbar-inner">
-	<a class="btn btn-info pull-left" href="#/search">Search</a>
+	<a class="btn btn-info pull-left" href="#/search">
+      <i class="glyphicon glyphicon-search"></i>
+      Search
+    </a>
 
 	<ul class="nav navbar-nav">
 	  <li class="divider-vertical"></li>
 	</ul>
 
-	<button class="btn pull-left" ng-click="print()">Print</button>
-
-	<ul class="nav navbar-nav">
-	  <li class="divider-vertical"></li>
-	</ul>
-
-	<button class="btn pull-left"
-            ng-show="!profile.readonly"
-            ng-click="addEpisode()">
-            Add Patient
+	<button class="btn pull-left btn-info" ng-click="print()">
+      <i class="glyphicon glyphicon-print"></i>
+      Print
     </button>
 
 	<ul class="nav navbar-nav">
 	  <li class="divider-vertical"></li>
 	</ul>
 
-	<div class="btn-group">
-	  {% for tag in tags %}
-		<button type="button" class="btn" ng-model="currentTag" btn-radio="'{{tag.name}}'">{{tag.title}}</button>
-	  {% endfor %}
-	</div>
+	<button class="btn pull-left btn-info"
+            ng-show="!profile.readonly"
+            ng-click="addEpisode()">
+      <i class="glyphicon glyphicon-plus"></i>
+      Add Patient
+    </button>
 
+	<ul class="nav navbar-nav">
+	  <li class="divider-vertical"></li>
+	</ul>
+
+    <ul class="nav navbar-nav nav-tabs" role="tablist">
+	  {% for tag in tags %}
+      <li ng-class="{active: currentTag == '{{tag.name }}' }"><a href="#/{% if discharged %}discharge{% else %}list{% endif %}/{{tag.name}}">{{tag.title}}</a></li>
+	  {% endfor %}
+    </ul>
+    
 	<ul class="nav navbar-nav">
 	  <li class="divider-vertical"></li>
 	</ul>
@@ -47,26 +55,24 @@
 
 
 <div class="navbar navbar-nav navbar-default {% if top %}navbar-fixed-top navbar-3{% endif %} screen-only" id="subtags-nav">
-     <div class="navbar-inner">
+  <div class="navbar-inner">
+    
+    <ul class="nav navbar-nav nav-tabs" role="tablist" id="subtags">
+	  {% for tag in tags %}
+        {% if tag.subtags %}
+          <li ng-class="{active: currentTag == '{{tag.name }}' && currentSubTag == 'all' }"                 
+              ng-show="currentTag == '{{tag.name}}'">
+            <a href="#/{% if discharged %}discharge{% else %}list{% endif %}/{{tag.name}}">All</a>
+          </li>
+          {% for subtag in tag.subtags %}
+            <li ng-class="{active: currentTag == '{{tag.name }}' && currentSubTag == '{{subtag.name}}' }"
+                ng-show="currentTag == '{{tag.name}}'">
+              <a href="#/{% if discharged %}discharge{% else %}list{% endif %}/{{tag.name}}/{{subtag.name}}">{{subtag.title}}</a>
+            </li>
+      {% endfor %}
+      {% endif %}
+      {% endfor %}
 
-       <div class="btn-group" id="subtags">
-	     {% for tag in tags %}
-           {% if tag.subtags %}
-               <button type="button" class="btn btn-sm"
-                       ng-show="currentTag == '{{tag.name}}'"
-                       ng-model="currentSubTag" btn-radio="'all'">
-                       All
-               </button>
-             {% for subtag in tag.subtags %}
-               <button type="button" class="btn btn-sm"
-                       ng-show="currentTag == '{{tag.name}}'"
-                       ng-model="currentSubTag" btn-radio="'{{subtag.name}}'">
-                       {{subtag.title}}
-               </button>
-             {% endfor %}
-           {% endif %}
-         {% endfor %}
-       </div>
-
-     </div>
+    </ul>
+  </div>
 </div>

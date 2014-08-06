@@ -23,6 +23,18 @@ li.selected {
     border-bottom: 0px;
     min-height: 1px;
 }
+#main-navbar {
+    color: #8a6d3b;
+    background-color: #fcf8e3;
+    border-color: #faebcc;
+}
+
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus,    
+#main-navbar .navbar-nav li:hover {
+	background-color: #f0ad4e;
+}
 #main-navbar ul li {
 	padding: 0px;
 }
@@ -52,12 +64,17 @@ table {
 	max-width: 150px;
 }
 
+.table.search tbody tr td {
+    padding: 8px;
+}
+
 input.ng-invalid {
 	background-color : #fcc;
 }
 
 #subtags {
-    margin-left: 260px;
+    margin-left: 304px;
+	border-bottom: none;
 }
 
 .underline {
@@ -70,18 +87,47 @@ input.ng-invalid {
 
 .navbar-2 {
     top: 50px;
+    padding-top: 4px;
+	background-color: white;
 }
 
 .navbar-3 {
-    top: 84px;
-    min-height: 30px;
+    top: 88px;
+    padding-top: 2px;
+	background-color: white;
+    min-height: 35px;
 }
 
 .content-offset {
-    margin-top: 114px;
+    margin-top: 124px;
 }
 
 .datepicker table tr td span {
 	height: 20px;
 	line-height: 12px;
+}
+
+.pointer:hover {
+    cursor: pointer;
+}
+
+.push-left-12 {
+    margin-left: 12px;
+}
+
+.navbar-nav.nav-tabs li {
+	padding: 0px;
+}
+.navbar-nav.nav-tabs li:hover a,
+.navbar-nav.nav-tabs li.active:hover a,
+.navbar-nav.nav-tabs li.active a,
+.navbar-nav.nav-tabs li.active{
+	background: #fcf8e3;
+}
+.navbar-nav.nav-tabs li a {
+	padding: 6px 10px;
+}
+
+.navbar-nav.nav-tabs {
+	background: #fafafa
 }

@@ -1,57 +1,72 @@
-<div class="navbar navbar-default navbar-fixed-top screen-only" role="navigation" id="main-navbar">
-  <div class="navbar-header">
-	<span class="navbar-brand">
-	  <a href="/">{{OPAL_BRAND_NAME}}</a>
-      <a href="#changelog" role="button" data-toggle="modal">
-        <span id="changelogTooltip"
-              data-toggle="tooltip"
-              data-trigger="manual"
-              data-title="{{OPAL_BRAND_NAME}} has been updated - click here to view the changes"
-              data-placement="bottom"
-              >
-              {{ VERSION_NUMBER }}
-        </span>
-      </a>
-	  {% now "DATE_FORMAT" %}
-	</span>
-  </div>
+<nav class="navbar navbar-default navbar-fixed-top screen-only" role="navigation" id="main-navbar">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
 
-  <ul class="nav navbar-nav pull-right">
-	<li>
-      <a href="/#/account">
-        {% if request.user.first_name %}
-          {{ request.user.first_name }}
-        {% else %}
-          {{ request.user.username }}
+	  
+	  <a class="navbar-brand" href="/">{{OPAL_BRAND_NAME}}</a>
+      <p class="navbar-text">
+        <a href="#changelog" role="button" data-toggle="modal">
+          <span id="changelogTooltip"
+                data-toggle="tooltip"
+                data-trigger="manual"
+                data-title="{{OPAL_BRAND_NAME}} has been updated - click here to view the changes"
+                data-placement="bottom"
+                >
+            {{ VERSION_NUMBER }}
+          </span>
+        </a>
+	    {% now "DATE_FORMAT" %}
+      </p>
+
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+	    <li>
+          <a href="/#/account">
+            {% if request.user.first_name %}
+            {{ request.user.first_name }}
+            {% else %}
+            {{ request.user.username }}
+            {% endif %}
+          </a>
+        </li>
+        {% if request.user.is_staff %}
+	    <li><a href="/admin">Admin</a></li>
         {% endif %}
-      </a>
-    </li>
-    {% if request.user.is_staff %}
-	  <li><a href="/admin">Admin</a></li>
-    {% endif %}
-    {% if request.user.is_authenticated %}
-      {% if request.user.get_profile.can_extract %}
-        <li><a href="/#/extract">Extract</a></li>
-      {% endif %}
-      <li><a href="/#/discharge">Discharged</a></li>
-	  <li><a href="/#/search">Search</a></li>
-    <li><a href="{% url 'feedback' %}">Feedback</a></li>
-	<li><a href="{% url 'django.contrib.auth.views.logout' %}">Log out</a></li>
-  {% endif %}
-  </ul>
+        {% if request.user.is_authenticated %}
+        <li  ng-class="{active: $location.path().indexOf('/discharge') == 0}">
+          <a href="/#/discharge">Discharged</a>
+        </li>
+	    <li><a href="/#/search">Search</a></li>
+        <li><a href="{% url 'feedback' %}">Feedback</a></li>
+	    <li><a href="{% url 'django.contrib.auth.views.logout' %}">Log out</a></li>
+        {% endif %}
 
-</div>
+      </ul>
+
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
 
 <div class="modal" id="changelog">
   <div class="modal-dialog">
     <div class="modal-content">
-	    <div class="modal-header">
-		  <button type="button" class="close" data-dismiss="modal">×</button>
-		  <h3>Changelog</h3>
-	    </div>
-	    <div class="modal-body">
-          {% include 'changelog.html' %}
-        </div>
+	  <div class="modal-header">
+		<button type="button" class="close" data-dismiss="modal">×</button>
+		<h3>Changelog</h3>
+	  </div>
+	  <div class="modal-body">
+        {% include 'changelog.html' %}
+      </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->

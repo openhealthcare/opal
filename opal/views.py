@@ -135,7 +135,7 @@ def episode_list_and_create_view(request):
                 if episode['id'] in historic:
                     historic_tags = historic[episode['id']]
                     for t in historic_tags.keys():
-                        episode['location'][0]['tags'][t] = True
+                        episode['tagging'][0][t] = True
 
         else:
             serialised = models.Episode.objects.serialised_active(request.user)
@@ -166,7 +166,8 @@ def episode_list_and_create_view(request):
                 {'error': 'Patient already has active episode'}, 400)
 
         episode.update_from_location_dict(data['location'], request.user)
-        episode.set_tag_names(data['tagging'][0].keys(), request.user)
+        tag_names = [n for n, v in data['tagging'][0].items() if v]
+        episode.set_tag_names(tag_names, request.user)
         return _build_json_response(episode.to_dict(request.user), 201)
 
 
@@ -216,11 +217,7 @@ class TaggingView(View):
         data = _get_request_data(self.request)
         if 'id' in data:
             data.pop('id')
-        tag_names = []
-        for n, v in data.items():
-            if v:
-                tag_names.append(n)
-        print tag_names
+        tag_names = [n for n, v in data.items() if v]
         episode.set_tag_names(tag_names, self.request.user)
         return _build_json_response(episode.tagging_dict()[0])
 
@@ -318,7 +315,9 @@ class AddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(AddEpisodeTemplateView, self).get_context_data(**kwargs)
-        context['tags'] = models.Team.to_TAGS()
+        tags = models.Team.to_TAGS()
+        context['tags'] = tags
+        context['with_subtags'] = ','.join(["'" + tag.name + "'" for tag in tags if tag.subtags])
         return context
 
 class DischargeEpisodeTemplateView(LoginRequiredMixin, TemplateView):

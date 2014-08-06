@@ -1,7 +1,12 @@
-<div class="container">
-  <div class="col-md-10">
-  <div class="row">
-    {% if not request.user.get_profile.can_extract %}
+<div class="container content-offset">
+
+  <div class="panel panel-warning">
+    <!-- Default panel contents -->
+    <div class="panel-heading">
+      <h2>Patient Search</h2>
+    </div>
+    <div class="panel-body">
+      {% if not request.user.get_profile.can_extract %}
       <div class="col-md-4 col-md-offset-4">
         <h2>Data Extract</h2>
         <p>
@@ -9,180 +14,203 @@
           Please contact your local administrator to request permission.
         </p>
       </div>
-    {% else %}
-      <div class="col-md-12">
-        <h2>Data Extract</h2>
-        <form class="form-inline">
-      </div>
+      {% else %}      
+      <div class="row">
+        <div class="col-md-10">
+          <form class="form form-inline">
+            <div class="row">
+              <span ng-repeat="query in criteria">
+                <div class="row">
+                  <div class="col-md-2">
+                    <select class="form-control" ng-model="query.combine"
+                            ng-hide="$index == 0">
+                      <option>and</option>
+                      <option>or</option>
+                    </select>
+                  </div>
+                  <div class="col-md-2">
+                    <select class="form-control" ng-model="query.column"
+                    ng-change="resetFilter($index, ['combine', 'column'])"
+                    >
+                      <option ng-repeat="col in columns" value="[[col.name]]">
+                        [[col.display_name]]
+                      </option>
+                    </select>
+                    <p ng-show="query.column == null">
+                      1. Select a Column
+                    </p>
+                  </div>
+                  <div class="col-md-2">
+                    <span ng-repeat="col in columns"
+                          ng-show="query.column == col.name">
+                      <select class="form-control" ng-model="query.field" >
+                        <option ng-repeat="field in searchableFields(col)">[[field]]</option>
+                      </select>
+                    </span>
+                    <p ng-show="query.column != null && query.field == null">
+                      2. Select a field
+                    </p>
+                  </div>
+                  <div class="col-md-4" ng-show="query.column == 'tagging'"></div>
+                  <div class="col-md-2" ng-hide="query.column == 'tagging'">
+                    <select class="form-control"
+                            ng-show="query.field != null && !isDate(query.column, query.field)"
+                            ng-model="query.queryType" >
+                      <option>Equals</option>
+                      <option ng-show="isText(query.column, query.field)">Contains</option>
+                    </select>
+                    <select class="form-control"
+                            ng-show="query.field != null && isDate(query.column, query.field)"
+                            ng-model="query.queryType" >
+                      <option>Before</option>
+                      <option>After</option>
+                    </select>
+                    <p ng-show="query.column != null && query.field != null && query.queryType == null">
+                      3. Select a query type
+                    </p>
+                  </div>
+                  <div class="col-md-2" ng-hide="query.column == 'tagging'">
+                    <select class="form-control" ng-model="query.query" ng-show="isBoolean(query.column, query.field) && query.field != null">
+                      <option>true</option>
+                      <option>false</option>
+                    </select>
+                    <input type="text"
+                           class="form-control"
+                           ng-model="query.query"
+                           ng-show="isText(query.column, query.field) && query.field != null"
+                           ng-options="x for x in query.lookup_list"
+                           bs-typeahead
+                           />
+	                <input type="text" ng-model="query.query"
+                           class="form-control"
+                           ng-show="isDate(query.column, query.field) && query.field != null"
+			               ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
+			               placeholder="dd/mm/yyyy"
+                           />
 
-      <span ng-repeat="query in criteria">
-        <div class="row">
-          <div class="col-md-2">
-            <select class="form-control" ng-model="query.combine"
-                    ng-hide="$index == 0">
-              <option>and</option>
-              <option>or</option>
-            </select>
-          </div>
-        <div class="col-md-2">
-          <select class="form-control" ng-model="query.column">
-            <option ng-repeat="col in columns" value="[[col.name]]">
-              [[col.display_name]]
-            </option>
-          </select>
-          <p ng-show="query.column == null">
-            1. Select a Column
-          </p>
+                    <p ng-show="query.queryType != null && query.query == null && query.field != null">
+                      4. Add your value
+                    </p>
+                  </div>
+                  <div class="col-md-2">
+                    <button type="button" class="btn btn-success"
+                            ng-show="query.field != null"
+                            ng-click="addFilter()"
+                            >
+                      <span ng-click="addFilter" class="glyphicon glyphicon-plus"></span>
+                    </button>
+                    <button type="button" class="btn btn-danger"
+                            ng-show="(query.field != null && criteria.length > 1 || criteria.length > 1)"
+                            ng-click="removeFilter($index)"
+                            >
+                      <span ng-click="removeFilter($index)" class="glyphicon glyphicon-minus"></span>
+                  </button>        </div>
+                </div>
+              </span>
+            </div>
+          </form>
         </div>
-        <div class="col-md-2">
-          <span ng-repeat="col in columns"
-                ng-show="query.column == col.name">
-                <select class="form-control" ng-model="query.field" >
-                  <option ng-repeat="field in searchableFields(col)">[[field]]</option>
-                </select>
-          </span>
-          <p ng-show="query.column != null && query.field == null">
-            2. Select a field
-          </p>
-        </div>
-        <div class="col-md-4" ng-show="query.column == 'tagging'"></div>
-        <div class="col-md-2" ng-hide="query.column == 'tagging'">
-          <select class="form-control"
-                  ng-show="query.field != null && !isDate(query.column, query.field)"
-                  ng-model="query.queryType" >
-                  <option>Equals</option>
-                  <option ng-show="isText(query.column, query.field)">Contains</option>
-          </select>
-          <select class="form-control"
-                  ng-show="query.field != null && isDate(query.column, query.field)"
-                  ng-model="query.queryType" >
-                  <option>Before</option>
-                  <option>After</option>
-          </select>
-          <p ng-show="query.column != null && query.field != null && query.queryType == null">
-            3. Select a query type
-          </p>
-        </div>
-        <div class="col-md-2" ng-hide="query.column == 'tagging'">
-          <select class="form-control" ng-model="query.query" ng-show="isBoolean(query.column, query.field) && query.field != null">
-            <option>true</option>
-            <option>false</option>
-          </select>
-          <input type="text"
-                 class="form-control"
-                 ng-model="query.query"
-                 ng-show="isText(query.column, query.field) && query.field != null"
-                 ng-options="x for x in query.lookup_list"
-                 bs-typeahead
-                 />
-	      <input type="text" ng-model="query.query"
-                 class="form-control"
-                 ng-show="isDate(query.column, query.field) && query.field != null"
-			     ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
-			     placeholder="dd/mm/yyyy"
-                 />
-
-          <p ng-show="query.queryType != null && query.query == null && query.field != null">
-            4. Add your value
-          </p>
-        </div>
-        <div class="col-md-2">
-          <button type="button" class="btn btn-success"
-                  ng-show="query.field != null"
-                  ng-click="addFilter()"
-                  >
-            <span ng-click="addFilter" class="glyphicon glyphicon-plus"></span>
-          </button>
-          <button type="button" class="btn btn-danger"
-                  ng-show="(query.field != null && criteria.length > 1 || criteria.length > 1)"
-                  ng-click="removeFilter($index)"
-                  >
-            <span ng-click="removeFilter($index)" class="glyphicon glyphicon-minus"></span>
-          </button>        </div>
-        </div>
-      </span>
-
-      </form>
-  </div>
-  <div class="row">
-    <div class="col-md-12">
-      <p></p>
-      <p>
-        <button type="button"
-                class="btn btn-primary btn-lg"
-                ng-click="search()"
-                >
-                <span class="glyphicon glyphicon-search"></span>
-                Search
-        </button>
-      </p>
-    </div>
-    <div class="col-md-12">
-      <div ng-show="state=='pending'">
-        <img src="/assets/img/loading.gif">
-      </div>
-
-      <div ng-show="state=='normal' && results.length > 0">
-        <p ng-repeat="result in results">
-          <a href="#/episode/[[result.id]]" target="_blank">
-            [[ result.date_of_admission ]] [[ result.demographics[0].name ]]
-          </a>
-        </p>
-        <p> Results 1- [[  results.length >= 10 && 10 || results.length ]] of [[ results.length ]]</p>
-        <form action="/search/extract/download" method="post" target="_blank" >
-
-          <input name="criteria" type="hidden" value="[[ JSON.stringify(criteria) ]]">
-          {% csrf_token %}
-        <button type="submit"
-                class="btn btn-info btn-lg"
-                >
-                Download these results
-                <span class="glyphicon glyphicon-download"></span>
-        </button>
-        </form>
-        <button type="button"
-                class="btn btn-info btn-lg pull-right"
-                ng-click="save()"
-                >
-                Save this search
-                <span class="glyphicon glyphicon-floppy-disk"></span>
-        </button>
-
-      </div>
-
-      <div ng-show="state=='normal' && results.length == 0">
-        <p>
-          Sorry, no results match your search.
-        </p>
-      </div>
-
-      <ul class="hide">
-        <li ng-repeat="col in columns">
-          [[ col.name ]] (Single=[[col.single]])
+        <div class="col-md-2 bg-info">
+          <h4>Saved Searches</h4>
           <ul>
-            <li ng-repeat="f in col.fields">
-              [[f.name]]: [[ f.type ]]
+            <li ng-repeat="f in filters">
+              <a href="#" ng-click="jumpToFilter($event, f)">
+                [[f.name]]
+              </a>
+              <a href="#" ng-click="editFilter($event, f, $index)" >
+                <span class="glyphicon glyphicon-edit"></span>
+              </a>
             </li>
           </ul>
-        </li>
-      </ul>
+        </div>
+      </div> <!-- Row -->
+      <br />
+      <div class="row">
+        <div class="col-md-5 col-md-offset-3">
 
-{% endif %}
-{% include 'extract_footer.html' %}
+          <!-- <div class="row" ng-show="state=='normal' && results.length > 0"> -->
+          <form action="/search/extract/download" method="post" target="_blank"
+                >
+            <input name="criteria" type="hidden" value="[[ JSON.stringify(criteria) ]]">
+            {% csrf_token %}
+            <button type="submit"
+                    class="btn btn-info pull-left"
+                    ng-show="state=='normal' && results.length > 0">
+              <span class="glyphicon glyphicon-download"></span>
+              Download these results
+            </button>
+          </form>
+          <button type="button"
+                  class="btn btn-info pull-left push-left-12"
+                  ng-click="save()"
+                  ng-show="state=='normal' && results.length > 0">
+
+            <span class="glyphicon glyphicon-floppy-disk"></span>
+            Save this search
+          </button>
+
+          
+        </div>
+        <div class="col-md-4">
+          <button type="button"
+                  class="btn btn-warning"
+                  ng-click="search()"
+                  >
+            <span class="glyphicon glyphicon-search"></span>
+            Search
+          </button>
+          <a href="#/search" class="btn btn-info">
+            Basic
+          </a>
+        </div>
+      </div>
     </div>
 
+    <div ng-show="state=='pending'">
+      <img src="/assets/img/loading.gif">
+    </div>
+
+    <div ng-show="state=='normal' && results.length == 0">
+      <p>
+        Sorry, no results match your search.
+      </p>
+    </div>
+
+
+    <table class="table table-bordered table-hover search" ng-show="state=='normal' && results.length > 0">
+      <thead>
+        <tr>
+          <td>Hospital #</td>
+          <td>Name</td>
+          <td>DOB</td>
+          <td>Admitted</td>
+          <td>Discharged</td>
+          <td></td>
+        </tr>
+      </thead>
+      <tbody>
+	    <tr class="pointer"
+            ng-click="jumpToEpisode(result)"
+            ng-repeat="result in results"
+            >
+	      <td>[[result.demographics[0].hospital_number]]</td>
+	      <td>[[result.demographics[0].name]]</td>
+          <td>[[result.demographics[0].date_of_birth]]</td>
+	      <td>[[ result.date_of_admission ]]</td>
+          <td>[[ result.discharge_date ]]</td>
+	      <td>
+            <i class="glyphicon glyphicon-new-window"></i>
+          </td>
+	    </tr>
+      </tbody>
+
+    </table>
+
+    <!-- Table -->
+    {% endif %}
   </div>
+
+<p ng-show="state=='normal' && results.length > 0"> Results 1- [[  results.length >= 10 && 10 || results.length ]] of [[ results.length ]]</p>
 </div>
-    <div class="md-col-2">
-      <h3>Saved Searches</h3>
-      <ul>
-        <li ng-repeat="f in filters">
-          <a href="#" ng-click="jumpToFilter($event, f)">
-            [[f.name]]
-          </a>
-          <a href="#" ng-click="editFilter($event, f, $index)" >
-            <span class="glyphicon glyphicon-edit"></span>
-          </a>
-        </li>
-      </ul>
-    </div>
+
+{% include 'extract_footer.html' %}

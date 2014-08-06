@@ -2,4 +2,7 @@
   Recently Discharged (last 7 days)
   <a href="#/" class="btn btn-large btn-primary pull-right" type="button">Return to list</a>
 </h2>
+{% with discharged=True %}
 {% include 'episode_list.html' %}
+{% endwith %}
+
