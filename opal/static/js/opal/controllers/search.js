@@ -2,10 +2,10 @@ angular.module('opal.controllers').controller(
     'SearchCtrl', function($scope, $http, $location, $modal,
                            $timeout,
                            $q, Episode,
-                           profile,
+                           UserProfile,
                            schema, options) {
 
-        $scope.profile = profile;
+        $scope.profile = UserProfile;
 	    $scope.searchTerms = {
 		    hospital_number: '',
 		    name: ''
