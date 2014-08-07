@@ -128,14 +128,13 @@
       <div class="row">
         <div class="col-md-5 col-md-offset-3">
 
-          <!-- <div class="row" ng-show="state=='normal' && results.length > 0"> -->
           <form action="/search/extract/download" method="post" target="_blank"
                 >
             <input name="criteria" type="hidden" value="[[ JSON.stringify(criteria) ]]">
             {% csrf_token %}
             <button type="submit"
                     class="btn btn-info pull-left"
-                    ng-show="state=='normal' && results.length > 0">
+                    ng-show="results.length > 0">
               <span class="glyphicon glyphicon-download"></span>
               Download these results
             </button>
