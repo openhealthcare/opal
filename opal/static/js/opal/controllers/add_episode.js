@@ -29,7 +29,7 @@ angular.module('opal.controllers')
 
 	$scope.editing.tagging[0][$scope.currentTag] = true;
 	if($scope.currentSubTag != 'all'){
-		$scope.editing.tagging[$scope.currentSubTag] = true;
+		$scope.editing.tagging[0][$scope.currentSubTag] = true;
 	}
 
 	$scope.showSubtags = function(withsubtags){

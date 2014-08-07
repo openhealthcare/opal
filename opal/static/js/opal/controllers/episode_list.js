@@ -15,9 +15,7 @@ angular.module('opal.controllers').controller(
         //     });
         // }
 
-
         $scope.state = 'normal';
-
 
 	    $scope.rix = 0; // row index
 	    $scope.cix = 0; // column index
@@ -29,9 +27,15 @@ angular.module('opal.controllers').controller(
 
 	    $scope.query = {hospital_number: '', name: ''};
 
+        if(viewDischarged){
+            $scope.path_base = '/discharge/';
+        }else{
+            $scope.path_base = '/list/';
+        }
+        
         if(!$routeParams.tag){
             var tag =  $cookieStore.get('opal.currentTag') || 'mine';
-            $location.path("/list/" + tag);
+            $location.path($scope.path_base + tag);                
             return
         }
         $scope.currentTag = $routeParams.tag;
@@ -46,40 +50,13 @@ angular.module('opal.controllers').controller(
         $scope.profile = profile;
         $scope.tag_display = options.tag_display;
 
-        $scope.episode_lookup = {};
-        _.each(episodes,  function(e){
-            if(e.tagging){         // Shouldn't be needed but occasionally happens in migration breakage
-                _.each(_.keys(e.tagging[0]), function(tag_name){
-                    if(tag_name && !_.has($scope.episode_lookup, tag_name)){
-                        $scope.episode_lookup[tag_name] = [];
-                    };
-                    $scope.episode_lookup[tag_name].push(e.id);
-                })
-                    }
-        });
-
-
 	    function getVisibleEpisodes() {
 		    var visibleEpisodes = [];
-            var episode_list;
+            var episode_list = [];
 
-            if($scope.episode_lookup){
-                if($scope.currentSubTag == 'all'){
-                    episode_list = $scope.episode_lookup[$scope.currentTag];
-                }else{
-                    episode_list = $scope.episode_lookup[$scope.currentSubTag];
-                }
-            }else{
-                episode_list = [];
-            }
-
-            visibleEpisodes = _.map(
-                _.filter(episode_list, function(id){
-                    return episodeVisibility(episodes[id], $scope, viewDischarged)
-                }),
-                function(id){
-                    return episodes[id];
-                })
+            visibleEpisodes = _.filter(episodes, function(episode){
+                return episodeVisibility(episode, $scope, viewDischarged)
+            });
 		    visibleEpisodes.sort(compareEpisodes);
 		    return visibleEpisodes;
 	    };
@@ -92,13 +69,13 @@ angular.module('opal.controllers').controller(
 
         $scope.jumpToTag = function(tag){
             if(_.contains(_.keys(options.tag_hierarchy), tag)){
-                $location.path('/list/'+tag)
+                $location.path($scope.path_base + tag)
             }else{
 
                 for(var prop in options.tag_hierarchy){
                     if(options.tag_hierarchy.hasOwnProperty(prop)){
                         if(_.contains(_.values(options.tag_hierarchy[prop]), tag)){
-                            $location.path('/list/'+ prop + '/' + tag)
+                            $location.path($scope.path_base + prop + '/' + tag)
                         }
                     }
                 }
@@ -117,7 +94,7 @@ angular.module('opal.controllers').controller(
             if($scope.currentTag != $routeParams.tag){
                 $scope.state = 'reloading'
             }
-            $location.path('/list/' +  $scope.currentTag);
+            $location.path($scope.path_base +  $scope.currentTag);
 	    });
 
 	    $scope.$watch('currentSubTag', function(){
@@ -126,12 +103,12 @@ angular.module('opal.controllers').controller(
                 if($routeParams.subtag && $scope.currentSubTag != $routeParams.subtag){
                     $scope.state = 'reloading'
                 }
-                $location.path('/list/' +  $scope.currentTag);
+                $location.path($scope.path_base +  $scope.currentTag);
             }else{
                 if($scope.currentSubTag != $routeParams.subtag){
                     $scope.state = 'reloading'
                 }
-                $location.path('/list/' +  $scope.currentTag + '/' +  $scope.currentSubTag);
+                $location.path($scope.path_base +  $scope.currentTag + '/' +  $scope.currentSubTag);
             }
 	    });
 
@@ -240,7 +217,8 @@ angular.module('opal.controllers').controller(
                     schema: function(){ return schema },
                     options: function(){ return options },
                     tags: function(){ return {tag: $scope.currentTag,
-                                              subtag: $scope.currentSubTag}}
+                                              subtag: $scope.currentSubTag}},
+                    hospital_number: function(){ return null; }
                 }
 		    }).result.then(
                 function(episode) {
@@ -253,13 +231,6 @@ angular.module('opal.controllers').controller(
 		            $scope.state = 'normal';
 		            if (episode) {
 			            episodes[episode.id] = episode;
-                        if($scope.episode_lookup[$scope.currentTag] === undefined){
-                            $scope.episode_lookup[$scope.currentTag] = [];
-                        }
-                        $scope.episode_lookup[$scope.currentTag].push(episode.id);
-                        if($scope.currentSubTag != 'all'){
-                            $scope.episode_lookup[$scope.currentSubTag].push(episode.id)
-                        }
 			            $scope.rows = getVisibleEpisodes();
 			            rowIx = getRowIxFromEpisodeId(episode.id);
 			            $scope.selectItem(rowIx, 0, 0);

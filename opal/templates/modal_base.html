@@ -2,14 +2,8 @@
 	    <button type="button" class="close" ng-click="cancel()">×</button>
 	    <h3>{% block title %}{{title}}([[editingName]]){% endblock %}</h3>
       </div>
-      <div class="modal-body" ng-show="state=='editing'">
+      <div class="modal-body">
         {% block modal_body %}{% endblock %}
-      </div>
-      <div class="modal-body" ng-show="state=='saving'">
-        <center>
-          <h3>Saving...</h3>
-          <img src="/assets/img/loading.gif" />
-        </center>
       </div>
       <div class="modal-footer">
         {% block modal_save %}
@@ -17,7 +11,7 @@
         {% endblock %}
 	    {% if not single %}
           {% block modal_another %}
-	      <button class="btn btn" ng-click="save('save-and-add-another')">
+	      <button class="btn btn btn-primary" ng-click="save('save-and-add-another')">
             Save and add another
           </button>
           {% endblock %}

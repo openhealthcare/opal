@@ -32,7 +32,7 @@
 
     <ul class="nav navbar-nav nav-tabs" role="tablist">
 	  {% for tag in tags %}
-      <li ng-class="{active: currentTag == '{{tag.name }}' }"><a href="#/list/{{tag.name}}">{{tag.title}}</a></li>
+      <li ng-class="{active: currentTag == '{{tag.name }}' }"><a href="#/{% if discharged %}discharge{% else %}list{% endif %}/{{tag.name}}">{{tag.title}}</a></li>
 	  {% endfor %}
     </ul>
     
@@ -62,12 +62,12 @@
         {% if tag.subtags %}
           <li ng-class="{active: currentTag == '{{tag.name }}' && currentSubTag == 'all' }"                 
               ng-show="currentTag == '{{tag.name}}'">
-            <a href="#/list/{{tag.name}}">All</a>
+            <a href="#/{% if discharged %}discharge{% else %}list{% endif %}/{{tag.name}}">All</a>
           </li>
           {% for subtag in tag.subtags %}
             <li ng-class="{active: currentTag == '{{tag.name }}' && currentSubTag == '{{subtag.name}}' }"
                 ng-show="currentTag == '{{tag.name}}'">
-              <a href="#/list/{{tag.name}}/{{subtag.name}}">{{subtag.title}}</a>
+              <a href="#/{% if discharged %}discharge{% else %}list{% endif %}/{{tag.name}}/{{subtag.name}}">{{subtag.title}}</a>
             </li>
       {% endfor %}
       {% endif %}

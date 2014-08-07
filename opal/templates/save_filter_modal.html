@@ -5,7 +5,7 @@
     <span class="glyphicon glyphicon-floppy-disk"></span>
   </h3>
 </div>
-<div class="modal-body" ng-show="state=='editing'">
+<div class="modal-body">
   <form role="form">
     <div class="form-group">
       <label for="name">Name</label>
@@ -15,14 +15,8 @@
              autofocus>
     </div>
   </form>
+</div>
 
-</div>
-<div class="modal-body" ng-show="state=='saving'">
-  <center>
-    <h3>Saving...</h3>
-    <img src="/assets/img/loading.gif" />
-  </center>
-</div>
 <div class="modal-footer">
   <button class="btn btn-primary" ng-click="save('save')">Save</button>
   <button class="btn" ng-click="cancel()">Cancel</button>

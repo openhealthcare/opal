@@ -26,8 +26,13 @@ li.selected {
 #main-navbar {
     color: #8a6d3b;
     background-color: #fcf8e3;
-    border-color: #faebcc;
+    border: solid #faebcc;
+    border-width: 0 0 2px 0;
 }
+
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:hover,
+.navbar-default .navbar-nav > .active > a:focus,    
 #main-navbar .navbar-nav li:hover {
 	background-color: #f0ad4e;
 }
@@ -82,7 +87,7 @@ input.ng-invalid {
 }
 
 .navbar-2 {
-    top: 50px;
+    top: 52px;
     padding-top: 4px;
 	background-color: white;
 }
@@ -91,7 +96,7 @@ input.ng-invalid {
     top: 88px;
     padding-top: 2px;
 	background-color: white;
-    min-height: 30px;
+    min-height: 35px;
 }
 
 .content-offset {
@@ -116,7 +121,8 @@ input.ng-invalid {
 }
 .navbar-nav.nav-tabs li:hover a,
 .navbar-nav.nav-tabs li.active:hover a,
-.navbar-nav.nav-tabs li.active a {
+.navbar-nav.nav-tabs li.active a,
+.navbar-nav.nav-tabs li.active{
 	background: #fcf8e3;
 }
 .navbar-nav.nav-tabs li a {
@@ -125,4 +131,15 @@ input.ng-invalid {
 
 .navbar-nav.nav-tabs {
 	background: #fafafa
+}
+
+/* ngProgress overrides */
+.ngProgressLiteBar {
+  background-color: firebrick;
+  box-shadow: 0 0 10px 0; /* Inherits the font color */
+  top: 50px;
+}
+
+.ngProgressLite .ngProgressLiteBarShadow {
+  display: none;
 }

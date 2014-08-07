@@ -9,7 +9,8 @@ angular.module('opal.controllers').controller(
              Episode,
              schema,
              options,
-             tags) {
+             tags,
+            hospital_number) {
 
         // TODO- reimplement this
 	    // $timeout(function() {
@@ -17,6 +18,9 @@ angular.module('opal.controllers').controller(
 	    // });
 
         $scope.model = {}
+        if(hospital_number){
+            $scope.model.hospitalNumber = hospital_number;
+        }
         $scope.tags = tags;
 
 	    $scope.findByHospitalNumber = function() {
@@ -57,7 +61,9 @@ angular.module('opal.controllers').controller(
         };
 
         $scope.newForPatient = function(patient){
-			if (patient.active_episode_id) {
+			if (patient.active_episode_id && 
+                // Check to see that this episode is not "Discharged"
+                patient.episodes[patient.active_episode_id].location[0].category != 'Discharged') {
 				// This patient has an active episode
                 $scope.newForPatientWithActiveEpisode(patient);
 			} else { // This patient has no active episode
@@ -114,7 +120,7 @@ angular.module('opal.controllers').controller(
                 if($scope.tags.subtag != 'all'){
                     episode.tagging[0][$scope.tags.subtag] = true;
                 }
-                episode.location[0].save(episode.location[0].makeCopy()).then(
+                episode.tagging[0].save(episode.tagging[0].makeCopy()).then(
                     function(){
 				        $modalInstance.close(episode);
                     });
