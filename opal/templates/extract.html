@@ -187,7 +187,7 @@
       <tbody>
 	    <tr class="pointer"
             ng-click="jumpToEpisode(result)"
-            ng-repeat="result in results"
+            ng-repeat="result in results | limitTo: 10"
             >
 	      <td>[[result.demographics[0].hospital_number]]</td>
 	      <td>[[result.demographics[0].name]]</td>
@@ -206,7 +206,7 @@
     {% endif %}
   </div>
 
-<p ng-show="state=='normal' && results.length > 0"> Results 1- [[  results.length >= 10 && 10 || results.length ]] of [[ results.length ]]</p>
+<p ng-show="results.length > 0"> Results 1- [[  results.length >= 10 && 10 || results.length ]] of [[ results.length ]]</p>
 </div>
 
 {% include 'extract_footer.html' %}
