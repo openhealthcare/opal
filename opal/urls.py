@@ -20,6 +20,8 @@ urlpatterns = patterns(
         views.AccountDetailTemplateView.as_view()),
     url(r'^accounts/banned', views.BannedView.as_view(), name='banned'),
 
+    url(r'^flow/', views.FlowView.as_view(), name='flow'),
+
     url(r'^schema/list/$', views.ListSchemaView.as_view()),
     url(r'^schema/detail/$', views.DetailSchemaView.as_view()),
     url(r'^schema/extract/$', views.ExtractSchemaView.as_view()),

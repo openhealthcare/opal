@@ -2,6 +2,7 @@ angular.module('opal.controllers').controller(
     'EpisodeListCtrl', function($scope, $q, $http, $cookieStore,
                                 $location, $routeParams,
                                 $modal,
+                                Flow,
                                 Episode, schema, episodes, options,
                                 profile,
                                 episodeVisibility, viewDischarged){
@@ -206,21 +207,20 @@ angular.module('opal.controllers').controller(
             if(profile.readonly){
                 return null;
             };
-		    var hospitalNumberModal;
+            
+            var enter = Flow(
+                'enter', schema, options, 
+                {
+                    current_tags: {
+                        tag: $scope.currentTag,
+                        subtag: $scope.currentSubTag
+                    }
+                }
+            );
 
 		    $scope.state = 'modal';
 
-		    hospitalNumberModal = $modal.open({
-			    templateUrl: '/templates/modals/hospital_number.html/',
-			    controller: 'HospitalNumberCtrl',
-                resolve: {
-                    schema: function(){ return schema },
-                    options: function(){ return options },
-                    tags: function(){ return {tag: $scope.currentTag,
-                                              subtag: $scope.currentSubTag}},
-                    hospital_number: function(){ return null; }
-                }
-		    }).result.then(
+            enter.then(
                 function(episode) {
 		            // User has either retrieved an existing episode or created a new one,
 		            // or has cancelled the process at some point.
