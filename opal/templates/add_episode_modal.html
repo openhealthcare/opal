@@ -71,7 +71,7 @@
 	  <div class="controls">
 		{% for tag in tags %}
 		  <label class="checkbox">
-			<input type="checkbox" ng-model="editing.tagging[0]['{{tag.name}}']">
+			<input type="checkbox" ng-model="editing.tagging[0].{{tag.name}}">
 			{{tag.title}}
 		  </label>
 		{% endfor %}
@@ -85,8 +85,8 @@
 			 {% if tag.subtags %}
 			   {% for subtag in tag.subtags %}
 				 <label class="checkbox"
-					    ng-show="editing.tagging[0]['{{tag.name}}'] == true">
-					    <input type="checkbox" ng-model="editing.tagging[0]['{{subtag.name}}']">
+					    ng-show="editing.tagging[0].{{tag.name}} == true">
+					    <input type="checkbox" ng-model="editing.tagging[0].{{subtag.name}}">
 					    {{subtag.title}}
 				 </label>
 			   {% endfor %}
