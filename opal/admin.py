@@ -9,10 +9,10 @@ from django.contrib import admin
 
 import reversion
 
-from opal.models import option_models, Synonym
-from opal.models import UserProfile
-
 from opal import models
+from opal.models import Synonym
+from opal.models import UserProfile
+from opal.utils.models import LookupList
 
 admin.site.unregister(User)
 
@@ -57,7 +57,7 @@ class OptionAdmin(admin.ModelAdmin):
     search_fields = ['name']
     inlines = [SynonymInline]
 
-for model in option_models.values():
+for model in LookupList.__subclasses__():
     admin.site.register(model, OptionAdmin)
 
 admin.site.register(User, UserProfileAdmin)

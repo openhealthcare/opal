@@ -21,6 +21,7 @@ from opal.utils.http import with_no_caching
 from opal.utils import (camelcase_to_underscore, stringport, fields, 
                         json_to_csv, OpalPlugin)
 from opal.utils.banned_passwords import banned
+from opal.utils.models import LookupList
 from opal.utils.views import LoginRequiredMixin
 from opal import models, exceptions
 
@@ -487,9 +488,11 @@ class BannedView(TemplateView):
 
 def options_view(request):
     data = {}
-    for name, model in option_models.items():
+    #for name, model in option_models.items():
+    
+    for model in LookupList.__subclasses__():
         options = [instance.name for instance in model.objects.all()]
-        data[name] = options
+        data[model.__name__.lower()] = options
 
     for synonym in Synonym.objects.all():
         name = type(synonym.content_object).__name__.lower()

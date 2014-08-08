@@ -14,6 +14,7 @@ import reversion
 
 from opal.utils import stringport, camelcase_to_underscore, OpalPlugin
 from opal.utils.fields import ForeignKeyOrFreeText
+from opal.utils.models import lookup_list
 from opal import exceptions, managers
 
 from opal.models.mixins import UpdatesFromDictMixin
@@ -461,16 +462,7 @@ option_models = {}
 model_names = options.model_names
 
 for name in model_names:
-    class_name = name.capitalize() # TODO handle camelcase properly
-    bases = (models.Model,)
-    attrs = {
-        'name': models.CharField(max_length=255, unique=True),
-        'synonyms': generic.GenericRelation('Synonym'),
-        'Meta': type('Meta', (object,), {'ordering': ['name']}),
-        '__unicode__': lambda self: self.name,
-        '__module__': __name__,
-    }
-    option_models[name] = type(class_name, bases, attrs)
+    option_models[name] = type(*lookup_list(name, module='opal.models'))
 
 
 # TODO
