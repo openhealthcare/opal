@@ -134,6 +134,7 @@ class Episode(UpdatesFromDictMixin, models.Model):
 
         for tag_name in tag_names:
             if tag_name not in original_tag_names:
+                print tag_name
                 params = {'team': Team.objects.get(name=tag_name)}
                 if tag_name == 'mine':
                     params['user'] = user
