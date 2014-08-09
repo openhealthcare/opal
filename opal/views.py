@@ -280,16 +280,20 @@ class EpisodeListTemplateView(EpisodeTemplateView):
     template_name = 'episode_list.html'
     column_schema = schema.list_schemas['default']
 
+    
 class DischargeListTemplateView(EpisodeTemplateView):
     template_name = 'discharge_list.html'
     column_schema = schema.list_columns
 
+    
 class SaveFilterModalView(TemplateView):
     template_name = 'save_filter_modal.html'
+
 
 class EpisodeDetailTemplateView(EpisodeTemplateView):
     template_name = 'episode_detail.html'
     column_schema = schema.detail_columns
+
 
 class TagsTemplateView(TemplateView):
     template_name = 'tagging_modal.html'
@@ -308,9 +312,11 @@ class SearchTemplateView(TemplateView):
         context['tags'] = models.Team.to_TAGS()
         return context
 
+
 class ExtractTemplateView(TemplateView):
     template_name = 'extract.html'
 
+    
 class AddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'add_episode_modal.html'
 
@@ -321,8 +327,13 @@ class AddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
         context['with_subtags'] = ','.join(["'" + tag.name + "'" for tag in tags if tag.subtags])
         return context
 
+    
 class DischargeEpisodeTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'discharge_episode_modal.html'
+
+
+class DischargeOpatEpisodeTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = 'discharge_opat_episode_modal.html'
 
 
 class DeleteItemConfirmationView(LoginRequiredMixin, TemplateView):

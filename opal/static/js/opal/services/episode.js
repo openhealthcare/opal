@@ -65,11 +65,16 @@ angular.module('opal.services')
             }
 
 	        this.newItem = function(columnName, opts) {
+                var column;
+
                 if(!opts){
                     opts = {};
                 }
                 if(!opts.schema){
                     opts.schema = schema;
+                }
+                if(!opts.column){
+                    opts.column = opts.schema.getColumn(columnName);
                 }
 
 	            var attrs = {};
@@ -93,14 +98,21 @@ angular.module('opal.services')
                 if (columnName == 'line'){
                     attrs.inserted_by = window.initials
                 }
-	            return new Item(attrs, episode, opts.schema.getColumn(columnName));
+	            return new Item(attrs, episode, opts.column);
 	        };
 
 	        this.getItem = function(columnName, iix) {
 	            return episode[columnName][iix];
 	        };
 
+            // 
+            // add an item (e.g. instance of a subfield) to this episode
+            // 
 	        this.addItem = function(item) {
+                // Sometimes we add an item from a non-active schema.
+                if(!episode[item.columnName]){
+                    episode[item.columnName] = [];
+                }
 	            episode[item.columnName].push(item);
                 if(item.sort){
                     this.sortColumn(item.columnName, item.sort);

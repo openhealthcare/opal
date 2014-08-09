@@ -21,11 +21,6 @@ angular.module('opal.controllers').controller(
 		    return _.some(withsubtags, function(tag){ return item[tag] });
         };
 
-        // TODO - reimplement this
-	    // $timeout(function() {
-	    // 	$modalInstance.modalEl.find('input,textarea').first().focus();
-	    // });
-
 	    for (var name in options) {
 		    if (name.indexOf('micro_test') != 0) {
 			    $scope[name + '_list'] = options[name];
@@ -69,21 +64,19 @@ angular.module('opal.controllers').controller(
 
 	    $scope.episode_category_list = ['OPAT',  'Inpatient', 'Outpatient', 'Review'];
 
+        // 
+        // Save the item that we're editing.
+        // 
 	    $scope.save = function(result) {
             ngProgressLite.set(0);
             ngProgressLite.start();
 		    item.save($scope.editing).then(function() {
                 ngProgressLite.done();
-                // if($scope.columnName == 'location'){
-                //     episode.save($scope.episode).then(function(){
-                //         $modalInstance.close(result)
-                //     });
-                // }else{
 			    $modalInstance.close(result);
-                // }
 		    });
 	    };
 
+        // Let's have a nice way to kill the modal.
 	    $scope.cancel = function() {
 		    $modalInstance.close('cancel');
 	    };

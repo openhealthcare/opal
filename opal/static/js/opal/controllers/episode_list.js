@@ -265,7 +265,7 @@ angular.module('opal.controllers').controller(
             exit.then(function(result) {
 			    $scope.state = 'normal';
 
-			    if (result == 'discharged') {
+			    if (result == 'discharged' | result == 'moved') {
 				    $scope.rows = getVisibleEpisodes();
 				    $scope.selectItem(0, $scope.cix, 0);
 			    };
