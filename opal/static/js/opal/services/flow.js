@@ -12,6 +12,7 @@ angular.module(
         // 
         var flow_for_verb = function(verb, current_tags){
             var flow = flow_cache.get('flow');
+
             if(!current_tags){
                 return flow['default'][verb];
             }
@@ -33,9 +34,9 @@ angular.module(
             }else{// Default
                 return flow['default'][verb];
             }
-        }
+        };
 
-        return function(verb, schema, options, config){
+        var Flow = function(verb, schema, options, config){
             var deferred = $q.defer();
             var datadeferred = $q.defer();
 
@@ -108,5 +109,8 @@ angular.module(
             return deferred.promise
             
         }
+        
+        Flow.flow_for_verb = flow_for_verb;
+        return Flow;
     }
 );
