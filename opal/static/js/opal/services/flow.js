@@ -4,20 +4,39 @@ angular.module(
     'Flow',
     function($q, $http, $modal, $cacheFactory){
         
-        var flowCache = $cacheFactory('flow-cache');
-        var GOT_FLOW = false;
+        var flow_cache = $cacheFactory('flow-cache');
+
+        // 
+        // Return the correct flow object for the current
+        // situation
+        // 
+        var flow_for_verb = function(verb, current_tags){
+            var flow = flow_cache.get('flow');
+            if(!current_tags){
+                return flow['default'][verb];
+            }
+            if(current_tags.tag && current_tags.tag in flow){
+                if(current_tags.subtag && current_tags.subtag in flow){
+                    return flow[current_tags.tag][current_tags.subtag][verb];
+                }else{
+                    return flow[current_tags.tag]['default'][verb];
+                }
+            }else{// Default
+                return flow['default'][verb];
+            }
+        }
 
         return function(verb, schema, options, config){
             var deferred = $q.defer();
             var datadeferred = $q.defer();
 
-            if(flowCache.get('flow')){
+            if(flow_cache.get('flow')){
                 datadeferred.resolve()
             }else{
                 $http.get('/flow/').then(
                     // Success
                     function(response){
-                        flowCache.put('flow', response.data);
+                        flow_cache.put('flow', response.data);
                         datadeferred.resolve()
                     },
                     // Error
@@ -30,31 +49,38 @@ angular.module(
             var verbs = {            
                 // The patient is 'entering'. Do the right thing.
                 enter: function(schema, options, config){
-
                     datadeferred.promise.then(function(){
-                        var flow = flowCache.get('flow');
-
-                        var templateUrl = flow['default'].enter.template;
-                        var controller = flow['default'].enter.controller;
+                        var flow = flow_for_verb('enter', config.current_tags);
 
 		                result = $modal.open({
-			                templateUrl: templateUrl,
-			                controller: controller,
+			                templateUrl: flow.template,
+			                controller:  flow.controller,
                             resolve: {
-                                schema: function(){ return schema },
-                                options: function(){ return options },
-                                tags: function(){ return options.current_tags},
+                                schema:          function(){ return schema },
+                                options:         function(){ return options },
+                                tags:            function(){ return options.current_tags},
                                 hospital_number: function(){ return null; }
                             }
 		                }).result;
-
                         deferred.resolve(result);
                     })
                 },
 
                 // The patient is 'leaving'. Do the right thing.
                 exit: function(schema, options, config){
-                    
+                    datadeferred.promise.then(function(){
+                        var flow = flow_for_verb('exit', config.current_tags);
+                        
+		                result = $modal.open({
+			                templateUrl: flow.template,
+			                controller:  flow.controller,
+			                resolve: {
+				                episode: function() { return config.episode; },
+                                tags   : function() { return config.current_tags }
+			                }
+		                }).result
+                        deferred.resolve(result);
+                    });
                 },
             }
 

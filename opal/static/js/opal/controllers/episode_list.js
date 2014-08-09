@@ -246,27 +246,25 @@ angular.module('opal.controllers').controller(
 	    };
 
 	    $scope.dischargeEpisode = function(rix, event) {
-		    var modal;
 		    var episode = getEpisode(rix);
 
-            if(profile.readonly){
-                return null;
-            };
-
-		    // This is required to prevent the page reloading
-		    event.preventDefault();
-
+            if(profile.readonly){ return null; };
+		    
+		    event.preventDefault();// Required to prevent the page reloading
 		    $scope.state = 'modal';
 
-		    modal = $modal.open({
-			    templateUrl: '/templates/modals/discharge_episode.html/',
-			    controller: 'DischargeEpisodeCtrl',
-			    resolve: {
-				    episode: function() { return episode; },
-				    currentTag: function() { return $scope.currentTag; },
-                    currentSubTag: function() { return $scope.currentSubTag; }
-			    }
-		    }).result.then(function(result) {
+            var exit = Flow(
+                'exit', schema, options,
+                {
+                    current_tags: {
+                        tag   : $scope.currentTag,
+                        subtag: $scope.currentSubTag
+                    },
+                    episode: episode
+                }
+            );
+
+            exit.then(function(result) {
 			    $scope.state = 'normal';
 
 			    if (result == 'discharged') {
