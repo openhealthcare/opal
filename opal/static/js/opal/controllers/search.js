@@ -1,7 +1,7 @@
 angular.module('opal.controllers').controller(
     'SearchCtrl', function($scope, $http, $location, $modal,
                            $timeout, ngProgressLite,
-                           $q, Episode,
+                           $q, Episode, Flow,
                            profile,
                            schema, options) {
 
@@ -58,20 +58,22 @@ angular.module('opal.controllers').controller(
         }
 
 	    $scope.addEpisode = function() {
-		    var hospitalNumberModal;
+            if(profile.readonly){ return null; };
+
+            var enter = Flow(
+                'enter', schema, options, 
+                {
+                    current_tags: {
+                        tag: 'mine',
+                        subtag: 'all'
+                    },
+                    hospital_number: $scope.searchTerms.hospital_number
+                }
+            );
 
 		    $scope.state = 'modal';
 
-		    hospitalNumberModal = $modal.open({
-			    templateUrl: '/templates/modals/hospital_number.html/',
-			    controller: 'HospitalNumberCtrl',
-                resolve: {
-                    schema: function(){ return schema },
-                    options: function(){ return options },
-                    tags: function(){ return {tag: 'mine', subtag: 'all'}},
-                    hospital_number: function(){ return $scope.searchTerms.hospital_number; }
-                }
-		    }).result.then(
+            enter.then(
                 function(episode) {
 			        // User has either retrieved an existing episode or created a new one,
 			        // or has cancelled the process at some point.

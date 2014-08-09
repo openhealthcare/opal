@@ -204,9 +204,7 @@ angular.module('opal.controllers').controller(
 	    };
 
 	    $scope.addEpisode = function() {
-            if(profile.readonly){
-                return null;
-            };
+            if(profile.readonly){ return null; };
             
             var enter = Flow(
                 'enter', schema, options, 

@@ -59,7 +59,7 @@ angular.module(
                                 schema:          function(){ return schema },
                                 options:         function(){ return options },
                                 tags:            function(){ return options.current_tags},
-                                hospital_number: function(){ return null; }
+                                hospital_number: function(){ return options.hospital_number; }
                             }
 		                }).result;
                         deferred.resolve(result);
