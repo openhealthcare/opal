@@ -167,7 +167,6 @@ angular.module('opal.controllers').controller(
             if(profile.readonly){ return null; };
 
 		    $scope.state = 'modal';
-
             var exit = Flow(
                 'exit', schema, options,
                 {

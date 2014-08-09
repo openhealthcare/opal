@@ -180,6 +180,7 @@ describe('controllers', function() {
 
     describe('EpisodeListCtrl', function() {
         var $scope, $cookieStore, $controller, $q, $dialog;
+        var Flow;
         var episodes, controller;
 
         beforeEach(function() {
@@ -196,14 +197,16 @@ describe('controllers', function() {
             episodes = {123: new Episode(episodeData, schema)};
             options = optionsData;
             $routeParams.tag = 'tropical';
+            Flow = jasmine.createSpy('Flow').andCallFake(function(){return {then: function(){}}});
 
             controller = $controller('EpisodeListCtrl', {
-                $scope: $scope,
-                $cookieStore: $cookieStore,
-                schema: schema,
-                episodes: episodes,
-                profile: profile,
-                options: options,
+                $scope        : $scope,
+                $cookieStore  : $cookieStore,
+                Flow          : Flow,
+                schema        : schema,
+                episodes      : episodes,
+                profile       : profile,
+                options       : options,
                 viewDischarged: false
             });
         });
@@ -220,63 +223,16 @@ describe('controllers', function() {
                 expect($scope.state).toBe('modal');
             });
 
-            it('should set up the hospital number modal', function() {
-                var callArgs;
-
-                spyOn($modal, 'open').andCallThrough();
-
+            it('should call the enter flow', function() {
                 $scope.addEpisode();
-
-                callArgs = $modal.open.mostRecentCall.args;
-                expect(callArgs.length).toBe(1);
-                expect(callArgs[0].templateUrl).toBe(
-                    '/templates/modals/hospital_number.html/');
-                expect(callArgs[0].controller).toBe('HospitalNumberCtrl');
-            });
-
-            it('should set the state to normal if the modal is cancelled', function(){
-                var deferred;
-
-                deferred = $q.defer();
-                spyOn($modal, 'open').andReturn({result: deferred.promise});
-
-                $scope.addEpisode();
-
-                expect($scope.state).toBe('modal');
-                deferred.reject('howdy');
-
-                $rootScope.$apply();
-                expect($scope.state).toBe('normal');
-            });
-
-            it('should set the state to normal if the modal is resolved', function(){
-                var deferred;
-
-                deferred = $q.defer();
-                spyOn($modal, 'open').andReturn({result: deferred.promise});
-
-                $scope.addEpisode();
-
-                expect($scope.state).toBe('modal');
-                deferred.resolve(episodes[0]);
-
-                $rootScope.$apply();
-                expect($scope.state).toBe('normal');
-            });
-
-            it('should select the episode when we close the modal', function(){
-                var deferred;
-
-                deferred = $q.defer();
-                spyOn($modal, 'open').andReturn({result: deferred.promise});
-                spyOn($scope, 'selectItem');
-
-                $scope.addEpisode();
-
-                deferred.resolve(episodes[123]);
-
-                $rootScope.$apply();
-                expect($scope.selectItem).toHaveBeenCalledWith(0, 0, 0)
+                expect(Flow).toHaveBeenCalledWith(
+                    'enter', schema, options, {
+                        current_tags: {
+                            tag   : 'tropical',
+                            subtag: 'all'
+                        }
+                    }
+                )
             });
 
             describe('for a readonly user', function(){
@@ -303,17 +259,19 @@ describe('controllers', function() {
                 $scope.dischargeEpisode(0, mockEvent)
             })
 
-            it('should open the discharge episode controller', function(){
-                var deferred, callArgs;
-
-                deferred = $q.defer();
-                spyOn($modal, 'open').andReturn({result: deferred.promise});
-
+            it('should call the exit flow', function(){
                 $scope.dischargeEpisode(0, mockEvent);
+                expect(Flow).toHaveBeenCalledWith(
+                    'exit', schema, options, 
+                    {
+                        current_tags: {
+                            tag: 'tropical', 
+                            subtag: 'all'
+                        },
+                        episode: episodes[123]
 
-                callArgs = $modal.open.mostRecentCall.args;
-                expect(callArgs.length).toBe(1);
-                expect(callArgs[0].controller).toBe('DischargeEpisodeCtrl');
+                    }
+                );
             });
 
             describe('for a readonly user', function(){
@@ -382,7 +340,7 @@ describe('controllers', function() {
 
                 deferred = $q.defer();
                 spyOn($modal, 'open').andReturn({result: deferred.promise});
-
+                
                 $scope.editItem(0, 0, 0);
 
                 spyOn($scope, 'editItem');
@@ -467,6 +425,7 @@ describe('controllers', function() {
 
     describe('EpisodeDetailCtrl', function(){
         var $scope, $cookieStore, $modal;
+        var Flow;
         var episode;
 
         beforeEach(function(){
@@ -480,11 +439,13 @@ describe('controllers', function() {
             });
 
             episode = new Episode(episodeData, schema);
+            Flow = jasmine.createSpy('Flow').andCallFake(function(){return {then: function(){}}});
 
             controller = $controller('EpisodeDetailCtrl', {
                 $scope      : $scope,
                 $modal      : $modal,
                 $cookieStore: $cookieStore,
+                Flow        : Flow,
                 schema      : schema,
                 episode     : episode,
                 options     : optionsData,
@@ -565,17 +526,19 @@ describe('controllers', function() {
                 mockEvent = {preventDefault: function(){}};
             });
 
-            it('should open the DischargeEpisodeCtrl controller', function(){
-                var deferred, callArgs;
-
-                deferred = $q.defer();
-                spyOn($modal, 'open').andReturn({result: deferred.promise});
-
+            it('should call the exit flow', function(){
                 $scope.dischargeEpisode(mockEvent);
+                expect(Flow).toHaveBeenCalledWith(
+                    'exit', schema, options, 
+                    {
+                        current_tags: {
+                            tag   : undefined, 
+                            subtag: undefined
+                        },
+                        episode: episode
 
-                callArgs = $modal.open.mostRecentCall.args;
-                expect(callArgs.length).toBe(1);
-                expect(callArgs[0].controller).toBe('DischargeEpisodeCtrl');
+                    }
+                );
             });
 
             describe('for a readonly user', function(){
@@ -848,17 +811,32 @@ describe('controllers', function() {
         });
 
         describe('new for patient', function(){
-
-            it('should call through if there is an active episode.', function(){
-                var patient;
-
+            
+            it('should call through if there is an active discharged episode.', function(){
                 spyOn($scope, 'newForPatientWithActiveEpisode');
-                patient = angular.copy(patientData);
-                patient.active_episode_id = 3;
 
-                $scope.newForPatient(patient);
+                patientData.active_episode_id = 3;
+
+                deferred = $q.defer();
+                spyOn($modal, 'open').andReturn({result: deferred.promise});
+
+                $scope.newForPatient(patientData);
+
+                callArgs = $modal.open.mostRecentCall.args;
+                expect(callArgs.length).toBe(1);
+                expect(callArgs[0].controller).toBe('ReopenEpisodeCtrl');
+                expect(callArgs[0].resolve.tag()).toBe('mine');
+            });
+            
+            it('should call through if there is an active episode.', function(){
+                spyOn($scope, 'newForPatientWithActiveEpisode');
+
+                patientData.active_episode_id = 3;
+                patientData.episodes[3].location[0].category = 'Inpatient'
+                
+                $scope.newForPatient(patientData);
                 expect($scope.newForPatientWithActiveEpisode)
-                    .toHaveBeenCalledWith(patient);
+                    .toHaveBeenCalledWith(patientData);
             });
 
             it('should call through if there are no active episodes', function(){
@@ -1068,7 +1046,7 @@ describe('controllers', function() {
 
     describe('ExtractCtrl', function(){
         beforeEach(function(){
-
+            
             inject(function($injector){
                 $httpBackend = $injector.get('$httpBackend');
             });
