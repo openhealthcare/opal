@@ -69,4 +69,11 @@ filters.filter('hoursSince', function(){
         diff =  moment().diff(target, 'hours')
         return diff
     }
-})
+});
+
+filters.filter('future', function(){
+    return function(input){
+        var today = new Date();
+        return input >= today;
+    }
+});
