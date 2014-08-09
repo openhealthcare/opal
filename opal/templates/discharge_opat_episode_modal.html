@@ -1,0 +1,56 @@
+<div class="modal-header">
+  <button type="button" class="close" ng-click="cancel()">×</button>
+  <h3>OPAT Next Stage</h3>
+</div>
+<div class="modal-body">
+
+  <!-- Initial State -->
+  <div ng-show="episode.tagging[0].opat_referrals == true && meta.accepted == null">
+    <p>Accept onto OPAT service?</p>
+    <button class="btn btn-success btn-lg" ng-click="meta.accepted = true">Accept</button>
+    <button class="btn btn-danger btn-lg"  ng-click="meta.accepted = false">Reject</button>
+  </div>
+
+  <div ng-show="episode.tagging[0].opat_referrals == true && meta.accepted == true">
+    <p>The patient will now be transferred to the OPAT Current List</p>
+    <button class="btn btn-success btn-lg" ng-click="accept()">Confirm</button>
+  </div>
+  
+  <div ng-show="episode.tagging[0].opat_referrals == true && meta.accepted == false">
+    <p>The patient will be rejected from the OPAT service.</p>
+    <form class="form-horizontal">
+      <div class="form-group">
+        <label class="control-label col-sm-3">Decided by</label>
+        <div class="col-sm-8">
+          <select class="form-control" ng-model="meta.decider">
+            <option>OPAT Team</option>
+            <option>Referring Team</option>
+            <option>Patient</option>
+            <option>Community Nursing Team</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-3">Reason for non-acceptance</label>
+        <div class="col-sm-8">
+          <select class="form-control" ng-model="meta.reason">
+            <option>Patient choice</option>
+            <option>Oral option available</option>          
+            <option>No antimicrobials needed</option>
+            <option>Patient suitability</option>
+            <option>Not medically fit for discharge</option>
+            <option>Lack of social support</option>
+          </select>
+        </div>
+      </div>
+    </form>
+    <button class="btn btn-danger btn-lg" 
+            ng-click="reject()">Reject</button>
+  </div>
+
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" ng-click="discharge()">Discharge</button>
+  <button class="btn" ng-click="cancel()">Cancel</button>
+</div>
