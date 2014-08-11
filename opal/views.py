@@ -15,10 +15,13 @@ from django.template.loader import select_template
 from django.utils.decorators import method_decorator
 from django.utils import formats
 from django.shortcuts import redirect
+from django.template.loader import select_template
 
 from opal.utils.http import with_no_caching
-from opal.utils import camelcase_to_underscore, stringport, fields, json_to_csv
+from opal.utils import (camelcase_to_underscore, stringport, fields, 
+                        json_to_csv, OpalPlugin)
 from opal.utils.banned_passwords import banned
+from opal.utils.models import LookupList
 from opal.utils.views import LoginRequiredMixin
 from opal import models, exceptions
 
@@ -28,6 +31,11 @@ flow = stringport(settings.OPAL_FLOW_MODULE)
 micro_test_defaults = options.micro_test_defaults
 option_models = models.option_models
 Synonym = models.Synonym
+
+LIST_SCHEMAS = {}
+for plugin in OpalPlugin.__subclasses__():
+    LIST_SCHEMAS.update(plugin().list_schemas())
+LIST_SCHEMAS.update(schema.list_schemas.copy())
 
 def _get_request_data(request):
     data = request.read()
@@ -243,11 +251,13 @@ class EpisodeTemplateView(TemplateView):
         """
         active_schema = self.column_schema
 
-        if 'tag' in kwargs and kwargs['tag'] in schema.list_schemas:
-            if 'subtag' in kwargs and kwargs['subtag'] in schema.list_schemas[kwargs['tag']]:
-                active_schema = schema.list_schemas[kwargs['tag']][kwargs['subtag']]
+        if 'tag' in kwargs and kwargs['tag'] in LIST_SCHEMAS:
+            if 'subtag' in kwargs and kwargs['subtag'] in LIST_SCHEMAS[kwargs['tag']]:
+                active_schema = LIST_SCHEMAS[kwargs['tag']][kwargs['subtag']]
+            elif 'default' in LIST_SCHEMAS[kwargs['tag']]:
+                active_schema = LIST_SCHEMAS[kwargs['tag']]['default']
             else:
-                active_schema = schema.list_schemas[kwargs['tag']]['default']
+                active_schema = LIST_SCHEMAS['default']
 
         context = []
         for column in active_schema:
@@ -258,7 +268,18 @@ class EpisodeTemplateView(TemplateView):
                                               name.replace('_', ' ').title())
             column_context['single'] = column._is_singleton
             column_context['episode_category'] = getattr(column, '_episode_category', None)
-            column_context['template_path'] = name + '.html'
+            
+            list_display_templates = [name + '.html']
+            if 'tag' in kwargs:
+                list_display_templates.insert(
+                    0, 'list_display/{0}/{1}.html'.format(kwargs['tag'], name))
+            if 'subtag' in kwargs:
+                list_display_templates.insert(
+                    0, 'list_display/{0}/{1}/{2}.html'.format(kwargs['subtag'],
+                                                              kwargs['tag'],
+                                                              name))
+            column_context['template_path'] = select_template(list_display_templates).name
+
             column_context['modal_template_path'] = name + '_modal.html'
             column_context['detail_template_path'] = select_template([name + '_detail.html', name + '.html']).name
             context.append(column_context)
@@ -268,7 +289,7 @@ class EpisodeTemplateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(EpisodeTemplateView, self).get_context_data(**kwargs)
         # todo rename/refactor this accordingly
-        context['tags'] = models.Team.to_TAGS()
+        context['tags'] = models.Team.to_TAGS(self.request.user)
         context['columns'] = self.get_column_context(**kwargs)
         if 'tag' in kwargs:
             context['team'] = models.Team.objects.get(name=kwargs['tag'])
@@ -299,7 +320,7 @@ class TagsTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(TagsTemplateView, self).get_context_data(**kwargs)
-        context['tags'] = models.Team.to_TAGS()
+        context['tags'] = models.Team.to_TAGS(self.request.user)
         return context
 
 
@@ -308,7 +329,7 @@ class SearchTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(SearchTemplateView, self).get_context_data(**kwargs)
-        context['tags'] = models.Team.to_TAGS()
+        context['tags'] = models.Team.to_TAGS(self.request.user)
         return context
 
 
@@ -321,7 +342,7 @@ class AddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(AddEpisodeTemplateView, self).get_context_data(**kwargs)
-        tags = models.Team.to_TAGS()
+        tags = models.Team.to_TAGS(self.request.user)
         context['tags'] = tags
         context['with_subtags'] = ','.join(["'" + tag.name + "'" for tag in tags if tag.subtags])
         return context
@@ -396,7 +417,7 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         context['single'] = self.column._is_singleton
 
         if self.name == 'location':
-            context['tags'] = models.Team.to_TAGS()
+            context['tags'] = models.Team.to_TAGS(self.request.user)
 
         return context
 
@@ -419,21 +440,35 @@ class SchemaBuilderView(View):
             cols.append(col)
         return cols
 
-    def get(self, *args, **kw):
+    def _get_plugin_schemas(self):
         scheme = {}
-        for name, s in self.columns.items():
+        for plugin in OpalPlugin.__subclasses__():
+            scheme.update(plugin().list_schemas())
+        return scheme
+    
+    def _get_serialized_schemas(self, schemas):
+        scheme = {}
+        for name, s in schemas.items():
             if isinstance(s, list):
                 scheme[name] = self.serialize_schema(s)
             else:
                 scheme[name] = {}
                 for n, c in s.items():
                     scheme[name][n] = self.serialize_schema(c)
-
+        return scheme
+    
+    def get(self, *args, **kw):
+        scheme = self._get_serialized_schemas(self.columns)
         return _build_json_response(scheme)
 
 
 class ListSchemaView(SchemaBuilderView):
     columns = schema.list_schemas
+
+    def get(self, *args, **kw):
+        schema = self._get_serialized_schemas(self._get_plugin_schemas())
+        schema.update(self._get_serialized_schemas(self.columns))
+        return _build_json_response(schema)
 
 
 class DetailSchemaView(SchemaBuilderView):
@@ -477,9 +512,11 @@ class BannedView(TemplateView):
 
 def options_view(request):
     data = {}
-    for name, model in option_models.items():
+    #for name, model in option_models.items():
+    
+    for model in LookupList.__subclasses__():
         options = [instance.name for instance in model.objects.all()]
-        data[name] = options
+        data[model.__name__.lower()] = options
 
     for synonym in Synonym.objects.all():
         name = type(synonym.content_object).__name__.lower()
@@ -492,7 +529,7 @@ def options_view(request):
 
     tag_hierarchy = {}
     tag_display = {}
-    for tag in models.Team.to_TAGS():
+    for tag in models.Team.to_TAGS(request.user):
         tag_display[tag.name] = tag.title
         if tag.subtags:
             tag_hierarchy[tag.name] = [st.name for st in tag.subtags]

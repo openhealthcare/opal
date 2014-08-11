@@ -6,18 +6,33 @@ import datetime
 import importlib
 import re
 
+from django.conf.urls import patterns
 import ffs
 from ffs.contrib import archive
 
 camelcase_to_underscore = lambda str: re.sub('(((?<=[a-z])[A-Z])|([A-Z](?![A-Z]|$)))', '_\\1', str).lower().strip('_')
 
 def stringport(module):
+    """
+    Given a string representing a python module or path-to-object 
+    import that module and return it.
+    """
+    msg = "Could not import module '%s'\
+                   (Is it on sys.path? Does it have syntax errors?)" % module
     try:
         return importlib.import_module(module)
     except ImportError, e:
-        raise ImportError("Could not import module '%s'\
-                   (Is it on sys.path? Does it have syntax errors?):\
-                    %s" % (module, e))
+        try:
+            module, obj = module.rsplit('.', 1)
+            module = importlib.import_module(module)
+            if hasattr(module, obj):
+                return getattr(module, obj)
+            else:
+                raise ImportError(msg)
+        except ImportError:
+            raise ImportError(msg)
+        raise ImportError(msg)
+
 
 # TODO depreciate this entirely
 Tag = namedtuple('Tag', 'name title subtags')
@@ -274,6 +289,20 @@ def json_to_csv(episodes, description, user):
     return target
 
 class OpalPlugin(object):
+    urls = []
+
+    def list_schemas(self):
+        """
+        Return a extra schemas for teams our plugin may have created.
+        """
+        return {}
+    
+    def restricted_teams(self, user):
+        """
+        Given a USER, return a list of extra teams that user can access.
+        """
+        return []
+
     def get_urls():
         from django.conf.urls import patterns
         return patterns()
