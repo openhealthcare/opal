@@ -18,9 +18,13 @@ controllers.controller(
         // 
         $scope.tag_and_close = function(episode){
             var teams = episode.tagging[0].makeCopy();
+            var location = episode.location[0].makeCopy();
             teams.opat_referrals = true;
+            location.category = 'OPAT';
             episode.tagging[0].save(teams).then(function(){
-                $modalInstance.close(episode);
+                episode.location[0].save(location).then(function(){
+                    $modalInstance.close(episode);
+                })
             });
         };
 
