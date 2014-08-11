@@ -30,7 +30,7 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav navbar-right">
-	    <li>
+	    <li ng-class="{active: $location.path().indexOf('/account') == 0}">
           <a href="/#/account">
             {% if request.user.first_name %}
             {{ request.user.first_name }}

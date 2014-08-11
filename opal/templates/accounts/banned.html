@@ -1,7 +1,20 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  {% for b in banned %}
-    <p>{{b}}</p>
-  {% endfor %}
-{% endblock %}
+<div class="container content-offset">
+
+  <div class="panel panel-warning">
+    <!-- Default panel contents -->
+    <div class="panel-heading">
+      <h2>Banned Passwords</h2>
+    </div>
+    <div class="panel-body col-sm-4 col-sm-offset-4">
+      {% for b in banned %}
+      {{b}}&nbsp; &nbsp;
+      {% endfor %}
+      {% endblock %}
+    </div>
+  </div>
+</div>
+
+
