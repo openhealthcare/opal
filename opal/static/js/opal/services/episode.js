@@ -226,15 +226,12 @@ recently changed it - refresh the page and try again');
         // These should be expressed as { newPatient: ..., newForPatient: ..., error: ... }
         //
         Episode.findByHospitalNumber = function(number, callbacks){
-            console.log(number);
-
             var deferred = $q.defer();
             var result = {
 				patients: [],
 				hospitalNumber: number
 			};
 
-            //deferred.promise.then($scope.addForHospitalNumber);
             deferred.promise.then(function(result){
                 if(result.patients.length == 0){
                     callbacks.newPatient(result);

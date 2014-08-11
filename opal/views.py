@@ -152,7 +152,6 @@ def episode_list_and_create_view(request):
             patient = models.Patient.objects.create()
 
         patient.update_from_demographics_dict(data['demographics'], request.user)
-
         try:
             episode = patient.create_episode()
             episode_fields = models.Episode._get_fieldnames_to_serialize()
@@ -343,6 +342,11 @@ class OpatReferralTemplateView(LoginRequiredMixin, TemplateView):
 
 class OpatAddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'opat/add_episode_modal.html'
+
+
+class OpatInternalReferralTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = 'opat/internal_referral.html'
+
 
 class DeleteItemConfirmationView(LoginRequiredMixin, TemplateView):
     template_name = 'delete_item_confirmation_modal.html'

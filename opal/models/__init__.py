@@ -56,11 +56,11 @@ class Patient(models.Model):
         demographics = self.demographics_set.get()
         return '%s | %s' % (demographics.hospital_number, demographics.name)
 
-    def create_episode(self):
-        if self.get_active_episode() is None:
+    def create_episode(self, category=None):
+        # if self.get_active_episode() is None:
             return self.episode_set.create()
-        else:
-            raise exceptions.APIError('Patient %s already has active episode' % self)
+        # else:
+        #     raise exceptions.APIError('Patient %s already has active episode' % self)
 
     def get_active_episode(self):
         for episode in self.episode_set.order_by('id').reverse():

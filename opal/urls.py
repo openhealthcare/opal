@@ -74,7 +74,8 @@ urlpatterns = patterns(
         views.OpatReferralTemplateView.as_view()),
     url(r'^templates/modals/opat/add_episode.html/?$',
         views.OpatAddEpisodeTemplateView.as_view()),
-
+    url(r'^templates/modals/opat_internal_referral.html/?$',
+        views.OpatInternalReferralTemplateView.as_view()),
 
     url(r'^templates/modals/delete_item_confirmation.html/?$',
         views.DeleteItemConfirmationView.as_view()),

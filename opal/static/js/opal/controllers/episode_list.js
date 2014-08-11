@@ -227,7 +227,7 @@ angular.module('opal.controllers').controller(
 		            // selected.
 		            var rowIx;
 		            $scope.state = 'normal';
-		            if (episode) {
+		            if (episode && episode != 'cancel') {
 			            episodes[episode.id] = episode;
 			            $scope.rows = getVisibleEpisodes();
 			            rowIx = getRowIxFromEpisodeId(episode.id);

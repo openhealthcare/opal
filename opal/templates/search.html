@@ -63,8 +63,8 @@
 	      <td>[[patient.demographics[0].hospital_number]]</td>
 	      <td>[[patient.demographics[0].name]]</td>
           <td>[[patient.demographics[0].date_of_birth]]</td>
-	      <td>[[ patient.episodes[getEpisodeID(patient)].date_of_admission ]]</td>
-          <td>[[ patient.episodes[getEpisodeID(patient)].discharge_date ]]</td>
+	      <td>[[ patient.episodes[getEpisodeID(patient)].date_of_admission | shortDate ]]</td>
+          <td>[[ patient.episodes[getEpisodeID(patient)].discharge_date | shortDate ]]</td>
 	      <td>
             <i class="glyphicon glyphicon-new-window"></i>
           </td>
