@@ -9,20 +9,20 @@ angular.module('opal.services')
 	    var schemas = response.data;
         if(tagparams.subtag){
             if(!schemas[tagparams.tag]){
-                schema = new Schema(schemas.default);
+                schema = new Schema(schemas['default']);
             }
             else if(schemas[tagparams.tag][tagparams.subtag]){
                 schema =  new Schema(schemas[tagparams.tag][tagparams.subtag]);
             }
-            else if(schemas[tagparams.tag].default){
-                schema = new Schema(schemas[tagparams.tag].default);
+            else if(schemas[tagparams.tag]['default']){
+                schema = new Schema(schemas[tagparams.tag]['default']);
             }else {
-                schema = new Schema(schemas.default)
+                schema = new Schema(schemas['default'])
             }
-        }else if(tagparams.tag && schemas[tagparams.tag].default){
-            schema = new Schema(schemas[tagparams.tag].default);
+        }else if(tagparams.tag && tagparams.tag in schemas && schemas[tagparams.tag]['default']){
+            schema = new Schema(schemas[tagparams.tag]['default']);
         }else{
-            schema = new Schema(schemas.default);
+            schema = new Schema(schemas['default']);
         }
 
 	    deferred.resolve(schema);
