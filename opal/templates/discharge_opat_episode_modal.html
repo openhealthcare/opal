@@ -7,8 +7,10 @@
   <!-- Initial State -->
   <div ng-show="episode.tagging[0].opat_referrals == true && meta.accepted == null">
     <p>Accept onto OPAT service?</p>
-    <button class="btn btn-success btn-lg" ng-click="meta.accepted = true">Accept</button>
-    <button class="btn btn-danger btn-lg"  ng-click="meta.accepted = false">Reject</button>
+    <center>
+      <button class="btn btn-success btn-lg" ng-click="meta.accepted = true">Accept</button>
+      <button class="btn btn-danger btn-lg"  ng-click="meta.accepted = false">Reject</button>
+    </center>
   </div>
 
   <div ng-show="episode.tagging[0].opat_referrals == true && meta.accepted == true">
