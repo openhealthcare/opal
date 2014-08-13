@@ -32,6 +32,7 @@ controllers.controller(
             var tagging = $scope.episode.tagging[0].makeCopy();
             tagging.opat_referrals = false;
             tagging.opat_current = true;
+            tagging.opat = true;
 
             $scope.episode.tagging[0].save(tagging).then(function(){
                 $modalInstance.close('moved');
@@ -46,18 +47,28 @@ controllers.controller(
             var reason = $scope.meta.reason;
             var decider = $scope.meta.decider;
             var date = moment().format('YYYY-MM-DD');
+            if(!$scope.episode.tagging[0].makeCopy){
+                $scope.episode.tagging[0] = $scope.episode.newItem('tagging',{
+                    column: {name: 'tagging', fields: [] }
+                })
+            };
+            
+
             rejection = $scope.episode.newItem('opat_rejection', {column: opat_rejection});
             rejection.save({decided_by: decider, reason: reason, date: date}).then(
                 function(){
                     var tagging = $scope.episode.tagging[0].makeCopy();
                     tagging.opat_referrals = false;
+                    tagging.opat = false;
                     
                     $scope.episode.tagging[0].save(tagging).then(function(){
+                        // Doesn't auto update for OPAT as TAGGING is not in the default schema.
+                        $scope.episode.tagging[0] = tagging; 
                         $modalInstance.close('discharged');
                     });                    
                 }
             )
-        
+            
             
         };
 

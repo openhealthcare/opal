@@ -13,13 +13,15 @@ angular.module('opal.services')
         }
 
         // Not in the top level tag - hide it
-	    if (_.keys(episode.tagging[0]).indexOf($scope.currentTag) == -1) {
+	    if (_.keys(episode.tagging[0]).indexOf($scope.currentTag) == -1 ||
+            !episode.tagging[0][$scope.currentTag]) {
 		    return false;
 	    }
 
         // Not in the current subtag
 	    if ($scope.currentSubTag != 'all' &&
-            _.keys(episode.tagging[0]).indexOf($scope.currentSubTag) == -1){
+            (_.keys(episode.tagging[0]).indexOf($scope.currentSubTag) == -1 ||
+             !episode.tagging[0][$scope.currentSubTag])){
 		    return false;
 	    }
 
