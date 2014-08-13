@@ -43,9 +43,12 @@ _sort names a field by which we would like to sorth the display of subrecords.
 
 Marks a field as read only if True
 
-### _fieldnames
+### _batch_template
 
-_.fieldnames allows you to specify the list of fieldnames to serialize. This is particularly useful in order to specify ordering within column entry schemas.
+Allow the list/detail template access to the complete row, not just an item.
+Template is then responsible for registering click handlers.
+
+Will get cix as a variable representing the column index, column_name as the column name.
 
 # Adding a controller
 
