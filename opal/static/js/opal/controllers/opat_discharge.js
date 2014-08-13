@@ -24,6 +24,11 @@ controllers.controller(
         // The patient is accepted onto the OPAT service.
         // We need to update their tagging data.
         $scope.accept = function(){
+            if(!$scope.episode.tagging[0].makeCopy){
+                $scope.episode.tagging[0] = $scope.episode.newItem('tagging',{
+                    column: {name: 'tagging', fields: [] }
+                })
+            }
             var tagging = $scope.episode.tagging[0].makeCopy();
             tagging.opat_referrals = false;
             tagging.opat_current = true;
@@ -60,5 +65,4 @@ controllers.controller(
         $scope.cancel = function() {
 	        $modalInstance.close('cancel');
         };
-    }
-);
+    });

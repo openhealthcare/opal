@@ -136,7 +136,8 @@ class Episode(UpdatesFromDictMixin, models.Model):
             if tag_name not in original_tag_names:
                 team = Team.objects.get(name=tag_name)
                 if team.parent:
-                    self.tagging_set.create(team=team.parent)
+                    if team.parent.name not in tag_names:
+                        self.tagging_set.create(team=team.parent)
                 params = {'team': team}
                 if tag_name == 'mine':
                     params['user'] = user
@@ -352,7 +353,7 @@ class Tagging(models.Model):
     _title = 'Teams'
 
     team = models.ForeignKey(Team, blank=True, null=True)
-    user = models.ForeignKey(auth.models.User, null=True)
+    user = models.ForeignKey(auth.models.User, null=True, blank=True)
     episode = models.ForeignKey(Episode, null=True) # TODO make null=False
 
     def __unicode__(self):
