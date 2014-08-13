@@ -53,12 +53,6 @@ class PatientTest(TestCase):
         self.patient.create_episode()
         self.assertIsNone(self.patient.get_active_episode())
 
-    def test_cannot_create_episode_if_has_active_episode(self):
-        episode = self.patient.create_episode()
-        episode.set_tag_names(['microbiology'], None)
-        with self.assertRaises(Exception):
-            self.patient.create_episode()
-
 
 class EpisodeTest(TestCase):
     fixtures = ['patients_users', 'patients_records', 'patients_options']
@@ -97,81 +91,6 @@ class EpisodeTest(TestCase):
     def test_inactive_if_only_tagged_by_mine_tag(self):
         self.episode.set_tag_names(['mine'], self.user)
         self.assertFalse(self.episode.is_active())
-
-    def test_to_dict(self):
-        # TODO: Decouple this from the elCID implementation/move to elCID
-        self.maxDiff = None
-        expected_data = {
-            'id': self.episode.id,
-            'prev_episodes': [
-                ],
-            'next_episodes': [],
-            'opat_outstanding_issues': [],
-            'opat_review': [],
-            'active': False,
-            'allergies': [],
-            'appointment': [],
-            'date_of_admission': None,
-            'discharge_date': None,
-            'consistency_token': '',
-            'demographics': [{
-                    u'id': self.patient.demographics_set.get().id,
-                    'patient_id': self.patient.id,
-                    'consistency_token': '',
-                    'date_of_birth': None,
-                    'country_of_birth': '',
-                    'country_of_birth_fk_id': None,
-                    'country_of_birth_ft': '',
-                    'ethnicity': None,
-                    'hospital_number': '',
-                    'nhs_number': None,
-                    'name': u'',
-                    }],
-            'contact_details': [{'address_line1': None,
-                                 'address_line2': None,
-                                 'city': u'',
-                                 'consistency_token': u'',
-                                 'county': None,
-                                 u'id': 2,
-                                 'patient_id': 2,
-                                 'post_code': None,
-                                 'tel1': None,
-                                 'tel2': None}],
-
-            'location': [{
-                    u'id': self.episode.location_set.get().id,
-                    'episode_id': self.episode.id,
-                    'bed': u'',
-                    'category': u'',
-                    'consistency_token': u'',
-                    'hospital': u'',
-                    'ward': u'',
-                    'opat_discharge': None,
-                    'opat_referral': None,
-                    'opat_referral_route': None,
-                    'opat_referral_team': None,
-                    'opat_referral_team_address': None,
-
-
-                    }],
-            'diagnosis': [],
-            'past_medical_history': [],
-            'general_note': [],
-            'opat_line_assessment': [],
-            'travel': [],
-            'antimicrobial': [],
-            'carers': [{'consistency_token': u'',
-                        'gp_id': None,
-                        u'id': 2,
-                        'nurse_id': None,
-                        'patient_id': 2}],
-            'line': [],
-            'microbiology_input': [],
-            'todo': [],
-            'tagging': [{}],
-            'microbiology_test': [],
-            }
-        self.assertEqual(expected_data, self.episode.to_dict(self.user))
 
     def test_to_dict_with_multiple_episodes(self):
         episode = Episode.objects.get(pk=1)
