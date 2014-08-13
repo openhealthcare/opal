@@ -50,7 +50,7 @@
 		<script type="text/javascript" src="{% static "js/utils/underscore.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/utils/showdown.js" %}"></script>
 		<script type="text/javascript" src="{% static "js/utils/moment.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/ngprogress-lite/ngprogress-lite.js" %}"></script>
+        <script type="text/javascript" src="{% static "js/ngprogress-lite/ngprogress-lite.js" %}"></script>
 
         <script type="text/javascript">
           var initials = "{{request.user.first_name|slice:":1"}} {{request.user.last_name}}"
@@ -103,7 +103,7 @@
 		<script type="text/javascript" src="{% static "js/opal/routes.js" %}"></script>
         {% endblock %}
 
-        <script type="text/javascript" src="{% static "js/opal/timer.js" %}"></script>
+        <!-- <script type="text/javascript" src="{% static "js/opal/timer.js" %}"></script> -->
 
         {% if extra_application %}{% include extra_application %}{% endif %}
 
