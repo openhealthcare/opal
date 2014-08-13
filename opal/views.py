@@ -88,7 +88,8 @@ def episode_detail_view(request, pk):
         return HttpResponseNotFound()
 
     if request.method == 'GET':
-        return _build_json_response(episode.to_dict(request.user))
+        serialized = episode.to_dict(request.user)
+        return _build_json_response(serialized)
 
     data = _get_request_data(request)
 
@@ -268,6 +269,7 @@ class EpisodeTemplateView(TemplateView):
                                               name.replace('_', ' ').title())
             column_context['single'] = column._is_singleton
             column_context['episode_category'] = getattr(column, '_episode_category', None)
+            column_context['batch_template'] = getattr(column, '_batch_template', None)
             
             list_display_templates = [name + '.html']
             if 'tag' in kwargs:
@@ -289,7 +291,7 @@ class EpisodeTemplateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(EpisodeTemplateView, self).get_context_data(**kwargs)
         # todo rename/refactor this accordingly
-        context['tags'] = models.Team.to_TAGS(self.request.user)
+        context['teams'] = models.Team.for_user(self.request.user)
         context['columns'] = self.get_column_context(**kwargs)
         if 'tag' in kwargs:
             context['team'] = models.Team.objects.get(name=kwargs['tag'])
@@ -320,17 +322,12 @@ class TagsTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(TagsTemplateView, self).get_context_data(**kwargs)
-        context['tags'] = models.Team.to_TAGS(self.request.user)
+        context['teams'] = models.Team.for_user(self.request.user)
         return context
 
 
 class SearchTemplateView(TemplateView):
     template_name = 'search.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(SearchTemplateView, self).get_context_data(**kwargs)
-        context['tags'] = models.Team.to_TAGS(self.request.user)
-        return context
 
 
 class ExtractTemplateView(TemplateView):
@@ -342,9 +339,7 @@ class AddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(AddEpisodeTemplateView, self).get_context_data(**kwargs)
-        tags = models.Team.to_TAGS(self.request.user)
-        context['tags'] = tags
-        context['with_subtags'] = ','.join(["'" + tag.name + "'" for tag in tags if tag.subtags])
+        context['teams'] = models.Team.for_user(self.request.user)
         return context
 
     
@@ -396,7 +391,6 @@ class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'opal.html'
 
 class ModalTemplateView(LoginRequiredMixin, TemplateView):
-    # template_name = 'modal_base.html'
 
     def dispatch(self, *a, **kw):
         """
@@ -415,11 +409,8 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         context['name'] = self.name
         context['title'] = getattr(self.column, '_title', self.name.replace('_', ' ').title())
         context['single'] = self.column._is_singleton
-
-        if self.name == 'location':
-            context['tags'] = models.Team.to_TAGS(self.request.user)
-
         return context
+
 
 class SchemaBuilderView(View):
 
@@ -512,7 +503,6 @@ class BannedView(TemplateView):
 
 def options_view(request):
     data = {}
-    #for name, model in option_models.items():
     
     for model in LookupList.__subclasses__():
         options = [instance.name for instance in model.objects.all()]
@@ -529,14 +519,16 @@ def options_view(request):
 
     tag_hierarchy = {}
     tag_display = {}
-    for tag in models.Team.to_TAGS(request.user):
-        tag_display[tag.name] = tag.title
-        if tag.subtags:
-            tag_hierarchy[tag.name] = [st.name for st in tag.subtags]
-            for t in tag.subtags:
-                tag_display[t.name] = t.title
+    
+    for team in models.Team.for_user(request.user):
+        tag_display[team.name] = team.title
+        if team.has_subtags:
+            for st in team.team_set.all():
+                tag_hierarchy[team.name] = st.name
+                tag_display[st.name] = st.title
         else:
-            tag_hierarchy[tag.name] = []
+            tag_hierarchy[team.name] = []
+
     data['tag_hierarchy'] = tag_hierarchy
     data['tag_display'] = tag_display
 

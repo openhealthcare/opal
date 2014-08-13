@@ -31,9 +31,9 @@
 	</ul>
 
     <ul class="nav navbar-nav nav-tabs" role="tablist">
-	  {% for tag in tags %}
-      <li ng-class="{active: currentTag == '{{tag.name }}' }"><a href="#/{% if discharged %}discharge{% else %}list{% endif %}/{{tag.name}}">{{tag.title}}</a></li>
-	  {% endfor %}
+	  {% for team in teams %}{% if not team.parent %}
+      <li ng-class="{active: currentTag == '{{team.name }}' }"><a href="#/{% if discharged %}discharge{% else %}list{% endif %}/{{team.name}}">{{team.title}}</a></li>
+	  {% endif %}{% endfor %}
     </ul>
     
 	<ul class="nav navbar-nav">
@@ -56,23 +56,15 @@
 
 <div class="navbar navbar-nav navbar-default {% if top %}navbar-fixed-top navbar-3{% endif %} screen-only" id="subtags-nav">
   <div class="navbar-inner">
-    
     <ul class="nav navbar-nav nav-tabs" role="tablist" id="subtags">
-	  {% for tag in tags %}
-        {% if tag.subtags %}
-          <li ng-class="{active: currentTag == '{{tag.name }}' && currentSubTag == 'all' }"                 
-              ng-show="currentTag == '{{tag.name}}'">
-            <a href="#/{% if discharged %}discharge{% else %}list{% endif %}/{{tag.name}}">All</a>
-          </li>
-          {% for subtag in tag.subtags %}
-            <li ng-class="{active: currentTag == '{{tag.name }}' && currentSubTag == '{{subtag.name}}' }"
-                ng-show="currentTag == '{{tag.name}}'">
-              <a href="#/{% if discharged %}discharge{% else %}list{% endif %}/{{tag.name}}/{{subtag.name}}">{{subtag.title}}</a>
+	  {% for team in teams %}
+        {% if team.parent %}
+            <li ng-class="{active: currentTag == '{{team.parent.name }}' && currentSubTag == '{{team.name}}' }"
+                ng-show="currentTag == '{{team.parent.name}}'">
+              <a href="#/{% if discharged %}discharge{% else %}list{% endif %}/{{team.parent.name}}/{{team.name}}">{{team.title}}</a>
             </li>
+        {% endif %}
       {% endfor %}
-      {% endif %}
-      {% endfor %}
-
     </ul>
   </div>
 </div>

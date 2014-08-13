@@ -143,3 +143,8 @@ input.ng-invalid {
 .ngProgressLite .ngProgressLiteBarShadow {
   display: none;
 }
+
+.edit_item:hover {
+	background-color: #f0ad4e;
+    cursor: pointer;
+}

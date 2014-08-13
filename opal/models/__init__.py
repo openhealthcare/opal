@@ -134,8 +134,10 @@ class Episode(UpdatesFromDictMixin, models.Model):
 
         for tag_name in tag_names:
             if tag_name not in original_tag_names:
-                print tag_name
-                params = {'team': Team.objects.get(name=tag_name)}
+                team = Team.objects.get(name=tag_name)
+                if team.parent:
+                    self.tagging_set.create(team=team.parent)
+                params = {'team': team}
                 if tag_name == 'mine':
                     params['user'] = user
                 self.tagging_set.create(**params)
@@ -231,6 +233,7 @@ class Team(models.Model):
     useful_numbers = models.ManyToManyField(ContactNumber, blank=True)
     restricted     = models.BooleanField(default=False, 
                                          help_text=HELP_RESTRICTED)
+    direct_add     = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.title
@@ -245,26 +248,22 @@ class Team(models.Model):
             if plugin.restricted_teams:
                 restricted_teams += plugin().restricted_teams(user)
         return restricted_teams
-    
-    # TODO depreciate this and refactor accordingly
+
     @classmethod
-    def to_TAGS(klass, user):
+    def for_user(klass, user):
         """
-        Given a USER, return the teams this user can access, as TAGS.
+        Return the set of teams this user has access to. 
         """
-        from opal.utils import Tag
         teams = klass.objects.filter(active=True, restricted=False).order_by('order')
         restricted_teams = klass.restricted_teams(user)
         teams = set(list(teams) + restricted_teams)
-        tags = collections.OrderedDict()
-        for team in teams:
-            if not team.parent:
-                tags[team.name] = Tag(team.name, team.title, [])
-        for team in teams:
-            if team.parent:
-                tags[team.parent.name].subtags.append(Tag(team.name, team.title, None))
-        return tags.values()
+        return teams
 
+    @property
+    def has_subtags(self):
+        return self.team_set.count() > 0
+
+    
 class Subrecord(UpdatesFromDictMixin, models.Model):
     consistency_token = models.CharField(max_length=8)
 
