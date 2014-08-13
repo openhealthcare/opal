@@ -1,130 +1,124 @@
 {% load staticfiles %}
+{% load opalplugins %}
 <!doctype html>
 <html xmlns:ng="http://angularjs.org" id="ng-app" ng-app="{% block ngapp %}opal{% endblock %}" ng-controller="RootCtrl" ng-keydown="keydown($event)">
   <head>
 
 	<!--[if lte IE 8]>
-			<script type="text/javascript" src="{% static "js/utils/json3.min.js" %}"></script>
+		<script type="text/javascript" src="{% static "js/utils/json3.min.js" %}"></script>
 		<![endif]-->
-		<meta charset="utf-8">
-		<title>{{brand_name}}</title>
+	<meta charset="utf-8">
+	<title>{{brand_name}}</title>
 
-        <!-- 3rd party -->
-		<script type="text/javascript" src="{% static "js/jquery-1.11.0/jquery.js" %}"></script>
+    <!-- 3rd party -->
+	<script type="text/javascript" src="{% static "js/jquery-1.11.0/jquery.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/d3/d3.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/c3-0.2.5/c3.js" %}"></script>
 
-		<!-- <script type="text/javascript" src="{% static "js/angular-1.2.11/angular.js" %}"></script> -->
-		<!-- <script type="text/javascript" src="{% static "js/angular-1.2.11/angular-route.js" %}"></script> -->
-		<!-- <script type="text/javascript" src="{% static "js/angular-1.2.11/angular-cookies.js" %}"></script> -->
-		<!-- <script type="text/javascript" src="{% static "js/angular-1.2.11/angular-resource.js" %}"></script> -->
+	<script type="text/javascript" src="{% static "js/angular-1.2.20/angular.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/angular-1.2.20/angular-route.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/angular-1.2.20/angular-cookies.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/angular-1.2.20/angular-resource.js" %}"></script>
 
-		<script type="text/javascript" src="{% static "js/angular-1.2.20/angular.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/angular-1.2.20/angular-route.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/angular-1.2.20/angular-cookies.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/angular-1.2.20/angular-resource.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/angular-ui-utils-0.1.0/ui-utils.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/ui-bootstrap-tpls-0.11.0.js" %}"></script>
 
+	<script type="text/javascript" src="{% static "bootstrap-3.1.0/js/bootstrap.js" %}"></script>
 
+	<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/tooltip.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/tooltip.tpl.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/dimensions.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/parse-options.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/date-parser.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/datepicker.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/datepicker.tpl.js" %}"></script>
 
-		<script type="text/javascript" src="{% static "js/angular-ui-utils-0.1.0/ui-utils.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/angular-ui-bootstrap-0.10.0/ui-bootstrap-tpls.js" %}"></script>
-
-		<script type="text/javascript" src="{% static "bootstrap-3.1.0/js/bootstrap.js" %}"></script>
-
-        <!-- <script type="text/javascript" src="{% static "js/angular-strap-2.0.3/angular-strap.js" %}"></script> -->
-		<!-- <script type="text/javascript" src="{% static "js/angular-strap-2.0.3/angular-strap.tpl.js" %}"></script> -->
-
-
-		<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/tooltip.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/tooltip.tpl.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/dimensions.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/parse-options.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/date-parser.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/datepicker.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/datepicker.tpl.js" %}"></script>
-
-		<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/typeahead.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/typeahead.tpl.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/typeahead.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/typeahead.tpl.js" %}"></script>
 
 
-		<script type="text/javascript" src="{% static "js/jquery-plugins/idle-timer.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/jquery-plugins/jquery.stickytableheaders.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/utils/underscore.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/utils/showdown.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/utils/moment.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/jquery-plugins/idle-timer.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/jquery-plugins/jquery.stickytableheaders.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/utils/underscore.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/utils/showdown.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/utils/moment.js" %}"></script>
     <script type="text/javascript" src="{% static "js/ngprogress-lite/ngprogress-lite.js" %}"></script>
 
-        <script type="text/javascript">
-          var initials = "{{request.user.first_name|slice:":1"}} {{request.user.last_name}}"
-          var settings = {
-              LOG_OUT_DURATION: {{OPAL_LOG_OUT_DURATION}}
-          }
-          var version = '{{VERSION_NUMBER}}'
-        </script>
+    <script type="text/javascript">
+      var initials = "{{request.user.first_name|slice:":1"}} {{request.user.last_name}}"
+      var settings = {
+      LOG_OUT_DURATION: {{OPAL_LOG_OUT_DURATION}}
+      }
+      var version = '{{VERSION_NUMBER}}'
+    </script>
 
-        <!-- Application -->
-		<script type="text/javascript" src="{% static "js/opal/utils.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/opal/opaldown.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/opal/directives.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/opal/filters.js" %}"></script>
+    <!-- Application -->
+	<script type="text/javascript" src="{% static "js/opal/utils.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/opal/opaldown.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/opal/directives.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/opal/filters.js" %}"></script>
 
-		<script type="text/javascript" src="{% static "js/opal/services_module.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/opal/services/flow.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/services/filter.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/opal/services/filters_loader.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/services/filter_resource.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/services/user_profile.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/services/item.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/services/episode.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/services/episode_visibility.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/services/episode_loader.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/services/list_schema_loader.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/services/detail_schema_loader.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/services/extract_schema_loader.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/services/schema.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/services/options.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/services/episodes_loader.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/services/discharged_episodes_loader.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/services/episode_resource.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/opal/services_module.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/opal/services/flow.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/services/filter.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/opal/services/filters_loader.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/services/filter_resource.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/services/user_profile.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/services/item.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/services/episode.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/services/episode_visibility.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/services/episode_loader.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/services/list_schema_loader.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/services/detail_schema_loader.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/services/extract_schema_loader.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/services/schema.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/services/options.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/services/episodes_loader.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/services/discharged_episodes_loader.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/services/episode_resource.js" %}"></script>
+    {% plugin_javascripts 'opal.services' %}
 
+    {% block angularapp %}
+	<script type="text/javascript" src="{% static "js/opal/app.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/opal/controllers_module.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/controllers/episode_list.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/controllers/episode_detail.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/controllers/search.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/controllers/hospital_number.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/controllers/add_episode.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/controllers/reopen_episode.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/controllers/edit_item.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/controllers/delete_item_confirmation.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/controllers/extract.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/controllers/account.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/controllers/save_filter.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/controllers/undischarge.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/controllers/opat_referral.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/controllers/opat_internal_referral.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/controllers/opat_discharge.js" %}"></script>
+    {% plugin_javascripts 'opal.controllers' %}
+	<script type="text/javascript" src="{% static "js/opal/routes.js" %}"></script>
+    {% endblock %}
 
-        {% block angularapp %}
-		<script type="text/javascript" src="{% static "js/opal/app.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/opal/controllers_module.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/controllers/episode_list.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/controllers/episode_detail.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/controllers/search.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/controllers/hospital_number.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/controllers/add_episode.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/controllers/reopen_episode.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/controllers/edit_item.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/controllers/delete_item_confirmation.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/controllers/extract.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/controllers/account.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/controllers/save_filter.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/controllers/undischarge.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/controllers/opat_referral.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/controllers/opat_internal_referral.js" %}"></script>
-        <script type="text/javascript" src="{% static "js/opal/controllers/opat_discharge.js" %}"></script>
-		<script type="text/javascript" src="{% static "js/opal/routes.js" %}"></script>
-        {% endblock %}
+    <script type="text/javascript" src="{% static "js/opal/timer.js" %}"></script>
 
-        <script type="text/javascript" src="{% static "js/opal/timer.js" %}"></script>
+    {% if extra_application %}{% include extra_application %}{% endif %}
 
-        {% if extra_application %}{% include extra_application %}{% endif %}
-
-		<link href="{% static "bootstrap-3.1.0/css/bootstrap.css" %}" rel="stylesheet" media="all">
-		<link href="{% static "css/bootstrap-datepicker.css" %}" rel="stylesheet" media="all">
-		<link href="{% static "css/font-awesome/css/font-awesome.css" %}" rel="stylesheet" media="all">
+    <link href="{% static "js/c3-0.2.5/c3.css" %}" rel="stylesheet" media="all"> 
+	<link href="{% static "bootstrap-3.1.0/css/bootstrap.css" %}" rel="stylesheet" media="all">
+	<link href="{% static "css/bootstrap-datepicker.css" %}" rel="stylesheet" media="all">
+	<link href="{% static "css/font-awesome/css/font-awesome.css" %}" rel="stylesheet" media="all">
     <link href="{% static "css/ngprogress-lite.css" %}" rel="stylesheet" media="screen">
-		<link href="{% static "css/opal.css" %}" rel="stylesheet" media="all">
-        <link href="{% static "css/print.css" %}" rel="stylesheet" media="print">
-        <link href="{% static "css/screen.css" %}" rel="stylesheet" media="screen">
-        <link rel="shortcut icon" href="{% static 'img/ohc-icon.png' %}">
-	</head>
-	<body>
-      {% if OPAL_EXTRA_HEADER %}{% include OPAL_EXTRA_HEADER %}{% endif %}
-      {% block navbar %}{% include 'navbar.html' %}{% endblock %}
-		<div ng-view autoscroll="true"></div>
-        {% include 'keyboard_shortcuts_modal.html' %}
-        {% include 'logout_modal.html' %}
-	</body>
+	<link href="{% static "css/opal.css" %}" rel="stylesheet" media="all">
+    <link href="{% static "css/print.css" %}" rel="stylesheet" media="print">
+    <link href="{% static "css/screen.css" %}" rel="stylesheet" media="screen">
+    <link rel="shortcut icon" href="{% static 'img/ohc-icon.png' %}">
+  </head>
+  <body>
+    {% if OPAL_EXTRA_HEADER %}{% include OPAL_EXTRA_HEADER %}{% endif %}
+    {% block navbar %}{% include 'navbar.html' %}{% endblock %}
+	<div ng-view autoscroll="true"></div>
+    {% include 'keyboard_shortcuts_modal.html' %}
+    {% include 'logout_modal.html' %}
+  </body>
 </html>

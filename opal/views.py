@@ -1,8 +1,9 @@
 """
 OPAL Viewz!
 """
-import json
+import collections
 import datetime
+import json
 
 from django.contrib.auth.views import login
 from django.contrib.contenttypes.models import ContentType
@@ -518,14 +519,14 @@ def options_view(request):
 
     data['micro_test_defaults'] = micro_test_defaults
 
-    tag_hierarchy = {}
+    tag_hierarchy = collections.defaultdict(list)
     tag_display = {}
     
     for team in models.Team.for_user(request.user):
         tag_display[team.name] = team.title
         if team.has_subtags:
             for st in team.team_set.all():
-                tag_hierarchy[team.name] = st.name
+                tag_hierarchy[team.name].append(st.name)
                 tag_display[st.name] = st.title
         else:
             tag_hierarchy[team.name] = []

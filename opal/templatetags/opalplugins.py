@@ -11,7 +11,7 @@ register = template.Library()
 def plugin_javascripts(namespace):
     def scripts():
         for plugin in OpalPlugin.__subclasses__():
-            if plugin.javascript_namespace == namespace:
-                for javascript in plugin.javascripts:
+            if namespace in plugin.javascripts:
+                for javascript in plugin.javascripts[namespace]:
                     yield javascript
     return dict(javascripts=scripts)

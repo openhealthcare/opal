@@ -18,6 +18,11 @@
 	      <tr {% if column.episode_category %} ng-show="episode.location[0].category == '{{column.episode_category}}'"{% endif %}>
 		    <td>
 		      <h5>{{ column.title }}</h5>
+              {% if column.batch_template %}
+              {% with cix=forloop.counter0 %}{% with column_name=column.name %}
+              {% include column.detail_template_path %}
+              {% endwith %}{% endwith %}
+              {% else %}
 		      <ul ng-mouseenter="mouseEnter({{ forloop.counter0 }})" ng-mouseleave="mouseLeave()">
 			    <li ng-repeat="item in episode.{{column.name}}"
 				    ng-click="selectItem({{ forloop.counter0 }}, $index)"
@@ -38,6 +43,7 @@
 			      </li>
 			    {% endif %}
 		      </ul>
+              {% endif %}
 		    </td>
 	      </tr>
 	    {% endfor %}

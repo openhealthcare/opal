@@ -122,9 +122,7 @@ controllers.controller(
 				resolve: {
 					schema: function() { return schema; },
 					options: function() { return options; },
-					demographics: function() {
-						return demographics;
-					}
+					demographics: function() { return demographics; }
 				}
 			}).result.then(function(result) {
 				// The user has created the episode, or cancelled
@@ -135,7 +133,6 @@ controllers.controller(
                 }
 			});                
         };
-
 
         // Let's have a nice way to kill the modal.
         $scope.cancel = function() {
