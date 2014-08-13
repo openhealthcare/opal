@@ -163,7 +163,8 @@ describe('controllers', function() {
         }
 
         optionsData = {
-            condition: ['Another condition', 'Some condition']
+            condition: ['Another condition', 'Some condition'],
+            tag_hierarchy :{'tropical': []}
         }
 
         injector = angular.injector(['opal.services'])
@@ -180,6 +181,7 @@ describe('controllers', function() {
 
     describe('EpisodeListCtrl', function() {
         var $scope, $cookieStore, $controller, $q, $dialog;
+        var $location, $routeParams, $http;
         var Flow;
         var episodes, controller;
 
@@ -191,7 +193,9 @@ describe('controllers', function() {
                 $controller  = $injector.get('$controller');
                 $q           = $injector.get('$q');
                 $modal       = $injector.get('$modal');
+                $http        = $injector.get('$http');
                 $routeParams = $injector.get('$routeParams');
+                $location    = $injector.get('$location');
             });
 
             episodes = {123: new Episode(episodeData, schema)};
@@ -201,7 +205,11 @@ describe('controllers', function() {
 
             controller = $controller('EpisodeListCtrl', {
                 $scope        : $scope,
+                $q            : $q,
+                $http         : $http,
                 $cookieStore  : $cookieStore,
+                $location     : $location,
+                $routeParams  : $routeParams,
                 Flow          : Flow,
                 schema        : schema,
                 episodes      : episodes,
