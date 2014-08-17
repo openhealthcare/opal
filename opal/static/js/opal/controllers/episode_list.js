@@ -43,7 +43,8 @@ angular.module('opal.controllers').controller(
 
         if(!$routeParams.subtag){
             // We now force redirect to the first subtag if there is one
-            if(options.tag_hierarchy[$scope.currentTag].length > 0){
+            if($scope.currentTag in options.tag_hierarchy && 
+               options.tag_hierarchy[$scope.currentTag].length > 0){
                 var subtag = options.tag_hierarchy[$scope.currentTag][0];
                 var target = $scope.path_base + $scope.currentTag + '/' + subtag;
                 console.log(target);
