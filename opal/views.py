@@ -193,6 +193,9 @@ class EpisodeListView(View):
             filter_kwargs['tagging__team__name'] = subtag
         elif tag:
             filter_kwargs['tagging__team__name'] = tag
+        # Probably the wrong place to do this, but mine needs specialcasing.
+        if tag == 'mine': 
+            filter_kwargs['tagging__user'] = self.request.user
         serialised = models.Episode.objects.serialised_active(
             self.request.user, **filter_kwargs)
         return _build_json_response(serialised)
