@@ -849,16 +849,21 @@ describe('controllers', function() {
 
         describe('new for patient', function(){
 
-            it('should call through if there is an active episode.', function(){
+            it('should call through if there is an active (undischarged) episode.', function(){
                 var patient;
 
                 spyOn($scope, 'newForPatientWithActiveEpisode');
                 patient = angular.copy(patientData);
                 patient.active_episode_id = 3;
+                patient.episodes[patient.active_episode_id].location[0].category = 'Inpatient';
 
                 $scope.newForPatient(patient);
                 expect($scope.newForPatientWithActiveEpisode)
                     .toHaveBeenCalledWith(patient);
+            });
+
+            it('should call ??? if there is an active discharged episode.', function(){
+                // TODO
             });
 
             it('should call through if there are no active episodes', function(){
