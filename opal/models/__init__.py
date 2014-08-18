@@ -27,11 +27,17 @@ class UserProfile(models.Model):
     """
     Profile for our user
     """
-    user                  = models.ForeignKey(User, unique=True)
-    force_password_change = models.BooleanField(default=True)
-    can_extract           = models.BooleanField(default=False)
-    readonly              = models.BooleanField(default=False)
+    HELP_RESTRICTED="This user will only see teams that they have been specifically added to"
+    HELP_READONLY="This user will only be able to read data - they have no write/edit permissions"
+    HELP_EXTRACT="This user will be able to download data from advanced searches"
+    HELP_PW="Force this user to change their password on the next login"
 
+    user                  = models.ForeignKey(User, unique=True)
+    force_password_change = models.BooleanField(default=True, help_text=HELP_PW)
+    can_extract           = models.BooleanField(default=False, help_text=HELP_EXTRACT)
+    readonly              = models.BooleanField(default=False, help_text=HELP_READONLY)
+    restricted_only       = models.BooleanField(default=False, help_text=HELP_RESTRICTED)
+    
 
 class Filter(models.Model):
     """
@@ -255,7 +261,11 @@ class Team(models.Model):
         """
         Return the set of teams this user has access to. 
         """
-        teams = klass.objects.filter(active=True, restricted=False).order_by('order')
+        profile = user.get_profile()
+        if profile.restricted_only:
+            teams = []
+        else:
+            teams = klass.objects.filter(active=True, restricted=False).order_by('order')
         restricted_teams = klass.restricted_teams(user)
         teams = set(list(teams) + restricted_teams)
         return teams
