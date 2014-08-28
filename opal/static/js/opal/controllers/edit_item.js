@@ -27,7 +27,8 @@ angular.module('opal.controllers').controller(
 		    };
 	    };
 
-	    if (item.columnName == 'microbiology_test') {
+        // TODO - don't hardcode this
+	    if (item.columnName == 'microbiology_test' || item.columnName == 'lab_test') {
 		    $scope.microbiology_test_list = [];
 		    $scope.microbiology_test_lookup = {};
 		    $scope.micro_test_defaults =  options.micro_test_defaults;
