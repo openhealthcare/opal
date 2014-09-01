@@ -69,4 +69,15 @@ filters.filter('hoursSince', function(){
         diff =  moment().diff(target, 'hours')
         return diff
     }
-})
+});
+
+filters.filter('age', function(){
+    return function(input){
+        if(!input){
+            return null;
+        }
+        target = moment(input)
+        diff =  moment().diff(target, 'years')
+        return diff        
+    }
+});

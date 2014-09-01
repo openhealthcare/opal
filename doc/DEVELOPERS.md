@@ -15,9 +15,6 @@ OPAL_EXTRA_APPLICATION = A template to include in the HEAD
 
 OPAL_EXTRA_HEADER = A template to include above the main nav
 
-
-TODO
-
 ## Defining Models
 
 Models should be defined in your project.
@@ -57,25 +54,47 @@ Use the angular module opal.controllers
 Include this file in templates/opal.html
 Create a template url in the django layer
 
+# Teams 
+
+Teams are the core concept around patient flow - broadly a tab in the list view.
+
+Teams have one level of nesting.
+
+Teams may be inactive, in which case they are not displayed.
+
+Teams may be restricted in which they only appear for a subset of users.
+
+The logic for showing restricted teams is implemented via plugins.
+
+# Users
+
+Users have various settings:
+
+Can extract
+Readonly
+Only restricted teams
+
 # Adding a lookup list
 
-Add the lookup list by name to options.py in your project.
+Lookup lists are subclasses of opal.utils.models.LookupList which have a generic relation to Synonym and define a foreign key on the calling model.
+
+You can define them yourself, or use the helper function ```opal.utils.models.lookup_list```
+
+    ColourLookupList = type(*lookup_list('colour', module=__name__))
+
 You can then reference the list in a django model by using a ForeignKeyOrFreeTextField 
 You can access the list in an angular template (For autocompletion) where it will be $NAME_list.
 
 e.g. The conditions lookup list is condition_list and used by the elCID Diagnosis model
 (https://github.com/openhealthcare/elcid/blob/master/elcid/models.py#L109)
 
-The lookup list can then be added to the admin - as an OPAL model.
+As you are creating a new model, you will need a new migration to accompany it. 
 
-Currently you create a migration on OPAL for all lookup lists. 
-(This is scheduled to change)
+If you have initial values for your lookup list, feel free to add them as a data migration. 
+
+The lookup list will automatically be added to the admin.
 
 so e.g. $ python manage.py schemamigration --atuo opal
-
-# Writing Plugins
-
-Plugins should subclass opal.utils.plugins.OpalPlugin
 
 # Creating a Heroku test server
 
@@ -88,3 +107,48 @@ Plugins should subclass opal.utils.plugins.OpalPlugin
     $ heroku run python manage.py syncdb --migrate --app $YOUR_APP_NAME
     $ heroku run python manage.py loaddata dumps/options.json --app $YOUR_APP_NAME
     $ heroku run python manage.py createinitialrevisions --app $YOUR_APP_NAME
+
+
+# Writing Plugins
+
+Plugins are Django apps with some extra hooks.
+
+Plugins should subclass opal.utils.plugins.OpalPlugin
+
+## Defining models
+
+Define in your models.py - just as you would for an implementation.
+
+## Defining Lookup lists
+
+See Defining lookup lists in "Your Implementation.
+
+## Defining teams
+
+As a signal is fine.
+Data migrations might work.
+
+Defining restricted team access is done by:
+
+Adding a method to your pluigin that takes one argument, a User object, and returning a set of
+extra teams that this user is allowed to see.
+
+## Defining Schemas 
+
+Plugins can define list schemas. They should return a dictionary of lists of models from the
+list_schemas() method of the plugin class.
+
+## Adding URLS
+
+Add an urls.py, then add to your plugin class as YourPlugin.urls
+
+Naturally, these can point to views in your plugin! 
+
+## Adding Javascript
+
+add to static, then add to your plugin class as YourPlugin.javascripts
+
+## Installing plugins 
+
+Add to installed apps
+Add to requirements if appropriate

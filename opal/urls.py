@@ -30,8 +30,8 @@ urlpatterns = patterns(
     url(r'^admin/?', include(admin.site.urls)),
     url(r'^patient/?$', views.patient_search_view),
     url(r'^episode/?$', views.episode_list_and_create_view),
-    url(r'^episode/(?P<tag>[a-z_]+)/?$', views.EpisodeListView.as_view()),
-    url(r'^episode/(?P<tag>[a-z_]+)/(?P<subtag>[a-z_]+)/?$', views.EpisodeListView.as_view()),
+    url(r'^episode/(?P<tag>[a-z_\-0-9]+)/?$', views.EpisodeListView.as_view()),
+    url(r'^episode/(?P<tag>[a-z_\-0-9]+)/(?P<subtag>[a-z_\-0-9]+)/?$', views.EpisodeListView.as_view()),
     url(r'^episode/(?P<pk>\d+)/?$', views.episode_detail_view),
 
     url(r'^tagging/(?P<pk>\d+)/?', views.TaggingView.as_view()),
@@ -43,14 +43,14 @@ urlpatterns = patterns(
     url(r'^filters/(?P<pk>\d+)/?$', views.FilterDetailView.as_view()),
 
     url(r'^templates/episode_list.html/?$', views.EpisodeListTemplateView.as_view()),
-    url(r'^templates/episode_list.html/(?P<tag>[a-z_]+)/?$', views.EpisodeListTemplateView.as_view()),
-    url(r'^templates/episode_list.html/(?P<tag>[a-z_]+)/(?P<subtag>[a-z_]+)/?$', views.EpisodeListTemplateView.as_view()),
+    url(r'^templates/episode_list.html/(?P<tag>[a-z0-9_\-]+)/?$', views.EpisodeListTemplateView.as_view()),
+    url(r'^templates/episode_list.html/(?P<tag>[a-z0-9_\-]+)/(?P<subtag>[a-z_\-0-9]+)/?$', views.EpisodeListTemplateView.as_view()),
 
     url(r'^templates/episode_detail.html/?$',
         views.EpisodeDetailTemplateView.as_view()),
     url(r'^templates/discharge_list.html/?$', views.DischargeListTemplateView.as_view()),
-    url(r'^templates/discharge_list.html/(?P<tag>[a-z_]+)/?$', views.DischargeListTemplateView.as_view()),
-    url(r'^templates/discharge_list.html/(?P<tag>[a-z_]+)/(?P<subtag>[a-z_]+)/?$', views.DischargeListTemplateView.as_view()),
+    url(r'^templates/discharge_list.html/(?P<tag>[a-z_\-0-9]+)/?$', views.DischargeListTemplateView.as_view()),
+    url(r'^templates/discharge_list.html/(?P<tag>[a-z_\-0-9]+)/(?P<subtag>[a-z_\-0-9]+)/?$', views.DischargeListTemplateView.as_view()),
 
     url(r'^templates/search.html/?$', views.SearchTemplateView.as_view()),
     url(r'^templates/extract.html/?$', views.ExtractTemplateView.as_view()),
