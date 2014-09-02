@@ -1,28 +1,35 @@
 angular.module('opal.services')
     .factory('listSchemaLoader', function($q, $http, $window, $route,
-                                              Schema) {
+                                              Schema, $rootScope) {
     return function() {
     var deferred = $q.defer();
     var tagparams = $route.current.params;
     $http.get('/schema/list/').then(function(response) {
         var schema;
-	    var schemas = response.data;
+	    var listSchemaNames = response.data.list_schema;
+        var fields = response.data.fields;
+        $rootScope.fields = fields;
+        var buildFields = function(names) {
+            return _.map(names, function(name) {
+                return fields[name];
+            })
+        }
         if(tagparams.subtag){
-            if(!schemas[tagparams.tag]){
-                schema = new Schema(schemas['default']);
+            if(!listSchemaNames[tagparams.tag]){
+                schema = new Schema(buildFields(listSchemaNames['default']));
             }
-            else if(schemas[tagparams.tag][tagparams.subtag]){
-                schema =  new Schema(schemas[tagparams.tag][tagparams.subtag]);
+            else if(listSchemaNames[tagparams.tag][tagparams.subtag]){
+                schema =  new Schema(buildFields(listSchemaNames[tagparams.tag][tagparams.subtag]));
             }
-            else if(schemas[tagparams.tag]['default']){
-                schema = new Schema(schemas[tagparams.tag]['default']);
+            else if(listSchemaNames[tagparams.tag]['default']){
+                schema = new Schema(buildFields(listSchemaNames[tagparams.tag]['default']));
             }else {
-                schema = new Schema(schemas['default'])
+                schema = new Schema(buildFields(listSchemaNames['default']))
             }
-        }else if(tagparams.tag && tagparams.tag in schemas && schemas[tagparams.tag]['default']){
-            schema = new Schema(schemas[tagparams.tag]['default']);
+        }else if(tagparams.tag && tagparams.tag in listSchemaNames && listSchemaNames[tagparams.tag]['default']){
+            schema = new Schema(buildFields(listSchemaNames[tagparams.tag]['default']));
         }else{
-            schema = new Schema(schemas['default']);
+            schema = new Schema(buildFields(listSchemaNames['default']));
         }
 
 	    deferred.resolve(schema);

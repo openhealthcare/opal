@@ -1,8 +1,8 @@
 angular.module('opal.controllers').controller(
     'EpisodeListCtrl', function($scope, $q, $http, $cookieStore,
                                 $location, $routeParams,
-                                $modal,
-                                Flow,
+                                $modal, $rootScope,
+                                Flow, Item,
                                 Episode, schema, episodes, options,
                                 profile,
                                 episodeVisibility, viewDischarged){
@@ -33,10 +33,10 @@ angular.module('opal.controllers').controller(
         }else{
             $scope.path_base = '/list/';
         }
-        
+
         if(!$routeParams.tag){
             var tag =  $cookieStore.get('opal.currentTag') || 'mine';
-            $location.path($scope.path_base + tag);                
+            $location.path($scope.path_base + tag);
             return
         }
         $scope.currentTag = $routeParams.tag;
@@ -80,7 +80,7 @@ angular.module('opal.controllers').controller(
                         }
                     }
                 }
-                
+
             };
         }
 
@@ -205,9 +205,9 @@ angular.module('opal.controllers').controller(
 
 	    $scope.addEpisode = function() {
             if(profile.readonly){ return null; };
-            
+
             var enter = Flow(
-                'enter', schema, options, 
+                'enter', schema, options,
                 {
                     current_tags: {
                         tag: $scope.currentTag,
@@ -247,7 +247,7 @@ angular.module('opal.controllers').controller(
 		    var episode = getEpisode(rix);
 
             if(profile.readonly){ return null; };
-		    
+
 		    event.preventDefault();// Required to prevent the page reloading
 		    $scope.state = 'modal';
 
@@ -293,15 +293,65 @@ angular.module('opal.controllers').controller(
 
         };
 
+      _openEditItemModal = function(item, columnName, episode) {
+        if(profile.readonly){
+          return null;
+        };
+        $scope.state = 'modal';
+
+        modal = $modal.open({
+          templateUrl: '/templates/modals/' + columnName + '.html/',
+          controller: 'EditItemCtrl',
+          resolve: {
+            item: function() { return item; },
+            options: function() { return options; },
+            episode: function() { return episode; }
+          }
+        });
+
+        modal.result.then(function(result) {
+          $scope.state = 'normal';
+
+          if (columnName == 'tagging') {
+            // User may have removed current tag
+            $scope.rows = getVisibleEpisodes();
+            $scope.selectItem(getRowIxFromEpisodeId(episode.id), $scope.cix, 0);
+          }
+
+          if (result == 'save-and-add-another') {
+            $scope.editItem(rix, cix, episode.getNumberOfItems(columnName));
+          };
+                if (item.sort){
+                    episode.sortColumn(item.columnName, item.sort);
+                };
+        }, function(){
+                $scope.state = 'normal';
+            });
+      }
+
+      $scope.newNamedItem = function(episode, name) {
+        var item = episode.newItem(name, {column: $rootScope.fields[name]});
+        episode[name][0] = item;
+        _openEditItemModal(item, name, episode);
+      }
+
+      $scope.editNamedItem = function(episode, name, iix) {
+        var item;
+        if (episode[name][iix].columnName) {
+          item = episode[name][iix];
+        } else {
+          item = new Item(episode[name][iix], episode, $rootScope.fields[name]);
+          episode[name][iix] = item;
+        }
+
+        _openEditItemModal(item, name, episode);
+      }
+
 	    $scope.editItem = function(rix, cix, iix) {
 		    var modal;
 		    var columnName = getColumnName(cix);
 		    var episode = getEpisode(rix);
 		    var item;
-
-            if(profile.readonly){
-                return null;
-            };
 
 		    if (iix == episode.getNumberOfItems(columnName)) {
 			    item = episode.newItem(columnName, {schema: schema});
@@ -310,36 +360,7 @@ angular.module('opal.controllers').controller(
 		    };
 
 		    $scope.selectItem(rix, cix, iix);
-		    $scope.state = 'modal';
-
-		    modal = $modal.open({
-			    templateUrl: '/templates/modals/' + columnName + '.html/',
-			    controller: 'EditItemCtrl',
-			    resolve: {
-				    item: function() { return item; },
-				    options: function() { return options; },
-                    episode: function() { return episode; }
-			    }
-		    });
-
-		    modal.result.then(function(result) {
-			    $scope.state = 'normal';
-
-			    if (columnName == 'tagging') {
-				    // User may have removed current tag
-				    $scope.rows = getVisibleEpisodes();
-				    $scope.selectItem(getRowIxFromEpisodeId(episode.id), $scope.cix, 0);
-			    }
-
-			    if (result == 'save-and-add-another') {
-				    $scope.editItem(rix, cix, episode.getNumberOfItems(columnName));
-			    };
-                if (item.sort){
-                    episode.sortColumn(item.columnName, item.sort);
-                };
-		    }, function(){
-                $scope.state = 'normal';
-            });
+        _openEditItemModal(item, columnName, episode);
 	    };
 
 	    $scope.deleteItem = function(rix, cix, iix) {
@@ -356,7 +377,7 @@ angular.module('opal.controllers').controller(
                 // Cannont delete readonly columns
                 return;
             }
-            
+
 		    if (schema.isSingleton(columnName)) {
 			    // Cannot delete singleton
 			    return;

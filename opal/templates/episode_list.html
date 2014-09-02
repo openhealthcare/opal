@@ -27,6 +27,9 @@
 			  ng-mouseleave="mouseLeave()"
               {% ifequal column.title "Teams" %}class="screen-only"{% endifequal %} >
 			  <ul>
+          {% if column.header_template_path %}
+            {% include column.header_template_path %}
+          {% endif %}
 			    <li ng-repeat="item in row.{{column.name}}"
 				    ng-click="selectItem($parent.$index, {{ forloop.counter0 }}, $index)"
 				    ng-dblclick="editItem($parent.$index, {{ forloop.counter0 }}, $index)"
