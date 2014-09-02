@@ -71,6 +71,13 @@ filters.filter('hoursSince', function(){
     }
 });
 
+filters.filter('future', function(){
+    return function(input){
+        var today = new Date();
+        return input >= today;
+    }
+});
+
 filters.filter('age', function(){
     return function(input){
         if(!input){

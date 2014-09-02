@@ -34,9 +34,6 @@ def stringport(module):
         raise ImportError(msg)
 
 
-# TODO depreciate this entirely
-Tag = namedtuple('Tag', 'name title subtags')
-
 # TODO - make this non-UCLH specific.
 # TODO - pick up FT/FK fields from introspection not hardcodings.
 def json_to_csv(episodes, description, user):
@@ -288,8 +285,13 @@ def json_to_csv(episodes, description, user):
             ffs.mv(zipfile, target)
     return target
 
+
 class OpalPlugin(object):
-    urls = []
+    """
+    Base class from which all of our plugins inherit.
+    """
+    urls        = []
+    javascripts = []
 
     def list_schemas(self):
         """

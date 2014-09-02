@@ -12,11 +12,6 @@ angular.module('opal.controllers').controller(
              tags,
             hospital_number) {
 
-        // TODO- reimplement this
-	    // $timeout(function() {
-	    // 	dialog.modalEl.find('input,textarea').first().focus();
-	    // });
-
         $scope.model = {}
         if(hospital_number){
             $scope.model.hospitalNumber = hospital_number;

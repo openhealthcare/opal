@@ -96,7 +96,10 @@ angular.module('opal.services')
 		            attrs.date = moment().format('YYYY-MM-DD');
                 }
                 if (columnName == 'line'){
-                    attrs.inserted_by = window.initials
+                    attrs.inserted_by = window.initials;
+                }
+                if (columnName == 'opat_review'){
+                    attrs.initials = window.initials;
                 }
 	            return new Item(attrs, episode, opts.column);
 	        };
@@ -226,15 +229,12 @@ recently changed it - refresh the page and try again');
         // These should be expressed as { newPatient: ..., newForPatient: ..., error: ... }
         //
         Episode.findByHospitalNumber = function(number, callbacks){
-            console.log(number);
-
             var deferred = $q.defer();
             var result = {
 				patients: [],
 				hospitalNumber: number
 			};
 
-            //deferred.promise.then($scope.addForHospitalNumber);
             deferred.promise.then(function(result){
                 if(result.patients.length == 0){
                     callbacks.newPatient(result);

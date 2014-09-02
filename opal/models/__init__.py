@@ -55,11 +55,11 @@ class Patient(models.Model):
         demographics = self.demographics_set.get()
         return '%s | %s' % (demographics.hospital_number, demographics.name)
 
-    def create_episode(self):
-        if self.get_active_episode() is None:
+    def create_episode(self, category=None):
+        # if self.get_active_episode() is None:
             return self.episode_set.create()
-        else:
-            raise exceptions.APIError('Patient %s already has active episode' % self)
+        # else:
+        #     raise exceptions.APIError('Patient %s already has active episode' % self)
 
     def get_active_episode(self):
         for episode in self.episode_set.order_by('id').reverse():
@@ -134,8 +134,11 @@ class Episode(UpdatesFromDictMixin, models.Model):
 
         for tag_name in tag_names:
             if tag_name not in original_tag_names:
-                print tag_name
-                params = {'team': Team.objects.get(name=tag_name)}
+                team = Team.objects.get(name=tag_name)
+                if team.parent:
+                    if team.parent.name not in tag_names:
+                        self.tagging_set.create(team=team.parent)
+                params = {'team': team}
                 if tag_name == 'mine':
                     params['user'] = user
                 self.tagging_set.create(**params)
@@ -231,6 +234,7 @@ class Team(models.Model):
     useful_numbers = models.ManyToManyField(ContactNumber, blank=True)
     restricted     = models.BooleanField(default=False, 
                                          help_text=HELP_RESTRICTED)
+    direct_add     = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.title
@@ -245,26 +249,22 @@ class Team(models.Model):
             if plugin.restricted_teams:
                 restricted_teams += plugin().restricted_teams(user)
         return restricted_teams
-    
-    # TODO depreciate this and refactor accordingly
+
     @classmethod
-    def to_TAGS(klass, user):
+    def for_user(klass, user):
         """
-        Given a USER, return the teams this user can access, as TAGS.
+        Return the set of teams this user has access to. 
         """
-        from opal.utils import Tag
         teams = klass.objects.filter(active=True, restricted=False).order_by('order')
         restricted_teams = klass.restricted_teams(user)
         teams = set(list(teams) + restricted_teams)
-        tags = collections.OrderedDict()
-        for team in teams:
-            if not team.parent:
-                tags[team.name] = Tag(team.name, team.title, [])
-        for team in teams:
-            if team.parent:
-                tags[team.parent.name].subtags.append(Tag(team.name, team.title, None))
-        return tags.values()
+        return teams
 
+    @property
+    def has_subtags(self):
+        return self.team_set.count() > 0
+
+    
 class Subrecord(UpdatesFromDictMixin, models.Model):
     consistency_token = models.CharField(max_length=8)
 
@@ -353,7 +353,7 @@ class Tagging(models.Model):
     _title = 'Teams'
 
     team = models.ForeignKey(Team, blank=True, null=True)
-    user = models.ForeignKey(auth.models.User, null=True)
+    user = models.ForeignKey(auth.models.User, null=True, blank=True)
     episode = models.ForeignKey(Episode, null=True) # TODO make null=False
 
     def __unicode__(self):

@@ -1,8 +1,9 @@
 """
 OPAL Viewz!
 """
-import json
+import collections
 import datetime
+import json
 
 from django.contrib.auth.views import login
 from django.contrib.contenttypes.models import ContentType
@@ -89,7 +90,8 @@ def episode_detail_view(request, pk):
         return HttpResponseNotFound()
 
     if request.method == 'GET':
-        return _build_json_response(episode.to_dict(request.user))
+        serialized = episode.to_dict(request.user)
+        return _build_json_response(serialized)
 
     data = _get_request_data(request)
 
@@ -160,7 +162,6 @@ def episode_list_and_create_view(request):
             patient = models.Patient.objects.create()
 
         patient.update_from_demographics_dict(data['demographics'], request.user)
-
         try:
             episode = patient.create_episode()
             episode_fields = models.Episode._get_fieldnames_to_serialize()
@@ -175,8 +176,9 @@ def episode_list_and_create_view(request):
                 {'error': 'Patient already has active episode'}, 400)
 
         episode.update_from_location_dict(data['location'], request.user)
-        tag_names = [n for n, v in data['tagging'][0].items() if v]
-        episode.set_tag_names(tag_names, request.user)
+        if 'tagging' in data:
+            tag_names = [n for n, v in data['tagging'][0].items() if v]
+            episode.set_tag_names(tag_names, request.user)
         return _build_json_response(episode.to_dict(request.user), 201)
 
 
@@ -191,6 +193,9 @@ class EpisodeListView(View):
             filter_kwargs['tagging__team__name'] = subtag
         elif tag:
             filter_kwargs['tagging__team__name'] = tag
+        # Probably the wrong place to do this, but mine needs specialcasing.
+        if tag == 'mine':
+            filter_kwargs['tagging__user'] = self.request.user
         serialised = models.Episode.objects.serialised_active(
             self.request.user, **filter_kwargs)
         return _build_json_response(serialised)
@@ -269,6 +274,7 @@ class EpisodeTemplateView(TemplateView):
                                               name.replace('_', ' ').title())
             column_context['single'] = column._is_singleton
             column_context['episode_category'] = getattr(column, '_episode_category', None)
+            column_context['batch_template'] = getattr(column, '_batch_template', None)
 
             list_display_templates = [name + '.html']
             if 'tag' in kwargs:
@@ -297,7 +303,7 @@ class EpisodeTemplateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(EpisodeTemplateView, self).get_context_data(**kwargs)
         # todo rename/refactor this accordingly
-        context['tags'] = models.Team.to_TAGS(self.request.user)
+        context['teams'] = models.Team.for_user(self.request.user)
         context['columns'] = self.get_column_context(**kwargs)
         if 'tag' in kwargs:
             context['team'] = models.Team.objects.get(name=kwargs['tag'])
@@ -328,17 +334,12 @@ class TagsTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(TagsTemplateView, self).get_context_data(**kwargs)
-        context['tags'] = models.Team.to_TAGS(self.request.user)
+        context['teams'] = models.Team.for_user(self.request.user)
         return context
 
 
 class SearchTemplateView(TemplateView):
     template_name = 'search.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(SearchTemplateView, self).get_context_data(**kwargs)
-        context['tags'] = models.Team.to_TAGS(self.request.user)
-        return context
 
 
 class ExtractTemplateView(TemplateView):
@@ -350,9 +351,7 @@ class AddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(AddEpisodeTemplateView, self).get_context_data(**kwargs)
-        tags = models.Team.to_TAGS(self.request.user)
-        context['tags'] = tags
-        context['with_subtags'] = ','.join(["'" + tag.name + "'" for tag in tags if tag.subtags])
+        context['teams'] = models.Team.for_user(self.request.user)
         return context
 
 
@@ -362,6 +361,19 @@ class DischargeEpisodeTemplateView(LoginRequiredMixin, TemplateView):
 
 class DischargeOpatEpisodeTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'discharge_opat_episode_modal.html'
+
+
+# OPAT specific templates
+class OpatReferralTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = 'opat_referral_modal.html'
+
+
+class OpatAddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = 'opat/add_episode_modal.html'
+
+
+class OpatInternalReferralTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = 'opat/internal_referral.html'
 
 
 class DeleteItemConfirmationView(LoginRequiredMixin, TemplateView):
@@ -391,7 +403,6 @@ class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'opal.html'
 
 class ModalTemplateView(LoginRequiredMixin, TemplateView):
-    # template_name = 'modal_base.html'
 
     def dispatch(self, *a, **kw):
         """
@@ -410,11 +421,8 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         context['name'] = self.name
         context['title'] = getattr(self.column, '_title', self.name.replace('_', ' ').title())
         context['single'] = self.column._is_singleton
-
-        if self.name == 'location':
-            context['tags'] = models.Team.to_TAGS(self.request.user)
-
         return context
+
 
 class SchemaBuilderView(View):
 
@@ -535,8 +543,6 @@ class BannedView(TemplateView):
 
 def options_view(request):
     data = {}
-    #for name, model in option_models.items():
-
     for model in LookupList.__subclasses__():
         options = [instance.name for instance in model.objects.all()]
         data[model.__name__.lower()] = options
@@ -550,16 +556,18 @@ def options_view(request):
 
     data['micro_test_defaults'] = micro_test_defaults
 
-    tag_hierarchy = {}
+    tag_hierarchy = collections.defaultdict(list)
     tag_display = {}
-    for tag in models.Team.to_TAGS(request.user):
-        tag_display[tag.name] = tag.title
-        if tag.subtags:
-            tag_hierarchy[tag.name] = [st.name for st in tag.subtags]
-            for t in tag.subtags:
-                tag_display[t.name] = t.title
+
+    for team in models.Team.for_user(request.user):
+        tag_display[team.name] = team.title
+        if team.has_subtags:
+            for st in team.team_set.all():
+                tag_hierarchy[team.name].append(st.name)
+                tag_display[st.name] = st.title
         else:
-            tag_hierarchy[tag.name] = []
+            tag_hierarchy[team.name] = []
+
     data['tag_hierarchy'] = tag_hierarchy
     data['tag_display'] = tag_display
 

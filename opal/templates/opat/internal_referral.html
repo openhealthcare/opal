@@ -1,0 +1,43 @@
+<div class="modal-header">
+  <button type="button" class="close" ng-click="cancel()">×</button>
+  <h3>Active inpatient episode found</h3>
+</div>
+<div class="modal-body">
+    <table class="table table-bordered table-hover search">
+      <thead>
+        <tr>
+          <td>Hospital #</td>
+          <td>Name</td>
+          <td>Admitted</td>
+          <td>Discharged</td>
+          <td></td>
+        </tr>
+      </thead>
+      <tbody>
+	    <tr class="pointer"
+            ng-click="jump_to_episode(patient.active_episode_id)"
+            >
+	      <td>[[patient.demographics[0].hospital_number]]</td>
+	      <td>[[patient.demographics[0].name]]</td>
+	      <td>[[ patient.episodes[patient.active_episode_id].date_of_admission | shortDate ]]</td>
+          <td>[[ patient.episodes[patient.active_episode_id].discharge_date | shortDate ]]</td>
+	      <td>
+            <i class="glyphicon glyphicon-new-window"></i>
+          </td>
+	    </tr>
+      </tbody>
+    </table>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" ng-click="open_new()">
+    Open new episode
+  </button>
+  <button class="btn btn-primary" ng-click="import_existing()">
+    Import from episode
+  </button>
+  <button class="btn" ng-click="cancel()">Cancel</button>
+</div>
+
+
+
+

@@ -1,16 +1,23 @@
-<div class="container">
-  <h2>Your Account</h2>
-  <h3>
-    {% if request.user.first_name %}
-      {{ request.user.first_name }}
-    {% else %}
-      {{ request.user.username }}
-    {% endif %}
-  </h3>
-  <br />
-  <h4>
-    <a href="{% url 'change-password' %}">
-      Reset Password
-    </a>
-  </h4>
+<div class="container content-offset">
+
+  <div class="panel panel-warning">
+    <!-- Default panel contents -->
+    <div class="panel-heading">
+      <h2>Your Account</h2>
+    </div>
+    <div class="panel-body">
+      <h3>
+        {% if request.user.first_name %}
+        {{ request.user.first_name }}
+        {% else %}
+        {{ request.user.username }}
+        {% endif %}
+      </h3>
+      <h4>
+        <a href="{% url 'change-password' %}">
+          Reset Password
+        </a>
+      </h4>
+    </div>
+  </div>
 </div>

@@ -42,7 +42,17 @@ angular.module('opal.controllers').controller(
         $scope.currentTag = $routeParams.tag;
 
         if(!$routeParams.subtag){
-            $scope.currentSubTag = 'all';
+            // We now force redirect to the first subtag if there is one
+            if($scope.currentTag in options.tag_hierarchy && 
+               options.tag_hierarchy[$scope.currentTag].length > 0){
+                var subtag = options.tag_hierarchy[$scope.currentTag][0];
+                var target = $scope.path_base + $scope.currentTag + '/' + subtag;
+                console.log(target);
+                $location.path(target);
+                return
+            }else{
+                $scope.currentSubTag = 'all';
+            }
         }else{
             $scope.currentSubTag = $routeParams.subtag;
         }
@@ -84,9 +94,14 @@ angular.module('opal.controllers').controller(
             };
         }
 
-        $scope.otherTags = function(item){
-            return _.filter(_.keys(item.makeCopy()), function(tag){
-                return item[tag];
+        $scope.otherTags = function(episode){
+            tags = episode.getTags();
+            return _.filter(tags, function(t){
+                if(t in options.tag_hierarchy && 
+                   options.tag_hierarchy[t].length > 0){ return false };
+                if(t == $scope.currentTag){ return false };
+                if(t == $scope.currentSubTag){ return false };
+                return true
             });
         }
 
@@ -227,7 +242,7 @@ angular.module('opal.controllers').controller(
 		            // selected.
 		            var rowIx;
 		            $scope.state = 'normal';
-		            if (episode) {
+		            if (episode && episode != 'cancel') {
 			            episodes[episode.id] = episode;
 			            $scope.rows = getVisibleEpisodes();
 			            rowIx = getRowIxFromEpisodeId(episode.id);

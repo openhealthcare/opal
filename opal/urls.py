@@ -66,8 +66,16 @@ urlpatterns = patterns(
         views.ReopenEpisodeTemplateView.as_view()),
     url(r'^templates/modals/discharge_episode.html/?$',
         views.DischargeEpisodeTemplateView.as_view()),
+
+    # OPAT Specific templates
     url(r'^templates/modals/discharge_opat_episode.html/?$',
         views.DischargeOpatEpisodeTemplateView.as_view()),
+    url(r'^templates/modals/opat_referral.html/?$',
+        views.OpatReferralTemplateView.as_view()),
+    url(r'^templates/modals/opat/add_episode.html/?$',
+        views.OpatAddEpisodeTemplateView.as_view()),
+    url(r'^templates/modals/opat_internal_referral.html/?$',
+        views.OpatInternalReferralTemplateView.as_view()),
 
     url(r'^templates/modals/delete_item_confirmation.html/?$',
         views.DeleteItemConfirmationView.as_view()),

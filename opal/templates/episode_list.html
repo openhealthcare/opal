@@ -10,46 +10,69 @@
   </div>
 
   {% with top=True %}
-    {% include 'episode_list_navbar.html' %}
+  {% include 'episode_list_navbar.html' %}
   {% endwith %}
   <table class="table table-bordered content-offset" freeze-panes>
     <thead>
 	  <tr>
 	    {% for column in columns %}
-		  <th {% ifequal column.title "Teams" %}class="screen-only"{% endifequal %}>{{ column.title }}</th>
+		<th {% ifequal column.title "Teams" %}class="screen-only"{% endifequal %}>{{ column.title }}</th>
 	    {% endfor %}
 	  </tr>
     </thead>
     <tbody>
 	  <tr ng-repeat="row in rows">
 	    {% for column in columns %}
-		  <td ng-mouseenter="mouseEnter($index, {{ forloop.counter0 }})"
-			  ng-mouseleave="mouseLeave()"
-              {% ifequal column.title "Teams" %}class="screen-only"{% endifequal %} >
-			  <ul>
-          {% if column.header_template_path %}
-            {% include column.header_template_path %}
-          {% endif %}
-			    <li ng-repeat="item in row.{{column.name}}"
-				    ng-click="selectItem($parent.$index, {{ forloop.counter0 }}, $index)"
-				    ng-dblclick="editItem($parent.$index, {{ forloop.counter0 }}, $index)"
-				    ng-class="{selected: rix == $parent.$index && cix == {{ forloop.counter0 }} && iix == $index}">
-				    {% include column.template_path %}
-			    </li>
+        {% if column.batch_template %}
+        <td ng-mouseenter="mouseEnter($index, {{ forloop.counter0 }})"
+			ng-mouseleave="mouseLeave()">
+          {% with cix=forloop.counter0 %}{% with column_name=column.name %}
+          {% include column.template_path %}
+          {% endwith %}{% endwith %}
+        </td>
+        {% else %}
+		<td ng-mouseenter="mouseEnter($index, {{ forloop.counter0 }})"
+			ng-mouseleave="mouseLeave()"
+            {% ifequal column.title "Teams" %}class="screen-only"{% endifequal %} >
+		  <ul>
+      {% if column.header_template_path %}
+        {% include column.header_template_path %}
+      {% endif %}
+			<li ng-repeat="item in row.{{column.name}}"
+				ng-click="selectItem($parent.$index, {{ forloop.counter0 }}, $index)"
+				ng-dblclick="editItem($parent.$index, {{ forloop.counter0 }}, $index)"
+				ng-class="{selected: rix == $parent.$index && cix == {{ forloop.counter0 }} && iix == $index}">
+			  {% include column.template_path %}
+			</li>
 
-			    {% if not column.single %}
-				  <li ng-click="selectItem($index, {{ forloop.counter0 }}, row.{{column.name}}.length)"
-				      ng-dblclick="editItem($index, {{ forloop.counter0 }}, row.{{column.name}}.length)"
-				      ng-class="{selected: rix == $index && cix == {{ forloop.counter0 }} && iix == row.{{column.name}}.length}">
-					  <span ng-show="(!profile.readonly && rix == $index && cix == {{ forloop.counter0 }}) ||
-						             (!profile.readonly && mouseRix == $index && mouseCix == {{ forloop.counter0 }})">
-						             Add
-					  </span>
-					  &nbsp;
-				  </li>
-			    {% endif %}
-			  </ul>
-		  </td>
+			{% if not column.single %}
+			<li class="edit_item"
+                ng-click="editItem($index, {{ forloop.counter0 }}, row.{{column.name}}.length)"
+				ng-dblclick="editItem($index, {{ forloop.counter0 }}, row.{{column.name}}.length)"
+				ng-class="{selected: rix == $index && cix == {{ forloop.counter0 }} && iix == row.{{column.name}}.length}">
+			  <span ng-show="(!profile.readonly && rix == $index && cix == {{ forloop.counter0 }}) ||
+						     (!profile.readonly && mouseRix == $index && mouseCix == {{ forloop.counter0 }})">
+				Add
+                <i class="glyphicon glyphicon-plus pull-right"></i>
+			  </span>
+			  &nbsp;
+			</li>
+            {% else %}
+            <li class="edit_item"
+                ng-click="editItem($index, {{ forloop.counter0 }}, 0)"
+				ng-dblclick="editItem($index, {{ forloop.counter0 }}, 0)"
+				ng-class="{selected: rix == $index && cix == {{ forloop.counter0 }} && iix == 0}">
+			  <span ng-show="(!profile.readonly && rix == $index && cix == {{ forloop.counter0 }}) ||
+						     (!profile.readonly && mouseRix == $index && mouseCix == {{ forloop.counter0 }})">
+				Edit <i class="glyphicon glyphicon-pencil pull-right"></i>
+			  </span>
+			  &nbsp;
+			</li>
+
+			{% endif %}
+		  </ul>
+		</td>
+        {% endif %}
 	    {% endfor %}
 	  </tr>
     </tbody>
@@ -75,13 +98,13 @@
             <tr>
               {% for number in team.useful_numbers.all %}
               <td>
-                  {{ number }}
+                {{ number }}
               </td>
               {% if forloop.counter|divisibleby:6 %}
             </tr>
             <tr>
               {% endif %}
-                {% endfor %}
+              {% endfor %}
             </tr>
           </table>
         </center>

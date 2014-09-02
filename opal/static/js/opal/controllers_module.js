@@ -6,14 +6,16 @@ var controllers = angular.module('opal.controllers', [
 	'opal.services',
 	'ui.event',
 	'ui.bootstrap',
-  'ngProgressLite',
+    'ngProgressLite',
     'mgcrea.ngStrap.typeahead',
     'mgcrea.ngStrap.helpers.dimensions',
     'mgcrea.ngStrap.helpers.parseOptions',
     'mgcrea.ngStrap.tooltip',
     'mgcrea.ngStrap.helpers.dateParser',
-    'mgcrea.ngStrap.datepicker'
+    'mgcrea.ngStrap.datepicker',
+    'mgcrea.ngStrap.timepicker'
 ]);
+
 
 controllers.controller('RootCtrl', function($scope, $location) {
     $scope.$location = $location;

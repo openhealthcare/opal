@@ -204,5 +204,17 @@ angular.module('opal.controllers').controller(
             }
             // Jump to scope.
             window.location.hash = '#/'
+        };
+
+        $scope.controller_for_episode = function(controller, template, size){
+            $modal.open({
+                controller : controller, 
+                templateUrl: template,
+                size       : size,
+                resolve    : {
+                    episode: function(){ return $scope.episode }
+                }
+            });
         }
+        
     });
