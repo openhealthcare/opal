@@ -43,7 +43,7 @@ angular.module('opal.controllers').controller(
 
         if(!$routeParams.subtag){
             // We now force redirect to the first subtag if there is one
-            if($scope.currentTag in options.tag_hierarchy && 
+            if($scope.currentTag in options.tag_hierarchy &&
                options.tag_hierarchy[$scope.currentTag].length > 0){
                 var subtag = options.tag_hierarchy[$scope.currentTag][0];
                 var target = $scope.path_base + $scope.currentTag + '/' + subtag;
@@ -97,7 +97,7 @@ angular.module('opal.controllers').controller(
         $scope.otherTags = function(episode){
             tags = episode.getTags();
             return _.filter(tags, function(t){
-                if(t in options.tag_hierarchy && 
+                if(t in options.tag_hierarchy &&
                    options.tag_hierarchy[t].length > 0){ return false };
                 if(t == $scope.currentTag){ return false };
                 if(t == $scope.currentSubTag){ return false };
@@ -346,6 +346,9 @@ angular.module('opal.controllers').controller(
 
       $scope.newNamedItem = function(episode, name) {
         var item = episode.newItem(name, {column: $rootScope.fields[name]});
+        if (!episode[name]) {
+          episode[name] = [];
+        }
         episode[name][0] = item;
         _openEditItemModal(item, name, episode);
       }
