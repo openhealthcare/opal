@@ -1,6 +1,18 @@
 <div class="navbar navbar-default {% if top %} navbar-fixed-top navbar-2{% endif %} screen-only">
 
-  <div class="navbar-inner">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">      
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
+      <span class="pull-right"><strong>Teams</strong></span>
+        <span class="sr-only">Toggle navigation</span>
+      </button>
+
+    </div>
+  </div>
+
+  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+  <!-- <div class="navbar-inner"> -->
 	<a class="btn btn-info pull-left" href="#/search">
       <i class="glyphicon glyphicon-search"></i>
       Search
@@ -55,7 +67,21 @@
 
 
 <div class="navbar navbar-nav navbar-default {% if top %}navbar-fixed-top navbar-3{% endif %} screen-only" id="subtags-nav">
-  <div class="navbar-inner">
+  <!-- <div class="navbar-inner"> -->
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-3">
+        <span class="sr-only">Toggle navigation</span>
+
+        <span class="pull-right"><strong>Sub Teams</strong></span>        
+      </button>
+
+
+    </div>
+  </div>
+
+  <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-3">
     
     <ul class="nav navbar-nav nav-tabs" role="tablist" id="subtags">
 	  {% for tag in tags %}
