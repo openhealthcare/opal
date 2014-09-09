@@ -153,7 +153,7 @@ class Episode(UpdatesFromDictMixin, models.Model):
             return [{}]
         td = [{t.team.name: True for t in self.tagging_set.exclude(team__name='mine')}]
         if self.tagging_set.filter(team__name='mine', user=user).count() > 0:
-            t[0]['mine'] = True
+            td[0]['mine'] = True
         td[0]['id'] = self.id
         return td
 
