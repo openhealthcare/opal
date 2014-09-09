@@ -148,13 +148,14 @@ class Episode(UpdatesFromDictMixin, models.Model):
             self.active = True
         self.save()
 
-    def tagging_dict(self):
+    def tagging_dict(self, user):
         if self.tagging_set.count() == 0:
             return [{}]
-        td = [{t.team.name: True for t in self.tagging_set.all()}]
+        td = [{t.team.name: True for t in self.tagging_set.exclude(team__name='mine')}]
+        if self.tagging_set.filter(team__name='mine', team__user=user).count() > 0:
+            t[0]['mine'] = True
         td[0]['id'] = self.id
         return td
-
 
     def get_tag_names(self, user):
         return [t.team.name for t in self.tagging_set.all() if t.user in (None, user)]
@@ -182,7 +183,7 @@ class Episode(UpdatesFromDictMixin, models.Model):
             d[model.get_api_name()] = [subrecord.to_dict(user)
                                        for subrecord in subrecords]
 
-        d['tagging'] = self.tagging_dict()
+        d['tagging'] = self.tagging_dict(user)
         d['prev_episodes'] = []
         d['next_episodes'] = []
 

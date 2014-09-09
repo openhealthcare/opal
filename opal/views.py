@@ -222,7 +222,7 @@ class TaggingView(View):
             data.pop('id')
         tag_names = [n for n, v in data.items() if v]
         episode.set_tag_names(tag_names, self.request.user)
-        return _build_json_response(episode.tagging_dict()[0])
+        return _build_json_response(episode.tagging_dict(self.request.user)[0])
 
     
 @require_http_methods(['POST'])
