@@ -143,7 +143,7 @@ class Episode(UpdatesFromDictMixin, models.Model):
         if len(tag_names) < 1:
             self.active = False
         elif tag_names == ['mine']:
-            self.active = False
+            self.active = True
         elif not self.active:
             self.active = True
         self.save()
