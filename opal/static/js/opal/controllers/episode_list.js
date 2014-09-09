@@ -286,12 +286,10 @@ angular.module('opal.controllers').controller(
 
             var modal;
             var episode = getEpisode(rix);
-            var location = episode.location[0];
-            editing = location.makeCopy();
-            // TODO:
-            // URGENT: Make this use new tagging
-            delete editing.tagging.mine;
-            location.save(editing).then(function(result){
+            var tagging = episode.tagging[0];
+            editing = tagging.makeCopy();
+            editing.mine = false;
+            tagging.save(editing).then(function(result){
                 $scope.rows = getVisibleEpisodes();
             })
 
