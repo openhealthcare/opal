@@ -4,3 +4,4 @@ var CATEGORIES = [
 ];
 
 var services = angular.module('opal.services', ['ngResource', 'ngRoute']);
+services.config(function($sceProvider){$sceProvider.enabled(false)});
