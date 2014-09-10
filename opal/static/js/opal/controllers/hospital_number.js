@@ -56,7 +56,7 @@ angular.module('opal.controllers').controller(
         };
 
         $scope.newForPatient = function(patient){
-			if (patient.active_episode_id && 
+			if (patient.active_episode_id &&
                 // Check to see that this episode is not "Discharged"
                 patient.episodes[patient.active_episode_id].location[0].category != 'Discharged') {
 				// This patient has an active episode

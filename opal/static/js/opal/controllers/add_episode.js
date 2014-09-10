@@ -1,9 +1,9 @@
-angular.module('opal.controllers').controller(
-    'AddEpisodeCtrl', function($scope, $http, 
-                               $timeout, $routeParams,
-                               $modalInstance, Episode, schema,
-                               options,
-                               demographics) {
+angular.module('opal.controllers')
+    .controller('AddEpisodeCtrl', function($scope, $http,
+                                           $timeout, $routeParams,
+                                           $modalInstance, Episode, schema,
+                                           options,
+                                           demographics) {
 
 	    $scope.currentTag    = $routeParams.tag || 'mine';
 	    $scope.currentSubTag = $routeParams.subtag || 'all';
@@ -11,7 +11,7 @@ angular.module('opal.controllers').controller(
 	    for (var name in options) {
 		    $scope[name + '_list'] = options[name];
 	    };
-        
+
 	    $scope.episode_category_list = ['OPAT', 'Inpatient', 'Outpatient', 'Review'];
 	    $scope.editing = {
 		    date_of_admission: moment().format('DD/MM/YYYY'),

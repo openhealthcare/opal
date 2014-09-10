@@ -13,13 +13,14 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.views.generic import TemplateView, View
 from django.views.decorators.http import require_http_methods
 from django.template.loader import select_template
+from django.template import TemplateDoesNotExist
 from django.utils.decorators import method_decorator
 from django.utils import formats
 from django.shortcuts import redirect
 from django.template.loader import select_template
 
 from opal.utils.http import with_no_caching
-from opal.utils import (camelcase_to_underscore, stringport, fields, 
+from opal.utils import (camelcase_to_underscore, stringport, fields,
                         json_to_csv, OpalPlugin)
 from opal.utils.banned_passwords import banned
 from opal.utils.models import LookupList
@@ -128,7 +129,6 @@ def patient_search_view(request):
     else:
         return _build_json_response({'error': 'No search terms'}, 400)
 
-
 @require_http_methods(['GET', 'POST'])
 def episode_list_and_create_view(request):
     if request.method == 'GET':
@@ -194,7 +194,7 @@ class EpisodeListView(View):
         elif tag:
             filter_kwargs['tagging__team__name'] = tag
         # Probably the wrong place to do this, but mine needs specialcasing.
-        if tag == 'mine': 
+        if tag == 'mine':
             filter_kwargs['tagging__user'] = self.request.user
         serialised = models.Episode.objects.serialised_active(
             self.request.user, **filter_kwargs)
@@ -241,7 +241,7 @@ def subrecord_detail_view(request, model, pk):
 class TaggingView(View):
     """
     Provide an API for updating the teams to which an episode is
-    tagged. 
+    tagged.
     """
 
     def put(self, *args, **kwargs):
@@ -253,7 +253,7 @@ class TaggingView(View):
         episode.set_tag_names(tag_names, self.request.user)
         return _build_json_response(episode.tagging_dict(self.request.user)[0])
 
-    
+
 @require_http_methods(['POST'])
 def subrecord_create_view(request, model):
     data = _get_request_data(request)
@@ -293,7 +293,7 @@ class EpisodeTemplateView(TemplateView):
             column_context['single'] = column._is_singleton
             column_context['episode_category'] = getattr(column, '_episode_category', None)
             column_context['batch_template'] = getattr(column, '_batch_template', None)
-            
+
             list_display_templates = [name + '.html']
             if 'tag' in kwargs:
                 list_display_templates.insert(
@@ -307,6 +307,13 @@ class EpisodeTemplateView(TemplateView):
 
             column_context['modal_template_path'] = name + '_modal.html'
             column_context['detail_template_path'] = select_template([name + '_detail.html', name + '.html']).name
+
+            list_header_templates = ['%s_header.html' % x[:-5] for x in list_display_templates]
+            try:
+                column_context['header_template_path'] = select_template(list_header_templates).name
+            except TemplateDoesNotExist:
+                column_context['header_template_path'] = ''
+
             context.append(column_context)
 
         return context
@@ -325,12 +332,12 @@ class EpisodeListTemplateView(EpisodeTemplateView):
     template_name = 'episode_list.html'
     column_schema = schema.list_schemas['default']
 
-    
+
 class DischargeListTemplateView(EpisodeTemplateView):
     template_name = 'discharge_list.html'
     column_schema = schema.list_columns
 
-    
+
 class SaveFilterModalView(TemplateView):
     template_name = 'save_filter_modal.html'
 
@@ -356,7 +363,7 @@ class SearchTemplateView(TemplateView):
 class ExtractTemplateView(TemplateView):
     template_name = 'extract.html'
 
-    
+
 class AddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'add_episode_modal.html'
 
@@ -365,7 +372,7 @@ class AddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
         context['teams'] = models.Team.for_user(self.request.user)
         return context
 
-    
+
 class DischargeEpisodeTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'discharge_episode_modal.html'
 
@@ -437,29 +444,56 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
 
 class SchemaBuilderView(View):
 
+    def serialize_model(self, model):
+        col = {
+            'name': model.get_api_name(),
+            'display_name': model.get_display_name(),
+            'single': model._is_singleton,
+            'fields': model.build_field_schema()
+            }
+        if hasattr(model, '_sort'):
+            col['sort'] = model._sort
+        if hasattr(model, '_read_only'):
+            col['readOnly'] = model._read_only
+        return col
+
     def serialize_schema(self, schema):
-        cols = []
-        for column in schema:
-            col = {
-                'name': column.get_api_name(),
-                'display_name': column.get_display_name(),
-                'single': column._is_singleton,
-                'fields': column.build_field_schema()
-                }
-            if hasattr(column, '_sort'):
-                col['sort'] = column._sort
-            if hasattr(column, '_read_only'):
-                col['readOnly'] = column._read_only
-            
-            cols.append(col)
-        return cols
+        return [self.serialize_model(column) for column in schema]
 
     def _get_plugin_schemas(self):
         scheme = {}
         for plugin in OpalPlugin.__subclasses__():
             scheme.update(plugin().list_schemas())
         return scheme
-    
+
+    def _get_list_schema(self):
+        schemas = self._get_field_names(self.columns)
+
+        plugin_schemas = self._get_plugin_schemas()
+        schemas.update(self._get_field_names(plugin_schemas))
+        return schemas
+
+    def _get_field_names(self, schemas):
+        scheme = {}
+        for name, s in schemas.items():
+            if isinstance(s, list):
+                scheme[name] = [f.get_api_name() for f in s]
+            else:
+                scheme[name] = {}
+                for n, c in s.items():
+                    scheme[name][n] = [f.get_api_name() for f in c]
+        return scheme
+
+    def _get_all_fields(self):
+        response = {'tagging': self.serialize_model(models.Tagging)}
+        for subclass in models.PatientSubrecord.__subclasses__():
+            response[subclass.get_api_name()] = self.serialize_model(subclass)
+
+        for subclass in models.EpisodeSubrecord.__subclasses__():
+            response[subclass.get_api_name()] = self.serialize_model(subclass)
+
+        return response
+
     def _get_serialized_schemas(self, schemas):
         scheme = {}
         for name, s in schemas.items():
@@ -470,7 +504,7 @@ class SchemaBuilderView(View):
                 for n, c in s.items():
                     scheme[name][n] = self.serialize_schema(c)
         return scheme
-    
+
     def get(self, *args, **kw):
         scheme = self._get_serialized_schemas(self.columns)
         return _build_json_response(scheme)
@@ -480,9 +514,10 @@ class ListSchemaView(SchemaBuilderView):
     columns = schema.list_schemas
 
     def get(self, *args, **kw):
-        schema = self._get_serialized_schemas(self._get_plugin_schemas())
-        schema.update(self._get_serialized_schemas(self.columns))
-        return _build_json_response(schema)
+        response = {}
+        response['fields'] = self._get_all_fields()
+        response['list_schema'] = self._get_list_schema()
+        return _build_json_response(response)
 
 
 class DetailSchemaView(SchemaBuilderView):
@@ -526,7 +561,6 @@ class BannedView(TemplateView):
 
 def options_view(request):
     data = {}
-    
     for model in LookupList.__subclasses__():
         options = [instance.name for instance in model.objects.all()]
         data[model.__name__.lower()] = options
@@ -542,7 +576,7 @@ def options_view(request):
 
     tag_hierarchy = collections.defaultdict(list)
     tag_display = {}
-    
+
     for team in models.Team.for_user(request.user):
         tag_display[team.name] = team.title
         if team.has_subtags:
@@ -678,7 +712,7 @@ class Extractor(View):
                 # eps = models.Episode.objects.filter(**kw)
                 eps = models.Episode.objects.ever_tagged(query['field'])
                 print eps
-                
+
 
             elif issubclass(Mod, models.EpisodeSubrecord):
                 eps = models.Episode.objects.filter(**kw)
