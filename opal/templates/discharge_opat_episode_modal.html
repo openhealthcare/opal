@@ -13,11 +13,13 @@
     </center>
   </div>
 
+  <!-- Accepted state -->
   <div ng-show="episode.tagging[0].opat_referrals == true && meta.accepted == true">
     <p>The patient will now be transferred to the OPAT Current List</p>
     <button class="btn btn-success btn-lg" ng-click="accept()">Confirm</button>
   </div>
   
+  <!-- Rejected state -->
   <div ng-show="episode.tagging[0].opat_referrals == true && meta.accepted == false">
     <p>The patient will be rejected from the OPAT service.</p>
     <form class="form-horizontal">
@@ -46,13 +48,112 @@
           </select>
         </div>
       </div>
+
+      <div class="form-group">
+        <label class="control-label col-sm-3">OPAT Review date</label>
+        <div class="col-sm-8">
+	      <input class="form-control" type="text" ng-model="meta.review_date" 
+                 bs-datepicker data-autoclose="true" />
+        </div>
+      </div>
+
     </form>
     <center>
       <button class="btn btn-danger btn-lg" 
               ng-click="reject()">Reject</button>
-      </center>
+    </center>
   </div>
 
+  <!-- OPAT Current initial state -->
+  <div ng-show="episode.tagging[0].opat_current && meta.oral == null && meta.completed == null">
+    <p>This patient has completed IV Therapy. What's the reason for that ?</p>
+    <center>
+      <button class="btn btn-primary btn-lg" ng-click="meta.oral = true">Switch to Oral</button>
+      <button class="btn btn-primary btn-lg" ng-click="meta.completed = true">Completed treatment</button>
+    </center>
+  </div>
+
+  <!-- OPAT Switch to oral -->
+  <div ng-show="episode.tagging[0].opat_current && meta.oral">
+    <p>The patient will be moved to the OPAT follow up list</p>
+
+    <form class="form-horizontal">
+      {% include 'opat/_stopped_antibiotics.html' %}
+    </form>
+
+    <center>
+      <button class="btn btn-danger btn-lg" 
+              ng-click="switch_to_oral()">Confirm</button>
+    </center>
+  </div>
+
+  <!-- OPAT completed therapy -->
+  <div ng-show="episode.tagging[0].opat_current && meta.completed">
+    <p>The patient will be discharged</p>
+
+    <form class="form-horizontal">
+      <div class="form-group">
+        <label class="control-label col-sm-3">OPAT Review date</label>
+        <div class="col-sm-8">
+	      <input class="form-control" type="text" ng-model="meta.review_date" 
+                 bs-datepicker data-autoclose="true" />
+        </div>
+      </div>
+      {% include 'opat/_stopped_antibiotics.html' %}
+      {% include 'opat/_finished_opat.html' %}
+    </form>
+
+    <center>
+      <button class="btn btn-warning btn-lg" 
+              ng-click="completed_therapy()">Confirm</button>
+    </center>
+  </div>
+
+  <!-- OPAT Follow up initial state -->
+  <div ng-show="episode.tagging[0].opat_followup && meta.oral == null && meta.completed == null">
+    <p>This patient has completed Oral treatment. What's the reason for that ?</p>
+    <center>
+      <button class="btn btn-primary btn-lg" ng-click="meta.iv = true">Back to IV Therapy</button>
+      <button class="btn btn-primary btn-lg" ng-click="meta.completed = true">Completed treatment</button>
+    </center>
+  </div>
+
+  <!-- OPAT Back to IV -->
+  <div ng-show="episode.tagging[0].opat_followup && meta.iv">
+    <p>The patient will go back to OPAT Current</p>
+
+    <form class="form-horizontal">
+      {% include 'opat/_stopped_antibiotics.html' %}
+    </form>
+
+    <center>
+      <button class="btn btn-warning btn-lg" 
+              ng-click="back_to_iv()">Confirm</button>
+    </center>
+  </div>
+  <!-- OPAT completed therapy -->
+  <div ng-show="episode.tagging[0].opat_followup && meta.completed">
+    <p>The patient will be discharged</p>
+
+    <form class="form-horizontal">
+      <div class="form-group">
+        <label class="control-label col-sm-3">OPAT Review date</label>
+        <div class="col-sm-8">
+	      <input class="form-control" type="text" ng-model="meta.review_date" 
+                 bs-datepicker data-autoclose="true" />
+        </div>
+      </div>
+      {% include 'opat/_stopped_antibiotics.html' %}
+      {% include 'opat/_finished_opat.html' %}
+    </form>
+
+    <center>
+      <button class="btn btn-warning btn-lg" 
+              ng-click="completed_therapy()">Confirm</button>
+    </center>
+  </div>
+  
+  
 </div>
 <div class="modal-footer">
   <button class="btn" ng-click="cancel()">Cancel</button>

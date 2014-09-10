@@ -5,6 +5,7 @@
 controllers.controller(
     'OPATInternalReferralCtrl',
     function($scope, $modalInstance,
+             CopyToCategory,
              patient){
         
         $scope.patient = patient;
@@ -27,7 +28,11 @@ controllers.controller(
         // The user has decided to import an existing inpatient episde
         // 
         $scope.import_existing = function(){
-            
+            CopyToCategory($scope.patient.active_episode_id, 'OPAT').then(
+                function(episode){
+                    $modalInstance.close(episode);
+                }
+            )
         };
 
         // Let's have a nice way to kill the modal.

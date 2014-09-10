@@ -3,7 +3,7 @@
 // 
 controllers.controller(
     'OPATReferralCtrl',
-    function($scope, $modalInstance, $modal,
+    function($scope, $modalInstance, $modal, $rootScope,
              schema, options,
              Episode){
         
@@ -17,6 +17,9 @@ controllers.controller(
         // teams and then kill the modal.
         // 
         $scope.tag_and_close = function(episode){
+            if(!episode.newItem){
+                episode = new Episode(episode, schema);
+            };
             if(!episode.tagging[0].makeCopy){
                 episode.tagging[0] = episode.newItem('tagging',{
                     column: {name: 'tagging', fields: [] }
@@ -27,9 +30,25 @@ controllers.controller(
             teams.opat = true;
             teams.opat_referrals = true;
             location.category = 'OPAT';
+
+            //
+            // Pre fill some tests:
+            //
+            var mrsa = episode.newItem('microbiology_test', 
+                                       {column: $rootScope.fields.microbiology_test});
+
+            var vte = episode.newItem('microbiology_test', 
+                                       {column: $rootScope.fields.microbiology_test});
+//            episode.microbiology_test = [mrsa, vte];
+
             episode.tagging[0].save(teams).then(function(){
                 episode.location[0].save(location).then(function(){
-                    $modalInstance.close(episode);
+                    mrsa.save({test: 'MRSA PCR'}).then(function(mrsa_test){
+                        vte.save({test: 'VTE Assessment'}).then(function(){
+                            episode.active = true;
+                            $modalInstance.close(episode);
+                        });
+                    });
                 })
             });
         };
@@ -97,6 +116,10 @@ controllers.controller(
 					}
 				}).result.then(
                     function(result) {
+                        if(!_.isString(result)){
+                            $scope.tag_and_close(result);
+                            return
+                        };
 					    var demographics;
 					    if (result == 'open-new') {
 						    // User has chosen to open a new episode

@@ -16,6 +16,8 @@ var controllers = angular.module('opal.controllers', [
     'mgcrea.ngStrap.timepicker'
 ]);
 
+controllers.config(function($sceProvider){$sceProvider.enabled(false)});
+
 controllers.controller('RootCtrl', function($scope, $location) {
     $scope.$location = $location;
     

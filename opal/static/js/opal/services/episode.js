@@ -96,7 +96,10 @@ angular.module('opal.services')
 		            attrs.date = moment().format('YYYY-MM-DD');
                 }
                 if (columnName == 'line'){
-                    attrs.inserted_by = window.initials
+                    attrs.inserted_by = window.initials;
+                }
+                if (columnName == 'opat_review'){
+                    attrs.initials = window.initials;
                 }
 	            return new Item(attrs, episode, opts.column);
 	        };

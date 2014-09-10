@@ -88,7 +88,7 @@ class EpisodeManager(models.Manager):
                 d[key] = value
             for key, value in patient_subs[e.patient_id].items():
                 d[key] = value
-            d['tagging'] = e.tagging_dict()
+            d['tagging'] = e.tagging_dict(user)
             serialised.append(d)
 
         return serialised

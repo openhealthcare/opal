@@ -148,3 +148,7 @@ input.ng-invalid {
 	background-color: #f0ad4e;
     cursor: pointer;
 }
+
+.italic{
+    font-style: italic;
+}

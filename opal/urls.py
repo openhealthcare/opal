@@ -33,7 +33,9 @@ urlpatterns = patterns(
     url(r'^episode/(?P<tag>[a-z_\-]+)/?$', views.EpisodeListView.as_view()),
     url(r'^episode/(?P<tag>[a-z_\-]+)/(?P<subtag>[a-z_\-]+)/?$', views.EpisodeListView.as_view()),
     url(r'^episode/(?P<pk>\d+)/?$', views.episode_detail_view),
-
+    url(r'^episode/(?P<pk>\d+)/actions/copyto/(?P<category>[a-zA-Z_\-]+)/?$', 
+        views.EpisodeCopyToCategoryView.as_view()),
+    
     url(r'^tagging/(?P<pk>\d+)/?', views.TaggingView.as_view()),
 
     url(r'^search/extract/$', views.ExtractSearchView.as_view()),
@@ -67,7 +69,7 @@ urlpatterns = patterns(
     url(r'^templates/modals/discharge_episode.html/?$',
         views.DischargeEpisodeTemplateView.as_view()),
 
-    # OPAT Specific templates 
+    # OPAT Specific templates
     url(r'^templates/modals/discharge_opat_episode.html/?$',
         views.DischargeOpatEpisodeTemplateView.as_view()),
     url(r'^templates/modals/opat_referral.html/?$',
