@@ -14,6 +14,8 @@ app.config(function($interpolateProvider) {
 	$interpolateProvider.endSymbol(']]');
 });
 
+app.config(function($sceProvider){$sceProvider.enabled(false)});
+
 app.run(['$rootScope', 'ngProgressLite', function($rootScope, ngProgressLite) {
   // When route started to change.
   $rootScope.$on('$routeChangeStart', function() {
