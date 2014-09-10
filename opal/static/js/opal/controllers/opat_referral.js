@@ -3,7 +3,7 @@
 // 
 controllers.controller(
     'OPATReferralCtrl',
-    function($scope, $modalInstance, $modal,
+    function($scope, $modalInstance, $modal, $rootScope,
              schema, options,
              Episode){
         
@@ -30,10 +30,25 @@ controllers.controller(
             teams.opat = true;
             teams.opat_referrals = true;
             location.category = 'OPAT';
+
+            //
+            // Pre fill some tests:
+            //
+            var mrsa = episode.newItem('microbiology_test', 
+                                       {column: $rootScope.fields.microbiology_test});
+
+            var vte = episode.newItem('microbiology_test', 
+                                       {column: $rootScope.fields.microbiology_test});
+//            episode.microbiology_test = [mrsa, vte];
+
             episode.tagging[0].save(teams).then(function(){
                 episode.location[0].save(location).then(function(){
-                    episode.active = true;
-                    $modalInstance.close(episode);
+                    mrsa.save({test: 'MRSA PCR'}).then(function(mrsa_test){
+                        vte.save({test: 'VTE Assessment'}).then(function(){
+                            episode.active = true;
+                            $modalInstance.close(episode);
+                        });
+                    });
                 })
             });
         };
