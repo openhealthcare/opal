@@ -200,6 +200,24 @@ class EpisodeListView(View):
             self.request.user, **filter_kwargs)
         return _build_json_response(serialised)
 
+    
+class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
+    """
+    Copy an episode to a given category, excluding tagging.   
+    """
+    def post(self, args, pk=None, category=None, **kwargs):
+        old = models.Episode.objects.get(pk=pk)
+        new = models.Episode(patient=old.patient)
+        new.save()
+        for sub in models.EpisodeSubrecord.__subclasses__():
+            if sub._is_singleton:
+                continue
+            for item in sub.objects.filter(episode=old):
+                item.id = None
+                item.episode = new
+                item.save()
+        return _build_json_response(new.to_dict(self.request.user))
+
 
 @require_http_methods(['PUT', 'DELETE'])
 def subrecord_detail_view(request, model, pk):

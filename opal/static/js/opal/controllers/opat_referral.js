@@ -17,6 +17,9 @@ controllers.controller(
         // teams and then kill the modal.
         // 
         $scope.tag_and_close = function(episode){
+            if(!episode.newItem){
+                episode = new Episode(episode, schema);
+            };
             if(!episode.tagging[0].makeCopy){
                 episode.tagging[0] = episode.newItem('tagging',{
                     column: {name: 'tagging', fields: [] }
@@ -29,6 +32,7 @@ controllers.controller(
             location.category = 'OPAT';
             episode.tagging[0].save(teams).then(function(){
                 episode.location[0].save(location).then(function(){
+                    episode.active = true;
                     $modalInstance.close(episode);
                 })
             });
@@ -97,6 +101,10 @@ controllers.controller(
 					}
 				}).result.then(
                     function(result) {
+                        if(!_.isString(result)){
+                            $scope.tag_and_close(result);
+                            return
+                        };
 					    var demographics;
 					    if (result == 'open-new') {
 						    // User has chosen to open a new episode
