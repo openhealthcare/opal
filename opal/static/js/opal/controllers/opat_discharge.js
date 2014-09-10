@@ -125,7 +125,7 @@ controllers.controller(
             
             updatedmeta.review_date = $scope.meta.review_date;
             updatedmeta.treatment_outcome = $scope.meta.outcome;
-            updatedmeta.died = $scope.meta.died;
+            updatedmeta.deceased = $scope.meta.died;
             updatedmeta.death_category = $scope.meta.death_category;
             updatedmeta.readmitted = $scope.meta.readmitted;
             updatedmeta.treatment_outcome = $scope.meta.outcome;
