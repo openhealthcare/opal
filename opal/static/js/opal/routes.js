@@ -43,14 +43,14 @@ app.config(
 			     templateUrl: '/templates/search.html',
 			     resolve: {
                      profile: function(UserProfile){ return UserProfile },
-				     schema: function(listSchemaLoader) { return listSchemaLoader; },
+				     schema: function(listSchemaLoader) { return listSchemaLoader(); },
 				     options: function(Options) { return Options; }
 			     }
              })
              .when('/discharge/:tag?/:subtag?', {
                  controller: 'EpisodeListCtrl',
                  resolve   : {
-                     schema: function(listSchemaLoader){ return listSchemaLoader },
+                     schema: function(listSchemaLoader){ return listSchemaLoader() },
                      options: function(Options){ return Options },
                      episodes: function(dischargedEpisodesLoader){
                          return dischargedEpisodesLoader()
