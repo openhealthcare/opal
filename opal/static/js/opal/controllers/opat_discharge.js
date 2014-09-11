@@ -5,7 +5,7 @@ controllers.controller(
     'OPATDischargeCtrl',
     function($scope, $modalInstance, $rootScope,
              Item,
-             episode, tags){
+             options, episode, tags){
 
         var opat_rejection = $rootScope.fields['opat_rejection'];
 
@@ -14,6 +14,14 @@ controllers.controller(
             accepted: null
         };
 
+        // Put all of our lookuplists in scope.
+	    for (var name in options) {
+		    if (name.indexOf('micro_test') != 0) {
+			    $scope[name + '_list'] = options[name];
+		    };
+	    };        
+
+        
         // Make sure that the episode's tagging item is an instance not an object
         $scope.ensure_tagging = function(episode){
             if(!$scope.episode.tagging[0].makeCopy){

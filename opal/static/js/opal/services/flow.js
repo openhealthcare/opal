@@ -96,7 +96,8 @@ angular.module(
 			                controller:  flow.controller,
 			                resolve: {
 				                episode: function() { return config.episode; },
-                                tags   : function() { return config.current_tags }
+                                tags   : function() { return config.current_tags; },
+                                options: function() { return options; }
 			                }
 		                }).result
                         deferred.resolve(result);
