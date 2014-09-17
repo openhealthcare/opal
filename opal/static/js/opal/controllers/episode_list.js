@@ -353,7 +353,7 @@ angular.module('opal.controllers').controller(
 
       $scope.editNamedItem = function(episode, name, iix) {
         var item;
-        if (episode[name][iix].columnName) {
+        if (episode[name][iix] && episode[name][iix].columnName) {
           item = episode[name][iix];
         } else {
           item = new Item(episode[name][iix], episode, $rootScope.fields[name]);
