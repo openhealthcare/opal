@@ -476,4 +476,15 @@ angular.module('opal.controllers').controller(
 			    $scope.iix = 0;
 		    };
 	    };
+
+        $scope.controller_for_episode = function(controller, template, size, episode){
+            $modal.open({
+                controller : controller,
+                templateUrl: template,
+                size       : size,
+                resolve    : {
+                    episode: function(){ return episode }
+                }
+            });
+        }
     });
