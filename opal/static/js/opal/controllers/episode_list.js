@@ -345,7 +345,7 @@ angular.module('opal.controllers').controller(
 
       $scope.editNamedItem = function(episode, name, iix) {
         var item;
-        if (episode[name][iix].columnName) {
+        if (episode[name][iix] && episode[name][iix].columnName) {
           item = episode[name][iix];
         } else {
           item = new Item(episode[name][iix], episode, $rootScope.fields[name]);
@@ -468,4 +468,15 @@ angular.module('opal.controllers').controller(
 			    $scope.iix = 0;
 		    };
 	    };
+
+        $scope.controller_for_episode = function(controller, template, size, episode){
+            $modal.open({
+                controller : controller,
+                templateUrl: template,
+                size       : size,
+                resolve    : {
+                    episode: function(){ return episode }
+                }
+            });
+        }
     });
