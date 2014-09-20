@@ -1,35 +1,37 @@
+//
+// This is the main Episode class for OPAL. 
+//
 angular.module('opal.services')
-    .factory('Episode', function($http, $q, Item) {
+    .factory('Episode', function($http, $q, $rootScope, Item) {
         Episode = function(resource, schema) {
 
 	        var episode = this;
 	        var column, field, attrs;
-            // TODO - Pull these from the schema?
-            var date_fields = ['date_of_admission', 'discharge_date'];
 
-	        for (var cix = 0; cix < schema.getNumberOfColumns(); cix++) {
-	            column = schema.columns[cix];
-                if(resource[column.name]){
-                    var schemacol = _.findWhere(schema.columns, {name: column.name});
-		            for (var iix = 0; iix < resource[column.name].length; iix++) {
-		                attrs = resource[column.name][iix];
-		                resource[column.name][iix] = new Item(attrs, episode, column);
-		            };
-                    // Now we've instantiated, see if we want to sort
-                    // by any particular field
-                    if(schemacol.sort){
-                        resource[column.name] = _.sortBy(resource[column.name],
-                                                         schemacol.sort).reverse();
+            // We would like everything for which we have data that is a field to
+            // be an instantiated instance of Item - not just those fields in the
+            // currently applicable schema.
+            _.each($rootScope.fields, function(field){
+                if(resource[field.name]){
+                    resource[field.name] = _.map(
+                        resource[field.name], 
+                        function(attrs){ return new Item(attrs, episode, field); });
+                    if(field.sort){
+                        resource[field.name] = _.sortBy(resource[field.name], field.sort).reverse();
                     }
-                }else{
-                    resource[column.name] = [];
-                }
+                }else{ resource[field.name] = []; }
+            });
 
-	        };
             // Sort a particular column according to schema params.
             this.sortColumn = function(columnName, sortBy){
                 episode[columnName] = _.sortBy(episode[columnName], sortBy).reverse();
             }
+
+            //
+            // TODO - Pull these from the schema?
+            // Note - these are date fields on the episode itself - which is not currently
+            // serialised and sent with the schema !
+            var date_fields = ['date_of_admission', 'discharge_date'];
 
             // Constructor to update from attrs and parse datish fields
             this.initialise = function(attrs){
@@ -74,7 +76,7 @@ angular.module('opal.services')
                     opts.schema = schema;
                 }
                 if(!opts.column){
-                    opts.column = opts.schema.getColumn(columnName);
+                    opts.column = $rootScope.fields[columnName];
                 }
 
 	            var attrs = {};

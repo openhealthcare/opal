@@ -8,14 +8,6 @@ angular.module('opal.controllers').controller(
                                 episodeVisibility, viewDischarged){
 
         var version = window.version;
-        // if($cookieStore.get('opal.seenVersion') !=  version){
-        //     $('#changelogTooltip').tooltip('show');
-        //     $('#changelog').on('hidden.bs.modal', function(){
-        //         $cookieStore.put('opal.seenVersion', version)
-        //         $('#changelogTooltip').tooltip('hide');
-        //     });
-        // }
-
         $scope.state = 'normal';
 
 	    $scope.rix = 0; // row index

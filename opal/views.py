@@ -559,37 +559,40 @@ class BannedView(TemplateView):
         return data
 
 
-def options_view(request):
-    data = {}
-    for model in LookupList.__subclasses__():
-        options = [instance.name for instance in model.objects.all()]
-        data[model.__name__.lower()] = options
+class OptionsView(View):
+    def get(self, *args, **kwargs):
+        data = {}
+        for model in LookupList.__subclasses__():
+            options = [instance.name for instance in model.objects.all()]
+            data[model.__name__.lower()] = options
 
-    for synonym in Synonym.objects.all():
-        name = type(synonym.content_object).__name__.lower()
-        data[name].append(synonym.name)
+        for synonym in Synonym.objects.all():
+            name = type(synonym.content_object).__name__.lower()
+            data[name].append(synonym.name)
 
-    for name in data:
-        data[name].sort()
+        for name in data:
+            data[name].sort()
 
-    data['micro_test_defaults'] = micro_test_defaults
+        data['micro_test_defaults'] = micro_test_defaults
 
-    tag_hierarchy = collections.defaultdict(list)
-    tag_display = {}
+        tag_hierarchy = collections.defaultdict(list)
+        tag_display = {}
 
-    for team in models.Team.for_user(request.user):
-        tag_display[team.name] = team.title
-        if team.has_subtags:
-            for st in team.team_set.all():
-                tag_hierarchy[team.name].append(st.name)
-                tag_display[st.name] = st.title
-        else:
-            tag_hierarchy[team.name] = []
+        teams = models.Team.for_user(self.request.user)
+        for team in teams:
+            if team.parent:
+                continue # Will be filled in at the appropriate point! 
+            tag_display[team.name] = team.title
 
-    data['tag_hierarchy'] = tag_hierarchy
-    data['tag_display'] = tag_display
+            subteams = [st for st in teams if st.parent == team]
+            tag_hierarchy[team.name] = [st.name for st in subteams]
+            for sub in subteams: 
+                tag_display[sub.name] = sub.title
 
-    return _build_json_response(data)
+        data['tag_hierarchy'] = tag_hierarchy
+        data['tag_display'] = tag_display
+
+        return _build_json_response(data)
 
 
 def userprofile_view(request):
@@ -706,13 +709,7 @@ class Extractor(View):
             kw = {'{0}__{1}{2}'.format(model_name, field, contains): query['query']}
 
             if Mod == models.Tagging:
-                print 'Tagggging'
-                print query
-                # kw = {'tagging__team__name{0}'.format(contains): query['query']}
-                # eps = models.Episode.objects.filter(**kw)
                 eps = models.Episode.objects.ever_tagged(query['field'])
-                print eps
-
 
             elif issubclass(Mod, models.EpisodeSubrecord):
                 eps = models.Episode.objects.filter(**kw)
@@ -782,7 +779,6 @@ class ReportView(TemplateView):
     """
     Base class for reports.
     """
-
     def get_data(self):
         return {}
 
@@ -826,5 +822,23 @@ class FilterDetailView(LoginRequiredMixin, View):
 
 
 class FlowView(View):
+    """
+    API call to retrieve the patient flow routes for this instance
+    """
     def get(self, *args, **kw):
-        return _build_json_response(flow.flows)
+        """
+        Return a dictionary of flow objects - these will be of the form:
+
+        { team: {verb: { controller: 'XXXX', template: 'XXXX'} } }
+
+        This allows the Flow service to determine the correct Angular 
+        controller for any given episode.
+        """
+        flows = {}
+        for plugin in OpalPlugin.__subclasses__():
+            scheme.update(plugin().flows())
+        flows.update(flow.flows)
+        return _build_json_response(flows)
+
+
+            

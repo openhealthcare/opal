@@ -304,7 +304,9 @@ class OpalPlugin(object):
         Given a USER, return a list of extra teams that user can access.
         """
         return []
+    
+    def flows(self):
+        """
+        Return any extra flows our plugin may have.
+        """
 
-    def get_urls():
-        from django.conf.urls import patterns
-        return patterns()

@@ -34,13 +34,10 @@ controllers.controller(
             //
             // Pre fill some tests:
             //
-            var mrsa = episode.newItem('microbiology_test', 
-                                       {column: $rootScope.fields.microbiology_test});
+            var mrsa = episode.newItem('microbiology_test');
+            var vte = episode.newItem('microbiology_test');
 
-            var vte = episode.newItem('microbiology_test', 
-                                       {column: $rootScope.fields.microbiology_test});
-//            episode.microbiology_test = [mrsa, vte];
-
+            // TODO - these are promises - the API is nicer than this !
             episode.tagging[0].save(teams).then(function(){
                 episode.location[0].save(location).then(function(){
                     mrsa.save({test: 'MRSA PCR'}).then(function(mrsa_test){

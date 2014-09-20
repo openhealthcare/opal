@@ -2,12 +2,6 @@ angular.module('opal.controllers').controller(
     'ReopenEpisodeCtrl', function($scope, $http, $timeout,
                                   $modalInstance, patient, tag)
     {
-        // TODO: Reimplement this.
-        //
-	    // $timeout(function() {
-	    // 	dialog.modalEl.find('input,textarea').first().focus();
-	    // });
-
 	    $scope.episodes = _.values(patient.episodes);
 	    $scope.model = {episodeId: 'None'};
 

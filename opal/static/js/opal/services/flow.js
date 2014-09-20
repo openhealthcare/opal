@@ -73,7 +73,7 @@ angular.module(
                             resolve: {
                                 schema:          function(){ return schema },
                                 options:         function(){ return options },
-                                tags:            function(){ return options.current_tags},
+                                tags:            function(){ return config.current_tags},
                                 hospital_number: function(){ return options.hospital_number; }
                             }
 		                }).result;
