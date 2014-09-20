@@ -28,10 +28,10 @@ def stringport(module):
             if hasattr(module, obj):
                 return getattr(module, obj)
             else:
-                raise ImportError(msg)
-        except ImportError:
-            raise ImportError(msg)
-        raise ImportError(msg)
+                raise ImportError(msg + e.message)
+        except ImportError, e:
+            raise ImportError(msg + e.message)
+        raise ImportError(msg + e.message)
 
 
 # TODO - make this non-UCLH specific.
@@ -307,6 +307,6 @@ class OpalPlugin(object):
     
     def flows(self):
         """
-        Return any extra flows our plugin may have.
+        Return any extra flows our plugin may hav.e
         """
-
+        return []

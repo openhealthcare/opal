@@ -21,9 +21,7 @@ controllers.controller(
                 episode = new Episode(episode, schema);
             };
             if(!episode.tagging[0].makeCopy){
-                episode.tagging[0] = episode.newItem('tagging',{
-                    column: {name: 'tagging', fields: [] }
-                })
+                episode.tagging[0] = episode.newItem('tagging');
             }
             var teams = episode.tagging[0].makeCopy();
             var location = episode.location[0].makeCopy();
@@ -106,9 +104,10 @@ controllers.controller(
 					patient.episodes[eix] = new Episode(patient.episodes[eix], schema);
 				};
 				modal = $modal.open({
-					templateUrl: '/templates/modals/opat_internal_referral.html/',
-					controller: 'OPATInternalReferralCtrl',
+					templateUrl: '/templates/modals/copy_to_category.html/',
+					controller: 'CopyToCategoryCtrl',
 					resolve: {
+                        category: function() { return 'OPAT' },
 						patient: function() { return patient; },
 					}
 				}).result.then(
@@ -117,7 +116,6 @@ controllers.controller(
                             $scope.tag_and_close(result);
                             return
                         };
-					    var demographics;
 					    if (result == 'open-new') {
 						    // User has chosen to open a new episode
                             $scope.add_for_patient(patient);

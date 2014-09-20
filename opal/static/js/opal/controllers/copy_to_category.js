@@ -3,10 +3,10 @@
 // This controller handles internal referrals to the opat service
 // 
 controllers.controller(
-    'OPATInternalReferralCtrl',
+    'CopyToCategoryCtrl',
     function($scope, $modalInstance,
              CopyToCategory,
-             patient){
+             patient, category){
         
         $scope.patient = patient;
 
@@ -28,7 +28,7 @@ controllers.controller(
         // The user has decided to import an existing inpatient episde
         // 
         $scope.import_existing = function(){
-            CopyToCategory($scope.patient.active_episode_id, 'OPAT').then(
+            CopyToCategory($scope.patient.active_episode_id, category).then(
                 function(episode){
                     $modalInstance.close(episode);
                 }

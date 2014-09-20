@@ -59,7 +59,7 @@ Create a template url in the django layer
 
 # Teams 
 
-Teams are the core concept around patient flow - broadly a tab in the list view.
+Episodes of care are assigned to n teams - broadly a tab in the list view.
 
 Teams have one level of nesting.
 
@@ -68,6 +68,12 @@ Teams may be inactive, in which case they are not displayed.
 Teams may be restricted in which they only appear for a subset of users.
 
 The logic for showing restricted teams is implemented via plugins.
+
+# Flow
+
+TBD.
+
+See https://github.com/openhealthcare/opal/issues/214
 
 # Users
 
@@ -140,6 +146,11 @@ extra teams that this user is allowed to see.
 
 Plugins can define list schemas. They should return a dictionary of lists of models from the
 list_schemas() method of the plugin class.
+
+## Defining new flows
+
+Plugins can define flows. They should return a dictionary of flows from the 
+flows() method of the plugin class.
 
 ## Adding URLS
 

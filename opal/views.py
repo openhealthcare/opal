@@ -399,8 +399,8 @@ class OpatAddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'opat/add_episode_modal.html'
 
 
-class OpatInternalReferralTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'opat/internal_referral.html'
+class CopyToCategoryTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = 'copy_to_category.html'
 
 
 class DeleteItemConfirmationView(LoginRequiredMixin, TemplateView):
@@ -482,6 +482,9 @@ class SchemaBuilderView(View):
         schemas.update(self._get_field_names(plugin_schemas))
         return schemas
 
+    def _get_detail_schema(self):
+        return self.serialize_schema(schema.detail_columns)
+
     def _get_field_names(self, schemas):
         scheme = {}
         for name, s in schemas.items():
@@ -531,7 +534,11 @@ class ListSchemaView(SchemaBuilderView):
 
 class DetailSchemaView(SchemaBuilderView):
     def get(self, *args, **kw):
-        return _build_json_response(self.serialize_schema(schema.detail_columns))
+        response = dict(
+            fields=self._get_all_fields(), 
+            detail_schema=self._get_detail_schema()
+        )
+        return _build_json_response(response)
 
 
 class ExtractSchemaView(SchemaBuilderView):
@@ -845,9 +852,6 @@ class FlowView(View):
         """
         flows = {}
         for plugin in OpalPlugin.__subclasses__():
-            scheme.update(plugin().flows())
+            flows.update(plugin().flows())
         flows.update(flow.flows)
         return _build_json_response(flows)
-
-
-            
