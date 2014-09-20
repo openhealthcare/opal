@@ -359,6 +359,7 @@ class EpisodeSubrecord(Subrecord):
     class Meta:
         abstract = True
 
+        
 class Tagging(models.Model):
     _is_singleton = True
     _title = 'Teams'
@@ -385,7 +386,6 @@ class Tagging(models.Model):
     def build_field_schema():
         teams = [{'name': t.name, 'type':'boolean'} for t in Team.objects.filter(active=True)]
         return teams
-#        return [dict(name='team__name', type='string')]
 
     @classmethod
     def historic_tags_for_episodes(cls, episodes):
