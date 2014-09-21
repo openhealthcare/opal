@@ -88,3 +88,10 @@ filters.filter('age', function(){
         return diff        
     }
 });
+
+filters.filter('upper', function(){
+    return function(input){
+        if(!input){ return null }
+        return input.toUpperCase();
+    }
+});
