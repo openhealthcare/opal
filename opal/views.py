@@ -616,14 +616,20 @@ class OptionsView(View):
         return _build_json_response(data)
 
 
-def userprofile_view(request):
-    profile = request.user.get_profile()
-    data = dict(
-        readonly=profile.readonly,
-        can_extract=profile.can_extract,
-        filters=[f.to_dict() for f in profile.user.filter_set.all()]
-        )
-    return _build_json_response(data)
+class UserProfileView(LoginRequiredMixin, View):
+    """
+    Render a serialized version of the currently logged in user's
+    userprofile.
+    """
+    def get(self, *args, **kw):
+        profile = self.request.user.get_profile()
+        data = dict(
+            readonly=profile.readonly,
+            can_extract=profile.can_extract,
+            filters=[f.to_dict() for f in profile.user.filter_set.all()],
+            roles=profile.get_roles()
+            )
+        return _build_json_response(data)
 
 
 class Extractor(View):

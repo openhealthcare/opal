@@ -37,7 +37,15 @@ class UserProfile(models.Model):
     can_extract           = models.BooleanField(default=False, help_text=HELP_EXTRACT)
     readonly              = models.BooleanField(default=False, help_text=HELP_READONLY)
     restricted_only       = models.BooleanField(default=False, help_text=HELP_RESTRICTED)
-    
+
+    def get_roles(self):
+        """
+        Return a roles dictionary for this user
+        """
+        roles = {}
+        for plugin in OpalPlugin.__subclasses__():
+            roles.update(plugin().roles(self.user))
+        return roles
 
 class Filter(models.Model):
     """
