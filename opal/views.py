@@ -274,7 +274,7 @@ class EpisodeTemplateView(TemplateView):
         Return the context for our columns
         """
         active_schema = self.column_schema
-
+        
         if 'tag' in kwargs and kwargs['tag'] in LIST_SCHEMAS:
             if 'subtag' in kwargs and kwargs['subtag'] in LIST_SCHEMAS[kwargs['tag']]:
                 active_schema = LIST_SCHEMAS[kwargs['tag']][kwargs['subtag']]
@@ -583,7 +583,12 @@ class OptionsView(View):
             data[model.__name__.lower()] = options
 
         for synonym in Synonym.objects.all():
-            name = type(synonym.content_object).__name__.lower()
+            try:
+                co =  synonym.content_object
+            except AttributeError:
+                print synonym
+                continue
+            name = type(co).__name__.lower()
             data[name].append(synonym.name)
 
         for name in data:
