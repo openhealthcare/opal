@@ -92,4 +92,8 @@ angular.module('opal.controllers').controller(
                 $modalInstance.close(episode.location[0])
             });
         };
+
+        $scope.prepopulate = function($event) {
+            angular.extend($scope.editing, $($event.target).data());
+        };
     });
