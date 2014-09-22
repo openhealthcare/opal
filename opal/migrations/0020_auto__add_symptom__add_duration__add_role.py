@@ -8,19 +8,19 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'Symptom'
-        db.create_table(u'opal_symptom', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Symptom'])
+        # # Adding model 'Symptom'
+        # db.create_table(u'opal_symptom', (
+        #     (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+        #     ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
+        # ))
+        # db.send_create_signal(u'opal', ['Symptom'])
 
-        # Adding model 'Duration'
-        db.create_table(u'opal_duration', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Duration'])
+        # # Adding model 'Duration'
+        # db.create_table(u'opal_duration', (
+        #     (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+        #     ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
+        # ))
+        # db.send_create_signal(u'opal', ['Duration'])
 
         # Adding model 'Role'
         db.create_table(u'opal_role', (
@@ -40,11 +40,11 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
-        # Deleting model 'Symptom'
-        db.delete_table(u'opal_symptom')
+        # # Deleting model 'Symptom'
+        # db.delete_table(u'opal_symptom')
 
-        # Deleting model 'Duration'
-        db.delete_table(u'opal_duration')
+        # # Deleting model 'Duration'
+        # db.delete_table(u'opal_duration')
 
         # Deleting model 'Role'
         db.delete_table(u'opal_role')
