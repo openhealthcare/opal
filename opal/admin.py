@@ -18,7 +18,8 @@ admin.site.unregister(User)
 
 class UserProfileInline(admin.StackedInline):
     model = UserProfile
-
+    filter_horizontal = ('roles',)
+    
 class FilterInline(admin.StackedInline):
     model = models.Filter
 
@@ -75,3 +76,4 @@ admin.site.register(models.GP, MyAdmin)
 admin.site.register(models.CommunityNurse, MyAdmin)
 admin.site.register(models.ContactNumber, MyAdmin)
 admin.site.register(models.Team, TeamAdmin)
+admin.site.register(models.Role, MyAdmin)

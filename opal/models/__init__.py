@@ -23,6 +23,12 @@ options = stringport(settings.OPAL_OPTIONS_MODULE)
 
 from django.contrib.auth.models import User
 
+class Role(models.Model):
+    name = models.CharField(max_length=200)
+
+    def __unicode__(self):
+        return unicode(self.name)
+
 class UserProfile(models.Model):
     """
     Profile for our user
@@ -37,6 +43,7 @@ class UserProfile(models.Model):
     can_extract           = models.BooleanField(default=False, help_text=HELP_EXTRACT)
     readonly              = models.BooleanField(default=False, help_text=HELP_READONLY)
     restricted_only       = models.BooleanField(default=False, help_text=HELP_RESTRICTED)
+    roles                 = models.ManyToManyField(Role)
 
     def get_roles(self):
         """
@@ -45,6 +52,7 @@ class UserProfile(models.Model):
         roles = {}
         for plugin in OpalPlugin.__subclasses__():
             roles.update(plugin().roles(self.user))
+        roles['default'] = [r.name for r in self.roles.all()]
         return roles
 
 class Filter(models.Model):
