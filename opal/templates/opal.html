@@ -49,17 +49,18 @@
     <script type="text/javascript">
       var initials = "{{request.user.first_name|slice:":1"}} {{request.user.last_name}}"
       var settings = {
-      LOG_OUT_DURATION: {{OPAL_LOG_OUT_DURATION}}
+        LOG_OUT_DURATION: {{OPAL_LOG_OUT_DURATION}}
       }
       var version = '{{VERSION_NUMBER}}'
     </script>
 
-    <!-- Application -->
+    <!-- OPAL Core utilities -->
 	<script type="text/javascript" src="{% static "js/opal/utils.js" %}"></script>
 	<script type="text/javascript" src="{% static "js/opal/opaldown.js" %}"></script>
 	<script type="text/javascript" src="{% static "js/opal/directives.js" %}"></script>
 	<script type="text/javascript" src="{% static "js/opal/filters.js" %}"></script>
 
+    <!-- OPAL Core services -->
 	<script type="text/javascript" src="{% static "js/opal/services_module.js" %}"></script>
 	<script type="text/javascript" src="{% static "js/opal/services/flow.js" %}"></script>
     <script type="text/javascript" src="{% static "js/opal/services/filter.js" %}"></script>
@@ -80,9 +81,8 @@
     <script type="text/javascript" src="{% static "js/opal/services/episode_resource.js" %}"></script>
     <script type="text/javascript" src="{% static "js/opal/services/copy_to_category.js" %}"></script>
     {% plugin_javascripts 'opal.services' %}
-
-    {% block angularapp %}
-	<script type="text/javascript" src="{% static "js/opal/app.js" %}"></script>
+    
+    <!-- OPAL Core controllers -->
 	<script type="text/javascript" src="{% static "js/opal/controllers_module.js" %}"></script>
     <script type="text/javascript" src="{% static "js/opal/controllers/episode_list.js" %}"></script>
     <script type="text/javascript" src="{% static "js/opal/controllers/episode_detail.js" %}"></script>
@@ -100,7 +100,10 @@
     <script type="text/javascript" src="{% static "js/opal/controllers/opat_referral.js" %}"></script>
     <script type="text/javascript" src="{% static "js/opal/controllers/opat_discharge.js" %}"></script>
     {% plugin_javascripts 'opal.controllers' %}
-	<script type="text/javascript" src="{% static "js/opal/routes.js" %}"></script>
+
+    {% block angularapp %}
+	  <script type="text/javascript" src="{% static "js/opal/app.js" %}"></script>
+	  <script type="text/javascript" src="{% static "js/opal/routes.js" %}"></script>
     {% endblock %}
 
     <script type="text/javascript" src="{% static "js/opal/timer.js" %}"></script>

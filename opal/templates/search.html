@@ -44,35 +44,7 @@
       <p>
       </p>
     </div>
-    <table class="table table-bordered table-hover search" ng-hide="!searched">
-      <thead>
-        <tr>
-          <td>Hospital #</td>
-          <td>Name</td>
-          <td>DOB</td>
-          <td>Admitted</td>
-          <td>Discharged</td>
-          <td></td>
-        </tr>
-      </thead>
-      <tbody>
-	    <tr class="pointer"
-            ng-click="jumpToEpisode(patient)"
-            ng-repeat="patient in results"
-            >
-	      <td>[[patient.demographics[0].hospital_number]]</td>
-	      <td>[[patient.demographics[0].name]]</td>
-          <td>[[patient.demographics[0].date_of_birth]]</td>
-	      <td>[[ patient.episodes[getEpisodeID(patient)].date_of_admission | shortDate ]]</td>
-          <td>[[ patient.episodes[getEpisodeID(patient)].discharge_date | shortDate ]]</td>
-	      <td>
-            <i class="glyphicon glyphicon-new-window"></i>
-          </td>
-	    </tr>
-      </tbody>
-
-    </table>
-
+    {% include '_episode_summary_table.html' %}
     <!-- Table -->
   </div>
 
