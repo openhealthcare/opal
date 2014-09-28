@@ -17,7 +17,7 @@ angular.module('opal.controllers')
 		    date_of_admission: moment().format('DD/MM/YYYY'),
             tagging: [{}],
 		    location: {
-                hospital: 'UCLH'
+
 		    },
 		    demographics: demographics
 	    };
