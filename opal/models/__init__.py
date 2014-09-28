@@ -258,6 +258,7 @@ class Team(models.Model):
     restricted     = models.BooleanField(default=False, 
                                          help_text=HELP_RESTRICTED)
     direct_add     = models.BooleanField(default=True)
+    show_all       = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.title
