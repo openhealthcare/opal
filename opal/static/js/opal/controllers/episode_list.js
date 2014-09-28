@@ -9,6 +9,7 @@ angular.module('opal.controllers').controller(
 
         var version = window.version;
         $scope.state = 'normal';
+        $scope.url = $location.url()
 
 	    $scope.rix = 0; // row index
 	    $scope.cix = 0; // column index
@@ -19,7 +20,7 @@ angular.module('opal.controllers').controller(
         $scope._ =  _;
 
 	    $scope.query = {hospital_number: '', name: '', ward: '', bed: ''};
-
+        
         if(viewDischarged){
             $scope.path_base = '/discharge/';
         }else{
