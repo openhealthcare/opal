@@ -1,3 +1,19 @@
+var OPAL = {
+    module: function(namespace, dependencies){
+        var mod = angular.module(namespace, dependencies);
+        // See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags
+        mod.config(function($interpolateProvider) {
+	        $interpolateProvider.startSymbol('[[');
+	        $interpolateProvider.endSymbol(']]');
+        });
+
+        // IE8 compatability mode! 
+        mod.config(function($sceProvider){$sceProvider.enabled(false)});
+
+        return mod;
+    }
+};
+
 // From http://stackoverflow.com/questions/3629183/why-doesnt-indexof-work-on-an-array-ie8
 if (!Array.prototype.indexOf) {
 	Array.prototype.indexOf = function(elt /*, from*/)
@@ -5,8 +21,8 @@ if (!Array.prototype.indexOf) {
 		var len = this.length >>> 0;
 		var from = Number(arguments[1]) || 0;
 		from = (from < 0)
-		? Math.ceil(from)
-		: Math.floor(from);
+		    ? Math.ceil(from)
+		    : Math.floor(from);
 		if (from < 0)
 			from += len;
 

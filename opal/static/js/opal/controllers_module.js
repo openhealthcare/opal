@@ -1,7 +1,4 @@
-// TODO:
-// Make sure all modals now have error handlers.
-//
-var controllers = angular.module('opal.controllers', [
+var controllers = OPAL.module('opal.controllers', [
 	'ngCookies',
 	'opal.services',
 	'ui.event',
@@ -16,8 +13,6 @@ var controllers = angular.module('opal.controllers', [
     'mgcrea.ngStrap.timepicker'
 ]);
 
-controllers.config(function($sceProvider){$sceProvider.enabled(false)});
-
 controllers.controller('RootCtrl', function($scope, $location) {
     $scope.$location = $location;
     
@@ -25,8 +20,6 @@ controllers.controller('RootCtrl', function($scope, $location) {
 		$scope.$broadcast('keydown', e);
 	};
 });
-
-
 
 controllers.config(function($datepickerProvider) {
   angular.extend($datepickerProvider.defaults, {

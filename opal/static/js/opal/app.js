@@ -1,4 +1,4 @@
-var app = angular.module('opal', [
+var app = OPAL.module('opal', [
     'ngRoute',
     'ngProgressLite',
 	'opal.filters',
@@ -7,29 +7,20 @@ var app = angular.module('opal', [
 	'opal.controllers',
     'ui.bootstrap'
 ]);
-
-// See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags
-app.config(function($interpolateProvider) {
-	$interpolateProvider.startSymbol('[[');
-	$interpolateProvider.endSymbol(']]');
-});
-
-app.config(function($sceProvider){$sceProvider.enabled(false)});
-
 app.run(['$rootScope', 'ngProgressLite', function($rootScope, ngProgressLite) {
-  // When route started to change.
-  $rootScope.$on('$routeChangeStart', function() {
-      ngProgressLite.set(0);
-      ngProgressLite.start();
-  });
+    // When route started to change.
+    $rootScope.$on('$routeChangeStart', function() {
+        ngProgressLite.set(0);
+        ngProgressLite.start();
+    });
 
-  // When route successfully changed.
-  $rootScope.$on('$routeChangeSuccess', function() {
-      ngProgressLite.done();
-  });
+    // When route successfully changed.
+    $rootScope.$on('$routeChangeSuccess', function() {
+        ngProgressLite.done();
+    });
 
-  // When some error occured.
-  $rootScope.$on('$routeChangeError', function() {
-      ngProgressLite.set(0);
-  });
+    // When some error occured.
+    $rootScope.$on('$routeChangeError', function() {
+        ngProgressLite.set(0);
+    });
 }]);

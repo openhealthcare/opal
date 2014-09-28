@@ -7,7 +7,6 @@ import json
 
 from django.contrib.auth.views import login
 from django.contrib.contenttypes.models import ContentType
-from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotFound
 from django.views.generic import TemplateView, View
@@ -24,7 +23,7 @@ from opal.utils import (camelcase_to_underscore, stringport, fields,
                         json_to_csv, OpalPlugin)
 from opal.utils.banned_passwords import banned
 from opal.utils.models import LookupList
-from opal.utils.views import LoginRequiredMixin
+from opal.utils.views import LoginRequiredMixin, _get_request_data, _build_json_response
 from opal import models, exceptions
 
 schema = stringport(settings.OPAL_SCHEMA_MODULE)
@@ -39,17 +38,6 @@ for plugin in OpalPlugin.__subclasses__():
     LIST_SCHEMAS.update(plugin().list_schemas())
 LIST_SCHEMAS.update(schema.list_schemas.copy())
 
-def _get_request_data(request):
-    data = request.read()
-    return json.loads(data)
-
-def _build_json_response(data, status_code=200):
-    response = HttpResponse()
-    response['Content-Type'] = 'application/json'
-    response.content = json.dumps(data, cls=DjangoJSONEncoder)
-    # response.content = '<html><body>'+json.dumps(data, cls=DjangoJSONEncoder)+'</body></html>'
-    response.status_code = status_code
-    return response
 
 def serve_maybe(meth):
     """
