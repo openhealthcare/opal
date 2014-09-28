@@ -292,6 +292,7 @@ class OpalPlugin(object):
     """
     urls        = []
     javascripts = []
+    menuitems   = []
 
     def list_schemas(self):
         """
