@@ -117,7 +117,7 @@
     <link href="{% static "css/print.css" %}" rel="stylesheet" media="print">
     <link href="{% static "css/screen.css" %}" rel="stylesheet" media="screen">
     <link rel="shortcut icon" href="{% static 'img/ohc-icon.png' %}">
-    {% if extra_application %}{% include extra_application %}{% endif %}
+    {% if OPAL_EXTRA_APPLICATION %}{% include OPAL_EXTRA_APPLICATION %}{% endif %}
 
   </head>
   <body>
