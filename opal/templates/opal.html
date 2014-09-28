@@ -105,8 +105,6 @@
 
     <script type="text/javascript" src="{% static "js/opal/timer.js" %}"></script>
 
-    {% if extra_application %}{% include extra_application %}{% endif %}
-
     <link href="{% static "js/c3-0.2.5/c3.css" %}" rel="stylesheet" media="all"> 
 	<link href="{% static "bootstrap-3.1.0/css/bootstrap.css" %}" rel="stylesheet" media="all">
 	<link href="{% static "css/bootstrap-datepicker.css" %}" rel="stylesheet" media="all">
@@ -116,6 +114,8 @@
     <link href="{% static "css/print.css" %}" rel="stylesheet" media="print">
     <link href="{% static "css/screen.css" %}" rel="stylesheet" media="screen">
     <link rel="shortcut icon" href="{% static 'img/ohc-icon.png' %}">
+    {% if extra_application %}{% include extra_application %}{% endif %}
+
   </head>
   <body>
     {% if OPAL_EXTRA_HEADER %}{% include OPAL_EXTRA_HEADER %}{% endif %}
