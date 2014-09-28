@@ -18,7 +18,7 @@ angular.module('opal.controllers').controller(
 	    $scope.mouseCix = -1; // index of column mouse is currently over
         $scope._ =  _;
 
-	    $scope.query = {hospital_number: '', name: ''};
+	    $scope.query = {hospital_number: '', name: '', ward: '', bed: ''};
 
         if(viewDischarged){
             $scope.path_base = '/discharge/';
@@ -39,7 +39,6 @@ angular.module('opal.controllers').controller(
                options.tag_hierarchy[$scope.currentTag].length > 0){
                 var subtag = options.tag_hierarchy[$scope.currentTag][0];
                 var target = $scope.path_base + $scope.currentTag + '/' + subtag;
-                console.log(target);
                 $location.path(target);
                 return
             }else{
@@ -102,7 +101,9 @@ angular.module('opal.controllers').controller(
             if($scope.currentTag != $routeParams.tag){
                 $scope.state = 'reloading'
             }
-            $location.path($scope.path_base +  $scope.currentTag);
+            var target = $scope.path_base +  $scope.currentTag;
+
+            $location.path(target);
 	    });
 
 	    $scope.$watch('currentSubTag', function(){
@@ -126,6 +127,12 @@ angular.module('opal.controllers').controller(
         };
 
 	    $scope.$watch('query.hospital_number', function() {
+		    $scope.rows = getVisibleEpisodes();
+	    });
+	    $scope.$watch('query.ward', function() {
+		    $scope.rows = getVisibleEpisodes();
+	    });
+	    $scope.$watch('query.bed', function() {
 		    $scope.rows = getVisibleEpisodes();
 	    });
 
