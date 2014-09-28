@@ -11,8 +11,8 @@ class Migration(DataMigration):
         # Note: Don't use "from appname.models import ModelName".
         # Use orm.ModelName to refer to models in this application,
         # and orm['appname.ModelName'] for models in other applications.
-        from opal.utils import Tag
-
+        from collections import namedtuple
+        Tag = namedtuple('Tag', 'name title subtags')
         TAGS = [
             Tag('opat', 'OPAT', [
                     Tag('opat_referrals', 'OPAT Referrals', None),
