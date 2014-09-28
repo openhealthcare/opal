@@ -99,6 +99,11 @@ angular.module('opal.controllers').controller(
             _.each(_.keys(data), function(key){
                 if(data[key] == 'true'){
                     data[key] = true;
+                    return
+                }
+                if(data[key] == 'false'){
+                    data[key] = false;
+                    return
                 }
             });
             angular.extend($scope.editing, data);
