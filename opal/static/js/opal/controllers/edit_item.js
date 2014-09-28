@@ -94,6 +94,13 @@ angular.module('opal.controllers').controller(
         };
 
         $scope.prepopulate = function($event) {
-            angular.extend($scope.editing, $($event.target).data());
+            $event.preventDefault();
+            var data = $($event.target).data()
+            _.each(_.keys(data), function(key){
+                if(data[key] == 'true'){
+                    data[key] = true;
+                }
+            });
+            angular.extend($scope.editing, data);
         };
     });
