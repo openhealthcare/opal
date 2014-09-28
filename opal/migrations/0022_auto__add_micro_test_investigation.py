@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'Micro_test_investigation'
-        db.create_table(u'opal_micro_test_investigation', (
+        db.create_table(u'opal_micro_test_iv', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
         ))
@@ -18,7 +18,7 @@ class Migration(SchemaMigration):
 
     def backwards(self, orm):
         # Deleting model 'Micro_test_investigation'
-        db.delete_table(u'opal_micro_test_investigation')
+        db.delete_table(u'opal_micro_test_iv')
 
 
     models = {
@@ -194,8 +194,8 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
         },
-        u'opal.micro_test_investigation': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Micro_test_investigation'},
+        u'opal.micro_test_iv': {
+            'Meta': {'ordering': "['name']", 'object_name': 'Micro_test_iv'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
         },
