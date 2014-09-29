@@ -300,8 +300,8 @@ class EpisodeTemplateView(TemplateView):
                     0, 'list_display/{0}/{1}.html'.format(kwargs['tag'], name))
             if 'subtag' in kwargs:
                 list_display_templates.insert(
-                    0, 'list_display/{0}/{1}/{2}.html'.format(kwargs['subtag'],
-                                                              kwargs['tag'],
+                    0, 'list_display/{0}/{1}/{2}.html'.format(kwargs['tag'],
+                                                              kwargs['subtag'],
                                                               name))
             column_context['template_path'] = select_template(list_display_templates).name
 
