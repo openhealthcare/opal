@@ -62,8 +62,6 @@ urlpatterns = patterns(
         views.UndischargeTemplateView.as_view()),
     url(r'^templates/modals/add_episode.html/?$',
         views.AddEpisodeTemplateView.as_view()),
-    url(r'^templates/modals/add_episode_without_teams.html/?$',
-        views.AddEpisodeWithoutTeamsTemplateView.as_view()),
     url(r'^templates/modals/hospital_number.html/?$',
         views.HospitalNumberTemplateView.as_view()),
     url(r'^templates/modals/reopen_episode.html/?$',
