@@ -304,8 +304,12 @@ angular.module('opal.controllers').controller(
         };
         $scope.state = 'modal';
 
+        var templateUrl = '/templates/modals/' + columnName + '.html/' + $scope.currentTag;
+        if ($scope.currentSubTag != 'all') {
+             templateUrl += '/' + $scope.currentSubTag;
+        }
         modal = $modal.open({
-          templateUrl: '/templates/modals/' + columnName + '.html/',
+          templateUrl: templateUrl,
           controller: 'EditItemCtrl',
           resolve: {
             item: function() { return item; },

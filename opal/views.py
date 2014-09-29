@@ -12,7 +12,6 @@ from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotFound
 from django.views.generic import TemplateView, View
 from django.views.decorators.http import require_http_methods
-from django.template.loader import select_template
 from django.template import TemplateDoesNotExist
 from django.utils.decorators import method_decorator
 from django.utils import formats
@@ -305,7 +304,6 @@ class EpisodeTemplateView(TemplateView):
                                                               name))
             column_context['template_path'] = select_template(list_display_templates).name
 
-            column_context['modal_template_path'] = name + '_modal.html'
             column_context['detail_template_path'] = select_template([name + '_detail.html', name + '.html']).name
 
             list_header_templates = ['%s_header.html' % x[:-5] for x in list_display_templates]
@@ -437,14 +435,26 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         it can be accessed by all subsequent methods
         """
         self.column = kw['model']
+        self.tag = kw.get('tag', None)
+        self.subtag = kw.get('subtag', None)
         self.name = camelcase_to_underscore(self.column.__name__)
         return super(ModalTemplateView, self).dispatch(*a, **kw)
 
     def get_template_names(self):
-        return [self.name + '_modal.html']
+        list_modal_templates = [self.name + '_modal.html']
+        if self.tag is not None:
+            list_modal_templates.insert(
+                0, 'list_display/{0}/{1}_modal.html'.format(self.tag, self.name))
+        if self.subtag is not None:
+            list_modal_templates.insert(
+                0, 'list_display/{0}/{1}/{2}_modal.html'.format(self.tag,
+                                                          self.subtag,
+                                                          self.name))
+        return select_template(list_modal_templates).name
 
     def get_context_data(self, **kwargs):
         context = super(ModalTemplateView, self).get_context_data(**kwargs)
+
         context['name'] = self.name
         context['title'] = getattr(self.column, '_title', self.name.replace('_', ' ').title())
         context['single'] = self.column._is_singleton
