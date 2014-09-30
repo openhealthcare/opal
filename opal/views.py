@@ -19,6 +19,7 @@ from django.utils import formats
 from django.shortcuts import redirect
 from django.template.loader import select_template
 
+from opal import ddd
 from opal.utils.http import with_no_caching
 from opal.utils import (camelcase_to_underscore, stringport, fields,
                         json_to_csv, OpalPlugin)
@@ -96,7 +97,10 @@ def episode_detail_view(request, pk):
     data = _get_request_data(request)
 
     try:
+        pre = episode.to_dict(request.user)
         episode.update_from_dict(data, request.user)
+        post = episode.to_dict(request.user)
+        ddd.change(pre, post)
         return _build_json_response(episode.to_dict(request.user, shallow=True))
     except exceptions.ConsistencyError:
         return _build_json_response({'error': 'Item has changed'}, 409)
@@ -179,7 +183,10 @@ def episode_list_and_create_view(request):
         if 'tagging' in data:
             tag_names = [n for n, v in data['tagging'][0].items() if v]
             episode.set_tag_names(tag_names, request.user)
-        return _build_json_response(episode.to_dict(request.user), 201)
+
+        serialised = episode.to_dict(request.user)
+        ddd.change({}, serialised)
+        return _build_json_response(serialised, 201)
 
 
 class EpisodeListView(View):
@@ -216,7 +223,9 @@ class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
                 item.id = None
                 item.episode = new
                 item.save()
-        return _build_json_response(new.to_dict(self.request.user))
+        serialised = new.to_dict(self.request.user)
+        ddd.change({}, serialised)
+        return _build_json_response(serialised)
 
 
 @require_http_methods(['PUT', 'DELETE'])
@@ -226,15 +235,20 @@ def subrecord_detail_view(request, model, pk):
     except model.DoesNotExist:
         return HttpResponseNotFound()
 
+    pre = subrecord.episode.to_dict(request.user)
     if request.method == 'PUT':
         data = _get_request_data(request)
         try:
             subrecord.update_from_dict(data, request.user)
+            post = subrecord.episode.to_dict(request.user)
+            ddd.change(pre, post)
             return _build_json_response(subrecord.to_dict(request.user))
         except exceptions.ConsistencyError:
             return _build_json_response({'error': 'Item has changed'}, 409)
     elif request.method == 'DELETE':
         subrecord.delete()
+        post = subrecord.episode.to_dict(request.user)
+        ddd.change(pre, post)
         return _build_json_response('')
 
 
@@ -250,7 +264,10 @@ class TaggingView(View):
         if 'id' in data:
             data.pop('id')
         tag_names = [n for n, v in data.items() if v]
+        pre = episode.to_dict(self.request.user)
         episode.set_tag_names(tag_names, self.request.user)
+        post = episode.to_dict(self.request.user)
+        ddd.change(pre, post)
         return _build_json_response(episode.tagging_dict(self.request.user)[0])
 
 
@@ -258,13 +275,21 @@ class TaggingView(View):
 def subrecord_create_view(request, model):
     data = _get_request_data(request)
     subrecord = model()
+
+    episode_id = data['episode_id']
+    episode = models.Episode.objects.get(pk=episode_id)
+    pre = episode.to_dict(request.user)
+
     if isinstance(subrecord, models.PatientSubrecord):
-        episode_id = data['episode_id']
         del data['episode_id']
-        patient_id = models.Episode.objects.get(pk=episode_id).patient.pk
+        patient_id = episode.patient.pk
         data['patient_id'] = patient_id
 
     subrecord.update_from_dict(data, request.user)
+
+    episode = models.Episode.objects.get(pk=episode_id)
+    post = episode.to_dict(request.user)
+    ddd.change(pre, post)
     return _build_json_response(subrecord.to_dict(request.user), 201)
 
 
