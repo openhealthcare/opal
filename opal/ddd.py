@@ -11,15 +11,18 @@ OUR_ENDPOINT = settings.DEFAULT_DOMAIN + '/ddd/'
 
 def change(pre, post):
     payload = {
-            'pre': json.dumps(pre, cls=DjangoJSONEncoder), 
-            'post': json.dumps(post, cls=DjangoJSONEncoder),
-            'endpoint': OUR_ENDPOINT
+        'pre': json.dumps(pre, cls=DjangoJSONEncoder), 
+        'post': json.dumps(post, cls=DjangoJSONEncoder),
+        'endpoint': OUR_ENDPOINT
         }
-    print payload
-    r = requests.post(
-        CHANGE_ENDPOINT,
-        data=payload
-    )
-    print 'status', r.status_code
-    print 'text', r.text
+    try:
+        r = requests.post(
+            CHANGE_ENDPOINT,
+            data=payload
+        )
+        print 'status', r.status_code
+        print 'text', r.text
+    except requests.ConnectionError:
+        print 'DDD Connection Error :('
+        return
     return
