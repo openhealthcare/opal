@@ -28,7 +28,7 @@ angular.module('opal.controllers').controller(
         }
 
         if(!$routeParams.tag){
-            var tag =  $cookieStore.get('opal.currentTag') || 'mine';
+            var tag =  $cookieStore.get('opal.currentTag') || _.keys(options.tag_hierarchy)[0];
             $location.path($scope.path_base + tag);
             return
         }
