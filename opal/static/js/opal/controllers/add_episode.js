@@ -1,7 +1,8 @@
 angular.module('opal.controllers')
     .controller('AddEpisodeCtrl', function($scope, $http,
                                            $timeout, $routeParams,
-                                           $modalInstance, Episode, schema,
+                                           $modalInstance, $rootScope,
+                                           Episode, schema,
                                            options,
                                            demographics) {
 
