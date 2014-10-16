@@ -258,6 +258,7 @@ class Team(models.Model):
     restricted     = models.BooleanField(default=False, 
                                          help_text=HELP_RESTRICTED)
     direct_add     = models.BooleanField(default=True)
+    show_all       = models.BooleanField(default=False)
 
     def __unicode__(self):
         return self.title
@@ -284,7 +285,11 @@ class Team(models.Model):
         else:
             teams = klass.objects.filter(active=True, restricted=False).order_by('order')
         restricted_teams = klass.restricted_teams(user)
-        teams = set(list(teams) + restricted_teams)
+        allteams = list(teams) + restricted_teams
+        teams = []
+        for t in allteams:
+            if t not in teams:
+                teams.append(t)
         return teams
 
     @property

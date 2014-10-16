@@ -9,6 +9,7 @@ angular.module('opal.controllers').controller(
 
         var version = window.version;
         $scope.state = 'normal';
+        $scope.url = $location.url()
 
 	    $scope.rix = 0; // row index
 	    $scope.cix = 0; // column index
@@ -18,8 +19,8 @@ angular.module('opal.controllers').controller(
 	    $scope.mouseCix = -1; // index of column mouse is currently over
         $scope._ =  _;
 
-	    $scope.query = {hospital_number: '', name: ''};
-
+	    $scope.query = {hospital_number: '', name: '', ward: '', bed: ''};
+        
         if(viewDischarged){
             $scope.path_base = '/discharge/';
         }else{
@@ -27,7 +28,7 @@ angular.module('opal.controllers').controller(
         }
 
         if(!$routeParams.tag){
-            var tag =  $cookieStore.get('opal.currentTag') || 'mine';
+            var tag =  $cookieStore.get('opal.currentTag') || _.keys(options.tag_hierarchy)[0];
             $location.path($scope.path_base + tag);
             return
         }
@@ -39,7 +40,6 @@ angular.module('opal.controllers').controller(
                options.tag_hierarchy[$scope.currentTag].length > 0){
                 var subtag = options.tag_hierarchy[$scope.currentTag][0];
                 var target = $scope.path_base + $scope.currentTag + '/' + subtag;
-                console.log(target);
                 $location.path(target);
                 return
             }else{
@@ -102,7 +102,9 @@ angular.module('opal.controllers').controller(
             if($scope.currentTag != $routeParams.tag){
                 $scope.state = 'reloading'
             }
-            $location.path($scope.path_base +  $scope.currentTag);
+            var target = $scope.path_base +  $scope.currentTag;
+
+            $location.path(target);
 	    });
 
 	    $scope.$watch('currentSubTag', function(){
@@ -126,6 +128,12 @@ angular.module('opal.controllers').controller(
         };
 
 	    $scope.$watch('query.hospital_number', function() {
+		    $scope.rows = getVisibleEpisodes();
+	    });
+	    $scope.$watch('query.ward', function() {
+		    $scope.rows = getVisibleEpisodes();
+	    });
+	    $scope.$watch('query.bed', function() {
 		    $scope.rows = getVisibleEpisodes();
 	    });
 

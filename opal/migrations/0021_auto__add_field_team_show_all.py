@@ -1,69 +1,23 @@
 # -*- coding: utf-8 -*-
 import datetime
 from south.db import db
-from south.v2 import DataMigration
+from south.v2 import SchemaMigration
 from django.db import models
 
-class Migration(DataMigration):
+
+class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        "Write your forwards methods here."
-        # Note: Don't use "from appname.models import ModelName".
-        # Use orm.ModelName to refer to models in this application,
-        # and orm['appname.ModelName'] for models in other applications.
-        from collections import namedtuple
-        Tag = namedtuple('Tag', 'name title subtags')
-        TAGS = [
-            Tag('opat', 'OPAT', [
-                    Tag('opat_referrals', 'OPAT Referrals', None),
-                    Tag('opat_current', 'OPAT Current', None),
-                    Tag('opat_followup', 'OPAT Follow-up', None),
-                    Tag('opat_review', 'OPAT Review', None)
-                    ]),
-            Tag('microbiology', 'Micro', [
-                    Tag('micro_ortho', 'Micro-Ortho', None),
-                    Tag('micro_icu', 'Micro-ICU', None),
-                    Tag('micro_haem', 'Micro-Haem', None),
-                    Tag('micro_nhnn', 'Micro-NHNN', None),
-                    Tag('micro_heart', 'Micro-Heart', None),
-                    Tag('micro_tower_review', 'Tower Review', None),
-                    Tag('micro_handover', 'Micro-C diff 2014', None),
-                    Tag('micro_c_diff_new', 'Micro-C diff NEW', None),
-                    Tag('micro_c_diff_review', 'Micro-C diff REVIEW', None),
-                    ]),
-            Tag('infectious_diseases', 'ID', [
-                    Tag('id_inpatients', 'ID Inpatients', None),
-                    Tag('id_liaison', 'ID Liaison', None)
-                    ]),
-            Tag('hiv', 'Immune', [
-                    Tag('immune_inpatients', 'Immune Inpatients', None),
-                    Tag('immune_liason', 'Immune Liason', None)
-                    ]),
-            Tag('tropical_diseases', 'Tropical', None),
-            Tag('virology', 'Virology', None),
-            Tag('mine', 'Mine', None),
-        ]
-
-        for team in TAGS:
-            t = orm.Team(name=team.name, title=team.title)
-            t.save()
-            if team.subtags:
-                for st in team.subtags:
-                    s = orm.Team(name=st.name, title=st.title, parent=t)
-                    s.save()
-
-        for tag in orm.Tagging.objects.all():
-            if tag.tag_name == 'undefined':
-                tag.delete
-                continue
-            team = orm.Team.objects.get(name=tag.tag_name)
-            tag.team = team
-            tag.save()
+        # Adding field 'Team.show_all'
+        db.add_column(u'opal_team', 'show_all',
+                      self.gf('django.db.models.fields.BooleanField')(default=False),
+                      keep_default=False)
 
 
     def backwards(self, orm):
-        "Write your backwards methods here."
-        raise RuntimeError("Cannot reverse this migration.")
+        # Deleting field 'Team.show_all'
+        db.delete_column(u'opal_team', 'show_all')
+
 
     models = {
         u'auth.group': {
@@ -107,6 +61,16 @@ class Migration(DataMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
         },
+        u'opal.antimicrobial_adverse_event': {
+            'Meta': {'ordering': "['name']", 'object_name': 'Antimicrobial_adverse_event'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
+        },
+        u'opal.antimicrobial_frequency': {
+            'Meta': {'ordering': "['name']", 'object_name': 'Antimicrobial_frequency'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
+        },
         u'opal.antimicrobial_route': {
             'Meta': {'ordering': "['name']", 'object_name': 'Antimicrobial_route'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -134,8 +98,19 @@ class Migration(DataMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
         },
+        u'opal.contactnumber': {
+            'Meta': {'object_name': 'ContactNumber'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
+            'number': ('django.db.models.fields.CharField', [], {'max_length': '255'})
+        },
         u'opal.destination': {
             'Meta': {'ordering': "['name']", 'object_name': 'Destination'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
+        },
+        u'opal.duration': {
+            'Meta': {'ordering': "['name']", 'object_name': 'Duration'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
         },
@@ -169,6 +144,11 @@ class Migration(DataMigration):
         },
         u'opal.hospital': {
             'Meta': {'ordering': "['name']", 'object_name': 'Hospital'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
+        },
+        u'opal.line_complication': {
+            'Meta': {'ordering': "['name']", 'object_name': 'Line_complication'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
         },
@@ -291,6 +271,16 @@ class Migration(DataMigration):
             'Meta': {'object_name': 'Patient'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
         },
+        u'opal.role': {
+            'Meta': {'object_name': 'Role'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '200'})
+        },
+        u'opal.symptom': {
+            'Meta': {'ordering': "['name']", 'object_name': 'Symptom'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
+        },
         u'opal.synonym': {
             'Meta': {'unique_together': "(('name', 'content_type'),)", 'object_name': 'Synonym'},
             'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']"}),
@@ -302,16 +292,21 @@ class Migration(DataMigration):
             'Meta': {'object_name': 'Tagging'},
             'episode': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['opal.Episode']", 'null': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'tag_name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
             'team': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['opal.Team']", 'null': 'True', 'blank': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']", 'null': 'True'})
+            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']", 'null': 'True', 'blank': 'True'})
         },
         u'opal.team': {
             'Meta': {'object_name': 'Team'},
+            'active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'direct_add': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
-            'parent': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['opal.Team']"}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '250'})
+            'order': ('django.db.models.fields.IntegerField', [], {'null': 'True', 'blank': 'True'}),
+            'parent': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['opal.Team']", 'null': 'True', 'blank': 'True'}),
+            'restricted': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'show_all': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'title': ('django.db.models.fields.CharField', [], {'max_length': '250'}),
+            'useful_numbers': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['opal.ContactNumber']", 'symmetrical': 'False', 'blank': 'True'})
         },
         u'opal.travel_reason': {
             'Meta': {'ordering': "['name']", 'object_name': 'Travel_reason'},
@@ -324,9 +319,10 @@ class Migration(DataMigration):
             'force_password_change': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'readonly': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'restricted_only': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'roles': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['opal.Role']", 'symmetrical': 'False'}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']", 'unique': 'True'})
         }
     }
 
     complete_apps = ['opal']
-    symmetrical = True

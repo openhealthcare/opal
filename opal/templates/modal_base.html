@@ -6,6 +6,7 @@
         {% block modal_body %}{% endblock %}
       </div>
       <div class="modal-footer">
+        {% block pop_buttons %}{% endblock %}
         {% block modal_save %}
 	      <button class="btn btn-primary" ng-click="save('save')">Save</button>
         {% endblock %}

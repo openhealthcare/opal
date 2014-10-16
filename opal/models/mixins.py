@@ -61,12 +61,20 @@ class UpdatesFromDictMixin(object):
             if consistency_token != self.consistency_token:
                 raise exceptions.ConsistencyError
 
-        unknown_fields = set(data.keys()) - set(self._get_fieldnames_to_serialize())
+        fields = set(self._get_fieldnames_to_serialize())
+        unknown_fields = set(data.keys()) - fields
         if unknown_fields:
             raise exceptions.APIError(
                 'Unexpected fieldname(s): %s' % list(unknown_fields))
 
         for name, value in data.items():
+            if name.endswith('_fk_id'):
+                if name[:-6] in fields:
+                    continue
+            if name.endswith('_ft'):
+                if name[:-3] in fields:
+                    continue
+
             if name == 'consistency_token':
                 continue # shouldn't be needed - Javascripts bug?
             setter = getattr(self, 'set_' + name, None)

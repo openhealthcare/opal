@@ -1,3 +1,4 @@
+{% load opalplugins %}
 <nav class="navbar navbar-default navbar-fixed-top screen-only" role="navigation" id="main-navbar">
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
@@ -43,11 +44,11 @@
 	    <li><a href="/admin">Admin</a></li>
         {% endif %}
         {% if request.user.is_authenticated %}
+          {% plugin_menuitems %}
         <li  ng-class="{active: $location.path().indexOf('/discharge') == 0}">
           <a href="/#/discharge">Discharged</a>
         </li>
 	    <li><a href="/#/search">Search</a></li>
-        <li><a href="{% url 'feedback' %}">Feedback</a></li>
 	    <li><a href="{% url 'django.contrib.auth.views.logout' %}">Log out</a></li>
         {% endif %}
 

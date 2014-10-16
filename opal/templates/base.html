@@ -12,6 +12,7 @@
 		<link href="{% static "bootstrap-3.1.0/css/bootstrap.css" %}" rel="stylesheet" media="all">
 		<link href="{% static "css/opal.css" %}" rel="stylesheet" media="all">
         <link href="{% static "css/print.css" %}" rel="stylesheet" media="print">
+        {% if OPAL_EXTRA_APPLICATION %}{% include OPAL_EXTRA_APPLICATION %}{% endif %}
 	</head>
 	<body>
       {% include 'navbar.html' %}

@@ -6,6 +6,8 @@ angular.module('opal.services')
         var demographics = episode.demographics[0];
         var hospital_number = $scope.query.hospital_number;
         var name = $scope.query.name;
+        var ward = $scope.query.ward;
+        var bed = $scope.query.bed;
 
         // Not active (no tags) - hide it.
         if(!episode.active && $scope.currentTag != 'mine' && !viewDischarged){
@@ -37,6 +39,28 @@ angular.module('opal.services')
             demographics.name.toLowerCase().indexOf(name.toLowerCase()) == -1) {
 		    return false;
 	    }
+
+
+        // Filtered out by ward.
+        if (ward &&  // Was it passed in?
+            location.ward.toLowerCase().indexOf(ward.toLowerCase()) == -1) {
+		    return false;
+	    }
+
+        if(bed){
+            if(bed.indexOf('-') == -1 ){
+                return location.bed == bed
+            }else{
+                var pair = bed.split('-')
+                var frist = pair[0];
+                var last = pair[1]
+                if( location.bed <= last && location.bed >= frist){
+                    return true
+                }
+                return false;
+            }
+        }
+        
         return true;
 	}
 });

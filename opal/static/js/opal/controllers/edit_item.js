@@ -28,7 +28,7 @@ angular.module('opal.controllers').controller(
 	    };
 
         // TODO - don't hardcode this
-	    if (item.columnName == 'microbiology_test' || item.columnName == 'lab_test') {
+	    if (item.columnName == 'microbiology_test' || item.columnName == 'lab_test' || item.columnName == 'investigation') {
 		    $scope.microbiology_test_list = [];
 		    $scope.microbiology_test_lookup = {};
 		    $scope.micro_test_defaults =  options.micro_test_defaults;
@@ -91,5 +91,21 @@ angular.module('opal.controllers').controller(
             ).result.then(function(result){
                 $modalInstance.close(episode.location[0])
             });
+        };
+
+        $scope.prepopulate = function($event) {
+            $event.preventDefault();
+            var data = $($event.target).data()
+            _.each(_.keys(data), function(key){
+                if(data[key] == 'true'){
+                    data[key] = true;
+                    return
+                }
+                if(data[key] == 'false'){
+                    data[key] = false;
+                    return
+                }
+            });
+            angular.extend($scope.editing, data);
         };
     });
