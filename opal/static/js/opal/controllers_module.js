@@ -10,7 +10,8 @@ var controllers = OPAL.module('opal.controllers', [
     'mgcrea.ngStrap.tooltip',
     'mgcrea.ngStrap.helpers.dateParser',
     'mgcrea.ngStrap.datepicker',
-    'mgcrea.ngStrap.timepicker'
+    'mgcrea.ngStrap.timepicker',
+
 ]);
 
 controllers.controller('RootCtrl', function($scope, $location) {

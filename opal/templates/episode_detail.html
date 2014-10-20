@@ -1,78 +1,27 @@
 <div class="container content-offset">
 
-  <div class="row">
-    <div class="col-md-2">
-      <h4>Previous Episodes</h4>
-      <p ng-repeat="ep in episode.prev_episodes">
-        <a href="/#/episode/[[ep.id]]">
-          Admit: [[ ep.date_of_admission | shortDate ]]
-          <br />
-          Disch: [[ ep.discharge_date | shortDate ]]
-        </a>
-        <hr />
-      </p>
-    </div>
-    <div class="col-md-8">
-      <table class="table table-bordered">
-	    {% for column in columns %}
-	      <tr {% if column.episode_category %} ng-show="episode.location[0].category == '{{column.episode_category}}'"{% endif %}>
-		    <td>
-		      <h5>{{ column.title }}</h5>
-              {% if column.batch_template %}
-              {% with cix=forloop.counter0 %}{% with column_name=column.name %}
-              {% include column.detail_template_path %}
-              {% endwith %}{% endwith %}
-              {% else %}
-		      <ul ng-mouseenter="mouseEnter({{ forloop.counter0 }})" ng-mouseleave="mouseLeave()">
-			    <li ng-repeat="item in episode.{{column.name}}"
-				    ng-click="selectItem({{ forloop.counter0 }}, $index)"
-				    ng-dblclick="editItem({{ forloop.counter0 }}, $index)"
-				    ng-class="{selected: cix == {{ forloop.counter0 }} && iix == $index}">
-				    {% include column.detail_template_path %}
-			    </li>
+  <div class="panel panel-warning">
+    <!-- Default panel contents -->
+    <div class="panel-heading">
+      <h2>
+        [[episode.demographics[0].name]]
+        <small>
+          [[episode.demographics[0].hospital_number]]
+          [[episode.demographics[0].date_of_birth | shortDate]]
+        </small>
 
+        <button type="button" class="btn btn-lg btn-danger pull-right"
+                ng-click="historyModal()"
+                >
+          Episode [[ this_episode_number ]] of [[ total_episodes ]]
+          <i class="glyphicon glyphicon-time"></i>
+        </button>
 
-			    {% if not column.single %}
-			      <li ng-click="selectItem({{ forloop.counter0 }}, episode.{{column.name}}.length)"
-				      ng-dblclick="editItem({{ forloop.counter0 }}, episode.{{column.name}}.length)"
-				      ng-class="{selected: cix == {{ forloop.counter0 }} && iix == episode.{{column.name}}.length}">
-				      <span ng-show="!profile.readonly && ((cix == {{ forloop.counter0 }}) || (mouseCix == {{ forloop.counter0 }}))">
-					    Add
-				      </span>
-				      &nbsp;
-			      </li>
-			    {% endif %}
-		      </ul>
-              {% endif %}
-		    </td>
-	      </tr>
-	    {% endfor %}
-      </table>
-
+      </h2>
     </div>
-    <div class="col-md-2">
-      <h4>Subsequent Episodes</h4>
-      <p ng-repeat="ep in episode.next_episodes">
-        <a href="/#/episode/[[ep.id]]">
-          Admit: [[ ep.date_of_admission | shortDate ]]
-          <br />
-          Disch: [[ ep.discharge_date | shortDate ]]
-        </a>
-        <hr />
-      </p>
-    </div>
+    {% include '_episode_detail.html' %}
+    <!-- Table -->
   </div>
-
+  
 </div>
 
-<div id="delete-confirmation" class="modal hide" tabindex="-1" role="dialog">
-  <div class="modal-header">
-	<button type="button" class="close" data-dismiss="modal" ng-click="cancelDelete()">
-  </div>
-  <div class="modal-body"><p>Do you want to delete this item?</p></div>
-  <div class="modal-footer">
-	<button class="btn btn-primary" data-dismiss="modal" ng-click="doDelete()">Yes</button>
-	<button class="btn" data-dismiss="modal" ng-click="cancelDelete()">No</button>
-  </div>
-</div>
-</div>

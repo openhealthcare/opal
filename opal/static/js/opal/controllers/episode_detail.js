@@ -1,5 +1,6 @@
 angular.module('opal.controllers').controller(
     'EpisodeDetailCtrl', function($scope, $modal, $cookieStore, $location,
+                                  $rootScope,
                                   Flow,
                                   schema,
                                   episode, options, profile) {
@@ -12,6 +13,9 @@ angular.module('opal.controllers').controller(
 	    $scope.mouseCix = -1; // index of column mouse is currently over
 
 	    $scope.episode = episode;
+        $scope.total_episodes = 1 + episode.prev_episodes.length + episode.next_episodes.length;
+        $scope.this_episode_number = episode.prev_episodes.length + 1;
+
         $scope.profile =  profile;
 
 	    $scope.columns = schema.columns;
@@ -53,23 +57,13 @@ angular.module('opal.controllers').controller(
 		    $scope.iix = iix;
 	    };
 
-	    $scope.editItem = function(cix, iix) {
-		    var modal;
-		    var columnName = getColumnName(cix);
-		    var item;
+        _openEditItemModal = function(item, columnName){
+            var modal;
 
             if(profile.readonly){
                 return null;
             };
-
-		    if (iix == episode.getNumberOfItems(columnName)) {
-			    item = episode.newItem(columnName);
-		    } else {
-			    item = episode.getItem(columnName, iix);
-		    }
-
-		    $scope.selectItem(cix, iix);
-		    $scope.state = 'modal';
+            $scope.state = 'modal';
 
 		    modal = $modal.open({
 			    templateUrl: '/templates/modals/' + columnName + '.html/',
@@ -87,6 +81,39 @@ angular.module('opal.controllers').controller(
 				    $scope.editItem(cix, episode.getNumberOfItems(columnName));
 			    };
 		    });
+        }
+
+        $scope.editNamedItem = function(name, index){
+            var item;
+            if (episode[name][index] && episode[name][index].columnName) {
+                item = episode[name][index];
+            } else {
+                item = new Item(episode[name][index], episode, $rootScope.fields[name]);
+                episode[name][index] = item;
+            }
+            _openEditItemModal(item, name)
+        };
+
+        $scope.newNamedItem = function(name) {
+            var item = episode.newItem(name, {column: $rootScope.fields[name]});
+            if (!episode[name]) {
+                episode[name] = [];
+            }
+            _openEditItemModal(item, name);            
+        };
+        
+	    $scope.editItem = function(cix, iix) {
+		    var columnName = getColumnName(cix);
+		    var item;
+
+		    if (iix == episode.getNumberOfItems(columnName)) {
+			    item = episode.newItem(columnName);
+		    } else {
+			    item = episode.getItem(columnName, iix);
+		    }
+
+		    $scope.selectItem(cix, iix);
+            _openEditItemModal(item, columnName, episode);
 	    };
 
 	    $scope.deleteItem = function(cix, iix) {
@@ -216,6 +243,10 @@ angular.module('opal.controllers').controller(
                     episode: function(){ return $scope.episode }
                 }
             });
-        }
+        };
+
+        $scope.historyModal = function(){
+            console.log('displayhistory')
+        };
         
     });
