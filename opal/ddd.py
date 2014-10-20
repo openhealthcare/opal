@@ -7,7 +7,7 @@ import json
 import requests
 
 CHANGE_ENDPOINT = settings.DDD_ENDPOINT + 'change/'
-OUR_ENDPOINT = settings.DEFAULT_DOMAIN + '/ddd/'
+OUR_ENDPOINT = settings.DEFAULT_DOMAIN + 'ddd/'
 
 def change(pre, post):
     payload = {
