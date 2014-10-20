@@ -310,6 +310,7 @@ angular.module('opal.controllers').controller(
           resolve: {
             item: function() { return item; },
             options: function() { return options; },
+            profile: function() { return profile; },
             episode: function() { return episode; }
           }
         });
@@ -361,6 +362,10 @@ angular.module('opal.controllers').controller(
 		    var episode = getEpisode(rix);
 		    var item;
 
+            if(columnName == 'demographics' && !profile.can_see_pid()){
+                return false;
+            }
+            
 		    if (iix == episode.getNumberOfItems(columnName)) {
 			    item = episode.newItem(columnName, {schema: schema});
 		    } else {

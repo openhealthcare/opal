@@ -77,6 +77,7 @@ angular.module('opal.controllers').controller(
 			    resolve: {
 				    item: function() { return item; },
 				    options: function() { return options; },
+				    profile: function() { return profile; },
                     episode: function() { return $scope.episode }
 			    }
 		    }).result.then(function(result) {
