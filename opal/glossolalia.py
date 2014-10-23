@@ -16,15 +16,13 @@ def _send_upstream_message(event, payload):
     Send a message upstream
     """
     try:
-        payload['endpoint'] = OUR_ENDPOINT
+        payload['servicetype'] = 'OPAL'
+        payload['event'] = event,
+        payload['name'] = NAME,
+        print "Payload is:", json.dumps(payload, indent=2)
         r = requests.post(
             ENDPOINT,
-            data={
-                'servicetype': 'OPAL',
-                'event'      : event,
-                'name':      NAME,
-                'data'       : payload
-            }
+            data=payload
         )
         print 'status', r.status_code
         print 'text', r.text
@@ -42,7 +40,11 @@ def admit(episode):
         return
     print 'Sending upstream Admission'
     payload = {
-        'episode': json.dumps(episode, cls=DjangoJSONEncoder),
+        'data': json.dumps(
+            {
+                'episode': episode,
+                'endpoint': OUR_ENDPOINT
+        }, cls=DjangoJSONEncoder)
     }
     _send_upstream_message('admit', payload)
     return
@@ -56,7 +58,10 @@ def discharge(episode):
         return
     print 'Sending upstream discharge'
     payload = {
-        'episode': json.dumps(episode, cls=DjangoJSONEncoder),
+        'data': json.dumps({
+            'episode': episode,
+            'endpoint': OUR_ENDPOINT
+        }, cls=DjangoJSONEncoder)
     }
     _send_upstream_message('discharge', payload)
     return
@@ -79,9 +84,12 @@ def change(pre, post):
     if not INTEGRATING:
         return
     print 'Sending upstream change'
-    payload = {
-        'pre': json.dumps(pre, cls=DjangoJSONEncoder), 
-        'post': json.dumps(post, cls=DjangoJSONEncoder),
-        }
+    payload = {'data':
+               json.dumps({
+                   'endpoint': OUR_ENDPOINT,
+                   'pre': pre, 
+                   'post': post,
+               }, cls=DjangoJSONEncoder)
+    }
     _send_upstream_message('change', payload)
     return
