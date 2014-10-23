@@ -70,6 +70,187 @@ def serve_maybe(meth):
 
     return handoff
 
+class EpisodeTemplateView(TemplateView):
+    def get_column_context(self, **kwargs):
+        """
+        Return the context for our columns
+        """
+        active_schema = self.column_schema
+        
+        if 'tag' in kwargs and kwargs['tag'] in LIST_SCHEMAS:
+            if 'subtag' in kwargs and kwargs['subtag'] in LIST_SCHEMAS[kwargs['tag']]:
+                active_schema = LIST_SCHEMAS[kwargs['tag']][kwargs['subtag']]
+            elif 'default' in LIST_SCHEMAS[kwargs['tag']]:
+                active_schema = LIST_SCHEMAS[kwargs['tag']]['default']
+            else:
+                active_schema = LIST_SCHEMAS['default']
+
+        context = []
+        for column in active_schema:
+            column_context = {}
+            name = camelcase_to_underscore(column.__name__)
+            column_context['name'] = name
+            column_context['title'] = getattr(column, '_title',
+                                              name.replace('_', ' ').title())
+            column_context['single'] = column._is_singleton
+            column_context['episode_category'] = getattr(column, '_episode_category', None)
+            column_context['batch_template'] = getattr(column, '_batch_template', None)
+
+            list_display_templates = [name + '.html']
+            if 'tag' in kwargs:
+                list_display_templates.insert(
+                    0, 'list_display/{0}/{1}.html'.format(kwargs['tag'], name))
+            if 'subtag' in kwargs:
+                list_display_templates.insert(
+                    0, 'list_display/{0}/{1}/{2}.html'.format(kwargs['subtag'],
+                                                              kwargs['tag'],
+                                                              name))
+            column_context['template_path'] = select_template(list_display_templates).name
+
+            column_context['modal_template_path'] = name + '_modal.html'
+            column_context['detail_template_path'] = select_template([name + '_detail.html', name + '.html']).name
+
+            list_header_templates = ['%s_header.html' % x[:-5] for x in list_display_templates]
+            try:
+                column_context['header_template_path'] = select_template(list_header_templates).name
+            except TemplateDoesNotExist:
+                column_context['header_template_path'] = ''
+
+            context.append(column_context)
+
+        return context
+
+    def get_context_data(self, **kwargs):
+        context = super(EpisodeTemplateView, self).get_context_data(**kwargs)
+        # todo rename/refactor this accordingly
+        context['teams'] = models.Team.for_user(self.request.user)
+        context['columns'] = self.get_column_context(**kwargs)
+        if 'tag' in kwargs:
+            context['team'] = models.Team.objects.get(name=kwargs['tag'])
+        return context
+
+
+class EpisodeListTemplateView(EpisodeTemplateView):
+    template_name = 'episode_list.html'
+    column_schema = schema.list_schemas['default']
+
+
+class DischargeListTemplateView(EpisodeTemplateView):
+    template_name = 'discharge_list.html'
+    column_schema = schema.list_columns
+
+
+class EpisodeDetailTemplateView(EpisodeTemplateView):
+    template_name = 'episode_detail.html'
+    column_schema = schema.detail_columns
+
+
+class TagsTemplateView(TemplateView):
+    template_name = 'tagging_modal.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(TagsTemplateView, self).get_context_data(**kwargs)
+        context['teams'] = models.Team.for_user(self.request.user)
+        return context
+
+
+class AddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = 'add_episode_modal.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(AddEpisodeTemplateView, self).get_context_data(**kwargs)
+        context['teams'] = models.Team.for_user(self.request.user)
+        return context
+
+
+class AddEpisodeWithoutTeamsTemplateView(LoginRequiredMixin, TemplateView):
+    template_name = 'add_episode_modal.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(AddEpisodeWithoutTeamsTemplateView, self).get_context_data(**kwargs)
+        context['teams'] = []
+        return context
+
+
+
+
+
+class IndexView(LoginRequiredMixin, TemplateView):
+    def get_context_data(self, **kwargs):
+        context = super(IndexView, self).get_context_data(**kwargs)
+        context['brand_name'] = getattr(settings, 'OPAL_BRAND_NAME', 'OPAL')
+        context['settings'] = settings
+        if hasattr(settings, 'OPAL_EXTRA_APPLICATION'):
+            context['extra_application'] = settings.OPAL_EXTRA_APPLICATION
+        return context
+
+    template_name = 'opal.html'
+
+class ModalTemplateView(LoginRequiredMixin, TemplateView):
+
+    def dispatch(self, *a, **kw):
+        """
+        Set the context for what this modal is for so
+        it can be accessed by all subsequent methods
+        """
+        self.column = kw['model']
+        self.name = camelcase_to_underscore(self.column.__name__)
+        return super(ModalTemplateView, self).dispatch(*a, **kw)
+
+    def get_template_names(self):
+        return [self.name + '_modal.html']
+
+    def get_context_data(self, **kwargs):
+        context = super(ModalTemplateView, self).get_context_data(**kwargs)
+        context['name'] = self.name
+        context['title'] = getattr(self.column, '_title', self.name.replace('_', ' ').title())
+        context['single'] = self.column._is_singleton
+        return context
+
+def check_password_reset(request, *args, **kwargs):
+    """
+    Check to see if the user needs to reset their password
+    """
+    response = login(request, *args, **kwargs)
+    if response.status_code == 302:
+        try:
+            profile = request.user.get_profile()
+            if profile and profile.force_password_change:
+                return redirect('django.contrib.auth.views.password_change')
+        except models.UserProfile.DoesNotExist:
+            models.UserProfile.objects.create(user=request.user, force_password_change=True)
+            return redirect('django.contrib.auth.views.password_change')
+    return response
+
+class UserProfileView(LoginRequiredMixin, View):
+    """
+    Render a serialized version of the currently logged in user's
+    userprofile.
+    """
+    def get(self, *args, **kw):
+        profile = self.request.user.get_profile()
+        data = dict(
+            readonly=profile.readonly,
+            can_extract=profile.can_extract,
+            filters=[f.to_dict() for f in profile.user.filter_set.all()],
+            roles=profile.get_roles()
+            )
+        return _build_json_response(data)
+
+class ReportView(TemplateView):
+    """
+    Base class for reports.
+    """
+    def get_data(self):
+        return {}
+
+    def get_context_data(self, *a, **kw):
+        ctx = super(ReportView, self).get_context_data(*a, **kw)
+        ctx.update(self.get_data())
+        return ctx
+
+
+"""Internal (Legacy) API Views"""
 
 @require_http_methods(['GET', 'PUT'])
 def episode_detail_view(request, pk):
@@ -281,187 +462,6 @@ def subrecord_create_view(request, model):
     return _build_json_response(subrecord.to_dict(request.user), 201)
 
 
-class EpisodeTemplateView(TemplateView):
-    def get_column_context(self, **kwargs):
-        """
-        Return the context for our columns
-        """
-        active_schema = self.column_schema
-        
-        if 'tag' in kwargs and kwargs['tag'] in LIST_SCHEMAS:
-            if 'subtag' in kwargs and kwargs['subtag'] in LIST_SCHEMAS[kwargs['tag']]:
-                active_schema = LIST_SCHEMAS[kwargs['tag']][kwargs['subtag']]
-            elif 'default' in LIST_SCHEMAS[kwargs['tag']]:
-                active_schema = LIST_SCHEMAS[kwargs['tag']]['default']
-            else:
-                active_schema = LIST_SCHEMAS['default']
-
-        context = []
-        for column in active_schema:
-            column_context = {}
-            name = camelcase_to_underscore(column.__name__)
-            column_context['name'] = name
-            column_context['title'] = getattr(column, '_title',
-                                              name.replace('_', ' ').title())
-            column_context['single'] = column._is_singleton
-            column_context['episode_category'] = getattr(column, '_episode_category', None)
-            column_context['batch_template'] = getattr(column, '_batch_template', None)
-
-            list_display_templates = [name + '.html']
-            if 'tag' in kwargs:
-                list_display_templates.insert(
-                    0, 'list_display/{0}/{1}.html'.format(kwargs['tag'], name))
-            if 'subtag' in kwargs:
-                list_display_templates.insert(
-                    0, 'list_display/{0}/{1}/{2}.html'.format(kwargs['subtag'],
-                                                              kwargs['tag'],
-                                                              name))
-            column_context['template_path'] = select_template(list_display_templates).name
-
-            column_context['modal_template_path'] = name + '_modal.html'
-            column_context['detail_template_path'] = select_template([name + '_detail.html', name + '.html']).name
-
-            list_header_templates = ['%s_header.html' % x[:-5] for x in list_display_templates]
-            try:
-                column_context['header_template_path'] = select_template(list_header_templates).name
-            except TemplateDoesNotExist:
-                column_context['header_template_path'] = ''
-
-            context.append(column_context)
-
-        return context
-
-    def get_context_data(self, **kwargs):
-        context = super(EpisodeTemplateView, self).get_context_data(**kwargs)
-        # todo rename/refactor this accordingly
-        context['teams'] = models.Team.for_user(self.request.user)
-        context['columns'] = self.get_column_context(**kwargs)
-        if 'tag' in kwargs:
-            context['team'] = models.Team.objects.get(name=kwargs['tag'])
-        return context
-
-
-class EpisodeListTemplateView(EpisodeTemplateView):
-    template_name = 'episode_list.html'
-    column_schema = schema.list_schemas['default']
-
-
-class DischargeListTemplateView(EpisodeTemplateView):
-    template_name = 'discharge_list.html'
-    column_schema = schema.list_columns
-
-
-class SaveFilterModalView(TemplateView):
-    template_name = 'save_filter_modal.html'
-
-
-class EpisodeDetailTemplateView(EpisodeTemplateView):
-    template_name = 'episode_detail.html'
-    column_schema = schema.detail_columns
-
-
-class TagsTemplateView(TemplateView):
-    template_name = 'tagging_modal.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(TagsTemplateView, self).get_context_data(**kwargs)
-        context['teams'] = models.Team.for_user(self.request.user)
-        return context
-
-
-class SearchTemplateView(TemplateView):
-    template_name = 'search.html'
-
-
-class ExtractTemplateView(TemplateView):
-    template_name = 'extract.html'
-
-
-class AddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'add_episode_modal.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(AddEpisodeTemplateView, self).get_context_data(**kwargs)
-        context['teams'] = models.Team.for_user(self.request.user)
-        return context
-
-
-class AddEpisodeWithoutTeamsTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'add_episode_modal.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(AddEpisodeWithoutTeamsTemplateView, self).get_context_data(**kwargs)
-        context['teams'] = []
-        return context
-
-
-class DischargeEpisodeTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'discharge_episode_modal.html'
-
-
-class DischargeOpatEpisodeTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'discharge_opat_episode_modal.html'
-
-
-# OPAT specific templates
-class OpatReferralTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'opat_referral_modal.html'
-
-
-class OpatAddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'opat/add_episode_modal.html'
-
-
-class CopyToCategoryTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'copy_to_category.html'
-
-
-class DeleteItemConfirmationView(LoginRequiredMixin, TemplateView):
-    template_name = 'delete_item_confirmation_modal.html'
-
-
-class HospitalNumberTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'hospital_number_modal.html'
-
-
-class ReopenEpisodeTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'reopen_episode_modal.html'
-
-
-class UndischargeTemplateView(TemplateView):
-    template_name = 'undischarge_modal.html'
-
-class IndexView(LoginRequiredMixin, TemplateView):
-    def get_context_data(self, **kwargs):
-        context = super(IndexView, self).get_context_data(**kwargs)
-        context['brand_name'] = getattr(settings, 'OPAL_BRAND_NAME', 'OPAL')
-        context['settings'] = settings
-        if hasattr(settings, 'OPAL_EXTRA_APPLICATION'):
-            context['extra_application'] = settings.OPAL_EXTRA_APPLICATION
-        return context
-
-    template_name = 'opal.html'
-
-class ModalTemplateView(LoginRequiredMixin, TemplateView):
-
-    def dispatch(self, *a, **kw):
-        """
-        Set the context for what this modal is for so
-        it can be accessed by all subsequent methods
-        """
-        self.column = kw['model']
-        self.name = camelcase_to_underscore(self.column.__name__)
-        return super(ModalTemplateView, self).dispatch(*a, **kw)
-
-    def get_template_names(self):
-        return [self.name + '_modal.html']
-
-    def get_context_data(self, **kwargs):
-        context = super(ModalTemplateView, self).get_context_data(**kwargs)
-        context['name'] = self.name
-        context['title'] = getattr(self.column, '_title', self.name.replace('_', ' ').title())
-        context['single'] = self.column._is_singleton
-        return context
 
 
 class SchemaBuilderView(View):
@@ -559,33 +559,6 @@ class ExtractSchemaView(SchemaBuilderView):
         return _build_json_response(self.serialize_schema(schema.extract_columns))
 
 
-def check_password_reset(request, *args, **kwargs):
-    """
-    Check to see if the user needs to reset their password
-    """
-    response = login(request, *args, **kwargs)
-    if response.status_code == 302:
-        try:
-            profile = request.user.get_profile()
-            if profile and profile.force_password_change:
-                return redirect('django.contrib.auth.views.password_change')
-        except models.UserProfile.DoesNotExist:
-            models.UserProfile.objects.create(user=request.user, force_password_change=True)
-            return redirect('django.contrib.auth.views.password_change')
-    return response
-
-
-class AccountDetailTemplateView(TemplateView):
-    template_name = 'accounts/account_detail.html'
-
-
-class BannedView(TemplateView):
-    template_name = 'accounts/banned.html'
-
-    def get_context_data(self, *a, **k):
-        data = super(BannedView, self).get_context_data(*a, **k)
-        data['banned'] = banned
-        return data
 
 
 class OptionsView(View):
@@ -626,22 +599,6 @@ class OptionsView(View):
         data['tag_hierarchy'] = tag_hierarchy
         data['tag_display'] = tag_display
 
-        return _build_json_response(data)
-
-
-class UserProfileView(LoginRequiredMixin, View):
-    """
-    Render a serialized version of the currently logged in user's
-    userprofile.
-    """
-    def get(self, *args, **kw):
-        profile = self.request.user.get_profile()
-        data = dict(
-            readonly=profile.readonly,
-            can_extract=profile.can_extract,
-            filters=[f.to_dict() for f in profile.user.filter_set.all()],
-            roles=profile.get_roles()
-            )
         return _build_json_response(data)
 
 
@@ -815,17 +772,6 @@ class DownloadSearchView(Extractor):
         return resp
 
 
-class ReportView(TemplateView):
-    """
-    Base class for reports.
-    """
-    def get_data(self):
-        return {}
-
-    def get_context_data(self, *a, **kw):
-        ctx = super(ReportView, self).get_context_data(*a, **kw)
-        ctx.update(self.get_data())
-        return ctx
 
 
 class FilterView(LoginRequiredMixin, View):
