@@ -18,7 +18,7 @@ from django.utils import formats
 from django.shortcuts import redirect
 from django.template.loader import select_template
 
-from opal import ddd
+from opal import glossolalia
 from opal.utils.http import with_no_caching
 from opal.utils import (camelcase_to_underscore, stringport, fields,
                         json_to_csv, OpalPlugin)
@@ -88,7 +88,7 @@ def episode_detail_view(request, pk):
         pre = episode.to_dict(request.user)
         episode.update_from_dict(data, request.user)
         post = episode.to_dict(request.user)
-        ddd.change(pre, post)
+        glossolalia.change(pre, post)
         return _build_json_response(episode.to_dict(request.user, shallow=True))
     except exceptions.ConsistencyError:
         return _build_json_response({'error': 'Item has changed'}, 409)
@@ -173,7 +173,7 @@ def episode_list_and_create_view(request):
             episode.set_tag_names(tag_names, request.user)
 
         serialised = episode.to_dict(request.user)
-        ddd.change({}, serialised)
+        glossolalia.admit(serialised)
         return _build_json_response(serialised, 201)
 
 
@@ -212,7 +212,7 @@ class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
                 item.episode = new
                 item.save()
         serialised = new.to_dict(self.request.user)
-        ddd.change({}, serialised)
+        glossolalia.admit(serialised)
         return _build_json_response(serialised)
 
 
@@ -229,14 +229,14 @@ def subrecord_detail_view(request, model, pk):
         try:
             subrecord.update_from_dict(data, request.user)
             post = subrecord.episode.to_dict(request.user)
-            ddd.change(pre, post)
+            glossolalia.change(pre, post)
             return _build_json_response(subrecord.to_dict(request.user))
         except exceptions.ConsistencyError:
             return _build_json_response({'error': 'Item has changed'}, 409)
     elif request.method == 'DELETE':
         subrecord.delete()
         post = subrecord.episode.to_dict(request.user)
-        ddd.change(pre, post)
+        glossolalia.change(pre, post)
         return _build_json_response('')
 
 
@@ -255,7 +255,7 @@ class TaggingView(View):
         pre = episode.to_dict(self.request.user)
         episode.set_tag_names(tag_names, self.request.user)
         post = episode.to_dict(self.request.user)
-        ddd.change(pre, post)
+        glossolalia.transfer(pre, post)
         return _build_json_response(episode.tagging_dict(self.request.user)[0])
 
 
@@ -277,7 +277,7 @@ def subrecord_create_view(request, model):
 
     episode = models.Episode.objects.get(pk=episode_id)
     post = episode.to_dict(request.user)
-    ddd.change(pre, post)
+    glossolalia.change(pre, post)
     return _build_json_response(subrecord.to_dict(request.user), 201)
 
 

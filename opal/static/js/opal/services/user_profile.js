@@ -14,11 +14,19 @@ angular.module('opal.services')
                 if($routeParams.tag && this.roles[$routeParams.tag]){
                     angular.extend(roles, this.roles[$routeParams.tag]);
                 }
-                return roles;o
+                return roles;
             };
 
             this.has_role = function(role){
                 return this.active_roles().indexOf(role) != -1;
+            };
+
+            // TODO: don't hardcode these roles
+            this.can_see_pid = function(){
+                if(this.has_role('researcher') || this.has_role('scientist')){
+                    return false;
+                }
+                return true;
             }
         };
 

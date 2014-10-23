@@ -13,7 +13,7 @@ class Migration(SchemaMigration):
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
         ))
-        db.send_create_signal(u'opal', ['Micro_test_investigation'])
+        db.send_create_signal(u'opal', ['Micro_test_iv'])
 
 
     def backwards(self, orm):

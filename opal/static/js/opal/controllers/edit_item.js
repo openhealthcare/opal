@@ -1,7 +1,9 @@
 angular.module('opal.controllers').controller(
     'EditItemCtrl', function($scope, $cookieStore, $timeout,
                              $modalInstance, $modal,
-                             ngProgressLite, item, options, episode) {
+                             ngProgressLite,
+                             profile, item, options, episode) {
+        $scope.profile = profile;
         $scope.episode = episode.makeCopy();
         // Some fields should only be shown for certain categories.
         // Make that category available to the template.
