@@ -66,7 +66,7 @@ def discharge(episode):
     _send_upstream_message('discharge', payload)
     return
 
-def transfer(episode):
+def transfer(pre, post):
     """
     We have transferred a patient - pass on the message to whatever
     upstream services are listening
