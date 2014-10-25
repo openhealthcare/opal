@@ -62,6 +62,7 @@ class UpdatesFromDictMixin(object):
                 raise exceptions.ConsistencyError
 
         fields = set(self._get_fieldnames_to_serialize())
+        print fields
         unknown_fields = set(data.keys()) - fields
         if unknown_fields:
             raise exceptions.APIError(

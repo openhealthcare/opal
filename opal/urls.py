@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
+from django.views.decorators.csrf import csrf_exempt
 
 from opal import views
 from opal.forms import ChangePasswordForm
@@ -19,15 +20,15 @@ urlpatterns = patterns(
     url(r'^accounts/templates/account_detail.html',
         views.AccountDetailTemplateView.as_view()),
     url(r'^accounts/banned', views.BannedView.as_view(), name='banned'),
+    url(r'^admin/?', include(admin.site.urls)),
 
+    # Internal (Legacy) API views
     url(r'^flow/', views.FlowView.as_view(), name='flow'),
-
     url(r'^schema/list/$', views.ListSchemaView.as_view()),
     url(r'^schema/detail/$', views.DetailSchemaView.as_view()),
     url(r'^schema/extract/$', views.ExtractSchemaView.as_view()),
     url(r'^options/$', views.OptionsView.as_view()),
     url(r'^userprofile/$', views.UserProfileView.as_view()),
-    url(r'^admin/?', include(admin.site.urls)),
     url(r'^patient/?$', views.patient_search_view),
     url(r'^episode/?$', views.episode_list_and_create_view),
     url(r'^episode/(?P<tag>[a-z_\-]+)/?$', views.EpisodeListView.as_view()),
@@ -35,15 +36,13 @@ urlpatterns = patterns(
     url(r'^episode/(?P<pk>\d+)/?$', views.episode_detail_view),
     url(r'^episode/(?P<pk>\d+)/actions/copyto/(?P<category>[a-zA-Z_\-]+)/?$', 
         views.EpisodeCopyToCategoryView.as_view()),
-    
     url(r'^tagging/(?P<pk>\d+)/?', views.TaggingView.as_view()),
-
     url(r'^search/extract/$', views.ExtractSearchView.as_view()),
     url(r'^search/extract/download$', views.DownloadSearchView.as_view()),
-
     url(r'^filters/?$', views.FilterView.as_view()),
     url(r'^filters/(?P<pk>\d+)/?$', views.FilterDetailView.as_view()),
 
+    # Template vires
     url(r'^templates/episode_list.html/?$', views.EpisodeListTemplateView.as_view()),
     url(r'^templates/episode_list.html/(?P<tag>[a-z_\-]+)/?$', views.EpisodeListTemplateView.as_view()),
     url(r'^templates/episode_list.html/(?P<tag>[a-z_\-]+)/(?P<subtag>[a-z_\-]+)/?$', views.EpisodeListTemplateView.as_view()),
@@ -86,10 +85,15 @@ urlpatterns = patterns(
     url(r'^templates/modals/save_filter_modal.html/?$',
         views.SaveFilterModalView.as_view()),
 
+
+    # New Public facing API urls
+    url(r'api/v0.1/episode/admit', csrf_exempt(views.APIAdmitEpisodeView.as_view())),
+    
 )
 
 subrecord_models = models.PatientSubrecord.__subclasses__() + models.EpisodeSubrecord.__subclasses__()
 
+# Generated subrecord internal (Legacy) API views 
 for subrecord_model in subrecord_models:
     sub_url = camelcase_to_underscore(subrecord_model.__name__)
     urlpatterns += patterns('',

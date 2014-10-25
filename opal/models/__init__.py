@@ -23,6 +23,10 @@ options = stringport(settings.OPAL_OPTIONS_MODULE)
 
 from django.contrib.auth.models import User
 
+
+
+from opal.models.core import *
+
 class Role(models.Model):
     name = models.CharField(max_length=200)
 
