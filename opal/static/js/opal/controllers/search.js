@@ -10,6 +10,7 @@ angular.module('opal.controllers').controller(
 		    hospital_number: '',
 		    name: ''
 	    };
+        $scope.limit = 10;
 	    $scope.results = [];
 	    $scope.searched = false;
 

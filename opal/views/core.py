@@ -5,18 +5,17 @@ import collections
 import datetime
 import json
 
+from django.conf import settings
 from django.contrib.auth.views import login
 from django.contrib.contenttypes.models import ContentType
-from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotFound
-from django.views.generic import TemplateView, View
-from django.views.decorators.http import require_http_methods
+from django.shortcuts import redirect
 from django.template.loader import select_template
 from django.template import TemplateDoesNotExist
 from django.utils.decorators import method_decorator
 from django.utils import formats
-from django.shortcuts import redirect
-from django.template.loader import select_template
+from django.views.generic import TemplateView, View
+from django.views.decorators.http import require_http_methods
 
 from opal import glossolalia
 from opal.utils.http import with_no_caching
@@ -75,6 +74,8 @@ class EpisodeTemplateView(TemplateView):
         """
         Return the context for our columns
         """
+        from opal.views.templates import _get_column_context
+        
         active_schema = self.column_schema
         
         if 'tag' in kwargs and kwargs['tag'] in LIST_SCHEMAS:
@@ -84,45 +85,12 @@ class EpisodeTemplateView(TemplateView):
                 active_schema = LIST_SCHEMAS[kwargs['tag']]['default']
             else:
                 active_schema = LIST_SCHEMAS['default']
-
-        context = []
-        for column in active_schema:
-            column_context = {}
-            name = camelcase_to_underscore(column.__name__)
-            column_context['name'] = name
-            column_context['title'] = getattr(column, '_title',
-                                              name.replace('_', ' ').title())
-            column_context['single'] = column._is_singleton
-            column_context['episode_category'] = getattr(column, '_episode_category', None)
-            column_context['batch_template'] = getattr(column, '_batch_template', None)
-
-            list_display_templates = [name + '.html']
-            if 'tag' in kwargs:
-                list_display_templates.insert(
-                    0, 'list_display/{0}/{1}.html'.format(kwargs['tag'], name))
-            if 'subtag' in kwargs:
-                list_display_templates.insert(
-                    0, 'list_display/{0}/{1}/{2}.html'.format(kwargs['subtag'],
-                                                              kwargs['tag'],
-                                                              name))
-            column_context['template_path'] = select_template(list_display_templates).name
-
-            column_context['modal_template_path'] = name + '_modal.html'
-            column_context['detail_template_path'] = select_template([name + '_detail.html', name + '.html']).name
-
-            list_header_templates = ['%s_header.html' % x[:-5] for x in list_display_templates]
-            try:
-                column_context['header_template_path'] = select_template(list_header_templates).name
-            except TemplateDoesNotExist:
-                column_context['header_template_path'] = ''
-
-            context.append(column_context)
-
-        return context
+        
+        return _get_column_context(active_schema, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(EpisodeTemplateView, self).get_context_data(**kwargs)
-        # todo rename/refactor this accordingly
+        # TODO rename/refactor this accordingly
         context['teams'] = models.Team.for_user(self.request.user)
         context['columns'] = self.get_column_context(**kwargs)
         if 'tag' in kwargs:
@@ -404,13 +372,22 @@ def subrecord_detail_view(request, model, pk):
     except model.DoesNotExist:
         return HttpResponseNotFound()
 
-    pre = subrecord.episode.to_dict(request.user)
+    try:
+        pre = subrecord.episode.to_dict(request.user)
+    except AttributeError:
+        pre = subrecord.patient.to_dict(request.user)
+        
     if request.method == 'PUT':
         data = _get_request_data(request)
         try:
             subrecord.update_from_dict(data, request.user)
-            post = subrecord.episode.to_dict(request.user)
+            
+            try:
+                post = subrecord.episode.to_dict(request.user)
+            except AttributeError:
+                post = subrecord.patient.to_dict(request.user)
             glossolalia.change(pre, post)
+
             return _build_json_response(subrecord.to_dict(request.user))
         except exceptions.ConsistencyError:
             return _build_json_response({'error': 'Item has changed'}, 409)

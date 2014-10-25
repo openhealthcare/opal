@@ -11,13 +11,35 @@
         </small>
 
         <button type="button" class="btn btn-lg btn-danger pull-right"
-                ng-click="historyModal()"
+                ng-click="historyCollapsed = !historyCollapsed"
                 >
           Episode [[ this_episode_number ]] of [[ total_episodes ]]
           <i class="glyphicon glyphicon-time"></i>
         </button>
-
       </h2>
+    </div>
+    <div class="panel-body">
+      <div collapse="historyCollapsed">
+        <h4> <i class="glyphicon glyphicon-time"></i> Episode History</h4>
+        <p ng-repeat="ep in episode.prev_episodes">
+          <a href="/#/episode/[[ep.id]]">
+            Admitted: [[ ep.date_of_admission | shortDate ]] -
+            Disch: [[ ep.discharge_date | shortDate ]]
+          </a>
+          <hr />
+        </p>
+        <p>
+          <i>This Episode</i>
+        </p>
+        <p ng-repeat="ep in episode.next_episodes">
+          <a href="/#/episode/[[ep.id]]">
+            Admitted: [[ ep.date_of_admission | shortDate ]] -
+            Disch: [[ ep.discharge_date | shortDate ]]
+          </a>
+          <hr />
+        </p>
+      </div>
+
     </div>
     {% include '_episode_detail.html' %}
     <!-- Table -->

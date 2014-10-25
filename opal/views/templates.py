@@ -1,9 +1,48 @@
 """
 Template views for OPAL
 """
+from django.template import TemplateDoesNotExist
+from django.template.loader import select_template
 from django.views.generic import TemplateView
 
+from opal.utils import camelcase_to_underscore
 from opal.utils.views import LoginRequiredMixin, _get_request_data, _build_json_response
+
+def _get_column_context(schema, **kwargs):
+    context = []
+    for column in schema:
+        column_context = {}
+        name = camelcase_to_underscore(column.__name__)
+        column_context['name'] = name
+        column_context['title'] = getattr(column, '_title',
+                                          name.replace('_', ' ').title())
+        column_context['single'] = column._is_singleton
+        column_context['episode_category'] = getattr(column, '_episode_category', None)
+        column_context['batch_template'] = getattr(column, '_batch_template', None)
+
+        list_display_templates = [name + '.html']
+        if 'tag' in kwargs:
+            list_display_templates.insert(
+                0, 'list_display/{0}/{1}.html'.format(kwargs['tag'], name))
+            if 'subtag' in kwargs:
+                list_display_templates.insert(
+                    0, 'list_display/{0}/{1}/{2}.html'.format(kwargs['subtag'],
+                                                              kwargs['tag'],
+                                                              name))
+                column_context['template_path'] = select_template(list_display_templates).name
+
+        column_context['modal_template_path'] = name + '_modal.html'
+        column_context['detail_template_path'] = select_template([name + '_detail.html', name + '.html']).name
+
+        list_header_templates = ['%s_header.html' % x[:-5] for x in list_display_templates]
+        try:
+            column_context['header_template_path'] = select_template(list_header_templates).name
+        except TemplateDoesNotExist:
+            column_context['header_template_path'] = ''
+
+        context.append(column_context)
+
+    return context
 
 class SaveFilterModalView(TemplateView):
     template_name = 'save_filter_modal.html'

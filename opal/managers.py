@@ -43,25 +43,13 @@ class EpisodeManager(models.Manager):
                       for episode in episodes]
         return serialised
 
-    def serialised_active(self, user, **kw):
+    def serialised(self, user, episodes):
         """
-        Return a set of serialised active episodes.
-
-        This is the first pass at optimising the initial active patients
-        query that kicks off the list and bootstraps the app.
-
-        Currently running at ~= 1.7s over the ~= 4.7s for the latest live
-        data dump.
-
-        KWARGS will be passed to the episode filter.
+        Return a set of serialised EPISODES. 
         """
-#        return self.serialised_legacy(user)
+        #        return self.serialised_legacy(user)
         from opal.models import EpisodeSubrecord, PatientSubrecord
 
-        filters = kw.copy()
-        filters['active'] = True
-
-        episodes = self.filter(**filters)
         patient_ids = [e.patient_id for e in episodes]
         patient_subs = defaultdict(lambda: defaultdict(list))
 
@@ -92,6 +80,18 @@ class EpisodeManager(models.Manager):
             serialised.append(d)
 
         return serialised
+
+    def serialised_active(self, user, **kw):
+        """
+        Return a set of serialised active episodes.
+
+        KWARGS will be passed to the episode filter.
+        """
+        filters = kw.copy()
+        filters['active'] = True
+        episodes = self.filter(**filters)
+        return self.serialised(user, episodes)
+
 
     def ever_tagged(self, team):
         """

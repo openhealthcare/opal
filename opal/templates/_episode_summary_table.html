@@ -1,29 +1,29 @@
 
 <table class="table table-bordered table-hover search" ng-show="results.length > 0">
-      <thead>
-        <tr>
-          <td>Hospital #</td>
-          <td>Name</td>
-          <td>DOB</td>
-          <td>Admitted</td>
-          <td>Discharged</td>
-          <td></td>
-        </tr>
-      </thead>
-      <tbody>
-	    <tr class="pointer"
-            ng-click="jumpToEpisode(result)"
-            ng-repeat="result in results | limitTo: 10"
-            >
-	      <td>[[result.demographics[0].hospital_number]]</td>
-	      <td>[[result.demographics[0].name]]</td>
-          <td>[[result.demographics[0].date_of_birth]]</td>
-	      <td>[[ result.date_of_admission | shortDate ]]</td>
-          <td>[[ result.discharge_date | shortDate ]]</td>
-	      <td>
-            <i class="glyphicon glyphicon-new-window"></i>
-          </td>
-	    </tr>
-      </tbody>
+  <thead>
+    <tr>
+      <td>Hospital #</td>
+      <td>Name</td>
+      <td>DOB</td>
+      <td>Admitted</td>
+      <td>Discharged</td>
+      <td></td>
+    </tr>
+  </thead>
+  <tbody>
+	<tr class="pointer"
+        ng-click="jumpToEpisode(result)"
+        ng-repeat="result in results | limitTo: limit"
+        >
+	  <td>[[result.demographics[0].hospital_number]]</td>
+	  <td>[[result.demographics[0].name]]</td>
+      <td>[[result.demographics[0].date_of_birth | shortDate ]]</td>
+	  <td>[[ result.date_of_admission | shortDate ]]</td>
+      <td>[[ result.discharge_date | shortDate ]]</td>
+	  <td>
+        <i class="{% if icon %}{{icon}}{% else %}glyphicon glyphicon-new-window{% endif %}"></i>
+      </td>
+	</tr>
+  </tbody>
 
-    </table>
+</table>
