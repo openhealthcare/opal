@@ -12,8 +12,10 @@ angular.module('opal.controllers').controller(
 
 	    $scope.mouseCix = -1; // index of column mouse is currently over
 
+        $scope.Flow = Flow;
 	    $scope.episode = episode;
         $scope.options = options;
+        $scope.schema = schema;
         $scope.total_episodes = 1 + episode.prev_episodes.length + episode.next_episodes.length;
         $scope.this_episode_number = episode.prev_episodes.length + 1;
         $scope.historyCollapsed = true;

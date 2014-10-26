@@ -20,7 +20,17 @@
     </div>
     <div class="panel-body">
       <div collapse="historyCollapsed">
-        <h4> <i class="glyphicon glyphicon-time"></i> Episode History</h4>
+        <h4>
+          <i class="glyphicon glyphicon-time"></i>
+          Episode History
+          <button type="button" class="btn btn-info pull-right"
+                ng-click="addEpisode()"
+                >
+          <i class="glyphicon glyphicon-plus"></i>
+          Add Episode
+        </button>
+        </h4>
+
         <p ng-repeat="ep in episode.prev_episodes">
           <a href="/#/episode/[[ep.id]]">
             Admitted: [[ ep.date_of_admission | shortDate ]] -

@@ -1,10 +1,12 @@
 angular.module('opal.services')
-    .factory('EpisodeDetailMixin', function($rootScope, $modal, Item){
+    .factory('EpisodeDetailMixin', function($rootScope, $modal, $location, Item){
         return function($scope){
 
             var episode = $scope.episode;
             var profile = $scope.profile;
             var options = $scope.options;
+            var schema  = $scope.schema;
+            var Flow    = $scope.Flow
             
 	        function getColumnName(cix) {
 		        return $scope.columns[cix].name;
@@ -168,6 +170,38 @@ angular.module('opal.services')
 		        });
 	        };
 
+            $scope.addEpisode = function(){
+                if(profile.readonly){ return null; };
+
+                var enter = Flow(
+                    'enter', schema, options,
+                    {
+                        current_tags: { tag: 'mine', subtag: 'all' },
+                        hospital_number: $scope.episode.demographics[0].hospital_number
+                    }
+                );
+
+		        $scope.state = 'modal';
+
+                enter.then(
+                    function(episode) {
+		                // User has either retrieved an existing episode or created a new one,
+		                // or has cancelled the process at some point.
+		                //
+		                // This ensures that the relevant episode is added to the table and
+		                // selected.
+		                $scope.state = 'normal';
+                        if(episode){
+                            $location.path('/episode/' + episode.id);
+                        }
+	                },
+                    function(reason){
+                        // The modal has been dismissed. We just need to re-set in order
+                        // to re-enable keybard listeners.
+                        $scope.state = 'normal';
+                    });                
+            },
+            
             $scope.jumpToTag = function(tag){
                 var currentTag, currentSubTag;
 
