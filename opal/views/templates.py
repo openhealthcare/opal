@@ -2,7 +2,7 @@
 Template views for OPAL
 """
 from django.template import TemplateDoesNotExist
-from django.template.loader import select_template
+from django.template.loader import select_template, get_template
 from django.views.generic import TemplateView
 
 from opal.utils import camelcase_to_underscore
@@ -34,9 +34,10 @@ def _get_column_context(schema, **kwargs):
         column_context['modal_template_path'] = name + '_modal.html'
         column_context['detail_template_path'] = select_template([name + '_detail.html', name + '.html']).name
 
-        list_header_templates = ['%s_header.html' % x[:-5] for x in list_display_templates]
+        
+        header_template = '_{0}_header.html'.format(name)
         try:
-            column_context['header_template_path'] = select_template(list_header_templates).name
+            column_context['header_template_path'] = get_template(header_template).name
         except TemplateDoesNotExist:
             column_context['header_template_path'] = ''
 
