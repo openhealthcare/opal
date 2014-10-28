@@ -97,7 +97,8 @@ angular.module(
 			                resolve: {
 				                episode: function() { return config.episode; },
                                 tags   : function() { return config.current_tags; },
-                                options: function() { return options; }
+                                options: function() { return options; },
+                                schema : function() { return schema; }
 			                }
 		                }).result
                         deferred.resolve(result);
