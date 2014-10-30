@@ -65,7 +65,7 @@ angular.module('opal.controllers').controller(
 		    });
 	    };
 
-	    $scope.episode_category_list = ['OPAT',  'Inpatient', 'Outpatient', 'Review'];
+	    $scope.episode_category_list = ['Inpatient', 'Outpatient', 'Review'];
 
         // 
         // Save the item that we're editing.
