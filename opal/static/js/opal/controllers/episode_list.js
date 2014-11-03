@@ -131,9 +131,11 @@ angular.module('opal.controllers').controller(
 	    $scope.$watch('query.hospital_number', function() {
 		    $scope.rows = getVisibleEpisodes();
 	    });
+
 	    $scope.$watch('query.ward', function() {
 		    $scope.rows = getVisibleEpisodes();
 	    });
+
 	    $scope.$watch('query.bed', function() {
 		    $scope.rows = getVisibleEpisodes();
 	    });
