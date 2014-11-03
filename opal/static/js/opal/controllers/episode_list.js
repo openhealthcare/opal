@@ -20,6 +20,7 @@ angular.module('opal.controllers').controller(
         $scope._ =  _;
 
 	    $scope.query = {hospital_number: '', name: '', ward: '', bed: ''};
+        $scope.$location = $location;
         
         if(viewDischarged){
             $scope.path_base = '/discharge/';

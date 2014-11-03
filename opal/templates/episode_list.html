@@ -12,7 +12,10 @@
   {% with top=True %}
   {% include 'episode_list_navbar.html' %}
   {% endwith %}
-  <table class="table table-bordered content-offset" freeze-panes>
+  <div class="content-offset">
+  {% include 'responsive/_phone_episode_list.html' %}
+  {% include 'responsive/_tablet_episode_list.html' %}
+  <table class="table table-bordered hidden-xs hidden-sm" freeze-panes>
     <thead>
 	  <tr>
 	    {% for column in columns %}
@@ -77,6 +80,7 @@
 	  </tr>
     </tbody>
   </table>
+  </div>
 
   {% include 'episode_list_navbar.html' %}
 

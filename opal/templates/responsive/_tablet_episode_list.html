@@ -1,0 +1,31 @@
+<div class="visible-sm"> 
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <td>Hospital #</td>
+        <td>Name</td>
+        <td>DOB</td>
+        <td>Admitted</td>
+        <td>Discharged</td>
+        <td></td>
+      </tr>
+    </thead>
+    <tbody>
+	  <tr class="pointer"
+          ng-click="$location.path('/episode/'+result.id)"
+          ng-repeat="result in rows"
+          >
+	    <td>[[result.demographics[0].hospital_number]]</td>
+	    <td>[[result.demographics[0].name]]</td>
+        <td>[[result.demographics[0].date_of_birth | shortDate ]]</td>
+	    <td>[[ result.date_of_admission | shortDate ]]</td>
+        <td>[[ result.discharge_date | shortDate ]]</td>
+	    <td>
+          <button class="btn btn-danger btn-lg">
+          <i class="{% if icon %}{{icon}}{% else %}glyphicon glyphicon-chevron-right{% endif %}"></i>
+          </button>
+        </td>
+	  </tr>
+    </tbody>
+  </table>
+</div>

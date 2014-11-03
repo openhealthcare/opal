@@ -1,0 +1,22 @@
+<div class="visible-xs"> 
+  <table class="table table-bordered">
+    <thead>
+      <tr><th colspan="2">Patients</th></tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="row in rows">
+        <td>
+          <a class="btn btn-lg btn-danger " href="#/episode/[[row.id]]">
+            <i class="glyphicon glyphicon-chevron-right"></i>
+          </a>
+        </td>
+        <td ng-click="$location.path('/episode/'+row.id)">
+          [[row.demographics[0].hospital_number]]<br />
+          [[row.demographics[0].name]]<br />
+          [[row.demographics[0].date_of_birth | shortDate]]<br />
+          [[ row.demographics[0].country_of_birth ]] [[ row.demographics[0].ethnicity ]]<br />
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
