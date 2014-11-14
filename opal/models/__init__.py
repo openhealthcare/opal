@@ -59,6 +59,7 @@ class UserProfile(models.Model):
         roles['default'] = [r.name for r in self.roles.all()]
         return roles
 
+    
 class Filter(models.Model):
     """
     Saved filters for users extracting data.
@@ -78,8 +79,11 @@ class Filter(models.Model):
 
 class Patient(models.Model):
     def __unicode__(self):
-        demographics = self.demographics_set.get()
-        return '%s | %s' % (demographics.hospital_number, demographics.name)
+        try:
+            demographics = self.demographics_set.get()
+            return '%s | %s' % (demographics.hospital_number, demographics.name)
+        except models.ObjectDoesNotExist:
+            return 'Patient {0}'.format(self.id)
 
     def create_episode(self, category=None):
         # if self.get_active_episode() is None:
@@ -128,12 +132,14 @@ class Episode(UpdatesFromDictMixin, models.Model):
     objects = managers.EpisodeManager()
 
     def __unicode__(self):
-        demographics = self.patient.demographics_set.get()
+        try:
+            demographics = self.patient.demographics_set.get()
 
-        return '%s | %s | %s' % (demographics.hospital_number,
-                                 demographics.name,
-                                 self.date_of_admission)
-
+            return '%s | %s | %s' % (demographics.hospital_number,
+                                     demographics.name,
+                                     self.date_of_admission)
+        except models.ObjectDoesNotExist:
+            return self.date_of_admission
 
     def is_active(self):
         # TODO Depreciate this.
