@@ -3,6 +3,7 @@ angular.module('opal.controllers').controller(
                              $modalInstance, $modal,
                              ngProgressLite,
                              profile, item, options, episode) {
+
         $scope.profile = profile;
         $scope.episode = episode.makeCopy();
         // Some fields should only be shown for certain categories.
