@@ -12,7 +12,7 @@ setup(
     packages=['opal', 'opal.utils'],
     include_package_data=True,
     license='GPL3',  # example license
-    description='Patient list framework.',
+    description='Clinical Transactional Digital Services Framework.',
     long_description=README,
     url='http://opal.openhealthcare.org.uk/',
     author='Open Health Care UK',
