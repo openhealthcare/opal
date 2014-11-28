@@ -552,7 +552,6 @@ class OptionsView(View):
             try:
                 co =  synonym.content_object
             except AttributeError:
-                print synonym
                 continue
             name = type(co).__name__.lower()
             data[name].append(synonym.name)
