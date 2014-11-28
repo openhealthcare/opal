@@ -434,6 +434,12 @@ class Tagging(models.Model):
                     tag_name = teams[data['team']]
                 except KeyError:
                     tag_name = data['tag_name']
+                except KeyError:
+                    import json
+                    print json.dumps(data, indent=2)
+                    
+                    raise exceptions.FTWLarryError("Can't find the team in this data :(")
+                
                 historic[data['episode']][tag_name] = True
         return historic
 

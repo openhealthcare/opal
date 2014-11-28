@@ -1,2 +1,4 @@
-class APIError(Exception): pass
-class ConsistencyError(Exception): pass
+class Error(Exception): pass
+class APIError(Error): pass
+class ConsistencyError(Error): pass
+class FTWLarryError(Error): pass
