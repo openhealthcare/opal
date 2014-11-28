@@ -80,7 +80,11 @@ angular.module('opal.services')
                 }
 
 	            var attrs = {};
-	            // TODO don't hardcode this
+                // 
+	            // TODO: don't hardcode this
+                //
+                // TODO: For serious, this is a bad place for these to go. 
+                //
 	            if (columnName == 'microbiology_test') {
 		            attrs.date_ordered = moment().format('YYYY-MM-DD');
 	            }
@@ -97,11 +101,21 @@ angular.module('opal.services')
                     attrs.initials = window.initials;
 		            attrs.date = moment().format('YYYY-MM-DD');
                 }
+                if (columnName == 'observation'){
+                    attrs.time = moment();
+                    attrs.date = moment().format('YYYY-MM-DD');
+                }
                 if (columnName == 'line'){
                     attrs.inserted_by = window.initials;
+                    attrs.insertion_date = moment().format('YYYY-MM-DD');
                 }
                 if (columnName == 'opat_review'){
                     attrs.initials = window.initials;
+                    attrs.time = moment();
+                    attrs.date = moment().format('YYYY-MM-DD');
+                }
+                if (columnName == 'opat_line_assessment'){
+                    attrs.assessment_date = moment().format('YYYY-MM-DD');
                 }
 	            return new Item(attrs, episode, opts.column);
 	        };

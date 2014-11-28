@@ -66,6 +66,13 @@ angular.module('opal.services')
 		            };
 		            attrs[field.name] = value.format('YYYY-MM-DD');
 		        };
+                // 
+                // TODO: Handle this conversion better 
+                // 
+                if (field.type == 'integer' && field.name == 'time') {
+                    value = attrs[field.name];
+                    attrs[field.name] = parseInt('' + value.hour() + value.minute());
+                }
 	        };
 
             // Tagging to teams are represented as a pseudo subrecord. 
