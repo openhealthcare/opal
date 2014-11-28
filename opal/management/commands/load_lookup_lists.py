@@ -48,5 +48,4 @@ class Command(BaseCommand):
                 for item in data[name]:
                     self._install_item(model, item)
                 
-        print data
         return

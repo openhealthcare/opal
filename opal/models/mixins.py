@@ -55,14 +55,13 @@ class UpdatesFromDictMixin(object):
             try:
                 consistency_token = data.pop('consistency_token')
             except KeyError:
-                print self.consistency_token, data
                 raise exceptions.APIError('Missing field (consistency_token)')
 
             if consistency_token != self.consistency_token:
                 raise exceptions.ConsistencyError
 
         fields = set(self._get_fieldnames_to_serialize())
-        print fields
+
         unknown_fields = set(data.keys()) - fields
         if unknown_fields:
             raise exceptions.APIError(

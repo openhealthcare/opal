@@ -289,7 +289,7 @@ class Team(models.Model):
         """
         Return the set of teams this user has access to. 
         """
-        profile = user.get_profile()
+        profile, _ = UserProfile.objects.get_or_create(user=user)
         if profile.restricted_only:
             teams = []
         else:

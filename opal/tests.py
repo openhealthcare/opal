@@ -86,11 +86,11 @@ class EpisodeTest(TestCase):
 
     def test_active_if_tagged_by_non_mine_tag(self):
         self.episode.set_tag_names(['microbiology'], self.user)
-        self.assertTrue(self.episode.is_active())
+        self.assertTrue(self.episode.active)
 
-    def test_inactive_if_only_tagged_by_mine_tag(self):
+    def test_active_if_only_tagged_by_mine_tag(self):
         self.episode.set_tag_names(['mine'], self.user)
-        self.assertFalse(self.episode.is_active())
+        self.assertTrue(self.episode.active)
 
     def test_to_dict_with_multiple_episodes(self):
         episode = Episode.objects.get(pk=1)

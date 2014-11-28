@@ -393,7 +393,10 @@ def subrecord_detail_view(request, model, pk):
             return _build_json_response({'error': 'Item has changed'}, 409)
     elif request.method == 'DELETE':
         subrecord.delete()
-        post = subrecord.episode.to_dict(request.user)
+        try:
+            post = subrecord.episode.to_dict(request.user)
+        except AttributeError:
+            post = subrecord.patient.to_dict(request.user)
         glossolalia.change(pre, post)
         return _build_json_response('')
 
