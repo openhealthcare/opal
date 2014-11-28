@@ -460,7 +460,10 @@ class Tagging(models.Model):
                 try:
                     tag_name = data['tag_name']
                 except KeyError:
+                    print "DATA:"
                     print json.dumps(data, indent=2)
+                    print "TEAMS:"
+                    print json.dumps(teams, indent=2)
                     raise exceptions.FTWLarryError("Can't find the team in this data :(")
 
             if tag_name == tag:
