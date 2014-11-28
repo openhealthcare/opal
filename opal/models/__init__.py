@@ -455,16 +455,18 @@ class Tagging(models.Model):
         for d in deleted:
             data = json.loads(d.serialized_data)[0]['fields']
             try:
-                tag_name = teams[data['team']]
-            except KeyError:
-                try:
-                    tag_name = data['tag_name']
-                except KeyError:
+                team_index = data['team']
+                if team_index not in teams:
+                    print "Can't find deleted team by index - we think the team has been deleted? "
                     print "DATA:"
                     print json.dumps(data, indent=2)
                     print "TEAMS:"
                     print json.dumps(teams, indent=2)
-                    raise exceptions.FTWLarryError("Can't find the team in this data :(")
+                    continue
+                tag_name = teams[team_index]
+
+            except KeyError:
+                tag_name = data['tag_name']
 
             if tag_name == tag:
                 eids.add(data['episode'])
