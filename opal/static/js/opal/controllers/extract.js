@@ -2,6 +2,7 @@ angular.module('opal.controllers').controller(
     'ExtractCtrl', function($scope, $http, $window, $modal,
                             ngProgressLite, filters, options, schema){
 
+        $scope.limit = 10;
         $scope.JSON = window.JSON;
         $scope.filters = filters;
         $scope.columns = schema.columns;
