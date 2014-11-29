@@ -1,3 +1,10 @@
 {% for item in items %}
-  <li><a href="{{ item.href }}">{{ item.display }}</a></li>
+  <li>
+    <a href="{{ item.href }}">
+      {% if item.icon %}
+        <i class="{{item.icon}}"></i>
+      {% endif %}
+      {{ item.display }}
+    </a>
+  </li>
 {% endfor %}
