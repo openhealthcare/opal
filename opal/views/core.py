@@ -85,7 +85,7 @@ class EpisodeTemplateView(TemplateView):
                 active_schema = LIST_SCHEMAS[kwargs['tag']]['default']
             else:
                 active_schema = LIST_SCHEMAS['default']
-        
+
         return _get_column_context(active_schema, **kwargs)
 
     def get_context_data(self, **kwargs):
