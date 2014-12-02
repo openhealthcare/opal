@@ -91,9 +91,6 @@ angular.module('opal.services')
 	            if (columnName == 'general_note') {
 		            attrs.date = moment().format('YYYY-MM-DD');
 	            }
-	            if (columnName == 'antimicrobial') {
-		            attrs.start_date = moment().format('YYYY-MM-DD');
-	            }
 	            if (columnName == 'diagnosis') {
 		            attrs.date_of_diagnosis = moment().format('YYYY-MM-DD');
 	            }
