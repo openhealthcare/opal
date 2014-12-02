@@ -77,6 +77,7 @@ app.config(
                  controller: 'ExtractCtrl',
                  templateUrl: '/templates/extract.html',
                  resolve: {
+                     profile: function(UserProfile){ return UserProfile },
                      schema: function(extractSchemaLoader){ return extractSchemaLoader },
 				     options: function(Options) { return Options; },
                      filters: function(filtersLoader){ return filtersLoader() }
