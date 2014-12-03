@@ -94,6 +94,7 @@ angular.module(
 		                result = $modal.open({
 			                templateUrl: flow.template,
 			                controller:  flow.controller,
+                            keyboard: false,
 			                resolve: {
 				                episode: function() { return config.episode; },
                                 tags   : function() { return config.current_tags; },
