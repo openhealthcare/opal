@@ -110,7 +110,7 @@
   </div>
 
   <!-- OPAT Follow up initial state -->
-  <div ng-show="episode.tagging[0].opat_followup && meta.oral == null && meta.completed == null">
+  <div ng-show="episode.tagging[0].opat_followup && meta.iv == null && meta.completed == null">
     <p>This patient has completed Oral treatment. What's the reason for that ?</p>
     <center>
       <button class="btn btn-primary btn-lg" ng-click="meta.iv = true">Back to IV Therapy</button>
