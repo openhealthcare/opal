@@ -309,66 +309,66 @@ angular.module('opal.controllers').controller(
 
         };
 
-      _openEditItemModal = function(item, columnName, episode) {
-        if(profile.readonly){
-          return null;
-        };
-        $scope.state = 'modal';
+        _openEditItemModal = function(item, columnName, episode) {
+            if(profile.readonly){
+                return null;
+            };
+            $scope.state = 'modal';
 
-        modal = $modal.open({
-          templateUrl: '/templates/modals/' + columnName + '.html/',
-          controller: 'EditItemCtrl',
-          resolve: {
-            item: function() { return item; },
-            options: function() { return options; },
-            profile: function() { return profile; },
-            episode: function() { return episode; }
-          }
-        });
+            modal = $modal.open({
+                templateUrl: '/templates/modals/' + columnName + '.html/',
+                controller: 'EditItemCtrl',
+                resolve: {
+                    item: function() { return item; },
+                    options: function() { return options; },
+                    profile: function() { return profile; },
+                    episode: function() { return episode; }
+                }
+            });
 
-        modal.result.then(function(result) {
-          $scope.state = 'normal';
+            modal.result.then(function(result) {
+                $scope.state = 'normal';
 
-          if (columnName == 'tagging') {
-            // User may have removed current tag
-            $scope.rows = getVisibleEpisodes();
-            $scope.selectItem(getRowIxFromEpisodeId(episode.id), $scope.cix, 0);
-          }
-
-          if (result == 'save-and-add-another') {
-            $scope.editItem(rix, cix, episode.getNumberOfItems(columnName));
-          };
+                if (columnName == 'tagging') {
+                    // User may have removed current tag
+                    $scope.rows = getVisibleEpisodes();
+                    $scope.selectItem(getRowIxFromEpisodeId(episode.id), $scope.cix, 0);
+                }
+                
+                if (result == 'save-and-add-another') {
+                    $scope.newNamedItem(episode, columnName);
+                    return
+                };
                 if (item.sort){
                     episode.sortColumn(item.columnName, item.sort);
                 };
-        }, function(){
+            }, function(){
                 $scope.state = 'normal';
             });
-      }
-
-      $scope.newNamedItem = function(episode, name) {
-        var item = episode.newItem(name, {column: $rootScope.fields[name]});
-        if (!episode[name]) {
-          episode[name] = [];
-        }
-        episode[name][0] = item;
-        _openEditItemModal(item, name, episode);
-      }
-
-      $scope.editNamedItem = function(episode, name, iix) {
-        var item;
-        if (episode[name][iix] && episode[name][iix].columnName) {
-          item = episode[name][iix];
-        } else {
-          item = new Item(episode[name][iix], episode, $rootScope.fields[name]);
-          episode[name][iix] = item;
         }
 
-        _openEditItemModal(item, name, episode);
-      }
+        $scope.newNamedItem = function(episode, name) {
+            var item = episode.newItem(name, {column: $rootScope.fields[name]});
+            if (!episode[name]) {
+                episode[name] = [];
+            }
+            episode[name].push(item);
+            _openEditItemModal(item, name, episode);
+        }
+
+        $scope.editNamedItem = function(episode, name, iix) {
+            var item;
+            if (episode[name][iix] && episode[name][iix].columnName) {
+                item = episode[name][iix];
+            } else {
+                item = new Item(episode[name][iix], episode, $rootScope.fields[name]);
+                episode[name][iix] = item;
+            }
+
+            _openEditItemModal(item, name, episode);
+        }
 
 	    $scope.editItem = function(rix, cix, iix) {
-		    var modal;
 		    var columnName = getColumnName(cix);
 		    var episode = getEpisode(rix);
 		    var item;
@@ -384,7 +384,7 @@ angular.module('opal.controllers').controller(
 		    };
 
 		    $scope.selectItem(rix, cix, iix);
-        _openEditItemModal(item, columnName, episode);
+            _openEditItemModal(item, columnName, episode);
 	    };
 
 	    $scope.deleteItem = function(rix, cix, iix) {
