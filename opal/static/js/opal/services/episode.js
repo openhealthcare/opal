@@ -103,7 +103,6 @@ angular.module('opal.services')
                     attrs.date = moment().format('YYYY-MM-DD');
                 }
                 if (columnName == 'line'){
-                    attrs.inserted_by = window.initials;
                     attrs.insertion_date = moment().format('YYYY-MM-DD');
                 }
                 if (columnName == 'opat_review'){
