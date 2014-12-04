@@ -21,24 +21,29 @@ def _get_column_context(schema, **kwargs):
         column_context['episode_category_excludes'] = getattr(column, '_episode_category_excludes', None)
         column_context['batch_template'] = getattr(column, '_batch_template', None)
 
+        header_templates = [name + '_header.html']
         list_display_templates = [name + '.html']
         if 'tag' in kwargs:
             list_display_templates.insert(
                 0, 'list_display/{0}/{1}.html'.format(kwargs['tag'], name))
+            header_templates.insert(
+                0, 'list_display/{0}/{1}_header.html'.format(kwargs['tag'], name))
             if 'subtag' in kwargs:
                 list_display_templates.insert(
-                    0, 'list_display/{0}/{1}/{2}.html'.format(kwargs['subtag'],
-                                                              kwargs['tag'],
+                    0, 'list_display/{0}/{1}/{2}.html'.format(kwargs['tag'],
+                                                              kwargs['subtag'],
                                                               name))
+                header_templates.insert(
+                    0, 'list_display/{0}/{1}/{2}_header.html'.format(kwargs['tag'],
+                                                                     kwargs['subtag'],
+                                                                     name))
         column_context['template_path'] = select_template(list_display_templates).name
 
         column_context['modal_template_path'] = name + '_modal.html'
         column_context['detail_template_path'] = select_template([name + '_detail.html', name + '.html']).name
 
-        
-        header_template = '_{0}_header.html'.format(name)
         try:
-            column_context['header_template_path'] = get_template(header_template).name
+            column_context['header_template_path'] = select_template(header_templates).name
         except TemplateDoesNotExist:
             column_context['header_template_path'] = ''
 
