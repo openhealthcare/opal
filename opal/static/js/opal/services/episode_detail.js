@@ -51,7 +51,7 @@ angular.module('opal.services')
                     item = new Item(episode[name][index], episode, $rootScope.fields[name]);
                     episode[name][index] = item;
                 }
-                _openEditItemModal(item, name)
+                return _openEditItemModal(item, name)
             };
 
             $scope.newNamedItem = function(name) {
@@ -59,7 +59,7 @@ angular.module('opal.services')
                 if (!episode[name]) {
                     episode[name] = [];
                 }
-                _openEditItemModal(item, name);            
+                return _openEditItemModal(item, name);            
             };
        	    $scope.editItem = function(cix, iix) {
 		        var columnName = getColumnName(cix);
@@ -72,7 +72,7 @@ angular.module('opal.services')
 		        }
 
 		        $scope.selectItem(cix, iix);
-                _openEditItemModal(item, columnName, episode);
+                return _openEditItemModal(item, columnName, episode);
 	        };
 
 	        $scope.deleteItem = function(cix, iix) {

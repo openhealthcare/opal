@@ -378,7 +378,8 @@ angular.module('opal.controllers').controller(
             }
             
 		    if (iix == episode.getNumberOfItems(columnName)) {
-			    item = episode.newItem(columnName, {schema: schema});
+			    item = episode.newItem(columnName, {schema: schema,
+                                                    column: $rootScope.fields[columnName]});
 		    } else {
 			    item = episode.getItem(columnName, iix);
 		    };

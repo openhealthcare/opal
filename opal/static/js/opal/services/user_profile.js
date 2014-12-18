@@ -1,7 +1,7 @@
 angular.module('opal.services')
     .factory('UserProfile', function($q, $http, $window, $routeParams) {
 
-        UserProfile = function(profiledata){
+        var UserProfile = function(profiledata){
             var profile = this;
 
             angular.extend(profile, profiledata);
@@ -20,7 +20,7 @@ angular.module('opal.services')
             this.has_role = function(role){
                 return this.active_roles().indexOf(role) != -1;
             };
-
+            
             // TODO: don't hardcode these roles
             this.can_see_pid = function(){
                 if(this.has_role('researcher') || this.has_role('scientist')){

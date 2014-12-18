@@ -2,12 +2,13 @@
 // Unit tests for our Flow
 // 
 
-describe('Flow', function(){
+describe('Flow ', function(){
     var schema, options;
     var the_flow;
 
 
     beforeEach(function(){
+
         module('opal.services');
         module('opal.controllers');
 
@@ -31,6 +32,7 @@ describe('Flow', function(){
         
         inject(function($injector){
             Flow         = $injector.get('Flow');
+            console.log(Flow)
             $modal       = $injector.get('$modal');
             $rootScope   = $injector.get('$rootScope');
             $httpBackend = $injector.get('$httpBackend');

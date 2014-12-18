@@ -1,5 +1,5 @@
 describe('controllers', function() {
-    var columns, episodeData, optionsData, patientData, Schema, schema, Episode, Item;
+    var columns, fields, episodeData, optionsData, profileData, patientData, Schema, schema, Episode, Item;
     var profile;
 
     beforeEach(function() {
@@ -33,10 +33,14 @@ describe('controllers', function() {
                     ]},
             ]
         };
+        fields = {}
+        _.each(columns.default, function(c){fields[c.name] = c});
 
         episodeData = {
             id: 123,
             active: true,
+            prev_episodes: [],
+            next_episodes: [],
             demographics: [{
                 id: 101,
                 name: 'John Smith',
@@ -168,15 +172,17 @@ describe('controllers', function() {
         }
 
         injector = angular.injector(['opal.services'])
-        Schema = injector.get('Schema');
-        Episode = injector.get('Episode');
-        Item = injector.get('Item')
+        Schema   = injector.get('Schema');
+        Episode  = injector.get('Episode');
+        Item     = injector.get('Item')
 
         schema = new Schema(columns.default);
+        
         profile = {
             readonly   : false,
-            can_extract: true
-        }
+            can_extract: true,
+            can_see_pid: function(){return true; }
+        };
     });
 
     describe('EpisodeListCtrl', function() {
@@ -202,8 +208,12 @@ describe('controllers', function() {
             options = optionsData;
             $routeParams.tag = 'tropical';
             Flow = jasmine.createSpy('Flow').andCallFake(function(){return {then: function(){}}});
+            
+            $rootScope.fields = fields
+
 
             controller = $controller('EpisodeListCtrl', {
+                $rootScope    : $rootScope,
                 $scope        : $scope,
                 $q            : $q,
                 $http         : $http,
@@ -660,6 +670,7 @@ describe('controllers', function() {
             });
 
             options = optionsData;
+            profile = profileData;
             episode = new Episode(episodeData, schema);
             item    = new Item(
                 {columnName: 'diagnosis'},
@@ -675,6 +686,7 @@ describe('controllers', function() {
                 $modalInstance: dialog,
                 item        : item,
                 options     : options,
+                profile     : profile,
                 episode     : episode,
                 ngProgressLite  : ngProgressLite,
             });
@@ -997,7 +1009,6 @@ describe('controllers', function() {
 
             it('Should set up the initial editing situation', function () {
                 expect($scope.editing.tagging).toEqual([{mine: true}]);
-                expect($scope.editing.date_of_admission).toEqual(moment().format('DD/MM/YYYY'));
             });
 
         });
@@ -1076,7 +1087,7 @@ describe('controllers', function() {
 
             controller = $controller('ExtractCtrl',  {
                 $scope : $scope,
-
+                profile: {},
                 options: optionsData,
                 filters: [],
                 schema : schema

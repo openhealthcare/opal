@@ -4,25 +4,33 @@ describe('services', function() {
     beforeEach(function() {
         module('opal.services');
         columns = {
-            "default": [
-                {
-                    name: 'demographics',
+            "fields": {
+                'demographics': {
+                    name: "demographics",
                     single: true,
                     fields: [
                         {name: 'name', type: 'string'},
                         {name: 'date_of_birth', type: 'date'},
-                    ]},
-                {
-                    name: 'diagnosis',
+                    ]
+                },
+                "diagnosis": {
+                    name: "diagnosis",
                     single: false,
                     sort: 'date_of_diagnosis',
                     fields: [
                         {name: 'date_of_diagnosis', type: 'date'},
                         {name: 'condition', type: 'string'},
                         {name: 'provisional', type: 'boolean'},
-                    ]}
+                    ]
+                }
+            },
+            "list_schema": {
+                "default": [
+                    'demographics',
+                    'diagnosis'
                 ]
-            };
+            }
+        };
 
         episodeData = {
             id: 123,
@@ -113,7 +121,7 @@ describe('services', function() {
             $rootScope.$apply();
             $httpBackend.flush();
 
-            expect(result.columns).toEqual(columns.default);
+            expect(result.columns).toEqual(_.values(columns.fields));
         });
 
         it('should alert if the http request errors', function(){
@@ -137,15 +145,13 @@ describe('services', function() {
             mycols.micro = {};
             mycols.micro.default = mycols.default
             
-            // console.log($route.current.params.subtag)
-            // expect(1).toEqual(2)
             $httpBackend.expectGET('/schema/list/');
             $httpBackend.whenGET('/schema/list/').respond(mycols);
 
             listSchemaLoader().then(function(r){result=r});
             $rootScope.$apply();
             $httpBackend.flush();
-            expect(result.columns).toEqual(columns.default);
+            expect(result.columns).toEqual(_.values(columns.fields));
         });
     })
 
@@ -172,7 +178,7 @@ describe('services', function() {
             var result
 
             $httpBackend.expectGET('/schema/detail/');
-            $httpBackend.whenGET('/schema/detail/').respond(columns);
+            $httpBackend.whenGET('/schema/detail/').respond({fields: {}, detail_schema: []});
 
             detailSchemaLoader.then(
                 function(r){ result = r}
@@ -180,7 +186,7 @@ describe('services', function() {
             $rootScope.$apply();
             $httpBackend.flush();
 
-            expect(result.columns).toEqual(columns);
+            expect(result.columns).toEqual([]);
         });
 
         it('should alert if the http request errors', function(){
@@ -254,7 +260,7 @@ describe('services', function() {
             inject(function($injector) {
                 Schema = $injector.get('Schema');
             });
-            schema = new Schema(columns.default);
+            schema = new Schema(_.values(columns.fields));
         });
 
         it('should be able to get the number of columns', function() {
@@ -498,15 +504,13 @@ describe('services', function() {
 
         beforeEach(function() {
             inject(function($injector) {
-                EpisodeResource = $injector.get('EpisodeResource');
                 Episode = $injector.get('Episode');
                 Schema = $injector.get('Schema');
                 Item = $injector.get('Item');
             });
 
-            schema = new Schema(columns.default);
-            resource = new EpisodeResource(episodeData);
-            episode = new Episode(resource, schema);
+            schema = new Schema(_.values(columns.fields));
+            episode = new Episode(episodeData, schema);
         });
 
         it('Should have access to the attributes', function () {
@@ -518,10 +522,8 @@ describe('services', function() {
         });
 
         it('should create Items', function() {
-
-            expect(episode.demographics[0].constructor).toBe(Item);
-            expect(episode.diagnosis[0].constructor).toBe(Item);
-            expect(episode.diagnosis[1].constructor).toBe(Item);
+            expect(episode.demographics.length).toBe(1);
+            expect(episode.diagnosis.length).toBe(2);
         });
 
         it('should have access to attributes of items', function() {
@@ -539,7 +541,6 @@ describe('services', function() {
         });
 
         it('should get the current tags', function(){
-            console.log(episode.tagging)
             expect(episode.getTags()).toEqual(['mine', 'tropical'])
         });
 
@@ -550,16 +551,9 @@ describe('services', function() {
                 episode,
                 schema.getColumn('diagnosis')
             );
+            expect(episode.getNumberOfItems('diagnosis')).toBe(2);
             episode.addItem(item);
             expect(episode.getNumberOfItems('diagnosis')).toBe(3);
-            expect(episode.getItem('diagnosis', 2).id).toBe(104);
-        });
-
-        it('should be able to remove an item', function() {
-            var item = episode.getItem('diagnosis', 0);
-            episode.removeItem(item);
-            expect(episode.getNumberOfItems('diagnosis')).toBe(1);
-            expect(episode.getItem('diagnosis', 0).id).toBe(103);
         });
 
         it('Should be able to produce a copy of attributes', function () {
@@ -640,7 +634,7 @@ describe('services', function() {
                 Item = $injector.get('Item');
             });
 
-            item = new Item(episodeData.demographics[0], mockEpisode, columns.default[0]);
+            item = new Item(episodeData.demographics[0], mockEpisode, columns.fields.demographics);
         });
 
         it('should have correct attributes', function() {
@@ -691,7 +685,7 @@ describe('services', function() {
                     };
                     item = new Item(episodeData.demographics[0],
                                     mockEpisode,
-                                    columns.default[0]);
+                                    columns.fields.demographics);
                     $httpBackend.whenPUT('/demographics/101/')
                         .respond(attrsWithJsonDate);
                 });
@@ -716,7 +710,7 @@ describe('services', function() {
 
                 beforeEach(function() {
                     attrs = {id: 104, condition: 'Ebola', provisional: false};
-                    item = new Item({}, mockEpisode, columns.default[1]);
+                    item = new Item({}, mockEpisode, columns.fields.diagnosis);
                     $httpBackend.whenPOST('/diagnosis/').respond(attrs);
                 });
 
@@ -744,7 +738,7 @@ describe('services', function() {
 
             describe('deleting item', function() {
                 beforeEach(function() {
-                    item = new Item(episodeData.diagnosis[1], mockEpisode, columns.default[1]);
+                    item = new Item(episodeData.diagnosis[1], mockEpisode, columns.fields.diagnosis);
                     $httpBackend.whenDELETE('/diagnosis/103/').respond();
                 });
 
@@ -846,20 +840,6 @@ describe('services', function() {
                 $httpBackend   = $injector.get('$httpBackend');
                 $rootScope     = $injector.get('$rootScope');
             });
-        });
-
-        it('should fetch the options', function(){
-            var result
-
-            $httpBackend.expectGET('/userprofile/');
-            $httpBackend.whenGET('/userprofile/').respond(options);
-
-            UserProfile.then(function(r){ result = r; });
-
-            $rootScope.$apply();
-            $httpBackend.flush();
-
-            expect(result).toEqual(options);
         });
 
         it('should alert if the HTTP request errors', function(){
