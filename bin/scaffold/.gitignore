@@ -1,0 +1,7 @@
+*~
+*.sqlite
+*.pyc
+static/*
+.coverage
+htmlcov
+libpeerconnection.log

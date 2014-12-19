@@ -1,7 +1,16 @@
+
+
+## Starting a new OPAL project
+
+1. Create a virtualenv 
+2. Install OPAL
+3. run opal-admin.py startproject name
+4. Step 4 is complex and hard to generalise
+
 # Your implementation
 
 
-Your implementation should be a Django project that includes OPAL as a Django app.
+Your implementation is a Django project with some extras. 
 
 ## OPAL settings
 
