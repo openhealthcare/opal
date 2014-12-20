@@ -93,7 +93,7 @@ class Patient(models.Model):
 
     def get_active_episode(self):
         for episode in self.episode_set.order_by('id').reverse():
-            if episode.is_active():
+            if episode.active:
                 return episode
         return None
 
@@ -140,13 +140,6 @@ class Episode(UpdatesFromDictMixin, models.Model):
                                      self.date_of_admission)
         except models.ObjectDoesNotExist:
             return self.date_of_admission
-
-    def is_active(self):
-        # TODO Depreciate this.
-        #
-        # This is only here for API compatability.
-        # Don't use me!
-        return self.active
 
     def set_tag_names(self, tag_names, user):
         """
