@@ -373,19 +373,19 @@ class PatientSubrecord(Subrecord):
 
 
 class EpisodeSubrecord(Subrecord):
-    episode = models.ForeignKey(Episode, null=True)  # TODO make null=False
+    episode = models.ForeignKey(Episode, null=False)
 
     class Meta:
         abstract = True
 
-        
+
 class Tagging(models.Model):
     _is_singleton = True
     _title = 'Teams'
 
     team = models.ForeignKey(Team, blank=True, null=True)
     user = models.ForeignKey(auth.models.User, null=True, blank=True)
-    episode = models.ForeignKey(Episode, null=True) # TODO make null=False
+    episode = models.ForeignKey(Episode, null=False)
 
     def __unicode__(self):
         if self.user is not None:
