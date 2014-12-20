@@ -1,10 +1,11 @@
 angular.module('opal.controllers').controller(
     'EditItemCtrl', function($scope, $cookieStore, $timeout,
-                             $modalInstance, $modal,
+                             $modalInstance, $modal, $q,
                              ngProgressLite,
                              profile, item, options, episode) {
 
         $scope.profile = profile;
+        $scope._episode = episode;
         $scope.episode = episode.makeCopy();
         // Some fields should only be shown for certain categories.
         // Make that category available to the template.
@@ -74,7 +75,11 @@ angular.module('opal.controllers').controller(
 	    $scope.save = function(result) {
             ngProgressLite.set(0);
             ngProgressLite.start();
-		    item.save($scope.editing).then(function() {
+            to_save = [item.save($scope.editing)];
+            if(!angular.equals($scope._episode.makeCopy(), $scope.episode)){
+                to_save.push($scope._episode.save($scope.episode));
+            }
+            $q.all(to_save).then(function() {
                 ngProgressLite.done();
 			    $modalInstance.close(result);
 		    });
