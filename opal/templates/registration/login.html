@@ -8,14 +8,13 @@
 
       <div class="panel-body">    
         {% if form.errors %}
-        <p>Your username and password didn't match. Please try again.</p>
+          <p>Your username and password didn't match. Please try again.</p>
         {% endif %}
 
         <form method="post" action="{% url 'login' %}" class="form-horizontal">
 	      {% csrf_token %}
 	      <div class="form-group">
-		    <label class="control-label col-sm-3">{{ form.username.label_tag }}</label>
-		    <div class="col-sm-8">
+		    <div class="col-sm-12">
               <input type="text" id="username" name="username"  placeholder="Username" 
                      autocomplete="off"
                      class="form-control"
@@ -25,15 +24,15 @@
           </div>
 
           <div class="form-group">
-            <label class="control-label col-sm-3">{{ form.password.label_tag }}</label>
-		    <div class="col-sm-8">
+
+		    <div class="col-sm-12">
               <input type="password" name="password" id="password" placeholder="Password" class="form-control">
 		    </div>
           </div>
 
           <div class="form-group">
-            <div class="col-sm-11">
-	          <button type="submit" class="btn btn-warning pull-right">Sign in</button>
+            <div class="col-sm-12">
+	          <button type="submit" class="btn btn-lg btn-warning pull-right">Sign in</button>
             </div>
           </div>
 
