@@ -229,11 +229,6 @@ class Episode(UpdatesFromDictMixin, models.Model):
 
         return d
 
-    def update_from_location_dict(self, location_data, user):
-        # TODO Completely depreciate this.
-        location = self.location_set.get()
-        location.update_from_dict(location_data, user)
-
 
 class ContactNumber(models.Model):
     name = models.CharField(max_length=255)
