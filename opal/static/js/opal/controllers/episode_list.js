@@ -353,7 +353,7 @@ angular.module('opal.controllers').controller(
                 episode[name] = [];
             }
             episode[name].push(item);
-            _openEditItemModal(item, name, episode);
+            return _openEditItemModal(item, name, episode);
         }
 
         $scope.editNamedItem = function(episode, name, iix) {
@@ -365,7 +365,7 @@ angular.module('opal.controllers').controller(
                 episode[name][iix] = item;
             }
 
-            _openEditItemModal(item, name, episode);
+            return _openEditItemModal(item, name, episode);
         }
 
 	    $scope.editItem = function(rix, cix, iix) {
@@ -385,7 +385,7 @@ angular.module('opal.controllers').controller(
 		    };
 
 		    $scope.selectItem(rix, cix, iix);
-            _openEditItemModal(item, columnName, episode);
+            return _openEditItemModal(item, columnName, episode);
 	    };
 
 	    $scope.deleteItem = function(rix, cix, iix) {

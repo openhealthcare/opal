@@ -353,20 +353,6 @@ describe('controllers', function() {
                 expect($scope.state).toBe('normal');
             });
 
-            it('should add a new item if result is "save-and-add-another"', function() {
-                var deferred;
-
-                deferred = $q.defer();
-                spyOn($modal, 'open').andReturn({result: deferred.promise});
-                
-                $scope.editItem(0, 0, 0);
-
-                spyOn($scope, 'editItem');
-                deferred.resolve('save-and-add-another');
-                $rootScope.$apply();
-
-                expect($scope.editItem).toHaveBeenCalledWith(0, 0, 1);
-            });
 
             describe('for a readonly user', function(){
                 beforeEach(function(){
@@ -1122,11 +1108,6 @@ describe('controllers', function() {
             it('should ask the server for results', function(){
                 $httpBackend.when('POST', "/search/extract/").respond(patientData.episodes);
                 $scope.search();
-                // TODO: Reimplement these?
-                // expect($scope.state).toBe('pending');
-                // $httpBackend.flush()
-                // expect($scope.results).toEqual(patientData.episodes);
-                // expect($scope.state).toBe('normal');
             });
         });
 
