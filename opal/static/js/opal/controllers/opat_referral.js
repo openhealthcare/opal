@@ -3,7 +3,7 @@
 // 
 controllers.controller(
     'OPATReferralCtrl',
-    function($scope, $modalInstance, $modal, $rootScope,
+    function($scope, $modalInstance, $modal, $rootScope, $q,
              schema, options,
              Episode){
         
@@ -28,6 +28,7 @@ controllers.controller(
             teams.opat = true;
             teams.opat_referrals = true;
             location.category = 'OPAT';
+            location.opat_referral = moment();
 
             //
             // Pre fill some tests:
@@ -35,17 +36,16 @@ controllers.controller(
             var mrsa = episode.newItem('microbiology_test');
             var vte = episode.newItem('microbiology_test');
 
-            // TODO - these are promises - the API is nicer than this !
-            episode.tagging[0].save(teams).then(function(){
-                episode.location[0].save(location).then(function(){
-                    mrsa.save({test: 'MRSA PCR'}).then(function(mrsa_test){
-                        vte.save({test: 'VTE Assessment'}).then(function(){
-                            episode.active = true;
-                            $modalInstance.close(episode);
-                        });
-                    });
-                })
+            $q.all([
+                episode.tagging[0].save(teams),
+                episode.location[0].save(location),
+                mrsa.save({test: 'MRSA PCR'}),
+                vte.save({test: 'VTE Assessment'})
+            ]).then(function(){
+                episode.active = true;
+                $modalInstance.close(episode);
             });
+                        
         };
 
         // 
