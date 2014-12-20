@@ -512,7 +512,6 @@ for name in model_names:
     option_models[name] = type(*lookup_list(name, module='opal.models'))
 
 
-# TODO
 @receiver(models.signals.post_save, sender=Patient)
 def create_patient_singletons(sender, **kwargs):
     if kwargs['created']:
