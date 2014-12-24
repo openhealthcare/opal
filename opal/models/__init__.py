@@ -515,6 +515,9 @@ class Macro(models.Model):
     title    = models.CharField(max_length=200, help_text=HELP_TITLE)
     expanded = models.TextField(help_text=HELP_EXPANDED)
 
+    def __unicode__(self):
+        return self.title
+    
     @classmethod
     def to_dict(klass):
         """
