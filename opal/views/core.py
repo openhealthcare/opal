@@ -580,6 +580,8 @@ class OptionsView(View):
         data['tag_hierarchy'] = tag_hierarchy
         data['tag_display'] = tag_display
 
+        data['macros'] = models.Macro.to_dict()
+
         return _build_json_response(data)
 
 

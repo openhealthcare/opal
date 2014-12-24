@@ -37,7 +37,9 @@
 
 	<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/typeahead.js" %}"></script>
 	<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/typeahead.tpl.js" %}"></script>
-
+	<script type="text/javascript" src="{% static "js/bower_components/ment.io/dist/mentio.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/bower_components/ment.io/dist/templates.js" %}"></script>
+    
 
 	<script type="text/javascript" src="{% static "js/jquery-plugins/idle-timer.js" %}"></script>
 	<script type="text/javascript" src="{% static "js/jquery-plugins/jquery.stickytableheaders.js" %}"></script>
@@ -100,6 +102,8 @@
     <script type="text/javascript" src="{% static "js/opal/controllers/copy_to_category.js" %}"></script>
     <script type="text/javascript" src="{% static "js/opal/controllers/opat_referral.js" %}"></script>
     <script type="text/javascript" src="{% static "js/opal/controllers/opat_discharge.js" %}"></script>
+
+
     {% plugin_javascripts 'opal.controllers' %}
 
     {% block angularapp %}

@@ -5,7 +5,8 @@ var app = OPAL.module('opal', [
 	'opal.services',
 	'opal.directives',
 	'opal.controllers',
-    'ui.bootstrap'
+    'ui.bootstrap',
+    'mentio'
 ]);
 app.run(['$rootScope', 'ngProgressLite', function($rootScope, ngProgressLite) {
     // When route started to change.

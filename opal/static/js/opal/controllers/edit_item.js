@@ -31,6 +31,11 @@ angular.module('opal.controllers').controller(
 		    };
 	    };
 
+        $scope.macros = options.macros;
+        $scope.select_macro = function(item){
+            return item.expanded;
+        };
+
         // TODO - don't hardcode this
 	    if (item.columnName == 'microbiology_test' || item.columnName == 'lab_test' || item.columnName == 'investigation') {
 		    $scope.microbiology_test_list = [];

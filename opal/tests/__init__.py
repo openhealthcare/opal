@@ -9,19 +9,15 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models as djangomodels
 from django.test import TestCase
 
-from opal.models import Patient, Episode, EpisodeSubrecord, UpdatesFromDictMixin
+from opal.models import (Patient, Episode, EpisodeSubrecord,
+                         UpdatesFromDictMixin, Macro)
 
-class UpdatesFromDictMixinTest(TestCase):
-    class TestDiagnosis(UpdatesFromDictMixin, djangomodels.Model):
-        condition = djangomodels.CharField(max_length=255, blank=True, null=True)
-        provisional = djangomodels.BooleanField()
-        details = djangomodels.CharField(max_length=255, blank=True)
-        date_of_diagnosis = djangomodels.DateField(blank=True, null=True)
+from updates_from_dict import *
+from macro import *
 
-    def test_get_fieldnames_to_serialise(self):
-        names = self.TestDiagnosis._get_fieldnames_to_serialize()
-        expected = ['id', 'condition', 'provisional', 'details', 'date_of_diagnosis']
-        self.assertEqual(expected, names)
+"""
+Models
+"""
 
 
 class PatientTest(TestCase):
@@ -153,7 +149,9 @@ class EpisodeDetailViewTest(TestCase):
         episode = self.patient.episode_set.all()[0]
         self.assertEqual(episode.discharge_date, today)
 
-
+"""
+Views
+"""
 class ListSchemaViewTest(TestCase):
     fixtures = ['patients_users', 'patients_options', 'patients_records']
 
@@ -169,3 +167,4 @@ class ListSchemaViewTest(TestCase):
 
     def test_list_schema_view(self):
         self.assertStatusCode('/schema/list/', 200)
+

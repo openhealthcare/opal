@@ -503,6 +503,25 @@ class CommunityNurse(LocatedModel):
     tel2 = models.CharField(blank=True, null=True, max_length=50)
 
 
+class Macro(models.Model):
+    """
+    A Macro is a user-expandable text sequence that allows us to
+    enter "github-style" #foo text blocks from an admin defined
+    list and then have them expand to cover frequent entries.
+    """
+    HELP_TITLE = "This is the text that will display in the dropdown. No spaces!"
+    HELP_EXPANDED = "This is thte text that it will expand to."
+    
+    title    = models.CharField(max_length=200, help_text=HELP_TITLE)
+    expanded = models.TextField(help_text=HELP_EXPANDED)
+
+    @classmethod
+    def to_dict(klass):
+        """
+        Return a serialised version of our Macros ready to be JSON'd
+        """
+        return [dict(expanded=m.expanded, label=m.title)
+                for m in klass.objects.all()]
 
 option_models = {}
 
