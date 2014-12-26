@@ -1,0 +1,9 @@
+<div class="form-group">
+  <label class="control-label col-sm-3">{{ label}}</label>
+  <div class="col-sm-8">
+    <select class="form-control" ng-model="{{ model }}">
+      <option value="">---------</option>
+      <option ng-repeat="i in {{ lookuplist }}">[[ i ]]</option>
+    </select>
+  </div>
+</div>
