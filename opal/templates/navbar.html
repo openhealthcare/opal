@@ -31,12 +31,16 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav navbar-right">
         {% if request.user.is_authenticated %}
-	    <li><a href="/#">
+	    <li ng-class="{active: $location.path().indexOf('/list/') == 0}">
+          <a href="/#">
             <i class="fa fa-table"></i> Lists
-        </a></li>
-	    <li><a href="/#/search">
+          </a>
+        </li>
+	    <li ng-class="{active: $location.path().indexOf('/search') == 0}">
+          <a href="/#/search">
             <i class="fa fa-search"></i> Search
-        </a></li>
+          </a>
+        </li>
           {% plugin_menuitems %}
         <li  ng-class="{active: $location.path().indexOf('/discharge') == 0}">
           <a href="/#/discharge"><i class="fa fa-history"></i> Discharged</a>
