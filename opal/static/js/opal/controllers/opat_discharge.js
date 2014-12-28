@@ -83,7 +83,7 @@ controllers.controller(
                 function(){
                     var tagging = $scope.episode.tagging[0].makeCopy();
                     tagging.opat_referrals = false;
-                    tagging.opat = false;
+                    tagging.opat_followup = true;
                     
                     $scope.episode.tagging[0].save(tagging).then(function(){
                         // Doesn't auto update for OPAT as TAGGING is not in the default schema.
