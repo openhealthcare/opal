@@ -11,7 +11,8 @@ controllers.controller(
 
         $scope.episode = episode;
         $scope.meta = {
-            accepted: null
+            accepted: null,
+            rejection: {date: moment().format('YYYY-MM-DD')}
         };
 
         // Put all of our lookuplists in scope.
@@ -72,14 +73,13 @@ controllers.controller(
         $scope.reject = function(){
             var reason = $scope.meta.reason;
             var decider = $scope.meta.decider;
-            var date = moment().format('YYYY-MM-DD');
             var meta = $scope.get_meta();
             var opatmetadata = meta.makeCopy();
             opatmetadata.review_date = $scope.meta.review_date;
             $scope.ensure_tagging(episode);
             
             rejection = $scope.episode.newItem('opat_rejection', {column: opat_rejection});
-            rejection.save({decided_by: decider, reason: reason, date: date}).then(
+            rejection.save($scope.meta.rejection).then(
                 function(){
                     var tagging = $scope.episode.tagging[0].makeCopy();
                     tagging.opat_referrals = false;

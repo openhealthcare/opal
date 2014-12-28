@@ -1,3 +1,5 @@
+{% load forms %} 
+
 <div class="modal-header">
   <button type="button" class="close" ng-click="cancel()">×</button>
   <h3>OPAT Next Stage</h3>
@@ -26,7 +28,7 @@
       <div class="form-group">
         <label class="control-label col-sm-3">Decided by</label>
         <div class="col-sm-8">
-          <select class="form-control" ng-model="meta.decider">
+          <select class="form-control" ng-model="meta.rejection.decided_by">
             <option>OPAT Team</option>
             <option>Referring Team</option>
             <option>Patient</option>
@@ -35,21 +37,21 @@
         </div>
       </div>
 
-      <div class="form-group">
-        <label class="control-label col-sm-3">Reason for non-acceptance</label>
-        <div class="col-sm-8">
-          <select class="form-control" ng-model="meta.reason">
-            <option>Patient choice</option>
-            <option>Oral option available</option>          
-            <option>No antimicrobials needed</option>
-            <option>Patient suitability</option>
-            <option>Not medically fit for discharge</option>
-            <option>Lack of social support</option>
-          </select>
-        </div>
-      </div>
-
-    </form>
+      <table>
+        <tr>
+          <td>
+            {% checkbox width=4 label="Patient Choice" model="meta.rejection.patient_choice" %}
+            {% checkbox width=4 label="Oral option available" model="meta.rejection.oral_available" %}
+            {% checkbox width=4 label="No antimicrobials needed" model="meta.rejection.not_needed" %}
+          </td>
+          <td>
+            {% checkbox width=4 label="Patient suitability" model="meta.rejection.patient_suitability" %}
+            {% checkbox width=4 label="Not medically fit for discharge" model="meta.rejection.not_fit_for_discharge" %}
+            {% checkbox width=4 label="Lack of social support" model="meta.rejection.no_social_support" %}
+          </td>
+        </tr>
+      </table>
+      {% input label="Other Reason" model="meta.rejection.reason" %}
     <center>
       <button class="btn btn-danger btn-lg" 
               ng-click="reject()">Reject</button>
