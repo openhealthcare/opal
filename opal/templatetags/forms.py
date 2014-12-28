@@ -39,6 +39,13 @@ def select(*args, **kwargs):
 def textarea(*args, **kwargs):
     return {
         'label': kwargs.pop('label', None),
+        'model': kwargs.pop('model', None),    
+    }
+
+@register.inclusion_tag('_helpers/checkbox.html')
+def checkbox(*args, **kwargs):
+    return {
+        'label': kwargs.pop('label', None),
         'model': kwargs.pop('model', None),
-        
+        'width': kwargs.pop('width', 8)
     }
