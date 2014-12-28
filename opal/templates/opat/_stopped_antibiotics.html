@@ -1,26 +1,16 @@
-      <div class="form-group">
-        <label class="control-label col-sm-3">Reason for stopping</label>
-        <div class="col-sm-8">
-          <select class="form-control" ng-model="meta.reason">
-            <option ng-show="meta.oral">Planned switch to Oral</option>
-            <option>Completed Antibiotics</option>
-            <option>Unplanned Stop</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group" ng-show="meta.reason == 'Unplanned Stop'">
-        <label class="control-label col-sm-3">Unplanned Stop Reason</label>
-        <div class="col-sm-8">
-	      <input class="form-control" type="text"
-                 ng-model="meta.unplanned_stop"
-                 ng-options="c for c in unplanned_stop_list"
-                 bs-typeahead
-                 >
-        </div>
-      </div>
-      <div class="form-group">
-        <label class="control-label col-sm-3">Details</label>
-        <div class="col-sm-8">
-	      <input class="form-control" ng-model="editing.details">
-        </div>
-      </div>
+{% load forms %}
+
+<div class="form-group">
+  <label class="control-label col-sm-3">Reason for stopping</label>
+  <div class="col-sm-8">
+    <select class="form-control" ng-model="meta.reason">
+      <option ng-show="meta.oral">Planned switch to Oral</option>
+      <option>Completed Antibiotics</option>
+      <option>Unplanned Stop</option>
+    </select>
+  </div>
+</div>
+
+{% select show="meta.reason=='Unplanned Stop'" label="Unplanned Stop Reason" model="meta.unplanned_stop" lookuplist="unplanned_stop_list" %}
+
+{% input label="Details" model="editing.details" %}
