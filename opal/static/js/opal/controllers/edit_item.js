@@ -5,7 +5,7 @@ angular.module('opal.controllers').controller(
                              profile, item, options, episode) {
 
         $scope.profile = profile;
-        $scope._episode = episode;
+        $scope.the_episode = episode;
         $scope.episode = episode.makeCopy();
         // Some fields should only be shown for certain categories.
         // Make that category available to the template.
@@ -81,8 +81,8 @@ angular.module('opal.controllers').controller(
             ngProgressLite.set(0);
             ngProgressLite.start();
             to_save = [item.save($scope.editing)];
-            if(!angular.equals($scope._episode.makeCopy(), $scope.episode)){
-                to_save.push($scope._episode.save($scope.episode));
+            if(!angular.equals($scope.the_episode.makeCopy(), $scope.episode)){
+                to_save.push($scope.the_episode.save($scope.episode));
             }
             $q.all(to_save).then(function() {
                 ngProgressLite.done();
