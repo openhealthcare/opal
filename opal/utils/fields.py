@@ -25,6 +25,8 @@ class ForeignKeyOrFreeText(property):
         ft_field.contribute_to_class(cls, self.ft_field_name)
 
     def __set__(self, inst, val):
+        if val is None:
+            return
         # This is totally not the right place to look up synonyms...
         vals = []
         content_type = ContentType.objects.get_for_model(self.foreign_model)

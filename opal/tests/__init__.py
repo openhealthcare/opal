@@ -15,6 +15,7 @@ from opal.models import (Patient, Episode, EpisodeSubrecord,
 from updates_from_dict import *
 from macro import *
 from templatetags_forms import *
+from utils_fields import *
 
 """
 Models
