@@ -140,10 +140,9 @@ class AddEpisodeWithoutTeamsTemplateView(LoginRequiredMixin, TemplateView):
         return context
 
 
-
-
-
 class IndexView(LoginRequiredMixin, TemplateView):
+    template_name = 'opal.html'
+
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
         context['brand_name'] = getattr(settings, 'OPAL_BRAND_NAME', 'OPAL')
@@ -152,10 +151,14 @@ class IndexView(LoginRequiredMixin, TemplateView):
             context['extra_application'] = settings.OPAL_EXTRA_APPLICATION
         return context
 
-    template_name = 'opal.html'
 
 class ModalTemplateView(LoginRequiredMixin, TemplateView):
+    """
+    This view renders the form/modal template for our field. 
 
+    These are generated for subrecords, but can also be used
+    by plugins for other mdoels.
+    """
     def dispatch(self, *a, **kw):
         """
         Set the context for what this modal is for so
