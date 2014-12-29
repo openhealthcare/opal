@@ -1,11 +1,17 @@
 var OPAL = {
     module: function(namespace, dependencies){
+        dependencies.push('angular-growl');
+        dependencies.push('mentio');
         var mod = angular.module(namespace, dependencies);
         // See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags
         mod.config(function($interpolateProvider) {
 	        $interpolateProvider.startSymbol('[[');
 	        $interpolateProvider.endSymbol(']]');
         });
+
+        mod.config(['growlProvider', function(growlProvider) {
+            growlProvider.globalTimeToLive(5000);
+        }]);
 
         // IE8 compatability mode! 
         mod.config(function($sceProvider){$sceProvider.enabled(false)});

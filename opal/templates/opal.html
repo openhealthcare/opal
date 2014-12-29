@@ -39,6 +39,7 @@
 	<script type="text/javascript" src="{% static "js/angular-strap-2.0.3/modules/typeahead.tpl.js" %}"></script>
 	<script type="text/javascript" src="{% static "js/bower_components/ment.io/dist/mentio.js" %}"></script>
 	<script type="text/javascript" src="{% static "js/bower_components/ment.io/dist/templates.js" %}"></script>
+	<script type="text/javascript" src="{% static "js/bower_components/angular-growl-v2/build/angular-growl.js" %}"></script>
     
 
 	<script type="text/javascript" src="{% static "js/jquery-plugins/idle-timer.js" %}"></script>
@@ -118,6 +119,7 @@
 	<link href="{% static "css/bootstrap-datepicker.css" %}" rel="stylesheet" media="all">
 	<link href="{% static "css/font-awesome/css/font-awesome.css" %}" rel="stylesheet" media="all">
     <link href="{% static "css/ngprogress-lite.css" %}" rel="stylesheet" media="screen">
+	<link href="{% static "js/bower_components/angular-growl-v2/build/angular-growl.css" %}" rel="stylesheet" media="screen">
 	<link href="{% static "css/opal.css" %}" rel="stylesheet" media="all">
     <link href="{% static "css/print.css" %}" rel="stylesheet" media="print">
     <link href="{% static "css/screen.css" %}" rel="stylesheet" media="screen">
@@ -125,11 +127,12 @@
     {% if OPAL_EXTRA_APPLICATION %}{% include OPAL_EXTRA_APPLICATION %}{% endif %}
 
   </head>
-  <body>
+  <body>    
     {% if OPAL_EXTRA_HEADER %}{% include OPAL_EXTRA_HEADER %}{% endif %}
     {% block navbar %}{% include 'navbar.html' %}{% endblock %}
 	<div ng-view autoscroll="true"></div>
     {% include 'keyboard_shortcuts_modal.html' %}
     {% include 'logout_modal.html' %}
+    <div growl></div>
   </body>
 </html>

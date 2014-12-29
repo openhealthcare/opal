@@ -154,3 +154,8 @@ input.ng-invalid {
 }
 
 .dropdown-menu { z-index: 1060; }
+
+.growl-container.growl-fixed.top-right {
+  top: 54px;
+  right: 2px;
+}

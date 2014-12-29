@@ -4,6 +4,7 @@
 controllers.controller(
     'OPATReferralCtrl',
     function($scope, $modalInstance, $modal, $rootScope, $q,
+             growl,
              schema, options,
              Episode){
         
@@ -25,11 +26,21 @@ controllers.controller(
             }
             var teams = episode.tagging[0].makeCopy();
             var location = episode.location[0].makeCopy();
+            
+            // 
+            // See https://github.com/openhealthcare/elcid/issues/484 -
+            //
+            // Becuase we have a referrals situation, we have to flush teams.
+            //
+            _.each(_.keys(teams), function(team){
+                if(teams[team]){ teams[team] = false };
+            })
+                
             teams.opat = true;
             teams.opat_referrals = true;
             location.category = 'OPAT';
             location.opat_referral = moment();
-
+            
             //
             // Pre fill some tests:
             //
@@ -43,9 +54,9 @@ controllers.controller(
                 vte.save({test: 'VTE Assessment'})
             ]).then(function(){
                 episode.active = true;
+                growl.success("Added " + episode.demographics[0].name)
                 $modalInstance.close(episode);
-            });
-                        
+            });                        
         };
 
         // 
