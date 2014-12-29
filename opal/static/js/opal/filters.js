@@ -91,7 +91,20 @@ filters.filter('age', function(){
 
 filters.filter('upper', function(){
     return function(input){
-        if(!input){ return null }
+        if(!input){ return null };
         return input.toUpperCase();
     }
 });
+
+filters.filter('totalDays', function(){
+    return function(item){
+        if(!item.start_date){ return null };
+        var start = moment(item.start_date);
+        if(item.end_date){
+            return moment(item.end_date).diff(start, 'days') + 1;
+        }else{
+            return moment().diff(start, 'days') + 1;
+        }
+    }    
+});
+
