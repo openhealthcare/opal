@@ -1,6 +1,5 @@
 *.sqlite
 *.pyc
-static/*
 /opal/local_settings.py
 .coverage
 htmlcov
@@ -9,6 +8,5 @@ old
 dist
 opal.egg-info
 coverage-js
-bower_components
 *~
 *#
