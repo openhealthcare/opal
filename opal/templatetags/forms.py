@@ -21,19 +21,12 @@ def _visibility_clauses(show, hide):
             visibility = show
     return visibility
 
-@register.inclusion_tag('_helpers/input.html')
-def input(*args, **kwargs):
-    """
-    Render a text input
-
-    Kwargs: 
-    - hide : Condition to hide
-    - show : Condition to show
-    - model: Angular model
-    - label: User visible label
-    - lookuplist: Name of the lookuplist
-    """
-    model = kwargs.pop('model')
+def _input(*args, **kwargs):
+    try:
+        model = kwargs.pop('model')
+    except:
+        print args, kwargs
+        raise
     label = kwargs.pop('label')
     lookuplist = kwargs.pop('lookuplist', None)
 
@@ -47,6 +40,24 @@ def input(*args, **kwargs):
         'lookuplist': lookuplist,
         'visibility': visibility
     }
+
+@register.inclusion_tag('_helpers/input.html')
+def input(*args, **kwargs):
+    """
+    Render a text input
+
+    Kwargs: 
+    - hide : Condition to hide
+    - show : Condition to show
+    - model: Angular model
+    - label: User visible label
+    - lookuplist: Name of the lookuplist
+    """
+    return _input(*args, **kwargs)
+
+@register.inclusion_tag('_helpers/input.html')
+def datepicker(*args, **kwargs):
+    return _input(*[a for a in args] + ["bs-datepicker"], **kwargs)
 
 @register.inclusion_tag('_helpers/select.html')
 def select(*args, **kwargs):
