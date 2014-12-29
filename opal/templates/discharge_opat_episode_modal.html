@@ -119,7 +119,8 @@
     <p>The patient will go back to OPAT Current</p>
 
     <form class="form-horizontal">
-      {% include 'opat/_stopped_antibiotics.html' %}
+      {% select label="Reason for return to IVs" model="meta.reason" lookuplist="['Intolarance of agents', 'Progression of infection', 'New infection', 'Other']" %}
+      {% input label="Details" model="editing.details" %}
     </form>
 
     <center>

@@ -63,6 +63,7 @@ controllers.controller(
             tagging.opat = true;
 
             $scope.episode.tagging[0].save(tagging).then(function(){
+                growl.success('Accepted: ' + episode.demographics[0].name)
                 $modalInstance.close('moved');
             });
         };
@@ -90,6 +91,7 @@ controllers.controller(
                         // Doesn't auto update for OPAT as TAGGING is not in the default schema.
                         $scope.episode.tagging[0] = tagging; 
                         meta.save(opatmetadata).then(function(){
+                            growl.success('Rejected: ' + episode.demographics[0].name)
                             $modalInstance.close('discharged');
                         });                        
                     });                    
@@ -116,6 +118,7 @@ controllers.controller(
             // Now let's save
             meta.save(updatedmeta).then(function(){
                 $scope.episode.tagging[0].save(tagging).then(function(){
+                    growl.success('Switched to Oral: ' + episode.demographics[0].name)
                     $modalInstance.close('discharged');
                 });
             });
@@ -169,6 +172,7 @@ controllers.controller(
             // Now let's save
             meta.save(updatedmeta).then(function(){
                 $scope.episode.tagging[0].save(tagging).then(function(){
+                    growl.success('Moved back to IVs: ' + episode.demographics[0].name)
                     $modalInstance.close('discharged');
                 });
             });
