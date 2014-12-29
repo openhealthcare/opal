@@ -4,6 +4,7 @@
 controllers.controller(
     'OPATDischargeCtrl',
     function($scope, $modalInstance, $rootScope,
+             growl,
              Item,
              options, episode, tags){
 
@@ -120,7 +121,9 @@ controllers.controller(
             });
         }
 
-        // A patient has 
+        // 
+        // A patient has completed their OPAT therapy.
+        // 
         $scope.completed_therapy = function(){
             var meta = $scope.get_meta();
             $scope.ensure_tagging($scope.episode);
@@ -142,6 +145,7 @@ controllers.controller(
             // Now let's save
             meta.save(updatedmeta).then(function(){
                 $scope.episode.tagging[0].save(tagging).then(function(){
+                    growl.success('Completed treatment: ' + episode.demographics[0].name)
                     $modalInstance.close('discharged');
                 });
             });            
