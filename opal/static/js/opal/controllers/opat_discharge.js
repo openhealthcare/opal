@@ -34,18 +34,12 @@ controllers.controller(
             return
         };
 
+        // 
+        // This method made more sense when we were storing metadata on a
+        // singleton. now it just returns a new metadata instance. 
+        // 
         $scope.get_meta = function(){
-            var meta;
-            if(!$scope.episode.opat_meta || $scope.episode.opat_meta.length < 1){
-                meta = $scope.episode.newItem('opat_meta', {column: $rootScope.fields.opat_meta});
-            }else{
-                meta = $scope.episode.opat_meta[0];
-                if(!meta.makeCopy){
-                    meta = new Item(meta, $scope.episode, $rootScope.fields.opat_meta);
-                    $scope.episode.opat_meta[0] = meta;
-                }
-            }
-            return meta;
+            return $scope.episode.newItem('opat_meta', {column: $rootScope.fields.opat_meta});
         }
         
         // 
@@ -140,6 +134,7 @@ controllers.controller(
             updatedmeta.review_date = $scope.meta.review_date;
             updatedmeta.treatment_outcome = $scope.meta.outcome;
             updatedmeta.deceased = $scope.meta.died;
+            updatedmeta.cause_of_death = $scope.meta.cause_of_death;
             updatedmeta.death_category = $scope.meta.death_category;
             updatedmeta.readmitted = $scope.meta.readmitted;
             updatedmeta.treatment_outcome = $scope.meta.outcome;
