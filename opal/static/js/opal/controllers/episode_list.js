@@ -314,9 +314,11 @@ angular.module('opal.controllers').controller(
                 return null;
             };
             $scope.state = 'modal';
-
+            var template_url = '/templates/modals/' + columnName + '.html/';
+            template_url += $scope.currentTag + '/' + $scope.currentSubTag;
+            
             modal = $modal.open({
-                templateUrl: '/templates/modals/' + columnName + '.html/',
+                templateUrl: template_url,
                 controller: 'EditItemCtrl',
                 resolve: {
                     item: function() { return item; },

@@ -50,6 +50,44 @@ def _get_column_context(schema, **kwargs):
 
     return context
 
+
+class ModalTemplateView(LoginRequiredMixin, TemplateView):
+    """
+    This view renders the form/modal template for our field. 
+
+    These are generated for subrecords, but can also be used
+    by plugins for other mdoels.
+    """
+    def dispatch(self, *a, **kw):
+        """
+        Set the context for what this modal is for so
+        it can be accessed by all subsequent methods
+        """
+        self.column = kw['model']
+        self.tag = kw.get('tag', None)
+        self.subtag = kw.get('sub', None)
+        self.name = camelcase_to_underscore(self.column.__name__)
+        return super(ModalTemplateView, self).dispatch(*a, **kw)
+
+    def get_template_names(self):
+        templates = [self.name + '_modal.html']
+        if self.tag:
+            templates.insert(0, 'modals/{0}/{1}_modal.html'.format(
+                self.tag, self.name))
+        if self.subtag:
+            templates.insert(0, 'modals/{0}/{1}/{2}_modal.html'.format(
+                self.tag, self.subtag, self.name))
+        return templates
+
+    def get_context_data(self, **kwargs):
+        context = super(ModalTemplateView, self).get_context_data(**kwargs)
+        context['name'] = self.name
+        context['title'] = getattr(self.column, '_title', self.name.replace('_', ' ').title())
+        # pylint: disable=W0201
+        context['single'] = self.column._is_singleton
+        return context
+
+
 class SaveFilterModalView(TemplateView):
     template_name = 'save_filter_modal.html'
 
