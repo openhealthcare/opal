@@ -43,12 +43,14 @@ class EpisodeManager(models.Manager):
                       for episode in episodes]
         return serialised
 
-    def serialised(self, user, episodes):
+    def serialised(self, user, episodes, historic_tags=False):
         """
-        Return a set of serialised EPISODES. 
+        Return a set of serialised EPISODES.
+
+        If HISTORIC_TAGS is Truthy, return delted tags as well.
         """
         #        return self.serialised_legacy(user)
-        from opal.models import EpisodeSubrecord, PatientSubrecord
+        from opal.models import EpisodeSubrecord, PatientSubrecord, Tagging
 
         patient_ids = [e.patient_id for e in episodes]
         patient_subs = defaultdict(lambda: defaultdict(list))
@@ -78,6 +80,16 @@ class EpisodeManager(models.Manager):
                 d[key] = value
             d['tagging'] = e.tagging_dict(user)
             serialised.append(d)
+
+        if historic_tags:
+            # Do things here
+            episode_ids = [e.id for e in episodes]
+            historic = Tagging.historic_tags_for_episodes(episode_ids)
+            for episode in serialised:
+                if episode['id'] in historic:
+                    historic_tags = historic[episode['id']]
+                    for t in historic_tags.keys():
+                        episode['tagging'][0][t] = True
 
         return serialised
 
