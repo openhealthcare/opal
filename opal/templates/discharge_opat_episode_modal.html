@@ -11,7 +11,7 @@
     <p>Accept onto OPAT service?</p>
     <center>
       <button class="btn btn-success btn-lg" ng-click="meta.accepted = true">Accept</button>
-      <button class="btn btn-danger btn-lg"  ng-click="meta.accepted = false">Reject</button>
+      <button class="btn btn-danger btn-lg"  ng-click="click_reject()">Reject</button>
     </center>
   </div>
 
@@ -25,6 +25,7 @@
   <div ng-show="episode.tagging[0].opat_referrals == true && meta.accepted == false">
     <p>The patient will be rejected from the OPAT service.</p>
     <form class="form-horizontal">
+
       <div class="form-group">
         <label class="control-label col-sm-3">Decided by</label>
         <div class="col-sm-8">
@@ -53,6 +54,7 @@
         </tr>
       </table>
       {% input label="Other Reason" model="meta.rejection.reason" %}
+      {% datepicker label="Review Date" model="meta.review_date" %}
     </form>
     <center>
       <button class="btn btn-danger btn-lg" 

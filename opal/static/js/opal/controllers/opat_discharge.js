@@ -3,7 +3,7 @@
 //
 controllers.controller(
     'OPATDischargeCtrl',
-    function($scope, $modalInstance, $rootScope,
+    function($scope, $modalInstance, $rootScope, $q,
              growl,
              Item,
              options, episode, tags){
@@ -62,35 +62,38 @@ controllers.controller(
             });
         };
 
+        $scope.click_reject = function(){
+            $scope.meta.accepted = false;
+            $scope.meta.review_date = moment().add(3, 'M')._d;
+            return
+        }
         // 
         // The patient is rejected from the OAPT service.
         // Store some extra data.
         // 
         $scope.reject = function(){
-            var reason = $scope.meta.reason;
-            var decider = $scope.meta.decider;
             var meta = $scope.get_meta();
             var opatmetadata = meta.makeCopy();
-            opatmetadata.review_date = $scope.meta.review_date;
+            var rejection = $scope.episode.newItem('opat_rejection', {column: opat_rejection});
+            var tagging = $scope.episode.tagging[0].makeCopy();
+
             $scope.ensure_tagging(episode);
+            opatmetadata.review_date = $scope.meta.review_date;
             
-            rejection = $scope.episode.newItem('opat_rejection', {column: opat_rejection});
-            rejection.save($scope.meta.rejection).then(
-                function(){
-                    var tagging = $scope.episode.tagging[0].makeCopy();
-                    tagging.opat_referrals = false;
-                    tagging.opat_followup = true;
-                    
-                    $scope.episode.tagging[0].save(tagging).then(function(){
-                        // Doesn't auto update for OPAT as TAGGING is not in the default schema.
-                        $scope.episode.tagging[0] = tagging; 
-                        meta.save(opatmetadata).then(function(){
-                            growl.success('Rejected: ' + episode.demographics[0].name)
-                            $modalInstance.close('discharged');
-                        });                        
-                    });                    
-                }
-            )
+            tagging.opat_referrals = false;
+            tagging.opat = false;                       
+            
+            $q.all([
+                rejection.save($scope.meta.rejection),
+                $scope.episode.tagging[0].save(tagging),
+                meta.save(opatmetadata)
+            ]).then(function(){
+                // Doesn't auto update for OPAT as TAGGING is not in the default schema.
+                $scope.episode.tagging[0] = tagging; 
+                growl.success('Rejected: ' + episode.demographics[0].name)
+                $modalInstance.close('discharged');                
+            });
+
         };
 
         //
