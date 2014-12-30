@@ -1,6 +1,6 @@
 angular.module('opal.services')
     .factory('episodeVisibility', function(){
-    return function(episode, $scope, viewDischarged) {
+    return function(episode, $scope) {
 
         var location = episode.location[0];
         var demographics = episode.demographics[0];
@@ -10,7 +10,7 @@ angular.module('opal.services')
         var bed = $scope.query.bed;
 
         // Not active (no tags) - hide it.
-        if(!episode.active && $scope.currentTag != 'mine' && !viewDischarged){
+        if(!episode.active && $scope.currentTag != 'mine'){
             return false;
         }
 

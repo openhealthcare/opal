@@ -42,10 +42,6 @@
           </a>
         </li>
           {% plugin_menuitems %}
-        <li  ng-class="{active: $location.path().indexOf('/discharge') == 0}">
-          <a href="/#/discharge"><i class="fa fa-history"></i> Discharged</a>
-        </li>
-        
         {% if request.user.is_staff %}
 	    <li><a href="/admin"><i class="fa fa-cogs"></i> Admin</a></li>
         {% endif %}

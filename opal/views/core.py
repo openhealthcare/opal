@@ -250,24 +250,20 @@ def patient_search_view(request):
 @require_http_methods(['GET', 'POST'])
 def episode_list_and_create_view(request):
     if request.method == 'GET':
-        GET = request.GET
-        if 'discharged' in GET:
-            today = datetime.date.today()
-            one_week_ago = today - datetime.timedelta(days=7)
+        # GET = request.GET
+        # if 'discharged' in GET:
+        #     today = datetime.date.today()
+        #     one_week_ago = today - datetime.timedelta(days=7)
 
-            episodes = models.Episode.objects.filter(discharge_date__gte=one_week_ago)
-            episode_ids = [e.id for e in episodes]
-            historic = models.Tagging.historic_tags_for_episodes(episode_ids)
-            serialised = [episode.to_dict(request.user)
-                          for episode in episodes]
-            for episode in serialised:
-                if episode['id'] in historic:
-                    historic_tags = historic[episode['id']]
-                    for t in historic_tags.keys():
-                        episode['tagging'][0][t] = True
+        #     episodes = models.Episode.objects.filter(discharge_date__gte=one_week_ago)
+        #     serialised = models.Episode.objects.serialised(
+        #         request.user, episodes, historic_tags=True
+        #     )
+        #     serialised = [episode.to_dict(request.user)
+        #                   for episode in episodes]
 
-        else:
-            serialised = models.Episode.objects.serialised_active(request.user)
+        # else:
+        serialised = models.Episode.objects.serialised_active(request.user)
         return _build_json_response(serialised)
 
     elif request.method == 'POST':

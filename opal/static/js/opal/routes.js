@@ -11,7 +11,6 @@ app.config(
 				     episodes: function(episodesLoader) { return episodesLoader(); },
 				     options: function(Options) { return Options; },
                      profile: function(UserProfile){ return UserProfile },
-                     viewDischarged: function(){ return false },
                      episodeVisibility: function(episodeVisibility){
                          return episodeVisibility
                      }
@@ -46,32 +45,6 @@ app.config(
 				     schema: function(listSchemaLoader) { return listSchemaLoader(); },
 				     options: function(Options) { return Options; }
 			     }
-             })
-             .when('/discharge/:tag?/:subtag?', {
-                 controller: 'EpisodeListCtrl',
-                 resolve   : {
-                     schema: function(listSchemaLoader){ return listSchemaLoader() },
-                     options: function(Options){ return Options },
-                     episodes: function(dischargedEpisodesLoader){
-                         return dischargedEpisodesLoader()
-                     },
-                     episodeVisibility: function(episodeVisibility){
-                         return episodeVisibility
-                     },
-                     profile: function(UserProfile){ return UserProfile },
-                     viewDischarged: function(){ return true }
-                 },
-
-			     templateUrl: function(params){
-                     var target =  '/templates/discharge_list.html';
-                     if(params.tag){
-                         target += '/' + params.tag;
-                         if(params.subtag){
-                             target += '/' + params.subtag;
-                         }
-                     }
-                     return target
-                 }
              })
              .when('/extract', {
                  controller: 'ExtractCtrl',

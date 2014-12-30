@@ -5,7 +5,7 @@ angular.module('opal.controllers').controller(
                                 Flow, Item,
                                 Episode, schema, episodes, options,
                                 profile,
-                                episodeVisibility, viewDischarged){
+                                episodeVisibility){
 
         var version = window.version;
         $scope.state = 'normal';
@@ -22,11 +22,7 @@ angular.module('opal.controllers').controller(
 	    $scope.query = {hospital_number: '', name: '', ward: '', bed: ''};
         $scope.$location = $location;
         
-        if(viewDischarged){
-            $scope.path_base = '/discharge/';
-        }else{
-            $scope.path_base = '/list/';
-        }
+        $scope.path_base = '/list/';
 
         if(!$routeParams.tag){
             var tag =  $cookieStore.get('opal.currentTag') || _.keys(options.tag_hierarchy)[0];
@@ -59,7 +55,7 @@ angular.module('opal.controllers').controller(
             var episode_list = [];
 
             visibleEpisodes = _.filter(episodes, function(episode){
-                return episodeVisibility(episode, $scope, viewDischarged)
+                return episodeVisibility(episode, $scope)
             });
 		    visibleEpisodes.sort(compareEpisodes);
 		    return visibleEpisodes;
