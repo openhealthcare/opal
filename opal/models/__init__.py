@@ -424,14 +424,18 @@ class Tagging(models.Model):
         for d in deleted:
             data = json.loads(d.serialized_data)[0]['fields']
             if data['episode'] in episodes:
-                try:
-                    tag_name = teams[data['team']]
-                except KeyError:
+                if 'team' in data:
+                    if data['team'] in teams:
+                        tag_name = teams[data['team']]
+                    else:
+                        print 'Team has been deleted since it was serialised.'
+                        print 'We ignore these for now.'
+                        continue
+                else:
                     try:
                         tag_name = data['tag_name']
                     except KeyError:
-                        print json.dumps(data, indent=2)
-                        
+                        print json.dumps(data, indent=2)                        
                         raise exceptions.FTWLarryError("Can't find the team in this data :(")
                 
                 historic[data['episode']][tag_name] = True
