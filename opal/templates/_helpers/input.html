@@ -4,6 +4,7 @@
   <label class="control-label col-sm-3">{% if icon %}<i class="{{icon}}"></i> {% endif %}{{ label }}</label>
   <div class="col-sm-8">
 	<input class="form-control" type="text" ng-model="{{ model }}"
+           autocomplete="off"
            {% for d in directives %}{{ d }}{% endfor %}
            {% if lookuplist %}
              bs-typeahead
