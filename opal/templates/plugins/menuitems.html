@@ -1,5 +1,5 @@
 {% for item in items %}
-  <li {% if item.activepattern %}ng-class="{active: $location.path().indexOf('{{activepattern}}') == 0}"{% endif %}>
+  <li {% if item.activepattern %}ng-class="{active: $location.absUrl().indexOf('{{ item.activepattern }}') != -1}"{% endif %}>
     <a href="{{ item.href }}">
       {% if item.icon %}
         <i class="{{item.icon}}"></i>
