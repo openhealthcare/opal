@@ -89,8 +89,11 @@ controllers.controller(
                 meta.save(opatmetadata)
             ]).then(function(){
                 // Doesn't auto update for OPAT as TAGGING is not in the default schema.
-                $scope.episode.tagging[0] = tagging; 
-                growl.success('Rejected: ' + episode.demographics[0].name)
+                $scope.episode.tagging[0] = tagging;
+                var date = moment($scope.meta.review_date).format('DD/MM/YYYY')
+                var message = 'Rejected: ' + episode.demographics[0].name;
+                message += '.\n Patient will come up for OPAT review after ' + date;
+                growl.success(message);
                 $modalInstance.close('discharged');                
             });
 
