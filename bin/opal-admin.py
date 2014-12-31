@@ -63,6 +63,34 @@ def startproject(name):
 
     return
 
+
+def create_plugin():
+    """
+    The steps to create our plugin are: 
+
+    * Create a top level directory (from sys.argv)
+    * Create a setup.py
+    * Create a readme
+    * Create a license
+    * Create the raw subfiles 
+      - __init__.py with plugin subclass
+      - static directory
+      - templates directory
+    * Drop in default .gitignore
+    """
+    target_dir = sys.argv[-1]
+    root = ffs.Path(target_dir)
+    root.mkdir()
+    codename = str(root[-1]).replace('opal-', '')
+    code_root = root/codename
+    code_root.mkdir()
+    init = code_root/'__init__.py'
+    init.touch()
+    templates = code_root/'templates'
+    templates.mkdir()
+    static = code_root/'static'
+    return
+
 def main():
     name = sys.argv[-1]
     startproject(name)
