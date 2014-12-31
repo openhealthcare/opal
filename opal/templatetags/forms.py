@@ -104,7 +104,8 @@ def textarea(*args, **kwargs):
 @register.inclusion_tag('_helpers/checkbox.html')
 def checkbox(*args, **kwargs):
     return {
-        'label': kwargs.pop('label', None),
-        'model': kwargs.pop('model', None),
-        'width': kwargs.pop('width', 8)
+        'label'     : kwargs.pop('label', None),
+        'model'     : kwargs.pop('model', None),
+        'width'     : kwargs.pop('width', 8),
+        'labelwidth': kwargs.pop('labelwidth', 3)
     }

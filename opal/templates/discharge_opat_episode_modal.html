@@ -37,24 +37,40 @@
           </select>
         </div>
       </div>
+      {% input label="Other Reason" model="meta.rejection.reason" %}
+      {% datepicker label="Review Date" model="meta.review_date" %}
 
-      <table>
+      <table class="table table-striped table-bordered">
         <tr>
           <td>
-            {% checkbox width=4 label="Patient Choice" model="meta.rejection.patient_choice" %}
-            {% checkbox width=4 label="Oral option available" model="meta.rejection.oral_available" %}
-            {% checkbox width=4 label="No antimicrobials needed" model="meta.rejection.not_needed" %}
-            {% checkbox width=4 label="UCLH@Home - Non complex infection" model="meta.rejection.non_complex_infection" %}
+            {% checkbox labelwidth=8 width=2 label="Patient Choice" model="meta.rejection.patient_choice" %}
           </td>
           <td>
-            {% checkbox width=4 label="Patient suitability" model="meta.rejection.patient_suitability" %}
-            {% checkbox width=4 label="Not medically fit for discharge" model="meta.rejection.not_fit_for_discharge" %}
-            {% checkbox width=4 label="Lack of social support" model="meta.rejection.no_social_support" %}
+            {% checkbox width=2 labelwidth=8 label="Oral option available" model="meta.rejection.oral_available" %}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            {% checkbox width=2 labelwidth=8 label="No antimicrobials needed" model="meta.rejection.not_needed" %}
+          </td>
+          <td>
+            {% checkbox width=2 labelwidth=8 label="UCLH@Home - Non complex infection" model="meta.rejection.non_complex_infection" %}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            {% checkbox width=2 labelwidth=8 label="Patient suitability" model="meta.rejection.patient_suitability" %}
+          </td>
+          <td>
+            {% checkbox width=2 labelwidth=8 label="Not medically fit for discharge" model="meta.rejection.not_fit_for_discharge" %}
+          </td>
+        </tr>
+        <tr>
+          <td>
+            {% checkbox width=2 labelwidth=8 label="Lack of social support" model="meta.rejection.no_social_support" %}
           </td>
         </tr>
       </table>
-      {% input label="Other Reason" model="meta.rejection.reason" %}
-      {% datepicker label="Review Date" model="meta.review_date" %}
     </form>
     <center>
       <button class="btn btn-danger btn-lg" 
