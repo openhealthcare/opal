@@ -21,15 +21,24 @@ def _visibility_clauses(show, hide):
             visibility = show
     return visibility
 
+def _icon_classes(name):
+    """
+    Given the name of an icon, return the classes that will render it
+    """
+    if name.startswith('fa-'):
+        return 'fa ' + name
+    if name.startswith('glyphicon'):
+        return 'glyphicon ' + name
+    return name
+
 def _input(*args, **kwargs):
-    try:
-        model = kwargs.pop('model')
-    except:
-        print args, kwargs
-        raise
+    model = kwargs.pop('model')
     label = kwargs.pop('label')
     lookuplist = kwargs.pop('lookuplist', None)
-
+    icon = kwargs.pop('icon', None)
+    if icon:
+        icon = _icon_classes(icon)
+        
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
     
@@ -38,7 +47,8 @@ def _input(*args, **kwargs):
         'model'     : model,
         'directives': args,
         'lookuplist': lookuplist,
-        'visibility': visibility
+        'visibility': visibility,
+        'icon'      : icon
     }
 
 @register.inclusion_tag('_helpers/input.html')
