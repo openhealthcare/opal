@@ -15,6 +15,7 @@ from opal.models import (Patient, Episode, EpisodeSubrecord,
 from updates_from_dict import *
 from macro import *
 from templatetags_forms import *
+from user_profile import *
 from utils_fields import *
 
 """
@@ -113,6 +114,10 @@ class EpisodeTest(TestCase):
 
 
 
+
+"""
+Views
+"""
 class EpisodeDetailViewTest(TestCase):
     fixtures = ['patients_users', 'patients_options', 'patients_records']
 
@@ -151,9 +156,6 @@ class EpisodeDetailViewTest(TestCase):
         episode = self.patient.episode_set.all()[0]
         self.assertEqual(episode.discharge_date, today)
 
-"""
-Views
-"""
 class ListSchemaViewTest(TestCase):
     fixtures = ['patients_users', 'patients_options', 'patients_records']
 

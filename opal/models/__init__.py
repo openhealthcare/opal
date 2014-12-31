@@ -59,6 +59,12 @@ class UserProfile(models.Model):
         roles['default'] = [r.name for r in self.roles.all()]
         return roles
 
+    def get_teams(self):
+        """
+        Return an iterable of teams for this user.
+        """
+        return Team.for_user(self.user)
+
     
 class Filter(models.Model):
     """
