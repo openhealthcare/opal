@@ -1,3 +1,6 @@
+
+## Datatypes
+
 OPAL provides each implementation a few commonly used data archetypes for re-use and compatibility.
 
 ### User / Role models
@@ -21,3 +24,4 @@ OPAL provides each implementation a few commonly used data archetypes for re-use
 
 * Gender
 * Ethnicity
+

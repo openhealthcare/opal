@@ -3,6 +3,7 @@
 OPAL Admin script.
 In which we expose useful commandline functionality to our users.
 """
+import argparse
 import os
 import sys
 
@@ -26,7 +27,7 @@ def interpolate_dir(directory, **context):
         t.rm()
     return
 
-def startproject(name):
+def startproject(args):
     """
     In which we perform the steps required to start a new OPAL project.
     
@@ -37,6 +38,8 @@ def startproject(name):
     5. Swap our scaffold app with the Django created app
     6. Interpolate the code templates from our scaffold app
     """
+    name = args.name
+    
     project_dir = USERLAND_HERE/name
     print "Creating project dir at {0}".format(project_dir)
     os.system('django-admin.py startproject {0}'.format(name))
@@ -59,12 +62,10 @@ def startproject(name):
 
     # # !!! TODO: make this a reals secret key please!
     # interpolate_dir(project_dir, name=name, secret_key='foobarbaz')
-    
 
     return
 
-
-def create_plugin():
+def startplugin(args):
     """
     The steps to create our plugin are: 
 
@@ -78,8 +79,9 @@ def create_plugin():
       - templates directory
     * Drop in default .gitignore
     """
-    target_dir = sys.argv[-1]
-    root = ffs.Path(target_dir)
+    name = args.name
+
+    root = USERLAND_HERE/name
     root.mkdir()
     codename = str(root[-1]).replace('opal-', '')
     code_root = root/codename
@@ -92,8 +94,30 @@ def create_plugin():
     return
 
 def main():
-    name = sys.argv[-1]
-    startproject(name)
+    parser = argparse.ArgumentParser(
+        description="OPAL a Clinical Transactional Digital Services Framework",
+        usage="opal <command> [<args>]",
+        epilog="Brought to you by Open Health Care UK"
+    )
+    subparsers = parser.add_subparsers(help="OPAL Commands")
+
+    parser_project = subparsers.add_parser(
+        'startproject'
+    )
+    parser_project.add_argument(
+        'name', help="name of your project"
+    )
+    parser_project.set_defaults(func=startproject)
+
+    parser_plugin = subparsers.add_parser('startplugin')
+    parser_plugin.add_argument(
+        'name', help="name of your plugin"
+    )
+    parser_plugin.set_defaults(func=startplugin)
+    
+    args = parser.parse_args()
+    args.func(args)
+
     sys.exit(0)
 
 if __name__ == '__main__':

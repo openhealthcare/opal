@@ -1,11 +1,16 @@
+## Forms
 
+OPAL contains a number of helpers for developing forms and input modals.
 
-## Starting a new OPAL project
+Many of these are located in the forms template tag library, which is a
+Django templatetag library that understands the context of common patterns with
+OPAL for creating forms and modals. 
 
-1. Create a virtualenv 
-2. Install OPAL
-3. run opal-admin.py startproject name
-4. Step 4 is complex and hard to generalise
+It provides helpers for various input types that will allow you to render consistent
+forms, with less verbose templates.
+
+For full documentation of the options, please see opal/templatetags/forms.py
+For example usage please see elcid/elcid/templates/*_modal.html
 
 # Your implementation
 
