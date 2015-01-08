@@ -97,8 +97,9 @@ def select(*args, **kwargs):
 @register.inclusion_tag('_helpers/textarea.html')
 def textarea(*args, **kwargs):
     return {
-        'label': kwargs.pop('label', None),
-        'model': kwargs.pop('model', None),    
+        'macros': kwargs.pop('macros', False),
+        'label' : kwargs.pop('label', None),
+        'model' : kwargs.pop('model', None),    
     }
 
 @register.inclusion_tag('_helpers/checkbox.html')
