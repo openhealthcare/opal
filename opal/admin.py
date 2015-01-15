@@ -41,6 +41,7 @@ class TaggingAdmin(reversion.VersionAdmin):
 
 class TeamAdmin(reversion.VersionAdmin):
     list_display = ['title', 'name', 'active', 'restricted', 'direct_add', 'order']
+    search_fields = ['title']
     list_editable = ['active', 'order', 'restricted', 'direct_add']
     filter_horizontal = ('useful_numbers',)
 
