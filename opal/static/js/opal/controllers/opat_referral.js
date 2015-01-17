@@ -54,7 +54,6 @@ controllers.controller(
                 vte.save({test: 'VTE Assessment'})
             ]).then(function(){
                 episode.active = true;
-                growl.success("Added " + episode.demographics[0].name)
                 $modalInstance.close(episode);
             });                        
         };

@@ -36,6 +36,14 @@ def _input(*args, **kwargs):
     label = kwargs.pop('label')
     lookuplist = kwargs.pop('lookuplist', None)
     icon = kwargs.pop('icon', None)
+    required = kwargs.pop('required', None)
+    formname = kwargs.pop('formname', None)
+    unit = kwargs.pop('unit', None)
+    
+    if required:
+        if not formname:
+            raise ValueError('You must pass formname if you pass required')
+        
     if icon:
         icon = _icon_classes(icon)
         
@@ -45,10 +53,14 @@ def _input(*args, **kwargs):
     return {
         'label'     : label,
         'model'     : model,
+        'modelname' : model.replace('.', '_'),
         'directives': args,
         'lookuplist': lookuplist,
         'visibility': visibility,
-        'icon'      : icon
+        'icon'      : icon,
+        'required'  : required,
+        'formname'  : formname,
+        'unit'      : unit
     }
 
 @register.inclusion_tag('_helpers/input.html')
@@ -62,6 +74,7 @@ def input(*args, **kwargs):
     - model: Angular model
     - label: User visible label
     - lookuplist: Name of the lookuplist
+    - required: label to show when we're required!
     """
     return _input(*args, **kwargs)
 
@@ -97,8 +110,9 @@ def select(*args, **kwargs):
 @register.inclusion_tag('_helpers/textarea.html')
 def textarea(*args, **kwargs):
     return {
-        'label': kwargs.pop('label', None),
-        'model': kwargs.pop('model', None),    
+        'macros': kwargs.pop('macros', False),
+        'label' : kwargs.pop('label', None),
+        'model' : kwargs.pop('model', None),    
     }
 
 @register.inclusion_tag('_helpers/checkbox.html')

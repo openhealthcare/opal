@@ -27,6 +27,10 @@ angular.module('opal.services')
 	    this.columnName = columnSchema.name;
         this.sort = columnSchema.sort
 
+        // 
+        // Returns a clone of the editable fields + consistency token so that
+        // we can then update them in isolation elsewhere.
+        // 
 	    this.makeCopy = function() {
 	        var field, value;
 	        var copy = {id: item.id};
@@ -37,6 +41,8 @@ angular.module('opal.services')
 		        if (field.type == 'date' && item[field.name]) {
 		            // Convert values of date fields to strings of format DD/MM/YYYY
 		            copy[field.name] = moment(value).format('DD/MM/YYYY');
+                }else if(field.type == 'date_time' && _.isDate(value)) {
+                    copy[field.name] = new Date(value.getTime());
 		        } else {
 		            copy[field.name] = _.clone(value);
 		        };
@@ -57,8 +63,9 @@ angular.module('opal.services')
 	        for (var fix = 0; fix < columnSchema.fields.length; fix++) {
 		        field = columnSchema.fields[fix];
 		        value = attrs[field.name];
+
+		        // Convert values of date fields to strings of format YYYY-MM-DD
 		        if (field.type == 'date' && attrs[field.name]) {
-		            // Convert values of date fields to strings of format YYYY-MM-DD
 		            if (angular.isString(value)) {
 			            value = moment(value, 'DD/MM/YYYY');
 		            } else {
@@ -66,6 +73,12 @@ angular.module('opal.services')
 		            };
 		            attrs[field.name] = value.format('YYYY-MM-DD');
 		        };
+
+                // Convert datetimes to YYYY-MM-DD HH:MM
+                if( field.type == 'date_time' && attrs[field.name] ){
+                    attrs[field.name] = moment(value).format('YYYY-MM-DD HH:mm')
+                }
+                
                 // 
                 // TODO: Handle this conversion better 
                 // 

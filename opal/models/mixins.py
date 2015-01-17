@@ -83,7 +83,8 @@ class UpdatesFromDictMixin(object):
             else:
                 if value and self._get_field_type(name) == models.fields.DateField:
                     value = datetime.strptime(value, '%Y-%m-%d').date()
-
+                if value and self._get_field_type(name) == models.fields.DateTimeField:
+                    value = datetime.strptime(value, '%Y-%m-%d %H:%M')
                 setattr(self, name, value)
 
         self.set_consistency_token()

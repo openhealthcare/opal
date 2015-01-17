@@ -13,7 +13,7 @@ class TextareaTest(TestCase):
     def test_textarea(self):
         rendered = self.template.render(Context({}))
         self.assertIn('ng-model="bai"', rendered)
-        self.assertIn('hai</label>', rendered)
+        self.assertIn('hai', rendered)
         
 
 class SelectTest(TestCase):

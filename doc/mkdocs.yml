@@ -1,0 +1,8 @@
+site_name: OPAL
+pages: 
+  - [index.md, Home]
+  - [tutorial.md, Tutorial]
+  - [guides.md, Guides]
+  - [plugins.md, Writing Plugins]
+  - [reference.md, Reference]
+theme: readthedocs

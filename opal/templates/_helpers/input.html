@@ -1,8 +1,11 @@
 <div class="form-group"
      {% if visibility %} {{ visibility|safe }} {% endif %}
      >
-  <label class="control-label col-sm-3">{% if icon %}<i class="{{icon}}"></i> {% endif %}{{ label }}</label>
-  <div class="col-sm-8">
+  <label class="control-label col-sm-3">
+    {% if icon %}<i class="{{icon}}"></i> {% endif %}
+    {{ label }}
+  </label>
+  <div class="col-sm-{% if unit %}2{% else %}8{% endif %}">
 	<input class="form-control" type="text" ng-model="{{ model }}"
            autocomplete="off"
            {% for d in directives %}{{ d }}{% endfor %}
@@ -10,6 +13,18 @@
              bs-typeahead
              ng-options="i for i in {{ lookuplist }}"
            {% endif %}
+           {% if required %}
+           name="{{ modelname }}"
+           required
+           {% endif %}
            />
+    {% if required %}
+      <span ng-show="{{ formname }}.{{ modelname }}.$dirty && {{ formname }}.{{ modelname }}.$error.required">
+        {{ required }}
+      </span>
+    {% endif %}
   </div>
+  {% if unit %}
+  <label class="control-label"><small>({{ unit }})</small></label>
+  {% endif %}
 </div>

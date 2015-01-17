@@ -1,5 +1,5 @@
 """
-OPAL Viewz!
+Core OPAL Views
 """
 import collections
 import datetime
@@ -325,7 +325,7 @@ class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
         glossolalia.admit(serialised)
         return _build_json_response(serialised)
 
-
+        
 @require_http_methods(['PUT', 'DELETE'])
 def subrecord_detail_view(request, model, pk):
     try:

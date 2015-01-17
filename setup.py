@@ -17,4 +17,15 @@ setup(
     url='http://opal.openhealthcare.org.uk/',
     author='Open Health Care UK',
     author_email='hello@openhealthcare.org.uk',
+    scripts=['bin/opal'],
+    install_requires=[
+        'ffs',
+        'letter',
+        'jinja2',
+        'requests',
+        'django==1.5.2',
+        'South==0.8.1',
+        'django-reversion==1.8.0',
+        'django-axes==1.3.4'
+        ]
 )

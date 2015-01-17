@@ -69,7 +69,7 @@ table {
     padding: 8px;
 }
 
-input.ng-invalid {
+input.ng-invalid.ng-dirty {
 	background-color : #fcc;
 }
 
