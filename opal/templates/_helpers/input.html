@@ -5,7 +5,7 @@
     {% if icon %}<i class="{{icon}}"></i> {% endif %}
     {{ label }}
   </label>
-  <div class="col-sm-8">
+  <div class="col-sm-{% if unit %}2{% else %}8{% endif %}">
 	<input class="form-control" type="text" ng-model="{{ model }}"
            autocomplete="off"
            {% for d in directives %}{{ d }}{% endfor %}
@@ -24,4 +24,7 @@
       </span>
     {% endif %}
   </div>
+  {% if unit %}
+  <label class="control-label"><small>({{ unit }})</small></label>
+  {% endif %}
 </div>

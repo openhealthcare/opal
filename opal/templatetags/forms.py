@@ -38,6 +38,7 @@ def _input(*args, **kwargs):
     icon = kwargs.pop('icon', None)
     required = kwargs.pop('required', None)
     formname = kwargs.pop('formname', None)
+    unit = kwargs.pop('unit', None)
     
     if required:
         if not formname:
@@ -58,7 +59,8 @@ def _input(*args, **kwargs):
         'visibility': visibility,
         'icon'      : icon,
         'required'  : required,
-        'formname'  : formname
+        'formname'  : formname,
+        'unit'      : unit
     }
 
 @register.inclusion_tag('_helpers/input.html')
