@@ -1,6 +1,6 @@
 <div class="panel-body">
   <div class="row">
-  {% for column in columns %}
+    {% for column in columns %}
 	<div class="col-md-8"
          {% if column.episode_category %} ng-show="episode.location[0].category == '{{column.episode_category}}'"{% endif %}
          {% if column.episode_category_excludes %} ng-hide="{{column.episode_category_excludes}}.indexOf(episode.location[0].category) != -1"{% endif %}

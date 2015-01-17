@@ -1,5 +1,5 @@
 """
-OPAL Viewz!
+Core OPAL Views
 """
 import collections
 import datetime
