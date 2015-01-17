@@ -44,6 +44,16 @@ filters.filter('shortDate', function(){
     }
 })
 
+filters.filter('hhmm', function(){
+    return function(input, change){
+        if(!input){
+            return;
+        }
+        var value = moment(input)
+        return value.hours() + ':' + value.minutes();
+    }
+});
+
 filters.filter('daysSince', function(){
     return function(input, change){
         if(!input){
