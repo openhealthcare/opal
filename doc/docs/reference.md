@@ -25,3 +25,12 @@ OPAL provides each implementation a few commonly used data archetypes for re-use
 * Gender
 * Ethnicity
 
+## Built in Angular Filters
+
+### shortDate
+
+Displays a date as DD/MM if it's this year, else DD/MM/YYYY
+
+### hhmm 
+
+Displays the hours & minutes portion of a javascript Date object as HH:MM
