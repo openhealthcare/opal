@@ -99,8 +99,7 @@ angular.module('opal.services')
 		            attrs.date = moment().format('YYYY-MM-DD');
                 }
                 if (columnName == 'observation'){
-                    attrs.time = moment();
-                    attrs.date = moment().format('YYYY-MM-DD');
+                    attrs.datetime = new Date();
                 }
                 if (columnName == 'line'){
                     attrs.insertion_date = moment().format('YYYY-MM-DD');
