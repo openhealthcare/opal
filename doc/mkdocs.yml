@@ -1,8 +1,13 @@
 site_name: OPAL
 pages: 
-  - [index.md, Home]
-  - [tutorial.md, Tutorial]
-  - [guides.md, Guides]
-  - [plugins.md, Writing Plugins]
-  - [reference.md, Reference]
+  - [index.md, Home]  
+  - [tutorial.md, 'Tutorials', Getting Started]
+  - [plugins.md, 'Tutorials', Writing Plugins]
+  - [guides/topic-guides.md, 'Guides', Index]
+  - [guides/flow.md, 'Guides', Flow]
+  - [guides/forms.md, 'Guides', Forms]
+  - [guides/lookup_lists.md, 'Guides', Lookup Lists]
+  - [guides/roles_and_permissions.md, 'Guides', Roles & Permissions]
+  - [guides/teams.md, 'Guides', Teams]
+  - [reference.md, 'Other', Reference]
 theme: readthedocs
