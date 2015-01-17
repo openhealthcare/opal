@@ -2,6 +2,7 @@ angular.module('opal.controllers').controller(
     'EpisodeListCtrl', function($scope, $q, $http, $cookieStore,
                                 $location, $routeParams,
                                 $modal, $rootScope,
+                                growl,
                                 Flow, Item,
                                 Episode, schema, episodes, options,
                                 profile,
@@ -233,20 +234,33 @@ angular.module('opal.controllers').controller(
 		    $scope.state = 'modal';
 
             enter.then(
-                function(episode) {
-		            // User has either retrieved an existing episode or created a new one,
+                function(resolved) {
+		            // We have either retrieved an existing episode or created a new one,
+                    // rendered a new modal for which we are waiting,
 		            // or has cancelled the process at some point.
-		            //
-		            // This ensures that the relevant episode is added to the table and
-		            // selected.
-		            var rowIx;
-		            $scope.state = 'normal';
-		            if (episode && episode != 'cancel') {
-			            episodes[episode.id] = episode;
-			            $scope.rows = getVisibleEpisodes();
-			            rowIx = getRowIxFromEpisodeId(episode.id);
-			            $scope.selectItem(rowIx, 0, 0);
-		            };
+
+                    var return_to_normal = function(episode){
+                    	// This ensures that the relevant episode is added to the table and
+		                // selected.
+		                var rowIx;
+		                $scope.state = 'normal';
+		                if (episode && episode != 'cancel') {
+			                episodes[episode.id] = episode;
+			                $scope.rows = getVisibleEpisodes();
+			                rowIx = getRowIxFromEpisodeId(episode.id);
+			                $scope.selectItem(rowIx, 0, 0);
+                            growl.success("Added a new episode for " + episode.demographics[0].name);
+		                };
+                    }
+
+                    if(resolved.then){ // OMG - it's a promise!
+                        resolved.then(
+                            function(r){ return_to_normal(r) },
+                            function(r){ return_to_normal(r) }
+                        );
+                    }else{
+                        return_to_normal(resolved);
+                    }
 	            },
                 function(reason){
                     // The modal has been dismissed. Practically speaking this means
@@ -302,9 +316,12 @@ angular.module('opal.controllers').controller(
             tagging.save(editing).then(function(result){
                 $scope.rows = getVisibleEpisodes();
             })
-
         };
 
+        // 
+        // Do the work of editing an item - open the modal and
+        // resolve it.
+        // 
         _openEditItemModal = function(item, columnName, episode) {
             if(profile.readonly){
                 return null;
@@ -324,10 +341,17 @@ angular.module('opal.controllers').controller(
                 }
             });
 
-            modal.result.then(function(result) {
+            // 
+            // The state resetting logic is fairly simple, but we may have to
+            // wait for an intermediary modal to close...
+            //
+            // TODO: Figure out & document how to actually take advantage of this hook :/
+            // 
+            var reset_state = function(result){
                 $scope.state = 'normal';
 
                 if (columnName == 'tagging') {
+                    
                     // User may have removed current tag
                     $scope.rows = getVisibleEpisodes();
                     $scope.selectItem(getRowIxFromEpisodeId(episode.id), $scope.cix, 0);
@@ -339,7 +363,15 @@ angular.module('opal.controllers').controller(
                 };
                 if (item.sort){
                     episode.sortColumn(item.columnName, item.sort);
-                };
+                };                
+            };
+
+            modal.result.then(function(result) {
+                if(result.then){
+                    result.then(function(r){ reset_state(r) });
+                }else{
+                    reset_state(result);
+                }
             }, function(){
                 $scope.state = 'normal';
             });
