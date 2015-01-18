@@ -1,42 +1,29 @@
 OPAL
 ====
 
-Opal is not a Patient Activity List
+[Project Website](http://opal.openhealthcare.org.uk)
+
+OPAL is designed to make writing transactional digital services for a clnical environment easy.
+
+It builds on established Open Source technologies with a track record of helping developers
+build easy to maintain, robust applications.
+
+Most notably, it makes use of [Django](https://djangoproject.com/) [Angular JS](https://angularjs.org/) 
+and [Bootstrap](http://getbootstrap.com/).
+
+From there, OPAL provides you with a common batteries-included architecture for writing healthcare
+applications, and a composable modular framework that takes advantage of generic, re-usable components.
+
+OPAL is an entirely Open ([Source](https://github.com/openhealthcare/opal) & 
+[Governance](https://github.com/openhealthcare/opal)issues) as are the wide library of plugins.
+
+OPAL was created by [Open Health Care UK](http://openhealthcare.org.uk), because it makes Healthcare IT Less Bad.
 
 We'd love you to get involved by using what we make, reporting bugs/suggesting improvements, and fixing bugs/making improvements.  Please refer to the CONTRIBUTING file.
 
-Opal is an open (open governance + open source) commercial NHS IT product by Open Health Care UK
+## More comprehensive documentation
 
-http://opal.openhealthcare.org.uk
-
-What problem does Opal solve?
-======
-Opal aims to solve the patient list problem.
-
-The patient list problem is this: Doctors need ready access to the core information needed to look after their patients such as who their patients are and where they are, what's wrong with them, what the plan is, and what progress has been made against the plan.... The widespread, but suboptimal, solution to this problem is to use a table in a Microsoft Word Document.
-
-NHS Hack Day 2012 http://www.youtube.com/watch?v=8x1yZQP4eoA
-
-Smart Ward 2013 http://www.youtube.com/watch?v=pxS0q1NJwZY
-
-
-## Adapting OPAL for Your Ward
-
-WARNING: OPAL is under rapid, active development to become a framework for building Patient List type applications rather than an application.
-e.g. at this stage the codebase is likely to be significantly refactored to allow multiple customised instances.
-Anyone looking to adapt OPAL to their specific ward should get in touch with the friendly OPals [(Opal Steering group)](https://groups.google.com/forum/#!forum/ohc-opal) !
-
-* We're very friendly
-* We can save you headaches
-* We are absolutely committed to adapting OPAL to new clinical settings
-* We can help getting improvements rolled into OPAL core so that the rest of the community can benefit
-
-
-## Helpful note to the wise
-
-Forking at this point going to cause a *lot* of extra work if you want to continue benefiting from the features, bug & security fixes from upstream - seriously, come chat to us about it.
-In the future the process and documentation for that kind of customisation will be freely available. (Yay!)
-
+... currently lives at ./doc/docs & can be built using mkdocs
 
 Open governance
 ===============
@@ -77,6 +64,3 @@ https://groups.google.com/forum/?ohc-dev#!forum/ohc-opal
 
 channel #ohc_dev on freenode
 
-Demo
-======
-A screencast and demo are here http://opal.openhealthcare.org.uk

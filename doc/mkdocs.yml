@@ -1,14 +1,16 @@
 site_name: OPAL
-docs_dir: docs/is/not/a/place
+docs_dir: docs
 pages: 
   - [index.md, Home]  
-  - [tutorial.md, 'Tutorials', Getting Started]
-  - [plugins.md, 'Tutorials', Writing Plugins]
+  - [tutorial.md, 'Tutorials', Your first OPAL App]
+  # - [plugins.md, 'Tutorials', Your first OPAL Plugin]
   - [guides/topic-guides.md, 'Guides', Index]
   - [guides/flow.md, 'Guides', Flow]
   - [guides/forms.md, 'Guides', Forms]
   - [guides/lookup_lists.md, 'Guides', Lookup Lists]
   - [guides/roles_and_permissions.md, 'Guides', Roles & Permissions]
   - [guides/teams.md, 'Guides', Teams]
+  - [installation.md, Installation]
+  - [overview.md, Overview]
   - [reference.md, 'Other', Reference]
 theme: readthedocs
