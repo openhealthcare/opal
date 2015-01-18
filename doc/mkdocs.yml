@@ -1,4 +1,5 @@
 site_name: OPAL
+docs_dir: docs/is/not/a/place
 pages: 
   - [index.md, Home]  
   - [tutorial.md, 'Tutorials', Getting Started]

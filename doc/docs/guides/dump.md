@@ -63,8 +63,8 @@ Create a template url in the django layer
 
 (Edit .git/config to give the remote a meaningful name)
 
-    $ heroku addons:add heroku-postgresql
-    $ git push $YOUR_REMOTE_NAME $YOUR_BRANCH:master --app $YOUR_APP_NAME
+    $ heroku addons:add heroku-postgresql --app $YOUR_APP_NAME
+    $ git push $YOUR_REMOTE_NAME $YOUR_BRANCH:master
     $ heroku run python manage.py syncdb --migrate --app $YOUR_APP_NAME
     $ heroku run python manage.py loaddata dumps/options.json --app $YOUR_APP_NAME
     $ heroku run python manage.py createinitialrevisions --app $YOUR_APP_NAME
