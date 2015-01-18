@@ -20,16 +20,16 @@ from django.views.decorators.http import require_http_methods
 from opal import glossolalia
 from opal.utils.http import with_no_caching
 from opal.utils import (camelcase_to_underscore, stringport, fields,
-                        json_to_csv, OpalPlugin)
+                        json_to_csv, OpalApplication, OpalPlugin)
 from opal.utils.banned_passwords import banned
 from opal.utils.models import LookupList
 from opal.utils.views import LoginRequiredMixin, _get_request_data, _build_json_response
 from opal import models, exceptions
 
-schema = stringport(settings.OPAL_SCHEMA_MODULE)
-options = stringport(settings.OPAL_OPTIONS_MODULE)
-flow = stringport(settings.OPAL_FLOW_MODULE)
-micro_test_defaults = options.micro_test_defaults
+app = OpalApplication.__subclasses__()[0]
+schema = app.schema_module
+flow = app.flow_module
+
 option_models = models.option_models
 Synonym = models.Synonym
 

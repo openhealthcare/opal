@@ -286,6 +286,11 @@ def json_to_csv(episodes, description, user):
     return target
 
 
+class OpalApplication(object):
+    schema_module = None
+    flow_module   = None
+
+
 class OpalPlugin(object):
     """
     Base class from which all of our plugins inherit.

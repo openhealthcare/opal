@@ -11,6 +11,8 @@ import ffs
 from ffs import nix
 from ffs.contrib import mold
 
+import opal
+
 USERLAND_HERE = ffs.Path('.').abspath
 SCRIPT_HERE = ffs.Path(__file__).parent
 SCAFFOLD = SCRIPT_HERE/'scaffold'
@@ -32,37 +34,95 @@ def startproject(args):
     In which we perform the steps required to start a new OPAL project.
     
     1. Run Django' Startproject
-    2. Copy across the scaffolding directory
-    3. Interpolate our project data into the templates.
-    4. Create a data/lookuplists dir
+    2. Create a data/lookuplists dir
+    3. Copy across the scaffolding directory
+    4. Interpolate our project data into the templates.
     5. Swap our scaffold app with the Django created app
     6. Interpolate the code templates from our scaffold app
+    7. Create extra directories we need
+    8. Run Django's migrations
+    9. Create a superuser
     """
     name = args.name
     
     project_dir = USERLAND_HERE/name
+    if project_dir:
+        print "\n\nDirectory", project_dir, "already exists !"
+        print "Please remove it or choose a new name.\n\n"
+        sys.exit(1)
+
+    # 1. Run Django Startproject
     print "Creating project dir at {0}".format(project_dir)
     os.system('django-admin.py startproject {0}'.format(name))
 
-    print "Creating OPAL Scaffold"
+    print "Bootstrapping your OPAL project..."
+    
+    # 2. Create empty directories
+    lookuplists = project_dir/'data/lookuplists'
+    lookuplists.mkdir()
+
+    # 3. Copy across the scaffold
     with SCAFFOLD:
         for p in SCAFFOLD.ls():
             target = project_dir/p[-1]
             p.cp(target)
 
+    # Dotfiles need their dot back
+    gitignore = project_dir/'gitignore'
+    gitignore.mv(project_dir/'.gitignore')
+    
+
+    # 3. Interpolate the project data
     interpolate_dir(project_dir, name=name)
-        
-    lookuplists = project_dir/'data/lookuplists'
-    lookuplists.mkdir()
     
     app_dir = project_dir/name
-    #!!! TODO: THIS IS NOT HAPPENING!
-    nix.rm(app_dir, force=True)
-    # nix.mv(project_dir/'app', app_dir)
 
-    # # !!! TODO: make this a reals secret key please!
-    # interpolate_dir(project_dir, name=name, secret_key='foobarbaz')
+    # 5. Django Startproject creates some things - let's kill them & 
+    # replace with our own things.
+    nix.rm(app_dir, recursive=True, force=True)
+    nix.mv(project_dir/'app', app_dir)
 
+    # 6. Interpolate code from our scaffold app
+    # !!! TODO: make this a reals secret key please!
+    interpolate_dir(app_dir, name=name, secret_key='foobarbaz')
+
+    # 7. Create extra directories we need
+    js = app_dir/'assets/js'
+    css = app_dir/'assets/css'
+    js.mkdir()
+    css.mkdir()
+
+    templates = app_dir/'templates'/name    
+    templates.mkdir()
+
+    def manage(command):
+        os.system('python {name}/manage.py {command} --traceback'.format(
+            name=name, command=command))
+        
+
+    # 8. Run Django's migrations
+    print 'Creating Database'
+    manage('schemamigration {0} --initial'.format(name))
+    manage('syncdb --migrate --noinput')
+
+    # 9. Create a superuser
+    sys.path.append(os.path.join(os.path.abspath('.'), name))
+
+    os.environ['DJANGO_SETTINGS_MODULE'] = '{0}.settings'.format(name)
+    # FTW? Why does this only work when we do this thing?
+    from mynewapp import flow
+
+    from django.contrib.auth.models import User
+    user = User(username='super')
+    user.set_password('super1')
+    user.is_superuser = True
+    user.is_staff = True
+    user.save()
+    from opal.models import UserProfile
+    profile, _ = UserProfile.objects.get_or_create(user=user)
+    profile.force_password_change = False
+    profile.save()
+ 
     return
 
 def startplugin(args):
@@ -98,6 +158,11 @@ def main():
         description="OPAL a Clinical Transactional Digital Services Framework",
         usage="opal <command> [<args>]",
         epilog="Brought to you by Open Health Care UK"
+    )
+    parser.add_argument(
+        '--version',
+        action='version',
+        version = 'OPAL {0}'.format(opal.__version__)
     )
     subparsers = parser.add_subparsers(help="OPAL Commands")
 

@@ -7,8 +7,8 @@ import json
 import requests
 
 INTEGRATING  = settings.INTEGRATING
-NAME         = settings.GLOSSOLALIA_NAME
-ENDPOINT     = settings.GLOSSOLALIA_URL + 'api/v0.1/accept/'
+NAME         = getattr(settings, 'GLOSSOLALIA_NAME', '')
+ENDPOINT     = getattr(settings, 'GLOSSOLALIA_URL', '') + 'api/v0.1/accept/'
 OUR_ENDPOINT = settings.DEFAULT_DOMAIN + 'ddd/'
 
 def _send_upstream_message(event, payload):

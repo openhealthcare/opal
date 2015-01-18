@@ -1,3 +1,0 @@
-"""
-Python-packagise our app
-"""
