@@ -33,5 +33,5 @@ class InputTest(TestCase):
     def test_input(self):
         rendered = self.template.render(Context({}))
         self.assertIn('ng-model="bai"', rendered)
-        self.assertIn('hai</label>', rendered)
+        self.assertIn('hai', rendered)
         
