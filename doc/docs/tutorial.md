@@ -32,7 +32,6 @@ Let's have a look at what that created for you:
         requirements.txt        # Requirements file ready for your project
         
         data/                   # A dummy directory for fixtures
-            lookuplists
         
         mynewapp/               # The actual python package for your application
              __init__.py
@@ -45,13 +44,7 @@ Let's have a look at what that created for you:
             wsgi.py             
 
             assets/             # Your static files directory
-                css
-                js
-
             templates/          # Your template directory
-                mynewapp
-
             migrations/         # Your Database migrations directory
-                __init__.py
-                0001_initial.py
+
 
