@@ -312,7 +312,8 @@ class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
     """
     def post(self, args, pk=None, category=None, **kwargs):
         old = models.Episode.objects.get(pk=pk)
-        new = models.Episode(patient=old.patient, date_of_admission=old.date_of_admission)
+        new = models.Episode(patient=old.patient, 
+                             date_of_admission=old.date_of_admission)
         new.save()
         for sub in models.EpisodeSubrecord.__subclasses__():
             if sub._is_singleton:
