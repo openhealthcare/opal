@@ -79,7 +79,8 @@ angular.module('opal.controllers').controller(
 						controller: 'ReopenEpisodeCtrl',
 						resolve: {
 							patient: function() { return patient; },
-							tag: function() { return $scope.tags.tag; }
+							tag: function() { return $scope.tags.tag; },
+							subtag: function() { return $scope.tags.subtag; }
 						}
 					}).result.then(function(result) {
 						var demographics;

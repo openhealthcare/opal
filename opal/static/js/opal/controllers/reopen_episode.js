@@ -1,6 +1,6 @@
 angular.module('opal.controllers').controller(
     'ReopenEpisodeCtrl', function($scope, $http, $timeout,
-                                  $modalInstance, patient, tag)
+                                  $modalInstance, patient, tag, subtag)
     {
 	    $scope.episodes = _.values(patient.episodes);
 	    $scope.model = {episodeId: 'None'};
@@ -34,6 +34,9 @@ angular.module('opal.controllers').controller(
 		    var attrs = tagging.makeCopy();
 
 		    attrs[tag] = true;
+            if(subtag != 'all'){
+                attrs[subtag] = true;
+            }
 		    tagging.save(attrs).then(function(result) {
                 episode.active = true;
 			    $modalInstance.close(episode);
