@@ -1,11 +1,6 @@
 """
 Create singletons that may have been dropped
 """
-import collections
-import json
-from optparse import make_option
-
-from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand
 
 from opal.models import Patient, Episode, PatientSubrecord, EpisodeSubrecord
