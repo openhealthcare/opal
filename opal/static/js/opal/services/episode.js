@@ -106,8 +106,7 @@ angular.module('opal.services')
                 }
                 if (columnName == 'opat_review'){
                     attrs.initials = window.initials;
-                    attrs.time = moment();
-                    attrs.date = moment().format('YYYY-MM-DD');
+                    attrs.datetime = new Date();
                 }
                 if (columnName == 'opat_line_assessment'){
                     attrs.assessment_date = moment().format('YYYY-MM-DD');
