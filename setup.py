@@ -19,7 +19,7 @@ else:
 
 setup(
     name='opal',
-    version='0.1',
+    version='0.3.0',
     packages=['opal', 'opal.utils'],
     include_package_data=True,
     license='GPL3',  # example license

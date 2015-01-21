@@ -152,6 +152,17 @@ class Episode(UpdatesFromDictMixin, models.Model):
         except models.ObjectDoesNotExist:
             return self.date_of_admission
 
+    @property
+    def is_discharged(self):
+        """
+        Predicate property to determine if we're discharged.
+        """
+        if not self.active:
+            return True
+        if self.discharge_date:
+            return True
+        return False
+        
     def set_tag_names(self, tag_names, user):
         """
         1. Blitz dangling tags not in our current dict.
@@ -196,8 +207,12 @@ class Episode(UpdatesFromDictMixin, models.Model):
         td[0]['id'] = self.id
         return td
 
-    def get_tag_names(self, user):
-        return [t.team.name for t in self.tagging_set.all() if t.user in (None, user)]
+    def get_tag_names(self, user, historic=False):
+        current = [t.team.name for t in self.tagging_set.all() if t.user in (None, user)]    
+        if not historic:
+            return current
+        historic = Tagging.historic_tags_for_episodes([self])[self.id].keys()
+        return list(set(current + historic))
 
     def to_dict(self, user, shallow=False, with_context=False):
         """
