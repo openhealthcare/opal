@@ -3,8 +3,6 @@
 """
 from opal.utils import OpalApplication
 
-from {{ name }} import flow, schema
-
 class Application(OpalApplication):
-    schema_module = schema
-    flow_module   = flow
+    schema_module = '{{ name }}.schema'
+    flow_module   = '{{ name }}.flow'
