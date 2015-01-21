@@ -7,7 +7,7 @@ README = open(os.path.join(os.path.dirname(__file__), 'README.md')).read()
 # allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
-VERSION_FILE = os.path.join(HERE, "ffs/_version.py")
+VERSION_FILE = os.path.join(HERE, "opal/_version.py")
 verstrline = open(VERSION_FILE, "rt").read()
 VSRE = r'^__version__ = [\'"]([^\'"]*)[\'"]'
 mo = re.search(VSRE,  verstrline, re.M)
