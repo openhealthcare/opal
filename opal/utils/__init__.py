@@ -299,6 +299,7 @@ class OpalPlugin(object):
     javascripts = []
     menuitems   = []
     head_extra  = []
+    angular_module_deps = []
 
     def list_schemas(self):
         """
