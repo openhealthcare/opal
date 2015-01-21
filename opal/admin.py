@@ -68,10 +68,12 @@ admin.site.register(models.Episode, EpisodeAdmin)
 admin.site.register(models.Tagging, TaggingAdmin)
 
 for subclass in models.PatientSubrecord.__subclasses__():
-    admin.site.register(subclass, PatientSubRecordAdmin)
+    if not subclass._meta.abstract:
+        admin.site.register(subclass, PatientSubRecordAdmin)
 
 for subclass in models.EpisodeSubrecord.__subclasses__():
-    admin.site.register(subclass, EpisodeSubRecordAdmin)
+    if not subclass._meta.abstract:
+        admin.site.register(subclass, EpisodeSubRecordAdmin)
 
 admin.site.register(models.GP, MyAdmin)
 admin.site.register(models.CommunityNurse, MyAdmin)

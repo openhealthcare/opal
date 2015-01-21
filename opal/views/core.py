@@ -29,6 +29,15 @@ from opal import models, exceptions
 app = OpalApplication.__subclasses__()[0]
 schema = app.schema_module
 flow = app.flow_module
+# TODO This is stupid - we can fully deprecate this please?
+try:
+    options = stringport(settings.OPAL_OPTIONS_MODULE)
+    micro_test_defaults = options.micro_test_defaults
+except AttributeError:
+    class options:
+        model_names = []
+    micro_test_defaults = []
+
 
 option_models = models.option_models
 Synonym = models.Synonym

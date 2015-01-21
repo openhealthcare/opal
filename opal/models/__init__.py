@@ -560,133 +560,155 @@ class Macro(models.Model):
 These should be refactored out of here!
 """
 
-class Demographics(PatientSubrecord):
-    _is_singleton = True
+# class Demographics(PatientSubrecord):
+#     _is_singleton = True
 
-    name             = models.CharField(max_length=255, blank=True)
-    hospital_number  = models.CharField(max_length=255, blank=True)
-    nhs_number       = models.CharField(max_length=255, blank=True, null=True)
-    date_of_birth    = models.DateField(null=True, blank=True)
-    country_of_birth = ForeignKeyOrFreeText(DestinationLookupList)
-    ethnicity        = models.CharField(max_length=255, blank=True, null=True)
-    gender           = models.CharField(max_length=255, blank=True, null=True)
+#     name             = models.CharField(max_length=255, blank=True)
+#     hospital_number  = models.CharField(max_length=255, blank=True)
+#     nhs_number       = models.CharField(max_length=255, blank=True, null=True)
+#     date_of_birth    = models.DateField(null=True, blank=True)
+#     country_of_birth = ForeignKeyOrFreeText(DestinationLookupList)
+#     ethnicity        = models.CharField(max_length=255, blank=True, null=True)
+#     gender           = models.CharField(max_length=255, blank=True, null=True)
 
-class Location(EpisodeSubrecord):
-    _is_singleton = True
-
-    category                   = models.CharField(max_length=255, blank=True)
-    hospital                   = models.CharField(max_length=255, blank=True)
-    ward                       = models.CharField(max_length=255, blank=True)
-    bed                        = models.CharField(max_length=255, blank=True)
-
-    def __unicode__(self):
-        demographics = self.episode.patient.demographics_set.get()
-        return u'Location for {0}({1}) {2} {3} {4} {5}'.format(
-            demographics.name,
-            demographics.hospital_number,
-            self.category,
-            self.hospital,
-            self.ward,
-            self.bed
-            )
+#     class Meta:
+#         abstract = True
 
 
-class Drug(EpisodeSubrecord):
-    _title = 'Antimicrobials'
-    _sort = 'start_date'
+# class Location(EpisodeSubrecord):
+#     _is_singleton = True
 
-    drug          = ForeignKeyOrFreeText(DrugLookupList)
-    dose          = models.CharField(max_length=255, blank=True)
-    route         = ForeignKeyOrFreeText(DrugRouteLookupList)
-    start_date    = models.DateField(null=True, blank=True)
-    end_date      = models.DateField(null=True, blank=True)
-    frequency     = ForeignKeyOrFreeText(DrugFrequencyLookupList)
+#     category                   = models.CharField(max_length=255, blank=True)
+#     hospital                   = models.CharField(max_length=255, blank=True)
+#     ward                       = models.CharField(max_length=255, blank=True)
+#     bed                        = models.CharField(max_length=255, blank=True)
 
+#     class Meta:
+#         abstract = True
 
-class Allergies(PatientSubrecord):
-
-    drug        = ForeignKeyOrFreeText(DrugLookupList)
-    provisional = models.BooleanField()
-    details     = models.CharField(max_length=255, blank=True)
-
-
-class Diagnosis(EpisodeSubrecord):
-    """
-    This is a working-diagnosis list, will often contain things that are
-    not technically diagnoses, but is for historical reasons, called diagnosis.
-    """
-    _title = 'Diagnosis / Issues'
-    _sort = 'date_of_diagnosis'
-
-    condition         = ForeignKeyOrFreeText(ConditionLookupList)
-    provisional       = models.BooleanField()
-    details           = models.CharField(max_length=255, blank=True)
-    date_of_diagnosis = models.DateField(blank=True, null=True)
-
-    def __unicode__(self):
-        return u'Diagnosis for {0}: {1} - {2}'.format(
-            self.episode.patient.demographics_set.get().name,
-            self.condition,
-            self.date_of_diagnosis
-            )
+#     def __unicode__(self):
+#         demographics = self.episode.patient.demographics_set.get()
+#         return u'Location for {0}({1}) {2} {3} {4} {5}'.format(
+#             demographics.name,
+#             demographics.hospital_number,
+#             self.category,
+#             self.hospital,
+#             self.ward,
+#             self.bed
+#             )
 
 
-class PastMedicalHistory(EpisodeSubrecord):
-    _title = 'PMH'
-    _sort = 'year'
+# class Drug(EpisodeSubrecord):
+#     _title = 'Antimicrobials'
+#     _sort = 'start_date'
 
-    condition = ForeignKeyOrFreeText(ConditionLookupList)
-    year      = models.CharField(max_length=4, blank=True)
-    details   = models.CharField(max_length=255, blank=True)
+#     drug          = ForeignKeyOrFreeText(DrugLookupList)
+#     dose          = models.CharField(max_length=255, blank=True)
+#     route         = ForeignKeyOrFreeText(DrugRouteLookupList)
+#     start_date    = models.DateField(null=True, blank=True)
+#     end_date      = models.DateField(null=True, blank=True)
+#     frequency     = ForeignKeyOrFreeText(DrugFrequencyLookupList)
+
+#     class Meta:
+#         abstract = True
 
 
-class Investigation(EpisodeSubrecord):
-    _title = 'Investigations'
-    _sort = 'date_ordered'
+# class Allergies(PatientSubrecord):
 
-    test                  = models.CharField(max_length=255)
-    date_ordered          = models.DateField(null=True, blank=True)
-    details               = models.CharField(max_length=255, blank=True)
-    microscopy            = models.CharField(max_length=255, blank=True)
-    organism              = models.CharField(max_length=255, blank=True)
-    sensitive_antibiotics = models.CharField(max_length=255, blank=True)
-    resistant_antibiotics = models.CharField(max_length=255, blank=True)
-    result                = models.CharField(max_length=255, blank=True)
-    igm                   = models.CharField(max_length=20, blank=True)
-    igg                   = models.CharField(max_length=20, blank=True)
-    vca_igm               = models.CharField(max_length=20, blank=True)
-    vca_igg               = models.CharField(max_length=20, blank=True)
-    ebna_igg              = models.CharField(max_length=20, blank=True)
-    hbsag                 = models.CharField(max_length=20, blank=True)
-    anti_hbs              = models.CharField(max_length=20, blank=True)
-    anti_hbcore_igm       = models.CharField(max_length=20, blank=True)
-    anti_hbcore_igg       = models.CharField(max_length=20, blank=True)
-    rpr                   = models.CharField(max_length=20, blank=True)
-    tppa                  = models.CharField(max_length=20, blank=True)
-    viral_load            = models.CharField(max_length=20, blank=True)
-    parasitaemia          = models.CharField(max_length=20, blank=True)
-    hsv                   = models.CharField(max_length=20, blank=True)
-    vzv                   = models.CharField(max_length=20, blank=True)
-    syphilis              = models.CharField(max_length=20, blank=True)
-    c_difficile_antigen   = models.CharField(max_length=20, blank=True)
-    c_difficile_toxin     = models.CharField(max_length=20, blank=True)
-    species               = models.CharField(max_length=20, blank=True)
-    hsv_1                 = models.CharField(max_length=20, blank=True)
-    hsv_2                 = models.CharField(max_length=20, blank=True)
-    enterovirus           = models.CharField(max_length=20, blank=True)
-    cmv                   = models.CharField(max_length=20, blank=True)
-    ebv                   = models.CharField(max_length=20, blank=True)
-    influenza_a           = models.CharField(max_length=20, blank=True)
-    influenza_b           = models.CharField(max_length=20, blank=True)
-    parainfluenza         = models.CharField(max_length=20, blank=True)
-    metapneumovirus       = models.CharField(max_length=20, blank=True)
-    rsv                   = models.CharField(max_length=20, blank=True)
-    adenovirus            = models.CharField(max_length=20, blank=True)
-    norovirus             = models.CharField(max_length=20, blank=True)
-    rotavirus             = models.CharField(max_length=20, blank=True)
-    giardia               = models.CharField(max_length=20, blank=True)
-    entamoeba_histolytica = models.CharField(max_length=20, blank=True)
-    cryptosporidium       = models.CharField(max_length=20, blank=True)
+#     drug        = ForeignKeyOrFreeText(DrugLookupList)
+#     provisional = models.BooleanField()
+#     details     = models.CharField(max_length=255, blank=True)
+
+#     class Meta:
+#         abstract = True
+
+
+# class Diagnosis(EpisodeSubrecord):
+#     """
+#     This is a working-diagnosis list, will often contain things that are
+#     not technically diagnoses, but is for historical reasons, called diagnosis.
+#     """
+#     _title = 'Diagnosis / Issues'
+#     _sort = 'date_of_diagnosis'
+
+#     condition         = ForeignKeyOrFreeText(ConditionLookupList)
+#     provisional       = models.BooleanField()
+#     details           = models.CharField(max_length=255, blank=True)
+#     date_of_diagnosis = models.DateField(blank=True, null=True)
+
+#     class Meta:
+#         abstract = True
+
+#     def __unicode__(self):
+#         return u'Diagnosis for {0}: {1} - {2}'.format(
+#             self.episode.patient.demographics_set.get().name,
+#             self.condition,
+#             self.date_of_diagnosis
+#             )
+
+
+# class PastMedicalHistory(EpisodeSubrecord):
+#     _title = 'PMH'
+#     _sort = 'year'
+
+#     condition = ForeignKeyOrFreeText(ConditionLookupList)
+#     year      = models.CharField(max_length=4, blank=True)
+#     details   = models.CharField(max_length=255, blank=True)
+
+#     class Meta:
+#         abstract = True
+
+
+# class Investigation(EpisodeSubrecord):
+#     _title = 'Investigations'
+#     _sort = 'date_ordered'
+
+#     test                  = models.CharField(max_length=255)
+#     date_ordered          = models.DateField(null=True, blank=True)
+#     details               = models.CharField(max_length=255, blank=True)
+#     microscopy            = models.CharField(max_length=255, blank=True)
+#     organism              = models.CharField(max_length=255, blank=True)
+#     sensitive_antibiotics = models.CharField(max_length=255, blank=True)
+#     resistant_antibiotics = models.CharField(max_length=255, blank=True)
+#     result                = models.CharField(max_length=255, blank=True)
+#     igm                   = models.CharField(max_length=20, blank=True)
+#     igg                   = models.CharField(max_length=20, blank=True)
+#     vca_igm               = models.CharField(max_length=20, blank=True)
+#     vca_igg               = models.CharField(max_length=20, blank=True)
+#     ebna_igg              = models.CharField(max_length=20, blank=True)
+#     hbsag                 = models.CharField(max_length=20, blank=True)
+#     anti_hbs              = models.CharField(max_length=20, blank=True)
+#     anti_hbcore_igm       = models.CharField(max_length=20, blank=True)
+#     anti_hbcore_igg       = models.CharField(max_length=20, blank=True)
+#     rpr                   = models.CharField(max_length=20, blank=True)
+#     tppa                  = models.CharField(max_length=20, blank=True)
+#     viral_load            = models.CharField(max_length=20, blank=True)
+#     parasitaemia          = models.CharField(max_length=20, blank=True)
+#     hsv                   = models.CharField(max_length=20, blank=True)
+#     vzv                   = models.CharField(max_length=20, blank=True)
+#     syphilis              = models.CharField(max_length=20, blank=True)
+#     c_difficile_antigen   = models.CharField(max_length=20, blank=True)
+#     c_difficile_toxin     = models.CharField(max_length=20, blank=True)
+#     species               = models.CharField(max_length=20, blank=True)
+#     hsv_1                 = models.CharField(max_length=20, blank=True)
+#     hsv_2                 = models.CharField(max_length=20, blank=True)
+#     enterovirus           = models.CharField(max_length=20, blank=True)
+#     cmv                   = models.CharField(max_length=20, blank=True)
+#     ebv                   = models.CharField(max_length=20, blank=True)
+#     influenza_a           = models.CharField(max_length=20, blank=True)
+#     influenza_b           = models.CharField(max_length=20, blank=True)
+#     parainfluenza         = models.CharField(max_length=20, blank=True)
+#     metapneumovirus       = models.CharField(max_length=20, blank=True)
+#     rsv                   = models.CharField(max_length=20, blank=True)
+#     adenovirus            = models.CharField(max_length=20, blank=True)
+#     norovirus             = models.CharField(max_length=20, blank=True)
+#     rotavirus             = models.CharField(max_length=20, blank=True)
+#     giardia               = models.CharField(max_length=20, blank=True)
+#     entamoeba_histolytica = models.CharField(max_length=20, blank=True)
+#     cryptosporidium       = models.CharField(max_length=20, blank=True)
+
+#     class Meta:
+#         abstract = True
 
 
 option_models = {}
