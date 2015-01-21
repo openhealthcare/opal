@@ -298,6 +298,7 @@ class OpalPlugin(object):
     urls        = []
     javascripts = []
     menuitems   = []
+    head_extra  = []
 
     def list_schemas(self):
         """

@@ -49,3 +49,7 @@ add to static, then add to your plugin class as YourPlugin.javascripts
 
 Add to installed apps
 Add to requirements if appropriate
+
+## Adding extra markup to the <head> tag
+
+Any templates you define in the property .head_extra will be included in the <head>
