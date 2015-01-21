@@ -367,7 +367,7 @@ angular.module('opal.controllers').controller(
             };
 
             modal.result.then(function(result) {
-                if(result.then){
+                if(result && result.then){
                     result.then(function(r){ reset_state(r) });
                 }else{
                     reset_state(result);
