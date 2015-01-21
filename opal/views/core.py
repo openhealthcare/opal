@@ -27,8 +27,8 @@ from opal.utils.views import LoginRequiredMixin, _get_request_data, _build_json_
 from opal import models, exceptions
 
 app = OpalApplication.__subclasses__()[0]
-schema = app.schema_module
-flow = app.flow_module
+schema = stringport(app.schema_module)
+flow = stringport(app.flow_module)
 # TODO This is stupid - we can fully deprecate this please?
 try:
     options = stringport(settings.OPAL_OPTIONS_MODULE)
