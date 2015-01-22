@@ -6,59 +6,59 @@ from django.db import models
 
 class Migration(DataMigration):
 
-    def forwards(self, orm):
-        "Write your forwards methods here."
-        # Note: Don't use "from appname.models import ModelName".
-        # Use orm.ModelName to refer to models in this application,
-        # and orm['appname.ModelName'] for models in other applications.
-        from collections import namedtuple
-        Tag = namedtuple('Tag', 'name title subtags')
-        TAGS = [
-            Tag('opat', 'OPAT', [
-                    Tag('opat_referrals', 'OPAT Referrals', None),
-                    Tag('opat_current', 'OPAT Current', None),
-                    Tag('opat_followup', 'OPAT Follow-up', None),
-                    Tag('opat_review', 'OPAT Review', None)
-                    ]),
-            Tag('microbiology', 'Micro', [
-                    Tag('micro_ortho', 'Micro-Ortho', None),
-                    Tag('micro_icu', 'Micro-ICU', None),
-                    Tag('micro_haem', 'Micro-Haem', None),
-                    Tag('micro_nhnn', 'Micro-NHNN', None),
-                    Tag('micro_heart', 'Micro-Heart', None),
-                    Tag('micro_tower_review', 'Tower Review', None),
-                    Tag('micro_handover', 'Micro-C diff 2014', None),
-                    Tag('micro_c_diff_new', 'Micro-C diff NEW', None),
-                    Tag('micro_c_diff_review', 'Micro-C diff REVIEW', None),
-                    ]),
-            Tag('infectious_diseases', 'ID', [
-                    Tag('id_inpatients', 'ID Inpatients', None),
-                    Tag('id_liaison', 'ID Liaison', None)
-                    ]),
-            Tag('hiv', 'Immune', [
-                    Tag('immune_inpatients', 'Immune Inpatients', None),
-                    Tag('immune_liason', 'Immune Liason', None)
-                    ]),
-            Tag('tropical_diseases', 'Tropical', None),
-            Tag('virology', 'Virology', None),
-            Tag('mine', 'Mine', None),
-        ]
+    def forwards(self, orm): pass
+        # "Write your forwards methods here."
+        # # Note: Don't use "from appname.models import ModelName".
+        # # Use orm.ModelName to refer to models in this application,
+        # # and orm['appname.ModelName'] for models in other applications.
+        # from collections import namedtuple
+        # Tag = namedtuple('Tag', 'name title subtags')
+        # TAGS = [
+        #     Tag('opat', 'OPAT', [
+        #             Tag('opat_referrals', 'OPAT Referrals', None),
+        #             Tag('opat_current', 'OPAT Current', None),
+        #             Tag('opat_followup', 'OPAT Follow-up', None),
+        #             Tag('opat_review', 'OPAT Review', None)
+        #             ]),
+        #     Tag('microbiology', 'Micro', [
+        #             Tag('micro_ortho', 'Micro-Ortho', None),
+        #             Tag('micro_icu', 'Micro-ICU', None),
+        #             Tag('micro_haem', 'Micro-Haem', None),
+        #             Tag('micro_nhnn', 'Micro-NHNN', None),
+        #             Tag('micro_heart', 'Micro-Heart', None),
+        #             Tag('micro_tower_review', 'Tower Review', None),
+        #             Tag('micro_handover', 'Micro-C diff 2014', None),
+        #             Tag('micro_c_diff_new', 'Micro-C diff NEW', None),
+        #             Tag('micro_c_diff_review', 'Micro-C diff REVIEW', None),
+        #             ]),
+        #     Tag('infectious_diseases', 'ID', [
+        #             Tag('id_inpatients', 'ID Inpatients', None),
+        #             Tag('id_liaison', 'ID Liaison', None)
+        #             ]),
+        #     Tag('hiv', 'Immune', [
+        #             Tag('immune_inpatients', 'Immune Inpatients', None),
+        #             Tag('immune_liason', 'Immune Liason', None)
+        #             ]),
+        #     Tag('tropical_diseases', 'Tropical', None),
+        #     Tag('virology', 'Virology', None),
+        #     Tag('mine', 'Mine', None),
+        # ]
 
-        for team in TAGS:
-            t = orm.Team(name=team.name, title=team.title)
-            t.save()
-            if team.subtags:
-                for st in team.subtags:
-                    s = orm.Team(name=st.name, title=st.title, parent=t)
-                    s.save()
+        # for team in TAGS:
+        #     t = orm.Team(name=team.name, title=team.title)
+        #     t.save()
+        #     if team.subtags:
+        #         for st in team.subtags:
+        #             s = orm.Team(name=st.name, title=st.title, parent=t)
+        #             s.save()
 
-        for tag in orm.Tagging.objects.all():
-            if tag.tag_name == 'undefined':
-                tag.delete
-                continue
-            team = orm.Team.objects.get(name=tag.tag_name)
-            tag.team = team
-            tag.save()
+        # for tag in orm.Tagging.objects.all():
+        #     if tag.tag_name == 'undefined':
+        #         tag.delete
+        #         continue
+        #     team = orm.Team.objects.get(name=tag.tag_name)
+        #     tag.team = team
+        #     tag.save()
 
 
     def backwards(self, orm):

@@ -6,22 +6,22 @@ from django.db import models
 
 class Migration(DataMigration):
 
-    def forwards(self, orm):
-        "Write your forwards methods here."
-        # Note: Don't use "from appname.models import ModelName". 
-        # Use orm.ModelName to refer to models in this application,
-        # and orm['appname.ModelName'] for models in other applications.
-        names = [
-            'opat', 'opat_referrals', 'opat_current', 'opat_followup', 
-            'opat_review', 'microbiology', 'micro_haem', 'micro_handover',
-            'micro_c_diff_review', 'infectious_diseases', 'id_inpatients',
-            'id_liaison', 'hiv', 'immune_inpatients', 'immune_liason', 
-            'tropical_diseases', 'virology'
-        ]
-        for name in names:
-            team = orm.Team.objects.get(name=name)
-            team.active = True
-            team.save()
+    def forwards(self, orm): pass
+        # "Write your forwards methods here."
+        # # Note: Don't use "from appname.models import ModelName". 
+        # # Use orm.ModelName to refer to models in this application,
+        # # and orm['appname.ModelName'] for models in other applications.
+        # names = [
+        #     'opat', 'opat_referrals', 'opat_current', 'opat_followup', 
+        #     'opat_review', 'microbiology', 'micro_haem', 'micro_handover',
+        #     'micro_c_diff_review', 'infectious_diseases', 'id_inpatients',
+        #     'id_liaison', 'hiv', 'immune_inpatients', 'immune_liason', 
+        #     'tropical_diseases', 'virology'
+        # ]
+        # for name in names:
+        #     team = orm.Team.objects.get(name=name)
+        #     team.active = True
+        #     team.save()
 
     def backwards(self, orm):
         "Write your backwards methods here."
