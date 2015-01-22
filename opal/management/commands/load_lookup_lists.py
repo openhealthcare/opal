@@ -41,11 +41,14 @@ class Command(BaseCommand):
             data = self._from_file(options['filename'])
         else:
             raise ValueError('no lookuplist_provided!')
-            
+
+        num = 0
         for model in LookupList.__subclasses__():
             name = model.__name__.lower()
             if name in data:
+                print 'Loading', name
+                num += 1
                 for item in data[name]:
                     self._install_item(model, item)
-                
+        print 'Loaded', num, 'lookup lists'
         return
