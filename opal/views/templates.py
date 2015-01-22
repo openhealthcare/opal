@@ -22,7 +22,7 @@ def _get_column_context(schema, **kwargs):
         column_context['batch_template'] = getattr(column, '_batch_template', None)
 
         header_templates = [name + '_header.html']
-        list_display_templates = [name + '.html']
+        list_display_templates = ['{0}.html'.format(name), 'records/{0}.html'.format(name)]
         if 'tag' in kwargs:
             list_display_templates.insert(
                 0, 'list_display/{0}/{1}.html'.format(kwargs['tag'], name))
@@ -39,7 +39,9 @@ def _get_column_context(schema, **kwargs):
                                                                      name))
         column_context['template_path'] = select_template(list_display_templates).name
 
-        column_context['detail_template_path'] = select_template([name + '_detail.html', name + '.html']).name
+        column_context['detail_template_path'] = select_template([
+            t.format(name) for t in '{0}_detail.html', '{0}.html', 'records/{0}.html'
+        ]).name
 
         try:
             column_context['header_template_path'] = select_template(header_templates).name
