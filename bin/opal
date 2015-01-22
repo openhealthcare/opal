@@ -81,7 +81,8 @@ def startproject(args):
     
 
     # 3. Interpolate the project data
-    interpolate_dir(project_dir, name=name)
+    # !!! TODO: make this a reals secret key please!
+    interpolate_dir(project_dir, name=name, secret_key='foobarbaz')
     
     app_dir = project_dir/name
 
@@ -90,9 +91,7 @@ def startproject(args):
     nix.rm(app_dir, recursive=True, force=True)
     nix.mv(project_dir/'app', app_dir)
 
-    # 6. Interpolate code from our scaffold app
-    # !!! TODO: make this a reals secret key please!
-    interpolate_dir(app_dir, name=name, secret_key='foobarbaz')
+
 
     # 7. Create extra directories we need
     js = app_dir/'assets/js'
@@ -117,8 +116,6 @@ def startproject(args):
     sys.path.append(os.path.join(os.path.abspath('.'), name))
 
     os.environ['DJANGO_SETTINGS_MODULE'] = '{0}.settings'.format(name)
-    # FTW? Why does this only work when we do this thing?
-    from mynewapp import flow
 
     from django.contrib.auth.models import User
     user = User(username='super')

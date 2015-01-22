@@ -1,8 +1,8 @@
 """
 {{ name }} - Our OPAL Application
 """
-from opal.utils import OpalApplication
+from opal import application
 
-class Application(OpalApplication):
+class Application(application.OpalApplication):
     schema_module = '{{ name }}.schema'
     flow_module   = '{{ name }}.flow'
