@@ -7,6 +7,7 @@ from opal import views
 from opal.forms import ChangePasswordForm
 from opal import models
 from opal.utils import camelcase_to_underscore
+from opal.utils.models import subrecords
 
 urlpatterns = patterns(
     '',
@@ -91,10 +92,8 @@ urlpatterns = patterns(
     
 )
 
-subrecord_models = models.PatientSubrecord.__subclasses__() + models.EpisodeSubrecord.__subclasses__()
-
 # Generated subrecord internal (Legacy) API views 
-for subrecord_model in subrecord_models:
+for subrecord_model in subrecords():
     sub_url = camelcase_to_underscore(subrecord_model.__name__)
     urlpatterns += patterns(
         '',

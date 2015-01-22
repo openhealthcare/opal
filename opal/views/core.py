@@ -17,16 +17,18 @@ from django.utils import formats
 from django.views.generic import TemplateView, View
 from django.views.decorators.http import require_http_methods
 
+from opal import application
 from opal import glossolalia
 from opal.utils.http import with_no_caching
 from opal.utils import (camelcase_to_underscore, stringport, fields,
-                        json_to_csv, OpalApplication, OpalPlugin)
+                        json_to_csv, OpalPlugin)
 from opal.utils.banned_passwords import banned
-from opal.utils.models import LookupList
+from opal.utils.models import LookupList, episode_subrecords, patient_subrecords, subrecords
 from opal.utils.views import LoginRequiredMixin, _get_request_data, _build_json_response
 from opal import models, exceptions
 
-app = OpalApplication.__subclasses__()[0]
+app = application.get_app()
+
 schema = stringport(app.schema_module)
 flow = stringport(app.flow_module)
 # TODO This is stupid - we can fully deprecate this please?
@@ -101,6 +103,7 @@ class EpisodeTemplateView(TemplateView):
         context = super(EpisodeTemplateView, self).get_context_data(**kwargs)
         # TODO rename/refactor this accordingly
         context['teams'] = models.Team.for_user(self.request.user)
+        print context['teams']
         context['columns'] = self.get_column_context(**kwargs)
         if 'tag' in kwargs:
             context['team'] = models.Team.objects.get(name=kwargs['tag'])
@@ -324,7 +327,7 @@ class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
         new = models.Episode(patient=old.patient, 
                              date_of_admission=old.date_of_admission)
         new.save()
-        for sub in models.EpisodeSubrecord.__subclasses__():
+        for sub in episode_subrecords():
             if sub._is_singleton:
                 continue
             for item in sub.objects.filter(episode=old):
@@ -453,21 +456,23 @@ class SchemaBuilderView(View):
         scheme = {}
         for name, s in schemas.items():
             if isinstance(s, list):
-                scheme[name] = [f.get_api_name() for f in s]
+                try:
+                    scheme[name] = [f.get_api_name() for f in s]
+                except:
+                    raise
             else:
-                scheme[name] = {}
-                for n, c in s.items():
-                    scheme[name][n] = [f.get_api_name() for f in c]
+                scheme[name] = self._get_field_names(s)
+                # scheme[name] = {}
+                # for n, c in s.items():
+                #     scheme[name][n] = [f.get_api_name() for f in c]
         return scheme
 
     def _get_all_fields(self):
-        response = {'tagging': self.serialize_model(models.Tagging)}
-        for subclass in models.PatientSubrecord.__subclasses__():
-            response[subclass.get_api_name()] = self.serialize_model(subclass)
-
-        for subclass in models.EpisodeSubrecord.__subclasses__():
-            response[subclass.get_api_name()] = self.serialize_model(subclass)
-
+        response = {
+            subclass.get_api_name(): self.serialize_model(subclass) 
+            for subclass in subrecords()
+        }
+        response['tagging'] = self.serialize_model(models.Tagging)
         return response
 
     def _get_serialized_schemas(self, schemas):
@@ -535,16 +540,17 @@ class OptionsView(View):
         tag_hierarchy = collections.defaultdict(list)
         tag_display = {}
 
-        teams = models.Team.for_user(self.request.user)
-        for team in teams:
-            if team.parent:
-                continue # Will be filled in at the appropriate point! 
-            tag_display[team.name] = team.title
+        if self.request.user.is_authenticated():
+            teams = models.Team.for_user(self.request.user)
+            for team in teams:
+                if team.parent:
+                    continue # Will be filled in at the appropriate point! 
+                tag_display[team.name] = team.title
 
-            subteams = [st for st in teams if st.parent == team]
-            tag_hierarchy[team.name] = [st.name for st in subteams]
-            for sub in subteams: 
-                tag_display[sub.name] = sub.title
+                subteams = [st for st in teams if st.parent == team]
+                tag_hierarchy[team.name] = [st.name for st in subteams]
+                for sub in subteams: 
+                    tag_display[sub.name] = sub.title
 
         data['tag_hierarchy'] = tag_hierarchy
         data['tag_display'] = tag_display

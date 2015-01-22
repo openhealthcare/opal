@@ -12,7 +12,7 @@ import reversion
 from opal import models
 from opal.models import Synonym
 from opal.models import UserProfile
-from opal.utils.models import LookupList
+from opal.utils.models import LookupList, episode_subrecords, patient_subrecords
 
 admin.site.unregister(User)
 
@@ -67,11 +67,11 @@ admin.site.register(models.Patient, PatientAdmin)
 admin.site.register(models.Episode, EpisodeAdmin)
 admin.site.register(models.Tagging, TaggingAdmin)
 
-for subclass in models.PatientSubrecord.__subclasses__():
+for subclass in patient_subrecords():
     if not subclass._meta.abstract:
         admin.site.register(subclass, PatientSubRecordAdmin)
 
-for subclass in models.EpisodeSubrecord.__subclasses__():
+for subclass in episode_subrecords():
     if not subclass._meta.abstract:
         admin.site.register(subclass, EpisodeSubRecordAdmin)
 

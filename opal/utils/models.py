@@ -30,8 +30,38 @@ def lookup_list(name, module=__name__):
     }
     return class_name, bases, attrs
     
-    
+ 
+def episode_subrecords():
+    """
+    Generator function for episode subrecords.
+    """
+    # CircularImport - SELF is used as a manager by models in this module
+    from opal.models import EpisodeSubrecord
+    for model in EpisodeSubrecord.__subclasses__():
+        if model._meta.abstract:
+            continue
+        yield model
 
+def patient_subrecords():
+    """
+    Generator function for patient subrecords.
+    """
+    # CircularImport - SELF is used as a manager by models in this module
+    from opal.models import PatientSubrecord
+    for model in PatientSubrecord.__subclasses__():
+        if model._meta.abstract:
+            continue
+        yield model
+
+def subrecords():
+    """
+    Generator function for subrecords
+    """
+    for m in episode_subrecords():
+        yield m
+    for m in patient_subrecords():
+        yield m
+    
 # These are models for testing.
 # TODO move these to tests directory so they are not made available when app is
 # added to INSTALLED_APPS.
