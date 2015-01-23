@@ -1,99 +1,36 @@
+{% load forms %}
 <div class="modal-header">
   <button type="button" class="close" ng-click="cancel()">×</button>
-  <h3>New record</h3>
+  <h3>New Episode</h3>
 </div>
 <div class="modal-body">
   <form class="form-horizontal" name="newEpisodeForm">
-	<div class="control-group">
-	  <label class="control-label">Hospital number</label>
-	  <div class="controls"><label>[[editing.demographics.hospital_number]]</label></div>
-	</div>
-	<div class="control-group">
-	  <label class="control-label">Name</label>
-	  <div class="controls">
-		<input type="text" ng-model="editing.demographics.name" autofocus>
-	  </div>
-	</div>
-	<div class="control-group">
-	  <label class="control-label">Date of birth</label>
-	  <div class="controls">
-		<input type="text"
+    
+    <p><b>Hospital number</b> [[ editing.demographics.hospital_number ]]</p>
+    {% input "autofocus" label="Name" model="editing.demographics.name" %} 
+
+	<div class="form-group">
+	  <label class="control-label col-sm-3">Date of birth</label>
+	  <div class="col-sm-8">
+		<input class="form-control"
+               type="text"
                name="date_of_birth"
 			   ng-model="editing.demographics.date_of_birth"
 			   ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
 			   placeholder="dd/mm/yyyy" />
-               <span class="help-block" ng-show="newEpisodeForm.date_of_birth.$invalid">
-                 Date of Birth must be dd/mm/yyyy
-               </span>
-
-	  </div>
-	</div>
-	<div class="control-group">
-	  <label class="control-label">Category</label>
-	  <div class="controls">
-        <select class="form-control" ng-model="editing.location.category">
-          <option value="">---------</option>
-          <option ng-repeat="category in episode_category_list">[[category]]</option>
-        </select>
-	  </div>
-	</div>
-    <div class="control-group">
-      <label class="control-label">Hospital</label>
-      <div class="controls">
-        <select class="form-control" ng-model="editing.hospital">
-          <option value="">---------</option>
-          <option ng-repeat="hospital in hospital_list">[[hospital]]</option>
-          <option>Other</option>
-        </select>
-      </div>
-    </div>
-	<div class="control-group">
-	  <label class="control-label">Ward</label>
-	  <div class="controls">
-		<input type="text" ng-model="editing.location.ward">
-	  </div>
-	</div>
-	<div class="control-group">
-	  <label class="control-label">Bed</label>
-	  <div class="controls">
-		<input type="text" ng-model="editing.location.bed">
-	  </div>
-	</div>
-	<div class="control-group">
-	  <label class="control-label">Date of admission</label>
-	  <div class="controls">
-		<input type="text" ng-model="editing.date_of_admission" bs-datepicker>
+        <span class="help-block" ng-show="newEpisodeForm.date_of_birth.$invalid">
+          Date of Birth must be dd/mm/yyyy
+        </span>
 	  </div>
 	</div>
 
-	<div class="control-group">
-	  <label class="control-label">Teams</label>
-	  <div class="controls">
-		{% for tag in tags %}
-		  <label class="checkbox">
-			<input type="checkbox" ng-model="editing.tagging[0].{{tag.name}}">
-			{{tag.title}}
-		  </label>
-		{% endfor %}
-	  </div>
-	</div>
+    {% select label="Category" model="editing.location.category" lookuplist="episode_category_list" %}
+    {% select label="Hospital" model="editing.hospital" lookuplist="hospital_list" %}
+    {% input label="Ward" model="editing.location.ward" %}
+    {% input label="Bed" model="editing.location.bed" %}
+    {% datepicker label="Date of admission" model="editing.date_of_admission" %}
 
-	<div class="control-group" ng-show="showSubtags([{{with_subtags|safe}}])">
-		 <label class="control-label">Sub Teams</label>
-		 <div class="controls">
-		   {% for tag in tags %}
-			 {% if tag.subtags %}
-			   {% for subtag in tag.subtags %}
-				 <label class="checkbox"
-					    ng-show="editing.tagging[0].{{tag.name}} == true">
-					    <input type="checkbox" ng-model="editing.tagging[0].{{subtag.name}}">
-					    {{subtag.title}}
-				 </label>
-			   {% endfor %}
-			 {% endif %}
-		   {% endfor %}
-		 </div>
-	</div>
+    {% include 'partials/_teams_form.html' %}
   </form>
 </div>
 <div class="modal-footer">

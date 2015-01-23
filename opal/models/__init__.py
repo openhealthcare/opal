@@ -190,10 +190,7 @@ class Patient(models.Model):
             return 'Patient {0}'.format(self.id)
 
     def create_episode(self, category=None):
-        # if self.get_active_episode() is None:
-            return self.episode_set.create()
-        # else:
-        #     raise exceptions.APIError('Patient %s already has active episode' % self)
+        return self.episode_set.create()
 
     def get_active_episode(self):
         for episode in self.episode_set.order_by('id').reverse():

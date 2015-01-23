@@ -249,8 +249,6 @@ def patient_search_view(request):
         filter_dict['demographics__name__icontains'] = GET['name']
 
     if filter_dict:
-        # TODO maybe limit/paginate results?
-        # TODO maybe only return demographics & location
         patients = models.Patient.objects.filter(
             **filter_dict).order_by('demographics__date_of_birth')
 
@@ -462,9 +460,6 @@ class SchemaBuilderView(View):
                     raise
             else:
                 scheme[name] = self._get_field_names(s)
-                # scheme[name] = {}
-                # for n, c in s.items():
-                #     scheme[name][n] = [f.get_api_name() for f in c]
         return scheme
 
     def _get_all_fields(self):
