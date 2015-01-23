@@ -50,6 +50,7 @@ def startproject(args):
     7. Create extra directories we need
     8. Run Django's migrations
     9. Create a superuser
+    10. Sample team
     """
     name = args.name
     
@@ -91,8 +92,6 @@ def startproject(args):
     nix.rm(app_dir, recursive=True, force=True)
     nix.mv(project_dir/'app', app_dir)
 
-
-
     # 7. Create extra directories we need
     js = app_dir/'assets/js'
     css = app_dir/'assets/css'
@@ -127,7 +126,17 @@ def startproject(args):
     profile, _ = UserProfile.objects.get_or_create(user=user)
     profile.force_password_change = False
     profile.save()
- 
+
+    # 10. Create sample team
+    from opal.models import Team
+    Team.objects.create(
+        name='teamone',
+        title='Team 1',
+        active=True,
+        restricted=False,
+        direct_add=True
+    )
+    
     return
 
 
