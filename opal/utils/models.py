@@ -31,13 +31,32 @@ def lookup_list(name, module=__name__):
     return class_name, bases, attrs
     
  
+def _itersubclasses(cls, _seen=None):
+    """
+    Recursively iterate through subclasses
+    """
+    if not isinstance(cls, type):
+        raise TypeError('itersubclasses must be called with '
+                        'new-style classes, not %.100r' % cls)
+    if _seen is None: _seen = set()
+    try:
+        subs = cls.__subclasses__()
+    except TypeError: # fails only when cls is type
+        subs = cls.__subclasses__(cls)
+    for sub in subs:
+        if sub not in _seen:
+            _seen.add(sub)
+            yield sub
+            for sub in _itersubclasses(sub, _seen):
+                yield sub
+
 def episode_subrecords():
     """
     Generator function for episode subrecords.
     """
     # CircularImport - SELF is used as a manager by models in this module
     from opal.models import EpisodeSubrecord
-    for model in EpisodeSubrecord.__subclasses__():
+    for model in _itersubclasses(EpisodeSubrecord):
         if model._meta.abstract:
             continue
         yield model
@@ -48,7 +67,7 @@ def patient_subrecords():
     """
     # CircularImport - SELF is used as a manager by models in this module
     from opal.models import PatientSubrecord
-    for model in PatientSubrecord.__subclasses__():
+    for model in _itersubclasses(PatientSubrecord):
         if model._meta.abstract:
             continue
         yield model
