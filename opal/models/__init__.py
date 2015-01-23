@@ -98,12 +98,9 @@ class Team(models.Model):
 
         profile, _ = UserProfile.objects.get_or_create(user=user)
         if profile.restricted_only:
-            print 'restricted only'
             teams = []
         else:
-            print 'all active'
             teams = klass.objects.filter(active=True, restricted=False).order_by('order')
-            print teams
         restricted_teams = klass.restricted_teams(user)
         allteams = list(teams) + restricted_teams
         teams = []

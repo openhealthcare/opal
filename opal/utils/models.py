@@ -54,7 +54,6 @@ def episode_subrecords():
     """
     Generator function for episode subrecords.
     """
-    # CircularImport - SELF is used as a manager by models in this module
     from opal.models import EpisodeSubrecord
     for model in _itersubclasses(EpisodeSubrecord):
         if model._meta.abstract:
@@ -65,7 +64,6 @@ def patient_subrecords():
     """
     Generator function for patient subrecords.
     """
-    # CircularImport - SELF is used as a manager by models in this module
     from opal.models import PatientSubrecord
     for model in _itersubclasses(PatientSubrecord):
         if model._meta.abstract:
