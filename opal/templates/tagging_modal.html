@@ -1,0 +1,30 @@
+{% extends 'modal_base.html' %}
+{% block modal_body %}
+<div class="row">
+  <div class="span3">
+    <div class="control-group">
+      <label>Teams</label>
+      <div>
+	{% for team in teams %}{% if not team.parent %}{% if team.direct_add %}
+          {% if team.has_subtags %}
+            <h4>{{team.title}}:</h4>
+              {% for subteam in team.team_set.all %}{% if subteam.active %}{% if subteam.direct_add %}
+	        <label class="checkbox">
+	          <input type="checkbox" ng-model="editing.{{subteam.name}}">
+	          {{subteam.title}}
+	        </label>            
+              {% endif %}{% endif %}{% endfor %}
+          {% else %}
+            <h4>{{team.title}}:</h4>
+	    <label class="checkbox">
+	      <input type="checkbox" ng-model="editing.{{team.name}}">
+	      {{team.title}}
+	    </label>
+          {% endif %}
+        {% endif %}{% endif %}{% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block modal_another %}{% endblock %}

@@ -1,0 +1,67 @@
+{% extends 'modal_base.html' %}
+{% block modal_body %}
+  <form name="demographicsForm" class="form-horizontal">
+    <div class="form-group">
+      <label class="control-label col-sm-3">Hospital number</label>
+      <div class="col-sm-8">
+	<input class="form-control" type="text" ng-model="editing.hospital_number" autofocus>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-3">NHS number</label>
+      <div class="col-sm-8">
+	<input class="form-control" type="text" ng-model="editing.nhs_number">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-3">Name</label>
+      <div class="col-sm-8">
+	<input class="form-control" type="text" ng-model="editing.name">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-3">Date of birth</label>
+      <div class="col-sm-8">
+	<input class="form-control" type="text"
+               name="date_of_birth"
+	       ng-model="editing.date_of_birth"
+	       ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
+	       placeholder="dd/mm/yyyy" />
+               <span class="help-block" ng-show="demographicsForm.date_of_birth.$invalid">
+                 Date of Birth must be dd/mm/yyyy
+               </span>
+
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-3">Gender</label>
+      <div class="col-sm-8">
+	<input class="form-control" type="text" ng-model="editing.gender"
+               ng-options="d for d in gender_list"
+               bs-typeahead >
+      </div>
+    </div>    
+    <div class="form-group">
+      <label class="control-label col-sm-3">Country of Birth</label>
+      <div class="col-sm-8">
+	<input class="form-control" type="text"
+               ng-model="editing.country_of_birth"
+               ng-options="d for d in destination_list"
+               bs-typeahead >
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label col-sm-3">Ethnicity</label>
+      <div class="col-sm-8">
+	<input class="form-control" type="text" ng-model="editing.ethnicity"
+               ng-options="d for d in ethnicity_list"
+               bs-typeahead >
+
+      </div>
+    </div>    
+
+  </form>
+{% endblock %}
+{% block modal_save %}
+  <button class="btn btn-primary" ng-disabled="demographicsForm.date_of_birth.$invalid" ng-click="save('save')">Save</button>
+{% endblock %}
