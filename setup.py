@@ -9,14 +9,14 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 HERE = os.path.realpath(os.path.dirname(__file__))
 
-VERSION_FILE = os.path.join(HERE, "opal/_version.py")
-verstrline = open(VERSION_FILE, "rt").read()
-VSRE = r'^__version__ = [\'"]([^\'"]*)[\'"]'
-mo = re.search(VSRE,  verstrline, re.M)
-if mo:
-    VERSION = mo.group(1)
-else:
-    raise RuntimeError("Unable to find version string in {0}".format(VERSION_FILE))
+# VERSION_FILE = os.path.join(HERE, "opal/_version.py")
+# verstrline = open(VERSION_FILE, "rt").read()
+# VSRE = r'^__version__ = [\'"]([^\'"]*)[\'"]'
+# mo = re.search(VSRE,  verstrline, re.M)
+# if mo:
+#     VERSION = mo.group(1)
+# else:
+#     raise RuntimeError("Unable to find version string in {0}".format(VERSION_FILE))
 
 
 setup(
