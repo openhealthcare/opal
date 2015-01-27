@@ -21,23 +21,18 @@ def _get_column_context(schema, **kwargs):
         column_context['episode_category_excludes'] = getattr(column, '_episode_category_excludes', None)
         column_context['batch_template'] = getattr(column, '_batch_template', None)
 
-        header_templates = [name + '_header.html']
-        list_display_templates = ['{0}.html'.format(name), 'records/{0}.html'.format(name)]
+        header_templates = [name + '_header.html']        
         if 'tag' in kwargs:
-            list_display_templates.insert(
-                0, 'list_display/{0}/{1}.html'.format(kwargs['tag'], name))
             header_templates.insert(
                 0, 'list_display/{0}/{1}_header.html'.format(kwargs['tag'], name))
             if 'subtag' in kwargs:
-                list_display_templates.insert(
-                    0, 'list_display/{0}/{1}/{2}.html'.format(kwargs['tag'],
-                                                              kwargs['subtag'],
-                                                              name))
                 header_templates.insert(
                     0, 'list_display/{0}/{1}/{2}_header.html'.format(kwargs['tag'],
                                                                      kwargs['subtag'],
                                                                      name))
-        column_context['template_path'] = select_template(list_display_templates).name
+
+        column_context['template_path'] = column.get_display_template(
+            team=kwargs.get('tag', None), subteam=kwargs.get('subtag', None))
 
         column_context['detail_template_path'] = select_template([
             t.format(name) for t in '{0}_detail.html', '{0}.html', 'records/{0}.html'
@@ -68,18 +63,9 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         self.column = kw['model']
         self.tag = kw.get('tag', None)
         self.subtag = kw.get('sub', None)
+        self.template_name = self.column.get_form_template(team=self.tag, subteam=self.subtag)
         self.name = camelcase_to_underscore(self.column.__name__)
         return super(ModalTemplateView, self).dispatch(*a, **kw)
-
-    def get_template_names(self):
-        templates = [self.name + '_modal.html']
-        if self.tag:
-            templates.insert(0, 'modals/{0}/{1}_modal.html'.format(
-                self.tag, self.name))
-        if self.subtag:
-            templates.insert(0, 'modals/{0}/{1}/{2}_modal.html'.format(
-                self.tag, self.subtag, self.name))
-        return templates
 
     def get_context_data(self, **kwargs):
         context = super(ModalTemplateView, self).get_context_data(**kwargs)

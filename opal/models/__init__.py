@@ -10,6 +10,8 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 from django.dispatch import receiver
+from django.template import TemplateDoesNotExist
+from django.template.loader import select_template
 import reversion
 
 from opal import managers
@@ -339,9 +341,9 @@ class Episode(UpdatesFromDictMixin, models.Model):
                 e.to_dict(user, shallow=True)
                 for e in
                 eset.filter(date_of_admission__gt=self.date_of_admission).order_by('date_of_admission')]
-
         return d
 
+    
 class Subrecord(UpdatesFromDictMixin, models.Model):
     consistency_token = models.CharField(max_length=8)
 
@@ -388,10 +390,50 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
             if cls._get_field_type(fieldname) == ForeignKeyOrFreeText:
                 fld = getattr(cls, fieldname)
                 lookup_list = camelcase_to_underscore(fld.foreign_model.__name__)
+            title = fieldname.replace('_', ' ').title()
             field_schema.append({'name': fieldname,
+                                 'title': title,
                                  'type': field_type,
                                  'lookup_list': lookup_list})
         return field_schema
+
+    @classmethod
+    def get_display_template(cls, team=None, subteam=None):
+        """
+        Return the active display template for our record
+        """
+        name = camelcase_to_underscore(cls.__name__)
+        list_display_templates = ['{0}.html'.format(name), 'records/{0}.html'.format(name)]
+        if team:
+            list_display_templates.insert(
+                0, 'list_display/{0}/{1}.html'.format(team, name))
+            if subteam:
+                list_display_templates.insert(
+                    0, 'list_display/{0}/{1}/{2}.html'.format(team,
+                                                              subteam,
+                                                              name))
+        try:
+            return select_template(list_display_templates).name
+        except TemplateDoesNotExist:
+            return None
+
+    @classmethod
+    def get_form_template(cls, team=None, subteam=None):
+        """
+        Return the active form template for our record
+        """
+        name = camelcase_to_underscore(cls.__name__)
+        templates = [name + '_modal.html', 'modals/{0}_modal.html'.format(name)]
+        if team:
+            templates.insert(0, 'modals/{0}/{1}_modal.html'.format(
+                team, name))
+        if subteam:
+            templates.insert(0, 'modals/{0}/{1}/{2}_modal.html'.format(
+                team, subteam, name))
+        try:
+            return select_template(templates).name
+        except TemplateDoesNotExist:
+            return None
 
     def _to_dict(self, user, fieldnames):
         """
@@ -448,6 +490,14 @@ class Tagging(models.Model):
     def get_display_name():
         return 'Teams'
 
+    @staticmethod
+    def get_display_template(team=None, subteam=None):
+        return 'tagging.html'
+
+    @staticmethod
+    def get_form_template(team=None, subteam=None):
+        return 'tagging_modal.html'
+    
     @staticmethod
     def build_field_schema():
         teams = [{'name': t.name, 'type':'boolean'} for t in Team.objects.filter(active=True)]

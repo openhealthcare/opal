@@ -21,6 +21,13 @@ class UpdatesFromDictMixin(object):
         for name, value in vars(cls).items():
             if isinstance(value, ForeignKeyOrFreeText):
                 fieldnames.append(name)
+        # Sometimes FKorFT fields are defined on the parent now we have
+        # core archetypes - find those fields.
+        ftfk_fields = [f for f in fieldnames if f.endswith('_fk_id')]
+        for f in ftfk_fields:
+            if f[:-6] in fieldnames:
+                continue
+            fieldnames.append(f[:-6])
         return fieldnames
 
     @classmethod
@@ -35,9 +42,11 @@ class UpdatesFromDictMixin(object):
             return models.ForeignKey
 
         try:
-            value = vars(cls)[name]
+            
+            value = getattr(cls, name)
             if isinstance(value, ForeignKeyOrFreeText):
                 return ForeignKeyOrFreeText
+            
         except KeyError:
             pass
 
