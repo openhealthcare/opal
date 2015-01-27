@@ -4,6 +4,7 @@ OPAL Admin script.
 In which we expose useful commandline functionality to our users.
 """
 import argparse
+import inspect
 import os
 import shutil
 import sys
@@ -18,6 +19,24 @@ USERLAND_HERE = ffs.Path('.').abspath
 SCRIPT_HERE = ffs.Path(__file__).parent
 SCAFFOLD = SCRIPT_HERE/'scaffold'
 PLUGIN_SCAFFOLD = SCRIPT_HERE/'plugin_scaffold'
+
+def _find_application_name():
+    """
+    Return the name of the current OPAL application
+    """
+    for d in  USERLAND_HERE.ls():
+        if d.is_dir:
+            if d/'settings.py':
+                return d[-1]
+
+    print "\n\nCripes!\n"
+    print "We can't figure out what the name of your application is :(\n"
+    print "Are you in the application root directory? \n\n"
+    sys.exit(1)
+
+def _set_settings_module(name):
+    os.environ['DJANGO_SETTINGS_MODULE'] = '{0}.settings'.format(name)
+    return
 
 def interpolate_dir(directory, **context):
     """
@@ -50,7 +69,8 @@ def startproject(args):
     7. Create extra directories we need
     8. Run Django's migrations
     9. Create a superuser
-    10. Sample team
+    10. Create a Sample team
+    11. Initialise our git repo
     """
     name = args.name
     
@@ -113,8 +133,7 @@ def startproject(args):
 
     # 9. Create a superuser
     sys.path.append(os.path.join(os.path.abspath('.'), name))
-
-    os.environ['DJANGO_SETTINGS_MODULE'] = '{0}.settings'.format(name)
+    _set_settings_module(name)
 
     from django.contrib.auth.models import User
     user = User(username='super')
@@ -136,7 +155,9 @@ def startproject(args):
         restricted=False,
         direct_add=True
     )
-    
+
+    # 11. Initialise git repo
+    os.system('cd {0}; git init'.format(name))
     return
 
 
@@ -183,6 +204,86 @@ def startplugin(args):
     services.mkdir()
     return
 
+def _get_template_dir_from_record(record):
+    """
+    Given a RECORD, return it's relative template dir
+    """
+    modelsfile = inspect.getfile(record)
+    if modelsfile.endswith('.pyc'):
+        modelsfile = modelsfile.replace('.pyc', '.py')
+    appdir = ffs.Path(modelsfile)[:-1]
+    templates = appdir/'templates'
+    return templates
+
+def _create_display_template_for(record):
+    """
+    Create a display template for RECORD.
+    """
+    print 'Creating display template for', record
+    from opal.utils import camelcase_to_underscore
+    name = camelcase_to_underscore(record.__name__)
+
+    # 1. Locate the records template directory
+    templates = _get_template_dir_from_record(record)
+    records = templates/'records'
+    if not records:
+        records.mkdir()
+    
+    display_template = SCRIPT_HERE/'record_templates/record_display.jinja2'
+    template = records/'{0}.html'.format(name)
+    template << mold.cast(display_template, record=record, fields=record.build_field_schema())
+    return
+
+def _create_form_template_for(record):
+    """
+    Create a form template for RECORD.
+    """
+    print 'Creating modal template for', record
+    from opal.utils import camelcase_to_underscore
+    name = camelcase_to_underscore(record.__name__)
+
+    templates = _get_template_dir_from_record(record)
+    modals = templates/'modals'
+    if not modals:
+        modals.mkdir()
+
+    modal_template = SCRIPT_HERE/'record_templates/record_modal.jinja2'
+    template = modals/'{0}_modal.html'.format(name)
+    template << mold.cast(modal_template, record=record, fields=record.build_field_schema())
+    
+    return
+
+def scaffold(args):
+    """
+    Create record boilierplates: 
+
+    1. Run a south auto migration
+    2. Create display templates
+    3. Create forms
+    """
+    app = args.app
+    name = _find_application_name()
+    _set_settings_module(name)
+    sys.path.append(os.path.abspath('.'))
+
+    # 1. Let's run a South migration
+    os.system('python manage.py schemamigration --auto {app} --traceback'.format(app=app))
+    os.system('python manage.py migrate {app} --traceback'.format(app=app))
+
+    # 2. Let's create some display templates
+    from opal.models import Subrecord
+    from opal.utils import stringport
+    
+    models = stringport('{0}.models'.format(app))
+    for i in dir(models):
+        thing = getattr(models, i)
+        if inspect.isclass(thing) and issubclass(thing, Subrecord):
+            if not thing.get_display_template():
+                _create_display_template_for(thing)
+            if not thing.get_form_template():
+                _create_form_template_for(thing)
+    return
+    
 def main():
     parser = argparse.ArgumentParser(
         description="OPAL a Clinical Transactional Digital Services Framework",
@@ -209,6 +310,10 @@ def main():
         'name', help="name of your plugin"
     )
     parser_plugin.set_defaults(func=startplugin)
+
+    parser_scaffold = subparsers.add_parser("scaffold")
+    parser_scaffold.add_argument('app', help='Django app to scaffold')
+    parser_scaffold.set_defaults(func=scaffold)
     
     args = parser.parse_args()
     args.func(args)
