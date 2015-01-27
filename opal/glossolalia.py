@@ -17,9 +17,9 @@ def _send_upstream_message(event, payload):
     """
     try:
         payload['servicetype'] = 'OPAL'
-        payload['event'] = event,
-        payload['name'] = NAME,
-        print "Payload is:", json.dumps(payload, indent=2)
+        payload['event'] = event
+        payload['name'] = NAME
+        print "Payload is:", payload
         r = requests.post(
             ENDPOINT,
             data=payload
