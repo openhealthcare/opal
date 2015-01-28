@@ -1,0 +1,309 @@
+<div class="row">
+  <div class="col-md-12">
+    <h1>
+      [[ episode.demographics[0].name ]]
+      <small>
+        [[ episode.demographics[0].hospital_number ]]
+        [[ episode.demographics[0].date_of_birth | shortDate ]]
+      </small>
+    </h1>
+  </div>
+</div>
+
+<div class="row"> <!-- Main Panel -->
+  <div class="col-md-9"> <!-- Detail panels -->
+    <div class="row">
+      <div class="col-md-6"> <!-- Detail panels col 1 -->
+        
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3><i class="fa fa-users"></i> Demographics</h3>
+          </div>
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-md-4">
+                <b>Hospital #</b>
+              </div>
+              <div class="col-md-8">
+                [[ episode.demographics[0].hospital_number ]]
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <b>DOB</b>
+              </div>
+              <div class="col-md-8">
+                [[ episode.demographics[0].date_of_birth | shortDate ]]
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <b>Gender</b>
+              </div>
+              <div class="col-md-8">
+                [[ episode.demographics[0].gender ]]
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <b>Born</b>
+              </div>
+              <div class="col-md-8">
+                [[ episode.demographics[0].country_of_birth ]]
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <b>Ethnicity</b>
+              </div>
+              <div class="col-md-8">
+                [[ episode.demographics[0].ethnicity ]]
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3><i class="fa fa-map-marker"></i> Location</h3>
+          </div>
+          <div class="panel-body">
+            <div class="row">
+              <div class="col-md-4">
+                <b>Category</b>
+              </div>
+              <div class="col-md-8">
+                [[ episode.location[0].category ]]
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <b>Admitted</b>
+              </div>
+              <div class="col-md-8">
+                [[ episode.date_of_admission | shortDate ]]
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <b>Hospital</b>
+              </div>
+              <div class="col-md-8">
+                [[ episode.location[0].hospital ]]
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <b>Ward</b>
+              </div>
+              <div class="col-md-8">
+                [[ episode.location[0].ward ]]
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-4">
+                <b>Bed</b>
+              </div>
+              <div class="col-md-8">
+                [[ episode.location[0].bed ]]
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3><i class="fa fa-warning"></i> Allergies & Intolerances</h3>
+          </div>
+          <div class="panel-body">
+            <div class="row" ng-repeat="item in episode.allergies">
+              <div class="col-md-12">
+                [[ item.drug ]]
+                <span ng-show="[[ item.details ]]"><br />[[ item.details ]]</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PMHx -->
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3><i class="fa fa-history"></i> Past Medical History</h3>
+          </div>
+          <div class="panel-body">
+            <div class="row" ng-repeat="item in episode.past_medical_history">
+              <div class="col-md-12">
+                [[ item.condition ]]<span ng-show="item.year">[[ item.year ]]</span>
+                <span ng-show="[[ item.details ]]"><br />[[ item.details ]]</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Travel -->
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3><i class="fa fa-plane"></i> Travel</h3>
+          </div>
+          <table class="table table-striped">
+            <tr class="row" ng-repeat="item in episode.travel">
+              <td>
+                [[item.destination]]
+                <span ng-show="item.dates">([[item.dates]])</span>
+                [[item.reason_for_travel]]
+                <span ng-show="item.reason && item.specific_exposures">/</span>
+                [[item.specific_exposures]]
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        
+        <!-- Clinical Advice -->
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3><i class="fa fa-comments"></i> Clinical Advice</h3>
+          </div>
+          <table class="table table-striped">
+            <tr class="row" ng-repeat="item in episode.microbiology_input">
+              <td>
+                <p>
+                  <b>
+                    [[item.date | shortDate]]
+                    [[item.reason_for_interaction]]
+                  </b>
+                  <br />
+                  [[item.initials]]
+                  <span ng-show="item.discussed_with"> with [[item.discussed_with]]</span>
+                </p>
+                <p ng-show="item.clinical_discussion">
+                  <div markdown="clinical_discussion"></div>
+                </p>
+              </td>
+            </tr>
+          </table>
+        </div>        
+        
+      </div>                 <!-- Ends Detail panels col 1 -->
+      <div class="col-md-6"> <!-- Detail panels col 2 -->
+        
+        <!-- Presenting Complaint -->
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3><i class="fa fa-stethoscope"></i> Presenting Complaint</h3>
+          </div>
+          <table class="table table-striped">
+            <tr ng-repeat="item in episode.presenting_complaint">
+              <td>
+                [[ item.symptom ]]
+                <span ng-show="item.duration"><br />[[ item.duration ]]</span>
+                <span ng-show="item.details"><br />[[ item.details ]]</span>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Diagnosis / Issues -->
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3><i class="fa fa-stethoscope"></i> Diagnosis / Issues</h3>
+          </div>
+          <table class="table table-striped">
+            <tr ng-repeat="item in episode.diagnosis">
+              <td>
+                [[item.date_of_diagnosis | shortDate]]
+                <span ng-show="item.provisional">?</span>
+                [[item.condition]]
+                <span ng-show="item.details">([[item.details]])</span>
+              </td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Antimicrobials -->
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3><i class="fa fa-flask"></i> Antimicrobials</h3>
+          </div>
+          <table class="table table-striped">
+            <tr ng-repeat="item in episode.antimicrobial">
+              <td>
+                <span ng-show="item.start_date">[[item.start_date | shortDate]]-[[item.end_date | shortDate]]</span>
+                [[item.drug]] [[item.dose]] [[item.route]] [[ item.frequency ]] [[item.delivered_by]]
+              </td> 
+            </tr>
+          </table>          
+        </div>
+
+        <!-- Investigations -->
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3><i class="fa fa-eyedropper"></i> Investigations</h3>
+          </div>
+          <table class="table table-striped">
+            <tr ng-repeat="item in episode.microbiology_test">
+              <td>
+                {% include 'microbiology_test.html' %}
+              </td> 
+            </tr>
+          </table>          
+        </div>
+
+        <!-- Todo -->
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3><i class="fa fa-th-list"></i> Todo</h3>
+          </div>
+          <table class="table table-striped">
+            <tr ng-repeat="item in episode.todo">
+              <td>
+                {% include 'todo.html' %}
+              </td> 
+            </tr>
+          </table>          
+        </div>
+
+        <!-- General Note -->
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h3><i class="fa fa-info-circle"></i> General Notes</h3>
+          </div>
+          <table class="table table-striped">
+            <tr ng-repeat="item in episode.general_note">
+              <td>
+                {% include 'general_note.html' %}
+              </td> 
+            </tr>
+          </table>          
+        </div>
+        
+      </div>                 <!-- Ends Detail panels col 2 -->
+    </div>
+  </div> <!-- Ends Detail Panels -->
+  <div class="col-md-3"> <!-- Action Panels -->
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3>[[ episode.demographics[0].name ]]</h3>
+      </div>
+      <div class="panel-body">
+        <p>
+          <i class="fa fa-users"></i> Teams
+        </p>
+        <p>
+          <span ng-repeat="tag in episode.getTags()">
+            <button class="btn btn-xs" ng-click="jumpToTag(tag)" ng-show="tag_display[tag] != undefined">
+              [[ tag_display[tag] ]]
+            </button>
+          </span>
+        </p>
+
+        <p>Actions</p>
+        <p>
+          <button class="btn">
+            Discharge
+          </button>
+        </p>
+      </div>
+    </div>
+  </div> <!-- Ends Action Panels -->
+</div> <!-- Ends Main Panel -->

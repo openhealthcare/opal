@@ -124,7 +124,7 @@ class DischargeListTemplateView(EpisodeTemplateView):
 
 
 class EpisodeDetailTemplateView(EpisodeTemplateView):
-    template_name = 'episode_detail.html'
+    template_name = 'episode_detail_panels.html'
     column_schema = schema.detail_columns
 
 
