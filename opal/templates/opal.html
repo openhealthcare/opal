@@ -112,6 +112,7 @@
 	  <script type="text/javascript" src="{% static "js/opal/routes.js" %}"></script>
     {% endblock %}
 
+    {% application_javascripts %}
     <script type="text/javascript" src="{% static "js/opal/timer.js" %}"></script>
 
     <link href="{% static "js/c3-0.2.5/c3.css" %}" rel="stylesheet" media="all"> 
@@ -124,7 +125,6 @@
     <link href="{% static "css/print.css" %}" rel="stylesheet" media="print">
     <link href="{% static "css/screen.css" %}" rel="stylesheet" media="screen">
     <link rel="shortcut icon" href="{% static 'img/ohc-icon.png' %}">
-    {% if OPAL_EXTRA_APPLICATION %}{% include OPAL_EXTRA_APPLICATION %}{% endif %}
 
    <script id="templates/growl/growl.html" type="text/ng-template">
      <div class="growl-container" ng-class="wrapperClasses()">

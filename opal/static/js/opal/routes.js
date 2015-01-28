@@ -2,9 +2,7 @@ var app = angular.module('opal')
 app.config(
     ['$routeProvider',
      function($routeProvider) {
-	     $routeProvider.when('/',  {redirectTo: '/list'})
-
-             .when('/list/:tag?/:subtag?', {
+             $routeProvider.when('/list/:tag?/:subtag?', {
 			     controller: 'EpisodeListCtrl',
 			     resolve: {
 				     schema: function(listSchemaLoader) { return listSchemaLoader(); },
@@ -62,4 +60,4 @@ app.config(
 
 		     })
              .otherwise({redirectTo: '/'});
-     }])
+     }]);

@@ -3,6 +3,7 @@ Templatetags for including OPAL plugins
 """
 from django import template
 
+from opal import application
 from opal.utils import OpalPlugin
 
 register = template.Library()
@@ -34,7 +35,6 @@ def plugin_menuitems():
                 yield i
     return dict(items=items)
 
-
 @register.inclusion_tag('plugins/angular_module_deps.html')
 def plugin_opal_angular_deps():
     def deps():
@@ -42,3 +42,11 @@ def plugin_opal_angular_deps():
             for i in plugin.angular_module_deps:
                 yield i
     return dict(deps=deps)
+
+@register.inclusion_tag('plugins/javascripts.html')
+def application_javascripts():
+    def scripts():
+        app = application.OpalApplication.__subclasses__()[0]
+        for javascript in app.javascripts:
+            yield javascript
+    return dict(javascripts=scripts)
