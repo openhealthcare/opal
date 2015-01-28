@@ -106,7 +106,10 @@ class EpisodeTemplateView(TemplateView):
         print context['teams']
         context['columns'] = self.get_column_context(**kwargs)
         if 'tag' in kwargs:
-            context['team'] = models.Team.objects.get(name=kwargs['tag'])
+            try:
+                context['team'] = models.Team.objects.get(name=kwargs['tag'])
+            except models.Team.DoesNotExist:
+                context['team'] = None
         return context
 
 
