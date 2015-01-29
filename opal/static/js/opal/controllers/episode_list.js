@@ -169,7 +169,7 @@ angular.module('opal.controllers').controller(
 				    break;
 			    case 191: // question mark
 				    if(e.shiftKey){
-					    showKeyboardShortcuts();
+					    $scope.keyboard_shortcuts();
 				    }
 				    break;
                 case 78: // n
@@ -467,11 +467,6 @@ angular.module('opal.controllers').controller(
 		    $scope.mouseCix = -1;
 	    }
 
-        function showKeyboardShortcuts(){
-		    // TODO fix this
-            $('#keyboard-shortcuts').modal();
-        };
-
 	    function goLeft() {
 		    if ($scope.cix > 0) {
 			    $scope.cix--;
@@ -526,5 +521,9 @@ angular.module('opal.controllers').controller(
                     episode: function(){ return episode }
                 }
             });
+        }
+
+        $scope.keyboard_shortcuts = function(){
+            $modal.open({templateUrl: 'list_keyboard_shortcuts.html'})
         }
     });

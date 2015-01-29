@@ -187,11 +187,12 @@
   </div> <!-- Ends Action Panels -->
 </div> <!-- Ends Main Panel -->
 
+{% include 'keyboard_shortcuts_modal.html' %}
 
 <div style="clear: both;">
   <center>
-    <a href="#keyboard-shortcuts" role="button" data-toggle="modal" class="screen-only">
-      <i class="icon-keyboard"></i> Keyboard shortcuts available
+    <a class="pointer screen-only" ng-click="keyboard_shortcuts($event)">
+      <i class="fa fa-keyboard-o"></i> Keyboard shortcuts available
     </a>
   </center>
 </div>

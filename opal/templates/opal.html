@@ -145,7 +145,6 @@
     {% if OPAL_EXTRA_HEADER %}{% include OPAL_EXTRA_HEADER %}{% endif %}
     {% block navbar %}{% include 'navbar.html' %}{% endblock %}
 	  <div ng-view autoscroll="true"></div>
-    {% include 'keyboard_shortcuts_modal.html' %}
     {% include 'logout_modal.html' %}
     <div growl></div>
   </body>
