@@ -55,7 +55,7 @@ angular.module('opal.controllers').controller(
         }
 
         $scope.jumpToEpisode = function(patient){
-            window.open('#/episode/'+$scope.getEpisodeID(patient), '_blank');
+            $location.path('/episode/'+$scope.getEpisodeID(patient));
         }
 
 	    $scope.addEpisode = function() {

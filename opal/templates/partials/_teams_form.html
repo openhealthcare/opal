@@ -3,7 +3,7 @@
   <label>Teams</label>
   <div >
 	{% for team in teams %}{% if not team.parent %}{% if team.direct_add %}
-    {% if team.has_subtags %}
+    {% if team.has_subteams %}
     <h4>{{team.title}}:</h4>
     {% for subteam in team.team_set.all %}{% if subteam.active %}{% if subteam.direct_add %}
 	<label class="checkbox">

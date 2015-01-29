@@ -1,0 +1,25 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3>
+      <i class="{{ icon }}"></i> {{ title }}
+      <i class="fa fa-plus-circle edit pull-right"
+         ng-click="newNamedItem('{{ name }}')"></i>
+    </h3>
+  </div>
+  <ul class="list-group">
+    <li class="list-group-item" ng-repeat="item in episode.{{ name }}">
+      <div class="row">
+        <div class="col-md-9">
+          {% include detail_template %}
+        </div>
+        <div class="col-md-3">
+          <i class="fa fa-pencil edit pull-right"
+             ng-click="editNamedItem('{{ name }}', $index)"></i>                
+          <i class="fa fa-trash-o delete pull-right"
+             ng-click="deleteNamedItem('{{ name }}', $index)"></i>                          
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>
+

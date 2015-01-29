@@ -1,5 +1,5 @@
 
-<table class="table table-bordered table-hover search" ng-show="results.length > 0">
+<table class="table table-bordered table-striped table-hover search" ng-show="results.length > 0">
   <thead>
     <tr>
       <td>Hospital #</td>
@@ -7,7 +7,6 @@
       <td>DOB</td>
       <td>Admitted</td>
       <td>Discharged</td>
-      <td></td>
     </tr>
   </thead>
   <tbody>
@@ -20,9 +19,6 @@
       <td>[[result.demographics[0].date_of_birth | shortDate ]]</td>
 	  <td>[[ result.date_of_admission | shortDate ]]</td>
       <td>[[ result.discharge_date | shortDate ]]</td>
-	  <td>
-        <i class="{% if icon %}{{icon}}{% else %}glyphicon glyphicon-new-window{% endif %}"></i>
-      </td>
 	</tr>
   </tbody>
 

@@ -101,20 +101,22 @@ class EpisodeTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(EpisodeTemplateView, self).get_context_data(**kwargs)
-        # TODO rename/refactor this accordingly
         context['teams'] = models.Team.for_user(self.request.user)
-        print context['teams']
         context['columns'] = self.get_column_context(**kwargs)
         if 'tag' in kwargs:
             try:
                 context['team'] = models.Team.objects.get(name=kwargs['tag'])
             except models.Team.DoesNotExist:
                 context['team'] = None
+                
+        context['actions'] = app.actions
+        context['models'] = { m.__name__: m for m in subrecords() }
+        print context['models']
         return context
 
 
 class EpisodeListTemplateView(EpisodeTemplateView):
-    template_name = 'episode_list.html'
+    template_name = 'episode_list_new.html'
     column_schema = schema.list_schemas['default']
 
 

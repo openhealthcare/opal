@@ -61,7 +61,6 @@ angular.module('opal.services')
                 return _.filter(_.keys(tags),  function(t){return tags[t]})
             };
 
-
             this.hasTag = function(tag){
                 return _.has(this.getTags, tag);
             }

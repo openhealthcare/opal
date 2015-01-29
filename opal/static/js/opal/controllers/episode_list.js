@@ -63,6 +63,7 @@ angular.module('opal.controllers').controller(
 	    };
 
 	    $scope.rows = getVisibleEpisodes();
+        $scope.episode = $scope.rows[0];
 
 	    function compareEpisodes(p1, p2) {
 		    return p1.compare(p2);
@@ -204,10 +205,11 @@ angular.module('opal.controllers').controller(
 		    $scope.rix = rix;
 		    $scope.cix = cix;
 		    $scope.iix = iix;
+            $scope.episode = $scope.rows[rix];
 	    };
 
 	    $scope.focusOnQuery = function() {
-		    $scope.selectItem(-1, -1, -1);
+		    // $scope.selectItem(-1, -1, -1);
 		    $scope.state = 'search';
 	    };
 
@@ -271,9 +273,7 @@ angular.module('opal.controllers').controller(
                 });
 	    };
 
-	    $scope.dischargeEpisode = function(rix, event) {
-		    var episode = getEpisode(rix);
-
+	    $scope.dischargeEpisode = function(episode, event) {
             if(profile.readonly){ return null; };
 
 		    event.preventDefault();// Required to prevent the page reloading
@@ -494,11 +494,11 @@ angular.module('opal.controllers').controller(
 			    $scope.iix--;
 		    } else if ($scope.rix > 0) {
 			    $scope.rix--;
+				$scope.episode = getEpisode($scope.rix);
 			    if (schema.isSingleton(columnName)) {
 				    $scope.iix = 0;
 			    } else {
-				    episode = getEpisode($scope.rix);
-				    $scope.iix = episode.getNumberOfItems(columnName);
+				    $scope.iix = $scope.episode.getNumberOfItems(columnName);
 			    };
 		    };
 	    };
@@ -512,6 +512,7 @@ angular.module('opal.controllers').controller(
 			    $scope.iix++;
 		    } else if ($scope.rix < $scope.rows.length - 1) {
 			    $scope.rix++;
+                $scope.episode = $scope.rows[$scope.rix];
 			    $scope.iix = 0;
 		    };
 	    };

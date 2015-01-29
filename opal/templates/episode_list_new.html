@@ -1,0 +1,197 @@
+<div class="container-fluid content-offset">
+
+  <div class="row spaced">
+    <div class="col-md-12">
+      <h1 >
+        <div class="btn-group pull-left" dropdown is-open="status.isopen">
+          <button type="button" class="btn btn-default dropdown-toggle" ng-disabled="disabled">
+            <i class="fa fa-user-md"></i>
+            [[ tag_display[currentTag] ]] / [[ tag_display[currentSubTag] ]]
+            <i class="fa fa-angle-down"></i>
+          </button>
+          <ul class="dropdown-menu slides" role="menu">
+            {% for team in teams %}
+            {% if not team.has_subteams or team.parent %}
+            <li ng-hide="currentTag == '{{ team.name }}' || currentSubTag == '{{ team.name }}'">
+              <a href="#/list/{% if team.parent %}{{ team.parent.name }}/{{ team.name }}{% else %}{{ team.name }}{% endif %}">
+                {% if team.parent %}
+                {{ team.parent.title }} /
+                {% endif %}
+                {{ team.title }}
+              </a>
+            </li>
+            {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+      </h1>
+    </div>
+  </div>
+
+  
+  <div class="row"> <!-- Main Panel -->
+    <div class="col-md-10"> <!-- Detail panels -->
+
+      <table class="table table-bordered table-striped bg-white hidden-xs hidden-sm" >
+        <thead>
+	      <tr>
+	        {% for column in columns %}
+		    <th {% ifequal column.title "Teams" %}class="screen-only"{% endifequal %}>{{ column.title }}</th>
+	        {% endfor %}
+	      </tr>
+        </thead>
+        <tbody>
+	      <tr ng-repeat="row in rows">
+	        {% for column in columns %}
+            {% if column.batch_template %}
+            <td ng-mouseenter="mouseEnter($index, {{ forloop.counter0 }})"
+			    ng-mouseleave="mouseLeave()">
+              {% with cix=forloop.counter0 %}{% with column_name=column.name %}
+              {% include column.template_path %}
+              {% endwith %}{% endwith %}
+            </td>
+            {% else %}
+		    <td ng-mouseenter="mouseEnter($index, {{ forloop.counter0 }})"
+			    ng-mouseleave="mouseLeave()"
+                {% ifequal column.title "Teams" %}class="screen-only"{% endifequal %} >
+		      <ul>
+                {% if column.header_template_path %}
+                {% include column.header_template_path %}
+                {% endif %}
+			    <li ng-repeat="item in row.{{column.name}}"
+				    ng-click="selectItem($parent.$index, {{ forloop.counter0 }}, $index)"
+				    ng-dblclick="editItem($parent.$index, {{ forloop.counter0 }}, $index)"
+				    ng-class="{selected: rix == $parent.$index && cix == {{ forloop.counter0 }} && iix == $index}">
+			      {% include column.template_path %}
+			    </li>
+
+			    {% if not column.single %}
+			    <li class="edit_item"
+                    ng-click="editItem($index, {{ forloop.counter0 }}, row.{{column.name}}.length)"
+				    ng-dblclick="editItem($index, {{ forloop.counter0 }}, row.{{column.name}}.length)"
+				    ng-class="{selected: rix == $index && cix == {{ forloop.counter0 }} && iix == row.{{column.name}}.length}">
+			      <span ng-show="(!profile.readonly && rix == $index && cix == {{ forloop.counter0 }}) ||
+						         (!profile.readonly && mouseRix == $index && mouseCix == {{ forloop.counter0 }})">
+				    Add
+                    <i class="glyphicon glyphicon-plus pull-right"></i>
+			      </span>
+			      &nbsp;
+			    </li>
+                {% else %}
+                <li class="edit_item"
+                    ng-click="editItem($index, {{ forloop.counter0 }}, 0)"
+				    ng-dblclick="editItem($index, {{ forloop.counter0 }}, 0)"
+				    ng-class="{selected: rix == $index && cix == {{ forloop.counter0 }} && iix == 0}">
+			      <span ng-show="(!profile.readonly && rix == $index && cix == {{ forloop.counter0 }}) ||
+						         (!profile.readonly && mouseRix == $index && mouseCix == {{ forloop.counter0 }})">
+				    Edit <i class="glyphicon glyphicon-pencil pull-right"></i>
+			      </span>
+			      &nbsp;
+			    </li>
+
+			    {% endif %}
+		      </ul>
+		    </td>
+            {% endif %}
+	        {% endfor %}
+	      </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col-md-2"> <!-- Action Panels -->
+      <div class="panel panel-default" ng-show="episode">
+        <div class="panel-heading">
+          <h3>[[ episode.demographics[0].name ]]</h3>
+        </div>
+        <ul class="list-group">
+          <li class="list-group-item">
+            <h3>
+              <i class="fa fa-users"></i> Teams
+              <i class="fa edit fa-pencil pointer pull-right"
+                 ng-click="editNamedItem(episode, 'tagging', 0)"></i>
+            </h3>
+            <p>
+              <span ng-repeat="tag in otherTags(episode)">
+                <button class="btn btn-xs" ng-click="jumpToTag(tag)" ng-show="tag_display[tag] != undefined">
+                  [[ tag_display[tag] ]]
+                </button>
+              </span>
+            </p>
+          </li>
+          <li class="list-group-item">
+            <h4><i class="fa fa-bolt"></i> Actions</h4>
+            <p>
+              <a class="btn btn-default screen-only" href="#/episode/[[episode.id]]">
+                <i class="fa fa-search-plus"></i>
+                Episode Details
+              </a>
+            </p>
+            <p>
+              <button 
+                 ng-hide="profile.readonly"
+                 ng-click="dischargeEpisode(episode, $event)"
+                 class="btn btn-primary">
+                <span ng-hide="currentTag == 'opat'">
+                  <i class="fa fa-home"></i>
+                  Discharge
+                </span>
+                <span ng-show="currentTag == 'opat'">
+                  <i class="glyphicon glyphicon-ok"></i>
+                </span>
+                <span ng-show="currentSubTag == 'opat_referrals'" >Accept / refuse</span>
+                <span ng-show="currentSubTag == 'opat_current'" >Completed IV</span>
+                <span ng-show="currentSubTag == 'opat_followup'" >Next</span> 
+              </button>
+            </p>
+            {% for action in actions %}{% include action %}{% endfor %}
+          </li>
+        </ul>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3>
+            <i class="fa fa-filter"></i>
+            Filters
+          </h3>
+        </div> 
+        <div class="panel-body">
+          <p>
+	        <input class="form-control" ng-model="query.hospital_number"
+                   ui-event="{focus: 'focusOnQuery()', blur: 'blurOnQuery()'}"
+                   type="text" class="input-small" placeholder="Hospital #">
+	        <input class="form-control" ng-model="query.name" ui-event="{focus: 'focusOnQuery()', blur: 'blurOnQuery()'}"
+                   type="text" class="input-small" placeholder="Name">
+          </p>
+        </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <p>
+	        <button class="btn btn-primary"
+                    ng-show="!profile.readonly"
+                    ng-click="addEpisode()">
+              <i class="glyphicon glyphicon-plus"></i>
+              Add Episode
+            </button>
+          	<button class="btn btn-primary" ng-click="print()">
+              <i class="glyphicon glyphicon-print"></i>
+            </button>
+          </p>
+        </div>
+      </div>
+
+    </div>
+  </div> <!-- Ends Action Panels -->
+</div> <!-- Ends Main Panel -->
+
+
+<div style="clear: both;">
+  <center>
+    <a href="#keyboard-shortcuts" role="button" data-toggle="modal" class="screen-only">
+      <i class="icon-keyboard"></i> Keyboard shortcuts available
+    </a>
+  </center>
+</div>

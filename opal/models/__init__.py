@@ -112,7 +112,7 @@ class Team(models.Model):
         return teams
 
     @property
-    def has_subtags(self):
+    def has_subteams(self):
         return self.team_set.count() > 0
 
     
@@ -418,6 +418,21 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
             return None
 
     @classmethod
+    def get_detail_template(cls, team=None, subteam=None):
+        """
+        Return the active detail template for our record
+        """
+        name = camelcase_to_underscore(cls.__name__)
+        templates = [
+            name + '_detail.html', 'records/{0}_detail.html'.format(name),
+            name + '.html', 'records/{0}.html'.format(name)
+        ]
+        try:
+            return select_template(templates).name
+        except TemplateDoesNotExist:
+            return None
+
+    @classmethod
     def get_form_template(cls, team=None, subteam=None):
         """
         Return the active form template for our record
@@ -434,6 +449,7 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
             return select_template(templates).name
         except TemplateDoesNotExist:
             return None
+
 
     def _to_dict(self, user, fieldnames):
         """

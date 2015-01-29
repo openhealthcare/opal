@@ -1,6 +1,6 @@
 <div class="container content-offset">
 
-  <div class="panel panel-warning">
+  <div class="panel panel-primary">
     <!-- Default panel contents -->
     <div class="panel-heading">
       <h2>Patient Search</h2>
@@ -102,18 +102,23 @@
             </div>
           </form>
         </div>
-        <div class="col-md-2 bg-info">
-          <h4>Saved Searches</h4>
-          <ul>
-            <li ng-repeat="f in filters">
-              <a href="#" ng-click="jumpToFilter($event, f)">
-                [[f.name]]
-              </a>
-              <a href="#" ng-click="editFilter($event, f, $index)" >
-                <span class="glyphicon glyphicon-edit"></span>
-              </a>
-            </li>
-          </ul>
+        <div class="col-md-2">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4><i class="fa fa-save"></i> Searches</h4>
+            </div>
+            <ul class="list-group">
+              <li class="list-group-item" ng-repeat="f in filters">
+                <a href="#" ng-click="jumpToFilter($event, f)">
+                  [[f.name]]
+                </a>
+                <a href="#" ng-click="editFilter($event, f, $index)" >
+                  <span class="glyphicon glyphicon-edit"></span>
+                </a>
+              </li>
+            </ul>
+            
+          </div>
         </div>
       </div> <!-- Row -->
       <br />
@@ -133,7 +138,7 @@
             </button>
           </form>
           <button type="button"
-                  class="btn btn-info pull-left push-left-12"
+                  class="btn btn-secondary pull-left push-left-12"
                   ng-click="save()"
                   ng-show="results.length > 0">
 
@@ -145,13 +150,14 @@
         </div>
         <div class="col-md-4">
           <button type="button"
-                  class="btn btn-warning"
+                  class="btn btn-primary"
                   ng-click="search()"
                   >
             <span class="glyphicon glyphicon-search"></span>
             Search
           </button>
-          <a href="#/search" class="btn btn-info">
+          <a href="#/search" class="btn btn-secondary">
+            <i class="fa fa-arrow-circle-right"></i>
             Basic
           </a>
         </div>

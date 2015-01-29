@@ -1,5 +1,5 @@
 angular.module('opal.services')
-    .factory('EpisodeDetailMixin', function($rootScope, $modal, $location, Item){
+    .factory('EpisodeDetailMixin', function($rootScope, $modal, $location, $cookieStore, Item){
         return function($scope){
 
             var episode = $scope.episode;
@@ -11,6 +11,15 @@ angular.module('opal.services')
 	        function getColumnName(cix) {
 		        return $scope.columns[cix].name;
 	        };
+
+            $scope.childTags = function(){
+                tags = episode.getTags();
+                return _.filter(tags, function(t){
+                    if(t in options.tag_hierarchy &&
+                       options.tag_hierarchy[t].length > 0){ return false };
+                    return true
+                });
+            }
 
 	        $scope.selectItem = function(cix, iix) {
 		        $scope.cix = cix;
@@ -110,6 +119,14 @@ angular.module('opal.services')
 		        });
 	        };
 
+            $scope.deleteNamedItem = function(name, index){
+                var cix;
+                _.map($scope.columns, function(c, i){ if (c.name == name) { 
+                    cix = i; return i } return false });
+
+                return $scope.deleteItem(cix, index)
+            };
+            
 	        $scope.mouseEnter = function(cix) {
 		        $scope.mouseCix = cix;
 	        }
