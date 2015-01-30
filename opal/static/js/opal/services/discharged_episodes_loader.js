@@ -1,3 +1,7 @@
+// 
+// TODO - Can this be deleted entirely ? 
+// Where is it used?
+// 
 angular.module('opal.services')
     .factory('dischargedEpisodesLoader',
              function($q, $window,

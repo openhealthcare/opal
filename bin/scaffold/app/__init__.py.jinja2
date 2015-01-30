@@ -7,5 +7,6 @@ class Application(application.OpalApplication):
     schema_module = '{{ name }}.schema'
     flow_module   = '{{ name }}.flow'
     javascripts   = [
-        'js/{{ name }}/routes.js'
+        'js/{{ name }}/routes.js',
+        'js/opal/controllers/discharge.js'
     ]
