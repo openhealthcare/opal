@@ -1,6 +1,6 @@
 <div class="container-fluid content-offset">
 
-  <div class="row spaced">
+  <div class="row spaced screen-only">
     <div class="col-md-12">
       <h1 >
         <div class="btn-group pull-left" dropdown is-open="status.isopen">
@@ -24,6 +24,19 @@
             {% endfor %}
           </ul>
         </div>
+
+        <!-- <div class="bnt-group pull-right"> -->
+	    <!--   <button class="btn btn-primary" -->
+        <!--           ng-show="!profile.readonly" -->
+        <!--           ng-click="addEpisode()"> -->
+        <!--     <i class="glyphicon glyphicon-plus"></i> -->
+        <!--     Add Patient -->
+        <!--   </button> -->
+        <!--   <button class="btn btn-primary" ng-click="print()"> -->
+        <!--     <i class="glyphicon glyphicon-print"></i> -->
+        <!--   </button> -->
+        <!-- </div> -->
+
       </h1>
     </div>
   </div>
@@ -32,7 +45,7 @@
   <div class="row"> <!-- Main Panel -->
     <div class="col-md-10"> <!-- Detail panels -->
 
-      <table class="table table-bordered table-striped bg-white hidden-xs hidden-sm" >
+      <table class="table table-bordered table-striped bg-white" >
         <thead>
 	      <tr>
 	        {% for column in columns %}
@@ -99,7 +112,7 @@
       </table>
     </div>
 
-    <div class="col-md-2"> <!-- Action Panels -->
+    <div class="col-md-2 screen-only"> <!-- Action Panels -->
       <div class="panel panel-default" ng-show="episode">
         <div class="panel-heading">
           <h3>[[ episode.demographics[0].name ]]</h3>
@@ -176,9 +189,10 @@
               <i class="glyphicon glyphicon-plus"></i>
               Add Patient
             </button>
-          	<button class="btn btn-primary" ng-click="print()">
+            <button class="btn btn-primary" ng-click="print()">
               <i class="glyphicon glyphicon-print"></i>
             </button>
+            
           </p>
         </div>
       </div>
