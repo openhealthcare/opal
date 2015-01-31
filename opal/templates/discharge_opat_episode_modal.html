@@ -82,8 +82,8 @@
   <div ng-show="episode.tagging[0].opat_current && meta.oral == null && meta.completed == null">
     <p>This patient has completed IV Therapy. What's the reason for that ?</p>
     <center>
-      <button class="btn btn-primary btn-lg" ng-click="meta.oral = true">Switch to Oral</button>
-      <button class="btn btn-primary btn-lg" ng-click="meta.completed = true">Completed treatment</button>
+      <button class="btn btn-primary btn-lg" ng-click="meta.oral = true">Ongoing Follow Up</button>
+      <button class="btn btn-primary btn-lg" ng-click="meta.completed = true">Completed OPAT care</button>
     </center>
   </div>
 
@@ -128,7 +128,7 @@
     <p>This patient has completed Oral treatment. What's the reason for that ?</p>
     <center>
       <button class="btn btn-primary btn-lg" ng-click="meta.iv = true">Back to IV Therapy</button>
-      <button class="btn btn-primary btn-lg" ng-click="meta.completed = true">Completed treatment</button>
+      <button class="btn btn-primary btn-lg" ng-click="meta.completed = true">Completed OPAT care</button>
     </center>
   </div>
 
