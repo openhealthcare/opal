@@ -14,20 +14,10 @@
 	  <a class="navbar-brand" href="/">
         <img src="{% static 'img/ohc-trans.png' %}" />
         {{OPAL_BRAND_NAME}}
+        <small><small>
+          {{ VERSION_NUMBER }}
+        </small></small>
       </a>
-      <p class="navbar-text">
-        <a href="#changelog" role="button" data-toggle="modal">
-          <span id="changelogTooltip"
-                data-toggle="tooltip"
-                data-trigger="manual"
-                data-title="{{OPAL_BRAND_NAME}} has been updated - click here to view the changes"
-                data-placement="bottom"
-                >
-            {{ VERSION_NUMBER }}
-          </span>
-        </a>
-      </p>
-
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
