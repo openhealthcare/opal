@@ -54,7 +54,8 @@
 	      </tr>
         </thead>
         <tbody>
-	      <tr ng-repeat="row in rows">
+	      <tr ng-repeat="row in rows" 
+              ng-class="{selected: episode.id == row.id}">
 	        {% for column in columns %}
             {% if column.batch_template %}
             <td ng-mouseenter="mouseEnter($index, {{ forloop.counter0 }})"
