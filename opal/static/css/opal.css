@@ -89,6 +89,11 @@ li.selected {
     background-color: #5fa2dd; /* Blue */
 }
 
+tr.selected {
+	border: 2px solid #5fa2dd;
+	border-top: 3px solid #5fa2dd;
+	border-bottom: 3px solid #5fa2dd;
+}
 
 /** Navbar **/
 #main-navbar {
@@ -110,6 +115,12 @@ li.selected {
     padding: 0px;
 }
 .navbar i { font-size: 18px; }
+
+/* Growl messages */
+.growl-container.growl-fixed.top-right {
+  top: 54px;
+  right: 2px;
+}
 
 /* Detail page & panels */
 .col-md-9.box { width: 74%; margin-right: 1%; }
@@ -211,46 +222,26 @@ li li {
 }
 
 .modal-header {
-    padding-left: 0px 0px 0px 15px;
+    /* padding: 0px 0px 0px 15px; */
+    background: #9cc96b;
+    color: white;
 }
 
-thead {
-	background: #fafafa;
-	border-bottom: 1px solid #ddd;
-}
+table { font-size: 12px; }
 
-table {
-	font-size: 12px;
-}
+.table.search tbody tr td { padding: 8px; }
 
-.table th {
-	max-width: 150px;
-}
-
-.table tbody tr td {
-	padding: 1px;
-	max-width: 150px;
-}
-
-.table.search tbody tr td {
-    padding: 8px;
-}
-
-input.ng-invalid.ng-dirty {
-	background-color : #fcc;
-}
+input.ng-invalid.ng-dirty { background-color : #fcc; }
 
 #subtags {
     margin-left: 304px;
 	border-bottom: none;
 }
 
-
 .datepicker table tr td span {
 	height: 20px;
 	line-height: 12px;
 }
-
 
 .edit_item:hover {
     background-color: #f76c51; /* red */
@@ -258,13 +249,7 @@ input.ng-invalid.ng-dirty {
     cursor: pointer;
 }
 
-
 .dropdown-menu { z-index: 1060; }
-
-.growl-container.growl-fixed.top-right {
-  top: 54px;
-  right: 2px;
-}
 
 
 
