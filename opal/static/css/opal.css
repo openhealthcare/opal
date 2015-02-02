@@ -90,7 +90,6 @@ li.selected {
 }
 
 tr.selected {
-	border: 2px solid #5fa2dd;
 	border-top: 3px solid #5fa2dd;
 	border-bottom: 3px solid #5fa2dd;
 }
