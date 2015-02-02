@@ -1,4 +1,5 @@
 {% extends 'modal_base.html' %}
+{% load forms %}
 {% block modal_body %}
   <form class="form-horizontal">
     <div class="form-group">
@@ -72,11 +73,7 @@
 	<input class="form-control" type="text" ng-model="editing.opat_referral_consultant" >
       </div>
     </div>    
-    <div class="form-group" ng-show="editing.category == 'OPAT'">
-      <label class="control-label col-sm-3">Referring team</label>
-      <div class="col-sm-8">
-	<input class="form-control" type="text" ng-model="editing.opat_referral_team" >
-      </div>
+    {% input label="Referring team" model="editing.opat_referral_team" show="editing.category=='OPAT'" %}
     </div>    
     <div class="form-group" ng-show="editing.category == 'OPAT'">
       <label class="control-label col-sm-3">Referring team address</label>
