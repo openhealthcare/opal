@@ -5,10 +5,3 @@ Admitted: [[row.date_of_admission | shortDate]]
 <span ng-show="row.discharge_date">
   Discharged [[row.discharge_date | shortDate]]
 </span>
-<br />
-<a ng-show="currentTag != 'mine' && !profile.readonly" class="screen-only" href="#" ng-click="dischargeEpisode($parent.$index, $event)">
-  Discharge / Remove
-</a>
-<a ng-show="currentTag == 'mine' && !profile.readonly" class="screen-only" href="#" ng-click="removeFromMine($parent.$index, $event)">
-  Remove from mine
-</a>

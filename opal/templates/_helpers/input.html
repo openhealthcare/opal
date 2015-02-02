@@ -17,6 +17,11 @@
            name="{{ modelname }}"
            required
            {% endif %}
+           {% if data %}
+           {% for key, val in data %}
+           data-{{key}}="{{ val }}"
+           {% endfor %}
+           {% endif %}
            />
     {% if required %}
       <span ng-show="{{ formname }}.{{ modelname }}.$dirty && {{ formname }}.{{ modelname }}.$error.required">

@@ -624,6 +624,7 @@ class Location(EpisodeSubrecord):
 
 class Antimicrobial(EpisodeSubrecord):
     _sort = 'start_date'
+    _icon = 'fa fa-flask'
 
     drug          = ForeignKeyOrFreeText(lookuplists.DrugLookupList)
     dose          = models.CharField(max_length=255, blank=True)
@@ -637,6 +638,7 @@ class Antimicrobial(EpisodeSubrecord):
 
 
 class Allergies(PatientSubrecord):
+    _icon = 'fa fa-warning'    
 
     drug        = ForeignKeyOrFreeText(lookuplists.DrugLookupList)
     provisional = models.BooleanField()
@@ -653,6 +655,7 @@ class Diagnosis(EpisodeSubrecord):
     """
     _title = 'Diagnosis / Issues'
     _sort = 'date_of_diagnosis'
+    _icon = 'fa fa-stethoscope'
 
     condition         = ForeignKeyOrFreeText(lookuplists.ConditionLookupList)
     provisional       = models.BooleanField()
@@ -673,6 +676,7 @@ class Diagnosis(EpisodeSubrecord):
 class PastMedicalHistory(EpisodeSubrecord):
     _title = 'PMH'
     _sort = 'year'
+    _icon = 'fa fa-history'
 
     condition = ForeignKeyOrFreeText(lookuplists.ConditionLookupList)
     year      = models.CharField(max_length=4, blank=True)
@@ -685,6 +689,7 @@ class PastMedicalHistory(EpisodeSubrecord):
 class Investigation(EpisodeSubrecord):
     _title = 'Investigations'
     _sort = 'date_ordered'
+    _icon = 'fa fa-crosshairs'
 
     test                  = models.CharField(max_length=255)
     date_ordered          = models.DateField(null=True, blank=True)

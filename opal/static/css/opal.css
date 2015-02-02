@@ -12,7 +12,7 @@ a {
     color: rgb(77, 77, 77);
 }
 a:hover { color: #337fb2; }
-
+.form-horizontal .control-label.text-left { text-align: left; }
 /* Our Utility classes */
 .italic{ font-style: italic; }
 .pointer:hover { cursor: pointer; }

@@ -1,51 +1,54 @@
-      <div class="modal-header">
-	    <button type="button" class="close" ng-click="cancel()">×</button>
-	    <h3>Discharge</h3>
-      </div>
-      <div class="modal-body">
-	    <form>
-		  <div ng-show="currentCategory != 'Followup' && currentCategory != 'Discharged' ">
-			<label class="radio">
-			  <input type="radio" ng-model="editing.category" value="Discharged">
-			  Discharge
-			</label>
-			<label class="radio">
-			  <input type="radio" ng-model="editing.category" value="Followup">
-			  Discharge - Outstanding Results for Follow-Up
-			</label>
-			<label class="radio">
-			  <input type="radio" ng-model="editing.category" value="Deceased">
-			  Deceased
-			</label>
-			<label class="radio">
-			  <input type="radio" ng-model="editing.category" value="Transferred">
-			  Transferred
-			</label>
-			<label class="radio">
-			  <input type="radio" ng-model="editing.category" value="Unfollow">
-			  No longer under active review
-			</label>
-		  </div>
-          <div ng-show="currentCategory == 'Followup'">
-            <input type="hidden" ng-model="editing.category" value="Discharged">
-            <p>
-              Confirm discharge and no further follow-up is required.
-            </p>
-          </div>
-		  <div ng-hide="editing.category=='Unfollow' || currentCategory=='Discharged'" class="control-group">
-			<label class="control-label">Date of discharge</label>
-			<div class="controls">
-			  <input type="text" ng-model="editing.discharge_date" 
-                     bs-datepicker 
-                     data-min-date="[[editing.date_of_admission]]">
-			</div>
-		  </div>
-          <div ng-show="currentCategory == 'Discharged'">
-            <p>Confirm discharge.</p>
-          </div>
-	    </form>
-      </div>
-      <div class="modal-footer">
-	    <button class="btn btn-primary" ng-click="discharge()">Discharge</button>
-	    <button class="btn" ng-click="cancel()">Cancel</button>
-      </div>
+{% load forms %}
+<div class="modal-header">
+  <button type="button" class="close" ng-click="cancel()">×</button>
+  <h3>
+    <i class="fa fa-home"></i>
+    Discharge
+  </h3>
+</div>
+<div class="modal-body">
+  <form>
+    {% datepicker label="Discharge date" model="editing.discharge_date" hide="editing.category=='Unfollow' || currentCategory=='Discharged'" mindate="[[editing.date_of_admission]]"%}
+    <br />
+    <br/>
+	<div ng-show="currentCategory != 'Followup' && currentCategory != 'Discharged' ">
+	  <label class="radio">
+		<input type="radio" ng-model="editing.category" value="Discharged">
+		Discharge
+	  </label>
+	  <label class="radio">
+		<input type="radio" ng-model="editing.category" value="Followup">
+		Discharge - Outstanding Results for Follow-Up
+	  </label>
+	  <label class="radio">
+		<input type="radio" ng-model="editing.category" value="Deceased">
+		Deceased
+	  </label>
+	  <label class="radio">
+		<input type="radio" ng-model="editing.category" value="Transferred">
+		Transferred
+	  </label>
+	  <label class="radio">
+		<input type="radio" ng-model="editing.category" value="Unfollow">
+		No longer under active review
+	  </label>
+	</div>
+    <div ng-show="currentCategory == 'Followup'">
+      <input type="hidden" ng-model="editing.category" value="Discharged">
+      <p>
+        Confirm discharge and no further follow-up is required.
+      </p>
+    </div>
+
+    <div ng-show="currentCategory == 'Discharged'">
+      <p>Confirm discharge.</p>
+    </div>
+  </form>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" ng-click="discharge()">
+    <i class="fa fa-home"></i>
+    Discharge
+  </button>
+  <button class="btn" ng-click="cancel()">Cancel</button>
+</div>

@@ -39,6 +39,7 @@ def _input(*args, **kwargs):
     required = kwargs.pop('required', None)
     formname = kwargs.pop('formname', None)
     unit = kwargs.pop('unit', None)
+    data = kwargs.pop('data', [])
     
     if required:
         if not formname:
@@ -60,7 +61,8 @@ def _input(*args, **kwargs):
         'icon'      : icon,
         'required'  : required,
         'formname'  : formname,
-        'unit'      : unit
+        'unit'      : unit,
+        'data'      : data
     }
 
 @register.inclusion_tag('_helpers/input.html')
@@ -80,6 +82,10 @@ def input(*args, **kwargs):
 
 @register.inclusion_tag('_helpers/input.html')
 def datepicker(*args, **kwargs):
+    if 'mindate' in kwargs:
+        kwargs['data'] = [
+            ('min-date', kwargs['mindate'])
+        ]
     return _input(*[a for a in args] + ["bs-datepicker"], **kwargs)
 
 @register.inclusion_tag('_helpers/select.html')
