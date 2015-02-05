@@ -16,6 +16,26 @@ class APIAdmitEpisodeView(View):
         return _build_json_response(resp)
 
 
+class APIReferPatientView(View):
+    """
+    Refer a particular episode of care to a new team
+    """
+    def post(self, *args, **kwargs):
+        """
+        Expects PATIENT, EPISODE, TARGET
+        """
+        from opal.models import Episode
+        data = _get_request_data(self.request)
+        episode = Episode.objects.get(pk=data['episode'])
+        current_tags = episode.get_tag_names(None)
+        if not data['target'] in current_tags:
+            print "Setting", data['target']
+            current_tags.append(data['target'])
+            episode.set_tag_names(current_tags, None)
+        resp = {'ok': 'Got your referral just fine - thanks!'}
+        return _build_json_response(resp)
+
+    
 class APISubrecordDetailView(View):
     """
     Main API entrypoint for Subrecords. 

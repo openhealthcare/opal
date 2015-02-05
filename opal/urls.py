@@ -89,6 +89,7 @@ urlpatterns = patterns(
 
     # New Public facing API urls
     url(r'api/v0.1/episode/admit', csrf_exempt(views.APIAdmitEpisodeView.as_view())),
+    url(r'api/v0.1/episode/refer', csrf_exempt(views.APIReferPatientView.as_view())),
     
 )
 
