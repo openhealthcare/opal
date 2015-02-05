@@ -9,7 +9,7 @@ import requests
 INTEGRATING  = settings.INTEGRATING
 NAME         = getattr(settings, 'GLOSSOLALIA_NAME', '')
 ENDPOINT     = getattr(settings, 'GLOSSOLALIA_URL', '') + 'api/v0.1/accept/'
-OUR_ENDPOINT = settings.DEFAULT_DOMAIN + 'ddd/'
+OUR_ENDPOINT = settings.DEFAULT_DOMAIN
 
 def _send_upstream_message(event, payload):
     """
