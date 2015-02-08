@@ -6,6 +6,8 @@ class OpalApplication(object):
     flow_module   = None
     javascripts   = []
     actions       = []
+    
+    default_episode_category = 'inpatient'
 
 def get_app():
     """

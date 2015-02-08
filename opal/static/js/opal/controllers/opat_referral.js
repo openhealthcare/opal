@@ -24,6 +24,7 @@ controllers.controller(
             if(!episode.tagging[0].makeCopy){
                 episode.tagging[0] = episode.newItem('tagging');
             }
+            var ep = episode.makeCopy()
             var teams = episode.tagging[0].makeCopy();
             var location = episode.location[0].makeCopy();
             
@@ -35,10 +36,10 @@ controllers.controller(
             _.each(_.keys(teams), function(team){
                 if(teams[team]){ teams[team] = false };
             })
-                
+
+                ep.category = 'OPAT'
             teams.opat = true;
             teams.opat_referrals = true;
-            location.category = 'OPAT';
             location.opat_referral = moment();
             
             //
@@ -48,6 +49,7 @@ controllers.controller(
             var vte = episode.newItem('microbiology_test');
 
             $q.all([
+                episode.save(ep),
                 episode.tagging[0].save(teams),
                 episode.location[0].save(location),
                 mrsa.save({test: 'MRSA PCR'}),

@@ -144,6 +144,7 @@ angular.module('opal.services')
             this.makeCopy = function(){
                 var copy = {
                     id               : episode.id,
+                    category         : episode.category,
                     date_of_admission: episode.date_of_admission,
                     discharge_date   : episode.discharge_date,
                     consistency_token: episode.consistency_token
