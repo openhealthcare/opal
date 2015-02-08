@@ -14,12 +14,14 @@ from django.template import TemplateDoesNotExist
 from django.template.loader import select_template
 import reversion
 
+from opal import application
 from opal import managers
 from opal.utils import stringport, camelcase_to_underscore, OpalPlugin
 from opal.utils.fields import ForeignKeyOrFreeText
 from opal.utils.models import lookup_list, episode_subrecords, patient_subrecords
 from opal import exceptions
 
+app = application.get_app()
 
 # TODO This is stupid - we can fully deprecate this please?
 try:
@@ -222,6 +224,7 @@ class Episode(UpdatesFromDictMixin, models.Model):
     A patient may have many episodes of care, but this maps to one occasion
     on which they found themselves on "The List".
     """
+    category = models.CharField(max_length=200, default=app.default_episode_category)
     patient = models.ForeignKey(Patient)
     active  = models.BooleanField(default=False)
     date_of_admission = models.DateField(null=True, blank=True)
@@ -239,6 +242,9 @@ class Episode(UpdatesFromDictMixin, models.Model):
                                      demographics.name,
                                      self.date_of_admission)
         except models.ObjectDoesNotExist:
+            return self.date_of_admission
+        except Exception as e:
+            print e.__class__
             return self.date_of_admission
 
     @property
@@ -309,6 +315,7 @@ class Episode(UpdatesFromDictMixin, models.Model):
         """
         d = {
             'id'               : self.id,
+            'category'         : self.category,
             'active'           : self.active,
             'date_of_admission': self.date_of_admission,
             'discharge_date'   : self.discharge_date,
