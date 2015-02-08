@@ -11,6 +11,8 @@ a {
     transition:.5s;
     color: rgb(77, 77, 77);
 }
+p a { color: #f76c51; }
+
 a:hover { color: #337fb2; }
 .form-horizontal .control-label.text-left { text-align: left; }
 /* Our Utility classes */
