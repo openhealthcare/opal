@@ -3,11 +3,14 @@
   <div class="panel panel-primary">
     <!-- Default panel contents -->
     <div class="panel-heading">
-      <h2>Patient Search</h2>
+      <h2>
+        <i class="fa fa-search"></i> 
+        Patient Search
+      </h2>
     </div>
     <div class="panel-body">
       <form class="form form-horizontal">
-        <div class="col-sm-6">
+        <div class="col-md-6">
           <input type="text"
                  name="name"
                  ng-model="searchTerms.name"
@@ -18,7 +21,7 @@
                  autocomplete="off"
                  />
         </div>
-        <div class="col-sm-3">
+        <div class="col-md-3">
           <input type="text"
                  name="hospital_number"
                  ng-model="searchTerms.hospital_number"
@@ -27,19 +30,15 @@
                  ng-keypress="$event.keyCode == 13 && search()" />
         </div>
 
-        <div class="col-sm-1">
-	      <button ng-click="search()" class="btn btn-primary">
+        <div class="col-md-3">
+	      <a ng-click="search()" class="btn btn-primary pull-left">
             <i class="glyphicon glyphicon-search"></i>
             Search
-          </button>
-        </div>
-        <div class="col-sm-1">
-          <p>
-            <a href="#/extract" class="btn btn-secondary">
-              <i class="fa fa-sliders"></i>
-              Advanced
-            </a>
-          </p>
+          </a>
+          <a href="#/extract" class="btn btn-secondary pull-right">
+            <i class="fa fa-sliders"></i>
+            Advanced
+          </a>
         </div>
 
       </form>
@@ -48,12 +47,33 @@
     </div>
     {% include '_episode_summary_table.html' %}
     <!-- Table -->
-  </div>
 
-  <div ng-hide="!searched || results.length">
-	No Results
-    <br /><br />
-    <button class="btn btn-info" ng-click="addEpisode()">Add patient</button>
-  </div>
+    <div ng-hide="!searched || results.length" class="panel-body">
+      <div class="row">
+        <div class="col-md-6">
+          <p class="lead">
+            We couldn't find any results for your search.
+            <br />
+            Maybe you'd like to
+            <a href="#/extract">try an advanced search?</a>
+          </p>
+        </div>
+        <div class="col-md-6">
+          <p>
+            <button class="btn btn-secondary pull-right"
+                    ng-click="addEpisode()"
+                    >
+              <i class="glyphicon glyphicon-plus"></i>
+              Add Patient
+            </button>
 
+          </p>
+        </div> 
+
+
+      </div>
+    </div>
+    
+    
+  </div>
 </div>
