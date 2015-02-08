@@ -48,6 +48,7 @@ class EpisodeManager(models.Manager):
         for e in episodes:
             d = {
                 'id'               : e.id,
+                'category'         : e.category,
                 'active'           : e.active,
                 'date_of_admission': e.date_of_admission,
                 'discharge_date'   : e.discharge_date,
