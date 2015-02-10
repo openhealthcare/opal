@@ -15,6 +15,7 @@ p a { color: #f76c51; }
 
 a:hover { color: #337fb2; }
 .form-horizontal .control-label.text-left { text-align: left; }
+.nav-tabs li:hover { cursor: pointer; }
 /* Our Utility classes */
 .italic{ font-style: italic; }
 .pointer:hover { cursor: pointer; }
