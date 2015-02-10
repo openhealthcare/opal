@@ -16,8 +16,9 @@ def record_panel(model):
     title =  getattr(model, '_title',
                      name.replace('_', ' ').title())
     return {
-        'name': name,
-        'title': title,
+        'name'           : name,
+        'singleton'      : getattr(model, '_is_singleton', False),
+        'title'          : title,
         'detail_template': model.__class__.get_detail_template(),
-        'icon': getattr(model, '_icon', None)
+        'icon'           : getattr(model, '_icon', None)
     }
