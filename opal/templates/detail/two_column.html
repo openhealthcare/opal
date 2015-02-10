@@ -47,15 +47,7 @@
           </li>
           <li class="list-group-item">
             <h4><i class="fa fa-bolt"></i> Actions</h4>
-            <p>
-              <button 
-                 ng-hide="profile.readonly"
-                 ng-click="dischargeEpisode($event)"
-                 class="btn btn-primary">
-                <i class="fa fa-home"></i>
-                Discharge
-              </button>
-            </p>
+            {% include 'partials/_episode_actions.html' %}
           </li>
         </ul>
       </div>
