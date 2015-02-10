@@ -4,9 +4,7 @@
 <html xmlns:ng="http://angularjs.org" id="ng-app" ng-app="{% block ngapp %}opal{% endblock %}" ng-controller="RootCtrl" ng-keydown="keydown($event)">
   <head>
 
-	<!--[if lte IE 8]>
-		<script type="text/javascript" src="{% static "js/utils/json3.min.js" %}"></script>
-		<![endif]-->
+	<script type="text/javascript" src="{% static "js/utils/json3.min.js" %}"></script>
 	<meta charset="utf-8">
 	<title>{{brand_name}}</title>
 
