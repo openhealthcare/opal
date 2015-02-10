@@ -273,10 +273,9 @@ angular.module('opal.controllers').controller(
                 });
 	    };
 
-	    $scope.dischargeEpisode = function(episode, event) {
+	    $scope.dischargeEpisode = function(episode) {
             if(profile.readonly){ return null; };
 
-		    event.preventDefault();// Required to prevent the page reloading
 		    $scope.state = 'modal';
 
             var exit = Flow(

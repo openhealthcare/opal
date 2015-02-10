@@ -165,9 +165,7 @@ angular.module('opal.services')
 		        };
 	        };
 
-	        $scope.dischargeEpisode = function(event) {
-		        event.preventDefault(); // required to prevent the page reloading
-
+	        $scope.dischargeEpisode = function() {
                 if(profile.readonly){ return null; };
 
 		        $scope.state = 'modal';

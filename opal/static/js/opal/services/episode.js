@@ -62,7 +62,7 @@ angular.module('opal.services')
             };
 
             this.hasTag = function(tag){
-                return _.has(this.getTags, tag);
+                return this.getTags().indexOf(tag) != -1;
             }
 
 	        this.newItem = function(columnName, opts) {
