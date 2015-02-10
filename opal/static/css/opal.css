@@ -27,6 +27,9 @@ a:hover { color: #337fb2; }
     border: 1px solid #bbb;
 }
 .content-offset { margin-top: 50px; }
+.heading { position: fixed; top: 50px; width: 100%; z-index: 3; }
+.headed-content-offset { margin-top: 150px; }
+
 
 /* Generic Colours */
 .bg-primary h1 small { color: #eff; }
