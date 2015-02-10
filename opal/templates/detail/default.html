@@ -1,0 +1,9 @@
+{% extends 'detail/two_column.html' %}
+{% load panels %}
+{% block left_column %}
+  {% include 'detail/_demographics_location_panels.html' %}
+{% endblock %}
+{% block right_column %}
+  {% record_panel models.Diagnosis %}
+  {% record_panel models.Antimicrobial %}
+{% endblock %}

@@ -33,7 +33,7 @@ app.config(
 				     options: function(Options) { return Options; },
                      profile: function(UserProfile){ return UserProfile }
 			     },
-			     templateUrl: '/templates/episode_detail.html'
+			     templateUrl: function(params){ return '/templates/episode_detail.html/' + params.id }
 		     })
              .when('/search', {
 			     controller: 'SearchCtrl',
