@@ -109,7 +109,6 @@ class EpisodeTemplateView(TemplateView):
             except models.Team.DoesNotExist:
                 context['team'] = None
                 
-        context['actions'] = app.actions
         context['models'] = { m.__name__: m for m in subrecords() }
         return context
 

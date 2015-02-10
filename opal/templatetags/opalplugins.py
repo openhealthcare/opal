@@ -50,3 +50,14 @@ def application_javascripts():
         for javascript in app.javascripts:
             yield javascript
     return dict(javascripts=scripts)
+
+@register.inclusion_tag('plugins/actions.html')
+def application_actions():
+    def actions():
+        app = application.OpalApplication.__subclasses__()[0]
+        for action in app.actions:
+            yield action
+        for plugin in OpalPlugin.__subclasses__():
+            for action in plugin.actions:
+                yield action
+    return dict(actions=actions)

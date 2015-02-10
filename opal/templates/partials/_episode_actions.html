@@ -1,18 +1,24 @@
-<p>
+{% load opalplugins %}
+<p
+   ng-hide="episode.category != 'inpatient'")
+   >
   <button 
      ng-hide="profile.readonly"
      ng-click="dischargeEpisode(episode)"
      class="btn btn-primary">
-    <span ng-hide="currentTag == 'opat' || episode.category == 'OPAT'">
       <i class="fa fa-home"></i>
       Discharge
-    </span>
-    <span ng-show="episode.category == 'OPAT'">
-      <i class="glyphicon glyphicon-ok"></i>
-    </span>
+  </button>
+</p>
+<p ng-show="episode.category == 'OPAT'">
+  <button 
+     ng-hide="profile.readonly"
+     ng-click="dischargeEpisode(episode)"
+     class="btn btn-primary">
+    <i class="glyphicon glyphicon-ok"></i>
     <span ng-show="episode.hasTag('opat_referrals')" >Accept / refuse</span>
     <span ng-show="episode.hasTag('opat_current')" >Completed IV</span>
     <span ng-show="episode.hasTag('opat_followup')" >Next</span> 
   </button>
 </p>
-{% for action in actions %}{% include action %}{% endfor %}
+{% application_actions %}

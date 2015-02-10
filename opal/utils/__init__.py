@@ -293,6 +293,7 @@ class OpalPlugin(object):
     urls        = []
     javascripts = []
     menuitems   = []
+    actions     = []
     head_extra  = []
     angular_module_deps = []
 
