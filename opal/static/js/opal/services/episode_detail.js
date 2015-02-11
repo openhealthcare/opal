@@ -47,7 +47,7 @@ angular.module('opal.services')
 			        $scope.state = 'normal';
 
 			        if (result == 'save-and-add-another') {
-				        $scope.editItem(cix, $episode.getNumberOfItems(columnName));
+				        $scope.newNamedItem(columnName)
 			        };
 		        });
             }
