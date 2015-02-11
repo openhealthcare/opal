@@ -13,8 +13,8 @@
              bs-typeahead
              ng-options="i for i in {{ lookuplist }}"
            {% endif %}
-           {% if required %}
            name="{{ modelname }}"
+           {% if required %}
            required
            {% endif %}
            {% if data %}
