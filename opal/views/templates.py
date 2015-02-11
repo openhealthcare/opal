@@ -18,6 +18,7 @@ def _get_column_context(schema, **kwargs):
                                           name.replace('_', ' ').title())
         column_context['single'] = column._is_singleton
         column_context['episode_category'] = getattr(column, '_episode_category', None)
+        column_context['icon'] = getattr(column, '_icon', '')
         column_context['episode_category_excludes'] = getattr(column, '_episode_category_excludes', None)
         column_context['batch_template'] = getattr(column, '_batch_template', None)
 

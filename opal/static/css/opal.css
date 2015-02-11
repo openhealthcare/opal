@@ -90,6 +90,8 @@ a:hover { color: #337fb2; }
     color: #fff    
 }
 
+table.patient-list tr th { white-space: nowrap; }
+
 /* Selected sub-cell - list view */
 li.selected {
 	background-color: #9cc96b;  /* Green*/
