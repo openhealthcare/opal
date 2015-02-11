@@ -34,16 +34,25 @@ angular.module('opal.services')
                 };
                 $scope.state = 'modal';
 
-		        modal = $modal.open({
+                var modal_opts = {
 			        templateUrl: '/templates/modals/' + columnName + '.html/',
-			        controller: 'EditItemCtrl',
-			        resolve: {
-				        item: function() { return item; },
-				        options: function() { return options; },
-				        profile: function() { return profile; },
-                        episode: function() { return $scope.episode }
-			        }
-		        }).result.then(function(result) {
+                    controller: 'EditItemCtrl',
+                    resolve: {
+                        item: function() { return item; },
+                        options: function() { return options; },
+                        profile: function() { return profile; },
+                        episode: function() { return $scope.episode; }
+                    }
+                }
+
+                if(item.size){
+                    modal_opts.size = item.size;
+                }
+                
+                modal = $modal.open(modal_opts);
+                
+
+                modal.result.then(function(result) {
 			        $scope.state = 'normal';
 
 			        if (result == 'save-and-add-another') {
