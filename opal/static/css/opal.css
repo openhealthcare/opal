@@ -28,6 +28,7 @@ a:hover { color: #337fb2; }
     border: 1px solid #bbb;
 }
 .content-offset { margin-top: 50px; }
+.content-centered { padding-top: 20%; height: 100%; }
 .heading { position: fixed; top: 50px; width: 100%; z-index: 3; }
 .headed-content-offset { margin-top: 150px; }
 
@@ -99,6 +100,17 @@ tr.selected {
 	border-top: 3px solid #5fa2dd;
 	border-bottom: 3px solid #5fa2dd;
 }
+
+/* Login */
+.login img { height: 60px; margin-top: -12px; padding-right: 4px; float: right; opacity: 0.7; }
+.login {
+    -o-transition:.4s;
+    -ms-transition:.4s;
+    -moz-transition:.4s;
+    -webkit-transition:.4s;
+    transition:.4s;
+}
+.login.submitted { margin-top: -2750px; }
 
 /** Navbar **/
 #main-navbar {
