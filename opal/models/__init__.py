@@ -189,6 +189,9 @@ class Patient(models.Model):
             return '%s | %s' % (demographics.hospital_number, demographics.name)
         except models.ObjectDoesNotExist:
             return 'Patient {0}'.format(self.id)
+        except:
+            print self.id
+            raise
 
     def create_episode(self, category=None):
         return self.episode_set.create()
