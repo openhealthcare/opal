@@ -635,6 +635,7 @@ class Location(EpisodeSubrecord):
 class Antimicrobial(EpisodeSubrecord):
     _sort = 'start_date'
     _icon = 'fa fa-flask'
+    _modal = 'lg'
 
     drug          = ForeignKeyOrFreeText(lookuplists.DrugLookupList)
     dose          = models.CharField(max_length=255, blank=True)
@@ -700,6 +701,7 @@ class Investigation(EpisodeSubrecord):
     _title = 'Investigations'
     _sort = 'date_ordered'
     _icon = 'fa fa-crosshairs'
+    _modal = 'lg'
 
     test                  = models.CharField(max_length=255)
     date_ordered          = models.DateField(null=True, blank=True)
