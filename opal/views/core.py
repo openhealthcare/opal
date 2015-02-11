@@ -440,6 +440,8 @@ class SchemaBuilderView(View):
             }
         if hasattr(model, '_sort'):
             col['sort'] = model._sort
+        if hasattr(model, '_modal'):
+            col['modal_size'] = model._modal
         if hasattr(model, '_read_only'):
             col['readOnly'] = model._read_only
         return col

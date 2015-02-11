@@ -329,7 +329,7 @@ angular.module('opal.controllers').controller(
             var template_url = '/templates/modals/' + columnName + '.html/';
             template_url += $scope.currentTag + '/' + $scope.currentSubTag;
             
-            modal = $modal.open({
+            var modal_opts = {
                 templateUrl: template_url,
                 controller: 'EditItemCtrl',
                 resolve: {
@@ -338,7 +338,13 @@ angular.module('opal.controllers').controller(
                     profile: function() { return profile; },
                     episode: function() { return episode; }
                 }
-            });
+            }
+
+            if(item.size){
+                modal_opts.size = item.size;
+            }
+                
+            modal = $modal.open(modal_opts);
 
             // 
             // The state resetting logic is fairly simple, but we may have to

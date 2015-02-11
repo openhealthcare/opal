@@ -26,6 +26,7 @@ angular.module('opal.services')
 
 	    this.columnName = columnSchema.name;
         this.sort = columnSchema.sort
+        this.size = columnSchema.modal_size
 
         // 
         // Returns a clone of the editable fields + consistency token so that
