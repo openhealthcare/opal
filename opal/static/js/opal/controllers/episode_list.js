@@ -511,6 +511,16 @@ angular.module('opal.controllers').controller(
 		    };
 	    };
 
+        $scope.select_episode = function(episode, rix){
+            if(rix == $scope.rix){
+                return;
+            }else{
+                $scope.episode = episode;
+                $scope.rix = rix;
+                $scope.iix = 0;
+            }
+        }
+
         $scope.controller_for_episode = function(controller, template, size, episode){
             $modal.open({
                 controller : controller,
