@@ -86,6 +86,9 @@ angular.module('opal.controllers').controller(
         }
 
         $scope.otherTags = function(episode){
+            if(!episode){
+                return []
+            }
             tags = episode.getTags();
             return _.filter(tags, function(t){
                 if(t in options.tag_hierarchy &&
