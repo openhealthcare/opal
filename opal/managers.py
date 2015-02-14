@@ -4,7 +4,7 @@ Custom managers for query optimisations
 from collections import defaultdict
 import time
 
-from django.db import models
+from django.db import models, connection, reset_queries
 
 from opal.utils.models import episode_subrecords, patient_subrecords
 
@@ -30,20 +30,27 @@ class EpisodeManager(models.Manager):
         """
         Return a set of serialised EPISODES.
 
-        If HISTORIC_TAGS is Truthy, return delted tags as well.
+        If HISTORIC_TAGS is Truthy, return deleted tags as well.
         """
         patient_ids = [e.patient_id for e in episodes]
         patient_subs = defaultdict(lambda: defaultdict(list))
 
         episode_subs = self.serialised_episode_subrecords(episodes, user)
-
         for model in patient_subrecords():
             name = model.get_api_name()
             subrecords = model.objects.filter(patient__in=patient_ids)
             for sub in subrecords:
                 patient_subs[sub.patient_id][name].append(sub.to_dict(user))
 
-
+        # We do this here because it's an order of magnitude quicker than hitting
+        # episode.tagging_dict() for each episode in a loop.
+        taggings = defaultdict(dict)
+        from opal.models import Tagging
+        for tag in Tagging.objects.filter(episode__in=episodes).select_related('team'):
+            if tag.team.name == 'mine' and tag.user != user:
+                continue
+            taggings[tag.episode_id][tag.team.name] = True
+        
         serialised = []
         for e in episodes:
             d = {
@@ -59,10 +66,12 @@ class EpisodeManager(models.Manager):
                 d[key] = value
             for key, value in patient_subs[e.patient_id].items():
                 d[key] = value
-            d['tagging'] = e.tagging_dict(user)
+            
+            d['tagging'] = taggings[e.id]
             serialised.append(d)
-
+        
         if historic_tags:
+            print 'Historic Tags'
             episode_ids = [e.id for e in episodes]
             historic = Tagging.historic_tags_for_episodes(episode_ids)
             for episode in serialised:
@@ -82,7 +91,8 @@ class EpisodeManager(models.Manager):
         filters = kw.copy()
         filters['active'] = True
         episodes = self.filter(**filters)
-        return self.serialised(user, episodes)
+        as_dict = self.serialised(user, episodes)
+        return as_dict
 
     def ever_tagged(self, team):
         """
