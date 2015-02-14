@@ -297,9 +297,7 @@ class Episode(UpdatesFromDictMixin, models.Model):
         self.save()
 
     def tagging_dict(self, user):
-        if self.tagging_set.count() == 0:
-            return [{}]
-        td = [{t.team.name: True for t in self.tagging_set.exclude(team__name='mine')}]
+        td = [{t.team.name: True for t in self.tagging_set.select_related('team').exclude(team__name='mine')}]
         if self.tagging_set.filter(team__name='mine', user=user).count() > 0:
             td[0]['mine'] = True
         td[0]['id'] = self.id
