@@ -1,0 +1,4 @@
+{% load staticfiles %}
+{% for sheet in styles %}
+<link href="{% static sheet  %}" rel="stylesheet" media="screen">
+{% endfor %}

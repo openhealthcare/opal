@@ -127,6 +127,9 @@
 	<link href="{% static "css/opal.css" %}" rel="stylesheet" media="all">
     <link href="{% static "css/print.css" %}" rel="stylesheet" media="print">
     <link href="{% static "css/screen.css" %}" rel="stylesheet" media="screen">
+
+    {% plugin_stylesheets %}
+    
     <link rel="shortcut icon" href="{% static 'img/ohc-icon.png' %}">
 
    <script id="templates/growl/growl.html" type="text/ng-template">
@@ -146,7 +149,7 @@
     {% if OPAL_EXTRA_HEADER %}{% include OPAL_EXTRA_HEADER %}{% endif %}
     {% block navbar %}{% include 'navbar.html' %}{% endblock %}
 	  <div ng-view autoscroll="true"></div>
-    {% include 'logout_modal.html' %}
+      {% include 'logout_modal.html' %}
     <div growl></div>
   </body>
 </html>

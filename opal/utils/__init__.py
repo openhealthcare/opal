@@ -292,6 +292,7 @@ class OpalPlugin(object):
     """
     urls        = []
     javascripts = []
+    stylesheets = []
     menuitems   = []
     actions     = []
     head_extra  = []

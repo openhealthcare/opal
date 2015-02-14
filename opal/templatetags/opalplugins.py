@@ -17,6 +17,14 @@ def plugin_javascripts(namespace):
                     yield javascript
     return dict(javascripts=scripts)
 
+@register.inclusion_tag('plugins/stylesheets.html')
+def plugin_stylesheets():
+    def styles():
+        for plugin in OpalPlugin.__subclasses__():
+            for sheet in plugin.stylesheets:
+                yield sheet
+    return dict(styles=styles)
+
 @register.inclusion_tag('plugins/head_extra.html', takes_context=True)
 def plugin_head_extra(context):
     def templates():
