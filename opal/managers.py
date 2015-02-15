@@ -67,7 +67,7 @@ class EpisodeManager(models.Manager):
             for key, value in patient_subs[e.patient_id].items():
                 d[key] = value
             
-            d['tagging'] = taggings[e.id]
+            d['tagging'] = [taggings[e.id]]
             serialised.append(d)
         
         if historic_tags:
