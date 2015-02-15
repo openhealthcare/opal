@@ -107,15 +107,15 @@
     <div class="col-md-2 screen-only"> <!-- Action Panels -->
       <div class="panel panel-default" ng-show="episode">
         <div class="panel-heading">
-          <h3>[[ episode.demographics[0].name ]]</h3>
+          <h4>[[ episode.demographics[0].name ]]</h4>
         </div>
         <ul class="list-group">
           <li class="list-group-item">
-            <h3>
+            <h4>
               <i class="fa fa-users"></i> Teams
               <i class="fa edit fa-pencil pointer pull-right"
                  ng-click="editNamedItem(episode, 'tagging', 0)"></i>
-            </h3>
+            </h4>
             <p>
               <span ng-repeat="tag in otherTags(episode)">
                 <button class="btn btn-xs" ng-click="jumpToTag(tag)" ng-show="tag_display[tag] != undefined">
@@ -139,10 +139,10 @@
 
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3>
+          <h4>
             <i class="fa fa-filter"></i>
             Filters
-          </h3>
+          </h4>
         </div> 
         <div class="panel-body">
           <p>
@@ -158,13 +158,13 @@
       <div class="panel panel-default">
         <div class="panel-body">
           <p>
-	        <button class="btn btn-primary"
+	        <button class="btn btn-primary btn-sm"
                     ng-show="!profile.readonly"
                     ng-click="addEpisode()">
               <i class="glyphicon glyphicon-plus"></i>
               Add Patient
             </button>
-            <button class="btn btn-primary" ng-click="print()">
+            <button class="btn btn-primary btn-sm" ng-click="print()">
               <i class="glyphicon glyphicon-print"></i>
             </button>
             
