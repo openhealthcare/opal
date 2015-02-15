@@ -63,7 +63,7 @@
                 {% if column.header_template_path %}
                 {% include column.header_template_path %}
                 {% endif %}
-			    <li ng-repeat="item in row.{{column.name}}"
+			    <li ng-repeat="item in row.{{column.name}}{% if column.list_limit %}|limitTo:{{ column.list_limit }}{% endif %}"
 				    ng-click="selectItem($parent.$index, {{ forloop.counter0 }}, $index)"
 				    ng-dblclick="editItem($parent.$index, {{ forloop.counter0 }}, $index)"
 				    ng-class="{selected: rix == $parent.$index && cix == {{ forloop.counter0 }} && iix == $index}">

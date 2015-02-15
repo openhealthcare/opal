@@ -17,9 +17,8 @@ def _get_column_context(schema, **kwargs):
         column_context['title'] = getattr(column, '_title',
                                           name.replace('_', ' ').title())
         column_context['single'] = column._is_singleton
-        column_context['episode_category'] = getattr(column, '_episode_category', None)
         column_context['icon'] = getattr(column, '_icon', '')
-        column_context['episode_category_excludes'] = getattr(column, '_episode_category_excludes', None)
+        column_context['list_limit'] = getattr(column, '_list_limit', None)
         column_context['batch_template'] = getattr(column, '_batch_template', None)
 
         header_templates = [name + '_header.html']        
