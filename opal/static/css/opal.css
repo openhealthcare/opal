@@ -143,9 +143,9 @@ tr.selected {
 
 /* Detail page & panels */
 .col-md-9.box { width: 74%; margin-right: 1%; }
-.detail .panel-heading i, 
-.detail .list-group-item i { font-size: 28px; }
+.detail .panel-heading i { font-size: 28px; }
 
+.list-group-item .btn i { font-size: 20px; }
 .panel-primary .panel-default .panel-heading, 
 .panel-default .panel-heading { border-bottom: 3px solid #f76c51; background-color: white; color: #333;}
 
