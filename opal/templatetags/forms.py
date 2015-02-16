@@ -115,10 +115,13 @@ def select(*args, **kwargs):
 
 @register.inclusion_tag('_helpers/textarea.html')
 def textarea(*args, **kwargs):
+    visibility = _visibility_clauses(kwargs.pop('show', None),
+                                     kwargs.pop('hide', None))
     return {
-        'macros': kwargs.pop('macros', False),
-        'label' : kwargs.pop('label', None),
-        'model' : kwargs.pop('model', None),    
+        'macros'    : kwargs.pop('macros', False),
+        'label'     : kwargs.pop('label', None),
+        'model'     : kwargs.pop('model', None),    
+        'visibility': visibility
     }
 
 @register.inclusion_tag('_helpers/checkbox.html')
