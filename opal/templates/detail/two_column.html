@@ -2,10 +2,12 @@
   <div class="row spaced bg-primary">
     <div class="col-md-12 box">
       <h1>
-        [[ episode.demographics[0].name ]]
+        {% block heading %}[[ episode.demographics[0].name ]]{% endblock %}
         <small>
+          {% block subheading %}
           [[ episode.demographics[0].hospital_number ]]
           [[ episode.demographics[0].date_of_birth | shortDate ]]
+          {% endblock %}
         </small>
       </h1>
     </div>
@@ -26,30 +28,33 @@
     </div> <!-- Ends Detail Panels -->
 
     <div class="col-md-3"> <!-- Action Panels -->
-      <div class="panel panel-default affix col-md-2">
-        <div class="panel-heading ">
-          <h3>[[ episode.demographics[0].name ]]</h3>
+      <div class="affix col-md-3">
+        <div class="panel panel-default">
+          <div class="panel-heading ">
+            <h3>[[ episode.demographics[0].name ]]</h3>
+          </div>
+          <ul class="list-group">
+            <li class="list-group-item">
+              <h4>
+                <i class="fa fa-users"></i> Teams
+                <i class="fa edit fa-pencil pointer pull-right"
+                   ng-click="editNamedItem('tagging', 0)"></i>
+              </h4>
+              <p>
+                <span ng-repeat="tag in childTags()">
+                  <button class="btn btn-xs" ng-click="jumpToTag(tag)" ng-show="tag_display[tag] != undefined">
+                    [[ tag_display[tag] ]]
+                  </button>
+                </span>
+              </p>
+            </li>
+            <li class="list-group-item">
+              <h4><i class="fa fa-bolt"></i> Actions</h4>
+              {% include 'partials/_episode_actions.html' %}
+            </li>
+          </ul>
         </div>
-        <ul class="list-group">
-          <li class="list-group-item">
-            <h4>
-              <i class="fa fa-users"></i> Teams
-              <i class="fa edit fa-pencil pointer pull-right"
-                 ng-click="editNamedItem('tagging', 0)"></i>
-            </h4>
-            <p>
-              <span ng-repeat="tag in childTags()">
-                <button class="btn btn-xs" ng-click="jumpToTag(tag)" ng-show="tag_display[tag] != undefined">
-                  [[ tag_display[tag] ]]
-                </button>
-              </span>
-            </p>
-          </li>
-          <li class="list-group-item">
-            <h4><i class="fa fa-bolt"></i> Actions</h4>
-            {% include 'partials/_episode_actions.html' %}
-          </li>
-        </ul>
+        {% block sidebar_panels %}{% endblock %}
       </div>
     </div>
 
