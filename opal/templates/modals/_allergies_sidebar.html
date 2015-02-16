@@ -8,6 +8,8 @@
   <ul class="list-group">
     <li class="list-group-item" ng-repeat="a in the_episode.allergies">
       <b class="text-danger">[[a.drug]]</b>
+      <span ng-show="item.provisional">?</span>
+      <span ng-show="a.details"> ([[a.details]])</span>
     </li>
   </ul>
 </div>
