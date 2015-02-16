@@ -143,6 +143,8 @@ tr.selected {
 
 /* Detail page & panels */
 .col-md-9.box { width: 74%; margin-right: 1%; }
+i.edit,
+i.delete,
 .detail .panel-heading i { font-size: 28px; }
 
 .list-group-item .btn i { font-size: 20px; }
