@@ -9,7 +9,7 @@ angular.module('opal.controllers').controller(
         $scope.episode = episode.makeCopy();
         // Some fields should only be shown for certain categories.
         // Make that category available to the template.
-        $scope.episode_category = episode.location[0].category
+        $scope.episode_category = episode.category
 	    $scope.editing = item.makeCopy();
 
         // This is the patientname displayed in the modal header
