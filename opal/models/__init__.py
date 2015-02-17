@@ -597,6 +597,7 @@ Fields
 
 class Demographics(PatientSubrecord):
     _is_singleton = True
+    _icon = 'fa fa-user'
 
     name             = models.CharField(max_length=255, blank=True)
     hospital_number  = models.CharField(max_length=255, blank=True)
@@ -612,6 +613,7 @@ class Demographics(PatientSubrecord):
 
 class Location(EpisodeSubrecord):
     _is_singleton = True
+    _icon = 'fa fa-map-marker'
 
     category  = models.CharField(max_length=255, blank=True)
     hospital  = models.CharField(max_length=255, blank=True)
