@@ -68,12 +68,8 @@ angular.module('opal.services')
 	        this.newItem = function(columnName, opts) {
                 var column;
 
-                if(!opts){
-                    opts = {};
-                }
-                if(!opts.schema){
-                    opts.schema = schema;
-                }
+                if(!opts){ opts = {}; }
+                
                 if(!opts.column){
                     opts.column = $rootScope.fields[columnName];
                 }
