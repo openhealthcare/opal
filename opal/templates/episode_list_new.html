@@ -36,7 +36,7 @@
         <thead>
 	      <tr>
 	        {% for column in columns %}
-		    <th {% ifequal column.title "Teams" %}class="screen-only"{% endifequal %}>
+		    <th>
               <i class="{{ column.icon }}"></i>
               {{ column.title }}
             </th>
@@ -129,7 +129,7 @@
             <p>
               <a class="btn btn-default screen-only btn-sm" href="#/episode/[[episode.id]]">
                 <i class="fa fa-search-plus"></i>
-                Episode Details
+                Patient Details
               </a>
             </p>
             {% include 'partials/_episode_actions.html' %}
