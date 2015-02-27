@@ -3,7 +3,7 @@
 //
 angular.module('opal.services')
     .factory('Episode', function($http, $q, $rootScope, Item) {
-        Episode = function(resource, schema) {
+        Episode = function(resource) {
 
 	        var episode = this;
 	        var column, field, attrs;
