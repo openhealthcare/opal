@@ -3,7 +3,7 @@
 // categrory.
 // 
 angular.module('opal.services')
-    .factory('CopyToCategory', function($http, $q){
+    .factory('CopyToCategory', function($http, $q, Episode){
         
         // 
         // Main entrypoint function for service
@@ -16,7 +16,7 @@ angular.module('opal.services')
             var deferred = $q.defer();
             $http.post('/episode/' + episode_id + '/actions/copyto/'+category).then(
                 function(response){ // Success
-                    deferred.resolve(response.data);
+                    deferred.resolve(new Episode(response.data));
                 },
                 function(response){ // Error
                     alert('Unable to create a new episode in ' + category);
