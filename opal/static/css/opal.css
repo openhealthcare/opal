@@ -17,6 +17,7 @@ a:hover { color: #337fb2; }
 .form-horizontal .control-label.text-left { text-align: left; }
 .nav-tabs li:hover { cursor: pointer; }
 /* Our Utility classes */
+h1.larger { font-size: 52px; }
 .italic{ font-style: italic; }
 .pointer:hover { cursor: pointer; }
 .push-left-12 { margin-left: 12px; }
@@ -40,9 +41,21 @@ a:hover { color: #337fb2; }
 }
 .bg-primary {
     color: white;
-    background-color: #5fa2dd; /* Blue */
-    background-color: #f76c51; /* red */
     background-color: #9cc96b; /* Green */
+}
+
+.panel-primary .panel-default .panel-heading.bg-secondary,
+.bg-secondary {
+    background-color: #f76c51; /* red */ 
+    border-bottom: none;
+    color: white;
+}
+
+.panel-primary .panel-default .panel-heading.bg-active,
+.bg-active {     
+    background-color: #5fa2dd; /* Blue */ 
+    border-bottom: none;
+    color: white;
 }
 
 .panel.panel-primary {
@@ -148,8 +161,13 @@ i.delete,
 .detail .panel-heading i { font-size: 28px; }
 
 .list-group-item .btn i { font-size: 20px; }
-.panel-primary .panel-default .panel-heading, 
-.panel-default .panel-heading { border-bottom: 3px solid #f76c51; background-color: white; color: #333;}
+
+.panel-primary .panel-default .panel-heading,
+.panel-default .panel-heading { 
+    border-bottom: 3px solid #f76c51; 
+    background-color: white; 
+    color: #333;
+}
 
 .panel-heading h3 { margin-top: 0px; margin-bottom: 0px; font-weight: normal;}
 .panel-heading i.edit, 
