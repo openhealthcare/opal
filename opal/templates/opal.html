@@ -148,7 +148,9 @@
   <body>    
     {% if OPAL_EXTRA_HEADER %}{% include OPAL_EXTRA_HEADER %}{% endif %}
     {% block navbar %}{% include 'navbar.html' %}{% endblock %}
-	  <div ng-view autoscroll="true"></div>
+    {% block content %}
+	  <div ng-view autoscroll="true"></div>    
+    {% endblock %}
       {% include 'logout_modal.html' %}
     <div growl></div>
   </body>
