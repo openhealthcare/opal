@@ -46,10 +46,12 @@ class TeamAdmin(reversion.VersionAdmin):
     filter_horizontal = ('useful_numbers',)
 
 class PatientSubRecordAdmin(reversion.VersionAdmin):
-    list_filter = ['patient']
+    pass
+#    list_filter = ['patient']
 
 class EpisodeSubRecordAdmin(reversion.VersionAdmin):
-    list_filter = ['episode']
+    pass
+ #   list_filter = ['episode']
 
 class SynonymInline(generic.GenericTabularInline):
     model = Synonym
