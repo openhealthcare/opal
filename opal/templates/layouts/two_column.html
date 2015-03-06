@@ -16,22 +16,14 @@
 
 <div class="container headed-content-offset detail">
   <div class="row"> <!-- Main Panel -->
-    <div class="col-md-9"> <!-- Detail panels -->
-      <div class="row">
-        <div class="col-md-6"> <!-- Detail panels col 1 -->
-          {% block left_column %}{% endblock %}          
-        </div>                 <!-- Ends Detail panels col 1 -->
-        <div class="col-md-6"> <!-- Detail panels col 2 -->
-          {% block right_column %}{% endblock %}                    
-        </div>                 <!-- Ends Detail panels col 2 -->
-      </div>
-    </div> <!-- Ends Detail Panels -->
 
     <div class="col-md-3"> <!-- Action Panels -->
-      <div class="affix col-md-3">
+      <div class="affix col-md-2">
         <div class="panel panel-default">
           <div class="panel-heading ">
-            <h3>[[ episode.demographics[0].name ]]</h3>
+            <h3>
+              [[ episode.demographics[0].name ]]
+            </h3>
           </div>
           <ul class="list-group">
             <li class="list-group-item">
@@ -56,8 +48,20 @@
         </div>
         {% block sidebar_panels %}{% endblock %}
       </div>
-    </div>
+    </div><!-- Ends Action Panels -->
 
-  </div> <!-- Ends Action Panels -->
+    <div class="col-md-9"> <!-- Detail panels -->
+      <div class="row">
+        <div class="col-md-6"> <!-- Detail panels col 1 -->
+          {% block left_column %}{% endblock %}          
+        </div>                 <!-- Ends Detail panels col 1 -->
+        <div class="col-md-6"> <!-- Detail panels col 2 -->
+          {% block right_column %}{% endblock %}                    
+        </div>                 <!-- Ends Detail panels col 2 -->
+      </div>
+    </div> <!-- Ends Detail Panels -->
+
+
+  </div> 
 </div> <!-- Ends Main Panel -->
 

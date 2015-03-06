@@ -55,7 +55,10 @@ class ForeignKeyOrFreeText(property):
     def __get__(self, inst, cls):
         if inst is None:
             return self
-        foreign_obj = getattr(inst, self.fk_field_name)
+        try:
+            foreign_obj = getattr(inst, self.fk_field_name)
+        except:
+            return 'Unknown Lookuplist Entry'
         if foreign_obj is None:
             return getattr(inst, self.ft_field_name)
         else:
