@@ -34,6 +34,7 @@ h1.larger { font-size: 52px; }
     border: 1px solid #bbb;
 }
 .content-offset { margin-top: 50px; }
+.content-offset-25 { margin-top: 25px; }
 .content-offset-75 {margin-top: 75px; }
 .content-centered { padding-top: 20%; height: 100%; }
 .heading { position: fixed; top: 50px; width: 100%; z-index: 3; }
@@ -108,6 +109,10 @@ h1.larger { font-size: 52px; }
     color: #fff    
 }
 
+.patient-list-container {
+    height: 760px;
+    overflow: scroll;
+}
 table.patient-list tr th { white-space: nowrap; }
 
 /* Selected sub-cell - list view */

@@ -3,14 +3,12 @@
 
   {% endblock %}
 
-  <div class="row content-offset-75"> <!-- Main Panel -->
-    <div class="col-md-2" style="z-index: 0"> <!-- Detail panels -->
-      <div class="affix col-md-2">
+  <div class="row content-offset-25"> <!-- Main Panel -->
+    <div class="col-md-2"> <!-- Detail panels -->
         {% block left_panel %}{% endblock %}
-      </div>
     </div>
 
-    <div class="col-md-10 screen-only"> <!-- Action Panels -->
+    <div class="col-md-10 screen-only patient-list-container"> <!-- Action Panels -->
 
       {% block content %}{% endblock %}
     </div> <!-- Ends Main Panel -->
