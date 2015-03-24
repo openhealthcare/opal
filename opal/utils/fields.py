@@ -14,6 +14,7 @@ class ForeignKeyOrFreeText(property):
     def __init__(self, foreign_model):
         self.foreign_model = foreign_model
 
+
     def contribute_to_class(self, cls, name):
         self.name = name
         self.fk_field_name = name + '_fk'
@@ -55,7 +56,11 @@ class ForeignKeyOrFreeText(property):
     def __get__(self, inst, cls):
         if inst is None:
             return self
-        foreign_obj = getattr(inst, self.fk_field_name)
+        try:
+            foreign_obj = getattr(inst, self.fk_field_name)
+        except:
+            return 'Unknown Lookuplist Entry'
+#        foreign_obj = getattr(inst, self.fk_field_name)
         if foreign_obj is None:
             return getattr(inst, self.ft_field_name)
         else:
