@@ -1,0 +1,63 @@
+<div class="heading container">
+  <div class="row spaced bg-primary">
+    <div class="col-md-12 box">
+      <h1>
+        {% block heading %}[[ episode.demographics[0].name ]]{% endblock %}
+        <small>
+          {% block subheading %}
+          [[ episode.demographics[0].hospital_number ]]
+          [[ episode.demographics[0].date_of_birth | shortDate ]]
+          {% endblock %}
+        </small>
+      </h1>
+    </div>
+  </div>
+</div>
+
+<div class="container headed-content-offset detail">
+  <div class="row"> <!-- Main Panel -->
+    <div class="col-md-9"> <!-- Detail panels -->
+      <div class="row">
+        <div class="col-md-6"> <!-- Detail panels col 1 -->
+          {% block left_column %}{% endblock %}          
+        </div>                 <!-- Ends Detail panels col 1 -->
+        <div class="col-md-6"> <!-- Detail panels col 2 -->
+          {% block right_column %}{% endblock %}                    
+        </div>                 <!-- Ends Detail panels col 2 -->
+      </div>
+    </div> <!-- Ends Detail Panels -->
+
+    <div class="col-md-3"> <!-- Action Panels -->
+      <div class="affix col-md-3">
+        <div class="panel panel-default">
+          <div class="panel-heading ">
+            <h3>[[ episode.demographics[0].name ]]</h3>
+          </div>
+          <ul class="list-group">
+            <li class="list-group-item">
+              <h4>
+                <i class="fa fa-users"></i> Teams
+                <i class="fa edit fa-pencil pointer pull-right"
+                   ng-click="editNamedItem('tagging', 0)"></i>
+              </h4>
+              <p>
+                <span ng-repeat="tag in childTags()">
+                  <button class="btn btn-xs" ng-click="jumpToTag(tag)" ng-show="tag_display[tag] != undefined">
+                    [[ tag_display[tag] ]]
+                  </button>
+                </span>
+              </p>
+            </li>
+            <li class="list-group-item">
+              <h4><i class="fa fa-bolt"></i> Actions</h4>
+              {% include 'partials/_episode_actions.html' %}
+            </li>
+          </ul>
+        </div>
+        {% block sidebar_panels %}{% endblock %}
+      </div>
+    </div>
+
+  </div> <!-- Ends Action Panels -->
+</div> <!-- Ends Main Panel -->
+
