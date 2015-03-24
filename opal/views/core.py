@@ -114,7 +114,7 @@ class EpisodeTemplateView(TemplateView):
 
 
 class EpisodeListTemplateView(EpisodeTemplateView):
-    template_name = 'episode_list_new.html'
+    template_name = 'episode_list.html'
     column_schema = schema.list_schemas['default']
 
 
