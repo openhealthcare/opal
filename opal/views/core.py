@@ -88,7 +88,6 @@ class EpisodeTemplateView(TemplateView):
         from opal.views.templates import _get_column_context
         
         active_schema = self.column_schema
-        
         if 'tag' in kwargs and kwargs['tag'] in LIST_SCHEMAS:
             if 'subtag' in kwargs and kwargs['subtag'] in LIST_SCHEMAS[kwargs['tag']]:
                 active_schema = LIST_SCHEMAS[kwargs['tag']][kwargs['subtag']]

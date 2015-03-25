@@ -11,8 +11,9 @@ class ForeignKeyOrFreeText(property):
     field.  If found, references foreign model in ForeignKey, otherwise stores
     string in CharField.
     """
-    def __init__(self, foreign_model):
+    def __init__(self, foreign_model, related_name=None):
         self.foreign_model = foreign_model
+        self.related_name = related_name
 
 
     def contribute_to_class(self, cls, name):
@@ -20,7 +21,10 @@ class ForeignKeyOrFreeText(property):
         self.fk_field_name = name + '_fk'
         self.ft_field_name = name + '_ft'
         setattr(cls, name, self)
-        fk_field = ForeignKey(self.foreign_model, blank=True, null=True)
+        fk_kwargs = dict(blank=True, null=True)
+        if self.related_name:
+            fk_kwargs['related_name'] = self.related_name
+        fk_field = ForeignKey(self.foreign_model, **fk_kwargs)
         fk_field.contribute_to_class(cls, self.fk_field_name)
         ft_field = CharField(max_length=255, blank=True, null=True, default='')
         ft_field.contribute_to_class(cls, self.ft_field_name)
