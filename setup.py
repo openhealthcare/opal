@@ -21,7 +21,7 @@ HERE = os.path.realpath(os.path.dirname(__file__))
 
 setup(
     name='opal',
-    version='0.3.0',
+    version='0.4.0.1',
     packages=['opal', 'opal.utils'],
     include_package_data=True,
     license='GPL3',  # example license
