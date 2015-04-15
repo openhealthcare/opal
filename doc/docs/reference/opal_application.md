@@ -17,4 +17,4 @@ generated for you, and located in `yourproject/yourproject/__init__.py`
 
 ### default_episode_category
 
-The default category is either 'inpatient', but can be overridden in the [OpalApplication](reference/opal_application.md) subclass for your implementation.
+The default category is either 'inpatient', but can be overridden in the [OpalApplication](opal_application.md) subclass for your implementation.
