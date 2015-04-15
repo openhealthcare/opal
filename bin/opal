@@ -271,15 +271,15 @@ def scaffold(args):
     os.system('python manage.py migrate {app} --traceback'.format(app=app))
 
     # 2. Let's create some display templates
-    from opal.models import Subrecord
+    from opal.models import Subrecord, EpisodeSubrecord, PatientSubrecord
     from opal.utils import stringport
     
     models = stringport('{0}.models'.format(app))
     for i in dir(models):
         thing = getattr(models, i)
-        # TODO: This is not the correct thing to be doing - what if the module
-        # imports EpisodeSubrecord and PatientSubrecord ? 
         if inspect.isclass(thing) and issubclass(thing, Subrecord):
+            if thing in [EpisodeSubrecord, PatientSubrecord]:
+                continue
             if not thing.get_display_template():
                 _create_display_template_for(thing)
             if not thing.get_form_template():
