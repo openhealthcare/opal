@@ -20,5 +20,6 @@ pages:
 
   - [reference/reference_guides.md, 'Reference', Index]
   - [reference/opal_application.md, 'Reference', OpalApplication]
+  - [reference/form_templatetags.md, 'Reference', Form helpers]
 theme: readthedocs
 dev_addr: 0.0.0.0:8965

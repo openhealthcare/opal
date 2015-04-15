@@ -98,7 +98,7 @@ def select(*args, **kwargs):
     - show : Condition to show
     - model: Angular model
     - label: User visible label
-    - lookuplist: Name of the lookuplist
+    - lookuplist: Name or value of the lookuplist
     """
     model = kwargs.pop('model')
     label = kwargs.pop('label')
@@ -131,4 +131,16 @@ def checkbox(*args, **kwargs):
         'model'     : kwargs.pop('model', None),
         'width'     : kwargs.pop('width', 8),
         'labelwidth': kwargs.pop('labelwidth', 3)
+    }
+
+@register.inclusion_tag('_helpers/radio.html')
+def radio(*args, **kwargs):
+    visibility = _visibility_clauses(kwargs.pop('show', None),
+                                     kwargs.pop('hide', None))
+    
+    return {
+        'label'     : kwargs.pop('label', None),
+        'lookuplist': kwargs.pop('lookuplist', None),
+        'model'     : kwargs.pop('model', None),
+        'visibility': visibility
     }
