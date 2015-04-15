@@ -18,12 +18,12 @@ Let's get you started!
 ### Tutorials
 
 * [Writing your first OPAL App](tutorial.md) 
-* Writing your first OPAL Plugin 
+* Writing your first OPAL Plugin (Coming Soon!)
 
 ## Topic Guides 
 
-?Should be listed here
+[Detailed topic guides](guides/topic-guides.md) are available for many key areas of OPAL
 
 ## Reference material
 
-Should also be available.
+[Detailed reference material](reference/reference_guides.md) is a work in progress. 

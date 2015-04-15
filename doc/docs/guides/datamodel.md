@@ -11,3 +11,10 @@ Episodes also have sub-records (such as diagnosis).
 
 Sub records may either be a 1-1 relationship with their parent, or 1-many.
 (e.g. a patient may have exactly one demographics, but many allergies).
+
+### Patients
+
+### Episodes
+
+Each episode has a category (e.g. Inpatient/Outpatient/Phone Consultation).
+

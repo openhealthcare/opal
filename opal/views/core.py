@@ -130,7 +130,6 @@ class EpisodeDetailTemplateView(EpisodeTemplateView):
     
     def get_template_names(self):
         names = ['detail/{0}.html'.format(self.episode.category.lower()), 'detail/default.html']
-        print names
         return names
 
     column_schema = schema.detail_columns
