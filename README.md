@@ -23,7 +23,11 @@ We'd love you to get involved by using what we make, reporting bugs/suggesting i
 
 ## More comprehensive documentation
 
-... currently lives at ./doc/docs & can be built using mkdocs
+The documentation is a work in progress.
+
+We'd love any feedback or contributions to it ! 
+
+Latest version is at [http://opal.openhealthcare.org.uk/docs/](http://opal.openhealthcare.org.uk/docs/)
 
 Open governance
 ===============
