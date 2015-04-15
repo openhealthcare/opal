@@ -10,3 +10,4 @@ opal.egg-info
 coverage-js
 *~
 *#
+*DS_Store
