@@ -1,0 +1,11 @@
+<div class="form-group"
+     {% if visibility %} {{ visibility|safe }} {% endif %}
+     >
+  <label class="control-label col-sm-3">{{ label }}</label>
+  <div class="col-sm-8">
+    <label class="radio-inline" ng-repeat="item in {{ lookuplist }}">
+      <input class="" type="radio" value="[[ item ]]" ng-model="{{ model }}">
+      [[ item ]]
+    </label>
+  </div>
+</div>
