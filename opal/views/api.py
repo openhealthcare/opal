@@ -2,8 +2,24 @@
 Public facing API views
 """
 from django.views.generic import View
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
+from opal import application
 from opal.utils.views import _get_request_data, _build_json_response
+
+app = application.get_app()
+
+class FlowView(APIView):
+    """
+    Return the Flow routes for this application.
+    
+    For more detail on OPAL Flows, see the documentation 
+    """
+    def get(self, *a, **k):
+        flows = app.flows()
+        return Response(flows)
+
 
 class APIAdmitEpisodeView(View):
     """

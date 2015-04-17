@@ -30,7 +30,7 @@ from opal import models, exceptions
 app = application.get_app()
 
 schema = stringport(app.schema_module)
-flow = stringport(app.flow_module)
+
 # TODO This is stupid - we can fully deprecate this please?
 try:
     options = stringport(settings.OPAL_OPTIONS_MODULE)
@@ -774,21 +774,3 @@ class FilterDetailView(LoginRequiredMixin, View):
         return _build_json_response('')
 
 
-class FlowView(View):
-    """
-    API call to retrieve the patient flow routes for this instance
-    """
-    def get(self, *args, **kw):
-        """
-        Return a dictionary of flow objects - these will be of the form:
-
-        { team: {verb: { controller: 'XXXX', template: 'XXXX'} } }
-
-        This allows the Flow service to determine the correct Angular 
-        controller for any given episode.
-        """
-        flows = {}
-        for plugin in OpalPlugin.__subclasses__():
-            flows.update(plugin().flows())
-        flows.update(flow.flows)
-        return _build_json_response(flows)

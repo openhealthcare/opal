@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.views.decorators.csrf import csrf_exempt
 
 from opal import views
+from opal.views import api
 from opal.forms import ChangePasswordForm
 from opal import models
 from opal.utils import camelcase_to_underscore
@@ -24,7 +25,6 @@ urlpatterns = patterns(
     url(r'^admin/?', include(admin.site.urls)),
 
     # Internal (Legacy) API views
-    url(r'^flow/', views.FlowView.as_view(), name='flow'),
     url(r'^schema/list/$', views.ListSchemaView.as_view()),
     url(r'^schema/detail/$', views.DetailSchemaView.as_view()),
     url(r'^schema/extract/$', views.ExtractSchemaView.as_view()),
@@ -90,6 +90,7 @@ urlpatterns = patterns(
     # New Public facing API urls
     url(r'api/v0.1/episode/admit', csrf_exempt(views.APIAdmitEpisodeView.as_view())),
     url(r'api/v0.1/episode/refer', csrf_exempt(views.APIReferPatientView.as_view())),
+    url(r'api/v0.1/flow', api.FlowView.as_view()),
     
 )
 

@@ -313,7 +313,7 @@ class Episode(UpdatesFromDictMixin, models.Model):
         historic = Tagging.historic_tags_for_episodes([self])[self.id].keys()
         return list(set(current + historic))
 
-    def to_dict(self, user, shallow=False, with_context=False):
+    def to_dict(self, user, shallow=False):
         """
         Serialisation to JSON for Episodes
         """
