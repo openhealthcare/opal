@@ -28,6 +28,14 @@ angular.module('opal.services')
         this.sort = columnSchema.sort
         this.size = columnSchema.modal_size
 
+        this.isSingleton = function(){
+            return columnSchema.single            
+        };
+
+        this.isReadOnly = function(){
+            return columnSchema.readOnly;
+        };
+        
         // 
         // Returns a clone of the editable fields + consistency token so that
         // we can then update them in isolation elsewhere.

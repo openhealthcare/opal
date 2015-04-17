@@ -2,7 +2,7 @@ angular.module('opal.controllers').controller(
     'EpisodeDetailCtrl', function($scope, $modal, $cookieStore, $location,
                                   $rootScope,
                                   Flow, EpisodeDetailMixin,
-                                  schema,
+//                                  schema,
                                   episode, options, profile) {
         $scope._ = _;
 	    $scope.state = 'normal';
@@ -15,14 +15,14 @@ angular.module('opal.controllers').controller(
         $scope.Flow = Flow;
 	    $scope.episode = episode;
         $scope.options = options;
-        $scope.schema = schema;
+        // $scope.schema = schema;
         $scope.total_episodes = 1 + episode.prev_episodes.length + episode.next_episodes.length;
         $scope.this_episode_number = episode.prev_episodes.length + 1;
         $scope.historyCollapsed = true;
 
         $scope.profile =  profile;
 
-	    $scope.columns = schema.columns;
+	    // $scope.columns = schema.columns;
         $scope.tag_display = options.tag_display;
 
         EpisodeDetailMixin($scope);

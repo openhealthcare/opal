@@ -428,100 +428,100 @@ def subrecord_create_view(request, model):
 
 
 
-class SchemaBuilderView(View):
+# class SchemaBuilderView(View):
 
-    def serialize_model(self, model):
-        col = {
-            'name': model.get_api_name(),
-            'display_name': model.get_display_name(),
-            'single': model._is_singleton,
-            'fields': model.build_field_schema()
-            }
-        if hasattr(model, '_sort'):
-            col['sort'] = model._sort
-        if hasattr(model, '_modal'):
-            col['modal_size'] = model._modal
-        if hasattr(model, '_read_only'):
-            col['readOnly'] = model._read_only
-        return col
+#     def serialize_model(self, model):
+#         col = {
+#             'name': model.get_api_name(),
+#             'display_name': model.get_display_name(),
+#             'single': model._is_singleton,
+#             'fields': model.build_field_schema()
+#             }
+#         if hasattr(model, '_sort'):
+#             col['sort'] = model._sort
+#         if hasattr(model, '_modal'):
+#             col['modal_size'] = model._modal
+#         if hasattr(model, '_read_only'):
+#             col['readOnly'] = model._read_only
+#         return col
 
-    def serialize_schema(self, schema):
-        return [self.serialize_model(column) for column in schema]
+#     def serialize_schema(self, schema):
+#         return [self.serialize_model(column) for column in schema]
 
-    def _get_plugin_schemas(self):
-        scheme = {}
-        for plugin in OpalPlugin.__subclasses__():
-            scheme.update(plugin().list_schemas())
-        return scheme
+#     def _get_plugin_schemas(self):
+#         scheme = {}
+#         for plugin in OpalPlugin.__subclasses__():
+#             scheme.update(plugin().list_schemas())
+#         return scheme
 
-    def _get_list_schema(self):
-        schemas = self._get_field_names(self.columns)
+#     def _get_list_schema(self):
+#         schemas = self._get_field_names(self.columns)
 
-        plugin_schemas = self._get_plugin_schemas()
-        schemas.update(self._get_field_names(plugin_schemas))
-        return schemas
+#         plugin_schemas = self._get_plugin_schemas()
+#         schemas.update(self._get_field_names(plugin_schemas))
+#         return schemas
 
-    def _get_detail_schema(self):
-        return self.serialize_schema(schema.detail_columns)
+#     def _get_detail_schema(self):
+#         return self.serialize_schema(schema.detail_columns)
 
-    def _get_field_names(self, schemas):
-        scheme = {}
-        for name, s in schemas.items():
-            if isinstance(s, list):
-                try:
-                    scheme[name] = [f.get_api_name() for f in s]
-                except:
-                    raise
-            else:
-                scheme[name] = self._get_field_names(s)
-        return scheme
+#     def _get_field_names(self, schemas):
+#         scheme = {}
+#         for name, s in schemas.items():
+#             if isinstance(s, list):
+#                 try:
+#                     scheme[name] = [f.get_api_name() for f in s]
+#                 except:
+#                     raise
+#             else:
+#                 scheme[name] = self._get_field_names(s)
+#         return scheme
 
-    def _get_all_fields(self):
-        response = {
-            subclass.get_api_name(): self.serialize_model(subclass) 
-            for subclass in subrecords()
-        }
-        response['tagging'] = self.serialize_model(models.Tagging)
-        return response
+#     def _get_all_fields(self):
+#         response = {
+#             subclass.get_api_name(): self.serialize_model(subclass) 
+#             for subclass in subrecords()
+#         }
+#         response['tagging'] = self.serialize_model(models.Tagging)
+#         return response
 
-    def _get_serialized_schemas(self, schemas):
-        scheme = {}
-        for name, s in schemas.items():
-            if isinstance(s, list):
-                scheme[name] = self.serialize_schema(s)
-            else:
-                scheme[name] = {}
-                for n, c in s.items():
-                    scheme[name][n] = self.serialize_schema(c)
-        return scheme
+#     def _get_serialized_schemas(self, schemas):
+#         scheme = {}
+#         for name, s in schemas.items():
+#             if isinstance(s, list):
+#                 scheme[name] = self.serialize_schema(s)
+#             else:
+#                 scheme[name] = {}
+#                 for n, c in s.items():
+#                     scheme[name][n] = self.serialize_schema(c)
+#         return scheme
 
-    def get(self, *args, **kw):
-        scheme = self._get_serialized_schemas(self.columns)
-        return _build_json_response(scheme)
-
-
-class ListSchemaView(SchemaBuilderView):
-    columns = schema.list_schemas
-
-    def get(self, *args, **kw):
-        response = {}
-        response['fields'] = self._get_all_fields()
-        response['list_schema'] = self._get_list_schema()
-        return _build_json_response(response)
+#     def get(self, *args, **kw):
+#         scheme = self._get_serialized_schemas(self.columns)
+#         return _build_json_response(scheme)
 
 
-class DetailSchemaView(SchemaBuilderView):
-    def get(self, *args, **kw):
-        response = dict(
-            fields=self._get_all_fields(), 
-            detail_schema=self._get_detail_schema()
-        )
-        return _build_json_response(response)
+# class ListSchemaView(SchemaBuilderView):
+#     columns = schema.list_schemas
+
+#     def get(self, *args, **kw):
+#         response = {}
+#         response['fields'] = self._get_all_fields()
+#         response['list_schema'] = self._get_list_schema()
+#         return _build_json_response(response)
 
 
-class ExtractSchemaView(SchemaBuilderView):
-    def get(self, *args, **kw):
-        return _build_json_response(self.serialize_schema(schema.extract_columns))
+# class DetailSchemaView(SchemaBuilderView):
+#     def get(self, *args, **kw):
+#         response = dict(
+#             fields=self._get_all_fields(), 
+#             detail_schema=self._get_detail_schema()
+#         )
+#         return _build_json_response(response)
+
+
+# class ExtractSchemaView(SchemaBuilderView):
+#     def get(self, *args, **kw):
+#         return _build_json_response(self.serialize_schema(schema.extract_columns))
 
 
 

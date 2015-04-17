@@ -25,9 +25,10 @@ urlpatterns = patterns(
     url(r'^admin/?', include(admin.site.urls)),
 
     # Internal (Legacy) API views
-    url(r'^schema/list/$', views.ListSchemaView.as_view()),
-    url(r'^schema/detail/$', views.DetailSchemaView.as_view()),
-    url(r'^schema/extract/$', views.ExtractSchemaView.as_view()),
+    # url(r'^schema/list/$', views.ListSchemaView.as_view()),
+    # url(r'^schema/detail/$', views.DetailSchemaView.as_view()),
+    # url(r'^schema/extract/$', views.ExtractSchemaView.as_view()),
+
     url(r'^options/$', views.OptionsView.as_view()),
     url(r'^userprofile/$', views.UserProfileView.as_view()),
     url(r'^patient/?$', views.patient_search_view),
@@ -90,7 +91,8 @@ urlpatterns = patterns(
     # New Public facing API urls
     url(r'api/v0.1/episode/admit', csrf_exempt(views.APIAdmitEpisodeView.as_view())),
     url(r'api/v0.1/episode/refer', csrf_exempt(views.APIReferPatientView.as_view())),
-    url(r'api/v0.1/flow', api.FlowView.as_view()),
+    
+    url(r'api/v0.1/', include(api.router.urls)),
     
 )
 

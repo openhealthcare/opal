@@ -2,23 +2,76 @@
 Public facing API views
 """
 from django.views.generic import View
+
+from rest_framework import routers, viewsets
+from rest_framework.decorators import list_route
+
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.reverse import reverse
 
-from opal import application
+from opal import application, schemas
 from opal.utils.views import _get_request_data, _build_json_response
 
 app = application.get_app()
 
-class FlowView(APIView):
+class OPALRouter(routers.DefaultRouter):
+    def get_default_base_name(self, viewset):
+        name = getattr(viewset, 'base_name', None)
+        if name is None:
+            return super(OPALRouter, self).get_default_base_name(viewset)
+        return name
+
+router = OPALRouter()
+
+class FlowViewSet(viewsets.ViewSet):
     """
     Return the Flow routes for this application.
     
     For more detail on OPAL Flows, see the documentation 
     """
-    def get(self, *a, **k):
+    base_name = 'flow'
+
+    def list(self, request):
         flows = app.flows()
         return Response(flows)
+
+
+class RecordViewSet(viewsets.ViewSet):
+    """
+    Return the serialization of all active record types ready to
+    initialize on the client side.
+    """
+    base_name = 'record'
+
+    def list(self, request):
+        return Response(schemas.list_records())
+
+    
+class ListSchemaViewSet(viewsets.ViewSet):
+    """
+    Returns the schema for our active lists
+    """
+    base_name = 'list-schema'
+
+    def list(self, request):
+        return Response(schemas.list_schemas())
+
+    
+class ExtractSchemaViewSet(viewsets.ViewSet):
+    """
+    Returns the schema to build our extract query builder
+    """
+    base_name = 'extract-schema'
+    
+    def list(self, request):
+        return Response(schemas.extract_schema())
+
+
+router.register('flow', FlowViewSet)
+router.register('record', RecordViewSet)
+router.register('list-schema', ListSchemaViewSet)
+router.register('extract-schema', ExtractSchemaViewSet)
 
 
 class APIAdmitEpisodeView(View):

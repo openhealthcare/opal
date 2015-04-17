@@ -5,7 +5,7 @@ angular.module('opal.services')
             var episode = $scope.episode;
             var profile = $scope.profile;
             var options = $scope.options;
-            var schema  = $scope.schema;
+            // var schema  = $scope.schema;
             var Flow    = $scope.Flow
             
 	        function getColumnName(cix) {
@@ -93,26 +93,26 @@ angular.module('opal.services')
                 return _openEditItemModal(item, columnName, episode);
 	        };
 
-	        $scope.deleteItem = function(cix, iix) {
+	        $scope.deleteItem = function(column_name, iix) {
 		        var modal;
-		        var columnName = getColumnName(cix);
-		        var item = episode.getItem(columnName, iix);
+		        var item = episode.getItem(column_name, iix);
 
                 if(profile.readonly){
                     return null;
                 };
+
+		        if (!angular.isDefined(item)) {
+			        // Cannot delete 'Add'
+			        return;
+		        }
                 
-                if (schema.isReadOnly(columnName)) {
+                if (item.isReadOnly()) {
                     // Cannont delete readonly columns
                     return;
                 }
                 
-		        if (schema.isSingleton(columnName)) {
+		        if (item.isSingleton()) {
 			        // Cannot delete singleton
-			        return;
-		        }
-		        if (!angular.isDefined(item)) {
-			        // Cannot delete 'Add'
 			        return;
 		        }
 
@@ -129,11 +129,8 @@ angular.module('opal.services')
 	        };
 
             $scope.deleteNamedItem = function(name, index){
-                var cix;
-                _.map($scope.columns, function(c, i){ if (c.name == name) { 
-                    cix = i; return i } return false });
-
-                return $scope.deleteItem(cix, index)
+                // TODO: Deprecate this fully - no longer neded !
+                return $scope.deleteItem(name, index)
             };
             
 	        $scope.mouseEnter = function(cix) {

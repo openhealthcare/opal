@@ -28,7 +28,6 @@ app.config(
              .when('/episode/:id', {
 			     controller: 'EpisodeDetailCtrl',
 			     resolve: {
-				     schema: function(detailSchemaLoader) { return detailSchemaLoader; },
 				     episode: function(episodeLoader) { return episodeLoader(); },
 				     options: function(Options) { return Options; },
                      profile: function(UserProfile){ return UserProfile }
