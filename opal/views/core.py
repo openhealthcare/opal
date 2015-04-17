@@ -30,7 +30,6 @@ from opal import models, exceptions
 app = application.get_app()
 
 schema = stringport(app.schema_module)
-
 # TODO This is stupid - we can fully deprecate this please?
 try:
     options = stringport(settings.OPAL_OPTIONS_MODULE)
@@ -39,7 +38,6 @@ except AttributeError:
     class options:
         model_names = []
     micro_test_defaults = []
-
 
 option_models = models.option_models
 Synonym = models.Synonym
@@ -426,149 +424,6 @@ def subrecord_create_view(request, model):
     return _build_json_response(subrecord.to_dict(request.user), 201)
 
 
-
-
-# class SchemaBuilderView(View):
-
-#     def serialize_model(self, model):
-#         col = {
-#             'name': model.get_api_name(),
-#             'display_name': model.get_display_name(),
-#             'single': model._is_singleton,
-#             'fields': model.build_field_schema()
-#             }
-#         if hasattr(model, '_sort'):
-#             col['sort'] = model._sort
-#         if hasattr(model, '_modal'):
-#             col['modal_size'] = model._modal
-#         if hasattr(model, '_read_only'):
-#             col['readOnly'] = model._read_only
-#         return col
-
-#     def serialize_schema(self, schema):
-#         return [self.serialize_model(column) for column in schema]
-
-#     def _get_plugin_schemas(self):
-#         scheme = {}
-#         for plugin in OpalPlugin.__subclasses__():
-#             scheme.update(plugin().list_schemas())
-#         return scheme
-
-#     def _get_list_schema(self):
-#         schemas = self._get_field_names(self.columns)
-
-#         plugin_schemas = self._get_plugin_schemas()
-#         schemas.update(self._get_field_names(plugin_schemas))
-#         return schemas
-
-#     def _get_detail_schema(self):
-#         return self.serialize_schema(schema.detail_columns)
-
-#     def _get_field_names(self, schemas):
-#         scheme = {}
-#         for name, s in schemas.items():
-#             if isinstance(s, list):
-#                 try:
-#                     scheme[name] = [f.get_api_name() for f in s]
-#                 except:
-#                     raise
-#             else:
-#                 scheme[name] = self._get_field_names(s)
-#         return scheme
-
-#     def _get_all_fields(self):
-#         response = {
-#             subclass.get_api_name(): self.serialize_model(subclass) 
-#             for subclass in subrecords()
-#         }
-#         response['tagging'] = self.serialize_model(models.Tagging)
-#         return response
-
-#     def _get_serialized_schemas(self, schemas):
-#         scheme = {}
-#         for name, s in schemas.items():
-#             if isinstance(s, list):
-#                 scheme[name] = self.serialize_schema(s)
-#             else:
-#                 scheme[name] = {}
-#                 for n, c in s.items():
-#                     scheme[name][n] = self.serialize_schema(c)
-#         return scheme
-
-#     def get(self, *args, **kw):
-#         scheme = self._get_serialized_schemas(self.columns)
-#         return _build_json_response(scheme)
-
-
-# class ListSchemaView(SchemaBuilderView):
-#     columns = schema.list_schemas
-
-#     def get(self, *args, **kw):
-#         response = {}
-#         response['fields'] = self._get_all_fields()
-#         response['list_schema'] = self._get_list_schema()
-#         return _build_json_response(response)
-
-
-# class DetailSchemaView(SchemaBuilderView):
-#     def get(self, *args, **kw):
-#         response = dict(
-#             fields=self._get_all_fields(), 
-#             detail_schema=self._get_detail_schema()
-#         )
-#         return _build_json_response(response)
-
-
-# class ExtractSchemaView(SchemaBuilderView):
-#     def get(self, *args, **kw):
-#         return _build_json_response(self.serialize_schema(schema.extract_columns))
-
-
-
-
-class OptionsView(View):
-    def get(self, *args, **kwargs):
-        data = {}
-        for model in LookupList.__subclasses__():
-            options = [instance.name for instance in model.objects.all()]
-            data[model.__name__.lower()] = options
-
-        for synonym in Synonym.objects.all():
-            try:
-                co =  synonym.content_object
-            except AttributeError:
-                continue
-            name = type(co).__name__.lower()
-            data[name].append(synonym.name)
-
-        for name in data:
-            data[name].sort()
-
-        data['micro_test_defaults'] = micro_test_defaults
-
-        tag_hierarchy = collections.defaultdict(list)
-        tag_display = {}
-
-        if self.request.user.is_authenticated():
-            teams = models.Team.for_user(self.request.user)
-            for team in teams:
-                if team.parent:
-                    continue # Will be filled in at the appropriate point! 
-                tag_display[team.name] = team.title
-
-                subteams = [st for st in teams if st.parent == team]
-                tag_hierarchy[team.name] = [st.name for st in subteams]
-                for sub in subteams: 
-                    tag_display[sub.name] = sub.title
-
-        data['tag_hierarchy'] = tag_hierarchy
-        data['tag_display'] = tag_display
-
-        data['macros'] = models.Macro.to_dict()
-
-        return _build_json_response(data)
-
-
 class Extractor(View):
 
     def __init__(self, *a, **k):
@@ -739,8 +594,6 @@ class DownloadSearchView(Extractor):
         return resp
 
 
-
-
 class FilterView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
         filters = models.Filter.objects.filter(user=self.request.user);
@@ -772,5 +625,3 @@ class FilterDetailView(LoginRequiredMixin, View):
     def delete(self, *args, **kwargs):
         self.filter.delete()
         return _build_json_response('')
-
-

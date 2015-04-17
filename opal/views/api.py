@@ -1,19 +1,31 @@
 """
 Public facing API views
 """
-from django.views.generic import View
+import collections
 
+from django.conf import settings
+from django.views.generic import View
 from rest_framework import routers, viewsets
 from rest_framework.decorators import list_route
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from opal import application, schemas
+from opal.utils import stringport
 from opal.utils.views import _get_request_data, _build_json_response
 
 app = application.get_app()
+
+# TODO This is stupid - we can fully deprecate this please?
+try:
+    options = stringport(settings.OPAL_OPTIONS_MODULE)
+    micro_test_defaults = options.micro_test_defaults
+except AttributeError:
+    class options:
+        model_names = []
+    micro_test_defaults = []
+
 
 class OPALRouter(routers.DefaultRouter):
     def get_default_base_name(self, viewset):
@@ -68,10 +80,63 @@ class ExtractSchemaViewSet(viewsets.ViewSet):
         return Response(schemas.extract_schema())
 
 
+class OptionsViewSet(viewsets.ViewSet):
+    """
+    Returns various metadata concerning this OPAL instance: 
+    Lookuplists, micro test defaults, tag hierarchy, macros.
+    """
+    base_name = 'options'
+    
+    def list(self, request):
+        from opal.utils.models import LookupList
+        from opal.models import Synonym, Team, Macro
+        
+        data = {}
+        for model in LookupList.__subclasses__():
+            options = [instance.name for instance in model.objects.all()]
+            data[model.__name__.lower()] = options
+
+        for synonym in Synonym.objects.all():
+            try:
+                co =  synonym.content_object
+            except AttributeError:
+                continue
+            name = type(co).__name__.lower()
+            data[name].append(synonym.name)
+
+        for name in data:
+            data[name].sort()
+
+        data['micro_test_defaults'] = micro_test_defaults
+
+        tag_hierarchy = collections.defaultdict(list)
+        tag_display = {}
+
+        if request.user.is_authenticated():
+            teams = Team.for_user(request.user)
+            for team in teams:
+                if team.parent:
+                    continue # Will be filled in at the appropriate point! 
+                tag_display[team.name] = team.title
+
+                subteams = [st for st in teams if st.parent == team]
+                tag_hierarchy[team.name] = [st.name for st in subteams]
+                for sub in subteams: 
+                    tag_display[sub.name] = sub.title
+
+        data['tag_hierarchy'] = tag_hierarchy
+        data['tag_display'] = tag_display
+
+        data['macros'] = Macro.to_dict()
+
+        return _build_json_response(data)
+        
+
 router.register('flow', FlowViewSet)
 router.register('record', RecordViewSet)
 router.register('list-schema', ListSchemaViewSet)
 router.register('extract-schema', ExtractSchemaViewSet)
+router.register('options', OptionsViewSet)
 
 
 class APIAdmitEpisodeView(View):
