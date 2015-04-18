@@ -31,7 +31,7 @@ angular.module('opal.services')
         };
 
         var deferred = $q.defer();
-        $http.get('/userprofile/').then(function(response) {
+        $http.get('/api/v0.1/userprofile/').then(function(response) {
 	        deferred.resolve(new UserProfile(response.data) );
         }, function() {
 	        // handle error better

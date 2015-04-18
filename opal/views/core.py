@@ -188,20 +188,6 @@ def check_password_reset(request, *args, **kwargs):
             return redirect('django.contrib.auth.views.password_change')
     return response
 
-class UserProfileView(LoginRequiredMixin, View):
-    """
-    Render a serialized version of the currently logged in user's
-    userprofile.
-    """
-    def get(self, *args, **kw):
-        profile = self.request.user.get_profile()
-        data = dict(
-            readonly=profile.readonly,
-            can_extract=profile.can_extract,
-            filters=[f.to_dict() for f in profile.user.filter_set.all()],
-            roles=profile.get_roles()
-            )
-        return _build_json_response(data)
 
 class ReportView(TemplateView):
     """

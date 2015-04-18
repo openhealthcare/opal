@@ -206,7 +206,29 @@ class SubrecordViewSet(viewsets.ViewSet):
         item.delete()
         glossolalia.change(pre, self._item_to_dict(item, request.user))
         return Response('deleted', status=202)
+
     
+class UserProfileViewSet(viewsets.ViewSet):
+    """
+    Returns the user profile details for the currently logged in user
+    """
+    base_name = 'userprofile'
+
+    def list(self, request):
+        if not request.user.is_authenticated():
+            return Response(
+                {'error': 'Only valid for authenticated users'},
+                status=status.HTTP_401_UNAUTHORIZED)
+        profile = request.user.get_profile()
+        return Response(profile.to_dict())
+    
+
+router.register('flow', FlowViewSet)
+router.register('record', RecordViewSet)
+router.register('list-schema', ListSchemaViewSet)
+router.register('extract-schema', ExtractSchemaViewSet)
+router.register('options', OptionsViewSet)
+router.register('userprofile', UserProfileViewSet)
 
 for subrecord in subrecords():
     sub_name = camelcase_to_underscore(subrecord.__name__)
@@ -215,12 +237,6 @@ for subrecord in subrecords():
         model     = subrecord
 
     router.register(sub_name, SubViewSet)
-
-router.register('flow', FlowViewSet)
-router.register('record', RecordViewSet)
-router.register('list-schema', ListSchemaViewSet)
-router.register('extract-schema', ExtractSchemaViewSet)
-router.register('options', OptionsViewSet)
 
 
 class APIAdmitEpisodeView(View):

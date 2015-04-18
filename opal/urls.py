@@ -25,8 +25,6 @@ urlpatterns = patterns(
     url(r'^admin/?', include(admin.site.urls)),
 
     # Internal (Legacy) API views
-    # url(r'^options/$', views.OptionsView.as_view()),
-    url(r'^userprofile/$', views.UserProfileView.as_view()),
     url(r'^patient/?$', views.patient_search_view),
     url(r'^episode/?$', views.episode_list_and_create_view),
     url(r'^episode/(?P<tag>[a-z_\-]+)/?$', views.EpisodeListView.as_view()),

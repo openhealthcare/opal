@@ -780,6 +780,14 @@ class UserProfile(models.Model):
     restricted_only       = models.BooleanField(default=False, help_text=HELP_RESTRICTED)
     roles                 = models.ManyToManyField(Role)
 
+    def to_dict(self):
+        return dict(
+            readonly=self.readonly,
+            can_extract=self.can_extract,
+            filters=[f.to_dict() for f in self.user.filter_set.all()],
+            roles=self.get_roles()
+            )
+
     def get_roles(self):
         """
         Return a roles dictionary for this user

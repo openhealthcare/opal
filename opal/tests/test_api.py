@@ -185,3 +185,38 @@ class SubrecordTestCase(TestCase):
         response = self.viewset().destroy(mock_request, pk=colour.pk)
         self.assertEqual(202, response.status_code)
         self.assertEqual(1, change.call_count)
+
+
+class UserProfileTestCase(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create(username='testuser')
+        models.UserProfile.objects.create(user=self.user)
+        self.mock_request = MagicMock(name='request')
+        self.mock_request.user = self.user
+        
+    def test_user_profile(self):
+        with patch.object(self.user, 'is_authenticated', return_value=True):
+            response = api.UserProfileViewSet().list(self.mock_request)
+            expected = {
+                'readonly'   :  False,
+                'can_extract': False,
+                'filters'    : [],
+                'roles'      : {'default': []}
+            }
+            self.assertEqual(expected, response.data)
+
+    def test_user_profile_readonly(self):
+        with patch.object(self.user, 'is_authenticated', return_value=True):
+            profile = self.user.get_profile()
+            profile.readonly = True
+            profile.save()
+            response = api.UserProfileViewSet().list(self.mock_request)
+            self.assertEqual(True, response.data['readonly'])
+
+    def test_user_profile_not_logged_in(self):
+        mock_request = MagicMock(name='request')
+        mock_request.user.is_authenticated.return_value = False
+        response = api.UserProfileViewSet().list(mock_request)
+        self.assertEqual(401, response.status_code)
+        
