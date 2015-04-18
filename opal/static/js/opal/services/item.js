@@ -67,7 +67,6 @@ angular.module('opal.services')
 	        var field, value;
 	        var deferred = $q.defer();
 	        var url = '/api/v0.1/' + this.columnName + '/';
-	        var url = '/' + this.columnName + '/';
 	        var method;
 
 	        for (var fix = 0; fix < columnSchema.fields.length; fix++) {
@@ -137,7 +136,7 @@ recently changed it - refresh the page and try again');
 
 	    this.destroy = function() {
 	        var deferred = $q.defer();
-	        var url = '/' + item.columnName + '/' + item.id + '/';
+	        var url = '/api/v0.1/' + item.columnName + '/' + item.id + '/';
 
 	        $http['delete'](url).then(function(response) {
 		        episode.removeItem(item);

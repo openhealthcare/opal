@@ -346,63 +346,6 @@ class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
         glossolalia.admit(serialised)
         return _build_json_response(serialised)
 
-        
-@require_http_methods(['PUT', 'DELETE'])
-def subrecord_detail_view(request, model, pk):
-    try:
-        subrecord = model.objects.get(pk=pk)
-    except model.DoesNotExist:
-        return HttpResponseNotFound()
-
-    try:
-        pre = subrecord.episode.to_dict(request.user)
-    except AttributeError:
-        pre = subrecord.patient.to_dict(request.user)
-        
-    if request.method == 'PUT':
-        data = _get_request_data(request)
-        try:
-            subrecord.update_from_dict(data, request.user)
-            
-            try:
-                post = subrecord.episode.to_dict(request.user)
-            except AttributeError:
-                post = subrecord.patient.to_dict(request.user)
-            glossolalia.change(pre, post)
-
-            return _build_json_response(subrecord.to_dict(request.user))
-        except exceptions.ConsistencyError:
-            return _build_json_response({'error': 'Item has changed'}, 409)
-    elif request.method == 'DELETE':
-        subrecord.delete()
-        try:
-            post = subrecord.episode.to_dict(request.user)
-        except AttributeError:
-            post = subrecord.patient.to_dict(request.user)
-        glossolalia.change(pre, post)
-        return _build_json_response('')
-
-@require_http_methods(['POST'])
-def subrecord_create_view(request, model):
-    data = _get_request_data(request)
-    subrecord = model()
-
-    episode_id = data['episode_id']
-    episode = models.Episode.objects.get(pk=episode_id)
-    pre = episode.to_dict(request.user)
-
-    if isinstance(subrecord, models.PatientSubrecord):
-        del data['episode_id']
-        patient_id = episode.patient.pk
-        data['patient_id'] = patient_id
-
-    subrecord.update_from_dict(data, request.user)
-
-    episode = models.Episode.objects.get(pk=episode_id)
-    post = episode.to_dict(request.user)
-    glossolalia.change(pre, post)
-    return _build_json_response(subrecord.to_dict(request.user), 201)
-
 
 class TaggingView(View):
     """
