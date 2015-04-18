@@ -100,3 +100,88 @@ class SubrecordTestCase(TestCase):
         response = self.viewset().create(mock_request)
         self.assertEqual(400, response.status_code)
 
+    def test_update(self):
+        colour = Colour.objects.create(name='blue', episode=self.episode)
+        mock_request = MagicMock(name='mock request')
+        mock_request.data = {
+            'name'             : 'green',
+            'episode_id'       : self.episode.pk,
+            'id'               : colour.pk,
+            'consistency_token': colour.consistency_token
+        }
+        mock_request.user = self.user
+        response = self.viewset().update(mock_request, pk=colour.pk)
+        self.assertEqual(202, response.status_code)
+        self.assertEqual('green', response.data['name'])
+
+    @patch('opal.views.api.glossolalia.change')
+    def test_update_pings_integration(self, change):
+        colour = Colour.objects.create(name='blue', episode=self.episode)
+        mock_request = MagicMock(name='mock request')
+        mock_request.data = {
+            'name'             : 'green',
+            'episode_id'       : self.episode.pk,
+            'id'               : colour.pk,
+            'consistency_token': colour.consistency_token
+        }
+        mock_request.user = self.user
+        response = self.viewset().update(mock_request, pk=colour.pk)
+        self.assertEqual(202, response.status_code)
+        self.assertEqual(1, change.call_count)
+    
+    def test_update_item_changed(self):
+        colour = Colour.objects.create(
+            name='blue',
+            episode=self.episode,
+            consistency_token='frist'
+        )
+        mock_request = MagicMock(name='mock request')
+        mock_request.data = {
+            'name'             : 'green',
+            'episode_id'       : self.episode.pk,
+            'id'               : colour.pk,
+            'consistency_token': 'wat'
+        }
+        mock_request.user = self.user
+        response = self.viewset().update(mock_request, pk=colour.pk)
+        self.assertEqual(409, response.status_code)
+
+    def test_update_nonexistent(self):
+        response = self.viewset().update(MagicMock(), pk=67757)
+        self.assertEqual(404, response.status_code)
+
+    def test_update_unexpected_field(self):
+        colour = Colour.objects.create(name='blue', episode=self.episode)
+        mock_request = MagicMock(name='mock request')
+        mock_request.data = {
+            'name'             : 'green',
+            'hue'              : 'sea',
+            'episode_id'       : self.episode.pk,
+            'id'               : colour.pk,
+            'consistency_token': colour.consistency_token
+        }
+        mock_request.user = self.user
+        response = self.viewset().update(mock_request, pk=colour.pk)
+        self.assertEqual(400, response.status_code)
+
+    def test_delete(self):
+        colour = Colour.objects.create(episode=self.episode)
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        response = self.viewset().destroy(mock_request, pk=colour.pk)
+        self.assertEqual(202, response.status_code)
+        with self.assertRaises(Colour.DoesNotExist):
+            c2 = Colour.objects.get(pk=colour.pk)
+
+    def test_delete_nonexistent(self):
+        response = self.viewset().destroy(MagicMock(name='request'), pk=567)
+        self.assertEqual(404, response.status_code)
+
+    @patch('opal.views.api.glossolalia.change')
+    def test_delete_pings_integration(self, change):
+        colour = Colour.objects.create(episode=self.episode)
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        response = self.viewset().destroy(mock_request, pk=colour.pk)
+        self.assertEqual(202, response.status_code)
+        self.assertEqual(1, change.call_count)

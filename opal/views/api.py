@@ -144,13 +144,19 @@ def item_from_pk(fn):
             return Response(status=status.HTTP_404_NOT_FOUND)
         return fn(self, request, item)
     return get_item
-    
+
     
 class SubrecordViewSet(viewsets.ViewSet):
     """
     This is the base viewset for our subrecords.
     """
     
+    def _item_to_dict(self, item, user):
+        try:
+            return item.episode.to_dict(user)
+        except AttributeError:
+            return item.patient.to_dict(user)
+            
     def create(self, request):
         from opal.models import Episode, PatientSubrecord
 
@@ -169,7 +175,7 @@ class SubrecordViewSet(viewsets.ViewSet):
         try:
             subrecord.update_from_dict(request.data, request.user)
         except exceptions.APIError:
-            return Response('Unexpected field name', status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Unexpected field name'}, status=status.HTTP_400_BAD_REQUEST)
             
         episode = Episode.objects.get(pk=request.data['episode_id'])
         post = episode.to_dict(request.user)
@@ -183,12 +189,25 @@ class SubrecordViewSet(viewsets.ViewSet):
 
     @item_from_pk
     def update(self, request, item):
-        pass
+        pre = self._item_to_dict(item, request.user)
+        try:
+            item.update_from_dict(request.data, request.user)
+        except exceptions.APIError:
+            return Response({'error': 'Unexpected field name'}, 
+                            status=status.HTTP_400_BAD_REQUEST)
+        except exceptions.ConsistencyError:
+            return Response({'error': 'Item has changed'}, status=status.HTTP_409_CONFLICT)
+        glossolalia.change(pre, self._item_to_dict(item, request.user))
+        return Response(item.to_dict(request.user), status=202)
 
     @item_from_pk
     def destroy(self, request, item):
-        pass
+        pre = self._item_to_dict(item, request.user)
+        item.delete()
+        glossolalia.change(pre, self._item_to_dict(item, request.user))
+        return Response('deleted', status=202)
     
+
 for subrecord in subrecords():
     sub_name = camelcase_to_underscore(subrecord.__name__)
     class SubViewSet(SubrecordViewSet):
