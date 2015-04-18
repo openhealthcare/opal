@@ -5,14 +5,15 @@ import collections
 
 from django.conf import settings
 from django.views.generic import View
-from rest_framework import routers, viewsets
+from rest_framework import routers, status, viewsets
 from rest_framework.decorators import list_route
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from opal import application, schemas
-from opal.utils import stringport
+from opal import application, exceptions, glossolalia
+from opal.utils import stringport, camelcase_to_underscore, schemas
+from opal.utils.models import subrecords
 from opal.utils.views import _get_request_data, _build_json_response
 
 app = application.get_app()
@@ -79,7 +80,8 @@ class ExtractSchemaViewSet(viewsets.ViewSet):
     def list(self, request):
         return Response(schemas.extract_schema())
 
-
+# TODO: 
+# Deprecate this fully
 class OptionsViewSet(viewsets.ViewSet):
     """
     Returns various metadata concerning this OPAL instance: 
@@ -129,8 +131,71 @@ class OptionsViewSet(viewsets.ViewSet):
 
         data['macros'] = Macro.to_dict()
 
-        return _build_json_response(data)
+        return Response(data)
+
+def item_from_pk(fn):
+    """
+    Decorator that passes an instance or returns a 404 from pk kwarg.
+    """
+    def get_item(self, request, pk=None):
+        try: 
+            item = self.model.objects.get(pk=pk)
+        except self.model.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return fn(self, request, item)
+    return get_item
+    
+    
+class SubrecordViewSet(viewsets.ViewSet):
+    """
+    This is the base viewset for our subrecords.
+    """
+    
+    def create(self, request):
+        from opal.models import Episode, PatientSubrecord
+
+        subrecord = self.model()
+        try:
+            episode = Episode.objects.get(pk=request.data['episode_id'])
+        except Episode.DoesNotExist:
+            return Response('Nonexistant episode', status=status.HTTP_400_BAD_REQUEST)
+        pre = episode.to_dict(request.user)
+
+        if isinstance(subrecord, PatientSubrecord):
+            del request.data['episode_id']
+            patient_id = episode.patient.pk
+            request.data['patient_id'] = patient_id
+
+        try:
+            subrecord.update_from_dict(request.data, request.user)
+        except exceptions.APIError:
+            return Response('Unexpected field name', status=status.HTTP_400_BAD_REQUEST)
+            
+        episode = Episode.objects.get(pk=request.data['episode_id'])
+        post = episode.to_dict(request.user)
+        glossolalia.change(pre, post)
         
+        return Response(post, status=status.HTTP_201_CREATED)
+
+    @item_from_pk
+    def retrieve(self, request, item):
+        return Response(item.to_dict(request.user))
+
+    @item_from_pk
+    def update(self, request, item):
+        pass
+
+    @item_from_pk
+    def destroy(self, request, item):
+        pass
+    
+for subrecord in subrecords():
+    sub_name = camelcase_to_underscore(subrecord.__name__)
+    class SubViewSet(SubrecordViewSet):
+        base_name = sub_name
+        model     = subrecord
+
+    router.register(sub_name, SubViewSet)
 
 router.register('flow', FlowViewSet)
 router.register('record', RecordViewSet)
@@ -168,39 +233,3 @@ class APIReferPatientView(View):
             episode.set_tag_names(current_tags, None)
         resp = {'ok': 'Got your referral just fine - thanks!'}
         return _build_json_response(resp)
-
-    
-class APISubrecordDetailView(View):
-    """
-    Main API entrypoint for Subrecords. 
-    """
-
-    def dispatch(self, *args, **kwargs):
-        """
-        Try to find our subrecord if we're not POSTING?
-
-        404 Appropriately.        
-        """
-
-    def get(self, *args, **kwargs):
-        """
-        Just render the JSON for this subrecord!
-        """
-        return
-
-    def post(self, *args, **kwargs):
-        """
-        Create a subrecord
-        """
-        return
-
-    def put(self, *args, **kwargs):
-        """
-        Update a subrecord
-        """
-        return
-
-    def delete(self, *args, **kwargs):
-        """
-        Delete a subrecord
-        """

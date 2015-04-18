@@ -66,6 +66,7 @@ angular.module('opal.services')
 	    this.save = function(attrs) {
 	        var field, value;
 	        var deferred = $q.defer();
+	        var url = '/api/v0.1/' + this.columnName + '/';
 	        var url = '/' + this.columnName + '/';
 	        var method;
 

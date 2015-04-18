@@ -382,26 +382,6 @@ def subrecord_detail_view(request, model, pk):
         glossolalia.change(pre, post)
         return _build_json_response('')
 
-
-class TaggingView(View):
-    """
-    Provide an API for updating the teams to which an episode is
-    tagged.
-    """
-
-    def put(self, *args, **kwargs):
-        episode = models.Episode.objects.get(pk=kwargs['pk'])
-        data = _get_request_data(self.request)
-        if 'id' in data:
-            data.pop('id')
-        tag_names = [n for n, v in data.items() if v]
-        pre = episode.to_dict(self.request.user)
-        episode.set_tag_names(tag_names, self.request.user)
-        post = episode.to_dict(self.request.user)
-        glossolalia.transfer(pre, post)
-        return _build_json_response(episode.tagging_dict(self.request.user)[0])
-
-
 @require_http_methods(['POST'])
 def subrecord_create_view(request, model):
     data = _get_request_data(request)
@@ -422,6 +402,25 @@ def subrecord_create_view(request, model):
     post = episode.to_dict(request.user)
     glossolalia.change(pre, post)
     return _build_json_response(subrecord.to_dict(request.user), 201)
+
+
+class TaggingView(View):
+    """
+    Provide an API for updating the teams to which an episode is
+    tagged.
+    """
+
+    def put(self, *args, **kwargs):
+        episode = models.Episode.objects.get(pk=kwargs['pk'])
+        data = _get_request_data(self.request)
+        if 'id' in data:
+            data.pop('id')
+        tag_names = [n for n, v in data.items() if v]
+        pre = episode.to_dict(self.request.user)
+        episode.set_tag_names(tag_names, self.request.user)
+        post = episode.to_dict(self.request.user)
+        glossolalia.transfer(pre, post)
+        return _build_json_response(episode.tagging_dict(self.request.user)[0])
 
 
 class Extractor(View):

@@ -6,24 +6,24 @@ import datetime
 from django.contrib.auth.models import User
 from django.test import TestCase
 
-from opal.models import Patient, Episode
+from opal.models import Patient, Episode, Team
 
 class EpisodeTest(TestCase):
     fixtures = ['patients_users', 'patients_records', 'patients_options']
 
     def setUp(self):
-        self.user = User.objects.get(pk=1)
+        self.user    = User.objects.get(pk=1)
         self.patient = Patient.objects.create()
         self.episode = self.patient.create_episode()
+        self.hiv     = Team.objects.create(name='hiv', title='HIV')
+        self.mine    = Team.objects.create(name='mine', title='Mine')
+        self.micro   = Team.objects.create(name='microbiology', title='Microbiology')
 
     def test_unicode(self):
         self.assertEqual(' |  | None', self.episode.__unicode__())
 
     def test_location_subrecord_created(self):
         self.assertEqual(1, self.episode.location_set.count())
-
-    def test_is_discharged_starts_false(self):
-        self.assertEqual(False, self.episode.is_discharged)
 
     def test_is_discharged_inactive(self):
         self.episode.active = False
