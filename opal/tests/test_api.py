@@ -6,7 +6,7 @@ from django.test import TestCase
 from mock import patch, MagicMock
 
 from opal import models
-from opal.tests.models import Colour
+from opal.tests.models import Colour, PatientColour
 
 from opal.views import api
 
@@ -60,8 +60,13 @@ class SubrecordTestCase(TestCase):
             base_name = 'colour'
             model     = Colour
 
+        class OurPatientViewSet(api.SubrecordViewSet):
+            base_name = 'patientcolour'
+            model     = PatientColour
+
         self.model   = Colour
         self.viewset = OurViewSet
+        self.patientviewset = OurPatientViewSet
 
     def test_retrieve(self):
         with patch.object(self.model.objects, 'get') as mockget:
@@ -78,6 +83,15 @@ class SubrecordTestCase(TestCase):
         self.assertEqual('blue', response.data['colour'][0]['name'])
         self.assertEqual(self.episode.pk, response.data['id'])
 
+    def test_create_patient_subrecord(self):
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        mock_request.data = {'name': 'blue', 'episode_id': self.episode.pk, 
+                             'patient_id': self.patient.pk}
+        response = self.patientviewset().create(mock_request)
+        self.assertEqual('blue', response.data['patient_colour'][0]['name'])
+        self.assertEqual(self.episode.pk, response.data['id'])
+        
     @patch('opal.views.api.glossolalia.change')
     def test_create_pings_integration(self, change):
         mock_request = MagicMock(name='mock request')
@@ -220,3 +234,46 @@ class UserProfileTestCase(TestCase):
         response = api.UserProfileViewSet().list(mock_request)
         self.assertEqual(401, response.status_code)
         
+
+class TaggingTestCase(TestCase):
+    
+    def setUp(self):
+        self.patient = models.Patient.objects.create()
+        self.episode = models.Episode.objects.create(patient=self.patient)
+        self.user    = User.objects.create(username='testuser')
+        self.micro   = models.Team.objects.create(name='micro', title='Microbiology')
+        self.mock_request = MagicMock(name='request')
+        self.mock_request.user = self.user
+
+    def test_retrieve_tags(self):
+        self.episode.set_tag_names(['micro'], self.user)
+        response = api.TaggingViewSet().retrieve(self.mock_request, pk=self.episode.pk)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(True, response.data['micro'])
+
+    def test_tag_episode(self):
+        self.assertEqual(self.episode.get_tag_names(self.user), [])
+        self.mock_request.data = {'micro': True}
+        response = api.TaggingViewSet().update(self.mock_request, pk=self.episode.pk)
+        self.assertEqual(202, response.status_code)
+        self.assertEqual(self.episode.get_tag_names(self.user), ['micro'])
+
+    def test_untag_episode(self):
+        self.assertEqual(self.episode.get_tag_names(self.user), [])
+        self.episode.set_tag_names(['micro'], self.user)
+        self.mock_request.data = {'micro': False}
+        response = api.TaggingViewSet().update(self.mock_request, pk=self.episode.pk)
+        self.assertEqual(202, response.status_code)
+        self.assertEqual(self.episode.get_tag_names(self.user), [])
+
+    @patch('opal.views.api.glossolalia.transfer')
+    def test_tagging_pings_integration(self, transfer):
+        self.assertEqual(self.episode.get_tag_names(self.user), [])
+        self.mock_request.data = {'micro': True}
+        response = api.TaggingViewSet().update(self.mock_request, pk=self.episode.pk)
+        self.assertEqual(202, response.status_code)
+        self.assertEqual(1, transfer.call_count)
+
+    def test_tag_nonexistent_episode(self):
+        response = api.TaggingViewSet().update(self.mock_request, pk=56576)
+        self.assertEqual(404, response.status_code)

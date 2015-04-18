@@ -32,7 +32,6 @@ urlpatterns = patterns(
     url(r'^episode/(?P<pk>\d+)/?$', views.episode_detail_view),
     url(r'^episode/(?P<pk>\d+)/actions/copyto/(?P<category>[a-zA-Z_\-]+)/?$', 
         views.EpisodeCopyToCategoryView.as_view()),
-    url(r'^tagging/(?P<pk>\d+)/?', views.TaggingView.as_view()),
     url(r'^search/extract/$', views.ExtractSearchView.as_view()),
     url(r'^search/extract/download$', views.DownloadSearchView.as_view()),
     url(r'^filters/?$', views.FilterView.as_view()),

@@ -7,3 +7,5 @@ from opal import models
 class Colour(models.EpisodeSubrecord):
     name = dmodels.CharField(max_length=200)
 
+class PatientColour(models.PatientSubrecord):
+    name = dmodels.CharField(max_length=200)

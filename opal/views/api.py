@@ -141,10 +141,21 @@ def item_from_pk(fn):
         try: 
             item = self.model.objects.get(pk=pk)
         except self.model.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Item does not exist'}, status=status.HTTP_404_NOT_FOUND)
         return fn(self, request, item)
     return get_item
 
+def episode_from_pk(fn):
+    """
+    Decorator that passes an episode or returns a 404 from pk kwarg.
+    """
+    def get_item(self, request, pk=None):
+        from opal.models import Episode
+        try: 
+            return fn(self, request, Episode.objects.get(pk=pk))
+        except Episode.DoesNotExist:
+            return Response({'error': 'Episode does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    return get_item
     
 class SubrecordViewSet(viewsets.ViewSet):
     """
@@ -177,7 +188,7 @@ class SubrecordViewSet(viewsets.ViewSet):
         except exceptions.APIError:
             return Response({'error': 'Unexpected field name'}, status=status.HTTP_400_BAD_REQUEST)
             
-        episode = Episode.objects.get(pk=request.data['episode_id'])
+        episode = Episode.objects.get(pk=episode.pk)
         post = episode.to_dict(request.user)
         glossolalia.change(pre, post)
         
@@ -198,14 +209,14 @@ class SubrecordViewSet(viewsets.ViewSet):
         except exceptions.ConsistencyError:
             return Response({'error': 'Item has changed'}, status=status.HTTP_409_CONFLICT)
         glossolalia.change(pre, self._item_to_dict(item, request.user))
-        return Response(item.to_dict(request.user), status=202)
+        return Response(item.to_dict(request.user), status=status.HTTP_202_ACCEPTED)
 
     @item_from_pk
     def destroy(self, request, item):
         pre = self._item_to_dict(item, request.user)
         item.delete()
         glossolalia.change(pre, self._item_to_dict(item, request.user))
-        return Response('deleted', status=202)
+        return Response('deleted', status=status.HTTP_202_ACCEPTED)
 
     
 class UserProfileViewSet(viewsets.ViewSet):
@@ -221,7 +232,29 @@ class UserProfileViewSet(viewsets.ViewSet):
                 status=status.HTTP_401_UNAUTHORIZED)
         profile = request.user.get_profile()
         return Response(profile.to_dict())
+  
+
+class TaggingViewSet(viewsets.ViewSet):
+    """
+    Associating episodes with teams
+    """
+    base_name = 'tagging'
+
+    @episode_from_pk
+    def retrieve(self, request, episode):
+        return Response(episode.tagging_dict(request.user)[0], status=status.HTTP_200_OK)
     
+    @episode_from_pk
+    def update(self, request, episode):
+        if 'id' in request.data:
+            del request.data['id']
+        tag_names = [n for n, v in request.data.items() if v]
+        pre = episode.to_dict(request.user)
+        episode.set_tag_names(tag_names, request.user)
+        post = episode.to_dict(request.user)
+        glossolalia.transfer(pre, post)
+        return Response(episode.tagging_dict(request.user)[0], status=status.HTTP_202_ACCEPTED)
+  
 
 router.register('flow', FlowViewSet)
 router.register('record', RecordViewSet)
@@ -229,6 +262,7 @@ router.register('list-schema', ListSchemaViewSet)
 router.register('extract-schema', ExtractSchemaViewSet)
 router.register('options', OptionsViewSet)
 router.register('userprofile', UserProfileViewSet)
+router.register('tagging', TaggingViewSet)
 
 for subrecord in subrecords():
     sub_name = camelcase_to_underscore(subrecord.__name__)
