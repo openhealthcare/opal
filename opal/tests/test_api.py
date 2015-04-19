@@ -333,32 +333,32 @@ class EpisodeTestCase(TestCase):
         self.assertEqual(expected, response.data)
     
     def test_create_existing_patient(self):
+        pass
 
-        # mock_request.data = {
+    def test_create_new_patient(self):
+        pass
+        # self.mock_request.data = {
         #     "tagging": [
         #         {
-        #             "virology":true,
-        #             "tropical_diseases":true}
+        #             "virology": True,
+        #             "tropical_diseases": True}
         #     ],
+        #     "date_of_admission":"2015-04-08",            
         #     "location": {
         #         "ward": "T8",
-        #         "bed": "16"
+        #         "bed": "16",
+        #         "hospital": "UCH",
         #     },
         #     "demographics": {
         #         "hospital_number": "676876896879",
         #         "name": "Simon Jones",
         #         "date_of_birth": "1912-12-12",
         #         "gender":"Male"
-        #     },
-        #     "hospital": "UCH",
-        #     "date_of_admission":"2015-04-08"
+        #     }
         # }
-            
         # response = api.EpisodeViewSet().create(self.mock_request)
+        # self.assertEqual(201, response.status_code)
 
-
-    def test_create_new_patient(self):
-        pass
 
     def test_create_pings_integration(self):
         pass

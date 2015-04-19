@@ -12,7 +12,8 @@ angular.module('opal.controllers')
 	    for (var name in options) {
 		    $scope[name + '_list'] = options[name];
 	    };
-
+        
+        // TODO: deprecate these
 	    $scope.episode_category_list = ['OPAT', 'Inpatient', 'Outpatient', 'Review'];
 	    $scope.editing = {
             tagging: [{}],
