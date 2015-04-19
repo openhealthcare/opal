@@ -165,12 +165,26 @@ class SubrecordViewSet(viewsets.ViewSet):
     """
     
     def _item_to_dict(self, item, user):
+        """
+        Given an item, serialize either the patient or episode it is a
+        subrecord of.
+        """
         try:
             return item.episode.to_dict(user)
         except AttributeError:
             return item.patient.to_dict(user)
             
     def create(self, request):
+        """
+        * Create a subrecord
+        * Ping our integration upstream interface
+        * Render the created subrecord back to the requester
+
+        Raise appropriate errors for: 
+
+        * Nonexistant episode
+        * Unexpected fields being passed in
+        """
         from opal.models import Episode, PatientSubrecord
 
         subrecord = self.model()
@@ -194,7 +208,7 @@ class SubrecordViewSet(viewsets.ViewSet):
         post = episode.to_dict(request.user)
         glossolalia.change(pre, post)
         
-        return Response(post, status=status.HTTP_201_CREATED)
+        return Response(subrecord.to_dict(request.user), status=status.HTTP_201_CREATED)
 
     @item_from_pk
     def retrieve(self, request, item):
@@ -263,6 +277,29 @@ class EpisodeViewSet(viewsets.ViewSet):
     Episodes of care
     """
     base_name = 'episode'
+
+    def list(self, request):
+        from opal.models import Episode
+
+        tag    = request.query_params.get('tag', None)
+        subtag = request.query_params.get('subtag', None)
+
+        filter_kwargs = {}
+        if subtag:
+            filter_kwargs['tagging__team__name'] = subtag
+        elif tag:
+            filter_kwargs['tagging__team__name'] = tag
+            
+        if tag == 'mine':
+            filter_kwargs['tagging__user'] = request.user
+
+        if not filter_kwargs:
+            return Response([e.to_dict(request.user) for e in Episode.objects.all()])
+        
+        serialised = Episode.objects.serialised_active(
+            request.user, **filter_kwargs)
+
+        return Response(serialised)
     
     @episode_from_pk
     def retrieve(self, request, episode):

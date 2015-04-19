@@ -128,7 +128,6 @@ class EpisodeDetailTemplateView(EpisodeTemplateView):
         return super(EpisodeDetailTemplateView, self).get(*args, **kwargs)
     
     def get_template_names(self):
-        print self.episode.category.lower()
         names = ['detail/{0}.html'.format(self.episode.category.lower()), 'detail/default.html']
         return names
 

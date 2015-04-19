@@ -80,8 +80,7 @@ class SubrecordTestCase(TestCase):
         mock_request.user = self.user
         mock_request.data = {'name': 'blue', 'episode_id': self.episode.pk}
         response = self.viewset().create(mock_request)
-        self.assertEqual('blue', response.data['colour'][0]['name'])
-        self.assertEqual(self.episode.pk, response.data['id'])
+        self.assertEqual('blue', response.data['name'])
 
     def test_create_patient_subrecord(self):
         mock_request = MagicMock(name='mock request')
@@ -89,8 +88,7 @@ class SubrecordTestCase(TestCase):
         mock_request.data = {'name': 'blue', 'episode_id': self.episode.pk, 
                              'patient_id': self.patient.pk}
         response = self.patientviewset().create(mock_request)
-        self.assertEqual('blue', response.data['patient_colour'][0]['name'])
-        self.assertEqual(self.episode.pk, response.data['id'])
+        self.assertEqual('blue', response.data['name'])
         
     @patch('opal.views.api.glossolalia.change')
     def test_create_pings_integration(self, change):
@@ -213,7 +211,7 @@ class UserProfileTestCase(TestCase):
         with patch.object(self.user, 'is_authenticated', return_value=True):
             response = api.UserProfileViewSet().list(self.mock_request)
             expected = {
-                'readonly'   :  False,
+                'readonly'   : False,
                 'can_extract': False,
                 'filters'    : [],
                 'roles'      : {'default': []}
@@ -241,7 +239,7 @@ class TaggingTestCase(TestCase):
         self.patient = models.Patient.objects.create()
         self.episode = models.Episode.objects.create(patient=self.patient)
         self.user    = User.objects.create(username='testuser')
-        self.micro   = models.Team.objects.create(name='micro', title='Microbiology')
+        self.micro   = models.Team.objects.create(name='micro', title='microbiology')
         self.mock_request = MagicMock(name='request')
         self.mock_request.user = self.user
 
@@ -286,6 +284,11 @@ class EpisodeTestCase(TestCase):
         self.user    = User.objects.create(username='testuser')
         self.mock_request = MagicMock(name='request')
         self.mock_request.user = self.user
+        self.mock_request.query_params = {}
+        self.micro   = models.Team.objects.create(name='micro', title='microbiology')
+        self.ortho   = models.Team.objects.create(
+            name='micro_ortho', title='Micro Ortho',
+            parent=self.micro)
 
     def test_retrieve_episode(self):
         response = api.EpisodeViewSet().retrieve(self.mock_request, pk=self.episode.pk)
@@ -295,3 +298,76 @@ class EpisodeTestCase(TestCase):
         response = api.EpisodeViewSet().retrieve(self.mock_request, pk=678687)
         self.assertEqual(404, response.status_code)
 
+    def test_list(self):
+        response = api.EpisodeViewSet().list(self.mock_request)
+        expected = [self.episode.to_dict(self.user)]
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(expected, response.data)
+
+    def test_list_for_tag_empty(self):
+        self.mock_request.query_params = {'tag': 'micro'}
+        response = api.EpisodeViewSet().list(self.mock_request)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual([], response.data)
+
+    def test_list_for_tag(self):
+        self.mock_request.query_params = {'tag': 'micro'}
+        self.episode.set_tag_names(['micro'], self.user)
+        expected = models.Episode.objects.serialised(self.user, [self.episode])
+        response = api.EpisodeViewSet().list(self.mock_request)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(expected, response.data)
+
+    def test_list_for_subtag_empty(self):
+        self.mock_request.query_params = {'tag': 'micro', 'subtag': 'micro_ortho'}
+        response = api.EpisodeViewSet().list(self.mock_request)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual([], response.data)
+
+    def test_list_for_subtag(self):
+        self.mock_request.query_params = {'tag': 'micro', 'subtag': 'micro_ortho'}
+        self.episode.set_tag_names(['micro_ortho'], self.user)
+        expected = models.Episode.objects.serialised(self.user, [self.episode])
+        response = api.EpisodeViewSet().list(self.mock_request)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(expected, response.data)
+    
+    def test_create_existing_patient(self):
+
+        # mock_request.data = {
+        #     "tagging": [
+        #         {
+        #             "virology":true,
+        #             "tropical_diseases":true}
+        #     ],
+        #     "location": {
+        #         "ward": "T8",
+        #         "bed": "16"
+        #     },
+        #     "demographics": {
+        #         "hospital_number": "676876896879",
+        #         "name": "Simon Jones",
+        #         "date_of_birth": "1912-12-12",
+        #         "gender":"Male"
+        #     },
+        #     "hospital": "UCH",
+        #     "date_of_admission":"2015-04-08"
+        # }
+            
+        # response = api.EpisodeViewSet().create(self.mock_request)
+
+
+    def test_create_new_patient(self):
+        pass
+
+    def test_create_pings_integration(self):
+        pass
+
+    def test_update(self):
+        pass
+
+    def test_update_nonexistent(self):
+        pass
+
+    def test_update_pings_integration(self):
+        pass
