@@ -43,7 +43,7 @@ angular.module(
             if(flow_cache.get('flow')){
                 datadeferred.resolve()
             }else{
-                $http.get('/api/v0.1/flow').then(
+                $http.get('/api/v0.1/flow/').then(
                     // Success
                     function(response){
                         flow_cache.put('flow', response.data);
