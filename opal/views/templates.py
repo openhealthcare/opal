@@ -113,19 +113,6 @@ class DischargeEpisodeTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'discharge_episode_modal.html'
 
 
-class DischargeOpatEpisodeTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'discharge_opat_episode_modal.html'
-
-
-# OPAT specific templates
-class OpatReferralTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'opat_referral_modal.html'
-
-
-class OpatAddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'opat/add_episode_modal.html'
-
-
 class CopyToCategoryTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'copy_to_category.html'
 

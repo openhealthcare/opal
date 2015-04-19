@@ -72,14 +72,6 @@ urlpatterns = patterns(
     url(r'^templates/modals/copy_to_category.html/?$',
         views.CopyToCategoryTemplateView.as_view()),
 
-    # OPAT Specific templates
-    url(r'^templates/modals/discharge_opat_episode.html/?$',
-        views.DischargeOpatEpisodeTemplateView.as_view()),
-    url(r'^templates/modals/opat_referral.html/?$',
-        views.OpatReferralTemplateView.as_view()),
-    url(r'^templates/modals/opat/add_episode.html/?$',
-        views.OpatAddEpisodeTemplateView.as_view()),
-
     url(r'^templates/modals/delete_item_confirmation.html/?$',
         views.DeleteItemConfirmationView.as_view()),
     url(r'^templates/modals/save_filter_modal.html/?$',
