@@ -78,6 +78,7 @@ def serve_maybe(meth):
 
     return handoff
 
+
 class EpisodeTemplateView(TemplateView):
     def get_column_context(self, **kwargs):
         """
@@ -189,19 +190,6 @@ def check_password_reset(request, *args, **kwargs):
     return response
 
 
-class ReportView(TemplateView):
-    """
-    Base class for reports.
-    """
-    def get_data(self):
-        return {}
-
-    def get_context_data(self, *a, **kw):
-        ctx = super(ReportView, self).get_context_data(*a, **kw)
-        ctx.update(self.get_data())
-        return ctx
-
-
 """Internal (Legacy) API Views"""
 
 @require_http_methods(['GET', 'PUT'])
@@ -226,31 +214,6 @@ def episode_detail_view(request, pk):
     except exceptions.ConsistencyError:
         return _build_json_response({'error': 'Item has changed'}, 409)
 
-
-@with_no_caching
-@require_http_methods(['GET'])
-def patient_search_view(request):
-    GET = request.GET
-
-    search_terms = {}
-    filter_dict = {}
-
-    if 'hospital_number' in GET:
-        search_terms['hospital_number'] = GET['hospital_number']
-        filter_dict['demographics__hospital_number__iexact'] = GET['hospital_number']
-
-    if 'name' in GET:
-        search_terms['name'] = GET['name']
-        filter_dict['demographics__name__icontains'] = GET['name']
-
-    if filter_dict:
-        patients = models.Patient.objects.filter(
-            **filter_dict).order_by('demographics__date_of_birth')
-
-        return _build_json_response([patient.to_dict(request.user)
-                                     for patient in patients])
-    else:
-        return _build_json_response({'error': 'No search terms'}, 400)
 
 @require_http_methods(['GET', 'POST'])
 def episode_list_and_create_view(request):
@@ -331,6 +294,32 @@ class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
         serialised = new.to_dict(self.request.user)
         glossolalia.admit(serialised)
         return _build_json_response(serialised)
+
+
+@with_no_caching
+@require_http_methods(['GET'])
+def patient_search_view(request):
+    GET = request.GET
+
+    search_terms = {}
+    filter_dict = {}
+
+    if 'hospital_number' in GET:
+        search_terms['hospital_number'] = GET['hospital_number']
+        filter_dict['demographics__hospital_number__iexact'] = GET['hospital_number']
+
+    if 'name' in GET:
+        search_terms['name'] = GET['name']
+        filter_dict['demographics__name__icontains'] = GET['name']
+
+    if filter_dict:
+        patients = models.Patient.objects.filter(
+            **filter_dict).order_by('demographics__date_of_birth')
+
+        return _build_json_response([patient.to_dict(request.user)
+                                     for patient in patients])
+    else:
+        return _build_json_response({'error': 'No search terms'}, 400)
 
 
 class Extractor(View):

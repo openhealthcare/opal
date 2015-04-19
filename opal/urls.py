@@ -1,3 +1,6 @@
+"""
+Core OPAL URlconfs
+"""
 from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
@@ -25,13 +28,15 @@ urlpatterns = patterns(
     url(r'^admin/?', include(admin.site.urls)),
 
     # Internal (Legacy) API views
-    url(r'^patient/?$', views.patient_search_view),
     url(r'^episode/?$', views.episode_list_and_create_view),
     url(r'^episode/(?P<tag>[a-z_\-]+)/?$', views.EpisodeListView.as_view()),
     url(r'^episode/(?P<tag>[a-z_\-]+)/(?P<subtag>[a-z_\-]+)/?$', views.EpisodeListView.as_view()),
     url(r'^episode/(?P<pk>\d+)/?$', views.episode_detail_view),
+
     url(r'^episode/(?P<pk>\d+)/actions/copyto/(?P<category>[a-zA-Z_\-]+)/?$', 
         views.EpisodeCopyToCategoryView.as_view()),
+
+    url(r'^patient/?$', views.patient_search_view),
     url(r'^search/extract/$', views.ExtractSearchView.as_view()),
     url(r'^search/extract/download$', views.DownloadSearchView.as_view()),
     url(r'^filters/?$', views.FilterView.as_view()),
@@ -86,7 +91,6 @@ urlpatterns = patterns(
     url(r'api/v0.1/episode/refer', csrf_exempt(views.APIReferPatientView.as_view())),
     
     url(r'api/v0.1/', include(api.router.urls)),
-    
 )
 
 # Generated subrecord template views 
