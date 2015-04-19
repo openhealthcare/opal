@@ -280,6 +280,7 @@ class TaggingTestCase(TestCase):
 class EpisodeTestCase(TestCase):
     def setUp(self):
         self.patient = models.Patient.objects.create()
+        self.demographics = self.patient.demographics_set.get()
         self.episode = models.Episode.objects.create(patient=self.patient)
         self.user    = User.objects.create(username='testuser')
         self.mock_request = MagicMock(name='request')
@@ -333,32 +334,33 @@ class EpisodeTestCase(TestCase):
         self.assertEqual(expected, response.data)
     
     def test_create_existing_patient(self):
-        pass
-
+        self.demographics.name = 'Aretha Franklin'
+        self.demographics.hospital_number = '123123123'
+        self.demographics.save()
+        self.mock_request.data = {
+            "tagging"                :[ { "micro":True }],
+            "date_of_admission"      : "2015-01-14",
+            "patient_hospital_number": self.demographics.hospital_number
+        }
+        response = api.EpisodeViewSet().create(self.mock_request)
+        self.assertEqual(201, response.status_code)
+        self.assertEqual(2, self.patient.episode_set.count())
+        self.assertEqual("2015-01-14", response.data['date_of_admission'])
+        
     def test_create_new_patient(self):
-        pass
-        # self.mock_request.data = {
-        #     "tagging": [
-        #         {
-        #             "virology": True,
-        #             "tropical_diseases": True}
-        #     ],
-        #     "date_of_admission":"2015-04-08",            
-        #     "location": {
-        #         "ward": "T8",
-        #         "bed": "16",
-        #         "hospital": "UCH",
-        #     },
-        #     "demographics": {
-        #         "hospital_number": "676876896879",
-        #         "name": "Simon Jones",
-        #         "date_of_birth": "1912-12-12",
-        #         "gender":"Male"
-        #     }
-        # }
-        # response = api.EpisodeViewSet().create(self.mock_request)
-        # self.assertEqual(201, response.status_code)
-
+        pcount = models.Patient.objects.filter(
+            demographics__hospital_number=999000999).count()
+        self.assertEqual(0, pcount)
+        self.mock_request.data = {
+            "tagging"                :[ { "micro":True }],
+            "date_of_admission"      : "2015-01-14",
+            "patient_hospital_number": "999000999"
+        }
+        response = api.EpisodeViewSet().create(self.mock_request)
+        self.assertEqual(201, response.status_code)
+        pcount = models.Patient.objects.filter(
+            demographics__hospital_number=999000999).count()
+        self.assertEqual(1, pcount)
 
     def test_create_pings_integration(self):
         pass

@@ -7,16 +7,13 @@ from django.test import TestCase
 from opal.models import Patient, Team, Episode
 
 class PatientTest(TestCase):
-    fixtures = ['patients_users', 'patients_records', 'patients_options']
-    maxDiff = None
 
     def setUp(self):
-        self.user = User.objects.get(pk=1)
         self.patient = Patient.objects.create()
-        self.micro   = Team.objects.create(name='microbiology', title='Microbiology')
+        self.micro   = Team.objects.create(name='microbiology', title='microbiology')
 
-    def test_demographics_subrecord_created(self):
-        self.assertEqual(1, self.patient.demographics_set.count())
+    def test_singleton_subrecord_created(self):
+        self.assertEqual(1, self.patient.famouslastwords_set.count())
 
     def test_can_create_episode(self):
         episode = self.patient.create_episode()

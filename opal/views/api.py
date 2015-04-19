@@ -300,6 +300,9 @@ class EpisodeViewSet(viewsets.ViewSet):
             request.user, **filter_kwargs)
 
         return Response(serialised)
+
+    def create(self, request):
+        return Response()
     
     @episode_from_pk
     def retrieve(self, request, episode):

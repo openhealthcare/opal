@@ -246,6 +246,8 @@ class Episode(UpdatesFromDictMixin, models.Model):
                                      self.date_of_admission)
         except models.ObjectDoesNotExist:
             return self.date_of_admission
+        except AttributeError:
+            return 'Episode: {0}'.format(self.pk)
         except Exception as e:
             print e.__class__
             return self.date_of_admission

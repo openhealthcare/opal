@@ -115,14 +115,8 @@ class EpisodeListTemplateView(EpisodeTemplateView):
     template_name = 'episode_list.html'
     column_schema = schema.list_schemas['default']
 
-
-class DischargeListTemplateView(EpisodeTemplateView):
-    template_name = 'discharge_list.html'
-    column_schema = schema.list_columns
-
-
-class EpisodeDetailTemplateView(EpisodeTemplateView):
-
+    
+class EpisodeDetailTemplateView(TemplateView):
     def get(self, *args, **kwargs):
         self.episode = models.Episode.objects.get(pk=kwargs['pk'])
         return super(EpisodeDetailTemplateView, self).get(*args, **kwargs)
@@ -130,8 +124,11 @@ class EpisodeDetailTemplateView(EpisodeTemplateView):
     def get_template_names(self):
         names = ['detail/{0}.html'.format(self.episode.category.lower()), 'detail/default.html']
         return names
-
-    column_schema = schema.detail_columns
+    
+    def get_context_data(self, **kwargs):
+        context = super(EpisodeDetailTemplateView, self).get_context_data(**kwargs)
+        context['models'] = { m.__name__: m for m in subrecords() }
+        return context
 
 
 class TagsTemplateView(TemplateView):
