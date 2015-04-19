@@ -50,5 +50,4 @@ class ListRecordsTestCase(TestCase):
             },
             'colour': colour_serialized
         }
-        print schemas.list_records()
         self.assertEqual(expected, schemas.list_records())
