@@ -181,7 +181,7 @@ def check_password_reset(request, *args, **kwargs):
     response = login(request, *args, **kwargs)
     if response.status_code == 302:
         try:
-            profile = request.user.get_profile()
+            profile = request.user.profile
             if profile and profile.force_password_change:
                 return redirect('django.contrib.auth.views.password_change')
         except models.UserProfile.DoesNotExist:

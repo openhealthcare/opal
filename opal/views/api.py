@@ -232,7 +232,7 @@ class UserProfileViewSet(viewsets.ViewSet):
             return Response(
                 {'error': 'Only valid for authenticated users'},
                 status=status.HTTP_401_UNAUTHORIZED)
-        profile = request.user.get_profile()
+        profile = request.user.profile
         return Response(profile.to_dict())
   
 

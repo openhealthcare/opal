@@ -770,7 +770,7 @@ class UserProfile(models.Model):
     HELP_EXTRACT="This user will be able to download data from advanced searches"
     HELP_PW="Force this user to change their password on the next login"
 
-    user                  = models.ForeignKey(User, unique=True)
+    user                  = models.OneToOneField(User, related_name='profile')
     force_password_change = models.BooleanField(default=True, help_text=HELP_PW)
     can_extract           = models.BooleanField(default=False, help_text=HELP_EXTRACT)
     readonly              = models.BooleanField(default=False, help_text=HELP_READONLY)

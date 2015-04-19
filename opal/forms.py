@@ -28,7 +28,7 @@ class ChangePasswordForm(AdminPasswordChangeForm):
 
     def save(self, commit=True):
         super(ChangePasswordForm, self).save(commit=commit)
-        profile = self.user.get_profile()
+        profile = self.user.profile
         profile.force_password_change = False
         profile.save()
         return self.user

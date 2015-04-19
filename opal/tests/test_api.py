@@ -222,7 +222,7 @@ class UserProfileTestCase(TestCase):
 
     def test_user_profile_readonly(self):
         with patch.object(self.user, 'is_authenticated', return_value=True):
-            profile = self.user.get_profile()
+            profile = self.user.profile
             profile.readonly = True
             profile.save()
             response = api.UserProfileViewSet().list(self.mock_request)
