@@ -277,3 +277,21 @@ class TaggingTestCase(TestCase):
     def test_tag_nonexistent_episode(self):
         response = api.TaggingViewSet().update(self.mock_request, pk=56576)
         self.assertEqual(404, response.status_code)
+
+        
+class EpisodeTestCase(TestCase):
+    def setUp(self):
+        self.patient = models.Patient.objects.create()
+        self.episode = models.Episode.objects.create(patient=self.patient)
+        self.user    = User.objects.create(username='testuser')
+        self.mock_request = MagicMock(name='request')
+        self.mock_request.user = self.user
+
+    def test_retrieve_episode(self):
+        response = api.EpisodeViewSet().retrieve(self.mock_request, pk=self.episode.pk)
+        self.assertEqual(self.episode.to_dict(self.user), response.data)
+    
+    def test_retrieve_nonexistent_episode(self):
+        response = api.EpisodeViewSet().retrieve(self.mock_request, pk=678687)
+        self.assertEqual(404, response.status_code)
+

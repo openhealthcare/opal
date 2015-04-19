@@ -27,7 +27,6 @@ except AttributeError:
         model_names = []
     micro_test_defaults = []
 
-
 class OPALRouter(routers.DefaultRouter):
     def get_default_base_name(self, viewset):
         name = getattr(viewset, 'base_name', None)
@@ -35,7 +34,32 @@ class OPALRouter(routers.DefaultRouter):
             return super(OPALRouter, self).get_default_base_name(viewset)
         return name
 
+
 router = OPALRouter()
+
+def item_from_pk(fn):
+    """
+    Decorator that passes an instance or returns a 404 from pk kwarg.
+    """
+    def get_item(self, request, pk=None):
+        try: 
+            item = self.model.objects.get(pk=pk)
+        except self.model.DoesNotExist:
+            return Response({'error': 'Item does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        return fn(self, request, item)
+    return get_item
+
+def episode_from_pk(fn):
+    """
+    Decorator that passes an episode or returns a 404 from pk kwarg.
+    """
+    def get_item(self, request, pk=None):
+        from opal.models import Episode
+        try: 
+            return fn(self, request, Episode.objects.get(pk=pk))
+        except Episode.DoesNotExist:
+            return Response({'error': 'Episode does not exist'}, status=status.HTTP_404_NOT_FOUND)
+    return get_item
 
 class FlowViewSet(viewsets.ViewSet):
     """
@@ -79,6 +103,7 @@ class ExtractSchemaViewSet(viewsets.ViewSet):
     
     def list(self, request):
         return Response(schemas.extract_schema())
+
 
 # TODO: 
 # Deprecate this fully
@@ -133,29 +158,6 @@ class OptionsViewSet(viewsets.ViewSet):
 
         return Response(data)
 
-def item_from_pk(fn):
-    """
-    Decorator that passes an instance or returns a 404 from pk kwarg.
-    """
-    def get_item(self, request, pk=None):
-        try: 
-            item = self.model.objects.get(pk=pk)
-        except self.model.DoesNotExist:
-            return Response({'error': 'Item does not exist'}, status=status.HTTP_404_NOT_FOUND)
-        return fn(self, request, item)
-    return get_item
-
-def episode_from_pk(fn):
-    """
-    Decorator that passes an episode or returns a 404 from pk kwarg.
-    """
-    def get_item(self, request, pk=None):
-        from opal.models import Episode
-        try: 
-            return fn(self, request, Episode.objects.get(pk=pk))
-        except Episode.DoesNotExist:
-            return Response({'error': 'Episode does not exist'}, status=status.HTTP_404_NOT_FOUND)
-    return get_item
     
 class SubrecordViewSet(viewsets.ViewSet):
     """
@@ -256,6 +258,18 @@ class TaggingViewSet(viewsets.ViewSet):
         return Response(episode.tagging_dict(request.user)[0], status=status.HTTP_202_ACCEPTED)
   
 
+class EpisodeViewSet(viewsets.ViewSet):
+    """
+    Episodes of care
+    """
+    base_name = 'episode'
+    
+    @episode_from_pk
+    def retrieve(self, request, episode):
+        return Response(episode.to_dict(request.user))
+    
+
+router.register('episode', EpisodeViewSet)    
 router.register('flow', FlowViewSet)
 router.register('record', RecordViewSet)
 router.register('list-schema', ListSchemaViewSet)
