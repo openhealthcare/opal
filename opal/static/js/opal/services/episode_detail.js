@@ -8,10 +8,6 @@ angular.module('opal.services')
             // var schema  = $scope.schema;
             var Flow    = $scope.Flow
             
-	        function getColumnName(cix) {
-		        return $scope.columns[cix].name;
-	        };
-
             $scope.childTags = function(){
                 tags = episode.getTags();
                 return _.filter(tags, function(t){
@@ -79,24 +75,11 @@ angular.module('opal.services')
                 }
                 return _openEditItemModal(item, name);            
             };
-       	    $scope.editItem = function(cix, iix) {
-		        var columnName = getColumnName(cix);
-		        var item;
-
-		        if (iix == episode.getNumberOfItems(columnName)) {
-			        item = episode.newItem(columnName);
-		        } else {
-			        item = episode.getItem(columnName, iix);
-		        }
-
-		        $scope.selectItem(cix, iix);
-                return _openEditItemModal(item, columnName, episode);
-	        };
 
 	        $scope.deleteItem = function(column_name, iix) {
 		        var modal;
 		        var item = episode.getItem(column_name, iix);
-
+                
                 if(profile.readonly){
                     return null;
                 };
@@ -106,6 +89,10 @@ angular.module('opal.services')
 			        return;
 		        }
                 
+                if(!item.isReadOnly){
+                    item = new Item(column_name, episode, $rootScope.fields[column_name]);
+                }
+
                 if (item.isReadOnly()) {
                     // Cannont delete readonly columns
                     return;
@@ -141,42 +128,14 @@ angular.module('opal.services')
 		        $scope.mouseCix = -1;
 	        }
 
-	        $scope.goUp = function () {
-		        var columnName;
-
-		        if ($scope.iix > 0) {
-			        $scope.iix--;
-		        } else {
-			        if ($scope.cix > 0) {
-				        $scope.cix--;
-				        columnName = getColumnName($scope.cix);
-				        if (schema.isSingleton(columnName)) {
-					        $scope.iix = 0;
-				        } else {
-					        $scope.iix = episode.getNumberOfItems(columnName);
-				        };
-			        };
-		        };
-	        };
-
-	        $scope.goDown = function () {
-		        var columnName = getColumnName($scope.cix);
-
-		        if (!schema.isSingleton(columnName) &&
-		            ($scope.iix < episode.getNumberOfItems(columnName))) {
-			        $scope.iix++;
-		        } else if ($scope.cix < $scope.columns.length - 1) {
-			        $scope.cix++;
-			        $scope.iix = 0;
-		        };
-	        };
-
 	        $scope.dischargeEpisode = function() {
                 if(profile.readonly){ return null; };
 
 		        $scope.state = 'modal';
                 var exit = Flow(
-                    'exit', schema, options,
+                    'exit', 
+                    null,  // Schema ? Not used ? Todo: investigate!
+                    options,
                     {
                         current_tags: {
                             tag   : $scope.currentTag,

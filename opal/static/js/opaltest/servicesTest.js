@@ -1,5 +1,5 @@
 describe('services', function() {
-    var columns, episodeData, options;
+    var columns, episodeData, options, records, list_schema;
 
     beforeEach(function() {
         module('opal.services');
@@ -31,6 +31,9 @@ describe('services', function() {
                 ]
             }
         };
+
+        records = columns['fields'];
+        list_schema  = columns['list_schema'];
 
         episodeData = {
             id: 123,
@@ -107,14 +110,15 @@ describe('services', function() {
                 $route           = $injector.get('$route');
             });
             $route.current = {params: {tag: 'micro'}};
+
+            $httpBackend.whenGET('/api/v0.1/record/').respond(records);
+
         });
 
         it('should fetch the schema', function(){
             var result
 
-            $httpBackend.expectGET('/schema/list/');
-            $httpBackend.whenGET('/schema/list/').respond(columns);
-
+            $httpBackend.whenGET('/api/v0.1/list-schema/').respond(list_schema);
             listSchemaLoader().then(
                 function(r){ result = r}
             );
@@ -127,8 +131,7 @@ describe('services', function() {
         it('should alert if the http request errors', function(){
             var result
 
-            $httpBackend.expectGET('/schema/list/');
-            $httpBackend.whenGET('/schema/list/').respond(500, 'NO');
+            $httpBackend.whenGET('/api/v0.1/list-schema/').respond(500, 'NO');
 
             listSchemaLoader().then( function(r){ result = r } );
             $rootScope.$apply();
@@ -141,66 +144,16 @@ describe('services', function() {
         it('should provide the default schema on a sublist', function(){
             $route.current.params.subtag = 'micro_haem';
 
-            var mycols = angular.copy(columns);
+            var mycols = angular.copy(list_schema);
             mycols.micro = {};
             mycols.micro.default = mycols.default
             
-            $httpBackend.expectGET('/schema/list/');
-            $httpBackend.whenGET('/schema/list/').respond(mycols);
+            $httpBackend.whenGET('/api/v0.1/list-schema/').respond(mycols);
 
             listSchemaLoader().then(function(r){result=r});
             $rootScope.$apply();
             $httpBackend.flush();
             expect(result.columns).toEqual(_.values(columns.fields));
-        });
-    })
-
-    describe('detailSchemaLoader', function(){
-        var mock;
-
-        beforeEach(function(){
-            mock = { alert: jasmine.createSpy() };
-
-            module(function($provide) {
-                $provide.value('$window', mock);
-            });
-
-            inject(function($injector){
-                detailSchemaLoader = $injector.get('detailSchemaLoader');
-                Schema             =  $injector.get('Schema');
-                $httpBackend       = $injector.get('$httpBackend');
-                $rootScope         = $injector.get('$rootScope');
-                $q                 = $injector.get('$q');
-            });
-        });
-
-        it('should fetch the schema', function(){
-            var result
-
-            $httpBackend.expectGET('/schema/detail/');
-            $httpBackend.whenGET('/schema/detail/').respond({fields: {}, detail_schema: []});
-
-            detailSchemaLoader.then(
-                function(r){ result = r}
-            );
-            $rootScope.$apply();
-            $httpBackend.flush();
-
-            expect(result.columns).toEqual([]);
-        });
-
-        it('should alert if the http request errors', function(){
-            var result
-
-            $httpBackend.expectGET('/schema/detail/');
-            $httpBackend.whenGET('/schema/detail/').respond(500, 'NO');
-
-            detailSchemaLoader.then( function(r){ result = r } );
-            $rootScope.$apply();
-            $httpBackend.flush()
-
-            expect(mock.alert).toHaveBeenCalledWith(
-                'Detail schema could not be loaded');
         });
     })
 
@@ -226,9 +179,7 @@ describe('services', function() {
         it('should fetch the schema', function(){
             var result
 
-            $httpBackend.expectGET('/schema/extract/');
-            $httpBackend.whenGET('/schema/extract/').respond(columns);
-
+            $httpBackend.whenGET('/api/v0.1/extract-schema/').respond(columns);
             extractSchemaLoader.then(
                 function(r){ result = r}
             );
@@ -240,10 +191,7 @@ describe('services', function() {
 
         it('should alert if the http request errors', function(){
             var result
-
-            $httpBackend.expectGET('/schema/extract/');
-            $httpBackend.whenGET('/schema/extract/').respond(500, 'NO');
-
+            $httpBackend.whenGET('/api/v0.1/extract-schema/').respond(500, 'NO');
             extractSchemaLoader.then( function(r){ result = r } );
             $rootScope.$apply();
             $httpBackend.flush()
@@ -298,8 +246,7 @@ describe('services', function() {
         it('should fetch the options', function(){
             var result
 
-            $httpBackend.expectGET('/options/');
-            $httpBackend.whenGET('/options/').respond(options);
+            $httpBackend.whenGET('/api/v0.1/options/').respond(options);
 
             Options.then(function(r){ result = r; });
 
@@ -312,8 +259,7 @@ describe('services', function() {
         it('should alert if the HTTP request errors', function(){
             var result;
 
-            $httpBackend.expectGET('/options/');
-            $httpBackend.whenGET('/options/').respond(500, 'NO');
+            $httpBackend.whenGET('/api/v0.1/options/').respond(500, 'NO');
 
             $rootScope.$apply();
             $httpBackend.flush();
@@ -348,9 +294,8 @@ describe('services', function() {
         it('should fetch the episodes', function(){
             var result
 
-            $httpBackend.expectGET('/schema/list/');
-            $httpBackend.whenGET('/schema/list/').respond(columns);
-            $httpBackend.expectGET('/episode/micro');
+            $httpBackend.whenGET('/api/v0.1/record/').respond(records);
+            $httpBackend.whenGET('/api/v0.1/list-schema/').respond(columns);
             $httpBackend.whenGET('/episode/micro').respond([episodeData]);
 
             episodesLoader().then(function(r){ result = r; });
@@ -366,71 +311,11 @@ describe('services', function() {
         it('should alert if the HTTP request errors', function(){
             var result;
 
-            $httpBackend.expectGET('/schema/list/');
-            $httpBackend.whenGET('/schema/list/').respond(columns);
-            $httpBackend.expectGET('/episode/micro');
+            $httpBackend.whenGET('/api/v0.1/record/').respond(records);
+            $httpBackend.whenGET('/api/v0.1/list-schema/').respond(columns);
             $httpBackend.whenGET('/episode/micro').respond(500, 'NO');
 
             episodesLoader()
-
-            $rootScope.$apply();
-            $httpBackend.flush();
-
-            expect(mock.alert).toHaveBeenCalledWith('Episodes could not be loaded');
-        });
-    });
-
-    describe('dischargedEpisodesLoader', function(){
-        var mock;
-
-        beforeEach(function(){
-            mock = { alert: jasmine.createSpy() };
-
-            module(function($provide){
-                $provide.value('$window', mock);
-            });
-
-            inject(function($injector){
-                dischargedEpisodesLoader = $injector.get('dischargedEpisodesLoader');
-                listSchemaLoader         = $injector.get('listSchemaLoader');
-                $q                       = $injector.get('$q');
-                $httpBackend             = $injector.get('$httpBackend');
-                $route                   = $injector.get('$route');
-                $rootScope               = $injector.get('$rootScope');
-                Episode                  = $injector.get('Episode');
-                Schema                   = $injector.get('Schema');
-            });
-            schema = new Schema(columns);
-            $route.current = {params: {tag: 'micro'}};
-        });
-
-        it('should query for discharged episodes', function(){
-            var result
-
-            $httpBackend.expectGET('/schema/list/');
-            $httpBackend.whenGET('/schema/list/').respond(columns);
-            $httpBackend.expectGET('/episode?discharged=true');
-            $httpBackend.whenGET('/episode?discharged=true').respond([episodeData]);
-
-            dischargedEpisodesLoader().then(function(r){ result = r; });
-
-            $rootScope.$apply();
-            $httpBackend.flush()
-
-            expect(result[123].demographics[0].name).toBe('John Smith');
-            expect(result[123].demographics[0].date_of_birth).toEqual(
-                new Date(1980, 6, 31));
-        });
-
-        it('should alert if the HTTP request errors', function(){
-            var result;
-
-            $httpBackend.expectGET('/schema/list/');
-            $httpBackend.whenGET('/schema/list/').respond(columns);
-            $httpBackend.expectGET('/episode?discharged=true');
-            $httpBackend.whenGET('/episode?discharged=true').respond(500, 'NO');
-
-            dischargedEpisodesLoader()
 
             $rootScope.$apply();
             $httpBackend.flush();
@@ -686,12 +571,12 @@ describe('services', function() {
                     item = new Item(episodeData.demographics[0],
                                     mockEpisode,
                                     columns.fields.demographics);
-                    $httpBackend.whenPUT('/demographics/101/')
+                    $httpBackend.whenPUT('/api/v0.1/demographics/101/')
                         .respond(attrsWithJsonDate);
                 });
 
                 it('should hit server', function() {
-                    $httpBackend.expectPUT('/demographics/101/', attrsWithJsonDate);
+                    $httpBackend.expectPUT('/api/v0.1/demographics/101/', attrsWithJsonDate);
                     item.save(attrsWithHumanDate);
                     $httpBackend.flush();
                 });
@@ -711,11 +596,11 @@ describe('services', function() {
                 beforeEach(function() {
                     attrs = {id: 104, condition: 'Ebola', provisional: false};
                     item = new Item({}, mockEpisode, columns.fields.diagnosis);
-                    $httpBackend.whenPOST('/diagnosis/').respond(attrs);
+                    $httpBackend.whenPOST('/api/v0.1/diagnosis/').respond(attrs);
                 });
 
                 it('should hit server', function() {
-                    $httpBackend.expectPOST('/diagnosis/');
+                    $httpBackend.expectPOST('/api/v0.1/diagnosis/');
                     item.save(attrs);
                     $httpBackend.flush();
                 });
@@ -739,11 +624,11 @@ describe('services', function() {
             describe('deleting item', function() {
                 beforeEach(function() {
                     item = new Item(episodeData.diagnosis[1], mockEpisode, columns.fields.diagnosis);
-                    $httpBackend.whenDELETE('/diagnosis/103/').respond();
+                    $httpBackend.whenDELETE('/api/v0.1/diagnosis/103/').respond();
                 });
 
                 it('should hit server', function() {
-                    $httpBackend.expectDELETE('/diagnosis/103/');
+                    $httpBackend.expectDELETE('/api/v0.1/diagnosis/103/');
                     item.destroy();
                     $httpBackend.flush();
                 });
@@ -775,8 +660,8 @@ describe('services', function() {
         it('should resolve to an object of episodes', function() {
             var promise = episodesLoader();
             var episodes;
-
-            $httpBackend.whenGET('/schema/list/').respond(columns);
+            $httpBackend.whenGET('/api/v0.1/record/').respond(records);
+            $httpBackend.whenGET('/api/v0.1/list-schema/').respond(list_schema);
             // TODO trailing slash?
             $httpBackend.whenGET('/episode/micro').respond([episodeData]);
             promise.then(function(value) {
@@ -845,8 +730,8 @@ describe('services', function() {
         it('should alert if the HTTP request errors', function(){
             var result;
 
-            $httpBackend.expectGET('/userprofile/');
-            $httpBackend.whenGET('/userprofile/').respond(500, 'NO');
+            $httpBackend.expectGET('/api/v0.1/userprofile/');
+            $httpBackend.whenGET('/api/v0.1/userprofile/').respond(500, 'NO');
 
             $rootScope.$apply();
             $httpBackend.flush();

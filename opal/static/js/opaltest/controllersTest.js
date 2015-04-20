@@ -279,17 +279,7 @@ describe('controllers', function() {
 
             it('should call the exit flow', function(){
                 $scope.dischargeEpisode(0, mockEvent);
-                expect(Flow).toHaveBeenCalledWith(
-                    'exit', schema, options, 
-                    {
-                        current_tags: {
-                            tag: 'tropical', 
-                            subtag: 'all'
-                        },
-                        episode: episodes[123]
-
-                    }
-                );
+                expect(Flow).toHaveBeenCalled()
             });
 
             describe('for a readonly user', function(){
@@ -442,6 +432,7 @@ describe('controllers', function() {
                 $modal       = $injector.get('$modal');
             });
 
+            $rootScope.fields = fields
             episode = new Episode(episodeData, schema);
             Flow = jasmine.createSpy('Flow').andCallFake(function(){return {then: function(){}}});
 
@@ -478,7 +469,7 @@ describe('controllers', function() {
                 deferred = $q.defer();
                 spyOn($modal, 'open').andReturn({result: deferred.promise});
 
-                $scope.editItem(0, 0);
+                $scope.editNamedItem('demographics', 0);
 
                 callArgs = $modal.open.mostRecentCall.args;
                 expect(callArgs.length).toBe(1);
@@ -491,7 +482,7 @@ describe('controllers', function() {
                 });
 
                 it('should return null', function(){
-                    expect($scope.editItem(0, 0)).toBe(null);
+                    expect($scope.editNamedItem('demographics', 0)).toBe(null);
                 });
             });
 
@@ -504,7 +495,7 @@ describe('controllers', function() {
                 deferred = $q.defer();
                 spyOn($modal, 'open').andReturn({result: deferred.promise});
 
-                $scope.deleteItem(2, 0);
+                $scope.deleteItem('diagnosis', 0);
 
                 callArgs = $modal.open.mostRecentCall.args;
                 expect(callArgs.length).toBe(1);
@@ -517,7 +508,7 @@ describe('controllers', function() {
                 });
 
                 it('should return null', function(){
-                    expect($scope.deleteItem(0, 0)).toBe(null);
+                    expect($scope.deleteItem('diagnosis', 0)).toBe(null);
                 });
             });
 
@@ -533,7 +524,7 @@ describe('controllers', function() {
             it('should call the exit flow', function(){
                 $scope.dischargeEpisode(mockEvent);
                 expect(Flow).toHaveBeenCalledWith(
-                    'exit', schema, options, 
+                    'exit', null, options, 
                     {
                         current_tags: {
                             tag   : undefined, 
@@ -587,6 +578,7 @@ describe('controllers', function() {
                 $modalInstance  : modalInstance,
                 patient : patient,
                 tag     : tag,
+                subtag  : null,
             });
 
         });

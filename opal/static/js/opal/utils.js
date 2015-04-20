@@ -2,7 +2,7 @@ var OPAL = {
     module: function(namespace, dependencies){
         dependencies.push('angular-growl');
         dependencies.push('mentio');
-        if(undefined === OPAL_ANGULAR_DEPS) { OPAL_ANGULAR_DEPS = [] }
+        if(undefined === OPAL_ANGULAR_DEPS) { var OPAL_ANGULAR_DEPS = [] }
         _.each(OPAL_ANGULAR_DEPS, function(d){ dependencies.push(d) });            
         var mod = angular.module(namespace, dependencies);
         // See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags

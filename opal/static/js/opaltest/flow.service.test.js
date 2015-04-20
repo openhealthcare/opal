@@ -1,5 +1,5 @@
 // 
-// Unit tests for our Flow
+// Unit tests for our Flow Service
 // 
 
 describe('Flow ', function(){
@@ -38,7 +38,7 @@ describe('Flow ', function(){
             $httpBackend = $injector.get('$httpBackend');
         });
 
-        $httpBackend.whenGET('/flow/').respond(the_flow);
+        $httpBackend.whenGET('/api/v0.1/flow/').respond(the_flow);
         $httpBackend.whenGET('/templates/enter').respond('<notarealtemplate>');
         $httpBackend.whenGET('/templates/exit').respond('<notarealtemplate>');
 
