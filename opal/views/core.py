@@ -22,7 +22,6 @@ from opal import glossolalia
 from opal.utils.http import with_no_caching
 from opal.utils import (camelcase_to_underscore, stringport, fields,
                         json_to_csv, OpalPlugin)
-from opal.utils.banned_passwords import banned
 from opal.utils.models import LookupList, episode_subrecords, patient_subrecords, subrecords
 from opal.utils.views import LoginRequiredMixin, _get_request_data, _build_json_response
 from opal import models, exceptions
