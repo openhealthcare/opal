@@ -307,6 +307,9 @@ class EpisodeTestCase(TestCase):
         self.assertEqual(200, response.status_code)
         self.assertEqual(expected, response.data)
 
+    def test_list_unauthenticated(self):
+        assert False
+
     def test_list_for_tag_empty(self):
         self.mock_request.query_params = {'tag': 'micro'}
         response = api.EpisodeViewSet().list(self.mock_request)
