@@ -302,7 +302,26 @@ class EpisodeViewSet(viewsets.ViewSet):
         return Response(serialised)
 
     def create(self, request):
-        return Response()
+        from opal.models import Patient
+
+        hospital_number = request.data.pop('patient_hospital_number', None)
+        tagging = request.data.pop('tagging', {})
+        if hospital_number:
+            patient, created = Patient.objects.get_or_create(
+                demographics__hospital_number=hospital_number)
+            if created:
+                demographics = patient.demographics_set.get()
+                demographics.hospital_number = hospital_number
+                demographics.save()
+        else:
+            patient = Patient.objects.create()
+
+        episode = patient.create_episode()
+        episode.update_from_dict(request.data, request.user)
+        
+        episode.set_tag_names([n for n, v in tagging[0].items() if v], request.user)
+        serialised = episode.to_dict(request.user)
+        return Response(serialised, status=status.HTTP_201_CREATED)
     
     @episode_from_pk
     def retrieve(self, request, episode):

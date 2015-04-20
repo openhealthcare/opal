@@ -1,6 +1,8 @@
 """
 Tests for the OPAL API
 """
+import datetime
+
 from django.contrib.auth.models import User
 from django.test import TestCase
 from mock import patch, MagicMock
@@ -345,11 +347,11 @@ class EpisodeTestCase(TestCase):
         response = api.EpisodeViewSet().create(self.mock_request)
         self.assertEqual(201, response.status_code)
         self.assertEqual(2, self.patient.episode_set.count())
-        self.assertEqual("2015-01-14", response.data['date_of_admission'])
+        self.assertEqual(datetime.date(2015, 1, 14), response.data['date_of_admission'])
         
     def test_create_new_patient(self):
         pcount = models.Patient.objects.filter(
-            demographics__hospital_number=999000999).count()
+            demographics__hospital_number="999000999").count()
         self.assertEqual(0, pcount)
         self.mock_request.data = {
             "tagging"                :[ { "micro":True }],
@@ -359,10 +361,11 @@ class EpisodeTestCase(TestCase):
         response = api.EpisodeViewSet().create(self.mock_request)
         self.assertEqual(201, response.status_code)
         pcount = models.Patient.objects.filter(
-            demographics__hospital_number=999000999).count()
+            demographics__hospital_number="999000999").count()
         self.assertEqual(1, pcount)
 
-    def test_create_pings_integration(self):
+    @patch('opal.views.api.glossolalia.admit')
+    def test_create_pings_integration(self, admit):
         pass
 
     def test_update(self):
