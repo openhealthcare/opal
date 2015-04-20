@@ -31,7 +31,7 @@ class OPALRouter(routers.DefaultRouter):
     def get_default_base_name(self, viewset):
         name = getattr(viewset, 'base_name', None)
         if name is None:
-            return super(OPALRouter, self).get_default_base_name(viewset)
+            return routers.DefaultRouter.get_default_base_name(self, viewset)
         return name
 
 
