@@ -17,7 +17,7 @@ import reversion
 from opal.core import application, exceptions
 from opal import managers
 from opal.utils import stringport, camelcase_to_underscore, OpalPlugin
-from opal.utils.fields import ForeignKeyOrFreeText
+from opal.core.fields import ForeignKeyOrFreeText
 from opal.utils.models import lookup_list, episode_subrecords, patient_subrecords
 
 app = application.get_app()

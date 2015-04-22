@@ -4,7 +4,7 @@ Test util fields
 from django.db import models
 from django.test import TestCase
 
-from opal.utils.fields import ForeignKeyOrFreeText
+from opal.core.fields import ForeignKeyOrFreeText
 from opal.utils.models import lookup_list
 
 class FKorFTTest(TestCase):

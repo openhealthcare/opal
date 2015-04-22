@@ -7,7 +7,7 @@ import random
 from django.db import models
 
 from opal.core import exceptions
-from opal.utils.fields import ForeignKeyOrFreeText
+from opal.core.fields import ForeignKeyOrFreeText
 
 
 class UpdatesFromDictMixin(object):
