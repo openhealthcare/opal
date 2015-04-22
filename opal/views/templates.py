@@ -6,7 +6,7 @@ from django.template.loader import select_template, get_template
 from django.views.generic import TemplateView
 
 from opal.utils import camelcase_to_underscore
-from opal.utils.views import LoginRequiredMixin, _get_request_data, _build_json_response
+from opal.core.views import LoginRequiredMixin, _get_request_data, _build_json_response
 from opal.utils.banned_passwords import banned
 
 def _get_column_context(schema, **kwargs):

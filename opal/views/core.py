@@ -19,11 +19,11 @@ from django.views.decorators.http import require_http_methods
 
 from opal.core import application, exceptions
 from opal import glossolalia
-from opal.utils.http import with_no_caching
 from opal.utils import (camelcase_to_underscore, stringport, fields,
                         json_to_csv, OpalPlugin)
 from opal.utils.models import LookupList, episode_subrecords, patient_subrecords, subrecords
-from opal.utils.views import LoginRequiredMixin, _get_request_data, _build_json_response
+from opal.core.views import (LoginRequiredMixin, _get_request_data, _build_json_response,
+                             with_no_caching)
 from opal import models
 
 app = application.get_app()

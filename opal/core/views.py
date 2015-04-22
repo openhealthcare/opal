@@ -1,6 +1,7 @@
 """
 Re-usable view components
 """
+import functools
 import json 
 
 from django.http import HttpResponse
@@ -8,12 +9,10 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.core.serializers.json import DjangoJSONEncoder
 
-
 class LoginRequiredMixin(object):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
-
 
 def _get_request_data(request):
     data = request.read()
@@ -27,3 +26,14 @@ def _build_json_response(data, status_code=200):
     response.status_code = status_code
     return response
     
+def with_no_caching(view):
+
+    @functools.wraps(view)
+    def no_cache(*args, **kw):
+        response = view(*args, **kw)
+        response['Cache-Control'] = 'no-cache'
+        response['Pragma'] = 'no-cache'
+        response['Expires'] = '-1'
+        return response
+
+    return no_cache
