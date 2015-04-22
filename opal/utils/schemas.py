@@ -3,7 +3,8 @@ Utilities for dealing with OPAL Schemas
 """
 from opal.utils import stringport, OpalPlugin
 from opal.utils.models import subrecords
-from opal import application, models
+from opal.core import application
+from opal import models
 
 app = application.get_app()
 

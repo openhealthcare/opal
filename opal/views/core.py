@@ -17,7 +17,7 @@ from django.utils import formats
 from django.views.generic import TemplateView, View
 from django.views.decorators.http import require_http_methods
 
-from opal import application
+from opal.core import application
 from opal import glossolalia
 from opal.utils.http import with_no_caching
 from opal.utils import (camelcase_to_underscore, stringport, fields,
