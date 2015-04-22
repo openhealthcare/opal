@@ -11,8 +11,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from opal.core import application
-from opal import exceptions, glossolalia
+from opal.core import application, exceptions
+from opal import glossolalia
 from opal.utils import stringport, camelcase_to_underscore, schemas
 from opal.utils.models import subrecords
 from opal.utils.views import _get_request_data, _build_json_response

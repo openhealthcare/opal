@@ -14,12 +14,11 @@ from django.template import TemplateDoesNotExist
 from django.template.loader import select_template
 import reversion
 
-from opal.core import application
+from opal.core import application, exceptions
 from opal import managers
 from opal.utils import stringport, camelcase_to_underscore, OpalPlugin
 from opal.utils.fields import ForeignKeyOrFreeText
 from opal.utils.models import lookup_list, episode_subrecords, patient_subrecords
-from opal import exceptions
 
 app = application.get_app()
 

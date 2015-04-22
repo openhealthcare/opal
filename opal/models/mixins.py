@@ -6,7 +6,7 @@ import random
 
 from django.db import models
 
-from opal import exceptions
+from opal.core import exceptions
 from opal.utils.fields import ForeignKeyOrFreeText
 
 
