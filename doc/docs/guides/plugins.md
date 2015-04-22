@@ -5,7 +5,7 @@ models for the client.
 
 ## Getting started with your plugin
 
-Plugins should subclass opal.utils.plugins.OpalPlugin
+Plugins should subclass opal.core.plugins.OpalPlugin
 
 ## Defining models
 

@@ -3,7 +3,7 @@
 
 Lookup lists are subclasses of opal.utils.models.LookupList which have a generic relation to Synonym and define a foreign key on the calling model.
 
-You can define them yourself, or use the helper function ```opal.utils.models.lookup_list```
+You can define them yourself, or use the helper function ```opal.core.lookuplists.lookup_list```
 
     ColourLookupList = type(*lookup_list('colour', module=__name__))
 
