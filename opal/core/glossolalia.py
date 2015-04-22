@@ -19,15 +19,12 @@ def _send_upstream_message(event, payload):
         payload['servicetype'] = 'OPAL'
         payload['event'] = event
         payload['name'] = NAME
-        print "Payload is:", payload
         r = requests.post(
             ENDPOINT,
             data=payload
         )
-        print 'status', r.status_code
-        print 'text', r.text
     except requests.ConnectionError:
-        print 'Glossolalia Connection Error :('
+        # print 'Glossolalia Connection Error :('
         return
     return
 
@@ -38,7 +35,6 @@ def admit(episode):
     """
     if not INTEGRATING:
         return
-    print 'Sending upstream Admission'
     payload = {
         'data': json.dumps(
             {
@@ -56,7 +52,6 @@ def discharge(episode):
     """
     if not INTEGRATING:
         return
-    print 'Sending upstream discharge'
     payload = {
         'data': json.dumps({
             'episode': episode,
@@ -83,7 +78,6 @@ def change(pre, post):
     """
     if not INTEGRATING:
         return
-    print 'Sending upstream change'
     payload = {'data':
                json.dumps({
                    'endpoint': OUR_ENDPOINT,
