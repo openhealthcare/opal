@@ -4,7 +4,7 @@ Create singletons that may have been dropped
 from django.core.management.base import BaseCommand
 
 from opal.models import Patient, Episode
-from opal.utils.models import patient_subrecords, episode_subrecords
+from opal.core.subrecords import patient_subrecords, episode_subrecords
 
 class Command(BaseCommand):
     

@@ -6,7 +6,7 @@ import time
 
 from django.db import models, connection, reset_queries
 
-from opal.utils.models import episode_subrecords, patient_subrecords
+from opal.core.subrecords import episode_subrecords, patient_subrecords
 
 class EpisodeManager(models.Manager):
 

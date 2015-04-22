@@ -11,7 +11,7 @@ from opal.views import api
 from opal.forms import ChangePasswordForm
 from opal import models
 from opal.utils import camelcase_to_underscore
-from opal.utils.models import subrecords
+from opal.core.subrecords import subrecords
 
 urlpatterns = patterns(
     '',
@@ -97,7 +97,7 @@ for subrecord_model in subrecords():
 
 urlpatterns += staticfiles_urlpatterns()
 
-from opal.utils import OpalPlugin
+from opal.core.plugins import OpalPlugin
 
 for plugin in OpalPlugin.__subclasses__():
     urlpatterns += plugin.urls

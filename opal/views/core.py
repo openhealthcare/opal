@@ -18,10 +18,12 @@ from django.views.generic import TemplateView, View
 from django.views.decorators.http import require_http_methods
 
 from opal.core import application, exceptions
-from opal import glossolalia
-from opal.utils import (camelcase_to_underscore, stringport, fields,
-                        json_to_csv, OpalPlugin)
-from opal.utils.models import LookupList, episode_subrecords, patient_subrecords, subrecords
+from opal.core import glossolalia
+from opal.core.plugins import OpalPlugin
+from opal.utils import camelcase_to_underscore, stringport, json_to_csv
+from opal.core import fields
+from opal.core.lookuplists import LookupList
+from opal.core.subrecords import episode_subrecords, patient_subrecords, subrecords
 from opal.core.views import (LoginRequiredMixin, _get_request_data, _build_json_response,
                              with_no_caching)
 from opal import models

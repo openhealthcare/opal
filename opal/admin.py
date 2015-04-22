@@ -11,7 +11,8 @@ import reversion
 from opal import models
 from opal.models import Synonym
 from opal.models import UserProfile
-from opal.utils.models import LookupList, episode_subrecords, patient_subrecords
+from opal.core.lookuplists import LookupList
+from opal.core.subrecords import episode_subrecords, patient_subrecords
 
 admin.site.unregister(User)
 

@@ -4,7 +4,7 @@ Templatetags for including OPAL plugins
 from django import template
 
 from opal import application
-from opal.utils import OpalPlugin
+from opal.core.plugins import OpalPlugin
 
 register = template.Library()
 

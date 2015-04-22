@@ -1,8 +1,9 @@
 """
 Utilities for dealing with OPAL Schemas
 """
-from opal.utils import stringport, OpalPlugin
-from opal.utils.models import subrecords
+from opal.utils import stringport
+from opal.core.plugins import OpalPlugin
+from opal.core.subrecords import subrecords
 from opal.core import application
 from opal import models
 

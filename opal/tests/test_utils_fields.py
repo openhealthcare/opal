@@ -5,7 +5,7 @@ from django.db import models
 from django.test import TestCase
 
 from opal.core.fields import ForeignKeyOrFreeText
-from opal.utils.models import lookup_list
+from opal.core.lookuplists import lookup_list
 
 class FKorFTTest(TestCase):
     def setUp(self):
