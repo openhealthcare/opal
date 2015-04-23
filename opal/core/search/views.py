@@ -10,7 +10,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.views.generic import View, TemplateView
 
 from opal.core.views import LoginRequiredMixin, _build_json_response, _get_request_data
-from opal.core.search import json_to_csv
+from opal.core.search.export import json_to_csv
 from opal import models
 
 class SaveFilterModalView(TemplateView):
