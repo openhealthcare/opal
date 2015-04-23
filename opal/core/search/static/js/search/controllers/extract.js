@@ -137,7 +137,7 @@ angular.module('opal.controllers').controller(
         $scope.editFilter = function($event, filter, $index){
             $event.preventDefault();
 		    modal = $modal.open({
-			    templateUrl: '/templates/modals/save_filter_modal.html/',
+			    templateUrl: '/search/templates/modals/save_filter_modal.html/',
 			    controller: 'SaveFilterCtrl',
 			    resolve: {
 				    params: function() { return $scope.filters[$index]; }
@@ -150,7 +150,7 @@ angular.module('opal.controllers').controller(
         $scope.save = function(){
 
 		    modal = $modal.open({
-			    templateUrl: '/templates/modals/save_filter_modal.html/',
+			    templateUrl: '/search/templates/modals/save_filter_modal.html/',
 			    controller: 'SaveFilterCtrl',
 			    resolve: {
 				    params: function() { return {name: null, criteria: $scope.completeCriteria()}; }

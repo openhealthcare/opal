@@ -117,7 +117,7 @@ class OptionsViewSet(viewsets.ViewSet):
     base_name = 'options'
     
     def list(self, request):
-        from opal.utils.models import LookupList
+        from opal.core.lookuplists import LookupList
         from opal.models import Synonym, Team, Macro
         
         data = {}
@@ -368,6 +368,7 @@ class APIReferPatientView(View):
         Expects PATIENT, EPISODE, TARGET
         """
         from opal.models import Episode
+
         data = _get_request_data(self.request)
         episode = Episode.objects.get(pk=data['episode'])
         current_tags = episode.get_tag_names(None)

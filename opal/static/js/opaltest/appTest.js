@@ -18,7 +18,7 @@ describe('app', function() {
         $httpBackend.whenGET('/userprofile/').respond([]);
         $httpBackend.whenGET('/templates/episode_list.html').respond();
         $httpBackend.whenGET('/templates/episode_detail.html').respond();
-        $httpBackend.whenGET('/templates/search.html').respond();
+        $httpBackend.whenGET('/search/templates/search.html').respond();
     });
 
 

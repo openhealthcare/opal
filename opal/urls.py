@@ -11,6 +11,7 @@ from opal.views import api
 from opal.forms import ChangePasswordForm
 from opal import models
 from opal.utils import camelcase_to_underscore
+from opal.core import search
 from opal.core.subrecords import subrecords
 
 urlpatterns = patterns(
@@ -37,10 +38,6 @@ urlpatterns = patterns(
         views.EpisodeCopyToCategoryView.as_view()),
 
     url(r'^patient/?$', views.patient_search_view),
-    url(r'^search/extract/$', views.ExtractSearchView.as_view()),
-    url(r'^search/extract/download$', views.DownloadSearchView.as_view()),
-    url(r'^filters/?$', views.FilterView.as_view()),
-    url(r'^filters/(?P<pk>\d+)/?$', views.FilterDetailView.as_view()),
 
     # Template vires
     url(r'^templates/episode_list.html/?$', views.EpisodeListTemplateView.as_view()),
@@ -50,8 +47,6 @@ urlpatterns = patterns(
     url(r'^templates/episode_detail.html/(?P<pk>\d+)/?$',
         views.EpisodeDetailTemplateView.as_view()),
 
-    url(r'^templates/search.html/?$', views.SearchTemplateView.as_view()),
-    url(r'^templates/extract.html/?$', views.ExtractTemplateView.as_view()),
     url(r'^templates/modals/tagging.html/?', views.TagsTemplateView.as_view()),
 
     url(r'^templates/modals/undischarge.html/?$',
@@ -71,9 +66,7 @@ urlpatterns = patterns(
 
     url(r'^templates/modals/delete_item_confirmation.html/?$',
         views.DeleteItemConfirmationView.as_view()),
-    url(r'^templates/modals/save_filter_modal.html/?$',
-        views.SaveFilterModalView.as_view()),
-
+    
 
     # New Public facing API urls
     url(r'api/v0.1/episode/admit', csrf_exempt(views.APIAdmitEpisodeView.as_view())),

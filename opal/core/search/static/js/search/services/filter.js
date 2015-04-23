@@ -40,7 +40,7 @@ recently changed it - refresh the page and try again');
 
         this.destroy = function(){
 	        var deferred = $q.defer();
-	        var url = '/filters/' + item.id + '/';
+	        var url = '/search/filters/' + item.id + '/';
 
 	        $http['delete'](url).then(function(response) {
 		        deferred.resolve();

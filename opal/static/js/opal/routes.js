@@ -36,7 +36,7 @@ app.config(
 		     })
              .when('/search', {
 			     controller: 'SearchCtrl',
-			     templateUrl: '/templates/search.html',
+			     templateUrl: '/search/templates/search.html',
 			     resolve: {
                      profile: function(UserProfile){ return UserProfile },
 				     schema: function(listSchemaLoader) { return listSchemaLoader(); },
@@ -45,7 +45,7 @@ app.config(
              })
              .when('/extract', {
                  controller: 'ExtractCtrl',
-                 templateUrl: '/templates/extract.html',
+                 templateUrl: '/search/templates/extract.html',
                  resolve: {
                      profile: function(UserProfile){ return UserProfile },
                      schema: function(extractSchemaLoader){ return extractSchemaLoader },

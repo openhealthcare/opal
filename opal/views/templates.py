@@ -77,16 +77,6 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class SaveFilterModalView(TemplateView):
-    template_name = 'save_filter_modal.html'
-
-class SearchTemplateView(TemplateView):
-    template_name = 'search.html'
-
-class ExtractTemplateView(TemplateView):
-    template_name = 'extract.html'
-
-
 class AccountDetailTemplateView(TemplateView):
     template_name = 'accounts/account_detail.html'
 
