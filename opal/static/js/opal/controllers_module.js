@@ -19,6 +19,8 @@ controllers.controller('RootCtrl', function($scope, $location) {
 	$scope.keydown = function(e) {
 		$scope.$broadcast('keydown', e);
 	};
+
+    if(collaborator){ collaborator($scope) };
 });
 
 controllers.config(function($datepickerProvider) {

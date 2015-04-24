@@ -55,6 +55,10 @@
       var settings = {
         LOG_OUT_DURATION: {{OPAL_LOG_OUT_DURATION}}
       }
+      {% if GLOSSOLALIA_URL %} 
+      settings.GLOSSOLALIA_URL = '{{ GLOSSOLALIA_URL }}'; 
+      settings.BROADCAST_ENDPONT = settings.GLOSSOLALIA_URL.replace('http', 'ws') + 'ws';
+      {% endif %}
       var version = '{{VERSION_NUMBER}}'
     </script>
 

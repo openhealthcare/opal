@@ -183,6 +183,21 @@ angular.module('opal.controllers').controller(
 		    };
 	    });
 
+        $scope.$on('change', function(event, episode) {
+            episode = new Episode(episode);
+            console.log('Episode list has change!');
+            if(episodes[episode.id]){
+                console.log("We're looking at the changed episode!")
+                console.log("Updating episodes")
+                episodes[episode.id] = episode;
+                var rix = getRowIxFromEpisodeId(episode.id);
+                if(rix != -1){
+                    console.log("Updating Row")
+                    $scope.rows[rix] = episode;
+                }
+            }
+        })
+        
 	    function getColumnName(cix) {
 		    return $scope.columns[cix].name;
 	    };
