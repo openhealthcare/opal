@@ -3,7 +3,7 @@ Unittests for opal.core.search.extract
 """
 from opal.core.test import OpalTestCase
 from opal import models
-from opal.tests.models import Colour
+from opal.tests.models import Colour, PatientColour
 
 from opal.core.search import extract
 
@@ -25,3 +25,4 @@ class SubrecordCSVTestCase(OpalTestCase):
         self.assertIsInstance(csv, extract.ExtractCSV)
         expected = 'episode_id,name\n{0},blue'.format(self.episode.id)
         self.assertEqual(expected, csv.contents)
+

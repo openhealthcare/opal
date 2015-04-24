@@ -10,7 +10,7 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.views.generic import View, TemplateView
 
 from opal.core.views import LoginRequiredMixin, _build_json_response, _get_request_data
-from opal.core.search.export import json_to_csv
+from opal.core.search.extract import zip_archive
 from opal import models
 
 class SaveFilterModalView(TemplateView):
@@ -185,7 +185,7 @@ class DownloadSearchView(Extractor):
         return self.query
 
     def post(self, *args, **kwargs):
-        fname = json_to_csv(self.get_episodes(), self.description(), self.request.user)
+        fname = zip_archive(self.get_episodes(), self.description(), self.request.user)
         resp = HttpResponse(
             open(fname, 'rb').read(),
             mimetype='application/force-download'
