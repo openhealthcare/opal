@@ -1,7 +1,6 @@
 """
 OPAL core search package
 """
-
 from opal.core.search import urls
 from opal.core.plugins import OpalPlugin
 
