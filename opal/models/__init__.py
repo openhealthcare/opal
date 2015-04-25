@@ -18,6 +18,7 @@ from opal.core import application, exceptions
 from opal import managers
 from opal.utils import stringport, camelcase_to_underscore
 from opal.core.plugins import OpalPlugin
+from opal.core.lookuplists import lookup_list
 from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.lookuplists import lookup_list
 from opal.core.subrecords import episode_subrecords, patient_subrecords
@@ -31,8 +32,6 @@ except AttributeError:
     class options:
         model_names = []
 
-from opal.models import lookuplists
-from opal.models.core import *
 from opal.models.mixins import UpdatesFromDictMixin
 
     
@@ -599,6 +598,17 @@ class Tagging(models.Model):
 Fields
 """
 
+GenderLookupList = type(*lookup_list('gender', module='opal.models'))
+EthnicityLookupList = type(*lookup_list('ethnicity', module='opal.models'))
+DestinationLookupList= type(*lookup_list('destination', module='opal.models'))
+DrugLookupList= type(*lookup_list('drug', module='opal.models'))
+DrugRouteLookupList= type(*lookup_list('drugroute', module='opal.models'))
+DrugFrequencyLookupList= type(*lookup_list('drugfreq', module='opal.models'))
+ConditionLookupList = type(*lookup_list('condition', module='opal.models'))
+HospitalLookupList = type(*lookup_list('hospital', module='opal.models'))
+
+
+
 class Demographics(PatientSubrecord):
     _is_singleton = True
     _icon = 'fa fa-user'
@@ -607,7 +617,7 @@ class Demographics(PatientSubrecord):
     hospital_number  = models.CharField(max_length=255, blank=True)
     nhs_number       = models.CharField(max_length=255, blank=True, null=True)
     date_of_birth    = models.DateField(null=True, blank=True)
-    country_of_birth = ForeignKeyOrFreeText(lookuplists.DestinationLookupList)
+    country_of_birth = ForeignKeyOrFreeText(DestinationLookupList)
     ethnicity        = models.CharField(max_length=255, blank=True, null=True)
     gender           = models.CharField(max_length=255, blank=True, null=True)
 
@@ -644,12 +654,12 @@ class Antimicrobial(EpisodeSubrecord):
     _icon = 'fa fa-flask'
     _modal = 'lg'
 
-    drug          = ForeignKeyOrFreeText(lookuplists.DrugLookupList)
+    drug          = ForeignKeyOrFreeText(DrugLookupList)
     dose          = models.CharField(max_length=255, blank=True)
-    route         = ForeignKeyOrFreeText(lookuplists.DrugRouteLookupList)
+    route         = ForeignKeyOrFreeText(DrugRouteLookupList)
     start_date    = models.DateField(null=True, blank=True)
     end_date      = models.DateField(null=True, blank=True)
-    frequency     = ForeignKeyOrFreeText(lookuplists.DrugFrequencyLookupList)
+    frequency     = ForeignKeyOrFreeText(DrugFrequencyLookupList)
 
     class Meta:
         abstract = True
@@ -658,7 +668,7 @@ class Antimicrobial(EpisodeSubrecord):
 class Allergies(PatientSubrecord):
     _icon = 'fa fa-warning'    
 
-    drug        = ForeignKeyOrFreeText(lookuplists.DrugLookupList)
+    drug        = ForeignKeyOrFreeText(DrugLookupList)
     provisional = models.BooleanField()
     details     = models.CharField(max_length=255, blank=True)
 
@@ -675,7 +685,7 @@ class Diagnosis(EpisodeSubrecord):
     _sort = 'date_of_diagnosis'
     _icon = 'fa fa-stethoscope'
 
-    condition         = ForeignKeyOrFreeText(lookuplists.ConditionLookupList)
+    condition         = ForeignKeyOrFreeText(ConditionLookupList)
     provisional       = models.BooleanField()
     details           = models.CharField(max_length=255, blank=True)
     date_of_diagnosis = models.DateField(blank=True, null=True)
@@ -696,7 +706,7 @@ class PastMedicalHistory(EpisodeSubrecord):
     _sort = 'year'
     _icon = 'fa fa-history'
 
-    condition = ForeignKeyOrFreeText(lookuplists.ConditionLookupList)
+    condition = ForeignKeyOrFreeText(ConditionLookupList)
     year      = models.CharField(max_length=4, blank=True)
     details   = models.CharField(max_length=255, blank=True)
 
@@ -806,6 +816,7 @@ class UserProfile(models.Model):
         return Team.for_user(self.user)
 
 
+# TODO: Stop Doing this! 
 option_models = {}
 
 model_names = options.model_names
