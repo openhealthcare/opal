@@ -68,6 +68,7 @@ def transfer(pre, post):
     """
     if not INTEGRATING:
         return
+    print 'integrating', INTEGRATING
     raise NotImplementedError('Need to sort out transfers Larry :(')
     return
 

@@ -1,9 +1,9 @@
 """
-Unittests for template views
+Unittests for opal.views
 """
 from django.test import TestCase
 
-from opal.views import templates
+from opal import views
 
 class ColumnContextTestCase(TestCase):
     pass

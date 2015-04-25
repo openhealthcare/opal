@@ -10,7 +10,7 @@ from mock import patch, MagicMock
 from opal import models
 from opal.tests.models import Colour, PatientColour
 
-from opal.views import api
+from opal.core import api
 
 class OPALRouterTestCase(TestCase):
     def test_default_base_name(self):
@@ -21,7 +21,7 @@ class OPALRouterTestCase(TestCase):
 
 class FlowTestCase(TestCase):
 
-    @patch('opal.views.api.app')
+    @patch('opal.core.api.app')
     def test_list(self, app):
         app.flows.return_value = [{}]
         self.assertEqual([{}], api.FlowViewSet().list(None).data)
@@ -29,7 +29,7 @@ class FlowTestCase(TestCase):
         
 class RecordTestCase(TestCase):
     
-    @patch('opal.views.api.schemas')
+    @patch('opal.core.api.schemas')
     def test_records(self, schemas):
         schemas.list_records.return_value = [{}]
         self.assertEqual([{}], api.RecordViewSet().list(None).data)
@@ -37,7 +37,7 @@ class RecordTestCase(TestCase):
 
 class ListSchemaTestCase(TestCase):
     
-    @patch('opal.views.api.schemas')
+    @patch('opal.core.api.schemas')
     def test_records(self, schemas):
         schemas.list_schemas.return_value = [{}]
         self.assertEqual([{}], api.ListSchemaViewSet().list(None).data)
@@ -45,7 +45,7 @@ class ListSchemaTestCase(TestCase):
 
 class ExtractSchemaTestCase(TestCase):
     
-    @patch('opal.views.api.schemas')
+    @patch('opal.core.api.schemas')
     def test_records(self, schemas):
         schemas.extract_schema.return_value = [{}]
         self.assertEqual([{}], api.ExtractSchemaViewSet().list(None).data)
@@ -92,7 +92,7 @@ class SubrecordTestCase(TestCase):
         response = self.patientviewset().create(mock_request)
         self.assertEqual('blue', response.data['name'])
         
-    @patch('opal.views.api.glossolalia.change')
+    @patch('opal.core.api.glossolalia.change')
     def test_create_pings_integration(self, change):
         mock_request = MagicMock(name='mock request')
         mock_request.data = {'name': 'blue', 'episode_id': self.episode.pk}
@@ -128,7 +128,7 @@ class SubrecordTestCase(TestCase):
         self.assertEqual(202, response.status_code)
         self.assertEqual('green', response.data['name'])
 
-    @patch('opal.views.api.glossolalia.change')
+    @patch('opal.core.api.glossolalia.change')
     def test_update_pings_integration(self, change):
         colour = Colour.objects.create(name='blue', episode=self.episode)
         mock_request = MagicMock(name='mock request')
@@ -191,7 +191,7 @@ class SubrecordTestCase(TestCase):
         response = self.viewset().destroy(MagicMock(name='request'), pk=567)
         self.assertEqual(404, response.status_code)
 
-    @patch('opal.views.api.glossolalia.change')
+    @patch('opal.core.api.glossolalia.change')
     def test_delete_pings_integration(self, change):
         colour = Colour.objects.create(episode=self.episode)
         mock_request = MagicMock(name='mock request')
@@ -266,7 +266,7 @@ class TaggingTestCase(TestCase):
         self.assertEqual(202, response.status_code)
         self.assertEqual(self.episode.get_tag_names(self.user), [])
 
-    @patch('opal.views.api.glossolalia.transfer')
+    @patch('opal.core.api.glossolalia.transfer')
     def test_tagging_pings_integration(self, transfer):
         self.assertEqual(self.episode.get_tag_names(self.user), [])
         self.mock_request.data = {'micro': True}
@@ -367,7 +367,7 @@ class EpisodeTestCase(TestCase):
             demographics__hospital_number="999000999").count()
         self.assertEqual(1, pcount)
 
-    @patch('opal.views.api.glossolalia.admit')
+    @patch('opal.core.api.glossolalia.admit')
     def test_create_pings_integration(self, admit):
         pass
 

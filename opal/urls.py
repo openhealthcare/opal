@@ -7,7 +7,7 @@ from django.contrib import admin
 from django.views.decorators.csrf import csrf_exempt
 
 from opal import views
-from opal.views import api
+from opal.core import api
 from opal.forms import ChangePasswordForm
 from opal import models
 from opal.utils import camelcase_to_underscore
@@ -69,9 +69,8 @@ urlpatterns = patterns(
     
 
     # New Public facing API urls
-    url(r'api/v0.1/episode/admit', csrf_exempt(views.APIAdmitEpisodeView.as_view())),
-    url(r'api/v0.1/episode/refer', csrf_exempt(views.APIReferPatientView.as_view())),
-    
+    url(r'api/v0.1/episode/admit', csrf_exempt(api.APIAdmitEpisodeView.as_view())),
+    url(r'api/v0.1/episode/refer', csrf_exempt(api.APIReferPatientView.as_view())),
     url(r'api/v0.1/', include(api.router.urls)),
 )
 
