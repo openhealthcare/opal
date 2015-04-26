@@ -12,7 +12,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
 from opal.core import application, exceptions
-from opal import glossolalia
+from opal.core import glossolalia
 from opal.utils import stringport, camelcase_to_underscore
 from opal.core import schemas
 from opal.core.subrecords import subrecords
