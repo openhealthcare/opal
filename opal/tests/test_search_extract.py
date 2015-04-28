@@ -26,3 +26,10 @@ class SubrecordCSVTestCase(OpalTestCase):
         expected = 'episode_id,name\n{0},blue'.format(self.episode.id)
         self.assertEqual(expected, csv.contents)
 
+    def test_with_subrecord_unicode(self):
+        colour = Colour.objects.create(episode=self.episode, name=u'blueu\ua000')
+        
+        csv = extract.subrecord_csv([self.episode], Colour)
+        self.assertIsInstance(csv, extract.ExtractCSV)
+        expected = u'episode_id,name\n{0},blueu\ua000'.format(self.episode.id)
+        self.assertEqual(expected, csv.contents)

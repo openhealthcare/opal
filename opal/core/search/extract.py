@@ -48,13 +48,13 @@ def subrecord_csv(episodes, subrecord):
     for fname in ['consistency_token', 'id']:
         if fname in fieldnames:
             fieldnames.remove(fname)
-    lines.append(','.join(fieldnames))
+    lines.append(u','.join(fieldnames))
 
     subrecords = subrecord.objects.filter(episode__in=episodes)
     for sub in subrecords:
-        lines.append(','.join([str(getattr(sub, f)) for f in fieldnames]))
+        lines.append(u','.join([unicode(getattr(sub, f)) for f in fieldnames]))
 
-    contents = '\n'.join(lines)
+    contents = u'\n'.join(lines)
     csv = ExtractCSV(filename=filename, contents=contents)
     return csv
 
