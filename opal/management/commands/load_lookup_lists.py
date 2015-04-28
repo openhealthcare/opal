@@ -8,7 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 import ffs
 
 from opal.models import Synonym
-from opal.utils.models import LookupList
+from opal.core.lookuplists import LookupList
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
