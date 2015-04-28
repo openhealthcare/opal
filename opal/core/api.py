@@ -130,6 +130,8 @@ class OptionsViewSet(viewsets.ViewSet):
                 co =  synonym.content_object
             except AttributeError:
                 continue
+            if co is None:
+                continue
             name = type(co).__name__.lower()
             data[name].append(synonym.name)
 
