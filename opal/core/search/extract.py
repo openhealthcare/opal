@@ -44,7 +44,7 @@ def subrecord_csv(episodes, subrecord):
     """
     filename = '{0}.csv'.format(subrecord.get_api_name())
     lines = []
-    fieldnames = subrecord._get_fieldnames_to_serialize()
+    fieldnames = subrecord._get_fieldnames_to_extract()
     for fname in ['consistency_token', 'id']:
         if fname in fieldnames:
             fieldnames.remove(fname)
@@ -65,7 +65,7 @@ def patient_subrecord_csv(episodes, subrecord):
     """
     filename = '{0}.csv'.format(subrecord.get_api_name())
     lines = []
-    fieldnames = subrecord._get_fieldnames_to_serialize()
+    fieldnames = subrecord._get_fieldnames_to_extract()
     for fname in ['consistency_token', 'patient_id']:
         if fname in fieldnames:
             fieldnames.remove(fname)

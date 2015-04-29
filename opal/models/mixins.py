@@ -31,6 +31,19 @@ class UpdatesFromDictMixin(object):
         return fieldnames
 
     @classmethod
+    def _get_fieldnames_to_extract(cls):
+        """
+        Return a list of fieldname to extract - which means dumping
+        PID fields.
+        """
+        fieldnames = cls._get_fieldnames_to_serialize()
+        if hasattr(cls, 'pid_fields'):
+            for fname in cls.pid_fields:
+                if fname in fieldnames:
+                    fieldnames.remove(fname)
+        return fieldnames
+
+    @classmethod
     def _get_field_type(cls, name):
         try:
             return type(cls._meta.get_field_by_name(name)[0])

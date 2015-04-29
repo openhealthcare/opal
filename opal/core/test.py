@@ -19,3 +19,4 @@ class OpalTestCase(TestCase):
     def assertStatusCode(self, path, expected_status_code):
         response = self.client.get(path)
         self.assertEqual(expected_status_code, response.status_code)
+
