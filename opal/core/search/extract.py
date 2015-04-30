@@ -36,7 +36,7 @@ def episode_csv(episodes, user):
     contents = '\n'.join(lines)
     csv = ExtractCSV(filename='episodes.csv', contents=contents)
     return csv
-        
+
 def subrecord_csv(episodes, subrecord):
     """
     Given an iterable of EPISODES, the SUBRECORD we want to serialise, 
@@ -66,18 +66,18 @@ def patient_subrecord_csv(episodes, subrecord):
     filename = '{0}.csv'.format(subrecord.get_api_name())
     lines = []
     fieldnames = subrecord._get_fieldnames_to_extract()
-    for fname in ['consistency_token', 'patient_id']:
+    for fname in ['consistency_token', 'patient_id', 'id']:
         if fname in fieldnames:
             fieldnames.remove(fname)
-    lines.append('episode_id,' + ','.join(fieldnames))
+    lines.append(u'episode_id,' + u','.join(fieldnames))
 
     for episode in episodes:
         for sub in subrecord.objects.filter(patient=episode.patient):
-            items = [str(episode.id)]
-            items += [str(getattr(sub, f)) for f in fieldnames]
-            lines.append(','.join(items))
+            items = [unicode(episode.id)]
+            items += [unicode(getattr(sub, f)) for f in fieldnames]
+            lines.append(u','.join(items))
 
-    contents = '\n'.join(lines)
+    contents = u'\n'.join(lines)
     csv = ExtractCSV(filename=filename, contents=contents)
     return csv
 

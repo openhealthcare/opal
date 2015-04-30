@@ -55,3 +55,10 @@ class PatientSubrecordCSVTestCase(OpalTestCase):
 
         self.assertIn('date_of_birth', headers)
         self.assertNotIn('name', headers)
+
+    def test_unicode(self):
+        colour = PatientColour.objects.create(patient=self.patient, name=u'blueu\ua000')
+        csv = extract.patient_subrecord_csv([self.episode], PatientColour)
+        self.assertIsInstance(csv, extract.ExtractCSV)
+        expected = u'episode_id,name\n{0},blueu\ua000'.format(self.episode.id)
+        self.assertEqual(expected, csv.contents)
