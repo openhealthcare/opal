@@ -1,8 +1,20 @@
 # Form Helpers
 
 OPAL comes with a selection of templatetags that can help you with the
-repetitive task of generating Bootstrap + OPAL compatible markup for
+repetitive task of generating Bootstrap and OPAL compatible markup for
 your forms.
+
+### {% checkbox ... %}
+
+Generates a checkbox
+
+Keywords:
+
+* `label` The Label with which to describe this input
+* `model` The model which we are editing (This is a string that references an in-scope Angular variable)
+* `width` Bootstrap small column width of the checkbox
+* `labelwidth` Bootstrap small column width of the label
+
 
 ### {% radio ... %}
 

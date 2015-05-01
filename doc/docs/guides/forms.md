@@ -15,5 +15,12 @@ OPAL for creating forms and modals.
 It provides helpers for various input types that will allow you to render consistent
 forms, with less verbose templates.
 
-For full documentation of the options, please see opal/templatetags/forms.py
-For example usage please see elcid/elcid/templates/*_modal.html
+    {% load forms %}
+    <form class="form-horizontal">
+      {% input "autofocus" label="Destination" model="editing.destination" lookuplist="destination_list" %}
+      {% datepicker label="Date" model="editing.date" %}
+      {% checkbox label="Alone?" model="editing.alone" %}
+    </form>
+
+
+For full documentation of the options, please see the [Form templatetags reference material](/reference/form_templatetags/)
