@@ -47,6 +47,25 @@ add to static, then add to your plugin class as YourPlugin.javascripts
 
 There are some restricted namespaces for these...
 
+## Adding Actions to the sidebar
+
+Actions can be added to the sidebar by setting the `actions` attribute of your plugin.
+Actions is expected to be an iterable of strings which are templates to be included in
+the sidebar. By convention, actions will live in `./templates/actions/` .
+
+    # plugin.py:
+    class Plugin(OpalPlugin):
+        actions = ('actions/javascript_alert.html', 'actions/dummy_button.html')
+
+And then in the template:
+
+    <p ng-show="episode.category == 'YourEpisodeCategory'">
+      <button class="btn btn-primary" ng-click="alert('Boom!')">
+        <i href="fa fa-warning"></i>
+        ALERT ME
+      </button>    
+    </p>
+
 ## Adding dependencies globally to our angular modules
 
 Dependencies listed in `angular_module_deps` will be added to all Angular modules (as long as they

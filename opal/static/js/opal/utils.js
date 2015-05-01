@@ -1,26 +1,64 @@
-var OPAL = {
-    module: function(namespace, dependencies){
-        dependencies.push('angular-growl');
-        dependencies.push('mentio');
-        if(undefined === OPAL_ANGULAR_DEPS) { var OPAL_ANGULAR_DEPS = [] }
-        _.each(OPAL_ANGULAR_DEPS, function(d){ dependencies.push(d) });            
-        var mod = angular.module(namespace, dependencies);
-        // See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags
-        mod.config(function($interpolateProvider) {
-	        $interpolateProvider.startSymbol('[[');
-	        $interpolateProvider.endSymbol(']]');
-        });
+var OPAL = {};
+OPAL.module = function(namespace, dependencies){
+    if(undefined === dependencies){ dependencies = []; };
+    dependencies.push('angular-growl');
+    dependencies.push('mentio');
 
-        mod.config(['growlProvider', function(growlProvider) {
-            growlProvider.globalTimeToLive(5000);
-        }]);
+    if(undefined === OPAL_ANGULAR_DEPS) { var OPAL_ANGULAR_DEPS = [] }
+    _.each(OPAL_ANGULAR_DEPS, function(d){ dependencies.push(d) });            
+    var mod = angular.module(namespace, dependencies);
+    // See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags
+    mod.config(function($interpolateProvider) {
+	    $interpolateProvider.startSymbol('[[');
+	    $interpolateProvider.endSymbol(']]');
+    });
 
-        // IE8 compatability mode! 
-        mod.config(function($sceProvider){$sceProvider.enabled(false)});
+    mod.config(['growlProvider', function(growlProvider) {
+        growlProvider.globalTimeToLive(5000);
+    }]);
 
-        return mod;
-    }
+    // IE8 compatability mode! 
+    mod.config(function($sceProvider){$sceProvider.enabled(false)});
+
+    return mod;
 };
+
+OPAL.run = function(app){
+    app.run(['$rootScope', 'ngProgressLite', '$modal', OPAL._run])
+}
+
+OPAL._run = function($rootScope, ngProgressLite, $modal) {
+    // When route started to change.
+    $rootScope.$on('$routeChangeStart', function() {
+        ngProgressLite.set(0);
+        ngProgressLite.start();
+    });
+
+    // When route successfully changed.
+    $rootScope.$on('$routeChangeSuccess', function() {
+        ngProgressLite.done();
+    });
+
+    // When some error occured.
+    $rootScope.$on('$routeChangeError', function() {
+        ngProgressLite.set(0);
+    });
+
+    $rootScope.open_modal = function(controller, template, size, resolves){
+        resolve = {}
+        _.each(_.keys(resolves), function(key){
+            resolve[key] = function(){ return resolves[key] };
+        })
+        $modal.open({
+            controller : controller,
+            templateUrl: template,
+            size       : size,
+            resolve    : resolve
+        });
+    }
+    
+};
+
 
 // From http://stackoverflow.com/questions/3629183/why-doesnt-indexof-work-on-an-array-ie8
 if (!Array.prototype.indexOf) {
