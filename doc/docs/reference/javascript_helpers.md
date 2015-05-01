@@ -11,7 +11,7 @@ the url for the template, the size of the modal window (either 'sm' or 'lg').
 
 You may also pass through a dictionary of items to resolve.
 
-## OPAL's Angular Filters
+## Angular Filters
 
 OPAL provides some buit-in Angular filters for your project to use.
 

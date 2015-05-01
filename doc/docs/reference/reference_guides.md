@@ -4,4 +4,4 @@ The following reference guides are available:
 
 [The forms Templatetag library](form_templatetags.md)
 
-[Javascript Helpers(javascript_helpers.md)]
+[Javascript Helpers](javascript_helpers.md)
