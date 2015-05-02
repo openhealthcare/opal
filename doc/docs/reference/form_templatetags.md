@@ -14,6 +14,7 @@ Keywords:
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
 * `width` Bootstrap small column width of the checkbox
 * `labelwidth` Bootstrap small column width of the label
+* `disabled` If this exists, we use this as the expression for the ng-disabled directive
 
 
 ### {% radio ... %}

@@ -130,7 +130,8 @@ def checkbox(*args, **kwargs):
         'label'     : kwargs.pop('label', None),
         'model'     : kwargs.pop('model', None),
         'width'     : kwargs.pop('width', 8),
-        'labelwidth': kwargs.pop('labelwidth', 3)
+        'labelwidth': kwargs.pop('labelwidth', 3),
+        'disabled'  : kwargs.pop('disabled', None)
     }
 
 @register.inclusion_tag('_helpers/radio.html')
