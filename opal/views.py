@@ -16,8 +16,7 @@ from django.views.generic import TemplateView, View
 from django.views.decorators.http import require_http_methods
 
 from opal import models
-from opal.core import application, exceptions, glossolalia, fields
-from opal.core.plugins import OpalPlugin
+from opal.core import application, exceptions, glossolalia, fields, plugins
 from opal.core.lookuplists import LookupList
 from opal.core.subrecords import episode_subrecords, patient_subrecords, subrecords
 from opal.core.views import (LoginRequiredMixin, _get_request_data, _build_json_response,
@@ -41,7 +40,7 @@ option_models = models.option_models
 Synonym = models.Synonym
 
 LIST_SCHEMAS = {}
-for plugin in OpalPlugin.__subclasses__():
+for plugin in plugins.plugins():
     LIST_SCHEMAS.update(plugin().list_schemas())
 LIST_SCHEMAS.update(schema.list_schemas.copy())
 

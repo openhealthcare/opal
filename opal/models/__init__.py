@@ -14,10 +14,9 @@ from django.template import TemplateDoesNotExist
 from django.template.loader import select_template
 import reversion
 
-from opal.core import application, exceptions
+from opal.core import application, plugins, exceptions
 from opal import managers
 from opal.utils import stringport, camelcase_to_underscore
-from opal.core.plugins import OpalPlugin
 from opal.core.lookuplists import lookup_list
 from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.lookuplists import lookup_list
@@ -89,7 +88,7 @@ class Team(models.Model):
         Given a USER, return the restricted teams this user can access.
         """
         restricted_teams = []
-        for plugin in OpalPlugin.__subclasses__():
+        for plugin in plugins.plugins():
             if plugin.restricted_teams:
                 restricted_teams += plugin().restricted_teams(user)
         return restricted_teams
@@ -803,7 +802,7 @@ class UserProfile(models.Model):
         Return a roles dictionary for this user
         """
         roles = {}
-        for plugin in OpalPlugin.__subclasses__():
+        for plugin in plugins.plugins():
             roles.update(plugin().roles(self.user))
         roles['default'] = [r.name for r in self.roles.all()]
         return roles

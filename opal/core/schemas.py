@@ -2,9 +2,8 @@
 Utilities for dealing with OPAL Schemas
 """
 from opal.utils import stringport
-from opal.core.plugins import OpalPlugin
 from opal.core.subrecords import subrecords
-from opal.core import application
+from opal.core import application, plugins
 from opal import models
 
 app = application.get_app()
@@ -31,7 +30,7 @@ def serialize_schema(schema):
 
 def _get_plugin_schemas():
     scheme = {}
-    for plugin in OpalPlugin.__subclasses__():
+    for plugin in plugins.plugins():
         scheme.update(plugin().list_schemas())
     return scheme
 

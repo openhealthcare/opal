@@ -5,15 +5,13 @@ models for the client.
 
 ## Getting started with your plugin
 
-Plugins should subclass opal.core.plugins.OpalPlugin
+The OPAL commandline tool will bootstrap your plugin for you - just run: 
 
-## Defining models
-
-Define in your models.py - just as you would for an implementation.
+    $ opal startplugin yourcoolplugin
 
 ## Defining Lookup lists
 
-See Defining lookup lists in "Your Implementation.
+// TODO
 
 ## Defining teams
 
@@ -47,13 +45,38 @@ add to static, then add to your plugin class as YourPlugin.javascripts
 
 There are some restricted namespaces for these...
 
+## Adding APIs
+
+OPAL uses Django Rest Framweork to provide APIs, and you may add to these from your plugin.
+By convention, APIs live in `yourplugin/api.py`. You are expected to provide a
+`rest_framework.viewsets.ViewSet` subclass, which you then detail as the `.apis` attribute
+of your plugin.
+
+    # yourplugin/api.py
+    from rest_framework.viewsets import ViewSet
+    from rest_framework.response import Response
+
+    class PingViewSet(ViewSet):
+        def list(self, request): return Response('pong')
+
+    # yourplugin/__init__.py
+    from opal.core.plugins import OpalPlugin
+    from yourplugin import api
+
+    class YourPlugin(OpalPlugin):
+        apis = [
+            ('ping', api.PingViewSet)
+        ]
+
+These APIs will then be available and self-documenting fom the standard OPAL url `/api/v0.1/`
+
 ## Adding Actions to the sidebar
 
 Actions can be added to the sidebar by setting the `actions` attribute of your plugin.
 Actions is expected to be an iterable of strings which are templates to be included in
 the sidebar. By convention, actions will live in `./templates/actions/` .
 
-    # plugin.py:
+    # __init__.py:
     class Plugin(OpalPlugin):
         actions = ('actions/javascript_alert.html', 'actions/dummy_button.html')
 

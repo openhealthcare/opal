@@ -19,10 +19,10 @@ class OpalApplication(object):
         Pulls flows defined in the application's flows module,
         plus any flows defined by plugins.
         """
-        from opal.core.plugins import OpalPlugin
+        from opal.core import plugins
 
         flows = {}
-        for plugin in OpalPlugin.__subclasses__():
+        for plugin in plugins.plugins():
             flows.update(plugin().flows())
             
         if klass.flow_module is None:

@@ -13,13 +13,13 @@ class OpalApplicationTestCase(TestCase):
 
         self.app = App
 
-    @patch('opal.core.plugins.OpalPlugin.__subclasses__')
+    @patch('opal.core.plugins.plugins')
     def test_flows_no_flow_module(self, subclasses):
         class App(application.OpalApplication): pass
         subclasses.return_value = []
         self.assertEqual({}, App.flows())
 
-    @patch('opal.core.plugins.OpalPlugin.__subclasses__')
+    @patch('opal.core.plugins.plugins')
     @patch('opal.core.application.stringport')
     def test_flows(self, stringport, pluginsubs):
         pluginsubs.return_value = []

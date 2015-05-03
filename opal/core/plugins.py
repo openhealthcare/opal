@@ -1,12 +1,15 @@
 """
 OPAL PLugin - base class and helpers
 """
+from opal.utils import _itersubclasses
+
 class OpalPlugin(object):
     """
     Base class from which all of our plugins inherit.
     """
     urls        = []
     javascripts = []
+    apis        = []
     stylesheets = []
     menuitems   = []
     actions     = []
@@ -36,3 +39,11 @@ class OpalPlugin(object):
         Given a USER, return a list of extra teams that user can access.
         """
         return []
+
+
+def plugins():
+    """
+    Generator function for plugin instances
+    """
+    for m in _itersubclasses(OpalPlugin):
+        yield m

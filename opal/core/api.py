@@ -11,7 +11,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from opal.core import application, exceptions
+from opal.core import application, exceptions, plugins
 from opal.core import glossolalia
 from opal.utils import stringport, camelcase_to_underscore
 from opal.core import schemas
@@ -349,7 +349,10 @@ for subrecord in subrecords():
 
     router.register(sub_name, SubViewSet)
 
-
+for plugin in plugins.plugins():
+    for api in plugin.apis:
+        router.register(*api)
+    
 class APIAdmitEpisodeView(View):
     """
     Admit an episode from upstream!
