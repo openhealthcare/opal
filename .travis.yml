@@ -1,0 +1,15 @@
+language: python
+python:
+  - "2.7"
+install:
+  - python setup.py develop
+  - pip install -r test-requirements.txt --use-mirrors
+  - npm install karma karma-coverage karma-jasmine@0.1.5 karma-firefox-launcher
+  - gem install rake
+before_script:
+  - export DISPLAY=:99.0
+  - sh -e /etc/init.d/xvfb start
+script:
+  - rake test
+notifications:
+  slack: ohcuk:6spaME3CB7f2PGrMAcklYWqp
