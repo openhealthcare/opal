@@ -68,8 +68,14 @@ def transfer(pre, post):
     """
     if not INTEGRATING:
         return
-    print 'integrating', INTEGRATING
-    raise NotImplementedError('Need to sort out transfers Larry :(')
+    payload = {'data':
+               json.dumps({
+                   'endpoint': OUR_ENDPOINT,
+                   'pre': pre, 
+                   'post': post,
+               }, cls=DjangoJSONEncoder)
+    }
+    _send_upstream_message('transfer', payload)
     return
 
 def change(pre, post):
