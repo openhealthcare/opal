@@ -9,19 +9,19 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 HERE = os.path.realpath(os.path.dirname(__file__))
 
-# VERSION_FILE = os.path.join(HERE, "opal/_version.py")
-# verstrline = open(VERSION_FILE, "rt").read()
-# VSRE = r'^__version__ = [\'"]([^\'"]*)[\'"]'
-# mo = re.search(VSRE,  verstrline, re.M)
-# if mo:
-#     VERSION = mo.group(1)
-# else:
-#     raise RuntimeError("Unable to find version string in {0}".format(VERSION_FILE))
+VERSION_FILE = os.path.join(HERE, "opal/_version.py")
+verstrline = open(VERSION_FILE, "rt").read()
+VSRE = r'^__version__ = [\'"]([^\'"]*)[\'"]'
+mo = re.search(VSRE,  verstrline, re.M)
+if mo:
+    VERSION = mo.group(1)
+else:
+    raise RuntimeError("Unable to find version string in {0}".format(VERSION_FILE))
 
 
 setup(
     name='opal',
-    version='0.4.0.1',
+    version=VERSION,
     packages=['opal', 'opal.utils'],
     include_package_data=True,
     license='GPL3',  # example license
@@ -39,6 +39,7 @@ setup(
         'django==1.6.11',
         'South==0.8.1',
         'django-reversion==1.8.0',
-        'django-axes==1.3.4'
+        'django-axes==1.3.4',
+        'djangorestframework'
         ]
 )
