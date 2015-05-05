@@ -75,12 +75,20 @@
                   [[ episode.location[0].category ]]
                 </div>
               </div>
-              <div class="row">
+              <div class="row" ng-show="episode.date_of_admission">
                 <div class="col-md-4">
                   <b>Admitted</b>
                 </div>
                 <div class="col-md-8">
                   [[ episode.date_of_admission | shortDate ]]
+                </div>
+              </div>
+              <div class="row" ng-show="episode.date_of_episode">
+                <div class="col-md-4">
+                  <b>Date</b>
+                </div>
+                <div class="col-md-8">
+                  [[ episode.date_of_episode | shortDate ]]
                 </div>
               </div>
               <div class="row">

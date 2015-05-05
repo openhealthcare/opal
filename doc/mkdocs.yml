@@ -20,6 +20,7 @@ pages:
   - [guides/plugins.md, 'Guides', Plugins]
 
   - [reference/reference_guides.md, 'Reference', Index]
+  - [reference/episode.md, 'Reference', The Episode model] 
   - [reference/opal_application.md, 'Reference', OpalApplication]
   - [reference/form_templatetags.md, 'Reference', Form helpers]
   - [reference/javascript_helpers.md, 'Reference', Javascript helpers]

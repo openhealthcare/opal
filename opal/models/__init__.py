@@ -226,12 +226,13 @@ class Episode(UpdatesFromDictMixin, models.Model):
     A patient may have many episodes of care, but this maps to one occasion
     on which they found themselves on "The List".
     """
-    category = models.CharField(max_length=200, default=app.default_episode_category)
-    patient = models.ForeignKey(Patient)
-    active  = models.BooleanField(default=False)
+    category          = models.CharField(max_length=200, default=app.default_episode_category)
+    patient           = models.ForeignKey(Patient)
+    active            = models.BooleanField(default=False)
     date_of_admission = models.DateField(null=True, blank=True)
     # TODO rename to date_of_discharge?
-    discharge_date = models.DateField(null=True, blank=True)
+    discharge_date    = models.DateField(null=True, blank=True)
+    date_of_episode   = models.DateField(blank=True, null=True)
     consistency_token = models.CharField(max_length=8)
 
     objects = managers.EpisodeManager()

@@ -1,7 +1,12 @@
 [[item.category]]<br />
 [[item.hospital]]<br />
 [[item.ward]] [[item.bed]]<br />
-Admitted: [[row.date_of_admission | shortDate]]
+<span ng-show="row.date_of_admission">
+  Admitted: [[row.date_of_admission | shortDate]]
+</span>
+<span ng-show="row.date_of_episode">
+  Date: [[row.date_of_episode | shortDate]]
+</span>
 <span ng-show="row.discharge_date">
-  Discharged [[row.discharge_date | shortDate]]
+  Discharged: [[row.discharge_date | shortDate]]
 </span>

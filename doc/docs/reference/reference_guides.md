@@ -1,4 +1,6 @@
-The following reference guides are available: 
+The following reference guides are available:
+
+[The opal.models.Episode model](episode.md)
 
 [The opal.application.OpalApplication class](opal_application.md)
 
