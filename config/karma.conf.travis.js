@@ -2,7 +2,7 @@ module.exports = function(config){
     config.set({
         frameworks: ['jasmine'],
         browsers: ['Firefox'],
-        basePath:  '/home/travis/openhealthcare/opal',
+        basePath:  __dirname + '/../opal/static/js',
 
         files: [
             //JASMINE,
