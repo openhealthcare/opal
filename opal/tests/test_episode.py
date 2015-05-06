@@ -6,6 +6,7 @@ import datetime
 from django.contrib.auth.models import User
 from django.test import TestCase
 
+from opal.core.test import OpalTestCase
 from opal.models import Patient, Episode, Team
 
 class EpisodeTest(TestCase):
@@ -55,6 +56,15 @@ class EpisodeTest(TestCase):
         self.episode.set_tag_names(['mine'], self.user)
         self.assertTrue(self.episode.active)
 
+    def test_to_dict_fields(self):
+        as_dict = self.episode.to_dict(self.user)
+        expected = [
+            'id', 'category', 'active', 'date_of_admission', 'discharge_date',
+            'consistency_token', 'date_of_episode'
+        ]
+        for field in expected:
+            self.assertIn(field, as_dict)
+
     def test_to_dict_with_multiple_episodes(self):
         self.episode.date_of_admission = datetime.date(2015, 7, 25)
         self.episode.save()
@@ -93,3 +103,19 @@ class EpisodeTest(TestCase):
         self.assertEqual(datetime.date(2012, 7, 25),
                          serialised['prev_episodes'][1]['date_of_admission'])
 
+
+
+class EpisodeManagerTestCase(OpalTestCase):
+    def setUp(self):
+        self.user    = User.objects.create(username='testuser')
+        self.patient = Patient.objects.create()
+        self.episode = self.patient.create_episode()
+
+    def test_serialised_fields(self):
+        as_dict = Episode.objects.serialised(self.user, [self.episode])[0]
+        expected = [
+            'id', 'category', 'active', 'date_of_admission', 'discharge_date',
+            'consistency_token', 'date_of_episode'
+        ]
+        for field in expected:
+            self.assertIn(field, as_dict)

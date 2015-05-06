@@ -325,6 +325,7 @@ class Episode(UpdatesFromDictMixin, models.Model):
             'category'         : self.category,
             'active'           : self.active,
             'date_of_admission': self.date_of_admission,
+            'date_of_episode'  : self.date_of_episode,
             'discharge_date'   : self.discharge_date,
             'consistency_token': self.consistency_token
             }

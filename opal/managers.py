@@ -58,6 +58,7 @@ class EpisodeManager(models.Manager):
                 'category'         : e.category,
                 'active'           : e.active,
                 'date_of_admission': e.date_of_admission,
+                'date_of_episode'  : e.date_of_episode,
                 'discharge_date'   : e.discharge_date,
                 'consistency_token': e.consistency_token
                 }

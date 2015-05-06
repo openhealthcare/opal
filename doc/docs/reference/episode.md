@@ -34,3 +34,40 @@ date of that event.
 ### Episode.consistency_token 
 
 A (automatically generated) hash of the above fields. This is used for detecting concurrent edits.
+
+## Methods
+
+The Episode model has the following methods: 
+
+### Episode.to_dict
+
+Return a dictionary of field value pairs for this episode
+
+    episode.to_dict(user)
+
+Arguments: 
+
+* `user` The User for whom we want to serialise this episode
+
+Keywords: 
+
+* `shallow` Boolean to indicate whether we want just this episode, or also a sorted set of previous and subsequent episodes
+
+## Manager
+
+The custom manager for Episodes has the following methods:
+
+### Episode.objects.serialised()
+
+Return a set of serialised episodes.
+
+    Episode.objects.serialised(User, [episode, ...], historic_tags=False)
+
+Arguments:
+
+* `user` The User for whom we want to serialise this episode
+* `episodes` An iterable of Episode instances
+
+Keywords: 
+
+* `historic_tags` A boolean to indicate whether the user desires historic or just current tags to be serialised
