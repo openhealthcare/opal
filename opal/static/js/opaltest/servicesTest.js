@@ -40,6 +40,7 @@ describe('services', function() {
             date_of_admission: "2013-11-19",
             active: true,
             discharge_date: null,
+            date_of_episode: null,
             tagging: [{
                 mine: true,
                 tropical: true
@@ -445,6 +446,7 @@ describe('services', function() {
             expect(episode.makeCopy()).toEqual({
                 id: 123,
                 date_of_admission: new Date(2013, 10, 19),
+                date_of_episode: null,
                 discharge_date: null,
             });
         });
