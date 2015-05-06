@@ -27,10 +27,10 @@ task :jstest do
   end
 end
 
-task :test => [:pytest] do
+task :test => [:pytest, :jstest] do
   p "Run all tests"
 end
 
-task :devtest => [:pytest] do
+task :devtest => [:pytest, :devjstest] do
   p "Run all development tests"
 end  
