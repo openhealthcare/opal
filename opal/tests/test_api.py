@@ -379,3 +379,13 @@ class EpisodeTestCase(TestCase):
 
     def test_update_pings_integration(self):
         pass
+
+
+class PatientTestCase(TestCase):
+    def setUp(self):
+        self.patient      = models.Patient.objects.create()
+        self.mock_request = MagicMock(name='request')
+        
+    def test_retrieve_episode(self):
+        response = api.PatientViewSet().retrieve(self.mock_request, pk=self.patient.pk)
+        self.assertEqual(self.patient.to_dict(None), response.data)

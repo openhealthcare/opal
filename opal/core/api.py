@@ -330,8 +330,19 @@ class EpisodeViewSet(viewsets.ViewSet):
     @episode_from_pk
     def retrieve(self, request, episode):
         return Response(episode.to_dict(request.user))
-    
 
+
+class PatientViewSet(viewsets.ViewSet):
+    base_name = 'patient'
+    
+    def retrieve(self, request, pk=None):
+        from opal.models import Patient
+
+        patient = Patient.objects.get(pk=pk)
+        return Response(patient.to_dict(request.user))
+
+
+router.register('patient', PatientViewSet)
 router.register('episode', EpisodeViewSet)    
 router.register('flow', FlowViewSet)
 router.register('record', RecordViewSet)
