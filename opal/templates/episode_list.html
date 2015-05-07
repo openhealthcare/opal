@@ -57,6 +57,14 @@
     </div>
     <ul class="list-group">
       <li class="list-group-item">
+        <p>
+          <a class="btn btn-secondary screen-only btn-sm" href="#/episode/[[episode.id]]">
+            <i class="fa fa-search-plus"></i>
+            Patient Details
+          </a>
+        </p>        
+      </li>
+      <li class="list-group-item">
         <h4>
           <i class="fa fa-users"></i> Teams
           <i class="fa edit fa-pencil pointer pull-right"
@@ -72,30 +80,10 @@
       </li>
       <li class="list-group-item">
         <h4><i class="fa fa-bolt"></i> Actions</h4>
-        <p>
-          <a class="btn btn-default screen-only btn-sm" href="#/episode/[[episode.id]]">
-            <i class="fa fa-search-plus"></i>
-            Patient Details
-          </a>
-        </p>
         {% include 'partials/_episode_actions.html' %}
       </li>
     </ul>
   </div>
-
-
-  <!-- <div class="panel panel-default"> -->
-  <!--   <\!-- <div class="panel-body"> -\-> -->
-  <!--   <\!--   <p> -\-> -->
-  <!--   <\!--     <button class="btn btn-primary" -\-> -->
-  <!--   <\!--             ng-show="!profile.readonly" -\-> -->
-  <!--   <\!--             ng-click="addEpisode()"> -\-> -->
-  <!--   <\!--       <i class="glyphicon glyphicon-plus"></i> -\-> -->
-  <!--   <\!--       Add Patient -\-> -->
-  <!--   <\!--     </button> -\-> -->
-  <!--   <\!--   </p> -\-> -->
-  <!--   <\!-- </div> -\-> -->
-  <!-- </div> -->
   <div class="panel panel-default">
     <div class="panel-heading">
       <h4>
