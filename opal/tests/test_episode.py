@@ -75,9 +75,9 @@ class EpisodeTest(TestCase):
         prev.save()
         
         serialised = self.episode.to_dict(self.user)
-        self.assertEqual(1, len(serialised['prev_episodes']))
+        self.assertEqual(2, len(serialised['episode_history']))
         self.assertEqual(datetime.date(2012, 7, 25),
-                         serialised['prev_episodes'][0]['date_of_admission'])
+                         serialised['episode_history'][0]['date_of_admission'])
 
     def test_to_dict_episode_ordering(self):
         patient = Patient.objects.create()
@@ -97,12 +97,17 @@ class EpisodeTest(TestCase):
         episode.save()
         
         serialised = episode.to_dict(self.user)
-        self.assertEqual(2, len(serialised['prev_episodes']))
+        self.assertEqual(3, len(serialised['episode_history']))
         self.assertEqual(datetime.date(2011, 7, 25),
-                         serialised['prev_episodes'][0]['date_of_admission'])
+                         serialised['episode_history'][0]['date_of_admission'])
         self.assertEqual(datetime.date(2012, 7, 25),
-                         serialised['prev_episodes'][1]['date_of_admission'])
+                         serialised['episode_history'][1]['date_of_admission'])
 
+    def test_to_dict_episode_history_includes_no_dates(self):
+        prev = self.patient.create_episode()
+        serialised = self.episode.to_dict(self.user)
+        self.assertEqual(2, len(serialised['episode_history']))
+        
 
 
 class EpisodeManagerTestCase(OpalTestCase):

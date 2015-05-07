@@ -342,20 +342,9 @@ class Episode(UpdatesFromDictMixin, models.Model):
                                        for subrecord in subrecords]
 
         d['tagging'] = self.tagging_dict(user)
-        d['prev_episodes'] = []
-        d['next_episodes'] = []
 
-        if self.date_of_admission:
-            eset = self.patient.episode_set
-
-            d['prev_episodes'] = [
-                e.to_dict(user, shallow=True)
-                for e in
-                eset.filter(date_of_admission__lt=self.date_of_admission).order_by('date_of_admission')]
-            d['next_episodes'] = [
-                e.to_dict(user, shallow=True)
-                for e in
-                eset.filter(date_of_admission__gt=self.date_of_admission).order_by('date_of_admission')]
+        episode_history = self.patient.episode_set.order_by('date_of_episode', 'date_of_admission', 'discharge_date')
+        d['episode_history'] = [e.to_dict(user, shallow=True) for e in episode_history]
         return d
 
     
