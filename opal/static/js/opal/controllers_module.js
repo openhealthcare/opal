@@ -20,7 +20,7 @@ controllers.controller('RootCtrl', function($scope, $location) {
 		$scope.$broadcast('keydown', e);
 	};
 
-    if(collaborator){ collaborator($scope) };
+    if(typeof collaborator != 'undefined'){ collaborator($scope) };
 });
 
 controllers.config(function($datepickerProvider) {
