@@ -304,3 +304,87 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 
 
 
+
+
+.timeline {
+  position: relative;
+  padding-bottom: 1px;
+}
+
+.timeline .timeline-now:first-child {
+  margin-bottom: 30px;
+  margin-top: 15px;
+}
+
+.timeline-now {
+  clear: both;
+  margin-bottom: 50px;
+  margin-top: 50px;
+  position: relative;
+}
+
+.timeline-now .timeline-now-text {
+  display: inline-block;
+  text-align: center;
+  padding: 7px 15px;
+  min-width: 100px;
+}
+
+.timeline-item {
+  margin-bottom: 50px;
+  margin-top: 5px;
+  position: relative;
+  clear: both;
+}
+
+.timeline-label {
+  width: 100px;
+  float: left;
+  text-align: center;
+  padding-bottom: 15px;
+}
+
+.timeline-icon {
+  border-radius: 50%;
+  box-shadow: 0 0 0 7px #e7ebee;
+  display: block;
+  margin: 0 auto;
+  height: 50px;
+  line-height: 50px;
+  text-align: center;
+  width: 50px;
+}
+
+.timeline-time {
+  display: inline-block;
+  padding: 5px 3px 7px;
+  margin-top: 3px;
+  background-color: #e7ebee;
+  font-size: 12px;
+  max-width: 70px;
+}
+
+.timeline-detail {
+  border-radius: 0;
+  margin-left: 110px;
+  top: -7px;
+  padding: 10px;
+  position: relative;
+  min-height: 50px;
+  border: 1px solid #e9e9e9;
+  font-size: 18px;
+}
+
+.timeline:before {
+  left: 49px;
+  top: 20px;
+  width: 2px;
+}
+
+.timeline:before, .timeline:after {
+  background-color: #cad3df;
+  bottom: 20px;
+  content: "";
+  display: block;
+  position: absolute;
+}

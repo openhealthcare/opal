@@ -66,7 +66,6 @@ urlpatterns = patterns(
 
     url(r'^templates/modals/delete_item_confirmation.html/?$',
         views.DeleteItemConfirmationView.as_view()),
-    
 
     # New Public facing API urls
     url(r'api/v0.1/episode/admit', csrf_exempt(api.APIAdmitEpisodeView.as_view())),
@@ -87,9 +86,15 @@ for subrecord_model in subrecords():
             views.ModalTemplateView.as_view(), {'model': subrecord_model}),
     )
 
+
 urlpatterns += staticfiles_urlpatterns()
 
 from opal.core import plugins
 
 for plugin in plugins.plugins():
     urlpatterns += plugin.urls
+
+urlpatterns += patterns(
+    '',
+    url(r'templates/(?P<template_name>[a-z_/]+.html)', views.RawTemplateView.as_view())
+)

@@ -420,3 +420,16 @@ class CopyToCategoryTemplateView(LoginRequiredMixin, TemplateView):
 
 class DeleteItemConfirmationView(LoginRequiredMixin, TemplateView):
     template_name = 'delete_item_confirmation_modal.html'
+
+
+class RawTemplateView(TemplateView):
+    """
+    Failover view for templates - just look for this path in Django!
+    """
+    def dispatch(self, *args, **kw):
+        self.template_name = kw['template_name']
+        try:
+            get_template(self.template_name)            
+        except TemplateDoesNotExist:
+            return HttpResponseNotFound()
+        return super(RawTemplateView, self).dispatch(*args, **kw)

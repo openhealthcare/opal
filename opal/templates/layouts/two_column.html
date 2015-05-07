@@ -41,6 +41,12 @@
               </p>
             </li>
             <li class="list-group-item">
+              <button class="btn btn-primary" ng-click="open_modal('PatientHistoryCtrl', '/templates/modals/patient_history.html', 'lg', {episode: episode})">
+                <i class="fa fa-history"></i>
+                History
+              </button>
+            </li>
+            <li class="list-group-item">
               <h4><i class="fa fa-bolt"></i> Actions</h4>
               {% include 'partials/_episode_actions.html' %}
             </li>
