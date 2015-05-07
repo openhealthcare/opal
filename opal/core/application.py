@@ -6,6 +6,81 @@ from opal.utils import stringport
 class OpalApplication(object):
     schema_module = None
     flow_module   = None
+    core_javascripts = {
+        'opal.upstream.deps': [
+            "js/jquery-1.11.0/jquery.js",
+            "js/d3/d3.js",
+            "js/c3-0.2.5/c3.js",
+            "js/angular-1.2.20/angular.js",
+            "js/angular-1.2.20/angular-route.js",
+            "js/angular-1.2.20/angular-cookies.js",
+            "js/angular-1.2.20/angular-resource.js",
+            "js/angular-ui-utils-0.1.0/ui-utils.js",
+            "js/ui-bootstrap-tpls-0.11.0.js",
+            "bootstrap-3.1.0/js/bootstrap.js",
+            "js/angular-strap-2.0.3/modules/tooltip.js",
+            "js/angular-strap-2.0.3/modules/tooltip.tpl.js",
+            "js/angular-strap-2.0.3/modules/dimensions.js",
+            "js/angular-strap-2.0.3/modules/parse-options.js",
+            "js/angular-strap-2.0.3/modules/date-parser.js",
+            "js/angular-strap-2.0.3/modules/datepicker.js",
+            "js/angular-strap-2.0.3/modules/datepicker.tpl.js",
+            "js/angular-strap-2.0.3/modules/timepicker.js",
+            "js/angular-strap-2.0.3/modules/timepicker.tpl.js",
+            "js/angular-strap-2.0.3/modules/typeahead.js",
+            "js/angular-strap-2.0.3/modules/typeahead.tpl.js",
+            "js/bower_components/ment.io/dist/mentio.js",
+            "js/bower_components/ment.io/dist/templates.js",
+            "js/bower_components/angular-growl-v2/build/angular-growl.js",
+            "js/jquery-plugins/idle-timer.js",
+            "js/jquery-plugins/jquery.stickytableheaders.js",
+            "js/utils/underscore.js",
+            "js/utils/showdown.js",
+            "js/utils/moment.js",
+            "js/ngprogress-lite/ngprogress-lite.js",
+        ],
+        'opal.utils': [
+            "js/opal/utils.js",
+            "js/opal/opaldown.js",
+            "js/opal/directives.js",
+            "js/opal/filters.js",
+        ],
+        'opal.services': [
+            "js/opal/services_module.js",
+            "js/opal/services/focus.js",
+            "js/opal/services/flow.js",
+            "js/opal/services/user_profile.js",
+            "js/opal/services/item.js",
+            "js/opal/services/episode.js",
+            "js/opal/services/episode_visibility.js",
+            "js/opal/services/episode_loader.js",
+            "js/opal/services/record_loader.js",
+            "js/opal/services/list_schema_loader.js",
+            "js/opal/services/extract_schema_loader.js",
+            "js/opal/services/schema.js",
+            "js/opal/services/options.js",
+            "js/opal/services/episodes_loader.js",
+            "js/opal/services/discharged_episodes_loader.js",
+            "js/opal/services/episode_resource.js",
+            "js/opal/services/copy_to_category.js",
+            "js/opal/services/episode_detail.js" 
+        ],
+        'opal.controllers': [
+            "js/opal/controllers_module.js",
+            "js/opal/controllers/episode_list.js",
+            "js/opal/controllers/episode_detail.js",
+            "js/opal/controllers/hospital_number.js",
+            "js/opal/controllers/add_episode.js",
+            "js/opal/controllers/reopen_episode.js",
+            "js/opal/controllers/edit_item.js",
+            "js/opal/controllers/delete_item_confirmation.js",
+            "js/opal/controllers/account.js",
+            "js/opal/controllers/save_filter.js",
+            "js/opal/controllers/undischarge.js",
+            "js/opal/controllers/copy_to_category.js",
+            "js/opal/controllers/patient_history.js"
+        ]
+    }
     javascripts   = []
     actions       = []
     

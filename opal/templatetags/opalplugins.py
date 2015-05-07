@@ -51,6 +51,14 @@ def plugin_opal_angular_deps():
     return dict(deps=deps)
 
 @register.inclusion_tag('plugins/javascripts.html')
+def core_javascripts(namespace):
+    def scripts():
+        app = application.get_app()
+        for javascript in app.core_javascripts[namespace]:
+            yield javascript
+    return dict(javascripts=scripts)
+
+@register.inclusion_tag('plugins/javascripts.html')
 def application_javascripts():
     def scripts():
         app = application.get_app()
