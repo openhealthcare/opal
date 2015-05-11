@@ -17,6 +17,7 @@ class SearchPlugin(OpalPlugin):
         ],
         'opal.controllers': [
             'js/search/controllers/search.js',
-            'js/search/controllers/extract.js'
+            'js/search/controllers/extract.js',
+            "js/search/controllers/save_filter.js",
         ]
     }

@@ -8,7 +8,7 @@ angular.module('opal.services')
         }
 
         this.save = function(attrs){
-            var url = '/filters/';
+            var url = '/search/filters/';
             var deferred = $q.defer();
             var method;
 
