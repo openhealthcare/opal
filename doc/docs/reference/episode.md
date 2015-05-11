@@ -51,11 +51,20 @@ Arguments:
 
 Keywords: 
 
-* `shallow` Boolean to indicate whether we want just this episode, or also a sorted set of previous and subsequent episodes
+* `shallow` Boolean to indicate whether we want just this episode, or also a sorted set of 
+previous and subsequent episodes
 
 ## Manager
 
 The custom manager for Episodes has the following methods:
+
+### Episode.objects.ever_tagged(team)
+
+Return a list of episodes ever tagged to `team`
+
+Arguments:
+
+* `team` The `Team.name` of the team you are interested in.
 
 ### Episode.objects.serialised()
 
@@ -70,4 +79,5 @@ Arguments:
 
 Keywords: 
 
-* `historic_tags` A boolean to indicate whether the user desires historic or just current tags to be serialised
+* `historic_tags` A boolean to indicate whether the user desires historic or just current tags to 
+be serialised
