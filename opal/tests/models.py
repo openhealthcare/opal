@@ -2,6 +2,8 @@
 Models for just our tests
 """
 from django.db import models as dmodels
+
+from opal.core import fields
 from opal import models
 
 class Colour(models.EpisodeSubrecord):
@@ -32,5 +34,7 @@ if not getattr(models.Patient, 'demographics_set', None):
         hospital_number = dmodels.CharField(max_length=200, blank=True, null=True)
         name = dmodels.CharField(max_length=200, blank=True, null=True)
         date_of_birth = dmodels.DateField(blank=True, null=True)
+        gender = fields.ForeignKeyOrFreeText(models.GenderLookupList)
 
         pid_fields = 'name',
+
