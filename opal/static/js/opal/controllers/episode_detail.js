@@ -5,7 +5,8 @@ angular.module('opal.controllers').controller(
                                   episode, options, profile) {
         $scope._ = _;
 	    $scope.state = 'normal';
-
+        $scope.url = $location.url();
+        
 	    $scope.cix = 0; // column index
 	    $scope.iix = 0; // item index
 

@@ -11,15 +11,4 @@
       Discharge
   </button>
 </p>
-<p ng-show="episode.category == 'OPAT'">
-  <button 
-     ng-hide="profile.readonly"
-     ng-click="dischargeEpisode(episode)"
-     class="btn btn-primary btn-sm">
-    <i class="glyphicon glyphicon-ok"></i>
-    <span ng-show="episode.hasTag('opat_referrals')" >Accept / refuse</span>
-    <span ng-show="episode.hasTag('opat_current')" >Completed IV</span>
-    <span ng-show="episode.hasTag('opat_followup')" >Next</span> 
-  </button>
-</p>
 {% application_actions %}
