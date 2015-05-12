@@ -50,7 +50,7 @@ angular.module('opal.services')
 	        };
 
             // Getter function to return active episode tags.
-            // Default implementation just hits location.
+            // Default implementation just hits tagging
             this.getTags = function(){
                 if(this.tagging[0].makeCopy){
                     var tags =  this.tagging[0].makeCopy()
@@ -61,10 +61,24 @@ angular.module('opal.services')
                 return _.filter(_.keys(tags),  function(t){return tags[t]})
             };
 
+            // 
+            // Boolean predicate function to determine whether
+            // this episode has the given TAG
+            // 
             this.hasTag = function(tag){
                 return this.getTags().indexOf(tag) != -1;
             }
 
+            // 
+            // Return those tags that are child items in HIERARCHY
+            //
+            this.childTags = function(hierarchy){
+                return _.filter(episode.getTags(), function(t){
+                    if(t in hierarchy && hierarchy[t].length > 0){ return false };
+                    return true
+                });
+            }
+            
 	        this.newItem = function(columnName, opts) {
                 var column;
 

@@ -12,6 +12,8 @@ angular.module('opal.controllers').controller(
         $scope.state = 'normal';
         $scope.url = $location.url()
 
+        $scope.options = options;
+
 	    $scope.rix = 0; // row index
 	    $scope.cix = 0; // column index
 	    $scope.iix = 0; // item index
@@ -83,20 +85,6 @@ angular.module('opal.controllers').controller(
                 }
 
             };
-        }
-
-        $scope.otherTags = function(episode){
-            if(!episode){
-                return []
-            }
-            tags = episode.getTags();
-            return _.filter(tags, function(t){
-                if(t in options.tag_hierarchy &&
-                   options.tag_hierarchy[t].length > 0){ return false };
-                if(t == $scope.currentTag){ return false };
-                if(t == $scope.currentSubTag){ return false };
-                return true
-            });
         }
 
 	    $scope.$watch('currentTag', function() {

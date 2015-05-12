@@ -8,15 +8,6 @@ angular.module('opal.services')
             // var schema  = $scope.schema;
             var Flow    = $scope.Flow
             
-            $scope.childTags = function(){
-                tags = episode.getTags();
-                return _.filter(tags, function(t){
-                    if(t in options.tag_hierarchy &&
-                       options.tag_hierarchy[t].length > 0){ return false };
-                    return true
-                });
-            }
-
 	        $scope.selectItem = function(cix, iix) {
 		        $scope.cix = cix;
 		        $scope.iix = iix;

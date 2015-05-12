@@ -33,18 +33,7 @@
               </button>
             </li>            
             <li class="list-group-item">
-              <h4>
-                <i class="fa fa-users"></i> Teams
-                <i class="fa edit fa-pencil pointer pull-right"
-                   ng-click="editNamedItem('tagging', 0)"></i>
-              </h4>
-              <p>
-                <span ng-repeat="tag in childTags()">
-                  <button class="btn btn-xs" ng-click="jumpToTag(tag)" ng-show="tag_display[tag] != undefined">
-                    [[ tag_display[tag] ]]
-                  </button>
-                </span>
-              </p>
+              {% include 'partials/_teams_list.html' %}
             </li>
             <li class="list-group-item">
               {% include 'partials/_episode_actions.html' %}

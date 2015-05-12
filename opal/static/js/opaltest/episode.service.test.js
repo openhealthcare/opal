@@ -1,9 +1,18 @@
 describe('Episode', function() {
     var Episode, EpisodeResource, Item;
-    var episode, episodeData, resource;
+    var episode, episodeData, resource, tag_hierarchy;
 
     beforeEach(function() {
         module('opal.services');
+        
+        tag_hierarchy = {
+            'mine'    : [],
+            'tropical': [],
+            'micro'   : [
+                'ortho', 'haem'
+            ]
+        };
+        
         columns = {
             "fields": {
                 'demographics': {
@@ -110,6 +119,21 @@ describe('Episode', function() {
 
     it('hasTags() Should know if the episode has a given tag', function () {
         expect(episode.hasTag('tropical')).toEqual(true);
+    });
+    
+    describe('childTags()', function (){
+
+        it('Should return child tags', function () {
+            expect(episode.childTags(tag_hierarchy)).toEqual(['mine', 'tropical'])
+        });
+
+        it('Should exclude parent tags', function () {
+            episode.tagging[0].micro = true;
+            episode.tagging[0].haem = true;
+            var children = ['mine', 'tropical', 'haem'];
+            expect(episode.childTags(tag_hierarchy)).toEqual(children);
+        });
+        
     });
 
     it('should be able to add a new item', function() {
