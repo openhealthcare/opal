@@ -40,6 +40,7 @@ def _input(*args, **kwargs):
     formname = kwargs.pop('formname', None)
     unit = kwargs.pop('unit', None)
     data = kwargs.pop('data', [])
+    enter = kwargs.pop('enter', None)
     
     if required:
         if not formname:
@@ -62,7 +63,8 @@ def _input(*args, **kwargs):
         'required'  : required,
         'formname'  : formname,
         'unit'      : unit,
-        'data'      : data
+        'data'      : data,
+        'enter'     : enter
     }
 
 @register.inclusion_tag('_helpers/input.html')
