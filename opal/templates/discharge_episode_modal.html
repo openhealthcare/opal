@@ -1,38 +1,58 @@
+{% extends 'modal_base.html' %}
 {% load forms %}
-<div class="modal-header">
-  <button type="button" class="close" ng-click="cancel()">×</button>
-  <h3>
-    <i class="fa fa-home"></i>
-    Discharge
-  </h3>
-</div>
-<div class="modal-body">
-  <form>
+{% block icon_name %}fa fa-home{% endblock %}
+{% block title %}Discharge {% endblock %}
+{% block modal_body %}
+  <form class="form form-horizontal">
     {% datepicker label="Discharge date" model="editing.discharge_date" hide="editing.category=='Unfollow' || currentCategory=='Discharged'" mindate="[[editing.date_of_admission]]"%}
-    <br />
-    <br/>
-	<div ng-show="currentCategory != 'Followup' && currentCategory != 'Discharged' ">
-	  <label class="radio">
-		<input type="radio" ng-model="editing.category" value="Discharged">
-		Discharge
-	  </label>
-	  <label class="radio">
-		<input type="radio" ng-model="editing.category" value="Followup">
-		Discharge - Outstanding Results for Follow-Up
-	  </label>
-	  <label class="radio">
-		<input type="radio" ng-model="editing.category" value="Deceased">
-		Deceased
-	  </label>
-	  <label class="radio">
-		<input type="radio" ng-model="editing.category" value="Transferred">
-		Transferred
-	  </label>
-	  <label class="radio">
-		<input type="radio" ng-model="editing.category" value="Unfollow">
-		No longer under active review
-	  </label>
+
+	<div 
+       class="col-md-offset-3"
+       ng-show="currentCategory != 'Followup' && currentCategory != 'Discharged' "
+       >
+      <h4>Reason</h4>
+      <div class="radio radio-primary">
+        <input type="radio" name="radio" id="radiodischarged" value="Discharged">
+        <label for="radiodischarged">
+          Discharge
+        </label>
+        <i class="fa fa-home pull-right"></i>
+      </div>
+      
+      <div class="radio radio-primary">
+        <input type="radio" name="radio" id="radiofollowup" value="Followup">
+        <label for="radiofollowup">
+          Discharged - Outstanding Results for Follow-Up
+        </label>
+        <i class="fa fa-home pull-right"></i>
+      </div>
+
+      <div class="radio radio-primary">      
+        <input type="radio" name="radio" id="radiodeceased" value="Deceased">
+        <label for="radiodeceased">
+          Deceased
+        </label>
+        <i class="fa fa-home pull-right"></i>
+      </div>
+      
+      <div class="radio radio-primary">
+        <input type="radio" name="radio" id="radiotransferred" value="Transferred">
+        <label for="radiotransferred">
+          Transferred
+        </label>
+        <i class="fa fa-home pull-right"></i>
+      </div>
+      
+      <div class="radio radio-primary">
+        <input type="radio" name="radio" id="radiounfollow" value="Unfollow">
+        <label for="radiounfollow">
+          No longer under active review
+        </label>
+        <i class="fa fa-home pull-right"></i>
+      </div>
+      
 	</div>
+
     <div ng-show="currentCategory == 'Followup'">
       <input type="hidden" ng-model="editing.category" value="Discharged">
       <p>
@@ -44,11 +64,11 @@
       <p>Confirm discharge.</p>
     </div>
   </form>
-</div>
-<div class="modal-footer">
+{% endblock %}
+{% block modal_save %}
   <button class="btn btn-primary" ng-click="discharge()">
     <i class="fa fa-home"></i>
     Discharge
   </button>
-  <button class="btn" ng-click="cancel()">Cancel</button>
-</div>
+{% endblock %}
+{% block modal_another %}{% endblock %}
