@@ -1,6 +1,7 @@
-<div class="form-group">
-  <label class="control-label col-sm-{{ labelwidth }}">{{ label }}</label>
-  <div class="col-sm-{{ width }}">
-	<input {% if disabled %}ng-disabled="{{ disabled }}"{% endif %} class="" type="checkbox" ng-model="{{ model }}">
-  </div>
+<div class="checkbox checkbox-primary">
+  <input {% if disabled %}ng-disabled="{{ disabled }}"{% endif %}
+         class="" id="checkbox_{{model}}" type="checkbox"
+         ng-model="{{ model }}"
+         />
+  <label for="checkbox_{{model}}">{{ label }}</label>
 </div>

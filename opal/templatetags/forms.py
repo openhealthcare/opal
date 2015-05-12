@@ -131,8 +131,6 @@ def checkbox(*args, **kwargs):
     return {
         'label'     : kwargs.pop('label', None),
         'model'     : kwargs.pop('model', None),
-        'width'     : kwargs.pop('width', 8),
-        'labelwidth': kwargs.pop('labelwidth', 3),
         'disabled'  : kwargs.pop('disabled', None)
     }
 
@@ -147,3 +145,11 @@ def radio(*args, **kwargs):
         'model'     : kwargs.pop('model', None),
         'visibility': visibility
     }
+
+@register.inclusion_tag('_helpers/icon.html')
+def icon(name):
+    if name.startswith('glyphicon'):
+        icon = 'glyphicon ' + name
+    if name.startswith('fa'):
+        icon = 'fa ' + name
+    return dict(icon=icon)

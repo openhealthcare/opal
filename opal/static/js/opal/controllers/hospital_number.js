@@ -100,8 +100,12 @@ angular.module('opal.controllers').controller(
         };
 
         $scope.newForPatientWithActiveEpisode = function(patient){
-			episode = new Episode(patient.episodes[patient.active_episode_id],
-                                  schema)
+			episode = new Episode(patient.episodes[patient.active_episode_id])
+            
+            if(episode.category != 'inpatient'){ // It's the wrong category - add new
+                return $scope.addForPatient(patient);
+            }
+            
 			if (episode.tagging[0][$scope.tags.tag] &&
                 ($scope.tags.subtag == 'all' ||
                  episode.tagging[0][$scope.tags.subtag])) {

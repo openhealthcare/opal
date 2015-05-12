@@ -1,5 +1,6 @@
 {% extends 'modal_base.html' %}
-{% block icon %}<i class="fa fa-users"></i>{% endblock %}
+{% load forms %}
+{% block icon_name %}fa fa-users{% endblock %}
 {% block modal_body %}
   <form name="demographicsForm" class="form-horizontal">
     <div class="form-group">
@@ -34,32 +35,9 @@
 
       </div>
     </div>
-    <div class="form-group">
-      <label class="control-label col-sm-3">Gender</label>
-      <div class="col-sm-8">
-	<input class="form-control" type="text" ng-model="editing.gender"
-               ng-options="d for d in gender_list"
-               bs-typeahead >
-      </div>
-    </div>    
-    <div class="form-group">
-      <label class="control-label col-sm-3">Country of Birth</label>
-      <div class="col-sm-8">
-	<input class="form-control" type="text"
-               ng-model="editing.country_of_birth"
-               ng-options="d for d in destination_list"
-               bs-typeahead >
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="control-label col-sm-3">Ethnicity</label>
-      <div class="col-sm-8">
-	<input class="form-control" type="text" ng-model="editing.ethnicity"
-               ng-options="d for d in ethnicity_list"
-               bs-typeahead >
-
-      </div>
-    </div>    
+    {% select label="Gender" model="editing.gender" lookuplist="gender_list" %}
+    {% input label="Country of Birth" model="editing.country_of_birth" lookuplist="destination_list" %}
+    {% input label="Ethnicity" model="editing.ethnicity" lookuplist="ethnicity_list" %}
 
   </form>
 {% endblock %}
