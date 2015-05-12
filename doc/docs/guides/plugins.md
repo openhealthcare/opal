@@ -25,8 +25,19 @@ extra teams that this user is allowed to see.
 
 ## Defining Schemas 
 
-Plugins can define list schemas. They should return a dictionary of lists of models from the
-list_schemas() method of the plugin class.
+Plugins can define list schemas to be used to generate patient lists. 
+They should return a dictionary of lists of models from the
+`list_schemas` method of the plugin class.
+
+    # yourplugin/__init__.py
+    from opal.core.plugins import OpalPlugin
+
+    from yourplugin import models
+
+    class YourPlugin(OpalPlugin):
+        def list_schemas(self):
+            columns = [models.YourAwesomeModel, models.YourSecondModel, models.SomeOtherModel]
+            return {'yourplugin': {'default': columns}}
 
 ## Defining new flows
 

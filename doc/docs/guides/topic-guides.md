@@ -10,6 +10,7 @@ There are some topic guides available:
 * [Forms](forms.md)
 * [Lookup Lists](lookup_lists.md)
 * [Episode Detail Views](episode_detail_views.md)
+* [Patient List Views](list_views.md)
 
 ### OPAL 
 * [Plugins](plugins.md)

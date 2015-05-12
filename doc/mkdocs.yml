@@ -17,6 +17,7 @@ pages:
   - [guides/forms.md, 'Guides', Forms]
   - [guides/lookup_lists.md, 'Guides', Lookup Lists]
   - [guides/episode_detail_views.md, 'Guides', Episode Detail Views]
+  - [guides/list_views.md, 'Guides', Patient List Views]
   - [guides/plugins.md, 'Guides', Plugins]
 
   - [reference/reference_guides.md, 'Reference', Index]

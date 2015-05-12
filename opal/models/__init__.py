@@ -407,13 +407,13 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
         Return the active display template for our record
         """
         name = camelcase_to_underscore(cls.__name__)
-        list_display_templates = ['{0}.html'.format(name), 'records/{0}.html'.format(name)]
+        list_display_templates = ['records/{0}.html'.format(name)]
         if team:
             list_display_templates.insert(
-                0, 'list_display/{0}/{1}.html'.format(team, name))
+                0, 'records/{0}/{1}.html'.format(team, name))
             if subteam:
                 list_display_templates.insert(
-                    0, 'list_display/{0}/{1}/{2}.html'.format(team,
+                    0, 'records/{0}/{1}/{2}.html'.format(team,
                                                               subteam,
                                                               name))
         try:
@@ -428,8 +428,8 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
         """
         name = camelcase_to_underscore(cls.__name__)
         templates = [
-            name + '_detail.html', 'records/{0}_detail.html'.format(name),
-            name + '.html', 'records/{0}.html'.format(name)
+            'records/{0}_detail.html'.format(name),
+            'records/{0}.html'.format(name)
         ]
         try:
             return select_template(templates).name
@@ -442,7 +442,7 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
         Return the active form template for our record
         """
         name = camelcase_to_underscore(cls.__name__)
-        templates = [name + '_modal.html', 'modals/{0}_modal.html'.format(name)]
+        templates = ['modals/{0}_modal.html'.format(name)]
         if team:
             templates.insert(0, 'modals/{0}/{1}_modal.html'.format(
                 team, name))

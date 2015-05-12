@@ -21,6 +21,7 @@ settings.configure(DEBUG=True,
                                    'django.contrib.sessions',
                                    'django.contrib.admin',
                                    'opal',
+                                   'opal.core.search',
                                    'opal.tests'
                                ))
 
