@@ -22,6 +22,9 @@
            data-{{key}}="{{ val }}"
            {% endfor %}
            {% endif %}
+           {% if enter %}
+           ng-keypress="$event.keyCode == 13 && {{ enter }}"
+           {% endif %}
            />
     {% if required %}
       <span ng-show="{{ formname }}.{{ modelname }}.$dirty && {{ formname }}.{{ modelname }}.$error.required">
