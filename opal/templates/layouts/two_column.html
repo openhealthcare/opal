@@ -33,7 +33,9 @@
               </button>
             </li>            
             <li class="list-group-item">
+              {% with edit_teams="editNamedItem('tagging', 0)" %}
               {% include 'partials/_teams_list.html' %}
+              {% endwith %}
             </li>
             <li class="list-group-item">
               {% include 'partials/_episode_actions.html' %}
@@ -54,7 +56,6 @@
         </div>                 <!-- Ends Detail panels col 2 -->
       </div>
     </div> <!-- Ends Detail Panels -->
-
 
   </div> 
 </div> <!-- Ends Main Panel -->

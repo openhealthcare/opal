@@ -65,7 +65,9 @@
         </p>        
       </li>
       <li class="list-group-item">
+        {% with edit_teams="editNamedItem(episode, 'tagging', 0)" %}
         {% include 'partials/_teams_list.html' %}
+        {% endwith %}
       </li>
       <li class="list-group-item">
         {% include 'partials/_episode_actions.html' %}

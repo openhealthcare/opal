@@ -1,7 +1,7 @@
 <h4>
   <i class="fa fa-users"></i> Teams
   <i class="fa edit fa-pencil pointer pull-right"
-     ng-click="editNamedItem('tagging', 0)"></i>
+     ng-click="{{ edit_teams }}"></i>
 </h4>
 <p ng-repeat="tag in episode.childTags(options.tag_hierarchy)">
   <button class="btn btn-xs" ng-click="jumpToTag(tag)" ng-show="tag_display[tag] != undefined">
