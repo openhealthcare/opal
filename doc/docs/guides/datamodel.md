@@ -39,7 +39,6 @@ implement a Demograpics `Subrecord` as follows:
         hospital_number  = models.CharField(max_length=255, blank=True)
         nhs_number       = models.CharField(max_length=255, blank=True, null=True)
         date_of_birth    = models.DateField(null=True, blank=True)
-        country_of_birth = ForeignKeyOrFreeText(DestinationLookupList)
         ethnicity        = models.CharField(max_length=255, blank=True, null=True)
         gender           = models.CharField(max_length=255, blank=True, null=True)
 
