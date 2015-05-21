@@ -5,6 +5,7 @@ There are some topic guides available:
 * [Flow](flow.md)
 * [Roles & Permissions](roles_and_permissions.md)
 * [Teams](teams.md)
+* [JSON API](json_api.md)
 
 ### Presentation and templating
 * [Forms](forms.md)
@@ -13,4 +14,7 @@ There are some topic guides available:
 * [Patient List Views](list_views.md)
 
 ### OPAL 
+* [OPAL, Applications, Plugins](components_overview.md) - how they all hang together
 * [Plugins](plugins.md)
+* [List of Plugins](plugins_list.md)
+* TODO: Integration

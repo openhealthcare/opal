@@ -1,18 +1,48 @@
 There are various levels of Roles & Permissions provided within OPAL.
 
-# Users
+# The UserProfile model
 
-Users have various settings:
+Some global properties about Users are set in the `opal.models.UserProfile`
+model.
 
-Can extract
-Readonly
-Only restricted teams
+### UserProflie._can_extract
 
-# Teams
+Boolean flag to determine whether this user is allowed to download data extracts
+from the system
 
-A user may be a member of a team
+### UserProflie._force_password_change
+
+Boolean flag to determine whether we would like to force this user to change
+their password on their next login. This defaults to `True` when the `User` is 
+first created.
+
+### UserProfile._readonly
+
+Boolean flag to determine whether this user has readonly access.
+
+### UserProfile._restricted_only
+
+Boolean flag to determine whether this user should be only shown [teams](teams.md) for which they
+have explicitly been given permission to view or whether they should also see the list of
+general access teams.
+
+### UserProfile.get_roles()
+
+Return a dictionary of roles in various contexts for our user
+
+    profile.get_roles() # ->
+    {
+        'default': ['doctor'],
+        'some_research_study': ['Clinical Lead']
+    }
+
+### UserProfile.get_teams()
+
+Return a list of `Team` objects that this user should be allowed to see.
 
 # Roles 
 
-A user may be given a particular role.
+A user may be given a particular role. These can be either global - in which case they are 
+returned in the 'default' section of the roles dict from `get_roles()`, or specific to 
+a [team](teams.md).
 
