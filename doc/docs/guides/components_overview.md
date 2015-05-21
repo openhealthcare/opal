@@ -44,7 +44,7 @@ that integrate with one another.
 
 ## Opinionated but Pluggable
 
-OPAL is an Opinionated Framework. It expects the developer to structure functionality in a 
+OPAL is an Opinionated Framework. It expects the developer to structure code in a 
 certain way. 
 
 OPAL expects features to be implemented as single page Angular.js applications, with the server
