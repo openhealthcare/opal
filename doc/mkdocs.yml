@@ -9,13 +9,15 @@ pages:
   - [tutorial.md, 'Tutorials', Your first OPAL App]
   # - [plugins.md, 'Tutorials', Your first OPAL Plugin]
 
-  - [guides/topic-guides.md, 'Data & Flow Guides', Index]
+  - [guides/topic-guides.md, 'Guides', Index]
+
   - [guides/datamodel.md, 'Data & Flow Guides', Data Model]
   - [guides/flow.md, 'Data & Flow Guides', Flow]
   - [guides/roles_and_permissions.md, 'Data & Flow Guides', Roles & Permissions]
   - [guides/teams.md, 'Data & Flow Guides', Teams]
   - [guides/json_api.md, 'Data & Flow Guides', JSON API] 
 
+  - [guides/templates.md, 'Presentation & Templating Guides', Templates]
   - [guides/forms.md, 'Presentation & Templating Guides', Forms]
   - [guides/lookup_lists.md, 'Presentation & Templating Guides', Lookup Lists]
   - [guides/episode_detail_views.md, 'Presentation & Templating Guides', Episode Detail Views]

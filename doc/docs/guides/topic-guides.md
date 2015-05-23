@@ -8,6 +8,7 @@ There are some topic guides available:
 * [JSON API](json_api.md)
 
 ### Presentation and templating
+* [Templates](templates.md)
 * [Forms](forms.md)
 * [Lookup Lists](lookup_lists.md)
 * [Episode Detail Views](episode_detail_views.md)

@@ -28,6 +28,10 @@ OPAL.run = function(app){
 }
 
 OPAL._run = function($rootScope, ngProgressLite, $modal) {
+
+    // Let's allow people to know what version they're running
+    $rootScope.OPAL_VERSION = version;
+    
     // When route started to change.
     $rootScope.$on('$routeChangeStart', function() {
         ngProgressLite.set(0);
