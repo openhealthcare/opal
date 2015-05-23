@@ -330,7 +330,6 @@ def _get_column_context(schema, **kwargs):
         column_context['single'] = column._is_singleton
         column_context['icon'] = getattr(column, '_icon', '')
         column_context['list_limit'] = getattr(column, '_list_limit', None)
-        column_context['batch_template'] = getattr(column, '_batch_template', None)
 
         header_templates = [name + '_header.html']        
         if 'tag' in kwargs:
