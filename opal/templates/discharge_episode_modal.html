@@ -12,7 +12,7 @@
        >
       <h4>Reason</h4>
       <div class="radio radio-primary">
-        <input type="radio" name="radio" id="radiodischarged" value="Discharged">
+        <input type="radio" name="radio" id="radiodischarged" value="Discharged" ng-model="editing.category">
         <label for="radiodischarged">
           Discharge
         </label>
@@ -20,7 +20,7 @@
       </div>
       
       <div class="radio radio-primary">
-        <input type="radio" name="radio" id="radiofollowup" value="Followup">
+        <input type="radio" name="radio" id="radiofollowup" value="Followup" ng-model="editing.category">
         <label for="radiofollowup">
           Discharged - Outstanding Results for Follow-Up
         </label>
@@ -28,7 +28,7 @@
       </div>
 
       <div class="radio radio-primary">      
-        <input type="radio" name="radio" id="radiodeceased" value="Deceased">
+        <input type="radio" name="radio" id="radiodeceased" value="Deceased" ng-model="editing.category">
         <label for="radiodeceased">
           Deceased
         </label>
@@ -36,7 +36,7 @@
       </div>
       
       <div class="radio radio-primary">
-        <input type="radio" name="radio" id="radiotransferred" value="Transferred">
+        <input type="radio" name="radio" id="radiotransferred" value="Transferred" ng-model="editing.category">
         <label for="radiotransferred">
           Transferred
         </label>
@@ -44,7 +44,7 @@
       </div>
       
       <div class="radio radio-primary">
-        <input type="radio" name="radio" id="radiounfollow" value="Unfollow">
+        <input type="radio" name="radio" id="radiounfollow" value="Unfollow" ng-model="editing.category">
         <label for="radiounfollow">
           No longer under active review
         </label>
