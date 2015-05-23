@@ -22,3 +22,20 @@ will render .html files direct from disk.
 So if our template is at `./myapp/templates/foo/bar.html`, then the url `/templates/foo/bar.html`
 will return it.
 
+### Partials
+
+OPAL has some built in template partials that are generally useful.
+
+##### partials/_episode_summary_table.html
+
+A table that renders the name, hospital number, date of birth, date of admission & discharge date
+for a list of episodes. Expects episodes to be stored in `$scope.results`. Will limit the 
+number of results to `$scope.limit` .Clicking on an individual 
+episode in the table will call `$scope.jumpToEpisode(episode)`.
+
+    // Controller Fn
+    function($scope, episodes, $location){
+        $scope.limit = 10;
+        $scope.results = episodes;
+        $scope.jumpToEpisode = function(episode){ $location.path('/episode/'+episode.id }
+    }
