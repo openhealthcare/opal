@@ -822,8 +822,7 @@ describe('controllers', function() {
 
                 callArgs = $modal.open.mostRecentCall.args;
                 expect(callArgs.length).toBe(1);
-                expect(callArgs[0].controller).toBe('ReopenEpisodeCtrl');
-                expect(callArgs[0].resolve.tag()).toBe('mine');
+                expect(callArgs[0].controller).toBe('AddEpisodeCtrl');
             });
             
             it('should call through if there is an active episode.', function(){
@@ -861,8 +860,7 @@ describe('controllers', function() {
 
                 callArgs = $modal.open.mostRecentCall.args;
                 expect(callArgs.length).toBe(1);
-                expect(callArgs[0].controller).toBe('ReopenEpisodeCtrl');
-                expect(callArgs[0].resolve.tag()).toBe('mine');
+                expect(callArgs[0].controller).toBe('AddEpisodeCtrl');
             });
 
             it('should open a new episode', function(){

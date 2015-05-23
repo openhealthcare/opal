@@ -1,9 +1,10 @@
 var OPAL = {};
+if(undefined === version){ var version = 'test'}; 
+
 OPAL.module = function(namespace, dependencies){
     if(undefined === dependencies){ dependencies = []; };
     dependencies.push('angular-growl');
     dependencies.push('mentio');
-
     if(undefined === OPAL_ANGULAR_DEPS) { var OPAL_ANGULAR_DEPS = [] }
     _.each(OPAL_ANGULAR_DEPS, function(d){ dependencies.push(d) });            
     var mod = angular.module(namespace, dependencies);
