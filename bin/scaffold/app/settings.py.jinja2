@@ -92,6 +92,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'compressor.finders.CompressorFinder',
 )
 
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage'
@@ -152,6 +153,7 @@ INSTALLED_APPS = (
     'reversion',
     'south',
     'rest_framework',
+    'compressor',
     'opal',
     'opal.core.search',
     '{{ name }}',
