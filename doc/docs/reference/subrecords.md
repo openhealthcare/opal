@@ -21,6 +21,15 @@ There may only be one of each singleton Subrecord, which is created whth the par
 For this case, when a `Patient` is created, an empty `Demographics` instance will 
 automatically be created.
 
+### Subrecord._list_limit
+
+Integer to indicate the maximum number of entries to display in list view for this
+model. Useful for record types where many entries will accrue, or where display is
+particularly verbose.
+
+    class BloodPressureReading(EpisodeSubrecord):
+        _list_limit = 3
+
 ### Subrecord._modal
 
 String to indicate a non-default modal size to be used for editing this `Subrecord`.
