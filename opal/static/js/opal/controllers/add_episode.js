@@ -54,7 +54,7 @@ angular.module('opal.controllers')
 		    }
 
 		    $http.post('episode/', $scope.editing).success(function(episode) {
-			    episode = new Episode(episode, schema);
+			    episode = new Episode(episode);
 			    $modalInstance.close(episode);
 		    });
 	    };
