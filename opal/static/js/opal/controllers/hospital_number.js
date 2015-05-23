@@ -62,40 +62,7 @@ angular.module('opal.controllers').controller(
 				// This patient has an active episode
                 $scope.newForPatientWithActiveEpisode(patient);
 			} else { // This patient has no active episode
-                // Check to see if the patient has *any* episodes
-                if (_.keys(patient.episodes).length ==  0){
-                    $scope.addForPatient(patient);
-                }else {
-					// Convert episodes to Episodes - TODO
-                    // it'd be better if this happened when the patient
-                    // was retrieved
-					for (var eix in patient.episodes) {
-						patient.episodes[eix] = new Episode(patient.episodes[eix],
-                                                            schema);
-					}
-					// Ask user if they want to reopen an episode, or open a new one
-					modal = $modal.open({
-						templateUrl: '/templates/modals/reopen_episode.html/',
-						controller: 'ReopenEpisodeCtrl',
-						resolve: {
-							patient: function() { return patient; },
-							tag: function() { return $scope.tags.tag; },
-							subtag: function() { return $scope.tags.subtag; }
-						}
-					}).result.then(function(result) {
-						var demographics;
-						if (result == 'open-new') {
-							// User has chosen to open a new episode
-                            $scope.addForPatient(patient);
-						} else {
-							// User has chosen to reopen an episode, or cancelled
-							$modalInstance.close(result);
-						};
-					},
-                                   function(result){
-                                       $modalInstance.close(result);
-                                   });
-                }
+                $scope.addForPatient(patient);
 			};
         };
 
