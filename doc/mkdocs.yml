@@ -18,6 +18,7 @@ pages:
   - [guides/json_api.md, 'Data & Flow Guides', JSON API] 
 
   - [guides/templates.md, 'Presentation & Templating Guides', Templates]
+  - [guides/static_files.md, 'Presentation & Templating Guides', Static Files]
   - [guides/forms.md, 'Presentation & Templating Guides', Forms]
   - [guides/lookup_lists.md, 'Presentation & Templating Guides', Lookup Lists]
   - [guides/episode_detail_views.md, 'Presentation & Templating Guides', Episode Detail Views]

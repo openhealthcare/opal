@@ -1,3 +1,5 @@
+# Templates in OPAL
+
 OPAL uses a mixture of Django and Angular templates.
 
 ### Angular templates 

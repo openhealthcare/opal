@@ -1,4 +1,6 @@
 {% load staticfiles %}
+{% load compress %}
+
 {% load opalplugins %}
 <!doctype html>
 <html xmlns:ng="http://angularjs.org" id="ng-app" ng-app="{% block ngapp %}opal{% endblock %}" ng-controller="RootCtrl" ng-keydown="keydown($event)">
@@ -10,6 +12,7 @@
 	<meta charset="utf-8">
 	<title>{{brand_name}}</title>
 
+    {% compress js %}
     {% core_javascripts 'opal.upstream.deps' %}
     {% plugin_javascripts 'opal.upstream.deps' %}
     {% plugin_opal_angular_deps %}
@@ -26,7 +29,10 @@
       var version = '{{VERSION_NUMBER}}'
     </script>
 
+
+
     {% core_javascripts 'opal.utils' %}
+
     {% core_javascripts 'opal.services' %}
     {% plugin_javascripts 'opal.services' %}
     {% core_javascripts 'opal.controllers' %}
@@ -39,6 +45,7 @@
 
     {% application_javascripts %}
     <script type="text/javascript" src="{% static "js/opal/timer.js" %}"></script>
+    {% endcompress %}
 
     <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Merriweather:400,300,700' rel='stylesheet' type='text/css'>
@@ -54,6 +61,7 @@
     <link href="{% static "css/screen.css" %}" rel="stylesheet" media="screen">
 
     {% plugin_stylesheets %}
+
     
     <link rel="shortcut icon" href="{% static 'img/ohc-icon.png' %}">
 

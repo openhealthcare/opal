@@ -40,6 +40,7 @@ setup(
         'South==0.8.1',
         'django-reversion==1.8.0',
         'django-axes==1.3.4',
-        'djangorestframework'
+        'djangorestframework',
+        'django-compressor==1.5'
         ]
 )

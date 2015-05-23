@@ -9,6 +9,7 @@ There are some topic guides available:
 
 ### Presentation and templating
 * [Templates](templates.md)
+* [Static Files](static_files.md) 
 * [Forms](forms.md)
 * [Lookup Lists](lookup_lists.md)
 * [Episode Detail Views](episode_detail_views.md)

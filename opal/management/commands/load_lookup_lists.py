@@ -45,9 +45,14 @@ class Command(BaseCommand):
         num = 0
         for model in LookupList.__subclasses__():
             name = model.__name__.lower()
+            # print name, (name in data)
+            # if name == 'drug':
+            #     import pdb;pdb.set_trace()
+            #     print data[name]
             if name in data:
                 print 'Loading', name
                 num += 1
+
                 for item in data[name]:
                     self._install_item(model, item)
         print 'Loaded', num, 'lookup lists'

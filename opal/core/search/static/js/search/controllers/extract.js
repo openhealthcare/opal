@@ -1,13 +1,19 @@
 angular.module('opal.controllers').controller(
     'ExtractCtrl', function($scope, $http, $window, $modal,
                             ngProgressLite, profile, filters, options, schema){
+
+        var underscoreToCapWords = function(str) {
+            return str.toLowerCase().replace(/_/g, ' ').replace(
+                    /(?:\b)(\w)/g, function(s, p){ return p.toUpperCase() });
+        }
+
         $scope.profile = profile;
         $scope.limit = 10;
         $scope.JSON = window.JSON;
         $scope.filters = filters;
         $scope.columns = schema.columns;
         $scope.column_names = _.map(schema.columns, function(c){
-            return c.name.underscoreToCapWords();
+            return underscoreToCapWords(c.name);
         });
 
 	    for (var name in options) {
@@ -57,7 +63,7 @@ angular.module('opal.controllers').controller(
                 _.reject(
                     column.fields,
                     function(c){ return c.type == 'token' ||  c.type ==  'list'; }),
-                function(c){ return c.name.underscoreToCapWords(); }
+                function(c){ return underscoreToCapWords(c.name); }
             );
         };
 
@@ -103,7 +109,7 @@ angular.module('opal.controllers').controller(
         // Determine the appropriate lookup list for this field if
         // one exists.
         //
-       $scope.$watch('criteria', function(){
+        $scope.$watch('criteria', function(){
             _.map($scope.criteria, function(c){
                 var column = _.findWhere($scope.columns, {name: c.column});
                 if(!column){return}
