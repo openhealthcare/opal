@@ -60,3 +60,11 @@ display of electronic observations data.
 
 The [Analytics](https://github.com/openhealthcare/opal-analytics) plugin allows you to integrate
 your application with Google or Piwik Analytics with a minimum of fuss.
+
+### opal-guidelines
+
+The [Guidelines](https://github.com/openhealthcare/opal-guidelines) plugin presents contextual links to clinical
+guidelines in use at your information when viewing records of patients whose condition matches those guidelines.
+
+Can be used with national or local guidelines.
+
