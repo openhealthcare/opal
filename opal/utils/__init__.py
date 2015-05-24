@@ -17,15 +17,18 @@ def stringport(module):
         return importlib.import_module(module)
     except ImportError, e:
         try:
+            if '.' not in module:
+                raise
             module, obj = module.rsplit('.', 1)
             module = importlib.import_module(module)
             if hasattr(module, obj):
                 return getattr(module, obj)
             else:
-                raise ImportError(msg + e.message)
+                raise ImportError(msg)
         except ImportError, e:
-            raise ImportError(msg + e.message)
-        raise ImportError(msg + e.message)
+            raise ImportError(msg)
+        raise ImportError(msg)
+
 
 def _itersubclasses(cls, _seen=None):
     """

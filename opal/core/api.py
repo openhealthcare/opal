@@ -36,7 +36,6 @@ class OPALRouter(routers.DefaultRouter):
             return routers.DefaultRouter.get_default_base_name(self, viewset)
         return name
 
-
 router = OPALRouter()
 
 def item_from_pk(fn):
@@ -368,7 +367,8 @@ for subrecord in subrecords():
 for plugin in plugins.plugins():
     for api in plugin.apis:
         router.register(*api)
-    
+
+        
 class APIAdmitEpisodeView(View):
     """
     Admit an episode from upstream!
