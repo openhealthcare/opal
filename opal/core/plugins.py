@@ -1,6 +1,7 @@
 """
 OPAL PLugin - base class and helpers
 """
+from django.conf import settings
 from opal.utils import _itersubclasses
 
 class OpalPlugin(object):
@@ -40,10 +41,31 @@ class OpalPlugin(object):
         """
         return []
 
+REGISTRY = set()
+AUTODISCOVERED = False
 
+def register(what):
+    #print 'registering', what
+    REGISTRY.add(what)
+
+def autodiscover():
+    from opal.utils import stringport
+    global AUTODISCOVERED
+
+    for a in settings.INSTALLED_APPS:
+        print 'stringporting', a
+        stringport(a)
+    AUTODISCOVERED = True
+
+    return REGISTRY
+   
 def plugins():
     """
     Generator function for plugin instances
     """
-    for m in _itersubclasses(OpalPlugin):
+    global AUTODISCOVERED
+    
+    if not AUTODISCOVERED:
+        autodiscover()
+    for m in REGISTRY:
         yield m

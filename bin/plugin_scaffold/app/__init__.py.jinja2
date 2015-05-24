@@ -1,11 +1,11 @@
 """
 Plugin definition for the {{ name }} OPAL plugin
 """
-from opal.core.plugins import OpalPlugin
+from opal.core import plugins
 
 from {{ name }}.urls import urlpatterns
 
-class {{ name.title() }}Plugin(OpalPlugin):
+class {{ name.title() }}Plugin(plugins.OpalPlugin):
     """
     Main entrypoint to expose this plugin to our OPAL application.
     """
@@ -44,3 +44,6 @@ class {{ name.title() }}Plugin(OpalPlugin):
         by our plugin.
         """
         return {}
+
+
+plugins.register({{ name.title() }}Plugin)

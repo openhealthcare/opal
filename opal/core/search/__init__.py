@@ -2,9 +2,9 @@
 OPAL core search package
 """
 from opal.core.search import urls
-from opal.core.plugins import OpalPlugin
+from opal.core import plugins
 
-class SearchPlugin(OpalPlugin):
+class SearchPlugin(plugins.OpalPlugin):
     """
     The plugin entrypoint for OPAL's core search functionality
     """
@@ -21,3 +21,5 @@ class SearchPlugin(OpalPlugin):
             "js/search/controllers/save_filter.js",
         ]
     }
+
+plugins.register(SearchPlugin)

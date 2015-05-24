@@ -1,11 +1,11 @@
 """
 OPAL core collaborative Plugin
 """
-from opal.core.plugins import OpalPlugin
+from opal.core import plugins
 
 from opal.core.collaborative import urls
 
-class CollaborativePlugin(OpalPlugin):
+class CollaborativePlugin(plugins.OpalPlugin):
     """
     Plugin entrypoint for OPAL's collaborative realtime editing features
     """
@@ -18,3 +18,5 @@ class CollaborativePlugin(OpalPlugin):
             'js/collaborative/collaborator.js'
         ]
     }
+
+plugins.register(CollaborativePlugin)
