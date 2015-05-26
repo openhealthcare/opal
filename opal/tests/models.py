@@ -34,7 +34,7 @@ if not getattr(models.Patient, 'demographics_set', None):
         hospital_number = dmodels.CharField(max_length=200, blank=True, null=True)
         name = dmodels.CharField(max_length=200, blank=True, null=True)
         date_of_birth = dmodels.DateField(blank=True, null=True)
-        gender = fields.ForeignKeyOrFreeText(models.GenderLookupList)
+        gender = fields.ForeignKeyOrFreeText(models.Gender)
 
         pid_fields = 'name',
 

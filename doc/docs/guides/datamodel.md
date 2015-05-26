@@ -29,7 +29,7 @@ An `Episode` will have `Subrecords` (such as e.g. Diagnosis) which are linked to
 care. These should be implemented as Django models that inherit from the `opal.models.EpisodeSubRecord`
 base class.
 
-### Sub Records
+### Records
 
 A `Subrecord` consists of a collection of fields that constitute a record. For example, one could 
 implement a Demograpics `Subrecord` as follows:
@@ -46,3 +46,11 @@ implement a Demograpics `Subrecord` as follows:
 Subrecords also define various properties that will provide metadata about their
 display or structure, which are documented in the 
 (Subrecord reference material)[../reference/subrecords.md]
+
+### Lookup Lists
+
+OPAL comes with a set of clinical terminology data models out of the box. - we often
+want to link our records to one of these - for example to record a type of condition
+a patient might have, or a drug they are taking.
+
+Full documentation of these is available in the [Lookup lists](lookup_lists.md) documentation.

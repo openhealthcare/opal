@@ -16,11 +16,11 @@ pages:
   - [guides/roles_and_permissions.md, 'Data & Flow Guides', Roles & Permissions]
   - [guides/teams.md, 'Data & Flow Guides', Teams]
   - [guides/json_api.md, 'Data & Flow Guides', JSON API] 
+  - [guides/lookup_lists.md, 'Data & Flow Guides', Lookup Lists]
 
   - [guides/templates.md, 'Presentation & Templating Guides', Templates]
   - [guides/static_files.md, 'Presentation & Templating Guides', Static Files]
   - [guides/forms.md, 'Presentation & Templating Guides', Forms]
-  - [guides/lookup_lists.md, 'Presentation & Templating Guides', Lookup Lists]
   - [guides/episode_detail_views.md, 'Presentation & Templating Guides', Episode Detail Views]
   - [guides/list_views.md, 'Presentation & Templating Guides', Patient List Views]
 

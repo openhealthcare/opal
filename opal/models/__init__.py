@@ -14,24 +14,14 @@ from django.template import TemplateDoesNotExist
 from django.template.loader import select_template
 import reversion
 
-from opal.core import application, plugins, exceptions
+from opal.core import application, exceptions, lookuplists, plugins
 from opal import managers
 from opal.utils import stringport, camelcase_to_underscore
-from opal.core.lookuplists import lookup_list
 from opal.core.fields import ForeignKeyOrFreeText
-from opal.core.lookuplists import lookup_list
 from opal.core.subrecords import episode_subrecords, patient_subrecords
+from opal.models.mixins import UpdatesFromDictMixin
 
 app = application.get_app()
-
-# TODO This is stupid - we can fully deprecate this please?
-try:
-    options = stringport(settings.OPAL_OPTIONS_MODULE)
-except AttributeError:
-    class options:
-        model_names = []
-
-from opal.models.mixins import UpdatesFromDictMixin
 
     
 class Filter(models.Model):
@@ -585,18 +575,59 @@ class Tagging(models.Model):
 
 
 """
-Fields
+Base Lookup Lists
 """
 
-GenderLookupList = type(*lookup_list('gender', module='opal.models'))
-EthnicityLookupList = type(*lookup_list('ethnicity', module='opal.models'))
-DestinationLookupList= type(*lookup_list('destination', module='opal.models'))
-DrugLookupList= type(*lookup_list('drug', module='opal.models'))
-DrugRouteLookupList= type(*lookup_list('drugroute', module='opal.models'))
-DrugFrequencyLookupList= type(*lookup_list('drugfreq', module='opal.models'))
-ConditionLookupList = type(*lookup_list('condition', module='opal.models'))
-HospitalLookupList = type(*lookup_list('hospital', module='opal.models'))
+class Antimicrobial_route(lookuplists.LookupList): pass
+class Antimicrobial(lookuplists.LookupList): pass
+class Antimicrobial_adverse_event(lookuplists.LookupList): pass
+class Antimicrobial_frequency(lookuplists.LookupList): pass
+class Clinical_advice_reason_for_interaction(lookuplists.LookupList): pass
+class Condition(lookuplists.LookupList): pass
+class Condition(lookuplists.LookupList): pass
+class Destination(lookuplists.LookupList): pass
+class Destination(lookuplists.LookupList): pass
+class Drug(lookuplists.LookupList): pass
+class Drugfreq(lookuplists.LookupList): pass
+class Drugroute(lookuplists.LookupList): pass
+class Duration(lookuplists.LookupList): pass
+class Ethnicity(lookuplists.LookupList): pass
+class Gender(lookuplists.LookupList): pass
+class Hospital(lookuplists.LookupList): pass
+class Hospital(lookuplists.LookupList): pass
 
+# These should probably get refactored into opal-opat in 0.5
+class Line_complication(lookuplists.LookupList): pass
+class Line_removal_reason(lookuplists.LookupList): pass
+class Line_site(lookuplists.LookupList): pass
+class Line_type(lookuplists.LookupList): pass
+
+class Micro_test_c_difficile(lookuplists.LookupList): pass
+class Micro_test_csf_pcr(lookuplists.LookupList): pass
+class Micro_test_ebv_serology(lookuplists.LookupList): pass
+class Micro_test_hepititis_b_serology(lookuplists.LookupList): pass
+class Micro_test_hiv(lookuplists.LookupList): pass
+class Micro_test_leishmaniasis_pcr(lookuplists.LookupList): pass
+class Micro_test_mcs(lookuplists.LookupList): pass
+class Micro_test_other(lookuplists.LookupList): pass
+class Micro_test_parasitaemia(lookuplists.LookupList): pass
+class Micro_test_respiratory_virus_pcr(lookuplists.LookupList): pass
+class Micro_test_serology(lookuplists.LookupList): pass
+class Micro_test_single_igg_test(lookuplists.LookupList): pass
+class Micro_test_single_test_pos_neg(lookuplists.LookupList): pass
+class Micro_test_single_test_pos_neg_equiv(lookuplists.LookupList): pass
+class Micro_test_stool_parasitology_pcr(lookuplists.LookupList): pass
+class Micro_test_stool_pcr(lookuplists.LookupList): pass
+class Micro_test_swab_pcr(lookuplists.LookupList): pass
+class Micro_test_syphilis_serology(lookuplists.LookupList): pass
+class Micro_test_viral_load(lookuplists.LookupList): pass
+class Microbiology_organism(lookuplists.LookupList): pass
+class Symptom(lookuplists.LookupList): pass
+class Travel_reason(lookuplists.LookupList): pass
+
+"""
+Base models
+"""
 
 
 class Demographics(PatientSubrecord):
@@ -607,7 +638,7 @@ class Demographics(PatientSubrecord):
     hospital_number  = models.CharField(max_length=255, blank=True)
     nhs_number       = models.CharField(max_length=255, blank=True, null=True)
     date_of_birth    = models.DateField(null=True, blank=True)
-    country_of_birth = ForeignKeyOrFreeText(DestinationLookupList)
+    country_of_birth = ForeignKeyOrFreeText(Destination)
     ethnicity        = models.CharField(max_length=255, blank=True, null=True)
     gender           = models.CharField(max_length=255, blank=True, null=True)
 
@@ -644,12 +675,12 @@ class Antimicrobial(EpisodeSubrecord):
     _icon = 'fa fa-flask'
     _modal = 'lg'
 
-    drug          = ForeignKeyOrFreeText(DrugLookupList)
+    drug          = ForeignKeyOrFreeText(Drug)
     dose          = models.CharField(max_length=255, blank=True)
-    route         = ForeignKeyOrFreeText(DrugRouteLookupList)
+    route         = ForeignKeyOrFreeText(Drugroute)
     start_date    = models.DateField(null=True, blank=True)
     end_date      = models.DateField(null=True, blank=True)
-    frequency     = ForeignKeyOrFreeText(DrugFrequencyLookupList)
+    frequency     = ForeignKeyOrFreeText(Drugfreq)
 
     class Meta:
         abstract = True
@@ -658,7 +689,7 @@ class Antimicrobial(EpisodeSubrecord):
 class Allergies(PatientSubrecord):
     _icon = 'fa fa-warning'    
 
-    drug        = ForeignKeyOrFreeText(DrugLookupList)
+    drug        = ForeignKeyOrFreeText(Drug)
     provisional = models.BooleanField()
     details     = models.CharField(max_length=255, blank=True)
 
@@ -675,7 +706,7 @@ class Diagnosis(EpisodeSubrecord):
     _sort = 'date_of_diagnosis'
     _icon = 'fa fa-stethoscope'
 
-    condition         = ForeignKeyOrFreeText(ConditionLookupList)
+    condition         = ForeignKeyOrFreeText(Condition)
     provisional       = models.BooleanField()
     details           = models.CharField(max_length=255, blank=True)
     date_of_diagnosis = models.DateField(blank=True, null=True)
@@ -696,7 +727,7 @@ class PastMedicalHistory(EpisodeSubrecord):
     _sort = 'year'
     _icon = 'fa fa-history'
 
-    condition = ForeignKeyOrFreeText(ConditionLookupList)
+    condition = ForeignKeyOrFreeText(Condition)
     year      = models.CharField(max_length=4, blank=True)
     details   = models.CharField(max_length=255, blank=True)
 
@@ -804,15 +835,6 @@ class UserProfile(models.Model):
         """
         from opal.models import Team
         return Team.for_user(self.user)
-
-
-# TODO: Stop Doing this! 
-option_models = {}
-
-model_names = options.model_names
-
-for name in model_names:
-    option_models[name] = type(*lookup_list(name, module='opal.models'))
 
 
 @receiver(models.signals.post_save, sender=Patient)

@@ -19,8 +19,8 @@ from opal import models
 from opal.core import application, exceptions, glossolalia, fields, plugins
 from opal.core.lookuplists import LookupList
 from opal.core.subrecords import episode_subrecords, patient_subrecords, subrecords
-from opal.core.views import (LoginRequiredMixin, _get_request_data, _build_json_response,
-                             with_no_caching)
+from opal.core.views import (LoginRequiredMixin, _get_request_data,
+                             _build_json_response, with_no_caching)
 from opal.utils import camelcase_to_underscore, stringport
 from opal.utils.banned_passwords import banned
 
@@ -33,10 +33,8 @@ try:
     micro_test_defaults = options.micro_test_defaults
 except AttributeError:
     class options:
-        model_names = []
-    micro_test_defaults = []
+        micro_test_defaults = []
 
-option_models = models.option_models
 Synonym = models.Synonym
 
 LIST_SCHEMAS = {}
