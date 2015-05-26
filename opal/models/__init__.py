@@ -594,7 +594,7 @@ class Duration(lookuplists.LookupList): pass
 class Ethnicity(lookuplists.LookupList): pass
 class Gender(lookuplists.LookupList): pass
 class Hospital(lookuplists.LookupList): pass
-class Hospital(lookuplists.LookupList): pass
+class Ward(lookuplists.LookupList): pass
 
 # These should probably get refactored into opal-opat in 0.5
 class Line_complication(lookuplists.LookupList): pass
