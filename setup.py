@@ -37,7 +37,7 @@ setup(
         'jinja2',
         'requests',
         'django==1.6.11',
-        'South==0.8.1',
+        'South==1.0.2',
         'django-reversion==1.8.0',
         'django-axes==1.3.4',
         'djangorestframework',
