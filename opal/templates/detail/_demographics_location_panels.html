@@ -72,7 +72,7 @@
                   <b>Category</b>
                 </div>
                 <div class="col-md-8">
-                  [[ episode.location[0].category ]]
+                  [[episode.category.charAt(0).toUpperCase() + episode.category.substring(1)]]
                 </div>
               </div>
               <div class="row" ng-show="episode.date_of_admission">
