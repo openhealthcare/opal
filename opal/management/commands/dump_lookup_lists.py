@@ -9,7 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand
 
 from opal.models import Synonym
-from opal.utils.models import LookupList
+from opal.core.lookuplists import LookupList
 
 class Command(BaseCommand):
     
