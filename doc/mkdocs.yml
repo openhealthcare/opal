@@ -25,6 +25,7 @@ pages:
   - [guides/list_views.md, 'Presentation & Templating Guides', Patient List Views]
 
   - [guides/components_overview.md, 'OPAL Guides', Component Overview]
+  - [guides/command_line_tool.md, 'OPAL Guides', Command Line tool]
   - [guides/plugins.md, 'OPAL Guides', Plugins]
   - [guides/plugins_list.md, 'OPAL Guides', Plugin List]
 

@@ -17,6 +17,7 @@ There are some topic guides available:
 
 ### OPAL 
 * [OPAL, Applications, Plugins](components_overview.md) - how they all hang together
+* [Command line tool](command_line_tool.md) - running admin tasks from the command line
 * [Plugins](plugins.md)
 * [List of Plugins](plugins_list.md)
 * TODO: Integration

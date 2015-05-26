@@ -7,6 +7,7 @@ import argparse
 import inspect
 import os
 import shutil
+import subprocess
 import sys
 
 import ffs
@@ -15,10 +16,11 @@ from ffs.contrib import mold
 
 import opal
 
-USERLAND_HERE = ffs.Path('.').abspath
-SCRIPT_HERE = ffs.Path(__file__).parent
-SCAFFOLD = SCRIPT_HERE/'scaffold'
+USERLAND_HERE   = ffs.Path('.').abspath
+SCRIPT_HERE     = ffs.Path(__file__).parent
+SCAFFOLD        = SCRIPT_HERE/'scaffold'
 PLUGIN_SCAFFOLD = SCRIPT_HERE/'plugin_scaffold'
+TRAVIS          = os.environ.get('TRAVIS', False)
 
 def _find_application_name():
     """
@@ -285,6 +287,56 @@ def scaffold(args):
             if not thing.get_form_template():
                 _create_form_template_for(thing)
     return
+
+def _run_py_tests():
+    """
+    Run our Python test suite
+    """
+    print "Running Python Unit Tests"
+    try:
+        subprocess.check_call(['python', 'runtests.py'])
+    except subprocess.CalledProcessError:
+        sys.exit(1)
+    return
+
+def _run_js_tests():
+    """
+    Run our Javascript test suite
+    """
+    print "Running Javascript Unit Tests"
+    env = os.environ.copy()
+    if TRAVIS:
+        sub_args = [
+            './node_modules/karma/bin/karma',
+            'start',
+            'config/karma.conf.travis.js',
+            '--single-run'
+        ]
+    else:
+        sub_args = [
+            'karma',
+            'start',
+            'config/karma.conf.developer.js',
+            '--single-run'
+        ]
+        env['DISPLAY'] = ':10'
+    try:
+        subprocess.check_call(sub_args, env=env)
+    except subprocess.CalledProcessError:
+        sys.exit(1)
+    return
+
+def test(args):
+    """
+    Run our test suites
+    """
+    if args.what == 'all':
+        suites = ['py', 'js']
+    else:
+        suites = args.what
+    for suite in suites:
+        globals()['_run_{0}_tests'.format(suite)]()
+    return
     
 def main():
     parser = argparse.ArgumentParser(
@@ -293,7 +345,7 @@ def main():
         epilog="Brought to you by Open Health Care UK"
     )
     parser.add_argument(
-        '--version',
+        '--version', '-v',
         action='version',
         version = 'OPAL {0}'.format(opal.__version__)
     )
@@ -316,6 +368,11 @@ def main():
     parser_scaffold = subparsers.add_parser("scaffold")
     parser_scaffold.add_argument('app', help='Django app to scaffold')
     parser_scaffold.set_defaults(func=scaffold)
+
+    parser_test = subparsers.add_parser("test")
+    parser_test.add_argument(
+        'what', default='all', choices=['all', 'py', 'js'], nargs='*')
+    parser_test.set_defaults(func=test)
     
     args = parser.parse_args()
     args.func(args)
