@@ -1,5 +1,5 @@
 Django==1.5.2
-South==0.8.1
+South==1.0.2
 coverage==3.6
 dj-database-url==0.2.1
 gunicorn==0.17.4
