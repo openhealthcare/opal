@@ -83,6 +83,14 @@
                   [[ episode.date_of_admission | shortDate ]]
                 </div>
               </div>
+              <div class="row" ng-show="episode.discharge_date">
+                <div class="col-md-4">
+                  <b>Discharged</b>
+                </div>
+                <div class="col-md-8">
+                  [[ episode.discharge_date | shortDate ]]
+                </div>
+              </div>
               <div class="row" ng-show="episode.date_of_episode">
                 <div class="col-md-4">
                   <b>Date</b>
