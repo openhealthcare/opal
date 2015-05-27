@@ -54,7 +54,7 @@ OPAL._run = function($rootScope, ngProgressLite, $modal) {
         _.each(_.keys(resolves), function(key){
             resolve[key] = function(){ return resolves[key] };
         })
-        $modal.open({
+        return $modal.open({
             controller : controller,
             templateUrl: template,
             size       : size,
