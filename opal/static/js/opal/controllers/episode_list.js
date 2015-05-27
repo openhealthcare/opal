@@ -53,7 +53,7 @@ angular.module('opal.controllers').controller(
         $scope.profile = profile;
         $scope.tag_display = options.tag_display;
 
-	    function getVisibleEpisodes() {
+	    $scope.getVisibleEpisodes = function() {
 		    var visibleEpisodes = [];
             var episode_list = [];
 
@@ -64,7 +64,7 @@ angular.module('opal.controllers').controller(
 		    return visibleEpisodes;
 	    };
 
-	    $scope.rows = getVisibleEpisodes();
+	    $scope.rows = $scope.getVisibleEpisodes();
         $scope.episode = $scope.rows[0];
 
 	    function compareEpisodes(p1, p2) {
@@ -118,19 +118,19 @@ angular.module('opal.controllers').controller(
         };
 
 	    $scope.$watch('query.hospital_number', function() {
-		    $scope.rows = getVisibleEpisodes();
+		    $scope.rows = $scope.getVisibleEpisodes();
 	    });
 
 	    $scope.$watch('query.ward', function() {
-		    $scope.rows = getVisibleEpisodes();
+		    $scope.rows = $scope.getVisibleEpisodes();
 	    });
 
 	    $scope.$watch('query.bed', function() {
-		    $scope.rows = getVisibleEpisodes();
+		    $scope.rows = $scope.getVisibleEpisodes();
 	    });
 
 	    $scope.$watch('query.name', function() {
-		    $scope.rows = getVisibleEpisodes();
+		    $scope.rows = $scope.getVisibleEpisodes();
 	    });
 
 	    $scope.$on('keydown', function(event, e) {
@@ -254,7 +254,7 @@ angular.module('opal.controllers').controller(
 		                $scope.state = 'normal';
 		                if (episode && episode != 'cancel') {
 			                episodes[episode.id] = episode;
-			                $scope.rows = getVisibleEpisodes();
+			                $scope.rows = $scope.getVisibleEpisodes();
 			                rowIx = getRowIxFromEpisodeId(episode.id);
 			                $scope.selectItem(rowIx, 0, 0);
                             growl.success("Added a new episode for " + episode.demographics[0].name);
@@ -279,6 +279,14 @@ angular.module('opal.controllers').controller(
                 });
 	    };
 
+        $scope._post_discharge = function(result){
+			$scope.state = 'normal';
+			if (result == 'discharged' | result == 'moved') {
+				$scope.rows = $scope.getVisibleEpisodes();
+				$scope.selectItem(0, 0, 0);
+			};
+        };
+        
 	    $scope.dischargeEpisode = function(episode) {
             if(profile.readonly){ return null; };
 
@@ -296,12 +304,16 @@ angular.module('opal.controllers').controller(
             );
 
             exit.then(function(result) {
-			    $scope.state = 'normal';
-
-			    if (result == 'discharged' | result == 'moved') {
-				    $scope.rows = getVisibleEpisodes();
-				    $scope.selectItem(0, $scope.cix, 0);
-			    };
+                // 
+                // Sometimes our Flow will open another modal - we wait for that
+                // to close before firing the Post discharge hooks - this avoids the list
+                // scope from trapping keystrokes etc
+                // 
+                if(result && result.then){
+                    result.then(function(r){ $scope._post_discharge(r); });
+                }else{
+                    $scope._post_discharge(result);
+                }
 		    });
 	    };
 
@@ -319,7 +331,7 @@ angular.module('opal.controllers').controller(
             editing = tagging.makeCopy();
             editing.mine = false;
             tagging.save(editing).then(function(result){
-                $scope.rows = getVisibleEpisodes();
+                $scope.rows = $scope.getVisibleEpisodes();
             })
         };
 
@@ -364,7 +376,7 @@ angular.module('opal.controllers').controller(
                 if (columnName == 'tagging') {
                     
                     // User may have removed current tag
-                    $scope.rows = getVisibleEpisodes();
+                    $scope.rows = $scope.getVisibleEpisodes();
                     $scope.selectItem(getRowIxFromEpisodeId(episode.id), $scope.cix, 0);
                 }
                 
