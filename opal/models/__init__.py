@@ -306,6 +306,14 @@ class Episode(UpdatesFromDictMixin, models.Model):
         historic = Tagging.historic_tags_for_episodes([self])[self.id].keys()
         return list(set(current + historic))
 
+    def _episode_history_to_dict(self, user):
+        """
+        Return a serialised version of this patient's episode history
+        """
+        order = 'date_of_episode', 'date_of_admission', 'discharge_date'
+        episode_history = self.patient.episode_set.order_by(*order)
+        return [e.to_dict(user, shallow=True) for e in episode_history]
+        
     def to_dict(self, user, shallow=False):
         """
         Serialisation to JSON for Episodes
@@ -333,8 +341,8 @@ class Episode(UpdatesFromDictMixin, models.Model):
 
         d['tagging'] = self.tagging_dict(user)
 
-        episode_history = self.patient.episode_set.order_by('date_of_episode', 'date_of_admission', 'discharge_date')
-        d['episode_history'] = [e.to_dict(user, shallow=True) for e in episode_history]
+        
+        d['episode_history'] = self._episode_history_to_dict(user)
         return d
 
     
