@@ -37,3 +37,8 @@ If specified, will only run one specific kind of test.
 
    $ opal test py
    $ opal test js
+
+When running Python tests, the `-t` or `--test` option allows the user to specify a single
+test module, case or method to run.
+
+   $ opal test py -t opal.tests.test_models

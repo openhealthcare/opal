@@ -288,18 +288,21 @@ def scaffold(args):
                 _create_form_template_for(thing)
     return
 
-def _run_py_tests():
+def _run_py_tests(args):
     """
     Run our Python test suite
     """
     print "Running Python Unit Tests"
+    test_args= ['python', 'runtests.py']
+    if args.test:
+        test_args.append(args.test)
     try:
-        subprocess.check_call(['python', 'runtests.py'])
+        subprocess.check_call(test_args)
     except subprocess.CalledProcessError:
         sys.exit(1)
     return
 
-def _run_js_tests():
+def _run_js_tests(args):
     """
     Run our Javascript test suite
     """
@@ -335,7 +338,7 @@ def test(args):
     else:
         suites = args.what
     for suite in suites:
-        globals()['_run_{0}_tests'.format(suite)]()
+        globals()['_run_{0}_tests'.format(suite)](args)
     return
     
 def main():
@@ -372,6 +375,9 @@ def main():
     parser_test = subparsers.add_parser("test")
     parser_test.add_argument(
         'what', default='all', choices=['all', 'py', 'js'], nargs='*')
+    parser_test.add_argument(
+        '-t', '--test', help='Test case or method to run'
+    )
     parser_test.set_defaults(func=test)
     
     args = parser.parse_args()
