@@ -12,7 +12,9 @@ urlpatterns = patterns(
     url(r'^search/templates/extract.html/?$', views.ExtractTemplateView.as_view()),
     url(r'^search/templates/modals/save_filter_modal.html/?$',
         views.SaveFilterModalView.as_view()),
-    
+
+    url(r'^search/patient/?$', views.patient_search_view),
+
     
     url(r'^search/extract/$', views.ExtractSearchView.as_view()),
     url(r'^search/extract/download$', views.DownloadSearchView.as_view()),

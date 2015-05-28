@@ -19,8 +19,7 @@ from opal import models
 from opal.core import application, exceptions, glossolalia, fields, plugins
 from opal.core.lookuplists import LookupList
 from opal.core.subrecords import episode_subrecords, patient_subrecords, subrecords
-from opal.core.views import (LoginRequiredMixin, _get_request_data,
-                             _build_json_response, with_no_caching)
+from opal.core.views import LoginRequiredMixin, _get_request_data, _build_json_response
 from opal.utils import camelcase_to_underscore, stringport
 from opal.utils.banned_passwords import banned
 
@@ -283,35 +282,6 @@ class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
         serialised = new.to_dict(self.request.user)
         glossolalia.admit(serialised)
         return _build_json_response(serialised)
-
-
-@with_no_caching
-@require_http_methods(['GET'])
-def patient_search_view(request):
-    GET = request.GET
-
-    search_terms = {}
-    filter_dict = {}
-
-    if 'hospital_number' in GET:
-        search_terms['hospital_number'] = GET['hospital_number']
-        filter_dict['demographics__hospital_number__iexact'] = GET['hospital_number']
-
-    if 'name' in GET:
-        search_terms['name'] = GET['name']
-        filter_dict['demographics__name__icontains'] = GET['name']
-
-    if filter_dict:
-        patients = models.Patient.objects.filter(
-            **filter_dict).order_by('demographics__date_of_birth')
-
-        return _build_json_response([patient.to_dict(request.user)
-                                     for patient in patients])
-    else:
-        return _build_json_response({'error': 'No search terms'}, 400)
-
-    
-
 
 """
 Template views for OPAL

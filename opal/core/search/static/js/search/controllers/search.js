@@ -22,8 +22,8 @@ angular.module('opal.controllers').controller(
 	    });
 
 	    $scope.search = function() {
-        ngProgressLite.set(0);
-        ngProgressLite.start();
+            ngProgressLite.set(0);
+            ngProgressLite.start();
 		    var queryParams = [];
 		    var queryString;
 
@@ -39,8 +39,8 @@ angular.module('opal.controllers').controller(
 
 		    queryString = queryParams.join('&');
 
-		    $http.get('patient/?' + queryString).success(function(results) {
-          ngProgressLite.done();
+		    $http.get('/search/patient/?' + queryString).success(function(results) {
+                ngProgressLite.done();
 			    $scope.searched = true;
 			    $scope.results = results;
 		    });

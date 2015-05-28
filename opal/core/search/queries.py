@@ -28,6 +28,15 @@ class QueryBackend(object):
     
         
 class DatabaseQuery(QueryBackend):
+    """
+    The default built in query backend for OPAL allows advanced search
+    criteria building. 
+
+    We broadly map reduce all criteria then the set of combined and/or 
+    criteria together, then only unique episodes.
+    
+    Finally we filter based on team restrictions.
+    """
 
     def _episodes_for_boolean_fields(self, query, field, contains):
         model = query['column'].replace(' ', '_').lower()
@@ -52,7 +61,8 @@ class DatabaseQuery(QueryBackend):
         model = query['column'].replace(' ', '_').lower()
 
         # Look up to see if there is a synonym.
-        content_type = ContentType.objects.get_for_model(getattr(Mod, field).foreign_model)
+        content_type = ContentType.objects.get_for_model(
+            getattr(Mod, field).foreign_model)
         name = query['query']
         try:
             from opal.models import Synonym
@@ -133,8 +143,50 @@ class DatabaseQuery(QueryBackend):
                     eps += list(p.episode_set.all())
         return eps
 
+    def _filter_for_restricted_only(self, episodes):
+        """
+        Given an iterable of EPISODES, return those for which our
+        current restricted only user is allowed to know about.
+        """
+        teams = models.Team.restricted_teams(self.user)
+        allowed_episodes = []
+        for e in episodes:
+            for tagging in e.tagging_set.all():
+                
+                if tagging.team in teams:
+                    allowed_episodes.append(e)
+                    break
+
+        return allowed_episodes
+
+    def _filter_restricted_teams(self, episodes):
+        """
+        Given an iterable of EPISODES, return only those which
+        are not only members of restricted teams that our user is not
+        allowed to know about.
+        """
+        teams = models.Team.restricted_teams(self.user)
+        allowed_episodes = []
+        for e in episodes:
+            allowed = False
+            if e.tagging_set.count() == 0:
+                allowed_episodes.append(e)
+                continue
+            for tagging in e.tagging_set.all():
+                if not tagging.team.restricted:
+                    allowed = True
+                    break
+                elif tagging.team in teams:
+                    allowed = True
+                    break
+                
+            if allowed:
+                allowed_episodes.append(e)
+        return allowed_episodes
+    
     def get_episodes(self):
-        all_matches = [(q['combine'], self.episodes_for_criteria(q)) for q in self.query]
+        all_matches = [(q['combine'], self.episodes_for_criteria(q)) 
+                       for q in self.query]
         if not all_matches:
             return []
 
@@ -146,6 +198,10 @@ class DatabaseQuery(QueryBackend):
             working = getattr(set(episodes), methods[combine])(working)
 
         eps = working
+        if self.user.profile.restricted_only:
+            eps = self._filter_for_restricted_only(eps)
+        else:
+            eps = self._filter_restricted_teams(eps)
         return eps
 
     def description(self):

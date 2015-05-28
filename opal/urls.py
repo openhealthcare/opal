@@ -11,7 +11,6 @@ from opal.core import api
 from opal.forms import ChangePasswordForm
 from opal import models
 from opal.utils import camelcase_to_underscore
-from opal.core import search
 from opal.core.subrecords import subrecords
 
 urlpatterns = patterns(
@@ -36,8 +35,6 @@ urlpatterns = patterns(
 
     url(r'^episode/(?P<pk>\d+)/actions/copyto/(?P<category>[a-zA-Z_\-]+)/?$', 
         views.EpisodeCopyToCategoryView.as_view()),
-
-    url(r'^patient/?$', views.patient_search_view),
 
     # Template vires
     url(r'^templates/episode_list.html/?$', views.EpisodeListTemplateView.as_view()),
