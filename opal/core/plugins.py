@@ -53,7 +53,6 @@ def autodiscover():
     global AUTODISCOVERED
 
     for a in settings.INSTALLED_APPS:
-        print 'stringporting', a
         stringport(a)
     AUTODISCOVERED = True
 
