@@ -4,6 +4,7 @@ Model mixins for OPAL!
 from datetime import datetime
 import random
 
+from django.utils import dateparse
 from django.db import models
 
 from opal.core import exceptions
@@ -106,7 +107,7 @@ class UpdatesFromDictMixin(object):
                 if value and self._get_field_type(name) == models.fields.DateField:
                     value = datetime.strptime(value, '%Y-%m-%d').date()
                 if value and self._get_field_type(name) == models.fields.DateTimeField:
-                    value = datetime.strptime(value, '%Y-%m-%d %H:%M')
+                    value = dateparse.parse_datetime(value)
                 setattr(self, name, value)
 
         self.set_consistency_token()

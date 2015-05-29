@@ -468,6 +468,7 @@ describe('services', function() {
                     expect(item.name).toBe('John Smythe');
                     expect(item.date_of_birth).toEqual(new Date(1980, 6, 30));
                 });
+
             });
 
             describe('saving new item', function() {

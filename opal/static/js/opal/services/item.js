@@ -85,7 +85,7 @@ angular.module('opal.services')
 
                 // Convert datetimes to YYYY-MM-DD HH:MM
                 if( field.type == 'date_time' && attrs[field.name] ){
-                    attrs[field.name] = moment(value).format('YYYY-MM-DD HH:mm')
+                    attrs[field.name] = moment(value).format('YYYY-MM-DD HH:mmZ')
                 }
                 
                 // 
