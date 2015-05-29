@@ -71,4 +71,4 @@ def list_schemas():
     return _get_list_schema()
 
 def extract_schema():
-    return serialize_schema(schema.extract_columns)
+    return serialize_schema([c for c in subrecords()])

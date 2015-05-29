@@ -27,8 +27,8 @@ def subrecords():
     """
     Generator function for subrecords
     """
-    for m in episode_subrecords():
-        yield m
     for m in patient_subrecords():
+        yield m
+    for m in episode_subrecords():
         yield m
     
