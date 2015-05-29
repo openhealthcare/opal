@@ -211,5 +211,40 @@ describe('Episode', function() {
 
         });
 
+        
+        describe('findByHospitalNumber()', function (){
+
+            
+            it('Should call the newPatient callback', function () {
+                var mock_new = jasmine.createSpy('Mock for new patient')
+                var search_url = '/search/patient/';
+                search_url += '?queryType=Equals&hospital_number=notarealnumber'
+                $httpBackend.expectGET(search_url).respond([]);
+                
+                Episode.findByHospitalNumber('notarealnumber', {newPatient: mock_new})
+
+                $httpBackend.flush();
+                $scope.$digest(); // Fire actual resolving
+
+                expect(mock_new).toHaveBeenCalled();
+            });
+
+            it('Should call the newForPatient callback', function () {
+                var mock_new = jasmine.createSpy('Mock for new patient')
+                var search_url = '/search/patient/';
+                search_url += '?queryType=Equals&hospital_number=notarealnumber'
+                $httpBackend.expectGET(search_url).respond([episodeData]);
+                
+                Episode.findByHospitalNumber('notarealnumber', {newForPatient: mock_new})
+
+                $httpBackend.flush();
+                $scope.$digest(); // Fire actual resolving
+
+                expect(mock_new).toHaveBeenCalled();
+            });
+
+            
+        });
+
     });
 });

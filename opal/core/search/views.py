@@ -42,6 +42,8 @@ def patient_search_view(request):
     elif 'name' in request.GET:
         criteria['field'] = 'name'
         criteria['query'] = request.GET['name']
+    if 'queryType' in request.GET:
+        criteria['queryType'] = request.GET['queryType']
     else:
         return _build_json_response({'error': 'No search terms'}, 400)
 
