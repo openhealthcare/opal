@@ -12,8 +12,6 @@ from opal.core.search import queries
 class DatabaseQueryTestCase(OpalTestCase):
 
     def setUp(self):
-        self.user    = User.objects.create(username='testuser')
-        profile, _ = UserProfile.objects.get_or_create(user=self.user)
         self.patient = Patient.objects.create()
         self.episode = self.patient.create_episode(category="testepisode")
         self.demographics = self.patient.demographics_set.get()

@@ -4,15 +4,13 @@ Unittests for Episodes
 import datetime
 
 from django.contrib.auth.models import User
-from django.test import TestCase
 
 from opal.core.test import OpalTestCase
 from opal.models import Patient, Episode, Team
 
-class EpisodeTest(TestCase):
+class EpisodeTest(OpalTestCase):
 
     def setUp(self):
-        self.user    = User.objects.create(username='testuser')
         self.patient = Patient.objects.create()
         self.episode = self.patient.create_episode()
         self.hiv     = Team.objects.create(name='hiv', title='HIV')
@@ -112,7 +110,6 @@ class EpisodeTest(TestCase):
 
 class EpisodeManagerTestCase(OpalTestCase):
     def setUp(self):
-        self.user    = User.objects.create(username='testuser')
         self.patient = Patient.objects.create()
         self.episode = self.patient.create_episode()
 

@@ -3,10 +3,26 @@ OPAL Test base classes
 """
 import json 
 
+from django.contrib.auth.models import User
 from django.core.serializers.json import DjangoJSONEncoder
 from django.test import TestCase
+from django.test.client import RequestFactory
+
+from opal.models import UserProfile
 
 class OpalTestCase(TestCase):
+
+    def __init__(self, *a, **k):
+        self.rf = RequestFactory()
+        self._user = None
+        TestCase.__init__(self, *a, **k)
+
+    @property
+    def user(self):
+        if self._user is None:
+            self._user = User.objects.create(username='testuser')
+            profile, _ = UserProfile.objects.get_or_create(user=self.user)
+        return self._user
 
     def post_json(self, path, data):
         json_data = json.dumps(data, cls=DjangoJSONEncoder)
