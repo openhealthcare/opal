@@ -678,7 +678,7 @@ class Location(EpisodeSubrecord):
             )
 
 
-class Antimicrobial(EpisodeSubrecord):
+class Treatment(EpisodeSubrecord):
     _sort = 'start_date'
     _icon = 'fa fa-flask'
     _modal = 'lg'
