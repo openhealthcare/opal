@@ -13,8 +13,12 @@ class Command(BaseCommand):
     """
     def delete(self):
         for model in LookupList.__subclasses__():
-            for item in model.objects.all():
-                item.delete()
+            print model
+            try:
+                for item in model.objects.all():
+                    item.delete()
+            except: 
+                continue
         for item in Synonym.objects.all():
             item.delete()
         
