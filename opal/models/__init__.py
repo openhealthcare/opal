@@ -698,7 +698,7 @@ class Allergies(PatientSubrecord):
     _icon = 'fa fa-warning'    
 
     drug        = ForeignKeyOrFreeText(Drug)
-    provisional = models.BooleanField()
+    provisional = models.BooleanField(default=False)
     details     = models.CharField(max_length=255, blank=True)
 
     class Meta:
@@ -715,7 +715,7 @@ class Diagnosis(EpisodeSubrecord):
     _icon = 'fa fa-stethoscope'
 
     condition         = ForeignKeyOrFreeText(Condition)
-    provisional       = models.BooleanField()
+    provisional       = models.BooleanField(default=False)
     details           = models.CharField(max_length=255, blank=True)
     date_of_diagnosis = models.DateField(blank=True, null=True)
 
