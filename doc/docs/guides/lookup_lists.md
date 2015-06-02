@@ -47,3 +47,7 @@ Prints all lookuplists as JSON to stdout.
 ### load_lookup_lists -f [filename]
 
 Loads lookup lists in the OPAL JSON format.
+
+### delete_all_lookuplists
+
+Deletes all currently lookuplist values and related synonyms
