@@ -34,7 +34,8 @@
             <i class="fa fa-search"></i> Search
           </a>
         </li>
-          {% plugin_menuitems %}
+        {% application_menuitems %}
+        {% plugin_menuitems %}
         {% if request.user.is_staff %}
 	    <li><a href="/admin"><i class="fa fa-cogs"></i> Admin</a></li>
         {% endif %}

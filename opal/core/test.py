@@ -21,6 +21,7 @@ class OpalTestCase(TestCase):
     def user(self):
         if self._user is None:
             self._user = User.objects.create(username='testuser')
+            self._user.set_password('password')
             profile, _ = UserProfile.objects.get_or_create(user=self.user)
         return self._user
 

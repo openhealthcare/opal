@@ -82,7 +82,7 @@ class OpalApplication(object):
     }
     javascripts   = []
     actions       = []
-    
+    menuitems     = []
     default_episode_category = 'inpatient'
 
     @classmethod

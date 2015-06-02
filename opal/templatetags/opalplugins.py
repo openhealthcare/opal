@@ -42,6 +42,14 @@ def plugin_menuitems():
                 yield i
     return dict(items=items)
 
+@register.inclusion_tag('plugins/menuitems.html')
+def application_menuitems():
+    def items():
+        app = application.get_app()
+        for i in app.menuitems:
+            yield i
+    return dict(items=items)
+    
 @register.inclusion_tag('plugins/angular_module_deps.html')
 def plugin_opal_angular_deps():
     def deps():
