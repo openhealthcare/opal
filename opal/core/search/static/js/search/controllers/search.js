@@ -47,7 +47,7 @@ angular.module('opal.controllers').controller(
 	    };
 
         $scope.jumpToEpisode = function(episode){
-            $location.path('/episode/'+episode.idg);
+            $location.path('/episode/'+episode.id);
         }
 
 	    $scope.addEpisode = function() {

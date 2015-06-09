@@ -1,5 +1,6 @@
 describe('controllers', function() {
-    var columns, fields, episodeData, optionsData, profileData, patientData, Schema, schema, Episode, Item;
+    var columns, fields, episodeData, optionsData, profileData, patientData, Schema;
+    var schema, Episode, Item;
     var profile;
 
     beforeEach(function() {

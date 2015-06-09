@@ -318,11 +318,6 @@ describe('controllers', function() {
 
     });
 
-    // TODO: Actual Tests Here Please
-    describe('SearchCtrl', function(){
-
-    });
-
     describe('ReopenEpisodeCtrl', function (){
         var $scope,  $timeout;
         var dialog, patient, tag;
@@ -466,46 +461,6 @@ describe('controllers', function() {
 
     });
 
-
-    describe('SearchCtrl', function (){
-        var $scope, $http, $location, $dialog;
-        var schema, options;
-
-        beforeEach(function(){
-            inject(function($injector){
-                $rootScope   = $injector.get('$rootScope');
-                $scope       = $rootScope.$new();
-                $controller  = $injector.get('$controller');
-                $timeout     = $injector.get('$timeout');
-                $modal       = $injector.get('$modal');
-            });
-
-            options = optionsData;
-
-            controller = $controller('SearchCtrl', {
-                $scope:   $scope,
-                $dialog:  $dialog,
-                $timeout: $timeout,
-                schema:   schema,
-                options:  options,
-                profile:  profile
-            });
-
-        });
-
-        describe('get relevant episode id', function (){
-            it('Should default to the active id', function () {
-                var myPatient = _.clone(patientData);
-                myPatient.active_episode_id = '3001';
-                expect($scope.getEpisodeID(myPatient)).toBe('3001')
-            });
-
-            it('Should use the frist episode if we are inactive', function () {
-                expect($scope.getEpisodeID(patientData)).toBe('3')
-            });
-        });
-
-    });
 
     describe('HospitalNumberCtrl', function(){
         var $scope, $timeout, $modal, $modalInstance, $http, $q;
