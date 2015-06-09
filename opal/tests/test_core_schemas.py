@@ -22,6 +22,13 @@ colour_serialized = dict(
                  'type': 'string'}]            
         ) 
 
+tagging_serialized = {
+    'fields': [],
+    'single': True, 
+    'display_name': 'Teams', 
+    'name': 'tagging'
+}
+
 class SerializeModelTestCase(TestCase):
     def test_serialize(self):
         self.assertEqual(colour_serialized, schemas.serialize_model(Colour))
@@ -42,12 +49,17 @@ class ListRecordsTestCase(TestCase):
         subrecords.return_value = [Colour]
         tagging.return_value = []
         expected = {
-            'tagging': {
-                'fields': [],
-                'single': True, 
-                'display_name': 'Teams', 
-                'name': 'tagging'
-            },
+            'tagging': tagging_serialized,
             'colour': colour_serialized
         }
         self.assertEqual(expected, schemas.list_records())
+
+
+class ExtractSchemaTestCase(TestCase):
+    @patch('opal.core.schemas.subrecords')
+    @patch('opal.core.schemas.models.Tagging.build_field_schema')
+    def test_list_records(self, tagging, subrecords):
+        subrecords.return_value = [Colour]
+        tagging.return_value = []
+        expected = [tagging_serialized, colour_serialized]
+        self.assertEqual(expected, schemas.extract_schema())
