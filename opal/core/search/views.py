@@ -62,7 +62,7 @@ class ExtractSearchView(View):
 class DownloadSearchView(View):
 
     def post(self, *args, **kwargs):
-        query = queies.SearchBackend(self.request.user, 
+        query = queries.SearchBackend(self.request.user, 
                                      json.loads(self.request.POST['criteria']))
         episodes = query.get_episodes()
         fname = zip_archive(episodes, query.description(), self.request.user)
