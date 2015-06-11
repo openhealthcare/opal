@@ -108,10 +108,11 @@ h1.larger { font-size: 52px; }
     border-color: #f54f2f;
     color: #fff    
 }
-
-.patient-list-container {
-    height: 760px;
-    overflow: scroll;
+@media screen  {
+    .patient-list-container {
+        height: 760px;
+        overflow: scroll;
+    }
 }
 table.patient-list tr th { white-space: nowrap; }
 
