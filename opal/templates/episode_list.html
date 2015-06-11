@@ -40,7 +40,7 @@
 {% endblock %}
 
 {% block left_panel %}
-<div class="panel panel-active" ng-show="episode">
+<div class="panel panel-active screen-only" ng-show="episode">
   <div class="panel-heading">
     <b>
       <i class="fa fa-user"></i>
@@ -74,7 +74,7 @@
     </li>
   </ul>
 </div>
-<div class="panel panel-default">
+<div class="panel panel-default screen-only">
   <div class="panel-heading">
     <h4>
       <i class="fa fa-filter"></i>
@@ -96,7 +96,9 @@
 
 
 {% block content %}
-
+<h4 class="print-only">
+  [[ tag_display[currentTag] ]] / [[ tag_display[currentSubTag] ]]
+</h4>
 
 <table class="table table-bordered table-striped bg-white patient-list">
   <thead>
