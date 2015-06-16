@@ -592,8 +592,6 @@ class Antimicrobial_adverse_event(lookuplists.LookupList): pass
 class Antimicrobial_frequency(lookuplists.LookupList): pass
 class Clinical_advice_reason_for_interaction(lookuplists.LookupList): pass
 class Condition(lookuplists.LookupList): pass
-class Condition(lookuplists.LookupList): pass
-class Destination(lookuplists.LookupList): pass
 class Destination(lookuplists.LookupList): pass
 class Drug(lookuplists.LookupList): pass
 class Drugfreq(lookuplists.LookupList): pass

@@ -1,549 +1,690 @@
 # -*- coding: utf-8 -*-
-import datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
-
-
-class Migration(SchemaMigration):
-
-    def forwards(self, orm):
-        # Adding model 'UserProfile'
-        db.create_table(u'opal_userprofile', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], unique=True)),
-            ('force_password_change', self.gf('django.db.models.fields.BooleanField')(default=True)),
-        ))
-        db.send_create_signal(u'opal', ['UserProfile'])
-
-        # Adding model 'Patient'
-        db.create_table(u'opal_patient', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-        ))
-        db.send_create_signal(u'opal', ['Patient'])
-
-        # Adding model 'Episode'
-        db.create_table(u'opal_episode', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('patient', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['opal.Patient'])),
-            ('active', self.gf('django.db.models.fields.BooleanField')(default=False)),
-        ))
-        db.send_create_signal(u'opal', ['Episode'])
-
-        # Adding model 'Tagging'
-        db.create_table(u'opal_tagging', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('tag_name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True)),
-            ('episode', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['opal.Episode'], null=True)),
-        ))
-        db.send_create_signal(u'opal', ['Tagging'])
-
-        # Adding model 'Synonym'
-        db.create_table(u'opal_synonym', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(max_length=255)),
-            ('content_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'])),
-            ('object_id', self.gf('django.db.models.fields.PositiveIntegerField')()),
-        ))
-        db.send_create_signal(u'opal', ['Synonym'])
-
-        # Adding unique constraint on 'Synonym', fields ['name', 'content_type']
-        db.create_unique(u'opal_synonym', ['name', 'content_type_id'])
-
-        # Adding model 'Antimicrobial'
-        db.create_table(u'opal_antimicrobial', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Antimicrobial'])
-
-        # Adding model 'Antimicrobial_route'
-        db.create_table(u'opal_antimicrobial_route', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Antimicrobial_route'])
-
-        # Adding model 'Clinical_advice_reason_for_interaction'
-        db.create_table(u'opal_clinical_advice_reason_for_interaction', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Clinical_advice_reason_for_interaction'])
-
-        # Adding model 'Condition'
-        db.create_table(u'opal_condition', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Condition'])
-
-        # Adding model 'Destination'
-        db.create_table(u'opal_destination', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Destination'])
-
-        # Adding model 'Hospital'
-        db.create_table(u'opal_hospital', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Hospital'])
-
-        # Adding model 'Microbiology_organism'
-        db.create_table(u'opal_microbiology_organism', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Microbiology_organism'])
-
-        # Adding model 'Travel_reason'
-        db.create_table(u'opal_travel_reason', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Travel_reason'])
-
-        # Adding model 'Micro_test_c_difficile'
-        db.create_table(u'opal_micro_test_c_difficile', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Micro_test_c_difficile'])
-
-        # Adding model 'Micro_test_csf_pcr'
-        db.create_table(u'opal_micro_test_csf_pcr', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Micro_test_csf_pcr'])
-
-        # Adding model 'Micro_test_ebv_serology'
-        db.create_table(u'opal_micro_test_ebv_serology', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Micro_test_ebv_serology'])
-
-        # Adding model 'Micro_test_hepititis_b_serology'
-        db.create_table(u'opal_micro_test_hepititis_b_serology', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Micro_test_hepititis_b_serology'])
-
-        # Adding model 'Micro_test_hiv'
-        db.create_table(u'opal_micro_test_hiv', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Micro_test_hiv'])
-
-        # Adding model 'Micro_test_leishmaniasis_pcr'
-        db.create_table(u'opal_micro_test_leishmaniasis_pcr', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Micro_test_leishmaniasis_pcr'])
-
-        # Adding model 'Micro_test_mcs'
-        db.create_table(u'opal_micro_test_mcs', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Micro_test_mcs'])
-
-        # Adding model 'Micro_test_other'
-        db.create_table(u'opal_micro_test_other', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Micro_test_other'])
-
-        # Adding model 'Micro_test_parasitaemia'
-        db.create_table(u'opal_micro_test_parasitaemia', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Micro_test_parasitaemia'])
-
-        # Adding model 'Micro_test_respiratory_virus_pcr'
-        db.create_table(u'opal_micro_test_respiratory_virus_pcr', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Micro_test_respiratory_virus_pcr'])
-
-        # Adding model 'Micro_test_serology'
-        db.create_table(u'opal_micro_test_serology', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Micro_test_serology'])
-
-        # Adding model 'Micro_test_single_igg_test'
-        db.create_table(u'opal_micro_test_single_igg_test', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Micro_test_single_igg_test'])
-
-        # Adding model 'Micro_test_single_test_pos_neg'
-        db.create_table(u'opal_micro_test_single_test_pos_neg', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Micro_test_single_test_pos_neg'])
-
-        # Adding model 'Micro_test_single_test_pos_neg_equiv'
-        db.create_table(u'opal_micro_test_single_test_pos_neg_equiv', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Micro_test_single_test_pos_neg_equiv'])
-
-        # Adding model 'Micro_test_stool_parasitology_pcr'
-        db.create_table(u'opal_micro_test_stool_parasitology_pcr', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Micro_test_stool_parasitology_pcr'])
-
-        # Adding model 'Micro_test_stool_pcr'
-        db.create_table(u'opal_micro_test_stool_pcr', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Micro_test_stool_pcr'])
-
-        # Adding model 'Micro_test_swab_pcr'
-        db.create_table(u'opal_micro_test_swab_pcr', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Micro_test_swab_pcr'])
-
-        # Adding model 'Micro_test_syphilis_serology'
-        db.create_table(u'opal_micro_test_syphilis_serology', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Micro_test_syphilis_serology'])
-
-        # Adding model 'Micro_test_viral_load'
-        db.create_table(u'opal_micro_test_viral_load', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=255)),
-        ))
-        db.send_create_signal(u'opal', ['Micro_test_viral_load'])
-
-
-    def backwards(self, orm):
-        # Removing unique constraint on 'Synonym', fields ['name', 'content_type']
-        db.delete_unique(u'opal_synonym', ['name', 'content_type_id'])
-
-        # Deleting model 'UserProfile'
-        db.delete_table(u'opal_userprofile')
-
-        # Deleting model 'Patient'
-        db.delete_table(u'opal_patient')
-
-        # Deleting model 'Episode'
-        db.delete_table(u'opal_episode')
-
-        # Deleting model 'Tagging'
-        db.delete_table(u'opal_tagging')
-
-        # Deleting model 'Synonym'
-        db.delete_table(u'opal_synonym')
-
-        # Deleting model 'Antimicrobial'
-        db.delete_table(u'opal_antimicrobial')
-
-        # Deleting model 'Antimicrobial_route'
-        db.delete_table(u'opal_antimicrobial_route')
-
-        # Deleting model 'Clinical_advice_reason_for_interaction'
-        db.delete_table(u'opal_clinical_advice_reason_for_interaction')
-
-        # Deleting model 'Condition'
-        db.delete_table(u'opal_condition')
-
-        # Deleting model 'Destination'
-        db.delete_table(u'opal_destination')
-
-        # Deleting model 'Hospital'
-        db.delete_table(u'opal_hospital')
-
-        # Deleting model 'Microbiology_organism'
-        db.delete_table(u'opal_microbiology_organism')
-
-        # Deleting model 'Travel_reason'
-        db.delete_table(u'opal_travel_reason')
-
-        # Deleting model 'Micro_test_c_difficile'
-        db.delete_table(u'opal_micro_test_c_difficile')
-
-        # Deleting model 'Micro_test_csf_pcr'
-        db.delete_table(u'opal_micro_test_csf_pcr')
-
-        # Deleting model 'Micro_test_ebv_serology'
-        db.delete_table(u'opal_micro_test_ebv_serology')
-
-        # Deleting model 'Micro_test_hepititis_b_serology'
-        db.delete_table(u'opal_micro_test_hepititis_b_serology')
-
-        # Deleting model 'Micro_test_hiv'
-        db.delete_table(u'opal_micro_test_hiv')
-
-        # Deleting model 'Micro_test_leishmaniasis_pcr'
-        db.delete_table(u'opal_micro_test_leishmaniasis_pcr')
-
-        # Deleting model 'Micro_test_mcs'
-        db.delete_table(u'opal_micro_test_mcs')
-
-        # Deleting model 'Micro_test_other'
-        db.delete_table(u'opal_micro_test_other')
-
-        # Deleting model 'Micro_test_parasitaemia'
-        db.delete_table(u'opal_micro_test_parasitaemia')
-
-        # Deleting model 'Micro_test_respiratory_virus_pcr'
-        db.delete_table(u'opal_micro_test_respiratory_virus_pcr')
-
-        # Deleting model 'Micro_test_serology'
-        db.delete_table(u'opal_micro_test_serology')
-
-        # Deleting model 'Micro_test_single_igg_test'
-        db.delete_table(u'opal_micro_test_single_igg_test')
-
-        # Deleting model 'Micro_test_single_test_pos_neg'
-        db.delete_table(u'opal_micro_test_single_test_pos_neg')
-
-        # Deleting model 'Micro_test_single_test_pos_neg_equiv'
-        db.delete_table(u'opal_micro_test_single_test_pos_neg_equiv')
-
-        # Deleting model 'Micro_test_stool_parasitology_pcr'
-        db.delete_table(u'opal_micro_test_stool_parasitology_pcr')
-
-        # Deleting model 'Micro_test_stool_pcr'
-        db.delete_table(u'opal_micro_test_stool_pcr')
-
-        # Deleting model 'Micro_test_swab_pcr'
-        db.delete_table(u'opal_micro_test_swab_pcr')
-
-        # Deleting model 'Micro_test_syphilis_serology'
-        db.delete_table(u'opal_micro_test_syphilis_serology')
-
-        # Deleting model 'Micro_test_viral_load'
-        db.delete_table(u'opal_micro_test_viral_load')
-
-
-    models = {
-        u'auth.group': {
-            'Meta': {'object_name': 'Group'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '80'}),
-            'permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'})
-        },
-        u'auth.permission': {
-            'Meta': {'ordering': "(u'content_type__app_label', u'content_type__model', u'codename')", 'unique_together': "((u'content_type', u'codename'),)", 'object_name': 'Permission'},
-            'codename': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '50'})
-        },
-        u'auth.user': {
-            'Meta': {'object_name': 'User'},
-            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
-            'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
-        },
-        u'contenttypes.contenttype': {
-            'Meta': {'ordering': "('name',)", 'unique_together': "(('app_label', 'model'),)", 'object_name': 'ContentType', 'db_table': "'django_content_type'"},
-            'app_label': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
-        },
-        u'opal.antimicrobial': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Antimicrobial'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.antimicrobial_route': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Antimicrobial_route'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.clinical_advice_reason_for_interaction': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Clinical_advice_reason_for_interaction'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.condition': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Condition'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.destination': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Destination'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.episode': {
-            'Meta': {'object_name': 'Episode'},
-            'active': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'patient': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['opal.Patient']"})
-        },
-        u'opal.hospital': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Hospital'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.micro_test_c_difficile': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Micro_test_c_difficile'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.micro_test_csf_pcr': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Micro_test_csf_pcr'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.micro_test_ebv_serology': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Micro_test_ebv_serology'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.micro_test_hepititis_b_serology': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Micro_test_hepititis_b_serology'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.micro_test_hiv': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Micro_test_hiv'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.micro_test_leishmaniasis_pcr': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Micro_test_leishmaniasis_pcr'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.micro_test_mcs': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Micro_test_mcs'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.micro_test_other': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Micro_test_other'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.micro_test_parasitaemia': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Micro_test_parasitaemia'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.micro_test_respiratory_virus_pcr': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Micro_test_respiratory_virus_pcr'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.micro_test_serology': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Micro_test_serology'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.micro_test_single_igg_test': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Micro_test_single_igg_test'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.micro_test_single_test_pos_neg': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Micro_test_single_test_pos_neg'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.micro_test_single_test_pos_neg_equiv': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Micro_test_single_test_pos_neg_equiv'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.micro_test_stool_parasitology_pcr': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Micro_test_stool_parasitology_pcr'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.micro_test_stool_pcr': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Micro_test_stool_pcr'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.micro_test_swab_pcr': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Micro_test_swab_pcr'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.micro_test_syphilis_serology': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Micro_test_syphilis_serology'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.micro_test_viral_load': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Micro_test_viral_load'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.microbiology_organism': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Microbiology_organism'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.patient': {
-            'Meta': {'object_name': 'Patient'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'})
-        },
-        u'opal.synonym': {
-            'Meta': {'unique_together': "(('name', 'content_type'),)", 'object_name': 'Synonym'},
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'object_id': ('django.db.models.fields.PositiveIntegerField', [], {})
-        },
-        u'opal.tagging': {
-            'Meta': {'object_name': 'Tagging'},
-            'episode': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['opal.Episode']", 'null': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'tag_name': ('django.db.models.fields.CharField', [], {'max_length': '255'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']", 'null': 'True'})
-        },
-        u'opal.travel_reason': {
-            'Meta': {'ordering': "['name']", 'object_name': 'Travel_reason'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '255'})
-        },
-        u'opal.userprofile': {
-            'Meta': {'object_name': 'UserProfile'},
-            'force_password_change': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']", 'unique': 'True'})
-        }
-    }
-
-    complete_apps = ['opal']
+from __future__ import unicode_literals
+
+from django.db import models, migrations
+from django.conf import settings
+import opal.models.mixins
+
+
+class Migration(migrations.Migration):
+
+    dependencies = [
+        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('contenttypes', '0001_initial'),
+    ]
+
+    operations = [
+        migrations.CreateModel(
+            name='Antimicrobial',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Antimicrobial_adverse_event',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Antimicrobial_frequency',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Antimicrobial_route',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Clinical_advice_reason_for_interaction',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='CommunityNurse',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('address_line1', models.CharField(max_length=45, null=True, verbose_name=b'Address line 1', blank=True)),
+                ('address_line2', models.CharField(max_length=45, null=True, verbose_name=b'Address line 2', blank=True)),
+                ('city', models.CharField(max_length=50, blank=True)),
+                ('county', models.CharField(max_length=40, null=True, verbose_name=b'County', blank=True)),
+                ('post_code', models.CharField(max_length=10, null=True, verbose_name=b'Post Code', blank=True)),
+                ('name', models.CharField(max_length=255, null=True, blank=True)),
+                ('tel1', models.CharField(max_length=50, null=True, blank=True)),
+                ('tel2', models.CharField(max_length=50, null=True, blank=True)),
+            ],
+            options={
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Condition',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='ContactNumber',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=255)),
+                ('number', models.CharField(max_length=255)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Destination',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Drug',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Drugfreq',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Drugroute',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Duration',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Episode',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('category', models.CharField(default=b'inpatient', max_length=200)),
+                ('active', models.BooleanField(default=False)),
+                ('date_of_admission', models.DateField(null=True, blank=True)),
+                ('discharge_date', models.DateField(null=True, blank=True)),
+                ('date_of_episode', models.DateField(null=True, blank=True)),
+                ('consistency_token', models.CharField(max_length=8)),
+            ],
+            options={
+            },
+            bases=(opal.models.mixins.UpdatesFromDictMixin, models.Model),
+        ),
+        migrations.CreateModel(
+            name='Ethnicity',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Filter',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=200)),
+                ('criteria', models.TextField()),
+                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Gender',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='GP',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('address_line1', models.CharField(max_length=45, null=True, verbose_name=b'Address line 1', blank=True)),
+                ('address_line2', models.CharField(max_length=45, null=True, verbose_name=b'Address line 2', blank=True)),
+                ('city', models.CharField(max_length=50, blank=True)),
+                ('county', models.CharField(max_length=40, null=True, verbose_name=b'County', blank=True)),
+                ('post_code', models.CharField(max_length=10, null=True, verbose_name=b'Post Code', blank=True)),
+                ('name', models.CharField(max_length=255, null=True, blank=True)),
+                ('tel1', models.CharField(max_length=50, null=True, blank=True)),
+                ('tel2', models.CharField(max_length=50, null=True, blank=True)),
+            ],
+            options={
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Hospital',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Line_complication',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Line_removal_reason',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Line_site',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Line_type',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Macro',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('title', models.CharField(help_text=b'This is the text that will display in the dropdown. No spaces!', max_length=200)),
+                ('expanded', models.TextField(help_text=b'This is thte text that it will expand to.')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Micro_test_c_difficile',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Micro_test_csf_pcr',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Micro_test_ebv_serology',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Micro_test_hepititis_b_serology',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Micro_test_hiv',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Micro_test_leishmaniasis_pcr',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Micro_test_mcs',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Micro_test_other',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Micro_test_parasitaemia',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Micro_test_respiratory_virus_pcr',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Micro_test_serology',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Micro_test_single_igg_test',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Micro_test_single_test_pos_neg',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Micro_test_single_test_pos_neg_equiv',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Micro_test_stool_parasitology_pcr',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Micro_test_stool_pcr',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Micro_test_swab_pcr',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Micro_test_syphilis_serology',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Micro_test_viral_load',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Microbiology_organism',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Patient',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Role',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=200)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Symptom',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Synonym',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=255)),
+                ('object_id', models.PositiveIntegerField()),
+                ('content_type', models.ForeignKey(to='contenttypes.ContentType')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Tagging',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('episode', models.ForeignKey(to='opal.Episode')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Team',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(help_text=b'This should only have letters and underscores', max_length=250)),
+                ('title', models.CharField(max_length=250)),
+                ('active', models.BooleanField(default=True)),
+                ('order', models.IntegerField(null=True, blank=True)),
+                ('restricted', models.BooleanField(default=False, help_text=b'Whether this team is restricted to only a subset of users')),
+                ('direct_add', models.BooleanField(default=True)),
+                ('show_all', models.BooleanField(default=False)),
+                ('parent', models.ForeignKey(blank=True, to='opal.Team', null=True)),
+                ('useful_numbers', models.ManyToManyField(to='opal.ContactNumber', blank=True)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Travel_reason',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='UserProfile',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('force_password_change', models.BooleanField(default=True, help_text=b'Force this user to change their password on the next login')),
+                ('can_extract', models.BooleanField(default=False, help_text=b'This user will be able to download data from advanced searches')),
+                ('readonly', models.BooleanField(default=False, help_text=b'This user will only be able to read data - they have no write/edit permissions')),
+                ('restricted_only', models.BooleanField(default=False, help_text=b'This user will only see teams that they have been specifically added to')),
+                ('roles', models.ManyToManyField(to='opal.Role')),
+                ('user', models.OneToOneField(related_name=b'profile', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Ward',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'ordering': ['name'],
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
+        migrations.AddField(
+            model_name='tagging',
+            name='team',
+            field=models.ForeignKey(blank=True, to='opal.Team', null=True),
+            preserve_default=True,
+        ),
+        migrations.AddField(
+            model_name='tagging',
+            name='user',
+            field=models.ForeignKey(blank=True, to=settings.AUTH_USER_MODEL, null=True),
+            preserve_default=True,
+        ),
+        migrations.AlterUniqueTogether(
+            name='synonym',
+            unique_together=set([('name', 'content_type')]),
+        ),
+        migrations.AddField(
+            model_name='episode',
+            name='patient',
+            field=models.ForeignKey(to='opal.Patient'),
+            preserve_default=True,
+        ),
+    ]

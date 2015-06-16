@@ -19,6 +19,18 @@ settings.configure(DEBUG=True,
                    OPAL_OPTIONS_MODULE = '{{ name }}.tests.dummy_options_module',
                    ROOT_URLCONF='{{ name }}.urls',
                    STATIC_URL='/assets/',
+                   COMPRESS_ROOT='/tmp/',
+                   MIDDLEWARE_CLASSES = (
+                       'django.middleware.common.CommonMiddleware',
+                       'django.contrib.sessions.middleware.SessionMiddleware',
+                       'opal.middleware.AngularCSRFRename',
+                       'django.middleware.csrf.CsrfViewMiddleware',
+                       'django.contrib.auth.middleware.AuthenticationMiddleware',
+                       'django.contrib.messages.middleware.MessageMiddleware',
+                       'opal.middleware.DjangoReversionWorkaround',
+                       'reversion.middleware.RevisionMiddleware',
+                       'axes.middleware.FailedLoginMiddleware',
+                   ),
                    INSTALLED_APPS=('django.contrib.auth',
                                    'django.contrib.contenttypes',
                                    'django.contrib.sessions',
@@ -27,6 +39,8 @@ settings.configure(DEBUG=True,
                                    'opal',
                                    '{{ name }}',))
 
+import django
+django.setup()
 
 from django.test.runner import DiscoverRunner
 test_runner = DiscoverRunner(verbosity=1)

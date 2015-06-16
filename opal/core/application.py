@@ -60,7 +60,7 @@ class OpalApplication(object):
             "js/opal/services/schema.js",
             "js/opal/services/options.js",
             "js/opal/services/episodes_loader.js",
-            "js/opal/services/discharged_episodes_loader.js",
+#            "js/opal/services/discharged_episodes_loader.js",
             "js/opal/services/episode_resource.js",
             "js/opal/services/copy_to_category.js",
             "js/opal/services/episode_detail.js" 

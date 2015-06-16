@@ -10,17 +10,19 @@ from opal.core.test import OpalTestCase
 
 from opal.models import mixins
 
+class UpdatableModelInstance(mixins.UpdatesFromDictMixin, models.Model):
+    foo = models.CharField(max_length=200, blank=True, null=True)
+    bar = models.CharField(max_length=200, blank=True, null=True)
+    pid = models.CharField(max_length=200, blank=True, null=True)
+    
+    pid_fields = 'pid',
+
+
 class UpdatesFromDictMixin(OpalTestCase):
     def setUp(self):
         
-        class UpdatableModel(mixins.UpdatesFromDictMixin, models.Model):
-            foo = models.CharField(max_length=200, blank=True, null=True)
-            bar = models.CharField(max_length=200, blank=True, null=True)
-            pid = models.CharField(max_length=200, blank=True, null=True)
-            
-            pid_fields = 'pid',
 
-        self.model = UpdatableModel
+        self.model = UpdatableModelInstance
 
     def test_get_fieldnames_to_serialize(self):
         expected = ['id', 'foo', 'bar', 'pid']
@@ -42,6 +44,6 @@ class UpdatesFromDictMixin(OpalTestCase):
         with patch.object(instance, '_get_field_type') as mock_type:
             with patch.object(instance, 'save'):
                 mock_type.return_value = models.DateTimeField
-            
+                
                 instance.update_from_dict(data, None)
                 self.assertEqual(expected, instance.datetime)

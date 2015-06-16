@@ -9,7 +9,7 @@ list_columns = [
     models.Allergies,
     models.Diagnosis,
     models.PastMedicalHistory,
-    models.Antimicrobial,
+    models.Treatment,
     models.Investigation
 ]
 
