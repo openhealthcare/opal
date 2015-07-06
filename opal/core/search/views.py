@@ -47,8 +47,8 @@ def patient_search_view(request):
     if 'queryType' in request.GET:
         criteria['queryType'] = request.GET['queryType']
 
-    query = queries.SearchBackend(request.user, [criteria])    
-    return _build_json_response(query.episodes_as_json())
+    query = queries.SearchBackend(request.user, [criteria])
+    return _build_json_response(query.patients_as_json())
 
 
 class ExtractSearchView(View):

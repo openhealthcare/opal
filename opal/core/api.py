@@ -375,7 +375,6 @@ class APIAdmitEpisodeView(View):
     """
     def post(self, *args, **kwargs):
         data = _get_request_data(self.request)
-        print data
         resp = {'ok': 'Got your admission just fine - thanks!'}
         return _build_json_response(resp)
 
@@ -394,7 +393,6 @@ class APIReferPatientView(View):
         episode = Episode.objects.get(pk=data['episode'])
         current_tags = episode.get_tag_names(None)
         if not data['target'] in current_tags:
-            print "Setting", data['target']
             current_tags.append(data['target'])
             episode.set_tag_names(current_tags, None)
         resp = {'ok': 'Got your referral just fine - thanks!'}
