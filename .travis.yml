@@ -4,8 +4,7 @@ python:
 install:
   - python setup.py develop
   - pip install -r test-requirements.txt 
-  - npm install https://github.com/davidmiller/karma-jasmine/tarball/opal
-  - npm install karma karma-coverage karma-firefox-launcher
+  - npm install karma karma-coverage https://github.com/davidmiller/karma-jasmine/tarball/opal karma-firefox-launcher
   - gem install rake
 before_script:
   - export DISPLAY=:99.0
