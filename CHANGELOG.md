@@ -1,3 +1,13 @@
+### 0.5 (Minor release)
+
+Upgrades dependency graph:
+
+* Django -> 1.8.3
+* Django-reversion -> 1.8.7
+* jQuery -> 1.11.3
+* D3 -> 3.5.6
+* C4 -> 0.4.10
+
 ### 0.4.1 (Bugfix release)
 
 Fixes some search results appearing duplicated.
