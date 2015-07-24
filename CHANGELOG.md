@@ -1,4 +1,4 @@
-### 0.5 (Minor release)
+### 0.4.2 (Minor release)
 
 Upgrades dependency graph:
 
