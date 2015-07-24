@@ -17,7 +17,7 @@ describe('Utils.OPAL._run', function (){
         OPAL._run(mock_scope, {}, mock_modal)
         mock_scope.open_modal('TestCtrl', 'template.html', 'lg', {episode: {}})
 
-        var call_args = mock_modal.open.calls[0].args[0];
+        var call_args = mock_modal.open.calls.mostRecent().args[0];
 
         expect(call_args.controller).toBe('TestCtrl');
         expect(call_args.templateUrl).toBe('template.html');

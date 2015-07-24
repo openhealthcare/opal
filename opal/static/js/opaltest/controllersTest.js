@@ -202,7 +202,7 @@ describe('controllers', function() {
 
             $rootScope.fields = fields
             episode = new Episode(episodeData, schema);
-            Flow = jasmine.createSpy('Flow').andCallFake(function(){return {then: function(){}}});
+            Flow = jasmine.createSpy('Flow').and.callFake(function(){return {then: function(){}}});
 
             controller = $controller('EpisodeDetailCtrl', {
                 $scope      : $scope,
@@ -235,11 +235,11 @@ describe('controllers', function() {
                 var deferred, callArgs;
 
                 deferred = $q.defer();
-                spyOn($modal, 'open').andReturn({result: deferred.promise});
+                spyOn($modal, 'open').and.returnValue({result: deferred.promise});
 
                 $scope.editNamedItem('demographics', 0);
 
-                callArgs = $modal.open.mostRecentCall.args;
+                callArgs = $modal.open.calls.mostRecent().args;
                 expect(callArgs.length).toBe(1);
                 expect(callArgs[0].controller).toBe('EditItemCtrl');
             });
@@ -261,11 +261,11 @@ describe('controllers', function() {
                 var deferred, callArgs;
 
                 deferred = $q.defer();
-                spyOn($modal, 'open').andReturn({result: deferred.promise});
+                spyOn($modal, 'open').and.returnValue({result: deferred.promise});
 
                 $scope.deleteItem('diagnosis', 0);
 
-                callArgs = $modal.open.mostRecentCall.args;
+                callArgs = $modal.open.calls.mostRecent().args;
                 expect(callArgs.length).toBe(1);
                 expect(callArgs[0].controller).toBe('DeleteItemConfirmationCtrl');
             });
@@ -447,11 +447,11 @@ describe('controllers', function() {
             it('Should save the current item', function () {
                 var callArgs;
 
-                spyOn(item, 'save').andCallThrough();
+                spyOn(item, 'save').and.callThrough();
 
                 $scope.save('save');
 
-                callArgs = item.save.mostRecentCall.args;
+                callArgs = item.save.calls.mostRecent().args;
 
                 expect(callArgs.length).toBe(1);
                 expect(callArgs[0]).toBe($scope.editing)
@@ -507,10 +507,10 @@ describe('controllers', function() {
 
                 deferred = $q.defer();
 
-                spyOn($modal, 'open').andReturn({result: deferred.promise});
+                spyOn($modal, 'open').and.returnValue({result: deferred.promise});
                 $scope.newPatient({patients: [], hospitalNumber: 123})
 
-                callArgs = $modal.open.mostRecentCall.args;
+                callArgs = $modal.open.calls.mostRecent().args;
                 expect(callArgs.length).toBe(1);
                 expect(callArgs[0].controller).toBe('AddEpisodeCtrl');
             });
@@ -520,7 +520,7 @@ describe('controllers', function() {
 
                 deferred = $q.defer();
 
-                spyOn($modal, 'open').andReturn({result: deferred.promise});
+                spyOn($modal, 'open').and.returnValue({result: deferred.promise});
                 spyOn(modalInstance, 'close');
                 $scope.newPatient({patients: [], hospitalNumber: 123});
 
@@ -539,11 +539,11 @@ describe('controllers', function() {
                 patientData.active_episode_id = 3;
 
                 deferred = $q.defer();
-                spyOn($modal, 'open').andReturn({result: deferred.promise});
+                spyOn($modal, 'open').and.returnValue({result: deferred.promise});
 
                 $scope.newForPatient(patientData);
 
-                callArgs = $modal.open.mostRecentCall.args;
+                callArgs = $modal.open.calls.mostRecent().args;
                 expect(callArgs.length).toBe(1);
                 expect(callArgs[0].controller).toBe('AddEpisodeCtrl');
             });
@@ -577,11 +577,11 @@ describe('controllers', function() {
                 var deferred, callArgs;
 
                 deferred = $q.defer();
-                spyOn($modal, 'open').andReturn({result: deferred.promise});
+                spyOn($modal, 'open').and.returnValue({result: deferred.promise});
 
                 $scope.newForPatient(patientData);
 
-                callArgs = $modal.open.mostRecentCall.args;
+                callArgs = $modal.open.calls.mostRecent().args;
                 expect(callArgs.length).toBe(1);
                 expect(callArgs[0].controller).toBe('AddEpisodeCtrl');
             });
@@ -590,7 +590,7 @@ describe('controllers', function() {
                 var deferred;
 
                 deferred = $q.defer();
-                spyOn($modal, 'open').andReturn({result: deferred.promise});
+                spyOn($modal, 'open').and.returnValue({result: deferred.promise});
                 spyOn($scope, 'addForPatient');
 
                 $scope.newForPatient(patientData);
@@ -605,7 +605,7 @@ describe('controllers', function() {
                 var deferred;
 
                 deferred = $q.defer();
-                spyOn($modal, 'open').andReturn({result: deferred.promise});
+                spyOn($modal, 'open').and.returnValue({result: deferred.promise});
                 spyOn(modalInstance, 'close');
 
                 $scope.newForPatient(patientData);
@@ -626,11 +626,11 @@ describe('controllers', function() {
 
                 deferred = $q.defer();
 
-                spyOn($modal, 'open').andReturn({result: deferred.promise});
+                spyOn($modal, 'open').and.returnValue({result: deferred.promise});
 
                 $scope.addForPatient(patientData);
 
-                callArgs = $modal.open.mostRecentCall.args;
+                callArgs = $modal.open.calls.mostRecent().args;
                 expect(callArgs.length).toBe(1);
                 expect(callArgs[0].controller).toBe('AddEpisodeCtrl');
             });
@@ -640,11 +640,11 @@ describe('controllers', function() {
 
                 deferred = $q.defer();
 
-                spyOn($modal, 'open').andReturn({result: deferred.promise});
+                spyOn($modal, 'open').and.returnValue({result: deferred.promise});
 
                 $scope.addForPatient(patientData);
 
-                callArgs = $modal.open.mostRecentCall.args;
+                callArgs = $modal.open.calls.mostRecent().args;
                 expect(callArgs.length).toBe(1);
                 expect(callArgs[0].resolve.demographics())
                     .toEqual(patientData.demographics[0]);
@@ -656,7 +656,7 @@ describe('controllers', function() {
                 deferred = $q.defer();
                 episode = new Episode({id: 3}, schema);
 
-                spyOn($modal, 'open').andReturn({result: deferred.promise});
+                spyOn($modal, 'open').and.returnValue({result: deferred.promise});
                 spyOn(modalInstance, 'close');
 
                 $scope.addForPatient(patientData);
@@ -664,7 +664,7 @@ describe('controllers', function() {
                 deferred.resolve(episode)
                 $rootScope.$apply();
 
-                callArgs = modalInstance.close.mostRecentCall.args;
+                callArgs = modalInstance.close.calls.mostRecent().args;
                 expect(callArgs[0].makeCopy()).toEqual(episode.makeCopy());
             });
 
@@ -744,7 +744,7 @@ describe('controllers', function() {
                 var deferred;
 
                 deferred = $q.defer();
-                spyOn(item, 'destroy').andReturn(deferred.promise);
+                spyOn(item, 'destroy').and.returnValue(deferred.promise);
                 spyOn($modalInstance, 'close');
 
                 $scope.destroy();
