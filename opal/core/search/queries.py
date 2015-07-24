@@ -22,9 +22,16 @@ class QueryBackend(object):
     def description(self):
         raise NotImplementedError()
 
+    def get_patients(self):
+        raise NotImplementedError()
+
     def episodes_as_json(self):
         eps = self.get_episodes()
         return [e.to_dict(self.user) for e in eps]
+
+    def patients_as_json(self):
+        patients = self.get_patients()
+        return [p.to_dict(self.user) for p in patients]
     
         
 class DatabaseQuery(QueryBackend):
@@ -203,6 +210,10 @@ class DatabaseQuery(QueryBackend):
         else:
             eps = self._filter_restricted_teams(eps)
         return eps
+
+    def get_patients(self):
+        patients = set(e.patient for e in self.get_episodes())
+        return list(patients)
 
     def description(self):
         """
