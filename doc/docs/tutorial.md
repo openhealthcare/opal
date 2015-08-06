@@ -1,4 +1,4 @@
-# Writing your first OPAL App
+## Writing an OPAL Application
 
 This tutorial walks you through the creation of a clinical TODO list application. 
 
@@ -10,7 +10,7 @@ by running this command
 
     $ opal --version
 
-## Bootstrapping a new project
+### Bootstrapping a new project
 
 To start a new OPAL project, we can bootstrap you the initial project structure, including
 a Djano project, some core datamodels (complete with JSON APIs) and a general application structure.
@@ -48,21 +48,21 @@ Let's have a look at what that created for you:
             migrations/         # Your Database migrations directory
 
 
-## Test it out 
+### Test it out 
 
 // TODO - should see a holding welcome page
 
-## Enable lists 
+### Enable lists 
 
 // TODO - enable the lists module
 
 // TODO - this is a good time to explain patients vs Episodes.
 
-## Enable Lookuplists
+### Enable Lookuplists
 
 // TODO - this is a good time to introduce the concept of FKorFT && Lookup lists.
 
-## Add your own data models
+### Add your own data models
 
 So far we've begun to get a sense of the batteries-included parts of OPAL, 
 but before long, you're going to need to create models for your own uniquely

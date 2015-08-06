@@ -1,9 +1,9 @@
-# OPAL Lookup Lists
+## OPAL Lookup Lists
 
 Lookup Lists allow us to reference lists of available terminology as a foreign key, while
 also allowing synonymous terms, and free text options.
 
-## Adding a lookup list
+### Adding a lookup list
 
 Lookup lists are subclasses of `opal.core.lookuplists.LookupList`. Typically, a specific named
 lookup list will not need to do anything other than define a class that inherits from the base
@@ -36,18 +36,18 @@ to accompany it.
 
 The lookup list will automatically be added to the admin.
 
-## Management commands
+### Management commands
 
 OPAL ships with some managemnent commands for importing and exporting lookup lists
 
-### dump_lookup_lists
+#### dump_lookup_lists
 
 Prints all lookuplists as JSON to stdout.
 
-### load_lookup_lists -f [filename]
+#### load_lookup_lists -f [filename]
 
 Loads lookup lists in the OPAL JSON format.
 
-### delete_all_lookuplists
+#### delete_all_lookuplists
 
 Deletes all currently lookuplist values and related synonyms

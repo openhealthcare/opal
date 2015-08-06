@@ -1,4 +1,4 @@
-# The OPAL Data model
+## The OPAL Data model
 
 The OPAL data model allows for patients to have multiple sequential or concurrent
 `Episodes of care`. Some information is linked to an `Episode`, some is linked to

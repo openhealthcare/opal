@@ -1,40 +1,41 @@
 site_name: OPAL
 docs_dir: docs
-pages: 
-  - [index.md, Home]  
+pages:
+  - Home: index.md
+  - installation.md
+  - tutorial.md
+  - Guides: guides/topic-guides.md
+  - Reference: reference/reference_guides.md
+    
+  - Topic Guides:
+      - Component Overview: guides/components_overview.md
+      - Command Line tool: guides/command_line_tool.md
+      - Plugins: guides/plugins.md
+      - Plugin List: guides/plugins_list.md        
+      - Data Model: guides/datamodel.md
+      - Flow: guides/flow.md
+      - Roles & Permissions: guides/roles_and_permissions.md
+      - Teams: guides/teams.md
+      - JSON API: guides/json_api.md
+      - Lookup Lists: guides/lookup_lists.md
+      - Templates: guides/templates.md
+      - Static Files: guides/static_files.md
+      - Forms: guides/forms.md
+      - Episode Detail Views: guides/episode_detail_views.md
+      - Patient List Views: guides/list_views.md
 
-  - [overview.md, Overview]
-  - [installation.md, Installation]
+  - Reference:
+      - The Episode model: reference/episode.md
+      - Subrecords: reference/subrecords.md
+      - OpalApplication: reference/opal_application.md
+      - Form helpers: reference/form_templatetags.md
+      - Javascript helpers: reference/javascript_helpers.md
 
-  - [tutorial.md, 'Tutorials', Your first OPAL App]
-  # - [plugins.md, 'Tutorials', Your first OPAL Plugin]
+theme: mkdocs
+theme: cerulean
+theme: cosmo
+theme_dir: 'custom_theme'
 
-  - [guides/topic-guides.md, 'Guides', Index]
 
-  - [guides/datamodel.md, 'Data & Flow Guides', Data Model]
-  - [guides/flow.md, 'Data & Flow Guides', Flow]
-  - [guides/roles_and_permissions.md, 'Data & Flow Guides', Roles & Permissions]
-  - [guides/teams.md, 'Data & Flow Guides', Teams]
-  - [guides/json_api.md, 'Data & Flow Guides', JSON API] 
-  - [guides/lookup_lists.md, 'Data & Flow Guides', Lookup Lists]
-
-  - [guides/templates.md, 'Presentation & Templating Guides', Templates]
-  - [guides/static_files.md, 'Presentation & Templating Guides', Static Files]
-  - [guides/forms.md, 'Presentation & Templating Guides', Forms]
-  - [guides/episode_detail_views.md, 'Presentation & Templating Guides', Episode Detail Views]
-  - [guides/list_views.md, 'Presentation & Templating Guides', Patient List Views]
-
-  - [guides/components_overview.md, 'OPAL Guides', Component Overview]
-  - [guides/command_line_tool.md, 'OPAL Guides', Command Line tool]
-  - [guides/plugins.md, 'OPAL Guides', Plugins]
-  - [guides/plugins_list.md, 'OPAL Guides', Plugin List]
-
-  - [reference/reference_guides.md, 'Reference', Index]
-  - [reference/episode.md, 'Reference', The Episode model] 
-  - [reference/subrecords.md, 'Reference', Subrecords ] 
-  - [reference/opal_application.md, 'Reference', OpalApplication]
-  - [reference/form_templatetags.md, 'Reference', Form helpers]
-  - [reference/javascript_helpers.md, 'Reference', Javascript helpers]
-
-theme: readthedocs
 dev_addr: 0.0.0.0:8965
+include_next_prev: false
