@@ -63,6 +63,7 @@ class Team(models.Model):
     parent         = models.ForeignKey('self', blank=True, null=True)
     active         = models.BooleanField(default=True)
     order          = models.IntegerField(blank=True, null=True)
+    #TODO: Move this somewhere else
     useful_numbers = models.ManyToManyField(ContactNumber, blank=True)
     restricted     = models.BooleanField(default=False, 
                                          help_text=HELP_RESTRICTED)

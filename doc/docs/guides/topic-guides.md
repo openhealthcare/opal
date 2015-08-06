@@ -2,6 +2,16 @@
 
 A list of all available topic guides.
 
+### OPAL
+
+|||
+|--|--|
+|[OPAL - Applications, Plugins](components_overview.md) | How OPAL components hang together.|
+|[Command line tool](command_line_tool.md) | running admin tasks from the command line|
+|[Plugins](plugins.md)| Available interfaces for OPAL plugins|
+|[List of Plugins](plugins_list.md)| A list of available high quality plugins|
+
+
 ### Data and flow
 
 |||
@@ -22,13 +32,4 @@ A list of all available topic guides.
 |[Forms](forms.md) | Forms for entering or editing data|
 |[Episode Detail Views](episode_detail_views.md)|Detailed views of an episode of care|
 |[Patient List Views](list_views.md)| Lists of patients |
-
-### OPAL
-
-|||
-|--|--|
-|[OPAL - Applications, Plugins](components_overview.md) | How OPAL components hang together.|
-|[Command line tool](command_line_tool.md) | running admin tasks from the command line|
-|[Plugins](plugins.md)| Available interfaces for OPAL plugins|
-|[List of Plugins](plugins_list.md)| A list of available high quality plugins|
 

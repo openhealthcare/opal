@@ -9,10 +9,6 @@ The OPAL commandline tool will bootstrap your plugin for you - just run:
 
     $ opal startplugin yourcoolplugin
 
-### Defining Lookup lists
-
-// TODO
-
 ### Defining teams
 
 As a signal is fine.

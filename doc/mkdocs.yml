@@ -26,7 +26,9 @@ pages:
 
   - Reference:
       - The Episode model: reference/episode.md
+      - reference/patient.md
       - Subrecords: reference/subrecords.md
+      - reference/team.md        
       - OpalApplication: reference/opal_application.md
       - Form helpers: reference/form_templatetags.md
       - Javascript helpers: reference/javascript_helpers.md
