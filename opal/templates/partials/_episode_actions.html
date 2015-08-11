@@ -1,6 +1,6 @@
 {% load opalplugins %}
 <p
-   ng-hide="episode.category != 'inpatient'")
+   ng-hide="episode.category != 'inpatient' || hide_discharge_action == true")
    >
   <button 
      ng-hide="profile.readonly"
