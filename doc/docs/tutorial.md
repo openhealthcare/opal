@@ -62,7 +62,7 @@ The scaffolding step has generated you a working project - so let's check that o
 
 If you now visit `http://localhost:8000` in your browser, you should see the standard login screen:
 
-<img src="../img/tutorial-login.png" style="margin: 12px auto; border: 1px solid black;"/>
+<img src="/img/tutorial-login.png" style="margin: 12px auto; border: 1px solid black;"/>
 
 The scaffolding step created you a superuser, so try logging in with the credentials: 
 
@@ -72,7 +72,7 @@ The scaffolding step created you a superuser, so try logging in with the credent
 When you log in you should be presented with a welcome screen that shows you the three
 areas that are enabled by default - team lists, search and the admin area.
 
-<img src="../img/tutorial-welcome.png" width="600" style="margin: 12px auto; border: 1px solid black;"/>
+<img src="/img/tutorial-welcome.png" width="600" style="margin: 12px auto; border: 1px solid black;"/>
 
 OPAL applications are a collection of single page Angular apps that talk to the Django
 server-side layer via JSON APIs. The Team Lists and Search options here are two examples of
@@ -86,7 +86,7 @@ this functionality enabled by default.
 The [list view](/guides/list_views/) is a spreadhseet-style list of patients - try navigating
 to the list view and adding a patient with the `add patient` button.
 
-<img src="../img/tutorial-list.png" width="600" style="margin: 12px auto; border: 1px solid black;"/>
+<img src="/img/tutorial-list.png" width="600" style="margin: 12px auto; border: 1px solid black;"/>
 
 Each column contains a different type of information about a patient, while each
 row represents one patient.
@@ -137,7 +137,7 @@ Now let's import the data:
 Now try adding a new diagnosis to your patient - as you start to type in the condition field,
 you'l see that the conditions we just imported appear as suggestions: 
 
-<img src="../img/tutorial-conditions.png" style="margin: 12px auto; border: 1px solid black;"/>
+<img src="/img/tutorial-conditions.png" style="margin: 12px auto; border: 1px solid black;"/>
 
 ### Add your own data models
 
@@ -239,7 +239,7 @@ in your application. You can inspect these APIs interactively at the url:
     http://localhost:8000/api/v0.1/
 
 
-<img src="../img/tutorial-api.png" style="margin: 12px auto; border: 1px solid black;"/>
+<img src="/img/tutorial-api.png" style="margin: 12px auto; border: 1px solid black;"/>
 
 ### What next?
 
