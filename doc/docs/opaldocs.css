@@ -25,7 +25,7 @@ h3 {
 h4 {
     font-style: italic;
 }
-p {
+pre, p {
     width: 680px;
 }
 
@@ -33,6 +33,7 @@ p {
     background-color: white;
     box-shadow: none;
     border: none;
+    margin-top: 52px;
 }
 
 .bs-sidenav li {
@@ -42,17 +43,6 @@ p {
     padding-bottom: 6px;
 }
 
-/* .navbar li.dropdown.open>a, */
-/* .navbar li.dropdown.active>a { */
-/*     background-color: #f76c51; */
-/* } */
-
-
-
-/* .navbar-nav li:hover, */
-/* .navbar-nav li:hover a, */
-/* .navbar-nav li.active a, */
-/* .navbar-nav li.active{ */
-/* 	background: #f76c51; */
-/*     color: white; */
-/* } */
+.custom-quote .fa-user-md {
+    color: #6dbd63;
+}

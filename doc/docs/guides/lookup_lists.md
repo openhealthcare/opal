@@ -1,7 +1,7 @@
 ## OPAL Lookup Lists
 
-Lookup Lists allow us to reference lists of available terminology as a foreign key, while
-also allowing synonymous terms, and free text options.
+Lookup Lists allow us to reference canonical lists of available terminology as a foreign key, while
+also allowing synonymous terms, and a free text override.
 
 ### Adding a lookup list
 
