@@ -55,7 +55,7 @@ def _get_field_names(schemas):
 
 def _get_all_fields():
     response = {
-        subclass.get_api_name(): serialize_model(subclass) 
+        subclass.get_api_name(): serialize_model(subclass)
         for subclass in subrecords()
     }
     response['tagging'] = serialize_model(models.Tagging)
@@ -72,3 +72,8 @@ def list_schemas():
 
 def extract_schema():
     return serialize_schema([models.Tagging] + [c for c in subrecords()])
+
+def get_all_list_schema_classes():
+    schemas = schema.list_schemas.copy()
+    schemas.update(_get_plugin_schemas())
+    return schemas

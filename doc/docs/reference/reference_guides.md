@@ -1,4 +1,4 @@
-## OPAL Reference material 
+## OPAL Reference material
 
 The following reference guides are available:
 
@@ -14,6 +14,7 @@ The following reference guides are available:
 |
 -|-
 [opal.application.OpalApplication](opal_application.md) | OPAL Application objects
+[opal.core.schemas](schemas.md)|Schemas - Dynamic columns for the table views
 
 ### Helper libraries
 
