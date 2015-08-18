@@ -1,7 +1,7 @@
 """
 OPAL Test base classes
 """
-import json 
+import json
 
 from django.contrib.auth.models import User
 from django.core.serializers.json import DjangoJSONEncoder
@@ -32,8 +32,7 @@ class OpalTestCase(TestCase):
     def put_json(self, path, data):
         json_data = json.dumps(data, cls=DjangoJSONEncoder)
         return self.client.put(path, content_type='application/json', data=json_data)
-    
+
     def assertStatusCode(self, path, expected_status_code):
         response = self.client.get(path)
         self.assertEqual(expected_status_code, response.status_code)
-
