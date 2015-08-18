@@ -19,13 +19,13 @@ colour_serialized = dict(
                 {'lookup_list': None,
                  'name': 'name',
                  'title': 'Name',
-                 'type': 'string'}]            
-        ) 
+                 'type': 'string'}]
+        )
 
 tagging_serialized = {
     'fields': [],
-    'single': True, 
-    'display_name': 'Teams', 
+    'single': True,
+    'display_name': 'Teams',
     'name': 'tagging'
 }
 
@@ -53,6 +53,20 @@ class ListRecordsTestCase(TestCase):
             'colour': colour_serialized
         }
         self.assertEqual(expected, schemas.list_records())
+
+    @patch('opal.core.schemas._get_plugin_schemas')
+    @patch('opal.core.schemas.schema')
+    def test_get_all_list_schema_classes(self, schema, _get_plugin_schemas):
+        list_schema_value = {"something": "something"}
+        schema.list_schemas = list_schema_value.copy()
+        _get_plugin_schemas.return_value = {"something_else": "something_else"}
+        result = schemas.get_all_list_schema_classes()
+        self.assertEqual(result, {
+            "something": "something",
+            "something_else": "something_else"
+        })
+        self.assertEqual(_get_plugin_schemas.call_count, 1)
+        self.assertEqual(schema.list_schemas, list_schema_value)
 
 
 class ExtractSchemaTestCase(TestCase):
