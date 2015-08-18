@@ -36,10 +36,11 @@ setup(
         'letter',
         'jinja2',
         'requests',
-        'django==1.8.3',
+        'django==1.6.11',
+        'South==1.0.2',
         'django-reversion==1.8.7',
         'django-axes==1.3.9',
-        'djangorestframework',
+        'djangorestframework==3.2.2',
         'django-compressor==1.5'
         ]
 )
