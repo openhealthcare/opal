@@ -728,8 +728,8 @@ class Micro_test_serology(lookuplists.LookupList):
 
 class Micro_test_single_igg_test(lookuplists.LookupList):
     class Meta:
-        verbose_name = "Micro test single igg test"
-        verbose_name_plural = "Micro tests single igg test"
+        verbose_name = "Micro test single IgG test"
+        verbose_name_plural = "Micro tests single IgG test"
 
 
 class Micro_test_single_test_pos_neg(lookuplists.LookupList):
