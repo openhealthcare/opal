@@ -1,4 +1,4 @@
-# The OPAL Data model
+## The OPAL Data model
 
 The OPAL data model allows for patients to have multiple sequential or concurrent
 `Episodes of care`. Some information is linked to an `Episode`, some is linked to
@@ -37,15 +37,18 @@ implement a Demograpics `Subrecord` as follows:
     class Demographics(PatientSubrecord):
         name             = models.CharField(max_length=255, blank=True)
         hospital_number  = models.CharField(max_length=255, blank=True)
-        nhs_number       = models.CharField(max_length=255, blank=True, null=True)
+        nhs_number       = models.CharField(max_length=255, blank=True,
+                                            null=True)
         date_of_birth    = models.DateField(null=True, blank=True)
-        ethnicity        = models.CharField(max_length=255, blank=True, null=True)
-        gender           = models.CharField(max_length=255, blank=True, null=True)
+        ethnicity        = models.CharField(max_length=255, blank=True,
+                                            null=True)
+        gender           = models.CharField(max_length=255, blank=True, 
+                                            null=True)
 
 
 Subrecords also define various properties that will provide metadata about their
 display or structure, which are documented in the 
-(Subrecord reference material)[../reference/subrecords.md]
+[Subrecord reference material](/reference/subrecords/)
 
 ### Lookup Lists
 
