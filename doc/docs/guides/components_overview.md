@@ -1,3 +1,5 @@
+# Components of an OPAL application
+
 The OPAL ecosystem comprises several types of components - let's take a look at how they all
 hang together.
 
@@ -42,7 +44,7 @@ handover tool for Renal wards.
 A hospital might have multiple services running on one `Application`, or multiple `Applications`
 that integrate with one another.
 
-## Opinionated but Pluggable
+### Opinionated but Pluggable
 
 OPAL is an Opinionated Framework. It expects the developer to structure code in a 
 certain way. 

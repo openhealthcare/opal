@@ -1,4 +1,4 @@
-# The OPAL Command line tool
+## The OPAL Command line tool
 
 OPAL ships with a helpful command line tool that helps with administrative tasks.
 
@@ -6,8 +6,6 @@ The `opal` script should be on your system path if you installed OPAL via setup.
 pip. You can check whether it is available by running this command: 
 
     $ opal -v
-
-## Available Commands
 
 ### startproject &lt;name&gt;
 

@@ -1,0 +1,48 @@
+.navbar-default{
+    background-color: #6dbd63;
+    border:  #6dbd63;
+}
+.navbar-brand {
+    padding: 0px;
+}
+.navbar-brand img {
+    height: 50px;
+}
+
+body {
+    font-size: 18px;
+}
+
+h1,h2,h3,h4 {
+    font-weight: bold;
+}
+h2 {
+    font-size: 48px;
+}
+h3 {
+    font-size: 24px;
+}
+h4 {
+    font-style: italic;
+}
+pre, p {
+    width: 680px;
+}
+
+.bs-sidebar.well {
+    background-color: white;
+    box-shadow: none;
+    border: none;
+    margin-top: 52px;
+}
+
+.bs-sidenav li {
+    font-size: 14px;
+    border-bottom: 1px solid #ccc;
+    padding-top:    6px;
+    padding-bottom: 6px;
+}
+
+.custom-quote .fa-user-md {
+    color: #6dbd63;
+}

@@ -117,10 +117,12 @@ def startproject(args):
     nix.mv(project_dir/'app', app_dir)
 
     # 7. Create extra directories we need
-    js = app_dir/'assets/js'
+    js = app_dir/'assets/js/{0}'.format(name)
     css = app_dir/'assets/css'
     js.mkdir()
     css.mkdir()
+    nix.mv(app_dir/'static/js/app/routes.js', app_dir/'assets/js/{0}/routes.js'.format(name))
+    nix.rm_r(app_dir/'static')
 
     templates = app_dir/'templates'/name    
     templates.mkdir()

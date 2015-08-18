@@ -1,3 +1,5 @@
+## OPAL Plugins list
+
 The OPAL ecosystem has a rich array of re-usable Open Source plugins that can be used as composable
 units of functionality to build your application. This page lists some of the best available:
 
