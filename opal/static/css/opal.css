@@ -1,9 +1,9 @@
 /* Bootstrap resets */
-body { 
-    font-family: 'Lato', sans-serif; 
+body {
+    font-family: 'Lato', sans-serif;
     background: #e7ebee;
 }
-a { 
+a {
     -o-transition:.5s;
     -ms-transition:.5s;
     -moz-transition:.5s;
@@ -24,8 +24,8 @@ h1.larger { font-size: 52px; }
 .push-left-8per { margin-left: 8%; }
 .underline { text-decoration: underline; }
 .break-word { word-wrap: break-word; }
-.row.spaced { 
-    margin-bottom: 12px; 
+.row.spaced {
+    margin-bottom: 12px;
     width: 100%;
     padding-left: 1%;
 }
@@ -35,6 +35,7 @@ h1.larger { font-size: 52px; }
 }
 .content-offset { margin-top: 50px; }
 .content-offset-25 { margin-top: 25px; }
+.content-offset-below-25 { margin-bottom: 25px; }
 .content-offset-75 {margin-top: 75px; }
 .content-centered { padding-top: 20%; height: 100%; }
 .heading { position: fixed; top: 50px; width: 100%; z-index: 3; }
@@ -42,7 +43,7 @@ h1.larger { font-size: 52px; }
 
 /* Generic Colours */
 .bg-primary h1 small { color: #eff; }
-.bg-white { 
+.bg-white {
     background-color: white;
 }
 .bg-primary {
@@ -52,14 +53,14 @@ h1.larger { font-size: 52px; }
 
 .panel-primary .panel-default .panel-heading.bg-secondary,
 .bg-secondary {
-    background-color: #f76c51; /* red */ 
+    background-color: #f76c51; /* red */
     border-bottom: none;
     color: white;
 }
 
 .panel-primary .panel-default .panel-heading.bg-active,
-.bg-active {     
-    background-color: #5fa2dd; /* Blue */ 
+.bg-active {
+    background-color: #5fa2dd; /* Blue */
     border-bottom: none;
     color: white;
 }
@@ -75,7 +76,7 @@ h1.larger { font-size: 52px; }
     background-color: #9cc96b; /* Green */
 }
 
-.btn-primary { 
+.btn-primary {
     -o-transition:.5s;
     -ms-transition:.5s;
     -moz-transition:.5s;
@@ -85,7 +86,7 @@ h1.larger { font-size: 52px; }
    background-color: #9cc96b; /* Green */
    border-color: #9cc96b; /* Green */
  }
-.btn-primary:hover, 
+.btn-primary:hover,
 .btn-primary:focus {
     background-color: #87bd4b;
     border-color: #87bd4b;
@@ -106,7 +107,7 @@ h1.larger { font-size: 52px; }
 .btn-secondary:focus {
     background-color: #f54928;
     border-color: #f54f2f;
-    color: #fff    
+    color: #fff
 }
 @media screen  {
     .patient-list-container {
@@ -174,16 +175,16 @@ i.delete,
 .list-group-item .btn i { font-size: 20px; }
 
 .panel-primary .panel-default .panel-heading,
-.panel-default .panel-heading { 
-    border-bottom: 3px solid #f76c51; 
-    background-color: white; 
+.panel-default .panel-heading {
+    border-bottom: 3px solid #f76c51;
+    background-color: white;
     color: #333;
 }
 .panel-active .panel-heading {
     border-bottom: 3px solid #5fa2dd; /* Blue */
 }
 .panel-heading h3 { margin-top: 0px; margin-bottom: 0px; font-weight: normal;}
-.panel-heading i.edit, 
+.panel-heading i.edit,
 .list-group-item i.edit,
 .list-group-item i.delete{ display:none }
 .panel-heading:hover i.edit,
@@ -212,7 +213,7 @@ i.delete,
 .open > .dropdown-menu.slides {
   -webkit-transform: scale(1, 1);
   transform: scale(1, 1);
-  
+
 }
 .open > .dropdown-menu.slides li a {
   color: #000;
@@ -228,7 +229,7 @@ i.delete,
   -webkit-transform: scale(1, 0);
   transform: scale(1, 0);
   display: block;
-  
+
   transition: all 0.2s ease-out;
   -webkit-transition: all 0.2s ease-out;
 }
@@ -236,9 +237,9 @@ i.delete,
   -webkit-transform-origin: bottom;
   transform-origin: bottom;
 }
- 
+
 .navbar .nav > li > .dropdown-menu.slides:after {
- 
+
 }
 .dropup > .dropdown-menu.slides:after {
   border-bottom: 0;
