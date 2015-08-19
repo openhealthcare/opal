@@ -4,7 +4,6 @@ OPAL Models!
 import collections
 import json
 
-from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -16,7 +15,7 @@ import reversion
 
 from opal.core import application, exceptions, lookuplists, plugins
 from opal import managers
-from opal.utils import stringport, camelcase_to_underscore
+from opal.utils import camelcase_to_underscore
 from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.subrecords import episode_subrecords, patient_subrecords
 from opal.models.mixins import UpdatesFromDictMixin
@@ -28,8 +27,8 @@ class Filter(models.Model):
     """
     Saved filters for users extracting data.
     """
-    user     = models.ForeignKey(User)
-    name     = models.CharField(max_length=200)
+    user = models.ForeignKey(User)
+    name = models.CharField(max_length=200)
     criteria = models.TextField()
 
     def to_dict(self):

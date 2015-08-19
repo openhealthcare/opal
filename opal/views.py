@@ -1,8 +1,6 @@
 """
 Module entrypoint for core OPAL views
 """
-import collections
-import json
 
 from django.conf import settings
 from django.contrib.auth.views import login
@@ -10,15 +8,12 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import redirect
 from django.template.loader import select_template, get_template
 from django.template import TemplateDoesNotExist
-from django.utils.decorators import method_decorator
-from django.utils import formats
 from django.views.generic import TemplateView, View
 from django.views.decorators.http import require_http_methods
 
 from opal import models
-from opal.core import application, exceptions, glossolalia, fields, plugins
-from opal.core.lookuplists import LookupList
-from opal.core.subrecords import episode_subrecords, patient_subrecords, subrecords
+from opal.core import application, exceptions, glossolalia
+from opal.core.subrecords import episode_subrecords, subrecords
 from opal.core.views import LoginRequiredMixin, _get_request_data, _build_json_response
 from opal.core.schemas import get_all_list_schema_classes
 from opal.utils import camelcase_to_underscore, stringport
