@@ -311,10 +311,10 @@ def _get_column_context(schema, **kwargs):
 
         column_context['detail_template_path'] = select_template([
             t.format(name) for t in '{0}_detail.html', '{0}.html', 'records/{0}.html'
-        ]).name
+        ]).template.name
 
         try:
-            column_context['header_template_path'] = select_template(header_templates).name
+            column_context['header_template_path'] = select_template(header_templates).template.name
         except TemplateDoesNotExist:
             column_context['header_template_path'] = ''
 

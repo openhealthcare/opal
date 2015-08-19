@@ -416,7 +416,7 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
                                                               subteam,
                                                               name))
         try:
-            return select_template(list_display_templates).name
+            return select_template(list_display_templates).template.name
         except TemplateDoesNotExist:
             return None
 
@@ -431,7 +431,7 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
             'records/{0}.html'.format(name)
         ]
         try:
-            return select_template(templates).name
+            return select_template(templates).template.name
         except TemplateDoesNotExist:
             return None
 
@@ -449,7 +449,7 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
             templates.insert(0, 'modals/{0}/{1}/{2}_modal.html'.format(
                 team, subteam, name))
         try:
-            return select_template(templates).name
+            return select_template(templates).template.name
         except TemplateDoesNotExist:
             return None
 
