@@ -46,7 +46,10 @@
                     <span ng-if="query.column != 'tagging'">
                       <select class="form-control content-offset-below-10"
                               ng-if="query.field != null && !isDate(query.column, query.field)"
-                              ng-model="query.queryType" >
+                              ng-model="query.queryType" data-trigger="focus" bs-tooltip="tooltip"
+                              data-placement="top" data-title="3. Select your query type"
+                              set-focus-if="query.field != null && !isDate(query.column, query.field)"
+                              >
                         <option>Equals</option>
                         <option ng-show="isText(query.column, query.field)">Contains</option>
                       </select>
@@ -74,7 +77,7 @@
                              ng-options="x for x in query.lookup_list"
                              data-trigger="focus" bs-tooltip="tooltip"
                              data-placement="top" data-title="4. Add your value"
-                             set-focus-if="isText(query.column, query.field) && query.field != null"
+                             set-focus-if="isText(query.column, query.field) && query.field != null  && query.queryType != null"
                              bs-typeahead
                              />
                     <input type="text" ng-model="query.query"
@@ -104,7 +107,7 @@
                   </div>
                 </div>
               </span>
-              <div class="content-offset-20 ">
+              <div class="content-offset-20 content-offset-below-10">
                 <a class="btn btn-danger" ng-show="criteria.length > 1" ng-click="removeCriteria()">
                    Clear search
                  </a>
