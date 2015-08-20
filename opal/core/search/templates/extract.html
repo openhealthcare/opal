@@ -43,9 +43,9 @@
                         <option ng-repeat="field in searchableFields(col)">[[field]]</option>
                       </select>
                     </span>
-                    <span ng-if="query.column != 'tagging'">
+                    <span ng-show="query.column != 'tagging'">
                       <select class="form-control content-offset-below-10"
-                              ng-if="query.field != null && !isDate(query.column, query.field)"
+                              ng-show="query.field != null && !isDate(query.column, query.field)"
                               ng-model="query.queryType" data-trigger="focus" bs-tooltip="tooltip"
                               data-placement="top" data-title="3. Select your query type"
                               set-focus-if="query.field != null && !isDate(query.column, query.field)"
@@ -54,7 +54,7 @@
                         <option ng-show="isText(query.column, query.field)">Contains</option>
                       </select>
                       <select class="form-control content-offset-below-10"
-                                ng-if="query.field != null && isDate(query.column, query.field)"
+                                ng-show="query.field != null && isDate(query.column, query.field)"
                               ng-model="query.queryType" data-trigger="focus" bs-tooltip="tooltip"
                               data-placement="top" data-title="3. Select your query type"
                               set-focus-if="query.field != null && isDate(query.column, query.field)" >
@@ -62,7 +62,7 @@
                         <option>After</option>
                       </select>
                       <select class="form-control content-offset-below-10" ng-model="query.query"
-                              ng-if="isBoolean(query.column, query.field) && query.field != null"
+                              ng-show="isBoolean(query.column, query.field) && query.field != null"
                               data-trigger="focus" bs-tooltip="tooltip"
                               data-placement="top" data-title="3. Select your query type"
                               set-focus-if="isBoolean(query.column, query.field) && query.field != null"
@@ -71,9 +71,9 @@
                         <option>false</option>
                       </select>
                       <input type="text"
-                             class="form-control content-offset-below-10"
+                             class="form-control onions content-offset-below-10"
                              ng-model="query.query"
-                             ng-if="isText(query.column, query.field) && query.field != null"
+                             ng-show="isText(query.column, query.field) && query.field != null"
                              ng-options="x for x in query.lookup_list"
                              data-trigger="focus" bs-tooltip="tooltip"
                              data-placement="top" data-title="4. Add your value"
@@ -82,7 +82,7 @@
                              />
                     <input type="text" ng-model="query.query"
                              class="form-control content-offset-below-10"
-                             ng-if="isDate(query.column, query.field) && query.field != null"
+                             ng-show="isDate(query.column, query.field) && query.field != null"
                              data-trigger="focus" bs-tooltip="tooltip"
                              data-placement="top" data-title="4. Add your value"
             	               ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
