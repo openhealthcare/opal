@@ -75,10 +75,9 @@
                              ng-model="query.query"
                              ng-show="isText(query.column, query.field) && query.field != null"
                              ng-options="x for x in query.lookup_list"
-                             data-trigger="focus" bs-tooltip="tooltip"
-                             data-placement="top" data-title="4. Add your value"
-                             set-focus-if="isText(query.column, query.field) && query.field != null  && query.queryType != null"
                              bs-typeahead
+                             placeholder="4. Add your value"
+                             set-focus-if="isText(query.column, query.field) && query.field != null  && query.queryType != null"
                              />
                     <input type="text" ng-model="query.query"
                              class="form-control content-offset-below-10"
