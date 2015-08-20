@@ -7,7 +7,7 @@
 </h2>
 
 <div class="timeline">
-  
+
   <!-- Timeline header -->
   <div class="timeline-now">
 	<div class="timeline-now-text bg-secondary">Now</div>
@@ -16,12 +16,12 @@
   <div class="timeline-item" ng-repeat="ep in episode_history">
 	<div class="timeline-label">
 	  <div class="timeline-icon bg-secondary">
-        <i ng-class="{'fa-hospital-o': ep.category == 'inpatient', 'fa-home': ep.category == 'OPAT' || ep.category == 'outpatient'}" 
+        <i ng-class="{'fa-hospital-o': ep.category == 'inpatient', 'fa-home': ep.category == 'OPAT' || ep.category == 'outpatient'}"
            class="fa fa-lg"></i>
       </div>
 	  <div class="timeline-time">
-        <span ng-show="ep.date_of_episode">[[ ep.date_of_episode ]]</span>
-        <span ng-show="ep.date_of_admission">[[ ep.date_of_admission ]]</span>
+        <span ng-show="ep.date_of_episode">[[ ep.date_of_episode | shortDate ]]</span>
+        <span ng-show="ep.date_of_admission">[[ ep.date_of_admission | shortDate ]]</span>
       </div>
 	</div>
 	<div class="timeline-detail">
@@ -32,9 +32,9 @@
         <span ng-show="ep.id == episode.id">(This episode)</span>
       </p>
       <p>
-        <span ng-show="ep.date_of_episode">[[ ep.date_of_episode ]]</span>
-        <span ng-show="ep.date_of_admission">Admitted: [[ ep.date_of_admission ]]<br /></span>
-        <span ng-show="ep.discharge_date">Discharged: [[ ep.discharge_date ]]<br /></span>
+        <span ng-show="ep.date_of_episode">[[ ep.date_of_episode | shortDate ]]</span>
+        <span ng-show="ep.date_of_admission">Admitted: [[ ep.date_of_admission | shortDate ]]<br /></span>
+        <span ng-show="ep.discharge_date">Discharged: [[ ep.discharge_date | shortDate ]]<br /></span>
       </p>
 	</div>
   </div>

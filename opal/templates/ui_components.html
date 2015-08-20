@@ -88,7 +88,8 @@
         <div class="col-md-8">
           <h3>Modals</h3>
           <p class="lead">
-            Present the user with an atomic interaction.
+            Present the user with an atomic interaction. Modals are based on the
+            <a href="http://angular-ui.github.io/bootstrap/#/modal">Angular UI-Bootstrap Modal</a>.
           </p>
           <!-- Demo -->
           <div class="row col-md-offset-3">
@@ -113,10 +114,36 @@
                 </button>
                 <button class="btn">Cancel button</button>
               </div>
-              <!-- Demo -->
             </div>
           </div>
+          <p class="lead">
+            Modals are available in three sizes - default, large and small.
+          </p>
+          <div class="row col-md-offset-3">
+              <div class="col-md-12 modal-lg">
+                <div class="modal-header">
+                  <button type="button" class="close" ng-click="cancel()">×</button>
+                  <h3>
+                    <i class="glyphicon glyphicon-plus"></i>
+                    Larger Modal Header
+                  </h3>
+                </div>
+                <div class="modal-body">
+                  <p class="lead">
+                    When we have complex information or interactions, we can use a large modal.
+                  </p>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-primary">
+                    <i class="fa fa-save"></i>        
+                    Primary button
+                  </button>
+                  <button class="btn">Cancel button</button>
+                </div>
+                <!-- Demo -->
+              </div>
 
+          </div>
 
         </div>
       </div>

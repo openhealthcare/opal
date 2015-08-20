@@ -1,8 +1,6 @@
 """
 Module entrypoint for core OPAL views
 """
-import collections
-import json
 
 from django.conf import settings
 from django.contrib.auth.views import login
@@ -10,16 +8,14 @@ from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import redirect
 from django.template.loader import select_template, get_template
 from django.template import TemplateDoesNotExist
-from django.utils.decorators import method_decorator
-from django.utils import formats
 from django.views.generic import TemplateView, View
 from django.views.decorators.http import require_http_methods
 
 from opal import models
-from opal.core import application, exceptions, glossolalia, fields, plugins
-from opal.core.lookuplists import LookupList
-from opal.core.subrecords import episode_subrecords, patient_subrecords, subrecords
+from opal.core import application, exceptions, glossolalia
+from opal.core.subrecords import episode_subrecords, subrecords
 from opal.core.views import LoginRequiredMixin, _get_request_data, _build_json_response
+from opal.core.schemas import get_all_list_schema_classes
 from opal.utils import camelcase_to_underscore, stringport
 from opal.utils.banned_passwords import banned
 
@@ -35,11 +31,6 @@ except AttributeError:
         micro_test_defaults = []
 
 Synonym = models.Synonym
-
-LIST_SCHEMAS = {}
-for plugin in plugins.plugins():
-    LIST_SCHEMAS.update(plugin().list_schemas())
-LIST_SCHEMAS.update(schema.list_schemas.copy())
 
 
 def serve_maybe(meth):
@@ -79,13 +70,14 @@ class EpisodeTemplateView(TemplateView):
         Return the context for our columns
         """
         active_schema = self.column_schema
-        if 'tag' in kwargs and kwargs['tag'] in LIST_SCHEMAS:
-            if 'subtag' in kwargs and kwargs['subtag'] in LIST_SCHEMAS[kwargs['tag']]:
-                active_schema = LIST_SCHEMAS[kwargs['tag']][kwargs['subtag']]
-            elif 'default' in LIST_SCHEMAS[kwargs['tag']]:
-                active_schema = LIST_SCHEMAS[kwargs['tag']]['default']
+        all_list_schemas = get_all_list_schema_classes()
+        if 'tag' in kwargs and kwargs['tag'] in all_list_schemas:
+            if 'subtag' in kwargs and kwargs['subtag'] in all_list_schemas[kwargs['tag']]:
+                active_schema = all_list_schemas[kwargs['tag']][kwargs['subtag']]
+            elif 'default' in all_list_schemas[kwargs['tag']]:
+                active_schema = all_list_schemas[kwargs['tag']]['default']
             else:
-                active_schema = LIST_SCHEMAS['default']
+                active_schema = all_list_schemas['default']
 
         return _get_column_context(active_schema, **kwargs)
 
@@ -98,7 +90,7 @@ class EpisodeTemplateView(TemplateView):
                 context['team'] = models.Team.objects.get(name=kwargs['tag'])
             except models.Team.DoesNotExist:
                 context['team'] = None
-                
+
         context['models'] = { m.__name__: m for m in subrecords() }
         return context
 
@@ -107,16 +99,16 @@ class EpisodeListTemplateView(EpisodeTemplateView):
     template_name = 'episode_list.html'
     column_schema = schema.list_schemas['default']
 
-    
+
 class EpisodeDetailTemplateView(TemplateView):
     def get(self, *args, **kwargs):
         self.episode = models.Episode.objects.get(pk=kwargs['pk'])
         return super(EpisodeDetailTemplateView, self).get(*args, **kwargs)
-    
+
     def get_template_names(self):
         names = ['detail/{0}.html'.format(self.episode.category.lower()), 'detail/default.html']
         return names
-    
+
     def get_context_data(self, **kwargs):
         context = super(EpisodeDetailTemplateView, self).get_context_data(**kwargs)
         context['models'] = { m.__name__: m for m in subrecords() }
@@ -261,10 +253,10 @@ class EpisodeListView(View):
             self.request.user, **filter_kwargs)
         return _build_json_response(serialised)
 
-    
+
 class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
     """
-    Copy an episode to a given category, excluding tagging.   
+    Copy an episode to a given category, excluding tagging.
     """
     def post(self, args, pk=None, category=None, **kwargs):
         old = models.Episode.objects.get(pk=pk)
@@ -299,7 +291,7 @@ def _get_column_context(schema, **kwargs):
         column_context['icon'] = getattr(column, '_icon', '')
         column_context['list_limit'] = getattr(column, '_list_limit', None)
 
-        header_templates = [name + '_header.html']        
+        header_templates = [name + '_header.html']
         if 'tag' in kwargs:
             header_templates.insert(
                 0, 'list_display/{0}/{1}_header.html'.format(kwargs['tag'], name))
@@ -314,10 +306,10 @@ def _get_column_context(schema, **kwargs):
 
         column_context['detail_template_path'] = select_template([
             t.format(name) for t in '{0}_detail.html', '{0}.html', 'records/{0}.html'
-        ]).name
+        ]).template.name
 
         try:
-            column_context['header_template_path'] = select_template(header_templates).name
+            column_context['header_template_path'] = select_template(header_templates).template.name
         except TemplateDoesNotExist:
             column_context['header_template_path'] = ''
 
@@ -328,7 +320,7 @@ def _get_column_context(schema, **kwargs):
 
 class ModalTemplateView(LoginRequiredMixin, TemplateView):
     """
-    This view renders the form/modal template for our field. 
+    This view renders the form/modal template for our field.
 
     These are generated for subrecords, but can also be used
     by plugins for other mdoels.
@@ -396,7 +388,7 @@ class RawTemplateView(TemplateView):
     def dispatch(self, *args, **kw):
         self.template_name = kw['template_name']
         try:
-            get_template(self.template_name)            
+            get_template(self.template_name)
         except TemplateDoesNotExist:
             return HttpResponseNotFound()
         return super(RawTemplateView, self).dispatch(*args, **kw)

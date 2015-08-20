@@ -100,10 +100,14 @@ angular.module('opal.controllers').controller(
         $scope.resetFilter = function(index, dontReset){
             for (k in $scope.model) {
                 if (dontReset.indexOf(k) == -1) {
-                    $scope.criteria[index][k] = $scope.model[k]
+                    $scope.criteria[index][k] = $scope.model[k];
                 }
             }
         };
+
+        $scope.removeCriteria = function(){
+            $scope.criteria = [_.clone($scope.model)];
+        }
 
         //
         // Determine the appropriate lookup list for this field if

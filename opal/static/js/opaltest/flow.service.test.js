@@ -42,7 +42,7 @@ describe('Flow ', function(){
         $httpBackend.whenGET('/templates/enter').respond('<notarealtemplate>');
         $httpBackend.whenGET('/templates/exit').respond('<notarealtemplate>');
 
-        spyOn($modal, 'open').andCallThrough();
+        spyOn($modal, 'open').and.callThrough();
         
     });
 
@@ -55,7 +55,7 @@ describe('Flow ', function(){
             $rootScope.$apply();
             $httpBackend.flush();
 
-            call_args = $modal.open.mostRecentCall.args;
+            call_args = $modal.open.calls.mostRecent().args;
             expect(call_args.length).toBe(1);
             expect(call_args[0].templateUrl).toBe('/templates/enter');
             expect(call_args[0].controller).toBe('EnterCtrl');
@@ -72,7 +72,7 @@ describe('Flow ', function(){
             $rootScope.$apply();
             $httpBackend.flush();
 
-            call_args = $modal.open.mostRecentCall.args;
+            call_args = $modal.open.calls.mostRecent().args;
             expect(call_args.length).toBe(1);
             expect(call_args[0].templateUrl).toBe('/templates/exit');
             expect(call_args[0].controller).toBe('ExitCtrl');

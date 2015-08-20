@@ -38,6 +38,8 @@ def _find_application_name():
 
 def _set_settings_module(name):
     os.environ['DJANGO_SETTINGS_MODULE'] = '{0}.settings'.format(name)
+    import django
+    django.setup()
     return
 
 def interpolate_dir(directory, **context):
@@ -126,14 +128,24 @@ def startproject(args):
     templates.mkdir()
 
     def manage(command):
-        os.system('python {name}/manage.py {command} --traceback'.format(
-            name=name, command=command))
-        
+        args = ['python', '{0}/manage.py'.format(name)]
+        args += command.split()
+        args.append('--traceback')
+
+        # os.system('python {name}/manage.py {command} --traceback'.format(
+        #     name=name, command=command))
+
+        try:
+            subprocess.check_call(args)
+        except subprocess.CalledProcessError:
+            sys.exit(1)
+        return
 
     # 8. Run Django's migrations
     print 'Creating Database'
-    manage('schemamigration {0} --initial'.format(name))
-    manage('syncdb --migrate --noinput')
+    manage('makemigrations'.format(name))
+    manage('syncdb --noinput')
+    manage('migrate --noinput')
 
     # 9. Create a superuser
     sys.path.append(os.path.join(os.path.abspath('.'), name))

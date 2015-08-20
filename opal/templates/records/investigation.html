@@ -1,7 +1,7 @@
 <span class="[[item.date_ordered == null && 'italic']]">
 
 [[item.date_ordered | shortDate]]
-[[item.test]]
+[[item.test]] <span ng-show="item.details">([[item.details]])</span>
 
 <!-- testType == 'micro_test_other'" -->
 <!-- testType == 'micro_test_hiv'" -->
@@ -86,7 +86,5 @@
 	<li ng-show="item.giardia && item.giardia != 'pending'">Giardia: [[item.giardia | microresult]]</li>
 	<li ng-show="item.entamoeba_histolytica && item.entamoeba_histolytica != 'pending'">Entamoeba Histolytica: [[item.entamoeba_histolytica | microresult]]</li>
 	<li ng-show="item.cryptosporidium && item.cryptosporidium != 'pending'">Cryptosporidium: [[item.cryptosporidium | microresult]]</li>
-
-	<li ng-show="item.details">[[item.details]]</li>
 </ul>
 </span>

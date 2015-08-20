@@ -6,12 +6,12 @@ pages:
   - tutorial.md
   - Guides: guides/topic-guides.md
   - Reference: reference/reference_guides.md
-    
+
   - Topic Guides:
       - Component Overview: guides/components_overview.md
       - Command Line tool: guides/command_line_tool.md
       - Plugins: guides/plugins.md
-      - Plugin List: guides/plugins_list.md        
+      - Plugin List: guides/plugins_list.md
       - Data Model: guides/datamodel.md
       - Flow: guides/flow.md
       - Roles & Permissions: guides/roles_and_permissions.md
@@ -28,10 +28,11 @@ pages:
       - The Episode model: reference/episode.md
       - reference/patient.md
       - Subrecords: reference/subrecords.md
-      - reference/team.md        
+      - reference/team.md
       - OpalApplication: reference/opal_application.md
       - Form helpers: reference/form_templatetags.md
       - Javascript helpers: reference/javascript_helpers.md
+      - Schemas: reference/schemas.md
 
 theme: mkdocs
 theme: cerulean

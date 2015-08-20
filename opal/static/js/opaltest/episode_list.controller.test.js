@@ -209,7 +209,7 @@ describe('controllers', function() {
             options = optionsData;
             $routeParams.tag = 'tropical';
             flow_promise = {then: function(){}};
-            Flow = jasmine.createSpy('Flow').andCallFake(function(){return flow_promise});
+            Flow = jasmine.createSpy('Flow').and.callFake(function(){return flow_promise});
             
             $rootScope.fields = fields
 
@@ -282,7 +282,7 @@ describe('controllers', function() {
                 });
 
                 it('Should re-set the visible episodes', function () {
-                    spyOn($scope, 'getVisibleEpisodes').andCallThrough();
+                    spyOn($scope, 'getVisibleEpisodes').and.callThrough();
                     $scope._post_discharge('discharged');
                     expect($scope.getVisibleEpisodes).toHaveBeenCalledWith();
                 });
@@ -315,8 +315,8 @@ describe('controllers', function() {
                 it('Should wait for the deferred', function () {
                     var returned_deferred = {then: function(fn){fn()}}
                     spyOn($scope, '_post_discharge');
-                    spyOn(returned_deferred, 'then').andCallThrough();
-                    spyOn(flow_promise, 'then').andCallFake(function(fn){ fn(returned_deferred);})
+                    spyOn(returned_deferred, 'then').and.callThrough();
+                    spyOn(flow_promise, 'then').and.callFake(function(fn){ fn(returned_deferred);})
 
                     $scope.dischargeEpisode(0);
                     
@@ -343,11 +343,11 @@ describe('controllers', function() {
             it('should set up the demographics modal', function() {
                 var callArgs;
 
-                spyOn($modal, 'open').andCallThrough();
+                spyOn($modal, 'open').and.callThrough();
 
                 $scope.editItem(0, 0, 0);
 
-                callArgs = $modal.open.mostRecentCall.args;
+                callArgs = $modal.open.calls.mostRecent().args;
                 expect(callArgs.length).toBe(1);
                 expect(callArgs[0].templateUrl).toBe('/templates/modals/demographics.html/tropical/all');
                 expect(callArgs[0].controller).toBe('EditItemCtrl');
@@ -357,7 +357,7 @@ describe('controllers', function() {
                 var modalSpy;
 
                 modalSpy = {open: function() {}};
-                spyOn($modal, 'open').andReturn({result:  {then: function() {}}});
+                spyOn($modal, 'open').and.returnValue({result:  {then: function() {}}});
 
                 $scope.editItem(0, 0, 0);
 
@@ -368,7 +368,7 @@ describe('controllers', function() {
                 var deferred;
 
                 deferred = $q.defer();
-                spyOn($modal, 'open').andReturn({result: deferred.promise});
+                spyOn($modal, 'open').and.returnValue({result: deferred.promise});
 
                 $scope.editItem(0, 0, 0);
 
@@ -411,11 +411,11 @@ describe('controllers', function() {
             it('should set up the modal', function() {
                 var callArgs;
 
-                spyOn($modal, 'open').andCallThrough();
+                spyOn($modal, 'open').and.callThrough();
 
                 $scope.editItem(0, 2, iix);
 
-                callArgs = $modal.open.mostRecentCall.args;
+                callArgs = $modal.open.calls.mostRecent().args;
                 expect(callArgs.length).toBe(1);
                 expect(callArgs[0].templateUrl).toBe('/templates/modals/diagnosis.html/tropical/all');
                 expect(callArgs[0].controller).toBe('EditItemCtrl');

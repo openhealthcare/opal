@@ -4,7 +4,6 @@ OPAL Models!
 import collections
 import json
 
-from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -16,20 +15,20 @@ import reversion
 
 from opal.core import application, exceptions, lookuplists, plugins
 from opal import managers
-from opal.utils import stringport, camelcase_to_underscore
+from opal.utils import camelcase_to_underscore
 from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.subrecords import episode_subrecords, patient_subrecords
 from opal.models.mixins import UpdatesFromDictMixin
 
 app = application.get_app()
 
-    
+
 class Filter(models.Model):
     """
     Saved filters for users extracting data.
     """
-    user     = models.ForeignKey(User)
-    name     = models.CharField(max_length=200)
+    user = models.ForeignKey(User)
+    name = models.CharField(max_length=200)
     criteria = models.TextField()
 
     def to_dict(self):
@@ -52,12 +51,12 @@ class ContactNumber(models.Model):
 class Team(models.Model):
     """
     A team to which an episode may be tagged
-    
+
     Represents either teams or stages in patient flow.
     """
     HELP_RESTRICTED = "Whether this team is restricted to only a subset of users"
 
-    name           = models.CharField(max_length=250, 
+    name           = models.CharField(max_length=250,
                                       help_text="This should only have letters and underscores")
     title          = models.CharField(max_length=250)
     parent         = models.ForeignKey('self', blank=True, null=True)
@@ -65,7 +64,7 @@ class Team(models.Model):
     order          = models.IntegerField(blank=True, null=True)
     #TODO: Move this somewhere else
     useful_numbers = models.ManyToManyField(ContactNumber, blank=True)
-    restricted     = models.BooleanField(default=False, 
+    restricted     = models.BooleanField(default=False,
                                          help_text=HELP_RESTRICTED)
     direct_add     = models.BooleanField(default=True)
     show_all       = models.BooleanField(default=False)
@@ -87,7 +86,7 @@ class Team(models.Model):
     @classmethod
     def for_user(klass, user):
         """
-        Return the set of teams this user has access to. 
+        Return the set of teams this user has access to.
         """
 
         profile, _ = UserProfile.objects.get_or_create(user=user)
@@ -107,7 +106,7 @@ class Team(models.Model):
     def has_subteams(self):
         return self.team_set.count() > 0
 
-    
+
 class Synonym(models.Model):
     name = models.CharField(max_length=255)
     content_type = models.ForeignKey(ContentType)
@@ -156,13 +155,13 @@ class Macro(models.Model):
     """
     HELP_TITLE = "This is the text that will display in the dropdown. No spaces!"
     HELP_EXPANDED = "This is thte text that it will expand to."
-    
+
     title    = models.CharField(max_length=200, help_text=HELP_TITLE)
     expanded = models.TextField(help_text=HELP_EXPANDED)
 
     def __unicode__(self):
         return self.title
-    
+
     @classmethod
     def to_dict(klass):
         """
@@ -253,7 +252,7 @@ class Episode(UpdatesFromDictMixin, models.Model):
         if self.discharge_date:
             return True
         return False
-        
+
     def set_tag_names(self, tag_names, user):
         """
         1. Blitz dangling tags not in our current dict.
@@ -291,7 +290,7 @@ class Episode(UpdatesFromDictMixin, models.Model):
 
     def tagging_dict(self, user):
         td = [{
-                t.team.name: True for t in 
+                t.team.name: True for t in
                 self.tagging_set.select_related('team').exclude(team__name='mine').exclude(
                                                                 team__isnull=True)
             }]
@@ -301,7 +300,7 @@ class Episode(UpdatesFromDictMixin, models.Model):
         return td
 
     def get_tag_names(self, user, historic=False):
-        current = [t.team.name for t in self.tagging_set.all() if t.user in (None, user)]    
+        current = [t.team.name for t in self.tagging_set.all() if t.user in (None, user)]
         if not historic:
             return current
         historic = Tagging.historic_tags_for_episodes([self])[self.id].keys()
@@ -314,7 +313,7 @@ class Episode(UpdatesFromDictMixin, models.Model):
         order = 'date_of_episode', 'date_of_admission', 'discharge_date'
         episode_history = self.patient.episode_set.order_by(*order)
         return [e.to_dict(user, shallow=True) for e in episode_history]
-        
+
     def to_dict(self, user, shallow=False):
         """
         Serialisation to JSON for Episodes
@@ -342,11 +341,11 @@ class Episode(UpdatesFromDictMixin, models.Model):
 
         d['tagging'] = self.tagging_dict(user)
 
-        
+
         d['episode_history'] = self._episode_history_to_dict(user)
         return d
 
-    
+
 class Subrecord(UpdatesFromDictMixin, models.Model):
     consistency_token = models.CharField(max_length=8)
 
@@ -416,7 +415,7 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
                                                               subteam,
                                                               name))
         try:
-            return select_template(list_display_templates).name
+            return select_template(list_display_templates).template.name
         except TemplateDoesNotExist:
             return None
 
@@ -431,7 +430,7 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
             'records/{0}.html'.format(name)
         ]
         try:
-            return select_template(templates).name
+            return select_template(templates).template.name
         except TemplateDoesNotExist:
             return None
 
@@ -449,7 +448,7 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
             templates.insert(0, 'modals/{0}/{1}/{2}_modal.html'.format(
                 team, subteam, name))
         try:
-            return select_template(templates).name
+            return select_template(templates).template.name
         except TemplateDoesNotExist:
             return None
 
@@ -516,7 +515,7 @@ class Tagging(models.Model):
     @staticmethod
     def get_form_template(team=None, subteam=None):
         return 'tagging_modal.html'
-    
+
     @staticmethod
     def build_field_schema():
         teams = [{'name': t.name, 'type':'boolean'} for t in Team.objects.filter(active=True)]
@@ -545,16 +544,16 @@ class Tagging(models.Model):
                     try:
                         tag_name = data['tag_name']
                     except KeyError:
-                        print json.dumps(data, indent=2)                        
+                        print json.dumps(data, indent=2)
                         raise exceptions.FTWLarryError("Can't find the team in this data :(")
-                
+
                 historic[data['episode']][tag_name] = True
         return historic
 
     @classmethod
     def historic_episodes_for_tag(cls, tag):
         """
-        Given a TAG return a list of episodes that have historically been 
+        Given a TAG return a list of episodes that have historically been
         tagged with it.
         """
         teams = {t.id: t.name for t in Team.objects.all()}
@@ -587,52 +586,205 @@ class Tagging(models.Model):
 Base Lookup Lists
 """
 
-class Antimicrobial_route(lookuplists.LookupList): pass
+class Antimicrobial_route(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Antimicrobial route"
+
+
 class Antimicrobial(lookuplists.LookupList): pass
-class Antimicrobial_adverse_event(lookuplists.LookupList): pass
-class Antimicrobial_frequency(lookuplists.LookupList): pass
-class Clinical_advice_reason_for_interaction(lookuplists.LookupList): pass
+
+
+class Antimicrobial_adverse_event(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Antimicrobial adverse event"
+
+
+class Antimicrobial_frequency(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Antimicrobial frequency"
+        verbose_name_plural = "Antimicrobial frequencies"
+
+
+class Clinical_advice_reason_for_interaction(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Clinical advice reason for interaction"
+        verbose_name_plural = "Clinical advice reasons for interaction"
+
 class Condition(lookuplists.LookupList): pass
-class Condition(lookuplists.LookupList): pass
-class Destination(lookuplists.LookupList): pass
 class Destination(lookuplists.LookupList): pass
 class Drug(lookuplists.LookupList): pass
-class Drugfreq(lookuplists.LookupList): pass
-class Drugroute(lookuplists.LookupList): pass
+
+
+class Drugfreq(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Drug frequency"
+        verbose_name_plural = "Drug frequencies "
+
+
+class Drugroute(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Drug route"
+
+
 class Duration(lookuplists.LookupList): pass
-class Ethnicity(lookuplists.LookupList): pass
+
+
+class Ethnicity(lookuplists.LookupList):
+    class Meta:
+        verbose_name_plural = "Ethnicities"
+
+
 class Gender(lookuplists.LookupList): pass
 class Hospital(lookuplists.LookupList): pass
 class Ward(lookuplists.LookupList): pass
 
-# These should probably get refactored into opal-opat in 0.5
-class Line_complication(lookuplists.LookupList): pass
-class Line_removal_reason(lookuplists.LookupList): pass
-class Line_site(lookuplists.LookupList): pass
-class Line_type(lookuplists.LookupList): pass
 
-class Micro_test_c_difficile(lookuplists.LookupList): pass
-class Micro_test_csf_pcr(lookuplists.LookupList): pass
-class Micro_test_ebv_serology(lookuplists.LookupList): pass
-class Micro_test_hepititis_b_serology(lookuplists.LookupList): pass
-class Micro_test_hiv(lookuplists.LookupList): pass
-class Micro_test_leishmaniasis_pcr(lookuplists.LookupList): pass
-class Micro_test_mcs(lookuplists.LookupList): pass
-class Micro_test_other(lookuplists.LookupList): pass
-class Micro_test_parasitaemia(lookuplists.LookupList): pass
-class Micro_test_respiratory_virus_pcr(lookuplists.LookupList): pass
-class Micro_test_serology(lookuplists.LookupList): pass
-class Micro_test_single_igg_test(lookuplists.LookupList): pass
-class Micro_test_single_test_pos_neg(lookuplists.LookupList): pass
-class Micro_test_single_test_pos_neg_equiv(lookuplists.LookupList): pass
-class Micro_test_stool_parasitology_pcr(lookuplists.LookupList): pass
-class Micro_test_stool_pcr(lookuplists.LookupList): pass
-class Micro_test_swab_pcr(lookuplists.LookupList): pass
-class Micro_test_syphilis_serology(lookuplists.LookupList): pass
-class Micro_test_viral_load(lookuplists.LookupList): pass
-class Microbiology_organism(lookuplists.LookupList): pass
+# These should probably get refactored into opal-opat in 0.5
+class Line_complication(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Line complication"
+
+
+class Line_removal_reason(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Line removal reason"
+
+
+class Line_site(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Line site"
+
+
+class Line_type(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Line type"
+
+
+class Micro_test_c_difficile(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Micro test C difficile"
+        verbose_name_plural = "Micro tests C difficile"
+
+
+class Micro_test_csf_pcr(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Micro test CSF PCR"
+        verbose_name_plural = "Micro tests CSF PCR"
+
+
+class Micro_test_ebv_serology(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Micro test EBV serology"
+        verbose_name_plural = "Micro tests EBV serology"
+
+
+class Micro_test_hepititis_b_serology(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Micro test hepatitis B serology"
+        verbose_name_plural = "Micro tests hepatitis B serology"
+
+
+class Micro_test_hiv(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Micro test HIV"
+        verbose_name_plural = "Micro tests HIV"
+
+
+class Micro_test_leishmaniasis_pcr(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Micro test leishmaniasis PCR"
+        verbose_name_plural = "Micro tests leishmaniasis PCR"
+
+
+class Micro_test_mcs(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Micro test MCS"
+        verbose_name_plural = "Micro tests MCS"
+
+
+class Micro_test_other(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Micro test other"
+        verbose_name_plural = "Micro tests other"
+
+class Micro_test_parasitaemia(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Micro test parasitaemia"
+        verbose_name_plural = "Micro tests parasitaemia"
+
+
+class Micro_test_respiratory_virus_pcr(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Micro test respiratory virus PCR"
+        verbose_name_plural = "Micro tests respiratory virus PCR"
+
+
+class Micro_test_serology(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Micro test serology"
+        verbose_name_plural = "Micro tests serology"
+
+
+class Micro_test_single_igg_test(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Micro test single IgG test"
+        verbose_name_plural = "Micro tests single IgG test"
+
+
+class Micro_test_single_test_pos_neg(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Micro test single test pos neg"
+        verbose_name_plural = "Micro tests single test pos neg"
+
+
+class Micro_test_single_test_pos_neg_equiv(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Micro test single test pos neg equiv"
+        verbose_name_plural = "Micro tests single test pos neg equiv"
+
+
+class Micro_test_stool_parasitology_pcr(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Micro test stool parasitology PCR"
+        verbose_name_plural = "Micro tests stool parasitology PCR"
+
+
+class Micro_test_stool_pcr(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Micro test stool PCR"
+        verbose_name_plural = "Micro tests stool PCR"
+
+
+class Micro_test_swab_pcr(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Micro test swab PCR"
+        verbose_name_plural = "Micro tests swab PCR"
+
+
+class Micro_test_syphilis_serology(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Micro test syphilis serology"
+        verbose_name_plural = "Micro tests syphilis serology"
+
+
+class Micro_test_viral_load(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Micro test viral load"
+        verbose_name_plural = "Micro tests viral load"
+
+
+class Microbiology_organism(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Microbiology organism"
+
+
 class Symptom(lookuplists.LookupList): pass
-class Travel_reason(lookuplists.LookupList): pass
+
+
+class Travel_reason(lookuplists.LookupList):
+    class Meta:
+        verbose_name = "Travel reason"
+
 
 """
 Base models
@@ -696,7 +848,7 @@ class Treatment(EpisodeSubrecord):
 
 
 class Allergies(PatientSubrecord):
-    _icon = 'fa fa-warning'    
+    _icon = 'fa fa-warning'
 
     drug        = ForeignKeyOrFreeText(Drug)
     provisional = models.BooleanField(default=False)

@@ -15,7 +15,7 @@ var controllers = OPAL.module('opal.controllers', [
 
 controllers.controller('RootCtrl', function($scope, $location) {
     $scope.$location = $location;
-    
+
 	$scope.keydown = function(e) {
 		$scope.$broadcast('keydown', e);
 	};

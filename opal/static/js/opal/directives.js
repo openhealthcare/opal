@@ -35,7 +35,6 @@ directives.directive('placeholder', function($timeout){
 
 directives.directive('markdown', function () {
 	return function postLink (scope, element, attrs) {
-
 	    var prefix = 'item';
 	    if( _.isUndefined(scope['item']) ){
 		if(! _.isUndefined(scope['editing']) )
@@ -58,15 +57,23 @@ directives.directive('markdown', function () {
 	}
 });
 
-directives.directive('focusOnThis', function($timeout){
-    return {
-        link: function(scope, elem, attr){
-            $timeout(function(){
-                elem[0].focus();
-            });
+directives.directive('setFocusIf', function($timeout) {
+  return {
+    link: function($scope, $element, $attr) {
+      $scope.$watch($attr.setFocusIf, function(value) {
+        if ( value ) {
+          $timeout(function() {
+            // We must reevaluate the value in case it was changed by a subsequent
+            // watch handler in the digest.
+            if ( $scope.$eval($attr.setFocusIf) ) {
+              $element[0].focus();
+            }
+          }, 0, false);
         }
+      });
     }
-});
+  }
+});;
 
 angular.module('ui.bootstrap.modal').directive('modalWindow', function ($timeout) {
   return {

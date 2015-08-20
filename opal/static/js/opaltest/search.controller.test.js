@@ -42,8 +42,8 @@ describe('SearchCtrl', function (){
     describe('jumpToEpisode()', function (){
 
         it('Should call location.path()', function () {
-            spyOn(location, 'path').andCallThrough();
-            $scope.jumpToEpisode({id: 555});
+            spyOn(location, 'path').and.callThrough();
+            $scope.jumpToEpisode({active_episode_id: 555});
             expect(location.path).toHaveBeenCalledWith('/episode/555');
         });
 

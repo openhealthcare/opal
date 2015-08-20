@@ -1,3 +1,15 @@
+### 0.4.2 (Minor release)
+
+Upgrades dependency graph:
+
+* Django -> 1.8.3
+* Django-reversion -> 1.8.7
+* jQuery -> 1.11.3
+* D3 -> 3.5.6
+* C4 -> 0.4.10
+
+South has been removed, now using django migrations
+
 ### 0.4.1 (Bugfix release)
 
 Fixes some search results appearing duplicated.
@@ -22,7 +34,7 @@ http://opal.openhealthcare.org.uk/docs/reference/form_templatetags/
 
 
 OPAL JSON APIs are now fully self-documenting for all updated instances
-http://opal.openhealthcare.org.uk/docs/guides/json_api/		
+http://opal.openhealthcare.org.uk/docs/guides/json_api/
 
 ### 0.3 (Minor release)
 

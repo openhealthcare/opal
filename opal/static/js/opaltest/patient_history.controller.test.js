@@ -48,7 +48,7 @@ describe('PatientHistoryCtrl', function (){
         it('should not jump', function (){
             $scope.jump_to_episode({id: 33});
             expect($modalInstance.close).toHaveBeenCalledWith('cancel');
-            expect($location.path.calls.length).toBe(0);
+            expect($location.path.calls.count()).toBe(0);
         });
 
     });
