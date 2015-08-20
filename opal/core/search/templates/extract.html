@@ -168,14 +168,15 @@
       </div>
       <br />
     </div> <!-- Row -->
-
-    <div ng-show="results.length == 0">
-      <p>
-        Sorry, no results match your search.
-      </p>
+    <div class="row">
+      <div class="col-md-12">
+        <div class="col-md-12" ng-show="results.length == 0">
+          <p>
+            Sorry, no results match your search.
+          </p>
+        </div>
+      </div>
     </div>
-
-
     {% include 'partials/_episode_summary_table.html' %}
     <!-- Table -->
   </div>
