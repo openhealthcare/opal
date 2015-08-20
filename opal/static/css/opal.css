@@ -35,7 +35,18 @@ h1.larger { font-size: 52px; }
 }
 .content-offset { margin-top: 50px; }
 .content-offset-25 { margin-top: 25px; }
-.content-offset-below-25 { margin-bottom: 25px; }
+.content-offset-20{
+    margin-top: 20px;
+}
+.content-offset-below-20 {
+    margin-bottom: 20px;
+}
+.content-offset-10{
+    margin-top: 10px;
+}
+.content-offset-below-10 {
+    margin-bottom: 10px;
+}
 .content-offset-75 {margin-top: 75px; }
 .content-centered { padding-top: 20%; height: 100%; }
 .heading { position: fixed; top: 50px; width: 100%; z-index: 3; }
@@ -304,10 +315,6 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 
 .dropdown-menu { z-index: 1060; }
 
-
-
-
-
 .timeline {
   position: relative;
   padding-bottom: 1px;
@@ -389,4 +396,13 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
   content: "";
   display: block;
   position: absolute;
+}
+
+.saved-search:hover{
+  color: #333;
+}
+
+.saved-search{
+  font-size: 30px;
+  margin-right: 10px;
 }

@@ -2546,7 +2546,7 @@ angular.module( 'ui.bootstrap.tooltip', [ 'ui.bootstrap.position', 'ui.bootstrap
               // Set the initial positioning.
               tooltip.css({ top: 0, left: 0, display: 'block' });
 
-              // Now we add it to the DOM because need some info about it. But it's not 
+              // Now we add it to the DOM because need some info about it. But it's not
               // visible yet anyway.
               if ( appendToBody ) {
                   $document.find( 'body' ).append( tooltip );
@@ -2574,7 +2574,7 @@ angular.module( 'ui.bootstrap.tooltip', [ 'ui.bootstrap.position', 'ui.bootstrap
               $timeout.cancel( popupTimeout );
               popupTimeout = null;
 
-              // And now we remove it from the DOM. However, if we have animation, we 
+              // And now we remove it from the DOM. However, if we have animation, we
               // need to wait for it to expire beforehand.
               // FIXME: this is a placeholder for a port of the transitions library.
               if ( scope.tt_animation ) {
@@ -2688,9 +2688,10 @@ angular.module( 'ui.bootstrap.tooltip', [ 'ui.bootstrap.position', 'ui.bootstrap
   };
 })
 
-.directive( 'tooltip', [ '$tooltip', function ( $tooltip ) {
-  return $tooltip( 'tooltip', 'tooltip', 'mouseenter' );
-}])
+// removing this to stop conflict with angular strap
+// .directive( 'tooltip', [ '$tooltip', function ( $tooltip ) {
+//   return $tooltip( 'tooltip', 'tooltip', 'mouseenter' );
+// }])
 
 .directive( 'tooltipHtmlUnsafePopup', function () {
   return {
@@ -3591,7 +3592,7 @@ angular.module('ui.bootstrap.typeahead', ['ui.bootstrap.position', 'ui.bootstrap
       //we need to propagate user's query so we can higlight matches
       scope.query = undefined;
 
-      //Declare the timeout promise var outside the function scope so that stacked calls can be cancelled later 
+      //Declare the timeout promise var outside the function scope so that stacked calls can be cancelled later
       var timeoutPromise;
 
       //plug into $parsers pipeline to open a typeahead on view changes initiated from DOM
