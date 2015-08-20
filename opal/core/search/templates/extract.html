@@ -11,44 +11,39 @@
     <div class="panel-body">
 
       <div class="row">
-        <div class="col-md-10">
+        <div class="col-md-9">
           <form class="form form-inline">
             <span ng-repeat="query in criteria">
               <div class="row">
-                  <div class="col-md-3">
-                    <select class="form-control content-offset-25 content-offset-below-25" ng-model="query.combine"
-                            ng-hide="$index == 0">
+                  <div class="col-md-3" ng-hide="$index == 0">
+                    <select class="content-offset-20 content-offset-below-20 form-control" ng-model="query.combine">
                       <option>and</option>
                       <option>or</option>
                     </select>
                   </div>
               </div>
               <div class="row">
-                <div class="col-md-3">
+                <div class="col-md-10">
                   <select class="form-control" ng-model="query.column"
                   ng-change="resetFilter($index, ['combine', 'column'])"
+                  data-trigger="focus" bs-tooltip="tooltip"
+                  data-placement="top" data-title="1. Select a Column"
+                  set-focus-if="!query.column"
                   >
                     <option ng-repeat="col in columns" value="[[col.name]]">
                       [[col.display_name]]
                     </option>
                   </select>
-                  <p ng-show="query.column == null">
-                    1. Select a Column
-                  </p>
-                </div>
-                <div class="col-md-2">
                   <span ng-repeat="col in columns"
                         ng-show="query.column == col.name">
-                    <select class="form-control" ng-model="query.field" >
+                    <select class="form-control" ng-model="query.field"
+                    data-trigger="focus" bs-tooltip="tooltip"
+                    data-placement="top" data-title="2. Select a field"
+                    set-focus-if="query.field == null && query.column != null"
+                    >
                       <option ng-repeat="field in searchableFields(col)">[[field]]</option>
                     </select>
                   </span>
-                  <p ng-show="query.column != null && query.field == null">
-                    2. Select a field
-                  </p>
-                </div>
-                <div class="col-md-4" ng-show="query.column == 'tagging'"></div>
-                <div class="col-md-2" ng-hide="query.column == 'tagging'">
                   <select class="form-control"
                           ng-show="query.field != null && !isDate(query.column, query.field)"
                           ng-model="query.queryType" >
@@ -57,16 +52,18 @@
                   </select>
                   <select class="form-control"
                           ng-show="query.field != null && isDate(query.column, query.field)"
-                          ng-model="query.queryType" >
+                          ng-model="query.queryType" data-trigger="focus" bs-tooltip="tooltip"
+                          data-placement="top" data-title="4. Add your value"
+                          set-focus-if="query.field != null && isDate(query.column, query.field)" >
                     <option>Before</option>
                     <option>After</option>
                   </select>
-                  <p ng-show="query.column != null && query.field != null && query.queryType == null">
-                    3. Select a query type
-                  </p>
-                </div>
-                <div class="col-md-2" ng-hide="query.column == 'tagging'">
-                  <select class="form-control" ng-model="query.query" ng-show="isBoolean(query.column, query.field) && query.field != null">
+                  <select class="form-control" ng-model="query.query"
+                          ng-show="isBoolean(query.column, query.field) && query.field != null"
+                          data-trigger="focus" bs-tooltip="tooltip"
+                          data-placement="top" data-title="4. Add your value"
+                          set-focus-if="isBoolean(query.column, query.field) && query.field != null"
+                          >
                     <option>true</option>
                     <option>false</option>
                   </select>
@@ -75,20 +72,22 @@
                          ng-model="query.query"
                          ng-show="isText(query.column, query.field) && query.field != null"
                          ng-options="x for x in query.lookup_list"
+                         data-trigger="focus" bs-tooltip="tooltip"
+                         data-placement="top" data-title="4. Add your value"
+                         set-focus-if="isText(query.column, query.field) && query.field != null"
                          bs-typeahead
                          />
                 <input type="text" ng-model="query.query"
                          class="form-control"
                          ng-show="isDate(query.column, query.field) && query.field != null"
-  	               ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
-  	               placeholder="dd/mm/yyyy"
+                         data-trigger="focus" bs-tooltip="tooltip"
+                         data-placement="top" data-title="4. Add your value"
+        	               ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
+        	               placeholder="dd/mm/yyyy"
+                         set-focus-if="isDate(query.column, query.field) && query.field != null"
                          />
-
-                  <p ng-show="query.queryType != null && query.query == null && query.field != null">
-                    4. Add your value
-                  </p>
                 </div>
-                <div class="col-md-3 text-center">
+                <div class="col-md-2">
                   <button type="button" class="btn btn-success"
                           ng-show="query.field != null"
                           ng-click="addFilter()"
@@ -100,77 +99,75 @@
                           ng-click="removeFilter($index)"
                           >
                     <span ng-click="removeFilter($index)" class="glyphicon glyphicon-minus"></span>
-                </button>        </div>
+                  </button>
+                </div>
               </div>
             </span>
-
+            <div class="content-offset-20 ">
+              <button class="btn btn-danger" ng-show="criteria.length > 1" ng-click="removeCriteria()">
+                 Clear search
+               </button>
+           </div>
           </form>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
           <div class="panel panel-default">
             <div class="panel-heading">
-              <h4><i class="fa fa-save"></i> Searches</h4>
+              <h4><i class="fa fa-save saved-search"></i>Saved Searches</h4>
             </div>
-            <ul class="list-group">
-              <li class="list-group-item" ng-repeat="f in filters">
-                <a href="#" ng-click="jumpToFilter($event, f)">
-                  [[f.name]]
-                </a>
-                <a href="#" ng-click="editFilter($event, f, $index)" >
-                  <span class="glyphicon glyphicon-edit"></span>
-                </a>
-              </li>
-            </ul>
 
+            <div class="panel-body">
+              <ul ng-show="filters.length" class="list-group">
+                <li class="list-group-item" ng-repeat="f in filters">
+                  <strong>
+                    <a href="#" ng-click="jumpToFilter($event, f)">
+                      [[f.name]]
+                    </a>
+                    <a href="#" ng-click="editFilter($event, f, $index)" >
+                      <span class="glyphicon glyphicon-edit"></span>
+                    </a>
+                  </strong>
+                </li>
+              </ul>
+              <div ng-show="!filters.length">
+                You have no saved searches
+              </div>
+            </div>
+            <div ng-show="results.length > 0" class="panel-footer text-center">
+              <button type="button"
+                      class="btn btn-secondary"
+                      ng-click="save()"
+                      >
+                <span class="glyphicon glyphicon-floppy-disk"></span>
+                Save this search
+              </button>
+            </div>
           </div>
         </div>
-      </div> <!-- Row -->
-      <br />
-      <div class="row">
-        <div class="col-md-5 col-md-offset-3">
-
-          <form action="/search/extract/download" method="post" target="_blank"
-                 ng-show="profile.can_extract"
-                >
-            <input name="criteria" type="hidden" value="[[ JSON.stringify(criteria) ]]">
-            {% csrf_token %}
-            <button type="submit"
-                    class="btn btn-secondary pull-left"
-                    ng-show="results.length > 0">
-              <span class="glyphicon glyphicon-download"></span>
-              Download these results
-            </button>
-          </form>
-
-          <button type="button"
-                  class="btn btn-secondary pull-left push-left-12"
-                  ng-click="save()"
-                  ng-show="results.length > 0">
-
-            <span class="glyphicon glyphicon-floppy-disk"></span>
-            Save this search
-          </button>
-
-
-        </div>
-        <div class="col-md-4">
-          <button class="btn btn-danger" ng-show="criteria.length > 1" ng-click="removeCriteria()">
-                Clear search
-          </button>
-          <button type="button"
-                  class="btn btn-primary"
-                  ng-click="search()"
-                  >
-            <span class="glyphicon glyphicon-search"></span>
-            Search
-          </button>
-          <a href="#/search" class="btn btn-secondary">
-            <i class="fa fa-arrow-circle-right"></i>
-            Basic
-          </a>
-        </div>
       </div>
-    </div>
+      <div class="row">
+        <button type="button"
+                class="btn btn-primary col-md-4 col-md-push-4"
+                ng-click="search()"
+                >
+          <span class="glyphicon glyphicon-search"></span>
+          Search
+        </button>
+      </div>
+      <div class="row content-offset-25" ng-show="!profile.can_extract">
+        <form action="/search/extract/download" method="post" target="_blank">
+          <input name="criteria" type="hidden" value="[[ JSON.stringify(criteria) ]]">
+          {% csrf_token %}
+          <button type="submit"
+                  class="btn btn-secondary col-md-4 col-md-push-4"
+                  ng-show="results.length > 0">
+            <span class="glyphicon glyphicon-download"></span>
+            Download these results
+          </button>
+        </form>
+      </div>
+      <br />
+    </div> <!-- Row -->
 
     <div ng-show="results.length == 0">
       <p>
