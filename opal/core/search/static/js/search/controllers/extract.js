@@ -106,7 +106,7 @@ angular.module('opal.controllers').controller(
         };
 
         $scope.removeCriteria = function(){
-            $scope.criteria.splice(0, $scope.criteria.length-1);
+            $scope.criteria = [_.clone($scope.model)];
         }
 
         //
