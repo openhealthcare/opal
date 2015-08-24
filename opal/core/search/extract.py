@@ -1,7 +1,7 @@
 """
 Utilities for extracting data from OPAL
 """
-import datetime 
+import datetime
 
 import ffs
 from ffs.contrib import archive
@@ -10,11 +10,11 @@ from opal.models import Episode, Tagging, EpisodeSubrecord, PatientSubrecord
 from opal.core.subrecords import episode_subrecords, patient_subrecords
 
 class ExtractCSV(object):
-    
+
     def __init__(self, contents=None, filename=None):
         self.contents = contents
         self.filename = filename
-        
+
 
 def episode_csv(episodes, user):
     """
@@ -32,14 +32,14 @@ def episode_csv(episodes, user):
         items = [str(getattr(episode, f)) for f in fieldnames]
         items.append(';'.join(episode.get_tag_names(user, historic=True)))
         lines.append(','.join(items))
-        
+
     contents = '\n'.join(lines)
     csv = ExtractCSV(filename='episodes.csv', contents=contents)
     return csv
 
 def subrecord_csv(episodes, subrecord):
     """
-    Given an iterable of EPISODES, the SUBRECORD we want to serialise, 
+    Given an iterable of EPISODES, the SUBRECORD we want to serialise,
     return an ExtractCSV for this subrecord for these episodes.
     """
     filename = '{0}.csv'.format(subrecord.get_api_name())
@@ -93,12 +93,12 @@ def zip_archive(episodes, description, user):
         csvs.append(subrecord_csv(episodes, sub))
     for sub in patient_subrecords():
         csvs.append(patient_subrecord_csv(episodes, sub))
-    
+
     csvs.append(episode_csv(episodes, user))
-        
+
     target_dir = str(ffs.Path.newdir())
     target = target_dir + '/extract.zip'
-    
+
     with ffs.Path.temp() as tempdir:
         zipfolder = '{0}.{1}/'.format(user.username, datetime.date.today())
         with tempdir:
@@ -108,5 +108,3 @@ def zip_archive(episodes, description, user):
             zipfile/(zipfolder+'filter.txt') << description.encode('UTF-8')
             ffs.mv(zipfile, target)
     return target
-    
-
