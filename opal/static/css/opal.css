@@ -177,6 +177,15 @@ tr.selected {
   right: 2px;
 }
 
+/* Forms */
+
+.form-horizontal .checkbox {
+  padding-left: 28px;
+  padding-bottom: 12px;
+}
+.form-horizontal .checkbox label {
+    font-weight: bold;
+}
 /* Detail page & panels */
 .col-md-9.box { width: 74%; margin-right: 1%; }
 i.edit,

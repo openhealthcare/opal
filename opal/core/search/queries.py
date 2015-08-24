@@ -4,9 +4,29 @@ Allow us to make search queries
 import datetime
 
 from django.contrib.contenttypes.models import ContentType
+from django.db import models as djangomodels
 
 from opal import models
 from opal.core import fields
+
+
+def get_model_name_from_column_name(column_name):
+    return column_name.replace(' ', '').replace('_', '').lower()
+
+
+def get_model_from_column_name(column_name):
+    Mod = None
+    model_name = get_model_name_from_column_name(column_name)
+
+    for m in djangomodels.get_models():
+        if m.__name__.lower() == model_name:
+            if not Mod:
+                Mod = m
+            elif (issubclass(m, models.EpisodeSubrecord) or
+                  issubclass(m, models.PatientSubrecord)):
+                Mod = m
+
+    return Mod
 
 class QueryBackend(object):
     """
@@ -15,7 +35,7 @@ class QueryBackend(object):
     def __init__(self, user, query):
         self.user  = user
         self.query = query
-    
+
     def get_episodes(self):
         raise NotImplementedError()
 
@@ -32,16 +52,16 @@ class QueryBackend(object):
     def patients_as_json(self):
         patients = self.get_patients()
         return [p.to_dict(self.user) for p in patients]
-    
-        
+
+
 class DatabaseQuery(QueryBackend):
     """
     The default built in query backend for OPAL allows advanced search
-    criteria building. 
+    criteria building.
 
-    We broadly map reduce all criteria then the set of combined and/or 
+    We broadly map reduce all criteria then the set of combined and/or
     criteria together, then only unique episodes.
-    
+
     Finally we filter based on team restrictions.
     """
 
@@ -100,27 +120,17 @@ class DatabaseQuery(QueryBackend):
         """
         Given one set of criteria, return episodes that match it.
         """
-        from django.db import models as djangomodels
-
         query = criteria
         querytype = query['queryType']
         contains = '__iexact'
         if querytype == 'Contains':
             contains = '__icontains'
 
-        model_name = query['column'].replace(' ', '').replace('_', '')
+        column_name = query['column']
         field = query['field'].replace(' ', '_').lower()
+        Mod = get_model_from_column_name(column_name)
 
-        Mod = None
-        for m in djangomodels.get_models():
-            if m.__name__.lower() == model_name:
-                if not Mod:
-                    Mod = m
-                elif (issubclass(m, models.EpisodeSubrecord) or
-                      issubclass(m, models.PatientSubrecord)):
-                    Mod = m
-                    
-        if model_name.lower() == 'tags':
+        if column_name.lower() == 'tags':
             Mod = models.Tagging
 
         named_fields = [f for f in Mod._meta.fields if f.name == field]
@@ -130,12 +140,12 @@ class DatabaseQuery(QueryBackend):
 
         elif len(named_fields) == 1 and isinstance(named_fields[0], djangomodels.DateField):
             eps = self._episodes_for_date_fields(query, field, contains)
-            
+
         elif hasattr(Mod, field) and isinstance(getattr(Mod, field), fields.ForeignKeyOrFreeText):
             eps = self._episodes_for_fkorft_fields(query, field, contains, Mod)
 
         else:
-            model = query['column'].replace(' ', '').lower()
+            model_name = get_model_name_from_column_name(query['column'])
             kw = {'{0}__{1}{2}'.format(model_name, field, contains): query['query']}
 
             if Mod == models.Tagging:
@@ -159,7 +169,7 @@ class DatabaseQuery(QueryBackend):
         allowed_episodes = []
         for e in episodes:
             for tagging in e.tagging_set.all():
-                
+
                 if tagging.team in teams:
                     allowed_episodes.append(e)
                     break
@@ -186,13 +196,13 @@ class DatabaseQuery(QueryBackend):
                 elif tagging.team in teams:
                     allowed = True
                     break
-                
+
             if allowed:
                 allowed_episodes.append(e)
         return allowed_episodes
-    
+
     def get_episodes(self):
-        all_matches = [(q['combine'], self.episodes_for_criteria(q)) 
+        all_matches = [(q['combine'], self.episodes_for_criteria(q))
                        for q in self.query]
         if not all_matches:
             return []
@@ -224,6 +234,6 @@ class DatabaseQuery(QueryBackend):
 Searching for:
 {filters}
 """.format(username=self.user.username, date=datetime.datetime.now(), filters=filters)
-    
+
 
 SearchBackend = DatabaseQuery

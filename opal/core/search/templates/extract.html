@@ -158,7 +158,7 @@
           </div>
         </div>
       </form>
-      <div class="row content-offset-25" ng-show="!profile.can_extract">
+      <div class="row content-offset-25" ng-show="profile.can_extract">
         <form action="/search/extract/download" method="post" target="_blank">
           <input name="criteria" type="hidden" value="[[ JSON.stringify(criteria) ]]">
           {% csrf_token %}
