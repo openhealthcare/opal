@@ -10,9 +10,13 @@ from opal import models
 from opal.core import fields
 
 
+def get_model_name_from_column_name(column_name):
+    return column_name.replace(' ', '').replace('_', '').lower()
+
+
 def get_model_from_column_name(column_name):
     Mod = None
-    model_name = column_name.replace(' ', '').replace('_', '').lower()
+    model_name = get_model_name_from_column_name(column_name)
 
     for m in djangomodels.get_models():
         if m.__name__.lower() == model_name:
@@ -141,7 +145,7 @@ class DatabaseQuery(QueryBackend):
             eps = self._episodes_for_fkorft_fields(query, field, contains, Mod)
 
         else:
-            model = query['column'].replace(' ', '').lower()
+            model_name = get_model_name_from_column_name(query['column'])
             kw = {'{0}__{1}{2}'.format(model_name, field, contains): query['query']}
 
             if Mod == models.Tagging:
