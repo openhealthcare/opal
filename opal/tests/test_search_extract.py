@@ -61,7 +61,7 @@ class SubrecordCSVTestCase(PatientEpisodeTestCase):
         headers = csv.writer().writerow.call_args_list[0][0][0]
         row = csv.writer().writerow.call_args_list[1][0][0]
         expected_headers = ['episode_id', 'name']
-        expected_row = (self.episode.id, 'blue')
+        expected_row = [self.episode.id, 'blue']
         self.assertEqual(headers, expected_headers)
         self.assertEqual(row, expected_row)
 

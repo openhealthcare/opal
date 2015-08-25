@@ -4,9 +4,9 @@ Utilities for extracting data from OPAL
 import datetime
 import csv
 import os
-
-import ffs
-from ffs.contrib import archive
+import tempfile
+import zipfile
+import functools
 
 from opal.models import Episode
 from opal.core.subrecords import episode_subrecords, patient_subrecords
@@ -27,9 +27,8 @@ def subrecord_csv(episodes, subrecord, file_name):
 
         writer.writerow(field_names)
         subrecords = subrecord.objects.filter(episode__in=episodes)
-        subrecord_rows = subrecords.values_list(*field_names)
-        for subrecord_row in subrecord_rows:
-            writer.writerow(subrecord_row)
+        for sub in subrecords:
+            writer.writerow([getattr(sub, f) for f in field_names])
 
 
 def episode_csv(episodes, user, file_name):
@@ -37,14 +36,15 @@ def episode_csv(episodes, user, file_name):
     Given an iterable of EPISODES, create a CSV file containing Episode details.
     """
     with open(file_name, "w") as csv_file:
-        headers = [Episode._get_fieldnames_to_serialize()]
-        headers.remove('consistency_token')
-        headers.append(["tagging"])
+        fieldnames = Episode._get_fieldnames_to_serialize()
+        fieldnames.remove('consistency_token')
+        headers = list(fieldnames)
+        headers.append("tagging")
         writer = csv.DictWriter(csv_file, fieldnames=headers)
         writer.writeheader()
 
         for episode in episodes:
-            row = {h: str(getattr(episode, h)) for h in headers}
+            row = {h: str(getattr(episode, h)) for h in fieldnames}
             row["tagging"] = ';'.join(episode.get_tag_names(user, historic=True))
             writer.writerow(row)
 
@@ -81,34 +81,30 @@ def zip_archive(episodes, description, user):
     and the USER for which we are extracting, create a zip archive suitable
     for download with all of these episodes as CSVs.
     """
-    csvs = []
-    for subrecord in episode_subrecords():
-        file_name = '{0}.csv'.format(subrecord.get_api_name())
-        csvs.append(subrecord_csv(episodes, subrecord, file_name))
+    target_dir = tempfile.mkdtemp()
+    target = os.path.join(target_dir, 'extract.zip')
 
-    csvs.append(episode_csv(episodes, user))
+    with zipfile.ZipFile(target, mode='w') as z:
+        zipfolder = '{0}.{1}'.format(user.username, datetime.date.today())
+        os.mkdir(os.path.join(target_dir, zipfolder))
+        make_file_path = functools.partial(os.path.join, target_dir, zipfolder)
+        zip_relative_file_path = functools.partial(os.path.join, zipfolder)
 
-    target_dir = str(ffs.Path.newdir())
-    target = target_dir + '/extract.zip'
-
-    with ffs.Path.temp() as tempdir:
-        with tempdir:
-            zipfile = archive.ZipPath('episodes.zip')
-
-        relative_zipfolder = '{0}.{1}'.format(user.username, datetime.date.today())
-        zipfolder = os.path.join(zipfile, relative_zipfolder)
-        episode_csv_file_name = os.path.join(zipfolder, "episodes.csv")
-        csvs.append(episode_csv(episodes, user, episode_csv_file_name))
+        file_name = "episodes.csv"
+        full_file_name = make_file_path(file_name)
+        episode_csv(episodes, user, full_file_name)
+        z.write(full_file_name, zip_relative_file_path(file_name))
 
         for subrecord in episode_subrecords():
             file_name = '{0}.csv'.format(subrecord.get_api_name())
-            full_file_name = os.path.join(zipfolder, file_name)
-            csvs.append(subrecord_csv(episodes, subrecord, full_file_name))
+            full_file_name = make_file_path(file_name)
+            subrecord_csv(episodes, subrecord, full_file_name)
+            z.write(full_file_name, zip_relative_file_path(file_name))
 
         for subrecord in patient_subrecords():
             file_name = '{0}.csv'.format(subrecord.get_api_name())
-            full_file_name = os.path.join(zipfolder, file_name)
-            csvs.append(patient_subrecord_csv(episodes, subrecord, full_file_name))
-            zipfolder+'filter.txt' << description.encode('UTF-8')
-            ffs.mv(zipfile, target)
+            full_file_name = make_file_path(file_name)
+            patient_subrecord_csv(episodes, subrecord, full_file_name)
+            z.write(full_file_name, file_name)
+
     return target
