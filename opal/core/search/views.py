@@ -11,7 +11,7 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import View, TemplateView
 
 from opal import models
-from opal.core.views import (LoginRequiredMixin, _build_json_response, 
+from opal.core.views import (LoginRequiredMixin, _build_json_response,
                              _get_request_data, with_no_caching)
 from opal.core.search import queries
 from opal.core.search.extract import zip_archive
@@ -32,10 +32,10 @@ class ExtractTemplateView(TemplateView):
 @require_http_methods(['GET'])
 def patient_search_view(request):
     criteria = {
-        u'column'   : u'demographics', 
-        u'combine'  : u'and', 
+        u'column'   : u'demographics',
+        u'combine'  : u'and',
         u'queryType': u'Contains'
-    }        
+    }
     if 'hospital_number' in request.GET:
         criteria['field'] = 'hospital_number'
         criteria['query'] = request.GET['hospital_number']
@@ -53,7 +53,7 @@ def patient_search_view(request):
 
 class ExtractSearchView(View):
     def post(self, *args, **kwargs):
-        query = queries.SearchBackend(self.request.user, 
+        query = queries.SearchBackend(self.request.user,
                                       _get_request_data(self.request))
         eps = query.episodes_as_json()
         return _build_json_response(eps)
@@ -62,14 +62,11 @@ class ExtractSearchView(View):
 class DownloadSearchView(View):
 
     def post(self, *args, **kwargs):
-        query = queries.SearchBackend(self.request.user, 
+        query = queries.SearchBackend(self.request.user,
                                      json.loads(self.request.POST['criteria']))
         episodes = query.get_episodes()
         fname = zip_archive(episodes, query.description(), self.request.user)
-        resp = HttpResponse(
-            open(fname, 'rb').read(),
-            mimetype='application/force-download'
-            )
+        resp = HttpResponse(open(fname, 'rb').read())
         disp = 'attachment; filename="{0}extract{1}.zip"'.format(
             settings.OPAL_BRAND_NAME, datetime.datetime.now().isoformat())
         resp['Content-Disposition'] = disp
@@ -107,4 +104,3 @@ class FilterDetailView(LoginRequiredMixin, View):
     def delete(self, *args, **kwargs):
         self.filter.delete()
         return _build_json_response('')
-

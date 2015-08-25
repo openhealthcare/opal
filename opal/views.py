@@ -48,10 +48,7 @@ def serve_maybe(meth):
         # When we're running locally, just take the hit, otherwise
         # offload the serving of the datafile to Nginx
         if settings.DEBUG:
-            resp = HttpResponse(
-                open(filename, 'rb').read(),
-                mimetype='application/force-download'
-                )
+            resp = HttpResponse(open(filename, 'rb').read())
             return resp
 
         resp = HttpResponse()
