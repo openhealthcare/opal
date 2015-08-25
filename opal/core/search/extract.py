@@ -2,84 +2,77 @@
 Utilities for extracting data from OPAL
 """
 import datetime
+import csv
+import os
 
 import ffs
 from ffs.contrib import archive
 
-from opal.models import Episode, Tagging, EpisodeSubrecord, PatientSubrecord
+from opal.models import Episode
 from opal.core.subrecords import episode_subrecords, patient_subrecords
 
-class ExtractCSV(object):
 
-    def __init__(self, contents=None, filename=None):
-        self.contents = contents
-        self.filename = filename
-
-
-def episode_csv(episodes, user):
-    """
-    Given an iterable of EPISODES, create a CSV file containing Episode details.
-    """
-    lines = []
-    fieldnames = Episode._get_fieldnames_to_serialize()
-    for fname in ['consistency_token']:
-        if fname in fieldnames:
-            fieldnames.remove(fname)
-    historic = Tagging.historic_tags_for_episodes([e.id for e in episodes])
-
-    lines.append(','.join(fieldnames) + ',tagging')
-    for episode in episodes:
-        items = [str(getattr(episode, f)) for f in fieldnames]
-        items.append(';'.join(episode.get_tag_names(user, historic=True)))
-        lines.append(','.join(items))
-
-    contents = '\n'.join(lines)
-    csv = ExtractCSV(filename='episodes.csv', contents=contents)
-    return csv
-
-def subrecord_csv(episodes, subrecord):
+def subrecord_csv(episodes, subrecord, file_name):
     """
     Given an iterable of EPISODES, the SUBRECORD we want to serialise,
     return an ExtractCSV for this subrecord for these episodes.
     """
-    filename = '{0}.csv'.format(subrecord.get_api_name())
-    lines = []
-    fieldnames = subrecord._get_fieldnames_to_extract()
-    for fname in ['consistency_token', 'id']:
-        if fname in fieldnames:
-            fieldnames.remove(fname)
-    lines.append(u','.join(fieldnames))
+    with open(file_name, "w") as csv_file:
+        writer = csv.writer(csv_file)
+        field_names = subrecord._get_fieldnames_to_extract()
 
-    subrecords = subrecord.objects.filter(episode__in=episodes)
-    for sub in subrecords:
-        lines.append(u','.join([unicode(getattr(sub, f)) for f in fieldnames]))
+        for fname in ['consistency_token', 'id']:
+            if fname in field_names:
+                field_names.remove(fname)
 
-    contents = u'\n'.join(lines)
-    csv = ExtractCSV(filename=filename, contents=contents)
-    return csv
+        writer.writerow(field_names)
+        subrecords = subrecord.objects.filter(episode__in=episodes)
+        subrecord_rows = subrecords.values_list(*field_names)
+        for subrecord_row in subrecord_rows:
+            writer.writerow(subrecord_row)
 
-def patient_subrecord_csv(episodes, subrecord):
+
+def episode_csv(episodes, user, file_name):
+    """
+    Given an iterable of EPISODES, create a CSV file containing Episode details.
+    """
+    with open(file_name, "w") as csv_file:
+        headers = [Episode._get_fieldnames_to_serialize()]
+        headers.remove('consistency_token')
+        headers.append(["tagging"])
+        writer = csv.DictWriter(csv_file, fieldnames=headers)
+        writer.writeheader()
+
+        for episode in episodes:
+            row = {h: str(getattr(episode, h)) for h in headers}
+            row["tagging"] = ';'.join(episode.get_tag_names(user, historic=True))
+            writer.writerow(row)
+
+
+def patient_subrecord_csv(episodes, subrecord, file_name):
     """
     Given an iterable of EPISODES, and the patient SUBRECORD we want to
     serialise, return an ExtractCSV for this subrecord for these episodes.
     """
-    filename = '{0}.csv'.format(subrecord.get_api_name())
-    lines = []
-    fieldnames = subrecord._get_fieldnames_to_extract()
-    for fname in ['consistency_token', 'patient_id', 'id']:
-        if fname in fieldnames:
-            fieldnames.remove(fname)
-    lines.append(u'episode_id,' + u','.join(fieldnames))
+    with open(file_name, "w") as csv_file:
+        field_names = subrecord._get_fieldnames_to_extract()
+        writer = csv.writer(csv_file)
 
-    for episode in episodes:
-        for sub in subrecord.objects.filter(patient=episode.patient):
-            items = [unicode(episode.id)]
-            items += [unicode(getattr(sub, f)) for f in fieldnames]
-            lines.append(u','.join(items))
+        for fname in ['consistency_token', 'patient_id', 'id']:
+            if fname in field_names:
+                field_names.remove(fname)
 
-    contents = u'\n'.join(lines)
-    csv = ExtractCSV(filename=filename, contents=contents)
-    return csv
+        patient_to_episode = {e.patient_id: e.id for e in episodes}
+        subs = subrecord.objects.filter(patient__in=patient_to_episode.keys())
+
+        headers = list(field_names)
+        headers.insert(0, "episode_id")
+        writer.writerow(headers)
+
+        for sub in subs:
+            row = [patient_to_episode[sub.patient_id]]
+            row.extend(getattr(sub, f) for f in field_names)
+            writer.writerow(row)
 
 
 def zip_archive(episodes, description, user):
@@ -89,10 +82,9 @@ def zip_archive(episodes, description, user):
     for download with all of these episodes as CSVs.
     """
     csvs = []
-    for sub in episode_subrecords():
-        csvs.append(subrecord_csv(episodes, sub))
-    for sub in patient_subrecords():
-        csvs.append(patient_subrecord_csv(episodes, sub))
+    for subrecord in episode_subrecords():
+        file_name = '{0}.csv'.format(subrecord.get_api_name())
+        csvs.append(subrecord_csv(episodes, subrecord, file_name))
 
     csvs.append(episode_csv(episodes, user))
 
@@ -100,11 +92,23 @@ def zip_archive(episodes, description, user):
     target = target_dir + '/extract.zip'
 
     with ffs.Path.temp() as tempdir:
-        zipfolder = '{0}.{1}/'.format(user.username, datetime.date.today())
         with tempdir:
             zipfile = archive.ZipPath('episodes.zip')
-            for csv in csvs:
-                zipfile/(zipfolder+csv.filename) << csv.contents.encode('UTF-8')
-            zipfile/(zipfolder+'filter.txt') << description.encode('UTF-8')
+
+        relative_zipfolder = '{0}.{1}'.format(user.username, datetime.date.today())
+        zipfolder = os.path.join(zipfile, relative_zipfolder)
+        episode_csv_file_name = os.path.join(zipfolder, "episodes.csv")
+        csvs.append(episode_csv(episodes, user, episode_csv_file_name))
+
+        for subrecord in episode_subrecords():
+            file_name = '{0}.csv'.format(subrecord.get_api_name())
+            full_file_name = os.path.join(zipfolder, file_name)
+            csvs.append(subrecord_csv(episodes, subrecord, full_file_name))
+
+        for subrecord in patient_subrecords():
+            file_name = '{0}.csv'.format(subrecord.get_api_name())
+            full_file_name = os.path.join(zipfolder, file_name)
+            csvs.append(patient_subrecord_csv(episodes, subrecord, full_file_name))
+            zipfolder+'filter.txt' << description.encode('UTF-8')
             ffs.mv(zipfile, target)
     return target
