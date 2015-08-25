@@ -70,3 +70,9 @@ guidelines in use at your institution when viewing records of patients whose con
 
 Can be used with national or local guidelines.
 
+
+### opal-iframe-api
+
+The [Iframe Api](https://github.com/openhealthcare/opal-iframe-api) plugin allows you to set up an api key. 
+With this Api key you can create templates to view subrecords for embedding in for example iframes.
+
