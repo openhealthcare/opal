@@ -11,7 +11,7 @@ angular.module('opal.controllers').controller(
         $scope.limit = 10;
         $scope.JSON = window.JSON;
         $scope.filters = filters;
-        $scope.columns = schema.columns;
+        $scope.columns = schema.getAdvancedSearchColumns();
         $scope.column_names = _.map(schema.columns, function(c){
             return underscoreToCapWords(c.name);
         });

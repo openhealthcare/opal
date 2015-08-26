@@ -177,7 +177,7 @@ describe('controllers', function() {
         Item     = injector.get('Item')
 
         schema = new Schema(columns.default);
-        
+
         profile = {
             readonly   : false,
             can_extract: true,
@@ -292,10 +292,10 @@ describe('controllers', function() {
             it('should call the exit flow', function(){
                 $scope.dischargeEpisode(mockEvent);
                 expect(Flow).toHaveBeenCalledWith(
-                    'exit', null, options, 
+                    'exit', null, options,
                     {
                         current_tags: {
-                            tag   : undefined, 
+                            tag   : undefined,
                             subtag: undefined
                         },
                         episode: episode
@@ -532,7 +532,7 @@ describe('controllers', function() {
         });
 
         describe('new for patient', function(){
-            
+
             it('should call through if there is an active discharged episode.', function(){
                 spyOn($scope, 'newForPatientWithActiveEpisode');
 
@@ -547,12 +547,12 @@ describe('controllers', function() {
                 expect(callArgs.length).toBe(1);
                 expect(callArgs[0].controller).toBe('AddEpisodeCtrl');
             });
-            
+
             it('should call through if there is an active episode.', function(){
                 spyOn($scope, 'newForPatientWithActiveEpisode');
                 patientData.active_episode_id = 3;
                 patientData.episodes[3].location[0].category = 'Inpatient'
-                
+
                 $scope.newForPatient(patientData);
                 expect($scope.newForPatientWithActiveEpisode)
                     .toHaveBeenCalledWith(patientData);
@@ -765,65 +765,5 @@ describe('controllers', function() {
         });
     });
 
-    describe('ExtractCtrl', function(){
-        beforeEach(function(){
-            
-            inject(function($injector){
-                $httpBackend = $injector.get('$httpBackend');
-            });
-
-            var $injector = angular.injector(['ng', 'opal.controllers'])
-            $scope   = $injector.get('$rootScope');
-            // $scope       = $rootScope.$new();
-            $controller  = $injector.get('$controller');
-            $window      = $injector.get('$window');
-
-            Schema = $injector.get('Schema');
-            Episode = $injector.get('Episode');
-            Item = $injector.get('Item')
-
-        var schema = new Schema(columns.default);
-
-            controller = $controller('ExtractCtrl',  {
-                $scope : $scope,
-                profile: {},
-                options: optionsData,
-                filters: [],
-                schema : schema
-            });
-        });
-
-        describe('Initialization', function(){
-            it('should set up initial state', function(){
-                // expect($scope.columns).toEqual(columns.default);
-            });
-        });
-
-        describe('Getting searchable fields', function(){
-            it('should exclude token fields', function(){
-                var col = {fields: [
-                    {name: 'consistency_token', type: 'token'},
-                    {name: 'hospital', type: 'string'},
-                ]}
-                expect($scope.searchableFields(col)).toEqual(['Hospital'])
-            });
-            it('should capitalze the field names', function(){
-                var col = {fields: [
-                    {name: 'hospital_number', type: 'string'},
-                    {name: 'hospital', type: 'string'},
-                ]}
-                expect($scope.searchableFields(col)).toEqual(['Hospital Number',
-                                                              'Hospital']);
-            });
-        });
-
-        describe('Search', function(){
-            it('should ask the server for results', function(){
-                $httpBackend.when('POST', "/search/extract/").respond(patientData.episodes);
-                $scope.search();
-            });
-        });
-
-    });
 
 });

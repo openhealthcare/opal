@@ -7,16 +7,18 @@ from opal.core import fields
 from opal import models
 
 class Colour(models.EpisodeSubrecord):
+    _advanced_searchable = False
+
     name = dmodels.CharField(max_length=200)
 
-    
+
 class PatientColour(models.PatientSubrecord):
     name = dmodels.CharField(max_length=200)
 
-    
+
 class FamousLastWords(models.PatientSubrecord):
     _is_singleton = True
-    
+
     words = dmodels.CharField(max_length=200, blank=True, null=True)
 
 
@@ -37,4 +39,3 @@ if not getattr(models.Patient, 'demographics_set', None):
         gender = fields.ForeignKeyOrFreeText(models.Gender)
 
         pid_fields = 'name',
-
