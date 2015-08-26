@@ -15,7 +15,7 @@ from opal.core.subrecords import episode_subrecords, patient_subrecords
 def subrecord_csv(episodes, subrecord, file_name):
     """
     Given an iterable of EPISODES, the SUBRECORD we want to serialise,
-    return an ExtractCSV for this subrecord for these episodes.
+    write a csv file for the data in this subrecord for these episodes.
     """
     with open(file_name, "w") as csv_file:
         writer = csv.writer(csv_file)
@@ -52,7 +52,7 @@ def episode_csv(episodes, user, file_name):
 def patient_subrecord_csv(episodes, subrecord, file_name):
     """
     Given an iterable of EPISODES, and the patient SUBRECORD we want to
-    serialise, return an ExtractCSV for this subrecord for these episodes.
+    create a CSV file for the data in this subrecord for these episodes.
     """
     with open(file_name, "w") as csv_file:
         field_names = subrecord._get_fieldnames_to_extract()
