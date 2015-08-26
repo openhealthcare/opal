@@ -2,16 +2,44 @@
 Unittests for opal.core.search.extract
 """
 import datetime
+import json
 from mock import mock_open, Mock, patch
 
+from django.core.urlresolvers import reverse
+from django.contrib.auth.models import User
 
 from opal.core.test import OpalTestCase
 from opal import models
-from opal.tests.models import Colour, PatientColour, Demographics
+from opal.tests.models import Colour,  Demographics
 
 from opal.core.search import extract
 
 MOCKING_FILE_NAME_OPEN = "opal.core.search.extract.open"
+
+
+class TestViewGet(OpalTestCase):
+    def test_check_view(self):
+        # a vanilla check to make sure that the view returns a zip file
+        url = reverse("extract_download")
+        post_data = {
+            "criteria":
+                json.dumps([{
+                    "combine": "and",
+                    "column": "demographics",
+                    "field": "Name",
+                    "queryType": "Contains",
+                    "query": "a",
+                    "lookup_list": [],
+                }])
+        }
+
+        self.assertTrue(
+            self.client.login(username=self.user.username, password=self.PASSWORD)
+        )
+
+        response = self.client.post(url, post_data)
+
+        self.assertEqual(response.status_code, 200)
 
 
 class PatientEpisodeTestCase(OpalTestCase):

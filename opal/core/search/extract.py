@@ -105,6 +105,12 @@ def zip_archive(episodes, description, user):
             file_name = '{0}.csv'.format(subrecord.get_api_name())
             full_file_name = make_file_path(file_name)
             patient_subrecord_csv(episodes, subrecord, full_file_name)
-            z.write(full_file_name, file_name)
+            z.write(full_file_name, zip_relative_file_path(file_name))
+
+        file_name = 'filter.txt'
+        full_file_name = make_file_path(file_name)
+        with open(full_file_name, 'w') as description_file:
+            description_file.write(description)
+        z.write(full_file_name, zip_relative_file_path(file_name))
 
     return target
