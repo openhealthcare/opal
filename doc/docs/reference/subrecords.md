@@ -55,6 +55,11 @@ String we would like to use for user-facing display of this record type.
     class Antimicrobial(EpisodeSubrecord):
         _title = 'Abx'
 
+#### Subrecord.pid_fields
+
+An iterable of strings that correspond to fieldnames that contain Patient Identifiable Data (PID).
+
+This is used when creating data extracts to exclude PID from e.g. CSV downloads.
 
 ### Methods
 
