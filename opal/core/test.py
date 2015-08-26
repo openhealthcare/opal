@@ -6,11 +6,14 @@ import json
 from django.contrib.auth.models import User
 from django.core.serializers.json import DjangoJSONEncoder
 from django.test import TestCase
-from django.test.client import RequestFactory
+from django.test.client import RequestFactory, Client
 
 from opal.models import UserProfile
 
+
 class OpalTestCase(TestCase):
+    USERNAME = "testuser"
+    PASSWORD = "password"
 
     def __init__(self, *a, **k):
         self.rf = RequestFactory()
@@ -20,9 +23,17 @@ class OpalTestCase(TestCase):
     @property
     def user(self):
         if self._user is None:
-            self._user = User.objects.create(username='testuser')
-            self._user.set_password('password')
-            profile, _ = UserProfile.objects.get_or_create(user=self.user)
+            self._user = User.objects.create(
+                username=self.USERNAME,
+                is_staff=True,
+                is_superuser=True
+            )
+            self._user.set_password(self.PASSWORD)
+            self._user.save()
+            profile, _ = UserProfile.objects.get_or_create(
+                user=self.user,
+                can_extract=True
+            )
         return self._user
 
     def post_json(self, path, data):
