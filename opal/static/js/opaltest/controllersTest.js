@@ -175,7 +175,6 @@ describe('controllers', function() {
         Schema   = injector.get('Schema');
         Episode  = injector.get('Episode');
         Item     = injector.get('Item')
-
         schema = new Schema(columns.default);
 
         profile = {
@@ -764,6 +763,4 @@ describe('controllers', function() {
             })
         });
     });
-
-
 });

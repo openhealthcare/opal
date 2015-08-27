@@ -1,10 +1,10 @@
 describe('Episode', function() {
-    var Episode, EpisodeResource, Item;
+    var Episode, EpisodeResource, Item, $scope;
     var episode, episodeData, resource, tag_hierarchy;
 
     beforeEach(function() {
         module('opal.services');
-        
+
         tag_hierarchy = {
             'mine'    : [],
             'tropical': [],
@@ -12,7 +12,7 @@ describe('Episode', function() {
                 'ortho', 'haem'
             ]
         };
-        
+
         columns = {
             "fields": {
                 'demographics': {
@@ -82,6 +82,8 @@ describe('Episode', function() {
         inject(function($injector) {
             Episode = $injector.get('Episode');
             Item = $injector.get('Item');
+            $rootScope  = $injector.get('$rootScope');
+            $scope      = $rootScope.$new();
         });
 
         episode = new Episode(episodeData);
@@ -121,7 +123,7 @@ describe('Episode', function() {
     it('hasTags() Should know if the episode has a given tag', function () {
         expect(episode.hasTag('tropical')).toEqual(true);
     });
-    
+
     describe('childTags()', function (){
 
         it('Should return child tags', function () {
@@ -134,7 +136,7 @@ describe('Episode', function() {
             var children = ['mine', 'tropical', 'haem'];
             expect(episode.childTags(tag_hierarchy)).toEqual(children);
         });
-        
+
     });
 
     it('should be able to add a new item', function() {
@@ -214,16 +216,16 @@ describe('Episode', function() {
 
         });
 
-        
+
         describe('findByHospitalNumber()', function (){
 
-            
+
             it('Should call the newPatient callback', function () {
                 var mock_new = jasmine.createSpy('Mock for new patient')
                 var search_url = '/search/patient/';
                 search_url += '?queryType=Equals&hospital_number=notarealnumber'
                 $httpBackend.expectGET(search_url).respond([]);
-                
+
                 Episode.findByHospitalNumber('notarealnumber', {newPatient: mock_new})
 
                 $httpBackend.flush();
@@ -237,7 +239,7 @@ describe('Episode', function() {
                 var search_url = '/search/patient/';
                 search_url += '?queryType=Equals&hospital_number=notarealnumber'
                 $httpBackend.expectGET(search_url).respond([episodeData]);
-                
+
                 Episode.findByHospitalNumber('notarealnumber', {newForPatient: mock_new})
 
                 $httpBackend.flush();
@@ -246,7 +248,7 @@ describe('Episode', function() {
                 expect(mock_new).toHaveBeenCalled();
             });
 
-            
+
         });
 
     });
