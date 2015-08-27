@@ -243,6 +243,20 @@ class Episode(UpdatesFromDictMixin, models.Model):
             return self.date_of_admission
 
     @property
+    def start_date(self):
+        if self.date_of_episode:
+            return self.date_of_episode
+        else:
+            return self.date_of_admission
+
+    @property
+    def end_date(self):
+        if self.date_of_episode:
+            return self.date_of_episode
+        else:
+            return self.discharge_date
+
+    @property
     def is_discharged(self):
         """
         Predicate property to determine if we're discharged.

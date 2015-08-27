@@ -2,7 +2,7 @@
 Re-usable view components
 """
 import functools
-import json 
+import json
 
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
@@ -26,7 +26,7 @@ def _build_json_response(data, status_code=200):
     # response.content = '<html><body>'+json.dumps(data, cls=DjangoJSONEncoder)+'</body></html>'
     response.status_code = status_code
     return response
-    
+
 def with_no_caching(view):
 
     @functools.wraps(view)
@@ -45,4 +45,3 @@ class ModelViewSet(
         mixins.ListModelMixin,
         viewsets.GenericViewSet):
     pass
-

@@ -5,6 +5,7 @@ import datetime
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import models as djangomodels
+from django.db.models import Count, Min, Max
 
 from opal import models
 from opal.core import fields
@@ -28,6 +29,27 @@ def get_model_from_column_name(column_name):
 
     return Mod
 
+
+class PatientSummary(object):
+    def __init__(self):
+        self.start_date, self.end_date = self.get_start_end_dates(episode)
+        self.count = 1
+        self.episode_id = 0
+
+    def update(self, episode):
+        if self.start_date > episode.start_date:
+            self.start_date = episode.start_date
+
+        if self.end_date < episode.end_date:
+            self.end_date = episode.end_date
+            self.episode_id = episode.episode_id
+
+        self.count += 1
+
+    def to_dict(self):
+        return {k: getattr(self, k) for k in ["start_date", "end_date", "episode_id", "count"]}
+
+
 class QueryBackend(object):
     """
     Base class for search implementations to inherit from
@@ -45,9 +67,8 @@ class QueryBackend(object):
     def get_patients(self):
         raise NotImplementedError()
 
-    def episodes_as_json(self):
-        eps = self.get_episodes()
-        return [e.to_dict(self.user) for e in eps]
+    def get_patient_summaries(self):
+        raise NotImplementedError()
 
     def patients_as_json(self):
         patients = self.get_patients()
@@ -160,6 +181,46 @@ class DatabaseQuery(QueryBackend):
                     eps += list(p.episode_set.all())
         return eps
 
+    def patients_for_criteria(self, criteria):
+        """
+            we get all patients for summaries by aggregating
+            all related episodes.
+        """
+        episodes = episodes_for_criteria(criteria)
+        return self._get_aggregate_patients_from_episodes(episodes)
+
+    def _get_aggregate_patients_from_episodes(self, episodes):
+        # at the moment we use date_of_admission/discharge only if
+        # date_of_episode is null, because of this we can't do this
+        # in a vanilla orm query
+        patient_summaries = {}
+
+        for episode in episodes:
+            patient_id = episodes.patient_od
+            if patient_id in patient_summaries:
+                patients[patient_id].update(episode)
+            else:
+                patients[patient_id] = PatientSummary(episode)
+
+        patients = Patients.objects.filter(id__in=patients.keys())
+        patients = patients.prefetch_related("demographics_set")
+
+        results = []
+
+        for patient_id, patient_summary in patient_summaries.iteritems():
+            patient = next(p for p in patients if p.id == patient_id)
+            demographic = patient.demographics_set.get()
+
+            result = {k: getattr(demographic, k) for k in [
+                "name", "hospital_number", "date_of_birth"
+                ]}
+
+            result.update(patient_summary.to_dict())
+            results.append(result)
+
+        return results
+
+
     def _filter_for_restricted_only(self, episodes):
         """
         Given an iterable of EPISODES, return those for which our
@@ -201,7 +262,7 @@ class DatabaseQuery(QueryBackend):
                 allowed_episodes.append(e)
         return allowed_episodes
 
-    def get_episodes(self):
+    def _episodes_without_restrictions(self):
         all_matches = [(q['combine'], self.episodes_for_criteria(q))
                        for q in self.query]
         if not all_matches:
@@ -214,12 +275,29 @@ class DatabaseQuery(QueryBackend):
             methods = {'and': 'intersection', 'or': 'union', 'not': 'difference'}
             working = getattr(set(episodes), methods[combine])(working)
 
-        eps = working
+        return working
+
+    def get_episodes(self):
+        eps = self._episodes_without_restrictions()
+
         if self.user.profile.restricted_only:
             eps = self._filter_for_restricted_only(eps)
         else:
             eps = self._filter_restricted_teams(eps)
         return eps
+
+    def get_patient_summaries(self):
+        eps = self._episodes_without_restrictions()
+        episode_ids = [e.id for e in eps]
+
+        # get all episodes of patients, that have episodes that
+        # match the criteria
+        all_eps = models.Episode.objects.filter(
+            patient__episode__in=episode_ids
+        )
+        filtered_eps = self._filter_for_restricted_only(all_eps)
+        filtered_eps = self._filter_restricted_teams(filtered_eps)
+        return self._get_aggregate_patients_from_episodes(filtered_eps)
 
     def get_patients(self):
         patients = set(e.patient for e in self.get_episodes())

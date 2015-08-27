@@ -19,7 +19,6 @@ from opal.core.search.extract import zip_archive
 
 PAGINATION_AMOUNT = 10
 
-
 class SaveFilterModalView(TemplateView):
     template_name = 'save_filter_modal.html'
 
@@ -32,10 +31,20 @@ class ExtractTemplateView(TemplateView):
     template_name = 'extract.html'
 
 
-@with_no_caching
-@require_http_methods(['GET'])
-def patient_search_view(request):
-    page_number = int(request.GET.get("page_number", 1))
+def _add_pagination(eps, page_number):
+    paginator = Paginator(eps, PAGINATION_AMOUNT)
+    results = {
+        "object_list": paginator.page(page_number).object_list,
+        "page_number": page_number,
+        "total_pages": paginator.num_pages
+    }
+    return results
+
+
+def _extract_basic_search_parameters(request):
+    ''' fills in the basic search criteria if we want
+    to search via a hospital number or name
+    '''
     criteria = {
         u'column': u'demographics',
         u'combine': u'and',
@@ -48,20 +57,34 @@ def patient_search_view(request):
         criteria['field'] = 'name'
         criteria['query'] = request.GET['name']
     else:
+        criteria["invalid"] = "No search terms"
         return _build_json_response({'error': 'No search terms'}, 400)
     if 'queryType' in request.GET:
         criteria['queryType'] = request.GET['queryType']
 
-    query = queries.SearchBackend(request.user, [criteria])
-    eps = query.episodes_as_json()
-    paginator = Paginator(eps, PAGINATION_AMOUNT)
-    results = {
-        "object_list": paginator.page(page_number).object_list,
-        "page_number": page_number,
-        "total_pages": paginator.num_pages
-    }
+    return criteria
 
-    return _build_json_response(results)
+
+@with_no_caching
+@require_http_methods(['GET'])
+def patient_search_view(request):
+    criteria = _extract_basic_search_parameters(request)
+
+    if "invalid" in criteria:
+        return _build_json_response({'error': criteria["invalid"]}, 400)
+
+    query = queries.SearchBackend(request.user, [criteria])
+    return _build_json_response(query.patients_as_json())
+
+
+@with_no_caching
+@require_http_methods(['GET'])
+def simple_search_view(request):
+    page_number = int(request.GET.get("page_number", 1))
+    criteria = _extract_basic_search_parameters(request)
+    query = queries.SearchBackend(request.user, criteria)
+    eps = query.episodes_as_json()
+    return _build_json_response(_add_pagination(eps, page_number))
 
 
 class ExtractSearchView(View):
@@ -71,13 +94,7 @@ class ExtractSearchView(View):
             self.request.user, _get_request_data(self.request)
         )
         eps = query.episodes_as_json()
-        paginator = Paginator(eps, PAGINATION_AMOUNT)
-        results = {
-            "object_list": paginator.page(page_number).object_list,
-            "page_number": page_number,
-            "total_pages": paginator.num_pages
-        }
-        return _build_json_response(results)
+        return _build_json_response(_add_pagination(eps, page_number))
 
 
 class DownloadSearchView(View):
