@@ -127,8 +127,10 @@ angular.module('opal.controllers').controller(
             ngProgressLite.set(0);
             ngProgressLite.start();
             $http.post('/search/extract/', $scope.completeCriteria()).success(
-                function(results){
-                    $scope.results = results;
+                function(response){
+                    $scope.results = response.object_list;
+                    $scope.pageNumber = response.page_number;
+                    $scope.totalPages = response.total_pages;
                     ngProgressLite.done();
                 }).error(function(e){
                     ngProgressLite.set(0);

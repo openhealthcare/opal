@@ -23,3 +23,12 @@
   </tbody>
 
 </table>
+<div ng-show="totalPages.length > 1">
+    <nav>
+      <ul class="pagination">
+          <li ng-repeat="pageNum in totalPages" ng-class="{active: currentPageNumber == pageNum }">
+              <a ng-click="search(pageNum)">[[ pageNum ]]</a>
+          </li>
+      </ul>
+  </nav>
+</div>

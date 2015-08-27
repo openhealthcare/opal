@@ -9,12 +9,16 @@ from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponse, HttpResponseNotFound
 from django.views.decorators.http import require_http_methods
 from django.views.generic import View, TemplateView
+from django.core.paginator import Paginator
 
 from opal import models
 from opal.core.views import (LoginRequiredMixin, _build_json_response,
                              _get_request_data, with_no_caching)
 from opal.core.search import queries
 from opal.core.search.extract import zip_archive
+
+PAGINATION_AMOUNT = 10
+
 
 class SaveFilterModalView(TemplateView):
     template_name = 'save_filter_modal.html'
@@ -31,9 +35,10 @@ class ExtractTemplateView(TemplateView):
 @with_no_caching
 @require_http_methods(['GET'])
 def patient_search_view(request):
+    page_number = int(request.GET.get("page_number", 1))
     criteria = {
-        u'column'   : u'demographics',
-        u'combine'  : u'and',
+        u'column': u'demographics',
+        u'combine': u'and',
         u'queryType': u'Contains'
     }
     if 'hospital_number' in request.GET:
@@ -48,15 +53,31 @@ def patient_search_view(request):
         criteria['queryType'] = request.GET['queryType']
 
     query = queries.SearchBackend(request.user, [criteria])
-    return _build_json_response(query.patients_as_json())
+    eps = query.episodes_as_json()
+    paginator = Paginator(eps, PAGINATION_AMOUNT)
+    results = {
+        "object_list": paginator.page(page_number).object_list,
+        "page_number": page_number,
+        "total_pages": paginator.num_pages
+    }
+
+    return _build_json_response(results)
 
 
 class ExtractSearchView(View):
     def post(self, *args, **kwargs):
-        query = queries.SearchBackend(self.request.user,
-                                      _get_request_data(self.request))
+        page_number = self.request.GET.get("page_number", 1)
+        query = queries.SearchBackend(
+            self.request.user, _get_request_data(self.request)
+        )
         eps = query.episodes_as_json()
-        return _build_json_response(eps)
+        paginator = Paginator(eps, PAGINATION_AMOUNT)
+        results = {
+            "object_list": paginator.page(page_number).object_list,
+            "page_number": page_number,
+            "total_pages": paginator.num_pages
+        }
+        return _build_json_response(results)
 
 
 class DownloadSearchView(View):

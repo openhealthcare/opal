@@ -13,6 +13,7 @@ angular.module('opal.controllers').controller(
         $scope.limit = 10;
 	    $scope.results = [];
 	    $scope.searched = false;
+        $scope.currentPageNumber = 1;
 
 	    $scope.episode_category_list = ['OPAT', 'Inpatient', 'Outpatient', 'Review'];
 	    $scope.hospital_list = ['Heart Hospital', 'NHNN', 'UCH'];
@@ -21,7 +22,10 @@ angular.module('opal.controllers').controller(
 		    $('#searchByName').focus();
 	    });
 
-	    $scope.search = function() {
+	    $scope.search = function(pageNumber) {
+            if(!pageNumber){
+                pageNumber = 1;
+            }
             ngProgressLite.set(0);
             ngProgressLite.start();
 		    var queryParams = [];
@@ -33,16 +37,19 @@ angular.module('opal.controllers').controller(
 			    };
 		    };
 
-		    if (queryParams.length == 0) {
+		    if (queryParams.length === 0) {
 			    return;
 		    };
 
+            queryParams.push("page_number=" + pageNumber);
 		    queryString = queryParams.join('&');
 
-		    $http.get('/search/patient/?' + queryString).success(function(results) {
+		    $http.get('/search/patient/?' + queryString).success(function(response) {
                 ngProgressLite.done();
 			    $scope.searched = true;
-			    $scope.results = results;
+                $scope.results = response.object_list;
+                $scope.currentPageNumber = response.page_number;
+                $scope.totalPages = _.range(1, response.total_pages + 1);
 		    });
 	    };
 
@@ -62,7 +69,7 @@ angular.module('opal.controllers').controller(
             if(profile.readonly){ return null; };
 
             var enter = Flow(
-                'enter', schema, options, 
+                'enter', schema, options,
                 {
                     current_tags: {
                         tag: 'mine',
