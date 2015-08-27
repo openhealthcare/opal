@@ -7,13 +7,14 @@ angular.module('opal.services').factory('Schema', function() {
 	    };
 
 	    this.getColumn = function(columnName) {
-	        var column;
-	        for (cix = 0; cix < this.getNumberOfColumns(); cix++) {
-		        column = columns[cix];
-		        if (column.name == columnName) {
-		            return column;
-		        }
-	        }
+            var result = _.find(columns, function(c){
+                return c.name === columnName
+            })
+
+            if(result){
+                return result;
+            }
+
 	        throw 'No such column with name: "' + columnName + '"';
 	    };
 
@@ -25,6 +26,12 @@ angular.module('opal.services').factory('Schema', function() {
         this.isReadOnly = function(columnName) {
             var column = this.getColumn(columnName);
             return column.readOnly;
+        }
+
+        this.getAdvancedSearchColumns = function(){
+            return _.filter(this.columns, function(c){
+                return c.advanced_searchable
+            })
         }
     };
 });

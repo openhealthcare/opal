@@ -15,6 +15,7 @@ def serialize_model(model):
         'name'        : model.get_api_name(),
         'display_name': model.get_display_name(),
         'single'      : model._is_singleton,
+        'advanced_searchable': model._advanced_searchable,
         'fields'      : model.build_field_schema()
         }
     if hasattr(model, '_sort'):

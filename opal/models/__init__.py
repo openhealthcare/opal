@@ -350,6 +350,7 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
     consistency_token = models.CharField(max_length=8)
 
     _is_singleton = False
+    _advanced_searchable = True
 
     class Meta:
         abstract = True
@@ -488,6 +489,7 @@ class EpisodeSubrecord(Subrecord):
 
 class Tagging(models.Model):
     _is_singleton = True
+    _advanced_searchable = True
     _title = 'Teams'
 
     team = models.ForeignKey(Team, blank=True, null=True)

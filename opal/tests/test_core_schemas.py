@@ -11,6 +11,7 @@ colour_serialized = dict(
             name='colour',
             display_name='Colour',
             single=False,
+            advanced_searchable=False,
             fields= [
                 {'lookup_list': None,
                  'name': 'consistency_token',
@@ -26,7 +27,8 @@ tagging_serialized = {
     'fields': [],
     'single': True,
     'display_name': 'Teams',
-    'name': 'tagging'
+    'name': 'tagging',
+    'advanced_searchable': True,
 }
 
 class SerializeModelTestCase(TestCase):

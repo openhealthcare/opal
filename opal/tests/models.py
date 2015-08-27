@@ -7,6 +7,8 @@ from opal.core import fields
 from opal import models
 
 class Colour(models.EpisodeSubrecord):
+    _advanced_searchable = False
+
     name = dmodels.CharField(max_length=200)
 
 

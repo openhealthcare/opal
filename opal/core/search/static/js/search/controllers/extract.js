@@ -11,10 +11,7 @@ angular.module('opal.controllers').controller(
         $scope.limit = 10;
         $scope.JSON = window.JSON;
         $scope.filters = filters;
-        $scope.columns = schema.columns;
-        $scope.column_names = _.map(schema.columns, function(c){
-            return underscoreToCapWords(c.name);
-        });
+        $scope.columns = schema.getAdvancedSearchColumns();
 
 	    for (var name in options) {
 		    $scope[name + '_list'] = options[name];
@@ -133,7 +130,7 @@ angular.module('opal.controllers').controller(
                 function(results){
                     $scope.results = results;
                     ngProgressLite.done();
-                }).error(function(){
+                }).error(function(e){
                     ngProgressLite.set(0);
                     $window.alert('ERROR: Could not process this search. Please report it to the OPAL team')
                 });
