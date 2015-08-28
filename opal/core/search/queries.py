@@ -5,7 +5,6 @@ import datetime
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import models as djangomodels
-from django.db.models import Count, Min, Max
 
 from opal import models
 from opal.core import fields
@@ -31,23 +30,37 @@ def get_model_from_column_name(column_name):
 
 
 class PatientSummary(object):
-    def __init__(self):
-        self.start_date, self.end_date = self.get_start_end_dates(episode)
+    def __init__(self, episode):
+        self.start_date = episode.start_date
+        self.end_date = episode.end_date
         self.count = 1
-        self.episode_id = 0
+        self.episode_id = episode.id
+        self.categories = set([episode.category])
+
 
     def update(self, episode):
-        if self.start_date > episode.start_date:
+        if not self.start_date:
             self.start_date = episode.start_date
+        elif episode.start_date:
+            if self.start_date > episode.start_date:
+                self.start_date = episode.start_date
 
-        if self.end_date < episode.end_date:
+        if not self.end_date:
             self.end_date = episode.end_date
-            self.episode_id = episode.episode_id
+        elif episode.end_date:
+            if self.end_date < episode.end_date:
+                self.end_date = episode.end_date
 
         self.count += 1
+        self.categories.add(episode.category)
+
 
     def to_dict(self):
-        return {k: getattr(self, k) for k in ["start_date", "end_date", "episode_id", "count"]}
+        result = {k: getattr(self, k) for k in [
+            "episode_id", "count", "start_date", "end_date"
+        ]}
+        result["categories"] = sorted(self.categories)
+        return result
 
 
 class QueryBackend(object):
@@ -55,7 +68,7 @@ class QueryBackend(object):
     Base class for search implementations to inherit from
     """
     def __init__(self, user, query):
-        self.user  = user
+        self.user = user
         self.query = query
 
     def get_episodes(self):
@@ -196,13 +209,15 @@ class DatabaseQuery(QueryBackend):
         patient_summaries = {}
 
         for episode in episodes:
-            patient_id = episodes.patient_od
+            patient_id = episode.patient_id
             if patient_id in patient_summaries:
-                patients[patient_id].update(episode)
+                patient_summaries[patient_id].update(episode)
             else:
-                patients[patient_id] = PatientSummary(episode)
+                patient_summaries[patient_id] = PatientSummary(episode)
 
-        patients = Patients.objects.filter(id__in=patients.keys())
+        patients = models.Patient.objects.filter(
+            id__in=patient_summaries.keys()
+        )
         patients = patients.prefetch_related("demographics_set")
 
         results = []
@@ -219,7 +234,6 @@ class DatabaseQuery(QueryBackend):
             results.append(result)
 
         return results
-
 
     def _filter_for_restricted_only(self, episodes):
         """
@@ -277,14 +291,17 @@ class DatabaseQuery(QueryBackend):
 
         return working
 
-    def get_episodes(self):
-        eps = self._episodes_without_restrictions()
-
+    def _filter_restricted_episodes(self, eps):
         if self.user.profile.restricted_only:
             eps = self._filter_for_restricted_only(eps)
         else:
             eps = self._filter_restricted_teams(eps)
+
         return eps
+
+    def get_episodes(self):
+        eps = self._episodes_without_restrictions()
+        return self._filter_restricted_episodes(eps)
 
     def get_patient_summaries(self):
         eps = self._episodes_without_restrictions()
@@ -295,8 +312,7 @@ class DatabaseQuery(QueryBackend):
         all_eps = models.Episode.objects.filter(
             patient__episode__in=episode_ids
         )
-        filtered_eps = self._filter_for_restricted_only(all_eps)
-        filtered_eps = self._filter_restricted_teams(filtered_eps)
+        filtered_eps = self._filter_restricted_episodes(all_eps)
         return self._get_aggregate_patients_from_episodes(filtered_eps)
 
     def get_patients(self):

@@ -3,13 +3,11 @@ angular.module('opal.controllers').controller(
                            $timeout, ngProgressLite,
                            $q, Episode, Flow,
                            profile,
-                           schema, options) {
+                           schema, options, PatientSummary) {
 
         $scope.profile = profile;
-	    $scope.searchTerms = {
-		    hospital_number: '',
-		    name: ''
-	    };
+	    $scope.searchTerm = ''
+        $scope.searchColumns = ['hospital_number', 'name']
         $scope.limit = 10;
 	    $scope.results = [];
 	    $scope.searched = false;
@@ -31,23 +29,21 @@ angular.module('opal.controllers').controller(
 		    var queryParams = [];
 		    var queryString;
 
-		    for (var term in $scope.searchTerms) {
-			    if ($scope.searchTerms[term] != '') {
-				    queryParams.push(term + '=' + $scope.searchTerms[term]);
-			    };
-		    };
-
-		    if (queryParams.length === 0) {
-			    return;
-		    };
+            if($scope.searchTerm.length){
+                queryParams = _.map($scope.searchColumns, function(column){
+                    return column + "=" + $scope.searchTerm;
+                });
+            }
 
             queryParams.push("page_number=" + pageNumber);
 		    queryString = queryParams.join('&');
 
-		    $http.get('/search/patient/?' + queryString).success(function(response) {
+		    $http.get('/search/simple/?' + queryString).success(function(response) {
                 ngProgressLite.done();
 			    $scope.searched = true;
-                $scope.results = response.object_list;
+                $scope.results = _.map(response.object_list, function(o){
+                    return new PatientSummary(o);
+                });
                 $scope.currentPageNumber = response.page_number;
                 $scope.totalPages = _.range(1, response.total_pages + 1);
 		    });
@@ -59,11 +55,11 @@ angular.module('opal.controllers').controller(
                 epid = _.first(_.keys(patient.episodes));
             }
             return epid;
-        }
+        };
 
         $scope.jumpToEpisode = function(patient){
             $location.path('/episode/'+$scope.getEpisodeID(patient));
-        }
+        };
 
 	    $scope.addEpisode = function() {
             if(profile.readonly){ return null; };

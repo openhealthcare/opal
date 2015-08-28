@@ -1,7 +1,12 @@
 /* Bootstrap resets */
+html, .outer-container, .container{
+    height: 100%;
+}
+
 body {
     font-family: 'Lato', sans-serif;
     background: #e7ebee;
+    height: calc(100% - 50px);
 }
 a {
     -o-transition:.5s;
@@ -11,7 +16,16 @@ a {
     transition:.5s;
     color: rgb(77, 77, 77);
 }
-p a { color: #f76c51; }
+p a, .orange-link { color: #f76c51; }
+.pagination > .active > a{
+    background-color: #f76447;
+    border-color: #f76447;
+}
+
+.pagination > li > a{
+    color: #f76447;
+    cursor: pointer;
+}
 
 a:hover { color: #337fb2; }
 .form-horizontal .control-label.text-left { text-align: left; }
@@ -414,4 +428,12 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 .saved-search{
   font-size: 30px;
   margin-right: 10px;
+}
+
+.search-panel.panel{
+    height: 100%;
+    padding-bottom: 0;
+    margin-bottom: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
 }

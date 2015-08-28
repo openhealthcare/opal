@@ -5,7 +5,6 @@ import datetime
 import json
 
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponse, HttpResponseNotFound
 from django.views.decorators.http import require_http_methods
 from django.views.generic import View, TemplateView
@@ -18,6 +17,7 @@ from opal.core.search import queries
 from opal.core.search.extract import zip_archive
 
 PAGINATION_AMOUNT = 10
+
 
 class SaveFilterModalView(TemplateView):
     template_name = 'save_filter_modal.html'
@@ -47,33 +47,47 @@ def _extract_basic_search_parameters(request):
     '''
     criteria = {
         u'column': u'demographics',
-        u'combine': u'and',
+        u'combine': u'or',
         u'queryType': u'Contains'
     }
-    if 'hospital_number' in request.GET:
-        criteria['field'] = 'hospital_number'
-        criteria['query'] = request.GET['hospital_number']
-    elif 'name' in request.GET:
-        criteria['field'] = 'name'
-        criteria['query'] = request.GET['name']
-    else:
-        criteria["invalid"] = "No search terms"
-        return _build_json_response({'error': 'No search terms'}, 400)
-    if 'queryType' in request.GET:
-        criteria['queryType'] = request.GET['queryType']
 
-    return criteria
+    hospital_number = request.GET.get("hospital_number")
+    name = request.GET.get("name")
+    result = []
+
+    if hospital_number is not None:
+        query_criteria = criteria.copy()
+        query_criteria['field'] = 'Hospital Number'
+        query_criteria['query'] = hospital_number
+        result.append(query_criteria)
+
+    if name is not None:
+        query_criteria = criteria.copy()
+        query_criteria['field'] = 'name'
+        query_criteria['query'] = name
+        result.append(query_criteria)
+
+    return result
 
 
 @with_no_caching
 @require_http_methods(['GET'])
 def patient_search_view(request):
-    criteria = _extract_basic_search_parameters(request)
+    hospital_number = request.GET.get("hospital_number")
 
-    if "invalid" in criteria:
-        return _build_json_response({'error': criteria["invalid"]}, 400)
+    if hospital_number is None:
+        return _build_json_response({'error': "No search terms"}, 400)
+    import ipdb; ipdb.set_trace()
 
-    query = queries.SearchBackend(request.user, [criteria])
+    criteria = [{
+        "queryType": "Equals",
+        "query": hospital_number,
+        "field": "Hospital Number",
+        'combine': 'and',
+        'column': u'demographics',
+    }]
+
+    query = queries.SearchBackend(request.user, criteria)
     return _build_json_response(query.patients_as_json())
 
 
@@ -81,9 +95,13 @@ def patient_search_view(request):
 @require_http_methods(['GET'])
 def simple_search_view(request):
     page_number = int(request.GET.get("page_number", 1))
-    criteria = _extract_basic_search_parameters(request)
-    query = queries.SearchBackend(request.user, criteria)
-    eps = query.episodes_as_json()
+    all_criteria = _extract_basic_search_parameters(request)
+
+    if not all_criteria:
+        return _build_json_response({'error': "No search terms"}, 400)
+
+    query = queries.SearchBackend(request.user, all_criteria)
+    eps = query.get_patient_summaries()
     return _build_json_response(_add_pagination(eps, page_number))
 
 
@@ -93,15 +111,16 @@ class ExtractSearchView(View):
         query = queries.SearchBackend(
             self.request.user, _get_request_data(self.request)
         )
-        eps = query.episodes_as_json()
+        eps = query.get_patient_summaries()
         return _build_json_response(_add_pagination(eps, page_number))
 
 
 class DownloadSearchView(View):
 
     def post(self, *args, **kwargs):
-        query = queries.SearchBackend(self.request.user,
-                                     json.loads(self.request.POST['criteria']))
+        query = queries.SearchBackend(
+            self.request.user, json.loads(self.request.POST['criteria'])
+        )
         episodes = query.get_episodes()
         fname = zip_archive(episodes, query.description(), self.request.user)
         resp = HttpResponse(open(fname, 'rb').read())
@@ -113,7 +132,7 @@ class DownloadSearchView(View):
 
 class FilterView(LoginRequiredMixin, View):
     def get(self, *args, **kwargs):
-        filters = models.Filter.objects.filter(user=self.request.user);
+        filters = models.Filter.objects.filter(user=self.request.user)
         return _build_json_response([f.to_dict() for f in filters])
 
     def post(self, *args, **kwargs):
@@ -132,7 +151,7 @@ class FilterDetailView(LoginRequiredMixin, View):
         return super(FilterDetailView, self).dispatch(*args, **kwargs)
 
     def get(self, *args, **kwargs):
-         return _build_json_response(self.filter)
+        return _build_json_response(self.filter)
 
     def put(self, *args, **kwargs):
         data = _get_request_data(self.request)

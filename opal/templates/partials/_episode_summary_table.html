@@ -1,16 +1,4 @@
 
-<ul>
-    <li>
-        <div>
-            [[ result.demographics[0].name ]] [[result.demographics[0].hospital_number]]
-            ([[result.demographics[0].date_of_birth | shortDate ]])
-        </div>
-        <div>
-
-        </div>
-    </li>
-</ul>
-
 <table class="table table-bordered table-striped table-hover search" ng-show="results.length > 0">
   <thead>
     <tr>
@@ -35,12 +23,3 @@
   </tbody>
 
 </table>
-<div ng-show="totalPages.length > 1">
-    <nav>
-      <ul class="pagination">
-          <li ng-repeat="pageNum in totalPages" ng-class="{active: currentPageNumber == pageNum }">
-              <a ng-click="search(pageNum)">[[ pageNum ]]</a>
-          </li>
-      </ul>
-  </nav>
-</div>

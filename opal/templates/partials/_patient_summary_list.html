@@ -1,0 +1,37 @@
+<div class="row">
+    <div class="col-md-4 col-md-push-4">
+        <h4>
+            We've found <strong>[[ results.length ]]</strong> result<span ng-if="results.length != 1">s</span>
+        </h4>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4 col-md-push-4">
+        <ul>
+            <li class="content-offset-20" ng-repeat="result in results">
+                <div>
+                    <h4 style="display: inline">
+                        <a class="orange-link" href="[[ result.link ]]">
+                            [[ result.name ]] [[ result.hospitalNumber ]]
+                        </a>
+                    </h4>
+                    ([[result.dateOfBirth | shortDate ]])
+                </div>
+                <div>
+                    [[ result.count ]] Episodes ([[ result.categories ]]) [[ result.years ]]
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="col-md-4 col-md-push-4" ng-show="totalPages.length > 1">
+    <nav>
+      <ul class="pagination">
+          <li ng-repeat="pageNum in totalPages" ng-class="{active: currentPageNumber == pageNum }">
+              <a ng-click="search(pageNum)">[[ pageNum ]]</a>
+          </li>
+      </ul>
+  </nav>
+</div>

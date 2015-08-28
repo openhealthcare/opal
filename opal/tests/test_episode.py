@@ -29,7 +29,7 @@ class EpisodeTest(OpalTestCase):
         yesterday = today - datetime.timedelta(days=1)
         self.episode.discharge_date = yesterday
         self.assertEqual(True, self.episode.is_discharged)
-        
+
     def test_can_set_tag_names(self):
         for tag_names in [
             ['microbiology', 'mine'],
@@ -71,7 +71,7 @@ class EpisodeTest(OpalTestCase):
         prev.discharge_date = datetime.date(2012, 8, 12)
         prev.active=False
         prev.save()
-        
+
         serialised = self.episode.to_dict(self.user)
         self.assertEqual(2, len(serialised['episode_history']))
         self.assertEqual(datetime.date(2012, 7, 25),
@@ -93,7 +93,7 @@ class EpisodeTest(OpalTestCase):
         episode = patient.create_episode()
         episode.date_of_admission = datetime.date(2014, 6, 23)
         episode.save()
-        
+
         serialised = episode.to_dict(self.user)
         self.assertEqual(3, len(serialised['episode_history']))
         self.assertEqual(datetime.date(2011, 7, 25),
@@ -105,7 +105,7 @@ class EpisodeTest(OpalTestCase):
         prev = self.patient.create_episode()
         serialised = self.episode.to_dict(self.user)
         self.assertEqual(2, len(serialised['episode_history']))
-        
+
 
 
 class EpisodeManagerTestCase(OpalTestCase):

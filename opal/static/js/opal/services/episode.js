@@ -1,5 +1,5 @@
 //
-// This is the main Episode class for OPAL. 
+// This is the main Episode class for OPAL.
 //
 angular.module('opal.services')
     .factory('Episode', function($http, $q, $rootScope, Item) {
@@ -14,7 +14,7 @@ angular.module('opal.services')
             _.each($rootScope.fields, function(field){
                 if(resource[field.name]){
                     resource[field.name] = _.map(
-                        resource[field.name], 
+                        resource[field.name],
                         function(attrs){ return new Item(attrs, episode, field); });
                     if(field.sort){
                         resource[field.name] = _.sortBy(resource[field.name], field.sort).reverse();
@@ -61,15 +61,15 @@ angular.module('opal.services')
                 return _.filter(_.keys(tags),  function(t){return tags[t]})
             };
 
-            // 
+            //
             // Boolean predicate function to determine whether
             // this episode has the given TAG
-            // 
+            //
             this.hasTag = function(tag){
                 return this.getTags().indexOf(tag) != -1;
             }
 
-            // 
+            //
             // Return those tags that are child items in HIERARCHY
             //
             this.childTags = function(hierarchy){
@@ -78,21 +78,21 @@ angular.module('opal.services')
                     return true
                 });
             }
-            
+
 	        this.newItem = function(columnName, opts) {
                 var column;
 
                 if(!opts){ opts = {}; }
-                
+
                 if(!opts.column){
                     opts.column = $rootScope.fields[columnName];
                 }
 
 	            var attrs = {};
-                // 
+                //
 	            // TODO: don't hardcode this
                 //
-                // TODO: For serious, this is a bad place for these to go. 
+                // TODO: For serious, this is a bad place for these to go.
                 //
 	            if (columnName == 'microbiology_test') {
 		            attrs.date_ordered = moment().format('YYYY-MM-DD');
@@ -127,9 +127,9 @@ angular.module('opal.services')
 	            return episode[columnName][iix];
 	        };
 
-            // 
+            //
             // add an item (e.g. instance of a subfield) to this episode
-            // 
+            //
 	        this.addItem = function(item) {
                 // Sometimes we add an item from a non-active schema.
                 if(!episode[item.columnName]){
@@ -235,9 +235,9 @@ recently changed it - refresh the page and try again');
                 return deferred.promise;
             };
 
-            // 
+            //
             // Predicate to determine whether this episode is discharged or not
-            // 
+            //
             this.isDischarged = function(){
                 return episode.location[0].category == 'Discharged' ||
                     moment(episode.discharge_date).isBefore(moment());
@@ -276,7 +276,7 @@ recently changed it - refresh the page and try again');
 
             if(number){
 			    // The user entered a hospital number
-			    $http.get('/search/patient/?queryType=Equals&hospital_number=' + number)
+			    $http.get('/search/patient/?hospital_number=' + number)
                     .success(function(response) {
 					    // We have retrieved patient records matching the hospital number
 					    result.patients = response;

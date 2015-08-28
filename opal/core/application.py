@@ -9,7 +9,7 @@ class OpalApplication(object):
     core_javascripts = {
         'opal.upstream.deps': [
             "js/jquery-1.11.3/jquery-1.11.3.js",
-            "js/d3/d3.js",            
+            "js/d3/d3.js",
             "js/c3-0.4.10/c3.js",
 
             "js/angular-1.2.20/angular.js",
@@ -61,6 +61,7 @@ class OpalApplication(object):
             "js/opal/services/episode.js",
             "js/opal/services/episode_visibility.js",
             "js/opal/services/episode_loader.js",
+            "js/opal/services/patient_summary.js",
             "js/opal/services/record_loader.js",
             "js/opal/services/list_schema_loader.js",
             "js/opal/services/extract_schema_loader.js",
@@ -70,7 +71,7 @@ class OpalApplication(object):
 #            "js/opal/services/discharged_episodes_loader.js",
             "js/opal/services/episode_resource.js",
             "js/opal/services/copy_to_category.js",
-            "js/opal/services/episode_detail.js" 
+            "js/opal/services/episode_detail.js"
         ],
         'opal.controllers': [
             "js/opal/controllers_module.js",
@@ -105,10 +106,10 @@ class OpalApplication(object):
         flows = {}
         for plugin in plugins.plugins():
             flows.update(plugin().flows())
-            
+
         if klass.flow_module is None:
             return flows
-        
+
         flow = stringport(klass.flow_module)
         flows.update(flow.flows)
         return flows

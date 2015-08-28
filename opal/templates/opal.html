@@ -16,14 +16,14 @@
     {% core_javascripts 'opal.upstream.deps' %}
     {% plugin_javascripts 'opal.upstream.deps' %}
     {% plugin_opal_angular_deps %}
-    
+
     <script type="text/javascript">
       var initials = "{{request.user.first_name|slice:":1"}} {{request.user.last_name}}"
       var settings = {
         LOG_OUT_DURATION: {{OPAL_LOG_OUT_DURATION}}
       }
-      {% if GLOSSOLALIA_URL %} 
-      settings.GLOSSOLALIA_URL = '{{ GLOSSOLALIA_URL }}'; 
+      {% if GLOSSOLALIA_URL %}
+      settings.GLOSSOLALIA_URL = '{{ GLOSSOLALIA_URL }}';
       settings.BROADCAST_ENDPONT = settings.GLOSSOLALIA_URL.replace('http', 'ws') + 'ws';
       {% endif %}
       var version = '{{VERSION_NUMBER}}'
@@ -49,7 +49,7 @@
 
     <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Merriweather:400,300,700' rel='stylesheet' type='text/css'>
-    <link href="{% static "js/c3-0.2.5/c3.css" %}" rel="stylesheet" media="all"> 
+    <link href="{% static "js/c3-0.2.5/c3.css" %}" rel="stylesheet" media="all">
 	<link href="{% static "bootstrap-3.1.0/css/bootstrap.css" %}" rel="stylesheet" media="all">
 	<link href="{% static "css/bootstrap-datepicker.css" %}" rel="stylesheet" media="all">
 	<link href="{% static "css/font-awesome/css/font-awesome.css" %}" rel="stylesheet" media="all">
@@ -65,7 +65,7 @@
     <link href="{% static "css/screen.css" %}" rel="stylesheet" media="screen">
 
     {% plugin_stylesheets %}
-    
+
     <link rel="shortcut icon" href="{% static 'img/ohc-icon.png' %}">
 
    <script id="templates/growl/growl.html" type="text/ng-template">
@@ -81,11 +81,11 @@
    {% plugin_head_extra %}
 
   </head>
-  <body>    
+  <body>
     {% if OPAL_EXTRA_HEADER %}{% include OPAL_EXTRA_HEADER %}{% endif %}
     {% block navbar %}{% include 'navbar.html' %}{% endblock %}
     {% block content %}
-	  <div ng-view autoscroll="true"></div>    
+	  <div class="outer-container" ng-view autoscroll="true"></div>    
     {% endblock %}
       {% include 'logout_modal.html' %}
     <div growl></div>

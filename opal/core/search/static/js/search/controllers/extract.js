@@ -1,11 +1,11 @@
 angular.module('opal.controllers').controller(
-    'ExtractCtrl', function($scope, $http, $window, $modal,
+    'ExtractCtrl', function($scope, $http, $window, $modal, PatientSummary,
                             ngProgressLite, profile, filters, options, schema){
 
         var underscoreToCapWords = function(str) {
             return str.toLowerCase().replace(/_/g, ' ').replace(
-                    /(?:\b)(\w)/g, function(s, p){ return p.toUpperCase() });
-        }
+                    /(?:\b)(\w)/g, function(s, p){ return p.toUpperCase(); });
+        };
 
         $scope.profile = profile;
         $scope.limit = 10;
@@ -128,7 +128,9 @@ angular.module('opal.controllers').controller(
             ngProgressLite.start();
             $http.post('/search/extract/', $scope.completeCriteria()).success(
                 function(response){
-                    $scope.results = response.object_list;
+                    $scope.results = _.map(response.object_list, function(o){
+                        return new PatientSummary(o);
+                    });
                     $scope.pageNumber = response.page_number;
                     $scope.totalPages = response.total_pages;
                     ngProgressLite.done();
