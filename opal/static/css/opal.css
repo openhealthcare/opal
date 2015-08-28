@@ -18,12 +18,18 @@ a {
 }
 p a, .orange-link { color: #f76c51; }
 .pagination > .active > a{
-    background-color: #f76447;
-    border-color: #f76447;
+    background-color: #f76c51;
+    border-color: #f76c51;
+}
+
+.pagination > li > a:hover,
+.pagination > li > a:active
+.pagination > li > a:focus {
+    color: #f76447;
 }
 
 .pagination > li > a{
-    color: #f76447;
+    color: #f76c51;
     cursor: pointer;
 }
 
@@ -431,7 +437,7 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 }
 
 .search-panel.panel{
-    height: 100%;
+    min-height: 100%;
     padding-bottom: 0;
     margin-bottom: 0;
     border-bottom-right-radius: 0;

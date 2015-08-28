@@ -26,12 +26,14 @@
     </div>
 </div>
 
-<div class="col-md-4 col-md-push-4" ng-show="totalPages.length > 1">
-    <nav>
-      <ul class="pagination">
-          <li ng-repeat="pageNum in totalPages" ng-class="{active: currentPageNumber == pageNum }">
-              <a ng-click="search(pageNum)">[[ pageNum ]]</a>
-          </li>
-      </ul>
-  </nav>
+<div class="row">
+    <div class="col-md-4 col-md-push-4" ng-show="totalPages.length > 1">
+        <nav>
+          <ul class="pagination">
+              <li ng-repeat="pageNum in totalPages" ng-class="{active: currentPageNumber == pageNum }">
+                  <a ng-click="search(pageNum)">[[ pageNum ]]</a>
+              </li>
+          </ul>
+      </nav>
+    </div>
 </div>
