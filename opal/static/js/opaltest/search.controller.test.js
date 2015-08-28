@@ -39,7 +39,7 @@ describe('SearchCtrl', function (){
     });
 
     describe('We should query for hospital number or name()', function (){
-        it('should ask the server for results', function(done){
+        it('should ask the server for results', function(){
             expectedUrl = "/search/simple/?hospital_number=Bond&name=Bond&page_number=1";
             $httpBackend.expectGET(expectedUrl).respond({
                 page_number: 1,

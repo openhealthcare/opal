@@ -77,7 +77,6 @@ def patient_search_view(request):
 
     if hospital_number is None:
         return _build_json_response({'error': "No search terms"}, 400)
-    import ipdb; ipdb.set_trace()
 
     criteria = [{
         "queryType": "Equals",
