@@ -36,7 +36,8 @@ def _add_pagination(eps, page_number):
     results = {
         "object_list": paginator.page(page_number).object_list,
         "page_number": page_number,
-        "total_pages": paginator.num_pages
+        "total_pages": paginator.num_pages,
+        "total_count": len(eps),
     }
     return results
 

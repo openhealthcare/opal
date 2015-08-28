@@ -77,13 +77,15 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
                     u'start_date': '2015-10-15',
                     u'categories': [u'inpatient']
                 }],
-            u'total_pages': 1
+            u'total_count': 1,
+            u'total_pages': 1,
         }
 
         self.empty_expected = {
             "page_number": 1,
             "object_list": [],
-            "total_pages": 1
+            "total_pages": 1,
+            "total_count": 0
         }
         self.episode.date_of_episode = date(
             day=15, month=10, year=2015

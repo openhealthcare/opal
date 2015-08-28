@@ -45,6 +45,7 @@ angular.module('opal.controllers').controller(
                     return new PatientSummary(o);
                 });
                 $scope.currentPageNumber = response.page_number;
+                $scope.totalCount = response.total_count;
                 $scope.totalPages = _.range(1, response.total_pages + 1);
 		    });
 	    };

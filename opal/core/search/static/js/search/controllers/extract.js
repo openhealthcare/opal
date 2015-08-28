@@ -133,6 +133,7 @@ angular.module('opal.controllers').controller(
                     });
                     $scope.pageNumber = response.page_number;
                     $scope.totalPages = response.total_pages;
+                    $scope.totalCount = response.total_count;
                     ngProgressLite.done();
                 }).error(function(e){
                     ngProgressLite.set(0);
