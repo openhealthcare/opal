@@ -16,7 +16,9 @@
                             [[ result.name ]] [[ result.hospitalNumber ]]
                         </a>
                     </h4>
-                    ([[result.dateOfBirth | shortDate ]])
+                    <span ng-show="result.dateOfBirth">
+                        ([[ result.dateOfBirth | shortDate ]])
+                    </span>
                 </div>
                 <div>
                     [[ result.count ]] Episodes ([[ result.categories ]]) [[ result.years ]]
