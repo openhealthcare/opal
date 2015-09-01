@@ -436,10 +436,28 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
   margin-right: 10px;
 }
 
-.search-panel.panel{
+.extract-panel.panel, .search-panel.panel{
     min-height: 100%;
-    padding-bottom: 0;
+    padding-bottom: 40;
     margin-bottom: 0;
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
+    position: relative;
+}
+
+.extract-footer{
+    position: absolute;
+    bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+}
+
+.extract-footer-container{
+    padding-top: 60px;
+}
+
+.inline{
+    display: inline;
 }

@@ -1,6 +1,6 @@
 <div class="container content-offset">
 
-  <div class="panel panel-primary">
+  <div class="panel panel-primary extract-panel">
     <!-- Default panel contents -->
     <div class="panel-heading">
       <h2>
@@ -150,7 +150,7 @@
         <div class="row">
           <div class="col-md-12">
             <button type="submit"
-                    class="btn btn-primary col-md-4 col-md-push-4"
+                    class="btn btn-primary btn-lg col-md-4 col-md-push-4"
                     >
               <span class="glyphicon glyphicon-search"></span>
               Search
@@ -174,20 +174,14 @@
       </div>
       <br />
     </div> <!-- Row -->
-    <div class="row">
-      <div class="col-md-12">
-        <div class="col-md-12" ng-show="results.length == 0">
-          <p>
-            Sorry, no results match your search.
-          </p>
-        </div>
+    <div ng-hide="!searched || results.length" class="row">
+      <div class="col-md-4 col-md-push-4 lead text-center">
+        Sorry, no results match your search.
       </div>
     </div>
-    {% include 'partials/_patient_summary_list.html' %}
-    <!-- Table -->
+    <div ng-show="results.length">
+        {% include 'partials/_patient_summary_list.html' %}
+    </div>
+    {% include 'extract_footer.html' %}
   </div>
-
-<p ng-show="results.length > 0"> Results 1- [[  results.length >= 10 && 10 || results.length ]] of [[ results.length ]]</p>
 </div>
-
-{% include 'extract_footer.html' %}

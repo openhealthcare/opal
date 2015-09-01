@@ -12,6 +12,7 @@ angular.module('opal.controllers').controller(
         $scope.JSON = window.JSON;
         $scope.filters = filters;
         $scope.columns = schema.getAdvancedSearchColumns();
+        $scope.searched = false;
 
 	    for (var name in options) {
 		    $scope[name + '_list'] = options[name];
@@ -131,6 +132,7 @@ angular.module('opal.controllers').controller(
                     $scope.results = _.map(response.object_list, function(o){
                         return new PatientSummary(o);
                     });
+                    $scope.searched = true;
                     $scope.pageNumber = response.page_number;
                     $scope.totalPages = response.total_pages;
                     $scope.totalCount = response.total_count;
