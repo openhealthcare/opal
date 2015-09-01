@@ -1,12 +1,13 @@
 var directives = angular.module('opal.directives', []);
 
-directives.directive("freezePanes", function () {
+directives.directive("freezeHeaders", function ($timeout) {
     return function (scope, element, attrs) {
-        scope.$watch("assignments", function () {
-            $('table').stickyTableHeaders({fixedOffset: 123});
-                //$('table').stickyTableHeaders()
+        $timeout(function() {
+            $('table').stickyTableHeaders({
+                scrollableArea: $(element)
+            });
         });
-    };
+    }
 });
 
 directives.directive('placeholder', function($timeout){

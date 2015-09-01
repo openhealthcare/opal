@@ -121,7 +121,7 @@ h1.larger { font-size: 52px; }
     color: #fff
 }
 @media screen  {
-    .patient-list-container {
+    .patient-list-container{
         height: 760px;
         overflow: scroll;
     }
@@ -414,4 +414,8 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 .saved-search{
   font-size: 30px;
   margin-right: 10px;
+}
+
+.table-header{
+    background-color: white;
 }

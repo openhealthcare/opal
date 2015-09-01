@@ -45,7 +45,7 @@
     <b>
       <i class="fa fa-user"></i>
       [[ episode.demographics[0].name ]]
-    </b>      
+    </b>
     {% if request.user.is_staff %}
     <span class="pull-right">
       <a href="/adminopal/episode/[[ episode.id ]]/" target="_blank">
@@ -62,7 +62,7 @@
           <i class="fa fa-search-plus"></i>
           Patient Details
         </a>
-      </p>        
+      </p>
     </li>
     <li class="list-group-item">
       {% with edit_teams="editNamedItem(episode, 'tagging', 0)" %}
@@ -80,7 +80,7 @@
       <i class="fa fa-filter"></i>
       Filters
     </h4>
-  </div> 
+  </div>
   <div class="panel-body">
     <p>
 	  <input class="form-control" ng-model="query.hospital_number"
@@ -101,7 +101,7 @@
 </h4>
 
 <table class="table table-bordered table-striped bg-white patient-list">
-  <thead>
+  <thead class="table-header">
 	<tr>
 	  {% for column in columns %}
 	  <th>
@@ -112,7 +112,7 @@
 	</tr>
   </thead>
   <tbody>
-	<tr ng-repeat="row in rows" 
+	<tr ng-repeat="row in rows"
         ng-click="select_episode(row, $index)"
         ng-class="{selected: episode.id == row.id}">
 	  {% for column in columns %}
@@ -177,5 +177,3 @@
 </div>
 
 {% endblock %}
-
-
