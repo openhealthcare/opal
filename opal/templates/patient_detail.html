@@ -3,11 +3,10 @@
   <div class="panel panel-primary">
     <div class="panel-heading">
       <h2>
-      </h2>
-      <h2>
+         <i class="fa fa-user"></i>
         [[patient.name]]
+        [[patient.hospital_number]]
         <small>
-          [[patient.hospital_number]]
           <span ng-show="patient.date_of_birth">
               ([[patient.date_of_birth | shortDate]])
           </span>
@@ -20,9 +19,12 @@
                 <div class="row">
                     <div class="col-md-12 text-center">
                         <a class="orange-link" ng-href="[[ getEpisodeLink(episode) ]]">
-                            [[ episode.category ]]
+                            <span ng-show="episode.active">Current </span>
+                            <span ng-show="episode.category === 'inpatient'">Inpatient Admission</span>
+                            <span ng-show="episode.category !== 'inpatient'">[[ episode.category | title ]] Episode</span>
                             <span ng-show="episode.date_of_admission">
-                                [[ episode.date_of_admission | shortDate ]] - [[ episode.date_of_discharge | shortDate ]]
+                                [[ episode.date_of_admission | shortDate ]]
+                                <span ng-show="episode.date_of_discharge"> - [[ episode.date_of_discharge | shortDate ]]</span
                             </span>
                             <span ng-show="!episode.date_of_admission">
                                 [[ episode.date_of_episode | shortDate ]]
@@ -64,9 +66,9 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        {% record_panel models.Diagnosis %}
-                        {% record_panel models.MicrobiologyTest %}
-                        {% record_panel models.Antimicrobial %}
+                        {% record_panel models.Diagnosis editable="$index === 0" %}
+                        {% record_panel models.MicrobiologyTest editable="$index === 0" %}
+                        {% record_panel models.Antimicrobial editable="$index === 0" %}
                     </div>
                 </div>
             </section>

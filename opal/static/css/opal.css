@@ -455,7 +455,7 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 }
 
 .patient-timeline-container{
-    overflow-y: hidden;
+    overflow: hidden;
     padding-bottom: 0;
 }
 
@@ -465,11 +465,11 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
      position: absolute;
      left: 50%;
      width: 2px;
-     height: 240px;
+     height: 540px;
      margin-left: -1px;
      background-color: #ddd;
      z-index: 0;
-     bottom: -200px;
+     bottom: -500px;
 }
 
 .patient-timeline-seperator{

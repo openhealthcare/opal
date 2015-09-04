@@ -3,24 +3,30 @@
 //
 angular.module('opal.controllers').controller(
    'PatientDetailCtrl', function($rootScope, $scope, $cookieStore,
-                                episodes, options, profile
+                                episodes, options, profile, recordLoader,
+                                EpisodeDetailMixin
                                    ){
 
-       $scope.episodes = _.sortBy(episodes, function(e){
+        microEpisodes = _.filter(episodes,function(e){
+           return e.microbiology_input.length;
+       });
+       $scope.episodes = _.sortBy(microEpisodes, function(e){
            var significantDate = e.date_of_discharge || e.date_of_episode || e.date_of_admission;
            if(significantDate){
                return significantDate.unix * -1;
            }
        });
 
-       $scope.patient = $scope.episodes[0].demographics[0];
-        //    $scope.episodeLink = _.partial(wardroundUtils.episodeLink, $routeParams.wardround);
-       $scope.options = options;
        $scope.profile = profile;
+       $scope.options = options;
 
        if($scope.episodes.length){
-           $scope.lastInputId = _.last(_.last($scope.episodes).microbiology_input).id;
+           $scope.episode = $scope.episodes[0];
+           EpisodeDetailMixin($scope);
        }
+
+       $scope.patient = episodes[0].demographics[0];
+       $scope.lastInputId = _.last(_.last($scope.episodes).microbiology_input).id;
 
        $scope.getEpisodeLink = function(episode){
            return "/#/episode/" + episode.id
