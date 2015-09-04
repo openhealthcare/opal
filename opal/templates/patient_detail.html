@@ -15,19 +15,24 @@
     </div>
     <div class="panel-body">
         <div class="patient-timeline-container">
-            <section ng-repeat="episode in episodes">
+            <div class="row">
+                <div class="col-md-6">
+                    {% record_panel models.Allergies %}
+                </div>
+            </div>
+            <section ng-repeat="e in episodes">
                 <div class="row">
                     <div class="col-md-12 text-center">
-                        <a class="orange-link" ng-href="[[ getEpisodeLink(episode) ]]">
-                            <span ng-show="episode.active">Current </span>
-                            <span ng-show="episode.category === 'inpatient'">Inpatient Admission</span>
-                            <span ng-show="episode.category !== 'inpatient'">[[ episode.category | title ]] Episode</span>
-                            <span ng-show="episode.date_of_admission">
-                                [[ episode.date_of_admission | shortDate ]]
-                                <span ng-show="episode.date_of_discharge"> - [[ episode.date_of_discharge | shortDate ]]</span
+                        <a class="orange-link" ng-href="[[ getEpisodeLink(e) ]]">
+                            <span ng-show="e.active">Current </span>
+                            <span ng-show="e.category === 'inpatient'">Inpatient Admission</span>
+                            <span ng-show="e.category !== 'inpatient'">[[ e.category | title ]] Episode</span>
+                            <span ng-show="e.date_of_admission">
+                                [[ e.date_of_admission | shortDate ]]
+                                <span ng-show="e.date_of_discharge"> - [[ e.date_of_discharge | shortDate ]]</span
                             </span>
-                            <span ng-show="!episode.date_of_admission">
-                                [[ episode.date_of_episode | shortDate ]]
+                            <span ng-show="!e.date_of_admission">
+                                [[ e.date_of_episode | shortDate ]]
                             </span>
                         </a>
                     </div>
@@ -44,7 +49,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div ng-repeat="microbiology_input in episode.microbiology_input" class="row content-offset-20">
+                        <div ng-repeat="microbiology_input in e.microbiology_input" class="row content-offset-20">
                             <div class="col-md-3 patient-timeline"
                                 ng-class="{'patient-timeline-container': microbiology_input.id === lastInputId}"
                             >
@@ -66,9 +71,9 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        {% record_panel models.Diagnosis editable="$index === 0" %}
-                        {% record_panel models.MicrobiologyTest editable="$index === 0" %}
-                        {% record_panel models.Antimicrobial editable="$index === 0" %}
+                        {% record_panel models.Diagnosis editable="e.id === episode.id" %}
+                        {% record_panel models.MicrobiologyTest editable="e.id === episode.id" %}
+                        {% record_panel models.Antimicrobial editable="e.id === episode.id" %}
                     </div>
                 </div>
             </section>

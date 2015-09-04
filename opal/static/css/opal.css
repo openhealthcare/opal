@@ -1,5 +1,9 @@
 /* Bootstrap resets */
-html, .outer-container, .container{
+html, .outer-container{
+    height: 100%;
+}
+
+.search-container{
     height: 100%;
 }
 

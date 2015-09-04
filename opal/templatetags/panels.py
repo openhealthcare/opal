@@ -8,7 +8,7 @@ from opal.utils import camelcase_to_underscore
 register = template.Library()
 
 @register.inclusion_tag('_helpers/record_panel.html')
-def record_panel(model, editable=True):
+def record_panel(model, editable=1):
     """
     Register a panel for our record.
     Editable is an angular expression
