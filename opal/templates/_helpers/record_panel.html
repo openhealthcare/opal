@@ -4,7 +4,7 @@
       <i class="{{ icon }}"></i> {{ title }}
       {% if singleton %}
       <i class="fa fa-pencil edit pull-right"
-         ng-click="editNamedItem('{{ name }}', 0)"></i>     
+         ng-click="editNamedItem('{{ name }}', 0)"></i>
       {% else %}
       <i class="fa fa-plus-circle edit pull-right"
          ng-click="newNamedItem('{{ name }}')"></i>
@@ -20,7 +20,7 @@
         <div class="col-md-3">
           {% if not singleton %}
           <i class="fa fa-pencil edit pull-right"
-             ng-click="editNamedItem('{{ name }}', $index)"></i>                
+             ng-click="editNamedItem('{{ name }}', $index)"></i>
           <i class="fa fa-trash-o delete pull-right"
              ng-click="deleteNamedItem('{{ name }}', $index)"></i>
           {% endif %}
@@ -29,4 +29,3 @@
     </li>
   </ul>
 </div>
-

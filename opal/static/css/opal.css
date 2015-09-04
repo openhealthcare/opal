@@ -420,11 +420,76 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 }
 
 .timeline:before, .timeline:after {
-  background-color: #cad3df;
+  background-color: #ddd;
   bottom: 20px;
   content: "";
   display: block;
   position: absolute;
+}
+
+.wardround-timeline-speech-bubble{
+    height: 50px;
+    width: 50px;
+    border-radius: 25px;
+    background-color: #f76c51;
+    display: inline-block;
+}
+
+.wardround-timeline-speech-bubble-icon{
+    color: white;
+    font-size: 35px;
+    margin-top: 5px;
+}
+
+.wardround-timeline-date{
+    background-color: #ddd;
+    color: white;
+    padding: 5px 10px;
+    display: inline-block;
+}
+
+.wardround-timeline{
+    text-align: center;
+    position: relative;
+    padding-bottom: 20px;
+}
+
+
+.wardround-timeline-first:before {
+     content: "";
+     display: block;
+     position: absolute;
+     left: 50%;
+     width: 2px;
+     height: 65px;
+     margin-left: -1px;
+     background-color: #ddd;
+     z-index: 0;
+     top: -60px;
+}
+
+.wardround-timeline-seperator{
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-top: 1px dashed #f76c51;
+}
+
+.wardround-timeline > div{
+    z-index: 1;
+    position: relative;
+}
+
+.wardround-timeline-now .wardround-timeline-now-text {
+  display: block;
+  text-align: center;
+  padding: 7px 15px;
+  margin-bottom: 20px;
+}
+
+.wardround-timeline-discussion{
+    margin-left: -30px;
+    border: 1px solid #ddd;
+    padding: 5px;
 }
 
 .saved-search:hover{
