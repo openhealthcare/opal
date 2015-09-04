@@ -427,7 +427,7 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
   position: absolute;
 }
 
-.wardround-timeline-speech-bubble{
+.patient-timeline-speech-bubble{
     height: 50px;
     width: 50px;
     border-radius: 25px;
@@ -435,58 +435,62 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     display: inline-block;
 }
 
-.wardround-timeline-speech-bubble-icon{
+.patient-timeline-speech-bubble-icon{
     color: white;
     font-size: 35px;
     margin-top: 5px;
 }
 
-.wardround-timeline-date{
+.patient-timeline-date{
     background-color: #ddd;
     color: white;
     padding: 5px 10px;
     display: inline-block;
 }
 
-.wardround-timeline{
+.patient-timeline{
     text-align: center;
     position: relative;
     padding-bottom: 20px;
 }
 
+.patient-timeline-last{
+    overflow-y: hidden;
+    padding-bottom: 0;
+}
 
-.wardround-timeline-first:before {
+.patient-timeline:after {
      content: "";
      display: block;
      position: absolute;
      left: 50%;
      width: 2px;
-     height: 65px;
+     height: 240px;
      margin-left: -1px;
      background-color: #ddd;
      z-index: 0;
-     top: -60px;
+     bottom: -200px;
 }
 
-.wardround-timeline-seperator{
+.patient-timeline-seperator{
     margin-top: 20px;
     margin-bottom: 20px;
     border-top: 1px dashed #f76c51;
 }
 
-.wardround-timeline > div{
+.patient-timeline > div{
     z-index: 1;
     position: relative;
 }
 
-.wardround-timeline-now .wardround-timeline-now-text {
+.patient-timeline-now .patient-timeline-now-text {
   display: block;
   text-align: center;
   padding: 7px 15px;
   margin-bottom: 20px;
 }
 
-.wardround-timeline-discussion{
+.patient-timeline-discussion{
     margin-left: -30px;
     border: 1px solid #ddd;
     padding: 5px;

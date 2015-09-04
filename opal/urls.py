@@ -27,13 +27,16 @@ urlpatterns = patterns(
     url(r'^accounts/banned', views.BannedView.as_view(), name='banned'),
     url(r'^admin/?', include(admin.site.urls)),
 
+    url(r'^patient/(?P<hospital_number>\w+)', views.PatientDetailDataView.as_view()),
+    url(r'^templates/patient_detail.html$', views.PatientDetailView.as_view()),
+
     # Internal (Legacy) API views
     url(r'^episode/?$', views.episode_list_and_create_view),
     url(r'^episode/(?P<tag>[a-z_\-]+)/?$', views.EpisodeListView.as_view()),
     url(r'^episode/(?P<tag>[a-z_\-]+)/(?P<subtag>[a-z_\-]+)/?$', views.EpisodeListView.as_view()),
     url(r'^episode/(?P<pk>\d+)/?$', views.episode_detail_view),
 
-    url(r'^episode/(?P<pk>\d+)/actions/copyto/(?P<category>[a-zA-Z_\-]+)/?$', 
+    url(r'^episode/(?P<pk>\d+)/actions/copyto/(?P<category>[a-zA-Z_\-]+)/?$',
         views.EpisodeCopyToCategoryView.as_view()),
 
     # Template vires
@@ -70,16 +73,16 @@ urlpatterns = patterns(
     url(r'api/v0.1/', include(api.router.urls)),
 )
 
-# Generated subrecord template views 
+# Generated subrecord template views
 for subrecord_model in subrecords():
     sub_url = camelcase_to_underscore(subrecord_model.__name__)
     urlpatterns += patterns(
         '',
         url(r'^templates/modals/%s.html/?$' % sub_url,
             views.ModalTemplateView.as_view(), {'model': subrecord_model}),
-        url(r'^templates/modals/%s.html/(?P<tag>[a-z_\-]+)/?$' % sub_url, 
+        url(r'^templates/modals/%s.html/(?P<tag>[a-z_\-]+)/?$' % sub_url,
             views.ModalTemplateView.as_view(), {'model': subrecord_model}),
-        url(r'^templates/modals/%s.html/(?P<tag>[a-z_\-]+)/(?P<subtag>[a-z_\-]+)/?$' % sub_url, 
+        url(r'^templates/modals/%s.html/(?P<tag>[a-z_\-]+)/(?P<subtag>[a-z_\-]+)/?$' % sub_url,
             views.ModalTemplateView.as_view(), {'model': subrecord_model}),
     )
 
