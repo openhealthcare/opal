@@ -23,10 +23,10 @@ angular.module('opal.controllers').controller(
        if($scope.episodes.length){
            $scope.episode = $scope.episodes[0];
            EpisodeDetailMixin($scope);
+           $scope.lastInputId = _.last(_.last($scope.episodes).microbiology_input).id;
        }
 
        $scope.patient = episodes[0].demographics[0];
-       $scope.lastInputId = _.last(_.last($scope.episodes).microbiology_input).id;
 
        $scope.getEpisodeLink = function(episode){
            return "/#/episode/" + episode.id
