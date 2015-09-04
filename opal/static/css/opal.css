@@ -420,7 +420,7 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 }
 
 .timeline:before, .timeline:after {
-  background-color: #ddd;
+  background-color: #cad3df;
   bottom: 20px;
   content: "";
   display: block;
@@ -454,7 +454,7 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     padding-bottom: 20px;
 }
 
-.patient-timeline-last{
+.patient-timeline-container{
     overflow-y: hidden;
     padding-bottom: 0;
 }

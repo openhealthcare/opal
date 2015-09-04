@@ -15,60 +15,62 @@
       </h2>
     </div>
     <div class="panel-body">
-        <section ng-repeat="episode in episodes">
-            <div class="row">
-                <div class="col-md-12 text-center">
-                    <a ng-href="[[ getEpisodeLink(episode) ]]">
-                        [[ episode.category ]]
-                        <span ng-show="episode.date_of_admission">
-                            [[ episode.date_of_admission | shortDate ]] - [[ episode.date_of_discharge | shortDate ]]
-                        </span>
-                        <span ng-show="!episode.date_of_admission">
-                            [[ episode.date_of_episode | shortDate ]]
-                        </span>
-                    </a>
+        <div class="patient-timeline-container">
+            <section ng-repeat="episode in episodes">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <a class="orange-link" ng-href="[[ getEpisodeLink(episode) ]]">
+                            [[ episode.category ]]
+                            <span ng-show="episode.date_of_admission">
+                                [[ episode.date_of_admission | shortDate ]] - [[ episode.date_of_discharge | shortDate ]]
+                            </span>
+                            <span ng-show="!episode.date_of_admission">
+                                [[ episode.date_of_episode | shortDate ]]
+                            </span>
+                        </a>
+                    </div>
                 </div>
-            </div>
-            <hr class="patient-timeline-seperator">
-            <div class="row">
-                <div class="col-md-6">
-                    <div ng-if="$first" class="row">
-                        <div class="col-md-3 patient-timeline">
-                            <div class="patient-timeline-now">
-                                <div class="patient-timeline-now-text bg-secondary">
-                                    Now
+                <hr class="patient-timeline-seperator">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div ng-if="$first" class="row">
+                            <div class="col-md-3 patient-timeline">
+                                <div class="patient-timeline-now">
+                                    <div class="patient-timeline-now-text bg-secondary">
+                                        Now
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div ng-repeat="microbiology_input in episode.microbiology_input" class="row content-offset-20">
-                        <div class="col-md-3 patient-timeline patient-timeline"
-                            ng-class="{'patient-timeline-last': microbiology_input.id === lastInputId}"
-                        >
-                            <div class="patient-timeline-speech-bubble">
-                                <i class="fa fa-comments patient-timeline-speech-bubble-icon"></i>
-                            </div>
-                            <div>
-                                <div class="patient-timeline-date">[[ microbiology_input.date | shortDate ]]</div>
-                            </div>
-                        </div>
-                        <div class="col-md-9">
-                            <div class="patient-timeline-discussion">
-                                <div><strong>[[ microbiology_input.initials ]]</strong></div>
+                        <div ng-repeat="microbiology_input in episode.microbiology_input" class="row content-offset-20">
+                            <div class="col-md-3 patient-timeline"
+                                ng-class="{'patient-timeline-container': microbiology_input.id === lastInputId}"
+                            >
+                                <div class="patient-timeline-speech-bubble">
+                                    <i class="fa fa-comments patient-timeline-speech-bubble-icon"></i>
+                                </div>
                                 <div>
-                                    [[ microbiology_input.clinical_discussion ]]
+                                    <div class="patient-timeline-date">[[ microbiology_input.date | shortDate ]]</div>
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="patient-timeline-discussion">
+                                    <div><strong>[[ microbiology_input.initials ]]</strong></div>
+                                    <div>
+                                        [[ microbiology_input.clinical_discussion ]]
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        {% record_panel models.Diagnosis %}
+                        {% record_panel models.MicrobiologyTest %}
+                        {% record_panel models.Antimicrobial %}
+                    </div>
                 </div>
-                <div class="col-md-6">
-                    {% record_panel models.Diagnosis %}
-                    {% record_panel models.MicrobiologyTest %}
-                    {% record_panel models.Antimicrobial %}
-                </div>
-            </div>
-        </section>
+            </section>
+        </div>
     </div>
   </div>
 

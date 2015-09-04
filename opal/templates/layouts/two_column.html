@@ -31,7 +31,7 @@
                 <i class="fa fa-history"></i>
                 History
               </button>
-            </li>
+            </li>            
             <li class="list-group-item">
               {% with edit_teams="editNamedItem('tagging', 0)" %}
               {% include 'partials/_teams_list.html' %}
@@ -49,13 +49,14 @@
     <div class="col-md-9"> <!-- Detail panels -->
       <div class="row">
         <div class="col-md-6"> <!-- Detail panels col 1 -->
-          {% block left_column %}{% endblock %}
+          {% block left_column %}{% endblock %}          
         </div>                 <!-- Ends Detail panels col 1 -->
         <div class="col-md-6"> <!-- Detail panels col 2 -->
-          {% block right_column %}{% endblock %}
+          {% block right_column %}{% endblock %}                    
         </div>                 <!-- Ends Detail panels col 2 -->
       </div>
     </div> <!-- Ends Detail Panels -->
 
-  </div>
+  </div> 
 </div> <!-- Ends Main Panel -->
+
