@@ -3,10 +3,16 @@
 //
 angular.module('opal.services').factory('PatientSummary', function() {
         var PatientSummary = function(jsonResponse){
+            var startYear, endYear;
 
             if(jsonResponse.start_date && jsonResponse.end_date){
-                startYear= moment(jsonResponse.start_date, 'YYYY-MM-DD').format("YYYY");
-                endYear = moment(jsonResponse.end_date, 'YYYY-MM-DD').format("YYYY");
+                if(jsonResponse.start_year){
+                    startYear= moment(jsonResponse.start_date, 'YYYY-MM-DD').format("YYYY");
+                }
+
+                if(jsonResponse.end_date){
+                    endYear = moment(jsonResponse.end_date, 'YYYY-MM-DD').format("YYYY");
+                }
             }
 
             if(startYear !== endYear){
