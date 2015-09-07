@@ -20,8 +20,32 @@ angular.module('opal.controllers').controller(
        $scope.profile = profile;
        $scope.options = options;
 
+       function getResistantOrganisms(episode){
+           if(episode.microbiology_test){
+               return _.reduce(episode.microbiology_test, function(r, mt){
+                   if(mt.resistant_antibiotics){
+                       r.push(mt.resistant_antibiotics);
+                   }
+
+                   return r;
+               }, []);
+           }
+       }
+
        if($scope.episodes.length){
            $scope.episode = $scope.episodes[0];
+
+           $scope.episode.resistantOrganisms = function(){
+                   return _.reduce(episodes, function(r, e){
+                   var resistantOrganisms = getResistantOrganisms(e);
+                   if(resistantOrganisms.length){
+                       r = r.concat(resistantOrganisms);
+                   }
+
+                   return r;
+               }, []);
+           }
+
            EpisodeDetailMixin($scope);
            $scope.lastInputId = _.last(_.last($scope.episodes).microbiology_input).id;
        }
