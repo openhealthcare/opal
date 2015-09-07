@@ -74,9 +74,9 @@ angular.module('opal.controllers').controller(
 
 	    $scope.episode_category_list = ['Inpatient', 'Outpatient', 'Review'];
 
-        // 
+        //
         // Save the item that we're editing.
-        // 
+        //
 	    $scope.save = function(result) {
             ngProgressLite.set(0);
             ngProgressLite.start();

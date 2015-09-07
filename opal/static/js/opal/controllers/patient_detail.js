@@ -4,7 +4,7 @@
 angular.module('opal.controllers').controller(
    'PatientDetailCtrl', function($rootScope, $scope, $cookieStore,
                                 episodes, options, profile, recordLoader,
-                                EpisodeDetailMixin
+                                EpisodeDetailMixin, ngProgressLite, $q
                                    ){
 
         microEpisodes = _.filter(episodes, function(e){
@@ -32,6 +32,10 @@ angular.module('opal.controllers').controller(
            }
        }
 
+       function cleanForm(){
+
+       }
+
        if($scope.episodes.length){
            $scope.episode = $scope.episodes[0];
 
@@ -44,16 +48,39 @@ angular.module('opal.controllers').controller(
 
                    return r;
                }, []);
-           }
+           };
 
            EpisodeDetailMixin($scope);
            $scope.lastInputId = _.last(_.last($scope.episodes).microbiology_input).id;
+
+           // TODO we probably don't want to use $scope.espisodes, we probably want episodes[0]
+           recordLoader.then(function(){
+               var item = $scope.episode.newItem(name, {column: $rootScope.fields.microbiology_input});
+               defaults ={
+                   created: new moment(),
+                   initials: window.initals,
+                   reason_for_interaction: "Microbiology meeting"
+               }
+               $scope.editing = item.makeCopy();
+               angular.extend($scope.editing, defaults);
+               $scope.save = function(){
+                       ngProgressLite.set(0);
+                       ngProgressLite.start();
+                       to_save = [item.save($scope.editing)];
+                       $q.all(to_save).then(function() {
+                           ngProgressLite.done();
+                           item = $scope.episode.newItem('microbiology_test', {column: $rootScope.fields.microbiology_input});
+                           $scope.editing = item.makeCopy();
+                           angular.extend($scope.editing, defaults);
+           		    });
+               };
+           });
        }
 
        $scope.patient = episodes[0].demographics[0];
 
        $scope.getEpisodeLink = function(episode){
-           return "/#/episode/" + episode.id
-       }
+           return "/#/episode/" + episode.id;
+       };
    }
 );

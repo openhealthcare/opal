@@ -44,6 +44,11 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div ng-if="$first" class="row">
+                            <div class="col-md-12">
+                                {% include "inline_forms/microbiology_input.html" %}
+                            </div>
+                        </div>
+                        <div ng-if="$first" class="row">
                             <div class="col-md-3 patient-timeline">
                                 <div class="patient-timeline-now">
                                     <div class="patient-timeline-now-text bg-secondary">
@@ -52,7 +57,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div ng-repeat="microbiology_input in e.microbiology_input" class="row content-offset-20">
+                        <div ng-repeat="microbiology_input in e.microbiology_input  | orderBy:'-created'" class="row content-offset-20">
                             <div class="col-md-3 patient-timeline"
                                 ng-class="{'patient-timeline-container': microbiology_input.id === lastInputId}"
                             >
@@ -60,7 +65,7 @@
                                     <i class="fa fa-comments patient-timeline-speech-bubble-icon"></i>
                                 </div>
                                 <div>
-                                    <div class="patient-timeline-date">[[ microbiology_input.date | shortDate ]]</div>
+                                    <div class="patient-timeline-date">[[ microbiology_input.created | shortDate ]]</div>
                                 </div>
                             </div>
                             <div class="col-md-9">
