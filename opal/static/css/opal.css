@@ -1,5 +1,9 @@
 /* Bootstrap resets */
-html, .outer-container, .container{
+html, .outer-container{
+    height: 100%;
+}
+
+.search-container{
     height: 100%;
 }
 
@@ -425,6 +429,75 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
   content: "";
   display: block;
   position: absolute;
+}
+
+.patient-timeline-speech-bubble{
+    height: 50px;
+    width: 50px;
+    border-radius: 25px;
+    background-color: #f76c51;
+    display: inline-block;
+}
+
+.patient-timeline-speech-bubble-icon{
+    color: white;
+    font-size: 35px;
+    margin-top: 5px;
+}
+
+.patient-timeline-date{
+    background-color: #ddd;
+    color: white;
+    padding: 5px 10px;
+    display: inline-block;
+}
+
+.patient-timeline{
+    text-align: center;
+    position: relative;
+    padding-bottom: 20px;
+}
+
+.patient-timeline-container{
+    overflow: hidden;
+    padding-bottom: 0;
+}
+
+.patient-timeline:after {
+     content: "";
+     display: block;
+     position: absolute;
+     left: 50%;
+     width: 2px;
+     height: 540px;
+     margin-left: -1px;
+     background-color: #ddd;
+     z-index: 0;
+     bottom: -500px;
+}
+
+.patient-timeline-seperator{
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border-top: 1px dashed #f76c51;
+}
+
+.patient-timeline > div{
+    z-index: 1;
+    position: relative;
+}
+
+.patient-timeline-now .patient-timeline-now-text {
+  display: block;
+  text-align: center;
+  padding: 7px 15px;
+  margin-bottom: 20px;
+}
+
+.patient-timeline-discussion{
+    margin-left: -30px;
+    border: 1px solid #ddd;
+    padding: 5px;
 }
 
 .saved-search:hover{

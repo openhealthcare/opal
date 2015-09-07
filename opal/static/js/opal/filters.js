@@ -95,7 +95,7 @@ filters.filter('age', function(){
         }
         target = moment(input)
         diff =  moment().diff(target, 'years')
-        return diff        
+        return diff
     }
 });
 
@@ -104,6 +104,15 @@ filters.filter('upper', function(){
         if(!input){ return null };
         return input.toUpperCase();
     }
+});
+
+filters.filter('title', function(){
+	return function(s) {
+        s = ( s === undefined || s === null ) ? '' : s;
+        return s.toString().replace( /\b([a-zA-Z])/g, function(ch) {
+            return ch.toUpperCase();
+        });
+    };
 });
 
 filters.filter('totalDays', function(){
@@ -115,12 +124,12 @@ filters.filter('totalDays', function(){
         }else{
             return moment().diff(start, 'days') + 1;
         }
-    }    
+    }
 });
 
 filters.filter('daysTo', function(){
     return function(frist, second){
         var start = moment(frist);
         return moment(second).diff(start, 'days');
-    }    
+    }
 })
