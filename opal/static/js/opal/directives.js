@@ -1,10 +1,48 @@
 var directives = angular.module('opal.directives', []);
 
-directives.directive("freezePanes", function () {
+directives.directive("freezeHeaders", function ($timeout) {
     return function (scope, element, attrs) {
-        scope.$watch("assignments", function () {
-            $('table').stickyTableHeaders({fixedOffset: 123});
-                //$('table').stickyTableHeaders()
+        $timeout(function() {
+            var onWindow = false;
+            var $el = $(element).find('table');
+            var stickyNavHeight, breakPoint;
+
+            function calcParams(){
+                stickyNavHeight = $("#main-navbar").height();
+                breakPoint = $(element).offset().top - stickyNavHeight;
+            }
+
+            function reCalculateMenu(){
+                if($(window).scrollTop() < breakPoint && onWindow){
+                    onWindow = false;
+                    $el.stickyTableHeaders({
+                        scrollableArea: $(element),
+                        fixedOffset: 0
+                    });
+                }
+
+                if($(window).scrollTop() > breakPoint && !onWindow){
+                    onWindow = true;
+                    $el.stickyTableHeaders({
+                        scrollableArea: window,
+                        fixedOffset: stickyNavHeight
+                    });
+                }
+            }
+
+            calcParams();
+
+            $el.stickyTableHeaders({
+                scrollableArea: $(element)
+            });
+
+            $(window).on("resize.changeScrollViewPort", function(){
+                calcParams();
+            });
+
+            $(window).on("scroll.changeScrollViewPort", function(){
+                requestAnimationFrame(reCalculateMenu);
+            });
         });
     };
 });
@@ -24,13 +62,13 @@ directives.directive('placeholder', function($timeout){
 						$(this).val('');
 					}
 				}).blur(function(){
-					if ($(this).val() == '') {
+					if ($(this).val() === '') {
 						$(this).val($(this).attr('placeholder'));
 					}
 				});
 			});
 		}
-	}
+	};
 });
 
 directives.directive('markdown', function () {
@@ -54,7 +92,7 @@ directives.directive('markdown', function () {
             }
 		}
 		);
-	}
+	};
 });
 
 directives.directive('setFocusIf', function($timeout) {
@@ -72,8 +110,8 @@ directives.directive('setFocusIf', function($timeout) {
         }
       });
     }
-  }
-});;
+  };
+});
 
 angular.module('ui.bootstrap.modal').directive('modalWindow', function ($timeout) {
   return {
