@@ -45,7 +45,22 @@
                     <div class="col-md-6">
                         <div ng-if="$first" class="row">
                             <div class="col-md-12">
-                                {% include "inline_forms/microbiology_input.html" %}
+                                {% if inline_forms|length > 1 %}
+                                    <select>
+                                        {% for form_name in inline_forms %}
+                                            <option>{{ form_name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                {% endif %}
+                                {% for form_name, form_template in inline_forms.items %}
+                                    {% if inline_forms|length > 1 %}
+                                        <div ng-show="inlineForm === '{{ form_name }}'">
+                                    {% endif %}
+                                    {% include form_template %}
+                                    {% if inline_forms|length > 1 %}
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
                             </div>
                         </div>
                         <div ng-if="$first" class="row">
