@@ -563,3 +563,38 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     border-top-right-radius: 0;
     border-top-left-radius: 0;
 }
+
+.scrollToTop{
+    background-color: #9cc96b;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    width: 80px;
+    height: 20px;
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    margin-left: -40px;
+    text-align: center;
+    display: inline-block;
+    padding-bottom: 25px;
+    transition-property: padding-bottom;
+    transition-duration: 0.2s;
+}
+
+.scrollToTop:hover{
+    padding-bottom: 30px;
+}
+
+.scrollToTop:after{
+    color: white;
+    content: "\f106";
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    position: absolute;
+    cursor: pointer;
+    margin-left: -5px;
+    font-size: 20px;
+    padding-bottom: 15px;
+}

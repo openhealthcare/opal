@@ -4,10 +4,32 @@ directives.directive("freezePanes", function () {
     return function (scope, element, attrs) {
         scope.$watch("assignments", function () {
             $('table').stickyTableHeaders({fixedOffset: 123});
-                //$('table').stickyTableHeaders()
         });
     };
 });
+
+directives.directive('scrollTop', function () {
+    return {
+        link: function ($scope, element, attrs) {
+            var body = $("body");
+            element.bind("click", function(){
+                body.animate({ scrollTop: "0" });
+            });
+
+            $(window).on("scroll.scrollTop", function(){
+                window.requestAnimationFrame(function(){
+                    if(body.scrollTop() > 0){
+                        $(element).removeClass("hide");
+                    }
+                    else{
+                        $(element).addClass("hide");
+                    }
+                });
+            });
+        }
+    };
+});
+
 
 directives.directive('placeholder', function($timeout){
 	if ($.support.placeholder) {
