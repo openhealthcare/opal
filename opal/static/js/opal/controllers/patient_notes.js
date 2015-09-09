@@ -7,6 +7,8 @@ angular.module('opal.controllers').controller(
                                 EpisodeDetailMixin, ngProgressLite, $q
                                    ){
 
+        COOKIE_NAME = "patientNotes-inlineForm"
+
         microEpisodes = _.filter(episodes, function(e){
            return e.microbiology_input && e.microbiology_input.length;
        });
@@ -17,13 +19,18 @@ angular.module('opal.controllers').controller(
            }
        });
 
-       $scope.someFunc = function(){
-           console.log($scope);
-       }
+       $scope.inlineForm = {};
 
        $scope.initialiseForm = function(default_arg){
-           $scope.inlineForm = $cookieStore.get("patientView-inlineForm") || default_arg;
-       }
+           $scope.inlineForm.name = $cookieStore.get(COOKIE_NAME) || default_arg;
+       };
+
+       $scope.$watch("inlineForm.name", function(){
+           if($scope.inlineForm.name){
+               $cookieStore.put(COOKIE_NAME, $scope.inlineForm.name);
+           }
+       }, true);
+
        $scope.profile = profile;
        $scope.options = options;
 
