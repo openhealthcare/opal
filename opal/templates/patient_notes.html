@@ -46,15 +46,19 @@
                         <div ng-if="$first" class="row">
                             <div class="col-md-12">
                                 {% if inline_forms|length > 1 %}
-                                    <select>
-                                        {% for form_name in inline_forms %}
-                                            <option>{{ form_name }}</option>
-                                        {% endfor %}
-                                    </select>
+                                <form>
+                                    <div class="fake-select-wrapper">
+                                        <select class="form-control attached-select" ng-change="someFunc()" ng-model="inlineForm" ng-init="initialiseForm('{{ inline_forms.keys|first }}')">
+                                            {% for form_name in inline_forms %}
+                                                <option>{{ form_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </form>
                                 {% endif %}
                                 {% for form_name, form_template in inline_forms.items %}
                                     {% if inline_forms|length > 1 %}
-                                        <div ng-show="inlineForm === '{{ form_name }}'">
+                                        <div class="select-attached" ng-show="inlineForm === '{{ form_name }}'">
                                     {% endif %}
                                     {% include form_template %}
                                     {% if inline_forms|length > 1 %}

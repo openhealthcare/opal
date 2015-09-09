@@ -28,7 +28,7 @@ urlpatterns = patterns(
     url(r'^admin/?', include(admin.site.urls)),
 
     url(r'^patient/(?P<hospital_number>\w+)', views.PatientDetailDataView.as_view()),
-    url(r'^templates/patient_detail.html$', views.PatientDetailView.as_view()),
+    url(r'^templates/patient_notes.html$', views.PatientDetailView.as_view()),
 
     # Internal (Legacy) API views
     url(r'^episode/?$', views.episode_list_and_create_view),

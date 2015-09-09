@@ -534,3 +534,32 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 .inline{
     display: inline;
 }
+
+.attached-select{
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    -webkit-appearance: none;
+    position: relative;
+}
+
+.fake-select-wrapper{
+    position: relative;
+}
+
+.fake-select-wrapper:after{
+    content: "\f107";
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    position: absolute;
+    right: 20px;
+    top: 5px;
+    z-index: 1;
+}
+
+.select-attached .panel{
+    border-top: none;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+}

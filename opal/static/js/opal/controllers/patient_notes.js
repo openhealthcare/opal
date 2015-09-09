@@ -17,8 +17,13 @@ angular.module('opal.controllers').controller(
            }
        });
 
+       $scope.someFunc = function(){
+           console.log($scope);
+       }
 
-       $scope.inlineForm = $cookieStore.get("patientView-inlineForm") || "";
+       $scope.initialiseForm = function(default_arg){
+           $scope.inlineForm = $cookieStore.get("patientView-inlineForm") || default_arg;
+       }
        $scope.profile = profile;
        $scope.options = options;
 

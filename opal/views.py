@@ -34,7 +34,7 @@ Synonym = models.Synonym
 
 
 class PatientDetailView(TemplateView):
-    template_name = 'patient_detail.html'
+    template_name = 'patient_notes.html'
 
     def get_context_data(self, *args, **kwargs):
         context = super(PatientDetailView, self).get_context_data(*args, **kwargs)

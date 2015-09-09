@@ -4,13 +4,24 @@ angular.module('opal.services')
 	    var item = this;
         this.episode =  episode;
 
+        // the moment format that is recieved/returned from the server
+        DATE_TIME_FORMAT = "YYYY-MM-DD HH:mmZ";
+
+        function dateTimeDateFieldName(columnName){
+            return columnName + "__date";
+        }
+
+        function dateTimeTimeFieldName(columnName){
+            return columnName + "__time";
+        }
+
 	    this.initialise = function(attrs) {
 	        // Copy all attributes to item, and change any date fields to Date objects
 	        var field, value;
 
             _.each(columnSchema.fields, function(field){
                 delete item[field.name];
-            })
+            });
 
 
 	        angular.extend(item, attrs);
@@ -20,26 +31,32 @@ angular.module('opal.services')
 		        if (field.type == 'date' && item[field.name] &&  !_.isDate(item[field.name])) {
 		            // Convert values of date fields to Date objects
 		            item[field.name] = moment(item[field.name], 'YYYY-MM-DD')._d;
-		        };
-	        };
+		        }
+
+                if (field.type == "date_time" && item[field.name]){
+                    var dt = moment(item[field.name], DATE_TIME_FORMAT);
+                    item[dateTimeDateFieldName(field.name)] = dt.toDate();
+                    item[dateTimeTimeFieldName(field.name)] = dt.toDate();
+                }
+	        }
 	    };
 
 	    this.columnName = columnSchema.name;
-        this.sort = columnSchema.sort
-        this.size = columnSchema.modal_size
+        this.sort = columnSchema.sort;
+        this.size = columnSchema.modal_size;
 
         this.isSingleton = function(){
-            return columnSchema.single            
+            return columnSchema.single
         };
 
         this.isReadOnly = function(){
             return columnSchema.readOnly;
         };
-        
-        // 
+
+        //
         // Returns a clone of the editable fields + consistency token so that
         // we can then update them in isolation elsewhere.
-        // 
+        //
 	    this.makeCopy = function() {
 	        var field, value;
 	        var copy = {id: item.id};
@@ -50,12 +67,15 @@ angular.module('opal.services')
 		        if (field.type == 'date' && item[field.name]) {
 		            // Convert values of date fields to strings of format DD/MM/YYYY
 		            copy[field.name] = moment(value).format('DD/MM/YYYY');
-                }else if(field.type == 'date_time' && _.isDate(value)) {
-                    copy[field.name] = new Date(value.getTime());
+                }else if(field.type == 'date_time') {
+                    var date_field_name = dateTimeDateFieldName(field.name),
+                    time_field_name = dateTimeTimeFieldName(field.name);
+                    copy[date_field_name] = item[date_field_name];
+                    copy[time_field_name] = item[time_field_name];
 		        } else {
 		            copy[field.name] = _.clone(value);
-		        };
-	        };
+		        }
+	        }
 
 	        return copy;
 	    };
@@ -79,27 +99,50 @@ angular.module('opal.services')
 			            value = moment(value, 'DD/MM/YYYY');
 		            } else {
 			            value = moment(value);
-		            };
+		            }
 		            attrs[field.name] = value.format('YYYY-MM-DD');
-		        };
+		        }
 
-                // Convert datetimes to YYYY-MM-DD HH:MM
-                if( field.type == 'date_time' && attrs[field.name] ){
-                    attrs[field.name] = moment(value).format('YYYY-MM-DD HH:mmZ')
+                if (field.type == "date_time"){
+                    var result,
+                        dateFieldName = dateTimeDateFieldName(field.name),
+                        timeFieldName = dateTimeTimeFieldName(field.name);
+
+                    if(attrs[dateFieldName]){
+                        if(_.isDate(attrs[dateFieldName]) || moment.isMoment(attrs[dateFieldName])){
+                            result = moment(attrs[dateFieldName]);
+                        }
+                        else{
+                            result = moment(attrs[dateFieldName], 'DD-MM-YYYY');
+                        }
+                        delete attrs[dateFieldName];
+
+                        if(attrs[timeFieldName]){
+                            var timeField = moment(attrs[timeFieldName]);
+                            result.hours(timeField.hours());
+                            result.minutes(timeField.minutes());
+                            delete attrs[timeFieldName];
+                        }
+
+                        attrs[field.name] = result.format(DATE_TIME_FORMAT);
+                    }
+                    else if(attrs[field.name]){
+                        attrs[field.name] = moment(value).format(DATE_TIME_FORMAT);
+                    }
                 }
-                
-                // 
-                // TODO: Handle this conversion better 
-                // 
+
+                //
+                // TODO: Handle this conversion better
+                //
                 if (field.type == 'integer' && field.name == 'time') {
                     value = attrs[field.name];
                     attrs[field.name] = parseInt('' + value.hour() + value.minute());
                 }
-	        };
+	        }
 
-            // Tagging to teams are represented as a pseudo subrecord. 
+            // Tagging to teams are represented as a pseudo subrecord.
             // Fake the ID attribute so we can know what episode we're tagging to.
-            // 
+            //
             // We can't do this at initialization time because the episode has
             // not fully initialized itself at that point.
             // TODO: Refactor episode initialization.
@@ -107,20 +150,20 @@ angular.module('opal.services')
                 item.id = episode.id;
                 attrs.id = episode.id;
             }
-            
+
 	        if (angular.isDefined(item.id)) {
 		        method = 'put';
 		        url += attrs.id + '/';
 	        } else {
 		        method = 'post';
-		        attrs['episode_id'] = episode.id;
+		        attrs.episode_id = episode.id;
 	        }
 
 	        $http[method](url, attrs).then(function(response) {
 		        item.initialise(response.data);
 		        if (method == 'post') {
 		            episode.addItem(item);
-		        };
+		        }
 		        deferred.resolve();
 	        }, function(response) {
 		        // handle error better
@@ -129,7 +172,7 @@ angular.module('opal.services')
 recently changed it - refresh the page and try again');
 		        } else {
 		            alert('Item could not be saved');
-		        };
+		        }
 	        });
 	        return deferred.promise;
 	    };

@@ -31,7 +31,7 @@ app.config(
 				     options: function(Options) { return Options; },
                      profile: function(UserProfile){ return UserProfile; }
                  },
-			     templateUrl: function(params){ return '/templates/patient_detail.html' }
+			     templateUrl: function(params){ return '/templates/patient_notes.html' }
              })
              .when('/episode/:id', {
 			     controller: 'EpisodeDetailCtrl',
