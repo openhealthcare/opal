@@ -7,12 +7,9 @@ angular.module('opal.controllers').controller(
                                 EpisodeDetailMixin, ngProgressLite, $q
                                    ){
 
-        COOKIE_NAME = "patientNotes-inlineForm"
+        COOKIE_NAME = "patientNotes-inlineForm";
 
-        microEpisodes = _.filter(episodes, function(e){
-           return e.microbiology_input && e.microbiology_input.length;
-       });
-       $scope.episodes = _.sortBy(microEpisodes, function(e){
+       $scope.episodes = _.sortBy(episodes, function(e){
            var significantDate = e.date_of_discharge || e.date_of_episode || e.date_of_admission;
            if(significantDate){
                return significantDate.unix * -1;
