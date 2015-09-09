@@ -569,20 +569,26 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
     width: 80px;
-    height: 20px;
+    height: 90px;
     position: fixed;
-    bottom: 0;
+    bottom: -60px;
     left: 50%;
     margin-left: -40px;
     text-align: center;
     display: inline-block;
-    padding-bottom: 25px;
-    transition-property: padding-bottom;
+    transition-property: height;
     transition-duration: 0.2s;
+    margin-bottom: -5px;
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 .scrollToTop:hover{
-    padding-bottom: 30px;
+    height: 100px;
+}
+
+.scrollToTop.hidden-at-top{
+    height: 0;
 }
 
 .scrollToTop:after{
@@ -596,5 +602,5 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     cursor: pointer;
     margin-left: -5px;
     font-size: 20px;
-    padding-bottom: 15px;
+    padding-bottom: 75px;
 }

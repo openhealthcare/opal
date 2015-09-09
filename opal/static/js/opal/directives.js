@@ -19,10 +19,10 @@ directives.directive('scrollTop', function () {
             $(window).on("scroll.scrollTop", function(){
                 window.requestAnimationFrame(function(){
                     if(body.scrollTop() > 0){
-                        $(element).removeClass("hide");
+                        $(element).removeClass("hidden-at-top");
                     }
                     else{
-                        $(element).addClass("hide");
+                        $(element).addClass("hidden-at-top");
                     }
                 });
             });
