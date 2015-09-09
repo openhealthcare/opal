@@ -58,7 +58,11 @@ angular.module('opal.controllers').controller(
            };
 
            EpisodeDetailMixin($scope);
-           $scope.lastInputId = _.last(_.last($scope.episodes).microbiology_input).id;
+           if($scope.episodes.length &&
+               _.last($scope.episodes).microbiology_input &&
+               _.last($scope.episodes).microbiology_input.length){
+               $scope.lastInputId = _.last(_.last($scope.episodes).microbiology_input).id;
+           }
        }
 
        $scope.patient = episodes[0].demographics[0];
