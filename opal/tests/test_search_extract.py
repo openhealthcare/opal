@@ -89,7 +89,7 @@ class SubrecordCSVTestCase(PatientEpisodeTestCase):
         headers = csv.writer().writerow.call_args_list[0][0][0]
         row = csv.writer().writerow.call_args_list[1][0][0]
         expected_headers = ['episode_id', 'name']
-        expected_row = [self.episode.id, 'blue']
+        expected_row = [str(self.episode.id), 'blue']
         self.assertEqual(headers, expected_headers)
         self.assertEqual(row, expected_row)
 
@@ -111,7 +111,7 @@ class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
         ]
 
         expected_row = [
-            1, u'12345678', datetime.date(1976, 1, 1), None, u'', u''
+            1, u'12345678', datetime.date(1976, 1, 1).strftime('%Y-%m-%d'), 'None', u'', u''
         ]
         self.assertEqual(headers, expected_headers)
         self.assertEqual(row, expected_row)
