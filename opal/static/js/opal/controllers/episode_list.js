@@ -14,6 +14,8 @@ angular.module('opal.controllers').controller(
 
         $scope.options = options;
 
+        $scope.num_episodes = _.keys(episodes).length;
+
 	    $scope.rix = 0; // row index
 	    $scope.cix = 0; // column index
 	    $scope.iix = 0; // item index
