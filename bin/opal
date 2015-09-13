@@ -192,6 +192,7 @@ def startplugin(args):
 
     if 'opal' in name:
         reponame = name
+        name = name.replace('opal-', '')
     else:
         reponame = 'opal-{0}'.format(name)
 
