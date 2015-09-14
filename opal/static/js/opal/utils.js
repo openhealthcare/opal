@@ -1,12 +1,20 @@
 var OPAL = {};
-if(undefined === version){ var version = 'test'}; 
+if(undefined === version){
+    var version = 'test';
+}
 
 OPAL.module = function(namespace, dependencies){
-    if(undefined === dependencies){ dependencies = []; };
+    var OPAL_ANGULAR_DEPS = OPAL_ANGULAR_DEPS || [];
+    dependencies = dependencies || [];
     dependencies.push('angular-growl');
     dependencies.push('mentio');
-    if(undefined === OPAL_ANGULAR_DEPS) { var OPAL_ANGULAR_DEPS = [] }
-    _.each(OPAL_ANGULAR_DEPS, function(d){ dependencies.push(d) });            
+    dependencies.push('angulartics');
+    dependencies.push('angulartics.google.analytics');
+
+    _.each(OPAL_ANGULAR_DEPS, function(d){
+        dependencies.push(d);
+    });
+
     var mod = angular.module(namespace, dependencies);
     // See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags
     mod.config(function($interpolateProvider) {
@@ -18,23 +26,37 @@ OPAL.module = function(namespace, dependencies){
         growlProvider.globalTimeToLive(5000);
     }]);
 
-    // IE8 compatability mode! 
-    mod.config(function($sceProvider){$sceProvider.enabled(false)});
+    // IE8 compatability mode!
+    mod.config(function($sceProvider){
+        $sceProvider.enabled(false);
+    });
+
+    mod.config(function($analyticsProvider){
+        $analyticsProvider.virualPageviews(false);
+    })
 
     return mod;
 };
 
 OPAL.run = function(app){
-    app.run(['$rootScope', 'ngProgressLite', '$modal', OPAL._run])
-}
+    app.run([
+        '$rootScope',
+        'ngProgressLite',
+        '$modal',
+        '$location',
+        '$analytics',
+        OPAL._run
+    ]);
+};
 
-OPAL._run = function($rootScope, ngProgressLite, $modal) {
+OPAL._run = function($rootScope, ngProgressLite, $modal, $location, $analytics) {
 
     // Let's allow people to know what version they're running
     $rootScope.OPAL_VERSION = version;
-    
+
     // When route started to change.
     $rootScope.$on('$routeChangeStart', function() {
+        $analytics.pageTrack($location.path());
         ngProgressLite.set(0);
         ngProgressLite.start();
     });
@@ -50,18 +72,20 @@ OPAL._run = function($rootScope, ngProgressLite, $modal) {
     });
 
     $rootScope.open_modal = function(controller, template, size, resolves){
-        resolve = {}
+        resolve = {};
         _.each(_.keys(resolves), function(key){
-            resolve[key] = function(){ return resolves[key] };
-        })
+            resolve[key] = function(){
+                return resolves[key];
+            };
+        });
+
         return $modal.open({
             controller : controller,
             templateUrl: template,
             size       : size,
             resolve    : resolve
         });
-    }
-    
+    };
 };
 
 
