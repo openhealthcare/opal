@@ -2,10 +2,26 @@
 Application helpers for OPAL
 """
 from opal.utils import stringport
+from django.conf import settings
+
+BACKEND = getattr(settings, 'OPAL_ANALYTICS_BACKEND', 'google.analytics')
+NODOMAIN = getattr(settings, 'OPAL_ANALYTICS_NODOMAIN', False)
+
+SCRIPTS = {
+    'google.analytics': {
+        'plugin': 'js/angulartics-0.17.2/angulartics-ga.min.js',
+        'snippet': 'analytics/ga.html'
+    },
+    'piwik': {
+        'plugin': 'js/angulartics-0.17.2/angulartics-piwik.min.js',
+        'snippet': 'analytics/piwik.html'
+    }
+}
+
 
 class OpalApplication(object):
     schema_module = None
-    flow_module   = None
+    flow_module = None
     core_javascripts = {
         'opal.upstream.deps': [
             "js/jquery-1.11.3/jquery-1.11.3.js",
@@ -33,6 +49,9 @@ class OpalApplication(object):
             "js/angular-strap-2.0.3/modules/timepicker.tpl.js",
             "js/angular-strap-2.0.3/modules/typeahead.js",
             "js/angular-strap-2.0.3/modules/typeahead.tpl.js",
+
+            "js/angulartics-0.17.2/angulartics.min.js",
+            "js/angulartics-0.17.2/angulartics-ga.min.js",
 
             "js/bower_components/ment.io/dist/mentio.js",
             "js/bower_components/ment.io/dist/templates.js",
@@ -92,6 +111,11 @@ class OpalApplication(object):
     actions       = []
     menuitems     = []
     default_episode_category = 'inpatient'
+
+    opal_angular_exclude_tracking_qs = [
+        "/search",
+        "/extract",
+    ]
 
     @classmethod
     def flows(klass):

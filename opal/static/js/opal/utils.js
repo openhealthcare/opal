@@ -4,8 +4,11 @@ if(undefined === version){
 }
 
 OPAL.module = function(namespace, dependencies){
-    var OPAL_ANGULAR_DEPS = OPAL_ANGULAR_DEPS || [];
     dependencies = dependencies || [];
+    var OPAL_ANGULAR_DEPS = OPAL_ANGULAR_DEPS || [];
+    var OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX = OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX || [];
+    var OPAL_ANGULAR_EXCLUDE_TRACKING_QS = OPAL_ANGULAR_EXCLUDE_TRACKING_QS || [];
+
     dependencies.push('angular-growl');
     dependencies.push('mentio');
     dependencies.push('angulartics');
@@ -26,14 +29,14 @@ OPAL.module = function(namespace, dependencies){
         growlProvider.globalTimeToLive(5000);
     }]);
 
+    mod.config(function($analyticsProvider) {
+        $analyticsProvider.virtualPageviews(false);
+    });
+
     // IE8 compatability mode!
     mod.config(function($sceProvider){
         $sceProvider.enabled(false);
     });
-
-    mod.config(function($analyticsProvider){
-        $analyticsProvider.virualPageviews(false);
-    })
 
     return mod;
 };
@@ -49,6 +52,27 @@ OPAL.run = function(app){
     ]);
 };
 
+OPAL._track = function($location, $analytics){
+    var track, not_qs, path = $location.path();
+
+    track = _.some(OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX, function(prefix){
+        return path.startsWith(prefix);
+    });
+
+    if(!track){
+        not_qs = _.some(OPAL_ANGULAR_EXCLUDE_TRACKING_QS, function(qs){
+            return path === qs;
+        });
+
+        if(not_qs){
+            $analytics.pageTrack($location.path());
+        }
+        else{
+            $analytics.pageTrack($location.url());
+        }
+    }
+};
+
 OPAL._run = function($rootScope, ngProgressLite, $modal, $location, $analytics) {
 
     // Let's allow people to know what version they're running
@@ -56,7 +80,7 @@ OPAL._run = function($rootScope, ngProgressLite, $modal, $location, $analytics) 
 
     // When route started to change.
     $rootScope.$on('$routeChangeStart', function() {
-        $analytics.pageTrack($location.path());
+        OPAL._track($location, $analytics);
         ngProgressLite.set(0);
         ngProgressLite.start();
     });

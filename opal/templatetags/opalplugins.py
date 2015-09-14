@@ -1,6 +1,8 @@
 """
 Templatetags for including OPAL plugins
 """
+import itertools
+
 from django import template
 
 from opal.core import application, plugins
@@ -49,7 +51,7 @@ def application_menuitems():
         for i in app.menuitems:
             yield i
     return dict(items=items)
-    
+
 @register.inclusion_tag('plugins/angular_module_deps.html')
 def plugin_opal_angular_deps():
     def deps():
@@ -57,6 +59,22 @@ def plugin_opal_angular_deps():
             for i in plugin.angular_module_deps:
                 yield i
     return dict(deps=deps)
+
+@register.inclusion_tag('plugins/angular_exclude_tracking.html')
+def plugin_opal_angular_tracking_exclude():
+    def yield_property(property_name):
+        app = application.OpalApplication
+        app_and_plugins = itertools.chain(plugins.plugins(), [app])
+        for plugin in app_and_plugins:
+            excluded_tracking_prefixes = getattr(plugin, property_name, [])
+            for i in excluded_tracking_prefixes:
+                yield i
+
+    return dict(
+        excluded_tracking_prefix=yield_property("opal_angular_exclude_tracking_prefix"),
+        excluded_tracking_qs=yield_property("opal_angular_exclude_tracking_qs")
+    )
+
 
 @register.inclusion_tag('plugins/javascripts.html')
 def core_javascripts(namespace):

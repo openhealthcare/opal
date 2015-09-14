@@ -1,4 +1,5 @@
-var app = angular.module('opal')
+var app = angular.module('opal');
+
 app.config(
     ['$routeProvider',
      function($routeProvider) {
@@ -37,11 +38,6 @@ app.config(
              .when('/search', {
 			     controller: 'SearchCtrl',
 			     templateUrl: '/search/templates/search.html',
-			     resolve: {
-                     profile: function(UserProfile){ return UserProfile },
-				     schema: function(listSchemaLoader) { return listSchemaLoader(); },
-				     options: function(Options) { return Options; }
-			     }
              })
              .when('/extract', {
                  controller: 'ExtractCtrl',
@@ -56,7 +52,6 @@ app.config(
              .when('/account', {
                  controller: 'AccountCtrl',
                  templateUrl: '/accounts/templates/account_detail.html'
-
 		     })
              .otherwise({redirectTo: '/'});
      }]);

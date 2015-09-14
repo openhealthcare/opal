@@ -461,3 +461,37 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 .inline{
     display: inline;
 }
+
+.nav-bar-search:before{
+    content: "\f002";
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    position: absolute;
+    left: 10px;
+    font-size: 18px;
+    top: 5px;
+    z-index: 1;
+    color:
+}
+
+.nav-bar-search-container{
+    float: right;
+}
+
+.nav-bar-search > .form-control{
+    padding-left: 30px;
+    width: 120px;
+    transition-property: width;
+    transition-duration: 0.2s;
+}
+
+.nav-bar-search > .form-control:focus{
+   width: 200px;
+}
+
+.nav-bar-search{
+    position: relative;
+    color: rgb(77, 77, 77);
+}
