@@ -131,7 +131,10 @@ angular.module('opal.controllers').controller(
             }
 
             var queryParams = $scope.completeCriteria();
-            queryParams[0].page_number = pageNumber;
+
+            if(queryParams.length){
+                queryParams[0].page_number = pageNumber;
+            }
             ngProgressLite.set(0);
             ngProgressLite.start();
             $http.post('/search/extract/', queryParams).success(

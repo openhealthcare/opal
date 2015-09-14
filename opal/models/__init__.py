@@ -543,12 +543,13 @@ class Tagging(models.Model):
         Given a list of episodes, return a dict indexed by episode id
         that contains historic tags for those episodes.
         """
+        episode_ids = [e.id for e in episodes]
         teams = {t.id: t.name for t in Team.objects.all()}
         deleted = reversion.get_deleted(cls)
         historic = collections.defaultdict(dict)
         for d in deleted:
             data = json.loads(d.serialized_data)[0]['fields']
-            if data['episode'] in episodes:
+            if data['episode'] in episode_ids:
                 if 'team' in data:
                     if data['team'] in teams:
                         tag_name = teams[data['team']]
