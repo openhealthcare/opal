@@ -476,9 +476,6 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     color:
 }
 
-.nav-bar-search-container{
-    float: right;
-}
 
 .nav-bar-search > .form-control{
     padding-left: 30px;
@@ -494,4 +491,5 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 .nav-bar-search{
     position: relative;
     color: rgb(77, 77, 77);
+    padding-right: 15px;
 }

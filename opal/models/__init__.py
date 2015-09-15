@@ -3,6 +3,7 @@ OPAL Models!
 """
 import collections
 import json
+import itertools
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -1014,6 +1015,10 @@ class UserProfile(models.Model):
         from opal.models import Team
         return Team.for_user(self.user)
 
+    @property
+    def can_see_pid(self):
+        all_roles = itertools.chain(*self.get_roles().values())
+        return not any(r for r in all_roles if r == "researcher" or r == "scientist")
 
 @receiver(models.signals.post_save, sender=Patient)
 def create_patient_singletons(sender, **kwargs):

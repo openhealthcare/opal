@@ -49,14 +49,15 @@
         {% endif %}
 
       </ul>
-      <div ng-controller="SearchCtrl">
-        <form class="navbar-form navbar-right" ng-submit="search()" role="search">
-          <div class="form-group nav-bar-search">
-            <input ng-model="searchTerm" type="text" class="form-control" placeholder="Search">
-          </div>
-        </form>
-      </div>
-
+      {% if user.profile.can_see_pid %}
+        <div ng-controller="SearchCtrl">
+          <form class="navbar-form navbar-right" ng-submit="search()" role="search">
+            <div class="form-group nav-bar-search">
+              <input ng-model="searchTerm" type="text" class="form-control" placeholder="Search">
+            </div>
+          </form>
+        </div>
+      {% endif %}
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
