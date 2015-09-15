@@ -18,7 +18,7 @@ angular.module('opal.controllers').controller(
 		    $('#searchByName').focus();
 	    });
 
-        var loadResults = function(){
+        $scope.loadResults = function(){
             var queryString;
             var urlParams = $location.search();
 
@@ -49,7 +49,7 @@ angular.module('opal.controllers').controller(
         };
 
         if($location.path() === searchUrl){
-            loadResults();
+            $scope.loadResults();
         }
 
 	    $scope.search = function(pageNumber) {

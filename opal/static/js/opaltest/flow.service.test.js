@@ -1,11 +1,32 @@
-// 
+//
 // Unit tests for our Flow Service
-// 
+//
 
 describe('Flow ', function(){
     var schema, options;
     var the_flow;
 
+    beforeEach(function(){
+        module('opal', function($provide) {
+            $provide.value('$analytics', function(){
+                return {
+                    pageTrack: function(x){}
+                }
+            });
+
+            $provide.provider('$analytics', function(){
+                this.$get = function() {
+                    return {
+                        virtualPageviews: function(x){},
+                        settings: {
+                            pageTracking: false,
+                        },
+                        pageTrack: function(x){}
+                     };
+                };
+            });
+        });
+    });
 
     beforeEach(function(){
 
@@ -29,7 +50,7 @@ describe('Flow ', function(){
                 }
             }
         }
-        
+
         inject(function($injector){
             Flow         = $injector.get('Flow');
             console.log(Flow)
@@ -43,7 +64,7 @@ describe('Flow ', function(){
         $httpBackend.whenGET('/templates/exit').respond('<notarealtemplate>');
 
         spyOn($modal, 'open').and.callThrough();
-        
+
     });
 
     describe('enter', function(){
@@ -51,7 +72,7 @@ describe('Flow ', function(){
             var call_args;
 
             Flow('enter', schema, options, {});
-            
+
             $rootScope.$apply();
             $httpBackend.flush();
 
@@ -68,7 +89,7 @@ describe('Flow ', function(){
             var call_args;
 
             Flow('exit', schema, options, {});
-            
+
             $rootScope.$apply();
             $httpBackend.flush();
 
@@ -78,7 +99,7 @@ describe('Flow ', function(){
             expect(call_args[0].controller).toBe('ExitCtrl');
 
         });
-        
+
     });
 
 })

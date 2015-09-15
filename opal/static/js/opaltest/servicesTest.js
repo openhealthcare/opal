@@ -1,8 +1,29 @@
 describe('services', function() {
     var columns, episodeData, options, records, list_schema;
 
+    beforeEach(function(){
+        module('opal', function($provide) {
+            $provide.value('$analytics', function(){
+                return {
+                    pageTrack: function(x){}
+                }
+            });
+
+            $provide.provider('$analytics', function(){
+                this.$get = function() {
+                    return {
+                        virtualPageviews: function(x){},
+                        settings: {
+                            pageTracking: false,
+                        },
+                        pageTrack: function(x){}
+                     };
+                };
+            });
+        });
+    });
+
     beforeEach(function() {
-        module('opal.services');
         columns = {
             "fields": {
                 'demographics': {
@@ -98,9 +119,7 @@ describe('services', function() {
         beforeEach(function(){
             mock = { alert: jasmine.createSpy() };
 
-            module(function($provide) {
-                $provide.value('$window', mock);
-            });
+
 
             inject(function($injector){
                 listSchemaLoader = $injector.get('listSchemaLoader');
@@ -148,7 +167,7 @@ describe('services', function() {
             var mycols = angular.copy(list_schema);
             mycols.micro = {};
             mycols.micro.default = mycols.default
-            
+
             $httpBackend.whenGET('/api/v0.1/list-schema/').respond(mycols);
 
             listSchemaLoader().then(function(r){result=r});

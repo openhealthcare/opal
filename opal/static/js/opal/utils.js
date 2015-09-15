@@ -6,19 +6,16 @@ if(undefined === version){
 OPAL.module = function(namespace, dependencies){
     dependencies = dependencies || [];
     var OPAL_ANGULAR_DEPS = OPAL_ANGULAR_DEPS || [];
-    var OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX = OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX || [];
-    var OPAL_ANGULAR_EXCLUDE_TRACKING_QS = OPAL_ANGULAR_EXCLUDE_TRACKING_QS || [];
 
     dependencies.push('angular-growl');
     dependencies.push('mentio');
-    dependencies.push('angulartics');
-    dependencies.push('angulartics.google.analytics');
 
     _.each(OPAL_ANGULAR_DEPS, function(d){
         dependencies.push(d);
     });
 
     var mod = angular.module(namespace, dependencies);
+
     // See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags
     mod.config(function($interpolateProvider) {
 	    $interpolateProvider.startSymbol('[[');
@@ -30,7 +27,10 @@ OPAL.module = function(namespace, dependencies){
     }]);
 
     mod.config(function($analyticsProvider) {
-        $analyticsProvider.virtualPageviews(false);
+        // console.log("this is definitely not being called");
+        // console.log($analyticsProvider);
+        // $analyticsProvider.virtualPageviews(false);
+        // console.log("job done");
     });
 
     // IE8 compatability mode!
@@ -42,6 +42,10 @@ OPAL.module = function(namespace, dependencies){
 };
 
 OPAL.run = function(app){
+    console.log("====")
+    console.log("starting to run")
+    console.log("====")
+
     app.run([
         '$rootScope',
         'ngProgressLite',
@@ -54,6 +58,9 @@ OPAL.run = function(app){
 
 OPAL._track = function($location, $analytics){
     var track, not_qs, path = $location.path();
+
+    var OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX = OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX || [];
+    var OPAL_ANGULAR_EXCLUDE_TRACKING_QS = OPAL_ANGULAR_EXCLUDE_TRACKING_QS || [];
 
     track = _.some(OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX, function(prefix){
         return path.startsWith(prefix);

@@ -3,6 +3,28 @@ describe('SearchCtrl', function (){
     var Episode, Flow;
     var profile, schema, options;
 
+    beforeEach(function(){
+        module('opal', function($provide) {
+            $provide.value('$analytics', function(){
+                return {
+                    pageTrack: function(x){}
+                }
+            });
+
+            $provide.provider('$analytics', function(){
+                this.$get = function() {
+                    return {
+                        virtualPageviews: function(x){},
+                        settings: {
+                            pageTracking: false,
+                        },
+                        pageTrack: function(x){}
+                     };
+                };
+            });
+        });
+    });
+
     beforeEach(function(){ module('opal.controllers') });
 
     beforeEach(inject(function($injector){
@@ -47,7 +69,7 @@ describe('SearchCtrl', function (){
                 total_pages: 1
             });
             $scope.searchTerm = "Bond";
-            $scope.search();
+            $scope.loadResults();
             $httpBackend.flush();
         });
     });

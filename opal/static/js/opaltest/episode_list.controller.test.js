@@ -3,8 +3,31 @@ describe('controllers', function() {
     var schema, Episode, Item;
     var profile;
 
+    beforeEach(function(){
+        module('opal', function($provide) {
+            $provide.value('$analytics', function(){
+                return {
+                    pageTrack: function(x){}
+                };
+            });
+
+            $provide.provider('$analytics', function(){
+                this.$get = function() {
+                    return {
+                        virtualPageviews: function(x){},
+                        settings: {
+                            pageTracking: false,
+                        },
+                        pageTrack: function(x){}
+                     };
+                };
+            });
+        });
+    });
+
+    beforeEach(module('opal.controllers'));
+
     beforeEach(function() {
-        module('opal.controllers');
         columns = {
             "default": [
                 {
@@ -178,7 +201,7 @@ describe('controllers', function() {
         Item     = injector.get('Item')
 
         schema = new Schema(columns.default);
-        
+
         profile = {
             readonly   : false,
             can_extract: true,
@@ -205,12 +228,12 @@ describe('controllers', function() {
                 $location    = $injector.get('$location');
             });
 
-            episodes = {123: new Episode(episodeData, schema)};
+            episodes = {123: new Episode(episodeData)};
             options = optionsData;
             $routeParams.tag = 'tropical';
             flow_promise = {then: function(){}};
             Flow = jasmine.createSpy('Flow').and.callFake(function(){return flow_promise});
-            
+
             $rootScope.fields = fields
 
 
@@ -269,13 +292,13 @@ describe('controllers', function() {
 
         describe('discharging an episode', function(){
 
-            
+
             describe('_post_discharge()', function (){
-                
+
                 beforeEach(function(){
                     $scope.state = 'modal'
                 });
-                
+
                 it('Should set the $scope.state', function () {
                     $scope._post_discharge();
                     expect($scope.state).toBe('normal');
@@ -309,9 +332,9 @@ describe('controllers', function() {
                 });
             });
 
-            
+
             describe('when Flow() returns a deferred', function (){
-                
+
                 it('Should wait for the deferred', function () {
                     var returned_deferred = {then: function(fn){fn()}}
                     spyOn($scope, '_post_discharge');
@@ -319,12 +342,12 @@ describe('controllers', function() {
                     spyOn(flow_promise, 'then').and.callFake(function(fn){ fn(returned_deferred);})
 
                     $scope.dischargeEpisode(0);
-                    
+
                     expect(flow_promise.then).toHaveBeenCalled();
                     expect(returned_deferred.then).toHaveBeenCalled();
                     expect($scope._post_discharge).toHaveBeenCalled();
                 });
-                
+
             });
 
         });

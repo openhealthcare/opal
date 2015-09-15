@@ -2,6 +2,28 @@ describe('controllers', function() {
     var columns, fields, episodeData, optionsData, profileData, patientData, Schema, schema, Episode, Item;
     var profile;
 
+    beforeEach(function(){
+        module('opal', function($provide) {
+            $provide.value('$analytics', function(){
+                return {
+                    pageTrack: function(x){}
+                }
+            });
+
+            $provide.provider('$analytics', function(){
+                this.$get = function() {
+                    return {
+                        virtualPageviews: function(x){},
+                        settings: {
+                            pageTracking: false,
+                        },
+                        pageTrack: function(x){}
+                     };
+                };
+            });
+        });
+    });
+
     beforeEach(function() {
         module('opal.controllers');
         columns = {
@@ -200,7 +222,7 @@ describe('controllers', function() {
             });
 
             $rootScope.fields = fields
-            episode = new Episode(episodeData, schema);
+            episode = new Episode(episodeData);
             Flow = jasmine.createSpy('Flow').and.callFake(function(){return {then: function(){}}});
 
             controller = $controller('EpisodeDetailCtrl', {
@@ -411,7 +433,7 @@ describe('controllers', function() {
 
             options = optionsData;
             profile = profileData;
-            episode = new Episode(episodeData, schema);
+            episode = new Episode(episodeData);
             item    = new Item(
                 {columnName: 'diagnosis'},
                 episode,
