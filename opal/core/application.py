@@ -2,21 +2,6 @@
 Application helpers for OPAL
 """
 from opal.utils import stringport
-from django.conf import settings
-
-BACKEND = getattr(settings, 'OPAL_ANALYTICS_BACKEND', 'google.analytics')
-NODOMAIN = getattr(settings, 'OPAL_ANALYTICS_NODOMAIN', False)
-
-SCRIPTS = {
-    'google.analytics': {
-        'plugin': 'js/angulartics-0.17.2/angulartics-ga.min.js',
-        'snippet': 'analytics/ga.html'
-    },
-    'piwik': {
-        'plugin': 'js/angulartics-0.17.2/angulartics-piwik.min.js',
-        'snippet': 'analytics/piwik.html'
-    }
-}
 
 
 class OpalApplication(object):

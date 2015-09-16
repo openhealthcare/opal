@@ -27,7 +27,7 @@
       settings.GLOSSOLALIA_URL = '{{ GLOSSOLALIA_URL }}';
       settings.BROADCAST_ENDPONT = settings.GLOSSOLALIA_URL.replace('http', 'ws') + 'ws';
       {% endif %}
-      var version = '{{VERSION_NUMBER}}'
+      var version = '{{VERSION_NUMBER}}';
     </script>
     <!-- google analytics -->
     <script>
@@ -37,13 +37,12 @@
       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
       {% if OPAL_ANALYTICS_NODOMAIN %}
-    //   ga('create', '{{ OPAL_ANALYTICS_ID }}', {
-    //     'cookieDomain': 'none'
-    //   });
+          ga('create', '{{ OPAL_ANALYTICS_ID }}', {
+            'cookieDomain': 'none'
+          });
       {% else %}
-    //   ga('create', '{{ OPAL_ANALYTICS_ID }}', 'auto');
+          ga('create', '{{ OPAL_ANALYTICS_ID }}', 'auto');
       {% endif %}
-        ga('create', '{{ OPAL_ANALYTICS_ID }}', 'none');
     </script>
 
 
