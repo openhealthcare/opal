@@ -9,6 +9,8 @@ OPAL.module = function(namespace, dependencies){
 
     dependencies.push('angular-growl');
     dependencies.push('mentio');
+    dependencies.push('angulartics');
+    dependencies.push('angulartics.google.analytics');
 
     _.each(OPAL_ANGULAR_DEPS, function(d){
         dependencies.push(d);

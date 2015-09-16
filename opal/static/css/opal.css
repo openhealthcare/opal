@@ -155,8 +155,7 @@ li.selected {
 }
 
 tr.selected {
-	border-top: 3px solid #5fa2dd;
-	border-bottom: 3px solid #5fa2dd;
+    background-color: #5fa2dd;
 }
 
 /* Login */

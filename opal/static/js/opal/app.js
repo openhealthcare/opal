@@ -2,8 +2,7 @@ var app = OPAL.module('opal', [
     'ngRoute',
     'ngProgressLite',
     'ngProgressLite',
-    'angulartics',
-    'angulartics.google.analytics',
+
 	'opal.filters',
 	'opal.services',
 	'opal.directives',

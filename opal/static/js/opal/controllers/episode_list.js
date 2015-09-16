@@ -10,7 +10,7 @@ angular.module('opal.controllers').controller(
 
         var version = window.version;
         $scope.state = 'normal';
-        $scope.url = $location.url()
+        $scope.url = $location.url();
 
         $scope.options = options;
 
@@ -30,7 +30,7 @@ angular.module('opal.controllers').controller(
         if(!$routeParams.tag){
             var tag =  $cookieStore.get('opal.currentTag') || _.keys(options.tag_hierarchy)[0];
             $location.path($scope.path_base + tag);
-            return
+            return;
         }
         $scope.currentTag = $routeParams.tag;
 
@@ -41,7 +41,7 @@ angular.module('opal.controllers').controller(
                 var subtag = options.tag_hierarchy[$scope.currentTag][0];
                 var target = $scope.path_base + $scope.currentTag + '/' + subtag;
                 $location.path(target);
-                return
+                return;
             }else{
                 $scope.currentSubTag = 'all';
             }
@@ -136,39 +136,14 @@ angular.module('opal.controllers').controller(
 	    $scope.$on('keydown', function(event, e) {
 		    if ($scope.state == 'normal') {
 			    switch (e.keyCode) {
-			    case 37: // left
-				    goLeft();
-				    break;
-			    case 39: // right
-				    goRight();
-				    break;
-			    case 38: // up
-				    goUp();
-				    break;
-			    case 40: // down
-				    goDown();
-				    break;
-			    case 13: // enter
-			    case 113: // F2
-				    $scope.editItem($scope.rix, $scope.cix, $scope.iix);
-                    e.preventDefault();
-				    break;
-			    case 8: // backspace
-				    e.preventDefault();
-			    case 46: // delete
-				    $scope.deleteItem($scope.rix, $scope.cix, $scope.iix);
-				    break;
-			    case 191: // question mark
-				    if(e.shiftKey){
-					    $scope.keyboard_shortcuts();
-				    }
-				    break;
-                case 78: // n
-                    $scope.addEpisode();
-                    e.preventDefault();
-                    break;
-			    };
-		    };
+    			    case 38: // up
+    				    goUp();
+    				    break;
+    			    case 40: // down
+    				    goDown();
+    				    break;
+    		    }
+            }
 	    });
 
         $scope.$on('change', function(event, episode) {
@@ -180,7 +155,7 @@ angular.module('opal.controllers').controller(
                     $scope.rows[rix] = episode;
                 }
             }
-        })
+        });
 
 	    function getColumnName(cix) {
 		    return $scope.columns[cix].name;

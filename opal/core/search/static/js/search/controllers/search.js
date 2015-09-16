@@ -67,6 +67,7 @@ angular.module('opal.controllers').controller(
                 $window.location.href="/#" + searchUrl + "?" + $.param(params);
             }
             else{
+                $location.url(searchUrl);
                 $location.search(params);
             }
 	    };
