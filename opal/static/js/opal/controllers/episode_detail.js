@@ -6,7 +6,7 @@ angular.module('opal.controllers').controller(
         $scope._ = _;
 	    $scope.state = 'normal';
         $scope.url = $location.url();
-        
+
 	    $scope.cix = 0; // column index
 	    $scope.iix = 0; // item index
 
@@ -20,7 +20,7 @@ angular.module('opal.controllers').controller(
         $scope.tag_display = options.tag_display;
 
         EpisodeDetailMixin($scope);
-        
+
 	    $scope.$on('keydown', function(event, e) {
 		    if ($scope.state == 'normal') {
 			    switch (e.keyCode) {

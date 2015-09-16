@@ -42,10 +42,6 @@ OPAL.module = function(namespace, dependencies){
 };
 
 OPAL.run = function(app){
-    console.log("====")
-    console.log("starting to run")
-    console.log("====")
-
     app.run([
         '$rootScope',
         'ngProgressLite',

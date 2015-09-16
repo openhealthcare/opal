@@ -24,7 +24,7 @@ angular.module('opal.controllers').controller(
 
 	    $scope.query = {hospital_number: '', name: '', ward: '', bed: ''};
         $scope.$location = $location;
-        
+
         $scope.path_base = '/list/';
 
         if(!$routeParams.tag){
@@ -173,19 +173,15 @@ angular.module('opal.controllers').controller(
 
         $scope.$on('change', function(event, episode) {
             episode = new Episode(episode);
-            console.log('Episode list has change!');
             if(episodes[episode.id]){
-                console.log("We're looking at the changed episode!")
-                console.log("Updating episodes")
                 episodes[episode.id] = episode;
                 var rix = getRowIxFromEpisodeId(episode.id);
                 if(rix != -1){
-                    console.log("Updating Row")
                     $scope.rows[rix] = episode;
                 }
             }
         })
-        
+
 	    function getColumnName(cix) {
 		    return $scope.columns[cix].name;
 	    };
@@ -286,7 +282,7 @@ angular.module('opal.controllers').controller(
 				$scope.selectItem(0, 0, 0);
 			};
         };
-        
+
 	    $scope.dischargeEpisode = function(episode) {
             if(profile.readonly){ return null; };
 
@@ -304,11 +300,11 @@ angular.module('opal.controllers').controller(
             );
 
             exit.then(function(result) {
-                // 
+                //
                 // Sometimes our Flow will open another modal - we wait for that
                 // to close before firing the Post discharge hooks - this avoids the list
                 // scope from trapping keystrokes etc
-                // 
+                //
                 if(result && result.then){
                     result.then(function(r){ $scope._post_discharge(r); });
                 }else{
@@ -335,10 +331,10 @@ angular.module('opal.controllers').controller(
             })
         };
 
-        // 
+        //
         // Do the work of editing an item - open the modal and
         // resolve it.
-        // 
+        //
         _openEditItemModal = function(item, columnName, episode) {
             if(profile.readonly){
                 return null;
@@ -346,7 +342,7 @@ angular.module('opal.controllers').controller(
             $scope.state = 'modal';
             var template_url = '/templates/modals/' + columnName + '.html/';
             template_url += $scope.currentTag + '/' + $scope.currentSubTag;
-            
+
             var modal_opts = {
                 templateUrl: template_url,
                 controller: 'EditItemCtrl',
@@ -361,32 +357,32 @@ angular.module('opal.controllers').controller(
             if(item.size){
                 modal_opts.size = item.size;
             }
-                
+
             modal = $modal.open(modal_opts);
 
-            // 
+            //
             // The state resetting logic is fairly simple, but we may have to
             // wait for an intermediary modal to close...
             //
             // TODO: Figure out & document how to actually take advantage of this hook :/
-            // 
+            //
             var reset_state = function(result){
                 $scope.state = 'normal';
 
                 if (columnName == 'tagging') {
-                    
+
                     // User may have removed current tag
                     $scope.rows = $scope.getVisibleEpisodes();
                     $scope.selectItem(getRowIxFromEpisodeId(episode.id), $scope.cix, 0);
                 }
-                
+
                 if (result == 'save-and-add-another') {
                     $scope.newNamedItem(episode, columnName);
                     return
                 };
                 if (item.sort){
                     episode.sortColumn(item.columnName, item.sort);
-                };                
+                };
             };
 
             modal.result.then(function(result) {
@@ -429,7 +425,7 @@ angular.module('opal.controllers').controller(
             if(columnName == 'demographics' && !profile.can_see_pid()){
                 return false;
             }
-            
+
 		    if (iix == episode.getNumberOfItems(columnName)) {
 			    item = episode.newItem(columnName, {schema: schema,
                                                     column: $rootScope.fields[columnName]});

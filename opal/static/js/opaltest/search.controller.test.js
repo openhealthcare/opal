@@ -28,7 +28,6 @@ describe('SearchCtrl', function (){
     beforeEach(function(){ module('opal.controllers') });
 
     beforeEach(inject(function($injector){
-
         $rootScope   = $injector.get('$rootScope');
         $scope       = $rootScope.$new();
         $controller  = $injector.get('$controller');
@@ -36,6 +35,13 @@ describe('SearchCtrl', function (){
         Episode      = $injector.get('Episode');
         Flow         = $injector.get('Flow');
         $httpBackend = $injector.get('$httpBackend');
+        $location = $injector.get('$location');
+
+        $location.search({
+            hospital_number: "Bond",
+            name: "Bond",
+            page_number: 1
+        })
 
         schema  = {};
         options = {};
@@ -68,7 +74,6 @@ describe('SearchCtrl', function (){
                 object_list: [],
                 total_pages: 1
             });
-            $scope.searchTerm = "Bond";
             $scope.loadResults();
             $httpBackend.flush();
         });
