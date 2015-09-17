@@ -27,6 +27,9 @@ urlpatterns = patterns(
     url(r'^accounts/banned', views.BannedView.as_view(), name='banned'),
     url(r'^admin/?', include(admin.site.urls)),
 
+    url(r'^patient/(?P<hospital_number>\w+)', views.PatientDetailDataView.as_view()),
+    url(r'^templates/patient_detail.html$', views.PatientDetailView.as_view()),
+
     # Internal (Legacy) API views
     url(r'^episode/?$', views.episode_list_and_create_view),
     url(r'^episode/(?P<tag>[a-z_\-]+)/?$', views.EpisodeListView.as_view()),

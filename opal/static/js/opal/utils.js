@@ -5,7 +5,10 @@ if(undefined === version){
 
 OPAL.module = function(namespace, dependencies){
     dependencies = dependencies || [];
-    OPAL_ANGULAR_DEPS = OPAL_ANGULAR_DEPS || [];
+
+    if(OPAL_ANGULAR_DEPS === undefined){
+        var OPAL_ANGULAR_DEPS = [];
+    }
 
     dependencies.push('angular-growl');
     dependencies.push('mentio');
@@ -54,8 +57,13 @@ OPAL.run = function(app){
 OPAL._track = function($location, $analytics){
     var track, not_qs, path = $location.path();
 
-    OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX = OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX || [];
-    OPAL_ANGULAR_EXCLUDE_TRACKING_QS = OPAL_ANGULAR_EXCLUDE_TRACKING_QS || [];
+    if(OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX === undefined){
+        var OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX = [];
+    }
+
+    if(OPAL_ANGULAR_EXCLUDE_TRACKING_QS === undefined){
+        var OPAL_ANGULAR_EXCLUDE_TRACKING_QS = [];
+    }
 
     track = _.some(OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX, function(prefix){
         return path.startsWith(prefix);

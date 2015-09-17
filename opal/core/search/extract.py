@@ -28,7 +28,7 @@ def subrecord_csv(episodes, subrecord, file_name):
         writer.writerow(field_names)
         subrecords = subrecord.objects.filter(episode__in=episodes)
         for sub in subrecords:
-            writer.writerow([getattr(sub, f) for f in field_names])
+            writer.writerow([unicode(getattr(sub, f)).encode('UTF-8') for f in field_names])
 
 
 def episode_csv(episodes, user, file_name):
@@ -44,7 +44,7 @@ def episode_csv(episodes, user, file_name):
         writer.writeheader()
 
         for episode in episodes:
-            row = {h: str(getattr(episode, h)) for h in fieldnames}
+            row = {h: unicode(getattr(episode, h)).encode('UTF-8') for h in fieldnames}
             row["tagging"] = ';'.join(episode.get_tag_names(user, historic=True))
             writer.writerow(row)
 
@@ -71,7 +71,7 @@ def patient_subrecord_csv(episodes, subrecord, file_name):
 
         for sub in subs:
             row = [patient_to_episode[sub.patient_id]]
-            row.extend(getattr(sub, f) for f in field_names)
+            row.extend(unicode(getattr(sub, f)).encode('UTF-8') for f in field_names)
             writer.writerow(row)
 
 

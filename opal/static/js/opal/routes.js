@@ -9,9 +9,9 @@ app.config(
 				     schema: function(listSchemaLoader) { return listSchemaLoader(); },
 				     episodes: function(episodesLoader) { return episodesLoader(); },
 				     options: function(Options) { return Options; },
-                     profile: function(UserProfile){ return UserProfile },
+                     profile: function(UserProfile){ return UserProfile; },
                      episodeVisibility: function(episodeVisibility){
-                         return episodeVisibility
+                         return episodeVisibility;
                      }
 			     },
 			     templateUrl: function(params){
@@ -22,18 +22,26 @@ app.config(
                              target += '/' + params.subtag;
                          }
                      }
-                     return target
+                     return target;
                  }
 		     })
-
+             .when('/patient/:id', {
+			     controller: 'PatientDetailCtrl',
+                 resolve: {
+				     episodes: function(patientLoader) { return patientLoader(); },
+				     options: function(Options) { return Options; },
+                     profile: function(UserProfile){ return UserProfile; }
+                 },
+			     templateUrl: function(params){ return '/templates/patient_detail.html' }
+             })
              .when('/episode/:id', {
 			     controller: 'EpisodeDetailCtrl',
 			     resolve: {
 				     episode: function(episodeLoader) { return episodeLoader(); },
 				     options: function(Options) { return Options; },
-                     profile: function(UserProfile){ return UserProfile }
+                     profile: function(UserProfile){ return UserProfile; }
 			     },
-			     templateUrl: function(params){ return '/templates/episode_detail.html/' + params.id }
+			     templateUrl: function(params){ return '/templates/episode_detail.html/' + params.id; }
 		     })
              .when('/search', {
 			     controller: 'SearchCtrl',
@@ -43,10 +51,10 @@ app.config(
                  controller: 'ExtractCtrl',
                  templateUrl: '/search/templates/extract.html',
                  resolve: {
-                     profile: function(UserProfile){ return UserProfile },
-                     schema: function(extractSchemaLoader){ return extractSchemaLoader },
+                     profile: function(UserProfile){ return UserProfile; },
+                     schema: function(extractSchemaLoader){ return extractSchemaLoader; },
 				     options: function(Options) { return Options; },
-                     filters: function(filtersLoader){ return filtersLoader() }
+                     filters: function(filtersLoader){ return filtersLoader(); }
                  }
              })
              .when('/account', {

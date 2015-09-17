@@ -1,0 +1,88 @@
+{% load panels %}
+<div class="container content-offset">
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h2>
+         <i class="fa fa-user"></i>
+        [[patient.name]]
+        [[patient.hospital_number]]
+        <small>
+          <span ng-show="patient.date_of_birth">
+              ([[patient.date_of_birth | shortDate]])
+          </span>
+        </small>
+      </h2>
+    </div>
+    <div class="panel-body">
+        <div class="patient-timeline-container">
+            <div class="row">
+                <div class="col-md-6">
+                    {% record_panel models.Allergies %}
+                </div>
+                <div class="col-md-6">
+                    {% record_panel models.MicrobiologyTest editable="false" title="Resistant Organisms" name="resistantOrganisms()" detail_template="records/resistant_organisms.html" %}
+                </div>
+            </div>
+            <section ng-repeat="e in episodes">
+                <div class="row">
+                    <div class="col-md-12 text-center">
+                        <a class="orange-link" ng-href="[[ getEpisodeLink(e) ]]">
+                            <span ng-show="e.active">Current </span>
+                            <span ng-show="e.category === 'inpatient'">Inpatient Admission</span>
+                            <span ng-show="e.category !== 'inpatient'">[[ e.category | title ]] Episode</span>
+                            <span ng-show="e.date_of_admission">
+                                [[ e.date_of_admission | shortDate ]]
+                                <span ng-show="e.date_of_discharge"> - [[ e.date_of_discharge | shortDate ]]</span
+                            </span>
+                            <span ng-show="!e.date_of_admission">
+                                [[ e.date_of_episode | shortDate ]]
+                            </span>
+                        </a>
+                    </div>
+                </div>
+                <hr class="patient-timeline-seperator">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div ng-if="$first" class="row">
+                            <div class="col-md-3 patient-timeline">
+                                <div class="patient-timeline-now">
+                                    <div class="patient-timeline-now-text bg-secondary">
+                                        Now
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div ng-repeat="microbiology_input in e.microbiology_input" class="row content-offset-20">
+                            <div class="col-md-3 patient-timeline"
+                                ng-class="{'patient-timeline-container': microbiology_input.id === lastInputId}"
+                            >
+                                <div class="patient-timeline-speech-bubble">
+                                    <i class="fa fa-comments patient-timeline-speech-bubble-icon"></i>
+                                </div>
+                                <div>
+                                    <div class="patient-timeline-date">[[ microbiology_input.date | shortDate ]]</div>
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="patient-timeline-discussion">
+                                    <div><strong>[[ microbiology_input.initials ]]</strong></div>
+                                    <div>
+                                        [[ microbiology_input.clinical_discussion ]]
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        {% record_panel models.Diagnosis editable="e.id === episode.id" %}
+                        {% record_panel models.MicrobiologyTest editable="e.id === episode.id" %}
+                        {% record_panel models.Antimicrobial editable="e.id === episode.id" %}
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+  </div>
+
+
+</div>

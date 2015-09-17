@@ -61,6 +61,10 @@ angular.module('opal.controllers').controller(
                 return episodeVisibility(episode, $scope)
             });
 		    visibleEpisodes.sort(compareEpisodes);
+            if($scope.rows && visibleEpisodes.length == 1){
+                rix = getRowIxFromEpisodeId(visibleEpisodes[0].id);
+                $scope.select_episode(visibleEpisodes[0], rix);
+            }
 		    return visibleEpisodes;
 	    };
 

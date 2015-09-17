@@ -4,7 +4,7 @@ Module entrypoint for core OPAL views
 
 from django.conf import settings
 from django.contrib.auth.views import login
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponseNotFound
 from django.shortcuts import redirect
 from django.template.loader import select_template, get_template
 from django.template import TemplateDoesNotExist
@@ -33,32 +33,13 @@ except AttributeError:
 Synonym = models.Synonym
 
 
-def serve_maybe(meth):
-    """
-    Decorator to figure out if we want to serve files
-    ourselves (DEBUG) or hand off to Nginx
-    """
-    def handoff(self, *args, **kwargs):
-        """
-        Internal wrapper function to figure out
-        the logic
-        """
-        filename = meth(self, *args, **kwargs)
+class PatientDetailView(TemplateView):
+    template_name = 'patient_detail.html'
 
-        # When we're running locally, just take the hit, otherwise
-        # offload the serving of the datafile to Nginx
-        if settings.DEBUG:
-            resp = HttpResponse(open(filename, 'rb').read())
-            return resp
-
-        resp = HttpResponse()
-        url = '/protected/{0}'.format(filename)
-        # let nginx determine the correct content type
-        resp['Content-Type']=""
-        resp['X-Accel-Redirect'] = url
-        return resp
-
-    return handoff
+    def get_context_data(self, *args, **kwargs):
+        context = super(PatientDetailView, self).get_context_data(*args, **kwargs)
+        context['models'] = {m.__name__: m for m in subrecords()}
+        return context
 
 
 class EpisodeTemplateView(TemplateView):
@@ -246,6 +227,19 @@ class EpisodeListView(View):
         # Probably the wrong place to do this, but mine needs specialcasing.
         if tag == 'mine':
             filter_kwargs['tagging__user'] = self.request.user
+        serialised = models.Episode.objects.serialised_active(
+            self.request.user, **filter_kwargs)
+        return _build_json_response(serialised)
+
+class PatientDetailDataView(View):
+    """
+    Return a serialised view of the patient.
+    """
+    def get(self, *args, **kwargs):
+        hospital_number = kwargs.get("hospital_number")
+        filter_kwargs = dict(
+            patient__demographics__hospital_number=hospital_number
+        )
         serialised = models.Episode.objects.serialised_active(
             self.request.user, **filter_kwargs)
         return _build_json_response(serialised)
