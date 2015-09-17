@@ -8,7 +8,7 @@ camelcase_to_underscore = lambda str: re.sub('(((?<=[a-z])[A-Z])|([A-Z](?![A-Z]|
 
 def stringport(module):
     """
-    Given a string representing a python module or path-to-object 
+    Given a string representing a python module or path-to-object
     import that module and return it.
     """
     msg = "Could not import module '%s'\
@@ -48,3 +48,17 @@ def _itersubclasses(cls, _seen=None):
             yield sub
             for sub in _itersubclasses(sub, _seen):
                 yield sub
+
+
+def jsonHelper(obj):
+    """A JSON serializer that will serialize date tiem for you"""
+    import calendar, datetime
+
+    if isinstance(obj, datetime.datetime):
+        if obj.utcoffset() is not None:
+            obj = obj - obj.utcoffset()
+    millis = int(
+        calendar.timegm(obj.timetuple()) * 1000 +
+        obj.microsecond / 1000
+    )
+    return millis
