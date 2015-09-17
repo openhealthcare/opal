@@ -478,13 +478,9 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 
 .nav-bar-search > .form-control{
     padding-left: 30px;
-    width: 120px;
+    width: 200px;
     transition-property: width;
     transition-duration: 0.2s;
-}
-
-.nav-bar-search > .form-control:focus{
-   width: 200px;
 }
 
 .nav-bar-search{
