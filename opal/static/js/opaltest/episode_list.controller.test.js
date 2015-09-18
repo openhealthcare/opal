@@ -445,35 +445,4 @@ describe('EpisodeListCtrl', function() {
                 expect(callArgs[0].resolve.item().id).toBeUndefined();
             });
         });
-
-        describe('deleting an item', function() {
-            it('should do nothing if item is singleton', function() {
-                $scope.deleteItem(0, 0, 0);
-                expect($rootScope.state).toBe('normal');
-            });
-
-            it('should do nothing if item is new item', function() {
-                $scope.deleteItem(0, 2, 2);
-                expect($rootScope.state).toBe('normal');
-            });
-
-            it('should change state to "modal"', function() {
-                $scope.deleteItem(0, 2, 1);
-                expect($rootScope.state).toBe('modal');
-            });
-
-            describe('for a readonly user', function(){
-                beforeEach(function(){
-                    profile.readonly = true;
-                });
-
-                it('should return null', function(){
-                    expect($scope.deleteItem(0, 0, 0)).toBe(null);
-                });
-
-                afterEach(function(){
-                    profile.readonly = false;
-                });
-            });
-    });
 });
