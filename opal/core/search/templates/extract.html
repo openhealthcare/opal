@@ -107,7 +107,7 @@
                 </div>
               </span>
               <div class="content-offset-20 content-offset-below-10">
-                <a class="btn btn-danger" ng-show="criteria.length > 1" ng-click="removeCriteria()">
+                <a class="btn btn-danger" ng-show="searched" ng-click="removeCriteria()">
                    Clear search
                  </a>
              </div>
@@ -135,7 +135,7 @@
                   You have no saved searches
                 </div>
               </div>
-              <div ng-show="results.length > 0" class="panel-footer text-center">
+              <div ng-show="searched && results.length > 0" class="panel-footer text-center">
                 <button type="button"
                         class="btn btn-secondary"
                         ng-click="save()"
@@ -149,12 +149,14 @@
         </div>
         <div class="row">
           <div class="col-md-12">
-            <button type="submit"
-                    class="btn btn-primary btn-lg col-md-4 col-md-push-4"
-                    >
-              <span class="glyphicon glyphicon-search"></span>
-              Search
-            </button>
+              <div class="col-md-4 col-md-push-4 text-center">
+                <button type="submit"
+                        class="btn btn-primary btn-lg"
+                        >
+                  <span class="glyphicon glyphicon-search"></span>
+                  Search
+                </button>
+                </div>
           </div>
         </div>
       </form>
@@ -165,7 +167,7 @@
           <div class="col-md-12">
             <button type="submit"
                     class="btn btn-secondary col-md-4 col-md-push-4"
-                    ng-show="results.length > 0">
+                    ng-show="searched && results.length > 0">
               <span class="glyphicon glyphicon-download"></span>
               Download these results
             </button>
@@ -179,7 +181,7 @@
         Sorry, no results match your search.
       </div>
     </div>
-    <div ng-show="results.length">
+    <div ng-show="searched && results.length">
         {% include 'partials/_patient_summary_list.html' %}
     </div>
     {% include 'extract_footer.html' %}

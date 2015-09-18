@@ -105,8 +105,9 @@ angular.module('opal.controllers').controller(
         };
 
         $scope.removeCriteria = function(){
+            $scope.searched = false;
             $scope.criteria = [_.clone($scope.model)];
-        }
+        };
 
         //
         // Determine the appropriate lookup list for this field if
