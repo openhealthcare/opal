@@ -29,11 +29,7 @@
             <i class="fa fa-table"></i> Lists
           </a>
         </li>
-	    <li ng-class="{active: $location.path().indexOf('/search') == 0}">
-          <a href="/#/search">
-            <i class="fa fa-search"></i> Search
-          </a>
-        </li>
+
         {% application_menuitems %}
         {% plugin_menuitems %}
         {% if request.user.is_staff %}
@@ -52,7 +48,22 @@
         {% endif %}
 
       </ul>
-
+      {% if user.profile.can_see_pid %}
+        <div ng-show="$location.path().indexOf('/search')">
+          <div ng-controller="SearchCtrl">
+            <form class="navbar-form navbar-right" ng-submit="search()" role="search">
+              <div class="form-group nav-bar-search">
+                <input
+                        slash-key-focus="!state || state==='normal'"
+                        ng-blur="enableShortcuts()"
+                        ng-focus="disableShortcuts()"
+                        ng-model="searchTerm"
+                        type="text" class="form-control" placeholder="Search">
+              </div>
+            </form>
+          </div>
+        </div>
+      {% endif %}
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>

@@ -107,11 +107,18 @@ def simple_search_view(request):
 
 class ExtractSearchView(View):
     def post(self, *args, **kwargs):
-        page_number = self.request.GET.get("page_number", 1)
+        request_data = _get_request_data(self.request)
+        page_number = 1
+
+        if "page_number" in request_data[0]:
+            page_number = request_data[0].pop("page_number", 1)
+
         query = queries.SearchBackend(
-            self.request.user, _get_request_data(self.request)
+            self.request.user,
+            request_data,
         )
         eps = query.get_patient_summaries()
+
         return _build_json_response(_add_pagination(eps, page_number))
 
 

@@ -5,12 +5,12 @@ angular.module('opal.controllers').controller(
                                 growl,
                                 Flow, Item,
                                 Episode, schema, episodes, options,
-                                profile,
+                                profile, $rootScope,
                                 episodeVisibility){
 
         var version = window.version;
-        $scope.state = 'normal';
-        $scope.url = $location.url()
+        $rootScope.state = 'normal';
+        $scope.url = $location.url();
 
         $scope.options = options;
 
@@ -26,13 +26,13 @@ angular.module('opal.controllers').controller(
 
 	    $scope.query = {hospital_number: '', name: '', ward: '', bed: ''};
         $scope.$location = $location;
-        
+
         $scope.path_base = '/list/';
 
         if(!$routeParams.tag){
             var tag =  $cookieStore.get('opal.currentTag') || _.keys(options.tag_hierarchy)[0];
             $location.path($scope.path_base + tag);
-            return
+            return;
         }
         $scope.currentTag = $routeParams.tag;
 
@@ -43,7 +43,7 @@ angular.module('opal.controllers').controller(
                 var subtag = options.tag_hierarchy[$scope.currentTag][0];
                 var target = $scope.path_base + $scope.currentTag + '/' + subtag;
                 $location.path(target);
-                return
+                return;
             }else{
                 $scope.currentSubTag = 'all';
             }
@@ -96,7 +96,7 @@ angular.module('opal.controllers').controller(
 	    $scope.$watch('currentTag', function() {
 		    $cookieStore.put('opal.currentTag', $scope.currentTag);
             if($scope.currentTag != $routeParams.tag){
-                $scope.state = 'reloading'
+                $$rootScope.state = 'reloading'
             }
             var target = $scope.path_base +  $scope.currentTag;
 
@@ -107,12 +107,12 @@ angular.module('opal.controllers').controller(
 		    $cookieStore.put('opal.currentSubTag', $scope.currentSubTag);
             if($scope.currentSubTag == 'all'){
                 if($routeParams.subtag && $scope.currentSubTag != $routeParams.subtag){
-                    $scope.state = 'reloading'
+                    $rootScope.state = 'reloading'
                 }
                 $location.path($scope.path_base +  $scope.currentTag);
             }else{
                 if($scope.currentSubTag != $routeParams.subtag){
-                    $scope.state = 'reloading'
+                    $rootScope.state = 'reloading'
                 }
                 $location.path($scope.path_base +  $scope.currentTag + '/' +  $scope.currentSubTag);
             }
@@ -139,59 +139,44 @@ angular.module('opal.controllers').controller(
 		    $scope.rows = $scope.getVisibleEpisodes();
 	    });
 
+        $scope.getEpisodeLink = function(){
+            return "/episode/" + $scope.episode.id;
+        };
+
 	    $scope.$on('keydown', function(event, e) {
-		    if ($scope.state == 'normal') {
+		    if ($rootScope.state == 'normal') {
 			    switch (e.keyCode) {
-			    case 37: // left
-				    goLeft();
-				    break;
-			    case 39: // right
-				    goRight();
-				    break;
-			    case 38: // up
-				    goUp();
-				    break;
-			    case 40: // down
-				    goDown();
-				    break;
-			    case 13: // enter
-			    case 113: // F2
-				    $scope.editItem($scope.rix, $scope.cix, $scope.iix);
-                    e.preventDefault();
-				    break;
-			    case 8: // backspace
-				    e.preventDefault();
-			    case 46: // delete
-				    $scope.deleteItem($scope.rix, $scope.cix, $scope.iix);
-				    break;
-			    case 191: // question mark
-				    if(e.shiftKey){
-					    $scope.keyboard_shortcuts();
-				    }
-				    break;
-                case 78: // n
-                    $scope.addEpisode();
-                    e.preventDefault();
-                    break;
-			    };
-		    };
+                   case 191: // question mark
+                        if(e.shiftKey){
+                            $scope.keyboard_shortcuts();
+                        }
+                        break;
+                    case 13:
+                        $location.url($scope.getEpisodeLink());
+                        break;
+    			    case 38: // up
+    				    goUp();
+    				    break;
+    			    case 40: // down
+    				    goDown();
+    				    break;
+                    case 78: // n
+                        $scope.addEpisode();
+    		    }
+            }
 	    });
 
         $scope.$on('change', function(event, episode) {
             episode = new Episode(episode);
-            console.log('Episode list has change!');
             if(episodes[episode.id]){
-                console.log("We're looking at the changed episode!")
-                console.log("Updating episodes")
                 episodes[episode.id] = episode;
                 var rix = getRowIxFromEpisodeId(episode.id);
                 if(rix != -1){
-                    console.log("Updating Row")
                     $scope.rows[rix] = episode;
                 }
             }
-        })
-        
+        });
+
 	    function getColumnName(cix) {
 		    return $scope.columns[cix].name;
 	    };
@@ -222,14 +207,14 @@ angular.module('opal.controllers').controller(
 
 	    $scope.focusOnQuery = function() {
 		    // $scope.selectItem(-1, -1, -1);
-		    $scope.state = 'search';
+		    $rootScope.state = 'search';
 	    };
 
 	    $scope.blurOnQuery = function() {
 		    if ($scope.rix == -1) {
 			    $scope.selectItem(0, 0, 0);
 		    };
-		    $scope.state = 'normal';
+		    $rootScope.state = 'normal';
 	    };
 
 	    $scope.addEpisode = function() {
@@ -245,7 +230,7 @@ angular.module('opal.controllers').controller(
                 }
             );
 
-		    $scope.state = 'modal';
+		    $rootScope.state = 'modal';
 
             enter.then(
                 function(resolved) {
@@ -257,7 +242,7 @@ angular.module('opal.controllers').controller(
                     	// This ensures that the relevant episode is added to the table and
 		                // selected.
 		                var rowIx;
-		                $scope.state = 'normal';
+		                $rootScope.state = 'normal';
 		                if (episode && episode != 'cancel') {
 			                episodes[episode.id] = episode;
 			                $scope.rows = $scope.getVisibleEpisodes();
@@ -282,23 +267,23 @@ angular.module('opal.controllers').controller(
                     // that the Angular UI called dismiss rather than our cancel()
                     // method on the OPAL controller. We just need to re-set in order
                     // to re-enable keybard listeners.
-                    $scope.state = 'normal';
+                    $rootScope.state = 'normal';
                 });
 	    };
 
         $scope._post_discharge = function(result){
-			$scope.state = 'normal';
+			$rootScope.state = 'normal';
 			if (result == 'discharged' | result == 'moved') {
 				$scope.rows = $scope.getVisibleEpisodes();
 				$scope.selectItem(0, 0, 0);
                 $scope.num_episodes -= 1;
 			};
         };
-        
+
 	    $scope.dischargeEpisode = function(episode) {
             if(profile.readonly){ return null; };
 
-		    $scope.state = 'modal';
+		    $rootScope.state = 'modal';
 
             var exit = Flow(
                 'exit', schema, options,
@@ -312,11 +297,11 @@ angular.module('opal.controllers').controller(
             );
 
             exit.then(function(result) {
-                // 
+                //
                 // Sometimes our Flow will open another modal - we wait for that
                 // to close before firing the Post discharge hooks - this avoids the list
                 // scope from trapping keystrokes etc
-                // 
+                //
                 if(result && result.then){
                     result.then(function(r){ $scope._post_discharge(r); });
                 }else{
@@ -343,18 +328,18 @@ angular.module('opal.controllers').controller(
             })
         };
 
-        // 
+        //
         // Do the work of editing an item - open the modal and
         // resolve it.
-        // 
+        //
         _openEditItemModal = function(item, columnName, episode) {
             if(profile.readonly){
                 return null;
             };
-            $scope.state = 'modal';
+            $rootScope.state = 'modal';
             var template_url = '/templates/modals/' + columnName + '.html/';
             template_url += $scope.currentTag + '/' + $scope.currentSubTag;
-            
+
             var modal_opts = {
                 templateUrl: template_url,
                 controller: 'EditItemCtrl',
@@ -369,32 +354,32 @@ angular.module('opal.controllers').controller(
             if(item.size){
                 modal_opts.size = item.size;
             }
-                
+
             modal = $modal.open(modal_opts);
 
-            // 
+            //
             // The state resetting logic is fairly simple, but we may have to
             // wait for an intermediary modal to close...
             //
             // TODO: Figure out & document how to actually take advantage of this hook :/
-            // 
+            //
             var reset_state = function(result){
-                $scope.state = 'normal';
+                $rootScope.state = 'normal';
 
                 if (columnName == 'tagging') {
-                    
+
                     // User may have removed current tag
                     $scope.rows = $scope.getVisibleEpisodes();
                     $scope.selectItem(getRowIxFromEpisodeId(episode.id), $scope.cix, 0);
                 }
-                
+
                 if (result == 'save-and-add-another') {
                     $scope.newNamedItem(episode, columnName);
                     return
                 };
                 if (item.sort){
                     episode.sortColumn(item.columnName, item.sort);
-                };                
+                };
             };
 
             modal.result.then(function(result) {
@@ -404,7 +389,7 @@ angular.module('opal.controllers').controller(
                     reset_state(result);
                 }
             }, function(){
-                $scope.state = 'normal';
+                $rootScope.state = 'normal';
             });
         }
 
@@ -437,7 +422,7 @@ angular.module('opal.controllers').controller(
             if(columnName == 'demographics' && !profile.can_see_pid()){
                 return false;
             }
-            
+
 		    if (iix == episode.getNumberOfItems(columnName)) {
 			    item = episode.newItem(columnName, {schema: schema,
                                                     column: $rootScope.fields[columnName]});
@@ -447,45 +432,6 @@ angular.module('opal.controllers').controller(
 
 		    $scope.selectItem(rix, cix, iix);
             return _openEditItemModal(item, columnName, episode);
-	    };
-
-	    $scope.deleteItem = function(rix, cix, iix) {
-		    var modal;
-		    var columnName = getColumnName(cix);
-		    var episode = getEpisode(rix);
-		    var item = episode.getItem(columnName, iix);
-
-            if(profile.readonly){
-                return null;
-            };
-
-            if (schema.isReadOnly(columnName)) {
-                // Cannont delete readonly columns
-                return;
-            }
-
-		    if (schema.isSingleton(columnName)) {
-			    // Cannot delete singleton
-			    return;
-		    }
-
-		    if (!angular.isDefined(item)) {
-			    // Cannot delete 'Add'
-			    return;
-		    }
-
-		    $scope.state = 'modal'
-		    modal = $modal.open({
-			    templateUrl: '/templates/modals/delete_item_confirmation.html/',
-			    controller: 'DeleteItemConfirmationCtrl',
-			    resolve: {
-				    item: function() { return item; }
-			    }
-		    });
-
-		    modal.result.then(function(result) {
-			    $scope.state = 'normal';
-		    });
 	    };
 
 	    $scope.mouseEnter = function(rix, cix) {
@@ -565,6 +511,9 @@ angular.module('opal.controllers').controller(
         }
 
         $scope.keyboard_shortcuts = function(){
-            $modal.open({templateUrl: 'list_keyboard_shortcuts.html'})
+            $modal.open({
+                controller: "KeyBoardShortcutsCtrl",
+                templateUrl: 'list_keyboard_shortcuts.html'
+            })
         }
     });

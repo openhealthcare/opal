@@ -42,6 +42,27 @@ describe('ExtractCtrl', function(){
         }
     ];
 
+    beforeEach(function(){
+        module('opal', function($provide) {
+            $provide.value('$analytics', function(){
+                return {
+                    pageTrack: function(x){}
+                }
+            });
+
+            $provide.provider('$analytics', function(){
+                this.$get = function() {
+                    return {
+                        virtualPageviews: function(x){},
+                        settings: {
+                            pageTracking: false,
+                        },
+                        pageTrack: function(x){}
+                     };
+                };
+            });
+        });
+    });
 
     beforeEach(function(){
         module('opal.controllers');
@@ -94,7 +115,11 @@ describe('ExtractCtrl', function(){
 
     describe('Search', function(){
         it('should ask the server for results', function(){
-            $httpBackend.expectPOST("/search/extract/").respond({});
+            $httpBackend.expectPOST("/search/extract/").respond({
+                page_number: 1,
+                total_pages: 1,
+                total_count: 0
+            });
             $scope.search();
             $httpBackend.flush();
         });

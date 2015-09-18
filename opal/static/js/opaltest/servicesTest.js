@@ -1,8 +1,29 @@
 describe('services', function() {
-    var columns, episodeData, options, records, list_schema;
+    var columns, episodeData, options, records, list_schema, mockWindow;
+
+    beforeEach(function(){
+        module('opal', function($provide) {
+            $provide.value('$analytics', function(){
+                return {
+                    pageTrack: function(x){}
+                };
+            });
+
+            $provide.provider('$analytics', function(){
+                this.$get = function() {
+                    return {
+                        virtualPageviews: function(x){},
+                        settings: {
+                            pageTracking: false,
+                        },
+                        pageTrack: function(x){}
+                     };
+                };
+            });
+        });
+    });
 
     beforeEach(function() {
-        module('opal.services');
         columns = {
             "fields": {
                 'demographics': {
@@ -32,8 +53,8 @@ describe('services', function() {
             }
         };
 
-        records = columns['fields'];
-        list_schema  = columns['list_schema'];
+        records = columns.fields;
+        list_schema  = columns.list_schema;
 
         episodeData = {
             id: 123,
@@ -96,10 +117,10 @@ describe('services', function() {
         var mock;
 
         beforeEach(function(){
-            mock = { alert: jasmine.createSpy() };
+            $window = {alert: jasmine.createSpy() };
 
             module(function($provide) {
-                $provide.value('$window', mock);
+              $provide.value('$window', $window);
             });
 
             inject(function($injector){
@@ -109,11 +130,10 @@ describe('services', function() {
                 $rootScope       = $injector.get('$rootScope');
                 $q               = $injector.get('$q');
                 $route           = $injector.get('$route');
+                mockWindow = $injector.get('$window');
             });
             $route.current = {params: {tag: 'micro'}};
-
             $httpBackend.whenGET('/api/v0.1/record/').respond(records);
-
         });
 
         it('should fetch the schema', function(){
@@ -138,8 +158,7 @@ describe('services', function() {
             $rootScope.$apply();
             $httpBackend.flush()
 
-            expect(mock.alert).toHaveBeenCalledWith(
-                'List schema could not be loaded');
+            expect(mockWindow.alert).toHaveBeenCalledWith('List schema could not be loaded');
         });
 
         it('should provide the default schema on a sublist', function(){
@@ -148,7 +167,7 @@ describe('services', function() {
             var mycols = angular.copy(list_schema);
             mycols.micro = {};
             mycols.micro.default = mycols.default
-            
+
             $httpBackend.whenGET('/api/v0.1/list-schema/').respond(mycols);
 
             listSchemaLoader().then(function(r){result=r});

@@ -95,6 +95,38 @@ directives.directive('markdown', function () {
 	};
 });
 
+directives.directive('slashKeyFocus', function() {
+  return {
+    link: function(scope, elem, attrs) {
+        scope.$watch(attrs.slashKeyFocus, function(value){
+            if(value){
+                $(window).on("keyup.keyFocus", function(e){
+                    if (e.keyCode == 191 && !e.shiftKey) {
+                      $(elem).focus();
+                    }
+                });
+            } else {
+                $(window).off("keyup.keyFocus");
+            }
+
+            $elem = $(elem);
+
+            $elem.on("focus.keyFocus", function(x){
+                $elem.on("keyup.keyBlur", function(e){
+                    if (e.keyCode == 27) {
+                        $elem.blur();
+                    }
+                });
+            });
+
+            $elem.on("blur.keyFocus", function(x){
+                $(elem.off("keyup.keyBlur"));
+            });
+        });
+    }
+  };
+});
+
 directives.directive('setFocusIf', function($timeout) {
   return {
     link: function($scope, $element, $attr) {
@@ -111,6 +143,18 @@ directives.directive('setFocusIf', function($timeout) {
       });
     }
   };
+});
+
+
+directives.directive('autofocus', function($timeout) {
+  return {
+    restrict: 'A',
+    link : function($scope, $element) {
+      $timeout(function() {
+        $element[0].focus();
+      });
+    }
+  }
 });
 
 angular.module('ui.bootstrap.modal').directive('modalWindow', function ($timeout) {

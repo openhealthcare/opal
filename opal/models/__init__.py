@@ -3,6 +3,7 @@ OPAL Models!
 """
 import collections
 import json
+import itertools
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -543,12 +544,13 @@ class Tagging(models.Model):
         Given a list of episodes, return a dict indexed by episode id
         that contains historic tags for those episodes.
         """
+        episode_ids = [e.id for e in episodes]
         teams = {t.id: t.name for t in Team.objects.all()}
         deleted = reversion.get_deleted(cls)
         historic = collections.defaultdict(dict)
         for d in deleted:
             data = json.loads(d.serialized_data)[0]['fields']
-            if data['episode'] in episodes:
+            if data['episode'] in episode_ids:
                 if 'team' in data:
                     if data['team'] in teams:
                         tag_name = teams[data['team']]
@@ -1013,6 +1015,10 @@ class UserProfile(models.Model):
         from opal.models import Team
         return Team.for_user(self.user)
 
+    @property
+    def can_see_pid(self):
+        all_roles = itertools.chain(*self.get_roles().values())
+        return not any(r for r in all_roles if r == "researcher" or r == "scientist")
 
 @receiver(models.signals.post_save, sender=Patient)
 def create_patient_singletons(sender, **kwargs):

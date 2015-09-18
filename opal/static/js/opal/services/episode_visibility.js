@@ -28,7 +28,7 @@ angular.module('opal.services')
 	    }
 
         // filtered out by hospital number
-	    if (demographics.hospital_number &&
+        if (demographics.hospital_number &&
             demographics.hospital_number.toLowerCase().indexOf(
                 hospital_number.toLowerCase()) == -1) {
 		    return false;
@@ -60,7 +60,7 @@ angular.module('opal.services')
                 return false;
             }
         }
-        
+
         return true;
 	}
 });

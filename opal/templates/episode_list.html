@@ -58,7 +58,7 @@
   <ul class="list-group">
     <li class="list-group-item">
       <p>
-        <a class="btn btn-secondary screen-only btn-sm" href="#/episode/[[episode.id]]">
+        <a class="btn btn-secondary screen-only btn-sm" ng-href='[[ "#/episode/" + episode.id ]]'>
           <i class="fa fa-search-plus"></i>
           Patient Details
         </a>
@@ -100,7 +100,7 @@
   [[ tag_display[currentTag] ]] / [[ tag_display[currentSubTag] ]]
 </h4>
 
-<table class="table table-bordered table-striped bg-white patient-list">
+<table class="table table-bordered bg-white patient-list">
   <thead class="table-header">
 	<tr>
 	  {% for column in columns %}
@@ -126,7 +126,7 @@
 		  <li ng-repeat="item in row.{{column.name}}{% if column.list_limit %}|limitTo:{{ column.list_limit }}{% endif %}"
 			  ng-click="selectItem($parent.$index, {{ forloop.counter0 }}, $index)"
 			  ng-dblclick="editItem($parent.$index, {{ forloop.counter0 }}, $index)"
-			  ng-class="{selected: rix == $parent.$index && cix == {{ forloop.counter0 }} && iix == $index}">
+			  >
 			{% include column.template_path %}
 		  </li>
 
@@ -134,9 +134,8 @@
 		  <li class="edit_item"
               ng-click="editItem($index, {{ forloop.counter0 }}, row.{{column.name}}.length)"
 			  ng-dblclick="editItem($index, {{ forloop.counter0 }}, row.{{column.name}}.length)"
-			  ng-class="{selected: rix == $index && cix == {{ forloop.counter0 }} && iix == row.{{column.name}}.length}">
-			<span ng-show="(!profile.readonly && rix == $index && cix == {{ forloop.counter0 }}) ||
-						   (!profile.readonly && mouseRix == $index && mouseCix == {{ forloop.counter0 }})">
+			  >
+			<span ng-show="!profile.readonly && mouseRix == $index && mouseCix == {{ forloop.counter0 }}">
 			  Add
               <i class="glyphicon glyphicon-plus pull-right"></i>
 			</span>
@@ -146,9 +145,8 @@
           <li class="edit_item"
               ng-click="editItem($index, {{ forloop.counter0 }}, 0)"
 			  ng-dblclick="editItem($index, {{ forloop.counter0 }}, 0)"
-			  ng-class="{selected: rix == $index && cix == {{ forloop.counter0 }} && iix == 0}">
-			<span ng-show="(!profile.readonly && rix == $index && cix == {{ forloop.counter0 }}) ||
-						   (!profile.readonly && mouseRix == $index && mouseCix == {{ forloop.counter0 }})">
+			  >
+			<span ng-show="!profile.readonly && mouseRix == $index && mouseCix == {{ forloop.counter0 }}">
 			  Edit <i class="glyphicon glyphicon-pencil pull-right"></i>
 			</span>
 			&nbsp;

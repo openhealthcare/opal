@@ -65,6 +65,9 @@ h1.larger { font-size: 52px; }
 .content-offset-below-20 {
     margin-bottom: 20px;
 }
+.content-offset-below-25 {
+    margin-bottom: 20px;
+}
 .content-offset-10{
     margin-top: 10px;
 }
@@ -166,8 +169,7 @@ li.selected {
 }
 
 tr.selected {
-	border-top: 3px solid #5fa2dd;
-	border-bottom: 3px solid #5fa2dd;
+    background-color: #5fa2dd;
 }
 
 /* Login */
@@ -379,6 +381,10 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
   min-width: 100px;
 }
 
+.float-left{
+    float: left;
+}
+
 .timeline-item {
   margin-bottom: 50px;
   margin-top: 5px;
@@ -540,6 +546,34 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 
 .inline{
     display: inline;
+}
+
+.nav-bar-search:before{
+    content: "\f002";
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    position: absolute;
+    left: 10px;
+    font-size: 18px;
+    top: 5px;
+    z-index: 1;
+    color:
+}
+
+
+.nav-bar-search > .form-control{
+    padding-left: 30px;
+    width: 200px;
+    transition-property: width;
+    transition-duration: 0.2s;
+}
+
+.nav-bar-search{
+    position: relative;
+    color: rgb(77, 77, 77);
+    padding-right: 15px;
 }
 
 .table-header{

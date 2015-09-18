@@ -29,17 +29,17 @@ angular.module('opal.services')
         this.size = columnSchema.modal_size
 
         this.isSingleton = function(){
-            return columnSchema.single            
+            return columnSchema.single
         };
 
         this.isReadOnly = function(){
             return columnSchema.readOnly;
         };
-        
-        // 
+
+        //
         // Returns a clone of the editable fields + consistency token so that
         // we can then update them in isolation elsewhere.
-        // 
+        //
 	    this.makeCopy = function() {
 	        var field, value;
 	        var copy = {id: item.id};
@@ -87,19 +87,19 @@ angular.module('opal.services')
                 if( field.type == 'date_time' && attrs[field.name] ){
                     attrs[field.name] = moment(value).format('YYYY-MM-DD HH:mmZ')
                 }
-                
-                // 
-                // TODO: Handle this conversion better 
-                // 
+
+                //
+                // TODO: Handle this conversion better
+                //
                 if (field.type == 'integer' && field.name == 'time') {
                     value = attrs[field.name];
                     attrs[field.name] = parseInt('' + value.hour() + value.minute());
                 }
 	        };
 
-            // Tagging to teams are represented as a pseudo subrecord. 
+            // Tagging to teams are represented as a pseudo subrecord.
             // Fake the ID attribute so we can know what episode we're tagging to.
-            // 
+            //
             // We can't do this at initialization time because the episode has
             // not fully initialized itself at that point.
             // TODO: Refactor episode initialization.
@@ -107,7 +107,7 @@ angular.module('opal.services')
                 item.id = episode.id;
                 attrs.id = episode.id;
             }
-            
+
 	        if (angular.isDefined(item.id)) {
 		        method = 'put';
 		        url += attrs.id + '/';

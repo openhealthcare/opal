@@ -19,7 +19,7 @@ angular.module('opal.services')
                 if(profile.readonly){
                     return null;
                 };
-                $scope.state = 'modal';
+                $rootScope.state = 'modal';
 
                 var modal_opts = {
 			        templateUrl: '/templates/modals/' + columnName + '.html/',
@@ -40,7 +40,7 @@ angular.module('opal.services')
 
 
                 modal.result.then(function(result) {
-			        $scope.state = 'normal';
+			        $rootScope.state = 'normal';
 
 			        if (result == 'save-and-add-another') {
 				        $scope.newNamedItem(columnName)
@@ -94,7 +94,7 @@ angular.module('opal.services')
 			        return;
 		        }
 
-		        $scope.state = 'modal'
+		        $rootScope.state = 'modal'
 		        modal = $modal.open({
 			        templateUrl: '/templates/modals/delete_item_confirmation.html/',
 			        controller: 'DeleteItemConfirmationCtrl',
@@ -102,7 +102,7 @@ angular.module('opal.services')
 				        item: function() { return item; }
 			        }
 		        }).result.then(function(result) {
-			        $scope.state = 'normal';
+			        $rootScope.state = 'normal';
 		        });
 	        };
 
@@ -122,7 +122,7 @@ angular.module('opal.services')
 	        $scope.dischargeEpisode = function() {
                 if(profile.readonly){ return null; };
 
-		        $scope.state = 'modal';
+		        $rootScope.state = 'modal';
                 var exit = Flow(
                     'exit',
                     null,  // Schema ? Not used ? Todo: investigate!
@@ -137,7 +137,7 @@ angular.module('opal.services')
                 );
 
                 exit.then(function(result) {
-			        $scope.state = 'normal';
+			        $rootScope.state = 'normal';
 		        });
 	        };
 
@@ -152,7 +152,7 @@ angular.module('opal.services')
                     }
                 );
 
-		        $scope.state = 'modal';
+		        $rootScope.state = 'modal';
 
                 enter.then(
                     function(episode) {
@@ -161,7 +161,7 @@ angular.module('opal.services')
 		                //
 		                // This ensures that the relevant episode is added to the table and
 		                // selected.
-		                $scope.state = 'normal';
+		                $rootScope.state = 'normal';
                         if(episode){
                             $location.path('/episode/' + episode.id);
                         }
@@ -169,7 +169,7 @@ angular.module('opal.services')
                     function(reason){
                         // The modal has been dismissed. We just need to re-set in order
                         // to re-enable keybard listeners.
-                        $scope.state = 'normal';
+                        $rootScope.state = 'normal';
                     });
             },
 

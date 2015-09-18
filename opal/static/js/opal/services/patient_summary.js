@@ -15,10 +15,10 @@ angular.module('opal.services').factory('PatientSummary', function() {
                 }
             }
 
-            if(startYear !== endYear){
+            if(startYear && endYear && startYear !== endYear){
                 this.years = startYear + "-" + endYear;
             }
-            else{
+            else if(startYear){
                 this.years = startYear;
             }
             this.name = jsonResponse.name;
