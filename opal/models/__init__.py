@@ -4,6 +4,7 @@ OPAL Models!
 import collections
 import json
 import itertools
+from datetime import datetime
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -356,7 +357,6 @@ class Episode(UpdatesFromDictMixin, models.Model):
 
         d['tagging'] = self.tagging_dict(user)
 
-
         d['episode_history'] = self._episode_history_to_dict(user)
         return d
 
@@ -364,11 +364,51 @@ class Episode(UpdatesFromDictMixin, models.Model):
 class Subrecord(UpdatesFromDictMixin, models.Model):
     consistency_token = models.CharField(max_length=8)
 
+    # these fields are set automatically from REST requests via
+    # updates from dict and the getter, setter properties
+    created = models.DateTimeField(blank=True, null=True)
+    update = models.DateTimeField(blank=True, null=True)
+    created_by = models.ForeignKey(
+        User, blank=True, null=True, related_name="created_%(app_label)s_%(class)s_subrecords"
+    )
+    updated_by = models.ForeignKey(
+        User, blank=True, null=True, related_name="updated_%(app_label)s_%(class)s_subrecords"
+    )
+
     _is_singleton = False
     _advanced_searchable = True
 
     class Meta:
         abstract = True
+
+    def set_created_by(self, incoming_value, user):
+        if incoming_value:
+            value = incoming_value
+        else:
+            value = user
+
+        if not self.id:
+            self.created_by = value
+
+    def set_updated_by(self, incoming_value, user):
+        if incoming_value:
+            value = incoming_value
+        else:
+            value = user
+
+        self.updated_by = value
+
+    def set_updated(self, incoming_value, user):
+        if not incoming_value:
+            incoming_value = datetime.now()
+        self.updated = incoming_value
+
+    def set_created(self, incoming_value, user):
+        if not self.id:
+            if incoming_value:
+                self.created = incoming_value
+            else:
+                self.created = datetime.now()
 
     def __unicode__(self):
         return u'{0}: {1}'.format(self.get_api_name(), self.id)
