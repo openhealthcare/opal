@@ -569,10 +569,10 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
     width: 80px;
-    height: 90px;
+    height: 70px;
     position: fixed;
-    bottom: -60px;
-    left: 50%;
+    bottom: -20px;
+    right: 5%;
     margin-left: -40px;
     text-align: center;
     display: inline-block;
@@ -581,17 +581,22 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     margin-bottom: -5px;
     overflow: hidden;
     box-sizing: border-box;
+    color: white;
+}
+
+.scrollToTopInner{
+    margin-top: 20px;
 }
 
 .scrollToTop:hover{
-    height: 100px;
+    height: 80px;
 }
 
 .scrollToTop.hidden-at-top{
     height: 0;
 }
 
-.scrollToTop:after{
+.scrollToTop:before{
     color: white;
     content: "\f106";
     font-family: FontAwesome;
