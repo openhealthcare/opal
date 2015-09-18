@@ -65,6 +65,9 @@ h1.larger { font-size: 52px; }
 .content-offset-below-20 {
     margin-bottom: 20px;
 }
+.content-offset-below-25 {
+    margin-bottom: 20px;
+}
 .content-offset-10{
     margin-top: 10px;
 }
