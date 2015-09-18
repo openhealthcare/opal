@@ -1,5 +1,5 @@
 angular.module('opal.controllers').controller(
-    'SearchCtrl', function($scope, $http, $location, $modal,
+    'SearchCtrl', function($rootScope, $scope, $http, $location, $modal,
                            $timeout, ngProgressLite,
                            $q, $window, Episode, Flow,
                             PatientSummary) {
@@ -17,6 +17,14 @@ angular.module('opal.controllers').controller(
 	    $timeout(function() {
 		    $('#searchByName').focus();
 	    });
+
+        $scope.disableShortcuts = function(){
+            $rootScope.state = "search";
+        };
+
+        $scope.enableShortcuts = function(){
+            $rootScope.state = "normal";
+        };
 
         $scope.loadResults = function(){
             var queryString;
@@ -51,6 +59,11 @@ angular.module('opal.controllers').controller(
         if($location.path() === searchUrl){
             $scope.loadResults();
         }
+
+        // empty the search bar if we click through and we're not running a search
+        $scope.$on('$locationChangeStart', function(event, newUrl) {
+            $scope.searchTerm = "";
+        });
 
 	    $scope.search = function(pageNumber) {
             var params = {};

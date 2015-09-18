@@ -5,11 +5,11 @@ angular.module('opal.controllers').controller(
                                 growl,
                                 Flow, Item,
                                 Episode, schema, episodes, options,
-                                profile,
+                                profile, $rootScope,
                                 episodeVisibility){
 
         var version = window.version;
-        $scope.state = 'normal';
+        $rootScope.state = 'normal';
         $scope.url = $location.url();
 
         $scope.options = options;
@@ -94,7 +94,7 @@ angular.module('opal.controllers').controller(
 	    $scope.$watch('currentTag', function() {
 		    $cookieStore.put('opal.currentTag', $scope.currentTag);
             if($scope.currentTag != $routeParams.tag){
-                $scope.state = 'reloading'
+                $$rootScope.state = 'reloading'
             }
             var target = $scope.path_base +  $scope.currentTag;
 
@@ -105,12 +105,12 @@ angular.module('opal.controllers').controller(
 		    $cookieStore.put('opal.currentSubTag', $scope.currentSubTag);
             if($scope.currentSubTag == 'all'){
                 if($routeParams.subtag && $scope.currentSubTag != $routeParams.subtag){
-                    $scope.state = 'reloading'
+                    $rootScope.state = 'reloading'
                 }
                 $location.path($scope.path_base +  $scope.currentTag);
             }else{
                 if($scope.currentSubTag != $routeParams.subtag){
-                    $scope.state = 'reloading'
+                    $rootScope.state = 'reloading'
                 }
                 $location.path($scope.path_base +  $scope.currentTag + '/' +  $scope.currentSubTag);
             }
@@ -137,15 +137,29 @@ angular.module('opal.controllers').controller(
 		    $scope.rows = $scope.getVisibleEpisodes();
 	    });
 
+        $scope.getEpisodeLink = function(){
+            return "/episode/" + $scope.episode.id;
+        };
+
 	    $scope.$on('keydown', function(event, e) {
-		    if ($scope.state == 'normal') {
+		    if ($rootScope.state == 'normal') {
 			    switch (e.keyCode) {
+                   case 191: // question mark
+                        if(e.shiftKey){
+                            $scope.keyboard_shortcuts();
+                        }
+                        break;
+                    case 13:
+                        $location.url($scope.getEpisodeLink());
+                        break;
     			    case 38: // up
     				    goUp();
     				    break;
     			    case 40: // down
     				    goDown();
     				    break;
+                    case 78: // n
+                        $scope.addEpisode();
     		    }
             }
 	    });
@@ -191,14 +205,14 @@ angular.module('opal.controllers').controller(
 
 	    $scope.focusOnQuery = function() {
 		    // $scope.selectItem(-1, -1, -1);
-		    $scope.state = 'search';
+		    $rootScope.state = 'search';
 	    };
 
 	    $scope.blurOnQuery = function() {
 		    if ($scope.rix == -1) {
 			    $scope.selectItem(0, 0, 0);
 		    };
-		    $scope.state = 'normal';
+		    $rootScope.state = 'normal';
 	    };
 
 	    $scope.addEpisode = function() {
@@ -214,7 +228,7 @@ angular.module('opal.controllers').controller(
                 }
             );
 
-		    $scope.state = 'modal';
+		    $rootScope.state = 'modal';
 
             enter.then(
                 function(resolved) {
@@ -226,7 +240,7 @@ angular.module('opal.controllers').controller(
                     	// This ensures that the relevant episode is added to the table and
 		                // selected.
 		                var rowIx;
-		                $scope.state = 'normal';
+		                $rootScope.state = 'normal';
 		                if (episode && episode != 'cancel') {
 			                episodes[episode.id] = episode;
 			                $scope.rows = $scope.getVisibleEpisodes();
@@ -250,12 +264,12 @@ angular.module('opal.controllers').controller(
                     // that the Angular UI called dismiss rather than our cancel()
                     // method on the OPAL controller. We just need to re-set in order
                     // to re-enable keybard listeners.
-                    $scope.state = 'normal';
+                    $rootScope.state = 'normal';
                 });
 	    };
 
         $scope._post_discharge = function(result){
-			$scope.state = 'normal';
+			$rootScope.state = 'normal';
 			if (result == 'discharged' | result == 'moved') {
 				$scope.rows = $scope.getVisibleEpisodes();
 				$scope.selectItem(0, 0, 0);
@@ -265,7 +279,7 @@ angular.module('opal.controllers').controller(
 	    $scope.dischargeEpisode = function(episode) {
             if(profile.readonly){ return null; };
 
-		    $scope.state = 'modal';
+		    $rootScope.state = 'modal';
 
             var exit = Flow(
                 'exit', schema, options,
@@ -318,7 +332,7 @@ angular.module('opal.controllers').controller(
             if(profile.readonly){
                 return null;
             };
-            $scope.state = 'modal';
+            $rootScope.state = 'modal';
             var template_url = '/templates/modals/' + columnName + '.html/';
             template_url += $scope.currentTag + '/' + $scope.currentSubTag;
 
@@ -346,7 +360,7 @@ angular.module('opal.controllers').controller(
             // TODO: Figure out & document how to actually take advantage of this hook :/
             //
             var reset_state = function(result){
-                $scope.state = 'normal';
+                $rootScope.state = 'normal';
 
                 if (columnName == 'tagging') {
 
@@ -371,7 +385,7 @@ angular.module('opal.controllers').controller(
                     reset_state(result);
                 }
             }, function(){
-                $scope.state = 'normal';
+                $rootScope.state = 'normal';
             });
         }
 
@@ -414,45 +428,6 @@ angular.module('opal.controllers').controller(
 
 		    $scope.selectItem(rix, cix, iix);
             return _openEditItemModal(item, columnName, episode);
-	    };
-
-	    $scope.deleteItem = function(rix, cix, iix) {
-		    var modal;
-		    var columnName = getColumnName(cix);
-		    var episode = getEpisode(rix);
-		    var item = episode.getItem(columnName, iix);
-
-            if(profile.readonly){
-                return null;
-            };
-
-            if (schema.isReadOnly(columnName)) {
-                // Cannont delete readonly columns
-                return;
-            }
-
-		    if (schema.isSingleton(columnName)) {
-			    // Cannot delete singleton
-			    return;
-		    }
-
-		    if (!angular.isDefined(item)) {
-			    // Cannot delete 'Add'
-			    return;
-		    }
-
-		    $scope.state = 'modal'
-		    modal = $modal.open({
-			    templateUrl: '/templates/modals/delete_item_confirmation.html/',
-			    controller: 'DeleteItemConfirmationCtrl',
-			    resolve: {
-				    item: function() { return item; }
-			    }
-		    });
-
-		    modal.result.then(function(result) {
-			    $scope.state = 'normal';
-		    });
 	    };
 
 	    $scope.mouseEnter = function(rix, cix) {
@@ -532,6 +507,9 @@ angular.module('opal.controllers').controller(
         }
 
         $scope.keyboard_shortcuts = function(){
-            $modal.open({templateUrl: 'list_keyboard_shortcuts.html'})
+            $modal.open({
+                controller: "KeyBoardShortcutsCtrl",
+                templateUrl: 'list_keyboard_shortcuts.html'
+            })
         }
     });

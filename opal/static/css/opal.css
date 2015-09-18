@@ -371,6 +371,10 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
   min-width: 100px;
 }
 
+.float-left{
+    float: left;
+}
+
 .timeline-item {
   margin-bottom: 50px;
   margin-top: 5px;

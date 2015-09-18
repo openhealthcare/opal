@@ -53,7 +53,12 @@
           <div ng-controller="SearchCtrl">
             <form class="navbar-form navbar-right" ng-submit="search()" role="search">
               <div class="form-group nav-bar-search">
-                <input ng-model="searchTerm" type="text" class="form-control" placeholder="Search">
+                <input
+                        slash-key-focus="!state || state==='normal'"
+                        ng-blur="enableShortcuts()"
+                        ng-focus="disableShortcuts()"
+                        ng-model="searchTerm"
+                        type="text" class="form-control" placeholder="Search">
               </div>
             </form>
           </div>

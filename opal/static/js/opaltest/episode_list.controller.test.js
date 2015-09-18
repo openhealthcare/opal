@@ -251,14 +251,14 @@ describe('EpisodeListCtrl', function() {
 
     describe('newly-created controller', function() {
         it('should have state "normal"', function() {
-            expect($scope.state).toBe('normal');
+            expect($rootScope.state).toBe('normal');
         });
     });
 
     describe('adding an episode', function() {
         it('should change stated to "modal"', function() {
             $scope.addEpisode();
-            expect($scope.state).toBe('modal');
+            expect($rootScope.state).toBe('modal');
         });
 
         it('should call the enter flow', function() {
@@ -292,12 +292,12 @@ describe('EpisodeListCtrl', function() {
         describe('_post_discharge()', function (){
 
             beforeEach(function(){
-                $scope.state = 'modal'
+                $rootScope.state = 'modal'
             });
 
             it('Should set the $scope.state', function () {
                 $scope._post_discharge();
-                expect($scope.state).toBe('normal');
+                expect($rootScope.state).toBe('normal');
             });
 
             it('Should re-set the visible episodes', function () {
@@ -357,7 +357,7 @@ describe('EpisodeListCtrl', function() {
 
             it('should change state to "modal"', function() {
                 $scope.editItem(0, 0, 0);
-                expect($scope.state).toBe('modal');
+                expect($rootScope.state).toBe('modal');
             });
 
             it('should set up the demographics modal', function() {
@@ -394,7 +394,7 @@ describe('EpisodeListCtrl', function() {
                 deferred.resolve('save');
                 $rootScope.$apply();
 
-                expect($scope.state).toBe('normal');
+                expect($rootScope.state).toBe('normal');
             });
 
 
@@ -428,7 +428,7 @@ describe('EpisodeListCtrl', function() {
 
             it('should change state to "modal"', function() {
                 $scope.editItem(0, 2, iix);
-                expect($scope.state).toBe('modal');
+                expect($rootScope.state).toBe('modal');
             });
 
             it('should set up the modal', function() {
@@ -449,17 +449,17 @@ describe('EpisodeListCtrl', function() {
         describe('deleting an item', function() {
             it('should do nothing if item is singleton', function() {
                 $scope.deleteItem(0, 0, 0);
-                expect($scope.state).toBe('normal');
+                expect($rootScope.state).toBe('normal');
             });
 
             it('should do nothing if item is new item', function() {
                 $scope.deleteItem(0, 2, 2);
-                expect($scope.state).toBe('normal');
+                expect($rootScope.state).toBe('normal');
             });
 
             it('should change state to "modal"', function() {
                 $scope.deleteItem(0, 2, 1);
-                expect($scope.state).toBe('modal');
+                expect($rootScope.state).toBe('modal');
             });
 
             describe('for a readonly user', function(){
