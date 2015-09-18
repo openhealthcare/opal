@@ -1,5 +1,5 @@
 describe('Utils.OPAL._run', function (){
-    
+
     it('Should add open_modal to the root scope.', function () {
         var mock_scope = { $on: function(){} };
         var mock_modal = { open: function(){} };
@@ -8,7 +8,7 @@ describe('Utils.OPAL._run', function (){
 
         expect(mock_scope.open_modal).toBeDefined();
     });
-    
+
     it('Should open a modal with the arguments', function () {
         var mock_scope = { $on: function(){} };
         var mock_modal = { open: function(){} };
@@ -26,4 +26,3 @@ describe('Utils.OPAL._run', function (){
     });
 
 });
-

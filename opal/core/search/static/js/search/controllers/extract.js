@@ -13,6 +13,7 @@ angular.module('opal.controllers').controller(
         $scope.filters = filters;
         $scope.columns = schema.getAdvancedSearchColumns();
         $scope.searched = false;
+        $scope.currentPageNumber = 1;
 
 	    for (var name in options) {
 		    $scope[name + '_list'] = options[name];
@@ -104,8 +105,9 @@ angular.module('opal.controllers').controller(
         };
 
         $scope.removeCriteria = function(){
+            $scope.searched = false;
             $scope.criteria = [_.clone($scope.model)];
-        }
+        };
 
         //
         // Determine the appropriate lookup list for this field if
@@ -124,17 +126,26 @@ angular.module('opal.controllers').controller(
             });
         }, true);
 
-        $scope.search = function(){
+        $scope.search = function(pageNumber){
+            if(!pageNumber){
+                pageNumber = 1;
+            }
+
+            var queryParams = $scope.completeCriteria();
+
+            if(queryParams.length){
+                queryParams[0].page_number = pageNumber;
+            }
             ngProgressLite.set(0);
             ngProgressLite.start();
-            $http.post('/search/extract/', $scope.completeCriteria()).success(
+            $http.post('/search/extract/', queryParams).success(
                 function(response){
                     $scope.results = _.map(response.object_list, function(o){
                         return new PatientSummary(o);
                     });
                     $scope.searched = true;
-                    $scope.pageNumber = response.page_number;
-                    $scope.totalPages = response.total_pages;
+                    $scope.currentPageNumber = response.page_number;
+                    $scope.totalPages = _.range(1, response.total_pages + 1);
                     $scope.totalCount = response.total_count;
                     ngProgressLite.done();
                 }).error(function(e){

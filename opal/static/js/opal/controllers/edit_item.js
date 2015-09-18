@@ -12,6 +12,10 @@ angular.module('opal.controllers').controller(
         $scope.episode_category = episode.category
 	    $scope.editing = item.makeCopy();
 
+        $scope.editingMode = function(){
+            return !_.isUndefined($scope.editing.id);
+        };
+
         // This is the patientname displayed in the modal header
 	    $scope.editingName = item.episode.demographics[0].name;
 

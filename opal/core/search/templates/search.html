@@ -12,12 +12,14 @@
       <form ng-submit="search()" class="form form-horizontal">
         <div class="row content-offset">
             <div class="col-md-4 col-md-push-4">
-              <input type="text"
+              <input type="text" autofocus
                      name="name"
-                     ng-model="searchTerm"
+                     slash-key-focus="!state || state==='normal'"
+                     ng-blur="enableShortcuts()"
+                     ng-focus="disableShortcuts()"
                      placeholder="Name or Hospital Number"
+                     ng-model="searchTerm"
                      class="form-control"
-                     focus-on-this
                      autocomplete="off"
                      />
             </div>

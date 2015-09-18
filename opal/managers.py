@@ -78,8 +78,7 @@ class EpisodeManager(models.Manager):
 
         if historic_tags:
             print 'Historic Tags'
-            episode_ids = [e.id for e in episodes]
-            historic = Tagging.historic_tags_for_episodes(episode_ids)
+            historic = Tagging.historic_tags_for_episodes(episodes)
             for episode in serialised:
                 if episode['id'] in historic:
                     historic_tags = historic[episode['id']]

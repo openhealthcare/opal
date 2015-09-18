@@ -20,6 +20,7 @@
 	        <link href="{% static "css/print.css" %}" rel="stylesheet" media="print">
         {% endcompress %}
         {% if OPAL_EXTRA_APPLICATION %}{% include OPAL_EXTRA_APPLICATION %}{% endif %}
+
 	</head>
 	<body>
       {% block navbar %}{% include 'navbar.html' %}{% endblock %}

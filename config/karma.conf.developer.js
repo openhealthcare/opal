@@ -27,6 +27,8 @@ module.exports = function(config){
             'angular-strap-2.0.3/modules/timepicker.tpl.js',
             'angular-strap-2.0.3/modules/typeahead.js',
             'angular-strap-2.0.3/modules/typeahead.tpl.js',
+            'angulartics-0.17.2/angulartics.min.js',
+            'angulartics-0.17.2/angulartics-ga.min.js',
             'ngprogress-lite/ngprogress-lite.js',
             'jquery-1.11.3/jquery-1.11.3.js',
             'utils/underscore.js',
@@ -46,7 +48,7 @@ module.exports = function(config){
             'opal/app.js',
             '../../core/search/static/js/search/controllers/*',
             '../../core/search/static/js/search/services/*',
-            
+
             'opaltest/*.js',
         ],
 
