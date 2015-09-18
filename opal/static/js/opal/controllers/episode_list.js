@@ -14,6 +14,8 @@ angular.module('opal.controllers').controller(
 
         $scope.options = options;
 
+        $scope.num_episodes = _.keys(episodes).length;
+
 	    $scope.rix = 0; // row index
 	    $scope.cix = 0; // column index
 	    $scope.iix = 0; // item index
@@ -261,6 +263,7 @@ angular.module('opal.controllers').controller(
 			                $scope.rows = $scope.getVisibleEpisodes();
 			                rowIx = getRowIxFromEpisodeId(episode.id);
 			                $scope.selectItem(rowIx, 0, 0);
+                            $scope.num_episodes += 1;
                             growl.success("Added a new episode for " + episode.demographics[0].name);
 		                };
                     }
@@ -288,6 +291,7 @@ angular.module('opal.controllers').controller(
 			if (result == 'discharged' | result == 'moved') {
 				$scope.rows = $scope.getVisibleEpisodes();
 				$scope.selectItem(0, 0, 0);
+                $scope.num_episodes -= 1;
 			};
         };
         

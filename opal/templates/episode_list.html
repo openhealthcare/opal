@@ -161,6 +161,15 @@
 	</tr>
   </tbody>
 </table>
+<div class="empty-list" ng-hide="num_episodes > 0">
+  <p class="lead text-center">
+    There are no patients on this list.
+  </p>
+  <p class="lead text-center">
+    Would you like to <a href="" ng-click="addEpisode()">add one</b>?
+  </p>
+  
+</div>
 
 {% endblock %}
 

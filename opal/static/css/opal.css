@@ -148,9 +148,16 @@ h1.larger { font-size: 52px; }
     .patient-list-container{
         height: 760px;
         overflow: scroll;
-    }
+    }    
 }
 table.patient-list tr th { white-space: nowrap; }
+.empty-list {
+    background-color: white;
+    padding: 20% 0 20%;
+    margin-top: -20px;
+    margin-left: 1px;
+    margin-right: 2px;
+}
 
 /* Selected sub-cell - list view */
 li.selected {
