@@ -31,10 +31,10 @@ angular.module('opal.controllers').controller(
        $scope.profile = profile;
        $scope.options = options;
        $scope.episode = {
-           resistantOrganisms: []
+           alertOrganisms: []
        };
 
-       function getResistantOrganisms(episode){
+       function getAlertOrganisms(episode){
            if(episode.microbiology_test){
                return _.reduce(episode.microbiology_test, function(r, mt){
                    if("resistant_antibiotics" in mt){
@@ -49,11 +49,11 @@ angular.module('opal.controllers').controller(
        if($scope.episodes.length){
            $scope.episode = $scope.episodes[0];
 
-           $scope.episode.resistantOrganisms = function(){
+           $scope.episode.alertOrganisms = function(){
                    return _.reduce(episodes, function(r, e){
-                   var resistantOrganisms = getResistantOrganisms(e);
-                   if(resistantOrganisms.length){
-                       r = r.concat(resistantOrganisms);
+                   var alertOrganisms = getAlertOrganisms(e);
+                   if(alertOrganisms.length){
+                       r = r.concat(alertOrganisms);
                    }
 
                    return r;

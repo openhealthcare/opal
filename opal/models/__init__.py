@@ -367,7 +367,7 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
     # these fields are set automatically from REST requests via
     # updates from dict and the getter, setter properties
     created = models.DateTimeField(blank=True, null=True)
-    update = models.DateTimeField(blank=True, null=True)
+    updated = models.DateTimeField(blank=True, null=True)
     created_by = models.ForeignKey(
         User, blank=True, null=True, related_name="created_%(app_label)s_%(class)s_subrecords"
     )

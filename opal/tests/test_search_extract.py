@@ -73,7 +73,15 @@ class SubrecordCSVTestCase(PatientEpisodeTestCase):
         )
         headers = csv.writer().writerow.call_args_list[0][0][0]
         self.assertEqual(csv.writer().writerow.call_count, 1)
-        self.assertEqual(headers, ['episode_id', 'name'])
+        expected_headers = [
+            'created',
+            'updated',
+            'created_by_id',
+            'updated_by_id',
+            'episode_id',
+            'name'
+        ]
+        self.assertEqual(headers, expected_headers)
 
     @patch("opal.core.search.extract.csv")
     def test_with_subrecords(self, csv):
@@ -88,8 +96,17 @@ class SubrecordCSVTestCase(PatientEpisodeTestCase):
 
         headers = csv.writer().writerow.call_args_list[0][0][0]
         row = csv.writer().writerow.call_args_list[1][0][0]
-        expected_headers = ['episode_id', 'name']
-        expected_row = [str(self.episode.id), 'blue']
+        expected_headers = [
+            'created',
+            'updated',
+            'created_by_id',
+            'updated_by_id',
+            'episode_id',
+            'name'
+        ]
+        expected_row = [
+            'None', 'None', 'None', 'None', str(self.episode.id), 'blue'
+        ]
         self.assertEqual(headers, expected_headers)
         self.assertEqual(row, expected_row)
 
@@ -107,11 +124,22 @@ class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
         headers = csv.writer().writerow.call_args_list[0][0][0]
         row = csv.writer().writerow.call_args_list[1][0][0]
         expected_headers = [
-            'episode_id', 'hospital_number', 'date_of_birth', u'gender_fk_id', 'gender_ft', 'gender'
+            'episode_id',
+            'created',
+            'updated',
+            'created_by_id',
+            'updated_by_id',
+            'hospital_number',
+            'date_of_birth',
+            u'gender_fk_id',
+            'gender_ft',
+            'gender'
         ]
 
         expected_row = [
-            1, u'12345678', datetime.date(1976, 1, 1).strftime('%Y-%m-%d'), 'None', u'', u''
+            1, 'None', 'None', 'None', 'None', u'12345678',
+            datetime.date(1976, 1, 1).strftime('%Y-%m-%d'),
+            'None', u'', u''
         ]
         self.assertEqual(headers, expected_headers)
         self.assertEqual(row, expected_row)

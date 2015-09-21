@@ -1,6 +1,6 @@
-<div class="heading container">
-  <div class="row spaced bg-primary">
-    <div class="col-md-12 box">
+<div class="heading">
+  <div class="spaced bg-primary">
+    <div class="box">
       <h1>
         {% block heading %}[[ episode.demographics[0].name ]]{% endblock %}
         <small>
@@ -31,7 +31,7 @@
                 <i class="fa fa-history"></i>
                 History
               </button>
-            </li>            
+            </li>
             <li class="list-group-item">
               {% with edit_teams="editNamedItem('tagging', 0)" %}
               {% include 'partials/_teams_list.html' %}
@@ -49,17 +49,13 @@
     <div class="col-md-9"> <!-- Detail panels -->
       <div class="row">
         <div class="col-md-6"> <!-- Detail panels col 1 -->
-          {% block left_column %}{% endblock %}          
+          {% block left_column %}{% endblock %}
         </div>                 <!-- Ends Detail panels col 1 -->
         <div class="col-md-6"> <!-- Detail panels col 2 -->
-          {% block right_column %}{% endblock %}                    
+          {% block right_column %}{% endblock %}
         </div>                 <!-- Ends Detail panels col 2 -->
-      </div>
-      <div class="row">
-        {% block under_split_cols %}{% endblock %}
       </div>
     </div> <!-- Ends Detail Panels -->
 
-  </div> 
+  </div>
 </div> <!-- Ends Main Panel -->
-

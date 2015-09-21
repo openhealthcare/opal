@@ -48,17 +48,3 @@ def _itersubclasses(cls, _seen=None):
             yield sub
             for sub in _itersubclasses(sub, _seen):
                 yield sub
-
-
-def jsonHelper(obj):
-    """A JSON serializer that will serialize date tiem for you"""
-    import calendar, datetime
-
-    if isinstance(obj, datetime.datetime):
-        if obj.utcoffset() is not None:
-            obj = obj - obj.utcoffset()
-    millis = int(
-        calendar.timegm(obj.timetuple()) * 1000 +
-        obj.microsecond / 1000
-    )
-    return millis

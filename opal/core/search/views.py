@@ -15,7 +15,6 @@ from opal.core.views import (LoginRequiredMixin, _build_json_response,
                              _get_request_data, with_no_caching)
 from opal.core.search import queries
 from opal.core.search.extract import zip_archive
-from opal.utils import jsonHelper
 
 PAGINATION_AMOUNT = 10
 
