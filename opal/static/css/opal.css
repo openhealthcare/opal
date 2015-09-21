@@ -184,7 +184,7 @@ tr.selected {
 .login.submitted { margin-top: -2750px; }
 
 /** Navbar **/
-#main-navbar {
+.top-navbar {
     color: #8a6d3b;
     padding: 0px;
     background-color: white;
@@ -548,7 +548,6 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     display: inline;
 }
 
-<<<<<<< HEAD
 .attached-select{
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
@@ -654,6 +653,11 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     position: relative;
     color: rgb(77, 77, 77);
     padding-right: 15px;
+}
+
+/* over ride this, as we've got too much in our nav bar */
+.navbar-collapse{
+    max-height: 500px;
 }
 
 .table-header{
