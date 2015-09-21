@@ -151,7 +151,7 @@ h1.larger { font-size: 52px; }
     .patient-list-container{
         height: 760px;
         overflow: scroll;
-    }    
+    }
 }
 table.patient-list tr th { white-space: nowrap; }
 .empty-list {
@@ -184,7 +184,7 @@ tr.selected {
 .login.submitted { margin-top: -2750px; }
 
 /** Navbar **/
-#main-navbar {
+.top-navbar {
     color: #8a6d3b;
     padding: 0px;
     background-color: white;
@@ -548,6 +548,29 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     display: inline;
 }
 
+.attached-select{
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+    -webkit-appearance: none;
+    position: relative;
+}
+
+.fake-select-wrapper{
+    position: relative;
+}
+
+.fake-select-wrapper:after{
+    content: "\f107";
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    position: absolute;
+    right: 20px;
+    top: 5px;
+    z-index: 1;
+}
+
 .nav-bar-search:before{
     content: "\f002";
     font-family: FontAwesome;
@@ -574,6 +597,11 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     position: relative;
     color: rgb(77, 77, 77);
     padding-right: 15px;
+}
+
+/* over ride this, as we've got too much in our nav bar */
+.navbar-collapse{
+    max-height: 500px;
 }
 
 .table-header{
