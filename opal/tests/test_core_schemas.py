@@ -8,20 +8,37 @@ from opal.core import schemas
 from opal.tests.models import Colour
 
 colour_serialized = dict(
-            name='colour',
-            display_name='Colour',
-            single=False,
-            advanced_searchable=False,
-            fields= [
-                {'lookup_list': None,
-                 'name': 'consistency_token',
-                 'title': 'Consistency Token',
-                 'type': 'token'},
-                {'lookup_list': None,
-                 'name': 'name',
-                 'title': 'Name',
-                 'type': 'string'}]
-        )
+    name='colour',
+    display_name='Colour',
+    single=False,
+    advanced_searchable=False,
+    fields=[
+        {'lookup_list': None,
+         'name': 'consistency_token',
+         'title': 'Consistency Token',
+         'type': 'token'},
+        {'lookup_list': None,
+         'type': 'date_time',
+         'name': 'created',
+         'title': 'Created'},
+        {'lookup_list': None,
+         'type': 'date_time',
+         'name': 'updated',
+         'title': 'Updated'},
+        {'lookup_list': None,
+         'name': 'created_by_id',
+         'title': 'Created By Id',
+         'type': 'forei'},
+        {'lookup_list': None,
+         'name': 'updated_by_id',
+         'title': 'Updated By Id',
+         'type': 'forei'},
+        {'lookup_list': None,
+         'name': 'name',
+         'title': 'Name',
+         'type': 'string'},
+    ]
+)
 
 tagging_serialized = {
     'fields': [],
@@ -30,6 +47,7 @@ tagging_serialized = {
     'name': 'tagging',
     'advanced_searchable': True,
 }
+
 
 class SerializeModelTestCase(TestCase):
     def test_serialize(self):
@@ -77,5 +95,5 @@ class ExtractSchemaTestCase(TestCase):
     def test_list_records(self, tagging, subrecords):
         subrecords.return_value = [Colour]
         tagging.return_value = []
-        expected = [tagging_serialized, colour_serialized]
-        self.assertEqual(expected, schemas.extract_schema())
+        self.assertEqual(tagging_serialized, schemas.extract_schema()[0])
+        self.assertEqual(colour_serialized, schemas.extract_schema()[1])
