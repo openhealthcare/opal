@@ -50,7 +50,7 @@ directives.directive("freezeHeaders", function ($timeout) {
 directives.directive('scrollTop', function () {
     return {
         link: function ($scope, element, attrs) {
-            var body = $("body");
+            var body = $("html, body");
             element.bind("click", function(){
                 body.animate({ scrollTop: "0" });
             });
