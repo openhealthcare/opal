@@ -579,7 +579,8 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     font-weight: normal;
     text-decoration: inherit;
     position: absolute;
-    right: 20px;
+    left: 10px;
+    font-size: 18px;
     top: 5px;
     z-index: 1;
 }
@@ -634,9 +635,9 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     margin-left: -5px;
     font-size: 20px;
     padding-bottom: 75px;
-    left: 10px;
+    left: 50%;
     font-size: 18px;
-    top: 5px;
+    top: 2px;
     z-index: 1;
     color:
 }

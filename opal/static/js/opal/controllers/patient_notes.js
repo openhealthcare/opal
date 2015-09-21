@@ -30,11 +30,14 @@ angular.module('opal.controllers').controller(
 
        $scope.profile = profile;
        $scope.options = options;
+       $scope.episode = {
+           resistantOrganisms: []
+       };
 
        function getResistantOrganisms(episode){
            if(episode.microbiology_test){
                return _.reduce(episode.microbiology_test, function(r, mt){
-                   if(mt.resistant_antibiotics){
+                   if("resistant_antibiotics" in mt){
                        r.push(mt.resistant_antibiotics);
                    }
 
