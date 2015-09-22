@@ -90,15 +90,18 @@
                                     <i class="fa fa-comments patient-timeline-speech-bubble-icon"></i>
                                 </div>
                                 <div ng-show="microbiology_input.when">
-                                    <div class="patient-timeline-date">[[ microbiology_input.when | shortDate ]]</div>
+                                    <div class="patient-timeline-date">
+                                        [[ microbiology_input.when | shortDate ]]</div>
                                 </div>
                             </div>
                             <div class="col-md-9">
                                 <div class="patient-timeline-discussion">
-                                    <div><strong>[[ microbiology_input.initials ]]</strong></div>
-                                    <div>
-                                        [[ microbiology_input.clinical_discussion ]]
-                                    </div>
+                                    <b ng-show="microbiology_input.initials">
+                                      ([[microbiology_input.initials]]<span ng-show="microbiology_input.discussed_with"> with [[microbiology_input.discussed_with]]</span>)
+                                      [[microbiology_input.reason_for_interaction]]
+                                    <br />
+                                    </b>
+                                    [[ microbiology_input.clinical_discussion]]
                                 </div>
                             </div>
                         </div>
