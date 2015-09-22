@@ -20,7 +20,15 @@ a {
     transition:.5s;
     color: rgb(77, 77, 77);
 }
+
 p a, .orange-link { color: #f76c51; }
+
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > li > a:hover{
+    background-color: #f76c51;
+    color: white;
+}
+
 .pagination > .active > a{
     background-color: #f76c51;
     border-color: #f76c51;
@@ -56,6 +64,8 @@ h1.larger { font-size: 52px; }
 .box {
     padding-top: 12px;
     border: 1px solid #bbb;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 .content-offset { margin-top: 50px; }
 .content-offset-25 { margin-top: 25px; }
