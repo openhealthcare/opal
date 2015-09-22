@@ -469,10 +469,11 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 }
 
 .patient-timeline-date{
-    background-color: #333;
+    background-color: #3b4146;
     color: white;
     padding: 5px 10px;
     display: inline-block;
+    font-size: 12px;
 }
 
 .patient-timeline{
