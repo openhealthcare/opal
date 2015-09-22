@@ -31,14 +31,16 @@ angular.module('opal.controllers').controller(
        $scope.profile = profile;
        $scope.options = options;
        $scope.episode = {
-           alertOrganisms: []
+           alertInvestigations: []
        };
 
-       function getAlertOrganisms(episode){
+       function getAlertInvestigations(episode){
            if(episode.microbiology_test){
                return _.reduce(episode.microbiology_test, function(r, mt){
                    if("resistant_antibiotics" in mt){
-                       r.push(mt.resistant_antibiotics);
+                       if(mt.resistant_antibiotics){
+                           r.push(mt.resistant_antibiotics);
+                       }
                    }
 
                    return r;
@@ -49,11 +51,11 @@ angular.module('opal.controllers').controller(
        if($scope.episodes.length){
            $scope.episode = $scope.episodes[0];
 
-           $scope.episode.alertOrganisms = function(){
+           $scope.episode.alertInvestigations = function(){
                    return _.reduce(episodes, function(r, e){
-                   var alertOrganisms = getAlertOrganisms(e);
-                   if(alertOrganisms.length){
-                       r = r.concat(alertOrganisms);
+                   var alertInvestigations = getAlertInvestigations(e);
+                   if(alertInvestigations.length){
+                       r = r.concat(alertInvestigations);
                    }
 
                    return r;

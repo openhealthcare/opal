@@ -26,7 +26,7 @@
                     {% record_panel models.Allergies %}
                 </div>
                 <div class="col-md-6">
-                    {% record_panel models.MicrobiologyTest editable="false" title="Resistant Organisms" name="resistantOrganisms()" detail_template="records/resistant_organisms.html" %}
+                    {% record_panel models.MicrobiologyTest editable="false" title="Alert Investigation Results" name="alertInvestigations()" detail_template="records/alert_investigations.html" %}
                 </div>
             </div>
             <section ng-repeat="e in episodes">
