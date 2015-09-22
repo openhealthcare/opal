@@ -11,6 +11,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
+from opal.models import Episode
 from opal.core import application, exceptions, plugins
 from opal.core import glossolalia
 from opal.utils import stringport, camelcase_to_underscore
@@ -319,9 +320,8 @@ class EpisodeViewSet(viewsets.ViewSet):
         else:
             patient = Patient.objects.create()
 
-        episode = patient.create_episode()
+        episode = Episode(patient=patient)
         episode.update_from_dict(request.data, request.user)
-
         episode.set_tag_names([n for n, v in tagging[0].items() if v], request.user)
         serialised = episode.to_dict(request.user)
         return Response(serialised, status=status.HTTP_201_CREATED)

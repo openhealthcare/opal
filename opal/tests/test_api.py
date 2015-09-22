@@ -283,6 +283,11 @@ class TaggingTestCase(TestCase):
         response = api.TaggingViewSet().update(self.mock_request, pk=self.episode.pk)
         self.assertEqual(202, response.status_code)
         self.assertEqual(self.episode.get_tag_names(self.user), ['micro'])
+        tag = models.Tagging.objects.get()
+        self.assertEqual(tag.created.date(), timezone.now().date())
+        self.assertEqual(tag.created_by, self.user)
+        self.assertIsNone(tag.updated_by)
+        self.assertIsNone(tag.updated)
 
     def test_untag_episode(self):
         self.assertEqual(self.episode.get_tag_names(self.user), [])
@@ -310,12 +315,12 @@ class EpisodeTestCase(TestCase):
         self.patient = models.Patient.objects.create()
         self.demographics = self.patient.demographics_set.get()
         self.episode = models.Episode.objects.create(patient=self.patient)
-        self.user    = User.objects.create(username='testuser')
+        self.user = User.objects.create(username='testuser')
         self.mock_request = MagicMock(name='request')
         self.mock_request.user = self.user
         self.mock_request.query_params = {}
-        self.micro   = models.Team.objects.create(name='micro', title='microbiology')
-        self.ortho   = models.Team.objects.create(
+        self.micro = models.Team.objects.create(name='micro', title='microbiology')
+        self.ortho = models.Team.objects.create(
             name='micro_ortho', title='Micro Ortho',
             parent=self.micro)
 
@@ -388,6 +393,20 @@ class EpisodeTestCase(TestCase):
             "patient_hospital_number": "999000999"
         }
         response = api.EpisodeViewSet().create(self.mock_request)
+        episode = models.Episode.objects.get(
+            patient__demographics__hospital_number="999000999"
+        )
+        self.assertEqual(
+            episode.created_by,
+            self.mock_request.user
+        )
+        self.assertEqual(
+            episode.created.date(),
+            timezone.now().date()
+        )
+        self.assertIsNone(episode.updated)
+        self.assertIsNone(episode.updated_by)
+
         self.assertEqual(201, response.status_code)
         pcount = models.Patient.objects.filter(
             demographics__hospital_number="999000999").count()
