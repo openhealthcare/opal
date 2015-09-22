@@ -1,7 +1,8 @@
 """
 Tests for the OPAL API
 """
-from datetime import datetime, date, timedelta
+from datetime import date, timedelta
+from django.utils import timezone
 
 from django.contrib.auth.models import User
 from django.test import TestCase
@@ -56,7 +57,7 @@ class SubrecordTestCase(TestCase):
     def setUp(self):
         self.patient = models.Patient.objects.create()
         self.episode = models.Episode.objects.create(patient=self.patient)
-        self.user    = User.objects.create(username='testuser')
+        self.user = User.objects.create(username='testuser')
 
         class OurViewSet(api.SubrecordViewSet):
             base_name = 'colour'
@@ -64,9 +65,9 @@ class SubrecordTestCase(TestCase):
 
         class OurPatientViewSet(api.SubrecordViewSet):
             base_name = 'patientcolour'
-            model     = PatientColour
+            model = PatientColour
 
-        self.model   = Colour
+        self.model = Colour
         self.viewset = OurViewSet
         self.patientviewset = OurPatientViewSet
 
@@ -120,16 +121,27 @@ class SubrecordTestCase(TestCase):
         self.assertEqual(400, response.status_code)
 
     def test_update(self):
-        colour = Colour.objects.create(name='blue', episode=self.episode)
+        created = timezone.now() - timedelta(1)
+        colour = Colour.objects.create(
+            name='blue',
+            episode=self.episode,
+            created_by=self.user,
+            created=created,
+        )
         mock_request = MagicMock(name='mock request')
         mock_request.data = {
-            'name'             : 'green',
-            'episode_id'       : self.episode.pk,
-            'id'               : colour.pk,
-            'consistency_token': colour.consistency_token
+            'name': 'green',
+            'episode_id': self.episode.pk,
+            'id': colour.pk,
+            'consistency_token': colour.consistency_token,
         }
         mock_request.user = self.user
         response = self.viewset().update(mock_request, pk=colour.pk)
+
+        updated_colour = Colour.objects.get()
+        self.assertEqual(created, updated_colour.created)
+        self.assertEqual(self.user, updated_colour.created_by)
+        self.assertEqual(date.today(), updated_colour.updated.date())
         self.assertEqual(202, response.status_code)
         self.assertEqual('green', response.data['name'])
 
@@ -149,7 +161,8 @@ class SubrecordTestCase(TestCase):
         self.assertEqual(1, change.call_count)
 
     def test_update_item_changed(self):
-        created = datetime.now() - timedelta(1)
+        created = timezone.now() - timedelta(1)
+
         colour = Colour.objects.create(
             name='blue',
             episode=self.episode,
@@ -169,8 +182,8 @@ class SubrecordTestCase(TestCase):
         colour = Colour.objects.get()
         self.assertEqual(created, colour.created)
         self.assertEqual(self.user, colour.created_by)
-        self.assertEqual(date.today(), colour.updated.date())
-        self.assertEqual(self.user, colour.updated_by)
+        self.assertIsNone(colour.updated)
+        self.assertIsNone(colour.updated_by)
         self.assertEqual(409, response.status_code)
 
     def test_update_nonexistent(self):

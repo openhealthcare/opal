@@ -4,7 +4,8 @@ OPAL Models!
 import collections
 import json
 import itertools
-from datetime import datetime
+from django.utils import timezone
+
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -402,7 +403,7 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
     def set_updated(self, incoming_value, user):
         if self.id:
             if not incoming_value:
-                incoming_value = datetime.now()
+                incoming_value = timezone.now()
             self.updated = incoming_value
 
     def set_created(self, incoming_value, user):
@@ -410,7 +411,7 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
             if incoming_value:
                 self.created = incoming_value
             else:
-                self.created = datetime.now()
+                self.created = timezone.now()
 
     def __unicode__(self):
         return u'{0}: {1}'.format(self.get_api_name(), self.id)

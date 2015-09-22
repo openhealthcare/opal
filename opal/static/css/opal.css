@@ -24,6 +24,7 @@ a {
 p a, .orange-link { color: #f76c51; }
 
 .navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:focus,
 .navbar-default .navbar-nav > li > a:hover{
     background-color: #f76c51;
     color: white;
@@ -179,7 +180,7 @@ li.selected {
 }
 
 tr.selected {
-    background-color: #5fa2dd;
+    background-color: #e0ebf5;
 }
 
 /* Login */

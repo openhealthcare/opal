@@ -119,4 +119,5 @@ class UpdatesFromDictMixin(object):
                     setattr(self, name, value)
 
         self.set_consistency_token()
+
         self.save()
