@@ -105,7 +105,8 @@ angular.module('opal.services')
 	            }
                 if (columnName == 'microbiology_input'){
                     attrs.initials = window.initials;
-		            attrs.date = moment().format('YYYY-MM-DD');
+		            attrs.when__date = moment().format('DD/MM/YYYY');
+		            attrs.when__time = moment();
                 }
                 if (columnName == 'observation'){
                     attrs.datetime = new Date();

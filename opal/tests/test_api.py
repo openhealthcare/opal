@@ -1,7 +1,7 @@
 """
 Tests for the OPAL API
 """
-import datetime
+from datetime import datetime, date, timedelta
 
 from django.contrib.auth.models import User
 from django.test import TestCase
@@ -25,10 +25,10 @@ class FlowTestCase(TestCase):
     def test_list(self, app):
         app.flows.return_value = [{}]
         self.assertEqual([{}], api.FlowViewSet().list(None).data)
-        
-        
+
+
 class RecordTestCase(TestCase):
-    
+
     @patch('opal.core.api.schemas')
     def test_records(self, schemas):
         schemas.list_records.return_value = [{}]
@@ -36,7 +36,7 @@ class RecordTestCase(TestCase):
 
 
 class ListSchemaTestCase(TestCase):
-    
+
     @patch('opal.core.api.schemas')
     def test_records(self, schemas):
         schemas.list_schemas.return_value = [{}]
@@ -44,7 +44,7 @@ class ListSchemaTestCase(TestCase):
 
 
 class ExtractSchemaTestCase(TestCase):
-    
+
     @patch('opal.core.api.schemas')
     def test_records(self, schemas):
         schemas.extract_schema.return_value = [{}]
@@ -52,12 +52,12 @@ class ExtractSchemaTestCase(TestCase):
 
 
 class SubrecordTestCase(TestCase):
-    
+
     def setUp(self):
         self.patient = models.Patient.objects.create()
         self.episode = models.Episode.objects.create(patient=self.patient)
         self.user    = User.objects.create(username='testuser')
-        
+
         class OurViewSet(api.SubrecordViewSet):
             base_name = 'colour'
             model     = Colour
@@ -82,16 +82,21 @@ class SubrecordTestCase(TestCase):
         mock_request.user = self.user
         mock_request.data = {'name': 'blue', 'episode_id': self.episode.pk}
         response = self.viewset().create(mock_request)
+        colour = Colour.objects.get()
+        self.assertEqual(date.today(), colour.created.date())
+        self.assertEqual(self.user, colour.created_by)
+        self.assertIsNone(colour.updated)
+        self.assertIsNone(colour.updated_by)
         self.assertEqual('blue', response.data['name'])
 
     def test_create_patient_subrecord(self):
         mock_request = MagicMock(name='mock request')
         mock_request.user = self.user
-        mock_request.data = {'name': 'blue', 'episode_id': self.episode.pk, 
+        mock_request.data = {'name': 'blue', 'episode_id': self.episode.pk,
                              'patient_id': self.patient.pk}
         response = self.patientviewset().create(mock_request)
         self.assertEqual('blue', response.data['name'])
-        
+
     @patch('opal.core.api.glossolalia.change')
     def test_create_pings_integration(self, change):
         mock_request = MagicMock(name='mock request')
@@ -142,22 +147,30 @@ class SubrecordTestCase(TestCase):
         response = self.viewset().update(mock_request, pk=colour.pk)
         self.assertEqual(202, response.status_code)
         self.assertEqual(1, change.call_count)
-    
+
     def test_update_item_changed(self):
+        created = datetime.now() - timedelta(1)
         colour = Colour.objects.create(
             name='blue',
             episode=self.episode,
-            consistency_token='frist'
+            consistency_token='frist',
+            created_by=self.user,
+            created=created,
         )
         mock_request = MagicMock(name='mock request')
         mock_request.data = {
-            'name'             : 'green',
-            'episode_id'       : self.episode.pk,
-            'id'               : colour.pk,
+            'name': 'green',
+            'episode_id': self.episode.pk,
+            'id': colour.pk,
             'consistency_token': 'wat'
         }
         mock_request.user = self.user
         response = self.viewset().update(mock_request, pk=colour.pk)
+        colour = Colour.objects.get()
+        self.assertEqual(created, colour.created)
+        self.assertEqual(self.user, colour.created_by)
+        self.assertEqual(date.today(), colour.updated.date())
+        self.assertEqual(self.user, colour.updated_by)
         self.assertEqual(409, response.status_code)
 
     def test_update_nonexistent(self):
@@ -208,7 +221,7 @@ class UserProfileTestCase(TestCase):
         models.UserProfile.objects.create(user=self.user)
         self.mock_request = MagicMock(name='request')
         self.mock_request.user = self.user
-        
+
     def test_user_profile(self):
         with patch.object(self.user, 'is_authenticated', return_value=True):
             response = api.UserProfileViewSet().list(self.mock_request)
@@ -233,10 +246,10 @@ class UserProfileTestCase(TestCase):
         mock_request.user.is_authenticated.return_value = False
         response = api.UserProfileViewSet().list(mock_request)
         self.assertEqual(401, response.status_code)
-        
+
 
 class TaggingTestCase(TestCase):
-    
+
     def setUp(self):
         self.patient = models.Patient.objects.create()
         self.episode = models.Episode.objects.create(patient=self.patient)
@@ -278,7 +291,7 @@ class TaggingTestCase(TestCase):
         response = api.TaggingViewSet().update(self.mock_request, pk=56576)
         self.assertEqual(404, response.status_code)
 
-        
+
 class EpisodeTestCase(TestCase):
     def setUp(self):
         self.patient = models.Patient.objects.create()
@@ -296,7 +309,7 @@ class EpisodeTestCase(TestCase):
     def test_retrieve_episode(self):
         response = api.EpisodeViewSet().retrieve(self.mock_request, pk=self.episode.pk)
         self.assertEqual(self.episode.to_dict(self.user), response.data)
-    
+
     def test_retrieve_nonexistent_episode(self):
         response = api.EpisodeViewSet().retrieve(self.mock_request, pk=678687)
         self.assertEqual(404, response.status_code)
@@ -337,7 +350,7 @@ class EpisodeTestCase(TestCase):
         response = api.EpisodeViewSet().list(self.mock_request)
         self.assertEqual(200, response.status_code)
         self.assertEqual(expected, response.data)
-    
+
     def test_create_existing_patient(self):
         self.demographics.name = 'Aretha Franklin'
         self.demographics.hospital_number = '123123123'
@@ -350,8 +363,8 @@ class EpisodeTestCase(TestCase):
         response = api.EpisodeViewSet().create(self.mock_request)
         self.assertEqual(201, response.status_code)
         self.assertEqual(2, self.patient.episode_set.count())
-        self.assertEqual(datetime.date(2015, 1, 14), response.data['date_of_admission'])
-        
+        self.assertEqual(date(2015, 1, 14), response.data['date_of_admission'])
+
     def test_create_new_patient(self):
         pcount = models.Patient.objects.filter(
             demographics__hospital_number="999000999").count()
@@ -385,7 +398,7 @@ class PatientTestCase(TestCase):
     def setUp(self):
         self.patient      = models.Patient.objects.create()
         self.mock_request = MagicMock(name='request')
-        
+
     def test_retrieve_episode(self):
         response = api.PatientViewSet().retrieve(self.mock_request, pk=self.patient.pk)
         self.assertEqual(self.patient.to_dict(None), response.data)

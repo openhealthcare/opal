@@ -34,16 +34,6 @@
     Save
   </button>
   {% endblock %}
-  {% if not single %}
-  {% block modal_another %}
-      <span ng-show="editingMode()">
-          <button class="btn btn btn-primary" ng-click="save('save-and-add-another')">
-            <i class="fa fa-save"></i>
-            Save & add another
-          </button>
-      </span>
-  {% endblock %}
-  {% endif %}
   {% block modal_cancel %}
   <button class="btn" ng-click="cancel()">Cancel</button>
   {% endblock %}

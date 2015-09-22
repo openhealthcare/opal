@@ -105,6 +105,7 @@ class UpdatesFromDictMixin(object):
                 continue
 
             setter = getattr(self, 'set_' + name, None)
+
             if setter is not None:
                 setter(value, user)
             else:

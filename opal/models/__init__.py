@@ -381,7 +381,7 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
     class Meta:
         abstract = True
 
-    def set_created_by(self, incoming_value, user):
+    def set_created_by_id(self, incoming_value, user):
         if incoming_value:
             value = incoming_value
         else:
@@ -390,18 +390,20 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
         if not self.id:
             self.created_by = value
 
-    def set_updated_by(self, incoming_value, user):
-        if incoming_value:
-            value = incoming_value
-        else:
-            value = user
+    def set_updated_by_id(self, incoming_value, user):
+        if self.id:
+            if incoming_value:
+                value = incoming_value
+            else:
+                value = user
 
-        self.updated_by = value
+            self.updated_by = value
 
     def set_updated(self, incoming_value, user):
-        if not incoming_value:
-            incoming_value = datetime.now()
-        self.updated = incoming_value
+        if self.id:
+            if not incoming_value:
+                incoming_value = datetime.now()
+            self.updated = incoming_value
 
     def set_created(self, incoming_value, user):
         if not self.id:
