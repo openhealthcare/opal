@@ -470,10 +470,11 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 }
 
 .patient-timeline-date{
-    background-color: #333;
+    background-color: #3b4146;
     color: white;
     padding: 5px 10px;
     display: inline-block;
+    font-size: 12px;
 }
 
 .patient-timeline{
@@ -501,7 +502,7 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 }
 
 .patient-timeline-seperator{
-    margin-top: 20px;
+    margin-top: 4px;
     margin-bottom: 20px;
     border-top: 1px dashed #f76c51;
 }
