@@ -424,7 +424,12 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
         abstract = True
 
     def __unicode__(self):
-        return u'{0}: {1}'.format(self.get_api_name(), self.id)
+        if self.created:
+            return u'{0}: {1} {2}'.format(
+                self.get_api_name(), self.id, self.created
+            )
+        else:
+            return u'{0}: {1}'.format(self.get_api_name(), self.id)
 
     @classmethod
     def get_api_name(cls):
