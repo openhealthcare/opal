@@ -8,7 +8,7 @@ camelcase_to_underscore = lambda str: re.sub('(((?<=[a-z])[A-Z])|([A-Z](?![A-Z]|
 
 def stringport(module):
     """
-    Given a string representing a python module or path-to-object 
+    Given a string representing a python module or path-to-object
     import that module and return it.
     """
     msg = "Could not import module '%s'\

@@ -20,7 +20,16 @@ a {
     transition:.5s;
     color: rgb(77, 77, 77);
 }
+
 p a, .orange-link { color: #f76c51; }
+
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:focus,
+.navbar-default .navbar-nav > li > a:hover{
+    background-color: #f76c51;
+    color: white;
+}
+
 .pagination > .active > a{
     background-color: #f76c51;
     border-color: #f76c51;
@@ -56,6 +65,8 @@ h1.larger { font-size: 52px; }
 .box {
     padding-top: 12px;
     border: 1px solid #bbb;
+    padding-left: 20px;
+    padding-right: 20px;
 }
 .content-offset { margin-top: 50px; }
 .content-offset-25 { margin-top: 25px; }
@@ -169,7 +180,7 @@ li.selected {
 }
 
 tr.selected {
-    background-color: #5fa2dd;
+    background-color: #e0ebf5;
 }
 
 /* Login */
@@ -459,10 +470,11 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 }
 
 .patient-timeline-date{
-    background-color: #ddd;
+    background-color: #3b4146;
     color: white;
     padding: 5px 10px;
     display: inline-block;
+    font-size: 12px;
 }
 
 .patient-timeline{
@@ -490,7 +502,7 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 }
 
 .patient-timeline-seperator{
-    margin-top: 20px;
+    margin-top: 4px;
     margin-bottom: 20px;
     border-top: 1px dashed #f76c51;
 }
@@ -582,7 +594,63 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     font-size: 18px;
     top: 5px;
     z-index: 1;
-    color:
+}
+
+.select-attached .panel{
+    border-top: none;
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+}
+
+.scrollToTop{
+    cursor: pointer;
+    background-color: #9cc96b;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    width: 80px;
+    height: 70px;
+    position: fixed;
+    bottom: -20px;
+    right: 5%;
+    margin-left: -40px;
+    text-align: center;
+    display: inline-block;
+    transition-property: height;
+    transition-duration: 0.2s;
+    margin-bottom: -5px;
+    overflow: hidden;
+    box-sizing: border-box;
+    color: white;
+}
+
+.scrollToTopInner{
+    margin-top: 20px;
+}
+
+.scrollToTop:hover{
+    height: 80px;
+}
+
+.scrollToTop.hidden-at-top{
+    height: 0;
+}
+
+.scrollToTop:before{
+    color: white;
+    content: "\f106";
+    font-family: FontAwesome;
+    font-style: normal;
+    font-weight: normal;
+    text-decoration: inherit;
+    cursor: pointer;
+    margin-left: -5px;
+    font-size: 20px;
+    padding-bottom: 75px;
+    left: 50%;
+    font-size: 18px;
+    top: 2px;
+    z-index: 1;
+    position: absolute;
 }
 
 

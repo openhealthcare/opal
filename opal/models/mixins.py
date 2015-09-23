@@ -56,11 +56,11 @@ class UpdatesFromDictMixin(object):
             return models.ForeignKey
 
         try:
-            
+
             value = getattr(cls, name)
             if isinstance(value, ForeignKeyOrFreeText):
                 return ForeignKeyOrFreeText
-            
+
         except KeyError:
             pass
 
@@ -90,7 +90,9 @@ class UpdatesFromDictMixin(object):
             raise exceptions.APIError(
                 'Unexpected fieldname(s): %s' % list(unknown_fields))
 
-        for name, value in data.items():
+        for name in fields:
+            value = data.get(name, None)
+
             if name.endswith('_fk_id'):
                 if name[:-6] in fields:
                     continue
@@ -98,9 +100,12 @@ class UpdatesFromDictMixin(object):
                 if name[:-3] in fields:
                     continue
 
+            # shouldn't be needed - Javascripts bug?
             if name == 'consistency_token':
-                continue # shouldn't be needed - Javascripts bug?
+                continue
+
             setter = getattr(self, 'set_' + name, None)
+
             if setter is not None:
                 setter(value, user)
             else:
@@ -108,7 +113,11 @@ class UpdatesFromDictMixin(object):
                     value = datetime.strptime(value, '%Y-%m-%d').date()
                 if value and self._get_field_type(name) == models.fields.DateTimeField:
                     value = dateparse.parse_datetime(value)
-                setattr(self, name, value)
+
+                # don't update if the field isn't in the data coming in
+                if name in data:
+                    setattr(self, name, value)
 
         self.set_consistency_token()
+
         self.save()

@@ -3,6 +3,7 @@ unittests for opal.core.search.views
 """
 import json
 from datetime import date
+from django.core.serializers.json import DjangoJSONEncoder
 
 from opal import models
 from opal.core.test import OpalTestCase
@@ -45,7 +46,8 @@ class PatientSearchTestCase(BaseSearchTestCase):
         resp = self.view(request)
         data = json.loads(resp.content)
         expected = [self.patient.to_dict(self.user)]
-        expected = json.loads(json.dumps(expected))
+
+        expected = json.loads(json.dumps(expected, cls=DjangoJSONEncoder))
         self.assertEqual(expected, data)
 
     # TODO:
@@ -68,15 +70,15 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
         self.expected = {
             u'page_number': 1,
             u'object_list': [{
-                    u'count': 1,
-                    u'name': u'Sean Connery',
-                    u'end_date': '2015-10-15',
-                    u'episode_id': 1,
-                    u'hospital_number': u'007',
-                    u'date_of_birth': None,
-                    u'start_date': '2015-10-15',
-                    u'categories': [u'inpatient']
-                }],
+                u'count': 1,
+                u'name': u'Sean Connery',
+                u'end_date': '2015-10-15',
+                u'episode_id': 1,
+                u'hospital_number': u'007',
+                u'date_of_birth': None,
+                u'start_date': '2015-10-15',
+                u'categories': [u'inpatient']
+            }],
             u'total_count': 1,
             u'total_pages': 1,
         }

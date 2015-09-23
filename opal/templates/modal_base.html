@@ -20,7 +20,7 @@
   {% if not single %}
       {% block modal_delete %}
         <span class="float-left" ng-show="editingMode()">
-            <button class="btn btn-danger" ng-click="delete('delete')">
+            <button class="btn btn-secondary" ng-click="delete('delete')">
               <i class="fa fa-trash-o"></i>
                 Delete
              </button>
@@ -34,16 +34,6 @@
     Save
   </button>
   {% endblock %}
-  {% if not single %}
-  {% block modal_another %}
-      <span ng-show="editingMode()">
-          <button class="btn btn btn-primary" ng-click="save('save-and-add-another')">
-            <i class="fa fa-save"></i>
-            Save & add another
-          </button>
-      </span>
-  {% endblock %}
-  {% endif %}
   {% block modal_cancel %}
   <button class="btn" ng-click="cancel()">Cancel</button>
   {% endblock %}

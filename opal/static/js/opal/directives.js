@@ -47,6 +47,40 @@ directives.directive("freezeHeaders", function ($timeout) {
     };
 });
 
+directives.directive('scrollTop', function () {
+    return {
+        link: function ($scope, element, attrs) {
+            var body = $("html, body");
+            element.bind("click", function(){
+                body.animate({ scrollTop: "0" });
+            });
+
+            $(window).on("scroll.scrollTop", function(){
+                window.requestAnimationFrame(function(){
+                    if($(window).scrollTop() > 0){
+                        $(element).removeClass("hidden-at-top");
+                    }
+                    else{
+                        $(element).addClass("hidden-at-top");
+                    }
+                });
+            });
+        }
+    };
+});
+
+directives.directive('blurOthers', function(){
+    return {
+        link: function ($scope, element, attrs) {
+            $scope.$watch(attrs.blurOthers, function(value){
+                if(attrs.blurOthers){
+                    $(document.activeElement).blur();
+                }
+            });
+        }
+    };
+});
+
 directives.directive('placeholder', function($timeout){
 	if ($.support.placeholder) {
 		return {};
@@ -154,7 +188,7 @@ directives.directive('autofocus', function($timeout) {
         $element[0].focus();
       });
     }
-  }
+  };
 });
 
 angular.module('ui.bootstrap.modal').directive('modalWindow', function ($timeout) {

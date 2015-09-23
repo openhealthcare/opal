@@ -33,15 +33,6 @@ except AttributeError:
 Synonym = models.Synonym
 
 
-class PatientDetailView(TemplateView):
-    template_name = 'patient_detail.html'
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(PatientDetailView, self).get_context_data(*args, **kwargs)
-        context['models'] = {m.__name__: m for m in subrecords()}
-        return context
-
-
 class EpisodeTemplateView(TemplateView):
     def get_column_context(self, **kwargs):
         """
@@ -231,18 +222,6 @@ class EpisodeListView(View):
             self.request.user, **filter_kwargs)
         return _build_json_response(serialised)
 
-class PatientDetailDataView(View):
-    """
-    Return a serialised view of the patient.
-    """
-    def get(self, *args, **kwargs):
-        hospital_number = kwargs.get("hospital_number")
-        filter_kwargs = dict(
-            patient__demographics__hospital_number=hospital_number
-        )
-        serialised = models.Episode.objects.serialised_active(
-            self.request.user, **filter_kwargs)
-        return _build_json_response(serialised)
 
 
 class EpisodeCopyToCategoryView(LoginRequiredMixin, View):

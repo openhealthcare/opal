@@ -4,7 +4,9 @@ OPAL Models!
 import collections
 import json
 import itertools
+import dateutil.parser
 
+from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -183,8 +185,8 @@ class Patient(models.Model):
             print self.id
             raise
 
-    def create_episode(self, category=None):
-        return self.episode_set.create()
+    def create_episode(self, category=None, **kwargs):
+        return self.episode_set.create(**kwargs)
 
     def get_active_episode(self):
         for episode in self.episode_set.order_by('id').reverse():
@@ -210,7 +212,56 @@ class Patient(models.Model):
         demographics.update_from_dict(demographics_data, user)
 
 
-class Episode(UpdatesFromDictMixin, models.Model):
+class TrackedModel(models.Model):
+    # these fields are set automatically from REST requests via
+    # updates from dict and the getter, setter properties, where available
+    # (from the update from dict mixin)
+    created = models.DateTimeField(blank=True, null=True)
+    updated = models.DateTimeField(blank=True, null=True)
+    created_by = models.ForeignKey(
+        User, blank=True, null=True, related_name="created_%(app_label)s_%(class)s_subrecords"
+    )
+    updated_by = models.ForeignKey(
+        User, blank=True, null=True, related_name="updated_%(app_label)s_%(class)s_subrecords"
+    )
+
+    class Meta:
+        abstract = True
+
+    def set_created_by_id(self, incoming_value, user):
+        if incoming_value:
+            value = User.objects.get(id=incoming_value)
+        else:
+            value = user
+
+        if not self.id:
+            self.created_by = value
+
+    def set_updated_by_id(self, incoming_value, user):
+        if self.id:
+            if incoming_value:
+                value = User.objects.get(id=incoming_value)
+            else:
+                value = user
+
+            self.updated_by = value
+
+    def set_updated(self, incoming_value, user):
+        if self.id:
+            if incoming_value:
+                self.updated = dateutil.parser.parse(incoming_value)
+            else:
+                self.updated = timezone.now()
+
+    def set_created(self, incoming_value, user):
+        if not self.id:
+            if incoming_value:
+                self.created = dateutil.parser.parse(incoming_value)
+            else:
+                self.created = timezone.now()
+
+
+class Episode(UpdatesFromDictMixin, TrackedModel):
     """
     An individual episode of care.
 
@@ -282,7 +333,8 @@ class Episode(UpdatesFromDictMixin, models.Model):
                 params = {'team__name': tag_name}
                 if tag_name == 'mine':
                     params['user'] = user
-                self.tagging_set.get(**params).delete()
+                tag = self.tagging_set.get(**params)
+                tag.delete()
 
         for tag_name in tag_names:
             if tag_name not in original_tag_names:
@@ -290,7 +342,11 @@ class Episode(UpdatesFromDictMixin, models.Model):
                 if team.parent:
                     if team.parent.name not in tag_names:
                         self.tagging_set.create(team=team.parent)
-                params = {'team': team}
+                params = {
+                    'team': team,
+                    'created_by': user,
+                    'created': timezone.now(),
+                }
                 if tag_name == 'mine':
                     params['user'] = user
                 self.tagging_set.create(**params)
@@ -356,14 +412,12 @@ class Episode(UpdatesFromDictMixin, models.Model):
 
         d['tagging'] = self.tagging_dict(user)
 
-
         d['episode_history'] = self._episode_history_to_dict(user)
         return d
 
 
-class Subrecord(UpdatesFromDictMixin, models.Model):
+class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
     consistency_token = models.CharField(max_length=8)
-
     _is_singleton = False
     _advanced_searchable = True
 
@@ -371,7 +425,12 @@ class Subrecord(UpdatesFromDictMixin, models.Model):
         abstract = True
 
     def __unicode__(self):
-        return u'{0}: {1}'.format(self.get_api_name(), self.id)
+        if self.created:
+            return u'{0}: {1} {2}'.format(
+                self.get_api_name(), self.id, self.created
+            )
+        else:
+            return u'{0}: {1}'.format(self.get_api_name(), self.id)
 
     @classmethod
     def get_api_name(cls):
@@ -502,7 +561,7 @@ class EpisodeSubrecord(Subrecord):
         abstract = True
 
 
-class Tagging(models.Model):
+class Tagging(TrackedModel, models.Model):
     _is_singleton = True
     _advanced_searchable = True
     _title = 'Teams'

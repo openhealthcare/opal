@@ -26,7 +26,7 @@
                     {% record_panel models.Allergies %}
                 </div>
                 <div class="col-md-6">
-                    {% record_panel models.MicrobiologyTest editable="false" title="Resistant Organisms" name="resistantOrganisms()" detail_template="records/resistant_organisms.html" %}
+                    {% record_panel models.MicrobiologyTest editable="false" title="Alert Investigation Results" name="alertInvestigations()" detail_template="records/alert_investigations.html" %}
                 </div>
             </div>
             <section ng-repeat="e in episodes">
@@ -50,6 +50,30 @@
                 <div class="row">
                     <div class="col-md-6">
                         <div ng-if="$first" class="row">
+                            <div class="col-md-12">
+                                {% if inline_forms|length > 1 %}
+                                <form>
+                                    <div class="fake-select-wrapper">
+                                        <select class="form-control attached-select" ng-model="inlineForm.name" ng-init="initialiseForm('{{ inline_forms.keys|first }}')">
+                                            {% for form_name in inline_forms %}
+                                                <option>{{ form_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </form>
+                                {% endif %}
+                                {% for form_name, form_template in inline_forms.items %}
+                                    {% if inline_forms|length > 1 %}
+                                        <div class="select-attached" ng-show="inlineForm.name === '{{ form_name }}'">
+                                    {% endif %}
+                                    {% include form_template %}
+                                    {% if inline_forms|length > 1 %}
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div ng-if="$first" class="row">
                             <div class="col-md-3 patient-timeline">
                                 <div class="patient-timeline-now">
                                     <div class="patient-timeline-now-text bg-secondary">
@@ -58,23 +82,27 @@
                                 </div>
                             </div>
                         </div>
-                        <div ng-repeat="microbiology_input in e.microbiology_input" class="row content-offset-20">
+                        <div ng-repeat="microbiology_input in e.microbiology_input  | orderBy:'-when'" class="row content-offset-20">
                             <div class="col-md-3 patient-timeline"
                                 ng-class="{'patient-timeline-container': microbiology_input.id === lastInputId}"
                             >
                                 <div class="patient-timeline-speech-bubble">
                                     <i class="fa fa-comments patient-timeline-speech-bubble-icon"></i>
                                 </div>
-                                <div>
-                                    <div class="patient-timeline-date">[[ microbiology_input.date | shortDate ]]</div>
+                                <div ng-show="microbiology_input.when">
+                                    <div class="patient-timeline-date">
+                                        [[ microbiology_input.when.format("D MMM") ]]
+                                    </div>
                                 </div>
                             </div>
                             <div class="col-md-9">
                                 <div class="patient-timeline-discussion">
-                                    <div><strong>[[ microbiology_input.initials ]]</strong></div>
-                                    <div>
-                                        [[ microbiology_input.clinical_discussion ]]
-                                    </div>
+                                    <b ng-show="microbiology_input.initials && microbiology_input.initials.trim().length">
+                                      ([[microbiology_input.initials]]<span ng-show="microbiology_input.discussed_with"> with [[microbiology_input.discussed_with]]</span>)
+                                      [[microbiology_input.reason_for_interaction]]
+                                    <br />
+                                    </b>
+                                    [[ microbiology_input.clinical_discussion]]
                                 </div>
                             </div>
                         </div>
@@ -92,3 +120,4 @@
 
 
 </div>
+<div scroll-top="true" class="hidden-at-top scrollToTop"><div class="scrollToTopInner">Top</div></div>
