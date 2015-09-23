@@ -4,17 +4,6 @@ angular.module('opal.services')
 	    var item = this;
         this.episode =  episode;
 
-        // the moment format that is recieved/returned from the server
-        DATE_TIME_FORMAT = "YYYY-MM-DD HH:mmZ";
-
-        function dateTimeDateFieldName(columnName){
-            return columnName + "__date";
-        }
-
-        function dateTimeTimeFieldName(columnName){
-            return columnName + "__time";
-        }
-
 	    this.initialise = function(attrs) {
 	        // Copy all attributes to item, and change any date fields to Date objects
 	        var field, value;
@@ -32,12 +21,6 @@ angular.module('opal.services')
 		            // Convert values of date fields to Date objects
 		            item[field.name] = moment(item[field.name], 'YYYY-MM-DD')._d;
 		        }
-
-                if (field.type == "date_time" && item[field.name]){
-                    var dt = moment(item[field.name], DATE_TIME_FORMAT);
-                    item[dateTimeDateFieldName(field.name)] = dt.toDate();
-                    item[dateTimeTimeFieldName(field.name)] = dt.toDate();
-                }
 	        }
 	    };
 
@@ -67,11 +50,8 @@ angular.module('opal.services')
 		        if (field.type == 'date' && item[field.name]) {
 		            // Convert values of date fields to strings of format DD/MM/YYYY
 		            copy[field.name] = moment(value).format('DD/MM/YYYY');
-                }else if(field.type == 'date_time') {
-                    var date_field_name = dateTimeDateFieldName(field.name),
-                    time_field_name = dateTimeTimeFieldName(field.name);
-                    copy[date_field_name] = item[date_field_name];
-                    copy[time_field_name] = item[time_field_name];
+                }else if(field.type == 'date_time' && _.isDate(value)) {
+                    copy[field.name] = new Date(value.getTime());
 		        } else {
 		            copy[field.name] = _.clone(value);
 		        }
@@ -103,32 +83,9 @@ angular.module('opal.services')
 		            attrs[field.name] = value.format('YYYY-MM-DD');
 		        }
 
-                if (field.type == "date_time"){
-                    var result,
-                        dateFieldName = dateTimeDateFieldName(field.name),
-                        timeFieldName = dateTimeTimeFieldName(field.name);
-
-                    if(attrs[dateFieldName]){
-                        if(_.isDate(attrs[dateFieldName]) || moment.isMoment(attrs[dateFieldName])){
-                            result = moment(attrs[dateFieldName]);
-                        }
-                        else{
-                            result = moment(attrs[dateFieldName], 'DD-MM-YYYY');
-                        }
-                        delete attrs[dateFieldName];
-
-                        if(attrs[timeFieldName]){
-                            var timeField = moment(attrs[timeFieldName]);
-                            result.hours(timeField.hours());
-                            result.minutes(timeField.minutes());
-                            delete attrs[timeFieldName];
-                        }
-
-                        attrs[field.name] = result.format(DATE_TIME_FORMAT);
-                    }
-                    else if(attrs[field.name]){
-                        attrs[field.name] = moment(value).format(DATE_TIME_FORMAT);
-                    }
+                // Convert datetimes to YYYY-MM-DD HH:MM
+                if( field.type == 'date_time' && attrs[field.name] ){
+                    attrs[field.name] = moment(value).format('YYYY-MM-DD HH:mmZ');
                 }
 
                 //
