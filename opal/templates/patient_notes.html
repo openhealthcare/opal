@@ -96,7 +96,7 @@
                             </div>
                             <div class="col-md-9">
                                 <div class="patient-timeline-discussion">
-                                    <b ng-show="microbiology_input.initials && microbiology_input.initials.length">
+                                    <b ng-show="microbiology_input.initials && microbiology_input.initials.trim().length">
                                       ([[microbiology_input.initials]]<span ng-show="microbiology_input.discussed_with"> with [[microbiology_input.discussed_with]]</span>)
                                       [[microbiology_input.reason_for_interaction]]
                                     <br />

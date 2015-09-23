@@ -603,6 +603,7 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 }
 
 .scrollToTop{
+    cursor: pointer;
     background-color: #9cc96b;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
@@ -641,7 +642,6 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     font-style: normal;
     font-weight: normal;
     text-decoration: inherit;
-    position: absolute;
     cursor: pointer;
     margin-left: -5px;
     font-size: 20px;
@@ -650,7 +650,7 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     font-size: 18px;
     top: 2px;
     z-index: 1;
-    color:
+    position: absolute;
 }
 
 

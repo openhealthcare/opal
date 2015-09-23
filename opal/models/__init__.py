@@ -333,9 +333,6 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
                 if tag_name == 'mine':
                     params['user'] = user
                 tag = self.tagging_set.get(**params)
-                tag.updated_by = user
-                tag.updated = timezone.now()
-                tag.save()
                 tag.delete()
 
         for tag_name in tag_names:

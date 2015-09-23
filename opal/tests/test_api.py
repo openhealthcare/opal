@@ -297,6 +297,7 @@ class TaggingTestCase(TestCase):
         self.assertEqual(202, response.status_code)
         self.assertEqual(self.episode.get_tag_names(self.user), [])
 
+
     @patch('opal.core.api.glossolalia.transfer')
     def test_tagging_pings_integration(self, transfer):
         self.assertEqual(self.episode.get_tag_names(self.user), [])

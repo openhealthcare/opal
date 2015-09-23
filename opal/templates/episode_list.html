@@ -114,7 +114,9 @@
   <tbody>
 	<tr ng-repeat="row in rows"
         ng-click="select_episode(row, $index)"
-        ng-class="{selected: episode.id == row.id}">
+        ng-class="{selected: episode.id == row.id}"
+        blur-others="episode.id == row.id"
+        >
 	  {% for column in columns %}
 	  <td ng-mouseenter="mouseEnter($index, {{ forloop.counter0 }})"
 		  ng-mouseleave="mouseLeave()"
@@ -166,7 +168,7 @@
   <p class="lead text-center">
     Would you like to <a href="" ng-click="addEpisode()">add one</b>?
   </p>
-  
+
 </div>
 
 {% endblock %}

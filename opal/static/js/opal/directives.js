@@ -57,7 +57,7 @@ directives.directive('scrollTop', function () {
 
             $(window).on("scroll.scrollTop", function(){
                 window.requestAnimationFrame(function(){
-                    if(body.scrollTop() > 0){
+                    if($(window).scrollTop() > 0){
                         $(element).removeClass("hidden-at-top");
                     }
                     else{
@@ -69,6 +69,17 @@ directives.directive('scrollTop', function () {
     };
 });
 
+directives.directive('blurOthers', function(){
+    return {
+        link: function ($scope, element, attrs) {
+            $scope.$watch(attrs.blurOthers, function(value){
+                if(attrs.blurOthers){
+                    $(document.activeElement).blur();
+                }
+            });
+        }
+    };
+});
 
 directives.directive('placeholder', function($timeout){
 	if ($.support.placeholder) {
