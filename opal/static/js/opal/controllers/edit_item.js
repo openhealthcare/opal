@@ -78,6 +78,19 @@ angular.module('opal.controllers').controller(
 
 	    $scope.episode_category_list = ['Inpatient', 'Outpatient', 'Review'];
 
+        $scope.delete = function(result){
+            $modalInstance.close(result);
+                modal = $modal.open({
+                templateUrl: '/templates/modals/delete_item_confirmation.html/',
+                controller: 'DeleteItemConfirmationCtrl',
+                resolve: {
+                item: function() {
+                        return item;
+                    }
+                }
+            });
+        };
+
         //
         // Save the item that we're editing.
         //
