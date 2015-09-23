@@ -4,9 +4,9 @@ OPAL Models!
 import collections
 import json
 import itertools
+import dateutil.parser
+
 from django.utils import timezone
-
-
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -230,7 +230,7 @@ class TrackedModel(models.Model):
 
     def set_created_by_id(self, incoming_value, user):
         if incoming_value:
-            value = incoming_value
+            value = User.objects.get(id=incoming_value)
         else:
             value = user
 
@@ -240,7 +240,7 @@ class TrackedModel(models.Model):
     def set_updated_by_id(self, incoming_value, user):
         if self.id:
             if incoming_value:
-                value = incoming_value
+                value = User.objects.get(id=incoming_value)
             else:
                 value = user
 
@@ -248,14 +248,15 @@ class TrackedModel(models.Model):
 
     def set_updated(self, incoming_value, user):
         if self.id:
-            if not incoming_value:
-                incoming_value = timezone.now()
-            self.updated = incoming_value
+            if incoming_value:
+                self.updated = dateutil.parser.parse(incoming_value)
+            else:
+                self.updated = timezone.now()
 
     def set_created(self, incoming_value, user):
         if not self.id:
             if incoming_value:
-                self.created = incoming_value
+                self.created = dateutil.parser.parse(incoming_value)
             else:
                 self.created = timezone.now()
 
