@@ -1,21 +1,18 @@
 var directives = angular.module('opal.directives', []);
 
-directives.directive("fixHeight", function ($timeout) {
+directives.directive("fixHeight", function () {
     return function (scope, element, attrs) {
-        $timeout(function() {
-            function calcParams(){
-                var stickyNavHeight = $("#main-navbar").height();
-                var footerHeight = $("footer").height();
-                return $(element).offset().top + stickyNavHeight + footerHeight;
-            }
+        function calcParams(){
+            var stickyNavHeight = $("#main-navbar").height();
+            var footerHeight = $("footer").height();
+            return $(element).offset().top + stickyNavHeight + footerHeight;
+        }
 
-            function updateHeight(){
-                $(element).height($(window).height() - calcParams());
-            }
+        function updateHeight(){
+            $(element).height($(window).height() - calcParams());
+        }
 
-            $(window).on("resize.fixTableHeight", updateHeight);
-            updateHeight();
-        });
+        updateHeight();
     };
 });
 
