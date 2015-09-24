@@ -1,48 +1,28 @@
 var directives = angular.module('opal.directives', []);
 
-directives.directive("freezeHeaders", function ($timeout) {
+directives.directive("fixHeight", function () {
     return function (scope, element, attrs) {
-        $timeout(function() {
-            var onWindow = false;
-            var $el = $(element).find('table');
-            var stickyNavHeight, breakPoint;
+        function calcParams(){
+            var stickyNavHeight = $("#main-navbar").height();
+            var footerHeight = $("footer").height();
+            return $(element).offset().top + stickyNavHeight + footerHeight;
+        }
 
-            function calcParams(){
-                stickyNavHeight = $("#main-navbar").height();
-                breakPoint = $(element).offset().top - stickyNavHeight;
-            }
+        function updateHeight(){
+            $(element).height($(window).height() - calcParams());
+        }
 
-            function reCalculateMenu(){
-                if($(window).scrollTop() < breakPoint && onWindow){
-                    onWindow = false;
-                    $el.stickyTableHeaders({
-                        scrollableArea: $(element),
-                        fixedOffset: 0
-                    });
-                }
+        updateHeight();
 
-                if($(window).scrollTop() > breakPoint && !onWindow){
-                    onWindow = true;
-                    $el.stickyTableHeaders({
-                        scrollableArea: window,
-                        fixedOffset: stickyNavHeight
-                    });
-                }
-            }
+        $(window).on("resize.fixHeight", updateHeight);
+    };
+});
 
-            calcParams();
-
-            $el.stickyTableHeaders({
-                scrollableArea: $(element)
-            });
-
-            $(window).on("resize.changeScrollViewPort", function(){
-                calcParams();
-            });
-
-            $(window).on("scroll.changeScrollViewPort", function(){
-                requestAnimationFrame(reCalculateMenu);
-            });
+directives.directive("freezeHeaders", function () {
+    return function (scope, element, attrs) {
+        var $el = $(element).find('table');
+        $el.stickyTableHeaders({
+            scrollableArea: $(element),
         });
     };
 });

@@ -5,8 +5,7 @@ angular.module('opal.controllers').controller(
                                 growl,
                                 Flow, Item,
                                 Episode, schema, episodes, options,
-                                profile, $rootScope,
-                                episodeVisibility){
+                                profile, episodeVisibility){
 
         var version = window.version;
         $rootScope.state = 'normal';
@@ -443,20 +442,6 @@ angular.module('opal.controllers').controller(
 		    $scope.mouseRix = -1;
 		    $scope.mouseCix = -1;
 	    }
-
-	    function goLeft() {
-		    if ($scope.cix > 0) {
-			    $scope.cix--;
-			    $scope.iix = 0;
-		    };
-	    };
-
-	    function goRight() {
-		    if ($scope.cix < $scope.columns.length - 1) {
-			    $scope.cix++;
-			    $scope.iix = 0;
-		    };
-	    };
 
 	    function goUp() {
 		    var episode;
