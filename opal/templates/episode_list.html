@@ -100,67 +100,69 @@
   [[ tag_display[currentTag] ]] / [[ tag_display[currentSubTag] ]]
 </h4>
 
-<table class="table table-bordered bg-white patient-list">
-  <thead class="table-header">
-	<tr>
-	  {% for column in columns %}
-	  <th>
-        <i class="{{ column.icon }}"></i>
-        {{ column.title }}
-      </th>
-	  {% endfor %}
-	</tr>
-  </thead>
-  <tbody>
-	<tr ng-repeat="row in rows"
-        ng-click="select_episode(row, $index)"
-        ng-class="{selected: episode.id == row.id}"
-        blur-others="episode.id == row.id"
-        >
-	  {% for column in columns %}
-	  <td ng-mouseenter="mouseEnter($index, {{ forloop.counter0 }})"
-		  ng-mouseleave="mouseLeave()"
-          {% ifequal column.title "Teams" %}class="screen-only"{% endifequal %} >
-		<ul>
-          {% if column.header_template_path %}
-          {% include column.header_template_path %}
-          {% endif %}
-		  <li ng-repeat="item in row.{{column.name}}{% if column.list_limit %}|limitTo:{{ column.list_limit }}{% endif %}"
-			  ng-click="selectItem($parent.$index, {{ forloop.counter0 }}, $index)"
-			  ng-dblclick="editItem($parent.$index, {{ forloop.counter0 }}, $index)"
-			  >
-			{% include column.template_path %}
-		  </li>
+<div class="patient-list-container" freeze-headers fix-height>
+  <table class="table table-bordered bg-white patient-list">
+    <thead class="table-header">
+  	<tr>
+  	  {% for column in columns %}
+  	  <th>
+          <i class="{{ column.icon }}"></i>
+          {{ column.title }}
+        </th>
+  	  {% endfor %}
+  	</tr>
+    </thead>
+    <tbody>
+  	<tr ng-repeat="row in rows"
+          ng-click="select_episode(row, $index)"
+          ng-class="{selected: episode.id == row.id}"
+          blur-others="episode.id == row.id"
+          >
+  	  {% for column in columns %}
+  	  <td ng-mouseenter="mouseEnter($index, {{ forloop.counter0 }})"
+  		  ng-mouseleave="mouseLeave()"
+            {% ifequal column.title "Teams" %}class="screen-only"{% endifequal %} >
+  		<ul>
+            {% if column.header_template_path %}
+            {% include column.header_template_path %}
+            {% endif %}
+  		  <li ng-repeat="item in row.{{column.name}}{% if column.list_limit %}|limitTo:{{ column.list_limit }}{% endif %}"
+  			  ng-click="selectItem($parent.$index, {{ forloop.counter0 }}, $index)"
+  			  ng-dblclick="editItem($parent.$index, {{ forloop.counter0 }}, $index)"
+  			  >
+  			{% include column.template_path %}
+  		  </li>
 
-		  {% if not column.single %}
-		  <li class="edit_item"
-              ng-click="editItem($index, {{ forloop.counter0 }}, row.{{column.name}}.length)"
-			  ng-dblclick="editItem($index, {{ forloop.counter0 }}, row.{{column.name}}.length)"
-			  >
-			<span ng-show="!profile.readonly && mouseRix == $index && mouseCix == {{ forloop.counter0 }}">
-			  Add
-              <i class="glyphicon glyphicon-plus pull-right"></i>
-			</span>
-			&nbsp;
-		  </li>
-          {% else %}
-          <li class="edit_item"
-              ng-click="editItem($index, {{ forloop.counter0 }}, 0)"
-			  ng-dblclick="editItem($index, {{ forloop.counter0 }}, 0)"
-			  >
-			<span ng-show="!profile.readonly && mouseRix == $index && mouseCix == {{ forloop.counter0 }}">
-			  Edit <i class="glyphicon glyphicon-pencil pull-right"></i>
-			</span>
-			&nbsp;
-		  </li>
+  		  {% if not column.single %}
+  		  <li class="edit_item"
+                ng-click="editItem($index, {{ forloop.counter0 }}, row.{{column.name}}.length)"
+  			  ng-dblclick="editItem($index, {{ forloop.counter0 }}, row.{{column.name}}.length)"
+  			  >
+  			<span ng-show="!profile.readonly && mouseRix == $index && mouseCix == {{ forloop.counter0 }}">
+  			  Add
+                <i class="glyphicon glyphicon-plus pull-right"></i>
+  			</span>
+  			&nbsp;
+  		  </li>
+            {% else %}
+            <li class="edit_item"
+                ng-click="editItem($index, {{ forloop.counter0 }}, 0)"
+  			  ng-dblclick="editItem($index, {{ forloop.counter0 }}, 0)"
+  			  >
+  			<span ng-show="!profile.readonly && mouseRix == $index && mouseCix == {{ forloop.counter0 }}">
+  			  Edit <i class="glyphicon glyphicon-pencil pull-right"></i>
+  			</span>
+  			&nbsp;
+  		  </li>
 
-          {% endif %}
-		</ul>
-	  </td>
-	  {% endfor %}
-	</tr>
-  </tbody>
-</table>
+            {% endif %}
+  		</ul>
+  	  </td>
+  	  {% endfor %}
+  	</tr>
+    </tbody>
+  </table>
+</div>
 <div class="empty-list" ng-hide="num_episodes > 0">
   <p class="lead text-center">
     There are no patients on this list.
@@ -177,12 +179,10 @@
 
 {% include 'keyboard_shortcuts_modal.html' %}
 
-<div style="clear: both;">
-  <center>
+<footer class="text-center keyboard-shortcuts"
     <a class="pointer screen-only" ng-click="keyboard_shortcuts($event)">
       <i class="fa fa-keyboard-o"></i> Keyboard shortcuts available
     </a>
-  </center>
-</div>
+</footer>
 
 {% endblock %}
