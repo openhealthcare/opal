@@ -13,6 +13,8 @@ directives.directive("fixHeight", function () {
         }
 
         updateHeight();
+
+        $(window).on("resize.fixHeight", updateHeight);
     };
 });
 
