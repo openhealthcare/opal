@@ -28,14 +28,21 @@ directives.directive("scrollEpisodes", function(){
       * when they user is on an episode and presses the down up key, the selected
       * episode should always be shown in its entirety.
       */
-      var shouldScroll = attrs.scrollEpisodes;
+      var shouldScroll = attrs.scrollEpisodes,
+          patientListContainer = $(attrs.scrollContainer),
+          thHeight = patientListContainer.find("thead").height();
 
       var adjustForThead = function(){
-        var patientListContainer = $(attrs.scrollContainer);
         var thHeight = patientListContainer.find("thead").height();
         if($(element).position().top < thHeight){
           patientListContainer.scrollTop(patientListContainer.scrollTop() - thHeight);
         }
+      }
+
+      function isScrolledIntoView(element, parent){
+        var elementTop    = element.getBoundingClientRect().top ,
+            elementBottom = element.getBoundingClientRect().bottom;
+        return elementTop >= 0 && elementBottom <= window.innerHeight;
       }
 
       scope.$on('keydown', function(event, e) {
@@ -43,13 +50,17 @@ directives.directive("scrollEpisodes", function(){
             // up
             if(e.keyCode === 38){
               event.preventDefault();
-              element[0].scrollIntoView(true);
+              if(!isScrolledIntoView(element[0], patientListContainer[0])){
+                element[0].scrollIntoView(true);
+              }
               adjustForThead();
             }
             // down
             else if(e.keyCode === 40){
               event.preventDefault();
-              element[0].scrollIntoView(false);
+              if(!isScrolledIntoView(element[0], patientListContainer[0])){
+                element[0].scrollIntoView(false);
+              }
               adjustForThead();
             }
         }
