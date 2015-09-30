@@ -117,6 +117,8 @@
           ng-click="select_episode(row, $index)"
           ng-class="{selected: episode.id == row.id}"
           blur-others="episode.id == row.id"
+          scroll-episodes="isSelectedEpisode"
+          scroll-container=".patient-list-container"
           >
   	  {% for column in columns %}
   	  <td ng-mouseenter="mouseEnter($index, {{ forloop.counter0 }})"
