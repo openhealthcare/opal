@@ -33,16 +33,16 @@ directives.directive("scrollEpisodes", function(){
           thHeight = patientListContainer.find("thead").height();
 
       var adjustForThead = function(){
-        var thHeight = patientListContainer.find("thead").height();
-        if($(element).position().top < thHeight){
-          patientListContainer.scrollTop(patientListContainer.scrollTop() - thHeight);
+        if($(element).position().top <= thHeight){
+          // adjust for the thead, plus some buffer
+          patientListContainer.scrollTop(patientListContainer.scrollTop() - thHeight - 10);
         }
       }
 
       function isScrolledIntoView(element, parent){
         var elementTop    = element.getBoundingClientRect().top ,
             elementBottom = element.getBoundingClientRect().bottom;
-        return elementTop >= 0 && elementBottom <= window.innerHeight;
+        return elementTop >= thHeight && elementBottom <= window.innerHeight;
       }
 
       scope.$on('keydown', function(event, e) {
