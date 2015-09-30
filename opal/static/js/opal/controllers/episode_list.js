@@ -72,6 +72,10 @@ angular.module('opal.controllers').controller(
 	    $scope.rows = $scope.getVisibleEpisodes();
         $scope.episode = $scope.rows[0];
 
+      $scope.isSelectedEpisode = function(episode){
+        return episode === $scope.episode;
+      }
+
 	    function compareEpisodes(p1, p2) {
 		    return p1.compare(p2);
 	    };
@@ -201,7 +205,7 @@ angular.module('opal.controllers').controller(
 		    $scope.rix = rix;
 		    $scope.cix = cix;
 		    $scope.iix = iix;
-            $scope.episode = $scope.rows[rix];
+        $scope.episode = $scope.rows[rix];
 	    };
 
 	    $scope.focusOnQuery = function() {

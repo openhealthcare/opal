@@ -15,6 +15,45 @@ directives.directive("fixHeight", function () {
         updateHeight();
 
         $(window).on("resize.fixHeight", updateHeight);
+
+        scope.$on('$destroy', function(){
+          $(window).off("resize.fixHeight");
+        });
+    };
+});
+
+directives.directive("scrollEpisodes", function(){
+    return function(scope, element, attrs){
+      /*
+      * when they user is on an episode and presses the down up key, the selected
+      * episode should always be shown in its entirety.
+      */
+      var shouldScroll = attrs.scrollEpisodes;
+
+      var adjustForThead = function(){
+        var patientListContainer = $(attrs.scrollContainer);
+        var thHeight = patientListContainer.find("thead").height();
+        if($(element).position().top < thHeight){
+          patientListContainer.scrollTop(patientListContainer.scrollTop() - thHeight);
+        }
+      }
+
+      scope.$on('keydown', function(event, e) {
+        if(scope[shouldScroll](scope.row)){
+            // up
+            if(e.keyCode === 38){
+              event.preventDefault();
+              element[0].scrollIntoView(true);
+              adjustForThead();
+            }
+            // down
+            else if(e.keyCode === 40){
+              event.preventDefault();
+              element[0].scrollIntoView(false);
+              adjustForThead();
+            }
+        }
+      });
     };
 });
 
@@ -29,7 +68,7 @@ directives.directive("freezeHeaders", function () {
 
 directives.directive('scrollTop', function () {
     return {
-        link: function ($scope, element, attrs) {
+        link: function (scope, element, attrs) {
             var body = $("html, body");
             element.bind("click", function(){
                 body.animate({ scrollTop: "0" });
@@ -44,6 +83,10 @@ directives.directive('scrollTop', function () {
                         $(element).addClass("hidden-at-top");
                     }
                 });
+            });
+
+            scope.$on('$destroy', function(){
+              $(window).off("resize.fixHeight");
             });
         }
     };
