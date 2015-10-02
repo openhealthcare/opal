@@ -14,6 +14,9 @@ angular.module('opal.controllers').controller(
         $scope.columns = schema.getAdvancedSearchColumns();
         $scope.searched = false;
         $scope.currentPageNumber = 1;
+        NOT_ADVANCED_SEARCHABLE = [
+          "created", "updated", "created_by_id", "updated_by_id"
+        ]
 
 	    for (var name in options) {
 		    $scope[name + '_list'] = options[name];
@@ -61,7 +64,12 @@ angular.module('opal.controllers').controller(
             return _.map(
                 _.reject(
                     column.fields,
-                    function(c){ return c.type == 'token' ||  c.type ==  'list'; }),
+                    function(c){
+                      if(_.contains(NOT_ADVANCED_SEARCHABLE, c.name)){
+                        return true;
+                      }
+                      return c.type == 'token' ||  c.type ==  'list';
+                    }),
                 function(c){ return underscoreToCapWords(c.name); }
             );
         };
