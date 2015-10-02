@@ -169,8 +169,11 @@ directives.directive('slashKeyFocus', function() {
         scope.$watch(attrs.slashKeyFocus, function(value){
             if(value){
                 $(window).on("keyup.keyFocus", function(e){
+                    // if we're already focused on a text area, lets ignore this
                     if (e.keyCode == 191 && !e.shiftKey) {
-                      $(elem).focus();
+                        if(!$('input:focus, textarea:focus').length){
+                            $(elem).focus();
+                        }
                     }
                 });
             } else {
