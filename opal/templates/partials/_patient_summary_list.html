@@ -12,7 +12,7 @@
             <li class="content-offset-10 content-offset-below-10" ng-repeat="result in results">
                 <div>
                     <h4 class="inline">
-                        <a class="orange-link" href="[[ result.link ]]">
+                        <a class="orange-link" ng-href="[[ result.link ]]">
                             [[ result.name ]] [[ result.hospitalNumber ]]
                         </a>
                     </h4>
@@ -21,7 +21,7 @@
                     </span>
                 </div>
                 <div>
-                    [[ result.count ]] Episode<span ng-show="result.count > 1">s</span> ([[ result.categories ]]) [[ result.years ]]
+                    [[ result.count ]] Episode<span ng-show="result.count > 1">s</span> ([[ result.categories ]]) [[ result.years ]] <a class="orange-link" ng-href="[[ result.patientNotesLink ]]">Patient Notes</a>
                 </div>
             </li>
         </ul>
