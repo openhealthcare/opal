@@ -126,6 +126,7 @@ h1.larger { font-size: 52px; }
         overflow: scroll;
     }
 }
+table.patient-list td { min-width: 70px;}
 table.patient-list tr th { white-space: nowrap; }
 
 /* Selected sub-cell - list view */
