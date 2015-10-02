@@ -51,7 +51,7 @@ table {
 	padding: 1px;
 	max-width: 150px;
 }
-
+.table.patient-list { min-width: 70px;}
 input.ng-invalid {
 	background-color : #fcc;
 }
