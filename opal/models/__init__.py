@@ -446,8 +446,13 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
     @classmethod
     def build_field_schema(cls):
         field_schema = []
+        ignored_fields = {
+            "id", 'patient_id', 'episode_id', "created", "updated",
+            "created_by_id", "updated_by_id"
+        }
+
         for fieldname in cls._get_fieldnames_to_serialize():
-            if fieldname in ['id', 'patient_id', 'episode_id']:
+            if fieldname in ignored_fields:
                 continue
             elif fieldname.endswith('_fk_id'):
                 continue
