@@ -161,6 +161,7 @@ h1.larger { font-size: 52px; }
 }
 
 table.patient-list tr th { white-space: nowrap; }
+table.patient-list td { min-width: 70px; }
 .empty-list {
     background-color: white;
     padding: 20% 0 20%;
@@ -514,7 +515,8 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 
 @media(min-width:992px){
     .patient-list-container{
-        overflow: scroll;
+        overflow-y: scroll;
+        background: white;
     }
 }
 
