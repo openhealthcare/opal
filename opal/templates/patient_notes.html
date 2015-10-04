@@ -73,6 +73,10 @@
                                 {% endfor %}
                             </div>
                         </div>
+                        <svg class="speech-bubble-timeline-container">
+                           <line class="speech-bubble-timeline hidden-sm hidden-xs" x1="12.5%" y1="0" x2="12.5%" y2="100%" />
+                           <line class="speech-bubble-timeline hidden-md hidden-lg" x1="50%" y1="0" x2="50%" y2="100%" />
+                        </svg>
                         <div ng-if="$first" class="row">
                             <div class="col-md-3 patient-timeline">
                                 <div class="patient-timeline-now">
@@ -83,9 +87,8 @@
                             </div>
                         </div>
                         <div ng-repeat="microbiology_input in e.microbiology_input  | orderBy:'-when'" class="row content-offset-20">
-                            <div class="col-md-3 patient-timeline"
-                                ng-class="{'patient-timeline-container': microbiology_input.id === lastInputId}"
-                            >
+
+                            <div class="col-md-3 patient-timeline">
                                 <div class="patient-timeline-speech-bubble">
                                     <i class="fa fa-comments patient-timeline-speech-bubble-icon"></i>
                                 </div>

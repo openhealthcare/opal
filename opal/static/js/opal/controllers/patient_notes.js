@@ -15,7 +15,7 @@ angular.module('opal.controllers').controller(
                return significantDate.unix * -1;
            }
        });
-       
+
 
        _.each($scope.episodes, function(e){
            if(e.microbiology_input){
@@ -56,6 +56,9 @@ angular.module('opal.controllers').controller(
 
                    return r;
                }, []);
+           }
+           else{
+             return [];
            }
        }
 
