@@ -26,6 +26,7 @@ angular.module('opal.services').factory('PatientSummary', function() {
             this.dateOfBirth = moment(jsonResponse.date_of_birth, 'YYYY-MM-DD');
             this.categories = jsonResponse.categories.join(", ");
             this.link = "#/episode/" + jsonResponse.episode_id;
+            this.patientNotesLink = "#/patient/" + jsonResponse.hospital_number;
             this.hospitalNumber = jsonResponse.hospital_number;
         };
 
