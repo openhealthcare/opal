@@ -73,14 +73,8 @@
                                 {% endfor %}
                             </div>
                         </div>
-                        <div ng-if="e.microbiology_input.length || !$first">
-                            <svg class="speech-bubble-timeline-container">
-                                 <line class="speech-bubble-timeline hidden-sm hidden-xs" x1="12.5%" y1="0" x2="12.5%" y2="100%" />
-                                 <line class="speech-bubble-timeline hidden-md hidden-lg" x1="50%" y1="0" x2="50%" y2="100%" />
-                            </svg>
-                        </div>
-                        <div class="row">
-                            <div ng-if="$first && e.microbiology_input.length" class="col-md-3 patient-timeline">
+                        <div ng-if="$first" class="row">
+                            <div class="col-md-3 patient-timeline">
                                 <div class="patient-timeline-now">
                                     <div class="patient-timeline-now-text bg-secondary">
                                         Now
@@ -88,6 +82,10 @@
                                 </div>
                             </div>
                         </div>
+                        <svg class="speech-bubble-timeline-container">
+                             <line class="speech-bubble-timeline hidden-sm hidden-xs" x1="12.5%" y1="0" x2="12.5%" y2="500%" />
+                             <line class="speech-bubble-timeline hidden-md hidden-lg" x1="50%" y1="0" x2="50%" y2="500%" />
+                        </svg>
                         <div ng-repeat="microbiology_input in e.microbiology_input  | orderBy:'-when'" class="row content-offset-20">
 
                             <div class="col-md-3 patient-timeline">
