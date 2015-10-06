@@ -489,17 +489,19 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     padding-bottom: 0;
 }
 
-.patient-timeline:after {
-     content: "";
-     display: block;
-     position: absolute;
-     left: 50%;
-     width: 2px;
-     height: 540px;
-     margin-left: -1px;
-     background-color: #ddd;
-     z-index: 0;
-     bottom: -500px;
+svg.speech-bubble-timeline-container{
+    position: absolute;
+    margin-right: -15px;
+    margin-left: -15px;
+    width: 100%;
+    height: 500%;
+    overflow-y: auto;
+    margin-top: -40px;
+}
+
+.speech-bubble-timeline{
+    stroke: #ddd;
+    stroke-width:2
 }
 
 .patient-timeline-seperator{

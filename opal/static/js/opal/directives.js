@@ -216,6 +216,16 @@ directives.directive('setFocusIf', function($timeout) {
   };
 });
 
+// until bootstrap moves to flex box, lets grab the parent height with javascript
+directives.directive('parentHeight', function(){
+  return{
+    restrict: 'A',
+    link: function(scope, element){
+      var $element = $(element);
+      $element.css("min-height", $element.parent().height());
+    }
+  };
+});
 
 directives.directive('autofocus', function($timeout) {
   return {
