@@ -65,8 +65,8 @@ angular.module('opal.controllers').controller(
                 _.reject(
                     column.fields,
                     function(c){
-                      if(_.contains(c.name, NOT_ADVANCED_SEARCHABLE)){
-                        return false;
+                      if(_.contains(NOT_ADVANCED_SEARCHABLE, c.name)){
+                        return true;
                       }
                       return c.type == 'token' ||  c.type ==  'list';
                     }),
