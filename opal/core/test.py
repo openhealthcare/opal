@@ -18,7 +18,7 @@ class OpalTestCase(TestCase):
     def __init__(self, *a, **k):
         self.rf = RequestFactory()
         self._user = None
-        TestCase.__init__(self, *a, **k)
+        super(OpalTestCase, self).__init__(*a, **k)
 
     @property
     def user(self):

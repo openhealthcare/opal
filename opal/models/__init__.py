@@ -228,7 +228,7 @@ class TrackedModel(models.Model):
     class Meta:
         abstract = True
 
-    def set_created_by_id(self, incoming_value, user):
+    def set_created_by_id(self, incoming_value, user, data):
         if incoming_value:
             value = User.objects.get(id=incoming_value)
         else:
@@ -237,7 +237,7 @@ class TrackedModel(models.Model):
         if not self.id:
             self.created_by = value
 
-    def set_updated_by_id(self, incoming_value, user):
+    def set_updated_by_id(self, incoming_value, user, data):
         if self.id:
             if incoming_value:
                 value = User.objects.get(id=incoming_value)
@@ -246,14 +246,14 @@ class TrackedModel(models.Model):
 
             self.updated_by = value
 
-    def set_updated(self, incoming_value, user):
+    def set_updated(self, incoming_value, user, data):
         if self.id:
             if incoming_value:
                 self.updated = dateutil.parser.parse(incoming_value)
             else:
                 self.updated = timezone.now()
 
-    def set_created(self, incoming_value, user):
+    def set_created(self, incoming_value, user, data):
         if not self.id:
             if incoming_value:
                 self.created = dateutil.parser.parse(incoming_value)

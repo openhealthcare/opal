@@ -107,7 +107,7 @@ class UpdatesFromDictMixin(object):
             setter = getattr(self, 'set_' + name, None)
 
             if setter is not None:
-                setter(value, user)
+                setter(value, user, data)
             else:
                 if value and self._get_field_type(name) == models.fields.DateField:
                     value = datetime.strptime(value, '%Y-%m-%d').date()
