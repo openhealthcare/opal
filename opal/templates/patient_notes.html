@@ -111,9 +111,9 @@
                         </div>
                     </div>
                     <div class="col-md-6">
-                        {% record_panel models.Diagnosis editable="e.id === episode.id" %}
-                        {% record_panel models.MicrobiologyTest editable="e.id === episode.id" %}
                         {% record_panel models.Antimicrobial editable="e.id === episode.id" %}
+                        {% record_panel models.MicrobiologyTest editable="e.id === episode.id" %}
+                        {% record_panel models.Diagnosis editable="e.id === episode.id" %}
                     </div>
                 </div>
             </section>
