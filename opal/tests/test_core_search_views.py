@@ -71,6 +71,7 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
             u'page_number': 1,
             u'object_list': [{
                 u'count': 1,
+                u'id': self.patient.id,
                 u'name': u'Sean Connery',
                 u'end_date': '2015-10-15',
                 u'episode_id': 1,

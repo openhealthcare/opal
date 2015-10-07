@@ -42,7 +42,17 @@ filters.filter('shortDate', function(){
         // show the year as two digits
         return d.format('DD/MM/YY')
     }
-})
+});
+
+filters.filter('momentDateFormat', function(){
+	return function(input, format){
+			if(!input){
+					return
+			}
+			var d = moment(input)
+			return d.format(format)
+	}
+});
 
 filters.filter('hhmm', function(){
     return function(input, change){
