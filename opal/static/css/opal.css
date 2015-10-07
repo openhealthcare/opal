@@ -13,6 +13,7 @@ a {
 }
 p a { color: #f76c51; }
 
+.popover { max-width: inherit }
 a:hover { color: #337fb2; }
 .form-horizontal .control-label.text-left { text-align: left; }
 .nav-tabs li:hover { cursor: pointer; }
@@ -120,6 +121,11 @@ h1.larger { font-size: 52px; }
     border-color: #f54f2f;
     color: #fff
 }
+
+i.help {
+    color: #46b9d8;
+}
+
 @media screen  {
     .patient-list-container{
         height: 760px;

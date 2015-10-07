@@ -105,14 +105,16 @@ def select(*args, **kwargs):
     model = kwargs.pop('model')
     label = kwargs.pop('label')
     lookuplist = kwargs.pop('lookuplist', None)
+    help_template = kwargs.pop('help', None)
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
     return {
-        'label'     : label,
-        'model'     : model,
-        'directives': args,
-        'lookuplist': lookuplist,
-        'visibility': visibility
+        'label'        : label,
+        'model'        : model,
+        'directives'   : args,
+        'lookuplist'   : lookuplist,
+        'visibility'   : visibility,
+        'help_template': help_template
     }
 
 @register.inclusion_tag('_helpers/textarea.html')

@@ -1,11 +1,34 @@
 <div class="form-group"
      {% if visibility %} {{ visibility|safe }} {% endif %}
      >
-  <label class="control-label col-sm-3">{{ label }}</label>
+  <label class="control-label col-sm-3">
+    {{ label }}
+  </label>
   <div class="col-sm-8">
     <select class="form-control" ng-model="{{ model }}">
       <option value="">---------</option>
       <option ng-repeat="i in {{ lookuplist }}">[[ i ]]</option>
     </select>
+    {% if help_template %}
+    <p class="text-muted pointer"
+       title="Help"
+       data-placement="bottom"
+       data-auto-close="true"
+       data-template-url="{{ help_template }}"
+       bs-popover
+       >
+        <i class="fa fa-question-circle"></i>
+        More details about {{ label }}
+    </p>
+    <script type="text/ng-template" id="{{ help_template }}">
+      <div class="popover">
+        <div class="arrow"></div>
+        <h3 class="popover-title" ng-bind="title" ng-show="title"></h3>
+        <div class="popover-content">
+          {% include help_template %}
+        </div>
+      </div>
+    </script>
+    {% endif %}
   </div>
 </div>
