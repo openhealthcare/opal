@@ -11,7 +11,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
-from django.dispatch import receiver
 from django.template import TemplateDoesNotExist
 from django.template.loader import select_template
 import reversion
@@ -211,6 +210,14 @@ class Patient(models.Model):
         demographics = self.demographics_set.get()
         demographics.update_from_dict(demographics_data, user)
 
+    def save(self, *args, **kwargs):
+        created = not bool(self.id)
+        super(Patient, self).save(*args, **kwargs)
+        if created:
+            for subclass in patient_subrecords():
+                if subclass._is_singleton:
+                    subclass.objects.create(patient=self)
+
 
 class TrackedModel(models.Model):
     # these fields are set automatically from REST requests via
@@ -293,6 +300,14 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         except Exception as e:
             print e.__class__
             return self.date_of_admission
+
+    def save(self, *args, **kwargs):
+        created = not bool(self.id)
+        super(Episode, self).save(*args, **kwargs)
+        if created:
+            for subclass in episode_subrecords():
+                if subclass._is_singleton:
+                    subclass.objects.create(episode=self)
 
     @property
     def start_date(self):
@@ -1026,6 +1041,7 @@ class Investigation(EpisodeSubrecord):
     class Meta:
         abstract = True
 
+
 class Role(models.Model):
     name = models.CharField(max_length=200)
 
@@ -1078,20 +1094,3 @@ class UserProfile(models.Model):
     def can_see_pid(self):
         all_roles = itertools.chain(*self.get_roles().values())
         return not any(r for r in all_roles if r == "researcher" or r == "scientist")
-
-@receiver(models.signals.post_save, sender=Patient)
-def create_patient_singletons(sender, **kwargs):
-    if kwargs['created']:
-        patient = kwargs['instance']
-        for subclass in patient_subrecords():
-            if subclass._is_singleton:
-                obj = subclass.objects.create(patient=patient)
-
-
-@receiver(models.signals.post_save, sender=Episode)
-def create_episode_singletons(sender, **kwargs):
-    if kwargs['created']:
-        episode = kwargs['instance']
-        for subclass in episode_subrecords():
-            if subclass._is_singleton:
-                subclass.objects.create(episode=episode)
