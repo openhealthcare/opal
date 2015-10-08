@@ -38,7 +38,9 @@ class OpalTestCase(TestCase):
 
     def post_json(self, path, data):
         json_data = json.dumps(data, cls=DjangoJSONEncoder)
-        return self.client.post(path, content_type='application/json', data=json_data)
+        return self.client.post(
+            path, content_type='application/json', data=json_data
+        )
 
     def put_json(self, path, data):
         json_data = json.dumps(data, cls=DjangoJSONEncoder)

@@ -888,10 +888,10 @@ class Location(EpisodeSubrecord):
     _is_singleton = True
     _icon = 'fa fa-map-marker'
 
-    category  = models.CharField(max_length=255, blank=True)
-    hospital  = models.CharField(max_length=255, blank=True)
-    ward      = models.CharField(max_length=255, blank=True)
-    bed       = models.CharField(max_length=255, blank=True)
+    category = models.CharField(max_length=255, blank=True)
+    hospital = models.CharField(max_length=255, blank=True)
+    ward = models.CharField(max_length=255, blank=True)
+    bed = models.CharField(max_length=255, blank=True)
 
     class Meta:
         abstract = True
