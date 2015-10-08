@@ -1,3 +1,4 @@
+{% load forms %}
 <div class="form-group"
      {% if visibility %} {{ visibility|safe }} {% endif %}
      >
@@ -8,6 +9,7 @@
     <select class="form-control" ng-model="{{ model }}">
       <option value="">---------</option>
       <option ng-repeat="i in {{ lookuplist }}">[[ i ]]</option>
+      {% if other %}<option>Other</option>{% endif %}
     </select>
     {% if help_template %}
     <p class="text-muted pointer"
@@ -32,3 +34,6 @@
     {% endif %}
   </div>
 </div>
+{% if other %}
+{% input model=model label=other_label show=other_show  %}
+{% endif %}
