@@ -6,7 +6,7 @@ import json
 from django.contrib.auth.models import User
 from django.core.serializers.json import DjangoJSONEncoder
 from django.test import TestCase
-from django.test.client import RequestFactory, Client
+from django.test.client import RequestFactory
 
 from opal.models import UserProfile
 
