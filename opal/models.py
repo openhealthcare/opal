@@ -414,8 +414,11 @@ class Episode(UpdatesFromDictMixin, models.Model):
         """
         Return a serialised version of this patient's episode history
         """
+        from opal.core.search.queries import episodes_for_user
+
         order = 'date_of_episode', 'date_of_admission', 'discharge_date'
         episode_history = self.patient.episode_set.order_by(*order)
+        episode_history = episodes_for_user(episode_history, user)
         return [e.to_dict(user, shallow=True) for e in episode_history]
 
     def to_dict(self, user, shallow=False):

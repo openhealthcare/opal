@@ -22,3 +22,9 @@ The following reference guides are available:
 -|-
 [The forms Templatetag library](form_templatetags.md) | The building blocks for OPAL forms
 [Javascript Helpers](javascript_helpers.md)| Angular filters and $rootScope methods
+
+### OPAL Search module
+
+|
+-|-
+[Making Search Queries](search_queries.md) | Search query backends and helper functions

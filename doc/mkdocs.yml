@@ -33,6 +33,7 @@ pages:
       - Form helpers: reference/form_templatetags.md
       - Javascript helpers: reference/javascript_helpers.md
       - Schemas: reference/schemas.md
+      - Search Queries: reference/search_queries.md
 
 theme: mkdocs
 theme: cerulean
