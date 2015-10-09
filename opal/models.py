@@ -2,7 +2,9 @@
 OPAL Models!
 """
 import collections
+import datetime
 import json
+import random
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -11,6 +13,7 @@ from django.contrib.contenttypes import generic
 from django.dispatch import receiver
 from django.template import TemplateDoesNotExist
 from django.template.loader import select_template
+from django.utils import dateparse
 import reversion
 
 from opal.core import application, exceptions, lookuplists, plugins
@@ -18,9 +21,110 @@ from opal import managers
 from opal.utils import camelcase_to_underscore
 from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.subrecords import episode_subrecords, patient_subrecords
-from opal.models.mixins import UpdatesFromDictMixin
 
 app = application.get_app()
+
+class UpdatesFromDictMixin(object):
+
+    @classmethod
+    def _get_fieldnames_to_serialize(cls):
+        """
+        Return the list of field names we want to serialize.
+        """
+        fieldnames = [f.attname for f in cls._meta.fields]
+        for name, value in vars(cls).items():
+            if isinstance(value, ForeignKeyOrFreeText):
+                fieldnames.append(name)
+        # Sometimes FKorFT fields are defined on the parent now we have
+        # core archetypes - find those fields.
+        ftfk_fields = [f for f in fieldnames if f.endswith('_fk_id')]
+        for f in ftfk_fields:
+            if f[:-6] in fieldnames:
+                continue
+            fieldnames.append(f[:-6])
+        return fieldnames
+
+    @classmethod
+    def _get_fieldnames_to_extract(cls):
+        """
+        Return a list of fieldname to extract - which means dumping
+        PID fields.
+        """
+        fieldnames = cls._get_fieldnames_to_serialize()
+        if hasattr(cls, 'pid_fields'):
+            for fname in cls.pid_fields:
+                if fname in fieldnames:
+                    fieldnames.remove(fname)
+        return fieldnames
+
+    @classmethod
+    def _get_field_type(cls, name):
+        try:
+            return type(cls._meta.get_field_by_name(name)[0])
+        except models.FieldDoesNotExist:
+            pass
+
+        # TODO: Make this dynamic
+        if name in ['patient_id', 'episode_id', 'gp_id', 'nurse_id']:
+            return models.ForeignKey
+
+        try:
+            
+            value = getattr(cls, name)
+            if isinstance(value, ForeignKeyOrFreeText):
+                return ForeignKeyOrFreeText
+            
+        except KeyError:
+            pass
+
+        raise Exception('Unexpected fieldname: %s' % name)
+
+    @classmethod
+    def get_field_type_for_consistency_token(cls):
+        return 'token'
+
+    def set_consistency_token(self):
+        self.consistency_token = '%08x' % random.randrange(16**8)
+
+    def update_from_dict(self, data, user):
+        if self.consistency_token:
+            try:
+                consistency_token = data.pop('consistency_token')
+            except KeyError:
+                raise exceptions.APIError('Missing field (consistency_token)')
+
+            if consistency_token != self.consistency_token:
+                raise exceptions.ConsistencyError
+
+        fields = set(self._get_fieldnames_to_serialize())
+
+        unknown_fields = set(data.keys()) - fields
+        if unknown_fields:
+            raise exceptions.APIError(
+                'Unexpected fieldname(s): %s' % list(unknown_fields))
+
+        for name, value in data.items():
+            if name.endswith('_fk_id'):
+                if name[:-6] in fields:
+                    continue
+            if name.endswith('_ft'):
+                if name[:-3] in fields:
+                    continue
+
+            if name == 'consistency_token':
+                continue # shouldn't be needed - Javascripts bug?
+            setter = getattr(self, 'set_' + name, None)
+            if setter is not None:
+                setter(value, user)
+            else:
+                if value and self._get_field_type(name) == models.fields.DateField:
+                    value = datetime.datetime.strptime(value, '%Y-%m-%d').date()
+                if value and self._get_field_type(name) == models.fields.DateTimeField:
+                    value = dateparse.parse_datetime(value)
+                setattr(self, name, value)
+
+        self.set_consistency_token()
+        self.save()
 
 
 class Filter(models.Model):
