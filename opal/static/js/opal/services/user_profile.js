@@ -28,6 +28,7 @@ angular.module('opal.services')
                 }
                 return true;
             }
+
         };
 
         var deferred = $q.defer();
