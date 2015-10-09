@@ -52,3 +52,36 @@ Keywords:
 * `show`  A string that contains an Angular expression for the ng-show directive
 * `hide`  A string that contains an Angular expression for the ng-hide directive
 * `lookuplist` an Angular expression that evaluates to an array containing the radio values
+
+### {% select ... %}
+
+Generates an inline select input
+
+Keywords: 
+
+* `label` The Label with which to describe this input
+* `model` The model which we are editing (This is a string that references an in-scope Angular variable)
+* `show`  A string that contains an Angular expression for the ng-show directive
+* `hide`  A string that contains an Angular expression for the ng-hide directive
+* `lookuplist` an Angular expression that evaluates to an array containing the radio values
+* `other` A boolean parameter that if true, provides a free text option when 'Other' is selected
+* `help` a template to use as the contents of a help popover
+
+### {% textarea ... %}
+
+Generates an inline textarea input
+
+Keywords: 
+
+* `label` The Label with which to describe this input
+* `model` The model which we are editing (This is a string that references an in-scope Angular variable)
+* `show`  A string that contains an Angular expression for the ng-show directive
+* `hide`  A string that contains an Angular expression for the ng-hide directive
+
+
+### {% icon "icon-name" %}
+
+We assume that the icon is one of the available glyphicon or Font Awesome icons.
+
+    {% icon "fa-user-md" %}
+

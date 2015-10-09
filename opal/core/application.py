@@ -38,20 +38,6 @@ class OpalApplication(object):
             "js/angular-strap-2.3.1/modules/typeahead.js",
             "js/angular-strap-2.3.1/modules/typeahead.tpl.js",
 
-            # "js/angular-strap-2.0.3/modules/tooltip.js",
-            # "js/angular-strap-2.0.3/modules/tooltip.tpl.js",
-            # "js/angular-strap-2.0.3/modules/popover.js",
-            # "js/angular-strap-2.0.3/modules/popover.tpl.js",
-            # "js/angular-strap-2.0.3/modules/dimensions.js",
-            # "js/angular-strap-2.0.3/modules/parse-options.js",
-            # "js/angular-strap-2.0.3/modules/date-parser.js",
-            # "js/angular-strap-2.0.3/modules/datepicker.js",
-            # "js/angular-strap-2.0.3/modules/datepicker.tpl.js",
-            # "js/angular-strap-2.0.3/modules/timepicker.js",
-            # "js/angular-strap-2.0.3/modules/timepicker.tpl.js",
-            # "js/angular-strap-2.0.3/modules/typeahead.js",
-            # "js/angular-strap-2.0.3/modules/typeahead.tpl.js",
-
             "js/bower_components/ment.io/dist/mentio.js",
             "js/bower_components/ment.io/dist/templates.js",
 
