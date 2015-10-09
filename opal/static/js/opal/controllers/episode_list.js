@@ -434,6 +434,8 @@ angular.module('opal.controllers').controller(
 		    var episode = getEpisode(rix);
 		    var item;
 
+            if(!profile.can_edit(columnName)){ return false };
+
             if(columnName == 'demographics' && !profile.can_see_pid()){
                 return false;
             }
