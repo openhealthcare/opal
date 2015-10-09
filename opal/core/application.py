@@ -82,7 +82,6 @@ class OpalApplication(object):
             "js/opal/controllers_module.js",
             "js/opal/controllers/episode_list.js",
             "js/opal/controllers/episode_detail.js",
-            "js/opal/controllers/patient_notes.js",
             "js/opal/controllers/hospital_number.js",
             "js/opal/controllers/add_episode.js",
             "js/opal/controllers/reopen_episode.js",
