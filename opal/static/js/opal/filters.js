@@ -29,6 +29,11 @@ filters.filter('shortDate', function(){
             return
         }
         var d = moment(input)
+
+				if(!d.isValid()){
+						d = moment(input, 'DD/MM/YYYY');
+				}
+
         if (d.year() <= 2000) {
             // if the date was before 1/1/2001,
             // show the full year
