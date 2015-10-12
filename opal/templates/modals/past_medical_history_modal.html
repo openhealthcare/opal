@@ -1,28 +1,10 @@
 {% extends 'modal_base.html' %}
+{% load forms %}
 {% block icon %}<i class="fa fa-history"></i>{% endblock %}
 {% block modal_body %}
   <form class="form-horizontal">
-    <div class="form-group">
-      <label class="control-label col-sm-3">Condition</label>
-      <div class="col-sm-8">
-	<input class="form-control" type="text"
-               ng-model="editing.condition"
-               ng-options="c for c in condition_list"
-               bs-typeahead
-               autofocus>
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="control-label col-sm-3">Year</label>
-      <div class="col-sm-8">
-	<input class="form-control" type="text" ng-model="editing.year">
-      </div>
-    </div>
-    <div class="form-group">
-      <label class="control-label col-sm-3">Details</label>
-      <div class="col-sm-8">
-	<input class="form-control" type="text" ng-model="editing.details">
-      </div>
-    </div>
+    {% input autofocus label="Condition" model="editing.condition" lookuplist="condition_list" %}
+    {% input label="Year" model="editing.year" %}
+    {% input label="Details" model="editing.details" %}
   </form>
 {% endblock %}

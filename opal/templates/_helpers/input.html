@@ -11,7 +11,7 @@
            {% for d in directives %}{{ d }}{% endfor %}
            {% if lookuplist %}
              bs-typeahead
-             ng-options="i for i in {{ lookuplist }}"
+             bs-options="i for i in {{ lookuplist }}"
            {% endif %}
            name="{{ modelname }}"
            {% if required %}

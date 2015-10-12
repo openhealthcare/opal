@@ -1,3 +1,12 @@
+### 0.4.3 (Minor release)
+
+Refactors opal.models to be a models.py file rather than a package.
+Adds several improvements to forms helpers -> Help argument, other argument to select.
+
+Updates dependency graph:
+
+* Angular-strap -> 2.3.1
+
 ### 0.4.2 (Minor release)
 
 Upgrades dependency graph:
