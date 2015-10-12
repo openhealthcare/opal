@@ -64,6 +64,32 @@ class PatientSummary(object):
         return result
 
 
+def episodes_for_user(episodes, user):
+    """
+    Given an iterable of EPISODES and a USER, return a filtered
+    list of episodes that this user has the permissions to know
+    about.
+    """
+    teams = models.Team.restricted_teams(user)
+    allowed_episodes = []
+    for e in episodes:
+        allowed = False
+        if e.tagging_set.count() == 0:
+            allowed_episodes.append(e)
+            continue
+        for tagging in e.tagging_set.all():
+            if not tagging.team.restricted:
+                allowed = True
+                break
+            elif tagging.team in teams:
+                allowed = True
+                break
+
+        if allowed:
+            allowed_episodes.append(e)
+    return allowed_episodes
+
+
 class QueryBackend(object):
     """
     Base class for search implementations to inherit from
@@ -241,11 +267,10 @@ class DatabaseQuery(QueryBackend):
         Given an iterable of EPISODES, return those for which our
         current restricted only user is allowed to know about.
         """
-        teams = models.Team.restricted_teams(self.user)
+        teams = models.Team.restricted_teams(user)
         allowed_episodes = []
         for e in episodes:
             for tagging in e.tagging_set.all():
-
                 if tagging.team in teams:
                     allowed_episodes.append(e)
                     break
@@ -258,24 +283,7 @@ class DatabaseQuery(QueryBackend):
         are not only members of restricted teams that our user is not
         allowed to know about.
         """
-        teams = models.Team.restricted_teams(self.user)
-        allowed_episodes = []
-        for e in episodes:
-            allowed = False
-            if e.tagging_set.count() == 0:
-                allowed_episodes.append(e)
-                continue
-            for tagging in e.tagging_set.all():
-                if not tagging.team.restricted:
-                    allowed = True
-                    break
-                elif tagging.team in teams:
-                    allowed = True
-                    break
-
-            if allowed:
-                allowed_episodes.append(e)
-        return allowed_episodes
+        return episodes_for_user(episodes, self.user)
 
     def _episodes_without_restrictions(self):
         all_matches = [(q['combine'], self.episodes_for_criteria(q))
