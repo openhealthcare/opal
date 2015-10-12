@@ -44,15 +44,16 @@
   <div class="panel-heading">
     <b>
       <i class="fa fa-user"></i>
-      [[ episode.demographics[0].name ]]
+      <span ng-show="profile.can_see_pid()">
+        [[ episode.demographics[0].name ]]
+      </span>
     </b>
     {% if request.user.is_staff %}
-    <span class="pull-right">
+    <br>
       <a href="/adminopal/episode/[[ episode.id ]]/" target="_blank">
         <i class="fa fa-cogs"></i>
         Admin
       </a>
-    </span>
     {% endif %}
   </div>
   <ul class="list-group">

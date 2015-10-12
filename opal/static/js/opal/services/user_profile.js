@@ -28,6 +28,17 @@ angular.module('opal.services')
                 }
                 return true;
             }
+
+            this.can_edit = function(record_name){
+                // This is non-scalable.
+                if(this.has_role('scientist')){
+                    if(['lab_test', 'lab_specimin'].indexOf(record_name) != -1){
+                        return false;
+                    }
+                }
+                return true;
+            }
+
         };
 
         var deferred = $q.defer();
