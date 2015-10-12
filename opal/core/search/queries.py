@@ -88,7 +88,6 @@ def episodes_for_user(episodes, user):
         if allowed:
             allowed_episodes.append(e)
     return allowed_episodes
->>>>>>> v0.4.3
 
 
 class QueryBackend(object):
