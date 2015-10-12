@@ -15,6 +15,7 @@ module.exports = function(config){
 
             'angular-ui-utils-0.1.0/ui-utils.js',
             'angular-ui-bootstrap-0.10.0/ui-bootstrap-tpls.js',
+
             'angular-strap-2.3.1/modules/tooltip.js',
             'angular-strap-2.3.1/modules/tooltip.tpl.js',
             'angular-strap-2.3.1/modules/dimensions.js',
