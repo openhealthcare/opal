@@ -267,7 +267,7 @@ class DatabaseQuery(QueryBackend):
         Given an iterable of EPISODES, return those for which our
         current restricted only user is allowed to know about.
         """
-        teams = models.Team.restricted_teams(user)
+        teams = models.Team.restricted_teams(self.user)
         allowed_episodes = []
         for e in episodes:
             for tagging in e.tagging_set.all():
