@@ -67,6 +67,14 @@ def _input(*args, **kwargs):
         'enter'     : enter
     }
 
+@register.inclusion_tag('_helpers/checkbox.html')
+def checkbox(*args, **kwargs):
+    return {
+        'label'     : kwargs.pop('label', None),
+        'model'     : kwargs.pop('model', None),
+        'disabled'  : kwargs.pop('disabled', None)
+    }
+
 @register.inclusion_tag('_helpers/input.html')
 def input(*args, **kwargs):
     """
@@ -90,6 +98,18 @@ def datepicker(*args, **kwargs):
         ]
     return _input(*[a for a in args] + ["bs-datepicker"], **kwargs)
 
+@register.inclusion_tag('_helpers/radio.html')
+def radio(*args, **kwargs):
+    visibility = _visibility_clauses(kwargs.pop('show', None),
+                                     kwargs.pop('hide', None))
+    
+    return {
+        'label'     : kwargs.pop('label', None),
+        'lookuplist': kwargs.pop('lookuplist', None),
+        'model'     : kwargs.pop('model', None),
+        'visibility': visibility
+    }
+
 @register.inclusion_tag('_helpers/select.html')
 def select(*args, **kwargs):
     """
@@ -101,19 +121,32 @@ def select(*args, **kwargs):
     - model: Angular model
     - label: User visible label
     - lookuplist: Name or value of the lookuplist
+    - other: (False) Boolean to indicate that we should allow free text if the item is not in the list
     """
     model = kwargs.pop('model')
     label = kwargs.pop('label')
     lookuplist = kwargs.pop('lookuplist', None)
+    other = kwargs.pop('other', False)
+    help_template = kwargs.pop('help', None)
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
+    if lookuplist is None:
+        other_show = None
+    else:
+        other_show = "{1} != null && {0}.indexOf({1}) == -1".format(lookuplist, model)
+    other_label = '{0} Other'.format(label)
+        
     return {
-        'label'     : label,
-        'model'     : model,
-        'directives': args,
-        'lookuplist': lookuplist,
-        'visibility': visibility
-    }
+        'label'        : label,
+        'model'        : model,
+        'directives'   : args,
+        'lookuplist'   : lookuplist,
+        'visibility'   : visibility,
+        'help_template': help_template,
+        'other'        : other,
+        'other_show'   : other_show,
+        'other_label'  : other_label
+   }
 
 @register.inclusion_tag('_helpers/textarea.html')
 def textarea(*args, **kwargs):
@@ -123,26 +156,6 @@ def textarea(*args, **kwargs):
         'macros'    : kwargs.pop('macros', False),
         'label'     : kwargs.pop('label', None),
         'model'     : kwargs.pop('model', None),    
-        'visibility': visibility
-    }
-
-@register.inclusion_tag('_helpers/checkbox.html')
-def checkbox(*args, **kwargs):
-    return {
-        'label'     : kwargs.pop('label', None),
-        'model'     : kwargs.pop('model', None),
-        'disabled'  : kwargs.pop('disabled', None)
-    }
-
-@register.inclusion_tag('_helpers/radio.html')
-def radio(*args, **kwargs):
-    visibility = _visibility_clauses(kwargs.pop('show', None),
-                                     kwargs.pop('hide', None))
-    
-    return {
-        'label'     : kwargs.pop('label', None),
-        'lookuplist': kwargs.pop('lookuplist', None),
-        'model'     : kwargs.pop('model', None),
         'visibility': visibility
     }
 

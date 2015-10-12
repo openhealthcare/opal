@@ -8,6 +8,7 @@ var controllers = OPAL.module('opal.controllers', [
     'mgcrea.ngStrap.helpers.dimensions',
     'mgcrea.ngStrap.helpers.parseOptions',
     'mgcrea.ngStrap.tooltip',
+    'mgcrea.ngStrap.popover',
     'mgcrea.ngStrap.helpers.dateParser',
     'mgcrea.ngStrap.datepicker',
     'mgcrea.ngStrap.timepicker',

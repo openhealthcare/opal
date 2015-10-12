@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 from django.conf import settings
-import opal.models.mixins
+import opal.models
 
 
 class Migration(migrations.Migration):
@@ -188,7 +188,7 @@ class Migration(migrations.Migration):
             ],
             options={
             },
-            bases=(opal.models.mixins.UpdatesFromDictMixin, models.Model),
+            bases=(opal.models.UpdatesFromDictMixin, models.Model),
         ),
         migrations.CreateModel(
             name='Ethnicity',
