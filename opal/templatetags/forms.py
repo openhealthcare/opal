@@ -41,6 +41,7 @@ def _input(*args, **kwargs):
     unit = kwargs.pop('unit', None)
     data = kwargs.pop('data', [])
     enter = kwargs.pop('enter', None)
+    maxlength = kwargs.pop('maxlength', None)
     
     if required:
         if not formname:
@@ -64,7 +65,8 @@ def _input(*args, **kwargs):
         'formname'  : formname,
         'unit'      : unit,
         'data'      : data,
-        'enter'     : enter
+        'enter'     : enter,
+        'maxlength' : maxlength
     }
 
 @register.inclusion_tag('_helpers/checkbox.html')

@@ -17,14 +17,16 @@
 <div class="modal-footer">
   {% block pop_buttons %}{% endblock %}
   {% block modal_save %}
-  <button class="btn btn-primary" ng-click="save('save')">
+  <button class="btn btn-primary" ng-click="save('save')"
+          ng-disabled="form.$invalid">
     <i class="fa fa-save"></i>
     Save
   </button>
   {% endblock %}
   {% if not single %}
   {% block modal_another %}
-  <button class="btn btn btn-primary" ng-click="save('save-and-add-another')">
+  <button class="btn btn btn-primary" ng-click="save('save-and-add-another')"
+          ng-disabled="form.$invalid">
     <i class="fa fa-save"></i>
     Save & add another
   </button>
