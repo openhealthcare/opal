@@ -10,6 +10,12 @@ from opal.core.test import OpalTestCase
 
 from opal.models import UpdatesFromDictMixin
 
+
+class DatingModel(UpdatesFromDictMixin, models.Model):
+    datetime = models.DateTimeField()
+    consistency_token = None
+
+
 class UpdatableModelInstance(UpdatesFromDictMixin, models.Model):
     foo = models.CharField(max_length=200, blank=True, null=True)
     bar = models.CharField(max_length=200, blank=True, null=True)
@@ -20,8 +26,6 @@ class UpdatableModelInstance(UpdatesFromDictMixin, models.Model):
 
 class UpdatesFromDictMixin(OpalTestCase):
     def setUp(self):
-
-
         self.model = UpdatableModelInstance
 
     def test_get_fieldnames_to_serialize(self):
@@ -33,10 +37,6 @@ class UpdatesFromDictMixin(OpalTestCase):
         self.assertEqual(expected, self.model._get_fieldnames_to_extract())
 
     def test_update_from_dict_datetime(self):
-        class DatingModel(UpdatesFromDictMixin, models.Model):
-            datetime          = models.DateTimeField()
-            consistency_token = None
-
         data = {'datetime': '1953-11-04 12:20+0000'}
         expected = datetime.datetime(1953, 11, 4, 12, 20, 0, 0, pytz.UTC)
         instance = DatingModel()
