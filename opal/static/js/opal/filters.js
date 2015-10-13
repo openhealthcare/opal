@@ -29,6 +29,11 @@ filters.filter('shortDate', function(){
             return
         }
         var d = moment(input)
+
+				if(!d.isValid()){
+						d = moment(input, 'DD/MM/YYYY');
+				}
+
         if (d.year() <= 2000) {
             // if the date was before 1/1/2001,
             // show the full year
@@ -42,7 +47,17 @@ filters.filter('shortDate', function(){
         // show the year as two digits
         return d.format('DD/MM/YY')
     }
-})
+});
+
+filters.filter('momentDateFormat', function(){
+	return function(input, format){
+			if(!input){
+					return
+			}
+			var d = moment(input)
+			return d.format(format)
+	}
+});
 
 filters.filter('hhmm', function(){
     return function(input, change){
