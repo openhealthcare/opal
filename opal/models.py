@@ -26,6 +26,7 @@ from opal.core.subrecords import episode_subrecords, patient_subrecords
 
 app = application.get_app()
 
+
 class UpdatesFromDictMixin(object):
 
     @classmethod
@@ -117,7 +118,7 @@ class UpdatesFromDictMixin(object):
                 continue # shouldn't be needed - Javascripts bug?
             setter = getattr(self, 'set_' + name, None)
             if setter is not None:
-                setter(value, user)
+                setter(value, user, data)
             else:
                 if value and self._get_field_type(name) == models.fields.DateField:
                     value = datetime.datetime.strptime(value, '%Y-%m-%d').date()
