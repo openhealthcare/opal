@@ -107,7 +107,9 @@ class UpdatesFromDictMixin(object):
             raise exceptions.APIError(
                 'Unexpected fieldname(s): %s' % list(unknown_fields))
 
-        for name, value in data.items():
+        for name in fields:
+            value = data.get(name, None)
+
             if name.endswith('_fk_id'):
                 if name[:-6] in fields:
                     continue
@@ -121,11 +123,12 @@ class UpdatesFromDictMixin(object):
             if setter is not None:
                 setter(value, user, data)
             else:
-                if value and self._get_field_type(name) == models.fields.DateField:
-                    value = datetime.datetime.strptime(value, '%Y-%m-%d').date()
-                if value and self._get_field_type(name) == models.fields.DateTimeField:
-                    value = dateparse.parse_datetime(value)
-                setattr(self, name, value)
+                if name in data:
+                    if value and self._get_field_type(name) == models.fields.DateField:
+                        value = datetime.datetime.strptime(value, '%Y-%m-%d').date()
+                    if value and self._get_field_type(name) == models.fields.DateTimeField:
+                        value = dateparse.parse_datetime(value)
+                    setattr(self, name, value)
 
         self.set_consistency_token()
         self.save()
@@ -333,7 +336,7 @@ class TrackedModel(models.Model):
     class Meta:
         abstract = True
 
-    def set_created_by_id(self, incoming_value, user):
+    def set_created_by_id(self, incoming_value, user, *args, **kwargs):
         if incoming_value:
             value = User.objects.get(id=incoming_value)
         else:
@@ -342,7 +345,7 @@ class TrackedModel(models.Model):
         if not self.id:
             self.created_by = value
 
-    def set_updated_by_id(self, incoming_value, user):
+    def set_updated_by_id(self, incoming_value, user, *args, **kwargs):
         if self.id:
             if incoming_value:
                 value = User.objects.get(id=incoming_value)
@@ -351,14 +354,14 @@ class TrackedModel(models.Model):
 
             self.updated_by = value
 
-    def set_updated(self, incoming_value, user):
+    def set_updated(self, incoming_value, user, *args, **kwargs):
         if self.id:
             if incoming_value:
                 self.updated = dateutil.parser.parse(incoming_value)
             else:
                 self.updated = timezone.now()
 
-    def set_created(self, incoming_value, user):
+    def set_created(self, incoming_value, user, *args, **kwargs):
         if not self.id:
             if incoming_value:
                 self.created = dateutil.parser.parse(incoming_value)
