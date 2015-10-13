@@ -11,9 +11,9 @@ def _visibility_clauses(show, hide):
     construct the angular directives to insert into the template.
     """
     visibility = None
-    if hide: 
+    if hide:
         visibility = 'ng-hide="{0}"'.format(hide)
-    if show: 
+    if show:
         show = ' ng-show="{0}"'.format(show)
         if visibility:
             visibility += show
@@ -41,17 +41,17 @@ def _input(*args, **kwargs):
     unit = kwargs.pop('unit', None)
     data = kwargs.pop('data', [])
     enter = kwargs.pop('enter', None)
-    
+
     if required:
         if not formname:
             raise ValueError('You must pass formname if you pass required')
-        
+
     if icon:
         icon = _icon_classes(icon)
-        
+
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
-    
+
     return {
         'label'     : label,
         'model'     : model,
@@ -80,7 +80,7 @@ def input(*args, **kwargs):
     """
     Render a text input
 
-    Kwargs: 
+    Kwargs:
     - hide : Condition to hide
     - show : Condition to show
     - model: Angular model
@@ -102,7 +102,7 @@ def datepicker(*args, **kwargs):
 def radio(*args, **kwargs):
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
-    
+
     return {
         'label'     : kwargs.pop('label', None),
         'lookuplist': kwargs.pop('lookuplist', None),
@@ -115,7 +115,7 @@ def select(*args, **kwargs):
     """
     Render a dropdown element
 
-    Kwargs: 
+    Kwargs:
     - hide : Condition to hide
     - show : Condition to show
     - model: Angular model
@@ -128,6 +128,7 @@ def select(*args, **kwargs):
     lookuplist = kwargs.pop('lookuplist', None)
     other = kwargs.pop('other', False)
     help_template = kwargs.pop('help', None)
+    placeholder = kwargs.pop("placeholder", None)
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
     if lookuplist is None:
@@ -135,7 +136,7 @@ def select(*args, **kwargs):
     else:
         other_show = "{1} != null && {0}.indexOf({1}) == -1".format(lookuplist, model)
     other_label = '{0} Other'.format(label)
-        
+
     return {
         'label'        : label,
         'model'        : model,
@@ -155,7 +156,7 @@ def textarea(*args, **kwargs):
     return {
         'macros'    : kwargs.pop('macros', False),
         'label'     : kwargs.pop('label', None),
-        'model'     : kwargs.pop('model', None),    
+        'model'     : kwargs.pop('model', None),
         'visibility': visibility
     }
 

@@ -8,9 +8,9 @@
   <div class="col-sm-8">
     {% if search-select %}
       <ui-select ng-model="{{ model }}" theme="select2" style="min-width: 300px;">
-        <ui-select-match placeholder="Select a person in the list or search his name/age...">{{$select.selected.name}}</ui-select-match>
+        <ui-select-match placeholder="{{ placeholder }}">[[ $select.selected.name ]]</ui-select-match>
         <ui-select-choices repeat="i in {{ lookuplist }}">
-          <div ng-bind-html="person.name | highlight: $select.search"></div>
+          <div ng-bind-html="i.name | highlight: $select.search"></div>
         </ui-select-choices>
       </ui-select>
     {% else %}
