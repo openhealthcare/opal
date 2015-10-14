@@ -6,13 +6,14 @@
     {{ label }}
   </label>
   <div class="col-sm-8">
-    {% if search-select %}
-      <ui-select ng-model="{{ model }}" theme="select2" style="min-width: 300px;">
-        <ui-select-match placeholder="{{ placeholder }}">[[ $select.selected.name ]]</ui-select-match>
-        <ui-select-choices repeat="i in {{ lookuplist }}">
-          <div ng-bind-html="i.name | highlight: $select.search"></div>
-        </ui-select-choices>
-      </ui-select>
+
+    {% if search_select %}
+    <ui-select ng-model="{{ model }}" theme="bootstrap" style="min-width: 300px;" reset-search-input="false">
+      <ui-select-match {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}>[[ $select.selected ]]</ui-select-match>
+      <ui-select-choices repeat="i in {{ lookuplist }} | filter:$select.search">
+        <div ng-bind-html="i | highlight: $select.search"></div>
+      </ui-select-choices>
+    </ui-select>
     {% else %}
       <select class="form-control" ng-model="{{ model }}">
         <option value="">---------</option>

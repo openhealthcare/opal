@@ -129,6 +129,7 @@ def select(*args, **kwargs):
     other = kwargs.pop('other', False)
     help_template = kwargs.pop('help', None)
     placeholder = kwargs.pop("placeholder", None)
+    search_select = kwargs.pop("search_select", None)
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
     if lookuplist is None:
@@ -138,6 +139,8 @@ def select(*args, **kwargs):
     other_label = '{0} Other'.format(label)
 
     return {
+        'placeholder': placeholder,
+        'search_select': search_select,
         'label'        : label,
         'model'        : model,
         'directives'   : args,
