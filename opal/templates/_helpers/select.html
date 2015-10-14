@@ -10,7 +10,7 @@
     {% if search_select %}
     <ui-select ng-model="{{ model }}" theme="bootstrap" style="min-width: 300px;" reset-search-input="false">
       <ui-select-match {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}>[[ $select.selected ]]</ui-select-match>
-      <ui-select-choices repeat="i in {{ lookuplist }} | filter:$select.search">
+      <ui-select-choices repeat="i in {{ lookuplist }} | filter:$select.search track by $index">
         <div ng-bind-html="i | highlight: $select.search"></div>
       </ui-select-choices>
     </ui-select>
