@@ -30,7 +30,11 @@ pages:
       - Subrecords: reference/subrecords.md
       - reference/team.md
       - OpalApplication: reference/opal_application.md
+      - reference/episode_service.md
+      - reference/item_service.md
+      - reference/patient_summary_service.md
       - Form helpers: reference/form_templatetags.md
+      - reference/record_panel_templatetag.md
       - Javascript helpers: reference/javascript_helpers.md
       - Schemas: reference/schemas.md
       - Search Queries: reference/search_queries.md

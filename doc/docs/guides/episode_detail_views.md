@@ -46,6 +46,5 @@ models.
 The above code will render a panel for your episode, including the `Subrecord` detail template for
 each instance, and allowing editing, deletion and creation of instances of your `Subrecord`. 
 
-The record panel template expects the relevant Angular `$scope` to have `newNamedItem(name, index)`, 
-`editNamedItem(name, index)` and `deleteNamedItem(name, index)` methods implemented. Default 
-implementations of these are available from the `EpisodeDetailMixin`.
+You may also consult the Detailed [reference documentation](reference/record_panel_templatetag.md) for 
+Record Panels.

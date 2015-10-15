@@ -56,6 +56,33 @@ Keywords:
 * `shallow` Boolean to indicate whether we want just this episode, or also a sorted set of 
 previous and subsequent episodes
 
+#### Episode.get_tag_names
+
+
+Arguments:
+
+* `user` The user for whom we want the tag names.
+
+Return the current active tag names for this Episode as strings.
+
+    episode.get_tag_names(user)
+    # ['mine', 'infectioncontrol']
+
+
+#### Episode.set_tag_names
+
+
+Arguments:
+
+* `tag_names` The list of tags that we want to be active for this Episode.
+* `user` The user for whom we want the tag names.
+
+Return the current active tag names for this Episode as strings.
+
+    episode.set_tag_names(['mine', 'infectioncontrol'], user)
+    
+
+
 ### Manager
 
 The custom manager for Episodes has the following methods:
