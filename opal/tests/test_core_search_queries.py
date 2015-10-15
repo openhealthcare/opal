@@ -86,6 +86,7 @@ class DatabaseQueryTestCase(OpalTestCase):
         query = queries.DatabaseQuery(self.user, self.name_criteria)
         summaries = query.get_patient_summaries()
         expected = [{
+            'id': self.patient.id,
             'count': 1,
             'hospital_number': u'0',
             'date_of_birth': self.DATE_OF_BIRTH,

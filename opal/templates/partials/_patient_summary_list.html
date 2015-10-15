@@ -21,7 +21,10 @@
                     </span>
                 </div>
                 <div>
-                    [[ result.count ]] Episode<span ng-show="result.count > 1">s</span> ([[ result.categories ]]) [[ result.years ]] <a class="orange-link" ng-href="[[ result.patientNotesLink ]]">Patient Notes</a>
+                    [[ result.count ]] Episode<span ng-show="result.count > 1">s</span> ([[ result.categories ]]) [[ result.years ]]
+                    <span ng-show="result.canViewPatientNotes">
+                        <a class="orange-link" ng-href="[[ result.patientNotesLink ]]">Haematology-Consult</a>
+                    </span>
                 </div>
             </li>
         </ul>

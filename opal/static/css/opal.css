@@ -23,6 +23,10 @@ a {
 
 p a, .orange-link { color: #f76c51; }
 
+.white-text{
+  color: #fff;
+}
+
 .navbar-default .navbar-nav > .active > a,
 .navbar-default .navbar-nav > .active > a:focus,
 .navbar-default .navbar-nav > li > a:hover{
