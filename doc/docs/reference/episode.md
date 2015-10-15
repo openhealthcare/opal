@@ -56,7 +56,7 @@ Keywords:
 * `shallow` Boolean to indicate whether we want just this episode, or also a sorted set of 
 previous and subsequent episodes
 
-##### Episode.get_tag_names
+#### Episode.get_tag_names
 
 
 Arguments:
@@ -69,7 +69,7 @@ Return the current active tag names for this Episode as strings.
     # ['mine', 'infectioncontrol']
 
 
-##### Episode.set_tag_names
+#### Episode.set_tag_names
 
 
 Arguments:
