@@ -25,7 +25,15 @@
            {% if enter %}
            ng-keypress="$event.keyCode == 13 && {{ enter }}"
            {% endif %}
+           {% if maxlength %}
+           ng-maxlength="{{ maxlength }}"
+           {% endif %}
            />
+    {% if maxlength %}
+        <span class="help-block" ng-show="form.{{ modelname }}.$invalid">
+          Maximum length is {{ maxlength }}
+        </span>
+    {% endif %}
     {% if required %}
       <span ng-show="{{ formname }}.{{ modelname }}.$dirty && {{ formname }}.{{ modelname }}.$error.required">
         {{ required }}

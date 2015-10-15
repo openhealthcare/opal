@@ -40,6 +40,7 @@ Keywords:
 * `lookuplist` an Angular expression that evaluates to an array containing the lookuplist values
 * `required` Label to show when we're required
 * `enter` expression to evaluate if the user presses return when in this input
+* `maxlength` maximum number of characters for this input. Will render the form invalid and display help text if exceeded.
 
 ### {% radio ... %}
 
