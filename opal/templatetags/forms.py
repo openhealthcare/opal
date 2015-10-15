@@ -37,7 +37,7 @@ def _input(*args, **kwargs):
     label = kwargs.pop('label')
     lookuplist = kwargs.pop('lookuplist', None)
     icon = kwargs.pop('icon', None)
-    required = kwargs.pop('required', None)
+    required = kwargs.pop('required', False)
     formname = kwargs.pop('formname', None)
     unit = kwargs.pop('unit', None)
     data = kwargs.pop('data', [])
@@ -62,7 +62,7 @@ def _input(*args, **kwargs):
         'lookuplist': lookuplist,
         'visibility': visibility,
         'icon'      : icon,
-        'required'  : required,
+        'required'  : int(required),
         'formname'  : formname,
         'unit'      : unit,
         'data'      : data,
@@ -135,6 +135,13 @@ def select(*args, **kwargs):
     search_select = kwargs.pop("search_select", None)
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
+
+    name = kwargs.pop('name', None)
+
+    if name is None:
+        name = "".join(label.title().split(" "))
+        name = name[0].lower() + name[1:]
+
     if lookuplist is None:
         other_show = None
     else:
@@ -144,16 +151,17 @@ def select(*args, **kwargs):
     return {
         'placeholder': placeholder,
         'search_select': search_select,
-        'label'        : label,
-        'model'        : model,
-        'directives'   : args,
-        'lookuplist'   : lookuplist,
-        'visibility'   : visibility,
+        'label': label,
+        'model': model,
+        'directives': args,
+        'lookuplist': lookuplist,
+        'visibility': visibility,
         'help_template': help_template,
-        'other'        : other,
-        'other_show'   : other_show,
-        'other_label'  : other_label
-   }
+        'other': other,
+        'name': name,
+        'other_show': other_show,
+        'other_label': other_label
+    }
 
 @register.inclusion_tag('_helpers/textarea.html')
 def textarea(*args, **kwargs):

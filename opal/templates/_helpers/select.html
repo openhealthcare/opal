@@ -8,18 +8,23 @@
   <div class="col-sm-8">
 
     {% if search_select %}
-    <ui-select ng-model="{{ model }}" theme="bootstrap" style="min-width: 300px;" reset-search-input="false">
+    <ui-select name="{{ name }}" required="{{ required }}" ng-model="{{ model }}" theme="bootstrap" style="min-width: 300px;" reset-search-input="false">
       <ui-select-match {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}>[[ $select.selected ]]</ui-select-match>
       <ui-select-choices repeat="i in {{ lookuplist }} | filter:$select.search track by $index">
         <div ng-bind-html="i | highlight: $select.search"></div>
       </ui-select-choices>
     </ui-select>
     {% else %}
-      <select class="form-control" ng-model="{{ model }}">
+      <select name="{{ name }}" ng-required="{{ required }}" class="form-control" ng-model="{{ model }}">
         <option value="">---------</option>
         <option ng-repeat="i in {{ lookuplist }}">[[ i ]]</option>
         {% if other %}<option>Other</option>{% endif %}
       </select>
+    {% endif %}
+    {% if required %}
+      <span ng-show="{{ formname }}.{{ modelname }}.$dirty && {{ formname }}.{{ modelname }}.$error.required">
+        {{ required }}
+      </span>
     {% endif %}
     {% if help_template %}
     <p class="text-muted pointer"
@@ -27,6 +32,7 @@
        data-placement="bottom"
        data-auto-close="true"
        data-template-url="{{ help_template }}"
+       name="{{ model }}"
        bs-popover
        >
         <i class="fa fa-question-circle"></i>
