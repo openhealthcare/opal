@@ -363,8 +363,20 @@ table { font-size: 12px; }
 
 input.ng-invalid.ng-dirty { background-color : #fcc; }
 
+.errored-state input, .errored-state .ui-select-toggle{
+    background-color: #fcc;
+}
+
+.warning-state input, .warning-state .ui-select-toggle{
+    background-color: #FFF793;
+}
+
+.warning-state .checkbox label::before{
+    background-color: #FFF793;
+}
+
 #subtags {
-    margin-left: 304px;
+  margin-left: 304px;
 	border-bottom: none;
 }
 

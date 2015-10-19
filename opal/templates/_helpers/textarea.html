@@ -1,7 +1,8 @@
 <div class="form-group"      {% if visibility %} {{ visibility|safe }} {% endif %} >
   <label class="control-label col-sm-3">{{ label }}</label>
   <div class="col-sm-8">
-	<textarea class="form-control" ng-model="{{ model }}" rows="5"
+	<textarea class="form-control" {% if disabled %}ng-disabled="{{ disabled }}" {% endif %}
+              ng-model="{{ model }}" rows="5"
               {% if macros %}{% include 'partials/_mentio_edit_item.html' %}{% endif %}
               ></textarea>
   </div>

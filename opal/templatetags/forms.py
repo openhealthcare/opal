@@ -32,9 +32,22 @@ def _icon_classes(name):
     return name
 
 
+def extract_common_args(kwargs):
+    args = {
+        "model": kwargs.pop('model', None),
+        "label": kwargs.pop('label', None),
+    }
+
+    disabled = kwargs.pop('disabled', None)
+
+    if disabled:
+        args["disabled"] = disabled
+
+    return args
+
+
 def _input(*args, **kwargs):
-    model = kwargs.pop('model')
-    label = kwargs.pop('label')
+    ctx = extract_common_args(kwargs)
     lookuplist = kwargs.pop('lookuplist', None)
     icon = kwargs.pop('icon', None)
     required = kwargs.pop('required', False)
@@ -54,10 +67,8 @@ def _input(*args, **kwargs):
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
 
-    return {
-        'label'     : label,
-        'model'     : model,
-        'modelname' : model.replace('.', '_'),
+    ctx.update({
+        'modelname' : ctx["model"].replace('.', '_'),
         'directives': args,
         'lookuplist': lookuplist,
         'visibility': visibility,
@@ -68,15 +79,15 @@ def _input(*args, **kwargs):
         'data'      : data,
         'enter'     : enter,
         'maxlength' : maxlength
-    }
+    })
+
+    return ctx
+
 
 @register.inclusion_tag('_helpers/checkbox.html')
 def checkbox(*args, **kwargs):
-    return {
-        'label'     : kwargs.pop('label', None),
-        'model'     : kwargs.pop('model', None),
-        'disabled'  : kwargs.pop('disabled', None)
-    }
+    return extract_common_args(kwargs)
+
 
 @register.inclusion_tag('_helpers/input.html')
 def input(*args, **kwargs):
@@ -105,13 +116,15 @@ def datepicker(*args, **kwargs):
 def radio(*args, **kwargs):
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
+    ctx = extract_common_args(kwargs)
 
-    return {
-        'label'     : kwargs.pop('label', None),
+    ctx.update({
         'lookuplist': kwargs.pop('lookuplist', None),
-        'model'     : kwargs.pop('model', None),
         'visibility': visibility
-    }
+    })
+
+    return ctx
+
 
 @register.inclusion_tag('_helpers/select.html')
 def select(*args, **kwargs):
@@ -126,53 +139,57 @@ def select(*args, **kwargs):
     - lookuplist: Name or value of the lookuplist
     - other: (False) Boolean to indicate that we should allow free text if the item is not in the list
     """
-    model = kwargs.pop('model')
-    label = kwargs.pop('label')
+    ctx = extract_common_args(kwargs)
     lookuplist = kwargs.pop('lookuplist', None)
+    form_name = kwargs.pop('formname', None)
     other = kwargs.pop('other', False)
     help_template = kwargs.pop('help', None)
     placeholder = kwargs.pop("placeholder", None)
     search_select = kwargs.pop("search_select", None)
+    required = kwargs.pop('required', False)
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
 
-    name = kwargs.pop('name', None)
-
-    if name is None:
-        name = "".join(label.title().split(" "))
-        name = name[0].lower() + name[1:]
+    if required:
+        if not form_name:
+            raise ValueError('You must pass formname if you pass required')
 
     if lookuplist is None:
         other_show = None
     else:
-        other_show = "{1} != null && {0}.indexOf({1}) == -1".format(lookuplist, model)
-    other_label = '{0} Other'.format(label)
+        other_show = "{1} != null && {0}.indexOf({1}) == -1".format(lookuplist, ctx["model"])
+    other_label = '{0} Other'.format(ctx["label"])
 
-    return {
+    ctx.update({
         'placeholder': placeholder,
         'search_select': search_select,
-        'label': label,
-        'model': model,
+        'form_name': form_name,
         'directives': args,
         'lookuplist': lookuplist,
         'visibility': visibility,
         'help_template': help_template,
         'other': other,
-        'name': name,
+        'modelname': ctx["model"].replace('.', '_'),
+        'required': required,
         'other_show': other_show,
         'other_label': other_label
-    }
+    })
+
+    return ctx
 
 @register.inclusion_tag('_helpers/textarea.html')
 def textarea(*args, **kwargs):
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
-    return {
+
+    ctx = extract_common_args(kwargs)
+    ctx.update({
         'macros'    : kwargs.pop('macros', False),
-        'label'     : kwargs.pop('label', None),
-        'model'     : kwargs.pop('model', None),
         'visibility': visibility
-    }
+
+    })
+
+    return ctx
 
 @register.inclusion_tag('_helpers/icon.html')
 def icon(name):

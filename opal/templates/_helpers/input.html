@@ -28,6 +28,9 @@
            {% if maxlength %}
            ng-maxlength="{{ maxlength }}"
            {% endif %}
+           {% if disabled %}
+           ng-disabled="{{ disabled}}"
+           {% endif %}
            />
     {% if maxlength %}
         <span class="help-block" ng-show="form.{{ modelname }}.$invalid">

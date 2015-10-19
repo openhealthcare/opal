@@ -2,27 +2,27 @@
 <div class="form-group"
      {% if visibility %} {{ visibility|safe }} {% endif %}
      >
-  <label class="control-label col-sm-3">
-    {{ label }}
-  </label>
+    <span ng-class="{ 'errored-state': {{ form_name }}.{{ modelname }}.$dirty && !{{ form_name }}.{{ modelname }}.$valid }">
+    <label class="control-label col-sm-3">
+      {{ label }}
+    </label>
   <div class="col-sm-8">
-
     {% if search_select %}
-    <ui-select name="{{ name }}" required="{{ required }}" ng-model="{{ model }}" theme="bootstrap" style="min-width: 300px;" reset-search-input="false">
-      <ui-select-match {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}>[[ $select.selected ]]</ui-select-match>
-      <ui-select-choices repeat="i in {{ lookuplist }} | filter:$select.search track by $index">
-        <div ng-bind-html="i | highlight: $select.search"></div>
-      </ui-select-choices>
-    </ui-select>
+      <ui-select {% if disabled %}ng-disabled="{{ disabled }}" {% endif %}name="{{ modelname }}" required="{{ required }}" ng-model="{{ model }}" theme="bootstrap" style="min-width: 300px;" reset-search-input="false">
+        <ui-select-match {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}>[[ $select.selected ]]</ui-select-match>
+        <ui-select-choices repeat="i in {{ lookuplist }} | filter:$select.search track by $index">
+          <div ng-bind-html="i | highlight: $select.search"></div>
+        </ui-select-choices>
+      </ui-select>
     {% else %}
-      <select name="{{ name }}" ng-required="{{ required }}" class="form-control" ng-model="{{ model }}">
+      <select name="{{ modelname }}" ng-required="{{ required }}" class="form-control" ng-model="{{ model }}" {% if disabled %}ng-disabled="{{ disabled }}" {% endif %}>
         <option value="">---------</option>
         <option ng-repeat="i in {{ lookuplist }}">[[ i ]]</option>
         {% if other %}<option>Other</option>{% endif %}
       </select>
     {% endif %}
     {% if required %}
-      <span ng-show="{{ formname }}.{{ modelname }}.$dirty && {{ formname }}.{{ modelname }}.$error.required">
+      <span ng-show="{{ form_name }}.{{ modelname }}.$dirty && {{ form_name }}.{{ modelname }}.$error.required">
         {{ required }}
       </span>
     {% endif %}
@@ -49,6 +49,7 @@
     </script>
     {% endif %}
   </div>
+  </span>
 </div>
 {% if other %}
 {% input model=model label=other_label show=other_show  %}
