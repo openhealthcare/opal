@@ -12,7 +12,7 @@ from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.template import TemplateDoesNotExist
 from django.template.loader import select_template
 from django.utils import dateparse
@@ -221,7 +221,7 @@ class Synonym(models.Model):
     name = models.CharField(max_length=255)
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey('content_type', 'object_id')
 
     class Meta:
         unique_together = (('name', 'content_type'))
