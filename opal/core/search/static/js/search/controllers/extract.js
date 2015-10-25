@@ -81,11 +81,17 @@ angular.module('opal.controllers').controller(
             var col = _.find($scope.columns, function(item){return item.name == column.toLowerCase().replace( / /g,  '_')});
             var theField =  _.find(col.fields, function(f){return f.name == field.toLowerCase().replace( / /g,  '_')});
             if(!theField){ return false }
-            return theField.type == type;
+            if (_.isArray(type)){
+                var match = false;
+                _.each(type, function(t){ if(t == theField.type){ match = true} });
+                return match;
+            }else{
+                return theField.type == type;
+            }
         };
 
         $scope.isBoolean = function(column, field){
-            return $scope.isType(column, field, "boolean");
+            return $scope.isType(column, field, ["boolean", "null_boolean"]);
         };
 
         $scope.isText = function(column, field){
