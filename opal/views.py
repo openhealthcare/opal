@@ -1,7 +1,6 @@
 """
 Module entrypoint for core OPAL views
 """
-
 from django.conf import settings
 from django.contrib.auth.views import login
 from django.http import HttpResponseNotFound
@@ -120,6 +119,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
         context['settings'] = settings
         if hasattr(settings, 'OPAL_EXTRA_APPLICATION'):
             context['extra_application'] = settings.OPAL_EXTRA_APPLICATION
+            
         return context
 
 

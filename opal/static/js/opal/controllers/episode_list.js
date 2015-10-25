@@ -6,6 +6,7 @@ angular.module('opal.controllers').controller(
                                 Flow, Item,
                                 Episode, schema, episodes, options,
                                 profile, episodeVisibility){
+        $scope.ready = false;
 
         var version = window.version;
         $rootScope.state = 'normal';
@@ -72,9 +73,11 @@ angular.module('opal.controllers').controller(
 	    $scope.rows = $scope.getVisibleEpisodes();
         $scope.episode = $scope.rows[0];
 
-      $scope.isSelectedEpisode = function(episode){
-        return episode === $scope.episode;
-      }
+        $scope.ready = true;
+
+        $scope.isSelectedEpisode = function(episode){
+            return episode === $scope.episode;
+        }
 
 	    function compareEpisodes(p1, p2) {
 		    return p1.compare(p2);
