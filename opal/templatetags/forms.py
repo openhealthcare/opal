@@ -37,7 +37,7 @@ def extract_common_args(kwargs):
         "model": kwargs.pop('model', None),
         "label": kwargs.pop('label', None),
         "change": kwargs.pop("change", None),
-        "focus": kwargs.pop("focus", None),
+        "autofocus": kwargs.pop("autofocus", None),
     }
 
     disabled = kwargs.pop('disabled', None)
@@ -152,7 +152,8 @@ def select(*args, **kwargs):
     required = kwargs.pop('required', False)
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
-    tagging = kwargs.pop('tagging', True)
+    tagging = kwargs.pop('tagging', False)
+    multiple = kwargs.pop('multiple', False)
 
     if required:
         if not form_name:
@@ -178,6 +179,7 @@ def select(*args, **kwargs):
         'other_show': other_show,
         'other_label': other_label,
         'tagging': tagging,
+        'multiple': multiple,
     })
 
     return ctx
