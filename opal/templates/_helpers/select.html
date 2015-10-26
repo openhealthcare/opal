@@ -3,12 +3,14 @@
      {% if visibility %} {{ visibility|safe }} {% endif %}
      >
     <span ng-class="{ 'errored-state': {{ form_name }}.{{ modelname }}.$dirty && !{{ form_name }}.{{ modelname }}.$valid }">
+    {% if label %}
     <label class="control-label col-sm-3">
       {{ label }}
     </label>
+    {% endif %}
   <div class="col-sm-8">
     {% if search_select %}
-      <ui-select {% if change %} ng-change={{ change }} {% endif %}{% if disabled %}ng-disabled="{{ disabled }}" {% endif %}name="{{ modelname }}" required="{{ required }}" ng-model="{{ model }}" theme="bootstrap" style="min-width: 300px;" reset-search-input="false">
+      <ui-select {% if tagging %}tagging {% endif %}{% if change %} ng-change={{ change }} {% endif %}{% if disabled %}ng-disabled="{{ disabled }}" {% endif %}name="{{ modelname }}" required="{{ required }}" ng-model="{{ model }}" theme="bootstrap" style="min-width: 300px;" reset-search-input="false">
         <ui-select-match {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}>[[ $select.selected ]]</ui-select-match>
         <ui-select-choices repeat="i in {{ lookuplist }} | filter:$select.search track by $index">
           <div ng-bind-html="i | highlight: $select.search"></div>

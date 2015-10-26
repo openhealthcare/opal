@@ -148,10 +148,11 @@ def select(*args, **kwargs):
     other = kwargs.pop('other', False)
     help_template = kwargs.pop('help', None)
     placeholder = kwargs.pop("placeholder", None)
-    search_select = kwargs.pop("search_select", None)
+    search_select = kwargs.pop("search_select", True)
     required = kwargs.pop('required', False)
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
+    tagging = kwargs.pop('tagging', True)
 
     if required:
         if not form_name:
@@ -175,7 +176,8 @@ def select(*args, **kwargs):
         'modelname': ctx["model"].replace('.', '_'),
         'required': required,
         'other_show': other_show,
-        'other_label': other_label
+        'other_label': other_label,
+        'tagging': tagging,
     })
 
     return ctx
