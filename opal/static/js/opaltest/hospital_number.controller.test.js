@@ -357,21 +357,21 @@ describe('HospitalNumberCtrl', function(){
 
             $scope.addForPatient(patientData);
 
-            deferred.resolve(episode)
+            deferred.resolve(episode);
             $rootScope.$apply();
 
             callArgs = modalInstance.close.calls.mostRecent().args;
             expect(callArgs[0].makeCopy()).toEqual(episode.makeCopy());
         });
 
-    })
+    });
 
     describe('cancelling the modal', function(){
         it('should close with null', function(){
             spyOn(modalInstance, 'close');
-            $scope.cancel()
-            expect(modalInstance.close).toHaveBeenCalledWith(null)
-        })
+            $scope.cancel();
+            expect(modalInstance.close).toHaveBeenCalledWith(null);
+        });
     });
 
 });

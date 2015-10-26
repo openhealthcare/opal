@@ -1796,8 +1796,8 @@
         var match, displayFn, valueName, keyName, groupByFn, valueFn, valuesFn;
         $parseOptions.init = function() {
           $parseOptions.$match = match = attr.match(options.regexp);
-          displayFn = $parse(match[2] || match[1]), valueName = match[4] || match[6], keyName = match[5], 
-          groupByFn = $parse(match[3] || ''), valueFn = $parse(match[2] ? match[1] : valueName), 
+          displayFn = $parse(match[2] || match[1]), valueName = match[4] || match[6], keyName = match[5],
+          groupByFn = $parse(match[3] || ''), valueFn = $parse(match[2] ? match[1] : valueName),
           valuesFn = $parse(match[7]);
         };
         $parseOptions.valuesFn = function(scope, controller) {

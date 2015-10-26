@@ -17,6 +17,9 @@
            {% if required %}
            required
            {% endif %}
+           {% if change %}
+            ng-change={{ change }}
+           {% endif %}
            {% if data %}
            {% for key, val in data %}
            data-{{key}}="{{ val }}"

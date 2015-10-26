@@ -1,7 +1,7 @@
 <div class="checkbox checkbox-primary col-sm-offset-3">
   <input {% if disabled %}ng-disabled="{{ disabled }}"{% endif %}
          class="" id="checkbox_{{model}}" type="checkbox"
-         ng-model="{{ model }}"
+         ng-model="{{ model }}" {% if change %}ng-change={{ change }}{% endif %}
          />
   <label for="checkbox_{{model}}">{{ label }}</label>
 </div>

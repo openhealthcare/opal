@@ -36,6 +36,8 @@ def extract_common_args(kwargs):
     args = {
         "model": kwargs.pop('model', None),
         "label": kwargs.pop('label', None),
+        "change": kwargs.pop("change", None),
+        "focus": kwargs.pop("focus", None),
     }
 
     disabled = kwargs.pop('disabled', None)
@@ -86,7 +88,8 @@ def _input(*args, **kwargs):
 
 @register.inclusion_tag('_helpers/checkbox.html')
 def checkbox(*args, **kwargs):
-    return extract_common_args(kwargs)
+    ctx = extract_common_args(kwargs)
+    return ctx
 
 
 @register.inclusion_tag('_helpers/input.html')

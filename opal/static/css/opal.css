@@ -729,3 +729,7 @@ svg.speech-bubble-timeline-container{
 .selectize-control > .selectize-dropdown {
   top: 36px;
 }
+
+.pointer{
+  cursor: pointer;
+}
