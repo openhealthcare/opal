@@ -45,7 +45,7 @@
                     </span>
                     <span ng-show="query.column != 'tagging'">
                       <select class="form-control content-offset-below-10"
-                              ng-show="query.field != null && !isDate(query.column, query.field)"
+                              ng-show="query.field != null && isText(query.column, query.field)"
                               ng-model="query.queryType" data-trigger="focus" bs-tooltip="tooltip"
                               data-placement="top" data-title="3. Select your query type"
                               set-focus-if="query.field != null && !isDate(query.column, query.field)"
@@ -54,7 +54,7 @@
                         <option ng-show="isText(query.column, query.field)">Contains</option>
                       </select>
                       <select class="form-control content-offset-below-10"
-                                ng-show="query.field != null && isDate(query.column, query.field)"
+                              ng-show="query.field != null && isDate(query.column, query.field)"
                               ng-model="query.queryType" data-trigger="focus" bs-tooltip="tooltip"
                               data-placement="top" data-title="3. Select your query type"
                               set-focus-if="query.field != null && isDate(query.column, query.field)" >
