@@ -2,7 +2,7 @@
 Combined admin for OPAL models
 """
 from django.contrib import admin
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.admin import GenericTabularInline
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 
@@ -53,7 +53,7 @@ class EpisodeSubRecordAdmin(reversion.VersionAdmin):
     pass
  #   list_filter = ['episode']
 
-class SynonymInline(generic.GenericTabularInline):
+class SynonymInline(GenericTabularInline):
     model = Synonym
 
 class OptionAdmin(admin.ModelAdmin):

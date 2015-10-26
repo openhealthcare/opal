@@ -8,11 +8,11 @@ angular.module('opal.services').factory('PatientSummary', function(UserProfile) 
 
             if(jsonResponse.start_date && jsonResponse.end_date){
                 if(jsonResponse.start_year){
-                    startYear= Date(jsonResponse.start_date, 'YYYY-MM-DD').format("YYYY");
+                    startYear= moment(jsonResponse.start_date, 'YYYY-MM-DD').format("YYYY");
                 }
 
                 if(jsonResponse.end_date){
-                    endYear = Date(jsonResponse.end_date, 'YYYY-MM-DD').format("YYYY");
+                    endYear = moment(jsonResponse.end_date, 'YYYY-MM-DD').format("YYYY");
                 }
             }
 

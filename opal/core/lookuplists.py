@@ -1,7 +1,7 @@
 """
 OPAL Lookuplists
 """
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 
 # class LookupList(models.Model):
@@ -10,7 +10,7 @@ from django.db import models
 
 class LookupList(models.Model):
     name = models.CharField(max_length=255, unique=True)
-    synonyms = generic.GenericRelation('opal.Synonym')
+    synonyms = GenericRelation('opal.Synonym')
     
     class Meta:
         ordering = ['name']

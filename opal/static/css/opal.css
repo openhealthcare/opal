@@ -733,3 +733,17 @@ svg.speech-bubble-timeline-container{
 .pointer{
   cursor: pointer;
 }
+
+.loading {
+  background-color: #9cc96b;
+  height: 100%;
+  position: fixed;
+  width: 1100%;
+  z-index: 100;
+  padding-left: 0px;
+  margin-left: -20px;
+}
+
+.loading-inner {
+  margin: 2% 3%;
+}
