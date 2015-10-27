@@ -17,6 +17,9 @@
            {% if required %}
            required
            {% endif %}
+           {% if change %}
+            ng-change={{ change }}
+           {% endif %}
            {% if data %}
            {% for key, val in data %}
            data-{{key}}="{{ val }}"
@@ -25,7 +28,18 @@
            {% if enter %}
            ng-keypress="$event.keyCode == 13 && {{ enter }}"
            {% endif %}
+           {% if maxlength %}
+           ng-maxlength="{{ maxlength }}"
+           {% endif %}
+           {% if disabled %}
+           ng-disabled="{{ disabled}}"
+           {% endif %}
            />
+    {% if maxlength %}
+        <span class="help-block" ng-show="form.{{ modelname }}.$invalid">
+          Maximum length is {{ maxlength }}
+        </span>
+    {% endif %}
     {% if required %}
       <span ng-show="{{ formname }}.{{ modelname }}.$dirty && {{ formname }}.{{ modelname }}.$error.required">
         {{ required }}

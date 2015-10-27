@@ -132,10 +132,19 @@ filters.filter('title', function(){
 
 filters.filter('totalDays', function(){
     return function(item){
-        if(!item.start_date){ return null };
+        if(!item.start_date){ return null; };
         var start = moment(item.start_date);
+
+				if(!start.isValid()){
+						start = moment(item.start_date, 'DD/MM/YYYY');
+				}
+
         if(item.end_date){
-            return moment(item.end_date).diff(start, 'days') + 1;
+						end = moment(item.end_date);
+						if(!end.isValid()){
+							end = moment(item.end_date, 'DD/MM/YYYY');
+						}
+            return end.diff(start, 'days') + 1;
         }else{
             return moment().diff(start, 'days') + 1;
         }

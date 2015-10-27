@@ -27,7 +27,7 @@
       <ul class="nav navbar-nav navbar-right">
         {% if request.user.is_authenticated %}
 	    <li ng-class="{active: $location.path().indexOf('/list/') == 0}">
-          <a href="/#">
+          <a href="/#/">
             <i class="fa fa-table"></i> Lists
           </a>
         </li>

@@ -21,11 +21,16 @@ Added four new utility fields to Patient and Episode subrecords:
 
 created_by, updated_by, created, updated
 
+#### Select2 and list fields
+
+Added support for select2 as an input widget and Subrecord fields that can be lists of things.
+
 #### Also
 
 Numerous small bugfixes.
 Refactoring of the models package into a models module.
 Updated Underscore.js -> 1.8.3
+Updated Angular.js -> 1.3.11
 
 ### 0.4.3 (Minor release)
 

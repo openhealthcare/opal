@@ -610,7 +610,7 @@ describe('services', function() {
     });
 
     describe('UserProfile', function(){
-        var mock;
+        var mock, $httpBackend;
 
         beforeEach(function(){
             mock = { alert: jasmine.createSpy() };

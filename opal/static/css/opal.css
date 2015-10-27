@@ -243,6 +243,11 @@ tr.selected {
 .form-horizontal .checkbox label {
     font-weight: bold;
 }
+
+.bold{
+    font-weight: bold;
+}
+
 /* Detail page & panels */
 .col-md-9.box { width: 74%; margin-right: 1%; }
 i.edit,
@@ -363,8 +368,20 @@ table { font-size: 12px; }
 
 input.ng-invalid.ng-dirty { background-color : #fcc; }
 
+.errored-state input, .errored-state .ui-select-toggle, .errored-state .ui-select-multiple{
+    background-color: #fcc;
+}
+
+.warning-state input, .warning-state .ui-select-toggle{
+    background-color: #FFF793;
+}
+
+.warning-state .checkbox label::before{
+    background-color: #FFF793;
+}
+
 #subtags {
-    margin-left: 304px;
+  margin-left: 304px;
 	border-bottom: none;
 }
 
@@ -707,6 +724,19 @@ svg.speech-bubble-timeline-container{
 .keyboard-shortcuts{
     padding-top: 20px;
     clear: both;
+}
+
+.select2 > .select2-choice.ui-select-match {
+  /* Because of the inclusion of Bootstrap */
+  height: 29px;
+}
+
+.selectize-control > .selectize-dropdown {
+  top: 36px;
+}
+
+.pointer{
+  cursor: pointer;
 }
 
 .loading {

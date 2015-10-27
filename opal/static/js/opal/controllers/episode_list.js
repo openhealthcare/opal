@@ -8,13 +8,13 @@ angular.module('opal.controllers').controller(
                                 profile, episodeVisibility){
         $scope.ready = false;
 
-        var version = window.version;
-        $rootScope.state = 'normal';
-        $scope.url = $location.url();
+      var version = window.version;
+      $rootScope.state = 'normal';
+      $scope.url = $location.url();
 
-        $scope.options = options;
+      $scope.options = options;
 
-        $scope.num_episodes = _.keys(episodes).length;
+      $scope.num_episodes = _.keys(episodes).length;
 
 	    $scope.rix = 0; // row index
 	    $scope.cix = 0; // column index

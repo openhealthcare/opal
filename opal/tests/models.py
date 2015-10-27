@@ -6,6 +6,17 @@ from django.db import models as dmodels
 from opal.core import fields
 from opal import models
 
+
+class Hat(dmodels.model):
+    name = dmodels.CharField(max_length=200, blank=True, null=True)
+
+
+class HatWearer(models.EpisodeSubrecord):
+    _advanced_searchable = False
+    name = dmodels.CharField(max_length=200)
+    hats = dmodels.ManytoManyField(Hat)
+
+
 class Colour(models.EpisodeSubrecord):
     _advanced_searchable = False
 

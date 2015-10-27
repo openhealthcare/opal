@@ -248,7 +248,7 @@ recently changed it - refresh the page and try again');
             //
             this.isDischarged = function(){
                 return episode.location[0].category == 'Discharged' ||
-                    moment(episode.discharge_date).isBefore(moment());
+                    (episode.discharge_date && moment(episode.discharge_date).isBefore(moment()));
             }
 
             this.initialise(resource)

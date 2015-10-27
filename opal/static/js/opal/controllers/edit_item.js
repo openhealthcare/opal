@@ -10,14 +10,14 @@ angular.module('opal.controllers').controller(
         // Some fields should only be shown for certain categories.
         // Make that category available to the template.
         $scope.episode_category = episode.category
-	    $scope.editing = item.makeCopy();
+  	    $scope.editing = item.makeCopy();
 
         $scope.editingMode = function(){
             return !_.isUndefined($scope.editing.id);
         };
 
         // This is the patientname displayed in the modal header
-	    $scope.editingName = item.episode.demographics[0].name;
+  	    $scope.editingName = item.episode.demographics[0].name;
 
         $scope.columnName = item.columnName;
         // initially display episodes of interest to current user
