@@ -127,26 +127,27 @@ class DatabaseQuery(QueryBackend):
     """
 
     def _episodes_for_boolean_fields(self, query, field, contains):
-        model = query['column'].replace(' ', '_').lower()
+        model = get_model_name_from_column_name(query['column'])
         val = query['query'] == 'true'
         kw = {'{0}__{1}'.format(model.replace('_', ''), field): val}
         eps = models.Episode.objects.filter(**kw)
         return eps
 
     def _episodes_for_date_fields(self, query, field, contains):
-        model = query['column'].replace(' ', '').lower()
+        model = get_model_name_from_column_name(query['column'])
         qtype = ''
         val = datetime.datetime.strptime(query['query'], "%d/%m/%Y")
         if query['queryType'] == 'Before':
             qtype = '__lte'
         elif query['queryType'] == 'After':
             qtype = '__gte'
+
         kw = {'{0}__{1}{2}'.format(model, field, qtype): val}
         eps = models.Episode.objects.filter(**kw)
         return eps
 
     def _episodes_for_fkorft_fields(self, query, field, contains, Mod):
-        model = query['column'].replace(' ', '_').lower()
+        model = get_model_name_from_column_name(query['column'])
 
         # Look up to see if there is a synonym.
         content_type = ContentType.objects.get_for_model(
@@ -188,6 +189,7 @@ class DatabaseQuery(QueryBackend):
             contains = '__icontains'
 
         column_name = query['column']
+
         field = query['field'].replace(' ', '_').lower()
         Mod = get_model_from_column_name(column_name)
 
