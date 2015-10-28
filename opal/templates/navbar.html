@@ -33,7 +33,9 @@
         </li>
 
         {% application_menuitems %}
-        {% plugin_menuitems %}
+        {% if not user.profile.explicit_access_only %}
+          {% plugin_menuitems %}
+        {% endif %}
         {% if request.user.is_staff %}
 	    <li><a href="/admin"><i class="fa fa-cogs"></i> Admin</a></li>
         {% endif %}

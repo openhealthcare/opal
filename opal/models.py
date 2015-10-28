@@ -1205,3 +1205,8 @@ class UserProfile(models.Model):
     def can_see_pid(self):
         all_roles = itertools.chain(*self.get_roles().values())
         return not any(r for r in all_roles if r == "researcher" or r == "scientist")
+
+    @property
+    def explicit_access_only(self):
+        all_roles = itertools.chain(*self.get_roles().values())
+        return any(r for r in all_roles if r == "scientist")

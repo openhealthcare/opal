@@ -25,13 +25,14 @@
           {% endfor %}
         </ul>
       </div>
-	  <button class="btn btn-primary pull-right"
+      {% if not user.profile.explicit_access_only %}
+      	  <button class="btn btn-primary pull-right"
               ng-show="!profile.readonly"
               ng-click="addEpisode()">
-        <i class="glyphicon glyphicon-plus"></i>
-        Add Patient
-      </button>
-
+            <i class="glyphicon glyphicon-plus"></i>
+            Add Patient
+          </button>
+      {% endif %}
     </h1>
   </div>
 </div>
@@ -57,7 +58,7 @@
     {% endif %}
   </div>
   <ul class="list-group">
-    <li class="list-group-item">
+    <li class="list-group-item" ng-show="profile.can_see_pid()">
       <p>
         <a class="btn btn-secondary screen-only btn-sm" ng-href='[[ "#/episode/" + episode.id ]]'>
           <i class="fa fa-search-plus"></i>
@@ -65,7 +66,7 @@
         </a>
       </p>
     </li>
-    <li class="list-group-item">
+    <li class="list-group-item" ng-show="profile.can_see_pid()">
       {% with edit_teams="editNamedItem(episode, 'tagging', 0)" %}
       {% include 'partials/_teams_list.html' %}
       {% endwith %}
@@ -75,7 +76,9 @@
     </li>
   </ul>
 </div>
-<div class="panel panel-default screen-only">
+<div class="panel panel-default screen-only"
+     ng-hide="!profile.can_see_pid()"
+     >
   <div class="panel-heading">
     <h4>
       <i class="fa fa-filter"></i>

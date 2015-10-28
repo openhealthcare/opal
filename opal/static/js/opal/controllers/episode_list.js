@@ -158,7 +158,9 @@ angular.module('opal.controllers').controller(
                         }
                         break;
                     case 13:
-                        $location.url($scope.getEpisodeLink());
+                        if(profile.can_see_pid()){
+                            $location.url($scope.getEpisodeLink());
+                        }
                         break;
     			    case 38: // up
     				    goUp();

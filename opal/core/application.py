@@ -113,6 +113,16 @@ class OpalApplication(object):
     ]
 
     @classmethod
+    def get_menu_items(klass):
+        """
+        Default implementation of get_menu_items()
+
+        By default we just return the menuitems property of the application,
+        which is itself set to [] by default.
+        """
+        return klass.menuitems
+
+    @classmethod
     def flows(klass):
         """
         Default implementation of flows()
