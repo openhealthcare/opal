@@ -7,14 +7,13 @@ from opal.core import fields
 from opal import models
 
 
-class Hat(dmodels.model):
+class Hat(dmodels.Model):
     name = dmodels.CharField(max_length=200, blank=True, null=True)
 
 
 class HatWearer(models.EpisodeSubrecord):
-    _advanced_searchable = False
     name = dmodels.CharField(max_length=200)
-    hats = dmodels.ManytoManyField(Hat)
+    hats = dmodels.ManyToManyField(Hat, related_name="hat_wearers")
 
 
 class Colour(models.EpisodeSubrecord):

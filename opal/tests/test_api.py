@@ -9,7 +9,7 @@ from django.test import TestCase
 from mock import patch, MagicMock
 
 from opal import models
-from opal.tests.models import Colour, PatientColour
+from opal.tests.models import Colour, PatientColour, HatWearer, Hat
 
 from opal.core import api
 
@@ -227,6 +227,103 @@ class SubrecordTestCase(TestCase):
         self.assertEqual(1, change.call_count)
 
 
+class ManyToManyTestSubrecordTest(TestCase):
+
+    def setUp(self):
+        self.patient = models.Patient.objects.create()
+        self.episode = models.Episode.objects.create(patient=self.patient)
+        self.user = User.objects.create(username='testuser')
+
+        class ManyToManyViewSet(api.SubrecordViewSet):
+            base_name = 'hatwearer'
+            model = HatWearer
+
+        self.model = HatWearer
+        self.viewset = ManyToManyViewSet
+        self.bowler = Hat.objects.create(name="bowler")
+        self.top = Hat.objects.create(name="top")
+
+    def create_hat_wearer(self, *hats):
+        hat_wearer = HatWearer.objects.create(
+            episode=self.episode,
+            name="Jane"
+        )
+        hat_wearer.hats.add(*hats)
+        return hat_wearer
+
+    def test_many_to_many_create(self):
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+
+        mock_request.data = {
+            'name': 'Jane',
+            'hats': [self.bowler.name, self.top.name],
+            'episode_id': self.episode.id,
+        }
+        self.viewset().create(mock_request)
+        hat_wearer = HatWearer.objects.get(name="Jane")
+        self.assertEqual(hat_wearer.episode.id, self.episode.id)
+        self.assertEqual(list(hat_wearer.hats.all()), [self.bowler, self.top])
+
+    def test_many_to_many_update_add(self):
+        hat_wearer = self.create_hat_wearer(self.bowler)
+
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        mock_request.data = {
+            'name': hat_wearer.name,
+            'hats': [self.bowler.name, self.top.name],
+            'episode_id': self.episode.id,
+            'consistency_token': 'wat',
+            'id': hat_wearer.id
+        }
+        self.viewset().update(mock_request, pk=hat_wearer.pk)
+        hat_wearer = HatWearer.objects.get(name="Jane")
+        self.assertEqual(hat_wearer.episode.id, self.episode.id)
+        self.assertEqual(list(hat_wearer.hats.all()), [self.bowler, self.top])
+
+    def test_many_to_many_update_delete(self):
+        hat_wearer = self.create_hat_wearer(self.bowler, self.top)
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        mock_request.data = {
+            'name': 'Jane',
+            'hats': [self.bowler.name],
+            'episode_id': self.episode.id,
+            "id": hat_wearer.id
+        }
+        self.viewset().update(mock_request, pk=hat_wearer.pk)
+        hat_wearer = HatWearer.objects.get(name="Jane")
+        self.assertEqual(hat_wearer.episode.id, self.episode.id)
+        self.assertEqual(list(hat_wearer.hats.all()), [self.bowler])
+
+    def test_normal_delete(self):
+        hat_wearer = self.create_hat_wearer(self.bowler, self.top)
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        self.viewset().destroy(mock_request, pk=hat_wearer.pk)
+        self.assertFalse(HatWearer.objects.filter(name="Jane").exists())
+
+    def test_removal_of_unknown_field(self):
+        """
+        we should be transactional, if we blow up, nothing should be saved
+        """
+        hat_wearer = self.create_hat_wearer(self.bowler)
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        mock_request.data = {
+            'name': 'Jane',
+            'hats': [self.top.name, "fake hat"],
+            'episode_id': self.episode.id,
+            "id": hat_wearer.id
+        }
+        response = self.viewset().update(mock_request, pk=hat_wearer.pk)
+        self.assertEqual(400, response.status_code)
+        hw = HatWearer.objects.get(name="Jane")
+        hat_names = hw.hats.all().values_list("name", flat=True)
+        self.assertEqual(list(hat_names), [unicode(self.bowler.name)])
+
+
 class UserProfileTestCase(TestCase):
 
     def setUp(self):
@@ -259,6 +356,8 @@ class UserProfileTestCase(TestCase):
         mock_request.user.is_authenticated.return_value = False
         response = api.UserProfileViewSet().list(mock_request)
         self.assertEqual(401, response.status_code)
+
+
 
 
 class TaggingTestCase(TestCase):
