@@ -227,7 +227,7 @@ class SubrecordTestCase(TestCase):
         self.assertEqual(1, change.call_count)
 
 
-class ManyToManyTestSubrecordTest(TestCase):
+class ManyToManyTestSubrecordWithLookupListTest(TestCase):
 
     def setUp(self):
         self.patient = models.Patient.objects.create()

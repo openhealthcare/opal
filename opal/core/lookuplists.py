@@ -8,17 +8,21 @@ from django.db import models
 #     class Meta:
 #         abstract = True
 
+
 class LookupList(models.Model):
     name = models.CharField(max_length=255, unique=True)
     synonyms = GenericRelation('opal.Synonym')
-    
+
     class Meta:
         ordering = ['name']
         abstract = True
 
     def __unicode__(self):
         return self.name
-    
+
+    def to_dict(self, user):
+        return self.name
+
 
 # def lookup_list(name, module=__name__):
 #     """
@@ -31,10 +35,9 @@ class LookupList(models.Model):
 #     attrs = {
 #         'name': models.CharField(max_length=255, unique=True),
 #         'synonyms': generic.GenericRelation('opal.Synonym'),
-#         'Meta': type('Meta', (object,), {'ordering': ['name'], 
+#         'Meta': type('Meta', (object,), {'ordering': ['name'],
 #                                          'verbose_name': prefix+name}),
 #         '__unicode__': lambda self: self.name,
 #         '__module__': module,
 #     }
 #     return class_name, bases, attrs
-

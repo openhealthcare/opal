@@ -698,18 +698,23 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
         except TemplateDoesNotExist:
             return None
 
-
     def _to_dict(self, user, fieldnames):
         """
         Allow a subset of FIELDNAMES
         """
+
         d = {}
         for name in fieldnames:
             getter = getattr(self, 'get_' + name, None)
             if getter is not None:
                 value = getter(user)
             else:
-                value = getattr(self, name)
+                field_type = self._get_field_type(name)
+                if field_type == models.fields.related.ManyToManyField:
+                    qs = getattr(self, name).all()
+                    value = [i.to_dict(user) for i in qs]
+                else:
+                    value = getattr(self, name)
             d[name] = value
 
         return d
