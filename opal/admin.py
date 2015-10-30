@@ -19,7 +19,7 @@ admin.site.unregister(User)
 class UserProfileInline(admin.StackedInline):
     model = UserProfile
     filter_horizontal = ('roles',)
-    
+
 class FilterInline(admin.StackedInline):
     model = models.Filter
 
@@ -70,11 +70,11 @@ admin.site.register(models.Episode, EpisodeAdmin)
 admin.site.register(models.Tagging, TaggingAdmin)
 
 for subclass in patient_subrecords():
-    if not subclass._meta.abstract:
+    if not subclass._meta.abstract and not getattr(subclass, "_no_admin", False):
         admin.site.register(subclass, PatientSubRecordAdmin)
 
 for subclass in episode_subrecords():
-    if not subclass._meta.abstract:
+    if not subclass._meta.abstract and not getattr(subclass, "_no_admin", False):
         admin.site.register(subclass, EpisodeSubRecordAdmin)
 
 admin.site.register(models.GP, MyAdmin)

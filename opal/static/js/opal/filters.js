@@ -23,6 +23,18 @@ filters.filter('boxed',  function(){
     }
 })
 
+filters.filter('plural', function(){
+		return function(someWord, count, plural){
+				if(count === 1){
+					 return someWord;
+				}
+				else if(plural){
+					 return plural;
+				}
+				return someWord + "s";
+		};
+});
+
 filters.filter('shortDate', function(){
     return function(input){
         if(!input){
@@ -152,8 +164,8 @@ filters.filter('totalDays', function(){
 });
 
 filters.filter('daysTo', function(){
-    return function(frist, second){
-        var start = moment(frist);
+    return function(first, second){
+        var start = moment(first);
         return moment(second).diff(start, 'days');
     }
 })

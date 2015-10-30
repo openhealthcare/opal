@@ -175,6 +175,9 @@ i.help {
         overflow: scroll;
     }
 }
+.nowrap{
+  white-space: nowrap;
+}
 
 table.patient-list tr th { white-space: nowrap; }
 table.patient-list td { min-width: 70px; }
@@ -509,6 +512,10 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     padding: 5px 10px;
     display: inline-block;
     font-size: 12px;
+}
+
+.float-right{
+    float: right;
 }
 
 .patient-timeline{

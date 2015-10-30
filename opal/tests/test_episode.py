@@ -6,7 +6,9 @@ import datetime
 from django.contrib.auth.models import User
 
 from opal.core.test import OpalTestCase
+from opal.tests.models import Hat, HatWearer
 from opal.models import Patient, Episode, Team
+
 
 class EpisodeTest(OpalTestCase):
 
@@ -106,6 +108,14 @@ class EpisodeTest(OpalTestCase):
         serialised = self.episode.to_dict(self.user)
         self.assertEqual(2, len(serialised['episode_history']))
 
+    def test_to_dict_episode_with_many_to_many(self):
+        prev = self.patient.create_episode()
+        bowler = Hat.objects.create(name="bowler")
+        top = Hat.objects.create(name="top")
+        hw = HatWearer.objects.create(episode=prev)
+        hw.hats.add(bowler, top)
+        serialised = prev.to_dict(self.user)
+        self.assertEqual(serialised["hat_wearer"][0]["hats"], [u'bowler', u'top'])
 
 
 class EpisodeManagerTestCase(OpalTestCase):
