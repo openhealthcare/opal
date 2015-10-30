@@ -375,6 +375,12 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     background-color: #fcc;
 }
 
+.form-control[disabled].btn-default[disabled].ui-select-toggle{
+    cursor: not-allowed;
+    background-color: #eee;
+    opacity: 1;
+}
+
 .warning-state input, .warning-state .ui-select-toggle{
     background-color: #FFF793;
 }
