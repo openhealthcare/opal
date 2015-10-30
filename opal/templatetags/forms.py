@@ -152,7 +152,7 @@ def select(*args, **kwargs):
     required = kwargs.pop('required', False)
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
-    tagging = kwargs.pop('tagging', False)
+    tagging = kwargs.pop('tagging', True)
     multiple = kwargs.pop('multiple', False)
 
     if required:
