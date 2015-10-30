@@ -3,7 +3,7 @@
 {% block icon %}<i class="fa fa-history"></i>{% endblock %}
 {% block modal_body %}
   <form class="form-horizontal">
-    {% input autofocus label="Condition" model="editing.condition" lookuplist="condition_list" %}
+    {% select autofocus label="Condition" model="editing.condition" lookuplist="condition_list" %}
     {% input label="Year" model="editing.year" %}
     {% input label="Details" model="editing.details" %}
   </form>
