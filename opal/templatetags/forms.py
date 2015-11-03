@@ -226,4 +226,5 @@ def process_steps(*args, **kwargs):
         template_args[required_kwarg] = kwargs.pop(required_kwarg)
 
     template_args["show_index"] = kwargs.pop("show_index", False)
+    template_args["show_titles"] = kwargs.pop("show_index", False)
     return template_args

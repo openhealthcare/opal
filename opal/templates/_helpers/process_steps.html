@@ -8,6 +8,8 @@
             <div class="progress-bar"></div>
         </div>
         <span class="smpl-step-icon"><i class="[[ progress_step.icon ]]"></i></span>
-        <div class="smpl-step-info text-center">[[ progress_step.title ]]</div>
+        {% if show_titles %}
+            <div class="smpl-step-info text-center">[[ progress_step.title ]]</div>
+        {% endif %}
     </div>
 </div>
