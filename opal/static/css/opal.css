@@ -806,14 +806,14 @@ svg.speech-bubble-timeline-container{
     border-radius: 0px;
     height: 4px;
     box-shadow: none;
-    margin-top: 20px;
+    margin-top: 21px;
     overflow: visible;
 }
 
 .smpl-step > .smpl-step-step > .progress > .progress-bar {
    width: 0px;
    box-shadow: none;
-   background: #428BCA;
+   background: #5fa2dd;
 }
 
 .smpl-step > .smpl-step-step.complete > .progress > .progress-bar {
