@@ -205,3 +205,25 @@ def icon(name):
     if name.startswith('fa'):
         icon = 'fa ' + name
     return dict(icon=icon)
+
+
+@register.inclusion_tag('_helpers/process_steps.html')
+def process_steps(*args, **kwargs):
+    """
+    renders a set of steps for a multi stage form
+
+    kwargs
+    "show_index" do we show the index number of the step we're on
+    "process_steps" an angular scoped array name with the fields "icon" and
+    "title" (title is optional)
+    "complete" an angular expression to tell us if the process step is complete
+    "disabled" an angular expression to tell us if the process step is disabled
+    "active" an angular expression to tell us if the process step is active
+    """
+    required_kwargs = ["process_steps", "complete", "disabled", "active"]
+    template_args = {}
+    for required_kwarg in required_kwargs:
+        template_args[required_kwarg] = kwargs.pop(required_kwarg)
+
+    template_args["show_index"] = kwargs.pop("show_index", False)
+    return template_args

@@ -13,8 +13,8 @@
         {% input label="Frequency" model="editing.frequency" lookuplist="antimicrobial_frequency_list" %}
         <div ng-show="episode_category == 'OPAT'" >
           {% input label="Delivered by" model="editing.delivered_by" lookuplist="drug_delivered_list" %}
-          {% select label="Adverse events" model="editing.adverse_event" lookuplist="antimicrobial_adverse_event_list" other=True %}
-          {% select label="Reason for Stopping" model="editing.reason_for_stopping" lookuplist="iv_stop_list" %}
+          {% select tagging=False label="Adverse events" model="editing.adverse_event" lookuplist="antimicrobial_adverse_event_list" other=True %}
+          {% select tagging=False label="Reason for Stopping" model="editing.reason_for_stopping" lookuplist="iv_stop_list" %}
           {% textarea label="Comments" model="editing.comments" %}
         </div>
       </form>
