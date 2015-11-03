@@ -1,4 +1,4 @@
-<div class="smpl-step" style="width: [[ 100 - (2 * (6 - {{ process_steps }}.length)) ]]%">
+<div class="smpl-step" >
     <!-- add complete active or disabled classes-->
     <div class="smpl-step-step" ng-class="{ active: {{ active }}, complete: {{ complete }}, disabled: {{ disabled }} }" ng-repeat="progress_step in {{ process_steps }}">
         {% if show_index %}

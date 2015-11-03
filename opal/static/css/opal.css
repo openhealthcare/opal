@@ -885,4 +885,6 @@ svg.speech-bubble-timeline-container{
 .discharge-process-steps{
     margin-top: 30px;
     margin-bottom: -47px;
+    margin-left: auto;
+    margin-right: auto;
 }
