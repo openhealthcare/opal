@@ -144,11 +144,10 @@ def select(*args, **kwargs):
     """
     ctx = extract_common_args(kwargs)
     lookuplist = kwargs.pop('lookuplist', None)
-    form_name = kwargs.pop('formname', None)
+    form_name = kwargs.pop('formname', "form")
     other = kwargs.pop('other', False)
     help_template = kwargs.pop('help', None)
     placeholder = kwargs.pop("placeholder", None)
-    search_select = kwargs.pop("search_select", True)
     required = kwargs.pop('required', False)
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
@@ -167,14 +166,13 @@ def select(*args, **kwargs):
 
     ctx.update({
         'placeholder': placeholder,
-        'search_select': search_select,
         'form_name': form_name,
         'directives': args,
         'lookuplist': lookuplist,
         'visibility': visibility,
         'help_template': help_template,
         'other': other,
-        'modelname': ctx["model"].replace('.', '_'),
+        'model_name': ctx["model"].replace('.', '_').replace('[','').replace(']', ''),
         'required': required,
         'other_show': other_show,
         'other_label': other_label,

@@ -82,15 +82,26 @@ filters.filter('hhmm', function(){
 });
 
 filters.filter('daysSince', function(){
-    return function(input, change){
+    return function(input, change, full){
         if(!input){
             return;
         }
         diff = moment().diff(moment(input), 'days')
+
         if(change){
             return diff + change
         }
-        return diff
+
+				if(full){
+						if(diff === 1){
+								return String(diff) + " day ago";
+						}
+						else{
+								return String(diff) + " days ago";
+						}
+				}
+
+        return diff;
     }
 })
 
