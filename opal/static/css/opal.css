@@ -767,13 +767,16 @@ svg.speech-bubble-timeline-container{
 }
 
 .smpl-step {
-    border-bottom: solid 1px #e0e0e0;
+    border-bottom: 0;
     padding: 0 0 10px 0;
+    display: flex;
+    justify-content: space-between;
 }
 
 .smpl-step > .smpl-step-step {
     padding: 0;
     position: relative;
+    flex: 1 1 auto;
 }
 
 .smpl-step > .smpl-step-step .smpl-step-num {
@@ -787,26 +790,26 @@ svg.speech-bubble-timeline-container{
     padding-top: 8px;
 }
 
-.smpl-step > .smpl-step-step > .smpl-step-icon {
-    position: absolute;
-    width: 35px;
-    height: 35px;
+.smpl-step-step > .smpl-step-icon {
+    width: 40px;
+    height: 40px;
     display: block;
-    background: #9cc96b;
-    top: 40px;
-    left: 50%;
-    margin-top: -33px;
-    margin-left: -15px;
+    margin-left: auto;
+    margin-right: auto;
     border-radius: 50%;
     z-index: 40;
+    position: relative;
 }
 
 .smpl-step > .smpl-step-step > .progress {
-    position: relative;
+    position: absolute;
+    width: 100%;
     border-radius: 0px;
     height: 4px;
+    top: 50%;
+    left: 50%;
+    margin-top: -2px;
     box-shadow: none;
-    margin-top: 21px;
     overflow: visible;
 }
 
@@ -816,12 +819,35 @@ svg.speech-bubble-timeline-container{
    background: #5fa2dd;
 }
 
-.smpl-step > .smpl-step-step.complete > .progress > .progress-bar {
-    width: 150%;
+.smpl-step-step > .smpl-step-icon {
+    background-color: white;
+    border: 2px solid #EEE;
 }
 
-.smpl-step > .smpl-step-step.complete:first-child > .progress > .progress-bar {
-    width: 180%;
+.smpl-step-step > .smpl-step-icon i{
+    color: #EEE;
+}
+
+.complete .smpl-step-icon{
+    background-color: #5fa2dd;
+    border: 2px solid #5fa2dd;
+}
+
+.complete .smpl-step-icon i{
+    color: white;
+}
+
+.active .smpl-step-icon{
+    background-color: white;
+    border: 2px solid #5fa2dd;
+}
+
+.active .smpl-step-icon i{
+    color: #5fa2dd;
+}
+
+.smpl-step > .smpl-step-step.complete > .progress > .progress-bar {
+    width: 100%;
 }
 
 .smpl-step > .smpl-step-step.active > .progress > .progress-bar {
@@ -836,31 +862,27 @@ svg.speech-bubble-timeline-container{
     width: 100%;
 }
 
-.smpl-step > .smpl-step-step.disabled > .smpl-step-icon {
-    background-color: #f5f5f5;
-}
-
 .smpl-step > .smpl-step-step.disabled > .smpl-step-icon:after {
     opacity: 0;
 }
 
-.smpl-step > .smpl-step-step:first-child > .progress {
-    left: 50%;
-    width: 50%;
-}
-
 .smpl-step > .smpl-step-step:last-child > .progress {
-    width: 50%;
+    width: 0;
 }
 
 .smpl-step > .smpl-step-step.disabled a.smpl-step-icon {
     pointer-events: none;
 }
 
-.smpl-step-icon i.fa{
+.smpl-step-icon i{
     display: block;
     text-align: center;
     font-size: 25px;
     color: black;
-    padding-top: 5px;
+    padding-top: 8px;
+}
+
+.discharge-process-steps{
+    margin-top: 30px;
+    margin-bottom: -47px;
 }
