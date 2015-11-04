@@ -48,7 +48,9 @@ class OpalApplication(object):
 
             "js/bower_components/ment.io/dist/mentio.js",
             "js/bower_components/ment.io/dist/templates.js",
+            # "js/ui-select/dist/select.js",
             "js/bower_components/angular-ui-select/dist/select.js",
+            "js/bower_components/ment.io/dist/templates.js",
             "js/bower_components/angular-growl-v2/build/angular-growl.js",
 
             "js/jquery-plugins/idle-timer.js",

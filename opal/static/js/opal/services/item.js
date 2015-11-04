@@ -133,7 +133,6 @@ recently changed it - refresh the page and try again');
 		        } else {
 		            alert('Item could not be saved');
 		        }
-            debugger;
             deferred.reject();
 	        });
 	        return deferred.promise;

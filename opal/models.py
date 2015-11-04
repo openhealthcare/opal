@@ -8,6 +8,7 @@ import itertools
 import dateutil.parser
 import random
 import functools
+import logging
 
 from django.utils import timezone
 from django.db import models
@@ -115,13 +116,13 @@ class UpdatesFromDictMixin(object):
             if not len(to_add_names) == len(to_add):
                 found_names = set(to_add.values_list("name", flat=True))
                 unexpected = list(set(to_add_names) - found_names)
-                raise exceptions.APIError(
-                    'Unexpected fieldname(s): %s' % unexpected
-                )
+                error_msg = 'Unexpected fieldname(s): %s' % unexpected
+                logging.error(error_msg)
+
+                raise exceptions.APIError(error_msg)
 
             manager.add(*to_add)
         manager.remove(*to_remove)
-
 
     def update_from_dict(self, data, user):
         if self.consistency_token:
@@ -138,6 +139,7 @@ class UpdatesFromDictMixin(object):
         post_save = []
 
         unknown_fields = set(data.keys()) - fields
+
         if unknown_fields:
             raise exceptions.APIError(
                 'Unexpected fieldname(s): %s' % list(unknown_fields))

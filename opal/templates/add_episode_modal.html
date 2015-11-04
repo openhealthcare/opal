@@ -8,7 +8,7 @@
 </div>
 <div class="modal-body">
   <form class="form-horizontal" name="newEpisodeForm">
-    
+
 
 	<div class="form-group">
 	  <label class="control-label col-sm-3">Hospital Number</label>
@@ -17,7 +17,7 @@
       </label>
 	</div>
 
-    {% input "autofocus" label="Name" model="editing.demographics.name" %} 
+    {% input "autofocus" label="Name" model="editing.demographics.name" %}
 
 	<div class="form-group">
 	  <label class="control-label col-sm-3">Date of birth</label>
@@ -26,6 +26,7 @@
                type="text"
                name="date_of_birth"
 			   ng-model="editing.demographics.date_of_birth"
+         ng-model-options="{ updateOn: 'blur' }"
 			   ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
 			   placeholder="dd/mm/yyyy" />
         <span class="help-block" ng-show="newEpisodeForm.date_of_birth.$invalid">
@@ -45,7 +46,7 @@
 </div>
 <div class="modal-footer">
   <button class="btn btn-primary" ng-click="save()" ng-disabled="newEpisodeForm.date_of_birth.$invalid">
-    <i class="fa fa-save"></i>        
+    <i class="fa fa-save"></i>
     Save record
   </button>
   <button class="btn" ng-click="cancel()">Cancel</button>

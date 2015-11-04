@@ -3,7 +3,7 @@
 {% block icon %}<i class="fa fa-stethoscope"></i>{% endblock %}
 {% block modal_body %}
   <form class="form-horizontal">
-    {% select "autofocus" label="Condition" model="editing.condition" lookuplist="condition_list" %}
+    {% input "autofocus" label="Condition" model="editing.condition" lookuplist="condition_list" %}
     {% checkbox label="Provisional?" model="editing.provisional" %}
     {% input label="Details" model="editing.details" %}
     {% datepicker label="Date of diagnosis" model="editing.date_of_diagnosis" %}

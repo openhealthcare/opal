@@ -31,7 +31,7 @@ angular.module('opal.controllers').controller(
 
 	    for (var name in options) {
 		    if (name.indexOf('micro_test') != 0) {
-			    $scope[name + '_list'] = options[name];
+			    $scope[name + '_list'] = _.uniq(options[name]);
 		    };
 	    };
 

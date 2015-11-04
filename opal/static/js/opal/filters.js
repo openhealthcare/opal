@@ -35,29 +35,48 @@ filters.filter('plural', function(){
 		};
 });
 
-filters.filter('shortDate', function(){
-    return function(input){
-        if(!input){
-            return
-        }
-        var d = moment(input)
+filters.filter('toMoment', function(){
+		return function(input){
+				if(!input){
+						return;
+				}
+				var d = moment(input);
 
 				if(!d.isValid()){
 						d = moment(input, 'DD/MM/YYYY');
 				}
 
+				return d;
+		};
+});
+
+filters.filter('fromNow', function(toMomentFilter){
+		return function(input){
+				var momented = toMomentFilter(input);
+				return momented.fromNow();
+		};
+});
+
+filters.filter('shortDate', function(toMomentFilter){
+    return function(input){
+        if(!input){
+            return
+        }
+
+				d = toMomentFilter(input);
+
         if (d.year() <= 2000) {
             // if the date was before 1/1/2001,
             // show the full year
-            return d.format('DD/MM/YYYY')
+            return d.format('DD/MM/YYYY');
         }
         else if (d.year() == moment().year()) {
             // if the date was this year,
             // don't show the year
-            return d.format('DD/MM')
+            return d.format('DD/MM');
         }
         // show the year as two digits
-        return d.format('DD/MM/YY')
+        return d.format('DD/MM/YY');
     }
 });
 
@@ -87,12 +106,14 @@ filters.filter('daysSince', function(){
             return;
         }
         diff = moment().diff(moment(input), 'days')
+
         if(change){
             return diff + change
         }
-        return diff
+
+        return diff;
     }
-})
+});
 
 filters.filter('hoursSince', function(){
     return function(input){

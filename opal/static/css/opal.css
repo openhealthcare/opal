@@ -375,6 +375,12 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     background-color: #fcc;
 }
 
+.form-control[disabled].btn-default[disabled].ui-select-toggle{
+    cursor: not-allowed;
+    background-color: #eee;
+    opacity: 1;
+}
+
 .warning-state input, .warning-state .ui-select-toggle{
     background-color: #FFF793;
 }
@@ -746,6 +752,10 @@ svg.speech-bubble-timeline-container{
   cursor: pointer;
 }
 
+.black-text{
+  color: black;
+}
+
 .loading {
   background-color: #9cc96b;
   height: 100%;
@@ -758,4 +768,127 @@ svg.speech-bubble-timeline-container{
 
 .loading-inner {
   margin: 2% 3%;
+}
+
+.smpl-step {
+    border-bottom: 0;
+    padding: 0 0 10px 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.smpl-step > .smpl-step-step {
+    padding: 0;
+    position: relative;
+    flex: 1 1 auto;
+}
+
+.smpl-step > .smpl-step-step .smpl-step-num {
+    font-size: 10px;
+    margin-top: -10px;
+    margin-left: 4px;
+}
+
+.smpl-step > .smpl-step-step .smpl-step-info {
+    font-size: 12px;
+    padding-top: 8px;
+}
+
+.smpl-step-step > .smpl-step-icon {
+    width: 40px;
+    height: 40px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border-radius: 50%;
+    z-index: 40;
+    position: relative;
+}
+
+.smpl-step > .smpl-step-step > .progress {
+    position: absolute;
+    width: 100%;
+    border-radius: 0px;
+    height: 4px;
+    top: 50%;
+    left: 50%;
+    margin-top: -2px;
+    box-shadow: none;
+    overflow: visible;
+}
+
+.smpl-step > .smpl-step-step > .progress > .progress-bar {
+   width: 0px;
+   box-shadow: none;
+   background: #5fa2dd;
+}
+
+.smpl-step-step > .smpl-step-icon {
+    background-color: white;
+    border: 2px solid #EEE;
+}
+
+.smpl-step-step > .smpl-step-icon i{
+    color: #EEE;
+}
+
+.complete .smpl-step-icon{
+    background-color: #5fa2dd;
+    border: 2px solid #5fa2dd;
+}
+
+.complete .smpl-step-icon i{
+    color: white;
+}
+
+.active .smpl-step-icon{
+    background-color: white;
+    border: 2px solid #5fa2dd;
+}
+
+.active .smpl-step-icon i{
+    color: #5fa2dd;
+}
+
+.smpl-step > .smpl-step-step.complete > .progress > .progress-bar {
+    width: 100%;
+}
+
+.smpl-step > .smpl-step-step.active > .progress > .progress-bar {
+    width: 0;
+}
+
+.smpl-step > .smpl-step-step:first-child.active > .progress > .progress-bar {
+    width: 0%;
+}
+
+.smpl-step > .smpl-step-step:last-child.active > .progress > .progress-bar {
+    width: 100%;
+}
+
+.smpl-step > .smpl-step-step.disabled > .smpl-step-icon:after {
+    opacity: 0;
+}
+
+.smpl-step > .smpl-step-step:last-child > .progress {
+    width: 0;
+}
+
+.smpl-step > .smpl-step-step.disabled a.smpl-step-icon {
+    pointer-events: none;
+}
+
+.smpl-step-icon i{
+    display: block;
+    text-align: center;
+    font-size: 25px;
+    color: black;
+    padding-top: 8px;
+}
+
+.discharge-process-steps{
+    margin-top: 30px;
+    margin-bottom: -47px;
+    margin-left: auto;
+    margin-right: auto;
 }

@@ -27,6 +27,7 @@
 	<input class="form-control" type="text"
                name="date_of_birth"
 	       ng-model="editing.date_of_birth"
+         ng-model="editing.demographics.date_of_birth"
 	       ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
 	       placeholder="dd/mm/yyyy" />
                <span class="help-block" ng-show="demographicsForm.date_of_birth.$invalid">
@@ -43,7 +44,7 @@
 {% endblock %}
 {% block modal_save %}
   <button class="btn btn-primary" ng-disabled="demographicsForm.date_of_birth.$invalid" ng-click="save('save')">
-    <i class="fa fa-save"></i> 
+    <i class="fa fa-save"></i>
     Save
   </button>
 {% endblock %}
