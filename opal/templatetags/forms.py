@@ -75,7 +75,7 @@ def _input(*args, **kwargs):
         'lookuplist': lookuplist,
         'visibility': visibility,
         'icon'      : icon,
-        'required'  : int(required),
+        'required'  : required,
         'formname'  : formname,
         'unit'      : unit,
         'data'      : data,
