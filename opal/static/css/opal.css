@@ -752,6 +752,10 @@ svg.speech-bubble-timeline-container{
   cursor: pointer;
 }
 
+.black-text{
+  color: black;
+}
+
 .loading {
   background-color: #9cc96b;
   height: 100%;
