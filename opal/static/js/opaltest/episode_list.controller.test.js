@@ -201,6 +201,9 @@ describe('EpisodeListCtrl', function() {
     });
 
     profile = {
+        can_edit: function(x){
+          return true;
+        },
         readonly   : false,
         can_extract: true,
         can_see_pid: function(){return true; }
