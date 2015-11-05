@@ -11,5 +11,6 @@ angular.module('opal.controllers').controller(
         $scope.options = options;
         $scope.profile =  profile;
         $scope.tag_display = options.tag_display;
+        $scope.tag_visibile_in_list = options.tag_visibile_in_list;
         EpisodeDetailMixin($scope);
     });

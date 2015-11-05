@@ -8,6 +8,7 @@ from django.db import models, connection, reset_queries
 
 from opal.core.subrecords import episode_subrecords, patient_subrecords
 
+
 class EpisodeManager(models.Manager):
 
     def serialised_episode_subrecords(self, episodes, user):

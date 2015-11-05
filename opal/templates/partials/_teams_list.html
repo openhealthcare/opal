@@ -4,7 +4,7 @@
      ng-click="{{ edit_teams }}"></i>
 </h4>
 <p ng-repeat="tag in episode.childTags(options.tag_hierarchy)">
-  <button class="btn btn-xs" ng-click="jumpToTag(tag)" ng-show="tag_display[tag] != undefined">
+  <button class="btn btn-xs" ng-click="jumpToTag(tag)" ng-disabled="!_.contains(tag_visibile_in_list, tag)"  ng-show="tag_display[tag] != undefined">
     [[ tag_display[tag] ]]
   </button>
 </p>
