@@ -225,6 +225,7 @@ class Team(models.Model):
                                          help_text=HELP_RESTRICTED)
     direct_add     = models.BooleanField(default=True)
     show_all       = models.BooleanField(default=False)
+    visibile_in_list = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.title
@@ -1250,7 +1251,6 @@ class UserProfile(models.Model):
         """
         Return an iterable of teams for this user.
         """
-        from opal.models import Team
         return Team.for_user(self.user)
 
     @property
