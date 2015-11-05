@@ -1,5 +1,6 @@
 angular.module('opal.controllers').controller(
-    'ExtractCtrl', function($scope, $http, $window, $modal, PatientSummary,
+    'ExtractCtrl', function($scope, $http, $window, $modal, $timeout,
+                            PatientSummary,
                             ngProgressLite, profile, filters, options, schema){
 
         var underscoreToCapWords = function(str) {
@@ -14,6 +15,8 @@ angular.module('opal.controllers').controller(
         $scope.columns = schema.getAdvancedSearchColumns();
         $scope.searched = false;
         $scope.currentPageNumber = 1;
+        $scope.async_waiting = false;
+        $scope.async_ready = false;
         NOT_ADVANCED_SEARCHABLE = [
           "created", "updated", "created_by_id", "updated_by_id"
         ]
@@ -167,6 +170,42 @@ angular.module('opal.controllers').controller(
                     $window.alert('ERROR: Could not process this search. Please report it to the OPAL team')
                 });
         };
+
+        $scope.async_extract = function(){
+            if($scope.async_ready){
+                window.open('/search/extract/download/' + $scope.extract_id, '_blank');
+                return null
+            }
+            if($scope.async_waiting){
+                return null
+            }
+ 
+            var ping_until_success = function(){
+                $http.get('/search/extract/result/'+ $scope.extract_id).then(function(result){
+                    console.log(result);
+                    if(result.data.state == 'FAILURE'){
+                        alert('FAILURE')
+                        $scope.async_waiting = false;
+                        return
+                    }
+                    if(result.data.state == 'SUCCESS'){
+                        $scope.async_ready = true;
+                    }else{
+                        $timeout(ping_until_success, 1000)
+                    }
+                });
+            }
+            
+            $scope.async_waiting = true;
+            $http.post(
+                '/search/extract/download', 
+                {criteria: JSON.stringify($scope.criteria)}
+            ).then(function(result){
+                console.log(result.data);
+                $scope.extract_id = result.data.extract_id;
+                ping_until_success();
+            });
+        }
 
         $scope.jumpToFilter = function($event, filter){
             $event.preventDefault()
