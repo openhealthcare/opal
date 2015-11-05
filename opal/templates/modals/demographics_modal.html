@@ -36,8 +36,8 @@
       </div>
     </div>
     {% select label="Gender" model="editing.gender" lookuplist="gender_list" %}
-    {% input label="Country of Birth" model="editing.country_of_birth" lookuplist="destination_list" %}
-    {% input label="Ethnicity" model="editing.ethnicity" lookuplist="ethnicity_list" %}
+    {% select label="Country of Birth" model="editing.country_of_birth" lookuplist="destination_list" %}
+    {% select label="Ethnicity" model="editing.ethnicity" lookuplist="ethnicity_list" %}
 
   </form>
 {% endblock %}

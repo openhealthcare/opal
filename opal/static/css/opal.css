@@ -104,7 +104,7 @@ h1.larger { font-size: 52px; }
     color: white;
     background-color: #9cc96b; /* Green */
 }
-
+.panel { font-size: 16px; }
 .panel-primary .panel-default .panel-heading.bg-secondary,
 .bg-secondary {
     background-color: #f76c51; /* red */
@@ -247,6 +247,7 @@ tr.selected {
 .bold{
     font-weight: bold;
 }
+label.readonly { padding-top: 5px; }
 
 /* Detail page & panels */
 .col-md-9.box { width: 74%; margin-right: 1%; }
@@ -360,6 +361,27 @@ li li {
     /* padding: 0px 0px 0px 15px; */
     background: #9cc96b;
     color: white;
+}
+
+.modal {
+  background-color: white;
+  font-size: 18px;
+}
+
+.modal-content {
+  box-shadow: none;
+}
+.modal .btn,
+.modal select,
+.modal input {
+  font-size: 18px;
+}
+.modal .form-control {
+  height: 44px;
+}
+
+.modal textarea.form-control {
+    height: auto
 }
 
 table { font-size: 12px; }

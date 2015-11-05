@@ -349,6 +349,7 @@ angular.module('opal.controllers').controller(
             template_url += $scope.currentTag + '/' + $scope.currentSubTag;
 
             var modal_opts = {
+                backdrop: 'static',
                 templateUrl: template_url,
                 controller: 'EditItemCtrl',
                 resolve: {
@@ -361,6 +362,8 @@ angular.module('opal.controllers').controller(
 
             if(item.size){
                 modal_opts.size = item.size;
+            }else{
+                modal_opts.size = 'lg';
             }
 
             modal = $modal.open(modal_opts);

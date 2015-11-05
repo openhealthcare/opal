@@ -68,6 +68,8 @@ angular.module(
                         var flow = flow_for_verb('enter', config.current_tags);
 
 		                result = $modal.open({
+                            size: 'lg',
+                            backdrop: 'static',
 			                templateUrl: flow.template,
 			                controller:  flow.controller,
                             resolve: {
@@ -92,6 +94,8 @@ angular.module(
                         var flow = flow_for_verb('exit', config.current_tags);
                         
 		                result = $modal.open({
+                            size: 'lg',
+                            backdrop: 'static',
 			                templateUrl: flow.template,
 			                controller:  flow.controller,
                             keyboard: false,
