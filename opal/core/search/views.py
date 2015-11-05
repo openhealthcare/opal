@@ -125,7 +125,7 @@ class ExtractSearchView(View):
 class DownloadSearchView(View):
 
     def post(self, *args, **kwargs):
-        if 'taskrunner' in settings.INSTALLED_APPS:
+        if settings.EXTRACT_ASYNC:
             criteria = _get_request_data(self.request)['criteria']
             extract_id = async_extract(
                 self.request.user,
