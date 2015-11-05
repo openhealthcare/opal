@@ -189,9 +189,8 @@ class ExtractResultView(View):
         result_value = None
         if result.state == 'SUCCESS':
             result_value = result.get()
-#        print result.get() 
         
-        return _build_json_response({'state': result.state, 'result': result_value})
+        return _build_json_response({'state': result.state})
                 
 
 class ExtractFileView(View):
