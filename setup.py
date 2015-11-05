@@ -32,7 +32,7 @@ setup(
     author_email='hello@openhealthcare.org.uk',
     scripts=['bin/opal'],
     install_requires=[
-        'ffs',
+        'ffs>=0.0.8.1',
         'letter',
         'jinja2',
         'requests',
