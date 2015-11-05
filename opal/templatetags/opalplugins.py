@@ -36,13 +36,26 @@ def plugin_head_extra(context):
     ctx['head_extra'] = templates
     return ctx
 
+
+def sort_menu_items(items):
+    # sorting of menu item is done withan index property (lower = first), if they
+    # don't have an index or if there are multiple with the same
+    # index then its done alphabetically
+
+    alphabetic = lambda x: x["display"]
+    index_sorting = lambda x: x.get("index", 100)
+    return sorted(sorted(items, key=alphabetic), key=index_sorting)
+
+
 @register.inclusion_tag('plugins/menuitems.html')
 def plugin_menuitems():
     def items():
         for plugin in plugins.plugins():
             for i in plugin.menuitems:
                 yield i
-    return dict(items=items)
+
+    return dict(items=sort_menu_items(items()))
+
 
 @register.inclusion_tag('plugins/menuitems.html')
 def application_menuitems():
