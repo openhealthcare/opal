@@ -181,14 +181,14 @@ class FilterDetailView(LoginRequiredMixin, View):
 class ExtractResultView(View):
                 
     def get(self, *args, **kwargs):
+        """
+        Tell the client about the state of the extract
+        """
         from celery.result import AsyncResult
         import taskrunner
         task_id = kwargs['task_id']
         result = AsyncResult(id=task_id, app=taskrunner.celery.app)
         print result.state 
-        result_value = None
-        if result.state == 'SUCCESS':
-            result_value = result.get()
         
         return _build_json_response({'state': result.state})
                 
