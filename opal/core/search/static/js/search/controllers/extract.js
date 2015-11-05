@@ -141,6 +141,8 @@ angular.module('opal.controllers').controller(
                     c.lookup_list = $scope[field.lookup_list + '_list'];
                 }
             });
+            $scope.async_waiting = false;
+            $scope.async_ready = false;
         }, true);
 
         $scope.search = function(pageNumber){
