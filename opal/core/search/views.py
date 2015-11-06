@@ -125,7 +125,7 @@ class ExtractSearchView(View):
 class DownloadSearchView(View):
 
     def post(self, *args, **kwargs):
-        if settings.EXTRACT_ASYNC:
+        if getattr(settings, 'EXTRACT_ASYNC', None):
             criteria = _get_request_data(self.request)['criteria']
             extract_id = async_extract(
                 self.request.user,

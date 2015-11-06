@@ -9,7 +9,7 @@
       </h2>
     </div>
     <div class="panel-body">
-      <form class="form form-inline" ng-submit="search()">
+      <form class="form form-inline">
         <div class="row">
           <div class="col-md-9">
             <span ng-repeat="query in criteria">
@@ -147,53 +147,52 @@
             </div>
           </div>
         </div>
+      </form>
 
 
-        <div class="row">
-          <div class="col-md-4" ng-show="profile.can_extract">
-              {% if EXTRACT_ASYNC %}
-              <button class="btn btn-lg"
-                      ng-class="{'btn-primary': async_ready, 'btn-secondary': !async_ready}"
-                      ng-show="searched && results.length > 0"
-                      ng-click="async_extract()">
-                <span ng-hide="async_waiting">
-                  <i class="glyphicon glyphicon-download"></i>
-                  Download this data
-                </span>
-                <span ng-show="async_waiting && !async_ready">
-                  <i class="fa fa-cog fa-spin" ></i>
-                  Building your extract... this could take some time...
-                </span>
-                <span ng-show="async_ready">
-                  <i class="glyphicon glyphicon-download"></i>
-                  Ready - Download your extract
-                </span>
-              </button>
-              {% else %}
-              <form action="/search/extract/download" method="post" target="_blank">
-                <input name="criteria" type="hidden" value="[[ JSON.stringify(criteria) ]]">
-                {% csrf_token %}
-                  <button type="submit"
-                          class="btn btn-secondary btn-lg"
-                          ng-show="searched && results.length > 0">
-                    <span class="glyphicon glyphicon-download"></span>
-                    Download these results
-                  </button>
-              </form>
-              {% endif %}
-          </div>
-
-          <div class="col-md-4 text-center" ng-class="{'col-md-push-4': !profile.can_extract}">
-              <button type="submit"
-                      class="btn btn-primary btn-lg"
-                      >
-                <span class="glyphicon glyphicon-search"></span>
-                Search
-              </button>
-          </div>
+      <div class="row">
+        <div class="col-md-4" ng-show="profile.can_extract">
+          {% if EXTRACT_ASYNC %}
+          <button class="btn btn-lg"
+                  ng-class="{'btn-primary': async_ready, 'btn-secondary': !async_ready}"
+                  ng-show="searched && results.length > 0"
+                  ng-click="async_extract()">
+            <span ng-hide="async_waiting">
+              <i class="glyphicon glyphicon-download"></i>
+              Download this data
+            </span>
+            <span ng-show="async_waiting && !async_ready">
+              <i class="fa fa-cog fa-spin" ></i>
+              Building your extract... this could take some time...
+            </span>
+            <span ng-show="async_ready">
+              <i class="glyphicon glyphicon-download"></i>
+              Ready - Download your extract
+            </span>
+          </button>
+          {% else %}
+          <form action="/search/extract/download" method="post" target="_blank">
+            <input name="criteria" type="hidden" value="[[ JSON.stringify(criteria) ]]">
+            {% csrf_token %}
+            <button type="submit"
+                    class="btn btn-secondary btn-lg"
+                    ng-show="searched && results.length > 0">
+              <span class="glyphicon glyphicon-download"></span>
+              Download these results
+            </button>
+          </form>
+          {% endif %}
         </div>
 
-      </form>
+        <div class="col-md-4 text-center" ng-class="{'col-md-push-4': !profile.can_extract}">
+          <button ng-click="search()"
+                  class="btn btn-primary btn-lg"
+                  >
+            <span class="glyphicon glyphicon-search"></span>
+            Search
+          </button>
+        </div>
+      </div>
     </div> <!-- Row -->
     <div ng-hide="!searched || results.length" class="row">
       <div class="col-md-4 col-md-push-4 lead text-center">
