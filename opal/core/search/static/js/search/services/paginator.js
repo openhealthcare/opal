@@ -22,8 +22,15 @@ angular.module('opal.services').factory('Paginator', function() {
             this.pageNumber = args.page_number;
             this.totalCount = args.total_count;
             this.hasPrevious = pageStart !== 1;
-            var pageStart = Math.min(args.total_pages - numberOfPageResultsDisplayed, this.pageNumber);
-            pageStart = Math.max(pageStart, 1);
+            var pageStart;
+
+            if(this.pageNumber < numberOfPageResultsDisplayed){
+                pageStart = 1;
+            }
+            else{
+                pageStart = Math.min(args.total_pages - numberOfPageResultsDisplayed, this.pageNumber);
+            }
+
             var pageEnd = Math.min(pageStart + numberOfPageResultsDisplayed, args.total_pages);
             this.totalPages = _.range(pageStart, pageEnd);
             this.hasNext = args.total_pages > numberOfPageResultsDisplayed;
