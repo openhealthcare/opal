@@ -14,7 +14,7 @@ from opal import models
 from opal.core.views import (LoginRequiredMixin, _build_json_response,
                              _get_request_data, with_no_caching)
 from opal.core.search import queries
-from opal.core.search.extract import zip_archive
+from opal.core.search.extract import zip_archive, async_extract
 
 PAGINATION_AMOUNT = 10
 
@@ -125,6 +125,14 @@ class ExtractSearchView(View):
 class DownloadSearchView(View):
 
     def post(self, *args, **kwargs):
+        if getattr(settings, 'EXTRACT_ASYNC', None):
+            criteria = _get_request_data(self.request)['criteria']
+            extract_id = async_extract(
+                self.request.user,
+                json.loads(criteria)
+            )
+            return _build_json_response({'extract_id': extract_id})
+
         query = queries.SearchBackend(
             self.request.user, json.loads(self.request.POST['criteria'])
         )
@@ -168,3 +176,35 @@ class FilterDetailView(LoginRequiredMixin, View):
     def delete(self, *args, **kwargs):
         self.filter.delete()
         return _build_json_response('')
+
+
+class ExtractResultView(View):
+                
+    def get(self, *args, **kwargs):
+        """
+        Tell the client about the state of the extract
+        """
+        from celery.result import AsyncResult
+        import taskrunner
+        task_id = kwargs['task_id']
+        result = AsyncResult(id=task_id, app=taskrunner.celery.app)
+        print result.state 
+        
+        return _build_json_response({'state': result.state})
+                
+
+class ExtractFileView(View):
+    def get(self, *args, **kwargs):
+        from celery.result import AsyncResult
+        import taskrunner
+        task_id = kwargs['task_id']
+        result = AsyncResult(id=task_id, app=taskrunner.celery.app)
+        if result.state != 'SUCCESS':
+            raise ValueError('Wrong Task Larry!')
+        print result.state
+        fname = result.get() 
+        resp = HttpResponse(open(fname, 'rb').read())
+        disp = 'attachment; filename="{0}extract{1}.zip"'.format(
+            settings.OPAL_BRAND_NAME, datetime.datetime.now().isoformat())
+        resp['Content-Disposition'] = disp
+        return resp        
