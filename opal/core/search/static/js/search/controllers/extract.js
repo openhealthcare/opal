@@ -17,9 +17,10 @@ angular.module('opal.controllers').controller(
         $scope.currentPageNumber = 1;
         $scope.paginator = new Paginator($scope.search);
 
+        // todo, remove symptom from here
         NOT_ADVANCED_SEARCHABLE = [
           "created", "updated", "created_by_id", "updated_by_id"
-        ]
+        ];
 
 	    for (var name in options) {
 		    $scope[name + '_list'] = options[name];
@@ -100,6 +101,10 @@ angular.module('opal.controllers').controller(
         $scope.isText = function(column, field){
             return $scope.isType(column, field, "string") || $scope.isType(column, field, "text");
         }
+
+        $scope.isSelect = function(column, field){
+            return $scope.isType(column, field, "many_to_many");
+        };
 
         $scope.isDate = function(column, field){
             return $scope.isType(column, field, "date");
