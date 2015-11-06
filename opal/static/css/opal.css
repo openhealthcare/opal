@@ -39,6 +39,9 @@ p a, .orange-link { color: #f76c51; }
     border-color: #f76c51;
 }
 
+.pagination > li{
+    padding: 0;
+}
 .pagination > li > a:hover,
 .pagination > li > a:active
 .pagination > li > a:focus {

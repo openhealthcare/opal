@@ -51,7 +51,9 @@ class EpisodeTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(EpisodeTemplateView, self).get_context_data(**kwargs)
-        context['teams'] = models.Team.for_user(self.request.user)
+        teams = models.Team.for_user(self.request.user)
+        teams = [t for t in teams if t.visibile_in_list]
+        context['teams'] = teams
         context['columns'] = self.get_column_context(**kwargs)
         if 'tag' in kwargs:
             try:
@@ -119,7 +121,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
         context['settings'] = settings
         if hasattr(settings, 'OPAL_EXTRA_APPLICATION'):
             context['extra_application'] = settings.OPAL_EXTRA_APPLICATION
-            
+
         return context
 
 
