@@ -193,7 +193,9 @@ angular.module('opal.controllers').controller(
                     if(result.data.state == 'SUCCESS'){
                         $scope.async_ready = true;
                     }else{
-                        $timeout(ping_until_success, 1000)
+                        if($scope.async_waiting){
+                            $timeout(ping_until_success, 1000)
+                        }
                     }
                 });
             }
