@@ -1,5 +1,5 @@
 angular.module('opal.controllers').controller(
-    'ExtractCtrl', function($scope, $http, $window, $modal, PatientSummary,
+    'ExtractCtrl', function($scope, $http, $window, $modal, PatientSummary, Paginator,
                             ngProgressLite, profile, filters, options, schema){
 
         var underscoreToCapWords = function(str) {
@@ -14,6 +14,8 @@ angular.module('opal.controllers').controller(
         $scope.columns = schema.getAdvancedSearchColumns();
         $scope.searched = false;
         $scope.currentPageNumber = 1;
+        $scope.paginator = new Paginator($scope.search);
+
         NOT_ADVANCED_SEARCHABLE = [
           "created", "updated", "created_by_id", "updated_by_id"
         ]
@@ -158,9 +160,7 @@ angular.module('opal.controllers').controller(
                         return new PatientSummary(o);
                     });
                     $scope.searched = true;
-                    $scope.currentPageNumber = response.page_number;
-                    $scope.totalPages = _.range(1, response.total_pages + 1);
-                    $scope.totalCount = response.total_count;
+                    $scope.paginator = new Paginator($scope.search, response);
                     ngProgressLite.done();
                 }).error(function(e){
                     ngProgressLite.set(0);
