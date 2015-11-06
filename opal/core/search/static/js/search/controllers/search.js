@@ -2,17 +2,17 @@ angular.module('opal.controllers').controller(
     'SearchCtrl', function($rootScope, $scope, $http, $location, $modal,
                            $timeout, ngProgressLite,
                            $q, $window, Episode, Flow,
-                            PatientSummary) {
+                            PatientSummary, Paginator) {
 
-        var searchUrl = "/search";
+      var searchUrl = "/search";
 	    $scope.searchTerm = '';
-        $scope.searchColumns = ['hospital_number', 'name'];
-        $scope.limit = 10;
+      $scope.searchColumns = ['hospital_number', 'name'];
+      $scope.limit = 10;
 	    $scope.results = [];
 	    $scope.searched = false;
-        $scope.currentPageNumber = 1;
 	    $scope.episode_category_list = ['OPAT', 'Inpatient', 'Outpatient', 'Review'];
 	    $scope.hospital_list = ['Heart Hospital', 'NHNN', 'UCH'];
+      $scope.paginator = new Paginator($scope.search);
 
 	    $timeout(function() {
 		    $('#searchByName').focus();
@@ -45,13 +45,11 @@ angular.module('opal.controllers').controller(
                 queryString = $.param($location.search());
                 $http.get('/search/simple/?' + queryString).success(function(response) {
                     ngProgressLite.done();
-    			    $scope.searched = true;
+          			    $scope.searched = true;
                     $scope.results = _.map(response.object_list, function(o){
                         return new PatientSummary(o);
                     });
-                    $scope.currentPageNumber = response.page_number;
-                    $scope.totalCount = response.total_count;
-                    $scope.totalPages = _.range(1, response.total_pages + 1);
+                    $scope.paginator = new Paginator($scope.search, response);
     		    });
             }
         };
