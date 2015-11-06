@@ -146,6 +146,13 @@ class DatabaseQuery(QueryBackend):
         eps = models.Episode.objects.filter(**kw)
         return eps
 
+    def _episodes_for_many_to_many_fields(self, query, field_obj):
+        model = get_model_name_from_column_name(query['column'])
+        related_field = query["field"].lower()
+        key = "%s__%s__name" % (model, related_field)
+        kwargs = {key: query["query"]}
+        return models.Episode.objects.filter(**kwargs)
+
     def _episodes_for_fkorft_fields(self, query, field, contains, Mod):
         model = get_model_name_from_column_name(query['column'])
 
@@ -206,7 +213,8 @@ class DatabaseQuery(QueryBackend):
 
         elif hasattr(Mod, field) and isinstance(getattr(Mod, field), fields.ForeignKeyOrFreeText):
             eps = self._episodes_for_fkorft_fields(query, field, contains, Mod)
-
+        elif hasattr(Mod, field) and isinstance(Mod._meta.get_field(field), djangomodels.ManyToManyField):
+            eps = self._episodes_for_many_to_many_fields(query, Mod._meta.get_field(field))
         else:
             model_name = get_model_name_from_column_name(query['column'])
             kw = {'{0}__{1}{2}'.format(model_name, field, contains): query['query']}

@@ -71,7 +71,7 @@
                       <option>false</option>
                     </select>
                     <input type="text"
-                           class="form-control onions content-offset-below-10"
+                           class="form-control content-offset-below-10"
                            ng-model="query.query"
                            ng-show="isText(query.column, query.field) && query.field != null"
                            bs-options="x for x in query.lookup_list"
@@ -88,6 +88,13 @@
             	           placeholder="dd/mm/yyyy"
                            set-focus-if="isDate(query.column, query.field) && query.field != null && query.queryType != null"
                            />
+                      <span ng-show="isSelect(query.column, query.field)">
+                          <select ng-model="query.query" class="form-control content-offset-below-10"
+                            data-trigger="focus" bs-tooltip="tooltip"
+                            data-placement="top" data-title="4. Select one of the below">
+                              <option ng-repeat="i in symptom_list track by $index">[[ i ]]</option>
+                          </select>
+                      </span>
                 </div>
                 </span>
                 <div class="col-md-2">
