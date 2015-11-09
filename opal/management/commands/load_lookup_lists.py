@@ -20,20 +20,28 @@ class Command(BaseCommand):
             metavar = "FILE"
         ),
     )
-
+    def __init__(self, *args, **kwargs):
+        self.items_created = 0
+        self.synonyms_created = 0
+        super(Command, self).__init__(*args, **kwargs)
+    
     def _from_file(self, filename):
         datafile = ffs.Path(filename)
         return datafile.json_load()
 
     def _install_item(self, model, item):
         content_type = ContentType.objects.get_for_model(model)
-        instance, _ = model.objects.get_or_create(name=item['name'])
+        instance, created = model.objects.get_or_create(name=item['name'])
+        if created:
+            self.items_created += 1
         for synonym in item['synonyms']:
-            syn, _ = Synonym.objects.get_or_create(
+            syn, created = Synonym.objects.get_or_create(
                 content_type=content_type,
                 object_id=instance.id,
                 name=synonym
             )
+            if created:
+                self.synonyms_created += 1
         return
     
     def handle(self, *args, **options):
@@ -55,5 +63,9 @@ class Command(BaseCommand):
 
                 for item in data[name]:
                     self._install_item(model, item)
-        print 'Loaded', num, 'lookup lists'
+        print "\nLoaded", num, "lookup lists\n"
+        print "\n\nNew items report:\n\n\n"
+        print "{0} new items".format(self.items_created)
+        print "{0} new synonyms".format(self.synonyms_created)
+        print "\n\nEnd new items report."
         return
