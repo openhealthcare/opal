@@ -149,6 +149,10 @@ h1.larger { font-size: 52px; }
     border-color: #87bd4b;
 }
 
+table.table > tbody > tr.diagnosis-table-issue > td{
+  background-color: #fcc;
+}
+
 .btn-secondary {
 
     -o-transition:.5s;
