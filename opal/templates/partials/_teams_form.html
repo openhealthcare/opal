@@ -4,11 +4,11 @@
 	  {% for team in teams %}
         {% if not team.parent %}
           {% if team.direct_add %}
-            
+
             {% if team.has_subteams %}
               {% for subteam in team.team_set.all %}
                 <!-- Subteam -->
-                {% if subteam.active %}
+                {% if subteam.active and subteam.visible_in_list %}
                   {% if subteam.direct_add %}
 
                     <div class="checkbox checkbox-primary">
@@ -44,4 +44,3 @@
   </div>
   <!-- Was editing.tagging[0] -->
 {% endif %}
-

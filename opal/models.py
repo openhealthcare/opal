@@ -225,7 +225,7 @@ class Team(models.Model):
                                          help_text=HELP_RESTRICTED)
     direct_add     = models.BooleanField(default=True)
     show_all       = models.BooleanField(default=False)
-    visibile_in_list = models.BooleanField(default=True)
+    visible_in_list = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.title
@@ -242,17 +242,21 @@ class Team(models.Model):
         return restricted_teams
 
     @classmethod
-    def for_user(klass, user):
+    def for_user(klass, user, list_view=False):
         """
         Return the set of teams this user has access to.
         """
-
         profile, _ = UserProfile.objects.get_or_create(user=user)
         if profile.restricted_only:
             teams = []
         else:
             teams = klass.objects.filter(active=True, restricted=False).order_by('order')
+
+        if list_view:
+            teams = teams.filter(visible_in_list=True)
+
         restricted_teams = klass.restricted_teams(user)
+        restricted_teams = [i.visible_in_list for i in restricted_teams]
         allteams = list(teams) + restricted_teams
         teams = []
         for t in allteams:

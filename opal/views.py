@@ -52,7 +52,6 @@ class EpisodeTemplateView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(EpisodeTemplateView, self).get_context_data(**kwargs)
         teams = models.Team.for_user(self.request.user)
-        teams = [t for t in teams if t.visibile_in_list]
         context['teams'] = teams
         context['columns'] = self.get_column_context(**kwargs)
         if 'tag' in kwargs:
@@ -90,7 +89,7 @@ class TagsTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(TagsTemplateView, self).get_context_data(**kwargs)
-        context['teams'] = models.Team.for_user(self.request.user)
+        context['teams'] = models.Team.for_user(self.request.user, list_view=True)
         return context
 
 
@@ -99,7 +98,7 @@ class AddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(AddEpisodeTemplateView, self).get_context_data(**kwargs)
-        context['teams'] = models.Team.for_user(self.request.user)
+        context['teams'] = models.Team.for_user(self.request.user, list_view=False)
         return context
 
 

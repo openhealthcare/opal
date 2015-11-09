@@ -410,6 +410,10 @@ angular.module('opal.controllers').controller(
             return _openEditItemModal(item, name, episode);
         }
 
+        $scope.is_tag_visible_in_list = function(tag){
+            return _.contains(options.tag_visible_in_list, tag);
+        };
+
         $scope.editNamedItem = function(episode, name, iix) {
             var item;
             if (episode[name][iix] && episode[name][iix].columnName) {

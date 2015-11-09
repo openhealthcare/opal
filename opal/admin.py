@@ -40,9 +40,9 @@ class TaggingAdmin(reversion.VersionAdmin):
     list_display = ['team', 'episode']
 
 class TeamAdmin(reversion.VersionAdmin):
-    list_display = ['title', 'name', 'active', 'restricted', 'visibile_in_list', 'direct_add', 'order']
+    list_display = ['title', 'name', 'active', 'restricted', 'visible_in_list', 'direct_add', 'order']
     search_fields = ['title']
-    list_editable = ['active', 'order', 'restricted', 'visibile_in_list', 'direct_add']
+    list_editable = ['active', 'order', 'restricted', 'visible_in_list', 'direct_add']
     filter_horizontal = ('useful_numbers',)
 
 class PatientSubRecordAdmin(reversion.VersionAdmin):
