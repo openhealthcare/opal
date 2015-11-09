@@ -12,6 +12,7 @@
         </button>
         <ul class="dropdown-menu slides" role="menu">
           {% for team in teams %}
+          {% if team.visible_in_list %}
           {% if not team.has_subteams or team.parent %}
           <li ng-hide="currentTag == '{{ team.name }}' || currentSubTag == '{{ team.name }}'">
             <a href="#/list/{% if team.parent %}{{ team.parent.name }}/{{ team.name }}{% else %}{{ team.name }}{% endif %}">
@@ -21,6 +22,7 @@
               {{ team.title }}
             </a>
           </li>
+          {% endif %}
           {% endif %}
           {% endfor %}
         </ul>
