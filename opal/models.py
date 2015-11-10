@@ -242,7 +242,7 @@ class Team(models.Model):
         return restricted_teams
 
     @classmethod
-    def for_user(klass, user, list_view=False):
+    def for_user(klass, user):
         """
         Return the set of teams this user has access to.
         """
@@ -252,12 +252,7 @@ class Team(models.Model):
         else:
             teams = klass.objects.filter(active=True, restricted=False).order_by('order')
 
-            if list_view:
-                teams = teams.filter(visible_in_list=True)
-
         restricted_teams = klass.restricted_teams(user)
-        if list_view:
-            restricted_teams = [i for i in restricted_teams if i.visible_in_list]
         allteams = list(teams) + restricted_teams
         teams = []
         for t in allteams:
