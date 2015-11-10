@@ -83,6 +83,16 @@ filters.filter('shortDate', function(toMomentFilter){
     }
 });
 
+filters.filter('momentDateFormat', function(){
+	return function(input, format){
+			if(!input){
+					return
+			}
+			var d = moment(input)
+			return d.format(format)
+	}
+});
+
 filters.filter('hhmm', function(){
     return function(input, change){
         if(!input){
