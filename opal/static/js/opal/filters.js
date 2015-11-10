@@ -83,16 +83,6 @@ filters.filter('shortDate', function(toMomentFilter){
     }
 });
 
-filters.filter('momentDateFormat', function(){
-	return function(input, format){
-			if(!input){
-					return
-			}
-			var d = moment(input)
-			return d.format(format)
-	}
-});
-
 filters.filter('hhmm', function(){
     return function(input, change){
         if(!input){
@@ -106,8 +96,11 @@ filters.filter('hhmm', function(){
 
 filters.filter('daysTo', function(){
     return function(first, second, withoutDays){
-        var start = moment(first);
+				if(!first || !second){
+						return;
+				}
 
+        var start = moment(first);
 				var diff = moment(second).diff(start, 'days');
 
 				if(withoutDays){
@@ -136,7 +129,7 @@ filters.filter('daysSince', function(daysToFilter){
 				if(change){
 						endDate.add(change, "days");
 				}
-				return daysToFilter(input, endDate, ago);
+				return daysToFilter(input, endDate, withoutDays);
     };
 });
 
