@@ -188,8 +188,14 @@ filters.filter('totalDays', function(){
 });
 
 filters.filter('daysTo', function(){
-    return function(first, second){
+    return function(first, second, ago){
         var start = moment(first);
-        return moment(second).diff(start, 'days');
+
+				if(!ago){
+		        return moment(second).diff(start, 'days');
+				}
+				else{
+						return moment(second).from(start, true)
+				}
     }
 })
