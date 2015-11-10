@@ -75,7 +75,7 @@ angular.module('opal.controllers').controller(
                       return c.type == 'token' ||  c.type ==  'list';
                     }),
                 function(c){ return underscoreToCapWords(c.name); }
-            );
+            ).sort();
         };
 
         $scope.isType = function(column, field, type){
