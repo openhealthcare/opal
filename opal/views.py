@@ -89,7 +89,7 @@ class TagsTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(TagsTemplateView, self).get_context_data(**kwargs)
-        context['teams'] = models.Team.for_user(self.request.user, list_view=True)
+        context['teams'] = models.Team.for_user(self.request.user)
         return context
 
 
@@ -98,7 +98,7 @@ class AddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(AddEpisodeTemplateView, self).get_context_data(**kwargs)
-        context['teams'] = models.Team.for_user(self.request.user, list_view=False)
+        context['teams'] = models.Team.for_user(self.request.user)
         return context
 
 

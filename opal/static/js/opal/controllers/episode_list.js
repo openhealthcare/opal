@@ -13,6 +13,7 @@ angular.module('opal.controllers').controller(
       $scope.url = $location.url();
 
       $scope.options = options;
+      $scope.listView = true;
 
       $scope.num_episodes = _.keys(episodes).length;
 

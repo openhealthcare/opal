@@ -231,14 +231,6 @@ class DatabaseQuery(QueryBackend):
                     eps += list(p.episode_set.all())
         return eps
 
-    def patients_for_criteria(self, criteria):
-        """
-            we get all patients for summaries by aggregating
-            all related episodes.
-        """
-        episodes = episodes_for_criteria(criteria)
-        return self._get_aggregate_patients_from_episodes(episodes)
-
     def _get_aggregate_patients_from_episodes(self, episodes):
         # at the moment we use date_of_admission/discharge only if
         # date_of_episode is null, because of this we can't do this

@@ -103,19 +103,44 @@ filters.filter('hhmm', function(){
     }
 });
 
-filters.filter('daysSince', function(){
-    return function(input, change){
+
+filters.filter('daysTo', function(){
+    return function(first, second, withoutDays){
+				if(!first || !second){
+						return;
+				}
+
+        var start = moment(first);
+				var diff = moment(second).diff(start, 'days');
+
+				if(withoutDays){
+						return diff;
+				}
+				else{
+						// don't use moment.from as it abstracts to months
+						// by rounding up/down
+						if(diff === 1){
+								return "1 day";
+						}
+						else{
+								return diff + " days";
+						}
+				}
+    };
+});
+
+filters.filter('daysSince', function(daysToFilter){
+    return function(input, change, withoutDays){
         if(!input){
             return;
         }
-        diff = moment().diff(moment(input), 'days')
+				endDate = moment();
 
-        if(change){
-            return diff + change
-        }
-
-        return diff;
-    }
+				if(change){
+						endDate.add(change, "days");
+				}
+				return daysToFilter(input, endDate, withoutDays);
+    };
 });
 
 filters.filter('hoursSince', function(){
@@ -186,10 +211,3 @@ filters.filter('totalDays', function(){
         }
     }
 });
-
-filters.filter('daysTo', function(){
-    return function(first, second){
-        var start = moment(first);
-        return moment(second).diff(start, 'days');
-    }
-})
