@@ -2,6 +2,10 @@
 	@page {
 		size: landscape;
 	}
+    .patient-list-container {
+        overflow: visible;
+        overflow-y: visible;
+    }
 }
 
 li {
