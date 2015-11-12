@@ -1,13 +1,17 @@
 
 describe('ExtractCtrl', function(){
-    var $scope, $httpBackend, schema;
+    "use strict";
 
-    optionsData = {
+    var $scope, $httpBackend, schema, $window;
+
+    var optionsData = {
         condition: ['Another condition', 'Some condition'],
         tag_hierarchy :{'tropical': []}
     }
 
-    columnsData = [
+    var patientSummary = {};
+
+    var columnsData = [
         {
             "single": true,
             "advanced_searchable": false,
@@ -65,15 +69,12 @@ describe('ExtractCtrl', function(){
     });
 
     beforeEach(function(){
-        module('opal.controllers');
-
         inject(function($injector){
             $httpBackend = $injector.get('$httpBackend');
             $rootScope  = $injector.get('$rootScope');
             $scope      = $rootScope.$new();
-            $controller  = $injector.get('$controller');
             $window      = $injector.get('$window');
-
+            $controller  = $injector.get('$controller');
             Schema = $injector.get('Schema');
             Episode = $injector.get('Episode');
             Item = $injector.get('Item')
@@ -86,13 +87,9 @@ describe('ExtractCtrl', function(){
             profile: {},
             options: optionsData,
             filters: [],
-            schema : schema
+            schema : schema,
+            PatientSummary: patientSummary
         });
-    });
-
-    afterEach(function() {
-        $httpBackend.verifyNoOutstandingExpectation();
-        $httpBackend.verifyNoOutstandingRequest();
     });
 
     describe('Getting searchable fields', function(){
@@ -107,21 +104,28 @@ describe('ExtractCtrl', function(){
             var col = {fields: [
                 {name: 'hospital_number', type: 'string'},
                 {name: 'hospital', type: 'string'},
-            ]}
-            expect($scope.searchableFields(col)).toEqual(['Hospital Number',
-                                                          'Hospital']);
+            ]};
+            expect($scope.searchableFields(col)).toEqual(['Hospital', 'Hospital Number']);
         });
     });
 
     describe('Search', function(){
-        it('should ask the server for results', function(){
+        beforeEach(function(){
             $httpBackend.expectPOST("/search/extract/").respond({
                 page_number: 1,
                 total_pages: 1,
                 total_count: 0
             });
+        });
+
+        it('should ask the server for results', function(){
             $scope.search();
+            if(!$rootScope.$$phase) {
+                $rootScope.$apply();
+            }
             $httpBackend.flush();
+            $httpBackend.verifyNoOutstandingExpectation();
+            $httpBackend.verifyNoOutstandingRequest();
         });
     });
 
