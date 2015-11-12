@@ -910,3 +910,9 @@ svg.speech-bubble-timeline-container{
     padding-left: 5px;
     text-align: left;
 }
+
+@media print {
+    .no-print{
+        display: none;
+    }
+}
