@@ -78,6 +78,7 @@ def plugin_opal_angular_tracking_exclude():
     def yield_property(property_name):
         app = application.OpalApplication
         app_and_plugins = itertools.chain(plugins.plugins(), [app])
+
         for plugin in app_and_plugins:
             excluded_tracking_prefixes = getattr(plugin, property_name, [])
             for i in excluded_tracking_prefixes:
