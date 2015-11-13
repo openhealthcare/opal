@@ -5,6 +5,18 @@ from django.db import models as dmodels
 
 from opal.core import fields
 from opal import models
+from opal.core import lookuplists
+
+
+
+class Hat(lookuplists.LookupList):
+    pass
+
+
+class HatWearer(models.EpisodeSubrecord):
+    name = dmodels.CharField(max_length=200)
+    hats = dmodels.ManyToManyField(Hat, related_name="hat_wearers")
+
 
 class Colour(models.EpisodeSubrecord):
     _advanced_searchable = False

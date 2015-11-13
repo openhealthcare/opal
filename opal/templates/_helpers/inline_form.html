@@ -1,0 +1,36 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3>
+      <i class="{{ icon }}"></i> {{ title }}
+      <span ng-show="{{ editable }}" >
+          {% if singleton %}
+          <i class="fa fa-pencil edit pull-right"
+             ng-click="editNamedItem('{{ name }}', 0)"></i>
+          {% else %}
+          <i class="fa fa-plus-circle edit pull-right"
+             ng-click="newNamedItem('{{ name }}')"></i>
+          {% endif %}
+     </span>
+    </h3>
+  </div>
+  <
+  <ul class="list-group">
+    <li class="list-group-item" ng-repeat="item in episode.{{ name }}">
+      <div class="row">
+        <div class="col-md-9">
+          {% include detail_template %}
+        </div>
+        <div class="col-md-3">
+          <span ng-show="{{ editable }}" >
+              {% if not singleton %}
+              <i class="fa fa-pencil edit pull-right"
+                 ng-click="editNamedItem('{{ name }}', $index)"></i>
+              <i class="fa fa-trash-o delete pull-right"
+                 ng-click="deleteNamedItem('{{ name }}', $index)"></i>
+              {% endif %}
+          </span>
+        </div>
+      </div>
+    </li>
+  </ul>
+</div>

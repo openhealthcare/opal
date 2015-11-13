@@ -3,19 +3,24 @@ Application helpers for OPAL
 """
 from opal.utils import stringport
 
+
 class OpalApplication(object):
     schema_module = None
-    flow_module   = None
+    flow_module = None
     core_javascripts = {
         'opal.upstream.deps': [
             "js/jquery-1.11.3/jquery-1.11.3.js",
-            "js/d3/d3.js",            
+            "js/d3/d3.js",
             "js/c3-0.4.10/c3.js",
 
-            "js/angular-1.2.20/angular.js",
-            "js/angular-1.2.20/angular-route.js",
-            "js/angular-1.2.20/angular-cookies.js",
-            "js/angular-1.2.20/angular-resource.js",
+            # "js/angular-1.2.20/angular.js",
+            # "js/angular-1.2.20/angular-route.js",
+            # "js/angular-1.2.20/angular-cookies.js",
+            # "js/angular-1.2.20/angular-resource.js",
+            "js/bower_components/angular/angular.js",
+            "js/bower_components/angular-route/angular-route.js",
+            "js/bower_components/angular-resource/angular-resource.js",
+            "js/bower_components/angular-cookies/angular-cookies.js",
 
             "js/angular-ui-utils-0.1.0/ui-utils.js",
             "js/ui-bootstrap-tpls-0.11.0.js",
@@ -38,11 +43,15 @@ class OpalApplication(object):
             "js/angular-strap-2.3.1/modules/typeahead.js",
             "js/angular-strap-2.3.1/modules/typeahead.tpl.js",
 
+            "js/angulartics-0.17.2/angulartics.min.js",
+            "js/angulartics-0.17.2/angulartics-ga.min.js",
+
             "js/bower_components/ment.io/dist/mentio.js",
             "js/bower_components/ment.io/dist/templates.js",
-
+            # "js/ui-select/dist/select.js",
+            "js/bower_components/angular-ui-select/dist/select.js",
+            "js/bower_components/ment.io/dist/templates.js",
             "js/bower_components/angular-growl-v2/build/angular-growl.js",
-
             "js/jquery-plugins/idle-timer.js",
             "js/jquery-plugins/jquery.stickytableheaders.js",
             "js/utils/underscore.js",
@@ -65,16 +74,19 @@ class OpalApplication(object):
             "js/opal/services/episode.js",
             "js/opal/services/episode_visibility.js",
             "js/opal/services/episode_loader.js",
+            "js/opal/services/patient_summary.js",
             "js/opal/services/record_loader.js",
             "js/opal/services/list_schema_loader.js",
             "js/opal/services/extract_schema_loader.js",
             "js/opal/services/schema.js",
             "js/opal/services/options.js",
             "js/opal/services/episodes_loader.js",
+            "js/opal/services/patient_loader.js",
 #            "js/opal/services/discharged_episodes_loader.js",
             "js/opal/services/episode_resource.js",
             "js/opal/services/copy_to_category.js",
-            "js/opal/services/episode_detail.js" 
+            "js/opal/services/episode_detail.js",
+            "js/search/services/paginator.js"
         ],
         'opal.controllers': [
             "js/opal/controllers_module.js",
@@ -88,13 +100,29 @@ class OpalApplication(object):
             "js/opal/controllers/account.js",
             "js/opal/controllers/undischarge.js",
             "js/opal/controllers/copy_to_category.js",
-            "js/opal/controllers/patient_history.js"
+            "js/opal/controllers/patient_history.js",
+            "js/opal/controllers/keyboard_shortcuts.js"
         ]
     }
     javascripts   = []
     actions       = []
     menuitems     = []
     default_episode_category = 'inpatient'
+
+    opal_angular_exclude_tracking_qs = [
+        "/search",
+        "/extract",
+    ]
+
+    @classmethod
+    def get_menu_items(klass):
+        """
+        Default implementation of get_menu_items()
+
+        By default we just return the menuitems property of the application,
+        which is itself set to [] by default.
+        """
+        return klass.menuitems
 
     @classmethod
     def flows(klass):
@@ -109,10 +137,10 @@ class OpalApplication(object):
         flows = {}
         for plugin in plugins.plugins():
             flows.update(plugin().flows())
-            
+
         if klass.flow_module is None:
             return flows
-        
+
         flow = stringport(klass.flow_module)
         flows.update(flow.flows)
         return flows

@@ -5,7 +5,7 @@ angular.module('opal.services')
             var profile = this;
 
             angular.extend(profile, profiledata);
-            
+
             this.active_roles = function(){
                 var roles = [];
                 if(this.roles['default']){
@@ -20,7 +20,7 @@ angular.module('opal.services')
             this.has_role = function(role){
                 return this.active_roles().indexOf(role) != -1;
             };
-            
+
             // TODO: don't hardcode these roles
             this.can_see_pid = function(){
                 if(this.has_role('researcher') || this.has_role('scientist')){

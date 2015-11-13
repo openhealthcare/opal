@@ -26,12 +26,12 @@ class OpalApplicationTestCase(TestCase):
         mock_flows = MagicMock(name='flow module')
         mock_flows.flows = {'default': { 'enter': '', 'exit': '' } }
         stringport.return_value = mock_flows
-        
+
         flows = self.app.flows()
-        
+
         stringport.assert_called_with('opal.tests.flows')
         self.assertEqual(mock_flows.flows, flows)
-        
+
 
 class GetAppTestCase(TestCase):
     @patch('opal.core.application.OpalApplication.__subclasses__')

@@ -6,7 +6,9 @@ import datetime
 from django.contrib.auth.models import User
 
 from opal.core.test import OpalTestCase
+from opal.tests.models import Hat, HatWearer
 from opal.models import Patient, Episode, Team
+
 
 class EpisodeTest(OpalTestCase):
 
@@ -29,7 +31,7 @@ class EpisodeTest(OpalTestCase):
         yesterday = today - datetime.timedelta(days=1)
         self.episode.discharge_date = yesterday
         self.assertEqual(True, self.episode.is_discharged)
-        
+
     def test_can_set_tag_names(self):
         for tag_names in [
             ['microbiology', 'mine'],
@@ -71,7 +73,7 @@ class EpisodeTest(OpalTestCase):
         prev.discharge_date = datetime.date(2012, 8, 12)
         prev.active=False
         prev.save()
-        
+
         serialised = self.episode.to_dict(self.user)
         self.assertEqual(2, len(serialised['episode_history']))
         self.assertEqual(datetime.date(2012, 7, 25),
@@ -93,7 +95,7 @@ class EpisodeTest(OpalTestCase):
         episode = patient.create_episode()
         episode.date_of_admission = datetime.date(2014, 6, 23)
         episode.save()
-        
+
         serialised = episode.to_dict(self.user)
         self.assertEqual(3, len(serialised['episode_history']))
         self.assertEqual(datetime.date(2011, 7, 25),
@@ -105,7 +107,15 @@ class EpisodeTest(OpalTestCase):
         prev = self.patient.create_episode()
         serialised = self.episode.to_dict(self.user)
         self.assertEqual(2, len(serialised['episode_history']))
-        
+
+    def test_to_dict_episode_with_many_to_many(self):
+        prev = self.patient.create_episode()
+        bowler = Hat.objects.create(name="bowler")
+        top = Hat.objects.create(name="top")
+        hw = HatWearer.objects.create(episode=prev)
+        hw.hats.add(bowler, top)
+        serialised = prev.to_dict(self.user)
+        self.assertEqual(serialised["hat_wearer"][0]["hats"], [u'bowler', u'top'])
 
 
 class EpisodeManagerTestCase(OpalTestCase):

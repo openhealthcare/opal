@@ -7,7 +7,7 @@ angular.module('opal.services')
             var options = $scope.options;
             // var schema  = $scope.schema;
             var Flow    = $scope.Flow
-            
+
 	        $scope.selectItem = function(cix, iix) {
 		        $scope.cix = cix;
 		        $scope.iix = iix;
@@ -19,7 +19,7 @@ angular.module('opal.services')
                 if(profile.readonly){
                     return null;
                 };
-                $scope.state = 'modal';
+                $rootScope.state = 'modal';
 
                 var modal_opts = {
 			        templateUrl: '/templates/modals/' + columnName + '.html/',
@@ -35,16 +35,12 @@ angular.module('opal.services')
                 if(item.size){
                     modal_opts.size = item.size;
                 }
-                
+
                 modal = $modal.open(modal_opts);
-                
+
 
                 modal.result.then(function(result) {
-			        $scope.state = 'normal';
-
-			        if (result == 'save-and-add-another') {
-				        $scope.newNamedItem(columnName)
-			        };
+			        $rootScope.state = 'normal';
 		        });
             }
 
@@ -64,13 +60,13 @@ angular.module('opal.services')
                 if (!episode[name]) {
                     episode[name] = [];
                 }
-                return _openEditItemModal(item, name);            
+                return _openEditItemModal(item, name);
             };
 
 	        $scope.deleteItem = function(column_name, iix) {
 		        var modal;
 		        var item = episode.getItem(column_name, iix);
-                
+
                 if(profile.readonly){
                     return null;
                 };
@@ -79,7 +75,7 @@ angular.module('opal.services')
 			        // Cannot delete 'Add'
 			        return;
 		        }
-                
+
                 if(!item.isReadOnly){
                     item = new Item(column_name, episode, $rootScope.fields[column_name]);
                 }
@@ -88,13 +84,13 @@ angular.module('opal.services')
                     // Cannont delete readonly columns
                     return;
                 }
-                
+
 		        if (item.isSingleton()) {
 			        // Cannot delete singleton
 			        return;
 		        }
 
-		        $scope.state = 'modal'
+		        $rootScope.state = 'modal'
 		        modal = $modal.open({
 			        templateUrl: '/templates/modals/delete_item_confirmation.html/',
 			        controller: 'DeleteItemConfirmationCtrl',
@@ -102,7 +98,7 @@ angular.module('opal.services')
 				        item: function() { return item; }
 			        }
 		        }).result.then(function(result) {
-			        $scope.state = 'normal';
+			        $rootScope.state = 'normal';
 		        });
 	        };
 
@@ -110,7 +106,7 @@ angular.module('opal.services')
                 // TODO: Deprecate this fully - no longer neded !
                 return $scope.deleteItem(name, index)
             };
-            
+
 	        $scope.mouseEnter = function(cix) {
 		        $scope.mouseCix = cix;
 	        }
@@ -122,9 +118,9 @@ angular.module('opal.services')
 	        $scope.dischargeEpisode = function() {
                 if(profile.readonly){ return null; };
 
-		        $scope.state = 'modal';
+		        $rootScope.state = 'modal';
                 var exit = Flow(
-                    'exit', 
+                    'exit',
                     null,  // Schema ? Not used ? Todo: investigate!
                     options,
                     {
@@ -137,7 +133,7 @@ angular.module('opal.services')
                 );
 
                 exit.then(function(result) {
-			        $scope.state = 'normal';
+			        $rootScope.state = 'normal';
 		        });
 	        };
 
@@ -152,7 +148,7 @@ angular.module('opal.services')
                     }
                 );
 
-		        $scope.state = 'modal';
+		        $rootScope.state = 'modal';
 
                 enter.then(
                     function(episode) {
@@ -161,7 +157,7 @@ angular.module('opal.services')
 		                //
 		                // This ensures that the relevant episode is added to the table and
 		                // selected.
-		                $scope.state = 'normal';
+		                $rootScope.state = 'normal';
                         if(episode){
                             $location.path('/episode/' + episode.id);
                         }
@@ -169,10 +165,10 @@ angular.module('opal.services')
                     function(reason){
                         // The modal has been dismissed. We just need to re-set in order
                         // to re-enable keybard listeners.
-                        $scope.state = 'normal';
-                    });                
+                        $rootScope.state = 'normal';
+                    });
             },
-            
+
             $scope.jumpToTag = function(tag){
                 var currentTag, currentSubTag;
 
@@ -198,7 +194,7 @@ angular.module('opal.services')
 
             $scope.controller_for_episode = function(controller, template, size){
                 $modal.open({
-                    controller : controller, 
+                    controller : controller,
                     templateUrl: template,
                     size       : size,
                     resolve    : {

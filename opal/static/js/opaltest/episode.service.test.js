@@ -2,6 +2,28 @@ describe('Episode', function() {
     var Episode, EpisodeResource, Item, $scope;
     var episode, episodeData, resource, tag_hierarchy;
 
+    beforeEach(function(){
+        module('opal', function($provide) {
+            $provide.value('$analytics', function(){
+                return {
+                    pageTrack: function(x){}
+                }
+            });
+
+            $provide.provider('$analytics', function(){
+                this.$get = function() {
+                    return {
+                        virtualPageviews: function(x){},
+                        settings: {
+                            pageTracking: false,
+                        },
+                        pageTrack: function(x){}
+                     };
+                };
+            });
+        });
+    });
+
     beforeEach(function() {
         module('opal.services');
 
@@ -223,7 +245,7 @@ describe('Episode', function() {
             it('Should call the newPatient callback', function () {
                 var mock_new = jasmine.createSpy('Mock for new patient')
                 var search_url = '/search/patient/';
-                search_url += '?queryType=Equals&hospital_number=notarealnumber'
+                search_url += '?hospital_number=notarealnumber'
                 $httpBackend.expectGET(search_url).respond([]);
 
                 Episode.findByHospitalNumber('notarealnumber', {newPatient: mock_new})
@@ -237,7 +259,7 @@ describe('Episode', function() {
             it('Should call the newForPatient callback', function () {
                 var mock_new = jasmine.createSpy('Mock for new patient')
                 var search_url = '/search/patient/';
-                search_url += '?queryType=Equals&hospital_number=notarealnumber'
+                search_url += '?hospital_number=notarealnumber'
                 $httpBackend.expectGET(search_url).respond([episodeData]);
 
                 Episode.findByHospitalNumber('notarealnumber', {newForPatient: mock_new})

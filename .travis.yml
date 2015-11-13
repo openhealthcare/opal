@@ -3,7 +3,7 @@ python:
   - "2.7"
 install:
   - python setup.py develop
-  - pip install -r test-requirements.txt 
+  - pip install -r test-requirements.txt
   - npm install karma karma-coverage karma-jasmine karma-firefox-launcher
   - gem install rake
 before_script:

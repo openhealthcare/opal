@@ -1,10 +1,9 @@
 """
 Module entrypoint for core OPAL views
 """
-
 from django.conf import settings
 from django.contrib.auth.views import login
-from django.http import HttpResponse, HttpResponseNotFound
+from django.http import HttpResponseNotFound
 from django.shortcuts import redirect
 from django.template.loader import select_template, get_template
 from django.template import TemplateDoesNotExist
@@ -33,34 +32,6 @@ except AttributeError:
 Synonym = models.Synonym
 
 
-def serve_maybe(meth):
-    """
-    Decorator to figure out if we want to serve files
-    ourselves (DEBUG) or hand off to Nginx
-    """
-    def handoff(self, *args, **kwargs):
-        """
-        Internal wrapper function to figure out
-        the logic
-        """
-        filename = meth(self, *args, **kwargs)
-
-        # When we're running locally, just take the hit, otherwise
-        # offload the serving of the datafile to Nginx
-        if settings.DEBUG:
-            resp = HttpResponse(open(filename, 'rb').read())
-            return resp
-
-        resp = HttpResponse()
-        url = '/protected/{0}'.format(filename)
-        # let nginx determine the correct content type
-        resp['Content-Type']=""
-        resp['X-Accel-Redirect'] = url
-        return resp
-
-    return handoff
-
-
 class EpisodeTemplateView(TemplateView):
     def get_column_context(self, **kwargs):
         """
@@ -80,7 +51,8 @@ class EpisodeTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(EpisodeTemplateView, self).get_context_data(**kwargs)
-        context['teams'] = models.Team.for_user(self.request.user)
+        teams = models.Team.for_user(self.request.user)
+        context['teams'] = teams
         context['columns'] = self.get_column_context(**kwargs)
         if 'tag' in kwargs:
             try:
@@ -148,6 +120,7 @@ class IndexView(LoginRequiredMixin, TemplateView):
         context['settings'] = settings
         if hasattr(settings, 'OPAL_EXTRA_APPLICATION'):
             context['extra_application'] = settings.OPAL_EXTRA_APPLICATION
+
         return context
 
 
@@ -249,6 +222,7 @@ class EpisodeListView(View):
         serialised = models.Episode.objects.serialised_active(
             self.request.user, **filter_kwargs)
         return _build_json_response(serialised)
+
 
 
 class EpisodeCopyToCategoryView(LoginRequiredMixin, View):

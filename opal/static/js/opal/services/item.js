@@ -10,7 +10,7 @@ angular.module('opal.services')
 
             _.each(columnSchema.fields, function(field){
                 delete item[field.name];
-            })
+            });
 
 
 	        angular.extend(item, attrs);
@@ -20,26 +20,26 @@ angular.module('opal.services')
 		        if (field.type == 'date' && item[field.name] &&  !_.isDate(item[field.name])) {
 		            // Convert values of date fields to Date objects
 		            item[field.name] = moment(item[field.name], 'YYYY-MM-DD')._d;
-		        };
-	        };
+		        }
+	        }
 	    };
 
 	    this.columnName = columnSchema.name;
-        this.sort = columnSchema.sort
-        this.size = columnSchema.modal_size
+      this.sort = columnSchema.sort;
+      this.size = columnSchema.modal_size;
 
-        this.isSingleton = function(){
-            return columnSchema.single            
-        };
+      this.isSingleton = function(){
+          return columnSchema.single
+      };
 
-        this.isReadOnly = function(){
-            return columnSchema.readOnly;
-        };
-        
-        // 
-        // Returns a clone of the editable fields + consistency token so that
-        // we can then update them in isolation elsewhere.
-        // 
+      this.isReadOnly = function(){
+          return columnSchema.readOnly;
+      };
+
+      //
+      // Returns a clone of the editable fields + consistency token so that
+      // we can then update them in isolation elsewhere.
+      //
 	    this.makeCopy = function() {
 	        var field, value;
 	        var copy = {id: item.id};
@@ -54,11 +54,40 @@ angular.module('opal.services')
                     copy[field.name] = new Date(value.getTime());
 		        } else {
 		            copy[field.name] = _.clone(value);
-		        };
-	        };
+		        }
+	        }
 
 	        return copy;
 	    };
+
+      // casts to dates/datetimes to the format the server reads dates
+      this.castToType = function(attrs){
+        _.forEach(columnSchema.fields, function(field){
+          value = attrs[field.name];
+          // Convert values of date fields to strings of format YYYY-MM-DD
+          if (field.type == 'date' && attrs[field.name]) {
+              if (angular.isString(value)) {
+                      value = moment(value, 'DD/MM/YYYY');
+                    } else {
+                      value = moment(value);
+                    }
+                    attrs[field.name] = value.format('YYYY-MM-DD');
+                  }
+                  // Convert datetimes to YYYY-MM-DD HH:MM
+                  if( field.type == 'date_time' && attrs[field.name] ){
+                    attrs[field.name] = moment(value).format('YYYY-MM-DD HH:mmZ');
+                  }
+                  //
+                  // TODO: Handle this conversion better
+                  //
+                  if (field.type == 'integer' && field.name == 'time') {
+                    value = attrs[field.name];
+                    attrs[field.name] = parseInt('' + value.hour() + value.minute());
+                  }
+        });
+
+        return attrs;
+      }
 
         //
         // Save our Item to the server
@@ -69,58 +98,32 @@ angular.module('opal.services')
 	        var url = '/api/v0.1/' + this.columnName + '/';
 	        var method;
 
-	        for (var fix = 0; fix < columnSchema.fields.length; fix++) {
-		        field = columnSchema.fields[fix];
-		        value = attrs[field.name];
+          attrs = this.castToType(attrs);
 
-		        // Convert values of date fields to strings of format YYYY-MM-DD
-		        if (field.type == 'date' && attrs[field.name]) {
-		            if (angular.isString(value)) {
-			            value = moment(value, 'DD/MM/YYYY');
-		            } else {
-			            value = moment(value);
-		            };
-		            attrs[field.name] = value.format('YYYY-MM-DD');
-		        };
+          // Tagging to teams are represented as a pseudo subrecord.
+          // Fake the ID attribute so we can know what episode we're tagging to.
+          //
+          // We can't do this at initialization time because the episode has
+          // not fully initialized itself at that point.
+          // TODO: Refactor episode initialization.
+          if (this.columnName == 'tagging') {
+              item.id = episode.id;
+              attrs.id = episode.id;
+          }
 
-                // Convert datetimes to YYYY-MM-DD HH:MM
-                if( field.type == 'date_time' && attrs[field.name] ){
-                    attrs[field.name] = moment(value).format('YYYY-MM-DD HH:mmZ')
-                }
-                
-                // 
-                // TODO: Handle this conversion better 
-                // 
-                if (field.type == 'integer' && field.name == 'time') {
-                    value = attrs[field.name];
-                    attrs[field.name] = parseInt('' + value.hour() + value.minute());
-                }
-	        };
-
-            // Tagging to teams are represented as a pseudo subrecord. 
-            // Fake the ID attribute so we can know what episode we're tagging to.
-            // 
-            // We can't do this at initialization time because the episode has
-            // not fully initialized itself at that point.
-            // TODO: Refactor episode initialization.
-            if (this.columnName == 'tagging') {
-                item.id = episode.id;
-                attrs.id = episode.id;
-            }
-            
 	        if (angular.isDefined(item.id)) {
 		        method = 'put';
 		        url += attrs.id + '/';
 	        } else {
 		        method = 'post';
-		        attrs['episode_id'] = episode.id;
+		        attrs.episode_id = episode.id;
 	        }
 
 	        $http[method](url, attrs).then(function(response) {
 		        item.initialise(response.data);
 		        if (method == 'post') {
 		            episode.addItem(item);
-		        };
+		        }
 		        deferred.resolve();
 	        }, function(response) {
 		        // handle error better
@@ -129,7 +132,8 @@ angular.module('opal.services')
 recently changed it - refresh the page and try again');
 		        } else {
 		            alert('Item could not be saved');
-		        };
+		        }
+            deferred.reject();
 	        });
 	        return deferred.promise;
 	    };

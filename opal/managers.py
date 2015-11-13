@@ -8,6 +8,7 @@ from django.db import models, connection, reset_queries
 
 from opal.core.subrecords import episode_subrecords, patient_subrecords
 
+
 class EpisodeManager(models.Manager):
 
     def serialised_episode_subrecords(self, episodes, user):
@@ -51,7 +52,7 @@ class EpisodeManager(models.Manager):
             if tag.team.name == 'mine' and tag.user != user:
                 continue
             taggings[tag.episode_id][tag.team.name] = True
-        
+
         serialised = []
         for e in episodes:
             d = {
@@ -68,18 +69,17 @@ class EpisodeManager(models.Manager):
                 d[key] = value
             for key, value in patient_subs[e.patient_id].items():
                 d[key] = value
-            
+
             d['tagging'] = [taggings[e.id]]
             serialised.append(d)
 
             if episode_history:
-                d['episode_history'] = e._episode_history_to_dict(user)            
+                d['episode_history'] = e._episode_history_to_dict(user)
 
-        
+
         if historic_tags:
             print 'Historic Tags'
-            episode_ids = [e.id for e in episodes]
-            historic = Tagging.historic_tags_for_episodes(episode_ids)
+            historic = Tagging.historic_tags_for_episodes(episodes)
             for episode in serialised:
                 if episode['id'] in historic:
                     historic_tags = historic[episode['id']]

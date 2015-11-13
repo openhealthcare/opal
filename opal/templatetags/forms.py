@@ -11,9 +11,9 @@ def _visibility_clauses(show, hide):
     construct the angular directives to insert into the template.
     """
     visibility = None
-    if hide: 
+    if hide:
         visibility = 'ng-hide="{0}"'.format(hide)
-    if show: 
+    if show:
         show = ' ng-show="{0}"'.format(show)
         if visibility:
             visibility += show
@@ -31,32 +31,46 @@ def _icon_classes(name):
         return 'glyphicon ' + name
     return name
 
+
+def extract_common_args(kwargs):
+    args = {
+        "model": kwargs.pop('model', None),
+        "label": kwargs.pop('label', None),
+        "change": kwargs.pop("change", None),
+        "autofocus": kwargs.pop("autofocus", None),
+    }
+
+    disabled = kwargs.pop('disabled', None)
+
+    if disabled:
+        args["disabled"] = disabled
+
+    return args
+
+
 def _input(*args, **kwargs):
-    model = kwargs.pop('model')
-    label = kwargs.pop('label')
+    ctx = extract_common_args(kwargs)
     lookuplist = kwargs.pop('lookuplist', None)
     icon = kwargs.pop('icon', None)
-    required = kwargs.pop('required', None)
+    required = kwargs.pop('required', False)
     formname = kwargs.pop('formname', None)
     unit = kwargs.pop('unit', None)
     data = kwargs.pop('data', [])
     enter = kwargs.pop('enter', None)
     maxlength = kwargs.pop('maxlength', None)
-    
+
     if required:
         if not formname:
             raise ValueError('You must pass formname if you pass required')
-        
+
     if icon:
         icon = _icon_classes(icon)
-        
+
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
-    
-    return {
-        'label'     : label,
-        'model'     : model,
-        'modelname' : model.replace('.', '_'),
+
+    ctx.update({
+        'modelname' : ctx["model"].replace('.', '_'),
         'directives': args,
         'lookuplist': lookuplist,
         'visibility': visibility,
@@ -67,22 +81,23 @@ def _input(*args, **kwargs):
         'data'      : data,
         'enter'     : enter,
         'maxlength' : maxlength
-    }
+    })
+
+    return ctx
+
 
 @register.inclusion_tag('_helpers/checkbox.html')
 def checkbox(*args, **kwargs):
-    return {
-        'label'     : kwargs.pop('label', None),
-        'model'     : kwargs.pop('model', None),
-        'disabled'  : kwargs.pop('disabled', None)
-    }
+    ctx = extract_common_args(kwargs)
+    return ctx
+
 
 @register.inclusion_tag('_helpers/input.html')
 def input(*args, **kwargs):
     """
     Render a text input
 
-    Kwargs: 
+    Kwargs:
     - hide : Condition to hide
     - show : Condition to show
     - model: Angular model
@@ -104,20 +119,22 @@ def datepicker(*args, **kwargs):
 def radio(*args, **kwargs):
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
-    
-    return {
-        'label'     : kwargs.pop('label', None),
+    ctx = extract_common_args(kwargs)
+
+    ctx.update({
         'lookuplist': kwargs.pop('lookuplist', None),
-        'model'     : kwargs.pop('model', None),
         'visibility': visibility
-    }
+    })
+
+    return ctx
+
 
 @register.inclusion_tag('_helpers/select.html')
 def select(*args, **kwargs):
     """
     Render a dropdown element
 
-    Kwargs: 
+    Kwargs:
     - hide : Condition to hide
     - show : Condition to show
     - model: Angular model
@@ -125,41 +142,59 @@ def select(*args, **kwargs):
     - lookuplist: Name or value of the lookuplist
     - other: (False) Boolean to indicate that we should allow free text if the item is not in the list
     """
-    model = kwargs.pop('model')
-    label = kwargs.pop('label')
+    ctx = extract_common_args(kwargs)
     lookuplist = kwargs.pop('lookuplist', None)
+    form_name = kwargs.pop('formname', "form")
     other = kwargs.pop('other', False)
     help_template = kwargs.pop('help', None)
+    placeholder = kwargs.pop("placeholder", None)
+    required = kwargs.pop('required', False)
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
+    tagging = kwargs.pop('tagging', True)
+    multiple = kwargs.pop('multiple', False)
+
+    if required:
+        if not form_name:
+            raise ValueError('You must pass formname if you pass required')
+
     if lookuplist is None:
         other_show = None
     else:
-        other_show = "{1} != null && {0}.indexOf({1}) == -1".format(lookuplist, model)
-    other_label = '{0} Other'.format(label)
-        
-    return {
-        'label'        : label,
-        'model'        : model,
-        'directives'   : args,
-        'lookuplist'   : lookuplist,
-        'visibility'   : visibility,
+        other_show = "{1} != null && {0}.indexOf({1}) == -1".format(lookuplist, ctx["model"])
+    other_label = '{0} Other'.format(ctx["label"])
+
+    ctx.update({
+        'placeholder': placeholder,
+        'form_name': form_name,
+        'directives': args,
+        'lookuplist': lookuplist,
+        'visibility': visibility,
         'help_template': help_template,
-        'other'        : other,
-        'other_show'   : other_show,
-        'other_label'  : other_label
-   }
+        'other': other,
+        'model_name': ctx["model"].replace('.', '_').replace('[','').replace(']', ''),
+        'required': required,
+        'other_show': other_show,
+        'other_label': other_label,
+        'tagging': tagging,
+        'multiple': multiple,
+    })
+
+    return ctx
 
 @register.inclusion_tag('_helpers/textarea.html')
 def textarea(*args, **kwargs):
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
-    return {
+
+    ctx = extract_common_args(kwargs)
+    ctx.update({
         'macros'    : kwargs.pop('macros', False),
-        'label'     : kwargs.pop('label', None),
-        'model'     : kwargs.pop('model', None),    
         'visibility': visibility
-    }
+
+    })
+
+    return ctx
 
 @register.inclusion_tag('_helpers/icon.html')
 def icon(name):
@@ -168,3 +203,26 @@ def icon(name):
     if name.startswith('fa'):
         icon = 'fa ' + name
     return dict(icon=icon)
+
+
+@register.inclusion_tag('_helpers/process_steps.html')
+def process_steps(*args, **kwargs):
+    """
+    renders a set of steps for a multi stage form
+
+    kwargs
+    "show_index" do we show the index number of the step we're on
+    "process_steps" an angular scoped array name with the fields "icon" and
+    "title" (title is optional)
+    "complete" an angular expression to tell us if the process step is complete
+    "disabled" an angular expression to tell us if the process step is disabled
+    "active" an angular expression to tell us if the process step is active
+    """
+    required_kwargs = ["process_steps", "complete", "disabled", "active"]
+    template_args = {}
+    for required_kwarg in required_kwargs:
+        template_args[required_kwarg] = kwargs.pop(required_kwarg)
+
+    template_args["show_index"] = kwargs.pop("show_index", False)
+    template_args["show_titles"] = kwargs.pop("show_index", False)
+    return template_args

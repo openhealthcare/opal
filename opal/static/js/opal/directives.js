@@ -1,49 +1,117 @@
 var directives = angular.module('opal.directives', []);
 
-directives.directive("freezeHeaders", function ($timeout) {
+directives.directive("fixHeight", function () {
     return function (scope, element, attrs) {
-        $timeout(function() {
-            var onWindow = false;
-            var $el = $(element).find('table');
-            var stickyNavHeight, breakPoint;
+        function calcParams(){
+            var stickyNavHeight = $("#main-navbar").height();
+            var footerHeight = $("footer").height();
+            return $(element).offset().top + stickyNavHeight + footerHeight;
+        }
 
-            function calcParams(){
-                stickyNavHeight = $("#main-navbar").height();
-                breakPoint = $(element).offset().top - stickyNavHeight;
-            }
+        function updateHeight(){
+            $(element).height($(window).height() - calcParams());
+        }
 
-            function reCalculateMenu(){
-                if($(window).scrollTop() < breakPoint && onWindow){
-                    onWindow = false;
-                    $el.stickyTableHeaders({
-                        scrollableArea: $(element),
-                        fixedOffset: 0
-                    });
-                }
+        updateHeight();
 
-                if($(window).scrollTop() > breakPoint && !onWindow){
-                    onWindow = true;
-                    $el.stickyTableHeaders({
-                        scrollableArea: window,
-                        fixedOffset: stickyNavHeight
-                    });
-                }
-            }
+        $(window).on("resize.fixHeight", updateHeight);
 
-            calcParams();
-
-            $el.stickyTableHeaders({
-                scrollableArea: $(element)
-            });
-
-            $(window).on("resize.changeScrollViewPort", function(){
-                calcParams();
-            });
-
-            $(window).on("scroll.changeScrollViewPort", function(){
-                requestAnimationFrame(reCalculateMenu);
-            });
+        scope.$on('$destroy', function(){
+          $(window).off("resize.fixHeight");
         });
+    };
+});
+
+directives.directive("scrollEpisodes", function(){
+    return function(scope, element, attrs){
+      /*
+      * when they user is on an episode and presses the down up key, the selected
+      * episode should always be shown in its entirety.
+      */
+      var shouldScroll = attrs.scrollEpisodes,
+          patientListContainer = $(attrs.scrollContainer),
+          thHeight = patientListContainer.find("thead").height();
+
+      var adjustForThead = function(){
+        if($(element).position().top <= thHeight){
+          // adjust for the thead, plus some buffer
+          patientListContainer.scrollTop(patientListContainer.scrollTop() - thHeight - 10);
+        }
+      }
+
+      function isScrolledIntoView(element, parent){
+        var elementTop    = element.getBoundingClientRect().top ,
+            elementBottom = element.getBoundingClientRect().bottom;
+        return elementTop >= thHeight && elementBottom <= window.innerHeight;
+      }
+
+      scope.$on('keydown', function(event, e) {
+        if(scope[shouldScroll](scope.row)){
+            // up
+            if(e.keyCode === 38){
+              event.preventDefault();
+              if(!isScrolledIntoView(element[0], patientListContainer[0])){
+                element[0].scrollIntoView(true);
+              }
+              adjustForThead();
+            }
+            // down
+            else if(e.keyCode === 40){
+              event.preventDefault();
+              if(!isScrolledIntoView(element[0], patientListContainer[0])){
+                element[0].scrollIntoView(false);
+              }
+              adjustForThead();
+            }
+        }
+      });
+    };
+});
+
+directives.directive("freezeHeaders", function () {
+    return function (scope, element, attrs) {
+        var $el = $(element).find('table');
+        $el.stickyTableHeaders({
+            scrollableArea: $(element),
+        });
+    };
+});
+
+directives.directive('scrollTop', function () {
+    return {
+        link: function (scope, element, attrs) {
+            var body = $("html, body");
+            element.bind("click", function(){
+                body.animate({ scrollTop: "0" });
+            });
+
+            $(window).on("scroll.scrollTop", function(){
+                window.requestAnimationFrame(function(){
+                    if($(window).scrollTop() > 0){
+                        $(element).removeClass("hidden-at-top");
+                    }
+                    else{
+                        $(element).addClass("hidden-at-top");
+                    }
+                });
+            });
+
+            scope.$on('$destroy', function(){
+              $(window).off("resize.fixHeight");
+            });
+        }
+    };
+});
+
+directives.directive('blurOthers', function(){
+    return {
+        link: function ($scope, element, attrs) {
+            $scope.$watch(attrs.blurOthers, function(value){
+                if(attrs.blurOthers){
+                    $(document.activeElement).blur();
+                }
+            });
+        }
     };
 });
 
@@ -95,6 +163,41 @@ directives.directive('markdown', function () {
 	};
 });
 
+directives.directive('slashKeyFocus', function() {
+  return {
+    link: function(scope, elem, attrs) {
+        scope.$watch(attrs.slashKeyFocus, function(value){
+            if(value){
+                $(window).on("keyup.keyFocus", function(e){
+                    // if we're already focused on a text area, lets ignore this
+                    if (e.keyCode == 191 && !e.shiftKey) {
+                        if(!$('input:focus, textarea:focus').length){
+                            $(elem).focus();
+                        }
+                    }
+                });
+            } else {
+                $(window).off("keyup.keyFocus");
+            }
+
+            $elem = $(elem);
+
+            $elem.on("focus.keyFocus", function(x){
+                $elem.on("keyup.keyBlur", function(e){
+                    if (e.keyCode == 27) {
+                        $elem.blur();
+                    }
+                });
+            });
+
+            $elem.on("blur.keyFocus", function(x){
+                $(elem.off("keyup.keyBlur"));
+            });
+        });
+    }
+  };
+});
+
 directives.directive('setFocusIf', function($timeout) {
   return {
     link: function($scope, $element, $attr) {
@@ -108,6 +211,28 @@ directives.directive('setFocusIf', function($timeout) {
             }
           }, 0, false);
         }
+      });
+    }
+  };
+});
+
+// until bootstrap moves to flex box, lets grab the parent height with javascript
+directives.directive('parentHeight', function(){
+  return{
+    restrict: 'A',
+    link: function(scope, element){
+      var $element = $(element);
+      $element.css("min-height", $element.parent().height());
+    }
+  };
+});
+
+directives.directive('autofocus', function($timeout) {
+  return {
+    restrict: 'A',
+    link : function($scope, $element) {
+      $timeout(function() {
+        $element[0].focus();
       });
     }
   };

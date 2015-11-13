@@ -6,7 +6,7 @@ import json
 from django.contrib.auth.models import User
 from django.core.serializers.json import DjangoJSONEncoder
 from django.test import TestCase
-from django.test.client import RequestFactory, Client
+from django.test.client import RequestFactory
 
 from opal.models import UserProfile
 
@@ -18,7 +18,7 @@ class OpalTestCase(TestCase):
     def __init__(self, *a, **k):
         self.rf = RequestFactory()
         self._user = None
-        TestCase.__init__(self, *a, **k)
+        super(OpalTestCase, self).__init__(*a, **k)
 
     @property
     def user(self):
@@ -38,7 +38,9 @@ class OpalTestCase(TestCase):
 
     def post_json(self, path, data):
         json_data = json.dumps(data, cls=DjangoJSONEncoder)
-        return self.client.post(path, content_type='application/json', data=json_data)
+        return self.client.post(
+            path, content_type='application/json', data=json_data
+        )
 
     def put_json(self, path, data):
         json_data = json.dumps(data, cls=DjangoJSONEncoder)

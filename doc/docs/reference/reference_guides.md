@@ -16,11 +16,20 @@ The following reference guides are available:
 [opal.application.OpalApplication](opal_application.md) | OPAL Application objects
 [opal.core.schemas](schemas.md)|Schemas - Dynamic columns for the table views
 
+### Angular Services
+|
+-|-
+[Episode](episode_service.md) | Episode objects
+[Item](item_service.md) |  Subrecord objects
+[PatientSummary](patient_summary_service.md) | Patient search result summaries
+
+
 ### Helper libraries
 
 |
 -|-
 [The forms Templatetag library](form_templatetags.md) | The building blocks for OPAL forms
+[The record_panel templatetag](record_panel_templatetag.md) | Rendering record panels.
 [Javascript Helpers](javascript_helpers.md)| Angular filters and $rootScope methods
 
 ### OPAL Search module

@@ -1,79 +1,67 @@
-<div class="container content-offset">
+<div class="container content-offset search-container">
 
-  <div class="panel panel-primary">
+  <div class="panel panel-primary search-panel">
     <!-- Default panel contents -->
     <div class="panel-heading">
       <h2>
-        <i class="fa fa-search"></i> 
+        <i class="fa fa-search"></i>
         Patient Search
       </h2>
     </div>
     <div class="panel-body">
-      <form class="form form-horizontal">
-        <div class="col-md-6">
-          <input type="text"
-                 name="name"
-                 ng-model="searchTerms.name"
-                 placeholder="Name"
-                 class="form-control"
-                 ng-keypress="$event.keyCode == 13 && search()"
-                 focus-on-this
-                 autocomplete="off"
-                 />
+      <form ng-submit="search()" class="form form-horizontal">
+        <div class="row content-offset">
+            <div class="col-md-4 col-md-push-4">
+              <input type="text" autofocus
+                     name="name"
+                     slash-key-focus="!state || state==='normal'"
+                     ng-blur="enableShortcuts()"
+                     ng-focus="disableShortcuts()"
+                     placeholder="Name or Hospital Number"
+                     ng-model="searchTerm"
+                     class="form-control"
+                     autocomplete="off"
+                     />
+            </div>
+            <div class="col-md-4 col-md-push-4 text-right">
+                <a href="#/extract" class="btn btn-secondary pull-right">
+                  <i class="fa fa-sliders"></i>
+                  Advanced
+                </a>
+            </div>
         </div>
-        <div class="col-md-3">
-          <input type="text"
-                 name="hospital_number"
-                 ng-model="searchTerms.hospital_number"
-                 placeholder="Hospital Number"
-                 class="form-control"
-                 ng-keypress="$event.keyCode == 13 && search()" />
+        <div class="row">
+            <div class="col-md-4 col-md-push-4 text-center">
+                <a ng-click="search()" class="btn btn-lg btn-primary content-offset-25">
+                    <i class="glyphicon glyphicon-search"></i>
+                    Search
+                </a>
+            </div>
         </div>
-
-        <div class="col-md-3">
-	      <a ng-click="search()" class="btn btn-primary pull-left">
-            <i class="glyphicon glyphicon-search"></i>
-            Search
-          </a>
-          <a href="#/extract" class="btn btn-secondary pull-right">
-            <i class="fa fa-sliders"></i>
-            Advanced
-          </a>
-        </div>
-
       </form>
       <p>
       </p>
     </div>
-    {% include 'partials/_episode_summary_table.html' %}
-    <!-- Table -->
+    <div ng-show="results.length">
+        {% include 'partials/_patient_summary_list.html' %}
+    </div>
 
     <div ng-hide="!searched || results.length" class="panel-body">
       <div class="row">
-        <div class="col-md-6">
-          <p class="lead">
-            We couldn't find any results for your search.
-            <br />
-            Maybe you'd like to
-            <a href="#/extract">try an advanced search?</a>
-          </p>
-        </div>
-        <div class="col-md-6">
+        <div class="col-md-4 col-md-push-4 lead text-center">
           <p>
-            <button class="btn btn-secondary pull-right"
-                    ng-click="addEpisode()"
-                    >
-              <i class="glyphicon glyphicon-plus"></i>
-              Add Patient
-            </button>
-
-          </p>
-        </div> 
-
-
+            We couldn't find any results for your search.
+            </p>
+            <p>
+            Maybe you'd like to
+            </p>
+            <p>
+            <a href="#/extract">try an advanced search?</a>
+            </p>
+        </div>
       </div>
     </div>
-    
-    
+
+
   </div>
 </div>

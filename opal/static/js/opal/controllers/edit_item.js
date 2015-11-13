@@ -10,10 +10,14 @@ angular.module('opal.controllers').controller(
         // Some fields should only be shown for certain categories.
         // Make that category available to the template.
         $scope.episode_category = episode.category
-	    $scope.editing = item.makeCopy();
+  	    $scope.editing = item.makeCopy();
+
+        $scope.editingMode = function(){
+            return !_.isUndefined($scope.editing.id);
+        };
 
         // This is the patientname displayed in the modal header
-	    $scope.editingName = item.episode.demographics[0].name;
+  	    $scope.editingName = item.episode.demographics[0].name;
 
         $scope.columnName = item.columnName;
         // initially display episodes of interest to current user
@@ -27,7 +31,7 @@ angular.module('opal.controllers').controller(
 
 	    for (var name in options) {
 		    if (name.indexOf('micro_test') != 0) {
-			    $scope[name + '_list'] = options[name];
+			    $scope[name + '_list'] = _.uniq(options[name]);
 		    };
 	    };
 
@@ -74,9 +78,22 @@ angular.module('opal.controllers').controller(
 
 	    $scope.episode_category_list = ['Inpatient', 'Outpatient', 'Review'];
 
-        // 
+        $scope.delete = function(result){
+            $modalInstance.close(result);
+                modal = $modal.open({
+                templateUrl: '/templates/modals/delete_item_confirmation.html/',
+                controller: 'DeleteItemConfirmationCtrl',
+                resolve: {
+                item: function() {
+                        return item;
+                    }
+                }
+            });
+        };
+
+        //
         // Save the item that we're editing.
-        // 
+        //
 	    $scope.save = function(result) {
             ngProgressLite.set(0);
             ngProgressLite.start();

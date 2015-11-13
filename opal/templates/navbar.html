@@ -1,6 +1,6 @@
 {% load opalplugins %}
 {% load static %}
-<nav class="navbar navbar-primary navbar-fixed-top screen-only" role="navigation" id="main-navbar">
+<nav class="navbar navbar-default navbar-primary navbar-fixed-top screen-only top-navbar" role="navigation">
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
@@ -11,7 +11,7 @@
         <span class="icon-bar"></span>
       </button>
 
-	  <a class="navbar-brand" href="/">
+	  <a class="navbar-brand" href="/#/">
         <img src="{% static 'img/ohc-trans.png' %}" />
         {{OPAL_BRAND_NAME}}
         <small><small>
@@ -20,22 +20,22 @@
       </a>
     </div>
 
+
+
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="main-navbar">
       <ul class="nav navbar-nav navbar-right">
         {% if request.user.is_authenticated %}
 	    <li ng-class="{active: $location.path().indexOf('/list/') == 0}">
-          <a href="/#">
+          <a href="/#/">
             <i class="fa fa-table"></i> Lists
           </a>
         </li>
-	    <li ng-class="{active: $location.path().indexOf('/search') == 0}">
-          <a href="/#/search">
-            <i class="fa fa-search"></i> Search
-          </a>
-        </li>
+
         {% application_menuitems %}
-        {% plugin_menuitems %}
+        {% if not user.profile.explicit_access_only %}
+          {% plugin_menuitems %}
+        {% endif %}
         {% if request.user.is_staff %}
 	    <li><a href="/admin"><i class="fa fa-cogs"></i> Admin</a></li>
         {% endif %}
@@ -52,7 +52,22 @@
         {% endif %}
 
       </ul>
-
+      {% if user.profile.can_see_pid %}
+        <div ng-show="$location.path().indexOf('/search')">
+          <div ng-controller="SearchCtrl">
+            <form class="navbar-form navbar-right" ng-submit="search()" role="search">
+              <div class="form-group nav-bar-search">
+                <input
+                        slash-key-focus="!state || state==='normal'"
+                        ng-blur="enableShortcuts()"
+                        ng-focus="disableShortcuts()"
+                        ng-model="searchTerm"
+                        type="text" class="form-control" placeholder="Search">
+              </div>
+            </form>
+          </div>
+        </div>
+      {% endif %}
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>

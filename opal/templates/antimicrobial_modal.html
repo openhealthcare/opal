@@ -5,7 +5,7 @@
   <div class="row">
     <div class="col-md-8">
       <form class="form-horizontal">
-        {% input "autofous" label="Drug" model="editing.drug" lookuplist="antimicrobial_list" %}
+        {% input "autofocus" label="Drug" model="editing.drug" lookuplist="antimicrobial_list" %}
         {% datepicker label="Start date" model="editing.start_date" %}
         {% datepicker label="End date" model="editing.end_date" %}
         {% input label="Dose" model="editing.dose" %}
@@ -17,11 +17,11 @@
           {% select label="Reason for Stopping" model="editing.reason_for_stopping" lookuplist="iv_stop_list" %}
           {% textarea label="Comments" model="editing.comments" %}
         </div>
-      </form>      
-    </div> 
+      </form>
+    </div>
     <div class="col-md-4">
       {% include 'modals/_allergies_sidebar.html' %}
-    </div> 
+    </div>
 
-  </div> 
+  </div>
 {% endblock %}

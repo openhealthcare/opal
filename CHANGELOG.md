@@ -1,3 +1,37 @@
+### 0.5 (Major release)
+
+#### Search
+
+Complete re-design of Search interface to provide a single search box on every page and pagination for resulta.
+Puts in place a pluggable interface that could be swapped out for e.g. ElasticSearch.
+New Service for PatientSummary()
+
+#### Analytics
+
+Moves Analytics integration into OPAL core with the ability to blacklist pages that should never be reported
+
+#### List view
+
+Removed old spreadsheet-style cell based navigation and moved to row-wise nav with clearer highlighting of the active row.
+Updated scrolling and loading behaviour to snap to viewport and not display the page build.
+
+#### Subrecord metadata
+
+Added four new utility fields to Patient and Episode subrecords: 
+
+created_by, updated_by, created, updated
+
+#### Select2 and list fields
+
+Added support for select2 as an input widget and Subrecord fields that can be lists of things.
+
+#### Also
+
+Numerous small bugfixes.
+Refactoring of the models package into a models module.
+Updated Underscore.js -> 1.8.3
+Updated Angular.js -> 1.3.11
+
 ### 0.4.3 (Minor release)
 
 Refactors opal.models to be a models.py file rather than a package.
@@ -23,7 +57,7 @@ South has been removed, now using django migrations
 
 Fixes some search results appearing duplicated.
 
-### 0.4 (Minor release)
+### 0.4 (Major release)
 
 ### New Design
 
@@ -45,7 +79,7 @@ http://opal.openhealthcare.org.uk/docs/reference/form_templatetags/
 OPAL JSON APIs are now fully self-documenting for all updated instances
 http://opal.openhealthcare.org.uk/docs/guides/json_api/
 
-### 0.3 (Minor release)
+### 0.3 (Major release)
 
 Bugfixes, significant flexibility in template customisability.
 
