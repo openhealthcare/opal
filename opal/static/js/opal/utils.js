@@ -14,6 +14,7 @@ OPAL.module = function(namespace, dependencies){
     dependencies.push('mentio');
     dependencies.push('angulartics');
     dependencies.push('angulartics.google.analytics');
+    console.log("SETTING UP TRACKING DEPENDENCIES");
 
     this.tracking = {
       manualTrack: window.OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX || window.OPAL_ANGULAR_EXCLUDE_TRACKING_QS,
