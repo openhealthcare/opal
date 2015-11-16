@@ -25,14 +25,23 @@ app.config(
                      return target;
                  }
 		     })
-             .when('/patient/:id', {
-			     controller: 'PatientDetailCtrl',
+             .when('/patientnotes/:id', {
+			     controller: 'PatientNotesCtrl',
                  resolve: {
 				     episodes: function(patientLoader) { return patientLoader(); },
 				     options: function(Options) { return Options; },
                      profile: function(UserProfile){ return UserProfile; }
                  },
 			     templateUrl: function(params){ return '/templates/patient_notes.html' }
+             })
+             .when('/patient/:id', {
+			     controller: 'PatientDetailCtrl',
+                 resolve: {
+				     patient: function(patientLoader) { return patientLoader(); },
+				     options: function(Options) { return Options; },
+                     profile: function(UserProfile){ return UserProfile; }
+                 },
+			     templateUrl: function(params){ return '/templates/patient_detail.html' }
              })
              .when('/episode/:id', {
 			     controller: 'EpisodeDetailCtrl',

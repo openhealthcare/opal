@@ -92,6 +92,7 @@ class OpalApplication(object):
             "js/opal/controllers_module.js",
             "js/opal/controllers/episode_list.js",
             "js/opal/controllers/episode_detail.js",
+            "js/opal/controllers/patient_detail.js",
             "js/opal/controllers/hospital_number.js",
             "js/opal/controllers/add_episode.js",
             "js/opal/controllers/reopen_episode.js",
@@ -107,7 +108,7 @@ class OpalApplication(object):
     javascripts   = []
     actions       = []
     menuitems     = []
-    default_episode_category = 'inpatient'
+    default_episode_category = 'Inpatient'
 
     opal_angular_exclude_tracking_qs = [
         "/search",

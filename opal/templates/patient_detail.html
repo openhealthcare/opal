@@ -1,0 +1,134 @@
+{% load panels %}
+<div class="heading">
+  <div class="spaced bg-primary">
+    <div class="box">
+      <h1>
+        {% block heading %}[[ patient.demographics[0].name ]]{% endblock %}
+        <small>
+          {% block subheading %}
+          [[ patient.demographics[0].hospital_number ]]
+          [[ patient.demographics[0].date_of_birth | shortDate ]]
+          {% endblock %}
+        </small>
+      </h1>
+    </div>
+  </div>
+</div>
+
+<div class="container container-wide headed-content-offset">
+
+  <div class="row"> <!-- Episode panels -->
+    <div class="col-md-3"> <!-- Episode Switcher -->
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3>
+                <i class="fa fa-user"></i> Demographics
+                <i class="fa fa-pencil edit pull-right"
+                   ng-click="alert('not yet')"></i>
+              </h3>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-md-4">
+                  <b>Name</b>
+                </div>
+                <div class="col-md-8">
+                  [[ patient.demographics[0].name ]]
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <b>Hospital #</b>
+                </div>
+                <div class="col-md-8">
+                  [[ patient.demographics[0].hospital_number ]]
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <b>DOB</b>
+                </div>
+                <div class="col-md-8">
+                  [[ patient.demographics[0].date_of_birth | shortDate ]]
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <b>Gender</b>
+                </div>
+                <div class="col-md-8">
+                  [[ patient.demographics[0].gender ]]
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <b>Born</b>
+                </div>
+                <div class="col-md-8">
+                  [[ patient.demographics[0].country_of_birth ]]
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <b>Ethnicity</b>
+                </div>
+                <div class="col-md-8">
+                  [[ patient.demographics[0].ethnicity ]]
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+      <div class="panel panel-default">
+        <div class="panel-heading ">
+          <h3>
+            <i class="fa fa-history"></i>
+            Patient History
+          </h3>
+        </div>
+        <ul class="list-group">
+          <li class="list-group-item episodelist pointer"
+              ng-class="{'bg-active': e.id == episode.id}"
+              ng-click="switch_to_episode($index)"
+              ng-repeat="e in patient.episodes">
+            [[ e.display_category() ]] 
+            [[ e.date_of_episode | shortDate ]]
+            [[ e.date_of_admission | shortDate]]<span ng-show="e.discharge_date"> - [[ e.discharge_date | shortDate ]]</span>
+          </li>
+          <li class="list-group-item episodelist">
+            <center>
+            <button class="btn btn-primary btn-lg">
+              <i class="glyphicon glyphicon-plus"></i>
+              Add episode
+            </button>
+            </center>
+          </li>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-heading ">
+          <h3>
+            <i class="fa fa-bolt"></i>
+            Actions
+          </h3>
+        </div>
+        <ul class="list-group">
+          <li class="list-group-item">
+            {% include 'partials/_episode_actions.html' %}
+          </li>
+        </ul>
+      </div>
+    </div> <!-- End episode switcher -->
+    <div class="col-md-9">
+      {% for episode_type in episode_types %}
+        {% if episode_type.detail_template %}
+          <div class="row" ng-show="episode.category == '{{ episode_type.name }}'">
+            {% include episode_type.detail_template %}
+          </div>            
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div> <!-- End Episode panels -->
+
+</div> <!-- Ends Main Panel -->

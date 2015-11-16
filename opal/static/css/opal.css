@@ -3,6 +3,10 @@ html, .outer-container{
     height: 100%;
 }
 
+.container-wide {
+    width: 1370px;
+}
+
 .search-container{
     height: 100%;
 }
@@ -264,9 +268,8 @@ label.readonly { padding-top: 5px; }
 i.edit,
 i.delete,
 .detail .panel-heading i { font-size: 28px; }
-
+/*.episodelist.bg-active { margin-right: -40px;} */
 .list-group-item .btn i { font-size: 20px; }
-
 .panel-primary .panel-default .panel-heading,
 .panel-default .panel-heading {
     border-bottom: 3px solid #f76c51;
@@ -438,7 +441,11 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     cursor: pointer;
 }
 
-.dropdown-menu { z-index: 1060; }
+.dropdown-menu { 
+    z-index: 1060; 
+    min-width: 260px;
+    font-size; 16px;
+}
 
 .timeline {
   position: relative;

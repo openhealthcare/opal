@@ -62,7 +62,7 @@
   <ul class="list-group">
     <li class="list-group-item" ng-show="profile.can_see_pid()">
       <p>
-        <a class="btn btn-secondary screen-only btn-sm" ng-href='[[ "#/episode/" + episode.id ]]'>
+        <a class="btn btn-secondary screen-only btn-sm" ng-href='[[ "#/patient/" + episode.demographics[0].patient_id ]]'>
           <i class="fa fa-search-plus"></i>
           Patient Details
         </a>

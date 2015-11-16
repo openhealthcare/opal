@@ -11,7 +11,7 @@ from django.views.generic import TemplateView, View
 from django.views.decorators.http import require_http_methods
 
 from opal import models
-from opal.core import application, exceptions, glossolalia
+from opal.core import application, episodes, exceptions, glossolalia
 from opal.core.subrecords import episode_subrecords, subrecords
 from opal.core.views import LoginRequiredMixin, _get_request_data, _build_json_response
 from opal.core.schemas import get_all_list_schema_classes
@@ -68,6 +68,16 @@ class EpisodeListTemplateView(EpisodeTemplateView):
     template_name = 'episode_list.html'
     column_schema = schema.list_schemas['default']
 
+
+class PatientDetailTemplateView(TemplateView):
+    template_name = 'patient_detail.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super(PatientDetailTemplateView, self).get_context_data(**kwargs)
+        context['models'] = { m.__name__: m for m in subrecords() }
+        context['episode_types'] = episodes.episode_types()
+        return context
+    
 
 class EpisodeDetailTemplateView(TemplateView):
     def get(self, *args, **kwargs):
