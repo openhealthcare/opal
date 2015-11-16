@@ -1,5 +1,6 @@
 angular.module('opal.controllers').controller(
-    'ExtractCtrl', function($scope, $http, $window, $modal, PatientSummary,
+    'ExtractCtrl', function($scope, $http, $window, $modal, $timeout,
+                            PatientSummary, Paginator,
                             ngProgressLite, profile, filters, options, schema){
 
         var underscoreToCapWords = function(str) {
@@ -14,9 +15,12 @@ angular.module('opal.controllers').controller(
         $scope.columns = schema.getAdvancedSearchColumns();
         $scope.searched = false;
         $scope.currentPageNumber = 1;
+        $scope.paginator = new Paginator($scope.search);
+
+        // todo, remove symptom from here
         NOT_ADVANCED_SEARCHABLE = [
           "created", "updated", "created_by_id", "updated_by_id"
-        ]
+        ];
 
 	    for (var name in options) {
 		    $scope[name + '_list'] = options[name];
@@ -71,7 +75,7 @@ angular.module('opal.controllers').controller(
                       return c.type == 'token' ||  c.type ==  'list';
                     }),
                 function(c){ return underscoreToCapWords(c.name); }
-            );
+            ).sort();
         };
 
         $scope.isType = function(column, field, type){
@@ -97,6 +101,10 @@ angular.module('opal.controllers').controller(
         $scope.isText = function(column, field){
             return $scope.isType(column, field, "string") || $scope.isType(column, field, "text");
         }
+
+        $scope.isSelect = function(column, field){
+            return $scope.isType(column, field, "many_to_many");
+        };
 
         $scope.isDate = function(column, field){
             return $scope.isType(column, field, "date");
@@ -138,6 +146,8 @@ angular.module('opal.controllers').controller(
                     c.lookup_list = $scope[field.lookup_list + '_list'];
                 }
             });
+            $scope.async_waiting = false;
+            $scope.async_ready = false;
         }, true);
 
         $scope.search = function(pageNumber){
@@ -158,15 +168,51 @@ angular.module('opal.controllers').controller(
                         return new PatientSummary(o);
                     });
                     $scope.searched = true;
-                    $scope.currentPageNumber = response.page_number;
-                    $scope.totalPages = _.range(1, response.total_pages + 1);
-                    $scope.totalCount = response.total_count;
+                    $scope.paginator = new Paginator($scope.search, response);
                     ngProgressLite.done();
                 }).error(function(e){
                     ngProgressLite.set(0);
                     $window.alert('ERROR: Could not process this search. Please report it to the OPAL team')
                 });
         };
+
+        $scope.async_extract = function(){
+            if($scope.async_ready){
+                window.open('/search/extract/download/' + $scope.extract_id, '_blank');
+                return null
+            }
+            if($scope.async_waiting){
+                return null
+            }
+
+            var ping_until_success = function(){
+                $http.get('/search/extract/result/'+ $scope.extract_id).then(function(result){
+                    console.log(result);
+                    if(result.data.state == 'FAILURE'){
+                        alert('FAILURE')
+                        $scope.async_waiting = false;
+                        return
+                    }
+                    if(result.data.state == 'SUCCESS'){
+                        $scope.async_ready = true;
+                    }else{
+                        if($scope.async_waiting){
+                            $timeout(ping_until_success, 1000)
+                        }
+                    }
+                });
+            }
+
+            $scope.async_waiting = true;
+            $http.post(
+                '/search/extract/download',
+                {criteria: JSON.stringify($scope.criteria)}
+            ).then(function(result){
+                console.log(result.data);
+                $scope.extract_id = result.data.extract_id;
+                ping_until_success();
+            });
+        }
 
         $scope.jumpToFilter = function($event, filter){
             $event.preventDefault()

@@ -7,6 +7,8 @@ import json
 import itertools
 import dateutil.parser
 import random
+import functools
+import logging
 
 from django.utils import timezone
 from django.db import models
@@ -34,6 +36,7 @@ class UpdatesFromDictMixin(object):
         """
         Return the list of field names we want to serialize.
         """
+        # TODO update to use the django 1.8 meta api
         fieldnames = [f.attname for f in cls._meta.fields]
         for name, value in vars(cls).items():
             if isinstance(value, ForeignKeyOrFreeText):
@@ -45,6 +48,15 @@ class UpdatesFromDictMixin(object):
             if f[:-6] in fieldnames:
                 continue
             fieldnames.append(f[:-6])
+
+        fields = cls._meta.get_fields(include_parents=True)
+        m2m = lambda x: isinstance(x, (
+            models.fields.related.ManyToManyField, models.fields.related.ManyToManyRel
+        ))
+        many_to_manys = [field.name for field in fields if m2m(field)]
+
+        fieldnames = fieldnames + many_to_manys
+
         return fieldnames
 
     @classmethod
@@ -72,7 +84,6 @@ class UpdatesFromDictMixin(object):
             return models.ForeignKey
 
         try:
-
             value = getattr(cls, name)
             if isinstance(value, ForeignKeyOrFreeText):
                 return ForeignKeyOrFreeText
@@ -89,6 +100,30 @@ class UpdatesFromDictMixin(object):
     def set_consistency_token(self):
         self.consistency_token = '%08x' % random.randrange(16**8)
 
+    def save_many_to_many(self, name, value, field_type):
+        # defer until after the object is saved
+        field = getattr(self, name, value)
+        existing_set = field.all()
+        existing_names = set(i.name for i in existing_set)
+        to_remove = [i for i in existing_set if i.name not in value]
+        to_add_names = [i for i in value if i not in existing_names]
+        manager = getattr(self, name)
+
+        if to_add_names:
+            field = next(i for i in self._meta.get_fields() if i.name == name)
+            to_add = field.related_model.objects.filter(name__in=to_add_names)
+
+            if not len(to_add_names) == len(to_add):
+                found_names = set(to_add.values_list("name", flat=True))
+                unexpected = list(set(to_add_names) - found_names)
+                error_msg = 'Unexpected fieldname(s): %s' % unexpected
+                logging.error(error_msg)
+
+                raise exceptions.APIError(error_msg)
+
+            manager.add(*to_add)
+        manager.remove(*to_remove)
+
     def update_from_dict(self, data, user):
         if self.consistency_token:
             try:
@@ -101,7 +136,10 @@ class UpdatesFromDictMixin(object):
 
         fields = set(self._get_fieldnames_to_serialize())
 
+        post_save = []
+
         unknown_fields = set(data.keys()) - fields
+
         if unknown_fields:
             raise exceptions.APIError(
                 'Unexpected fieldname(s): %s' % list(unknown_fields))
@@ -123,14 +161,23 @@ class UpdatesFromDictMixin(object):
                 setter(value, user, data)
             else:
                 if name in data:
-                    if value and self._get_field_type(name) == models.fields.DateField:
-                        value = datetime.datetime.strptime(value, '%Y-%m-%d').date()
-                    if value and self._get_field_type(name) == models.fields.DateTimeField:
-                        value = dateparse.parse_datetime(value)
-                    setattr(self, name, value)
+                    field_type = self._get_field_type(name)
+
+                    if field_type == models.fields.related.ManyToManyField:
+                        post_save.append(functools.partial(self.save_many_to_many, name, value, field_type))
+                    else:
+                        if value and field_type == models.fields.DateField:
+                            value = datetime.datetime.strptime(value, '%Y-%m-%d').date()
+                        if value and field_type == models.fields.DateTimeField:
+                            value = dateparse.parse_datetime(value)
+
+                        setattr(self, name, value)
 
         self.set_consistency_token()
         self.save()
+
+        for some_func in post_save:
+            some_func()
 
 
 class Filter(models.Model):
@@ -178,6 +225,7 @@ class Team(models.Model):
                                          help_text=HELP_RESTRICTED)
     direct_add     = models.BooleanField(default=True)
     show_all       = models.BooleanField(default=False)
+    visible_in_list = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.title
@@ -198,12 +246,12 @@ class Team(models.Model):
         """
         Return the set of teams this user has access to.
         """
-
         profile, _ = UserProfile.objects.get_or_create(user=user)
         if profile.restricted_only:
             teams = []
         else:
             teams = klass.objects.filter(active=True, restricted=False).order_by('order')
+
         restricted_teams = klass.restricted_teams(user)
         allteams = list(teams) + restricted_teams
         teams = []
@@ -653,18 +701,23 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
         except TemplateDoesNotExist:
             return None
 
-
     def _to_dict(self, user, fieldnames):
         """
         Allow a subset of FIELDNAMES
         """
+
         d = {}
         for name in fieldnames:
             getter = getattr(self, 'get_' + name, None)
             if getter is not None:
                 value = getter(user)
             else:
-                value = getattr(self, name)
+                field_type = self._get_field_type(name)
+                if field_type == models.fields.related.ManyToManyField:
+                    qs = getattr(self, name).all()
+                    value = [i.to_dict(user) for i in qs]
+                else:
+                    value = getattr(self, name)
             d[name] = value
 
         return d
@@ -1198,7 +1251,6 @@ class UserProfile(models.Model):
         """
         Return an iterable of teams for this user.
         """
-        from opal.models import Team
         return Team.for_user(self.user)
 
     @property

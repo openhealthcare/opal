@@ -141,6 +141,7 @@ class OptionsViewSet(viewsets.ViewSet):
         data['micro_test_defaults'] = micro_test_defaults
 
         tag_hierarchy = collections.defaultdict(list)
+        tag_visible_in_list = []
         tag_display = {}
 
         if request.user.is_authenticated():
@@ -150,14 +151,20 @@ class OptionsViewSet(viewsets.ViewSet):
                     continue # Will be filled in at the appropriate point!
                 tag_display[team.name] = team.title
 
+                if team.visible_in_list:
+                    tag_visible_in_list.append(team.name)
+
                 subteams = [st for st in teams if st.parent == team]
                 tag_hierarchy[team.name] = [st.name for st in subteams]
                 for sub in subteams:
                     tag_display[sub.name] = sub.title
 
+                    if sub.visible_in_list:
+                        tag_visible_in_list.append(sub.name)
+
         data['tag_hierarchy'] = tag_hierarchy
         data['tag_display'] = tag_display
-
+        data['tag_visible_in_list'] = tag_visible_in_list
         data['macros'] = Macro.to_dict()
 
         return Response(data)

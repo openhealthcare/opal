@@ -1,7 +1,7 @@
 <div class="row">
     <div class="col-md-4 col-md-push-4">
         <h4>
-            We've found <strong>[[ totalCount ]]</strong> result<span ng-if="results.length != 1">s</span>
+            We've found <strong>[[ paginator.totalCount ]]</strong> result<span ng-if="results.length != 1">s</span>
         </h4>
     </div>
 </div>
@@ -32,13 +32,19 @@
 </div>
 
 <div class="row">
-    <div class="col-md-4 col-md-push-4" ng-show="totalPages.length > 1">
+    <div class="col-md-4 col-md-push-4" ng-show="paginator.totalPages.length > 1">
         <nav>
           <ul class="pagination">
-              <li ng-repeat="pageNum in totalPages" ng-class="{active: currentPageNumber == pageNum }">
+              <li ng-if="paginator.hasPrevious">
+                  <a ng-click="paginator.goPrevious()"><i class="fa fa-caret-left"></i></a>
+              </li>
+              <li ng-repeat="pageNum in paginator.totalPages" ng-class="{active: paginator.pageNumber == pageNum }">
                   <a ng-click="search(pageNum)">[[ pageNum ]]</a>
               </li>
-          </ul>
+              <li ng-if="paginator.hasNext">
+                  <a ng-click="paginator.goNext()"><i class="fa fa-caret-right"></i></a>
+              </li>
+        </ul>
       </nav>
     </div>
 </div>

@@ -12,6 +12,7 @@
         </button>
         <ul class="dropdown-menu slides" role="menu">
           {% for team in teams %}
+          {% if team.visible_in_list %}
           {% if not team.has_subteams or team.parent %}
           <li ng-hide="currentTag == '{{ team.name }}' || currentSubTag == '{{ team.name }}'">
             <a href="#/list/{% if team.parent %}{{ team.parent.name }}/{{ team.name }}{% else %}{{ team.name }}{% endif %}">
@@ -21,6 +22,7 @@
               {{ team.title }}
             </a>
           </li>
+          {% endif %}
           {% endif %}
           {% endfor %}
         </ul>
@@ -172,17 +174,16 @@
     <p class="lead text-center">
       There are no patients on this list.
     </p>
-    <p class="lead text-center">
-      Would you like to <a href="" ng-click="addEpisode()">add one</b>?
-    </p>
-
-
-
-
+      <p class="lead text-center">
+        <span class="screen-only">
+        Would you like to <a href="" ng-click="addEpisode()">add one</a>?
+        </span>
+      </p>
+    </span>
   </div>
 </div>
 
-<footer class="text-center keyboard-shortcuts">
+<footer class="text-center keyboard-shortcuts screen-only">
     <a class="pointer screen-only" ng-click="keyboard_shortcuts($event)">
       <i class="fa fa-keyboard-o"></i> Keyboard shortcuts available
     </a>

@@ -2,6 +2,7 @@ describe('SearchCtrl', function (){
     var $scope, location;
     var Episode, Flow;
     var profile, schema, options, locationDetails;
+    var patientSummary = {};
 
     beforeEach(function(){
         module('opal', function($provide) {
@@ -57,7 +58,8 @@ describe('SearchCtrl', function (){
             Flow: Flow,
             options        : options,
             schema         : schema,
-            profile        : profile
+            profile        : profile,
+            PatientSummary: patientSummary
         });
 
     });});

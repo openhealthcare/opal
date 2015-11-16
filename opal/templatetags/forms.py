@@ -75,7 +75,7 @@ def _input(*args, **kwargs):
         'lookuplist': lookuplist,
         'visibility': visibility,
         'icon'      : icon,
-        'required'  : int(required),
+        'required'  : required,
         'formname'  : formname,
         'unit'      : unit,
         'data'      : data,
@@ -144,15 +144,14 @@ def select(*args, **kwargs):
     """
     ctx = extract_common_args(kwargs)
     lookuplist = kwargs.pop('lookuplist', None)
-    form_name = kwargs.pop('formname', None)
+    form_name = kwargs.pop('formname', "form")
     other = kwargs.pop('other', False)
     help_template = kwargs.pop('help', None)
     placeholder = kwargs.pop("placeholder", None)
-    search_select = kwargs.pop("search_select", True)
     required = kwargs.pop('required', False)
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
-    tagging = kwargs.pop('tagging', False)
+    tagging = kwargs.pop('tagging', True)
     multiple = kwargs.pop('multiple', False)
 
     if required:
@@ -167,14 +166,13 @@ def select(*args, **kwargs):
 
     ctx.update({
         'placeholder': placeholder,
-        'search_select': search_select,
         'form_name': form_name,
         'directives': args,
         'lookuplist': lookuplist,
         'visibility': visibility,
         'help_template': help_template,
         'other': other,
-        'modelname': ctx["model"].replace('.', '_'),
+        'model_name': ctx["model"].replace('.', '_').replace('[','').replace(']', ''),
         'required': required,
         'other_show': other_show,
         'other_label': other_label,
@@ -205,3 +203,26 @@ def icon(name):
     if name.startswith('fa'):
         icon = 'fa ' + name
     return dict(icon=icon)
+
+
+@register.inclusion_tag('_helpers/process_steps.html')
+def process_steps(*args, **kwargs):
+    """
+    renders a set of steps for a multi stage form
+
+    kwargs
+    "show_index" do we show the index number of the step we're on
+    "process_steps" an angular scoped array name with the fields "icon" and
+    "title" (title is optional)
+    "complete" an angular expression to tell us if the process step is complete
+    "disabled" an angular expression to tell us if the process step is disabled
+    "active" an angular expression to tell us if the process step is active
+    """
+    required_kwargs = ["process_steps", "complete", "disabled", "active"]
+    template_args = {}
+    for required_kwarg in required_kwargs:
+        template_args[required_kwarg] = kwargs.pop(required_kwarg)
+
+    template_args["show_index"] = kwargs.pop("show_index", False)
+    template_args["show_titles"] = kwargs.pop("show_index", False)
+    return template_args

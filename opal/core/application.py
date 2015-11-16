@@ -48,9 +48,10 @@ class OpalApplication(object):
 
             "js/bower_components/ment.io/dist/mentio.js",
             "js/bower_components/ment.io/dist/templates.js",
+            # "js/ui-select/dist/select.js",
             "js/bower_components/angular-ui-select/dist/select.js",
+            "js/bower_components/ment.io/dist/templates.js",
             "js/bower_components/angular-growl-v2/build/angular-growl.js",
-
             "js/jquery-plugins/idle-timer.js",
             "js/jquery-plugins/jquery.stickytableheaders.js",
             "js/utils/underscore.js",
@@ -84,7 +85,8 @@ class OpalApplication(object):
 #            "js/opal/services/discharged_episodes_loader.js",
             "js/opal/services/episode_resource.js",
             "js/opal/services/copy_to_category.js",
-            "js/opal/services/episode_detail.js"
+            "js/opal/services/episode_detail.js",
+            "js/search/services/paginator.js"
         ],
         'opal.controllers': [
             "js/opal/controllers_module.js",

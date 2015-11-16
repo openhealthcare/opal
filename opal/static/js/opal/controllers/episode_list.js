@@ -13,6 +13,7 @@ angular.module('opal.controllers').controller(
       $scope.url = $location.url();
 
       $scope.options = options;
+      $scope.listView = true;
 
       $scope.num_episodes = _.keys(episodes).length;
 
@@ -412,6 +413,10 @@ angular.module('opal.controllers').controller(
             episode[name].push(item);
             return _openEditItemModal(item, name, episode);
         }
+
+        $scope.is_tag_visible_in_list = function(tag){
+            return _.contains(options.tag_visible_in_list, tag);
+        };
 
         $scope.editNamedItem = function(episode, name, iix) {
             var item;

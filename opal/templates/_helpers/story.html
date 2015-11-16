@@ -1,0 +1,27 @@
+<div class="row">
+  <div class="col-md-8">
+    <h3>{{ label }}</h3>
+  </div>
+</div>
+{% for story in stories %}
+<div class="row">
+  <div class="col-md-8">
+    <p class="text-muted">
+      ({{ story }})
+    </p>
+    <div>
+      <pre><code class="gherkin">
+{% include story %}
+      </code></pre>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="checkbox checkbox-slider-lg large checkbox-slider--b-flat">
+	  <label>
+		<input type="checkbox"><span></span>
+	  </label>
+    </div>
+  </div>
+</div>  
+{% endfor %}
+<hr />

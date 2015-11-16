@@ -4,7 +4,9 @@
 {% load opalplugins %}
 {% load gifs %}
 <!doctype html>
+{% block angulardefinition %}
 <html xmlns:ng="http://angularjs.org" id="ng-app" ng-app="{% block ngapp %}opal{% endblock %}" ng-controller="RootCtrl" ng-keydown="keydown($event)">
+{% endblock %}
   <head>
 
 	<!--[if lte IE 8]>
@@ -109,7 +111,7 @@
     <div growl></div>
 
     {% block loading %}
-    <div class="loading">
+    <div class="loading screen-only">
       <div class="loading-inner">
         <p>
           {% loading_gif %}

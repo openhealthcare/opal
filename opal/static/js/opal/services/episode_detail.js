@@ -44,10 +44,6 @@ angular.module('opal.services')
 
                 modal.result.then(function(result) {
 			        $rootScope.state = 'normal';
-
-			        if (result == 'save-and-add-another') {
-				        $scope.newNamedItem(columnName)
-			        };
 		        });
             }
 

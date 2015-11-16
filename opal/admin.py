@@ -19,7 +19,7 @@ admin.site.unregister(User)
 class UserProfileInline(admin.StackedInline):
     model = UserProfile
     filter_horizontal = ('roles',)
-    
+
 class FilterInline(admin.StackedInline):
     model = models.Filter
 
@@ -40,9 +40,9 @@ class TaggingAdmin(reversion.VersionAdmin):
     list_display = ['team', 'episode']
 
 class TeamAdmin(reversion.VersionAdmin):
-    list_display = ['title', 'name', 'active', 'restricted', 'direct_add', 'order']
+    list_display = ['title', 'name', 'active', 'restricted', 'visible_in_list', 'direct_add', 'order']
     search_fields = ['title']
-    list_editable = ['active', 'order', 'restricted', 'direct_add']
+    list_editable = ['active', 'order', 'restricted', 'visible_in_list', 'direct_add']
     filter_horizontal = ('useful_numbers',)
 
 class PatientSubRecordAdmin(reversion.VersionAdmin):
@@ -70,11 +70,11 @@ admin.site.register(models.Episode, EpisodeAdmin)
 admin.site.register(models.Tagging, TaggingAdmin)
 
 for subclass in patient_subrecords():
-    if not subclass._meta.abstract:
+    if not subclass._meta.abstract and not getattr(subclass, "_no_admin", False):
         admin.site.register(subclass, PatientSubRecordAdmin)
 
 for subclass in episode_subrecords():
-    if not subclass._meta.abstract:
+    if not subclass._meta.abstract and not getattr(subclass, "_no_admin", False):
         admin.site.register(subclass, EpisodeSubRecordAdmin)
 
 admin.site.register(models.GP, MyAdmin)
