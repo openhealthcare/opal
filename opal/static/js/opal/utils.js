@@ -21,17 +21,17 @@ OPAL.module = function(namespace, dependencies){
       opal_angular_exclude_tracking_qs: window.OPAL_ANGULAR_EXCLUDE_TRACKING_QS || []
     };
 
-    if(this.tracking.manualTrack){
-      mod.config(function($analyticsProvider) {
-          $analyticsProvider.virtualPageviews(false);
-      });
-    }
-
     _.each(OPAL_ANGULAR_DEPS, function(d){
         dependencies.push(d);
     });
 
     var mod = angular.module(namespace, dependencies);
+
+    if(this.tracking.manualTrack){
+      mod.config(function($analyticsProvider) {
+          $analyticsProvider.virtualPageviews(false);
+      });
+    }
 
     // See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags
     mod.config(function($interpolateProvider) {
