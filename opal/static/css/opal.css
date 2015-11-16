@@ -618,7 +618,10 @@ svg.speech-bubble-timeline-container{
     border: 1px solid #ddd;
     padding: 5px;
 }
-
+.patient-timeline-entry{
+    margin-left: -30px;
+    padding-left: 10px;
+}
 .saved-search:hover{
   color: #333;
 }
