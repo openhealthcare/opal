@@ -147,7 +147,7 @@ angular.module('opal.controllers').controller(
 	    });
 
         $scope.getEpisodeLink = function(){
-            return "/episode/" + $scope.episode.id;
+            return "/patient/" + $scope.episode.demographics[0].patient_id + "/" + $scope.episode.id;
         };
 
 	    $scope.$on('keydown', function(event, e) {

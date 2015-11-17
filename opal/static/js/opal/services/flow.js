@@ -10,10 +10,15 @@ angular.module(
         // Return the correct flow object for the current
         // situation
         // 
-        var flow_for_verb = function(verb, current_tags){
+        var flow_for_verb = function(verb, current_tags, episode){
             var flow = flow_cache.get('flow');
 
-            if(!current_tags){
+            if(!current_tags.tag){
+                if(episode){
+                    if(flow[episode.category]){
+                        return flow[episode.category][verb];
+                    }
+                }
                 return flow['default'][verb];
             }
             if(current_tags.tag && current_tags.tag in flow){
@@ -91,7 +96,7 @@ angular.module(
                 //
                 exit: function(schema, options, config){
                     datadeferred.promise.then(function(){
-                        var flow = flow_for_verb('exit', config.current_tags);
+                        var flow = flow_for_verb('exit', config.current_tags, config.episode);
                         
 		                result = $modal.open({
                             size: 'lg',
