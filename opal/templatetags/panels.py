@@ -44,6 +44,7 @@ def record_timeline(model, whenfield):
 
         return {
             'name': name,
+            'editable': True,
             'title': getattr(model, '_title', name.replace('_', ' ').title()),
             'detail_template': model.__class__.get_detail_template(),
             'icon': getattr(model, '_icon', None),
