@@ -48,7 +48,14 @@ class EpisodeManager(models.Manager):
         # episode.tagging_dict() for each episode in a loop.
         taggings = defaultdict(dict)
         from opal.models import Tagging
-        for tag in Tagging.objects.filter(episode__in=episodes).select_related('team'):
+        qs = Tagging.objects.filter(episode__in=episodes)
+
+        if not historic_tags:
+            qs = qs.filter(archived=False)
+
+        qs = qs.select_related('team')
+
+        for tag in qs:
             if tag.team.name == 'mine' and tag.user != user:
                 continue
             taggings[tag.episode_id][tag.team.name] = True
@@ -76,18 +83,8 @@ class EpisodeManager(models.Manager):
             if episode_history:
                 d['episode_history'] = e._episode_history_to_dict(user)
 
-
-        if historic_tags:
-            print 'Historic Tags'
-            historic = Tagging.historic_tags_for_episodes(episodes)
-            for episode in serialised:
-                if episode['id'] in historic:
-                    historic_tags = historic[episode['id']]
-                    for t in historic_tags.keys():
-                        episode['tagging'][0][t] = True
-
-
         return serialised
+
 
     def serialised_active(self, user, **kw):
         """
@@ -100,14 +97,3 @@ class EpisodeManager(models.Manager):
         episodes = self.filter(**filters)
         as_dict = self.serialised(user, episodes)
         return as_dict
-
-    def ever_tagged(self, team):
-        """
-        Return a list of episodes that were ever tagged to TEAM
-        """
-        from opal.models import Tagging
-
-        team_name = team.lower().replace(' ', '_')
-        current = self.filter(tagging__team__name=team_name)
-        historic = Tagging.historic_episodes_for_tag(team_name)
-        return list(historic) + list(current)

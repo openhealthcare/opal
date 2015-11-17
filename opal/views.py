@@ -211,7 +211,7 @@ class EpisodeListView(View):
     """
     def get(self, *args, **kwargs):
         tag, subtag = kwargs.get('tag', None), kwargs.get('subtag', None)
-        filter_kwargs = {}
+        filter_kwargs = dict(tagging__archived=False)
         if subtag:
             filter_kwargs['tagging__team__name'] = subtag
         elif tag:
