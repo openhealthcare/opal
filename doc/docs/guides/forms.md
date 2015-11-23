@@ -11,7 +11,7 @@ the Angular Controller `opal.controllers.EditItemCtrl` for doing just this
 Modal templates live in `./templates/modals/*`. For the Demographics subrecord we would
 look in `./templates/modals/demographics_modal.html` - which is also available from the URL
 `/templates/modals/demographics_modal.html`. Modal or form templates can be customised per
-team or sub-team, with template selection handled by the `.get_form_template` classmethod of your
+team or sub-team, with template selection handled by the `.get_modal_template` classmethod of your
 Subrecord.
 
 Team customised subrecords are retrieved from the url e.g.
