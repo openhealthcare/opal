@@ -542,6 +542,9 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         return td
 
     def get_tag_names(self, user, historic=False):
+        """
+        Return the current active tag names for this Episode as strings.
+        """
         current = [t.team.name for t in self.tagging_set.all() if t.user in (None, user)]
         if not historic:
             return current
