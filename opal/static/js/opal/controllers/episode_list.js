@@ -252,15 +252,17 @@ angular.module('opal.controllers').controller(
 		                // selected.
 		                var rowIx;
 		                $rootScope.state = 'normal';
-		                if (episode && episode != 'cancel') {
-			                episodes[episode.id] = episode;
-			                $scope.rows = $scope.getVisibleEpisodes();
-			                rowIx = getRowIxFromEpisodeId(episode.id);
-			                $scope.selectItem(rowIx, 0, 0);
-                            $scope.num_episodes += 1;
-                            growl.success("Added a new episode for " + episode.demographics[0].name);
-		                };
-                    }
+  		                if (episode && episode != 'cancel') {
+  			                episodes[episode.id] = episode;
+  			                $scope.rows = $scope.getVisibleEpisodes();
+  			                rowIx = getRowIxFromEpisodeId(episode.id);
+  			                $scope.selectItem(rowIx, 0, 0);
+                              $scope.num_episodes += 1;
+                              var readableName = $scope.tag_display[$scope.currentSubTag];
+                              var msg = episode.demographics[0].name + " added to the " + readableName + " list";
+                              growl.success(msg);
+  		                }
+                    };
 
                     if(resolved.then){ // OMG - it's a promise!
                         resolved.then(
