@@ -100,7 +100,7 @@ class UpdatesFromDictMixin(object):
     def set_consistency_token(self):
         self.consistency_token = '%08x' % random.randrange(16**8)
 
-    def get_lookup_list_for_names(self, lookuplist, names):
+    def get_lookup_list_values_for_names(self, lookuplist, names):
         ct = ContentType.objects.get_for_model(lookuplist)
 
         return lookuplist.objects.filter(
@@ -111,7 +111,9 @@ class UpdatesFromDictMixin(object):
 
     def save_many_to_many(self, name, values, field_type):
         field = getattr(self, name)
-        new_lookup_values = self.get_lookup_list_for_names(field.model, values)
+        new_lookup_values = self.get_lookup_list_values_for_names(
+            field.model, values
+        )
 
         new_values = new_lookup_values.values_list("id", flat=True)
         existing_values = field.all().values_list("id", flat=True)
