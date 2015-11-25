@@ -100,29 +100,50 @@ class UpdatesFromDictMixin(object):
     def set_consistency_token(self):
         self.consistency_token = '%08x' % random.randrange(16**8)
 
-    def save_many_to_many(self, name, value, field_type):
-        # defer until after the object is saved
-        field = getattr(self, name, value)
-        existing_set = field.all()
-        existing_names = set(i.name for i in existing_set)
-        to_remove = [i for i in existing_set if i.name not in value]
-        to_add_names = [i for i in value if i not in existing_names]
-        manager = getattr(self, name)
+    def get_lookup_list_for_names(self, lookuplist, names):
+        ct = ContentType.objects.get_for_model(lookuplist)
 
-        if to_add_names:
-            field = next(i for i in self._meta.get_fields() if i.name == name)
-            to_add = field.related_model.objects.filter(name__in=to_add_names)
+        return lookuplist.objects.filter(
+            models.Q(name__in=names) | models.Q(
+                synonyms__name__in=names, synonyms__content_type=ct
+            )
+        )
 
-            if not len(to_add_names) == len(to_add):
-                found_names = set(to_add.values_list("name", flat=True))
-                unexpected = list(set(to_add_names) - found_names)
-                error_msg = 'Unexpected fieldname(s): %s' % unexpected
+    def save_many_to_many(self, name, values, field_type):
+        field = getattr(self, name)
+        new_lookup_values = self.get_lookup_list_for_names(field.model, values)
+
+        new_values = new_lookup_values.values_list("id", flat=True)
+        existing_values = field.all().values_list("id", flat=True)
+
+        to_add = set(new_values) - set(existing_values)
+        to_remove = set(existing_values) - set(new_values)
+
+        if len(new_values) != len(values):
+            # the only way this should happen is if one of the incoming
+            # values is a synonym for another incoming value so lets check this
+            synonym_found = False
+            new_names = new_lookup_values.filter(name__in=values)
+            values_set = set(values)
+
+            for new_name in new_names:
+                synonyms = set(new_name.synonyms.all().values_list(
+                    "name", flat=True)
+                )
+                if values_set.intersection(synonyms):
+                    synonym_found = True
+                    logging.info("found synonym {0} for {1}".format(
+                        synonyms, values_set)
+                    )
+                    break
+
+            if not synonym_found:
+                error_msg = 'Unexpected fieldname(s): {}'.format(values)
                 logging.error(error_msg)
-
                 raise exceptions.APIError(error_msg)
 
-            manager.add(*to_add)
-        manager.remove(*to_remove)
+        field.add(*to_add)
+        field.remove(*to_remove)
 
     def update_from_dict(self, data, user):
         if self.consistency_token:
