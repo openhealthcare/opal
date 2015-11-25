@@ -18,7 +18,9 @@
       </ui-select>
     {% else %}
       <select {% if autofocus %}autofocus {% endif %}name="{{ model_name }}" {% if required %}required{% endif %} class="form-control" ng-model="{{ model }}" {% if change %} ng-change="{{ change }}" {% endif %} {% if disabled %}ng-disabled="{{ disabled }}" {% endif %}>
-        <option value="" selected>---------</option>
+        {% if default_null %}
+          <option value="" selected>---------</option>
+        {% endif %}
         <option ng-repeat="i in {{ lookuplist }} track by $index">[[ i ]]</option>
         {% if other %}<option>Other</option>{% endif %}
       </select>

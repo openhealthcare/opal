@@ -151,6 +151,7 @@ def select(*args, **kwargs):
     required = kwargs.pop('required', False)
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
+    default_null = kwargs.pop('default_null', True)
     tagging = kwargs.pop('tagging', True)
     multiple = kwargs.pop('multiple', False)
 
@@ -166,6 +167,7 @@ def select(*args, **kwargs):
 
     ctx.update({
         'placeholder': placeholder,
+        'default_null': default_null,
         'form_name': form_name,
         'directives': args,
         'lookuplist': lookuplist,

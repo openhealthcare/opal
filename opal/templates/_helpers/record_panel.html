@@ -1,4 +1,4 @@
-<div class="panel panel-default">
+<div {% if only_display_if_exists %}ng-show="episode.{{ name }}.length && episode.{{ name }}[0].consistency_token"{% endif %} class="panel panel-default">
   <div class="panel-heading">
     <h3>
       <i class="{{ icon }}"></i> {{ title }}
