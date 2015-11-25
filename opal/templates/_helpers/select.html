@@ -28,6 +28,11 @@
         {{ required }}
       </span>
     {% endif %}
+    {% if help_text %}
+    <p class="text-center text-muted">
+        {{ help_text }}
+    </p>
+    {% endif %}
     {% if help_template %}
     <p class="text-muted pointer"
        title="Help"

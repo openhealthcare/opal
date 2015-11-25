@@ -147,6 +147,7 @@ def select(*args, **kwargs):
     form_name = kwargs.pop('formname', "form")
     other = kwargs.pop('other', False)
     help_template = kwargs.pop('help', None)
+    help_text = kwargs.pop('help_text', None)
     placeholder = kwargs.pop("placeholder", None)
     required = kwargs.pop('required', False)
     visibility = _visibility_clauses(kwargs.pop('show', None),
@@ -171,6 +172,7 @@ def select(*args, **kwargs):
         'lookuplist': lookuplist,
         'visibility': visibility,
         'help_template': help_template,
+        'help_text': help_text,
         'other': other,
         'model_name': ctx["model"].replace('.', '_').replace('[','').replace(']', ''),
         'required': required,
