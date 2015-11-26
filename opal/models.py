@@ -125,6 +125,9 @@ class UpdatesFromDictMixin(object):
         manager.remove(*to_remove)
 
     def update_from_dict(self, data, user):
+        logging.info("updating {0} with {1} for {2}".format(
+            self.__class__.__name__, data, user)
+        )
         if self.consistency_token:
             try:
                 consistency_token = data.pop('consistency_token')
