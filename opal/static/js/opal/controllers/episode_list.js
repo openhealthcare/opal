@@ -6,8 +6,7 @@ angular.module('opal.controllers').controller(
                                 Flow, Item,
                                 Episode, schema, episodes, options,
                                 profile, episodeVisibility){
-        $scope.ready = false;
-
+      $scope.ready = false;
       var version = window.version;
       $rootScope.state = 'normal';
       $scope.url = $location.url();
@@ -23,38 +22,35 @@ angular.module('opal.controllers').controller(
 
 	    $scope.mouseRix = -1; // index of row mouse is currently over
 	    $scope.mouseCix = -1; // index of column mouse is currently over
-        $scope._ =  _;
+      $scope._ =  _;
 
 	    $scope.query = {hospital_number: '', name: '', ward: '', bed: ''};
-        $scope.$location = $location;
+      $scope.$location = $location;
+      $scope.path_base = '/list/';
+      $scope.currentTag = $routeParams.tag;
 
-        $scope.path_base = '/list/';
+      if(!$routeParams.subtag){
+          // this should never be the case, redirection should be done
+          // by the episode list redirect controller
+          if($scope.currentTag in options.tag_hierarchy &&
+             options.tag_hierarchy[$scope.currentTag].length > 0){
+                var subtag = $cookieStore.get('opal.currentSubTag') || "";
 
-        if(!$routeParams.tag){
-            var tag =  $cookieStore.get('opal.currentTag') || _.keys(options.tag_hierarchy)[0];
-            $location.path($scope.path_base + tag);
-            return;
-        }
-        $scope.currentTag = $routeParams.tag;
+                if(!subtag){
+                    subtag = options.tag_hierarchy[$scope.currentTag][0];
+                }
 
-        if(!$routeParams.subtag){
-            // We now force redirect to the first subtag if there is one
-            if($scope.currentTag in options.tag_hierarchy &&
-               options.tag_hierarchy[$scope.currentTag].length > 0){
-                var subtag = options.tag_hierarchy[$scope.currentTag][0];
                 var target = $scope.path_base + $scope.currentTag + '/' + subtag;
                 $location.path(target);
                 return;
-            }else{
-                $scope.currentSubTag = 'all';
-            }
-        }else{
-            $scope.currentSubTag = $routeParams.subtag;
-        }
-        $scope.columns = schema.columns;
+          }
+      }
 
-        $scope.profile = profile;
-        $scope.tag_display = options.tag_display;
+      $scope.currentSubTag = $routeParams.subtag || "all";
+      $scope.columns = schema.columns;
+
+      $scope.profile = profile;
+      $scope.tag_display = options.tag_display;
 
 	    $scope.getVisibleEpisodes = function() {
 		    var visibleEpisodes = [];
@@ -72,33 +68,33 @@ angular.module('opal.controllers').controller(
 	    };
 
 	    $scope.rows = $scope.getVisibleEpisodes();
-        $scope.episode = $scope.rows[0];
+      $scope.episode = $scope.rows[0];
 
-        $scope.ready = true;
+      $scope.ready = true;
 
-        $scope.isSelectedEpisode = function(episode){
-            return episode === $scope.episode;
-        }
+      $scope.isSelectedEpisode = function(episode){
+          return episode === $scope.episode;
+      }
 
 	    function compareEpisodes(p1, p2) {
 		    return p1.compare(p2);
 	    };
 
-        $scope.jumpToTag = function(tag){
-            if(_.contains(_.keys(options.tag_hierarchy), tag)){
-                $location.path($scope.path_base + tag)
-            }else{
+      $scope.jumpToTag = function(tag){
+          if(_.contains(_.keys(options.tag_hierarchy), tag)){
+              $location.path($scope.path_base + tag)
+          }else{
 
-                for(var prop in options.tag_hierarchy){
-                    if(options.tag_hierarchy.hasOwnProperty(prop)){
-                        if(_.contains(_.values(options.tag_hierarchy[prop]), tag)){
-                            $location.path($scope.path_base + prop + '/' + tag)
-                        }
-                    }
-                }
+              for(var prop in options.tag_hierarchy){
+                  if(options.tag_hierarchy.hasOwnProperty(prop)){
+                      if(_.contains(_.values(options.tag_hierarchy[prop]), tag)){
+                          $location.path($scope.path_base + prop + '/' + tag)
+                      }
+                  }
+              }
 
-            };
-        }
+          };
+      }
 
 	    $scope.$watch('currentTag', function() {
 		    $cookieStore.put('opal.currentTag', $scope.currentTag);
