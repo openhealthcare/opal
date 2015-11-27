@@ -1,7 +1,8 @@
 angular.module('opal.controllers').controller(
-    'EpisodeRedirectListCtrl', function($cookieStore, $location, options){
+    'EpisodeRedirectListCtrl', function($scope, $cookieStore, $location, options){
         "use strict";
         // a simple controller that redirects to the correct tag/subtag
+        $scope.ready = false;
         var tag =  $cookieStore.get('opal.currentTag') || _.keys(options.tag_hierarchy)[0];
         var subtag =  $cookieStore.get('opal.currentSubTag') || "";
         var path_base = '/list/';
