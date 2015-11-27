@@ -1,7 +1,7 @@
 describe('EpisodeRedirectListCtrl', function() {
   "use strict";
 
-  var $location, $cookieStore, $controller;
+  var $location, $cookieStore, $controller, $scope;
   var fakeOptions = {
       tag_hierarchy: {
           "parentTag": [
@@ -17,6 +17,8 @@ describe('EpisodeRedirectListCtrl', function() {
       spyOn($location, 'path');
       $cookieStore = $injector.get('$cookieStore');
       $controller  = $injector.get('$controller');
+      $rootScope   = $injector.get('$rootScope');
+      $scope       = $rootScope.$new();
   }));
 
   it('should redirect to the cookie store tag and sub tag', function() {
@@ -33,6 +35,7 @@ describe('EpisodeRedirectListCtrl', function() {
           }
       };
       $controller('EpisodeRedirectListCtrl', {
+          $scope: $scope,
           $cookieStore: $cookieStore,
           $location: $location ,
           options: fakeOptions
@@ -54,6 +57,7 @@ describe('EpisodeRedirectListCtrl', function() {
         }
     };
     $controller('EpisodeRedirectListCtrl', {
+        $scope: $scope,
         $cookieStore: $cookieStore,
         $location: $location ,
         options: fakeOptions
@@ -64,6 +68,7 @@ describe('EpisodeRedirectListCtrl', function() {
   it('should redirect to the first option if there is no tag', function(){
         spyOn($cookieStore, 'get').and.returnValue(undefined);
         $controller('EpisodeRedirectListCtrl', {
+            $scope: $scope,
             $cookieStore: $cookieStore,
             $location: $location ,
             options: fakeOptions
