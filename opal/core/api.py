@@ -8,9 +8,10 @@ from django.views.generic import View
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import routers, status, viewsets
 from rest_framework.response import Response
-from opal.models import Episode
+from opal.models import Episode, Synonym, Team, Macro
 from opal.core import application, exceptions, plugins
 from opal.core import glossolalia
+from opal.core.lookuplists import LookupList
 from opal.utils import stringport, camelcase_to_underscore
 from opal.core import schemas
 from opal.core.subrecords import subrecords
@@ -114,14 +115,12 @@ class OptionsViewSet(viewsets.ViewSet):
     base_name = 'options'
 
     def list(self, request):
-        from opal.core.lookuplists import LookupList
-        from opal.models import Synonym, Team, Macro
+
 
         data = {}
         subclasses = LookupList.__subclasses__()
         for model in subclasses:
             options = list(model.objects.all().values_list("name", flat=True))
-            options = [instance.name for instance in model.objects.all()]
             data[model.__name__.lower()] = options
 
         model_to_ct = ContentType.objects.get_for_models(
