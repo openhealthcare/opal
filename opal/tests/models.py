@@ -8,7 +8,6 @@ from opal import models
 from opal.core import lookuplists
 
 
-
 class Hat(lookuplists.LookupList):
     pass
 
@@ -16,6 +15,15 @@ class Hat(lookuplists.LookupList):
 class HatWearer(models.EpisodeSubrecord):
     name = dmodels.CharField(max_length=200)
     hats = dmodels.ManyToManyField(Hat, related_name="hat_wearers")
+
+
+class Dog(lookuplists.LookupList):
+    pass
+
+
+class DogOwner(models.EpisodeSubrecord):
+    name = dmodels.CharField(max_length=200)
+    dog = fields.ForeignKeyOrFreeText(Dog)
 
 
 class Colour(models.EpisodeSubrecord):
