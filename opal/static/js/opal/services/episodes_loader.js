@@ -25,7 +25,10 @@ angular.module('opal.services')
               episodes[resource.id] = new Episode(resource, listSchema);
           });
           deferred.resolve(episodes);
-      });
+      }, function() {
+           // handle error better
+           $window.alert('Episodes could not be loaded');
+     });
 
 	    return deferred.promise;
     };
