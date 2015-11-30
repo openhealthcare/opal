@@ -2,14 +2,13 @@ angular.module('opal.services')
     .factory('episodesLoader', function($q, $window,
                                         $http,
                                         $route,
-                                        EpisodeResource, Episode,
-                                        listSchemaLoader) {
+                                        EpisodeResource, Episode
+                                        ) {
     return function() {
       "use strict";
 
 	    var deferred = $q.defer();
       var params = $route.current.params;
-      var listSchemaPromise = listSchemaLoader();
       var target = '/episode/' + params.tag;
       if(params.subtag){
           target += '/' + params.subtag;
@@ -17,12 +16,10 @@ angular.module('opal.services')
 
       var getEpisodePromise = $http.get(target);
 
-      $q.all([listSchemaPromise, getEpisodePromise]).then(function(results){
-          var listSchema = results[0];
-          var episodesResult = results[1];
+      getEpisodePromise.then(function(episodesResult){
           var episodes = {};
           _.each(episodesResult.data, function(resource) {
-              episodes[resource.id] = new Episode(resource, listSchema);
+              episodes[resource.id] = new Episode(resource);
           });
           deferred.resolve(episodes);
       }, function() {
