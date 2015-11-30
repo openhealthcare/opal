@@ -5,30 +5,28 @@ angular.module('opal.services')
                                         EpisodeResource, Episode,
                                         listSchemaLoader) {
     return function() {
+      "use strict";
+
 	    var deferred = $q.defer();
-        var params = $route.current.params;
+      var params = $route.current.params;
+      var listSchemaPromise = listSchemaLoader();
+      var target = '/episode/' + params.tag;
+      if(params.subtag){
+          target += '/' + params.subtag;
+      }
 
-        if(!$route.current.params.tag){
-            deferred.resolve([])
-        }
+      var getEpisodePromise = $http.get(target);
 
-	    listSchemaLoader().then(function(schema) {
-            var target = '/episode/' + params.tag;
-            if(params.subtag){
-                target += '/' + params.subtag;
-            }
-            $http.get(target).then(
-                function(resources) {
-	                var episodes = {};
-		            _.each(resources.data, function(resource) {
-		                episodes[resource.id] = new Episode(resource, schema);
-		            });
-		            deferred.resolve(episodes);
-                }, function() {
-		            // handle error better
-		            $window.alert('Episodes could not be loaded');
-	            });
-	    });
+      $q.all([listSchemaPromise, getEpisodePromise]).then(function(results){
+          var listSchema = results[0];
+          var episodesResult = results[1];
+          var episodes = {};
+          _.each(episodesResult.data, function(resource) {
+              episodes[resource.id] = new Episode(resource, listSchema);
+          });
+          deferred.resolve(episodes);
+      });
+
 	    return deferred.promise;
     };
 });
