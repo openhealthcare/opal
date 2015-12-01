@@ -6,6 +6,7 @@ angular.module('opal.services')
         Episode = function(resource) {
 
 	        var episode = this;
+          var DATE_FORMAT = 'DD/MM/YYYY';
 	        var column, field, attrs;
 
             // We would like everything for which we have data that is a field to
@@ -39,7 +40,7 @@ angular.module('opal.services')
                 // Convert string-serialised dates into native JavaScriptz
                 _.each(date_fields, function(field){
                     if(attrs[field]){
-                        var parsed = moment(attrs[field], 'YYYY-MM-DD');
+                        var parsed = moment(attrs[field], DATE_FORMAT);
                         episode[field] = parsed._d;
                     }
                 });
@@ -95,13 +96,13 @@ angular.module('opal.services')
                 // TODO: For serious, this is a bad place for these to go.
                 //
 	            if (columnName == 'microbiology_test') {
-		            attrs.date_ordered = moment().format('YYYY-MM-DD');
+		            attrs.date_ordered = moment().format(DATE_FORMAT);
 	            }
 	            if (columnName == 'general_note') {
-		            attrs.date = moment().format('YYYY-MM-DD');
+		            attrs.date = moment().format(DATE_FORMAT);
 	            }
 	            if (columnName == 'diagnosis') {
-		            attrs.date_of_diagnosis = moment().format('YYYY-MM-DD');
+		            attrs.date_of_diagnosis = moment().format(DATE_FORMAT);
 	            }
                 if (columnName == 'microbiology_input'){
                     attrs.initials = window.initials;
@@ -111,14 +112,14 @@ angular.module('opal.services')
                     attrs.datetime = new Date();
                 }
                 if (columnName == 'line'){
-                    attrs.insertion_date = moment().format('YYYY-MM-DD');
+                    attrs.insertion_date = moment().format(DATE_FORMAT);
                 }
                 if (columnName == 'opat_review'){
                     attrs.initials = window.initials;
                     attrs.datetime = new Date();
                 }
                 if (columnName == 'opat_line_assessment'){
-                    attrs.assessment_date = moment().format('YYYY-MM-DD');
+                    attrs.assessment_date = moment().format(DATE_FORMAT);
                 }
                 //
                 // That's right, it gets worse!
@@ -213,16 +214,16 @@ angular.module('opal.services')
                 var url = '/episode/' + attrs.id + '/';
                 method = 'put'
 
-                _.each(date_fields, function(field){
-                    if(attrs[field]){
-                        if(angular.isString(attrs[field])){
-                            value = moment(attrs[field], 'DD/MM/YYYY')
-                        }else{
-                            value = moment(attrs[field])
-                        }
-                        attrs[field] = value.format('YYYY-MM-DD');
-                    }
-                });
+                // _.each(date_fields, function(field){
+                //     if(attrs[field]){
+                //         if(angular.isString(attrs[field])){
+                //             value = moment(attrs[field], 'DD/MM/YYYY')
+                //         }else{
+                //             value = moment(attrs[field])
+                //         }
+                //         attrs[field] = value.format(DATE_FORMAT);
+                //     }
+                // });
 
                 $http[method](url, attrs).then(
                     function(response){

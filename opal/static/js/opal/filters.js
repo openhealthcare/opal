@@ -83,14 +83,14 @@ filters.filter('shortDate', function(toMomentFilter){
     }
 });
 
-filters.filter('momentDateFormat', function(){
+filters.filter('momentDateFormat', function(toMomentFilter){
 	return function(input, format){
 			if(!input){
-					return
+					return;
 			}
-			var d = moment(input)
-			return d.format(format)
-	}
+			var d = toMomentFilter(input);
+			return d.format(format);
+	};
 });
 
 filters.filter('hhmm', function(){
@@ -104,14 +104,14 @@ filters.filter('hhmm', function(){
 });
 
 
-filters.filter('daysTo', function(){
+filters.filter('daysTo', function(toMomentFilter){
     return function(first, second, withoutDays){
 				if(!first || !second){
 						return;
 				}
 
-        var start = moment(first);
-				var diff = moment(second).diff(start, 'days');
+        var start = toMomentFilter(first);
+				var diff = toMomentFilter(second).diff(start, 'days');
 
 				if(withoutDays){
 						return diff;
@@ -164,12 +164,12 @@ filters.filter('future', function(){
     }
 });
 
-filters.filter('age', function(){
+filters.filter('age', function(toMomentFilter){
     return function(input){
         if(!input){
             return null;
         }
-        target = moment(input)
+        target = toMomentFilter(input)
         diff =  moment().diff(target, 'years')
         return diff
     }
@@ -191,23 +191,16 @@ filters.filter('title', function(){
     };
 });
 
-filters.filter('totalDays', function(){
+filters.filter('totalDays', function(toMomentFilter){
     return function(item){
-        if(!item.start_date){ return null; };
-        var start = moment(item.start_date);
-
-				if(!start.isValid()){
-						start = moment(item.start_date, 'DD/MM/YYYY');
-				}
+        if(!item.start_date){ return null; }
+        var start = toMomentFilter(item.start_date);
 
         if(item.end_date){
-						end = moment(item.end_date);
-						if(!end.isValid()){
-							end = moment(item.end_date, 'DD/MM/YYYY');
-						}
+						end = toMomentFilter(item.end_date);
             return end.diff(start, 'days') + 1;
         }else{
             return moment().diff(start, 'days') + 1;
         }
-    }
+    };
 });
