@@ -3,13 +3,12 @@ angular.module('opal.services')
                                         $http,
                                         $route,
                                         EpisodeResource, Episode,
-                                        listSchemaLoader) {
+                                        recordLoader) {
     return function() {
       "use strict";
 
 	    var deferred = $q.defer();
       var params = $route.current.params;
-      var listSchemaPromise = listSchemaLoader();
       var target = '/episode/' + params.tag;
       if(params.subtag){
           target += '/' + params.subtag;
@@ -17,12 +16,13 @@ angular.module('opal.services')
 
       var getEpisodePromise = $http.get(target);
 
-      $q.all([listSchemaPromise, getEpisodePromise]).then(function(results){
-          var listSchema = results[0];
+      $q.all([recordLoader, getEpisodePromise]).then(function(results){
+          // record loader updates the global scope
+          // TODO look at whether it should be doing this...
           var episodesResult = results[1];
           var episodes = {};
           _.each(episodesResult.data, function(resource) {
-              episodes[resource.id] = new Episode(resource, listSchema);
+              episodes[resource.id] = new Episode(resource);
           });
           deferred.resolve(episodes);
       }, function() {
