@@ -214,16 +214,15 @@ angular.module('opal.services')
                 var url = '/episode/' + attrs.id + '/';
                 method = 'put'
 
-                // _.each(date_fields, function(field){
-                //     if(attrs[field]){
-                //         if(angular.isString(attrs[field])){
-                //             value = moment(attrs[field], 'DD/MM/YYYY')
-                //         }else{
-                //             value = moment(attrs[field])
-                //         }
-                //         attrs[field] = value.format(DATE_FORMAT);
-                //     }
-                // });
+                _.each(date_fields, function(field){
+                    if(attrs[field]){
+                        if(!angular.isString(attrs[field])){
+                            value = moment(attrs[field]).format(DATE_FORMAT);
+                            value = moment(attrs[field], 'DD/MM/YYYY')
+                        }
+                        attrs[field] = value;
+                    }
+                });
 
                 $http[method](url, attrs).then(
                     function(response){

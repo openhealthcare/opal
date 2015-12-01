@@ -71,11 +71,11 @@ angular.module('opal.services')
                     } else {
                       value = moment(value);
                     }
-                    attrs[field.name] = value.format('YYYY-MM-DD');
+                    attrs[field.name] = value.format('DD/MM/YYYY');
                   }
-                  // Convert datetimes to YYYY-MM-DD HH:MM
+                  // Convert datetimes to DD/MM/YYYY HH:MM:SS
                   if( field.type == 'date_time' && attrs[field.name] ){
-                    attrs[field.name] = moment(value).format('YYYY-MM-DD HH:mmZ');
+                    attrs[field.name] = moment(value).format('DD/MM/YYYY HH:mm:ss');
                   }
                   //
                   // TODO: Handle this conversion better

@@ -40,10 +40,18 @@ filters.filter('toMoment', function(){
 				if(!input){
 						return;
 				}
+
+				// if a date is passed in
 				var d = moment(input);
 
 				if(!d.isValid()){
+						// if a moment of the servers' date format is passed in
 						d = moment(input, 'DD/MM/YYYY');
+
+						if(!d.isValid()){
+								// if a moment of the servers' datetime format is passed in
+								d = moment(input, 'DD/MM/YYYY HH:mm:ss');
+						}
 				}
 
 				return d;
