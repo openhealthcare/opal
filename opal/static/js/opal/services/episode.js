@@ -212,14 +212,16 @@ angular.module('opal.services')
                 var value;
                 var deferred = $q.defer();
                 var url = '/episode/' + attrs.id + '/';
-                method = 'put'
+                method = 'put';
 
                 _.each(date_fields, function(field){
                     if(attrs[field]){
+                        value = attrs[field];
+
                         if(!angular.isString(attrs[field])){
                             value = moment(attrs[field]).format(DATE_FORMAT);
-                            value = moment(attrs[field], 'DD/MM/YYYY')
                         }
+
                         attrs[field] = value;
                     }
                 });
