@@ -89,9 +89,9 @@ angular.module('opal.services')
         return attrs;
       }
 
-        //
-        // Save our Item to the server
-        //
+      //
+      // Save our Item to the server
+      //
 	    this.save = function(attrs) {
 	        var field, value;
 	        var deferred = $q.defer();
@@ -120,6 +120,8 @@ angular.module('opal.services')
 	        }
 
 	        $http[method](url, attrs).then(function(response) {
+            item.saving = false;
+
 		        item.initialise(response.data);
 		        if (method == 'post') {
 		            episode.addItem(item);

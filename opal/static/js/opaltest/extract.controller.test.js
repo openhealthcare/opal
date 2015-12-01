@@ -2,7 +2,7 @@
 describe('ExtractCtrl', function(){
     "use strict";
 
-    var $scope, $httpBackend, schema, $window;
+    var $scope, $httpBackend, schema, $window, Item;
 
     var optionsData = {
         condition: ['Another condition', 'Some condition'],
