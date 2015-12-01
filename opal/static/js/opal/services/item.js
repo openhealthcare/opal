@@ -19,7 +19,7 @@ angular.module('opal.services')
 		        value = item[field.name];
 		        if (field.type == 'date' && item[field.name] &&  !_.isDate(item[field.name])) {
 		            // Convert values of date fields to Date objects
-		            item[field.name] = moment(item[field.name], 'YYYY-MM-DD')._d;
+		            item[field.name] = moment(item[field.name], 'DD/MM/YYYY').toDate();
 		        }
 	        }
 	    };

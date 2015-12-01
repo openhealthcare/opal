@@ -41,7 +41,7 @@ angular.module('opal.services')
                 _.each(date_fields, function(field){
                     if(attrs[field]){
                         var parsed = moment(attrs[field], DATE_FORMAT);
-                        episode[field] = parsed._d;
+                        episode[field] = parsed.toDate();
                     }
                 });
             }
