@@ -34,8 +34,8 @@ def record_panel(model, editable=1, title=None, name=None, detail_template=None,
         'icon': getattr(model, '_icon', None),
         'editable': editable,
         'angular_filter': angular_filter,
-        'noentries': noentries
-        'only_display_if_exists': only_display_if_exists,
+        'noentries': noentries,
+        'only_display_if_exists': only_display_if_exists
     }
 
 @register.inclusion_tag('_helpers/record_timeline.html')
