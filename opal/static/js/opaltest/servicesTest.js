@@ -1,5 +1,5 @@
 describe('services', function() {
-    var columns, episodeData, options, records, list_schema, mockWindow;
+    var columns, episodeData, options, records, mockWindow;
 
     beforeEach(function(){
         module('opal', function($provide) {
@@ -44,17 +44,10 @@ describe('services', function() {
                         {name: 'provisional', type: 'boolean'},
                     ]
                 }
-            },
-            "list_schema": {
-                "default": [
-                    'demographics',
-                    'diagnosis'
-                ]
             }
         };
 
         records = columns.fields;
-        list_schema  = columns.list_schema;
 
         episodeData = {
             id: 123,
@@ -113,71 +106,7 @@ describe('services', function() {
         }
     });
 
-    describe('listSchemaLoader', function(){
-        var mock;
-
-        beforeEach(function(){
-            $window = {alert: jasmine.createSpy() };
-
-            module(function($provide) {
-              $provide.value('$window', $window);
-            });
-
-            inject(function($injector){
-                listSchemaLoader = $injector.get('listSchemaLoader');
-                Schema           =  $injector.get('Schema');
-                $httpBackend     = $injector.get('$httpBackend');
-                $rootScope       = $injector.get('$rootScope');
-                $q               = $injector.get('$q');
-                $route           = $injector.get('$route');
-                mockWindow = $injector.get('$window');
-            });
-            $route.current = {params: {tag: 'micro'}};
-            $httpBackend.whenGET('/api/v0.1/record/').respond(records);
-        });
-
-        it('should fetch the schema', function(){
-            var result
-
-            $httpBackend.whenGET('/api/v0.1/list-schema/').respond(list_schema);
-            listSchemaLoader().then(
-                function(r){ result = r}
-            );
-            $rootScope.$apply();
-            $httpBackend.flush();
-
-            expect(result.columns).toEqual(_.values(columns.fields));
-        });
-
-        it('should alert if the http request errors', function(){
-            var result
-
-            $httpBackend.whenGET('/api/v0.1/list-schema/').respond(500, 'NO');
-
-            listSchemaLoader().then( function(r){ result = r } );
-            $rootScope.$apply();
-            $httpBackend.flush()
-
-            expect(mockWindow.alert).toHaveBeenCalledWith('List schema could not be loaded');
-        });
-
-        it('should provide the default schema on a sublist', function(){
-            $route.current.params.subtag = 'micro_haem';
-
-            var mycols = angular.copy(list_schema);
-            mycols.micro = {};
-            mycols.micro.default = mycols.default
-
-            $httpBackend.whenGET('/api/v0.1/list-schema/').respond(mycols);
-
-            listSchemaLoader().then(function(r){result=r});
-            $rootScope.$apply();
-            $httpBackend.flush();
-            expect(result.columns).toEqual(_.values(columns.fields));
-        });
-    })
-
-    describe('extractSchemaLoader', function(){
+     describe('extractSchemaLoader', function(){
         var mock;
 
         beforeEach(function(){
@@ -315,7 +244,6 @@ describe('services', function() {
             var result
 
             $httpBackend.whenGET('/api/v0.1/record/').respond(records);
-            $httpBackend.whenGET('/api/v0.1/list-schema/').respond(columns);
             $httpBackend.whenGET('/episode/micro').respond([episodeData]);
 
             episodesLoader().then(function(r){ result = r; });
@@ -545,7 +473,6 @@ describe('services', function() {
 
         beforeEach(function() {
             inject(function($injector) {
-                listSchemaLoader = $injector.get('listSchemaLoader');
                 episodesLoader   = $injector.get('episodesLoader');
                 $route           = $injector.get('$route');
                 $httpBackend     = $injector.get('$httpBackend');
@@ -558,7 +485,6 @@ describe('services', function() {
             var promise = episodesLoader();
             var episodes;
             $httpBackend.whenGET('/api/v0.1/record/').respond(records);
-            $httpBackend.whenGET('/api/v0.1/list-schema/').respond(list_schema);
             // TODO trailing slash?
             $httpBackend.whenGET('/episode/micro').respond([episodeData]);
             promise.then(function(value) {

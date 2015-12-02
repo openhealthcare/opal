@@ -440,6 +440,8 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
     color: white;
     cursor: pointer;
 }
+.edit_item span { display: none; }
+.edit_item:hover span { display: inline; }
 
 .dropdown-menu { 
     z-index: 1060; 

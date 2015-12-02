@@ -1,6 +1,5 @@
 {% extends 'layouts/left_panel.html' %}
 {% block heading %}
-
 <div class="row screen-only">
   <div class="col-md-12">
     <h1 >
@@ -28,12 +27,12 @@
         </ul>
       </div>
       {% if not user.profile.explicit_access_only %}
-      	  <button class="btn btn-primary pull-right"
+      <button class="btn btn-primary pull-right"
               ng-show="!profile.readonly"
               ng-click="addEpisode()">
-            <i class="glyphicon glyphicon-plus"></i>
-            Add Patient
-          </button>
+        <i class="glyphicon glyphicon-plus"></i>
+        Add Patient
+      </button>
       {% endif %}
     </h1>
   </div>
@@ -53,10 +52,10 @@
     </b>
     {% if request.user.is_staff %}
     <br>
-      <a href="/adminopal/episode/[[ episode.id ]]/" target="_blank">
-        <i class="fa fa-cogs"></i>
-        Admin
-      </a>
+    <a href="/adminopal/episode/[[ episode.id ]]/" target="_blank">
+      <i class="fa fa-cogs"></i>
+      Admin
+    </a>
     {% endif %}
   </div>
   <ul class="list-group">
@@ -109,84 +108,81 @@
 <div class="patient-list-container" freeze-headers fix-height>
   <table class="table table-bordered bg-white patient-list">
     <thead class="table-header">
-  	<tr>
-  	  {% for column in columns %}
-  	  <th>
+  	  <tr>
+  	    {% for column in columns %}
+  	    <th>
           <i class="{{ column.icon }}"></i>
           {{ column.title }}
         </th>
-  	  {% endfor %}
-  	</tr>
+  	    {% endfor %}
+  	  </tr>
     </thead>
     <tbody>
-  	<tr ng-repeat="row in rows"
+  	  <tr ng-repeat="row in rows"
           ng-click="select_episode(row, $index)"
           ng-class="{selected: episode.id == row.id}"
           blur-others="episode.id == row.id"
           scroll-episodes="isSelectedEpisode"
           scroll-container=".patient-list-container"
           >
-  	  {% for column in columns %}
-  	  <td ng-mouseenter="mouseEnter($index, {{ forloop.counter0 }})"
-  		  ng-mouseleave="mouseLeave()"
-            {% ifequal column.title "Teams" %}class="screen-only"{% endifequal %} >
-  		<ul>
+  	    {% for column in columns %}
+  	    <td {% ifequal column.title "Teams" %}class="screen-only"{% endifequal %} >
+  		  <ul>
             {% if column.header_template_path %}
             {% include column.header_template_path %}
             {% endif %}
-  		  <li ng-repeat="item in row.{{column.name}} {% if column.list_limit %} |limitTo:{{ column.list_limit }}{% endif %} track by $index"
-  			  ng-click="selectItem($parent.$index, {{ forloop.counter0 }}, $index)"
-  			  ng-dblclick="editItem($parent.$index, {{ forloop.counter0 }}, $index)"
-  			  >
-  			{% include column.template_path %}
-  		  </li>
+  		    <li ng-repeat="item in row.{{column.name}} {% if column.list_limit %} |limitTo:{{ column.list_limit }}{% endif %} track by $index"
+  			    ng-dblclick="editNamedItem(row, '{{column.name}}', $index);$event.stopPropagation()"
+  			    >
+  			  {% include column.template_path %}
+  		    </li>
 
-  		  {% if not column.single %}
-  		  <li class="edit_item"
-                ng-click="editItem($index, {{ forloop.counter0 }}, row.{{column.name}}.length)"
-  			  ng-dblclick="editItem($index, {{ forloop.counter0 }}, row.{{column.name}}.length)"
-  			  >
-  			<span ng-show="!profile.readonly && mouseRix == $index && mouseCix == {{ forloop.counter0 }}">
-  			  Add
+  		    {% if not column.single %}
+  		    <li class="edit_item"
+                ng-click="editNamedItem(row, '{{ column.name }}', row.{{column.name}}.length)"
+  			    ng-dblclick="editNamedItem(row, '{{ column.name  }}', row.{{column.name}}.length)"
+  			    >
+  			  <span ng-show="!profile.readonly">
+  			    Add
                 <i class="glyphicon glyphicon-plus pull-right"></i>
-  			</span>
-  			&nbsp;
-  		  </li>
+  			  </span>
+  			  &nbsp;
+  		    </li>
             {% else %}
             <li class="edit_item"
-                ng-click="editItem($index, {{ forloop.counter0 }}, 0)"
-  			  ng-dblclick="editItem($index, {{ forloop.counter0 }}, 0)"
-  			  >
-  			<span ng-show="!profile.readonly && mouseRix == $index && mouseCix == {{ forloop.counter0 }}">
-  			  Edit <i class="glyphicon glyphicon-pencil pull-right"></i>
-  			</span>
-  			&nbsp;
-  		  </li>
+                ng-click="editNamedItem(row, '{{ column.name }}', 0)"
+  			    ng-dblclick="editNamedItem(row, '{{ column.name }}', 0)"
+  			    >
+  			  <span ng-show="!profile.readonly">
+  			    Edit <i class="glyphicon glyphicon-pencil pull-right"></i>
+  			  </span>
+  			  &nbsp;
+  		    </li>
 
             {% endif %}
-  		</ul>
-  	  </td>
-  	  {% endfor %}
-  	</tr>
+  		  </ul>
+  	    </td>
+  	    {% endfor %}
+  	  </tr>
     </tbody>
   </table>
   <div class="empty-list" ng-hide="num_episodes > 0">
     <p class="lead text-center">
       There are no patients on this list.
     </p>
-      <p class="lead text-center">
-        <span class="screen-only">
+    <p class="lead text-center">
+      <span class="screen-only">
         Would you like to <a href="" ng-click="addEpisode()">add one</a>?
-        </span>
-      </p>
-    </span>
-  </div>
+      </span>
+    </p>
+</span>
+</div>
 </div>
 
 <footer class="text-center keyboard-shortcuts screen-only">
-    <a class="pointer screen-only" ng-click="keyboard_shortcuts($event)">
-      <i class="fa fa-keyboard-o"></i> Keyboard shortcuts available
-    </a>
+  <a class="pointer screen-only" ng-click="keyboard_shortcuts($event)">
+    <i class="fa fa-keyboard-o"></i> Keyboard shortcuts available
+  </a>
 </footer>
 
 
@@ -196,6 +192,5 @@
 {% block footer %}
 
 {% include 'keyboard_shortcuts_modal.html' %}
-
 
 {% endblock %}

@@ -62,6 +62,7 @@ class PatientSearchTestCase(BaseSearchTestCase):
 
 
 class SimpleSearchViewTestCase(BaseSearchTestCase):
+    maxDiff = None
 
     def setUp(self):
         super(SimpleSearchViewTestCase, self).setUp()
@@ -78,7 +79,7 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
                 u'hospital_number': u'007',
                 u'date_of_birth': None,
                 u'start_date': '2015-10-15',
-                u'categories': [u'inpatient']
+                u'categories': [u'Inpatient']
             }],
             u'total_count': 1,
             u'total_pages': 1,

@@ -41,7 +41,7 @@ angular.module(
             }
         };
 
-        var Flow = function(verb, schema, options, config){
+        var Flow = function(verb, options, config){
             var deferred = $q.defer();
             var datadeferred = $q.defer();
 
@@ -68,7 +68,7 @@ angular.module(
                 //   hospital_number - the hospital number we're entering for
                 //   current_tags - a tags object representing a current list
                 //
-                enter: function(schema, options, config){
+                enter: function(options, config){
                     datadeferred.promise.then(function(){
                         var flow = flow_for_verb('enter', config.current_tags);
 
@@ -78,7 +78,6 @@ angular.module(
 			                templateUrl: flow.template,
 			                controller:  flow.controller,
                             resolve: {
-                                schema:          function(){ return schema },
                                 options:         function(){ return options },
                                 tags:            function(){ return config.current_tags},
                                 hospital_number: function(){ return config.hospital_number; }
@@ -94,7 +93,7 @@ angular.module(
                 //   episode - the episode that is exiting
                 //   current_tags - a tags object representing a current list
                 //
-                exit: function(schema, options, config){
+                exit: function(options, config){
                     datadeferred.promise.then(function(){
                         var flow = flow_for_verb('exit', config.current_tags, config.episode);
                         
@@ -108,7 +107,6 @@ angular.module(
 				                episode: function() { return config.episode; },
                                 tags   : function() { return config.current_tags; },
                                 options: function() { return options; },
-                                schema : function() { return schema; }
 			                }
 		                }).result
                         deferred.resolve(result);
@@ -116,7 +114,7 @@ angular.module(
                 },
             }
 
-            verbs[verb](schema, options, config)
+            verbs[verb](options, config)
 
             return deferred.promise
             
