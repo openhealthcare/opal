@@ -6,12 +6,14 @@ from django.utils import timezone
 
 from django.contrib.auth.models import User
 from django.test import TestCase
+from django.contrib.contenttypes.models import ContentType
 from mock import patch, MagicMock
 
 from opal import models
 from opal.tests.models import Colour, PatientColour, HatWearer, Hat
 
 from opal.core import api
+
 
 class OPALRouterTestCase(TestCase):
     def test_default_base_name(self):
@@ -50,6 +52,30 @@ class ExtractSchemaTestCase(TestCase):
     def test_records(self, schemas):
         schemas.extract_schema.return_value = [{}]
         self.assertEqual([{}], api.ExtractSchemaViewSet().list(None).data)
+
+
+class OptionTestCase(TestCase):
+    def setUp(self):
+        self.top = Hat.objects.create(name="top")
+        self.bowler = Hat.objects.create(name="bowler")
+        self.synonym_name = "high"
+        self.user = User.objects.create(username='testuser')
+        content_type = ContentType.objects.get_for_model(Hat)
+        models.Synonym.objects.get_or_create(
+            content_type=content_type,
+            object_id=self.top.id,
+            name=self.synonym_name
+        )
+        self.viewset = api.OptionsViewSet
+
+    def test_options_loader(self):
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        response = self.viewset().list(mock_request)
+        result = response.data
+        self.assertIn("hat", result)
+        self.assertEqual(set(result["hat"]), {"top", "bowler", "high"})
+        self.assertEqual(response.status_code, 200)
 
 
 class SubrecordTestCase(TestCase):
@@ -242,6 +268,13 @@ class ManyToManyTestSubrecordWithLookupListTest(TestCase):
         self.viewset = ManyToManyViewSet
         self.bowler = Hat.objects.create(name="bowler")
         self.top = Hat.objects.create(name="top")
+        self.synonym_name = "high"
+        content_type = ContentType.objects.get_for_model(Hat)
+        models.Synonym.objects.get_or_create(
+            content_type=content_type,
+            object_id=self.top.id,
+            name=self.synonym_name
+        )
 
     def create_hat_wearer(self, *hats):
         hat_wearer = HatWearer.objects.create(
@@ -251,47 +284,76 @@ class ManyToManyTestSubrecordWithLookupListTest(TestCase):
         hat_wearer.hats.add(*hats)
         return hat_wearer
 
-    def test_many_to_many_create(self):
+    def create_mock_request(self, **kwargs):
         mock_request = MagicMock(name='mock request')
         mock_request.user = self.user
 
         mock_request.data = {
             'name': 'Jane',
-            'hats': [self.bowler.name, self.top.name],
             'episode_id': self.episode.id,
         }
+        mock_request.data.update(kwargs)
+        return mock_request
+
+    def test_many_to_many_create(self):
+        mock_request = self.create_mock_request(
+            hats=[self.bowler.name, self.top.name]
+        )
         self.viewset().create(mock_request)
         hat_wearer = HatWearer.objects.get(name="Jane")
         self.assertEqual(hat_wearer.episode.id, self.episode.id)
         self.assertEqual(list(hat_wearer.hats.all()), [self.bowler, self.top])
 
+    def test_many_to_many_synonym_create(self):
+        mock_request = self.create_mock_request(
+            hats=[self.synonym_name]
+        )
+        self.viewset().create(mock_request)
+        hat_wearer = HatWearer.objects.get(name="Jane")
+        self.assertEqual(hat_wearer.episode.id, self.episode.id)
+        self.assertEqual(list(hat_wearer.hats.all()), [self.top])
+
+    def test_many_to_many_synonym_create_unique(self):
+        mock_request = self.create_mock_request(
+            hats=[self.synonym_name, self.top.name]
+        )
+        self.viewset().create(mock_request)
+        hat_wearer = HatWearer.objects.get(name="Jane")
+        self.assertEqual(hat_wearer.episode.id, self.episode.id)
+        self.assertEqual(list(hat_wearer.hats.all()), [self.top])
+
     def test_many_to_many_update_add(self):
         hat_wearer = self.create_hat_wearer(self.bowler)
+        mock_request = self.create_mock_request(
+            hats=[self.bowler.name, self.top.name],
+            consistency_token='wat',
+            id=hat_wearer.id
+        )
 
-        mock_request = MagicMock(name='mock request')
-        mock_request.user = self.user
-        mock_request.data = {
-            'name': hat_wearer.name,
-            'hats': [self.bowler.name, self.top.name],
-            'episode_id': self.episode.id,
-            'consistency_token': 'wat',
-            'id': hat_wearer.id
-        }
+        self.viewset().update(mock_request, pk=hat_wearer.pk)
+        hat_wearer = HatWearer.objects.get(name="Jane")
+        self.assertEqual(hat_wearer.episode.id, self.episode.id)
+        self.assertEqual(list(hat_wearer.hats.all()), [self.bowler, self.top])
+
+    def test_many_to_many_update_synonym(self):
+        hat_wearer = self.create_hat_wearer(self.bowler)
+        mock_request = self.create_mock_request(
+            hats=[self.bowler.name, self.synonym_name],
+            consistency_token='wat',
+            id=hat_wearer.id
+        )
+
         self.viewset().update(mock_request, pk=hat_wearer.pk)
         hat_wearer = HatWearer.objects.get(name="Jane")
         self.assertEqual(hat_wearer.episode.id, self.episode.id)
         self.assertEqual(list(hat_wearer.hats.all()), [self.bowler, self.top])
 
     def test_many_to_many_update_delete(self):
-        hat_wearer = self.create_hat_wearer(self.bowler, self.top)
-        mock_request = MagicMock(name='mock request')
-        mock_request.user = self.user
-        mock_request.data = {
-            'name': 'Jane',
-            'hats': [self.bowler.name],
-            'episode_id': self.episode.id,
-            "id": hat_wearer.id
-        }
+        hat_wearer = self.create_hat_wearer(self.bowler)
+        mock_request = self.create_mock_request(
+            hats=[self.bowler.name],
+            id=hat_wearer.id
+        )
         self.viewset().update(mock_request, pk=hat_wearer.pk)
         hat_wearer = HatWearer.objects.get(name="Jane")
         self.assertEqual(hat_wearer.episode.id, self.episode.id)
@@ -309,14 +371,10 @@ class ManyToManyTestSubrecordWithLookupListTest(TestCase):
         we should be transactional, if we blow up, nothing should be saved
         """
         hat_wearer = self.create_hat_wearer(self.bowler)
-        mock_request = MagicMock(name='mock request')
-        mock_request.user = self.user
-        mock_request.data = {
-            'name': 'Jane',
-            'hats': [self.top.name, "fake hat"],
-            'episode_id': self.episode.id,
-            "id": hat_wearer.id
-        }
+        mock_request = self.create_mock_request(
+            hats=[self.top.name, "fake hat"],
+            id=hat_wearer.id
+        )
         response = self.viewset().update(mock_request, pk=hat_wearer.pk)
         self.assertEqual(400, response.status_code)
         hw = HatWearer.objects.get(name="Jane")

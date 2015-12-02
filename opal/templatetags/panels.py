@@ -10,7 +10,7 @@ register = template.Library()
 
 
 @register.inclusion_tag('_helpers/record_panel.html')
-def record_panel(model, editable=1, title=None, name=None, detail_template=None, angular_filter=None, noentries=None):
+def record_panel(model, editable=1, title=None, name=None, detail_template=None, angular_filter=None, noentries=None, only_display_if_exists=False):
     """
     Register a panel for our record.
     Editable is an angular expression
@@ -35,6 +35,7 @@ def record_panel(model, editable=1, title=None, name=None, detail_template=None,
         'editable': editable,
         'angular_filter': angular_filter,
         'noentries': noentries
+        'only_display_if_exists': only_display_if_exists,
     }
 
 @register.inclusion_tag('_helpers/record_timeline.html')

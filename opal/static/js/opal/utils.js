@@ -15,11 +15,23 @@ OPAL.module = function(namespace, dependencies){
     dependencies.push('angulartics');
     dependencies.push('angulartics.google.analytics');
 
+    this.tracking = {
+      manualTrack: window.OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX || window.OPAL_ANGULAR_EXCLUDE_TRACKING_QS,
+      opal_angular_exclude_tracking_prefix: window.OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX || [],
+      opal_angular_exclude_tracking_qs: window.OPAL_ANGULAR_EXCLUDE_TRACKING_QS || []
+    };
+
     _.each(OPAL_ANGULAR_DEPS, function(d){
         dependencies.push(d);
     });
 
     var mod = angular.module(namespace, dependencies);
+
+    if(this.tracking.manualTrack){
+      mod.config(function($analyticsProvider) {
+          $analyticsProvider.virtualPageviews(false);
+      });
+    }
 
     // See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags
     mod.config(function($interpolateProvider) {
@@ -31,9 +43,6 @@ OPAL.module = function(namespace, dependencies){
         growlProvider.globalTimeToLive(5000);
     }]);
 
-    mod.config(function($analyticsProvider) {
-        $analyticsProvider.virtualPageviews(false);
-    });
 
     // IE8 compatability mode!
     mod.config(function($sceProvider){
@@ -55,30 +64,26 @@ OPAL.run = function(app){
 };
 
 OPAL._track = function($location, $analytics){
-    var track, not_qs, path = $location.path();
+    var track, not_qs, path;
 
-    if(OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX === undefined){
-        var OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX = [];
-    }
+    if(this.tracking.manualTrack){
+        path = $location.path();
 
-    if(OPAL_ANGULAR_EXCLUDE_TRACKING_QS === undefined){
-        var OPAL_ANGULAR_EXCLUDE_TRACKING_QS = [];
-    }
-
-    track = _.some(OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX, function(prefix){
-        return path.startsWith(prefix);
-    });
-
-    if(!track){
-        not_qs = _.some(OPAL_ANGULAR_EXCLUDE_TRACKING_QS, function(qs){
-            return path === qs;
+        track = _.some(this.tracking.opal_angular_exclude_tracking_prefix, function(prefix){
+            return path.startsWith(prefix);
         });
 
-        if(not_qs){
-            $analytics.pageTrack($location.path());
-        }
-        else{
-            $analytics.pageTrack($location.url());
+        if(!track){
+            not_qs = _.some(this.tracking.opal_angular_exclude_tracking_qs, function(qs){
+                return path === qs;
+            });
+
+            if(not_qs){
+                $analytics.pageTrack($location.path());
+            }
+            else{
+                $analytics.pageTrack($location.url());
+            }
         }
     }
 };
