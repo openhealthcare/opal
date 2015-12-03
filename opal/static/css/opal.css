@@ -3,6 +3,10 @@ html, .outer-container{
     height: 100%;
 }
 
+.full-height{
+    height: 100%;
+}
+
 .search-container{
     height: 100%;
 }
