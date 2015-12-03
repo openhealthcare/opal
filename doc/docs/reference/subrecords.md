@@ -75,7 +75,7 @@ Keywords:
 * `subteam` Optional subteam to check for form customisations
 
 
-#### Subrecord.get_form_template()
+#### Subrecord.get_modal_template()
 
 Classmethod to locate the active template for our record. Returns the name of a template or None.
 

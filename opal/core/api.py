@@ -150,17 +150,18 @@ class OptionsViewSet(viewsets.ViewSet):
                 if team.parent:
                     continue # Will be filled in at the appropriate point!
                 tag_display[team.name] = team.title
+                tag_visible_in_list.append(team.name)
 
-                if team.visible_in_list:
-                    tag_visible_in_list.append(team.name)
+                # if team.visible_in_list:
+                    # tag_visible_in_list.append(team.name)
 
                 subteams = [st for st in teams if st.parent == team]
                 tag_hierarchy[team.name] = [st.name for st in subteams]
                 for sub in subteams:
                     tag_display[sub.name] = sub.title
 
-                    if sub.visible_in_list:
-                        tag_visible_in_list.append(sub.name)
+                    # if sub.visible_in_list:
+                    tag_visible_in_list.append(sub.name)
 
         data['tag_hierarchy'] = tag_hierarchy
         data['tag_display'] = tag_display

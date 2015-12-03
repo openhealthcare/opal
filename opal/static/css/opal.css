@@ -895,7 +895,7 @@ svg.speech-bubble-timeline-container{
     text-align: center;
     font-size: 25px;
     color: black;
-    padding-top: 8px;
+    padding-top: 6px;
 }
 
 .discharge-process-steps{
@@ -918,4 +918,14 @@ svg.speech-bubble-timeline-container{
 
 .no-margins{
     margin: 0;
+
+.pathway-process-steps{
+    margin-top: 25px;
+    margin-bottom: -43px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.pathway-process-steps-padding{
+    margin-top: 30px;
 }

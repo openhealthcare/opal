@@ -289,6 +289,24 @@ def _get_column_context(schema, **kwargs):
     return context
 
 
+class FormTemplateView(LoginRequiredMixin, TemplateView):
+    """
+    This view renders the form template for our field.
+
+    These are generated for subrecords, but can also be used
+    by plugins for other mdoels.
+    """
+    def dispatch(self, *a, **kw):
+        """
+        Set the context for what this modal is for so
+        it can be accessed by all subsequent methods
+        """
+        self.column = kw['model']
+        self.template_name = self.column.get_form_template()
+        self.name = camelcase_to_underscore(self.column.__name__)
+        return super(FormTemplateView, self).dispatch(*a, **kw)
+
+
 class ModalTemplateView(LoginRequiredMixin, TemplateView):
     """
     This view renders the form/modal template for our field.
@@ -304,7 +322,7 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         self.column = kw['model']
         self.tag = kw.get('tag', None)
         self.subtag = kw.get('sub', None)
-        self.template_name = self.column.get_form_template(team=self.tag, subteam=self.subtag)
+        self.template_name = self.column.get_modal_template(team=self.tag, subteam=self.subtag)
         self.name = camelcase_to_underscore(self.column.__name__)
         return super(ModalTemplateView, self).dispatch(*a, **kw)
 
