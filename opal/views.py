@@ -296,13 +296,18 @@ class FormTemplateView(LoginRequiredMixin, TemplateView):
     These are generated for subrecords, but can also be used
     by plugins for other mdoels.
     """
+    template_name = "form_base.html"
+
+    def get_context_data(self, *args, **kwargs):
+        ctx = super(FormTemplateView, self).get_context_data(*args, **kwargs)
+        ctx["form_name"] = self.column.get_form_template()
+
     def dispatch(self, *a, **kw):
         """
         Set the context for what this modal is for so
         it can be accessed by all subsequent methods
         """
         self.column = kw['model']
-        self.template_name = self.column.get_form_template()
         self.name = camelcase_to_underscore(self.column.__name__)
         return super(FormTemplateView, self).dispatch(*a, **kw)
 
