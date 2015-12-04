@@ -301,6 +301,7 @@ class FormTemplateView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, *args, **kwargs):
         ctx = super(FormTemplateView, self).get_context_data(*args, **kwargs)
         ctx["form_name"] = self.column.get_form_template()
+        return ctx
 
     def dispatch(self, *a, **kw):
         """
