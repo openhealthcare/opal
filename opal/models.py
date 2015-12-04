@@ -845,6 +845,11 @@ class Tagging(TrackedModel, models.Model):
             if team_id and not Team.objects.filter(id=team_id).exists():
                 continue
 
+            if "tag_name" in data:
+                qs = Team.objects.filter(name=data["tag_name"])
+                if qs.exists():
+                    team_id = qs.first().id
+
             user_id = data.get("user")
 
             if user_id and not User.objects.filter(id=user_id).exists():
