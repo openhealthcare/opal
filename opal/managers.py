@@ -23,6 +23,9 @@ class EpisodeManager(models.Manager):
             name = model.get_api_name()
             subrecords = model.objects.filter(episode__in=episodes)
 
+            for related in model._meta.many_to_many:
+                subrecords = subrecords.prefetch_related(related.attname)
+
             for sub in subrecords:
                 episode_subs[sub.episode_id][name].append(sub.to_dict(user))
         return episode_subs
@@ -41,6 +44,7 @@ class EpisodeManager(models.Manager):
         for model in patient_subrecords():
             name = model.get_api_name()
             subrecords = model.objects.filter(patient__in=patient_ids)
+
             for sub in subrecords:
                 patient_subs[sub.patient_id][name].append(sub.to_dict(user))
 

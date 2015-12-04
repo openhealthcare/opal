@@ -581,6 +581,9 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         return [tagging_dict]
 
     def get_tag_names(self, user, historic=False):
+        """
+        Return the current active tag names for this Episode as strings.
+        """
         qs = self.tagging_set.filter(Q(user=user) | Q(user=None))
         if not historic:
             qs = qs.filter(archived=False)

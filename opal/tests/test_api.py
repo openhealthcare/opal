@@ -54,6 +54,30 @@ class ExtractSchemaTestCase(TestCase):
         self.assertEqual([{}], api.ExtractSchemaViewSet().list(None).data)
 
 
+class OptionTestCase(TestCase):
+    def setUp(self):
+        self.top = Hat.objects.create(name="top")
+        self.bowler = Hat.objects.create(name="bowler")
+        self.synonym_name = "high"
+        self.user = User.objects.create(username='testuser')
+        content_type = ContentType.objects.get_for_model(Hat)
+        models.Synonym.objects.get_or_create(
+            content_type=content_type,
+            object_id=self.top.id,
+            name=self.synonym_name
+        )
+        self.viewset = api.OptionsViewSet
+
+    def test_options_loader(self):
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        response = self.viewset().list(mock_request)
+        result = response.data
+        self.assertIn("hat", result)
+        self.assertEqual(set(result["hat"]), {"top", "bowler", "high"})
+        self.assertEqual(response.status_code, 200)
+
+
 class SubrecordTestCase(TestCase):
 
     def setUp(self):
