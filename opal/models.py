@@ -835,8 +835,19 @@ class Tagging(TrackedModel, models.Model):
 
         for deleted_item in deleted:
             episode_id = deleted_item.field_dict["episode"]
+
+            if not Episode.objects.filter(id=episode_id).exists():
+                continue
+
             team_id = deleted_item.field_dict.get("team")
+
+            if team_id and not Team.objects.filter(id=team_id).exists():
+                continue
+
             user_id = deleted_item.field_dict.get("user")
+
+            if user_id and not User.objects.filter(id=user_id).exists():
+                continue
 
             if user_id:
                 episode_id_to_user_dict[episode_id].add(user_id)
