@@ -792,8 +792,8 @@ class Tagging(TrackedModel, models.Model):
     episode = models.ForeignKey(Episode, null=False)
     archived = models.BooleanField(default=False)
 
-    class Meta:
-        unique_together = ('team', 'user', 'episode',)
+    # class Meta:
+        # unique_together = ('team', 'user', 'episode',)
 
     def __unicode__(self):
         if self.user is not None:
