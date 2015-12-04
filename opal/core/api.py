@@ -5,15 +5,13 @@ import collections
 
 from django.conf import settings
 from django.views.generic import View
+from django.contrib.contenttypes.models import ContentType
 from rest_framework import routers, status, viewsets
-from rest_framework.decorators import list_route
-from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.reverse import reverse
-
-from opal.models import Episode
+from opal.models import Episode, Synonym, Team, Macro
 from opal.core import application, exceptions, plugins
 from opal.core import glossolalia
+from opal.core.lookuplists import LookupList
 from opal.utils import stringport, camelcase_to_underscore
 from opal.core import schemas
 from opal.core.subrecords import subrecords
@@ -117,23 +115,23 @@ class OptionsViewSet(viewsets.ViewSet):
     base_name = 'options'
 
     def list(self, request):
-        from opal.core.lookuplists import LookupList
-        from opal.models import Synonym, Team, Macro
+
 
         data = {}
-        for model in LookupList.__subclasses__():
-            options = [instance.name for instance in model.objects.all()]
+        subclasses = LookupList.__subclasses__()
+        for model in subclasses:
+            options = list(model.objects.all().values_list("name", flat=True))
             data[model.__name__.lower()] = options
 
-        for synonym in Synonym.objects.all():
-            try:
-                co =  synonym.content_object
-            except AttributeError:
-                continue
-            if co is None:
-                continue
-            name = type(co).__name__.lower()
-            data[name].append(synonym.name)
+        model_to_ct = ContentType.objects.get_for_models(
+            *subclasses
+        )
+
+        for model, ct in model_to_ct.iteritems():
+            synonyms = Synonym.objects.filter(content_type=ct).values_list(
+                "name", flat=True
+            )
+            data[model.__name__.lower()].extend(synonyms)
 
         for name in data:
             data[name].sort()
@@ -220,7 +218,10 @@ class SubrecordViewSet(viewsets.ViewSet):
         post = episode.to_dict(request.user)
         glossolalia.change(pre, post)
 
-        return Response(subrecord.to_dict(request.user), status=status.HTTP_201_CREATED)
+        return _build_json_response(
+            subrecord.to_dict(request.user),
+            status_code=status.HTTP_201_CREATED
+        )
 
     @item_from_pk
     def retrieve(self, request, item):
@@ -237,7 +238,10 @@ class SubrecordViewSet(viewsets.ViewSet):
         except exceptions.ConsistencyError:
             return Response({'error': 'Item has changed'}, status=status.HTTP_409_CONFLICT)
         glossolalia.change(pre, self._item_to_dict(item, request.user))
-        return Response(item.to_dict(request.user), status=status.HTTP_202_ACCEPTED)
+        return _build_json_response(
+            item.to_dict(request.user),
+            status_code=status.HTTP_202_ACCEPTED
+        )
 
     @item_from_pk
     def destroy(self, request, item):
