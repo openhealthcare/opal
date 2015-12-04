@@ -834,17 +834,18 @@ class Tagging(TrackedModel, models.Model):
         episode_id_to_user_dict = defaultdict(set)
 
         for deleted_item in deleted:
-            episode_id = deleted_item.field_dict["episode"]
+            data = json.loads(deleted_item.serialized_data)[0]['fields']
+            episode_id = data["episode"]
 
             if not Episode.objects.filter(id=episode_id).exists():
                 continue
 
-            team_id = deleted_item.field_dict.get("team")
+            team_id = data.get("team")
 
             if team_id and not Team.objects.filter(id=team_id).exists():
                 continue
 
-            user_id = deleted_item.field_dict.get("user")
+            user_id = data.get("user")
 
             if user_id and not User.objects.filter(id=user_id).exists():
                 continue
