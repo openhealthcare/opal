@@ -16,8 +16,4 @@ class Migration(migrations.Migration):
             name='archived',
             field=models.BooleanField(default=False),
         ),
-        migrations.AlterUniqueTogether(
-            name='tagging',
-            unique_together=set([('team', 'user', 'episode')]),
-        ),
     ]
