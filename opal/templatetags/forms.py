@@ -151,7 +151,9 @@ def select(*args, **kwargs):
     placeholder = kwargs.pop("placeholder", None)
     required = kwargs.pop('required', False)
     visibility = _visibility_clauses(kwargs.pop('show', None),
-                                     kwargs.pop('hide', None))
+
+
+    kwargs.pop('hide', None))
     default_null = kwargs.pop('default_null', True)
     tagging = kwargs.pop('tagging', True)
     multiple = kwargs.pop('multiple', False)
@@ -165,6 +167,7 @@ def select(*args, **kwargs):
     else:
         other_show = "{1} != null && {0}.indexOf({1}) == -1".format(lookuplist, ctx["model"])
     other_label = '{0} Other'.format(ctx["label"])
+
 
     ctx.update({
         'placeholder': placeholder,

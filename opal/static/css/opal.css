@@ -3,6 +3,10 @@ html, .outer-container{
     height: 100%;
 }
 
+.full-height{
+    height: 100%;
+}
+
 .search-container{
     height: 100%;
 }
@@ -77,6 +81,7 @@ h1.larger { font-size: 52px; }
     padding-right: 20px;
 }
 .content-offset { margin-top: 50px; }
+.content-offset-below { margin-bottom: 50px; }
 .content-offset-25 { margin-top: 25px; }
 .content-offset-20{
     margin-top: 20px;
@@ -85,7 +90,7 @@ h1.larger { font-size: 52px; }
     margin-bottom: 20px;
 }
 .content-offset-below-25 {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 .content-offset-10{
     margin-top: 10px;
@@ -539,6 +544,7 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 
 .patient-timeline-container{
     overflow: hidden;
+    position: relative;
     padding-bottom: 0;
 }
 
@@ -890,7 +896,7 @@ svg.speech-bubble-timeline-container{
     text-align: center;
     font-size: 25px;
     color: black;
-    padding-top: 8px;
+    padding-top: 6px;
 }
 
 .discharge-process-steps{
@@ -909,4 +915,18 @@ svg.speech-bubble-timeline-container{
     display: inline-block;
     padding-left: 5px;
     text-align: left;
+}
+
+.no-margins{
+    margin: 0;
+
+.pathway-process-steps{
+    margin-top: 25px;
+    margin-bottom: -43px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.pathway-process-steps-padding{
+    margin-top: 30px;
 }

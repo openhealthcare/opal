@@ -76,6 +76,10 @@ for subrecord_model in subrecords():
     sub_url = camelcase_to_underscore(subrecord_model.__name__)
     urlpatterns += patterns(
         '',
+        url(r'^templates/forms/%s.html/?$' % sub_url,
+            views.FormTemplateView.as_view(), {'model': subrecord_model},
+            name="form_template_view"
+            ),
         url(r'^templates/modals/%s.html/?$' % sub_url,
             views.ModalTemplateView.as_view(), {'model': subrecord_model}),
         url(r'^templates/modals/%s.html/(?P<tag>[a-z_\-]+)/?$' % sub_url,

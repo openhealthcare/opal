@@ -148,17 +148,18 @@ class OptionsViewSet(viewsets.ViewSet):
                 if team.parent:
                     continue # Will be filled in at the appropriate point!
                 tag_display[team.name] = team.title
+                tag_visible_in_list.append(team.name)
 
-                if team.visible_in_list:
-                    tag_visible_in_list.append(team.name)
+                # if team.visible_in_list:
+                    # tag_visible_in_list.append(team.name)
 
                 subteams = [st for st in teams if st.parent == team]
                 tag_hierarchy[team.name] = [st.name for st in subteams]
                 for sub in subteams:
                     tag_display[sub.name] = sub.title
 
-                    if sub.visible_in_list:
-                        tag_visible_in_list.append(sub.name)
+                    # if sub.visible_in_list:
+                    tag_visible_in_list.append(sub.name)
 
         data['tag_hierarchy'] = tag_hierarchy
         data['tag_display'] = tag_display
@@ -217,7 +218,10 @@ class SubrecordViewSet(viewsets.ViewSet):
         post = episode.to_dict(request.user)
         glossolalia.change(pre, post)
 
-        return Response(subrecord.to_dict(request.user), status=status.HTTP_201_CREATED)
+        return _build_json_response(
+            subrecord.to_dict(request.user),
+            status_code=status.HTTP_201_CREATED
+        )
 
     @item_from_pk
     def retrieve(self, request, item):
@@ -234,7 +238,10 @@ class SubrecordViewSet(viewsets.ViewSet):
         except exceptions.ConsistencyError:
             return Response({'error': 'Item has changed'}, status=status.HTTP_409_CONFLICT)
         glossolalia.change(pre, self._item_to_dict(item, request.user))
-        return Response(item.to_dict(request.user), status=status.HTTP_202_ACCEPTED)
+        return _build_json_response(
+            item.to_dict(request.user),
+            status_code=status.HTTP_202_ACCEPTED
+        )
 
     @item_from_pk
     def destroy(self, request, item):
