@@ -37,7 +37,7 @@ class UpdatesFromDictMixin(OpalTestCase):
         self.assertEqual(expected, self.model._get_fieldnames_to_extract())
 
     def test_update_from_dict_datetime(self):
-        data = {'datetime': '1953-11-04 12:20+0000'}
+        data = {'datetime': '04/11/1953 12:20:00'}
         expected = datetime.datetime(1953, 11, 4, 12, 20, 0, 0, pytz.UTC)
         instance = DatingModel()
 

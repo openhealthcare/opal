@@ -147,10 +147,14 @@ def select(*args, **kwargs):
     form_name = kwargs.pop('formname', "form")
     other = kwargs.pop('other', False)
     help_template = kwargs.pop('help', None)
+    help_text = kwargs.pop('help_text', None)
     placeholder = kwargs.pop("placeholder", None)
     required = kwargs.pop('required', False)
     visibility = _visibility_clauses(kwargs.pop('show', None),
-                                     kwargs.pop('hide', None))
+
+
+    kwargs.pop('hide', None))
+    default_null = kwargs.pop('default_null', True)
     tagging = kwargs.pop('tagging', True)
     multiple = kwargs.pop('multiple', False)
 
@@ -164,13 +168,16 @@ def select(*args, **kwargs):
         other_show = "{1} != null && {0}.indexOf({1}) == -1".format(lookuplist, ctx["model"])
     other_label = '{0} Other'.format(ctx["label"])
 
+
     ctx.update({
         'placeholder': placeholder,
+        'default_null': default_null,
         'form_name': form_name,
         'directives': args,
         'lookuplist': lookuplist,
         'visibility': visibility,
         'help_template': help_template,
+        'help_text': help_text,
         'other': other,
         'model_name': ctx["model"].replace('.', '_').replace('[','').replace(']', ''),
         'required': required,

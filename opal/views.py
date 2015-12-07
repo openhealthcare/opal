@@ -202,7 +202,7 @@ def episode_list_and_create_view(request):
 
         serialised = episode.to_dict(request.user)
         glossolalia.admit(serialised)
-        return _build_json_response(serialised, 201)
+        return _build_json_response(serialised, status_code=201)
 
 
 class EpisodeListView(View):
@@ -289,6 +289,30 @@ def _get_column_context(schema, **kwargs):
     return context
 
 
+class FormTemplateView(LoginRequiredMixin, TemplateView):
+    """
+    This view renders the form template for our field.
+
+    These are generated for subrecords, but can also be used
+    by plugins for other mdoels.
+    """
+    template_name = "form_base.html"
+
+    def get_context_data(self, *args, **kwargs):
+        ctx = super(FormTemplateView, self).get_context_data(*args, **kwargs)
+        ctx["form_name"] = self.column.get_form_template()
+        return ctx
+
+    def dispatch(self, *a, **kw):
+        """
+        Set the context for what this modal is for so
+        it can be accessed by all subsequent methods
+        """
+        self.column = kw['model']
+        self.name = camelcase_to_underscore(self.column.__name__)
+        return super(FormTemplateView, self).dispatch(*a, **kw)
+
+
 class ModalTemplateView(LoginRequiredMixin, TemplateView):
     """
     This view renders the form/modal template for our field.
@@ -304,7 +328,7 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         self.column = kw['model']
         self.tag = kw.get('tag', None)
         self.subtag = kw.get('sub', None)
-        self.template_name = self.column.get_form_template(team=self.tag, subteam=self.subtag)
+        self.template_name = self.column.get_modal_template(team=self.tag, subteam=self.subtag)
         self.name = camelcase_to_underscore(self.column.__name__)
         return super(ModalTemplateView, self).dispatch(*a, **kw)
 
@@ -314,7 +338,7 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         context['title'] = getattr(self.column, '_title', self.name.replace('_', ' ').title())
         # pylint: disable=W0201
         context['single'] = self.column._is_singleton
-
+        context["column"] = self.column
         return context
 
 

@@ -48,7 +48,7 @@ def interpolate_dir(directory, **context):
     files with CONTEXT.
     """
     # Frist, let's deal with files at our current level.
-    for t in directory.ls('*.jinja2', all=True):
+    for t in directory.ls('*.jinja2'):
         realname = str(t[-1]).replace('.jinja2', '')
         target = t[:-1]/realname
         target << mold.cast(t, **context)
@@ -299,7 +299,7 @@ def scaffold(args):
                 continue
             if not thing.get_display_template():
                 _create_display_template_for(thing)
-            if not thing.get_form_template():
+            if not thing.get_modal_template():
                 _create_form_template_for(thing)
     return
 
