@@ -158,10 +158,6 @@ def select(*args, **kwargs):
     tagging = kwargs.pop('tagging', True)
     multiple = kwargs.pop('multiple', False)
 
-    print "hello"
-    print ctx["label"]
-    print default_null
-
     if required:
         if not form_name:
             raise ValueError('You must pass formname if you pass required')

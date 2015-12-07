@@ -54,14 +54,15 @@ class SubrecordTestCase(OpalTestCase):
     @patch('opal.models.select_template')
     def test_form_template(self, select):
         models.Subrecord.get_modal_template()
-        select.assert_called_with(['modals/subrecord_modal.html'])
+        select.assert_called_with(['modals/subrecord_modal.html', 'modal_base.html'])
 
     @patch('opal.models.select_template')
     def test_modal_template_team(self, select):
         models.Subrecord.get_modal_template(team='test')
         select.assert_called_with([
             'modals/test/subrecord_modal.html',
-            'modals/subrecord_modal.html'
+            'modals/subrecord_modal.html',
+            'modal_base.html'
         ])
 
     @patch('opal.models.select_template')
@@ -71,4 +72,5 @@ class SubrecordTestCase(OpalTestCase):
             'modals/test/really/subrecord_modal.html',
             'modals/test/subrecord_modal.html',
             'modals/subrecord_modal.html',
+            'modal_base.html'
         ])

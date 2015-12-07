@@ -743,6 +743,8 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
         if subteam:
             templates.insert(0, 'modals/{0}/{1}/{2}_modal.html'.format(
                 team, subteam, name))
+
+        templates.append("modal_base.html")
         try:
             return select_template(templates).template.name
         except TemplateDoesNotExist:
