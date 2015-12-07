@@ -544,6 +544,7 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 
 .patient-timeline-container{
     overflow: hidden;
+    position: relative;
     padding-bottom: 0;
 }
 
