@@ -104,7 +104,7 @@ angular.module('opal.controllers').controller(
             }
             $q.all(to_save).then(function() {
                 ngProgressLite.done();
-			    $modalInstance.close(result);
+      			    $modalInstance.close(result);
 		    });
 	    };
 

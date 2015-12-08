@@ -13,7 +13,11 @@
     {% endblock %}
 </div>
 <div class="modal-body" {% block modal_body_extra %}{% endblock %}>
-  {% block modal_body %}{% endblock %}
+  {% block modal_body %}
+    <form class="form-horizontal">
+      {% include column.get_form_template %}
+    </form>
+  {% endblock %}
 </div>
 <div class="modal-footer">
   {% block pop_buttons %}{% endblock %}
