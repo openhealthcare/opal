@@ -10,6 +10,7 @@ import random
 import functools
 import logging
 
+from django.conf import settings
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
@@ -17,7 +18,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.template import TemplateDoesNotExist
 from django.template.loader import select_template
-from django.utils import dateparse
 import reversion
 
 from opal.core import application, exceptions, lookuplists, plugins
@@ -193,9 +193,17 @@ class UpdatesFromDictMixin(object):
                         post_save.append(functools.partial(self.save_many_to_many, name, value, field_type))
                     else:
                         if value and field_type == models.fields.DateField:
-                            value = datetime.datetime.strptime(value, '%Y-%m-%d').date()
+                            input_format = settings.DATE_INPUT_FORMATS[0]
+                            dt = datetime.datetime.strptime(
+                                value, input_format
+                            )
+                            dt = timezone.make_aware(dt, timezone.get_current_timezone())
+                            value = dt.date()
                         if value and field_type == models.fields.DateTimeField:
-                            value = dateparse.parse_datetime(value)
+                            input_format = settings.DATETIME_INPUT_FORMATS[0]
+                            value = timezone.make_aware(datetime.datetime.strptime(
+                                value, input_format
+                            ), timezone.get_current_timezone())
 
                         setattr(self, name, value)
 

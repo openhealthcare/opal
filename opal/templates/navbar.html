@@ -20,14 +20,12 @@
       </a>
     </div>
 
-
-
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="main-navbar">
       <ul class="nav navbar-nav navbar-right">
         {% if request.user.is_authenticated %}
 	    <li ng-class="{active: $location.path().indexOf('/list/') == 0}">
-          <a href="/#/">
+          <a href="/#/list/">
             <i class="fa fa-table"></i> Lists
           </a>
         </li>
