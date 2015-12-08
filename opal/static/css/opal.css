@@ -77,6 +77,7 @@ h1.larger { font-size: 52px; }
     padding-right: 20px;
 }
 .content-offset { margin-top: 50px; }
+.content-offset-below { margin-bottom: 50px; }
 .content-offset-25 { margin-top: 25px; }
 .content-offset-20{
     margin-top: 20px;
@@ -538,8 +539,24 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 }
 
 .patient-timeline-container{
+    position:relative;
     overflow: hidden;
     padding-bottom: 0;
+}
+
+.no-margins{
+    margin: 0;
+}
+
+.pathway-process-steps{
+    margin-top: 25px;
+    margin-bottom: -43px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.pathway-process-steps-padding{
+    margin-top: 30px;
 }
 
 svg.speech-bubble-timeline-container{

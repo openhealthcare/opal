@@ -9,11 +9,12 @@ angular.module('opal.controllers').controller(
         $scope.episode = episode.makeCopy();
         // Some fields should only be shown for certain categories.
         // Make that category available to the template.
-        $scope.episode_category = episode.category
-  	    $scope.editing = item.makeCopy();
+        $scope.episode_category = episode.category;
+        $scope.editing = {};
+        $scope.editing[item.columnName] = item.makeCopy();
 
         $scope.editingMode = function(){
-            return !_.isUndefined($scope.editing.id);
+            return !_.isUndefined($scope.editing[item.columnName].id);
         };
 
         // This is the patientname displayed in the modal header
@@ -67,8 +68,8 @@ angular.module('opal.controllers').controller(
                             var field =  values[0];
                             var _default =  values[1];
                             var val = _default
-                            if($scope.editing[field]){
-                                val = $scope.editing[field]
+                            if($scope.editing[item.columnName][field]){
+                              val = $scope.editing[item.columnName][field]
                             }
                             $scope.editing[field] =  val;
                         });
@@ -97,7 +98,7 @@ angular.module('opal.controllers').controller(
 	    $scope.save = function(result) {
             ngProgressLite.set(0);
             ngProgressLite.start();
-            to_save = [item.save($scope.editing)];
+            to_save = [item.save($scope.editing[item.columnName])];
             if(!angular.equals($scope.the_episode.makeCopy(), $scope.episode)){
                 to_save.push($scope.the_episode.save($scope.episode));
             }
@@ -136,6 +137,6 @@ angular.module('opal.controllers').controller(
                     return
                 }
             });
-            angular.extend($scope.editing, data);
+            angular.extend($scope.editing[item.columnName], data);
         };
     });
