@@ -713,7 +713,16 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
             return None
 
     @classmethod
-    def get_form_template(cls, team=None, subteam=None):
+    def get_form_template(cls):
+        name = camelcase_to_underscore(cls.__name__)
+        templates = ['forms/{0}_form.html'.format(name)]
+        try:
+            return select_template(templates).template.name
+        except TemplateDoesNotExist:
+            return None
+
+    @classmethod
+    def get_modal_template(cls, team=None, subteam=None):
         """
         Return the active form template for our record
         """
