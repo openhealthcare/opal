@@ -29,11 +29,11 @@ angular.module('opal.controllers').controller(
 		    return _.some(withsubtags, function(tag){ return item[tag] });
         };
 
-	    for (var name in options) {
-		    if (name.indexOf('micro_test') != 0) {
-			    $scope[name + '_list'] = _.uniq(options[name]);
-		    };
-	    };
+  	    for (var name in options) {
+  		    if (name.indexOf('micro_test') != 0) {
+  			    $scope[name + '_list'] = _.uniq(options[name]);
+  		    };
+  	    };
 
         $scope.macros = options.macros;
         $scope.select_macro = function(item){
@@ -94,17 +94,22 @@ angular.module('opal.controllers').controller(
         //
         // Save the item that we're editing.
         //
+
+      $scope.saving = false;
+
 	    $scope.save = function(result) {
-            ngProgressLite.set(0);
-            ngProgressLite.start();
-            to_save = [item.save($scope.editing)];
-            if(!angular.equals($scope.the_episode.makeCopy(), $scope.episode)){
-                to_save.push($scope.the_episode.save($scope.episode));
-            }
-            $q.all(to_save).then(function() {
-                ngProgressLite.done();
-			    $modalInstance.close(result);
-		    });
+          $scope.saving = true;
+          ngProgressLite.set(0);
+          ngProgressLite.start();
+          to_save = [item.save($scope.editing)];
+          if(!angular.equals($scope.the_episode.makeCopy(), $scope.episode)){
+              to_save.push($scope.the_episode.save($scope.episode));
+          }
+          $q.all(to_save).then(function() {
+              $scope.saving = false;
+              ngProgressLite.done();
+    			    $modalInstance.close(result);
+  		    });
 	    };
 
         // Let's have a nice way to kill the modal.
