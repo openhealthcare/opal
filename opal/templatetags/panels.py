@@ -36,3 +36,7 @@ def record_panel(model, editable=1, only_display_if_exists=False, title=None, na
         'angular_filter': angular_filter,
         'only_display_if_exists': only_display_if_exists,
     }
+
+@register.inclusion_tag('_helpers/teams_panel.html')
+def teams_panel():
+    return {}

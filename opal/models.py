@@ -648,6 +648,10 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
         return camelcase_to_underscore(cls._meta.object_name)
 
     @classmethod
+    def get_icon(cls):
+        return getattr(cls, '_icon', None)
+
+    @classmethod
     def get_display_name(cls):
         if hasattr(cls, '_title'):
             return cls._title
