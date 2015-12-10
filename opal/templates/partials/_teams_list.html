@@ -3,8 +3,9 @@
   <i class="fa edit fa-pencil pointer pull-right"
      ng-click="{{ edit_teams }}"></i>
 </h4>
-<p ng-repeat="tag in episode.childTags(options.tag_hierarchy)">
-  <button class="btn btn-xs" ng-click="jumpToTag(tag)" ng-disabled="!is_tag_visible_in_list(tag)"  ng-show="tag_display[tag] != undefined">
-    [[ tag_display[tag] ]]
-  </button>
-</p>
+<hr />
+<h4
+   ng-hide="!is_tag_visible_in_list(tag)"
+   ng-repeat="tag in episode.childTags(options.tag_hierarchy)">
+  <a href="/#/list/[[tag]]" >[[ tag_display[tag] ]]</a>
+</h4>
