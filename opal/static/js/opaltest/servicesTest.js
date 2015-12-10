@@ -1,5 +1,7 @@
 describe('services', function() {
-    var columns, episodeData, options, records, mockWindow;
+    "use strict";
+
+    var columns, episodeData, options, records, list_schema, mockWindow;
 
     beforeEach(function(){
         module('opal', function($provide) {
@@ -51,7 +53,7 @@ describe('services', function() {
 
         episodeData = {
             id: 123,
-            date_of_admission: "2013-11-19",
+            date_of_admission: "19/11/2013",
             active: true,
             discharge_date: null,
             date_of_episode: null,
@@ -62,7 +64,7 @@ describe('services', function() {
             demographics: [{
                 id: 101,
                 name: 'John Smith',
-                date_of_birth: '1980-07-31',
+                date_of_birth: '31/071980',
                 hospital_number: '555'
             }],
             location: [{
@@ -70,18 +72,18 @@ describe('services', function() {
                 hospital: 'UCH',
                 ward: 'T10',
                 bed: '15',
-                date_of_admission: '2013-08-01',
+                date_of_admission: '01/08/2013',
             }],
             diagnosis: [{
                 id: 102,
                 condition: 'Dengue',
                 provisional: true,
-                date_of_diagnosis: '2007-04-20'
+                date_of_diagnosis: '20/04/2007'
             }, {
                 id: 103,
                 condition: 'Malaria',
                 provisional: false,
-                date_of_diagnosis: '2006-03-19'
+                date_of_diagnosis: '19/03/2006'
             }]
         };
         options =  {
@@ -106,8 +108,8 @@ describe('services', function() {
         }
     });
 
-     describe('extractSchemaLoader', function(){
-        var mock;
+    describe('extractSchemaLoader', function(){
+        var mock, extractSchemaLoader;
 
         beforeEach(function(){
             mock = { alert: jasmine.createSpy() };
@@ -118,7 +120,6 @@ describe('services', function() {
 
             inject(function($injector){
                 extractSchemaLoader = $injector.get('extractSchemaLoader');
-                Schema             =  $injector.get('Schema');
                 $httpBackend       = $injector.get('$httpBackend');
                 $rootScope         = $injector.get('$rootScope');
                 $q                 = $injector.get('$q');
@@ -126,11 +127,11 @@ describe('services', function() {
         });
 
         it('should fetch the schema', function(){
-            var result
+            var result;
 
             $httpBackend.whenGET('/api/v0.1/extract-schema/').respond(columns);
             extractSchemaLoader.then(
-                function(r){ result = r}
+                function(r){ result = r; }
             );
             $rootScope.$apply();
             $httpBackend.flush();
@@ -139,11 +140,11 @@ describe('services', function() {
         });
 
         it('should alert if the http request errors', function(){
-            var result
+            var result;
             $httpBackend.whenGET('/api/v0.1/extract-schema/').respond(500, 'NO');
-            extractSchemaLoader.then( function(r){ result = r } );
+            extractSchemaLoader.then( function(r){ result = r; } );
             $rootScope.$apply();
-            $httpBackend.flush()
+            $httpBackend.flush();
 
             expect(mock.alert).toHaveBeenCalledWith(
                 'Extract schema could not be loaded');
@@ -175,7 +176,7 @@ describe('services', function() {
     });
 
     describe('Options', function(){
-        var mock;
+        var mock, Options;
 
         beforeEach(function(){
             mock = { alert: jasmine.createSpy() };
@@ -218,7 +219,7 @@ describe('services', function() {
     });
 
     describe('episodesLoader', function(){
-        var mock;
+        var mock, episodesLoader, $route;
 
         beforeEach(function(){
             mock = { alert: jasmine.createSpy() };
@@ -270,7 +271,7 @@ describe('services', function() {
     });
 
     describe('episodeVisibility', function(){
-        var $scope, episode;
+        var $scope, episode, episodeVisibility;
 
         beforeEach(function(){
             inject(function($injector){
@@ -378,19 +379,14 @@ describe('services', function() {
                 $httpBackend.verifyNoOutstandingRequest();
             });
 
-            describe('saving existing item', function() {
-                var attrsWithJsonDate, attrsWithHumanDate;
+            fdescribe('saving existing item', function() {
+                var attrsWithJsonDate;
 
                 beforeEach(function() {
                     attrsWithJsonDate = {
                         id: 101,
                         name: 'John Smythe',
-                        date_of_birth: '1980-07-30',
-                    };
-                    attrsWithHumanDate = {
-                        id: 101,
-                        name: 'John Smythe',
-                        date_of_birth: '30/07/1980',
+                        date_of_birth: '30/07/1980'
                     };
                     item = new Item(episodeData.demographics[0],
                                     mockEpisode,
@@ -401,12 +397,12 @@ describe('services', function() {
 
                 it('should hit server', function() {
                     $httpBackend.expectPUT('/api/v0.1/demographics/101/', attrsWithJsonDate);
-                    item.save(attrsWithHumanDate);
+                    item.save(attrsWithJsonDate);
                     $httpBackend.flush();
                 });
 
-                it('should update item attributes', function() {
-                    item.save(attrsWithHumanDate);
+                fit('should update item attributes', function() {
+                    item.save(attrsWithJsonDate);
                     $httpBackend.flush();
                     expect(item.id).toBe(101);
                     expect(item.name).toBe('John Smythe');
@@ -469,7 +465,7 @@ describe('services', function() {
     });
 
     describe('episodesLoader', function() {
-        var episodesLoader, $httpBackend;
+        var episodesLoader, $httpBackend, listSchemaLoader, $route;
 
         beforeEach(function() {
             inject(function($injector) {
@@ -478,7 +474,7 @@ describe('services', function() {
                 $httpBackend     = $injector.get('$httpBackend');
                 $rootScope       = $injector.get('$rootScope');
             });
-            $route.current = {params: {tag: 'micro'}}
+            $route.current = {params: {tag: 'micro'}};
         });
 
         it('should resolve to an object of episodes', function() {
@@ -533,7 +529,7 @@ describe('services', function() {
     });
 
     describe('UserProfile', function(){
-        var mock, $httpBackend;
+        var mock, $httpBackend, UserProfile;
 
         beforeEach(function(){
             mock = { alert: jasmine.createSpy() };

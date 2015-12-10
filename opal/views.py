@@ -212,7 +212,7 @@ def episode_list_and_create_view(request):
 
         serialised = episode.to_dict(request.user)
         glossolalia.admit(serialised)
-        return _build_json_response(serialised, 201)
+        return _build_json_response(serialised, status_code=201)
 
 
 class EpisodeListView(View):

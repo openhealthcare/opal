@@ -18,6 +18,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.template import TemplateDoesNotExist
 from django.template.loader import select_template
+from django.utils import timezone
+from django.conf import settings
 import reversion
 
 from opal.core import application, exceptions, lookuplists, plugins
