@@ -29,6 +29,7 @@ angular.module('opal.controllers').controller(
       $scope.path_base = '/list/';
       $scope.currentTag = $routeParams.tag;
 
+
       if(!$routeParams.subtag){
           // this should never be the case, redirection should be done
           // by the episode list redirect controller
@@ -236,7 +237,6 @@ angular.module('opal.controllers').controller(
             );
 
 		    $rootScope.state = 'modal';
-
             enter.then(
                 function(resolved) {
 		            // We have either retrieved an existing episode or created a new one,
