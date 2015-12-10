@@ -3,32 +3,33 @@ angular.module('opal.services')
                                         $http,
                                         $route,
                                         EpisodeResource, Episode,
-                                        listSchemaLoader) {
+                                        recordLoader) {
     return function() {
+      "use strict";
+
 	    var deferred = $q.defer();
-        var params = $route.current.params;
+      var params = $route.current.params;
+      var target = '/episode/' + params.tag;
+      if(params.subtag){
+          target += '/' + params.subtag;
+      }
 
-        if(!$route.current.params.tag){
-            deferred.resolve([])
-        }
+      var getEpisodePromise = $http.get(target);
 
-	    listSchemaLoader().then(function(schema) {
-            var target = '/episode/' + params.tag;
-            if(params.subtag){
-                target += '/' + params.subtag;
-            }
-            $http.get(target).then(
-                function(resources) {
-	                var episodes = {};
-		            _.each(resources.data, function(resource) {
-		                episodes[resource.id] = new Episode(resource, schema);
-		            });
-		            deferred.resolve(episodes);
-                }, function() {
-		            // handle error better
-		            $window.alert('Episodes could not be loaded');
-	            });
-	    });
+      $q.all([recordLoader, getEpisodePromise]).then(function(results){
+          // record loader updates the global scope
+          // TODO look at whether it should be doing this...
+          var episodesResult = results[1];
+          var episodes = {};
+          _.each(episodesResult.data, function(resource) {
+              episodes[resource.id] = new Episode(resource);
+          });
+          deferred.resolve(episodes);
+      }, function() {
+           // handle error better
+           $window.alert('Episodes could not be loaded');
+     });
+
 	    return deferred.promise;
     };
 });
