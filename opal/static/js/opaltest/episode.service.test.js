@@ -1,5 +1,7 @@
 describe('Episode', function() {
-    var Episode, EpisodeResource, Item, $scope;
+    "use strict";
+
+    var Episode, EpisodeResource, Item, $scope, columns;
     var episode, episodeData, resource, tag_hierarchy;
 
     beforeEach(function(){
@@ -66,7 +68,7 @@ describe('Episode', function() {
 
         episodeData = {
             id: 123,
-            date_of_admission: "2013-11-19",
+            date_of_admission: "19/11/2013",
             category: 'inpatient',
             active: true,
             discharge_date: null,
@@ -78,7 +80,7 @@ describe('Episode', function() {
             demographics: [{
                 id: 101,
                 name: 'John Smith',
-                date_of_birth: '1980-07-31',
+                date_of_birth: '31/07/1980',
                 hospital_number: '555'
             }],
             location: [{
@@ -86,18 +88,18 @@ describe('Episode', function() {
                 hospital: 'UCH',
                 ward: 'T10',
                 bed: '15',
-                date_of_admission: '2013-08-01',
+                date_of_admission: '01/08/2013'
             }],
             diagnosis: [{
                 id: 102,
                 condition: 'Dengue',
                 provisional: true,
-                date_of_diagnosis: '2007-04-20'
+                date_of_diagnosis: '20/04/2007'
             }, {
                 id: 103,
                 condition: 'Malaria',
                 provisional: false,
-                date_of_diagnosis: '2006-03-19'
+                date_of_diagnosis: '03/19/2006'
             }]
         };
 
@@ -164,7 +166,7 @@ describe('Episode', function() {
     it('should be able to add a new item', function() {
         var item = new Item(
             {id: 104, condition: 'Ebola', provisional: false,
-             date_of_diagnosis: '2005-02-18'},
+             date_of_diagnosis: '19/02/2005'},
             episode,
             columns.fields.diagnosis
         );
@@ -200,21 +202,15 @@ describe('Episode', function() {
 
 
         describe('saving an existing episode', function (){
-            var attrsJsonDate, attrsHumanDate;
+            var attrsJsonDate;
 
             beforeEach(function(){
                 attrsJsonDate = {
                     id               : 555,
                     active           : true,
-                    date_of_admission: '2013-11-20',
-                    discharge_date   : null
-                };
-                attrsHumanDate = {
-                    id               : 555,
-                    active           : true,
                     date_of_admission: '20/11/2013',
                     discharge_date   : null
-                }
+                };
 
                 episode = new Episode(episodeData);
 
@@ -225,13 +221,13 @@ describe('Episode', function() {
 
             it('Should hit server', function () {
                 $httpBackend.expectPUT('/episode/555/', attrsJsonDate);
-                episode.save(attrsHumanDate);
+                episode.save(attrsJsonDate);
                 $httpBackend.flush();
             });
 
             it('Should update item attributes', function () {
                 $httpBackend.expectPUT('/episode/555/', attrsJsonDate);
-                episode.save(attrsHumanDate);
+                episode.save(attrsJsonDate);
                 $httpBackend.flush();
                 expect(episode.date_of_admission).toEqual(new Date(2013, 10, 20))
             });
