@@ -112,8 +112,6 @@ h1.larger { font-size: 52px; }
     color: white;
     background-color: #9cc96b; /* Green */
 }
-.panel { font-size: 16px; }
-
 .panel-container { margin-top: 20px; }
 
 .panel-primary .panel-default .panel-heading.bg-secondary,
@@ -974,9 +972,6 @@ a.panel-link{
     color: #333;
 }
 
-.panel.panel-default{
-    font-size: 18px;
-}
 
 a.panel-link:hover .panel-heading,
 a.panel-link:hover .panel{
