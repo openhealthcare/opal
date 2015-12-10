@@ -1,7 +1,7 @@
 angular.module('opal.controllers').controller(
     'EditItemCtrl', function($scope, $cookieStore, $timeout,
                              $modalInstance, $modal, $q,
-                             ngProgressLite,
+                             ngProgressLite, $rootScope,
                              profile, item, options, episode) {
 
         $scope.profile = profile;
@@ -107,6 +107,7 @@ angular.module('opal.controllers').controller(
           }
           $q.all(to_save).then(function() {
               $scope.saving = false;
+              $rootScope.$broadcast("episodeSaved", result);
               ngProgressLite.done();
     			    $modalInstance.close(result);
   		    });

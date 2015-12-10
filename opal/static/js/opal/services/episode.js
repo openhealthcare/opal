@@ -172,32 +172,54 @@ angular.module('opal.services')
             };
 
 	        this.compare = function(other) {
-	            var v1, v2;
-	            var comparators = [
-		            function(p) { return CATEGORIES.indexOf(p.location[0].category) },
-		            function(p) { return p.location[0].hospital },
-		            function(p) {
-		                if (p.location[0].hospital == 'UC4H' &&
-                            p.location[0].ward.match(/^T\d+/)) {
-			                return parseInt(p.location[0].ward.substring(1));
-		                } else {
-			                return p.location[0].ward
-		                }
-		            },
-		            function(p) { return parseInt(p.location[0].bed) }
-	            ];
+              if($routeParams.tag === "walkin" && $routeParams.subtag === "walkin_review"){
+                  var getName = function(x){
+                      return x.demographics[0].name;
+                  };
 
-	            for (var ix = 0; ix < comparators.length; ix++) {
-		            v1 = comparators[ix](episode);
-		            v2 = comparators[ix](other);
-		            if (v1 < v2) {
-		                return -1;
-		            } else if (v1 > v2) {
-		                return 1;
-		            }
-	            }
+                  if(other.date_of_episode > this.date_of_episode){
+                      return -1;
+                  }
+                  else if(other.date_of_episode < this.date_of_episode){
+                      return 1;
+                  }
+                  else if(getName(other) > getName(this)){
+                      return -1;
+                  }
+                  else if(getName(other) < getName(this)){
+                      return 1;
+                  }
 
-	            return 0;
+                  return 0;
+              }
+              else{
+                var v1, v2;
+  	            var comparators = [
+  		            function(p) { return CATEGORIES.indexOf(p.location[0].category) },
+  		            function(p) { return p.location[0].hospital },
+  		            function(p) {
+  		                if (p.location[0].hospital == 'UC4H' &&
+                              p.location[0].ward.match(/^T\d+/)) {
+  			                return parseInt(p.location[0].ward.substring(1));
+  		                } else {
+  			                return p.location[0].ward
+  		                }
+  		            },
+  		            function(p) { return parseInt(p.location[0].bed) }
+  	            ];
+
+  	            for (var ix = 0; ix < comparators.length; ix++) {
+  		            v1 = comparators[ix](episode);
+  		            v2 = comparators[ix](other);
+  		            if (v1 < v2) {
+  		                return -1;
+  		            } else if (v1 > v2) {
+  		                return 1;
+  		            }
+  	            }
+
+  	            return 0;
+              }
 	        };
 
             //
