@@ -41,6 +41,7 @@ angular.module('opal.controllers').controller(
 			modal = $modal.open({
 				templateUrl: '/templates/modals/add_episode.html/',
 				controller: 'AddEpisodeCtrl',
+                size: 'lg',
 				resolve: {
 					options: function() { return options; },
 					demographics: function() {
@@ -103,6 +104,7 @@ angular.module('opal.controllers').controller(
             modal = $modal.open({
 				templateUrl: '/templates/modals/add_episode.html/',
 				controller: 'AddEpisodeCtrl',
+                size: 'lg',
 				resolve: {
 					options: function() { return options; },
 					demographics: function() { return demographics; }
