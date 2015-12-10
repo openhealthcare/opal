@@ -127,10 +127,6 @@ angular.module('opal.controllers').controller(
             return show
         };
 
-        $scope.$on("episodeSaved", function(x){
-            $scope.rows = $scope.getVisibleEpisodes();
-        });
-
 	    $scope.$watch('query.hospital_number', function() {
 		    $scope.rows = $scope.getVisibleEpisodes();
 	    });
