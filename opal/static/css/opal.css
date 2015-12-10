@@ -109,6 +109,7 @@ h1.larger { font-size: 52px; }
     background-color: #9cc96b; /* Green */
 }
 
+.panel-container { margin-top: 20px; }
 .panel-primary .panel-default .panel-heading.bg-secondary,
 .bg-secondary {
     background-color: #f76c51; /* red */
