@@ -81,6 +81,7 @@ h1.larger { font-size: 52px; }
     padding-right: 20px;
 }
 .content-offset { margin-top: 50px; }
+.content-offset-below { margin-bottom: 50px; }
 .content-offset-25 { margin-top: 25px; }
 .content-offset-20{
     margin-top: 20px;
@@ -112,6 +113,9 @@ h1.larger { font-size: 52px; }
     background-color: #9cc96b; /* Green */
 }
 .panel { font-size: 16px; }
+
+.panel-container { margin-top: 20px; }
+
 .panel-primary .panel-default .panel-heading.bg-secondary,
 .bg-secondary {
     background-color: #f76c51; /* red */
@@ -569,8 +573,24 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 }
 
 .patient-timeline-container{
+    position:relative;
     overflow: hidden;
     padding-bottom: 0;
+}
+
+.no-margins{
+    margin: 0;
+}
+
+.pathway-process-steps{
+    margin-top: 25px;
+    margin-bottom: -43px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.pathway-process-steps-padding{
+    margin-top: 30px;
 }
 
 svg.speech-bubble-timeline-container{
@@ -943,4 +963,27 @@ svg.speech-bubble-timeline-container{
     display: inline-block;
     padding-left: 5px;
     text-align: left;
+}
+
+ul.dropdown-menu {
+    text-align: left;
+}
+
+a.panel-link{
+    text-decoration: none;
+    color: #333;
+}
+
+.panel.panel-default{
+    font-size: 18px;
+}
+
+a.panel-link:hover .panel-heading,
+a.panel-link:hover .panel{
+    -o-transition:.3s;
+    -ms-transition:.3s;
+    -moz-transition:.3s;
+    -webkit-transition:.3s;
+    transition:.3s;
+    background-color: #F6F6F6;
 }

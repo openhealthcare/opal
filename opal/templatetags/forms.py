@@ -70,7 +70,7 @@ def _input(*args, **kwargs):
                                      kwargs.pop('hide', None))
 
     ctx.update({
-        'modelname' : ctx["model"].replace('.', '_'),
+        'modelname': ctx["model"].replace('.', '_').replace("editing_", ""),
         'directives': args,
         'lookuplist': lookuplist,
         'visibility': visibility,

@@ -19,7 +19,7 @@ angular.module('opal.services')
 		        value = item[field.name];
 		        if (field.type == 'date' && item[field.name] &&  !_.isDate(item[field.name])) {
 		            // Convert values of date fields to Date objects
-		            item[field.name] = moment(item[field.name], 'YYYY-MM-DD')._d;
+		            item[field.name] = moment(item[field.name], 'DD/MM/YYYY').toDate();
 		        }
 	        }
 	    };
@@ -63,27 +63,26 @@ angular.module('opal.services')
       // casts to dates/datetimes to the format the server reads dates
       this.castToType = function(attrs){
         _.forEach(columnSchema.fields, function(field){
-          value = attrs[field.name];
           // Convert values of date fields to strings of format YYYY-MM-DD
+          value = attrs[field.name];
           if (field.type == 'date' && attrs[field.name]) {
-              if (angular.isString(value)) {
-                      value = moment(value, 'DD/MM/YYYY');
-                    } else {
-                      value = moment(value);
-                    }
-                    attrs[field.name] = value.format('YYYY-MM-DD');
-                  }
-                  // Convert datetimes to YYYY-MM-DD HH:MM
-                  if( field.type == 'date_time' && attrs[field.name] ){
-                    attrs[field.name] = moment(value).format('YYYY-MM-DD HH:mmZ');
-                  }
-                  //
-                  // TODO: Handle this conversion better
-                  //
-                  if (field.type == 'integer' && field.name == 'time') {
-                    value = attrs[field.name];
-                    attrs[field.name] = parseInt('' + value.hour() + value.minute());
-                  }
+              if (!angular.isString(value)) {
+                  value = moment(value);
+                  value = value.format('DD/MM/YYYY');
+              }
+                attrs[field.name] = value;
+              }
+              // Convert datetimes to DD/MM/YYYY HH:MM:SS
+              if( field.type == 'date_time' && attrs[field.name] ){
+                attrs[field.name] = moment(value).format('DD/MM/YYYY HH:mm:ss');
+              }
+              //
+              // TODO: Handle this conversion better
+              //
+              if (field.type == 'integer' && field.name == 'time') {
+                value = attrs[field.name];
+                attrs[field.name] = parseInt('' + value.hour() + value.minute());
+              }
         });
 
         return attrs;

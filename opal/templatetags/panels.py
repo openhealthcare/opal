@@ -54,3 +54,8 @@ def record_timeline(model, whenfield):
     except Exception as err:
         print err
         raise
+
+@register.inclusion_tag('_helpers/teams_panel.html')
+def teams_panel():
+    return {}
+
