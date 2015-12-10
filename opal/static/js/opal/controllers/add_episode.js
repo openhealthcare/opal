@@ -6,7 +6,7 @@ angular.module('opal.controllers')
                                            options,
                                            demographics) {
 
-      var DATE_FORMAT = 'DD/MM/YYYY';
+        var DATE_FORMAT = 'DD/MM/YYYY';
 	    $scope.currentTag    = $routeParams.tag || 'mine';
 	    $scope.currentSubTag = $routeParams.subtag || 'all';
 
@@ -33,18 +33,18 @@ angular.module('opal.controllers')
 		    // This is a bit mucky but will do for now
 		    doa = $scope.editing.date_of_admission;
 		    if (doa) {
-          if(!angular.isString(doa)){
-              doa = moment(doa).format(DATE_FORMAT);
-          }
+                if(!angular.isString(doa)){
+                    doa = moment(doa).format(DATE_FORMAT);
+                }
 			    $scope.editing.date_of_admission = doa;
 		    }
 
 		    dob = $scope.editing.demographics.date_of_birth;
 		    if (dob) {
-          if(!angular.isString(dob)){
-              dob = moment(dob).format(DATE_FORMAT);
-          }
-        }
+                if(!angular.isString(dob)){
+                    dob = moment(dob).format(DATE_FORMAT);
+                }
+            }
 		    $scope.editing.demographics.date_of_birth = dob;
 
 		    $http.post('episode/', $scope.editing).success(function(episode) {
