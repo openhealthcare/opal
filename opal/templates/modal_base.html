@@ -1,7 +1,7 @@
 <div class="modal-header">
   <!-- <button type="button" class="close" ng-click="cancel()">×</button> -->
   <h3>
-    {% block icon %}<i class="{% block icon_name %}{% endblock %}"></i>{% endblock %}
+    {% block icon %}<i class="{% block icon_name %}{{ icon }}{% endblock %}"></i>{% endblock %}
     {% block title %}
     {{title}}
     <span ng-show="profile.can_see_pid() && editingName">

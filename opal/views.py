@@ -346,6 +346,7 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         context = super(ModalTemplateView, self).get_context_data(**kwargs)
         context['name'] = self.name
         context['title'] = getattr(self.column, '_title', self.name.replace('_', ' ').title())
+        context['icon'] = getattr(self.column, '_icon')
         # pylint: disable=W0201
         context['single'] = self.column._is_singleton
         context["column"] = self.column
