@@ -127,7 +127,8 @@ h1.larger { font-size: 52px; }
     border-color: #9cc96b; /* Green */
 }
 
-.panel.panel-primary .panel-heading {
+.panel.panel-primary .panel-heading,
+.panel.panel-primary .panel-heading .small {
     color: white;
     border-color: #9cc96b; /* Green */
     background-color: #5fa2dd; /* Blue */
