@@ -1,7 +1,28 @@
 describe('Episode', function() {
     var Episode, EpisodeResource, Item, $scope;
     var episode, episodeData, resource, tag_hierarchy;
-    var $routeParams;
+
+    beforeEach(function(){
+        module('opal', function($provide) {
+            $provide.value('$analytics', function(){
+                return {
+                    pageTrack: function(x){}
+                }
+            });
+
+            $provide.provider('$analytics', function(){
+                this.$get = function() {
+                    return {
+                        virtualPageviews: function(x){},
+                        settings: {
+                            pageTracking: false,
+                        },
+                        pageTrack: function(x){}
+                     };
+                };
+            });
+        });
+    });
 
     beforeEach(function() {
         module('opal.services');
@@ -85,28 +106,9 @@ describe('Episode', function() {
             Item = $injector.get('Item');
             $rootScope  = $injector.get('$rootScope');
             $scope      = $rootScope.$new();
-            $routeParams = $injector.get('$routeParams');
         });
 
         episode = new Episode(episodeData);
-    });
-
-    it('should run walkin comparison in walkin review', function(){
-        $routeParams.tag = "walkin";
-        $routeParams.subtag = "walkin_review";
-        var johnSmith = new Episode(episodeData);
-        var anneAngelaData = angular.copy(episodeData);
-        anneAngelaData.demographics[0].name = "Anne Angela";
-        var anneAngela = new Episode(anneAngelaData);
-        expect(johnSmith.compare(anneAngela)).toEqual(1);
-
-        johnSmith.date_of_episode = new Date(2015, 10, 11);
-        johnSmithOld = new Episode(episodeData);
-        johnSmithOld.date_of_episode = new Date(2015, 10, 10);
-        expect(johnSmithOld.compare(johnSmith)).toEqual(-1);
-
-        anneAngela.date_of_episode = new Date(2015, 10, 12);
-        expect(johnSmith.compare(anneAngela)).toEqual(-1);
     });
 
     it('Should have access to the attributes', function () {
