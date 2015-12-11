@@ -24,6 +24,14 @@ angular.module('opal.services').factory('Paginator', function() {
             this.hasPrevious = pageStart !== 1;
             var pageStart;
 
+            /*
+            * assuming a page size of 10
+            * when we've got 11 results we want 2 pages
+            * when we've got 101 results and we're on page 4
+            * we want to see "previous 4, 5, 6, 7, 8, 9 next"
+            * when we're on page 11 we want to see previous 6, 7, 8, 9, 10, 11
+            */
+
             if(this.pageNumber < numberOfPageResultsDisplayed){
                 pageStart = 1;
             }
@@ -32,8 +40,8 @@ angular.module('opal.services').factory('Paginator', function() {
             }
 
             var pageEnd = Math.min(pageStart + numberOfPageResultsDisplayed, args.total_pages);
-            this.totalPages = _.range(pageStart, pageEnd);
-            this.hasNext = args.total_pages > numberOfPageResultsDisplayed;
+            this.totalPages = _.range(pageStart, pageEnd + 1);
+            this.hasNext = args.total_pages > numberOfPageResultsDisplayed + this.pageNumber;
             this.hasPrevious = pageStart !== 1;
         }
         else{
