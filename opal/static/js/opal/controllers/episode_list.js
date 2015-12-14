@@ -13,7 +13,7 @@ angular.module('opal.controllers').controller(
         var version = window.version;
         $rootScope.state = 'normal';
         $scope.url = $location.url();
-        
+
         $scope.options = options;
         $scope.listView = true;
 
@@ -138,9 +138,9 @@ angular.module('opal.controllers').controller(
 		    $scope.rows = $scope.getVisibleEpisodes();
 	    });
 
-        $scope.getEpisodeLink = function(){
-            return "/patient/" + $scope.episode.demographics[0].patient_id + "/" + $scope.episode.id;
-        };
+      $scope.getEpisodeLink = function(){
+          return $scope.episode.link;
+      };
 
 	    $scope.$on('keydown', function(event, e) {
 		    if ($rootScope.state == 'normal') {

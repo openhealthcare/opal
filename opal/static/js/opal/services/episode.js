@@ -44,7 +44,9 @@ angular.module('opal.services')
                         episode[field] = parsed.toDate();
                     }
                 });
-            }
+
+                this.link = "/patient/" + episode.demographics[0].patient_id + "/" + episode.id;
+            };
 
 	        this.getNumberOfItems = function(columnName) {
 	            return episode[columnName].length;
