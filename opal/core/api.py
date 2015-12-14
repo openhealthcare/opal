@@ -140,6 +140,7 @@ class OptionsViewSet(viewsets.ViewSet):
 
         tag_hierarchy = collections.defaultdict(list)
         tag_visible_in_list = []
+        tag_direct_add = []
         tag_display = {}
 
         if request.user.is_authenticated():
@@ -149,9 +150,14 @@ class OptionsViewSet(viewsets.ViewSet):
                     continue # Will be filled in at the appropriate point!
                 tag_display[team.name] = team.title
 
-                if team.visible_in_list:
-                    tag_visible_in_list.append(team.name)
+                if not team.has_subteams:
 
+                    if team.visible_in_list:
+                        tag_visible_in_list.append(team.name)
+
+                    if team.direct_add:
+                        tag_direct_add.append(team.name)
+                        
                 subteams = [st for st in teams if st.parent == team]
                 tag_hierarchy[team.name] = [st.name for st in subteams]
                 for sub in subteams:
@@ -160,9 +166,13 @@ class OptionsViewSet(viewsets.ViewSet):
                     if sub.visible_in_list:
                         tag_visible_in_list.append(sub.name)
 
+                    if sub.direct_add:
+                        tag_direct_add.append(sub.name)
+
         data['tag_hierarchy'] = tag_hierarchy
         data['tag_display'] = tag_display
         data['tag_visible_in_list'] = tag_visible_in_list
+        data['tag_direct_add'] = tag_direct_add
         data['macros'] = Macro.to_dict()
 
         return Response(data)
@@ -217,7 +227,10 @@ class SubrecordViewSet(viewsets.ViewSet):
         post = episode.to_dict(request.user)
         glossolalia.change(pre, post)
 
-        return Response(subrecord.to_dict(request.user), status=status.HTTP_201_CREATED)
+        return _build_json_response(
+            subrecord.to_dict(request.user),
+            status_code=status.HTTP_201_CREATED
+        )
 
     @item_from_pk
     def retrieve(self, request, item):
@@ -234,7 +247,10 @@ class SubrecordViewSet(viewsets.ViewSet):
         except exceptions.ConsistencyError:
             return Response({'error': 'Item has changed'}, status=status.HTTP_409_CONFLICT)
         glossolalia.change(pre, self._item_to_dict(item, request.user))
-        return Response(item.to_dict(request.user), status=status.HTTP_202_ACCEPTED)
+        return _build_json_response(
+            item.to_dict(request.user),
+            status_code=status.HTTP_202_ACCEPTED
+        )
 
     @item_from_pk
     def destroy(self, request, item):

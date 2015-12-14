@@ -1,0 +1,16 @@
+{% load forms %}
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3>
+      {% icon 'fa-users' %}
+      Teams
+      <i class="fa fa-pencil edit pull-right"
+         ng-click="open_modal('EditTeamsCtrl', '/templates/modals/edit_teams.html', 'lg', {episode: episode})"></i>
+    </h3>
+  </div>
+  <ul class="list-group">
+    <li class="list-group-item" ng-repeat="item in episode.childTags(options.tag_hierarchy)">
+      <a href="/#/list/[[item]]" >[[ options.tag_display[item] ]]</a>
+    </li>
+  </ul>
+</div>
