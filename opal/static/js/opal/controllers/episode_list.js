@@ -138,10 +138,6 @@ angular.module('opal.controllers').controller(
 		    $scope.rows = $scope.getVisibleEpisodes();
 	    });
 
-      $scope.getEpisodeLink = function(){
-          return $scope.episode.link;
-      };
-
 	    $scope.$on('keydown', function(event, e) {
 		    if ($rootScope.state == 'normal') {
 			    switch (e.keyCode) {
@@ -152,7 +148,7 @@ angular.module('opal.controllers').controller(
                     break;
                 case 13:
                     if(profile.can_see_pid()){
-                        $location.url($scope.getEpisodeLink());
+                        $location.url($scope.episode.link);
                     }
                     break;
     			case 38: // up

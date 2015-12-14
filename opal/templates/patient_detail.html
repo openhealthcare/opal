@@ -88,32 +88,24 @@
             Patient History
           </h3>
         </div>
-        <ul class="list-group">
-          <li class="list-group-item episodelist pointer"
-              ng-class="{'bg-active': view == null && e.id == episode.id}"
-              ng-click="switch_to_episode($index)"
-              ng-repeat="e in patient.episodes">
-              <a href="[[ e.link]]">
-                [[ e.display_category() ]]
-                [[ e.date_of_episode | shortDate ]]
-                [[ e.date_of_admission | shortDate]]<span ng-show="e.discharge_date"> - [[ e.discharge_date | shortDate ]]</span>
-              </a>
-          </li>
-          <li class="list-group-item episodelist pointer"
-              ng-class="{'bg-active': view == 'micro_haem'}"
-              ng-click="switch_to_episode(0) && switch_to_view('micro_haem')"
-              ng-show="profile.has_role('micro_haem')">
-            Micro Haem Consult
-          </li>
-          <li class="list-group-item episodelist"
-              >
-            <center>
-              <button class="btn btn-primary btn-lg">
-                <i class="glyphicon glyphicon-plus"></i>
-                Add episode
-              </button>
-            </center>
-          </li>
+        <div class="list-group">
+            <a class="list-group-item episodelist pointer"
+                ng-class="{'bg-active': view == null && e.id == episode.id}"
+                ng-repeat="e in patient.episodes"
+                href="[[ '/#' + e.link]]"
+                >
+                  [[ e.display_category() ]]
+                  [[ e.date_of_episode | shortDate ]]
+                  [[ e.date_of_admission | shortDate]]<span ng-show="e.discharge_date"> - [[ e.discharge_date | shortDate ]]</span>
+            </>
+            <a class="list-group-item episodelist pointer"
+                ng-class="{'bg-active': view == 'micro_haem'}"
+                ng-show="profile.has_role('micro_haem')"
+                href="[[ '/#/patient/' + patient.id + '/micro_haem' ]]"
+                >
+                Micro Haem Consult
+            </a>
+          </div>
       </div>
       <!-- <div class="panel panel-default"> -->
       <!--   <div class="panel-heading "> -->

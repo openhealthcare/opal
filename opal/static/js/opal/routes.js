@@ -39,7 +39,7 @@ app.config(
                  },
 			     templateUrl: function(params){ return '/templates/patient_notes.html' }
              })
-             .when('/patient/:id/:view?', {
+             .when('/patient/:patient_id/:view?', {
 			     controller: 'PatientDetailCtrl',
                  resolve: {
 				     patient: function(patientLoader) { return patientLoader(); },

@@ -3,13 +3,13 @@ angular.module('opal.services')
         return function() {
 	        var deferred = $q.defer();
             recordLoader.then(function(records){
-                var hospitalNumber = $route.current.params.id;
+                var patient_id = $route.current.params.patient_id;
 
-                if(!hospitalNumber){
-                    deferred.resolve([])
+                if(!patient_id){
+                    deferred.resolve([]);
                 }
 
-                target = "/api/v0.1/patient/" + hospitalNumber + '/';
+                target = "/api/v0.1/patient/" + patient_id + '/';
 
                 $http.get(target).then(
                     function(resources) {
