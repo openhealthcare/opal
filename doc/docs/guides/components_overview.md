@@ -1,36 +1,47 @@
 # Components of an OPAL application
 
-The OPAL ecosystem comprises several types of components - let's take a look at how they all
-hang together.
+OPAL applications will typically be made up of several types of components.
 
-### Core OPAL framework
+![Layers of an OPAL application](../img/OPALLayers.png)
 
-The core OPAL framework provides common patterns for writing clinical facing transactional 
-applications. It is an opinionated approach, and amongst many other things, it gives you 
-authentication and login mechanisms, hooks for integration with other clinical systems, a 
-foundational [Clinical Data Model](datamodel.md), self-documenting, open JSON APIs for your 
-data, a [Permission framework](roles_and_permissions.md) and a pattern library for UX 
-components.
+### OPAL
 
-In addition to this, OPAL also provides some very common functionality as part of the core
-framework, such as Search, rendering lists of patients, viewing the detail and history of
-episodes of care, as well as multi-user realtime updates.
+The core OPAL framework provides you with a range of commonly required elements
+of clinical applications.
+
+It contains a core [data model](datamodel.md) for persisting clinical information,
+as well core [clinical archetypes](archetypes.md) out of the box that build on many
+years of collaboratively modelling clinical concepts by medical domain experts.
+
+OPAL also makes it easy to integrate standard clinical [reference data](referencedata.md)
+into your application - things like medical diagnoses, tests, drugs et cetera.
+
+Some common functional components end up in to most clinical applications, and many
+of these come with OPAL as "batteries included" - immediately available modular features
+that can be simply re-used without having to reinvent the wheel.
+
+For example:
+
+* [Patient lists](list_views.md)
+* [Search](search.md)
+* Authentication and [Permissions](roles_and_permissions.md)
+* [Forms for data entry](forms.md)
+* [JSON based REST APIs](json_api.md) for all of your models
+* ... and [many more](topic-guides.md)...
 
 ### Plugins
 
 OPAL plugins are intended to provide high quality generic, composable, re-usable chunks of 
 functionality that can be "dropped in" to an application. For example, installing the 
-[Analytics](https://github.com/openhealthcare/opal-analytics) plugin allows you to integrate
-your application with Google or Piwik Analytics with a minimum of fuss. The 
+[Dashboards](https://github.com/openhealthcare/opal-dashboards) plugin allows you to easily
+create clinical dashboards within your application. The 
 [Referral](https://github.com/openhealthcare/opal-referral) plugin provides the plumbing for 
 building complex inter-team referrals within an institution.
 
-Plugins have a [rich plugin API](plugins.md) they can hook into to aid the seamlessness, and
+Plugins have a [rich plugin API](plugins.md) they can hook into to, and
 many examples can be found by inspecting the source of [existing plugins](plugins_list.md). 
 This includes defining patient Flows through the system, adding to the core JSON API, ovrerriding
 templates, adding patient Actions, as well as much more.
-
-TODO: Write the Plugin Tutorial
 
 ### Applications
 
