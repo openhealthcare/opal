@@ -104,7 +104,7 @@ h1.larger { font-size: 52px; }
 .headed-content-offset { margin-top: 150px; }
 
 /* Generic Colours */
-.bg-primary h1 small { color: #eff; }
+h1 small { color: #eff; }
 .bg-white {
     background-color: white;
 }

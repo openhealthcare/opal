@@ -121,7 +121,7 @@ class DatabaseQueryTestCase(OpalTestCase):
             'name': u'Sally Stevens',
             'end_date': self.DATE_OF_EPISODE,
             'start_date': self.DATE_OF_EPISODE,
-            'episode_id': 1,
+            'patient_id': 1,
             'categories': [u'Inpatient']
         }]
         self.assertEqual(expected, summaries)

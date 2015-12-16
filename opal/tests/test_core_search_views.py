@@ -74,12 +74,12 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
                 u'count': 1,
                 u'id': self.patient.id,
                 u'name': u'Sean Connery',
-                u'end_date': '15/10/2015',
-                u'episode_id': 1,
+                u'end_date': u'15/10/2015',
+                u'patient_id': 1,
                 u'hospital_number': u'007',
                 u'date_of_birth': None,
-                u'start_date': '15/10/2015',
-                u'categories': [u'inpatient']
+                u'start_date': u'15/10/2015',
+                u'categories': [u'Inpatient']
             }],
             u'total_count': 1,
             u'total_pages': 1,

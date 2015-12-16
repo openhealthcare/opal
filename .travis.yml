@@ -10,7 +10,8 @@ before_script:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
 script:
-  - opal test
+  - opal test --coverage
+after_success: coveralls
 notifications:
   slack: ohcuk:6spaME3CB7f2PGrMAcklYWqp
 sudo: false

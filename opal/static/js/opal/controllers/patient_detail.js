@@ -12,7 +12,11 @@ angular.module('opal.controllers').controller(
 
         $scope.view = null;
         
-        $scope.switch_to_episode = function(index){
+        $scope.switch_to_episode = function(index, $event){
+            if($event){
+                $event.preventDefault()
+
+            }
             $scope.episode = $scope.patient.episodes[index];
             $scope.view = null;
             return true
