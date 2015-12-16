@@ -5,7 +5,7 @@ from django.db import models as dmodels
 
 from opal.core import fields
 from opal import models
-from opal.core import lookuplists
+from opal.core import lookuplists, referencedata
 
 
 class Hat(lookuplists.LookupList):
@@ -56,6 +56,6 @@ if not getattr(models.Patient, 'demographics_set', None):
         hospital_number = dmodels.CharField(max_length=200, blank=True, null=True)
         name = dmodels.CharField(max_length=200, blank=True, null=True)
         date_of_birth = dmodels.DateField(blank=True, null=True)
-        gender = fields.ForeignKeyOrFreeText(models.Gender)
+        gender = fields.ForeignKeyOrFreeText(referencedata.Gender)
 
         pid_fields = 'name',

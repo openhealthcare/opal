@@ -2,7 +2,7 @@
 Unittests for the delete all lookuplists command
 """
 from opal.core.test import OpalTestCase
-from opal.models import Symptom
+from opal.core.referencedata import Symptom
 
 from opal.management.commands import delete_all_lookup_lists
 
