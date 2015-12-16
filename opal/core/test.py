@@ -8,6 +8,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.test import TestCase
 from django.test.client import RequestFactory
 
+from opal.core.views import OpalSerializer
 from opal.models import UserProfile
 
 
@@ -37,13 +38,13 @@ class OpalTestCase(TestCase):
         return self._user
 
     def post_json(self, path, data):
-        json_data = json.dumps(data, cls=DjangoJSONEncoder)
+        json_data = json.dumps(data, cls=OpalSerializer)
         return self.client.post(
             path, content_type='application/json', data=json_data
         )
 
     def put_json(self, path, data):
-        json_data = json.dumps(data, cls=DjangoJSONEncoder)
+        json_data = json.dumps(data, cls=OpalSerializer)
         return self.client.put(path, content_type='application/json', data=json_data)
 
     def assertStatusCode(self, path, expected_status_code):
