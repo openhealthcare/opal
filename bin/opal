@@ -76,6 +76,7 @@ def startproject(args):
     10. Create a Sample team
     11. Initialise our git repo
     """
+    raise Exception('Project scaffolding disabled pending core archetype work')
     name = args.name
 
     project_dir = USERLAND_HERE/name
