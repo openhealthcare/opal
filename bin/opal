@@ -396,7 +396,7 @@ def main():
         '-t', '--test', help='Test case or method to run'
     )
     parser_test.add_argument(
-        '-c', '--coverage', help='Generate a test coverage report'
+        '-c', '--coverage', action='store_true', help='Generate a test coverage report'
     )
     parser_test.set_defaults(func=test)
 
