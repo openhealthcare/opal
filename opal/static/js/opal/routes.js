@@ -30,15 +30,6 @@ app.config(
                      return target;
                  }
 		     })
-             .when('/patientnotes/:id', {
-			     controller: 'PatientNotesCtrl',
-                 resolve: {
-				     episodes: function(patientLoader) { return patientLoader(); },
-				     options: function(Options) { return Options; },
-                     profile: function(UserProfile){ return UserProfile; }
-                 },
-			     templateUrl: function(params){ return '/templates/patient_notes.html' }
-             })
              .when('/patient/:patient_id/:view?', {
 			     controller: 'PatientDetailCtrl',
                  resolve: {
@@ -48,15 +39,6 @@ app.config(
                  },
 			     templateUrl: function(params){ return '/templates/patient_detail.html' }
              })
-             .when('/episode/:id', {
-			     controller: 'EpisodeDetailCtrl',
-			     resolve: {
-				     episode: function(episodeLoader) { return episodeLoader(); },
-				     options: function(Options) { return Options; },
-                     profile: function(UserProfile){ return UserProfile; }
-			     },
-			     templateUrl: function(params){ return '/templates/episode_detail.html/' + params.id; }
-		     })
              .when('/search', {
 			     controller: 'SearchCtrl',
 			     templateUrl: '/search/templates/search.html',
