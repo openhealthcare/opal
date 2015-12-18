@@ -2,14 +2,15 @@
 # Utilities for dealing with OPAL Schemas
 # """
 # from opal.utils import stringport
-# from opal.core.subrecords import subrecords
+from opal.core.subrecords import subrecords
+from opal import models
 # from opal.core import application, plugins
-# from opal import models
 #
 # app = application.get_app()
 #
 # schema = stringport(app.schema_module)
 #
+
 def serialize_model(model):
     col = {
         'name'        : model.get_api_name(),
@@ -25,9 +26,11 @@ def serialize_model(model):
     if hasattr(model, '_read_only'):
         col['readOnly'] = model._read_only
     return col
-#
-# def serialize_schema(schema):
-#     return [serialize_model(column) for column in schema]
+
+
+def serialize_schema(schema):
+    return [serialize_model(column) for column in schema]
+
 #
 # def _get_plugin_schemas():
 #     scheme = {}
@@ -55,16 +58,19 @@ def serialize_model(model):
 #             scheme[name] = _get_field_names(s)
 #     return scheme
 #
-# def _get_all_fields():
-#     response = {
-#         subclass.get_api_name(): serialize_model(subclass)
-#         for subclass in subrecords()
-#     }
-#     response['tagging'] = serialize_model(models.Tagging)
-#     return response
-#
-# def list_records():
-#     return _get_all_fields()
+
+
+def _get_all_fields():
+    response = {
+        subclass.get_api_name(): serialize_model(subclass)
+        for subclass in subrecords()
+    }
+    response['tagging'] = serialize_model(models.Tagging)
+    return response
+
+
+def list_records():
+    return _get_all_fields()
 #
 # def list_schemas():
 #     """
@@ -72,8 +78,10 @@ def serialize_model(model):
 #     """
 #     return _get_list_schema()
 #
-# def extract_schema():
-#     return serialize_schema([models.Tagging] + [c for c in subrecords()])
+
+
+def extract_schema():
+    return serialize_schema([models.Tagging] + [c for c in subrecords()])
 #
 # def get_all_list_schema_classes():
 #     schemas = schema.list_schemas.copy()
