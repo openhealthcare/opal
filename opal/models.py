@@ -477,7 +477,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     date_of_episode   = models.DateField(blank=True, null=True)
     consistency_token = models.CharField(max_length=8)
 
-    objects = managers.EpisodeManager()
+    objects = managers.EpisodeQueryset.as_manager()
 
     def __unicode__(self):
         try:

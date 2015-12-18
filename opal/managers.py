@@ -2,14 +2,11 @@
 Custom managers for query optimisations
 """
 from collections import defaultdict
-import time
-
-from django.db import models, connection, reset_queries
-
+from django.db import models
 from opal.core.subrecords import episode_subrecords, patient_subrecords
 
 
-class EpisodeManager(models.Manager):
+class EpisodeQueryset(models.QuerySet):
 
     def serialised_episode_subrecords(self, episodes, user):
         """
@@ -88,7 +85,6 @@ class EpisodeManager(models.Manager):
                 d['episode_history'] = e._episode_history_to_dict(user)
 
         return serialised
-
 
     def serialised_active(self, user, **kw):
         """

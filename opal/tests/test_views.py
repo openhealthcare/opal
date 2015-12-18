@@ -20,8 +20,8 @@ class BaseViewTestCase(OpalTestCase):
         view = viewklass.as_view()
         resp = view(request)
         self.assertEqual(200, resp.status_code)
-        
-        
+
+
 class EpisodeListTemplateViewTestCase(BaseViewTestCase):
 
     def test_episode_template_view(self):
@@ -29,8 +29,8 @@ class EpisodeListTemplateViewTestCase(BaseViewTestCase):
         self.should_200(views.EpisodeListTemplateView, request)
 
 class PatientDetailTemplateViewTestCase(BaseViewTestCase):
-    
-    def test_patient_detail_template_view(self):
+
+    def test_microhaem_template_view(self):
         request = self.get_request('/patient_detail_template')
         self.should_200(views.PatientDetailTemplateView, request)
 

@@ -12,15 +12,14 @@ from django.views.decorators.http import require_http_methods
 
 from opal import models
 from opal.core import application, episodes, exceptions, glossolalia
+from opal.core.patient_lists import PatientList
 from opal.core.subrecords import episode_subrecords, subrecords
 from opal.core.views import LoginRequiredMixin, _get_request_data, _build_json_response
-from opal.core.schemas import get_all_list_schema_classes
 from opal.utils import camelcase_to_underscore, stringport
 from opal.utils.banned_passwords import banned
 
 app = application.get_app()
 
-schema = stringport(app.schema_module)
 # TODO This is stupid - we can fully deprecate this please?
 try:
     options = stringport(settings.OPAL_OPTIONS_MODULE)
@@ -37,17 +36,9 @@ class EpisodeTemplateView(TemplateView):
         """
         Return the context for our columns
         """
-        active_schema = self.column_schema
-        all_list_schemas = get_all_list_schema_classes()
-        if 'tag' in kwargs and kwargs['tag'] in all_list_schemas:
-            if 'subtag' in kwargs and kwargs['subtag'] in all_list_schemas[kwargs['tag']]:
-                active_schema = all_list_schemas[kwargs['tag']][kwargs['subtag']]
-            elif 'default' in all_list_schemas[kwargs['tag']]:
-                active_schema = all_list_schemas[kwargs['tag']]['default']
-            else:
-                active_schema = all_list_schemas['default']
-
-        return _get_column_context(active_schema, **kwargs)
+        # active_schema = self.column_schema
+        patient_list = PatientList.get_class(self.request, **kwargs)
+        return _get_column_context(patient_list.schema, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(EpisodeTemplateView, self).get_context_data(**kwargs)
@@ -71,13 +62,13 @@ class EpisodeListTemplateView(EpisodeTemplateView):
 
 class PatientDetailTemplateView(TemplateView):
     template_name = 'patient_detail.html'
-    
+
     def get_context_data(self, **kwargs):
         context = super(PatientDetailTemplateView, self).get_context_data(**kwargs)
         context['models'] = { m.__name__: m for m in subrecords() }
         context['episode_types'] = episodes.episode_types()
         return context
-    
+
 
 class EpisodeDetailTemplateView(TemplateView):
     def get(self, *args, **kwargs):
@@ -220,19 +211,9 @@ class EpisodeListView(View):
     Return serialised subsets of active episodes by tag.
     """
     def get(self, *args, **kwargs):
-        tag, subtag = kwargs.get('tag', None), kwargs.get('subtag', None)
-        filter_kwargs = dict(tagging__archived=False)
-        if subtag:
-            filter_kwargs['tagging__team__name'] = subtag
-        elif tag:
-            filter_kwargs['tagging__team__name'] = tag
-        # Probably the wrong place to do this, but mine needs specialcasing.
-        if tag == 'mine':
-            filter_kwargs['tagging__user'] = self.request.user
-        serialised = models.Episode.objects.serialised_active(
-            self.request.user, **filter_kwargs)
-        return _build_json_response(serialised)
-
+        # while we manage transition lets allow a fall back to the old way
+        patient_list = PatientList.get_class(self.request, **kwargs)
+        return _build_json_response(patient_list.get_serialised())
 
 
 class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
