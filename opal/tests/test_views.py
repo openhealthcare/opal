@@ -22,18 +22,6 @@ class BaseViewTestCase(OpalTestCase):
         self.assertEqual(200, resp.status_code)
 
 
-class EpisodeListTemplateViewTestCase(BaseViewTestCase):
-
-    def test_episode_template_view(self):
-        request = self.get_request('/episodetemplate')
-        self.should_200(views.EpisodeListTemplateView, request)
-
-class PatientDetailTemplateViewTestCase(BaseViewTestCase):
-
-    def test_microhaem_template_view(self):
-        request = self.get_request('/patient_detail_template')
-        self.should_200(views.PatientDetailTemplateView, request)
-
 class BannedViewTestCase(BaseViewTestCase):
     def test_banned_view(self):
         request = self.get_request('/banned_passwords')

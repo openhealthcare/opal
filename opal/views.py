@@ -31,7 +31,9 @@ except AttributeError:
 Synonym = models.Synonym
 
 
-class EpisodeTemplateView(TemplateView):
+class EpisodeListTemplateView(TemplateView):
+    template_name = 'episode_list.html'
+
     def get_column_context(self, **kwargs):
         """
         Return the context for our columns
@@ -41,7 +43,7 @@ class EpisodeTemplateView(TemplateView):
         return _get_column_context(patient_list.schema, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(EpisodeTemplateView, self).get_context_data(**kwargs)
+        context = super(EpisodeListTemplateView, self).get_context_data(**kwargs)
         teams = models.Team.for_user(self.request.user)
         context['teams'] = teams
         context['columns'] = self.get_column_context(**kwargs)
@@ -53,10 +55,6 @@ class EpisodeTemplateView(TemplateView):
 
         context['models'] = { m.__name__: m for m in subrecords() }
         return context
-
-
-class EpisodeListTemplateView(EpisodeTemplateView):
-    template_name = 'episode_list.html'
 
 
 class PatientDetailTemplateView(TemplateView):
