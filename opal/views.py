@@ -4,7 +4,7 @@ Module entrypoint for core OPAL views
 from django.conf import settings
 from django.contrib.auth.views import login
 from django.http import HttpResponseNotFound
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import select_template, get_template
 from django.template import TemplateDoesNotExist
 from django.views.generic import TemplateView, View
@@ -69,7 +69,7 @@ class PatientDetailTemplateView(TemplateView):
 
 class EpisodeDetailTemplateView(TemplateView):
     def get(self, *args, **kwargs):
-        self.episode = models.Episode.objects.get(pk=kwargs['pk'])
+        self.episode = get_object_or_404(models.Episode, pk=kwargs['pk'])
         return super(EpisodeDetailTemplateView, self).get(*args, **kwargs)
 
     def get_template_names(self):
