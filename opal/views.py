@@ -38,9 +38,14 @@ class EpisodeListTemplateView(TemplateView):
         """
         Return the context for our columns
         """
-        # active_schema = self.column_schema
-        patient_list = PatientList.get_class(self.request, **kwargs)
-        return _get_column_context(patient_list.schema, **kwargs)
+        # we use this view to load blank tables without content for
+        # the list redirect view, so if there are no kwargs, just
+        # return an empty context
+        if kwargs:
+            patient_list = PatientList.get_class(self.request, **kwargs)
+            return _get_column_context(patient_list.schema, **kwargs)
+        else:
+            return []
 
     def get_context_data(self, **kwargs):
         context = super(EpisodeListTemplateView, self).get_context_data(**kwargs)
