@@ -131,10 +131,18 @@ def check_password_reset(request, *args, **kwargs):
         try:
             profile = request.user.profile
             if profile and profile.force_password_change:
-                return redirect('django.contrib.auth.views.password_change')
+                return redirect(
+                    'django.contrib.auth.views.password_change'
+                )
         except models.UserProfile.DoesNotExist:
-            models.UserProfile.objects.create(user=request.user, force_password_change=True)
-            return redirect('django.contrib.auth.views.password_change')
+            # TODO: This probably doesn't do any harm, but
+            # we should really never reach this. Creation
+            # of profiles shouldn't happen in a random view.
+            models.UserProfile.objects.create(
+                user=request.user, force_password_change=True)
+            return redirect(
+                'django.contrib.auth.views.password_change'
+            )
     return response
 
 
