@@ -31,8 +31,11 @@ from opal.core.subrecords import episode_subrecords, patient_subrecords
 
 app = application.get_app()
 
-
 class UpdatesFromDictMixin(object):
+    """
+    Mixin class to provide the serialization/deserialization
+    fields, as well as update logic for our JSON APIs.
+    """
 
     @classmethod
     def _get_fieldnames_to_serialize(cls):
