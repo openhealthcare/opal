@@ -5,8 +5,10 @@ from django import http
 from mock import patch, MagicMock
 from opal.core.test import OpalTestCase
 from opal import models
+from opal.tests import models as testmodels
 
 from opal import views
+
 
 class BaseViewTestCase(OpalTestCase):
 
@@ -122,7 +124,64 @@ class CheckPasswordResetViewTestCase(BaseViewTestCase):
         self.assertEqual(mockresponse, response)
 
 
+class GetColumnContextTestCase(OpalTestCase):
+
+    def test_column_context(self):
+        schema = [testmodels.Colour]
+
+        expected = [
+            dict(
+                name = 'colour',
+                title = 'Colour',
+                single = False,
+                icon = '',
+                list_limit = None,
+                template_path = 'records/colour.html',
+                detail_template_path = 'records/colour.html',
+                header_template_path = ''
+            )
+        ]
+        context = views._get_column_context(schema)
+        self.assertEqual(expected, context)
+
+
+class FormTemplateViewTestCase(BaseViewTestCase):
+
+    def test_200(self):
+        request = self.get_request('/colour_form.html')
+        view = self.setup_view(
+            views.FormTemplateView, request)
+        resp = view.dispatch(request, model=testmodels.Colour)
+        self.assertEqual(200, resp.status_code)
+
+class ModalTemplateViewTestCase(BaseViewTestCase):
+
+    def test_200(self):
+        request = self.get_request('/colour_modal.html')
+        view = self.setup_view(
+            views.ModalTemplateView, request)
+        resp = view.dispatch(request, model=testmodels.Colour)
+        self.assertEqual(200, resp.status_code)
+
+
 class BannedViewTestCase(BaseViewTestCase):
     def test_banned_view(self):
         request = self.get_request('/banned_passwords')
         self.should_200(views.BannedView, request)
+
+
+class RawTemplateViewTestCase(BaseViewTestCase):
+
+    def test_get_existing_template(self):
+        request = self.get_request('modal_base.html')
+        view = self.setup_view(
+            views.RawTemplateView, request)
+        resp = view.dispatch(request, template_name='modal_base.html')
+        self.assertEqual(200, resp.status_code)
+
+    def test_get_non_existing_template(self):
+        request = self.get_request('not_a_real_template.html')
+        view = self.setup_view(
+            views.RawTemplateView, request)
+        resp = view.dispatch(request, template_name='not_a_real_template.html')
+        self.assertEqual(404, resp.status_code)
