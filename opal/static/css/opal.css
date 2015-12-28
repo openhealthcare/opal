@@ -27,6 +27,21 @@ a {
 
 p a, .orange-link { color: #f76c51; }
 
+a.table-link::before {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+a.table-link:hover{
+  text-decoration: none;
+  color: #333;
+}
+
 .white-text{
   color: #fff;
 }
@@ -445,8 +460,8 @@ input.ng-invalid.ng-dirty { background-color : #fcc; }
 .edit_item span { display: none; }
 .edit_item:hover span { display: inline; }
 
-.dropdown-menu { 
-    z-index: 1060; 
+.dropdown-menu {
+    z-index: 1060;
     min-width: 260px;
     font-size; 16px;
 }
