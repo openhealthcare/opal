@@ -21,9 +21,6 @@ angular.module('opal.services')
 		            // Convert values of date fields to Date objects
 		            item[field.name] = moment(item[field.name], 'DD/MM/YYYY').toDate();
 		        }
-            else if(field.type == 'date_time' && item[field.name] && !_.isDate(item[field.name])){
-                item[field.name] = moment(item[field.name], 'DD/MM/YYYY HH:mm:ss').toDate();
-            }
 	        }
 	    };
 
