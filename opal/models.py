@@ -887,7 +887,6 @@ class Tagging(TrackedModel, models.Model):
                 episode_id_to_team_dict[episode_id].add(team_id)
 
 
-        print "we are looking at {} episodes".format(len(episode_id_to_team_dict))
         team_taggings = Tagging.objects.filter(episode_id__in=episode_id_to_team_dict.keys())
 
         for tagging in team_taggings:
@@ -906,7 +905,6 @@ class Tagging(TrackedModel, models.Model):
         for tagging in user_taggins:
             relevent_set = episode_id_to_user_dict[tagging.episode_id]
             if tagging.user_id and tagging.user_id in relevent_set:
-                print "removing %s" % tagging.user_id
                 relevent_set.remove(tagging.user_id)
 
         user_team = Team.objects.get(name="mine")
