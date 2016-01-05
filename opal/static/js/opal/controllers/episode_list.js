@@ -29,6 +29,7 @@ angular.module('opal.controllers').controller(
       $scope.path_base = '/list/';
       $scope.currentTag = $routeParams.tag;
 
+
       if(!$routeParams.subtag){
           // this should never be the case, redirection should be done
           // by the episode list redirect controller
@@ -236,7 +237,6 @@ angular.module('opal.controllers').controller(
             );
 
 		    $rootScope.state = 'modal';
-
             enter.then(
                 function(resolved) {
 		            // We have either retrieved an existing episode or created a new one,
@@ -253,10 +253,13 @@ angular.module('opal.controllers').controller(
   			                $scope.rows = $scope.getVisibleEpisodes();
   			                rowIx = getRowIxFromEpisodeId(episode.id);
   			                $scope.selectItem(rowIx, 0, 0);
-                              $scope.num_episodes += 1;
-                              var readableName = $scope.tag_display[$scope.currentSubTag];
-                              var msg = episode.demographics[0].name + " added to the " + readableName + " list";
-                              growl.success(msg);
+                        $scope.num_episodes += 1;
+                        var readableName = $scope.tag_display[$scope.currentSubTag];
+                        if(!readableName){
+                          readableName = $scope.tag_display[$scope.currentTag];
+                        }
+                        var msg = episode.demographics[0].name + " added to the " + readableName + " list";
+                        growl.success(msg);
   		                }
                     };
 
