@@ -26,6 +26,10 @@ def import_from_apps():
 
 
 class PatientList(object):
+    """
+    A view of a list shown on the list page, complete with schema that
+    define the columns shown and a queryset that defines the episodes shown
+    """
     def __init__(self, request, *args, **kwargs):
         self.request = request
 
@@ -52,13 +56,22 @@ class PatientList(object):
 
     @classmethod
     def get_class(klass, request, **kwargs):
-        for list_class in klass.list_classes():
+        list_classes = klass.list_classes()
+        for list_class in list_classes:
             lc = list_class.get(**kwargs)
             if lc:
                 return lc(request)
 
 
-class TaggedPatientList(object):
+class TaggedPatientList(PatientList):
+    """
+    The most common list use case of a patient list, when we define a tag
+    and a sub tag and look up the episodes on the basis of these. You still
+    need to define schema
+    """
+    tag = "Implement me please"
+    subtag = "Implement me please"
+
     @classmethod
     def get(klass, **kwargs):
         tag = kwargs.get("tag", None)
@@ -78,6 +91,10 @@ class TaggedPatientList(object):
 
 
 class Mine(PatientList):
+    """
+    if the user has tagged episodes as their's this will give them the appropriate
+    episode queryset
+    """
     @classmethod
     def get(klass, **kwargs):
         tag = kwargs.get("tag", None)
@@ -85,4 +102,4 @@ class Mine(PatientList):
             return klass
 
     def get_queryset(self):
-        return Episode.objects.filter(tagging_user=self.request.user)
+        return Episode.objects.filter(tagging__user=self.request.user)
