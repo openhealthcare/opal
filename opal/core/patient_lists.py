@@ -88,18 +88,3 @@ class TaggedPatientList(PatientList):
         else:
             filter_kwargs["tagging__team__name"] = self.tag
         return Episode.objects.filter(**filter_kwargs)
-
-
-class Mine(PatientList):
-    """
-    if the user has tagged episodes as their's this will give them the appropriate
-    episode queryset
-    """
-    @classmethod
-    def get(klass, **kwargs):
-        tag = kwargs.get("tag", None)
-        if tag and "mine" == tag.lower():
-            return klass
-
-    def get_queryset(self):
-        return Episode.objects.filter(tagging__user=self.request.user)

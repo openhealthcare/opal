@@ -38,7 +38,5 @@ def _get_all_fields():
 def list_records():
     return _get_all_fields()
 
-
 def extract_schema():
     return serialize_schema([models.Tagging] + [c for c in subrecords()])
-   return schemas
