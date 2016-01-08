@@ -12,6 +12,10 @@ from mock import patch, MagicMock
 
 from opal import models
 from opal.tests.models import Colour, PatientColour, HatWearer, Hat
+from opal.core.test import OpalTestCase
+
+# this is used just to import the class for EpisodeListApiTestCase
+from opal.tests.test_patient_lists import TaggingTestPatientList # flake8: noqa
 
 from opal.core import api
 
@@ -37,6 +41,16 @@ class RecordTestCase(TestCase):
     def test_records(self, schemas):
         schemas.list_records.return_value = [{}]
         self.assertEqual([{}], api.RecordViewSet().list(None).data)
+
+
+class EpisodeListApiTestCase(OpalTestCase):
+    def test_episode_list_view(self):
+        request = MagicMock(name='mock request')
+        request.user = self.user
+        view = api.EpisodeListApi()
+        view.request = request
+        resp = view.get(tag="eater", subtag="herbivore")
+        self.assertEqual(200, resp.status_code)
 
 
 class ListSchemaTestCase(TestCase):

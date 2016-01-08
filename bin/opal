@@ -313,10 +313,18 @@ def _run_py_tests(args):
         test_args.append(args.test)
     if args.coverage:
         test_args = ['coverage', 'run', 'runtests.py']
+
     try:
         subprocess.check_call(test_args)
     except subprocess.CalledProcessError:
         sys.exit(1)
+
+    if args.coverage:
+        try:
+            subprocess.check_call(['coverage', 'html'])
+        except subprocess.CalledProcessError:
+            sys.exit(1)
+
     return
 
 def _run_js_tests(args):

@@ -30,11 +30,11 @@ angular.module('opal.controllers').controller(
 		    return _.some(withsubtags, function(tag){ return item[tag] });
         };
 
-	    for (var name in options) {
-		    if (name.indexOf('micro_test') != 0) {
-			    $scope[name + '_list'] = _.uniq(options[name]);
-		    };
-	    };
+  	    for (var name in options) {
+  		    if (name.indexOf('micro_test') != 0) {
+  			    $scope[name + '_list'] = _.uniq(options[name]);
+  		    };
+  	    };
 
         $scope.macros = options.macros;
         $scope.select_macro = function(item){
@@ -95,6 +95,9 @@ angular.module('opal.controllers').controller(
         //
         // Save the item that we're editing.
         //
+
+      $scope.saving = false;
+
 	    $scope.save = function(result) {
             ngProgressLite.set(0);
             ngProgressLite.start();
@@ -106,6 +109,7 @@ angular.module('opal.controllers').controller(
                 ngProgressLite.done();
       			    $modalInstance.close(result);
 		    });
+
 	    };
 
         // Let's have a nice way to kill the modal.
