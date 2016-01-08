@@ -555,9 +555,11 @@ class EpisodeTestCase(TestCase):
         self.demographics.hospital_number = '123123123'
         self.demographics.save()
         self.mock_request.data = {
-            "tagging"                :[ { "micro":True }],
-            "date_of_admission"      : "14/01/2015",
-            "patient_hospital_number": self.demographics.hospital_number
+            "tagging"          :[ { "micro":True }],
+            "date_of_admission": "14/01/2015",
+            "demographics"     : {
+                "hospital_number": self.demographics.hospital_number
+            }
         }
         response = api.EpisodeViewSet().create(self.mock_request)
         self.assertEqual(201, response.status_code)
@@ -569,9 +571,11 @@ class EpisodeTestCase(TestCase):
             demographics__hospital_number="999000999").count()
         self.assertEqual(0, pcount)
         self.mock_request.data = {
-            "tagging"                :[ { "micro":True }],
-            "date_of_admission"      : "14/01/2015",
-            "patient_hospital_number": "999000999"
+            "tagging"           :[ { "micro":True }],
+            "date_of_admission" : "14/01/2015",
+            "demographics"      : {
+                "hospital_number": "999000999"
+            }
         }
         response = api.EpisodeViewSet().create(self.mock_request)
         episode = models.Episode.objects.get(
@@ -592,6 +596,51 @@ class EpisodeTestCase(TestCase):
         pcount = models.Patient.objects.filter(
             demographics__hospital_number="999000999").count()
         self.assertEqual(1, pcount)
+
+    def test_create_sets_demographics(self):
+        pcount = models.Patient.objects.filter(
+            demographics__hospital_number="9999000999").count()
+        self.assertEqual(0, pcount)
+        self.mock_request.data = {
+            "tagging"                :[ { "micro":True }],
+            "date_of_admission"      : "14/01/2015",
+            "demographics" : {
+                "name": "Alain Anderson",
+                "gender": "Male",
+                "hospital_number": "9999000999",
+            }
+        }
+        response = api.EpisodeViewSet().create(self.mock_request)
+        patient = models.Patient.objects.get(
+            demographics__hospital_number="9999000999")
+        demographics = patient.demographics_set.get()
+        self.assertEqual("Alain Anderson", demographics.name)
+        self.assertEqual("Male", demographics.gender)
+
+    def test_create_sets_location(self):
+        pcount = models.Patient.objects.filter(
+            demographics__hospital_number="9999000999").count()
+        self.assertEqual(0, pcount)
+        self.mock_request.data = {
+            "tagging"                :[ { "micro":True }],
+            "date_of_admission"      : "14/01/2015",
+            "demographics" : {
+                "hospital_number": "9999000999",
+            },
+            "location": {
+                "ward": "West",
+                "bed" : "7"
+            }
+        }
+        response = api.EpisodeViewSet().create(self.mock_request)
+        patient = models.Patient.objects.get(
+            demographics__hospital_number="9999000999")
+        location = patient.episode_set.get().location_set.get()
+        self.assertEqual("West", location.ward)
+        self.assertEqual("7", location.bed)
+
+    def test_create_sets_tagging(self):
+        pass
 
     @patch('opal.core.api.glossolalia.admit')
     def test_create_pings_integration(self, admit):
