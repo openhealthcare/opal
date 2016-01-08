@@ -9,7 +9,6 @@ from django.views.decorators.csrf import csrf_exempt
 from opal import views
 from opal.core import api
 from opal.forms import ChangePasswordForm
-from opal import models
 from opal.utils import camelcase_to_underscore
 from opal.core.subrecords import subrecords
 
@@ -28,19 +27,18 @@ urlpatterns = patterns(
     url(r'^admin/?', include(admin.site.urls)),
 
 
-    # Internal (Legacy) API views
     url(r'^episode/?$', views.episode_list_and_create_view),
-    url(r'^episode/(?P<tag>[a-z_\-]+)/?$', views.EpisodeListView.as_view()),
-    url(r'^episode/(?P<tag>[a-z_\-]+)/(?P<subtag>[a-z_\-]+)/?$', views.EpisodeListView.as_view()),
+    url(r'^episode/(?P<tag>[a-z_\-]+)/?$', api.EpisodeListApi.as_view()),
+    url(r'^episode/(?P<tag>[a-z_\-]+)/(?P<subtag>[a-z_\-]+)/?$', api.EpisodeListApi.as_view()),
     url(r'^episode/(?P<pk>\d+)/?$', views.episode_detail_view),
 
     url(r'^episode/(?P<pk>\d+)/actions/copyto/(?P<category>[a-zA-Z_\-]+)/?$',
         views.EpisodeCopyToCategoryView.as_view()),
 
     # Template vires
-    url(r'^templates/episode_list.html/?$', views.EpisodeListTemplateView.as_view()),
-    url(r'^templates/episode_list.html/(?P<tag>[a-z_\-]+)/?$', views.EpisodeListTemplateView.as_view()),
-    url(r'^templates/episode_list.html/(?P<tag>[a-z_\-]+)/(?P<subtag>[a-z_\-]+)/?$', views.EpisodeListTemplateView.as_view()),
+    url(r'^templates/episode_list.html/?$', views.EpisodeListTemplateView.as_view(), name="episode_list_template_view"),
+    url(r'^templates/episode_list.html/(?P<tag>[a-z_\-]+)/?$', views.EpisodeListTemplateView.as_view(), name="episode_list_template_view"),
+    url(r'^templates/episode_list.html/(?P<tag>[a-z_\-]+)/(?P<subtag>[a-z_\-]+)/?$', views.EpisodeListTemplateView.as_view(), name="episode_list_template_view"),
 
     url(r'^templates/patient_detail.html$',
         views.PatientDetailTemplateView.as_view()),
