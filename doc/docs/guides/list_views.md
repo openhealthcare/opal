@@ -6,38 +6,39 @@ A list is comprised of a set of record types to display, and their ordering.
 
 ### Registering a list
 
-Your application will have a `schema_module` defined in its object. This is expected
-to be a python module with a `list_schemas` object. The `list_schemas` object should
-be a dictionary of team/subteam names that point to lists of models.
+Your application can have a file called patient_lists.py. This defines the list views
+that the application makes available on the list page.
 
-If you are using the OPAL scaffolding commands from the command line interface, this
-will have been generated for you.
+We need a way to get your list patient based on the page url. Usually this will be via tag
+if you inherit from TaggedPatientList you need to define a tag and optionally a subtag.
+It should also define a queryset of episodes and a schema attribute. The schema attribute
+is the list of columns that will be displayed. The queryset is the episodes rows that
+will be displayed.
 
-    list_columns = [models.Demographics, models.Diagnosis]
-    list_columns_micro = [models.Demographics, models.Diagnosis, models.Antimicrobial]
-    list_columns_id_liaison = [models.Demographics, models.Diagnosis, models.Travel]
+when navigated to /#/list/[[ tag ]]/[[ sub tag ]] this will look up the tag/subtag and
+return serialized episodes defined by the queryset.
 
-    list_schemas = {
-        'default': list_columns,
-        'microbiology': {
-            'default': list_columns_micro,
-        },
-        'infectious_diseases': {
-            'id_liaison': list_columns_id_liaison
-        }
-    }
-  
-### Registering a list via a plugin
+You can override get_queryset and have access to the request as self.request, to return
+a custom queryset based on GET params/user etc.
 
-Plugins may register their own schemas by returning dictionaries of similar structure
-to the above from the `OpalPlugin.list_schemas()` [method](plugins.md).
+If you don't want a url like the above, patient lists are got by calling a classmethod get(\*\*url_kwargs) which returns the class.
+
+e.g. /#/other_list/[[ name ]]
+
+could have a class method of
+
+@classmethod
+def get(klass, url_kwargs):
+  if url_kwargs["name"] === "Larry":
+    return klass
+
 
 ### Template selection
 
-The list view is constructed by rendering a column for each record, in the order 
+The list view is constructed by rendering a column for each record, in the order
 defined in the schema, and a row for each episode in the list.
 
-The template for each cell should live in `./templates/records/*`. In order to 
+The template for each cell should live in `./templates/records/*`. In order to
 select the appropriate template for a given episode, OPAL looks in the following
 locations:
 

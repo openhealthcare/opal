@@ -2,13 +2,15 @@
 Unittests for opal.views
 """
 from django import http
+from django.core.urlresolvers import reverse
 from mock import patch, MagicMock
-from opal.core.test import OpalTestCase
-from opal import models
+
+from opal import models, views
 from opal.tests import models as testmodels
+from opal.core.test import OpalTestCase
 
-from opal import views
-
+# this is used just to import the class for EpisodeListApiTestCase
+from opal.tests.test_patient_lists import TaggingTestPatientList # flake8: noqa
 
 class BaseViewTestCase(OpalTestCase):
 
@@ -185,3 +187,15 @@ class RawTemplateViewTestCase(BaseViewTestCase):
             views.RawTemplateView, request)
         resp = view.dispatch(request, template_name='not_a_real_template.html')
         self.assertEqual(404, resp.status_code)
+
+
+class EpisodeListTemplateViewTestCase(BaseViewTestCase):
+    def test_episode_list_view(self):
+        url = reverse("episode_list_template_view", kwargs=dict(tag="eater", subtag="herbivore"))
+        request = self.get_request(url)
+        view = views.EpisodeListTemplateView()
+        view.request = request
+        context_data = view.get_context_data(tag="eater", subtag="herbivore")
+        column_names = [i["name"] for i in context_data["columns"]]
+        self.assertEqual(column_names, ["demographics"])
+        self.should_200(views.EpisodeListTemplateView, request)

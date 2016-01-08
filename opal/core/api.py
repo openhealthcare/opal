@@ -16,6 +16,7 @@ from opal.utils import stringport, camelcase_to_underscore
 from opal.core import schemas
 from opal.core.subrecords import subrecords
 from opal.core.views import _get_request_data, _build_json_response
+from opal.core.patient_lists import PatientList
 
 app = application.get_app()
 
@@ -157,7 +158,7 @@ class OptionsViewSet(viewsets.ViewSet):
 
                     if team.direct_add:
                         tag_direct_add.append(team.name)
-                        
+
                 subteams = [st for st in teams if st.parent == team]
                 tag_hierarchy[team.name] = [st.name for st in subteams]
                 for sub in subteams:
@@ -418,3 +419,13 @@ class APIReferPatientView(View):
             episode.set_tag_names(current_tags, None)
         resp = {'ok': 'Got your referral just fine - thanks!'}
         return _build_json_response(resp)
+
+
+class EpisodeListApi(View):
+    """
+    Return serialised subsets of active episodes by tag.
+    """
+    def get(self, *args, **kwargs):
+        # while we manage transition lets allow a fall back to the old way
+        patient_list = PatientList.get_class(self.request, **kwargs)
+        return _build_json_response(patient_list.get_serialised())
