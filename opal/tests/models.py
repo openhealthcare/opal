@@ -59,3 +59,11 @@ if not getattr(models.Patient, 'demographics_set', None):
         gender = fields.ForeignKeyOrFreeText(models.Gender)
 
         pid_fields = 'name',
+
+if not getattr(models.Episode, 'location_set', None):
+
+    class Location(models.EpisodeSubrecord):
+        _is_singleton = True
+
+        ward = dmodels.CharField(max_length=200, blank=True, null=True)
+        bed = dmodels.CharField(max_length=200, blank=True, null=True)

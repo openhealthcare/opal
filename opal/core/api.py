@@ -328,10 +328,23 @@ class EpisodeViewSet(viewsets.ViewSet):
         return Response(serialised)
 
     def create(self, request):
+        """
+        Create a new episode, optionally implicitly creating a patient.
+
+        * Extract the data from the request
+        * Create or locate the patient
+        * Create a new episode
+        * Update the patient with any extra data passed in
+        * Inform glossolalia
+        * return the patient
+        """
         from opal.models import Patient
 
-        hospital_number = request.data.pop('patient_hospital_number', None)
-        tagging = request.data.pop('tagging', {})
+        demographics_data = request.data.pop('demographics', None)
+        location_data     = request.data.pop('location', {})
+        tagging           = request.data.pop('tagging', {})
+
+        hospital_number = demographics_data.get('hospital_number', None)
         if hospital_number:
             patient, created = Patient.objects.get_or_create(
                 demographics__hospital_number=hospital_number)
@@ -342,10 +355,15 @@ class EpisodeViewSet(viewsets.ViewSet):
         else:
             patient = Patient.objects.create()
 
+        patient.update_from_demographics_dict(demographics_data, request.user)
+
         episode = Episode(patient=patient)
         episode.update_from_dict(request.data, request.user)
+        location = episode.location_set.get()
+        location.update_from_dict(location_data, request.user)
         episode.set_tag_names([n for n, v in tagging[0].items() if v], request.user)
         serialised = episode.to_dict(request.user)
+
         return Response(serialised, status=status.HTTP_201_CREATED)
 
     @episode_from_pk
