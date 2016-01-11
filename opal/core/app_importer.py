@@ -4,6 +4,7 @@ from opal.utils import _itersubclasses, stringport
 # So we only do it once
 IMPORTED_FROM_APPS = set()
 
+
 def import_from_apps(module):
     """
     Iterate through installed apps attempting to import app.wardrounds
