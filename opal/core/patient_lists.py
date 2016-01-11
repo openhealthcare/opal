@@ -45,20 +45,20 @@ class TaggedPatientList(PatientList):
     need to define schema
     """
     tag = "Implement me please"
-    subtag = "Implement me please"
 
     @classmethod
     def get(klass, **kwargs):
         tag = kwargs.get("tag", None)
         subtag = kwargs.get("subtag", None)
+        klass_subtag = getattr(klass, "subtag", None)
 
         if tag and klass.tag == tag.lower():
-            if not klass.subtag or klass.subtag == subtag.lower():
+            if not klass_subtag or klass_subtag == subtag.lower():
                 return klass
 
     def get_queryset(self):
         filter_kwargs = dict(tagging__archived=False)
-        if self.subtag:
+        if getattr(self, "subtag", None):
             filter_kwargs["tagging__team__name"] = self.subtag
         else:
             filter_kwargs["tagging__team__name"] = self.tag
