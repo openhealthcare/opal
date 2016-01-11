@@ -13,24 +13,31 @@ The OPAL commandline tool will bootstrap your plugin for you - just run:
 ### Adding Discoverable Functionality
 
 A common pattern for plugins is to add functionality that other plugins or applications
-can use by inheriting a base class that you define in a file with a magic name. (In 
+can use by inheriting a base class that you define in a file with a magic name. (In
 much the same way that Django provides models.)
 
 For example, if you're creating an appointments plugin that helps people to book and schedule
-appointments in clinics, you would create a base `Clinic` class that can be subclassed to 
+appointments in clinics, you would create a base `Clinic` class that can be subclassed to
 create specific clinics.
+
+    class Clinic(opal.core.discoverable.DiscoverableFeature):
+        module_name = 'clinics'
+
+We can then create clinics in any installed app, and they will be available from `Clinic.list()`
 
     class OutpatientsClinic(Clinic):
         name = 'Outpatients'
-        
-We can use the helper functions in `opal.core.app_importer` to autodiscover
-clinics in any Django app with a `clinics.py`
 
-    class Clinic(object):
-        @classmethod
-        def list(self, klass):
-            return app_importer.get_subclass("clinics", klass)
+        # Add your custom clnic functionality here e.g.
+        def book_appointment(self, date, patient):
+            pass
 
+
+    Clinic.list()
+    # -> Generator including OutPatientsClinic
+
+    Clinic.get('outpatients)
+    # -> OutpatientsClinic
 
 ### Defining teams
 
@@ -116,7 +123,7 @@ And then in the template:
       <button class="btn btn-primary" ng-click="alert('Boom!')">
         <i href="fa fa-warning"></i>
         ALERT ME
-      </button>    
+      </button>
     </p>
 
 ### Adding dependencies globally to our angular modules
