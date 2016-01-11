@@ -10,22 +10,26 @@ The OPAL commandline tool will bootstrap your plugin for you - just run:
     $ opal startplugin yourcoolplugin
 
 
-### Adding Additional Functionality
+### Adding Discoverable Functionality
 
-Wardrounds, Dashboards and other plugins all add functionality in the same way
-and you can too! So the way we do this is very similar to the way django does models
-we add a file, for example wardrounds.py This has a bunch of wardrounds that all inherit
-from an object. We iterate over objects and get the one that matches our criteria
-when we want it, e.g. get me the wardround which has name === "our new wardround". Simple!
+A common pattern for plugins is to add functionality that other plugins or applications
+can use by inheriting a base class that you define in a file with a magic name. (In 
+much the same way that Django provides models.)
 
-To help you create your own, Opal has app_importer.py this contains the get_subclass
-which takes in the name of the module to look for the files and the name of the subclass
-we want and returns a generator.
+For example, if you're creating an appointments plugin that helps people to book and schedule
+appointments in clinics, you would create a base `Clinic` class that can be subclassed to 
+create specific clinics.
 
-For example if you're creating a medicines plugin and you want a view which return medicines
-information, for you would create an object that allowed you to configure functionality probably called Medicine that you would expect to be subclassed, then the expectation would
-probably be that we would keep all our medicines in medicines.py so we would use
-get_subclass("medicines", Medicine) and this would let us iterate over medicines.
+    class OutpatientsClinic(Clinic):
+        name = 'Outpatients'
+        
+We can use the helper functions in `opal.core.app_importer` to autodiscover
+clinics in any Django app with a `clinics.py`
+
+    class Clinic(object):
+        @classmethod
+        def list(self, klass):
+            return app_importer.get_subclass("clinics", klass)
 
 
 ### Defining teams
