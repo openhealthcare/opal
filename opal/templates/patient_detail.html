@@ -1,0 +1,90 @@
+{% load panels %}
+{% load forms %}
+<div class="container content-offset">
+  <div class="panel panel-primary panel-container">
+    <!-- Default panel contents -->
+    <div class="panel-heading">
+      <h1>
+        {% block heading %}{% icon 'fa-user' %}[[ patient.demographics[0].name ]]{% endblock %}
+        <small>
+          {% block subheading %}
+          [[ patient.demographics[0].hospital_number ]]
+          [[ patient.demographics[0].date_of_birth | shortDate ]]
+          {% endblock %}
+        </small>
+      </h1>
+    </div>
+
+    <div class="panel-body">
+      <div class="row">
+        {% block content %}
+
+        <div class="col-md-4"> <!-- Episode Switcher -->
+          {% include 'partials/_demographics_panel.html' %}
+          <div class="panel panel-default">
+            <div class="panel-heading ">
+              <h3>
+                <i class="fa fa-history"></i>
+                Patient History
+              </h3>
+            </div>
+            <div class="list-group">
+              <a class="list-group-item episodelist pointer"
+                 ng-class="{'bg-active': view == null && e.id == episode.id}"
+                 ng-repeat="e in patient.episodes"
+                 href="[[ '/#' + e.link]]"
+                 ng-click="switch_to_episode($index, $event)"
+                 >
+                [[ e.display_category() ]]
+                [[ e.date_of_episode | shortDate ]]
+                [[ e.date_of_admission | shortDate]]<span ng-show="e.discharge_date"> - [[ e.discharge_date | shortDate ]]</span>
+              </a>
+              <a class="list-group-item episodelist pointer"
+                 ng-class="{'bg-active': view == 'micro_haem'}"
+                 ng-show="profile.has_role('micro_haem')"
+                 ng-click="switch_to_episode(0, $event) && switch_to_view('micro_haem')"
+                 href="[[ '/#/patient/' + patient.id + '/micro_haem' ]]"
+                 >
+                Micro Haem Consult
+              </a>
+            </div>
+          </div>
+          <!-- <div class="panel panel-default"> -->
+          <!--   <div class="panel-heading "> -->
+          <!--     <h3> -->
+          <!--       <i class="fa fa-bolt"></i> -->
+          <!--       Actions -->
+          <!--     </h3> -->
+          <!--   </div> -->
+          <!--   <ul class="list-group"> -->
+          <!--     <li class="list-group-item"> -->
+          <!--       {% include 'partials/_episode_actions.html' %} -->
+          <!--     </li> -->
+          <!--   </ul> -->
+          <!-- </div> -->
+        </div> <!-- End episode switcher -->
+        <div class="col-md-8">
+          {% for episode_type in episode_types %}
+          {% if episode_type.detail_template %}
+          <div class="row" ng-show="view == null && episode.category == '{{ episode_type.name }}'">
+            {% include episode_type.detail_template %}
+          </div>
+          {% endif %}
+          {% endfor %}
+          <div class="row" ng-show="view == 'micro_haem'">
+            {% include 'detail/micro_haem.html' %}
+          </div>
+        </div>
+
+      </div> <!-- Ends Main Panel -->
+
+
+      {% endblock content %}
+
+    </div>
+
+  </div> <!-- Panel body -->
+</div>   <!-- Panel -->
+</div>     <!-- Container -->
+
+

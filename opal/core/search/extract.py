@@ -7,6 +7,7 @@ import os
 import tempfile
 import zipfile
 import functools
+import logging
 
 from opal.models import Episode
 from opal.core.subrecords import episode_subrecords, patient_subrecords
@@ -17,6 +18,7 @@ def subrecord_csv(episodes, subrecord, file_name):
     Given an iterable of EPISODES, the SUBRECORD we want to serialise,
     write a csv file for the data in this subrecord for these episodes.
     """
+    logging.info("writing for %s" % subrecord)
     with open(file_name, "w") as csv_file:
         writer = csv.writer(csv_file)
         field_names = subrecord._get_fieldnames_to_extract()
@@ -29,12 +31,14 @@ def subrecord_csv(episodes, subrecord, file_name):
         subrecords = subrecord.objects.filter(episode__in=episodes)
         for sub in subrecords:
             writer.writerow([unicode(getattr(sub, f)).encode('UTF-8') for f in field_names])
+    logging.info("finished writing for %s" % subrecord)
 
 
 def episode_csv(episodes, user, file_name):
     """
     Given an iterable of EPISODES, create a CSV file containing Episode details.
     """
+    logging.info("writing eposides")
     with open(file_name, "w") as csv_file:
         fieldnames = Episode._get_fieldnames_to_serialize()
         fieldnames.remove('consistency_token')
@@ -47,6 +51,7 @@ def episode_csv(episodes, user, file_name):
             row = {h: unicode(getattr(episode, h)).encode('UTF-8') for h in fieldnames}
             row["tagging"] = ';'.join(episode.get_tag_names(user, historic=True))
             writer.writerow(row)
+    logging.info("finished writing episodes")
 
 
 def patient_subrecord_csv(episodes, subrecord, file_name):
@@ -54,6 +59,7 @@ def patient_subrecord_csv(episodes, subrecord, file_name):
     Given an iterable of EPISODES, and the patient SUBRECORD we want to
     create a CSV file for the data in this subrecord for these episodes.
     """
+    logging.info("writing patient subrecord %s" % subrecord)
     with open(file_name, "w") as csv_file:
         field_names = subrecord._get_fieldnames_to_extract()
         writer = csv.writer(csv_file)
@@ -73,6 +79,7 @@ def patient_subrecord_csv(episodes, subrecord, file_name):
             row = [patient_to_episode[sub.patient_id]]
             row.extend(unicode(getattr(sub, f)).encode('UTF-8') for f in field_names)
             writer.writerow(row)
+    logging.info("finished patient subrecord %s" % subrecord)
 
 
 def zip_archive(episodes, description, user):

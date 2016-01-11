@@ -1,6 +1,9 @@
 describe('EditItemCtrl', function (){
-    var $scope, $cookieStore, $timeout, item;
-    var dialog, episode, ngProgressLite;
+    "use strict";
+
+    var $scope, $cookieStore, $timeout, item, Item;
+    var dialog, Episode, episode, ngProgressLite, $q;
+    var Schema, $modal, $controller, controller;
 
     var episodeData = {
         id: 123,
@@ -72,41 +75,20 @@ describe('EditItemCtrl', function (){
         can_see_pid: function(){return true; }
     };
 
-    beforeEach(function(){
-        module('opal', function($provide) {
-            $provide.value('$analytics', function(){
-                return {
-                    pageTrack: function(x){}
-                };
-            });
-
-            $provide.provider('$analytics', function(){
-                this.$get = function() {
-                    return {
-                        virtualPageviews: function(x){},
-                        settings: {
-                            pageTracking: false,
-                        },
-                        pageTrack: function(x){}
-                     };
-                };
-            });
-        });
-    });
+    beforeEach(module('opal.controllers'));
 
     beforeEach(function(){
         inject(function($injector){
-            $httpBackend = $injector.get('$httpBackend');
-            Episode = $injector.get('Episode');
             Item = $injector.get('Item');
-            $rootScope   = $injector.get('$rootScope');
-            $scope       = $rootScope.$new();
+            Episode = $injector.get('Episode');
             $controller  = $injector.get('$controller');
+            $q  = $injector.get('$q');
             $cookieStore = $injector.get('$cookieStore');
-            $modal       = $injector.get('$modal');
             $timeout     = $injector.get('$timeout');
             ngProgressLite   = $injector.get('ngProgressLite');
             Schema   = $injector.get('Schema');
+            var $rootScope   = $injector.get('$rootScope');
+            $scope       = $rootScope.$new();
         });
 
         var schema = new Schema(columns.default);
@@ -116,13 +98,17 @@ describe('EditItemCtrl', function (){
             episode,
             schema.columns[0]
         );
-        dialog = $modal.open({template: 'notarealtemplate!'});
+        var fakeModalInstance = {
+            close: function(){
+                // do nothing
+            }
+        };
 
         controller = $controller('EditItemCtrl', {
             $scope      : $scope,
             $cookieStore: $cookieStore,
             $timeout    : $timeout,
-            $modalInstance: dialog,
+            $modalInstance: fakeModalInstance,
             item        : item,
             options     : options,
             profile     : profile,
@@ -141,11 +127,18 @@ describe('EditItemCtrl', function (){
 
 
     describe('Saving items', function (){
-
         it('Should save the current item', function () {
             var callArgs;
-            spyOn(item, 'save').and.callThrough();
+            var deferred = $q.defer();
+            spyOn(item, 'save').and.callFake(function() {
+                return deferred.promise;
+            });
+            expect($scope.saving).toBe(false);
             $scope.save('save');
+            expect($scope.saving).toBe(true);
+            deferred.resolve("episode returned");
+            $scope.$digest();
+            expect($scope.saving).toBe(false);
             callArgs = item.save.calls.mostRecent().args;
             expect(callArgs.length).toBe(1);
             expect(callArgs[0]).toBe($scope.editing);

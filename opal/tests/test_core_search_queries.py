@@ -2,7 +2,8 @@
 unittests for opal.core.search.queries
 """
 from mock import patch
-
+import reversion
+from django.db import transaction
 from opal.models import Patient, Team
 from opal.core.test import OpalTestCase
 from datetime import date
@@ -65,6 +66,33 @@ class DatabaseQueryTestCase(OpalTestCase):
             mock_restrict.return_value = [self.restricted_team]
             self.assertEqual([self.episode], query.get_episodes())
 
+    def test_get_old_episode(self):
+        # episode's with old tags that have subsequently been removed
+        # should still be qiried
+
+        team_query = [dict(
+            column="tagging",
+            field='other_team',
+            combine='and',
+            query=None,
+            lookup_list=[],
+            queryType=None
+        )]
+
+
+        with transaction.atomic(), reversion.create_revision():
+            other_team, _ = Team.objects.get_or_create(name='other_team', title='Other Team')
+            other_episode = self.patient.create_episode(category="testepisode")
+            other_episode.set_tag_names([other_team.name], self.user)
+            query = queries.DatabaseQuery(self.user, team_query)
+
+        self.assertEqual([other_episode], query.get_episodes())
+
+        with transaction.atomic(), reversion.create_revision():
+            other_episode.set_tag_names([], self.user)
+
+        self.assertEqual([other_episode], query.get_episodes())
+
     def test_get_episodes(self):
         query = queries.DatabaseQuery(self.user, self.name_criteria)
         self.assertEqual([self.episode], query.get_episodes())
@@ -93,7 +121,7 @@ class DatabaseQueryTestCase(OpalTestCase):
             'name': u'Sally Stevens',
             'end_date': self.DATE_OF_EPISODE,
             'start_date': self.DATE_OF_EPISODE,
-            'episode_id': 1,
-            'categories': [u'inpatient']
+            'patient_id': 1,
+            'categories': [u'Inpatient']
         }]
         self.assertEqual(expected, summaries)

@@ -22,7 +22,8 @@ angular.module('opal.services')
                 $rootScope.state = 'modal';
 
                 var modal_opts = {
-			        templateUrl: '/templates/modals/' + columnName + '.html/',
+                    backdrop: 'static',
+      			        templateUrl: '/templates/modals/' + columnName + '.html/',
                     controller: 'EditItemCtrl',
                     resolve: {
                         item: function() { return item; },
@@ -34,6 +35,8 @@ angular.module('opal.services')
 
                 if(item.size){
                     modal_opts.size = item.size;
+                }else{
+                    modal_opts.size = 'lg';
                 }
 
                 modal = $modal.open(modal_opts);

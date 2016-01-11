@@ -10,10 +10,15 @@ angular.module(
         // Return the correct flow object for the current
         // situation
         // 
-        var flow_for_verb = function(verb, current_tags){
+        var flow_for_verb = function(verb, current_tags, episode){
             var flow = flow_cache.get('flow');
 
-            if(!current_tags){
+            if(!current_tags.tag){
+                if(episode){
+                    if(flow[episode.category]){
+                        return flow[episode.category][verb];
+                    }
+                }
                 return flow['default'][verb];
             }
             if(current_tags.tag && current_tags.tag in flow){
@@ -36,7 +41,7 @@ angular.module(
             }
         };
 
-        var Flow = function(verb, schema, options, config){
+        var Flow = function(verb, options, config){
             var deferred = $q.defer();
             var datadeferred = $q.defer();
 
@@ -63,15 +68,16 @@ angular.module(
                 //   hospital_number - the hospital number we're entering for
                 //   current_tags - a tags object representing a current list
                 //
-                enter: function(schema, options, config){
+                enter: function(options, config){
                     datadeferred.promise.then(function(){
                         var flow = flow_for_verb('enter', config.current_tags);
 
 		                result = $modal.open({
+                            size: 'lg',
+                            backdrop: 'static',
 			                templateUrl: flow.template,
 			                controller:  flow.controller,
                             resolve: {
-                                schema:          function(){ return schema },
                                 options:         function(){ return options },
                                 tags:            function(){ return config.current_tags},
                                 hospital_number: function(){ return config.hospital_number; }
@@ -87,11 +93,13 @@ angular.module(
                 //   episode - the episode that is exiting
                 //   current_tags - a tags object representing a current list
                 //
-                exit: function(schema, options, config){
+                exit: function(options, config){
                     datadeferred.promise.then(function(){
-                        var flow = flow_for_verb('exit', config.current_tags);
+                        var flow = flow_for_verb('exit', config.current_tags, config.episode);
                         
 		                result = $modal.open({
+                            size: 'lg',
+                            backdrop: 'static',
 			                templateUrl: flow.template,
 			                controller:  flow.controller,
                             keyboard: false,
@@ -99,7 +107,6 @@ angular.module(
 				                episode: function() { return config.episode; },
                                 tags   : function() { return config.current_tags; },
                                 options: function() { return options; },
-                                schema : function() { return schema; }
 			                }
 		                }).result
                         deferred.resolve(result);
@@ -107,7 +114,7 @@ angular.module(
                 },
             }
 
-            verbs[verb](schema, options, config)
+            verbs[verb](options, config)
 
             return deferred.promise
             

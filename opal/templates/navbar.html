@@ -20,14 +20,12 @@
       </a>
     </div>
 
-
-
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="main-navbar">
       <ul class="nav navbar-nav navbar-right">
         {% if request.user.is_authenticated %}
 	    <li ng-class="{active: $location.path().indexOf('/list/') == 0}">
-          <a href="/#/">
+          <a href="/#/list/">
             <i class="fa fa-table"></i> Lists
           </a>
         </li>
@@ -40,11 +38,11 @@
 	    <li><a href="/admin"><i class="fa fa-cogs"></i> Admin</a></li>
         {% endif %}
 
-        <li >
-          <a href="#/account" title="Your Account">
-            <i class="fa fa-user"></i>
-          </a>
-        </li>
+        <!-- <li > -->
+        <!--   <a href="#/account" title="Your Account"> -->
+        <!--     <i class="fa fa-user"></i> -->
+        <!--   </a> -->
+        <!-- </li> -->
 	    <li><a href="{% url 'django.contrib.auth.views.logout' %}" title="Log out">
             <i class="fa fa-sign-out"></i>
         </a></li>

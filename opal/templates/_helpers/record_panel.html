@@ -36,5 +36,10 @@
       </div>
       </div>
     </li>
+    {% if noentries %}
+    <li class="list-group-item" ng-show="episode.{{name}}.length == 0">
+      {{ noentries }}
+    </li>
+    {% endif %}
   </ul>
 </div>

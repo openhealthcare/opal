@@ -10,14 +10,17 @@ import random
 import functools
 import logging
 
+from django.conf import settings
 from django.utils import timezone
 from django.db import models
+from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.template import TemplateDoesNotExist
 from django.template.loader import select_template
-from django.utils import dateparse
+from django.utils import timezone
+from django.conf import settings
 import reversion
 
 from opal.core import application, exceptions, lookuplists, plugins
@@ -193,9 +196,17 @@ class UpdatesFromDictMixin(object):
                         post_save.append(functools.partial(self.save_many_to_many, name, value, field_type))
                     else:
                         if value and field_type == models.fields.DateField:
-                            value = datetime.datetime.strptime(value, '%Y-%m-%d').date()
+                            input_format = settings.DATE_INPUT_FORMATS[0]
+                            dt = datetime.datetime.strptime(
+                                value, input_format
+                            )
+                            dt = timezone.make_aware(dt, timezone.get_current_timezone())
+                            value = dt.date()
                         if value and field_type == models.fields.DateTimeField:
-                            value = dateparse.parse_datetime(value)
+                            input_format = settings.DATETIME_INPUT_FORMATS[0]
+                            value = timezone.make_aware(datetime.datetime.strptime(
+                                value, input_format
+                            ), timezone.get_current_timezone())
 
                         setattr(self, name, value)
 
@@ -466,7 +477,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     date_of_episode   = models.DateField(blank=True, null=True)
     consistency_token = models.CharField(max_length=8)
 
-    objects = managers.EpisodeManager()
+    objects = managers.EpisodeQueryset.as_manager()
 
     def __unicode__(self):
         try:
@@ -523,59 +534,71 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         3. Make sure that we set the Active boolean appropriately
         4. There is no step 4.
         """
-        original_tag_names = self.get_tag_names(user)
 
-        for tag_name in original_tag_names:
-            if tag_name not in tag_names:
-                params = {'team__name': tag_name}
-                if tag_name == 'mine':
-                    params['user'] = user
-                tag = self.tagging_set.get(**params)
-                tag.delete()
-
-        for tag_name in tag_names:
-            if tag_name not in original_tag_names:
-                team = Team.objects.get(name=tag_name)
-                if team.parent:
-                    if team.parent.name not in tag_names:
-                        self.tagging_set.create(team=team.parent)
-                params = {
-                    'team': team,
-                    'created_by': user,
-                    'created': timezone.now(),
-                }
-                if tag_name == 'mine':
-                    params['user'] = user
-                self.tagging_set.create(**params)
-
-        if len(tag_names) < 1:
+        if len(tag_names) and not self.active:
+            self.active = True
+            self.save()
+        elif not len(tag_names) and self.active:
             self.active = False
-        elif tag_names == ['mine']:
-            self.active = True
-        elif not self.active:
-            self.active = True
-        self.save()
+            self.save()
+
+        if "mine" not in tag_names:
+            self.tagging_set.filter(user=user).update(archived=True)
+
+        if "mine" in tag_names:
+            my_team = Team.objects.get(name="mine")
+            tag, created = self.tagging_set.get_or_create(
+                team=my_team, user=user
+            )
+
+            if not created:
+                tag.archived = False
+                tag.save()
+
+            tag_names = [t for t in tag_names if not t == 'mine']
+
+        # nuke everything and start from fresh so we don't have
+        # to deal with childless parents
+        self.tagging_set.exclude(team__name="mine").filter(archived=False).update(archived=True)
+
+        for i in tag_names:
+            focused_team = Team.objects.get(name=i)
+
+            if focused_team.parent:
+                teams_to_update = [focused_team, focused_team.parent]
+            else:
+                teams_to_update = [focused_team]
+
+            for team in teams_to_update:
+                tagging, created = Tagging.objects.get_or_create(
+                    episode=self, team=team
+                )
+
+                if created:
+                    tagging.created_by = user
+                    tagging.created = timezone.now()
+                    tagging.save()
+                else:
+                    tagging.archived = False
+                    tagging.updated_by = user
+                    tagging.updated = timezone.now()
+                    tagging.save()
 
     def tagging_dict(self, user):
-        td = [{
-                t.team.name: True for t in
-                self.tagging_set.select_related('team').exclude(team__name='mine').exclude(
-                                                                team__isnull=True)
-            }]
-        if self.tagging_set.filter(team__name='mine', user=user).count() > 0:
-            td[0]['mine'] = True
-        td[0]['id'] = self.id
-        return td
+        tag_names = self.get_tag_names(user)
+        tagging_dict = {i: True for i in tag_names}
+        tagging_dict["id"] = self.id
+        return [tagging_dict]
 
     def get_tag_names(self, user, historic=False):
         """
         Return the current active tag names for this Episode as strings.
         """
-        current = [t.team.name for t in self.tagging_set.all() if t.user in (None, user)]
+        qs = self.tagging_set.filter(Q(user=user) | Q(user=None))
         if not historic:
-            return current
-        historic = Tagging.historic_tags_for_episodes([self])[self.id].keys()
-        return list(set(current + historic))
+            qs = qs.filter(archived=False)
+
+        return qs.values_list("team__name", flat=True)
 
     def _episode_history_to_dict(self, user):
         """
@@ -638,6 +661,10 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
     @classmethod
     def get_api_name(cls):
         return camelcase_to_underscore(cls._meta.object_name)
+
+    @classmethod
+    def get_icon(cls):
+        return getattr(cls, '_icon', None)
 
     @classmethod
     def get_display_name(cls):
@@ -713,7 +740,16 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
             return None
 
     @classmethod
-    def get_form_template(cls, team=None, subteam=None):
+    def get_form_template(cls):
+        name = camelcase_to_underscore(cls.__name__)
+        templates = ['forms/{0}_form.html'.format(name)]
+        try:
+            return select_template(templates).template.name
+        except TemplateDoesNotExist:
+            return None
+
+    @classmethod
+    def get_modal_template(cls, team=None, subteam=None):
         """
         Return the active form template for our record
         """
@@ -725,6 +761,9 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
         if subteam:
             templates.insert(0, 'modals/{0}/{1}/{2}_modal.html'.format(
                 team, subteam, name))
+
+        templates.append("modal_base.html")
+
         try:
             return select_template(templates).template.name
         except TemplateDoesNotExist:
@@ -777,12 +816,18 @@ class Tagging(TrackedModel, models.Model):
     team = models.ForeignKey(Team, blank=True, null=True)
     user = models.ForeignKey(User, null=True, blank=True)
     episode = models.ForeignKey(Episode, null=False)
+    archived = models.BooleanField(default=False)
+
+    # class Meta:
+        # unique_together = ('team', 'user', 'episode',)
 
     def __unicode__(self):
         if self.user is not None:
-            return 'User: %s - %s' % (self.user.username, self.team.name)
+            return 'User: %s - %s - archived: %s' % (
+                self.user.username, self.team.name, self.archived
+            )
         else:
-            return self.team.name
+            return "%s - archived: %s" % (self.team.name, self.archived)
 
     @staticmethod
     def get_api_name():
@@ -806,6 +851,78 @@ class Tagging(TrackedModel, models.Model):
         return teams
 
     @classmethod
+    def import_from_reversion(cls):
+        # a one off function that syncs the tags with archived tags with the
+        # existing tags
+        from collections import defaultdict
+        deleted = reversion.get_deleted(cls)
+        episode_id_to_team_dict = defaultdict(set)
+        episode_id_to_user_dict = defaultdict(set)
+
+        for deleted_item in deleted:
+            data = json.loads(deleted_item.serialized_data)[0]['fields']
+            episode_id = data["episode"]
+
+            if not Episode.objects.filter(id=episode_id).exists():
+                continue
+
+            team_id = data.get("team")
+
+            if team_id and not Team.objects.filter(id=team_id).exists():
+                continue
+
+            if "tag_name" in data:
+                qs = Team.objects.filter(name=data["tag_name"])
+                if qs.exists():
+                    team_id = qs.first().id
+
+            user_id = data.get("user")
+
+            if user_id and not User.objects.filter(id=user_id).exists():
+                continue
+
+            if user_id:
+                episode_id_to_user_dict[episode_id].add(user_id)
+            elif team_id:
+                episode_id_to_team_dict[episode_id].add(team_id)
+
+
+        print "we are looking at {} episodes".format(len(episode_id_to_team_dict))
+        team_taggings = Tagging.objects.filter(episode_id__in=episode_id_to_team_dict.keys())
+
+        for tagging in team_taggings:
+            relevent_set = episode_id_to_team_dict[tagging.episode_id]
+            if tagging.team_id and tagging.team_id in relevent_set:
+                print "removing %s" % tagging.team_id
+                relevent_set.remove(tagging.team_id)
+
+        tagging_objs = []
+        for episode_id, team_ids in episode_id_to_team_dict.iteritems():
+            for team_id in team_ids:
+                tagging_objs.append(Tagging(episode_id=episode_id, team_id=team_id, archived=True))
+
+        user_taggins = Tagging.objects.filter(episode_id__in=episode_id_to_user_dict.keys())
+
+        for tagging in user_taggins:
+            relevent_set = episode_id_to_user_dict[tagging.episode_id]
+            if tagging.user_id and tagging.user_id in relevent_set:
+                print "removing %s" % tagging.user_id
+                relevent_set.remove(tagging.user_id)
+
+        user_team = Team.objects.get(name="mine")
+
+        for episode_id, user_ids in episode_id_to_user_dict.iteritems():
+            for user_id in user_ids:
+                tagging_objs.append(Tagging(
+                    episode_id=episode_id,
+                    team_id=user_team.id,
+                    user_id=user_id,
+                    archived=True
+                ))
+
+        Tagging.objects.bulk_create(tagging_objs)
+
+    @classmethod
     def historic_tags_for_episodes(cls, episodes):
         """
         Given a list of episodes, return a dict indexed by episode id
@@ -815,6 +932,7 @@ class Tagging(TrackedModel, models.Model):
         teams = {t.id: t.name for t in Team.objects.all()}
         deleted = reversion.get_deleted(cls)
         historic = collections.defaultdict(dict)
+
         for d in deleted:
             data = json.loads(d.serialized_data)[0]['fields']
             if data['episode'] in episode_ids:
@@ -844,6 +962,7 @@ class Tagging(TrackedModel, models.Model):
         teams = {t.id: t.name for t in Team.objects.all()}
         deleted = reversion.get_deleted(cls)
         eids = set()
+
         for d in deleted:
             data = json.loads(d.serialized_data)[0]['fields']
             try:

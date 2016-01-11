@@ -2,19 +2,17 @@ angular.module('opal.controllers')
     .controller('AddEpisodeCtrl', function($scope, $http,
                                            $timeout, $routeParams,
                                            $modalInstance, $rootScope,
-                                           Episode, schema,
+                                           Episode,
                                            options,
                                            demographics) {
 
+        var DATE_FORMAT = 'DD/MM/YYYY';
 	    $scope.currentTag    = $routeParams.tag || 'mine';
 	    $scope.currentSubTag = $routeParams.subtag || 'all';
 
 	    for (var name in options) {
 		    $scope[name + '_list'] = options[name];
 	    };
-        
-        // TODO: deprecate these
-	    $scope.episode_category_list = ['OPAT', 'Inpatient', 'Outpatient', 'Review'];
 	    $scope.editing = {
             tagging: [{}],
 		    location: {
@@ -30,28 +28,24 @@ angular.module('opal.controllers')
 	    }
 
 	    $scope.save = function() {
-		    var value;
+		    var dob, doa;
 
 		    // This is a bit mucky but will do for now
-		    value = $scope.editing.date_of_admission;
-		    if (value) {
-                if(typeof value == 'string'){
-                    var doa = moment(value, 'DD/MM/YYYY').format('YYYY-MM-DD');
-                }else{
-                    var doa = moment(value).format('YYYY-MM-DD');
+		    doa = $scope.editing.date_of_admission;
+		    if (doa) {
+                if(!angular.isString(doa)){
+                    doa = moment(doa).format(DATE_FORMAT);
                 }
 			    $scope.editing.date_of_admission = doa;
 		    }
 
-		    value = $scope.editing.demographics.date_of_birth;
-		    if (value) {
-                if(typeof value == 'string'){
-                    var dob = moment(value, 'DD/MM/YYYY').format('YYYY-MM-DD');
-                }else{
-                    var dob = moment(value).format('YYYY-MM-DD');
+		    dob = $scope.editing.demographics.date_of_birth;
+		    if (dob) {
+                if(!angular.isString(dob)){
+                    dob = moment(dob).format(DATE_FORMAT);
                 }
-			    $scope.editing.demographics.date_of_birth = dob;
-		    }
+            }
+		    $scope.editing.demographics.date_of_birth = dob;
 
 		    $http.post('episode/', $scope.editing).success(function(episode) {
 			    episode = new Episode(episode);

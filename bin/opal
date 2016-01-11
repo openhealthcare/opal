@@ -311,6 +311,8 @@ def _run_py_tests(args):
     test_args= ['python', 'runtests.py']
     if args.test:
         test_args.append(args.test)
+    if args.coverage:
+        test_args = ['coverage', 'run', 'runtests.py']
     try:
         subprocess.check_call(test_args)
     except subprocess.CalledProcessError:
@@ -392,6 +394,9 @@ def main():
         'what', default='all', choices=['all', 'py', 'js'], nargs='*')
     parser_test.add_argument(
         '-t', '--test', help='Test case or method to run'
+    )
+    parser_test.add_argument(
+        '-c', '--coverage', action='store_true', help='Generate a test coverage report'
     )
     parser_test.set_defaults(func=test)
 

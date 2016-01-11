@@ -1,12 +1,9 @@
 [run]
 source =
-    patients
-    options
-    utils
+    opal
 omit =
-    */tests.py
+    opal/tests/*
     */migrations/*
-    patients/microbiology.py
 
 [report]
 exclude_lines =

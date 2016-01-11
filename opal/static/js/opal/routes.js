@@ -12,7 +12,6 @@ app.config(
              }).when('/list/:tag/:subtag?', {
 			     controller: 'EpisodeListCtrl',
 			     resolve: {
-				     schema: function(listSchemaLoader) { return listSchemaLoader(); },
 				     episodes: function(episodesLoader) { return episodesLoader(); },
 				     options: function(Options) { return Options; },
                      profile: function(UserProfile){ return UserProfile; },
@@ -31,24 +30,15 @@ app.config(
                      return target;
                  }
 		     })
-             .when('/patient/:id', {
+             .when('/patient/:patient_id/:view?', {
 			     controller: 'PatientDetailCtrl',
                  resolve: {
-				     episodes: function(patientLoader) { return patientLoader(); },
+				     patient: function(patientLoader) { return patientLoader(); },
 				     options: function(Options) { return Options; },
                      profile: function(UserProfile){ return UserProfile; }
                  },
-			     templateUrl: function(params){ return '/templates/patient_notes.html' }
+			     templateUrl: function(params){ return '/templates/patient_detail.html' }
              })
-             .when('/episode/:id', {
-			     controller: 'EpisodeDetailCtrl',
-			     resolve: {
-				     episode: function(episodeLoader) { return episodeLoader(); },
-				     options: function(Options) { return Options; },
-                     profile: function(UserProfile){ return UserProfile; }
-			     },
-			     templateUrl: function(params){ return '/templates/episode_detail.html/' + params.id; }
-		     })
              .when('/search', {
 			     controller: 'SearchCtrl',
 			     templateUrl: '/search/templates/search.html',

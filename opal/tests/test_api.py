@@ -1,6 +1,7 @@
 """
 Tests for the OPAL API
 """
+import json
 from datetime import date, timedelta
 from django.utils import timezone
 
@@ -54,6 +55,30 @@ class ExtractSchemaTestCase(TestCase):
         self.assertEqual([{}], api.ExtractSchemaViewSet().list(None).data)
 
 
+class OptionTestCase(TestCase):
+    def setUp(self):
+        self.top = Hat.objects.create(name="top")
+        self.bowler = Hat.objects.create(name="bowler")
+        self.synonym_name = "high"
+        self.user = User.objects.create(username='testuser')
+        content_type = ContentType.objects.get_for_model(Hat)
+        models.Synonym.objects.get_or_create(
+            content_type=content_type,
+            object_id=self.top.id,
+            name=self.synonym_name
+        )
+        self.viewset = api.OptionsViewSet
+
+    def test_options_loader(self):
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        response = self.viewset().list(mock_request)
+        result = response.data
+        self.assertIn("hat", result)
+        self.assertEqual(set(result["hat"]), {"top", "bowler", "high"})
+        self.assertEqual(response.status_code, 200)
+
+
 class SubrecordTestCase(TestCase):
 
     def setUp(self):
@@ -90,7 +115,7 @@ class SubrecordTestCase(TestCase):
         self.assertEqual(self.user, colour.created_by)
         self.assertIsNone(colour.updated)
         self.assertIsNone(colour.updated_by)
-        self.assertEqual('blue', response.data['name'])
+        self.assertEqual('blue', json.loads(response.content)['name'])
 
     def test_create_patient_subrecord(self):
         mock_request = MagicMock(name='mock request')
@@ -98,7 +123,7 @@ class SubrecordTestCase(TestCase):
         mock_request.data = {'name': 'blue', 'episode_id': self.episode.pk,
                              'patient_id': self.patient.pk}
         response = self.patientviewset().create(mock_request)
-        self.assertEqual('blue', response.data['name'])
+        self.assertEqual('blue', json.loads(response.content)['name'])
 
     @patch('opal.core.api.glossolalia.change')
     def test_create_pings_integration(self, change):
@@ -145,7 +170,7 @@ class SubrecordTestCase(TestCase):
         self.assertEqual(self.user, updated_colour.created_by)
         self.assertEqual(date.today(), updated_colour.updated.date())
         self.assertEqual(202, response.status_code)
-        self.assertEqual('green', response.data['name'])
+        self.assertEqual('green', json.loads(response.content)['name'])
 
     @patch('opal.core.api.glossolalia.change')
     def test_update_pings_integration(self, change):
@@ -411,11 +436,11 @@ class TaggingTestCase(TestCase):
         self.assertEqual(True, response.data['micro'])
 
     def test_tag_episode(self):
-        self.assertEqual(self.episode.get_tag_names(self.user), [])
+        self.assertEqual(list(self.episode.get_tag_names(self.user)), [])
         self.mock_request.data = {'micro': True}
         response = api.TaggingViewSet().update(self.mock_request, pk=self.episode.pk)
         self.assertEqual(202, response.status_code)
-        self.assertEqual(self.episode.get_tag_names(self.user), ['micro'])
+        self.assertEqual(list(self.episode.get_tag_names(self.user)), ['micro'])
         tag = models.Tagging.objects.get()
         self.assertEqual(tag.created.date(), timezone.now().date())
         self.assertEqual(tag.created_by, self.user)
@@ -423,17 +448,17 @@ class TaggingTestCase(TestCase):
         self.assertIsNone(tag.updated)
 
     def test_untag_episode(self):
-        self.assertEqual(self.episode.get_tag_names(self.user), [])
+        self.assertEqual(list(self.episode.get_tag_names(self.user)), [])
         self.episode.set_tag_names(['micro'], self.user)
         self.mock_request.data = {'micro': False}
         response = api.TaggingViewSet().update(self.mock_request, pk=self.episode.pk)
         self.assertEqual(202, response.status_code)
-        self.assertEqual(self.episode.get_tag_names(self.user), [])
+        self.assertEqual(list(self.episode.get_tag_names(self.user)), [])
 
 
     @patch('opal.core.api.glossolalia.transfer')
     def test_tagging_pings_integration(self, transfer):
-        self.assertEqual(self.episode.get_tag_names(self.user), [])
+        self.assertEqual(list(self.episode.get_tag_names(self.user)), [])
         self.mock_request.data = {'micro': True}
         response = api.TaggingViewSet().update(self.mock_request, pk=self.episode.pk)
         self.assertEqual(202, response.status_code)
@@ -489,6 +514,14 @@ class EpisodeTestCase(TestCase):
         self.assertEqual(200, response.status_code)
         self.assertEqual(expected, response.data)
 
+    def test_list_for_archived_tag(self):
+        self.mock_request.query_params = {'tag': 'micro'}
+        self.episode.set_tag_names(['micro'], self.user)
+        self.episode.set_tag_names([], self.user)
+        response = api.EpisodeViewSet().list(self.mock_request)
+        self.assertEqual(200, response.status_code)
+        self.assertEqual([], response.data)
+
     def test_list_for_subtag_empty(self):
         self.mock_request.query_params = {'tag': 'micro', 'subtag': 'micro_ortho'}
         response = api.EpisodeViewSet().list(self.mock_request)
@@ -509,7 +542,7 @@ class EpisodeTestCase(TestCase):
         self.demographics.save()
         self.mock_request.data = {
             "tagging"                :[ { "micro":True }],
-            "date_of_admission"      : "2015-01-14",
+            "date_of_admission"      : "14/01/2015",
             "patient_hospital_number": self.demographics.hospital_number
         }
         response = api.EpisodeViewSet().create(self.mock_request)
@@ -523,7 +556,7 @@ class EpisodeTestCase(TestCase):
         self.assertEqual(0, pcount)
         self.mock_request.data = {
             "tagging"                :[ { "micro":True }],
-            "date_of_admission"      : "2015-01-14",
+            "date_of_admission"      : "14/01/2015",
             "patient_hospital_number": "999000999"
         }
         response = api.EpisodeViewSet().create(self.mock_request)
