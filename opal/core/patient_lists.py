@@ -1,28 +1,5 @@
-from django.conf import settings
-
-from opal.utils import _itersubclasses
-from opal.utils import stringport
 from opal.models import Episode
-
-# So we only do it once
-IMPORTED_FROM_APPS = False
-
-
-def import_from_apps():
-    """
-    Iterate through installed apps attempting to import app.wardrounds
-    This way we allow our implementation, or plugins, to define their
-    own ward rounds.
-    """
-    for app in settings.INSTALLED_APPS:
-        try:
-            stringport(app + '.patient_lists')
-            print "successfully imported %s" % app
-        except ImportError:
-            pass # not a problem
-    global IMPORTED_FROM_APPS
-    IMPORTED_FROM_APPS = True
-    return
+from opal.core import app_importer
 
 
 class PatientList(object):
@@ -50,9 +27,7 @@ class PatientList(object):
 
     @classmethod
     def list_classes(klass):
-        if not IMPORTED_FROM_APPS:
-            import_from_apps()
-        return _itersubclasses(PatientList)
+        return app_importer.get_subclass("patient_lists", klass)
 
     @classmethod
     def get_class(klass, request, **kwargs):

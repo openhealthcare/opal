@@ -1,13 +1,36 @@
 ## Writing Plugins
 
 OPAL Plugins are Django apps on the server side, and collections of angular.js
-models for the client. 
+models for the client.
 
 ### Getting started with your plugin
 
-The OPAL commandline tool will bootstrap your plugin for you - just run: 
+The OPAL commandline tool will bootstrap your plugin for you - just run:
 
     $ opal startplugin yourcoolplugin
+
+
+### Adding Discoverable Functionality
+
+A common pattern for plugins is to add functionality that other plugins or applications
+can use by inheriting a base class that you define in a file with a magic name. (In 
+much the same way that Django provides models.)
+
+For example, if you're creating an appointments plugin that helps people to book and schedule
+appointments in clinics, you would create a base `Clinic` class that can be subclassed to 
+create specific clinics.
+
+    class OutpatientsClinic(Clinic):
+        name = 'Outpatients'
+        
+We can use the helper functions in `opal.core.app_importer` to autodiscover
+clinics in any Django app with a `clinics.py`
+
+    class Clinic(object):
+        @classmethod
+        def list(self, klass):
+            return app_importer.get_subclass("clinics", klass)
+
 
 ### Defining teams
 
@@ -19,9 +42,9 @@ Defining restricted team access is done by:
 Adding a method to your pluigin that takes one argument, a User object, and returning a set of
 extra teams that this user is allowed to see.
 
-### Defining Schemas 
+### Defining Schemas
 
-Plugins can define list schemas to be used to generate patient lists. 
+Plugins can define list schemas to be used to generate patient lists.
 They should return a dictionary of lists of models from the
 `list_schemas` method of the plugin class.
 
@@ -37,14 +60,14 @@ They should return a dictionary of lists of models from the
 
 ### Defining new flows
 
-Plugins can define flows. They should return a dictionary of flows from the 
+Plugins can define flows. They should return a dictionary of flows from the
 flows() method of the plugin class.
 
 ### Adding URLS
 
 Add an urls.py, then add to your plugin class as YourPlugin.urls
 
-Naturally, these can point to views in your plugin! 
+Naturally, these can point to views in your plugin!
 
 ### Adding Javascript
 
@@ -102,7 +125,7 @@ Dependencies listed in `angular_module_deps` will be added to all Angular module
 use the OPAL.module() API. If not, you're on your own. We could monkey patch angular.module, but we
 won't for now.
 
-### Installing plugins 
+### Installing plugins
 
 Add to installed apps
 Add to requirements if appropriate
