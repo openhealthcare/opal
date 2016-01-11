@@ -4,7 +4,7 @@ Module entrypoint for core OPAL views
 from django.conf import settings
 from django.contrib.auth.views import login
 from django.http import HttpResponseNotFound
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import select_template, get_template
 from django.template import TemplateDoesNotExist
 from django.views.generic import TemplateView, View
@@ -74,7 +74,7 @@ class PatientDetailTemplateView(TemplateView):
 
 class EpisodeDetailTemplateView(TemplateView):
     def get(self, *args, **kwargs):
-        self.episode = models.Episode.objects.get(pk=kwargs['pk'])
+        self.episode = get_object_or_404(models.Episode, pk=kwargs['pk'])
         return super(EpisodeDetailTemplateView, self).get(*args, **kwargs)
 
     def get_template_names(self):
@@ -136,10 +136,18 @@ def check_password_reset(request, *args, **kwargs):
         try:
             profile = request.user.profile
             if profile and profile.force_password_change:
-                return redirect('django.contrib.auth.views.password_change')
+                return redirect(
+                    'django.contrib.auth.views.password_change'
+                )
         except models.UserProfile.DoesNotExist:
-            models.UserProfile.objects.create(user=request.user, force_password_change=True)
-            return redirect('django.contrib.auth.views.password_change')
+            # TODO: This probably doesn't do any harm, but
+            # we should really never reach this. Creation
+            # of profiles shouldn't happen in a random view.
+            models.UserProfile.objects.create(
+                user=request.user, force_password_change=True)
+            return redirect(
+                'django.contrib.auth.views.password_change'
+            )
     return response
 
 
@@ -208,14 +216,7 @@ def episode_list_and_create_view(request):
         return _build_json_response(serialised, status_code=201)
 
 
-class EpisodeListView(View):
-    """
-    Return serialised subsets of active episodes by tag.
-    """
-    def get(self, *args, **kwargs):
-        # while we manage transition lets allow a fall back to the old way
-        patient_list = PatientList.get_class(self.request, **kwargs)
-        return _build_json_response(patient_list.get_serialised())
+
 
 
 class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
@@ -329,7 +330,7 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         context = super(ModalTemplateView, self).get_context_data(**kwargs)
         context['name'] = self.name
         context['title'] = getattr(self.column, '_title', self.name.replace('_', ' ').title())
-        context['icon'] = getattr(self.column, '_icon')
+        context['icon'] = getattr(self.column, '_icon', '')
         # pylint: disable=W0201
         context['single'] = self.column._is_singleton
         context["column"] = self.column

@@ -17,6 +17,8 @@ A list of all available topic guides.
 |||
 |---------------------------|-------------------------------------------------------------------------------|
 |[Data Model](datamodel.md) | How OPAL models clinical reality.|
+|[Archetypes](archetypes.md) | Core Clinical Archetypes|
+|[Reference Data](referencedata.md)|Clinical reference data|
 |[Flow](flow.md)            | Hooks to customise key moments in a patient's flow through a clinical service.|
 |[Roles & Permissions](roles_and_permissions.md)| How we handle authorization in OPAL|
 |[Teams](teams.md) | Clinical teams in OPAL |
@@ -33,3 +35,8 @@ A list of all available topic guides.
 |[Episode Detail Views](episode_detail_views.md)|Detailed views of an episode of care|
 |[Patient List Views](list_views.md)| Lists of patients |
 
+### Optional Components
+
+|||
+|--|--|
+|[Search](search.md)|Default search implementation|

@@ -24,7 +24,8 @@ class SubrecordTestCase(OpalTestCase):
 
     @patch('opal.models.select_template')
     def test_display_template_subteam(self, select):
-        Subrecord.get_display_template(team='test', subteam='really')
+        Subrecord.get_display_template(team='test',
+                                       subteam='really')
         select.assert_called_with([
             'records/test/really/subrecord.html',
             'records/test/subrecord.html',
@@ -49,8 +50,11 @@ class SubrecordTestCase(OpalTestCase):
 
     @patch('opal.models.select_template')
     def test_detail_template_subteam(self, select):
-        Subrecord.get_detail_template(team='test', subteam='really')
-        select.assert_called_with(['records/subrecord_detail.html', 'records/subrecord.html'])
+        Subrecord.get_detail_template(team='test',
+                                      subteam='really')
+        select.assert_called_with(
+            ['records/subrecord_detail.html',
+             'records/subrecord.html'])
 
     @patch('opal.models.select_template')
     def test_form_template(self, select):

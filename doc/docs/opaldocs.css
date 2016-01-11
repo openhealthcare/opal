@@ -16,6 +16,9 @@ body {
 h1,h2,h3,h4 {
     font-weight: bold;
 }
+h1 {
+    margin-bottom: 24px;
+}
 h2 {
     font-size: 48px;
 }
@@ -45,4 +48,9 @@ pre, p {
 
 .custom-quote .fa-user-md {
     color: #6dbd63;
+}
+
+.col-md-9 img {
+    width: 100%;
+    padding: 24px 0px;
 }

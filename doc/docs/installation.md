@@ -26,7 +26,7 @@ You should now have the `opal` commandline tools installed.
 Let's just check that you do:
 
     $ opal --version
-    OPAL 0.3.0
+    OPAL 0.6.0
 
 ### Step 3: There is no step 3.
 

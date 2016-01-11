@@ -16,6 +16,7 @@ from opal.utils import stringport, camelcase_to_underscore
 from opal.core import schemas
 from opal.core.subrecords import subrecords
 from opal.core.views import _get_request_data, _build_json_response
+from opal.core.patient_lists import PatientList
 
 app = application.get_app()
 
@@ -157,7 +158,7 @@ class OptionsViewSet(viewsets.ViewSet):
 
                     if team.direct_add:
                         tag_direct_add.append(team.name)
-                        
+
                 subteams = [st for st in teams if st.parent == team]
                 tag_hierarchy[team.name] = [st.name for st in subteams]
                 for sub in subteams:
@@ -327,10 +328,23 @@ class EpisodeViewSet(viewsets.ViewSet):
         return Response(serialised)
 
     def create(self, request):
+        """
+        Create a new episode, optionally implicitly creating a patient.
+
+        * Extract the data from the request
+        * Create or locate the patient
+        * Create a new episode
+        * Update the patient with any extra data passed in
+        * Inform glossolalia
+        * return the patient
+        """
         from opal.models import Patient
 
-        hospital_number = request.data.pop('patient_hospital_number', None)
-        tagging = request.data.pop('tagging', {})
+        demographics_data = request.data.pop('demographics', None)
+        location_data     = request.data.pop('location', {})
+        tagging           = request.data.pop('tagging', {})
+
+        hospital_number = demographics_data.get('hospital_number', None)
         if hospital_number:
             patient, created = Patient.objects.get_or_create(
                 demographics__hospital_number=hospital_number)
@@ -341,10 +355,15 @@ class EpisodeViewSet(viewsets.ViewSet):
         else:
             patient = Patient.objects.create()
 
+        patient.update_from_demographics_dict(demographics_data, request.user)
+
         episode = Episode(patient=patient)
         episode.update_from_dict(request.data, request.user)
+        location = episode.location_set.get()
+        location.update_from_dict(location_data, request.user)
         episode.set_tag_names([n for n, v in tagging[0].items() if v], request.user)
         serialised = episode.to_dict(request.user)
+
         return Response(serialised, status=status.HTTP_201_CREATED)
 
     @episode_from_pk
@@ -418,3 +437,13 @@ class APIReferPatientView(View):
             episode.set_tag_names(current_tags, None)
         resp = {'ok': 'Got your referral just fine - thanks!'}
         return _build_json_response(resp)
+
+
+class EpisodeListApi(View):
+    """
+    Return serialised subsets of active episodes by tag.
+    """
+    def get(self, *args, **kwargs):
+        # while we manage transition lets allow a fall back to the old way
+        patient_list = PatientList.get_class(self.request, **kwargs)
+        return _build_json_response(patient_list.get_serialised())
