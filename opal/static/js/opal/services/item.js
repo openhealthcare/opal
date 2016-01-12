@@ -15,13 +15,14 @@ angular.module('opal.services')
 	        angular.extend(item, attrs);
 	        for (var fix = 0; fix < columnSchema.fields.length; fix++) {
 		        field = columnSchema.fields[fix];
+
 		        value = item[field.name];
 		        if (field.type == 'date' && item[field.name] &&  !_.isDate(item[field.name])) {
 		            // Convert values of date fields to Date objects
 		            item[field.name] = moment(item[field.name], 'DD/MM/YYYY').toDate();
 		        }
             else if(field.type == 'date_time' && item[field.name] && !_.isDate(item[field.name])){
-                item[field.name] = moment(item[field.name], 'DD/MM/YYYY HH:mm:ss').toDate();
+                item[field.name] = moment(item[field.name], 'DD/MM/YYYY HH:mm:ss');
             }
 	        }
 	    };
@@ -51,9 +52,9 @@ angular.module('opal.services')
 		        value = item[field.name];
 		        if (field.type == 'date' && item[field.name]) {
 		            // Convert values of date fields to strings of format DD/MM/YYYY
-		            copy[field.name] = moment(value).format('DD/MM/YYYY');
-                }else if(field.type == 'date_time' && _.isDate(value)) {
-                    copy[field.name] = new Date(value.getTime());
+		            copy[field.name] = moment(value).toDate();
+            }else if(field.type == 'date_time' && item[field.name]) {
+                copy[field.name] = moment(value).toDate();
 		        } else {
 		            copy[field.name] = _.clone(value);
 		        }
@@ -66,6 +67,7 @@ angular.module('opal.services')
       this.castToType = function(attrs){
         _.forEach(columnSchema.fields, function(field){
           // Convert values of date fields to strings of format YYYY-MM-DD
+
           value = attrs[field.name];
           if (field.type == 'date' && attrs[field.name]) {
               if (!angular.isString(value)) {
@@ -73,11 +75,11 @@ angular.module('opal.services')
                   value = value.format('DD/MM/YYYY');
               }
                 attrs[field.name] = value;
-              }
+            }
               // Convert datetimes to DD/MM/YYYY HH:MM:SS
-              if( field.type == 'date_time' && attrs[field.name] ){
+            if( field.type == 'date_time' && attrs[field.name] ){
                 attrs[field.name] = moment(value).format('DD/MM/YYYY HH:mm:ss');
-              }
+            }
               //
               // TODO: Handle this conversion better
               //

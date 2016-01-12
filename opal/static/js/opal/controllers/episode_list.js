@@ -51,16 +51,16 @@ angular.module('opal.controllers').controller(
 
 	    $scope.getVisibleEpisodes = function() {
 		    var visibleEpisodes = [];
-            var episode_list = [];
+        var episode_list = [];
 
-            visibleEpisodes = _.filter(episodes, function(episode){
-                return episodeVisibility(episode, $scope)
-            });
+        visibleEpisodes = _.filter(episodes, function(episode){
+            return episodeVisibility(episode, $scope);
+        });
 		    visibleEpisodes.sort(compareEpisodes);
-            if($scope.rows && visibleEpisodes.length == 1){
-                rix = getRowIxFromEpisodeId(visibleEpisodes[0].id);
-                $scope.select_episode(visibleEpisodes[0], rix);
-            }
+        if($scope.rows && visibleEpisodes.length == 1){
+            rix = getRowIxFromEpisodeId(visibleEpisodes[0].id);
+            $scope.select_episode(visibleEpisodes[0], rix);
+        }
 		    return visibleEpisodes;
 	    };
 
@@ -255,13 +255,13 @@ angular.module('opal.controllers').controller(
                 });
 	    };
 
-        $scope._post_discharge = function(result){
-			$rootScope.state = 'normal';
-			if (result == 'discharged' | result == 'moved') {
-				$scope.rows = $scope.getVisibleEpisodes();
-                $scope.num_episodes -= 1;
-			};
-        };
+      $scope._post_discharge = function(result){
+  			$rootScope.state = 'normal';
+  			if (result == 'discharged' | result == 'moved') {
+  				$scope.rows = $scope.getVisibleEpisodes();
+          $scope.num_episodes -= 1;
+  			};
+      };
 
 	    $scope.dischargeEpisode = function(episode) {
             if(profile.readonly){ return null; };

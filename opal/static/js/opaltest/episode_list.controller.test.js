@@ -7,7 +7,7 @@ describe('EpisodeListCtrl', function() {
     var $location, $routeParams, $http;
     var Flow, flow_promise;
     var episodes, controller;
-    var $modal, options;
+    var $modal, options, $rootScope;
 
     var fields = {};
     var columns = {
@@ -246,7 +246,7 @@ describe('EpisodeListCtrl', function() {
         it('should call the enter flow', function() {
             $scope.addEpisode();
             expect(Flow).toHaveBeenCalledWith(
-                'enter', schema, options, {
+                'enter', options, {
                     current_tags: {
                         tag   : 'tropical',
                         subtag: 'all'
@@ -289,9 +289,13 @@ describe('EpisodeListCtrl', function() {
             });
 
             it('Should re-set the focus to 0', function () {
-                spyOn($scope, 'selectItem');
+                /*
+                * reselect the first episode available when we discharge
+                */
+                spyOn($scope, 'select_episode');
                 $scope._post_discharge('discharged');
-                expect($scope.selectItem).toHaveBeenCalledWith(0, 0, 0);
+                var name = $scope.select_episode.calls.allArgs()[0][0].demographics[0].name;
+                expect(name).toEqual("John Smith");
             });
         });
 

@@ -1,11 +1,13 @@
 describe('HospitalNumberCtrl', function(){
+    "use strict";
     var $scope, $timeout, $modal, modalInstance, $http, $q;
-    var tags, columns, patientData, Episode;
+    var tags, columns, patientData, Episode, options, optionsData;
+    var $httpBackend;
 
     optionsData = {
         condition: ['Another condition', 'Some condition'],
         tag_hierarchy :{'tropical': []}
-    }
+    };
 
     columns = {
         "default": [
@@ -230,6 +232,7 @@ describe('HospitalNumberCtrl', function(){
     describe('new for patient', function(){
 
         it('should call through if there is an active discharged episode.', function(){
+            var deferred, callArgs;
             spyOn($scope, 'newForPatientWithActiveEpisode');
 
             patientData.active_episode_id = 3;
@@ -350,7 +353,10 @@ describe('HospitalNumberCtrl', function(){
             var deferred, episode, callArgs;
 
             deferred = $q.defer();
-            episode = new Episode({id: 3}, schema);
+            episode = new Episode({
+              id: 3,
+              demographics: [{"patient_id": 1}]
+            }, schema);
 
             spyOn($modal, 'open').and.returnValue({result: deferred.promise});
             spyOn(modalInstance, 'close');

@@ -14,6 +14,7 @@ describe('services', function() {
                     fields: [
                         {name: 'name', type: 'string'},
                         {name: 'date_of_birth', type: 'date'},
+                        {name: 'created', type: 'date_time'},
                     ]
                 },
                 "diagnosis": {
@@ -44,8 +45,9 @@ describe('services', function() {
             demographics: [{
                 id: 101,
                 name: 'John Smith',
-                date_of_birth: '31/071980',
-                hospital_number: '555'
+                date_of_birth: '31/07/1980',
+                hospital_number: '555',
+                created: "07/04/2015 11:45:00"
             }],
             location: [{
                 category: 'Inepisode',
@@ -58,7 +60,7 @@ describe('services', function() {
                 id: 102,
                 condition: 'Dengue',
                 provisional: true,
-                date_of_diagnosis: '20/04/2007'
+                date_of_diagnosis: '20/04/2007',
             }, {
                 id: 103,
                 condition: 'Malaria',
@@ -111,8 +113,11 @@ describe('services', function() {
         });
 
         it('should convert values of date fields to Date objects', function() {
-            expect(true).toEqual(false);
             expect(item.date_of_birth).toEqual(new Date(1980, 6, 31));
+        });
+
+        it('should convert values of date time fields to Date objects', function() {
+            expect(item.created).toEqual(new Date(2015, 3, 7, 11, 45));
         });
 
         it('should be able to produce copy of attributes', function() {
@@ -120,6 +125,7 @@ describe('services', function() {
                 id: 101,
                 name: 'John Smith',
                 date_of_birth: '31/07/1980',
+                created: "07/04/2015 11:45:00"
             });
         });
 

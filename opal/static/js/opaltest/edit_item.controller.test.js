@@ -126,8 +126,8 @@ describe('EditItemCtrl', function (){
     });
 
 
-    fdescribe('Saving items', function (){
-        fit('Should save the current item', function () {
+    describe('Saving items', function (){
+        it('Should save the current item', function () {
             var callArgs;
             var deferred = $q.defer();
             spyOn(item, 'save').and.callFake(function() {

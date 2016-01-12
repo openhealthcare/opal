@@ -1,30 +1,10 @@
 describe('PatientHistoryCtrl', function (){
+    "use strict";
+
     var $controller, $scope, $modalInstance, $httpBackend, $rootScope;
     var $modal, $location;
-    var Episode;
+    var Episode, controller;
     var episode, episode_history;
-
-    beforeEach(function(){
-        module('opal', function($provide) {
-            $provide.value('$analytics', function(){
-                return {
-                    pageTrack: function(x){}
-                }
-            });
-
-            $provide.provider('$analytics', function(){
-                this.$get = function() {
-                    return {
-                        virtualPageviews: function(x){},
-                        settings: {
-                            pageTracking: false,
-                        },
-                        pageTrack: function(x){}
-                     };
-                };
-            });
-        });
-    });
 
     beforeEach(module('opal.controllers'));
 
@@ -38,8 +18,17 @@ describe('PatientHistoryCtrl', function (){
         $location    = $injector.get('$location');
 
         $modalInstance = $modal.open({template: 'Not a real template'});
-        episode_history = [1,2,3,4]
-        episode = new Episode({id: 33, episode_history: episode_history});
+        episode_history = [1,2,3,4];
+        episode = new Episode({
+          id: 33,
+          episode_history: episode_history,
+          demographics: [{
+              id: 101,
+              name: 'John Smith',
+              date_of_birth: '1980-07-31',
+              patient_id: 102
+          }]
+        });
 
         controller = $controller('PatientHistoryCtrl', {
             $scope        : $scope,
