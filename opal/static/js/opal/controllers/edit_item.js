@@ -99,6 +99,7 @@ angular.module('opal.controllers').controller(
       $scope.saving = false;
 
 	    $scope.save = function(result) {
+            $scope.saving = true;
             ngProgressLite.set(0);
             ngProgressLite.start();
             to_save = [item.save($scope.editing[item.columnName])];
@@ -106,6 +107,7 @@ angular.module('opal.controllers').controller(
                 to_save.push($scope.the_episode.save($scope.episode));
             }
             $q.all(to_save).then(function() {
+                $scope.saving = false;
                 ngProgressLite.done();
       			    $modalInstance.close(result);
 		    });

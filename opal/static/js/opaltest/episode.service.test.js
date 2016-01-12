@@ -103,7 +103,7 @@ describe('Episode', function() {
         expect(johnSmith.compare(anneAngela)).toEqual(1);
 
         johnSmith.date_of_episode = new Date(2015, 10, 11);
-        johnSmithOld = new Episode(episodeData);
+        var johnSmithOld = new Episode(episodeData);
         johnSmithOld.date_of_episode = new Date(2015, 10, 10);
         expect(johnSmithOld.compare(johnSmith)).toEqual(-1);
 

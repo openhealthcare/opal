@@ -432,36 +432,20 @@ class TrackedModel(models.Model):
         abstract = True
 
     def set_created_by_id(self, incoming_value, user, *args, **kwargs):
-        if incoming_value:
-            value = User.objects.get(id=incoming_value)
-        else:
-            value = user
-
         if not self.id:
-            self.created_by = value
+            self.created_by = user
 
     def set_updated_by_id(self, incoming_value, user, *args, **kwargs):
         if self.id:
-            if incoming_value:
-                value = User.objects.get(id=incoming_value)
-            else:
-                value = user
-
-            self.updated_by = value
+            self.updated_by = user
 
     def set_updated(self, incoming_value, user, *args, **kwargs):
         if self.id:
-            if incoming_value:
-                self.updated = dateutil.parser.parse(incoming_value)
-            else:
-                self.updated = timezone.now()
+            self.updated = timezone.now()
 
     def set_created(self, incoming_value, user, *args, **kwargs):
         if not self.id:
-            if incoming_value:
-                self.created = dateutil.parser.parse(incoming_value)
-            else:
-                self.created = timezone.now()
+            self.created = timezone.now()
 
 
 class Episode(UpdatesFromDictMixin, TrackedModel):

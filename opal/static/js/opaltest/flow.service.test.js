@@ -3,30 +3,8 @@
 //
 
 describe('Flow ', function(){
-    var schema, options;
-    var the_flow;
-
-    beforeEach(function(){
-        module('opal', function($provide) {
-            $provide.value('$analytics', function(){
-                return {
-                    pageTrack: function(x){}
-                }
-            });
-
-            $provide.provider('$analytics', function(){
-                this.$get = function() {
-                    return {
-                        virtualPageviews: function(x){},
-                        settings: {
-                            pageTracking: false,
-                        },
-                        pageTrack: function(x){}
-                     };
-                };
-            });
-        });
-    });
+    "use strict";
+    var options, the_flow, Flow, $httpBackend, $modal, $rootScope;
 
     beforeEach(function(){
 
@@ -36,24 +14,22 @@ describe('Flow ', function(){
         angular.module('opal.controllers').controller('EnterCtrl', function(){});
         angular.module('opal.controllers').controller('ExitCtrl', function(){});
 
-        schema  = {};
         options = {};
         the_flow = {
             default: {
                 enter: {
                     controller: 'EnterCtrl',
-                    template  : '/templates/enter'
+                    template  : '/templates/enter',
                 },
                 exit : {
                     controller: 'ExitCtrl',
-                    template  : '/templates/exit'
+                    template  : '/templates/exit',
                 }
             }
         }
 
         inject(function($injector){
             Flow         = $injector.get('Flow');
-            console.log(Flow)
             $modal       = $injector.get('$modal');
             $rootScope   = $injector.get('$rootScope');
             $httpBackend = $injector.get('$httpBackend');
@@ -71,7 +47,7 @@ describe('Flow ', function(){
         it('should pass through to the correct controller', function(){
             var call_args;
 
-            Flow('enter', schema, options, {});
+            Flow('enter', options, {current_tags: { tag: "Micro-Ortho" }});
 
             $rootScope.$apply();
             $httpBackend.flush();
@@ -88,7 +64,7 @@ describe('Flow ', function(){
         it('should pass through to the correct controller', function(){
             var call_args;
 
-            Flow('exit', schema, options, {});
+            Flow('exit', options, {current_tags: { tag: "Micro-Ortho" }});
 
             $rootScope.$apply();
             $httpBackend.flush();

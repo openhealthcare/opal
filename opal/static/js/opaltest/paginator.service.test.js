@@ -1,4 +1,4 @@
-fdescribe('paginator', function(){
+describe('paginator', function(){
   "use strict";
 
   var Paginator;

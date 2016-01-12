@@ -141,7 +141,7 @@ describe('EditItemCtrl', function (){
             expect($scope.saving).toBe(false);
             callArgs = item.save.calls.mostRecent().args;
             expect(callArgs.length).toBe(1);
-            expect(callArgs[0]).toBe($scope.editing);
+            expect(callArgs[0]).toBe($scope.editing.diagnosis);
         });
     });
 });

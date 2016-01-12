@@ -1,4 +1,5 @@
 describe('EpisodeListCtrl', function() {
+    "use strict";
     var episodeData, optionsData, profileData, patientData, Schema;
     var schema, Episode, Item;
     var profile;
@@ -6,7 +7,7 @@ describe('EpisodeListCtrl', function() {
     var $location, $routeParams, $http;
     var Flow, flow_promise;
     var episodes, controller;
-    var $modal;
+    var $modal, options, $rootScope;
 
     var fields = {};
     var columns = {
@@ -245,7 +246,7 @@ describe('EpisodeListCtrl', function() {
         it('should call the enter flow', function() {
             $scope.addEpisode();
             expect(Flow).toHaveBeenCalledWith(
-                'enter', schema, options, {
+                'enter', options, {
                     current_tags: {
                         tag   : 'tropical',
                         subtag: 'all'
@@ -288,9 +289,13 @@ describe('EpisodeListCtrl', function() {
             });
 
             it('Should re-set the focus to 0', function () {
-                spyOn($scope, 'selectItem');
+                /*
+                * reselect the first episode available when we discharge
+                */
+                spyOn($scope, 'select_episode');
                 $scope._post_discharge('discharged');
-                expect($scope.selectItem).toHaveBeenCalledWith(0, 0, 0);
+                var name = $scope.select_episode.calls.allArgs()[0][0].demographics[0].name;
+                expect(name).toEqual("John Smith");
             });
         });
 
@@ -331,13 +336,8 @@ describe('EpisodeListCtrl', function() {
         });
 
         describe('editing an item', function() {
-            it('should select that item', function() {
-                $scope.editItem(0, 0, 0);
-                expect([$scope.rix, $scope.cix, $scope.iix]).toEqual([0, 0, 0]);
-            });
-
             it('should change state to "modal"', function() {
-                $scope.editItem(0, 0, 0);
+                $scope.editNamedItem($scope.episode, 'demographics', 0);
                 expect($rootScope.state).toBe('modal');
             });
 
@@ -345,7 +345,7 @@ describe('EpisodeListCtrl', function() {
                 var callArgs;
 
                 spyOn($modal, 'open').and.callThrough();
-                $scope.editItem(0, 0, 0);
+                $scope.editNamedItem($scope.episode, 'demographics', 0);
 
                 callArgs = $modal.open.calls.mostRecent().args;
                 expect(callArgs.length).toBe(1);
@@ -359,7 +359,7 @@ describe('EpisodeListCtrl', function() {
                 modalSpy = {open: function() {}};
                 spyOn($modal, 'open').and.returnValue({result:  {then: function() {}}});
 
-                $scope.editItem(0, 0, 0);
+                $scope.editNamedItem($scope.episode, 'demographics', 0);
 
                 expect($modal.open).toHaveBeenCalled();
             });
@@ -370,7 +370,7 @@ describe('EpisodeListCtrl', function() {
                 deferred = $q.defer();
                 spyOn($modal, 'open').and.returnValue({result: deferred.promise});
 
-                $scope.editItem(0, 0, 0);
+                $scope.editNamedItem($scope.episode, 'demographics', 0);
 
                 deferred.resolve('save');
                 $rootScope.$apply();
@@ -385,7 +385,8 @@ describe('EpisodeListCtrl', function() {
                 });
 
                 it('should return null', function(){
-                    expect($scope.editItem(0,  0, 0)).toBe(null);
+                    var editItem = $scope.editNamedItem($scope.episode, 'demographics', 0);
+                    expect(editItem).toBe(null);
                 });
 
                 afterEach(function(){
@@ -402,13 +403,8 @@ describe('EpisodeListCtrl', function() {
                 iix = episodeData.diagnosis.length;
             });
 
-            it('should select "Add"', function() {
-                $scope.editItem(0, 2, iix);
-                expect([$scope.rix, $scope.cix, $scope.iix]).toEqual([0, 2, iix]);
-            });
-
             it('should change state to "modal"', function() {
-                $scope.editItem(0, 2, iix);
+                $scope.editNamedItem($scope.episode, "diagnosis", iix);
                 expect($rootScope.state).toBe('modal');
             });
 
@@ -417,7 +413,7 @@ describe('EpisodeListCtrl', function() {
 
                 spyOn($modal, 'open').and.callThrough();
 
-                $scope.editItem(0, 2, iix);
+                $scope.editNamedItem($scope.episode, "diagnosis", iix);
 
                 callArgs = $modal.open.calls.mostRecent().args;
                 expect(callArgs.length).toBe(1);
