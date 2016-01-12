@@ -117,15 +117,15 @@ describe('services', function() {
         });
 
         it('should convert values of date time fields to Date objects', function() {
-            expect(item.created).toEqual(new Date(2015, 3, 7, 11, 45));
+            expect(item.created.toDate()).toEqual(new Date(2015, 3, 7, 11, 45));
         });
 
         it('should be able to produce copy of attributes', function() {
             expect(item.makeCopy()).toEqual({
                 id: 101,
                 name: 'John Smith',
-                date_of_birth: '31/07/1980',
-                created: "07/04/2015 11:45:00"
+                date_of_birth: new Date(1980, 6, 31),
+                created: new Date(2015, 3, 7, 11, 45)
             });
         });
 
