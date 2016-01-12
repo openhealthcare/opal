@@ -126,8 +126,8 @@ describe('EditItemCtrl', function (){
     });
 
 
-    describe('Saving items', function (){
-        it('Should save the current item', function () {
+    fdescribe('Saving items', function (){
+        fit('Should save the current item', function () {
             var callArgs;
             var deferred = $q.defer();
             spyOn(item, 'save').and.callFake(function() {
@@ -141,7 +141,7 @@ describe('EditItemCtrl', function (){
             expect($scope.saving).toBe(false);
             callArgs = item.save.calls.mostRecent().args;
             expect(callArgs.length).toBe(1);
-            expect(callArgs[0]).toBe($scope.editing);
+            expect(callArgs[0]).toBe($scope.editing.diagnosis);
         });
     });
 });
