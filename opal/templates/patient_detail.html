@@ -1,6 +1,6 @@
 {% load panels %}
 {% load forms %}
-<div class="container content-offset">
+<div class="container-fluid content-offset">
   <div class="panel panel-primary panel-container">
     <!-- Default panel contents -->
     <div class="panel-heading">
@@ -19,7 +19,7 @@
       <div class="row">
         {% block content %}
 
-        <div class="col-md-4"> <!-- Episode Switcher -->
+        <div class="col-md-3"> <!-- Episode Switcher -->
           {% include 'partials/_demographics_panel.html' %}
           <div class="panel panel-default">
             <div class="panel-heading ">
@@ -63,16 +63,18 @@
           <!--   </ul> -->
           <!-- </div> -->
         </div> <!-- End episode switcher -->
-        <div class="col-md-8">
-          {% for episode_type in episode_types %}
-          {% if episode_type.detail_template %}
-          <div class="row" ng-show="view == null && episode.category == '{{ episode_type.name }}'">
-            {% include episode_type.detail_template %}
-          </div>
-          {% endif %}
-          {% endfor %}
-          <div class="row" ng-show="view == 'micro_haem'">
-            {% include 'detail/micro_haem.html' %}
+        <div class="col-md-9">
+          <div class="col-md-12">
+            {% for episode_type in episode_types %}
+            {% if episode_type.detail_template %}
+            <div class="row" ng-show="view == null && episode.category == '{{ episode_type.name }}'">
+              {% include episode_type.detail_template %}
+            </div>
+            {% endif %}
+            {% endfor %}
+            <div class="row" ng-show="view == 'micro_haem'">
+              {% include 'detail/micro_haem.html' %}
+            </div>
           </div>
         </div>
 
@@ -86,5 +88,3 @@
   </div> <!-- Panel body -->
 </div>   <!-- Panel -->
 </div>     <!-- Container -->
-
-
