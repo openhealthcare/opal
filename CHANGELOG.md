@@ -1,14 +1,14 @@
 ### 0.5.3
 Speed up loading of the lookup lists
-fix pagination issues in search
-speed up loading of many to many fields
-increase test coverage
+Fix pagination issues in search
+Speed up loading of many to many fields
+Increase test coverage
 
 
 ### 0.5.2
 Speed improvements on page load
-allow us to only show record panels if a record of that type exists
-disable modal buttons while saving
+Allow us to only show record panels if a record of that type exists
+Disable modal buttons while saving
 
 
 ### 0.5.1 (Minor Release)
