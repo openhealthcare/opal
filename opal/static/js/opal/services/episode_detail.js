@@ -23,7 +23,7 @@ angular.module('opal.services')
 
                 var modal_opts = {
                     backdrop: 'static',
-			        templateUrl: '/templates/modals/' + columnName + '.html/',
+      			        templateUrl: '/templates/modals/' + columnName + '.html/',
                     controller: 'EditItemCtrl',
                     resolve: {
                         item: function() { return item; },
