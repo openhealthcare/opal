@@ -374,11 +374,6 @@ class EpisodeViewSet(viewsets.ViewSet):
 class PatientViewSet(viewsets.ViewSet):
     base_name = 'patient'
 
-    def list(self, request):
-        from opal.models import Patient
-        results = [p.to_dict(request.user) for p in Patient.objects.all()]
-        return _build_json_response(results)
-
     def retrieve(self, request, pk=None):
         from opal.models import Patient
         patient = Patient.objects.get(pk=pk)
