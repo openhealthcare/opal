@@ -13,6 +13,7 @@ from mock import patch, MagicMock
 from opal import models
 from opal.tests.models import Colour, PatientColour, HatWearer, Hat
 from opal.core.test import OpalTestCase
+from opal.core.views import _build_json_response
 
 # this is used just to import the class for EpisodeListApiTestCase
 from opal.tests.test_patient_lists import TaggingTestPatientList # flake8: noqa
@@ -498,8 +499,9 @@ class EpisodeTestCase(TestCase):
             parent=self.micro)
 
     def test_retrieve_episode(self):
-        response = api.EpisodeViewSet().retrieve(self.mock_request, pk=self.episode.pk)
-        self.assertEqual(self.episode.to_dict(self.user), response.data)
+        response = api.EpisodeViewSet().retrieve(self.mock_request, pk=self.episode.pk).data
+        expected = json.loads(_build_json_response(self.episode.to_dict(self.user)).content)
+        self.assertEqual(expected, response)
 
     def test_retrieve_nonexistent_episode(self):
         response = api.EpisodeViewSet().retrieve(self.mock_request, pk=678687)
@@ -662,5 +664,6 @@ class PatientTestCase(TestCase):
         self.mock_request = MagicMock(name='request')
 
     def test_retrieve_episode(self):
-        response = api.PatientViewSet().retrieve(self.mock_request, pk=self.patient.pk)
-        self.assertEqual(self.patient.to_dict(None), response.data)
+        response = api.PatientViewSet().retrieve(self.mock_request, pk=self.patient.pk).content
+        expected = _build_json_response(self.patient.to_dict(None)).content
+        self.assertEqual(expected, response)

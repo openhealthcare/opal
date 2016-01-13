@@ -41,6 +41,7 @@ angular.module('opal.controllers').controller(
 
                 var target = $scope.path_base + $scope.currentTag + '/' + subtag;
                 $location.path(target);
+                $location.replace();
                 return;
             }
         }
@@ -81,7 +82,6 @@ angular.module('opal.controllers').controller(
             if(_.contains(_.keys(options.tag_hierarchy), tag)){
                 $location.path($scope.path_base + tag)
             }else{
-
                 for(var prop in options.tag_hierarchy){
                     if(options.tag_hierarchy.hasOwnProperty(prop)){
                         if(_.contains(_.values(options.tag_hierarchy[prop]), tag)){

@@ -14,4 +14,5 @@ angular.module('opal.controllers').controller(
             }
         }
         $location.path(path_base + tag + "/" + subtag);
+        $location.replace();
 });
