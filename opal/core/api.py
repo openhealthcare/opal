@@ -8,7 +8,7 @@ from django.views.generic import View
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import routers, status, viewsets
 from rest_framework.response import Response
-from opal.models import Episode, Synonym, Team, Macro
+from opal.models import Episode, Synonym, Team, Macro, Patient
 from opal.core import application, exceptions, plugins
 from opal.core import glossolalia
 from opal.core.lookuplists import LookupList
@@ -338,8 +338,6 @@ class EpisodeViewSet(viewsets.ViewSet):
         * Inform glossolalia
         * return the patient
         """
-        from opal.models import Patient
-
         demographics_data = request.data.pop('demographics', None)
         location_data     = request.data.pop('location', {})
         tagging           = request.data.pop('tagging', {})
@@ -375,7 +373,6 @@ class PatientViewSet(viewsets.ViewSet):
     base_name = 'patient'
 
     def retrieve(self, request, pk=None):
-        from opal.models import Patient
         patient = Patient.objects.get(pk=pk)
         return _build_json_response(patient.to_dict(request.user))
 
