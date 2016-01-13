@@ -11,7 +11,7 @@ angular.module('opal.controllers').controller(
         $scope.episode = patient.episodes[0];
 
         $scope.view = null;
-        
+
         $scope.switch_to_episode = function(index, $event){
             if($event){
                 $event.preventDefault()
@@ -43,7 +43,7 @@ angular.module('opal.controllers').controller(
                 }
             }
         }
-        
+
         _openEditItemModal = function(item, columnName){
             var modal;
 
@@ -104,7 +104,6 @@ angular.module('opal.controllers').controller(
 		    $rootScope.state = 'modal';
             var exit = Flow(
                 'exit',
-                null,  // Schema ? Not used ? Todo: investigate!
                 options,
                 {
                     current_tags: {
