@@ -5,10 +5,17 @@ angular.module('opal.services').factory('RecordEditor', function($http, $q, Item
     self.options = options;
     self.profile = profile;
 
+    self.emptyPromise = function(){
+        // if its read only, just return an empty promise
+        var empty = $q.defer();
+        empty.resolve();
+        return empty.promise;
+    }
+
     self.deleteItem = function(episode, name, iix, rootScope){
       if(profile.readonly){
-          return null;
-      };
+          return self.emptyPromise();
+      }
 
       var item = self.getItem(episode, name, iix, rootScope);
 
@@ -31,10 +38,10 @@ angular.module('opal.services').factory('RecordEditor', function($http, $q, Item
         return;
       }
 
-      rootScope.state = 'modal'
+      rootScope.state = 'modal';
       var deferred = $q.defer();
 
-      modal = $modal.open({
+      var modal = $modal.open({
         templateUrl: '/templates/modals/delete_item_confirmation.html/',
         controller: 'DeleteItemConfirmationCtrl',
         resolve: {
@@ -46,7 +53,7 @@ angular.module('opal.services').factory('RecordEditor', function($http, $q, Item
       });
 
       return deferred.promise;
-    }
+    };
 
     self.getItem = function(episode, name, iix, rootScope){
       if (episode[name][iix] && episode[name][iix].columnName) {
@@ -92,19 +99,27 @@ angular.module('opal.services').factory('RecordEditor', function($http, $q, Item
     };
 
     self.editItem = function(episode, name, iix, scope, rootScope){
-        var item = self.getItem(episode, name, iix, rootScope);
-        return self.openEditItemModal(episode, item, name, scope, rootScope);
+      if(self.profile.readonly){
+          return self.emptyPromise();
+      }
+
+      var item = self.getItem(episode, name, iix, rootScope);
+      return self.openEditItemModal(episode, item, name, scope, rootScope);
     };
 
     self.newItem = function(episode, name, scope, rootScope){
-        if (!episode[name]) {
-            episode[name] = [];
-        }
+      if(self.profile.readonly){
+          return self.emptyPromise();
+      }
 
-        var iix;
-        var item = self.getItem(episode, name, iix, rootScope);
-        episode[name].push(item);
-        return self.openEditItemModal(episode, item, name, scope, rootScope);
+      if (!episode[name]) {
+          episode[name] = [];
+      }
+
+      var iix;
+      var item = self.getItem(episode, name, iix, rootScope);
+      episode[name].push(item);
+      return self.openEditItemModal(episode, item, name, scope, rootScope);
     };
   };
 

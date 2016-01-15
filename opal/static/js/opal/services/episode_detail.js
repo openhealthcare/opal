@@ -8,10 +8,10 @@ angular.module('opal.services')
             // var schema  = $scope.schema;
             var Flow    = $scope.Flow
 
-	        $scope.selectItem = function(cix, iix) {
-		        $scope.cix = cix;
-		        $scope.iix = iix;
-	        };
+	        // $scope.selectItem = function(cix, iix) {
+		      //   $scope.cix = cix;
+		      //   $scope.iix = iix;
+	        // };
 
             // _openEditItemModal = function(item, columnName){
             //     var modal;

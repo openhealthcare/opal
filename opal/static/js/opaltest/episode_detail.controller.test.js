@@ -1,7 +1,10 @@
 describe('EpisodeDetailCtrl', function(){
+    "use strict";
+
     var $scope, $cookieStore, $modal;
-    var Flow;
-    var episode;
+    var $rootScope, $q, $controller;
+    var Flow, Episode, episode;
+    var controller;
 
     var profile = {
         readonly   : false,
@@ -14,7 +17,7 @@ describe('EpisodeDetailCtrl', function(){
         tag_hierarchy :{'tropical': []}
     }
 
-    episodeData = {
+    var episodeData = {
         id: 123,
         active: true,
         prev_episodes: [],
@@ -107,10 +110,11 @@ describe('EpisodeDetailCtrl', function(){
             $controller  = $injector.get('$controller');
             $cookieStore = $injector.get('$cookieStore');
             $modal       = $injector.get('$modal');
+            Episode      = $injector.get('Episode');
         });
 
         $rootScope.fields = fields
-        episode = new Episode(episodeData);
+        episode = new Episode(angular.copy(episodeData));
         Flow = jasmine.createSpy('Flow').and.callFake(function(){return {then: function(){}}});
 
         controller = $controller('EpisodeDetailCtrl', {
@@ -129,14 +133,6 @@ describe('EpisodeDetailCtrl', function(){
             expect($scope.episode).toEqual(episode);
         });
     });
-
-    describe('selecting an item', function(){
-        it('should select the item', function(){
-            $scope.selectItem(1, 34);
-            expect($scope.cix).toBe(1);
-            expect($scope.iix).toBe(34);
-        });
-    })
 
     describe('editing an item', function(){
         it('should open the EditItemCtrl', function(){
@@ -158,7 +154,10 @@ describe('EpisodeDetailCtrl', function(){
             });
 
             it('should return null', function(){
-                expect($scope.editNamedItem('demographics', 0)).toBe(null);
+                var promise = $scope.editNamedItem('demographics', 0).then(function(result){
+                  expect(result).toBe(null);
+                });
+                $scope.$apply();
             });
 
             afterEach(function(){
