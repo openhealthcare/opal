@@ -49,8 +49,7 @@ class EpisodeListTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(EpisodeListTemplateView, self).get_context_data(**kwargs)
-        teams = models.Team.for_user(self.request.user)
-        context['teams'] = teams
+        context['teams'] = PatientList.get_menu_items(self.request)
         context['columns'] = self.get_column_context(**kwargs)
         if 'tag' in kwargs:
             try:

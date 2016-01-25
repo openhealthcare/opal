@@ -46,6 +46,7 @@ class TestPatientList(OpalTestCase):
         serialized = patient_list.get_serialised()
         self.assertEqual(len(serialized), 1)
         self.assertEqual(serialized[0]["id"], 2)
+        self.assertEqual("#/list/eater/herbivore", patient_list.url)
 
     def test_tagging_set_without_subtag(self):
         ''' given an episode with certain tags and the required request we should
@@ -65,3 +66,4 @@ class TestPatientList(OpalTestCase):
         serialized = patient_list.get_serialised()
         self.assertEqual(len(serialized), 1)
         self.assertEqual(serialized[0]["id"], 2)
+        self.assertEqual("#/list/carnivore", patient_list.url)

@@ -14,10 +14,11 @@ app.config(
 			     resolve: {
 				     episodes: function(episodesLoader) { return episodesLoader(); },
 				     options: function(Options) { return Options; },
-                     profile: function(UserProfile){ return UserProfile; },
-                     episodeVisibility: function(episodeVisibility){
-                         return episodeVisibility;
-                     }
+             menuItems: function(patientListLoader){ return patientListLoader(); },
+             profile: function(UserProfile){ return UserProfile; },
+             episodeVisibility: function(episodeVisibility){
+                 return episodeVisibility;
+             }
 			     },
 			     templateUrl: function(params){
                      var target =  '/templates/episode_list.html';

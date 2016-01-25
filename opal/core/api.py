@@ -105,6 +105,15 @@ class ExtractSchemaViewSet(viewsets.ViewSet):
     def list(self, request):
         return Response(schemas.extract_schema())
 
+class PatientListViewSet(viewsets.ViewSet):
+    """
+    Returns the schema to build our extract query builder
+    """
+    base_name = 'patient-list'
+
+    def list(self, request):
+        patient_lists = PatientList.get_menu_items(request)
+        return Response(patient_list.to_dict() for patient_list in patient_lists)
 
 # TODO:
 # Deprecate this fully
@@ -386,6 +395,8 @@ router.register('extract-schema', ExtractSchemaViewSet)
 router.register('options', OptionsViewSet)
 router.register('userprofile', UserProfileViewSet)
 router.register('tagging', TaggingViewSet)
+router.register('patient-list', PatientListViewSet)
+
 
 for subrecord in subrecords():
     sub_name = camelcase_to_underscore(subrecord.__name__)

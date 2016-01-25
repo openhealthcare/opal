@@ -6,24 +6,13 @@
       <div class="btn-group pull-left" dropdown is-open="status.isopen">
         <button type="button" class="btn btn-secondary dropdown-toggle" ng-disabled="disabled">
           <i class="fa fa-user-md"></i>
-          [[ tag_display[currentTag] ]] / [[ tag_display[currentSubTag] ]]
+          [[ currentMenuItem.title ]]
           <i class="fa fa-angle-down"></i>
         </button>
         <ul class="dropdown-menu slides" role="menu">
-          {% for team in teams %}
-          {% if team.visible_in_list %}
-          {% if not team.has_subteams or team.parent %}
-          <li ng-hide="currentTag == '{{ team.name }}' || currentSubTag == '{{ team.name }}'">
-            <a href="#/list/{% if team.parent %}{{ team.parent.name }}/{{ team.name }}{% else %}{{ team.name }}{% endif %}">
-              {% if team.parent %}
-              {{ team.parent.title }} /
-              {% endif %}
-              {{ team.title }}
-            </a>
+          <li ng-repeat="menuItem in menuItems">
+              <a href="[[ menuItem.url ]]">[[ menuItem.title ]]</a>
           </li>
-          {% endif %}
-          {% endif %}
-          {% endfor %}
         </ul>
       </div>
       {% if not user.profile.explicit_access_only %}
@@ -69,7 +58,7 @@
     </li>
     <li class="list-group-item" ng-show="profile.can_see_pid()">
       {% with edit_teams="open_modal('EditTeamsCtrl', '/templates/modals/edit_teams.html', 'lg', {episode: episode})" %}
-      {% include 'partials/_teams_list.html' %}
+        {% include 'partials/_teams_list.html' %}
       {% endwith %}
     </li>
     <li class="list-group-item">

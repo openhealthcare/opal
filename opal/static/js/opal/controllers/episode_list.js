@@ -2,25 +2,34 @@ angular.module('opal.controllers').controller(
     'EpisodeListCtrl', function($scope, $q, $http, $cookieStore,
                                 $location, $routeParams,
                                 $modal, $rootScope,
-
+                                menuItems,
                                 $window,
 
                                 growl,
                                 Flow, Item,
                                 Episode, episodes, options,
                                 profile, episodeVisibility){
-        $scope.ready = false;
-        var version = window.version;
-        $rootScope.state = 'normal';
-        $scope.url = $location.url();
+      $scope.ready = false;
+      var version = window.version;
+      $rootScope.state = 'normal';
+      $scope.url = $location.url();
+      $scope.menuItems = _.filter(menuItems, function(mi){
+        return mi.url !== $scope.url;
+      });
 
-        $scope.options = options;
-        $scope.listView = true;
+      $scope.currentMenuItem = _.find(menuItems, function(mi){
+        // remove the hash at the front of the url
+        var relativeUrl = mi.url.substr(1);
+        return relativeUrl === $scope.url;
+      });
 
-        $scope.num_episodes = _.keys(episodes).length;
+      $scope.options = options;
+      $scope.listView = true;
+
+      $scope.num_episodes = _.keys(episodes).length;
 
 	    $scope.rix = 0; // row index
-        $scope._ =  _;
+      $scope._ =  _;
 
 	    $scope.query = {hospital_number: '', name: '', ward: '', bed: ''};
         $scope.$location = $location;
