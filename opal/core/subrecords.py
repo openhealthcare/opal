@@ -31,3 +31,12 @@ def subrecords():
         yield m
     for m in episode_subrecords():
         yield m
+
+
+def singleton_subrecords():
+    """
+    Generator function for singleton subrecords
+    """
+    for s in subrecords():
+        if s._is_singleton:
+            yield s
