@@ -419,11 +419,8 @@ class TrackedModel(models.Model):
 
     def set_created_by_id(self, incoming_value, user, *args, **kwargs):
         if not self.id:
-<<<<<<< HEAD
             # this means if a record is not created by the api, it will not
             # have a created by id
-=======
->>>>>>> ab8463b9440ca74ee18c4f09ed65f96739fc6cab
             self.created_by = user
 
     def set_updated_by_id(self, incoming_value, user, *args, **kwargs):
@@ -436,11 +433,9 @@ class TrackedModel(models.Model):
 
     def set_created(self, incoming_value, user, *args, **kwargs):
         if not self.id:
-<<<<<<< HEAD
             # this means if a record is not created by the api, it will not
             # have a created timestamp
-=======
->>>>>>> ab8463b9440ca74ee18c4f09ed65f96739fc6cab
+
             self.created = timezone.now()
 
 
