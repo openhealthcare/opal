@@ -161,8 +161,6 @@ class UpdatesFromDictMixin(object):
             try:
                 consistency_token = data.pop('consistency_token')
             except KeyError:
-                print data
-                print self.to_dict(user)
                 raise exceptions.APIError('Missing field (consistency_token)')
 
             if consistency_token != self.consistency_token:
