@@ -130,7 +130,7 @@ OPAL._run = function($rootScope, ngProgressLite, $modal, $location, $analytics) 
             templateUrl: template,
             size       : size,
             resolve    : resolve
-        }).then(
+        }).result.then(
             reset, reset
         );
     };
