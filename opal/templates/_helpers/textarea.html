@@ -5,5 +5,12 @@
               ng-model="{{ model }}" rows="5"
               {% if macros %}{% include 'partials/_mentio_edit_item.html' %}{% endif %}
               ></textarea>
+    {% if help_text %}
+  <br />
+  <span class="text-muted" style="">
+    {{ help_text }}
+  </span>
+  {% endif %}
+
   </div>
 </div>
