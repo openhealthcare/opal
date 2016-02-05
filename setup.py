@@ -22,10 +22,18 @@ else:
 setup(
     name='opal',
     version=VERSION,
-    packages=['opal', 'opal.utils'],
+    packages=[
+        'opal',
+        'opal.utils',
+        'opal.core',
+        'opal.management',
+        'opal.migrations',
+        'opal.templatetags',
+        'opal.tests'
+    ],
     include_package_data=True,
     license='GPL3',  # example license
-    description='Clinical Transactional Digital Services Framework.',
+    description='A web framework for building highly usable healthcare applications.',
     long_description=README,
     url='http://opal.openhealthcare.org.uk/',
     author='Open Health Care UK',
