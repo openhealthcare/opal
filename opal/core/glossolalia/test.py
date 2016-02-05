@@ -1,14 +1,20 @@
+import json
+from mock import patch, Mock
+
+from django.test import TestCase
+from django.core.urlresolvers import reverse
+
+from opal.core import glossolalia
 from opal.core.test import OpalTestCase
 from opal.core.glossolalia import triggers
 from opal.core.glossolalia.models import GlossolaliaSubscription
-from mock import patch, Mock
 from opal import models as opal_models
-import json
-from django.test import TestCase
-from opal.core import glossolalia
 
 
 class SubscriptionTest(OpalTestCase):
+
+    def setUp(self):
+        self.patient = opal_models.Patient.objects.create()
 
     def get_mock_request_obj(self, return_value):
         json_response = Mock(return_value=return_value)
@@ -20,12 +26,11 @@ class SubscriptionTest(OpalTestCase):
     def test_subscribe(self, mock_send):
         mock_response = self.get_mock_request_obj(return_value={"id": 1})
         mock_send.return_value = mock_response
-        patient = opal_models.Patient.objects.create()
-        episode = opal_models.Episode.objects.create(patient=patient)
+        episode = opal_models.Episode.objects.create(patient=self.patient)
         triggers.subscribe(episode)
         self.assertTrue(mock_response.json.called)
         self.assertTrue(GlossolaliaSubscription.objects.filter(
-            patient_id=patient.id,
+            patient_id=self.patient.id,
             subscription_type=GlossolaliaSubscription.ALL_INFORMATION,
             gloss_id=1
         ).exists())
@@ -34,15 +39,23 @@ class SubscriptionTest(OpalTestCase):
     def test_unsubscribe(self, mock_send):
         mock_response = self.get_mock_request_obj(return_value={"id": 1})
         mock_send.return_value = mock_response
-        patient = opal_models.Patient.objects.create()
-        episode = opal_models.Episode.objects.create(patient=patient)
+        episode = opal_models.Episode.objects.create(patient=self.patient)
         triggers.unsubscribe(episode)
         self.assertTrue(mock_response.json.called)
         self.assertTrue(GlossolaliaSubscription.objects.filter(
-            patient_id=patient.id,
-            subscription_type=GlossolaliaSubscription.ALL_INFORMATION,
+            patient_id=self.patient.id,
+            subscription_type=GlossolaliaSubscription.CORE_DEMOGRAPHICS,
             gloss_id=1
         ).exists())
+
+    def test_list_subscription(self):
+        GlossolaliaSubscription.objects.create(
+            patient=self.patient,
+            subscription_type=GlossolaliaSubscription.CORE_DEMOGRAPHICS,
+            gloss_id=1
+        )
+        url = reverse('glossolalia-list')
+        self.assertStatusCode(url, 200)
 
 
 class AdmitTestCase(TestCase):
