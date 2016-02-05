@@ -1,4 +1,5 @@
 describe('filters', function() {
+    "use strict";
 
     beforeEach(module('opal.filters'));
 
@@ -16,14 +17,14 @@ describe('filters', function() {
                expect(shortDateFilter(new Date(new Date().getFullYear(), 1, 1))).toBe('01/02');
            }));
     });
-    
+
     describe('future', function(){
         var futureFilter, today;
 
         beforeEach(function(){
             inject(function($injector){
                 futureFilter = $injector.get('futureFilter')
-            
+
             });
             today = new Date();
         });
@@ -33,8 +34,8 @@ describe('filters', function() {
             expect(futureFilter(tomorrow)).toBe(true);
         });
 
-        it('should return true if toady', function(){
-            expect(futureFilter(today)).toBe(true);
+        it('should return true if today', function(){
+            expect(futureFilter(new Date())).toBe(true);
         });
 
         it('should return fals if in the past', function(){
@@ -49,15 +50,15 @@ describe('filters', function() {
         beforeEach(function(){
             inject(function($injector){
                 ageFilter = $injector.get('ageFilter')
-                
+
             });
         });
 
         it('Should return the age in years', function () {
             expect(ageFilter(new Date())).toBe(0);
-            expect(ageFilter(new Date(2000,1,1))).toBe(15);
+            expect(ageFilter(new Date(2000,1,1))).toBe(16);
         });
-        
+
     });
 
 
@@ -66,7 +67,7 @@ describe('filters', function() {
 
         beforeEach(function(){
             inject(function($injector){
-                upperFilter = $injector.get('upperFilter')                
+                upperFilter = $injector.get('upperFilter')
             });
         });
 
@@ -93,7 +94,7 @@ describe('filters', function() {
             var obj = {start_date: new Date(2000, 1, 1), end_date: new Date(2000, 1, 4)}
             expect(totalDaysFilter(obj)).toBe(4)
         });
-        
+
     });
 
 });

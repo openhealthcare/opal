@@ -321,7 +321,7 @@ describe('services', function() {
             episodesLoader().then(function(r){ result = r; });
 
             $rootScope.$apply();
-            $httpBackend.flush()
+            $httpBackend.flush();
 
             expect(result[123].demographics[0].name).toBe('John Smith');
             expect(result[123].demographics[0].date_of_birth).toEqual(
@@ -332,11 +332,8 @@ describe('services', function() {
             var result;
 
             $httpBackend.whenGET('/api/v0.1/record/').respond(records);
-            $httpBackend.whenGET('/api/v0.1/list-schema/').respond(columns);
             $httpBackend.whenGET('/episode/micro').respond(500, 'NO');
-
-            episodesLoader()
-
+            episodesLoader();
             $rootScope.$apply();
             $httpBackend.flush();
 
