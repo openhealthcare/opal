@@ -6,7 +6,7 @@ import datetime
 from django.contrib.auth.models import User
 
 from opal.core.test import OpalTestCase
-from opal.tests.models import Hat, HatWearer
+from opal.tests.models import Hat, HatWearer, Dog, DogOwner
 from opal.models import Patient, Episode, Team
 
 
@@ -123,11 +123,32 @@ class EpisodeManagerTestCase(OpalTestCase):
         self.patient = Patient.objects.create()
         self.episode = self.patient.create_episode()
 
+        # make sure many to many serialisation goes as epected
+        top = Hat.objects.create(name="top")
+        hw = HatWearer.objects.create(episode=self.episode)
+        hw.hats.add(top)
+
+        # make sure free text or foreign key serialisation goes as expected
+        # for actual foriegn keys
+        Dog.objects.create(name="Jemima")
+        do = DogOwner.objects.create(episode=self.episode)
+        do.dog = "Jemima"
+        do.save()
+
+        # make sure it goes as expected for strings
+        DogOwner.objects.create(episode=self.episode, dog="Philip")
+
     def test_serialised_fields(self):
         as_dict = Episode.objects.serialised(self.user, [self.episode])[0]
         expected = [
             'id', 'category', 'active', 'date_of_admission', 'discharge_date',
             'consistency_token', 'date_of_episode'
         ]
+
         for field in expected:
             self.assertIn(field, as_dict)
+
+        dogs = set(i["dog"] for i in as_dict["dog_owner"])
+
+        self.assertEqual(dogs, {"Jemima", "Philip"})
+        self.assertEqual(as_dict["hat_wearer"][0]["hats"], ["top"])

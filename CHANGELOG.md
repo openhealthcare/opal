@@ -1,3 +1,21 @@
+### 0.5.3 (Minor Release)
+* Speed up loading of the lookup lists
+* Fix pagination issues in search
+* Speed up loading of many to many fields
+* Increase test coverage
+* Add some extra help fields to {% forms %} helpers
+* Fixes bug with $rootScope.open_modal() where keystrokes were being intercepted
+
+### 0.5.2 (Minor Release)
+Speed improvements on page load
+allow us to only show record panels if a record of that type exists
+disable modal buttons while saving
+
+
+### 0.5.1 (Minor Release)
+Minor bug fixes
+
+
 ### 0.5 (Major release)
 
 #### Search
@@ -17,7 +35,7 @@ Updated scrolling and loading behaviour to snap to viewport and not display the 
 
 #### Subrecord metadata
 
-Added four new utility fields to Patient and Episode subrecords: 
+Added four new utility fields to Patient and Episode subrecords:
 
 created_by, updated_by, created, updated
 
