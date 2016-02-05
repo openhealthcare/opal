@@ -11,10 +11,10 @@ describe('Utils.OPAL._run', function (){
 
     it('Should open a modal with the arguments', function () {
         var mock_scope = { $on: function(){} };
-        var mock_then  = { then: function(){} };
+        var mock_then  = { result: { then: function(){} } };
         var mock_modal = { open: function(){ return mock_then } };
         spyOn(mock_modal, 'open').and.callThrough();
-        spyOn(mock_then, 'then');
+        spyOn(mock_then, 'result');
 
         OPAL._run(mock_scope, {}, mock_modal)
         mock_scope.open_modal('TestCtrl', 'template.html', 'lg', {episode: {}})
