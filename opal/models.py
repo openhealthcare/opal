@@ -31,6 +31,7 @@ from opal.core.subrecords import episode_subrecords, patient_subrecords
 
 app = application.get_app()
 
+
 class UpdatesFromDictMixin(object):
     """
     Mixin class to provide the serialization/deserialization
@@ -413,7 +414,6 @@ class Patient(models.Model):
             for subclass in patient_subrecords():
                 if subclass._is_singleton:
                     subclass.objects.create(patient=self)
-
 
 class TrackedModel(models.Model):
     # these fields are set automatically from REST requests via
