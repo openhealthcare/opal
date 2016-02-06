@@ -1,3 +1,19 @@
+//
+// This service allows us to dynamically filter visible episodes.
+// (This is particularly useful in e.g. a patient list with many patients)
+//
+// In the current implementation there are a small number of allowed filters
+//
+// * Name
+// * Hospital Number
+// * Ward
+// * Bed
+//
+// TODO: At some point in the future we might like to refactor this to be
+// significantly more generic, or indeed consider whether it makes any real
+// sense to have this fuctionality in it's own service rather than in the
+// Patient List controller.
+//
 angular.module('opal.services')
     .factory('episodeVisibility', function(){
     return function(episode, $scope) {
@@ -8,24 +24,6 @@ angular.module('opal.services')
         var name = $scope.query.name;
         var ward = $scope.query.ward;
         var bed = $scope.query.bed;
-
-        // Not active (no tags) - hide it.
-        if(!episode.active && $scope.currentTag != 'mine'){
-            return false;
-        }
-
-        // Not in the top level tag - hide it
-	    if (_.keys(episode.tagging[0]).indexOf($scope.currentTag) == -1 ||
-            !episode.tagging[0][$scope.currentTag]) {
-		    return false;
-	    }
-
-        // Not in the current subtag
-	    if ($scope.currentSubTag != 'all' &&
-            (_.keys(episode.tagging[0]).indexOf($scope.currentSubTag) == -1 ||
-             !episode.tagging[0][$scope.currentSubTag])){
-		    return false;
-	    }
 
         // filtered out by hospital number
         if (demographics.hospital_number &&
