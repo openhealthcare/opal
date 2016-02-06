@@ -15,9 +15,6 @@ app.config(
 				     episodes: function(episodesLoader) { return episodesLoader(); },
 				     options: function(Options) { return Options; },
                      profile: function(UserProfile){ return UserProfile; },
-                     episodeVisibility: function(episodeVisibility){
-                         return episodeVisibility;
-                     }
 			     },
 			     templateUrl: function(params){
                      var target =  '/templates/episode_list.html';
