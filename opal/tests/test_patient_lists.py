@@ -34,16 +34,12 @@ class TestPatientList(OpalTestCase):
         eater = Team.objects.create(name="eater")
         Team.objects.create(name="herbivore", parent=eater)
         self.episode_2.set_tag_names(["eater", "herbivore"], self.user)
-        mock_request = MagicMock(name='Mock request')
-        mock_request.user = self.user
 
-        patient_list = PatientList.get_class(
-            mock_request, tag="eater", subtag="herbivore"
-        )
+        patient_list = PatientList.get('eater-herbivore')()
         self.assertEqual(
             [self.episode_2], [i for i in patient_list.get_queryset()]
         )
-        serialized = patient_list.get_serialised()
+        serialized = patient_list.to_dict(self.user)
         self.assertEqual(len(serialized), 1)
         self.assertEqual(serialized[0]["id"], 2)
 
@@ -53,15 +49,11 @@ class TestPatientList(OpalTestCase):
         '''
         Team.objects.create(name="carnivore")
         self.episode_2.set_tag_names(["carnivore"], self.user)
-        mock_request = MagicMock(name='Mock request')
-        mock_request.user = self.user
 
-        patient_list = PatientList.get_class(
-            mock_request, tag="carnivore"
-        )
+        patient_list = PatientList.get("carnivore")()
         self.assertEqual(
             [self.episode_2], [i for i in patient_list.get_queryset()]
         )
-        serialized = patient_list.get_serialised()
+        serialized = patient_list.to_dict(self.user)
         self.assertEqual(len(serialized), 1)
         self.assertEqual(serialized[0]["id"], 2)
