@@ -6,13 +6,12 @@ app.config(
              $routeProvider.when('/list/',{
                 controller: 'EpisodeRedirectListCtrl',
                 templateUrl: '/templates/episode_list.html',
-                resolve: {
-                    options: function(Options){ return Options; }
-                }
-             }).when('/list/:tag/:subtag?', {
+             }).when('/list/:slug', {
 			     controller: 'EpisodeListCtrl',
 			     resolve: {
-				     episodes: function(episodesLoader) { return episodesLoader(); },
+				     episodes: function(episodesLoader, $route) {
+               return episodesLoader($route.current.params.slug);
+             },
 				     options: function(Options) { return Options; },
              menuItems: function(patientListLoader){ return patientListLoader(); },
              profile: function(UserProfile){ return UserProfile; },

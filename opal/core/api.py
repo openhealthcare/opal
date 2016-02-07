@@ -447,5 +447,5 @@ class EpisodeListApi(View):
     """
     def get(self, *args, **kwargs):
         # while we manage transition lets allow a fall back to the old way
-        patient_list = PatientList.get_class(self.request, **kwargs)
+        patient_list = PatientList.get(kwargs["name"])
         return _build_json_response(patient_list.get_serialised())

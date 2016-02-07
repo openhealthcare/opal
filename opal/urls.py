@@ -28,8 +28,7 @@ urlpatterns = patterns(
 
 
     url(r'^episode/?$', views.episode_list_and_create_view),
-    url(r'^episode/(?P<tag>[a-z_\-]+)/?$', api.EpisodeListApi.as_view()),
-    url(r'^episode/(?P<tag>[a-z_\-]+)/(?P<subtag>[a-z_\-]+)/?$', api.EpisodeListApi.as_view()),
+    url(r'^episode/(?P<slug>[a-z_\-]+)/?$', api.EpisodeListApi.as_view()),
     url(r'^episode/(?P<pk>\d+)/?$', views.episode_detail_view),
 
     url(r'^episode/(?P<pk>\d+)/actions/copyto/(?P<category>[a-zA-Z_\-]+)/?$',

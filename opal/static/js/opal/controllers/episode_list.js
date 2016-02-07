@@ -9,13 +9,15 @@ angular.module('opal.controllers').controller(
                                 Flow, Item,
                                 Episode, episodes, options,
                                 profile, episodeVisibility){
-      $scope.ready = false;
+      $scope.ready = true;
       var version = window.version;
       $rootScope.state = 'normal';
       $scope.url = $location.url();
       $scope.menuItems = _.filter(menuItems, function(mi){
         return mi.url !== $scope.url;
       });
+
+      $cookieStore.put('opal.listSlug', $routeParams.slug);
 
       $scope.currentMenuItem = _.find(menuItems, function(mi){
         // remove the hash at the front of the url
@@ -32,32 +34,11 @@ angular.module('opal.controllers').controller(
       $scope._ =  _;
 
 	    $scope.query = {hospital_number: '', name: '', ward: '', bed: ''};
-        $scope.$location = $location;
-        $scope.path_base = '/list/';
-        $scope.currentTag = $routeParams.tag;
-
-        if(!$routeParams.subtag){
-            // this should never be the case, redirection should be done
-            // by the episode list redirect controller
-            if($scope.currentTag in options.tag_hierarchy &&
-               options.tag_hierarchy[$scope.currentTag].length > 0){
-
-                var subtag = $cookieStore.get('opal.currentSubTag') || "";
-
-                if(!subtag){
-                    subtag = options.tag_hierarchy[$scope.currentTag][0];
-                }
-
-                var target = $scope.path_base + $scope.currentTag + '/' + subtag;
-                $location.path(target);
-                $location.replace();
-                return;
-            }
-        }
-
-        $scope.currentSubTag = $routeParams.subtag || "all";
-        $scope.profile = profile;
-        $scope.tag_display = options.tag_display;
+      $scope.$location = $location;
+      $scope.path_base = '/list/';
+      // $scope.currentTag = $routeParams.tag;
+      $scope.profile = profile;
+      $scope.tag_display = options.tag_display;
 
 	    $scope.getVisibleEpisodes = function() {
 		    var visibleEpisodes = [];
@@ -75,62 +56,15 @@ angular.module('opal.controllers').controller(
 	    };
 
 	    $scope.rows = $scope.getVisibleEpisodes();
-        $scope.episode = $scope.rows[0];
+      $scope.episode = $scope.rows[0];
 
-        $scope.ready = true;
-
-        $scope.isSelectedEpisode = function(episode){
-            return episode === $scope.episode;
-        }
+      $scope.isSelectedEpisode = function(episode){
+          return episode === $scope.episode;
+      }
 
 	    function compareEpisodes(p1, p2) {
 		    return p1.compare(p2);
 	    };
-
-        $scope.jumpToTag = function(tag){
-            if(_.contains(_.keys(options.tag_hierarchy), tag)){
-                $location.path($scope.path_base + tag)
-            }else{
-                for(var prop in options.tag_hierarchy){
-                    if(options.tag_hierarchy.hasOwnProperty(prop)){
-                        if(_.contains(_.values(options.tag_hierarchy[prop]), tag)){
-                            $location.path($scope.path_base + prop + '/' + tag)
-                        }
-                    }
-                }
-
-            };
-        }
-
-	    $scope.$watch('currentTag', function() {
-		    $cookieStore.put('opal.currentTag', $scope.currentTag);
-            if($scope.currentTag != $routeParams.tag){
-                $$rootScope.state = 'reloading'
-            }
-            var target = $scope.path_base +  $scope.currentTag;
-
-            $location.path(target);
-	    });
-
-	    $scope.$watch('currentSubTag', function(){
-		    $cookieStore.put('opal.currentSubTag', $scope.currentSubTag);
-            if($scope.currentSubTag == 'all'){
-                if($routeParams.subtag && $scope.currentSubTag != $routeParams.subtag){
-                    $rootScope.state = 'reloading'
-                }
-                $location.path($scope.path_base +  $scope.currentTag);
-            }else{
-                if($scope.currentSubTag != $routeParams.subtag){
-                    $rootScope.state = 'reloading'
-                }
-                $location.path($scope.path_base +  $scope.currentTag + '/' +  $scope.currentSubTag);
-            }
-	    });
-
-        $scope.showSubtags = function(withsubtags){
-            var show =  _.contains(withsubtags, $scope.currentTag);
-            return show
-        };
 
 	    $scope.$watch('query.hospital_number', function() {
 		    $scope.rows = $scope.getVisibleEpisodes();
