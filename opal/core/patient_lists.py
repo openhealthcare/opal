@@ -14,11 +14,11 @@ class PatientList(discoverable.DiscoverableFeature):
 
     @property
     def schema(self):
-        raise "this needs to be implemented"
+        raise ValueError("this needs to be implemented")
 
     @property
     def queryset(self):
-        raise "this needs to be implemented"
+        raise ValueError("this needs to be implemented")
 
     def get_queryset(self):
         return self.queryset

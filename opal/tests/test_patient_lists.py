@@ -1,4 +1,7 @@
-from mock import MagicMock
+"""
+Unittests for opal.core.patient_lists
+"""
+from mock import MagicMock, PropertyMock, patch
 from opal.core.patient_lists import PatientList, TaggedPatientList
 from opal.tests import models
 from opal.models import Patient, Team
@@ -20,8 +23,24 @@ class TaggingTestNotSubTag(TaggedPatientList):
         models.Demographics,
     ]
 
-
 class TestPatientList(OpalTestCase):
+
+    def test_unimplemented_schema(self):
+        with self.assertRaises(ValueError):
+            schema = PatientList().schema
+
+    def test_unimplemented_queryset(self):
+        with self.assertRaises(ValueError):
+            queryset = PatientList().queryset
+
+    def test_get_queryset_default(self):
+        mock_queryset = MagicMock('Mock Queryset')
+        with patch.object(PatientList, 'queryset', new_callable=PropertyMock) as queryset:
+            queryset.return_value = mock_queryset
+            self.assertEqual(mock_queryset, PatientList().get_queryset())
+
+
+class TestTaggedPatientList(OpalTestCase):
     def setUp(self):
         self.patient = Patient.objects.create()
         self.episode_1 = self.patient.create_episode()
