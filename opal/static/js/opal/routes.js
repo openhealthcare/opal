@@ -21,7 +21,7 @@ app.config(
                      if(params.tag){
                          target += '/' + params.tag;
                          if(params.subtag){
-                             target += '/' + params.subtag;
+                             target += '-' + params.subtag;
                          }
                      }
                      return target;
