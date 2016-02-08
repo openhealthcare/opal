@@ -291,47 +291,52 @@ describe('services', function() {
         it('should allow inactive episodes on mine', function(){
             episode.active = false;
             $scope.currentTag = 'mine';
-            expect(episodeVisibility(episode, $scope, false)).toBe(true);
+            expect(episodeVisibility(episode, $scope)).toBe(true);
         });
-        it('should reject inactive episodes', function(){
+        it('should allow inactive episodes', function(){
             episode.active = false;
-            expect(episodeVisibility(episode, $scope, false)).toBe(false);
-        });
-        it('should reject if the current tag is not true', function(){
-            expect(episodeVisibility(episode, $scope, false)).toBe(false);
-        });
-        it('should reject if the current subtag is not true', function(){
-            $scope.currentTag = 'tropical';
-            $scope.currentSubTag = 'tropical_outpatients';
-            expect(episodeVisibility(episode, $scope, false)).toBe(false);
+            expect(episodeVisibility(episode, $scope)).toBe(true);
         });
         it('should reject if the hospital number filter fails', function(){
             $scope.currentTag = 'tropical';
             $scope.query.hospital_number = '123'
-            expect(episodeVisibility(episode, $scope, false)).toBe(false);
+            expect(episodeVisibility(episode, $scope)).toBe(false);
         });
         it('should allow if the hospital number filter passes', function(){
             $scope.currentTag = 'tropical';
-            expect(episodeVisibility(episode, $scope, false)).toBe(true);
+            expect(episodeVisibility(episode, $scope)).toBe(true);
         });
         it('should reject if the name filter fails', function(){
             $scope.currentTag = 'tropical';
             $scope.query.name = 'Fake Name';
-            expect(episodeVisibility(episode, $scope, false)).toBe(false);
+            expect(episodeVisibility(episode, $scope)).toBe(false);
         });
         it('should allow if the name filter passes', function(){
             $scope.currentTag = 'tropical';
             $scope.query.name = 'john'
-            expect(episodeVisibility(episode, $scope, false)).toBe(true);
+            expect(episodeVisibility(episode, $scope)).toBe(true);
         });
-        it('should allow if in the tag & unfiltered', function(){
-            $scope.currentTag = 'tropical';
-            expect(episodeVisibility(episode, $scope, false)).toBe(true);
-        })
+        it('should allow if unfiltered', function(){
+            expect(episodeVisibility(episode, $scope)).toBe(true);
+        });
+        it('should allow if the bed filter passes', function(){
+            $scope.query.bed = '15'
+            expect(episodeVisibility(episode, $scope)).toBe(true);
+        });
+        it('should allow if the bed rangefilter passes', function(){
+            $scope.query.bed = '10-20'
+            expect(episodeVisibility(episode, $scope)).toBe(true);
+        });
+        it('should fail if the bed filter fails', function(){
+            $scope.query.bed = '14'
+            expect(episodeVisibility(episode, $scope)).toBe(false);
+        });
+        it('should fail if the bed range filter fails', function(){
+            $scope.query.bed = '1-10'
+            expect(episodeVisibility(episode, $scope)).toBe(false);
+        });
+
     });
-
-
-
 
     describe('episodesLoader', function() {
         var episodesLoader, $httpBackend, listSchemaLoader, $route;

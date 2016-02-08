@@ -1,41 +1,31 @@
+"""
+This module defines the base PatientList classes.
+"""
 from opal.models import Episode
-from opal.core import app_importer
+from opal.core import discoverable
 
 
-class PatientList(object):
+class PatientList(discoverable.DiscoverableFeature):
     """
     A view of a list shown on the list page, complete with schema that
     define the columns shown and a queryset that defines the episodes shown
     """
-    def __init__(self, request, *args, **kwargs):
-        self.request = request
+    module_name = 'patient_lists'
 
     @property
     def schema(self):
-        raise "this needs to be implemented"
+        raise ValueError("this needs to be implemented")
 
     @property
     def queryset(self):
-        raise "this needs to be implemented"
+        raise ValueError("this needs to be implemented")
 
     def get_queryset(self):
         return self.queryset
 
-    def get_serialised(self):
+    def to_dict(self, user):
         # only bringing in active seems a sensible default at this time
-        return self.get_queryset().serialised_active(self.request.user)
-
-    @classmethod
-    def list_classes(klass):
-        return app_importer.get_subclass("patient_lists", klass)
-
-    @classmethod
-    def get_class(klass, request, **kwargs):
-        list_classes = klass.list_classes()
-        for list_class in list_classes:
-            lc = list_class.get(**kwargs)
-            if lc:
-                return lc(request)
+        return self.get_queryset().serialised_active(user)
 
 
 class TaggedPatientList(PatientList):
@@ -47,14 +37,14 @@ class TaggedPatientList(PatientList):
     tag = "Implement me please"
 
     @classmethod
-    def get(klass, **kwargs):
-        tag = kwargs.get("tag", None)
-        subtag = kwargs.get("subtag", None)
-        klass_subtag = getattr(klass, "subtag", None)
-
-        if tag and klass.tag == tag.lower():
-            if not klass_subtag or klass_subtag == subtag.lower():
-                return klass
+    def slug(klass):
+        """
+        For a tagged patient list, the slug is made up of the tags.
+        """
+        s = klass.tag
+        if hasattr(klass, 'subtag'):
+            s += '-' + klass.subtag
+        return s
 
     def get_queryset(self):
         filter_kwargs = dict(tagging__archived=False)

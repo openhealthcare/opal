@@ -4,4 +4,10 @@
          ng-model="{{ model }}" {% if change %}ng-change="{{ change }}"{% endif %}
          />
   <label for="checkbox_{{model}}">{{ label }}</label>
+  {% if help_text %}
+  <br />
+  <span class="text-muted" style="margin-left: -20px;">
+    {{ help_text }}
+  </span>
+  {% endif %}
 </div>

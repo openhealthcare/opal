@@ -56,7 +56,7 @@ describe('filters', function() {
 
         it('Should return the age in years', function () {
             expect(ageFilter(new Date())).toBe(0);
-            expect(ageFilter(new Date(2000,1,1))).toBe(15);
+            expect(ageFilter(new Date(2000,1,1))).toBe(16);
         });
 
     });

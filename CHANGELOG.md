@@ -1,19 +1,22 @@
-### 0.5.3
-Speed up loading of the lookup lists
-Fix pagination issues in search
-Speed up loading of many to many fields
-Increase test coverage
+### 0.6.0 (Major Release)
 
+### 0.5.3 (Minor Release)
 
-### 0.5.2
+* Speed up loading of the lookup lists
+* Fix pagination issues in search
+* Speed up loading of many to many fields
+* Increase test coverage
+* Add some extra help fields to {% forms %} helpers
+* Fixes bug with $rootScope.open_modal() where keystrokes were being intercepted
+
+### 0.5.2 (Minor Release)
+
 Speed improvements on page load
 Allow us to only show record panels if a record of that type exists
 Disable modal buttons while saving
 
-
 ### 0.5.1 (Minor Release)
 Minor bug fixes
-
 
 ### 0.5 (Major release)
 

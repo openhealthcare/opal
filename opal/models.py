@@ -31,6 +31,7 @@ from opal.core.subrecords import episode_subrecords, patient_subrecords
 
 app = application.get_app()
 
+
 class UpdatesFromDictMixin(object):
     """
     Mixin class to provide the serialization/deserialization
@@ -414,7 +415,6 @@ class Patient(models.Model):
                 if subclass._is_singleton:
                     subclass.objects.create(patient=self)
 
-
 class TrackedModel(models.Model):
     # these fields are set automatically from REST requests via
     # updates from dict and the getter, setter properties, where available
@@ -433,6 +433,8 @@ class TrackedModel(models.Model):
 
     def set_created_by_id(self, incoming_value, user, *args, **kwargs):
         if not self.id:
+            # this means if a record is not created by the api, it will not
+            # have a created by id
             self.created_by = user
 
     def set_updated_by_id(self, incoming_value, user, *args, **kwargs):
@@ -445,6 +447,9 @@ class TrackedModel(models.Model):
 
     def set_created(self, incoming_value, user, *args, **kwargs):
         if not self.id:
+            # this means if a record is not created by the api, it will not
+            # have a created timestamp
+
             self.created = timezone.now()
 
 

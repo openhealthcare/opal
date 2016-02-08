@@ -15,16 +15,13 @@ app.config(
 				     episodes: function(episodesLoader) { return episodesLoader(); },
 				     options: function(Options) { return Options; },
                      profile: function(UserProfile){ return UserProfile; },
-                     episodeVisibility: function(episodeVisibility){
-                         return episodeVisibility;
-                     }
 			     },
 			     templateUrl: function(params){
                      var target =  '/templates/episode_list.html';
                      if(params.tag){
                          target += '/' + params.tag;
                          if(params.subtag){
-                             target += '/' + params.subtag;
+                             target += '-' + params.subtag;
                          }
                      }
                      return target;

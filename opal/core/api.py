@@ -436,5 +436,8 @@ class EpisodeListApi(View):
     """
     def get(self, *args, **kwargs):
         # while we manage transition lets allow a fall back to the old way
-        patient_list = PatientList.get_class(self.request, **kwargs)
-        return _build_json_response(patient_list.get_serialised())
+        name = kwargs['tag']
+        if 'subtag' in kwargs:
+            name += '-' + kwargs['subtag']
+        patient_list = PatientList.get(name)()
+        return _build_json_response(patient_list.to_dict(self.request.user))
