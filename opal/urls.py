@@ -11,6 +11,7 @@ from opal.core import api
 from opal.forms import ChangePasswordForm
 from opal.utils import camelcase_to_underscore
 from opal.core.subrecords import subrecords
+from opal.core.glossolalia import api as glossolalia_api
 
 urlpatterns = patterns(
     '',
@@ -68,6 +69,7 @@ urlpatterns = patterns(
     url(r'api/v0.1/episode/admit', csrf_exempt(api.APIAdmitEpisodeView.as_view())),
     url(r'api/v0.1/episode/refer', csrf_exempt(api.APIReferPatientView.as_view())),
     url(r'api/v0.1/', include(api.router.urls)),
+    url(r'glossolalia_api/v0.1/', include(glossolalia_api.router.urls)),
 )
 
 # Generated subrecord template views

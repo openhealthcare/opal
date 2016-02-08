@@ -1,6 +1,11 @@
 from opal.models import Episode, Team
 from django.utils.functional import cached_property
 from django.utils.text import slugify
+
+"""
+This module defines the base PatientList classes.
+"""
+from opal.models import Episode
 from opal.core import discoverable
 
 
@@ -36,9 +41,9 @@ class PatientList(discoverable.DiscoverableFeature):
     def get_queryset(self):
         return self.queryset
 
-    def get_serialised(self):
-        # only bringing in active seems a sensible default at this time
-        return self.get_queryset().serialised_active(self.request.user)
+    # def to_dict(self, user):
+    #     # only bringing in active seems a sensible default at this time
+    #     return self.get_queryset().serialised_active(self.request.user)
 
     def to_dict(self):
         return dict(
@@ -71,6 +76,16 @@ class TaggedPatientList(PatientList):
             return "{0} / {1}".format(tag_obj.title, subtag_obj.title)
         else:
             return tag_obj.title
+
+    @classmethod
+    def slug(klass):
+        """
+        For a tagged patient list, the slug is made up of the tags.
+        """
+        s = klass.tag
+        if hasattr(klass, 'subtag'):
+            s += '-' + klass.subtag
+        return s
 
     def get_queryset(self):
         filter_kwargs = dict(tagging__archived=False)

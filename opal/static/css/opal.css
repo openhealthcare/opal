@@ -223,6 +223,10 @@ li.selected {
     background-color: #5fa2dd; /* Blue */
 }
 
+.zero-padded-list li{
+    padding-left: 0;
+}
+
 tr.selected {
     background-color: #e0ebf5;
 }

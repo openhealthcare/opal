@@ -3,13 +3,16 @@ Glossolalia Integration for OPAL
 """
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
-import json
+from opal.core.glossolalia.models import GlossolaliaSubscription
+from django.core.urlresolvers import reverse
 import requests
+import json
 
-INTEGRATING  = settings.INTEGRATING
-NAME         = getattr(settings, 'GLOSSOLALIA_NAME', '')
-ENDPOINT     = getattr(settings, 'GLOSSOLALIA_URL', '') + 'api/v0.1/accept/'
+INTEGRATING = settings.INTEGRATING
+NAME = getattr(settings, 'GLOSSOLALIA_NAME', '')
+ENDPOINT = getattr(settings, 'GLOSSOLALIA_URL', '') + 'api/v0.1/accept/'
 OUR_ENDPOINT = settings.DEFAULT_DOMAIN
+
 
 def _send_upstream_message(event, payload):
     """
@@ -26,7 +29,37 @@ def _send_upstream_message(event, payload):
     except requests.ConnectionError:
         # print 'Glossolalia Connection Error :('
         return
-    return
+    return r
+
+
+def subscribe_to_type(episode, subscription_type):
+    demographics = episode.patient.demographics_set.get()
+    payload = {
+        "hopsital_number": demographics.hospital_number,
+        "subscription_type": subscription_type,
+        "end_point": reverse('glossolalia-list')
+    }
+    result = _send_upstream_message("subscribe", payload)
+    if result:
+        gloss_id = result.json()["id"]
+        GlossolaliaSubscription.objects.create(
+            patient=episode.patient, gloss_id=gloss_id,
+            subscription_type=subscription_type
+        )
+
+
+def subscribe(episode):
+    subscribe_to_type(episode, GlossolaliaSubscription.ALL_INFORMATION)
+
+
+def unsubscribe(episode):
+    # we never want to really unsubscribe, we just want core demographics data
+    subscribe_to_type(episode, GlossolaliaSubscription.CORE_DEMOGRAPHICS)
+
+
+def demographics_query(hospital_number):
+    pass
+
 
 def admit(episode):
     """
@@ -71,7 +104,7 @@ def transfer(pre, post):
     payload = {'data':
                json.dumps({
                    'endpoint': OUR_ENDPOINT,
-                   'pre': pre, 
+                   'pre': pre,
                    'post': post,
                }, cls=DjangoJSONEncoder)
     }
@@ -88,7 +121,7 @@ def change(pre, post):
     payload = {'data':
                json.dumps({
                    'endpoint': OUR_ENDPOINT,
-                   'pre': pre, 
+                   'pre': pre,
                    'post': post,
                }, cls=DjangoJSONEncoder)
     }

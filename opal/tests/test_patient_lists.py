@@ -1,4 +1,7 @@
-from mock import MagicMock
+"""
+Unittests for opal.core.patient_lists
+"""
+from mock import MagicMock, PropertyMock, patch
 from opal.core.patient_lists import PatientList, TaggedPatientList
 from opal.tests import models
 from opal.models import Patient, Team
@@ -20,8 +23,24 @@ class TaggingTestNotSubTag(TaggedPatientList):
         models.Demographics,
     ]
 
-
 class TestPatientList(OpalTestCase):
+
+    def test_unimplemented_schema(self):
+        with self.assertRaises(ValueError):
+            schema = PatientList().schema
+
+    def test_unimplemented_queryset(self):
+        with self.assertRaises(ValueError):
+            queryset = PatientList().queryset
+
+    def test_get_queryset_default(self):
+        mock_queryset = MagicMock('Mock Queryset')
+        with patch.object(PatientList, 'queryset', new_callable=PropertyMock) as queryset:
+            queryset.return_value = mock_queryset
+            self.assertEqual(mock_queryset, PatientList().get_queryset())
+
+
+class TestTaggedPatientList(OpalTestCase):
     def setUp(self):
         self.patient = Patient.objects.create()
         self.episode_1 = self.patient.create_episode()
@@ -34,16 +53,12 @@ class TestPatientList(OpalTestCase):
         eater = Team.objects.create(name="eater")
         Team.objects.create(name="herbivore", parent=eater)
         self.episode_2.set_tag_names(["eater", "herbivore"], self.user)
-        mock_request = MagicMock(name='Mock request')
-        mock_request.user = self.user
 
-        patient_list = PatientList.get_class(
-            mock_request, tag="eater", subtag="herbivore"
-        )
+        patient_list = PatientList.get('eater-herbivore')()
         self.assertEqual(
             [self.episode_2], [i for i in patient_list.get_queryset()]
         )
-        serialized = patient_list.get_serialised()
+        serialized = patient_list.to_dict(self.user)
         self.assertEqual(len(serialized), 1)
         self.assertEqual(serialized[0]["id"], 2)
         self.assertEqual("#/list/eater/herbivore", patient_list.url)
@@ -54,16 +69,12 @@ class TestPatientList(OpalTestCase):
         '''
         Team.objects.create(name="carnivore")
         self.episode_2.set_tag_names(["carnivore"], self.user)
-        mock_request = MagicMock(name='Mock request')
-        mock_request.user = self.user
 
-        patient_list = PatientList.get_class(
-            mock_request, tag="carnivore"
-        )
+        patient_list = PatientList.get("carnivore")()
         self.assertEqual(
             [self.episode_2], [i for i in patient_list.get_queryset()]
         )
-        serialized = patient_list.get_serialised()
+        serialized = patient_list.to_dict(self.user)
         self.assertEqual(len(serialized), 1)
         self.assertEqual(serialized[0]["id"], 2)
         self.assertEqual("#/list/carnivore", patient_list.url)

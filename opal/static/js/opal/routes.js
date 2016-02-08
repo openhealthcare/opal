@@ -18,13 +18,14 @@ app.config(
              episodeVisibility: function(episodeVisibility){
                  return episodeVisibility;
              }
+             profile: function(UserProfile){ return UserProfile; },
 			     },
 			     templateUrl: function(params){
                      var target =  '/templates/episode_list.html';
                      if(params.tag){
                          target += '/' + params.tag;
                          if(params.subtag){
-                             target += '/' + params.subtag;
+                             target += '-' + params.subtag;
                          }
                      }
                      return target;

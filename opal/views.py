@@ -42,7 +42,10 @@ class EpisodeListTemplateView(TemplateView):
         # the list redirect view, so if there are no kwargs, just
         # return an empty context
         if kwargs:
-            patient_list = PatientList.get_class(self.request, **kwargs)
+            name = kwargs['tag']
+            if 'subtag' in kwargs:
+                name += '-' + kwargs['subtag']
+            patient_list = PatientList.get(name)
             return _get_column_context(patient_list.schema, **kwargs)
         else:
             return []
