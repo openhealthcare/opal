@@ -111,7 +111,7 @@ class OpalApplication(object):
     javascripts   = []
     actions       = []
     menuitems     = []
-    default_episode_category = 'Inpatient'
+    default_episode_category = 'inpatient'
 
     opal_angular_exclude_tracking_qs = [
         "/search",
