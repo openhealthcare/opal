@@ -38,6 +38,7 @@ def extract_common_args(kwargs):
         "label": kwargs.pop('label', None),
         "change": kwargs.pop("change", None),
         "autofocus": kwargs.pop("autofocus", None),
+        "help_text": kwargs.pop("help_text", None)
     }
 
     disabled = kwargs.pop('disabled', None)

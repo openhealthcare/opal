@@ -111,6 +111,8 @@ OPAL._run = function($rootScope, ngProgressLite, $modal, $location, $analytics) 
     });
 
     $rootScope.open_modal = function(controller, template, size, resolves){
+        $rootScope.state = 'modal';
+
         resolve = {};
         _.each(_.keys(resolves), function(key){
             resolve[key] = function(){
@@ -118,12 +120,18 @@ OPAL._run = function($rootScope, ngProgressLite, $modal, $location, $analytics) 
             };
         });
 
+        var reset = function(){
+            $rootScope.state = 'normal';
+        }
+
         return $modal.open({
             controller : controller,
             templateUrl: template,
             size       : size,
             resolve    : resolve
-        });
+        }).result.then(
+            reset, reset
+        );
     };
 };
 

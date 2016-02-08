@@ -253,10 +253,13 @@ angular.module('opal.controllers').controller(
   			                $scope.rows = $scope.getVisibleEpisodes();
   			                rowIx = getRowIxFromEpisodeId(episode.id);
   			                $scope.selectItem(rowIx, 0, 0);
-                              $scope.num_episodes += 1;
-                              var readableName = $scope.tag_display[$scope.currentSubTag];
-                              var msg = episode.demographics[0].name + " added to the " + readableName + " list";
-                              growl.success(msg);
+                        $scope.num_episodes += 1;
+                        var readableName = $scope.tag_display[$scope.currentSubTag];
+                        if(!readableName){
+                          readableName = $scope.tag_display[$scope.currentTag];
+                        }
+                        var msg = episode.demographics[0].name + " added to the " + readableName + " list";
+                        growl.success(msg);
   		                }
                     };
 

@@ -174,7 +174,7 @@ angular.module('opal.services')
 	        this.compare = function(other) {
               if($routeParams.tag === "walkin" && $routeParams.subtag === "walkin_review"){
                   var getName = function(x){
-                      return x.demographics[0].name;
+                      return x.demographics[0].name.toLowerCase();
                   };
 
                   if(other.date_of_episode > this.date_of_episode){

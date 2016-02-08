@@ -435,6 +435,7 @@ class TrackedModel(models.Model):
         if not self.id:
             # this means if a record is not created by the api, it will not
             # have a created timestamp
+
             self.created = timezone.now()
 
 
