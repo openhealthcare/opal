@@ -667,3 +667,17 @@ class PatientTestCase(TestCase):
         response = api.PatientViewSet().retrieve(self.mock_request, pk=self.patient.pk).content
         expected = _build_json_response(self.patient.to_dict(None)).content
         self.assertEqual(expected, response)
+
+
+class PatientListTestCase(TestCase):
+
+    def setUp(self):
+        self.mock_request = MagicMock(name='request')
+
+    @patch('opal.core.api.PatientList')
+    def test_retrieve_episodes(self, patient_list):
+        instantiated_list = patient_list.get.return_value.return_value
+        instantiated_list.to_dict.return_value = {}
+        expected = _build_json_response({}).content
+        response = api.PatientListViewSet().retrieve(self.mock_request, pk='mylist').content
+        self.assertEqual(expected, response)
