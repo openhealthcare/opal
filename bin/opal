@@ -249,7 +249,7 @@ def _create_display_template_for(record):
     if not records:
         records.mkdir()
 
-    display_template = SCRIPT_HERE/'record_templates/record_display.jinja2'
+    display_template = SCAFFOLDING_BASE/'record_templates/record_display.jinja2'
     template = records/'{0}.html'.format(name)
     template << mold.cast(display_template, record=record, fields=record.build_field_schema())
     return
@@ -267,7 +267,7 @@ def _create_form_template_for(record):
     if not modals:
         modals.mkdir()
 
-    modal_template = SCRIPT_HERE/'record_templates/record_modal.jinja2'
+    modal_template = SCAFFOLDING_BASE/'record_templates/record_modal.jinja2'
     template = modals/'{0}_modal.html'.format(name)
     template << mold.cast(modal_template, record=record, fields=record.build_field_schema())
 
