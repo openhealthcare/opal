@@ -1,2 +1,3 @@
 recursive-include opal/static *
 recursive-include opal/templates *
+recursive-include opal/scaffolding *

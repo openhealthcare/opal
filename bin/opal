@@ -16,11 +16,13 @@ from ffs.contrib import mold
 
 import opal
 
-USERLAND_HERE   = ffs.Path('.').abspath
-SCRIPT_HERE     = ffs.Path(__file__).parent
-SCAFFOLD        = SCRIPT_HERE/'scaffold'
-PLUGIN_SCAFFOLD = SCRIPT_HERE/'plugin_scaffold'
-TRAVIS          = os.environ.get('TRAVIS', False)
+USERLAND_HERE    = ffs.Path('.').abspath
+SCRIPT_HERE      = ffs.Path(__file__).parent
+OPAL             = ffs.Path(opal.__file__).parent
+SCAFFOLDING_BASE = OPAL/'scaffolding'
+SCAFFOLD         = SCAFFOLDING_BASE/'scaffold'
+PLUGIN_SCAFFOLD  = SCAFFOLDING_BASE/'plugin_scaffold'
+TRAVIS           = os.environ.get('TRAVIS', False)
 
 def _find_application_name():
     """
