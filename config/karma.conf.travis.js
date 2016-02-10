@@ -38,6 +38,7 @@ module.exports = function(config){
             'bower_components/ment.io/dist/mentio.js',
             'bower_components/ment.io/dist/templates.js',
             'bower_components/angular-ui-select/dist/select.js',
+            "bower_components/angular-local-storage/dist/angular-local-storage.js",
             'opal/utils.js',
             'opal/directives.js',
             'opal/filters.js',
