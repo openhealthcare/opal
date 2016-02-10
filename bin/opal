@@ -40,6 +40,8 @@ def _find_application_name():
 
 def _set_settings_module(name):
     os.environ['DJANGO_SETTINGS_MODULE'] = '{0}.settings'.format(name)
+    if '.' not in sys.path:
+        sys.path.append('.')
     import django
     django.setup()
     return
@@ -284,8 +286,8 @@ def scaffold(args):
     _set_settings_module(name)
     sys.path.append(os.path.abspath('.'))
 
-    # 1. Let's run a South migration
-    os.system('python manage.py schemamigration --auto {app} --traceback'.format(app=app))
+    # 1. Let's run a Django migration
+    os.system('python manage.py makemigrations {app} --traceback'.format(app=app))
     os.system('python manage.py migrate {app} --traceback'.format(app=app))
 
     # 2. Let's create some display templates
