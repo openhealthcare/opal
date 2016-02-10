@@ -145,9 +145,8 @@ def startproject(args):
 
     # 8. Run Django's migrations
     print 'Creating Database'
-    manage('makemigrations'.format(name))
-    manage('syncdb --noinput')
-    manage('migrate --noinput')
+    manage('makemigrations {0}'.format(name))
+    manage('migrate')
 
     # 9. Create a superuser
     sys.path.append(os.path.join(os.path.abspath('.'), name))
