@@ -1,6 +1,6 @@
 import os
 import re
-from setuptools import setup
+from setuptools import setup, find_packages
 
 README = open(os.path.join(os.path.dirname(__file__), 'README.md')).read()
 
@@ -22,15 +22,8 @@ else:
 setup(
     name='opal',
     version=VERSION,
-    packages=[
-        'opal',
-        'opal.utils',
-        'opal.core',
-        'opal.management',
-        'opal.migrations',
-        'opal.templatetags',
-        'opal.tests'
-    ],
+    packages=find_packages(),
+    zip_safe=False,
     include_package_data=True,
     license='GPL3',  # example license
     description='A web framework for building highly usable healthcare applications.',
@@ -48,6 +41,7 @@ setup(
         'django-reversion==1.8.7',
         'django-axes==1.4.0',
         'djangorestframework==3.2.2',
-        'django-compressor==1.5'
+        'django-compressor==1.5',
+        'python-dateutil==2.4.2'
         ]
 )
