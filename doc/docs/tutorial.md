@@ -257,7 +257,12 @@ or unique identifier:
 
 #### Detail views
 
-We also have a detail view for our patients, which you can access via search results:
+We also have a detail view for our patients, which you can access via search results. This
+view will typically allow for a more detailed display and editing of all the events
+comprising an activity of care than is available on the list page.
+
+<img src="/img/detail.png" style="margin: 12px auto; border: 1px solid black; width: 600px;"/>
+
 
 #### JSON APIs
 
