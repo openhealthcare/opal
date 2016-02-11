@@ -884,7 +884,6 @@ class Tagging(TrackedModel, models.Model):
         for tagging in team_taggings:
             relevent_set = episode_id_to_team_dict[tagging.episode_id]
             if tagging.team_id and tagging.team_id in relevent_set:
-                print "removing %s" % tagging.team_id
                 relevent_set.remove(tagging.team_id)
 
         tagging_objs = []

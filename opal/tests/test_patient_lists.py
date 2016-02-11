@@ -1,10 +1,12 @@
 """
 Unittests for opal.core.patient_lists
 """
+from django.contrib.auth.models import User
 from mock import MagicMock, PropertyMock, patch
+
 from opal.core.patient_lists import PatientList, TaggedPatientList
 from opal.tests import models
-from opal.models import Patient, Team
+from opal.models import Patient, Team, UserProfile
 from opal.core.test import OpalTestCase
 
 
@@ -25,6 +27,12 @@ class TaggingTestNotSubTag(TaggedPatientList):
 
 class TestPatientList(OpalTestCase):
 
+    def setUp(self):
+        self.restricted_user = User.objects.create(username='restrictedonly')
+        self.profile, _ = UserProfile.objects.get_or_create(
+            user=self.restricted_user, restricted_only=True
+        )
+
     def test_unimplemented_schema(self):
         with self.assertRaises(ValueError):
             schema = PatientList().schema
@@ -38,6 +46,19 @@ class TestPatientList(OpalTestCase):
         with patch.object(PatientList, 'queryset', new_callable=PropertyMock) as queryset:
             queryset.return_value = mock_queryset
             self.assertEqual(mock_queryset, PatientList().get_queryset())
+
+    def test_visible_to(self):
+        self.assertTrue(TaggingTestPatientList.visible_to(self.user))
+
+    def test_visible_to_restricted_only(self):
+        self.assertFalse(TaggingTestPatientList.visible_to(self.restricted_user))
+
+    def test_for_user(self):
+        self.assertIn(TaggingTestPatientList, list(PatientList.for_user(self.user)))
+        self.assertIn(TaggingTestNotSubTag, list(PatientList.for_user(self.user)))
+
+    def test_for_user_restricted_only(self):
+        self.assertEqual([], list(PatientList.for_user(self.restricted_user)))
 
 
 class TestTaggedPatientList(OpalTestCase):
