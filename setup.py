@@ -2,7 +2,16 @@ import os
 import re
 from setuptools import setup, find_packages
 
-README = open(os.path.join(os.path.dirname(__file__), 'README.md')).read()
+long_desc = """
+OPAL is a web framework for building highly usable healthcare applications.
+
+OPAL builds deep clinical domain specific functionality on top of Django, Angular
+and Bootstrap to help developers quickly build easy to maintain,
+robust clinical applications.
+
+Full documentation is available at http://opal.openhealthcare.org.uk/docs/
+Source code is available at https://github.com/openhealthcare/opal/
+"""
 
 # allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
