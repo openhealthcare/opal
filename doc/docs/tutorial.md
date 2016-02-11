@@ -12,7 +12,7 @@ So that I can treat them effectively and safely.
 
 ### Bootstrapping a new project
 
-We assume that you've already [Installed OPAL](installation.md). You can tell which version of opal is installed 
+We assume that you've already [Installed OPAL](installation.md). You can tell which version of opal is installed
 by running this command
 
     $ opal --version
@@ -20,11 +20,11 @@ by running this command
 At the start a new project, OPAL will bootstrap the initial project structure, including
 a Djano project, some core datamodels (complete with JSON APIs) and a general application structure.
 
-From the commandline: 
+From the commandline:
 
     $ opal startproject mynewapp
 
-This will create a mynewap directory where your new project lives. 
+This will create a mynewap directory where your new project lives.
 
 Let's have a look at what that created for you:
 
@@ -35,25 +35,25 @@ Let's have a look at what that created for you:
         README.md
         manage.py               # Django's manage.py script
         requirements.txt        # Requirements file ready for your project
-        
+
         data/                   # A dummy directory for fixtures
-        
+
         mynewapp/               # The actual python package for your application
              __init__.py
             flow.py             # How patients move through your services
-            models.py           # Data models for your application 
+            models.py           # Data models for your application
             schema.py           # The list schemas for your application
             settings.py         # Helpfully tweaked Django settings
             tests.py            # Dummy unittests
             urls.py             # Django Urlconf
-            wsgi.py             
+            wsgi.py
 
             assets/             # Your static files directory
             templates/          # Your template directory
             migrations/         # Your Database migrations directory
 
 
-### Test it out 
+### Test it out
 
 The scaffolding step has generated you a working project - so let's check that out
 
@@ -64,7 +64,7 @@ If you now visit `http://localhost:8000` in your browser, you should see the sta
 
 <img src="/img/tutorial-login.png" style="margin: 12px auto; border: 1px solid black;"/>
 
-The scaffolding step created you a superuser, so try logging in with the credentials: 
+The scaffolding step created you a superuser, so try logging in with the credentials:
 
 * Username: _super_
 * Password:  _super1_
@@ -105,7 +105,7 @@ looks a lot like this:
         provisional       = models.BooleanField(default=False)
         details           = models.CharField(max_length=255, blank=True)
         date_of_diagnosis = models.DateField(blank=True, null=True)
-    
+
         class Meta:
             abstract = True
 
@@ -116,12 +116,12 @@ This is a custom field type that we use with OPAL when we want to use a
 [Lookup List](/guides/lookup_lists/).
 
 Lookup Lists allow us to reference canonical lists of available terminology as a foreign key, while
-also allowing synonymous terms, and a free text override. That means that we can ensure that 
+also allowing synonymous terms, and a free text override. That means that we can ensure that
 we record high quality coded data, while allowing users an easy way to enter unusual edge
 cases.
 
 You'll need to import the data for a terminology before you can start to take advantage of that.
-For now, let's use the reference data from elCID: 
+For now, let's use the reference data from elCID (An OPAL application maintained by Open Health Care):
 
     wget https://raw.githubusercontent.com/openhealthcare/elcid/master/data/lookuplists/lookuplists.json -P data/lookuplists
 
@@ -134,43 +134,43 @@ Now let's import the data:
 
     python manage.py load_lookup_lists -f data/lookuplists/lookuplists.json
 
-Now try adding a new diagnosis to your patient - as you start to type in the condition field,
-you'l see that the conditions we just imported appear as suggestions: 
+Now refresh your application and try adding a new diagnosis to your patient. As you start to type in
+the condition field, you'l see that the conditions we just imported appear as suggestions:
 
 <img src="/img/tutorial-conditions.png" style="margin: 12px auto; border: 1px solid black;"/>
 
 ### Add your own data models
 
-So far we've begun to get a sense of the batteries-included parts of OPAL, 
+So far we've begun to get a sense of the batteries-included parts of OPAL,
 but before long, you're going to need to create models for your own needs.
 
 Most OPAL models are [Subrecords](/guides/datamodel/) - they relate to either a patient, or
 an episode (an episode is for example, an admission to hospital).
 
 Let's see how that works by creating a TODO list model that is assigned to
-episodes of care. In your `mynewapp/models.py` : 
+episodes of care. In your `mynewapp/models.py` :
 
     class TODOItem(models.EpisodeSubrecord):
         job       = fields.CharField(max_length=200)
         due_date  = fields.DateField(blank=True, null=True)
         details   = fields.TextField(blank=True, null=True)
         completed = fields.BooleanField(default=False)
-          
-This is simply a Django model, apart from the parent class `models.EpisodeSubrecord` 
-which provides us with some extra functionality: 
+
+This is simply a Django model, apart from the parent class `models.EpisodeSubrecord`
+which provides us with some extra functionality:
 
 * A relationship to an episode, linked to a patient
 * JSON APIs for creating, retrieving and updating it
 * Ensuring that the OPAL Angular layer knows it exists
 
 Next, we're going to let OPAL take care of the boilerplate that we'll need to use this
-model in our application. From the commandline: 
+model in our application. From the commandline:
 
     $ opal scaffold mynewapp
 
-Let's take a look at what that did: 
+Let's take a look at what that did:
 
-* It created a south migration (Migrations live in `mynewapp/migrations`)
+* It created a Django migration
 * It created a detail template `mynewapp/templates/records/todo_item.html`
 * It created a form template `mynewapp/templates/modals/todo_item_modal.html`
 
@@ -204,7 +204,7 @@ It uses the OPAL form helpers templatetag library.
 
 Now let's add our TODO list model as a column in the Spreadsheet-like list view.
 
-The columns for team lists are set in `mynewapp/schemas.py` as a list of models.
+The columns for team lists are set in `mynewapp/schema.py` as a list of models.
 
 Open mynewapp/schemas.py and edit the `list_columns` variable to add `models.TODOItem` as
 the final item:
@@ -224,17 +224,50 @@ Refresh the lists page in your browser, and you'll see your new column on the en
 TODO item, noting how we automatically get appropriate form types like datepickers and
 checkboxes.
 
-### Set an Icon for your model
+### Tweaking the default scaffolding
+
+The scaffolding templates are only really supposed to get you started - you'll often
+need to tweak the templates they generate with whatever logic makes sense for your
+application.
+
+For us, you'll notice that the value of `TODOItem.completed` simply displays as false -
+which is not particularly useful. So let's update that using the OPAL
+[Boxed filter](/reference/javascript_helpers/). In `mynewapp/templates/records/todo_item.html`
+change the last line to look like this:
+
+    <span ng-show="item.completed">[[ item.completed | boxed ]] <br /></span>
+
+#### Set an Icon for your model
 
 You'll notice that your new column is the only one without an icon - we set the icon by
-adding the following property to your `TODOItem` class: 
+adding the following property to your `TODOItem` class:
 
         _icon = 'fa fa-th-list'
 
-### JSON APIs 
+### Some other batteries included
+
+Let's take a look at some of the other core functionality that we now have out of the box:
+
+#### Search
+
+By default, we also enable the search module, which allows you to search by patient name
+or unique identifier:
+
+<img src="/img/search.png" style="margin: 12px auto; border: 1px solid black;"/>
+
+#### Detail views
+
+We also have a detail view for our patients, which you can access via search results. This
+view will typically allow for a more detailed display and editing of all the events
+comprising an activity of care than is available on the list page.
+
+<img src="/img/detail.png" style="margin: 12px auto; border: 1px solid black; width: 600px;"/>
+
+
+#### JSON APIs
 
 OPAL automatically creates self-documenting JSON APIs for your interacting with the data
-in your application. You can inspect these APIs interactively at the url: 
+in your application. You can inspect these APIs interactively at the url:
 
     http://localhost:8000/api/v0.1/
 
