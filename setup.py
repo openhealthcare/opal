@@ -36,7 +36,7 @@ setup(
     include_package_data=True,
     license='GPL3',  # example license
     description='A web framework for building highly usable healthcare applications.',
-    long_description=README,
+    long_description=long_desc,
     url='http://opal.openhealthcare.org.uk/',
     author='Open Health Care UK',
     author_email='hello@openhealthcare.org.uk',
