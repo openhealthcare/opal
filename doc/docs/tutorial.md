@@ -52,6 +52,8 @@ Let's have a look at what that created for you:
             templates/          # Your template directory
             migrations/         # Your Database migrations directory
 
+            opal.sqlite         # The Sqlite development database
+
 
 ### Test it out
 
@@ -223,6 +225,8 @@ the final item:
 Refresh the lists page in your browser, and you'll see your new column on the end - add a
 TODO item, noting how we automatically get appropriate form types like datepickers and
 checkboxes.
+
+You can edit any entry in the list view by double clicking on it.
 
 ### Tweaking the default scaffolding
 
