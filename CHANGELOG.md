@@ -1,3 +1,7 @@
+### 0.5.4 (Minor Release)
+* Include local storage
+
+
 ### 0.5.3 (Minor Release)
 * Speed up loading of the lookup lists
 * Fix pagination issues in search
