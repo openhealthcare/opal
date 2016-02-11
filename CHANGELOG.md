@@ -1,7 +1,8 @@
-### 0.6.0 (Major Release)
+### 0.5.4 (Minor Release)
+* Include local storage
+
 
 ### 0.5.3 (Minor Release)
-
 * Speed up loading of the lookup lists
 * Fix pagination issues in search
 * Speed up loading of many to many fields
@@ -10,13 +11,14 @@
 * Fixes bug with $rootScope.open_modal() where keystrokes were being intercepted
 
 ### 0.5.2 (Minor Release)
-
 Speed improvements on page load
-Allow us to only show record panels if a record of that type exists
-Disable modal buttons while saving
+allow us to only show record panels if a record of that type exists
+disable modal buttons while saving
+
 
 ### 0.5.1 (Minor Release)
 Minor bug fixes
+
 
 ### 0.5 (Major release)
 
