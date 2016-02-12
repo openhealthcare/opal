@@ -1,7 +1,7 @@
 """
 This module defines the base PatientList classes.
 """
-from opal.models import Episode
+from opal.models import Episode, UserProfile
 from opal.core import discoverable
 
 
@@ -11,6 +11,23 @@ class PatientList(discoverable.DiscoverableFeature):
     define the columns shown and a queryset that defines the episodes shown
     """
     module_name = 'patient_lists'
+
+    @classmethod
+    def for_user(klass, user):
+        """
+        Return the set of instances that this USER can see.
+        """
+        for k in klass.list():
+            if k.visible_to(user):
+                yield k
+
+    @classmethod
+    def visible_to(klass, user):
+        profile, _ = UserProfile.objects.get_or_create(user=user)
+        if profile.restricted_only:
+            return False
+
+        return True
 
     @property
     def schema(self):

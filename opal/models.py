@@ -753,8 +753,8 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
         if subteam:
             templates.insert(0, 'modals/{0}/{1}/{2}_modal.html'.format(
                 team, subteam, name))
-
-        templates.append("modal_base.html")
+        if cls.get_form_template():
+            templates.append("modal_base.html")
 
         try:
             return select_template(templates).template.name
@@ -884,7 +884,6 @@ class Tagging(TrackedModel, models.Model):
         for tagging in team_taggings:
             relevent_set = episode_id_to_team_dict[tagging.episode_id]
             if tagging.team_id and tagging.team_id in relevent_set:
-                print "removing %s" % tagging.team_id
                 relevent_set.remove(tagging.team_id)
 
         tagging_objs = []

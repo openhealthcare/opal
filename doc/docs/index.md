@@ -1,8 +1,11 @@
 ## OPAL Documentation
 
-OPAL is a framework that makes writing clinical digital services easy.
+#### OPAL is a full stack framework that makes building digital tools for health care easy.
 
-It builds upon [Django](https://djangoproject.com/), [Angular JS](https://angularjs.org/)
+<img src="/img/clinical.advice.png" width="600px;" style="margin: 12px auto; border: 1px solid black;"/>
+
+OPAL builds deep clinical domain specific functionality on top of
+[Django](https://djangoproject.com/), [Angular](https://angularjs.org/)
 and [Bootstrap](http://getbootstrap.com/) to help developers quickly build easy to maintain,
 robust clinical applications.
 

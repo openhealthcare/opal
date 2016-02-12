@@ -1,7 +1,46 @@
+
 ### 0.6.0 (Major Release)
 
-### 0.5.3 (Minor Release)
 
+#### Detail views
+
+Moves from episode oriented detail to patient oriented detail.
+(All episodes plus x-episode views are available from a patient detail screen)
+
+#### Tagging
+
+As a performance optimisation for the frequent access of historic tags, untagging
+an episode simply renders the tag inactive rather than deleting it and relying on
+Django-Reversion for access to historical data.
+
+#### Date Formatting
+
+We now expect 'd/m/y' date formatting by default.
+
+#### Patient lists
+
+Lists are now declarative, and separate from teams. They are implemented as 
+subclasses of opal.core.patient_lists.PatientList.
+
+#### Forms vs. Modals
+
+Introduces a distinction between a form and a modal.
+By default, we now use forms for subrecords, only overriding the modal if there
+is something we want to do differently specifically in the modal.
+
+#### Command line tools
+
+Adds $opal checkout for switching between applications or application versions.
+
+#### Upgrade instructions:
+
+* Update your settings to use the new date formats.
+
+### 0.5.4 (Minor Release)
+* Include local storage
+
+
+### 0.5.3 (Minor Release)
 * Speed up loading of the lookup lists
 * Fix pagination issues in search
 * Speed up loading of many to many fields
@@ -10,13 +49,14 @@
 * Fixes bug with $rootScope.open_modal() where keystrokes were being intercepted
 
 ### 0.5.2 (Minor Release)
-
 Speed improvements on page load
-Allow us to only show record panels if a record of that type exists
-Disable modal buttons while saving
+allow us to only show record panels if a record of that type exists
+disable modal buttons while saving
+
 
 ### 0.5.1 (Minor Release)
 Minor bug fixes
+
 
 ### 0.5 (Major release)
 
