@@ -397,14 +397,15 @@ li li {
     color: white;
 }
 
-.modal {
-  background-color: white;
-  font-size: 18px;
-}
+/* .modal { */
+/*   background-color: white; */
+/*   font-size: 18px; */
+/* } */
 
-.modal-content {
-  box-shadow: none;
-}
+/* .modal-content { */
+/*   box-shadow: none; */
+/* } */
+
 .modal .btn,
 .modal select,
 .modal input {
