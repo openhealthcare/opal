@@ -16,11 +16,13 @@ from ffs.contrib import mold
 
 import opal
 
-USERLAND_HERE   = ffs.Path('.').abspath
-SCRIPT_HERE     = ffs.Path(__file__).parent
-SCAFFOLD        = SCRIPT_HERE/'scaffold'
-PLUGIN_SCAFFOLD = SCRIPT_HERE/'plugin_scaffold'
-TRAVIS          = os.environ.get('TRAVIS', False)
+USERLAND_HERE    = ffs.Path('.').abspath
+SCRIPT_HERE      = ffs.Path(__file__).parent
+OPAL             = ffs.Path(opal.__file__).parent
+SCAFFOLDING_BASE = OPAL/'scaffolding'
+SCAFFOLD         = SCAFFOLDING_BASE/'scaffold'
+PLUGIN_SCAFFOLD  = SCAFFOLDING_BASE/'plugin_scaffold'
+TRAVIS           = os.environ.get('TRAVIS', False)
 
 def _find_application_name():
     """
@@ -38,6 +40,8 @@ def _find_application_name():
 
 def _set_settings_module(name):
     os.environ['DJANGO_SETTINGS_MODULE'] = '{0}.settings'.format(name)
+    if '.' not in sys.path:
+        sys.path.append('.')
     import django
     django.setup()
     return
@@ -143,9 +147,8 @@ def startproject(args):
 
     # 8. Run Django's migrations
     print 'Creating Database'
-    manage('makemigrations'.format(name))
-    manage('syncdb --noinput')
-    manage('migrate --noinput')
+    manage('makemigrations {0}'.format(name))
+    manage('migrate')
 
     # 9. Create a superuser
     sys.path.append(os.path.join(os.path.abspath('.'), name))
@@ -221,6 +224,10 @@ def startplugin(args):
     services.mkdir()
     return
 
+def _strip_non_user_fields(schema):
+    exclude = ['created', 'updated', 'created_by_id', 'updated_by_id', 'consistency_token']
+    return [f for f in schema if f['name'] not in exclude]
+
 def _get_template_dir_from_record(record):
     """
     Given a RECORD, return it's relative template dir
@@ -246,9 +253,13 @@ def _create_display_template_for(record):
     if not records:
         records.mkdir()
 
-    display_template = SCRIPT_HERE/'record_templates/record_display.jinja2'
+    display_template = SCAFFOLDING_BASE/'record_templates/record_display.jinja2'
     template = records/'{0}.html'.format(name)
-    template << mold.cast(display_template, record=record, fields=record.build_field_schema())
+    fields = _strip_non_user_fields(record.build_field_schema())
+    contents = mold.cast(display_template, record=record, fields=fields)
+    # We often get lots of lines containing just spaces as a Jinja2 artifact. Lose them.
+    contents = "\n".join(l for l in contents.split("\n") if l.strip())
+    template << contents
     return
 
 def _create_form_template_for(record):
@@ -264,10 +275,13 @@ def _create_form_template_for(record):
     if not modals:
         modals.mkdir()
 
-    modal_template = SCRIPT_HERE/'record_templates/record_modal.jinja2'
+    modal_template = SCAFFOLDING_BASE/'record_templates/record_modal.jinja2'
     template = modals/'{0}_modal.html'.format(name)
-    template << mold.cast(modal_template, record=record, fields=record.build_field_schema())
-
+    fields = _strip_non_user_fields(record.build_field_schema())
+    contents = mold.cast(modal_template, record=record, fields=fields)
+    # We often get lots of lines containing just spaces as a Jinja2 artifact. Lose them.
+    contents = "\n".join(l for l in contents.split("\n") if l.strip())
+    template << contents
     return
 
 def scaffold(args):
@@ -283,8 +297,8 @@ def scaffold(args):
     _set_settings_module(name)
     sys.path.append(os.path.abspath('.'))
 
-    # 1. Let's run a South migration
-    os.system('python manage.py schemamigration --auto {app} --traceback'.format(app=app))
+    # 1. Let's run a Django migration
+    os.system('python manage.py makemigrations {app} --traceback'.format(app=app))
     os.system('python manage.py migrate {app} --traceback'.format(app=app))
 
     # 2. Let's create some display templates

@@ -1000,4 +1000,18 @@ a.panel-link:hover .panel{
     -webkit-transition:.3s;
     transition:.3s;
     background-color: #F6F6F6;
+
+a.table-link::before {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+a.table-link:hover{
+  text-decoration: none;
+  color: #333;
 }
