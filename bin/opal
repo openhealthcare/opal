@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import sys
 
+from fabric.api import local
 import ffs
 from ffs import nix
 from ffs.contrib import mold
@@ -380,6 +381,87 @@ def test(args):
         globals()['_run_{0}_tests'.format(suite)](args)
     return
 
+
+
+def check_for_uncommitted():
+    changes = local("git status --porcelain", capture=True)
+    return len(changes)
+
+
+def get_requirements():
+    """
+    looks for a requirements file in the same directory as the
+    fabfile. Parses it,
+    """
+
+    with USERLAND_HERE:
+        requirements = local("less requirements.txt", capture=True).split("\n")
+
+        package_to_version = {}
+
+        for requirement in requirements:
+            parsed_url = parse_github_urls(requirement)
+
+            if parsed_url:
+                package_to_version.update(parsed_url)
+
+    return package_to_version
+
+
+def parse_github_urls(some_url):
+    """
+    takes in something that looks like a git hub url in a fabfile e.g.
+    -e git+https://github.com/openhealthcare/opal-referral.git@v0.1.2#egg=opal_referral
+    returns opal-referral
+    """
+
+    if "github" in some_url and "opal" in some_url:
+        package_name = some_url.split("@")[0].split("/")[-1]
+        package_name = package_name.replace(".git", "")
+        version = some_url.split("@")[-1].split("#")[0]
+        return {package_name: version}
+
+
+def checkout(args):
+    """
+    This is our main entrypoint for the checkout command.
+    """
+    package_name_version = get_requirements()
+    SOURCE_DIR = USERLAND_HERE.parent
+    with SOURCE_DIR:
+        existing_packages = local("ls", capture=True).split("\n")
+        uncommitted = []
+
+        for package_name, version in package_name_version.iteritems():
+            if package_name in existing_packages:
+                with SOURCE_DIR/package_name:
+                    if check_for_uncommitted():
+                        uncommitted.append(package_name)
+
+        if len(uncommitted):
+            print "we have uncommited changes in {} quitting".format(
+                ", ".join(uncommitted)
+            )
+            return
+
+        for package_name, version in package_name_version.iteritems():
+            if package_name in existing_packages:
+                with SOURCE_DIR/package_name:
+                    print "checking out {0} to {1}".format(
+                        package_name, version
+                    )
+                    local("git checkout {}".format(version))
+                    local("python setup.py develop")
+            else:
+                print "cloning {}".format(package_name)
+                local("git clone {}".format(package_name))
+                with SOURCE_DIR/package_name:
+                    print "checking out {0} to {1}".format(
+                        package_name, version
+                    )
+                    local("git checkout {}".format(version))
+                    local("python setup.py develop")
+
 def main():
     parser = argparse.ArgumentParser(
         description="OPAL a Clinical Transactional Digital Services Framework",
@@ -421,6 +503,9 @@ def main():
         '-c', '--coverage', action='store_true', help='Generate a test coverage report'
     )
     parser_test.set_defaults(func=test)
+
+    parser_checkout = subparsers.add_parser("checkout")
+    parser_checkout.set_defaults(func=checkout)
 
     args = parser.parse_args()
     args.func(args)
