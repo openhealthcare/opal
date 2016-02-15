@@ -3,9 +3,9 @@ Allow us to make search queries
 """
 import datetime
 
+from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.db import models as djangomodels
-
 
 from opal import models
 from opal.core import fields
@@ -19,7 +19,7 @@ def get_model_from_column_name(column_name):
     Mod = None
     model_name = get_model_name_from_column_name(column_name)
 
-    for m in djangomodels.get_models():
+    for m in apps.get_models():
         if m.__name__.lower() == model_name:
             if not Mod:
                 Mod = m
