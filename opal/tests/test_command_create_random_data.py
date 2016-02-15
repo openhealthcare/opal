@@ -14,3 +14,10 @@ class StringGeneratorTestCase(OpalTestCase):
         frist, last = crd.string_generator(mock_field).split()
         self.assertIn(frist, crd.adjectives)
         self.assertIn(last, crd.nouns)
+
+
+class ConsistencyGeneratorTestCase(OpalTestCase):
+    def test_consistency_generator(self):
+        res = crd.consistency_generator()
+        self.assertIsInstance(res, str)
+        self.assertEqual(8, len(res))
