@@ -2,6 +2,7 @@
 Randomise our admission dates over the last year.
 """
 from datetime import datetime, date, timedelta
+import logging
 from optparse import make_option
 import random
 
@@ -107,7 +108,7 @@ def foreign_key_or_free_text_generator(field, **kwargs):
         if len(all_options):
             return random.choice(all_options)
         else:
-            print "no len for %s" % field.foreign_model
+            logging.info("no len for {0}".format(field.foreign_model))
 
 
 def text_field_generator(*args, **kwargs):
