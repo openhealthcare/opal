@@ -350,7 +350,7 @@ describe('EpisodeListCtrl', function() {
                 callArgs = $modal.open.calls.mostRecent().args;
                 expect(callArgs.length).toBe(1);
                 expect(callArgs[0].templateUrl).toBe('/templates/modals/demographics.html/tropical/all');
-                expect(callArgs[0].controller).toBe('EditItemCtrl');
+                expect(callArgs[0].controller).toBe(' EditItemCtrl');
             });
 
             it('should open the demographics modal', function() {

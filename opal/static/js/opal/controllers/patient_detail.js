@@ -47,15 +47,15 @@ angular.module('opal.controllers').controller(
       var recordEditor = new RecordEditor(options, profile);
 
       self.deleteItem = function(columnName, iix){
-          recordEditor.deleteItem($scope.episode, name, iix, $rootScope);
+          $scope.episode.recordEditor.deleteItem(name, iix, $rootScope);
       };
 
       $scope.editNamedItem = function(name, iix){
-          recordEditor.editItem($scope.episode, name, iix, $scope, $rootScope);
+          $scope.episode.recordEditor.editItem(name, iix, $rootScope);
       };
 
       $scope.newNamedItem = function(name){
-          recordEditor.newItem($scope.episode, name, $scope, $rootScope);
+          $scope.episode.recordEditor.newItem(name, $scope, $rootScope);
       };
 
 

@@ -3,7 +3,6 @@ angular.module('opal.controllers').controller(
                                 $location, $routeParams,
                                 $modal, $rootScope,
                                 $window,
-                                RecordEditor,
                                 growl,
                                 Flow, Item,
                                 Episode, episodes, options,
@@ -21,7 +20,7 @@ angular.module('opal.controllers').controller(
 	    $scope.rix = 0; // row index
         $scope._ =  _;
 
-	    $scope.query = {hospital_number: '', name: '', ward: '', bed: ''};
+  	    $scope.query = {hospital_number: '', name: '', ward: '', bed: ''};
         $scope.$location = $location;
         $scope.path_base = '/list/';
         $scope.currentTag = $routeParams.tag;
@@ -311,8 +310,7 @@ angular.module('opal.controllers').controller(
         };
 
         $scope.newNamedItem = function(episode, name) {
-            var recordEditor = new RecordEditor(options, profile)
-            return recordEditor.newItem(episode, name, $scope, $rootScope);
+            return episode.recordEditor.newItem(name, {tag: $scope.currentTag, subTag: $scope.subTag});
         }
 
         $scope.is_tag_visible_in_list = function(tag){
@@ -320,7 +318,6 @@ angular.module('opal.controllers').controller(
         };
 
         $scope.editNamedItem  = function(episode, name, iix) {
-            var recordEditor = new RecordEditor(options, profile);
             var reset_state = function(result){
                 if (name == 'tagging') {
                     // User may have removed current tag
@@ -333,7 +330,7 @@ angular.module('opal.controllers').controller(
                 }
             };
 
-            recordEditor.editItem(episode, name, iix, $scope, $rootScope).then(function(result){
+            episode.recordEditor.editItem(name, iix, {tag: $scope.currentTag, subtag: $scope.currentSubTag}).then(function(result){
                 reset_state(result);
             });
         };

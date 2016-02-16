@@ -132,7 +132,7 @@
             {% include column.header_template_path %}
             {% endif %}
   		    <li ng-repeat="item in row.{{column.name}} {% if column.list_limit %} |limitTo:{{ column.list_limit }}{% endif %} track by $index"
-  			    ng-dblclick="editNamedItem(row, '{{column.name}}', $index);$event.stopPropagation()"
+  			    ng-dblclick="editNamedItem('{{column.name}}', $index);$event.stopPropagation()"
   			    >
   			  {% include column.template_path %}
   		    </li>
