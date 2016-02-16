@@ -1,6 +1,6 @@
 describe('SearchCtrl', function (){
     var $scope, location;
-    var Episode, Flow;
+    var Flow;
     var profile, schema, options, locationDetails;
     var patientSummary = {};
 
@@ -41,7 +41,6 @@ describe('SearchCtrl', function (){
         $rootScope   = $injector.get('$rootScope');
         $scope       = $rootScope.$new();
         $controller  = $injector.get('$controller');
-        Episode      = $injector.get('Episode');
         Flow         = $injector.get('Flow');
         $httpBackend = $injector.get('$httpBackend');
         location = $injector.get('$location');
@@ -54,7 +53,6 @@ describe('SearchCtrl', function (){
         controller = $controller('SearchCtrl', {
             $scope         : $scope,
             $location      : location,
-            Episode: Episode,
             Flow: Flow,
             options        : options,
             schema         : schema,

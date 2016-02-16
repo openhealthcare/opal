@@ -2,53 +2,37 @@ angular.module('opal.services').factory('RecordEditor', function($http, $q, Item
   "use strict";
   var RecordEditor = function(episode){
     var self = this;
-    // self.options = options;
-    // self.profile = profile;
-    self.emptyPromise = function(){
-        // if its read only, just return an empty promise
-        var empty = $q.defer();
-        empty.resolve();
-        return empty.promise;
-    }
 
     self.deleteItem = function(name, iix){
-      if(profile.readonly){
-          return self.emptyPromise();
-      }
 
       var item = self.getItem(name, iix);
+      var deferred = $q.defer();
 
-      if (!angular.isDefined(item)) {
+      if (!angular.isDefined(item) || item.isReadOnly() || item.isSingleton()) {
         // Cannot delete 'Add'
-        return;
-      }
-
-      if(!item.isReadOnly){
-          item = new Item(column_name, episode, $rootScope.fields[column_name]);
-      }
-
-      if (item.isReadOnly()) {
-          // Cannont delete readonly columns
-          return;
-      }
-
-      if (item.isSingleton()) {
-        // Cannot delete singleton
-        return;
+        deferred.resolve();
+        return deferred.promise;
       }
 
       $rootScope.state = 'modal';
-      var deferred = $q.defer();
 
-      var modal = $modal.open({
-        templateUrl: '/templates/modals/delete_item_confirmation.html/',
-        controller: 'DeleteItemConfirmationCtrl',
-        resolve: {
-          item: function() { return item; }
+      UserProfile.then(function(profile){
+        if(profile.readonly){
+            deferred.resolve();
+            return deferred.promise;
         }
-      }).result.then(function(result) {
-        $$rootScope.state = 'normal';
-        deferred.resolve(result);
+
+        var modal = $modal.open({
+          templateUrl: '/templates/modals/delete_item_confirmation.html/',
+          controller: 'DeleteItemConfirmationCtrl',
+          resolve: {
+            item: function() { return item; },
+            profile: function(){ return profile; }
+          }
+        }).result.then(function(result) {
+          $rootScope.state = 'normal';
+          deferred.resolve(result);
+        });
       });
 
       return deferred.promise;
@@ -64,61 +48,70 @@ angular.module('opal.services').factory('RecordEditor', function($http, $q, Item
 
     self.openEditItemModal = function(item, name, tags){
       $rootScope.state = 'modal';
+
       var template_url = '/templates/modals/' + name + '.html/';
-      template_url += tags.currentTag + '/' + tags.currentSubTag;
 
-      var modal_opts = {
-          backdrop: 'static',
-          templateUrl: template_url,
-          controller: 'EditItemCtrl',
-          resolve: {
-              item: function() { return item; },
-              options: function(Options) { return Options; },
-              profile: function(UserProfile) { return UserProfile; },
-              episode: function() { return episode; }
-          }
-      };
-
-      if(item.size){
-          modal_opts.size = item.size;
-      }else{
-          modal_opts.size = 'lg';
+      if(tags){
+        template_url += tags.currentTag + '/' + tags.currentSubTag;
       }
-
-      var modal = $modal.open(modal_opts);
 
       var deferred = $q.defer();
 
-      modal.result.then(function(result) {
-        $rootScope.state = 'normal';
-        deferred.resolve(result);
+      UserProfile.then(function(profile){
+        if(profile.readonly){
+            deferred.resolve();
+        }
+        else{
+          var modal_opts = {
+              backdrop: 'static',
+              templateUrl: template_url,
+              controller: 'EditItemCtrl',
+              resolve: {
+                  item: function() { return item; },
+                  options: function(Options) { return Options; },
+                  profile: function(UserProfile) { return profile; },
+                  episode: function() { return episode; }
+              }
+          };
+
+          if(item.size){
+              modal_opts.size = item.size;
+          }else{
+              modal_opts.size = 'lg';
+          }
+
+          var modal = $modal.open(modal_opts);
+
+          modal.result.then(function(result) {
+            $rootScope.state = 'normal';
+            deferred.resolve(result);
+          });
+        }
       });
 
       return deferred.promise;
     };
 
     self.editItem = function(name, iix, tags){
-      if(self.profile.readonly){
-          return self.emptyPromise();
-      }
-
       var item = self.getItem(name, iix);
-      return self.openEditItemModal(episode, item, name, tags);
+      return self.openEditItemModal(item, name, tags);
     };
 
     self.newItem = function(name, tags){
-      if(self.profile.readonly){
-          return self.emptyPromise();
-      }
-
       if (!episode[name]) {
           episode[name] = [];
       }
 
-      var iix;
-      var item = self.getItem(episode, name, iix);
+      var iix = episode[name].length;
+      var item = self.getItem(name, iix);
+
+      if(item.isReadOnly() || item.isSingleton()){
+        var deferred = $q.defer();
+        deferred.resolve();
+        return deferred.promise;
+      }
       episode[name].push(item);
-      return self.openEditItemModal(episode, item, name, tags);
+      return self.openEditItemModal(item, name, tags);
     };
   };
 

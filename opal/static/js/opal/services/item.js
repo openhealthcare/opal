@@ -2,7 +2,7 @@ angular.module('opal.services')
     .factory('Item', function($http, $q) {
         return function(attrs, episode, columnSchema) {
 	        var item = this;
-            this.episode =  episode;
+          this.episode =  episode;
 
 	        this.initialise = function(attrs) {
 	            // Copy all attributes to item, and change any date fields to Date objects

@@ -80,29 +80,30 @@ describe('EpisodeDetailCtrl', function(){
         fields[c.name] = c;
     });
 
-    beforeEach(function(){
-        module('opal', function($provide) {
-            $provide.value('$analytics', function(){
-                return {
-                    pageTrack: function(x){}
-                };
-            });
+    // beforeEach(function(){
+    //     module('opal', function($provide) {
+    //         $provide.value('$analytics', function(){
+    //             return {
+    //                 pageTrack: function(x){}
+    //             };
+    //         });
+    //
+    //         $provide.provider('$analytics', function(){
+    //             this.$get = function() {
+    //                 return {
+    //                     virtualPageviews: function(x){},
+    //                     settings: {
+    //                         pageTracking: false,
+    //                     },
+    //                     pageTrack: function(x){}
+    //                  };
+    //             };
+    //         });
+    //     });
+    // });
 
-            $provide.provider('$analytics', function(){
-                this.$get = function() {
-                    return {
-                        virtualPageviews: function(x){},
-                        settings: {
-                            pageTracking: false,
-                        },
-                        pageTrack: function(x){}
-                     };
-                };
-            });
-        });
-    });
-
     beforeEach(function(){
+        module('opal');
         inject(function($injector){
             $rootScope   = $injector.get('$rootScope');
             $scope       = $rootScope.$new();
@@ -132,69 +133,6 @@ describe('EpisodeDetailCtrl', function(){
         it('should set up state', function(){
             expect($scope.episode).toEqual(episode);
         });
-    });
-
-    describe('editing an item', function(){
-        it('should open the EditItemCtrl', function(){
-            var deferred, callArgs;
-
-            deferred = $q.defer();
-            spyOn($modal, 'open').and.returnValue({result: deferred.promise});
-
-            $scope.editNamedItem('demographics', 0);
-
-            callArgs = $modal.open.calls.mostRecent().args;
-            expect(callArgs.length).toBe(1);
-            expect(callArgs[0].controller).toBe('EditItemCtrl');
-        });
-
-        describe('for a readonly user', function(){
-            beforeEach(function(){
-                profile.readonly = true;
-            });
-
-            it('should return null', function(){
-                var promise = $scope.editNamedItem('demographics', 0).then(function(result){
-                  expect(result).toBe(null);
-                });
-                $scope.$apply();
-            });
-
-            afterEach(function(){
-                profile.readonly = false;
-            });
-        });
-
-    });
-
-    describe('deleting an item', function(){
-        it('should open the DeleteItemConfirmationCtrl', function(){
-            var deferred, callArgs;
-
-            deferred = $q.defer();
-            spyOn($modal, 'open').and.returnValue({result: deferred.promise});
-
-            $scope.deleteItem('diagnosis', 0);
-
-            callArgs = $modal.open.calls.mostRecent().args;
-            expect(callArgs.length).toBe(1);
-            expect(callArgs[0].controller).toBe('DeleteItemConfirmationCtrl');
-        });
-
-        describe('for a readonly user', function(){
-            beforeEach(function(){
-                profile.readonly = true;
-            });
-
-            it('should return null', function(){
-                expect($scope.deleteItem('diagnosis', 0)).toBe(null);
-            });
-
-            afterEach(function(){
-                profile.readonly = false;
-            });
-        });
-
     });
 
     describe('discharging an episode', function(){
