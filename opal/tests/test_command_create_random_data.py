@@ -5,6 +5,7 @@ import datetime
 from mock import patch, MagicMock
 
 from opal.core.test import OpalTestCase
+from opal.models import Patient
 
 from opal.management.commands import create_random_data as crd
 
@@ -94,3 +95,8 @@ class PatientGeneratorTestCase(OpalTestCase):
     def test_get_unique_hospital_numbers(self):
         numbers = self.gen.get_unique_hospital_numbers(10)
         self.assertEqual(10, len(numbers))
+
+    def test_make(self):
+        self.assertEqual(0, Patient.objects.count())
+        p = self.gen.make()
+        self.assertEqual(1, Patient.objects.count())

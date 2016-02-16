@@ -89,7 +89,6 @@ def plugin_opal_angular_tracking_exclude():
         excluded_tracking_qs=yield_property("opal_angular_exclude_tracking_qs")
     )
 
-
 @register.inclusion_tag('plugins/javascripts.html')
 def core_javascripts(namespace):
     def scripts():
