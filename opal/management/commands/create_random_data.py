@@ -163,12 +163,6 @@ class PatientGenerator(object):
 
         return hospital_numbers
 
-    def get_country_of_birth(self):
-        return foreign_key_or_free_text_generator(models.Destination)
-
-    def get_gender(self):
-        return foreign_key_or_free_text_generator(models.Gender)
-
     def create_episode(self, patient):
         dob = patient.demographics_set.first().date_of_birth
         kwargs = dict(date_of_admission=date_generator(start_date=dob))

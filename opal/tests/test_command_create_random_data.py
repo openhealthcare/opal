@@ -64,3 +64,33 @@ class ForeignKeyOrFreeTextGenerator(OpalTestCase):
                 result = crd.foreign_key_or_free_text_generator(mock_field)
                 stringgen.assert_called_with(mock_field)
                 self.assertEqual('the string', result)
+
+
+class TextFieldGeneratorTestCase(OpalTestCase):
+    def test_text_field_generator(self):
+        result = crd.text_field_generator()
+        self.assertIsInstance(result, str)
+
+
+class BooleanFieldGeneratorTestCase(OpalTestCase):
+    def test_boolean(self):
+        self.assertIn(crd.boolean_field_generator(), [True, False])
+
+
+class PatientGeneratorTestCase(OpalTestCase):
+    def setUp(self):
+        self.gen = crd.PatientGenerator()
+
+    def test_get_name(self):
+        name = self.gen.get_name()
+        frist, last = name.split()
+        self.assertIsInstance(name, str)
+        self.assertIn(frist, crd.first_names)
+        self.assertIn(last, crd.last_names)
+
+    def test_get_birth_date_returns_date(self):
+        self.assertIsInstance(self.gen.get_birth_date(), datetime.date)
+
+    def test_get_unique_hospital_numbers(self):
+        numbers = self.gen.get_unique_hospital_numbers(10)
+        self.assertEqual(10, len(numbers))

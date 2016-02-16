@@ -48,7 +48,11 @@ settings.configure(DEBUG=True,
                                    'opal.core.search',
                                    'opal.core.glossolalia',
                                    'opal.tests'
-                               ))
+                               ),
+                   MIGRATION_MODULES={
+                       'opal': 'opal.nomigrations'
+                   }
+)
 
 from opal.tests import dummy_options_module
 from opal.tests import dummy_opal_application
