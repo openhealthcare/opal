@@ -13,10 +13,10 @@ from opal.core.lookuplists import LookupList
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option(
-            "-f", 
-            "--file", 
+            "-f",
+            "--file",
             dest = "filename",
-            help = "specify import file", 
+            help = "specify import file",
             metavar = "FILE"
         ),
     )
@@ -24,7 +24,7 @@ class Command(BaseCommand):
         self.items_created = 0
         self.synonyms_created = 0
         super(Command, self).__init__(*args, **kwargs)
-    
+
     def _from_file(self, filename):
         datafile = ffs.Path(filename)
         return datafile.json_load()
@@ -43,9 +43,9 @@ class Command(BaseCommand):
             if created:
                 self.synonyms_created += 1
         return
-    
+
     def handle(self, *args, **options):
-        if options['filename']:
+        if options.get('filename', None):
             data = self._from_file(options['filename'])
         else:
             raise ValueError('no lookuplist_provided!')

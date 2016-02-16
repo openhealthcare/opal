@@ -148,7 +148,7 @@ class UpdatesFromDictMixin(object):
 
             if not synonym_found:
                 error_msg = 'Unexpected fieldname(s): {}'.format(values)
-                logging.error(error_msg)
+                logging.info(error_msg)
                 raise exceptions.APIError(error_msg)
 
         field.add(*to_add)
