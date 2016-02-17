@@ -42,7 +42,7 @@ angular.module('opal.services').factory('RecordEditor', function($http, $q, Item
       if (episode[name][iix] && episode[name][iix].columnName) {
           return episode[name][iix];
       } else {
-          return new Item(episode[name][iix], episode, $rootScope.fields[name]);
+          return episode.newItem(name, {column: $rootScope.fields[name]});
       }
     };
 

@@ -17,17 +17,5 @@ angular.module('opal.controllers').controller(
               return _.contains(options.tag_visible_in_list, tag);
           };
 
-          $scope.deleteItem = function(name, iix){
-              return recordEditor.deleteItem(episode, name, iix, $rootScope);
-          };
-
-          $scope.editNamedItem = function(name, iix){
-              return recordEditor.editItem(episode, name, iix, $scope, $rootScope);
-          };
-
-          $scope.newNamedItem = function(name){
-              return recordEditor.editItem(episode, name, $scope, $rootScope);
-          }
-
           EpisodeDetailMixin($scope);
     });

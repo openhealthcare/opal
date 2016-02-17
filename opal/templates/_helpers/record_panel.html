@@ -8,7 +8,7 @@
              ng-click="editNamedItem('{{ name }}', 0)"></i>
           {% else %}
           <i class="fa fa-plus-circle edit pull-right"
-             ng-click="newNamedItem('{{ name }}')"></i>
+             ng-click="episode.recordEditor.newItem('{{ name }}')"></i>
           {% endif %}
      </span>
     </h3>
@@ -28,7 +28,7 @@
         <span ng-show="{{ editable }}" >
             {% if not singleton %}
             <i class="fa fa-pencil edit pull-right"
-               ng-click="editNamedItem('{{ name }}', $index)"></i>
+               ng-click="episode.recordEditor.editItem('{{ name }}', $index)"></i>
             {% endif %}
         </span>
       </div>
