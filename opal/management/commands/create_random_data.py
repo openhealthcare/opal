@@ -2,12 +2,14 @@
 Randomise our admission dates over the last year.
 """
 from datetime import datetime, date, timedelta
+import logging
 from optparse import make_option
 import random
 
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from django.utils.functional import cached_property
+from django.utils import timezone
 
 from opal import models
 from opal.core.fields import ForeignKeyOrFreeText
@@ -95,7 +97,7 @@ def date_time_generator(*args, **kwargs):
     d = date_generator(*args, **kwargs)
     hours = random.randint(0, 23)
     minutes = random.randint(0, 59)
-    return datetime(d.year, d.month, d.day, hours, minutes)
+    return timezone.make_aware(datetime(d.year, d.month, d.day, hours, minutes))
 
 
 def foreign_key_or_free_text_generator(field, **kwargs):
@@ -107,7 +109,7 @@ def foreign_key_or_free_text_generator(field, **kwargs):
         if len(all_options):
             return random.choice(all_options)
         else:
-            print "no len for %s" % field.foreign_model
+            logging.info("no len for {0}".format(field.foreign_model))
 
 
 def text_field_generator(*args, **kwargs):
@@ -162,12 +164,6 @@ class PatientGenerator(object):
 
         return hospital_numbers
 
-    def get_country_of_birth(self):
-        return foreign_key_or_free_text_generator(models.Destination)
-
-    def get_gender(self):
-        return foreign_key_or_free_text_generator(models.Gender)
-
     def create_episode(self, patient):
         dob = patient.demographics_set.first().date_of_birth
         kwargs = dict(date_of_admission=date_generator(start_date=dob))
@@ -183,20 +179,19 @@ class PatientGenerator(object):
 
     def make(self):
         patient = models.Patient.objects.create()
-        demographics = patient.demographics_set.first()
+        demographics = patient.demographics_set.get()
         hospital_number = random.randint(1000, 2000000)  # self.get_unique_hospital_numbers(1)[0]
         hospital_number = str(hospital_number)
-        demographics_kwargs = dict(
-            name=self.get_name(),
-            hospital_number=hospital_number,
-            nhs_number=hospital_number,
-            date_of_birth=self.get_birth_date(),
-            gender=random.choice(['Female', 'Male', 'Not Known', 'Not Specified'])
-        )
-
-        patient.demographics_set.update(**demographics_kwargs)
-        demographics = patient.demographics_set.get()
+        demographics.name=self.get_name()
+        demographics.hospital_number=hospital_number
+        demographics.nhs_number=hospital_number
+        demographics.date_of_birth=self.get_birth_date()
+        demographics.gender=random.choice(['Female', 'Male', 'Not Known', 'Not Specified'])
+        # cob = [f for f in Demographics._meta.get_fields() if f.name == 'country_of_birth'][0]
+        # demographics.country_of_birth = foreign_key_or_free_text_generator(cob)
         demographics.country_of_birth = foreign_key_or_free_text_generator(Demographics.country_of_birth)
+        demographics.save()
+
         self.create_episode(patient)
 
         for subrecord in episode_subrecords():

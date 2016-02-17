@@ -14,6 +14,9 @@ class SubrecordTestCase(OpalTestCase):
         Subrecord.get_display_template()
         select.assert_called_with(['records/subrecord.html'])
 
+    def test_display_template_does_not_exist(self):
+        self.assertEqual(None, Subrecord.get_display_template())
+
     @patch('opal.models.select_template')
     def test_display_template_team(self, select):
         Subrecord.get_display_template(team='test')
@@ -48,6 +51,9 @@ class SubrecordTestCase(OpalTestCase):
             'records/subrecord.html'
         ])
 
+    def test_detail_template_does_not_exist(self):
+        self.assertEqual(None, Subrecord.get_detail_template())
+
     @patch('opal.models.select_template')
     def test_detail_template_subteam(self, select):
         Subrecord.get_detail_template(team='test',
@@ -60,6 +66,9 @@ class SubrecordTestCase(OpalTestCase):
     def test_form_template(self, select):
         Subrecord.get_form_template()
         select.assert_called_with(['forms/subrecord_form.html'])
+
+    def test_get_modal_template_does_not_exist(self):
+        self.assertEqual(None, Subrecord.get_modal_template())
 
     @patch('opal.models.select_template')
     @patch('opal.models.Subrecord.get_form_template')

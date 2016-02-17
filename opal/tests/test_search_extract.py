@@ -130,16 +130,18 @@ class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
             'created_by_id',
             'updated_by_id',
             'hospital_number',
+            'nhs_number',
             'date_of_birth',
             u'gender_fk_id',
             'gender_ft',
-            'gender'
+            'country_of_birth_fk_id',
+            'country_of_birth_ft',
+            'gender',
+            'country_of_birth',
         ]
-
         expected_row = [
-            1, 'None', 'None', 'None', 'None', u'12345678',
-            datetime.date(1976, 1, 1).strftime('%Y-%m-%d'),
-            'None', u'', u''
+            1, 'None', 'None', 'None', 'None', '12345678',
+            'None', '1976-01-01', 'None', '', 'None', '', '', ''
         ]
         self.assertEqual(headers, expected_headers)
         self.assertEqual(row, expected_row)

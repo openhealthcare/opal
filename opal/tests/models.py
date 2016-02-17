@@ -54,9 +54,11 @@ if not getattr(models.Patient, 'demographics_set', None):
         _is_singleton = True
 
         hospital_number = dmodels.CharField(max_length=200, blank=True, null=True)
+        nhs_number = dmodels.CharField(max_length=200, blank=True, null=True)
         name = dmodels.CharField(max_length=200, blank=True, null=True)
         date_of_birth = dmodels.DateField(blank=True, null=True)
         gender = fields.ForeignKeyOrFreeText(models.Gender)
+        country_of_birth = fields.ForeignKeyOrFreeText(models.Destination)
 
         pid_fields = 'name',
 
