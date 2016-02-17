@@ -110,7 +110,6 @@ angular.module('opal.services').factory('RecordEditor', function($http, $q, Item
         deferred.resolve();
         return deferred.promise;
       }
-      episode[name].push(item);
       return self.openEditItemModal(item, name, tags);
     };
   };
