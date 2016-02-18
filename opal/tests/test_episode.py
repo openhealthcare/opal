@@ -46,7 +46,7 @@ class EpisodeTest(OpalTestCase):
         other_user = User.objects.create(username='seconduser')
 
         self.episode.set_tag_names(['hiv', 'mine'], self.user)
-        self.assertEqual(['hiv'], self.episode.get_tag_names(other_user))
+        self.assertEqual(['hiv'], list(self.episode.get_tag_names(other_user)))
 
     def test_active_if_tagged_by_non_mine_tag(self):
         self.episode.set_tag_names(['microbiology'], self.user)

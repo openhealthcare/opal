@@ -220,7 +220,7 @@ class DatabaseQuery(QueryBackend):
             kw = {'{0}__{1}{2}'.format(model_name, field, contains): query['query']}
 
             if Mod == models.Tagging:
-                eps = models.Episode.objects.ever_tagged(query['field'])
+                eps = models.Episode.objects.filter(tagging__team__name=query['field'])
 
             elif issubclass(Mod, models.EpisodeSubrecord):
                 eps = models.Episode.objects.filter(**kw)
