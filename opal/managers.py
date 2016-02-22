@@ -55,7 +55,7 @@ class EpisodeManager(models.Manager):
         filter_kargs = dict(episode__in=episodes)
 
         if not historic_tags:
-            filter_kargs["archived"] = False
+            filter_kargs["tagging__archived"] = False
 
         for tag in Tagging.objects.filter(**filter_kargs).select_related('team'):
             if tag.team.name == 'mine' and tag.user != user:
@@ -95,6 +95,6 @@ class EpisodeManager(models.Manager):
         """
         filters = kw.copy()
         filters['active'] = True
-        episodes = self.filter(**filters).distinct()
+        episodes = self.filter(**filters)
         as_dict = self.serialised(user, episodes)
         return as_dict
