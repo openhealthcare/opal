@@ -1,6 +1,6 @@
 angular.module('opal.controllers').controller(
     'EpisodeDetailCtrl', function($scope, $modal, $cookieStore, $location,
-                                  $rootScope, RecordEditor,
+                                  $rootScope,
                                   Flow, EpisodeDetailMixin,
                                   episode, options, profile) {
           $scope._ = _;
