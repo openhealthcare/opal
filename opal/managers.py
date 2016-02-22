@@ -95,6 +95,6 @@ class EpisodeManager(models.Manager):
         """
         filters = kw.copy()
         filters['active'] = True
-        episodes = self.filter(**filters)
+        episodes = self.filter(**filters).distinct()
         as_dict = self.serialised(user, episodes)
         return as_dict

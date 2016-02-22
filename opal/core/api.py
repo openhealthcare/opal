@@ -302,7 +302,7 @@ class EpisodeViewSet(viewsets.ViewSet):
         if tag == 'mine':
             filter_kwargs['tagging__user'] = request.user
 
-        if not filter_kwargs:
+        if not (subtag or tag):
             return Response([e.to_dict(request.user) for e in Episode.objects.all()])
 
         serialised = Episode.objects.serialised_active(
