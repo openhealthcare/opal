@@ -524,8 +524,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
         if "mine" not in tag_names:
             self.tagging_set.filter(user=user).update(archived=True)
-
-        if "mine" in tag_names:
+        else:
             my_team = Team.objects.get(name="mine")
             tag, created = self.tagging_set.get_or_create(
                 team=my_team, user=user
