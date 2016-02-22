@@ -435,11 +435,11 @@ class TaggingTestCase(TestCase):
         self.assertEqual(True, response.data['micro'])
 
     def test_tag_episode(self):
-        self.assertEqual(self.episode.get_tag_names(self.user), [])
+        self.assertEqual(list(self.episode.get_tag_names(self.user)), [])
         self.mock_request.data = {'micro': True}
         response = api.TaggingViewSet().update(self.mock_request, pk=self.episode.pk)
         self.assertEqual(202, response.status_code)
-        self.assertEqual(self.episode.get_tag_names(self.user), ['micro'])
+        self.assertEqual(list(self.episode.get_tag_names(self.user)), ['micro'])
         tag = models.Tagging.objects.get()
         self.assertEqual(tag.created.date(), timezone.now().date())
         self.assertEqual(tag.created_by, self.user)
@@ -447,17 +447,17 @@ class TaggingTestCase(TestCase):
         self.assertIsNone(tag.updated)
 
     def test_untag_episode(self):
-        self.assertEqual(self.episode.get_tag_names(self.user), [])
+        self.assertEqual(list(self.episode.get_tag_names(self.user)), [])
         self.episode.set_tag_names(['micro'], self.user)
         self.mock_request.data = {'micro': False}
         response = api.TaggingViewSet().update(self.mock_request, pk=self.episode.pk)
         self.assertEqual(202, response.status_code)
-        self.assertEqual(self.episode.get_tag_names(self.user), [])
+        self.assertEqual(list(self.episode.get_tag_names(self.user)), [])
 
 
     @patch('opal.core.api.glossolalia.transfer')
     def test_tagging_pings_integration(self, transfer):
-        self.assertEqual(self.episode.get_tag_names(self.user), [])
+        self.assertEqual(list(self.episode.get_tag_names(self.user)), [])
         self.mock_request.data = {'micro': True}
         response = api.TaggingViewSet().update(self.mock_request, pk=self.episode.pk)
         self.assertEqual(202, response.status_code)
