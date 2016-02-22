@@ -293,7 +293,7 @@ class EpisodeViewSet(viewsets.ViewSet):
         tag    = request.query_params.get('tag', None)
         subtag = request.query_params.get('subtag', None)
 
-        filter_kwargs = {}
+        filter_kwargs = {'tagging__archived': False}
         if subtag:
             filter_kwargs['tagging__team__name'] = subtag
         elif tag:
