@@ -1,3 +1,7 @@
+### 0.5.5 (Minor Release)
+Tags are no longer ever deleted off episodes, they're only archived
+
+
 ### 0.5.4 (Minor Release)
 * Include local storage
 
