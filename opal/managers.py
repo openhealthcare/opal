@@ -55,7 +55,7 @@ class EpisodeManager(models.Manager):
         filter_kargs = dict(episode__in=episodes)
 
         if not historic_tags:
-            filter_kargs["tagging__archived"] = False
+            filter_kargs["archived"] = False
 
         for tag in Tagging.objects.filter(**filter_kargs).select_related('team'):
             if tag.team.name == 'mine' and tag.user != user:
