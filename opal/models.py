@@ -814,10 +814,6 @@ class Tagging(TrackedModel, models.Model):
         teams = [{'name': t.name, 'type':'boolean'} for t in Team.objects.filter(active=True)]
         return teams
 
-    def delete(self, *args, **kwargs):
-        self.archived = True
-        self.save()
-
     @classmethod
     def import_from_reversion(cls):
         # a one off function that syncs the tags with archived tags with the
@@ -886,7 +882,6 @@ class Tagging(TrackedModel, models.Model):
                 ))
 
         Tagging.objects.bulk_create(tagging_objs)
-
 
 """
 Base Lookup Lists
