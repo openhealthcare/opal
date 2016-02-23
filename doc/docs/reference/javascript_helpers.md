@@ -21,7 +21,13 @@ OPAL provides some buit-in Angular filters for your project to use.
 
 Displays a date as DD/MM if it's this year, else DD/MM/YYYY
 
-#### hhmm 
+#### hhmm
 
 Displays the hours & minutes portion of a javascript Date object as HH:MM
 
+
+#### boxed
+
+Displays Boolean fields as a checkbox (e.g. either [ ] or [X])
+
+    [[ item.boolean_field | boxed]]
