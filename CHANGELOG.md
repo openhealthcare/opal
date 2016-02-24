@@ -1,3 +1,9 @@
+### 0.5.5 (Minor Release)
+Changes the way old tags are handled. 
+
+Tags are no longer deleted episodes, rather they're marked as archived.
+
+
 ### 0.5.4 (Minor Release)
 * Include local storage
 

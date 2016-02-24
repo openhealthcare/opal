@@ -1,7 +1,7 @@
 ## opal.models.Episode
 
-The `opal.models.Episode` class represents an episode of care for a patient. This can be either 
-an inpatient stay, an outpatient treatment, a telephone liaison, an appointment at a clinic, 
+The `opal.models.Episode` class represents an episode of care for a patient. This can be either
+an inpatient stay, an outpatient treatment, a telephone liaison, an appointment at a clinic,
 or any other arbitrarially defined period of care.
 
 ### Fields
@@ -9,7 +9,7 @@ or any other arbitrarially defined period of care.
 #### Episode.category
 
 The category of this episode - e.g. inpatient, outpatient et cetera.
-This defaults to whatever is set on your application's subclass of 
+This defaults to whatever is set on your application's subclass of
 `opal.core.application.OpalApplication` - which itseflf defaults to 'inpatient'.
 
 #### Episode.patient
@@ -30,16 +30,16 @@ If this is an inpatient episode, the date of discharge.
 
 #### Episode.date_of_episode
 
-If this is an episode that occurs on one date (like a clinic visit or telephone liaison), the 
+If this is an episode that occurs on one date (like a clinic visit or telephone liaison), the
 date of that event.
 
-#### Episode.consistency_token 
+#### Episode.consistency_token
 
 A (automatically generated) hash of the above fields. This is used for detecting concurrent edits.
 
 ### Methods
 
-The Episode model has the following methods: 
+The Episode model has the following methods:
 
 #### Episode.to_dict
 
@@ -47,13 +47,13 @@ Return a dictionary of field value pairs for this episode
 
     episode.to_dict(user)
 
-Arguments: 
+Arguments:
 
 * `user` The User for whom we want to serialise this episode
 
-Keywords: 
+Keywords:
 
-* `shallow` Boolean to indicate whether we want just this episode, or also a sorted set of 
+* `shallow` Boolean to indicate whether we want just this episode, or also a sorted set of
 previous and subsequent episodes
 
 #### Episode.get_tag_names
@@ -80,20 +80,12 @@ Arguments:
 Return the current active tag names for this Episode as strings.
 
     episode.set_tag_names(['mine', 'infectioncontrol'], user)
-    
+
 
 
 ### Manager
 
 The custom manager for Episodes has the following methods:
-
-#### Episode.objects.ever_tagged(team)
-
-Return a list of episodes ever tagged to `team`
-
-Arguments:
-
-* `team` The `Team.name` of the team you are interested in.
 
 #### Episode.objects.serialised()
 
@@ -106,7 +98,7 @@ Arguments:
 * `user` The User for whom we want to serialise this episode
 * `episodes` An iterable of Episode instances
 
-Keywords: 
+Keywords:
 
-* `historic_tags` A boolean to indicate whether the user desires historic or just current tags to 
+* `historic_tags` A boolean to indicate whether the user desires historic or just current tags to
 be serialised
