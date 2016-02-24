@@ -38,7 +38,7 @@ def manage(command):
 
 def _userland_here_has__file(filename):
     """
-    Predicate function to determine whether we have a manage.py here
+    Predicate function to determine whether we have FILENAME is in the current working directory
     """
     return bool(ffs.Path(USERLAND_HERE/filename))
 
