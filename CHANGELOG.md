@@ -1,5 +1,7 @@
 ### 0.5.5 (Minor Release)
-Tags are no longer ever deleted off episodes, they're only archived
+Changes the way old tags are handled. 
+
+Tags are no longer deleted episodes, rather they're marked as archived.
 
 
 ### 0.5.4 (Minor Release)
