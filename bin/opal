@@ -25,6 +25,23 @@ SCAFFOLD         = SCAFFOLDING_BASE/'scaffold'
 PLUGIN_SCAFFOLD  = SCAFFOLDING_BASE/'plugin_scaffold'
 TRAVIS           = os.environ.get('TRAVIS', False)
 
+def manage(command):
+    args = ['python', '{0}/manage.py'.format(name)]
+    args += command.split()
+    args.append('--traceback')
+
+    try:
+        subprocess.check_call(args)
+    except subprocess.CalledProcessError:
+        sys.exit(1)
+    return
+
+def _userland_here_has__file(filename):
+    """
+    Predicate function to determine whether we have FILENAME is in the current working directory
+    """
+    return bool(ffs.Path(USERLAND_HERE/filename))
+
 def _find_application_name():
     """
     Return the name of the current OPAL application
@@ -131,20 +148,6 @@ def startproject(args):
 
     templates = app_dir/'templates'/name
     templates.mkdir()
-
-    def manage(command):
-        args = ['python', '{0}/manage.py'.format(name)]
-        args += command.split()
-        args.append('--traceback')
-
-        # os.system('python {name}/manage.py {command} --traceback'.format(
-        #     name=name, command=command))
-
-        try:
-            subprocess.check_call(args)
-        except subprocess.CalledProcessError:
-            sys.exit(1)
-        return
 
     # 8. Run Django's migrations
     print 'Creating Database'
@@ -323,11 +326,30 @@ def _run_py_tests(args):
     Run our Python test suite
     """
     print "Running Python Unit Tests"
-    test_args= ['python', 'runtests.py']
-    if args.test:
-        test_args.append(args.test)
-    if args.coverage:
-        test_args = ['coverage', 'run', 'runtests.py']
+
+    # We have a custom test runner - e.g. it's OPAL itself or a plugin.
+    if _userland_here_has__file('runtests.py'):
+        test_args= ['python', 'runtests.py']
+        if args.test:
+            test_args.append(args.test)
+        if args.coverage:
+            test_args = ['coverage', 'run', 'runtests.py']
+
+    # We have a manage.py script - assume that we're in an application
+    elif _userland_here_has__file('manage.py'):
+        test_args = ['python', 'manage.py', 'test']
+
+        if args.test:
+            test_args.append(args.test)
+
+        if args.coverage:
+            test_args = ['coverage', 'run', 'manage.py', 'test',]
+
+    else:
+        print "\n\nCripes!\n"
+        print "We can't figure out how to run your tests :(\n"
+        print "Are you in the root directory? \n\n"
+        sys.exit(1)
 
     try:
         subprocess.check_call(test_args)
