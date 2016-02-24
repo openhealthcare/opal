@@ -1,7 +1,7 @@
 describe('EpisodeListCtrl', function() {
     "use strict";
     var episodeData, optionsData, profileData, patientData, Schema;
-    var schema, Episode, Item;
+    var schema, Episode, Item, episode;
     var profile;
     var $scope, $cookieStore, $controller, $q, $dialog;
     var $location, $routeParams, $http;
@@ -206,12 +206,22 @@ describe('EpisodeListCtrl', function() {
         $location    = $injector.get('$location');
 
         schema = new Schema(columns.default);
-        episodes = {123: new Episode(episodeData)};
+        var episode = new Episode(episodeData)
+
+        var deferred = $q.defer();
+        deferred.resolve();
+        var promise = deferred.promise
+
+        spyOn(episode.recordEditor, 'deleteItem').and.returnValue(promise);
+        spyOn(episode.recordEditor, 'editItem').and.returnValue(promise);
+
+        episodes = {123: episode};
         options = optionsData;
         $routeParams.tag = 'tropical';
         flow_promise = {then: function(){}};
         Flow = jasmine.createSpy('Flow').and.callFake(function(){return flow_promise});
         $rootScope.fields = fields;
+
 
         controller = $controller('EpisodeListCtrl', {
             $rootScope    : $rootScope,
@@ -336,64 +346,12 @@ describe('EpisodeListCtrl', function() {
         });
 
         describe('editing an item', function() {
-            it('should change state to "modal"', function() {
+            it('should call through to the record editor', function(){
                 $scope.editNamedItem($scope.episode, 'demographics', 0);
-                expect($rootScope.state).toBe('modal');
+                expect($scope.episode.recordEditor.editItem).toHaveBeenCalledWith(
+                    'demographics', 0, { tag: 'tropical', subtag: 'all' }
+                );
             });
-
-            it('should set up the demographics modal', function() {
-                var callArgs;
-
-                spyOn($modal, 'open').and.callThrough();
-                $scope.editNamedItem($scope.episode, 'demographics', 0);
-
-                callArgs = $modal.open.calls.mostRecent().args;
-                expect(callArgs.length).toBe(1);
-                expect(callArgs[0].templateUrl).toBe('/templates/modals/demographics.html/tropical/all');
-                expect(callArgs[0].controller).toBe('EditItemCtrl');
-            });
-
-            it('should open the demographics modal', function() {
-                var modalSpy;
-
-                modalSpy = {open: function() {}};
-                spyOn($modal, 'open').and.returnValue({result:  {then: function() {}}});
-
-                $scope.editNamedItem($scope.episode, 'demographics', 0);
-
-                expect($modal.open).toHaveBeenCalled();
-            });
-
-            it('should change state to "normal" when the modal is closed', function() {
-                var deferred;
-
-                deferred = $q.defer();
-                spyOn($modal, 'open').and.returnValue({result: deferred.promise});
-
-                $scope.editNamedItem($scope.episode, 'demographics', 0);
-
-                deferred.resolve('save');
-                $rootScope.$apply();
-
-                expect($rootScope.state).toBe('normal');
-            });
-
-
-            describe('for a readonly user', function(){
-                beforeEach(function(){
-                    profile.readonly = true;
-                });
-
-                it('should return null', function(){
-                    var editItem = $scope.editNamedItem($scope.episode, 'demographics', 0);
-                    expect(editItem).toBe(null);
-                });
-
-                afterEach(function(){
-                    profile.readonly = false;
-                });
-            });
-
         });
 
         describe('adding an item', function() {
@@ -403,23 +361,11 @@ describe('EpisodeListCtrl', function() {
                 iix = episodeData.diagnosis.length;
             });
 
-            it('should change state to "modal"', function() {
+            it('should call through to the record editor', function() {
                 $scope.editNamedItem($scope.episode, "diagnosis", iix);
-                expect($rootScope.state).toBe('modal');
-            });
-
-            it('should set up the modal', function() {
-                var callArgs;
-
-                spyOn($modal, 'open').and.callThrough();
-
-                $scope.editNamedItem($scope.episode, "diagnosis", iix);
-
-                callArgs = $modal.open.calls.mostRecent().args;
-                expect(callArgs.length).toBe(1);
-                expect(callArgs[0].templateUrl).toBe('/templates/modals/diagnosis.html/tropical/all');
-                expect(callArgs[0].controller).toBe('EditItemCtrl');
-                expect(callArgs[0].resolve.item().id).toBeUndefined();
+                expect($scope.episode.recordEditor.editItem).toHaveBeenCalledWith(
+                    'diagnosis', iix, { tag: 'tropical', subtag: 'all' }
+                );
             });
         });
 });

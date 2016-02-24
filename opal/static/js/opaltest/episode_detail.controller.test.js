@@ -1,7 +1,10 @@
 describe('EpisodeDetailCtrl', function(){
+    "use strict";
+
     var $scope, $cookieStore, $modal;
-    var Flow;
-    var episode;
+    var $rootScope, $q, $controller;
+    var Flow, Episode, episode;
+    var controller;
 
     var profile = {
         readonly   : false,
@@ -14,7 +17,7 @@ describe('EpisodeDetailCtrl', function(){
         tag_hierarchy :{'tropical': []}
     }
 
-    episodeData = {
+    var episodeData = {
         id: 123,
         active: true,
         prev_episodes: [],
@@ -78,28 +81,7 @@ describe('EpisodeDetailCtrl', function(){
     });
 
     beforeEach(function(){
-        module('opal', function($provide) {
-            $provide.value('$analytics', function(){
-                return {
-                    pageTrack: function(x){}
-                };
-            });
-
-            $provide.provider('$analytics', function(){
-                this.$get = function() {
-                    return {
-                        virtualPageviews: function(x){},
-                        settings: {
-                            pageTracking: false,
-                        },
-                        pageTrack: function(x){}
-                     };
-                };
-            });
-        });
-    });
-
-    beforeEach(function(){
+        module('opal');
         inject(function($injector){
             $rootScope   = $injector.get('$rootScope');
             $scope       = $rootScope.$new();
@@ -107,10 +89,11 @@ describe('EpisodeDetailCtrl', function(){
             $controller  = $injector.get('$controller');
             $cookieStore = $injector.get('$cookieStore');
             $modal       = $injector.get('$modal');
+            Episode      = $injector.get('Episode');
         });
 
         $rootScope.fields = fields
-        episode = new Episode(episodeData);
+        episode = new Episode(angular.copy(episodeData));
         Flow = jasmine.createSpy('Flow').and.callFake(function(){return {then: function(){}}});
 
         controller = $controller('EpisodeDetailCtrl', {
@@ -128,74 +111,6 @@ describe('EpisodeDetailCtrl', function(){
         it('should set up state', function(){
             expect($scope.episode).toEqual(episode);
         });
-    });
-
-    describe('selecting an item', function(){
-        it('should select the item', function(){
-            $scope.selectItem(1, 34);
-            expect($scope.cix).toBe(1);
-            expect($scope.iix).toBe(34);
-        });
-    })
-
-    describe('editing an item', function(){
-        it('should open the EditItemCtrl', function(){
-            var deferred, callArgs;
-
-            deferred = $q.defer();
-            spyOn($modal, 'open').and.returnValue({result: deferred.promise});
-
-            $scope.editNamedItem('demographics', 0);
-
-            callArgs = $modal.open.calls.mostRecent().args;
-            expect(callArgs.length).toBe(1);
-            expect(callArgs[0].controller).toBe('EditItemCtrl');
-        });
-
-        describe('for a readonly user', function(){
-            beforeEach(function(){
-                profile.readonly = true;
-            });
-
-            it('should return null', function(){
-                expect($scope.editNamedItem('demographics', 0)).toBe(null);
-            });
-
-            afterEach(function(){
-                profile.readonly = false;
-            });
-        });
-
-    });
-
-    describe('deleting an item', function(){
-        it('should open the DeleteItemConfirmationCtrl', function(){
-            var deferred, callArgs;
-
-            deferred = $q.defer();
-            spyOn($modal, 'open').and.returnValue({result: deferred.promise});
-
-            $scope.deleteItem('diagnosis', 0);
-
-            callArgs = $modal.open.calls.mostRecent().args;
-            expect(callArgs.length).toBe(1);
-            expect(callArgs[0].controller).toBe('DeleteItemConfirmationCtrl');
-        });
-
-        describe('for a readonly user', function(){
-            beforeEach(function(){
-                profile.readonly = true;
-            });
-
-            it('should return null', function(){
-                expect($scope.deleteItem('diagnosis', 0)).toBe(null);
-            });
-
-            afterEach(function(){
-                profile.readonly = false;
-            });
-        });
-
     });
 
     describe('discharging an episode', function(){

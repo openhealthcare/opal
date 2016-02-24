@@ -3,6 +3,12 @@ describe('services', function() {
 
     var columns, episodeData, options, records, list_schema, mockWindow;
 
+    var profile = {
+        readonly   : false,
+        can_extract: true,
+        can_see_pid: function(){return true; }
+    };
+
     beforeEach(function(){
         module('opal', function($provide) {
             $provide.value('$analytics', function(){
@@ -22,7 +28,9 @@ describe('services', function() {
                      };
                 };
             });
+
         });
+
     });
 
     beforeEach(function() {
@@ -118,6 +126,10 @@ describe('services', function() {
                 $provide.value('$window', mock);
             });
 
+            module('opal.services', function($provide) {
+                $provide.value('UserProfile', function(){ return profile; });
+            });
+
             inject(function($injector){
                 extractSchemaLoader = $injector.get('extractSchemaLoader');
                 $httpBackend       = $injector.get('$httpBackend');
@@ -155,6 +167,10 @@ describe('services', function() {
         var Schema, schema;
 
         beforeEach(function() {
+            module('opal.services', function($provide) {
+                $provide.value('UserProfile', function(){ return profile; });
+            });
+
             inject(function($injector) {
                 Schema = $injector.get('Schema');
             });
@@ -228,6 +244,10 @@ describe('services', function() {
                 $provide.value('$window', mock);
             });
 
+            module('opal.services', function($provide) {
+                $provide.value('UserProfile', function(){ return profile; });
+            });
+
             inject(function($injector){
                 episodesLoader = $injector.get('episodesLoader');
                 $q             = $injector.get('$q');
@@ -274,6 +294,11 @@ describe('services', function() {
         var $scope, episode, episodeVisibility;
 
         beforeEach(function(){
+
+            module('opal.services', function($provide) {
+                $provide.value('UserProfile', function(){ return profile; });
+            });
+
             inject(function($injector){
                 episodeVisibility = $injector.get('episodeVisibility');
             });
@@ -342,6 +367,10 @@ describe('services', function() {
         var episodesLoader, $httpBackend, listSchemaLoader, $route;
 
         beforeEach(function() {
+            module(function($provide) {
+                $provide.value('UserProfile', function(){ return profile; });
+            });
+
             inject(function($injector) {
                 episodesLoader   = $injector.get('episodesLoader');
                 $route           = $injector.get('$route');
@@ -372,6 +401,10 @@ describe('services', function() {
         var episodeLoader, $httpBackend;
 
         beforeEach(function() {
+            module(function($provide) {
+                $provide.value('UserProfile', function(){ return profile; });
+            });
+
             inject(function($injector) {
                 episodeLoader = $injector.get('episodeLoader');
                 $httpBackend = $injector.get('$httpBackend');

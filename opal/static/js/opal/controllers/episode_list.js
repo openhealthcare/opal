@@ -2,9 +2,7 @@ angular.module('opal.controllers').controller(
     'EpisodeListCtrl', function($scope, $q, $http, $cookieStore,
                                 $location, $routeParams,
                                 $modal, $rootScope,
-
                                 $window,
-
                                 growl,
                                 Flow, Item,
                                 Episode, episodes, options,
@@ -22,7 +20,7 @@ angular.module('opal.controllers').controller(
 	    $scope.rix = 0; // row index
         $scope._ =  _;
 
-	    $scope.query = {hospital_number: '', name: '', ward: '', bed: ''};
+  	    $scope.query = {hospital_number: '', name: '', ward: '', bed: ''};
         $scope.$location = $location;
         $scope.path_base = '/list/';
         $scope.currentTag = $routeParams.tag;
@@ -311,103 +309,31 @@ angular.module('opal.controllers').controller(
             })
         };
 
-        //
-        // Do the work of editing an item - open the modal and
-        // resolve it.
-        //
-        _openEditItemModal = function(item, columnName, episode) {
-            if(profile.readonly){
-                return null;
-            };
-            $rootScope.state = 'modal';
-            var template_url = '/templates/modals/' + columnName + '.html/';
-            template_url += $scope.currentTag + '/' + $scope.currentSubTag;
-
-            var modal_opts = {
-                backdrop: 'static',
-                templateUrl: template_url,
-                controller: 'EditItemCtrl',
-                resolve: {
-                    item: function() { return item; },
-                    options: function() { return options; },
-                    profile: function() { return profile; },
-                    episode: function() { return episode; }
-                }
-            }
-
-            if(item.size){
-                modal_opts.size = item.size;
-            }else{
-                modal_opts.size = 'lg';
-            }
-
-            modal = $modal.open(modal_opts);
-
-            //
-            // The state resetting logic is fairly simple, but we may have to
-            // wait for an intermediary modal to close...
-            //
-            // TODO: Figure out & document how to actually take advantage of this hook :/
-            //
-            var reset_state = function(result){
-                $rootScope.state = 'normal';
-
-                if (columnName == 'tagging') {
-
-                    // User may have removed current tag
-                    $scope.rows = $scope.getVisibleEpisodes();
-                }
-
-                if (result == 'save-and-add-another') {
-                    $scope.newNamedItem(episode, columnName);
-                    return
-                };
-                if (item.sort){
-                    episode.sortColumn(item.columnName, item.sort);
-                };
-            };
-
-            modal.result.then(function(result) {
-                if(result && result.then){
-                    result.then(function(r){ reset_state(r) });
-                }else{
-                    reset_state(result);
-                }
-            }, function(){
-                $rootScope.state = 'normal';
-            });
-        }
-
         $scope.newNamedItem = function(episode, name) {
-            var item = episode.newItem(name, {column: $rootScope.fields[name]});
-            if (!episode[name]) {
-                episode[name] = [];
-            }
-            episode[name].push(item);
-            return _openEditItemModal(item, name, episode);
+            return episode.recordEditor.newItem(name, {tag: $scope.currentTag, subTag: $scope.subTag});
         }
 
         $scope.is_tag_visible_in_list = function(tag){
             return _.contains(options.tag_visible_in_list, tag);
         };
 
-        $scope.editNamedItem = function(episode, name, iix) {
-            var item;
+        $scope.editNamedItem  = function(episode, name, iix) {
+            var reset_state = function(result){
+                if (name == 'tagging') {
+                    // User may have removed current tag
+                    $scope.rows = $scope.getVisibleEpisodes();
+                }
+                var item = _.last(episode[name]);
 
-            if(!profile.can_edit(name)){ return false };
+                if (episode[name].sort){
+                    episode.sortColumn(item.columnName, item.sort);
+                }
+            };
 
-            if(name == 'demographics' && !profile.can_see_pid()){
-                return false;
-            }
-
-            if (episode[name][iix] && episode[name][iix].columnName) {
-                item = episode[name][iix];
-            } else {
-                item = new Item(episode[name][iix], episode, $rootScope.fields[name]);
-            }
-
-            return _openEditItemModal(item, name, episode);
-        }
+            episode.recordEditor.editItem(name, iix, {tag: $scope.currentTag, subtag: $scope.currentSubTag}).then(function(result){
+                reset_state(result);
+            });
+        };
 
 	    function goUp() {
 		    var episode;

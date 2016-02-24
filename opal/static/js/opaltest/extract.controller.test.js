@@ -76,7 +76,6 @@ describe('ExtractCtrl', function(){
             $window      = $injector.get('$window');
             $controller  = $injector.get('$controller');
             Schema = $injector.get('Schema');
-            Episode = $injector.get('Episode');
             Item = $injector.get('Item')
         });
 

@@ -145,7 +145,7 @@ describe('HospitalNumberCtrl', function(){
             $provide.value('$analytics', function(){
                 return {
                     pageTrack: function(x){}
-                }
+                };
             });
 
             $provide.provider('$analytics', function(){
@@ -159,6 +159,10 @@ describe('HospitalNumberCtrl', function(){
                      };
                 };
             });
+        });
+
+        module('opal.services', function($provide) {
+            $provide.value('UserProfile', function(){ return profile; });
         });
     });
 

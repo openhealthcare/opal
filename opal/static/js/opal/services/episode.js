@@ -2,12 +2,14 @@
 // This is the main Episode class for OPAL.
 //
 angular.module('opal.services')
-    .factory('Episode', function($http, $q, $rootScope, $routeParams, Item) {
+    .factory('Episode', function($http, $q, $rootScope, $routeParams, Item, RecordEditor) {
         Episode = function(resource) {
 
 	        var episode = this;
             var DATE_FORMAT = 'DD/MM/YYYY';
 	        var column, field, attrs;
+
+          episode.recordEditor = new RecordEditor(episode);
 
             // We would like everything for which we have data that is a field to
             // be an instantiated instance of Item - not just those fields in the

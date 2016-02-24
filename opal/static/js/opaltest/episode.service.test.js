@@ -6,7 +6,9 @@ describe('Episode', function() {
     var $routeParams;
 
     beforeEach(function() {
-        module('opal.services');
+        module('opal.services', function($provide) {
+            $provide.value('UserProfile', function(){ return profile; });
+        });
 
         tag_hierarchy = {
             'mine'    : [],
