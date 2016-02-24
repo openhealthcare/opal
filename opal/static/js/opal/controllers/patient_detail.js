@@ -43,8 +43,6 @@ angular.module('opal.controllers').controller(
             }
         }
 
-      var recordEditor = new RecordEditor(options, profile);
-
       self.deleteItem = function(columnName, iix){
           $scope.episode.recordEditor.deleteItem(name, iix, $rootScope);
       };
