@@ -1,5 +1,5 @@
 controllers.controller(
-    'DischargeEpisodeCtrl',     
+    'DischargeEpisodeCtrl',
     function($scope, $timeout,
              $modalInstance, episode,
              tags) {
@@ -9,9 +9,9 @@ controllers.controller(
             var currentSubTag = tags.subtag;
         }else{
             var currentTag = 'mine';
-            var currentSubTag = 'all';
+            var currentSubTag = '';
         }
-        
+
         $scope.currentCategory = episode.location[0].category;
         var newCategory;
 
@@ -42,20 +42,20 @@ controllers.controller(
             $scope.editing.discharge_date = $scope.episode.discharge_date;
         }
 
-        // 
+        //
         // Discharging an episode requires updating three server-side entities:
         //
         // * Location
         // * Tagging
         // * Episode
-        // 
+        //
         // Make these requests then kill our modal.
-        // 
+        //
         $scope.discharge = function() {
 
 	        var tagging = episode.getItem('tagging', 0);
             var location = episode.getItem('location', 0);
-            
+
 	        var taggingAttrs = tagging.makeCopy();
             var locationAttrs = location.makeCopy();
             var episodeAttrs = episode.makeCopy();
@@ -72,7 +72,7 @@ controllers.controller(
             }
 
 	        if ($scope.editing.category != 'Followup') {
-                if(currentSubTag != 'all'){
+                if(currentSubTag != ''){
                     taggingAttrs[currentSubTag] = false;
                 }else{
                     taggingAttrs[currentTag] = false;
@@ -82,7 +82,7 @@ controllers.controller(
 	        tagging.save(taggingAttrs).then(function(){
                 location.save(locationAttrs).then(function(){
                     episode.save(episodeAttrs).then(function(){
-                        $modalInstance.close('discharged');            
+                        $modalInstance.close('discharged');
                     })
                 })
 

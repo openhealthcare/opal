@@ -8,7 +8,7 @@ angular.module('opal.controllers')
 
         var DATE_FORMAT = 'DD/MM/YYYY';
 	    $scope.currentTag    = $routeParams.tag || 'mine';
-	    $scope.currentSubTag = $routeParams.subtag || 'all';
+	    $scope.currentSubTag = $routeParams.subtag || '';
 
 	    for (var name in options) {
 		    $scope[name + '_list'] = options[name];
@@ -23,7 +23,7 @@ angular.module('opal.controllers')
 
 
 	    $scope.editing.tagging[0][$scope.currentTag] = true;
-	    if($scope.currentSubTag != 'all'){
+	    if($scope.currentSubTag != ''){
 		    $scope.editing.tagging[0][$scope.currentSubTag] = true;
 	    }
 

@@ -123,8 +123,7 @@ describe('EditItemCtrl', function (){
     });
 
     describe('newly-created-controller', function (){
-        it('Should have subtag "all"', function () {
-            expect($scope.currentSubTag).toBe('all');
+        it('Should have columname diagnosis', function () {
             expect($scope.columnName).toBe('diagnosis');
         });
     });

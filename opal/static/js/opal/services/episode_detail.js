@@ -36,7 +36,7 @@ angular.module('opal.services')
                 var enter = Flow(
                     'enter', schema, options,
                     {
-                        current_tags: { tag: 'mine', subtag: 'all' },
+                        current_tags: { tag: 'mine', subtag: '' },
                         hospital_number: $scope.episode.demographics[0].hospital_number
                     }
                 );
@@ -63,11 +63,6 @@ angular.module('opal.services')
             },
 
             $scope.jumpToTag = function(tag){
-                var currentTag, currentSubTag;
-
-                currentTag = $cookieStore.get('opal.currentTag') || 'mine';
-                currentSubTag = $cookieStore.get('opal.currentSubTag') || 'all';
-
                 if(_.contains(_.keys(options.tag_hierarchy), tag)){
                     $location.path('/list/'+tag)
                     return
