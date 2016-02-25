@@ -1,12 +1,13 @@
 describe('PatientListLoaderTest', function(){
     "use strict";
 
-    var patientListLoader, $route, $rootScope, $httpBackend;
+    var patientListLoader, Episode, $route, $rootScope, $httpBackend;
 
     beforeEach(function(){
         module('opal');
         inject(function($injector){
             patientListLoader = $injector.get('patientListLoader');
+            Episode           = $injector.get('Episode');
             $route            = $injector.get('$route');
             $rootScope        = $injector.get('$rootScope');
             $httpBackend      = $injector.get('$httpBackend');
@@ -19,15 +20,18 @@ describe('PatientListLoaderTest', function(){
     it('should fetch the episodes for a list', function(){
         var result
 
+        var episodedata = {id: 1, demographics: [{patient_id: 1, name: 'Jane'}] };
+
         $route.current = {params: {list: 'mylist'}}
-        $httpBackend.whenGET('/api/v0.1/patientlist/mylist').respond([])
+        $httpBackend.whenGET('/api/v0.1/patientlist/mylist').respond([episodedata])
         patientListLoader().then(function(r){ result = r; })
 
         $rootScope.$apply();
         $httpBackend.flush();
 
         expect(result.status).toEqual('success');
-        expect(result.data).toEqual({});
+        expect(result.data[1].id).toEqual(1);
+        expect(result.data[1].demographics[0].name).toEqual('Jane');
     });
 
 
