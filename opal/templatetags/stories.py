@@ -24,12 +24,6 @@ def story(label, story_dir):
                 if filename.endswith('~'):
                     continue
                 template_files.append(os.path.join(story_dir, filename))
-                print filename
 
     ctx['stories'] = template_files
     return ctx
-
-
-
-
-

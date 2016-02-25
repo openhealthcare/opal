@@ -53,6 +53,15 @@ module.exports = function(config){
 
             'opaltest/*.js',
         ],
-
+        preprocessors: {
+            'opal/**/*.js': 'coverage'
+        },
+        // reporters: ['coverage'],
+        reporters: ['progress', 'coverage'],
+        singleRun: true,
+        coverageReporter : {
+            type : 'html',
+            dir : '../../../htmlcov/js/'
+        }
     })
 }

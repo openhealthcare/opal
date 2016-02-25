@@ -1,7 +1,7 @@
 angular.module('opal.controllers').controller(
     'SearchCtrl', function($rootScope, $scope, $http, $location, $modal,
                            $timeout, ngProgressLite,
-                           $q, $window, Episode, Flow,
+                           $q, $window, Flow,
                             PatientSummary, Paginator) {
 
       var searchUrl = "/search";

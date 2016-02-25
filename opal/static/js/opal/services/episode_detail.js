@@ -8,113 +8,6 @@ angular.module('opal.services')
             // var schema  = $scope.schema;
             var Flow    = $scope.Flow
 
-	        $scope.selectItem = function(cix, iix) {
-		        $scope.cix = cix;
-		        $scope.iix = iix;
-	        };
-
-            _openEditItemModal = function(item, columnName){
-                var modal;
-
-                if(profile.readonly){
-                    return null;
-                };
-                $rootScope.state = 'modal';
-
-                var modal_opts = {
-			        templateUrl: '/templates/modals/' + columnName + '.html/',
-                    controller: 'EditItemCtrl',
-                    resolve: {
-                        item: function() { return item; },
-                        options: function() { return options; },
-                        profile: function() { return profile; },
-                        episode: function() { return $scope.episode; }
-                    }
-                }
-
-                if(item.size){
-                    modal_opts.size = item.size;
-                }
-
-                modal = $modal.open(modal_opts);
-
-
-                modal.result.then(function(result) {
-			        $rootScope.state = 'normal';
-		        });
-            }
-
-            $scope.editNamedItem = function(name, index){
-                var item;
-                if (episode[name][index] && episode[name][index].columnName) {
-                    item = episode[name][index];
-                } else {
-                    item = new Item(episode[name][index], episode, $rootScope.fields[name]);
-                    episode[name][index] = item;
-                }
-                return _openEditItemModal(item, name)
-            };
-
-            $scope.newNamedItem = function(name) {
-                var item = episode.newItem(name, {column: $rootScope.fields[name]});
-                if (!episode[name]) {
-                    episode[name] = [];
-                }
-                return _openEditItemModal(item, name);
-            };
-
-	        $scope.deleteItem = function(column_name, iix) {
-		        var modal;
-		        var item = episode.getItem(column_name, iix);
-
-                if(profile.readonly){
-                    return null;
-                };
-
-		        if (!angular.isDefined(item)) {
-			        // Cannot delete 'Add'
-			        return;
-		        }
-
-                if(!item.isReadOnly){
-                    item = new Item(column_name, episode, $rootScope.fields[column_name]);
-                }
-
-                if (item.isReadOnly()) {
-                    // Cannont delete readonly columns
-                    return;
-                }
-
-		        if (item.isSingleton()) {
-			        // Cannot delete singleton
-			        return;
-		        }
-
-		        $rootScope.state = 'modal'
-		        modal = $modal.open({
-			        templateUrl: '/templates/modals/delete_item_confirmation.html/',
-			        controller: 'DeleteItemConfirmationCtrl',
-			        resolve: {
-				        item: function() { return item; }
-			        }
-		        }).result.then(function(result) {
-			        $rootScope.state = 'normal';
-		        });
-	        };
-
-            $scope.deleteNamedItem = function(name, index){
-                // TODO: Deprecate this fully - no longer neded !
-                return $scope.deleteItem(name, index)
-            };
-
-	        $scope.mouseEnter = function(cix) {
-		        $scope.mouseCix = cix;
-	        }
-
-	        $scope.mouseLeave = function() {
-		        $scope.mouseCix = -1;
-	        }
-
 	        $scope.dischargeEpisode = function() {
                 if(profile.readonly){ return null; };
 
@@ -143,7 +36,7 @@ angular.module('opal.services')
                 var enter = Flow(
                     'enter', schema, options,
                     {
-                        current_tags: { tag: 'mine', subtag: 'all' },
+                        current_tags: { tag: 'mine', subtag: '' },
                         hospital_number: $scope.episode.demographics[0].hospital_number
                     }
                 );
@@ -170,11 +63,6 @@ angular.module('opal.services')
             },
 
             $scope.jumpToTag = function(tag){
-                var currentTag, currentSubTag;
-
-                currentTag = $cookieStore.get('opal.currentTag') || 'mine';
-                currentSubTag = $cookieStore.get('opal.currentSubTag') || 'all';
-
                 if(_.contains(_.keys(options.tag_hierarchy), tag)){
                     $location.path('/list/'+tag)
                     return

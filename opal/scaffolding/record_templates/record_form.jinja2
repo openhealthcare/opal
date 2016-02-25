@@ -1,0 +1,9 @@
+{% raw %}
+{% load forms %}
+{% endraw %}
+{% for f in fields %}{% if f['name'] != 'consistency_token' %}
+{% if f['type'] == 'string' %}{{ '{' + '% input ' }} label="{{f['title']}}" model="editing.{{f['name']}}" {{' %' +'}' }}{% endif %}
+{% if f['type'] == 'date' %}{{ '{' + '% datepicker ' }} label="{{f['title']}}" model="editing.{{f['name']}}" {{' %' +'}' }}{% endif %}
+{% if f['type'] == 'text' %}{{ '{' + '% textarea ' }} label="{{f['title']}}" model="editing.{{f['name']}}" {{' %' +'}' }}{% endif %}
+{% if f['type'] == 'boolean' %}{{ '{' + '% checkbox ' }} label="{{f['title']}}" model="editing.{{f['name']}}" {{' %' +'}' }}{% endif %}
+{% endif %}{% endfor %}

@@ -10,14 +10,14 @@
     {% endif %}
   <div class="col-sm-8">
     {% if multiple %}
-      <ui-select {% if tagging %}tagging {% endif %}multiple {% if autofocus %}autofocus {% endif %} {% if change %} ng-change="{{ change }}" {% endif %}{% if disabled %}ng-disabled="{{ disabled }}" {% endif %}name="{{ model_name }}" {% if required %}required{% endif %} ng-model="{{ model }}" theme="bootstrap" style="min-width: 300px;">
+      <ui-select {% if tagging %}tagging {% endif %}multiple {% if autofocus %}autofocus {% endif %} {% if change %} ng-change="{{ change }}" {% endif %}{% if disabled %}ng-disabled="{{ disabled }}" {% endif %}name="{{ model_name }}" {% if required %}required{% endif %} ng-model="{{ model }}" theme="bootstrap" {% for d in directives %}{{ d }} {% endfor %} style="min-width: 300px;">
         <ui-select-match {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}>{% if multiple %}[[ $item ]]{% else %}[[ $select.selected ]]{% endif %}</ui-select-match>
         <ui-select-choices repeat="i in {{ lookuplist }} | filter:$select.search {% if not multiple %}track by $index{% endif %}">
           <div ng-bind-html="i | highlight: $select.search"></div>
         </ui-select-choices>
       </ui-select>
     {% else %}
-      <select {% if autofocus %}autofocus {% endif %}name="{{ model_name }}" {% if required %}required{% endif %} class="form-control" ng-model="{{ model }}" {% if change %} ng-change="{{ change }}" {% endif %} {% if disabled %}ng-disabled="{{ disabled }}" {% endif %}>
+      <select {% if autofocus %}autofocus {% endif %}name="{{ model_name }}" {% if required %}required{% endif %} class="form-control" ng-model="{{ model }}" {% if change %} ng-change="{{ change }}" {% endif %} {% if disabled %}ng-disabled="{{ disabled }}" {% endif %} {% for d in directives %}{{ d }} {% endfor %}>
         {% if default_null %}
           <option value="" selected>---------</option>
         {% endif %}

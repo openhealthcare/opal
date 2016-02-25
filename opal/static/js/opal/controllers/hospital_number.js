@@ -7,7 +7,6 @@ angular.module('opal.controllers').controller(
              $http,
              $q,
              Episode,
-             schema,
              options,
              tags,
             hospital_number) {
@@ -42,8 +41,8 @@ angular.module('opal.controllers').controller(
 			modal = $modal.open({
 				templateUrl: '/templates/modals/add_episode.html/',
 				controller: 'AddEpisodeCtrl',
+                size: 'lg',
 				resolve: {
-					schema: function() { return schema; },
 					options: function() { return options; },
 					demographics: function() {
 						return { hospital_number: result.hospitalNumber }
@@ -69,12 +68,12 @@ angular.module('opal.controllers').controller(
         $scope.newForPatientWithActiveEpisode = function(patient){
 			episode = new Episode(patient.episodes[patient.active_episode_id])
 
-            if(episode.category != 'inpatient'){ // It's the wrong category - add new
+            if(episode.category != 'Inpatient'){ // It's the wrong category - add new
                 return $scope.addForPatient(patient);
             }
 
 			if (episode.tagging[0][$scope.tags.tag] &&
-                ($scope.tags.subtag == 'all' ||
+                ($scope.tags.subtag == '' ||
                  episode.tagging[0][$scope.tags.subtag])) {
 				// There is already an active episode for this patient
                 // with the current tag
@@ -84,9 +83,10 @@ angular.module('opal.controllers').controller(
                 // it doesn't have the current tag.
                 // Add the current Tag.
                 episode.tagging[0][$scope.tags.tag] = true;
-                if($scope.tags.subtag != 'all'){
+                if($scope.tags.subtag != ''){
                     episode.tagging[0][$scope.tags.subtag] = true;
                 }
+
                 episode.tagging[0].save(episode.tagging[0].makeCopy()).then(
                     function(){
 				        $modalInstance.close(episode);
@@ -105,8 +105,8 @@ angular.module('opal.controllers').controller(
             modal = $modal.open({
 				templateUrl: '/templates/modals/add_episode.html/',
 				controller: 'AddEpisodeCtrl',
+                size: 'lg',
 				resolve: {
-					schema: function() { return schema; },
 					options: function() { return options; },
 					demographics: function() { return demographics; }
 				}

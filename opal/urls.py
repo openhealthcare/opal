@@ -9,9 +9,9 @@ from django.views.decorators.csrf import csrf_exempt
 from opal import views
 from opal.core import api
 from opal.forms import ChangePasswordForm
-from opal import models
 from opal.utils import camelcase_to_underscore
 from opal.core.subrecords import subrecords
+from opal.core.glossolalia import api as glossolalia_api
 
 urlpatterns = patterns(
     '',
@@ -28,20 +28,21 @@ urlpatterns = patterns(
     url(r'^admin/?', include(admin.site.urls)),
 
 
-    # Internal (Legacy) API views
     url(r'^episode/?$', views.episode_list_and_create_view),
-    url(r'^episode/(?P<tag>[a-z_\-]+)/?$', views.EpisodeListView.as_view()),
-    url(r'^episode/(?P<tag>[a-z_\-]+)/(?P<subtag>[a-z_\-]+)/?$', views.EpisodeListView.as_view()),
+    url(r'^episode/(?P<tag>[a-z_\-]+)/?$', api.EpisodeListApi.as_view()),
+    url(r'^episode/(?P<tag>[a-z_\-]+)/(?P<subtag>[a-z_\-]+)/?$', api.EpisodeListApi.as_view()),
     url(r'^episode/(?P<pk>\d+)/?$', views.episode_detail_view),
 
     url(r'^episode/(?P<pk>\d+)/actions/copyto/(?P<category>[a-zA-Z_\-]+)/?$',
         views.EpisodeCopyToCategoryView.as_view()),
 
     # Template vires
-    url(r'^templates/episode_list.html/?$', views.EpisodeListTemplateView.as_view()),
-    url(r'^templates/episode_list.html/(?P<tag>[a-z_\-]+)/?$', views.EpisodeListTemplateView.as_view()),
-    url(r'^templates/episode_list.html/(?P<tag>[a-z_\-]+)/(?P<subtag>[a-z_\-]+)/?$', views.EpisodeListTemplateView.as_view()),
+    url(r'^templates/episode_list.html/?$', views.EpisodeListTemplateView.as_view(), name="episode_list_template_view"),
+    url(r'^templates/episode_list.html/(?P<tag>[a-z_\-]+)/?$', views.EpisodeListTemplateView.as_view(), name="episode_list_template_view"),
+    url(r'^templates/episode_list.html/(?P<tag>[a-z_\-]+)/(?P<subtag>[a-z_\-]+)/?$', views.EpisodeListTemplateView.as_view(), name="episode_list_template_view"),
 
+    url(r'^templates/patient_detail.html$',
+        views.PatientDetailTemplateView.as_view()),
     url(r'^templates/episode_detail.html/(?P<pk>\d+)/?$',
         views.EpisodeDetailTemplateView.as_view()),
 
@@ -69,6 +70,7 @@ urlpatterns = patterns(
     url(r'api/v0.1/episode/admit', csrf_exempt(api.APIAdmitEpisodeView.as_view())),
     url(r'api/v0.1/episode/refer', csrf_exempt(api.APIReferPatientView.as_view())),
     url(r'api/v0.1/', include(api.router.urls)),
+    url(r'glossolalia_api/v0.1/', include(glossolalia_api.router.urls)),
 )
 
 # Generated subrecord template views
@@ -76,6 +78,10 @@ for subrecord_model in subrecords():
     sub_url = camelcase_to_underscore(subrecord_model.__name__)
     urlpatterns += patterns(
         '',
+        url(r'^templates/forms/%s.html/?$' % sub_url,
+            views.FormTemplateView.as_view(), {'model': subrecord_model},
+            name="form_template_view"
+            ),
         url(r'^templates/modals/%s.html/?$' % sub_url,
             views.ModalTemplateView.as_view(), {'model': subrecord_model}),
         url(r'^templates/modals/%s.html/(?P<tag>[a-z_\-]+)/?$' % sub_url,

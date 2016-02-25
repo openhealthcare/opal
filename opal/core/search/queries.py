@@ -3,9 +3,9 @@ Allow us to make search queries
 """
 import datetime
 
+from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.db import models as djangomodels
-
 
 from opal import models
 from opal.core import fields
@@ -19,7 +19,7 @@ def get_model_from_column_name(column_name):
     Mod = None
     model_name = get_model_name_from_column_name(column_name)
 
-    for m in djangomodels.get_models():
+    for m in apps.get_models():
         if m.__name__.lower() == model_name:
             if not Mod:
                 Mod = m
@@ -35,7 +35,7 @@ class PatientSummary(object):
         self.start_date = episode.start_date
         self.end_date = episode.end_date
         self.episode_ids = set([episode.id])
-        self.episode_id = episode.id
+        self.patient_id = episode.patient.id
         self.categories = set([episode.category])
         self.id = episode.patient.demographics_set.get().id
 
@@ -57,7 +57,7 @@ class PatientSummary(object):
 
     def to_dict(self):
         result = {k: getattr(self, k) for k in [
-            "episode_id", "start_date", "end_date", "id"
+            "patient_id", "start_date", "end_date", "id"
         ]}
         result["categories"] = sorted(self.categories)
         result["count"] = len(self.episode_ids)
@@ -220,7 +220,10 @@ class DatabaseQuery(QueryBackend):
             kw = {'{0}__{1}{2}'.format(model_name, field, contains): query['query']}
 
             if Mod == models.Tagging:
-                eps = models.Episode.objects.ever_tagged(query['field'])
+                db_team_name = query['field'].lower().replace(' ', '_')
+                eps = models.Episode.objects.filter(
+                    tagging__team__name=db_team_name
+                )
 
             elif issubclass(Mod, models.EpisodeSubrecord):
                 eps = models.Episode.objects.filter(**kw)

@@ -1,0 +1,59 @@
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3>
+      <i class="fa fa-user"></i> Demographics
+      <i class="fa fa-pencil edit pull-right"
+         ng-click="editNamedItem('demographics', 0)"></i>
+    </h3>
+  </div>
+  <div class="panel-body">
+    <div class="row">
+      <div class="col-md-4">
+        <b>Name</b>
+      </div>
+      <div class="col-md-8">
+        [[ patient.demographics[0].name ]]
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <b>Hospital #</b>
+      </div>
+      <div class="col-md-8">
+        [[ patient.demographics[0].hospital_number ]]
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <b>DOB</b>
+      </div>
+      <div class="col-md-8">
+        [[ patient.demographics[0].date_of_birth | shortDate ]]
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <b>Gender</b>
+      </div>
+      <div class="col-md-8">
+        [[ patient.demographics[0].gender ]]
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <b>Born</b>
+      </div>
+      <div class="col-md-8">
+        [[ patient.demographics[0].country_of_birth ]]
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <b>Ethnicity</b>
+      </div>
+      <div class="col-md-8">
+        [[ patient.demographics[0].ethnicity ]]
+      </div>
+    </div>
+  </div>
+</div>

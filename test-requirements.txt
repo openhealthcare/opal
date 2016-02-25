@@ -1,3 +1,6 @@
 mock
 pytz
 python-dateutil==2.4.2
+coverage
+coveralls
+celery

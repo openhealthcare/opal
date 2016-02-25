@@ -71,7 +71,7 @@ def _input(*args, **kwargs):
                                      kwargs.pop('hide', None))
 
     ctx.update({
-        'modelname' : ctx["model"].replace('.', '_'),
+        'modelname': ctx["model"].replace('.', '_').replace("editing_", ""),
         'directives': args,
         'lookuplist': lookuplist,
         'visibility': visibility,
@@ -177,7 +177,7 @@ def select(*args, **kwargs):
         'help_template': help_template,
         'help_text': help_text,
         'other': other,
-        'model_name': ctx["model"].replace('.', '_').replace('[','').replace(']', ''),
+        'model_name': ctx["model"].replace('.', '_').replace('[','').replace(']', '').replace('editing_', ''),
         'required': required,
         'other_show': other_show,
         'other_label': other_label,

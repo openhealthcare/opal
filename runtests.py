@@ -15,6 +15,11 @@ settings.configure(DEBUG=True,
                    OPAL_OPTIONS_MODULE = 'opal.tests.dummy_options_module',
                    ROOT_URLCONF='opal.urls',
                    USE_TZ=True,
+                   OPAL_EXTRA_APPLICATION='',
+                   DATE_FORMAT='d/m/Y',
+                   DATE_INPUT_FORMATS=['%d/%m/%Y'],
+                   DATETIME_FORMAT='d/m/Y H:i:s',
+                   DATETIME_INPUT_FORMATS=['%d/%m/%Y %H:%M:%S'],
                    STATIC_URL='/assets/',
                    COMPRESS_ROOT='/tmp/',
                    TIME_ZONE='UTC',
@@ -37,11 +42,17 @@ settings.configure(DEBUG=True,
                                    'django.contrib.staticfiles',
                                    'django.contrib.sessions',
                                    'django.contrib.admin',
+                                   'reversion',
                                    'compressor',
                                    'opal',
                                    'opal.core.search',
+                                   'opal.core.glossolalia',
                                    'opal.tests'
-                               ))
+                               ),
+                   MIGRATION_MODULES={
+                       'opal': 'opal.nomigrations'
+                   }
+)
 
 from opal.tests import dummy_options_module
 from opal.tests import dummy_opal_application

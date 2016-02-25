@@ -78,17 +78,21 @@ describe('EditItemCtrl', function (){
     beforeEach(module('opal.controllers'));
 
     beforeEach(function(){
+        module(function($provide) {
+            $provide.value('UserProfile', function(){ return profile; });
+        });
+
         inject(function($injector){
             Item = $injector.get('Item');
             Episode = $injector.get('Episode');
             $controller  = $injector.get('$controller');
             $q  = $injector.get('$q');
             $cookieStore = $injector.get('$cookieStore');
-            $timeout     = $injector.get('$timeout');
-            ngProgressLite   = $injector.get('ngProgressLite');
-            Schema   = $injector.get('Schema');
+            $timeout = $injector.get('$timeout');
+            ngProgressLite = $injector.get('ngProgressLite');
+            Schema = $injector.get('Schema');
             var $rootScope   = $injector.get('$rootScope');
-            $scope       = $rootScope.$new();
+            $scope = $rootScope.$new();
         });
 
         var schema = new Schema(columns.default);
@@ -119,8 +123,7 @@ describe('EditItemCtrl', function (){
     });
 
     describe('newly-created-controller', function (){
-        it('Should have subtag "all"', function () {
-            expect($scope.currentSubTag).toBe('all');
+        it('Should have columname diagnosis', function () {
             expect($scope.columnName).toBe('diagnosis');
         });
     });
@@ -128,6 +131,7 @@ describe('EditItemCtrl', function (){
 
     describe('Saving items', function (){
         it('Should save the current item', function () {
+            $scope.$digest();
             var callArgs;
             var deferred = $q.defer();
             spyOn(item, 'save').and.callFake(function() {
@@ -141,7 +145,7 @@ describe('EditItemCtrl', function (){
             expect($scope.saving).toBe(false);
             callArgs = item.save.calls.mostRecent().args;
             expect(callArgs.length).toBe(1);
-            expect(callArgs[0]).toBe($scope.editing);
+            expect(callArgs[0]).toBe($scope.editing.diagnosis);
         });
     });
 });

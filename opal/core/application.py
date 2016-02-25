@@ -77,7 +77,6 @@ class OpalApplication(object):
             "js/opal/services/episode_loader.js",
             "js/opal/services/patient_summary.js",
             "js/opal/services/record_loader.js",
-            "js/opal/services/list_schema_loader.js",
             "js/opal/services/extract_schema_loader.js",
             "js/opal/services/schema.js",
             "js/opal/services/options.js",
@@ -85,6 +84,7 @@ class OpalApplication(object):
             "js/opal/services/patient_loader.js",
 #            "js/opal/services/discharged_episodes_loader.js",
             "js/opal/services/episode_resource.js",
+            "js/opal/services/record_editor.js",
             "js/opal/services/copy_to_category.js",
             "js/opal/services/episode_detail.js",
             "js/search/services/paginator.js"
@@ -94,10 +94,12 @@ class OpalApplication(object):
             "js/opal/controllers/episode_list_redirect.js",
             "js/opal/controllers/episode_list.js",
             "js/opal/controllers/episode_detail.js",
+            "js/opal/controllers/patient_detail.js",
             "js/opal/controllers/hospital_number.js",
             "js/opal/controllers/add_episode.js",
             "js/opal/controllers/reopen_episode.js",
             "js/opal/controllers/edit_item.js",
+            "js/opal/controllers/edit_teams.js",
             "js/opal/controllers/delete_item_confirmation.js",
             "js/opal/controllers/account.js",
             "js/opal/controllers/undischarge.js",
@@ -109,7 +111,7 @@ class OpalApplication(object):
     javascripts   = []
     actions       = []
     menuitems     = []
-    default_episode_category = 'inpatient'
+    default_episode_category = 'Inpatient'
 
     opal_angular_exclude_tracking_qs = [
         "/search",
