@@ -34,7 +34,7 @@ angular.module('opal.controllers').controller(
 		    var attrs = tagging.makeCopy();
 
 		    attrs[tag] = true;
-            if(subtag != 'all'){
+            if(subtag != ''){
                 attrs[subtag] = true;
             }
 		    tagging.save(attrs).then(function(result) {

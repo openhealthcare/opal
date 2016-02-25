@@ -44,7 +44,7 @@ angular.module('opal.controllers').controller(
             }
         }
 
-        $scope.currentSubTag = $routeParams.subtag || "all";
+        $scope.currentSubTag = $routeParams.subtag || "";
         $scope.profile = profile;
         $scope.tag_display = options.tag_display;
 
@@ -103,7 +103,7 @@ angular.module('opal.controllers').controller(
 
 	    $scope.$watch('currentSubTag', function(){
 		    $cookieStore.put('opal.currentSubTag', $scope.currentSubTag);
-            if($scope.currentSubTag == 'all'){
+            if($scope.currentSubTag == ''){
                 if($routeParams.subtag && $scope.currentSubTag != $routeParams.subtag){
                     $rootScope.state = 'reloading'
                 }

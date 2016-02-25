@@ -1,7 +1,7 @@
 describe('HospitalNumberCtrl', function(){
     "use strict";
     var $scope, $timeout, $modal, modalInstance, $http, $q;
-    var tags, columns, patientData, Episode, options, optionsData;
+    var tags, columns, _patientData, patientData, Episode, options, optionsData;
     var $httpBackend;
 
     optionsData = {
@@ -9,6 +9,7 @@ describe('HospitalNumberCtrl', function(){
         tag_hierarchy :{'tropical': []}
     };
 
+    var fields = {};
     columns = {
         "default": [
             {
@@ -36,10 +37,40 @@ describe('HospitalNumberCtrl', function(){
                     {name: 'condition', type: 'string'},
                     {name: 'provisional', type: 'boolean'},
                 ]},
+            {
+                "name": "tagging",
+                "single": true,
+                "display_name": "Teams",
+                "advanced_searchable": true,
+                "fields": [
+                    {
+                        "type": "boolean",
+                        "name": "mine"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "tropical"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "main"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "secondary"
+                    }
+                ]
+            }
         ]
     };
 
-    patientData = {
+
+    _.each(columns.default, function(c){
+        fields[c.name] = c;
+    });
+
+
+    _patientData = {
         "active_episode_id": null,
         "demographics": [
             {
@@ -53,6 +84,7 @@ describe('HospitalNumberCtrl', function(){
         ],
         "episodes": {
             "3": {
+                "category": "Inpatient",
                 "antimicrobial": [],
                 "demographics": [
                     {
@@ -67,7 +99,7 @@ describe('HospitalNumberCtrl', function(){
                 "diagnosis": [],
                 "general_note": [],
                 "id": 3,
-                "tagging": {},
+                "tagging": [{}],
                 "location": [
                     {
                         "bed": "",
@@ -156,7 +188,7 @@ describe('HospitalNumberCtrl', function(){
                             pageTracking: false,
                         },
                         pageTrack: function(x){}
-                     };
+                    };
                 };
             });
         });
@@ -178,9 +210,12 @@ describe('HospitalNumberCtrl', function(){
             Episode = $injector.get('Episode');
         });
 
+        patientData = angular.copy(_patientData);
         options = optionsData;
         modalInstance = $modal.open({template: 'notatemplate'});
         schema = new Schema(columns.default);
+
+        $rootScope.fields = fields;
 
         controller = $controller('HospitalNumberCtrl', {
             $scope:         $scope,
@@ -189,7 +224,7 @@ describe('HospitalNumberCtrl', function(){
             $modalInstance: modalInstance,
             schema:         schema,
             options:        options,
-            tags:           {tag: 'mine', subtag: 'all'},
+            tags:           {tag: 'mine', subtag: ''},
             hospital_number: null
         });
     });
@@ -202,7 +237,7 @@ describe('HospitalNumberCtrl', function(){
 
     });
 
-    describe('new patient', function(){
+    describe('newPatient()', function(){
 
         it('should open AddEpisodeCtrl', function(){
             var deferred, callArgs;
@@ -233,7 +268,7 @@ describe('HospitalNumberCtrl', function(){
         })
     });
 
-    describe('new for patient', function(){
+    describe('newForPatient()', function(){
 
         it('should call through if there is an active discharged episode.', function(){
             var deferred, callArgs;
@@ -322,10 +357,58 @@ describe('HospitalNumberCtrl', function(){
 
     });
 
-    describe('adding for a patient', function(){
+    describe('addForPatientWithActiveEpisode()', function(){
+        var activePatientData;
+
+        beforeEach(function(){
+            activePatientData = angular.copy(patientData);
+            activePatientData.active_episode_id = 3;
+        })
+
+        describe('if not an inpatient', function(){
+            it('should add an episode', function(){
+                spyOn($scope, 'addForPatient');
+                activePatientData.episodes[3].category = 'outpatients';
+                $scope.newForPatientWithActiveEpisode(activePatientData);
+                expect($scope.addForPatient).toHaveBeenCalledWith(activePatientData);
+            })
+        });
+
+        describe('if we have the current tags', function(){
+            it('should just close', function(){
+                spyOn(modalInstance, 'close');
+                activePatientData.episodes[3].tagging[0].mine = true;
+                $scope.newForPatientWithActiveEpisode(activePatientData);
+                expect(modalInstance.close).toHaveBeenCalled();
+            })
+        });
+
+        describe('if we have the current tag but not hte subtag', function(){
+            it('should add the tag', function(){
+                spyOn(modalInstance, 'close');
+                $scope.tags.tag = 'main';
+                $scope.tags.subtag = 'secondary';
+
+                activePatientData.episodes[3].tagging[0].main = true;
+
+                $httpBackend.expectPUT('/api/v0.1/tagging/3/',
+                                       {main: true, secondary: true, id: 3})
+                    .respond({});
+
+                $scope.newForPatientWithActiveEpisode(activePatientData);
+                $scope.$digest();
+                $httpBackend.flush()
+                expect(modalInstance.close).toHaveBeenCalled();
+
+            });
+        });
+
+    });
+
+    describe('addForPatient()', function(){
 
         it('should open AddEpisodeCtrl', function(){
-        var deferred, callArgs;
+            var deferred, callArgs;
 
             deferred = $q.defer();
 
@@ -358,8 +441,8 @@ describe('HospitalNumberCtrl', function(){
 
             deferred = $q.defer();
             episode = new Episode({
-              id: 3,
-              demographics: [{"patient_id": 1}]
+                id: 3,
+                demographics: [{"patient_id": 1}]
             }, schema);
 
             spyOn($modal, 'open').and.returnValue({result: deferred.promise});
@@ -376,7 +459,7 @@ describe('HospitalNumberCtrl', function(){
 
     });
 
-    describe('cancelling the modal', function(){
+    describe('cancel()', function(){
         it('should close with null', function(){
             spyOn(modalInstance, 'close');
             $scope.cancel();

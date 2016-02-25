@@ -83,5 +83,9 @@ describe('AddEpisodeCtrl', function (){
         it('Should set up the initial editing situation', function () {
             expect($scope.editing.tagging).toEqual([{mine: true}]);
         });
+
+        it('Should set the subtag to an empty string', function(){
+            expect($scope.currentSubTag).toEqual('');
+        })
     });
 });

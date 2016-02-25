@@ -259,7 +259,7 @@ describe('EpisodeListCtrl', function() {
                 'enter', options, {
                     current_tags: {
                         tag   : 'tropical',
-                        subtag: 'all'
+                        subtag: ''
                     }
                 }
             );
@@ -349,7 +349,7 @@ describe('EpisodeListCtrl', function() {
             it('should call through to the record editor', function(){
                 $scope.editNamedItem($scope.episode, 'demographics', 0);
                 expect($scope.episode.recordEditor.editItem).toHaveBeenCalledWith(
-                    'demographics', 0, { tag: 'tropical', subtag: 'all' }
+                    'demographics', 0, { tag: 'tropical', subtag: '' }
                 );
             });
         });
@@ -364,7 +364,7 @@ describe('EpisodeListCtrl', function() {
             it('should call through to the record editor', function() {
                 $scope.editNamedItem($scope.episode, "diagnosis", iix);
                 expect($scope.episode.recordEditor.editItem).toHaveBeenCalledWith(
-                    'diagnosis', iix, { tag: 'tropical', subtag: 'all' }
+                    'diagnosis', iix, { tag: 'tropical', subtag: '' }
                 );
             });
         });

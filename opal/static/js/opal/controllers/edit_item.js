@@ -21,10 +21,6 @@ angular.module('opal.controllers').controller(
   	    $scope.editingName = item.episode.demographics[0].name;
 
         $scope.columnName = item.columnName;
-        // initially display episodes of interest to current user
-        $scope.currentTag = $cookieStore.get('opal.currentTag') || 'mine';
-        // initially display episodes of interest to current user
-        $scope.currentSubTag = 'all';
 
         $scope.showSubtags = function(withsubtags){
 		    return _.some(withsubtags, function(tag){ return item[tag] });
