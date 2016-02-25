@@ -15,7 +15,6 @@ angular.module('opal.services')
 
             $q.all([recordLoader, getEpisodesPromise]).then(function(results){
                 // record loader updates the global scope
-                // TODO look at whether it should be doing this...
                 var episodesResult = results[1];
                 var episodes = {};
                 _.each(episodesResult.data, function(resource) {
