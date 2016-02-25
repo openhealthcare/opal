@@ -380,7 +380,10 @@ class PatientListViewSet(viewsets.ViewSet):
     base_name = 'patientlist'
 
     def retrieve(self, request, pk=None):
-        patientlist = PatientList.get(pk)()
+        try:
+            patientlist = PatientList.get(pk)()
+        except ValueError:
+            return Response({'error': 'List does not exist'}, status=status.HTTP_404_NOT_FOUND)
         return _build_json_response(patientlist.to_dict(request.user))
 
 
