@@ -681,3 +681,7 @@ class PatientListTestCase(TestCase):
         expected = _build_json_response({}).content
         response = api.PatientListViewSet().retrieve(self.mock_request, pk='mylist').content
         self.assertEqual(expected, response)
+
+    def test_retrieve_episodes_not_found(self):
+        response = api.PatientListViewSet().retrieve(self.mock_request, pk='not a real list at all')
+        self.assertEqual(404, response.status_code)
