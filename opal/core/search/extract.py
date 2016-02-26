@@ -49,6 +49,48 @@ def episode_csv(episodes, user, file_name):
             writer.writerow(row)
 
 
+def symptoms_csv_write(episodes, file_name):
+    import csv
+    from walkin import models as walkin_models
+    from opal import models as opal_models
+    from copy import copy
+
+    def parse_known_symptoms(symptom):
+        results = []
+
+        if symptom.symptom:
+            potential_symptom = symptom.symptom
+            if opal_models.Symptom.objects.filter(name=potential_symptom).exists():
+                results.append(potential_symptom)
+        results.extend(symptom.symptoms.values_list("name", flat=True))
+        return ", ".join(results)
+
+    def parse_unknown_symptoms(symptom):
+        potential_symptom = symptom.symptom
+        if not opal_models.Symptom.objects.filter(name=potential_symptom).exists():
+            return potential_symptom
+
+    with open(file_name, "w") as csv_file:
+        writer = csv.writer(csv_file)
+        field_names = walkin_models.Symptom._get_fieldnames_to_extract()
+
+        for fname in ['consistency_token', 'id', 'symptom', 'symptoms']:
+            if fname in field_names:
+                field_names.remove(fname)
+
+        written_field_names = copy(field_names)
+        written_field_names.append("known symptoms")
+        written_field_names.append("unknown symptoms")
+
+        writer.writerow(written_field_names)
+        subrecords = walkin_models.Symptom.objects.filter(episode__in=episodes)
+        for sub in subrecords:
+            field_values = [unicode(getattr(sub, f)).encode('UTF-8') for f in field_names]
+            field_values.append(parse_known_symptoms(sub))
+            field_values.append(parse_unknown_symptoms(sub))
+            writer.writerow(field_values)
+
+
 def patient_subrecord_csv(episodes, subrecord, file_name):
     """
     Given an iterable of EPISODES, and the patient SUBRECORD we want to
