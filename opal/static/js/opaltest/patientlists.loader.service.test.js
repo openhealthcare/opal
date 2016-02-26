@@ -22,8 +22,8 @@ describe('PatientListLoaderTest', function(){
 
         var episodedata = {id: 1, demographics: [{patient_id: 1, name: 'Jane'}] };
 
-        $route.current = {params: {list: 'mylist'}}
-        $httpBackend.whenGET('/api/v0.1/patientlist/mylist').respond([episodedata])
+        $route.current = {params: {slug: 'mylist'}}
+        $httpBackend.whenGET('/api/v0.1/patientlist/mylist/').respond([episodedata])
         patientListLoader().then(function(r){ result = r; })
 
         $rootScope.$apply();
@@ -38,8 +38,8 @@ describe('PatientListLoaderTest', function(){
     it('should resolve an error for nonexistant lists', function(){
         var result
 
-        $route.current = {params: {list: 'mylist'}}
-        $httpBackend.whenGET('/api/v0.1/patientlist/mylist').respond(404, {error: "NOT FOUND"});
+        $route.current = {params: {slug: 'mylist'}}
+        $httpBackend.whenGET('/api/v0.1/patientlist/mylist/').respond(404, {error: "NOT FOUND"});
         patientListLoader().then(function(r){ result = r; })
 
         $rootScope.$apply();

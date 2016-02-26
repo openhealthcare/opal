@@ -24,13 +24,9 @@ describe('EpisodeRedirectListCtrl', function() {
   it('should redirect to the cookie store tag and sub tag', function() {
       var $cookieStore = {
           get: function(someKey){
-              if(someKey === "opal.currentTag"){
-                  return "cookieTag";
+              if(someKey === 'opal.lastPatientList'){
+                  return "cookietag"
               }
-              if(someKey === "opal.currentSubTag"){
-                  return "cookieSubTag";
-              }
-
               throw "unknown argument " + someKey;
           }
       };
@@ -40,30 +36,9 @@ describe('EpisodeRedirectListCtrl', function() {
           $location: $location ,
           options: fakeOptions
       });
-      expect($location.path).toHaveBeenCalledWith("/list/cookieTag/cookieSubTag");
+      expect($location.path).toHaveBeenCalledWith("/list/cookietag/");
   });
 
-  it('should redirect to the options child tag second', function(){
-    var $cookieStore = {
-        get: function(someKey){
-            if(someKey === "opal.currentTag"){
-                return "parentTag";
-            }
-            if(someKey === "opal.currentSubTag"){
-                return "";
-            }
-
-            throw "unknown argument " + someKey;
-        }
-    };
-    $controller('EpisodeRedirectListCtrl', {
-        $scope: $scope,
-        $cookieStore: $cookieStore,
-        $location: $location ,
-        options: fakeOptions
-    });
-    expect($location.path).toHaveBeenCalledWith("/list/parentTag/childTag");
-  });
 
   it('should redirect to the first option if there is no tag', function(){
         spyOn($cookieStore, 'get').and.returnValue(undefined);
@@ -73,8 +48,9 @@ describe('EpisodeRedirectListCtrl', function() {
             $location: $location ,
             options: fakeOptions
         });
-        expect($location.path).toHaveBeenCalledWith("/list/parentTag/childTag");
-        expect($cookieStore.get).toHaveBeenCalledWith("opal.currentTag");
-        expect($cookieStore.get).toHaveBeenCalledWith("opal.currentSubTag");
-  });
+        expect($location.path).toHaveBeenCalledWith("/list/parentTag-childTag/");
+        expect($cookieStore.get).toHaveBeenCalledWith("opal.lastPatientList");
+
+    });
+
 });

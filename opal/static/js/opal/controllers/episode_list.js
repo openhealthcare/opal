@@ -5,61 +5,52 @@ angular.module('opal.controllers').controller(
                                 $window,
                                 growl,
                                 Flow, Item,
-                                Episode, episodes, options,
+                                Episode, episodedata, options,
                                 profile, episodeVisibility){
+
         $scope.ready = false;
         var version = window.version;
-        $rootScope.state = 'normal';
-        $scope.url = $location.url();
 
-        $scope.options = options;
-        $scope.listView = true;
+        if(episodedata.status == 'error'){
+            $location.path('/404');
+            return
+        }else{
+            var episodes = episodedata.data;
+            $rootScope.state = 'normal';
+            $scope.url = $location.url();
 
-        $scope.num_episodes = _.keys(episodes).length;
+            $scope.options = options;
+            $scope.listView = true;
 
-	    $scope.rix = 0; // row index
-        $scope._ =  _;
+            $scope.num_episodes = _.keys(episodes).length;
 
-  	    $scope.query = {hospital_number: '', name: '', ward: '', bed: ''};
-        $scope.$location = $location;
-        $scope.path_base = '/list/';
-        $scope.currentTag = $routeParams.tag;
+	        $scope.rix = 0; // row index
+            $scope._ =  _;
 
-        if(!$routeParams.subtag){
-            // this should never be the case, redirection should be done
-            // by the episode list redirect controller
-            if($scope.currentTag in options.tag_hierarchy &&
-               options.tag_hierarchy[$scope.currentTag].length > 0){
+  	        $scope.query = {hospital_number: '', name: '', ward: '', bed: ''};
+            $scope.$location = $location;
+            $scope.path_base = '/list/';
+            $scope.profile = profile;
 
-                var subtag = $cookieStore.get('opal.currentSubTag') || "";
-
-                if(!subtag){
-                    subtag = options.tag_hierarchy[$scope.currentTag][0];
-                }
-
-                var target = $scope.path_base + $scope.currentTag + '/' + subtag;
-                $location.path(target);
-                $location.replace();
-                return;
-            }
+            $cookieStore.put('opal.lastPatientList', $routeParams.slug);
+            var tags = $routeParams.slug.split('-')
+            $scope.currentTag = tags[0];
+            $scope.currentSubTag = tags.length == 2 ? tags[1] : "" ;
+            $scope.tag_display = options.tag_display;
         }
-
-        $scope.currentSubTag = $routeParams.subtag || "";
-        $scope.profile = profile;
-        $scope.tag_display = options.tag_display;
 
 	    $scope.getVisibleEpisodes = function() {
 		    var visibleEpisodes = [];
-        var episode_list = [];
+            var episode_list = [];
 
-        visibleEpisodes = _.filter(episodes, function(episode){
-            return episodeVisibility(episode, $scope);
-        });
+            visibleEpisodes = _.filter(episodes, function(episode){
+                return episodeVisibility(episode, $scope);
+            });
 		    visibleEpisodes.sort(compareEpisodes);
-        if($scope.rows && visibleEpisodes.length == 1){
-            rix = getRowIxFromEpisodeId(visibleEpisodes[0].id);
-            $scope.select_episode(visibleEpisodes[0], rix);
-        }
+            if($scope.rows && visibleEpisodes.length == 1){
+                rix = getRowIxFromEpisodeId(visibleEpisodes[0].id);
+                $scope.select_episode(visibleEpisodes[0], rix);
+            }
 		    return visibleEpisodes;
 	    };
 
@@ -68,6 +59,10 @@ angular.module('opal.controllers').controller(
 
         $scope.ready = true;
 
+        //
+        // This is used to be callable we can pass to
+        // the table row iterator in the spreadsheet template.
+        //
         $scope.isSelectedEpisode = function(episode){
             return episode === $scope.episode;
         }
@@ -83,38 +78,12 @@ angular.module('opal.controllers').controller(
                 for(var prop in options.tag_hierarchy){
                     if(options.tag_hierarchy.hasOwnProperty(prop)){
                         if(_.contains(_.values(options.tag_hierarchy[prop]), tag)){
-                            $location.path($scope.path_base + prop + '/' + tag)
+                            $location.path($scope.path_base + prop + '-' + tag)
                         }
                     }
                 }
-
             };
         }
-
-	    $scope.$watch('currentTag', function() {
-		    $cookieStore.put('opal.currentTag', $scope.currentTag);
-            if($scope.currentTag != $routeParams.tag){
-                $$rootScope.state = 'reloading'
-            }
-            var target = $scope.path_base +  $scope.currentTag;
-
-            $location.path(target);
-	    });
-
-	    $scope.$watch('currentSubTag', function(){
-		    $cookieStore.put('opal.currentSubTag', $scope.currentSubTag);
-            if($scope.currentSubTag == ''){
-                if($routeParams.subtag && $scope.currentSubTag != $routeParams.subtag){
-                    $rootScope.state = 'reloading'
-                }
-                $location.path($scope.path_base +  $scope.currentTag);
-            }else{
-                if($scope.currentSubTag != $routeParams.subtag){
-                    $rootScope.state = 'reloading'
-                }
-                $location.path($scope.path_base +  $scope.currentTag + '/' +  $scope.currentSubTag);
-            }
-	    });
 
         $scope.showSubtags = function(withsubtags){
             var show =  _.contains(withsubtags, $scope.currentTag);
@@ -253,13 +222,13 @@ angular.module('opal.controllers').controller(
                 });
 	    };
 
-      $scope._post_discharge = function(result){
+        $scope._post_discharge = function(result){
   			$rootScope.state = 'normal';
   			if (result == 'discharged' | result == 'moved') {
   				$scope.rows = $scope.getVisibleEpisodes();
-          $scope.num_episodes -= 1;
+                $scope.num_episodes -= 1;
   			};
-      };
+        };
 
 	    $scope.dischargeEpisode = function(episode) {
             if(profile.readonly){ return null; };

@@ -3,16 +3,18 @@ angular.module('opal.controllers').controller(
         "use strict";
         // a simple controller that redirects to the correct tag/subtag
         $scope.ready = false;
-        var tag =  $cookieStore.get('opal.currentTag') || _.keys(options.tag_hierarchy)[0];
-        var subtag =  $cookieStore.get('opal.currentSubTag') || "";
-        var path_base = '/list/';
 
-        if(!subtag){
-            if(tag in options.tag_hierarchy &&
-                options.tag_hierarchy[tag].length > 0){
-                subtag = options.tag_hierarchy[tag][0];
+        var path_base = '/list/';
+        var last_list = $cookieStore.get('opal.lastPatientList');
+        if(last_list){
+            var target = path_base + last_list;
+        }else{
+            var target = _.keys(options.tag_hierarchy)[0];
+            if(options.tag_hierarchy[target].length > 0){
+                target += '-' + options.tag_hierarchy[target][0];
             }
+            target = path_base + target;
         }
-        $location.path(path_base + tag + "/" + subtag);
+        $location.path( target + '/');
         $location.replace();
 });
