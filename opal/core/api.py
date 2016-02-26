@@ -309,7 +309,7 @@ class EpisodeViewSet(viewsets.ViewSet):
         tag    = request.query_params.get('tag', None)
         subtag = request.query_params.get('subtag', None)
 
-        filter_kwargs = {}
+        filter_kwargs = {'tagging__archived': False}
         if subtag:
             filter_kwargs['tagging__team__name'] = subtag
         elif tag:
@@ -318,7 +318,7 @@ class EpisodeViewSet(viewsets.ViewSet):
         if tag == 'mine':
             filter_kwargs['tagging__user'] = request.user
 
-        if not filter_kwargs:
+        if not (subtag or tag):
             return Response([e.to_dict(request.user) for e in Episode.objects.all()])
 
         serialised = Episode.objects.serialised_active(
