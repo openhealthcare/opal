@@ -1,4 +1,3 @@
-
 ### 0.6.0 (Major Release)
 
 
@@ -19,7 +18,7 @@ We now expect 'd/m/y' date formatting by default.
 
 #### Patient lists
 
-Lists are now declarative, and separate from teams. They are implemented as 
+Lists are now declarative, and separate from teams. They are implemented as
 subclasses of opal.core.patient_lists.PatientList.
 
 #### Forms vs. Modals
@@ -35,6 +34,13 @@ Adds $opal checkout for switching between applications or application versions.
 #### Upgrade instructions:
 
 * Update your settings to use the new date formats.
+
+
+### 0.5.5 (Minor Release)
+Changes the way old tags are handled.
+
+Tags are no longer deleted episodes, rather they're marked as archived.
+
 
 ### 0.5.4 (Minor Release)
 * Include local storage

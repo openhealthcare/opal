@@ -219,9 +219,6 @@ def episode_list_and_create_view(request):
         return _build_json_response(serialised, status_code=201)
 
 
-
-
-
 class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
     """
     Copy an episode to a given category, excluding tagging.

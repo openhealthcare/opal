@@ -22,7 +22,7 @@ from django.template.loader import select_template
 from django.utils import timezone
 from django.conf import settings
 import reversion
-
+from django.utils import dateparse
 from opal.core import application, exceptions, lookuplists, plugins
 from opal import managers
 from opal.utils import camelcase_to_underscore
@@ -536,8 +536,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
         if "mine" not in tag_names:
             self.tagging_set.filter(user=user).update(archived=True)
-
-        if "mine" in tag_names:
+        else:
             my_team = Team.objects.get(name="mine")
             tag, created = self.tagging_set.get_or_create(
                 team=my_team, user=user
@@ -753,6 +752,7 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
         if subteam:
             templates.insert(0, 'modals/{0}/{1}/{2}_modal.html'.format(
                 team, subteam, name))
+
         if cls.get_form_template():
             templates.append("modal_base.html")
 
@@ -910,69 +910,6 @@ class Tagging(TrackedModel, models.Model):
                 ))
 
         Tagging.objects.bulk_create(tagging_objs)
-
-    @classmethod
-    def historic_tags_for_episodes(cls, episodes):
-        """
-        Given a list of episodes, return a dict indexed by episode id
-        that contains historic tags for those episodes.
-        """
-        episode_ids = [e.id for e in episodes]
-        teams = {t.id: t.name for t in Team.objects.all()}
-        deleted = reversion.get_deleted(cls)
-        historic = collections.defaultdict(dict)
-
-        for d in deleted:
-            data = json.loads(d.serialized_data)[0]['fields']
-            if data['episode'] in episode_ids:
-                if 'team' in data:
-                    if data['team'] in teams:
-                        tag_name = teams[data['team']]
-                    else:
-                        print 'Team has been deleted since it was serialised.'
-                        print 'We ignore these for now.'
-                        continue
-                else:
-                    try:
-                        tag_name = data['tag_name']
-                    except KeyError:
-                        print json.dumps(data, indent=2)
-                        raise exceptions.FTWLarryError("Can't find the team in this data :(")
-
-                historic[data['episode']][tag_name] = True
-        return historic
-
-    @classmethod
-    def historic_episodes_for_tag(cls, tag):
-        """
-        Given a TAG return a list of episodes that have historically been
-        tagged with it.
-        """
-        teams = {t.id: t.name for t in Team.objects.all()}
-        deleted = reversion.get_deleted(cls)
-        eids = set()
-
-        for d in deleted:
-            data = json.loads(d.serialized_data)[0]['fields']
-            try:
-                team_index = data['team']
-                if team_index not in teams:
-                    print "Can't find deleted team by index - we think the team has been deleted? "
-                    print "DATA:"
-                    print json.dumps(data, indent=2)
-                    print "TEAMS:"
-                    print json.dumps(teams, indent=2)
-                    continue
-                tag_name = teams[team_index]
-
-            except KeyError:
-                tag_name = data['tag_name']
-
-            if tag_name == tag:
-                eids.add(data['episode'])
-
-        historic = Episode.objects.filter(id__in=eids)
-        return historic
 
 
 """
