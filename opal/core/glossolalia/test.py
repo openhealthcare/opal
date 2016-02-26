@@ -126,3 +126,11 @@ class ChangeTestCase(TestCase):
 # test unsubscribe
 
 # test get list-api
+
+class SendUpstreamMessageTestCase(TestCase):
+
+    @patch('opal.core.glossolalia.triggers.requests.post')
+    def test_post(self, post):
+        triggers._send_upstream_message('myevent', {})
+        payload = dict(servicetype="OPAL", event="myevent", name=triggers.NAME)
+        post.assert_called_with(triggers.ENDPOINT, data=payload)

@@ -13,7 +13,7 @@ class GlossolaliaViewSet(viewsets.ViewSet):
         serialised = queryset.values(*GlossolaliaSubscription.SERIALISED_FIELDS)
         return Response(serialised)
 
-    def update(self, request, pk=None):
-        pass
+    def update(self, request, pk=None): pass
+
 
 router.register('glossolalia', GlossolaliaViewSet)

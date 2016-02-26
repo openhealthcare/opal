@@ -57,8 +57,7 @@ def unsubscribe(episode):
     subscribe_to_type(episode, GlossolaliaSubscription.CORE_DEMOGRAPHICS)
 
 
-def demographics_query(hospital_number):
-    pass
+def demographics_query(hospital_number): pass
 
 
 def admit(episode):
