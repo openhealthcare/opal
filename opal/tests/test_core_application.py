@@ -13,6 +13,9 @@ class OpalApplicationTestCase(TestCase):
 
         self.app = App
 
+    def test_get_menu_items(self):
+        self.assertEqual([], application.OpalApplication.get_menu_items())
+
     @patch('opal.core.plugins.plugins')
     def test_flows_no_flow_module(self, subclasses):
         class App(application.OpalApplication): pass
@@ -22,7 +25,7 @@ class OpalApplicationTestCase(TestCase):
     @patch('opal.core.plugins.plugins')
     @patch('opal.core.application.stringport')
     def test_flows(self, stringport, pluginsubs):
-        pluginsubs.return_value = []
+        pluginsubs.return_value = [MagicMock(name='mock_plugin')]
         mock_flows = MagicMock(name='flow module')
         mock_flows.flows = {'default': { 'enter': '', 'exit': '' } }
         stringport.return_value = mock_flows
