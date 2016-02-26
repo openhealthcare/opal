@@ -1,9 +1,17 @@
 """
 Unittests for the opal.core.discoverable module
 """
+from mock import patch
+from django.test import override_settings
 from opal.core.test import OpalTestCase
 
 from opal.core import discoverable
+
+class NewOpalObjectType(object):
+    pass
+
+class NewOpalObjectClass(NewOpalObjectType):
+    pass
 
 class MyPassingFeature(discoverable.DiscoverableFeature):
     pass
@@ -23,6 +31,23 @@ class RedColour(ColourFeature):
 
 class SeaGreenColour(ColourFeature):
     name = 'Sea Green'
+
+
+
+class AppImporterTestCase(OpalTestCase):
+
+    @override_settings(INSTALLED_APPS=("opal",))
+    @patch("opal.core.discoverable.stringport")
+    def test_class_import(self, stringport_mock):
+        classes_1 = discoverable.get_subclass("someModule", NewOpalObjectType)
+        classes_2 = discoverable.get_subclass("someModule", NewOpalObjectType)
+
+        self.assertEqual([i for i in classes_1], [NewOpalObjectClass])
+        self.assertEqual([i for i in classes_2], [NewOpalObjectClass])
+
+        # should only be called once because we should only import once
+        self.assertEqual(stringport_mock.call_count, 1)
+
 
 class DiscoverableFeatureTestCase(OpalTestCase):
 
