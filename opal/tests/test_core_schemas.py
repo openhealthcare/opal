@@ -5,7 +5,7 @@ from django.test import TestCase
 from mock import patch
 
 from opal.core import schemas
-from opal.tests.models import Colour
+from opal.tests.models import Colour, HatWearer, FamousLastWords
 
 colour_serialized = dict(
     name='colour',
@@ -52,6 +52,15 @@ tagging_serialized = {
 class SerializeModelTestCase(TestCase):
     def test_serialize(self):
         self.assertEqual(colour_serialized, schemas.serialize_model(Colour))
+
+    def test_serialize_sort(self):
+        self.assertEqual('name', schemas.serialize_model(HatWearer)['sort'])
+
+    def test_serialize_modal(self):
+        self.assertEqual('lg', schemas.serialize_model(FamousLastWords)['modal_size'])
+
+    def test_serialize_readonly(self):
+        self.assertEqual(True, schemas.serialize_model(FamousLastWords)['readOnly'])
 
 
 class SerializeSchemaTestCase(TestCase):

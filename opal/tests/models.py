@@ -13,6 +13,8 @@ class Hat(lookuplists.LookupList):
 
 
 class HatWearer(models.EpisodeSubrecord):
+    _sort = 'name'
+
     name = dmodels.CharField(max_length=200)
     hats = dmodels.ManyToManyField(Hat, related_name="hat_wearers")
 
@@ -38,6 +40,8 @@ class PatientColour(models.PatientSubrecord):
 
 class FamousLastWords(models.PatientSubrecord):
     _is_singleton = True
+    _read_only = True
+    _modal = 'lg'
 
     words = dmodels.CharField(max_length=200, blank=True, null=True)
 
