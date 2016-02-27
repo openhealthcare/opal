@@ -145,7 +145,7 @@ def select(*args, **kwargs):
     """
     ctx = extract_common_args(kwargs)
     lookuplist = kwargs.pop('lookuplist', None)
-    form_name = kwargs.pop('formname', "form")
+    form_name = kwargs.pop('formname', None)
     other = kwargs.pop('other', False)
     help_template = kwargs.pop('help', None)
     help_text = kwargs.pop('help_text', None)
@@ -229,5 +229,5 @@ def process_steps(*args, **kwargs):
         template_args[required_kwarg] = kwargs.pop(required_kwarg)
 
     template_args["show_index"] = kwargs.pop("show_index", False)
-    template_args["show_titles"] = kwargs.pop("show_index", False)
+    template_args["show_titles"] = kwargs.pop("show_titles", False)
     return template_args

@@ -82,7 +82,7 @@ class ApplicationMenuitemsTestCase(OpalTestCase):
         self.assertEqual(expected, result)
 
 
-class PluginAngularDeps(OpalTestCase):
+class PluginAngularDepsTestCase(OpalTestCase):
 
     @patch('opal.templatetags.opalplugins.plugins.plugins')
     def test_plugin_angular_deps(self, plugins):
@@ -90,3 +90,29 @@ class PluginAngularDeps(OpalTestCase):
         deps = list(opalplugins.plugin_opal_angular_deps()['deps']())
         expected = ['js/test.angular.mod.js']
         self.assertEqual(expected, deps)
+
+
+class CoreJavascriptTestCase(OpalTestCase):
+
+    @patch('opal.templatetags.opalplugins.application.get_app')
+    def test_core_javascripts(self, get_app):
+        mock_app = MagicMock(name='Application')
+        mock_app.core_javascripts = {'opal': ['test.js']}
+        get_app.return_value = mock_app
+
+        result = list(opalplugins.core_javascripts('opal')['javascripts']())
+
+        self.assertEqual(['test.js'], result)
+
+
+class ApplicationJavascriptTestCase(OpalTestCase):
+
+    @patch('opal.templatetags.opalplugins.application.get_app')
+    def test_core_javascripts(self, get_app):
+        mock_app = MagicMock(name='Application')
+        mock_app.javascripts = ['test.js']
+        get_app.return_value = mock_app
+
+        result = list(opalplugins.application_javascripts()['javascripts']())
+
+        self.assertEqual(['test.js'], result)

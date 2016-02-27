@@ -49,12 +49,15 @@ class Command(BaseCommand):
 
         for pair in suspicious:
             self.stdout.write("Suspicious Pair:")
+
             msg = '{0} {1}'.format(
-                pair[0].demographics_set.get().name, pair[0].episode_set.all()[0].id
+                pair[0].demographics_set.get().name, pair[0].id
             )
             self.stdout.write(msg)
+
             msg = '{0} {1}'.format(
-                pair[1].demographics_set.get().name, pair[1].episode_set.all()[0].id
+                pair[1].demographics_set.get().name, pair[1].id
             )
+            self.stdout.write(msg)
 
         return
