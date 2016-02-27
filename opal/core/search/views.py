@@ -146,6 +146,7 @@ class DownloadSearchView(View):
 
 
 class FilterView(LoginRequiredMixin, View):
+
     def get(self, *args, **kwargs):
         filters = models.Filter.objects.filter(user=self.request.user)
         return _build_json_response([f.to_dict() for f in filters])
@@ -179,7 +180,7 @@ class FilterDetailView(LoginRequiredMixin, View):
 
 
 class ExtractResultView(View):
-                
+
     def get(self, *args, **kwargs):
         """
         Tell the client about the state of the extract
@@ -188,10 +189,9 @@ class ExtractResultView(View):
         import taskrunner
         task_id = kwargs['task_id']
         result = AsyncResult(id=task_id, app=taskrunner.celery.app)
-        print result.state 
-        
+
         return _build_json_response({'state': result.state})
-                
+
 
 class ExtractFileView(View):
     def get(self, *args, **kwargs):
@@ -202,9 +202,9 @@ class ExtractFileView(View):
         if result.state != 'SUCCESS':
             raise ValueError('Wrong Task Larry!')
         print result.state
-        fname = result.get() 
+        fname = result.get()
         resp = HttpResponse(open(fname, 'rb').read())
         disp = 'attachment; filename="{0}extract{1}.zip"'.format(
             settings.OPAL_BRAND_NAME, datetime.datetime.now().isoformat())
         resp['Content-Disposition'] = disp
-        return resp        
+        return resp
