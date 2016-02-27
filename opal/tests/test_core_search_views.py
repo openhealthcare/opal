@@ -3,7 +3,9 @@ unittests for opal.core.search.views
 """
 import json
 from datetime import date
+
 from django.core.serializers.json import DjangoJSONEncoder
+from mock import patch
 
 from opal import models
 from opal.core.test import OpalTestCase
@@ -155,3 +157,28 @@ class SearchTemplateTestCase(OpalTestCase):
 
     def test_search_template_view(self):
         self.assertStatusCode('/search/templates/search.html/', 200)
+
+
+class FilterViewTestCase(OpalTestCase):
+
+    def test_get(self):
+        filt = models.Filter(user=self.user, name='testfilter', criteria='[]').save()
+        self.assertEqual(1, models.Filter.objects.count())
+
+        view = views.FilterView()
+        view.request = self.rf.get('/filter')
+        view.request.user = self.user
+
+        data = json.loads(view.get().content)
+        self.assertEqual([{'name': 'testfilter', 'criteria': [], 'id': 1}], data)
+
+    def test_post(self):
+        view = views.FilterView()
+        view.request = self.rf.post('/filter')
+        view.request.user = self.user
+        with patch.object(view.request, 'read') as mock_read:
+            mock_read.return_value =  '{"name": "posttestfilter", "criteria": "[]"}'
+
+            self.assertEqual(0, models.Filter.objects.count())
+            view.post()
+            self.assertEqual(1, models.Filter.objects.count())
