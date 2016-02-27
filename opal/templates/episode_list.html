@@ -14,7 +14,7 @@
           {% if team.visible_in_list %}
           {% if not team.has_subteams or team.parent %}
           <li ng-hide="currentTag == '{{ team.name }}' || currentSubTag == '{{ team.name }}'">
-            <a href="#/list/{% if team.parent %}{{ team.parent.name }}/{{ team.name }}{% else %}{{ team.name }}{% endif %}">
+            <a href="#/list/{% if team.parent %}{{ team.parent.name }}-{{ team.name }}{% else %}{{ team.name }}{% endif %}">
               {% if team.parent %}
               {{ team.parent.title }} /
               {% endif %}

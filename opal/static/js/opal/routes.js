@@ -3,30 +3,27 @@ var app = angular.module('opal');
 app.config(
     ['$routeProvider',
      function($routeProvider) {
-             $routeProvider.when('/list/',{
-                controller: 'EpisodeRedirectListCtrl',
-                templateUrl: '/templates/episode_list.html',
-                resolve: {
-                    options: function(Options){ return Options; }
-                }
-             }).when('/list/:tag/:subtag?', {
-			     controller: 'EpisodeListCtrl',
-			     resolve: {
-				     episodes: function(episodesLoader) { return episodesLoader(); },
-				     options: function(Options) { return Options; },
-                     profile: function(UserProfile){ return UserProfile; },
-			     },
-			     templateUrl: function(params){
-                     var target =  '/templates/episode_list.html';
-                     if(params.tag){
-                         target += '/' + params.tag;
-                         if(params.subtag){
-                             target += '-' + params.subtag;
-                         }
-                     }
-                     return target;
+         $routeProvider.when('/list/',{
+             controller: 'EpisodeRedirectListCtrl',
+             templateUrl: '/templates/episode_list.html',
+             resolve: {
+                 options: function(Options){ return Options; }
+             }
+         }).when('/list/:slug', {
+			 controller: 'EpisodeListCtrl',
+			 resolve: {
+				 episodedata: function(patientListLoader) { return patientListLoader(); },
+				 options    : function(Options) { return Options; },
+                 profile    : function(UserProfile){ return UserProfile; },
+			 },
+			 templateUrl: function(params){
+                 var target =  '/templates/episode_list.html';
+                 if(params.slug){
+                     target += '/' + params.slug;
                  }
-		     })
+                 return target;
+             }
+		 })
              .when('/patient/:patient_id/:view?', {
 			     controller: 'PatientDetailCtrl',
                  resolve: {
@@ -54,5 +51,9 @@ app.config(
                  controller: 'AccountCtrl',
                  templateUrl: '/accounts/templates/account_detail.html'
 		     })
+             .when('/404', {
+                 controller: '404Ctrl',
+                 templateUrl: '/templates/404.html'
+             })
              .otherwise({redirectTo: '/'});
      }]);

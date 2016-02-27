@@ -45,7 +45,10 @@ class EpisodeListTemplateView(TemplateView):
             name = kwargs['tag']
             if 'subtag' in kwargs:
                 name += '-' + kwargs['subtag']
-            patient_list = PatientList.get(name)
+            try:
+                patient_list = PatientList.get(name)
+            except ValueError:
+                return []
             return _get_column_context(patient_list.schema, **kwargs)
         else:
             return []

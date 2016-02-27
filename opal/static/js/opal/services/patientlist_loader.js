@@ -9,7 +9,7 @@ angular.module('opal.services')
 
 	        var deferred = $q.defer();
             var params = $route.current.params;
-            var target = '/api/v0.1/patientlist/' + params.list;
+            var target = '/api/v0.1/patientlist/' + params.slug + '/';
 
             var getEpisodesPromise = $http.get(target);
 

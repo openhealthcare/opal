@@ -35,6 +35,25 @@ class BaseViewTestCase(OpalTestCase):
         v.kwargs = kw
         return v
 
+
+class EpisodeListTemplateViewTestCase(BaseViewTestCase):
+
+    def test_episode_list_view(self):
+        url = reverse("episode_list_template_view", kwargs=dict(tag="eater", subtag="herbivore"))
+        request = self.get_request(url)
+        view = views.EpisodeListTemplateView()
+        view.request = request
+        context_data = view.get_context_data(tag="eater", subtag="herbivore")
+        column_names = [i["name"] for i in context_data["columns"]]
+        self.assertEqual(column_names, ["demographics"])
+        self.should_200(views.EpisodeListTemplateView, request)
+
+    def test_get_column_context_no_list(self):
+        view = views.EpisodeListTemplateView()
+        ctx = view.get_column_context(tag='notarealthing')
+        self.assertEqual([], ctx)
+
+
 class PatientDetailTemplateViewTestCase(BaseViewTestCase):
 
     def test_default_should_200(self):
@@ -187,15 +206,3 @@ class RawTemplateViewTestCase(BaseViewTestCase):
             views.RawTemplateView, request)
         resp = view.dispatch(request, template_name='not_a_real_template.html')
         self.assertEqual(404, resp.status_code)
-
-
-class EpisodeListTemplateViewTestCase(BaseViewTestCase):
-    def test_episode_list_view(self):
-        url = reverse("episode_list_template_view", kwargs=dict(tag="eater", subtag="herbivore"))
-        request = self.get_request(url)
-        view = views.EpisodeListTemplateView()
-        view.request = request
-        context_data = view.get_context_data(tag="eater", subtag="herbivore")
-        column_names = [i["name"] for i in context_data["columns"]]
-        self.assertEqual(column_names, ["demographics"])
-        self.should_200(views.EpisodeListTemplateView, request)

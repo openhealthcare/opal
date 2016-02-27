@@ -6,8 +6,10 @@ describe('EpisodeListCtrl', function() {
     var $scope, $cookieStore, $controller, $q, $dialog;
     var $location, $routeParams, $http;
     var Flow, flow_promise;
-    var episodes, controller;
+    var episodedata, controller;
     var $modal, options, $rootScope;
+
+    var _makecontroller;
 
     var fields = {};
     var columns = {
@@ -176,12 +178,12 @@ describe('EpisodeListCtrl', function() {
 
     optionsData = {
         condition: ['Another condition', 'Some condition'],
-        tag_hierarchy :{'tropical': []}
+        tag_hierarchy: {'tropical': [], 'inpatients': ['icu']}
     };
 
     profile = {
         can_edit: function(x){
-          return true;
+            return true;
         },
         readonly   : false,
         can_extract: true,
@@ -214,36 +216,95 @@ describe('EpisodeListCtrl', function() {
 
         spyOn(episode.recordEditor, 'deleteItem').and.returnValue(promise);
         spyOn(episode.recordEditor, 'editItem').and.returnValue(promise);
+        spyOn($cookieStore, 'put').and.callThrough();
 
-        episodes = {123: episode};
+        episodedata = {status: 'success', data: {123: episode} };
+
         options = optionsData;
-        $routeParams.tag = 'tropical';
+        $routeParams.slug = 'tropical';
         flow_promise = {then: function(){}};
         Flow = jasmine.createSpy('Flow').and.callFake(function(){return flow_promise});
         $rootScope.fields = fields;
 
+        _makecontroller = function(){
+            return $controller('EpisodeListCtrl', {
+                $rootScope    : $rootScope,
+                $scope        : $scope,
+                $q            : $q,
+                $http         : $http,
+                $cookieStore  : $cookieStore,
+                $location     : $location,
+                $routeParams  : $routeParams,
+                Flow          : Flow,
+                schema        : schema,
+                episodedata   : episodedata,
+                profile       : profile,
+                options       : options,
+                viewDischarged: false
+            });
+        }
 
-        controller = $controller('EpisodeListCtrl', {
-            $rootScope    : $rootScope,
-            $scope        : $scope,
-            $q            : $q,
-            $http         : $http,
-            $cookieStore  : $cookieStore,
-            $location     : $location,
-            $routeParams  : $routeParams,
-            Flow          : Flow,
-            schema        : schema,
-            episodes      : episodes,
-            profile       : profile,
-            options       : options,
-            viewDischarged: false
-        });
+        controller = _makecontroller();
+
     }));
 
 
     describe('newly-created controller', function() {
         it('should have state "normal"', function() {
             expect($rootScope.state).toBe('normal');
+        });
+
+        it('should extract single tags', function(){
+            expect($scope.currentTag).toBe('tropical');
+            expect($scope.currentSubTag).toBe('');
+        })
+
+        it('should extract subtags', function() {
+            $routeParams.slug = 'inpatients-icu'
+            _makecontroller();
+            expect($scope.currentTag).toBe('inpatients');
+            expect($scope.currentSubTag).toBe('icu');
+        });
+
+        it('should set the URL of the last list visited', function() {
+            expect($cookieStore.put).toHaveBeenCalledWith('opal.lastPatientList', 'tropical');
+        });
+
+    });
+
+    describe('Unknown list', function() {
+        it('should redirect to /404', function() {
+            spyOn($location, 'path');
+            episodedata.status = 'error'
+            _makecontroller();
+            expect($location.path).toHaveBeenCalledWith('/404');
+        });
+    });
+
+    describe('isSelectedEpisode()', function() {
+        it('should say yes when given the episode', function() {
+            expect($scope.isSelectedEpisode($scope.episode)).toBe(true);
+        });
+
+        it('should say no when given not the episode', function() {
+            expect($scope.isSelectedEpisode({})).toBe(false);
+        });
+
+    });
+
+    describe('jumpToTag()', function() {
+        it('should send me to the right path', function() {
+            spyOn($location, 'path');
+            $scope.jumpToTag('tropical');
+            expect($location.path).toHaveBeenCalledWith('/list/tropical');
+        });
+
+        describe('for a subtag', function() {
+            it('should find the parent tag', function() {
+                spyOn($location, 'path');
+                $scope.jumpToTag('icu');
+                expect($location.path).toHaveBeenCalledWith('/list/inpatients-icu');
+            });
         });
     });
 
@@ -300,8 +361,8 @@ describe('EpisodeListCtrl', function() {
 
             it('Should re-set the focus to 0', function () {
                 /*
-                * reselect the first episode available when we discharge
-                */
+                 * reselect the first episode available when we discharge
+                 */
                 spyOn($scope, 'select_episode');
                 $scope._post_discharge('discharged');
                 var name = $scope.select_episode.calls.allArgs()[0][0].demographics[0].name;
@@ -329,43 +390,43 @@ describe('EpisodeListCtrl', function() {
         });
 
         describe('when Flow() returns a deferred', function (){
-                it('Should wait for the deferred', function () {
-                    var returned_deferred = {then: function(fn){fn()}}
-                    spyOn($scope, '_post_discharge');
-                    spyOn(returned_deferred, 'then').and.callThrough();
-                    spyOn(flow_promise, 'then').and.callFake(function(fn){ fn(returned_deferred);})
+            it('Should wait for the deferred', function () {
+                var returned_deferred = {then: function(fn){fn()}}
+                spyOn($scope, '_post_discharge');
+                spyOn(returned_deferred, 'then').and.callThrough();
+                spyOn(flow_promise, 'then').and.callFake(function(fn){ fn(returned_deferred);})
 
-                    $scope.dischargeEpisode(0);
+                $scope.dischargeEpisode(0);
 
-                    expect(flow_promise.then).toHaveBeenCalled();
-                    expect(returned_deferred.then).toHaveBeenCalled();
-                    expect($scope._post_discharge).toHaveBeenCalled();
-                });
-
+                expect(flow_promise.then).toHaveBeenCalled();
+                expect(returned_deferred.then).toHaveBeenCalled();
+                expect($scope._post_discharge).toHaveBeenCalled();
             });
+
+        });
+    });
+
+    describe('editing an item', function() {
+        it('should call through to the record editor', function(){
+            $scope.editNamedItem($scope.episode, 'demographics', 0);
+            expect($scope.episode.recordEditor.editItem).toHaveBeenCalledWith(
+                'demographics', 0, { tag: 'tropical', subtag: '' }
+            );
+        });
+    });
+
+    describe('adding an item', function() {
+        var iix;
+
+        beforeEach(function() {
+            iix = episodeData.diagnosis.length;
         });
 
-        describe('editing an item', function() {
-            it('should call through to the record editor', function(){
-                $scope.editNamedItem($scope.episode, 'demographics', 0);
-                expect($scope.episode.recordEditor.editItem).toHaveBeenCalledWith(
-                    'demographics', 0, { tag: 'tropical', subtag: '' }
-                );
-            });
+        it('should call through to the record editor', function() {
+            $scope.editNamedItem($scope.episode, "diagnosis", iix);
+            expect($scope.episode.recordEditor.editItem).toHaveBeenCalledWith(
+                'diagnosis', iix, { tag: 'tropical', subtag: '' }
+            );
         });
-
-        describe('adding an item', function() {
-            var iix;
-
-            beforeEach(function() {
-                iix = episodeData.diagnosis.length;
-            });
-
-            it('should call through to the record editor', function() {
-                $scope.editNamedItem($scope.episode, "diagnosis", iix);
-                expect($scope.episode.recordEditor.editItem).toHaveBeenCalledWith(
-                    'diagnosis', iix, { tag: 'tropical', subtag: '' }
-                );
-            });
-        });
+    });
 });
