@@ -25,16 +25,6 @@ SCAFFOLD         = SCAFFOLDING_BASE/'scaffold'
 PLUGIN_SCAFFOLD  = SCAFFOLDING_BASE/'plugin_scaffold'
 TRAVIS           = os.environ.get('TRAVIS', False)
 
-def manage(command):
-    args = ['python', '{0}/manage.py'.format(name)]
-    args += command.split()
-    args.append('--traceback')
-
-    try:
-        subprocess.check_call(args)
-    except subprocess.CalledProcessError:
-        sys.exit(1)
-    return
 
 def _userland_here_has__file(filename):
     """
@@ -148,6 +138,18 @@ def startproject(args):
 
     templates = app_dir/'templates'/name
     templates.mkdir()
+
+    # We have this here because it uses name from above.
+    def manage(command):
+        args = ['python', '{0}/manage.py'.format(name)]
+        args += command.split()
+        args.append('--traceback')
+
+        try:
+            subprocess.check_call(args)
+        except subprocess.CalledProcessError:
+            sys.exit(1)
+        return
 
     # 8. Run Django's migrations
     print 'Creating Database'
