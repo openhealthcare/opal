@@ -34,6 +34,12 @@ class DateTimeGeneratorTestCase(OpalTestCase):
     def test_datetime_generator_returns_datetime(self):
         self.assertIsInstance(crd.date_time_generator(), datetime.datetime)
 
+    @patch('opal.management.commands.create_random_data.date')
+    def test_datetime_generator_on_leap_day(self, date):
+        date.today.return_value = datetime.date(2016, 2, 29)
+        date.side_effect = lambda *args, **kw: datetime.date(*args, **kw)
+        self.assertIsInstance(crd.date_time_generator(), datetime.datetime)
+
 
 class ForeignKeyOrFreeTextGenerator(OpalTestCase):
     def test_no_options(self):
