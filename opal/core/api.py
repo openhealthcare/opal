@@ -9,7 +9,7 @@ from django.contrib.contenttypes.models import ContentType
 from rest_framework import routers, status, viewsets
 from rest_framework.response import Response
 
-from opal.models import Episode, Synonym, Team, Macro, Patient
+from opal.models import Episode, Synonym, Team, Macro, Patient, PatientRecordAccess
 from opal.core import application, exceptions, plugins, glossolalia, schemas
 from opal.core.lookuplists import LookupList
 from opal.utils import stringport, camelcase_to_underscore
@@ -373,8 +373,17 @@ class PatientViewSet(viewsets.ViewSet):
 
     def retrieve(self, request, pk=None):
         patient = Patient.objects.get(pk=pk)
+        PatientRecordAccess.objects.create(patient=patient, user=request.user)
         return _build_json_response(patient.to_dict(request.user))
 
+
+class PatientRecordAccessViewSet(viewsets.ViewSet):
+    base_name = 'patientrecordaccess'
+
+    def retrieve(self, request, pk=None):
+        return _build_json_response([
+            a.to_dict(request.user) for a in PatientRecordAccess.objects.filter(patient_id=pk)
+        ])
 
 class PatientListViewSet(viewsets.ViewSet):
     base_name = 'patientlist'
@@ -398,6 +407,7 @@ router.register('options', OptionsViewSet)
 router.register('userprofile', UserProfileViewSet)
 router.register('tagging', TaggingViewSet)
 router.register('patientlist', PatientListViewSet)
+router.register('patientrecordaccess', PatientRecordAccessViewSet)
 
 for subrecord in subrecords():
     sub_name = camelcase_to_underscore(subrecord.__name__)

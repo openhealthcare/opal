@@ -106,7 +106,8 @@ class OpalApplication(object):
             "js/opal/controllers/undischarge.js",
             "js/opal/controllers/copy_to_category.js",
             "js/opal/controllers/patient_history.js",
-            "js/opal/controllers/keyboard_shortcuts.js"
+            "js/opal/controllers/keyboard_shortcuts.js",
+            "js/opal/controllers/patient_access_log.js"
         ]
     }
     javascripts   = []
