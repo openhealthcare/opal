@@ -225,7 +225,7 @@ class SubrecordViewSet(viewsets.ViewSet):
 
         episode = Episode.objects.get(pk=episode.pk)
         post = episode.to_dict(request.user)
-        glossolalia.change(pre, post)
+        # glossolalia.change(pre, post)
 
         return _build_json_response(
             subrecord.to_dict(request.user),
@@ -246,7 +246,7 @@ class SubrecordViewSet(viewsets.ViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
         except exceptions.ConsistencyError:
             return Response({'error': 'Item has changed'}, status=status.HTTP_409_CONFLICT)
-        glossolalia.change(pre, self._item_to_dict(item, request.user))
+        # glossolalia.change(pre, self._item_to_dict(item, request.user))
         return _build_json_response(
             item.to_dict(request.user),
             status_code=status.HTTP_202_ACCEPTED
@@ -256,7 +256,7 @@ class SubrecordViewSet(viewsets.ViewSet):
     def destroy(self, request, item):
         pre = self._item_to_dict(item, request.user)
         item.delete()
-        glossolalia.change(pre, self._item_to_dict(item, request.user))
+        # glossolalia.change(pre, self._item_to_dict(item, request.user))
         return Response('deleted', status=status.HTTP_202_ACCEPTED)
 
 

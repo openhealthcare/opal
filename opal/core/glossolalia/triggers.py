@@ -3,7 +3,7 @@ Glossolalia Integration for OPAL
 """
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
-from opal.core.glossolalia.models import GlossolaliaSubscription
+# from opal.core.glossolalia.models import GlossolaliaSubscription
 from django.core.urlresolvers import reverse
 import requests
 import json

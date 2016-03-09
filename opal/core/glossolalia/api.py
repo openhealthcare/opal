@@ -6,7 +6,7 @@ from opal.core.api import router
 from opal.core.views import _get_request_data, _build_json_response
 from opal.utils import camelcase_to_underscore
 
-from opal.core.glossolalia.models import GlossolaliaSubscription
+# from opal.core.glossolalia.models import GlossolaliaSubscription
 
 # class GlossolaliaViewSet(viewsets.ViewSet):
 #     base_name = 'glossolalia'
