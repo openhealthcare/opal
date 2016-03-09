@@ -1,10 +1,23 @@
 """
 Unittests for opal.models
 """
+import datetime
+
 from mock import patch
 from django.contrib.auth.models import User
 from opal.core.test import OpalTestCase
+from opal import models
 from opal.models import Subrecord, Tagging, Team, Patient
+
+class PatientRecordAccessTestCase(OpalTestCase):
+
+    def test_to_dict(self):
+        patient = models.Patient.objects.create()
+        access = models.PatientRecordAccess.objects.create(
+            user=self.user, patient=patient)
+        self.assertEqual(patient.id, access.to_dict(self.user)['patient'])
+        self.assertEqual(self.user.username, access.to_dict(self.user)['username'])
+        self.assertIsInstance(access.to_dict(self.user)['datetime'], datetime.datetime)
 
 
 class SubrecordTestCase(OpalTestCase):

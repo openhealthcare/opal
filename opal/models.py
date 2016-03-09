@@ -415,6 +415,20 @@ class Patient(models.Model):
                 if subclass._is_singleton:
                     subclass.objects.create(patient=self)
 
+
+class PatientRecordAccess(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    user    = models.ForeignKey(User)
+    patient = models.ForeignKey(Patient)
+
+    def to_dict(self, user):
+        return dict(
+            patient=self.patient.id,
+            datetime=self.created,
+            username=self.user.username
+        )
+
+
 class TrackedModel(models.Model):
     # these fields are set automatically from REST requests via
     # updates from dict and the getter, setter properties, where available

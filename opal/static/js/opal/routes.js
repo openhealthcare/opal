@@ -24,6 +24,13 @@ app.config(
                  return target;
              }
 		 })
+             .when('/patient/:patient_id/access_log', {
+                 controller: 'PatientRecordAccessLogCtrl',
+                 resolve: {
+                     patient: function(patientLoader){ return patientLoader(); }
+                 },
+                 templateUrl: '/templates/patient_record_access_log.html'
+             })
              .when('/patient/:patient_id/:view?', {
 			     controller: 'PatientDetailCtrl',
                  resolve: {
