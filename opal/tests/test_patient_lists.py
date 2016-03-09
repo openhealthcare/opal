@@ -13,6 +13,7 @@ from opal.core.test import OpalTestCase
 class TaggingTestPatientList(TaggedPatientList):
     tag = "eater"
     subtag = "herbivore"
+    order = 4
 
     schema = [
         models.Demographics,
@@ -20,6 +21,7 @@ class TaggingTestPatientList(TaggedPatientList):
 
 class TaggingTestNotSubTag(TaggedPatientList):
     tag = "carnivore"
+    order = 1
 
     schema = [
         models.Demographics,
@@ -59,6 +61,16 @@ class TestPatientList(OpalTestCase):
 
     def test_for_user_restricted_only(self):
         self.assertEqual([], list(PatientList.for_user(self.restricted_user)))
+
+    def test_order(self):
+        self.assertEqual(1, TaggingTestNotSubTag.order)
+
+    def test_order_unimplemented(self):
+        self.assertEqual(None, PatientList.order)
+
+    def test_order_respected_by_list(self):
+        expected = [TaggingTestNotSubTag, TaggingTestPatientList]
+        self.assertEqual(expected, list(PatientList.list()))
 
 
 class TestTaggedPatientList(OpalTestCase):

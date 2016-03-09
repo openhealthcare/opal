@@ -11,6 +11,16 @@ class PatientList(discoverable.DiscoverableFeature):
     define the columns shown and a queryset that defines the episodes shown
     """
     module_name = 'patient_lists'
+    order       = None
+
+    @classmethod
+    def list(klass):
+        """
+        Return an iterable of Patient Lists.
+        """
+        klasses = sorted(super(PatientList, klass).list(), key=lambda x: x.order)
+        klasses.remove(TaggedPatientList)
+        return klasses
 
     @classmethod
     def for_user(klass, user):
