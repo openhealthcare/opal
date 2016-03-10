@@ -31,7 +31,7 @@ except AttributeError:
 Synonym = models.Synonym
 
 
-class EpisodeListTemplateView(TemplateView):
+class PatientListTemplateView(TemplateView):
     template_name = 'episode_list.html'
 
     def get_column_context(self, **kwargs):
@@ -41,29 +41,16 @@ class EpisodeListTemplateView(TemplateView):
         # we use this view to load blank tables without content for
         # the list redirect view, so if there are no kwargs, just
         # return an empty context
-        if kwargs:
-            name = kwargs['tag']
-            if 'subtag' in kwargs:
-                name += '-' + kwargs['subtag']
-            try:
-                patient_list = PatientList.get(name)
-            except ValueError:
-                return []
-            return _get_column_context(patient_list.schema, **kwargs)
-        else:
+        try:
+            patient_list = PatientList.get(kwargs['slug'])
+        except ValueError:
             return []
+        return _get_column_context(patient_list.schema, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(EpisodeListTemplateView, self).get_context_data(**kwargs)
-        teams = models.Team.for_user(self.request.user)
-        context['teams'] = teams
+        context = super(PatientListTemplateView, self).get_context_data(**kwargs)
+        context['teams'] = models.Team.for_user(self.request.user)
         context['columns'] = self.get_column_context(**kwargs)
-        if 'tag' in kwargs:
-            try:
-                context['team'] = models.Team.objects.get(name=kwargs['tag'])
-            except models.Team.DoesNotExist:
-                context['team'] = None
-
         context['models'] = { m.__name__: m for m in subrecords() }
         return context
 
@@ -77,7 +64,7 @@ class PatientDetailTemplateView(TemplateView):
         context['episode_types'] = episodes.episode_types()
         return context
 
-
+# TODO: ?Remove this ?
 class EpisodeDetailTemplateView(TemplateView):
     def get(self, *args, **kwargs):
         self.episode = get_object_or_404(models.Episode, pk=kwargs['pk'])

@@ -36,21 +36,29 @@ class BaseViewTestCase(OpalTestCase):
         return v
 
 
-class EpisodeListTemplateViewTestCase(BaseViewTestCase):
+class PatientListTemplateViewTestCase(BaseViewTestCase):
 
     def test_episode_list_view(self):
-        url = reverse("episode_list_template_view", kwargs=dict(tag="eater", subtag="herbivore"))
+        # The Eater Herbivore patient list is defined in
+        # opal.tests.test_patient_lists
+        url = reverse("patient_list_template_view", kwargs=dict(slug="eater-herbivore"))
         request = self.get_request(url)
-        view = views.EpisodeListTemplateView()
-        view.request = request
-        context_data = view.get_context_data(tag="eater", subtag="herbivore")
+        view = self.setup_view(views.PatientListTemplateView, request, slug="eater-herbivore")
+        self.assertEqual(200, view.get(request, **view.kwargs).status_code)
+
+    def test_get_context_data(self):
+        # The Eater Herbivore patient list is defined in
+        # opal.tests.test_patient_lists
+        url = reverse("patient_list_template_view", kwargs=dict(slug="eater-herbivore"))
+        request = self.get_request(url)
+        view = self.setup_view(views.PatientListTemplateView, request, slug="eater-herbivore")
+        context_data = view.get_context_data(slug="eater-herbivore")
         column_names = [i["name"] for i in context_data["columns"]]
         self.assertEqual(column_names, ["demographics"])
-        self.should_200(views.EpisodeListTemplateView, request)
 
     def test_get_column_context_no_list(self):
-        view = views.EpisodeListTemplateView()
-        ctx = view.get_column_context(tag='notarealthing')
+        view = views.PatientListTemplateView()
+        ctx = view.get_column_context(slug='notarealthing')
         self.assertEqual([], ctx)
 
 

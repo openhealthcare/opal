@@ -17,10 +17,8 @@ app.config(
                  profile    : function(UserProfile){ return UserProfile; },
 			 },
 			 templateUrl: function(params){
-                 var target =  '/templates/episode_list.html';
-                 if(params.slug){
-                     target += '/' + params.slug;
-                 }
+                 var target =  '/templates/patient_list.html';
+                 target += '/' + params.slug;
                  return target;
              }
 		 })
