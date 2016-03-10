@@ -37,9 +37,7 @@ urlpatterns = patterns(
         views.EpisodeCopyToCategoryView.as_view()),
 
     # Template vires
-    url(r'^templates/episode_list.html/?$', views.EpisodeListTemplateView.as_view(), name="episode_list_template_view"),
-    url(r'^templates/episode_list.html/(?P<tag>[0-9a-z_\-]+)/?$', views.EpisodeListTemplateView.as_view(), name="episode_list_template_view"),
-    url(r'^templates/episode_list.html/(?P<tag>[a-z_\-]+)/(?P<subtag>[a-z_\-]+)/?$', views.EpisodeListTemplateView.as_view(), name="episode_list_template_view"),
+    url(r'^templates/patient_list.html/(?P<slug>[0-9a-z_\-]+)/?$', views.PatientListTemplateView.as_view(), name="patient_list_template_view"),
 
     url(r'^templates/patient_detail.html$',
         views.PatientDetailTemplateView.as_view()),

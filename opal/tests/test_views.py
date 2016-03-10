@@ -36,21 +36,29 @@ class BaseViewTestCase(OpalTestCase):
         return v
 
 
-class EpisodeListTemplateViewTestCase(BaseViewTestCase):
+class PatientListTemplateViewTestCase(BaseViewTestCase):
 
     def test_episode_list_view(self):
-        url = reverse("episode_list_template_view", kwargs=dict(tag="eater", subtag="herbivore"))
+        # The Eater Herbivore patient list is defined in
+        # opal.tests.test_patient_lists
+        url = reverse("patient_list_template_view", kwargs=dict(slug="eater-herbivore"))
         request = self.get_request(url)
-        view = views.EpisodeListTemplateView()
-        view.request = request
-        context_data = view.get_context_data(tag="eater", subtag="herbivore")
+        view = self.setup_view(views.PatientListTemplateView, request, slug="eater-herbivore")
+        self.assertEqual(200, view.get(request, **view.kwargs).status_code)
+
+    def test_get_context_data(self):
+        # The Eater Herbivore patient list is defined in
+        # opal.tests.test_patient_lists
+        url = reverse("patient_list_template_view", kwargs=dict(slug="eater-herbivore"))
+        request = self.get_request(url)
+        view = self.setup_view(views.PatientListTemplateView, request, slug="eater-herbivore")
+        context_data = view.get_context_data(slug="eater-herbivore")
         column_names = [i["name"] for i in context_data["columns"]]
         self.assertEqual(column_names, ["demographics"])
-        self.should_200(views.EpisodeListTemplateView, request)
 
     def test_get_column_context_no_list(self):
-        view = views.EpisodeListTemplateView()
-        ctx = view.get_column_context(tag='notarealthing')
+        view = views.PatientListTemplateView()
+        ctx = view.get_column_context(slug='notarealthing')
         self.assertEqual([], ctx)
 
 
@@ -143,6 +151,31 @@ class CheckPasswordResetViewTestCase(BaseViewTestCase):
             self.get_request('/login/')
         )
         self.assertEqual(mockresponse, response)
+
+
+class EpisodeDetailViewTestCase(OpalTestCase):
+
+    def test_episode_detail_view(self):
+        self.patient = models.Patient.objects.create()
+        self.episode = self.patient.create_episode()
+        request = self.rf.get('/episode/detail')
+        request.user = self.user
+        resp = views.episode_detail_view(request, 1)
+        self.assertEqual(200, resp.status_code)
+
+    def test_epidode_detail_view_does_not_exist(self):
+        request = self.rf.get('/episode/detail')
+        request.user = self.user
+        resp = views.episode_detail_view(request, 123)
+        self.assertEqual(404, resp.status_code)
+
+
+class EpisodeListAndCreateViewTestCase(OpalTestCase):
+    def test_get(self):
+        request = self.rf.get('/episode/detail')
+        request.user = self.user
+        resp = views.episode_list_and_create_view(request)
+        self.assertEqual(200, resp.status_code)
 
 
 class GetColumnContextTestCase(OpalTestCase):

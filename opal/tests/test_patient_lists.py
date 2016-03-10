@@ -45,7 +45,8 @@ class TestPatientList(OpalTestCase):
 
     def test_get_queryset_default(self):
         mock_queryset = MagicMock('Mock Queryset')
-        with patch.object(PatientList, 'queryset', new_callable=PropertyMock) as queryset:
+        with patch.object(PatientList, 'queryset',
+                          new_callable=PropertyMock) as queryset:
             queryset.return_value = mock_queryset
             self.assertEqual(mock_queryset, PatientList().get_queryset())
 
