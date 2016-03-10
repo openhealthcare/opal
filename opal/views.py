@@ -32,7 +32,13 @@ Synonym = models.Synonym
 
 
 class PatientListTemplateView(TemplateView):
-    template_name = 'episode_list.html'
+
+    def dispatch(self, *args, **kwargs):
+        try:
+            self.patient_list = PatientList.get(kwargs['slug'])
+        except ValueError:
+            self.patient_list = None
+        return super(PatientListTemplateView, self).dispatch(*args, **kwargs)
 
     def get_column_context(self, **kwargs):
         """
@@ -41,11 +47,9 @@ class PatientListTemplateView(TemplateView):
         # we use this view to load blank tables without content for
         # the list redirect view, so if there are no kwargs, just
         # return an empty context
-        try:
-            patient_list = PatientList.get(kwargs['slug'])
-        except ValueError:
+        if not self.patient_list:
             return []
-        return _get_column_context(patient_list.schema, **kwargs)
+        return _get_column_context(self.patient_list.schema, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(PatientListTemplateView, self).get_context_data(**kwargs)
@@ -54,6 +58,10 @@ class PatientListTemplateView(TemplateView):
         context['models'] = { m.__name__: m for m in subrecords() }
         return context
 
+    def get_template_names(self):
+        if self.patient_list:
+            return self.patient_list().get_template_names()
+        return [PatientList.template_name]
 
 class PatientDetailTemplateView(TemplateView):
     template_name = 'patient_detail.html'

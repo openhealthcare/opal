@@ -11,6 +11,7 @@ class PatientList(discoverable.DiscoverableFeature):
     define the columns shown and a queryset that defines the episodes shown
     """
     module_name = 'patient_lists'
+    template_name = 'episode_list.html'
     order       = None
 
     @classmethod
@@ -49,6 +50,9 @@ class PatientList(discoverable.DiscoverableFeature):
 
     def get_queryset(self):
         return self.queryset
+
+    def get_template_names(self):
+        return [self.template_name]
 
     def to_dict(self, user):
         # only bringing in active seems a sensible default at this time
