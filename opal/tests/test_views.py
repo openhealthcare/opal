@@ -153,6 +153,31 @@ class CheckPasswordResetViewTestCase(BaseViewTestCase):
         self.assertEqual(mockresponse, response)
 
 
+class EpisodeDetailViewTestCase(OpalTestCase):
+
+    def test_episode_detail_view(self):
+        self.patient = models.Patient.objects.create()
+        self.episode = self.patient.create_episode()
+        request = self.rf.get('/episode/detail')
+        request.user = self.user
+        resp = views.episode_detail_view(request, 1)
+        self.assertEqual(200, resp.status_code)
+
+    def test_epidode_detail_view_does_not_exist(self):
+        request = self.rf.get('/episode/detail')
+        request.user = self.user
+        resp = views.episode_detail_view(request, 123)
+        self.assertEqual(404, resp.status_code)
+
+
+class EpisodeListAndCreateViewTestCase(OpalTestCase):
+    def test_get(self):
+        request = self.rf.get('/episode/detail')
+        request.user = self.user
+        resp = views.episode_list_and_create_view(request)
+        self.assertEqual(200, resp.status_code)
+
+
 class GetColumnContextTestCase(OpalTestCase):
 
     def test_column_context(self):

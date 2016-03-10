@@ -146,6 +146,7 @@ def check_password_reset(request, *args, **kwargs):
 
 """Internal (Legacy) API Views"""
 
+#    TODO: Remove this
 @require_http_methods(['GET', 'PUT'])
 def episode_detail_view(request, pk):
     try:
@@ -169,6 +170,7 @@ def episode_detail_view(request, pk):
         return _build_json_response({'error': 'Item has changed'}, 409)
 
 
+# TODO: Remove this
 @require_http_methods(['GET', 'POST'])
 def episode_list_and_create_view(request):
     if request.method == 'GET':
