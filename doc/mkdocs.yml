@@ -50,4 +50,4 @@ dev_addr: 0.0.0.0:8965
 include_next_prev: false
 
 extra:
-  version: v0.5.4
+  version: v0.5.6
