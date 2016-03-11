@@ -11,9 +11,9 @@ application to a later version where there are extra steps required.
 Before upgrading from 4.x to 5.x you should ensure that you have upgraded from South
 to Djangomigrations.
 
-    rm yourapp/migrations/*
-    python manage.py makemigrations yourapp
-    python manage.py migrate yourapp --fake-initial
+    $ rm yourapp/migrations/*
+    $ python manage.py makemigrations yourapp
+    $ python manage.py migrate yourapp --fake-initial
 
 #### OPAL
 
@@ -36,6 +36,9 @@ fresh migrations for your own application.
     $ python manage.py makemigrations yourapp
     $ python manage.py migrate yourapp
 
+At this stage you'll want to commit your new migrations, as well as any changes to your
+application's requirements file.
+
 #### Tags
 
 As of 0.5.5, old tags in OPAL are stored directly on the Tagging model rather than via
@@ -45,3 +48,12 @@ Djano Reversion. We can import those old tags by doing the following.
 
     >>> from opal.models import Tagging
     >>> Tagging.import_from_reversion()
+
+#### Deployment
+
+The first time you deploy your upgraded application you'll need to run the following
+commands to upgrade your database:
+
+    $ python manage.py migrate --fake-initial
+
+You'll also have to repeat the Tagging step once for each deployment.
