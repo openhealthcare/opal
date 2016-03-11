@@ -38,6 +38,7 @@ pages:
       - Javascript helpers: reference/javascript_helpers.md
       - Schemas: reference/schemas.md
       - Search Queries: reference/search_queries.md
+      - Upgrading: reference/upgrading.md
 
 theme: mkdocs
 theme: cerulean
