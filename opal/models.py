@@ -863,23 +863,26 @@ class Tagging(TrackedModel, models.Model):
             for team_id in team_ids:
                 tagging_objs.append(Tagging(episode_id=episode_id, team_id=team_id, archived=True))
 
-        user_taggins = Tagging.objects.filter(episode_id__in=episode_id_to_user_dict.keys())
+        try:
+            user_taggins = Tagging.objects.filter(episode_id__in=episode_id_to_user_dict.keys())
 
-        for tagging in user_taggins:
-            relevent_set = episode_id_to_user_dict[tagging.episode_id]
-            if tagging.user_id and tagging.user_id in relevent_set:
-                relevent_set.remove(tagging.user_id)
+            for tagging in user_taggins:
+                relevent_set = episode_id_to_user_dict[tagging.episode_id]
+                if tagging.user_id and tagging.user_id in relevent_set:
+                    relevent_set.remove(tagging.user_id)
 
-        user_team = Team.objects.get(name="mine")
+            user_team = Team.objects.get(name="mine")
 
-        for episode_id, user_ids in episode_id_to_user_dict.iteritems():
-            for user_id in user_ids:
-                tagging_objs.append(Tagging(
-                    episode_id=episode_id,
-                    team_id=user_team.id,
-                    user_id=user_id,
-                    archived=True
-                ))
+            for episode_id, user_ids in episode_id_to_user_dict.iteritems():
+                for user_id in user_ids:
+                    tagging_objs.append(Tagging(
+                        episode_id=episode_id,
+                        team_id=user_team.id,
+                        user_id=user_id,
+                        archived=True
+                    ))
+        except Team.DoesNotExist:
+            pass # We don't have a mine team here
 
         Tagging.objects.bulk_create(tagging_objs)
 
