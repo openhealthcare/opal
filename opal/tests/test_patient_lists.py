@@ -22,6 +22,7 @@ class TaggingTestPatientList(TaggedPatientList):
 class TaggingTestNotSubTag(TaggedPatientList):
     tag = "carnivore"
     order = 1
+    template_name = 'carnivore.html'
 
     schema = [
         models.Demographics,
@@ -72,6 +73,12 @@ class TestPatientList(OpalTestCase):
     def test_order_respected_by_list(self):
         expected = [TaggingTestNotSubTag, TaggingTestPatientList]
         self.assertEqual(expected, list(PatientList.list()))
+
+    def test_get_template_names_default(self):
+        self.assertEqual(['episode_list.html'], PatientList().get_template_names())
+
+    def test_get_template_names_overridden_proerty(self):
+        self.assertEqual(['carnivore.html'], TaggingTestNotSubTag().get_template_names())
 
 
 class TestTaggedPatientList(OpalTestCase):
