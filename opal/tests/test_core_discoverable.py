@@ -83,3 +83,48 @@ class DiscoverableFeatureTestCase(OpalTestCase):
 
     def test_get_exists(self):
         self.assertEqual(RedColour, ColourFeature.get('red'))
+
+
+class SortedFeature(discoverable.SortableFeature,
+                    discoverable.DiscoverableFeature):
+    module_name = 'sorted'
+
+class Sorted2(SortedFeature):
+    order = 2
+
+class Sorted3(SortedFeature):
+    order = 3
+
+class Sorted1(SortedFeature):
+    order = 1
+
+
+class SortableFeatureTestCase(OpalTestCase):
+
+    def test_list_respects_order(self):
+        expected = [Sorted1, Sorted2, Sorted3]
+        self.assertEqual(expected, list(SortedFeature.list()))
+
+    def test_sortable_without_module_name(self):
+        class Nope(discoverable.SortableFeature): pass
+
+        with self.assertRaises(ValueError):
+            Nope.list()
+
+class SometimesFeature(discoverable.DiscoverableFeature, discoverable.RestrictableFeature):
+    module_name = 'sometimes'
+
+class Available(SometimesFeature): pass
+
+class Unavailable(SometimesFeature):
+
+    @classmethod
+    def visible_to(self, user):
+        return False
+
+
+class RestrictableFeatureTestCase(OpalTestCase):
+
+    def test_restricted(self):
+        expected = [Available]
+        self.assertEqual(expected, list(SometimesFeature.for_user(self.user)))
