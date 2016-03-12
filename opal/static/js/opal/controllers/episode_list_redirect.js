@@ -9,11 +9,7 @@ angular.module('opal.controllers').controller(
         if(last_list){
             var target = path_base + last_list;
         }else{
-            var target = _.keys(options.tag_hierarchy)[0];
-            if(options.tag_hierarchy[target].length > 0){
-                target += '-' + options.tag_hierarchy[target][0];
-            }
-            target = path_base + target;
+            var target = path_base + options.first_list_slug;
         }
         $location.path( target + '/');
         $location.replace();
