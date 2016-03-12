@@ -25,7 +25,7 @@ import reversion
 from django.utils import dateparse
 from opal.core import application, exceptions, lookuplists, plugins
 from opal import managers
-from opal.utils import camelcase_to_underscore
+from opal.utils import camelcase_to_underscore, find_template
 from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.subrecords import episode_subrecords, patient_subrecords
 
@@ -724,10 +724,7 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
                     0, 'records/{0}/{1}/{2}.html'.format(team,
                                                               subteam,
                                                               name))
-        try:
-            return select_template(list_display_templates).template.name
-        except TemplateDoesNotExist:
-            return None
+        return find_template(list_display_templates)
 
     @classmethod
     def get_detail_template(cls, team=None, subteam=None):
@@ -739,19 +736,12 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
             'records/{0}_detail.html'.format(name),
             'records/{0}.html'.format(name)
         ]
-        try:
-            return select_template(templates).template.name
-        except TemplateDoesNotExist:
-            return None
+        return find_template(templates)
 
     @classmethod
     def get_form_template(cls):
         name = camelcase_to_underscore(cls.__name__)
-        templates = ['forms/{0}_form.html'.format(name)]
-        try:
-            return select_template(templates).template.name
-        except TemplateDoesNotExist:
-            return None
+        return find_template(['forms/{0}_form.html'.format(name)])
 
     @classmethod
     def get_modal_template(cls, team=None, subteam=None):
@@ -770,10 +760,7 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
         if cls.get_form_template():
             templates.append("modal_base.html")
 
-        try:
-            return select_template(templates).template.name
-        except TemplateDoesNotExist:
-            return None
+        return find_template(templates)
 
     def _to_dict(self, user, fieldnames):
         """
