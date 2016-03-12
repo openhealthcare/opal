@@ -39,6 +39,15 @@
                 [[ e.date_of_episode | shortDate ]]
                 [[ e.date_of_admission | shortDate]]<span ng-show="e.discharge_date"> - [[ e.discharge_date | shortDate ]]</span>
               </a>
+              {% for detail in detail_views %}
+              <a class="list-group-item episodelist pointer"
+                 ng-class="{'bg-active': view == '{{ detail.name}}'}"
+                 ng-click="switch_to_episode(0, $event) && switch_to_view('{{ detail.name }}')"
+                 href="[[ '/#/patient/' + patient.id + '/{{ detail.name }}' ]]"
+                 >
+                {{ detail.title }}
+              </a>
+              {% endfor %}
               {% block viewnavigation %}{% endblock %}
             </div>
           </div>
@@ -51,6 +60,11 @@
               {% include episode_type.detail_template %}
             </div>
             {% endif %}
+            {% endfor %}
+            {% for detail in detail_views %}
+            <div class="row" ng-show="view == '{{ detail.name }}'">
+              {% include detail.template %}
+            </div>
             {% endfor %}
             {% block viewtemplates %}{% endblock %}
           </div>
