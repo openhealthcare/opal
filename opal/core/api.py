@@ -1,8 +1,6 @@
 """
 Public facing API views
 """
-import collections
-
 from django.conf import settings
 from django.views.generic import View
 from django.contrib.contenttypes.models import ContentType
