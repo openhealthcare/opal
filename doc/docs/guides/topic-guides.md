@@ -1,4 +1,4 @@
-## OPAL Guides 
+## OPAL Guides
 
 A list of all available topic guides.
 
@@ -8,6 +8,7 @@ A list of all available topic guides.
 |--|--|
 |[OPAL - Applications, Plugins](components_overview.md) | How OPAL components hang together.|
 |[Command line tool](command_line_tool.md) | running admin tasks from the command line|
+|[Disvoverable](discoverable.md)| design patterns and library for creating easily reusable features |
 |[Plugins](plugins.md)| Available interfaces for OPAL plugins|
 |[List of Plugins](plugins_list.md)| A list of available high quality plugins|
 
@@ -32,7 +33,7 @@ A list of all available topic guides.
 |[Templates](templates.md)|Server and client side templating |
 |[Static Files](static_files.md)| How OPAL handles static files|
 |[Forms](forms.md) | Forms for entering or editing data|
-|[Episode Detail Views](episode_detail_views.md)|Detailed views of an episode of care|
+|[Patient Detail Views](patient_detail_views.md)|Detailed views of a Patient|
 |[Patient List Views](list_views.md)| Lists of patients |
 
 ### Optional Components
