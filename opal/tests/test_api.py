@@ -84,6 +84,10 @@ class OptionTestCase(TestCase):
             name=self.synonym_name
         )
         self.viewset = api.OptionsViewSet
+        models.Team.objects.get_or_create(
+            name='friendly_patients',
+            title='Friendly Patients',
+        )
 
     def test_options_loader(self):
         mock_request = MagicMock(name='mock request')
@@ -100,6 +104,27 @@ class OptionTestCase(TestCase):
         response = self.viewset().list(mock_request)
         result = response.data
         self.assertEqual('carnivore', result['first_list_slug'])
+
+    def test_tag_display(self):
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        response = self.viewset().list(mock_request)
+        result = response.data
+        self.assertEqual('Friendly Patients', result['tag_display']['friendly_patients'])
+
+    def test_tag_visible_in_list(self):
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        response = self.viewset().list(mock_request)
+        result = response.data
+        self.assertIn('friendly_patients', result['tag_visible_in_list'])
+
+    def test_tag_direct_add(self):
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        response = self.viewset().list(mock_request)
+        result = response.data
+        self.assertIn('friendly_patients', result['tag_direct_add'])
 
 
 class SubrecordTestCase(TestCase):
