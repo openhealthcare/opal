@@ -15,7 +15,8 @@ from opal.tests.models import Colour, PatientColour, HatWearer, Hat
 from opal.core.test import OpalTestCase
 from opal.core.views import _build_json_response
 
-# this is used just to import the class for EpisodeListApiTestCase
+# this is used just to import the class for
+# EpisodeListApiTestCase and OptionsViewSetTestCase
 from opal.tests.test_patient_lists import TaggingTestPatientList # flake8: noqa
 
 from opal.core import api
@@ -92,6 +93,13 @@ class OptionTestCase(TestCase):
         self.assertIn("hat", result)
         self.assertEqual(set(result["hat"]), {"top", "bowler", "high"})
         self.assertEqual(response.status_code, 200)
+
+    def test_first_list_slug(self):
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        response = self.viewset().list(mock_request)
+        result = response.data
+        self.assertEqual('carnivore', result['first_list_slug'])
 
 
 class SubrecordTestCase(TestCase):
