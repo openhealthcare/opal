@@ -5,7 +5,8 @@ from opal.models import Episode, UserProfile
 from opal.core import discoverable
 
 
-class PatientList(discoverable.DiscoverableFeature):
+class PatientList(discoverable.DiscoverableFeature,
+                  discoverable.RestrictableFeature):
     """
     A view of a list shown on the list page, complete with schema that
     define the columns shown and a queryset that defines the episodes shown
@@ -22,15 +23,6 @@ class PatientList(discoverable.DiscoverableFeature):
         klasses = sorted(super(PatientList, klass).list(), key=lambda x: x.order)
         klasses.remove(TaggedPatientList)
         return klasses
-
-    @classmethod
-    def for_user(klass, user):
-        """
-        Return the set of instances that this USER can see.
-        """
-        for k in klass.list():
-            if k.visible_to(user):
-                yield k
 
     @classmethod
     def visible_to(klass, user):
