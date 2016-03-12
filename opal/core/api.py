@@ -116,7 +116,6 @@ class OptionsViewSet(viewsets.ViewSet):
 
     def list(self, request):
 
-
         data = {}
         subclasses = LookupList.__subclasses__()
         for model in subclasses:
@@ -145,27 +144,12 @@ class OptionsViewSet(viewsets.ViewSet):
         if request.user.is_authenticated():
             teams = Team.for_user(request.user)
             for team in teams:
-                if team.parent:
-                    continue # Will be filled in at the appropriate point!
                 tag_display[team.name] = team.title
+                if team.visible_in_list:
+                    tag_visible_in_list.append(team.name)
 
-                if not team.has_subteams:
-
-                    if team.visible_in_list:
-                        tag_visible_in_list.append(team.name)
-
-                    if team.direct_add:
-                        tag_direct_add.append(team.name)
-
-                subteams = [st for st in teams if st.parent == team]
-                for sub in subteams:
-                    tag_display[sub.name] = sub.title
-
-                    if sub.visible_in_list:
-                        tag_visible_in_list.append(sub.name)
-
-                    if sub.direct_add:
-                        tag_direct_add.append(sub.name)
+                if team.direct_add:
+                    tag_direct_add.append(team.name)
 
         data['tag_display'] = tag_display
         data['tag_visible_in_list'] = tag_visible_in_list
