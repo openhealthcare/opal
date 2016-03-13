@@ -21,8 +21,9 @@ pages:
       - Templates: guides/templates.md
       - Static Files: guides/static_files.md
       - Forms: guides/forms.md
-      - Episode Detail Views: guides/episode_detail_views.md
+      - Patient Detail Views: guides/patient_detail_views.md
       - Patient List Views: guides/list_views.md
+      - Discoverable Features: guides/discoverable.md
 
   - Reference:
       - The Episode model: reference/episode.md
@@ -38,6 +39,7 @@ pages:
       - Javascript helpers: reference/javascript_helpers.md
       - Schemas: reference/schemas.md
       - Search Queries: reference/search_queries.md
+      - Detail Views: reference/detail_views.md
 
 theme: mkdocs
 theme: cerulean
@@ -49,4 +51,4 @@ dev_addr: 0.0.0.0:8965
 include_next_prev: false
 
 extra:
-  version: v0.5.4
+  version: v0.6.0

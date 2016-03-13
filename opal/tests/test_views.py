@@ -6,11 +6,13 @@ from django.core.urlresolvers import reverse
 from mock import patch, MagicMock
 
 from opal import models, views
-from opal.tests import models as testmodels
+from opal.core import detail
+from opal.core.episodes import InpatientEpisode
 from opal.core.test import OpalTestCase
 
 # this is used just to import the class for EpisodeListApiTestCase
 from opal.tests.test_patient_lists import TaggingTestPatientList # flake8: noqa
+from opal.tests import models as testmodels
 
 class BaseViewTestCase(OpalTestCase):
 
@@ -95,6 +97,31 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
 
 
 class PatientDetailTemplateViewTestCase(BaseViewTestCase):
+
+    def test_get_context_data_models(self):
+        request = self.rf.get('/wat')
+        request.user = self.user
+        view = views.PatientDetailTemplateView()
+        view.request = request
+        ctx = view.get_context_data()
+        self.assertEqual(testmodels.Colour, ctx['models']['Colour'])
+
+    def test_get_context_data_episode_types(self):
+        request = self.rf.get('/wat')
+        request.user = self.user
+        view = views.PatientDetailTemplateView()
+        view.request = request
+        ctx = view.get_context_data()
+        self.assertIn(InpatientEpisode, ctx['episode_types'])
+
+    def test_get_context_data_detail_views(self):
+        request = self.rf.get('/wat')
+        request.user = self.user
+        view = views.PatientDetailTemplateView()
+        view.request = request
+        ctx = view.get_context_data()
+        expected = list(detail.PatientDetailView.for_user(self.user))
+        self.assertEqual(expected, list(ctx['detail_views']))
 
     def test_default_should_200(self):
         request = self.get_request('/patient_detail.html')

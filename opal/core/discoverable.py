@@ -61,3 +61,33 @@ class DiscoverableFeature(object):
             if sub.slug() == name:
                 return sub
         raise ValueError('No {0} implementation with slug {1}'.format(klass, name))
+
+
+class SortableFeature(object):
+    module_name = None
+
+    @classmethod
+    def list(klass):
+        """
+        Return an iterable of Patient Lists.
+        """
+        if klass.module_name is None:
+            raise ValueError('Must set {0}.module_name for {0}'.format(klass))
+        klasses = sorted(get_subclass(klass.module_name, klass), key=lambda x: x.order)
+        return klasses
+
+
+class RestrictableFeature(object):
+
+    @classmethod
+    def for_user(klass, user):
+        """
+        Return the set of instances that this USER can see.
+        """
+        for k in klass.list():
+            if k.visible_to(user):
+                yield k
+
+    @classmethod
+    def visible_to(klass, user):
+        return True
