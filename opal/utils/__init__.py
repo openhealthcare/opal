@@ -62,4 +62,4 @@ def find_template(template_list):
     try:
         return select_template(template_list).template.name
     except TemplateDoesNotExist:
-         return None
+        return None
