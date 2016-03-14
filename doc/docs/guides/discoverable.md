@@ -57,3 +57,28 @@ We can ensure that only particular users can access a feature by including
          @classmethod
          def visible_to(klass, user):
              return user.is_superuser
+
+### Validating Features
+
+Sometimes we wish to validate features so that we don't cause unintended consequences when
+we implement subclasses of them. This is available via the `is_valid` classmethod. For instance,
+if we wanted to implement a "Bomb" feature, which blew up every time the blow_up attribute was
+true, we could to this as follows:
+
+    class BombFeature(discoverable.DiscoverableFeature):
+        module_name = 'bombs'
+        blow_up = False
+
+        @classmethod
+        def is_valid(klass):
+            if klass.blow_up == True:
+                from opal.core.exceptions import InvalidDiscoverableFeatureError
+                raise InvalidDiscoverableFeatureError('BLOWING UP')
+
+
+    class Threat(BombFeature): pass
+    # That's fine.
+
+    class Detonate(BombFeature):
+        blow_up = True
+    # InvalidDiscoverableFeatureError: BLOWING UP

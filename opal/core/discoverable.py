@@ -29,13 +29,24 @@ def get_subclass(module, klass):
     return _itersubclasses(klass)
 
 
+class DiscoverableMeta(type):
+    def __new__(cls, name, bases, dct):
+        newfeature = type.__new__(cls, name, bases, dct)
+        newfeature.is_valid()
+        return newfeature
+
+
 class DiscoverableFeature(object):
     """
     Base discoverable feature providing common patterns for
     re-usable features.
     """
+    __metaclass__ = DiscoverableMeta
     module_name = None
     name = None
+
+    @classmethod
+    def is_valid(klass): pass
 
     @classmethod
     def slug(klass):

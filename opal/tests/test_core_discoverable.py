@@ -3,6 +3,8 @@ Unittests for the opal.core.discoverable module
 """
 from mock import patch
 from django.test import override_settings
+
+from opal.core import exceptions
 from opal.core.test import OpalTestCase
 
 from opal.core import discoverable
@@ -33,6 +35,16 @@ class SeaGreenColour(ColourFeature):
     name = 'Sea Green'
 
 
+class BombFeature(discoverable.DiscoverableFeature):
+    module_name = 'bombs'
+    blow_up = False
+
+    @classmethod
+    def is_valid(klass):
+        if klass.blow_up == True:
+            from opal.core.exceptions import InvalidDiscoverableFeatureError
+            raise InvalidDiscoverableFeatureError('BLOWING UP')
+
 
 class AppImporterTestCase(OpalTestCase):
 
@@ -50,6 +62,17 @@ class AppImporterTestCase(OpalTestCase):
 
 
 class DiscoverableFeatureTestCase(OpalTestCase):
+
+    def test_is_valid_will_blow_up(self):
+
+        class Threat(BombFeature): pass
+
+        # We only care that the above class did not raise an exception.
+        self.assertTrue(True)
+
+        with self.assertRaises(exceptions.InvalidDiscoverableFeatureError):
+            class Detonate(BombFeature):
+                blow_up = True
 
     def test_slug_for_no_implementation(self):
         with self.assertRaises(ValueError):
