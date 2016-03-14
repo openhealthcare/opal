@@ -24,9 +24,11 @@ pages:
       - Patient Detail Views: guides/patient_detail_views.md
       - Patient List Views: guides/list_views.md
       - Discoverable Features: guides/discoverable.md
+      - Search Overview: guides/search.md
 
   - Reference:
       - The Episode model: reference/episode.md
+      - Episode Types: reference/episode_types.md
       - reference/patient.md
       - Subrecords: reference/subrecords.md
       - reference/team.md

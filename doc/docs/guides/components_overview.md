@@ -10,10 +10,10 @@ The core OPAL framework provides you with a range of commonly required elements
 of clinical applications.
 
 It contains a core [data model](datamodel.md) for persisting clinical information,
-as well core [clinical archetypes](archetypes.md) out of the box that build on many
+as well core clinical archetypes out of the box that build on many
 years of collaboratively modelling clinical concepts by medical domain experts.
 
-OPAL also makes it easy to integrate standard clinical [reference data](referencedata.md)
+OPAL also makes it easy to integrate standard clinical [reference data](lookup_lists.md)
 into your application - things like medical diagnoses, tests, drugs et cetera.
 
 Some common functional components end up in to most clinical applications, and many

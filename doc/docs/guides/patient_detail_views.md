@@ -15,7 +15,7 @@ simply includes the base template.
 
 Each episode will display using the template appropriate for it's `EpisodeType` - for instance
 an `InpatientEpisode` will use `./templates/detail/inpatient.html`. You may [define your own
-episode types](reference/episode_types.md) should you require.
+episode types](../reference/episode_types.md) should you require.
 
 ### Record Panels
 
@@ -29,7 +29,7 @@ models.
 The above code will render a panel for your episode, including the `Subrecord` detail template for
 each instance, and allowing editing, deletion and creation of instances of your `Subrecord`.
 
-You may also consult the Detailed [reference documentation](reference/record_panel_templatetag.md) for
+You may also consult the Detailed [reference documentation](../reference/panels_templatetags.md) for
 Record Panels.
 
 ### Custom Patient Detail Views
