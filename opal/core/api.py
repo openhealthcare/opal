@@ -7,7 +7,7 @@ from django.contrib.contenttypes.models import ContentType
 from rest_framework import routers, status, viewsets
 from rest_framework.response import Response
 
-from opal.models import Episode, Synonym, Team, Macro, Patient, PatientRecordAccess
+from opal.models import Episode, Synonym, Macro, Patient, PatientRecordAccess
 from opal.core import application, exceptions, plugins, glossolalia, schemas
 from opal.core.lookuplists import LookupList
 from opal.utils import stringport, camelcase_to_underscore
