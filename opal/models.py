@@ -77,6 +77,9 @@ class UpdatesFromDictMixin(object):
             for fname in cls.pid_fields:
                 if fname in fieldnames:
                     fieldnames.remove(fname)
+                    if cls._get_field_type(fname) == ForeignKeyOrFreeText:
+                        fieldnames.remove(fname + '_fk_id')
+                        fieldnames.remove(fname + '_ft')
         return fieldnames
 
     @classmethod
