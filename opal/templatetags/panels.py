@@ -40,22 +40,17 @@ def record_panel(model, editable=1, title=None, name=None, detail_template=None,
 
 @register.inclusion_tag('_helpers/record_timeline.html')
 def record_timeline(model, whenfield):
-    try:
-        name = camelcase_to_underscore(model.__class__.__name__)
+    name = camelcase_to_underscore(model.__class__.__name__)
 
-        return {
-            'name': name,
-            'editable': True,
-            'title': getattr(model, '_title', name.replace('_', ' ').title()),
-            'detail_template': model.__class__.get_detail_template(),
-            'icon': getattr(model, '_icon', None),
-            'whenfield': whenfield,
-        }
-    except Exception as err:
-        print err
-        raise
+    return {
+        'name': name,
+        'editable': True,
+        'title': getattr(model, '_title', name.replace('_', ' ').title()),
+        'detail_template': model.__class__.get_detail_template(),
+        'icon': getattr(model, '_icon', None),
+        'whenfield': whenfield,
+    }
 
 @register.inclusion_tag('_helpers/teams_panel.html')
 def teams_panel():
     return {}
-
