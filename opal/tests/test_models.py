@@ -22,44 +22,44 @@ class PatientRecordAccessTestCase(OpalTestCase):
 
 class SubrecordTestCase(OpalTestCase):
 
-    @patch('opal.models.select_template')
-    def test_display_template(self, select):
+    @patch('opal.models.find_template')
+    def test_display_template(self, find):
         Subrecord.get_display_template()
-        select.assert_called_with(['records/subrecord.html'])
+        find.assert_called_with(['records/subrecord.html'])
 
     def test_display_template_does_not_exist(self):
         self.assertEqual(None, Subrecord.get_display_template())
 
-    @patch('opal.models.select_template')
-    def test_display_template_team(self, select):
+    @patch('opal.models.find_template')
+    def test_display_template_team(self, find):
         Subrecord.get_display_template(team='test')
-        select.assert_called_with([
+        find.assert_called_with([
             'records/test/subrecord.html',
             'records/subrecord.html',
         ])
 
-    @patch('opal.models.select_template')
-    def test_display_template_subteam(self, select):
+    @patch('opal.models.find_template')
+    def test_display_template_subteam(self, find):
         Subrecord.get_display_template(team='test',
                                        subteam='really')
-        select.assert_called_with([
+        find.assert_called_with([
             'records/test/really/subrecord.html',
             'records/test/subrecord.html',
             'records/subrecord.html'
         ])
 
-    @patch('opal.models.select_template')
-    def test_detail_template(self, select):
+    @patch('opal.models.find_template')
+    def test_detail_template(self, find):
         Subrecord.get_detail_template()
-        select.assert_called_with([
+        find.assert_called_with([
             'records/subrecord_detail.html',
             'records/subrecord.html'
         ])
 
-    @patch('opal.models.select_template')
-    def test_detail_template_team(self, select):
+    @patch('opal.models.find_template')
+    def test_detail_template_team(self, find):
         Subrecord.get_detail_template(team='test')
-        select.assert_called_with([
+        find.assert_called_with([
             'records/subrecord_detail.html',
             'records/subrecord.html'
         ])
@@ -67,34 +67,33 @@ class SubrecordTestCase(OpalTestCase):
     def test_detail_template_does_not_exist(self):
         self.assertEqual(None, Subrecord.get_detail_template())
 
-    @patch('opal.models.select_template')
-    def test_detail_template_subteam(self, select):
+    @patch('opal.models.find_template')
+    def test_detail_template_subteam(self, find):
         Subrecord.get_detail_template(team='test',
                                       subteam='really')
-        select.assert_called_with(
+        find.assert_called_with(
             ['records/subrecord_detail.html',
              'records/subrecord.html'])
 
-
-    @patch('opal.models.select_template')
-    def test_form_template(self, select):
+    @patch('opal.models.find_template')
+    def test_form_template(self, find):
         Subrecord.get_form_template()
-        select.assert_called_with(['forms/subrecord_form.html'])
+        find.assert_called_with(['forms/subrecord_form.html'])
 
     def test_get_modal_template_does_not_exist(self):
         self.assertEqual(None, Subrecord.get_modal_template())
 
-    @patch('opal.models.select_template')
+    @patch('opal.models.find_template')
     @patch('opal.models.Subrecord.get_form_template')
-    def test_modal_template_no_form_template(self, modal, select):
+    def test_modal_template_no_form_template(self, modal, find):
         modal.return_value = None
         Subrecord.get_modal_template()
-        select.assert_called_with(['modals/subrecord_modal.html'])
+        find.assert_called_with(['modals/subrecord_modal.html'])
 
-    @patch('opal.models.select_template')
-    def test_modal_template_subteam(self, select):
+    @patch('opal.models.find_template')
+    def test_modal_template_subteam(self, find):
         Subrecord.get_modal_template(team='test', subteam='really')
-        select.assert_called_with([
+        find.assert_called_with([
             'modals/test/really/subrecord_modal.html',
             'modals/test/subrecord_modal.html',
             'modals/subrecord_modal.html',
