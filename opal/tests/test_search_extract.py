@@ -10,7 +10,7 @@ from django.contrib.auth.models import User
 
 from opal.core.test import OpalTestCase
 from opal import models
-from opal.tests.models import Colour,  Demographics
+from opal.tests.models import Colour, PatientColour, Demographics
 
 from opal.core.search import extract
 
@@ -145,3 +145,33 @@ class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
         ]
         self.assertEqual(headers, expected_headers)
         self.assertEqual(row, expected_row)
+
+
+class ZipArchiveTestCase(PatientEpisodeTestCase):
+
+    @patch('opal.core.search.extract.zipfile')
+    def test_episode_subrecords(self, zipfile):
+        target = extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
+        self.assertEqual(8, zipfile.ZipFile.return_value.__enter__.return_value.write.call_count)
+
+    @patch('opal.core.search.extract.subrecord_csv')
+    @patch('opal.core.search.extract.zipfile')
+    def test_exclude_episode_subrecords(self, zipfile, subrecords):
+        target = extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
+        subs = [a[0][1] for a in subrecords.call_args_list]
+        self.assertFalse(Colour in subs)
+
+    @patch('opal.core.search.extract.patient_subrecord_csv')
+    @patch('opal.core.search.extract.zipfile')
+    def test_exclude_patient_subrecords(self, zipfile, subrecords):
+        target = extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
+        subs = [a[0][1] for a in subrecords.call_args_list]
+        self.assertFalse(PatientColour in subs)
+
+
+class AsyncExtractTestCase(OpalTestCase):
+
+    @patch('opal.core.search.tasks.extract.delay')
+    def test_async(self, delay):
+        extract.async_extract(self.user, 'THIS')
+        delay.assert_called_with(self.user, 'THIS')
