@@ -151,16 +151,6 @@ class OptionsViewSet(viewsets.ViewSet):
                 tag_visible_in_list.append(tag)
                 tag_direct_add.append(tag)
 
-
-            # teams = Team.for_user(request.user)
-            # for team in teams:
-            #     tag_display[team.name] = team.title
-            #     if team.visible_in_list:
-            #         tag_visible_in_list.append(team.name)
-
-            #     if team.direct_add:
-            #         tag_direct_add.append(team.name)
-
         data['tag_display'] = tag_display
         data['tag_visible_in_list'] = tag_visible_in_list
         data['tag_direct_add'] = tag_direct_add
