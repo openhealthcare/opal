@@ -33,7 +33,7 @@
               </button>
             </li>
             <li class="list-group-item">
-              {% with edit_teams="editNamedItem('tagging', 0)" %}
+              {% with edit_teams="episode.recordEditor.editItem('tagging', 0)" %}
               {% include 'partials/_teams_list.html' %}
               {% endwith %}
             </li>
@@ -59,6 +59,6 @@
         {% block under_split_cols %}{% endblock %}
       </div>
     </div> <!-- Ends Detail Panels -->
-    
+
   </div>
 </div> <!-- Ends Main Panel -->
