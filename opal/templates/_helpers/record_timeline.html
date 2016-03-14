@@ -5,10 +5,10 @@
       <span ng-show="{{ editable }}" >
         {% if singleton %}
         <i class="fa fa-pencil edit pull-right"
-           ng-click="editNamedItem('{{ name }}', 0)"></i>
+           ng-click="episode.recordEditor.editItem('{{ name }}', 0)"></i>
         {% else %}
         <i class="fa fa-plus-circle edit pull-right"
-           ng-click="newNamedItem('{{ name }}')"></i>
+           ng-click="episode.recordEditor.newItem('{{ name }}')"></i>
         {% endif %}
       </span>
     </h3>
