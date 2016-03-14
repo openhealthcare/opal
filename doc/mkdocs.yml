@@ -40,6 +40,7 @@ pages:
       - Schemas: reference/schemas.md
       - Search Queries: reference/search_queries.md
       - Detail Views: reference/detail_views.md
+      - Patient Lists: reference/patient_list.md
 
 theme: mkdocs
 theme: cerulean

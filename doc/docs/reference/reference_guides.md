@@ -16,6 +16,7 @@ The following reference guides are available:
 [opal.application.OpalApplication](opal_application.md) | OPAL Application objects|
 [opal.core.schemas](schemas.md)|Schemas - Dynamic columns for the table views|
 [opal.core.detail](detail_views.md)|Detail Views - Custom views over one or many episodes.|
+[opal.core.patient_lists](patient_list.md)|Patient Lists - defining different types of list.|
 
 ### Angular Services
 |
