@@ -20,7 +20,7 @@ There may only be one of each singleton Subrecord, which is created whth the par
     class Demographics(PatientSubrecord):
         _is_singleton = True
 
-For this case, when a `Patient` is created, an empty `Demographics` instance will 
+For this case, when a `Patient` is created, an empty `Demographics` instance will
 automatically be created.
 
 #### Subrecord._list_limit
@@ -55,6 +55,14 @@ String we would like to use for user-facing display of this record type.
     class Antimicrobial(EpisodeSubrecord):
         _title = 'Abx'
 
+#### Subrecord._exclude_from_extract
+
+Boolean to specify that this subrecord should be excluded from any standard data extract.
+This implicitly defaults to False.
+
+    class Antimicrobial(EpisodeSubrecord):
+        _exclude_from_extract = 'Abx'
+
 #### Subrecord.pid_fields
 
 An iterable of strings that correspond to fieldnames that contain Patient Identifiable Data (PID).
@@ -79,7 +87,7 @@ Keywords:
 
 Classmethod to locate the active template for our record. Returns the name of a template or None.
 
-Keywords: 
+Keywords:
 
 * `team` Optional team to check for form customisations
 * `subteam` Optional subteam to check for form customisations

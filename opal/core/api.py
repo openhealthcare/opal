@@ -1,8 +1,6 @@
 """
 Public facing API views
 """
-import collections
-
 from django.conf import settings
 from django.views.generic import View
 from django.contrib.contenttypes.models import ContentType
@@ -116,7 +114,6 @@ class OptionsViewSet(viewsets.ViewSet):
 
     def list(self, request):
 
-
         data = {}
         subclasses = LookupList.__subclasses__()
         for model in subclasses:
@@ -138,7 +135,6 @@ class OptionsViewSet(viewsets.ViewSet):
 
         data['micro_test_defaults'] = micro_test_defaults
 
-        tag_hierarchy = collections.defaultdict(list)
         tag_visible_in_list = []
         tag_direct_add = []
         tag_display = {}
@@ -146,33 +142,19 @@ class OptionsViewSet(viewsets.ViewSet):
         if request.user.is_authenticated():
             teams = Team.for_user(request.user)
             for team in teams:
-                if team.parent:
-                    continue # Will be filled in at the appropriate point!
                 tag_display[team.name] = team.title
+                if team.visible_in_list:
+                    tag_visible_in_list.append(team.name)
 
-                if not team.has_subteams:
+                if team.direct_add:
+                    tag_direct_add.append(team.name)
 
-                    if team.visible_in_list:
-                        tag_visible_in_list.append(team.name)
-
-                    if team.direct_add:
-                        tag_direct_add.append(team.name)
-
-                subteams = [st for st in teams if st.parent == team]
-                tag_hierarchy[team.name] = [st.name for st in subteams]
-                for sub in subteams:
-                    tag_display[sub.name] = sub.title
-
-                    if sub.visible_in_list:
-                        tag_visible_in_list.append(sub.name)
-
-                    if sub.direct_add:
-                        tag_direct_add.append(sub.name)
-
-        data['tag_hierarchy'] = tag_hierarchy
         data['tag_display'] = tag_display
         data['tag_visible_in_list'] = tag_visible_in_list
         data['tag_direct_add'] = tag_direct_add
+
+        data['first_list_slug'] = PatientList.list()[0].slug()
+
         data['macros'] = Macro.to_dict()
 
         return Response(data)

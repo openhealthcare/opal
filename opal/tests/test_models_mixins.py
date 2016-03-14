@@ -6,7 +6,10 @@ import pytz
 
 from django.db import models
 from mock import patch
+
+from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.test import OpalTestCase
+from opal.tests.models import Hat
 
 from opal.models import UpdatesFromDictMixin
 
@@ -20,8 +23,9 @@ class UpdatableModelInstance(UpdatesFromDictMixin, models.Model):
     foo = models.CharField(max_length=200, blank=True, null=True)
     bar = models.CharField(max_length=200, blank=True, null=True)
     pid = models.CharField(max_length=200, blank=True, null=True)
+    hatty = ForeignKeyOrFreeText(Hat)
 
-    pid_fields = 'pid',
+    pid_fields = 'pid', 'hatty'
 
 
 class UpdatesFromDictMixin(OpalTestCase):
@@ -29,12 +33,18 @@ class UpdatesFromDictMixin(OpalTestCase):
         self.model = UpdatableModelInstance
 
     def test_get_fieldnames_to_serialize(self):
-        expected = ['id', 'foo', 'bar', 'pid']
+        expected = ['id', 'foo', 'bar', 'pid', 'hatty_fk_id', 'hatty_ft', 'hatty']
         self.assertEqual(expected, self.model._get_fieldnames_to_serialize())
 
     def test_get_fieldnames_to_extract(self):
         expected = ['id', 'foo', 'bar']
         self.assertEqual(expected, self.model._get_fieldnames_to_extract())
+
+    def test_get_fieldnames_to_extract_fkorft_438(self):
+        # Regression test for https://github.com/opal/issues/438
+        fnames = self.model._get_fieldnames_to_extract()
+        self.assertFalse('hatty_fk_id' in fnames)
+        self.assertFalse('hatty_ft' in fnames)
 
     def test_update_from_dict_datetime(self):
         data = {'datetime': '04/11/1953 12:20:00'}

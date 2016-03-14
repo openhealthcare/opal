@@ -103,12 +103,16 @@ def zip_archive(episodes, description, user):
         z.write(full_file_name, zip_relative_file_path(file_name))
 
         for subrecord in episode_subrecords():
+            if getattr(subrecord, '_exclude_from_extract', False):
+                continue
             file_name = '{0}.csv'.format(subrecord.get_api_name())
             full_file_name = make_file_path(file_name)
             subrecord_csv(episodes, subrecord, full_file_name)
             z.write(full_file_name, zip_relative_file_path(file_name))
 
         for subrecord in patient_subrecords():
+            if getattr(subrecord, '_exclude_from_extract', False):
+                continue
             file_name = '{0}.csv'.format(subrecord.get_api_name())
             full_file_name = make_file_path(file_name)
             patient_subrecord_csv(episodes, subrecord, full_file_name)

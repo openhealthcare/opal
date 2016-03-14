@@ -30,12 +30,14 @@ class DogOwner(models.EpisodeSubrecord):
 
 class Colour(models.EpisodeSubrecord):
     _advanced_searchable = False
+    _exclude_from_extract = True
 
     name = dmodels.CharField(max_length=200)
 
 
 class PatientColour(models.PatientSubrecord):
     name = dmodels.CharField(max_length=200)
+    _exclude_from_extract = True
 
 
 class FamousLastWords(models.PatientSubrecord):

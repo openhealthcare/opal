@@ -30,7 +30,7 @@ The following reference guides are available:
 |
 -|-
 [The forms Templatetag library](form_templatetags.md) | The building blocks for OPAL forms
-[The record_panel templatetag](record_panel_templatetag.md) | Rendering record panels.
+[The panels Templatetag library](panels_templatetags.md) | Rendering record panels.
 [Javascript Helpers](javascript_helpers.md)| Angular filters and $rootScope methods
 
 ### OPAL Search module
