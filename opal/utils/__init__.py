@@ -2,12 +2,13 @@
 Generic OPAL utilities
 """
 import importlib
-import os
 import re
 
-from django.template import engines
+from django.template import TemplateDoesNotExist
+from django.template.loader import select_template
 
 camelcase_to_underscore = lambda str: re.sub('(((?<=[a-z])[A-Z])|([A-Z](?![A-Z]|$)))', '_\\1', str).lower().strip('_')
+
 
 def stringport(module):
     """
@@ -58,10 +59,7 @@ def find_template(template_list):
     Given an iterable of template paths, return the first one that
     exists on our template path or None.
     """
-    for path in template_list:
-        for engine in engines.all():
-            for loader in engine.engine.template_loaders:
-                for origin in loader.get_template_sources(path):
-                    if os.path.exists(origin):
-                        return path
-    return None
+    try:
+        return select_template(template_list).template.name
+    except TemplateDoesNotExist:
+        return None
