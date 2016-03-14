@@ -148,21 +148,6 @@ describe('Episode', function() {
         expect(episode.hasTag('tropical')).toEqual(true);
     });
 
-    describe('childTags()', function (){
-
-        it('Should return child tags', function () {
-            expect(episode.childTags(tag_hierarchy)).toEqual(['mine', 'tropical'])
-        });
-
-        it('Should exclude parent tags', function () {
-            episode.tagging[0].micro = true;
-            episode.tagging[0].haem = true;
-            var children = ['mine', 'tropical', 'haem'];
-            expect(episode.childTags(tag_hierarchy)).toEqual(children);
-        });
-
-    });
-
     it('should be able to add a new item', function() {
         var item = new Item(
             {id: 104, condition: 'Ebola', provisional: false,

@@ -74,16 +74,6 @@ angular.module('opal.services')
                 return this.getTags().indexOf(tag) != -1;
             }
 
-            //
-            // Return those tags that are child items in HIERARCHY
-            //
-            this.childTags = function(hierarchy){
-                return _.filter(episode.getTags(), function(t){
-                    if(t in hierarchy && hierarchy[t].length > 0){ return false };
-                    return true
-                });
-            }
-
 	        this.newItem = function(columnName, opts) {
                 var column;
 

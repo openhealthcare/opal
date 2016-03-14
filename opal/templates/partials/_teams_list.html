@@ -5,7 +5,8 @@
 </h4>
 <hr />
 <h4
-   ng-hide="!is_tag_visible_in_list(tag)"
-   ng-repeat="tag in episode.childTags(options.tag_hierarchy)">
-  <a href="/#/list/[[tag]]" >[[ tag_display[tag] ]]</a>
+   ng-repeat="tag in episode.getTags()"
+   ng-show="options.tag_visible_in_list.indexOf(tag) != -1"
+   >
+  <a href="/#/list/[[ options.tag_slugs[tag] ]]" >[[ tag_display[tag] ]]</a>
 </h4>
