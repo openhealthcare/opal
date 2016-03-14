@@ -51,7 +51,13 @@ settings.configure(DEBUG=True,
                                ),
                    MIGRATION_MODULES={
                        'opal': 'opal.nomigrations'
-                   }
+                   },
+                   TEMPLATE_LOADERS = (
+                       ('django.template.loaders.cached.Loader', (
+                           'django.template.loaders.filesystem.Loader',
+                           'django.template.loaders.app_directories.Loader',
+                           )),
+                   )
 )
 
 from opal.tests import dummy_options_module
