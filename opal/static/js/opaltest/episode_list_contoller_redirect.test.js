@@ -3,6 +3,7 @@ describe('EpisodeRedirectListCtrl', function() {
 
   var $location, $cookieStore, $controller, $scope;
   var fakeOptions = {
+      first_list_slug: 'carnivore-eater',
       tag_hierarchy: {
           "parentTag": [
               "childTag",
@@ -21,7 +22,7 @@ describe('EpisodeRedirectListCtrl', function() {
       $scope       = $rootScope.$new();
   }));
 
-  it('should redirect to the cookie store tag and sub tag', function() {
+  it('should redirect to the cookie store list', function() {
       var $cookieStore = {
           get: function(someKey){
               if(someKey === 'opal.lastPatientList'){
@@ -40,7 +41,7 @@ describe('EpisodeRedirectListCtrl', function() {
   });
 
 
-  it('should redirect to the first option if there is no tag', function(){
+  it('should redirect to the first list slug if there is no tag', function(){
         spyOn($cookieStore, 'get').and.returnValue(undefined);
         $controller('EpisodeRedirectListCtrl', {
             $scope: $scope,
@@ -48,7 +49,7 @@ describe('EpisodeRedirectListCtrl', function() {
             $location: $location ,
             options: fakeOptions
         });
-        expect($location.path).toHaveBeenCalledWith("/list/parentTag-childTag/");
+        expect($location.path).toHaveBeenCalledWith("/list/carnivore-eater/");
         expect($cookieStore.get).toHaveBeenCalledWith("opal.lastPatientList");
 
     });
