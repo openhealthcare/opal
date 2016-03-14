@@ -21,7 +21,10 @@ class PatientList(discoverable.DiscoverableFeature,
         Return an iterable of Patient Lists.
         """
         klasses = sorted(super(PatientList, klass).list(), key=lambda x: x.order)
-        klasses.remove(TaggedPatientList)
+        try:
+            klasses.remove(TaggedPatientList)
+        except ValueError:
+            pass # It's not there - perhaps we're trying to list() TaggedPatientLists?
         return klasses
 
     @classmethod
@@ -58,6 +61,7 @@ class TaggedPatientList(PatientList):
     need to define schema
     """
     tag = "Implement me please"
+    display_name = "Implement me please"
 
     @classmethod
     def slug(klass):

@@ -9,8 +9,10 @@
     </h3>
   </div>
   <ul class="list-group">
-    <li class="list-group-item" ng-repeat="item in episode.childTags(options.tag_hierarchy)">
-      <a href="/#/list/[[item]]" >[[ options.tag_display[item] ]]</a>
+    <li class="list-group-item"
+        ng-repeat="item in episode.getTags()"
+        ng-show="options.tag_visible_in_list.indexOf(item) != -1">
+      <a href="/#/list/[[options.tag_slugs[item]] ]" >[[ options.tag_display[item] ]]</a>
     </li>
   </ul>
 </div>

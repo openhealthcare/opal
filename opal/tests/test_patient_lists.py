@@ -11,6 +11,7 @@ from opal.core.test import OpalTestCase
 
 
 class TaggingTestPatientList(TaggedPatientList):
+    display_name = "Herbivores"
     tag = "eater"
     subtag = "herbivore"
     order = 4
@@ -20,6 +21,7 @@ class TaggingTestPatientList(TaggedPatientList):
     ]
 
 class TaggingTestNotSubTag(TaggedPatientList):
+    display_name = 'Carnivores'
     tag = "carnivore"
     order = 1
     template_name = 'carnivore.html'
@@ -117,3 +119,7 @@ class TestTaggedPatientList(OpalTestCase):
         serialized = patient_list.to_dict(self.user)
         self.assertEqual(len(serialized), 1)
         self.assertEqual(serialized[0]["id"], 2)
+
+    def test_list(self):
+        expected = [TaggingTestNotSubTag, TaggingTestPatientList]
+        self.assertEqual(expected, list(TaggedPatientList.list()))

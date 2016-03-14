@@ -13,7 +13,7 @@ from opal.core.lookuplists import LookupList
 from opal.utils import stringport, camelcase_to_underscore
 from opal.core.subrecords import subrecords
 from opal.core.views import _get_request_data, _build_json_response
-from opal.core.patient_lists import PatientList
+from opal.core.patient_lists import PatientList, TaggedPatientList
 
 app = application.get_app()
 
@@ -138,20 +138,33 @@ class OptionsViewSet(viewsets.ViewSet):
         tag_visible_in_list = []
         tag_direct_add = []
         tag_display = {}
+        tag_slugs = {}
 
         if request.user.is_authenticated():
-            teams = Team.for_user(request.user)
-            for team in teams:
-                tag_display[team.name] = team.title
-                if team.visible_in_list:
-                    tag_visible_in_list.append(team.name)
+            for taglist in TaggedPatientList.for_user(request.user):
+                slug = taglist().slug()
+                tag = taglist.tag
+                if hasattr(taglist, 'subtag'):
+                    tag = taglist.subtag
+                tag_display[tag] = taglist.display_name
+                tag_slugs[tag] = slug
+                tag_visible_in_list.append(tag)
+                tag_direct_add.append(tag)
 
-                if team.direct_add:
-                    tag_direct_add.append(team.name)
+
+            # teams = Team.for_user(request.user)
+            # for team in teams:
+            #     tag_display[team.name] = team.title
+            #     if team.visible_in_list:
+            #         tag_visible_in_list.append(team.name)
+
+            #     if team.direct_add:
+            #         tag_direct_add.append(team.name)
 
         data['tag_display'] = tag_display
         data['tag_visible_in_list'] = tag_visible_in_list
         data['tag_direct_add'] = tag_direct_add
+        data['tag_slugs'] = tag_slugs
 
         data['first_list_slug'] = PatientList.list()[0].slug()
 
