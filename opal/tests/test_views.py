@@ -86,14 +86,14 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
         view = self.setup_view(views.PatientListTemplateView, request, slug="eater-herbivore")
         view.patient_list = TaggingTestPatientList
 
-        self.assertEqual(['episode_list.html'], view.get_template_names())
+        self.assertEqual(['patient_lists/spreadsheet_list.html'], view.get_template_names())
 
     def test_get_template_names_no_list(self):
         url = reverse("patient_list_template_view", kwargs=dict(slug="eater-herbivore"))
         request = self.get_request(url)
         view = self.setup_view(views.PatientListTemplateView, request, slug="eater-herbivore")
         view.patient_list = None
-        self.assertEqual(['episode_list.html'], view.get_template_names())
+        self.assertEqual(['patient_lists/spreadsheet_list.html'], view.get_template_names())
 
 
 class PatientDetailTemplateViewTestCase(BaseViewTestCase):
