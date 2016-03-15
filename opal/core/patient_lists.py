@@ -77,7 +77,7 @@ class TaggedPatientList(PatientList):
         return True
 
     @classmethod
-    def slug(klass):
+    def get_slug(klass):
         """
         For a tagged patient list, the slug is made up of the tags.
         """

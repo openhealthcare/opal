@@ -142,7 +142,7 @@ class OptionsViewSet(viewsets.ViewSet):
 
         if request.user.is_authenticated():
             for taglist in TaggedPatientList.for_user(request.user):
-                slug = taglist().slug()
+                slug = taglist().get_slug()
                 tag = taglist.tag
                 if hasattr(taglist, 'subtag'):
                     tag = taglist.subtag
@@ -157,7 +157,7 @@ class OptionsViewSet(viewsets.ViewSet):
         data['tag_direct_add'] = tag_direct_add
         data['tag_slugs'] = tag_slugs
 
-        data['first_list_slug'] = PatientList.list()[0].slug()
+        data['first_list_slug'] = PatientList.list()[0].get_slug()
 
         data['macros'] = Macro.to_dict()
 
