@@ -11,3 +11,12 @@ Save this filter with the attributes passed in. If there is no ID, this is taken
 ### destroy()
 
 Destroy this filter.
+
+## filtersLoader
+
+Loader service that will resolve with instantiated `Filter` objects for each of the current
+user's filters.
+
+## FilterResource
+
+Angular $resource for Filter objects.
