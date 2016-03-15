@@ -4,6 +4,7 @@ Unittests for opal.core.patient_lists
 from django.contrib.auth.models import User
 from mock import MagicMock, PropertyMock, patch
 
+from opal.core import exceptions
 from opal.core.patient_lists import PatientList, TaggedPatientList
 from opal.tests import models
 from opal.models import Patient, Team, UserProfile
@@ -123,3 +124,14 @@ class TestTaggedPatientList(OpalTestCase):
     def test_list(self):
         expected = [TaggingTestNotSubTag, TaggingTestPatientList]
         self.assertEqual(expected, list(TaggedPatientList.list()))
+
+    def test_invalid_tag_name(self):
+        with self.assertRaises(exceptions.InvalidDiscoverableFeatureError):
+            class MyList(TaggedPatientList):
+                tag = 'foo-bar'
+
+    def test_invalid_subtag_name(self):
+        with self.assertRaises(exceptions.InvalidDiscoverableFeatureError):
+            class MyList(TaggedPatientList):
+                tag = 'foo'
+                subtag = 'one-two'

@@ -3,6 +3,7 @@ OPAL utilities for discoverable functionality
 """
 from django.conf import settings
 
+from opal.core import exceptions
 from opal.utils import camelcase_to_underscore, _itersubclasses, stringport
 
 # So we only do it once
@@ -61,7 +62,16 @@ class DiscoverableFeature(object):
         """
         if klass.module_name is None:
             raise ValueError('Must set {0}.module_name for {0}'.format(klass))
-        return get_subclass(klass.module_name, klass)
+
+        # We don't want to list() invalid features that have been suppressed
+        def valid_generator():
+            for k in get_subclass(klass.module_name, klass):
+                try:
+                    k.is_valid()
+                    yield k
+                except exceptions.InvalidDiscoverableFeatureError:
+                    continue # Just don't list() it
+        return valid_generator()
 
     @classmethod
     def get(klass, name):

@@ -2,7 +2,7 @@
 This module defines the base PatientList classes.
 """
 from opal.models import Episode, UserProfile
-from opal.core import discoverable
+from opal.core import discoverable, exceptions
 
 
 class PatientList(discoverable.DiscoverableFeature,
@@ -62,6 +62,17 @@ class TaggedPatientList(PatientList):
     """
     tag = "Implement me please"
     display_name = "Implement me please"
+
+    @classmethod
+    def is_valid(klass):
+        if '-' in klass.tag:
+            msg = 'Invalid tag {0}'.format(klass.tag)
+            raise exceptions.InvalidDiscoverableFeatureError(msg)
+        if hasattr(klass, 'subtag'):
+            if '-' in klass.subtag:
+                msg = 'Invalid subtag {0}'.format(klass.subtag)
+                raise exceptions.InvalidDiscoverableFeatureError(msg)
+        return True
 
     @classmethod
     def slug(klass):
