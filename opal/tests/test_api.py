@@ -120,7 +120,10 @@ class OptionTestCase(TestCase):
         mock_request.user = self.user
         response = self.viewset().list(mock_request)
         result = response.data
-        self.assertIn('carnivore', result['tag_direct_add'])
+        # .direct_add = False
+        self.assertNotIn('carnivore', result['tag_direct_add'])
+        # .direct_add = default
+        self.assertIn('herbivore', result['tag_direct_add'])
 
     def test_tag_slug(self):
         mock_request = MagicMock(name='mock request')

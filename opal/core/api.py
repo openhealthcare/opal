@@ -149,7 +149,8 @@ class OptionsViewSet(viewsets.ViewSet):
                 tag_display[tag] = taglist.display_name
                 tag_slugs[tag] = slug
                 tag_visible_in_list.append(tag)
-                tag_direct_add.append(tag)
+                if taglist.direct_add:
+                    tag_direct_add.append(tag)
 
         data['tag_display'] = tag_display
         data['tag_visible_in_list'] = tag_visible_in_list
