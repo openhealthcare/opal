@@ -19,21 +19,27 @@ class MyPassingFeature(discoverable.DiscoverableFeature):
     pass
 
 class WatFeature(discoverable.DiscoverableFeature):
-    name = 'wat'
+    display_name = 'wat'
     module_name = 'wat'
+
+class SlugFeature(discoverable.DiscoverableFeature):
+    module_name = 'sluggy'
+
+class MySlugFeature(SlugFeature):
+    slug = 'my-slug'
+    display_name = 'My Slug Defined Slug'
 
 class ColourFeature(discoverable.DiscoverableFeature):
     module_name = 'colours'
 
 class BlueColour(ColourFeature):
-    name = 'Blue'
+    display_name = 'Blue'
 
 class RedColour(ColourFeature):
-    name = 'Red'
+    display_name = 'Red'
 
 class SeaGreenColour(ColourFeature):
-    name = 'Sea Green'
-
+    display_name = 'Sea Green'
 
 class BombFeature(discoverable.DiscoverableFeature):
     module_name = 'bombs'
@@ -77,16 +83,19 @@ class DiscoverableFeatureTestCase(OpalTestCase):
 
     def test_slug_for_no_implementation(self):
         with self.assertRaises(ValueError):
-            MyPassingFeature.slug()
+            MyPassingFeature.get_slug()
 
     def test_slug_for_implementation(self):
-        self.assertEqual('wat', WatFeature.slug())
+        self.assertEqual('wat', WatFeature.get_slug())
 
     def test_slug_for_subclass(self):
-        self.assertEqual('red', RedColour.slug())
+        self.assertEqual('red', RedColour.get_slug())
 
     def test_slug_for_multi_word_name(self):
-        self.assertEqual('sea_green', SeaGreenColour.slug())
+        self.assertEqual('sea_green', SeaGreenColour.get_slug())
+
+    def test_slug_for_overriden_slug_property(self):
+        self.assertEqual('my-slug', MySlugFeature.get_slug())
 
     def test_list_for_no_implementation(self):
         with self.assertRaises(ValueError):

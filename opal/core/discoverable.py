@@ -44,16 +44,19 @@ class DiscoverableFeature(object):
     """
     __metaclass__ = DiscoverableMeta
     module_name = None
-    name = None
+    display_name = None
+    slug = None
 
     @classmethod
     def is_valid(klass): pass
 
     @classmethod
-    def slug(klass):
-        if klass.name is None:
-            raise ValueError('Must set {0}.name for {0}'.format(klass))
-        return camelcase_to_underscore(klass.name).replace(' ', '')
+    def get_slug(klass):
+        if klass.slug is not None:
+            return klass.slug
+        if klass.display_name is None:
+            raise ValueError('Must set display_name or slug for {0}'.format(klass))
+        return camelcase_to_underscore(klass.display_name).replace(' ', '')
 
     @classmethod
     def list(klass):
@@ -79,7 +82,7 @@ class DiscoverableFeature(object):
         Return a specific subclass by slug
         """
         for sub in klass.list():
-            if sub.slug() == name:
+            if sub.get_slug() == name:
                 return sub
         raise ValueError('No {0} implementation with slug {1}'.format(klass, name))
 

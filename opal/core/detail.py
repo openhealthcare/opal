@@ -9,8 +9,8 @@ class BasePatientDetailView(discoverable.SortableFeature,
     module_name = 'detail'
 
 class PatientDetailView(BasePatientDetailView):
-    name       = None
-    title      = None
-    template   = None
-    visible    = None
-    order      = None
+    slug         = None
+    display_name = None
+    template     = None
+    visible      = None
+    order        = None
