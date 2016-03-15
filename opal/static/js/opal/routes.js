@@ -5,7 +5,7 @@ app.config(
      function($routeProvider) {
          $routeProvider.when('/list/',{
              controller: 'EpisodeRedirectListCtrl',
-             templateUrl: '/templates/episode_list.html',
+             templateUrl: '/templates/404.html',
              resolve: {
                  options: function(Options){ return Options; }
              }

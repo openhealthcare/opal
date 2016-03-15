@@ -79,7 +79,7 @@ class TestPatientList(OpalTestCase):
         self.assertEqual(expected, list(PatientList.list()))
 
     def test_get_template_names_default(self):
-        self.assertEqual(['episode_list.html'], PatientList().get_template_names())
+        self.assertEqual(['patient_lists/spreadsheet_list.html'], PatientList().get_template_names())
 
     def test_get_template_names_overridden_proerty(self):
         self.assertEqual(['carnivore.html'], TaggingTestNotSubTag().get_template_names())
