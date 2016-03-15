@@ -46,6 +46,9 @@ class BombFeature(discoverable.DiscoverableFeature):
             raise InvalidDiscoverableFeatureError('BLOWING UP')
 
 
+class Threat(BombFeature): pass
+
+
 class AppImporterTestCase(OpalTestCase):
 
     @override_settings(INSTALLED_APPS=("opal",))
@@ -64,8 +67,6 @@ class AppImporterTestCase(OpalTestCase):
 class DiscoverableFeatureTestCase(OpalTestCase):
 
     def test_is_valid_will_blow_up(self):
-
-        class Threat(BombFeature): pass
 
         # We only care that the above class did not raise an exception.
         self.assertTrue(True)
@@ -99,6 +100,9 @@ class DiscoverableFeatureTestCase(OpalTestCase):
         self.assertEqual(3, len(subs))
         for s in [BlueColour, RedColour, SeaGreenColour]:
             self.assertIn(s, subs)
+
+    def test_list_invalid_subclasses(self):
+        self.assertEqual([Threat], list(BombFeature.list()))
 
     def test_get_not_a_thing(self):
         with self.assertRaises(ValueError):
