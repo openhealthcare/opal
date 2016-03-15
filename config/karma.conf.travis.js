@@ -60,7 +60,8 @@ module.exports = function(config){
         browserNoActivityTimeout : 4*60*1000, //default 10000
         captureTimeout : 4*60*1000, //default 60000
         preprocessors: {
-            'opal/**/*.js': 'coverage'
+            'opal/**/*.js': 'coverage',
+            '../../core/search/static/js/search/**/*.js': 'coverage',
         },
         reporters: ['coverage'],
         coverageReporter: {
