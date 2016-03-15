@@ -57,7 +57,8 @@ module.exports = function(config){
             'opal/**/*.js': 'coverage'
         },
         // reporters: ['coverage'],
-        reporters: ['progress', 'coverage'],
+        reporters: ['progress', 'coverage',
+                   ],
         singleRun: true,
         coverageReporter : {
             type : 'html',

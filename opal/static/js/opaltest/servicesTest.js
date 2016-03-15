@@ -234,62 +234,6 @@ describe('services', function() {
         });
     });
 
-    describe('episodesLoader', function(){
-        var mock, episodesLoader, $route;
-
-        beforeEach(function(){
-            mock = { alert: jasmine.createSpy() };
-
-            module(function($provide){
-                $provide.value('$window', mock);
-            });
-
-            module('opal.services', function($provide) {
-                $provide.value('UserProfile', function(){ return profile; });
-            });
-
-            inject(function($injector){
-                episodesLoader = $injector.get('episodesLoader');
-                $q             = $injector.get('$q');
-                $httpBackend   = $injector.get('$httpBackend');
-                $rootScope     = $injector.get('$rootScope');
-                $route         = $injector.get('$route');
-                Episode        = $injector.get('Episode');
-                Schema         = $injector.get('Schema');
-            });
-            schema = new Schema(columns);
-            $route.current = {params: {tag: 'micro'}};
-        });
-
-        it('should fetch the episodes', function(){
-            var result
-
-            $httpBackend.whenGET('/api/v0.1/record/').respond(records);
-            $httpBackend.whenGET('/episode/micro').respond([episodeData]);
-
-            episodesLoader().then(function(r){ result = r; });
-
-            $rootScope.$apply();
-            $httpBackend.flush();
-
-            expect(result[123].demographics[0].name).toBe('John Smith');
-            expect(result[123].demographics[0].date_of_birth).toEqual(
-                new Date(1980, 6, 31));
-        });
-
-        it('should alert if the HTTP request errors', function(){
-            var result;
-
-            $httpBackend.whenGET('/api/v0.1/record/').respond(records);
-            $httpBackend.whenGET('/episode/micro').respond(500, 'NO');
-            episodesLoader();
-            $rootScope.$apply();
-            $httpBackend.flush();
-
-            expect(mock.alert).toHaveBeenCalledWith('Episodes could not be loaded');
-        });
-    });
-
     describe('episodeVisibility', function(){
         var $scope, episode, episodeVisibility;
 
@@ -361,40 +305,6 @@ describe('services', function() {
             expect(episodeVisibility(episode, $scope)).toBe(false);
         });
 
-    });
-
-    describe('episodesLoader', function() {
-        var episodesLoader, $httpBackend, listSchemaLoader, $route;
-
-        beforeEach(function() {
-            module(function($provide) {
-                $provide.value('UserProfile', function(){ return profile; });
-            });
-
-            inject(function($injector) {
-                episodesLoader   = $injector.get('episodesLoader');
-                $route           = $injector.get('$route');
-                $httpBackend     = $injector.get('$httpBackend');
-                $rootScope       = $injector.get('$rootScope');
-            });
-            $route.current = {params: {tag: 'micro'}};
-        });
-
-        it('should resolve to an object of episodes', function() {
-            var promise = episodesLoader();
-            var episodes;
-            $httpBackend.whenGET('/api/v0.1/record/').respond(records);
-            // TODO trailing slash?
-            $httpBackend.whenGET('/episode/micro').respond([episodeData]);
-            promise.then(function(value) {
-                episodes = value;
-            });
-
-            $httpBackend.flush();
-            $rootScope.$apply();
-
-            expect(episodes[123].id).toBe(123);
-        });
     });
 
     describe('episodeLoader', function() {

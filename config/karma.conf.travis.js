@@ -59,7 +59,14 @@ module.exports = function(config){
         browserDisconnectTolerance : 1, // default 0
         browserNoActivityTimeout : 4*60*1000, //default 10000
         captureTimeout : 4*60*1000, //default 60000
-
+        preprocessors: {
+            'opal/**/*.js': 'coverage'
+        },
+        reporters: ['coverage'],
+        coverageReporter: {
+            type: 'lcovonly', // lcov or lcovonly are required for generating lcov.info files
+            dir: '../../../coverage/',
+        }
 
     })
 }
