@@ -104,4 +104,18 @@ in the urls for lists, so attempting to define one will raise an exception.
 
     # This will raise InvalidDiscoverableFeatureError !
 
+### Direct Add
+
+Sometimes, we want to control the flow of patients onto, off, or between lists a little more closely.
+For instance, we might need to ensure additional data collection at points in a patient journey.
+
+In order to accomplish this, we often implement custom patient flows that wil programatically tag
+episodes to tagged lists. In those cases we will want to prevent users from manually adding or
+removing the tags themselves. This can be easily accomplished via the `direct_add` property. When
+set to false, users will not be able to add the tag for this list.
+
+    class MyLockedDownList(TaggedPatientList):
+        tag = 'liaisonpatients'
+        direct_add = False
+
 ## Access Control

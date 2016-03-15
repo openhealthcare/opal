@@ -23,6 +23,7 @@ class TaggingTestPatientList(TaggedPatientList):
 
 class TaggingTestNotSubTag(TaggedPatientList):
     display_name = 'Carnivores'
+    direct_add = False
     tag = "carnivore"
     order = 1
     template_name = 'carnivore.html'
@@ -89,6 +90,9 @@ class TestTaggedPatientList(OpalTestCase):
         self.patient = Patient.objects.create()
         self.episode_1 = self.patient.create_episode()
         self.episode_2 = self.patient.create_episode()
+
+    def test_default_direct_add(self):
+        self.assertTrue(TaggingTestPatientList.direct_add)
 
     def test_tagging_set_with_subtag(self):
         ''' given an episode with certain tags and the required request we should

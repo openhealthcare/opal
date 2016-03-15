@@ -60,6 +60,8 @@ class TaggedPatientList(PatientList):
     and a sub tag and look up the episodes on the basis of these. You still
     need to define schema
     """
+    direct_add = True
+
     tag = "Implement me please"
     display_name = "Implement me please"
 
