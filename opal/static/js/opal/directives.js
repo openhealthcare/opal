@@ -227,24 +227,24 @@ directives.directive('parentHeight', function(){
     };
 });
 
-directives.directive('autofocus', function($timeout) {
-    return {
-        restrict: 'A',
-        link : function($scope, $element) {
-            $timeout(function() {
-                $element[0].focus();
-            });
-        }
-    };
-});
+// directives.directive('autofocus', function($timeout) {
+//     return {
+//         restrict: 'A',
+//         link : function($scope, $element) {
+//             $timeout(function() {
+//                 $element[0].focus();
+//             });
+//         }
+//     };
+// });
 
-angular.module('ui.bootstrap.modal').directive('modalWindow', function ($timeout) {
-    return {
-        priority: 1,
-        link: function (scope, element, attrs) {
-            $timeout(function () {
-                element.find('[autofocus]').focus();
-            });
-        }
-    };
-});
+// angular.module('ui.bootstrap.modal').directive('modalWindow', function ($timeout) {
+//     return {
+//         priority: 1,
+//         link: function (scope, element, attrs) {
+//             $timeout(function () {
+//                 element.find('[autofocus]').focus();
+//             });
+//         }
+//     };
+// });

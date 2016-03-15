@@ -3,6 +3,95 @@ describe('filters', function() {
 
     beforeEach(module('opal.filters'));
 
+    describe('microresultFilter', function(){
+        var microresult;
+
+        beforeEach(function(){
+            inject(function($injector){
+                microresult  = $injector.get('microresultFilter');
+            });
+        });
+
+        it('should return pos', function(){
+            expect(microresult('positive')).toEqual('POS');
+        });
+
+        it('should return neg', function(){
+            expect(microresult('negative')).toEqual('NEG');
+        });
+
+        it('should return equiv', function(){
+            expect(microresult('equivocal')).toEqual('EQUIV');
+        });
+
+        it('should do nothing', function(){
+            expect(microresult('wat')).toEqual('wat');
+        });
+
+    })
+
+    describe('boxed', function(){
+        var boxed
+
+        beforeEach(function(){
+            inject(function($injector){
+                boxed  = $injector.get('boxedFilter');
+            });
+        });
+
+        it('should be boxed done', function(){
+            expect(boxed(true)).toEqual('[X]');
+        });
+
+        it('should be boxed todo', function(){
+            expect(boxed(false)).toEqual('[ ]');
+        });
+
+    });
+
+    describe('plural', function(){
+        var plural;
+
+        beforeEach(function(){
+            inject(function($injector){
+                plural  = $injector.get('pluralFilter');
+            });
+        });
+
+        it('should be many', function(){
+            expect(plural('box', 2, 'boxes')).toEqual('boxes');
+        });
+
+        it('should be singular', function(){
+            expect(plural('box', 1, 'boxes')).toEqual('box');
+        });
+
+        it('should use the default', function(){
+            expect(plural('ball', 3)).toEqual('balls');
+        });
+
+    });
+
+    describe('toMoment', function(){
+        var toMoment;
+
+        beforeEach(function(){
+            inject(function($injector){
+                toMoment  = $injector.get('toMomentFilter');
+            });
+        });
+
+        it('shoud be null if null', function(){
+            expect(toMoment(null)).toBe(undefined);
+        })
+
+        it('should take DDMMYYYY', function(){
+            var expected = new Date(1999, 11, 22);
+            expect(toMoment('22/12/1999')._d).toEqual(expected);
+        })
+
+    });
+
     describe('shortDate', function() {
         it('should output a date before 1/1/2001 as DD/MM/YYYY',
            inject(function(shortDateFilter) {
@@ -54,6 +143,10 @@ describe('filters', function() {
             });
         });
 
+        it('should be null if null', function(){
+            expect(ageFilter(null)).toBe(null);
+        })
+
         it('Should return the age in years', function () {
             expect(ageFilter(new Date())).toBe(0);
             expect(ageFilter(new Date(2000,1,1))).toBe(16);
@@ -74,6 +167,21 @@ describe('filters', function() {
         it('Should uppercase the input', function () {
             expect(upperFilter('this')).toBe('THIS');
         });
+    });
+
+    describe('title', function(){
+        var title;
+
+        beforeEach(function(){
+            inject(function($injector){
+                title = $injector.get('titleFilter')
+            });
+        });
+
+        it('Should return the titel', function () {
+            expect(title('hello world')).toBe('Hello World');
+        });
+
     });
 
 
