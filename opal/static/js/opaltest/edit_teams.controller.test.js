@@ -1,10 +1,10 @@
-describe('DischargeEpisodeCtrl', function(){
+describe('EditTeamsCtrl', function(){
     "use strict";
 
-    var $scope, $modal, $httpBackend, $window, $rootScope, $controller;
+    var $scope, $rootScope, $httpBackend, $window, $modal, $controller;
     var Episode;
-    var modalInstance, episodeData;
-    var episode, tags;
+    var modalInstance;
+    var episode
 
     var fields = {};
     var records = {
@@ -67,7 +67,7 @@ describe('DischargeEpisodeCtrl', function(){
     });
 
 
-    episodeData = {
+    var episodeData = {
         date_of_admission: '',
         tagging: [{tropical: true}],
         demographics: [
@@ -81,6 +81,7 @@ describe('DischargeEpisodeCtrl', function(){
             }
         ]
     }
+
 
     beforeEach(function(){
         module('opal.controllers');
@@ -96,35 +97,22 @@ describe('DischargeEpisodeCtrl', function(){
         });
 
         modalInstance = $modal.open({template: 'notatemplate'});
-        tags = {};
-        $rootScope.fields = fields;
-        episode = new Episode(episodeData)
 
-        $controller('DischargeEpisodeCtrl', {
+        episode = new Episode(episodeData);
+
+        $controller('EditTeamsCtrl', {
             $scope: $scope,
             $window: $window,
             $modalInstance: modalInstance,
             episode: episode,
-            tags: tags
-        })
-
-    });
-
-    describe('Setup', function(){
-
-        it('should have the current and new categories', function() {
-            expect($scope.editing.category).toEqual('Discharged');
         });
 
     });
 
-    describe('discharge()', function() {
+    describe('Setup', function() {
 
-        it('should discharge the patient', function() {
-            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
-            $scope.discharge();
-            $rootScope.$apply();
-            $httpBackend.flush();
+        it('should have an editing object', function() {
+            expect($scope.editing).toEqual({});
         });
 
     });
