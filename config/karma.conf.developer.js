@@ -54,7 +54,8 @@ module.exports = function(config){
             'opaltest/*.js',
         ],
         preprocessors: {
-            'opal/**/*.js': 'coverage'
+            'opal/**/*.js': 'coverage',
+            '../../core/search/static/js/search/**/*.js': 'coverage',
         },
         // reporters: ['coverage'],
         reporters: ['progress', 'coverage',

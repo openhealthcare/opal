@@ -111,10 +111,12 @@ angular.module('opal.controllers').controller(
         };
 
         $scope.addFilter = function(){
+            $scope.searched = false;
             $scope.criteria.push(_.clone($scope.model));
         };
 
         $scope.removeFilter = function(index){
+            $scope.searched = false;
             $scope.criteria.splice(index, 1);
         };
 
@@ -187,7 +189,6 @@ angular.module('opal.controllers').controller(
 
             var ping_until_success = function(){
                 $http.get('/search/extract/result/'+ $scope.extract_id).then(function(result){
-                    console.log(result);
                     if(result.data.state == 'FAILURE'){
                         alert('FAILURE')
                         $scope.async_waiting = false;
@@ -208,7 +209,6 @@ angular.module('opal.controllers').controller(
                 '/search/extract/download',
                 {criteria: JSON.stringify($scope.criteria)}
             ).then(function(result){
-                console.log(result.data);
                 $scope.extract_id = result.data.extract_id;
                 ping_until_success();
             });

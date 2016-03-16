@@ -77,11 +77,13 @@
                            bs-options="x for x in query.lookup_list"
                            bs-typeahead
                            placeholder="4. Add your value"
+                           ng-keypress="$event.keyCode == 13 && search()"
                            set-focus-if="isText(query.column, query.field) && query.field != null  && query.queryType != null"
                            />
                     <input type="text" ng-model="query.query"
                            class="form-control content-offset-below-10"
                            ng-show="isDate(query.column, query.field) && query.field != null"
+                           ng-keypress="$event.keyCode == 13 && search()"
                            data-trigger="focus" bs-tooltip="tooltip"
                            data-placement="top" data-title="4. Add your value"
             	           ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
@@ -90,8 +92,9 @@
                            />
                       <span ng-show="isSelect(query.column, query.field)">
                           <select ng-model="query.query" class="form-control content-offset-below-10"
-                            data-trigger="focus" bs-tooltip="tooltip"
-                            data-placement="top" data-title="4. Select one of the below">
+                                  data-trigger="focus" bs-tooltip="tooltip"
+                                  ng-keypress="$event.keyCode == 13 && search()"
+                                  data-placement="top" data-title="4. Select one of the below">
                               <option ng-repeat="i in symptom_list track by $index">[[ i ]]</option>
                           </select>
                       </span>
@@ -114,7 +117,9 @@
               </div>
             </span>
             <div class="content-offset-20 content-offset-below-10">
-              <button class="btn" ng-show="searched" ng-click="removeCriteria()">
+              <button type="button" class="btn" ng-disabled="searched==false"
+                      ng-show="searched"
+                      ng-click="removeCriteria()">
                 Clear search
               </button>
             </div>
