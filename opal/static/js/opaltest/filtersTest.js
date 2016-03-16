@@ -86,8 +86,8 @@ describe('filters', function() {
         })
 
         it('should take DDMMYYYY', function(){
-            var expected = new Date(1999, 11, 22);
-            expect(toMoment('22/12/1999').toDate()).toEqual(expected);
+            var expected = new Date(1989, 11, 27);
+            expect(toMoment('27/12/1989').toDate()).toEqual(expected);
         })
     });
 
