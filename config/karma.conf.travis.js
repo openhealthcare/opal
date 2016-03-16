@@ -65,7 +65,7 @@ module.exports = function(config){
             'opal/**/*.js': 'coverage',
             '../../core/search/static/js/search/**/*.js': 'coverage',
         },
-        reporters: ['coverage'],
+        reporters: ['progress', 'coverage'],
         coverageReporter: {
             type: 'lcovonly', // lcov or lcovonly are required for generating lcov.info files
             dir: '../../../coverage/',
