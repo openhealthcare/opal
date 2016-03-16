@@ -2,13 +2,12 @@ describe('ExtractCtrl', function(){
     "use strict";
 
     var $scope, $httpBackend, schema, $window, Item;
+    var PatientSummary;
 
     var optionsData = {
         condition: ['Another condition', 'Some condition'],
         tag_hierarchy :{'tropical': []}
     }
-
-    var patientSummary = {};
 
     var columnsData = [
         {
@@ -46,6 +45,12 @@ describe('ExtractCtrl', function(){
                     "lookup_list": null,
                     "name": "dead",
                     "type": "boolean"
+                },
+                {
+                    "title": "Date of Birth",
+                    "lookup_list": null,
+                    "name": "date_of_birth",
+                    "type": "date"
                 }
             ]
         },
@@ -58,7 +63,7 @@ describe('ExtractCtrl', function(){
             "fields": [
                 {
                     "title": "Symptoms",
-                    "lookup_list": "symptom_list",
+                    "lookup_list": "symptoms",
                     "name": "symptoms",
                     "type": "many_to_many"
                 }
@@ -82,7 +87,7 @@ describe('ExtractCtrl', function(){
                             pageTracking: false,
                         },
                         pageTrack: function(x){}
-                     };
+                    };
                 };
             });
         });
@@ -96,6 +101,7 @@ describe('ExtractCtrl', function(){
             $window      = $injector.get('$window');
             $controller  = $injector.get('$controller');
             Schema = $injector.get('Schema');
+            PatientSummary = $injector.get('PatientSummary');
             Item = $injector.get('Item')
         });
 
@@ -107,7 +113,7 @@ describe('ExtractCtrl', function(){
             options: optionsData,
             filters: [],
             schema : schema,
-            PatientSummary: patientSummary
+            PatientSummary: PatientSummary
         });
     });
 
@@ -156,13 +162,13 @@ describe('ExtractCtrl', function(){
 
         it('should special case Micro Test fields', function(){
             var expected = [
-                    'Test',
-                    'Date Ordered',
-                    'Details',
-                    'Microscopy',
-                    'Organism',
-                    'Sensitive Antibiotics',
-                    'Resistant Antibiotics'
+                'Test',
+                'Date Ordered',
+                'Details',
+                'Microscopy',
+                'Organism',
+                'Sensitive Antibiotics',
+                'Resistant Antibiotics'
             ];
             expect($scope.searchableFields({name: 'microbiology_test'})).toEqual(expected);
         });
@@ -196,21 +202,105 @@ describe('ExtractCtrl', function(){
         });
 
         it('should find select fields', function(){
-            expect($scope.isSelect("Symptoms", "symptoms"))
+            expect($scope.isSelect("Symptoms", "symptoms")).toBe(true);
+        });
+
+        it('should find date fields', function(){
+            expect($scope.isDate("Demographics", "date_of_birth")).toBe(true);
+        });
+
+    });
+
+    describe('addFilter()', function(){
+
+        it('should add a criteria', function(){
+            expect($scope.criteria.length).toBe(1);
+            $scope.addFilter();
+            expect($scope.criteria.length).toBe(2);
+        });
+
+    });
+
+    describe('removeFilter()', function(){
+
+        it('should always leave 1 filter', function(){
+            expect($scope.criteria.length).toBe(1);
+            $scope.removeFilter();
+            expect($scope.criteria.length).toBe(1);
+        });
+
+        it('should remove a criteria', function(){
+            $scope.addFilter();
+            expect($scope.criteria.length).toBe(2);
+            $scope.removeFilter();
+            expect($scope.criteria.length).toBe(1);
+        });
+
+    });
+
+    describe('resetFilter()', function(){
+
+        it('should reset the criteria', function(){
+            $scope.criteria[0].field = "demographics";
+            $scope.criteria[0].column = "name";
+            $scope.criteria[0].combine = "or";
+            $scope.criteria[0].query = "Jane";
+            $scope.criteria[0].queryType = "contains";
+            $scope.resetFilter(0, ["combine", "field"]);
+            expect($scope.criteria[0].combine).toEqual("or");
+            expect($scope.criteria[0].field).toEqual("demographics");
+            expect($scope.criteria[0].column).toEqual(null);
+            expect($scope.criteria[0].query).toEqual(null);
+            expect($scope.criteria[0].queryType).toEqual(null);
+        })
+
+    });
+
+    describe('removeCriteria', function(){
+
+        it('should reset the criteria', function(){
+            $scope.criteria.push('hello world');
+            $scope.removeCriteria();
+            expect($scope.criteria.length).toBe(1);
+        });
+
+    });
+
+    describe('_lookuplist_watch', function(){
+
+        it('should set the lookuplist', function(){
+            $scope.symptoms_list = ['thing']
+            $scope.criteria[0].column = "symptoms";
+
+            $scope.criteria[0].field = 'symptoms';
+            $scope._lookuplist_watch();
+            expect($scope.criteria[0].lookup_list).toEqual(['thing']);
         });
 
     });
 
     describe('Search', function(){
         beforeEach(function(){
-            $httpBackend.expectPOST("/search/extract/").respond({
-                page_number: 1,
-                total_pages: 1,
-                total_count: 0
-            });
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
         });
 
         it('should ask the server for results', function(){
+            $httpBackend.expectPOST("/search/extract/").respond({
+                page_number: 1,
+                total_pages: 1,
+                total_count: 0,
+                object_list: [
+                    {categories: []}
+                ]
+            });
+            $scope.criteria[0] = {
+                combine    : "and",
+                column     : "symptoms",
+                field      : "symptoms",
+                queryType  : "contains",
+                query      : "cough",
+                lookup_list: []
+            }
             $scope.search();
             if(!$rootScope.$$phase) {
                 $rootScope.$apply();
@@ -219,6 +309,15 @@ describe('ExtractCtrl', function(){
             $httpBackend.verifyNoOutstandingExpectation();
             $httpBackend.verifyNoOutstandingRequest();
         });
+
+        it('should handle errors', function(){
+            spyOn($window, 'alert');
+            $httpBackend.expectPOST('/search/extract/').respond(500, {});
+            $scope.search();
+            $httpBackend.flush();
+            expect($window.alert).toHaveBeenCalled();
+        });
+
     });
 
     describe('Getting searchable columns', function(){

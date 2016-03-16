@@ -82,8 +82,16 @@ angular.module('opal.controllers').controller(
             if(!column || !field){
                 return false;
             }
-            var col = _.find($scope.columns, function(item){return item.name == column.toLowerCase().replace( / /g,  '_')});
-            var theField =  _.find(col.fields, function(f){return f.name == field.toLowerCase().replace( / /g,  '_')});
+            var col = _.find(
+                $scope.columns,
+                function(item){
+                    return item.name == column.toLowerCase().replace( / /g,  '_')
+                });
+            var theField =  _.find(
+                col.fields,
+                function(f){
+                    return f.name == field.toLowerCase().replace( / /g,  '_')
+                });
             if(!theField){ return false }
             if (_.isArray(type)){
                 var match = false;
@@ -116,6 +124,9 @@ angular.module('opal.controllers').controller(
         };
 
         $scope.removeFilter = function(index){
+            if($scope.criteria.length == 1){
+                return
+            }
             $scope.searched = false;
             $scope.criteria.splice(index, 1);
         };
@@ -137,12 +148,13 @@ angular.module('opal.controllers').controller(
         // Determine the appropriate lookup list for this field if
         // one exists.
         //
-        $scope.$watch('criteria', function(){
+        $scope._lookuplist_watch = function(){
             _.map($scope.criteria, function(c){
                 var column = _.findWhere($scope.columns, {name: c.column});
                 if(!column){return}
                 if(!c.field){return}
-                var field = _.findWhere(column.fields, {name: c.field.toLowerCase().replace(/ /g, '_')});
+                var field = _.findWhere(
+                    column.fields, {name: c.field.toLowerCase().replace(/ /g, '_')});
                 if(!field){return}
                 if(field.lookup_list){
                     c.lookup_list = $scope[field.lookup_list + '_list'];
@@ -150,7 +162,9 @@ angular.module('opal.controllers').controller(
             });
             $scope.async_waiting = false;
             $scope.async_ready = false;
-        }, true);
+        }
+
+        $scope.$watch('criteria', $scope._lookuplist_watch, true);
 
         $scope.search = function(pageNumber){
             if(!pageNumber){
