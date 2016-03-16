@@ -127,7 +127,7 @@ angular.module('opal.controllers').controller(
                 }
             }
         };
-        window.scope = $scope;
+       
         $scope.removeCriteria = function(){
             $scope.searched = false;
             $scope.criteria = [_.clone($scope.model)];
