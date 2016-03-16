@@ -89,7 +89,6 @@ describe('filters', function() {
             var expected = new Date(1999, 11, 22);
             expect(toMoment('22/12/1999')._d).toEqual(expected);
         })
-
     });
 
     describe('shortDate', function() {

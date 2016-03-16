@@ -24,7 +24,7 @@ describe('OPAL Directives', function(){
             var markup = '<div class="patient-list-container" fix-height></div>';
             compileDirective(markup);
             scope.$destroy();
-            expect(element.attr('style')).toEqual('height: 300px; ')
+            expect(element.attr('style').indexOf('height: ')).toEqual(0);
         });
     });
 
