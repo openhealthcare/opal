@@ -24,6 +24,7 @@ The following reference guides are available:
 [Episode](episode_service.md) | Episode objects
 [Item](item_service.md) |  Subrecord objects
 [PatientSummary](patient_summary_service.md) | Patient search result summaries
+[Search Services](search_js_services.md) | Services from the Search module|
 
 
 ### Helper libraries

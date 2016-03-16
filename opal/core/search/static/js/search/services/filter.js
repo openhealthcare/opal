@@ -1,5 +1,5 @@
 angular.module('opal.services')
-    .factory('Filter', function($http, $q) {
+    .factory('Filter', function($http, $q, $window) {
     return function(resource){
         var filter = this;
 
@@ -28,10 +28,10 @@ angular.module('opal.services')
                 function(response) {
 		            // TODO handle error better
 		            if (response.status == 409) {
-			            alert('Item could not be saved because somebody else has \
+			            $window.alert('Item could not be saved because somebody else has \
 recently changed it - refresh the page and try again');
 		            } else {
-			            alert('Item could not be saved');
+			            $window.alert('Item could not be saved');
 		            };
 		        }
             );
@@ -40,13 +40,13 @@ recently changed it - refresh the page and try again');
 
         this.destroy = function(){
 	        var deferred = $q.defer();
-	        var url = '/search/filters/' + item.id + '/';
+	        var url = '/search/filters/' + this.id + '/';
 
 	        $http['delete'](url).then(function(response) {
 		        deferred.resolve();
 	        }, function(response) {
 		        // handle error better
-		        alert('Item could not be deleted');
+		        $window.alert('Item could not be deleted');
 	        });
 	        return deferred.promise;
 
