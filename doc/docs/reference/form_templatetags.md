@@ -18,7 +18,7 @@ Keywords:
 
 Generates a datepicker
 
-Keywords: 
+Keywords:
 
 * `label` The Label with which to describe this field
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
@@ -31,7 +31,7 @@ Keywords:
 
 Generates an Input
 
-Keywords: 
+Keywords:
 
 * `label` The Label with which to describe this field
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
@@ -46,7 +46,7 @@ Keywords:
 
 Generates an inline radio input
 
-Keywords: 
+Keywords:
 
 * `label` The Label with which to describe this input
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
@@ -58,7 +58,7 @@ Keywords:
 
 Generates an inline select input
 
-Keywords: 
+Keywords:
 
 * `label` The Label with which to describe this input
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
@@ -72,7 +72,7 @@ Keywords:
 
 Generates an inline textarea input
 
-Keywords: 
+Keywords:
 
 * `label` The Label with which to describe this input
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
@@ -82,7 +82,11 @@ Keywords:
 
 ### {% icon "icon-name" %}
 
-We assume that the icon is one of the available glyphicon or Font Awesome icons.
+Renders a Bootstrap style Icon tag.
+If the icon starts with `fa` or `glyphicon` then we will insert the preceding `fa`.
 
     {% icon "fa-user-md" %}
+    <i class="fa fa-user-md"></i>
 
+    {% icon "cusom-icon"}
+    <i class="custom-icon"></i>
