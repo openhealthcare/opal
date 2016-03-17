@@ -337,6 +337,7 @@ class ModelTemplateView(LoginRequiredMixin, TemplateView):
 
         return context
 
+
 class RecordTemplateView(ModelTemplateView):
     """
     This view returns the record template as it is rendered in the
@@ -345,6 +346,7 @@ class RecordTemplateView(ModelTemplateView):
     """
     def get_template_from_model(self):
         return self.column.get_detail_template(team=self.tag, subteam=self.subtag)
+
 
 class ModalTemplateView(ModelTemplateView):
     """
@@ -355,30 +357,6 @@ class ModalTemplateView(ModelTemplateView):
     """
     def get_template_from_model(self):
         return self.column.get_modal_template(team=self.tag, subteam=self.subtag)
-
-
-    def dispatch(self, *a, **kw):
-        """
-        Set the context for what this modal is for so
-        it can be accessed by all subsequent methods
-        """
-        self.column = kw['model']
-        self.tag = kw.get('tag', None)
-        self.subtag = kw.get('sub', None)
-        self.template_name = self.get_template_from_model()
-        self.name = camelcase_to_underscore(self.column.__name__)
-        return super(ModalTemplateView, self).dispatch(*a, **kw)
-
-    def get_context_data(self, **kwargs):
-        context = super(ModalTemplateView, self).get_context_data(**kwargs)
-        context['name'] = self.name
-        context['title'] = getattr(self.column, '_title', self.name.replace('_', ' ').title())
-        context['icon'] = getattr(self.column, '_icon', '')
-        # pylint: disable=W0201
-        context['single'] = self.column._is_singleton
-        context["column"] = self.column
-
-        return context
 
 
 class AccountDetailTemplateView(TemplateView):
