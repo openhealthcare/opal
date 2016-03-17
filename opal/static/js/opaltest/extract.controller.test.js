@@ -1,7 +1,7 @@
 describe('ExtractCtrl', function(){
     "use strict";
 
-    var $scope, $httpBackend, schema, $window, Item;
+    var $scope, $httpBackend, schema, $window, $timeout, $modal, Item;
     var PatientSummary;
 
     var optionsData = {
@@ -99,6 +99,8 @@ describe('ExtractCtrl', function(){
             $rootScope  = $injector.get('$rootScope');
             $scope      = $rootScope.$new();
             $window      = $injector.get('$window');
+            $modal       = $injector.get('$modal');
+            $timeout     = $injector.get('$timeout');
             $controller  = $injector.get('$controller');
             Schema = $injector.get('Schema');
             PatientSummary = $injector.get('PatientSummary');
@@ -109,6 +111,7 @@ describe('ExtractCtrl', function(){
 
         controller = $controller('ExtractCtrl',  {
             $scope : $scope,
+            $modal: $modal,
             profile: {},
             options: optionsData,
             filters: [],
@@ -316,6 +319,102 @@ describe('ExtractCtrl', function(){
             $scope.search();
             $httpBackend.flush();
             expect($window.alert).toHaveBeenCalled();
+        });
+
+    });
+
+    describe('async_extract', function() {
+
+        it('should open a new window if async_ready', function() {
+            $scope.async_ready = true;
+            $scope.extract_id = '23';
+            spyOn($window, 'open');
+            $scope.async_extract();
+
+            expect($window.open).toHaveBeenCalledWith('/search/extract/download/23', '_blank');
+        });
+
+        it('should return null if async_waiting', function() {
+            $scope.async_waiting = true;
+            expect($scope.async_extract()).toBe(null);
+        });
+
+        it('should post to the url', function() {
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+            $httpBackend.expectPOST('/search/extract/download').respond({extract_id: '23'});
+            $httpBackend.expectGET('/search/extract/result/23').respond({state: 'SUCCESS'})
+            $scope.async_extract();
+            $timeout.flush()
+            $rootScope.$apply();
+            $httpBackend.flush();
+
+            expect($scope.extract_id).toBe('23');
+            $rootScope.$apply();
+
+            expect($scope.async_ready).toBe(true);
+        });
+
+        it('should re-ping', function() {
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+            $httpBackend.expectPOST('/search/extract/download').respond({});
+            $scope.async_extract();
+            $timeout.flush()
+            $rootScope.$apply();
+            $httpBackend.flush();
+            $timeout.flush()
+        });
+
+        it('should alert if we fail', function() {
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+            $httpBackend.expectPOST('/search/extract/download').respond({extract_id: '23'});
+            $httpBackend.expectGET('/search/extract/result/23').respond({state: 'FAILURE'})
+            spyOn($window, 'alert');
+            $scope.async_extract();
+            $timeout.flush()
+            $rootScope.$apply();
+            $httpBackend.flush();
+
+            expect($scope.extract_id).toBe('23');
+            $rootScope.$apply();
+
+            expect($scope.async_ready).toBe(false);
+            expect($window.alert).toHaveBeenCalledWith('FAILURE');
+
+        });
+
+    });
+
+    describe('jumpToFilter()', function() {
+
+        it('should reset the criteria', function() {
+            var mock_default = jasmine.createSpy();
+            var mock_event = {preventDefault: mock_default};
+            $scope.jumpToFilter(mock_event, {criteria: []});
+            expect($scope.criteria).toEqual([]);
+            expect(mock_default).toHaveBeenCalledWith();
+        });
+
+    });
+
+    describe('editFilter()', function() {
+
+        it('should open the modal', function() {
+            spyOn($modal, 'open').and.returnValue({result: {then: jasmine.createSpy()}});
+            var mock_default = jasmine.createSpy();
+            var mock_event = {preventDefault: mock_default};
+            $scope.filters = [{}]
+            $scope.editFilter(mock_event, {}, 0);
+            expect($modal.open).toHaveBeenCalled();
+        });
+
+    });
+
+    describe('jumpToEpisode()', function() {
+
+        it('should open the tab', function() {
+            spyOn($window, 'open');
+            $scope.jumpToEpisode({id: 2});
+            expect($window.open).toHaveBeenCalledWith('#/episode/2', '_blank');
         });
 
     });

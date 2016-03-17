@@ -194,7 +194,7 @@ angular.module('opal.controllers').controller(
 
         $scope.async_extract = function(){
             if($scope.async_ready){
-                window.open('/search/extract/download/' + $scope.extract_id, '_blank');
+                $window.open('/search/extract/download/' + $scope.extract_id, '_blank');
                 return null
             }
             if($scope.async_waiting){
@@ -202,9 +202,13 @@ angular.module('opal.controllers').controller(
             }
 
             var ping_until_success = function(){
+                if(!$scope.extract_id){
+                    $timeout(ping_until_success, 1000)
+                    return
+                }
                 $http.get('/search/extract/result/'+ $scope.extract_id).then(function(result){
                     if(result.data.state == 'FAILURE'){
-                        alert('FAILURE')
+                        $window.alert('FAILURE')
                         $scope.async_waiting = false;
                         return
                     }

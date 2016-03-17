@@ -67,6 +67,20 @@ describe('SearchCtrl', function (){
         $httpBackend.verifyNoOutstandingRequest();
     });
 
+    describe('setters', function() {
+
+        it('should set state', function() {
+            $scope.disableShortcuts();
+            expect($scope.state).toEqual('search');
+        });
+
+        it('should set state', function() {
+            $scope.enableShortcuts();
+            expect($scope.state).toEqual('normal');
+        });
+
+    });
+
     describe('We should query for hospital number or name()', function (){
         it('should ask the server for results', function(){
             location.search({
