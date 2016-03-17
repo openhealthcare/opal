@@ -86,6 +86,14 @@ for subrecord_model in subrecords():
             views.ModalTemplateView.as_view(), {'model': subrecord_model}),
         url(r'^templates/modals/%s.html/(?P<tag>[a-z_\-]+)/(?P<subtag>[a-z_\-]+)/?$' % sub_url,
             views.ModalTemplateView.as_view(), {'model': subrecord_model}),
+
+
+        url(r'^templates/record/%s.html/?$' % sub_url,
+            views.RecordTemplateView.as_view(), {'model': subrecord_model}, name="record_view"),
+        url(r'^templates/record/%s.html/(?P<tag>[a-z_\-]+)/?$' % sub_url,
+            views.RecordTemplateView.as_view(), {'model': subrecord_model}, name="record_view"),
+        url(r'^templates/record/%s.html/(?P<tag>[a-z_\-]+)/(?P<subtag>[a-z_\-]+)/?$' % sub_url,
+            views.RecordTemplateView.as_view(), {'model': subrecord_model}, name="record_view"),
     )
 
 

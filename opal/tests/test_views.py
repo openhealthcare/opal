@@ -277,6 +277,16 @@ class ModalTemplateViewTestCase(BaseViewTestCase):
         self.assertEqual(200, resp.status_code)
 
 
+class RecordTemplateViewTestCase(BaseViewTestCase):
+
+    def test_200(self):
+        request = self.get_request('/colour_record.html')
+        view = self.setup_view(
+            views.RecordTemplateView, request)
+        resp = view.dispatch(request, model=testmodels.Colour)
+        self.assertEqual(200, resp.status_code)
+
+
 class BannedViewTestCase(BaseViewTestCase):
     def test_banned_view(self):
         request = self.get_request('/banned_passwords')
