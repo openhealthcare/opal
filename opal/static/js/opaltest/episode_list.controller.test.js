@@ -3,8 +3,8 @@ describe('EpisodeListCtrl', function() {
     var episodeData, optionsData, profileData, patientData, Schema;
     var schema, Episode, Item, episode;
     var profile;
-    var $scope, $cookieStore, $controller, $q, $dialog;
-    var $location, $routeParams, $http;
+    var $scope, $cookieStore, $controller, $q, $dialog, $httpBackend;
+    var $location, $routeParams, $http, $window;
     var Flow, flow_promise;
     var episodedata, controller;
     var $modal, options, $rootScope;
@@ -205,6 +205,8 @@ describe('EpisodeListCtrl', function() {
         $modal       = $injector.get('$modal');
         $http        = $injector.get('$http');
         $routeParams = $injector.get('$routeParams');
+        $httpBackend = $injector.get('$httpBackend');
+        $window      = $injector.get('$window');
         $location    = $injector.get('$location');
 
         schema = new Schema(columns.default);
@@ -319,6 +321,78 @@ describe('EpisodeListCtrl', function() {
             });
         });
     });
+
+    describe('showSubtags()', function() {
+
+        it('should say whether the tag is conatained', function() {
+            $scope.currentTag = 'this';
+            expect($scope.showSubtags(['that'])).toBe(false);
+            expect($scope.showSubtags(['this'])).toBe(true);
+        });
+
+    });
+
+    describe('watches', function() {
+
+        beforeEach(function(){
+            spyOn($scope, 'getVisibleEpisodes');
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+        });
+
+        it('should call on hosp number', function() {
+            $scope.hospital_number = 'goo';
+            $rootScope.$apply();
+            expect($scope.getVisibleEpisodes).toHaveBeenCalledWith()
+        });
+
+        it('should call on ward', function() {
+            $scope.ward = 'goo';
+            $rootScope.$apply();
+            expect($scope.getVisibleEpisodes).toHaveBeenCalledWith()
+        });
+
+        it('should call on bed', function() {
+            $scope.bed = 'goo';
+            $rootScope.$apply();
+            expect($scope.getVisibleEpisodes).toHaveBeenCalledWith()
+        });
+
+        it('should call on name', function() {
+            $scope.name = 'goo';
+            $rootScope.$apply();
+            expect($scope.getVisibleEpisodes).toHaveBeenCalledWith()
+        });
+
+    });
+
+    describe('print()', function() {
+
+        it('should print', function() {
+            spyOn($window, 'print');
+            $scope.print();
+            expect($window.print).toHaveBeenCalledWith();
+        });
+
+    });
+
+    describe('focusOnQuery', function() {
+
+        it('should set state', function() {
+            $scope.focusOnQuery();
+            expect($scope.state).toEqual('search');
+        });
+
+    });
+
+    describe('blurOnQuery', function() {
+
+        it('should set state', function() {
+            $scope.blurOnQuery();
+            expect($scope.state).toEqual('normal');
+        });
+
+    });
+
 
     describe('adding an episode', function() {
         it('should change stated to "modal"', function() {
@@ -441,4 +515,6 @@ describe('EpisodeListCtrl', function() {
             );
         });
     });
+
+
 });

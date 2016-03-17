@@ -161,7 +161,7 @@ angular.module('opal.controllers').controller(
 	    };
 
 	    $scope.print = function() {
-		    window.print();
+		    $window.print();
 	    };
 
 	    $scope.focusOnQuery = function() {
