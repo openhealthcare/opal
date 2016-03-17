@@ -53,7 +53,11 @@ class PatientListTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(PatientListTemplateView, self).get_context_data(**kwargs)
-        context['teams'] = models.Team.for_user(self.request.user)
+        list_slug = None
+        if self.patient_list:
+            list_slug = self.patient_list.get_slug()
+        context['list_slug'] = list_slug
+        context['lists'] = PatientList.for_user(self.request.user)
         context['columns'] = self.get_column_context(**kwargs)
         context['models'] = { m.__name__: m for m in subrecords() }
         return context

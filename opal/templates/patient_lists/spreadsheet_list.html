@@ -10,18 +10,13 @@
           <i class="fa fa-angle-down"></i>
         </button>
         <ul class="dropdown-menu slides" role="menu">
-          {% for team in teams %}
-          {% if team.visible_in_list %}
-          {% if not team.has_subteams or team.parent %}
-          <li ng-hide="currentTag == '{{ team.name }}' || currentSubTag == '{{ team.name }}'">
-            <a href="#/list/{% if team.parent %}{{ team.parent.name }}-{{ team.name }}{% else %}{{ team.name }}{% endif %}">
-              {% if team.parent %}
-              {{ team.parent.title }} /
-              {% endif %}
-              {{ team.title }}
+          {% for list in lists %}
+          {% if list.get_slug != list_slug %}
+          <li>
+            <a href="#/list/{{ list.get_slug }}">
+              {{ list.display_name }}
             </a>
           </li>
-          {% endif %}
           {% endif %}
           {% endfor %}
         </ul>
@@ -37,8 +32,6 @@
     </h1>
   </div>
 </div>
-
-
 {% endblock %}
 
 {% block left_panel %}
