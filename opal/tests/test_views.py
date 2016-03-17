@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from mock import patch, MagicMock
 
 from opal import models, views
-from opal.core import detail
+from opal.core import detail, patient_lists
 from opal.core.episodes import InpatientEpisode
 from opal.core.test import OpalTestCase
 
@@ -25,9 +25,9 @@ class BaseViewTestCase(OpalTestCase):
         request.user = self.user
         return request
 
-    def should_200(self, viewklass, request):
+    def should_200(self, viewklass, request, *args, **kw):
         view = viewklass.as_view()
-        resp = view(request)
+        resp = view(request, *args, **kw)
         self.assertEqual(200, resp.status_code)
 
     def setup_view(self, view, request, *args, **kw):
@@ -74,6 +74,16 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
         column_names = [i["name"] for i in context_data["columns"]]
         self.assertEqual(column_names, ["demographics"])
 
+    def test_get_context_data_lists(self):
+        url = reverse("patient_list_template_view", kwargs=dict(slug="eater-herbivore"))
+        request = self.get_request(url)
+        view = self.setup_view(views.PatientListTemplateView, request, slug="eater-herbivore")
+        view.patient_list = TaggingTestPatientList
+
+        context_data = view.get_context_data(slug="eater-herbivore")
+        expected = list(patient_lists.PatientList.for_user(self.user))
+        self.assertEqual(expected, list(context_data['lists']))
+
     def test_get_column_context_no_list(self):
         view = views.PatientListTemplateView()
         view.patient_list = None
@@ -95,6 +105,9 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
         view.patient_list = None
         self.assertEqual(['patient_lists/spreadsheet_list.html'], view.get_template_names())
 
+    def test_end_to_end_200(self):
+        request = self.get_request('/templates/patient_list.html/eater-herbivore')
+        self.should_200(views.PatientListTemplateView, request, slug='eater-herbivore')
 
 class PatientDetailTemplateViewTestCase(BaseViewTestCase):
 
