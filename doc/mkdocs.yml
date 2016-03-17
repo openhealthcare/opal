@@ -43,8 +43,8 @@ pages:
       - Search Queries: reference/search_queries.md
       - Detail Views: reference/detail_views.md
       - Patient Lists: reference/patient_list.md
-
       - Search JS Services: reference/search_js_services.md
+      - Upgrading: reference/upgrading.md
 
 theme: mkdocs
 theme: cerulean
