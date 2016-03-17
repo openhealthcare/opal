@@ -284,7 +284,7 @@ class RecordTemplateViewTestCase(BaseViewTestCase):
         view = self.setup_view(
             views.RecordTemplateView, request)
         resp = view.dispatch(request, model=testmodels.Colour)
-        self.assertEqual(testmodels.Colour.get_display_template(), resp.template_name)
+        self.assertEqual([testmodels.Colour.get_display_template()], resp.template_name)
         self.assertEqual(200, resp.status_code)
 
 
