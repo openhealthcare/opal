@@ -8,7 +8,7 @@ A list of all available topic guides.
 |--|--|
 |[OPAL - Applications, Plugins](components_overview.md) | How OPAL components hang together.|
 |[Command line tool](command_line_tool.md) | running admin tasks from the command line|
-|[Disvoverable](discoverable.md)| design patterns and library for creating easily reusable features |
+|[Discoverable](discoverable.md)| design patterns and library for creating easily reusable features |
 |[Plugins](plugins.md)| Available interfaces for OPAL plugins|
 |[List of Plugins](plugins_list.md)| A list of available high quality plugins|
 

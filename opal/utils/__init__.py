@@ -9,6 +9,11 @@ from django.template.loader import select_template
 
 camelcase_to_underscore = lambda str: re.sub('(((?<=[a-z])[A-Z])|([A-Z](?![A-Z]|$)))', '_\\1', str).lower().strip('_')
 
+class AbstractBase(object):
+    """
+    This placeholder class allows us to filter out abstract
+    bases when iterating through subclasses.
+    """
 
 def stringport(module):
     """
@@ -38,6 +43,7 @@ def _itersubclasses(cls, _seen=None):
     """
     Recursively iterate through subclasses
     """
+    abstract_classes = AbstractBase.__subclasses__()
     if not isinstance(cls, type):
         raise TypeError('itersubclasses must be called with '
                         'new-style classes, not %.100r' % cls)
@@ -49,9 +55,11 @@ def _itersubclasses(cls, _seen=None):
     for sub in subs:
         if sub not in _seen:
             _seen.add(sub)
-            yield sub
-            for sub in _itersubclasses(sub, _seen):
+            if sub not in abstract_classes:
                 yield sub
+            for sub in _itersubclasses(sub, _seen):
+                if sub not in abstract_classes:
+                    yield sub
 
 
 def find_template(template_list):

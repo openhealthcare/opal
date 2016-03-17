@@ -6,6 +6,7 @@ from django.test import override_settings
 
 from opal.core import exceptions
 from opal.core.test import OpalTestCase
+from opal.utils import AbstractBase
 
 from opal.core import discoverable
 
@@ -119,6 +120,29 @@ class DiscoverableFeatureTestCase(OpalTestCase):
 
     def test_get_exists(self):
         self.assertEqual(RedColour, ColourFeature.get('red'))
+
+
+    def test_abstract_discoverable(self):
+        class A(discoverable.DiscoverableFeature):
+            module_name = 'a'
+
+        class AA(A, AbstractBase):
+            pass
+
+        class B(A):
+            pass
+
+        class C(B, AbstractBase):
+            pass
+
+        class D(C):
+            pass
+
+        class E(AA):
+            pass
+
+        results = {i for i in A.list()}
+        self.assertEqual(results, set([B, D, E]))
 
 
 class SortedFeature(discoverable.SortableFeature,
