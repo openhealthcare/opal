@@ -12,6 +12,11 @@ angular.module('opal.controllers').controller(
         var version = window.version;
 
         if(episodedata.status == 'error'){
+            if($cookieStore.get('opal.lastPatientList')){
+                $cookieStore.remove('opal.lastPatientList');
+                $location.path('/list/')
+                return
+            }
             $location.path('/404');
             return
         }else{
