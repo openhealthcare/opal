@@ -310,13 +310,10 @@ class FormTemplateView(LoginRequiredMixin, TemplateView):
         return super(FormTemplateView, self).dispatch(*a, **kw)
 
 
-class ModalTemplateView(LoginRequiredMixin, TemplateView):
-    """
-    This view renders the form/modal template for our field.
+class ModelTemplateView(LoginRequiredMixin, TemplateView):
+    def get_template_from_model(self):
+        raise NotImplementedError("this needs to be implemented")
 
-    These are generated for subrecords, but can also be used
-    by plugins for other mdoels.
-    """
     def dispatch(self, *a, **kw):
         """
         Set the context for what this modal is for so
@@ -325,12 +322,12 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         self.column = kw['model']
         self.tag = kw.get('tag', None)
         self.subtag = kw.get('sub', None)
-        self.template_name = self.column.get_modal_template(team=self.tag, subteam=self.subtag)
+        self.template_name = self.get_template_from_model()
         self.name = camelcase_to_underscore(self.column.__name__)
-        return super(ModalTemplateView, self).dispatch(*a, **kw)
+        return super(ModelTemplateView, self).dispatch(*a, **kw)
 
     def get_context_data(self, **kwargs):
-        context = super(ModalTemplateView, self).get_context_data(**kwargs)
+        context = super(ModelTemplateView, self).get_context_data(**kwargs)
         context['name'] = self.name
         context['title'] = getattr(self.column, '_title', self.name.replace('_', ' ').title())
         context['icon'] = getattr(self.column, '_icon', '')
@@ -339,6 +336,27 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         context["column"] = self.column
 
         return context
+
+
+class RecordTemplateView(ModelTemplateView):
+    """
+    This view returns the record template as it is rendered in the
+    record panels, this is used for forms where you can add
+    multiple values
+    """
+    def get_template_from_model(self):
+        return self.column.get_display_template(team=self.tag, subteam=self.subtag)
+
+
+class ModalTemplateView(ModelTemplateView):
+    """
+    This view renders the form/modal template for our field.
+
+    These are generated for subrecords, but can also be used
+    by plugins for other mdoels.
+    """
+    def get_template_from_model(self):
+        return self.column.get_modal_template(team=self.tag, subteam=self.subtag)
 
 
 class AccountDetailTemplateView(TemplateView):
