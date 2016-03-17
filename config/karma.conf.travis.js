@@ -34,12 +34,14 @@ module.exports = function(config){
             'jquery-1.11.3/jquery-1.11.3.js',
             'utils/underscore.js',
             'utils/moment.js',
+            'utils/showdown.js',
             'bower_components/angular-growl-v2/build/angular-growl.js',
             'bower_components/ment.io/dist/mentio.js',
             'bower_components/ment.io/dist/templates.js',
             'bower_components/angular-ui-select/dist/select.js',
             "bower_components/angular-local-storage/dist/angular-local-storage.js",
             'opal/utils.js',
+            'opal/opaldown.js',
             'opal/directives.js',
             'opal/filters.js',
             'opal/services_module.js',
@@ -60,9 +62,10 @@ module.exports = function(config){
         browserNoActivityTimeout : 4*60*1000, //default 10000
         captureTimeout : 4*60*1000, //default 60000
         preprocessors: {
-            'opal/**/*.js': 'coverage'
+            'opal/**/*.js': 'coverage',
+            '../../core/search/static/js/search/**/*.js': 'coverage',
         },
-        reporters: ['coverage'],
+        reporters: ['progress', 'coverage'],
         coverageReporter: {
             type: 'lcovonly', // lcov or lcovonly are required for generating lcov.info files
             dir: '../../../coverage/',

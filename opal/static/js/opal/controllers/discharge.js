@@ -24,13 +24,7 @@ controllers.controller(
 	        newCategory = $scope.currentCategory;
         }
 
-        var admission;
-        if(episode.date_of_admission){
-            admission = moment(episode.date_of_admission).format('MM/DD/YY')
-        }
-
         $scope.editing = {
-            date_of_admission: admission,
 	        category: newCategory,
             discharge_date: null
         };

@@ -203,6 +203,7 @@ def textarea(*args, **kwargs):
 
 @register.inclusion_tag('_helpers/icon.html')
 def icon(name):
+    icon = name
     if name.startswith('glyphicon'):
         icon = 'glyphicon ' + name
     if name.startswith('fa'):
