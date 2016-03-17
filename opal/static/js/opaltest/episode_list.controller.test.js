@@ -273,7 +273,19 @@ describe('EpisodeListCtrl', function() {
     });
 
     describe('Unknown list', function() {
+
+        it('should redirect to list if set from a cookie', function(){
+            $cookieStore.put('opal.lastPatientList', 'randomlist');
+            spyOn($location, 'path');
+            spyOn($cookieStore, 'remove');
+            episodedata.status = 'error'
+            _makecontroller();
+            expect($location.path).toHaveBeenCalledWith('/list/');
+            expect($cookieStore.remove).toHaveBeenCalledWith('opal.lastPatientList');
+        })
+
         it('should redirect to /404', function() {
+            $cookieStore.remove('opal.lastPatientList')
             spyOn($location, 'path');
             episodedata.status = 'error'
             _makecontroller();
