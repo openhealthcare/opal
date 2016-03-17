@@ -11,11 +11,13 @@
         </button>
         <ul class="dropdown-menu slides" role="menu">
           {% for list in lists %}
+          {% if list.get_slug != list_slug %}
           <li ng-hide="currentTag == '{{ list.tag }}' && currentSubTag == '{{ list.subtag }}'">
             <a href="#/list/{{ list.get_slug }}">
               {{ list.display_name }}
             </a>
           </li>
+          {% endif %}
           {% endfor %}
         </ul>
       </div>
