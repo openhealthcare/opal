@@ -123,6 +123,11 @@ class IconTestCase(TestCase):
         tpl = Template('{% load forms %}{% icon "glyphicon-boat" %}')
         self.assertIn('<i class="glyphicon glyphicon-boat"></i>', tpl.render(Context({})))
 
+    def test_form_some_random_user_string_482(self):
+        # Regression test for https://github.com/opal/issues/482
+        tpl = Template('{% load forms %}{% icon "this-is-my-icon-shut-up-opal" %}')
+        self.assertIn('<i class="this-is-my-icon-shut-up-opal"></i>', tpl.render(Context({})))
+
 
 class ProcessStepsTestCase(TestCase):
 
