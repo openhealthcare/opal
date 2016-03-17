@@ -102,3 +102,25 @@ true, we could to this as follows:
     class Detonate(BombFeature):
         blow_up = True
     # InvalidDiscoverableFeatureError: BLOWING UP
+
+### Abstract Features
+
+Sometimes we want to declare an abstract feature - something with reusable functionality
+that isn't itself a new feature. We would rather not have our abstract feature show up
+when we `list()` our base feature - because it's simply a programming convenience. This
+is made simple by using `opal.utils.AbstractBase`.
+
+        class A(discoverable.DiscoverableFeature):
+            module_name = 'a'
+
+        class AA(A, AbstractBase): pass
+
+        class B(A): pass
+
+        class C(AA): pass
+
+        class D(AA): pass
+
+
+        A.list()
+        # [B, C, D]

@@ -1,3 +1,6 @@
+"""
+Unittests for opal.utils
+"""
 from django.test import TestCase
 from django.db.models import ForeignKey, CharField
 
@@ -8,6 +11,24 @@ class StringportTestCase(TestCase):
     def test_import(self):
         import collections
         self.assertEqual(collections, utils.stringport('collections'))
+
+
+class ItersubclassesTestCase(TestCase):
+    def test_tree_structure(self):
+        class A(object):
+            pass
+
+        class B(A):
+            pass
+
+        class C(B, utils.AbstractBase):
+            pass
+
+        class D(C):
+            pass
+
+        results = {i for i in utils._itersubclasses(A)}
+        self.assertEqual(results, set([B, D]))
 
 
 class FindTemplateTestCase(TestCase):

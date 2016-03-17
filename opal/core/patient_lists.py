@@ -1,6 +1,7 @@
 """
 This module defines the base PatientList classes.
 """
+from opal import utils
 from opal.models import Episode, UserProfile
 from opal.core import discoverable, exceptions
 
@@ -20,12 +21,7 @@ class PatientList(discoverable.DiscoverableFeature,
         """
         Return an iterable of Patient Lists.
         """
-        klasses = sorted(super(PatientList, klass).list(), key=lambda x: x.order)
-        try:
-            klasses.remove(TaggedPatientList)
-        except ValueError:
-            pass # It's not there - perhaps we're trying to list() TaggedPatientLists?
-        return klasses
+        return sorted(super(PatientList, klass).list(), key=lambda x: x.order)
 
     @classmethod
     def visible_to(klass, user):
@@ -54,7 +50,7 @@ class PatientList(discoverable.DiscoverableFeature,
         return self.get_queryset().serialised_active(user)
 
 
-class TaggedPatientList(PatientList):
+class TaggedPatientList(PatientList, utils.AbstractBase):
     """
     The most common list use case of a patient list, when we define a tag
     and a sub tag and look up the episodes on the basis of these. You still
