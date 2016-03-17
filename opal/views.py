@@ -345,7 +345,7 @@ class RecordTemplateView(ModelTemplateView):
     multiple values
     """
     def get_template_from_model(self):
-        return self.column.get_detail_template(team=self.tag, subteam=self.subtag)
+        return self.column.get_display_template(team=self.tag, subteam=self.subtag)
 
 
 class ModalTemplateView(ModelTemplateView):
