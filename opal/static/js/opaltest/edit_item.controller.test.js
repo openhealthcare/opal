@@ -128,6 +128,13 @@ describe('EditItemCtrl', function (){
         });
     });
 
+    describe('editingMode()', function() {
+
+        it('should know if this is edit or add', function() {
+            expect($scope.editingMode()).toBe(false);
+        });
+
+    });
 
     describe('Saving items', function (){
         it('Should save the current item', function () {
@@ -148,4 +155,5 @@ describe('EditItemCtrl', function (){
             expect(callArgs[0]).toBe($scope.editing.diagnosis);
         });
     });
+
 });
