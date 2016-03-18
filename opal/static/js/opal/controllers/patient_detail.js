@@ -11,6 +11,25 @@ angular.module('opal.controllers').controller(
 
         $scope.view = null;
 
+        $scope.initialise = function(){
+            if($routeParams.view){
+                if(_.isNaN(parseInt($routeParams.view))){
+                    $scope.switch_to_view($routeParams.view);
+                }else{
+                    var index = null
+                    var target = parseInt($routeParams.view);
+                    _.each($scope.patient.episodes, function(episode, i){
+                        if(episode.id == target){
+                            index = i;
+                        }
+                    });
+                    if(index != null){
+                        $scope.switch_to_episode(index);
+                    }
+                }
+            }
+        }
+
         $scope.switch_to_episode = function(index, $event){
             if($event){
                 $event.preventDefault()
@@ -24,23 +43,6 @@ angular.module('opal.controllers').controller(
         $scope.switch_to_view = function(what){
             $scope.view = what;
             return true
-        }
-
-        if($routeParams.view){
-            if(_.isNaN(parseInt($routeParams.view))){
-                $scope.switch_to_view($routeParams.view);
-            }else{
-                var index = null
-                var target = parseInt($routeParams.view);
-                _.each($scope.patient.episodes, function(episode, i){
-                    if(episode.id == target){
-                        index = i;
-                    }
-                });
-                if(index != null){
-                    $scope.switch_to_episode(index);
-                }
-            }
         }
 
 	    $scope.dischargeEpisode = function() {
@@ -64,5 +66,6 @@ angular.module('opal.controllers').controller(
 		    });
 	    };
 
+        $scope.initialise();
     }
 );
