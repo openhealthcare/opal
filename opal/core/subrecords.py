@@ -32,3 +32,8 @@ def subrecords():
     for m in episode_subrecords():
         yield m
 
+
+def get_subrecord_from_api_name(api_name):
+    for subrecord in subrecords():
+        if subrecord.get_api_name() == api_name:
+            return subrecord

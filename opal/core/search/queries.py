@@ -8,7 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models as djangomodels
 
 from opal import models
-from opal.core import fields
+from opal.core import fields, subrecords
 
 
 def get_model_name_from_column_name(column_name):
@@ -198,7 +198,7 @@ class DatabaseQuery(QueryBackend):
         column_name = query['column']
 
         field = query['field'].replace(' ', '_').lower()
-        Mod = get_model_from_column_name(column_name)
+        Mod = subrecords.get_subrecord_from_api_name(column_name)
 
         if column_name.lower() == 'tags':
             Mod = models.Tagging
