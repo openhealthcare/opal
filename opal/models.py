@@ -12,7 +12,7 @@ import logging
 
 from django.conf import settings
 from django.utils import timezone
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -415,6 +415,11 @@ class Patient(models.Model):
             for subclass in patient_subrecords():
                 if subclass._is_singleton:
                     subclass.objects.create(patient=self)
+
+    def bulk_update_from_dict(self, patient_subrecords, user):
+        with transaction.atomic():
+            for model_name, list_of_values in patient_subrecords.itervalues():
+                pass
 
 
 class PatientRecordAccess(models.Model):
