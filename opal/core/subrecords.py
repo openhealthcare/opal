@@ -3,6 +3,7 @@ OPAL subrecords - helpers, iterators et cetera
 """
 from opal.utils import _itersubclasses
 
+
 def episode_subrecords():
     """
     Generator function for episode subrecords.
@@ -12,6 +13,7 @@ def episode_subrecords():
         if model._meta.abstract:
             continue
         yield model
+
 
 def patient_subrecords():
     """
@@ -23,6 +25,7 @@ def patient_subrecords():
             continue
         yield model
 
+
 def subrecords():
     """
     Generator function for subrecords
@@ -32,3 +35,9 @@ def subrecords():
     for m in episode_subrecords():
         yield m
 
+
+def get_subrecord_from_api_name(api_name):
+    for subrecord in subrecords():
+        if subrecord.get_api_name() == api_name:
+            return subrecord
+    raise ValueError("unable to fina a model for {}".format(api_name))
