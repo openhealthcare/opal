@@ -537,10 +537,12 @@ describe('EpisodeListCtrl', function() {
         });
 
         it('should remove the mine tag', function() {
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
             profile.readonly = false;
             var mock_event = {preventDefault: jasmine.createSpy()};
             $scope.removeFromMine(0, mock_event);
-            expect(episode.tagging[0].mine).toBe(false);
+            $rootScope.$apply();
+            $httpBackend.flush();
         });
 
     });
