@@ -1,7 +1,7 @@
 describe('EpisodeDetailCtrl', function(){
     "use strict";
 
-    var $scope, $cookieStore, $modal;
+    var $scope, $cookieStore, $modal, $httpBackend, $location;
     var $rootScope, $q, $controller;
     var Flow, Episode, episode;
     var controller;
@@ -14,7 +14,7 @@ describe('EpisodeDetailCtrl', function(){
 
     var options = {
         condition: ['Another condition', 'Some condition'],
-        tag_hierarchy :{'tropical': []}
+        tag_slugs: {tropical: 'tropical', id_inpatients: 'id-inpatients'}
     }
 
     var episodeData = {
@@ -25,7 +25,8 @@ describe('EpisodeDetailCtrl', function(){
         demographics: [{
             id: 101,
             name: 'John Smith',
-            date_of_birth: '1980-07-31'
+            date_of_birth: '1980-07-31',
+            hospital_number: '555-333'
         }],
         tagging: [{'mine': true, 'tropical': true}],
         location: [{
@@ -89,12 +90,15 @@ describe('EpisodeDetailCtrl', function(){
             $controller  = $injector.get('$controller');
             $cookieStore = $injector.get('$cookieStore');
             $modal       = $injector.get('$modal');
+            $httpBackend = $injector.get('$httpBackend');
+            $location    = $injector.get('$location');
             Episode      = $injector.get('Episode');
         });
 
         $rootScope.fields = fields
         episode = new Episode(angular.copy(episodeData));
-        Flow = jasmine.createSpy('Flow').and.callFake(function(){return {then: function(){}}});
+        Flow = jasmine.createSpy('Flow').and.callFake(function(){
+            return {then: function(fn){ fn() }}});
 
         controller = $controller('EpisodeDetailCtrl', {
             $scope      : $scope,
@@ -114,14 +118,10 @@ describe('EpisodeDetailCtrl', function(){
     });
 
     describe('discharging an episode', function(){
-        var mockEvent;
-
-        beforeEach(function(){
-            mockEvent = {preventDefault: function(){}};
-        });
 
         it('should call the exit flow', function(){
-            $scope.dischargeEpisode(mockEvent);
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+            $scope.dischargeEpisode();
             expect(Flow).toHaveBeenCalledWith(
                 'exit', null, options,
                 {
@@ -133,6 +133,8 @@ describe('EpisodeDetailCtrl', function(){
 
                 }
             );
+            $rootScope.$apply();
+            $httpBackend.flush()
         });
 
         describe('for a readonly user', function(){
@@ -141,13 +143,105 @@ describe('EpisodeDetailCtrl', function(){
             });
 
             it('should return null', function(){
-                expect($scope.dischargeEpisode(mockEvent)).toBe(null);
+                expect($scope.dischargeEpisode()).toBe(null);
             });
 
             afterEach(function(){
                 profile.readonly = false;
             });
         });
+    });
+
+    describe('addEpisode()', function() {
+
+        describe('success!', function() {
+
+            beforeEach(function(){
+                Flow = jasmine.createSpy('Flow').and.callFake(function(){
+                    return {then: function(success, err){ success(episodeData) }}});
+
+                controller = $controller('EpisodeDetailCtrl', {
+                    $scope      : $scope,
+                    $modal      : $modal,
+                    $location   : $location,
+                    $cookieStore: $cookieStore,
+                    Flow        : Flow,
+                    episode     : episode,
+                    options     : options,
+                    profile     : profile
+                });
+            });
+
+            it('should go to the episde', function() {
+                $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+                spyOn($location, 'path');
+                $scope.addEpisode();
+                expect(Flow).toHaveBeenCalledWith(
+                    'enter', options,
+                    {
+                        current_tags: {
+                            tag   : 'mine',
+                            subtag: ''
+                        },
+                        hospital_number: '555-333'
+
+                    }
+                );
+                $rootScope.$apply();
+                $httpBackend.flush()
+                expect($location.path).toHaveBeenCalledWith('/episode/123');
+            });
+
+        });
+
+        describe('Cancelled by user', function() {
+
+            beforeEach(function(){
+                Flow = jasmine.createSpy('Flow').and.callFake(function(){
+                    return {then: function(success, err){ err() }}});
+
+                controller = $controller('EpisodeDetailCtrl', {
+                    $scope      : $scope,
+                    $modal      : $modal,
+                    $cookieStore: $cookieStore,
+                    Flow        : Flow,
+                    episode     : episode,
+                    options     : options,
+                    profile     : profile
+                });
+            });
+
+            it('should reset state if cancelled', function() {
+                $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+                $scope.addEpisode();
+                expect(Flow).toHaveBeenCalledWith(
+                    'enter', options,
+                    {
+                        current_tags: {
+                            tag   : 'mine',
+                            subtag: ''
+                        },
+                        hospital_number: '555-333'
+
+                    }
+                );
+                $rootScope.$apply();
+                $httpBackend.flush()
+                expect($scope.state).toEqual('normal');
+            });
+
+        });
+
+    });
+
+    describe('jumpToTag()', function() {
+
+        it('should go to the tag', function() {
+            spyOn($location, 'path');
+            $scope.jumpToTag('id_inpatients');
+            expect($location.path).toHaveBeenCalledWith('id-inpatients');
+        });
+
     });
 
 });

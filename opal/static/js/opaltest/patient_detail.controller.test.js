@@ -1,7 +1,8 @@
 describe('PatientDetailCtrl', function(){
     "use strict";
 
-    var $scope, $rootScope, $controller, $modal;
+    var $scope, $rootScope, $controller, $modal, $routeParams, $httpBackend;
+    var Flow;
     var patient;
     var controller;
     var episodeData = {
@@ -87,25 +88,83 @@ describe('PatientDetailCtrl', function(){
             $scope       = $rootScope.$new();
             $controller  = $injector.get('$controller');
             $modal       = $injector.get('$modal');
+            $routeParams = $injector.get('$routeParams');
+            $httpBackend = $injector.get('$httpBackend');
             Episode      = $injector.get('Episode');
         });
 
         $rootScope.fields = fields
         patient = {episodes: [new Episode(angular.copy(episodeData))] };
 
+        Flow = jasmine.createSpy().and.returnValue({then: function(fn){ fn() }});
+
         controller = $controller('PatientDetailCtrl', {
-            $scope: $scope,
-            patient: patient,
-            options: options,
-            profile: profile
+            $scope      : $scope,
+            $routeParams: $routeParams,
+            Flow        : Flow,
+            patient     : patient,
+            options     : options,
+            profile     : profile
         });
 
     });
 
     describe('initialization', function(){
+
         it('should set up state', function(){
             expect($scope.patient).toEqual(patient)
         });
+
+        it('should call switch_to_view', function() {
+            spyOn($scope, 'switch_to_view');
+            $routeParams.view = 'myview';
+            $scope.initialise();
+            expect($scope.switch_to_view).toHaveBeenCalledWith('myview');
+        });
+
+        it('should set the episode', function() {
+            spyOn($scope, 'switch_to_episode');
+            $routeParams.view = '123';
+            $scope.initialise();
+            expect($scope.switch_to_episode).toHaveBeenCalledWith(0);
+        });
+
+    });
+
+    describe('switch_to_episode()', function() {
+
+        it('should switch to the episode', function() {
+            var mock_event = {preventDefault: jasmine.createSpy()};
+            $scope.switch_to_episode(0, mock_event);
+            expect($scope.view).toBe(null);
+            expect($scope.episode).toBe(patient.episodes[0]);
+        });
+
+    });
+
+    describe('switch_to_view()', function() {
+
+        it('should switch', function() {
+            $scope.switch_to_view('wat');
+            expect($scope.view).toEqual('wat');
+        });
+
+    });
+
+    describe('dischargeEpisode()', function() {
+
+        it('should should return null if readonly', function() {
+            profile.readonly = true;
+            expect($scope.dischargeEpisode()).toBe(null);
+        });
+
+        it('should call Flow.', function() {
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+            profile.readonly = false;
+            $scope.dischargeEpisode();
+            $rootScope.$apply();
+        });
+
     });
 
 });

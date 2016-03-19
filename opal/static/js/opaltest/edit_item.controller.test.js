@@ -3,7 +3,7 @@ describe('EditItemCtrl', function (){
 
     var $scope, $cookieStore, $timeout, item, Item;
     var dialog, Episode, episode, ngProgressLite, $q;
-    var Schema, $modal, $controller, controller;
+    var Schema, $modal, $controller, controller, fakeModalInstance;
 
     var episodeData = {
         id: 123,
@@ -61,6 +61,13 @@ describe('EditItemCtrl', function (){
                     {name: 'condition', type: 'string'},
                     {name: 'provisional', type: 'boolean'},
                 ]},
+            {
+                name:  'investigation',
+                single: false,
+                fields: [
+                    {name: 'result', type: 'string'}
+                ]
+            }
         ]
     };
 
@@ -98,11 +105,12 @@ describe('EditItemCtrl', function (){
         var schema = new Schema(columns.default);
         episode = new Episode(episodeData);
         item = new Item(
-            {columnName: 'diagnosis'},
+            {columnName: 'investigation'},
             episode,
-            schema.columns[0]
+            columns['default'][3]
         );
-        var fakeModalInstance = {
+
+        fakeModalInstance = {
             close: function(){
                 // do nothing
             }
@@ -123,11 +131,27 @@ describe('EditItemCtrl', function (){
     });
 
     describe('newly-created-controller', function (){
-        it('Should have columname diagnosis', function () {
-            expect($scope.columnName).toBe('diagnosis');
+        it('Should have columname investigation', function () {
+            expect($scope.columnName).toBe('investigation');
         });
     });
 
+    describe('editingMode()', function() {
+
+        it('should know if this is edit or add', function() {
+            expect($scope.editingMode()).toBe(false);
+        });
+
+    });
+
+    describe('select_macro()', function() {
+
+        it('should return expanded', function() {
+            var i = {expanded: 'thing'};
+            expect($scope.select_macro(i)).toEqual('thing');
+        });
+
+    });
 
     describe('Saving items', function (){
         it('Should save the current item', function () {
@@ -145,7 +169,18 @@ describe('EditItemCtrl', function (){
             expect($scope.saving).toBe(false);
             callArgs = item.save.calls.mostRecent().args;
             expect(callArgs.length).toBe(1);
-            expect(callArgs[0]).toBe($scope.editing.diagnosis);
+            expect(callArgs[0]).toBe($scope.editing.investigation);
         });
     });
+
+    describe('cancel()', function(){
+
+        it('should close with null', function(){
+            spyOn(fakeModalInstance, 'close');
+            $scope.cancel();
+            expect(fakeModalInstance.close).toHaveBeenCalledWith('cancel');
+        });
+
+    })
+
 });

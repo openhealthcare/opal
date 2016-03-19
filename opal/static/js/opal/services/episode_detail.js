@@ -34,7 +34,7 @@ angular.module('opal.services')
                 if(profile.readonly){ return null; };
 
                 var enter = Flow(
-                    'enter', schema, options,
+                    'enter', options,
                     {
                         current_tags: { tag: 'mine', subtag: '' },
                         hospital_number: $scope.episode.demographics[0].hospital_number
@@ -62,33 +62,9 @@ angular.module('opal.services')
                     });
             },
 
-            $scope.jumpToTag = function(tag){
-                if(_.contains(_.keys(options.tag_hierarchy), tag)){
-                    $location.path('/list/'+tag)
-                    return
-                }else{
-                    for(var prop in options.tag_hierarchy){
-                        if(options.tag_hierarchy.hasOwnProperty(prop)){
-                            if(_.contains(_.values(options.tag_hierarchy[prop]), tag)){
-                                $location.path('/list/'+ prop + '/' + tag)
-                                return
-                            }
-                        }
-                    }
-                }
-                // Jump to scope.
-                window.location.hash = '#/'
-            };
 
-            $scope.controller_for_episode = function(controller, template, size){
-                $modal.open({
-                    controller : controller,
-                    templateUrl: template,
-                    size       : size,
-                    resolve    : {
-                        episode: function(){ return $scope.episode }
-                    }
-                });
+            $scope.jumpToTag = function(tag){
+                $location.path(options.tag_slugs[tag]);
             };
 
         }

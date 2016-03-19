@@ -1,6 +1,6 @@
 describe('EpisodeListCtrl', function() {
     "use strict";
-    var episodeData, optionsData, profileData, patientData, Schema;
+    var episodeData, optionsData, patientData, Schema;
     var schema, Episode, Item, episode;
     var profile;
     var $scope, $cookieStore, $controller, $q, $dialog, $httpBackend;
@@ -39,6 +39,14 @@ describe('EpisodeListCtrl', function() {
                     {name: 'condition', type: 'string'},
                     {name: 'provisional', type: 'boolean'},
                 ]},
+            {
+                name: 'tagging',
+                single: true,
+                fields: [
+                    {name: 'mine', type: 'boolean'},
+                    {name: 'tropical', type: 'boolean'}
+                ]
+            }
         ]
     };
 
@@ -178,7 +186,8 @@ describe('EpisodeListCtrl', function() {
 
     optionsData = {
         condition: ['Another condition', 'Some condition'],
-        tag_hierarchy: {'tropical': [], 'inpatients': ['icu']}
+        tag_hierarchy: {'tropical': [], 'inpatients': ['icu']},
+        tag_display: {'tropical': 'Tropical'}
     };
 
     profile = {
@@ -190,6 +199,9 @@ describe('EpisodeListCtrl', function() {
         can_see_pid: function(){return true; }
     };
 
+    var growl = {
+        success: jasmine.createSpy()
+    }
 
     beforeEach(module('opal.controllers'));
 
@@ -210,6 +222,7 @@ describe('EpisodeListCtrl', function() {
         $location    = $injector.get('$location');
 
         schema = new Schema(columns.default);
+        $rootScope.fields = fields;
         var episode = new Episode(episodeData)
 
         var deferred = $q.defer();
@@ -224,9 +237,9 @@ describe('EpisodeListCtrl', function() {
 
         options = optionsData;
         $routeParams.slug = 'tropical';
-        flow_promise = {then: function(){}};
+        flow_promise = {then: function(fn){ fn( episode ) }};
         Flow = jasmine.createSpy('Flow').and.callFake(function(){return flow_promise});
-        $rootScope.fields = fields;
+
 
         _makecontroller = function(){
             return $controller('EpisodeListCtrl', {
@@ -237,6 +250,7 @@ describe('EpisodeListCtrl', function() {
                 $cookieStore  : $cookieStore,
                 $location     : $location,
                 $routeParams  : $routeParams,
+                growl         : growl,
                 Flow          : Flow,
                 schema        : schema,
                 episodedata   : episodedata,
@@ -365,6 +379,30 @@ describe('EpisodeListCtrl', function() {
 
     });
 
+    describe('keydown watch', function() {
+
+        it('should open keyboard shortcuts', function() {
+            spyOn($scope, 'keyboard_shortcuts');
+            $scope.$broadcast('keydown', { keyCode: 191, shiftKey: true });
+            expect($scope.keyboard_shortcuts).toHaveBeenCalledWith();
+        });
+
+        it('should go to the episode link', function() {
+            spyOn($location, 'url');
+            $scope.$broadcast('keydown', { keyCode: 13 });
+            expect($location.url).toHaveBeenCalledWith($scope.episode.link);
+        });
+
+        it('should go up', function() {
+            $scope.$broadcast('keydown', { keyCode: 38 });
+        });
+
+        it('should go up', function() {
+            $scope.$broadcast('keydown', { keyCode: 40 });
+        });
+
+    });
+
     describe('print()', function() {
 
         it('should print', function() {
@@ -395,12 +433,9 @@ describe('EpisodeListCtrl', function() {
 
 
     describe('adding an episode', function() {
-        it('should change stated to "modal"', function() {
-            $scope.addEpisode();
-            expect($rootScope.state).toBe('modal');
-        });
 
         it('should call the enter flow', function() {
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
             $scope.addEpisode();
             expect(Flow).toHaveBeenCalledWith(
                 'enter', options, {
@@ -410,6 +445,8 @@ describe('EpisodeListCtrl', function() {
                     }
                 }
             );
+            $rootScope.$apply();
+            $httpBackend.flush();
         });
 
         describe('for a readonly user', function(){
@@ -490,6 +527,24 @@ describe('EpisodeListCtrl', function() {
             });
 
         });
+    });
+
+    describe('removeFromMine()', function() {
+
+        it('should be null if readonly', function() {
+            profile.readonly = true;
+            expect($scope.removeFromMine(0, null)).toBe(null);
+        });
+
+        it('should remove the mine tag', function() {
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+            profile.readonly = false;
+            var mock_event = {preventDefault: jasmine.createSpy()};
+            $scope.removeFromMine(0, mock_event);
+            $rootScope.$apply();
+            $httpBackend.flush();
+        });
+
     });
 
     describe('editing an item', function() {

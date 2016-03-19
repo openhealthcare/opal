@@ -5,7 +5,7 @@ angular.module('opal.controllers').controller(
         episode) {
 
         $scope.editing = {};
-        
+
         Options.then(
             function(options){
                 $scope.options = options;
@@ -17,22 +17,17 @@ angular.module('opal.controllers').controller(
                 $scope.display_tag_to_name = _.invert(options.tag_display);
                 $scope.episode = episode;
 
-                console.log(episode.tagging[0]);
                 $scope.editing.current_tags = _.filter(_.map(
                     $scope.episode.getTags(),
-                    function(k){ 
+                    function(k){
                         if(_.contains(direct_add, $scope.options.tag_display[k])){
-                            console.log(k)
-                            console.log($scope.options.tag_display[k] )
-                            return $scope.options.tag_display[k] 
+                            return $scope.options.tag_display[k]
                         }
                     }));
-                console.log($scope.editing.current_tags);
-
-            }            
+            }
         );
-        
-        
+
+
         //
         // Save the teams.
         //
@@ -41,7 +36,6 @@ angular.module('opal.controllers').controller(
             ngProgressLite.start();
             var new_tags = {};
             _.each($scope.editing.current_tags, function(t){ new_tags[$scope.display_tag_to_name[t]] = true });
-            console.log(new_tags)
             $scope.episode.tagging[0].save(new_tags).then(function() {
                 ngProgressLite.done();
 			    $modalInstance.close(result);

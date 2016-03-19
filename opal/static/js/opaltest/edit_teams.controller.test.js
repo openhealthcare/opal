@@ -5,7 +5,13 @@ describe('EditTeamsCtrl', function(){
     var Episode;
     var modalInstance;
     var episode
-
+    var options = {
+        tag_display: {
+            tropical: 'Tropical',
+            virology: 'Virology'
+        },
+        tag_direct_add: ['tropical', 'virology']
+    };
     var fields = {};
     var records = {
         "default": [
@@ -97,6 +103,7 @@ describe('EditTeamsCtrl', function(){
         });
 
         modalInstance = $modal.open({template: 'notatemplate'});
+        $rootScope.fields = fields;
 
         episode = new Episode(episodeData);
 
@@ -113,6 +120,24 @@ describe('EditTeamsCtrl', function(){
 
         it('should have an editing object', function() {
             expect($scope.editing).toEqual({});
+        });
+
+        it('should fetch the options', function() {
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+            $httpBackend.expectGET('/api/v0.1/options/').respond(options);
+            $rootScope.$apply();
+            $httpBackend.flush();
+        });
+
+    });
+
+    describe('save()', function() {
+
+        it('should save', function() {
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+            $httpBackend.expectGET('/api/v0.1/options/').respond(options);
+            $rootScope.$apply();
+            $httpBackend.flush();
         });
 
     });
