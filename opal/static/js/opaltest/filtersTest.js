@@ -140,6 +140,28 @@ describe('filters', function() {
            }));
     });
 
+    describe('momentDateFormat()', function() {
+        var momentDateFormat;
+
+        beforeEach(function(){
+            inject(function($injector){
+                momentDateFormat = $injector.get('momentDateFormatFilter');
+
+            });
+        });
+
+        it('should return nothing if null', function() {
+            expect(momentDateFormat(null)).toBe(undefined);
+        });
+
+        it('should return a formatted string', function() {
+            var res = momentDateFormat(new Date(2000, 1, 1), "YYYY-MM-DD");
+            expect(res).toEqual('2000-02-01');
+        });
+
+    });
+
+
     describe('future', function(){
         var futureFilter, today;
 
