@@ -181,6 +181,39 @@ describe('filters', function() {
 
     });
 
+    describe('daysTo', function() {
+      var daysTo
+
+        beforeEach(function(){
+            inject(function($injector){
+                daysTo = $injector.get('daysToFilter');
+
+            });
+        });
+
+        it('should return undefined if not first', function() {
+            expect(daysTo(null, null, null)).toBe(undefined);
+        });
+
+        it('should return undefined if not second', function() {
+            expect(daysTo(new Date(1999, 0, 12), null)).toBe(undefined);
+        });
+
+        it('should return the difference in days as a string', function() {
+            expect(daysTo(new Date(1999, 0, 12), new Date(1999, 0, 14))).toBe('2 days')
+        });
+
+        it('should return the difference of a single day as a string', function() {
+            expect(daysTo(new Date(1999, 0, 12), new Date(1999, 0, 13))).toBe('1 day')
+        });
+
+        it('should return just the number if Without Days', function() {
+            expect(daysTo(new Date(1999, 0, 12), new Date(1999, 0, 14), true)).toBe(2)
+        });
+
+    });
+
+
     describe('future', function(){
         var futureFilter, today;
 
