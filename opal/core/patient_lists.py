@@ -57,7 +57,6 @@ class TaggedPatientList(PatientList, utils.AbstractBase):
     need to define schema
     """
     direct_add = True
-
     tag = "Implement me please"
     display_name = "Implement me please"
 

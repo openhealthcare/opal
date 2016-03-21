@@ -12,7 +12,7 @@ import logging
 
 from django.conf import settings
 from django.utils import timezone
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -25,7 +25,9 @@ from opal.core import application, exceptions, lookuplists, plugins
 from opal import managers
 from opal.utils import camelcase_to_underscore, find_template
 from opal.core.fields import ForeignKeyOrFreeText
-from opal.core.subrecords import episode_subrecords, patient_subrecords
+from opal.core.subrecords import (
+    episode_subrecords, patient_subrecords, get_subrecord_from_api_name, subrecords
+)
 
 app = application.get_app()
 
@@ -391,6 +393,49 @@ class Patient(models.Model):
                 return episode
         return None
 
+    @transaction.atomic()
+    def bulk_update(self, dict_of_list_of_upgrades, user, episode=None):
+        """
+                takes in a dictionary of api name to a list of fields and
+                creates the required subrecords. If passed an episode
+                sub record but no episode it will create an episode
+                and attatch it.
+
+                e.g. {"allergies": [
+                            {"drug": "paracetomol"}
+                            {"drug": "aspirin"}
+                          ],
+                      "investigation":[
+                            {"name": "some test", "details": "some details"}
+                          ]
+                     }
+        """
+        if "demographics" not in dict_of_list_of_upgrades:
+            if not self.id:
+                raise ValueError(
+                    "demographics are required when creating a new patient"
+                )
+
+        if not self.id:
+            self.save()
+
+        for api_name, list_of_upgrades in dict_of_list_of_upgrades.iteritems():
+            model = get_subrecord_from_api_name(api_name=api_name)
+            if model in episode_subrecords():
+                if episode is None:
+                    episode = self.create_episode(patient=self)
+                    episode.save()
+
+                model.bulk_update_from_dicts(episode, list_of_upgrades, user)
+            else:
+                # its a patient subrecord
+                model.bulk_update_from_dicts(self, list_of_upgrades, user)
+
+
+
+
+
+
     def to_dict(self, user):
         active_episode = self.get_active_episode()
         d = {
@@ -415,6 +460,8 @@ class Patient(models.Model):
             for subclass in patient_subrecords():
                 if subclass._is_singleton:
                     subclass.objects.create(patient=self)
+
+
 
 
 class PatientRecordAccess(models.Model):
@@ -722,10 +769,48 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
                 0, 'records/{0}/{1}.html'.format(team, name))
             if subteam:
                 list_display_templates.insert(
-                    0, 'records/{0}/{1}/{2}.html'.format(team,
-                                                              subteam,
-                                                              name))
+                    0, 'records/{0}/{1}/{2}.html'.format(
+                        team, subteam, name
+                    )
+                )
         return find_template(list_display_templates)
+
+    @classmethod
+    def bulk_update_from_dicts(
+        cls, parent, list_of_dicts, user
+    ):
+        """
+            allows the bulk updating of a field for example
+            [
+                {"test": "blah 1", "details": "blah blah"}
+                {"test": "blah 2", "details": "blah blah"}
+            ]
+
+            parent is the parent class, that can be Episode or Patient
+
+            this method will not delete. It updates if there's an id or if
+            the model is a singleton otherwise it creates
+        """
+        schema_name = parent.__class__.__name__.lower()
+
+        if cls._is_singleton:
+            if len(list_of_dicts) > 1:
+                raise ValueError(
+                    "attempted creation of multiple fields on a singleton {}".format(cls.__name__)
+                )
+
+        for a_dict in list_of_dicts:
+            if "id" in a_dict or cls._is_singleton:
+                if cls._is_singleton:
+                    query = cls.objects.filter(**{schema_name: parent})
+                    subrecord = query.get()
+                else:
+                    subrecord = cls.objects.get(id=a_dict["id"])
+            else:
+                a_dict["{}_id".format(schema_name)] = parent.id
+                subrecord = cls(**{schema_name: parent})
+
+            subrecord.update_from_dict(a_dict, user)
 
     @classmethod
     def get_detail_template(cls, team=None, subteam=None):

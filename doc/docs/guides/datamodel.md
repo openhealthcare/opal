@@ -59,6 +59,7 @@ Subrecords also define various properties that will provide metadata about their
 display or structure, which are documented in the
 [Subrecord reference material](/reference/subrecords/)
 
+
 ### Lookup Lists
 
 OPAL comes with a set of clinical terminology data models out of the box. - we often

@@ -91,3 +91,22 @@ Keywords:
 
 * `team` Optional team to check for form customisations
 * `subteam` Optional subteam to check for form customisations
+
+#### Subrecord.update_from_dict()
+An instance method that will update a model with a dictionary. This method is used
+to provides a hook for changing the way a subrecord handles being updated from serialised
+data.
+
+For example on a new allergy
+    allergy.update_from_dict({"drug": "penicillin"})
+
+will update the allergy to have the correct drug
+
+
+#### Subrecord.bulk_update_from_dicts()
+
+A Classmethod to allow the creation of multiple objects. 
+
+Takes in the parent model - an episode
+for EpisodeSubrecords a patient for PatientSubrecords. Under the covers it iterates
+over all the subrecords, adds in the parent relationship and calls update_from_dict

@@ -382,7 +382,6 @@ class PatientListViewSet(viewsets.ViewSet):
         return _build_json_response(patientlist.to_dict(request.user))
 
 
-
 router.register('patient', PatientViewSet)
 router.register('episode', EpisodeViewSet)
 router.register('flow', FlowViewSet)
