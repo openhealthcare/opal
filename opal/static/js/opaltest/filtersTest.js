@@ -161,6 +161,25 @@ describe('filters', function() {
 
     });
 
+    describe('hhmm', function() {
+        var hhmm;
+
+        beforeEach(function(){
+            inject(function($injector){
+                hhmm = $injector.get('hhmmFilter');
+
+            });
+        });
+
+        it('should return undefined if not input', function() {
+            expect(hhmm(null)).toBe(undefined);
+        });
+
+        it('should return the hours and minutes string', function() {
+            expect(hhmm(new Date(201, 3, 12, 08, 45))).toEqual('8:45');
+        });
+
+    });
 
     describe('future', function(){
         var futureFilter, today;
