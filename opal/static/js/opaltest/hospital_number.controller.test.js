@@ -252,6 +252,20 @@ describe('HospitalNumberCtrl', function(){
             expect(callArgs[0].controller).toBe('AddEpisodeCtrl');
         });
 
+        it('should provide AddEpisodeCtrl with resolves', function(){
+            var deferred, callArgs;
+
+            deferred = $q.defer();
+
+            spyOn($modal, 'open').and.returnValue({result: deferred.promise});
+            $scope.newPatient({patients: [], hospitalNumber: 123})
+
+            var resolves = $modal.open.calls.mostRecent().args[0].resolve;
+            expect(resolves.options()).toEqual(options);
+            expect(resolves.demographics()).toEqual({ hospital_number: 123});
+            expect(resolves.tags()).toEqual({tag: 'mine', subtag: ''});
+        });
+
         it('should close the modal with a new patient', function(){
             var deferred;
 

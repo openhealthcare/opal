@@ -4,11 +4,12 @@ angular.module('opal.controllers')
                                            $modalInstance, $rootScope,
                                            Episode,
                                            options,
-                                           demographics) {
+                                           demographics,
+                                           tags) {
 
         var DATE_FORMAT = 'DD/MM/YYYY';
-	    $scope.currentTag    = $routeParams.tag || 'mine';
-	    $scope.currentSubTag = $routeParams.subtag || '';
+	    $scope.currentTag    = tags.tag;
+	    $scope.currentSubTag = tags.subtag;
 
 	    for (var name in options) {
 		    $scope[name + '_list'] = options[name];

@@ -3,13 +3,13 @@ angular.module(
 ).factory(
     'Flow',
     function($q, $http, $modal, $cacheFactory){
-        
+
         var flow_cache = $cacheFactory('flow-cache');
 
-        // 
+        //
         // Return the correct flow object for the current
         // situation
-        // 
+        //
         var flow_for_verb = function(verb, current_tags, episode){
             var flow = flow_cache.get('flow');
 
@@ -27,14 +27,14 @@ angular.module(
                         return flow[current_tags.tag][current_tags.subtag][verb];
                     }           // TODO: ELSE
                 }else{
-                    if(flow[current_tags.tag]['default'] && 
+                    if(flow[current_tags.tag]['default'] &&
                        flow[current_tags.tag]['default'][verb]){
                         // The tag has this verb in it's default
                         return flow[current_tags.tag]['default'][verb];
                     }else {
                         return flow['default'][verb];
                     }
-                    
+
                 }
             }else{// Default
                 return flow['default'][verb];
@@ -59,9 +59,9 @@ angular.module(
                         alert('An error occurred - please inform someone!');
                     }
                 )
-            }            
+            }
 
-            var verbs = {            
+            var verbs = {
                 // The patient is 'entering'. Do the right thing.
                 //
                 // Config params:
@@ -96,7 +96,7 @@ angular.module(
                 exit: function(options, config){
                     datadeferred.promise.then(function(){
                         var flow = flow_for_verb('exit', config.current_tags, config.episode);
-                        
+
 		                result = $modal.open({
                             size: 'lg',
                             backdrop: 'static',
@@ -117,9 +117,9 @@ angular.module(
             verbs[verb](options, config)
 
             return deferred.promise
-            
+
         }
-        
+
         Flow.flow_for_verb = flow_for_verb;
         return Flow;
     }
