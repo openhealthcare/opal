@@ -76,14 +76,24 @@ describe('AddEpisodeCtrl', function (){
             $modalInstance: modalInstance,
             schema: schema,
             options: optionsData,
-            demographics: {}
+            demographics: {},
+            tags: {tag: 'tropical', subtag: ''}
         });
+    });
+
+    describe('initial state', function() {
+
+        it('should know the current tags', function() {
+            expect($scope.currentTag).toEqual('tropical');
+            expect($scope.currentSubTag).toEqual('');
+        });
+
     });
 
     describe('Adding an episode', function (){
 
         it('Should set up the initial editing situation', function () {
-            expect($scope.editing.tagging).toEqual([{mine: true}]);
+            expect($scope.editing.tagging).toEqual([{tropical: true}]);
         });
 
         it('Should set the subtag to an empty string', function(){
