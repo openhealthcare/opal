@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from opal.core.test import OpalTestCase
 from opal import models
 from opal.models import Subrecord, Tagging, Team, Patient
+from opal.tests.models import FamousLastWords, PatientColour
 
 class PatientRecordAccessTestCase(OpalTestCase):
 
@@ -17,7 +18,76 @@ class PatientRecordAccessTestCase(OpalTestCase):
             user=self.user, patient=patient)
         self.assertEqual(patient.id, access.to_dict(self.user)['patient'])
         self.assertEqual(self.user.username, access.to_dict(self.user)['username'])
-        self.assertIsInstance(access.to_dict(self.user)['datetime'], datetime.datetime)
+        self.assertIsInstance(
+            access.to_dict(self.user)['datetime'], datetime.datetime
+        )
+
+
+class PatientTestCase(OpalTestCase):
+    def test_bulk_update_patient_subrecords(self):
+        original_patient = models.Patient()
+
+        d = {
+            "demographics": [{
+                "name": "Samantha Sun",
+                "hospital_number": "123312"
+            }],
+            "patient_colour": [
+                {"name": "green"},
+                {"name": "purple"},
+            ]
+        }
+        original_patient.bulk_update(d, self.user)
+
+        patient = Patient.objects.get()
+        demographics = patient.demographics_set.get()
+        self.assertEqual(demographics.name, "Samantha Sun")
+        self.assertEqual(demographics.hospital_number, "123312")
+
+        colours = patient.patientcolour_set.all()
+        self.assertEqual(len(colours), 2)
+        self.assertEqual(colours[0].name, "green")
+        self.assertEqual(colours[1].name, "purple")
+
+    def test_bulk_update_without_demographics(self):
+        original_patient = models.Patient()
+
+        d = {
+            "patient_colour": [
+                {"name": "green"},
+                {"name": "purple"},
+            ]
+        }
+
+        with self.assertRaises(ValueError):
+            original_patient.bulk_update(d, self.user)
+
+    def test_bulk_update_episode_subrecords_without_episode(self):
+        original_patient = models.Patient()
+
+        d = {
+            "demographics": [{
+                "name": "Samantha Sun",
+                "hospital_number": "123312"
+            }],
+            "hat_wearer": [
+                {"name": "bowler"},
+                {"name": "wizard"},
+            ]
+        }
+        self.assertFalse(models.Episode.objects.exists())
+        original_patient.bulk_update(d, self.user)
+
+        patient = Patient.objects.get()
+        demographics = patient.demographics_set.get()
+        self.assertEqual(demographics.name, "Samantha Sun")
+        self.assertEqual(demographics.hospital_number, "123312")
+        episode = patient.episode_set.get()
+
+        hat_wearers = episode.hatwearer_set.all()
+        self.assertEqual(len(hat_wearers), 2)
+        self.assertEqual(hat_wearers[0].name, "bowler")
+        self.assertEqual(hat_wearers[1].name, "wizard")
 
 
 class SubrecordTestCase(OpalTestCase):
@@ -99,6 +169,39 @@ class SubrecordTestCase(OpalTestCase):
             'modals/subrecord_modal.html',
             'modal_base.html'
         ])
+
+
+class BulkUpdateFromDictsTest(OpalTestCase):
+
+    def test_bulk_update_from_dict(self):
+        self.assertFalse(PatientColour.objects.exists())
+        patient_colours = [
+            {"name": "purple"},
+            {"name": "blue"}
+        ]
+        patient = Patient.objects.create()
+        PatientColour.bulk_update_from_dicts(
+            patient, patient_colours, self.user
+        )
+        expected_patient_colours = set(["purple", "blue"])
+        new_patient_colours = set(PatientColour.objects.values_list(
+            "name", flat=True
+        ))
+        self.assertEqual(
+            expected_patient_colours, new_patient_colours
+        )
+
+    def test_bulk_update_multiple_singletons_from_dict(self):
+        patient = Patient.objects.create()
+        famous_last_words = [
+            {"words": "so long and thanks for all the fish"},
+            {"words": "A towel is the most important item"},
+        ]
+
+        with self.assertRaises(ValueError):
+            FamousLastWords.bulk_update_from_dicts(
+                patient, famous_last_words, self.user
+            )
 
 
 class TaggingImportTestCase(OpalTestCase):
