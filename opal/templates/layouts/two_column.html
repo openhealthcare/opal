@@ -27,12 +27,6 @@
           </div>
           <ul class="list-group">
             <li class="list-group-item">
-              <button class="btn btn-secondary" ng-click="open_modal('PatientHistoryCtrl', '/templates/modals/patient_history.html', 'lg', {episode: episode})">
-                <i class="fa fa-history"></i>
-                History
-              </button>
-            </li>
-            <li class="list-group-item">
               {% with edit_teams="episode.recordEditor.editItem('tagging', 0)" %}
               {% include 'partials/_teams_list.html' %}
               {% endwith %}

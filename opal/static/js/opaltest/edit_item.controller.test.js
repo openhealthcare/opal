@@ -90,16 +90,17 @@ describe('EditItemCtrl', function (){
         });
 
         inject(function($injector){
-            Item = $injector.get('Item');
-            Episode = $injector.get('Episode');
-            $controller  = $injector.get('$controller');
-            $q  = $injector.get('$q');
-            $cookieStore = $injector.get('$cookieStore');
-            $timeout = $injector.get('$timeout');
+            Item           = $injector.get('Item');
+            Episode        = $injector.get('Episode');
+            $controller    = $injector.get('$controller');
+            $q             = $injector.get('$q');
+            $cookieStore   = $injector.get('$cookieStore');
+            $timeout       = $injector.get('$timeout');
             ngProgressLite = $injector.get('ngProgressLite');
-            Schema = $injector.get('Schema');
-            var $rootScope   = $injector.get('$rootScope');
-            $scope = $rootScope.$new();
+            Schema         = $injector.get('Schema');
+            var $rootScope = $injector.get('$rootScope');
+            $scope         = $rootScope.$new();
+            $modal         = $injector.get('$modal');
         });
 
         var schema = new Schema(columns.default);
@@ -117,15 +118,15 @@ describe('EditItemCtrl', function (){
         };
 
         controller = $controller('EditItemCtrl', {
-            $scope      : $scope,
-            $cookieStore: $cookieStore,
-            $timeout    : $timeout,
+            $scope        : $scope,
+            $cookieStore  : $cookieStore,
+            $timeout      : $timeout,
             $modalInstance: fakeModalInstance,
-            item        : item,
-            options     : options,
-            profile     : profile,
-            episode     : episode,
-            ngProgressLite  : ngProgressLite,
+            item          : item,
+            options       : options,
+            profile       : profile,
+            episode       : episode,
+            ngProgressLite: ngProgressLite,
         });
 
     });
@@ -181,6 +182,19 @@ describe('EditItemCtrl', function (){
             expect(fakeModalInstance.close).toHaveBeenCalledWith('cancel');
         });
 
-    })
+    });
+
+    describe('undischarge', function() {
+        it('should open the modal', function() {
+
+            spyOn($modal, 'open').and.callFake(function(){
+                return {result: {then: function(fn){ fn() }}}
+            });;
+            $scope.undischarge();
+            expect($modal.open).toHaveBeenCalled();
+            var resolvers = $modal.open.calls.mostRecent().args[0].resolve
+            expect(resolvers.episode()).toEqual(episode);
+        });
+    });
 
 });
