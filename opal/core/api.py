@@ -382,46 +382,6 @@ class PatientListViewSet(viewsets.ViewSet):
         return _build_json_response(patientlist.to_dict(request.user))
 
 
-def save_the_world(some_dict):
-    # data = {}
-    # context = dict(hosptial_id, episode_id)
-    hospital_number = context.get("hospital_number", None)
-    episode_id = context.get("episode_id", None)
-    episode = None
-    if not hospital_number:
-        raise ValueError("we need a hosptial number bro")
-
-    patient = Patient.objects.get_or_create(demographics__id=hospital_number)
-
-    if exists(some_dict.keys().episode_subrecords):
-        if not episode_id:
-            episode = patient.create_episode()
-        else:
-            episode = Episode.objects.get(id=episode_id)
-
-    bulk_create(some_dict, patient, episode=episode)
-
-
-def bulk_create(some_dict, patient, episode=None, user=None):
-    for k, v in some_dict:
-        model = get_from_api_name(k)
-        if model.type == "PatientSubrecord":
-            model.bulk_from_dict(v, patient)
-        else:
-            model.bulk_from_dict(v, episode)
-
-
-def bulk_from_dict(v, episode, user):
-    for i in v:
-        v.episode_id = episode.id
-        v.update_from_dict(v, user)
-
-
-
-
-
-
-
 router.register('patient', PatientViewSet)
 router.register('episode', EpisodeViewSet)
 router.register('flow', FlowViewSet)

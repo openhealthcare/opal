@@ -43,13 +43,7 @@ filters.filter('toMoment', function(){
             if (_.isDate(input) ){
                 return moment(input);
             }else{
-				// if a moment of the servers' date format is passed in
-				d = moment(input, 'DD/MM/YYYY');
-
-				if(!d.isValid()){
-					// if a moment of the servers' datetime format is passed in
-					d = moment(input, 'DD/MM/YYYY HH:mm:ss');
-				}
+				d = moment(input, 'DD/MM/YYYY HH:mm:ss');
 			}
 
 			return d;

@@ -89,22 +89,78 @@ describe('filters', function() {
             var expected = new Date(1989, 11, 27);
             expect(toMoment('27/12/1989').toDate()).toEqual(expected);
         })
+
+        it('should take datetimes', function() {
+            var expected = new Date(1999, 3, 1, 4, 52);
+            expect(toMoment('01/04/1999 04:52:00'));
+        });
+    });
+
+    describe('fromNow()', function() {
+        var fromNow;
+
+        beforeEach(function(){
+            inject(function($injector){
+                fromNow  = $injector.get('fromNowFilter');
+            });
+        });
+
+        it('should return nill if null', function() {
+            expect(fromNow(null)).toBe(undefined);
+        });
+
+        it('should return the time fromNow', function() {
+            var today = new Date(2002, 2, 22);
+            jasmine.clock().mockDate(today);
+            expect(fromNow('20/03/2002')).toEqual('2 days ago');
+        });
+
     });
 
     describe('shortDate', function() {
+
+        it('should return undefined for no input',
+           inject(function(shortDateFilter) {
+               expect(shortDateFilter(null)).toBe(undefined);
+           }));
+
         it('should output a date before 1/1/2001 as DD/MM/YYYY',
            inject(function(shortDateFilter) {
                expect(shortDateFilter(new Date(2000, 1, 1))).toBe('01/02/2000');
            }));
+
         it('should output a date before this year as DD/MM/YY',
            inject(function(shortDateFilter) {
                expect(shortDateFilter(new Date(2001, 1, 1))).toBe('01/02/01');
            }));
+
         it('should output a date this year as DD/MM',
            inject(function(shortDateFilter) {
                expect(shortDateFilter(new Date(new Date().getFullYear(), 1, 1))).toBe('01/02');
            }));
     });
+
+    describe('momentDateFormat()', function() {
+        var momentDateFormat;
+
+        beforeEach(function(){
+            inject(function($injector){
+                momentDateFormat = $injector.get('momentDateFormatFilter');
+
+            });
+        });
+
+        it('should return nothing if null', function() {
+            expect(momentDateFormat(null)).toBe(undefined);
+        });
+
+        it('should return a formatted string', function() {
+            var res = momentDateFormat(new Date(2000, 1, 1), "YYYY-MM-DD");
+            expect(res).toEqual('2000-02-01');
+        });
+
+    });
+
 
     describe('future', function(){
         var futureFilter, today;
@@ -147,6 +203,8 @@ describe('filters', function() {
         })
 
         it('Should return the age in years', function () {
+            var today = new Date(2016, 2, 22);
+            jasmine.clock().mockDate(today);
             expect(ageFilter(new Date())).toBe(0);
             expect(ageFilter(new Date(2000,1,1))).toBe(16);
         });
