@@ -57,6 +57,32 @@ describe('OPAL Directives', function(){
 
     });
 
+    describe('scrollTop', function(){
+
+        it('should', function() {
+            var markup = '<div scroll-top></div';
+            compileDirective(markup);
+
+        });
+
+    })
+
+    describe('placeholder', function() {
+
+        it('should ', function() {
+            var markup = '<input placeholder="foo" />';
+            compileDirective(markup);
+        });
+
+    });
+
+    describe('slashkeyfocus', function() {
+      it('should do something', function() {
+          var markup = '<input slash-key-focus />';
+          compileDirective(markup);
+      });
+    });
+
     describe('markdown', function(){
         it('should be markdowny', function(){
             var markup = '<div markdown="foo"></div>';
