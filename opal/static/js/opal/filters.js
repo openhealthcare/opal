@@ -134,28 +134,15 @@ filters.filter('daysSince', function(daysToFilter){
         if(!input){
             return;
         }
-				endDate = moment();
+		endDate = moment();
 
-				if(change){
-						endDate.add(change, "days");
-				}
-				return daysToFilter(input, endDate, withoutDays);
+		if(change){
+			endDate.add(change, "days");
+		}
+		return daysToFilter(input, endDate, withoutDays);
     };
 });
 
-filters.filter('hoursSince', function(){
-    return function(input){
-        if(!input){
-            return null;
-        }
-        t = input.toString()
-        target = moment()
-        target.hour(t.substr(0, 2))
-        target.minutes(t.substr(2))
-        diff =  moment().diff(target, 'hours')
-        return diff
-    }
-});
 
 filters.filter('future', function(){
     return function(input){
@@ -197,7 +184,7 @@ filters.filter('totalDays', function(toMomentFilter){
         var start = toMomentFilter(item.start_date);
 
         if(item.end_date){
-						end = toMomentFilter(item.end_date);
+			end = toMomentFilter(item.end_date);
             return end.diff(start, 'days') + 1;
         }else{
             return moment().diff(start, 'days') + 1;

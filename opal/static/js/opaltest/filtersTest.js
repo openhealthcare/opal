@@ -213,6 +213,28 @@ describe('filters', function() {
 
     });
 
+    describe('daysSince', function() {
+        var daysSince
+
+        beforeEach(function(){
+            inject(function($injector){
+                daysSince = $injector.get('daysSinceFilter');
+
+            });
+        });
+
+        it('should return undefined if not first', function() {
+            expect(daysSince(null)).toBe(undefined);
+        });
+
+        it('should return the number of days', function() {
+            var today = new Date(2002, 2, 29);
+            jasmine.clock().mockDate(today);
+
+            expect(daysSince(new Date(2002, 1, 12), 3, true)).toEqual(48)
+        });
+
+    });
 
     describe('future', function(){
         var futureFilter, today;
@@ -310,6 +332,13 @@ describe('filters', function() {
         it('Should return the diff in days', function () {
             var obj = {start_date: new Date(2000, 1, 1), end_date: new Date(2000, 1, 4)}
             expect(totalDaysFilter(obj)).toBe(4)
+        });
+
+        it('should return the diff to today if no end date', function() {
+            var today = new Date(2000, 1, 22);
+            jasmine.clock().mockDate(today);
+            var obj = {start_date: new Date(2000, 1, 1)};
+            expect(totalDaysFilter(obj)).toBe(22);
         });
 
     });
