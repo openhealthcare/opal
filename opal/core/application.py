@@ -68,7 +68,6 @@ class OpalApplication(object):
         ],
         'opal.services': [
             "js/opal/services_module.js",
-            "js/opal/services/focus.js",
             "js/opal/services/flow.js",
             "js/opal/services/user_profile.js",
             "js/opal/services/item.js",
