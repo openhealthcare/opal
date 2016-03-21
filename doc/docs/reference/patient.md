@@ -14,11 +14,15 @@ Return the dictionary representation of this patient - suitable for serializatio
 
 
 #### bulk_update
-pass in a dictionary of subrecords you want to update, pass in an episode if one exists.
-This method will create all the subrecords and a new episode if necessary in an atomic
-transaction.
 
-for example if you can create a patient with the following snippet
+Create or update many subrecords in one go, from a serialised dictionary of data.
+
+Pass in a dictionary of subrecords you want to update, as well as an episode if one exists.
+This method will create all the subrecords and implicitly create a new episode if required.
+
+This API will execute all create/update operations as an atomic transaction.
+
+For example the following will create a patient:
 
     patient = Patient()
     patient.bulk_update(
@@ -28,5 +32,6 @@ for example if you can create a patient with the following snippet
             {"drug": "penicillin"},
             {"drug": "aspirin"},
         ]
-      }
+      },
+      user
     )
