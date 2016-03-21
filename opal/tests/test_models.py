@@ -191,6 +191,28 @@ class BulkUpdateFromDictsTest(OpalTestCase):
             expected_patient_colours, new_patient_colours
         )
 
+    def test_bulk_update_existing_from_dict(self):
+        patient = Patient.objects.create()
+        patient_colours = []
+        for colour in ["green", "red"]:
+            patient_colours.append(
+                PatientColour.objects.create(patient=patient, name=colour)
+            )
+        patient_colours = [
+            {"name": "purple", "id": patient_colours[0].id},
+            {"name": "blue", "id": patient_colours[1].id}
+        ]
+        PatientColour.bulk_update_from_dicts(
+            patient, patient_colours, self.user
+        )
+        expected_patient_colours = set(["purple", "blue"])
+        new_patient_colours = set(PatientColour.objects.values_list(
+            "name", flat=True
+        ))
+        self.assertEqual(
+            expected_patient_colours, new_patient_colours
+        )
+
     def test_bulk_update_multiple_singletons_from_dict(self):
         patient = Patient.objects.create()
         famous_last_words = [

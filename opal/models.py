@@ -787,6 +787,9 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
             ]
 
             parent is the parent class, that can be Episode or Patient
+
+            this method will not delete. It updates if there's an id or if
+            the model is a singleton otherwise it creates
         """
         schema_name = parent.__class__.__name__.lower()
 
@@ -800,11 +803,7 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
             if "id" in a_dict or cls._is_singleton:
                 if cls._is_singleton:
                     query = cls.objects.filter(**{schema_name: parent})
-
-                    if query.exists():
-                        subrecord = query.get()
-                    else:
-                        subrecord = cls(**{schema_name: parent})
+                    subrecord = query.get()
                 else:
                     subrecord = cls.objects.get(id=a_dict["id"])
             else:

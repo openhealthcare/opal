@@ -16,4 +16,17 @@ Return the dictionary representation of this patient - suitable for serializatio
 #### bulk_update
 pass in a dictionary of subrecords you want to update, pass in an episode if one exists.
 This method will create all the subrecords and a new episode if necessary in an atomic
-transaction
+transaction.
+
+for example if you can create a patient with the following snippet
+
+    patient = Patient()
+    patient.bulk_update(
+      {
+        "demographics": "hospital_number": "1231212",
+        "allergies": [
+            {"drug": "penicillin"},
+            {"drug": "aspirin"},
+        ]
+      }
+    )
