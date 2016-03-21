@@ -176,7 +176,7 @@ describe('filters', function() {
         });
 
         it('should return the hours and minutes string', function() {
-            expect(hhmm(new Date(201, 3, 12, 08, 45))).toEqual('8:45');
+            expect(hhmm(new Date(201, 3, 12, 8, 45))).toEqual('8:45');
         });
 
     });
