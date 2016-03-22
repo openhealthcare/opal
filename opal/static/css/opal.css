@@ -25,7 +25,7 @@ a {
     color: rgb(77, 77, 77);
 }
 
-p a, .orange-link { color: #f76c51; }
+p a, .orange-link, .list-inline.lead li a { color: #f76c51; }
 
 a.table-link::before {
   content: "";
@@ -291,15 +291,23 @@ i.delete,
 .detail .panel-heading i { font-size: 28px; }
 /*.episodelist.bg-active { margin-right: -40px;} */
 .list-group-item .btn i { font-size: 20px; }
+
 .panel-primary .panel-default .panel-heading,
 .panel-default .panel-heading {
     border-bottom: 3px solid #f76c51;
     background-color: white;
     color: #333;
 }
+.panel-primary .panel-active .panel-heading,
 .panel-active .panel-heading {
+    background-color: white;
+    color: #333;
     border-bottom: 3px solid #5fa2dd; /* Blue */
 }
+.panel-primary .panel-active {
+    border-color: #ddd;
+}
+
 .panel-heading h3 { margin-top: 0px; margin-bottom: 0px; font-weight: normal;}
 .panel-heading i.edit,
 .list-group-item i.edit,
