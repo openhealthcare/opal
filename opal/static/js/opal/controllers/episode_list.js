@@ -175,8 +175,8 @@ angular.module('opal.controllers').controller(
 	    $scope.addEpisode = function() {
             if(profile.readonly){ return null; };
 
-            var enter = Flow(
-                'enter', options,
+            var enter = Flow.enter(
+                options,
                 {
                     current_tags: {
                         tag: $scope.currentTag,
@@ -240,14 +240,12 @@ angular.module('opal.controllers').controller(
 
 		    $rootScope.state = 'modal';
 
-            var exit = Flow(
-                'exit', options,
+            var exit = Flow.exit(episode, options,
                 {
                     current_tags: {
                         tag   : $scope.currentTag,
                         subtag: $scope.currentSubTag
                     },
-                    episode: episode
                 }
             );
 
