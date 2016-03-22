@@ -376,5 +376,4 @@ describe('services', function() {
         });
     });
 
-
 });
