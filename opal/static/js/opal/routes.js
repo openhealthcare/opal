@@ -4,13 +4,13 @@ app.config(
     ['$routeProvider',
      function($routeProvider) {
          $routeProvider.when('/list/',{
-             controller: 'EpisodeRedirectListCtrl',
+             controller: 'PatientListRedirectCtrl',
              templateUrl: '/templates/404.html',
              resolve: {
                  options: function(Options){ return Options; }
              }
          }).when('/list/:slug', {
-			 controller: 'EpisodeListCtrl',
+			 controller: 'PatientListCtrl',
 			 resolve: {
 				 episodedata: function(patientListLoader) { return patientListLoader(); },
 				 options    : function(Options) { return Options; },

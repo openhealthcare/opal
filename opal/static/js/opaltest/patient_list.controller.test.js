@@ -1,4 +1,4 @@
-describe('EpisodeListCtrl', function() {
+describe('PatientListCtrl', function() {
     "use strict";
     var episodeData, optionsData, patientData, Schema;
     var schema, Episode, Item, episode;
@@ -242,7 +242,7 @@ describe('EpisodeListCtrl', function() {
 
 
         _makecontroller = function(){
-            return $controller('EpisodeListCtrl', {
+            return $controller('PatientListCtrl', {
                 $rootScope    : $rootScope,
                 $scope        : $scope,
                 $q            : $q,
