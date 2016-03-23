@@ -1,4 +1,4 @@
-describe('EpisodeRedirectListCtrl', function() {
+describe('PatientListRedirectListCtrl', function() {
   "use strict";
 
   var $location, $cookieStore, $controller, $scope;
@@ -31,7 +31,7 @@ describe('EpisodeRedirectListCtrl', function() {
               throw "unknown argument " + someKey;
           }
       };
-      $controller('EpisodeRedirectListCtrl', {
+      $controller('PatientListRedirectCtrl', {
           $scope: $scope,
           $cookieStore: $cookieStore,
           $location: $location ,
@@ -43,7 +43,7 @@ describe('EpisodeRedirectListCtrl', function() {
 
   it('should redirect to the first list slug if there is no tag', function(){
         spyOn($cookieStore, 'get').and.returnValue(undefined);
-        $controller('EpisodeRedirectListCtrl', {
+        $controller('PatientListRedirectCtrl', {
             $scope: $scope,
             $cookieStore: $cookieStore,
             $location: $location ,

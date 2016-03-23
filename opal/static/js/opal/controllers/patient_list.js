@@ -1,5 +1,5 @@
 angular.module('opal.controllers').controller(
-    'EpisodeListCtrl', function($scope, $q, $http, $cookieStore,
+    'PatientListCtrl', function($scope, $q, $http, $cookieStore,
                                 $location, $routeParams,
                                 $modal, $rootScope,
                                 $window,

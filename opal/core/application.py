@@ -89,8 +89,8 @@ class OpalApplication(object):
         ],
         'opal.controllers': [
             "js/opal/controllers_module.js",
-            "js/opal/controllers/episode_list_redirect.js",
-            "js/opal/controllers/episode_list.js",
+            "js/opal/controllers/patient_list_redirect.js",
+            "js/opal/controllers/patient_list.js",
             "js/opal/controllers/episode_detail.js",
             "js/opal/controllers/patient_detail.js",
             "js/opal/controllers/hospital_number.js",

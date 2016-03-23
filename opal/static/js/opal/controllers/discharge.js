@@ -4,12 +4,12 @@ controllers.controller(
              $modalInstance, episode,
              tags) {
 
-        if(tags){
-            var currentTag = tags.tag;
-            var currentSubTag = tags.subtag;
+        if(tags && !_.isEmpty(tags)){
+            $scope.currentTag = tags.tag;
+            $scope.currentSubTag = tags.subtag;
         }else{
-            var currentTag = 'mine';
-            var currentSubTag = '';
+            $scope.currentTag = 'mine';
+            $scope.currentSubTag = '';
         }
 
         $scope.currentCategory = episode.location[0].category;
@@ -66,10 +66,10 @@ controllers.controller(
             }
 
 	        if ($scope.editing.category != 'Followup') {
-                if(currentSubTag != ''){
-                    taggingAttrs[currentSubTag] = false;
+                if($scope.currentSubTag != ''){
+                    taggingAttrs[$scope.currentSubTag] = false;
                 }else{
-                    taggingAttrs[currentTag] = false;
+                    taggingAttrs[$scope.currentTag] = false;
                 }
 	        }
 
