@@ -6,6 +6,8 @@ describe('DischargeEpisodeCtrl', function(){
     var modalInstance, episodeData;
     var episode, tags;
 
+    var mkcontroller;
+
     var fields = {};
     var records = {
         "default": [
@@ -100,20 +102,51 @@ describe('DischargeEpisodeCtrl', function(){
         $rootScope.fields = fields;
         episode = new Episode(episodeData)
 
-        $controller('DischargeEpisodeCtrl', {
-            $scope: $scope,
-            $window: $window,
-            $modalInstance: modalInstance,
-            episode: episode,
-            tags: tags
-        })
 
+        mkcontroller = function(tags){
+            $controller('DischargeEpisodeCtrl', {
+                $scope: $scope,
+                $window: $window,
+                $modalInstance: modalInstance,
+                episode: episode,
+                tags: tags
+            });
+        }
+        mkcontroller(tags)
     });
 
     describe('Setup', function(){
 
         it('should have the current and new categories', function() {
             expect($scope.editing.category).toEqual('Discharged');
+        });
+
+        it('should set the category if we ar review', function() {
+            episode.location[0].category = 'Review';
+            mkcontroller();
+            expect($scope.editing.category).toEqual('Unfollow');
+        });
+
+        it('should handle arbitrary categories', function() {
+            episode.location[0].category = 'Dead';
+            mkcontroller();
+            expect($scope.editing.category).toEqual('Dead');
+        });
+
+        it('should set the tags to mine', function() {
+            expect($scope.currentTag).toEqual('mine');
+        });
+
+        it('should set the tags to tags when they exist', function() {
+            mkcontroller({tag: 'infection', subtag: 'tropical'});
+            expect($scope.currentTag).toEqual('infection');
+            expect($scope.currentSubTag).toEqual('tropical');
+        });
+
+        it('should set the discahrge date from the episode if it exists', function() {
+            episode.discharge_date = new Date(2000, 0, 1);
+            mkcontroller();
+            expect($scope.editing.discharge_date).toEqual(new Date(2000, 0, 1))
         });
 
     });
