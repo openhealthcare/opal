@@ -27,7 +27,6 @@ angular.module(
             enter: function(options, config){
                 var deferred = $q.defer();
                 var target = ApplicationFlow.enter();
-
 		        result = $modal.open({
                     size: 'lg',
                     backdrop: 'static',

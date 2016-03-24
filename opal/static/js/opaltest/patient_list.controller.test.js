@@ -510,6 +510,38 @@ describe('PatientListCtrl', function() {
             });
         });
 
+        describe('should discharge', function() {
+
+            it('should discharge the patient', function() {
+                $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+                var fake_exit = function(){
+                    return {
+                        then: function(fn){
+                            fn(episode);
+                        }
+                    }
+                }
+                spyOn(Flow, 'exit').and.callFake(fake_exit);
+                $scope.dischargeEpisode(episode);
+                $rootScope.$apply();
+            });
+
+            it('should should discharge the patient if flow returns a promise', function() {
+                $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+                var fake_exit = function(){
+                    return {
+                        then: function(fn){
+                            fn({ then: function(gn){ gn() } } );
+                        }
+                    }
+                }
+                spyOn(Flow, 'exit').and.callFake(fake_exit);
+                $scope.dischargeEpisode(episode);
+                $rootScope.$apply();
+            });
+
+        });
+
         describe('for a readonly user', function(){
             beforeEach(function(){
                 profile.readonly = true;
