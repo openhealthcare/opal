@@ -1227,7 +1227,7 @@ class Demographics(PatientSubrecord):
     hospital_number  = models.CharField(max_length=255, blank=True)
     nhs_number       = models.CharField(max_length=255, blank=True, null=True)
     date_of_birth    = models.DateField(null=True, blank=True)
-    country_of_birth = ForeignKeyOrFreeText(Destination)
+    birth_place = ForeignKeyOrFreeText(Destination)
     ethnicity = ForeignKeyOrFreeText(Ethnicity)
     surname = models.CharField(max_length=255, blank=True)
     first_name = models.CharField(max_length=255, blank=True)

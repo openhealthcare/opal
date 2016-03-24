@@ -135,10 +135,10 @@ class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
             'date_of_birth',
             'sex_fk_id',
             'sex_ft',
-            'country_of_birth_fk_id',
-            'country_of_birth_ft',
+            'birth_place_fk_id',
+            'birth_place_ft',
             'sex',
-            'country_of_birth',
+            'birth_place',
         ]
         expected_row = [
             1, 'None', 'None', 'None', 'None', '12345678',
