@@ -251,7 +251,7 @@ class DatabaseQuery(QueryBackend):
             demographic = patient.demographics_set.get()
 
             result = {k: getattr(demographic, k) for k in [
-                "name", "hospital_number", "date_of_birth"
+                "first_name", "surname", "hospital_number", "date_of_birth"
                 ]}
 
             result.update(patient_summary.to_dict())

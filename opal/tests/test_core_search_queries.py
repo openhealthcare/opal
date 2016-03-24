@@ -23,8 +23,9 @@ class DatabaseQueryTestCase(OpalTestCase):
         self.episode.date_of_episode = self.DATE_OF_EPISODE
         self.episode.save()
         self.demographics = self.patient.demographics_set.get()
-        self.demographics.name = "Sally Stevens"
-        self.demographics.gender = "Female"
+        self.demographics.first_name = "Sally"
+        self.demographics.surname = "Stevens"
+        self.demographics.sex = "Female"
         self.demographics.hospital_number = "0"
         self.demographics.date_of_birth = self.DATE_OF_BIRTH
         self.demographics.save()
@@ -36,9 +37,9 @@ class DatabaseQueryTestCase(OpalTestCase):
         self.name_criteria = [
             {
                 u'column': u'demographics',
-                u'field': u'Name',
+                u'field': u'Surname',
                 u'combine': u'and',
-                u'query': u'Sally Stevens',
+                u'query': u'Stevens',
                 u'queryType': u'Equals'
             }
         ]
@@ -101,7 +102,7 @@ class DatabaseQueryTestCase(OpalTestCase):
         criteria = [
             {
                 u'column': u'demographics',
-                u'field': u'Gender',
+                u'field': u'Sex',
                 u'combine': u'and',
                 u'query': u'Female',
                 u'queryType': u'Equals'
@@ -118,7 +119,8 @@ class DatabaseQueryTestCase(OpalTestCase):
             'count': 1,
             'hospital_number': u'0',
             'date_of_birth': self.DATE_OF_BIRTH,
-            'name': u'Sally Stevens',
+            'first_name': u'Sally',
+            'surname': u'Stevens',
             'end_date': self.DATE_OF_EPISODE,
             'start_date': self.DATE_OF_EPISODE,
             'patient_id': 1,

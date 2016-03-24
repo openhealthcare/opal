@@ -190,7 +190,7 @@ class PatientGenerator(object):
         demographics.hospital_number=hospital_number
         demographics.nhs_number=hospital_number
         demographics.date_of_birth=self.get_birth_date()
-        demographics.gender=random.choice(['Female', 'Male', 'Not Known', 'Not Specified'])
+        demographics.sex=random.choice(['Female', 'Male', 'Not Known', 'Not Specified'])
         # cob = [f for f in Demographics._meta.get_fields() if f.name == 'country_of_birth'][0]
         # demographics.country_of_birth = foreign_key_or_free_text_generator(cob)
         demographics.country_of_birth = foreign_key_or_free_text_generator(Demographics.country_of_birth)

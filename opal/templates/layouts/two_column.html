@@ -2,7 +2,7 @@
   <div class="spaced bg-primary">
     <div class="box">
       <h1>
-        {% block heading %}[[ episode.demographics[0].name ]]{% endblock %}
+        {% block heading %}[[ episode.demographics[0].first_name ]] [[ episode.demographics[0].surname ]]{% endblock %}
         <small>
           {% block subheading %}
           [[ episode.demographics[0].hospital_number ]]
@@ -22,7 +22,8 @@
         <div class="panel panel-default">
           <div class="panel-heading ">
             <h3>
-              [[ episode.demographics[0].name ]]
+              [[ episode.demographics[0].first_name ]]
+              [[ episode.demographics[0].surname ]]
             </h3>
           </div>
           <ul class="list-group">

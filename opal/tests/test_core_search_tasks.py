@@ -1,10 +1,11 @@
 """
 Unittests for the opal.core.search.tasks module
 """
-from mock import patch, MagicMock
+from mock import patch
 from opal.core.test import OpalTestCase
 
 from opal.core.search import tasks
+
 
 class ExtractTestCase(OpalTestCase):
 
@@ -14,9 +15,9 @@ class ExtractTestCase(OpalTestCase):
         criteria = [
             {
                 u'column': u'demographics',
-                u'field': u'Name',
+                u'field': u'surname',
                 u'combine': u'and',
-                u'query': u'Sally Stevens',
+                u'query': u'Stevens',
                 u'queryType': u'Equals'
             }
         ]

@@ -18,7 +18,7 @@ angular.module('opal.controllers').controller(
         };
 
         // This is the patientname displayed in the modal header
-  	    $scope.editingName = item.episode.demographics[0].name;
+  	    $scope.editingName = item.episode.demographics[0].first_name + ' ' + episode.demographics[0].surname;
 
         $scope.columnName = item.columnName;
 

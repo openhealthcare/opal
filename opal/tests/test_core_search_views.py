@@ -17,7 +17,8 @@ class BaseSearchTestCase(OpalTestCase):
         self.patient = models.Patient.objects.create()
         self.episode = self.patient.create_episode()
         self.demographics = self.patient.demographics_set.get()
-        self.demographics.name = 'Sean Connery'
+        self.demographics.first_name = 'Sean'
+        self.demographics.surname = 'Connery'
         self.demographics.hospital_number = '007'
         self.demographics.save()
 
@@ -75,7 +76,8 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
             u'object_list': [{
                 u'count': 1,
                 u'id': self.patient.id,
-                u'name': u'Sean Connery',
+                u'first_name': u'Sean',
+                u'surname': u'Connery',
                 u'end_date': u'15/10/2015',
                 u'patient_id': 1,
                 u'hospital_number': u'007',
@@ -106,7 +108,7 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
 
     # Searching for a patient that exists by partial name match
     def test_patient_exists_partial_name(self):
-        request = self.rf.get("%s?name=Sean" % self.url)
+        request = self.rf.get("%s?name=Co" % self.url)
         request.user = self.user
         resp = self.view(request)
         data = json.loads(resp.content)
@@ -122,7 +124,7 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
 
     # Searching for a patient that exists by name
     def test_patient_exists_name(self):
-        request = self.rf.get('%s?name=Sean Connery' % self.url)
+        request = self.rf.get('%s?name=Connery' % self.url)
         request.user = self.user
         resp = self.view(request)
         data = json.loads(resp.content)

@@ -26,7 +26,7 @@ class TestViewGet(OpalTestCase):
                 json.dumps([{
                     "combine": "and",
                     "column": "demographics",
-                    "field": "Name",
+                    "field": "Surname",
                     "queryType": "Contains",
                     "query": "a",
                     "lookup_list": [],
@@ -49,7 +49,8 @@ class PatientEpisodeTestCase(OpalTestCase):
         Demographics.objects.all().update(
             patient=self.patient,
             hospital_number='12345678',
-            name='Alice Alderney',
+            first_name="Alice",
+            surname="Alderney",
             date_of_birth=datetime.date(1976,1,1)
         )
         super(PatientEpisodeTestCase, self).setUp()
@@ -132,11 +133,11 @@ class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
             'hospital_number',
             'nhs_number',
             'date_of_birth',
-            u'gender_fk_id',
-            'gender_ft',
+            'sex_fk_id',
+            'sex_ft',
             'country_of_birth_fk_id',
             'country_of_birth_ft',
-            'gender',
+            'sex',
             'country_of_birth',
         ]
         expected_row = [

@@ -22,12 +22,14 @@ class CommandTestCase(OpalTestCase):
     def test_handle_duplicate_names(self):
         p1 = models.Patient.objects.create()
         d1 = p1.demographics_set.get()
-        d1.name = 'Jenny Smith'
+        d1.first_name = 'Jenny'
+        d1.surname = 'Smith'
         d1.save()
 
         p2 = models.Patient.objects.create()
         d2 = p2.demographics_set.get()
-        d2.name = 'Jenny Smith'
+        d2.first_name = 'Jenny'
+        d2.surname = 'Smith'
         d2.save()
 
         c = detector.Command()
@@ -44,17 +46,20 @@ class CommandTestCase(OpalTestCase):
         """
         p1 = models.Patient.objects.create()
         d1 = p1.demographics_set.get()
-        d1.name = 'Jenny Smith'
+        d1.first_name = 'Jenny'
+        d1.surname = 'Smith'
         d1.save()
 
         p2 = models.Patient.objects.create()
         d2 = p2.demographics_set.get()
-        d2.name = 'Jenny Smith'
+        d2.first_name = 'Jenny'
+        d2.surname = 'Smith'
         d2.save()
 
         p3 = models.Patient.objects.create()
         d3 = p3.demographics_set.get()
-        d3.name = 'Jenny Smith'
+        d3.first_name = 'Jenny'
+        d3.surname = 'Smith'
         d3.save()
 
         c = detector.Command()
@@ -69,13 +74,15 @@ class CommandTestCase(OpalTestCase):
     def test_handle_duplicate_dobs(self):
         p1 = models.Patient.objects.create()
         d1 = p1.demographics_set.get()
-        d1.name = 'Jenny Smiths'
+        d1.first_name = 'Jenny'
+        d1.surname = 'Smiths'
         d1.date_of_birth = datetime.date(1934, 2, 2)
         d1.save()
 
         p2 = models.Patient.objects.create()
         d2 = p2.demographics_set.get()
-        d2.name = 'Jenny Smith'
+        d2.first_name = 'Jenny'
+        d2.surname = 'Smith'
         d2.date_of_birth = datetime.date(1934, 2, 2)
         d2.save()
 

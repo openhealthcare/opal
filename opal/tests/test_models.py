@@ -29,7 +29,8 @@ class PatientTestCase(OpalTestCase):
 
         d = {
             "demographics": [{
-                "name": "Samantha Sun",
+                "first_name": "Samantha",
+                "surname": "Sun",
                 "hospital_number": "123312"
             }],
             "patient_colour": [
@@ -41,7 +42,8 @@ class PatientTestCase(OpalTestCase):
 
         patient = Patient.objects.get()
         demographics = patient.demographics_set.get()
-        self.assertEqual(demographics.name, "Samantha Sun")
+        self.assertEqual(demographics.first_name, "Samantha")
+        self.assertEqual(demographics.surname, "Sun")
         self.assertEqual(demographics.hospital_number, "123312")
 
         colours = patient.patientcolour_set.all()
@@ -67,7 +69,8 @@ class PatientTestCase(OpalTestCase):
 
         d = {
             "demographics": [{
-                "name": "Samantha Sun",
+                "first_name": "Samantha",
+                "surname": "Sun",
                 "hospital_number": "123312"
             }],
             "hat_wearer": [
@@ -80,7 +83,8 @@ class PatientTestCase(OpalTestCase):
 
         patient = Patient.objects.get()
         demographics = patient.demographics_set.get()
-        self.assertEqual(demographics.name, "Samantha Sun")
+        self.assertEqual(demographics.first_name, "Samantha")
+        self.assertEqual(demographics.surname, "Sun")
         self.assertEqual(demographics.hospital_number, "123312")
         episode = patient.episode_set.get()
 

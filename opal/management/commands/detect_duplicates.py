@@ -17,8 +17,13 @@ class Command(BaseCommand):
         for i, patient in enumerate(Patient.objects.all()):
             progress = '({0}% - {1} found)'.format(int(float(i+1)/patients*100), len(suspicious))
             patient_demographics = patient.demographics_set.get()
-            name = patient_demographics.name
-            self.stdout.write('{0} Examining {1}'.format(progress, name))
+            self.stdout.write(
+                '{0} Examining {1} {2}'.format(
+                    progress,
+                    patient_demographics.first_name,
+                    patient_demographics.surname,
+                )
+            )
 
             def add_to_suspicious(patient, other_patient):
                 if suspicious_ids.get(patient.id, False):
@@ -34,8 +39,9 @@ class Command(BaseCommand):
             for d in demographics:
                 if d.patient.id == patient.id:
                     continue
-                if d.name == patient_demographics.name:
-                    add_to_suspicious(d.patient, patient)
+                if d.surname == patient_demographics.surname:
+                    if d.first_name == patient_demographics.first_name:
+                        add_to_suspicious(d.patient, patient)
                 if d.hospital_number == patient_demographics.hospital_number:
                     add_to_suspicious(d.patient, patient)
                 if d.date_of_birth:
@@ -50,14 +56,18 @@ class Command(BaseCommand):
         for pair in suspicious:
             self.stdout.write("Suspicious Pair:")
 
-            msg = '{0} {1}'.format(
-                pair[0].demographics_set.get().name, pair[0].id
+            msg_1 = '{0} {1} {2}'.format(
+                pair[0].demographics_set.get().first_name,
+                pair[0].demographics_set.get().surname,
+                pair[0].id
             )
-            self.stdout.write(msg)
+            self.stdout.write(msg_1)
 
-            msg = '{0} {1}'.format(
-                pair[1].demographics_set.get().name, pair[1].id
+            msg_2 = '{0} {1} {2}'.format(
+                pair[1].demographics_set.get().first_name,
+                pair[1].demographics_set.get().surname,
+                pair[1].id
             )
-            self.stdout.write(msg)
+            self.stdout.write(msg_2)
 
         return
