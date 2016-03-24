@@ -185,7 +185,7 @@ angular.module('opal.controllers').controller(
                 }
             );
 
-		    $rootScope.state = 'modal';
+            $rootScope.state = 'modal';
             enter.then(
                 function(resolved) {
 		            // We have either retrieved an existing episode or created a new one,
@@ -208,7 +208,7 @@ angular.module('opal.controllers').controller(
 
   		                }
                     };
-
+                    console.log(resolved)
                     if(resolved.then){ // OMG - it's a promise!
                         resolved.then(
                             function(r){ return_to_normal(r) },
@@ -239,7 +239,6 @@ angular.module('opal.controllers').controller(
             if(profile.readonly){ return null; };
 
 		    $rootScope.state = 'modal';
-
             var exit = Flow.exit(episode, options,
                 {
                     current_tags: {

@@ -49,15 +49,14 @@ angular.module('opal.controllers').controller(
             if(profile.readonly){ return null; };
 
 		    $rootScope.state = 'modal';
-            var exit = Flow(
-                'exit',
+            var exit = Flow.exit(
+                $scope.episode,
                 options,
                 {
                     current_tags: {
                         tag   : $scope.currentTag,
                         subtag: $scope.currentSubTag
-                    },
-                    episode: $scope.episode
+                    }
                 }
             );
 

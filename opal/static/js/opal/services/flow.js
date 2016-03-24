@@ -3,7 +3,25 @@ angular.module(
 ).factory(
     'Flow',
     function($q, $http, $modal, $cacheFactory, $injector){
-        var ApplicationFlow = $injector.get('elCIDFlow');
+        if(OPAL_FLOW_SERVICE){
+            var ApplicationFlow = $injector.get(OPAL_FLOW_SERVICE);
+        }else{
+            var ApplicationFlow = {
+                enter:  function(){
+                    return {
+                    'controller': 'HospitalNumberCtrl',
+                    'template'  : '/templates/modals/hospital_number.html/'
+                    }
+                },
+                exit: function(){
+                    return  {
+                    'controller': 'DischargeEpisodeCtrl',
+                    'template'  : '/templates/modals/discharge_episode.html/'
+                    }
+                }
+            };
+        }
+
         var Flow = {
 
             enter: function(options, config){
