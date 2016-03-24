@@ -65,7 +65,7 @@ if not getattr(models.Patient, 'demographics_set', None):
         surname = dmodels.CharField(max_length=200, blank=True, null=True)
         date_of_birth = dmodels.DateField(blank=True, null=True)
         sex = fields.ForeignKeyOrFreeText(models.Gender)
-        country_of_birth = fields.ForeignKeyOrFreeText(models.Destination)
+        birth_place = fields.ForeignKeyOrFreeText(models.Destination)
 
         pid_fields = 'first_name', 'surname',
 
