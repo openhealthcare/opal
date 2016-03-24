@@ -29,14 +29,6 @@ class OPALRouterTestCase(TestCase):
         self.assertEqual(api.OPALRouter().get_default_base_name(ViewSet), 'the name')
 
 
-class FlowTestCase(TestCase):
-
-    @patch('opal.core.api.app')
-    def test_list(self, app):
-        app.flows.return_value = [{}]
-        self.assertEqual([{}], api.FlowViewSet().list(None).data)
-
-
 class RecordTestCase(TestCase):
 
     @patch('opal.core.api.schemas')
