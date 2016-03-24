@@ -646,17 +646,20 @@ class EpisodeTestCase(TestCase):
             "tagging"                :[ { "micro":True }],
             "date_of_admission"      : "14/01/2015",
             "demographics" : {
-                "name": "Alain Anderson",
-                "gender": "Male",
+                "first_name": "Alain",
+                "surname": "Anderson",
+                "sex": "Male",
                 "hospital_number": "9999000999",
             }
         }
         response = api.EpisodeViewSet().create(self.mock_request)
         patient = models.Patient.objects.get(
-            demographics__hospital_number="9999000999")
+            demographics__hospital_number="9999000999"
+        )
         demographics = patient.demographics_set.get()
-        self.assertEqual("Alain Anderson", demographics.name)
-        self.assertEqual("Male", demographics.gender)
+        self.assertEqual("Alain", demographics.first_name)
+        self.assertEqual("Anderson", demographics.surname)
+        self.assertEqual("Male", demographics.sex)
 
     def test_create_sets_location(self):
         pcount = models.Patient.objects.filter(

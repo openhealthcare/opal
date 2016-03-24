@@ -377,7 +377,11 @@ class Patient(models.Model):
     def __unicode__(self):
         try:
             demographics = self.demographics_set.get()
-            return '%s | %s' % (demographics.hospital_number, demographics.name)
+            return '%s | %s %s' % (
+                demographics.hospital_number,
+                demographics.first_name,
+                demographics.surname
+            )
         except models.ObjectDoesNotExist:
             return 'Patient {0}'.format(self.id)
         except:
@@ -1080,6 +1084,9 @@ class Line_type(lookuplists.LookupList):
         verbose_name = "Line type"
 
 
+class MaritalStatus(lookuplists.LookupList):
+    pass
+
 class Micro_test_c_difficile(lookuplists.LookupList):
     class Meta:
         verbose_name = "Micro test C difficile"
@@ -1192,13 +1199,15 @@ class Micro_test_viral_load(lookuplists.LookupList):
         verbose_name = "Micro test viral load"
         verbose_name_plural = "Micro tests viral load"
 
-
 class Microbiology_organism(lookuplists.LookupList):
     class Meta:
         verbose_name = "Microbiology organism"
 
-
 class Symptom(lookuplists.LookupList): pass
+
+class Title(lookuplists.LookupList):
+    pass
+
 
 
 class Travel_reason(lookuplists.LookupList):
@@ -1215,13 +1224,15 @@ class Demographics(PatientSubrecord):
     _is_singleton = True
     _icon = 'fa fa-user'
 
-    name             = models.CharField(max_length=255, blank=True)
     hospital_number  = models.CharField(max_length=255, blank=True)
     nhs_number       = models.CharField(max_length=255, blank=True, null=True)
     date_of_birth    = models.DateField(null=True, blank=True)
     country_of_birth = ForeignKeyOrFreeText(Destination)
-    ethnicity        = models.CharField(max_length=255, blank=True, null=True)
-    gender           = models.CharField(max_length=255, blank=True, null=True)
+    ethnicity = ForeignKeyOrFreeText(Ethnicity)
+    surname = models.CharField(max_length=255, blank=True)
+    first_name = models.CharField(max_length=255, blank=True)
+    middle_name = models.CharField(max_length=255, blank=True)
+    sex = ForeignKeyOrFreeText(Gender)
 
     class Meta:
         abstract = True
@@ -1273,6 +1284,8 @@ class Allergies(PatientSubrecord):
     drug        = ForeignKeyOrFreeText(Drug)
     provisional = models.BooleanField(default=False)
     details     = models.CharField(max_length=255, blank=True)
+
+
 
     class Meta:
         abstract = True

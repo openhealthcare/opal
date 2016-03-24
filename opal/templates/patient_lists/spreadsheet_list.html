@@ -40,7 +40,7 @@
     <b>
       <i class="fa fa-user"></i>
       <span ng-show="profile.can_see_pid()">
-        [[ episode.demographics[0].name ]]
+        [[ episode.demographics[0].first_name ]] [[ episode.demographics[0].surname ]]
       </span>
     </b>
     {% if request.user.is_staff %}

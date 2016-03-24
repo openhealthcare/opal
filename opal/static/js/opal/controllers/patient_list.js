@@ -203,7 +203,7 @@ angular.module('opal.controllers').controller(
   			                rowIx = getRowIxFromEpisodeId(episode.id);
                             $scope.num_episodes += 1;
                             var readableName = $scope.tag_display[$scope.currentSubTag];
-                            var msg = episode.demographics[0].name + " added to the " + readableName + " list";
+                            var msg = episode.demographics[0].first_name + " " + episode.demographics[0].surname + " added to the " + readableName + " list";
                             growl.success(msg);
 
   		                }

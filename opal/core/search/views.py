@@ -64,7 +64,7 @@ def _extract_basic_search_parameters(request):
 
     if name is not None:
         query_criteria = criteria.copy()
-        query_criteria['field'] = 'name'
+        query_criteria['field'] = 'surname'
         query_criteria['query'] = name
         result.append(query_criteria)
 

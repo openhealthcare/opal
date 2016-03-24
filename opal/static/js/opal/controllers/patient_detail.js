@@ -8,7 +8,6 @@ angular.module('opal.controllers').controller(
         $scope.patient = patient;
         $scope.options = options;
         $scope.episode = patient.episodes[0];
-
         $scope.view = null;
 
         $scope.initialise = function(){
