@@ -96,7 +96,7 @@ describe('PatientDetailCtrl', function(){
         $rootScope.fields = fields
         patient = {episodes: [new Episode(angular.copy(episodeData))] };
 
-        Flow = jasmine.createSpy().and.returnValue({then: function(fn){ fn() }});
+        Flow = {exit: jasmine.createSpy().and.returnValue({then: function(fn){ fn() }}) };
 
         controller = $controller('PatientDetailCtrl', {
             $scope      : $scope,

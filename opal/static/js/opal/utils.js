@@ -2,6 +2,9 @@ var OPAL = {};
 if(undefined === version){
     var version = 'test';
 }
+if(undefined === OPAL_FLOW_SERVICE){
+    var OPAL_FLOW_SERVICE = null;
+}
 
 OPAL.module = function(namespace, dependencies){
     dependencies = dependencies || [];

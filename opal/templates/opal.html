@@ -31,6 +31,9 @@
       settings.BROADCAST_ENDPONT = settings.GLOSSOLALIA_URL.replace('http', 'ws') + 'ws';
       {% endif %}
       var version = '{{VERSION_NUMBER}}';
+      {% if OPAL_FLOW_SERVICE %}
+      var OPAL_FLOW_SERVICE = '{{ OPAL_FLOW_SERVICE }}';
+      {% endif %}
     </script>
     <!-- google analytics -->
     <script>

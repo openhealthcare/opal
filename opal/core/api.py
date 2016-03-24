@@ -59,18 +59,6 @@ def episode_from_pk(fn):
             return Response({'error': 'Episode does not exist'}, status=status.HTTP_404_NOT_FOUND)
     return get_item
 
-class FlowViewSet(viewsets.ViewSet):
-    """
-    Return the Flow routes for this application.
-
-    For more detail on OPAL Flows, see the documentation
-    """
-    base_name = 'flow'
-
-    def list(self, request):
-        flows = app.flows()
-        return Response(flows)
-
 
 class RecordViewSet(viewsets.ViewSet):
     """
@@ -384,7 +372,6 @@ class PatientListViewSet(viewsets.ViewSet):
 
 router.register('patient', PatientViewSet)
 router.register('episode', EpisodeViewSet)
-router.register('flow', FlowViewSet)
 router.register('record', RecordViewSet)
 router.register('list-schema', ListSchemaViewSet)
 router.register('extract-schema', ExtractSchemaViewSet)

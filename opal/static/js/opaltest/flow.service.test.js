@@ -4,29 +4,12 @@
 
 describe('Flow ', function(){
     "use strict";
-    var options, the_flow, Flow, $httpBackend, $modal, $rootScope;
+    var options, Flow, $httpBackend, $modal, $rootScope;
 
     beforeEach(function(){
 
         module('opal.services');
         module('opal.controllers');
-
-        angular.module('opal.controllers').controller('EnterCtrl', function(){});
-        angular.module('opal.controllers').controller('ExitCtrl', function(){});
-
-        options = {};
-        the_flow = {
-            default: {
-                enter: {
-                    controller: 'EnterCtrl',
-                    template  : '/templates/enter',
-                },
-                exit : {
-                    controller: 'ExitCtrl',
-                    template  : '/templates/exit',
-                }
-            }
-        }
 
         inject(function($injector){
             Flow         = $injector.get('Flow');
@@ -35,45 +18,33 @@ describe('Flow ', function(){
             $httpBackend = $injector.get('$httpBackend');
         });
 
-        $httpBackend.whenGET('/api/v0.1/flow/').respond(the_flow);
-        $httpBackend.whenGET('/templates/enter').respond('<notarealtemplate>');
-        $httpBackend.whenGET('/templates/exit').respond('<notarealtemplate>');
-
-        spyOn($modal, 'open').and.callThrough();
+        spyOn($modal, 'open').and.returnValue({result: null});
 
     });
 
     describe('enter', function(){
-        it('should pass through to the correct controller', function(){
-            var call_args;
-
-            Flow('enter', options, {current_tags: { tag: "Micro-Ortho" }});
-
-            $rootScope.$apply();
-            $httpBackend.flush();
-
-            call_args = $modal.open.calls.mostRecent().args;
-            expect(call_args.length).toBe(1);
-            expect(call_args[0].templateUrl).toBe('/templates/enter');
-            expect(call_args[0].controller).toBe('EnterCtrl');
-
+        it('should call the modal with the enter flow', function(){
+            Flow.enter({}, {hospital_number: '555-456'});
+            var args = $modal.open.calls.mostRecent().args;
+            expect(args[0].controller).toEqual('HospitalNumberCtrl');
+            expect(args[0].templateUrl).toEqual('/templates/modals/hospital_number.html/');
+            var resolves = args[0].resolve;
+            expect(resolves.options()).toEqual({});
+            expect(resolves.tags()).toEqual(undefined);
+            expect(resolves.hospital_number()).toEqual('555-456');
         });
     });
 
     describe('exit', function(){
-        it('should pass through to the correct controller', function(){
-            var call_args;
-
-            Flow('exit', options, {current_tags: { tag: "Micro-Ortho" }});
-
-            $rootScope.$apply();
-            $httpBackend.flush();
-
-            call_args = $modal.open.calls.mostRecent().args;
-            expect(call_args.length).toBe(1);
-            expect(call_args[0].templateUrl).toBe('/templates/exit');
-            expect(call_args[0].controller).toBe('ExitCtrl');
-
+        it('should call exit', function(){
+            Flow.exit('episode', 'options', {current_tags: {}});
+            var args = $modal.open.calls.mostRecent().args;
+            expect(args[0].controller).toEqual('DischargeEpisodeCtrl');
+            expect(args[0].templateUrl).toEqual('/templates/modals/discharge_episode.html/');
+            var resolves = args[0].resolve;
+            expect(resolves.options()).toEqual('options');
+            expect(resolves.tags()).toEqual({});
+            expect(resolves.episode()).toEqual('episode');
         });
 
     });

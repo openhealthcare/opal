@@ -6,7 +6,6 @@ from opal.utils import stringport
 
 class OpalApplication(object):
     schema_module = None
-    flow_module = None
     core_javascripts = {
         'opal.upstream.deps': [
             "js/jquery-1.11.3/jquery-1.11.3.js",
@@ -126,26 +125,6 @@ class OpalApplication(object):
         """
         return klass.menuitems
 
-    @classmethod
-    def flows(klass):
-        """
-        Default implementation of flows()
-
-        Pulls flows defined in the application's flows module,
-        plus any flows defined by plugins.
-        """
-        from opal.core import plugins
-
-        flows = {}
-        for plugin in plugins.plugins():
-            flows.update(plugin().flows())
-
-        if klass.flow_module is None:
-            return flows
-
-        flow = stringport(klass.flow_module)
-        flows.update(flow.flows)
-        return flows
 
 def get_app():
     """

@@ -5,7 +5,7 @@ describe('PatientListCtrl', function() {
     var profile;
     var $scope, $cookieStore, $controller, $q, $dialog, $httpBackend;
     var $location, $routeParams, $http, $window;
-    var Flow, flow_promise;
+    var Flow;
     var episodedata, controller;
     var $modal, options, $rootScope;
 
@@ -220,6 +220,7 @@ describe('PatientListCtrl', function() {
         $httpBackend = $injector.get('$httpBackend');
         $window      = $injector.get('$window');
         $location    = $injector.get('$location');
+        Flow         = $injector.get('Flow');
 
         schema = new Schema(columns.default);
         $rootScope.fields = fields;
@@ -237,9 +238,6 @@ describe('PatientListCtrl', function() {
 
         options = optionsData;
         $routeParams.slug = 'tropical';
-        flow_promise = {then: function(fn){ fn( episode ) }};
-        Flow = jasmine.createSpy('Flow').and.callFake(function(){return flow_promise});
-
 
         _makecontroller = function(){
             return $controller('PatientListCtrl', {
@@ -434,19 +432,38 @@ describe('PatientListCtrl', function() {
 
     describe('adding an episode', function() {
 
-        it('should call the enter flow', function() {
-            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+        it('should call flow', function() {
+            spyOn(Flow, 'enter').and.callFake(
+                function(){
+                    return {then : function(fn){ fn(new Episode(episodeData)) }};
+                }
+            );
             $scope.addEpisode();
-            expect(Flow).toHaveBeenCalledWith(
-                'enter', options, {
-                    current_tags: {
-                        tag   : 'tropical',
-                        subtag: ''
+            expect(Flow.enter).toHaveBeenCalledWith(options, {current_tags: {
+                tag: $scope.currentTag,
+                subtag: $scope.currentSubTag
+            }})
+        });
+
+        it('should allow the enter flow to resolve with a promise', function() {
+            spyOn(Flow, 'enter').and.callFake(
+                function(){
+                    return {
+                        then : function(fn){ fn({
+                            then: function(fn){ fn(new Episode(episodeData) ) }
+                        })}
                     }
                 }
             );
-            $rootScope.$apply();
-            $httpBackend.flush();
+            $scope.addEpisode();
+            expect(Flow.enter).toHaveBeenCalledWith(options, {current_tags: {
+                tag: $scope.currentTag,
+                subtag: $scope.currentSubTag
+            }})
+        });
+
+        it('should allow the enter flow to fail with a promise', function() {
+
         });
 
         describe('for a readonly user', function(){
@@ -493,9 +510,36 @@ describe('PatientListCtrl', function() {
             });
         });
 
-        it('should call the exit flow', function(){
-            $scope.dischargeEpisode(0);
-            expect(Flow).toHaveBeenCalled()
+        describe('should discharge', function() {
+
+            it('should discharge the patient', function() {
+                $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+                var fake_exit = function(){
+                    return {
+                        then: function(fn){
+                            fn(episode);
+                        }
+                    }
+                }
+                spyOn(Flow, 'exit').and.callFake(fake_exit);
+                $scope.dischargeEpisode(episode);
+                $rootScope.$apply();
+            });
+
+            it('should should discharge the patient if flow returns a promise', function() {
+                $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+                var fake_exit = function(){
+                    return {
+                        then: function(fn){
+                            fn({ then: function(gn){ gn() } } );
+                        }
+                    }
+                }
+                spyOn(Flow, 'exit').and.callFake(fake_exit);
+                $scope.dischargeEpisode(episode);
+                $rootScope.$apply();
+            });
+
         });
 
         describe('for a readonly user', function(){
@@ -510,22 +554,6 @@ describe('PatientListCtrl', function() {
             afterEach(function(){
                 profile.readonly = false;
             });
-        });
-
-        describe('when Flow() returns a deferred', function (){
-            it('Should wait for the deferred', function () {
-                var returned_deferred = {then: function(fn){fn()}}
-                spyOn($scope, '_post_discharge');
-                spyOn(returned_deferred, 'then').and.callThrough();
-                spyOn(flow_promise, 'then').and.callFake(function(fn){ fn(returned_deferred);})
-
-                $scope.dischargeEpisode(0);
-
-                expect(flow_promise.then).toHaveBeenCalled();
-                expect(returned_deferred.then).toHaveBeenCalled();
-                expect($scope._post_discharge).toHaveBeenCalled();
-            });
-
         });
     });
 
