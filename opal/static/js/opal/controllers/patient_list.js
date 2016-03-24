@@ -208,7 +208,6 @@ angular.module('opal.controllers').controller(
 
   		                }
                     };
-                    console.log(resolved)
                     if(resolved.then){ // OMG - it's a promise!
                         resolved.then(
                             function(r){ return_to_normal(r) },
