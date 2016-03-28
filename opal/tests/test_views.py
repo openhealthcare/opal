@@ -7,6 +7,7 @@ from mock import patch, MagicMock
 
 from opal import models, views
 from opal.core import detail, patient_lists
+from opal.core.subrecords import subrecords
 from opal.core.episodes import InpatientEpisode
 from opal.core.test import OpalTestCase
 
@@ -310,13 +311,18 @@ class ModalTemplateViewTestCase(BaseViewTestCase):
 
 class RecordTemplateViewTestCase(BaseViewTestCase):
 
-    def test_200(self):
-        request = self.get_request('/colour_record.html')
-        view = self.setup_view(
-            views.RecordTemplateView, request)
-        resp = view.dispatch(request, model=testmodels.Colour)
-        self.assertEqual([testmodels.Colour.get_display_template()], resp.template_name)
-        self.assertEqual(200, resp.status_code)
+    def setUp(self, *args, **kwargs):
+        super(RecordTemplateViewTestCase, self).setUp(*args, **kwargs)
+        self.client.login(
+            username=self.user.username, password=self.PASSWORD
+        )
+
+
+    def test_test_view(self):
+        # make sure it works for Colour in case subrecords is broken
+        url = reverse("record_view", kwargs=dict(model=testmodels.Colour.get_api_name()))
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
 
 
 class BannedViewTestCase(BaseViewTestCase):
