@@ -2,6 +2,7 @@
 Templatetags for form/modal helpers
 """
 from django import template
+from opal.core.subrecords import get_subrecord_from_api_name
 
 register = template.Library()
 
@@ -32,15 +33,41 @@ def _icon_classes(name):
     return name
 
 
-def extract_common_args(kwargs):
-    args = {
-        "model": kwargs.pop('model', None),
-        "label": kwargs.pop('label', None),
-        "change": kwargs.pop("change", None),
-        "autofocus": kwargs.pop("autofocus", None),
-        "help_text": kwargs.pop("help_text", None)
-    }
+def infer_from_subrecord_field_path(subRecordFieldPath):
+    api_name, field_name = subRecordFieldPath.split(".")
+    model = get_subrecord_from_api_name(api_name)
 
+    if hasattr(model, field_name):
+        # this is true for lookuplists
+        field = getattr(model, field_name)
+    else:
+        field = model._meta.get_field(field_name)
+
+    ctx = {}
+    ctx["label"] = field.name.title()
+    ctx["model"] = "editing.{}".format(subRecordFieldPath)
+
+    if hasattr(field, "foreign_model"):
+        ctx["lookuplist"] = "{}_list".format(
+            field.foreign_model.__name__.lower()
+        )
+
+    ctx["required"] = getattr(field, "required", False)
+    return ctx
+
+
+def extract_common_args(kwargs):
+    if "field" in kwargs:
+        args = infer_from_subrecord_field_path(kwargs["field"])
+    else:
+        args = {}
+
+    for field in ["model", "label", "change"]:
+        if field in kwargs:
+            args[field] = kwargs[field]
+
+    args["autofocus"] = kwargs.pop("autofocus", None)
+    args["help_text"] = kwargs.pop("help_text", None)
     disabled = kwargs.pop('disabled', None)
 
     if disabled:
@@ -51,7 +78,10 @@ def extract_common_args(kwargs):
 
 def _input(*args, **kwargs):
     ctx = extract_common_args(kwargs)
-    lookuplist = kwargs.pop('lookuplist', None)
+
+    if "lookuplist" in kwargs:
+        ctx["lookuplist"] = kwargs.pop("lookuplist")
+
     icon = kwargs.pop('icon', None)
     required = kwargs.pop('required', False)
     formname = kwargs.pop('formname', None)
@@ -73,7 +103,6 @@ def _input(*args, **kwargs):
     ctx.update({
         'modelname': ctx["model"].replace('.', '_').replace("editing_", ""),
         'directives': args,
-        'lookuplist': lookuplist,
         'visibility': visibility,
         'icon'      : icon,
         'required'  : required,
@@ -144,13 +173,14 @@ def select(*args, **kwargs):
     - other: (False) Boolean to indicate that we should allow free text if the item is not in the list
     """
     ctx = extract_common_args(kwargs)
-    lookuplist = kwargs.pop('lookuplist', None)
+    lookuplist = kwargs.pop("lookuplist", ctx.get("lookuplist", None))
+    required = kwargs.pop("required", ctx.get("required", False))
+
     form_name = kwargs.pop('formname', None)
     other = kwargs.pop('other', False)
     help_template = kwargs.pop('help', None)
     help_text = kwargs.pop('help_text', None)
     placeholder = kwargs.pop("placeholder", None)
-    required = kwargs.pop('required', False)
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
     default_null = kwargs.pop('default_null', True)
@@ -172,7 +202,6 @@ def select(*args, **kwargs):
         'default_null': default_null,
         'form_name': form_name,
         'directives': args,
-        'lookuplist': lookuplist,
         'visibility': visibility,
         'help_template': help_template,
         'help_text': help_text,
