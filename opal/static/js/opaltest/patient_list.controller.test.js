@@ -227,7 +227,7 @@ describe('PatientListCtrl', function() {
 
         episodeData2 = angular.copy(episodeData);
         episodeData2.id = 124;
-        var episode = new Episode(episodeData)
+        episode = new Episode(episodeData)
 
         var deferred = $q.defer();
         deferred.resolve();
@@ -513,7 +513,7 @@ describe('PatientListCtrl', function() {
 
             it('Should re-set the visible episodes', function () {
                 spyOn($scope, 'getVisibleEpisodes').and.callThrough();
-                $scope._post_discharge('discharged');
+                $scope._post_discharge('discharged', episode);
                 expect($scope.getVisibleEpisodes).toHaveBeenCalledWith();
             });
 
@@ -522,7 +522,8 @@ describe('PatientListCtrl', function() {
                  * reselect the first episode available when we discharge
                  */
                 spyOn($scope, 'select_episode');
-                $scope._post_discharge('discharged');
+                $scope.episodes[episodeData2.id] = new Episode( episodeData2 );
+                $scope._post_discharge('discharged', episode);
                 var name = $scope.select_episode.calls.allArgs()[0][0].demographics[0].name;
                 expect(name).toEqual("John Smith");
             });
@@ -530,22 +531,25 @@ describe('PatientListCtrl', function() {
 
         describe('should discharge', function() {
 
-            it('should discharge the patient', function() {
-                $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
-                var fake_exit = function(){
-                    return {
-                        then: function(fn){
-                            fn(episode);
-                        }
+            var fake_exit = function(){
+                return {
+                    then: function(fn){
+                        fn('discharged');
                     }
                 }
+            }
+
+            beforeEach(function(){
+                $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+            });
+
+            it('should discharge the patient', function() {
                 spyOn(Flow, 'exit').and.callFake(fake_exit);
                 $scope.dischargeEpisode(episode);
                 $rootScope.$apply();
             });
 
             it('should should discharge the patient if flow returns a promise', function() {
-                $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
                 var fake_exit = function(){
                     return {
                         then: function(fn){
@@ -556,6 +560,46 @@ describe('PatientListCtrl', function() {
                 spyOn(Flow, 'exit').and.callFake(fake_exit);
                 $scope.dischargeEpisode(episode);
                 $rootScope.$apply();
+            });
+
+            describe('for multiple patients', function() {
+                beforeEach(function(){
+                    var episodeData3 = angular.copy(episodeData);
+                    episodeData3.id = 125
+                    episodedata = {
+                        status: 'success',
+                        data: {
+                            123: episode,
+                            124: new Episode(episodeData2),
+                            125: new Episode(episodeData3)
+                        }
+                    };
+                    _makecontroller()
+                });
+
+                it('should remove the episode from episodes', function() {
+                    spyOn(Flow, 'exit').and.callFake(fake_exit);
+                    expect(_.keys($scope.episodes).length).toBe(3);
+                    $scope.dischargeEpisode(episode);
+                    $rootScope.$apply();
+                    expect(_.keys($scope.episodes).length).toBe(2);
+                });
+
+                it('should set a new active episode', function() {
+                    spyOn(Flow, 'exit').and.callFake(fake_exit);
+                    expect($scope.rix).toEqual(0);
+                    expect($scope.episode.id).toEqual(123);
+                    expect($scope.rows.length).toEqual(3)
+
+                    $scope.dischargeEpisode(episode);
+                    $rootScope.$apply();
+
+                    expect($scope.rix).toEqual(0);
+                    expect($scope.rows.length).toEqual(2)
+                    expect($scope.episode.id).toEqual(124);
+                });
+
+
             });
 
         });
