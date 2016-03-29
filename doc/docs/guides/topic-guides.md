@@ -29,6 +29,7 @@ A list of all available topic guides.
 |||
 |--|--|
 |[Templates](templates.md)|Server and client side templating |
+|[Default Context Processors]|OPAL Django context processors|
 |[Static Files](static_files.md)| How OPAL handles static files|
 |[Forms](forms.md) | Forms for entering or editing data|
 |[Patient Detail Views](patient_detail_views.md)|Detailed views of a Patient|
