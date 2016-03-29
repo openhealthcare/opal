@@ -315,7 +315,7 @@ def scaffold(args):
     for i in dir(models):
         thing = getattr(models, i)
         if inspect.isclass(thing) and issubclass(thing, Subrecord):
-            if thing in [EpisodeSubrecord, PatientSubrecord]:
+            if thing in [Subrecord, EpisodeSubrecord, PatientSubrecord]:
                 continue
             if not thing.get_display_template():
                 _create_display_template_for(thing)
