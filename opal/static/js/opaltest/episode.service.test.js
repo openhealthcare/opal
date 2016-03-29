@@ -1,8 +1,8 @@
 describe('Episode', function() {
     "use strict";
 
-    var Episode, EpisodeResource, Item, $scope, columns;
-    var episode, episodeData, resource, tag_hierarchy;
+    var Episode, EpisodeResource, Item, $scope, $rootScope, columns, $window;
+    var episode, episodeData, resource, tag_hierarchy, fields;
     var $routeParams;
 
     beforeEach(function() {
@@ -37,6 +37,32 @@ describe('Episode', function() {
                         {name: 'date_of_diagnosis', type: 'date'},
                         {name: 'condition', type: 'string'},
                         {name: 'provisional', type: 'boolean'},
+                    ]
+                },
+                microbiology_test: {
+                    name: "microbiology_test",
+                    single: false,
+                    fields: [
+                        {name: 'date_ordered', type: 'date'}
+                    ]
+                },
+                general_note: {
+                    name: 'general_note',
+                    fields: [
+                        {name: 'date', type: 'date'}
+                    ]
+                },
+                microbiology_input: {
+                    name: 'microbiology_input',
+                    fields: [
+                        {name: 'initials', type: 'string'},
+                        {name: 'when', type: 'datetime'}
+                    ]
+                },
+                antimicrobial: {
+                    name: 'antimicrobial',
+                    fields: [
+                        {name: 'start_date', type: 'date'}
                     ]
                 }
             },
@@ -87,13 +113,20 @@ describe('Episode', function() {
             }]
         };
 
+        fields = {};
+        _.each(columns.fields, function(c){
+            fields[c.name] = c;
+        });
+
         inject(function($injector) {
             Episode = $injector.get('Episode');
             Item = $injector.get('Item');
             $rootScope  = $injector.get('$rootScope');
             $scope      = $rootScope.$new();
             $routeParams = $injector.get('$routeParams');
+            $window      = $injector.get('$window');
         });
+        $rootScope.fields = fields;
 
         episode = new Episode(episodeData);
     });
@@ -145,7 +178,7 @@ describe('Episode', function() {
     });
 
     it('should be able to get specific item', function() {
-        expect(episode.getItem('diagnosis', 1).id).toEqual(103);
+        expect(episode.getItem('diagnosis', 1).id).toEqual(102);
     });
 
     it('should know how many items it has in each column', function() {
@@ -160,6 +193,7 @@ describe('Episode', function() {
     it('hasTags() Should know if the episode has a given tag', function () {
         expect(episode.hasTag('tropical')).toEqual(true);
     });
+
 
     it('should be able to add a new item', function() {
         var item = new Item(
@@ -182,6 +216,29 @@ describe('Episode', function() {
             category: 'inpatient',
             consistency_token: undefined
         });
+    });
+
+    describe('newItem()', function() {
+        var TODAY = moment(moment().format('YYYY-MM-DD')).toDate()
+
+        it('should set defaults for micro_test', function() {
+            expect(episode.newItem('microbiology_test').date_ordered).toEqual(TODAY);
+        });
+
+        it('should set defaults for general_note', function() {
+            expect(episode.newItem('general_note').date).toEqual(TODAY);
+        });
+
+        it('should set defaults for micro input', function() {
+            $window.initials = 'DM';
+            expect(episode.newItem('microbiology_input').initials).toEqual('DM');
+        });
+
+        it('should set defaults for walkin antimicrobials', function() {
+            $routeParams.slug = 'walkin-walkin_doctor';
+            expect(episode.newItem('antimicrobial').start_date).toEqual(TODAY);
+        });
+
     });
 
     describe('communicating with server', function (){
