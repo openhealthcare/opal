@@ -69,6 +69,8 @@ urlpatterns = patterns(
     url(r'api/v0.1/episode/refer', csrf_exempt(api.APIReferPatientView.as_view())),
     url(r'api/v0.1/', include(api.router.urls)),
     url(r'glossolalia_api/v0.1/', include(glossolalia_api.router.urls)),
+    url(r'^templates/record/(?P<model>[a-z_\-]+).html$',
+        views.RecordTemplateView.as_view(), name="record_view"),
 )
 
 # Generated subrecord template views
@@ -86,11 +88,6 @@ for subrecord_model in subrecords():
             views.ModalTemplateView.as_view(), {'model': subrecord_model}),
         url(r'^templates/modals/%s.html/(?P<tag>[a-z_\-]+)/(?P<subtag>[a-z_\-]+)/?$' % sub_url,
             views.ModalTemplateView.as_view(), {'model': subrecord_model}),
-
-
-        url(r'^templates/record/%s.html/?$' % sub_url,
-            views.RecordTemplateView.as_view(), {'model': subrecord_model}, name="record_view"),
-
     )
 
 

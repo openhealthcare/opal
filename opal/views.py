@@ -13,7 +13,9 @@ from django.views.decorators.http import require_http_methods
 from opal import models
 from opal.core import application, detail, episodes, exceptions, glossolalia
 from opal.core.patient_lists import PatientList
-from opal.core.subrecords import episode_subrecords, subrecords
+from opal.core.subrecords import (
+    episode_subrecords, subrecords, get_subrecord_from_api_name
+)
 from opal.core.views import LoginRequiredMixin, _get_request_data, _build_json_response
 from opal.utils import camelcase_to_underscore, stringport
 from opal.utils.banned_passwords import banned
@@ -59,7 +61,6 @@ class PatientListTemplateView(TemplateView):
         context['list_slug'] = list_slug
         context['lists'] = PatientList.for_user(self.request.user)
         context['columns'] = self.get_column_context(**kwargs)
-        context['models'] = { m.__name__: m for m in subrecords() }
         return context
 
     def get_template_names(self):
@@ -72,7 +73,6 @@ class PatientDetailTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(PatientDetailTemplateView, self).get_context_data(**kwargs)
-        context['models'] = { m.__name__: m for m in subrecords() }
         context['episode_types'] = episodes.episode_types()
         # We cast this to a list because it's a generator but we want to consume
         # it twice in the template
@@ -91,7 +91,6 @@ class EpisodeDetailTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(EpisodeDetailTemplateView, self).get_context_data(**kwargs)
-        context['models'] = { m.__name__: m for m in subrecords() }
         return context
 
 
@@ -314,9 +313,11 @@ class FormTemplateView(LoginRequiredMixin, TemplateView):
         return super(FormTemplateView, self).dispatch(*a, **kw)
 
 
-class ModelTemplateView(LoginRequiredMixin, TemplateView):
+class ModalTemplateView(LoginRequiredMixin, TemplateView):
     def get_template_from_model(self):
-        raise NotImplementedError("this needs to be implemented")
+        return self.column.get_modal_template(
+            team=self.tag, subteam=self.subtag
+        )
 
     def dispatch(self, *a, **kw):
         """
@@ -328,10 +329,10 @@ class ModelTemplateView(LoginRequiredMixin, TemplateView):
         self.subtag = kw.get('sub', None)
         self.template_name = self.get_template_from_model()
         self.name = camelcase_to_underscore(self.column.__name__)
-        return super(ModelTemplateView, self).dispatch(*a, **kw)
+        return super(ModalTemplateView, self).dispatch(*a, **kw)
 
     def get_context_data(self, **kwargs):
-        context = super(ModelTemplateView, self).get_context_data(**kwargs)
+        context = super(ModalTemplateView, self).get_context_data(**kwargs)
         context['name'] = self.name
         context['title'] = getattr(self.column, '_title', self.name.replace('_', ' ').title())
         context['icon'] = getattr(self.column, '_icon', '')
@@ -342,25 +343,15 @@ class ModelTemplateView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class RecordTemplateView(ModelTemplateView):
-    """
-    This view returns the record template as it is rendered in the
-    record panels, this is used for forms where you can add
-    multiple values
-    """
-    def get_template_from_model(self):
-        return self.column.get_display_template(team=self.tag, subteam=self.subtag)
-
-
-class ModalTemplateView(ModelTemplateView):
-    """
-    This view renders the form/modal template for our field.
-
-    These are generated for subrecords, but can also be used
-    by plugins for other mdoels.
-    """
-    def get_template_from_model(self):
-        return self.column.get_modal_template(team=self.tag, subteam=self.subtag)
+class RecordTemplateView(LoginRequiredMixin, TemplateView):
+    def get_template_names(self):
+        model = get_subrecord_from_api_name(self.kwargs["model"])
+        tag = self.kwargs.get("tag", None)
+        subtag = self.kwargs.get("subtag", None)
+        template_name = model.get_modal_template(
+            team=tag, subteam=subtag
+        )
+        return [template_name]
 
 
 class AccountDetailTemplateView(TemplateView):
