@@ -758,7 +758,9 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
             field_schema.append({'name': fieldname,
                                  'title': title,
                                  'type': field_type,
-                                 'lookup_list': lookup_list})
+                                 'lookup_list': lookup_list,
+                                 'model': cls.__name__
+                                 })
         return field_schema
 
     @classmethod
