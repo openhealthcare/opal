@@ -32,7 +32,9 @@ Keywords:
 
 ### {% input ... %}
 
-Generates an Input
+Generates an Input. If you pass a field, the tag will infer the label, model and lookuplist by introspecting the relevant subrecord model.
+
+    {% input field="allergies.drug" %}
 
 Keywords:
 
