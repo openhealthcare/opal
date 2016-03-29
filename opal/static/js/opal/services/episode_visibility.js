@@ -24,6 +24,7 @@ angular.module('opal.services')
         var name = $scope.query.name;
         var ward = $scope.query.ward;
         var bed = $scope.query.bed;
+        var patient_name = demographics.first_name + ' ' + demographics.surname;
 
         // filtered out by hospital number
         if (demographics.hospital_number &&
@@ -33,8 +34,8 @@ angular.module('opal.services')
 	    }
 
         // Filtered out by name.
-        if (name &&  demographics.name && // Was it passed in?
-            demographics.name.toLowerCase().indexOf(name.toLowerCase()) == -1) {
+        if (name &&  patient_name && // Was it passed in?
+            patient_name.toLowerCase().indexOf(name.toLowerCase()) == -1) {
 		    return false;
 	    }
 
