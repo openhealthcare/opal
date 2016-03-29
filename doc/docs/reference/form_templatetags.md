@@ -11,7 +11,7 @@ Generates a checkbox
 
 Keywords:
 
-* `field` a string of the models api name '.' field from this it calculates the label, model and will infer the lookuplist if required
+* `field` a string of the model name '.' field from this it calculates the label, model and will infer the lookuplist if required. For example {% checkbox DogOwner.dog %}. For example {% checkbox DogOwner.dog %}
 * `label` The Label with which to describe this field
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
 * `disabled` If this exists, we use this as the expression for the ng-disabled directive
@@ -22,7 +22,7 @@ Generates a datepicker
 
 Keywords:
 
-* `field` a string of the models api name '.' field from this it calculates the label, model and will infer the lookuplist if required
+* `field` a string of the models api name '.' field from this it calculates the label, model and will infer the lookuplist if required. For example {% datepicker DogOwner.dog %}
 * `label` The Label with which to describe this field
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
 * `show`  A string that contains an Angular expression for the ng-show directive
@@ -38,7 +38,7 @@ Generates an Input. If you pass a field, the tag will infer the label, model and
 
 Keywords:
 
-* `field` a string of the models api name '.' field from this it calculates the label, model and will infer the lookuplist if required
+* `field` a string of the models api name '.' field from this it calculates the label, model and will infer the lookuplist if required. For example {% input DogOwner.dog %}
 * `label` The Label with which to describe this field
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
 * `show`  A string that contains an Angular expression for the ng-show directive
@@ -54,7 +54,7 @@ Generates an inline radio input
 
 Keywords:
 
-* `field` a string of the models api name '.' field from this it calculates the label, model and will infer the lookuplist if required
+* `field` a string of the models api name '.' field from this it calculates the label, model and will infer the lookuplist if required. For example {% radio DogOwner.dog %}
 * `label` The Label with which to describe this input
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
 * `show`  A string that contains an Angular expression for the ng-show directive
@@ -67,7 +67,7 @@ Generates an inline select input
 
 Keywords:
 
-* `field` a string of the models api name '.' field from this it calculates the label, model and will infer the lookuplist if required
+* `field` a string of the models api name '.' field from this it calculates the label, model and will infer the lookuplist if required. For example {% select DogOwner.dog %}
 * `label` The Label with which to describe this input
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
 * `show`  A string that contains an Angular expression for the ng-show directive
@@ -82,7 +82,7 @@ Generates an inline textarea input
 
 Keywords:
 
-* `field` a string of the models api name '.' field from this it calculates the label, model and will infer the lookuplist if required
+* `field` a string of the models api name '.' field from this it calculates the label, model and will infer the lookuplist if required. For example {% textarea DogOwner.dog %}
 * `label` The Label with which to describe this input
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
 * `show`  A string that contains an Angular expression for the ng-show directive
