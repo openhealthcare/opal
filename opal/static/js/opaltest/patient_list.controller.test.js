@@ -1,6 +1,6 @@
 describe('PatientListCtrl', function() {
     "use strict";
-    var episodeData, optionsData, patientData, Schema;
+    var episodeData, episodeData2, optionsData, patientData, Schema;
     var schema, Episode, Item, episode;
     var profile;
     var $scope, $cookieStore, $controller, $q, $dialog, $httpBackend;
@@ -224,6 +224,9 @@ describe('PatientListCtrl', function() {
 
         schema = new Schema(columns.default);
         $rootScope.fields = fields;
+
+        episodeData2 = angular.copy(episodeData);
+        episodeData2.id = 124;
         var episode = new Episode(episodeData)
 
         var deferred = $q.defer();
@@ -282,6 +285,11 @@ describe('PatientListCtrl', function() {
 
         it('should set the URL of the last list visited', function() {
             expect($cookieStore.put).toHaveBeenCalledWith('opal.lastPatientList', 'tropical');
+        });
+
+        it('should should set rows and episodes', function() {
+            expect(_.keys($scope.episodes)).toEqual(['123']);
+            expect($scope.rows.length).toBe(1);
         });
 
     });
@@ -431,13 +439,12 @@ describe('PatientListCtrl', function() {
 
 
     describe('adding an episode', function() {
+        var fake_episode_resolver = function(){
+            return {then : function(fn){ fn(new Episode(episodeData2)) }};
+        };
 
         it('should call flow', function() {
-            spyOn(Flow, 'enter').and.callFake(
-                function(){
-                    return {then : function(fn){ fn(new Episode(episodeData)) }};
-                }
-            );
+            spyOn(Flow, 'enter').and.callFake(fake_episode_resolver);
             $scope.addEpisode();
             expect(Flow.enter).toHaveBeenCalledWith(options, {current_tags: {
                 tag: $scope.currentTag,
@@ -462,8 +469,19 @@ describe('PatientListCtrl', function() {
             }})
         });
 
-        it('should allow the enter flow to fail with a promise', function() {
+        it('should add the new episode to episodes if it has the current tag', function() {
+            spyOn(Flow, 'enter').and.callFake(fake_episode_resolver);
+            expect($scope.rows.length).toBe(1);
+            $scope.addEpisode();
+            expect($scope.rows.length).toBe(2);
+        });
 
+        it('should not add the new episode to episodes if it does not have the current tag', function() {
+            episodeData2.tagging = [{'mine': true, 'id_inpatients': true}];
+            spyOn(Flow, 'enter').and.callFake(fake_episode_resolver);
+            expect($scope.rows.length).toBe(1);
+            $scope.addEpisode();
+            expect($scope.rows.length).toBe(1);
         });
 
         describe('for a readonly user', function(){
