@@ -12,6 +12,7 @@ describe('PatientDetailCtrl', function(){
         next_episodes: [],
         demographics: [{
             id: 101,
+            patient_id: 99,
             name: 'John Smith',
             date_of_birth: '1980-07-31'
         }],

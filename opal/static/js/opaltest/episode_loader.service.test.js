@@ -8,7 +8,7 @@ describe('episodeLoader', function() {
     var episodeLoader, episodeData;
 
     episodeData = {
-        demographics: [{}],
+        demographics: [{patient_id: 1234}],
         tagging: [{}]
     }
 

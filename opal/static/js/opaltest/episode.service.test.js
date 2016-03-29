@@ -61,6 +61,7 @@ describe('Episode', function() {
                 }],
             demographics: [{
                 id: 101,
+                patient_id: 99,
                 first_name: 'John',
                 surname: "Smith",
                 date_of_birth: '31/07/1980',
@@ -95,6 +96,14 @@ describe('Episode', function() {
         });
 
         episode = new Episode(episodeData);
+    });
+
+    describe('initialization', function() {
+
+        it('should throw if there is no patient ID', function() {
+            expect(function(){ new Episode({} )}).toThrow();
+        });
+
     });
 
     it('should run walkin comparison in walkin review', function(){

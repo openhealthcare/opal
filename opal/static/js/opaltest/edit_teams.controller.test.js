@@ -78,6 +78,7 @@ describe('EditTeamsCtrl', function(){
         tagging: [{tropical: true}],
         demographics: [
             {
+                patient_id: 1234,
                 name: 'Jane doe'
             }
         ],
