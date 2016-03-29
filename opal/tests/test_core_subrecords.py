@@ -32,3 +32,14 @@ class TestSubrecords(OpalTestCase):
             subrecords.get_subrecord_from_api_name(famous_api_name)
 
         )
+
+    def test_get_get_subrecord_from_model_name(self):
+        self.assertEqual(
+            HatWearer,
+            subrecords.get_subrecord_from_api_name("HatWearer")
+        )
+
+        self.assertEqual(
+            FamousLastWords,
+            subrecords.get_subrecord_from_api_name("FamousLastWords")
+        )
