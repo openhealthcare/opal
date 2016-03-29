@@ -20,14 +20,14 @@ angular.module('opal.controllers').controller(
             $location.path('/404');
             return
         }else{
-            var episodes = episodedata.data;
+            $scope.episodes = episodedata.data;
             $rootScope.state = 'normal';
             $scope.url = $location.url();
 
             $scope.options = options;
             $scope.listView = true;
 
-            $scope.num_episodes = _.keys(episodes).length;
+            $scope.num_episodes = _.keys($scope.episodes).length;
 
 	        $scope.rix = 0; // row index
             $scope._ =  _;
@@ -48,7 +48,7 @@ angular.module('opal.controllers').controller(
 		    var visibleEpisodes = [];
             var episode_list = [];
 
-            visibleEpisodes = _.filter(episodes, function(episode){
+            visibleEpisodes = _.filter($scope.episodes, function(episode){
                 return episodeVisibility(episode, $scope);
             });
 		    visibleEpisodes.sort(compareEpisodes);
@@ -138,8 +138,8 @@ angular.module('opal.controllers').controller(
 
         $scope.$on('change', function(event, episode) {
             episode = new Episode(episode);
-            if(episodes[episode.id]){
-                episodes[episode.id] = episode;
+            if($scope.episodes[episode.id]){
+                $scope.episodes[episode.id] = episode;
                 var rix = getRowIxFromEpisodeId(episode.id);
                 if(rix != -1){
                     $scope.rows[rix] = episode;
@@ -198,12 +198,21 @@ angular.module('opal.controllers').controller(
 		                var rowIx;
 		                $rootScope.state = 'normal';
   		                if (episode && episode != 'cancel') {
-  			                episodes[episode.id] = episode;
-  			                $scope.rows = $scope.getVisibleEpisodes();
-  			                rowIx = getRowIxFromEpisodeId(episode.id);
-                            $scope.num_episodes += 1;
+                            //
+                            // Occasionally the addPatient modal will add an episode to a list we're
+                            // not currently on. So we check to see if they're tagged to this list.
+                            //
+                            if(episode.tagging[0][$scope.currentTag]){
+                                if(!$scope.currentSubTag || episode.tagging[0][$scope.currentSubTag]){
+  			                        $scope.episodes[episode.id] = episode;
+  			                        $scope.rows = $scope.getVisibleEpisodes();
+  			                        rowIx = getRowIxFromEpisodeId(episode.id);
+                                    $scope.num_episodes += 1;
+                                }
+                            }
                             var readableName = $scope.tag_display[$scope.currentSubTag];
-                            var msg = episode.demographics[0].first_name + " " + episode.demographics[0].surname + " added to the " + readableName + " list";
+                            var msg = episode.demographics[0].first_name + " " + episode.demographics[0].surname;
+                            msg += " added to the " + readableName + " list";
                             growl.success(msg);
 
   		                }
