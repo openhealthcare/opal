@@ -19,6 +19,7 @@ pages:
       - JSON API: guides/json_api.md
       - Lookup Lists: guides/lookup_lists.md
       - Templates: guides/templates.md
+      - Context Processors: guides/context_processors.md
       - Static Files: guides/static_files.md
       - Forms: guides/forms.md
       - Patient Detail Views: guides/patient_detail_views.md
