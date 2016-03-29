@@ -5,7 +5,7 @@ describe('UndischargeCtrl', function() {
 
     episodeData = {
         id: 221,
-        demographics: [{}],
+        demographics: [{patient_id: 1234}],
         location: [{id: 12}]
     };
 

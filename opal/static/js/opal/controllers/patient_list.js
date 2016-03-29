@@ -235,11 +235,14 @@ angular.module('opal.controllers').controller(
                 });
 	    };
 
-        $scope._post_discharge = function(result){
+        $scope._post_discharge = function(result, episode){
   			$rootScope.state = 'normal';
   			if (result == 'discharged' | result == 'moved') {
+                delete $scope.episodes[episode.id];
   				$scope.rows = $scope.getVisibleEpisodes();
                 $scope.num_episodes -= 1;
+                $scope.rix = 0;
+                $scope.episode = $scope.rows[0];
   			};
         };
 
@@ -263,9 +266,9 @@ angular.module('opal.controllers').controller(
                 // scope from trapping keystrokes etc
                 //
                 if(result && result.then){
-                    result.then(function(r){ $scope._post_discharge(r); });
+                    result.then(function(r){ $scope._post_discharge(r, episode); });
                 }else{
-                    $scope._post_discharge(result);
+                    $scope._post_discharge(result, episode);
                 }
 		    });
 	    };

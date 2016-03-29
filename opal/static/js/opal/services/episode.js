@@ -46,6 +46,9 @@ angular.module('opal.services')
                         episode[field] = parsed.toDate();
                     }
                 });
+                if(!episode.demographics || episode.demographics.length == 0 || !episode.demographics[0].patient_id){
+                    throw "Episode() initialization data must contain demographics with a patient id."
+                }
                 this.link = "/patient/" + episode.demographics[0].patient_id + "/" + episode.id;
             };
 
