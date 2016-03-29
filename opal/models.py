@@ -157,15 +157,18 @@ class UpdatesFromDictMixin(object):
         field.add(*to_add)
         field.remove(*to_remove)
 
-    def update_from_dict(self, data, user):
+    def update_from_dict(self, data, user, force=False):
         logging.info("updating {0} with {1} for {2}".format(
             self.__class__.__name__, data, user)
         )
-        if self.consistency_token:
+        if self.consistency_token and not force:
             try:
                 consistency_token = data.pop('consistency_token')
             except KeyError:
-                raise exceptions.APIError('Missing field (consistency_token)')
+                msg = 'Missing field (consistency_token) for {}'
+                raise exceptions.APIError(
+                    msg.format(self.__class__.__name__)
+                )
 
             if consistency_token != self.consistency_token:
                 raise exceptions.ConsistencyError
@@ -398,7 +401,7 @@ class Patient(models.Model):
         return None
 
     @transaction.atomic()
-    def bulk_update(self, dict_of_list_of_upgrades, user, episode=None):
+    def bulk_update(self, dict_of_list_of_upgrades, user, episode=None, force=False):
         """
                 takes in a dictionary of api name to a list of fields and
                 creates the required subrecords. If passed an episode
@@ -430,14 +433,10 @@ class Patient(models.Model):
                     episode = self.create_episode(patient=self)
                     episode.save()
 
-                model.bulk_update_from_dicts(episode, list_of_upgrades, user)
+                model.bulk_update_from_dicts(episode, list_of_upgrades, user, force=force)
             else:
                 # its a patient subrecord
-                model.bulk_update_from_dicts(self, list_of_upgrades, user)
-
-
-
-
+                model.bulk_update_from_dicts(self, list_of_upgrades, user, force=force)
 
 
     def to_dict(self, user):
@@ -781,7 +780,7 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
 
     @classmethod
     def bulk_update_from_dicts(
-        cls, parent, list_of_dicts, user
+        cls, parent, list_of_dicts, user, force=False
     ):
         """
             allows the bulk updating of a field for example
@@ -814,7 +813,7 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
                 a_dict["{}_id".format(schema_name)] = parent.id
                 subrecord = cls(**{schema_name: parent})
 
-            subrecord.update_from_dict(a_dict, user)
+            subrecord.update_from_dict(a_dict, user, force=force)
 
     @classmethod
     def get_detail_template(cls, team=None, subteam=None):

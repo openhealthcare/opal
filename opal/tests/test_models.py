@@ -9,6 +9,7 @@ from opal.core.test import OpalTestCase
 from opal import models
 from opal.models import Subrecord, Tagging, Team, Patient
 from opal.tests.models import FamousLastWords, PatientColour
+from opal.core import exceptions
 
 class PatientRecordAccessTestCase(OpalTestCase):
 
@@ -228,6 +229,38 @@ class BulkUpdateFromDictsTest(OpalTestCase):
             FamousLastWords.bulk_update_from_dicts(
                 patient, famous_last_words, self.user
             )
+
+    def test_bulk_update_singleton(self):
+        patient = Patient.objects.create()
+        famous_model = FamousLastWords.objects.get()
+        famous_model.set_consistency_token()
+        famous_model.save()
+
+        famous_last_words = [
+            {"words": "A towel is the most important item"},
+        ]
+
+        with self.assertRaises(exceptions.APIError):
+            FamousLastWords.bulk_update_from_dicts(
+                patient, famous_last_words, self.user
+            )
+
+    def test_bulk_update_singleton_with_force(self):
+        patient = Patient.objects.create()
+        famous_model = FamousLastWords.objects.get()
+        famous_model.set_consistency_token()
+        famous_model.save()
+
+        famous_last_words = [
+            {"words": "A towel is the most important item"},
+        ]
+
+        FamousLastWords.bulk_update_from_dicts(
+            patient, famous_last_words, self.user, force=True
+        )
+
+        result = FamousLastWords.objects.get()
+        self.assertEqual(result.words, famous_last_words[0].values()[0])
 
 
 class TaggingImportTestCase(OpalTestCase):
