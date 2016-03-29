@@ -61,7 +61,6 @@ class PatientListTemplateView(TemplateView):
         context['list_slug'] = list_slug
         context['lists'] = PatientList.for_user(self.request.user)
         context['columns'] = self.get_column_context(**kwargs)
-        context['models'] = { m.__name__: m for m in subrecords() }
         return context
 
     def get_template_names(self):
@@ -74,7 +73,6 @@ class PatientDetailTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(PatientDetailTemplateView, self).get_context_data(**kwargs)
-        context['models'] = { m.__name__: m for m in subrecords() }
         context['episode_types'] = episodes.episode_types()
         # We cast this to a list because it's a generator but we want to consume
         # it twice in the template
@@ -93,7 +91,6 @@ class EpisodeDetailTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(EpisodeDetailTemplateView, self).get_context_data(**kwargs)
-        context['models'] = { m.__name__: m for m in subrecords() }
         return context
 
 

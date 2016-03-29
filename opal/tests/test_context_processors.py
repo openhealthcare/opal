@@ -16,7 +16,7 @@ class SettingsTestCase(TestCase):
             self.assertEqual(getattr(settings, s), context[s])
 
 
-class SubrecordsTestCase(TestCase):
+class ModelsTestCase(TestCase):
 
     @patch(
         "opal.context_processors.subrecords_iterator",
@@ -26,14 +26,14 @@ class SubrecordsTestCase(TestCase):
         """ subrecord is lazily evaluated, we can
             check this easily, by raising an error
         """
-        context = context_processors.subrecords(None)
+        context = context_processors.models(None)
 
         with self.assertRaises(ValueError):
-            context["subrecords"].Demograpics
+            context["models"].Demograpics
 
     def test_subrecords_are_populated(self):
-        context = context_processors.subrecords(None)
-        subrecord_context = context["subrecords"]
+        context = context_processors.models(None)
+        subrecord_context = context["models"]
         for subrecord in subrecords():
             name = subrecord.__name__
             found_class = getattr(subrecord_context, name)

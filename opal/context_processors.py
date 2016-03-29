@@ -5,7 +5,7 @@ from django.conf import settings as s
 from django.utils.functional import SimpleLazyObject
 from opal.core.subrecords import subrecords as subrecords_iterator
 
-class SubrecordContextProcessor(object):
+class ModelContextProcessor(object):
     def __init__(self):
         for i in subrecords_iterator():
             setattr(self, i.__name__, i)
@@ -16,7 +16,7 @@ def settings(request):
     """
     return {x: getattr(s,x) for x in dir(s)}
 
-def subrecords(request):
+def models(request):
     return {
-        "subrecords": SimpleLazyObject(SubrecordContextProcessor)
+        "models": SimpleLazyObject(ModelContextProcessor)
     }

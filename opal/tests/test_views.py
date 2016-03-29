@@ -130,14 +130,6 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
 
 class PatientDetailTemplateViewTestCase(BaseViewTestCase):
 
-    def test_get_context_data_models(self):
-        request = self.rf.get('/wat')
-        request.user = self.user
-        view = views.PatientDetailTemplateView()
-        view.request = request
-        ctx = view.get_context_data()
-        self.assertEqual(testmodels.Colour, ctx['models']['Colour'])
-
     def test_get_context_data_episode_types(self):
         request = self.rf.get('/wat')
         request.user = self.user
