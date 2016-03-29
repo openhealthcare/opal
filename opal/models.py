@@ -1438,3 +1438,16 @@ class UserProfile(models.Model):
     def explicit_access_only(self):
         all_roles = itertools.chain(*self.get_roles().values())
         return any(r for r in all_roles if r == "scientist")
+
+
+class InpatientAdmission(PatientSubrecord):
+    _title = "Inpatient Admission"
+    _sort = "-admitted"
+
+    admitted = models.DateTimeField()
+    discharged = models.DateTimeField()
+    hospital = models.CharField(max_length=255, blank=True)
+    ward = models.CharField(max_length=255, blank=True)
+    bed = models.CharField(max_length=255, blank=True)
+    admission_diagnosis = models.CharField(max_length=255, blank=True)
+    external_identifier = models.CharField(max_length=255, blank=True)
