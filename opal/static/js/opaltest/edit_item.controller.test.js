@@ -1,7 +1,7 @@
 describe('EditItemCtrl', function (){
     "use strict";
 
-    var $scope, $cookieStore, $timeout, item, Item;
+    var $scope, $cookieStore, $timeout, $modal, item, Item;
     var dialog, Episode, episode, ngProgressLite, $q;
     var Schema, $modal, $controller, controller, fakeModalInstance;
 
@@ -96,6 +96,7 @@ describe('EditItemCtrl', function (){
             $q             = $injector.get('$q');
             $cookieStore   = $injector.get('$cookieStore');
             $timeout       = $injector.get('$timeout');
+            $modal         = $injector.get('$modal');
             ngProgressLite = $injector.get('ngProgressLite');
             Schema         = $injector.get('Schema');
             var $rootScope = $injector.get('$rootScope');
@@ -114,7 +115,7 @@ describe('EditItemCtrl', function (){
         fakeModalInstance = {
             close: function(){
                 // do nothing
-            }
+            },
         };
 
         controller = $controller('EditItemCtrl', {
@@ -174,6 +175,19 @@ describe('EditItemCtrl', function (){
         });
     });
 
+    describe('delete()', function() {
+
+        it('should open the delete modal', function() {
+            spyOn($modal, 'open');
+            $scope.delete();
+            expect($modal.open).toHaveBeenCalled()
+            var args = $modal.open.calls.mostRecent().args[0];
+            expect(args.templateUrl).toEqual('/templates/modals/delete_item_confirmation.html/');
+            expect(args.controller).toEqual('DeleteItemConfirmationCtrl');
+        });
+
+    });
+
     describe('cancel()', function(){
 
         it('should close with null', function(){
@@ -196,5 +210,15 @@ describe('EditItemCtrl', function (){
             expect(resolvers.episode()).toEqual(episode);
         });
     });
+
+    // describe('prepopulate()', function() {
+    //     it('should extend the item', function() {
+    //         var mock_event = {
+    //             preventDefault: function(){}
+    //         }
+    //         $scope.prepopulate(mock_event);
+
+    //     });
+    // });
 
 });
