@@ -21,6 +21,11 @@
     >
     {% endif %}
     <div class="row">
+      {% if full_width %}
+      <div class="col-md-12">
+        {% include detail_template %}
+      </div>
+      {% else %}
       <div class="col-md-9">
         {% include detail_template %}
       </div>
@@ -32,6 +37,7 @@
             {% endif %}
         </span>
       </div>
+      {% endif %}
       </div>
     </li>
     {% if noentries %}

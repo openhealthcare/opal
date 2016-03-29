@@ -10,7 +10,17 @@ register = template.Library()
 
 
 @register.inclusion_tag('_helpers/record_panel.html')
-def record_panel(model, editable=1, title=None, name=None, detail_template=None, angular_filter=None, noentries=None, only_display_if_exists=False):
+def record_panel(
+    model,
+    editable=1,
+    title=None,
+    name=None,
+    detail_template=None,
+    angular_filter=None,
+    noentries=None,
+    only_display_if_exists=False,
+    full_width=False,
+):
     """
     Register a panel for our record.
     Editable is an angular expression
@@ -18,24 +28,25 @@ def record_panel(model, editable=1, title=None, name=None, detail_template=None,
     """
 
     if name is None:
-        name = camelcase_to_underscore(model.__class__.__name__)
+        name = model.get_api_name()
 
     if detail_template is None:
-        detail_template = model.__class__.get_detail_template()
+        detail_template = model.get_detail_template()
 
     if title is None:
-        title = getattr(model, '_title', name.replace('_', ' ').title())
+        title = model.get_display_name()
 
     return {
         'name': name,
         'singleton': getattr(model, '_is_singleton', False),
         'title': title,
         'detail_template': detail_template,
-        'icon': getattr(model, '_icon', None),
+        'icon': model.get_icon(),
         'editable': editable,
         'angular_filter': angular_filter,
         'noentries': noentries,
-        'only_display_if_exists': only_display_if_exists
+        'only_display_if_exists': only_display_if_exists,
+        'full_width': full_width
     }
 
 @register.inclusion_tag('_helpers/record_timeline.html')
