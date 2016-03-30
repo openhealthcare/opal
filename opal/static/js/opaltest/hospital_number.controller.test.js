@@ -298,6 +298,12 @@ describe('HospitalNumberCtrl', function(){
             callArgs = $modal.open.calls.mostRecent().args;
             expect(callArgs.length).toBe(1);
             expect(callArgs[0].controller).toBe('AddEpisodeCtrl');
+            var resolves = $modal.open.calls.mostRecent().args[0].resolve;
+            expect(resolves.options()).toEqual(options);
+            var expected_demographics = angular.copy(patientData.demographics[0])
+            expected_demographics["date_of_birth"] = "12/12/1999";
+            expect(resolves.demographics()).toEqual(expected_demographics);
+            expect(resolves.tags()).toEqual({tag: 'mine', subtag: ''});
         });
 
         it('should call through if there is an active episode.', function(){
