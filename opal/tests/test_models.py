@@ -2,12 +2,14 @@
 Unittests for opal.models
 """
 import datetime
-
 from mock import patch
+
+from django.conf import settings
 from django.contrib.auth.models import User
+
 from opal.core.test import OpalTestCase
 from opal import models
-from opal.models import Subrecord, Tagging, Team, Patient
+from opal.models import Subrecord, Tagging, Team, Patient, InpatientAdmission
 from opal.tests.models import FamousLastWords, PatientColour
 from opal.core import exceptions
 
@@ -261,6 +263,37 @@ class BulkUpdateFromDictsTest(OpalTestCase):
 
         result = FamousLastWords.objects.get()
         self.assertEqual(result.words, famous_last_words[0].values()[0])
+
+
+class InpatientAdmissionTestCase(OpalTestCase):
+    def test_updates_with_external_identifer(self):
+        patient = models.Patient()
+        patient.save()
+        yesterday = datetime.datetime.now() - datetime.timedelta(1)
+        InpatientAdmission.objects.create(
+            datetime_of_admission=yesterday,
+            external_identifier="1",
+            patient=patient
+        )
+
+        now = datetime.datetime.now().strftime(
+            settings.DATETIME_INPUT_FORMATS[0]
+        )
+
+        update_dict = dict(
+            datetime_of_admission=now,
+            external_identifier="1",
+            patient_id=patient.id
+        )
+
+        a = InpatientAdmission()
+        a.update_from_dict(update_dict, self.user)
+
+        result = InpatientAdmission.objects.get()
+        self.assertEqual(
+            result.datetime_of_admission.date(),
+            datetime.date.today()
+        )
 
 
 class TaggingImportTestCase(OpalTestCase):
