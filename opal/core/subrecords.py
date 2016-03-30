@@ -41,3 +41,9 @@ def get_subrecord_from_api_name(api_name):
         if subrecord.get_api_name() == api_name:
             return subrecord
     raise ValueError("unable to find a model for {}".format(api_name))
+
+def get_subrecord_from_model_name(model_name):
+    for subrecord in subrecords():
+        if subrecord.__name__ == model_name:
+            return subrecord
+    raise ValueError("unable to find a model for {}".format(model_name))

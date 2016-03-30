@@ -4,7 +4,24 @@ Tests for our modal/form helpers
 from django.template import Template, Context
 from django.test import TestCase
 
-from opal.templatetags.forms import input, select, textarea, process_steps
+from opal.templatetags.forms import process_steps, infer_from_subrecord_field_path
+
+
+class TestInferFromSubrecordPath(TestCase):
+    def test_infer_from_path(self):
+        ctx = infer_from_subrecord_field_path("DogOwner.name")
+        self.assertEqual(ctx["label"], "Name")
+        self.assertTrue("lookuplist" not in ctx)
+        self.assertEqual(ctx["model"], "editing.dog_owner.name")
+        self.assertFalse(ctx["required"])
+
+        ctx = infer_from_subrecord_field_path("DogOwner.dog")
+        self.assertEqual(ctx["label"], "Dog")
+        self.assertEqual(ctx["model"], "editing.dog_owner.dog")
+        self.assertEqual(ctx["lookuplist"], "dog_list")
+        self.assertFalse(ctx["required"])
+
+
 
 class TextareaTest(TestCase):
     def setUp(self):
@@ -17,6 +34,19 @@ class TextareaTest(TestCase):
 
 
 class InputTest(TestCase):
+
+    def test_load_from_model(self):
+        tpl = Template('{% load forms %}{% input field="DogOwner.dog" %}')
+        rendered = tpl.render(Context({}))
+        self.assertIn("editing.dog_owner.dog", rendered)
+        self.assertIn("dog_list", rendered)
+
+    def test_override_from_model(self):
+        tpl = Template('{% load forms %}{% input label="Cat" model="editing.cat_owner.cat" lookuplist="cat_list" field="DogOwner.dog" %}')
+        rendered = tpl.render(Context({}))
+        self.assertIn("editing.cat_owner.cat", rendered)
+        self.assertIn("cat_list", rendered)
+        self.assertIn("Cat", rendered)
 
     def test_input(self):
         template = Template('{% load forms %}{% input label="hai" model="bai"%}')

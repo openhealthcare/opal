@@ -2,7 +2,9 @@
 // This is the main Episode class for OPAL.
 //
 angular.module('opal.services')
-    .factory('Episode', function($http, $q, $rootScope, $routeParams, Item, RecordEditor) {
+    .factory('Episode', function(
+        $http, $q, $rootScope, $routeParams, $window,
+        Item, RecordEditor) {
         Episode = function(resource) {
 
 	        var episode = this;
@@ -101,8 +103,8 @@ angular.module('opal.services')
 		            attrs.date_of_diagnosis = moment().format(DATE_FORMAT);
 	            }
                 if (columnName == 'microbiology_input'){
-                    attrs.initials = window.initials;
-		            attrs.when = new Date();
+                    attrs.initials = $window.initials;
+                    attrs.when = new Date();
                 }
                 if (columnName == 'observation'){
                     attrs.datetime = new Date();
@@ -121,8 +123,8 @@ angular.module('opal.services')
                 // That's right, it gets worse!
                 //
                 if(columnName == 'antimicrobial'){
-                    if($routeParams.tag == 'walkin'){
-                        attrs.start_date = new Date();
+                    if($routeParams.slug.indexOf('walkin') == 0){
+                        attrs.start_date = moment().format(DATE_FORMAT);
                     }
                 }
 	            return new Item(attrs, episode, opts.column);

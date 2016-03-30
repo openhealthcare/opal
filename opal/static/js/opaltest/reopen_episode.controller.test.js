@@ -1,7 +1,60 @@
 describe('ReopenEpisodeCtrl', function (){
-    var $scope,  $timeout;
-    var dialog, patient, tag
-    var modalInstance;
+    "use strict"
+    var $scope,  $timeout, $rootScope, $httpBackend;
+    var Episode;
+    var dialog, patient, tag, subtag;
+    var modalInstance, mkcontroller;
+    var fields = {};
+    var subrecords = {
+        "default": [
+            {
+                name: 'demographics',
+                single: true,
+                fields: [
+                    {name: 'name', type: 'string'},
+                    {name: 'date_of_birth', type: 'date'},
+                ]},
+            {
+                name: 'location',
+                single: true,
+                fields: [
+                    {name: 'category', type: 'string'},
+                    {name: 'hospital', type: 'string'},
+                    {name: 'ward', type: 'string'},
+                    {name: 'bed', type: 'string'},
+                    {name: 'date_of_admission', type: 'date'},
+                    {name: 'tags', type: 'list'},
+                ]},
+            {
+                name: 'diagnosis',
+                single: false,
+                fields: [
+                    {name: 'condition', type: 'string'},
+                    {name: 'provisional', type: 'boolean'},
+                ]},
+            {
+                "name": "tagging",
+                "single": true,
+                "display_name": "Teams",
+                "advanced_searchable": true,
+                "fields": [
+                    {
+                        "type": "boolean",
+                        "name": "mine"
+                    },
+                    {
+                        "type": "boolean",
+                        "name": "tropical"
+                    }
+                ]
+            }
+        ]
+    };
+
+
+    _.each(subrecords.default, function(c){
+        fields[c.name] = c;
+    });
 
     var patientData = {
         "active_episode_id": null,
@@ -31,7 +84,9 @@ describe('ReopenEpisodeCtrl', function (){
                 "diagnosis": [],
                 "general_note": [],
                 "id": 3,
-                "tagging": {},
+                "tagging": [{
+
+                }],
                 "location": [
                     {
                         "bed": "",
@@ -133,25 +188,36 @@ describe('ReopenEpisodeCtrl', function (){
             $controller  = $injector.get('$controller');
             $modal       = $injector.get('$modal');
             $timeout     = $injector.get('$timeout');
+            Episode      = $injector.get('Episode');
+            $httpBackend = $injector.get('$httpBackend');
         });
 
+        $rootScope.fields = fields;
         modalInstance = $modal.open({template: 'notarealtemplate!'});
-        patient = patientData;
+        patient = angular.copy(patientData);
+        patient.episodes = _.map(_.keys(patient.episodes), function(k){
+            return new Episode(patientData.episodes[k]);
+        })
         tag = 'mine';
+        subtag = null;
 
-        controller = $controller('ReopenEpisodeCtrl', {
-            $scope  : $scope,
-            $timeout: $timeout,
-            $modalInstance  : modalInstance,
-            patient : patient,
-            tag     : tag,
-            subtag  : null,
-        });
+
+        mkcontroller = function(){
+            $controller('ReopenEpisodeCtrl', {
+                $scope  : $scope,
+                $timeout: $timeout,
+                $modalInstance  : modalInstance,
+                patient : patient,
+                tag     : tag,
+                subtag  : subtag,
+            });
+        }
+        mkcontroller();
     });
 
     describe('initialization', function(){
         it('should set up state', function(){
-            expect($scope.episodes).toEqual(_.values(patientData.episodes));
+            expect($scope.episodes.length).toEqual(1);
             expect($scope.model.episodeId).toEqual('None');
         });
     });
@@ -193,4 +259,27 @@ describe('ReopenEpisodeCtrl', function (){
             expect(modalInstance.close).toHaveBeenCalledWith('open-new');
         });
     });
+
+    describe('reopen()', function() {
+      it('should save with the tags.', function() {
+          $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+          tag = 'id';
+          subtag = 'inpatients';
+          mkcontroller();
+          $scope.model.episodeId = '0';
+          $scope.reopen();
+          $httpBackend.flush();
+          $rootScope.$apply();
+      });
+    });
+
+    describe('cancel()', function(){
+        it('should close with null', function(){
+            spyOn(modalInstance, 'close');
+            $scope.cancel();
+            expect(modalInstance.close).toHaveBeenCalledWith(null);
+        });
+    });
+
+
 });
