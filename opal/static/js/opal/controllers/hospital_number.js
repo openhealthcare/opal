@@ -33,26 +33,37 @@ angular.module('opal.controllers').controller(
             );
 
 	    };
+      var addPatient = function(demographics){
+        modal = $modal.open({
+  				templateUrl: '/templates/modals/add_episode.html/',
+  				controller: 'AddEpisodeCtrl',
+                  size: 'lg',
+  				resolve: {
+  					options: function() { return options; },
+  					demographics: function() {
+  						return demographics
+  					},
+            tags: function(){ return $scope.tags; }
+  				}
+  			}).result.then(function(result) {
+  				// The user has created the episode, or cancelled
+  				$modalInstance.close(result);
+  			});
+      }
 
         $scope.newPatient = function(result){
-			// There is no patient with this hospital number
-			// Show user the form for creating a new episode,
-            // with the hospital number pre-populated
-			modal = $modal.open({
-				templateUrl: '/templates/modals/add_episode.html/',
-				controller: 'AddEpisodeCtrl',
-                size: 'lg',
-				resolve: {
-					options: function() { return options; },
-					demographics: function() {
-						return { hospital_number: result.hospitalNumber }
-					},
-                    tags: function(){ return $scope.tags }
-				}
-			}).result.then(function(result) {
-				// The user has created the episode, or cancelled
-				$modalInstance.close(result);
-			});
+          addPatient({ hospital_number: result.hospitalNumber });
+        };
+
+        $scope.addForPatient = function(patient){
+          demographics = patient.demographics[0];
+          if(demographics.date_of_birth){
+              var dob = moment(demographics.date_of_birth, 'YYYY-MM-DD')
+                  .format('DD/MM/YYYY');
+              demographics.date_of_birth = dob;
+          }
+
+          addPatient(demographics);
         };
 
         $scope.newForPatient = function(patient){
@@ -95,30 +106,7 @@ angular.module('opal.controllers').controller(
 			}
         };
 
-        $scope.addForPatient = function(patient){
-            demographics = patient.demographics[0];
-            if(demographics.date_of_birth){
-                var dob = moment(demographics.date_of_birth, 'YYYY-MM-DD')
-                    .format('DD/MM/YYYY');
-				demographics.date_of_birth = dob;
-            }
 
-            modal = $modal.open({
-				templateUrl: '/templates/modals/add_episode.html/',
-				controller: 'AddEpisodeCtrl',
-                size: 'lg',
-				resolve: {
-					options: function() { return options; },
-					demographics: function() { return demographics; }
-				}
-			}).result.then(
-                function(result){
-                    $modalInstance.close(result);
-                },
-                function(result){
-                    $modalInstance.close(result);
-                });
-        };
 
 	    $scope.cancel = function() {
 		    $modalInstance.close(null);
