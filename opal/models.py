@@ -1440,3 +1440,30 @@ class UserProfile(models.Model):
     def explicit_access_only(self):
         all_roles = itertools.chain(*self.get_roles().values())
         return any(r for r in all_roles if r == "scientist")
+
+
+class InpatientAdmission(PatientSubrecord):
+    _title = "Inpatient Admission"
+    _icon = 'fa fa-map-marker'
+    _sort = "-admitted"
+
+    datetime_of_admission = models.DateTimeField(blank=True, null=True)
+    datetime_of_discharge = models.DateTimeField(blank=True, null=True)
+    hospital = models.CharField(max_length=255, blank=True)
+    ward_code = models.CharField(max_length=255, blank=True)
+    room_code = models.CharField(max_length=255, blank=True)
+    bed_code = models.CharField(max_length=255, blank=True)
+    admission_diagnosis = models.CharField(max_length=255, blank=True)
+    external_identifier = models.CharField(max_length=255, blank=True)
+
+    def update_from_dict(self, data, *args, **kwargs):
+        if "id" not in data:
+            if "external_identifier" in data:
+                existing = InpatientAdmission.objects.filter(
+                    external_identifier=data["external_identifier"]
+                ).first()
+
+                if existing:
+                    data["id"] = existing.id
+
+        super(InpatientAdmission, self).update_from_dict(data, *args, **kwargs)
