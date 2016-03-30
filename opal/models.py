@@ -1444,6 +1444,7 @@ class UserProfile(models.Model):
 
 class InpatientAdmission(PatientSubrecord):
     _title = "Inpatient Admission"
+    _icon = 'fa fa-map-marker'
     _sort = "-admitted"
 
     datetime_of_admission = models.DateTimeField(blank=True, null=True)
