@@ -3,12 +3,11 @@ module.exports = function(config){
 
     if(process.env.TRAVIS){
         browsers = ["Firefox"];
-        basePath = '../../opal/opal/static/js';
     }
     else{
         browsers = ['PhantomJS'];
-        basePath = __dirname + '/../opal/static/js';
     }
+
     basePath = '../../opal/opal/static/js';
 
     config.set({
@@ -66,18 +65,6 @@ module.exports = function(config){
             '../../core/search/static/js/search/services/*',
             'opaltest/*.js',
         ],
-        // preprocessors: {
-        //     'opal/**/*.js': 'coverage',
-        //     '../../core/search/static/js/search/**/*.js': 'coverage',
-        // },
-        // // reporters: ['coverage'],
-        // reporters: ['progress', 'coverage',
-        //            ],
-        // singleRun: true,
-        // coverageReporter : {
-        //     type : 'html',
-        //     dir : '../../../htmlcov/js/'
-        // }
 
         // Stolen from http://oligofren.wordpress.com/2014/05/27/running-karma-tests-on-browserstack/
         browserDisconnectTimeout : 10000, // default 2000
