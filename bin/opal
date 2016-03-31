@@ -373,20 +373,18 @@ def _run_js_tests(args):
     print "Running Javascript Unit Tests"
     env = os.environ.copy()
     if TRAVIS:
-        sub_args = [
-            './node_modules/karma/bin/karma',
-            'start',
-            'config/karma.conf.travis.js',
-            '--single-run'
-        ]
+        karma = './node_modules/karma/bin/karma'
     else:
-        sub_args = [
-            'karma',
-            'start',
-            'config/karma.conf.developer.js',
-            '--single-run'
-        ]
+        karma = 'karma'
         env['DISPLAY'] = ':10'
+
+    sub_args = [
+        karma,
+        'start',
+        'config/karma.conf.js',
+        '--single-run'
+    ]
+
     try:
         subprocess.check_call(sub_args, env=env)
     except subprocess.CalledProcessError:

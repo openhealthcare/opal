@@ -124,7 +124,7 @@ describe('ExtractCtrl', function(){
 
         it('should be true if we have a query', function(){
             $scope.criteria[0].column = 'demographics';
-            $scope.criteria[0].field = 'name';
+            $scope.criteria[0].field = 'surname';
             $scope.criteria[0].queryType = 'contains';
             $scope.criteria[0].query = 'jane';
             expect($scope.completeCriteria().length).toBe(1);
