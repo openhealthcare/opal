@@ -381,7 +381,7 @@ def _run_js_tests(args):
     sub_args = [
         karma,
         'start',
-        'config/karma.conf.travis.js',
+        'config/karma.conf.js',
         '--single-run'
     ]
 
