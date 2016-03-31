@@ -2,7 +2,7 @@ module.exports = function(config){
     config.set({
         frameworks: ['jasmine'],
         browsers: ['PhantomJS'],
-        basePath:  '/usr/lib/ohc/opal/opal/static/js',
+        basePath:  '../../opal/opal/static/js',
 
         files: [
             //JASMINE,
@@ -52,20 +52,35 @@ module.exports = function(config){
             'opal/app.js',
             '../../core/search/static/js/search/controllers/*',
             '../../core/search/static/js/search/services/*',
-
             'opaltest/*.js',
         ],
+        // preprocessors: {
+        //     'opal/**/*.js': 'coverage',
+        //     '../../core/search/static/js/search/**/*.js': 'coverage',
+        // },
+        // // reporters: ['coverage'],
+        // reporters: ['progress', 'coverage',
+        //            ],
+        // singleRun: true,
+        // coverageReporter : {
+        //     type : 'html',
+        //     dir : '../../../htmlcov/js/'
+        // }
+
+        // Stolen from http://oligofren.wordpress.com/2014/05/27/running-karma-tests-on-browserstack/
+        browserDisconnectTimeout : 10000, // default 2000
+        browserDisconnectTolerance : 1, // default 0
+        browserNoActivityTimeout : 4*60*1000, //default 10000
+        captureTimeout : 4*60*1000, //default 60000
         preprocessors: {
             'opal/**/*.js': 'coverage',
             '../../core/search/static/js/search/**/*.js': 'coverage',
         },
-        // reporters: ['coverage'],
-        reporters: ['progress', 'coverage',
-                   ],
-        singleRun: true,
-        coverageReporter : {
-            type : 'html',
-            dir : '../../../htmlcov/js/'
+        reporters: ['progress', 'coverage'],
+        coverageReporter: {
+            type: 'lcovonly', // lcov or lcovonly are required for generating lcov.info files
+            dir: '../../../coverage/',
         }
+
     })
 }

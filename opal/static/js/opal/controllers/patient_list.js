@@ -32,7 +32,9 @@ angular.module('opal.controllers').controller(
 	        $scope.rix = 0; // row index
             $scope._ =  _;
 
-  	        $scope.query = {hospital_number: '', name: '', ward: '', bed: ''};
+  	        $scope.query = {
+              hospital_number: '', first_name: '', surname: '', ward: '', bed: ''
+            };
             $scope.$location = $location;
             $scope.path_base = '/list/';
             $scope.profile = profile;

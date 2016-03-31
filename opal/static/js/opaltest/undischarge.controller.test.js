@@ -15,7 +15,8 @@ describe('UndischargeCtrl', function() {
                 name: 'demographics',
                 single: true,
                 fields: [
-                    {name: 'name', type: 'string'},
+                    {name: 'first_name', type: 'string'},
+                    {name: 'surname', type: 'string'},
                     {name: 'date_of_birth', type: 'date'},
                 ]},
             {
