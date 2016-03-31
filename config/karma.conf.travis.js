@@ -1,11 +1,20 @@
 module.exports = function(config){
-    console.log("Boom");
-    console.log(process.env.TRAVIS);
+    var browsers, basePath;
+
+    if(process.env.TRAVIS){
+        browsers = ["Firefox"];
+        basePath = '../../opal/opal/static/js';
+    }
+    else{
+        browsers = ['PhantomJS'];
+        basePath = __dirname + '/../opal/static/js';
+    }
+    basePath = '../../opal/opal/static/js';
 
     config.set({
         frameworks: ['jasmine'],
-        browsers: ['PhantomJS'],
-        basePath:  '../../opal/opal/static/js',
+        browsers: browsers,
+        basePath:  basePath,
 
         files: [
             //JASMINE,
