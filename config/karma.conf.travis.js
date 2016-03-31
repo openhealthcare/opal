@@ -1,8 +1,11 @@
 module.exports = function(config){
+    console.log("Boom");
+    console.log(process.env.TRAVIS);
+
     config.set({
         frameworks: ['jasmine'],
-        browsers: ['Firefox'],
-        basePath:  __dirname + '/../opal/static/js',
+        browsers: ['PhantomJS'],
+        basePath:  '../../opal/opal/static/js',
 
         files: [
             //JASMINE,
@@ -33,8 +36,8 @@ module.exports = function(config){
             'ngprogress-lite/ngprogress-lite.js',
             'jquery-1.11.3/jquery-1.11.3.js',
             'utils/underscore.js',
-            'utils/moment.js',
             'utils/showdown.js',
+            'utils/moment.js',
             'bower_components/angular-growl-v2/build/angular-growl.js',
             'bower_components/ment.io/dist/mentio.js',
             'bower_components/ment.io/dist/templates.js',
@@ -52,9 +55,20 @@ module.exports = function(config){
             'opal/app.js',
             '../../core/search/static/js/search/controllers/*',
             '../../core/search/static/js/search/services/*',
-
             'opaltest/*.js',
         ],
+        // preprocessors: {
+        //     'opal/**/*.js': 'coverage',
+        //     '../../core/search/static/js/search/**/*.js': 'coverage',
+        // },
+        // // reporters: ['coverage'],
+        // reporters: ['progress', 'coverage',
+        //            ],
+        // singleRun: true,
+        // coverageReporter : {
+        //     type : 'html',
+        //     dir : '../../../htmlcov/js/'
+        // }
 
         // Stolen from http://oligofren.wordpress.com/2014/05/27/running-karma-tests-on-browserstack/
         browserDisconnectTimeout : 10000, // default 2000
