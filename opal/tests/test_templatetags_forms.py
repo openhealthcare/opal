@@ -142,6 +142,19 @@ class SelectTestCase(TestCase):
         with self.assertRaises(ValueError):
             tpl.render(Context({}))
 
+    def test_load_from_model(self):
+        tpl = Template('{% load forms %}{% select field="DogOwner.dog" %}')
+        rendered = tpl.render(Context({}))
+        self.assertIn("editing.dog_owner.dog", rendered)
+        self.assertIn("dog_list", rendered)
+
+    def test_override_from_model(self):
+        tpl = Template('{% load forms %}{% select label="Cat" model="editing.cat_owner.cat" lookuplist="cat_list" field="DogOwner.dog" %}')
+        rendered = tpl.render(Context({}))
+        self.assertIn("editing.cat_owner.cat", rendered)
+        self.assertIn("cat_list", rendered)
+        self.assertIn("Cat", rendered)
+
 
 class IconTestCase(TestCase):
 

@@ -201,6 +201,7 @@ def select(*args, **kwargs):
     other_label = '{0} Other'.format(ctx["label"])
 
     ctx.update({
+        'lookuplist': lookuplist,
         'placeholder': placeholder,
         'default_null': default_null,
         'form_name': form_name,
