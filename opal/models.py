@@ -1458,9 +1458,12 @@ class InpatientAdmission(PatientSubrecord):
 
     def update_from_dict(self, data, *args, **kwargs):
         if "id" not in data:
-            if "external_identifier" in data:
+            if "patient_id" not in data:
+                raise ValueError("no patient id found for result in %s" % data)
+            if "external_identifier" in data and data["external_identifier"]:
                 existing = InpatientAdmission.objects.filter(
-                    external_identifier=data["external_identifier"]
+                    external_identifier=data["external_identifier"],
+                    patient_id=data["patient_id"]
                 ).first()
 
                 if existing:
