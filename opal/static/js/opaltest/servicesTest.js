@@ -40,7 +40,8 @@ describe('services', function() {
                     name: "demographics",
                     single: true,
                     fields: [
-                        {name: 'name', type: 'string'},
+                        {name: 'first_name', type: 'string'},
+                        {name: 'surname', type: 'string'},
                         {name: 'date_of_birth', type: 'date'},
                     ]
                 },
@@ -71,7 +72,8 @@ describe('services', function() {
                 }],
             demographics: [{
                 id: 101,
-                name: 'John Smith',
+                first_name: 'John',
+                surname: 'Smith',
                 date_of_birth: '31/071980',
                 hospital_number: '555'
             }],
