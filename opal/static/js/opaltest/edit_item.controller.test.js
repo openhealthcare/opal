@@ -74,7 +74,10 @@ describe('EditItemCtrl', function (){
 
     var options = {
         condition: ['Another condition', 'Some condition'],
-        tag_hierarchy :{'tropical': []}
+        tag_hierarchy :{'tropical': []},
+        "micro_test_stool_parasitology_pcr": [
+            "Stool Parasitology PCR"
+        ],
     };
 
     var profile = {
@@ -212,14 +215,14 @@ describe('EditItemCtrl', function (){
         });
     });
 
-    // describe('prepopulate()', function() {
-    //     it('should extend the item', function() {
-    //         var mock_event = {
-    //             preventDefault: function(){}
-    //         }
-    //         $scope.prepopulate(mock_event);
+    describe('prepopulate()', function() {
+        it('should extend the item', function() {
+            var mock_event = {
+                preventDefault: function(){}
+            }
+            $scope.prepopulate(mock_event);
 
-    //     });
-    // });
+        });
+    });
 
 });
