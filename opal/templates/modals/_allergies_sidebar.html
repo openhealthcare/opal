@@ -12,7 +12,7 @@
     <div ng-hide="the_episode.allergies[0].no_allergies">
       <ul>
         <li ng-repeat="item in the_episode.allergies">
-          {% include subrecords.Allergies.get_detail_template %}
+          {% include models.Allergies.get_detail_template %}
         </li>
       </ul>
     </div>

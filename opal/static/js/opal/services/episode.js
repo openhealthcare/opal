@@ -123,7 +123,7 @@ angular.module('opal.services')
                 // That's right, it gets worse!
                 //
                 if(columnName == 'antimicrobial'){
-                    if($routeParams.slug.indexOf('walkin') == 0){
+                    if($routeParams.slug && $routeParams.slug.indexOf('walkin') === 0){
                         attrs.start_date = moment().format(DATE_FORMAT);
                     }
                 }
