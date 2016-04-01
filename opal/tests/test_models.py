@@ -295,6 +295,114 @@ class InpatientAdmissionTestCase(OpalTestCase):
             datetime.date.today()
         )
 
+    def test_no_external_identifier(self):
+        patient = models.Patient()
+        patient.save()
+        yesterday = datetime.datetime.now() - datetime.timedelta(1)
+        InpatientAdmission.objects.create(
+            datetime_of_admission=yesterday,
+            external_identifier="1",
+            patient=patient
+        )
+
+        now = datetime.datetime.now().strftime(
+            settings.DATETIME_INPUT_FORMATS[0]
+        )
+
+        update_dict = dict(
+            datetime_of_admission=now,
+            patient_id=patient.id
+        )
+
+        a = InpatientAdmission()
+        a.update_from_dict(update_dict, self.user)
+
+        results = InpatientAdmission.objects.all()
+        self.assertEqual(2, len(results))
+
+        self.assertEqual(
+            results[0].datetime_of_admission.date(),
+            yesterday.date()
+        )
+
+        self.assertEqual(
+            results[1].datetime_of_admission.date(),
+            datetime.date.today()
+        )
+
+    def test_doesnt_update_empty_external_identifier(self):
+        patient = models.Patient()
+        patient.save()
+        yesterday = datetime.datetime.now() - datetime.timedelta(1)
+        InpatientAdmission.objects.create(
+            datetime_of_admission=yesterday,
+            external_identifier="",
+            patient=patient
+        )
+
+        now = datetime.datetime.now().strftime(
+            settings.DATETIME_INPUT_FORMATS[0]
+        )
+
+        update_dict = dict(
+            datetime_of_admission=now,
+            external_identifier="",
+            patient_id=patient.id
+        )
+
+        a = InpatientAdmission()
+        a.update_from_dict(update_dict, self.user)
+
+        results = InpatientAdmission.objects.all()
+        self.assertEqual(2, len(results))
+
+        self.assertEqual(
+            results[0].datetime_of_admission.date(),
+            yesterday.date()
+        )
+
+        self.assertEqual(
+            results[1].datetime_of_admission.date(),
+            datetime.date.today()
+        )
+
+    def test_doesnt_update_a_different_patient(self):
+        other_patient = Patient.objects.create()
+        patient = models.Patient()
+        patient.save()
+        yesterday = datetime.datetime.now() - datetime.timedelta(1)
+        InpatientAdmission.objects.create(
+            datetime_of_admission=yesterday,
+            external_identifier="1",
+            patient=patient
+        )
+
+        now = datetime.datetime.now().strftime(
+            settings.DATETIME_INPUT_FORMATS[0]
+        )
+
+        update_dict = dict(
+            datetime_of_admission=now,
+            external_identifier="",
+            patient_id=other_patient.id
+        )
+
+        a = InpatientAdmission()
+        a.update_from_dict(update_dict, self.user)
+
+        results = InpatientAdmission.objects.all()
+        self.assertEqual(2, len(results))
+
+        self.assertEqual(
+            results[0].datetime_of_admission.date(),
+            yesterday.date()
+        )
+
+        self.assertEqual(
+            results[1].datetime_of_admission.date(),
+            datetime.date.today()
+        )
+
 
 class TaggingImportTestCase(OpalTestCase):
     def test_tagging_import(self):
