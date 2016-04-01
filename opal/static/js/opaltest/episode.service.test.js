@@ -235,6 +235,11 @@ describe('Episode', function() {
         });
 
         it('should set defaults for walkin antimicrobials', function() {
+            delete $routeParams.slug;
+            expect(episode.newItem('antimicrobial').start_date).toBe(undefined);
+        });
+
+        it('should not set defaults if there is no slug', function() {
             $routeParams.slug = 'walkin-walkin_doctor';
             expect(episode.newItem('antimicrobial').start_date).toEqual(TODAY);
         });
