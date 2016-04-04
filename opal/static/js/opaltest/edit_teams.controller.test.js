@@ -137,8 +137,20 @@ describe('EditTeamsCtrl', function(){
         it('should save', function() {
             $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
             $httpBackend.expectGET('/api/v0.1/options/').respond(options);
+            spyOn(modalInstance, 'close');
+            $scope.episode = {
+                tagging: [
+                    {
+                        save: function(){
+                            return {then: function(fn) { fn() }}
+                        }
+                    }
+                ]
+            };
+            $scope.save('close');
             $rootScope.$apply();
             $httpBackend.flush();
+            expect(modalInstance.close).toHaveBeenCalledWith('close');
         });
 
     });

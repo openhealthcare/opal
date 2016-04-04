@@ -220,8 +220,13 @@ describe('EditItemCtrl', function (){
             var mock_event = {
                 preventDefault: function(){}
             }
-            $scope.prepopulate(mock_event);
+            //            $ = jasmine.createSpy().and.callFake(function(what){ console.log(what)})
+            var spy = spyOn(jQuery.fn, 'data').and.returnValue({'foo': 'true', 'bar': 'false'});
 
+            $scope.prepopulate(mock_event);
+            expect(spy).toHaveBeenCalled();
+            expect($scope.editing.investigation.foo).toEqual(true);
+            expect($scope.editing.investigation.bar).toEqual(false);
         });
     });
 
