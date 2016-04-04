@@ -3,12 +3,12 @@ Allow us to make search queries
 """
 import datetime
 
-from django.apps import apps
 from django.contrib.contenttypes.models import ContentType
 from django.db import models as djangomodels
-
+from django.conf import settings
 from opal import models
 from opal.core import fields, subrecords
+from opal.utils import stringport
 
 
 def get_model_name_from_column_name(column_name):
@@ -335,5 +335,7 @@ Searching for:
 {filters}
 """.format(username=self.user.username, date=datetime.datetime.now(), filters=filters)
 
-
-SearchBackend = DatabaseQuery
+if hasattr(settings, "OPAL_SEARCH_BACKEND"):
+    SearchBackend = stringport(settings.SEARCH_BACKEND)
+else:
+    SearchBackend = DatabaseQuery
