@@ -3,7 +3,6 @@ Allow us to make search queries
 """
 import datetime
 
-from django.utils.functional import SimpleLazyObject
 from django.contrib.contenttypes.models import ContentType
 from django.db import models as djangomodels
 from django.conf import settings
