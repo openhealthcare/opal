@@ -87,7 +87,7 @@ def patient_search_view(request):
         'column': u'demographics',
     }]
 
-    query = queries.SearchBackend(request.user, criteria)
+    query = queries.create_query(request.user, criteria)
     return _build_json_response(query.patients_as_json())
 
 
@@ -100,7 +100,7 @@ def simple_search_view(request):
     if not all_criteria:
         return _build_json_response({'error': "No search terms"}, 400)
 
-    query = queries.SearchBackend(request.user, all_criteria)
+    query = queries.create_query(request.user, all_criteria)
     eps = query.get_patient_summaries()
     return _build_json_response(_add_pagination(eps, page_number))
 
@@ -113,7 +113,7 @@ class ExtractSearchView(View):
         if "page_number" in request_data[0]:
             page_number = request_data[0].pop("page_number", 1)
 
-        query = queries.SearchBackend(
+        query = queries.create_query(
             self.request.user,
             request_data,
         )
@@ -133,7 +133,7 @@ class DownloadSearchView(View):
             )
             return _build_json_response({'extract_id': extract_id})
 
-        query = queries.SearchBackend(
+        query = queries.create_query(
             self.request.user, json.loads(self.request.POST['criteria'])
         )
         episodes = query.get_episodes()

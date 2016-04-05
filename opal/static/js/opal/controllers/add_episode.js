@@ -7,13 +7,16 @@ angular.module('opal.controllers')
                                            demographics,
                                            tags) {
 
-        var DATE_FORMAT = 'DD/MM/YYYY';
+      var DATE_FORMAT = 'DD/MM/YYYY';
 	    $scope.currentTag    = tags.tag;
 	    $scope.currentSubTag = tags.subtag;
 
 	    for (var name in options) {
 		    $scope[name + '_list'] = options[name];
 	    };
+
+      $scope.tagging_display_list = _.values(options.tag_display);
+
 	    $scope.editing = {
             tagging: [{}],
 		    location: {

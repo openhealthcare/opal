@@ -1,5 +1,14 @@
 {% load forms %}
-<div class="form-group"
+<div ng-show="{{ static }}" class="form-group">
+  <label class="control-label col-sm-3">
+    {{ label }}
+  </label>
+  <p class="form-control-static col-sm-8">
+    [[ {{ model }} ]]
+  </p>
+</div>
+
+<div ng-hide="{{ static }}" class="form-group"
      {% if visibility %} {{ visibility|safe }} {% endif %}
      >
     <span ng-class="{ 'errored-state': {{ form_name }}.{{ model_name }}.$dirty && !{{ form_name }}.{{ model_name }}.$valid }">
