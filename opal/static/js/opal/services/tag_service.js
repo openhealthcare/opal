@@ -8,16 +8,12 @@ angular.module('opal.services').factory('TagService', function(Options) {
         self.currentFormTags = [];
 
         Options.then(function(options){
-            self.tags_list = _.filter(options.tags, function(option){
+            self.tags_list = _.filter(_.values(options.tags), function(option){
                 return option.direct_add;
             });
 
             self.is_direct_add = function(someTag){
-                return _.find(self.tags_list, function(optionsTag){
-                    if(someTag === optionsTag.name){
-                        return optionsTag.direct_add;
-                    }
-                });
+                return options.tags[someTag] && options.tags[someTag].direct_add;
             };
 
             self.currentFormTags = _.filter(existing_tags, function(t){

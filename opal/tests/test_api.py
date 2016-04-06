@@ -129,22 +129,22 @@ class OptionTestCase(TestCase):
         mock_request.user = self.user
         response = self.viewset().list(mock_request)
         result = response.data
-        expected = [
-            {
-            'visible_in_list': 'carnivore',
-            'direct_add': False,
-            'display_name': 'Carnivores',
-            'slug': 'carnivore',
-            'name': 'carnivore'
+        expected = {
+            "carnivore": {
+                'visible_in_list': True,
+                'direct_add': False,
+                'display_name': 'Carnivores',
+                'slug': 'carnivore',
+                'name': 'carnivore'
             },
-            {
-            'visible_in_list': 'herbivore',
-            'direct_add': True,
-            'display_name': 'Herbivores',
-            'slug': 'eater-herbivore',
-            'name': 'herbivore'
+            "herbivore": {
+                'visible_in_list': False,
+                'direct_add': True,
+                'display_name': 'Herbivores',
+                'slug': 'eater-herbivore',
+                'name': 'herbivore'
             }
-        ]
+        }
         self.assertEqual(expected, result['tags'])
 
 
