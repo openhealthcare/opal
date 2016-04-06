@@ -2,22 +2,22 @@ describe('services.TagService', function() {
     "use strict";
     var tagService;
     var exampleOptions = {
-      "tags": [
-        {
-            "visible_in_list": "id_inpatients",
-            "direct_add": true,
-            "display_name": "ID Inpatients",
-            "slug": "infectious_diseases-id_inpatients",
-            "name": "id_inpatients"
+      "tags": {
+        id_inpatients: {
+              "visible_in_list": true,
+              "direct_add": true,
+              "display_name": "ID Inpatients",
+              "slug": "infectious_diseases-id_inpatients",
+              "name": "id_inpatients"
         },
-        {
-            "visible_in_list": "infectious_diseases",
+        infectious_diseases: {
+            "visible_in_list": true,
             "direct_add": false,
             "display_name": "Infectious Diseases",
             "slug": "infectious_diseases",
             "name": "infectious_diseases"
-        },
-      ]
+        }
+      }
     };
 
 
@@ -42,12 +42,12 @@ describe('services.TagService', function() {
 
     describe('TagService', function(){
         it("should put the visible options onto itself when they arrive", function(){
-            expect(tagService.tags_list ).toEqual([exampleOptions.tags[0]]);
+            expect(tagService.tags_list ).toEqual([exampleOptions.tags.id_inpatients]);
         });
 
         it("should only put visible tags onto itself", function(){
             expect(tagService.currentFormTags).toEqual(
-                [exampleOptions.tags[0].name]
+                [exampleOptions.tags.id_inpatients.name]
             );
         });
 
