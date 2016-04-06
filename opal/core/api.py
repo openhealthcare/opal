@@ -151,16 +151,12 @@ class OptionsViewSet(viewsets.ViewSet):
             tag = tagging.tag
             if hasattr(tagging, 'subtag'):
                 tag = tagging.subtag
-                visible_in_list = False
-            else:
-                visible_in_list = True
 
             direct_add = tagging.direct_add
             slug = tagging().get_slug()
             data["tags"][tag] = dict(
                 name=tag,
                 display_name=tagging.display_name,
-                visible_in_list=visible_in_list,
                 slug=slug,
                 direct_add=direct_add
             )

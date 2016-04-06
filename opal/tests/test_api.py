@@ -131,14 +131,12 @@ class OptionTestCase(TestCase):
         result = response.data
         expected = {
             "carnivore": {
-                'visible_in_list': True,
                 'direct_add': False,
                 'display_name': 'Carnivores',
                 'slug': 'carnivore',
                 'name': 'carnivore'
             },
             "herbivore": {
-                'visible_in_list': False,
                 'direct_add': True,
                 'display_name': 'Herbivores',
                 'slug': 'eater-herbivore',
