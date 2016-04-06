@@ -145,6 +145,17 @@ class OptionsViewSet(viewsets.ViewSet):
         data['tag_direct_add'] = tag_direct_add
         data['tag_slugs'] = tag_slugs
 
+        data["tags"] = []
+
+        for tag in tag_visible_in_list:
+            data["tags"].append(dict(
+                name=tag,
+                display_name=tag_display[tag],
+                visible_in_list=tag,
+                slug=tag_slugs[tag],
+                direct_add=tag in tag_direct_add
+            ))
+
         data['first_list_slug'] = PatientList.list()[0].get_slug()
 
         data['macros'] = Macro.to_dict()

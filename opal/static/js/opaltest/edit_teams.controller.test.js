@@ -105,16 +105,26 @@ describe('EditTeamsCtrl', function(){
 
         modalInstance = $modal.open({template: 'notatemplate'});
         $rootScope.fields = fields;
-
         episode = new Episode(episodeData);
+
+        episode.tagging = [
+                {
+                    save: function(a){
+                        return {then: function(fn) { fn(); }}
+                    }
+                }
+        ];
+        var mockTagService = function(){
+            this.toSave = function(){ return {}; }
+        };
 
         $controller('EditTeamsCtrl', {
             $scope: $scope,
             $window: $window,
             $modalInstance: modalInstance,
-            episode: episode,
+            TagService: mockTagService,
+            episode: episode
         });
-
     });
 
     describe('Setup', function() {
@@ -125,7 +135,6 @@ describe('EditTeamsCtrl', function(){
 
         it('should fetch the options', function() {
             $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
-            $httpBackend.expectGET('/api/v0.1/options/').respond(options);
             $rootScope.$apply();
             $httpBackend.flush();
         });
@@ -136,17 +145,7 @@ describe('EditTeamsCtrl', function(){
 
         it('should save', function() {
             $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
-            $httpBackend.expectGET('/api/v0.1/options/').respond(options);
             spyOn(modalInstance, 'close');
-            $scope.episode = {
-                tagging: [
-                    {
-                        save: function(){
-                            return {then: function(fn) { fn() }}
-                        }
-                    }
-                ]
-            };
             $scope.save('close');
             $rootScope.$apply();
             $httpBackend.flush();
