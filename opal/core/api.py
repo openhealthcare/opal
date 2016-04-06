@@ -127,9 +127,10 @@ class OptionsViewSet(viewsets.ViewSet):
         tag_direct_add = []
         tag_display = {}
         tag_slugs = {}
+        tag_list = [i for i in TaggedPatientList.for_user(request.user)]
 
         if request.user.is_authenticated():
-            for taglist in TaggedPatientList.for_user(request.user):
+            for taglist in tag_list:
                 slug = taglist().get_slug()
                 tag = taglist.tag
                 if hasattr(taglist, 'subtag'):
@@ -144,6 +145,21 @@ class OptionsViewSet(viewsets.ViewSet):
         data['tag_visible_in_list'] = tag_visible_in_list
         data['tag_direct_add'] = tag_direct_add
         data['tag_slugs'] = tag_slugs
+        data["tags"] = {}
+
+        for tagging in tag_list:
+            tag = tagging.tag
+            if hasattr(tagging, 'subtag'):
+                tag = tagging.subtag
+
+            direct_add = tagging.direct_add
+            slug = tagging().get_slug()
+            data["tags"][tag] = dict(
+                name=tag,
+                display_name=tagging.display_name,
+                slug=slug,
+                direct_add=direct_add
+            )
 
         data['first_list_slug'] = PatientList.list()[0].get_slug()
 

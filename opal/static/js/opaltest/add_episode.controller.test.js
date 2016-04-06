@@ -1,6 +1,6 @@
 describe('AddEpisodeCtrl', function (){
     var $scope, $httpBackend;
-    var modalInstance;
+    var modalInstance, mockTagService, tagServiceToSave;
     var columns = {
         "default": [
             {
@@ -63,6 +63,11 @@ describe('AddEpisodeCtrl', function (){
         var $controller, $modal
         $scope = {};
 
+        tagServiceToSave = jasmine.createSpy('toSave').and.returnValue({"id_inpatients": true});
+        mockTagService = jasmine.createSpy('TagService').and.returnValue(
+            {toSave: tagServiceToSave}
+        );
+
         inject(function($injector){
             $controller = $injector.get('$controller');
             $modal = $injector.get('$modal');
@@ -77,26 +82,22 @@ describe('AddEpisodeCtrl', function (){
             $modalInstance: modalInstance,
             schema: schema,
             options: optionsData,
+            TagService: mockTagService,
             demographics: {},
             tags: {tag: 'tropical', subtag: ''}
         });
     });
 
     describe('initial state', function() {
-
         it('should know the current tags', function() {
             expect($scope.currentTag).toEqual('tropical');
             expect($scope.currentSubTag).toEqual('');
+            expect(mockTagService).toHaveBeenCalledWith(['tropical']);
         });
 
     });
 
     describe('Adding an episode', function (){
-
-        it('Should set up the initial editing situation', function () {
-            expect($scope.editing.tagging).toEqual([{tropical: true}]);
-        });
-
         it('Should set the subtag to an empty string', function(){
             expect($scope.currentSubTag).toEqual('');
         })
@@ -107,11 +108,10 @@ describe('AddEpisodeCtrl', function (){
         it('should save', function(){
             $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
             $httpBackend.expectPOST('episode/').respond({demographics:[{patient_id: 1}]})
-
             $scope.editing.date_of_admission = new Date(13, 1, 2014);
             $scope.editing.demographics.date_of_birth = new Date(13, 1, 1914);
             $scope.save();
-
+            expect(tagServiceToSave).toHaveBeenCalled();
             $httpBackend.flush();
         });
 

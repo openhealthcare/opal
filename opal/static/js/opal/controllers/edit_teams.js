@@ -1,50 +1,27 @@
 angular.module('opal.controllers').controller(
     'EditTeamsCtrl', function(
         $scope, $modalInstance, $modal, $q, ngProgressLite,
-        Options,
-        episode) {
+        TagService, episode) {
 
         $scope.editing = {};
 
-        Options.then(
-            function(options){
-                $scope.options = options;
-                var direct_add = _.filter(options.tag_display, function(v, k){
-                    return _.contains(options.tag_direct_add, k);
-                });
-
-                $scope.tagging_display_list = _.values(direct_add);
-                $scope.display_tag_to_name = _.invert(options.tag_display);
-                $scope.episode = episode;
-
-                $scope.editing.current_tags = _.filter(_.map(
-                    $scope.episode.getTags(),
-                    function(k){
-                        if(_.contains(direct_add, $scope.options.tag_display[k])){
-                            return $scope.options.tag_display[k]
-                        }
-                    }));
-            }
-        );
-
+        var currentTags = episode.getTags();
+        $scope.tagService = new TagService(currentTags);
 
         //
         // Save the teams.
         //
-	    $scope.save = function(result) {
-            ngProgressLite.set(0);
-            ngProgressLite.start();
-            var new_tags = {};
-            _.each($scope.editing.current_tags, function(t){ new_tags[$scope.display_tag_to_name[t]] = true });
-            $scope.episode.tagging[0].save(new_tags).then(function() {
+  	    $scope.save = function(result) {
+              ngProgressLite.set(0);
+              ngProgressLite.start();
+              episode.tagging[0].save($scope.tagService.toSave()).then(function() {
                 ngProgressLite.done();
-			    $modalInstance.close(result);
-		    });
-	    };
+      			    $modalInstance.close(result);
+  		    });
+  	    };
 
         // Let's have a nice way to kill the modal.
-	    $scope.cancel = function() {
-		    $modalInstance.close('cancel');
-	    };
-
+  	    $scope.cancel = function() {
+  		    $modalInstance.close('cancel');
+  	    };
     });

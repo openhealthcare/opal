@@ -3,17 +3,19 @@ angular.module('opal.controllers')
                                            $timeout, $routeParams,
                                            $modalInstance, $rootScope,
                                            Episode,
+                                           TagService,
                                            options,
                                            demographics,
                                            tags) {
 
-        var DATE_FORMAT = 'DD/MM/YYYY';
+      var DATE_FORMAT = 'DD/MM/YYYY';
 	    $scope.currentTag    = tags.tag;
 	    $scope.currentSubTag = tags.subtag;
 
 	    for (var name in options) {
 		    $scope[name + '_list'] = options[name];
 	    };
+
 	    $scope.editing = {
             tagging: [{}],
 		    location: {
@@ -22,17 +24,21 @@ angular.module('opal.controllers')
 		    demographics: demographics
 	    };
 
+      if($scope.currentSubTag.length){
+        currentTags = [$scope.currentSubTag];
+      }
+      else{
+        currentTags = [$scope.currentTag];
+      }
 
-	    $scope.editing.tagging[0][$scope.currentTag] = true;
-	    if($scope.currentSubTag != ''){
-		    $scope.editing.tagging[0][$scope.currentSubTag] = true;
-	    }
+      $scope.tagService = new TagService(currentTags);
 
 	    $scope.save = function() {
 		    var dob, doa;
 
 		    // This is a bit mucky but will do for now
 		    doa = $scope.editing.date_of_admission;
+        $scope.editing.tagging = [$scope.tagService.toSave()];
 		    if (doa) {
                 if(!angular.isString(doa)){
                     doa = moment(doa).format(DATE_FORMAT);

@@ -84,6 +84,7 @@ class OpalApplication(object):
             "js/opal/services/copy_to_category.js",
             "js/opal/services/episode_detail.js",
             "js/opal/services/patientlist_loader.js",
+            "js/opal/services/tag_service.js",
             "js/search/services/paginator.js"
         ],
         'opal.controllers': [
