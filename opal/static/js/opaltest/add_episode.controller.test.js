@@ -90,17 +90,8 @@ describe('AddEpisodeCtrl', function (){
 
     describe('initial state', function() {
         it('should know the current tags', function() {
-            expect($scope.currentTag).toEqual('tropical');
-            expect($scope.currentSubTag).toEqual('');
             expect(mockTagService).toHaveBeenCalledWith(['tropical']);
         });
-
-    });
-
-    describe('Adding an episode', function (){
-        it('Should set the subtag to an empty string', function(){
-            expect($scope.currentSubTag).toEqual('');
-        })
     });
 
     describe('save()', function(){
