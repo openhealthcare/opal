@@ -266,6 +266,14 @@ describe('PatientListCtrl', function() {
 
     }));
 
+    describe('newNamedItem', function(){
+        it('should pass through the current scopes tags', function(){
+          spyOn(episode.recordEditor, "newItem");
+          $scope.newNamedItem(episode, "someName");
+          expect(episode.recordEditor.newItem).toHaveBeenCalledWith("newItem", {tag: 'inpatients', subtag: 'icu'})
+        });
+    });
+
 
     describe('newly-created controller', function() {
         it('should have state "normal"', function() {

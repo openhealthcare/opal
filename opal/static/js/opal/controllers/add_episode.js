@@ -7,10 +7,8 @@ angular.module('opal.controllers')
                                            options,
                                            demographics,
                                            tags) {
-
       var DATE_FORMAT = 'DD/MM/YYYY';
-	    $scope.currentTag    = tags.tag;
-	    $scope.currentSubTag = tags.subtag;
+      var currentTags = [];
 
 	    for (var name in options) {
 		    $scope[name + '_list'] = options[name];
@@ -24,11 +22,13 @@ angular.module('opal.controllers')
 		    demographics: demographics
 	    };
 
-      if($scope.currentSubTag.length){
-        currentTags = [$scope.currentSubTag];
+      if(tags.tag){
+        currentTags = [tags.tag];
       }
-      else{
-        currentTags = [$scope.currentTag];
+
+      if(tags.subtag){
+        // if there's a subtag, don't tag with the parent tag
+        currentTags = [tags.subtag];
       }
 
       $scope.tagService = new TagService(currentTags);
