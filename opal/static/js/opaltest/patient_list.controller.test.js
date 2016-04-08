@@ -343,16 +343,6 @@ describe('PatientListCtrl', function() {
         });
     });
 
-    describe('showSubtags()', function() {
-
-        it('should say whether the tag is conatained', function() {
-            $scope.currentTag = 'this';
-            expect($scope.showSubtags(['that'])).toBe(false);
-            expect($scope.showSubtags(['this'])).toBe(true);
-        });
-
-    });
-
     describe('watches', function() {
 
         beforeEach(function(){
