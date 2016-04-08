@@ -6,12 +6,14 @@ from mock import patch
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.utils import timezone
 
-from opal.core.test import OpalTestCase
 from opal import models
-from opal.models import Subrecord, Tagging, Team, Patient, InpatientAdmission
-from opal.tests.models import FamousLastWords, PatientColour
 from opal.core import exceptions
+from opal.models import Subrecord, Tagging, Team, Patient, InpatientAdmission
+from opal.core.test import OpalTestCase
+import opal.tests.test_patient_lists # To make sure test tagged lists are pulled in
+from opal.tests.models import FamousLastWords, PatientColour
 
 class PatientRecordAccessTestCase(OpalTestCase):
 
@@ -27,6 +29,12 @@ class PatientRecordAccessTestCase(OpalTestCase):
 
 
 class PatientTestCase(OpalTestCase):
+
+    def test_create_episode_category(self):
+        patient = models.Patient.objects.create()
+        e = patient.create_episode(category='testcategory')
+        self.assertEqual('testcategory', e.category)
+
     def test_bulk_update_patient_subrecords(self):
         original_patient = models.Patient()
 
@@ -269,14 +277,14 @@ class InpatientAdmissionTestCase(OpalTestCase):
     def test_updates_with_external_identifer(self):
         patient = models.Patient()
         patient.save()
-        yesterday = datetime.datetime.now() - datetime.timedelta(1)
+        yesterday = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(1))
         InpatientAdmission.objects.create(
             datetime_of_admission=yesterday,
             external_identifier="1",
             patient=patient
         )
 
-        now = datetime.datetime.now().strftime(
+        now = timezone.make_aware(datetime.datetime.now()).strftime(
             settings.DATETIME_INPUT_FORMATS[0]
         )
 
@@ -298,7 +306,7 @@ class InpatientAdmissionTestCase(OpalTestCase):
     def test_no_external_identifier(self):
         patient = models.Patient()
         patient.save()
-        yesterday = datetime.datetime.now() - datetime.timedelta(1)
+        yesterday = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(1))
         InpatientAdmission.objects.create(
             datetime_of_admission=yesterday,
             external_identifier="1",
@@ -333,7 +341,7 @@ class InpatientAdmissionTestCase(OpalTestCase):
     def test_doesnt_update_empty_external_identifier(self):
         patient = models.Patient()
         patient.save()
-        yesterday = datetime.datetime.now() - datetime.timedelta(1)
+        yesterday = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(1))
         InpatientAdmission.objects.create(
             datetime_of_admission=yesterday,
             external_identifier="",
@@ -370,7 +378,7 @@ class InpatientAdmissionTestCase(OpalTestCase):
         other_patient = Patient.objects.create()
         patient = models.Patient()
         patient.save()
-        yesterday = datetime.datetime.now() - datetime.timedelta(1)
+        yesterday = timezone.make_aware(datetime.datetime.now() - datetime.timedelta(1))
         InpatientAdmission.objects.create(
             datetime_of_admission=yesterday,
             external_identifier="1",
@@ -404,8 +412,24 @@ class InpatientAdmissionTestCase(OpalTestCase):
         )
 
 
+class TaggingTestCase(OpalTestCase):
+    def test_display_template(self):
+        self.assertEqual('tagging.html', Tagging.get_display_template())
+
+    def test_form_template(self):
+        self.assertEqual('tagging_modal.html', Tagging.get_form_template())
+
+    def test_field_schema(self):
+        names = ['eater', 'herbivore', 'carnivore']
+        fields = [{'name': tagname, 'type': 'boolean'} for tagname in names]
+        schema = Tagging.build_field_schema()
+        for field in fields:
+            self.assertIn(field, schema)
+
+
 class TaggingImportTestCase(OpalTestCase):
-    def test_tagging_import(self):
+
+    def test_tagging_import_from_reversion(self):
         import reversion
         from django.db import transaction
         patient = Patient.objects.create()

@@ -1,15 +1,15 @@
 """
-OPAL Models!
+OPAL Django Models
 """
 import collections
 import datetime
-import json
-import itertools
-import dateutil.parser
-import random
 import functools
+import itertools
+import json
 import logging
+import random
 
+import dateutil.parser
 from django.conf import settings
 from django.utils import timezone
 from django.db import models, transaction
@@ -21,7 +21,10 @@ from django.utils import timezone
 from django.conf import settings
 import reversion
 from django.utils import dateparse
-from opal.core import application, exceptions, lookuplists, plugins
+
+from opal.core import (
+    application, exceptions, lookuplists, plugins, patient_lists, tagging
+)
 from opal import managers
 from opal.utils import camelcase_to_underscore, find_template
 from opal.core.fields import ForeignKeyOrFreeText
@@ -254,9 +257,15 @@ class ContactNumber(models.Model):
 
 class Team(models.Model):
     """
-    A team to which an episode may be tagged
+    This model is no longer relevant and marked for removal.
 
-    Represents either teams or stages in patient flow.
+    In pre 0.6 versions of OPAL this was in fact a mis-named
+    Patient list model.
+
+    As of 0.6 defining lists has been moved to declarative subclasses
+    of opal.core.patient_lists.PatientList
+
+    See the 0.5.x -> 0.6.x documentation for upgrade strategies.
     """
     HELP_RESTRICTED = "Whether this team is restricted to only a subset of users"
 
@@ -391,7 +400,7 @@ class Patient(models.Model):
             print self.id
             raise
 
-    def create_episode(self, category=None, **kwargs):
+    def create_episode(self, **kwargs):
         return self.episode_set.create(**kwargs)
 
     def get_active_episode(self):
@@ -584,14 +593,30 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
             return True
         return False
 
+    @property
+    def type(self):
+        from opal.core import episodes
+        return episodes.EpisodeType.for_category(self.category)
+
+    def visible_to(self, user):
+        """
+        Predicate function to determine whether this episode is visible to
+        a certain user.
+
+        The logic for visibility is held in individual opal.core.episodes.EpisodeType
+        implementations.
+        """
+        return self.type.episode_visible_to(self, user)
+
     def set_tag_names(self, tag_names, user):
         """
-        1. Blitz dangling tags not in our current dict.
-        2. Add new tags.
-        3. Make sure that we set the Active boolean appropriately
-        4. There is no step 4.
+        1. Set the episode.active status
+        2. Special case mine
+        3. Archive dangling tags not in our current list.
+        4. Add new tags.
+        5. Ensure that we're setting the parents of child tags
+        6. There is no step 6.
         """
-
         if len(tag_names) and not self.active:
             self.active = True
             self.save()
@@ -600,13 +625,11 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
             self.save()
 
         if "mine" not in tag_names:
-            self.tagging_set.filter(user=user).update(archived=True)
+            self.tagging_set.filter(user=user, value='mine').update(archived=True)
         else:
-            my_team = Team.objects.get(name="mine")
             tag, created = self.tagging_set.get_or_create(
-                team=my_team, user=user
+                value='mine', user=user
             )
-
             if not created:
                 tag.archived = False
                 tag.save()
@@ -615,30 +638,31 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
         # nuke everything and start from fresh so we don't have
         # to deal with childless parents
-        self.tagging_set.exclude(team__name="mine").filter(archived=False).update(archived=True)
+        self.tagging_set.exclude(value="mine").filter(archived=False).update(
+            archived=True,
+            updated_by=user,
+            updated=timezone.now()
+        )
+        parents = []
+        for tag in tag_names:
+            parent = tagging.parent(tag)
+            if parent:
+                parents.append(parent)
+        tag_names += parents
 
-        for i in tag_names:
-            focused_team = Team.objects.get(name=i)
-
-            if focused_team.parent:
-                teams_to_update = [focused_team, focused_team.parent]
+        for tag in tag_names:
+            tagg, created = self.tagging_set.get_or_create(
+                value=tag, episode=self
+            )
+            if created:
+                tagg.created_by = user
+                tagg.created = timezone.now()
             else:
-                teams_to_update = [focused_team]
+                tagg.archived = False
+                tagg.updated_by = user
+                tagg.updated = timezone.now()
 
-            for team in teams_to_update:
-                tagging, created = Tagging.objects.get_or_create(
-                    episode=self, team=team
-                )
-
-                if created:
-                    tagging.created_by = user
-                    tagging.created = timezone.now()
-                    tagging.save()
-                else:
-                    tagging.archived = False
-                    tagging.updated_by = user
-                    tagging.updated = timezone.now()
-                    tagging.save()
+            tagg.save()
 
     def tagging_dict(self, user):
         tag_names = self.get_tag_names(user)
@@ -654,7 +678,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         if not historic:
             qs = qs.filter(archived=False)
 
-        return qs.values_list("team__name", flat=True)
+        return qs.values_list("value", flat=True)
 
     def _episode_history_to_dict(self, user):
         """
@@ -781,6 +805,42 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
         return find_template(list_display_templates)
 
     @classmethod
+    def get_detail_template(cls, team=None, subteam=None):
+        """
+        Return the active detail template for our record
+        """
+        name = camelcase_to_underscore(cls.__name__)
+        templates = [
+            'records/{0}_detail.html'.format(name),
+            'records/{0}.html'.format(name)
+        ]
+        return find_template(templates)
+
+    @classmethod
+    def get_form_template(cls):
+        name = camelcase_to_underscore(cls.__name__)
+        return find_template(['forms/{0}_form.html'.format(name)])
+
+    @classmethod
+    def get_modal_template(cls, team=None, subteam=None):
+        """
+        Return the active form template for our record
+        """
+        name = camelcase_to_underscore(cls.__name__)
+        templates = ['modals/{0}_modal.html'.format(name)]
+        if team:
+            templates.insert(0, 'modals/{0}/{1}_modal.html'.format(
+                team, name))
+        if subteam:
+            templates.insert(0, 'modals/{0}/{1}/{2}_modal.html'.format(
+                team, subteam, name))
+
+        if cls.get_form_template():
+            templates.append("modal_base.html")
+
+        return find_template(templates)
+
+    @classmethod
     def bulk_update_from_dicts(
         cls, parent, list_of_dicts, user, force=False
     ):
@@ -816,42 +876,6 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
                 subrecord = cls(**{schema_name: parent})
 
             subrecord.update_from_dict(a_dict, user, force=force)
-
-    @classmethod
-    def get_detail_template(cls, team=None, subteam=None):
-        """
-        Return the active detail template for our record
-        """
-        name = camelcase_to_underscore(cls.__name__)
-        templates = [
-            'records/{0}_detail.html'.format(name),
-            'records/{0}.html'.format(name)
-        ]
-        return find_template(templates)
-
-    @classmethod
-    def get_form_template(cls):
-        name = camelcase_to_underscore(cls.__name__)
-        return find_template(['forms/{0}_form.html'.format(name)])
-
-    @classmethod
-    def get_modal_template(cls, team=None, subteam=None):
-        """
-        Return the active form template for our record
-        """
-        name = camelcase_to_underscore(cls.__name__)
-        templates = ['modals/{0}_modal.html'.format(name)]
-        if team:
-            templates.insert(0, 'modals/{0}/{1}_modal.html'.format(
-                team, name))
-        if subteam:
-            templates.insert(0, 'modals/{0}/{1}/{2}_modal.html'.format(
-                team, subteam, name))
-
-        if cls.get_form_template():
-            templates.append("modal_base.html")
-
-        return find_template(templates)
 
     def _to_dict(self, user, fieldnames):
         """
@@ -897,21 +921,19 @@ class Tagging(TrackedModel, models.Model):
     _advanced_searchable = True
     _title = 'Teams'
 
-    team = models.ForeignKey(Team, blank=True, null=True)
-    user = models.ForeignKey(User, null=True, blank=True)
-    episode = models.ForeignKey(Episode, null=False)
+    team     = models.ForeignKey(Team, blank=True, null=True)
+    user     = models.ForeignKey(User, null=True, blank=True)
+    episode  = models.ForeignKey(Episode, null=False)
     archived = models.BooleanField(default=False)
-
-    # class Meta:
-        # unique_together = ('team', 'user', 'episode',)
+    value    = models.CharField(max_length=200, blank=True, null=True)
 
     def __unicode__(self):
         if self.user is not None:
             return 'User: %s - %s - archived: %s' % (
-                self.user.username, self.team.name, self.archived
+                self.user.username, self.value, self.archived
             )
         else:
-            return "%s - archived: %s" % (self.team.name, self.archived)
+            return "%s - archived: %s" % (self.value, self.archived)
 
     @staticmethod
     def get_api_name():
@@ -931,8 +953,9 @@ class Tagging(TrackedModel, models.Model):
 
     @staticmethod
     def build_field_schema():
-        teams = [{'name': t.name, 'type':'boolean'} for t in Team.objects.filter(active=True)]
-        return teams
+        return [{'name': t, 'type':'boolean'} for t in
+                patient_lists.TaggedPatientList.get_tag_names()]
+
 
     @classmethod
     def import_from_reversion(cls):

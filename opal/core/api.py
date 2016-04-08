@@ -71,16 +71,6 @@ class RecordViewSet(viewsets.ViewSet):
         return Response(schemas.list_records())
 
 
-class ListSchemaViewSet(viewsets.ViewSet):
-    """
-    Returns the schema for our active lists
-    """
-    base_name = 'list-schema'
-
-    def list(self, request):
-        return Response(schemas.list_schemas())
-
-
 class ExtractSchemaViewSet(viewsets.ViewSet):
     """
     Returns the schema to build our extract query builder
@@ -251,7 +241,7 @@ class UserProfileViewSet(viewsets.ViewSet):
 
 class TaggingViewSet(viewsets.ViewSet):
     """
-    Associating episodes with teams
+    Returns taggings associated with episodes
     """
     base_name = 'tagging'
 
@@ -279,26 +269,7 @@ class EpisodeViewSet(viewsets.ViewSet):
 
     def list(self, request):
         from opal.models import Episode
-
-        tag    = request.query_params.get('tag', None)
-        subtag = request.query_params.get('subtag', None)
-
-        filter_kwargs = {'tagging__archived': False}
-        if subtag:
-            filter_kwargs['tagging__team__name'] = subtag
-        elif tag:
-            filter_kwargs['tagging__team__name'] = tag
-
-        if tag == 'mine':
-            filter_kwargs['tagging__user'] = request.user
-
-        if not (subtag or tag):
-            return Response([e.to_dict(request.user) for e in Episode.objects.all()])
-
-        serialised = Episode.objects.serialised_active(
-            request.user, **filter_kwargs)
-
-        return Response(serialised)
+        return Response([e.to_dict(request.user) for e in Episode.objects.all()])
 
     def create(self, request):
         """
@@ -373,7 +344,6 @@ class PatientListViewSet(viewsets.ViewSet):
 router.register('patient', PatientViewSet)
 router.register('episode', EpisodeViewSet)
 router.register('record', RecordViewSet)
-router.register('list-schema', ListSchemaViewSet)
 router.register('extract-schema', ExtractSchemaViewSet)
 router.register('options', OptionsViewSet)
 router.register('userprofile', UserProfileViewSet)
@@ -406,8 +376,9 @@ class APIAdmitEpisodeView(View):
 
 class APIReferPatientView(View):
     """
-    Refer a particular episode of care to a new team
+    Refer a patient
     """
+    # TODO - explore when this is used - seems like there should be a better way?
     def post(self, *args, **kwargs):
         """
         Expects PATIENT, EPISODE, TARGET

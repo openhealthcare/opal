@@ -5,10 +5,12 @@ import datetime
 
 from django.contrib.auth.models import User
 
+from opal.core.episodes import InpatientEpisode
 from opal.core.test import OpalTestCase
-from opal.tests.models import Hat, HatWearer, Dog, DogOwner
 from opal.models import Patient, Episode, Team, Tagging
 
+from opal.tests import test_patient_lists # ensure the lists are loaded
+from opal.tests.models import Hat, HatWearer, Dog, DogOwner
 
 class EpisodeTest(OpalTestCase):
 
@@ -32,6 +34,13 @@ class EpisodeTest(OpalTestCase):
         self.episode.discharge_date = yesterday
         self.assertEqual(True, self.episode.is_discharged)
 
+    def test_type(self):
+        self.episode.category = 'Inpatient'
+        self.assertEqual(self.episode.type, InpatientEpisode)
+
+    def test_visible_to(self):
+        self.assertTrue(self.episode.visible_to(self.user))
+
     def test_can_set_tag_names(self):
         test_cases = [
             ['microbiology', 'mine'],
@@ -45,27 +54,25 @@ class EpisodeTest(OpalTestCase):
                              set(self.episode.get_tag_names(self.user)))
 
     def test_set_tagging_parent(self):
-        team_1 = Team.objects.create(name='team 1', title='team 1')
-        team_2 = Team.objects.create(name='team 2', title='team 2', parent=team_1)
-        self.episode.set_tag_names(["mine", "team 2"], self.user)
+        self.episode.set_tag_names(["mine", "herbivore"], self.user)
 
         self.assertTrue(Tagging.objects.filter(
-            team=team_1, archived=False).exists()
+            value='eater', archived=False).exists()
         )
         self.assertTrue(Tagging.objects.filter(
-            team=team_2, archived=False).exists()
+            value='herbivore', archived=False).exists()
         )
         self.assertTrue(Tagging.objects.filter(
-            team=self.mine, user=self.user, archived=False).exists()
+            value='mine', user=self.user, archived=False).exists()
         )
 
     def test_user_cannot_see_other_users_mine_tag(self):
         other_user = User.objects.create(username='seconduser')
-        self.episode.set_tag_names(['hiv', 'mine'], self.user)
-        self.assertEqual(['hiv'], list(self.episode.get_tag_names(other_user)))
+        self.episode.set_tag_names(['carnivore', 'mine'], self.user)
+        self.assertEqual(['carnivore'], list(self.episode.get_tag_names(other_user)))
 
     def test_active_if_tagged_by_non_mine_tag(self):
-        self.episode.set_tag_names(['microbiology'], self.user)
+        self.episode.set_tag_names(['carnivore'], self.user)
         self.assertTrue(self.episode.active)
 
     def test_active_if_only_tagged_by_mine_tag(self):

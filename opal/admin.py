@@ -37,21 +37,20 @@ class PatientAdmin(reversion.VersionAdmin):
     search_fields = ['demographics__name', 'demographics__hospital_number']
 
 class TaggingAdmin(reversion.VersionAdmin):
-    list_display = ['team', 'episode']
+    list_display = ['value', 'episode']
 
-class TeamAdmin(reversion.VersionAdmin):
-    list_display = ['title', 'name', 'active', 'restricted', 'visible_in_list', 'direct_add', 'order']
-    search_fields = ['title']
-    list_editable = ['active', 'order', 'restricted', 'visible_in_list', 'direct_add']
-    filter_horizontal = ('useful_numbers',)
+# class TeamAdmin(reversion.VersionAdmin):
+#     list_display = ['title', 'name', 'active', 'restricted', 'visible_in_list', 'direct_add', 'order']
+#     search_fields = ['title']
+#     list_editable = ['active', 'order', 'restricted', 'visible_in_list', 'direct_add']
+#     filter_horizontal = ('useful_numbers',)
 
 class PatientSubRecordAdmin(reversion.VersionAdmin):
     pass
-#    list_filter = ['patient']
 
 class EpisodeSubRecordAdmin(reversion.VersionAdmin):
     pass
- #   list_filter = ['episode']
+
 
 class SynonymInline(GenericTabularInline):
     model = Synonym
@@ -80,6 +79,6 @@ for subclass in episode_subrecords():
 admin.site.register(models.GP, MyAdmin)
 admin.site.register(models.CommunityNurse, MyAdmin)
 admin.site.register(models.ContactNumber, MyAdmin)
-admin.site.register(models.Team, TeamAdmin)
+#admin.site.register(models.Team, TeamAdmin)
 admin.site.register(models.Role, MyAdmin)
 admin.site.register(models.Macro, MyAdmin)

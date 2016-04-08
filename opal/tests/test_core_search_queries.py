@@ -10,6 +10,7 @@ from datetime import date
 
 from opal.core.search import queries
 
+from opal.tests.episodes import RestrictedEpisodeType
 
 class DatabaseQueryTestCase(OpalTestCase):
     DATE_OF_BIRTH = date(day=27, month=1, year=1977)
@@ -17,9 +18,7 @@ class DatabaseQueryTestCase(OpalTestCase):
 
     def setUp(self):
         self.patient = Patient.objects.create()
-        self.episode = self.patient.create_episode(
-            category="testepisode",
-        )
+        self.episode = self.patient.create_episode()
         self.episode.date_of_episode = self.DATE_OF_EPISODE
         self.episode.save()
         self.demographics = self.patient.demographics_set.get()
@@ -32,8 +31,6 @@ class DatabaseQueryTestCase(OpalTestCase):
 
         self.general_team, _ = Team.objects.get_or_create(
             name='general', title='General Team')
-        self.restricted_team, _ = Team.objects.get_or_create(
-            name='restricted', title='Restricted Team', restricted=True)
         self.name_criteria = [
             {
                 u'column': u'demographics',
@@ -47,25 +44,18 @@ class DatabaseQueryTestCase(OpalTestCase):
     def test_filter_restricted_only_user(self):
         self.user.profile.restricted_only   = True
         self.user.profile.save()
-        self.patient.create_episode(category='nonsensecategory')
+        self.patient.create_episode(category='Inpatient')
         query = queries.DatabaseQuery(self.user, self.name_criteria)
         self.assertEqual([], query.get_episodes())
-        self.episode.set_tag_names(['restricted'], self.user)
-        with patch.object(queries.models.Team, 'restricted_teams') as mock_restrict:
-            mock_restrict.return_value = [self.restricted_team]
-            self.assertEqual([self.episode], query.get_episodes())
 
-    def test_filter_out_restricted_teams(self):
-        query = queries.DatabaseQuery(self.user, self.name_criteria)
-        self.episode.set_tag_names(['restricted'], self.user)
-        self.assertEqual([], query.get_episodes())
+    def test_filter_in_restricted_episode_types(self):
+        self.user.profile.restricted_only   = True
+        self.user.profile.save()
+        episode2 = self.patient.create_episode(category='Restricted')
+        self.assertEqual('Restricted', episode2.category)
 
-    def test_filter_in_restricted_teams(self):
         query = queries.DatabaseQuery(self.user, self.name_criteria)
-        self.episode.set_tag_names(['restricted'], self.user)
-        with patch.object(queries.models.Team, 'restricted_teams') as mock_restrict:
-            mock_restrict.return_value = [self.restricted_team]
-            self.assertEqual([self.episode], query.get_episodes())
+        self.assertEqual([episode2], query.get_episodes())
 
     def test_get_old_episode(self):
         # episode's with old tags that have subsequently been removed
@@ -82,9 +72,8 @@ class DatabaseQueryTestCase(OpalTestCase):
 
 
         with transaction.atomic(), reversion.create_revision():
-            other_team, _ = Team.objects.get_or_create(name='other_team', title='Other Team')
-            other_episode = self.patient.create_episode(category="testepisode")
-            other_episode.set_tag_names([other_team.name], self.user)
+            other_episode = self.patient.create_episode()
+            other_episode.set_tag_names(['other_team'], self.user)
             query = queries.DatabaseQuery(self.user, team_query)
 
         self.assertEqual([other_episode], query.get_episodes())

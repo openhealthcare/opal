@@ -47,14 +47,6 @@ class EpisodeListApiTestCase(OpalTestCase):
         self.assertEqual(200, resp.status_code)
 
 
-class ListSchemaTestCase(TestCase):
-
-    @patch('opal.core.api.schemas')
-    def test_records(self, schemas):
-        schemas.list_schemas.return_value = [{}]
-        self.assertEqual([{}], api.ListSchemaViewSet().list(None).data)
-
-
 class ExtractSchemaTestCase(TestCase):
 
     @patch('opal.core.api.schemas')
@@ -524,10 +516,6 @@ class EpisodeTestCase(TestCase):
         self.mock_request = MagicMock(name='request')
         self.mock_request.user = self.user
         self.mock_request.query_params = {}
-        self.micro = models.Team.objects.create(name='micro', title='microbiology')
-        self.ortho = models.Team.objects.create(
-            name='micro_ortho', title='Micro Ortho',
-            parent=self.micro)
 
     def test_retrieve_episode(self):
         response = api.EpisodeViewSet().retrieve(self.mock_request, pk=self.episode.pk).data
@@ -546,42 +534,6 @@ class EpisodeTestCase(TestCase):
 
     def test_list_unauthenticated(self):
         pass #TODO TEST THIS
-
-    def test_list_for_tag_empty(self):
-        self.mock_request.query_params = {'tag': 'micro'}
-        response = api.EpisodeViewSet().list(self.mock_request)
-        self.assertEqual(200, response.status_code)
-        self.assertEqual([], response.data)
-
-    def test_list_for_tag(self):
-        self.mock_request.query_params = {'tag': 'micro'}
-        self.episode.set_tag_names(['micro'], self.user)
-        expected = models.Episode.objects.serialised(self.user, [self.episode])
-        response = api.EpisodeViewSet().list(self.mock_request)
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(expected, response.data)
-
-    def test_list_for_archived_tag(self):
-        self.mock_request.query_params = {'tag': 'micro'}
-        self.episode.set_tag_names(['micro'], self.user)
-        self.episode.set_tag_names([], self.user)
-        response = api.EpisodeViewSet().list(self.mock_request)
-        self.assertEqual(200, response.status_code)
-        self.assertEqual([], response.data)
-
-    def test_list_for_subtag_empty(self):
-        self.mock_request.query_params = {'tag': 'micro', 'subtag': 'micro_ortho'}
-        response = api.EpisodeViewSet().list(self.mock_request)
-        self.assertEqual(200, response.status_code)
-        self.assertEqual([], response.data)
-
-    def test_list_for_subtag(self):
-        self.mock_request.query_params = {'tag': 'micro', 'subtag': 'micro_ortho'}
-        self.episode.set_tag_names(['micro_ortho'], self.user)
-        expected = models.Episode.objects.serialised(self.user, [self.episode])
-        response = api.EpisodeViewSet().list(self.mock_request)
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(expected, response.data)
 
     def test_create_existing_patient(self):
         self.demographics.name = 'Aretha Franklin'

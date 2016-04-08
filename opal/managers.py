@@ -54,12 +54,10 @@ class EpisodeQueryset(models.QuerySet):
         if not historic_tags:
             qs = qs.filter(archived=False)
 
-        qs = qs.select_related('team')
-
         for tag in qs:
-            if tag.team.name == 'mine' and tag.user != user:
+            if tag.value == 'mine' and tag.user != user:
                 continue
-            taggings[tag.episode_id][tag.team.name] = True
+            taggings[tag.episode_id][tag.value] = True
 
         serialised = []
         for e in episodes:

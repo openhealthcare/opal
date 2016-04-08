@@ -85,8 +85,7 @@ def startproject(args):
     7. Create extra directories we need
     8. Run Django's migrations
     9. Create a superuser
-    10. Create a Sample team
-    11. Initialise our git repo
+    10. Initialise our git repo
     """
     name = args.name
 
@@ -170,16 +169,6 @@ def startproject(args):
     profile, _ = UserProfile.objects.get_or_create(user=user)
     profile.force_password_change = False
     profile.save()
-
-    # 10. Create sample team
-    from opal.models import Team
-    Team.objects.create(
-        name='teamone',
-        title='Team 1',
-        active=True,
-        restricted=False,
-        direct_add=True
-    )
 
     # 11. Initialise git repo
     os.system('cd {0}; git init'.format(name))
