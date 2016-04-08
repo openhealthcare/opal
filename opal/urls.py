@@ -44,8 +44,6 @@ urlpatterns = patterns(
     url(r'^templates/episode_detail.html/(?P<pk>\d+)/?$',
         views.EpisodeDetailTemplateView.as_view()),
 
-    url(r'^templates/modals/tagging.html/?', views.TagsTemplateView.as_view()),
-
     url(r'^templates/modals/undischarge.html/?$',
         views.UndischargeTemplateView.as_view()),
     url(r'^templates/modals/add_episode.html/?$',

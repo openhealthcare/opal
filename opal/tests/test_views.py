@@ -168,13 +168,6 @@ class EpisodeDetailTemplateViewTestCase(BaseViewTestCase):
             resp = view.get(request, pk=self.episode.pk+345)
 
 
-class TagsTemplateViewTestCase(BaseViewTestCase):
-
-    def test_default_should_200(self):
-        request = self.get_request('/tags_template_modal.html')
-        self.should_200(views.TagsTemplateView, request)
-
-
 class AddEpisodeTemplateViewTestCase(BaseViewTestCase):
 
     def test_default_should_200(self):

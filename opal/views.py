@@ -94,15 +94,6 @@ class EpisodeDetailTemplateView(TemplateView):
         return context
 
 
-class TagsTemplateView(TemplateView):
-    template_name = 'tagging_modal.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(TagsTemplateView, self).get_context_data(**kwargs)
-        context['teams'] = models.Team.for_user(self.request.user)
-        return context
-
-
 class AddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'add_episode_modal.html'
 
