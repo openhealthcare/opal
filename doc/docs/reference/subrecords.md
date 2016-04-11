@@ -92,10 +92,20 @@ Keywords:
 * `episode_type` Optional episode type string to check for form customisations
 * `patient_list` Optional patient list slug string to check for form customisations
 
+#### Subrecord.get_modal_template()
+
+Classmethod to locate the active template for our record. Returns the name of a template or None.
+
+Keywords:
+
+* `episode_type` Optional episode type string to check for modal customisations
+* `patient_list` Optional patient list slug string to check for modal customisations
+
 #### Subrecord.update_from_dict()
 An instance method that will update a model with a dictionary. This method is used
 to provides a hook for changing the way a subrecord handles being updated from serialised
 data.
+
 
 For example on a new allergy
     allergy.update_from_dict({"drug": "penicillin"})
