@@ -92,11 +92,6 @@ angular.module('opal.controllers').controller(
             };
         }
 
-        $scope.showSubtags = function(withsubtags){
-            var show =  _.contains(withsubtags, $scope.currentTag);
-            return show
-        };
-
 	    $scope.$watch('query.hospital_number', function() {
 		    $scope.rows = $scope.getVisibleEpisodes();
 	    });
@@ -294,8 +289,10 @@ angular.module('opal.controllers').controller(
         };
 
         $scope.newNamedItem = function(episode, name) {
-            return episode.recordEditor.newItem(name, {tag: $scope.currentTag, subTag: $scope.subTag});
-        }
+            return episode.recordEditor.newItem(
+                name, {tag: $scope.currentTag, subtag: $scope.currentSubTag}
+            );
+        };
 
         $scope.is_tag_visible_in_list = function(tag){
             return _.contains(options.tag_visible_in_list, tag);

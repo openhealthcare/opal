@@ -266,6 +266,14 @@ describe('PatientListCtrl', function() {
 
     }));
 
+    describe('newNamedItem', function(){
+        it('should pass through the current scopes tags', function(){
+          spyOn(episode.recordEditor, "newItem");
+          $scope.newNamedItem(episode, "someName");
+          expect(episode.recordEditor.newItem).toHaveBeenCalledWith("someName", {tag: 'tropical', subtag: ''})
+        });
+    });
+
 
     describe('newly-created controller', function() {
         it('should have state "normal"', function() {
@@ -341,16 +349,6 @@ describe('PatientListCtrl', function() {
                 expect($location.path).toHaveBeenCalledWith('/list/inpatients-icu');
             });
         });
-    });
-
-    describe('showSubtags()', function() {
-
-        it('should say whether the tag is conatained', function() {
-            $scope.currentTag = 'this';
-            expect($scope.showSubtags(['that'])).toBe(false);
-            expect($scope.showSubtags(['this'])).toBe(true);
-        });
-
     });
 
     describe('watches', function() {

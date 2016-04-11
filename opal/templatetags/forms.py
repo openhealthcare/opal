@@ -113,7 +113,8 @@ def _input(*args, **kwargs):
         'unit'      : unit,
         'data'      : data,
         'enter'     : enter,
-        'maxlength' : maxlength
+        'maxlength' : maxlength,
+        'static': kwargs.pop("static", None)
     })
 
     return ctx
@@ -216,6 +217,7 @@ def select(*args, **kwargs):
         'other_label': other_label,
         'tagging': tagging,
         'multiple': multiple,
+        'static': kwargs.pop("static", None)
     })
 
     return ctx

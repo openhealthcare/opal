@@ -116,6 +116,27 @@ class OptionTestCase(TestCase):
         result = response.data
         self.assertEqual('eater-herbivore', result['tag_slugs']['herbivore'])
 
+    def test_tags(self):
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        response = self.viewset().list(mock_request)
+        result = response.data
+        expected = {
+            "carnivore": {
+                'direct_add': False,
+                'display_name': 'Carnivores',
+                'slug': 'carnivore',
+                'name': 'carnivore'
+            },
+            "herbivore": {
+                'direct_add': True,
+                'display_name': 'Herbivores',
+                'slug': 'eater-herbivore',
+                'name': 'herbivore'
+            }
+        }
+        self.assertEqual(expected, result['tags'])
+
 
 class SubrecordTestCase(TestCase):
 
