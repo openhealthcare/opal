@@ -1,4 +1,4 @@
-# Form Helpers
+# Panel helpers
 
 OPAL comes with a selection of templatetags for rendering OPAL panels
 for a given subrecord. These panels also allow the user to
@@ -6,7 +6,7 @@ see instances of the model against the current value of `episode` in
 Angular `$scope`. The user can also create new
 instances of the given model, as well as editing any existing ones.
 
-## {% record_panel ... %}
+### {% record_panel ... %}
 
 Render a panel for a given record that will allow the user to view, create, update and delete instances.
 
@@ -27,7 +27,7 @@ Keywords:
 * `noentries`: A string to render if there are no instances of `model` for the current episode
 * `only_display_if_exists`: Boolean defaulting to False. If true, the panel will simply not render if there are no instances of `model`
 
-## {% record_timeline ... %}
+### {% record_timeline ... %}
 
 Similar to `record_panel`, `record_timeline` renders a penel for a given record as a timeline - particularly
 useful for subrecord types where the date is a key field.

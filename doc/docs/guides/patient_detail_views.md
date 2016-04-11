@@ -3,8 +3,8 @@
 OPAL provides all patients with a detail view.
 
 The default detail view will allow the user to switch between all of a patient's
-[episodes](datamodel.md), as well as editing patient information such as Allergies
-for example.
+[episodes](datamodel.md), as well as editing patient information linked to the patient
+rather than an episode. (Allergies for example.)
 
 ### Template selection
 

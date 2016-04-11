@@ -6,6 +6,33 @@ The editing of records is a key component of any OPAL application. A key pattern
 or create an individual record in a modal containing the form for just that record. OPAL provides
 the Angular Controller `opal.controllers.EditItemCtrl` for doing just this
 
+### Form and modal templates
+
+Subrecords have `get_form_template()` and `get_modal_template()` methods, which are used for
+figuring out how to render forms for interacting with them. These use the following template
+paths based on the context in which they are called:
+
+    # Forms
+    forms/{episode_type}/{list slug}/{record_name}_form.html
+    forms/{list_slug}/{record_name}_form.html
+    forms/{episode_type}/{record_name}_form.html
+    forms/{record_name}_form.html
+
+    # Modals
+    modals/{episode_type}/{list slug}/{record_name}_modal.html
+    modals/{list_slug}/{record_name}_modal.html
+    modals/{episode_type}/{record_name}_modal.html
+    modals/{record_name}_modal.html
+
+### Autogenerating forms
+
+The `opal` commandline tool has a scaffold command, which will autogenerate missing form templates
+for subrecord models. Simply run the following command to generate.
+
+    $ opal scaffold $DJANGO_APP_WHERE_MODELS_LIVE
+
+(Note this will also generate and run migrations for any unmigrated models.xb)
+
 ### Client side Validation
 
 Client side validation for forms requires a pattern and a help block && uses ng-pattern, ng-disabled (https://docs.angularjs.org/api/ng/directive/input)
