@@ -769,54 +769,77 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
         return field_schema
 
     @classmethod
-    def get_display_template(cls, team=None, subteam=None):
+    def get_display_template(cls, episode_type=None, patient_list=None):
         """
         Return the active display template for our record
         """
         name = camelcase_to_underscore(cls.__name__)
-        list_display_templates = ['records/{0}.html'.format(name)]
-        if team:
-            list_display_templates.insert(
-                0, 'records/{0}/{1}.html'.format(team, name))
-            if subteam:
-                list_display_templates.insert(
-                    0, 'records/{0}/{1}/{2}.html'.format(
-                        team, subteam, name
-                    )
-                )
-        return find_template(list_display_templates)
+        templates = []
+        if patient_list and episode_type:
+            templates.append('records/{0}/{1}/{2}.html'.format(
+                episode_type.lower(), patient_list, name
+            ))
+        if patient_list:
+            templates.append('records/{0}/{1}.html'.format(patient_list, name))
+        if episode_type:
+            templates.append('records/{0}/{1}.html'.format(episode_type.lower(), name))
+        templates.append('records/{0}.html'.format(name))
+        return find_template(templates)
 
     @classmethod
-    def get_detail_template(cls, team=None, subteam=None):
+    def get_detail_template(cls, patient_list=None, episode_type=None):
         """
         Return the active detail template for our record
         """
         name = camelcase_to_underscore(cls.__name__)
-        templates = [
-            'records/{0}_detail.html'.format(name),
-            'records/{0}.html'.format(name)
-        ]
+        templates = []
+        if episode_type:
+            templates.append('records/{0}/{1}_detail.html'.format(episode_type.lower(), name))
+            templates.append('records/{0}/{1}.html'.format(episode_type.lower(), name))
+        templates.append('records/{0}_detail.html'.format(name))
+        templates.append('records/{0}.html'.format(name))
         return find_template(templates)
 
     @classmethod
-    def get_form_template(cls):
+    def get_form_template(cls, patient_list=None, episode_type=None):
+        templates = []
         name = camelcase_to_underscore(cls.__name__)
-        return find_template(['forms/{0}_form.html'.format(name)])
+        if patient_list and episode_type:
+            templates.append('forms/{0}/{1}/{2}_form.html'.format(
+                episode_type.lower(), patient_list, name
+            ))
+        if patient_list:
+            templates.append('forms/{0}/{1}_form.html'.format(
+                patient_list, name
+            ))
+        if episode_type:
+            templates.append('forms/{0}/{1}_form.html'.format(
+                episode_type.lower(), name
+            ))
+
+        templates.append('forms/{0}_form.html'.format(name))
+        return find_template(templates)
 
     @classmethod
-    def get_modal_template(cls, team=None, subteam=None):
+    def get_modal_template(cls, patient_list=None, episode_type=None):
         """
         Return the active form template for our record
         """
         name = camelcase_to_underscore(cls.__name__)
-        templates = ['modals/{0}_modal.html'.format(name)]
-        if team:
-            templates.insert(0, 'modals/{0}/{1}_modal.html'.format(
-                team, name))
-        if subteam:
-            templates.insert(0, 'modals/{0}/{1}/{2}_modal.html'.format(
-                team, subteam, name))
-
+        templates = []
+        if episode_type and patient_list:
+            templates.append('modals/{0}/{1}/{2}_modal.html'.format(
+                episode_type.lower(), patient_list, name
+            ))
+        if patient_list:
+            templates.append('modals/{0}/{1}_modal.html'.format(
+                patient_list, name
+            ))
+        if episode_type:
+            templates.append('modals/{0}/{1}_modal.html'.format(
+                episode_type.lower(), name
+            ))
+        templates.append('modals/{0}_modal.html'.format(name))
         if cls.get_form_template():
             templates.append("modal_base.html")
 

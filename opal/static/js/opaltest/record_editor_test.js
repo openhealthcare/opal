@@ -1,7 +1,7 @@
 describe('RecordEditor', function(){
     "use strict";
 
-    var $scope, $modal;
+    var $scope, $modal, $routeParams;
     var $rootScope, $q, $controller;
     var Flow, Episode, episode;
     var controller;
@@ -103,6 +103,7 @@ describe('RecordEditor', function(){
         inject(function($injector){
             $rootScope = $injector.get('$rootScope');
             $scope = $rootScope.$new();
+            $routeParams = $injector.get('$routeParams');
             $controller = $injector.get('$controller');
             $modal = $injector.get('$modal');
             Episode = $injector.get('Episode');
@@ -130,19 +131,20 @@ describe('RecordEditor', function(){
               expect(callArgs[0].templateUrl).toBe('/templates/modals/demographics.html/');
           });
 
-          it('should open the use tags appropriaty', function(){
+          it('should open the use route slug appropriately', function(){
               var deferred, callArgs;
               deferred = $q.defer();
               deferred.resolve();
               var modalPromise = deferred.promise;
 
               spyOn($modal, 'open').and.returnValue({result: modalPromise}  );
-              episode.recordEditor.editItem('diagnosis', 0, {currentTag: "tropical", currentSubTag: "all"});
+              $routeParams.slug = 'tropical-all'
+              episode.recordEditor.editItem('diagnosis', 0);
               $scope.$digest();
               callArgs = $modal.open.calls.mostRecent().args;
               expect(callArgs.length).toBe(1);
               expect(callArgs[0].controller).toBe('EditItemCtrl');
-              expect(callArgs[0].templateUrl).toBe('/templates/modals/diagnosis.html/tropical/all');
+              expect(callArgs[0].templateUrl).toBe('/templates/modals/diagnosis.html/tropical-all');
           });
 
           describe('for a readonly user', function(){
@@ -272,16 +274,17 @@ describe('RecordEditor', function(){
         expect(callArgs[0].templateUrl).toBe('/templates/modals/something.html/');
       });
 
-      it('should respond to tags', function(){
-        var deferred, callArgs;
-        deferred = $q.defer();
-        spyOn($modal, 'open').and.returnValue({result: deferred.promise});
-        episode.recordEditor.newItem('diagnosis', {currentTag: "tropical", currentSubTag: "all"});
-        $scope.$digest();
-        callArgs = $modal.open.calls.mostRecent().args;
-        expect(callArgs.length).toBe(1);
-        expect(callArgs[0].controller).toBe('EditItemCtrl');
-        expect(callArgs[0].templateUrl).toBe('/templates/modals/diagnosis.html/tropical/all');
+      it('should respond to $routeParams.slug', function(){
+          var deferred, callArgs;
+          deferred = $q.defer();
+          spyOn($modal, 'open').and.returnValue({result: deferred.promise});
+          $routeParams.slug = 'tropical-all';
+          episode.recordEditor.newItem('diagnosis');
+          $scope.$digest();
+          callArgs = $modal.open.calls.mostRecent().args;
+          expect(callArgs.length).toBe(1);
+          expect(callArgs[0].controller).toBe('EditItemCtrl');
+          expect(callArgs[0].templateUrl).toBe('/templates/modals/diagnosis.html/tropical-all');
       });
     });
 });

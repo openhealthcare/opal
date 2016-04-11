@@ -109,6 +109,35 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
         ctx = view.get_column_context(slug='notarealthing')
         self.assertEqual([], ctx)
 
+
+    def test_get_column_context(self):
+
+        view = views.PatientListTemplateView()
+
+        class PL:
+            schema = [testmodels.Colour]
+
+            @classmethod
+            def get_slug(k): return 'the-slug'
+
+        view.patient_list = PL
+
+        expected = [
+            dict(
+                name = 'colour',
+                title = 'Colour',
+                single = False,
+                icon = '',
+                list_limit = None,
+                template_path = 'records/colour.html',
+                detail_template_path = 'records/colour.html',
+                header_template_path = ''
+            )
+        ]
+        context = view.get_column_context(slug='notarealthing')
+        self.assertEqual(expected, context)
+
+
     def test_get_template_names(self):
         url = reverse("patient_list_template_view", kwargs=dict(slug="eater-herbivore"))
         request = self.get_request(url)
@@ -253,26 +282,6 @@ class EpisodeListAndCreateViewTestCase(OpalTestCase):
         resp = views.episode_list_and_create_view(request)
         self.assertEqual(200, resp.status_code)
 
-
-class GetColumnContextTestCase(OpalTestCase):
-
-    def test_column_context(self):
-        schema = [testmodels.Colour]
-
-        expected = [
-            dict(
-                name = 'colour',
-                title = 'Colour',
-                single = False,
-                icon = '',
-                list_limit = None,
-                template_path = 'records/colour.html',
-                detail_template_path = 'records/colour.html',
-                header_template_path = ''
-            )
-        ]
-        context = views._get_column_context(schema)
-        self.assertEqual(expected, context)
 
 
 class FormTemplateViewTestCase(BaseViewTestCase):

@@ -107,31 +107,42 @@ class PatientTestCase(OpalTestCase):
 
 class SubrecordTestCase(OpalTestCase):
 
+    def test_display_template_does_not_exist(self):
+        self.assertEqual(None, Subrecord.get_display_template())
+
     @patch('opal.models.find_template')
     def test_display_template(self, find):
         Subrecord.get_display_template()
         find.assert_called_with(['records/subrecord.html'])
 
-    def test_display_template_does_not_exist(self):
-        self.assertEqual(None, Subrecord.get_display_template())
-
     @patch('opal.models.find_template')
-    def test_display_template_team(self, find):
-        Subrecord.get_display_template(team='test')
+    def test_display_template_list(self, find):
+        Subrecord.get_display_template(patient_list='test')
         find.assert_called_with([
             'records/test/subrecord.html',
             'records/subrecord.html',
         ])
 
     @patch('opal.models.find_template')
-    def test_display_template_subteam(self, find):
-        Subrecord.get_display_template(team='test',
-                                       subteam='really')
+    def test_display_template_episode_type(self, find):
+        Subrecord.get_display_template(episode_type='Inpatient')
         find.assert_called_with([
-            'records/test/really/subrecord.html',
-            'records/test/subrecord.html',
-            'records/subrecord.html'
+            'records/inpatient/subrecord.html',
+            'records/subrecord.html',
         ])
+
+    @patch('opal.models.find_template')
+    def test_display_template_list_episode_type(self, find):
+        Subrecord.get_display_template(patient_list='test', episode_type='Inpatient')
+        find.assert_called_with([
+            'records/inpatient/test/subrecord.html',
+            'records/test/subrecord.html',
+            'records/inpatient/subrecord.html',
+            'records/subrecord.html',
+        ])
+
+    def test_detail_template_does_not_exist(self):
+        self.assertEqual(None, Subrecord.get_detail_template())
 
     @patch('opal.models.find_template')
     def test_detail_template(self, find):
@@ -142,28 +153,66 @@ class SubrecordTestCase(OpalTestCase):
         ])
 
     @patch('opal.models.find_template')
-    def test_detail_template_team(self, find):
-        Subrecord.get_detail_template(team='test')
+    def test_detail_template_list(self, find):
+        Subrecord.get_detail_template(patient_list='test')
         find.assert_called_with([
             'records/subrecord_detail.html',
             'records/subrecord.html'
         ])
 
-    def test_detail_template_does_not_exist(self):
-        self.assertEqual(None, Subrecord.get_detail_template())
+    @patch('opal.models.find_template')
+    def test_detail_template_episode_type(self, find):
+        Subrecord.get_detail_template(episode_type='Inpatient')
+        find.assert_called_with([
+            'records/inpatient/subrecord_detail.html',
+            'records/inpatient/subrecord.html',
+            'records/subrecord_detail.html',
+            'records/subrecord.html'
+        ])
 
     @patch('opal.models.find_template')
-    def test_detail_template_subteam(self, find):
-        Subrecord.get_detail_template(team='test',
-                                      subteam='really')
-        find.assert_called_with(
-            ['records/subrecord_detail.html',
-             'records/subrecord.html'])
+    def test_detail_template_list_episode_type(self, find):
+        Subrecord.get_detail_template(episode_type='Inpatient', patient_list='test')
+        find.assert_called_with([
+            'records/inpatient/subrecord_detail.html',
+            'records/inpatient/subrecord.html',
+            'records/subrecord_detail.html',
+            'records/subrecord.html'
+        ])
+
+    def test_form_template_does_not_exist(self):
+        self.assertEqual(None, Subrecord.get_form_template())
 
     @patch('opal.models.find_template')
     def test_form_template(self, find):
         Subrecord.get_form_template()
         find.assert_called_with(['forms/subrecord_form.html'])
+
+    @patch('opal.models.find_template')
+    def test_form_template_list(self, find):
+        Subrecord.get_form_template(patient_list='test')
+        find.assert_called_with([
+            'forms/test/subrecord_form.html',
+            'forms/subrecord_form.html'
+        ])
+
+    @patch('opal.models.find_template')
+    def test_form_template_episode_type(self, find):
+        Subrecord.get_form_template(episode_type='Inpatient')
+        find.assert_called_with([
+            'forms/inpatient/subrecord_form.html',
+            'forms/subrecord_form.html'
+        ])
+
+    @patch('opal.models.find_template')
+    def test_form_template_list_episode_type(self, find):
+        Subrecord.get_form_template(episode_type='Inpatient', patient_list='test')
+        find.assert_called_with([
+            'forms/inpatient/test/subrecord_form.html',
+            'forms/test/subrecord_form.html',
+            'forms/inpatient/subrecord_form.html',
+            'forms/subrecord_form.html'
+        ])
 
     def test_get_modal_template_does_not_exist(self):
         self.assertEqual(None, Subrecord.get_modal_template())
@@ -176,15 +225,33 @@ class SubrecordTestCase(OpalTestCase):
         find.assert_called_with(['modals/subrecord_modal.html'])
 
     @patch('opal.models.find_template')
-    def test_modal_template_subteam(self, find):
-        Subrecord.get_modal_template(team='test', subteam='really')
+    def test_modal_template_list(self, find):
+        Subrecord.get_modal_template(patient_list='test')
         find.assert_called_with([
-            'modals/test/really/subrecord_modal.html',
             'modals/test/subrecord_modal.html',
             'modals/subrecord_modal.html',
             'modal_base.html'
         ])
 
+    @patch('opal.models.find_template')
+    def test_modal_template_episode_type(self, find):
+        Subrecord.get_modal_template(episode_type='Inpatient')
+        find.assert_called_with([
+            'modals/inpatient/subrecord_modal.html',
+            'modals/subrecord_modal.html',
+            'modal_base.html'
+        ])
+
+    @patch('opal.models.find_template')
+    def test_modal_template_episode_type_list(self, find):
+        Subrecord.get_modal_template(episode_type='Inpatient', patient_list='test')
+        find.assert_called_with([
+            'modals/inpatient/test/subrecord_modal.html',
+            'modals/test/subrecord_modal.html',
+            'modals/inpatient/subrecord_modal.html',
+            'modals/subrecord_modal.html',
+            'modal_base.html'
+        ])
 
 class BulkUpdateFromDictsTest(OpalTestCase):
 
