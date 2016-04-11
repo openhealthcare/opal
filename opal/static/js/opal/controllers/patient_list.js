@@ -92,11 +92,6 @@ angular.module('opal.controllers').controller(
             };
         }
 
-        $scope.showSubtags = function(withsubtags){
-            var show =  _.contains(withsubtags, $scope.currentTag);
-            return show
-        };
-
 	    $scope.$watch('query.hospital_number', function() {
 		    $scope.rows = $scope.getVisibleEpisodes();
 	    });

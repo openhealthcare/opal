@@ -19,7 +19,6 @@ describe('Flow ', function(){
         });
 
         spyOn($modal, 'open').and.returnValue({result: null});
-
     });
 
     describe('enter', function(){

@@ -22,10 +22,6 @@ angular.module('opal.controllers').controller(
 
         $scope.columnName = item.columnName;
 
-        $scope.showSubtags = function(withsubtags){
-		    return _.some(withsubtags, function(tag){ return item[tag] });
-        };
-
   	    for (var name in options) {
   		    if (name.indexOf('micro_test') != 0) {
   			    $scope[name + '_list'] = _.uniq(options[name]);
