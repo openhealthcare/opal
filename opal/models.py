@@ -769,21 +769,28 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
         return field_schema
 
     @classmethod
+    def _build_template_selection(cls, episode_type=None, patient_list=None, suffix=None, prefix=None):
+        name = camelcase_to_underscore(cls.__name__)
+        templates = []
+        if patient_list and episode_type:
+            templates.append('{0}/{1}/{2}/{3}{4}'.format(
+                prefix, episode_type.lower(), patient_list, name, suffix
+            ))
+        if patient_list:
+            templates.append('{0}/{1}/{2}{3}'.format(prefix, patient_list, name, suffix))
+        if episode_type:
+            templates.append('{0}/{1}/{2}{3}'.format(prefix, episode_type.lower(), name, suffix))
+        templates.append('{0}/{1}{2}'.format(prefix, name, suffix))
+        return templates
+
+    @classmethod
     def get_display_template(cls, episode_type=None, patient_list=None):
         """
         Return the active display template for our record
         """
-        name = camelcase_to_underscore(cls.__name__)
-        templates = []
-        if patient_list and episode_type:
-            templates.append('records/{0}/{1}/{2}.html'.format(
-                episode_type.lower(), patient_list, name
-            ))
-        if patient_list:
-            templates.append('records/{0}/{1}.html'.format(patient_list, name))
-        if episode_type:
-            templates.append('records/{0}/{1}.html'.format(episode_type.lower(), name))
-        templates.append('records/{0}.html'.format(name))
+        templates = cls._build_template_selection(
+            episode_type=episode_type, patient_list=patient_list,
+            suffix='.html', prefix='records')
         return find_template(templates)
 
     @classmethod
@@ -802,22 +809,9 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
 
     @classmethod
     def get_form_template(cls, patient_list=None, episode_type=None):
-        templates = []
-        name = camelcase_to_underscore(cls.__name__)
-        if patient_list and episode_type:
-            templates.append('forms/{0}/{1}/{2}_form.html'.format(
-                episode_type.lower(), patient_list, name
-            ))
-        if patient_list:
-            templates.append('forms/{0}/{1}_form.html'.format(
-                patient_list, name
-            ))
-        if episode_type:
-            templates.append('forms/{0}/{1}_form.html'.format(
-                episode_type.lower(), name
-            ))
-
-        templates.append('forms/{0}_form.html'.format(name))
+        templates = cls._build_template_selection(
+            episode_type=episode_type, patient_list=patient_list,
+            suffix='_form.html', prefix='forms')
         return find_template(templates)
 
     @classmethod
@@ -825,24 +819,11 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
         """
         Return the active form template for our record
         """
-        name = camelcase_to_underscore(cls.__name__)
-        templates = []
-        if episode_type and patient_list:
-            templates.append('modals/{0}/{1}/{2}_modal.html'.format(
-                episode_type.lower(), patient_list, name
-            ))
-        if patient_list:
-            templates.append('modals/{0}/{1}_modal.html'.format(
-                patient_list, name
-            ))
-        if episode_type:
-            templates.append('modals/{0}/{1}_modal.html'.format(
-                episode_type.lower(), name
-            ))
-        templates.append('modals/{0}_modal.html'.format(name))
+        templates = cls._build_template_selection(
+            episode_type=episode_type, patient_list=patient_list,
+            suffix='_modal.html', prefix='modals')
         if cls.get_form_template():
             templates.append("modal_base.html")
-
         return find_template(templates)
 
     @classmethod
