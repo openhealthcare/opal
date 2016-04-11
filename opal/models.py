@@ -287,17 +287,6 @@ class Team(models.Model):
         return self.title
 
     @classmethod
-    def restricted_teams(klass, user):
-        """
-        Given a USER, return the restricted teams this user can access.
-        """
-        restricted_teams = []
-        for plugin in plugins.plugins():
-            if plugin.restricted_teams:
-                restricted_teams += plugin().restricted_teams(user)
-        return restricted_teams
-
-    @classmethod
     def for_user(klass, user):
         """
         Return the set of teams this user has access to.
@@ -307,13 +296,6 @@ class Team(models.Model):
             teams = []
         else:
             teams = klass.objects.filter(active=True, restricted=False).order_by('order')
-
-        restricted_teams = klass.restricted_teams(user)
-        allteams = list(teams) + restricted_teams
-        teams = []
-        for t in allteams:
-            if t not in teams:
-                teams.append(t)
         return teams
 
     @property

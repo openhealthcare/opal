@@ -39,16 +39,6 @@ We can then create clinics in any installed app, and they will be available from
     Clinic.get('outpatients)
     # -> OutpatientsClinic
 
-### Defining teams
-
-As a signal is fine.
-Data migrations might work.
-
-Defining restricted team access is done by:
-
-Adding a method to your pluigin that takes one argument, a User object, and returning a set of
-extra teams that this user is allowed to see.
-
 ### Defining new flows
 
 Plugins can define flows. They should return a dictionary of flows from the

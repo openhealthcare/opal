@@ -29,11 +29,6 @@ class OpalPlugin(object):
         """
         return {}
 
-    def restricted_teams(self, user):
-        """
-        Given a USER, return a list of extra teams that user can access.
-        """
-        return []
 
 REGISTRY = set()
 AUTODISCOVERED = False
