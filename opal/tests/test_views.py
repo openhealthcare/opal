@@ -131,7 +131,6 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
                 list_limit = None,
                 template_path = 'records/colour.html',
                 detail_template_path = 'records/colour.html',
-                header_template_path = ''
             )
         ]
         context = view.get_column_context(slug='notarealthing')

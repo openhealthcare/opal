@@ -63,26 +63,8 @@ class PatientListTemplateView(TemplateView):
             column_context['single'] = column._is_singleton
             column_context['icon'] = getattr(column, '_icon', '')
             column_context['list_limit'] = getattr(column, '_list_limit', None)
-
-            header_templates = [name + '_header.html']
-            if 'tag' in kwargs:
-                header_templates.insert(
-                    0, 'list_display/{0}/{1}_header.html'.format(kwargs['tag'], name))
-                if 'subtag' in kwargs:
-                    header_templates.insert(
-                        0, 'list_display/{0}/{1}/{2}_header.html'.format(kwargs['tag'],
-                                                                         kwargs['subtag'],
-                                                                         name))
-
             column_context['template_path'] = column.get_display_template(patient_list=slug)
-            column_context['detail_template_path'] = column.get_detail_template(
-                patient_list=slug)
-
-            try:
-                column_context['header_template_path'] = select_template(header_templates).template.name
-            except TemplateDoesNotExist:
-                column_context['header_template_path'] = ''
-
+            column_context['detail_template_path'] = column.get_detail_template(patient_list=slug)
             context.append(column_context)
 
         return context
