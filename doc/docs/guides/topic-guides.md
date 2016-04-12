@@ -20,7 +20,7 @@ A list of all available topic guides.
 |[Data Model](datamodel.md) | How OPAL models clinical reality.|
 |[Flow](flow.md)            | Hooks to customise key moments in a patient's flow through a clinical service.|
 |[Roles & Permissions](roles_and_permissions.md)| How we handle authorization in OPAL|
-|[Teams](teams.md) | Clinical teams in OPAL |
+|[Tagging](tagging.md) | Tagging episodes in OPAL |
 |[JSON API](json_api.md) | The OPAL JSON API |
 |[Lookup Lists](lookup_lists.md) | Canonical coded terms and ontologies|
 

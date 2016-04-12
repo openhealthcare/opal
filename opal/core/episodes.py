@@ -27,7 +27,31 @@ class EpisodeType(object):
     name            = None
     detail_template = None
 
-    
+    @classmethod
+    def episode_visible_to(kls, episode, user):
+        """
+        Predicate function to determine whether an episode of this type
+        is visible to a particular user.
+
+        Defaults implementation checks for Profile.restricted_only and
+        returns true if we have a regular user.
+        """
+        from opal.models import UserProfile # Avoid circular import from opal.models
+
+        profile, _ = UserProfile.objects.get_or_create(user=user)
+        if profile.restricted_only:
+            return False
+
+        return True
+
+    @classmethod
+    def for_category(kls, category):
+        for et in episode_types():
+            if et.name == category:
+                return et
+
+
+
 class InpatientEpisode(EpisodeType):
     name            = 'Inpatient'
     detail_template = 'detail/inpatient.html'
@@ -36,7 +60,7 @@ class InpatientEpisode(EpisodeType):
 class OutpatientEpisode(EpisodeType):
     name = 'Outpatient'
 
-    
+
 class LiaisonEpisode(EpisodeType):
     name = 'Liaison'
 

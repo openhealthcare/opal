@@ -289,9 +289,7 @@ angular.module('opal.controllers').controller(
         };
 
         $scope.newNamedItem = function(episode, name) {
-            return episode.recordEditor.newItem(
-                name, {tag: $scope.currentTag, subtag: $scope.currentSubTag}
-            );
+            return episode.recordEditor.newItem(name);
         };
 
         $scope.is_tag_visible_in_list = function(tag){
@@ -311,7 +309,7 @@ angular.module('opal.controllers').controller(
                 }
             };
 
-            episode.recordEditor.editItem(name, iix, {tag: $scope.currentTag, subtag: $scope.currentSubTag}).then(function(result){
+            episode.recordEditor.editItem(name, iix).then(function(result){
                 reset_state(result);
             });
         };

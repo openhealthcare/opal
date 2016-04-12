@@ -63,24 +63,7 @@ def episodes_for_user(episodes, user):
     list of episodes that this user has the permissions to know
     about.
     """
-    teams = models.Team.restricted_teams(user)
-    allowed_episodes = []
-    for e in episodes:
-        allowed = False
-        if e.tagging_set.count() == 0:
-            allowed_episodes.append(e)
-            continue
-        for tagging in e.tagging_set.all():
-            if not tagging.team.restricted:
-                allowed = True
-                break
-            elif tagging.team in teams:
-                allowed = True
-                break
-
-        if allowed:
-            allowed_episodes.append(e)
-    return allowed_episodes
+    return [e for e in episodes if e.visible_to(user)]
 
 
 class QueryBackend(object):
@@ -116,7 +99,7 @@ class DatabaseQuery(QueryBackend):
     We broadly map reduce all criteria then the set of combined and/or
     criteria together, then only unique episodes.
 
-    Finally we filter based on team restrictions.
+    Finally we filter based on episode type level restrictions.
     """
 
     def _episodes_for_boolean_fields(self, query, field, contains):
@@ -215,7 +198,7 @@ class DatabaseQuery(QueryBackend):
             if Mod == models.Tagging:
                 tag_name = query['field'].replace(" ", "_").title()
                 eps = models.Episode.objects.filter(
-                    tagging__team__name__iexact=tag_name
+                    tagging__value__iexact=tag_name
                 )
 
             elif issubclass(Mod, models.EpisodeSubrecord):
@@ -260,29 +243,6 @@ class DatabaseQuery(QueryBackend):
 
         return results
 
-    def _filter_for_restricted_only(self, episodes):
-        """
-        Given an iterable of EPISODES, return those for which our
-        current restricted only user is allowed to know about.
-        """
-        teams = models.Team.restricted_teams(self.user)
-        allowed_episodes = []
-        for e in episodes:
-            for tagging in e.tagging_set.all():
-                if tagging.team in teams:
-                    allowed_episodes.append(e)
-                    break
-
-        return allowed_episodes
-
-    def _filter_restricted_teams(self, episodes):
-        """
-        Given an iterable of EPISODES, return only those which
-        are not only members of restricted teams that our user is not
-        allowed to know about.
-        """
-        return episodes_for_user(episodes, self.user)
-
     def _episodes_without_restrictions(self):
         all_matches = [(q['combine'], self.episodes_for_criteria(q))
                        for q in self.query]
@@ -298,17 +258,8 @@ class DatabaseQuery(QueryBackend):
 
         return working
 
-    def _filter_restricted_episodes(self, eps):
-        if self.user.profile.restricted_only:
-            eps = self._filter_for_restricted_only(eps)
-        else:
-            eps = self._filter_restricted_teams(eps)
-
-        return eps
-
     def get_episodes(self):
-        eps = self._episodes_without_restrictions()
-        return self._filter_restricted_episodes(eps)
+        return episodes_for_user(self._episodes_without_restrictions(), self.user)
 
     def get_patient_summaries(self):
         eps = self._episodes_without_restrictions()
@@ -319,7 +270,7 @@ class DatabaseQuery(QueryBackend):
         all_eps = models.Episode.objects.filter(
             patient__episode__in=episode_ids
         )
-        filtered_eps = self._filter_restricted_episodes(all_eps)
+        filtered_eps = episodes_for_user(all_eps, self.user)
         return self._get_aggregate_patients_from_episodes(filtered_eps)
 
     def get_patients(self):

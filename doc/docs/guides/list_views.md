@@ -3,10 +3,11 @@
 OPAL provides support for displaying lists of patients, both via a spreadsheet like view,
 and with a card based view.
 
-## Defining lists
+### Defining lists
 
-OPAL patient lists are subclasses of `opal.core.patient_lists.PatientList`. Typically these
-are found in a `patient_lists.py` module of your application or plugin. (Lists _can_ be
+OPAL patient lists are subclasses of `opal.core.patient_lists.PatientList`.
+
+Typically these are found in a `patient_lists.py` module of your application or plugin. (Lists _can_ be
 defined elsewhere, but may not be autodiscovered.)
 
 A basic list needs only define it's `display_name` a `queryset` of episodes to display, and
@@ -33,11 +34,12 @@ a `schema` of subrecords to show for each episode.
 The `display_name` property is the human readable name for our list - which is displayed as
 link text to our list.
 
-## Schemas
+### Schemas
 
 Schemas are lists of Subrecords that we would like to display in our list. By default we
 render the subrecord display_template, and allow editing and addition of each subrecord in
 place.
+
 
 ### Template selection
 
@@ -49,11 +51,12 @@ The template for each cell should live in `./templates/records/*`. In order to
 select the appropriate template for a given episode, OPAL looks in the following
 locations:
 
+    records/{episode_type}/{list slug}/{record_name}.html
+    records/{list_slug}/{record_name}.html
+    records/{episode_type}/{record_name}.html
     records/{record_name}.html
-    records/{team}/{record_name}.html
-    records/{team}/{subteam}/{record_name}.html
 
-## Querysets
+### Querysets
 
 The queryset property of your list should contain all of the episodes for this particular
 list. On occasion we require a more dynamic queryset, in which case we can ovreride the
@@ -69,13 +72,20 @@ list. On occasion we require a more dynamic queryset, in which case we can ovrer
             one_week_ago = datetime.date.today() - datetime.timedelta(days=1)
             return Episode.objects.filter(date_of_admission__gte=one_week_ago)
 
-## Ordering Lists
+### Ordering Lists
 
-## Slug
+As a [discoverable.SortableFeature](discoverable.md) lists may be ordered by setting the
+`order` property to an integer. Lists will display in drop-downs, tables et cetera, in
+this order.
 
-## Templates
+### Slug
 
-## Tagged Patient Lists
+As a [discoverable](discoverable.md) feature, the slug for each list is determined by
+either setting the `slug` property, or returning a string from the `get_slug` classmethod.
+
+### Templates
+
+### Tagged Patient Lists
 
 A common model for working with lists is to use lists based on the tags assigned to an episode.
 This allows users to add and remove patients from lists as they see fit, rather than attempting

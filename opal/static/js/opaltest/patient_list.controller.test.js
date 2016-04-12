@@ -270,7 +270,7 @@ describe('PatientListCtrl', function() {
         it('should pass through the current scopes tags', function(){
           spyOn(episode.recordEditor, "newItem");
           $scope.newNamedItem(episode, "someName");
-          expect(episode.recordEditor.newItem).toHaveBeenCalledWith("someName", {tag: 'tropical', subtag: ''})
+          expect(episode.recordEditor.newItem).toHaveBeenCalledWith("someName")
         });
     });
 
@@ -640,7 +640,7 @@ describe('PatientListCtrl', function() {
         it('should call through to the record editor', function(){
             $scope.editNamedItem($scope.episode, 'demographics', 0);
             expect($scope.episode.recordEditor.editItem).toHaveBeenCalledWith(
-                'demographics', 0, { tag: 'tropical', subtag: '' }
+                'demographics', 0
             );
         });
     });
@@ -655,7 +655,7 @@ describe('PatientListCtrl', function() {
         it('should call through to the record editor', function() {
             $scope.editNamedItem($scope.episode, "diagnosis", iix);
             expect($scope.episode.recordEditor.editItem).toHaveBeenCalledWith(
-                'diagnosis', iix, { tag: 'tropical', subtag: '' }
+                'diagnosis', iix
             );
         });
     });

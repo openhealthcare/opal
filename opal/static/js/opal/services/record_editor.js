@@ -1,4 +1,6 @@
-angular.module('opal.services').factory('RecordEditor', function($http, $q, Item, $modal, $rootScope, UserProfile){
+angular.module('opal.services').factory('RecordEditor', function(
+    $http, $q, Item, $modal, $rootScope, $routeParams,
+    UserProfile){
   "use strict";
   var RecordEditor = function(episode){
     var self = this;
@@ -46,13 +48,13 @@ angular.module('opal.services').factory('RecordEditor', function($http, $q, Item
       }
     };
 
-    self.openEditItemModal = function(item, name, tags){
+    self.openEditItemModal = function(item, name){
       $rootScope.state = 'modal';
 
       var template_url = '/templates/modals/' + name + '.html/';
 
-      if(tags){
-        template_url += tags.currentTag + '/' + tags.currentSubTag;
+      if($routeParams.slug){
+          template_url += $routeParams.slug;
       }
 
       var deferred = $q.defer();
@@ -92,12 +94,12 @@ angular.module('opal.services').factory('RecordEditor', function($http, $q, Item
       return deferred.promise;
     };
 
-    self.editItem = function(name, iix, tags){
+    self.editItem = function(name, iix){
       var item = self.getItem(name, iix);
-      return self.openEditItemModal(item, name, tags);
+      return self.openEditItemModal(item, name);
     };
 
-    self.newItem = function(name, tags){
+    self.newItem = function(name){
       if (!episode[name]) {
           episode[name] = [];
       }
@@ -110,7 +112,7 @@ angular.module('opal.services').factory('RecordEditor', function($http, $q, Item
         deferred.resolve();
         return deferred.promise;
       }
-      return self.openEditItemModal(item, name, tags);
+      return self.openEditItemModal(item, name);
     };
   };
 

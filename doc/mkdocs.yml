@@ -15,7 +15,7 @@ pages:
       - Data Model: guides/datamodel.md
       - Flow: guides/flow.md
       - Roles & Permissions: guides/roles_and_permissions.md
-      - Teams: guides/teams.md
+      - Tagging: guides/tagging.md
       - JSON API: guides/json_api.md
       - Lookup Lists: guides/lookup_lists.md
       - Templates: guides/templates.md
@@ -32,7 +32,6 @@ pages:
       - Episode Types: reference/episode_types.md
       - reference/patient.md
       - Subrecords: reference/subrecords.md
-      - reference/team.md
       - OpalApplication: reference/opal_application.md
       - reference/episode_service.md
       - reference/item_service.md

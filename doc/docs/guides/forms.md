@@ -6,17 +6,32 @@ The editing of records is a key component of any OPAL application. A key pattern
 or create an individual record in a modal containing the form for just that record. OPAL provides
 the Angular Controller `opal.controllers.EditItemCtrl` for doing just this
 
-### Modal template selection
+### Form and modal templates
 
-Modal templates live in `./templates/modals/*`. For the Demographics subrecord we would
-look in `./templates/modals/demographics_modal.html` - which is also available from the URL
-`/templates/modals/demographics_modal.html`. Modal or form templates can be customised per
-team or sub-team, with template selection handled by the `.get_form_template` classmethod of your
-Subrecord.
+Subrecords have `get_form_template()` and `get_modal_template()` methods, which are used for
+figuring out how to render forms for interacting with them. These use the following template
+paths based on the context in which they are called:
 
-Team customised subrecords are retrieved from the url e.g.
-`/templates/modals/demographics_modal.html/team/subteam/` and will look for templates in 
-`./templates/modals/team/subteam/demographics_modal.html`
+    # Forms
+    forms/{episode_type}/{list slug}/{record_name}_form.html
+    forms/{list_slug}/{record_name}_form.html
+    forms/{episode_type}/{record_name}_form.html
+    forms/{record_name}_form.html
+
+    # Modals
+    modals/{episode_type}/{list slug}/{record_name}_modal.html
+    modals/{list_slug}/{record_name}_modal.html
+    modals/{episode_type}/{record_name}_modal.html
+    modals/{record_name}_modal.html
+
+### Autogenerating forms
+
+The `opal` commandline tool has a scaffold command, which will autogenerate missing form templates
+for subrecord models. Simply run the following command to generate.
+
+    $ opal scaffold $DJANGO_APP_WHERE_MODELS_LIVE
+
+(Note this will also generate and run migrations for any unmigrated models.xb)
 
 ### Client side Validation
 
@@ -28,7 +43,7 @@ OPAL contains a number of helpers for developing forms and input modals.
 
 Many of these are located in the forms template tag library, which is a
 Django templatetag library that understands the context of common patterns with
-OPAL for creating forms and modals. 
+OPAL for creating forms and modals.
 
 It provides helpers for various input types that will allow you to render consistent
 forms, with less verbose templates.

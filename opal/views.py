@@ -51,7 +51,23 @@ class PatientListTemplateView(TemplateView):
         # return an empty context
         if not self.patient_list:
             return []
-        return _get_column_context(self.patient_list.schema, **kwargs)
+
+        context = []
+        slug = self.patient_list.get_slug()
+        for column in self.patient_list.schema:
+            column_context = {}
+            name = camelcase_to_underscore(column.__name__)
+            column_context['name'] = name
+            column_context['title'] = getattr(column, '_title',
+                                              name.replace('_', ' ').title())
+            column_context['single'] = column._is_singleton
+            column_context['icon'] = getattr(column, '_icon', '')
+            column_context['list_limit'] = getattr(column, '_list_limit', None)
+            column_context['template_path'] = column.get_display_template(patient_list=slug)
+            column_context['detail_template_path'] = column.get_detail_template(patient_list=slug)
+            context.append(column_context)
+
+        return context
 
     def get_context_data(self, **kwargs):
         context = super(PatientListTemplateView, self).get_context_data(**kwargs)
@@ -91,15 +107,6 @@ class EpisodeDetailTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(EpisodeDetailTemplateView, self).get_context_data(**kwargs)
-        return context
-
-
-class TagsTemplateView(TemplateView):
-    template_name = 'tagging_modal.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(TagsTemplateView, self).get_context_data(**kwargs)
-        context['teams'] = models.Team.for_user(self.request.user)
         return context
 
 
@@ -250,45 +257,6 @@ class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
 Template views for OPAL
 """
 
-def _get_column_context(schema, **kwargs):
-    context = []
-    for column in schema:
-        column_context = {}
-        name = camelcase_to_underscore(column.__name__)
-        column_context['name'] = name
-        column_context['title'] = getattr(column, '_title',
-                                          name.replace('_', ' ').title())
-        column_context['single'] = column._is_singleton
-        column_context['icon'] = getattr(column, '_icon', '')
-        column_context['list_limit'] = getattr(column, '_list_limit', None)
-
-        header_templates = [name + '_header.html']
-        if 'tag' in kwargs:
-            header_templates.insert(
-                0, 'list_display/{0}/{1}_header.html'.format(kwargs['tag'], name))
-            if 'subtag' in kwargs:
-                header_templates.insert(
-                    0, 'list_display/{0}/{1}/{2}_header.html'.format(kwargs['tag'],
-                                                                     kwargs['subtag'],
-                                                                     name))
-
-        column_context['template_path'] = column.get_display_template(
-            team=kwargs.get('tag', None), subteam=kwargs.get('subtag', None))
-
-        column_context['detail_template_path'] = select_template([
-            t.format(name) for t in '{0}_detail.html', '{0}.html', 'records/{0}.html'
-        ]).template.name
-
-        try:
-            column_context['header_template_path'] = select_template(header_templates).template.name
-        except TemplateDoesNotExist:
-            column_context['header_template_path'] = ''
-
-        context.append(column_context)
-
-    return context
-
-
 class FormTemplateView(LoginRequiredMixin, TemplateView):
     """
     This view renders the form template for our field.
@@ -316,8 +284,8 @@ class FormTemplateView(LoginRequiredMixin, TemplateView):
 class ModalTemplateView(LoginRequiredMixin, TemplateView):
     def get_template_from_model(self):
         return self.column.get_modal_template(
-            team=self.tag, subteam=self.subtag
-        )
+            patient_list=self.list_slug)
+
 
     def dispatch(self, *a, **kw):
         """
@@ -325,8 +293,7 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         it can be accessed by all subsequent methods
         """
         self.column = kw['model']
-        self.tag = kw.get('tag', None)
-        self.subtag = kw.get('sub', None)
+        self.list_slug = kw.get('list', None)
         self.template_name = self.get_template_from_model()
         self.name = camelcase_to_underscore(self.column.__name__)
         return super(ModalTemplateView, self).dispatch(*a, **kw)
@@ -346,11 +313,7 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
 class RecordTemplateView(LoginRequiredMixin, TemplateView):
     def get_template_names(self):
         model = get_subrecord_from_api_name(self.kwargs["model"])
-        tag = self.kwargs.get("tag", None)
-        subtag = self.kwargs.get("subtag", None)
-        template_name = model.get_modal_template(
-            team=tag, subteam=subtag
-        )
+        template_name = model.get_modal_template()
         return [template_name]
 
 

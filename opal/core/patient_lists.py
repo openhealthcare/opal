@@ -2,7 +2,6 @@
 This module defines the base PatientList classes.
 """
 from opal import utils
-from opal.models import Episode, UserProfile
 from opal.core import discoverable, exceptions
 
 
@@ -25,6 +24,8 @@ class PatientList(discoverable.DiscoverableFeature,
 
     @classmethod
     def visible_to(klass, user):
+        from opal.models import UserProfile # Avoid circular import from opal.models
+
         profile, _ = UserProfile.objects.get_or_create(user=user)
         if profile.restricted_only:
             return False
@@ -81,10 +82,21 @@ class TaggedPatientList(PatientList, utils.AbstractBase):
             s += '-' + klass.subtag
         return s
 
+    @classmethod
+    def get_tag_names(kls):
+        tags = []
+        for patientlist in kls.list():
+            tags.append(patientlist.tag)
+            if hasattr(patientlist, 'subtag'):
+                tags.append(patientlist.subtag)
+        return tags
+
     def get_queryset(self):
+        from opal.models import Episode # Avoid circular import from opal.models
+
         filter_kwargs = dict(tagging__archived=False)
         if getattr(self, "subtag", None):
-            filter_kwargs["tagging__team__name"] = self.subtag
+            filter_kwargs["tagging__value"] = self.subtag
         else:
-            filter_kwargs["tagging__team__name"] = self.tag
+            filter_kwargs["tagging__value"] = self.tag
         return Episode.objects.filter(**filter_kwargs)

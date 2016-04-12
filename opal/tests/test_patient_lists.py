@@ -102,8 +102,6 @@ class TestTaggedPatientList(OpalTestCase):
         ''' given an episode with certain tags and the required request we should
             only return episodes with those tags
         '''
-        eater = Team.objects.create(name="eater")
-        Team.objects.create(name="herbivore", parent=eater)
         self.episode_2.set_tag_names(["eater", "herbivore"], self.user)
 
         patient_list = PatientList.get('eater-herbivore')()
@@ -118,7 +116,6 @@ class TestTaggedPatientList(OpalTestCase):
         ''' given an episode with certain tags and the required request we should
             only return episodes with those tags
         '''
-        Team.objects.create(name="carnivore")
         self.episode_2.set_tag_names(["carnivore"], self.user)
 
         patient_list = PatientList.get("carnivore")()
@@ -143,3 +140,8 @@ class TestTaggedPatientList(OpalTestCase):
             class MyList(TaggedPatientList):
                 tag = 'foo'
                 subtag = 'one-two'
+
+    def test_get_tag_names(self):
+        taglist = TaggedPatientList.get_tag_names()
+        for tag in ['carnivore', 'herbivore', 'eater']:
+            self.assertIn(tag, taglist)
