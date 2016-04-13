@@ -426,6 +426,10 @@ class Patient(models.Model):
         if not self.id:
             self.save()
 
+        # we never want to be in the position where we don't have an episode
+        if not self.episode_set.exists():
+            episode = self.create_episode()
+
         for api_name, list_of_upgrades in dict_of_list_of_upgrades.iteritems():
             model = get_subrecord_from_api_name(api_name=api_name)
             if model in episode_subrecords():

@@ -53,6 +53,37 @@ class PatientTestCase(OpalTestCase):
         self.assertEqual(len(colours), 2)
         self.assertEqual(colours[0].name, "green")
         self.assertEqual(colours[1].name, "purple")
+        self.assertTrue(patient.episode_set.exists())
+
+    def test_bulk_update_with_existing_patient_episode(self):
+        original_patient = models.Patient()
+        original_patient.save()
+        original_episode = original_patient.create_episode()
+
+        d = {
+            "demographics": [{
+                "first_name": "Samantha",
+                "surname": "Sun",
+                "hospital_number": "123312"
+            }],
+            "patient_colour": [
+                {"name": "green"},
+                {"name": "purple"},
+            ]
+        }
+        original_patient.bulk_update(d, self.user)
+
+        patient = Patient.objects.get()
+        demographics = patient.demographics_set.get()
+        self.assertEqual(demographics.first_name, "Samantha")
+        self.assertEqual(demographics.surname, "Sun")
+        self.assertEqual(demographics.hospital_number, "123312")
+
+        colours = patient.patientcolour_set.all()
+        self.assertEqual(len(colours), 2)
+        self.assertEqual(colours[0].name, "green")
+        self.assertEqual(colours[1].name, "purple")
+        self.assertTrue(patient.episode_set.get(), original_episode)
 
     def test_bulk_update_without_demographics(self):
         original_patient = models.Patient()
@@ -79,6 +110,12 @@ class PatientTestCase(OpalTestCase):
             "hat_wearer": [
                 {"name": "bowler"},
                 {"name": "wizard"},
+            ],
+            "location": [
+                {
+                    "ward": "a ward",
+                    "bed": "a bed"
+                },
             ]
         }
         self.assertFalse(models.Episode.objects.exists())
@@ -89,12 +126,19 @@ class PatientTestCase(OpalTestCase):
         self.assertEqual(demographics.first_name, "Samantha")
         self.assertEqual(demographics.surname, "Sun")
         self.assertEqual(demographics.hospital_number, "123312")
+        self.assertEqual(models.Episode.objects.count(), 1)
         episode = patient.episode_set.get()
 
         hat_wearers = episode.hatwearer_set.all()
         self.assertEqual(len(hat_wearers), 2)
         self.assertEqual(hat_wearers[0].name, "bowler")
         self.assertEqual(hat_wearers[1].name, "wizard")
+        self.assertEqual(hat_wearers[0].episode, episode)
+        self.assertEqual(hat_wearers[1].episode, episode)
+
+        location = episode.location_set.get()
+        self.assertEqual(location.bed, "a bed")
+        self.assertEqual(location.ward, "a ward")
 
 
 class SubrecordTestCase(OpalTestCase):
@@ -197,6 +241,7 @@ class BulkUpdateFromDictsTest(OpalTestCase):
         self.assertEqual(
             expected_patient_colours, new_patient_colours
         )
+
 
     def test_bulk_update_existing_from_dict(self):
         patient = Patient.objects.create()
