@@ -41,9 +41,9 @@
               </a>
               {% for detail in detail_views %}
               <a class="list-group-item episodelist pointer"
-                 ng-class="{'bg-active': view == '{{ detail.slug}}'}"
-                 ng-click="switch_to_episode(0, $event) && switch_to_view('{{ detail.slug }}')"
-                 href="[[ '/#/patient/' + patient.id + '/{{ detail.slug }}' ]]"
+                 ng-class="{'bg-active': view == '{{ detail.get_slug}}'}"
+                 ng-click="switch_to_episode(0, $event) && switch_to_view('{{ detail.get_slug }}')"
+                 href="[[ '/#/patient/' + patient.id + '/{{ detail.get_slug }}' ]]"
                  >
                 {{ detail.display_name }}
               </a>
