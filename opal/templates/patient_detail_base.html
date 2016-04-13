@@ -62,7 +62,7 @@
             {% endif %}
             {% endfor %}
             {% for detail in detail_views %}
-            <div class="row" ng-show="view == '{{ detail.slug }}'">
+            <div class="row" ng-show="view == '{{ detail.get_slug }}'">
               {% include detail.template %}
             </div>
             {% endfor %}
