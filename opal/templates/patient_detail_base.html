@@ -25,7 +25,7 @@
             <div class="panel-heading ">
               <h3>
                 <i class="fa fa-history"></i>
-                Patient History
+                Episodes
               </h3>
             </div>
             <div class="list-group">
@@ -39,6 +39,17 @@
                 [[ e.date_of_episode | shortDate ]]
                 [[ e.date_of_admission | shortDate]]<span ng-show="e.discharge_date"> - [[ e.discharge_date | shortDate ]]</span>
               </a>
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <div class="panel-heading ">
+              <h3>
+                <i class="fa fa-list-alt"></i>
+                Views
+              </h3>
+            </div>
+            <div class="list-group">
               {% for detail in detail_views %}
               <a class="list-group-item episodelist pointer"
                  ng-class="{'bg-active': view == '{{ detail.get_slug}}'}"
@@ -77,5 +88,6 @@
     </div>
 
   </div> <!-- Panel body -->
+
 </div>   <!-- Panel -->
 </div>     <!-- Container -->
