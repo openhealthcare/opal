@@ -1,4 +1,6 @@
-<div class="form-group">
+{% load forms %}
+{% input "autofocus" field="Demographics.hospital_number" static="editing.demographics.sourced_from_upstream" %}
+<div ng-show="editing.demographics.sourced_from_upstream" class="form-group">
   <label class="control-label col-sm-3">Name</label>
   <p class="form-control-static col-sm-8">
     [[ editing.demographics.title ]]
@@ -6,15 +8,9 @@
     [[ editing.demographics.surname ]]
   </p>
 </div>
-<div class="form-group">
-  <label class="control-label col-sm-3">Hospital #</label>
-  <p class="form-control-static col-sm-8">
-    [[ editing.demographics.hospital_number ]]
-  </p>
+<div ng-hide="editing.demographics.sourced_from_upstream">
+  {% select field="Demographics.title" static="editing.demographics.sourced_from_upstream" %}
+  {% input field="Demographics.first_name" static="editing.demographics.sourced_from_upstream" %}
+  {% input field="Demographics.surname" static="editing.demographics.sourced_from_upstream" %}
 </div>
-<div class="form-group">
-  <label class="control-label col-sm-3">Date of birth</label>
-  <p class="form-control-static col-sm-8">
-    [[ editing.demographics.date_of_birth | shortDate ]]
-  </p>
-</div>
+{% include 'partials/_date_of_birth_field.html' %}

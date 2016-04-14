@@ -13,6 +13,7 @@ angular.module('opal.services')
                 });
 
 	            angular.extend(item, attrs);
+
 	            for (var fix = 0; fix < columnSchema.fields.length; fix++) {
 		            field = columnSchema.fields[fix];
 

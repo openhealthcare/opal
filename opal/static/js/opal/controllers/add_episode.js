@@ -46,14 +46,6 @@ angular.module('opal.controllers')
 			    $scope.editing.date_of_admission = doa;
 		    }
 
-		    dob = $scope.editing.demographics.date_of_birth;
-		    if (dob) {
-                if(!angular.isString(dob)){
-                    dob = moment(dob).format(DATE_FORMAT);
-                }
-            }
-		    $scope.editing.demographics.date_of_birth = dob;
-
 		    $http.post('episode/', $scope.editing).success(function(episode) {
 			    episode = new Episode(episode);
 			    $modalInstance.close(episode);

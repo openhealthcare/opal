@@ -10,6 +10,13 @@ describe('services.TagService', function() {
               "slug": "infectious_diseases-id_inpatients",
               "name": "id_inpatients"
         },
+        tropical: {
+              "visible_in_list": true,
+              "direct_add": true,
+              "display_name": "Tropical",
+              "slug": "infectious_diseases-tropical",
+              "name": "tropical"
+        },
         infectious_diseases: {
             "visible_in_list": true,
             "direct_add": false,
@@ -41,8 +48,11 @@ describe('services.TagService', function() {
     });
 
     describe('TagService', function(){
-        it("should put the visible options onto itself when they arrive", function(){
-            expect(tagService.tags_list ).toEqual([exampleOptions.tags.id_inpatients]);
+        it("should put the visible options onto itself when they arrive and sort them alphabetically", function(){
+            expect(tagService.tags_list ).toEqual([
+              exampleOptions.tags.id_inpatients,
+              exampleOptions.tags.tropical
+            ]);
         });
 
         it("should only put visible tags onto itself", function(){
