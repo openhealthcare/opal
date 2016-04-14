@@ -44,7 +44,7 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
         field = model._meta.get_field(field_name)
 
     ctx = {}
-    ctx["label"] = field.name.title()
+    ctx["label"] = field.name.title().replace("_", " ")
     ctx["model"] = "editing.{0}.{1}".format(
         model.get_api_name(),
         field_name

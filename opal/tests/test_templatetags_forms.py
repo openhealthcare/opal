@@ -21,6 +21,9 @@ class TestInferFromSubrecordPath(TestCase):
         self.assertEqual(ctx["lookuplist"], "dog_list")
         self.assertFalse(ctx["required"])
 
+        ctx = infer_from_subrecord_field_path("Demographics.hospital_number")
+        self.assertEqual(ctx["label"], "Hospital Number")
+
 
 
 class TextareaTest(TestCase):
