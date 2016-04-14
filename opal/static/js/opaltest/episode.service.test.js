@@ -128,7 +128,7 @@ describe('Episode', function() {
         });
         $rootScope.fields = fields;
 
-        episode = new Episode(episodeData);
+        episode = new Episode(angular.copy(episodeData));
     });
 
     describe('initialization', function() {
@@ -296,8 +296,6 @@ describe('Episode', function() {
 
 
         describe('findByHospitalNumber()', function (){
-
-
             it('Should call the newPatient callback', function () {
                 var mock_new = jasmine.createSpy('Mock for new patient')
                 var search_url = '/search/patient/';
@@ -308,22 +306,23 @@ describe('Episode', function() {
 
                 $httpBackend.flush();
                 $scope.$digest(); // Fire actual resolving
-
                 expect(mock_new).toHaveBeenCalled();
             });
 
-            it('Should call the newForPatient callback', function () {
+            it('Should cast the new patient and call the newForPatient callback', function () {
                 var mock_new = jasmine.createSpy('Mock for new patient')
                 var search_url = '/search/patient/';
                 search_url += '?hospital_number=notarealnumber'
                 $httpBackend.expectGET(search_url).respond([episodeData]);
-
                 Episode.findByHospitalNumber('notarealnumber', {newForPatient: mock_new})
-
                 $httpBackend.flush();
                 $scope.$digest(); // Fire actual resolving
 
                 expect(mock_new).toHaveBeenCalled();
+                var call_args = mock_new.calls.argsFor(0)[0]
+                expect(call_args.demographics[0].date_of_birth.format('DD/MM/YY')).toEqual('31/07/80');
+                expect(call_args.demographics[0].first_name).toEqual('John');
+                expect(call_args.demographics[0].surname).toEqual('Smith');
             });
 
 

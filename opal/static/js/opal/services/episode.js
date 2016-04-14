@@ -5,10 +5,10 @@ angular.module('opal.services')
     .factory('Episode', function(
         $http, $q, $rootScope, $routeParams, $window,
         Item, RecordEditor) {
-        Episode = function(resource) {
+        var DATE_FORMAT = 'DD/MM/YYYY';
 
+        Episode = function(resource) {
 	        var episode = this;
-            var DATE_FORMAT = 'DD/MM/YYYY';
 	        var column, field, attrs;
 
           episode.recordEditor = new RecordEditor(episode);
@@ -305,9 +305,38 @@ recently changed it - refresh the page and try again');
 			};
 
             deferred.promise.then(function(result){
-                if(result.patients.length == 0){
+                var lookUpField = function(subrecordName, fieldName){
+                    var fieldBySubrecord = $rootScope.fields[subrecordName]
+                    if(!fieldBySubrecord){
+                        return;
+                    }
+                    var allFields = fieldBySubrecord.fields;
+                    return _.find(allFields, function(x){
+                        return x.name == fieldName;
+                    });
+                };
+
+
+                if(!result.patients.length){
                     callbacks.newPatient(result);
                 }else if(result.patients.length == 1){
+                    _.forEach(result.patients[0], function(allSubrecords, subrecordName){
+                      _.forEach(allSubrecords, function(subrecordFields){
+                        _.forEach(subrecordFields, function(fieldValue, fieldName){
+                            if(fieldValue){
+                                var fieldMapping = lookUpField(subrecordName, fieldName);
+                                if(fieldMapping){
+                                  if(fieldMapping.type == 'date'){
+                                      subrecordFields[fieldName] = moment(fieldValue, DATE_FORMAT);
+                                  }
+                                  else if(fieldMapping.type == 'date_time'){
+                                      subrecordFields[fieldName] = moment(fieldValue, DATE_FORMAT);
+                                  }
+                                }
+                            }
+                        });
+                      });
+                    });
                     callbacks.newForPatient(result.patients[0])
                 }else{
                     callbacks.error();
@@ -319,8 +348,10 @@ recently changed it - refresh the page and try again');
 			    $http.get('/search/patient/?hospital_number=' + number)
                     .success(function(response) {
 					    // We have retrieved patient records matching the hospital number
-					    result.patients = response;
-                        deferred.resolve(result);
+  					    result.patients = response;
+                // cast the patient fields
+                deferred.resolve(result);
+
 				    });
             }else{
                 deferred.resolve(result);

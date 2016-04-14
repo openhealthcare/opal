@@ -10,7 +10,7 @@ angular.module('opal.services').factory('TagService', function(Options) {
         Options.then(function(options){
             self.tags_list = _.filter(_.values(options.tags), function(option){
                 return option.direct_add;
-            });
+            }).sort(function(x, y){ return y.name < x.name; });
 
             self.is_direct_add = function(someTag){
                 return options.tags[someTag] && options.tags[someTag].direct_add;
