@@ -175,6 +175,12 @@ class SubrecordTestCase(OpalTestCase):
             'records/subrecord.html',
         ])
 
+    def test_get_modal_footer_template(self):
+        self.assertEqual(
+            Subrecord.get_modal_footer_template(),
+            "partials/_modal_footer.html"
+        )
+
     @patch('opal.models.find_template')
     def test_display_template_list_episode_type(self, find):
         Subrecord.get_display_template(patient_list='test', episode_type='Inpatient')

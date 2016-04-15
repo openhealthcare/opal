@@ -831,6 +831,10 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
         return find_template(templates)
 
     @classmethod
+    def get_modal_footer_template(cls):
+        return "partials/_modal_footer.html"
+
+    @classmethod
     def bulk_update_from_dicts(
         cls, parent, list_of_dicts, user, force=False
     ):
