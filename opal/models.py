@@ -1456,7 +1456,7 @@ class UserProfile(models.Model):
 
 
 class InpatientAdmission(PatientSubrecord):
-    _title = "Inpatient Admission"
+    _title = "Inpatient Admissions"
     _icon = 'fa fa-map-marker'
     _sort = "-admitted"
 
