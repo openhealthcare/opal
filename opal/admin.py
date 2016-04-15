@@ -31,10 +31,18 @@ class MyAdmin(reversion.VersionAdmin): pass
 class EpisodeAdmin(reversion.VersionAdmin):
     list_display = ['patient', 'active', 'date_of_admission', 'discharge_date',]
     list_filter = ['active', ]
-    search_fields = ['patient__demographics__name', ]
+    search_fields = [
+        'patient__demographics__first_name',
+        'patient__demographics__surname',
+        'patient__demographics__hospital_number'
+    ]
 
 class PatientAdmin(reversion.VersionAdmin):
-    search_fields = ['demographics__name', 'demographics__hospital_number']
+    search_fields = [
+        'demographics__first_name',
+        'demographics__surname',
+        'demographics__hospital_number'
+    ]
 
 class TaggingAdmin(reversion.VersionAdmin):
     list_display = ['value', 'episode']
@@ -45,8 +53,14 @@ class TaggingAdmin(reversion.VersionAdmin):
 #     list_editable = ['active', 'order', 'restricted', 'visible_in_list', 'direct_add']
 #     filter_horizontal = ('useful_numbers',)
 
+
 class PatientSubRecordAdmin(reversion.VersionAdmin):
-    pass
+    search_fields = [
+        'patient__demographics__first_name',
+        'patient__demographics__surname',
+        'patient__demographics__hospital_number'
+    ]
+
 
 class EpisodeSubRecordAdmin(reversion.VersionAdmin):
     pass
