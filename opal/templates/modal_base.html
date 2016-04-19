@@ -43,5 +43,7 @@
   {% block modal_cancel %}
   <button class="btn" ng-click="cancel()">Cancel</button>
   {% endblock %}
-  {% include column.get_modal_footer_template %}
+  {% if column.get_modal_footer_template %}
+    {% include column.get_modal_footer_template %}
+  {% endif %}
 </div>
