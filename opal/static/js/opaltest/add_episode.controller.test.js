@@ -38,28 +38,7 @@ describe('AddEpisodeCtrl', function (){
     };
 
     beforeEach(function(){
-        module('opal', function($provide) {
-            $provide.value('$analytics', function(){
-                return {
-                    pageTrack: function(x){}
-                }
-            });
-
-            $provide.provider('$analytics', function(){
-                this.$get = function() {
-                    return {
-                        virtualPageviews: function(x){},
-                        settings: {
-                            pageTracking: false,
-                        },
-                        pageTrack: function(x){}
-                     };
-                };
-            });
-        });
-    });
-
-    beforeEach(function(){
+        module('opal');
         var $controller, $modal
         $scope = {};
 
@@ -99,8 +78,8 @@ describe('AddEpisodeCtrl', function (){
         it('should save', function(){
             $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
             $httpBackend.expectPOST('episode/').respond({demographics:[{patient_id: 1}]})
-            $scope.editing.date_of_admission = new Date(13, 1, 2014);
-            $scope.editing.demographics.date_of_birth = new Date(13, 1, 1914);
+            $scope.editing.date_of_admission = moment(new Date(13, 1, 2014));
+            $scope.editing.demographics.date_of_birth = moment(new Date(13, 1, 1914));
             $scope.save();
             expect(tagServiceToSave).toHaveBeenCalled();
             $httpBackend.flush();

@@ -86,6 +86,7 @@ class OpalApplication(object):
             "js/opal/services/patientlist_loader.js",
             "js/opal/services/tag_service.js",
             "js/search/services/paginator.js"
+            'js/services/fields_translater.js',
         ],
         'opal.controllers': [
             "js/opal/controllers_module.js",
