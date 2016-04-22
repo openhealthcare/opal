@@ -22,8 +22,10 @@
       We couldn't find any patients with this hospital number.
     </p>
     <p class="lead text-center">
-      If the patient is unknown to the hospital you could add them as an elCID
-      only patient
+      <b>Please check you have entered the hospital number correctly</b>
+    </p>
+    <p class="lead text-center">
+      If this is the correct number and the patient is currently at a different hospital or in the community you can add them as an elCID only patient
     </p>
     <div class="text-center">
       <button ng-click="newPatient()" class="btn btn-secondary">
@@ -33,10 +35,11 @@
 </div>
   <div ng-show="result.merged.length">
     <p class="lead text-center">
-      We've found this patient's records have been merged with another patient
+      We've found this patient's records have been <b>merged</b> with another patient.
     </p>
     <p class="lead text-center">
-      [[ result.merged[0].demographics[0].first_name ]] [[ result.merged[0].demographics[0].surname ]] ([[ result.merged[0].demographics[0].hospital_number ]])
+      The correct patient for this hospital number is
+      <b>[[ result.merged[0].demographics[0].first_name ]] [[ result.merged[0].demographics[0].surname ]] ([[ result.merged[0].demographics[0].hospital_number ]])</b>
     </p>
     <div class="text-center">
       <button ng-click="newForPatient(result.merged[0])" class="btn btn-secondary">
