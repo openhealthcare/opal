@@ -303,12 +303,13 @@ recently changed it - refresh the page and try again');
     				patients: [],
     				hospitalNumber: number
 			};
-
+            // record loader is sued by the field translater to
+            // cast the results fields
             deferred.promise.then(function(result){
                 if(!result.patients.length){
                     callbacks.newPatient(result);
                 }else if(result.patients.length == 1){
-                    var patient = FieldTranslater.PatientToJs(result.patients[0]);
+                    var patient = FieldTranslater.patientToJs(result.patients[0]);
                     callbacks.newForPatient(patient)
                 }else{
                     callbacks.error();

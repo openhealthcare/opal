@@ -19,7 +19,7 @@ angular.module('opal.services').service('FieldTranslater', function($rootScope){
   };
 
 
-  this.PatientToJs = function(originalPatient){
+  this.patientToJs = function(originalPatient){
     var patient = angular.copy(originalPatient);
     _.forEach(patient, function(allSubrecords, subrecordName){
       _.forEach(allSubrecords, function(subrecordFields){
@@ -40,7 +40,7 @@ angular.module('opal.services').service('FieldTranslater', function($rootScope){
     });
 
     if(patient.merged && patient.merged.length){
-        patient.merged = [self.PatientToJs(patient.merged[0])];
+        patient.merged = [self.patientToJs(patient.merged[0])];
     }
 
     return patient;
