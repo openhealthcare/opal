@@ -15,11 +15,9 @@ angular.module('opal.controllers')
 	    };
 
 	    $scope.editing = {
-            tagging: [{}],
-		    location: {
-
-		    },
-		    demographics: demographics
+        tagging: [{}],
+		    location: {},
+        demographics: demographics
 	    };
 
       if(tags.tag){
@@ -39,14 +37,24 @@ angular.module('opal.controllers')
 		    // This is a bit mucky but will do for now
 		    doa = $scope.editing.date_of_admission;
         $scope.editing.tagging = [$scope.tagService.toSave()];
-		    if (doa) {
-                if(!angular.isString(doa)){
-                    doa = moment(doa).format(DATE_FORMAT);
-                }
-			    $scope.editing.date_of_admission = doa;
+
+        var toSave = angular.copy($scope.editing);
+
+
+		    if(doa){
+            if(!angular.isString(doa)){
+                doa = moment(doa).format(DATE_FORMAT);
+            }
+    			  toSave.date_of_admission = doa;
 		    }
 
-		    $http.post('episode/', $scope.editing).success(function(episode) {
+        if($scope.editing.demographics.date_of_birth){
+            toSave.demographics.date_of_birth = $scope.editing.demographics.date_of_birth.format(
+                DATE_FORMAT
+            );
+        }
+
+		    $http.post('episode/', toSave).success(function(episode) {
 			    episode = new Episode(episode);
 			    $modalInstance.close(episode);
 		    });

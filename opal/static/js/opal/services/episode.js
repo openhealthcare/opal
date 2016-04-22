@@ -4,7 +4,7 @@
 angular.module('opal.services')
     .factory('Episode', function(
         $http, $q, $rootScope, $routeParams, $window,
-        Item, RecordEditor) {
+        Item, RecordEditor, FieldTranslater) {
         var DATE_FORMAT = 'DD/MM/YYYY';
 
         Episode = function(resource) {
@@ -300,48 +300,21 @@ recently changed it - refresh the page and try again');
         Episode.findByHospitalNumber = function(number, callbacks){
             var deferred = $q.defer();
             var result = {
-				patients: [],
-				hospitalNumber: number
+    				patients: [],
+    				hospitalNumber: number
 			};
-
+            // record loader is sued by the field translater to
+            // cast the results fields
             deferred.promise.then(function(result){
-                var lookUpField = function(subrecordName, fieldName){
-                    var fieldBySubrecord = $rootScope.fields[subrecordName]
-                    if(!fieldBySubrecord){
-                        return;
-                    }
-                    var allFields = fieldBySubrecord.fields;
-                    return _.find(allFields, function(x){
-                        return x.name == fieldName;
-                    });
-                };
-
-
                 if(!result.patients.length){
                     callbacks.newPatient(result);
                 }else if(result.patients.length == 1){
-                    _.forEach(result.patients[0], function(allSubrecords, subrecordName){
-                      _.forEach(allSubrecords, function(subrecordFields){
-                        _.forEach(subrecordFields, function(fieldValue, fieldName){
-                            if(fieldValue){
-                                var fieldMapping = lookUpField(subrecordName, fieldName);
-                                if(fieldMapping){
-                                  if(fieldMapping.type == 'date'){
-                                      subrecordFields[fieldName] = moment(fieldValue, DATE_FORMAT);
-                                  }
-                                  else if(fieldMapping.type == 'date_time'){
-                                      subrecordFields[fieldName] = moment(fieldValue, DATE_FORMAT);
-                                  }
-                                }
-                            }
-                        });
-                      });
-                    });
-                    callbacks.newForPatient(result.patients[0])
+                    var patient = FieldTranslater.patientToJs(result.patients[0]);
+                    callbacks.newForPatient(patient)
                 }else{
                     callbacks.error();
                 }
-            })
+            });
 
             if(number){
 			    // The user entered a hospital number
