@@ -11,7 +11,7 @@ from django.views.generic import TemplateView, View
 from django.views.decorators.http import require_http_methods
 
 from opal import models
-from opal.core import application, detail, episodes, exceptions, glossolalia
+from opal.core import application, detail, episodes, exceptions
 from opal.core.patient_lists import PatientList
 from opal.core.subrecords import (
     episode_subrecords, subrecords, get_subrecord_from_api_name
@@ -182,10 +182,7 @@ def episode_detail_view(request, pk):
     data = _get_request_data(request)
 
     try:
-        pre = episode.to_dict(request.user)
         episode.update_from_dict(data, request.user)
-        post = episode.to_dict(request.user)
-        glossolalia.change(pre, post)
         return _build_json_response(episode.to_dict(request.user, shallow=True))
     except exceptions.ConsistencyError:
         return _build_json_response({'error': 'Item has changed'}, 409)
@@ -228,7 +225,6 @@ def episode_list_and_create_view(request):
             episode.set_tag_names(tag_names, request.user)
 
         serialised = episode.to_dict(request.user)
-        glossolalia.admit(serialised)
         return _build_json_response(serialised, status_code=201)
 
 
@@ -250,7 +246,6 @@ class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
                 item.episode = new
                 item.save()
         serialised = new.to_dict(self.request.user)
-        glossolalia.admit(serialised)
         return _build_json_response(serialised)
 
 """
