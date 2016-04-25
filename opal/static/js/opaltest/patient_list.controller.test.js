@@ -63,7 +63,6 @@ describe('PatientListCtrl', function() {
             id: 101,
             patient_id: 99,
             name: 'John Smith',
-            date_of_birth: '1980-07-31'
         }],
         tagging: [{'mine': true, 'tropical': true}],
         location: [{
@@ -71,7 +70,6 @@ describe('PatientListCtrl', function() {
             hospital: 'UCH',
             ward: 'T10',
             bed: '15',
-            date_of_admission: '2013-08-01',
         }],
         diagnosis: [{
             id: 102,
@@ -82,107 +80,6 @@ describe('PatientListCtrl', function() {
             condition: 'Malaria',
             provisional: false,
         }]
-    };
-
-    patientData = {
-        "active_episode_id": null,
-        "demographics": [
-            {
-                "consistency_token": "0beb0d46",
-                "date_of_birth": "1999-12-12",
-                "hospital_number": "",
-                "id": 2,
-                "name": "Mr WAT",
-                "patient_id": 2
-            }
-        ],
-        "episodes": {
-            "3": {
-                "antimicrobial": [],
-                "demographics": [
-                    {
-                        "consistency_token": "0beb0d46",
-                        "date_of_birth": "1999-12-12",
-                        "hospital_number": "",
-                        "id": 2,
-                        "name": "Mr WAT",
-                        "patient_id": 2
-                    }
-                ],
-                "diagnosis": [],
-                "general_note": [],
-                "id": 3,
-                "tagging": {},
-                "location": [
-                    {
-                        "bed": "",
-                        "category": "Discharged",
-                        "consistency_token": "bd4f5db6",
-                        "date_of_admission": "2013-11-14",
-                        "discharge_date": null,
-                        "episode_id": 3,
-                        "hospital": "",
-                        "id": 3,
-                        "ward": ""
-                    }
-                ],
-                "microbiology_input": [],
-                "microbiology_test": [
-                    {
-                        "adenovirus": "",
-                        "anti_hbcore_igg": "",
-                        "anti_hbcore_igm": "",
-                        "anti_hbs": "",
-                        "c_difficile_antigen": "",
-                        "c_difficile_toxin": "",
-                        "cmv": "",
-                        "consistency_token": "29429ebf",
-                        "cryptosporidium": "",
-                        "date_ordered": "2013-11-14",
-                        "details": "",
-                        "ebna_igg": "",
-                        "ebv": "",
-                        "entamoeba_histolytica": "",
-                        "enterovirus": "",
-                        "episode_id": 3,
-                        "giardia": "",
-                        "hbsag": "",
-                        "hsv": "",
-                        "hsv_1": "",
-                        "hsv_2": "",
-                        "id": 1,
-                        "igg": "",
-                        "igm": "",
-                        "influenza_a": "",
-                        "influenza_b": "",
-                        "metapneumovirus": "",
-                        "microscopy": "",
-                        "norovirus": "",
-                        "organism": "",
-                        "parainfluenza": "",
-                        "parasitaemia": "",
-                        "resistant_antibiotics": "",
-                        "result": "pending",
-                        "rotavirus": "",
-                        "rpr": "",
-                        "rsv": "",
-                        "sensitive_antibiotics": "",
-                        "species": "",
-                        "syphilis": "",
-                        "test": "Fasciola Serology",
-                        "tppa": "",
-                        "vca_igg": "",
-                        "vca_igm": "",
-                        "viral_load": "",
-                        "vzv": ""
-                    }
-                ],
-                "past_medical_history": [],
-                "todo": [],
-                "travel": []
-            }
-        },
-        "id": 2
     };
 
     optionsData = {
@@ -589,7 +486,6 @@ describe('PatientListCtrl', function() {
                     expect($scope.rix).toEqual(0);
                     expect($scope.episode.id).toEqual(123);
                     expect($scope.rows.length).toEqual(3)
-
                     $scope.dischargeEpisode(episode);
                     $rootScope.$apply();
 

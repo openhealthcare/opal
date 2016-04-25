@@ -2,8 +2,8 @@ describe('EditItemCtrl', function (){
     "use strict";
 
     var $scope, $cookieStore, $timeout, $modal, item, Item;
-    var dialog, Episode, episode, ngProgressLite, $q;
-    var Schema, $modal, $controller, controller, fakeModalInstance;
+    var dialog, Episode, episode, ngProgressLite, $q, $rootScope;
+    var Schema, $controller, controller, fakeModalInstance;
 
     var episodeData = {
         id: 123,
@@ -103,11 +103,12 @@ describe('EditItemCtrl', function (){
             $modal         = $injector.get('$modal');
             ngProgressLite = $injector.get('ngProgressLite');
             Schema         = $injector.get('Schema');
-            var $rootScope = $injector.get('$rootScope');
-            $scope         = $rootScope.$new();
+            $rootScope = $injector.get('$rootScope');
             $modal         = $injector.get('$modal');
         });
 
+        $rootScope.fields = columns.default;
+        $scope = $rootScope.$new();
         var schema = new Schema(columns.default);
         episode = new Episode(episodeData);
         item = new Item(

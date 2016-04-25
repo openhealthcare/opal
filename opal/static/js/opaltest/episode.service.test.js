@@ -142,8 +142,8 @@ describe('Episode', function() {
     it('should run walkin comparison in walkin review', function(){
         $routeParams.tag = "walkin";
         $routeParams.subtag = "walkin_review";
-        var johnSmith = new Episode(episodeData);
         var anneAngelaData = angular.copy(episodeData);
+        var johnSmith = new Episode(episodeData);
         anneAngelaData.demographics[0].first_name = "Anne";
         anneAngelaData.demographics[0].surname = "Angela";
         var anneAngela = new Episode(anneAngelaData);
@@ -222,11 +222,11 @@ describe('Episode', function() {
         var TODAY = moment(moment().format('YYYY-MM-DD')).toDate()
 
         it('should set defaults for micro_test', function() {
-            expect(episode.newItem('microbiology_test').date_ordered).toEqual(TODAY);
+            expect(episode.newItem('microbiology_test').date_ordered.toDate()).toEqual(TODAY);
         });
 
         it('should set defaults for general_note', function() {
-            expect(episode.newItem('general_note').date).toEqual(TODAY);
+            expect(episode.newItem('general_note').date.toDate()).toEqual(TODAY);
         });
 
         it('should set defaults for micro input', function() {
@@ -241,7 +241,7 @@ describe('Episode', function() {
 
         it('should not set defaults if there is no slug', function() {
             $routeParams.slug = 'walkin-walkin_doctor';
-            expect(episode.newItem('antimicrobial').start_date).toEqual(TODAY);
+            expect(episode.newItem('antimicrobial').start_date.toDate()).toEqual(TODAY);
         });
 
     });
