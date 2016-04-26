@@ -15,7 +15,6 @@ angular.module('opal.controllers').controller(
   if(last_list){
     replacePath(last_list);
   }else{
-    replacePath(options.first_list_slug);
     Options.then(function(options){
       replacePath(options.first_list_slug);
     });
