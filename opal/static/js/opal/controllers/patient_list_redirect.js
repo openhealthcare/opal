@@ -1,5 +1,5 @@
 angular.module('opal.controllers').controller(
-  'PatientListRedirectCtrl', function($scope, $cookieStore, $location, Options){
+  'PatientListRedirectCtrl', ["$scope", "$cookieStore", "$location", "Options", function($scope, $cookieStore, $location, Options){
     "use strict";
     // a simple controller that redirects to the correct tag/subtag
     var target;
@@ -20,4 +20,4 @@ angular.module('opal.controllers').controller(
         replacePath(options.first_list_slug);
       });
     }
-});
+}]);
