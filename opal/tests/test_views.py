@@ -114,7 +114,7 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
 
         view = views.PatientListTemplateView()
 
-        class PL:
+        class PL(patient_lists.PatientList):
             schema = [testmodels.Colour]
 
             @classmethod
