@@ -22,6 +22,7 @@ describe('PatientListRedirectListCtrl', function() {
       $controller  = $injector.get('$controller');
       $rootScope   = $injector.get('$rootScope');
       $scope       = $rootScope.$new();
+      spyOn(fakeOptionsPromise, 'then').and.callThrough();
   }));
 
   it('should redirect to the cookie store list', function() {
@@ -38,9 +39,10 @@ describe('PatientListRedirectListCtrl', function() {
           $scope: $scope,
           $cookieStore: $cookieStore,
           $location: $location ,
-          options: fakeOptions
+          options: fakeOptionsPromise
       });
       expect($location.path).toHaveBeenCalledWith("/list/cookietag/");
+      expect(fakeOptionsPromise.then).not.toHaveBeenCalled();
   });
 
 
@@ -50,10 +52,11 @@ describe('PatientListRedirectListCtrl', function() {
             $scope: $scope,
             $cookieStore: $cookieStore,
             $location: $location,
-            options: fakeOptions
+            Options: fakeOptionsPromise
         });
         expect($location.path).toHaveBeenCalledWith("/list/carnivore-eater/");
         expect($cookieStore.get).toHaveBeenCalledWith("opal.lastPatientList");
+        expect(fakeOptionsPromise.then).toHaveBeenCalled();
     });
 
 });
