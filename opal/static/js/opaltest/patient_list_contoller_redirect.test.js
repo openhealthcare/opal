@@ -1,7 +1,7 @@
 describe('PatientListRedirectListCtrl', function() {
   "use strict";
 
-  var $location, $cookieStore, $controller, $scope;
+  var $location, $cookieStore, $controller, $scope, $rootScope;
   var fakeOptions = {
       first_list_slug: 'carnivore-eater',
       tag_hierarchy: {
@@ -11,6 +11,8 @@ describe('PatientListRedirectListCtrl', function() {
           ]
       }
   };
+
+  var fakeOptionsPromise = {then: function(someFun){ return someFun(fakeOptions); }};
 
   beforeEach(module('opal.controllers'));
   beforeEach(inject(function($injector){
@@ -31,6 +33,7 @@ describe('PatientListRedirectListCtrl', function() {
               throw "unknown argument " + someKey;
           }
       };
+
       $controller('PatientListRedirectCtrl', {
           $scope: $scope,
           $cookieStore: $cookieStore,
@@ -46,12 +49,11 @@ describe('PatientListRedirectListCtrl', function() {
         $controller('PatientListRedirectCtrl', {
             $scope: $scope,
             $cookieStore: $cookieStore,
-            $location: $location ,
+            $location: $location,
             options: fakeOptions
         });
         expect($location.path).toHaveBeenCalledWith("/list/carnivore-eater/");
         expect($cookieStore.get).toHaveBeenCalledWith("opal.lastPatientList");
-
     });
 
 });
