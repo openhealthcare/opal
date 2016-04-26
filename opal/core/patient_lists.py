@@ -32,6 +32,12 @@ class PatientList(discoverable.DiscoverableFeature,
 
         return True
 
+    def get_template_prefixes(self):
+        """ a patient list can return templates particular to themselves
+            or indeed used by other patient lists
+        """
+        return []
+
     @property
     def schema(self):
         raise ValueError("this needs to be implemented")
@@ -100,3 +106,13 @@ class TaggedPatientList(PatientList, utils.AbstractBase):
         else:
             filter_kwargs["tagging__value"] = self.tag
         return Episode.objects.filter(**filter_kwargs)
+
+    def get_template_prefixes(self):
+        """ a patient list can return templates particular to themselves
+            or indeed used by other patient lists
+        """
+        possible = [self.tag]
+
+        if hasattr(self, 'subtag'):
+            possible.append("{0}.{1}".format(self.tag, self.subtag))
+        return possible

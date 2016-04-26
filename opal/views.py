@@ -53,7 +53,6 @@ class PatientListTemplateView(TemplateView):
             return []
 
         context = []
-        slug = self.patient_list.get_slug()
         for column in self.patient_list.schema:
             column_context = {}
             name = camelcase_to_underscore(column.__name__)
@@ -63,8 +62,12 @@ class PatientListTemplateView(TemplateView):
             column_context['single'] = column._is_singleton
             column_context['icon'] = getattr(column, '_icon', '')
             column_context['list_limit'] = getattr(column, '_list_limit', None)
-            column_context['template_path'] = column.get_display_template(patient_list=slug)
-            column_context['detail_template_path'] = column.get_detail_template(patient_list=slug)
+            column_context['template_path'] = column.get_display_template(
+                patient_list=self.patient_list()
+            )
+            column_context['detail_template_path'] = column.get_detail_template(
+                patient_list=self.patient_list()
+            )
             context.append(column_context)
 
         return context
@@ -283,9 +286,13 @@ class FormTemplateView(LoginRequiredMixin, TemplateView):
 
 class ModalTemplateView(LoginRequiredMixin, TemplateView):
     def get_template_from_model(self):
-        return self.column.get_modal_template(
-            patient_list=self.list_slug)
+        patient_list = None
 
+        if self.list_slug:
+            patient_list = PatientList.get(self.list_slug)()
+        return self.column.get_modal_template(
+            patient_list=patient_list
+        )
 
     def dispatch(self, *a, **kw):
         """

@@ -114,7 +114,7 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
 
         view = views.PatientListTemplateView()
 
-        class PL:
+        class PL(patient_lists.PatientList):
             schema = [testmodels.Colour]
 
             @classmethod
@@ -300,6 +300,20 @@ class ModalTemplateViewTestCase(BaseViewTestCase):
             views.ModalTemplateView, request)
         resp = view.dispatch(request, model=testmodels.Colour)
         self.assertEqual(200, resp.status_code)
+
+    @patch("opal.tests.models.DogOwner.get_modal_template")
+    def test_model_specific_lookups(self, get_modal_template):
+        # test patient list look up
+        request = self.get_request('/colour_modal.html/eater-herbivore')
+        view = self.setup_view(views.ModalTemplateView, request)
+        view.column = testmodels.DogOwner
+        view.list_slug = 'eater-herbivore'
+        get_modal_template.return_value = "eater/colour_modal.html"
+        result = view.get_template_from_model()
+        self.assertEqual(
+            TaggingTestPatientList, get_modal_template.call_args[1]["patient_list"].__class__
+        )
+        self.assertEqual(result, "eater/colour_modal.html")
 
 
 class RecordTemplateViewTestCase(BaseViewTestCase):

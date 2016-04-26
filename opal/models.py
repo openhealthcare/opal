@@ -775,13 +775,15 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
     @classmethod
     def _build_template_selection(cls, episode_type=None, patient_list=None, suffix=None, prefix=None):
         name = camelcase_to_underscore(cls.__name__)
+
         templates = []
         if patient_list and episode_type:
-            templates.append('{0}/{1}/{2}/{3}{4}'.format(
-                prefix, episode_type.lower(), patient_list, name, suffix
-            ))
+            raise ValueError("you can not get both a patient list and episode type")
         if patient_list:
-            templates.append('{0}/{1}/{2}{3}'.format(prefix, patient_list, name, suffix))
+            list_prefixes = patient_list.get_template_prefixes()
+
+            for list_prefix in list_prefixes:
+                templates.append('{0}/{1}/{2}{3}'.format(prefix, list_prefix, name, suffix))
         if episode_type:
             templates.append('{0}/{1}/{2}{3}'.format(prefix, episode_type.lower(), name, suffix))
         templates.append('{0}/{1}{2}'.format(prefix, name, suffix))
@@ -802,6 +804,8 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
         """
         Return the active detail template for our record
         """
+        if patient_list and episode_type:
+            raise ValueError("you can not get both a patient list and episode type")
         name = camelcase_to_underscore(cls.__name__)
         templates = []
         if episode_type:
