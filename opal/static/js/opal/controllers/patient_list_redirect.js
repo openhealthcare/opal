@@ -1,7 +1,6 @@
 angular.module('opal.controllers').controller(
   'PatientListRedirectCtrl', function($scope, $cookieStore, $location, options){
   "use strict";
-  a simple controller that redirects to the correct tag/subtag
   var target;
   $scope.ready = false;
 
