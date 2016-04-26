@@ -5,7 +5,7 @@ app.config(
      function($routeProvider) {
          $routeProvider.when('/list/',{
              controller: 'PatientListRedirectCtrl',
-             templateUrl: '/templates/empty_page.html'
+             templateUrl: '/templates/404.html'
          }).when('/list/:slug', {
 			 controller: 'PatientListCtrl',
 			 resolve: {
