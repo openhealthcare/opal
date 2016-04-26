@@ -5,13 +5,16 @@ app.config(
      function($routeProvider) {
          $routeProvider.when('/list/',{
              controller: 'PatientListRedirectCtrl',
-             templateUrl: '/templates/empty_page.html'
+             templateUrl: '/templates/404.html',
+             resolve: {
+                 options: function(Options){ return Options; }
+             }
          }).when('/list/:slug', {
 			 controller: 'PatientListCtrl',
 			 resolve: {
 				 episodedata: function(patientListLoader) { return patientListLoader(); },
 				 options    : function(Options) { return Options; },
-         profile    : function(UserProfile){ return UserProfile; },
+                 profile    : function(UserProfile){ return UserProfile; },
 			 },
 			 templateUrl: function(params){
                  var target =  '/templates/patient_list.html';
