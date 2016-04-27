@@ -33,6 +33,21 @@ class TaggingTestNotSubTag(TaggedPatientList):
         models.Demographics,
     ]
 
+
+class TaggingTestSameTagPatientList(TaggedPatientList):
+        # we shouldn't have duplicate tags so lets check that by
+        # having another patient list with the same parent tag
+        # but different subtrags
+        display_name = "Omnivore"
+        tag = "eater"
+        subtag = "omnivore"
+        order = 5
+
+        schema = [
+            models.Demographics,
+        ]
+
+
 class TestPatientList(OpalTestCase):
 
     def setUp(self):
@@ -76,7 +91,11 @@ class TestPatientList(OpalTestCase):
         self.assertEqual(None, PatientList.order)
 
     def test_order_respected_by_list(self):
-        expected = [TaggingTestNotSubTag, TaggingTestPatientList]
+        expected = [
+            TaggingTestNotSubTag,
+            TaggingTestPatientList,
+            TaggingTestSameTagPatientList
+        ]
         self.assertEqual(expected, list(PatientList.list()))
 
     def test_get_template_names_default(self):
@@ -91,6 +110,8 @@ class TestPatientList(OpalTestCase):
 
 
 class TestTaggedPatientList(OpalTestCase):
+
+
     def setUp(self):
         self.patient = Patient.objects.create()
         self.episode_1 = self.patient.create_episode()
@@ -128,7 +149,11 @@ class TestTaggedPatientList(OpalTestCase):
         self.assertEqual(serialized[0]["id"], 2)
 
     def test_list(self):
-        expected = [TaggingTestNotSubTag, TaggingTestPatientList]
+        expected = [
+            TaggingTestNotSubTag,
+            TaggingTestPatientList,
+            TaggingTestSameTagPatientList
+        ]
         self.assertEqual(expected, list(TaggedPatientList.list()))
 
     def test_invalid_tag_name(self):
@@ -143,18 +168,6 @@ class TestTaggedPatientList(OpalTestCase):
                 subtag = 'one-two'
 
     def test_get_tag_names(self):
-        class TaggingTestSameTagPatientList(TaggedPatientList):
-                # we shouldn't have duplicate tags so lets check that by
-                # having another patient list with the same parent tag
-                # but different subtrags
-                display_name = "Omnivore"
-                tag = "eater"
-                subtag = "omnivore"
-                order = 4
-
-                schema = [
-                    models.Demographics,
-                ]
 
         taglist = TaggedPatientList.get_tag_names()
         expected = {'carnivore', 'herbivore', 'omnivore', 'eater'}
