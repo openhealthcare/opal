@@ -14,7 +14,7 @@ class RecordPanelTestCase(OpalTestCase):
             name='demographics',
             singleton=True,
             title='Demographics',
-            detail_template='records/demographics.html',
+            detail_template='records/demographics_detail.html',
             icon=None,
             editable=1,
             angular_filter=None,
@@ -49,7 +49,7 @@ class RecordTimelineTestCase(OpalTestCase):
         expected = dict(
             name='demographics',
             title='Demographics',
-            detail_template='records/demographics.html',
+            detail_template='records/demographics_detail.html',
             icon=None,
             editable=True,
             whenfield='when'

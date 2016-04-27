@@ -774,7 +774,7 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
 
     @classmethod
     def _build_template_selection(cls, episode_type=None, patient_list=None, suffix=None, prefix=None):
-        name = camelcase_to_underscore(cls.__name__)
+        name = cls.get_api_name()
 
         templates = []
         if patient_list and episode_type:
@@ -1335,7 +1335,7 @@ class Diagnosis(EpisodeSubrecord):
             self.episode.patient.demographics_set.get().name,
             self.condition,
             self.date_of_diagnosis
-            )
+        )
 
 
 class PastMedicalHistory(EpisodeSubrecord):
