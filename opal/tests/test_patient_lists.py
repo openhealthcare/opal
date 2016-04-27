@@ -21,6 +21,7 @@ class TaggingTestPatientList(TaggedPatientList):
         models.Demographics,
     ]
 
+
 class TaggingTestNotSubTag(TaggedPatientList):
     display_name = 'Carnivores'
     direct_add = False
@@ -142,6 +143,19 @@ class TestTaggedPatientList(OpalTestCase):
                 subtag = 'one-two'
 
     def test_get_tag_names(self):
+        class TaggingTestSameTagPatientList(TaggedPatientList):
+                # we shouldn't have duplicate tags so lets check that by
+                # having another patient list with the same parent tag
+                # but different subtrags
+                display_name = "Omnivore"
+                tag = "eater"
+                subtag = "omnivore"
+                order = 4
+
+                schema = [
+                    models.Demographics,
+                ]
+
         taglist = TaggedPatientList.get_tag_names()
-        for tag in ['carnivore', 'herbivore', 'eater']:
-            self.assertIn(tag, taglist)
+        expected = {'carnivore', 'herbivore', 'omnivore', 'eater'}
+        self.assertEqual(set(taglist), expected)

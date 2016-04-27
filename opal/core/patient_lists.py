@@ -92,7 +92,8 @@ class TaggedPatientList(PatientList, utils.AbstractBase):
     def get_tag_names(kls):
         tags = []
         for patientlist in kls.list():
-            tags.append(patientlist.tag)
+            if patientlist.tag not in tags:
+                tags.append(patientlist.tag)
             if hasattr(patientlist, 'subtag'):
                 tags.append(patientlist.subtag)
         return tags
