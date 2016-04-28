@@ -2,7 +2,7 @@
 Templatetags for panels
 """
 from django import template
-from django.template.loader import get_template
+from opal.core.subrecords import patient_subrecords
 
 from opal.utils import camelcase_to_underscore
 
@@ -46,8 +46,10 @@ def record_panel(
         'angular_filter': angular_filter,
         'noentries': noentries,
         'only_display_if_exists': only_display_if_exists,
-        'full_width': full_width
+        'full_width': full_width,
+        'is_patient_subrecord': model.__class__ in patient_subrecords()
     }
+
 
 @register.inclusion_tag('_helpers/record_timeline.html')
 def record_timeline(model, whenfield):

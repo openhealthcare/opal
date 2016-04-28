@@ -1,5 +1,5 @@
 angular.module('opal.services')
-    .factory('patientLoader', function($q, $window, $http, $route, Episode, recordLoader ) {
+    .factory('patientLoader', function($q, $window, $http, $route, Episode, recordLoader, FieldTranslater) {
         return function() {
           "use strict";
 	        var deferred = $q.defer();
@@ -14,9 +14,21 @@ angular.module('opal.services')
             $q.all([recordLoader, getEpisodePromise]).then(
                     function(results)   {
                         var patient = results[1].data;
+                        patient = FieldTranslater.patientToJs(patient);
                         patient.episodes = _.map(patient.episodes, function(resource) {
                             return new Episode(resource);
                         });
+
+                        var episodeValues = _.values(patient.episodes);
+                        if(episodeValues.length){
+                          _.each(patient, function(v, k){
+                              if(k in episodeValues[0]){
+                                  patient[k] = episodeValues[0][k];
+                              }
+                          });
+                          patient.recordEditor = episodeValues[0].recordEditor;
+                        }
+
                         deferred.resolve(patient);
                     }, function() {
                         // handle error better
