@@ -20,7 +20,8 @@ class RecordPanelTestCase(OpalTestCase):
             angular_filter=None,
             noentries=None,
             only_display_if_exists=False,
-            full_width=False
+            full_width=False,
+            is_patient_subrecord=True,
         )
         result = panels.record_panel(Demographics())
         self.assertEqual(expected, result)
