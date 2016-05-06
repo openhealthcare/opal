@@ -5,3 +5,4 @@ coverage
 coveralls
 celery
 Fabric==1.10.2
+pycrypto==2.6.1
