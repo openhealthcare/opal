@@ -4,3 +4,4 @@ python-dateutil==2.4.2
 coverage
 coveralls
 celery
+Fabric==1.10.2
