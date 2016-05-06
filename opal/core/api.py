@@ -8,7 +8,7 @@ from rest_framework import routers, status, viewsets
 from rest_framework.response import Response
 
 from opal.models import Episode, Synonym, Macro, Patient, PatientRecordAccess
-from opal.core import application, exceptions, plugins, glossolalia, schemas
+from opal.core import application, exceptions, plugins, schemas
 from opal.core.lookuplists import LookupList
 from opal.utils import stringport, camelcase_to_underscore
 from opal.core.subrecords import subrecords
@@ -191,7 +191,6 @@ class SubrecordViewSet(viewsets.ViewSet):
             episode = Episode.objects.get(pk=request.data['episode_id'])
         except Episode.DoesNotExist:
             return Response('Nonexistant episode', status=status.HTTP_400_BAD_REQUEST)
-        pre = episode.to_dict(request.user)
 
         if isinstance(subrecord, PatientSubrecord):
             del request.data['episode_id']
@@ -204,8 +203,6 @@ class SubrecordViewSet(viewsets.ViewSet):
             return Response({'error': 'Unexpected field name'}, status=status.HTTP_400_BAD_REQUEST)
 
         episode = Episode.objects.get(pk=episode.pk)
-        post = episode.to_dict(request.user)
-        glossolalia.change(pre, post)
 
         return _build_json_response(
             subrecord.to_dict(request.user),
@@ -218,7 +215,6 @@ class SubrecordViewSet(viewsets.ViewSet):
 
     @item_from_pk
     def update(self, request, item):
-        pre = self._item_to_dict(item, request.user)
         try:
             item.update_from_dict(request.data, request.user)
         except exceptions.APIError:
@@ -226,7 +222,6 @@ class SubrecordViewSet(viewsets.ViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
         except exceptions.ConsistencyError:
             return Response({'error': 'Item has changed'}, status=status.HTTP_409_CONFLICT)
-        glossolalia.change(pre, self._item_to_dict(item, request.user))
         return _build_json_response(
             item.to_dict(request.user),
             status_code=status.HTTP_202_ACCEPTED
@@ -234,9 +229,7 @@ class SubrecordViewSet(viewsets.ViewSet):
 
     @item_from_pk
     def destroy(self, request, item):
-        pre = self._item_to_dict(item, request.user)
         item.delete()
-        glossolalia.change(pre, self._item_to_dict(item, request.user))
         return Response('deleted', status=status.HTTP_202_ACCEPTED)
 
 
@@ -270,10 +263,7 @@ class TaggingViewSet(viewsets.ViewSet):
         if 'id' in request.data:
             del request.data['id']
         tag_names = [n for n, v in request.data.items() if v]
-        pre = episode.to_dict(request.user)
         episode.set_tag_names(tag_names, request.user)
-        post = episode.to_dict(request.user)
-        glossolalia.transfer(pre, post)
         return Response(episode.tagging_dict(request.user)[0], status=status.HTTP_202_ACCEPTED)
 
 
@@ -295,7 +285,6 @@ class EpisodeViewSet(viewsets.ViewSet):
         * Create or locate the patient
         * Create a new episode
         * Update the patient with any extra data passed in
-        * Inform glossolalia
         * return the patient
         """
         demographics_data = request.data.pop('demographics', None)

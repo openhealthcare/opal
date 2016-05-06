@@ -190,14 +190,6 @@ class SubrecordTestCase(TestCase):
         response = self.patientviewset().create(mock_request)
         self.assertEqual('blue', json.loads(response.content)['name'])
 
-    @patch('opal.core.api.glossolalia.change')
-    def test_create_pings_integration(self, change):
-        mock_request = MagicMock(name='mock request')
-        mock_request.data = {'name': 'blue', 'episode_id': self.episode.pk}
-        mock_request.user = self.user
-        response = self.viewset().create(mock_request)
-        self.assertEqual(1, change.call_count)
-
     def test_create_nonexistant_episode(self):
         mock_request = MagicMock(name='mock request')
         mock_request.data = {'name': 'blue', 'episode_id': 56785}
@@ -236,21 +228,6 @@ class SubrecordTestCase(TestCase):
         self.assertEqual(date.today(), updated_colour.updated.date())
         self.assertEqual(202, response.status_code)
         self.assertEqual('green', json.loads(response.content)['name'])
-
-    @patch('opal.core.api.glossolalia.change')
-    def test_update_pings_integration(self, change):
-        colour = Colour.objects.create(name='blue', episode=self.episode)
-        mock_request = MagicMock(name='mock request')
-        mock_request.data = {
-            'name'             : 'green',
-            'episode_id'       : self.episode.pk,
-            'id'               : colour.pk,
-            'consistency_token': colour.consistency_token
-        }
-        mock_request.user = self.user
-        response = self.viewset().update(mock_request, pk=colour.pk)
-        self.assertEqual(202, response.status_code)
-        self.assertEqual(1, change.call_count)
 
     def test_update_item_changed(self):
         created = timezone.now() - timedelta(1)
@@ -308,15 +285,6 @@ class SubrecordTestCase(TestCase):
     def test_delete_nonexistent(self):
         response = self.viewset().destroy(MagicMock(name='request'), pk=567)
         self.assertEqual(404, response.status_code)
-
-    @patch('opal.core.api.glossolalia.change')
-    def test_delete_pings_integration(self, change):
-        colour = Colour.objects.create(episode=self.episode)
-        mock_request = MagicMock(name='mock request')
-        mock_request.user = self.user
-        response = self.viewset().destroy(mock_request, pk=colour.pk)
-        self.assertEqual(202, response.status_code)
-        self.assertEqual(1, change.call_count)
 
 
 class ManyToManyTestSubrecordWithLookupListTest(TestCase):
@@ -520,15 +488,6 @@ class TaggingTestCase(TestCase):
         self.assertEqual(202, response.status_code)
         self.assertEqual(list(self.episode.get_tag_names(self.user)), [])
 
-
-    @patch('opal.core.api.glossolalia.transfer')
-    def test_tagging_pings_integration(self, transfer):
-        self.assertEqual(list(self.episode.get_tag_names(self.user)), [])
-        self.mock_request.data = {'micro': True}
-        response = api.TaggingViewSet().update(self.mock_request, pk=self.episode.pk)
-        self.assertEqual(202, response.status_code)
-        self.assertEqual(1, transfer.call_count)
-
     def test_tag_nonexistent_episode(self):
         response = api.TaggingViewSet().update(self.mock_request, pk=56576)
         self.assertEqual(404, response.status_code)
@@ -657,18 +616,12 @@ class EpisodeTestCase(TestCase):
     def test_create_sets_tagging(self):
         pass
 
-    @patch('opal.core.api.glossolalia.admit')
-    def test_create_pings_integration(self, admit):
-        pass
-
     def test_update(self):
         pass
 
     def test_update_nonexistent(self):
         pass
 
-    def test_update_pings_integration(self):
-        pass
 
 
 class PatientTestCase(OpalTestCase):
