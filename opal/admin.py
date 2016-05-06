@@ -58,12 +58,16 @@ class PatientSubRecordAdmin(reversion.VersionAdmin):
     search_fields = [
         'patient__demographics__first_name',
         'patient__demographics__surname',
-        'patient__demographics__hospital_number'
+        'patient__demographics__hospital_number',
     ]
 
 
 class EpisodeSubRecordAdmin(reversion.VersionAdmin):
-    pass
+    search_fields = [
+        'episode__patient__demographics__first_name',
+        'episode__patient__demographics__surname',
+        'episode__patient__demographics__hospital_number',
+    ]
 
 
 class SynonymInline(GenericTabularInline):
@@ -81,6 +85,7 @@ admin.site.register(User, UserProfileAdmin)
 admin.site.register(models.Patient, PatientAdmin)
 admin.site.register(models.Episode, EpisodeAdmin)
 admin.site.register(models.Tagging, TaggingAdmin)
+
 
 for subclass in patient_subrecords():
     if not subclass._meta.abstract and not getattr(subclass, "_no_admin", False):
