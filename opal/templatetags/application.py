@@ -3,7 +3,7 @@ Templatetags for working with OPAL applications
 """
 from django import template
 
-from opal.core import application
+from opal.core import application, plugins
 
 register = template.Library()
 
