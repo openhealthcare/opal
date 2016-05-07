@@ -315,6 +315,13 @@ i.delete,
 .panel-heading:hover i.edit,
 .list-group-item:hover i.edit,
 .list-group-item:hover i.delete{ display: block; }
+
+@media(max-width: 800px){
+    .panel-heading i.edit,
+    .list-group-item i.edit,
+    .list-group-item i.delete{ display:block }
+}
+
 .panel-heading i:hover,
 .detail .list-group-item i:hover { cursor: pointer; color: rgb(60, 118, 61); }
 .detail .list-group-item i.delete:hover { cursor: pointer; color: rgb(169, 68, 66); }

@@ -35,7 +35,7 @@
 {% endblock %}
 
 {% block left_panel %}
-<div class="panel panel-active screen-only" ng-show="episode">
+<div class="panel panel-active screen-only hidden-sm" ng-show="episode">
   <div class="panel-heading">
     <b>
       <i class="fa fa-user"></i>
@@ -97,31 +97,32 @@
 <h4 class="print-only">
   [[ tag_display[currentTag] ]] / [[ tag_display[currentSubTag] ]]
 </h4>
-<div class="visible-sm">
-<table class="table table-bordered">
-  <thead class="table-header">
-    <tr>
-      <th>
-        <i class="{{ models.Demographics.get_icon }}"> Demographics
-      </th>
-      <th>
-        <i class="{{ models.Diagnosis.get_icon }}"> Diagnosis
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr ng-repeat="row in rows">
-      <td>
-        {% include models.Demographics.get_display_template %}
-      </td>
-      <td>
-        {% include models.Diagnosis.get_display_template %}
-      </td>
-    </tr>
-  </tbody>
-</table>
+
+<div class="visible-sm panel panel-active">
+  <div class="panel-heading">
+    <i class="fa fa-users"></i> Patients
+  </div>
+  <ul class="list-group">
+    <li class="list-group-item" ng-repeat="row in rows">
+      <a href="/#[[ row.link ]]">
+        <div class="row">
+          <div class="col-sm-6">
+            <p ng-repeat="item in row.demographics">
+              {% include models.Demographics.get_display_template %}
+            </p>
+          </div>
+          <div class="col-sm-6">
+            <p ng-repeat="item in row.diagnosis">
+              {% include models.Diagnosis.get_display_template %}
+            </p>
+          </div>
+        </div>
+      </a>
+    </li>
+  </ul>
 </div>
-<div class="patient-list-container" freeze-headers fix-height>
+
+<div class="patient-list-container hidden-sm" freeze-headers fix-height>
   <table class="table table-bordered bg-white patient-list">
     <thead class="table-header">
   	  <tr>
