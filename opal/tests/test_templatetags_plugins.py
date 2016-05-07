@@ -116,3 +116,16 @@ class ApplicationJavascriptTestCase(OpalTestCase):
         result = list(opalplugins.application_javascripts()['javascripts']())
 
         self.assertEqual(['test.js'], result)
+
+
+class AppliationStylesTestCase(OpalTestCase):
+
+    @patch('opal.templatetags.opalplugins.application.get_app')
+    def test_core_styles(self, get_app):
+        mock_app = MagicMock(name='Application')
+        mock_app.styles = ['test.css']
+        get_app.return_value = mock_app
+
+        result = list(opalplugins.application_stylesheets()['styles']())
+
+        self.assertEqual(['test.css'], result)

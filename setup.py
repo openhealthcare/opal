@@ -52,6 +52,7 @@ setup(
         'djangorestframework==3.2.2',
         'django-compressor==1.5',
         'python-dateutil==2.4.2',
-        'Fabric==1.10.2'
+        'Fabric==1.10.2',
+        'pycrypto==2.6.1',
         ]
 )

@@ -105,6 +105,14 @@ def application_javascripts():
             yield javascript
     return dict(javascripts=scripts)
 
+@register.inclusion_tag('plugins/stylesheets.html')
+def application_stylesheets():
+    def styles():
+        app = application.get_app()
+        for style in app.styles:
+            yield style
+    return dict(styles=styles)
+
 @register.inclusion_tag('plugins/actions.html')
 def application_actions():
     def actions():
