@@ -379,7 +379,32 @@ i.delete,
   border-left: 6px solid transparent;
 }
 
+/*  Modals  */
 
+.modal-header {
+    /* padding: 0px 0px 0px 15px; */
+    background: #9cc96b;
+    color: white;
+}
+
+.modal .btn,
+.modal select,
+.modal input {
+  font-size: 18px;
+}
+.modal .form-control {
+  height: 44px;
+}
+
+.modal textarea.form-control {
+    height: auto
+}
+
+@media (max-width: 800px){
+    .modal-lg {
+        width: 100%;
+    }
+}
 
 /* Old, uncleaned styles */
 
@@ -397,34 +422,6 @@ li {
 li li {
 	padding-top: 0px;
 	padding-bottom: 0px;
-}
-
-.modal-header {
-    /* padding: 0px 0px 0px 15px; */
-    background: #9cc96b;
-    color: white;
-}
-
-/* .modal { */
-/*   background-color: white; */
-/*   font-size: 18px; */
-/* } */
-
-/* .modal-content { */
-/*   box-shadow: none; */
-/* } */
-
-.modal .btn,
-.modal select,
-.modal input {
-  font-size: 18px;
-}
-.modal .form-control {
-  height: 44px;
-}
-
-.modal textarea.form-control {
-    height: auto
 }
 
 table { font-size: 12px; }

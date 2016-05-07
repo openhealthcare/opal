@@ -70,7 +70,7 @@
     </li>
   </ul>
 </div>
-<div class="panel panel-default screen-only"
+<div class="panel panel-default screen-only hidden-sm"
      ng-hide="!profile.can_see_pid()"
      >
   <div class="panel-heading">
@@ -97,7 +97,30 @@
 <h4 class="print-only">
   [[ tag_display[currentTag] ]] / [[ tag_display[currentSubTag] ]]
 </h4>
-
+<div class="visible-sm">
+<table class="table table-bordered">
+  <thead class="table-header">
+    <tr>
+      <th>
+        <i class="{{ models.Demographics.get_icon }}"> Demographics
+      </th>
+      <th>
+        <i class="{{ models.Diagnosis.get_icon }}"> Diagnosis
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr ng-repeat="row in rows">
+      <td>
+        {% include models.Demographics.get_display_template %}
+      </td>
+      <td>
+        {% include models.Diagnosis.get_display_template %}
+      </td>
+    </tr>
+  </tbody>
+</table>
+</div>
 <div class="patient-list-container" freeze-headers fix-height>
   <table class="table table-bordered bg-white patient-list">
     <thead class="table-header">
