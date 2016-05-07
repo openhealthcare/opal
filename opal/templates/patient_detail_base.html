@@ -42,6 +42,7 @@
             </div>
           </div>
 
+          {% if detail_views|length > 0 %}
           <div class="panel panel-default">
             <div class="panel-heading ">
               <h3>
@@ -62,6 +63,7 @@
               {% block viewnavigation %}{% endblock %}
             </div>
           </div>
+          {% endif %}
         </div> <!-- End episode switcher -->
         <div class="col-md-9">
           <div class="col-md-12">
