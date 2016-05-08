@@ -26,9 +26,25 @@ class ConsistencyGeneratorTestCase(OpalTestCase):
 
 
 class DateGeneratorTestCase(OpalTestCase):
+
     def test_date_generator_returns_date(self):
         self.assertIsInstance(crd.date_generator(), datetime.date)
 
+    def test_date_generator_partial_year(self):
+        start = datetime.date(2016, 3, 1)
+        end = datetime.date(2016, 5, 1)
+        date = crd.date_generator(start_date=start, end_date=end)
+        self.assertIsInstance(date, datetime.date)
+        self.assertGreaterEqual(date, start)
+        self.assertLessEqual(date, end)
+
+    def test_date_generator_single_month(self):
+        start = datetime.date(2016, 3, 1)
+        end = datetime.date(2016, 3, 15)
+        date = crd.date_generator(start_date=start, end_date=end)
+        self.assertIsInstance(date, datetime.date)
+        self.assertGreaterEqual(date, start)
+        self.assertLessEqual(date, end)
 
 class DateTimeGeneratorTestCase(OpalTestCase):
     def test_datetime_generator_returns_datetime(self):
@@ -101,6 +117,15 @@ class PatientGeneratorTestCase(OpalTestCase):
     def test_get_unique_hospital_numbers(self):
         numbers = self.gen.get_unique_hospital_numbers(10)
         self.assertEqual(10, len(numbers))
+
+    def test_create_episode(self):
+        patient = Patient.objects.create()
+        self.assertEqual(0, patient.episode_set.count())
+        with patch.object(crd.random, 'choice') as randchoice:
+            randchoice.return_value = True
+            episode = self.gen.create_episode(patient)
+            randchoice.assert_called_with([True, False])
+        self.assertEqual(1, patient.episode_set.count())
 
     def test_make(self):
         self.assertEqual(0, Patient.objects.count())
