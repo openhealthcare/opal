@@ -1495,3 +1495,7 @@ class InpatientAdmission(PatientSubrecord):
                     data["id"] = existing.id
 
         super(InpatientAdmission, self).update_from_dict(data, *args, **kwargs)
+
+    @classmethod
+    def get_modal_footer_template(cls):
+        return "partials/sourced_modal_footer.html"

@@ -92,6 +92,7 @@ def _input(*args, **kwargs):
     data = kwargs.pop('data', [])
     enter = kwargs.pop('enter', None)
     maxlength = kwargs.pop('maxlength', None)
+    datepicker = kwargs.pop("datepicker", False)
 
     if required:
         if not formname:
@@ -114,6 +115,7 @@ def _input(*args, **kwargs):
         'data'      : data,
         'enter'     : enter,
         'maxlength' : maxlength,
+        'datepicker': datepicker,
         'static': kwargs.pop("static", None)
     })
 
@@ -147,6 +149,7 @@ def datepicker(*args, **kwargs):
         kwargs['data'] = [
             ('min-date', kwargs['mindate'])
         ]
+    kwargs["datepicker"] = True
     return _input(*[a for a in args] + ["bs-datepicker"], **kwargs)
 
 @register.inclusion_tag('_helpers/radio.html')
