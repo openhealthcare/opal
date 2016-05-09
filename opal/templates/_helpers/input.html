@@ -3,7 +3,7 @@
     {{ label }}
   </label>
   <p class="form-control-static col-sm-8">
-    [[ {{ model }} ]]
+    [[ {{ model }}{% if datepicker %}|shortDate{% endif %} ]]
   </p>
 </div>
 <div ng-hide="{{ static }}" class="form-group"

@@ -475,6 +475,25 @@ class PatientRecordAccess(models.Model):
         )
 
 
+class ExternallySourcedModel(models.Model):
+    # the system upstream that contains this model
+    external_system = models.CharField(
+        blank=True, null=True, max_length=255
+    )
+
+    # the identifier used by the upstream system
+    external_identifier = models.CharField(
+        blank=True, null=True, max_length=255
+    )
+
+    class Meta:
+        abstract = True
+
+    @classmethod
+    def get_modal_footer_template(cls):
+        return "partials/_sourced_modal_footer.html"
+
+
 class TrackedModel(models.Model):
     # these fields are set automatically from REST requests via
     # updates from dict and the getter, setter properties, where available
@@ -1467,7 +1486,7 @@ class UserProfile(models.Model):
         return any(r for r in all_roles if r == "scientist")
 
 
-class InpatientAdmission(PatientSubrecord):
+class InpatientAdmission(PatientSubrecord, ExternallySourcedModel):
     _title = "Inpatient Admissions"
     _icon = 'fa fa-map-marker'
     _sort = "-admitted"
@@ -1479,7 +1498,6 @@ class InpatientAdmission(PatientSubrecord):
     room_code = models.CharField(max_length=255, blank=True)
     bed_code = models.CharField(max_length=255, blank=True)
     admission_diagnosis = models.CharField(max_length=255, blank=True)
-    external_identifier = models.CharField(max_length=255, blank=True)
 
     def update_from_dict(self, data, *args, **kwargs):
         if "id" not in data:
