@@ -25,7 +25,7 @@
     <ul class="list-group">
       <li class="list-group-item" ng-repeat="item in parent.{{ name }}"
       {% if angular_filter %}
-      ng-show="{{ angular_filter }}(item)">
+      ng-show="{{ angular_filter }}">
       {% else %}
       >
       {% endif %}
