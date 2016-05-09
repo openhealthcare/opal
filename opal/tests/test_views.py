@@ -315,6 +315,14 @@ class ModalTemplateViewTestCase(BaseViewTestCase):
         )
         self.assertEqual(result, "eater/colour_modal.html")
 
+    @patch("opal.tests.models.DogOwner.get_modal_template")
+    def test_no_modal_template(self, get_modal_template):
+        request = self.get_request('/colour_modal.html/eater-herbivore')
+        view = self.setup_view(views.ModalTemplateView, request)
+        get_modal_template.return_value = None
+        with self.assertRaises(ValueError):
+            view.dispatch(model=testmodels.DogOwner)
+
 
 class RecordTemplateViewTestCase(BaseViewTestCase):
 
