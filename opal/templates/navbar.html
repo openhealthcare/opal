@@ -28,7 +28,10 @@
         {% if request.user.is_authenticated %}
 	    <li ng-class="{active: $location.path().indexOf('/list/') == 0}">
           <a href="/#/list/">
-            <i class="fa fa-table"></i> Lists
+            <i class="fa fa-table"></i>
+            <span class="hidden-sm">
+              Lists
+            </span>
           </a>
         </li>
 
@@ -37,7 +40,12 @@
           {% plugin_menuitems %}
         {% endif %}
         {% if request.user.is_staff %}
-	    <li><a href="/admin"><i class="fa fa-cogs"></i> Admin</a></li>
+	    <li>
+          <a href="/admin">
+            <i class="fa fa-cogs"></i>
+            <span class="hidden-sm">Admin</span>
+          </a>
+        </li>
         {% endif %}
 
         <!-- <li > -->
