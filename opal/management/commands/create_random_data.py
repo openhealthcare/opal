@@ -72,7 +72,10 @@ def date_generator(*args, **kwargs):
         start_date = date(today.year - back, today.month, today.day)
 
     year_diff = end_date.year - start_date.year
-    year = end_date.year - random.randint(1, year_diff)
+    if year_diff > 0:
+        year = end_date.year - random.randint(1, year_diff)
+    else:
+        year = end_date.year
 
     if year == start_date.year:
         first_month = start_date.month

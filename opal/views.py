@@ -297,6 +297,8 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         self.column = kw['model']
         self.list_slug = kw.get('list', None)
         self.template_name = self.get_template_from_model()
+        if self.template_name is None:
+            raise ValueError('No modal Template available for {0}'.format(self.column.__name__))
         self.name = camelcase_to_underscore(self.column.__name__)
         return super(ModalTemplateView, self).dispatch(*a, **kw)
 

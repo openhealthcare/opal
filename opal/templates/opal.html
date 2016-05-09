@@ -1,7 +1,8 @@
 {% load staticfiles %}
 {% load compress %}
 
-{% load opalplugins %}
+{% load application %}
+{% load plugins %}
 {% load gifs %}
 <!doctype html>
 {% block angulardefinition %}
@@ -13,6 +14,7 @@
 		<script type="text/javascript" src="{% static "js/utils/json3.min.js" %}"></script>
 		<![endif]-->
 	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/> <!--320-->
 	<title>{{brand_name}}</title>
 
     {% compress js %}
@@ -88,6 +90,7 @@
     <link href="{% static "css/screen.css" %}" rel="stylesheet" media="screen">
 
     {% plugin_stylesheets %}
+    {% application_stylesheets %}
 
     <link rel="shortcut icon" href="{% static 'img/ohc-icon.png' %}">
 

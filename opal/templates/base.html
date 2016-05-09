@@ -1,5 +1,6 @@
 {% load staticfiles %}
 {% load compress %}
+{% load application %}
 <!doctype html>
 <html>
 	<head>
@@ -7,6 +8,7 @@
 			<script src="{% static "js/utils/json3.min.js" %}"></script>
 		<![endif]-->
 		<meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/> <!--320-->
 		<title>{{OPAL_BRAND_NAME}}</title>
 		<script type="text/javascript" src="{% static "js/jquery-1.11.0/jquery.js" %}"></script>
 		<script src="{% static "bootstrap-3.1.0/js/bootstrap.js" %}"></script>
@@ -18,9 +20,8 @@
 		    <link href="{% static "css/font-awesome/css/font-awesome.css" %}" rel="stylesheet" media="all">
 			<link href="{% static "css/opal.css" %}" rel="stylesheet" media="all">
 	        <link href="{% static "css/print.css" %}" rel="stylesheet" media="print">
+            {% application_stylesheets %}
         {% endcompress %}
-        {% if OPAL_EXTRA_APPLICATION %}{% include OPAL_EXTRA_APPLICATION %}{% endif %}
-
 	</head>
 	<body>
       {% block navbar %}{% include 'navbar.html' %}{% endblock %}

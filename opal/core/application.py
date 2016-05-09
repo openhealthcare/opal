@@ -108,6 +108,7 @@ class OpalApplication(object):
         ]
     }
     javascripts   = []
+    styles        = []
     actions       = []
     menuitems     = []
     default_episode_category = 'Inpatient'
