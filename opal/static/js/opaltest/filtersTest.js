@@ -181,6 +181,25 @@ describe('filters', function() {
 
     });
 
+    describe('shortDateTime', function(){
+        var shortDateTime;
+
+        beforeEach(function(){
+            inject(function($injector){
+                shortDateTime = $injector.get('shortDateTimeFilter');
+
+            });
+        });
+
+        it('should return undefined if no input', function(){
+            expect(shortDateTime(null)).toBe(undefined);
+        });
+        it('correct represent a string in date time format', function(){
+            var expected = shortDateTime(new Date(2000, 1, 1, 20, 45));
+            expect(expected).toBe('01/02/2000 20:45');
+        });
+    });
+
     describe('daysTo', function() {
       var daysTo
 
