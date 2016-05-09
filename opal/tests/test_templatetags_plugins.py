@@ -1,11 +1,11 @@
 """
-Unittests for the opal.templatetags.opalplugins module
+Unittests for the opal.templatetags.plugins module
 """
 from mock import patch, MagicMock
 
 from opal.core import plugins
 from opal.core.test import OpalTestCase
-from opal.templatetags import opalplugins
+from opal.templatetags import plugins as opalplugins
 
 class TestPlugin(plugins.OpalPlugin):
     javascripts = {
@@ -19,7 +19,7 @@ class TestPlugin(plugins.OpalPlugin):
 
 class PluginJavascriptsTestCase(OpalTestCase):
 
-    @patch('opal.templatetags.opalplugins.plugins.plugins')
+    @patch('opal.templatetags.plugins.plugins.plugins')
     def test_plugin_javascripts(self, plugins):
         plugins.return_value = [TestPlugin]
         result = opalplugins.plugin_javascripts('opal.test')
@@ -32,7 +32,7 @@ class PluginJavascriptsTestCase(OpalTestCase):
 
 class PluginStylesheetsTestCase(OpalTestCase):
 
-    @patch('opal.templatetags.opalplugins.plugins.plugins')
+    @patch('opal.templatetags.plugins.plugins.plugins')
     def test_plugin_stylesheets(self, plugins):
         plugins.return_value = [TestPlugin]
         css = list(opalplugins.plugin_stylesheets()['styles']())
@@ -41,7 +41,7 @@ class PluginStylesheetsTestCase(OpalTestCase):
 
 class PluginHeadExtraTestCase(OpalTestCase):
 
-    @patch('opal.templatetags.opalplugins.plugins.plugins')
+    @patch('opal.templatetags.plugins.plugins.plugins')
     def test_plugin_head_extra(self, plugins):
         plugins.return_value = [TestPlugin]
         context = opalplugins.plugin_head_extra({})
@@ -62,7 +62,7 @@ class MenuItemOrderingTest(OpalTestCase):
 
 class PluginMenuitemsTestCase(OpalTestCase):
 
-    @patch('opal.templatetags.opalplugins.plugins.plugins')
+    @patch('opal.templatetags.plugins.plugins.plugins')
     def test_plugin_menuitems(self, plugins):
         plugins.return_value = [TestPlugin]
         menuitems = opalplugins.plugin_menuitems()['items']
@@ -70,49 +70,11 @@ class PluginMenuitemsTestCase(OpalTestCase):
         self.assertEqual(expected, menuitems)
 
 
-class ApplicationMenuitemsTestCase(OpalTestCase):
-
-    @patch('opal.templatetags.opalplugins.application.get_app')
-    def test_application_menuitems(self, get_app):
-        mock_app = MagicMock(name='Application')
-        mock_app.menuitems = [{'display': 'test'}]
-        get_app.return_value = mock_app
-        result = list(opalplugins.application_menuitems()['items']())
-        expected = [{'display': 'test'}]
-        self.assertEqual(expected, result)
-
-
 class PluginAngularDepsTestCase(OpalTestCase):
 
-    @patch('opal.templatetags.opalplugins.plugins.plugins')
+    @patch('opal.templatetags.plugins.plugins.plugins')
     def test_plugin_angular_deps(self, plugins):
         plugins.return_value = [TestPlugin]
         deps = list(opalplugins.plugin_opal_angular_deps()['deps']())
         expected = ['js/test.angular.mod.js']
         self.assertEqual(expected, deps)
-
-
-class CoreJavascriptTestCase(OpalTestCase):
-
-    @patch('opal.templatetags.opalplugins.application.get_app')
-    def test_core_javascripts(self, get_app):
-        mock_app = MagicMock(name='Application')
-        mock_app.core_javascripts = {'opal': ['test.js']}
-        get_app.return_value = mock_app
-
-        result = list(opalplugins.core_javascripts('opal')['javascripts']())
-
-        self.assertEqual(['test.js'], result)
-
-
-class ApplicationJavascriptTestCase(OpalTestCase):
-
-    @patch('opal.templatetags.opalplugins.application.get_app')
-    def test_core_javascripts(self, get_app):
-        mock_app = MagicMock(name='Application')
-        mock_app.javascripts = ['test.js']
-        get_app.return_value = mock_app
-
-        result = list(opalplugins.application_javascripts()['javascripts']())
-
-        self.assertEqual(['test.js'], result)
