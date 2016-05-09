@@ -1256,6 +1256,10 @@ class Demographics(PatientSubrecord):
     middle_name = models.CharField(max_length=255, blank=True)
     sex = ForeignKeyOrFreeText(Gender)
 
+    @property
+    def name(self):
+        return '{0} {1}'.format(self.first_name, self.surname)
+
     class Meta:
         abstract = True
 

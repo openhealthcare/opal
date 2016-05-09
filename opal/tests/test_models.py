@@ -717,3 +717,12 @@ class TaggingImportTestCase(OpalTestCase):
             ).exists()
         )
         self.assertEqual(Tagging.objects.filter(episode=episode_7).count(), 4)
+
+
+class AbstractDemographicsTestCase(OpalTestCase):
+    def test_name(self):
+        from opal import models
+        d = models.Demographics(first_name='Jane',
+                                surname='Doe',
+                                middle_name='Obsidian')
+        self.assertEqual('Jane Doe', d.name)
