@@ -83,6 +83,18 @@ filters.filter('shortDate', function(toMomentFilter){
     }
 });
 
+filters.filter('shortDateTime', function(shortDateFilter, hhmmFilter){
+		return function(input){
+				var datePart = shortDateFilter(input);
+				var timePart = hhmmFilter(input);
+
+				if(datePart && timePart){
+						return datePart + " " + timePart;
+				}
+		};
+});
+
+
 filters.filter('momentDateFormat', function(toMomentFilter){
 	return function(input, format){
 			if(!input){
@@ -93,13 +105,9 @@ filters.filter('momentDateFormat', function(toMomentFilter){
 	};
 });
 
-filters.filter('hhmm', function(){
+filters.filter('hhmm', function(momentDateFormatFilter){
     return function(input, change){
-        if(!input){
-            return;
-        }
-        var value = moment(input)
-        return value.hours() + ':' + value.minutes();
+				return momentDateFormatFilter(input, "H:mm")
     }
 });
 
