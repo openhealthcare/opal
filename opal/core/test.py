@@ -8,7 +8,7 @@ from django.test import TestCase
 from django.test.client import RequestFactory
 
 from opal.core.views import OpalSerializer
-from opal.models import UserProfile
+from opal.models import UserProfile, Patient
 
 
 class OpalTestCase(TestCase):
@@ -49,3 +49,8 @@ class OpalTestCase(TestCase):
     def assertStatusCode(self, path, expected_status_code):
         response = self.client.get(path)
         self.assertEqual(expected_status_code, response.status_code)
+
+    def new_patient_and_episode_please(self):
+        patient = Patient.objects.create()
+        episode = patient.create_episode()
+        return patient, episode
