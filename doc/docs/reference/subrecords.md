@@ -82,7 +82,6 @@ Keywords:
 * `episode_type` Optional episode type string to check for form customisations
 * `patient_list` Optional patient list slug string to check for form customisations
 
-
 #### Subrecord.get_form_template()
 
 Classmethod to locate the active template for our record. Returns the name of a template or None.
@@ -101,17 +100,21 @@ Keywords:
 * `episode_type` Optional episode type string to check for modal customisations
 * `patient_list` Optional patient list slug string to check for modal customisations
 
+
+#### Subrecord.get_modal_footer_template
+
+Classmethod to add a custom footer to a modal, used for example to denote if
+the data from a model has been sourced from an external source
+
 #### Subrecord.update_from_dict()
 An instance method that will update a model with a dictionary. This method is used
 to provides a hook for changing the way a subrecord handles being updated from serialised
 data.
 
-
 For example on a new allergy
     allergy.update_from_dict({"drug": "penicillin"})
 
 will update the allergy to have the correct drug
-
 
 #### Subrecord.bulk_update_from_dicts()
 
@@ -120,3 +123,18 @@ A Classmethod to allow the creation of multiple objects.
 Takes in the parent model - an episode
 for EpisodeSubrecords a patient for PatientSubrecords. Under the covers it iterates
 over all the subrecords, adds in the parent relationship and calls update_from_dict
+
+### Subrecord Mixins
+
+#### TrackedModel
+
+A Tracked Model automatically has created, created_by, updated, updated_by and
+these are only updated when used via the api
+
+#### ExternallySourcedModel
+
+Often we want data to be sourced from external systems, this mixin adds in the
+fields external_system and external_identifier to allow us to track where
+they come from and how they are referenced by that system.
+
+These fields are then often used in forms to make the data read only
