@@ -29,7 +29,7 @@ angular.module('opal.controllers').controller(
 
             $scope.num_episodes = _.keys($scope.episodes).length;
 
-	        $scope.rix = 0; // row index
+  	        $scope.rix = 0; // row index
             $scope._ =  _;
 
   	        $scope.query = {
@@ -215,7 +215,7 @@ angular.module('opal.controllers').controller(
 
   		                }
                     };
-                    if(resolved.then){ // OMG - it's a promise!
+                    if(resolved && resolved.then){ // OMG - it's a promise!
                         resolved.then(
                             function(r){ return_to_normal(r) },
                             function(r){ return_to_normal(r) }
