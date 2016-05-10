@@ -53,6 +53,13 @@ class EpisodeName(models.EpisodeSubrecord):
 
     name = dmodels.CharField(max_length=200, blank=True, null=True)
 
+
+class ExternalSubRecord(
+    models.EpisodeSubrecord,
+    models.ExternallySourcedModel,
+):
+    name = dmodels.CharField(max_length=200, blank=True, null=True)
+
 # We shouldn't, but we basically insist on some non-core models being there.
 if not getattr(models.Patient, 'demographics_set', None):
 

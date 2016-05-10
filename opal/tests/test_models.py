@@ -13,7 +13,7 @@ from opal.core import exceptions
 from opal.models import Subrecord, Tagging, Team, Patient, InpatientAdmission
 from opal.core.test import OpalTestCase
 import opal.tests.test_patient_lists # To make sure test tagged lists are pulled in
-from opal.tests.models import FamousLastWords, PatientColour
+from opal.tests.models import FamousLastWords, PatientColour, ExternalSubRecord
 
 class PatientRecordAccessTestCase(OpalTestCase):
 
@@ -176,12 +176,6 @@ class SubrecordTestCase(OpalTestCase):
             'records/inpatient/subrecord.html',
             'records/subrecord.html',
         ])
-
-    def test_get_modal_footer_template(self):
-        self.assertEqual(
-            Subrecord.get_modal_footer_template(),
-            "partials/_modal_footer.html"
-        )
 
     @patch('opal.models.find_template')
     def test_display_template_list_episode_type(self, find):
@@ -721,8 +715,15 @@ class TaggingImportTestCase(OpalTestCase):
 
 class AbstractDemographicsTestCase(OpalTestCase):
     def test_name(self):
-        from opal import models
         d = models.Demographics(first_name='Jane',
                                 surname='Doe',
                                 middle_name='Obsidian')
         self.assertEqual('Jane Doe', d.name)
+
+
+class ExternalSystemTestCase(OpalTestCase):
+    def test_get_footer(self):
+        self.assertEqual(
+            ExternalSubRecord.get_modal_footer_template(),
+            "partials/_sourced_modal_footer.html"
+        )
