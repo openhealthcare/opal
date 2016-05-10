@@ -275,14 +275,6 @@ recently changed it - refresh the page and try again');
                     (episode.discharge_date && moment(episode.discharge_date).isBefore(moment()));
             }
 
-            this.display_category = function(){
-                if(episode.category == 'inpatient'){
-                    return 'Inpatient';
-                }else{
-                    return episode.category;
-                }
-            }
-
             this.initialise(resource)
         };
 
