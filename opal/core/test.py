@@ -46,8 +46,8 @@ class OpalTestCase(TestCase):
         json_data = json.dumps(data, cls=OpalSerializer)
         return self.client.put(path, content_type='application/json', data=json_data)
 
-    def assertStatusCode(self, path, expected_status_code):
-        response = self.client.get(path)
+    def assertStatusCode(self, path, expected_status_code, follow=True):
+        response = self.client.get(path, follow=follow)
         self.assertEqual(expected_status_code, response.status_code)
 
     def new_patient_and_episode_please(self):
