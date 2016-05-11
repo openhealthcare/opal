@@ -3,6 +3,7 @@ Templatetags for form/modal helpers
 """
 from django import template
 from opal.core.subrecords import get_subrecord_from_model_name
+from opal.core import fields
 
 register = template.Library()
 
@@ -36,11 +37,15 @@ def _icon_classes(name):
 def infer_from_subrecord_field_path(subRecordFieldPath):
     api_name, field_name = subRecordFieldPath.split(".")
     model = get_subrecord_from_model_name(api_name)
+    field = None
 
     if hasattr(model, field_name):
         # this is true for lookuplists
-        field = getattr(model, field_name)
-    else:
+        lookuplist_field = getattr(model, field_name)
+        if lookuplist_field.__class__ == fields.ForeignKeyOrFreeText:
+            field = lookuplist_field
+
+    if not field:
         field = model._meta.get_field(field_name)
 
     ctx = {}
@@ -54,6 +59,12 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
         ctx["lookuplist"] = "{}_list".format(
             field.foreign_model.__name__.lower()
         )
+    else:
+        related_model = field.related_model
+        if related_model:
+            ctx["lookuplist"] = "{}_list".format(
+                field.related_model.__name__.lower()
+            )
 
     ctx["required"] = getattr(field, "required", False)
     return ctx
