@@ -57,13 +57,13 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
 
     if hasattr(field, "foreign_model"):
         ctx["lookuplist"] = "{}_list".format(
-            field.foreign_model.__name__.lower()
+            field.foreign_model.get_api_name()
         )
     else:
         related_model = field.related_model
         if related_model:
             ctx["lookuplist"] = "{}_list".format(
-                field.related_model.__name__.lower()
+                field.related_model.get_api_name()
             )
 
     ctx["required"] = getattr(field, "required", False)
