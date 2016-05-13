@@ -6,55 +6,57 @@
     [[ {{ model }}{% if datepicker %}|shortDate{% endif %} ]]
   </p>
 </div>
-<div {% if static %}ng-hide="{{ static }}"{% endif %} class="form-group"
-     {% if visibility %} {{ visibility|safe }} {% endif %}
-     >
-  <label class="control-label col-sm-3">
-    {% if icon %}<i class="{{icon}}"></i> {% endif %}
-    {{ label }}
-  </label>
-  <div class="col-sm-{% if unit %}2{% else %}8{% endif %}">
-	<input class="form-control" type="text" ng-model="{{ model }}"
-           autocomplete="off"
-           {% for d in directives %}{{ d }} {% endfor %}
-           {% if lookuplist %}
-             bs-typeahead
-             bs-options="i for i in {{ lookuplist }}"
-           {% endif %}
-           name="{{ modelname }}"
-           {% if required %}
-           required
-           {% endif %}
-           {% if change %}
-            ng-change="{{ change }}"
-           {% endif %}
-           {% if data %}
-           {% for key, val in data %}
-           data-{{key}}="{{ val }}"
-           {% endfor %}
-           {% endif %}
-           {% if enter %}
-           ng-keypress="$event.keyCode == 13 && {{ enter }}"
-           {% endif %}
-           {% if maxlength %}
-           ng-maxlength="{{ maxlength }}"
-           {% endif %}
-           {% if disabled %}
-           ng-disabled="{{ disabled}}"
-           {% endif %}
-           />
-    {% if maxlength %}
-        <span class="help-block" ng-show="form.{{ modelname }}.$invalid">
-          Maximum length is {{ maxlength }}
+<div ng-hide="{{ static }}">
+  <div class="form-group"
+       {% if visibility %} {{ visibility|safe }} {% endif %}
+       >
+    <label class="control-label col-sm-3">
+      {% if icon %}<i class="{{icon}}"></i> {% endif %}
+      {{ label }}
+    </label>
+    <div class="col-sm-{% if unit %}2{% else %}8{% endif %}">
+  	<input class="form-control" type="text" ng-model="{{ model }}"
+             autocomplete="off"
+             {% for d in directives %}{{ d }} {% endfor %}
+             {% if lookuplist %}
+               bs-typeahead
+               bs-options="i for i in {{ lookuplist }}"
+             {% endif %}
+             name="{{ modelname }}"
+             {% if required %}
+             required
+             {% endif %}
+             {% if change %}
+              ng-change="{{ change }}"
+             {% endif %}
+             {% if data %}
+             {% for key, val in data %}
+             data-{{key}}="{{ val }}"
+             {% endfor %}
+             {% endif %}
+             {% if enter %}
+             ng-keypress="$event.keyCode == 13 && {{ enter }}"
+             {% endif %}
+             {% if maxlength %}
+             ng-maxlength="{{ maxlength }}"
+             {% endif %}
+             {% if disabled %}
+             ng-disabled="{{ disabled}}"
+             {% endif %}
+             />
+      {% if maxlength %}
+          <span class="help-block" ng-show="form.{{ modelname }}.$invalid">
+            Maximum length is {{ maxlength }}
+          </span>
+      {% endif %}
+      {% if required %}
+        <span ng-show="{{ formname }}.{{ modelname }}.$dirty && {{ formname }}.{{ modelname }}.$error.required">
+          {{ required }}
         </span>
-    {% endif %}
-    {% if required %}
-      <span ng-show="{{ formname }}.{{ modelname }}.$dirty && {{ formname }}.{{ modelname }}.$error.required">
-        {{ required }}
-      </span>
+      {% endif %}
+    </div>
+    {% if unit %}
+    <label class="control-label"><small>({{ unit }})</small></label>
     {% endif %}
   </div>
-  {% if unit %}
-  <label class="control-label"><small>({{ unit }})</small></label>
-  {% endif %}
 </div>
