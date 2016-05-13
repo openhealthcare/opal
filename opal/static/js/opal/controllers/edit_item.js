@@ -48,7 +48,7 @@ angular.module('opal.controllers').controller(
 			    };
 		    };
 
-		    $scope.$watch('editing.test', function(testName) {
+		    $scope.$watch('editing.microbiology_test.test', function(testName) {
 			    $scope.testType = $scope.microbiology_test_lookup[testName];
                 if( _.isUndefined(testName) || _.isUndefined($scope.testType) ){
                     return;
