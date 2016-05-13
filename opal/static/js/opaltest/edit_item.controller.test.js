@@ -78,6 +78,15 @@ describe('EditItemCtrl', function (){
         "micro_test_stool_parasitology_pcr": [
             "Stool Parasitology PCR"
         ],
+        micro_test_defaults: {
+          micro_test_c_difficile: {
+            c_difficile_antigen: "pending",
+            c_difficile_toxin: "pending"
+          }
+        },
+        micro_test_c_difficile: [
+          "C diff", "Clostridium difficile"
+        ]
     };
 
     var profile = {
@@ -228,6 +237,33 @@ describe('EditItemCtrl', function (){
             expect(spy).toHaveBeenCalled();
             expect($scope.editing.investigation.foo).toEqual(true);
             expect($scope.editing.investigation.bar).toEqual(false);
+        });
+    });
+
+    describe('testType', function(){
+        it('should prepopulate microbiology tests', function(){
+            item.columnName = "microbiology_test";
+            $scope = $rootScope.$new();
+            controller = $controller('EditItemCtrl', {
+                $scope        : $scope,
+                $cookieStore  : $cookieStore,
+                $timeout      : $timeout,
+                $modalInstance: fakeModalInstance,
+                item          : item,
+                options       : options,
+                profile       : profile,
+                episode       : episode,
+                ngProgressLite: ngProgressLite,
+            });
+
+            $scope.editing.microbiology_test.test = "C diff";
+            $scope.$digest();
+            expect($scope.editing.microbiology_test.c_difficile_antigen).toEqual("pending");
+            expect($scope.editing.microbiology_test.c_difficile_toxin).toEqual("pending");
+            $scope.editing.microbiology_test.test = ""
+            $scope.$digest();
+            expect($scope.editing.microbiology_test.c_difficile_antigen).not.toEqual("pending");
+            expect($scope.editing.microbiology_test.c_difficile_toxin).not.toEqual("pending");
         });
     });
 
