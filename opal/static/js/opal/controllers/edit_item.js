@@ -47,25 +47,27 @@ angular.module('opal.controllers').controller(
 				    };
 			    };
 		    };
+        var watchName = "editing." + item.columnName + ".test"
+		    $scope.$watch(watchName, function(testName) {
 
-		    $scope.$watch('editing.test', function(testName) {
+          _.each(_.keys($scope.editing[item.columnName]), function(field){
+              if(field !== "test"){
+                $scope.editing[item.columnName][field] = undefined;
+              }
+          });
+
 			    $scope.testType = $scope.microbiology_test_lookup[testName];
-                if( _.isUndefined(testName) || _.isUndefined($scope.testType) ){
-                    return;
-                }
-                if($scope.testType in $scope.micro_test_defaults){
-                    _.each(
-                        _.pairs($scope.micro_test_defaults[$scope.testType]),
-                        function(values){
-                            var field =  values[0];
-                            var _default =  values[1];
-                            var val = _default
-                            if($scope.editing[item.columnName][field]){
-                              val = $scope.editing[item.columnName][field]
-                            }
-                            $scope.editing[field] =  val;
-                        });
-                }
+          if( _.isUndefined(testName) || _.isUndefined($scope.testType) ){
+              return;
+          }
+
+          if($scope.testType in $scope.micro_test_defaults){
+            _.each(_.pairs($scope.micro_test_defaults[$scope.testType]), function(values){
+                    var field =  values[0];
+                    var val =  values[1];
+                    $scope.editing[item.columnName][field] = val;
+            });
+          }
 		    });
 	    };
 
