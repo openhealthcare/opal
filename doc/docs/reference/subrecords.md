@@ -55,6 +55,17 @@ String we would like to use for user-facing display of this record type.
     class Antimicrobial(EpisodeSubrecord):
         _title = 'Abx'
 
+
+#### Subrecord._clonable
+
+A Boolean that is True by default and is used by methods such as
+opal.views.EpisodeCopyToCategoryView to copy subrecords on to a new record if
+they are _clonable.
+
+    class Antimicrobial(EpisodeSubrecord):
+        _clonable = 'False'
+
+
 #### Subrecord._exclude_from_extract
 
 Boolean to specify that this subrecord should be excluded from any standard data extract.
