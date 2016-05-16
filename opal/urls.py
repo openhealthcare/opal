@@ -9,8 +9,6 @@ from django.views.decorators.csrf import csrf_exempt
 from opal import views
 from opal.core import api
 from opal.forms import ChangePasswordForm
-from opal.utils import camelcase_to_underscore
-from opal.core.subrecords import subrecords
 
 urlpatterns = patterns(
     '',
