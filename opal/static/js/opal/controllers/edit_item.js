@@ -39,7 +39,7 @@ angular.module('opal.controllers').controller(
 		    $scope.microbiology_test_lookup = {};
 		    $scope.micro_test_defaults =  options.micro_test_defaults;
 
-		    for (var name in options) {
+		    for (var name in options){
 			    if (name.indexOf('micro_test') == 0) {
 				    for (var ix = 0; ix < options[name].length; ix++) {
 					    $scope.microbiology_test_list.push(options[name][ix]);
@@ -51,7 +51,7 @@ angular.module('opal.controllers').controller(
 		    $scope.$watch(watchName, function(testName) {
 
           _.each(_.keys($scope.editing[item.columnName]), function(field){
-              if(field !== "test"){
+              if(field !== "test" && field !== "id" && field !== "episode_id" && field !== "consistency_token"){
                 $scope.editing[item.columnName][field] = undefined;
               }
           });
@@ -96,10 +96,12 @@ angular.module('opal.controllers').controller(
             $scope.saving = true;
             ngProgressLite.set(0);
             ngProgressLite.start();
+
             to_save = [item.save($scope.editing[item.columnName])];
             if(!angular.equals($scope.the_episode.makeCopy(), $scope.episode)){
                 to_save.push($scope.the_episode.save($scope.episode));
             }
+
             $q.all(to_save).then(function() {
                 $scope.saving = false;
                 ngProgressLite.done();
