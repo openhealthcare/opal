@@ -66,7 +66,16 @@ describe('EditItemCtrl', function (){
                 name:  'investigation',
                 single: false,
                 fields: [
-                    {name: 'result', type: 'string'}
+                    {name: 'result', type: 'string'},
+                ]
+            },
+            {
+                name:  'microbiology_test',
+                single: false,
+                fields: [
+                    {name: 'result', type: 'string'},
+                    {name: 'consistency_token', type: 'string'},
+                    {name: 'test', type: 'string'},
                 ]
             }
         ]
@@ -242,7 +251,20 @@ describe('EditItemCtrl', function (){
 
     describe('testType', function(){
         it('should prepopulate microbiology tests', function(){
-            item.columnName = "microbiology_test";
+            var existingEpisode = new Episode(angular.copy(episodeData));
+
+            // when we prepopulate we should not remove the consistency_token
+            existingEpisode.microbiology_test = [{
+              test: "T brucei Serology",
+              consistency_token: "23423223"
+            }];
+
+            item = new Item(
+                existingEpisode.microbiology_test[0],
+                existingEpisode,
+                columns['default'][4]
+            );
+
             $scope = $rootScope.$new();
             controller = $controller('EditItemCtrl', {
                 $scope        : $scope,
@@ -252,7 +274,7 @@ describe('EditItemCtrl', function (){
                 item          : item,
                 options       : options,
                 profile       : profile,
-                episode       : episode,
+                episode       : existingEpisode,
                 ngProgressLite: ngProgressLite,
             });
 
@@ -264,6 +286,7 @@ describe('EditItemCtrl', function (){
             $scope.$digest();
             expect($scope.editing.microbiology_test.c_difficile_antigen).not.toEqual("pending");
             expect($scope.editing.microbiology_test.c_difficile_toxin).not.toEqual("pending");
+            expect($scope.editing.microbiology_test.consistency_token).toEqual("23423223");
         });
     });
 
