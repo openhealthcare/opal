@@ -235,14 +235,15 @@ class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
     """
     Copy an episode to a given category, excluding tagging.
     """
-    def post(self, args, pk=None, category=None, **kwargs):
+    def post(self, request, pk=None, category=None, **kwargs):
         old = models.Episode.objects.get(pk=pk)
         new = models.Episode(patient=old.patient,
                              category=category,
                              date_of_admission=old.date_of_admission)
         new.save()
+
         for sub in episode_subrecords():
-            if sub._is_singleton:
+            if sub._is_singleton or not sub._clonable:
                 continue
             for item in sub.objects.filter(episode=old):
                 item.id = None

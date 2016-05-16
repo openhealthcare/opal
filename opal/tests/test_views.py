@@ -282,7 +282,6 @@ class EpisodeListAndCreateViewTestCase(OpalTestCase):
         self.assertEqual(200, resp.status_code)
 
 
-
 class FormTemplateViewTestCase(BaseViewTestCase):
 
     def test_200(self):
@@ -291,6 +290,7 @@ class FormTemplateViewTestCase(BaseViewTestCase):
             views.FormTemplateView, request)
         resp = view.dispatch(request, model=testmodels.Colour)
         self.assertEqual(200, resp.status_code)
+
 
 class ModalTemplateViewTestCase(BaseViewTestCase):
 
@@ -361,3 +361,32 @@ class RawTemplateViewTestCase(BaseViewTestCase):
             views.RawTemplateView, request)
         resp = view.dispatch(request, template_name='not_a_real_template.html')
         self.assertEqual(404, resp.status_code)
+
+
+class CopyToCategoryViewTestCase(BaseViewTestCase):
+    def test_copy_to_category(self):
+        """ copy all subrecords that don't have _clonable=True and
+            are not singletons
+        """
+        request = MagicMock()
+        request.user = self.user;
+        view = self.setup_view(views.EpisodeCopyToCategoryView, request)
+        testmodels.Colour.objects.create(
+            episode=self.episode, name="purple"
+        )
+        testmodels.HatWearer.objects.create(
+            episode=self.episode, name="hat wearer"
+        )
+        testmodels.EpisodeName.objects.create(
+            episode=self.episode, name="episode name"
+        )
+        view.post(request, pk=self.episode.pk, category="Outpatient")
+
+        new_episode = models.Episode.objects.exclude(id=self.episode.id).get()
+        self.assertEqual(new_episode.hatwearer_set.get().name, "hat wearer")
+        self.assertEqual(new_episode.colour_set.count(), 0)
+
+        # a singleton will be created but not populate it
+        self.assertEqual(
+            new_episode.episodename_set.filter(name="episode name").count(), 0
+        )
