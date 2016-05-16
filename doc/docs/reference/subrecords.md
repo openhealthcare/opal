@@ -58,9 +58,8 @@ String we would like to use for user-facing display of this record type.
 
 #### Subrecord._clonable
 
-A Boolean that is True by default and is used by methods such as
-opal.views.EpisodeCopyToCategoryView to copy subrecords on to a new record if
-they are _clonable.
+A Boolean that is True by default used by `opal.views.EpisodeCopyToCategoryView` 
+to determine if instances of this record should be copied across.
 
     class Antimicrobial(EpisodeSubrecord):
         _clonable = 'False'
