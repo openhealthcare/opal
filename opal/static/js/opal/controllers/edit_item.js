@@ -78,6 +78,7 @@ angular.module('opal.controllers').controller(
             var modal = $modal.open({
                 templateUrl: '/templates/modals/delete_item_confirmation.html/',
                 controller: 'DeleteItemConfirmationCtrl',
+                size: 'lg',
                 resolve: {
                     item: function() {
                         return item;
