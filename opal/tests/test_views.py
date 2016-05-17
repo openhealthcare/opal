@@ -289,7 +289,7 @@ class FormTemplateViewTestCase(BaseViewTestCase):
         request = self.get_request('/colour_form.html')
         view = self.setup_view(
             views.FormTemplateView, request)
-        resp = view.dispatch(request, model=testmodels.Colour)
+        resp = view.dispatch(request, model="colour")
         self.assertEqual(200, resp.status_code)
 
 class ModalTemplateViewTestCase(BaseViewTestCase):
