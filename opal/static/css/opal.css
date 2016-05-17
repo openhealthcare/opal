@@ -323,7 +323,7 @@ i.delete,
 }
 
 .panel-heading i:hover,
-.detail .list-group-item i:hover { cursor: pointer; color: rgb(60, 118, 61); }
+.detail .list-group-item i:hover { cursor: pointer; }
 .detail .list-group-item i.delete:hover { cursor: pointer; color: rgb(169, 68, 66); }
 .list-group-item { min-height: 50px; }
 
