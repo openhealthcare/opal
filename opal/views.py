@@ -255,7 +255,6 @@ class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
 """
 Template views for OPAL
 """
-
 class FormTemplateView(LoginRequiredMixin, TemplateView):
     """
     This view renders the form template for our field.
@@ -275,7 +274,7 @@ class FormTemplateView(LoginRequiredMixin, TemplateView):
         Set the context for what this modal is for so
         it can be accessed by all subsequent methods
         """
-        self.column = kw['model']
+        self.column = get_subrecord_from_api_name(kw['model'])
         self.name = camelcase_to_underscore(self.column.__name__)
         return super(FormTemplateView, self).dispatch(*a, **kw)
 
@@ -295,7 +294,7 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         Set the context for what this modal is for so
         it can be accessed by all subsequent methods
         """
-        self.column = kw['model']
+        self.column = get_subrecord_from_api_name(kw['model'])
         self.list_slug = kw.get('list', None)
         self.template_name = self.get_template_from_model()
         if self.template_name is None:
