@@ -66,7 +66,7 @@ urlpatterns = patterns(
     url(r'^templates/record/(?P<model>[a-z_\-]+).html$',
         views.RecordTemplateView.as_view(), name="record_view"),
 
-    url(r'^templates/modals/(?P<model>[a-z_\-]+).html/(?P<list>[a-z_\-]+/?)$',
+    url(r'^templates/modals/(?P<model>[a-z_\-]+).html/(?P<list>[a-z_\-]+/?)?$',
         views.ModalTemplateView.as_view(), name="modal_view"),
     url(r'^templates/forms/(?P<model>[a-z_\-]+).html/?$',
         views.FormTemplateView.as_view(), name="form_view"),

@@ -316,11 +316,9 @@ i.delete,
 .list-group-item:hover i.edit,
 .list-group-item:hover i.delete{ display: block; }
 
-@media(max-width: 800px){
-    .panel-heading i.edit,
-    .list-group-item i.edit,
-    .list-group-item i.delete{ display:block }
-}
+.touch .panel-heading i.edit,
+.touch .list-group-item i.edit,
+.touch .list-group-item i.delete{ display:block }
 
 .panel-heading i:hover,
 .detail .list-group-item i:hover { cursor: pointer; }
@@ -414,6 +412,7 @@ i.delete,
     .modal-lg {
         width: 100%;
     }
+
 }
 
 /* Old, uncleaned styles */

@@ -130,6 +130,18 @@
       </div>
     </div>
     {% endblock %}
+    <script>
+        // temporary for try outs
+        jQuery(function($){
+
+        	// Touch Device Detection
+        	var isTouchDevice = 'ontouchstart' in document.documentElement;
+        	if( isTouchDevice ) {
+        		$('body').addClass('touch');
+        	}
+
+        });
+    </script>
 
   </body>
 </html>
