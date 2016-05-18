@@ -3,6 +3,7 @@ OPAL Search views
 """
 import datetime
 import json
+from copy import copy
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotFound
@@ -42,35 +43,6 @@ def _add_pagination(eps, page_number):
     return results
 
 
-def _extract_basic_search_parameters(request):
-    ''' fills in the basic search criteria if we want
-    to search via a hospital number or name
-    '''
-    criteria = {
-        u'column': u'demographics',
-        u'combine': u'or',
-        u'queryType': u'Contains'
-    }
-
-    hospital_number = request.GET.get("hospital_number")
-    name = request.GET.get("name")
-    result = []
-
-    if hospital_number is not None:
-        query_criteria = criteria.copy()
-        query_criteria['field'] = 'Hospital Number'
-        query_criteria['query'] = hospital_number
-        result.append(query_criteria)
-
-    if name is not None:
-        query_criteria = criteria.copy()
-        query_criteria['field'] = 'surname'
-        query_criteria['query'] = name
-        result.append(query_criteria)
-
-    return result
-
-
 @with_no_caching
 @require_http_methods(['GET'])
 def patient_search_view(request):
@@ -95,14 +67,13 @@ def patient_search_view(request):
 @require_http_methods(['GET'])
 def simple_search_view(request):
     page_number = int(request.GET.get("page_number", 1))
-    all_criteria = _extract_basic_search_parameters(request)
-
-    if not all_criteria:
+    query_string = request.GET.get("query")
+    if not query_string:
         return _build_json_response({'error': "No search terms"}, 400)
 
-    query = queries.create_query(request.user, all_criteria)
-    eps = query.get_patient_summaries()
-    return _build_json_response(_add_pagination(eps, page_number))
+    query = queries.create_query(request.user, query_string)
+    result = query.fuzzy_query()
+    return _build_json_response(_add_pagination(result, page_number))
 
 
 class ExtractSearchView(View):
