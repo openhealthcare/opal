@@ -2,10 +2,14 @@
 Allow us to make search queries
 """
 import datetime
+import operator
+import itertools
+from collections import Counter
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import models as djangomodels
 from django.conf import settings
+from django.db.models import Q
 
 from opal import models
 from opal.core import fields, subrecords
@@ -74,6 +78,9 @@ class QueryBackend(object):
         self.user = user
         self.query = query
 
+    def fuzzy_query(self):
+        raise NotImplementedError()
+
     def get_episodes(self):
         raise NotImplementedError()
 
@@ -101,6 +108,44 @@ class DatabaseQuery(QueryBackend):
 
     Finally we filter based on episode type level restrictions.
     """
+
+    def fuzzy_query(self):
+        """ fuzzy queries break apart the query string by spaces and search a
+            number of fields based on the underlying tokens.
+
+            We then search hospital number, first name and surname by those fields
+            and order by the occurances
+
+            so if you put in Anna Lisa, even though this is a first name split
+            becasuse Anna and Lisa will both be found, this will rank higher
+            than an Anna or a Lisa, although both of those will also be found
+        """
+        fields = ["hospital_number", "first_name", "surname"]
+
+        some_query = self.query
+
+        query_values = some_query.split(" ")
+        result = {}
+
+        for query_value in query_values:
+            q_objects = []
+            for field in fields:
+                model_field = "demographics__{}__icontains".format(field)
+                q_objects.append(Q(**{model_field: query_value}))
+            r = models.Patient.objects.filter(reduce(operator.or_, q_objects))
+            result[query_value] = set(r.values_list("id", flat=True))
+
+        all_results = [i for i in itertools.chain(*result.values())]
+        count = Counter(all_results)
+        episodes = models.Episode.objects.filter(patient__id__in=all_results)
+        patient_summaries = self._get_aggregate_patients_from_episodes(
+            episodes
+        )
+        return sorted(
+            patient_summaries,
+            key=lambda x: count[x["patient_id"]],
+            reverse=True
+        )
 
     def _episodes_for_boolean_fields(self, query, field, contains):
         model = get_model_name_from_column_name(query['column'])
