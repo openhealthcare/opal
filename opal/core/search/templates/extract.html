@@ -163,7 +163,7 @@
 
 
       <div class="row">
-        <div class="col-md-4" ng-show="profile.can_extract">
+        <div class="col-sm-4" ng-show="profile.can_extract">
           {% if EXTRACT_ASYNC %}
           <button class="btn btn-lg"
                   ng-class="{'btn-primary': async_ready, 'btn-secondary': !async_ready}"
@@ -196,7 +196,7 @@
           {% endif %}
         </div>
 
-        <div class="col-md-4 text-center" ng-class="{'col-md-push-4': !profile.can_extract}">
+        <div class="col-sm-4 text-center" ng-class="{'col-sm-push-4': !profile.can_extract}">
           <button ng-click="search()"
                   class="btn btn-primary btn-lg"
                   >
@@ -207,7 +207,7 @@
       </div>
     </div> <!-- Row -->
     <div ng-hide="!searched || results.length" class="row">
-      <div class="col-md-4 col-md-push-4 lead text-center">
+      <div class="col-sm-4 col-sm-push-4 lead text-center">
         Sorry, no results match your search.
       </div>
     </div>

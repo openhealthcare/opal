@@ -1,5 +1,5 @@
 <div class="row">
-  <div class="col-md-4 col-md-push-4">
+  <div class="col-sm-4 col-sm-push-4">
     <h4>
       We've found <strong>[[ paginator.totalCount ]]</strong> patient<span ng-if="results.length != 1">s</span>
     </h4>
@@ -7,7 +7,7 @@
 </div>
 
 <div class="row">
-  <div class="col-md-4 col-md-push-4">
+  <div class="col-sm-4 col-sm-push-4">
     <ul>
       <li class="content-offset-10 content-offset-below-10" ng-repeat="result in results">
         <div>
@@ -29,7 +29,7 @@
 </div>
 
 <div class="row">
-  <div class="col-md-4 col-md-push-4" ng-show="paginator.totalPages.length > 1">
+  <div class="col-sm-4 col-sm-push-4" ng-show="paginator.totalPages.length > 1">
     <nav>
       <ul class="pagination">
         <li ng-if="paginator.hasPrevious">
