@@ -42,8 +42,9 @@ angular.module('opal.controllers').controller(
             $cookieStore.put('opal.lastPatientList', $routeParams.slug);
             var tags = $routeParams.slug.split('-')
             $scope.currentTag = tags[0];
-            $scope.currentSubTag = tags.length == 2 ? tags[1] : "" ;
+            $scope.currentSubTag = tags.length == 2 ? tags[1] : "";
             $scope.tag_display = options.tag_display;
+            $scope.readableTagName = $scope.tag_display[$scope.currentSubTag] || $scope.tag_display[$scope.currentTag]
         }
 
 	    $scope.getVisibleEpisodes = function() {
@@ -208,9 +209,8 @@ angular.module('opal.controllers').controller(
                                     $scope.num_episodes += 1;
                                 }
                             }
-                            var readableName = $scope.tag_display[$scope.currentSubTag];
                             var msg = episode.demographics[0].first_name + " " + episode.demographics[0].surname;
-                            msg += " added to the " + readableName + " list";
+                            msg += " added to the " + $scope.readableTagName + " list";
                             growl.success(msg);
 
   		                }
