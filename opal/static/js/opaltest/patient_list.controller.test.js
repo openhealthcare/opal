@@ -85,7 +85,7 @@ describe('PatientListCtrl', function() {
     optionsData = {
         condition: ['Another condition', 'Some condition'],
         tag_hierarchy: {'tropical': [], 'inpatients': ['icu']},
-        tag_display: {'tropical': 'Tropical'}
+        tag_display: {'tropical': 'Tropical', 'icu': "ICU"}
     };
 
     profile = {
@@ -180,6 +180,7 @@ describe('PatientListCtrl', function() {
         it('should extract single tags', function(){
             expect($scope.currentTag).toBe('tropical');
             expect($scope.currentSubTag).toBe('');
+            expect($scope.readableTagName).toBe('Tropical');
         })
 
         it('should extract subtags', function() {
@@ -187,6 +188,7 @@ describe('PatientListCtrl', function() {
             _makecontroller();
             expect($scope.currentTag).toBe('inpatients');
             expect($scope.currentSubTag).toBe('icu');
+            expect($scope.readableTagName).toBe('ICU');
         });
 
         it('should set the URL of the last list visited', function() {
