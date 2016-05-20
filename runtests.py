@@ -44,6 +44,7 @@ settings.configure(DEBUG=True,
                                    'django.contrib.admin',
                                    'reversion',
                                    'compressor',
+                                   'djcelery',
                                    'opal',
                                    'opal.core.search',
                                    'opal.tests'

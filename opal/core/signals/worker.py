@@ -13,13 +13,15 @@ episode_post_save   = dispatch.Signal(providing_args=["created", "instance"])
 subrecord_post_save = dispatch.Signal(providing_args=["created", "instance"])
 
 def post_save_worker_forwarder(sender, created=None, instance=None, **kwargs):
-    from opal.core.signals import tasks
-    if sender == models.Patient:
-        tasks.patient_post_save.delay(created, instance.id)
-    if sender == models.Episode:
-        tasks.episode_post_save.delay(created, instance.id)
-    if issubclass(sender, models.Subrecord):
-        tasks.subrecord_post_save(sender, created, instance.id)
+    from django.conf import settings
+    if 'djcelery' in settings.INSTALLED_APPS:
+        from opal.core.signals import tasks
+        if sender == models.Patient:
+            tasks.patient_post_save.delay(created, instance.id)
+        if sender == models.Episode:
+            tasks.episode_post_save.delay(created, instance.id)
+        if issubclass(sender, models.Subrecord):
+            tasks.subrecord_post_save(sender, created, instance.id)
     return
 
 post_save.connect(post_save_worker_forwarder)
