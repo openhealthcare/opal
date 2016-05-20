@@ -2,11 +2,8 @@ angular.module('opal.controllers').controller(
     'PatientListCtrl', function($scope, $q, $http, $cookieStore,
                                 $location, $routeParams,
                                 $modal, $rootScope,
-                                $window,
-                                growl,
-                                Flow, Item,
-                                Episode, episodedata, options,
-                                profile, episodeVisibility){
+                                growl, Flow, Item, Episode, episodedata,
+                                options, $window, profile, episodeVisibility){
 
         $scope.ready = false;
         var version = window.version;
@@ -17,7 +14,7 @@ angular.module('opal.controllers').controller(
                 $location.path('/list/')
                 return
             }
-            $location.path('/404');
+            $window.location.href = '/404';
             return
         }else{
             $scope.episodes = episodedata.data;

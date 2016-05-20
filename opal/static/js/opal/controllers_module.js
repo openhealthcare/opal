@@ -25,8 +25,6 @@ controllers.controller('RootCtrl', function($scope, $location) {
     if(typeof collaborator != 'undefined'){ collaborator($scope) };
 });
 
-controllers.controller('404Ctrl', function($scope){});
-
 controllers.config(function($datepickerProvider) {
   angular.extend($datepickerProvider.defaults, {
       autoclose: true,

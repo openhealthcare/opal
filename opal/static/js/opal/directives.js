@@ -69,11 +69,15 @@ directives.directive("scrollEpisodes", function(){
 });
 
 directives.directive("freezeHeaders", function () {
-    return function (scope, element, attrs) {
-        var $el = $(element).find('table');
-        $el.stickyTableHeaders({
-            scrollableArea: $(element),
-        });
+    return {
+      restrict: 'A',
+      link: function (scope, element, attrs) {
+          var $el = $(element).find('table');
+
+          $el.stickyTableHeaders({
+              scrollableArea: $(element),
+          });
+      }
     };
 });
 
