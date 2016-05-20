@@ -4,12 +4,17 @@ describe('PatientListCtrl', function() {
     var schema, Episode, Item, episode;
     var profile;
     var $scope, $cookieStore, $controller, $q, $dialog, $httpBackend;
-    var $location, $routeParams, $http, $window;
+    var $location, $routeParams, $http;
     var Flow;
     var episodedata, controller;
     var $modal, options, $rootScope;
 
     var _makecontroller;
+
+    var fakeWindow = {
+        location: {href: "dummy"},
+        print: function(){}
+    }
 
     var fields = {};
     var columns = {
@@ -116,7 +121,6 @@ describe('PatientListCtrl', function() {
         $http        = $injector.get('$http');
         $routeParams = $injector.get('$routeParams');
         $httpBackend = $injector.get('$httpBackend');
-        $window      = $injector.get('$window');
         $location    = $injector.get('$location');
         Flow         = $injector.get('Flow');
 
@@ -149,6 +153,7 @@ describe('PatientListCtrl', function() {
                 $cookieStore  : $cookieStore,
                 $location     : $location,
                 $routeParams  : $routeParams,
+                $window       : fakeWindow,
                 growl         : growl,
                 Flow          : Flow,
                 schema        : schema,
@@ -215,11 +220,10 @@ describe('PatientListCtrl', function() {
         })
 
         it('should redirect to /404', function() {
-            $cookieStore.remove('opal.lastPatientList')
-            spyOn($location, 'path');
-            episodedata.status = 'error'
+            $cookieStore.remove('opal.lastPatientList');
+            episodedata.status = 'error';
             _makecontroller();
-            expect($location.path).toHaveBeenCalledWith('/404');
+            expect(fakeWindow.location.href).toBe("/404");
         });
     });
 
@@ -310,9 +314,9 @@ describe('PatientListCtrl', function() {
     describe('print()', function() {
 
         it('should print', function() {
-            spyOn($window, 'print');
+            spyOn(fakeWindow, 'print');
             $scope.print();
-            expect($window.print).toHaveBeenCalledWith();
+            expect(fakeWindow.print).toHaveBeenCalledWith();
         });
 
     });
