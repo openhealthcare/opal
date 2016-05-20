@@ -6,7 +6,7 @@ angular.module('opal.controllers').controller(
 
         var searchUrl = "/search";
 	    $scope.searchTerm = '';
-        $scope.searchColumns = ['hospital_number', 'name'];
+        $scope.searchColumns = ['query'];
         $scope.limit = 10;
 	    $scope.results = [];
 	    $scope.searched = false;

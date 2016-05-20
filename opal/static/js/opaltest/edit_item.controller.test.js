@@ -2,8 +2,8 @@ describe('EditItemCtrl', function (){
     "use strict";
 
     var $scope, $cookieStore, $timeout, $modal, item, Item;
-    var dialog, Episode, episode, ngProgressLite, $q;
-    var Schema, $modal, $controller, controller, fakeModalInstance;
+    var dialog, Episode, episode, ngProgressLite, $q, $rootScope;
+    var Schema, $controller, controller, fakeModalInstance;
 
     var episodeData = {
         id: 123,
@@ -66,7 +66,16 @@ describe('EditItemCtrl', function (){
                 name:  'investigation',
                 single: false,
                 fields: [
-                    {name: 'result', type: 'string'}
+                    {name: 'result', type: 'string'},
+                ]
+            },
+            {
+                name:  'microbiology_test',
+                single: false,
+                fields: [
+                    {name: 'result', type: 'string'},
+                    {name: 'consistency_token', type: 'string'},
+                    {name: 'test', type: 'string'},
                 ]
             }
         ]
@@ -78,6 +87,15 @@ describe('EditItemCtrl', function (){
         "micro_test_stool_parasitology_pcr": [
             "Stool Parasitology PCR"
         ],
+        micro_test_defaults: {
+          micro_test_c_difficile: {
+            c_difficile_antigen: "pending",
+            c_difficile_toxin: "pending"
+          }
+        },
+        micro_test_c_difficile: [
+          "C diff", "Clostridium difficile"
+        ]
     };
 
     var profile = {
@@ -103,11 +121,12 @@ describe('EditItemCtrl', function (){
             $modal         = $injector.get('$modal');
             ngProgressLite = $injector.get('ngProgressLite');
             Schema         = $injector.get('Schema');
-            var $rootScope = $injector.get('$rootScope');
-            $scope         = $rootScope.$new();
+            $rootScope = $injector.get('$rootScope');
             $modal         = $injector.get('$modal');
         });
 
+        $rootScope.fields = columns.default;
+        $scope = $rootScope.$new();
         var schema = new Schema(columns.default);
         episode = new Episode(episodeData);
         item = new Item(
@@ -188,6 +207,7 @@ describe('EditItemCtrl', function (){
             var args = $modal.open.calls.mostRecent().args[0];
             expect(args.templateUrl).toEqual('/templates/modals/delete_item_confirmation.html/');
             expect(args.controller).toEqual('DeleteItemConfirmationCtrl');
+            expect(args.size).toEqual('lg');
         });
 
     });
@@ -227,6 +247,47 @@ describe('EditItemCtrl', function (){
             expect(spy).toHaveBeenCalled();
             expect($scope.editing.investigation.foo).toEqual(true);
             expect($scope.editing.investigation.bar).toEqual(false);
+        });
+    });
+
+    describe('testType', function(){
+        it('should prepopulate microbiology tests', function(){
+            var existingEpisode = new Episode(angular.copy(episodeData));
+
+            // when we prepopulate we should not remove the consistency_token
+            existingEpisode.microbiology_test = [{
+              test: "T brucei Serology",
+              consistency_token: "23423223"
+            }];
+
+            item = new Item(
+                existingEpisode.microbiology_test[0],
+                existingEpisode,
+                columns['default'][4]
+            );
+
+            $scope = $rootScope.$new();
+            controller = $controller('EditItemCtrl', {
+                $scope        : $scope,
+                $cookieStore  : $cookieStore,
+                $timeout      : $timeout,
+                $modalInstance: fakeModalInstance,
+                item          : item,
+                options       : options,
+                profile       : profile,
+                episode       : existingEpisode,
+                ngProgressLite: ngProgressLite,
+            });
+
+            $scope.editing.microbiology_test.test = "C diff";
+            $scope.$digest();
+            expect($scope.editing.microbiology_test.c_difficile_antigen).toEqual("pending");
+            expect($scope.editing.microbiology_test.c_difficile_toxin).toEqual("pending");
+            $scope.editing.microbiology_test.test = ""
+            $scope.$digest();
+            expect($scope.editing.microbiology_test.c_difficile_antigen).not.toEqual("pending");
+            expect($scope.editing.microbiology_test.c_difficile_toxin).not.toEqual("pending");
+            expect($scope.editing.microbiology_test.consistency_token).toEqual("23423223");
         });
     });
 

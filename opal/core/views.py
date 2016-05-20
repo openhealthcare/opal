@@ -52,7 +52,6 @@ def _build_json_response(data, status_code=200):
     return response
 
 def with_no_caching(view):
-
     @functools.wraps(view)
     def no_cache(*args, **kw):
         response = view(*args, **kw)

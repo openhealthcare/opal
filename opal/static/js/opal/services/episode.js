@@ -104,7 +104,7 @@ angular.module('opal.services')
 	            }
                 if (columnName == 'microbiology_input'){
                     attrs.initials = $window.initials;
-                    attrs.when = new Date();
+                    attrs.when = moment(new Date()).format(DATE_FORMAT);
                 }
                 if (columnName == 'observation'){
                     attrs.datetime = new Date();
@@ -273,14 +273,6 @@ recently changed it - refresh the page and try again');
             this.isDischarged = function(){
                 return episode.location[0].category == 'Discharged' ||
                     (episode.discharge_date && moment(episode.discharge_date).isBefore(moment()));
-            }
-
-            this.display_category = function(){
-                if(episode.category == 'inpatient'){
-                    return 'Inpatient';
-                }else{
-                    return episode.category;
-                }
             }
 
             this.initialise(resource)

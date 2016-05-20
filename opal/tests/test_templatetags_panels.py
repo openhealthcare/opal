@@ -14,13 +14,14 @@ class RecordPanelTestCase(OpalTestCase):
             name='demographics',
             singleton=True,
             title='Demographics',
-            detail_template='records/demographics.html',
+            detail_template='records/demographics_detail.html',
             icon=None,
             editable=1,
             angular_filter=None,
             noentries=None,
             only_display_if_exists=False,
-            full_width=False
+            full_width=False,
+            is_patient_subrecord=True,
         )
         result = panels.record_panel(Demographics())
         self.assertEqual(expected, result)
@@ -49,7 +50,7 @@ class RecordTimelineTestCase(OpalTestCase):
         expected = dict(
             name='demographics',
             title='Demographics',
-            detail_template='records/demographics.html',
+            detail_template='records/demographics_detail.html',
             icon=None,
             editable=True,
             whenfield='when'

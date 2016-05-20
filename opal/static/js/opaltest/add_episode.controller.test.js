@@ -1,5 +1,5 @@
 describe('AddEpisodeCtrl', function (){
-    var $scope, $httpBackend;
+    var $scope, $httpBackend, $rootScope;
     var modalInstance, mockTagService, tagServiceToSave;
     var columns = {
         "default": [
@@ -52,7 +52,9 @@ describe('AddEpisodeCtrl', function (){
             $modal = $injector.get('$modal');
             $httpBackend = $injector.get('$httpBackend');
             Schema = $injector.get('Schema');
+            $rootScope  = $injector.get('$rootScope');
         });
+        $rootScope.fields = angular.copy(columns.default);
 
         schema = new Schema(columns.default);
         modalInstance = $modal.open({template: 'Notatemplate'});

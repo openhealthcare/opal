@@ -35,13 +35,14 @@
                  href="[[ '/#' + e.link]]"
                  ng-click="switch_to_episode($index, $event)"
                  >
-                [[ e.display_category() ]]
+                [[ e.category ]]
                 [[ e.date_of_episode | shortDate ]]
                 [[ e.date_of_admission | shortDate]]<span ng-show="e.discharge_date"> - [[ e.discharge_date | shortDate ]]</span>
               </a>
             </div>
           </div>
 
+          {% if detail_views|length > 0 %}
           <div class="panel panel-default">
             <div class="panel-heading ">
               <h3>
@@ -62,6 +63,7 @@
               {% block viewnavigation %}{% endblock %}
             </div>
           </div>
+          {% endif %}
         </div> <!-- End episode switcher -->
         <div class="col-md-9">
           <div class="col-md-12">

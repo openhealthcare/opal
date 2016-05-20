@@ -114,7 +114,7 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
 
         view = views.PatientListTemplateView()
 
-        class PL:
+        class PL(patient_lists.PatientList):
             schema = [testmodels.Colour]
 
             @classmethod
@@ -282,15 +282,15 @@ class EpisodeListAndCreateViewTestCase(OpalTestCase):
         self.assertEqual(200, resp.status_code)
 
 
-
 class FormTemplateViewTestCase(BaseViewTestCase):
 
     def test_200(self):
         request = self.get_request('/colour_form.html')
         view = self.setup_view(
             views.FormTemplateView, request)
-        resp = view.dispatch(request, model=testmodels.Colour)
+        resp = view.dispatch(request, model="colour")
         self.assertEqual(200, resp.status_code)
+
 
 class ModalTemplateViewTestCase(BaseViewTestCase):
 
@@ -298,8 +298,30 @@ class ModalTemplateViewTestCase(BaseViewTestCase):
         request = self.get_request('/colour_modal.html')
         view = self.setup_view(
             views.ModalTemplateView, request)
-        resp = view.dispatch(request, model=testmodels.Colour)
+        resp = view.dispatch(request, model=testmodels.Colour.get_api_name())
         self.assertEqual(200, resp.status_code)
+
+    @patch("opal.tests.models.DogOwner.get_modal_template")
+    def test_model_specific_lookups(self, get_modal_template):
+        # test patient list look up
+        request = self.get_request('/colour_modal.html/eater-herbivore')
+        view = self.setup_view(views.ModalTemplateView, request)
+        view.column = testmodels.DogOwner
+        view.list_slug = 'eater-herbivore'
+        get_modal_template.return_value = "eater/colour_modal.html"
+        result = view.get_template_from_model()
+        self.assertEqual(
+            TaggingTestPatientList, get_modal_template.call_args[1]["patient_list"].__class__
+        )
+        self.assertEqual(result, "eater/colour_modal.html")
+
+    @patch("opal.tests.models.DogOwner.get_modal_template")
+    def test_no_modal_template(self, get_modal_template):
+        request = self.get_request('/colour_modal.html/eater-herbivore')
+        view = self.setup_view(views.ModalTemplateView, request)
+        get_modal_template.return_value = None
+        with self.assertRaises(ValueError):
+            view.dispatch(model=testmodels.DogOwner)
 
 
 class RecordTemplateViewTestCase(BaseViewTestCase):
@@ -339,3 +361,32 @@ class RawTemplateViewTestCase(BaseViewTestCase):
             views.RawTemplateView, request)
         resp = view.dispatch(request, template_name='not_a_real_template.html')
         self.assertEqual(404, resp.status_code)
+
+
+class CopyToCategoryViewTestCase(BaseViewTestCase):
+    def test_copy_to_category(self):
+        """ copy all subrecords that don't have _clonable=True and
+            are not singletons
+        """
+        request = MagicMock()
+        request.user = self.user;
+        view = self.setup_view(views.EpisodeCopyToCategoryView, request)
+        testmodels.Colour.objects.create(
+            episode=self.episode, name="purple"
+        )
+        testmodels.HatWearer.objects.create(
+            episode=self.episode, name="hat wearer"
+        )
+        testmodels.EpisodeName.objects.create(
+            episode=self.episode, name="episode name"
+        )
+        view.post(request, pk=self.episode.pk, category="Outpatient")
+
+        new_episode = models.Episode.objects.exclude(id=self.episode.id).get()
+        self.assertEqual(new_episode.hatwearer_set.get().name, "hat wearer")
+        self.assertEqual(new_episode.colour_set.count(), 0)
+
+        # a singleton will be created but not populate it
+        self.assertEqual(
+            new_episode.episodename_set.filter(name="episode name").count(), 0
+        )

@@ -5,23 +5,20 @@ app.config(
      function($routeProvider) {
          $routeProvider.when('/list/',{
              controller: 'PatientListRedirectCtrl',
-             templateUrl: '/templates/404.html',
-             resolve: {
-                 options: function(Options){ return Options; }
-             }
+             templateUrl: '/templates/loading_page.html'
          }).when('/list/:slug', {
 			 controller: 'PatientListCtrl',
 			 resolve: {
 				 episodedata: function(patientListLoader) { return patientListLoader(); },
 				 options    : function(Options) { return Options; },
-                 profile    : function(UserProfile){ return UserProfile; },
+         profile    : function(UserProfile){ return UserProfile; },
 			 },
 			 templateUrl: function(params){
                  var target =  '/templates/patient_list.html';
                  target += '/' + params.slug;
                  return target;
              }
-		 })
+  		 })
              .when('/patient/:patient_id/access_log', {
                  controller: 'PatientRecordAccessLogCtrl',
                  resolve: {
@@ -56,9 +53,5 @@ app.config(
                  controller: 'AccountCtrl',
                  templateUrl: '/accounts/templates/account_detail.html'
 		     })
-             .when('/404', {
-                 controller: '404Ctrl',
-                 templateUrl: '/templates/404.html'
-             })
              .otherwise({redirectTo: '/'});
      }]);

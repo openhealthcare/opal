@@ -96,7 +96,7 @@ class OptionsViewSet(viewsets.ViewSet):
         subclasses = LookupList.__subclasses__()
         for model in subclasses:
             options = list(model.objects.all().values_list("name", flat=True))
-            data[model.__name__.lower()] = options
+            data[model.get_api_name()] = options
 
         model_to_ct = ContentType.objects.get_for_models(
             *subclasses
@@ -106,7 +106,7 @@ class OptionsViewSet(viewsets.ViewSet):
             synonyms = Synonym.objects.filter(content_type=ct).values_list(
                 "name", flat=True
             )
-            data[model.__name__.lower()].extend(synonyms)
+            data[model.get_api_name()].extend(synonyms)
 
         for name in data:
             data[name].sort()
@@ -151,7 +151,9 @@ class OptionsViewSet(viewsets.ViewSet):
                 direct_add=direct_add
             )
 
-        data['first_list_slug'] = PatientList.list()[0].get_slug()
+        data['first_list_slug'] = next(
+            PatientList.for_user(self.request.user)
+        ).get_slug()
 
         data['macros'] = Macro.to_dict()
 

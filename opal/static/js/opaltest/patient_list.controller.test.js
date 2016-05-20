@@ -4,12 +4,17 @@ describe('PatientListCtrl', function() {
     var schema, Episode, Item, episode;
     var profile;
     var $scope, $cookieStore, $controller, $q, $dialog, $httpBackend;
-    var $location, $routeParams, $http, $window;
+    var $location, $routeParams, $http;
     var Flow;
     var episodedata, controller;
     var $modal, options, $rootScope;
 
     var _makecontroller;
+
+    var fakeWindow = {
+        location: {href: "dummy"},
+        print: function(){}
+    }
 
     var fields = {};
     var columns = {
@@ -63,7 +68,6 @@ describe('PatientListCtrl', function() {
             id: 101,
             patient_id: 99,
             name: 'John Smith',
-            date_of_birth: '1980-07-31'
         }],
         tagging: [{'mine': true, 'tropical': true}],
         location: [{
@@ -71,7 +75,6 @@ describe('PatientListCtrl', function() {
             hospital: 'UCH',
             ward: 'T10',
             bed: '15',
-            date_of_admission: '2013-08-01',
         }],
         diagnosis: [{
             id: 102,
@@ -84,111 +87,10 @@ describe('PatientListCtrl', function() {
         }]
     };
 
-    patientData = {
-        "active_episode_id": null,
-        "demographics": [
-            {
-                "consistency_token": "0beb0d46",
-                "date_of_birth": "1999-12-12",
-                "hospital_number": "",
-                "id": 2,
-                "name": "Mr WAT",
-                "patient_id": 2
-            }
-        ],
-        "episodes": {
-            "3": {
-                "antimicrobial": [],
-                "demographics": [
-                    {
-                        "consistency_token": "0beb0d46",
-                        "date_of_birth": "1999-12-12",
-                        "hospital_number": "",
-                        "id": 2,
-                        "name": "Mr WAT",
-                        "patient_id": 2
-                    }
-                ],
-                "diagnosis": [],
-                "general_note": [],
-                "id": 3,
-                "tagging": {},
-                "location": [
-                    {
-                        "bed": "",
-                        "category": "Discharged",
-                        "consistency_token": "bd4f5db6",
-                        "date_of_admission": "2013-11-14",
-                        "discharge_date": null,
-                        "episode_id": 3,
-                        "hospital": "",
-                        "id": 3,
-                        "ward": ""
-                    }
-                ],
-                "microbiology_input": [],
-                "microbiology_test": [
-                    {
-                        "adenovirus": "",
-                        "anti_hbcore_igg": "",
-                        "anti_hbcore_igm": "",
-                        "anti_hbs": "",
-                        "c_difficile_antigen": "",
-                        "c_difficile_toxin": "",
-                        "cmv": "",
-                        "consistency_token": "29429ebf",
-                        "cryptosporidium": "",
-                        "date_ordered": "2013-11-14",
-                        "details": "",
-                        "ebna_igg": "",
-                        "ebv": "",
-                        "entamoeba_histolytica": "",
-                        "enterovirus": "",
-                        "episode_id": 3,
-                        "giardia": "",
-                        "hbsag": "",
-                        "hsv": "",
-                        "hsv_1": "",
-                        "hsv_2": "",
-                        "id": 1,
-                        "igg": "",
-                        "igm": "",
-                        "influenza_a": "",
-                        "influenza_b": "",
-                        "metapneumovirus": "",
-                        "microscopy": "",
-                        "norovirus": "",
-                        "organism": "",
-                        "parainfluenza": "",
-                        "parasitaemia": "",
-                        "resistant_antibiotics": "",
-                        "result": "pending",
-                        "rotavirus": "",
-                        "rpr": "",
-                        "rsv": "",
-                        "sensitive_antibiotics": "",
-                        "species": "",
-                        "syphilis": "",
-                        "test": "Fasciola Serology",
-                        "tppa": "",
-                        "vca_igg": "",
-                        "vca_igm": "",
-                        "viral_load": "",
-                        "vzv": ""
-                    }
-                ],
-                "past_medical_history": [],
-                "todo": [],
-                "travel": []
-            }
-        },
-        "id": 2
-    };
-
     optionsData = {
         condition: ['Another condition', 'Some condition'],
         tag_hierarchy: {'tropical': [], 'inpatients': ['icu']},
-        tag_display: {'tropical': 'Tropical'}
+        tag_display: {'tropical': 'Tropical', 'icu': "ICU"}
     };
 
     profile = {
@@ -219,7 +121,6 @@ describe('PatientListCtrl', function() {
         $http        = $injector.get('$http');
         $routeParams = $injector.get('$routeParams');
         $httpBackend = $injector.get('$httpBackend');
-        $window      = $injector.get('$window');
         $location    = $injector.get('$location');
         Flow         = $injector.get('Flow');
 
@@ -252,6 +153,7 @@ describe('PatientListCtrl', function() {
                 $cookieStore  : $cookieStore,
                 $location     : $location,
                 $routeParams  : $routeParams,
+                $window       : fakeWindow,
                 growl         : growl,
                 Flow          : Flow,
                 schema        : schema,
@@ -283,6 +185,7 @@ describe('PatientListCtrl', function() {
         it('should extract single tags', function(){
             expect($scope.currentTag).toBe('tropical');
             expect($scope.currentSubTag).toBe('');
+            expect($scope.readableTagName).toBe('Tropical');
         })
 
         it('should extract subtags', function() {
@@ -290,6 +193,7 @@ describe('PatientListCtrl', function() {
             _makecontroller();
             expect($scope.currentTag).toBe('inpatients');
             expect($scope.currentSubTag).toBe('icu');
+            expect($scope.readableTagName).toBe('ICU');
         });
 
         it('should set the URL of the last list visited', function() {
@@ -316,11 +220,10 @@ describe('PatientListCtrl', function() {
         })
 
         it('should redirect to /404', function() {
-            $cookieStore.remove('opal.lastPatientList')
-            spyOn($location, 'path');
-            episodedata.status = 'error'
+            $cookieStore.remove('opal.lastPatientList');
+            episodedata.status = 'error';
             _makecontroller();
-            expect($location.path).toHaveBeenCalledWith('/404');
+            expect(fakeWindow.location.href).toBe("/404");
         });
     });
 
@@ -411,9 +314,9 @@ describe('PatientListCtrl', function() {
     describe('print()', function() {
 
         it('should print', function() {
-            spyOn($window, 'print');
+            spyOn(fakeWindow, 'print');
             $scope.print();
-            expect($window.print).toHaveBeenCalledWith();
+            expect(fakeWindow.print).toHaveBeenCalledWith();
         });
 
     });
@@ -589,7 +492,6 @@ describe('PatientListCtrl', function() {
                     expect($scope.rix).toEqual(0);
                     expect($scope.episode.id).toEqual(123);
                     expect($scope.rows.length).toEqual(3)
-
                     $scope.dischargeEpisode(episode);
                     $rootScope.$apply();
 

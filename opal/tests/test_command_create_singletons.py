@@ -18,8 +18,7 @@ class CreateSingletonsTestCase(OpalTestCase):
         self.assertEqual(1, FamousLastWords.objects.filter(patient=p).count())
 
     def test_handle_create_episode_singleton(self):
-        p = Patient.objects.create()
-        e = p.create_episode()
+        p, e = self.new_patient_and_episode_please()
         EpisodeName.objects.get(episode=e).delete()
         self.assertEqual(0, EpisodeName.objects.filter(episode=e).count())
         c = create_singletons.Command()

@@ -29,6 +29,7 @@ class DogOwner(models.EpisodeSubrecord):
 
 
 class Colour(models.EpisodeSubrecord):
+    _clonable = False
     _advanced_searchable = False
     _exclude_from_extract = True
 
@@ -51,6 +52,13 @@ class FamousLastWords(models.PatientSubrecord):
 class EpisodeName(models.EpisodeSubrecord):
     _is_singleton = True
 
+    name = dmodels.CharField(max_length=200, blank=True, null=True)
+
+
+class ExternalSubRecord(
+    models.EpisodeSubrecord,
+    models.ExternallySourcedModel,
+):
     name = dmodels.CharField(max_length=200, blank=True, null=True)
 
 # We shouldn't, but we basically insist on some non-core models being there.

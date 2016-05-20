@@ -1,7 +1,7 @@
 describe('services', function() {
     "use strict";
 
-    var columns, episodeData, options, records, list_schema, mockWindow;
+    var columns, episodeData, options, records, list_schema, mockWindow, $rootScope;
 
     beforeEach(function() {
         module('opal.services');
@@ -101,8 +101,10 @@ describe('services', function() {
         beforeEach(function() {
             inject(function($injector) {
                 Item = $injector.get('Item');
+                $rootScope = $injector.get('$rootScope');
             });
 
+            $rootScope.fields = columns.fields;
             item = new Item(episodeData.demographics[0], mockEpisode, columns.fields.demographics);
         });
 
@@ -112,11 +114,11 @@ describe('services', function() {
 
         });
 
-        it('should convert values of date fields to Date objects', function() {
-            expect(item.date_of_birth).toEqual(new Date(1980, 6, 31));
+        it('should convert values of date fields to moment objects', function() {
+            expect(item.date_of_birth.toDate()).toEqual(new Date(1980, 6, 31));
         });
 
-        it('should convert values of date time fields to Date objects', function() {
+        it('should convert values of date time fields to moment objects', function() {
             expect(item.created.toDate()).toEqual(new Date(2015, 3, 7, 11, 45));
         });
 
@@ -170,7 +172,7 @@ describe('services', function() {
                     $httpBackend.flush();
                     expect(item.id).toBe(101);
                     expect(item.name).toBe('John Smythe');
-                    expect(item.date_of_birth).toEqual(new Date(1980, 6, 30));
+                    expect(item.date_of_birth.toDate()).toEqual(new Date(1980, 6, 30));
                 });
 
             });

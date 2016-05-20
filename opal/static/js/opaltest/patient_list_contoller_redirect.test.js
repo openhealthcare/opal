@@ -1,7 +1,7 @@
 describe('PatientListRedirectListCtrl', function() {
   "use strict";
 
-  var $location, $cookieStore, $controller, $scope;
+  var $location, $cookieStore, $controller, $scope, $rootScope;
   var fakeOptions = {
       first_list_slug: 'carnivore-eater',
       tag_hierarchy: {
@@ -12,6 +12,8 @@ describe('PatientListRedirectListCtrl', function() {
       }
   };
 
+  var fakeOptionsPromise = {then: function(someFun){ return someFun(fakeOptions); }};
+
   beforeEach(module('opal.controllers'));
   beforeEach(inject(function($injector){
       $location    = $injector.get('$location');
@@ -20,6 +22,7 @@ describe('PatientListRedirectListCtrl', function() {
       $controller  = $injector.get('$controller');
       $rootScope   = $injector.get('$rootScope');
       $scope       = $rootScope.$new();
+      spyOn(fakeOptionsPromise, 'then').and.callThrough();
   }));
 
   it('should redirect to the cookie store list', function() {
@@ -31,13 +34,15 @@ describe('PatientListRedirectListCtrl', function() {
               throw "unknown argument " + someKey;
           }
       };
+
       $controller('PatientListRedirectCtrl', {
           $scope: $scope,
           $cookieStore: $cookieStore,
           $location: $location ,
-          options: fakeOptions
+          options: fakeOptionsPromise
       });
       expect($location.path).toHaveBeenCalledWith("/list/cookietag/");
+      expect(fakeOptionsPromise.then).not.toHaveBeenCalled();
   });
 
 
@@ -46,12 +51,12 @@ describe('PatientListRedirectListCtrl', function() {
         $controller('PatientListRedirectCtrl', {
             $scope: $scope,
             $cookieStore: $cookieStore,
-            $location: $location ,
-            options: fakeOptions
+            $location: $location,
+            Options: fakeOptionsPromise
         });
         expect($location.path).toHaveBeenCalledWith("/list/carnivore-eater/");
         expect($cookieStore.get).toHaveBeenCalledWith("opal.lastPatientList");
-
+        expect(fakeOptionsPromise.then).toHaveBeenCalled();
     });
 
 });

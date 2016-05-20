@@ -475,6 +475,25 @@ class PatientRecordAccess(models.Model):
         )
 
 
+class ExternallySourcedModel(models.Model):
+    # the system upstream that contains this model
+    external_system = models.CharField(
+        blank=True, null=True, max_length=255
+    )
+
+    # the identifier used by the upstream system
+    external_identifier = models.CharField(
+        blank=True, null=True, max_length=255
+    )
+
+    class Meta:
+        abstract = True
+
+    @classmethod
+    def get_modal_footer_template(cls):
+        return "partials/_sourced_modal_footer.html"
+
+
 class TrackedModel(models.Model):
     # these fields are set automatically from REST requests via
     # updates from dict and the getter, setter properties, where available
@@ -774,14 +793,16 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
 
     @classmethod
     def _build_template_selection(cls, episode_type=None, patient_list=None, suffix=None, prefix=None):
-        name = camelcase_to_underscore(cls.__name__)
+        name = cls.get_api_name()
+
         templates = []
         if patient_list and episode_type:
-            templates.append('{0}/{1}/{2}/{3}{4}'.format(
-                prefix, episode_type.lower(), patient_list, name, suffix
-            ))
+            raise ValueError("you can not get both a patient list and episode type")
         if patient_list:
-            templates.append('{0}/{1}/{2}{3}'.format(prefix, patient_list, name, suffix))
+            list_prefixes = patient_list.get_template_prefixes()
+
+            for list_prefix in list_prefixes:
+                templates.append('{0}/{1}/{2}{3}'.format(prefix, list_prefix, name, suffix))
         if episode_type:
             templates.append('{0}/{1}/{2}{3}'.format(prefix, episode_type.lower(), name, suffix))
         templates.append('{0}/{1}{2}'.format(prefix, name, suffix))
@@ -802,6 +823,8 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
         """
         Return the active detail template for our record
         """
+        if patient_list and episode_type:
+            raise ValueError("you can not get both a patient list and episode type")
         name = camelcase_to_underscore(cls.__name__)
         templates = []
         if episode_type:
@@ -829,10 +852,6 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
         if cls.get_form_template():
             templates.append("modal_base.html")
         return find_template(templates)
-
-    @classmethod
-    def get_modal_footer_template(cls):
-        return "partials/_modal_footer.html"
 
     @classmethod
     def bulk_update_from_dicts(
@@ -904,6 +923,8 @@ class PatientSubrecord(Subrecord):
 
 
 class EpisodeSubrecord(Subrecord):
+    _clonable = True
+
     episode = models.ForeignKey(Episode, null=False)
 
     class Meta:
@@ -1252,6 +1273,10 @@ class Demographics(PatientSubrecord):
     middle_name = models.CharField(max_length=255, blank=True)
     sex = ForeignKeyOrFreeText(Gender)
 
+    @property
+    def name(self):
+        return '{0} {1}'.format(self.first_name, self.surname)
+
     class Meta:
         abstract = True
 
@@ -1331,7 +1356,7 @@ class Diagnosis(EpisodeSubrecord):
             self.episode.patient.demographics_set.get().name,
             self.condition,
             self.date_of_diagnosis
-            )
+        )
 
 
 class PastMedicalHistory(EpisodeSubrecord):
@@ -1459,7 +1484,7 @@ class UserProfile(models.Model):
         return any(r for r in all_roles if r == "scientist")
 
 
-class InpatientAdmission(PatientSubrecord):
+class InpatientAdmission(PatientSubrecord, ExternallySourcedModel):
     _title = "Inpatient Admissions"
     _icon = 'fa fa-map-marker'
     _sort = "-admitted"
@@ -1471,7 +1496,6 @@ class InpatientAdmission(PatientSubrecord):
     room_code = models.CharField(max_length=255, blank=True)
     bed_code = models.CharField(max_length=255, blank=True)
     admission_diagnosis = models.CharField(max_length=255, blank=True)
-    external_identifier = models.CharField(max_length=255, blank=True)
 
     def update_from_dict(self, data, *args, **kwargs):
         if "id" not in data:

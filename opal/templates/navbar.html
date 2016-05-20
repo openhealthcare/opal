@@ -1,5 +1,7 @@
-{% load opalplugins %}
 {% load static %}
+
+{% load application %}
+{% load plugins %}
 <nav class="navbar navbar-default navbar-primary navbar-fixed-top screen-only top-navbar" role="navigation">
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
@@ -26,7 +28,10 @@
         {% if request.user.is_authenticated %}
 	    <li ng-class="{active: $location.path().indexOf('/list/') == 0}">
           <a href="/#/list/">
-            <i class="fa fa-table"></i> Lists
+            <i class="fa fa-table"></i>
+            <span class="hidden-sm">
+              Lists
+            </span>
           </a>
         </li>
 
@@ -35,7 +40,12 @@
           {% plugin_menuitems %}
         {% endif %}
         {% if request.user.is_staff %}
-	    <li><a href="/admin"><i class="fa fa-cogs"></i> Admin</a></li>
+	    <li>
+          <a href="/admin">
+            <i class="fa fa-cogs"></i>
+            <span class="hidden-sm">Admin</span>
+          </a>
+        </li>
         {% endif %}
 
         <!-- <li > -->

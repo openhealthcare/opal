@@ -1,6 +1,7 @@
 # """
 # Utilities for dealing with OPAL Schemas
 # """
+import itertools
 from opal.core.subrecords import subrecords
 from opal import models
 
@@ -38,5 +39,6 @@ def _get_all_fields():
 def list_records():
     return _get_all_fields()
 
+
 def extract_schema():
-    return serialize_schema([models.Tagging] + [c for c in subrecords()])
+    return serialize_schema(itertools.chain([models.Tagging], subrecords()))

@@ -53,7 +53,6 @@ class PatientListTemplateView(TemplateView):
             return []
 
         context = []
-        slug = self.patient_list.get_slug()
         for column in self.patient_list.schema:
             column_context = {}
             name = camelcase_to_underscore(column.__name__)
@@ -63,8 +62,12 @@ class PatientListTemplateView(TemplateView):
             column_context['single'] = column._is_singleton
             column_context['icon'] = getattr(column, '_icon', '')
             column_context['list_limit'] = getattr(column, '_list_limit', None)
-            column_context['template_path'] = column.get_display_template(patient_list=slug)
-            column_context['detail_template_path'] = column.get_detail_template(patient_list=slug)
+            column_context['template_path'] = column.get_display_template(
+                patient_list=self.patient_list()
+            )
+            column_context['detail_template_path'] = column.get_detail_template(
+                patient_list=self.patient_list()
+            )
             context.append(column_context)
 
         return context
@@ -232,14 +235,15 @@ class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
     """
     Copy an episode to a given category, excluding tagging.
     """
-    def post(self, args, pk=None, category=None, **kwargs):
+    def post(self, request, pk=None, category=None, **kwargs):
         old = models.Episode.objects.get(pk=pk)
         new = models.Episode(patient=old.patient,
                              category=category,
                              date_of_admission=old.date_of_admission)
         new.save()
+
         for sub in episode_subrecords():
-            if sub._is_singleton:
+            if sub._is_singleton or not sub._clonable:
                 continue
             for item in sub.objects.filter(episode=old):
                 item.id = None
@@ -251,7 +255,6 @@ class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
 """
 Template views for OPAL
 """
-
 class FormTemplateView(LoginRequiredMixin, TemplateView):
     """
     This view renders the form template for our field.
@@ -271,25 +274,31 @@ class FormTemplateView(LoginRequiredMixin, TemplateView):
         Set the context for what this modal is for so
         it can be accessed by all subsequent methods
         """
-        self.column = kw['model']
+        self.column = get_subrecord_from_api_name(kw['model'])
         self.name = camelcase_to_underscore(self.column.__name__)
         return super(FormTemplateView, self).dispatch(*a, **kw)
 
 
 class ModalTemplateView(LoginRequiredMixin, TemplateView):
     def get_template_from_model(self):
-        return self.column.get_modal_template(
-            patient_list=self.list_slug)
+        patient_list = None
 
+        if self.list_slug:
+            patient_list = PatientList.get(self.list_slug)()
+        return self.column.get_modal_template(
+            patient_list=patient_list
+        )
 
     def dispatch(self, *a, **kw):
         """
         Set the context for what this modal is for so
         it can be accessed by all subsequent methods
         """
-        self.column = kw['model']
+        self.column = get_subrecord_from_api_name(kw['model'])
         self.list_slug = kw.get('list', None)
         self.template_name = self.get_template_from_model()
+        if self.template_name is None:
+            raise ValueError('No modal Template available for {0}'.format(self.column.__name__))
         self.name = camelcase_to_underscore(self.column.__name__)
         return super(ModalTemplateView, self).dispatch(*a, **kw)
 
