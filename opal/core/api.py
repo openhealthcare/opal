@@ -151,7 +151,9 @@ class OptionsViewSet(viewsets.ViewSet):
                 direct_add=direct_add
             )
 
-        data['first_list_slug'] = PatientList.list()[0].get_slug()
+        data['first_list_slug'] = next(
+            PatientList.for_user(self.request.user)
+        ).get_slug()
 
         data['macros'] = Macro.to_dict()
 

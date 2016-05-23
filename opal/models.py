@@ -461,7 +461,6 @@ class Patient(models.Model):
 
 
 
-
 class PatientRecordAccess(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     user    = models.ForeignKey(User)

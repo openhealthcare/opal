@@ -69,11 +69,15 @@ directives.directive("scrollEpisodes", function(){
 });
 
 directives.directive("freezeHeaders", function () {
-    return function (scope, element, attrs) {
-        var $el = $(element).find('table');
-        $el.stickyTableHeaders({
-            scrollableArea: $(element),
-        });
+    return {
+      restrict: 'A',
+      link: function (scope, element, attrs) {
+          var $el = $(element).find('table');
+
+          $el.stickyTableHeaders({
+              scrollableArea: $(element),
+          });
+      }
     };
 });
 
@@ -230,7 +234,6 @@ directives.directive('parentHeight', function(){
 directives.directive('autofocus', ['$timeout', function($timeout) {
   return {
     restrict: 'A',
-    scope: {'autofocus':'='},
     link : function($scope, $element) {
       $scope.$watch('autofocus', function(){
         $timeout(function() {
