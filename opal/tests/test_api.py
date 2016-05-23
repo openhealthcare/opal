@@ -124,8 +124,15 @@ class OptionTestCase(TestCase):
                 'display_name': 'Omnivore',
                 'name': 'omnivore',
                 'slug': 'eater-omnivore'
+            },
+              'mine': {
+                'direct_add': True,
+                'display_name': 'Mine',
+                'name': 'mine',
+                'slug': 'mine'
             }
         }
+
         self.assertEqual(expected, result['tags'])
 
 

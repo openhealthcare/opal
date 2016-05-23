@@ -67,7 +67,8 @@ describe('PatientListCtrl', function() {
         demographics: [{
             id: 101,
             patient_id: 99,
-            name: 'John Smith',
+            first_name: 'John',
+            surname: 'Smith'
         }],
         tagging: [{'mine': true, 'tropical': true}],
         location: [{
@@ -90,7 +91,21 @@ describe('PatientListCtrl', function() {
     optionsData = {
         condition: ['Another condition', 'Some condition'],
         tag_hierarchy: {'tropical': [], 'inpatients': ['icu']},
-        tag_display: {'tropical': 'Tropical', 'icu': "ICU"}
+        tag_display: {'tropical': 'Tropical', 'icu': "ICU"},
+        tags: {
+            opat_referral: {
+                display_name: "OPAT Referral"
+            },
+            tropical: {
+                display_name: "Tropical"
+            },
+            mine: {
+              direct_add: true,
+              display_name: 'Mine',
+              name: 'mine',
+              slug: 'mine'
+          }
+        }
     };
 
     profile = {
@@ -368,7 +383,9 @@ describe('PatientListCtrl', function() {
             expect(Flow.enter).toHaveBeenCalledWith(options, {current_tags: {
                 tag: $scope.currentTag,
                 subtag: $scope.currentSubTag
-            }})
+            }});
+
+            expect(growl.success).toHaveBeenCalledWith('John Smith added to the Mine list');
         });
 
         it('should add the new episode to episodes if it has the current tag', function() {
@@ -426,8 +443,10 @@ describe('PatientListCtrl', function() {
                 spyOn($scope, 'select_episode');
                 $scope.episodes[episodeData2.id] = new Episode( episodeData2 );
                 $scope._post_discharge('discharged', episode);
-                var name = $scope.select_episode.calls.allArgs()[0][0].demographics[0].name;
-                expect(name).toEqual("John Smith");
+                var first_name = $scope.select_episode.calls.allArgs()[0][0].demographics[0].first_name;
+                var surname = $scope.select_episode.calls.allArgs()[0][0].demographics[0].surname;
+                expect(first_name).toEqual("John");
+                expect(surname).toEqual("Smith");
             });
         });
 

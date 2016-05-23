@@ -207,7 +207,8 @@ angular.module('opal.controllers').controller(
                                 }
                             }
                             var msg = episode.demographics[0].first_name + " " + episode.demographics[0].surname;
-                            msg += " added to the " + $scope.readableTagName + " list";
+                            var newTag = _.intersection(_.keys(episode.tagging[0]), _.keys(options.tags))[0]
+                            msg += " added to the " + options.tags[newTag].display_name + " list";
                             growl.success(msg);
 
   		                }

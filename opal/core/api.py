@@ -150,6 +150,12 @@ class OptionsViewSet(viewsets.ViewSet):
                 slug=slug,
                 direct_add=direct_add
             )
+        data["tags"]["mine"] = dict(
+            name="mine",
+            display_name="Mine",
+            slug="mine",
+            direct_add=True
+        )
 
         data['first_list_slug'] = next(
             PatientList.for_user(self.request.user)
