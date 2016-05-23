@@ -103,12 +103,4 @@ describe('OPAL Directives', function(){
             compileDirective(markup);
         });
     })
-
-    describe('blurOthers', function(){
-        it('should be blurred', function(){
-            var markup = '<div blur-others></div>';
-            compileDirective(markup);
-        })
-    })
-
 });

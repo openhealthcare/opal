@@ -185,17 +185,6 @@ if (typeof String.prototype.trim !== 'function') {
 }
 
 
-
-// Prevent the backspace key from navigating back.
-$(document).unbind('keydown').bind('keydown', function (event) {
-    $(document).on("keydown", function (e) {
-        if (e.which === 8 && !$(e.target).is("input:not([readonly]):not([type=radio]):not([type=checkbox]), textarea, [contentEditable], [contentEditable=true]")) {
-            e.preventDefault();
-        }
-    });
-});
-
-
 // // From http://stackoverflow.com/a/2897510/2463201
 // jQuery.fn.getCursorPosition = function() {
 //     var self = this;
