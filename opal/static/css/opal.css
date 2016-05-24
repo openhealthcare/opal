@@ -987,17 +987,6 @@ svg.speech-bubble-timeline-container{
     margin-right: auto;
 }
 
-.multiline-btn{
-    display: flex;
-    align-items: center;
-}
-
-.multiline-btn-text{
-    display: inline-block;
-    padding-left: 5px;
-    text-align: left;
-}
-
 ul.dropdown-menu {
     text-align: left;
 }
@@ -1016,6 +1005,7 @@ a.panel-link:hover .panel{
     -webkit-transition:.3s;
     transition:.3s;
     background-color: #F6F6F6;
+}
 
 a.table-link::before {
   content: "";
@@ -1030,4 +1020,8 @@ a.table-link::before {
 a.table-link:hover{
   text-decoration: none;
   color: #333;
+}
+
+.side-bar .btn-lg{
+    width: 100%;
 }
