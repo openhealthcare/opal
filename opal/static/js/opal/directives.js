@@ -107,18 +107,6 @@ directives.directive('scrollTop', function () {
     };
 });
 
-directives.directive('blurOthers', function(){
-    return {
-        link: function ($scope, element, attrs) {
-            $scope.$watch(attrs.blurOthers, function(value){
-                if(attrs.blurOthers){
-                    $(document.activeElement).blur();
-                }
-            });
-        }
-    };
-});
-
 directives.directive('placeholder', function($timeout){
 	if ($.support.placeholder) {
 		return {};

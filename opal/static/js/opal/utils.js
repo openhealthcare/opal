@@ -185,7 +185,6 @@ if (typeof String.prototype.trim !== 'function') {
 }
 
 
-
 // // From http://stackoverflow.com/a/2897510/2463201
 // jQuery.fn.getCursorPosition = function() {
 //     var self = this;
