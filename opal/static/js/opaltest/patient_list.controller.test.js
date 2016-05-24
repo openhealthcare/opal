@@ -93,7 +93,7 @@ describe('PatientListCtrl', function() {
         tag_hierarchy: {'tropical': [], 'inpatients': ['icu']},
         tag_display: {'tropical': 'Tropical', 'icu': "ICU"},
         tags: {
-            opat_referral: {
+            opat_referrals: {
                 display_name: "OPAT Referral",
                 parent_tag: "opat",
                 name: "opat_referrals"
@@ -410,17 +410,21 @@ describe('PatientListCtrl', function() {
         it('should print the correct message even in the case of multiple tags with hierarchies on the current tag', function(){
           $scope.currentTag = 'opat';
           $scope.currentSubTag = 'opat_referrals';
+          var episodeData3 = angular.copy(episodeData);
+          episodeData3.tagging = [
+              {opat: true, opat_referrals: true, mine: true}
+          ];
           spyOn(Flow, 'enter').and.callFake(
               function(){
                   return {
                       then : function(fn){ fn({
-                          then: function(fn){ fn(new Episode(episodeData) ) }
+                          then: function(fn){ fn(new Episode(episodeData3) ) }
                       })}
                   }
               }
           );
           $scope.addEpisode();
-          expect(growl.success).toHaveBeenCalledWith('John Smith added to the Tropical list');
+          expect(growl.success).toHaveBeenCalledWith('John Smith added to the OPAT Referral list');
         });
 
         it('should add the new episode to episodes if it has the current tag', function() {

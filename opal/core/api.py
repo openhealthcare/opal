@@ -152,7 +152,7 @@ class OptionsViewSet(viewsets.ViewSet):
             )
 
             if tag and hasattr(tagging, 'subtag'):
-                data["parent_tag"] = tagging.tag
+                data["tags"][tag]["parent_tag"] = tagging.tag
 
         data["tags"]["mine"] = dict(
             name="mine",

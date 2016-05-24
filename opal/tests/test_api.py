@@ -117,13 +117,15 @@ class OptionTestCase(TestCase):
                 'direct_add': True,
                 'display_name': 'Herbivores',
                 'slug': 'eater-herbivore',
-                'name': 'herbivore'
+                'name': 'herbivore',
+                'parent_tag': 'eater'
             },
               'omnivore': {
                 'direct_add': True,
                 'display_name': 'Omnivore',
                 'name': 'omnivore',
-                'slug': 'eater-omnivore'
+                'slug': 'eater-omnivore',
+                'parent_tag': 'eater'
             },
               'mine': {
                 'direct_add': True,
