@@ -394,7 +394,6 @@ describe('PatientListCtrl', function() {
 
         it('should print the correct message even dependent on the current tag', function(){
           $scope.currentTag = 'tropical';
-          var episodeData = angular.copy(episodeData);
           spyOn(Flow, 'enter').and.callFake(
               function(){
                   return {
@@ -411,7 +410,6 @@ describe('PatientListCtrl', function() {
         it('should print the correct message even in the case of multiple tags with hierarchies on the current tag', function(){
           $scope.currentTag = 'opat';
           $scope.currentSubTag = 'opat_referrals';
-          var episodeData = angular.copy(episodeData);
           spyOn(Flow, 'enter').and.callFake(
               function(){
                   return {
