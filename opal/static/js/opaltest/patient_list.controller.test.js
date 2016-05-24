@@ -94,10 +94,13 @@ describe('PatientListCtrl', function() {
         tag_display: {'tropical': 'Tropical', 'icu': "ICU"},
         tags: {
             opat_referral: {
-                display_name: "OPAT Referral"
+                display_name: "OPAT Referral",
+                parent_tag: "opat",
+                name: "opat_referrals"
             },
             tropical: {
-                display_name: "Tropical"
+                display_name: "Tropical",
+                name: "tropical"
             },
             mine: {
               direct_add: true,
@@ -370,6 +373,7 @@ describe('PatientListCtrl', function() {
         });
 
         it('should allow the enter flow to resolve with a promise', function() {
+            $scope.currentTag = 'mine';
             spyOn(Flow, 'enter').and.callFake(
                 function(){
                     return {
@@ -386,6 +390,39 @@ describe('PatientListCtrl', function() {
             }});
 
             expect(growl.success).toHaveBeenCalledWith('John Smith added to the Mine list');
+        });
+
+        it('should print the correct message even dependent on the current tag', function(){
+          $scope.currentTag = 'tropical';
+          var episodeData = angular.copy(episodeData);
+          spyOn(Flow, 'enter').and.callFake(
+              function(){
+                  return {
+                      then : function(fn){ fn({
+                          then: function(fn){ fn(new Episode(episodeData) ) }
+                      })}
+                  }
+              }
+          );
+          $scope.addEpisode();
+          expect(growl.success).toHaveBeenCalledWith('John Smith added to the Tropical list');
+        });
+
+        it('should print the correct message even in the case of multiple tags with hierarchies on the current tag', function(){
+          $scope.currentTag = 'opat';
+          $scope.currentSubTag = 'opat_referrals';
+          var episodeData = angular.copy(episodeData);
+          spyOn(Flow, 'enter').and.callFake(
+              function(){
+                  return {
+                      then : function(fn){ fn({
+                          then: function(fn){ fn(new Episode(episodeData) ) }
+                      })}
+                  }
+              }
+          );
+          $scope.addEpisode();
+          expect(growl.success).toHaveBeenCalledWith('John Smith added to the Tropical list');
         });
 
         it('should add the new episode to episodes if it has the current tag', function() {

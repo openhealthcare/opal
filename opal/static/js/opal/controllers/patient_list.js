@@ -207,7 +207,21 @@ angular.module('opal.controllers').controller(
                                 }
                             }
                             var msg = episode.demographics[0].first_name + " " + episode.demographics[0].surname;
-                            var newTag = _.intersection(_.keys(episode.tagging[0]), _.keys(options.tags))[0]
+                            var newTags = _.intersection(_.keys(episode.tagging[0]), _.keys(options.tags));
+                            var newTag;
+
+                            if(newTags.length > 1){
+                              var tagObjs = _.filter(options.tags, function(t){ return _.contains(newTags, t.name); });
+                              if($scope.currentSubTag.length){
+                                newTag = _.findWhere(tagObjs, {parent_tag: $scope.currentTag}).name;
+                              }
+                              else{
+                                newTag = _.findWhere(tagObjs, {name: $scope.currentTag}).name;
+                              }
+                            }
+                            else{
+                              newTag = newTags[0];
+                            }
                             msg += " added to the " + options.tags[newTag].display_name + " list";
                             growl.success(msg);
 

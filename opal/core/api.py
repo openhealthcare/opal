@@ -150,11 +150,15 @@ class OptionsViewSet(viewsets.ViewSet):
                 slug=slug,
                 direct_add=direct_add
             )
+
+            if tag and hasattr(tagging, 'subtag'):
+                data["parent_tag"] = tagging.tag
+
         data["tags"]["mine"] = dict(
             name="mine",
             display_name="Mine",
             slug="mine",
-            direct_add=True
+            direct_add=True,
         )
 
         data['first_list_slug'] = next(
