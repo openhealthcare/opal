@@ -1,12 +1,15 @@
 describe('OPAL Directives', function(){
 
-    var element, scope;
+    var element, scope, $timeout;
 
-    beforeEach(module('opal'));
     beforeEach(module('opal.directives'));
 
     beforeEach(inject(function($rootScope, $compile) {
         scope = $rootScope.$new();
+    }));
+
+    beforeEach(inject(function(_$timeout_) {
+        $timeout = _$timeout_;
     }));
 
     function compileDirective(tpl){
@@ -25,6 +28,16 @@ describe('OPAL Directives', function(){
             compileDirective(markup);
             scope.$destroy();
             expect(element.attr('style').indexOf('height: ')).toEqual(0);
+        });
+    });
+
+    describe('autofocus', function(){
+        it('should set autofocus', function(){
+            var markup = '<input type="text" autofocus />';
+            compileDirective(markup);
+            spyOn(element[0],'focus');
+            $timeout.flush();
+            expect(element[0].focus).toHaveBeenCalled();
         });
     });
 
@@ -90,12 +103,4 @@ describe('OPAL Directives', function(){
             compileDirective(markup);
         });
     })
-
-    describe('blurOthers', function(){
-        it('should be blurred', function(){
-            var markup = '<div blur-others></div>';
-            compileDirective(markup);
-        })
-    })
-
 });

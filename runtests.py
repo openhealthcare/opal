@@ -44,6 +44,7 @@ settings.configure(DEBUG=True,
                                    'django.contrib.admin',
                                    'reversion',
                                    'compressor',
+                                   'djcelery',
                                    'opal',
                                    'opal.core.search',
                                    'opal.tests'
@@ -56,7 +57,8 @@ settings.configure(DEBUG=True,
                            'django.template.loaders.filesystem.Loader',
                            'django.template.loaders.app_directories.Loader',
                            )),
-                   )
+                   ),
+                   CELERY_ALWAYS_EAGER=True
 )
 
 from opal.tests import dummy_options_module
@@ -65,6 +67,8 @@ from opal.tests import dummy_opal_application
 
 import django
 django.setup()
+from opal.core import celery
+celery.app.config_from_object('django.conf:settings')
 
 
 from django.test.runner import DiscoverRunner

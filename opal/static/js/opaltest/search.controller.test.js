@@ -84,12 +84,11 @@ describe('SearchCtrl', function (){
     describe('We should query for hospital number or name()', function (){
         it('should ask the server for results', function(){
             location.search({
-                hospital_number: "Bond",
-                name: "Bond",
+                query: "Bond",
                 page_number: 1
             });
 
-            expectedUrl = "/search/simple/?hospital_number=Bond&name=Bond&page_number=1";
+            expectedUrl = "/search/simple/?query=Bond&page_number=1";
             $httpBackend.expectGET(expectedUrl).respond({
                 page_number: 1,
                 object_list: [],
@@ -104,7 +103,7 @@ describe('SearchCtrl', function (){
             locationDetails.pathname = "/somewhere";
             $scope.searchTerm = "Bond";
             $scope.search();
-            expectedUrl = "/#/search?hospital_number=Bond&name=Bond";
+            expectedUrl = "/#/search?query=Bond";
             expect(locationDetails.href).toEqual(expectedUrl);
         });
 
@@ -114,8 +113,7 @@ describe('SearchCtrl', function (){
             $scope.searchTerm = "Bond";
             $scope.search();
             expectedSearch = {
-                hospital_number: "Bond",
-                name: "Bond",
+                query: "Bond",
             };
             expect(location.search()).toEqual(expectedSearch);
             expect(locationDetails.href).toEqual("unchanged");

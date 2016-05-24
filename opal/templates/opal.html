@@ -3,7 +3,6 @@
 
 {% load application %}
 {% load plugins %}
-{% load gifs %}
 <!doctype html>
 {% block angulardefinition %}
 <html xmlns:ng="http://angularjs.org" id="ng-app" ng-app="{% block ngapp %}opal{% endblock %}" ng-controller="RootCtrl" ng-keydown="keydown($event)">
@@ -117,18 +116,7 @@
     <div growl></div>
 
     {% block loading %}
-    <div class="loading screen-only">
-      <div class="loading-inner">
-        <p>
-          {% loading_gif %}
-        </p>
-        <p class="lead">
-          <strong>
-            Loading...
-          </strong>
-        </p>
-      </div>
-    </div>
+      {% include "partials/_loading.html" %}
     {% endblock %}
     <script>
         // temporary for try outs

@@ -54,5 +54,7 @@ setup(
         'python-dateutil==2.4.2',
         'Fabric==1.10.2',
         'pycrypto==2.6.1',
+        'django-celery==3.1.17',
+        'celery==3.1.19',
         ]
 )

@@ -6,12 +6,9 @@
   <button
      ng-hide="profile.readonly"
      ng-click="dischargeEpisode(episode)"
-     class="btn btn-primary btn-lg multiline-btn">
-      <i class="fa fa-home"></i>
-      <div class="multiline-btn-text">
-      <div ng-show="episode.discharge_date">Confirm</div>
-      <div>Discharge</div>
-      </div>
+     class="btn btn-primary btn-lg">
+        <span ng-show="episode.discharge_date"><i class="fa fa-home"></i> Confirm<br>Discharge</span>
+        <span ng-hide="episode.discharge_date"><i class="fa fa-home"></i> Discharge</span>
   </button>
 </p>
 {% application_actions %}

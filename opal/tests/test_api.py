@@ -67,60 +67,45 @@ class OptionTestCase(TestCase):
             object_id=self.top.id,
             name=self.synonym_name
         )
-        self.viewset = api.OptionsViewSet
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        request = mock_request
+        viewset = api.OptionsViewSet()
+        viewset.request = mock_request
+        self.response = viewset.list(request)
 
     def test_options_loader(self):
-        mock_request = MagicMock(name='mock request')
-        mock_request.user = self.user
-        response = self.viewset().list(mock_request)
-        result = response.data
+        result = self.response.data
         self.assertIn("hat", result)
         self.assertEqual(set(result["hat"]), {"top", "bowler", "high"})
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(self.response.status_code, 200)
 
     def test_first_list_slug(self):
-        mock_request = MagicMock(name='mock request')
-        mock_request.user = self.user
-        response = self.viewset().list(mock_request)
-        result = response.data
+        result = self.response.data
         self.assertEqual('carnivore', result['first_list_slug'])
 
     def test_tag_display(self):
-        mock_request = MagicMock(name='mock request')
-        mock_request.user = self.user
-        response = self.viewset().list(mock_request)
-        result = response.data
+        result = self.response.data
         self.assertEqual('Herbivores', result['tag_display']['herbivore'])
 
     def test_tag_visible_in_list(self):
-        mock_request = MagicMock(name='mock request')
-        mock_request.user = self.user
-        response = self.viewset().list(mock_request)
-        result = response.data
+        result = self.response.data
         self.assertIn('carnivore', result['tag_visible_in_list'])
 
     def test_tag_direct_add(self):
-        mock_request = MagicMock(name='mock request')
-        mock_request.user = self.user
-        response = self.viewset().list(mock_request)
-        result = response.data
+        result = self.response.data
         # .direct_add = False
         self.assertNotIn('carnivore', result['tag_direct_add'])
         # .direct_add = default
         self.assertIn('herbivore', result['tag_direct_add'])
 
     def test_tag_slug(self):
-        mock_request = MagicMock(name='mock request')
-        mock_request.user = self.user
-        response = self.viewset().list(mock_request)
-        result = response.data
+        result = self.response.data
         self.assertEqual('eater-herbivore', result['tag_slugs']['herbivore'])
 
     def test_tags(self):
-        mock_request = MagicMock(name='mock request')
-        mock_request.user = self.user
-        response = self.viewset().list(mock_request)
-        result = response.data
+        result = self.response.data
+
         expected = {
             "carnivore": {
                 'direct_add': False,

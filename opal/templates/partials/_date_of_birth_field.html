@@ -1,10 +1,10 @@
-<div ng-show="editing.demographics.sourced_from_upstream" class="form-group">
+<div ng-show="editing.demographics.external_system" class="form-group">
   <label class="control-label col-sm-3">Date of birth</label>
   <p class="form-control-static col-sm-8">
     [[ editing.demographics.date_of_birth | shortDate ]]
   </p>
 </div>
-<div ng-hide="editing.demographics.sourced_from_upstream" class="form-group">
+<div ng-hide="editing.demographics.external_system" class="form-group">
   <label class="control-label col-sm-3">Date of birth</label>
   <div class="col-sm-8">
     <input class="form-control" type="text"

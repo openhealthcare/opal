@@ -69,11 +69,15 @@ directives.directive("scrollEpisodes", function(){
 });
 
 directives.directive("freezeHeaders", function () {
-    return function (scope, element, attrs) {
-        var $el = $(element).find('table');
-        $el.stickyTableHeaders({
-            scrollableArea: $(element),
-        });
+    return {
+      restrict: 'A',
+      link: function (scope, element, attrs) {
+          var $el = $(element).find('table');
+
+          $el.stickyTableHeaders({
+              scrollableArea: $(element),
+          });
+      }
     };
 });
 
@@ -98,18 +102,6 @@ directives.directive('scrollTop', function () {
 
             scope.$on('$destroy', function(){
                 $(window).off("resize.fixHeight");
-            });
-        }
-    };
-});
-
-directives.directive('blurOthers', function(){
-    return {
-        link: function ($scope, element, attrs) {
-            $scope.$watch(attrs.blurOthers, function(value){
-                if(attrs.blurOthers){
-                    $(document.activeElement).blur();
-                }
             });
         }
     };
@@ -227,24 +219,15 @@ directives.directive('parentHeight', function(){
     };
 });
 
-// directives.directive('autofocus', function($timeout) {
-//     return {
-//         restrict: 'A',
-//         link : function($scope, $element) {
-//             $timeout(function() {
-//                 $element[0].focus();
-//             });
-//         }
-//     };
-// });
-
-// angular.module('ui.bootstrap.modal').directive('modalWindow', function ($timeout) {
-//     return {
-//         priority: 1,
-//         link: function (scope, element, attrs) {
-//             $timeout(function () {
-//                 element.find('[autofocus]').focus();
-//             });
-//         }
-//     };
-// });
+directives.directive('autofocus', ['$timeout', function($timeout) {
+  return {
+    restrict: 'A',
+    link : function($scope, $element) {
+      $scope.$watch('autofocus', function(){
+        $timeout(function() {
+          $element[0].focus();
+        });
+      });
+    }
+  };
+}]);

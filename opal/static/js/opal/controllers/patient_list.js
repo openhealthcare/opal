@@ -2,11 +2,8 @@ angular.module('opal.controllers').controller(
     'PatientListCtrl', function($scope, $q, $http, $cookieStore,
                                 $location, $routeParams,
                                 $modal, $rootScope,
-                                $window,
-                                growl,
-                                Flow, Item,
-                                Episode, episodedata, options,
-                                profile, episodeVisibility){
+                                growl, Flow, Item, Episode, episodedata,
+                                options, $window, profile, episodeVisibility){
 
         $scope.ready = false;
         var version = window.version;
@@ -17,7 +14,7 @@ angular.module('opal.controllers').controller(
                 $location.path('/list/')
                 return
             }
-            $location.path('/404');
+            $window.location.href = '/404';
             return
         }else{
             $scope.episodes = episodedata.data;
@@ -42,8 +39,9 @@ angular.module('opal.controllers').controller(
             $cookieStore.put('opal.lastPatientList', $routeParams.slug);
             var tags = $routeParams.slug.split('-')
             $scope.currentTag = tags[0];
-            $scope.currentSubTag = tags.length == 2 ? tags[1] : "" ;
+            $scope.currentSubTag = tags.length == 2 ? tags[1] : "";
             $scope.tag_display = options.tag_display;
+            $scope.readableTagName = $scope.tag_display[$scope.currentSubTag] || $scope.tag_display[$scope.currentTag]
         }
 
 	    $scope.getVisibleEpisodes = function() {
@@ -208,9 +206,8 @@ angular.module('opal.controllers').controller(
                                     $scope.num_episodes += 1;
                                 }
                             }
-                            var readableName = $scope.tag_display[$scope.currentSubTag];
                             var msg = episode.demographics[0].first_name + " " + episode.demographics[0].surname;
-                            msg += " added to the " + readableName + " list";
+                            msg += " added to the " + $scope.readableTagName + " list";
                             growl.success(msg);
 
   		                }
