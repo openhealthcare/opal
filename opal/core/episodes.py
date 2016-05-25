@@ -50,6 +50,19 @@ class EpisodeType(object):
             if et.name == category:
                 return et
 
+    @classmethod
+    def start(kls, episode):
+        if episode.date_of_episode:
+            return episode.date_of_episode
+        else:
+            return episode.date_of_admission
+
+    @classmethod
+    def end(kls, episode):
+        if episode.date_of_episode:
+            return episode.date_of_episode
+        else:
+            return episode.discharge_date
 
 
 class InpatientEpisode(EpisodeType):

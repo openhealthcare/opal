@@ -36,7 +36,7 @@ angular.module('opal.services')
             // TODO - Pull these from the schema?
             // Note - these are date fields on the episode itself - which is not currently
             // serialised and sent with the schema !
-            var date_fields = ['date_of_admission', 'discharge_date', 'date_of_episode'];
+            var date_fields = ['date_of_admission', 'discharge_date', 'date_of_episode', 'start', 'end'];
 
             // Constructor to update from attrs and parse datish fields
             this.initialise = function(attrs){
