@@ -294,7 +294,7 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         Set the context for what this modal is for so
         it can be accessed by all subsequent methods
         """
-        self.column = get_subrecord_from_api_name(kw['model'])
+        self.column = kw['model']
         self.list_slug = kw.get('list', None)
         self.template_name = self.get_template_from_model()
         if self.template_name is None:

@@ -298,7 +298,7 @@ class ModalTemplateViewTestCase(BaseViewTestCase):
         request = self.get_request('/colour_modal.html')
         view = self.setup_view(
             views.ModalTemplateView, request)
-        resp = view.dispatch(request, model=testmodels.Colour.get_api_name())
+        resp = view.dispatch(request, model=testmodels.Colour)
         self.assertEqual(200, resp.status_code)
 
     @patch("opal.tests.models.DogOwner.get_modal_template")

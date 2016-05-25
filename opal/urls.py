@@ -5,9 +5,9 @@ from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 from django.views.decorators.csrf import csrf_exempt
-
+from opal.utils import camelcase_to_underscore
 from opal import views
-from opal.core import api
+from opal.core import api, subrecords
 from opal.forms import ChangePasswordForm
 
 urlpatterns = patterns(
@@ -65,12 +65,21 @@ urlpatterns = patterns(
     url(r'api/v0.1/', include(api.router.urls)),
     url(r'^templates/record/(?P<model>[a-z_\-]+).html$',
         views.RecordTemplateView.as_view(), name="record_view"),
-
-    url(r'^templates/modals/(?P<model>[a-z_\-]+).html/(?P<list>[a-z_\-]+/?)?$',
-        views.ModalTemplateView.as_view(), name="modal_view"),
     url(r'^templates/forms/(?P<model>[a-z_\-]+).html/?$',
         views.FormTemplateView.as_view(), name="form_view"),
 )
+
+# Generated subrecord template views
+for subrecord_model in subrecords.subrecords():
+    sub_url = camelcase_to_underscore(subrecord_model.__name__)
+    urlpatterns += patterns(
+        '',
+        url(r'^templates/modals/%s.html/?$' % sub_url,
+            views.ModalTemplateView.as_view(), {'model': subrecord_model}),
+        url(r'^templates/modals/%s.html/(?P<list>[a-z_\-]+/?)$' % sub_url,
+            views.ModalTemplateView.as_view(), {'model': subrecord_model}),
+    )
+
 
 urlpatterns += staticfiles_urlpatterns()
 
