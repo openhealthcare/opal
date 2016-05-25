@@ -79,8 +79,10 @@ describe('Episode', function() {
             date_of_admission: "19/11/2013",
             category: 'inpatient',
             active: true,
-            discharge_date: null,
-            date_of_episode: null,
+            discharge_date: "25/05/2016",
+            date_of_episode: "20/11/2013",
+            start: "19/11/2013",
+            end: "25/05/2016",
             tagging: [{
                 mine: true,
                 tropical: true
@@ -131,12 +133,21 @@ describe('Episode', function() {
         episode = new Episode(angular.copy(episodeData));
     });
 
-    describe('initialization', function() {
+    describe('initialisation', function() {
 
         it('should throw if there is no patient ID', function() {
             expect(function(){ new Episode({} )}).toThrow();
         });
 
+        it('should cast dates on the episode if appropriate', function(){
+            var episodeDataCloned = angular.copy(episodeData);
+            var newEpisode = new Episode(episodeDataCloned);
+            expect(moment(newEpisode.date_of_admission).format('DD/MM/YYYY')).toEqual("19/11/2013")
+            expect(moment(newEpisode.start).format('DD/MM/YYYY')).toEqual("19/11/2013")
+            expect(moment(newEpisode.end).format('DD/MM/YYYY')).toEqual("25/05/2016")
+            expect(moment(newEpisode.date_of_episode).format('DD/MM/YYYY')).toEqual("20/11/2013")
+            expect(moment(newEpisode.discharge_date).format('DD/MM/YYYY')).toEqual("25/05/2016")
+        });
     });
 
     it('should run walkin comparison in walkin review', function(){
@@ -211,8 +222,10 @@ describe('Episode', function() {
         expect(episode.makeCopy()).toEqual({
             id: 123,
             date_of_admission: new Date(2013, 10, 19),
-            date_of_episode: null,
-            discharge_date: null,
+            date_of_episode: new Date(2013, 10, 20),
+            discharge_date: new Date(2016, 4, 25),
+            start: new Date(2013, 10, 19),
+            end: new Date(2016, 4, 25),
             category: 'inpatient',
             consistency_token: undefined
         });

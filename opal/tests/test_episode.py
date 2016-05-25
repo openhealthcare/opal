@@ -36,7 +36,8 @@ class EpisodeTest(OpalTestCase):
 
     def test_type(self):
         self.episode.category = 'Inpatient'
-        self.assertEqual(self.episode.type, InpatientEpisode)
+        self.assertEqual(self.episode.type.__class__, InpatientEpisode)
+        self.assertEqual(self.episode.type.episode, self.episode)
 
     def test_visible_to(self):
         self.assertTrue(self.episode.visible_to(self.user))
@@ -83,7 +84,7 @@ class EpisodeTest(OpalTestCase):
         as_dict = self.episode.to_dict(self.user)
         expected = [
             'id', 'category', 'active', 'date_of_admission', 'discharge_date',
-            'consistency_token', 'date_of_episode'
+            'consistency_token', 'date_of_episode', 'start', 'end'
         ]
         for field in expected:
             self.assertIn(field, as_dict)
@@ -139,6 +140,35 @@ class EpisodeTest(OpalTestCase):
         hw.hats.add(bowler, top)
         serialised = prev.to_dict(self.user)
         self.assertEqual(serialised["hat_wearer"][0]["hats"], [u'bowler', u'top'])
+
+
+class EpisodeTypeTestCase(OpalTestCase):
+    def setUp(self):
+        _, self.episode = self.new_patient_and_episode_please()
+        self.today = datetime.date.today()
+        self.yesterday = self.today - datetime.timedelta(1)
+
+    def test_start_date_of_episode(self):
+        self.episode.date_of_episode = self.today
+        self.episode.date_of_admission = self.yesterday
+        self.episode.save()
+        self.assertEqual(self.episode.start, self.today)
+
+    def test_start_date_of_admission(self):
+        self.episode.date_of_admission = self.yesterday
+        self.episode.save()
+        self.assertEqual(self.episode.start, self.yesterday)
+
+    def test_start_date_of_episode(self):
+        self.episode.date_of_episode = self.today
+        self.episode.discharge_date = self.yesterday
+        self.episode.save()
+        self.assertEqual(self.episode.end, self.today)
+
+    def test_start_date_of_admission(self):
+        self.episode.discharge_date = self.yesterday
+        self.episode.save()
+        self.assertEqual(self.episode.end, self.yesterday)
 
 
 class EpisodeManagerTestCase(OpalTestCase):

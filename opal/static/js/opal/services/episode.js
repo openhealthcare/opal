@@ -33,7 +33,7 @@ angular.module('opal.services')
             }
 
             //
-            // TODO - Pull these from the schema?
+            // TODO - Pull these from the schema? Also cast them to moments
             // Note - these are date fields on the episode itself - which is not currently
             // serialised and sent with the schema !
             var date_fields = ['date_of_admission', 'discharge_date', 'date_of_episode', 'start', 'end'];
@@ -165,7 +165,9 @@ angular.module('opal.services')
                     date_of_admission: episode.date_of_admission,
                     date_of_episode  : episode.date_of_episode,
                     discharge_date   : episode.discharge_date,
-                    consistency_token: episode.consistency_token
+                    consistency_token: episode.consistency_token,
+                    end              : episode.end,
+                    start            : episode.start
                 }
                 return copy
             };

@@ -44,25 +44,28 @@ class EpisodeType(object):
 
         return True
 
+    def __init__(self, episode):
+        self.episode = episode
+
     @classmethod
     def for_category(kls, category):
         for et in episode_types():
             if et.name == category:
                 return et
 
-    @classmethod
-    def start(kls, episode):
-        if episode.date_of_episode:
-            return episode.date_of_episode
+    @property
+    def start(self):
+        if self.episode.date_of_episode:
+            return self.episode.date_of_episode
         else:
-            return episode.date_of_admission
+            return self.episode.date_of_admission
 
-    @classmethod
-    def end(kls, episode):
-        if episode.date_of_episode:
-            return episode.date_of_episode
+    @property
+    def end(self):
+        if self.episode.date_of_episode:
+            return self.episode.date_of_episode
         else:
-            return episode.discharge_date
+            return self.episode.discharge_date
 
 
 class InpatientEpisode(EpisodeType):

@@ -84,11 +84,11 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
                 u'id': self.patient.id,
                 u'first_name': u'Sean',
                 u'surname': u'Connery',
-                u'end_date': u'15/10/2015',
+                u'end': u'15/10/2015',
                 u'patient_id': 1,
                 u'hospital_number': u'007',
                 u'date_of_birth': None,
-                u'start_date': u'15/10/2015',
+                u'start': u'15/10/2015',
                 u'categories': [u'Inpatient']
             }],
             u'total_count': 1,

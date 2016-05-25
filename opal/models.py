@@ -576,11 +576,11 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
     @cached_property
     def start(self):
-        return self.type.start(self)
+        return self.type.start
 
     @cached_property
     def end(self):
-        return self.type.end(self)
+        return self.type.end
 
     @property
     def is_discharged(self):
@@ -596,7 +596,8 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     @property
     def type(self):
         from opal.core import episodes
-        return episodes.EpisodeType.for_category(self.category)
+        return episodes.EpisodeType.for_category(self.category)(self)
+
 
     def visible_to(self, user):
         """
