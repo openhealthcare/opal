@@ -151,6 +151,16 @@ class OptionsViewSet(viewsets.ViewSet):
                 direct_add=direct_add
             )
 
+            if tag and hasattr(tagging, 'subtag'):
+                data["tags"][tag]["parent_tag"] = tagging.tag
+
+        data["tags"]["mine"] = dict(
+            name="mine",
+            display_name="Mine",
+            slug="mine",
+            direct_add=True,
+        )
+
         data['first_list_slug'] = next(
             PatientList.for_user(self.request.user)
         ).get_slug()

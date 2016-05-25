@@ -106,14 +106,14 @@
       <a href="/#[[ row.link ]]">
         <div class="row">
           <div class="col-sm-6">
-            <p ng-repeat="item in row.demographics">
+            <div ng-repeat="item in row.demographics">
               {% include models.Demographics.get_display_template %}
-            </p>
+            </div>
           </div>
           <div class="col-sm-6">
-            <p ng-repeat="item in row.diagnosis">
+            <div ng-repeat="item in row.diagnosis">
               {% include models.Diagnosis.get_display_template %}
-            </p>
+            </div>
           </div>
         </div>
       </a>

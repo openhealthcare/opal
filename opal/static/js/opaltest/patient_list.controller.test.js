@@ -67,7 +67,8 @@ describe('PatientListCtrl', function() {
         demographics: [{
             id: 101,
             patient_id: 99,
-            name: 'John Smith',
+            first_name: 'John',
+            surname: 'Smith'
         }],
         tagging: [{'mine': true, 'tropical': true}],
         location: [{
@@ -90,7 +91,24 @@ describe('PatientListCtrl', function() {
     optionsData = {
         condition: ['Another condition', 'Some condition'],
         tag_hierarchy: {'tropical': [], 'inpatients': ['icu']},
-        tag_display: {'tropical': 'Tropical', 'icu': "ICU"}
+        tag_display: {'tropical': 'Tropical', 'icu': "ICU"},
+        tags: {
+            opat_referrals: {
+                display_name: "OPAT Referral",
+                parent_tag: "opat",
+                name: "opat_referrals"
+            },
+            tropical: {
+                display_name: "Tropical",
+                name: "tropical"
+            },
+            mine: {
+              direct_add: true,
+              display_name: 'Mine',
+              name: 'mine',
+              slug: 'mine'
+          }
+        }
     };
 
     profile = {
@@ -355,6 +373,7 @@ describe('PatientListCtrl', function() {
         });
 
         it('should allow the enter flow to resolve with a promise', function() {
+            $scope.currentTag = 'mine';
             spyOn(Flow, 'enter').and.callFake(
                 function(){
                     return {
@@ -368,7 +387,44 @@ describe('PatientListCtrl', function() {
             expect(Flow.enter).toHaveBeenCalledWith(options, {current_tags: {
                 tag: $scope.currentTag,
                 subtag: $scope.currentSubTag
-            }})
+            }});
+
+            expect(growl.success).toHaveBeenCalledWith('John Smith added to the Mine list');
+        });
+
+        it('should print the correct message even dependent on the current tag', function(){
+          $scope.currentTag = 'tropical';
+          spyOn(Flow, 'enter').and.callFake(
+              function(){
+                  return {
+                      then : function(fn){ fn({
+                          then: function(fn){ fn(new Episode(episodeData) ) }
+                      })}
+                  }
+              }
+          );
+          $scope.addEpisode();
+          expect(growl.success).toHaveBeenCalledWith('John Smith added to the Tropical list');
+        });
+
+        it('should print the correct message even in the case of multiple tags with hierarchies on the current tag', function(){
+          $scope.currentTag = 'opat';
+          $scope.currentSubTag = 'opat_referrals';
+          var episodeData3 = angular.copy(episodeData);
+          episodeData3.tagging = [
+              {opat: true, opat_referrals: true, mine: true}
+          ];
+          spyOn(Flow, 'enter').and.callFake(
+              function(){
+                  return {
+                      then : function(fn){ fn({
+                          then: function(fn){ fn(new Episode(episodeData3) ) }
+                      })}
+                  }
+              }
+          );
+          $scope.addEpisode();
+          expect(growl.success).toHaveBeenCalledWith('John Smith added to the OPAT Referral list');
         });
 
         it('should add the new episode to episodes if it has the current tag', function() {
@@ -426,8 +482,10 @@ describe('PatientListCtrl', function() {
                 spyOn($scope, 'select_episode');
                 $scope.episodes[episodeData2.id] = new Episode( episodeData2 );
                 $scope._post_discharge('discharged', episode);
-                var name = $scope.select_episode.calls.allArgs()[0][0].demographics[0].name;
-                expect(name).toEqual("John Smith");
+                var first_name = $scope.select_episode.calls.allArgs()[0][0].demographics[0].first_name;
+                var surname = $scope.select_episode.calls.allArgs()[0][0].demographics[0].surname;
+                expect(first_name).toEqual("John");
+                expect(surname).toEqual("Smith");
             });
         });
 
