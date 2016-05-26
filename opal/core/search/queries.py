@@ -29,32 +29,32 @@ def get_model_from_api_name(column_name):
 
 class PatientSummary(object):
     def __init__(self, episode):
-        self.start_date = episode.start_date
-        self.end_date = episode.end_date
+        self.start = episode.start
+        self.end = episode.end
         self.episode_ids = set([episode.id])
         self.patient_id = episode.patient.id
         self.categories = set([episode.category])
         self.id = episode.patient.demographics_set.get().id
 
     def update(self, episode):
-        if not self.start_date:
-            self.start_date = episode.start_date
-        elif episode.start_date:
-            if self.start_date > episode.start_date:
-                self.start_date = episode.start_date
+        if not self.start:
+            self.start = episode.start
+        elif episode.start:
+            if self.start > episode.start:
+                self.start = episode.start
 
-        if not self.end_date:
-            self.end_date = episode.end_date
-        elif episode.end_date:
-            if self.end_date < episode.end_date:
-                self.end_date = episode.end_date
+        if not self.end:
+            self.end = episode.end
+        elif episode.end:
+            if self.end < episode.end:
+                self.end = episode.end
 
         self.episode_ids.add(episode.id)
         self.categories.add(episode.category)
 
     def to_dict(self):
         result = {k: getattr(self, k) for k in [
-            "patient_id", "start_date", "end_date", "id"
+            "patient_id", "start", "end", "id"
         ]}
         result["categories"] = sorted(self.categories)
         result["count"] = len(self.episode_ids)

@@ -110,8 +110,8 @@ class DatabaseQueryTestCase(OpalTestCase):
             'date_of_birth': self.DATE_OF_BIRTH,
             'first_name': u'Sally',
             'surname': u'Stevens',
-            'end_date': self.DATE_OF_EPISODE,
-            'start_date': self.DATE_OF_EPISODE,
+            'end': self.DATE_OF_EPISODE,
+            'start': self.DATE_OF_EPISODE,
             'patient_id': 1,
             'categories': [u'Inpatient']
         }]

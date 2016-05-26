@@ -1,7 +1,6 @@
 """
 OPAL Django Models
 """
-import collections
 import datetime
 import functools
 import itertools
@@ -9,7 +8,6 @@ import json
 import logging
 import random
 
-import dateutil.parser
 from django.conf import settings
 from django.utils import timezone
 from django.db import models, transaction
@@ -17,10 +15,8 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
-from django.utils import timezone
-from django.conf import settings
+from django.utils.functional import cached_property
 import reversion
-from django.utils import dateparse
 
 from opal.core import (
     application, exceptions, lookuplists, plugins, patient_lists, tagging
@@ -29,7 +25,7 @@ from opal import managers
 from opal.utils import camelcase_to_underscore, find_template
 from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.subrecords import (
-    episode_subrecords, patient_subrecords, get_subrecord_from_api_name, subrecords
+    episode_subrecords, patient_subrecords, get_subrecord_from_api_name
 )
 
 app = application.get_app()
@@ -572,19 +568,19 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
                 if subclass._is_singleton:
                     subclass.objects.create(episode=self)
 
-    @property
-    def start_date(self):
-        if self.date_of_episode:
-            return self.date_of_episode
-        else:
-            return self.date_of_admission
+    @classmethod
+    def _get_fieldnames_to_serialize(cls):
+        fields = super(Episode, cls)._get_fieldnames_to_serialize()
+        fields.extend(["start", "end"])
+        return fields
 
-    @property
-    def end_date(self):
-        if self.date_of_episode:
-            return self.date_of_episode
-        else:
-            return self.discharge_date
+    @cached_property
+    def start(self):
+        return self.type.start
+
+    @cached_property
+    def end(self):
+        return self.type.end
 
     @property
     def is_discharged(self):
@@ -600,7 +596,8 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     @property
     def type(self):
         from opal.core import episodes
-        return episodes.EpisodeType.for_category(self.category)
+        return episodes.EpisodeType.for_category(self.category)(self)
+
 
     def visible_to(self, user):
         """
@@ -706,7 +703,9 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
             'date_of_admission': self.date_of_admission,
             'date_of_episode'  : self.date_of_episode,
             'discharge_date'   : self.discharge_date,
-            'consistency_token': self.consistency_token
+            'consistency_token': self.consistency_token,
+            'start'            : self.start,
+            'end'              : self.end,
             }
         if shallow:
             return d

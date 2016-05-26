@@ -36,8 +36,9 @@
                  ng-click="switch_to_episode($index, $event)"
                  >
                 [[ e.category ]]
-                [[ e.date_of_episode | shortDate ]]
-                [[ e.date_of_admission | shortDate]]<span ng-show="e.discharge_date"> - [[ e.discharge_date | shortDate ]]</span>
+                <span ng-show="e.start && e.end">
+                  [[ e.start | shortDate ]] - [[ e.end | shortDate ]]<span ng-show="!e.end">Current</span>
+                </span>
               </a>
             </div>
           </div>
