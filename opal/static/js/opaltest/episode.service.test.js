@@ -224,8 +224,6 @@ describe('Episode', function() {
             date_of_admission: new Date(2013, 10, 19),
             date_of_episode: new Date(2013, 10, 20),
             discharge_date: new Date(2016, 4, 25),
-            start: new Date(2013, 10, 19),
-            end: new Date(2016, 4, 25),
             category: 'inpatient',
             consistency_token: undefined
         });

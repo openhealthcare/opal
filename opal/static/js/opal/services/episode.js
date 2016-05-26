@@ -166,8 +166,6 @@ angular.module('opal.services')
                     date_of_episode  : episode.date_of_episode,
                     discharge_date   : episode.discharge_date,
                     consistency_token: episode.consistency_token,
-                    end              : episode.end,
-                    start            : episode.start
                 }
                 return copy
             };
