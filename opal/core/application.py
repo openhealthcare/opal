@@ -8,6 +8,7 @@ class OpalApplication(object):
     schema_module = None
     core_javascripts = {
         'opal.upstream.deps': [
+            "js/modernizr.js",
             "js/jquery-1.11.3/jquery-1.11.3.js",
             "js/d3/d3.js",
             "js/c3-0.4.10/c3.js",
