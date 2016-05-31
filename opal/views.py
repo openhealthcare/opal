@@ -92,7 +92,11 @@ class PatientDetailTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(PatientDetailTemplateView, self).get_context_data(**kwargs)
-        context['episode_types'] = episodes.episode_types()
+
+        # django likes to try and initialise classes, even when we
+        # don't want it to, so vars it
+        context['episode_types'] = [vars(i) for i in episodes.episode_types()]
+
         # We cast this to a list because it's a generator but we want to consume
         # it twice in the template
         context['detail_views'] = list(detail.PatientDetailView.for_user(self.request.user))
