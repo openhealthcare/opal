@@ -39,6 +39,7 @@ pages:
       - Form helpers: reference/form_templatetags.md
       - Panel Template tags: reference/panels_templatetags.md
       - Javascript helpers: reference/javascript_helpers.md
+      - Javascript dependencies: reference/javascript_dependencies.md
       - Schemas: reference/schemas.md
       - Search Queries: reference/search_queries.md
       - Detail Views: reference/detail_views.md
