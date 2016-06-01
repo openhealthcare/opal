@@ -21,7 +21,7 @@ def post_save_worker_forwarder(sender, created=None, instance=None, **kwargs):
         if sender == models.Episode:
             tasks.episode_post_save.delay(created, instance.id)
         if issubclass(sender, models.Subrecord):
-            tasks.subrecord_post_save(sender, created, instance.id)
+            tasks.subrecord_post_save.delay(sender, created, instance.id)
     return
 
-post_save.connect(post_save_worker_forwarder)
+post_save.connect(post_save_worker_forwarder, dispatch_uid='OPAL.async_signal_connector')
