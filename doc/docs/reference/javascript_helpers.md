@@ -19,7 +19,7 @@ OPAL provides some built-in Angular directives for your project to use.
 
 #### date-of-birth
 
-Creates an input field that assumes to base field is a moment and handles validation and parsing. It assumes no one is born in the future or is over 150 years old
+Creates an input field that assumes to base field is a moment and handles validation and parsing. It assumes no one is born in the future or is over 150 years old.
 
 ### Angular Filters
 
