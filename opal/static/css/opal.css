@@ -227,7 +227,7 @@ li.selected {
     padding-left: 0;
 }
 
-tr.selected {
+tr.selected, .spreadsheet-view.selected {
     background-color: #e0ebf5;
 }
 
