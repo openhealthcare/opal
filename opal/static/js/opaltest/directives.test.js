@@ -136,7 +136,7 @@ describe('OPAL Directives', function(){
         });
 
         it("should mark as invalid if its not a valid date string", function(){
-            expect(testScope.numberCheck.test("wrong")).toBe(false);
+            expect(testScope.numberCheck.test("wrongwrong")).toBe(false);
         });
 
         it("should mark as invalid if the date is over 150", function(){
