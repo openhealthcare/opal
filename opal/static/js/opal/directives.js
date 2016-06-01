@@ -257,12 +257,12 @@ directives.directive("dateOfBirth", function(){
             return false;
         }
 
+ 	var now = moment();
+
         // I wasn't born yesterday, don't let people be born tomorrow
-        if(inputMoment.isAfter(moment())){
+        if(inputMoment.isAfter(now){
             return false;
         }
-
-        var now = moment();
 
         // lets not allow for patients over 150
         return now.diff(inputMoment, 'years') < 150
