@@ -46,3 +46,4 @@ The following reference guides are available:
 |
 -|-
 [Upgrading](upgrading.md) | Search query backends and helper functions
+[Javascript dependencies](javascript_dependencies.md)| External javascript libraries available |

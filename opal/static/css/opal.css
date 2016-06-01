@@ -227,7 +227,7 @@ li.selected {
     padding-left: 0;
 }
 
-tr.selected {
+tr.selected, .spreadsheet-view.selected {
     background-color: #e0ebf5;
 }
 
@@ -309,18 +309,27 @@ i.delete,
 }
 
 .panel-heading h3 { margin-top: 0px; margin-bottom: 0px; font-weight: normal;}
-.panel-heading i.edit,
+
+.no-touchevents .panel-heading i.edit,
 .list-group-item i.edit,
-.list-group-item i.delete{ display:none }
+.list-group-item i.delete{
+  display:none
+}
+
+.touchevents .panel-heading i,
 .panel-heading:hover i.edit,
 .list-group-item:hover i.edit,
-.list-group-item:hover i.delete{ display: block; }
+.list-group-item:hover i.delete{
+  display: block;
+}
 
 @media(max-width: 800px){
     .panel-heading i.edit,
     .list-group-item i.edit,
     .list-group-item i.delete{ display:block }
 }
+
+
 
 .panel-heading i:hover,
 .detail .list-group-item i:hover { cursor: pointer; }

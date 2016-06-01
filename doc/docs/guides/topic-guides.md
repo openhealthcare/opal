@@ -35,6 +35,7 @@ A list of all available topic guides.
 |[Patient Detail Views](patient_detail_views.md)|Detailed views of a Patient|
 |[Patient List Views](list_views.md)| Lists of patients |
 
+
 ### Optional Components
 
 |||
