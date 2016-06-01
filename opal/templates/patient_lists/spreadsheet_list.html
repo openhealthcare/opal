@@ -102,7 +102,7 @@
     <i class="fa fa-users"></i> Patients
   </div>
   <ul class="list-group">
-    <li class="list-group-item" ng-repeat="row in rows">
+    <li class="list-group-item spreadsheet-view" ng-repeat="row in rows" ng-class="{selected: episode.id == row.id}">
       <a href="/#[[ row.link ]]">
         <div class="row">
           <div class="col-sm-6">
