@@ -1,7 +1,7 @@
 ## OPAL Javscript Dependencies
 
-#### OPAL is an angular app, but also uses various other libraries.
-#### below are some o the major libraries we use
+OPAL makes use of a number of upstream dependencies which are available for
+devleopers to use in building applications.
 
 |
 -|-
