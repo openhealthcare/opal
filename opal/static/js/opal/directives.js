@@ -231,3 +231,80 @@ directives.directive('autofocus', ['$timeout', function($timeout) {
     }
   };
 }]);
+
+directives.directive('moDateInput', function ($window) {
+    return {
+        require:'^ngModel',
+        restrict:'A',
+        link:function (scope, elm, attrs, ctrl) {
+            var moment = $window.moment;
+            var dateFormat = attrs.moDateInput;
+            attrs.$observe('moDateInput', function (newValue) {
+                if (dateFormat == newValue || !ctrl.$modelValue) return;
+                dateFormat = newValue;
+                ctrl.$modelValue = new Date(ctrl.$setViewValue);
+            });
+
+            ctrl.$formatters.unshift(function (modelValue) {
+                if (!dateFormat || !modelValue) return "";
+                var retVal = moment(modelValue).format(dateFormat);
+                return retVal;
+            });
+
+            ctrl.$parsers.unshift(function (viewValue) {
+                var date = moment(viewValue, dateFormat);
+                return (date && date.isValid() && date.year() > 1950 ) ? date.toDate() : "";
+            });
+        }
+    };
+});
+
+directives.directive("dateOfBirth", function(){
+  return {
+    require: "?ngModel",
+    scope: true,
+    template: "<input name='[[ name ]]' class='form-control' ng-pattern='numberCheck' ng-model='value' ng-change='onChange()'>",
+    link: function(scope, element, attrs, ngModel){
+      if (!ngModel) return;
+
+      scope.name = attrs.name
+
+      scope.onChange = function(){
+        ngModel.$setViewValue(moment(scope.value, "DD/MM/YYYY", true));
+      };
+
+      scope.numberCheck = {test: function(inputStr){
+
+        if(_.last(inputStr.split("/")).length > 4){
+            return false;
+        }
+
+        var inputMoment =  moment(inputStr, "DD/MM/YYYY", true);
+        if(!inputMoment.isValid()){
+            return false;
+        }
+
+        // I wasn't born yesterday, don't let people be born tomorrow
+        if(inputMoment.isAfter(moment())){
+            return false;
+        }
+
+        var now = moment();
+
+        // lets not allow for patients over 150
+        return now.diff(inputMoment, 'years') < 150
+      }}
+
+      ngModel.$render = function(){
+        if(_.isString(ngModel.$modelValue)){
+            scope.value = ngModel.$modelValue;
+        }
+        else{
+            if(ngModel.$modelValue){
+                scope.value = moment(ngModel.$modelValue).format("DD/MM/YYYY");
+            }
+        }
+      };
+    }
+  };
+});
