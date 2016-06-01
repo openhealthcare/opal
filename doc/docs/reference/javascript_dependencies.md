@@ -9,3 +9,5 @@ Modernizr | Opal has a custom modernizr build that detects touch events
 Jquery | 1.11.3
 Angular | 1.2.20
 Underscore.js | 1.8.3
+D3 | 3.5.6
+C3 | 0.4.10
