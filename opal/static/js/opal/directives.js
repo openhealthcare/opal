@@ -260,7 +260,7 @@ directives.directive("dateOfBirth", function(){
  	var now = moment();
 
         // I wasn't born yesterday, don't let people be born tomorrow
-        if(inputMoment.isAfter(now){
+        if(inputMoment.isAfter(now)){
             return false;
         }
 
