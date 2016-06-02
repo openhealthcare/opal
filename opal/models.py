@@ -576,11 +576,11 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
     @cached_property
     def start(self):
-        return self.type.start
+        return self.pattern.start
 
     @cached_property
     def end(self):
-        return self.type.end
+        return self.pattern.end
 
     @property
     def is_discharged(self):
@@ -594,9 +594,9 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         return False
 
     @property
-    def type(self):
+    def pattern(self):
         from opal.core import episodes
-        return episodes.EpisodeType.for_category(self.category)(self)
+        return episodes.EpisodePattern.get(self.category.lower())(self)
 
 
     def visible_to(self, user):
@@ -604,10 +604,10 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         Predicate function to determine whether this episode is visible to
         a certain user.
 
-        The logic for visibility is held in individual opal.core.episodes.EpisodeType
+        The logic for visibility is held in individual opal.core.episodes.EpisodeCategory
         implementations.
         """
-        return self.type.episode_visible_to(self, user)
+        return self.pattern.episode_visible_to(self, user)
 
     def set_tag_names(self, tag_names, user):
         """

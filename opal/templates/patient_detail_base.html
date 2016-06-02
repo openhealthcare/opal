@@ -68,10 +68,10 @@
         </div> <!-- End episode switcher -->
         <div class="col-md-9">
           <div class="col-md-12">
-            {% for episode_type in episode_types %}
-            {% if episode_type.detail_template %}
-            <div class="row" ng-show="view == null && episode.category == '{{ episode_type.name }}'">
-              {% include episode_type.detail_template %}
+            {% for episode_pattern in episode_patterns %}
+            {% if episode_pattern.detail_template %}
+            <div class="row" ng-show="view == null && episode.category == '{{ episode_pattern.display_name }}'">
+              {% include episode_pattern.detail_template %}
             </div>
             {% endif %}
             {% endfor %}

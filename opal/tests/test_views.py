@@ -164,7 +164,7 @@ class PatientDetailTemplateViewTestCase(BaseViewTestCase):
         view = views.PatientDetailTemplateView()
         view.request = request
         ctx = view.get_context_data()
-        self.assertIn(vars(InpatientEpisode), ctx['episode_types'])
+        self.assertIn(vars(InpatientEpisode), ctx['episode_patterns'])
 
     def test_get_context_data_detail_views(self):
         request = self.rf.get('/wat')

@@ -13,9 +13,9 @@ although you can override or customise that for your application most easily by 
 a `./templates/patient_detail.html` and customising specific blocks, as the OPAL implementation
 simply includes the base template.
 
-Each episode will display using the template appropriate for it's `EpisodeType` - for instance
+Each episode will display using the template appropriate for it's `EpisodeCategory` - for instance
 an `InpatientEpisode` will use `./templates/detail/inpatient.html`. You may [define your own
-episode types](../reference/episode_types.md) should you require.
+episode types](../reference/episode_category.md) should you require.
 
 ### Record Panels
 

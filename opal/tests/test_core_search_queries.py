@@ -10,7 +10,7 @@ from datetime import date
 
 from opal.core.search import queries
 
-from opal.tests.episodes import RestrictedEpisodeType
+from opal.tests.episodes import RestrictedEpisodePattern
 
 class DatabaseQueryTestCase(OpalTestCase):
     DATE_OF_BIRTH = date(day=27, month=1, year=1977)
