@@ -24,11 +24,12 @@ We'd love you to get involved by using what we make, reporting bugs/suggesting i
 
 ## More comprehensive documentation
 
-The documentation is a work in progress.
+Documentation is available at: [http://opal.openhealthcare.org.uk/docs/](http://opal.openhealthcare.org.uk/docs/)
 
-We'd love any feedback or contributions to it ! 
+Documentation for specific branches are available at e.g. [http://opal.openhealthcare.org.uk/docs/v0.6.0/](http://opal.openhealthcare.org.uk/docs/v0.6.0/)
 
-Latest version is at [http://opal.openhealthcare.org.uk/docs/](http://opal.openhealthcare.org.uk/docs/)
+The documentation is a work in progress, and we welcome any feedback or contributions to it ! 
+
 
 Open governance
 ===============
