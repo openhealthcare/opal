@@ -24,8 +24,8 @@ flexibility over the behaviour of their episodes.
 from opal.core.discoverable import DiscoverableFeature
 
 
-class EpisodePattern(DiscoverableFeature):
-    module_name = "episode_patterns"
+class EpisodeCategory(DiscoverableFeature):
+    module_name = "episode_categories"
     display_name            = None
     detail_template = None
 
@@ -64,14 +64,14 @@ class EpisodePattern(DiscoverableFeature):
             return self.episode.discharge_date
 
 
-class InpatientEpisode(EpisodePattern):
+class InpatientEpisode(EpisodeCategory):
     display_name            = 'Inpatient'
     detail_template = 'detail/inpatient.html'
 
 
-class OutpatientEpisode(EpisodePattern):
+class OutpatientEpisode(EpisodeCategory):
     display_name = 'Outpatient'
 
 
-class LiaisonEpisode(EpisodePattern):
+class LiaisonEpisode(EpisodeCategory):
     display_name = 'Liaison'

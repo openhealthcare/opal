@@ -18,8 +18,8 @@ class EpisodeCategoryTestCase(test.OpalTestCase):
         self.patient = Patient.objects.create()
         self.inpatient_episode = self.patient.create_episode(category=episodes.InpatientEpisode)
 
-    def test_episode_patterns(self):
-        self.assertIn(episodes.InpatientEpisode, episodes.EpisodePattern.list())
+    def test_episode_categories(self):
+        self.assertIn(episodes.InpatientEpisode, episodes.EpisodeCategory.list())
 
     def test_visible_to(self):
         self.assertTrue(
@@ -32,4 +32,4 @@ class EpisodeCategoryTestCase(test.OpalTestCase):
         )
 
     def test_for_category(self):
-        self.assertEqual(episodes.InpatientEpisode, episodes.EpisodePattern.get('inpatient'))
+        self.assertEqual(episodes.InpatientEpisode, episodes.EpisodeCategory.get('inpatient'))

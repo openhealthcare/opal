@@ -142,7 +142,7 @@ class EpisodeTest(OpalTestCase):
         self.assertEqual(serialised["hat_wearer"][0]["hats"], [u'bowler', u'top'])
 
 
-class EpisodePatternTestCase(OpalTestCase):
+class EpisodeCategoryTestCase(OpalTestCase):
     def setUp(self):
         _, self.episode = self.new_patient_and_episode_please()
         self.today = datetime.date.today()
