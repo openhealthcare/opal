@@ -13,11 +13,19 @@ the url for the template, the size of the modal window (either 'sm' or 'lg').
 
 You may also pass through a dictionary of items to resolve.
 
+### Angular Directives
+
+OPAL provides some built-in Angular directives for your project to use.
+
+#### date-of-birth
+
+Creates an input field that assumes to base field is a moment and handles validation and parsing. It assumes no one is born in the future or is over 150 years old.
+
 ### Angular Filters
 
-OPAL provides some buit-in Angular filters for your project to use.
+OPAL provides some built-in Angular filters for your project to use.
 
-#### shortDate
+#### short-date
 
 Displays a date as DD/MM if it's this year, else DD/MM/YYYY
 

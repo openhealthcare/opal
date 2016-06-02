@@ -103,4 +103,63 @@ describe('OPAL Directives', function(){
             compileDirective(markup);
         });
     })
+
+    describe('date-of-birth', function(){
+        var scopeBinding = {date_of_birth: moment("10/12/1999", "DD/MM/YYYY", true)}
+        var testScope;
+        var input;
+        var markup = '<form name="form"><div id="test" date-of-birth name="date_of_birth" ng-model="editing.date_of_birth"></div></form>'
+
+        beforeEach(function(){
+            scope.editing = scopeBinding;
+            compileDirective(markup);
+            input = angular.element($(element).find("input")[0]);
+            testScope = input.scope();
+        });
+
+        it('should change change the core moment into a date string', function(){
+            expect(testScope.value).toEqual("10/12/1999");
+        });
+
+        it('should handle the case where there is no date of birth', function(){
+            scope.editing = {};
+            compileDirective(markup);
+            var input = angular.element($(element).find("input")[0]);
+            var testScope = input.scope();
+            expect(testScope.value).toBe(undefined);
+        });
+
+        it('should change inputs to moments', function(){
+            testScope.value = "11/01/2000";
+            testScope.onChange();
+            expect(scopeBinding.date_of_birth.format("DD/MM/YYYY")).toEqual("11/01/2000");
+        });
+
+        it("should mark as invalid if its not a valid date string", function(){
+            expect(testScope.numberCheck.test("wrongwrong")).toBe(false);
+        });
+
+        it("should mark as invalid if the date is over 150", function(){
+            expect(testScope.numberCheck.test("10/1/1200")).toBe(false);
+        });
+
+        it("should mark as invalid if the date is in the future", function(){
+            expect(testScope.numberCheck.test("10/1/4000")).toBe(false);
+        });
+        it("should mark as invalid if the year is too long", function(){
+            expect(testScope.numberCheck.test("10/1/19994000")).toBe(false);
+        });
+
+        it("should not render a string as a moment if its a string", function(){
+            /*
+            * item changes dates to strings before passing them off
+            * we don't want this change to show on the front end
+            */
+            scope.editing = {date_of_birth: "19/10/2001"};
+            compileDirective(markup);
+            var input = angular.element($(element).find("input")[0]);
+            var testScope = input.scope();
+            expect(testScope.value).toBe("19/10/2001");
+        });
+    });
 });

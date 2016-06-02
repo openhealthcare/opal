@@ -14,7 +14,7 @@
 </div>
 <div class="modal-body" {% block modal_body_extra %}{% endblock %}>
   {% block modal_body %}
-    <form class="form-horizontal">
+    <form name="form" class="form-horizontal" novalidate>
       {% include column.get_form_template %}
     </form>
   {% endblock %}

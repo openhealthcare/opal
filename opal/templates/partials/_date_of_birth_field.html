@@ -7,15 +7,9 @@
 <div ng-hide="editing.demographics.external_system" class="form-group">
   <label class="control-label col-sm-3">Date of birth</label>
   <div class="col-sm-8">
-    <input class="form-control" type="text"
-           bs-datepicker
-           name="date_of_birth"
-           ng-model-options="{ updateOn: 'blur' }"
-           ng-model="editing.demographics.date_of_birth"
-           ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
-           placeholder="dd/mm/yyyy" />
-    <span class="help-block" ng-show="demographicsForm.date_of_birth.$invalid">
-      Date of Birth must be dd/mm/yyyy
+    <div date-of-birth name="date_of_birth" ng-model="editing.demographics.date_of_birth"></div>
+    <span class="help-block" ng-show="form.date_of_birth.$invalid">
+      Please enter a valid date of birth
     </span>
   </div>
 </div>
