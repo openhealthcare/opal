@@ -1,12 +1,10 @@
 OPAL
 ====
 
-[Project Website](http://opal.openhealthcare.org.uk)
-
 [![Build Status](https://travis-ci.org/openhealthcare/opal.svg?branch=v0.6.0)](https://travis-ci.org/openhealthcare/opal)
 [![Coverage Status](https://coveralls.io/repos/github/openhealthcare/opal/badge.svg?branch=v0.6.0)](https://coveralls.io/github/openhealthcare/opal?branch=v0.6.0) 
 
-OPAL is designed to make writing transactional digital services for a clinical environment easy.
+OPAL is a full stack framework that makes building digital tools for health care easy.
 
 It builds on established Open Source technologies with a track record of helping developers
 build easy to maintain, robust applications.
