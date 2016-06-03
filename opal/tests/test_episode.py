@@ -36,8 +36,8 @@ class EpisodeTest(OpalTestCase):
 
     def test_pattern(self):
         self.episode.category = 'Inpatient'
-        self.assertEqual(self.episode.pattern.__class__, InpatientEpisode)
-        self.assertEqual(self.episode.pattern.episode, self.episode)
+        self.assertEqual(self.episode.episode_category.__class__, InpatientEpisode)
+        self.assertEqual(self.episode.episode_category.episode, self.episode)
 
     def test_visible_to(self):
         self.assertTrue(self.episode.visible_to(self.user))
