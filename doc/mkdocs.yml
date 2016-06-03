@@ -45,6 +45,7 @@ pages:
       - Detail Views: reference/detail_views.md
       - Patient Lists: reference/patient_list.md
       - Search JS Services: reference/search_js_services.md
+      - Changelog: reference/changelog.md
       - Upgrading: reference/upgrading.md
 
 theme: mkdocs

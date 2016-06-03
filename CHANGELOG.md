@@ -1,39 +1,44 @@
 ### 0.7.0 (Major Release)
 
+** Episode Categories**
+
+Refactors EpisodeCategory to be a discoverable feature. Renames `Episode.category` -> `Episode.category_name`.
+
+
 ### 0.6.0 (Major Release)
 
 
-#### Detail views
+**Detail views**
 
 Moves from episode oriented detail to patient oriented detail.
 (All episodes plus x-episode views are available from a patient detail screen)
 
-#### Tagging
+**Tagging**
 
 As a performance optimisation for the frequent access of historic tags, untagging
 an episode simply renders the tag inactive rather than deleting it and relying on
 Django-Reversion for access to historical data.
 
-#### Date Formatting
+**Date Formatting**
 
 We now expect 'd/m/y' date formatting by default.
 
-#### Patient lists
+**Patient lists**
 
 Lists are now declarative, and separate from teams. They are implemented as
 subclasses of opal.core.patient_lists.PatientList.
 
-#### Forms vs. Modals
+**Forms vs. Modals**
 
 Introduces a distinction between a form and a modal.
 By default, we now use forms for subrecords, only overriding the modal if there
 is something we want to do differently specifically in the modal.
 
-#### Command line tools
+**Command line tools**
 
 Adds $opal checkout for switching between applications or application versions.
 
-#### Upgrade instructions:
+** Upgrade instructions:**
 
 * Update your settings to use the new date formats.
 
@@ -68,32 +73,32 @@ Minor bug fixes
 
 ### 0.5 (Major release)
 
-#### Search
+**Search**
 
 Complete re-design of Search interface to provide a single search box on every page and pagination for resulta.
 Puts in place a pluggable interface that could be swapped out for e.g. ElasticSearch.
 New Service for PatientSummary()
 
-#### Analytics
+**Analytics**
 
 Moves Analytics integration into OPAL core with the ability to blacklist pages that should never be reported
 
-#### List view
+**List view**
 
 Removed old spreadsheet-style cell based navigation and moved to row-wise nav with clearer highlighting of the active row.
 Updated scrolling and loading behaviour to snap to viewport and not display the page build.
 
-#### Subrecord metadata
+**Subrecord metadata**
 
 Added four new utility fields to Patient and Episode subrecords:
 
 created_by, updated_by, created, updated
 
-#### Select2 and list fields
+**Select2 and list fields**
 
 Added support for select2 as an input widget and Subrecord fields that can be lists of things.
 
-#### Also
+**Also**
 
 Numerous small bugfixes.
 Refactoring of the models package into a models module.
@@ -127,21 +132,21 @@ Fixes some search results appearing duplicated.
 
 ### 0.4 (Major release)
 
-### New Design
+**New Design**
 
 Completely re-designed UI following extensive user research and multiple iterations.
 
-### Management commands and scaffolding
+**Managementcommands and scaffolding**
 
 Features the opal command line tool for common administrative tasks
 http://opal.openhealthcare.org.uk/docs/guides/command_line_tool/
 
-### Form helpers templatetag library
+** Form helpers templatetag library**
 
 New template library for consistent form controls in line with our new interface guidelines
 http://opal.openhealthcare.org.uk/docs/reference/form_templatetags/
 
-### API Documentation
+**API Documentation**
 
 
 OPAL JSON APIs are now fully self-documenting for all updated instances
