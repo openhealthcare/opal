@@ -16,13 +16,13 @@ describe('CopyToCategoryCtrl', function(){
         });
 
         patient = {};
-        category = 'newcategory';
+        category_name = 'newcategory';
         modalInstance = $modal.open({template: 'notatemplate'});
 
         $controller('CopyToCategoryCtrl', {
             $scope: $scope,
             patient: patient,
-            category: category,
+            category_name: category_name,
             $modalInstance: modalInstance
         })
     });

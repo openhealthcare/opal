@@ -77,7 +77,7 @@ describe('Episode', function() {
         episodeData = {
             id: 123,
             date_of_admission: "19/11/2013",
-            category: 'inpatient',
+            category_name: 'inpatient',
             active: true,
             discharge_date: "25/05/2016",
             date_of_episode: "20/11/2013",
@@ -224,7 +224,7 @@ describe('Episode', function() {
             date_of_admission: new Date(2013, 10, 19),
             date_of_episode: new Date(2013, 10, 20),
             discharge_date: new Date(2016, 4, 25),
-            category: 'inpatient',
+            category_name: 'inpatient',
             consistency_token: undefined
         });
     });
