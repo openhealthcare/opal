@@ -2,12 +2,12 @@
 Custom managers for query optimisations
 """
 from collections import defaultdict
+
 from django.db import models
+
 from opal.core.subrecords import (
     episode_subrecords, patient_subrecords
 )
-
-from opal.core.subrecords import subrecords as all_subrecords
 
 class EpisodeQueryset(models.QuerySet):
 
