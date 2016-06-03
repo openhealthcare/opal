@@ -15,7 +15,7 @@ simply includes the base template.
 
 Each episode will display using the template appropriate for it's `EpisodeCategory` - for instance
 an `InpatientEpisode` will use `./templates/detail/inpatient.html`. You may [define your own
-episode types](../reference/episode_category.md) should you require.
+episode types](../reference/episode_categories.md) should you require.
 
 ### Record Panels
 
