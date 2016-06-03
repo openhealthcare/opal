@@ -51,8 +51,8 @@ class DatabaseQueryTestCase(OpalTestCase):
     def test_filter_in_restricted_episode_types(self):
         self.user.profile.restricted_only   = True
         self.user.profile.save()
-        episode2 = self.patient.create_episode(category='Restricted')
-        self.assertEqual('Restricted', episode2.category)
+        episode2 = self.patient.create_episode(category_name='Restricted')
+        self.assertEqual('Restricted', episode2.category_name)
 
         query = queries.DatabaseQuery(self.user, self.name_criteria)
         self.assertEqual([episode2], query.get_episodes())

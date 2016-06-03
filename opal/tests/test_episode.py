@@ -34,10 +34,10 @@ class EpisodeTest(OpalTestCase):
         self.episode.discharge_date = yesterday
         self.assertEqual(True, self.episode.is_discharged)
 
-    def test_pattern(self):
-        self.episode.category = 'Inpatient'
-        self.assertEqual(self.episode.episode_category.__class__, InpatientEpisode)
-        self.assertEqual(self.episode.episode_category.episode, self.episode)
+    def test_category(self):
+        self.episode.category_name = 'Inpatient'
+        self.assertEqual(self.episode.category.__class__, InpatientEpisode)
+        self.assertEqual(self.episode.category.episode, self.episode)
 
     def test_visible_to(self):
         self.assertTrue(self.episode.visible_to(self.user))
@@ -205,3 +205,14 @@ class EpisodeManagerTestCase(OpalTestCase):
 
         self.assertEqual(dogs, {"Jemima", "Philip"})
         self.assertEqual(as_dict["hat_wearer"][0]["hats"], ["top"])
+
+    def test_serialised_equals_to_dict(self):
+        """ Serialised is an optimisation
+        """
+        as_dict = Episode.objects.serialised(
+            self.user, [self.episode], episode_history=True
+        )
+
+        expected = self.episode.to_dict(self.user)
+
+        self.assertEqual(as_dict[0], expected)

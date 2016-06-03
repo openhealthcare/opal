@@ -534,7 +534,9 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     A patient may have many episodes of care, but this maps to one occasion
     on which they found themselves on "The List".
     """
-    category          = models.CharField(max_length=200, default=app.default_episode_category)
+    category_name     = models.CharField(
+        max_length=200, default=app.default_episode_category
+    )
     patient           = models.ForeignKey(Patient)
     active            = models.BooleanField(default=False)
     date_of_admission = models.DateField(null=True, blank=True)
@@ -576,11 +578,11 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
     @cached_property
     def start(self):
-        return self.episode_category.start
+        return self.category.start
 
     @cached_property
     def end(self):
-        return self.episode_category.end
+        return self.category.end
 
     @property
     def is_discharged(self):
@@ -594,10 +596,9 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         return False
 
     @property
-    def episode_category(self):
+    def category(self):
         from opal.core import episodes
-        return episodes.EpisodeCategory.get(self.category.lower())(self)
-
+        return episodes.EpisodeCategory.get(self.category_name.lower())(self)
 
     def visible_to(self, user):
         """
@@ -607,7 +608,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         The logic for visibility is held in individual opal.core.episodes.EpisodeCategory
         implementations.
         """
-        return self.episode_category.episode_visible_to(self, user)
+        return self.category.episode_visible_to(self, user)
 
     def set_tag_names(self, tag_names, user):
         """
@@ -698,7 +699,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         """
         d = {
             'id'               : self.id,
-            'category'         : self.category,
+            'category'         : self.category_name,
             'active'           : self.active,
             'date_of_admission': self.date_of_admission,
             'date_of_episode'  : self.date_of_episode,
@@ -712,12 +713,18 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
         for model in patient_subrecords():
             subrecords = model.objects.filter(patient_id=self.patient.id)
-            d[model.get_api_name()] = [subrecord.to_dict(user)
-                                       for subrecord in subrecords]
+
+            if subrecords:
+                d[model.get_api_name()] = [
+                    subrecord.to_dict(user) for subrecord in subrecords
+                ]
         for model in episode_subrecords():
             subrecords = model.objects.filter(episode_id=self.id)
-            d[model.get_api_name()] = [subrecord.to_dict(user)
-                                       for subrecord in subrecords]
+
+            if subrecords:
+                d[model.get_api_name()] = [
+                    subrecord.to_dict(user) for subrecord in subrecords
+                ]
 
         d['tagging'] = self.tagging_dict(user)
 
