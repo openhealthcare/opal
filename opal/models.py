@@ -699,7 +699,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         """
         d = {
             'id'               : self.id,
-            'category_name'         : self.category_name,
+            'category_name'    : self.category_name,
             'active'           : self.active,
             'date_of_admission': self.date_of_admission,
             'date_of_episode'  : self.date_of_episode,

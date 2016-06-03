@@ -83,7 +83,7 @@ class EpisodeTest(OpalTestCase):
     def test_to_dict_fields(self):
         as_dict = self.episode.to_dict(self.user)
         expected = [
-            'id', 'category', 'active', 'date_of_admission', 'discharge_date',
+            'id', 'category_name', 'active', 'date_of_admission', 'discharge_date',
             'consistency_token', 'date_of_episode', 'start', 'end'
         ]
         for field in expected:
@@ -194,7 +194,7 @@ class EpisodeManagerTestCase(OpalTestCase):
     def test_serialised_fields(self):
         as_dict = Episode.objects.serialised(self.user, [self.episode])[0]
         expected = [
-            'id', 'category', 'active', 'date_of_admission', 'discharge_date',
+            'id', 'category_name', 'active', 'date_of_admission', 'discharge_date',
             'consistency_token', 'date_of_episode'
         ]
 
