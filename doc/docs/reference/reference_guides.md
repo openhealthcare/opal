@@ -47,5 +47,5 @@ The following reference guides are available:
 |
 -|-
 [Changelog](changelog.md) | OPAL Changelog
-[Upgrading](upgrading.md) | Search query backends and helper functions
+[Upgrading](upgrading.md) | Upgrading between OPAL versions
 [Javascript dependencies](javascript_dependencies.md)| External javascript libraries available |
