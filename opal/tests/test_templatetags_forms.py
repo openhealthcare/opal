@@ -163,6 +163,19 @@ class SelectTestCase(TestCase):
         self.assertIn("cat_list", rendered)
         self.assertIn("Cat", rendered)
 
+class StaticTestCase(TestCase):
+
+    def test_static(self):
+        tpl = Template('{% load forms %}{% static "DogOwner.name" %}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('editing.dog_owner.name', rendered)
+
+    def test_date(self):
+        tpl = Template('{% load forms %}{% static "Demographics.date_of_birth" %}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('editing.demographics.date_of_birth', rendered)
+        self.assertIn('shortDate', rendered)
+
 
 class IconTestCase(TestCase):
 
