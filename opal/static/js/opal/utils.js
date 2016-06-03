@@ -53,6 +53,10 @@ OPAL.module = function(namespace, dependencies){
         $sceProvider.enabled(false);
     });
 
+    mod.config(function($resourceProvider) {
+        $resourceProvider.defaults.stripTrailingSlashes = false;
+    });
+
     return mod;
 };
 
