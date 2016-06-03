@@ -2,9 +2,12 @@
 Custom managers for query optimisations
 """
 from collections import defaultdict
-from django.db import models
-from opal.core.subrecords import episode_subrecords, patient_subrecords
 
+from django.db import models
+
+from opal.core.subrecords import (
+    episode_subrecords, patient_subrecords
+)
 
 class EpisodeQueryset(models.QuerySet):
 
@@ -60,16 +63,9 @@ class EpisodeQueryset(models.QuerySet):
             taggings[tag.episode_id][tag.value] = True
 
         serialised = []
+
         for e in episodes:
-            d = {
-                'id'               : e.id,
-                'category'         : e.category,
-                'active'           : e.active,
-                'date_of_admission': e.date_of_admission,
-                'date_of_episode'  : e.date_of_episode,
-                'discharge_date'   : e.discharge_date,
-                'consistency_token': e.consistency_token
-                }
+            d = e.to_dict(user, shallow=True)
 
             for key, value in episode_subs[e.id].items():
                 d[key] = value
@@ -77,6 +73,7 @@ class EpisodeQueryset(models.QuerySet):
                 d[key] = value
 
             d['tagging'] = [taggings[e.id]]
+            d['tagging'][0]['id'] = e.id
             serialised.append(d)
 
             if episode_history:

@@ -95,7 +95,7 @@ class PatientDetailTemplateView(TemplateView):
 
         # django likes to try and initialise classes, even when we
         # don't want it to, so vars it
-        context['episode_types'] = [vars(i) for i in episodes.episode_types()]
+        context['episode_categories'] = [vars(i) for i in episodes.EpisodeCategory.list()]
 
         # We cast this to a list because it's a generator but we want to consume
         # it twice in the template
@@ -109,7 +109,7 @@ class EpisodeDetailTemplateView(TemplateView):
         return super(EpisodeDetailTemplateView, self).get(*args, **kwargs)
 
     def get_template_names(self):
-        names = ['detail/{0}.html'.format(self.episode.category.lower()), 'detail/default.html']
+        names = ['detail/{0}.html'.format(self.episode.category_name.lower()), 'detail/default.html']
         return names
 
     def get_context_data(self, **kwargs):

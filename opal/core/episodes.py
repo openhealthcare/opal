@@ -1,5 +1,5 @@
 """
-OPAL Episode types
+OPAL Episode categories
 
 An episode of care in OPAL can be one of many things:
 
@@ -11,26 +11,28 @@ A research study enrollment
 
 (Non exhaustive list)
 
-An Episode type has various properties it can use to customise the way episodes
-of it's type behave in OPAL applications - for instance:
+An Episode category has various properties it can use to customise the way episodes
+of it's category behave in OPAL applications - for instance:
 
 Display
 Permissions
 Flow
 
-By registering episode types, plugins and applications can achieve a huge degree of
+By registering episode category, plugins and applications can achieve a huge degree of
 flexibility over the behaviour of their episodes.
 """
-from opal.utils import _itersubclasses
+from opal.core.discoverable import DiscoverableFeature
 
-class EpisodeType(object):
-    name            = None
+
+class EpisodeCategory(DiscoverableFeature):
+    module_name     = "episode_categories"
+    display_name    = None
     detail_template = None
 
     @classmethod
     def episode_visible_to(kls, episode, user):
         """
-        Predicate function to determine whether an episode of this type
+        Predicate function to determine whether an episode of this category
         is visible to a particular user.
 
         Defaults implementation checks for Profile.restricted_only and
@@ -47,12 +49,6 @@ class EpisodeType(object):
     def __init__(self, episode):
         self.episode = episode
 
-    @classmethod
-    def for_category(kls, category):
-        for et in episode_types():
-            if et.name == category:
-                return et
-
     @property
     def start(self):
         if self.episode.date_of_episode:
@@ -68,22 +64,14 @@ class EpisodeType(object):
             return self.episode.discharge_date
 
 
-class InpatientEpisode(EpisodeType):
-    name            = 'Inpatient'
+class InpatientEpisode(EpisodeCategory):
+    display_name    = 'Inpatient'
     detail_template = 'detail/inpatient.html'
 
 
-class OutpatientEpisode(EpisodeType):
-    name = 'Outpatient'
+class OutpatientEpisode(EpisodeCategory):
+    display_name = 'Outpatient'
 
 
-class LiaisonEpisode(EpisodeType):
-    name = 'Liaison'
-
-
-def episode_types():
-    """
-    Generator function for episode types
-    """
-    for et in _itersubclasses(EpisodeType):
-        yield et
+class LiaisonEpisode(EpisodeCategory):
+    display_name = 'Liaison'

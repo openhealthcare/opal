@@ -161,7 +161,7 @@ angular.module('opal.services')
             this.makeCopy = function(){
                 var copy = {
                     id               : episode.id,
-                    category         : episode.category,
+                    category_name    : episode.category_name,
                     date_of_admission: episode.date_of_admission,
                     date_of_episode  : episode.date_of_episode,
                     discharge_date   : episode.discharge_date,
