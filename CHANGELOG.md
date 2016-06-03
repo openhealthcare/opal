@@ -1,3 +1,5 @@
+### 0.7.0 (Major Release)
+
 ### 0.6.0 (Major Release)
 
 
