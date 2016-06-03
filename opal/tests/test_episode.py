@@ -34,10 +34,10 @@ class EpisodeTest(OpalTestCase):
         self.episode.discharge_date = yesterday
         self.assertEqual(True, self.episode.is_discharged)
 
-    def test_type(self):
-        self.episode.category = 'Inpatient'
-        self.assertEqual(self.episode.type.__class__, InpatientEpisode)
-        self.assertEqual(self.episode.type.episode, self.episode)
+    def test_category(self):
+        self.episode.category_name = 'Inpatient'
+        self.assertEqual(self.episode.category.__class__, InpatientEpisode)
+        self.assertEqual(self.episode.category.episode, self.episode)
 
     def test_visible_to(self):
         self.assertTrue(self.episode.visible_to(self.user))
@@ -83,7 +83,7 @@ class EpisodeTest(OpalTestCase):
     def test_to_dict_fields(self):
         as_dict = self.episode.to_dict(self.user)
         expected = [
-            'id', 'category', 'active', 'date_of_admission', 'discharge_date',
+            'id', 'category_name', 'active', 'date_of_admission', 'discharge_date',
             'consistency_token', 'date_of_episode', 'start', 'end'
         ]
         for field in expected:
@@ -142,7 +142,7 @@ class EpisodeTest(OpalTestCase):
         self.assertEqual(serialised["hat_wearer"][0]["hats"], [u'bowler', u'top'])
 
 
-class EpisodeTypeTestCase(OpalTestCase):
+class EpisodeCategoryTestCase(OpalTestCase):
     def setUp(self):
         _, self.episode = self.new_patient_and_episode_please()
         self.today = datetime.date.today()
@@ -194,7 +194,7 @@ class EpisodeManagerTestCase(OpalTestCase):
     def test_serialised_fields(self):
         as_dict = Episode.objects.serialised(self.user, [self.episode])[0]
         expected = [
-            'id', 'category', 'active', 'date_of_admission', 'discharge_date',
+            'id', 'category_name', 'active', 'date_of_admission', 'discharge_date',
             'consistency_token', 'date_of_episode'
         ]
 
@@ -205,3 +205,14 @@ class EpisodeManagerTestCase(OpalTestCase):
 
         self.assertEqual(dogs, {"Jemima", "Philip"})
         self.assertEqual(as_dict["hat_wearer"][0]["hats"], ["top"])
+
+    def test_serialised_equals_to_dict(self):
+        """ Serialised is an optimisation
+        """
+        as_dict = Episode.objects.serialised(
+            self.user, [self.episode], episode_history=True
+        )
+
+        expected = self.episode.to_dict(self.user)
+
+        self.assertEqual(as_dict[0], expected)

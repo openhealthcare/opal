@@ -84,7 +84,7 @@ describe('HospitalNumberCtrl', function(){
         ],
         "episodes": {
             "3": {
-                "category": "Inpatient",
+                "category_name": "Inpatient",
                 "antimicrobial": [],
                 "demographics": [
                     {
@@ -388,7 +388,7 @@ describe('HospitalNumberCtrl', function(){
         describe('if not an inpatient', function(){
             it('should add an episode', function(){
                 spyOn($scope, 'addForPatient');
-                activePatientData.episodes[3].category = 'outpatients';
+                activePatientData.episodes[3].category_name = 'outpatients';
                 $scope.newForPatientWithActiveEpisode(activePatientData);
                 expect($scope.addForPatient).toHaveBeenCalledWith(activePatientData);
             })

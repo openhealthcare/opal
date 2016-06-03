@@ -80,7 +80,7 @@ angular.module('opal.controllers').controller(
         $scope.newForPatientWithActiveEpisode = function(patient){
 			episode = new Episode(patient.episodes[patient.active_episode_id])
 
-            if(episode.category != 'Inpatient'){ // It's the wrong category - add new
+            if(episode.category_name != 'Inpatient'){ // It's the wrong category - add new
                 return $scope.addForPatient(patient);
             }
 

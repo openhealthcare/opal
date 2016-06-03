@@ -1,6 +1,8 @@
-# opal.application.OpalApplication
+# opal.core.application
 
-The base class for your main application entrypoints is opal.application.OpalApplication.
+##OpalApplication
+
+The base class for your main application entrypoints is opal.core.application.OpalApplication.
 
 You must subclass this in order for OPAL to discover your application.
 
@@ -9,13 +11,11 @@ generated for you, and located in `yourproject/yourproject/__init__.py`
 
 ### schema_module
 
-### flow_module
-
 ### javascripts
 
 ### actions
 
-### menuitems 
+### menuitems
 
 A list of items to add to the top level menu
 
