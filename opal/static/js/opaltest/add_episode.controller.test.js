@@ -79,7 +79,7 @@ describe('AddEpisodeCtrl', function (){
 
         it('should save', function(){
             $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
-            $httpBackend.expectPOST('episode/').respond({demographics:[{patient_id: 1}]})
+            $httpBackend.expectPOST('/api/v0.1/episode/').respond({demographics:[{patient_id: 1}]})
             $scope.editing.date_of_admission = moment(new Date(13, 1, 2014));
             $scope.editing.demographics.date_of_birth = moment(new Date(13, 1, 1914));
             $scope.save();
