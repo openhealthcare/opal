@@ -24,12 +24,6 @@ urlpatterns = patterns(
     url(r'^accounts/banned', views.BannedView.as_view(), name='banned'),
     url(r'^admin/?', include(admin.site.urls)),
 
-
-    url(r'^episode/?$', views.episode_list_and_create_view),
-    url(r'^episode/(?P<tag>[a-z_\-]+)/?$', api.EpisodeListApi.as_view()),
-    url(r'^episode/(?P<tag>[a-z_\-]+)/(?P<subtag>[a-z_\-]+)/?$', api.EpisodeListApi.as_view()),
-    url(r'^episode/(?P<pk>\d+)/?$', views.episode_detail_view),
-
     url(r'^episode/(?P<pk>\d+)/actions/copyto/(?P<category>[a-zA-Z_\-]+)/?$',
         views.EpisodeCopyToCategoryView.as_view()),
 
