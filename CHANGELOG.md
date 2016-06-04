@@ -4,6 +4,13 @@
 
 Refactors EpisodeCategory to be a discoverable feature. Renames `Episode.category` -> `Episode.category_name`.
 
+** Episode JSON API**
+
+The Restful Episode JSON API previously available at `/episode/:pk/` is now moved into
+`/api/v0.1/episode/:pk/` for consistency with the rest of our JSON APIs.
+The OPAL Angular layer has been updated to reflect this, and
+should handle the transition seamlessly, but code calling the API directly should update
+to reflect the new URL.
 
 ### 0.6.0 (Major Release)
 
