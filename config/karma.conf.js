@@ -26,11 +26,12 @@ module.exports = function(config){
         files: [
             //JASMINE,
             //JASMINE_ADAPTER,
-            'angular-1.2.20/angular.js',
-            'angular-1.2.20/angular-route.js',
-            'angular-1.2.20/angular-resource.js',
-            'angular-1.2.20/angular-cookies.js',
-            'angular-1.2.20/angular-mocks.js',
+
+            "bower_components/angular/angular.js",
+            "bower_components/angular-route/angular-route.js",
+            "bower_components/angular-resource/angular-resource.js",
+            "bower_components/angular-cookies/angular-cookies.js",
+            "bower_components/angular-mocks/angular-mocks.js",
 
             'angular-ui-utils-0.1.0/ui-utils.js',
             'angular-ui-bootstrap-0.10.0/ui-bootstrap-tpls.js',
