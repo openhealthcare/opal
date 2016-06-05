@@ -1516,3 +1516,24 @@ class InpatientAdmission(PatientSubrecord, ExternallySourcedModel):
                     data["id"] = existing.id
 
         super(InpatientAdmission, self).update_from_dict(data, *args, **kwargs)
+
+
+class ReferralRoute(EpisodeSubrecord):
+    _title = "Referral Route"
+    _icon = 'fa fa-level-up'
+
+    internal = models.NullBooleanField()
+
+    # e.g. GP, the title or institution of the person who referred the patient
+    referral_route = models.CharField(max_length=255, blank=True)
+
+    # the name of the person who referred the patient, e.g. the GPs name
+    referral_name = models.CharField(max_length=255, blank=True)
+
+    # date_of_referral
+    date_of_referral = models.DateField(null=True, blank=True)
+
+    # an individual can be from multiple teams
+    referral_team = models.CharField(max_length=255, blank=True)
+
+    referral_reason = models.CharField(max_length=255, blank=True)
