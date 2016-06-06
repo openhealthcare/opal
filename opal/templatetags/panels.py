@@ -28,7 +28,8 @@ def record_panel(
     """
 
     if name is None:
-        name = model.get_api_name()
+        if isinstance(model, str):
+            raise ValueError("unable to find a model for {}".format(model))
 
     if detail_template is None:
         detail_template = model.get_detail_template()
