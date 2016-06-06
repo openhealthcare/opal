@@ -20,7 +20,7 @@ describe('FilterResource', function(){
     describe('resource', function(){
 
         it('should hit the API', function(){
-            $httpBackend.whenGET('/search/filters').respond([]);
+            $httpBackend.whenGET('/search/filters/').respond([]);
             FilterResource.query(function(resources){})
             $rootScope.$apply();
             $httpBackend.flush();

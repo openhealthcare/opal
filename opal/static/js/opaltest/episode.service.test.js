@@ -285,19 +285,19 @@ describe('Episode', function() {
 
                 episode = new Episode(episodeData);
 
-                $httpBackend.whenPUT('/episode/555/')
+                $httpBackend.whenPUT('/api/v0.1/episode/555/')
                     .respond(attrsJsonDate);
 
             });
 
             it('Should hit server', function () {
-                $httpBackend.expectPUT('/episode/555/', attrsJsonDate);
+                $httpBackend.expectPUT('/api/v0.1/episode/555/', attrsJsonDate);
                 episode.save(attrsJsonDate);
                 $httpBackend.flush();
             });
 
             it('Should update item attributes', function () {
-                $httpBackend.expectPUT('/episode/555/', attrsJsonDate);
+                $httpBackend.expectPUT('/api/v0.1/episode/555/', attrsJsonDate);
                 episode.save(attrsJsonDate);
                 $httpBackend.flush();
                 expect(episode.date_of_admission).toEqual(new Date(2013, 10, 20))

@@ -26,7 +26,7 @@ describe('filtersLoader', function(){
     describe('query', function(){
 
         it('should save existing filters', function(){
-            $httpBackend.whenGET('/search/filters').respond([{id: 1, name: 'afilter'}]);
+            $httpBackend.whenGET('/search/filters/').respond([{id: 1, name: 'afilter'}]);
 
             filtersLoader()
             $rootScope.$apply();
@@ -34,7 +34,7 @@ describe('filtersLoader', function(){
         });
 
         it('should handle errors', function(){
-            $httpBackend.whenGET('/search/filters').respond(500, 'failure');
+            $httpBackend.whenGET('/search/filters/').respond(500, 'failure');
 
             filtersLoader();
 
