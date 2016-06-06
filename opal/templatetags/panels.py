@@ -28,6 +28,8 @@ def record_panel(
     """
 
     if name is None:
+        if isinstance(model, str):
+            raise ValueError("Unable to find a subrecord")
         name = model.get_api_name()
 
     if detail_template is None:
