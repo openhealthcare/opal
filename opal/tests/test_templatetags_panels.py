@@ -44,6 +44,16 @@ class RecordPanelTestCase(OpalTestCase):
         result = template.render(Context(ctx))
         self.assertIn('HatWearer', result)
 
+    def test_error_thrown(self):
+        template = Template(
+            '{% load panels %}{% record_panel models.ThisDoesntExist %}'
+        )
+        ctx = {"models": {"HatWearer": HatWearer}}
+        with self.assertRaises(ValueError) as e:
+            template.render(Context(ctx))
+
+        self.assertEqual(e.exception.message, 'unable to find a subrecord')
+
 
 class RecordTimelineTestCase(OpalTestCase):
     def test_record_timeline(self):
