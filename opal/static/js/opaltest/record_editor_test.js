@@ -240,6 +240,23 @@ describe('RecordEditor', function(){
       });
     });
 
+    describe("get item", function(){
+      it("should handle the case where there is no subrecords of this type on the episode", function(){
+        var result = episode.recordEditor.getItem("something", 0);
+        expect(result).not.toBe(undefined);
+      });
+
+      it("should handle the case where there are no episodes at this index of this type on the episode", function(){
+        var result = episode.recordEditor.getItem("diagnosis", 2);
+        expect(result).not.toBe(undefined);
+      });
+
+      it("should not create if it can find the expected value", function(){
+        var result = episode.recordEditor.getItem("diagnosis", 1);
+        expect(result.condition).toBe('Malaria');
+      });
+    })
+
     describe("new item", function(){
       it('should create a new item', function(){
          var deferred, callArgs;

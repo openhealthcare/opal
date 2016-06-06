@@ -128,4 +128,16 @@ set to false, users will not be able to add the tag for this list.
         tag = 'liaisonpatients'
         direct_add = False
 
-## Access Control
+### Access Control
+
+As PatientLists are a [RestrictableFeature](discoverable.md#restrictable-features), Access control
+for lists is set by overriding the `visible_to` classmethod. Your list will only be visible to
+those users for whom this method returns `True`.
+
+For instance, we could define a Patient List that was only available to Django Superusers:
+
+    class SuperuserPatientList(PatientList):
+
+        @classmethod
+        def visible_to(klass, user):
+            return user.is_superuser
