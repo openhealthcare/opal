@@ -41,7 +41,7 @@ angular.module('opal.services').factory('RecordEditor', function(
     };
 
     self.getItem = function(name, iix){
-      if (episode[name][iix] && episode[name][iix].columnName) {
+      if (episode[name] && episode[name][iix] && episode[name][iix].columnName) {
           return episode[name][iix];
       } else {
           return episode.newItem(name, {column: $rootScope.fields[name]});
