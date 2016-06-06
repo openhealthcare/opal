@@ -1532,6 +1532,9 @@ class ReferralRoute(EpisodeSubrecord):
     _icon = 'fa fa-level-up'
     _is_singleton = True
 
+    class Meta:
+        abstract = True
+
     internal = models.NullBooleanField()
 
     # e.g. GP, the title or institution of the person who referred the patient
