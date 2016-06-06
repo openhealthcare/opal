@@ -13,10 +13,6 @@ class OpalApplication(object):
             "js/d3/d3.js",
             "js/c3-0.4.10/c3.js",
 
-            # "js/angular-1.2.20/angular.js",
-            # "js/angular-1.2.20/angular-route.js",
-            # "js/angular-1.2.20/angular-cookies.js",
-            # "js/angular-1.2.20/angular-resource.js",
             "js/bower_components/angular/angular.js",
             "js/bower_components/angular-route/angular-route.js",
             "js/bower_components/angular-resource/angular-resource.js",
