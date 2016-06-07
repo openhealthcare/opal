@@ -326,6 +326,14 @@ class EpisodeViewSet(viewsets.ViewSet):
         return Response(serialised, status=status.HTTP_201_CREATED)
 
     @episode_from_pk
+    def update(self, request, episode):
+        try:
+            episode.update_from_dict(request.data, request.user)
+            return Response(episode.to_dict(request.user, shallow=True))
+        except exceptions.ConsistencyError:
+            return _build_json_response({'error': 'Item has changed'}, 409)
+
+    @episode_from_pk
     def retrieve(self, request, episode):
         return Response(episode.to_dict(request.user))
 

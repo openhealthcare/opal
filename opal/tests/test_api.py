@@ -487,7 +487,8 @@ class TaggingTestCase(TestCase):
         self.assertEqual(404, response.status_code)
 
 
-class EpisodeTestCase(TestCase):
+class EpisodeTestCase(OpalTestCase):
+
     def setUp(self):
         self.patient = models.Patient.objects.create()
         self.demographics = self.patient.demographics_set.get()
@@ -608,14 +609,51 @@ class EpisodeTestCase(TestCase):
         self.assertEqual("7", location.bed)
 
     def test_create_sets_tagging(self):
-        pass
+        pcount = models.Patient.objects.filter(
+            demographics__hospital_number="9999000999").count()
+        self.assertEqual(0, pcount)
+        self.mock_request.data = {
+            "tagging"                :[ { "micro":True }],
+            "date_of_admission"      : "14/01/2015",
+            "demographics" : {
+                "hospital_number": "9999000999",
+            },
+            "location": {
+                "ward": "West",
+                "bed" : "7"
+            }
+        }
+        response = api.EpisodeViewSet().create(self.mock_request)
+        patient = models.Patient.objects.get(
+            demographics__hospital_number="9999000999")
+        episode = patient.episode_set.get()
+        tags = episode.get_tag_names(self.user)
+        self.assertEqual(u'micro', tags[0])
+        self.assertEqual(1, len(tags))
 
     def test_update(self):
-        pass
+        patient, episode = self.new_patient_and_episode_please()
+        self.assertEqual(None, episode.date_of_admission)
+        self.mock_request.data = {"date_of_admission": "14/01/2015"}
+        response = api.EpisodeViewSet().update(self.mock_request, pk=episode.pk)
+        e = models.Episode.objects.get(pk=episode.pk)
+        self.assertEqual(date(2015, 1, 14), e.date_of_admission)
 
     def test_update_nonexistent(self):
-        pass
+        self.mock_request.data = {"date_of_admission": "14/01/2015"}
+        response = api.EpisodeViewSet().update(self.mock_request, pk=8993939)
+        self.assertEqual(404, response.status_code)
 
+    def test_update_consistency_error(self):
+        patient, episode = self.new_patient_and_episode_please()
+        episode.consistency_token = 'FFFF'
+        episode.save()
+        self.mock_request.data = {
+            "date_of_admission": "14/01/2015",
+            "consistency_token": "EEEE"
+        }
+        response = api.EpisodeViewSet().update(self.mock_request, pk=episode.pk)
+        self.assertEqual(409, response.status_code)
 
 
 class PatientTestCase(OpalTestCase):
