@@ -18,6 +18,9 @@ li {
 	display: none;
 }
 
+/*
+* it needs important because bootstrap
+*/
 .always-on-print-block{
 	display: block !important;
 }
