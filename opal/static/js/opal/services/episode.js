@@ -233,7 +233,7 @@ angular.module('opal.services')
             this.save = function(attrs){
                 var value;
                 var deferred = $q.defer();
-                var url = '/episode/' + attrs.id + '/';
+                var url = '/api/v0.1/episode/' + attrs.id + '/';
                 method = 'put';
 
                 _.each(date_fields, function(field){

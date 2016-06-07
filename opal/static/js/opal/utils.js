@@ -13,11 +13,20 @@ OPAL.module = function(namespace, dependencies){
         var OPAL_ANGULAR_DEPS = [];
     }
 
-    dependencies.push('angular-growl');
-    dependencies.push('mentio');
-    dependencies.push('angulartics');
-    dependencies.push('angulartics.google.analytics');
-    dependencies.push('LocalStorageModule');
+    var implicit_dependencies = [
+        'angular-growl',
+        'mentio',
+        'angulartics',
+        'angulartics.google.analytics',
+        'LocalStorageModule',
+    ]
+
+    _.each(implicit_dependencies, function(dependency){
+        if(!_.contains(dependencies, dependency)){
+            dependencies.push(dependency);
+        }
+    });
+
 
     this.tracking = {
       manualTrack: window.OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX || window.OPAL_ANGULAR_EXCLUDE_TRACKING_QS,
@@ -51,6 +60,10 @@ OPAL.module = function(namespace, dependencies){
     // IE8 compatability mode!
     mod.config(function($sceProvider){
         $sceProvider.enabled(false);
+    });
+
+    mod.config(function($resourceProvider) {
+        $resourceProvider.defaults.stripTrailingSlashes = false;
     });
 
     return mod;

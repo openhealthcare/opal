@@ -13,6 +13,7 @@ pages:
       - Plugins: guides/plugins.md
       - Plugin List: guides/plugins_list.md
       - Data Model: guides/datamodel.md
+      - Archetypes: guides/archetypes.md
       - Flow: guides/flow.md
       - Roles & Permissions: guides/roles_and_permissions.md
       - Tagging: guides/tagging.md
