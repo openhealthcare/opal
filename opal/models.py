@@ -28,7 +28,10 @@ from opal.core.subrecords import (
     episode_subrecords, patient_subrecords, get_subrecord_from_api_name
 )
 
-app = application.get_app()
+
+def get_default_episode_type():
+    app = application.get_app()
+    return app.default_episode_category
 
 
 class UpdatesFromDictMixin(object):
@@ -535,7 +538,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     on which they found themselves on "The List".
     """
     category_name     = models.CharField(
-        max_length=200, default=app.default_episode_category
+        max_length=200, default=get_default_episode_type
     )
     patient           = models.ForeignKey(Patient)
     active            = models.BooleanField(default=False)
@@ -1268,14 +1271,23 @@ class Demographics(PatientSubrecord):
     _is_singleton = True
     _icon = 'fa fa-user'
 
-    hospital_number  = models.CharField(max_length=255, blank=True)
-    nhs_number       = models.CharField(max_length=255, blank=True, null=True)
-    date_of_birth    = models.DateField(null=True, blank=True)
-    birth_place = ForeignKeyOrFreeText(Destination)
-    ethnicity = ForeignKeyOrFreeText(Ethnicity)
+    hospital_number = models.CharField(max_length=255, blank=True)
+    nhs_number = models.CharField(max_length=255, blank=True, null=True)
+
     surname = models.CharField(max_length=255, blank=True)
     first_name = models.CharField(max_length=255, blank=True)
-    middle_name = models.CharField(max_length=255, blank=True)
+    middle_name = models.CharField(max_length=255, blank=True, null=True)
+    title = ForeignKeyOrFreeText(Title)
+    date_of_birth = models.DateField(null=True, blank=True)
+    marital_status = ForeignKeyOrFreeText(MaritalStatus)
+    religion = models.CharField(max_length=255, blank=True, null=True)
+    date_of_death = models.DateField(null=True, blank=True)
+    post_code = models.CharField(max_length=20, blank=True, null=True)
+    gp_practice_code = models.CharField(max_length=20, blank=True, null=True)
+    birth_place = ForeignKeyOrFreeText(Destination)
+    ethnicity = ForeignKeyOrFreeText(Ethnicity)
+    death_indicator = models.BooleanField(default=False)
+
     sex = ForeignKeyOrFreeText(Gender)
 
     @property
@@ -1516,3 +1528,28 @@ class InpatientAdmission(PatientSubrecord, ExternallySourcedModel):
                     data["id"] = existing.id
 
         super(InpatientAdmission, self).update_from_dict(data, *args, **kwargs)
+
+
+class ReferralRoute(EpisodeSubrecord):
+    _title = "Referral Route"
+    _icon = 'fa fa-level-up'
+    _is_singleton = True
+
+    class Meta:
+        abstract = True
+
+    internal = models.NullBooleanField()
+
+    # e.g. GP, the title or institution of the person who referred the patient
+    referral_route = models.CharField(max_length=255, blank=True)
+
+    # the name of the person who referred the patient, e.g. the GPs name
+    referral_name = models.CharField(max_length=255, blank=True)
+
+    # date_of_referral
+    date_of_referral = models.DateField(null=True, blank=True)
+
+    # an individual can be from multiple teams
+    referral_team = models.CharField(max_length=255, blank=True)
+
+    referral_reason = models.CharField(max_length=255, blank=True)

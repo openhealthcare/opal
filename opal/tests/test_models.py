@@ -30,6 +30,14 @@ class PatientRecordAccessTestCase(OpalTestCase):
 
 class PatientTestCase(OpalTestCase):
 
+    @patch("opal.models.application.get_app")
+    def test_created_with_the_default_episode(self, get_app):
+        test_app = MagicMock()
+        test_app.default_episode_category ="testcategory"
+        get_app.return_value = test_app
+        _, episode = self.new_patient_and_episode_please()
+        self.assertEqual(episode.category_name, "testcategory")
+
     def test_create_episode_category(self):
         patient = models.Patient.objects.create()
         e = patient.create_episode(category_name='testcategory')
