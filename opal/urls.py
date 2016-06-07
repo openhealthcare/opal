@@ -37,7 +37,7 @@ urlpatterns = patterns(
     url(r'^templates/patient_list.html/(?P<slug>[0-9a-z_\-]+)/?$', views.PatientListTemplateView.as_view(), name="patient_list_template_view"),
 
     url(r'^templates/patient_detail.html$',
-        views.PatientDetailTemplateView.as_view()),
+        views.PatientDetailTemplateView.as_view(), name="patient_detail"),
     url(r'^templates/episode_detail.html/(?P<pk>\d+)/?$',
         views.EpisodeDetailTemplateView.as_view()),
 
