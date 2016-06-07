@@ -30,6 +30,9 @@ from opal.core.subrecords import (
 
 app = application.get_app()
 
+def get_default_episode_type():
+    return app.default_episode_category()
+
 
 class UpdatesFromDictMixin(object):
     """
@@ -535,7 +538,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     on which they found themselves on "The List".
     """
     category_name     = models.CharField(
-        max_length=200, default=app.default_episode_category
+        max_length=200, default=get_default_episode_type
     )
     patient           = models.ForeignKey(Patient)
     active            = models.BooleanField(default=False)
