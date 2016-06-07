@@ -28,10 +28,10 @@ from opal.core.subrecords import (
     episode_subrecords, patient_subrecords, get_subrecord_from_api_name
 )
 
-app = application.get_app()
 
 def get_default_episode_type():
-    return app.default_episode_category()
+    app = application.get_app()
+    return app.default_episode_category
 
 
 class UpdatesFromDictMixin(object):
