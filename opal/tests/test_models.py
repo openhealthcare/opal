@@ -252,6 +252,10 @@ class SubrecordTestCase(OpalTestCase):
         Subrecord.get_form_template()
         find.assert_called_with(['forms/subrecord_form.html'])
 
+    def test_get_form_url(self):
+        url = Subrecord.get_form_url()
+        self.assertEqual(url, '/templates/forms/subrecord.html')
+
     @patch('opal.models.find_template')
     def test_form_template_list(self, find):
         patient_list = MagicMock()
