@@ -50,7 +50,7 @@ class PatientSummary(object):
                 self.end = episode.end
 
         self.episode_ids.add(episode.id)
-        self.categories.add(episode.category)
+        self.categories.add(episode.category_name)
 
     def to_dict(self):
         result = {k: getattr(self, k) for k in [

@@ -1,7 +1,6 @@
 """
 unittests for opal.core.search.queries
 """
-from mock import patch
 import reversion
 from django.db import transaction
 from opal.models import Patient, Team
@@ -11,6 +10,7 @@ from datetime import date
 from opal.core.search import queries
 
 from opal.tests.episodes import RestrictedEpisodeCategory
+
 
 class DatabaseQueryTestCase(OpalTestCase):
     DATE_OF_BIRTH = date(day=27, month=1, year=1977)
@@ -112,6 +112,34 @@ class DatabaseQueryTestCase(OpalTestCase):
             'surname': u'Stevens',
             'end': self.DATE_OF_EPISODE,
             'start': self.DATE_OF_EPISODE,
+            'patient_id': 1,
+            'categories': [u'Inpatient']
+        }]
+        self.assertEqual(expected, summaries)
+
+    def test_update_patient_summaries(self):
+        """ with a patient with multiple episodes
+            we expect it to aggregate these into summaries
+        """
+        start_date = date(day=1, month=2, year=2014)
+        episode_2 = self.patient.create_episode(
+            date_of_episode=start_date
+        )
+        end_date = date(day=1, month=2, year=2016)
+        episode_3 = self.patient.create_episode(
+            date_of_episode=end_date
+        )
+        query = queries.DatabaseQuery(self.user, self.name_criteria)
+        summaries = query.get_patient_summaries()
+        expected = [{
+            'id': self.patient.id,
+            'count': 3,
+            'hospital_number': u'0',
+            'date_of_birth': self.DATE_OF_BIRTH,
+            'first_name': u'Sally',
+            'surname': u'Stevens',
+            'end': end_date,
+            'start': start_date,
             'patient_id': 1,
             'categories': [u'Inpatient']
         }]

@@ -114,6 +114,24 @@ class PatientTestCase(OpalTestCase):
         with self.assertRaises(ValueError):
             original_patient.bulk_update(d, self.user)
 
+    def test_bulk_update_tagging_ignored(self):
+        original_patient = models.Patient()
+        original_patient.save()
+
+        d = {
+            "demographics": [{
+                "first_name": "Samantha",
+                "surname": "Sun",
+                "hospital_number": "123312"
+            }],
+            "tagging": [
+                {"id": 1},
+            ]
+        }
+        original_patient.bulk_update(d, self.user)
+        episode = original_patient.episode_set.first()
+        self.assertEqual(list(episode.get_tag_names(self.user)), [])
+
     def test_bulk_update_episode_subrecords_without_episode(self):
         original_patient = models.Patient()
 
@@ -233,6 +251,10 @@ class SubrecordTestCase(OpalTestCase):
     def test_form_template(self, find):
         Subrecord.get_form_template()
         find.assert_called_with(['forms/subrecord_form.html'])
+
+    def test_get_form_url(self):
+        url = Subrecord.get_form_url()
+        self.assertEqual(url, '/templates/forms/subrecord.html')
 
     @patch('opal.models.find_template')
     def test_form_template_list(self, find):
