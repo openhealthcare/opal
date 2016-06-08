@@ -97,31 +97,33 @@
   [[ tag_display[currentTag] ]] / [[ tag_display[currentSubTag] ]]
 </h4>
 
-<div class="visible-sm panel panel-active">
-  <div class="panel-heading">
-    <i class="fa fa-users"></i> Patients
+<div class="screen-only">
+  <div class="visible-sm panel panel-active">
+    <div class="panel-heading">
+      <i class="fa fa-users"></i> Patients
+    </div>
+    <ul class="list-group">
+      <li class="list-group-item spreadsheet-view" ng-repeat="row in rows" ng-class="{selected: episode.id == row.id}">
+        <a href="/#[[ row.link ]]">
+          <div class="row">
+            <div class="col-sm-6">
+              <div ng-repeat="item in row.demographics">
+                {% include models.Demographics.get_display_template %}
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div ng-repeat="item in row.diagnosis">
+                {% include models.Diagnosis.get_display_template %}
+              </div>
+            </div>
+          </div>
+        </a>
+      </li>
+    </ul>
   </div>
-  <ul class="list-group">
-    <li class="list-group-item spreadsheet-view" ng-repeat="row in rows" ng-class="{selected: episode.id == row.id}">
-      <a href="/#[[ row.link ]]">
-        <div class="row">
-          <div class="col-sm-6">
-            <div ng-repeat="item in row.demographics">
-              {% include models.Demographics.get_display_template %}
-            </div>
-          </div>
-          <div class="col-sm-6">
-            <div ng-repeat="item in row.diagnosis">
-              {% include models.Diagnosis.get_display_template %}
-            </div>
-          </div>
-        </div>
-      </a>
-    </li>
-  </ul>
 </div>
 
-<div class="patient-list-container hidden-sm" freeze-headers fix-height>
+<div class="patient-list-container hidden-sm always-on-print-block" freeze-headers fix-height>
   <table class="table table-bordered bg-white patient-list">
     <thead class="table-header">
   	  <tr>

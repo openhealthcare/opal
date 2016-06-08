@@ -6,7 +6,7 @@
   </h3>
 </div>
 <div class="modal-body">
-  <form class="form-horizontal" name="newEpisodeForm">
+  <form class="form-horizontal" name="form">
     {% include models.Demographics.get_form_template %}
     {% select label="Category" model="editing.location.category" lookuplist="episode_category_list" %}
     {% select label="Hospital" model="editing.location.hospital" lookuplist="hospital_list" %}
@@ -17,7 +17,7 @@
   </form>
 </div>
 <div class="modal-footer">
-  <button class="btn btn-primary" ng-click="save()" ng-disabled="newEpisodeForm.date_of_birth.$invalid">
+  <button class="btn btn-primary" ng-click="save()" ng-disabled="form.date_of_birth.$invalid">
     <i class="fa fa-save"></i>
     Save record
   </button>

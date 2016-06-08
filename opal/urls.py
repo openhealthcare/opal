@@ -65,13 +65,20 @@ urlpatterns = patterns(
 
 # Generated subrecord template views
 for subrecord_model in subrecords.subrecords():
-    sub_url = camelcase_to_underscore(subrecord_model.__name__)
+    sub_url = subrecord_model.get_api_name()
+    url_name = "{}_modal".format(sub_url)
     urlpatterns += patterns(
         '',
         url(r'^templates/modals/%s.html/?$' % sub_url,
-            views.ModalTemplateView.as_view(), {'model': subrecord_model}),
+            views.ModalTemplateView.as_view(),
+            {'model': subrecord_model},
+            name=url_name
+        ),
         url(r'^templates/modals/%s.html/(?P<list>[a-z_\-]+/?)$' % sub_url,
-            views.ModalTemplateView.as_view(), {'model': subrecord_model}),
+            views.ModalTemplateView.as_view(),
+            {'model': subrecord_model},
+            name=url_name
+        ),
     )
 
 
