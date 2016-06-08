@@ -114,6 +114,24 @@ class PatientTestCase(OpalTestCase):
         with self.assertRaises(ValueError):
             original_patient.bulk_update(d, self.user)
 
+    def test_bulk_update_tagging_ignored(self):
+        original_patient = models.Patient()
+        original_patient.save()
+
+        d = {
+            "demographics": [{
+                "first_name": "Samantha",
+                "surname": "Sun",
+                "hospital_number": "123312"
+            }],
+            "tagging": [
+                {"id": 1},
+            ]
+        }
+        original_patient.bulk_update(d, self.user)
+        episode = original_patient.episode_set.first()
+        self.assertEqual(list(episode.get_tag_names(self.user)), [])
+
     def test_bulk_update_episode_subrecords_without_episode(self):
         original_patient = models.Patient()
 

@@ -15,6 +15,7 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
+from django.core.urlresolvers import reverse
 from django.utils.functional import cached_property
 import reversion
 
@@ -421,6 +422,10 @@ class Patient(models.Model):
             episode = self.create_episode()
 
         for api_name, list_of_upgrades in dict_of_list_of_upgrades.iteritems():
+
+            # for the moment we'll ignore tagging as its weird
+            if(api_name == "tagging"):
+                continue
             model = get_subrecord_from_api_name(api_name=api_name)
             if model in episode_subrecords():
                 if episode is None:
@@ -848,6 +853,10 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
             episode_type=episode_type, patient_list=patient_list,
             suffix='_form.html', prefix='forms')
         return find_template(templates)
+
+    @classmethod
+    def get_form_url(cls):
+        return reverse("form_view", kwargs=dict(model=cls.get_api_name()))
 
     @classmethod
     def get_modal_template(cls, patient_list=None, episode_type=None):
