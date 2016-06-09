@@ -86,6 +86,6 @@ if not getattr(models.Episode, 'location_set', None):
         bed = dmodels.CharField(max_length=200, blank=True, null=True)
 
 
-if not getattr(models.Episode, 'presenting_complaints', None):
-    class PresentingComplaint(models.PresentingComplaint):
+if not getattr(models.Episode, 'symptoms', None):
+    class SymptomComplex(models.SymptomComplex):
         pass

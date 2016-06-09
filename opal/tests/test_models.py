@@ -12,12 +12,12 @@ from opal import models
 from opal.core import exceptions
 from opal.models import (
     Subrecord, Tagging, Team, Patient, InpatientAdmission, Symptom,
-    PresentingComplaint
+    SymptomComplex
 )
 from opal.core.test import OpalTestCase
 import opal.tests.test_patient_lists # To make sure test tagged lists are pulled in
 from opal.tests.models import (
-    FamousLastWords, PatientColour, ExternalSubRecord, PresentingComplaint
+    FamousLastWords, PatientColour, ExternalSubRecord, SymptomComplex
 )
 
 class PatientRecordAccessTestCase(OpalTestCase):
@@ -546,25 +546,26 @@ class InpatientAdmissionTestCase(OpalTestCase):
             datetime.date.today()
         )
 
-class PresentingComplaintTest(OpalTestCase):
+
+class SymptomComplexTestCase(OpalTestCase):
     def setUp(self):
         self.patient, self.episode = self.new_patient_and_episode_please()
-        super(PresentingComplaintTest, self).setUp()
+        super(SymptomComplexTestCase, self).setUp()
         self.symptom_1 = Symptom.objects.create(name="tiredness")
         self.symptom_2 = Symptom.objects.create(name="alertness")
         self.symptom_3 = Symptom.objects.create(name="apathy")
-        self.presenting_complaint = PresentingComplaint.objects.create(
+        self.symptom_complex = SymptomComplex.objects.create(
             duration="a week",
             details="information",
             consistency_token=1111,
             episode=self.episode
         )
-        self.presenting_complaint.symptoms.add(self.symptom_2, self.symptom_3)
+        self.symptom_complex.symptoms.add(self.symptom_2, self.symptom_3)
 
     def test_to_dict(self):
         expected_data = dict(
-            id=self.presenting_complaint.id,
-            consistency_token=self.presenting_complaint.consistency_token,
+            id=self.symptom_complex.id,
+            consistency_token=self.symptom_complex.consistency_token,
             symptoms=["alertness", "apathy"],
             duration="a week",
             details="information",
@@ -575,25 +576,25 @@ class PresentingComplaintTest(OpalTestCase):
             created_by_id=None
         )
         self.assertEqual(
-            expected_data, self.presenting_complaint.to_dict(self.user)
+            expected_data, self.symptom_complex.to_dict(self.user)
         )
 
     def test_update_from_dict(self):
         data = {
-            u'consistency_token': self.presenting_complaint.consistency_token,
-            u'id': self.presenting_complaint.id,
+            u'consistency_token': self.symptom_complex.consistency_token,
+            u'id': self.symptom_complex.id,
             u'symptoms': [u'alertness', u'tiredness'],
             u'duration': 'a month',
             u'details': 'other information'
         }
-        self.presenting_complaint.update_from_dict(data, self.user)
-        new_symptoms = self.presenting_complaint.symptoms.values_list(
+        self.symptom_complex.update_from_dict(data, self.user)
+        new_symptoms = self.symptom_complex.symptoms.values_list(
             "name", flat=True
         )
         self.assertEqual(set(new_symptoms), set([u'alertness', u'tiredness']))
-        self.assertEqual(self.presenting_complaint.duration, 'a month')
+        self.assertEqual(self.symptom_complex.duration, 'a month')
         self.assertEqual(
-            self.presenting_complaint.details, 'other information'
+            self.symptom_complex.details, 'other information'
         )
 
 

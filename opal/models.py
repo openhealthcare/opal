@@ -1564,15 +1564,15 @@ class ReferralRoute(EpisodeSubrecord):
     referral_reason = models.CharField(max_length=255, blank=True)
 
 
-class PresentingComplaint(EpisodeSubrecord):
-    _title = 'Presenting Complaint'
+class SymptomComplex(EpisodeSubrecord):
+    _title = 'Symptom'
     _icon = 'fa fa-stethoscope'
 
     class Meta:
         abstract = True
 
     symptoms = models.ManyToManyField(
-        Symptom, related_name="presenting_complaints"
+        Symptom, related_name="symptoms"
     )
     duration = models.CharField(max_length=255, blank=True, null=True)
     details = models.TextField(blank=True, null=True)
