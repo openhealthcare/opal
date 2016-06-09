@@ -1575,6 +1575,34 @@ class ReferralRoute(EpisodeSubrecord):
     referral_reason = ForeignKeyOrFreeText(ReferralReason)
 
 
+class PatientConsultation(EpisodeSubrecord):
+    _title = 'Clinical Advice'
+    _sort = 'when'
+    _icon = 'fa fa-comments'
+    _modal = 'lg'
+    _list_limit = 3
+
+    class Meta:
+        abstract = True
+
+    when = models.DateTimeField(null=True, blank=True)
+    initials = models.CharField(max_length=255, blank=True)
+    reason_for_interaction = ForeignKeyOrFreeText(
+        Clinical_advice_reason_for_interaction
+    )
+    clinical_discussion = models.TextField(blank=True)
+    discussed_with = models.CharField(max_length=255, blank=True)
+
+    def update_from_dict(self, data, *args, **kwargs):
+        if "when" not in data:
+            data["when"] = datetime.datetime.now().strftime(
+                settings.DATETIME_INPUT_FORMATS[0]
+            )
+
+        super(PatientConsultation, self).update_from_dict(data, *args, **kwargs)
+
+
+
 class SymptomComplex(EpisodeSubrecord):
     _title = 'Symptom'
     _icon = 'fa fa-stethoscope'

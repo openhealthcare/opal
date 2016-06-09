@@ -101,6 +101,16 @@ date_of_referral | Date
 referral_team | FKorFT(Speciality)
 referral_reason | FKorFT(ReferralReason)
 
+### PatientConsultation
+
+Field|Type|Length
+-----|----|---
+when | Datetime
+initials | Char | 255
+reason_for_interaction | FKorFT(Clinical_advice_reason_for_interaction)
+clinical_discussion | Text
+discussed_with | Char | 255
+
 
 ### Investigation
 
