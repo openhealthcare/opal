@@ -1259,7 +1259,18 @@ class Microbiology_organism(lookuplists.LookupList):
     class Meta:
         verbose_name = "Microbiology organism"
 
-class Symptom(lookuplists.LookupList): pass
+
+class ReferralReason(lookuplists.LookupList):
+    pass
+
+
+class ReferralOrganisation(lookuplists.LookupList):
+    pass
+
+
+class Symptom(lookuplists.LookupList):
+    pass
+
 
 class Title(lookuplists.LookupList):
     pass
@@ -1550,7 +1561,7 @@ class ReferralRoute(EpisodeSubrecord):
     internal = models.NullBooleanField()
 
     # e.g. GP, the title or institution of the person who referred the patient
-    referral_route = models.CharField(max_length=255, blank=True)
+    referral_organisation = ForeignKeyOrFreeText(ReferralOrganisation)
 
     # the name of the person who referred the patient, e.g. the GPs name
     referral_name = models.CharField(max_length=255, blank=True)
@@ -1559,9 +1570,9 @@ class ReferralRoute(EpisodeSubrecord):
     date_of_referral = models.DateField(null=True, blank=True)
 
     # an individual can be from multiple teams
-    referral_team = models.CharField(max_length=255, blank=True)
+    referral_team = ForeignKeyOrFreeText(Speciality)
 
-    referral_reason = models.CharField(max_length=255, blank=True)
+    referral_reason = ForeignKeyOrFreeText(ReferralReason)
 
 
 class SymptomComplex(EpisodeSubrecord):
