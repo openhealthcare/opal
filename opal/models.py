@@ -1562,3 +1562,25 @@ class ReferralRoute(EpisodeSubrecord):
     referral_team = models.CharField(max_length=255, blank=True)
 
     referral_reason = models.CharField(max_length=255, blank=True)
+
+
+class PresentingComplaint(EpisodeSubrecord):
+    _title = 'Presenting Complaint'
+    _icon = 'fa fa-stethoscope'
+
+    class Meta:
+        abstract = True
+
+    symptoms = models.ManyToManyField(
+        Symptom, related_name="presenting_complaints"
+    )
+    duration = models.CharField(max_length=255, blank=True, null=True)
+    details = models.TextField(blank=True, null=True)
+
+    def to_dict(self, user):
+        field_names = self.__class__._get_fieldnames_to_serialize()
+        result = {
+            i: getattr(self, i) for i in field_names if not i == "symptoms"
+        }
+        result["symptoms"] = list(self.symptoms.values_list("name", flat=True))
+        return result

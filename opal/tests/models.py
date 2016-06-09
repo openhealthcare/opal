@@ -84,3 +84,8 @@ if not getattr(models.Episode, 'location_set', None):
 
         ward = dmodels.CharField(max_length=200, blank=True, null=True)
         bed = dmodels.CharField(max_length=200, blank=True, null=True)
+
+
+if not getattr(models.Episode, 'presenting_complaints', None):
+    class PresentingComplaint(models.PresentingComplaint):
+        pass

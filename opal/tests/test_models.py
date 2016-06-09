@@ -10,10 +10,15 @@ from django.utils import timezone
 
 from opal import models
 from opal.core import exceptions
-from opal.models import Subrecord, Tagging, Team, Patient, InpatientAdmission
+from opal.models import (
+    Subrecord, Tagging, Team, Patient, InpatientAdmission, Symptom,
+    PresentingComplaint
+)
 from opal.core.test import OpalTestCase
 import opal.tests.test_patient_lists # To make sure test tagged lists are pulled in
-from opal.tests.models import FamousLastWords, PatientColour, ExternalSubRecord
+from opal.tests.models import (
+    FamousLastWords, PatientColour, ExternalSubRecord, PresentingComplaint
+)
 
 class PatientRecordAccessTestCase(OpalTestCase):
 
@@ -539,6 +544,56 @@ class InpatientAdmissionTestCase(OpalTestCase):
         self.assertEqual(
             results[1].datetime_of_admission.date(),
             datetime.date.today()
+        )
+
+class PresentingComplaintTest(OpalTestCase):
+    def setUp(self):
+        self.patient, self.episode = self.new_patient_and_episode_please()
+        super(PresentingComplaintTest, self).setUp()
+        self.symptom_1 = Symptom.objects.create(name="tiredness")
+        self.symptom_2 = Symptom.objects.create(name="alertness")
+        self.symptom_3 = Symptom.objects.create(name="apathy")
+        self.presenting_complaint = PresentingComplaint.objects.create(
+            duration="a week",
+            details="information",
+            consistency_token=1111,
+            episode=self.episode
+        )
+        self.presenting_complaint.symptoms.add(self.symptom_2, self.symptom_3)
+
+    def test_to_dict(self):
+        expected_data = dict(
+            id=self.presenting_complaint.id,
+            consistency_token=self.presenting_complaint.consistency_token,
+            symptoms=["alertness", "apathy"],
+            duration="a week",
+            details="information",
+            episode_id=1,
+            updated=None,
+            updated_by_id=None,
+            created=None,
+            created_by_id=None
+        )
+        self.assertEqual(
+            expected_data, self.presenting_complaint.to_dict(self.user)
+        )
+
+    def test_update_from_dict(self):
+        data = {
+            u'consistency_token': self.presenting_complaint.consistency_token,
+            u'id': self.presenting_complaint.id,
+            u'symptoms': [u'alertness', u'tiredness'],
+            u'duration': 'a month',
+            u'details': 'other information'
+        }
+        self.presenting_complaint.update_from_dict(data, self.user)
+        new_symptoms = self.presenting_complaint.symptoms.values_list(
+            "name", flat=True
+        )
+        self.assertEqual(set(new_symptoms), set([u'alertness', u'tiredness']))
+        self.assertEqual(self.presenting_complaint.duration, 'a month')
+        self.assertEqual(
+            self.presenting_complaint.details, 'other information'
         )
 
 
