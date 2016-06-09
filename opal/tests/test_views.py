@@ -309,10 +309,14 @@ class RecordTemplateViewTestCase(BaseViewTestCase):
 
 
     def test_test_view(self):
-        # make sure it works for Colour in case subrecords is broken
-        url = reverse("record_view", kwargs=dict(model=testmodels.Colour.get_api_name()))
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        record_template = testmodels.Colour.get_display_template()
+
+        with patch("opal.tests.models.Colour.get_display_template") as get_display_template:
+            get_display_template.return_value = record_template
+            url = reverse("record_view", kwargs=dict(model=testmodels.Colour.get_api_name()))
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(get_display_template.call_count, 1)
 
 
 class BannedViewTestCase(BaseViewTestCase):

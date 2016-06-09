@@ -260,7 +260,7 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
 class RecordTemplateView(LoginRequiredMixin, TemplateView):
     def get_template_names(self):
         model = get_subrecord_from_api_name(self.kwargs["model"])
-        template_name = model.get_modal_template()
+        template_name = model.get_display_template()
         return [template_name]
 
 
