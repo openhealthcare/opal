@@ -1090,6 +1090,11 @@ class Clinical_advice_reason_for_interaction(lookuplists.LookupList):
         verbose_name = "Clinical advice reason for interaction"
         verbose_name_plural = "Clinical advice reasons for interaction"
 
+
+class PatientConsultationReasonForInteraction(lookuplists.LookupList):
+    class Meta:
+        verbose_name_plural = "Patient advice reasons for interaction"
+
 class Condition(lookuplists.LookupList): pass
 class Destination(lookuplists.LookupList): pass
 class Drug(lookuplists.LookupList): pass
@@ -1576,7 +1581,6 @@ class ReferralRoute(EpisodeSubrecord):
 
 
 class PatientConsultation(EpisodeSubrecord):
-    _title = 'Clinical Advice'
     _sort = 'when'
     _icon = 'fa fa-comments'
     _modal = 'lg'
@@ -1588,10 +1592,10 @@ class PatientConsultation(EpisodeSubrecord):
     when = models.DateTimeField(null=True, blank=True)
     initials = models.CharField(max_length=255, blank=True)
     reason_for_interaction = ForeignKeyOrFreeText(
-        Clinical_advice_reason_for_interaction
+        PatientConsultationReasonForInteraction
+
     )
-    clinical_discussion = models.TextField(blank=True)
-    discussed_with = models.CharField(max_length=255, blank=True)
+    discussion = models.TextField(blank=True)
 
     def set_when(self, incoming_value, user, *args, **kwargs):
         if incoming_value:
