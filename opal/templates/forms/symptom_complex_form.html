@@ -1,0 +1,4 @@
+{% load forms %}
+{% select autofocus field="SymptomComplex.symptoms" multiple=True tagging=False help_text="If a symptom isn't in the list, add it in the details box" %}
+{% select field="SymptomComplex.duration" lookuplist="['3 days or less','4-10 days','11-21 days','22 days to 3 months','over 3 months']" %}
+{% textarea field="SymptomComplex.details" %}

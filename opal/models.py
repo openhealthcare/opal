@@ -1090,6 +1090,11 @@ class Clinical_advice_reason_for_interaction(lookuplists.LookupList):
         verbose_name = "Clinical advice reason for interaction"
         verbose_name_plural = "Clinical advice reasons for interaction"
 
+
+class PatientConsultationReasonForInteraction(lookuplists.LookupList):
+    class Meta:
+        verbose_name_plural = "Patient advice reasons for interaction"
+
 class Condition(lookuplists.LookupList): pass
 class Destination(lookuplists.LookupList): pass
 class Drug(lookuplists.LookupList): pass
@@ -1259,7 +1264,18 @@ class Microbiology_organism(lookuplists.LookupList):
     class Meta:
         verbose_name = "Microbiology organism"
 
-class Symptom(lookuplists.LookupList): pass
+
+class ReferralReason(lookuplists.LookupList):
+    pass
+
+
+class ReferralOrganisation(lookuplists.LookupList):
+    pass
+
+
+class Symptom(lookuplists.LookupList):
+    pass
+
 
 class Title(lookuplists.LookupList):
     pass
@@ -1550,7 +1566,7 @@ class ReferralRoute(EpisodeSubrecord):
     internal = models.NullBooleanField()
 
     # e.g. GP, the title or institution of the person who referred the patient
-    referral_route = models.CharField(max_length=255, blank=True)
+    referral_organisation = ForeignKeyOrFreeText(ReferralOrganisation)
 
     # the name of the person who referred the patient, e.g. the GPs name
     referral_name = models.CharField(max_length=255, blank=True)
@@ -1559,6 +1575,52 @@ class ReferralRoute(EpisodeSubrecord):
     date_of_referral = models.DateField(null=True, blank=True)
 
     # an individual can be from multiple teams
-    referral_team = models.CharField(max_length=255, blank=True)
+    referral_team = ForeignKeyOrFreeText(Speciality)
 
-    referral_reason = models.CharField(max_length=255, blank=True)
+    referral_reason = ForeignKeyOrFreeText(ReferralReason)
+
+
+class PatientConsultation(EpisodeSubrecord):
+    _sort = 'when'
+    _icon = 'fa fa-comments'
+    _modal = 'lg'
+    _list_limit = 3
+
+    class Meta:
+        abstract = True
+
+    when = models.DateTimeField(null=True, blank=True)
+    initials = models.CharField(max_length=255, blank=True)
+    reason_for_interaction = ForeignKeyOrFreeText(
+        PatientConsultationReasonForInteraction
+
+    )
+    discussion = models.TextField(blank=True)
+
+    def set_when(self, incoming_value, user, *args, **kwargs):
+        if incoming_value:
+            self.when = incoming_value
+        else:
+            self.when = datetime.datetime.now()
+
+
+class SymptomComplex(EpisodeSubrecord):
+    _title = 'Symptom'
+    _icon = 'fa fa-stethoscope'
+
+    class Meta:
+        abstract = True
+
+    symptoms = models.ManyToManyField(
+        Symptom, related_name="symptoms"
+    )
+    duration = models.CharField(max_length=255, blank=True, null=True)
+    details = models.TextField(blank=True, null=True)
+
+    def to_dict(self, user):
+        field_names = self.__class__._get_fieldnames_to_serialize()
+        result = {
+            i: getattr(self, i) for i in field_names if not i == "symptoms"
+        }
+        result["symptoms"] = list(self.symptoms.values_list("name", flat=True))
+        return result

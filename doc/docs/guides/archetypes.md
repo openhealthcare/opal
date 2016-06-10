@@ -82,6 +82,34 @@ condition | FKorFT(Condition)
 year | Char | 4
 details | Char | 255
 
+### SymptomComplex
+
+Field|Type|Length
+-----|----|---
+symptoms | ManyToMany(Symptom)
+duration | Char | 255
+details | Text
+
+### ReferralRoute
+
+Field|Type|Length
+-----|----|---
+internal | NullBoolean
+referral_route | FKorFT(ReferralOrganisation)
+referral_name | Char | 255
+date_of_referral | Date
+referral_team | FKorFT(Speciality)
+referral_reason | FKorFT(ReferralReason)
+
+### PatientConsultation
+
+Field|Type|Length
+-----|----|---
+when | Datetime
+initials | Char | 255
+reason_for_interaction | FKorFT(Patient_consultation_reason_for_interaction)
+discussion | Text
+
 ### Investigation
 
 Field|Type|Length

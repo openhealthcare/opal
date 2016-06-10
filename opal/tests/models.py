@@ -84,3 +84,12 @@ if not getattr(models.Episode, 'location_set', None):
 
         ward = dmodels.CharField(max_length=200, blank=True, null=True)
         bed = dmodels.CharField(max_length=200, blank=True, null=True)
+
+
+if not getattr(models.Episode, 'symptoms', None):
+    class SymptomComplex(models.SymptomComplex):
+        pass
+
+if not getattr(models.Episode, 'patientconsultation_set', None):
+    class PatientConsultation(models.PatientConsultation):
+        pass
