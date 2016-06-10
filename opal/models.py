@@ -1593,14 +1593,11 @@ class PatientConsultation(EpisodeSubrecord):
     clinical_discussion = models.TextField(blank=True)
     discussed_with = models.CharField(max_length=255, blank=True)
 
-    def update_from_dict(self, data, *args, **kwargs):
-        if "when" not in data:
-            data["when"] = datetime.datetime.now().strftime(
-                settings.DATETIME_INPUT_FORMATS[0]
-            )
-
-        super(PatientConsultation, self).update_from_dict(data, *args, **kwargs)
-
+    def set_when(self, incoming_value, user, *args, **kwargs):
+        if incoming_value:
+            self.when = incoming_value
+        else:
+            self.when = datetime.datetime.now()
 
 
 class SymptomComplex(EpisodeSubrecord):

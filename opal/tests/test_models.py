@@ -17,7 +17,7 @@ from opal.models import (
 from opal.core.test import OpalTestCase
 import opal.tests.test_patient_lists # To make sure test tagged lists are pulled in
 from opal.tests.models import (
-    FamousLastWords, PatientColour, ExternalSubRecord, SymptomComplex
+    FamousLastWords, PatientColour, ExternalSubRecord, SymptomComplex, PatientConsultation
 )
 
 class PatientRecordAccessTestCase(OpalTestCase):
@@ -545,6 +545,33 @@ class InpatientAdmissionTestCase(OpalTestCase):
             results[1].datetime_of_admission.date(),
             datetime.date.today()
         )
+
+
+class PatientConsultationTestCase(OpalTestCase):
+    def setUp(self):
+        _, self.episode = self.new_patient_and_episode_please()
+        self.patient_consultation = PatientConsultation.objects.create(
+            episode_id=self.episode.id
+        )
+
+    def test_if_when_is_set(self):
+        when = datetime.datetime(2012, 10, 10)
+        patient_consultation_dict = dict(
+            when=when,
+        )
+
+        self.patient_consultation.update_from_dict(patient_consultation_dict, self.user)
+        patient_consultation = self.episode.patientconsultation_set.first()
+        self.assertEqual(patient_consultation.when.year, when.year)
+        self.assertEqual(patient_consultation.when.month, when.month)
+        self.assertEqual(patient_consultation.when.day, when.day)
+
+    def test_if_when_is_not_set(self):
+        now = timezone.now()
+        patient_consultation_dict = dict()
+        self.patient_consultation.update_from_dict(patient_consultation_dict, self.user)
+        patient_consultation = self.episode.patientconsultation_set.first()
+        self.assertTrue(patient_consultation.when >= now)
 
 
 class SymptomComplexTestCase(OpalTestCase):
