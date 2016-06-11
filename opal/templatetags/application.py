@@ -19,7 +19,7 @@ def application_menuitems():
 def core_javascripts(namespace):
     def scripts():
         app = application.get_app()
-        for javascript in app.core_javascripts[namespace]:
+        for javascript in app.get_core_javascripts(namespace):
             yield javascript
     return dict(javascripts=scripts)
 
