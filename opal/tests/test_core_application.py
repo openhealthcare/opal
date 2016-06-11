@@ -10,6 +10,7 @@ class OpalApplicationTestCase(TestCase):
     def setUp(self):
         class App(application.OpalApplication):
             flow_module = 'opal.tests.flows'
+            javascripts = ['test.js']
 
 
         self.app = App
@@ -36,6 +37,9 @@ class OpalApplicationTestCase(TestCase):
         self.assertEqual(
             expected,
             self.app.get_core_javascripts('opal.controllers'))
+
+    def test_get_javascripts(self):
+        self.assertEqual(['test.js'], self.app.get_javascripts())
 
     def test_get_menu_items(self):
         self.assertEqual(

@@ -27,7 +27,7 @@ def core_javascripts(namespace):
 def application_javascripts():
     def scripts():
         app = application.get_app()
-        for javascript in app.javascripts:
+        for javascript in app.get_javascripts():
             yield javascript
     return dict(javascripts=scripts)
 

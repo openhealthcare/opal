@@ -123,6 +123,13 @@ class OpalApplication(object):
         return klass.core_javascripts[namespace]
 
     @classmethod
+    def get_javascripts(klass):
+        """
+        Return the javascripts for our application
+        """
+        return klass.javascripts
+
+    @classmethod
     def get_menu_items(klass):
         """
         Default implementation of get_menu_items()

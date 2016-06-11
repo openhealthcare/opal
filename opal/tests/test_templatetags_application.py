@@ -37,12 +37,13 @@ class ApplicationJavascriptTestCase(OpalTestCase):
     @patch('opal.templatetags.application.application.get_app')
     def test_core_javascripts(self, get_app):
         mock_app = MagicMock(name='Application')
-        mock_app.javascripts = ['test.js']
+        mock_app.get_javascripts.return_value = ['test.js']
         get_app.return_value = mock_app
 
         result = list(application.application_javascripts()['javascripts']())
 
         self.assertEqual(['test.js'], result)
+        mock_app.get_javascripts.assert_called_with()
 
 
 class ApplicationStylesTestCase(OpalTestCase):
