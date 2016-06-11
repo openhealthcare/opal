@@ -139,6 +139,14 @@ class OpalApplication(object):
         """
         return klass.menuitems
 
+    @classmethod
+    def get_styles(klass):
+        """
+        Return the stylesheets for our application
+        """
+        return klass.styles
+
+
 
 def get_app():
     """

@@ -51,9 +51,10 @@ class ApplicationStylesTestCase(OpalTestCase):
     @patch('opal.templatetags.application.application.get_app')
     def test_core_styles(self, get_app):
         mock_app = MagicMock(name='Application')
-        mock_app.styles = ['test.css']
+        mock_app.get_styles.return_value = ['test.css']
         get_app.return_value = mock_app
 
         result = list(application.application_stylesheets()['styles']())
 
         self.assertEqual(['test.css'], result)
+        mock_app.get_styles.assert_called_with()

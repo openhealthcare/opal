@@ -35,7 +35,7 @@ def application_javascripts():
 def application_stylesheets():
     def styles():
         app = application.get_app()
-        for style in app.styles:
+        for style in app.get_styles():
             yield style
     return dict(styles=styles)
 

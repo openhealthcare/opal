@@ -36,6 +36,15 @@ A list of items to add to the top level menu
 
 #### OpalApplication.styles
 
+A list of stylesheets that our application would like to include. These should be strings
+representing paths ready for staticfiles. Defaults to `[]`. These styles are included after
+the default OPAL styles.
+
+```python
+class MyApplication(OpalApplication):
+    styles = ['css/app.css']
+```
+
 ### Classmethods
 
 Classmethod API for OpalApplication instances:
@@ -53,7 +62,7 @@ application.get_core_javascripts('opal.utils')
 #### OpalApplication.get_javascripts()
 
 Return a list of the application's javasctipts as paths to them ready for staticfiles.
-Defaults to returning the OpalApplication.javascripts property.
+Defaults to returning the `OpalApplication.javascripts` property.
 
 ```python
 application.get_javascripts()
@@ -61,3 +70,13 @@ application.get_javascripts()
 ```
 
 #### OpalApplication.get_menu_items()
+
+#### OpalApplication.get_styles()
+
+Return a list of the application's stylesheets as paths to them ready for staticfiles.
+Defaults to returning the contents of `OpalApplication.styles`.
+
+```python
+application.get_styles()
+# -> ['css/app.css', ...]
+```

@@ -11,6 +11,7 @@ class OpalApplicationTestCase(TestCase):
         class App(application.OpalApplication):
             flow_module = 'opal.tests.flows'
             javascripts = ['test.js']
+            styles = ['app.css']
 
 
         self.app = App
@@ -45,6 +46,9 @@ class OpalApplicationTestCase(TestCase):
         self.assertEqual(
             [],
             application.OpalApplication.get_menu_items())
+
+    def test_get_styles(self):
+        self.assertEqual(['app.css'], self.app.get_styles())
 
 
 
