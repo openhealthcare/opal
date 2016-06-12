@@ -249,9 +249,9 @@ def scaffold(args):
             if thing in [Subrecord, EpisodeSubrecord, PatientSubrecord]:
                 continue
             if not thing.get_display_template():
-                scaffold_utils._create_display_template_for(thing, SCAFFOLDING_BASE)
+                scaffold_utils.create_display_template_for(thing, SCAFFOLDING_BASE)
             if not thing.get_modal_template():
-                scaffold_utils._create_form_template_for(thing, SCAFFOLDING_BASE)
+                scaffold_utils.create_form_template_for(thing, SCAFFOLDING_BASE)
     return
 
 def _run_py_tests(args):

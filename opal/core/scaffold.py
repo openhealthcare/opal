@@ -30,7 +30,7 @@ def _get_template_dir_from_record(record):
     return templates
 
 
-def _create_display_template_for(record, scaffold_base):
+def create_display_template_for(record, scaffold_base):
     """
     Create a display template for RECORD.
     """
@@ -52,7 +52,7 @@ def _create_display_template_for(record, scaffold_base):
     template << contents
     return
 
-def _create_form_template_for(record, scaffold_base):
+def create_form_template_for(record, scaffold_base):
     """
     Create a form template for RECORD.
     """
