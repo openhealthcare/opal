@@ -1,16 +1,7 @@
-import argparse
 import inspect
-import os
-import shutil
-import subprocess
-import sys
 
-from fabric.api import local
 import ffs
-from ffs import nix
 from ffs.contrib import mold
-
-from opal.utils import camelcase_to_underscore
 
 
 def _strip_non_user_fields(schema):
@@ -29,13 +20,19 @@ def _get_template_dir_from_record(record):
     templates = appdir/'templates'
     return templates
 
+def create_template(record, scaffold_base, template_type):
+    """
+        creates a template, either a form or a record depending on type
+    """
+
+    pass
 
 def create_display_template_for(record, scaffold_base):
     """
     Create a display template for RECORD.
     """
     print 'Creating display template for', record
-    name = camelcase_to_underscore(record.__name__)
+    name = record.get_api_name()
 
     # 1. Locate the records template directory
     templates = _get_template_dir_from_record(record)
@@ -57,7 +54,7 @@ def create_form_template_for(record, scaffold_base):
     Create a form template for RECORD.
     """
     print 'Creating modal template for', record
-    name = camelcase_to_underscore(record.__name__)
+    name = record.get_api_name()
 
     templates = _get_template_dir_from_record(record)
     forms = templates/'forms'
