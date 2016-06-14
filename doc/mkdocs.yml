@@ -60,3 +60,6 @@ include_next_prev: false
 
 extra:
   version: v0.7.0
+
+markdown_extensions:
+    - fenced_code

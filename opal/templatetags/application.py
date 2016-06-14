@@ -19,7 +19,7 @@ def application_menuitems():
 def core_javascripts(namespace):
     def scripts():
         app = application.get_app()
-        for javascript in app.core_javascripts[namespace]:
+        for javascript in app.get_core_javascripts(namespace):
             yield javascript
     return dict(javascripts=scripts)
 
@@ -27,7 +27,7 @@ def core_javascripts(namespace):
 def application_javascripts():
     def scripts():
         app = application.get_app()
-        for javascript in app.javascripts:
+        for javascript in app.get_javascripts():
             yield javascript
     return dict(javascripts=scripts)
 
@@ -35,7 +35,7 @@ def application_javascripts():
 def application_stylesheets():
     def styles():
         app = application.get_app()
-        for style in app.styles:
+        for style in app.get_styles():
             yield style
     return dict(styles=styles)
 
