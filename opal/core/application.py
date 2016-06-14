@@ -116,6 +116,20 @@ class OpalApplication(object):
     ]
 
     @classmethod
+    def get_core_javascripts(klass, namespace):
+        """
+        Return core javascripts for a given NAMESPACE
+        """
+        return klass.core_javascripts[namespace]
+
+    @classmethod
+    def get_javascripts(klass):
+        """
+        Return the javascripts for our application
+        """
+        return klass.javascripts
+
+    @classmethod
     def get_menu_items(klass):
         """
         Default implementation of get_menu_items()
@@ -124,6 +138,14 @@ class OpalApplication(object):
         which is itself set to [] by default.
         """
         return klass.menuitems
+
+    @classmethod
+    def get_styles(klass):
+        """
+        Return the stylesheets for our application
+        """
+        return klass.styles
+
 
 
 def get_app():
