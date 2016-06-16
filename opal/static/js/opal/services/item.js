@@ -1,5 +1,5 @@
 angular.module('opal.services')
-    .factory('Item', function($http, $q, FieldTranslater) {
+    .factory('Item', function($http, $q, $injector, FieldTranslater) {
         return function(attrs, episode, columnSchema) {
 	        var item = this;
           this.episode =  episode;
@@ -12,8 +12,12 @@ angular.module('opal.services')
                     delete item[field.name];
                 });
 
-              var toUpdate = FieldTranslater.subRecordToJs(attrs, columnSchema.name);
-              angular.extend(item, toUpdate);
+                var toUpdate = FieldTranslater.subRecordToJs(attrs, columnSchema.name);
+                angular.extend(item, toUpdate);
+                if(columnSchema.angular_service){
+                    var serv = $injector.get(columnSchema.angular_service);
+                    serv(item);
+                }
 	        };
 
 	        this.columnName = columnSchema.name;
