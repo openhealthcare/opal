@@ -2,7 +2,9 @@
 
 ** Episode Categories**
 
-Refactors EpisodeCategory to be a discoverable feature. Renames `Episode.category` -> `Episode.category_name`.
+Refactors EpisodeCategory to be a discoverable feature.
+
+Renames `Episode.category` -> `Episode.category_name`.
 
 ** Episode JSON API**
 
