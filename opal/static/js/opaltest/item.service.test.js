@@ -4,7 +4,11 @@ describe('services', function() {
     var columns, episodeData, options, records, list_schema, mockWindow, $rootScope;
 
     beforeEach(function() {
-        module('opal.services');
+        module('opal.services', function($provide){
+            $provide.service('Demographics', function(){
+                return function(x){ return x };
+            });
+        });
 
         columns = {
             "fields": {
@@ -15,7 +19,8 @@ describe('services', function() {
                         {name: 'name', type: 'string'},
                         {name: 'date_of_birth', type: 'date'},
                         {name: 'created', type: 'date_time'},
-                    ]
+                    ],
+                    angular_service: 'Demographics'
                 },
                 "diagnosis": {
                     name: "diagnosis",

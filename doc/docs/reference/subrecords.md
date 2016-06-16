@@ -5,6 +5,17 @@ base classes `opal.models.PatientSubrecord` or `opal.models.EpisodeSubrecord`
 
 ### Properties
 
+#### Subrecord._angular_service
+
+Name of the Angular service you would like to use to customise the initialization of this
+subrecord in the javascript layer.
+
+```python
+
+class Demographics(PatientSubrecord):
+    _angular_service = 'Demographics'
+````
+
 #### Subrecord._icon
 
 String that provides the name of the icon to use for forms, column headings etc.
@@ -58,7 +69,7 @@ String we would like to use for user-facing display of this record type.
 
 #### Subrecord._clonable
 
-A Boolean that is True by default used by `opal.views.EpisodeCopyToCategoryView` 
+A Boolean that is True by default used by `opal.views.EpisodeCopyToCategoryView`
 to determine if instances of this record should be copied across.
 
     class Antimicrobial(EpisodeSubrecord):
