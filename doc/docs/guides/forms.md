@@ -24,6 +24,14 @@ paths based on the context in which they are called:
     modals/{episode_type}/{record_name}_modal.html
     modals/{record_name}_modal.html
 
+
+### Subrecord's Form Controllers
+Subrecords can set a custom service, this is a function allowing you to override defaults. Without it everything will just work but if you need custom form logic use [a custom angular service](subrecords.md) to override the formController attribute.
+
+Custom form controllers can use the preSave(itemToBeSaved) hook to
+add their own custom logic before the item is saved
+
+
 ### Autogenerating forms
 
 The `opal` commandline tool has a scaffold command, which will autogenerate missing form templates
