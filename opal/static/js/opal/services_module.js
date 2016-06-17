@@ -3,8 +3,11 @@ var CATEGORIES = [
     'Inepisode', 'Review', 'Followup', 'Transferred', 'Discharged', 'Deceased'
 ];
 
+var records = OPAL.module('opal.records', [])
+
 var services = OPAL.module('opal.services', [
-    'ngResource', 
+    'ngResource',
     'ngRoute',
-    'ui.bootstrap'
+    'ui.bootstrap',
+    'opal.records'
 ]);
