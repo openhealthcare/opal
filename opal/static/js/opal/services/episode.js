@@ -79,8 +79,6 @@ angular.module('opal.services')
             }
 
 	        this.newItem = function(columnName, opts) {
-                var column;
-
                 if(!opts){ opts = {}; }
 
                 if(!opts.column){
@@ -88,45 +86,6 @@ angular.module('opal.services')
                 }
 
 	            var attrs = {};
-                //
-	            // TODO: don't hardcode this
-                //
-                // TODO: For serious, this is a bad place for these to go.
-                //
-	            if (columnName == 'microbiology_test') {
-		            attrs.date_ordered = moment().format(DATE_FORMAT);
-	            }
-	            if (columnName == 'general_note') {
-		            attrs.date = moment().format(DATE_FORMAT);
-	            }
-	            if (columnName == 'diagnosis') {
-		            attrs.date_of_diagnosis = moment().format(DATE_FORMAT);
-	            }
-                if (columnName == 'microbiology_input'){
-                    attrs.initials = $window.initials;
-                    attrs.when = moment(new Date()).format(DATE_FORMAT);
-                }
-                if (columnName == 'observation'){
-                    attrs.datetime = new Date();
-                }
-                if (columnName == 'line'){
-                    attrs.insertion_date = moment().format(DATE_FORMAT);
-                }
-                if (columnName == 'opat_review'){
-                    attrs.initials = window.initials;
-                    attrs.datetime = new Date();
-                }
-                if (columnName == 'opat_line_assessment'){
-                    attrs.assessment_date = moment().format(DATE_FORMAT);
-                }
-                //
-                // That's right, it gets worse!
-                //
-                if(columnName == 'antimicrobial'){
-                    if($routeParams.slug && $routeParams.slug.indexOf('walkin') === 0){
-                        attrs.start_date = moment().format(DATE_FORMAT);
-                    }
-                }
 	            return new Item(attrs, episode, opts.column);
 	        };
 
