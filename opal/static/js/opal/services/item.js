@@ -3,6 +3,7 @@ angular.module('opal.services')
         return function(attrs, episode, columnSchema) {
 	        var item = this;
           this.episode =  episode;
+          this.formController = 'EditItemCtrl';
 
 	        this.initialise = function(attrs) {
 	            // Copy all attributes to item, and change any date fields to Date objects
@@ -20,17 +21,18 @@ angular.module('opal.services')
                 }
 	        };
 
+
 	        this.columnName = columnSchema.name;
-            this.sort = columnSchema.sort;
-            this.size = columnSchema.modal_size;
+          this.sort = columnSchema.sort;
+          this.size = columnSchema.modal_size;
 
-            this.isSingleton = function(){
-                return columnSchema.single
-            };
+          this.isSingleton = function(){
+              return columnSchema.single
+          };
 
-            this.isReadOnly = function(){
-                return columnSchema.readOnly;
-            };
+          this.isReadOnly = function(){
+              return columnSchema.readOnly;
+          };
 
             //
             // Returns a clone of the editable fields + consistency token so that
