@@ -229,34 +229,6 @@ describe('Episode', function() {
         });
     });
 
-    describe('newItem()', function() {
-        var TODAY = moment(moment().format('YYYY-MM-DD')).toDate()
-
-        it('should set defaults for micro_test', function() {
-            expect(episode.newItem('microbiology_test').date_ordered.toDate()).toEqual(TODAY);
-        });
-
-        it('should set defaults for general_note', function() {
-            expect(episode.newItem('general_note').date.toDate()).toEqual(TODAY);
-        });
-
-        it('should set defaults for micro input', function() {
-            $window.initials = 'DM';
-            expect(episode.newItem('microbiology_input').initials).toEqual('DM');
-        });
-
-        it('should set defaults for walkin antimicrobials', function() {
-            delete $routeParams.slug;
-            expect(episode.newItem('antimicrobial').start_date).toBe(undefined);
-        });
-
-        it('should not set defaults if there is no slug', function() {
-            $routeParams.slug = 'walkin-walkin_doctor';
-            expect(episode.newItem('antimicrobial').start_date.toDate()).toEqual(TODAY);
-        });
-
-    });
-
     describe('communicating with server', function (){
         var $httpBackend, episode;
 
