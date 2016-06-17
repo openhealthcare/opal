@@ -170,6 +170,50 @@ class OptionsViewSet(viewsets.ViewSet):
         return Response(data)
 
 
+class ReferenceDataViewSet(viewsets.ViewSet):
+    """
+    API for referencedata
+    """
+    base_name = 'referencedata'
+
+    def list(self, request):
+        data = {}
+        subclasses = LookupList.__subclasses__()
+        for model in subclasses:
+            options = list(model.objects.all().values_list("name", flat=True))
+            data[model.get_api_name()] = options
+
+        model_to_ct = ContentType.objects.get_for_models(
+            *subclasses
+        )
+
+        for model, ct in model_to_ct.iteritems():
+            synonyms = Synonym.objects.filter(content_type=ct).values_list(
+                "name", flat=True
+            )
+            data[model.get_api_name()].extend(synonyms)
+
+        for name in data:
+            data[name].sort()
+        return Response(data)
+
+    def retrieve(self, request, pk=None):
+        the_list = None
+        for lookuplist in LookupList.__subclasses__():
+            if lookuplist.get_api_name() == pk:
+                the_list = lookuplist
+                break
+        if the_list:
+            values = list(the_list.objects.all().values_list('name', flat=True))
+            ct = ContentType.objects.get_for_model(the_list)
+            synonyms = Synonym.objects.filter(content_type=ct).values_list(
+                'name', flat=True
+            )
+            values += list(synonyms)
+            return Response(values)
+
+        return Response({'error': 'Item does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
 class SubrecordViewSet(viewsets.ViewSet):
     """
     This is the base viewset for our subrecords.
@@ -370,11 +414,13 @@ router.register('patient', PatientViewSet)
 router.register('episode', EpisodeViewSet)
 router.register('record', RecordViewSet)
 router.register('extract-schema', ExtractSchemaViewSet)
-router.register('options', OptionsViewSet)
 router.register('userprofile', UserProfileViewSet)
 router.register('tagging', TaggingViewSet)
 router.register('patientlist', PatientListViewSet)
 router.register('patientrecordaccess', PatientRecordAccessViewSet)
+
+router.register('options', OptionsViewSet)
+router.register('referencedata', ReferenceDataViewSet)
 
 for subrecord in subrecords():
     sub_name = camelcase_to_underscore(subrecord.__name__)

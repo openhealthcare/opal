@@ -138,6 +138,42 @@ class OptionTestCase(TestCase):
         self.assertEqual(expected, result['tags'])
 
 
+class ReferenceDataViewSetTestCase(OpalTestCase):
+
+    def setUp(self):
+        self.top = Hat.objects.create(name="top")
+        self.bowler = Hat.objects.create(name="bowler")
+        self.synonym_name = "high"
+        self.user = User.objects.create(username='testuser')
+        content_type = ContentType.objects.get_for_model(Hat)
+        models.Synonym.objects.get_or_create(
+            content_type=content_type,
+            object_id=self.top.id,
+            name=self.synonym_name
+        )
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        self.request = mock_request
+        self.viewset = api.ReferenceDataViewSet()
+        self.viewset.request = mock_request
+
+    def test_list(self):
+        self.response = self.viewset.list(self.request)
+        result = self.response.data
+        self.assertIn("hat", result)
+        self.assertEqual(set(result["hat"]), {"top", "bowler", "high"})
+        self.assertEqual(self.response.status_code, 200)
+
+    def test_get(self):
+        response = self.viewset.retrieve(self.request, pk='hat')
+        self.assertEqual(set(response.data), {"top", "bowler", "high"})
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_does_not_exist(self):
+        response = self.viewset.retrieve(self.request, pk='notalookuplist')
+        self.assertEqual(response.status_code, 404)
+
+
 class SubrecordTestCase(TestCase):
 
     def setUp(self):
