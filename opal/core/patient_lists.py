@@ -2,7 +2,7 @@
 This module defines the base PatientList classes.
 """
 from opal import utils
-from opal.core import discoverable, exceptions
+from opal.core import discoverable, exceptions, metadata
 
 
 class PatientList(discoverable.DiscoverableFeature,
@@ -117,3 +117,69 @@ class TaggedPatientList(PatientList, utils.AbstractBase):
         if hasattr(self, 'subtag'):
             possible.append("{0}.{1}".format(self.tag, self.subtag))
         return possible
+
+
+class FirstListMetadata(metadata.Metadata):
+    slug = 'first_list_slug'
+
+    @classmethod
+    def to_dict(klass, user=None, **kw):
+        return {
+            klass.slug: next(PatientList.for_user(user)).get_slug()
+        }
+
+
+class TaggedPatientListMetadata(metadata.Metadata):
+    slug = 'tagging'
+
+    @classmethod
+    def to_dict(klass, user=None, **kw):
+        data = {}
+        tag_visible_in_list = []
+        tag_direct_add = []
+        tag_display = {}
+        tag_slugs = {}
+        tag_list = [i for i in TaggedPatientList.for_user(user)]
+
+        if user.is_authenticated():
+            for taglist in tag_list:
+                slug = taglist().get_slug()
+                tag = taglist.tag
+                if hasattr(taglist, 'subtag'):
+                    tag = taglist.subtag
+                tag_display[tag] = taglist.display_name
+                tag_slugs[tag] = slug
+                tag_visible_in_list.append(tag)
+                if taglist.direct_add:
+                    tag_direct_add.append(tag)
+
+        data['tag_display'] = tag_display
+        data['tag_visible_in_list'] = tag_visible_in_list
+        data['tag_direct_add'] = tag_direct_add
+        data['tag_slugs'] = tag_slugs
+        data["tags"] = {}
+
+        for tagging in tag_list:
+            tag = tagging.tag
+            if hasattr(tagging, 'subtag'):
+                tag = tagging.subtag
+
+            direct_add = tagging.direct_add
+            slug = tagging().get_slug()
+            data["tags"][tag] = dict(
+                name=tag,
+                display_name=tagging.display_name,
+                slug=slug,
+                direct_add=direct_add
+            )
+
+            if tag and hasattr(tagging, 'subtag'):
+                data["tags"][tag]["parent_tag"] = tagging.tag
+
+        data["tags"]["mine"] = dict(
+            name="mine",
+            display_name="Mine",
+            slug="mine",
+            direct_add=True,
+        )
+        return data

@@ -12,6 +12,7 @@ from mock import patch, MagicMock
 
 from opal import models
 from opal.tests.models import Colour, PatientColour, HatWearer, Hat
+from opal.core import metadata
 from opal.core.test import OpalTestCase
 from opal.core.views import _build_json_response
 
@@ -172,6 +173,30 @@ class ReferenceDataViewSetTestCase(OpalTestCase):
     def test_get_does_not_exist(self):
         response = self.viewset.retrieve(self.request, pk='notalookuplist')
         self.assertEqual(response.status_code, 404)
+
+
+class MetadataViewSetTestCase(OpalTestCase):
+    def test_list(self):
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        response = api.MetadataViewSet().list(mock_request)
+        self.assertEqual(200, response.status_code)
+        for s in metadata.Metadata.list():
+            for key, value in s.to_dict(user=self.user).items():
+                self.assertEqual(response.data[key], value)
+
+    def test_retrieve(self):
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        response = api.MetadataViewSet().retrieve(mock_request, pk='macros')
+        self.assertEqual(200, response.status_code)
+        self.assertIn('macros', response.data)
+
+    def test_retrieve_nonexistent_metadata(self):
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        response = api.MetadataViewSet().retrieve(mock_request, pk='notarealmetadata')
+        self.assertEqual(404, response.status_code)
 
 
 class SubrecordTestCase(TestCase):
