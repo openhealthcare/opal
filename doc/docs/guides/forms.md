@@ -6,6 +6,31 @@ The editing of records is a key component of any OPAL application. A key pattern
 or create an individual record in a modal containing the form for just that record. OPAL provides
 the Angular Controller `opal.controllers.EditItemCtrl` for doing just this
 
+### Customising the Angular Controller
+
+OPAL uses the `formController` attribute of an `Item` to determine which Angular Controller to use. This
+defaults to `opal.controllers.EditItemCtrl`. Individual Subrecords may customise this by implementing an Angualar record Service
+and overriding the formController attribute.
+
+```python
+# yourapp/models.py
+class Diagnosis(models.Diagnosis):
+    _angular_service = 'Diagnosis'
+```
+
+```js
+// yourapp/static/js/diagnosis.js
+angular.module('opal.records').factory('Diagnosis', function(){
+    return function(record){
+        record.formController = 'MyCustomDiagnosisFormController';
+        return record;
+    }
+});
+
+```
+
+Custom form controllers can use the preSave(itemToBeSaved) hook to add their own custom logic before the item is saved
+
 ### Form and modal templates
 
 Subrecords have `get_form_template()` and `get_modal_template()` methods, which are used for
@@ -23,13 +48,6 @@ paths based on the context in which they are called:
     modals/{list_slug}/{record_name}_modal.html
     modals/{episode_type}/{record_name}_modal.html
     modals/{record_name}_modal.html
-
-
-### Subrecord's Form Controllers
-Subrecords can set a custom service, this is a function allowing you to override defaults. Without it everything will just work but if you need custom form logic use [a custom angular service](subrecords.md) to override the formController attribute.
-
-Custom form controllers can use the preSave(itemToBeSaved) hook to
-add their own custom logic before the item is saved
 
 
 ### Autogenerating forms

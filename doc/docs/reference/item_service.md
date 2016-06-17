@@ -18,4 +18,6 @@ Saves attributes to the server.
 
 #### Item.formController
 
-This is the form controller used by the modal that is opened when you edit this form, allowing custom logic. It should be overridden by [a custom angular service](subrecords.md)
+The Angular controller used by the modal that is opened when you edit this item to allow custom logic.
+
+Defaults to 'EditItemCtrl';
