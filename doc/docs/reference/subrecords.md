@@ -14,7 +14,7 @@ subrecord in the javascript layer.
 
 class Demographics(PatientSubrecord):
     _angular_service = 'Demographics'
-````
+```
 
 #### Subrecord._icon
 
