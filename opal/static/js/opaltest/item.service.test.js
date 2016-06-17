@@ -127,6 +127,10 @@ describe('services', function() {
             expect(item.created.toDate()).toEqual(new Date(2015, 3, 7, 11, 45));
         });
 
+        it('should supply a default formController of editItem', function() {
+            expect(item.formController).toEqual('EditItemCtrl');
+        });
+
         it('should be able to produce copy of attributes', function() {
             expect(item.makeCopy()).toEqual({
                 id: 101,
