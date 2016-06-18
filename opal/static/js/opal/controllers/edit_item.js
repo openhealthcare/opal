@@ -93,10 +93,13 @@ angular.module('opal.controllers').controller(
 
       $scope.saving = false;
 
+      $scope.preSave = function(editing){};
+
 	    $scope.save = function(result) {
             $scope.saving = true;
             ngProgressLite.set(0);
             ngProgressLite.start();
+            $scope.preSave($scope.editing);
 
             to_save = [item.save($scope.editing[item.columnName])];
             if(!angular.equals($scope.the_episode.makeCopy(), $scope.episode)){

@@ -14,6 +14,7 @@ pages:
       - Plugin List: guides/plugins_list.md
       - Data Model: guides/datamodel.md
       - Archetypes: guides/archetypes.md
+      - Angular Models: guides/working_with_data_in_angular.md
       - Flow: guides/flow.md
       - Roles & Permissions: guides/roles_and_permissions.md
       - Tagging: guides/tagging.md
@@ -60,3 +61,6 @@ include_next_prev: false
 
 extra:
   version: v0.7.0
+
+markdown_extensions:
+    - fenced_code

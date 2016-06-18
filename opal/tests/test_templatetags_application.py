@@ -23,12 +23,13 @@ class CoreJavascriptTestCase(OpalTestCase):
     @patch('opal.templatetags.application.application.get_app')
     def test_core_javascripts(self, get_app):
         mock_app = MagicMock(name='Application')
-        mock_app.core_javascripts = {'opal': ['test.js']}
+        mock_app.get_core_javascripts.return_value = ['test.js']
         get_app.return_value = mock_app
 
         result = list(application.core_javascripts('opal')['javascripts']())
 
         self.assertEqual(['test.js'], result)
+        mock_app.get_core_javascripts.assert_called_with('opal')
 
 
 class ApplicationJavascriptTestCase(OpalTestCase):
@@ -36,12 +37,13 @@ class ApplicationJavascriptTestCase(OpalTestCase):
     @patch('opal.templatetags.application.application.get_app')
     def test_core_javascripts(self, get_app):
         mock_app = MagicMock(name='Application')
-        mock_app.javascripts = ['test.js']
+        mock_app.get_javascripts.return_value = ['test.js']
         get_app.return_value = mock_app
 
         result = list(application.application_javascripts()['javascripts']())
 
         self.assertEqual(['test.js'], result)
+        mock_app.get_javascripts.assert_called_with()
 
 
 class ApplicationStylesTestCase(OpalTestCase):
@@ -49,9 +51,10 @@ class ApplicationStylesTestCase(OpalTestCase):
     @patch('opal.templatetags.application.application.get_app')
     def test_core_styles(self, get_app):
         mock_app = MagicMock(name='Application')
-        mock_app.styles = ['test.css']
+        mock_app.get_styles.return_value = ['test.css']
         get_app.return_value = mock_app
 
         result = list(application.application_stylesheets()['styles']())
 
         self.assertEqual(['test.css'], result)
+        mock_app.get_styles.assert_called_with()

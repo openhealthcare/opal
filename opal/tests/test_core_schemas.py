@@ -12,6 +12,7 @@ colour_serialized = dict(
     display_name='Colour',
     single=False,
     advanced_searchable=False,
+    angular_service='Colour',
     fields=[
         {'model': 'Colour',
          'lookup_list': None,

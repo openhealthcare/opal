@@ -20,6 +20,8 @@ def serialize_model(model):
         col['modal_size'] = model._modal
     if hasattr(model, '_read_only'):
         col['readOnly'] = model._read_only
+    if hasattr(model, '_angular_service'):
+        col['angular_service'] = model._angular_service
     return col
 
 
