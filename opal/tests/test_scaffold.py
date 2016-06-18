@@ -22,6 +22,52 @@ class FormRenderTestCase(OpalTestCase):
             '{% load forms %}\n{% input  field="Colour.name"  %}'
         )
 
+    @patch.object(Colour, "build_field_schema")
+    def test_date_render(self, build_field_schema, lshift):
+        build_field_schema.return_value = {
+            'lookup_list': None,
+            'model': 'Colour',
+            'name': 'name',
+            'title': 'Name',
+            'type': 'date'
+        },
+        scaffold_path = ffs.Path(settings.PROJECT_PATH)/'scaffolding'
+        create_form_template_for(Colour, scaffold_path)
+        lshift.assert_called_once_with(
+            '{% load forms %}\n{% datepicker  field="Colour.name"  %}'
+        )
+
+    @patch.object(Colour, "build_field_schema")
+    def test_text_render(self, build_field_schema, lshift):
+        build_field_schema.return_value = {
+            'lookup_list': None,
+            'model': 'Colour',
+            'name': 'name',
+            'title': 'Name',
+            'type': 'text'
+        },
+        scaffold_path = ffs.Path(settings.PROJECT_PATH)/'scaffolding'
+        create_form_template_for(Colour, scaffold_path)
+        lshift.assert_called_once_with(
+            '{% load forms %}\n{% textarea  field="Colour.name"  %}'
+        )
+
+    @patch.object(Colour, "build_field_schema")
+    def test_boolean_render(self, build_field_schema, lshift):
+        build_field_schema.return_value = {
+            'lookup_list': None,
+            'model': 'Colour',
+            'name': 'name',
+            'title': 'Name',
+            'type': 'boolean'
+        },
+        scaffold_path = ffs.Path(settings.PROJECT_PATH)/'scaffolding'
+        create_form_template_for(Colour, scaffold_path)
+        lshift.assert_called_once_with(
+            '{% load forms %}\n{% checkbox  field="Colour.name"  %}'
+        )
+
+
 
 @patch("ffs.Path.__lshift__")
 class RecordRenderTestCase(OpalTestCase):
