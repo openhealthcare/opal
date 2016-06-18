@@ -4,7 +4,7 @@
      {{ f['title'] }}
    {% elif f['type'] == 'date' %}
     [[ item.{{ f['name'] }} | shortDate ]]
-   {% elif f['type'] == 'datetime' %}
+   {% elif f['type'] == 'date_time' %}
     [[ item.{{ f['name'] }} | shortDateTime ]]
    {% else %}
     [[ item.{{ f['name'] }} ]]
