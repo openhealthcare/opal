@@ -20,12 +20,6 @@ def _get_template_dir_from_record(record):
     templates = appdir/'templates'
     return templates
 
-def create_template(record, scaffold_base, template_type):
-    """
-        creates a template, either a form or a record depending on type
-    """
-
-    pass
 
 def create_display_template_for(record, scaffold_base):
     """
