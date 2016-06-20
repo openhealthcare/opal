@@ -107,6 +107,12 @@ describe('PatientListCtrl', function() {
               display_name: 'Mine',
               name: 'mine',
               slug: 'mine'
+            },
+            icu: {
+              direct_add: true,
+              display_name: 'ICU',
+              name: 'icu',
+              slug: 'icu'
           }
         }
     };
