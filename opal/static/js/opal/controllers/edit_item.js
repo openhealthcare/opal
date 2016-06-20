@@ -51,7 +51,7 @@ angular.module('opal.controllers').controller(
 		    $scope.$watch(watchName, function(testName) {
 
           _.each(_.keys($scope.editing[item.columnName]), function(field){
-              if(field !== "test" && field !== "id" && field !== "episode_id" && field !== "consistency_token"){
+              if(field !== "test" && field !== "date_ordered" && field !== "id" && field !== "episode_id" && field !== "consistency_token"){
                 $scope.editing[item.columnName][field] = undefined;
               }
           });
