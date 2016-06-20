@@ -41,7 +41,8 @@ angular.module('opal.controllers').controller(
             $scope.currentTag = tags[0];
             $scope.currentSubTag = tags.length == 2 ? tags[1] : "";
             $scope.tag_display = options.tag_display;
-            $scope.readableTagName = $scope.tag_display[$scope.currentSubTag] || $scope.tag_display[$scope.currentTag]
+            var pertinantTag = $scope.currentSubTag || $scope.currentTag;
+            $scope.readableTagName = options.tags[pertinantTag].display_name;
         }
 
 	    $scope.getVisibleEpisodes = function() {

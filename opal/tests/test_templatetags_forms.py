@@ -4,7 +4,9 @@ Tests for our modal/form helpers
 from django.template import Template, Context
 from django.test import TestCase
 
-from opal.templatetags.forms import process_steps, infer_from_subrecord_field_path
+from opal.templatetags.forms import (
+    process_steps, infer_from_subrecord_field_path, date_of_birth_field
+)
 
 
 class TestInferFromSubrecordPath(TestCase):
@@ -212,3 +214,21 @@ class ProcessStepsTestCase(TestCase):
             show_titles=True
         )
         self.assertEqual(expected, ctx)
+
+
+class DateOfBirthTestCase(TestCase):
+    def test_set_field(self):
+        ctx = date_of_birth_field(model_name="something")
+        self.assertEqual(ctx, dict(model_name="something"))
+
+    def test_default(self):
+        ctx = date_of_birth_field()
+        self.assertEqual(
+            ctx,
+            dict(model_name="editing.demographics.date_of_birth")
+        )
+
+    def test_render(self):
+        tpl = Template('{% load forms %}{% date_of_birth_field %}')
+        rendered = tpl.render(Context({}))
+        self.assertIn("editing.demographics.date_of_birth", rendered)
