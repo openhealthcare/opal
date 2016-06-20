@@ -183,7 +183,12 @@ class UpdatesFromDictMixin(object):
                 'Unexpected fieldname(s): %s' % list(unknown_fields))
 
         for name in fields:
-            value = data.get(name, None)
+            field_type = self._get_field_type(name)
+
+            if field_type == models.fields.related.ManyToManyField:
+                value = data.getlist(name)
+            else:
+                value = data.get(name, None)
 
             if name.endswith('_fk_id'):
                 if name[:-6] in fields:
@@ -199,8 +204,6 @@ class UpdatesFromDictMixin(object):
                 setter(value, user, data)
             else:
                 if name in data:
-                    field_type = self._get_field_type(name)
-
                     if field_type == models.fields.related.ManyToManyField:
                         post_save.append(functools.partial(self.save_many_to_many, name, value, field_type))
                     else:
