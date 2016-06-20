@@ -6,6 +6,11 @@ import sys
 
 from django.conf import settings
 
+PROJECT_PATH = os.path.join(
+    os.path.realpath(os.path.dirname(__file__)), "opal"
+)
+
+
 settings.configure(DEBUG=True,
                    DATABASES={
                        'default': {
@@ -13,6 +18,7 @@ settings.configure(DEBUG=True,
                        }
                    },
                    OPAL_OPTIONS_MODULE = 'opal.tests.dummy_options_module',
+                   PROJECT_PATH=PROJECT_PATH,
                    ROOT_URLCONF='opal.urls',
                    USE_TZ=True,
                    OPAL_EXTRA_APPLICATION='',
