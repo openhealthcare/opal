@@ -2,7 +2,7 @@
 Tests for the OPAL API
 """
 import json
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from django.utils import timezone
 
 from django.contrib.auth.models import User
@@ -553,6 +553,10 @@ class EpisodeTestCase(OpalTestCase):
     def setUp(self):
         self.patient = models.Patient.objects.create()
         self.demographics = self.patient.demographics_set.get()
+
+        # add a date to make sure serialisation works as expected
+        self.demographics.date_of_birth = date(2010, 1, 1)
+        self.demographics.created = datetime.now()
         self.episode = models.Episode.objects.create(patient=self.patient)
         self.user = User.objects.create(username='testuser')
         self.mock_request = MagicMock(name='request')
@@ -560,7 +564,7 @@ class EpisodeTestCase(OpalTestCase):
         self.mock_request.query_params = {}
 
     def test_retrieve_episode(self):
-        response = api.EpisodeViewSet().retrieve(self.mock_request, pk=self.episode.pk).data
+        response = json.loads(api.EpisodeViewSet().retrieve(self.mock_request, pk=self.episode.pk).content)
         expected = json.loads(_build_json_response(self.episode.to_dict(self.user)).content)
         self.assertEqual(expected, response)
 
@@ -591,7 +595,7 @@ class EpisodeTestCase(OpalTestCase):
         response = api.EpisodeViewSet().create(self.mock_request)
         self.assertEqual(201, response.status_code)
         self.assertEqual(2, self.patient.episode_set.count())
-        self.assertEqual(date(2015, 1, 14), response.data['date_of_admission'])
+        self.assertEqual("14/01/2015", json.loads(response.content)['date_of_admission'])
 
     def test_create_new_patient(self):
         pcount = models.Patient.objects.filter(
