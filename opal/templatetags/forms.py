@@ -260,6 +260,11 @@ def icon(name):
     return dict(icon=icon)
 
 
+@register.inclusion_tag('_helpers/date_of_birth_field.html')
+def date_of_birth_field(model_name="editing.demographics.date_of_birth"):
+    return dict(model_name=model_name)
+
+
 @register.inclusion_tag('_helpers/process_steps.html')
 def process_steps(*args, **kwargs):
     """
