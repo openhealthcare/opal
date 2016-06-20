@@ -25,7 +25,7 @@ describe('Metadata', function(){
         });
     });
 
-    fit('should fetch the metadata', function(){
+    it('should fetch the metadata', function(){
         var result
 
         $httpBackend.whenGET('/api/v0.1/metadata/').respond(metadata);

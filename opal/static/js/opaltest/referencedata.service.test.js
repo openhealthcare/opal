@@ -25,7 +25,7 @@ describe('Referencedata', function(){
         });
     });
 
-    fit('should fetch the referencedata', function(){
+    it('should fetch the referencedata', function(){
         var result
 
         $httpBackend.whenGET('/api/v0.1/referencedata/').respond(referencedata);
