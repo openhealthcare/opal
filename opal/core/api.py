@@ -337,7 +337,7 @@ class EpisodeViewSet(viewsets.ViewSet):
         episode.set_tag_names([n for n, v in tagging[0].items() if v], request.user)
         serialised = episode.to_dict(request.user)
 
-        return Response(serialised, status=status.HTTP_201_CREATED)
+        return _build_json_response(serialised, status_code=status.HTTP_201_CREATED)
 
     @episode_from_pk
     def update(self, request, episode):
@@ -349,7 +349,7 @@ class EpisodeViewSet(viewsets.ViewSet):
 
     @episode_from_pk
     def retrieve(self, request, episode):
-        return Response(episode.to_dict(request.user))
+        return _build_json_response(episode.to_dict(request.user))
 
 
 class PatientViewSet(viewsets.ViewSet):

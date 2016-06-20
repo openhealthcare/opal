@@ -257,34 +257,36 @@ describe('EditItemCtrl', function (){
     });
 
     describe('testType', function(){
+        beforeEach(function(){
+          var existingEpisode = new Episode(angular.copy(episodeData));
+
+          // when we prepopulate we should not remove the consistency_token
+          existingEpisode.microbiology_test = [{
+            test: "T brucei Serology",
+            consistency_token: "23423223"
+          }];
+
+          item = new Item(
+              existingEpisode.microbiology_test[0],
+              existingEpisode,
+              columns['default'][4]
+          );
+
+          $scope = $rootScope.$new();
+          controller = $controller('EditItemCtrl', {
+              $scope        : $scope,
+              $cookieStore  : $cookieStore,
+              $timeout      : $timeout,
+              $modalInstance: fakeModalInstance,
+              item          : item,
+              options       : options,
+              profile       : profile,
+              episode       : existingEpisode,
+              ngProgressLite: ngProgressLite,
+          });
+        })
+
         it('should prepopulate microbiology tests', function(){
-            var existingEpisode = new Episode(angular.copy(episodeData));
-
-            // when we prepopulate we should not remove the consistency_token
-            existingEpisode.microbiology_test = [{
-              test: "T brucei Serology",
-              consistency_token: "23423223"
-            }];
-
-            item = new Item(
-                existingEpisode.microbiology_test[0],
-                existingEpisode,
-                columns['default'][4]
-            );
-
-            $scope = $rootScope.$new();
-            controller = $controller('EditItemCtrl', {
-                $scope        : $scope,
-                $cookieStore  : $cookieStore,
-                $timeout      : $timeout,
-                $modalInstance: fakeModalInstance,
-                item          : item,
-                options       : options,
-                profile       : profile,
-                episode       : existingEpisode,
-                ngProgressLite: ngProgressLite,
-            });
-
             $scope.editing.microbiology_test.test = "C diff";
             $scope.$digest();
             expect($scope.editing.microbiology_test.c_difficile_antigen).toEqual("pending");
@@ -294,6 +296,25 @@ describe('EditItemCtrl', function (){
             expect($scope.editing.microbiology_test.c_difficile_antigen).not.toEqual("pending");
             expect($scope.editing.microbiology_test.c_difficile_toxin).not.toEqual("pending");
             expect($scope.editing.microbiology_test.consistency_token).toEqual("23423223");
+        });
+
+        it('should should not clean id, date ordered or episode id', function(){
+            var today = moment().format('DD/MM/YYYY');
+            $scope.editing.microbiology_test.test = "C diff";
+            $scope.$digest();
+            $scope.editing.microbiology_test.c_difficile_antigen = "pending";
+            $scope.editing.microbiology_test.episode_id = 1;
+            $scope.editing.microbiology_test.id = 2;
+            $scope.editing.microbiology_test.date_ordered = today;
+            $scope.editing.microbiology_test.consistency_token = "122112";
+            $scope.editing.microbiology_test.test = "";
+            $scope.$digest();
+
+            expect($scope.editing.microbiology_test.c_difficile_antigen).not.toEqual("pending");
+            expect($scope.editing.microbiology_test.episode_id).toBe(1);
+            expect($scope.editing.microbiology_test.id).toBe(2);
+            expect($scope.editing.microbiology_test.consistency_token).toBe("122112");
+            expect($scope.editing.microbiology_test.date_ordered).toBe(today);
         });
     });
 
