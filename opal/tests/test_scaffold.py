@@ -1,3 +1,6 @@
+"""
+Unittests for opal.core.scaffold
+"""
 from mock import patch
 import ffs
 
@@ -9,6 +12,15 @@ from opal.core.scaffold import (
     create_form_template_for,
     create_display_template_for
 )
+from opal.core import scaffold
+
+class WriteTestCase(OpalTestCase):
+
+    def test_write(self):
+        with patch.object(scaffold, 'sys') as mocksys:
+            mocksys.argv = ['not', 'te$targs']
+            scaffold.write('this')
+            mocksys.stdout.write.assert_called_with('this\n')
 
 
 @patch("ffs.Path.__lshift__")
@@ -66,7 +78,6 @@ class FormRenderTestCase(OpalTestCase):
         lshift.assert_called_once_with(
             '{% load forms %}\n{% checkbox  field="Colour.name"  %}'
         )
-
 
 
 @patch("ffs.Path.__lshift__")

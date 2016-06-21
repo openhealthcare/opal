@@ -1,8 +1,16 @@
+"""
+OPAL scaffolding and code generation
+"""
 import inspect
+import sys
 
 import ffs
 from ffs.contrib import mold
 
+def write(what):
+    if 'runtests.py' in sys.argv:
+        return
+    sys.stdout.write("{0}\n".format(what))
 
 def _strip_non_user_fields(schema):
     exclude = ['created', 'updated', 'created_by_id', 'updated_by_id', 'consistency_token']
@@ -25,7 +33,7 @@ def create_display_template_for(record, scaffold_base):
     """
     Create a display template for RECORD.
     """
-    print 'Creating display template for', record
+    write('Creating display template for {0}'.format(record))
     name = record.get_api_name()
 
     # 1. Locate the records template directory
@@ -47,7 +55,7 @@ def create_form_template_for(record, scaffold_base):
     """
     Create a form template for RECORD.
     """
-    print 'Creating modal template for', record
+    write('Creating modal template for{0}'.format(record))
     name = record.get_api_name()
 
     templates = _get_template_dir_from_record(record)
