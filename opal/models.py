@@ -1607,9 +1607,7 @@ class PatientConsultation(EpisodeSubrecord):
 
     def set_when(self, incoming_value, user, *args, **kwargs):
         if incoming_value:
-            super(PatientConsultation, self).save_datetime(
-                "when", incoming_value
-            )
+            self.save_datetime("when", incoming_value)
         else:
             self.when = datetime.datetime.now()
 
