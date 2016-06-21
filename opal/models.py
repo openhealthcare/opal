@@ -160,6 +160,22 @@ class UpdatesFromDictMixin(object):
         field.add(*to_add)
         field.remove(*to_remove)
 
+    def save_datetime(self, name, value):
+        input_format = settings.DATETIME_INPUT_FORMATS[0]
+        value = timezone.make_aware(datetime.datetime.strptime(
+            value, input_format
+        ), timezone.get_current_timezone())
+        setattr(self, name, value)
+
+    def save_date(self, name, value):
+        input_format = settings.DATE_INPUT_FORMATS[0]
+        dt = datetime.datetime.strptime(
+            value, input_format
+        )
+        dt = timezone.make_aware(dt, timezone.get_current_timezone())
+        value = dt.date()
+        setattr(self, name, value)
+
     def update_from_dict(self, data, user, force=False):
         logging.info("updating {0} with {1} for {2}".format(
             self.__class__.__name__, data, user)
@@ -209,19 +225,11 @@ class UpdatesFromDictMixin(object):
                         post_save.append(functools.partial(self.save_many_to_many, name, value, field_type))
                     else:
                         if value and field_type == models.fields.DateField:
-                            input_format = settings.DATE_INPUT_FORMATS[0]
-                            dt = datetime.datetime.strptime(
-                                value, input_format
-                            )
-                            dt = timezone.make_aware(dt, timezone.get_current_timezone())
-                            value = dt.date()
-                        if value and field_type == models.fields.DateTimeField:
-                            input_format = settings.DATETIME_INPUT_FORMATS[0]
-                            value = timezone.make_aware(datetime.datetime.strptime(
-                                value, input_format
-                            ), timezone.get_current_timezone())
-
-                        setattr(self, name, value)
+                            self.save_date(name, value)
+                        elif value and field_type == models.fields.DateTimeField:
+                            self.save_datetime(name, value)
+                        else:
+                            setattr(self, name, value)
 
         self.set_consistency_token()
         self.save()
@@ -1599,7 +1607,9 @@ class PatientConsultation(EpisodeSubrecord):
 
     def set_when(self, incoming_value, user, *args, **kwargs):
         if incoming_value:
-            self.when = incoming_value
+            super(PatientConsultation, self).save_datetime(
+                "when", incoming_value
+            )
         else:
             self.when = datetime.datetime.now()
 
