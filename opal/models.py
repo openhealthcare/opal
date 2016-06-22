@@ -45,6 +45,7 @@ def deserialize_datetime(value):
     ), timezone.get_current_timezone())
     return value
 
+
 def deserialize_date(value):
     if isinstance(value, datetime.date):
         return value
