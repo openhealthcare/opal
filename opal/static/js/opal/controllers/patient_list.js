@@ -54,11 +54,18 @@ angular.module('opal.controllers').controller(
             });
 
     		    visibleEpisodes.sort(compareEpisodes);
-            if($scope.rows && visibleEpisodes.length == 1){
+
+            if($scope.rows && visibleEpisodes.length){
+              var episodePresent = _.any($scope.visibleEpisodes, function(x){
+                  return x.id === $scope.episode.id;
+              });
+
+              if(!episodePresent){
                 rix = getRowIxFromEpisodeId(visibleEpisodes[0].id);
                 $scope.select_episode(visibleEpisodes[0], rix);
+              }
             }
-		    return visibleEpisodes;
+    		    return visibleEpisodes;
 	    };
 
 	    $scope.rows = $scope.getVisibleEpisodes();
@@ -249,11 +256,11 @@ angular.module('opal.controllers').controller(
         $scope._post_discharge = function(result, episode){
     			$rootScope.state = 'normal';
     			if (result == 'discharged' | result == 'moved') {
-                  delete $scope.episodes[episode.id];
-    				$scope.rows = $scope.getVisibleEpisodes();
-                  $scope.num_episodes -= 1;
-                  $scope.rix = 0;
-                  $scope.episode = $scope.rows[0];
+            delete $scope.episodes[episode.id];
+            $scope.rows = $scope.getVisibleEpisodes();
+            $scope.num_episodes -= 1;
+            $scope.rix = 0;
+            $scope.episode = $scope.rows[0];
     			};
         };
 
@@ -347,9 +354,7 @@ angular.module('opal.controllers').controller(
 	    };
 
         $scope.select_episode = function(episode, rix){
-            if(rix == $scope.rix){
-                return true;
-            }else{
+            if(rix !== $scope.rix){
                 $scope.episode = episode;
                 $scope.rix = rix;
             }
