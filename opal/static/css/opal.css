@@ -316,11 +316,12 @@ i.delete,
   display:none
 }
 
-.touchevents .panel-heading i,
+.touchevents .panel-heading i.edit,
+.touchevents .panel-heading i.delete,
 .panel-heading:hover i.edit,
 .list-group-item:hover i.edit,
 .list-group-item:hover i.delete{
-  display: block;
+  display: inline-block;
 }
 
 @media(max-width: 800px){
