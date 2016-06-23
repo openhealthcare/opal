@@ -257,7 +257,7 @@ directives.directive("dateOfBirth", function(){
             return false;
         }
 
- 	var now = moment();
+       	var now = moment();
 
         // I wasn't born yesterday, don't let people be born tomorrow
         if(inputMoment.isAfter(now)){
@@ -275,6 +275,9 @@ directives.directive("dateOfBirth", function(){
         else{
             if(ngModel.$modelValue){
                 scope.value = moment(ngModel.$modelValue).format("DD/MM/YYYY");
+            }
+            else{
+                scope.value = undefined;
             }
         }
       };
