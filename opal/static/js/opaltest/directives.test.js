@@ -129,6 +129,13 @@ describe('OPAL Directives', function(){
             expect(testScope.value).toBe(undefined);
         });
 
+        it('it should reset the value when changed', function(){
+            expect(testScope.value).toEqual("10/12/1999");
+            scope.editing.date_of_birth = undefined;
+            scope.$apply();
+            expect(testScope.value).toBe(undefined);
+        });
+
         it('should change inputs to moments', function(){
             testScope.value = "11/01/2000";
             testScope.onChange();
