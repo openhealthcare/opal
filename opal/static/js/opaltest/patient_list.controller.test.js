@@ -1,8 +1,8 @@
 describe('PatientListCtrl', function() {
     "use strict";
     var episodeData, episodeData2, optionsData, patientData, Schema;
-    var schema, Episode, Item, episode;
-    var profile;
+    var schema, Episode, Item, episode, episodeVisibility;
+    var profile, episode2;
     var $scope, $cookieStore, $controller, $q, $dialog, $httpBackend;
     var $location, $routeParams, $http;
     var Flow;
@@ -130,9 +130,9 @@ describe('PatientListCtrl', function() {
         success: jasmine.createSpy()
     }
 
-    beforeEach(module('opal.controllers', function($provide) {
+    beforeEach(module('opal.controllers'), function($provide) {
         $provide.value('UserProfile', function(){ return profile; });
-    }));
+    });
 
     beforeEach(inject(function($injector){
         Schema   = $injector.get('Schema');
@@ -149,13 +149,18 @@ describe('PatientListCtrl', function() {
         $httpBackend = $injector.get('$httpBackend');
         $location    = $injector.get('$location');
         Flow         = $injector.get('Flow');
+        episodeVisibility = $injector.get('episodeVisibility');
 
         schema = new Schema(columns.default);
         $rootScope.fields = fields;
 
         episodeData2 = angular.copy(episodeData);
         episodeData2.id = 124;
-        episode = new Episode(episodeData)
+        episodeData2.demographics[0].first_name = "Suzanne";
+        episodeData2.demographics[0].surname = "Vega";
+
+        episode = new Episode(episodeData);
+        episode2 = new Episode(episodeData2);
 
         var deferred = $q.defer();
         deferred.resolve();
@@ -166,6 +171,7 @@ describe('PatientListCtrl', function() {
         spyOn($cookieStore, 'put').and.callThrough();
 
         episodedata = {status: 'success', data: {123: episode} };
+        episodeVisibility = jasmine.createSpy().and.callFake(episodeVisibility);
 
         options = optionsData;
         $routeParams.slug = 'tropical';
@@ -186,7 +192,8 @@ describe('PatientListCtrl', function() {
                 episodedata   : episodedata,
                 profile       : profile,
                 options       : options,
-                viewDischarged: false
+                viewDischarged: false,
+                episodeVisibility: episodeVisibility
             });
         }
 
@@ -310,7 +317,80 @@ describe('PatientListCtrl', function() {
             $rootScope.$apply();
             expect($scope.getVisibleEpisodes).toHaveBeenCalledWith()
         });
+    });
 
+    describe('get visible episodes', function(){
+        var episodeData3;
+
+        beforeEach(function(){
+          $scope.episodes[episode.id] = episode;
+          $scope.episodes[episode2.id] = episode2;
+          episodeData3 = angular.copy(episodeData2);
+          episodeData3.id = 125;
+          episodeData3.demographics[0].first_name = "Suzy";
+          episodeData3.demographics[0].surname = "Vega";
+
+          $scope.episodes[episodeData3.id] = new Episode(episodeData3);
+
+          $scope.rows = [
+            episode,
+            episode2,
+            $scope.episodes[episodeData3.id]
+          ];
+
+          $scope.episode = episode;
+        });
+
+
+        it('should select the only available episode if filtered to one', function(){
+            /*
+            so if episode visibility filters out all but one response
+            we expect that episode to now be selected
+            */
+            expect($scope.episode.id).toEqual(episodeData.id);
+
+            episodeVisibility.and.callFake(function(episode){
+                return episode.id === episode2.id || episode.id === episodeData3.id;
+            });
+
+            $scope.getVisibleEpisodes();
+
+            expect($scope.episode.id).toBe(episode2.id);
+        });
+
+        it('should maintain the same episode if its still present', function(){
+            /*
+            so if episode visibility does not filter
+            anything out, we expect the in scope episode to
+            be the same
+            */
+            expect($scope.episode.id).toEqual(episodeData.id);
+
+            episodeVisibility.and.callFake(function(episode){
+                return true;
+            });
+
+            $scope.getVisibleEpisodes();
+
+            expect($scope.episode.id).toBe(episode.id);
+        });
+
+        it('if no episodes are available, keep using the last selected one', function(){
+            /*
+            so if episode visibility does not filter
+            anything out, we expect the in scope episode to
+            be the same
+            */
+            expect($scope.episode.id).toEqual(episodeData.id);
+
+            episodeVisibility.and.callFake(function(episode){
+                return false;
+            });
+
+            $scope.getVisibleEpisodes();
+
+            expect($scope.episode.id).toBe(episode.id);
+        });
     });
 
     describe('keydown watch', function() {
@@ -364,7 +444,6 @@ describe('PatientListCtrl', function() {
         });
 
     });
-
 
     describe('adding an episode', function() {
         var fake_episode_resolver = function(){
@@ -488,12 +567,20 @@ describe('PatientListCtrl', function() {
                  * reselect the first episode available when we discharge
                  */
                 spyOn($scope, 'select_episode');
-                $scope.episodes[episodeData2.id] = new Episode( episodeData2 );
+
+                $scope.episodes[episodeData.id] = episode;
+                $scope.episodes[episodeData2.id] = episode2;
+                $scope.rows = [
+                  $scope.episodes[episode.id],
+                  $scope.episodes[episode2.id]
+                ];
                 $scope._post_discharge('discharged', episode);
                 var first_name = $scope.select_episode.calls.allArgs()[0][0].demographics[0].first_name;
                 var surname = $scope.select_episode.calls.allArgs()[0][0].demographics[0].surname;
-                expect(first_name).toEqual("John");
-                expect(surname).toEqual("Smith");
+                var expectedFirstName = episode2.demographics[0].first_name;
+                var expectedSurname = episode2.demographics[0].surname;
+                expect(first_name).toEqual(expectedFirstName);
+                expect(surname).toEqual(expectedSurname);
             });
         });
 
