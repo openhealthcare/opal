@@ -71,9 +71,10 @@ class OptionTestCase(TestCase):
         mock_request = MagicMock(name='mock request')
         mock_request.user = self.user
         request = mock_request
-        viewset = api.OptionsViewSet()
-        viewset.request = mock_request
-        self.response = viewset.list(request)
+        self.request = request
+        self.viewset = api.OptionsViewSet()
+        self.viewset.request = mock_request
+        self.response = self.viewset.list(request)
 
     def test_options_loader(self):
         result = self.response.data
@@ -84,6 +85,16 @@ class OptionTestCase(TestCase):
     def test_first_list_slug(self):
         result = self.response.data
         self.assertEqual('carnivore', result['first_list_slug'])
+
+    def test_first_list_slug_no_lists(self):
+        def nongen():
+            for x in range(0, 0):
+                yield x
+
+        with patch.object(api.PatientList, 'for_user') as for_user:
+            for_user.return_value = nongen()
+            result = self.viewset.list(self.request).data
+            self.assertEqual('', result['first_list_slug'])
 
     def test_tag_display(self):
         result = self.response.data

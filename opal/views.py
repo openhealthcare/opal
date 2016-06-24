@@ -78,6 +78,7 @@ class PatientListTemplateView(TemplateView):
         if self.patient_list:
             list_slug = self.patient_list.get_slug()
         context['list_slug'] = list_slug
+        context['patient_list'] = self.patient_list
         context['lists'] = PatientList.for_user(self.request.user)
         context['columns'] = self.get_column_context(**kwargs)
         return context
