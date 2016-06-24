@@ -161,9 +161,14 @@ class OptionsViewSet(viewsets.ViewSet):
             direct_add=True,
         )
 
-        data['first_list_slug'] = next(
-            PatientList.for_user(self.request.user)
-        ).get_slug()
+        try:
+            first_list_slug = next(
+                PatientList.for_user(self.request.user)
+            ).get_slug()
+        except StopIteration: # There are no PatientLists for this user
+            first_list_slug = ''
+
+        data['first_list_slug'] = first_list_slug
 
         data['macros'] = Macro.to_dict()
 
