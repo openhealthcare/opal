@@ -35,20 +35,16 @@ def get_default_episode_type():
     return app.default_episode_category
 
 
-# Maybe these belong in a serializers place of their own?
 def deserialize_datetime(value):
-    if isinstance(value, datetime.datetime):
-        return value
     input_format = settings.DATETIME_INPUT_FORMATS[0]
     value = timezone.make_aware(datetime.datetime.strptime(
         value, input_format
     ), timezone.get_current_timezone())
+
     return value
 
 
 def deserialize_date(value):
-    if isinstance(value, datetime.date):
-        return value
     input_format = settings.DATE_INPUT_FORMATS[0]
     dt = datetime.datetime.strptime(
         value, input_format

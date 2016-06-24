@@ -203,7 +203,6 @@ class SubrecordTestCase(OpalTestCase):
         expected_start = '2016-02-11T20:30:10'
         self.assertEqual(start, expected_start)
 
-
     def test_display_template_does_not_exist(self):
         self.assertEqual(None, Subrecord.get_display_template())
 
