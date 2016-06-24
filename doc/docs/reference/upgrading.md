@@ -84,8 +84,53 @@ class RespiratoryList(patient_lists.TaggedPatientList):
     schema       = [models.Demographics, models.Treatment]
 ```
 
+The schema property will likely be available to you in your application's `schema.py`
+file - which is now obsolete.
+
 See the [full patient list documentation](../guides/list_views.md) for further details
 of the options available for Patient Lists.
+
+#### Form and Display templates.
+
+We may now be missing some form or display templates, as your application may be
+relying on templates previously in OPAL. To discover which these are, run
+
+    $ opal scaffold --dry-run
+
+Modal templates already in your application will likely be referencing invalid paths
+to their Angular variables. You should update these to include the record name - for example:
+
+```html
+<!-- Was -->
+{% input  label="Drug" model="editing.drug" lookuplist="antimicrobial_list" %}
+<!-- Becomes -->
+{% input  label="Drug" model="editing.treatment.drug" lookuplist="antimicrobial_list" %}
+```
+
+#### Update Date formats
+
+The default date formats in OPAL have changed - and so you should update your `DATE_X`
+settings to match:
+
+```python
+DATE_FORMAT = 'd/m/Y'
+DATE_INPUT_FORMATS = ['%d/%m/%Y']
+DATETIME_FORMAT = 'd/m/Y H:i:s'
+DATETIME_INPUT_FORMATS = ['%d/%m/%Y %H:%M:%S']
+```
+
+#### The Inpatient episode category
+
+The default Episode Category - Inpatient episodes has updated it's database identifier
+from `inpatient` to `Inpatient`. To update your episodes run :
+
+```python
+>>> from opal.models import Episode
+>>> for e in Episode.objects.filter(category='inpatient'):
+...   e.category='Inpatient'
+...   e.save()
+...
+```
 
 ### 4.X -> 5.x
 
