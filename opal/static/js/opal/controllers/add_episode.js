@@ -35,7 +35,7 @@ angular.module('opal.controllers')
         $scope.editing.tagging = [$scope.tagService.toSave()];
         var toSave = FieldTranslater.jsToPatient($scope.editing)
 
-		    $http.post('episode/', toSave).success(function(episode) {
+		    $http.post('/api/v0.1/episode/', toSave).success(function(episode) {
 			    episode = new Episode(episode);
 			    $modalInstance.close(episode);
 		    });

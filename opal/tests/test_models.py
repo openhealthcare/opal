@@ -10,10 +10,15 @@ from django.utils import timezone
 
 from opal import models
 from opal.core import exceptions
-from opal.models import Subrecord, Tagging, Team, Patient, InpatientAdmission
+from opal.models import (
+    Subrecord, Tagging, Team, Patient, InpatientAdmission, Symptom,
+    SymptomComplex
+)
 from opal.core.test import OpalTestCase
 import opal.tests.test_patient_lists # To make sure test tagged lists are pulled in
-from opal.tests.models import FamousLastWords, PatientColour, ExternalSubRecord
+from opal.tests.models import (
+    FamousLastWords, PatientColour, ExternalSubRecord, SymptomComplex, PatientConsultation
+)
 
 class PatientRecordAccessTestCase(OpalTestCase):
 
@@ -30,10 +35,18 @@ class PatientRecordAccessTestCase(OpalTestCase):
 
 class PatientTestCase(OpalTestCase):
 
+    @patch("opal.models.application.get_app")
+    def test_created_with_the_default_episode(self, get_app):
+        test_app = MagicMock()
+        test_app.default_episode_category ="testcategory"
+        get_app.return_value = test_app
+        _, episode = self.new_patient_and_episode_please()
+        self.assertEqual(episode.category_name, "testcategory")
+
     def test_create_episode_category(self):
         patient = models.Patient.objects.create()
-        e = patient.create_episode(category='testcategory')
-        self.assertEqual('testcategory', e.category)
+        e = patient.create_episode(category_name='testcategory')
+        self.assertEqual('testcategory', e.category_name)
 
     def test_bulk_update_patient_subrecords(self):
         original_patient = models.Patient()
@@ -105,6 +118,24 @@ class PatientTestCase(OpalTestCase):
 
         with self.assertRaises(ValueError):
             original_patient.bulk_update(d, self.user)
+
+    def test_bulk_update_tagging_ignored(self):
+        original_patient = models.Patient()
+        original_patient.save()
+
+        d = {
+            "demographics": [{
+                "first_name": "Samantha",
+                "surname": "Sun",
+                "hospital_number": "123312"
+            }],
+            "tagging": [
+                {"id": 1},
+            ]
+        }
+        original_patient.bulk_update(d, self.user)
+        episode = original_patient.episode_set.first()
+        self.assertEqual(list(episode.get_tag_names(self.user)), [])
 
     def test_bulk_update_episode_subrecords_without_episode(self):
         original_patient = models.Patient()
@@ -225,6 +256,10 @@ class SubrecordTestCase(OpalTestCase):
     def test_form_template(self, find):
         Subrecord.get_form_template()
         find.assert_called_with(['forms/subrecord_form.html'])
+
+    def test_get_form_url(self):
+        url = Subrecord.get_form_url()
+        self.assertEqual(url, '/templates/forms/subrecord.html')
 
     @patch('opal.models.find_template')
     def test_form_template_list(self, find):
@@ -509,6 +544,84 @@ class InpatientAdmissionTestCase(OpalTestCase):
         self.assertEqual(
             results[1].datetime_of_admission.date(),
             datetime.date.today()
+        )
+
+
+class PatientConsultationTestCase(OpalTestCase):
+    def setUp(self):
+        _, self.episode = self.new_patient_and_episode_please()
+        self.patient_consultation = PatientConsultation.objects.create(
+            episode_id=self.episode.id
+        )
+
+    def test_if_when_is_set(self):
+        when = datetime.datetime(2012, 10, 10)
+        patient_consultation_dict = dict(
+            when=when,
+        )
+
+        self.patient_consultation.update_from_dict(patient_consultation_dict, self.user)
+        patient_consultation = self.episode.patientconsultation_set.first()
+        self.assertEqual(patient_consultation.when.year, when.year)
+        self.assertEqual(patient_consultation.when.month, when.month)
+        self.assertEqual(patient_consultation.when.day, when.day)
+
+    def test_if_when_is_not_set(self):
+        now = timezone.now()
+        patient_consultation_dict = dict()
+        self.patient_consultation.update_from_dict(patient_consultation_dict, self.user)
+        patient_consultation = self.episode.patientconsultation_set.first()
+        self.assertTrue(patient_consultation.when >= now)
+
+
+class SymptomComplexTestCase(OpalTestCase):
+    def setUp(self):
+        self.patient, self.episode = self.new_patient_and_episode_please()
+        super(SymptomComplexTestCase, self).setUp()
+        self.symptom_1 = Symptom.objects.create(name="tiredness")
+        self.symptom_2 = Symptom.objects.create(name="alertness")
+        self.symptom_3 = Symptom.objects.create(name="apathy")
+        self.symptom_complex = SymptomComplex.objects.create(
+            duration="a week",
+            details="information",
+            consistency_token=1111,
+            episode=self.episode
+        )
+        self.symptom_complex.symptoms.add(self.symptom_2, self.symptom_3)
+
+    def test_to_dict(self):
+        expected_data = dict(
+            id=self.symptom_complex.id,
+            consistency_token=self.symptom_complex.consistency_token,
+            symptoms=["alertness", "apathy"],
+            duration="a week",
+            details="information",
+            episode_id=1,
+            updated=None,
+            updated_by_id=None,
+            created=None,
+            created_by_id=None
+        )
+        self.assertEqual(
+            expected_data, self.symptom_complex.to_dict(self.user)
+        )
+
+    def test_update_from_dict(self):
+        data = {
+            u'consistency_token': self.symptom_complex.consistency_token,
+            u'id': self.symptom_complex.id,
+            u'symptoms': [u'alertness', u'tiredness'],
+            u'duration': 'a month',
+            u'details': 'other information'
+        }
+        self.symptom_complex.update_from_dict(data, self.user)
+        new_symptoms = self.symptom_complex.symptoms.values_list(
+            "name", flat=True
+        )
+        self.assertEqual(set(new_symptoms), set([u'alertness', u'tiredness']))
+        self.assertEqual(self.symptom_complex.duration, 'a month')
+        self.assertEqual(
+            self.symptom_complex.details, 'other information'
         )
 
 

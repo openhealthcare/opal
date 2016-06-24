@@ -30,7 +30,7 @@ describe('PatientListCtrl', function() {
                 name: 'location',
                 single: true,
                 fields: [
-                    {name: 'category', type: 'string'},
+                    {name: 'category_name', type: 'string'},
                     {name: 'hospital', type: 'string'},
                     {name: 'ward', type: 'string'},
                     {name: 'bed', type: 'string'},

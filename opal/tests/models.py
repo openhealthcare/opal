@@ -32,6 +32,7 @@ class Colour(models.EpisodeSubrecord):
     _clonable = False
     _advanced_searchable = False
     _exclude_from_extract = True
+    _angular_service = 'Colour'
 
     name = dmodels.CharField(max_length=200)
 
@@ -84,3 +85,12 @@ if not getattr(models.Episode, 'location_set', None):
 
         ward = dmodels.CharField(max_length=200, blank=True, null=True)
         bed = dmodels.CharField(max_length=200, blank=True, null=True)
+
+
+if not getattr(models.Episode, 'symptoms', None):
+    class SymptomComplex(models.SymptomComplex):
+        pass
+
+if not getattr(models.Episode, 'patientconsultation_set', None):
+    class PatientConsultation(models.PatientConsultation):
+        pass

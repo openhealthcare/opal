@@ -77,7 +77,7 @@ describe('Episode', function() {
         episodeData = {
             id: 123,
             date_of_admission: "19/11/2013",
-            category: 'inpatient',
+            category_name: 'inpatient',
             active: true,
             discharge_date: "25/05/2016",
             date_of_episode: "20/11/2013",
@@ -224,37 +224,9 @@ describe('Episode', function() {
             date_of_admission: new Date(2013, 10, 19),
             date_of_episode: new Date(2013, 10, 20),
             discharge_date: new Date(2016, 4, 25),
-            category: 'inpatient',
+            category_name: 'inpatient',
             consistency_token: undefined
         });
-    });
-
-    describe('newItem()', function() {
-        var TODAY = moment(moment().format('YYYY-MM-DD')).toDate()
-
-        it('should set defaults for micro_test', function() {
-            expect(episode.newItem('microbiology_test').date_ordered.toDate()).toEqual(TODAY);
-        });
-
-        it('should set defaults for general_note', function() {
-            expect(episode.newItem('general_note').date.toDate()).toEqual(TODAY);
-        });
-
-        it('should set defaults for micro input', function() {
-            $window.initials = 'DM';
-            expect(episode.newItem('microbiology_input').initials).toEqual('DM');
-        });
-
-        it('should set defaults for walkin antimicrobials', function() {
-            delete $routeParams.slug;
-            expect(episode.newItem('antimicrobial').start_date).toBe(undefined);
-        });
-
-        it('should not set defaults if there is no slug', function() {
-            $routeParams.slug = 'walkin-walkin_doctor';
-            expect(episode.newItem('antimicrobial').start_date.toDate()).toEqual(TODAY);
-        });
-
     });
 
     describe('communicating with server', function (){
@@ -285,19 +257,19 @@ describe('Episode', function() {
 
                 episode = new Episode(episodeData);
 
-                $httpBackend.whenPUT('/episode/555/')
+                $httpBackend.whenPUT('/api/v0.1/episode/555/')
                     .respond(attrsJsonDate);
 
             });
 
             it('Should hit server', function () {
-                $httpBackend.expectPUT('/episode/555/', attrsJsonDate);
+                $httpBackend.expectPUT('/api/v0.1/episode/555/', attrsJsonDate);
                 episode.save(attrsJsonDate);
                 $httpBackend.flush();
             });
 
             it('Should update item attributes', function () {
-                $httpBackend.expectPUT('/episode/555/', attrsJsonDate);
+                $httpBackend.expectPUT('/api/v0.1/episode/555/', attrsJsonDate);
                 episode.save(attrsJsonDate);
                 $httpBackend.flush();
                 expect(episode.date_of_admission).toEqual(new Date(2013, 10, 20))

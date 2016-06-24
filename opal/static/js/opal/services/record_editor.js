@@ -67,7 +67,7 @@ angular.module('opal.services').factory('RecordEditor', function(
           var modal_opts = {
               backdrop: 'static',
               templateUrl: template_url,
-              controller: 'EditItemCtrl',
+              controller: item.formController,
               resolve: {
                   item: function() { return item; },
                   options: function(Options) { return Options; },

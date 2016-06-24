@@ -164,7 +164,7 @@ class PatientDetailTemplateViewTestCase(BaseViewTestCase):
         view = views.PatientDetailTemplateView()
         view.request = request
         ctx = view.get_context_data()
-        self.assertIn(vars(InpatientEpisode), ctx['episode_types'])
+        self.assertIn(vars(InpatientEpisode), ctx['episode_categories'])
 
     def test_get_context_data_detail_views(self):
         request = self.rf.get('/wat')
@@ -257,31 +257,6 @@ class CheckPasswordResetViewTestCase(BaseViewTestCase):
         self.assertEqual(mockresponse, response)
 
 
-class EpisodeDetailViewTestCase(OpalTestCase):
-
-    def test_episode_detail_view(self):
-        self.patient = models.Patient.objects.create()
-        self.episode = self.patient.create_episode()
-        request = self.rf.get('/episode/detail')
-        request.user = self.user
-        resp = views.episode_detail_view(request, 1)
-        self.assertEqual(200, resp.status_code)
-
-    def test_epidode_detail_view_does_not_exist(self):
-        request = self.rf.get('/episode/detail')
-        request.user = self.user
-        resp = views.episode_detail_view(request, 123)
-        self.assertEqual(404, resp.status_code)
-
-
-class EpisodeListAndCreateViewTestCase(OpalTestCase):
-    def test_get(self):
-        request = self.rf.get('/episode/detail')
-        request.user = self.user
-        resp = views.episode_list_and_create_view(request)
-        self.assertEqual(200, resp.status_code)
-
-
 class FormTemplateViewTestCase(BaseViewTestCase):
 
     def test_200(self):
@@ -334,10 +309,14 @@ class RecordTemplateViewTestCase(BaseViewTestCase):
 
 
     def test_test_view(self):
-        # make sure it works for Colour in case subrecords is broken
-        url = reverse("record_view", kwargs=dict(model=testmodels.Colour.get_api_name()))
-        response = self.client.get(url)
-        self.assertEqual(response.status_code, 200)
+        record_template = testmodels.Colour.get_display_template()
+
+        with patch("opal.tests.models.Colour.get_display_template") as get_display_template:
+            get_display_template.return_value = record_template
+            url = reverse("record_view", kwargs=dict(model=testmodels.Colour.get_api_name()))
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(get_display_template.call_count, 1)
 
 
 class BannedViewTestCase(BaseViewTestCase):

@@ -13,12 +13,14 @@ A list of all available topic guides.
 |[List of Plugins](plugins_list.md)| A list of available high quality plugins|
 
 
-### Data and flow
+### Data and Business Logic
 
 |||
 |---------------------------|-------------------------------------------------------------------------------|
 |[Data Model](datamodel.md) | How OPAL models clinical reality.|
+|[Core Clinical Model](archetypes.md)| The core clinical data model available to OPAL applications.|
 |[Flow](flow.md)            | Hooks to customise key moments in a patient's flow through a clinical service.|
+|[Angular models](working_with_data_in_angular.md)|Working with Clinical data in Angular|
 |[Roles & Permissions](roles_and_permissions.md)| How we handle authorization in OPAL|
 |[Tagging](tagging.md) | Tagging episodes in OPAL |
 |[JSON API](json_api.md) | The OPAL JSON API |

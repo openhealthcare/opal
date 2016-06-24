@@ -15,6 +15,7 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
+from django.core.urlresolvers import reverse
 from django.utils.functional import cached_property
 import reversion
 
@@ -28,7 +29,10 @@ from opal.core.subrecords import (
     episode_subrecords, patient_subrecords, get_subrecord_from_api_name
 )
 
-app = application.get_app()
+
+def get_default_episode_type():
+    app = application.get_app()
+    return app.default_episode_category
 
 
 class UpdatesFromDictMixin(object):
@@ -418,6 +422,10 @@ class Patient(models.Model):
             episode = self.create_episode()
 
         for api_name, list_of_upgrades in dict_of_list_of_upgrades.iteritems():
+
+            # for the moment we'll ignore tagging as its weird
+            if(api_name == "tagging"):
+                continue
             model = get_subrecord_from_api_name(api_name=api_name)
             if model in episode_subrecords():
                 if episode is None:
@@ -534,7 +542,9 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     A patient may have many episodes of care, but this maps to one occasion
     on which they found themselves on "The List".
     """
-    category          = models.CharField(max_length=200, default=app.default_episode_category)
+    category_name     = models.CharField(
+        max_length=200, default=get_default_episode_type
+    )
     patient           = models.ForeignKey(Patient)
     active            = models.BooleanField(default=False)
     date_of_admission = models.DateField(null=True, blank=True)
@@ -576,11 +586,11 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
     @cached_property
     def start(self):
-        return self.type.start
+        return self.category.start
 
     @cached_property
     def end(self):
-        return self.type.end
+        return self.category.end
 
     @property
     def is_discharged(self):
@@ -594,20 +604,19 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         return False
 
     @property
-    def type(self):
+    def category(self):
         from opal.core import episodes
-        return episodes.EpisodeType.for_category(self.category)(self)
-
+        return episodes.EpisodeCategory.get(self.category_name.lower())(self)
 
     def visible_to(self, user):
         """
         Predicate function to determine whether this episode is visible to
         a certain user.
 
-        The logic for visibility is held in individual opal.core.episodes.EpisodeType
+        The logic for visibility is held in individual opal.core.episodes.EpisodeCategory
         implementations.
         """
-        return self.type.episode_visible_to(self, user)
+        return self.category.episode_visible_to(self, user)
 
     def set_tag_names(self, tag_names, user):
         """
@@ -698,7 +707,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         """
         d = {
             'id'               : self.id,
-            'category'         : self.category,
+            'category_name'    : self.category_name,
             'active'           : self.active,
             'date_of_admission': self.date_of_admission,
             'date_of_episode'  : self.date_of_episode,
@@ -712,12 +721,18 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
         for model in patient_subrecords():
             subrecords = model.objects.filter(patient_id=self.patient.id)
-            d[model.get_api_name()] = [subrecord.to_dict(user)
-                                       for subrecord in subrecords]
+
+            if subrecords:
+                d[model.get_api_name()] = [
+                    subrecord.to_dict(user) for subrecord in subrecords
+                ]
         for model in episode_subrecords():
             subrecords = model.objects.filter(episode_id=self.id)
-            d[model.get_api_name()] = [subrecord.to_dict(user)
-                                       for subrecord in subrecords]
+
+            if subrecords:
+                d[model.get_api_name()] = [
+                    subrecord.to_dict(user) for subrecord in subrecords
+                ]
 
         d['tagging'] = self.tagging_dict(user)
 
@@ -838,6 +853,10 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
             episode_type=episode_type, patient_list=patient_list,
             suffix='_form.html', prefix='forms')
         return find_template(templates)
+
+    @classmethod
+    def get_form_url(cls):
+        return reverse("form_view", kwargs=dict(model=cls.get_api_name()))
 
     @classmethod
     def get_modal_template(cls, patient_list=None, episode_type=None):
@@ -1071,6 +1090,11 @@ class Clinical_advice_reason_for_interaction(lookuplists.LookupList):
         verbose_name = "Clinical advice reason for interaction"
         verbose_name_plural = "Clinical advice reasons for interaction"
 
+
+class PatientConsultationReasonForInteraction(lookuplists.LookupList):
+    class Meta:
+        verbose_name_plural = "Patient advice reasons for interaction"
+
 class Condition(lookuplists.LookupList): pass
 class Destination(lookuplists.LookupList): pass
 class Drug(lookuplists.LookupList): pass
@@ -1240,7 +1264,18 @@ class Microbiology_organism(lookuplists.LookupList):
     class Meta:
         verbose_name = "Microbiology organism"
 
-class Symptom(lookuplists.LookupList): pass
+
+class ReferralReason(lookuplists.LookupList):
+    pass
+
+
+class ReferralOrganisation(lookuplists.LookupList):
+    pass
+
+
+class Symptom(lookuplists.LookupList):
+    pass
+
 
 class Title(lookuplists.LookupList):
     pass
@@ -1261,14 +1296,23 @@ class Demographics(PatientSubrecord):
     _is_singleton = True
     _icon = 'fa fa-user'
 
-    hospital_number  = models.CharField(max_length=255, blank=True)
-    nhs_number       = models.CharField(max_length=255, blank=True, null=True)
-    date_of_birth    = models.DateField(null=True, blank=True)
-    birth_place = ForeignKeyOrFreeText(Destination)
-    ethnicity = ForeignKeyOrFreeText(Ethnicity)
+    hospital_number = models.CharField(max_length=255, blank=True)
+    nhs_number = models.CharField(max_length=255, blank=True, null=True)
+
     surname = models.CharField(max_length=255, blank=True)
     first_name = models.CharField(max_length=255, blank=True)
-    middle_name = models.CharField(max_length=255, blank=True)
+    middle_name = models.CharField(max_length=255, blank=True, null=True)
+    title = ForeignKeyOrFreeText(Title)
+    date_of_birth = models.DateField(null=True, blank=True)
+    marital_status = ForeignKeyOrFreeText(MaritalStatus)
+    religion = models.CharField(max_length=255, blank=True, null=True)
+    date_of_death = models.DateField(null=True, blank=True)
+    post_code = models.CharField(max_length=20, blank=True, null=True)
+    gp_practice_code = models.CharField(max_length=20, blank=True, null=True)
+    birth_place = ForeignKeyOrFreeText(Destination)
+    ethnicity = ForeignKeyOrFreeText(Ethnicity)
+    death_indicator = models.BooleanField(default=False)
+
     sex = ForeignKeyOrFreeText(Gender)
 
     @property
@@ -1509,3 +1553,74 @@ class InpatientAdmission(PatientSubrecord, ExternallySourcedModel):
                     data["id"] = existing.id
 
         super(InpatientAdmission, self).update_from_dict(data, *args, **kwargs)
+
+
+class ReferralRoute(EpisodeSubrecord):
+    _title = "Referral Route"
+    _icon = 'fa fa-level-up'
+    _is_singleton = True
+
+    class Meta:
+        abstract = True
+
+    internal = models.NullBooleanField()
+
+    # e.g. GP, the title or institution of the person who referred the patient
+    referral_organisation = ForeignKeyOrFreeText(ReferralOrganisation)
+
+    # the name of the person who referred the patient, e.g. the GPs name
+    referral_name = models.CharField(max_length=255, blank=True)
+
+    # date_of_referral
+    date_of_referral = models.DateField(null=True, blank=True)
+
+    # an individual can be from multiple teams
+    referral_team = ForeignKeyOrFreeText(Speciality)
+
+    referral_reason = ForeignKeyOrFreeText(ReferralReason)
+
+
+class PatientConsultation(EpisodeSubrecord):
+    _sort = 'when'
+    _icon = 'fa fa-comments'
+    _modal = 'lg'
+    _list_limit = 3
+
+    class Meta:
+        abstract = True
+
+    when = models.DateTimeField(null=True, blank=True)
+    initials = models.CharField(max_length=255, blank=True)
+    reason_for_interaction = ForeignKeyOrFreeText(
+        PatientConsultationReasonForInteraction
+
+    )
+    discussion = models.TextField(blank=True)
+
+    def set_when(self, incoming_value, user, *args, **kwargs):
+        if incoming_value:
+            self.when = incoming_value
+        else:
+            self.when = datetime.datetime.now()
+
+
+class SymptomComplex(EpisodeSubrecord):
+    _title = 'Symptom'
+    _icon = 'fa fa-stethoscope'
+
+    class Meta:
+        abstract = True
+
+    symptoms = models.ManyToManyField(
+        Symptom, related_name="symptoms"
+    )
+    duration = models.CharField(max_length=255, blank=True, null=True)
+    details = models.TextField(blank=True, null=True)
+
+    def to_dict(self, user):
+        field_names = self.__class__._get_fieldnames_to_serialize()
+        result = {
+            i: getattr(self, i) for i in field_names if not i == "symptoms"
+        }
+        result["symptoms"] = list(self.symptoms.values_list("name", flat=True))
+        return result

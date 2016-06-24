@@ -13,6 +13,8 @@ pages:
       - Plugins: guides/plugins.md
       - Plugin List: guides/plugins_list.md
       - Data Model: guides/datamodel.md
+      - Archetypes: guides/archetypes.md
+      - Angular Models: guides/working_with_data_in_angular.md
       - Flow: guides/flow.md
       - Roles & Permissions: guides/roles_and_permissions.md
       - Tagging: guides/tagging.md
@@ -29,7 +31,7 @@ pages:
 
   - Reference:
       - The Episode model: reference/episode.md
-      - Episode Types: reference/episode_types.md
+      - Episode Categories: reference/episode_categories.md
       - reference/patient.md
       - Subrecords: reference/subrecords.md
       - OpalApplication: reference/opal_application.md
@@ -45,6 +47,7 @@ pages:
       - Detail Views: reference/detail_views.md
       - Patient Lists: reference/patient_list.md
       - Search JS Services: reference/search_js_services.md
+      - Changelog: reference/changelog.md
       - Upgrading: reference/upgrading.md
 
 theme: mkdocs
@@ -57,4 +60,7 @@ dev_addr: 0.0.0.0:8965
 include_next_prev: false
 
 extra:
-  version: v0.6.0
+  version: v0.7.0
+
+markdown_extensions:
+    - fenced_code

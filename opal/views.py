@@ -95,7 +95,7 @@ class PatientDetailTemplateView(TemplateView):
 
         # django likes to try and initialise classes, even when we
         # don't want it to, so vars it
-        context['episode_types'] = [vars(i) for i in episodes.episode_types()]
+        context['episode_categories'] = [vars(i) for i in episodes.EpisodeCategory.list()]
 
         # We cast this to a list because it's a generator but we want to consume
         # it twice in the template
@@ -109,7 +109,7 @@ class EpisodeDetailTemplateView(TemplateView):
         return super(EpisodeDetailTemplateView, self).get(*args, **kwargs)
 
     def get_template_names(self):
-        names = ['detail/{0}.html'.format(self.episode.category.lower()), 'detail/default.html']
+        names = ['detail/{0}.html'.format(self.episode.category_name.lower()), 'detail/default.html']
         return names
 
     def get_context_data(self, **kwargs):
@@ -172,68 +172,7 @@ def check_password_reset(request, *args, **kwargs):
     return response
 
 
-"""Internal (Legacy) API Views"""
-
-#    TODO: Remove this
-@require_http_methods(['GET', 'PUT'])
-def episode_detail_view(request, pk):
-    try:
-        episode = models.Episode.objects.get(pk=pk)
-    except models.Episode.DoesNotExist:
-        return HttpResponseNotFound()
-
-    if request.method == 'GET':
-        serialized = episode.to_dict(request.user)
-        return _build_json_response(serialized)
-
-    data = _get_request_data(request)
-
-    try:
-        episode.update_from_dict(data, request.user)
-        return _build_json_response(episode.to_dict(request.user, shallow=True))
-    except exceptions.ConsistencyError:
-        return _build_json_response({'error': 'Item has changed'}, 409)
-
-
-# TODO: Remove this
-@require_http_methods(['GET', 'POST'])
-def episode_list_and_create_view(request):
-    if request.method == 'GET':
-        serialised = models.Episode.objects.serialised_active(request.user)
-        return _build_json_response(serialised)
-
-    elif request.method == 'POST':
-        data = _get_request_data(request)
-        hospital_number = data['demographics'].get('hospital_number')
-        if hospital_number:
-            patient, _ = models.Patient.objects.get_or_create(
-                demographics__hospital_number=hospital_number)
-        else:
-            patient = models.Patient.objects.create()
-
-        patient.update_from_demographics_dict(data['demographics'], request.user)
-        try:
-            episode = patient.create_episode()
-            episode_fields = models.Episode._get_fieldnames_to_serialize()
-            episode_data = {}
-            for fname in episode_fields:
-                if fname in data:
-                    episode_data[fname] = data[fname]
-            episode.update_from_dict(episode_data, request.user)
-
-        except exceptions.APIError:
-            return _build_json_response(
-                {'error': 'Patient already has active episode'}, 400)
-
-        location = episode.location_set.get()
-        location.update_from_dict(data['location'], request.user)
-        if 'tagging' in data:
-            tag_names = [n for n, v in data['tagging'][0].items() if v]
-            episode.set_tag_names(tag_names, request.user)
-
-        serialised = episode.to_dict(request.user)
-        return _build_json_response(serialised, status_code=201)
-
+"""Internal (Legacy) API View"""
 
 class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
     """
@@ -321,7 +260,7 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
 class RecordTemplateView(LoginRequiredMixin, TemplateView):
     def get_template_names(self):
         model = get_subrecord_from_api_name(self.kwargs["model"])
-        template_name = model.get_modal_template()
+        template_name = model.get_display_template()
         return [template_name]
 
 

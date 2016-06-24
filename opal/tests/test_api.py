@@ -2,7 +2,7 @@
 Tests for the OPAL API
 """
 import json
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 from django.utils import timezone
 
 from django.contrib.auth.models import User
@@ -12,6 +12,7 @@ from mock import patch, MagicMock
 
 from opal import models
 from opal.tests.models import Colour, PatientColour, HatWearer, Hat
+from opal.core import metadata
 from opal.core.test import OpalTestCase
 from opal.core.views import _build_json_response
 
@@ -136,6 +137,66 @@ class OptionTestCase(TestCase):
         }
 
         self.assertEqual(expected, result['tags'])
+
+
+class ReferenceDataViewSetTestCase(OpalTestCase):
+
+    def setUp(self):
+        self.top = Hat.objects.create(name="top")
+        self.bowler = Hat.objects.create(name="bowler")
+        self.synonym_name = "high"
+        self.user = User.objects.create(username='testuser')
+        content_type = ContentType.objects.get_for_model(Hat)
+        models.Synonym.objects.get_or_create(
+            content_type=content_type,
+            object_id=self.top.id,
+            name=self.synonym_name
+        )
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        self.request = mock_request
+        self.viewset = api.ReferenceDataViewSet()
+        self.viewset.request = mock_request
+
+    def test_list(self):
+        self.response = self.viewset.list(self.request)
+        result = self.response.data
+        self.assertIn("hat", result)
+        self.assertEqual(set(result["hat"]), {"top", "bowler", "high"})
+        self.assertEqual(self.response.status_code, 200)
+
+    def test_get(self):
+        response = self.viewset.retrieve(self.request, pk='hat')
+        self.assertEqual(set(response.data), {"top", "bowler", "high"})
+        self.assertEqual(response.status_code, 200)
+
+    def test_get_does_not_exist(self):
+        response = self.viewset.retrieve(self.request, pk='notalookuplist')
+        self.assertEqual(response.status_code, 404)
+
+
+class MetadataViewSetTestCase(OpalTestCase):
+    def test_list(self):
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        response = api.MetadataViewSet().list(mock_request)
+        self.assertEqual(200, response.status_code)
+        for s in metadata.Metadata.list():
+            for key, value in s.to_dict(user=self.user).items():
+                self.assertEqual(response.data[key], value)
+
+    def test_retrieve(self):
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        response = api.MetadataViewSet().retrieve(mock_request, pk='macros')
+        self.assertEqual(200, response.status_code)
+        self.assertIn('macros', response.data)
+
+    def test_retrieve_nonexistent_metadata(self):
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        response = api.MetadataViewSet().retrieve(mock_request, pk='notarealmetadata')
+        self.assertEqual(404, response.status_code)
 
 
 class SubrecordTestCase(TestCase):
@@ -487,10 +548,15 @@ class TaggingTestCase(TestCase):
         self.assertEqual(404, response.status_code)
 
 
-class EpisodeTestCase(TestCase):
+class EpisodeTestCase(OpalTestCase):
+
     def setUp(self):
         self.patient = models.Patient.objects.create()
         self.demographics = self.patient.demographics_set.get()
+
+        # add a date to make sure serialisation works as expected
+        self.demographics.date_of_birth = date(2010, 1, 1)
+        self.demographics.created = datetime.now()
         self.episode = models.Episode.objects.create(patient=self.patient)
         self.user = User.objects.create(username='testuser')
         self.mock_request = MagicMock(name='request')
@@ -498,7 +564,7 @@ class EpisodeTestCase(TestCase):
         self.mock_request.query_params = {}
 
     def test_retrieve_episode(self):
-        response = api.EpisodeViewSet().retrieve(self.mock_request, pk=self.episode.pk).data
+        response = json.loads(api.EpisodeViewSet().retrieve(self.mock_request, pk=self.episode.pk).content)
         expected = json.loads(_build_json_response(self.episode.to_dict(self.user)).content)
         self.assertEqual(expected, response)
 
@@ -529,7 +595,7 @@ class EpisodeTestCase(TestCase):
         response = api.EpisodeViewSet().create(self.mock_request)
         self.assertEqual(201, response.status_code)
         self.assertEqual(2, self.patient.episode_set.count())
-        self.assertEqual(date(2015, 1, 14), response.data['date_of_admission'])
+        self.assertEqual("14/01/2015", json.loads(response.content)['date_of_admission'])
 
     def test_create_new_patient(self):
         pcount = models.Patient.objects.filter(
@@ -608,14 +674,51 @@ class EpisodeTestCase(TestCase):
         self.assertEqual("7", location.bed)
 
     def test_create_sets_tagging(self):
-        pass
+        pcount = models.Patient.objects.filter(
+            demographics__hospital_number="9999000999").count()
+        self.assertEqual(0, pcount)
+        self.mock_request.data = {
+            "tagging"                :[ { "micro":True }],
+            "date_of_admission"      : "14/01/2015",
+            "demographics" : {
+                "hospital_number": "9999000999",
+            },
+            "location": {
+                "ward": "West",
+                "bed" : "7"
+            }
+        }
+        response = api.EpisodeViewSet().create(self.mock_request)
+        patient = models.Patient.objects.get(
+            demographics__hospital_number="9999000999")
+        episode = patient.episode_set.get()
+        tags = episode.get_tag_names(self.user)
+        self.assertEqual(u'micro', tags[0])
+        self.assertEqual(1, len(tags))
 
     def test_update(self):
-        pass
+        patient, episode = self.new_patient_and_episode_please()
+        self.assertEqual(None, episode.date_of_admission)
+        self.mock_request.data = {"date_of_admission": "14/01/2015"}
+        response = api.EpisodeViewSet().update(self.mock_request, pk=episode.pk)
+        e = models.Episode.objects.get(pk=episode.pk)
+        self.assertEqual(date(2015, 1, 14), e.date_of_admission)
 
     def test_update_nonexistent(self):
-        pass
+        self.mock_request.data = {"date_of_admission": "14/01/2015"}
+        response = api.EpisodeViewSet().update(self.mock_request, pk=8993939)
+        self.assertEqual(404, response.status_code)
 
+    def test_update_consistency_error(self):
+        patient, episode = self.new_patient_and_episode_please()
+        episode.consistency_token = 'FFFF'
+        episode.save()
+        self.mock_request.data = {
+            "date_of_admission": "14/01/2015",
+            "consistency_token": "EEEE"
+        }
+        response = api.EpisodeViewSet().update(self.mock_request, pk=episode.pk)
+        self.assertEqual(409, response.status_code)
 
 
 class PatientTestCase(OpalTestCase):

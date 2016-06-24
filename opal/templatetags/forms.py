@@ -2,6 +2,7 @@
 Templatetags for form/modal helpers
 """
 from django import template
+from django.db import models
 from opal.core.subrecords import get_subrecord_from_model_name
 from opal.core import fields
 
@@ -34,8 +35,8 @@ def _icon_classes(name):
     return name
 
 
-def infer_from_subrecord_field_path(subRecordFieldPath):
-    api_name, field_name = subRecordFieldPath.split(".")
+def _model_and_field_from_path(fieldname):
+    api_name, field_name = fieldname.split(".")
     model = get_subrecord_from_model_name(api_name)
     field = None
 
@@ -47,6 +48,11 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
 
     if not field:
         field = model._meta.get_field(field_name)
+    return model, field
+
+def infer_from_subrecord_field_path(subRecordFieldPath):
+    _, field_name = subRecordFieldPath.split('.')
+    model, field = _model_and_field_from_path(subRecordFieldPath)
 
     ctx = {}
     ctx["label"] = field.name.title().replace("_", " ")
@@ -249,6 +255,17 @@ def textarea(*args, **kwargs):
     })
 
     return ctx
+
+@register.inclusion_tag('_helpers/static.html')
+def static(fieldname):
+    _, field_name = fieldname.split('.')
+    model, field = _model_and_field_from_path(fieldname)
+    return dict(model="editing.{0}.{1}".format(model.get_api_name(),
+                                               field_name
+                                           ),
+                label=field.name.title().replace("_", " "),
+                datep=isinstance(field, models.DateField)
+    )
 
 @register.inclusion_tag('_helpers/icon.html')
 def icon(name):

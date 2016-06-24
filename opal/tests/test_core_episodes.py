@@ -8,7 +8,7 @@ from opal.models import UserProfile, Patient
 
 from opal.core import episodes
 
-class EpisodeTypesTestCas(test.OpalTestCase):
+class EpisodeCategoryTestCase(test.OpalTestCase):
 
     def setUp(self):
         self.restricted_user = User.objects.create(username='restrictedonly')
@@ -18,8 +18,8 @@ class EpisodeTypesTestCas(test.OpalTestCase):
         self.patient = Patient.objects.create()
         self.inpatient_episode = self.patient.create_episode(category=episodes.InpatientEpisode)
 
-    def test_episode_types(self):
-        self.assertIn(episodes.InpatientEpisode, episodes.episode_types())
+    def test_episode_categories(self):
+        self.assertIn(episodes.InpatientEpisode, episodes.EpisodeCategory.list())
 
     def test_visible_to(self):
         self.assertTrue(
@@ -32,4 +32,4 @@ class EpisodeTypesTestCas(test.OpalTestCase):
         )
 
     def test_for_category(self):
-        self.assertEqual(episodes.InpatientEpisode, episodes.EpisodeType.for_category('Inpatient'))
+        self.assertEqual(episodes.InpatientEpisode, episodes.EpisodeCategory.get('inpatient'))

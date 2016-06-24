@@ -183,6 +183,7 @@ describe('EditItemCtrl', function (){
             $scope.$digest();
             var callArgs;
             var deferred = $q.defer();
+            spyOn($scope, 'preSave');
             spyOn(item, 'save').and.callFake(function() {
                 return deferred.promise;
             });
@@ -192,6 +193,11 @@ describe('EditItemCtrl', function (){
             deferred.resolve("episode returned");
             $scope.$digest();
             expect($scope.saving).toBe(false);
+
+            var preSaveCallArgs = $scope.preSave.calls.mostRecent().args;
+            expect(preSaveCallArgs.length).toBe(1);
+            expect(preSaveCallArgs[0]).toBe($scope.editing);
+
             callArgs = item.save.calls.mostRecent().args;
             expect(callArgs.length).toBe(1);
             expect(callArgs[0]).toBe($scope.editing.investigation);

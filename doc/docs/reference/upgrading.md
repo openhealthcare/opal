@@ -3,6 +3,18 @@
 This document provides instructions for specific steps required to upgrading your OPAL
 application to a later version where there are extra steps required.
 
+### 6.x -> 7.x
+
+#### Breaking changes
+
+OPAL 0.7 contains a number of breaking changes.
+
+`opal.models.Episode.category` has been re-named `category_name`. If your application
+directly sets category, you will be required to update all instances where this happens.
+
+The `/episode/:pk/` API has moved to `/api/v0.1/episode/:pk/` so any code (typically
+javascript) code that directly saves to this API endpoint rather than using the OPAL JS
+`Episode` services should work immediately when re-pointed at the new URL.
 
 ### 4.X -> 5.x
 

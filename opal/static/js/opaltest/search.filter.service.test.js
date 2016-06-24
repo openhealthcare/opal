@@ -26,7 +26,7 @@ describe('Filter', function(){
     describe('save()', function(){
 
         it('should save existing filters', function(){
-            $httpBackend.whenPUT('/search/filters/1/').respond('success');
+            $httpBackend.whenPUT('/search/filters/1/').respond({value: 'success'});
 
             var filter = new Filter({id: 1, name: 'myfilter', criteria: []})
             filter.save({id: 1, name: 'myrenamedfilter', criteria: []})
@@ -36,7 +36,7 @@ describe('Filter', function(){
         });
 
         it('should save new filters', function(){
-            $httpBackend.whenPOST('/search/filters/').respond('success');
+            $httpBackend.whenPOST('/search/filters/').respond({value: 'success'});
 
             var filter = new Filter()
             filter.save({name: 'mynewfilter', criteria: []})

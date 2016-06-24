@@ -77,7 +77,8 @@ Keywords:
 * `other` A boolean parameter that if true, provides a free text option when 'Other' is selected
 * `help` a template to use as the contents of a help popover
 * `static` an Angular expression that will swap the display to be a static input if it evaluates to `true`
-* 
+*
+
 ### {% textarea ... %}
 
 Generates an inline textarea input
@@ -89,6 +90,25 @@ Keywords:
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
 * `show`  A string that contains an Angular expression for the ng-show directive
 * `hide`  A string that contains an Angular expression for the ng-hide directive
+
+
+### {% static ... %}
+
+Generates a bootstrap Static div (for displaying data from fields as uneditable but formatted nicely with appropriate styles).
+
+Takes one positional argument, a string representing the subrecord field path.
+
+
+    {% static "Demographics.name" %}
+    <!-- Renders as -->
+    <div class="form-group">
+      <label class="control-label col-sm-3">
+        Name
+      </label>
+      <p class="form-control-static col-sm-8">
+        [[ editing.demographics.name ]]
+      </p>
+    </div>
 
 
 ### {% icon "icon-name" %}

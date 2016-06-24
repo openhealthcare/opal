@@ -8,12 +8,13 @@ from rest_framework import routers, status, viewsets
 from rest_framework.response import Response
 
 from opal.models import Episode, Synonym, Macro, Patient, PatientRecordAccess
-from opal.core import application, exceptions, plugins, schemas
+from opal.core import application, exceptions, metadata, plugins, schemas
 from opal.core.lookuplists import LookupList
 from opal.utils import stringport, camelcase_to_underscore
 from opal.core.subrecords import subrecords
 from opal.core.views import _get_request_data, _build_json_response
-from opal.core.patient_lists import PatientList, TaggedPatientList
+from opal.core.patient_lists import (PatientList, TaggedPatientList,
+                                     TaggedPatientListMetadata, FirstListMetadata)
 
 app = application.get_app()
 
@@ -111,63 +112,76 @@ class OptionsViewSet(viewsets.ViewSet):
         for name in data:
             data[name].sort()
 
-        data['micro_test_defaults'] = micro_test_defaults
+        data.update(metadata.MicroTestDefaultsMetadata.to_dict())
+        data.update(metadata.MacrosMetadata.to_dict())
+        data.update(TaggedPatientListMetadata.to_dict(user=request.user))
+        data.update(FirstListMetadata.to_dict(user=request.user))
+        return Response(data)
 
-        tag_visible_in_list = []
-        tag_direct_add = []
-        tag_display = {}
-        tag_slugs = {}
-        tag_list = [i for i in TaggedPatientList.for_user(request.user)]
 
-        if request.user.is_authenticated():
-            for taglist in tag_list:
-                slug = taglist().get_slug()
-                tag = taglist.tag
-                if hasattr(taglist, 'subtag'):
-                    tag = taglist.subtag
-                tag_display[tag] = taglist.display_name
-                tag_slugs[tag] = slug
-                tag_visible_in_list.append(tag)
-                if taglist.direct_add:
-                    tag_direct_add.append(tag)
+class ReferenceDataViewSet(viewsets.ViewSet):
+    """
+    API for referencedata
+    """
+    base_name = 'referencedata'
 
-        data['tag_display'] = tag_display
-        data['tag_visible_in_list'] = tag_visible_in_list
-        data['tag_direct_add'] = tag_direct_add
-        data['tag_slugs'] = tag_slugs
-        data["tags"] = {}
+    def list(self, request):
+        data = {}
+        subclasses = LookupList.__subclasses__()
+        for model in subclasses:
+            options = list(model.objects.all().values_list("name", flat=True))
+            data[model.get_api_name()] = options
 
-        for tagging in tag_list:
-            tag = tagging.tag
-            if hasattr(tagging, 'subtag'):
-                tag = tagging.subtag
-
-            direct_add = tagging.direct_add
-            slug = tagging().get_slug()
-            data["tags"][tag] = dict(
-                name=tag,
-                display_name=tagging.display_name,
-                slug=slug,
-                direct_add=direct_add
-            )
-
-            if tag and hasattr(tagging, 'subtag'):
-                data["tags"][tag]["parent_tag"] = tagging.tag
-
-        data["tags"]["mine"] = dict(
-            name="mine",
-            display_name="Mine",
-            slug="mine",
-            direct_add=True,
+        model_to_ct = ContentType.objects.get_for_models(
+            *subclasses
         )
 
-        data['first_list_slug'] = next(
-            PatientList.for_user(self.request.user)
-        ).get_slug()
+        for model, ct in model_to_ct.iteritems():
+            synonyms = Synonym.objects.filter(content_type=ct).values_list(
+                "name", flat=True
+            )
+            data[model.get_api_name()].extend(synonyms)
 
-        data['macros'] = Macro.to_dict()
-
+        for name in data:
+            data[name].sort()
         return Response(data)
+
+    def retrieve(self, request, pk=None):
+        the_list = None
+        for lookuplist in LookupList.__subclasses__():
+            if lookuplist.get_api_name() == pk:
+                the_list = lookuplist
+                break
+        if the_list:
+            values = list(the_list.objects.all().values_list('name', flat=True))
+            ct = ContentType.objects.get_for_model(the_list)
+            synonyms = Synonym.objects.filter(content_type=ct).values_list(
+                'name', flat=True
+            )
+            values += list(synonyms)
+            return Response(values)
+
+        return Response({'error': 'Item does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+
+class MetadataViewSet(viewsets.ViewSet):
+    """
+    Our metadata API
+    """
+    base_name = 'metadata'
+
+    def list(self, request):
+        data = {}
+        for meta in metadata.Metadata.list():
+            data.update(meta.to_dict(user=request.user))
+        return Response(data)
+
+    def retrieve(self, request, pk=None):
+        try:
+            meta = metadata.Metadata.get(pk)
+            return Response(meta.to_dict(user=request.user))
+        except ValueError:
+            return Response({'error': 'Metadata does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 
 class SubrecordViewSet(viewsets.ViewSet):
@@ -323,11 +337,19 @@ class EpisodeViewSet(viewsets.ViewSet):
         episode.set_tag_names([n for n, v in tagging[0].items() if v], request.user)
         serialised = episode.to_dict(request.user)
 
-        return Response(serialised, status=status.HTTP_201_CREATED)
+        return _build_json_response(serialised, status_code=status.HTTP_201_CREATED)
+
+    @episode_from_pk
+    def update(self, request, episode):
+        try:
+            episode.update_from_dict(request.data, request.user)
+            return Response(episode.to_dict(request.user, shallow=True))
+        except exceptions.ConsistencyError:
+            return _build_json_response({'error': 'Item has changed'}, 409)
 
     @episode_from_pk
     def retrieve(self, request, episode):
-        return Response(episode.to_dict(request.user))
+        return _build_json_response(episode.to_dict(request.user))
 
 
 class PatientViewSet(viewsets.ViewSet):
@@ -362,11 +384,14 @@ router.register('patient', PatientViewSet)
 router.register('episode', EpisodeViewSet)
 router.register('record', RecordViewSet)
 router.register('extract-schema', ExtractSchemaViewSet)
-router.register('options', OptionsViewSet)
 router.register('userprofile', UserProfileViewSet)
 router.register('tagging', TaggingViewSet)
 router.register('patientlist', PatientListViewSet)
 router.register('patientrecordaccess', PatientRecordAccessViewSet)
+
+router.register('options', OptionsViewSet)
+router.register('referencedata', ReferenceDataViewSet)
+router.register('metadata', MetadataViewSet)
 
 for subrecord in subrecords():
     sub_name = camelcase_to_underscore(subrecord.__name__)
