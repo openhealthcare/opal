@@ -585,21 +585,27 @@ describe('PatientListCtrl', function() {
     });
 
     describe('removeFromMine()', function() {
+      it('should be null if readonly', function() {
+          profile.readonly = true;
+          expect($scope.removeFromMine(0, null)).toBe(null);
+      });
 
-        it('should be null if readonly', function() {
-            profile.readonly = true;
-            expect($scope.removeFromMine(0, null)).toBe(null);
-        });
+      it('should remove the mine tag', function() {
+          var selectedEpisodeId = $scope.episode.id;
+          $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+          profile.readonly = false;
+          $scope.removeFromMine($scope.episode);
+          $rootScope.$apply();
 
-        it('should remove the mine tag', function() {
-            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
-            profile.readonly = false;
-            var mock_event = {preventDefault: jasmine.createSpy()};
-            $scope.removeFromMine(0, mock_event);
-            $rootScope.$apply();
-            $httpBackend.flush();
-        });
+          // the episode should be removed from the displayed episodes
+          var displayed_episodes = _.map($scope.rows, function(episode){
+            return episode.id;
+          });
 
+          $httpBackend.flush();
+          var isRemoved = _.contains(displayed_episodes, selectedEpisodeId);
+          expect(isRemoved).toBe(true);
+      });
     });
 
     describe('editing an item', function() {
