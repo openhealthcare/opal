@@ -3,6 +3,46 @@
 This document provides instructions for specific steps required to upgrading your OPAL
 application to a later version where there are extra steps required.
 
+### 5.x -> 6.x
+
+#### Upgrading OPAL
+
+How you do this depends on how you have configured your application, but updating your
+requirements.txt to update the version should work.
+
+    -e git://github.com/openhealthcare/opal.git@v0.6.0#egg=opal
+
+After re-installing (via for instance `pip install -r requirements.txt`) you will need to
+run the migrations for OPAL 0.6.x
+
+    $ python manage.py migrate opal
+
+#### Upgrade plugins
+
+A number of OPAL plugins have new releases to work with the changes in OPAL 0.6.x
+
+* opal-referral - Upgrade to 0.1.4
+* opal-wardround - Upgrade to 0.6.0
+* opal-observations - Upgrade to 0.1.2
+* opal-dischargesummary - Upgrade to 0.2.0
+* opal-dashboard - Upgrade to 0.1.3
+
+Meanwhile the `opal-taskrunner` plugin has now been deprecated, this functionality now
+living natively within OPAL core.
+
+#### Update your Teams to be PatientLists
+
+Patient Lists are now driven by subclasses of `opal.core.PatientList`, so we will need
+to convert your Teams to be PatientLists.
+
+    # patient_lists.py
+    from opal.core import patient_lists
+
+    class MyTagList(patient_lists.TaggedPatientList):
+        display_name = 'Tagged blue'
+        tag = 'blue'
+
+See the [full patient list documentation](../guides/list_views.md) for further details.
 
 ### 4.X -> 5.x
 

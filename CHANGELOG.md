@@ -33,8 +33,11 @@ Adds $opal checkout for switching between applications or application versions.
 
 #### Upgrade instructions:
 
-* Update your settings to use the new date formats.
+Full upgrade instructions to work through any backwards incompatible changes are
+provided in the OPAL docs.
 
+* Update your settings to use the new date formats.
+* Update your lists to use the new TaggedPatientList class
 
 ### 0.5.5 (Minor Release)
 Changes the way old tags are handled.
