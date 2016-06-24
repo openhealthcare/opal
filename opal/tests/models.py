@@ -8,6 +8,11 @@ from opal import models
 from opal.core import lookuplists
 
 
+class Birthday(models.PatientSubrecord):
+    birth_date = dmodels.DateField()
+    party = dmodels.DateTimeField()
+
+
 class Hat(lookuplists.LookupList):
     pass
 

@@ -35,6 +35,24 @@ def get_default_episode_type():
     return app.default_episode_category
 
 
+def deserialize_datetime(value):
+    input_format = settings.DATETIME_INPUT_FORMATS[0]
+    value = timezone.make_aware(datetime.datetime.strptime(
+        value, input_format
+    ), timezone.get_current_timezone())
+
+    return value
+
+
+def deserialize_date(value):
+    input_format = settings.DATE_INPUT_FORMATS[0]
+    dt = datetime.datetime.strptime(
+        value, input_format
+    )
+    dt = timezone.make_aware(dt, timezone.get_current_timezone())
+    return dt.date()
+
+
 class UpdatesFromDictMixin(object):
     """
     Mixin class to provide the serialization/deserialization
@@ -209,17 +227,9 @@ class UpdatesFromDictMixin(object):
                         post_save.append(functools.partial(self.save_many_to_many, name, value, field_type))
                     else:
                         if value and field_type == models.fields.DateField:
-                            input_format = settings.DATE_INPUT_FORMATS[0]
-                            dt = datetime.datetime.strptime(
-                                value, input_format
-                            )
-                            dt = timezone.make_aware(dt, timezone.get_current_timezone())
-                            value = dt.date()
-                        if value and field_type == models.fields.DateTimeField:
-                            input_format = settings.DATETIME_INPUT_FORMATS[0]
-                            value = timezone.make_aware(datetime.datetime.strptime(
-                                value, input_format
-                            ), timezone.get_current_timezone())
+                            value = deserialize_date(value)
+                        elif value and field_type == models.fields.DateTimeField:
+                            value = deserialize_datetime(value)
 
                         setattr(self, name, value)
 
@@ -1605,7 +1615,7 @@ class PatientConsultation(EpisodeSubrecord):
 
     def set_when(self, incoming_value, user, *args, **kwargs):
         if incoming_value:
-            self.when = incoming_value
+            self.when = deserialize_datetime(incoming_value)
         else:
             self.when = datetime.datetime.now()
 

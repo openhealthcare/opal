@@ -17,7 +17,8 @@ from opal.models import (
 from opal.core.test import OpalTestCase
 import opal.tests.test_patient_lists # To make sure test tagged lists are pulled in
 from opal.tests.models import (
-    FamousLastWords, PatientColour, ExternalSubRecord, SymptomComplex, PatientConsultation
+    FamousLastWords, PatientColour, ExternalSubRecord, SymptomComplex, PatientConsultation,
+    Birthday
 )
 
 class PatientRecordAccessTestCase(OpalTestCase):
@@ -181,6 +182,26 @@ class PatientTestCase(OpalTestCase):
 
 
 class SubrecordTestCase(OpalTestCase):
+
+
+    def test_date_time_deserialisation(self):
+        patient, _ = self.new_patient_and_episode_please()
+        birthday_date = "10/1/2000"
+        birthday_party= "11/2/2016 20:30:10"
+        birthday = Birthday()
+        birthday.update_from_dict(dict(
+            birth_date=birthday_date,
+            party=birthday_party,
+            patient_id=patient.id
+        ), self.user)
+
+        bday = Birthday.objects.get()
+        self.assertEqual(bday.patient_id, patient.id)
+        self.assertEqual(bday.birth_date, datetime.date(2000, 1, 10))
+        # stip off miliseconds, we don't use them
+        start = bday.party.isoformat()[:19]
+        expected_start = '2016-02-11T20:30:10'
+        self.assertEqual(start, expected_start)
 
     def test_display_template_does_not_exist(self):
         self.assertEqual(None, Subrecord.get_display_template())
@@ -555,9 +576,9 @@ class PatientConsultationTestCase(OpalTestCase):
         )
 
     def test_if_when_is_set(self):
-        when = datetime.datetime(2012, 10, 10)
+        when = datetime.datetime(2016, 06, 10, 12, 2, 20)
         patient_consultation_dict = dict(
-            when=when,
+            when='10/06/2016 12:02:20',
         )
 
         self.patient_consultation.update_from_dict(patient_consultation_dict, self.user)
