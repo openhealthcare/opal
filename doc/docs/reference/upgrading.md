@@ -31,7 +31,7 @@ middle name and title. The previous `name` field will be converted to be `first_
 
 Strategies for updating your data to use the appropriate fields will vary from application
 to application, but one good such strategy is to use a data migration [such as the one done
-here](https://github.com/openhealthcare/elcid/blob/v0.6.0/elcid/migrations/0035_auto_20160324_0942.py).
+here](https://github.com/openhealthcare/acute/blob/master/acute/migrations/0004_auto_20160624_1215.py).
 
 #### Update settings
 
