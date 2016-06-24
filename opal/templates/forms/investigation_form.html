@@ -1,43 +1,43 @@
 {% load forms %}
-{% input "autofocus" label="Test" model="editing.microbiology_test.test" lookuplist="microbiology_test_list" %}
-{% datepicker label="Date ordered" model="editing.microbiology_test.date_ordered" %}
-{% input label="Details" model="editing.microbiology_test.details" %}
+{% input "autofocus" field="Investigation.test" lookuplist="microbiology_test_list" %}
+{% datepicker field="Investigation.date_ordered" %}
+{% input label="Details" model="editing.investigation.details" %}
 
-{% input label="Microscopy" model="editing.microbiology_test.microscopy" show="testType == 'micro_test_mcs'" %}
-{% input label="Organism" model="editing.microbiology_test.organism" lookuplist="microbiology_organism_list" show="testType == 'micro_test_mcs'" %}
-{% input label="Sensitive antibiotics" model="editing.microbiology_test.sensitive_antibiotics" lookuplist="antimicrobial_list" show="testType == 'micro_test_mcs'" %}
-{% input label="Resistant antibiotics" model="editing.microbiology_test.resistant_antibiotics" lookuplist="antimicrobial_list" show="testType == 'micro_test_mcs'" %}
+{% input label="Microscopy" model="editing.investigation.microscopy" show="testType == 'micro_test_mcs'" %}
+{% input label="Organism" model="editing.investigation.organism" lookuplist="microbiology_organism_list" show="testType == 'micro_test_mcs'" %}
+{% input label="Sensitive antibiotics" model="editing.investigation.sensitive_antibiotics" lookuplist="antimicrobial_list" show="testType == 'micro_test_mcs'" %}
+{% input label="Resistant antibiotics" model="editing.investigation.resistant_antibiotics" lookuplist="antimicrobial_list" show="testType == 'micro_test_mcs'" %}
 
-{% radio label="IgM" model="editing.microbiology_test.igm" show="testType == 'micro_test_serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
-{% radio label="IgG" model="editing.microbiology_test.igg" show="testType == 'micro_test_serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
+{% radio label="IgM" model="editing.investigation.igm" show="testType == 'micro_test_serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
+{% radio label="IgG" model="editing.investigation.igg" show="testType == 'micro_test_serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
 
-{% radio label="IgM" model="editing.microbiology_test.vca_igm" show="testType == 'micro_test_ebv_serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
-{% radio label="IgG" model="editing.microbiology_test.vca_igg" show="testType == 'micro_test_ebv_serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
-{% radio label="EBNA IgG" model="editing.microbiology_test.ebna_igg" show="testType == 'micro_test_ebv_serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
+{% radio label="IgM" model="editing.investigation.vca_igm" show="testType == 'micro_test_ebv_serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
+{% radio label="IgG" model="editing.investigation.vca_igg" show="testType == 'micro_test_ebv_serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
+{% radio label="EBNA IgG" model="editing.investigation.ebna_igg" show="testType == 'micro_test_ebv_serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
 
-{% radio label="Result" model="editing.microbiology_test.result" show="testType == 'micro_test_hiv'" lookuplist="['pending', 'antibody positive', 'p24 antigen only', 'negative']" %}
+{% radio label="Result" model="editing.investigation.result" show="testType == 'micro_test_hiv'" lookuplist="['pending', 'antibody positive', 'p24 antigen only', 'negative']" %}
 
-{% radio label="HBsAg" model="editing.microbiology_test.hbsag" show="testType == 'micro_test_hepititis_b_serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
-{% radio label="anti-HbS" model="editing.microbiology_test.anti_hbs" show="testType == 'micro_test_hepititis_b_serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
-{% radio label="anti-HbCore IgM" model="editing.microbiology_test.anti_hbcore_igm" show="testType == 'micro_test_hepititis_b_serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
-{% radio label="anti-HbCore IgG" model="editing.microbiology_test.anti_hbcore_igg" show="testType == 'micro_test_hepititis_b_serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
+{% radio label="HBsAg" model="editing.investigation.hbsag" show="testType == 'micro_test_hepititis_b_serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
+{% radio label="anti-HbS" model="editing.investigation.anti_hbs" show="testType == 'micro_test_hepititis_b_serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
+{% radio label="anti-HbCore IgM" model="editing.investigation.anti_hbcore_igm" show="testType == 'micro_test_hepititis_b_serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
+{% radio label="anti-HbCore IgG" model="editing.investigation.anti_hbcore_igg" show="testType == 'micro_test_hepititis_b_serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
 
-{% input label="RPR" model="editing.microbiology_test.rpr" show="testType == 'micro_test_syphilis_serology'" %}
-{% radio label="TPPA" model="editing.microbiology_test.tppa" show="testType == 'micro_test_syphilis_serology'" lookuplist="['pending', 'positive', 'negative']" %}
+{% input label="RPR" model="editing.investigation.rpr" show="testType == 'micro_test_syphilis_serology'" %}
+{% radio label="TPPA" model="editing.investigation.tppa" show="testType == 'micro_test_syphilis_serology'" lookuplist="['pending', 'positive', 'negative']" %}
 
-{% radio label="Result" model="editing.microbiology_test.result" show="testType == 'micro_test_single_test_pos_neg'" lookuplist="['pending', 'positive', 'negative']" %}
+{% radio label="Result" model="editing.investigation.result" show="testType == 'micro_test_single_test_pos_neg'" lookuplist="['pending', 'positive', 'negative']" %}
 
-{% radio label="Result" model="editing.microbiology_test.result" show="testType == 'micro_test_single_test_pos_neg_equiv'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
+{% radio label="Result" model="editing.investigation.result" show="testType == 'micro_test_single_test_pos_neg_equiv'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
 
-{% radio label="IgG" model="editing.microbiology_test.igg" show="testType == 'micro_test_single_igg_test'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
+{% radio label="IgG" model="editing.investigation.igg" show="testType == 'micro_test_single_igg_test'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
 
-{% input label="Viral load" model="editing.microbiology_test.viral_load" show="testType == 'micro_test_viral_load'" %}
+{% input label="Viral load" model="editing.investigation.viral_load" show="testType == 'micro_test_viral_load'" %}
 
-{% input label="Parasitaemia" model="editing.microbiology_test.parasitaemia" show="testType == 'micro_test_parasitaemia'" %}
+{% input label="Parasitaemia" model="editing.investigation.parasitaemia" show="testType == 'micro_test_parasitaemia'" %}
 
-{% radio label="HSV" model="editing.microbiology_test.hsv" show="testType == 'micro_test_swab_pcr'" lookuplist="['pending', 'positive', 'negative']" %}
-{% radio label="VZV" model="editing.microbiology_test.vzv" show="testType == 'micro_test_swab_pcr'" lookuplist="['pending', 'positive', 'negative']" %}
-{% radio label="Syphilis" model="editing.microbiology_test.syphilis" show="testType == 'micro_test_swab_pcr'" lookuplist="['pending', 'positive', 'negative']" %}
+{% radio label="HSV" model="editing.investigation.hsv" show="testType == 'micro_test_swab_pcr'" lookuplist="['pending', 'positive', 'negative']" %}
+{% radio label="VZV" model="editing.investigation.vzv" show="testType == 'micro_test_swab_pcr'" lookuplist="['pending', 'positive', 'negative']" %}
+{% radio label="Syphilis" model="editing.investigation.syphilis" show="testType == 'micro_test_swab_pcr'" lookuplist="['pending', 'positive', 'negative']" %}
 
 <span ng-show="testType == 'micro_test_c_difficile'">
 
@@ -46,17 +46,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.microbiology_test.c_difficile_antigen">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.c_difficile_antigen">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.microbiology_test.c_difficile_antigen">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.c_difficile_antigen">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.microbiology_test.c_difficile_antigen">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.c_difficile_antigen">
         negative
       </label>
 
@@ -68,17 +68,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.microbiology_test.c_difficile_toxin">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.c_difficile_toxin">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.microbiology_test.c_difficile_toxin">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.c_difficile_toxin">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.microbiology_test.c_difficile_toxin">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.c_difficile_toxin">
         negative
       </label>
 
@@ -92,7 +92,7 @@
   <div class="form-group">
     <label class="control-label col-sm-3">Species</label>
     <div class="col-sm-8">
-      <input class="form-control" type="text" ng-model="editing.microbiology_test.species">
+      <input class="form-control" type="text" ng-model="editing.investigation.species">
     </div>
   </div>
 
@@ -101,17 +101,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.microbiology_test.result">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.result">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.microbiology_test.result">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.result">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.microbiology_test.result">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.result">
         negative
       </label>
 
@@ -127,17 +127,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.microbiology_test.hsv_1">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.hsv_1">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.microbiology_test.hsv_1">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.hsv_1">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.microbiology_test.hsv_1">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.hsv_1">
         negative
       </label>
 
@@ -149,17 +149,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.microbiology_test.hsv_3">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.hsv_3">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.microbiology_test.hsv_3">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.hsv_3">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.microbiology_test.hsv_3">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.hsv_3">
         negative
       </label>
 
@@ -171,17 +171,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.microbiology_test.enterovirus">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.enterovirus">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.microbiology_test.enterovirus">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.enterovirus">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.microbiology_test.enterovirus">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.enterovirus">
         negative
       </label>
 
@@ -193,17 +193,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.microbiology_test.cmv">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.cmv">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.microbiology_test.cmv">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.cmv">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.microbiology_test.cmv">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.cmv">
         negative
       </label>
 
@@ -215,17 +215,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.microbiology_test.ebv">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.ebv">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.microbiology_test.ebv">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.ebv">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.microbiology_test.ebv">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.ebv">
         negative
       </label>
 
@@ -237,17 +237,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.microbiology_test.vzv">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.vzv">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.microbiology_test.vzv">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.vzv">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.microbiology_test.vzv">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.vzv">
         negative
       </label>
 
@@ -263,17 +263,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.microbiology_test.influenza_a">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.influenza_a">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.microbiology_test.influenza_a">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.influenza_a">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.microbiology_test.influenza_a">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.influenza_a">
         negative
       </label>
 
@@ -285,17 +285,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.microbiology_test.influenza_b">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.influenza_b">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.microbiology_test.influenza_b">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.influenza_b">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.microbiology_test.influenza_b">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.influenza_b">
         negative
       </label>
 
@@ -307,17 +307,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.microbiology_test.parainfluenza">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.parainfluenza">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.microbiology_test.parainfluenza">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.parainfluenza">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.microbiology_test.parainfluenza">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.parainfluenza">
         negative
       </label>
 
@@ -329,17 +329,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.microbiology_test.metapneumovirus">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.metapneumovirus">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.microbiology_test.metapneumovirus">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.metapneumovirus">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.microbiology_test.metapneumovirus">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.metapneumovirus">
         negative
       </label>
 
@@ -351,17 +351,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.microbiology_test.rsv">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.rsv">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.microbiology_test.rsv">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.rsv">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.microbiology_test.rsv">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.rsv">
         negative
       </label>
 
@@ -373,17 +373,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.microbiology_test.adenovirus">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.adenovirus">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.microbiology_test.adenovirus">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.adenovirus">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.microbiology_test.adenovirus">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.adenovirus">
         negative
       </label>
 
@@ -399,17 +399,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.microbiology_test.norovirus">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.norovirus">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.microbiology_test.norovirus">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.norovirus">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.microbiology_test.norovirus">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.norovirus">
         negative
       </label>
 
@@ -421,17 +421,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.microbiology_test.rotavirus">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.rotavirus">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.microbiology_test.rotavirus">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.rotavirus">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.microbiology_test.rotavirus">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.rotavirus">
         negative
       </label>
 
@@ -443,17 +443,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.microbiology_test.adenovirus">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.adenovirus">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.microbiology_test.adenovirus">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.adenovirus">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.microbiology_test.adenovirus">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.adenovirus">
         negative
       </label>
 
@@ -469,17 +469,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.microbiology_test.giardia">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.giardia">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.microbiology_test.giardia">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.giardia">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.microbiology_test.giardia">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.giardia">
         negative
       </label>
 
@@ -491,17 +491,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.microbiology_test.entamoeba_histolytica">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.entamoeba_histolytica">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.microbiology_test.entamoeba_histolytica">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.entamoeba_histolytica">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.microbiology_test.entamoeba_histolytica">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.entamoeba_histolytica">
         negative
       </label>
 
@@ -513,17 +513,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.microbiology_test.cryptosporidium">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.cryptosporidium">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.microbiology_test.cryptosporidium">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.cryptosporidium">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.microbiology_test.cryptosporidium">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.cryptosporidium">
         negative
       </label>
 
@@ -537,18 +537,18 @@
   <div class="form-group">
     <label class="control-label col-sm-3">Result</label>
     <div class="col-sm-8">
-      <input class="form-control" type="text" ng-model="editing.microbiology_test.result">
+      <input class="form-control" type="text" ng-model="editing.investigation.result">
     </div>
   </div>
 
 </span>
 
-{% select label="Reason not done" model="editing.microbiology_test.hiv_declined" show="editing.microbiology_test.test == 'HIV Point of Care' && editing.microbiology_test.result == 'not done'" lookuplist="hiv_no_list" %}
-{% checkbox label="Alert Investigation" model="editing.microbiology_test.alert_investigation" %}
+{% select label="Reason not done" model="editing.investigation.hiv_declined" show="editing.investigation.test == 'HIV Point of Care' && editing.investigation.result == 'not done'" lookuplist="hiv_no_list" %}
+{% checkbox label="Alert Investigation" model="editing.investigation.alert_investigation" %}
 
-{% radio label="Spotted Fever Group IgM" model="editing.microbiology_test.spotted_fever_igm" show="editing.microbiology_test.test == 'Rickettsia Serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
-{% radio label="Spotted Fever Group IgG" model="editing.microbiology_test.spotted_fever_igg" show="editing.microbiology_test.test == 'Rickettsia Serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
-{% radio label="Typhus Group IgM" model="editing.microbiology_test.typhus_group_igm" show="editing.microbiology_test.test == 'Rickettsia Serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
-{% radio label="Typhus Group IgG" model="editing.microbiology_test.typhus_group_igg" show="editing.microbiology_test.test == 'Rickettsia Serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
-{% radio label="Scrub Typhus IgM" model="editing.microbiology_test.scrub_typhus_igm" show="editing.microbiology_test.test == 'Rickettsia Serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
-{% radio label="Scrub Typhus IgG" model="editing.microbiology_test.scrub_typhus_igg" show="editing.microbiology_test.test == 'Rickettsia Serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
+{% radio label="Spotted Fever Group IgM" model="editing.investigation.spotted_fever_igm" show="editing.investigation.test == 'Rickettsia Serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
+{% radio label="Spotted Fever Group IgG" model="editing.investigation.spotted_fever_igg" show="editing.investigation.test == 'Rickettsia Serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
+{% radio label="Typhus Group IgM" model="editing.investigation.typhus_group_igm" show="editing.investigation.test == 'Rickettsia Serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
+{% radio label="Typhus Group IgG" model="editing.investigation.typhus_group_igg" show="editing.investigation.test == 'Rickettsia Serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
+{% radio label="Scrub Typhus IgM" model="editing.investigation.scrub_typhus_igm" show="editing.investigation.test == 'Rickettsia Serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
+{% radio label="Scrub Typhus IgG" model="editing.investigation.scrub_typhus_igg" show="editing.investigation.test == 'Rickettsia Serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
