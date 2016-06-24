@@ -37,12 +37,11 @@ Let's have a look at what that created for you:
         requirements.txt        # Requirements file ready for your project
 
         data/                   # A dummy directory for fixtures
+            lookuplists/        # A dummy directory for reference data
 
         mynewapp/               # The actual python package for your application
              __init__.py
-            flow.py             # How patients move through your services
             models.py           # Data models for your application
-            schema.py           # The list schemas for your application
             settings.py         # Helpfully tweaked Django settings
             tests.py            # Dummy unittests
             urls.py             # Django Urlconf
@@ -59,8 +58,10 @@ Let's have a look at what that created for you:
 
 The scaffolding step has generated you a working project - so let's check that out
 
-    cd mynewapp
-    python manage.py runserver
+```bash
+cd mynewapp
+python manage.py runserver
+```
 
 If you now visit `http://localhost:8000` in your browser, you should see the standard login screen:
 
