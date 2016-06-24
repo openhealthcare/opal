@@ -553,6 +553,12 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     date_of_episode   = models.DateField(blank=True, null=True)
     consistency_token = models.CharField(max_length=8)
 
+    # stage is at what stage of an episode flow is the
+    # patient at
+    stage             = models.CharField(
+        max_length=256, null=True, blank=True
+    )
+
     objects = managers.EpisodeQueryset.as_manager()
 
     def __unicode__(self):
