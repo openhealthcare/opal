@@ -39,6 +39,15 @@ Many of the default OPAL templates now assume that the `'opal.context_processors
 Context Processor is available - you should add that to the `TEMPLATE_CONTEXT_PROCESSORS`
 setting in your application's `settings.py`
 
+The default date formats in OPAL have changed - and so you should update your `DATE_X`
+settings to match:
+
+```python
+DATE_FORMAT = 'd/m/Y'
+DATE_INPUT_FORMATS = ['%d/%m/%Y']
+DATETIME_FORMAT = 'd/m/Y H:i:s'
+DATETIME_INPUT_FORMATS = ['%d/%m/%Y %H:%M:%S']
+```
 
 #### Upgrade plugins
 
@@ -97,6 +106,9 @@ relying on templates previously in OPAL. To discover which these are, run
 
     $ opal scaffold --dry-run
 
+You may either create templates by hand, or have OPAL generate boilerplate templates for you
+by running `$ opal scaffold`.
+
 Modal templates already in your application will likely be referencing invalid paths
 to their Angular variables. You should update these to include the record name - for example:
 
@@ -105,18 +117,6 @@ to their Angular variables. You should update these to include the record name -
 {% input  label="Drug" model="editing.drug" lookuplist="antimicrobial_list" %}
 <!-- Becomes -->
 {% input  label="Drug" model="editing.treatment.drug" lookuplist="antimicrobial_list" %}
-```
-
-#### Update Date formats
-
-The default date formats in OPAL have changed - and so you should update your `DATE_X`
-settings to match:
-
-```python
-DATE_FORMAT = 'd/m/Y'
-DATE_INPUT_FORMATS = ['%d/%m/%Y']
-DATETIME_FORMAT = 'd/m/Y H:i:s'
-DATETIME_INPUT_FORMATS = ['%d/%m/%Y %H:%M:%S']
 ```
 
 #### The Inpatient episode category
