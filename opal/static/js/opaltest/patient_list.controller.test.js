@@ -586,14 +586,25 @@ describe('PatientListCtrl', function() {
 
     describe('removeFromMine()', function() {
       it('should be null if readonly', function() {
-          profile.readonly = true;
-          expect($scope.removeFromMine(0, null)).toBe(null);
+          $httpBackend.expectGET('/api/v0.1/userprofile/').respond(
+            {readonly: false}
+          );
+          var rows = _.map($scope.rows, function(episode){
+            return episode.id;
+          });
+          expect($scope.removeFromMine($scope.episode));
+          $rootScope.$apply();
+          var newRows = _.map($scope.rows, function(episode){
+            return episode.id;
+          });
+          expect(rows).toEqual(newRows);
       });
 
       it('should remove the mine tag', function() {
           var selectedEpisodeId = $scope.episode.id;
-          $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
-          profile.readonly = false;
+          $httpBackend.expectGET('/api/v0.1/userprofile/').respond(
+            {readonly: false}
+          );
           $scope.removeFromMine($scope.episode);
           $rootScope.$apply();
 
