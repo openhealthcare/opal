@@ -130,9 +130,11 @@ describe('PatientListCtrl', function() {
         success: jasmine.createSpy()
     }
 
-    beforeEach(module('opal.controllers'), function($provide) {
+    beforeEach(module('opal.services', function($provide) {
         $provide.value('UserProfile', function(){ return profile; });
-    });
+    }));
+
+    beforeEach(module('opal.controllers'));
 
     beforeEach(inject(function($injector){
         Schema   = $injector.get('Schema');

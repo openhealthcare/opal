@@ -61,8 +61,7 @@ angular.module('opal.controllers').controller(
               });
 
               if(!episodePresent){
-                rix = getRowIxFromEpisodeId(visibleEpisodes[0].id);
-                $scope.select_episode(visibleEpisodes[0], rix);
+                $scope.select_episode(visibleEpisodes[0], 0);
               }
             }
     		    return visibleEpisodes;
@@ -354,11 +353,8 @@ angular.module('opal.controllers').controller(
 	    };
 
         $scope.select_episode = function(episode, rix){
-            if(rix !== $scope.rix){
-                $scope.episode = episode;
-                $scope.rix = rix;
-            }
-            return true;
+            $scope.episode = episode;
+            $scope.rix = rix;
         }
 
         $scope.controller_for_episode = function(controller, template, size, episode){
