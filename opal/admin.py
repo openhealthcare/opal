@@ -47,11 +47,12 @@ class PatientAdmin(reversion.VersionAdmin):
 class TaggingAdmin(reversion.VersionAdmin):
     list_display = ['value', 'episode']
 
-# class TeamAdmin(reversion.VersionAdmin):
-#     list_display = ['title', 'name', 'active', 'restricted', 'visible_in_list', 'direct_add', 'order']
-#     search_fields = ['title']
-#     list_editable = ['active', 'order', 'restricted', 'visible_in_list', 'direct_add']
-#     filter_horizontal = ('useful_numbers',)
+
+class TeamAdmin(reversion.VersionAdmin):
+    list_display = ['title', 'name', 'active', 'restricted', 'visible_in_list', 'direct_add', 'order']
+    search_fields = ['title']
+    list_editable = ['active', 'order', 'restricted', 'visible_in_list', 'direct_add']
+    filter_horizontal = ('useful_numbers',)
 
 
 class PatientSubRecordAdmin(reversion.VersionAdmin):
