@@ -299,7 +299,7 @@ angular.module('opal.controllers').controller(
           var tagging = episode.tagging[0];
           editing = tagging.makeCopy();
           editing.mine = false;
-          tagging.save(editing).then(function(result){
+          tagging.save(editing).then(function(){
               $scope.removeFromList(episode);
           });
 

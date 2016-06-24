@@ -130,7 +130,9 @@ describe('PatientListCtrl', function() {
         success: jasmine.createSpy()
     }
 
-    beforeEach(module('opal.controllers'));
+    beforeEach(module('opal.controllers', function($provide) {
+        $provide.value('UserProfile', function(){ return profile; });
+    }));
 
     beforeEach(inject(function($injector){
         Schema   = $injector.get('Schema');
@@ -586,9 +588,8 @@ describe('PatientListCtrl', function() {
 
     describe('removeFromMine()', function() {
       it('should be null if readonly', function() {
-          $httpBackend.expectGET('/api/v0.1/userprofile/').respond(
-            {readonly: false}
-          );
+          profile.readonly = true;
+
           var rows = _.map($scope.rows, function(episode){
             return episode.id;
           });
@@ -602,9 +603,7 @@ describe('PatientListCtrl', function() {
 
       it('should remove the mine tag', function() {
           var selectedEpisodeId = $scope.episode.id;
-          $httpBackend.expectGET('/api/v0.1/userprofile/').respond(
-            {readonly: false}
-          );
+          profile.readonly = false;
           $scope.removeFromMine($scope.episode);
           $rootScope.$apply();
 
@@ -613,7 +612,6 @@ describe('PatientListCtrl', function() {
             return episode.id;
           });
 
-          $httpBackend.flush();
           var isRemoved = _.contains(displayed_episodes, selectedEpisodeId);
           expect(isRemoved).toBe(true);
       });
