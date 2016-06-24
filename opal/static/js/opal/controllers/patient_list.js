@@ -61,8 +61,7 @@ angular.module('opal.controllers').controller(
               });
 
               if(!episodePresent){
-                rix = getRowIxFromEpisodeId(visibleEpisodes[0].id);
-                $scope.select_episode(visibleEpisodes[0], rix);
+                $scope.select_episode(visibleEpisodes[0], 0);
               }
             }
     		    return visibleEpisodes;
@@ -253,14 +252,17 @@ angular.module('opal.controllers').controller(
                 });
 	    };
 
+        $scope.removeFromList = function(episode){
+          delete $scope.episodes[episode.id];
+          $scope.rows = $scope.getVisibleEpisodes();
+          $scope.num_episodes -= 1;
+          $scope.episode = $scope.rows[0];
+        }
+
         $scope._post_discharge = function(result, episode){
     			$rootScope.state = 'normal';
     			if (result == 'discharged' | result == 'moved') {
-            delete $scope.episodes[episode.id];
-            $scope.rows = $scope.getVisibleEpisodes();
-            $scope.num_episodes -= 1;
-            $scope.rix = 0;
-            $scope.episode = $scope.rows[0];
+            $scope.removeFromList(episode);
     			};
         };
 
@@ -293,49 +295,46 @@ angular.module('opal.controllers').controller(
 		    });
 	    };
 
-        // TODO: Test This!
-        $scope.removeFromMine = function(rix, event){
-            if(profile.readonly){
-                return null;
-            };
+      $scope.removeFromMine = function(episode){
+          if(profile.readonly){
+              return null;
+          }
 
-            event.preventDefault();
+          var modal;
+          var tagging = episode.tagging[0];
+          editing = tagging.makeCopy();
+          editing.mine = false;
+          tagging.save(editing).then(function(){
+              $scope.removeFromList(episode);
+          });
 
-            var modal;
-            var episode = getEpisode(rix);
-            var tagging = episode.tagging[0];
-            editing = tagging.makeCopy();
-            editing.mine = false;
-            tagging.save(editing).then(function(result){
-                $scope.rows = $scope.getVisibleEpisodes();
-            })
-        };
+      };
 
-        $scope.newNamedItem = function(episode, name) {
-            return episode.recordEditor.newItem(name);
-        };
+      $scope.newNamedItem = function(episode, name) {
+          return episode.recordEditor.newItem(name);
+      };
 
-        $scope.is_tag_visible_in_list = function(tag){
-            return _.contains(options.tag_visible_in_list, tag);
-        };
+      $scope.is_tag_visible_in_list = function(tag){
+          return _.contains(options.tag_visible_in_list, tag);
+      };
 
-        $scope.editNamedItem  = function(episode, name, iix) {
-            var reset_state = function(result){
-                if (name == 'tagging') {
-                    // User may have removed current tag
-                    $scope.rows = $scope.getVisibleEpisodes();
-                }
-                var item = _.last(episode[name]);
+      $scope.editNamedItem  = function(episode, name, iix) {
+          var reset_state = function(result){
+              if (name == 'tagging') {
+                  // User may have removed current tag
+                  $scope.rows = $scope.getVisibleEpisodes();
+              }
+              var item = _.last(episode[name]);
 
-                if (episode[name].sort){
-                    episode.sortColumn(item.columnName, item.sort);
-                }
-            };
+              if (episode[name].sort){
+                  episode.sortColumn(item.columnName, item.sort);
+              }
+          };
 
-            episode.recordEditor.editItem(name, iix).then(function(result){
-                reset_state(result);
-            });
-        };
+          episode.recordEditor.editItem(name, iix).then(function(result){
+              reset_state(result);
+          });
+      };
 
 	    function goUp() {
 		    var episode;
@@ -354,11 +353,8 @@ angular.module('opal.controllers').controller(
 	    };
 
         $scope.select_episode = function(episode, rix){
-            if(rix !== $scope.rix){
-                $scope.episode = episode;
-                $scope.rix = rix;
-            }
-            return true;
+            $scope.episode = episode;
+            $scope.rix = rix;
         }
 
         $scope.controller_for_episode = function(controller, template, size, episode){

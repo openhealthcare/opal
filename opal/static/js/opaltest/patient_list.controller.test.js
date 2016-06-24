@@ -130,9 +130,11 @@ describe('PatientListCtrl', function() {
         success: jasmine.createSpy()
     }
 
-    beforeEach(module('opal.controllers'), function($provide) {
+    beforeEach(module('opal.services', function($provide) {
         $provide.value('UserProfile', function(){ return profile; });
-    });
+    }));
+
+    beforeEach(module('opal.controllers'));
 
     beforeEach(inject(function($injector){
         Schema   = $injector.get('Schema');
@@ -674,21 +676,34 @@ describe('PatientListCtrl', function() {
     });
 
     describe('removeFromMine()', function() {
+      it('should be null if readonly', function() {
+          profile.readonly = true;
 
-        it('should be null if readonly', function() {
-            profile.readonly = true;
-            expect($scope.removeFromMine(0, null)).toBe(null);
-        });
+          var rows = _.map($scope.rows, function(episode){
+            return episode.id;
+          });
+          expect($scope.removeFromMine($scope.episode));
+          $rootScope.$apply();
+          var newRows = _.map($scope.rows, function(episode){
+            return episode.id;
+          });
+          expect(rows).toEqual(newRows);
+      });
 
-        it('should remove the mine tag', function() {
-            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
-            profile.readonly = false;
-            var mock_event = {preventDefault: jasmine.createSpy()};
-            $scope.removeFromMine(0, mock_event);
-            $rootScope.$apply();
-            $httpBackend.flush();
-        });
+      it('should remove the mine tag', function() {
+          var selectedEpisodeId = $scope.episode.id;
+          profile.readonly = false;
+          $scope.removeFromMine($scope.episode);
+          $rootScope.$apply();
 
+          // the episode should be removed from the displayed episodes
+          var displayed_episodes = _.map($scope.rows, function(episode){
+            return episode.id;
+          });
+
+          var isRemoved = _.contains(displayed_episodes, selectedEpisodeId);
+          expect(isRemoved).toBe(true);
+      });
     });
 
     describe('editing an item', function() {

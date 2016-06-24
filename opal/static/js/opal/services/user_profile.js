@@ -1,6 +1,5 @@
 angular.module('opal.services')
     .factory('UserProfile', function($q, $http, $window, $routeParams) {
-
         var UserProfile = function(profiledata){
             var profile = this;
 
