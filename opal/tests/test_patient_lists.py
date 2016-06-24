@@ -5,10 +5,12 @@ from django.contrib.auth.models import User
 from mock import MagicMock, PropertyMock, patch
 
 from opal.core import exceptions
-from opal.core.patient_lists import PatientList, TaggedPatientList
 from opal.tests import models
 from opal.models import Patient, Team, UserProfile
 from opal.core.test import OpalTestCase
+
+from opal.core import patient_lists
+from opal.core.patient_lists import PatientList, TaggedPatientList
 
 
 class TaggingTestPatientList(TaggedPatientList):
@@ -107,6 +109,22 @@ class TestPatientList(OpalTestCase):
     def test_known_abstract_subclasses_not_in_list(self):
         lists = list(PatientList.list())
         self.assertNotIn(TaggedPatientList, lists)
+
+class FirstListMetadataTestCase(OpalTestCase):
+
+    def test_first_list_slug(self):
+        slug = patient_lists.FirstListMetadata.to_dict(user=self.user)
+        self.assertEqual({'first_list_slug': 'carnivore'}, slug)
+
+    def test_first_list_slug_no_lists_for_user(self):
+        def nongen():
+            for x in range(0, 0):
+                yield x
+
+        with patch.object(patient_lists.PatientList, 'for_user') as for_user:
+            for_user.return_value = nongen()
+            slug = patient_lists.FirstListMetadata.to_dict(user=self.user)
+            self.assertEqual({'first_list_slug': ''}, slug)
 
 
 class TestTaggedPatientList(OpalTestCase):

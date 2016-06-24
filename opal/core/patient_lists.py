@@ -124,8 +124,12 @@ class FirstListMetadata(metadata.Metadata):
 
     @classmethod
     def to_dict(klass, user=None, **kw):
+        try:
+            slug = next(PatientList.for_user(user)).get_slug()
+        except StopIteration: # No lists for this user
+            slug = ''
         return {
-            klass.slug: next(PatientList.for_user(user)).get_slug()
+            klass.slug: slug
         }
 
 
