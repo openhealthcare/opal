@@ -31,6 +31,15 @@ is something we want to do differently specifically in the modal.
 
 Adds $opal checkout for switching between applications or application versions.
 
+### Models ContextProcessor
+
+The 'opal.context_processors.models' Context Processor will allow you to access your
+subrecords from templates without having to explicitly load them in a view. In turn,
+this allows patterns like:
+
+    {% include models.Demographics.get_detail_template %}
+
+
 #### Upgrade instructions:
 
 Full upgrade instructions to work through any backwards incompatible changes are

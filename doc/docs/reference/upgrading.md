@@ -10,12 +10,35 @@ application to a later version where there are extra steps required.
 How you do this depends on how you have configured your application, but updating your
 requirements.txt to update the version should work.
 
-    -e git://github.com/openhealthcare/opal.git@v0.6.0#egg=opal
+    # requirements.txt
+    opal==0.6.0
 
 After re-installing (via for instance `pip install -r requirements.txt`) you will need to
 run the migrations for OPAL 0.6.x
 
     $ python manage.py migrate opal
+
+#### Changes to abstract models
+
+If you are inheriting from the abstract models in OPAL e.g. `Demographics` then you should
+run a makemigrations command to update to the 0.6.x data model.
+
+    python manage.py makemigrations yourapp
+    python manage.py migrate yourapp
+
+You should note that as of OPAL 0.6.x `Demographics` now splits names into first, surname,
+middle name and title. The previous `name` field will be converted to be `first_name`.
+
+Strategies for updating your data to use the appropriate fields will vary from application
+to application, but one good such strategy is to use a data migration [such as the one done
+here](https://github.com/openhealthcare/elcid/blob/v0.6.0/elcid/migrations/0035_auto_20160324_0942.py).
+
+#### Update settings
+
+Many of the default OPAL templates now assume that the `'opal.context_processors.models'`
+Context Processor is available - you should add that to the `TEMPLATE_CONTEXT_PROCESSORS`
+setting in your application's `settings.py`
+
 
 #### Upgrade plugins
 
@@ -33,16 +56,36 @@ living natively within OPAL core.
 #### Update your Teams to be PatientLists
 
 Patient Lists are now driven by subclasses of `opal.core.PatientList`, so we will need
-to convert your Teams to be PatientLists.
+to convert your Teams to be PatientLists. You may want to re-enable the Team admin while
+you do so - this is simple, by updating your application's `admin.py`:
 
-    # patient_lists.py
-    from opal.core import patient_lists
+    # yourapp/admin.py
+    ...
+    from opal.admin import TeamAdmin
+    from opal.models import Team
+    admin.site.register(Team, TeamAdmin)
 
-    class MyTagList(patient_lists.TaggedPatientList):
-        display_name = 'Tagged blue'
-        tag = 'blue'
 
-See the [full patient list documentation](../guides/list_views.md) for further details.
+Patient lists are now declarative. For instance, to replicate the following team:
+
+<img src="/img/resp.team.png" style="margin: 12px auto; border: 1px solid black;"/>
+
+
+We would convert that to:
+
+```python
+# yourapp/patient*lists.py
+from opal.core import patient_lists
+
+class RespiratoryList(patient_lists.TaggedPatientList):
+    display_name = 'Respiratory'
+    tag          = 'respiratory'
+    order        = 4
+    schema       = [models.Demographics, models.Treatment]
+```
+
+See the [full patient list documentation](../guides/list_views.md) for further details
+of the options available for Patient Lists.
 
 ### 4.X -> 5.x
 
