@@ -64,7 +64,7 @@ class Command(BaseCommand):
         msg = "\nLoaded {0} lookup lists\n".format(num)
         msg += "\n\nNew items report:\n\n\n"
         msg += "{0} new items".format(self.items_created)
-        msg += "{0} new synonyms".format(self.synonyms_created)
+        msg += " {0} new synonyms".format(self.synonyms_created)
         msg += "\n\nEnd new items report."
         self.stdout.write(msg)
         return
