@@ -1,8 +1,8 @@
 {% load staticfiles %}
 {% load compress %}
 
-{% load opalplugins %}
-{% load gifs %}
+{% load application %}
+{% load plugins %}
 <!doctype html>
 {% block angulardefinition %}
 <html xmlns:ng="http://angularjs.org" id="ng-app" ng-app="{% block ngapp %}opal{% endblock %}" ng-controller="RootCtrl" ng-keydown="keydown($event)">
@@ -13,6 +13,7 @@
 		<script type="text/javascript" src="{% static "js/utils/json3.min.js" %}"></script>
 		<![endif]-->
 	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/> <!--320-->
 	<title>{{brand_name}}</title>
 
     {% compress js %}
@@ -31,6 +32,9 @@
       settings.BROADCAST_ENDPONT = settings.GLOSSOLALIA_URL.replace('http', 'ws') + 'ws';
       {% endif %}
       var version = '{{VERSION_NUMBER}}';
+      {% if OPAL_FLOW_SERVICE %}
+      var OPAL_FLOW_SERVICE = '{{ OPAL_FLOW_SERVICE }}';
+      {% endif %}
     </script>
     <!-- google analytics -->
     <script>
@@ -66,8 +70,8 @@
     <script type="text/javascript" src="{% static "js/opal/timer.js" %}"></script>
     {% endcompress %}
 
-    <link href='http://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Merriweather:400,300,700' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Merriweather:400,300,700' rel='stylesheet' type='text/css'>
     <link href="{% static "js/c3-0.2.5/c3.css" %}" rel="stylesheet" media="all">
 	<link href="{% static "bootstrap-3.1.0/css/bootstrap.css" %}" rel="stylesheet" media="all">
 	<link href="{% static "css/select.css" %}" rel="stylesheet" media="all">
@@ -85,6 +89,7 @@
     <link href="{% static "css/screen.css" %}" rel="stylesheet" media="screen">
 
     {% plugin_stylesheets %}
+    {% application_stylesheets %}
 
     <link rel="shortcut icon" href="{% static 'img/ohc-icon.png' %}">
 
@@ -111,19 +116,20 @@
     <div growl></div>
 
     {% block loading %}
-    <div class="loading screen-only">
-      <div class="loading-inner">
-        <p>
-          {% loading_gif %}
-        </p>
-        <p class="lead">
-          <strong>
-            Loading...
-          </strong>
-        </p>
-      </div>
-    </div>
+      {% include "partials/_loading.html" %}
     {% endblock %}
+    <script>
+        // temporary for try outs
+        jQuery(function($){
+
+        	// Touch Device Detection
+        	var isTouchDevice = 'ontouchstart' in document.documentElement;
+        	if( isTouchDevice ) {
+        		$('body').addClass('touch');
+        	}
+
+        });
+    </script>
 
   </body>
 </html>

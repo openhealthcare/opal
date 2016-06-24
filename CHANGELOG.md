@@ -1,5 +1,55 @@
+### 0.6.0 (Major Release)
+
+
+#### Detail views
+
+Moves from episode oriented detail to patient oriented detail.
+(All episodes plus x-episode views are available from a patient detail screen)
+
+#### Tagging
+
+As a performance optimisation for the frequent access of historic tags, untagging
+an episode simply renders the tag inactive rather than deleting it and relying on
+Django-Reversion for access to historical data.
+
+#### Date Formatting
+
+We now expect 'd/m/y' date formatting by default.
+
+#### Patient lists
+
+Lists are now declarative, and separate from teams. They are implemented as
+subclasses of opal.core.patient_lists.PatientList.
+
+#### Forms vs. Modals
+
+Introduces a distinction between a form and a modal.
+By default, we now use forms for subrecords, only overriding the modal if there
+is something we want to do differently specifically in the modal.
+
+#### Command line tools
+
+Adds $opal checkout for switching between applications or application versions.
+
+### Models ContextProcessor
+
+The 'opal.context_processors.models' Context Processor will allow you to access your
+subrecords from templates without having to explicitly load them in a view. In turn,
+this allows patterns like:
+
+    {% include models.Demographics.get_detail_template %}
+
+
+#### Upgrade instructions:
+
+Full upgrade instructions to work through any backwards incompatible changes are
+provided in the OPAL docs.
+
+* Update your settings to use the new date formats.
+* Update your lists to use the new TaggedPatientList class
+
 ### 0.5.5 (Minor Release)
-Changes the way old tags are handled. 
+Changes the way old tags are handled.
 
 Tags are no longer deleted episodes, rather they're marked as archived.
 

@@ -1,0 +1,13 @@
+<div class="form-group">
+  <label class="control-label col-sm-3">
+    Teams
+  </label>
+  <div class="col-sm-8">
+    <ui-select class="col-sm-8" multiple name="editing_tags" ng-model="tagService.currentFormTags" theme="bootstrap">
+      <ui-select-match>[[ $item.display_name ]]</ui-select-match>
+      <ui-select-choices repeat="i.name as i in tagService.tags_list | filter:$select.search" value="[[ $select.selected.name ]]">
+        <div ng-bind-html="i.display_name | highlight: $select.search"></div>
+      </ui-select-choices>
+    </ui-select>
+  </div>
+</div>

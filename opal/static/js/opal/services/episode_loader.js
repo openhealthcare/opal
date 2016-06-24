@@ -2,10 +2,13 @@ angular.module('opal.services')
     .factory('episodeLoader', function($q, $route,
                                            EpisodeResource,
                                            Episode, recordLoader) {
-    return function() {
+    return function(episode_id) {
+        if(!episode_id){
+            episode_id = $route.current.params.id;
+        }
 	    var deferred = $q.defer();
 	    recordLoader.then(function(records) {
-	        EpisodeResource.get({id: $route.current.params.id}, function(resource) {
+	        EpisodeResource.get({id: episode_id}, function(resource) {
 		        var episode = new Episode(resource);
 		        deferred.resolve(episode);
 	        }, function() {

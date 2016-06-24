@@ -1,38 +1,41 @@
 """
-OPAL Models!
+OPAL Django Models
 """
-import collections
 import datetime
-import json
-import itertools
-import dateutil.parser
-import random
 import functools
+import itertools
+import json
 import logging
+import random
 
 from django.conf import settings
 from django.utils import timezone
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
-from django.template import TemplateDoesNotExist
-from django.template.loader import select_template
-from django.utils import timezone
-from django.conf import settings
+from django.utils.functional import cached_property
 import reversion
-from django.utils import dateparse
-from opal.core import application, exceptions, lookuplists, plugins
+
+from opal.core import (
+    application, exceptions, lookuplists, plugins, patient_lists, tagging
+)
 from opal import managers
-from opal.utils import camelcase_to_underscore
+from opal.utils import camelcase_to_underscore, find_template
 from opal.core.fields import ForeignKeyOrFreeText
-from opal.core.subrecords import episode_subrecords, patient_subrecords
+from opal.core.subrecords import (
+    episode_subrecords, patient_subrecords, get_subrecord_from_api_name
+)
 
 app = application.get_app()
 
 
 class UpdatesFromDictMixin(object):
+    """
+    Mixin class to provide the serialization/deserialization
+    fields, as well as update logic for our JSON APIs.
+    """
 
     @classmethod
     def _get_fieldnames_to_serialize(cls):
@@ -73,6 +76,9 @@ class UpdatesFromDictMixin(object):
             for fname in cls.pid_fields:
                 if fname in fieldnames:
                     fieldnames.remove(fname)
+                    if cls._get_field_type(fname) == ForeignKeyOrFreeText:
+                        fieldnames.remove(fname + '_fk_id')
+                        fieldnames.remove(fname + '_ft')
         return fieldnames
 
     @classmethod
@@ -144,21 +150,24 @@ class UpdatesFromDictMixin(object):
 
             if not synonym_found:
                 error_msg = 'Unexpected fieldname(s): {}'.format(values)
-                logging.error(error_msg)
+                logging.critical(error_msg)
                 raise exceptions.APIError(error_msg)
 
         field.add(*to_add)
         field.remove(*to_remove)
 
-    def update_from_dict(self, data, user):
+    def update_from_dict(self, data, user, force=False):
         logging.info("updating {0} with {1} for {2}".format(
             self.__class__.__name__, data, user)
         )
-        if self.consistency_token:
+        if self.consistency_token and not force:
             try:
                 consistency_token = data.pop('consistency_token')
             except KeyError:
-                raise exceptions.APIError('Missing field (consistency_token)')
+                msg = 'Missing field (consistency_token) for {}'
+                raise exceptions.APIError(
+                    msg.format(self.__class__.__name__)
+                )
 
             if consistency_token != self.consistency_token:
                 raise exceptions.ConsistencyError
@@ -196,9 +205,17 @@ class UpdatesFromDictMixin(object):
                         post_save.append(functools.partial(self.save_many_to_many, name, value, field_type))
                     else:
                         if value and field_type == models.fields.DateField:
-                            value = datetime.datetime.strptime(value, '%Y-%m-%d').date()
+                            input_format = settings.DATE_INPUT_FORMATS[0]
+                            dt = datetime.datetime.strptime(
+                                value, input_format
+                            )
+                            dt = timezone.make_aware(dt, timezone.get_current_timezone())
+                            value = dt.date()
                         if value and field_type == models.fields.DateTimeField:
-                            value = dateparse.parse_datetime(value)
+                            input_format = settings.DATETIME_INPUT_FORMATS[0]
+                            value = timezone.make_aware(datetime.datetime.strptime(
+                                value, input_format
+                            ), timezone.get_current_timezone())
 
                         setattr(self, name, value)
 
@@ -236,9 +253,15 @@ class ContactNumber(models.Model):
 
 class Team(models.Model):
     """
-    A team to which an episode may be tagged
+    This model is no longer relevant and marked for removal.
 
-    Represents either teams or stages in patient flow.
+    In pre 0.6 versions of OPAL this was in fact a mis-named
+    Patient list model.
+
+    As of 0.6 defining lists has been moved to declarative subclasses
+    of opal.core.patient_lists.PatientList
+
+    See the 0.5.x -> 0.6.x documentation for upgrade strategies.
     """
     HELP_RESTRICTED = "Whether this team is restricted to only a subset of users"
 
@@ -260,17 +283,6 @@ class Team(models.Model):
         return self.title
 
     @classmethod
-    def restricted_teams(klass, user):
-        """
-        Given a USER, return the restricted teams this user can access.
-        """
-        restricted_teams = []
-        for plugin in plugins.plugins():
-            if plugin.restricted_teams:
-                restricted_teams += plugin().restricted_teams(user)
-        return restricted_teams
-
-    @classmethod
     def for_user(klass, user):
         """
         Return the set of teams this user has access to.
@@ -280,13 +292,6 @@ class Team(models.Model):
             teams = []
         else:
             teams = klass.objects.filter(active=True, restricted=False).order_by('order')
-
-        restricted_teams = klass.restricted_teams(user)
-        allteams = list(teams) + restricted_teams
-        teams = []
-        for t in allteams:
-            if t not in teams:
-                teams.append(t)
         return teams
 
     @property
@@ -362,14 +367,18 @@ class Patient(models.Model):
     def __unicode__(self):
         try:
             demographics = self.demographics_set.get()
-            return '%s | %s' % (demographics.hospital_number, demographics.name)
+            return '%s | %s %s' % (
+                demographics.hospital_number,
+                demographics.first_name,
+                demographics.surname
+            )
         except models.ObjectDoesNotExist:
             return 'Patient {0}'.format(self.id)
         except:
             print self.id
             raise
 
-    def create_episode(self, category=None, **kwargs):
+    def create_episode(self, **kwargs):
         return self.episode_set.create(**kwargs)
 
     def get_active_episode(self):
@@ -377,6 +386,49 @@ class Patient(models.Model):
             if episode.active:
                 return episode
         return None
+
+    @transaction.atomic()
+    def bulk_update(self, dict_of_list_of_upgrades, user, episode=None, force=False):
+        """
+                takes in a dictionary of api name to a list of fields and
+                creates the required subrecords. If passed an episode
+                sub record but no episode it will create an episode
+                and attatch it.
+
+                e.g. {"allergies": [
+                            {"drug": "paracetomol"}
+                            {"drug": "aspirin"}
+                          ],
+                      "investigation":[
+                            {"name": "some test", "details": "some details"}
+                          ]
+                     }
+        """
+        if "demographics" not in dict_of_list_of_upgrades:
+            if not self.id:
+                raise ValueError(
+                    "demographics are required when creating a new patient"
+                )
+
+        if not self.id:
+            self.save()
+
+        # we never want to be in the position where we don't have an episode
+        if not self.episode_set.exists():
+            episode = self.create_episode()
+
+        for api_name, list_of_upgrades in dict_of_list_of_upgrades.iteritems():
+            model = get_subrecord_from_api_name(api_name=api_name)
+            if model in episode_subrecords():
+                if episode is None:
+                    episode = self.create_episode(patient=self)
+                    episode.save()
+
+                model.bulk_update_from_dicts(episode, list_of_upgrades, user, force=force)
+            else:
+                # its a patient subrecord
+                model.bulk_update_from_dicts(self, list_of_upgrades, user, force=force)
+
 
     def to_dict(self, user):
         active_episode = self.get_active_episode()
@@ -402,6 +454,40 @@ class Patient(models.Model):
             for subclass in patient_subrecords():
                 if subclass._is_singleton:
                     subclass.objects.create(patient=self)
+
+
+
+class PatientRecordAccess(models.Model):
+    created = models.DateTimeField(auto_now_add=True)
+    user    = models.ForeignKey(User)
+    patient = models.ForeignKey(Patient)
+
+    def to_dict(self, user):
+        return dict(
+            patient=self.patient.id,
+            datetime=self.created,
+            username=self.user.username
+        )
+
+
+class ExternallySourcedModel(models.Model):
+    # the system upstream that contains this model
+    external_system = models.CharField(
+        blank=True, null=True, max_length=255
+    )
+
+    # the identifier used by the upstream system
+    external_identifier = models.CharField(
+        blank=True, null=True, max_length=255
+    )
+
+    class Meta:
+        abstract = True
+
+    @classmethod
+    def get_modal_footer_template(cls):
+        return "partials/_sourced_modal_footer.html"
+
 
 class TrackedModel(models.Model):
     # these fields are set automatically from REST requests via
@@ -457,7 +543,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     date_of_episode   = models.DateField(blank=True, null=True)
     consistency_token = models.CharField(max_length=8)
 
-    objects = managers.EpisodeManager()
+    objects = managers.EpisodeQueryset.as_manager()
 
     def __unicode__(self):
         try:
@@ -482,19 +568,19 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
                 if subclass._is_singleton:
                     subclass.objects.create(episode=self)
 
-    @property
-    def start_date(self):
-        if self.date_of_episode:
-            return self.date_of_episode
-        else:
-            return self.date_of_admission
+    @classmethod
+    def _get_fieldnames_to_serialize(cls):
+        fields = super(Episode, cls)._get_fieldnames_to_serialize()
+        fields.extend(["start", "end"])
+        return fields
 
-    @property
-    def end_date(self):
-        if self.date_of_episode:
-            return self.date_of_episode
-        else:
-            return self.discharge_date
+    @cached_property
+    def start(self):
+        return self.type.start
+
+    @cached_property
+    def end(self):
+        return self.type.end
 
     @property
     def is_discharged(self):
@@ -507,14 +593,31 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
             return True
         return False
 
+    @property
+    def type(self):
+        from opal.core import episodes
+        return episodes.EpisodeType.for_category(self.category)(self)
+
+
+    def visible_to(self, user):
+        """
+        Predicate function to determine whether this episode is visible to
+        a certain user.
+
+        The logic for visibility is held in individual opal.core.episodes.EpisodeType
+        implementations.
+        """
+        return self.type.episode_visible_to(self, user)
+
     def set_tag_names(self, tag_names, user):
         """
-        1. Blitz dangling tags not in our current dict.
-        2. Add new tags.
-        3. Make sure that we set the Active boolean appropriately
-        4. There is no step 4.
+        1. Set the episode.active status
+        2. Special case mine
+        3. Archive dangling tags not in our current list.
+        4. Add new tags.
+        5. Ensure that we're setting the parents of child tags
+        6. There is no step 6.
         """
-
         if len(tag_names) and not self.active:
             self.active = True
             self.save()
@@ -523,13 +626,11 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
             self.save()
 
         if "mine" not in tag_names:
-            self.tagging_set.filter(user=user).update(archived=True)
+            self.tagging_set.filter(user=user, value='mine').update(archived=True)
         else:
-            my_team = Team.objects.get(name="mine")
             tag, created = self.tagging_set.get_or_create(
-                team=my_team, user=user
+                value='mine', user=user
             )
-
             if not created:
                 tag.archived = False
                 tag.save()
@@ -538,30 +639,31 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
         # nuke everything and start from fresh so we don't have
         # to deal with childless parents
-        self.tagging_set.exclude(team__name="mine").filter(archived=False).update(archived=True)
+        self.tagging_set.exclude(value="mine").filter(archived=False).update(
+            archived=True,
+            updated_by=user,
+            updated=timezone.now()
+        )
+        parents = []
+        for tag in tag_names:
+            parent = tagging.parent(tag)
+            if parent:
+                parents.append(parent)
+        tag_names += parents
 
-        for i in tag_names:
-            focused_team = Team.objects.get(name=i)
-
-            if focused_team.parent:
-                teams_to_update = [focused_team, focused_team.parent]
+        for tag in tag_names:
+            tagg, created = self.tagging_set.get_or_create(
+                value=tag, episode=self
+            )
+            if created:
+                tagg.created_by = user
+                tagg.created = timezone.now()
             else:
-                teams_to_update = [focused_team]
+                tagg.archived = False
+                tagg.updated_by = user
+                tagg.updated = timezone.now()
 
-            for team in teams_to_update:
-                tagging, created = Tagging.objects.get_or_create(
-                    episode=self, team=team
-                )
-
-                if created:
-                    tagging.created_by = user
-                    tagging.created = timezone.now()
-                    tagging.save()
-                else:
-                    tagging.archived = False
-                    tagging.updated_by = user
-                    tagging.updated = timezone.now()
-                    tagging.save()
+            tagg.save()
 
     def tagging_dict(self, user):
         tag_names = self.get_tag_names(user)
@@ -577,7 +679,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         if not historic:
             qs = qs.filter(archived=False)
 
-        return qs.values_list("team__name", flat=True)
+        return qs.values_list("value", flat=True)
 
     def _episode_history_to_dict(self, user):
         """
@@ -601,7 +703,9 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
             'date_of_admission': self.date_of_admission,
             'date_of_episode'  : self.date_of_episode,
             'discharge_date'   : self.discharge_date,
-            'consistency_token': self.consistency_token
+            'consistency_token': self.consistency_token,
+            'start'            : self.start,
+            'end'              : self.end,
             }
         if shallow:
             return d
@@ -642,6 +746,10 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
         return camelcase_to_underscore(cls._meta.object_name)
 
     @classmethod
+    def get_icon(cls):
+        return getattr(cls, '_icon', None)
+
+    @classmethod
     def get_display_name(cls):
         if hasattr(cls, '_title'):
             return cls._title
@@ -676,62 +784,109 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
             field_schema.append({'name': fieldname,
                                  'title': title,
                                  'type': field_type,
-                                 'lookup_list': lookup_list})
+                                 'lookup_list': lookup_list,
+                                 'model': cls.__name__
+                                 })
         return field_schema
 
     @classmethod
-    def get_display_template(cls, team=None, subteam=None):
+    def _build_template_selection(cls, episode_type=None, patient_list=None, suffix=None, prefix=None):
+        name = cls.get_api_name()
+
+        templates = []
+        if patient_list and episode_type:
+            raise ValueError("you can not get both a patient list and episode type")
+        if patient_list:
+            list_prefixes = patient_list.get_template_prefixes()
+
+            for list_prefix in list_prefixes:
+                templates.append('{0}/{1}/{2}{3}'.format(prefix, list_prefix, name, suffix))
+        if episode_type:
+            templates.append('{0}/{1}/{2}{3}'.format(prefix, episode_type.lower(), name, suffix))
+        templates.append('{0}/{1}{2}'.format(prefix, name, suffix))
+        return templates
+
+    @classmethod
+    def get_display_template(cls, episode_type=None, patient_list=None):
         """
         Return the active display template for our record
         """
-        name = camelcase_to_underscore(cls.__name__)
-        list_display_templates = ['records/{0}.html'.format(name)]
-        if team:
-            list_display_templates.insert(
-                0, 'records/{0}/{1}.html'.format(team, name))
-            if subteam:
-                list_display_templates.insert(
-                    0, 'records/{0}/{1}/{2}.html'.format(team,
-                                                              subteam,
-                                                              name))
-        try:
-            return select_template(list_display_templates).template.name
-        except TemplateDoesNotExist:
-            return None
+        templates = cls._build_template_selection(
+            episode_type=episode_type, patient_list=patient_list,
+            suffix='.html', prefix='records')
+        return find_template(templates)
 
     @classmethod
-    def get_detail_template(cls, team=None, subteam=None):
+    def get_detail_template(cls, patient_list=None, episode_type=None):
         """
         Return the active detail template for our record
         """
+        if patient_list and episode_type:
+            raise ValueError("you can not get both a patient list and episode type")
         name = camelcase_to_underscore(cls.__name__)
-        templates = [
-            'records/{0}_detail.html'.format(name),
-            'records/{0}.html'.format(name)
-        ]
-        try:
-            return select_template(templates).template.name
-        except TemplateDoesNotExist:
-            return None
+        templates = []
+        if episode_type:
+            templates.append('records/{0}/{1}_detail.html'.format(episode_type.lower(), name))
+            templates.append('records/{0}/{1}.html'.format(episode_type.lower(), name))
+        templates.append('records/{0}_detail.html'.format(name))
+        templates.append('records/{0}.html'.format(name))
+        return find_template(templates)
 
     @classmethod
-    def get_form_template(cls, team=None, subteam=None):
+    def get_form_template(cls, patient_list=None, episode_type=None):
+        templates = cls._build_template_selection(
+            episode_type=episode_type, patient_list=patient_list,
+            suffix='_form.html', prefix='forms')
+        return find_template(templates)
+
+    @classmethod
+    def get_modal_template(cls, patient_list=None, episode_type=None):
         """
         Return the active form template for our record
         """
-        name = camelcase_to_underscore(cls.__name__)
-        templates = ['modals/{0}_modal.html'.format(name)]
-        if team:
-            templates.insert(0, 'modals/{0}/{1}_modal.html'.format(
-                team, name))
-        if subteam:
-            templates.insert(0, 'modals/{0}/{1}/{2}_modal.html'.format(
-                team, subteam, name))
+        templates = cls._build_template_selection(
+            episode_type=episode_type, patient_list=patient_list,
+            suffix='_modal.html', prefix='modals')
+        if cls.get_form_template():
+            templates.append("modal_base.html")
+        return find_template(templates)
 
-        try:
-            return select_template(templates).template.name
-        except TemplateDoesNotExist:
-            return None
+    @classmethod
+    def bulk_update_from_dicts(
+        cls, parent, list_of_dicts, user, force=False
+    ):
+        """
+            allows the bulk updating of a field for example
+            [
+                {"test": "blah 1", "details": "blah blah"}
+                {"test": "blah 2", "details": "blah blah"}
+            ]
+
+            parent is the parent class, that can be Episode or Patient
+
+            this method will not delete. It updates if there's an id or if
+            the model is a singleton otherwise it creates
+        """
+        schema_name = parent.__class__.__name__.lower()
+
+        if cls._is_singleton:
+            if len(list_of_dicts) > 1:
+                raise ValueError(
+                    "attempted creation of multiple fields on a singleton {}".format(cls.__name__)
+                )
+
+        for a_dict in list_of_dicts:
+            if "id" in a_dict or cls._is_singleton:
+                if cls._is_singleton:
+                    query = cls.objects.filter(**{schema_name: parent})
+                    subrecord = query.get()
+                else:
+                    subrecord = cls.objects.get(id=a_dict["id"])
+            else:
+                a_dict["{}_id".format(schema_name)] = parent.id
+                subrecord = cls(**{schema_name: parent})
+
+            subrecord.update_from_dict(a_dict, user, force=force)
 
     def _to_dict(self, user, fieldnames):
         """
@@ -766,6 +921,8 @@ class PatientSubrecord(Subrecord):
 
 
 class EpisodeSubrecord(Subrecord):
+    _clonable = True
+
     episode = models.ForeignKey(Episode, null=False)
 
     class Meta:
@@ -777,21 +934,19 @@ class Tagging(TrackedModel, models.Model):
     _advanced_searchable = True
     _title = 'Teams'
 
-    team = models.ForeignKey(Team, blank=True, null=True)
-    user = models.ForeignKey(User, null=True, blank=True)
-    episode = models.ForeignKey(Episode, null=False)
+    team     = models.ForeignKey(Team, blank=True, null=True)
+    user     = models.ForeignKey(User, null=True, blank=True)
+    episode  = models.ForeignKey(Episode, null=False)
     archived = models.BooleanField(default=False)
-
-    # class Meta:
-        # unique_together = ('team', 'user', 'episode',)
+    value    = models.CharField(max_length=200, blank=True, null=True)
 
     def __unicode__(self):
         if self.user is not None:
             return 'User: %s - %s - archived: %s' % (
-                self.user.username, self.team.name, self.archived
+                self.user.username, self.value, self.archived
             )
         else:
-            return "%s - archived: %s" % (self.team.name, self.archived)
+            return "%s - archived: %s" % (self.value, self.archived)
 
     @staticmethod
     def get_api_name():
@@ -811,8 +966,9 @@ class Tagging(TrackedModel, models.Model):
 
     @staticmethod
     def build_field_schema():
-        teams = [{'name': t.name, 'type':'boolean'} for t in Team.objects.filter(active=True)]
-        return teams
+        return [{'name': t, 'type':'boolean'} for t in
+                patient_lists.TaggedPatientList.get_tag_names()]
+
 
     @classmethod
     def import_from_reversion(cls):
@@ -885,6 +1041,7 @@ class Tagging(TrackedModel, models.Model):
             pass # We don't have a mine team here
 
         Tagging.objects.bulk_create(tagging_objs)
+
 
 """
 Base Lookup Lists
@@ -963,6 +1120,9 @@ class Line_type(lookuplists.LookupList):
     class Meta:
         verbose_name = "Line type"
 
+
+class MaritalStatus(lookuplists.LookupList):
+    pass
 
 class Micro_test_c_difficile(lookuplists.LookupList):
     class Meta:
@@ -1076,13 +1236,15 @@ class Micro_test_viral_load(lookuplists.LookupList):
         verbose_name = "Micro test viral load"
         verbose_name_plural = "Micro tests viral load"
 
-
 class Microbiology_organism(lookuplists.LookupList):
     class Meta:
         verbose_name = "Microbiology organism"
 
-
 class Symptom(lookuplists.LookupList): pass
+
+class Title(lookuplists.LookupList):
+    pass
+
 
 
 class Travel_reason(lookuplists.LookupList):
@@ -1099,13 +1261,19 @@ class Demographics(PatientSubrecord):
     _is_singleton = True
     _icon = 'fa fa-user'
 
-    name             = models.CharField(max_length=255, blank=True)
     hospital_number  = models.CharField(max_length=255, blank=True)
     nhs_number       = models.CharField(max_length=255, blank=True, null=True)
     date_of_birth    = models.DateField(null=True, blank=True)
-    country_of_birth = ForeignKeyOrFreeText(Destination)
-    ethnicity        = models.CharField(max_length=255, blank=True, null=True)
-    gender           = models.CharField(max_length=255, blank=True, null=True)
+    birth_place = ForeignKeyOrFreeText(Destination)
+    ethnicity = ForeignKeyOrFreeText(Ethnicity)
+    surname = models.CharField(max_length=255, blank=True)
+    first_name = models.CharField(max_length=255, blank=True)
+    middle_name = models.CharField(max_length=255, blank=True)
+    sex = ForeignKeyOrFreeText(Gender)
+
+    @property
+    def name(self):
+        return '{0} {1}'.format(self.first_name, self.surname)
 
     class Meta:
         abstract = True
@@ -1158,6 +1326,8 @@ class Allergies(PatientSubrecord):
     provisional = models.BooleanField(default=False)
     details     = models.CharField(max_length=255, blank=True)
 
+
+
     class Meta:
         abstract = True
 
@@ -1184,7 +1354,7 @@ class Diagnosis(EpisodeSubrecord):
             self.episode.patient.demographics_set.get().name,
             self.condition,
             self.date_of_diagnosis
-            )
+        )
 
 
 class PastMedicalHistory(EpisodeSubrecord):
@@ -1310,3 +1480,32 @@ class UserProfile(models.Model):
     def explicit_access_only(self):
         all_roles = itertools.chain(*self.get_roles().values())
         return any(r for r in all_roles if r == "scientist")
+
+
+class InpatientAdmission(PatientSubrecord, ExternallySourcedModel):
+    _title = "Inpatient Admissions"
+    _icon = 'fa fa-map-marker'
+    _sort = "-admitted"
+
+    datetime_of_admission = models.DateTimeField(blank=True, null=True)
+    datetime_of_discharge = models.DateTimeField(blank=True, null=True)
+    hospital = models.CharField(max_length=255, blank=True)
+    ward_code = models.CharField(max_length=255, blank=True)
+    room_code = models.CharField(max_length=255, blank=True)
+    bed_code = models.CharField(max_length=255, blank=True)
+    admission_diagnosis = models.CharField(max_length=255, blank=True)
+
+    def update_from_dict(self, data, *args, **kwargs):
+        if "id" not in data:
+            if "patient_id" not in data:
+                raise ValueError("no patient id found for result in %s" % data)
+            if "external_identifier" in data and data["external_identifier"]:
+                existing = InpatientAdmission.objects.filter(
+                    external_identifier=data["external_identifier"],
+                    patient_id=data["patient_id"]
+                ).first()
+
+                if existing:
+                    data["id"] = existing.id
+
+        super(InpatientAdmission, self).update_from_dict(data, *args, **kwargs)

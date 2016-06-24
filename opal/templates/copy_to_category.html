@@ -18,7 +18,7 @@
           ng-click="jump_to_episode(patient.active_episode_id)"
           >
 	    <td>[[patient.demographics[0].hospital_number]]</td>
-	    <td>[[patient.demographics[0].name]]</td>
+	    <td>[[patient.demographics[0].first_name]] [[patient.demographics[0].surname]]</td>
 	    <td>[[ patient.episodes[patient.active_episode_id].date_of_admission | shortDate ]]</td>
         <td>[[ patient.episodes[patient.active_episode_id].discharge_date | shortDate ]]</td>
 	    <td>
@@ -26,7 +26,7 @@
         </td>
 	  </tr>
     </tbody>
-  </table>  
+  </table>
 {% endblock %}
 {% block modal_save %}
   <button class="btn btn-primary" ng-click="open_new()">

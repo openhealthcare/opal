@@ -4,23 +4,24 @@ Module entrypoint for core OPAL views
 from django.conf import settings
 from django.contrib.auth.views import login
 from django.http import HttpResponseNotFound
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import select_template, get_template
 from django.template import TemplateDoesNotExist
 from django.views.generic import TemplateView, View
 from django.views.decorators.http import require_http_methods
 
 from opal import models
-from opal.core import application, exceptions, glossolalia
-from opal.core.subrecords import episode_subrecords, subrecords
+from opal.core import application, detail, episodes, exceptions
+from opal.core.patient_lists import PatientList
+from opal.core.subrecords import (
+    episode_subrecords, subrecords, get_subrecord_from_api_name
+)
 from opal.core.views import LoginRequiredMixin, _get_request_data, _build_json_response
-from opal.core.schemas import get_all_list_schema_classes
 from opal.utils import camelcase_to_underscore, stringport
 from opal.utils.banned_passwords import banned
 
 app = application.get_app()
 
-schema = stringport(app.schema_module)
 # TODO This is stupid - we can fully deprecate this please?
 try:
     options = stringport(settings.OPAL_OPTIONS_MODULE)
@@ -32,46 +33,80 @@ except AttributeError:
 Synonym = models.Synonym
 
 
-class EpisodeTemplateView(TemplateView):
+class PatientListTemplateView(TemplateView):
+
+    def dispatch(self, *args, **kwargs):
+        try:
+            self.patient_list = PatientList.get(kwargs['slug'])
+        except ValueError:
+            self.patient_list = None
+        return super(PatientListTemplateView, self).dispatch(*args, **kwargs)
+
     def get_column_context(self, **kwargs):
         """
         Return the context for our columns
         """
-        active_schema = self.column_schema
-        all_list_schemas = get_all_list_schema_classes()
-        if 'tag' in kwargs and kwargs['tag'] in all_list_schemas:
-            if 'subtag' in kwargs and kwargs['subtag'] in all_list_schemas[kwargs['tag']]:
-                active_schema = all_list_schemas[kwargs['tag']][kwargs['subtag']]
-            elif 'default' in all_list_schemas[kwargs['tag']]:
-                active_schema = all_list_schemas[kwargs['tag']]['default']
-            else:
-                active_schema = all_list_schemas['default']
+        # we use this view to load blank tables without content for
+        # the list redirect view, so if there are no kwargs, just
+        # return an empty context
+        if not self.patient_list:
+            return []
 
-        return _get_column_context(active_schema, **kwargs)
+        context = []
+        for column in self.patient_list.schema:
+            column_context = {}
+            name = camelcase_to_underscore(column.__name__)
+            column_context['name'] = name
+            column_context['title'] = getattr(column, '_title',
+                                              name.replace('_', ' ').title())
+            column_context['single'] = column._is_singleton
+            column_context['icon'] = getattr(column, '_icon', '')
+            column_context['list_limit'] = getattr(column, '_list_limit', None)
+            column_context['template_path'] = column.get_display_template(
+                patient_list=self.patient_list()
+            )
+            column_context['detail_template_path'] = column.get_detail_template(
+                patient_list=self.patient_list()
+            )
+            context.append(column_context)
 
-    def get_context_data(self, **kwargs):
-        context = super(EpisodeTemplateView, self).get_context_data(**kwargs)
-        teams = models.Team.for_user(self.request.user)
-        context['teams'] = teams
-        context['columns'] = self.get_column_context(**kwargs)
-        if 'tag' in kwargs:
-            try:
-                context['team'] = models.Team.objects.get(name=kwargs['tag'])
-            except models.Team.DoesNotExist:
-                context['team'] = None
-
-        context['models'] = { m.__name__: m for m in subrecords() }
         return context
 
+    def get_context_data(self, **kwargs):
+        context = super(PatientListTemplateView, self).get_context_data(**kwargs)
+        list_slug = None
+        if self.patient_list:
+            list_slug = self.patient_list.get_slug()
+        context['list_slug'] = list_slug
+        context['patient_list'] = self.patient_list
+        context['lists'] = PatientList.for_user(self.request.user)
+        context['columns'] = self.get_column_context(**kwargs)
+        return context
 
-class EpisodeListTemplateView(EpisodeTemplateView):
-    template_name = 'episode_list.html'
-    column_schema = schema.list_schemas['default']
+    def get_template_names(self):
+        if self.patient_list:
+            return self.patient_list().get_template_names()
+        return [PatientList.template_name]
 
+class PatientDetailTemplateView(TemplateView):
+    template_name = 'patient_detail.html'
 
+    def get_context_data(self, **kwargs):
+        context = super(PatientDetailTemplateView, self).get_context_data(**kwargs)
+
+        # django likes to try and initialise classes, even when we
+        # don't want it to, so vars it
+        context['episode_types'] = [vars(i) for i in episodes.episode_types()]
+
+        # We cast this to a list because it's a generator but we want to consume
+        # it twice in the template
+        context['detail_views'] = list(detail.PatientDetailView.for_user(self.request.user))
+        return context
+
+# TODO: ?Remove this ?
 class EpisodeDetailTemplateView(TemplateView):
     def get(self, *args, **kwargs):
-        self.episode = models.Episode.objects.get(pk=kwargs['pk'])
+        self.episode = get_object_or_404(models.Episode, pk=kwargs['pk'])
         return super(EpisodeDetailTemplateView, self).get(*args, **kwargs)
 
     def get_template_names(self):
@@ -80,16 +115,6 @@ class EpisodeDetailTemplateView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(EpisodeDetailTemplateView, self).get_context_data(**kwargs)
-        context['models'] = { m.__name__: m for m in subrecords() }
-        return context
-
-
-class TagsTemplateView(TemplateView):
-    template_name = 'tagging_modal.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(TagsTemplateView, self).get_context_data(**kwargs)
-        context['teams'] = models.Team.for_user(self.request.user)
         return context
 
 
@@ -133,15 +158,24 @@ def check_password_reset(request, *args, **kwargs):
         try:
             profile = request.user.profile
             if profile and profile.force_password_change:
-                return redirect('django.contrib.auth.views.password_change')
+                return redirect(
+                    'django.contrib.auth.views.password_change'
+                )
         except models.UserProfile.DoesNotExist:
-            models.UserProfile.objects.create(user=request.user, force_password_change=True)
-            return redirect('django.contrib.auth.views.password_change')
+            # TODO: This probably doesn't do any harm, but
+            # we should really never reach this. Creation
+            # of profiles shouldn't happen in a random view.
+            models.UserProfile.objects.create(
+                user=request.user, force_password_change=True)
+            return redirect(
+                'django.contrib.auth.views.password_change'
+            )
     return response
 
 
 """Internal (Legacy) API Views"""
 
+#    TODO: Remove this
 @require_http_methods(['GET', 'PUT'])
 def episode_detail_view(request, pk):
     try:
@@ -156,15 +190,13 @@ def episode_detail_view(request, pk):
     data = _get_request_data(request)
 
     try:
-        pre = episode.to_dict(request.user)
         episode.update_from_dict(data, request.user)
-        post = episode.to_dict(request.user)
-        glossolalia.change(pre, post)
         return _build_json_response(episode.to_dict(request.user, shallow=True))
     except exceptions.ConsistencyError:
         return _build_json_response({'error': 'Item has changed'}, 409)
 
 
+# TODO: Remove this
 @require_http_methods(['GET', 'POST'])
 def episode_list_and_create_view(request):
     if request.method == 'GET':
@@ -201,110 +233,77 @@ def episode_list_and_create_view(request):
             episode.set_tag_names(tag_names, request.user)
 
         serialised = episode.to_dict(request.user)
-        glossolalia.admit(serialised)
-        return _build_json_response(serialised, 201)
-
-
-class EpisodeListView(View):
-    """
-    Return serialised subsets of active episodes by tag.
-    """
-    def get(self, *args, **kwargs):
-        tag, subtag = kwargs.get('tag', None), kwargs.get('subtag', None)
-        filter_kwargs = {"tagging__archived": False}
-        if subtag:
-            filter_kwargs['tagging__team__name'] = subtag
-        elif tag:
-            filter_kwargs['tagging__team__name'] = tag
-        # Probably the wrong place to do this, but mine needs specialcasing.
-        if tag == 'mine':
-            filter_kwargs['tagging__user'] = self.request.user
-        serialised = models.Episode.objects.serialised_active(
-            self.request.user, **filter_kwargs)
-        return _build_json_response(serialised)
-
+        return _build_json_response(serialised, status_code=201)
 
 
 class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
     """
     Copy an episode to a given category, excluding tagging.
     """
-    def post(self, args, pk=None, category=None, **kwargs):
+    def post(self, request, pk=None, category=None, **kwargs):
         old = models.Episode.objects.get(pk=pk)
         new = models.Episode(patient=old.patient,
                              category=category,
                              date_of_admission=old.date_of_admission)
         new.save()
+
         for sub in episode_subrecords():
-            if sub._is_singleton:
+            if sub._is_singleton or not sub._clonable:
                 continue
             for item in sub.objects.filter(episode=old):
                 item.id = None
                 item.episode = new
                 item.save()
         serialised = new.to_dict(self.request.user)
-        glossolalia.admit(serialised)
         return _build_json_response(serialised)
 
 """
 Template views for OPAL
 """
-
-def _get_column_context(schema, **kwargs):
-    context = []
-    for column in schema:
-        column_context = {}
-        name = camelcase_to_underscore(column.__name__)
-        column_context['name'] = name
-        column_context['title'] = getattr(column, '_title',
-                                          name.replace('_', ' ').title())
-        column_context['single'] = column._is_singleton
-        column_context['icon'] = getattr(column, '_icon', '')
-        column_context['list_limit'] = getattr(column, '_list_limit', None)
-
-        header_templates = [name + '_header.html']
-        if 'tag' in kwargs:
-            header_templates.insert(
-                0, 'list_display/{0}/{1}_header.html'.format(kwargs['tag'], name))
-            if 'subtag' in kwargs:
-                header_templates.insert(
-                    0, 'list_display/{0}/{1}/{2}_header.html'.format(kwargs['tag'],
-                                                                     kwargs['subtag'],
-                                                                     name))
-
-        column_context['template_path'] = column.get_display_template(
-            team=kwargs.get('tag', None), subteam=kwargs.get('subtag', None))
-
-        column_context['detail_template_path'] = select_template([
-            t.format(name) for t in '{0}_detail.html', '{0}.html', 'records/{0}.html'
-        ]).template.name
-
-        try:
-            column_context['header_template_path'] = select_template(header_templates).template.name
-        except TemplateDoesNotExist:
-            column_context['header_template_path'] = ''
-
-        context.append(column_context)
-
-    return context
-
-
-class ModalTemplateView(LoginRequiredMixin, TemplateView):
+class FormTemplateView(LoginRequiredMixin, TemplateView):
     """
-    This view renders the form/modal template for our field.
+    This view renders the form template for our field.
 
     These are generated for subrecords, but can also be used
     by plugins for other mdoels.
     """
+    template_name = "form_base.html"
+
+    def get_context_data(self, *args, **kwargs):
+        ctx = super(FormTemplateView, self).get_context_data(*args, **kwargs)
+        ctx["form_name"] = self.column.get_form_template()
+        return ctx
+
+    def dispatch(self, *a, **kw):
+        """
+        Set the context for what this modal is for so
+        it can be accessed by all subsequent methods
+        """
+        self.column = get_subrecord_from_api_name(kw['model'])
+        self.name = camelcase_to_underscore(self.column.__name__)
+        return super(FormTemplateView, self).dispatch(*a, **kw)
+
+
+class ModalTemplateView(LoginRequiredMixin, TemplateView):
+    def get_template_from_model(self):
+        patient_list = None
+
+        if self.list_slug:
+            patient_list = PatientList.get(self.list_slug)()
+        return self.column.get_modal_template(
+            patient_list=patient_list
+        )
+
     def dispatch(self, *a, **kw):
         """
         Set the context for what this modal is for so
         it can be accessed by all subsequent methods
         """
         self.column = kw['model']
-        self.tag = kw.get('tag', None)
-        self.subtag = kw.get('sub', None)
-        self.template_name = self.column.get_form_template(team=self.tag, subteam=self.subtag)
+        self.list_slug = kw.get('list', None)
+        self.template_name = self.get_template_from_model()
+        if self.template_name is None:
+            raise ValueError('No modal Template available for {0}'.format(self.column.__name__))
         self.name = camelcase_to_underscore(self.column.__name__)
         return super(ModalTemplateView, self).dispatch(*a, **kw)
 
@@ -312,10 +311,19 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         context = super(ModalTemplateView, self).get_context_data(**kwargs)
         context['name'] = self.name
         context['title'] = getattr(self.column, '_title', self.name.replace('_', ' ').title())
+        context['icon'] = getattr(self.column, '_icon', '')
         # pylint: disable=W0201
         context['single'] = self.column._is_singleton
+        context["column"] = self.column
 
         return context
+
+
+class RecordTemplateView(LoginRequiredMixin, TemplateView):
+    def get_template_names(self):
+        model = get_subrecord_from_api_name(self.kwargs["model"])
+        template_name = model.get_modal_template()
+        return [template_name]
 
 
 class AccountDetailTemplateView(TemplateView):

@@ -1,0 +1,96 @@
+{% load panels %}
+{% load forms %}
+<div class="container-fluid content-offset">
+  <div class="panel panel-primary panel-container">
+    <!-- Default panel contents -->
+    <div class="panel-heading">
+      <h1>
+        {% block heading %}{% icon 'fa-user' %}[[ patient.demographics[0].first_name ]] [[ patient.demographics[0].surname ]]{% endblock %}
+        <small>
+          {% block subheading %}
+          ([[ patient.demographics[0].date_of_birth | shortDate ]]) 
+          [[ patient.demographics[0].hospital_number ]]
+          {% endblock %}
+        </small>
+      </h1>
+    </div>
+
+    <div class="panel-body">
+      <div class="row">
+        {% block content %}
+
+        <div class="col-md-3"> <!-- Episode Switcher -->
+          {% include 'partials/_demographics_panel.html' %}
+          <div class="panel panel-default">
+            <div class="panel-heading ">
+              <h3>
+                <i class="fa fa-history"></i>
+                Episodes
+              </h3>
+            </div>
+            <div class="list-group">
+              <a class="list-group-item episodelist pointer"
+                 ng-class="{'bg-active': view == null && e.id == episode.id}"
+                 ng-repeat="e in patient.episodes"
+                 href="[[ '/#' + e.link]]"
+                 ng-click="switch_to_episode($index, $event)"
+                 >
+                [[ e.category ]]
+                <span ng-show="e.start">
+                  [[ e.start | shortDate ]] - [[ e.end | shortDate ]]<span ng-show="!e.end">Current</span>
+                </span>
+              </a>
+            </div>
+          </div>
+
+          {% if detail_views|length > 0 %}
+          <div class="panel panel-default">
+            <div class="panel-heading ">
+              <h3>
+                <i class="fa fa-list-alt"></i>
+                Views
+              </h3>
+            </div>
+            <div class="list-group">
+              {% for detail in detail_views %}
+              <a class="list-group-item episodelist pointer"
+                 ng-class="{'bg-active': view == '{{ detail.get_slug}}'}"
+                 ng-click="switch_to_episode(0, $event) && switch_to_view('{{ detail.get_slug }}')"
+                 href="[[ '/#/patient/' + patient.id + '/{{ detail.get_slug }}' ]]"
+                 >
+                {{ detail.display_name }}
+              </a>
+              {% endfor %}
+              {% block viewnavigation %}{% endblock %}
+            </div>
+          </div>
+          {% endif %}
+        </div> <!-- End episode switcher -->
+        <div class="col-md-9">
+          <div class="col-md-12">
+            {% for episode_type in episode_types %}
+            {% if episode_type.detail_template %}
+            <div class="row" ng-show="view == null && episode.category == '{{ episode_type.name }}'">
+              {% include episode_type.detail_template %}
+            </div>
+            {% endif %}
+            {% endfor %}
+            {% for detail in detail_views %}
+            <div class="row" ng-show="view == '{{ detail.get_slug }}'">
+              {% include detail.template %}
+            </div>
+            {% endfor %}
+            {% block viewtemplates %}{% endblock %}
+          </div>
+        </div>
+
+      </div> <!-- Ends Main Panel -->
+
+      {% endblock content %}
+
+    </div>
+
+  </div> <!-- Panel body -->
+
+</div>   <!-- Panel -->
+</div>     <!-- Container -->

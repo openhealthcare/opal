@@ -7,10 +7,9 @@ angular.module('opal.controllers').controller(
              $http,
              $q,
              Episode,
-             schema,
              options,
              tags,
-            hospital_number) {
+             hospital_number) {
 
         $scope.model = {}
         if(hospital_number){
@@ -34,25 +33,37 @@ angular.module('opal.controllers').controller(
             );
 
 	    };
+      var addPatient = function(demographics){
+        modal = $modal.open({
+  				templateUrl: '/templates/modals/add_episode.html/',
+  				controller: 'AddEpisodeCtrl',
+                  size: 'lg',
+  				resolve: {
+  					options: function() { return options; },
+  					demographics: function() {
+  						return demographics
+  					},
+            tags: function(){ return $scope.tags; }
+  				}
+  			}).result.then(function(result) {
+  				// The user has created the episode, or cancelled
+  				$modalInstance.close(result);
+  			});
+      }
 
         $scope.newPatient = function(result){
-			// There is no patient with this hospital number
-			// Show user the form for creating a new episode,
-            // with the hospital number pre-populated
-			modal = $modal.open({
-				templateUrl: '/templates/modals/add_episode.html/',
-				controller: 'AddEpisodeCtrl',
-				resolve: {
-					schema: function() { return schema; },
-					options: function() { return options; },
-					demographics: function() {
-						return { hospital_number: result.hospitalNumber }
-					}
-				}
-			}).result.then(function(result) {
-				// The user has created the episode, or cancelled
-				$modalInstance.close(result);
-			});
+          addPatient({ hospital_number: result.hospitalNumber });
+        };
+
+        $scope.addForPatient = function(patient){
+          demographics = patient.demographics[0];
+          if(demographics.date_of_birth){
+              var dob = moment(demographics.date_of_birth, 'YYYY-MM-DD')
+                  .format('DD/MM/YYYY');
+              demographics.date_of_birth = dob;
+          }
+
+          addPatient(demographics);
         };
 
         $scope.newForPatient = function(patient){
@@ -69,12 +80,12 @@ angular.module('opal.controllers').controller(
         $scope.newForPatientWithActiveEpisode = function(patient){
 			episode = new Episode(patient.episodes[patient.active_episode_id])
 
-            if(episode.category != 'inpatient'){ // It's the wrong category - add new
+            if(episode.category != 'Inpatient'){ // It's the wrong category - add new
                 return $scope.addForPatient(patient);
             }
 
 			if (episode.tagging[0][$scope.tags.tag] &&
-                ($scope.tags.subtag == 'all' ||
+                ($scope.tags.subtag == '' ||
                  episode.tagging[0][$scope.tags.subtag])) {
 				// There is already an active episode for this patient
                 // with the current tag
@@ -84,9 +95,10 @@ angular.module('opal.controllers').controller(
                 // it doesn't have the current tag.
                 // Add the current Tag.
                 episode.tagging[0][$scope.tags.tag] = true;
-                if($scope.tags.subtag != 'all'){
+                if($scope.tags.subtag != ''){
                     episode.tagging[0][$scope.tags.subtag] = true;
                 }
+
                 episode.tagging[0].save(episode.tagging[0].makeCopy()).then(
                     function(){
 				        $modalInstance.close(episode);
@@ -94,30 +106,7 @@ angular.module('opal.controllers').controller(
 			}
         };
 
-        $scope.addForPatient = function(patient){
-            demographics = patient.demographics[0];
-            if(demographics.date_of_birth){
-                var dob = moment(demographics.date_of_birth, 'YYYY-MM-DD')
-                    .format('DD/MM/YYYY');
-				demographics.date_of_birth = dob;
-            }
 
-            modal = $modal.open({
-				templateUrl: '/templates/modals/add_episode.html/',
-				controller: 'AddEpisodeCtrl',
-				resolve: {
-					schema: function() { return schema; },
-					options: function() { return options; },
-					demographics: function() { return demographics; }
-				}
-			}).result.then(
-                function(result){
-                    $modalInstance.close(result);
-                },
-                function(result){
-                    $modalInstance.close(result);
-                });
-        };
 
 	    $scope.cancel = function() {
 		    $modalInstance.close(null);

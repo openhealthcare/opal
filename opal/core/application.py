@@ -6,9 +6,9 @@ from opal.utils import stringport
 
 class OpalApplication(object):
     schema_module = None
-    flow_module = None
     core_javascripts = {
         'opal.upstream.deps': [
+            "js/modernizr.js",
             "js/jquery-1.11.3/jquery-1.11.3.js",
             "js/d3/d3.js",
             "js/c3-0.4.10/c3.js",
@@ -68,7 +68,6 @@ class OpalApplication(object):
         ],
         'opal.services': [
             "js/opal/services_module.js",
-            "js/opal/services/focus.js",
             "js/opal/services/flow.js",
             "js/opal/services/user_profile.js",
             "js/opal/services/item.js",
@@ -77,39 +76,43 @@ class OpalApplication(object):
             "js/opal/services/episode_loader.js",
             "js/opal/services/patient_summary.js",
             "js/opal/services/record_loader.js",
-            "js/opal/services/list_schema_loader.js",
             "js/opal/services/extract_schema_loader.js",
             "js/opal/services/schema.js",
             "js/opal/services/options.js",
-            "js/opal/services/episodes_loader.js",
             "js/opal/services/patient_loader.js",
-#            "js/opal/services/discharged_episodes_loader.js",
             "js/opal/services/episode_resource.js",
+            "js/opal/services/record_editor.js",
             "js/opal/services/copy_to_category.js",
             "js/opal/services/episode_detail.js",
-            "js/search/services/paginator.js"
+            "js/opal/services/patientlist_loader.js",
+            "js/opal/services/tag_service.js",
+            'js/opal/services/fields_translater.js',
+            "js/search/services/paginator.js",
         ],
         'opal.controllers': [
             "js/opal/controllers_module.js",
-            "js/opal/controllers/episode_list_redirect.js",
-            "js/opal/controllers/episode_list.js",
+            "js/opal/controllers/patient_list_redirect.js",
+            "js/opal/controllers/patient_list.js",
             "js/opal/controllers/episode_detail.js",
+            "js/opal/controllers/patient_detail.js",
             "js/opal/controllers/hospital_number.js",
             "js/opal/controllers/add_episode.js",
             "js/opal/controllers/reopen_episode.js",
             "js/opal/controllers/edit_item.js",
+            "js/opal/controllers/edit_teams.js",
             "js/opal/controllers/delete_item_confirmation.js",
             "js/opal/controllers/account.js",
             "js/opal/controllers/undischarge.js",
             "js/opal/controllers/copy_to_category.js",
-            "js/opal/controllers/patient_history.js",
-            "js/opal/controllers/keyboard_shortcuts.js"
+            "js/opal/controllers/keyboard_shortcuts.js",
+            "js/opal/controllers/patient_access_log.js"
         ]
     }
     javascripts   = []
+    styles        = []
     actions       = []
     menuitems     = []
-    default_episode_category = 'inpatient'
+    default_episode_category = 'Inpatient'
 
     opal_angular_exclude_tracking_qs = [
         "/search",
@@ -126,26 +129,6 @@ class OpalApplication(object):
         """
         return klass.menuitems
 
-    @classmethod
-    def flows(klass):
-        """
-        Default implementation of flows()
-
-        Pulls flows defined in the application's flows module,
-        plus any flows defined by plugins.
-        """
-        from opal.core import plugins
-
-        flows = {}
-        for plugin in plugins.plugins():
-            flows.update(plugin().flows())
-
-        if klass.flow_module is None:
-            return flows
-
-        flow = stringport(klass.flow_module)
-        flows.update(flow.flows)
-        return flows
 
 def get_app():
     """

@@ -1,0 +1,5 @@
+{% load forms %}
+{% input label="Condition" model="editing.diagnosis.condition" lookuplist="condition_list" %}
+{% checkbox label="Provisional?" model="editing.diagnosis.provisional" %}
+{% input label="Details" model="editing.diagnosis.details" %}
+{% datepicker label="Date of diagnosis" model="editing.diagnosis.date_of_diagnosis" %}

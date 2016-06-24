@@ -2,7 +2,7 @@
   <div class="spaced bg-primary">
     <div class="box">
       <h1>
-        {% block heading %}[[ episode.demographics[0].name ]]{% endblock %}
+        {% block heading %}[[ episode.demographics[0].first_name ]] [[ episode.demographics[0].surname ]]{% endblock %}
         <small>
           {% block subheading %}
           [[ episode.demographics[0].hospital_number ]]
@@ -18,22 +18,17 @@
   <div class="row"> <!-- Main Panel -->
 
     <div class="col-md-3"> <!-- Action Panels -->
-      <div class="affix col-md-2">
+      <div class="affix col-md-2 side-bar">
         <div class="panel panel-default">
           <div class="panel-heading ">
             <h3>
-              [[ episode.demographics[0].name ]]
+              [[ episode.demographics[0].first_name ]]
+              [[ episode.demographics[0].surname ]]
             </h3>
           </div>
           <ul class="list-group">
             <li class="list-group-item">
-              <button class="btn btn-secondary" ng-click="open_modal('PatientHistoryCtrl', '/templates/modals/patient_history.html', 'lg', {episode: episode})">
-                <i class="fa fa-history"></i>
-                History
-              </button>
-            </li>
-            <li class="list-group-item">
-              {% with edit_teams="editNamedItem('tagging', 0)" %}
+              {% with edit_teams="episode.recordEditor.editItem('tagging', 0)" %}
               {% include 'partials/_teams_list.html' %}
               {% endwith %}
             </li>
@@ -59,6 +54,6 @@
         {% block under_split_cols %}{% endblock %}
       </div>
     </div> <!-- Ends Detail Panels -->
-    
+
   </div>
 </div> <!-- Ends Main Panel -->

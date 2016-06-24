@@ -37,16 +37,16 @@ filters.filter('plural', function(){
 
 filters.filter('toMoment', function(){
 		return function(input){
-				if(!input){
-						return;
-				}
-				var d = moment(input);
+			if(!input){
+				return;
+			}
+            if (_.isDate(input) ){
+                return moment(input);
+            }else{
+				d = moment(input, 'DD/MM/YYYY HH:mm:ss');
+			}
 
-				if(!d.isValid()){
-						d = moment(input, 'DD/MM/YYYY');
-				}
-
-				return d;
+			return d;
 		};
 });
 
@@ -83,35 +83,43 @@ filters.filter('shortDate', function(toMomentFilter){
     }
 });
 
-filters.filter('momentDateFormat', function(){
-	return function(input, format){
-			if(!input){
-					return
-			}
-			var d = moment(input)
-			return d.format(format)
-	}
+filters.filter('shortDateTime', function(shortDateFilter, hhmmFilter){
+		return function(input){
+				var datePart = shortDateFilter(input);
+				var timePart = hhmmFilter(input);
+
+				if(datePart && timePart){
+						return datePart + " " + timePart;
+				}
+		};
 });
 
-filters.filter('hhmm', function(){
+
+filters.filter('momentDateFormat', function(toMomentFilter){
+	return function(input, format){
+			if(!input){
+					return;
+			}
+			var d = toMomentFilter(input);
+			return d.format(format);
+	};
+});
+
+filters.filter('hhmm', function(momentDateFormatFilter){
     return function(input, change){
-        if(!input){
-            return;
-        }
-        var value = moment(input)
-        return value.hours() + ':' + value.minutes();
+				return momentDateFormatFilter(input, "H:mm")
     }
 });
 
 
-filters.filter('daysTo', function(){
+filters.filter('daysTo', function(toMomentFilter){
     return function(first, second, withoutDays){
 				if(!first || !second){
 						return;
 				}
 
-        var start = moment(first);
-				var diff = moment(second).diff(start, 'days');
+        var start = toMomentFilter(first);
+				var diff = toMomentFilter(second).diff(start, 'days');
 
 				if(withoutDays){
 						return diff;
@@ -134,28 +142,15 @@ filters.filter('daysSince', function(daysToFilter){
         if(!input){
             return;
         }
-				endDate = moment();
+		endDate = moment();
 
-				if(change){
-						endDate.add(change, "days");
-				}
-				return daysToFilter(input, endDate, withoutDays);
+		if(change){
+			endDate.add(change, "days");
+		}
+		return daysToFilter(input, endDate, withoutDays);
     };
 });
 
-filters.filter('hoursSince', function(){
-    return function(input){
-        if(!input){
-            return null;
-        }
-        t = input.toString()
-        target = moment()
-        target.hour(t.substr(0, 2))
-        target.minutes(t.substr(2))
-        diff =  moment().diff(target, 'hours')
-        return diff
-    }
-});
 
 filters.filter('future', function(){
     return function(input){
@@ -164,12 +159,12 @@ filters.filter('future', function(){
     }
 });
 
-filters.filter('age', function(){
+filters.filter('age', function(toMomentFilter){
     return function(input){
         if(!input){
             return null;
         }
-        target = moment(input)
+        target = toMomentFilter(input)
         diff =  moment().diff(target, 'years')
         return diff
     }
@@ -191,23 +186,16 @@ filters.filter('title', function(){
     };
 });
 
-filters.filter('totalDays', function(){
+filters.filter('totalDays', function(toMomentFilter){
     return function(item){
-        if(!item.start_date){ return null; };
-        var start = moment(item.start_date);
-
-				if(!start.isValid()){
-						start = moment(item.start_date, 'DD/MM/YYYY');
-				}
+        if(!item.start_date){ return null; }
+        var start = toMomentFilter(item.start_date);
 
         if(item.end_date){
-						end = moment(item.end_date);
-						if(!end.isValid()){
-							end = moment(item.end_date, 'DD/MM/YYYY');
-						}
+			end = toMomentFilter(item.end_date);
             return end.diff(start, 'days') + 1;
         }else{
             return moment().diff(start, 'days') + 1;
         }
-    }
+    };
 });

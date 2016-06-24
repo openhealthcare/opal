@@ -2,6 +2,8 @@
 Templatetags for form/modal helpers
 """
 from django import template
+from opal.core.subrecords import get_subrecord_from_model_name
+from opal.core import fields
 
 register = template.Library()
 
@@ -32,15 +34,54 @@ def _icon_classes(name):
     return name
 
 
-def extract_common_args(kwargs):
-    args = {
-        "model": kwargs.pop('model', None),
-        "label": kwargs.pop('label', None),
-        "change": kwargs.pop("change", None),
-        "autofocus": kwargs.pop("autofocus", None),
-        "help_text": kwargs.pop("help_text", None)
-    }
+def infer_from_subrecord_field_path(subRecordFieldPath):
+    api_name, field_name = subRecordFieldPath.split(".")
+    model = get_subrecord_from_model_name(api_name)
+    field = None
 
+    if hasattr(model, field_name):
+        # this is true for lookuplists
+        lookuplist_field = getattr(model, field_name)
+        if lookuplist_field.__class__ == fields.ForeignKeyOrFreeText:
+            field = lookuplist_field
+
+    if not field:
+        field = model._meta.get_field(field_name)
+
+    ctx = {}
+    ctx["label"] = field.name.title().replace("_", " ")
+    ctx["model"] = "editing.{0}.{1}".format(
+        model.get_api_name(),
+        field_name
+    )
+
+    if hasattr(field, "foreign_model"):
+        ctx["lookuplist"] = "{}_list".format(
+            field.foreign_model.get_api_name()
+        )
+    else:
+        related_model = field.related_model
+        if related_model:
+            ctx["lookuplist"] = "{}_list".format(
+                field.related_model.get_api_name()
+            )
+
+    ctx["required"] = getattr(field, "required", False)
+    return ctx
+
+
+def extract_common_args(kwargs):
+    if "field" in kwargs:
+        args = infer_from_subrecord_field_path(kwargs["field"])
+    else:
+        args = {}
+
+    for field in ["model", "label", "change"]:
+        if field in kwargs:
+            args[field] = kwargs[field]
+
+    args["autofocus"] = kwargs.pop("autofocus", None)
+    args["help_text"] = kwargs.pop("help_text", None)
     disabled = kwargs.pop('disabled', None)
 
     if disabled:
@@ -51,7 +92,10 @@ def extract_common_args(kwargs):
 
 def _input(*args, **kwargs):
     ctx = extract_common_args(kwargs)
-    lookuplist = kwargs.pop('lookuplist', None)
+
+    if "lookuplist" in kwargs:
+        ctx["lookuplist"] = kwargs.pop("lookuplist")
+
     icon = kwargs.pop('icon', None)
     required = kwargs.pop('required', False)
     formname = kwargs.pop('formname', None)
@@ -59,6 +103,7 @@ def _input(*args, **kwargs):
     data = kwargs.pop('data', [])
     enter = kwargs.pop('enter', None)
     maxlength = kwargs.pop('maxlength', None)
+    datepicker = kwargs.pop("datepicker", False)
 
     if required:
         if not formname:
@@ -71,9 +116,8 @@ def _input(*args, **kwargs):
                                      kwargs.pop('hide', None))
 
     ctx.update({
-        'modelname' : ctx["model"].replace('.', '_'),
+        'modelname': ctx["model"].replace('.', '_').replace("editing_", ""),
         'directives': args,
-        'lookuplist': lookuplist,
         'visibility': visibility,
         'icon'      : icon,
         'required'  : required,
@@ -81,7 +125,9 @@ def _input(*args, **kwargs):
         'unit'      : unit,
         'data'      : data,
         'enter'     : enter,
-        'maxlength' : maxlength
+        'maxlength' : maxlength,
+        'datepicker': datepicker,
+        'static': kwargs.pop("static", None)
     })
 
     return ctx
@@ -114,6 +160,7 @@ def datepicker(*args, **kwargs):
         kwargs['data'] = [
             ('min-date', kwargs['mindate'])
         ]
+    kwargs["datepicker"] = True
     return _input(*[a for a in args] + ["bs-datepicker"], **kwargs)
 
 @register.inclusion_tag('_helpers/radio.html')
@@ -144,13 +191,14 @@ def select(*args, **kwargs):
     - other: (False) Boolean to indicate that we should allow free text if the item is not in the list
     """
     ctx = extract_common_args(kwargs)
-    lookuplist = kwargs.pop('lookuplist', None)
-    form_name = kwargs.pop('formname', "form")
+    lookuplist = kwargs.pop("lookuplist", ctx.get("lookuplist", None))
+    required = kwargs.pop("required", ctx.get("required", False))
+
+    form_name = kwargs.pop('formname', None)
     other = kwargs.pop('other', False)
     help_template = kwargs.pop('help', None)
     help_text = kwargs.pop('help_text', None)
     placeholder = kwargs.pop("placeholder", None)
-    required = kwargs.pop('required', False)
     visibility = _visibility_clauses(kwargs.pop('show', None),
                                      kwargs.pop('hide', None))
     default_null = kwargs.pop('default_null', True)
@@ -168,21 +216,22 @@ def select(*args, **kwargs):
     other_label = '{0} Other'.format(ctx["label"])
 
     ctx.update({
+        'lookuplist': lookuplist,
         'placeholder': placeholder,
         'default_null': default_null,
         'form_name': form_name,
         'directives': args,
-        'lookuplist': lookuplist,
         'visibility': visibility,
         'help_template': help_template,
         'help_text': help_text,
         'other': other,
-        'model_name': ctx["model"].replace('.', '_').replace('[','').replace(']', ''),
+        'model_name': ctx["model"].replace('.', '_').replace('[','').replace(']', '').replace('editing_', ''),
         'required': required,
         'other_show': other_show,
         'other_label': other_label,
         'tagging': tagging,
         'multiple': multiple,
+        'static': kwargs.pop("static", None)
     })
 
     return ctx
@@ -203,11 +252,17 @@ def textarea(*args, **kwargs):
 
 @register.inclusion_tag('_helpers/icon.html')
 def icon(name):
+    icon = name
     if name.startswith('glyphicon'):
         icon = 'glyphicon ' + name
     if name.startswith('fa'):
         icon = 'fa ' + name
     return dict(icon=icon)
+
+
+@register.inclusion_tag('_helpers/date_of_birth_field.html')
+def date_of_birth_field(model_name="editing.demographics.date_of_birth"):
+    return dict(model_name=model_name)
 
 
 @register.inclusion_tag('_helpers/process_steps.html')
@@ -229,5 +284,5 @@ def process_steps(*args, **kwargs):
         template_args[required_kwarg] = kwargs.pop(required_kwarg)
 
     template_args["show_index"] = kwargs.pop("show_index", False)
-    template_args["show_titles"] = kwargs.pop("show_index", False)
+    template_args["show_titles"] = kwargs.pop("show_titles", False)
     return template_args

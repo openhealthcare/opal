@@ -6,13 +6,12 @@ import json
 from mock import mock_open, Mock, patch
 
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
 
 from opal.core.test import OpalTestCase
 from opal import models
-from opal.tests.models import Colour,  Demographics
-
+from opal.tests.models import Colour, PatientColour, Demographics
 from opal.core.search import extract
+from opal.core import subrecords
 
 MOCKING_FILE_NAME_OPEN = "opal.core.search.extract.open"
 
@@ -26,7 +25,7 @@ class TestViewGet(OpalTestCase):
                 json.dumps([{
                     "combine": "and",
                     "column": "demographics",
-                    "field": "Name",
+                    "field": "Surname",
                     "queryType": "Contains",
                     "query": "a",
                     "lookup_list": [],
@@ -49,7 +48,8 @@ class PatientEpisodeTestCase(OpalTestCase):
         Demographics.objects.all().update(
             patient=self.patient,
             hospital_number='12345678',
-            name='Alice Alderney',
+            first_name="Alice",
+            surname="Alderney",
             date_of_birth=datetime.date(1976,1,1)
         )
         super(PatientEpisodeTestCase, self).setUp()
@@ -130,16 +130,49 @@ class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
             'created_by_id',
             'updated_by_id',
             'hospital_number',
+            'nhs_number',
             'date_of_birth',
-            u'gender_fk_id',
-            'gender_ft',
-            'gender'
+            'sex_fk_id',
+            'sex_ft',
+            'birth_place_fk_id',
+            'birth_place_ft',
+            'sex',
+            'birth_place',
         ]
-
         expected_row = [
-            1, 'None', 'None', 'None', 'None', u'12345678',
-            datetime.date(1976, 1, 1).strftime('%Y-%m-%d'),
-            'None', u'', u''
+            1, 'None', 'None', 'None', 'None', '12345678',
+            'None', '1976-01-01', 'None', '', 'None', '', '', ''
         ]
         self.assertEqual(headers, expected_headers)
         self.assertEqual(row, expected_row)
+
+
+class ZipArchiveTestCase(PatientEpisodeTestCase):
+
+    @patch('opal.core.search.extract.zipfile')
+    def test_episode_subrecords(self, zipfile):
+        extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
+        expected = len([i for i in subrecords.episode_subrecords()]) + 4
+        self.assertEqual(expected, zipfile.ZipFile.return_value.__enter__.return_value.write.call_count)
+
+    @patch('opal.core.search.extract.subrecord_csv')
+    @patch('opal.core.search.extract.zipfile')
+    def test_exclude_episode_subrecords(self, zipfile, subrecords):
+        extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
+        subs = [a[0][1] for a in subrecords.call_args_list]
+        self.assertFalse(Colour in subs)
+
+    @patch('opal.core.search.extract.patient_subrecord_csv')
+    @patch('opal.core.search.extract.zipfile')
+    def test_exclude_patient_subrecords(self, zipfile, subrecords):
+        extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
+        subs = [a[0][1] for a in subrecords.call_args_list]
+        self.assertFalse(PatientColour in subs)
+
+
+class AsyncExtractTestCase(OpalTestCase):
+
+    @patch('opal.core.search.tasks.extract.delay')
+    def test_async(self, delay):
+        extract.async_extract(self.user, 'THIS')
+        delay.assert_called_with(self.user, 'THIS')

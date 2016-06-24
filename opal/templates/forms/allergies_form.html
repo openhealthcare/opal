@@ -1,0 +1,4 @@
+{% load forms %}
+{% input label="Drug" model="editing.allergies.drug" lookuplist="antimicrobial_list" %}
+{% checkbox label="Suspected?" model="editing.allergies.provisional" %}
+{% input label="Details" model="editing.allergies.details" %}

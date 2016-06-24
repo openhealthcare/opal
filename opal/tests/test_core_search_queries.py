@@ -2,13 +2,15 @@
 unittests for opal.core.search.queries
 """
 from mock import patch
-
+import reversion
+from django.db import transaction
 from opal.models import Patient, Team
 from opal.core.test import OpalTestCase
 from datetime import date
 
 from opal.core.search import queries
 
+from opal.tests.episodes import RestrictedEpisodeType
 
 class DatabaseQueryTestCase(OpalTestCase):
     DATE_OF_BIRTH = date(day=27, month=1, year=1977)
@@ -16,28 +18,25 @@ class DatabaseQueryTestCase(OpalTestCase):
 
     def setUp(self):
         self.patient = Patient.objects.create()
-        self.episode = self.patient.create_episode(
-            category="testepisode",
-        )
+        self.episode = self.patient.create_episode()
         self.episode.date_of_episode = self.DATE_OF_EPISODE
         self.episode.save()
         self.demographics = self.patient.demographics_set.get()
-        self.demographics.name = "Sally Stevens"
-        self.demographics.gender = "Female"
+        self.demographics.first_name = "Sally"
+        self.demographics.surname = "Stevens"
+        self.demographics.sex = "Female"
         self.demographics.hospital_number = "0"
         self.demographics.date_of_birth = self.DATE_OF_BIRTH
         self.demographics.save()
 
         self.general_team, _ = Team.objects.get_or_create(
             name='general', title='General Team')
-        self.restricted_team, _ = Team.objects.get_or_create(
-            name='restricted', title='Restricted Team', restricted=True)
         self.name_criteria = [
             {
                 u'column': u'demographics',
-                u'field': u'Name',
+                u'field': u'Surname',
                 u'combine': u'and',
-                u'query': u'Sally Stevens',
+                u'query': u'Stevens',
                 u'queryType': u'Equals'
             }
         ]
@@ -45,25 +44,44 @@ class DatabaseQueryTestCase(OpalTestCase):
     def test_filter_restricted_only_user(self):
         self.user.profile.restricted_only   = True
         self.user.profile.save()
-        self.patient.create_episode(category='nonsensecategory')
+        self.patient.create_episode(category='Inpatient')
         query = queries.DatabaseQuery(self.user, self.name_criteria)
         self.assertEqual([], query.get_episodes())
-        self.episode.set_tag_names(['restricted'], self.user)
-        with patch.object(queries.models.Team, 'restricted_teams') as mock_restrict:
-            mock_restrict.return_value = [self.restricted_team]
-            self.assertEqual([self.episode], query.get_episodes())
 
-    def test_filter_out_restricted_teams(self):
-        query = queries.DatabaseQuery(self.user, self.name_criteria)
-        self.episode.set_tag_names(['restricted'], self.user)
-        self.assertEqual([], query.get_episodes())
+    def test_filter_in_restricted_episode_types(self):
+        self.user.profile.restricted_only   = True
+        self.user.profile.save()
+        episode2 = self.patient.create_episode(category='Restricted')
+        self.assertEqual('Restricted', episode2.category)
 
-    def test_filter_in_restricted_teams(self):
         query = queries.DatabaseQuery(self.user, self.name_criteria)
-        self.episode.set_tag_names(['restricted'], self.user)
-        with patch.object(queries.models.Team, 'restricted_teams') as mock_restrict:
-            mock_restrict.return_value = [self.restricted_team]
-            self.assertEqual([self.episode], query.get_episodes())
+        self.assertEqual([episode2], query.get_episodes())
+
+    def test_get_old_episode(self):
+        # episode's with old tags that have subsequently been removed
+        # should still be qiried
+
+        team_query = [dict(
+            column="tagging",
+            field='other_team',
+            combine='and',
+            query=None,
+            lookup_list=[],
+            queryType=None
+        )]
+
+
+        with transaction.atomic(), reversion.create_revision():
+            other_episode = self.patient.create_episode()
+            other_episode.set_tag_names(['other_team'], self.user)
+            query = queries.DatabaseQuery(self.user, team_query)
+
+        self.assertEqual([other_episode], query.get_episodes())
+
+        with transaction.atomic(), reversion.create_revision():
+            other_episode.set_tag_names([], self.user)
+
+        self.assertEqual([other_episode], query.get_episodes())
 
     def test_get_episodes(self):
         query = queries.DatabaseQuery(self.user, self.name_criteria)
@@ -73,7 +91,7 @@ class DatabaseQueryTestCase(OpalTestCase):
         criteria = [
             {
                 u'column': u'demographics',
-                u'field': u'Gender',
+                u'field': u'Sex',
                 u'combine': u'and',
                 u'query': u'Female',
                 u'queryType': u'Equals'
@@ -90,10 +108,11 @@ class DatabaseQueryTestCase(OpalTestCase):
             'count': 1,
             'hospital_number': u'0',
             'date_of_birth': self.DATE_OF_BIRTH,
-            'name': u'Sally Stevens',
-            'end_date': self.DATE_OF_EPISODE,
-            'start_date': self.DATE_OF_EPISODE,
-            'episode_id': 1,
-            'categories': [u'inpatient']
+            'first_name': u'Sally',
+            'surname': u'Stevens',
+            'end': self.DATE_OF_EPISODE,
+            'start': self.DATE_OF_EPISODE,
+            'patient_id': 1,
+            'categories': [u'Inpatient']
         }]
         self.assertEqual(expected, summaries)

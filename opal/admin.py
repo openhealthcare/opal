@@ -31,13 +31,22 @@ class MyAdmin(reversion.VersionAdmin): pass
 class EpisodeAdmin(reversion.VersionAdmin):
     list_display = ['patient', 'active', 'date_of_admission', 'discharge_date',]
     list_filter = ['active', ]
-    search_fields = ['patient__demographics__name', ]
+    search_fields = [
+        'patient__demographics__first_name',
+        'patient__demographics__surname',
+        'patient__demographics__hospital_number'
+    ]
 
 class PatientAdmin(reversion.VersionAdmin):
-    search_fields = ['demographics__name', 'demographics__hospital_number']
+    search_fields = [
+        'demographics__first_name',
+        'demographics__surname',
+        'demographics__hospital_number'
+    ]
 
 class TaggingAdmin(reversion.VersionAdmin):
-    list_display = ['team', 'episode']
+    list_display = ['value', 'episode']
+
 
 class TeamAdmin(reversion.VersionAdmin):
     list_display = ['title', 'name', 'active', 'restricted', 'visible_in_list', 'direct_add', 'order']
@@ -45,13 +54,22 @@ class TeamAdmin(reversion.VersionAdmin):
     list_editable = ['active', 'order', 'restricted', 'visible_in_list', 'direct_add']
     filter_horizontal = ('useful_numbers',)
 
+
 class PatientSubRecordAdmin(reversion.VersionAdmin):
-    pass
-#    list_filter = ['patient']
+    search_fields = [
+        'patient__demographics__first_name',
+        'patient__demographics__surname',
+        'patient__demographics__hospital_number',
+    ]
+
 
 class EpisodeSubRecordAdmin(reversion.VersionAdmin):
-    pass
- #   list_filter = ['episode']
+    search_fields = [
+        'episode__patient__demographics__first_name',
+        'episode__patient__demographics__surname',
+        'episode__patient__demographics__hospital_number',
+    ]
+
 
 class SynonymInline(GenericTabularInline):
     model = Synonym
@@ -69,6 +87,7 @@ admin.site.register(models.Patient, PatientAdmin)
 admin.site.register(models.Episode, EpisodeAdmin)
 admin.site.register(models.Tagging, TaggingAdmin)
 
+
 for subclass in patient_subrecords():
     if not subclass._meta.abstract and not getattr(subclass, "_no_admin", False):
         admin.site.register(subclass, PatientSubRecordAdmin)
@@ -80,6 +99,6 @@ for subclass in episode_subrecords():
 admin.site.register(models.GP, MyAdmin)
 admin.site.register(models.CommunityNurse, MyAdmin)
 admin.site.register(models.ContactNumber, MyAdmin)
-admin.site.register(models.Team, TeamAdmin)
+#admin.site.register(models.Team, TeamAdmin)
 admin.site.register(models.Role, MyAdmin)
 admin.site.register(models.Macro, MyAdmin)

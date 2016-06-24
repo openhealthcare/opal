@@ -17,12 +17,6 @@ class OpalPlugin(object):
     head_extra  = []
     angular_module_deps = []
 
-    def list_schemas(self):
-        """
-        Return a extra schemas for teams our plugin may have created.
-        """
-        return {}
-
     def flows(self):
         """
         Return any extra flows our plugin may hav.e
@@ -34,12 +28,7 @@ class OpalPlugin(object):
         Given a USER, return a list of extra roles that this user has.
         """
         return {}
-    
-    def restricted_teams(self, user):
-        """
-        Given a USER, return a list of extra teams that user can access.
-        """
-        return []
+
 
 REGISTRY = set()
 AUTODISCOVERED = False
@@ -57,13 +46,13 @@ def autodiscover():
     AUTODISCOVERED = True
 
     return REGISTRY
-   
+
 def plugins():
     """
     Generator function for plugin instances
     """
     global AUTODISCOVERED
-    
+
     if not AUTODISCOVERED:
         autodiscover()
     for m in REGISTRY:

@@ -2,6 +2,9 @@ var OPAL = {};
 if(undefined === version){
     var version = 'test';
 }
+if(undefined === OPAL_FLOW_SERVICE){
+    var OPAL_FLOW_SERVICE = null;
+}
 
 OPAL.module = function(namespace, dependencies){
     dependencies = dependencies || [];
@@ -180,7 +183,6 @@ if (typeof String.prototype.trim !== 'function') {
 		return this.replace(/^\s+|\s+$/g, '');
 	}
 }
-
 
 
 // // From http://stackoverflow.com/a/2897510/2463201

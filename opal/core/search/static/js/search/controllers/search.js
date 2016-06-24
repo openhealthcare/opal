@@ -1,22 +1,18 @@
 angular.module('opal.controllers').controller(
     'SearchCtrl', function($rootScope, $scope, $http, $location, $modal,
                            $timeout, ngProgressLite,
-                           $q, $window, Episode, Flow,
-                            PatientSummary, Paginator) {
+                           $q, $window, Flow,
+                           PatientSummary, Paginator) {
 
-      var searchUrl = "/search";
+        var searchUrl = "/search";
 	    $scope.searchTerm = '';
-      $scope.searchColumns = ['hospital_number', 'name'];
-      $scope.limit = 10;
+        $scope.searchColumns = ['query'];
+        $scope.limit = 10;
 	    $scope.results = [];
 	    $scope.searched = false;
 	    $scope.episode_category_list = ['OPAT', 'Inpatient', 'Outpatient', 'Review'];
 	    $scope.hospital_list = ['Heart Hospital', 'NHNN', 'UCH'];
-      $scope.paginator = new Paginator($scope.search);
-
-	    $timeout(function() {
-		    $('#searchByName').focus();
-	    });
+        $scope.paginator = new Paginator($scope.search);
 
         $scope.disableShortcuts = function(){
             $rootScope.state = "search";
@@ -45,7 +41,7 @@ angular.module('opal.controllers').controller(
                 queryString = $.param($location.search());
                 $http.get('/search/simple/?' + queryString).success(function(response) {
                     ngProgressLite.done();
-          			    $scope.searched = true;
+          			$scope.searched = true;
                     $scope.results = _.map(response.object_list, function(o){
                         return new PatientSummary(o);
                     });

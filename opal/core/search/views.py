@@ -3,6 +3,7 @@ OPAL Search views
 """
 import datetime
 import json
+from copy import copy
 
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotFound
@@ -42,35 +43,6 @@ def _add_pagination(eps, page_number):
     return results
 
 
-def _extract_basic_search_parameters(request):
-    ''' fills in the basic search criteria if we want
-    to search via a hospital number or name
-    '''
-    criteria = {
-        u'column': u'demographics',
-        u'combine': u'or',
-        u'queryType': u'Contains'
-    }
-
-    hospital_number = request.GET.get("hospital_number")
-    name = request.GET.get("name")
-    result = []
-
-    if hospital_number is not None:
-        query_criteria = criteria.copy()
-        query_criteria['field'] = 'Hospital Number'
-        query_criteria['query'] = hospital_number
-        result.append(query_criteria)
-
-    if name is not None:
-        query_criteria = criteria.copy()
-        query_criteria['field'] = 'name'
-        query_criteria['query'] = name
-        result.append(query_criteria)
-
-    return result
-
-
 @with_no_caching
 @require_http_methods(['GET'])
 def patient_search_view(request):
@@ -87,7 +59,7 @@ def patient_search_view(request):
         'column': u'demographics',
     }]
 
-    query = queries.SearchBackend(request.user, criteria)
+    query = queries.create_query(request.user, criteria)
     return _build_json_response(query.patients_as_json())
 
 
@@ -95,14 +67,13 @@ def patient_search_view(request):
 @require_http_methods(['GET'])
 def simple_search_view(request):
     page_number = int(request.GET.get("page_number", 1))
-    all_criteria = _extract_basic_search_parameters(request)
-
-    if not all_criteria:
+    query_string = request.GET.get("query")
+    if not query_string:
         return _build_json_response({'error': "No search terms"}, 400)
 
-    query = queries.SearchBackend(request.user, all_criteria)
-    eps = query.get_patient_summaries()
-    return _build_json_response(_add_pagination(eps, page_number))
+    query = queries.create_query(request.user, query_string)
+    result = query.fuzzy_query()
+    return _build_json_response(_add_pagination(result, page_number))
 
 
 class ExtractSearchView(View):
@@ -113,7 +84,7 @@ class ExtractSearchView(View):
         if "page_number" in request_data[0]:
             page_number = request_data[0].pop("page_number", 1)
 
-        query = queries.SearchBackend(
+        query = queries.create_query(
             self.request.user,
             request_data,
         )
@@ -133,7 +104,7 @@ class DownloadSearchView(View):
             )
             return _build_json_response({'extract_id': extract_id})
 
-        query = queries.SearchBackend(
+        query = queries.create_query(
             self.request.user, json.loads(self.request.POST['criteria'])
         )
         episodes = query.get_episodes()
@@ -146,6 +117,7 @@ class DownloadSearchView(View):
 
 
 class FilterView(LoginRequiredMixin, View):
+
     def get(self, *args, **kwargs):
         filters = models.Filter.objects.filter(user=self.request.user)
         return _build_json_response([f.to_dict() for f in filters])
@@ -179,7 +151,7 @@ class FilterDetailView(LoginRequiredMixin, View):
 
 
 class ExtractResultView(View):
-                
+
     def get(self, *args, **kwargs):
         """
         Tell the client about the state of the extract
@@ -188,10 +160,9 @@ class ExtractResultView(View):
         import taskrunner
         task_id = kwargs['task_id']
         result = AsyncResult(id=task_id, app=taskrunner.celery.app)
-        print result.state 
-        
+
         return _build_json_response({'state': result.state})
-                
+
 
 class ExtractFileView(View):
     def get(self, *args, **kwargs):
@@ -202,9 +173,9 @@ class ExtractFileView(View):
         if result.state != 'SUCCESS':
             raise ValueError('Wrong Task Larry!')
         print result.state
-        fname = result.get() 
+        fname = result.get()
         resp = HttpResponse(open(fname, 'rb').read())
         disp = 'attachment; filename="{0}extract{1}.zip"'.format(
             settings.OPAL_BRAND_NAME, datetime.datetime.now().isoformat())
         resp['Content-Disposition'] = disp
-        return resp        
+        return resp

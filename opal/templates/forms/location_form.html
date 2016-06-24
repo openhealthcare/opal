@@ -1,0 +1,14 @@
+{% load forms %}
+<div class="form-group">
+  <label class="control-label col-sm-3">Category</label>
+  <div class="col-sm-8" >
+    <select class="form-control" ng-model="editing.location.category" autofocus>
+      <option value="">---------</option>
+      <option ng-repeat="category in episode_category_list">[[category]]</option>
+    </select>
+  </div>
+</div>
+
+{% select model="editing.location.ward" label="Ward" lookuplist="ward_list" hide="episode.category_name == 'OPAT'" %}
+{% input model="editing.location.bed" label="Bed" hide="episode.category_name == 'OPAT'" %}
+{% datepicker model="episode.date_of_admission" label="Date of admission" %}

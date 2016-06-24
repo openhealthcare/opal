@@ -8,13 +8,14 @@ The following reference guides are available:
 [opal.models.Episode model](episode.md)| The central Episode model
 [opal.models.Patient](patient.md) | The Patient model
 [opal.models.Subrecord base class](subrecords.md)|Base class for subrecords of Episodes or Patients
-[opal.models.Team](team.md)|Teams - Clinical units or stages in a Service
 
 ### OPAL Core
 |
 -|-
-[opal.application.OpalApplication](opal_application.md) | OPAL Application objects
-[opal.core.schemas](schemas.md)|Schemas - Dynamic columns for the table views
+[opal.application.OpalApplication](opal_application.md) | OPAL Application objects|
+[opal.core.schemas](schemas.md)|Schemas - Dynamic columns for the table views|
+[opal.core.detail](detail_views.md)|Detail Views - Custom views over one or many episodes.|
+[opal.core.patient_lists](patient_list.md)|Patient Lists - defining different types of list.|
 
 ### Angular Services
 |
@@ -22,6 +23,7 @@ The following reference guides are available:
 [Episode](episode_service.md) | Episode objects
 [Item](item_service.md) |  Subrecord objects
 [PatientSummary](patient_summary_service.md) | Patient search result summaries
+[Search Services](search_js_services.md) | Services from the Search module|
 
 
 ### Helper libraries
@@ -29,7 +31,7 @@ The following reference guides are available:
 |
 -|-
 [The forms Templatetag library](form_templatetags.md) | The building blocks for OPAL forms
-[The record_panel templatetag](record_panel_templatetag.md) | Rendering record panels.
+[The panels Templatetag library](panels_templatetags.md) | Rendering record panels.
 [Javascript Helpers](javascript_helpers.md)| Angular filters and $rootScope methods
 
 ### OPAL Search module
@@ -44,3 +46,4 @@ The following reference guides are available:
 |
 -|-
 [Upgrading](upgrading.md) | Search query backends and helper functions
+[Javascript dependencies](javascript_dependencies.md)| External javascript libraries available |

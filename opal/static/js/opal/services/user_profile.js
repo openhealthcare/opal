@@ -9,10 +9,10 @@ angular.module('opal.services')
             this.active_roles = function(){
                 var roles = [];
                 if(this.roles['default']){
-                    angular.extend(roles, this.roles['default']);
+                    roles = angular.copy(this.roles['default']);
                 }
-                if($routeParams.tag && this.roles[$routeParams.tag]){
-                    angular.extend(roles, this.roles[$routeParams.tag]);
+                if($routeParams.slug && this.roles[$routeParams.slug]){
+                    roles = _.union(roles, this.roles[$routeParams.slug]);
                 }
                 return roles;
             };
@@ -32,7 +32,7 @@ angular.module('opal.services')
             this.can_edit = function(record_name){
                 // This is non-scalable.
                 if(this.has_role('scientist')){
-                    if(['lab_test', 'lab_specimin'].indexOf(record_name) != -1){
+                    if(['lab_test', 'ridrti_test'].indexOf(record_name) == -1){
                         return false;
                     }
                 }
@@ -42,11 +42,15 @@ angular.module('opal.services')
         };
 
         var deferred = $q.defer();
-        $http.get('/api/v0.1/userprofile/').then(function(response) {
-	        deferred.resolve(new UserProfile(response.data) );
+
+        url = '/api/v0.1/userprofile/';
+
+        $http({ cache: true, url: url, method: 'GET'}).then(function(response) {
+          deferred.resolve(new UserProfile(response.data) );
         }, function() {
-	        // handle error better
-	        $window.alert('UserProfile could not be loaded');
+          // handle error better
+          $window.alert('UserProfile could not be loaded');
         });
+
         return deferred.promise;
     });

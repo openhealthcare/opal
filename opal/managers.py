@@ -2,14 +2,11 @@
 Custom managers for query optimisations
 """
 from collections import defaultdict
-import time
-
-from django.db import models, connection, reset_queries
-
+from django.db import models
 from opal.core.subrecords import episode_subrecords, patient_subrecords
 
 
-class EpisodeManager(models.Manager):
+class EpisodeQueryset(models.QuerySet):
 
     def serialised_episode_subrecords(self, episodes, user):
         """
@@ -52,15 +49,15 @@ class EpisodeManager(models.Manager):
         # episode.tagging_dict() for each episode in a loop.
         taggings = defaultdict(dict)
         from opal.models import Tagging
-        filter_kargs = dict(episode__in=episodes)
+        qs = Tagging.objects.filter(episode__in=episodes)
 
         if not historic_tags:
-            filter_kargs["archived"] = False
+            qs = qs.filter(archived=False)
 
-        for tag in Tagging.objects.filter(**filter_kargs).select_related('team'):
-            if tag.team.name == 'mine' and tag.user != user:
+        for tag in qs:
+            if tag.value == 'mine' and tag.user != user:
                 continue
-            taggings[tag.episode_id][tag.team.name] = True
+            taggings[tag.episode_id][tag.value] = True
 
         serialised = []
         for e in episodes:

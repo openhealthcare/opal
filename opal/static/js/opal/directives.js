@@ -17,63 +17,67 @@ directives.directive("fixHeight", function () {
         $(window).on("resize.fixHeight", updateHeight);
 
         scope.$on('$destroy', function(){
-          $(window).off("resize.fixHeight");
+            $(window).off("resize.fixHeight");
         });
     };
 });
 
 directives.directive("scrollEpisodes", function(){
     return function(scope, element, attrs){
-      /*
-      * when they user is on an episode and presses the down up key, the selected
-      * episode should always be shown in its entirety.
-      */
-      var shouldScroll = attrs.scrollEpisodes,
-          patientListContainer = $(attrs.scrollContainer),
-          thHeight = patientListContainer.find("thead").height();
+        /*
+         * when they user is on an episode and presses the down up key, the selected
+         * episode should always be shown in its entirety.
+         */
+        var shouldScroll = attrs.scrollEpisodes,
+            patientListContainer = $(attrs.scrollContainer),
+            thHeight = patientListContainer.find("thead").height();
 
-      var adjustForThead = function(){
-        if($(element).position().top <= thHeight){
-          // adjust for the thead, plus some buffer
-          patientListContainer.scrollTop(patientListContainer.scrollTop() - thHeight - 10);
-        }
-      }
-
-      function isScrolledIntoView(element, parent){
-        var elementTop    = element.getBoundingClientRect().top ,
-            elementBottom = element.getBoundingClientRect().bottom;
-        return elementTop >= thHeight && elementBottom <= window.innerHeight;
-      }
-
-      scope.$on('keydown', function(event, e) {
-        if(scope[shouldScroll](scope.row)){
-            // up
-            if(e.keyCode === 38){
-              event.preventDefault();
-              if(!isScrolledIntoView(element[0], patientListContainer[0])){
-                element[0].scrollIntoView(true);
-              }
-              adjustForThead();
-            }
-            // down
-            else if(e.keyCode === 40){
-              event.preventDefault();
-              if(!isScrolledIntoView(element[0], patientListContainer[0])){
-                element[0].scrollIntoView(false);
-              }
-              adjustForThead();
+        var adjustForThead = function(){
+            if($(element).position().top <= thHeight){
+                // adjust for the thead, plus some buffer
+                patientListContainer.scrollTop(patientListContainer.scrollTop() - thHeight - 10);
             }
         }
-      });
+
+        function isScrolledIntoView(element, parent){
+            var elementTop    = element.getBoundingClientRect().top ,
+                elementBottom = element.getBoundingClientRect().bottom;
+            return elementTop >= thHeight && elementBottom <= window.innerHeight;
+        }
+
+        scope.$on('keydown', function(event, e) {
+            if(scope[shouldScroll](scope.row)){
+                // up
+                if(e.keyCode === 38){
+                    event.preventDefault();
+                    if(!isScrolledIntoView(element[0], patientListContainer[0])){
+                        element[0].scrollIntoView(true);
+                    }
+                    adjustForThead();
+                }
+                // down
+                else if(e.keyCode === 40){
+                    event.preventDefault();
+                    if(!isScrolledIntoView(element[0], patientListContainer[0])){
+                        element[0].scrollIntoView(false);
+                    }
+                    adjustForThead();
+                }
+            }
+        });
     };
 });
 
 directives.directive("freezeHeaders", function () {
-    return function (scope, element, attrs) {
-        var $el = $(element).find('table');
-        $el.stickyTableHeaders({
-            scrollableArea: $(element),
-        });
+    return {
+      restrict: 'A',
+      link: function (scope, element, attrs) {
+          var $el = $(element).find('table');
+
+          $el.stickyTableHeaders({
+              scrollableArea: $(element),
+          });
+      }
     };
 });
 
@@ -97,19 +101,7 @@ directives.directive('scrollTop', function () {
             });
 
             scope.$on('$destroy', function(){
-              $(window).off("resize.fixHeight");
-            });
-        }
-    };
-});
-
-directives.directive('blurOthers', function(){
-    return {
-        link: function ($scope, element, attrs) {
-            $scope.$watch(attrs.blurOthers, function(value){
-                if(attrs.blurOthers){
-                    $(document.activeElement).blur();
-                }
+                $(window).off("resize.fixHeight");
             });
         }
     };
@@ -143,13 +135,13 @@ directives.directive('markdown', function () {
 	return function postLink (scope, element, attrs) {
 	    var prefix = 'item';
 	    if( _.isUndefined(scope['item']) ){
-		if(! _.isUndefined(scope['editing']) )
+		    if(! _.isUndefined(scope['editing']) )
 		    {
-			prefix = 'editing';
+			    prefix = 'editing';
 		    }
-		else
+		    else
 		    {
-			return;
+			    return;
 		    }
 	    }
 	    scope.$watch(prefix + '.' + attrs.markdown, function(){
@@ -159,92 +151,136 @@ directives.directive('markdown', function () {
 		        element.html(contents);
             }
 		}
-		);
+		            );
 	};
 });
 
 directives.directive('slashKeyFocus', function() {
-  return {
-    link: function(scope, elem, attrs) {
-        scope.$watch(attrs.slashKeyFocus, function(value){
-            if(value){
-                $(window).on("keyup.keyFocus", function(e){
-                    // if we're already focused on a text area, lets ignore this
-                    if (e.keyCode == 191 && !e.shiftKey) {
-                        if(!$('input:focus, textarea:focus').length){
-                            $(elem).focus();
+    return {
+        link: function(scope, elem, attrs) {
+            scope.$watch(attrs.slashKeyFocus, function(value){
+                if(value){
+                    $(window).on("keyup.keyFocus", function(e){
+                        // if we're already focused on a text area, lets ignore this
+                        if (e.keyCode == 191 && !e.shiftKey) {
+                            if(!$('input:focus, textarea:focus').length){
+                                $(elem).focus();
+                            }
                         }
-                    }
+                    });
+                } else {
+                    $(window).off("keyup.keyFocus");
+                }
+
+                $elem = $(elem);
+
+                $elem.on("focus.keyFocus", function(x){
+                    $elem.on("keyup.keyBlur", function(e){
+                        if (e.keyCode == 27) {
+                            $elem.blur();
+                        }
+                    });
                 });
-            } else {
-                $(window).off("keyup.keyFocus");
-            }
 
-            $elem = $(elem);
-
-            $elem.on("focus.keyFocus", function(x){
-                $elem.on("keyup.keyBlur", function(e){
-                    if (e.keyCode == 27) {
-                        $elem.blur();
-                    }
+                $elem.on("blur.keyFocus", function(x){
+                    $(elem.off("keyup.keyBlur"));
                 });
             });
-
-            $elem.on("blur.keyFocus", function(x){
-                $(elem.off("keyup.keyBlur"));
-            });
-        });
-    }
-  };
+        }
+    };
 });
 
 directives.directive('setFocusIf', function($timeout) {
-  return {
-    link: function($scope, $element, $attr) {
-      $scope.$watch($attr.setFocusIf, function(value) {
-        if ( value ) {
-          $timeout(function() {
-            // We must reevaluate the value in case it was changed by a subsequent
-            // watch handler in the digest.
-            if ( $scope.$eval($attr.setFocusIf) ) {
-              $element[0].focus();
-            }
-          }, 0, false);
+    return {
+        link: function($scope, $element, $attr) {
+            $scope.$watch($attr.setFocusIf, function(value) {
+                if ( value ) {
+                    $timeout(function() {
+                        // We must reevaluate the value in case it was changed by a subsequent
+                        // watch handler in the digest.
+                        if ( $scope.$eval($attr.setFocusIf) ) {
+                            $element[0].focus();
+                        }
+                    }, 0, false);
+                }
+            });
         }
-      });
-    }
-  };
+    };
 });
 
 // until bootstrap moves to flex box, lets grab the parent height with javascript
 directives.directive('parentHeight', function(){
-  return{
-    restrict: 'A',
-    link: function(scope, element){
-      var $element = $(element);
-      $element.css("min-height", $element.parent().height());
-    }
-  };
+    return{
+        restrict: 'A',
+        link: function(scope, element){
+            var $element = $(element);
+            $element.css("min-height", $element.parent().height());
+        }
+    };
 });
 
-directives.directive('autofocus', function($timeout) {
+directives.directive('autofocus', ['$timeout', function($timeout) {
   return {
     restrict: 'A',
     link : function($scope, $element) {
-      $timeout(function() {
-        $element[0].focus();
+      $scope.$watch('autofocus', function(){
+        $timeout(function() {
+          $element[0].focus();
+        });
       });
     }
   };
-});
+}]);
 
-angular.module('ui.bootstrap.modal').directive('modalWindow', function ($timeout) {
+directives.directive("dateOfBirth", function(){
   return {
-    priority: 1,
-    link: function (scope, element, attrs) {
-      $timeout(function () {
-        element.find('[autofocus]').focus();
-      });
+    require: "?ngModel",
+    scope: true,
+    template: "<input name='[[ name ]]' class='form-control' ng-pattern='numberCheck' ng-model='value' ng-model-options=\"{ updateOn: 'blur' }\" ng-change='onChange()'>",
+    link: function(scope, element, attrs, ngModel){
+      if (!ngModel) return;
+
+      scope.name = attrs.name
+
+      scope.onChange = function(){
+        ngModel.$setViewValue(moment(scope.value, "DD/MM/YYYY", true));
+      };
+
+      scope.numberCheck = {test: function(inputStr){
+
+        if(_.last(inputStr.split("/")).length > 4){
+            return false;
+        }
+
+        var inputMoment =  moment(inputStr, "DD/MM/YYYY", true);
+        if(!inputMoment.isValid()){
+            return false;
+        }
+
+       	var now = moment();
+
+        // I wasn't born yesterday, don't let people be born tomorrow
+        if(inputMoment.isAfter(now)){
+            return false;
+        }
+
+        // lets not allow for patients over 150
+        return now.diff(inputMoment, 'years') < 150
+      }}
+
+      ngModel.$render = function(){
+        if(_.isString(ngModel.$modelValue)){
+            scope.value = ngModel.$modelValue;
+        }
+        else{
+            if(ngModel.$modelValue){
+                scope.value = moment(ngModel.$modelValue).format("DD/MM/YYYY");
+            }
+            else{
+                scope.value = undefined;
+            }
+        }
+      };
     }
   };
 });

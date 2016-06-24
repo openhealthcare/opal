@@ -1,17 +1,17 @@
 controllers.controller(
-    'DischargeEpisodeCtrl',     
+    'DischargeEpisodeCtrl',
     function($scope, $timeout,
              $modalInstance, episode,
              tags) {
 
-        if(tags){
-            var currentTag = tags.tag;
-            var currentSubTag = tags.subtag;
+        if(tags && !_.isEmpty(tags)){
+            $scope.currentTag = tags.tag;
+            $scope.currentSubTag = tags.subtag;
         }else{
-            var currentTag = 'mine';
-            var currentSubTag = 'all';
+            $scope.currentTag = 'mine';
+            $scope.currentSubTag = '';
         }
-        
+
         $scope.currentCategory = episode.location[0].category;
         var newCategory;
 
@@ -24,13 +24,7 @@ controllers.controller(
 	        newCategory = $scope.currentCategory;
         }
 
-        var admission;
-        if(episode.date_of_admission){
-            admission = moment(episode.date_of_admission).format('MM/DD/YY')
-        }
-
         $scope.editing = {
-            date_of_admission: admission,
 	        category: newCategory,
             discharge_date: null
         };
@@ -42,20 +36,20 @@ controllers.controller(
             $scope.editing.discharge_date = $scope.episode.discharge_date;
         }
 
-        // 
+        //
         // Discharging an episode requires updating three server-side entities:
         //
         // * Location
         // * Tagging
         // * Episode
-        // 
+        //
         // Make these requests then kill our modal.
-        // 
+        //
         $scope.discharge = function() {
 
 	        var tagging = episode.getItem('tagging', 0);
             var location = episode.getItem('location', 0);
-            
+
 	        var taggingAttrs = tagging.makeCopy();
             var locationAttrs = location.makeCopy();
             var episodeAttrs = episode.makeCopy();
@@ -72,17 +66,17 @@ controllers.controller(
             }
 
 	        if ($scope.editing.category != 'Followup') {
-                if(currentSubTag != 'all'){
-                    taggingAttrs[currentSubTag] = false;
+                if($scope.currentSubTag != ''){
+                    taggingAttrs[$scope.currentSubTag] = false;
                 }else{
-                    taggingAttrs[currentTag] = false;
+                    taggingAttrs[$scope.currentTag] = false;
                 }
 	        }
 
 	        tagging.save(taggingAttrs).then(function(){
                 location.save(locationAttrs).then(function(){
                     episode.save(episodeAttrs).then(function(){
-                        $modalInstance.close('discharged');            
+                        $modalInstance.close('discharged');
                     })
                 })
 

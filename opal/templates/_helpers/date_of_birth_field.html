@@ -1,0 +1,15 @@
+<div ng-show="editing.demographics.external_system" class="form-group">
+  <label class="control-label col-sm-3">Date Of Birth</label>
+  <p class="form-control-static col-sm-8">
+    [[ {{ model_name }} | shortDate ]]
+  </p>
+</div>
+<div ng-hide="editing.demographics.external_system" class="form-group">
+  <label class="control-label col-sm-3">Date Of Birth</label>
+  <div class="col-sm-8">
+    <div date-of-birth name="date_of_birth" ng-model="{{ model_name }}"></div>
+    <span class="help-block" ng-show="form.date_of_birth.$invalid">
+      Please enter a valid date of birth
+    </span>
+  </div>
+</div>

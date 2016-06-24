@@ -1,6 +1,6 @@
 describe('SearchCtrl', function (){
     var $scope, location;
-    var Episode, Flow;
+    var Flow;
     var profile, schema, options, locationDetails;
     var patientSummary = {};
 
@@ -41,7 +41,6 @@ describe('SearchCtrl', function (){
         $rootScope   = $injector.get('$rootScope');
         $scope       = $rootScope.$new();
         $controller  = $injector.get('$controller');
-        Episode      = $injector.get('Episode');
         Flow         = $injector.get('Flow');
         $httpBackend = $injector.get('$httpBackend');
         location = $injector.get('$location');
@@ -54,7 +53,6 @@ describe('SearchCtrl', function (){
         controller = $controller('SearchCtrl', {
             $scope         : $scope,
             $location      : location,
-            Episode: Episode,
             Flow: Flow,
             options        : options,
             schema         : schema,
@@ -69,15 +67,28 @@ describe('SearchCtrl', function (){
         $httpBackend.verifyNoOutstandingRequest();
     });
 
+    describe('setters', function() {
+
+        it('should set state', function() {
+            $scope.disableShortcuts();
+            expect($scope.state).toEqual('search');
+        });
+
+        it('should set state', function() {
+            $scope.enableShortcuts();
+            expect($scope.state).toEqual('normal');
+        });
+
+    });
+
     describe('We should query for hospital number or name()', function (){
         it('should ask the server for results', function(){
             location.search({
-                hospital_number: "Bond",
-                name: "Bond",
+                query: "Bond",
                 page_number: 1
             });
 
-            expectedUrl = "/search/simple/?hospital_number=Bond&name=Bond&page_number=1";
+            expectedUrl = "/search/simple/?query=Bond&page_number=1";
             $httpBackend.expectGET(expectedUrl).respond({
                 page_number: 1,
                 object_list: [],
@@ -92,7 +103,7 @@ describe('SearchCtrl', function (){
             locationDetails.pathname = "/somewhere";
             $scope.searchTerm = "Bond";
             $scope.search();
-            expectedUrl = "/#/search?hospital_number=Bond&name=Bond";
+            expectedUrl = "/#/search?query=Bond";
             expect(locationDetails.href).toEqual(expectedUrl);
         });
 
@@ -102,8 +113,7 @@ describe('SearchCtrl', function (){
             $scope.searchTerm = "Bond";
             $scope.search();
             expectedSearch = {
-                hospital_number: "Bond",
-                name: "Bond",
+                query: "Bond",
             };
             expect(location.search()).toEqual(expectedSearch);
             expect(locationDetails.href).toEqual("unchanged");

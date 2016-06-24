@@ -10,6 +10,7 @@ import shutil
 import subprocess
 import sys
 
+from fabric.api import local
 import ffs
 from ffs import nix
 from ffs.contrib import mold
@@ -23,6 +24,13 @@ SCAFFOLDING_BASE = OPAL/'scaffolding'
 SCAFFOLD         = SCAFFOLDING_BASE/'scaffold'
 PLUGIN_SCAFFOLD  = SCAFFOLDING_BASE/'plugin_scaffold'
 TRAVIS           = os.environ.get('TRAVIS', False)
+
+
+def _userland_here_has__file(filename):
+    """
+    Predicate function to determine whether we have FILENAME is in the current working directory
+    """
+    return bool(ffs.Path(USERLAND_HERE/filename))
 
 def _find_application_name():
     """
@@ -77,8 +85,7 @@ def startproject(args):
     7. Create extra directories we need
     8. Run Django's migrations
     9. Create a superuser
-    10. Create a Sample team
-    11. Initialise our git repo
+    10. Initialise our git repo
     """
     name = args.name
 
@@ -131,13 +138,11 @@ def startproject(args):
     templates = app_dir/'templates'/name
     templates.mkdir()
 
+    # We have this here because it uses name from above.
     def manage(command):
         args = ['python', '{0}/manage.py'.format(name)]
         args += command.split()
         args.append('--traceback')
-
-        # os.system('python {name}/manage.py {command} --traceback'.format(
-        #     name=name, command=command))
 
         try:
             subprocess.check_call(args)
@@ -164,16 +169,6 @@ def startproject(args):
     profile, _ = UserProfile.objects.get_or_create(user=user)
     profile.force_password_change = False
     profile.save()
-
-    # 10. Create sample team
-    from opal.models import Team
-    Team.objects.create(
-        name='teamone',
-        title='Team 1',
-        active=True,
-        restricted=False,
-        direct_add=True
-    )
 
     # 11. Initialise git repo
     os.system('cd {0}; git init'.format(name))
@@ -271,14 +266,14 @@ def _create_form_template_for(record):
     name = camelcase_to_underscore(record.__name__)
 
     templates = _get_template_dir_from_record(record)
-    modals = templates/'modals'
-    if not modals:
-        modals.mkdir()
+    forms = templates/'forms'
+    if not forms:
+        forms.mkdir()
 
-    modal_template = SCAFFOLDING_BASE/'record_templates/record_modal.jinja2'
-    template = modals/'{0}_modal.html'.format(name)
+    form_template = SCAFFOLDING_BASE/'record_templates/record_form.jinja2'
+    template = forms/'{0}_form.html'.format(name)
     fields = _strip_non_user_fields(record.build_field_schema())
-    contents = mold.cast(modal_template, record=record, fields=fields)
+    contents = mold.cast(form_template, record=record, fields=fields)
     # We often get lots of lines containing just spaces as a Jinja2 artifact. Lose them.
     contents = "\n".join(l for l in contents.split("\n") if l.strip())
     template << contents
@@ -298,8 +293,17 @@ def scaffold(args):
     sys.path.append(os.path.abspath('.'))
 
     # 1. Let's run a Django migration
-    os.system('python manage.py makemigrations {app} --traceback'.format(app=app))
-    os.system('python manage.py migrate {app} --traceback'.format(app=app))
+    dry_run = ''
+    if args.dry_run:
+        dry_run = '--dry-run'
+
+    makemigrations_cmd = 'python manage.py makemigrations {app} --traceback {dry_run}'.format(
+        app=app, dry_run=dry_run)
+    migrate_cmd = 'python manage.py migrate {app} --traceback '.format(app=app)
+
+    os.system(makemigrations_cmd)
+    if not args.dry_run:
+        os.system(migrate_cmd)
 
     # 2. Let's create some display templates
     from opal.models import Subrecord, EpisodeSubrecord, PatientSubrecord
@@ -309,12 +313,18 @@ def scaffold(args):
     for i in dir(models):
         thing = getattr(models, i)
         if inspect.isclass(thing) and issubclass(thing, Subrecord):
-            if thing in [EpisodeSubrecord, PatientSubrecord]:
+            if thing in [Subrecord, EpisodeSubrecord, PatientSubrecord]:
                 continue
             if not thing.get_display_template():
-                _create_display_template_for(thing)
-            if not thing.get_form_template():
-                _create_form_template_for(thing)
+                if args.dry_run:
+                    print 'No Display template for {0}'.format(thing)
+                else:
+                    _create_display_template_for(thing)
+            if not thing.get_modal_template():
+                if args.dry_run:
+                    print 'No Form template for {0}'.format(thing)
+                else:
+                    _create_form_template_for(thing)
     return
 
 def _run_py_tests(args):
@@ -322,13 +332,42 @@ def _run_py_tests(args):
     Run our Python test suite
     """
     print "Running Python Unit Tests"
-    test_args= ['python', 'runtests.py']
-    if args.test:
-        test_args.append(args.test)
+
+    # We have a custom test runner - e.g. it's OPAL itself or a plugin.
+    if _userland_here_has__file('runtests.py'):
+        test_args= ['python', 'runtests.py']
+        if args.test:
+            test_args.append(args.test)
+        if args.coverage:
+            test_args = ['coverage', 'run', 'runtests.py']
+
+    # We have a manage.py script - assume that we're in an application
+    elif _userland_here_has__file('manage.py'):
+        test_args = ['python', 'manage.py', 'test']
+
+        if args.test:
+            test_args.append(args.test)
+
+        if args.coverage:
+            test_args = ['coverage', 'run', 'manage.py', 'test',]
+
+    else:
+        print "\n\nCripes!\n"
+        print "We can't figure out how to run your tests :(\n"
+        print "Are you in the root directory? \n\n"
+        sys.exit(1)
+
     try:
         subprocess.check_call(test_args)
     except subprocess.CalledProcessError:
         sys.exit(1)
+
+    if args.coverage:
+        try:
+            subprocess.check_call(['coverage', 'html'])
+        except subprocess.CalledProcessError:
+            sys.exit(1)
+
     return
 
 def _run_js_tests(args):
@@ -338,20 +377,18 @@ def _run_js_tests(args):
     print "Running Javascript Unit Tests"
     env = os.environ.copy()
     if TRAVIS:
-        sub_args = [
-            './node_modules/karma/bin/karma',
-            'start',
-            'config/karma.conf.travis.js',
-            '--single-run'
-        ]
+        karma = './node_modules/karma/bin/karma'
     else:
-        sub_args = [
-            'karma',
-            'start',
-            'config/karma.conf.developer.js',
-            '--single-run'
-        ]
+        karma = 'karma'
         env['DISPLAY'] = ':10'
+
+    sub_args = [
+        karma,
+        'start',
+        'config/karma.conf.js',
+        '--single-run'
+    ]
+
     try:
         subprocess.check_call(sub_args, env=env)
     except subprocess.CalledProcessError:
@@ -369,6 +406,87 @@ def test(args):
     for suite in suites:
         globals()['_run_{0}_tests'.format(suite)](args)
     return
+
+
+
+def check_for_uncommitted():
+    changes = local("git status --porcelain", capture=True)
+    return len(changes)
+
+
+def get_requirements():
+    """
+    looks for a requirements file in the same directory as the
+    fabfile. Parses it,
+    """
+
+    with USERLAND_HERE:
+        requirements = local("less requirements.txt", capture=True).split("\n")
+
+        package_to_version = {}
+
+        for requirement in requirements:
+            parsed_url = parse_github_urls(requirement)
+
+            if parsed_url:
+                package_to_version.update(parsed_url)
+
+    return package_to_version
+
+
+def parse_github_urls(some_url):
+    """
+    takes in something that looks like a git hub url in a fabfile e.g.
+    -e git+https://github.com/openhealthcare/opal-referral.git@v0.1.2#egg=opal_referral
+    returns opal-referral
+    """
+
+    if "github" in some_url and "opal" in some_url:
+        package_name = some_url.split("@")[0].split("/")[-1]
+        package_name = package_name.replace(".git", "")
+        version = some_url.split("@")[-1].split("#")[0]
+        return {package_name: version}
+
+
+def checkout(args):
+    """
+    This is our main entrypoint for the checkout command.
+    """
+    package_name_version = get_requirements()
+    SOURCE_DIR = USERLAND_HERE.parent
+    with SOURCE_DIR:
+        existing_packages = local("ls", capture=True).split("\n")
+        uncommitted = []
+
+        for package_name, version in package_name_version.iteritems():
+            if package_name in existing_packages:
+                with SOURCE_DIR/package_name:
+                    if check_for_uncommitted():
+                        uncommitted.append(package_name)
+
+        if len(uncommitted):
+            print "we have uncommited changes in {} quitting".format(
+                ", ".join(uncommitted)
+            )
+            return
+
+        for package_name, version in package_name_version.iteritems():
+            if package_name in existing_packages:
+                with SOURCE_DIR/package_name:
+                    print "checking out {0} to {1}".format(
+                        package_name, version
+                    )
+                    local("git checkout {}".format(version))
+                    local("python setup.py develop")
+            else:
+                print "cloning {}".format(package_name)
+                local("git clone {}".format(package_name))
+                with SOURCE_DIR/package_name:
+                    print "checking out {0} to {1}".format(
+                        package_name, version
+                    )
+                    local("git checkout {}".format(version))
+                    local("python setup.py develop")
 
 def main():
     parser = argparse.ArgumentParser(
@@ -399,6 +517,10 @@ def main():
 
     parser_scaffold = subparsers.add_parser("scaffold")
     parser_scaffold.add_argument('app', help='Django app to scaffold')
+    parser_scaffold.add_argument(
+        '--dry-run',
+        action='store_true',
+        help="Just print the templates we would create - don't actually create them")
     parser_scaffold.set_defaults(func=scaffold)
 
     parser_test = subparsers.add_parser("test")
@@ -407,7 +529,13 @@ def main():
     parser_test.add_argument(
         '-t', '--test', help='Test case or method to run'
     )
+    parser_test.add_argument(
+        '-c', '--coverage', action='store_true', help='Generate a test coverage report'
+    )
     parser_test.set_defaults(func=test)
+
+    parser_checkout = subparsers.add_parser("checkout")
+    parser_checkout.set_defaults(func=checkout)
 
     args = parser.parse_args()
     args.func(args)

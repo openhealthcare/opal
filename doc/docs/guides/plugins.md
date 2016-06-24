@@ -1,50 +1,54 @@
 ## Writing Plugins
 
 OPAL Plugins are Django apps on the server side, and collections of angular.js
-models for the client. 
+models for the client.
 
 ### Getting started with your plugin
 
-The OPAL commandline tool will bootstrap your plugin for you - just run: 
+The OPAL commandline tool will bootstrap your plugin for you - just run:
 
     $ opal startplugin yourcoolplugin
 
-### Defining teams
 
-As a signal is fine.
-Data migrations might work.
+### Adding Discoverable Functionality
 
-Defining restricted team access is done by:
+A common pattern for plugins is to add functionality that other plugins or applications
+can use by inheriting a base class that you define in a file with a magic name. (In
+much the same way that Django provides models.)
 
-Adding a method to your pluigin that takes one argument, a User object, and returning a set of
-extra teams that this user is allowed to see.
+For example, if you're creating an appointments plugin that helps people to book and schedule
+appointments in clinics, you would create a base `Clinic` class that can be subclassed to
+create specific clinics.
 
-### Defining Schemas 
+    class Clinic(opal.core.discoverable.DiscoverableFeature):
+        module_name = 'clinics'
 
-Plugins can define list schemas to be used to generate patient lists. 
-They should return a dictionary of lists of models from the
-`list_schemas` method of the plugin class.
+We can then create clinics in any installed app, and they will be available from `Clinic.list()`
 
-    # yourplugin/__init__.py
-    from opal.core.plugins import OpalPlugin
+    class OutpatientsClinic(Clinic):
+        name = 'Outpatients'
 
-    from yourplugin import models
+        # Add your custom clnic functionality here e.g.
+        def book_appointment(self, date, patient):
+            pass
 
-    class YourPlugin(OpalPlugin):
-        def list_schemas(self):
-            columns = [models.YourAwesomeModel, models.YourSecondModel, models.SomeOtherModel]
-            return {'yourplugin': {'default': columns}}
+
+    Clinic.list()
+    # -> Generator including OutPatientsClinic
+
+    Clinic.get('outpatients)
+    # -> OutpatientsClinic
 
 ### Defining new flows
 
-Plugins can define flows. They should return a dictionary of flows from the 
+Plugins can define flows. They should return a dictionary of flows from the
 flows() method of the plugin class.
 
 ### Adding URLS
 
 Add an urls.py, then add to your plugin class as YourPlugin.urls
 
-Naturally, these can point to views in your plugin! 
+Naturally, these can point to views in your plugin!
 
 ### Adding Javascript
 
@@ -93,7 +97,7 @@ And then in the template:
       <button class="btn btn-primary" ng-click="alert('Boom!')">
         <i href="fa fa-warning"></i>
         ALERT ME
-      </button>    
+      </button>
     </p>
 
 ### Adding dependencies globally to our angular modules
@@ -102,7 +106,7 @@ Dependencies listed in `angular_module_deps` will be added to all Angular module
 use the OPAL.module() API. If not, you're on your own. We could monkey patch angular.module, but we
 won't for now.
 
-### Installing plugins 
+### Installing plugins
 
 Add to installed apps
 Add to requirements if appropriate

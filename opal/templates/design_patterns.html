@@ -1,0 +1,314 @@
+{% extends 'opal.html' %}
+{% load forms %}
+{% block angularapp %}{% endblock %}
+{% block content %}
+<div class="container content-offset">
+  <div class="panel panel-primary">
+    <!-- Default panel contents -->
+    <div class="panel-heading">
+      <h2>
+        OPAL Design Patterns
+      </h2>
+    </div>
+
+    <div class="panel-body">
+
+      <div class="row">
+        <div class="col-md-12">
+          <p class="lead">
+            Living documentation of the available design patterns for OPAL applications
+          </p>
+
+          <h3>Presentation</h3>
+          <ul class="list-inline lead">
+            <li><a href="#Panels">Panels</a></li>
+          </ul>
+
+          <h3>Interaction</h3>
+          <ul class="list-inline lead">
+            <li><a href="#Modals">Modals</a></li>
+          </ul>
+
+          <h3>Forms</h3>
+          <ul class="list-inline lead">
+            <li><a href="#Buttons">Buttons</a></li>
+            <li><a href="#Checkboxes">Checkboxes</a></li>
+            <li><a href="#CheckboxLists">Checkbox Lists</a></li>
+            <li><a href="#RadioButtons">Radio buttons</a></li>
+          </ul>
+        </div>
+      </div> <!-- Row -->
+
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Presentation</h2>
+        </div>
+      </div>
+
+      <a class="anchor" name="Panels"></a>
+      <div class="row">
+        <div class="col-md-8">
+          <h3>Panels <a href="#Panels">{% icon 'fa-paragraph' %}</a></h3>
+          <p class="lead">
+            A way of presenting discrete units of information.
+          </p>
+          <h4>Panel Primary</h4>
+          <!-- Demo -->
+
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3>
+                The Heading
+              </h3>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-md-12">
+                  <p>The Body</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Demo -->
+
+          <h4>Panel Default</h4>
+          <!-- Demo -->
+
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3>
+                The Heading
+              </h3>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-md-12">
+                  <p>The Body</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Demo -->
+
+          <h4>Panel Active</h4>
+          <!-- Demo -->
+
+          <div class="panel panel-active">
+            <div class="panel-heading">
+              <h3>
+                The Heading
+              </h3>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-md-12">
+                  <p>The Body</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Demo -->
+        </div>
+
+      </div>
+
+
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Interaction</h2>
+        </div>
+      </div>
+
+      <a class="anchor" name="Modals"></a>
+      <div class="row">
+        <div class="col-md-8">
+          <h3>Modals <a href="#Modals">{% icon 'fa-paragraph' %}</a></h3>
+          <p class="lead">
+            Present the user with an atomic interaction. Modals are based on the
+            <a href="http://angular-ui.github.io/bootstrap/#/modal">Angular UI-Bootstrap Modal</a>.
+          </p>
+          <!-- Demo -->
+          <div class="row col-md-offset-3">
+            <div class="col-md-12">
+              <div class="modal-header">
+                <button type="button" class="close" ng-click="cancel()">×</button>
+                <h3>
+                  <i class="glyphicon glyphicon-plus"></i>
+                  Modal Header
+                </h3>
+              </div>
+              <div class="modal-body">
+                <p class="lead">
+                  This area - the <b>Modal Body</b> typically contains either a form or a detailed
+                  view of some data pertaining to the parent context.
+                </p>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-primary">
+                  <i class="fa fa-save"></i>
+                  Primary button
+                </button>
+                <button class="btn">Cancel button</button>
+              </div>
+            </div>
+          </div>
+          <p class="lead">
+            Modals are available in three sizes - default, large and small.
+          </p>
+          <div class="row col-md-offset-3">
+            <div class="col-md-12 modal-lg">
+              <div class="modal-header">
+                <button type="button" class="close" ng-click="cancel()">×</button>
+                <h3>
+                  <i class="glyphicon glyphicon-plus"></i>
+                  Larger Modal Header
+                </h3>
+              </div>
+              <div class="modal-body">
+                <p class="lead">
+                  When we have complex information or interactions, we can use a large modal.
+                </p>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-primary">
+                  <i class="fa fa-save"></i>
+                  Primary button
+                </button>
+                <button class="btn">Cancel button</button>
+              </div>
+              <!-- Demo -->
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Forms</h2>
+        </div>
+      </div>
+
+      <a class="anchor" name="Buttons"></a>
+      <div class="row">
+        <div class="col-md-8">
+          <h3>Buttons <a href="#Buttons">{% icon 'fa-paragraph' %}</a></h3>
+          <p class="lead">
+            Buttons lead with icons chosen from Font Awesome.
+          </p>
+          <div class="col-md-offset-3">
+            <button class="btn btn-primary">
+              <i class="fa fa-search-plus"></i>
+              Primary Button
+            </button>
+
+            <button class="btn btn-secondary">
+              <i class="fa fa-search-plus"></i>
+              Secondary Button
+            </button>
+
+            <button class="btn" ng-click="cancel()">Cancel Button</button>
+          </div>
+        </div>
+      </div>
+      <hr />
+
+      <a name="Checkboxes" class="anchor"></a>
+      <div class="row">
+        <div class="col-md-8">
+          <h3>Checkboxes <a href="#Checkboxes">{% icon 'fa-paragraph' %}</a></h3>
+          <p class="lead">
+            Fields which have a boolean state
+          </p>
+          <!-- Demo -->
+          <div class="row col-md-offset-3">
+            <form class="form form-horizontal">
+              {% checkbox label="Make it so" %}
+            </form>
+          </div>
+          <!-- Demo -->
+        </div>
+      </div>
+
+
+      <hr />
+
+      <a name="CheckboxLists" class="anchor"></a>
+      <div class="row">
+        <div class="col-md-8">
+          <h3>Checkbox Lists <a href="#CheckboxLists">{% icon 'fa-paragraph' %}</a></h3>
+          <p class="lead">
+            List of items which each have a boolean state.
+          </p>
+          <p class="lead">
+            When used in a form, should be aligned with the form inputs <small>(typically offset-md-3)</small>.
+          </p>
+          <!-- Demo -->
+          <div class="row col-md-offset-3">
+            <div class="col-md-6">
+              <h4>Name of Group</h4>
+              <div class="checkbox checkbox-primary">
+                <input type="checkbox" id="checkbox1" checked>
+                <label for="checkbox1">List Item selected</label>
+                <i class="fa fa-bullseye pull-right"></i>
+              </div>
+              <div class="checkbox checkbox-primary">
+                <input type="checkbox" id="checkbox2" >
+                <label for="checkbox2">List Item unselected</label>
+                <i class="fa fa-bullseye pull-right"></i>
+              </div>
+            </div>
+          </div>
+          <!-- Demo -->
+        </div>
+      </div>
+
+      <hr />
+
+      <a name="RadioButtons" class="anchor"></a>
+      <div class="row">
+        <div class="col-md-8">
+          <h3>Radio Buttons <a href="#RadioButtons">{% icon 'fa-paragraph' %}</a></h3>
+          <p class="lead">
+            List of mutually exclusive items
+          </p>
+          <p class="lead">
+            When used in a form, should be aligned with the form inputs <small>(typically offset-md-3)</small>.
+          </p>
+          <!-- Demo -->
+          <div class="row col-md-offset-3">
+            <div class="col-md-6">
+              <h4>Name of Group</h4>
+              <div class="radio radio-primary">
+                <input type="radio" name="radio2" id="radio3" value="option1">
+                <label for="radio3">
+                  One
+                </label>
+                <i class="fa fa-bullseye pull-right"></i>
+              </div>
+              <div class="radio radio-primary">
+                <input type="radio" name="radio2" id="radio4" value="option2" checked>
+                <label for="radio4">
+                  Two
+                </label>
+                <i class="fa fa-bullseye pull-right"></i>
+              </div>
+            </div>
+          </div>
+          <!-- Demo -->
+        </div>
+      </div>
+
+      <hr />
+
+
+    </div>
+  </div>
+  <script>
+    var shiftWindow = function() { scrollBy(0, -100) };
+    if (location.hash) shiftWindow();
+    window.addEventListener("hashchange", shiftWindow);
+  </script>
+  {% endblock %}

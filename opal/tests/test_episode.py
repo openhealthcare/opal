@@ -5,10 +5,12 @@ import datetime
 
 from django.contrib.auth.models import User
 
+from opal.core.episodes import InpatientEpisode
 from opal.core.test import OpalTestCase
-from opal.tests.models import Hat, HatWearer, Dog, DogOwner
-from opal.models import Patient, Episode, Team
+from opal.models import Patient, Episode, Team, Tagging
 
+from opal.tests import test_patient_lists # ensure the lists are loaded
+from opal.tests.models import Hat, HatWearer, Dog, DogOwner
 
 class EpisodeTest(OpalTestCase):
 
@@ -32,24 +34,46 @@ class EpisodeTest(OpalTestCase):
         self.episode.discharge_date = yesterday
         self.assertEqual(True, self.episode.is_discharged)
 
+    def test_type(self):
+        self.episode.category = 'Inpatient'
+        self.assertEqual(self.episode.type.__class__, InpatientEpisode)
+        self.assertEqual(self.episode.type.episode, self.episode)
+
+    def test_visible_to(self):
+        self.assertTrue(self.episode.visible_to(self.user))
+
     def test_can_set_tag_names(self):
-        for tag_names in [
+        test_cases = [
             ['microbiology', 'mine'],
             ['microbiology', 'hiv'],
             ['hiv', 'mine'],
-            ]:
+        ]
+
+        for tag_names in test_cases:
             self.episode.set_tag_names(tag_names, self.user)
             self.assertEqual(set(tag_names),
                              set(self.episode.get_tag_names(self.user)))
 
+    def test_set_tagging_parent(self):
+        self.episode.set_tag_names(["mine", "herbivore"], self.user)
+
+        self.assertTrue(Tagging.objects.filter(
+            value='eater', archived=False).exists()
+        )
+        self.assertTrue(Tagging.objects.filter(
+            value='herbivore', archived=False).exists()
+        )
+        self.assertTrue(Tagging.objects.filter(
+            value='mine', user=self.user, archived=False).exists()
+        )
+
     def test_user_cannot_see_other_users_mine_tag(self):
         other_user = User.objects.create(username='seconduser')
-
-        self.episode.set_tag_names(['hiv', 'mine'], self.user)
-        self.assertEqual(['hiv'], list(self.episode.get_tag_names(other_user)))
+        self.episode.set_tag_names(['carnivore', 'mine'], self.user)
+        self.assertEqual(['carnivore'], list(self.episode.get_tag_names(other_user)))
 
     def test_active_if_tagged_by_non_mine_tag(self):
-        self.episode.set_tag_names(['microbiology'], self.user)
+        self.episode.set_tag_names(['carnivore'], self.user)
         self.assertTrue(self.episode.active)
 
     def test_active_if_only_tagged_by_mine_tag(self):
@@ -60,7 +84,7 @@ class EpisodeTest(OpalTestCase):
         as_dict = self.episode.to_dict(self.user)
         expected = [
             'id', 'category', 'active', 'date_of_admission', 'discharge_date',
-            'consistency_token', 'date_of_episode'
+            'consistency_token', 'date_of_episode', 'start', 'end'
         ]
         for field in expected:
             self.assertIn(field, as_dict)
@@ -116,6 +140,35 @@ class EpisodeTest(OpalTestCase):
         hw.hats.add(bowler, top)
         serialised = prev.to_dict(self.user)
         self.assertEqual(serialised["hat_wearer"][0]["hats"], [u'bowler', u'top'])
+
+
+class EpisodeTypeTestCase(OpalTestCase):
+    def setUp(self):
+        _, self.episode = self.new_patient_and_episode_please()
+        self.today = datetime.date.today()
+        self.yesterday = self.today - datetime.timedelta(1)
+
+    def test_start_date_of_episode(self):
+        self.episode.date_of_episode = self.today
+        self.episode.date_of_admission = self.yesterday
+        self.episode.save()
+        self.assertEqual(self.episode.start, self.today)
+
+    def test_start_date_of_admission(self):
+        self.episode.date_of_admission = self.yesterday
+        self.episode.save()
+        self.assertEqual(self.episode.start, self.yesterday)
+
+    def test_start_date_of_episode(self):
+        self.episode.date_of_episode = self.today
+        self.episode.discharge_date = self.yesterday
+        self.episode.save()
+        self.assertEqual(self.episode.end, self.today)
+
+    def test_start_date_of_admission(self):
+        self.episode.discharge_date = self.yesterday
+        self.episode.save()
+        self.assertEqual(self.episode.end, self.yesterday)
 
 
 class EpisodeManagerTestCase(OpalTestCase):

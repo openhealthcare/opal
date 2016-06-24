@@ -1,21 +1,19 @@
 """
 Public facing API views
 """
-import collections
-
 from django.conf import settings
 from django.views.generic import View
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import routers, status, viewsets
 from rest_framework.response import Response
-from opal.models import Episode, Synonym, Team, Macro
-from opal.core import application, exceptions, plugins
-from opal.core import glossolalia
+
+from opal.models import Episode, Synonym, Macro, Patient, PatientRecordAccess
+from opal.core import application, exceptions, plugins, schemas
 from opal.core.lookuplists import LookupList
 from opal.utils import stringport, camelcase_to_underscore
-from opal.core import schemas
 from opal.core.subrecords import subrecords
 from opal.core.views import _get_request_data, _build_json_response
+from opal.core.patient_lists import PatientList, TaggedPatientList
 
 app = application.get_app()
 
@@ -61,18 +59,6 @@ def episode_from_pk(fn):
             return Response({'error': 'Episode does not exist'}, status=status.HTTP_404_NOT_FOUND)
     return get_item
 
-class FlowViewSet(viewsets.ViewSet):
-    """
-    Return the Flow routes for this application.
-
-    For more detail on OPAL Flows, see the documentation
-    """
-    base_name = 'flow'
-
-    def list(self, request):
-        flows = app.flows()
-        return Response(flows)
-
 
 class RecordViewSet(viewsets.ViewSet):
     """
@@ -83,16 +69,6 @@ class RecordViewSet(viewsets.ViewSet):
 
     def list(self, request):
         return Response(schemas.list_records())
-
-
-class ListSchemaViewSet(viewsets.ViewSet):
-    """
-    Returns the schema for our active lists
-    """
-    base_name = 'list-schema'
-
-    def list(self, request):
-        return Response(schemas.list_schemas())
 
 
 class ExtractSchemaViewSet(viewsets.ViewSet):
@@ -116,12 +92,11 @@ class OptionsViewSet(viewsets.ViewSet):
 
     def list(self, request):
 
-
         data = {}
         subclasses = LookupList.__subclasses__()
         for model in subclasses:
             options = list(model.objects.all().values_list("name", flat=True))
-            data[model.__name__.lower()] = options
+            data[model.get_api_name()] = options
 
         model_to_ct = ContentType.objects.get_for_models(
             *subclasses
@@ -131,38 +106,70 @@ class OptionsViewSet(viewsets.ViewSet):
             synonyms = Synonym.objects.filter(content_type=ct).values_list(
                 "name", flat=True
             )
-            data[model.__name__.lower()].extend(synonyms)
+            data[model.get_api_name()].extend(synonyms)
 
         for name in data:
             data[name].sort()
 
         data['micro_test_defaults'] = micro_test_defaults
 
-        tag_hierarchy = collections.defaultdict(list)
         tag_visible_in_list = []
+        tag_direct_add = []
         tag_display = {}
+        tag_slugs = {}
+        tag_list = [i for i in TaggedPatientList.for_user(request.user)]
 
         if request.user.is_authenticated():
-            teams = Team.for_user(request.user)
-            for team in teams:
-                if team.parent:
-                    continue # Will be filled in at the appropriate point!
-                tag_display[team.name] = team.title
+            for taglist in tag_list:
+                slug = taglist().get_slug()
+                tag = taglist.tag
+                if hasattr(taglist, 'subtag'):
+                    tag = taglist.subtag
+                tag_display[tag] = taglist.display_name
+                tag_slugs[tag] = slug
+                tag_visible_in_list.append(tag)
+                if taglist.direct_add:
+                    tag_direct_add.append(tag)
 
-                if team.visible_in_list:
-                    tag_visible_in_list.append(team.name)
-
-                subteams = [st for st in teams if st.parent == team]
-                tag_hierarchy[team.name] = [st.name for st in subteams]
-                for sub in subteams:
-                    tag_display[sub.name] = sub.title
-
-                    if sub.visible_in_list:
-                        tag_visible_in_list.append(sub.name)
-
-        data['tag_hierarchy'] = tag_hierarchy
         data['tag_display'] = tag_display
         data['tag_visible_in_list'] = tag_visible_in_list
+        data['tag_direct_add'] = tag_direct_add
+        data['tag_slugs'] = tag_slugs
+        data["tags"] = {}
+
+        for tagging in tag_list:
+            tag = tagging.tag
+            if hasattr(tagging, 'subtag'):
+                tag = tagging.subtag
+
+            direct_add = tagging.direct_add
+            slug = tagging().get_slug()
+            data["tags"][tag] = dict(
+                name=tag,
+                display_name=tagging.display_name,
+                slug=slug,
+                direct_add=direct_add
+            )
+
+            if tag and hasattr(tagging, 'subtag'):
+                data["tags"][tag]["parent_tag"] = tagging.tag
+
+        data["tags"]["mine"] = dict(
+            name="mine",
+            display_name="Mine",
+            slug="mine",
+            direct_add=True,
+        )
+
+        try:
+            first_list_slug = next(
+                PatientList.for_user(self.request.user)
+            ).get_slug()
+        except StopIteration: # There are no PatientLists for this user
+            first_list_slug = ''
+
+        data['first_list_slug'] = first_list_slug
+
         data['macros'] = Macro.to_dict()
 
         return Response(data)
@@ -201,7 +208,6 @@ class SubrecordViewSet(viewsets.ViewSet):
             episode = Episode.objects.get(pk=request.data['episode_id'])
         except Episode.DoesNotExist:
             return Response('Nonexistant episode', status=status.HTTP_400_BAD_REQUEST)
-        pre = episode.to_dict(request.user)
 
         if isinstance(subrecord, PatientSubrecord):
             del request.data['episode_id']
@@ -214,10 +220,11 @@ class SubrecordViewSet(viewsets.ViewSet):
             return Response({'error': 'Unexpected field name'}, status=status.HTTP_400_BAD_REQUEST)
 
         episode = Episode.objects.get(pk=episode.pk)
-        post = episode.to_dict(request.user)
-        glossolalia.change(pre, post)
 
-        return Response(subrecord.to_dict(request.user), status=status.HTTP_201_CREATED)
+        return _build_json_response(
+            subrecord.to_dict(request.user),
+            status_code=status.HTTP_201_CREATED
+        )
 
     @item_from_pk
     def retrieve(self, request, item):
@@ -225,7 +232,6 @@ class SubrecordViewSet(viewsets.ViewSet):
 
     @item_from_pk
     def update(self, request, item):
-        pre = self._item_to_dict(item, request.user)
         try:
             item.update_from_dict(request.data, request.user)
         except exceptions.APIError:
@@ -233,14 +239,14 @@ class SubrecordViewSet(viewsets.ViewSet):
                             status=status.HTTP_400_BAD_REQUEST)
         except exceptions.ConsistencyError:
             return Response({'error': 'Item has changed'}, status=status.HTTP_409_CONFLICT)
-        glossolalia.change(pre, self._item_to_dict(item, request.user))
-        return Response(item.to_dict(request.user), status=status.HTTP_202_ACCEPTED)
+        return _build_json_response(
+            item.to_dict(request.user),
+            status_code=status.HTTP_202_ACCEPTED
+        )
 
     @item_from_pk
     def destroy(self, request, item):
-        pre = self._item_to_dict(item, request.user)
         item.delete()
-        glossolalia.change(pre, self._item_to_dict(item, request.user))
         return Response('deleted', status=status.HTTP_202_ACCEPTED)
 
 
@@ -261,7 +267,7 @@ class UserProfileViewSet(viewsets.ViewSet):
 
 class TaggingViewSet(viewsets.ViewSet):
     """
-    Associating episodes with teams
+    Returns taggings associated with episodes
     """
     base_name = 'tagging'
 
@@ -274,10 +280,7 @@ class TaggingViewSet(viewsets.ViewSet):
         if 'id' in request.data:
             del request.data['id']
         tag_names = [n for n, v in request.data.items() if v]
-        pre = episode.to_dict(request.user)
         episode.set_tag_names(tag_names, request.user)
-        post = episode.to_dict(request.user)
-        glossolalia.transfer(pre, post)
         return Response(episode.tagging_dict(request.user)[0], status=status.HTTP_202_ACCEPTED)
 
 
@@ -289,32 +292,23 @@ class EpisodeViewSet(viewsets.ViewSet):
 
     def list(self, request):
         from opal.models import Episode
-
-        tag    = request.query_params.get('tag', None)
-        subtag = request.query_params.get('subtag', None)
-
-        filter_kwargs = {'tagging__archived': False}
-        if subtag:
-            filter_kwargs['tagging__team__name'] = subtag
-        elif tag:
-            filter_kwargs['tagging__team__name'] = tag
-
-        if tag == 'mine':
-            filter_kwargs['tagging__user'] = request.user
-
-        if not (subtag or tag):
-            return Response([e.to_dict(request.user) for e in Episode.objects.all()])
-
-        serialised = Episode.objects.serialised_active(
-            request.user, **filter_kwargs)
-
-        return Response(serialised)
+        return Response([e.to_dict(request.user) for e in Episode.objects.all()])
 
     def create(self, request):
-        from opal.models import Patient
+        """
+        Create a new episode, optionally implicitly creating a patient.
 
-        hospital_number = request.data.pop('patient_hospital_number', None)
-        tagging = request.data.pop('tagging', {})
+        * Extract the data from the request
+        * Create or locate the patient
+        * Create a new episode
+        * Update the patient with any extra data passed in
+        * return the patient
+        """
+        demographics_data = request.data.pop('demographics', None)
+        location_data     = request.data.pop('location', {})
+        tagging           = request.data.pop('tagging', {})
+
+        hospital_number = demographics_data.get('hospital_number', None)
         if hospital_number:
             patient, created = Patient.objects.get_or_create(
                 demographics__hospital_number=hospital_number)
@@ -325,10 +319,15 @@ class EpisodeViewSet(viewsets.ViewSet):
         else:
             patient = Patient.objects.create()
 
+        patient.update_from_demographics_dict(demographics_data, request.user)
+
         episode = Episode(patient=patient)
         episode.update_from_dict(request.data, request.user)
+        location = episode.location_set.get()
+        location.update_from_dict(location_data, request.user)
         episode.set_tag_names([n for n, v in tagging[0].items() if v], request.user)
         serialised = episode.to_dict(request.user)
+
         return Response(serialised, status=status.HTTP_201_CREATED)
 
     @episode_from_pk
@@ -339,27 +338,40 @@ class EpisodeViewSet(viewsets.ViewSet):
 class PatientViewSet(viewsets.ViewSet):
     base_name = 'patient'
 
-    def list(self, request):
-        from opal.models import Patient
+    def retrieve(self, request, pk=None):
+        patient = Patient.objects.get(pk=pk)
+        PatientRecordAccess.objects.create(patient=patient, user=request.user)
+        return _build_json_response(patient.to_dict(request.user))
 
-        return Response([p.to_dict(request.user) for p in Patient.objects.all()])
+
+class PatientRecordAccessViewSet(viewsets.ViewSet):
+    base_name = 'patientrecordaccess'
 
     def retrieve(self, request, pk=None):
-        from opal.models import Patient
+        return _build_json_response([
+            a.to_dict(request.user) for a in PatientRecordAccess.objects.filter(patient_id=pk)
+        ])
 
-        patient = Patient.objects.get(pk=pk)
-        return Response(patient.to_dict(request.user))
+class PatientListViewSet(viewsets.ViewSet):
+    base_name = 'patientlist'
+
+    def retrieve(self, request, pk=None):
+        try:
+            patientlist = PatientList.get(pk)()
+        except ValueError:
+            return Response({'error': 'List does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        return _build_json_response(patientlist.to_dict(request.user))
 
 
 router.register('patient', PatientViewSet)
 router.register('episode', EpisodeViewSet)
-router.register('flow', FlowViewSet)
 router.register('record', RecordViewSet)
-router.register('list-schema', ListSchemaViewSet)
 router.register('extract-schema', ExtractSchemaViewSet)
 router.register('options', OptionsViewSet)
 router.register('userprofile', UserProfileViewSet)
 router.register('tagging', TaggingViewSet)
+router.register('patientlist', PatientListViewSet)
+router.register('patientrecordaccess', PatientRecordAccessViewSet)
 
 for subrecord in subrecords():
     sub_name = camelcase_to_underscore(subrecord.__name__)
@@ -386,8 +398,9 @@ class APIAdmitEpisodeView(View):
 
 class APIReferPatientView(View):
     """
-    Refer a particular episode of care to a new team
+    Refer a patient
     """
+    # TODO - explore when this is used - seems like there should be a better way?
     def post(self, *args, **kwargs):
         """
         Expects PATIENT, EPISODE, TARGET
@@ -402,3 +415,16 @@ class APIReferPatientView(View):
             episode.set_tag_names(current_tags, None)
         resp = {'ok': 'Got your referral just fine - thanks!'}
         return _build_json_response(resp)
+
+
+class EpisodeListApi(View):
+    """
+    Return serialised subsets of active episodes by tag.
+    """
+    def get(self, *args, **kwargs):
+        # while we manage transition lets allow a fall back to the old way
+        name = kwargs['tag']
+        if 'subtag' in kwargs:
+            name += '-' + kwargs['subtag']
+        patient_list = PatientList.get(name)()
+        return _build_json_response(patient_list.to_dict(self.request.user))

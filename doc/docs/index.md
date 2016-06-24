@@ -9,7 +9,9 @@ OPAL builds deep clinical domain specific functionality on top of
 and [Bootstrap](http://getbootstrap.com/) to help developers quickly build easy to maintain,
 robust clinical applications.
 
-This is the developer documentation.
+This is the **developer documentation**.
+
+<img src="/img/clinical.advice.png" width="600px;" style="margin: 12px auto; border: 1px solid black;"/>
 
 OPAL is an entirely Open [Source](https://github.com/openhealthcare/opal),
 Open [Governance](https://github.com/openhealthcare/opal/issues) product, as are the wide library of plugins.

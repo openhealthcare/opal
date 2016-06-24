@@ -1,0 +1,67 @@
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3>
+                <i class="fa fa-map-marker"></i> Location
+                <i class="fa fa-pencil edit pull-right"
+                   ng-click="episode.recordEditor.editItem('location', 0)"></i>
+              </h3>
+            </div>
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-md-4">
+                  <b>Category</b>
+                </div>
+                <div class="col-md-8">
+                  [[episode.category.charAt(0).toUpperCase() + episode.category.substring(1)]]
+                </div>
+              </div>
+              <div class="row" ng-show="episode.date_of_admission">
+                <div class="col-md-4">
+                  <b>Admitted</b>
+                </div>
+                <div class="col-md-8">
+                  [[ episode.date_of_admission | shortDate ]]
+                </div>
+              </div>
+              <div class="row" ng-show="episode.discharge_date">
+                <div class="col-md-4">
+                  <b>Discharged</b>
+                </div>
+                <div class="col-md-8">
+                  [[ episode.discharge_date | shortDate ]]
+                </div>
+              </div>
+              <div class="row" ng-show="episode.date_of_episode">
+                <div class="col-md-4">
+                  <b>Date</b>
+                </div>
+                <div class="col-md-8">
+                  [[ episode.date_of_episode | shortDate ]]
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <b>Hospital</b>
+                </div>
+                <div class="col-md-8">
+                  [[ episode.location[0].hospital ]]
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <b>Ward</b>
+                </div>
+                <div class="col-md-8">
+                  [[ episode.location[0].ward ]]
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-4">
+                  <b>Bed</b>
+                </div>
+                <div class="col-md-8">
+                  [[ episode.location[0].bed ]]
+                </div>
+              </div>
+            </div>
+          </div>

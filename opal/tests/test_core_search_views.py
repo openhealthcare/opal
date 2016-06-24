@@ -3,7 +3,9 @@ unittests for opal.core.search.views
 """
 import json
 from datetime import date
+
 from django.core.serializers.json import DjangoJSONEncoder
+from mock import patch
 
 from opal import models
 from opal.core.test import OpalTestCase
@@ -11,13 +13,20 @@ from opal.core.search import views
 
 
 class BaseSearchTestCase(OpalTestCase):
+
+    def create_patient(self, first_name, last_name, hospital_number):
+        patient, episode = self.new_patient_and_episode_please()
+        demographics = patient.demographics_set.get()
+        demographics.first_name = first_name
+        demographics.surname = last_name
+        demographics.hospital_number = hospital_number
+        demographics.save()
+        return patient, episode
+
     def setUp(self):
-        self.patient = models.Patient.objects.create()
-        self.episode = self.patient.create_episode()
-        self.demographics = self.patient.demographics_set.get()
-        self.demographics.name = 'Sean Connery'
-        self.demographics.hospital_number = '007'
-        self.demographics.save()
+        self.patient, self.episode = self.create_patient(
+            "Sean", "Connery", "007"
+        )
 
     def tearDown(self):
         self.patient.delete()
@@ -62,6 +71,7 @@ class PatientSearchTestCase(BaseSearchTestCase):
 
 
 class SimpleSearchViewTestCase(BaseSearchTestCase):
+    maxDiff = None
 
     def setUp(self):
         super(SimpleSearchViewTestCase, self).setUp()
@@ -72,13 +82,14 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
             u'object_list': [{
                 u'count': 1,
                 u'id': self.patient.id,
-                u'name': u'Sean Connery',
-                u'end_date': '2015-10-15',
-                u'episode_id': 1,
+                u'first_name': u'Sean',
+                u'surname': u'Connery',
+                u'end': u'15/10/2015',
+                u'patient_id': 1,
                 u'hospital_number': u'007',
                 u'date_of_birth': None,
-                u'start_date': '2015-10-15',
-                u'categories': [u'inpatient']
+                u'start': u'15/10/2015',
+                u'categories': [u'Inpatient']
             }],
             u'total_count': 1,
             u'total_pages': 1,
@@ -103,7 +114,7 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
 
     # Searching for a patient that exists by partial name match
     def test_patient_exists_partial_name(self):
-        request = self.rf.get("%s?name=Sean" % self.url)
+        request = self.rf.get("%s?query=Co" % self.url)
         request.user = self.user
         resp = self.view(request)
         data = json.loads(resp.content)
@@ -111,7 +122,7 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
 
     # Searching for a patient that exists by partial HN match
     def test_patient_exists_partial_number(self):
-        request = self.rf.get('%s?hospital_number=07' % self.url)
+        request = self.rf.get('%s?query=07' % self.url)
         request.user = self.user
         resp = self.view(request)
         data = json.loads(resp.content)
@@ -119,7 +130,7 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
 
     # Searching for a patient that exists by name
     def test_patient_exists_name(self):
-        request = self.rf.get('%s?name=Sean Connery' % self.url)
+        request = self.rf.get('%s?query=Connery' % self.url)
         request.user = self.user
         resp = self.view(request)
         data = json.loads(resp.content)
@@ -127,7 +138,7 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
 
     # Searching for a patient that doesn't exist by Hospital Number
     def test_patient_does_not_exist_number(self):
-        request = self.rf.get('%s?hospital_number=notareanumber' % self.url)
+        request = self.rf.get('%s?query=notareanumber' % self.url)
         request.user = self.user
         resp = self.view(request)
         data = json.loads(resp.content)
@@ -135,7 +146,7 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
 
     # Searching for a patient that doesn't exist by name
     def test_patient_does_not_exist_name(self):
-        request = self.rf.get('%s/?name=notareaname' % self.url)
+        request = self.rf.get('%s/?query=notareaname' % self.url)
         request.user = self.user
         resp = self.view(request)
         data = json.loads(resp.content)
@@ -143,14 +154,61 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
 
     # Searching for a patient that exists by Hospital Number
     def test_patient_exists_number(self):
-        request = self.rf.get('%s/?hospital_number=007' % self.url)
+        request = self.rf.get('%s/?query=007' % self.url)
         request.user = self.user
         resp = self.view(request)
         data = json.loads(resp.content)
         self.assertEqual(self.expected, data)
+
+    # searching by James Bond should yield Samantha Bond second
+    # and not blofeld
+    def test_incomplete_matching(self):
+        james_patient, sam_episode = self.create_patient(
+            "James", "Bond", "23412"
+        )
+        sam_patient, sam_episode = self.create_patient(
+            "Samantha", "Bond", "23432"
+        )
+        blofeld_patient, blofeld_episode = self.create_patient(
+            "Ernst", "Blofeld", "23422"
+        )
+        request = self.rf.get('{}/?query=James%20Bond'.format(self.url))
+        request.user = self.user
+        resp = self.view(request)
+        data = json.loads(resp.content)["object_list"]
+        self.assertEqual(len(data), 2)
+        self.assertEqual(data[0]["first_name"], "James")
+        self.assertEqual(data[0]["surname"], "Bond")
+        self.assertEqual(data[1]["first_name"], "Samantha")
+        self.assertEqual(data[1]["surname"], "Bond")
 
 
 class SearchTemplateTestCase(OpalTestCase):
 
     def test_search_template_view(self):
         self.assertStatusCode('/search/templates/search.html/', 200)
+
+
+class FilterViewTestCase(OpalTestCase):
+
+    def test_get(self):
+        filt = models.Filter(user=self.user, name='testfilter', criteria='[]').save()
+        self.assertEqual(1, models.Filter.objects.count())
+
+        view = views.FilterView()
+        view.request = self.rf.get('/filter')
+        view.request.user = self.user
+
+        data = json.loads(view.get().content)
+        self.assertEqual([{'name': 'testfilter', 'criteria': [], 'id': 1}], data)
+
+    def test_post(self):
+        view = views.FilterView()
+        view.request = self.rf.post('/filter')
+        view.request.user = self.user
+        with patch.object(view.request, 'read') as mock_read:
+            mock_read.return_value =  '{"name": "posttestfilter", "criteria": "[]"}'
+
+            self.assertEqual(0, models.Filter.objects.count())
+            view.post()
+            self.assertEqual(1, models.Filter.objects.count())

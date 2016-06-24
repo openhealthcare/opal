@@ -1,7 +1,10 @@
 describe('EpisodeDetailCtrl', function(){
-    var $scope, $cookieStore, $modal;
-    var Flow;
-    var episode;
+    "use strict";
+
+    var $scope, $cookieStore, $modal, $httpBackend, $location;
+    var $rootScope, $q, $controller;
+    var Flow, Episode, episode;
+    var controller;
 
     var profile = {
         readonly   : false,
@@ -11,18 +14,20 @@ describe('EpisodeDetailCtrl', function(){
 
     var options = {
         condition: ['Another condition', 'Some condition'],
-        tag_hierarchy :{'tropical': []}
+        tag_slugs: {tropical: 'tropical', id_inpatients: 'id-inpatients'}
     }
 
-    episodeData = {
+    var episodeData = {
         id: 123,
         active: true,
         prev_episodes: [],
         next_episodes: [],
         demographics: [{
             id: 101,
+            patient_id: 99,
             name: 'John Smith',
-            date_of_birth: '1980-07-31'
+            date_of_birth: '1980-07-31',
+            hospital_number: '555-333'
         }],
         tagging: [{'mine': true, 'tropical': true}],
         location: [{
@@ -78,28 +83,7 @@ describe('EpisodeDetailCtrl', function(){
     });
 
     beforeEach(function(){
-        module('opal', function($provide) {
-            $provide.value('$analytics', function(){
-                return {
-                    pageTrack: function(x){}
-                };
-            });
-
-            $provide.provider('$analytics', function(){
-                this.$get = function() {
-                    return {
-                        virtualPageviews: function(x){},
-                        settings: {
-                            pageTracking: false,
-                        },
-                        pageTrack: function(x){}
-                     };
-                };
-            });
-        });
-    });
-
-    beforeEach(function(){
+        module('opal');
         inject(function($injector){
             $rootScope   = $injector.get('$rootScope');
             $scope       = $rootScope.$new();
@@ -107,11 +91,15 @@ describe('EpisodeDetailCtrl', function(){
             $controller  = $injector.get('$controller');
             $cookieStore = $injector.get('$cookieStore');
             $modal       = $injector.get('$modal');
+            $httpBackend = $injector.get('$httpBackend');
+            $location    = $injector.get('$location');
+            Episode      = $injector.get('Episode');
         });
 
         $rootScope.fields = fields
-        episode = new Episode(episodeData);
-        Flow = jasmine.createSpy('Flow').and.callFake(function(){return {then: function(){}}});
+        episode = new Episode(angular.copy(episodeData));
+        Flow = jasmine.createSpy('Flow').and.callFake(function(){
+            return {then: function(fn){ fn() }}});
 
         controller = $controller('EpisodeDetailCtrl', {
             $scope      : $scope,
@@ -130,83 +118,11 @@ describe('EpisodeDetailCtrl', function(){
         });
     });
 
-    describe('selecting an item', function(){
-        it('should select the item', function(){
-            $scope.selectItem(1, 34);
-            expect($scope.cix).toBe(1);
-            expect($scope.iix).toBe(34);
-        });
-    })
-
-    describe('editing an item', function(){
-        it('should open the EditItemCtrl', function(){
-            var deferred, callArgs;
-
-            deferred = $q.defer();
-            spyOn($modal, 'open').and.returnValue({result: deferred.promise});
-
-            $scope.editNamedItem('demographics', 0);
-
-            callArgs = $modal.open.calls.mostRecent().args;
-            expect(callArgs.length).toBe(1);
-            expect(callArgs[0].controller).toBe('EditItemCtrl');
-        });
-
-        describe('for a readonly user', function(){
-            beforeEach(function(){
-                profile.readonly = true;
-            });
-
-            it('should return null', function(){
-                expect($scope.editNamedItem('demographics', 0)).toBe(null);
-            });
-
-            afterEach(function(){
-                profile.readonly = false;
-            });
-        });
-
-    });
-
-    describe('deleting an item', function(){
-        it('should open the DeleteItemConfirmationCtrl', function(){
-            var deferred, callArgs;
-
-            deferred = $q.defer();
-            spyOn($modal, 'open').and.returnValue({result: deferred.promise});
-
-            $scope.deleteItem('diagnosis', 0);
-
-            callArgs = $modal.open.calls.mostRecent().args;
-            expect(callArgs.length).toBe(1);
-            expect(callArgs[0].controller).toBe('DeleteItemConfirmationCtrl');
-        });
-
-        describe('for a readonly user', function(){
-            beforeEach(function(){
-                profile.readonly = true;
-            });
-
-            it('should return null', function(){
-                expect($scope.deleteItem('diagnosis', 0)).toBe(null);
-            });
-
-            afterEach(function(){
-                profile.readonly = false;
-            });
-        });
-
-    });
-
     describe('discharging an episode', function(){
-        var mockEvent;
-
-        beforeEach(function(){
-            mockEvent = {preventDefault: function(){}};
-        });
 
         it('should call the exit flow', function(){
-            $scope.dischargeEpisode(mockEvent);
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+            $scope.dischargeEpisode();
             expect(Flow).toHaveBeenCalledWith(
                 'exit', null, options,
                 {
@@ -218,6 +134,8 @@ describe('EpisodeDetailCtrl', function(){
 
                 }
             );
+            $rootScope.$apply();
+            $httpBackend.flush()
         });
 
         describe('for a readonly user', function(){
@@ -226,13 +144,105 @@ describe('EpisodeDetailCtrl', function(){
             });
 
             it('should return null', function(){
-                expect($scope.dischargeEpisode(mockEvent)).toBe(null);
+                expect($scope.dischargeEpisode()).toBe(null);
             });
 
             afterEach(function(){
                 profile.readonly = false;
             });
         });
+    });
+
+    describe('addEpisode()', function() {
+
+        describe('success!', function() {
+
+            beforeEach(function(){
+                Flow = jasmine.createSpy('Flow').and.callFake(function(){
+                    return {then: function(success, err){ success(episodeData) }}});
+
+                controller = $controller('EpisodeDetailCtrl', {
+                    $scope      : $scope,
+                    $modal      : $modal,
+                    $location   : $location,
+                    $cookieStore: $cookieStore,
+                    Flow        : Flow,
+                    episode     : episode,
+                    options     : options,
+                    profile     : profile
+                });
+            });
+
+            it('should go to the episde', function() {
+                $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+                spyOn($location, 'path');
+                $scope.addEpisode();
+                expect(Flow).toHaveBeenCalledWith(
+                    'enter', options,
+                    {
+                        current_tags: {
+                            tag   : 'mine',
+                            subtag: ''
+                        },
+                        hospital_number: '555-333'
+
+                    }
+                );
+                $rootScope.$apply();
+                $httpBackend.flush()
+                expect($location.path).toHaveBeenCalledWith('/episode/123');
+            });
+
+        });
+
+        describe('Cancelled by user', function() {
+
+            beforeEach(function(){
+                Flow = jasmine.createSpy('Flow').and.callFake(function(){
+                    return {then: function(success, err){ err() }}});
+
+                controller = $controller('EpisodeDetailCtrl', {
+                    $scope      : $scope,
+                    $modal      : $modal,
+                    $cookieStore: $cookieStore,
+                    Flow        : Flow,
+                    episode     : episode,
+                    options     : options,
+                    profile     : profile
+                });
+            });
+
+            it('should reset state if cancelled', function() {
+                $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+                $scope.addEpisode();
+                expect(Flow).toHaveBeenCalledWith(
+                    'enter', options,
+                    {
+                        current_tags: {
+                            tag   : 'mine',
+                            subtag: ''
+                        },
+                        hospital_number: '555-333'
+
+                    }
+                );
+                $rootScope.$apply();
+                $httpBackend.flush()
+                expect($scope.state).toEqual('normal');
+            });
+
+        });
+
+    });
+
+    describe('jumpToTag()', function() {
+
+        it('should go to the tag', function() {
+            spyOn($location, 'path');
+            $scope.jumpToTag('id_inpatients');
+            expect($location.path).toHaveBeenCalledWith('id-inpatients');
+        });
+
     });
 
 });

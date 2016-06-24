@@ -1,6 +1,7 @@
 """
 Load a series of lookup lists into our instance.
 """
+import logging
 from optparse import make_option
 
 from django.core.management.base import BaseCommand
@@ -13,10 +14,10 @@ from opal.core.lookuplists import LookupList
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
         make_option(
-            "-f", 
-            "--file", 
+            "-f",
+            "--file",
             dest = "filename",
-            help = "specify import file", 
+            help = "specify import file",
             metavar = "FILE"
         ),
     )
@@ -24,7 +25,7 @@ class Command(BaseCommand):
         self.items_created = 0
         self.synonyms_created = 0
         super(Command, self).__init__(*args, **kwargs)
-    
+
     def _from_file(self, filename):
         datafile = ffs.Path(filename)
         return datafile.json_load()
@@ -43,9 +44,9 @@ class Command(BaseCommand):
             if created:
                 self.synonyms_created += 1
         return
-    
+
     def handle(self, *args, **options):
-        if options['filename']:
+        if options.get('filename', None):
             data = self._from_file(options['filename'])
         else:
             raise ValueError('no lookuplist_provided!')
@@ -53,19 +54,17 @@ class Command(BaseCommand):
         num = 0
         for model in LookupList.__subclasses__():
             name = model.__name__.lower()
-            # print name, (name in data)
-            # if name == 'drug':
-            #     import pdb;pdb.set_trace()
-            #     print data[name]
             if name in data:
-                print 'Loading', name
+                logging.info('Loading {0}'.format(name))
                 num += 1
 
                 for item in data[name]:
                     self._install_item(model, item)
-        print "\nLoaded", num, "lookup lists\n"
-        print "\n\nNew items report:\n\n\n"
-        print "{0} new items".format(self.items_created)
-        print "{0} new synonyms".format(self.synonyms_created)
-        print "\n\nEnd new items report."
+
+        msg = "\nLoaded {0} lookup lists\n".format(num)
+        msg += "\n\nNew items report:\n\n\n"
+        msg += "{0} new items".format(self.items_created)
+        msg += " {0} new synonyms".format(self.synonyms_created)
+        msg += "\n\nEnd new items report."
+        self.stdout.write(msg)
         return

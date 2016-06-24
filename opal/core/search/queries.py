@@ -2,62 +2,59 @@
 Allow us to make search queries
 """
 import datetime
+import operator
+import itertools
+from collections import Counter
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import models as djangomodels
-
+from django.conf import settings
+from django.db.models import Q
 
 from opal import models
-from opal.core import fields
+from opal.core import fields, subrecords
+from opal.utils import stringport
 
 
 def get_model_name_from_column_name(column_name):
     return column_name.replace(' ', '').replace('_', '').lower()
 
 
-def get_model_from_column_name(column_name):
-    Mod = None
-    model_name = get_model_name_from_column_name(column_name)
-
-    for m in djangomodels.get_models():
-        if m.__name__.lower() == model_name:
-            if not Mod:
-                Mod = m
-            elif (issubclass(m, models.EpisodeSubrecord) or
-                  issubclass(m, models.PatientSubrecord)):
-                Mod = m
-
-    return Mod
+def get_model_from_api_name(column_name):
+    if column_name == "tagging":
+        return models.Tagging
+    else:
+        return subrecords.get_subrecord_from_api_name(column_name)
 
 
 class PatientSummary(object):
     def __init__(self, episode):
-        self.start_date = episode.start_date
-        self.end_date = episode.end_date
+        self.start = episode.start
+        self.end = episode.end
         self.episode_ids = set([episode.id])
-        self.episode_id = episode.id
+        self.patient_id = episode.patient.id
         self.categories = set([episode.category])
         self.id = episode.patient.demographics_set.get().id
 
     def update(self, episode):
-        if not self.start_date:
-            self.start_date = episode.start_date
-        elif episode.start_date:
-            if self.start_date > episode.start_date:
-                self.start_date = episode.start_date
+        if not self.start:
+            self.start = episode.start
+        elif episode.start:
+            if self.start > episode.start:
+                self.start = episode.start
 
-        if not self.end_date:
-            self.end_date = episode.end_date
-        elif episode.end_date:
-            if self.end_date < episode.end_date:
-                self.end_date = episode.end_date
+        if not self.end:
+            self.end = episode.end
+        elif episode.end:
+            if self.end < episode.end:
+                self.end = episode.end
 
         self.episode_ids.add(episode.id)
         self.categories.add(episode.category)
 
     def to_dict(self):
         result = {k: getattr(self, k) for k in [
-            "episode_id", "start_date", "end_date", "id"
+            "patient_id", "start", "end", "id"
         ]}
         result["categories"] = sorted(self.categories)
         result["count"] = len(self.episode_ids)
@@ -70,24 +67,7 @@ def episodes_for_user(episodes, user):
     list of episodes that this user has the permissions to know
     about.
     """
-    teams = models.Team.restricted_teams(user)
-    allowed_episodes = []
-    for e in episodes:
-        allowed = False
-        if e.tagging_set.count() == 0:
-            allowed_episodes.append(e)
-            continue
-        for tagging in e.tagging_set.all():
-            if not tagging.team.restricted:
-                allowed = True
-                break
-            elif tagging.team in teams:
-                allowed = True
-                break
-
-        if allowed:
-            allowed_episodes.append(e)
-    return allowed_episodes
+    return [e for e in episodes if e.visible_to(user)]
 
 
 class QueryBackend(object):
@@ -97,6 +77,9 @@ class QueryBackend(object):
     def __init__(self, user, query):
         self.user = user
         self.query = query
+
+    def fuzzy_query(self):
+        raise NotImplementedError()
 
     def get_episodes(self):
         raise NotImplementedError()
@@ -123,8 +106,46 @@ class DatabaseQuery(QueryBackend):
     We broadly map reduce all criteria then the set of combined and/or
     criteria together, then only unique episodes.
 
-    Finally we filter based on team restrictions.
+    Finally we filter based on episode type level restrictions.
     """
+
+    def fuzzy_query(self):
+        """ fuzzy queries break apart the query string by spaces and search a
+            number of fields based on the underlying tokens.
+
+            We then search hospital number, first name and surname by those fields
+            and order by the occurances
+
+            so if you put in Anna Lisa, even though this is a first name split
+            becasuse Anna and Lisa will both be found, this will rank higher
+            than an Anna or a Lisa, although both of those will also be found
+        """
+        fields = ["hospital_number", "first_name", "surname"]
+
+        some_query = self.query
+
+        query_values = some_query.split(" ")
+        result = {}
+
+        for query_value in query_values:
+            q_objects = []
+            for field in fields:
+                model_field = "demographics__{}__icontains".format(field)
+                q_objects.append(Q(**{model_field: query_value}))
+            r = models.Patient.objects.filter(reduce(operator.or_, q_objects))
+            result[query_value] = set(r.values_list("id", flat=True))
+
+        all_results = [i for i in itertools.chain(*result.values())]
+        count = Counter(all_results)
+        episodes = models.Episode.objects.filter(patient__id__in=all_results)
+        patient_summaries = self._get_aggregate_patients_from_episodes(
+            episodes
+        )
+        return sorted(
+            patient_summaries,
+            key=lambda x: count[x["patient_id"]],
+            reverse=True
+        )
 
     def _episodes_for_boolean_fields(self, query, field, contains):
         model = get_model_name_from_column_name(query['column'])
@@ -198,7 +219,7 @@ class DatabaseQuery(QueryBackend):
         column_name = query['column']
 
         field = query['field'].replace(' ', '_').lower()
-        Mod = get_model_from_column_name(column_name)
+        Mod = get_model_from_api_name(column_name)
 
         if column_name.lower() == 'tags':
             Mod = models.Tagging
@@ -222,7 +243,7 @@ class DatabaseQuery(QueryBackend):
             if Mod == models.Tagging:
                 tag_name = query['field'].replace(" ", "_").title()
                 eps = models.Episode.objects.filter(
-                    tagging__team__name__iexact=tag_name
+                    tagging__value__iexact=tag_name
                 )
 
             elif issubclass(Mod, models.EpisodeSubrecord):
@@ -259,36 +280,13 @@ class DatabaseQuery(QueryBackend):
             demographic = patient.demographics_set.get()
 
             result = {k: getattr(demographic, k) for k in [
-                "name", "hospital_number", "date_of_birth"
+                "first_name", "surname", "hospital_number", "date_of_birth"
                 ]}
 
             result.update(patient_summary.to_dict())
             results.append(result)
 
         return results
-
-    def _filter_for_restricted_only(self, episodes):
-        """
-        Given an iterable of EPISODES, return those for which our
-        current restricted only user is allowed to know about.
-        """
-        teams = models.Team.restricted_teams(self.user)
-        allowed_episodes = []
-        for e in episodes:
-            for tagging in e.tagging_set.all():
-                if tagging.team in teams:
-                    allowed_episodes.append(e)
-                    break
-
-        return allowed_episodes
-
-    def _filter_restricted_teams(self, episodes):
-        """
-        Given an iterable of EPISODES, return only those which
-        are not only members of restricted teams that our user is not
-        allowed to know about.
-        """
-        return episodes_for_user(episodes, self.user)
 
     def _episodes_without_restrictions(self):
         all_matches = [(q['combine'], self.episodes_for_criteria(q))
@@ -305,17 +303,8 @@ class DatabaseQuery(QueryBackend):
 
         return working
 
-    def _filter_restricted_episodes(self, eps):
-        if self.user.profile.restricted_only:
-            eps = self._filter_for_restricted_only(eps)
-        else:
-            eps = self._filter_restricted_teams(eps)
-
-        return eps
-
     def get_episodes(self):
-        eps = self._episodes_without_restrictions()
-        return self._filter_restricted_episodes(eps)
+        return episodes_for_user(self._episodes_without_restrictions(), self.user)
 
     def get_patient_summaries(self):
         eps = self._episodes_without_restrictions()
@@ -326,7 +315,7 @@ class DatabaseQuery(QueryBackend):
         all_eps = models.Episode.objects.filter(
             patient__episode__in=episode_ids
         )
-        filtered_eps = self._filter_restricted_episodes(all_eps)
+        filtered_eps = episodes_for_user(all_eps, self.user)
         return self._get_aggregate_patients_from_episodes(filtered_eps)
 
     def get_patients(self):
@@ -344,4 +333,13 @@ Searching for:
 """.format(username=self.user.username, date=datetime.datetime.now(), filters=filters)
 
 
-SearchBackend = DatabaseQuery
+def create_query(user, criteria):
+    """
+        gives us a level of indirection to select the search backend we're
+        going to use, without this we can get import errors if the module is
+        loaded after this module
+    """
+    if hasattr(settings, "OPAL_SEARCH_BACKEND"):
+        return stringport(settings.OPAL_SEARCH_BACKEND)(user, criteria)
+
+    return DatabaseQuery(user, criteria)

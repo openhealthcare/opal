@@ -1,9 +1,9 @@
 describe('EditItemCtrl', function (){
     "use strict";
 
-    var $scope, $cookieStore, $timeout, item, Item;
-    var dialog, Episode, episode, ngProgressLite, $q;
-    var Schema, $modal, $controller, controller;
+    var $scope, $cookieStore, $timeout, $modal, item, Item;
+    var dialog, Episode, episode, ngProgressLite, $q, $rootScope;
+    var Schema, $controller, controller, fakeModalInstance;
 
     var episodeData = {
         id: 123,
@@ -12,6 +12,7 @@ describe('EditItemCtrl', function (){
         next_episodes: [],
         demographics: [{
             id: 101,
+            patient_id: 99,
             name: 'John Smith',
             date_of_birth: '1980-07-31'
         }],
@@ -61,12 +62,40 @@ describe('EditItemCtrl', function (){
                     {name: 'condition', type: 'string'},
                     {name: 'provisional', type: 'boolean'},
                 ]},
+            {
+                name:  'investigation',
+                single: false,
+                fields: [
+                    {name: 'result', type: 'string'},
+                ]
+            },
+            {
+                name:  'microbiology_test',
+                single: false,
+                fields: [
+                    {name: 'result', type: 'string'},
+                    {name: 'consistency_token', type: 'string'},
+                    {name: 'test', type: 'string'},
+                ]
+            }
         ]
     };
 
     var options = {
         condition: ['Another condition', 'Some condition'],
-        tag_hierarchy :{'tropical': []}
+        tag_hierarchy :{'tropical': []},
+        "micro_test_stool_parasitology_pcr": [
+            "Stool Parasitology PCR"
+        ],
+        micro_test_defaults: {
+          micro_test_c_difficile: {
+            c_difficile_antigen: "pending",
+            c_difficile_toxin: "pending"
+          }
+        },
+        micro_test_c_difficile: [
+          "C diff", "Clostridium difficile"
+        ]
     };
 
     var profile = {
@@ -78,56 +107,80 @@ describe('EditItemCtrl', function (){
     beforeEach(module('opal.controllers'));
 
     beforeEach(function(){
-        inject(function($injector){
-            Item = $injector.get('Item');
-            Episode = $injector.get('Episode');
-            $controller  = $injector.get('$controller');
-            $q  = $injector.get('$q');
-            $cookieStore = $injector.get('$cookieStore');
-            $timeout     = $injector.get('$timeout');
-            ngProgressLite   = $injector.get('ngProgressLite');
-            Schema   = $injector.get('Schema');
-            var $rootScope   = $injector.get('$rootScope');
-            $scope       = $rootScope.$new();
+        module(function($provide) {
+            $provide.value('UserProfile', function(){ return profile; });
         });
 
+        inject(function($injector){
+            Item           = $injector.get('Item');
+            Episode        = $injector.get('Episode');
+            $controller    = $injector.get('$controller');
+            $q             = $injector.get('$q');
+            $cookieStore   = $injector.get('$cookieStore');
+            $timeout       = $injector.get('$timeout');
+            $modal         = $injector.get('$modal');
+            ngProgressLite = $injector.get('ngProgressLite');
+            Schema         = $injector.get('Schema');
+            $rootScope = $injector.get('$rootScope');
+            $modal         = $injector.get('$modal');
+        });
+
+        $rootScope.fields = columns.default;
+        $scope = $rootScope.$new();
         var schema = new Schema(columns.default);
         episode = new Episode(episodeData);
         item = new Item(
-            {columnName: 'diagnosis'},
+            {columnName: 'investigation'},
             episode,
-            schema.columns[0]
+            columns['default'][3]
         );
-        var fakeModalInstance = {
+
+        fakeModalInstance = {
             close: function(){
                 // do nothing
-            }
+            },
         };
 
         controller = $controller('EditItemCtrl', {
-            $scope      : $scope,
-            $cookieStore: $cookieStore,
-            $timeout    : $timeout,
+            $scope        : $scope,
+            $cookieStore  : $cookieStore,
+            $timeout      : $timeout,
             $modalInstance: fakeModalInstance,
-            item        : item,
-            options     : options,
-            profile     : profile,
-            episode     : episode,
-            ngProgressLite  : ngProgressLite,
+            item          : item,
+            options       : options,
+            profile       : profile,
+            episode       : episode,
+            ngProgressLite: ngProgressLite,
         });
 
     });
 
     describe('newly-created-controller', function (){
-        it('Should have subtag "all"', function () {
-            expect($scope.currentSubTag).toBe('all');
-            expect($scope.columnName).toBe('diagnosis');
+        it('Should have columname investigation', function () {
+            expect($scope.columnName).toBe('investigation');
         });
     });
 
+    describe('editingMode()', function() {
+
+        it('should know if this is edit or add', function() {
+            expect($scope.editingMode()).toBe(false);
+        });
+
+    });
+
+    describe('select_macro()', function() {
+
+        it('should return expanded', function() {
+            var i = {expanded: 'thing'};
+            expect($scope.select_macro(i)).toEqual('thing');
+        });
+
+    });
 
     describe('Saving items', function (){
         it('Should save the current item', function () {
+            $scope.$digest();
             var callArgs;
             var deferred = $q.defer();
             spyOn(item, 'save').and.callFake(function() {
@@ -141,7 +194,122 @@ describe('EditItemCtrl', function (){
             expect($scope.saving).toBe(false);
             callArgs = item.save.calls.mostRecent().args;
             expect(callArgs.length).toBe(1);
-            expect(callArgs[0]).toBe($scope.editing);
+            expect(callArgs[0]).toBe($scope.editing.investigation);
         });
     });
+
+    describe('delete()', function() {
+
+        it('should open the delete modal', function() {
+            spyOn($modal, 'open');
+            $scope.delete();
+            expect($modal.open).toHaveBeenCalled()
+            var args = $modal.open.calls.mostRecent().args[0];
+            expect(args.templateUrl).toEqual('/templates/modals/delete_item_confirmation.html/');
+            expect(args.controller).toEqual('DeleteItemConfirmationCtrl');
+            expect(args.size).toEqual('lg');
+        });
+
+    });
+
+    describe('cancel()', function(){
+
+        it('should close with null', function(){
+            spyOn(fakeModalInstance, 'close');
+            $scope.cancel();
+            expect(fakeModalInstance.close).toHaveBeenCalledWith('cancel');
+        });
+
+    });
+
+    describe('undischarge', function() {
+        it('should open the modal', function() {
+
+            spyOn($modal, 'open').and.callFake(function(){
+                return {result: {then: function(fn){ fn() }}}
+            });;
+            $scope.undischarge();
+            expect($modal.open).toHaveBeenCalled();
+            var resolvers = $modal.open.calls.mostRecent().args[0].resolve
+            expect(resolvers.episode()).toEqual(episode);
+        });
+    });
+
+    describe('prepopulate()', function() {
+        it('should extend the item', function() {
+            var mock_event = {
+                preventDefault: function(){}
+            }
+            //            $ = jasmine.createSpy().and.callFake(function(what){ console.log(what)})
+            var spy = spyOn(jQuery.fn, 'data').and.returnValue({'foo': 'true', 'bar': 'false'});
+
+            $scope.prepopulate(mock_event);
+            expect(spy).toHaveBeenCalled();
+            expect($scope.editing.investigation.foo).toEqual(true);
+            expect($scope.editing.investigation.bar).toEqual(false);
+        });
+    });
+
+    describe('testType', function(){
+        beforeEach(function(){
+          var existingEpisode = new Episode(angular.copy(episodeData));
+
+          // when we prepopulate we should not remove the consistency_token
+          existingEpisode.microbiology_test = [{
+            test: "T brucei Serology",
+            consistency_token: "23423223"
+          }];
+
+          item = new Item(
+              existingEpisode.microbiology_test[0],
+              existingEpisode,
+              columns['default'][4]
+          );
+
+          $scope = $rootScope.$new();
+          controller = $controller('EditItemCtrl', {
+              $scope        : $scope,
+              $cookieStore  : $cookieStore,
+              $timeout      : $timeout,
+              $modalInstance: fakeModalInstance,
+              item          : item,
+              options       : options,
+              profile       : profile,
+              episode       : existingEpisode,
+              ngProgressLite: ngProgressLite,
+          });
+        })
+
+        it('should prepopulate microbiology tests', function(){
+            $scope.editing.microbiology_test.test = "C diff";
+            $scope.$digest();
+            expect($scope.editing.microbiology_test.c_difficile_antigen).toEqual("pending");
+            expect($scope.editing.microbiology_test.c_difficile_toxin).toEqual("pending");
+            $scope.editing.microbiology_test.test = ""
+            $scope.$digest();
+            expect($scope.editing.microbiology_test.c_difficile_antigen).not.toEqual("pending");
+            expect($scope.editing.microbiology_test.c_difficile_toxin).not.toEqual("pending");
+            expect($scope.editing.microbiology_test.consistency_token).toEqual("23423223");
+        });
+
+        it('should should not clean id, date ordered or episode id', function(){
+            var today = moment().format('DD/MM/YYYY');
+            $scope.editing.microbiology_test.test = "C diff";
+            $scope.$digest();
+            $scope.editing.microbiology_test.c_difficile_antigen = "pending";
+            $scope.editing.microbiology_test.episode_id = 1;
+            $scope.editing.microbiology_test.id = 2;
+            $scope.editing.microbiology_test.date_ordered = today;
+            $scope.editing.microbiology_test.consistency_token = "122112";
+            $scope.editing.microbiology_test.test = "";
+            $scope.$digest();
+
+            expect($scope.editing.microbiology_test.c_difficile_antigen).not.toEqual("pending");
+            expect($scope.editing.microbiology_test.episode_id).toBe(1);
+            expect($scope.editing.microbiology_test.id).toBe(2);
+            expect($scope.editing.microbiology_test.consistency_token).toBe("122112");
+            expect($scope.editing.microbiology_test.date_ordered).toBe(today);
+        });
+    });
+
 });

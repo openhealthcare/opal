@@ -5,7 +5,7 @@ from django.test import TestCase
 from mock import patch
 
 from opal.core import schemas
-from opal.tests.models import Colour
+from opal.tests.models import Colour, HatWearer, FamousLastWords
 
 colour_serialized = dict(
     name='colour',
@@ -13,27 +13,33 @@ colour_serialized = dict(
     single=False,
     advanced_searchable=False,
     fields=[
-        {'lookup_list': None,
+        {'model': 'Colour',
+         'lookup_list': None,
          'type': 'date_time',
          'name': 'created',
          'title': 'Created'},
-        {'lookup_list': None,
+        {'model': 'Colour',
+         'lookup_list': None,
          'type': 'date_time',
          'name': 'updated',
          'title': 'Updated'},
-        {'lookup_list': None,
+        {'model': 'Colour',
+         'lookup_list': None,
          'name': 'created_by_id',
          'title': 'Created By Id',
          'type': 'forei'},
-        {'lookup_list': None,
+        {'model': 'Colour',
+         'lookup_list': None,
          'name': 'updated_by_id',
          'title': 'Updated By Id',
          'type': 'forei'},
-        {'lookup_list': None,
+        {'model': 'Colour',
+         'lookup_list': None,
          'name': 'consistency_token',
          'title': 'Consistency Token',
          'type': 'token'},
-        {'lookup_list': None,
+        {'model': 'Colour',
+         'lookup_list': None,
          'name': 'name',
          'title': 'Name',
          'type': 'string'},
@@ -52,6 +58,15 @@ tagging_serialized = {
 class SerializeModelTestCase(TestCase):
     def test_serialize(self):
         self.assertEqual(colour_serialized, schemas.serialize_model(Colour))
+
+    def test_serialize_sort(self):
+        self.assertEqual('name', schemas.serialize_model(HatWearer)['sort'])
+
+    def test_serialize_modal(self):
+        self.assertEqual('lg', schemas.serialize_model(FamousLastWords)['modal_size'])
+
+    def test_serialize_readonly(self):
+        self.assertEqual(True, schemas.serialize_model(FamousLastWords)['readOnly'])
 
 
 class SerializeSchemaTestCase(TestCase):
@@ -73,20 +88,6 @@ class ListRecordsTestCase(TestCase):
             'colour': colour_serialized
         }
         self.assertEqual(expected, schemas.list_records())
-
-    @patch('opal.core.schemas._get_plugin_schemas')
-    @patch('opal.core.schemas.schema')
-    def test_get_all_list_schema_classes(self, schema, _get_plugin_schemas):
-        list_schema_value = {"something": "something"}
-        schema.list_schemas = list_schema_value.copy()
-        _get_plugin_schemas.return_value = {"something_else": "something_else"}
-        result = schemas.get_all_list_schema_classes()
-        self.assertEqual(result, {
-            "something": "something",
-            "something_else": "something_else"
-        })
-        self.assertEqual(_get_plugin_schemas.call_count, 1)
-        self.assertEqual(schema.list_schemas, list_schema_value)
 
 
 class ExtractSchemaTestCase(TestCase):

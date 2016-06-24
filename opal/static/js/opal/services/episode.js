@@ -2,11 +2,16 @@
 // This is the main Episode class for OPAL.
 //
 angular.module('opal.services')
-    .factory('Episode', function($http, $q, $rootScope, $routeParams, Item) {
-        Episode = function(resource) {
+    .factory('Episode', function(
+        $http, $q, $rootScope, $routeParams, $window,
+        Item, RecordEditor, FieldTranslater) {
+        var DATE_FORMAT = 'DD/MM/YYYY';
 
+        Episode = function(resource) {
 	        var episode = this;
 	        var column, field, attrs;
+
+          episode.recordEditor = new RecordEditor(episode);
 
             // We would like everything for which we have data that is a field to
             // be an instantiated instance of Item - not just those fields in the
@@ -28,10 +33,10 @@ angular.module('opal.services')
             }
 
             //
-            // TODO - Pull these from the schema?
+            // TODO - Pull these from the schema? Also cast them to moments
             // Note - these are date fields on the episode itself - which is not currently
             // serialised and sent with the schema !
-            var date_fields = ['date_of_admission', 'discharge_date', 'date_of_episode'];
+            var date_fields = ['date_of_admission', 'discharge_date', 'date_of_episode', 'start', 'end'];
 
             // Constructor to update from attrs and parse datish fields
             this.initialise = function(attrs){
@@ -39,11 +44,15 @@ angular.module('opal.services')
                 // Convert string-serialised dates into native JavaScriptz
                 _.each(date_fields, function(field){
                     if(attrs[field]){
-                        var parsed = moment(attrs[field], 'YYYY-MM-DD');
-                        episode[field] = parsed._d;
+                        var parsed = moment(attrs[field], DATE_FORMAT);
+                        episode[field] = parsed.toDate();
                     }
                 });
-            }
+                if(!episode.demographics || episode.demographics.length == 0 || !episode.demographics[0].patient_id){
+                    throw "Episode() initialization data must contain demographics with a patient id."
+                }
+                this.link = "/patient/" + episode.demographics[0].patient_id + "/" + episode.id;
+            };
 
 	        this.getNumberOfItems = function(columnName) {
 	            return episode[columnName].length;
@@ -69,16 +78,6 @@ angular.module('opal.services')
                 return this.getTags().indexOf(tag) != -1;
             }
 
-            //
-            // Return those tags that are child items in HIERARCHY
-            //
-            this.childTags = function(hierarchy){
-                return _.filter(episode.getTags(), function(t){
-                    if(t in hierarchy && hierarchy[t].length > 0){ return false };
-                    return true
-                });
-            }
-
 	        this.newItem = function(columnName, opts) {
                 var column;
 
@@ -95,37 +94,37 @@ angular.module('opal.services')
                 // TODO: For serious, this is a bad place for these to go.
                 //
 	            if (columnName == 'microbiology_test') {
-		            attrs.date_ordered = moment().format('YYYY-MM-DD');
+		            attrs.date_ordered = moment().format(DATE_FORMAT);
 	            }
 	            if (columnName == 'general_note') {
-		            attrs.date = moment().format('YYYY-MM-DD');
+		            attrs.date = moment().format(DATE_FORMAT);
 	            }
 	            if (columnName == 'diagnosis') {
-		            attrs.date_of_diagnosis = moment().format('YYYY-MM-DD');
+		            attrs.date_of_diagnosis = moment().format(DATE_FORMAT);
 	            }
                 if (columnName == 'microbiology_input'){
-                    attrs.initials = window.initials;
-		            attrs.when = new Date();
+                    attrs.initials = $window.initials;
+                    attrs.when = moment(new Date()).format(DATE_FORMAT);
                 }
                 if (columnName == 'observation'){
                     attrs.datetime = new Date();
                 }
                 if (columnName == 'line'){
-                    attrs.insertion_date = moment().format('YYYY-MM-DD');
+                    attrs.insertion_date = moment().format(DATE_FORMAT);
                 }
                 if (columnName == 'opat_review'){
                     attrs.initials = window.initials;
                     attrs.datetime = new Date();
                 }
                 if (columnName == 'opat_line_assessment'){
-                    attrs.assessment_date = moment().format('YYYY-MM-DD');
+                    attrs.assessment_date = moment().format(DATE_FORMAT);
                 }
                 //
                 // That's right, it gets worse!
                 //
                 if(columnName == 'antimicrobial'){
-                    if($routeParams.tag == 'walkin'){
-                        attrs.start_date = new Date();
+                    if($routeParams.slug && $routeParams.slug.indexOf('walkin') === 0){
+                        attrs.start_date = moment().format(DATE_FORMAT);
                     }
                 }
 	            return new Item(attrs, episode, opts.column);
@@ -172,54 +171,56 @@ angular.module('opal.services')
             };
 
 	        this.compare = function(other) {
-              if($routeParams.tag === "walkin" && $routeParams.subtag === "walkin_review"){
-                  var getName = function(x){
-                      return x.demographics[0].name.toLowerCase();
-                  };
+                if($routeParams.tag === "walkin" && $routeParams.subtag === "walkin_review"){
+                    var getName = function(x){
+                        var surname = x.demographics[0].surname.toLowerCase()
+                        var first_name = x.demographics[0].first_name.toLowerCase()
+                        return first_name + " " + surname;
+                    };
 
-                  if(other.date_of_episode > this.date_of_episode){
-                      return -1;
-                  }
-                  else if(other.date_of_episode < this.date_of_episode){
-                      return 1;
-                  }
-                  else if(getName(other) > getName(this)){
-                      return -1;
-                  }
-                  else if(getName(other) < getName(this)){
-                      return 1;
-                  }
+                    if(other.date_of_episode > this.date_of_episode){
+                        return -1;
+                    }
+                    else if(other.date_of_episode < this.date_of_episode){
+                        return 1;
+                    }
+                    else if(getName(other) > getName(this)){
+                        return -1;
+                    }
+                    else if(getName(other) < getName(this)){
+                        return 1;
+                    }
 
-                  return 0;
-              }
-              else{
-                var v1, v2;
-  	            var comparators = [
-  		            function(p) { return CATEGORIES.indexOf(p.location[0].category) },
-  		            function(p) { return p.location[0].hospital },
-  		            function(p) {
-  		                if (p.location[0].hospital == 'UC4H' &&
-                              p.location[0].ward.match(/^T\d+/)) {
-  			                return parseInt(p.location[0].ward.substring(1));
-  		                } else {
-  			                return p.location[0].ward
+                    return 0;
+                }
+                else{
+                    var v1, v2;
+  	                var comparators = [
+  		                function(p) { return CATEGORIES.indexOf(p.location[0].category) },
+  		                function(p) { return p.location[0].hospital },
+  		                function(p) {
+  		                    if (p.location[0].hospital == 'UC4H' &&
+                                p.location[0].ward.match(/^T\d+/)) {
+  			                    return parseInt(p.location[0].ward.substring(1));
+  		                    } else {
+  			                    return p.location[0].ward
+  		                    }
+  		                },
+  		                function(p) { return parseInt(p.location[0].bed) }
+  	                ];
+
+  	                for (var ix = 0; ix < comparators.length; ix++) {
+  		                v1 = comparators[ix](episode);
+  		                v2 = comparators[ix](other);
+  		                if (v1 < v2) {
+  		                    return -1;
+  		                } else if (v1 > v2) {
+  		                    return 1;
   		                }
-  		            },
-  		            function(p) { return parseInt(p.location[0].bed) }
-  	            ];
+  	                }
 
-  	            for (var ix = 0; ix < comparators.length; ix++) {
-  		            v1 = comparators[ix](episode);
-  		            v2 = comparators[ix](other);
-  		            if (v1 < v2) {
-  		                return -1;
-  		            } else if (v1 > v2) {
-  		                return 1;
-  		            }
-  	            }
-
-  	            return 0;
-              }
+  	                return 0;
+                }
 	        };
 
             //
@@ -233,16 +234,17 @@ angular.module('opal.services')
                 var value;
                 var deferred = $q.defer();
                 var url = '/episode/' + attrs.id + '/';
-                method = 'put'
+                method = 'put';
 
                 _.each(date_fields, function(field){
                     if(attrs[field]){
-                        if(angular.isString(attrs[field])){
-                            value = moment(attrs[field], 'DD/MM/YYYY')
-                        }else{
-                            value = moment(attrs[field])
+                        value = attrs[field];
+
+                        if(!angular.isString(attrs[field])){
+                            value = moment(attrs[field]).format(DATE_FORMAT);
                         }
-                        attrs[field] = value.format('YYYY-MM-DD');
+
+                        attrs[field] = value;
                     }
                 });
 
@@ -290,33 +292,35 @@ recently changed it - refresh the page and try again');
         Episode.findByHospitalNumber = function(number, callbacks){
             var deferred = $q.defer();
             var result = {
-				patients: [],
-				hospitalNumber: number
+    				patients: [],
+    				hospitalNumber: number
 			};
-
+            // record loader is sued by the field translater to
+            // cast the results fields
             deferred.promise.then(function(result){
-                if(result.patients.length == 0){
+                if(!result.patients.length){
                     callbacks.newPatient(result);
                 }else if(result.patients.length == 1){
-                    callbacks.newForPatient(result.patients[0])
+                    var patient = FieldTranslater.patientToJs(result.patients[0]);
+                    callbacks.newForPatient(patient)
                 }else{
                     callbacks.error();
                 }
-            })
+            });
 
             if(number){
 			    // The user entered a hospital number
 			    $http.get('/search/patient/?hospital_number=' + number)
                     .success(function(response) {
 					    // We have retrieved patient records matching the hospital number
-					    result.patients = response;
-                        deferred.resolve(result);
+  					    result.patients = response;
+                // cast the patient fields
+                deferred.resolve(result);
+
 				    });
             }else{
                 deferred.resolve(result);
             }
-
-
         }
         return Episode
     });

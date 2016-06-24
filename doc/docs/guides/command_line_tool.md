@@ -2,8 +2,8 @@
 
 OPAL ships with a helpful command line tool that helps with administrative tasks.
 
-The `opal` script should be on your system path if you installed OPAL via setup.py or 
-pip. You can check whether it is available by running this command: 
+The `opal` script should be on your system path if you installed OPAL via setup.py or
+pip. You can check whether it is available by running this command:
 
     $ opal -v
 
@@ -25,6 +25,9 @@ Use with new record models.
 
 Creates and runs automatic migrations, creates display and form (modal) templates.
 
+Running with `--dry-run` will run makemigrations with `--dry-run` and print display
+and form templates that would be generated.
+
 ### test &lt;what&gt;
 
 Run our tests suites.
@@ -40,3 +43,14 @@ When running Python tests, the `-t` or `--test` option allows the user to specif
 test module, case or method to run.
 
    $ opal test py -t opal.tests.test_models
+
+### checkout
+
+Ensure that all of our application plugins and packages are on the correct branch.
+
+This is particularly useful when working on OPAL itself, or when you have multiple
+projects that use different versions of OPAL or plugins. It will assume that github
+based requirements will be installed in development via `python setup.py develop`.
+
+This command will parse your project's `requirements.txt`, and then ensure that any
+Github sources are checked out loclaly to the branch specified therein.
