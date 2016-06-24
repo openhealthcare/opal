@@ -235,8 +235,17 @@ def scaffold(args):
     sys.path.append(os.path.abspath('.'))
 
     # 1. Let's run a Django migration
-    os.system('python manage.py makemigrations {app} --traceback'.format(app=app))
-    os.system('python manage.py migrate {app} --traceback'.format(app=app))
+    dry_run = ''
+    if args.dry_run:
+        dry_run = '--dry-run'
+
+    makemigrations_cmd = 'python manage.py makemigrations {app} --traceback {dry_run}'.format(
+        app=app, dry_run=dry_run)
+    migrate_cmd = 'python manage.py migrate {app} --traceback '.format(app=app)
+
+    os.system(makemigrations_cmd)
+    if not args.dry_run:
+        os.system(migrate_cmd)
 
     # 2. Let's create some display templates
     from opal.models import Subrecord, EpisodeSubrecord, PatientSubrecord
@@ -249,9 +258,15 @@ def scaffold(args):
             if thing in [Subrecord, EpisodeSubrecord, PatientSubrecord]:
                 continue
             if not thing.get_display_template():
-                scaffold_utils.create_display_template_for(thing, SCAFFOLDING_BASE)
+                if args.dry_run:
+                    print 'No Display template for {0}'.format(thing)
+                else:
+                    scaffold_utils.create_display_template_for(thing, SCAFFOLDING_BASE)
             if not thing.get_modal_template():
-                scaffold_utils.create_form_template_for(thing, SCAFFOLDING_BASE)
+                if args.dry_run:
+                    print 'No Form template for {0}'.format(thing)
+                else:
+                    scaffold_utils.create_form_template_for(thing, SCAFFOLDING_BASE)
     return
 
 def _run_py_tests(args):
@@ -444,6 +459,10 @@ def main():
 
     parser_scaffold = subparsers.add_parser("scaffold")
     parser_scaffold.add_argument('app', help='Django app to scaffold')
+    parser_scaffold.add_argument(
+        '--dry-run',
+        action='store_true',
+        help="Just print the templates we would create - don't actually create them")
     parser_scaffold.set_defaults(func=scaffold)
 
     parser_test = subparsers.add_parser("test")

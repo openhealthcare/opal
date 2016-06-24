@@ -37,12 +37,11 @@ Let's have a look at what that created for you:
         requirements.txt        # Requirements file ready for your project
 
         data/                   # A dummy directory for fixtures
+            lookuplists/        # A dummy directory for reference data
 
         mynewapp/               # The actual python package for your application
              __init__.py
-            flow.py             # How patients move through your services
             models.py           # Data models for your application
-            schema.py           # The list schemas for your application
             settings.py         # Helpfully tweaked Django settings
             tests.py            # Dummy unittests
             urls.py             # Django Urlconf
@@ -59,8 +58,10 @@ Let's have a look at what that created for you:
 
 The scaffolding step has generated you a working project - so let's check that out
 
-    cd mynewapp
-    python manage.py runserver
+```bash
+cd mynewapp
+python manage.py runserver
+```
 
 If you now visit `http://localhost:8000` in your browser, you should see the standard login screen:
 
@@ -164,6 +165,7 @@ which provides us with some extra functionality:
 * A relationship to an episode, linked to a patient
 * JSON APIs for creating, retrieving and updating it
 * Ensuring that the OPAL Angular layer knows it exists
+* Some metadata fields, like created, updated, created_by, updated_by
 
 Next, we're going to let OPAL take care of the boilerplate that we'll need to use this
 model in our application. From the commandline:
@@ -173,8 +175,9 @@ model in our application. From the commandline:
 Let's take a look at what that did:
 
 * It created a Django migration
+* It ran that migration for you
 * It created a detail template `mynewapp/templates/records/todo_item.html`
-* It created a form template `mynewapp/templates/modals/todo_item_modal.html`
+* It created a form template `mynewapp/templates/forms/todo_item_forml.html`
 
 #### Detail template
 
@@ -191,36 +194,56 @@ The default form template will display each field on a new line, with some basic
 appropriate form field types set.
 It uses the OPAL form helpers templatetag library.
 
-    {% extends 'modal_base.html' %}
-    {% load forms %}
-    {% block modal_body %}
-      <form class="form-horizontal">
-       {% input  label="Job" model="editing.job"  %}
-       {% datepicker  label="Due Date" model="editing.due_date"  %}
-       {% textarea  label="Details" model="editing.details"  %}
-       {% checkbox  label="Completed" model="editing.completed"  %}
-      </form>
-    {% endblock %}
+```html
+{% load forms %}
+{% input  field="TODOItem.job"  %}
+{% datepicker  field="TODOItem.due_date"  %}
+{% textarea  field="TODOItem.details"  %}
+{% checkbox  field="TODOItem.completed"  %}
+```
 
 #### Adding TODOs to our Team Lists
 
 Now let's add our TODO list model as a column in the Spreadsheet-like list view.
 
-The columns for team lists are set in `mynewapp/schema.py` as a list of models.
+Patient Lists in OPAL are subclasses of `opal.core.patient_lists.PatientList`, and
+they live in `patient_lists.py` files of our Django apps.
 
-Open mynewapp/schemas.py and edit the `list_columns` variable to add `models.TODOItem` as
-the final item:
+<blockquote><small>
+Technically these can live anywhere you like - although if you put them in other places
+you're responsible for making sure that they're imported at startup.
+<br />OPAL guarantees
+to autodiscover lists in `app.patient_list` modules.
+</small></blockquote>
 
-    list_columns = [
+You can see the basic list that the OPAL application scaffold created for you in
+`yournewapp/patient_lists.py`.
+
+```python
+class AllPatientsList(core.patient_lists.PatientList):
+    display_name = 'All Patients'
+
+    schema = [
         models.Demographics,
-        models.Location,
-        models.Allergies,
         models.Diagnosis,
-        models.PastMedicalHistory,
+        models.Treatment
+    ]
+
+    def get_queryset(self):
+        return Episode.objects.all()
+```
+
+The columns for lists are set in the `schema` property of the PatientList class. To add
+our TODO model to the list, just add the model to the schema:
+
+```python
+    schema = [
+        models.Demographics,
+        models.Diagnosis,
         models.Treatment,
-        models.Investigation,
         models.TODOItem
     ]
+```
 
 Refresh the lists page in your browser, and you'll see your new column on the end - add a
 TODO item, noting how we automatically get appropriate form types like datepickers and
@@ -263,7 +286,7 @@ or unique identifier:
 
 We also have a detail view for our patients, which you can access via search results. This
 view will typically allow for a more detailed display and editing of all the events
-comprising an activity of care than is available on the list page.
+comprising a patient's care than is available on the list page.
 
 <img src="/img/detail.png" style="margin: 12px auto; border: 1px solid black; width: 600px;"/>
 

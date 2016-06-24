@@ -6,7 +6,7 @@
       <div class="btn-group pull-left" dropdown is-open="status.isopen">
         <button type="button" class="btn btn-secondary dropdown-toggle" ng-disabled="disabled">
           <i class="fa fa-user-md"></i>
-          [[ readableTagName ]]
+          {{ patient_list.display_name }}
           <i class="fa fa-angle-down"></i>
         </button>
         <ul class="dropdown-menu slides" role="menu">
@@ -94,7 +94,7 @@
 
 {% block content %}
 <h4 class="print-only">
-  [[ readableTagName ]]
+  {{ patient_list.display_name }}
 </h4>
 
 <div class="screen-only">
