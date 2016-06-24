@@ -378,6 +378,9 @@ class Macro(models.Model):
 
 
 class Patient(models.Model):
+
+    objects = managers.PatientQueryset.as_manager()
+
     def __unicode__(self):
         try:
             demographics = self.demographics_set.get()
