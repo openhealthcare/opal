@@ -25,6 +25,9 @@ Use with new record models.
 
 Creates and runs automatic migrations, creates display and form (modal) templates.
 
+Running with `--dry-run` will run makemigrations with `--dry-run` and print display
+and form templates that would be generated.
+
 ### test &lt;what&gt;
 
 Run our tests suites.
