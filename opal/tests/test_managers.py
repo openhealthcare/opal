@@ -64,7 +64,7 @@ class PatientManagerTestCase(OpalTestCase):
 class EpisodeManagerTestCase(OpalTestCase):
     def setUp(self):
         self.patient_1, self.episode_1_1 = self.new_patient_and_episode_please()
-        self.episode_1_2 = self.patient.create_new_episode()
+        self.episode_1_2 = self.patient_1.create_episode()
         self.patient_1.demographics_set.all().update(
             first_name="je ne",
             surname="regrette",
@@ -72,7 +72,7 @@ class EpisodeManagerTestCase(OpalTestCase):
         )
 
         self.patient_2, self.episode_2_1 = self.new_patient_and_episode_please()
-        self.patient_1.demographics_set.all().update(
+        self.patient_2.demographics_set.all().update(
             first_name="je joue",
             surname="au",
             hospital_number="football"

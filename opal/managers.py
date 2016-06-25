@@ -37,7 +37,7 @@ class EpisodeQueryset(models.QuerySet):
         patients = Patient.objects.search(some_query).values_list(
             "id", flat=True
         )
-        return self.filter(patients_id__in=patients)
+        return self.filter(patient_id__in=patients)
 
     def serialised_episode_subrecords(self, episodes, user):
         """
