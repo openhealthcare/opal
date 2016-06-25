@@ -32,6 +32,13 @@ class PatientQueryset(models.QuerySet):
 
 class EpisodeQueryset(models.QuerySet):
 
+    def search(self, some_query):
+        from opal.models import Patient
+        patients = Patient.objects.search(some_query).values_list(
+            "id", flat=True
+        )
+        return self.filter(patients_id__in=patients)
+
     def serialised_episode_subrecords(self, episodes, user):
         """
         Return all serialised subrecords for this set of EPISODES

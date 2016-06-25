@@ -103,3 +103,7 @@ Keywords:
 
 * `historic_tags` A boolean to indicate whether the user desires historic or just current tags to
 be serialised
+
+#### Episode.objects.search
+
+As a useful utility, the episode manager has a search method that will search on first name, last name and/or hospital number, under the hood it uses [Patient search](patient.md#patientobjectssearch)

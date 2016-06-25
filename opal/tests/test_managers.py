@@ -1,5 +1,5 @@
 from opal.core.test import OpalTestCase
-from opal.models import Patient
+from opal.models import Patient, Episode
 
 
 class PatientManagerTestCase(OpalTestCase):
@@ -59,3 +59,27 @@ class PatientManagerTestCase(OpalTestCase):
         """
         query = Patient.objects.search('je rien')
         self.assertEqual(query.get(), self.patient_1)
+
+
+class EpisodeManagerTestCase(OpalTestCase):
+    def setUp(self):
+        self.patient_1, self.episode_1_1 = self.new_patient_and_episode_please()
+        self.episode_1_2 = self.patient.create_new_episode()
+        self.patient_1.demographics_set.all().update(
+            first_name="je ne",
+            surname="regrette",
+            hospital_number="rien"
+        )
+
+        self.patient_2, self.episode_2_1 = self.new_patient_and_episode_please()
+        self.patient_1.demographics_set.all().update(
+            first_name="je joue",
+            surname="au",
+            hospital_number="football"
+        )
+
+    def test_returns_both_episodes(self):
+        episodes = Episode.objects.search("je ne")
+        expected = set([self.episode_1_1.id, self.episode_1_2.id])
+        found = set(episodes.values_list("id", flat=True))
+        self.assertEqual(expected, found)
