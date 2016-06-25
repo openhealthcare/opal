@@ -2,7 +2,7 @@ OPAL
 ====
 
 [![Build Status](https://travis-ci.org/openhealthcare/opal.svg?branch=v0.6.0)](https://travis-ci.org/openhealthcare/opal)
-[![Coverage Status](https://coveralls.io/repos/github/openhealthcare/opal/badge.svg?branch=v0.6.0)](https://coveralls.io/github/openhealthcare/opal?branch=v0.6.0) 
+[![Coverage Status](https://coveralls.io/repos/github/openhealthcare/opal/badge.svg?branch=v0.6.0)](https://coveralls.io/github/openhealthcare/opal) 
 
 OPAL is a full stack framework that makes building digital tools for health care easy.
 
