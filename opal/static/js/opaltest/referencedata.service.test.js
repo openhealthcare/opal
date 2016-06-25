@@ -4,7 +4,7 @@ describe('Referencedata', function(){
     var $httpBackend, $rootScope;
     var mock, Referencedata;
     var referencedata = {
-        foo: 'bar'
+        foo: ['bar']
     };
 
     beforeEach(function(){
@@ -35,7 +35,7 @@ describe('Referencedata', function(){
         $rootScope.$apply();
         $httpBackend.flush();
 
-        expect(result.get('foo')).toEqual('bar');
+        expect(result.get('foo')).toEqual(['bar']);
     });
 
     it('should alert if the HTTP request errors', function(){
@@ -48,4 +48,18 @@ describe('Referencedata', function(){
 
         expect(mock.alert).toHaveBeenCalledWith('Referencedata could not be loaded');
     });
+
+    it('should return with the _list suffix', function(){
+        var result
+
+        $httpBackend.whenGET('/api/v0.1/referencedata/').respond(referencedata);
+
+        Referencedata.then(function(r){ result = r; });
+        $rootScope.$apply();
+        $httpBackend.flush();
+
+        expect(result.toLookuplists()).toEqual({foo_list: ['bar']})
+
+    })
+
 });
