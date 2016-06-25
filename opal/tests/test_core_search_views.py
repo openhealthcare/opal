@@ -189,6 +189,31 @@ class SearchTemplateTestCase(OpalTestCase):
         self.assertStatusCode('/search/templates/search.html/', 200)
 
 
+class ExtractSearchViewTestCase(BaseSearchTestCase):
+
+    def test_post(self):
+        data = json.dumps([
+            {
+                u'page_number': 1,
+                u'column': u'demographics',
+                u'field': u'Surname',
+                u'combine': u'and',
+                u'query': u'Connery',
+                u'queryType': u'Equals'
+            }
+        ])
+        request = self.rf.post('extract')
+        request.user = self.user
+        view = views.ExtractSearchView()
+        view.request = request
+        with patch.object(view.request, 'read') as mock_read:
+            mock_read.return_value = data
+
+            resp = json.loads(view.post().content)
+            self.assertEqual(1, resp['total_count'])
+            self.assertEqual(self.patient.id, resp['object_list'][0]['patient_id'])
+
+
 class FilterViewTestCase(OpalTestCase):
 
     def test_get(self):
