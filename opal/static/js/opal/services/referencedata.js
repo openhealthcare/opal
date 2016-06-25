@@ -1,4 +1,5 @@
 angular.module('opal.services').factory('Referencedata', function($q, $http, $window) {
+
     "use strict";
 
     var deferred = $q.defer();
