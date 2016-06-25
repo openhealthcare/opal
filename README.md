@@ -67,6 +67,3 @@ http://www.openhealthcare.org.uk
 https://twitter.com/ohcuk
 
 https://groups.google.com/forum/?ohc-dev#!forum/ohc-opal
-
-channel #ohc_dev on freenode
-
