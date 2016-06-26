@@ -120,30 +120,17 @@ class DatabaseQuery(QueryBackend):
             becasuse Anna and Lisa will both be found, this will rank higher
             than an Anna or a Lisa, although both of those will also be found
         """
-        fields = ["hospital_number", "first_name", "surname"]
-
         some_query = self.query
-
-        query_values = some_query.split(" ")
-        result = {}
-
-        for query_value in query_values:
-            q_objects = []
-            for field in fields:
-                model_field = "demographics__{}__icontains".format(field)
-                q_objects.append(Q(**{model_field: query_value}))
-            r = models.Patient.objects.filter(reduce(operator.or_, q_objects))
-            result[query_value] = set(r.values_list("id", flat=True))
-
-        all_results = [i for i in itertools.chain(*result.values())]
-        count = Counter(all_results)
-        episodes = models.Episode.objects.filter(patient__id__in=all_results)
+        patients = models.Patient.objects.search(some_query)
+        episodes = models.Episode.objects.filter(
+            patient__id__in=patients.values_list("id", flat=True)
+        )
         patient_summaries = self._get_aggregate_patients_from_episodes(
             episodes
         )
         return sorted(
             patient_summaries,
-            key=lambda x: count[x["patient_id"]],
+            key=lambda x: x["count"],
             reverse=True
         )
 

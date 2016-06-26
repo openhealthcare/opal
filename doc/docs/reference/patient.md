@@ -35,3 +35,15 @@ For example the following will create a patient:
       },
       user
     )
+
+### Manager
+
+The custom manager for Patient has the following methods:
+
+#### Patient.objects.search
+
+A useful utility the patient manager has a search method that
+will search on first name last name hospital number. Its splits the string input on space, so if you do "12 Jane", you will get all
+Patients who's name, surname or hospital number contains either
+12 or Jane, in this example most probably people who's hospital
+number contains 12 and who's first name is Jane.

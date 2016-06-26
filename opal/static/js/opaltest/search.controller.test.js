@@ -101,7 +101,7 @@ describe('SearchCtrl', function (){
         it("should redirect to the search page if we're not in search", function(){
             locationDetails.href = "";
             locationDetails.pathname = "/somewhere";
-            $scope.searchTerm = "Bond";
+            $scope.query.searchTerm = "Bond";
             $scope.search();
             expectedUrl = "/#/search?query=Bond";
             expect(locationDetails.href).toEqual(expectedUrl);
@@ -110,7 +110,7 @@ describe('SearchCtrl', function (){
         it("should update the url if on the search page", function(){
             locationDetails.href = "unchanged";
             locationDetails.pathname = "/";
-            $scope.searchTerm = "Bond";
+            $scope.query.searchTerm = "Bond";
             $scope.search();
             expectedSearch = {
                 query: "Bond",
