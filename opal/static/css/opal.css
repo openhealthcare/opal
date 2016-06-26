@@ -337,6 +337,10 @@ i.delete,
 .detail .list-group-item i.delete:hover { cursor: pointer; color: rgb(169, 68, 66); }
 .list-group-item { min-height: 50px; }
 
+.search-dropdown-result{
+  cursor: pointer;
+}
+
 
 /* ngProgress overrides */
 .ngProgressLiteBar {
@@ -1036,4 +1040,8 @@ a.table-link:hover{
     width: 100%;
     margin-bottom: 10px;
     white-space: normal;
+}
+
+.orange{
+  color: #f76c51
 }

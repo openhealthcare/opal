@@ -66,11 +66,18 @@
             <form class="navbar-form navbar-right" ng-submit="search()" role="search">
               <div class="form-group nav-bar-search">
                 <input
-                        slash-key-focus="!state || state==='normal'"
-                        ng-blur="enableShortcuts()"
-                        ng-focus="disableShortcuts()"
-                        ng-model="searchTerm"
-                        type="text" class="form-control" placeholder="Search">
+                  ng-model="query.searchTerm"
+                  bs-typeahead
+                  bs-options="i as i.display for i in results"
+                  slash-key-focus="!state || state==='normal'"
+                  ng-blur="enableShortcuts()"
+                  ng-focus="disableShortcuts()"
+                  type="text"
+                  class="form-control"
+                  placeholder="Search"
+                  data-html="1"
+                  data-template="search/search_results.html"
+                />
               </div>
             </form>
           </div>
@@ -79,7 +86,6 @@
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
-
 <div class="modal" id="changelog">
   <div class="modal-dialog">
     <div class="modal-content">

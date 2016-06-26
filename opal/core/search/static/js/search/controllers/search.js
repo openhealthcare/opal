@@ -5,9 +5,9 @@ angular.module('opal.controllers').controller(
                            PatientSummary, Paginator) {
 
         var searchUrl = "/search";
-	    $scope.searchTerm = '';
-        $scope.searchColumns = ['query'];
-        $scope.limit = 10;
+	    $scope.query = {searchTerm: ''};
+      $scope.searchColumns = ['query'];
+      $scope.limit = 10;
 	    $scope.results = [];
 	    $scope.searched = false;
 	    $scope.episode_category_list = ['OPAT', 'Inpatient', 'Outpatient', 'Review'];
@@ -28,13 +28,13 @@ angular.module('opal.controllers').controller(
 
             // this view only allows a couple a couple of search columns
             // but allow a search on either of these
-            $scope.searchTerm = _.find(urlParams, function(v, k){
+            $scope.query.searchTerm = _.find(urlParams, function(v, k){
                 if(_.contains($scope.searchColumns, k)){
                     return true;
                 }
             }) || "";
 
-            if($scope.searchTerm.length){
+            if($scope.query.searchTerm.length){
                 ngProgressLite.set(0);
                 ngProgressLite.start();
 
@@ -56,8 +56,27 @@ angular.module('opal.controllers').controller(
 
         // empty the search bar if we click through and we're not running a search
         $scope.$on('$locationChangeStart', function(event, newUrl) {
-            $scope.searchTerm = "";
+            $scope.query.searchTerm = "";
         });
+
+        // redirect to the patient
+        // if they select from
+        // the drop down list
+        $scope.$on('$typeahead.select', function(event, patientSummary) {
+          $window.location.href = patientSummary.link;
+        });
+
+
+      $scope.$watch("query.searchTerm", function(){
+        if($scope.query.searchTerm.length){
+          queryString = $.param({query: $scope.query.searchTerm});
+          $http.get('/search/simple/?' + queryString).success(function(response) {
+              $scope.results = _.map(response.object_list, function(o){
+                  return new PatientSummary(o);
+              });
+          });
+        }
+      });
 
 	    $scope.search = function(pageNumber) {
             var params = {};
@@ -67,7 +86,7 @@ angular.module('opal.controllers').controller(
             }
 
             _.each($scope.searchColumns, function(c){
-                params[c] = $scope.searchTerm;
+                params[c] = $scope.query.searchTerm;
             });
 
             if($window.location.pathname !== "/"){
