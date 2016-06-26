@@ -27,4 +27,19 @@ describe('Utils.OPAL._run', function (){
         expect(call_args.resolve.episode()).toEqual({});
     });
 
+    describe('indexOf for IE8', function(){
+        beforeEach(function(){
+            Array.prototype._indexof = _indexof;
+        })
+
+        it('should return the index of the thing', function(){
+            expect([1,2,3]._indexof(2)).toEqual(1);
+            expect([1,2,3]._indexof(3)).toEqual(2);
+            expect([1,2,3]._indexof(0)).toEqual(-1);
+        });
+
+    })
+
+
+
 });
