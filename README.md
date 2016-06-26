@@ -20,7 +20,7 @@ OPAL is entirely Open ([Source](https://github.com/openhealthcare/opal) &
 
 OPAL was created by [Open Health Care UK](http://openhealthcare.org.uk), because it makes Healthcare IT Less Bad.
 
-We'd love you to get involved by using what we make, reporting bugs/suggesting improvements, and fixing bugs/making improvements.  Please refer to the CONTRIBUTING file.
+We'd love you to get involved by using what we make, reporting bugs/suggesting improvements, and fixing bugs/updating documentation/making improvements. 
 
 ## More comprehensive documentation
 
@@ -67,6 +67,3 @@ http://www.openhealthcare.org.uk
 https://twitter.com/ohcuk
 
 https://groups.google.com/forum/?ohc-dev#!forum/ohc-opal
-
-channel #ohc_dev on freenode
-
