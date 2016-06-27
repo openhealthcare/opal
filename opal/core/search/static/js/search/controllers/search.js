@@ -3,10 +3,11 @@ angular.module('opal.controllers').controller(
                            $timeout, ngProgressLite,
                            $q, $window, Flow,
                            PatientSummary, Paginator) {
+      "use strict";
 
       var searchUrl = "/search";
       var inSearch = $location.path() === searchUrl;
-	    $scope.query = {searchTerm: ''};
+	    $scope.query = {searchTerm: '', autocompleteSearchTerm: ''};
       $scope.searchColumns = ['query'];
       $scope.limit = 10;
 	    $scope.results = [];
@@ -15,7 +16,12 @@ angular.module('opal.controllers').controller(
 	    $scope.hospital_list = ['Heart Hospital', 'NHNN', 'UCH'];
       $scope.paginator = new Paginator($scope.search);
 
-
+      var getQueryParam = function(){
+          if($scope.query.searchTerm.length){
+            return $scope.query.searchTerm;
+          }
+          return $scope.query.autocompleteSearchTerm;
+      }
 
         $scope.disableShortcuts = function(){
             $rootScope.state = "search";
@@ -23,6 +29,15 @@ angular.module('opal.controllers').controller(
 
         $scope.enableShortcuts = function(){
             $rootScope.state = "normal";
+        };
+
+        var queryBackend = function(queryParams){
+          var queryString = $.param(queryParams);
+          return $http.get('/search/simple/?' + queryString).success(function(response) {
+            $scope.results = _.map(response.object_list, function(o){
+                return new PatientSummary(o);
+            });
+          });
         };
 
         $scope.loadResults = function(){
@@ -40,16 +55,12 @@ angular.module('opal.controllers').controller(
             if($scope.query.searchTerm.length){
                 ngProgressLite.set(0);
                 ngProgressLite.start();
-
-                queryString = $.param($location.search());
-                $http.get('/search/simple/?' + queryString).success(function(response) {
+                var queryParams = $location.search();
+                queryBackend(queryParams).then(function(response){
                     ngProgressLite.done();
-          			$scope.searched = true;
-                    $scope.results = _.map(response.object_list, function(o){
-                        return new PatientSummary(o);
-                    });
-                    $scope.paginator = new Paginator($scope.search, response);
-    		    });
+                    $scope.searched = true;
+                    $scope.paginator = new Paginator($scope.search, response.data);
+                });
             }
         };
 
@@ -70,18 +81,11 @@ angular.module('opal.controllers').controller(
         });
 
 
-      if(!inSearch){
-        $scope.$watch("query.searchTerm", function(){
-          if($scope.query.searchTerm.length){
-            queryString = $.param({query: $scope.query.searchTerm});
-            $http.get('/search/simple/?' + queryString).success(function(response) {
-                $scope.results = _.map(response.object_list, function(o){
-                    return new PatientSummary(o);
-                });
-            });
+        $scope.$watch("query.autocompleteSearchTerm", function(){
+          if($scope.query.autocompleteSearchTerm.length){
+            queryBackend({query: $scope.query.autocompleteSearchTerm});
           }
         });
-      }
 
 	    $scope.search = function(pageNumber) {
             var params = {};
@@ -91,7 +95,7 @@ angular.module('opal.controllers').controller(
             }
 
             _.each($scope.searchColumns, function(c){
-                params[c] = $scope.query.searchTerm;
+                params[c] = getQueryParam();
             });
 
             if($window.location.pathname !== "/"){
@@ -114,4 +118,6 @@ angular.module('opal.controllers').controller(
         $scope.jumpToEpisode = function(patient){
             $location.path('/episode/'+$scope.getEpisodeID(patient));
         };
+
+        window.scope = $scope;
     });

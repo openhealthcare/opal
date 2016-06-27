@@ -123,6 +123,21 @@ describe('SearchCtrl', function (){
         });
     });
 
+    describe("it should autocomplete the search if necessary", function(){
+        it('should watch the autocomplete and query if it changes', function(){
+          $scope.query.autocompleteSearchTerm = "autocomplete";
+          $scope.query.searchTerm = "";
+          expectedUrl = "/search/simple/?query=autocomplete";
+          $httpBackend.expectGET(expectedUrl).respond({
+              page_number: 1,
+              object_list: [],
+              total_pages: 1
+          });
+          $scope.$apply();
+          $httpBackend.flush();
+        });
+    });
+
 
     describe('jumpToEpisode()', function (){
         it('Should call location.path()', function () {
