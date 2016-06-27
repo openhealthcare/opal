@@ -4,7 +4,8 @@ angular.module('opal.controllers').controller(
                            $q, $window, Flow,
                            PatientSummary, Paginator) {
 
-        var searchUrl = "/search";
+      var searchUrl = "/search";
+      var inSearch = $location.path() === searchUrl;
 	    $scope.query = {searchTerm: ''};
       $scope.searchColumns = ['query'];
       $scope.limit = 10;
@@ -12,7 +13,9 @@ angular.module('opal.controllers').controller(
 	    $scope.searched = false;
 	    $scope.episode_category_list = ['OPAT', 'Inpatient', 'Outpatient', 'Review'];
 	    $scope.hospital_list = ['Heart Hospital', 'NHNN', 'UCH'];
-        $scope.paginator = new Paginator($scope.search);
+      $scope.paginator = new Paginator($scope.search);
+
+
 
         $scope.disableShortcuts = function(){
             $rootScope.state = "search";
@@ -67,16 +70,18 @@ angular.module('opal.controllers').controller(
         });
 
 
-      $scope.$watch("query.searchTerm", function(){
-        if($scope.query.searchTerm.length){
-          queryString = $.param({query: $scope.query.searchTerm});
-          $http.get('/search/simple/?' + queryString).success(function(response) {
-              $scope.results = _.map(response.object_list, function(o){
-                  return new PatientSummary(o);
-              });
-          });
-        }
-      });
+      if(!inSearch){
+        $scope.$watch("query.searchTerm", function(){
+          if($scope.query.searchTerm.length){
+            queryString = $.param({query: $scope.query.searchTerm});
+            $http.get('/search/simple/?' + queryString).success(function(response) {
+                $scope.results = _.map(response.object_list, function(o){
+                    return new PatientSummary(o);
+                });
+            });
+          }
+        });
+      }
 
 	    $scope.search = function(pageNumber) {
             var params = {};

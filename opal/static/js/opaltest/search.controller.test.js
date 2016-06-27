@@ -50,6 +50,9 @@ describe('SearchCtrl', function (){
         options = {};
         profile = {};
 
+
+        spyOn(location, 'path').and.returnValue("/search");
+
         controller = $controller('SearchCtrl', {
             $scope         : $scope,
             $location      : location,
@@ -123,7 +126,6 @@ describe('SearchCtrl', function (){
 
     describe('jumpToEpisode()', function (){
         it('Should call location.path()', function () {
-            spyOn(location, 'path').and.callThrough();
             $scope.jumpToEpisode({active_episode_id: 555});
             expect(location.path).toHaveBeenCalledWith('/episode/555');
         });
