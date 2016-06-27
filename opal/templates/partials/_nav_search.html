@@ -1,0 +1,26 @@
+<div ng-show="$location.path().indexOf('/search')">
+  <div ng-controller="SearchCtrl">
+    <form class="navbar-form navbar-right" ng-submit="search()" role="search">
+      <div class="form-group nav-bar-search">
+        <input
+          {% if AUTOCOMPLETE_SEARCH %}
+            ng-model="query.autocompleteSearchTerm"
+            data-html="1"
+            data-template="search/search_results.html"
+            data-watch-options=true
+            bs-typeahead
+            bs-options="i as i.display for i in results"
+          {% else %}
+            ng-model="query.searchTerm"
+          {% endif %}
+          slash-key-focus="!state || state==='normal'"
+          ng-blur="enableShortcuts()"
+          ng-focus="disableShortcuts()"
+          type="text"
+          class="form-control"
+          placeholder="Search"
+        />
+      </div>
+    </form>
+  </div>
+</div>
