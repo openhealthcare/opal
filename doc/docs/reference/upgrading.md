@@ -16,6 +16,12 @@ The `/episode/:pk/` API has moved to `/api/v0.1/episode/:pk/` so any code (typic
 javascript) code that directly saves to this API endpoint rather than using the OPAL JS
 `Episode` services should work immediately when re-pointed at the new URL.
 
+The version of Django Axes on which we rely by default has been upgraded to `2.0.0` with
+OPAL 7.x - you will need to change your settings. Remove any reference to axes middleware,
+and change the 'axes' setting in `INSTALLED_APPS` to read
+
+        'axes.apps.AppConfig',
+
 ### 5.x -> 6.x
 
 #### Upgrading OPAL
