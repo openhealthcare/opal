@@ -783,7 +783,7 @@ class RegisterPluginsTestCase(OpalTestCase):
     @patch('opal.core.api.plugins.plugins')
     def test_register(self, plugins):
         mock_plugin = MagicMock(name='Mock Plugin')
-        mock_plugin.apis = [('thingapi', None)]
+        mock_plugin.get_apis.return_value = [('thingapi', None)]
         plugins.return_value = [mock_plugin]
         with patch.object(api.router, 'register') as register:
             api.register_plugin_apis()

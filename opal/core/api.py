@@ -356,7 +356,7 @@ for subrecord in subrecords():
 
 def register_plugin_apis():
     for plugin in plugins.plugins():
-        for api in plugin.apis:
+        for api in plugin.get_apis():
             router.register(*api)
 
 register_plugin_apis()

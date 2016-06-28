@@ -3,14 +3,16 @@ OPAL PLugin - base class and helpers
 """
 import inspect
 import os
-from django.conf import settings
-from opal.utils import _itersubclasses
+
+from opal.core import discoverable
 
 
-class OpalPlugin(object):
+class OpalPlugin(discoverable.DiscoverableFeature):
     """
     Base class from which all of our plugins inherit.
     """
+    module_name = 'plugin'
+
     urls        = []
     javascripts = []
     apis        = []
@@ -20,9 +22,30 @@ class OpalPlugin(object):
     head_extra  = []
     angular_module_deps = []
 
+    @classmethod
+    def get_urls(klass):
+        """
+        Return the urls
+        """
+        return klass.urls
+
+    @classmethod
+    def get_apis(klass):
+        """
+        Return the apis
+        """
+        return klass.apis
+
+    @classmethod
+    def directory(cls):
+        """
+        Give the plugins directory
+        """
+        return os.path.realpath(os.path.dirname(inspect.getfile(cls)))
+
     def flows(self):
         """
-        Return any extra flows our plugin may hav.e
+        Return any extra flows our plugin may have.
         """
         return {}
 
@@ -32,38 +55,14 @@ class OpalPlugin(object):
         """
         return {}
 
-    @classmethod
-    def directory(cls):
-        """
-        Give the plugins directory
-        """
-        return os.path.realpath(os.path.dirname(inspect.getfile(cls)))
 
-
-REGISTRY = set()
-AUTODISCOVERED = False
-
+# These two are only here for legacy reasons.
+# TODO: Consider removing and updating elsewhere.
 def register(what):
-    #print 'registering', what
-    REGISTRY.add(what)
-
-def autodiscover():
-    from opal.utils import stringport
-    global AUTODISCOVERED
-
-    for a in settings.INSTALLED_APPS:
-        stringport(a)
-    AUTODISCOVERED = True
-
-    return REGISTRY
+    pass
 
 def plugins():
     """
     Generator function for plugin instances
     """
-    global AUTODISCOVERED
-
-    if not AUTODISCOVERED:
-        autodiscover()
-    for m in REGISTRY:
-        yield m
+    return OpalPlugin.list()
