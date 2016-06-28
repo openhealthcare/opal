@@ -4,7 +4,7 @@ Installation should be simple.
 
 ### Step 1: The Prerequisites
 
-Before you install OPAL, you'll need to make sure that you have 
+Before you install OPAL, you'll need to make sure that you have
 [Python](https://www.python.org/) and [pip](http://pip.readthedocs.org/en/latest/installing.html)
 installed on your system.
 
@@ -30,5 +30,4 @@ Let's just check that you do:
 
 ### Step 3: There is no step 3.
 
-Maybe make yourself somme tea & then try the [Tutorial](tutorial.md) instead ? 
-
+Maybe make yourself some tea & then try the [Tutorial](tutorial.md) instead ?
