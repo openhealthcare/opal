@@ -403,7 +403,7 @@ for subrecord in subrecords():
     router.register(sub_name, SubViewSet)
 
 for plugin in plugins.plugins():
-    for api in plugin.apis:
+    for api in plugin.get_apis():
         router.register(*api)
 
 

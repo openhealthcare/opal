@@ -2,12 +2,16 @@
 OPAL PLugin - base class and helpers
 """
 from django.conf import settings
+
+from opal.core import discoverable
 from opal.utils import _itersubclasses
 
-class OpalPlugin(object):
+class OpalPlugin(discoverable.DiscoverableFeature):
     """
     Base class from which all of our plugins inherit.
     """
+    module_name = 'plugin'
+
     urls        = []
     javascripts = []
     apis        = []
@@ -16,6 +20,20 @@ class OpalPlugin(object):
     actions     = []
     head_extra  = []
     angular_module_deps = []
+
+    @classmethod
+    def get_urls(klass):
+        """
+        Return the urls
+        """
+        return klass.urls
+
+    @classmethod
+    def get_apis(klass):
+        """
+        Return the apis
+        """
+        return klass.apis
 
     def flows(self):
         """
@@ -29,31 +47,13 @@ class OpalPlugin(object):
         """
         return {}
 
-
-REGISTRY = set()
-AUTODISCOVERED = False
-
+# These two are only here for legacy reasons.
+# TODO: Consider removing and updating elsewhere.
 def register(what):
-    #print 'registering', what
-    REGISTRY.add(what)
-
-def autodiscover():
-    from opal.utils import stringport
-    global AUTODISCOVERED
-
-    for a in settings.INSTALLED_APPS:
-        stringport(a)
-    AUTODISCOVERED = True
-
-    return REGISTRY
+    pass
 
 def plugins():
     """
     Generator function for plugin instances
     """
-    global AUTODISCOVERED
-
-    if not AUTODISCOVERED:
-        autodiscover()
-    for m in REGISTRY:
-        yield m
+    return OpalPlugin.list()
