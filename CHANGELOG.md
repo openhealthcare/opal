@@ -17,6 +17,8 @@ to reflect the new URL.
 Updates dependency graph:
 
 * Django -> 1.8.13
+* Django Reversion -> 1.10.2
+* Django Axes -> 2.0.0
 
 ### 0.6.0 (Major Release)
 

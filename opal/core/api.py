@@ -18,6 +18,7 @@ from opal.core.patient_lists import (PatientList, TaggedPatientList,
 
 app = application.get_app()
 
+
 # TODO This is stupid - we can fully deprecate this please?
 try:
     options = stringport(settings.OPAL_OPTIONS_MODULE)

@@ -6,7 +6,6 @@ import operator
 import itertools
 from collections import Counter
 
-from django.contrib.contenttypes.models import ContentType
 from django.db import models as djangomodels
 from django.conf import settings
 from django.db.models import Q
@@ -162,6 +161,8 @@ class DatabaseQuery(QueryBackend):
         return models.Episode.objects.filter(**kwargs)
 
     def _episodes_for_fkorft_fields(self, query, field, contains, Mod):
+        from django.contrib.contenttypes.models import ContentType
+
         model = get_model_name_from_column_name(query['column'])
 
         # Look up to see if there is a synonym.

@@ -6,7 +6,7 @@ from django.contrib.contenttypes.admin import GenericTabularInline
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 
-import reversion
+from reversion.admin import VersionAdmin
 
 from opal import models
 from opal.models import Synonym
@@ -26,9 +26,9 @@ class FilterInline(admin.StackedInline):
 class UserProfileAdmin(UserAdmin):
     inlines = [ UserProfileInline, FilterInline,]
 
-class MyAdmin(reversion.VersionAdmin): pass
+class MyAdmin(VersionAdmin): pass
 
-class EpisodeAdmin(reversion.VersionAdmin):
+class EpisodeAdmin(VersionAdmin):
     list_display = ['patient', 'active', 'date_of_admission', 'discharge_date',]
     list_filter = ['active', ]
     search_fields = [
@@ -37,25 +37,25 @@ class EpisodeAdmin(reversion.VersionAdmin):
         'patient__demographics__hospital_number'
     ]
 
-class PatientAdmin(reversion.VersionAdmin):
+class PatientAdmin(VersionAdmin):
     search_fields = [
         'demographics__first_name',
         'demographics__surname',
         'demographics__hospital_number'
     ]
 
-class TaggingAdmin(reversion.VersionAdmin):
+class TaggingAdmin(VersionAdmin):
     list_display = ['value', 'episode']
 
 
-class TeamAdmin(reversion.VersionAdmin):
+class TeamAdmin(VersionAdmin):
     list_display = ['title', 'name', 'active', 'restricted', 'visible_in_list', 'direct_add', 'order']
     search_fields = ['title']
     list_editable = ['active', 'order', 'restricted', 'visible_in_list', 'direct_add']
     filter_horizontal = ('useful_numbers',)
 
 
-class PatientSubRecordAdmin(reversion.VersionAdmin):
+class PatientSubRecordAdmin(VersionAdmin):
     search_fields = [
         'patient__demographics__first_name',
         'patient__demographics__surname',
@@ -63,7 +63,7 @@ class PatientSubRecordAdmin(reversion.VersionAdmin):
     ]
 
 
-class EpisodeSubRecordAdmin(reversion.VersionAdmin):
+class EpisodeSubRecordAdmin(VersionAdmin):
     search_fields = [
         'episode__patient__demographics__first_name',
         'episode__patient__demographics__surname',

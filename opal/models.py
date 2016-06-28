@@ -12,12 +12,12 @@ from django.conf import settings
 from django.utils import timezone
 from django.db import models, transaction
 from django.db.models import Q
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.urlresolvers import reverse
 from django.utils.functional import cached_property
-import reversion
+from reversion import revisions as reversion
 
 from opal.core import (
     application, exceptions, lookuplists, plugins, patient_lists, tagging
@@ -28,7 +28,6 @@ from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.subrecords import (
     episode_subrecords, patient_subrecords, get_subrecord_from_api_name
 )
-
 
 def get_default_episode_type():
     app = application.get_app()
@@ -244,7 +243,7 @@ class Filter(models.Model):
     """
     Saved filters for users extracting data.
     """
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
     name = models.CharField(max_length=200)
     criteria = models.TextField()
 
@@ -480,7 +479,7 @@ class Patient(models.Model):
 
 class PatientRecordAccess(models.Model):
     created = models.DateTimeField(auto_now_add=True)
-    user    = models.ForeignKey(User)
+    user    = models.ForeignKey(settings.AUTH_USER_MODEL)
     patient = models.ForeignKey(Patient)
 
     def to_dict(self, user):
@@ -517,10 +516,12 @@ class TrackedModel(models.Model):
     created = models.DateTimeField(blank=True, null=True)
     updated = models.DateTimeField(blank=True, null=True)
     created_by = models.ForeignKey(
-        User, blank=True, null=True, related_name="created_%(app_label)s_%(class)s_subrecords"
+        settings.AUTH_USER_MODEL,
+        blank=True, null=True, related_name="created_%(app_label)s_%(class)s_subrecords"
     )
     updated_by = models.ForeignKey(
-        User, blank=True, null=True, related_name="updated_%(app_label)s_%(class)s_subrecords"
+        settings.AUTH_USER_MODEL,
+        blank=True, null=True, related_name="updated_%(app_label)s_%(class)s_subrecords"
     )
 
     class Meta:
@@ -973,7 +974,7 @@ class Tagging(TrackedModel, models.Model):
     _title = 'Teams'
 
     team     = models.ForeignKey(Team, blank=True, null=True)
-    user     = models.ForeignKey(User, null=True, blank=True)
+    user     = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True)
     episode  = models.ForeignKey(Episode, null=False)
     archived = models.BooleanField(default=False)
     value    = models.CharField(max_length=200, blank=True, null=True)
@@ -1013,6 +1014,8 @@ class Tagging(TrackedModel, models.Model):
         # a one off function that syncs the tags with archived tags with the
         # existing tags
         from collections import defaultdict
+        User = get_user_model()
+
         deleted = reversion.get_deleted(cls)
         episode_id_to_team_dict = defaultdict(set)
         episode_id_to_user_dict = defaultdict(set)
@@ -1503,7 +1506,7 @@ class UserProfile(models.Model):
     HELP_EXTRACT="This user will be able to download data from advanced searches"
     HELP_PW="Force this user to change their password on the next login"
 
-    user                  = models.OneToOneField(User, related_name='profile')
+    user                  = models.OneToOneField(settings.AUTH_USER_MODEL, related_name='profile')
     force_password_change = models.BooleanField(default=True, help_text=HELP_PW)
     can_extract           = models.BooleanField(default=False, help_text=HELP_EXTRACT)
     readonly              = models.BooleanField(default=False, help_text=HELP_READONLY)

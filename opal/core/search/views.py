@@ -11,10 +11,8 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import View, TemplateView
 from django.core.paginator import Paginator
 
-from opal import models
 from opal.core.views import (LoginRequiredMixin, _build_json_response,
                              _get_request_data, with_no_caching)
-from opal.core.search import queries
 from opal.core.search.extract import zip_archive, async_extract
 
 PAGINATION_AMOUNT = 10
@@ -46,6 +44,8 @@ def _add_pagination(eps, page_number):
 @with_no_caching
 @require_http_methods(['GET'])
 def patient_search_view(request):
+    from opal.core.search import queries
+
     hospital_number = request.GET.get("hospital_number")
 
     if hospital_number is None:
@@ -66,6 +66,8 @@ def patient_search_view(request):
 @with_no_caching
 @require_http_methods(['GET'])
 def simple_search_view(request):
+    from opal.core.search import queries
+
     page_number = int(request.GET.get("page_number", 1))
     query_string = request.GET.get("query")
     if not query_string:
@@ -78,6 +80,8 @@ def simple_search_view(request):
 
 class ExtractSearchView(View):
     def post(self, *args, **kwargs):
+        from opal.core.search import queries
+
         request_data = _get_request_data(self.request)
         page_number = 1
 
@@ -96,6 +100,8 @@ class ExtractSearchView(View):
 class DownloadSearchView(View):
 
     def post(self, *args, **kwargs):
+        from opal.core.search import queries
+
         if getattr(settings, 'EXTRACT_ASYNC', None):
             criteria = _get_request_data(self.request)['criteria']
             extract_id = async_extract(
@@ -119,10 +125,14 @@ class DownloadSearchView(View):
 class FilterView(LoginRequiredMixin, View):
 
     def get(self, *args, **kwargs):
+        from opal import models
+
         filters = models.Filter.objects.filter(user=self.request.user)
         return _build_json_response([f.to_dict() for f in filters])
 
     def post(self, *args, **kwargs):
+        from opal import models
+
         data = _get_request_data(self.request)
         self.filter = models.Filter(user=self.request.user)
         self.filter.update_from_dict(data)
@@ -131,6 +141,8 @@ class FilterView(LoginRequiredMixin, View):
 
 class FilterDetailView(LoginRequiredMixin, View):
     def dispatch(self, *args, **kwargs):
+        from opal import models
+
         try:
             self.filter = models.Filter.objects.get(pk=kwargs['pk'])
         except models.Episode.DoesNotExist:

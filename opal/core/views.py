@@ -10,7 +10,6 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.core.serializers.json import DjangoJSONEncoder
-from rest_framework import mixins, viewsets
 from django.conf import settings
 
 
@@ -61,10 +60,3 @@ def with_no_caching(view):
         return response
 
     return no_cache
-
-class ModelViewSet(
-        mixins.CreateModelMixin,
-        mixins.RetrieveModelMixin,
-        mixins.ListModelMixin,
-        viewsets.GenericViewSet):
-    pass

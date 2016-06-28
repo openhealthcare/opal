@@ -9,7 +9,6 @@ import zipfile
 import functools
 import logging
 
-from opal.models import Episode
 from opal.core.subrecords import episode_subrecords, patient_subrecords
 
 
@@ -38,6 +37,8 @@ def episode_csv(episodes, user, file_name):
     """
     Given an iterable of EPISODES, create a CSV file containing Episode details.
     """
+    from opal.models import Episode
+
     logging.info("writing eposides")
     with open(file_name, "w") as csv_file:
         fieldnames = Episode._get_fieldnames_to_serialize()
