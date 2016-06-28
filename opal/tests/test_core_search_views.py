@@ -160,8 +160,7 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
         data = json.loads(resp.content)
         self.assertEqual(self.expected, data)
 
-    # searching by James Bond should yield Samantha Bond second
-    # and not blofeld
+    # searching by James Bond should only yield James Bond
     def test_incomplete_matching(self):
         james_patient, sam_episode = self.create_patient(
             "James", "Bond", "23412"
@@ -176,11 +175,9 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
         request.user = self.user
         resp = self.view(request)
         data = json.loads(resp.content)["object_list"]
-        self.assertEqual(len(data), 2)
+        self.assertEqual(len(data), 1)
         self.assertEqual(data[0]["first_name"], "James")
         self.assertEqual(data[0]["surname"], "Bond")
-        self.assertEqual(data[1]["first_name"], "Samantha")
-        self.assertEqual(data[1]["surname"], "Bond")
 
 
 class SearchTemplateTestCase(OpalTestCase):

@@ -1,9 +1,15 @@
 describe('EditItemCtrl', function (){
     "use strict";
 
-    var $scope, $cookieStore, $timeout, $modal, item, Item;
+    var $scope, $cookieStore, $timeout, $modal, $httpBackend;
+    var item, Item;
     var dialog, Episode, episode, ngProgressLite, $q, $rootScope;
     var Schema, $controller, controller, fakeModalInstance;
+
+    var referencedata = {
+        dogs: ['Poodle', 'Dalmation'],
+        hats: ['Bowler', 'Top', 'Sun']
+    };
 
     var episodeData = {
         id: 123,
@@ -88,13 +94,13 @@ describe('EditItemCtrl', function (){
             "Stool Parasitology PCR"
         ],
         micro_test_defaults: {
-          micro_test_c_difficile: {
-            c_difficile_antigen: "pending",
-            c_difficile_toxin: "pending"
-          }
+            micro_test_c_difficile: {
+                c_difficile_antigen: "pending",
+                c_difficile_toxin: "pending"
+            }
         },
         micro_test_c_difficile: [
-          "C diff", "Clostridium difficile"
+            "C diff", "Clostridium difficile"
         ]
     };
 
@@ -116,6 +122,7 @@ describe('EditItemCtrl', function (){
             Episode        = $injector.get('Episode');
             $controller    = $injector.get('$controller');
             $q             = $injector.get('$q');
+            $httpBackend   = $injector.get('$httpBackend');
             $cookieStore   = $injector.get('$cookieStore');
             $timeout       = $injector.get('$timeout');
             $modal         = $injector.get('$modal');
@@ -152,6 +159,10 @@ describe('EditItemCtrl', function (){
             episode       : episode,
             ngProgressLite: ngProgressLite,
         });
+
+        $httpBackend.expectGET('/api/v0.1/referencedata/').respond(referencedata);
+        $scope.$apply();
+        $httpBackend.flush();
 
     });
 
@@ -258,32 +269,35 @@ describe('EditItemCtrl', function (){
 
     describe('testType', function(){
         beforeEach(function(){
-          var existingEpisode = new Episode(angular.copy(episodeData));
+            var existingEpisode = new Episode(angular.copy(episodeData));
 
-          // when we prepopulate we should not remove the consistency_token
-          existingEpisode.microbiology_test = [{
-            test: "T brucei Serology",
-            consistency_token: "23423223"
-          }];
+            // when we prepopulate we should not remove the consistency_token
+            existingEpisode.microbiology_test = [{
+                test: "T brucei Serology",
+                consistency_token: "23423223"
+            }];
 
-          item = new Item(
-              existingEpisode.microbiology_test[0],
-              existingEpisode,
-              columns['default'][4]
-          );
+            item = new Item(
+                existingEpisode.microbiology_test[0],
+                existingEpisode,
+                columns['default'][4]
+            );
 
-          $scope = $rootScope.$new();
-          controller = $controller('EditItemCtrl', {
-              $scope        : $scope,
-              $cookieStore  : $cookieStore,
-              $timeout      : $timeout,
-              $modalInstance: fakeModalInstance,
-              item          : item,
-              options       : options,
-              profile       : profile,
-              episode       : existingEpisode,
-              ngProgressLite: ngProgressLite,
-          });
+            $scope = $rootScope.$new();
+            controller = $controller('EditItemCtrl', {
+                $scope        : $scope,
+                $cookieStore  : $cookieStore,
+                $timeout      : $timeout,
+                $modalInstance: fakeModalInstance,
+                item          : item,
+                options       : options,
+                profile       : profile,
+                episode       : existingEpisode,
+                ngProgressLite: ngProgressLite,
+            });
+            // We need to fire the promise - the http expectation is set above.
+            $scope.$apply();
+
         })
 
         it('should prepopulate microbiology tests', function(){

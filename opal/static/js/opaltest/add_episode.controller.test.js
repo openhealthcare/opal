@@ -37,6 +37,12 @@ describe('AddEpisodeCtrl', function (){
         tag_hierarchy :{'tropical': []}
     };
 
+    var referencedata = {
+        dogs: ['Poodle', 'Dalmation'],
+        hats: ['Bowler', 'Top', 'Sun']
+    };
+
+
     beforeEach(function(){
         module('opal');
         var $controller, $modal
@@ -58,6 +64,8 @@ describe('AddEpisodeCtrl', function (){
 
         schema = new Schema(columns.default);
         modalInstance = $modal.open({template: 'Notatemplate'});
+        $scope = $rootScope.$new();
+
         var controller = $controller('AddEpisodeCtrl', {
             $scope: $scope,
             $modalInstance: modalInstance,
@@ -67,6 +75,12 @@ describe('AddEpisodeCtrl', function (){
             demographics: {},
             tags: {tag: 'tropical', subtag: ''}
         });
+
+        $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+        $httpBackend.expectGET('/api/v0.1/referencedata/').respond(referencedata);
+        $scope.$apply();
+        $httpBackend.flush();
+
     });
 
     describe('initial state', function() {
@@ -78,7 +92,6 @@ describe('AddEpisodeCtrl', function (){
     describe('save()', function(){
 
         it('should save', function(){
-            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
             $httpBackend.expectPOST('/api/v0.1/episode/').respond({demographics:[{patient_id: 1}]})
             $scope.editing.date_of_admission = moment(new Date(13, 1, 2014));
             $scope.editing.demographics.date_of_birth = moment(new Date(13, 1, 1914));

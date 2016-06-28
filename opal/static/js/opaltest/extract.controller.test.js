@@ -8,6 +8,10 @@ describe('ExtractCtrl', function(){
         condition: ['Another condition', 'Some condition'],
         tag_hierarchy :{'tropical': []}
     }
+    var referencedata = {
+        dogs: ['Poodle', 'Dalmation'],
+        hats: ['Bowler', 'Top', 'Sun']
+    };
 
     var columnsData = [
         {
@@ -118,6 +122,12 @@ describe('ExtractCtrl', function(){
             schema : schema,
             PatientSummary: PatientSummary
         });
+
+        $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
+        $httpBackend.expectGET('/api/v0.1/referencedata/').respond(referencedata);
+        $scope.$apply();
+        $httpBackend.flush();
+
     });
 
     describe('Getting Complete Criteria', function(){
@@ -283,9 +293,6 @@ describe('ExtractCtrl', function(){
     });
 
     describe('Search', function(){
-        beforeEach(function(){
-            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
-        });
 
         it('should ask the server for results', function(){
             $httpBackend.expectPOST("/search/extract/").respond({
@@ -340,7 +347,6 @@ describe('ExtractCtrl', function(){
         });
 
         it('should post to the url', function() {
-            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
             $httpBackend.expectPOST('/search/extract/download').respond({extract_id: '23'});
             $httpBackend.expectGET('/search/extract/result/23').respond({state: 'SUCCESS'})
             $scope.async_extract();
@@ -355,7 +361,6 @@ describe('ExtractCtrl', function(){
         });
 
         it('should re-ping', function() {
-            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
             $httpBackend.expectPOST('/search/extract/download').respond({});
             $scope.async_extract();
             $timeout.flush()
@@ -365,7 +370,6 @@ describe('ExtractCtrl', function(){
         });
 
         it('should alert if we fail', function() {
-            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
             $httpBackend.expectPOST('/search/extract/download').respond({extract_id: '23'});
             $httpBackend.expectGET('/search/extract/result/23').respond({state: 'FAILURE'})
             spyOn($window, 'alert');

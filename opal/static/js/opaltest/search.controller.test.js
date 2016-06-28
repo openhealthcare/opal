@@ -50,6 +50,9 @@ describe('SearchCtrl', function (){
         options = {};
         profile = {};
 
+
+        spyOn(location, 'path').and.returnValue("/search");
+
         controller = $controller('SearchCtrl', {
             $scope         : $scope,
             $location      : location,
@@ -101,7 +104,7 @@ describe('SearchCtrl', function (){
         it("should redirect to the search page if we're not in search", function(){
             locationDetails.href = "";
             locationDetails.pathname = "/somewhere";
-            $scope.searchTerm = "Bond";
+            $scope.query.searchTerm = "Bond";
             $scope.search();
             expectedUrl = "/#/search?query=Bond";
             expect(locationDetails.href).toEqual(expectedUrl);
@@ -110,7 +113,7 @@ describe('SearchCtrl', function (){
         it("should update the url if on the search page", function(){
             locationDetails.href = "unchanged";
             locationDetails.pathname = "/";
-            $scope.searchTerm = "Bond";
+            $scope.query.searchTerm = "Bond";
             $scope.search();
             expectedSearch = {
                 query: "Bond",
@@ -120,10 +123,24 @@ describe('SearchCtrl', function (){
         });
     });
 
+    describe("it should autocomplete the search if necessary", function(){
+        it('should watch the autocomplete and query if it changes', function(){
+          $scope.query.autocompleteSearchTerm = "autocomplete";
+          $scope.query.searchTerm = "";
+          expectedUrl = "/search/simple/?query=autocomplete";
+          $httpBackend.expectGET(expectedUrl).respond({
+              page_number: 1,
+              object_list: [],
+              total_pages: 1
+          });
+          $scope.$apply();
+          $httpBackend.flush();
+        });
+    });
+
 
     describe('jumpToEpisode()', function (){
         it('Should call location.path()', function () {
-            spyOn(location, 'path').and.callThrough();
             $scope.jumpToEpisode({active_episode_id: 555});
             expect(location.path).toHaveBeenCalledWith('/episode/555');
         });

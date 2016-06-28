@@ -1,48 +1,52 @@
 angular.module('opal.controllers')
-    .controller('AddEpisodeCtrl', function($scope, $http,
-                                           $timeout, $routeParams,
-                                           $modalInstance, $rootScope,
-                                           Episode,
-                                           FieldTranslater,
-                                           TagService,
-                                           options,
-                                           demographics,
-                                           tags) {
-        var currentTags = [];
+    .controller(
+        'AddEpisodeCtrl',
+        function($scope, $http,
+                 $timeout, $routeParams,
+                 $modalInstance, $rootScope,
+                 Episode, FieldTranslater, Referencedata,
+                 TagService,
+                 options,
+                 demographics,
+                 tags){
+            "use strict";
+            Referencedata.then(function(referencedata){
 
-	    for (var name in options) {
-		    $scope[name + '_list'] = options[name];
-	    };
+                var currentTags = [];
 
-	    $scope.editing = {
-            tagging: [{}],
-		    location: {},
-            demographics: demographics
-	    };
+                _.extend($scope, referencedata.toLookuplists());
 
-        if(tags.tag){
-            currentTags = [tags.tag];
-        }
+	            $scope.editing = {
+                    tagging: [{}],
+		            location: {},
+                    demographics: demographics
+	            };
 
-        if(tags.subtag){
-            // if there's a subtag, don't tag with the parent tag
-            currentTags = [tags.subtag];
-        }
+                if(tags.tag){
+                    currentTags = [tags.tag];
+                }
 
-        $scope.tagService = new TagService(currentTags);
+                if(tags.subtag){
+                    // if there's a subtag, don't tag with the parent tag
+                    currentTags = [tags.subtag];
+                }
 
-	    $scope.save = function() {
-            $scope.editing.tagging = [$scope.tagService.toSave()];
-            var toSave = FieldTranslater.jsToPatient($scope.editing)
+                $scope.tagService = new TagService(currentTags);
 
-		    $http.post('/api/v0.1/episode/', toSave).success(function(episode) {
-			    episode = new Episode(episode);
-			    $modalInstance.close(episode);
-		    });
-	    };
+	            $scope.save = function() {
+                    $scope.editing.tagging = [$scope.tagService.toSave()];
+                    var toSave = FieldTranslater.jsToPatient($scope.editing)
 
-	    $scope.cancel = function() {
-		    $modalInstance.close(null);
-	    };
+		            $http.post('/api/v0.1/episode/', toSave).success(function(episode) {
+			            episode = new Episode(episode);
+			            $modalInstance.close(episode);
+		            });
+	            };
 
-    });
+	            $scope.cancel = function() {
+		            $modalInstance.close(null);
+	            };
+
+            });
+
+        });
