@@ -46,7 +46,7 @@ setup(
         'letter',
         'jinja2',
         'requests',
-        'django==1.8.3',
+        'django==1.8.13',
         'django-reversion==1.8.7',
         'django-axes==1.4.0',
         'djangorestframework==3.2.2',
