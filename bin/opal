@@ -10,7 +10,6 @@ import shutil
 import subprocess
 import sys
 
-from fabric.api import local
 import ffs
 from ffs import nix
 from ffs.contrib import mold
@@ -352,7 +351,7 @@ def test(args):
 
 
 def check_for_uncommitted():
-    changes = local("git status --porcelain", capture=True)
+    changes = subprocess.check_output(["git", "status", "--porcelain"])
     return len(changes)
 
 
@@ -363,7 +362,7 @@ def get_requirements():
     """
 
     with USERLAND_HERE:
-        requirements = local("less requirements.txt", capture=True).split("\n")
+        requirements = subprocess.check_output(["less", "requirements.txt"]).split("\n")
 
         package_to_version = {}
 
@@ -397,7 +396,7 @@ def checkout(args):
     package_name_version = get_requirements()
     SOURCE_DIR = USERLAND_HERE.parent
     with SOURCE_DIR:
-        existing_packages = local("ls", capture=True).split("\n")
+        existing_packages = subprocess.check_output(["ls"]).split("\n")
         uncommitted = []
 
         for package_name, version in package_name_version.iteritems():
@@ -418,17 +417,17 @@ def checkout(args):
                     print "checking out {0} to {1}".format(
                         package_name, version
                     )
-                    local("git checkout {}".format(version))
-                    local("python setup.py develop")
+                    os.system("git checkout {}".format(version))
+                    os.system("python setup.py develop")
             else:
                 print "cloning {}".format(package_name)
-                local("git clone {}".format(package_name))
+                os.system("git clone {}".format(package_name))
                 with SOURCE_DIR/package_name:
                     print "checking out {0} to {1}".format(
                         package_name, version
                     )
-                    local("git checkout {}".format(version))
-                    local("python setup.py develop")
+                    os.system("git checkout {}".format(version))
+                    os.system("python setup.py develop")
 
 def main():
     parser = argparse.ArgumentParser(
