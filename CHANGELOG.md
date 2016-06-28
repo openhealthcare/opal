@@ -14,6 +14,10 @@ The OPAL Angular layer has been updated to reflect this, and
 should handle the transition seamlessly, but code calling the API directly should update
 to reflect the new URL.
 
+Updates dependency graph:
+
+* Django -> 1.8.13
+
 ### 0.6.0 (Major Release)
 
 
