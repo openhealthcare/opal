@@ -139,7 +139,7 @@ class PatientGenerator(object):
     def get_name(self):
         first_name = random.choice(first_names)
         last_name = random.choice(last_names)
-        return "%s %s" % (first_name, last_name)
+        return (first_name, last_name)
 
     def get_hospital_numbers(self, amount, seed=0):
         template = "00000000"
@@ -189,7 +189,9 @@ class PatientGenerator(object):
         demographics = patient.demographics_set.get()
         hospital_number = random.randint(1000, 2000000)  # self.get_unique_hospital_numbers(1)[0]
         hospital_number = str(hospital_number)
-        demographics.name=self.get_name()
+        frist, last = self.get_name()
+        demographics.first_name = frist
+        demographics.surname = last
         demographics.hospital_number=hospital_number
         demographics.nhs_number=hospital_number
         demographics.date_of_birth=self.get_birth_date()

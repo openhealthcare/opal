@@ -15,7 +15,7 @@ class RecordPanelTestCase(OpalTestCase):
             singleton=True,
             title='Demographics',
             detail_template='records/demographics_detail.html',
-            icon=None,
+            icon='fa fa-user',
             editable=1,
             angular_filter=None,
             noentries=None,
@@ -61,7 +61,7 @@ class RecordTimelineTestCase(OpalTestCase):
             name='demographics',
             title='Demographics',
             detail_template='records/demographics_detail.html',
-            icon=None,
+            icon='fa fa-user',
             editable=True,
             whenfield='when'
         )

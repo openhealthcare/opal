@@ -17,7 +17,7 @@ def story(label, story_dir):
     }
 
     template_files = []
-    for template_dir in (settings.TEMPLATE_DIRS + get_app_template_dirs('')):
+    for template_dir in (settings.TEMPLATE_DIRS + list(get_app_template_dirs(''))):
         story_path = os.path.join(template_dir, story_dir)
         for dir, dirnames, filenames in os.walk(story_path):
             for filename in filenames:

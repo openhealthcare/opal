@@ -664,7 +664,8 @@ class TaggingTestCase(OpalTestCase):
 class TaggingImportTestCase(OpalTestCase):
 
     def test_tagging_import_from_reversion(self):
-        import reversion
+        from reversion import revisions as reversion
+
         from django.db import transaction
         patient = Patient.objects.create()
 
@@ -849,9 +850,10 @@ class TaggingImportTestCase(OpalTestCase):
 
 class AbstractDemographicsTestCase(OpalTestCase):
     def test_name(self):
-        d = models.Demographics(first_name='Jane',
-                                surname='Doe',
-                                middle_name='Obsidian')
+        from opal.tests.models import Demographics
+        d = Demographics(first_name='Jane',
+                         surname='Doe',
+                         middle_name='Obsidian')
         self.assertEqual('Jane Doe', d.name)
 
 

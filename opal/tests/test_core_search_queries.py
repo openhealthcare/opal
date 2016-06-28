@@ -1,11 +1,13 @@
 """
 unittests for opal.core.search.queries
 """
-import reversion
-from django.db import transaction
-from opal.models import Patient, Team
-from opal.core.test import OpalTestCase
 from datetime import date
+
+from django.db import transaction
+from reversion import revisions as reversion
+
+from opal.core.test import OpalTestCase
+from opal.models import Patient, Team
 
 from opal.core.search import queries
 

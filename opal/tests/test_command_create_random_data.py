@@ -105,9 +105,8 @@ class PatientGeneratorTestCase(OpalTestCase):
         self.gen = crd.PatientGenerator()
 
     def test_get_name(self):
-        name = self.gen.get_name()
-        frist, last = name.split()
-        self.assertIsInstance(name, str)
+        frist, last = self.gen.get_name()
+        self.assertIsInstance(frist, str)
         self.assertIn(frist, crd.first_names)
         self.assertIn(last, crd.last_names)
 
