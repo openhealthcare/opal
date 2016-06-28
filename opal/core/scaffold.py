@@ -55,7 +55,7 @@ def create_form_template_for(record, scaffold_base):
     """
     Create a form template for RECORD.
     """
-    write('Creating modal template for{0}'.format(record))
+    write('Creating form template for{0}'.format(record))
     name = record.get_api_name()
 
     templates = _get_template_dir_from_record(record)
