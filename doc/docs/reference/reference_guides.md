@@ -14,9 +14,9 @@ The following reference guides are available:
 -|-
 [opal.core.application](opal_application.md) | OPAL Application objects|
 [opal.core.detail](detail_views.md)|Detail Views - Custom views over one or many episodes.|
-[opal.core.episodes](episode_categories.md)|Episode Categories - Controlling the behaviour of different types of episode.|
+[opal.core.episodes](episode_categories.md)|Episode Categories - Controlling the behaviour of different types of episode|
 [opal.core.schemas](schemas.md)|Schemas - Dynamic columns for the table views|
-[opal.core.patient_lists](patient_list.md)|Patient Lists - defining different types of list.|
+[opal.core.patient_lists](patient_list.md)|Patient Lists - defining different types of list|
 
 ### Angular Services
 |
@@ -32,7 +32,7 @@ The following reference guides are available:
 |
 -|-
 [The forms Templatetag library](form_templatetags.md) | The building blocks for OPAL forms
-[The panels Templatetag library](panels_templatetags.md) | Rendering record panels.
+[The panels Templatetag library](panels_templatetags.md) | Rendering record panels
 [Javascript Helpers](javascript_helpers.md)| Angular filters and $rootScope methods
 
 ### OPAL Search module
