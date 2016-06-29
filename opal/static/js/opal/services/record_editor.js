@@ -70,9 +70,9 @@ angular.module('opal.services').factory('RecordEditor', function(
               controller: item.formController,
               resolve: {
                   item: function() { return item; },
-                  options: function(Options) { return Options; },
                   profile: function(UserProfile) { return profile; },
                   episode: function() { return episode; },
+                  metadata: function(Metadata) { return Metadata; },
                   referencedata: function(Referencedata){ return Referencedata; }
               }
           };
