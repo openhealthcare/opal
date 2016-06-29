@@ -72,7 +72,8 @@ angular.module('opal.services').factory('RecordEditor', function(
                   item: function() { return item; },
                   options: function(Options) { return Options; },
                   profile: function(UserProfile) { return profile; },
-                  episode: function() { return episode; }
+                  episode: function() { return episode; },
+                  referencedata: function(Referencedata){ return Referencedata; }
               }
           };
 

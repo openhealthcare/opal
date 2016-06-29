@@ -2,9 +2,9 @@ angular.module('opal.controllers').controller(
     'EditItemCtrl', function($scope, $cookieStore, $timeout,
                              $modalInstance, $modal, $q,
                              ngProgressLite,
-                             Referencedata,
+                             referencedata,
                              profile, item, options, episode) {
-        Referencedata.then(function(referencedata){
+
             $scope.profile = profile;
             $scope.the_episode = episode;
             $scope.episode = episode.makeCopy();
@@ -142,5 +142,5 @@ angular.module('opal.controllers').controller(
                 angular.extend($scope.editing[item.columnName], data);
             };
 
-        });
+
     });
