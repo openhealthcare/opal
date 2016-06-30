@@ -37,8 +37,8 @@ class LookupList(models.Model):
         return cls.__name__.lower()
 
     def save(self, *args, **kwargs):
-        """ save the look up list, but do a check that makes
-            there isn't a synonym already with this name for
+        """ Save the lookuplist value, but do a check that makes
+            sure there isn't a synonym already with this name for
             this ct
         """
         if synonym_exists(self.__class__, self.name):
