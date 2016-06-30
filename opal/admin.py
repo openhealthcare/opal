@@ -5,13 +5,16 @@ from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ValidationError
+from django import forms
 
 import reversion
 
 from opal import models
 from opal.models import Synonym
 from opal.models import UserProfile
-from opal.core.lookuplists import LookupList
+from opal.core.lookuplists import LookupList, synonym_exists
 from opal.core.subrecords import episode_subrecords, patient_subrecords
 
 admin.site.unregister(User)
@@ -74,10 +77,25 @@ class EpisodeSubRecordAdmin(reversion.VersionAdmin):
 class SynonymInline(GenericTabularInline):
     model = Synonym
 
+
+class LookupListForm(forms.ModelForm):
+    def clean_name(self):
+        object_class = self.instance.__class__
+        name = self.cleaned_data["name"]
+        if synonym_exists(object_class, name):
+            raise ValidationError(
+                "A synonym of that name already exists"
+            )
+
+        return self.cleaned_data["name"]
+
+
 class OptionAdmin(admin.ModelAdmin):
+    form = LookupListForm
     ordering = ['name']
     search_fields = ['name']
     inlines = [SynonymInline]
+
 
 for model in LookupList.__subclasses__():
     admin.site.register(model, OptionAdmin)
