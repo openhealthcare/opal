@@ -2,9 +2,8 @@ angular.module('opal.controllers').controller(
     'EditItemCtrl', function($scope, $cookieStore, $timeout,
                              $modalInstance, $modal, $q,
                              ngProgressLite,
-                             referencedata,
-                             profile, item, options, episode) {
-
+                             referencedata, metadata,
+                             profile, item, episode) {
             $scope.profile = profile;
             $scope.the_episode = episode;
             $scope.episode = episode.makeCopy();
@@ -24,7 +23,7 @@ angular.module('opal.controllers').controller(
             $scope.columnName = item.columnName;
             _.extend($scope, referencedata.toLookuplists());
 
-            $scope.macros = options.macros;
+            $scope.macros = metadata.macros;
             $scope.select_macro = function(item){
                 return item.expanded;
             };
@@ -33,13 +32,13 @@ angular.module('opal.controllers').controller(
 	        if (item.columnName == 'microbiology_test' || item.columnName == 'lab_test' || item.columnName == 'investigation') {
 		        $scope.microbiology_test_list = [];
 		        $scope.microbiology_test_lookup = {};
-		        $scope.micro_test_defaults =  options.micro_test_defaults;
+		        $scope.micro_test_defaults =  metadata.micro_test_defaults;
 
-		        for (var name in options){
+		        for (var name in metadata){
 			        if (name.indexOf('micro_test') == 0) {
-				        for (var ix = 0; ix < options[name].length; ix++) {
-					        $scope.microbiology_test_list.push(options[name][ix]);
-					        $scope.microbiology_test_lookup[options[name][ix]] = name;
+				        for (var ix = 0; ix < metadata[name].length; ix++) {
+					        $scope.microbiology_test_list.push(metadata[name][ix]);
+					        $scope.microbiology_test_lookup[metadata[name][ix]] = name;
 				        };
 			        };
 		        };

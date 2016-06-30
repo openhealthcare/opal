@@ -11,6 +11,21 @@ describe('EditItemCtrl', function (){
         hats: ['Bowler', 'Top', 'Sun'],
         toLookuplists: function(){return {}}
     };
+    var metadata = {
+        tag_hierarchy :{'tropical': []},
+        "micro_test_stool_parasitology_pcr": [
+            "Stool Parasitology PCR"
+        ],
+        micro_test_defaults: {
+            micro_test_c_difficile: {
+                c_difficile_antigen: "pending",
+                c_difficile_toxin: "pending"
+            }
+        },
+        micro_test_c_difficile: [
+            "C diff", "Clostridium difficile"
+        ]
+    };
 
     var episodeData = {
         id: 123,
@@ -88,23 +103,6 @@ describe('EditItemCtrl', function (){
         ]
     };
 
-    var options = {
-        condition: ['Another condition', 'Some condition'],
-        tag_hierarchy :{'tropical': []},
-        "micro_test_stool_parasitology_pcr": [
-            "Stool Parasitology PCR"
-        ],
-        micro_test_defaults: {
-            micro_test_c_difficile: {
-                c_difficile_antigen: "pending",
-                c_difficile_toxin: "pending"
-            }
-        },
-        micro_test_c_difficile: [
-            "C diff", "Clostridium difficile"
-        ]
-    };
-
     var profile = {
         readonly   : false,
         can_extract: true,
@@ -155,7 +153,7 @@ describe('EditItemCtrl', function (){
             $timeout      : $timeout,
             $modalInstance: fakeModalInstance,
             item          : item,
-            options       : options,
+            metadata      : metadata,
             profile       : profile,
             episode       : episode,
             ngProgressLite: ngProgressLite,
@@ -288,7 +286,7 @@ describe('EditItemCtrl', function (){
                 $timeout      : $timeout,
                 $modalInstance: fakeModalInstance,
                 item          : item,
-                options       : options,
+                metadata      : metadata,
                 profile       : profile,
                 episode       : existingEpisode,
                 ngProgressLite: ngProgressLite,
