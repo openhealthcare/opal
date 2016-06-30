@@ -1284,7 +1284,7 @@ class Microbiology_organism(lookuplists.LookupList):
         verbose_name = "Microbiology organism"
 
 
-class ReferralReason(lookuplists.LookupList):
+class ReferralType(lookuplists.LookupList):
     pass
 
 
@@ -1596,7 +1596,7 @@ class ReferralRoute(EpisodeSubrecord):
     # an individual can be from multiple teams
     referral_team = ForeignKeyOrFreeText(Speciality)
 
-    referral_reason = ForeignKeyOrFreeText(ReferralReason)
+    referral_type = ForeignKeyOrFreeText(ReferralType)
 
 
 class PatientConsultation(EpisodeSubrecord):
