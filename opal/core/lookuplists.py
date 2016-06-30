@@ -8,7 +8,7 @@ from django.db import models
 
 def synonym_exists(lookuplist, name):
     """
-        a lookup list name should be uniqe among its
+        A lookup list name should be uniqe among its
         type and synonyms of its type
     """
     from opal.models import Synonym
