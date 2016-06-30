@@ -8,7 +8,8 @@ describe('EditItemCtrl', function (){
 
     var referencedata = {
         dogs: ['Poodle', 'Dalmation'],
-        hats: ['Bowler', 'Top', 'Sun']
+        hats: ['Bowler', 'Top', 'Sun'],
+        toLookuplists: function(){return {}}
     };
 
     var episodeData = {
@@ -158,11 +159,8 @@ describe('EditItemCtrl', function (){
             profile       : profile,
             episode       : episode,
             ngProgressLite: ngProgressLite,
+            referencedata: referencedata,
         });
-
-        $httpBackend.expectGET('/api/v0.1/referencedata/').respond(referencedata);
-        $scope.$apply();
-        $httpBackend.flush();
 
     });
 
@@ -294,6 +292,7 @@ describe('EditItemCtrl', function (){
                 profile       : profile,
                 episode       : existingEpisode,
                 ngProgressLite: ngProgressLite,
+                referencedata: referencedata,
             });
             // We need to fire the promise - the http expectation is set above.
             $scope.$apply();
