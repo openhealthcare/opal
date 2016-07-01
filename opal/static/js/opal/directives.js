@@ -232,6 +232,22 @@ directives.directive('autofocus', ['$timeout', function($timeout) {
   };
 }]);
 
+// a nice little directive to disable
+// a button on click unless we tell it otherwise
+directives.directive('oneClickOnly', function(){
+  return {
+    link: function($scope, $element, attrs){
+      if(attrs.oneClickOnly === undefined || !attrs.oneClickOnly){
+        $element.on('click', function(){
+          if(!$element.prop('disabled')){
+            $element.prop( "disabled", true );
+          }
+        });
+      }
+    }
+  };
+});
+
 directives.directive("dateOfBirth", function(){
   return {
     require: "?ngModel",
