@@ -138,7 +138,7 @@ class FilterDetailView(LoginRequiredMixin, View):
         return super(FilterDetailView, self).dispatch(*args, **kwargs)
 
     def get(self, *args, **kwargs):
-        return _build_json_response(self.filter)
+        return _build_json_response(self.filter.to_dict())
 
     def put(self, *args, **kwargs):
         data = _get_request_data(self.request)

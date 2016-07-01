@@ -234,3 +234,14 @@ class FilterViewTestCase(OpalTestCase):
             self.assertEqual(0, models.Filter.objects.count())
             view.post()
             self.assertEqual(1, models.Filter.objects.count())
+
+
+class FilterDetailViewTestCase(OpalTestCase):
+
+    def test_get(self):
+        filt = models.Filter(user=self.user, name='testfilter', criteria='[]')
+        filt.save()
+        request = self.rf.get('/filter/1/')
+        request.user = self.user
+        data = json.loads(views.FilterDetailView.as_view()(request, pk=filt.pk).content)
+        self.assertEqual({'name': 'testfilter', 'criteria': [], 'id': filt.id}, data)
