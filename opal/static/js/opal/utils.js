@@ -176,13 +176,6 @@ if (!Array.prototype.indexOf) {
 	Array.prototype.indexOf = _indexof
 }
 
-function clone(obj) {
-	if (typeof obj == 'object') {
-		return $.extend(true, {}, obj);
-	} else {
-		return obj;
-	}
-};
 
 // From http://stackoverflow.com/a/3937924/2463201
 jQuery.support.placeholder = (function(){
