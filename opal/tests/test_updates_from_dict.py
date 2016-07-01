@@ -15,3 +15,7 @@ class UpdatesFromDictMixinTest(TestCase):
         expected = ['id', 'condition', 'provisional', 'details', 'date_of_diagnosis']
         self.assertEqual(expected, names)
 
+    def test_get_named_foreign_key_fields(self):
+        for name in ['patient_id', 'episode_id', 'gp_id', 'nurse_id']:
+            self.assertEqual(djangomodels.ForeignKey,
+                             self.TestDiagnosis._get_field_type(name))
