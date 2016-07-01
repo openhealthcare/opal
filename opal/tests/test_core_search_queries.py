@@ -33,6 +33,28 @@ class PatientSummaryTestCase(OpalTestCase):
         summary.update(episode2)
         self.assertEqual(summary.end, the_date)
 
+class QueryBackendTestCase(OpalTestCase):
+
+    def test_fuzzy_query(self):
+        with self.assertRaises(NotImplementedError):
+            queries.QueryBackend(self.user, 'aquery').fuzzy_query()
+
+    def test_get_episodes(self):
+        with self.assertRaises(NotImplementedError):
+            queries.QueryBackend(self.user, 'aquery').get_episodes()
+
+    def test_description(self):
+        with self.assertRaises(NotImplementedError):
+            queries.QueryBackend(self.user, 'aquery').description()
+
+    def test_get_patients(self):
+        with self.assertRaises(NotImplementedError):
+            queries.QueryBackend(self.user, 'aquery').get_patients()
+
+    def test_get_patient_summaries(self):
+        with self.assertRaises(NotImplementedError):
+            queries.QueryBackend(self.user, 'aquery').get_patient_summaries()
+
 
 class DatabaseQueryTestCase(OpalTestCase):
     DATE_OF_BIRTH = date(day=27, month=1, year=1977)
