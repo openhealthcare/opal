@@ -1,15 +1,37 @@
 """
 unittests for opal.core.search.queries
 """
-import reversion
-from django.db import transaction
-from opal.models import Patient, Team
-from opal.core.test import OpalTestCase
 from datetime import date
+
+from django.db import transaction
+import reversion
+
+from opal.models import Episode, Patient, Team
+from opal.core.test import OpalTestCase
+from opal.tests.episodes import RestrictedEpisodeCategory
 
 from opal.core.search import queries
 
-from opal.tests.episodes import RestrictedEpisodeCategory
+
+class PatientSummaryTestCase(OpalTestCase):
+
+    def test_update_sets_start(self):
+        patient, episode = self.new_patient_and_episode_please()
+        summary = queries.PatientSummary(episode)
+        self.assertEqual(None, summary.start)
+        the_date = date(day=27, month=1, year=1972)
+        episode2 = patient.create_episode(date_of_admission=the_date)
+        summary.update(episode2)
+        self.assertEqual(summary.start, the_date)
+
+    def test_update_sets_end(self):
+        patient, episode = self.new_patient_and_episode_please()
+        summary = queries.PatientSummary(episode)
+        self.assertEqual(None, summary.start)
+        the_date = date(day=27, month=1, year=1972)
+        episode2 = patient.create_episode(discharge_date=the_date)
+        summary.update(episode2)
+        self.assertEqual(summary.end, the_date)
 
 
 class DatabaseQueryTestCase(OpalTestCase):
