@@ -25,3 +25,17 @@ class ChangePasswordFormTestCase(OpalTestCase):
         f.cleaned_data = {'password1': 'password'}
         with self.assertRaises(forms.ValidationError):
             p = f.clean_password1()
+
+    def test_save(self):
+        self.user.profile.force_password_change = True
+        self.user.profile.save()
+        self.assertEqual(True, self.user.profile.force_password_change)
+        data = {
+            'old_password' : 'password',
+            'password1': 'abc123HHHH',
+            'password2': 'abc123HHHH'
+        }
+        f = forms.ChangePasswordForm(self.user, data)
+        self.assertTrue(f.is_valid())
+        user = f.save()
+        self.assertEqual(False, user.profile.force_password_change)
