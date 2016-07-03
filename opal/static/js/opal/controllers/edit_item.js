@@ -86,12 +86,9 @@ angular.module('opal.controllers').controller(
             // Save the item that we're editing.
             //
 
-            $scope.saving = false;
-
             $scope.preSave = function(editing){};
 
 	        $scope.save = function(result) {
-                $scope.saving = true;
                 ngProgressLite.set(0);
                 ngProgressLite.start();
                 $scope.preSave($scope.editing);
@@ -102,7 +99,6 @@ angular.module('opal.controllers').controller(
                 }
 
                 $q.all(to_save).then(function() {
-                    $scope.saving = false;
                     ngProgressLite.done();
       			    $modalInstance.close(result);
 		        });
