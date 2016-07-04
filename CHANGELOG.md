@@ -16,8 +16,13 @@ to reflect the new URL.
 
 ** Defaults for records on the client side**
 
-Establishes a new way to define defaults for records initialized in Javascript without 
+Establishes a new way to define defaults for records initialized in Javascript without
 requiring that we hard-code API names to defaults in a global namespace.
+
+*** Update to AddEpisode Signature ***
+
+AddEpisodeCtrl now no longer requires options as a resolves() option, but requires Referencedata
+instead.
 
 Updates dependency graph:
 
