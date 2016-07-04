@@ -7,7 +7,6 @@ angular.module('opal.controllers').controller(
              $http,
              $q,
              Episode,
-             options,
              tags,
              hospital_number) {
 
@@ -33,37 +32,39 @@ angular.module('opal.controllers').controller(
             );
 
 	    };
-      var addPatient = function(demographics){
-        modal = $modal.open({
+        var addPatient = function(demographics){
+            modal = $modal.open({
   				templateUrl: '/templates/modals/add_episode.html/',
   				controller: 'AddEpisodeCtrl',
-                  size: 'lg',
+                size: 'lg',
   				resolve: {
-  					options: function() { return options; },
+  					referencedata: function(Referencedata) {
+                        return Referencedata;
+                    },
   					demographics: function() {
   						return demographics
   					},
-            tags: function(){ return $scope.tags; }
+                    tags: function(){ return $scope.tags; }
   				}
   			}).result.then(function(result) {
   				// The user has created the episode, or cancelled
   				$modalInstance.close(result);
   			});
-      }
+        }
 
         $scope.newPatient = function(result){
-          addPatient({ hospital_number: result.hospitalNumber });
+            addPatient({ hospital_number: result.hospitalNumber });
         };
 
         $scope.addForPatient = function(patient){
-          demographics = patient.demographics[0];
-          if(demographics.date_of_birth){
-              var dob = moment(demographics.date_of_birth, 'YYYY-MM-DD')
-                  .format('DD/MM/YYYY');
-              demographics.date_of_birth = dob;
-          }
+            demographics = patient.demographics[0];
+            if(demographics.date_of_birth){
+                var dob = moment(demographics.date_of_birth, 'YYYY-MM-DD')
+                    .format('DD/MM/YYYY');
+                demographics.date_of_birth = dob;
+            }
 
-          addPatient(demographics);
+            addPatient(demographics);
         };
 
         $scope.newForPatient = function(patient){

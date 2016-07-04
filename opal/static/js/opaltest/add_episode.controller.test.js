@@ -32,15 +32,13 @@ describe('AddEpisodeCtrl', function (){
         ]
     };
 
-    optionsData = {
-        condition: ['Another condition', 'Some condition'],
-        tag_hierarchy :{'tropical': []}
-    };
-
     var referencedata = {
         dogs: ['Poodle', 'Dalmation'],
         hats: ['Bowler', 'Top', 'Sun']
     };
+    referencedata.toLookuplists = function(){
+        return { dog_list: referencedata.dogs, hats_list: referencedata.hats }
+    }
 
 
     beforeEach(function(){
@@ -54,11 +52,11 @@ describe('AddEpisodeCtrl', function (){
         );
 
         inject(function($injector){
-            $controller = $injector.get('$controller');
-            $modal = $injector.get('$modal');
+            $controller  = $injector.get('$controller');
+            $modal       = $injector.get('$modal');
             $httpBackend = $injector.get('$httpBackend');
-            Schema = $injector.get('Schema');
-            $rootScope  = $injector.get('$rootScope');
+            Schema       = $injector.get('Schema');
+            $rootScope   = $injector.get('$rootScope');
         });
         $rootScope.fields = angular.copy(columns.default);
 
@@ -67,13 +65,12 @@ describe('AddEpisodeCtrl', function (){
         $scope = $rootScope.$new();
 
         var controller = $controller('AddEpisodeCtrl', {
-            $scope: $scope,
+            $scope        : $scope,
             $modalInstance: modalInstance,
-            schema: schema,
-            options: optionsData,
-            TagService: mockTagService,
-            demographics: {},
-            tags: {tag: 'tropical', subtag: ''}
+            referencedata : referencedata,
+            TagService    : mockTagService,
+            demographics  : {},
+            tags          : {tag: 'tropical', subtag: ''}
         });
 
         $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
