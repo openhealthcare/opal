@@ -1,7 +1,7 @@
 describe('HospitalNumberCtrl', function(){
     "use strict";
     var $scope, $timeout, $modal, modalInstance, $http, $q, $rootScope, $controller;
-    var tags, columns, _patientData, patientData, Episode, controller;
+    var tags, columns, _patientData, patientData, Episode, controller, mkcontroller;
     var $httpBackend;
 
     var fields = {};
@@ -211,20 +211,31 @@ describe('HospitalNumberCtrl', function(){
 
         $rootScope.fields = fields;
 
-        controller = $controller('HospitalNumberCtrl', {
-            $scope:         $scope,
-            $timeout:       $timeout,
-            $modal:         $modal,
-            $modalInstance: modalInstance,
-            tags:           {tag: 'mine', subtag: ''},
-            hospital_number: null
-        });
+        mkcontroller = function(with_hosp_num){
+            controller = $controller('HospitalNumberCtrl', {
+                $scope:         $scope,
+                $timeout:       $timeout,
+                $modal:         $modal,
+                $modalInstance: modalInstance,
+                tags:           {tag: 'mine', subtag: ''},
+                hospital_number: with_hosp_num
+            });
+        };
+        mkcontroller();
+
     });
 
     describe('newly created controller', function(){
 
         it('should have set up the model', function(){
             expect($scope.model).toEqual({});
+        });
+
+        describe('with hospital number', function(){
+            it('should store the hospital number', function(){
+                mkcontroller('123456789');
+                expect($scope.model.hospitalNumber).toEqual('123456789');
+            });
         });
 
     });
