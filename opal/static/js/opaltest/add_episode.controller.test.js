@@ -70,7 +70,7 @@ describe('AddEpisodeCtrl', function (){
             referencedata : referencedata,
             TagService    : mockTagService,
             demographics  : {},
-            tags          : {tag: 'tropical', subtag: ''}
+            tags          : {tag: 'id', subtag: 'id_inpatients'}
         });
 
         $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
@@ -82,7 +82,7 @@ describe('AddEpisodeCtrl', function (){
 
     describe('initial state', function() {
         it('should know the current tags', function() {
-            expect(mockTagService).toHaveBeenCalledWith(['tropical']);
+            expect(mockTagService).toHaveBeenCalledWith(['id_inpatients']);
         });
     });
 
