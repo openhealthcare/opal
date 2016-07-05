@@ -14,6 +14,11 @@ The OPAL Angular layer has been updated to reflect this, and
 should handle the transition seamlessly, but code calling the API directly should update
 to reflect the new URL.
 
+** Defaults for records on the client side**
+
+Establishes a new way to define defaults for records initialized in Javascript without 
+requiring that we hard-code API names to defaults in a global namespace.
+
 Updates dependency graph:
 
 * Django -> 1.8.13

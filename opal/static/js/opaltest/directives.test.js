@@ -18,6 +18,7 @@ describe('OPAL Directives', function(){
         inject(function($compile) {
             element = $compile(tpl)(scope);
         });
+
         // $digest is necessary to finalize the directive generation
         scope.$digest();
     }
@@ -103,6 +104,31 @@ describe('OPAL Directives', function(){
             compileDirective(markup);
         });
     })
+
+    describe('oneClickOnly', function(){
+        it('should disable buttons on click and call through', function(){
+            var clickfn = jasmine.createSpy('clickfn');
+            scope.clickfn = clickfn;
+            var markup = '<button one-click-only ng-click="clickfn()">Save</button>'
+            compileDirective(markup);
+            $(element).click();
+            expect(clickfn.calls.count()).toEqual(1);
+            expect($(element).prop('disabled')).toBe(true);
+        });
+
+        it('should not disable clicks if a variable is set', function(){
+            // if a form is invalid, we don't want to disable clicks
+            var clickfn = jasmine.createSpy('clickfn');
+            scope.clickfn = clickfn;
+            scope.oneClick = true;
+            var markup = '<button one-click-only="oneClick" ng-click="clickfn()">Save</button>'
+            compileDirective(markup);
+            scope.oneClick = false;
+            $(element).click();
+            expect(clickfn.calls.count()).toEqual(1);
+            expect($(element).prop('disabled')).toBe(false);
+        });
+    });
 
     describe('date-of-birth', function(){
         var scopeBinding = {date_of_birth: moment("10/12/1999", "DD/MM/YYYY", true)}

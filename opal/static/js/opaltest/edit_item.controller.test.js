@@ -194,12 +194,9 @@ describe('EditItemCtrl', function (){
             spyOn(item, 'save').and.callFake(function() {
                 return deferred.promise;
             });
-            expect($scope.saving).toBe(false);
             $scope.save('save');
-            expect($scope.saving).toBe(true);
             deferred.resolve("episode returned");
             $scope.$digest();
-            expect($scope.saving).toBe(false);
 
             var preSaveCallArgs = $scope.preSave.calls.mostRecent().args;
             expect(preSaveCallArgs.length).toBe(1);

@@ -21,6 +21,12 @@ OPAL provides some built-in Angular directives for your project to use.
 
 Creates an input field that assumes to base field is a moment and handles validation and parsing. It assumes no one is born in the future or is over 150 years old.
 
+#### one-click-only
+
+A directive that if set with no arguments, or set to true, will only allow a button to be
+clicked on once and then it'll be disabled. Useful for example to make sure that multiple save requests aren't
+accidentally triggered.
+
 ### Angular Filters
 
 OPAL provides some built-in Angular filters for your project to use.
