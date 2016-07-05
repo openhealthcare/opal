@@ -20,6 +20,8 @@ describe('services', function() {
                         {name: 'name', type: 'string'},
                         {name: 'date_of_birth', type: 'date'},
                         {name: 'created', type: 'date_time'},
+                        {name: 'age', type: 'integer'},
+                        {name: 'weight', type: 'float'},
                     ]
                 },
             }
@@ -38,6 +40,8 @@ describe('services', function() {
                 date_of_birth: '31/07/1980',
                 hospital_number: '555',
                 created: "07/04/2015 11:45:00",
+                age: "36",
+                weight: "20.2",
                 sex: null
             }],
         };
@@ -55,6 +59,8 @@ describe('services', function() {
                 date_of_birth: moment(new Date(1980, 6, 31)),
                 hospital_number: '555',
                 created: moment(new Date(2015, 3, 7, 11, 45, 0)),
+                age: "36",
+                weight: "20.2",
                 sex: null
             },
         };
@@ -64,6 +70,39 @@ describe('services', function() {
       it("should cast date and datetime fields", function(){
           var result = FieldTranslater.jsToPatient(jsPatientData);
           expect(result.demographics).toEqual(patientData.demographics[0]);
+      });
+
+      it("should remove the spaces from around ints and floats", function(){
+          jsPatientData.demographics.age = " 35 ";
+          jsPatientData.demographics.weight = " 12.2 ";
+
+          patientData.demographics[0].age = "35";
+          patientData.demographics[0].weight = "12.2";
+          var result = FieldTranslater.jsToPatient(jsPatientData);
+          expect(result.demographics).toEqual(patientData.demographics[0]);
+      });
+
+      it('should handle single empty strings', function(){
+        it("should remove the spaces from around ints and floats", function(){
+            jsPatientData.demographics.age = "";
+            jsPatientData.demographics.weight = "";
+
+            patientData.demographics[0].age = undefined;
+            patientData.demographics[0].weight = undefined;
+            var result = FieldTranslater.jsToPatient(jsPatientData);
+            expect(result.demographics).toEqual(patientData.demographics[0]);
+        });
+      });
+
+
+      it('should handle multiple empty strings', function(){
+        jsPatientData.demographics.age = "   ";
+        jsPatientData.demographics.weight = "    ";
+
+        patientData.demographics[0].age = undefined;
+        patientData.demographics[0].weight = undefined;
+        var result = FieldTranslater.jsToPatient(jsPatientData);
+        expect(result.demographics).toEqual(patientData.demographics[0]);
       });
     });
 
