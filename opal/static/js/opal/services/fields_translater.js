@@ -62,17 +62,39 @@ angular.module('opal.services').service('FieldTranslater', function($rootScope){
     return subrecord;
   }
 
+  this.cleanString = function(fieldValue){
+    if(angular.isString(fieldValue)){
+      fieldValue = fieldValue.trim();
+
+      if(!fieldValue){
+          return undefined;
+      }
+    }
+
+    return fieldValue;
+  }
+
   this.translateJsToField = function(fieldMapping, fieldValue){
-      if(fieldValue){
-        if(fieldMapping.type == 'date'){
+      if(fieldValue !== undefined){
+        if(fieldMapping.type === 'date'){
             if (!angular.isString(fieldValue)) {
                 fieldValue = moment(fieldValue);
                 fieldValue = fieldValue.format(DATE_FORMAT);
             }
-            return fieldValue;
+            else{
+                fieldValue = self.cleanString(fieldValue);
+            }
         }
-        else if(fieldMapping.type == 'date_time'){
-            return moment(fieldValue).format(DATETIME_FORMAT);
+        else if(fieldMapping.type === 'date_time'){
+          if(angular.isString(fieldValue)){
+            fieldValue = self.cleanString(fieldValue);
+          }
+          else{
+            fieldValue = moment(fieldValue).format(DATETIME_FORMAT);
+          }
+        }
+        else if(fieldMapping.type == 'integer' || fieldMapping.type == 'float'){
+          fieldValue = self.cleanString(fieldValue);
         }
       }
       return fieldValue;
