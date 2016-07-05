@@ -11,7 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 from mock import patch, MagicMock
 
 from opal import models
-from opal.tests.models import Colour, PatientColour, HatWearer, Hat
+from opal.tests.models import Colour, PatientColour, HatWearer, Hat, Birthday
 from opal.core import metadata
 from opal.core.test import OpalTestCase
 from opal.core.views import _build_json_response
@@ -225,9 +225,15 @@ class SubrecordTestCase(TestCase):
             base_name = 'patientcolour'
             model = PatientColour
 
+
+        class OurBirthdayViewSet(api.SubrecordViewSet):
+            base_name = 'patientcolour'
+            model = Birthday
+
         self.model = Colour
         self.viewset = OurViewSet
         self.patientviewset = OurPatientViewSet
+        self.birthdayviewset = OurBirthdayViewSet
 
     def test_retrieve(self):
         with patch.object(self.model.objects, 'get') as mockget:
@@ -263,12 +269,44 @@ class SubrecordTestCase(TestCase):
         response = self.viewset().create(mock_request)
         self.assertEqual(400, response.status_code)
 
+    def test_with_too_long_strings(self):
+        """ the api should give an accurate
+            description of what the api user
+            has done wrong
+        """
+        mock_request = MagicMock(name='mock request')
+        name = "Red and yellow and pink and green "
+        while(len(name) < Colour._meta.get_field("name").max_length):
+            name += name
+
+        mock_request.data = {'name': name, 'episode_id': self.episode.pk}
+        mock_request.user = self.user
+        response = self.viewset().create(mock_request)
+        self.assertEqual(400, response.status_code)
+
+    def test_with_the_wrong_datatype(self):
+        """ the api should give an accurate
+            description of what the api user
+            has done wrong
+        """
+        mock_request = MagicMock(name='mock request')
+        name = "Red and yellow and pink and green "
+        while(len(name) < Colour._meta.get_field("name").max_length):
+            name += name
+
+        mock_request.data = {'birth_date': 'asdd', 'episode_id': self.episode.pk}
+        mock_request.user = self.user
+        response = self.birthdayviewset().create(mock_request)
+        self.assertEqual(400, response.status_code)
+
+
     def test_create_unexpected_field(self):
         mock_request = MagicMock(name='mock request')
         mock_request.data = {'name': 'blue', 'hue': 'enabled', 'episode_id': self.episode.pk}
         mock_request.user = self.user
         response = self.viewset().create(mock_request)
         self.assertEqual(400, response.status_code)
+
 
     def test_update(self):
         created = timezone.now() - timedelta(1)
