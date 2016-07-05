@@ -81,22 +81,12 @@ angular.module('opal.services').service('FieldTranslater', function($rootScope){
                 fieldValue = moment(fieldValue);
                 fieldValue = fieldValue.format(DATE_FORMAT);
             }
-            return self.cleanEmptyStrings(fieldValue);
         }
         else if(fieldMapping.type === 'date_time'){
-            if (angular.isString(fieldValue)) {
-                fieldValue = self.cleanEmptyStrings(fieldValue);
-            }
-
-            if(fieldValue){
-              return moment(fieldValue).format(DATETIME_FORMAT);
-            }
-            else{
-              fieldValue = undefined;
-            }
+          fieldValue = moment(fieldValue).format(DATETIME_FORMAT);
         }
         else if(fieldMapping.type == 'integer' || fieldMapping.type == 'float'){
-            fieldValue = self.cleanEmptyStrings(fieldValue);
+          fieldValue = self.cleanEmptyStrings(fieldValue);
         }
       }
       return fieldValue;
