@@ -4,9 +4,10 @@ Tests for the OPAL API
 import json
 from datetime import date, timedelta, datetime
 from django.utils import timezone
-
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import TestCase
+from django.db import DataError
 from django.contrib.contenttypes.models import ContentType
 from mock import patch, MagicMock
 
@@ -281,8 +282,20 @@ class SubrecordTestCase(TestCase):
 
         mock_request.data = {'name': name, 'episode_id': self.episode.pk}
         mock_request.user = self.user
-        response = self.viewset().create(mock_request)
+
+        # sqlite doesn't enforce max string length, so lets mock it up
+        if 'sqlite3' in settings.DATABASES['default']['ENGINE']:
+            with patch('opal.tests.models.Colour.save_base') as e:
+                e.side_effect = DataError('value too long for type character varying(255)')
+                response = self.viewset().create(mock_request)
+        else:
+            response = self.viewset().create(mock_request)
+
         self.assertEqual(400, response.status_code)
+        expected = dict(
+            error='value too long for type character varying(255)'
+        )
+        self.assertEqual(expected, response.data)
 
     def test_with_the_wrong_datatype(self):
         """ the api should give an accurate
@@ -298,6 +311,10 @@ class SubrecordTestCase(TestCase):
         mock_request.user = self.user
         response = self.birthdayviewset().create(mock_request)
         self.assertEqual(400, response.status_code)
+        expected = dict(
+            error="time data 'asdd' does not match format '%d/%m/%Y'"
+        )
+        self.assertEqual(expected, response.data)
 
 
     def test_create_unexpected_field(self):

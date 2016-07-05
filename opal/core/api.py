@@ -225,9 +225,7 @@ class SubrecordViewSet(viewsets.ViewSet):
 
         try:
             subrecord.update_from_dict(request.data, request.user)
-        except exceptions.APIError:
-            return Response({'error': 'Unexpected field name'}, status=status.HTTP_400_BAD_REQUEST)
-        except ValueError as e:
+        except Exception as e:
             return Response({'error': e.message}, status=status.HTTP_400_BAD_REQUEST)
 
         episode = Episode.objects.get(pk=episode.pk)
