@@ -104,6 +104,33 @@ describe('services', function() {
         var result = FieldTranslater.jsToPatient(jsPatientData);
         expect(result.demographics).toEqual(patientData.demographics[0]);
       });
+
+
+      it('should handle strings with trailing spaces passed to dates', function(){
+        jsPatientData.demographics.date_of_birth = "31/07/1980 ";
+        var result = FieldTranslater.jsToPatient(jsPatientData);
+        expect(result.demographics).toEqual(patientData.demographics[0]);
+      });
+
+      it('should handle strings with trailing spaces passed to date times', function(){
+        jsPatientData.demographics.created = "07/04/2015 11:45:00 ";
+        var result = FieldTranslater.jsToPatient(jsPatientData);
+        expect(result.demographics).toEqual(patientData.demographics[0]);
+      });
+
+      it('should handle spaces  passed to dates', function(){
+        jsPatientData.demographics.date_of_birth = "  ";
+        patientData.demographics[0].date_of_birth = undefined;
+        var result = FieldTranslater.jsToPatient(jsPatientData);
+        expect(result.demographics).toEqual(patientData.demographics[0]);
+      });
+
+      it('should handle spaces  passed to date times', function(){
+        jsPatientData.demographics.created = "  ";
+        patientData.demographics[0].created = undefined;
+        var result = FieldTranslater.jsToPatient(jsPatientData);
+        expect(result.demographics).toEqual(patientData.demographics[0]);
+      });
     });
 
     describe("patientToJs", function(){
