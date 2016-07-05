@@ -62,7 +62,7 @@ angular.module('opal.services').service('FieldTranslater', function($rootScope){
     return subrecord;
   }
 
-  this.cleanStrings = function(fieldValue){
+  this.cleanString = function(fieldValue){
     if(angular.isString(fieldValue)){
       fieldValue = fieldValue.trim();
 
@@ -82,19 +82,19 @@ angular.module('opal.services').service('FieldTranslater', function($rootScope){
                 fieldValue = fieldValue.format(DATE_FORMAT);
             }
             else{
-                fieldValue = self.cleanStrings(fieldValue);
+                fieldValue = self.cleanString(fieldValue);
             }
         }
         else if(fieldMapping.type === 'date_time'){
           if(angular.isString(fieldValue)){
-            fieldValue = self.cleanStrings(fieldValue);
+            fieldValue = self.cleanString(fieldValue);
           }
           else{
             fieldValue = moment(fieldValue).format(DATETIME_FORMAT);
           }
         }
         else if(fieldMapping.type == 'integer' || fieldMapping.type == 'float'){
-          fieldValue = self.cleanStrings(fieldValue);
+          fieldValue = self.cleanString(fieldValue);
         }
       }
       return fieldValue;
