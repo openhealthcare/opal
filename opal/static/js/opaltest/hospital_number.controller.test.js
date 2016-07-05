@@ -1,13 +1,8 @@
 describe('HospitalNumberCtrl', function(){
     "use strict";
-    var $scope, $timeout, $modal, modalInstance, $http, $q;
-    var tags, columns, _patientData, patientData, Episode, options, optionsData;
+    var $scope, $timeout, $modal, modalInstance, $http, $q, $rootScope, $controller;
+    var tags, columns, _patientData, patientData, Episode, controller, mkcontroller;
     var $httpBackend;
-
-    optionsData = {
-        condition: ['Another condition', 'Some condition'],
-        tag_hierarchy :{'tropical': []}
-    };
 
     var fields = {};
     columns = {
@@ -196,6 +191,7 @@ describe('HospitalNumberCtrl', function(){
         module('opal.services', function($provide) {
             $provide.value('UserProfile', function(){ return profile; });
         });
+
     });
 
     beforeEach(function(){
@@ -207,32 +203,39 @@ describe('HospitalNumberCtrl', function(){
             $controller  = $injector.get('$controller');
             $timeout     = $injector.get('$timeout');
             $modal       = $injector.get('$modal');
-            Episode = $injector.get('Episode');
+            Episode      = $injector.get('Episode');
         });
 
         patientData = angular.copy(_patientData);
-        options = optionsData;
         modalInstance = $modal.open({template: 'notatemplate'});
-        schema = new Schema(columns.default);
 
         $rootScope.fields = fields;
 
-        controller = $controller('HospitalNumberCtrl', {
-            $scope:         $scope,
-            $timeout:       $timeout,
-            $modal:         $modal,
-            $modalInstance: modalInstance,
-            schema:         schema,
-            options:        options,
-            tags:           {tag: 'mine', subtag: ''},
-            hospital_number: null
-        });
+        mkcontroller = function(with_hosp_num){
+            controller = $controller('HospitalNumberCtrl', {
+                $scope:         $scope,
+                $timeout:       $timeout,
+                $modal:         $modal,
+                $modalInstance: modalInstance,
+                tags:           {tag: 'mine', subtag: ''},
+                hospital_number: with_hosp_num
+            });
+        };
+        mkcontroller();
+
     });
 
     describe('newly created controller', function(){
 
         it('should have set up the model', function(){
             expect($scope.model).toEqual({});
+        });
+
+        describe('with hospital number', function(){
+            it('should store the hospital number', function(){
+                mkcontroller('123456789');
+                expect($scope.model.hospitalNumber).toEqual('123456789');
+            });
         });
 
     });
@@ -259,9 +262,8 @@ describe('HospitalNumberCtrl', function(){
 
             spyOn($modal, 'open').and.returnValue({result: deferred.promise});
             $scope.newPatient({patients: [], hospitalNumber: 123})
-
             var resolves = $modal.open.calls.mostRecent().args[0].resolve;
-            expect(resolves.options()).toEqual(options);
+            expect(_.has(resolves, 'referencedata')).toBe(true);
             expect(resolves.demographics()).toEqual({ hospital_number: 123});
             expect(resolves.tags()).toEqual({tag: 'mine', subtag: ''});
         });
@@ -299,7 +301,7 @@ describe('HospitalNumberCtrl', function(){
             expect(callArgs.length).toBe(1);
             expect(callArgs[0].controller).toBe('AddEpisodeCtrl');
             var resolves = $modal.open.calls.mostRecent().args[0].resolve;
-            expect(resolves.options()).toEqual(options);
+            expect(_.has(resolves, 'referencedata')).toBe(true);
             var expected_demographics = angular.copy(patientData.demographics[0])
             expected_demographics["date_of_birth"] = "12/12/1999";
             expect(resolves.demographics()).toEqual(expected_demographics);
@@ -463,7 +465,7 @@ describe('HospitalNumberCtrl', function(){
             episode = new Episode({
                 id: 3,
                 demographics: [{"patient_id": 1}]
-            }, schema);
+            });
 
             spyOn($modal, 'open').and.returnValue({result: deferred.promise});
             spyOn(modalInstance, 'close');
