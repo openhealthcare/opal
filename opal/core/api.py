@@ -223,11 +223,7 @@ class SubrecordViewSet(viewsets.ViewSet):
             patient_id = episode.patient.pk
             request.data['patient_id'] = patient_id
 
-        try:
-            subrecord.update_from_dict(request.data, request.user)
-        except Exception as e:
-            return Response({'error': e.message}, status=status.HTTP_400_BAD_REQUEST)
-
+        subrecord.update_from_dict(request.data, request.user)
         episode = Episode.objects.get(pk=episode.pk)
 
         return _build_json_response(

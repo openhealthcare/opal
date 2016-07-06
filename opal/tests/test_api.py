@@ -214,9 +214,7 @@ class MetadataViewSetTestCase(OpalTestCase):
 class SubrecordTestCase(TestCase):
 
     def setUp(self):
-        self.patient = models.Patient.objects.create()
-        self.episode = models.Episode.objects.create(patient=self.patient)
-        self.user = User.objects.create(username='testuser')
+        self.patient, self.episode = self.new_patient_and_episode_please()
 
         class OurViewSet(api.SubrecordViewSet):
             base_name = 'colour'
@@ -235,6 +233,11 @@ class SubrecordTestCase(TestCase):
         self.viewset = OurViewSet
         self.patientviewset = OurPatientViewSet
         self.birthdayviewset = OurBirthdayViewSet
+        self.assertTrue(
+            self.client.login(
+                username=self.user.username, password=self.PASSWORD
+            )
+        )
 
     def test_retrieve(self):
         with patch.object(self.model.objects, 'get') as mockget:
@@ -321,7 +324,11 @@ class SubrecordTestCase(TestCase):
         mock_request = MagicMock(name='mock request')
         mock_request.data = {'name': 'blue', 'hue': 'enabled', 'episode_id': self.episode.pk}
         mock_request.user = self.user
-        response = self.viewset().create(mock_request)
+
+        with self.assertRaises("APIError") as e:
+            response = self.viewset().create(mock_request)
+
+        self.assertEqual(e.message, "Unexpected fieldname(s): ['hue']")
         self.assertEqual(400, response.status_code)
 
 
