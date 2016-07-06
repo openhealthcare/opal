@@ -20,7 +20,12 @@
         {% block content %}
 
         <div class="col-md-3"> <!-- Episode Switcher -->
-          {% include 'partials/_demographics_panel.html' %}
+          {% block pre_demographics %}{% endblock %}
+          {% block demographics %}
+            {% include 'partials/_demographics_panel.html' %}
+          {% endblock %}
+          {% block post_demographics %}{% endblock %}
+
           <div class="panel panel-default">
             <div class="panel-heading ">
               <h3>
