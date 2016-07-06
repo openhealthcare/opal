@@ -23,12 +23,11 @@ describe('Flow ', function(){
 
     describe('enter', function(){
         it('should call the modal with the enter flow', function(){
-            Flow.enter({}, {hospital_number: '555-456'});
+            Flow.enter({hospital_number: '555-456'});
             var args = $modal.open.calls.mostRecent().args;
             expect(args[0].controller).toEqual('HospitalNumberCtrl');
             expect(args[0].templateUrl).toEqual('/templates/modals/hospital_number.html/');
             var resolves = args[0].resolve;
-            expect(resolves.options()).toEqual({});
             expect(resolves.tags()).toEqual(undefined);
             expect(resolves.hospital_number()).toEqual('555-456');
         });

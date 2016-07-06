@@ -178,7 +178,7 @@ describe('EpisodeDetailCtrl', function(){
                 spyOn($location, 'path');
                 $scope.addEpisode();
                 expect(Flow).toHaveBeenCalledWith(
-                    'enter', options,
+                    'enter',
                     {
                         current_tags: {
                             tag   : 'mine',
@@ -216,7 +216,7 @@ describe('EpisodeDetailCtrl', function(){
                 $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
                 $scope.addEpisode();
                 expect(Flow).toHaveBeenCalledWith(
-                    'enter', options,
+                    'enter',
                     {
                         current_tags: {
                             tag   : 'mine',
