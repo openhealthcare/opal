@@ -5,8 +5,8 @@
 {% block loading %}{% endblock %}
 {% block content %}
 
-<script type="text/javascript" src="{% static "js/highlight/highlight.pack.js" %}"></script>
-<link href="{% static "js/highlight/styles/school_book.css" %}" rel="stylesheet" media="all">
+<script type="text/javascript" src="{% static "js/lib/highlight/highlight.pack.js" %}"></script>
+<link href="{% static "js/lib/highlight/styles/school_book.css" %}" rel="stylesheet" media="all">
 <script>hljs.initHighlightingOnLoad();</script>
 <link href="{% static "css/tita.css" %}" rel="stylesheet" media="all">
 <style>
@@ -43,7 +43,7 @@
     <!-- Default panel contents -->
     <div class="panel-heading">
       <h2>
-        {{ OPAL_BRAND_NAME }} Stories & Acceptance 
+        {{ OPAL_BRAND_NAME }} Stories & Acceptance
       </h2>
     </div>
 
@@ -89,4 +89,3 @@
   useresults();
 </script>
   {% endblock %}
-
