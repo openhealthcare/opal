@@ -106,7 +106,7 @@ describe('services', function() {
       });
 
 
-      fit('should handle nulls', function(){
+      it('should handle nulls', function(){
         jsPatientData.demographics.age = null;
         jsPatientData.demographics.weight = null;
 
