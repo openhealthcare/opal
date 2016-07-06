@@ -16,6 +16,12 @@ The `/episode/:pk/` API has moved to `/api/v0.1/episode/:pk/` so any code (typic
 javascript) code that directly saves to this API endpoint rather than using the OPAL JS
 `Episode` services should work immediately when re-pointed at the new URL.
 
+The signature of the EditItemCtrl has been updated - this modal controller no longer
+takes an `options` argument, rather it uses the new 0.7.x `referencedata` and `metadata`
+services. Applications that call EditItemCtrl directly should look to update the `resolves`
+option they were passing to `$modal.open`. (Alternatively, developers should consider
+refactoring to use the new `recordEditor` API.)
+
 ### 5.x -> 6.x
 
 #### Upgrading OPAL
