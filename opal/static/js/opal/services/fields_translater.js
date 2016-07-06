@@ -75,7 +75,7 @@ angular.module('opal.services').service('FieldTranslater', function($rootScope){
   }
 
   this.translateJsToField = function(fieldMapping, fieldValue){
-      if(fieldValue !== undefined){
+      if(fieldValue !== undefined && fieldValue !== null){
         if(fieldMapping.type === 'date'){
             if (!angular.isString(fieldValue)) {
                 fieldValue = moment(fieldValue);

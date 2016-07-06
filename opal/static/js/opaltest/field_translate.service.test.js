@@ -106,6 +106,17 @@ describe('services', function() {
       });
 
 
+      it('should handle nulls', function(){
+        jsPatientData.demographics.age = null;
+        jsPatientData.demographics.weight = null;
+
+        patientData.demographics[0].age = null;
+        patientData.demographics[0].weight = null;
+        var result = FieldTranslater.jsToPatient(jsPatientData);
+        expect(result.demographics).toEqual(patientData.demographics[0]);
+      })
+
+
       it('should handle strings with trailing spaces passed to dates', function(){
         jsPatientData.demographics.date_of_birth = "31/07/1980 ";
         var result = FieldTranslater.jsToPatient(jsPatientData);
