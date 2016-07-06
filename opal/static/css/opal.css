@@ -400,6 +400,20 @@ i.delete,
   border-left: 6px solid transparent;
 }
 
+/* Tabs */
+.nav-tabs li a {
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    border-top: 1px solid #ddd;
+}
+.nav-tabs li {
+    padding: 4px 0px;
+}
+.nav-tabs li.active a {
+    background-color: #5fa2dd; /* Blue */
+    color: white;
+}
+
 /*  Modals  */
 
 .modal-header {
