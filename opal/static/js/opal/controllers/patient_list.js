@@ -178,7 +178,6 @@ angular.module('opal.controllers').controller(
             if(profile.readonly){ return null; };
 
             var enter = Flow.enter(
-                options,
                 {
                     current_tags: {
                         tag: $scope.currentTag,

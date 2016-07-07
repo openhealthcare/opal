@@ -453,7 +453,7 @@ describe('PatientListCtrl', function() {
         it('should call flow', function() {
             spyOn(Flow, 'enter').and.callFake(fake_episode_resolver);
             $scope.addEpisode();
-            expect(Flow.enter).toHaveBeenCalledWith(options, {current_tags: {
+            expect(Flow.enter).toHaveBeenCalledWith({current_tags: {
                 tag: $scope.currentTag,
                 subtag: $scope.currentSubTag
             }})
@@ -471,7 +471,7 @@ describe('PatientListCtrl', function() {
                 }
             );
             $scope.addEpisode();
-            expect(Flow.enter).toHaveBeenCalledWith(options, {current_tags: {
+            expect(Flow.enter).toHaveBeenCalledWith({current_tags: {
                 tag: $scope.currentTag,
                 subtag: $scope.currentSubTag
             }});

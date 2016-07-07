@@ -34,7 +34,7 @@ angular.module('opal.services')
                 if(profile.readonly){ return null; };
 
                 var enter = Flow(
-                    'enter', options,
+                    'enter',
                     {
                         current_tags: { tag: 'mine', subtag: '' },
                         hospital_number: $scope.episode.demographics[0].hospital_number
