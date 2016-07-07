@@ -9,8 +9,7 @@
   </p>
 </div>
 <div ng-hide="editing.demographics.external_system">
-  {% select field="Demographics.title" static="editing.demographics.external_system" %}
-  {% input field="Demographics.first_name" static="editing.demographics.external_system" %}
-  {% input field="Demographics.surname" static="editing.demographics.external_system" %}
+  {% input field="Demographics.first_name"%}
+  {% input field="Demographics.surname" %}
 </div>
 {% date_of_birth_field %}
