@@ -4,7 +4,8 @@
 
 describe('Flow ', function(){
     "use strict";
-    var options, Flow, $httpBackend, $modal, $rootScope;
+    var $httpBackend, $modal, $rootScope;
+    var options, Flow, Metadata, Referencedata;
 
     beforeEach(function(){
 
@@ -12,10 +13,12 @@ describe('Flow ', function(){
         module('opal.controllers');
 
         inject(function($injector){
-            Flow         = $injector.get('Flow');
-            $modal       = $injector.get('$modal');
-            $rootScope   = $injector.get('$rootScope');
-            $httpBackend = $injector.get('$httpBackend');
+            Flow          = $injector.get('Flow');
+            Referencedata = $injector.get('Referencedata');
+            Metadata      = $injector.get('Metadata');
+            $modal        = $injector.get('$modal');
+            $rootScope    = $injector.get('$rootScope');
+            $httpBackend  = $injector.get('$httpBackend');
         });
 
         spyOn($modal, 'open').and.returnValue({result: null});
@@ -30,6 +33,8 @@ describe('Flow ', function(){
             var resolves = args[0].resolve;
             expect(resolves.tags()).toEqual(undefined);
             expect(resolves.hospital_number()).toEqual('555-456');
+            expect(resolves.referencedata(Referencedata)).toEqual(Referencedata)
+            expect(resolves.metadata(Metadata)).toEqual(Metadata)
         });
     });
 
