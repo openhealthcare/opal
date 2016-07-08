@@ -18,7 +18,7 @@ from opal.core.test import OpalTestCase
 import opal.tests.test_patient_lists # To make sure test tagged lists are pulled in
 from opal.tests.models import (
     FamousLastWords, PatientColour, ExternalSubRecord, SymptomComplex, PatientConsultation,
-    Birthday
+    Birthday, DogOwner
 )
 
 class PatientRecordAccessTestCase(OpalTestCase):
@@ -182,8 +182,6 @@ class PatientTestCase(OpalTestCase):
 
 
 class SubrecordTestCase(OpalTestCase):
-
-
     def test_date_time_deserialisation(self):
         patient, _ = self.new_patient_and_episode_please()
         birthday_date = "10/1/2000"
@@ -339,6 +337,18 @@ class SubrecordTestCase(OpalTestCase):
     def test_modal_template_episode_type_list(self, find):
         with self.assertRaises(ValueError):
             Subrecord.get_modal_template(episode_type='Inpatient', patient_list='test')
+
+    def test_get_normal_field_title(self):
+        name_title = PatientColour._get_field_title("name")
+        self.assertEqual(name_title, "Name")
+
+    def test_get_foreign_key_or_free_text_title(self):
+        dog_title = DogOwner._get_field_title("dog")
+        self.assertEqual(dog_title, "Dog")
+
+    def test_verbose_name(self):
+        only_words = FamousLastWords._get_field_title("words")
+        self.assertEqual(only_words, "Only Words")
 
 
 class BulkUpdateFromDictsTest(OpalTestCase):
