@@ -98,8 +98,12 @@ describe('EpisodeDetailCtrl', function(){
 
         $rootScope.fields = fields
         episode = new Episode(angular.copy(episodeData));
-        Flow = jasmine.createSpy('Flow').and.callFake(function(){
-            return {then: function(fn){ fn() }}});
+        Flow = {
+            enter: jasmine.createSpy('Flow.enter').and.callFake(function(){
+                return {then: function(fn){ fn() }}}),
+            exit: jasmine.createSpy('Flow.exit').and.callFake(function(){
+                return {then: function(fn){ fn() }}}),
+        };
 
         controller = $controller('EpisodeDetailCtrl', {
             $scope      : $scope,
@@ -123,15 +127,13 @@ describe('EpisodeDetailCtrl', function(){
         it('should call the exit flow', function(){
             $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
             $scope.dischargeEpisode();
-            expect(Flow).toHaveBeenCalledWith(
-                'exit', null, options,
+            expect(Flow.exit).toHaveBeenCalledWith(
+                $scope.episode, options,
                 {
                     current_tags: {
                         tag   : undefined,
                         subtag: undefined
                     },
-                    episode: episode
-
                 }
             );
             $rootScope.$apply();
@@ -158,8 +160,8 @@ describe('EpisodeDetailCtrl', function(){
         describe('success!', function() {
 
             beforeEach(function(){
-                Flow = jasmine.createSpy('Flow').and.callFake(function(){
-                    return {then: function(success, err){ success(episodeData) }}});
+                Flow = {enter: jasmine.createSpy('Flow.enter').and.callFake(function(){
+                    return {then: function(success, err){ success(episodeData) }}}) };
 
                 controller = $controller('EpisodeDetailCtrl', {
                     $scope      : $scope,
@@ -177,15 +179,13 @@ describe('EpisodeDetailCtrl', function(){
                 $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
                 spyOn($location, 'path');
                 $scope.addEpisode();
-                expect(Flow).toHaveBeenCalledWith(
-                    'enter',
+                expect(Flow.enter).toHaveBeenCalledWith(
                     {
                         current_tags: {
                             tag   : 'mine',
                             subtag: ''
                         },
                         hospital_number: '555-333'
-
                     }
                 );
                 $rootScope.$apply();
@@ -198,8 +198,8 @@ describe('EpisodeDetailCtrl', function(){
         describe('Cancelled by user', function() {
 
             beforeEach(function(){
-                Flow = jasmine.createSpy('Flow').and.callFake(function(){
-                    return {then: function(success, err){ err() }}});
+                // Flow = jasmine.createSpy('Flow').and.callFake(function(){
+                //     return {then: function(success, err){ err() }}});
 
                 controller = $controller('EpisodeDetailCtrl', {
                     $scope      : $scope,
@@ -215,8 +215,7 @@ describe('EpisodeDetailCtrl', function(){
             it('should reset state if cancelled', function() {
                 $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
                 $scope.addEpisode();
-                expect(Flow).toHaveBeenCalledWith(
-                    'enter',
+                expect(Flow.enter).toHaveBeenCalledWith(
                     {
                         current_tags: {
                             tag   : 'mine',

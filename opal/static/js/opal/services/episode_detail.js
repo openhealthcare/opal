@@ -12,16 +12,14 @@ angular.module('opal.services')
                 if(profile.readonly){ return null; };
 
 		        $rootScope.state = 'modal';
-                var exit = Flow(
-                    'exit',
-                    null,  // Schema ? Not used ? Todo: investigate!
+                var exit = Flow.exit(
+                    $scope.episode,
                     options,
                     {
                         current_tags: {
                             tag   : $scope.currentTag,
                             subtag: $scope.currentSubTag
                         },
-                        episode: $scope.episode
                     }
                 );
 
@@ -33,8 +31,7 @@ angular.module('opal.services')
             $scope.addEpisode = function(){
                 if(profile.readonly){ return null; };
 
-                var enter = Flow(
-                    'enter',
+                var enter = Flow.enter(
                     {
                         current_tags: { tag: 'mine', subtag: '' },
                         hospital_number: $scope.episode.demographics[0].hospital_number
