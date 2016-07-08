@@ -16,6 +16,7 @@ from opal.tests.models import Colour, PatientColour, HatWearer, Hat, Birthday
 from opal.core import metadata
 from opal.core.test import OpalTestCase
 from opal.core.views import _build_json_response
+from opal.core.exceptions import APIError
 
 # this is used just to import the class for
 # EpisodeListApiTestCase and OptionsViewSetTestCase
@@ -211,7 +212,7 @@ class MetadataViewSetTestCase(OpalTestCase):
         self.assertEqual(404, response.status_code)
 
 
-class SubrecordTestCase(TestCase):
+class SubrecordTestCase(OpalTestCase):
 
     def setUp(self):
         self.patient, self.episode = self.new_patient_and_episode_please()
@@ -287,18 +288,13 @@ class SubrecordTestCase(TestCase):
         mock_request.user = self.user
 
         # sqlite doesn't enforce max string length, so lets mock it up
-        if 'sqlite3' in settings.DATABASES['default']['ENGINE']:
-            with patch('opal.tests.models.Colour.save_base') as e:
-                e.side_effect = DataError('value too long for type character varying(255)')
+        with self.assertRaises(DataError):
+            if 'sqlite3' in settings.DATABASES['default']['ENGINE']:
+                with patch('opal.tests.models.Colour.save_base') as e:
+                    e.side_effect = DataError('value too long for type character varying(255)')
+                    response = self.viewset().create(mock_request)
+            else:
                 response = self.viewset().create(mock_request)
-        else:
-            response = self.viewset().create(mock_request)
-
-        self.assertEqual(400, response.status_code)
-        expected = dict(
-            error='value too long for type character varying(255)'
-        )
-        self.assertEqual(expected, response.data)
 
     def test_with_the_wrong_datatype(self):
         """ the api should give an accurate
@@ -312,12 +308,8 @@ class SubrecordTestCase(TestCase):
 
         mock_request.data = {'birth_date': 'asdd', 'episode_id': self.episode.pk}
         mock_request.user = self.user
-        response = self.birthdayviewset().create(mock_request)
-        self.assertEqual(400, response.status_code)
-        expected = dict(
-            error="time data 'asdd' does not match format '%d/%m/%Y'"
-        )
-        self.assertEqual(expected, response.data)
+        with self.assertRaises(ValueError):
+            self.birthdayviewset().create(mock_request)
 
 
     def test_create_unexpected_field(self):
@@ -325,11 +317,8 @@ class SubrecordTestCase(TestCase):
         mock_request.data = {'name': 'blue', 'hue': 'enabled', 'episode_id': self.episode.pk}
         mock_request.user = self.user
 
-        with self.assertRaises("APIError") as e:
+        with self.assertRaises(APIError) as e:
             response = self.viewset().create(mock_request)
-
-        self.assertEqual(e.message, "Unexpected fieldname(s): ['hue']")
-        self.assertEqual(400, response.status_code)
 
 
     def test_update(self):
