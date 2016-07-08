@@ -1,7 +1,7 @@
 describe('services.TagService', function() {
     "use strict";
     var tagService;
-    var exampleOptions = {
+    var exampleMetadata = {
       "tags": {
         id_inpatients: {
               "visible_in_list": true,
@@ -28,15 +28,15 @@ describe('services.TagService', function() {
     };
 
 
-    var exampleOptionsPromise = {
+    var exampleMetadataPromise = {
         then: function(x){
-            x(angular.copy(exampleOptions));
+            x(angular.copy(exampleMetadata));
         }
     };
 
     beforeEach(function(){
         module('opal.services', function($provide){
-            $provide.constant('Options', exampleOptionsPromise);
+            $provide.constant('Metadata', exampleMetadataPromise);
         });
         var TagService;
 
@@ -48,16 +48,16 @@ describe('services.TagService', function() {
     });
 
     describe('TagService', function(){
-        it("should put the visible options onto itself when they arrive and sort them alphabetically", function(){
+        it("should put the visible metadata onto itself when they arrive and sort them alphabetically", function(){
             expect(tagService.tags_list ).toEqual([
-              exampleOptions.tags.id_inpatients,
-              exampleOptions.tags.tropical
+              exampleMetadata.tags.id_inpatients,
+              exampleMetadata.tags.tropical
             ]);
         });
 
         it("should only put visible tags onto itself", function(){
             expect(tagService.currentFormTags).toEqual(
-                [exampleOptions.tags.id_inpatients.name]
+                [exampleMetadata.tags.id_inpatients.name]
             );
         });
 
