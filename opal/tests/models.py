@@ -33,6 +33,11 @@ class DogOwner(models.EpisodeSubrecord):
     dog = fields.ForeignKeyOrFreeText(Dog)
 
 
+class HoundOwner(models.EpisodeSubrecord):
+    name = dmodels.CharField(max_length=200)
+    dog = fields.ForeignKeyOrFreeText(Dog, verbose_name="hound")
+
+
 class Colour(models.EpisodeSubrecord):
     _clonable = False
     _advanced_searchable = False
@@ -52,7 +57,7 @@ class FamousLastWords(models.PatientSubrecord):
     _read_only = True
     _modal = 'lg'
 
-    words = dmodels.CharField(max_length=200, blank=True, null=True)
+    words = dmodels.CharField(verbose_name="only words", max_length=200, blank=True, null=True)
 
 
 class EpisodeName(models.EpisodeSubrecord):

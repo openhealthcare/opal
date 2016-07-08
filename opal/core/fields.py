@@ -1,3 +1,4 @@
+from opal.utils import camelcase_to_underscore
 from django.db.models import ForeignKey, CharField
 from django.contrib.contenttypes.models import ContentType
 
@@ -11,10 +12,18 @@ class ForeignKeyOrFreeText(property):
     field.  If found, references foreign model in ForeignKey, otherwise stores
     string in CharField.
     """
-    def __init__(self, foreign_model, related_name=None):
+    def __init__(self, foreign_model, related_name=None, verbose_name=None):
         self.foreign_model = foreign_model
         self.related_name = related_name
+        self._verbose_name = verbose_name
 
+    @property
+    def verbose_name(self):
+        if self._verbose_name:
+            return self._verbose_name
+        else:
+            field = camelcase_to_underscore(self.name)
+            return field.replace('_', ' ')
 
     def contribute_to_class(self, cls, name):
         self.name = name

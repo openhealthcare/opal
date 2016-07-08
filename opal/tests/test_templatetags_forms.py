@@ -51,6 +51,11 @@ class InputTest(TestCase):
         self.assertIn("editing.dog_owner.dog", rendered)
         self.assertIn("dog_list", rendered)
 
+    def test_use_verbose_name_from_model(self):
+        tpl = Template('{% load forms %}{% input field="HoundOwner.dog" %}')
+        rendered = tpl.render(Context({}))
+        self.assertIn("Hound", rendered)
+
     def test_override_from_model(self):
         tpl = Template('{% load forms %}{% input label="Cat" model="editing.cat_owner.cat" lookuplist="cat_list" field="DogOwner.dog" %}')
         rendered = tpl.render(Context({}))
