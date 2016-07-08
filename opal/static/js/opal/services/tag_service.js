@@ -1,4 +1,4 @@
-angular.module('opal.services').factory('TagService', function(Options) {
+angular.module('opal.services').factory('TagService', function(Metadata) {
     "use strict";
 
     var TagService = function(existing_tags){
@@ -7,13 +7,13 @@ angular.module('opal.services').factory('TagService', function(Options) {
         self.tags_list = [];
         self.currentFormTags = [];
 
-        Options.then(function(options){
-            self.tags_list = _.filter(_.values(options.tags), function(option){
+        Metadata.then(function(metadata){
+            self.tags_list = _.filter(_.values(metadata.tags), function(option){
                 return option.direct_add;
             }).sort(function(x, y){ return y.name < x.name; });
 
             self.is_direct_add = function(someTag){
-                return options.tags[someTag] && options.tags[someTag].direct_add;
+                return metadata.tags[someTag] && metadata.tags[someTag].direct_add;
             };
 
             self.currentFormTags = _.filter(existing_tags, function(t){
