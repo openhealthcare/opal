@@ -4,14 +4,15 @@ Tests for the OPAL API
 import json
 from datetime import date, timedelta, datetime
 from django.utils import timezone
-
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import TestCase
+from django.db import DataError
 from django.contrib.contenttypes.models import ContentType
 from mock import patch, MagicMock
 
 from opal import models
-from opal.tests.models import Colour, PatientColour, HatWearer, Hat
+from opal.tests.models import Colour, PatientColour, HatWearer, Hat, Birthday
 from opal.core import metadata
 from opal.core.test import OpalTestCase
 from opal.core.views import _build_json_response
@@ -213,9 +214,7 @@ class MetadataViewSetTestCase(OpalTestCase):
 class SubrecordTestCase(TestCase):
 
     def setUp(self):
-        self.patient = models.Patient.objects.create()
-        self.episode = models.Episode.objects.create(patient=self.patient)
-        self.user = User.objects.create(username='testuser')
+        self.patient, self.episode = self.new_patient_and_episode_please()
 
         class OurViewSet(api.SubrecordViewSet):
             base_name = 'colour'
@@ -225,9 +224,20 @@ class SubrecordTestCase(TestCase):
             base_name = 'patientcolour'
             model = PatientColour
 
+
+        class OurBirthdayViewSet(api.SubrecordViewSet):
+            base_name = 'patientcolour'
+            model = Birthday
+
         self.model = Colour
         self.viewset = OurViewSet
         self.patientviewset = OurPatientViewSet
+        self.birthdayviewset = OurBirthdayViewSet
+        self.assertTrue(
+            self.client.login(
+                username=self.user.username, password=self.PASSWORD
+            )
+        )
 
     def test_retrieve(self):
         with patch.object(self.model.objects, 'get') as mockget:
@@ -263,12 +273,64 @@ class SubrecordTestCase(TestCase):
         response = self.viewset().create(mock_request)
         self.assertEqual(400, response.status_code)
 
+    def test_with_too_long_strings(self):
+        """ the api should give an accurate
+            description of what the api user
+            has done wrong
+        """
+        mock_request = MagicMock(name='mock request')
+        name = "Red and yellow and pink and green "
+        while(len(name) < Colour._meta.get_field("name").max_length):
+            name += name
+
+        mock_request.data = {'name': name, 'episode_id': self.episode.pk}
+        mock_request.user = self.user
+
+        # sqlite doesn't enforce max string length, so lets mock it up
+        if 'sqlite3' in settings.DATABASES['default']['ENGINE']:
+            with patch('opal.tests.models.Colour.save_base') as e:
+                e.side_effect = DataError('value too long for type character varying(255)')
+                response = self.viewset().create(mock_request)
+        else:
+            response = self.viewset().create(mock_request)
+
+        self.assertEqual(400, response.status_code)
+        expected = dict(
+            error='value too long for type character varying(255)'
+        )
+        self.assertEqual(expected, response.data)
+
+    def test_with_the_wrong_datatype(self):
+        """ the api should give an accurate
+            description of what the api user
+            has done wrong
+        """
+        mock_request = MagicMock(name='mock request')
+        name = "Red and yellow and pink and green "
+        while(len(name) < Colour._meta.get_field("name").max_length):
+            name += name
+
+        mock_request.data = {'birth_date': 'asdd', 'episode_id': self.episode.pk}
+        mock_request.user = self.user
+        response = self.birthdayviewset().create(mock_request)
+        self.assertEqual(400, response.status_code)
+        expected = dict(
+            error="time data 'asdd' does not match format '%d/%m/%Y'"
+        )
+        self.assertEqual(expected, response.data)
+
+
     def test_create_unexpected_field(self):
         mock_request = MagicMock(name='mock request')
         mock_request.data = {'name': 'blue', 'hue': 'enabled', 'episode_id': self.episode.pk}
         mock_request.user = self.user
-        response = self.viewset().create(mock_request)
+
+        with self.assertRaises("APIError") as e:
+            response = self.viewset().create(mock_request)
+
+        self.assertEqual(e.message, "Unexpected fieldname(s): ['hue']")
         self.assertEqual(400, response.status_code)
+
 
     def test_update(self):
         created = timezone.now() - timedelta(1)
