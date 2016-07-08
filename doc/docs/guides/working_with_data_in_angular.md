@@ -29,6 +29,22 @@ editing.date_of_diagnosis = new Date();
 diagnosis.save(editing);
 ```
 
+## Subrecord CRUD modals
+
+The `Episode` service has a convenient API that allows you to open a modal to edit
+a new or existing subrecord.
+
+```js
+epiode.recordEditor.newItem('diagnosis'):
+// -> Opens a modal with the diagnosis form and will create a new diagnosis on save
+
+episode.recordEditor.editItem('diagnosis', 0);
+// -> Opens a modal that allows the user to edit the first diagnosis
+
+episode.recordEditor.deleteItem('diagnosis', 0);
+// -> Prompts the user to confirm the deletion of the first diagnosis
+```
+
 ## Customising Subrecords
 
 Sometimes our application will wish to customise a subrecord of a particular type - for

@@ -33,12 +33,38 @@ Arguments:
 
 Instantiate a new subrecord for this episode of a given type.
 
-Arguments: 
+Arguments:
 
 * `recordName`: The name of the type of record you want to instantiate.
 
-Example usage: 
+Example usage:
 
     episode.newItem('diagnosis');
     // item (an Item() instance.
 
+
+#### Episode.recordEditor.newItem(name)
+
+Takes a string, opens a modal from which the user can create a new subrecord of type `name`.
+
+```js
+epiode.recordEditor.newItem('diagnosis'):
+// -> Opens a modal with the diagnosis form and will create a new diagnosis on save
+```
+
+#### Episode.recordEditor.deleteItem(name, index)
+
+Delete the `index-th` item of type `name`. Prompt the user to confirm this with a dialog.
+
+```js
+episode.recordEditor.deleteItem('diagnosis', 0);
+// -> Prompts the user to confirm the deletion of the first diagnosis
+```
+#### Episode.recordEditor.editItem(name, index)
+
+Open a modal from which the user may edit the `index-th` item of type `name`.
+
+```js
+episode.recordEditor.editItem('diagnosis', 0);
+// -> Opens a modal that allows the user to edit the first diagnosis
+```
