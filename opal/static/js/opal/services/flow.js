@@ -53,9 +53,11 @@ angular.module(
 			        controller:  target.controller,
                     keyboard: false,
 			        resolve: {
-				        episode: function() { return episode; },
-                        tags   : function() { return config.current_tags; },
-                        options: function() { return options; },
+                        episode      : function() { return episode; },
+                        referencedata: function(Referencedata){ return Referencedata },
+                        metadata     : function(Metadata){ return Metadata },
+                        tags         : function() { return config.current_tags; },
+                        options      : function() { return options; },
 			        }
 		        }).result
                 deferred.resolve(result);
