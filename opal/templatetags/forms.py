@@ -36,8 +36,8 @@ def _icon_classes(name):
 
 
 def _model_and_field_from_path(fieldname):
-    api_name, field_name = fieldname.split(".")
-    model = get_subrecord_from_model_name(api_name)
+    model_name, field_name = fieldname.split(".")
+    model = get_subrecord_from_model_name(model_name)
     field = None
 
     if hasattr(model, field_name):
@@ -55,7 +55,7 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
     model, field = _model_and_field_from_path(subRecordFieldPath)
 
     ctx = {}
-    ctx["label"] = field.verbose_name.title()
+    ctx["label"] = model._get_field_title(field_name)
     ctx["model"] = "editing.{0}.{1}".format(
         model.get_api_name(),
         field_name
@@ -263,7 +263,7 @@ def static(fieldname):
     return dict(model="editing.{0}.{1}".format(model.get_api_name(),
                                                field_name
                                            ),
-                label=field.name.title().replace("_", " "),
+                label=model._get_field_title(field_name),
                 datep=isinstance(field, models.DateField)
     )
 
