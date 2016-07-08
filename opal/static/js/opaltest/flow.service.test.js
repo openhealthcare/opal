@@ -48,6 +48,8 @@ describe('Flow ', function(){
             expect(resolves.options()).toEqual('options');
             expect(resolves.tags()).toEqual({});
             expect(resolves.episode()).toEqual('episode');
+            expect(resolves.referencedata(Referencedata)).toEqual(Referencedata)
+            expect(resolves.metadata(Metadata)).toEqual(Metadata)
         });
 
     });
