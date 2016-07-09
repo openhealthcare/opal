@@ -16,6 +16,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.urlresolvers import reverse
+from django.core.exceptions import FieldDoesNotExist
 from django.utils.functional import cached_property
 import reversion
 
@@ -123,6 +124,20 @@ class UpdatesFromDictMixin(object):
             pass
 
         raise Exception('Unexpected fieldname: %s' % name)
+
+
+    @classmethod
+    def _get_field_title(cls, name):
+        try:
+            field = cls._meta.get_field(name)
+
+            if isinstance(field, models.ManyToOneRel):
+                return field.related_model._meta.verbose_name_plural.title()
+
+            return field.verbose_name.title()
+        except FieldDoesNotExist:
+            # else its foreign key or free text
+            return getattr(cls, name).verbose_name.title()
 
     @classmethod
     def get_field_type_for_consistency_token(cls):
@@ -814,7 +829,8 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
             if cls._get_field_type(fieldname) == ForeignKeyOrFreeText:
                 fld = getattr(cls, fieldname)
                 lookup_list = camelcase_to_underscore(fld.foreign_model.__name__)
-            title = fieldname.replace('_', ' ').title()
+            title = cls._get_field_title(fieldname)
+
             field_schema.append({'name': fieldname,
                                  'title': title,
                                  'type': field_type,

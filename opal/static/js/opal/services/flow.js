@@ -27,18 +27,18 @@ angular.module(
             enter: function(config){
                 var deferred = $q.defer();
                 var target = ApplicationFlow.enter();
-		        result = $modal.open({
+                result = $modal.open({
                     size: 'lg',
                     backdrop: 'static',
-			        templateUrl: target.template,
-			        controller:  target.controller,
+                    templateUrl: target.template,
+                    controller:  target.controller,
                     resolve: {
                         referencedata:   function(Referencedata){ return Referencedata },
                         metadata:        function(Metadata){ return Metadata },
                         tags:            function(){ return config.current_tags},
                         hospital_number: function(){ return config.hospital_number; }
                     }
-		        }).result;
+                }).result;
                 deferred.resolve(result);
                 return deferred.promise;
             },
@@ -46,13 +46,13 @@ angular.module(
             exit: function(episode, config){
                 var deferred = $q.defer();
                 var target = ApplicationFlow.exit(episode)
-		        result = $modal.open({
+                result = $modal.open({
                     size: 'lg',
                     backdrop: 'static',
-			        templateUrl: target.template,
-			        controller:  target.controller,
+                    templateUrl: target.template,
+                    controller:  target.controller,
                     keyboard: false,
-			        resolve: {
+                    resolve: {
                         episode      : function() { return episode; },
                         referencedata: function(Referencedata){ return Referencedata },
                         metadata     : function(Metadata){ return Metadata },

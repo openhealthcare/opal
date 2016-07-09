@@ -24,6 +24,15 @@ class HatWearer(models.EpisodeSubrecord):
     hats = dmodels.ManyToManyField(Hat, related_name="hat_wearers")
 
 
+class HouseOwner(models.PatientSubrecord):
+    pass
+
+
+class House(dmodels.Model):
+    address = dmodels.CharField(max_length=200)
+    house_owner = dmodels.ForeignKey(HouseOwner, null=True, blank=True)
+
+
 class Dog(lookuplists.LookupList):
     pass
 
@@ -31,6 +40,11 @@ class Dog(lookuplists.LookupList):
 class DogOwner(models.EpisodeSubrecord):
     name = dmodels.CharField(max_length=200)
     dog = fields.ForeignKeyOrFreeText(Dog)
+
+
+class HoundOwner(models.EpisodeSubrecord):
+    name = dmodels.CharField(max_length=200)
+    dog = fields.ForeignKeyOrFreeText(Dog, verbose_name="hound")
 
 
 class Colour(models.EpisodeSubrecord):
@@ -52,8 +66,7 @@ class FamousLastWords(models.PatientSubrecord):
     _read_only = True
     _modal = 'lg'
 
-    words = dmodels.CharField(max_length=200, blank=True, null=True)
-
+    words = dmodels.CharField(verbose_name="only words", max_length=200, blank=True, null=True)
 
 class EpisodeName(models.EpisodeSubrecord):
     _is_singleton = True
