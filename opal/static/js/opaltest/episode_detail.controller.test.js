@@ -192,6 +192,43 @@ describe('EpisodeDetailCtrl', function(){
                 $httpBackend.flush()
                 expect($location.path).toHaveBeenCalledWith('/episode/123');
             });
+        });
+
+        describe('failure!', function() {
+
+            beforeEach(function(){
+                Flow = {enter: jasmine.createSpy('Flow.enter').and.callFake(function(){
+                    return {then: function(success, err){ err(episodeData) }}}) };
+
+                controller = $controller('EpisodeDetailCtrl', {
+                    $scope      : $scope,
+                    $modal      : $modal,
+                    $location   : $location,
+                    $cookieStore: $cookieStore,
+                    Flow        : Flow,
+                    episode     : episode,
+                    options     : options,
+                    profile     : profile
+                });
+            });
+
+            it('should go to the episde', function() {
+                $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+                spyOn($location, 'path');
+                $scope.addEpisode();
+                expect(Flow.enter).toHaveBeenCalledWith(
+                    {
+                        current_tags: {
+                            tag   : 'mine',
+                            subtag: ''
+                        },
+                        hospital_number: '555-333'
+                    }
+                );
+                $rootScope.$apply();
+                $httpBackend.flush()
+                expect($scope.state).toEqual('normal');
+            });
 
         });
 
