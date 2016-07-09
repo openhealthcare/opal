@@ -128,7 +128,7 @@ describe('EpisodeDetailCtrl', function(){
             $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
             $scope.dischargeEpisode();
             expect(Flow.exit).toHaveBeenCalledWith(
-                $scope.episode, options,
+                $scope.episode,
                 {
                     current_tags: {
                         tag   : undefined,

@@ -22,6 +22,15 @@ services. Applications that call EditItemCtrl directly should look to update the
 option they were passing to `$modal.open`. (Alternatively, developers should consider
 refactoring to use the new `recordEditor` API.)
 
+The signatures of Flow `enter` and `exit` methods has changed to no longer accept
+options as a positional argument, and enter/exit controllers will no longer be initialized
+with access to options as a resovled provider. They will have access to either/both of
+`referencedata` and `metadata` so if your application includes custom flow controllers that
+use `options` you will need to refactor these to use the new x-data arguments instead.
+
+`referencedata` and `metadata` between them have all data previously in options, so the refactor
+here should be relatively painless.
+
 ### 5.x -> 6.x
 
 #### Upgrading OPAL
