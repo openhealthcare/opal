@@ -18,7 +18,7 @@ from opal.core.test import OpalTestCase
 import opal.tests.test_patient_lists # To make sure test tagged lists are pulled in
 from opal.tests.models import (
     FamousLastWords, PatientColour, ExternalSubRecord, SymptomComplex, PatientConsultation,
-    Birthday, DogOwner
+    Birthday, DogOwner, HatWearer, HouseOwner
 )
 
 class PatientRecordAccessTestCase(OpalTestCase):
@@ -345,6 +345,14 @@ class SubrecordTestCase(OpalTestCase):
     def test_get_foreign_key_or_free_text_title(self):
         dog_title = DogOwner._get_field_title("dog")
         self.assertEqual(dog_title, "Dog")
+
+    def test_get_title_over_many_to_many(self):
+        hats = HatWearer._get_field_title("hats")
+        self.assertEqual(hats, "Hats")
+
+    def test_get_title_over_reverse_foreign_key(self):
+        hats = HouseOwner._get_field_title("house")
+        self.assertEqual(hats, "Houses")
 
     def test_verbose_name(self):
         only_words = FamousLastWords._get_field_title("words")

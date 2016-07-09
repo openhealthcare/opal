@@ -130,6 +130,10 @@ class UpdatesFromDictMixin(object):
     def _get_field_title(cls, name):
         try:
             field = cls._meta.get_field(name)
+
+            if isinstance(field, models.ManyToOneRel):
+                return field.related_model._meta.verbose_name_plural.title()
+
             return field.verbose_name.title()
         except FieldDoesNotExist:
             # else its foreign key or free text
