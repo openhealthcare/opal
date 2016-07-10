@@ -11,6 +11,8 @@ from django.db import DataError
 from django.contrib.contenttypes.models import ContentType
 from mock import patch, MagicMock
 
+from rest_framework.reverse import reverse
+
 from opal import models
 from opal.tests.models import Colour, PatientColour, HatWearer, Hat, Birthday
 from opal.core import metadata
@@ -274,51 +276,13 @@ class SubrecordTestCase(OpalTestCase):
         response = self.viewset().create(mock_request)
         self.assertEqual(400, response.status_code)
 
-    def test_with_too_long_strings(self):
-        """ the api should give an accurate
-            description of what the api user
-            has done wrong
-        """
-        mock_request = MagicMock(name='mock request')
-        name = "Red and yellow and pink and green "
-        while(len(name) < Colour._meta.get_field("name").max_length):
-            name += name
-
-        mock_request.data = {'name': name, 'episode_id': self.episode.pk}
-        mock_request.user = self.user
-
-        # sqlite doesn't enforce max string length, so lets mock it up
-        with self.assertRaises(DataError):
-            if 'sqlite3' in settings.DATABASES['default']['ENGINE']:
-                with patch('opal.tests.models.Colour.save_base') as e:
-                    e.side_effect = DataError('value too long for type character varying(255)')
-                    response = self.viewset().create(mock_request)
-            else:
-                response = self.viewset().create(mock_request)
-
-    def test_with_the_wrong_datatype(self):
-        """ the api should give an accurate
-            description of what the api user
-            has done wrong
-        """
-        mock_request = MagicMock(name='mock request')
-        name = "Red and yellow and pink and green "
-        while(len(name) < Colour._meta.get_field("name").max_length):
-            name += name
-
-        mock_request.data = {'birth_date': 'asdd', 'episode_id': self.episode.pk}
-        mock_request.user = self.user
-        with self.assertRaises(ValueError):
-            self.birthdayviewset().create(mock_request)
-
-
     def test_create_unexpected_field(self):
-        mock_request = MagicMock(name='mock request')
-        mock_request.data = {'name': 'blue', 'hue': 'enabled', 'episode_id': self.episode.pk}
-        mock_request.user = self.user
+        data = {'name': 'blue', 'hue': 'enabled', 'episode_id': self.episode.pk}
+        request = self.rf.get("/")
+        url = reverse("colour-list", request=request)
 
         with self.assertRaises(APIError) as e:
-            response = self.viewset().create(mock_request)
+            response = self.client.post(url, data=data)
 
 
     def test_update(self):
