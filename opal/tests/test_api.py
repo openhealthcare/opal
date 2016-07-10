@@ -14,7 +14,7 @@ from mock import patch, MagicMock
 from rest_framework.reverse import reverse
 
 from opal import models
-from opal.tests.models import Colour, PatientColour, HatWearer, Hat, Birthday
+from opal.tests.models import Colour, PatientColour, HatWearer, Hat
 from opal.core import metadata
 from opal.core.test import OpalTestCase
 from opal.core.views import _build_json_response
@@ -228,14 +228,9 @@ class SubrecordTestCase(OpalTestCase):
             model = PatientColour
 
 
-        class OurBirthdayViewSet(api.SubrecordViewSet):
-            base_name = 'patientcolour'
-            model = Birthday
-
         self.model = Colour
         self.viewset = OurViewSet
         self.patientviewset = OurPatientViewSet
-        self.birthdayviewset = OurBirthdayViewSet
         self.assertTrue(
             self.client.login(
                 username=self.user.username, password=self.PASSWORD
