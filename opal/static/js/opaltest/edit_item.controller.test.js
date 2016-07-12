@@ -309,6 +309,7 @@ describe('EditItemCtrl', function (){
         it('should should not clean id, date ordered or episode id', function(){
             var today = moment().format('DD/MM/YYYY');
             $scope.editing.microbiology_test.test = "C diff";
+            $scope.editing.microbiology_test.alert_investigation = true;
             $scope.$digest();
             $scope.editing.microbiology_test.c_difficile_antigen = "pending";
             $scope.editing.microbiology_test.episode_id = 1;
@@ -323,6 +324,7 @@ describe('EditItemCtrl', function (){
             expect($scope.editing.microbiology_test.id).toBe(2);
             expect($scope.editing.microbiology_test.consistency_token).toBe("122112");
             expect($scope.editing.microbiology_test.date_ordered).toBe(today);
+            expect($scope.editing.microbiology_test.alert_investigation).toBe(true);
         });
     });
 
