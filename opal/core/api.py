@@ -7,14 +7,17 @@ from django.contrib.contenttypes.models import ContentType
 from rest_framework import routers, status, viewsets
 from rest_framework.response import Response
 
-from opal.models import Episode, Synonym, Macro, Patient, PatientRecordAccess
+from opal.models import (
+    Episode, Synonym, Patient, PatientRecordAccess, PatientSubrecord
+)
 from opal.core import application, exceptions, metadata, plugins, schemas
 from opal.core.lookuplists import LookupList
 from opal.utils import stringport, camelcase_to_underscore
 from opal.core.subrecords import subrecords
 from opal.core.views import _get_request_data, _build_json_response
-from opal.core.patient_lists import (PatientList, TaggedPatientList,
-                                     TaggedPatientListMetadata, FirstListMetadata)
+from opal.core.patient_lists import (
+    PatientList, TaggedPatientListMetadata, FirstListMetadata
+)
 
 app = application.get_app()
 
@@ -53,7 +56,6 @@ def episode_from_pk(fn):
     Decorator that passes an episode or returns a 404 from pk kwarg.
     """
     def get_item(self, request, pk=None):
-        from opal.models import Episode
         try:
             return fn(self, request, Episode.objects.get(pk=pk))
         except Episode.DoesNotExist:
@@ -210,8 +212,6 @@ class SubrecordViewSet(viewsets.ViewSet):
         * Nonexistant episode
         * Unexpected fields being passed in
         """
-        from opal.models import Episode, PatientSubrecord
-
         subrecord = self.model()
         try:
             episode = Episode.objects.get(pk=request.data['episode_id'])
@@ -223,11 +223,7 @@ class SubrecordViewSet(viewsets.ViewSet):
             patient_id = episode.patient.pk
             request.data['patient_id'] = patient_id
 
-        try:
-            subrecord.update_from_dict(request.data, request.user)
-        except exceptions.APIError:
-            return Response({'error': 'Unexpected field name'}, status=status.HTTP_400_BAD_REQUEST)
-
+        subrecord.update_from_dict(request.data, request.user)
         episode = Episode.objects.get(pk=episode.pk)
 
         return _build_json_response(
@@ -300,7 +296,6 @@ class EpisodeViewSet(viewsets.ViewSet):
     base_name = 'episode'
 
     def list(self, request):
-        from opal.models import Episode
         return Response([e.to_dict(request.user) for e in Episode.objects.all()])
 
     def create(self, request):
@@ -425,8 +420,6 @@ class APIReferPatientView(View):
         """
         Expects PATIENT, EPISODE, TARGET
         """
-        from opal.models import Episode
-
         data = _get_request_data(self.request)
         episode = Episode.objects.get(pk=data['episode'])
         current_tags = episode.get_tag_names(None)
