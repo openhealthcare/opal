@@ -748,6 +748,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
             'consistency_token': self.consistency_token,
             'start'            : self.start,
             'end'              : self.end,
+            'stage'            : self.stage,
             }
         if shallow:
             return d
@@ -1619,6 +1620,7 @@ class PatientConsultation(EpisodeSubrecord):
     _icon = 'fa fa-comments'
     _modal = 'lg'
     _list_limit = 3
+    _title = "Patient Consultation"
 
     class Meta:
         abstract = True
