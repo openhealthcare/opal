@@ -12,7 +12,7 @@ def serialize_model(model):
         'display_name': model.get_display_name(),
         'single'      : model._is_singleton,
         'advanced_searchable': model._advanced_searchable,
-        'fields'      : model.build_field_schema()
+        'fields'      : model.build_field_schema(),
         }
     if hasattr(model, '_sort'):
         col['sort'] = model._sort
@@ -22,6 +22,9 @@ def serialize_model(model):
         col['readOnly'] = model._read_only
     if hasattr(model, '_angular_service'):
         col['angular_service'] = model._angular_service
+    if hasattr(model, 'get_form_url'):
+        col["form_url"] = model.get_form_url()
+
     return col
 
 
