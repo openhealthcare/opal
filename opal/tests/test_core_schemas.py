@@ -13,6 +13,7 @@ colour_serialized = dict(
     single=False,
     advanced_searchable=False,
     angular_service='Colour',
+    form_url=u'/templates/forms/colour.html',
     fields=[
         {'model': 'Colour',
          'lookup_list': None,
