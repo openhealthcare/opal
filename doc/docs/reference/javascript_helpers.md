@@ -27,6 +27,14 @@ A directive that if set with no arguments, or set to true, will only allow a but
 clicked on once and then it'll be disabled. Useful for example to make sure that multiple save requests aren't
 accidentally triggered.
 
+#### scroll-top
+
+Adds a click handler to the element that when click will animate the body of the element to scroll to the top
+
+#### go-to-top
+
+Similar to scroll-top, this moves the scroll bar to the top of the page but doesn't animate the transition.
+
 ### Angular Filters
 
 OPAL provides some built-in Angular filters for your project to use.
@@ -39,6 +47,33 @@ Displays a date as DD/MM if it's this year, else DD/MM/YYYY
 
 Displays the hours & minutes portion of a javascript Date object as HH:MM
 
+#### short-date-time
+
+Displays a date time, short date as above and time as in hhmm above
+
+#### moment-date-filter
+
+Allows a us to use moment.js formatters in the template exactly like you would use moment.format
+
+#### title
+
+Converts a string to title case
+
+#### upper
+
+Converts a string to upper case
+
+#### plural
+
+takes a word, a count, and an optional plural term.
+
+if count != 1 and there is a plural term it will return the plural term otherwise it will just suffix an 's'
+
+if count == 1 then it will return the word
+
+#### age
+
+calculates a persons current age from their date of birth
 
 #### boxed
 

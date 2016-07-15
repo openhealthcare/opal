@@ -73,13 +73,24 @@ describe('OPAL Directives', function(){
 
     describe('scrollTop', function(){
 
-        it('should', function() {
-            var markup = '<div scroll-top></div';
+        it('should animate on click', function() {
+            var markup = '<button scroll-top></button>';
+            spyOn($.fn, "animate");
             compileDirective(markup);
-
+            $(element).click();
+            expect($.fn.animate).toHaveBeenCalledWith({ scrollTop: '0' });
         });
-
     })
+
+    describe('goToTop', function(){
+      it('should compile', function() {
+          var markup = '<button go-to-top>hello</button>';
+          spyOn($.fn, "scrollTop");
+          compileDirective(markup);
+          $(element).click();
+          expect($.fn.scrollTop).toHaveBeenCalledWith(0);
+      });
+    });
 
     describe('placeholder', function() {
 
