@@ -107,6 +107,19 @@ directives.directive('scrollTop', function () {
     };
 });
 
+directives.directive('goToTop', function () {
+    return {
+        priority: 1,
+        link: function (scope, element, attrs) {
+            element.bind("click", function(){
+                var body = $("html, body");
+                body.scrollTop(0);
+            });
+        }
+    };
+});
+
+
 directives.directive('placeholder', function($timeout){
 	if ($.support.placeholder) {
 		return {};
