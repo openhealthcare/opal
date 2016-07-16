@@ -206,6 +206,12 @@ table.table > tbody > tr.diagnosis-table-issue > td{
     color: #fff
 }
 
+p.sidebar-help{
+    color: #999;
+    font-size: 18px;
+    line-height: 26px;
+}
+
 i.help {
     color: #46b9d8;
 }
