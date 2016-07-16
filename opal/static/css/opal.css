@@ -163,6 +163,10 @@ h1 small { color: #eff; }
     background-color: #9cc96b; /* Green */
 }
 
+.btn.btn-text-left {
+    text-align: left;
+}
+
 .btn-primary {
     -o-transition:.5s;
     -ms-transition:.5s;
