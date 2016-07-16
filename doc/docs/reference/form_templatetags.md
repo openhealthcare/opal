@@ -32,9 +32,7 @@ Keywords:
 
 ### {% input ... %}
 
-Generates an Input. If you pass a field, the tag will infer the label, model and lookuplist by introspecting the relevant subrecord model.
-
-    {% input field="allergies.drug" %}
+The input template tag generates you a form input that will play nicely with OPAL's styling.
 
 Keywords:
 
@@ -48,6 +46,22 @@ Keywords:
 * `enter` expression to evaluate if the user presses return when in this input
 * `maxlength` maximum number of characters for this input. Will render the form invalid and display help text if exceeded.
 * `static` an Angular expression that will swap the display to be a static input if it evaluates to `true`
+
+#### Inputs for subrecord fields
+
+A very common pattern is to render form fields that relate to fields of `Subrecords`. The input templatetag
+accepts a `field` argument, from which it will infer the label, model and lookuplist by introspecting the relevant subrecord model.
+
+    {% input field="allergies.drug" %}
+
+#### Inputs with units
+
+We also often want to display the unit of a particular field to help our users - consistent styling for this is
+available by using the unit argument e.g.
+
+```html
+{% input label="Weight" model="editing.weight" unit="kg" %}
+```
 
 ### {% radio ... %}
 
