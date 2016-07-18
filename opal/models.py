@@ -1641,7 +1641,7 @@ class PatientConsultation(EpisodeSubrecord):
 
 
 class SymptomComplex(EpisodeSubrecord):
-    _title = 'Symptom'
+    _title = 'Symptoms'
     _icon = 'fa fa-stethoscope'
 
     class Meta:
