@@ -24,6 +24,8 @@ def serialize_model(model):
         col['angular_service'] = model._angular_service
     if hasattr(model, 'get_form_url'):
         col["form_url"] = model.get_form_url()
+    if hasattr(model, 'get_icon'):
+        col["icon"] = model.get_icon()
 
     return col
 

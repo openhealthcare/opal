@@ -127,7 +127,7 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
                 name = 'colour',
                 title = 'Colour',
                 single = False,
-                icon = '',
+                icon = 'fa fa-comments',
                 list_limit = None,
                 template_path = 'records/colour.html',
                 detail_template_path = 'records/colour.html',
