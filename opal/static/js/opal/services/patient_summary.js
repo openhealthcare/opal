@@ -25,7 +25,7 @@ angular.module('opal.services').factory('PatientSummary', function(UserProfile) 
             this.count = jsonResponse.count;
             this.dateOfBirth = moment(jsonResponse.date_of_birth, 'DD/MM/YYYY');
             this.categories = jsonResponse.categories.join(", ");
-            this.link = "#/patient/" + jsonResponse.patient_id;
+            this.link = "/#/patient/" + jsonResponse.patient_id;
             this.hospitalNumber = jsonResponse.hospital_number;
             UserProfile.then(function(user_profile){
                 self.canViewPatientNotes = _.contains(user_profile.roles.default, "micro_haem");
