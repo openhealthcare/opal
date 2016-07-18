@@ -9,6 +9,7 @@ from opal.tests.models import Colour, HatWearer, FamousLastWords
 
 colour_serialized = dict(
     name='colour',
+    icon="fa fa-comments",
     display_name='Colour',
     single=False,
     advanced_searchable=False,
