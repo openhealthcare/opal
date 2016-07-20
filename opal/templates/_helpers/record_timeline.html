@@ -4,10 +4,10 @@
       <i class="{{ icon }}"></i> {{ title }}
       {% if editable %}
       {% if singleton %}
-      <i class="fa fa-pencil edit pull-right"
+      <i class="fa fa-pencil edit pull-right pointer"
          ng-click="episode.recordEditor.editItem('{{ name }}', 0)"></i>
       {% else %}
-      <i class="fa fa-plus-circle edit pull-right"
+      <i class="fa fa-plus-circle edit pull-right pointer"
          ng-click="episode.recordEditor.newItem('{{ name }}')"></i>
       {% endif %}
       {% endif %}
