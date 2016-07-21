@@ -30,6 +30,20 @@ Keywords:
 * `required` Label to show when we're required
 * `mindate` Expression to use to set the minimum possible date
 
+### {% datepicker ... %}
+
+Generates a date time fields, a date field on one line and a time field on another
+
+Keywords:
+
+* `field` a string of the models api name '.' field from this it calculates the label, model and will infer the lookuplist if required. For example {% datetimepicker field="DogOwner.vet_appointment" %}
+* `date_label` The Label with which to describe the date field (defaults to 'Date')
+* `time_label` The Label with which to describe the date field (defaults to 'Time')
+* `model` The model which we are editing (This is a string that references an in-scope Angular variable)
+* `change`  an angular directive that fires on change
+
+
+
 ### {% input ... %}
 
 The input template tag generates you a form input that will play nicely with OPAL's styling.
