@@ -1621,6 +1621,8 @@ class PatientConsultation(EpisodeSubrecord):
     _modal = 'lg'
     _list_limit = 3
     _title = "Patient Consultation"
+    _angular_service = 'PatientConsultationRecord'
+
 
     class Meta:
         abstract = True
