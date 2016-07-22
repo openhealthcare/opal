@@ -24,6 +24,10 @@ requiring that we hard-code API names to defaults in a global namespace.
 AddEpisodeCtrl now no longer requires options as a resolves() option, but requires Referencedata
 instead.
 
+** Additional utilities
+
+Adds a datetimepicker templatetag that will render widgets for a Datetime field including time.
+
 Updates dependency graph:
 
 * Django -> 1.8.13
