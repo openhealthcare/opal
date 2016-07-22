@@ -122,6 +122,28 @@ class DatepickerTestCase(TestCase):
         self.assertIn('hai', rendered)
         self.assertIn('data-min-date="2013-12-22"', rendered)
 
+class DateTimePickerTestCase(TestCase):
+    def test_generic(self):
+        template = Template('{% load forms %}{% datetimepicker field="Colour.name" %}')
+        rendered = template.render(Context({}))
+        self.assertEqual(rendered.count('ng-model="editing.colour.name"'), 2)
+        self.assertIn('date-type="date"', rendered)
+
+    def test_label_date(self):
+        template = Template('{% load forms %}{% datetimepicker field="Colour.name" date_label="something" %}')
+        rendered = template.render(Context({}))
+        self.assertIn('something', rendered)
+
+    def test_label_time(self):
+        template = Template('{% load forms %}{% datetimepicker field="Colour.name" time_label="something" %}')
+        rendered = template.render(Context({}))
+        self.assertIn('something', rendered)
+
+    def test_change(self):
+        template = Template('{% load forms %}{% datetimepicker field="Colour.name" change="something()" %}')
+        rendered = template.render(Context({}))
+        self.assertEqual(rendered.count("something()"), 2)
+
 
 class RadioTestCase(TestCase):
 

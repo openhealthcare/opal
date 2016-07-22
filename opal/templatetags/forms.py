@@ -95,6 +95,13 @@ def extract_common_args(kwargs):
 
     return args
 
+@register.inclusion_tag('_helpers/datetime_picker.html')
+def datetimepicker(*args, **kwargs):
+    ctx = extract_common_args(kwargs)
+    ctx["date_picker_args"] = [('date-type', 'date',), ('autoclose', 1,),]
+    ctx["date_label"] = kwargs.pop("date_label", "Date")
+    ctx["time_label"] = kwargs.pop("time_label", "Time")
+    return ctx
 
 def _input(*args, **kwargs):
     ctx = extract_common_args(kwargs)
@@ -168,6 +175,7 @@ def datepicker(*args, **kwargs):
         ]
     kwargs["datepicker"] = True
     return _input(*[a for a in args] + ["bs-datepicker"], **kwargs)
+
 
 @register.inclusion_tag('_helpers/radio.html')
 def radio(*args, **kwargs):
@@ -280,7 +288,6 @@ def icon(name):
 @register.inclusion_tag('_helpers/date_of_birth_field.html')
 def date_of_birth_field(model_name="editing.demographics.date_of_birth"):
     return dict(model_name=model_name)
-
 
 @register.inclusion_tag('_helpers/process_steps.html')
 def process_steps(*args, **kwargs):
