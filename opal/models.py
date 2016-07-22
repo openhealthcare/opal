@@ -1402,7 +1402,7 @@ class Allergies(PatientSubrecord):
     _icon = 'fa fa-warning'
 
     drug        = ForeignKeyOrFreeText(Drug)
-    provisional = models.BooleanField(default=False)
+    provisional = models.BooleanField(default=False, verbose_name="Suspected?")
     details     = models.CharField(max_length=255, blank=True)
 
 
@@ -1421,7 +1421,7 @@ class Diagnosis(EpisodeSubrecord):
     _icon = 'fa fa-stethoscope'
 
     condition         = ForeignKeyOrFreeText(Condition)
-    provisional       = models.BooleanField(default=False)
+    provisional       = models.BooleanField(default=False, verbose_name="Provisional?")
     details           = models.CharField(max_length=255, blank=True)
     date_of_diagnosis = models.DateField(blank=True, null=True)
 

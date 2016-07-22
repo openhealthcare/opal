@@ -73,6 +73,9 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
             )
 
     ctx["required"] = getattr(field, "required", False)
+
+    if hasattr(field, "max_length"):
+        ctx["maxlength"] = field.max_length
     return ctx
 
 
@@ -115,7 +118,7 @@ def _input(*args, **kwargs):
     unit = kwargs.pop('unit', None)
     data = kwargs.pop('data', [])
     enter = kwargs.pop('enter', None)
-    maxlength = kwargs.pop('maxlength', None)
+    maxlength = kwargs.pop('maxlength', None) or ctx.get("maxlength")
     datepicker = kwargs.pop("datepicker", False)
 
     if required:
