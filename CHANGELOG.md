@@ -19,7 +19,7 @@ to reflect the new URL.
 Establishes a new way to define defaults for records initialized in Javascript without
 requiring that we hard-code API names to defaults in a global namespace.
 
-### Update to AddEpisode Signature
+#### Update to AddEpisode Signature
 
 AddEpisodeCtrl now no longer requires options as a resolves() option, but requires Referencedata
 instead.
@@ -28,7 +28,7 @@ instead.
 
 Adds a datetimepicker templatetag that will render widgets for a Datetime field including time.
 
-Updates dependency graph:
+#### Updates dependency graph:
 
 * Django -> 1.8.13
 
