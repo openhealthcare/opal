@@ -19,6 +19,22 @@ angular.module('opal.services')
                             return new Episode(resource);
                         });
 
+                        patient.episodes = _.sortBy(patient.episodes, function(episode){
+                            /*
+                            * so we cast to unix because if an event hasn't got
+                            * a start or an end, we want it at the bottom
+                            */
+                            if(episode.end){
+                                return moment(episode.end).unix();
+                            }
+                            else if(episode.start){
+                                return moment(episode.start).unix()
+                            }
+                            else{
+                                return 0;
+                            }
+                        }).reverse();
+
                         var episodeValues = _.values(patient.episodes);
                         if(episodeValues.length){
                           _.each(patient, function(v, k){
