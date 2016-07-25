@@ -69,6 +69,11 @@ class InputTest(TestCase):
         self.assertIn('ng-model="bai"', rendered)
         self.assertIn('hai', rendered)
 
+    def test_max_length(self):
+        tpl = Template('{% load forms %}{% input field="DogOwner.name" %}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('ng-maxlength="200"', rendered)
+
     def test_hide(self):
         tpl = Template('{% load forms %}{% input label="hai" model="bai" hide="status=\'reloading\'"%}')
         self.assertIn('ng-hide="status=\'reloading\'"', tpl.render(Context({})))

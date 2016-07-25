@@ -17,6 +17,10 @@ class ForeignKeyOrFreeText(property):
         self.related_name = related_name
         self._verbose_name = verbose_name
 
+        # for use in the fields, lookup lists essentially have
+        #  a max length based on the char field that's used internally
+        self.max_length=255
+
     @property
     def verbose_name(self):
         if self._verbose_name:
