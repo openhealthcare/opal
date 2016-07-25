@@ -50,7 +50,6 @@ angular.module('opal.services').factory('RecordEditor', function(
 
     self.openEditItemModal = function(item, name){
       $rootScope.state = 'modal';
-
       var template_url = '/templates/modals/' + name + '.html/';
 
       if($routeParams.slug){

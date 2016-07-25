@@ -83,6 +83,24 @@ angular.module('opal.controllers').controller(
 		    return p1.compare(p2);
 	    };
 
+      $scope.editTags = function(){
+          $scope.open_modal(
+            'EditTeamsCtrl',
+            '/templates/modals/edit_teams.html',
+            'lg',
+            {episode: $scope.episode}
+          ).then(function(){
+              if(!$scope.episode.hasTag(pertinantTag)){
+                delete $scope.episodes[$scope.episode.id];
+                $scope.rows = _.filter($scope.rows, function(e){
+                    return e.id !== $scope.episode.id;
+                });
+              }
+
+              $scope.episode = $scope.rows[0];
+          });
+      };
+
         $scope.jumpToTag = function(tag){
             if(_.contains(_.keys(options.tag_hierarchy), tag)){
                 $location.path($scope.path_base + tag)

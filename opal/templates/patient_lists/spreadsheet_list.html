@@ -60,7 +60,7 @@
       </p>
     </li>
     <li class="list-group-item" ng-show="profile.can_see_pid()">
-      {% with edit_teams="open_modal('EditTeamsCtrl', '/templates/modals/edit_teams.html', 'lg', {episode: episode})" %}
+      {% with edit_teams="editTags()" %}
       {% include 'partials/_teams_list.html' %}
       {% endwith %}
     </li>
