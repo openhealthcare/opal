@@ -296,7 +296,7 @@ class EpisodeViewSet(viewsets.ViewSet):
     base_name = 'episode'
 
     def list(self, request):
-        return Response([e.to_dict(request.user) for e in Episode.objects.all()])
+        return _build_json_response([e.to_dict(request.user) for e in Episode.objects.all()])
 
     def create(self, request):
         """
@@ -338,7 +338,7 @@ class EpisodeViewSet(viewsets.ViewSet):
     def update(self, request, episode):
         try:
             episode.update_from_dict(request.data, request.user)
-            return Response(episode.to_dict(request.user, shallow=True))
+            return _build_json_response(episode.to_dict(request.user, shallow=True))
         except exceptions.ConsistencyError:
             return _build_json_response({'error': 'Item has changed'}, 409)
 

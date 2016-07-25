@@ -572,22 +572,29 @@ class TaggingTestCase(TestCase):
 class EpisodeTestCase(OpalTestCase):
 
     def setUp(self):
-        self.patient = models.Patient.objects.create()
+        super(EpisodeTestCase, self).setUp()
+        self.patient, self.episode = self.new_patient_and_episode_please()
         self.demographics = self.patient.demographics_set.get()
 
         # add a date to make sure serialisation works as expected
         self.demographics.date_of_birth = date(2010, 1, 1)
         self.demographics.created = datetime.now()
-        self.episode = models.Episode.objects.create(patient=self.patient)
+        self.episode.date_of_admission = date(2014, 1, 14)
+        self.episode.active = True
+        self.episode.save()
         self.user = User.objects.create(username='testuser')
         self.mock_request = MagicMock(name='request')
         self.mock_request.user = self.user
         self.mock_request.query_params = {}
+        self.expected = self.episode.to_dict(self.user)
+        self.expected["date_of_admission"] = "14/01/2014"
+        self.expected["start"] = "14/01/2014"
+        self.expected["episode_history"][0]["start"] = "14/01/2014"
+        self.expected["episode_history"][0]["date_of_admission"] = "14/01/2014"
 
     def test_retrieve_episode(self):
         response = json.loads(api.EpisodeViewSet().retrieve(self.mock_request, pk=self.episode.pk).content)
-        expected = json.loads(_build_json_response(self.episode.to_dict(self.user)).content)
-        self.assertEqual(expected, response)
+        self.assertEqual(self.expected, response)
 
     def test_retrieve_nonexistent_episode(self):
         response = api.EpisodeViewSet().retrieve(self.mock_request, pk=678687)
@@ -595,9 +602,9 @@ class EpisodeTestCase(OpalTestCase):
 
     def test_list(self):
         response = api.EpisodeViewSet().list(self.mock_request)
-        expected = [self.episode.to_dict(self.user)]
         self.assertEqual(200, response.status_code)
-        self.assertEqual(expected, response.data)
+        response_content = json.loads(response.content)
+        self.assertEqual([self.expected], response_content)
 
     def test_list_unauthenticated(self):
         pass #TODO TEST THIS
@@ -724,6 +731,8 @@ class EpisodeTestCase(OpalTestCase):
         response = api.EpisodeViewSet().update(self.mock_request, pk=episode.pk)
         e = models.Episode.objects.get(pk=episode.pk)
         self.assertEqual(date(2015, 1, 14), e.date_of_admission)
+        response_dict = json.loads(response.content)
+        self.assertEqual(response_dict["date_of_admission"], "14/01/2015")
 
     def test_update_nonexistent(self):
         self.mock_request.data = {"date_of_admission": "14/01/2015"}
