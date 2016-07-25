@@ -20,7 +20,7 @@ Establishes a new way to define defaults for records initialized in Javascript w
 requiring that we hard-code API names to defaults in a global namespace.
 
 
-#### Update to JS Signatures
+#### Update to Javascript Signatures
 
 `Flow.enter()` and `Flow.exit()` now no longer take `options` positional arguments - instead
 the controllers they initialize have `Metadata` and `Referencedata` as optional resolves
