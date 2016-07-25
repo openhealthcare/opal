@@ -163,6 +163,10 @@ h1 small { color: #eff; }
     background-color: #9cc96b; /* Green */
 }
 
+.btn.btn-text-left {
+    text-align: left;
+}
+
 .btn-primary {
     -o-transition:.5s;
     -ms-transition:.5s;
@@ -200,6 +204,12 @@ table.table > tbody > tr.diagnosis-table-issue > td{
     background-color: #f54928;
     border-color: #f54f2f;
     color: #fff
+}
+
+p.sidebar-help{
+    color: #999;
+    font-size: 18px;
+    line-height: 26px;
 }
 
 i.help {
@@ -341,7 +351,6 @@ i.delete,
 
 
 
-.panel-heading i:hover,
 .detail .list-group-item i:hover { cursor: pointer; }
 .detail .list-group-item i.delete:hover { cursor: pointer; color: rgb(169, 68, 66); }
 .list-group-item { min-height: 50px; }

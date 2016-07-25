@@ -187,7 +187,6 @@ class UpdatesFromDictMixin(object):
 
             if not synonym_found:
                 error_msg = 'Unexpected fieldname(s): {}'.format(values)
-                logging.critical(error_msg)
                 raise exceptions.APIError(error_msg)
 
         field.add(*to_add)
@@ -749,6 +748,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
             'consistency_token': self.consistency_token,
             'start'            : self.start,
             'end'              : self.end,
+            'stage'            : self.stage,
             }
         if shallow:
             return d
@@ -1620,6 +1620,9 @@ class PatientConsultation(EpisodeSubrecord):
     _icon = 'fa fa-comments'
     _modal = 'lg'
     _list_limit = 3
+    _title = "Patient Consultation"
+    _angular_service = 'PatientConsultationRecord'
+
 
     class Meta:
         abstract = True
@@ -1640,7 +1643,7 @@ class PatientConsultation(EpisodeSubrecord):
 
 
 class SymptomComplex(EpisodeSubrecord):
-    _title = 'Symptom'
+    _title = 'Symptoms'
     _icon = 'fa fa-stethoscope'
 
     class Meta:

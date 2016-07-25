@@ -15,11 +15,12 @@ from opal.tests.models import Hat, HatWearer, Dog, DogOwner
 class EpisodeTest(OpalTestCase):
 
     def setUp(self):
-        self.patient = Patient.objects.create()
-        self.episode = self.patient.create_episode()
+        self.patient, self.episode = self.new_patient_and_episode_please()
         self.hiv     = Team.objects.create(name='hiv', title='HIV')
         self.mine    = Team.objects.create(name='mine', title='Mine')
         self.micro   = Team.objects.create(name='microbiology', title='Microbiology')
+        self.episode.stage = "Active TB"
+        self.episode.save()
 
     def test_singleton_subrecord_created(self):
         self.assertEqual(1, self.episode.episodename_set.count())
@@ -84,10 +85,12 @@ class EpisodeTest(OpalTestCase):
         as_dict = self.episode.to_dict(self.user)
         expected = [
             'id', 'category_name', 'active', 'date_of_admission', 'discharge_date',
-            'consistency_token', 'date_of_episode', 'start', 'end'
+            'consistency_token', 'date_of_episode', 'start', 'end', 'stage'
         ]
         for field in expected:
             self.assertIn(field, as_dict)
+
+        self.assertEqual(as_dict["stage"], "Active TB")
 
     def test_to_dict_with_multiple_episodes(self):
         self.episode.date_of_admission = datetime.date(2015, 7, 25)
@@ -195,7 +198,7 @@ class EpisodeManagerTestCase(OpalTestCase):
         as_dict = Episode.objects.serialised(self.user, [self.episode])[0]
         expected = [
             'id', 'category_name', 'active', 'date_of_admission', 'discharge_date',
-            'consistency_token', 'date_of_episode'
+            'consistency_token', 'date_of_episode', 'stage'
         ]
 
         for field in expected:

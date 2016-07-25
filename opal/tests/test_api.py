@@ -4,17 +4,21 @@ Tests for the OPAL API
 import json
 from datetime import date, timedelta, datetime
 from django.utils import timezone
-
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import TestCase
+from django.db import DataError
 from django.contrib.contenttypes.models import ContentType
 from mock import patch, MagicMock
+
+from rest_framework.reverse import reverse
 
 from opal import models
 from opal.tests.models import Colour, PatientColour, HatWearer, Hat
 from opal.core import metadata
 from opal.core.test import OpalTestCase
 from opal.core.views import _build_json_response
+from opal.core.exceptions import APIError
 
 # this is used just to import the class for
 # EpisodeListApiTestCase and OptionsViewSetTestCase
@@ -210,12 +214,10 @@ class MetadataViewSetTestCase(OpalTestCase):
         self.assertEqual(404, response.status_code)
 
 
-class SubrecordTestCase(TestCase):
+class SubrecordTestCase(OpalTestCase):
 
     def setUp(self):
-        self.patient = models.Patient.objects.create()
-        self.episode = models.Episode.objects.create(patient=self.patient)
-        self.user = User.objects.create(username='testuser')
+        self.patient, self.episode = self.new_patient_and_episode_please()
 
         class OurViewSet(api.SubrecordViewSet):
             base_name = 'colour'
@@ -225,9 +227,15 @@ class SubrecordTestCase(TestCase):
             base_name = 'patientcolour'
             model = PatientColour
 
+
         self.model = Colour
         self.viewset = OurViewSet
         self.patientviewset = OurPatientViewSet
+        self.assertTrue(
+            self.client.login(
+                username=self.user.username, password=self.PASSWORD
+            )
+        )
 
     def test_retrieve(self):
         with patch.object(self.model.objects, 'get') as mockget:
@@ -264,11 +272,13 @@ class SubrecordTestCase(TestCase):
         self.assertEqual(400, response.status_code)
 
     def test_create_unexpected_field(self):
-        mock_request = MagicMock(name='mock request')
-        mock_request.data = {'name': 'blue', 'hue': 'enabled', 'episode_id': self.episode.pk}
-        mock_request.user = self.user
-        response = self.viewset().create(mock_request)
-        self.assertEqual(400, response.status_code)
+        data = {'name': 'blue', 'hue': 'enabled', 'episode_id': self.episode.pk}
+        request = self.rf.get("/")
+        url = reverse("colour-list", request=request)
+
+        with self.assertRaises(APIError) as e:
+            response = self.client.post(url, data=data)
+
 
     def test_update(self):
         created = timezone.now() - timedelta(1)

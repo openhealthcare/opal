@@ -29,6 +29,7 @@ describe('PatientSummary', function (){
       expect(patientSummary.hospitalNumber).toEqual("11111111");
       expect(patientSummary.first_name).toEqual("Isabella");
       expect(patientSummary.surname).toEqual("King");
+      expect(patientSummary.link).toEqual("/#/patient/192");
   });
 
   it("should populate years if they exist", function(){

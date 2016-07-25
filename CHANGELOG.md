@@ -1,12 +1,12 @@
 ### 0.7.0 (Major Release)
 
-** Episode Categories**
+#### Episode Categories
 
 Refactors EpisodeCategory to be a discoverable feature.
 
 Renames `Episode.category` -> `Episode.category_name`.
 
-** Episode JSON API**
+#### Episode JSON API
 
 The Restful Episode JSON API previously available at `/episode/:pk/` is now moved into
 `/api/v0.1/episode/:pk/` for consistency with the rest of our JSON APIs.
@@ -14,19 +14,24 @@ The OPAL Angular layer has been updated to reflect this, and
 should handle the transition seamlessly, but code calling the API directly should update
 to reflect the new URL.
 
-** Defaults for records on the client side**
+#### Defaults for records on the client side
 
 Establishes a new way to define defaults for records initialized in Javascript without
 requiring that we hard-code API names to defaults in a global namespace.
 
-*** Update to JS Signatures ***
 
-AddEpisodeCtrl now no longer requires options as a resolves() option, but requires Referencedata
-instead.
+#### Update to JS Signatures
 
 `Flow.enter()` and `Flow.exit()` now no longer take `options` positional arguments - instead
 the controllers they initialize have `Metadata` and `Referencedata` as optional resolves
 arguments.
+
+AddEpisodeCtrl now no longer requires options as a resolves() option, but requires Referencedata
+instead.
+
+#### Additional utilities
+
+Adds a datetimepicker templatetag that will render widgets for a Datetime field including time.
 
 Updates dependency graph:
 
