@@ -211,6 +211,37 @@ describe('PatientListCtrl', function() {
         });
     });
 
+    describe("edit Tags", function(){
+      it('should filter an episode if the episode does not have the same tags', function(){
+        // imitate the case where we remove all the tags
+        $scope.episodes[episode.id] = episode;
+        $scope.episodes[episode2.id] = episode2;
+        $scope.rows = [episode, episode2];
+        $scope.open_modal = function(){};
+        spyOn($scope, "open_modal").and.returnValue({then: function(fn){ episode.tagging = [{}]; fn(); }});
+        $scope.editTags();
+        expect($scope.rows).toEqual([episode2]);
+        expect($scope.episodes[episode.id]).toBe(undefined);
+        expect($scope.open_modal).toHaveBeenCalled();
+      });
+
+      it('should leave the episode if it does have the pertinant tag', function(){
+        it('should filter an episode if the episode does not have the same tags', function(){
+          // imitate the case where we remove all the tags
+          $scope.episodes[episode.id] = episode;
+          episode.tagging["micro_orth"] = true;
+          $scope.episodes[episode2.id] = episode2;
+          $scope.rows = [episode, episode2];
+          $scope.open_modal = function(){};
+          spyOn($scope, "open_modal").and.returnValue({then: function(fn){ delete episode.tagging["micro_orth"]; fn(); }});
+          $scope.editTags();
+          expect($scope.rows).toEqual([episode, episode2]);
+          expect($scope.episodes[episode.id]).toBe(episode);
+          expect($scope.open_modal).toHaveBeenCalled();
+        });
+      });
+    });
+
 
     describe('newly-created controller', function() {
         it('should have state "normal"', function() {
