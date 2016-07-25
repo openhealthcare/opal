@@ -34,11 +34,11 @@ angular.module('opal.controllers').controller(
 		        $scope.microbiology_test_lookup = {};
 		        $scope.micro_test_defaults =  metadata.micro_test_defaults;
 
-		        for (var name in metadata){
+		        for (var name in referencedata){
 			        if (name.indexOf('micro_test') == 0) {
-				        for (var ix = 0; ix < metadata[name].length; ix++) {
-					        $scope.microbiology_test_list.push(metadata[name][ix]);
-					        $scope.microbiology_test_lookup[metadata[name][ix]] = name;
+				        for (var ix = 0; ix < referencedata[name].length; ix++) {
+					        $scope.microbiology_test_list.push(referencedata[name][ix]);
+					        $scope.microbiology_test_lookup[referencedata[name][ix]] = name;
 				        };
 			        };
 		        };

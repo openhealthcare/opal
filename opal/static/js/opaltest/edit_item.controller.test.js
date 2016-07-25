@@ -9,11 +9,10 @@ describe('EditItemCtrl', function (){
     var referencedata = {
         dogs: ['Poodle', 'Dalmation'],
         hats: ['Bowler', 'Top', 'Sun'],
-        toLookuplists: function(){return {}}
-    };
-    var metadata = {
-        tag_hierarchy :{'tropical': []},
-        "micro_test_stool_parasitology_pcr": [
+        micro_test_c_difficile: [
+            "C diff", "Clostridium difficile"
+        ],
+        micro_test_stool_parasitology_pcr: [
             "Stool Parasitology PCR"
         ],
         micro_test_defaults: {
@@ -22,9 +21,16 @@ describe('EditItemCtrl', function (){
                 c_difficile_toxin: "pending"
             }
         },
-        micro_test_c_difficile: [
-            "C diff", "Clostridium difficile"
-        ]
+        toLookuplists: function(){return {}}
+    };
+    var metadata = {
+        tag_hierarchy :{'tropical': []},
+        micro_test_defaults: {
+            micro_test_c_difficile: {
+                c_difficile_antigen: "pending",
+                c_difficile_toxin: "pending"
+            }
+        }
     };
 
     var episodeData = {
