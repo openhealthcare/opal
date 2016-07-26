@@ -89,6 +89,9 @@ def extract_common_args(kwargs):
         if field in kwargs:
             args[field] = kwargs[field]
 
+    model_name = args["model"].replace('.', '_').replace("editing_", "")
+    model_name = model_name.replace("[", "").replace("]", "")
+    args["modelname"] = model_name
     args["autofocus"] = kwargs.pop("autofocus", None)
     args["help_text"] = kwargs.pop("help_text", None)
     disabled = kwargs.pop('disabled', None)
@@ -132,7 +135,6 @@ def _input(*args, **kwargs):
                                      kwargs.pop('hide', None))
 
     ctx.update({
-        'modelname': ctx["model"].replace('.', '_').replace("editing_", ""),
         'directives': args,
         'visibility': visibility,
         'icon'      : icon,
