@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 
 import os
+import sys
 
 from celery import Celery
 
@@ -18,7 +19,7 @@ app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 @app.task(bind=True)
 def debug_task(self):
-    print('Request: {0!r}'.format(self.request))
+    sys.stdout.write('Request: {0!r}\n'.format(self.request))
 
 app.conf.update(
     CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend',
