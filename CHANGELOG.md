@@ -34,6 +34,12 @@ instead.
 The `input` form helper will now infer the max length of char fields from the max length of the
 database field, and render relevant Angular directives.
 
+#### EpisodeDetail removed
+
+The `EpisodeDetailCtrl` and `EpisodeDetailMixin` controller and service have been removed - these
+were not used anywhere other than in the Wardround plugin, and redundant after enhancements to
+Patient Detail and Custom DetailViews in 0.6.
+
 #### Additional utilities
 
 Adds a datetimepicker templatetag that will render widgets for a Datetime field including time.
