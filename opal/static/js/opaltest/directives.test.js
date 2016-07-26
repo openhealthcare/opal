@@ -94,9 +94,20 @@ describe('OPAL Directives', function(){
 
     describe('placeholder', function() {
 
-        it('should ', function() {
+        it('should display the', function() {
+            spyOn($, "support");
+            $.support.placeholder = true;
             var markup = '<input placeholder="foo" />';
             compileDirective(markup);
+            expect(_.contains(element[0], 'placeholder="foo"'));
+        });
+
+        it('should display the', function() {
+            spyOn($, "support");
+            $.support.placeholder = false;
+            var markup = '<input placeholder="foo" />';
+            compileDirective(markup);
+            expect(_.contains(element[0], 'placeholder="foo"'));
         });
 
     });
