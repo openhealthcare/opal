@@ -103,6 +103,10 @@ class InputTest(TestCase):
         tpl = Template('{% load forms %}{% input label="hai" model="bai" disabled="status=\'reloading\'"%}')
         self.assertIn('ng-disabled="status=\'reloading\'"', tpl.render(Context({})))
 
+    def test_model_name(self):
+        tpl = Template('{% load forms %}{% input label="hai" model="bai[0].something" %}')
+        self.assertIn('bai0_something', tpl.render(Context({})))
+
     def test_required_no_formname(self):
         tpl = Template('{% load forms %}{% input label="hai" model="bai" required=True%}')
         with self.assertRaises(ValueError):
