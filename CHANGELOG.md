@@ -1,3 +1,5 @@
+### 0.7.1 (Minor Release)
+
 ### 0.7.0 (Major Release)
 
 #### Episode Categories
