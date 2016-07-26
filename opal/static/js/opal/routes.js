@@ -14,6 +14,7 @@ app.config(
 			 resolve: {
 				 episodedata: function(patientListLoader) { return patientListLoader(); },
 				 options    : function(Options) { return Options; },
+                 metadata   : function(Metadata){ return Metadata },
                  profile    : function(UserProfile){ return UserProfile; },
 			 },
 			 templateUrl: function(params){

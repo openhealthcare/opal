@@ -2,11 +2,10 @@ angular.module('opal.controllers').controller(
     'PatientDetailCtrl',
     function(
         $rootScope, $scope, $modal, $location, $routeParams,
-        Flow, Item, patient, options, profile
+        Flow, Item, patient, profile
     ){
         $scope.profile = profile;
         $scope.patient = patient;
-        $scope.options = options;
         $scope.episode = patient.episodes[0];
         $scope.view = null;
 
