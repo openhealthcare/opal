@@ -84,6 +84,7 @@ angular.module('opal.controllers').controller(
 	    };
 
       $scope.editTags = function(){
+          $rootScope.state = 'modal';
           $scope.open_modal(
             'EditTeamsCtrl',
             '/templates/modals/edit_teams.html',
@@ -96,7 +97,7 @@ angular.module('opal.controllers').controller(
                     return e.id !== $scope.episode.id;
                 });
               }
-
+              $rootScope.state = 'normal';
               $scope.episode = $scope.rows[0];
           });
       };

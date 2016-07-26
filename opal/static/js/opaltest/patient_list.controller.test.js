@@ -217,23 +217,31 @@ describe('PatientListCtrl', function() {
         $scope.episodes[episode.id] = episode;
         $scope.episodes[episode2.id] = episode2;
         $scope.rows = [episode, episode2];
+        var scopeChanged = false;
+        $rootScope.$watch("state.modal", function(ca){
+          scopeChanged = true;
+        });
+
         $scope.open_modal = function(){};
         spyOn($scope, "open_modal").and.returnValue({then: function(fn){ episode.tagging = [{}]; fn(); }});
         $scope.editTags();
+        $scope.$apply();
         expect($scope.rows).toEqual([episode2]);
         expect($scope.episodes[episode.id]).toBe(undefined);
         expect($scope.open_modal).toHaveBeenCalled();
+        expect(scopeChanged).toBe(true);
+        expect($rootScope.state).toBe("normal");
       });
 
       it('should leave the episode if it does have the pertinant tag', function(){
         it('should filter an episode if the episode does not have the same tags', function(){
           // imitate the case where we remove all the tags
           $scope.episodes[episode.id] = episode;
-          episode.tagging["micro_orth"] = true;
+          episode.tagging.micro_orth = true;
           $scope.episodes[episode2.id] = episode2;
           $scope.rows = [episode, episode2];
           $scope.open_modal = function(){};
-          spyOn($scope, "open_modal").and.returnValue({then: function(fn){ delete episode.tagging["micro_orth"]; fn(); }});
+          spyOn($scope, "open_modal").and.returnValue({then: function(fn){ delete episode.tagging.micro_orth; fn(); }});
           $scope.editTags();
           expect($scope.rows).toEqual([episode, episode2]);
           expect($scope.episodes[episode.id]).toBe(episode);
