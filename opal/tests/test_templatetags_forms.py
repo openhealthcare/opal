@@ -179,6 +179,11 @@ class SelectTestCase(TestCase):
         cleaned = "".join([i.strip() for i in rendered.split("\n") if i.strip()])
         self.assertIn('<label class="control-label col-sm-3">hai</label>', cleaned)
 
+    def test_help_text(self):
+        template = Template('{% load forms %}{% select label="hai" model="bai" lookuplist="[1,2,3]" help_text="informative help text" %}')
+        rendered = template.render(Context({}))
+        self.assertIn('informative help text', rendered)
+
     def test_required_no_formname(self):
         tpl = Template('{% load forms %}{% select label="hai" model="bai" required=True %}')
         with self.assertRaises(ValueError):
