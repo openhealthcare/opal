@@ -40,12 +40,11 @@ describe('Flow ', function(){
 
     describe('exit', function(){
         it('should call exit', function(){
-            Flow.exit('episode', 'options', {current_tags: {}});
+            Flow.exit('episode', {current_tags: {}});
             var args = $modal.open.calls.mostRecent().args;
             expect(args[0].controller).toEqual('DischargeEpisodeCtrl');
             expect(args[0].templateUrl).toEqual('/templates/modals/discharge_episode.html/');
             var resolves = args[0].resolve;
-            expect(resolves.options()).toEqual('options');
             expect(resolves.tags()).toEqual({});
             expect(resolves.episode()).toEqual('episode');
             expect(resolves.referencedata(Referencedata)).toEqual(Referencedata)

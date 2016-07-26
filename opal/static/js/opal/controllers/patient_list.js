@@ -286,7 +286,7 @@ angular.module('opal.controllers').controller(
             if(profile.readonly){ return null; };
 
 		    $rootScope.state = 'modal';
-            var exit = Flow.exit(episode, options,
+            var exit = Flow.exit(episode,
                 {
                     current_tags: {
                         tag   : $scope.currentTag,

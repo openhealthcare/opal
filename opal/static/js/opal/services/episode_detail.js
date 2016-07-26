@@ -14,7 +14,6 @@ angular.module('opal.services')
 		        $rootScope.state = 'modal';
                 var exit = Flow.exit(
                     $scope.episode,
-                    options,
                     {
                         current_tags: {
                             tag   : $scope.currentTag,

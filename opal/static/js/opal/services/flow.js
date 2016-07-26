@@ -43,7 +43,7 @@ angular.module(
                 return deferred.promise;
             },
 
-            exit: function(episode, options, config){
+            exit: function(episode, config){
                 var deferred = $q.defer();
                 var target = ApplicationFlow.exit(episode)
                 result = $modal.open({
@@ -57,9 +57,8 @@ angular.module(
                         referencedata: function(Referencedata){ return Referencedata },
                         metadata     : function(Metadata){ return Metadata },
                         tags         : function() { return config.current_tags; },
-                        options      : function() { return options; },
-                    }
-                }).result
+			        }
+		        }).result
                 deferred.resolve(result);
                 return deferred.promise
             }

@@ -50,7 +50,6 @@ angular.module('opal.controllers').controller(
 		    $rootScope.state = 'modal';
             var exit = Flow.exit(
                 $scope.episode,
-                options,
                 {
                     current_tags: {
                         tag   : $scope.currentTag,
