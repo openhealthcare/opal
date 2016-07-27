@@ -13,7 +13,7 @@ app.config(
 			 controller: 'PatientListCtrl',
 			 resolve: {
 				 episodedata: function(patientListLoader) { return patientListLoader(); },
-				 options    : function(Options) { return Options; },
+                 metadata   : function(Metadata){ return Metadata },
                  profile    : function(UserProfile){ return UserProfile; },
 			 },
 			 templateUrl: function(params){
@@ -33,7 +33,6 @@ app.config(
 			     controller: 'PatientDetailCtrl',
                  resolve: {
 				     patient: function(patientLoader) { return patientLoader(); },
-				     options: function(Options) { return Options; },
                      profile: function(UserProfile){ return UserProfile; }
                  },
 			     templateUrl: function(params){ return '/templates/patient_detail.html' }
@@ -48,7 +47,6 @@ app.config(
                  resolve: {
                      profile: function(UserProfile){ return UserProfile; },
                      schema: function(extractSchemaLoader){ return extractSchemaLoader; },
-				     options: function(Options) { return Options; },
                      filters: function(filtersLoader){ return filtersLoader(); }
                  }
              })

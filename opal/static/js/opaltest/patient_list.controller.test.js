@@ -1,13 +1,13 @@
 describe('PatientListCtrl', function() {
     "use strict";
-    var episodeData, episodeData2, optionsData, patientData, Schema;
+    var episodeData, episodeData2, metaData, patientData, Schema;
     var schema, Episode, Item, episode, episodeVisibility;
     var profile, episode2;
     var $scope, $cookieStore, $controller, $q, $dialog, $httpBackend;
     var $location, $routeParams, $http;
     var Flow;
     var episodedata, controller;
-    var $modal, options, $rootScope;
+    var $modal, metadata, $rootScope;
 
     var _makecontroller;
 
@@ -88,7 +88,7 @@ describe('PatientListCtrl', function() {
         }]
     };
 
-    optionsData = {
+    metaData = {
         condition: ['Another condition', 'Some condition'],
         tag_hierarchy: {'tropical': [], 'inpatients': ['icu']},
         tag_display: {'tropical': 'Tropical', 'icu': "ICU"},
@@ -175,7 +175,7 @@ describe('PatientListCtrl', function() {
         episodedata = {status: 'success', data: {123: episode} };
         episodeVisibility = jasmine.createSpy().and.callFake(episodeVisibility);
 
-        options = optionsData;
+        metadata = metaData;
         $routeParams.slug = 'tropical';
 
         _makecontroller = function(){
@@ -193,7 +193,7 @@ describe('PatientListCtrl', function() {
                 schema        : schema,
                 episodedata   : episodedata,
                 profile       : profile,
-                options       : options,
+                metadata      : metadata,
                 viewDischarged: false,
                 episodeVisibility: episodeVisibility
             });
