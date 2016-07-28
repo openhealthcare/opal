@@ -1,6 +1,6 @@
-# """
-# Utilities for dealing with OPAL Schemas
-# """
+"""
+Utilities for dealing with OPAL Schemas
+"""
 import itertools
 from opal.core.subrecords import subrecords
 from opal import models
