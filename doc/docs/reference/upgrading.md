@@ -5,9 +5,32 @@ application to a later version where there are extra steps required.
 
 ### 6.x -> 7.x
 
+#### Upgrading OPAL
+
+How you do this depends on how you have configured your application, but updating your
+requirements.txt to update the version should work.
+
+    # requirements.txt
+    opal==0.7.0
+
+After re-installing (via for instance `pip install -r requirements.txt`) you will need to
+run the migrations for OPAL 0.6.x
+
+    $ python manage.py migrate opal
+
+
+If you are inheriting from the abstract models in OPAL e.g. `Demographics` then you should
+run a makemigrations command to update to the 0.7.x data model.
+
+    python manage.py makemigrations yourapp
+    python manage.py migrate yourapp
+
+
 #### Breaking changes
 
 OPAL 0.7 contains a number of breaking changes.
+
+##### Name changes
 
 `opal.models.Episode.category` has been re-named `category_name`. If your application
 directly sets category, you will be required to update all instances where this happens.
@@ -15,6 +38,8 @@ directly sets category, you will be required to update all instances where this 
 The `/episode/:pk/` API has moved to `/api/v0.1/episode/:pk/` so any code (typically
 javascript) code that directly saves to this API endpoint rather than using the OPAL JS
 `Episode` services should work immediately when re-pointed at the new URL.
+
+##### Moving from options to referencedata and metadata
 
 The signature of the EditItemCtrl has been updated - this modal controller no longer
 takes an `options` argument, rather it uses the new 0.7.x `referencedata` and `metadata`
@@ -30,6 +55,12 @@ use `options` you will need to refactor these to use the new x-data arguments in
 
 `referencedata` and `metadata` between them have all data previously in options, so the refactor
 here should be relatively painless.
+
+##### Date of birth fields in forms
+
+The partial `partials/_date_of_birth_field.html` has been removed and replaced with the
+`{% date_of_birth_field %}` templatetag in the forms library. You should update any forms
+to use this new tag.
 
 ### 5.x -> 6.x
 
@@ -159,6 +190,16 @@ from `inpatient` to `Inpatient`. To update your episodes run :
 ...   e.save()
 ...
 ```
+
+Any references to episode category in templates (for e.g. ng-hide) or controllers for logic
+will also require updates.
+
+#### Flow is now defined in JS
+
+Flow is no longer defined on the server side in python, but rather is a javascript service.
+See the documentation for information about setting up custom flows. At a minimum applications
+that use custom flows will have to implement their own flow service and reference it in their
+settings.
 
 ### 4.X -> 5.x
 

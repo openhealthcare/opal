@@ -11,6 +11,13 @@ Your application scaffold will have created a file at
 `./yourapp/assets/js/yourapp/services/flow.js`. This file will declare an angular service that
 your application will use to determine how to move to the correct next step for a patient.
 
+To enable this, we must set the following setting:
+
+```python
+# settings.py
+OPAL_FLOW_SERVICE = 'MyAppFlow'
+```
+
 Flow services must define an `enter` and an `exit` method, which both return the appropriate
 angular controller and template to use. Although OPAL provides sensible default controllers and
 templates for these common actions, applications with custom flows may customise these methods

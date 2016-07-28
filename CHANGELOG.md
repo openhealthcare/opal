@@ -44,6 +44,9 @@ Patient Detail and Custom DetailViews in 0.6.
 
 Adds a datetimepicker templatetag that will render widgets for a Datetime field including time.
 
+Adds a `date_of_birth_field` templatetag that renders a date of birth field complete with inteligent
+validation. (Note this change also includes removing the old _partial/ template)
+
 Updates dependency graph:
 
 * Django -> 1.8.13
