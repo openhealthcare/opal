@@ -19,6 +19,7 @@ pages:
       - Roles & Permissions: guides/roles_and_permissions.md
       - Tagging: guides/tagging.md
       - JSON API: guides/json_api.md
+      - Referencedata: guides/referencedata.md
       - Lookup Lists: guides/lookup_lists.md
       - Templates: guides/templates.md
       - Context Processors: guides/context_processors.md
