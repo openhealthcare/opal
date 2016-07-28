@@ -20,6 +20,7 @@ pages:
       - Tagging: guides/tagging.md
       - JSON API: guides/json_api.md
       - Referencedata: guides/referencedata.md
+      - Metadata: guides/metadata.md
       - Lookup Lists: guides/lookup_lists.md
       - Templates: guides/templates.md
       - Context Processors: guides/context_processors.md
