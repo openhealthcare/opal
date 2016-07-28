@@ -157,6 +157,7 @@ INSTALLED_APPS = (
     'axes',
     'reversion',
     'rest_framework',
+    'rest_framework.authtoken',
     'compressor',
     'opal',
     'opal.core.search',
@@ -252,6 +253,13 @@ DEFAULT_DOMAIN = 'http://{{ name }}.com/'
 
 OPAL_BRAND_NAME = '{{ name }}'
 VERSION_NUMBER  = '<0.0.1'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    )
+}
 
 try:
     from local_settings import *
