@@ -36,10 +36,43 @@ to accompany it.
 
 The lookup list will automatically be added to the admin.
 
-### JSON API and front end referencedata
+### Reference data JSON API
 
-Reference data is available over the JSON API located at `/api/v0.1/referencedata/` and can be
-loaded with the Angular service `Referencedata`.
+Reference data is available over the OPAL JSON API.
+
+You may either load all lookuplists at once via the `/api/v0.1/referencedata/` endpoint, or
+individual lookuplists by name - for example all diagnoses from `/api/v0.1/referencedata/diagnosis/`.
+
+The reference data API also loads all synonyms in a flat list - the conversion of synonyms to their
+canonical form is handled by the save mechanism of subrecords using `ForeignKeyOrFreeText` fields.
+
+### Working with reference data on the front end
+
+The Angular service `Referencedata` can be used to fetch all lookuplists at once - for instance
+loaded in the Angular routing for a controller in your application
+
+```javascript
+when('/my/route', {
+    controller: 'MyCtrl',
+   	resolve: {
+           referencedata: function(Referencedata){ return Referencedata; }
+   		 }
+    }
+```
+
+Lookuplists will then be available either as properties of the `referencedata` object.
+
+### Using referencedata in forms
+
+The OPAL [form templatetag library](../reference/form_templatetags.md) allow us to easily incorporate
+referencedata into the forms we build, eiether by detecting their use automatically when we have
+`ForeignKeyOrFreeText` fields, or explicitly by passing an argument.
+
+```html
+{% load forms %}
+{% input field="Diagnosis.condition" %}
+{% select label="List of Conditions" lookuplist="referencedata.diagnosis" %}
+```
 
 ### Management commands
 
