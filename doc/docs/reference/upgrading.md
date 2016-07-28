@@ -3,6 +3,30 @@
 This document provides instructions for specific steps required to upgrading your OPAL
 application to a later version where there are extra steps required.
 
+### 0.7.0 -> 0.7.1
+
+We highly recommend that applications explicitly set Django Rest Framework authentication
+classes in their `settings.py`.
+
+By default OPAL now uses session and token auth, which will require a migration to install
+the DRF Token authentication app.
+
+```python
+INSTALLED_APPS = (
+    # ....
+    'rest_framework',
+    'rest_framework.authtoken',
+    # ...
+)
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    )
+}
+```
+
 ### 6.x -> 7.x
 
 #### Breaking changes
