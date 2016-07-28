@@ -11,7 +11,7 @@ You may examine the API of any running OPAL application by navigating to the url
 
 ### Adding your own APIs
 
-You can add your own APIs to the OPAL API namespae [from plugins](plugins.md#adding-apis) or
+You can add your own APIs to the OPAL API namespace [from plugins](plugins.md#adding-apis) or
 by registering them directly with the router.
 
     from rest_framework.viewsets import ViewSet
