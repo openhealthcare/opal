@@ -128,15 +128,24 @@ def startproject(args):
     nix.mv(project_dir/'app', app_dir)
 
     # 7. Create extra directories we need
-    js = app_dir/'assets/js/{0}'.format(name)
-    css = app_dir/'assets/css'
+    js = app_dir/'static/js/{0}'.format(name)
+    css = app_dir/'static/css'
     js.mkdir()
     css.mkdir()
-    nix.mv(app_dir/'static/js/app/routes.js', app_dir/'assets/js/{0}/routes.js'.format(name))
-    nix.rm_r(app_dir/'static')
+    nix.mv(app_dir/'static/js/app/routes.js', app_dir/'static/js/{0}/routes.js'.format(name))
 
     templates = app_dir/'templates'/name
     templates.mkdir()
+
+    assets = app_dir/'assets'
+    assets.mkdir()
+    assets_explainer = assets/'README.md'
+    assets_explainer << """
+    This placeholder file is here to ensure that there we still have our STATICFILES_DIRS target
+    if we commit generated code to source control.
+
+    This means that we can run collectstatic OK.
+    """
 
     # We have this here because it uses name from above.
     def manage(command):
