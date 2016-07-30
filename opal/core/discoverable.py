@@ -1,6 +1,9 @@
 """
 OPAL utilities for discoverable functionality
 """
+import collections
+import inspect
+
 from django.conf import settings
 
 from opal.core import exceptions
@@ -87,8 +90,25 @@ class DiscoverableFeature(object):
         raise ValueError('No {0} implementation with slug {1}'.format(klass, name))
 
 
+sortable_orders = collections.defaultdict(set)
+
 class SortableFeature(object):
     module_name = None
+
+    @classmethod
+    def is_valid(klass):
+        order = getattr(klass, 'order', None)
+        if order is None:
+            return
+
+        parents = tuple(k for k in inspect.getmro(klass) if k != klass)
+        if order in sortable_orders[parents]:
+            msg = "{0} is not the first subclass of {1} to be ordered {2}".format(
+                str(klass), str(parents), order
+            )
+            raise exceptions.InvalidDiscoverableFeatureError(msg)
+        sortable_orders[parents].add(order)
+        return True
 
     @classmethod
     def list(klass):
