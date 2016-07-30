@@ -24,6 +24,8 @@ def write(what):
         return
     sys.stdout.write("{0}\n".format(what))
 
+# TODO: This is backported from Django 1.9.x - after we upgrade to target
+# Django 1.9.x can we kill this and import it from there please.
 def get_random_secret_key():
     """
     Return a 50 character random string usable as a SECRET_KEY setting value.
