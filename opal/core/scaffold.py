@@ -6,6 +6,7 @@ import os
 import subprocess
 import sys
 
+from django.utils.crypto import get_random_string
 import ffs
 from ffs import nix
 from ffs.contrib import mold
@@ -23,6 +24,14 @@ def write(what):
         return
     sys.stdout.write("{0}\n".format(what))
 
+# TODO: This is backported from Django 1.9.x - after we upgrade to target
+# Django 1.9.x can we kill this and import it from there please.
+def get_random_secret_key():
+    """
+    Return a 50 character random string usable as a SECRET_KEY setting value.
+    """
+    chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
+    return get_random_string(50, chars)
 
 def interpolate_dir(directory, **context):
     """
@@ -96,8 +105,7 @@ def startproject(args, USERLAND_HERE):
 
 
     # 3. Interpolate the project data
-    # !!! TODO: make this a reals secret key please!
-    interpolate_dir(project_dir, name=name, secret_key='foobarbaz')
+    interpolate_dir(project_dir, name=name, secret_key=get_random_secret_key())
 
     app_dir = project_dir/name
 

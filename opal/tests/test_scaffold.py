@@ -42,7 +42,6 @@ class StartprojectTestCase(OpalTestCase):
             scaffold.startproject(self.args, self.path)
             exiter.assert_called_with(1)
 
-
     def test_run_django_startproject(self, os, subpr):
         scaffold.startproject(self.args, self.path)
         os.assert_any_call('django-admin.py startproject testapp')
@@ -59,14 +58,24 @@ class StartprojectTestCase(OpalTestCase):
 
     def test_calls_interpolate_dir(self, os, subpr):
         with patch.object(scaffold, 'interpolate_dir') as interpolate:
-            scaffold.startproject(self.args, self.path)
-            interpolate.assert_any_call(self.path/'testapp', name='testapp',
-                                        secret_key='foobarbaz')
+            with patch.object(scaffold, 'get_random_secret_key') as rnd:
+                rnd.return_value = 'foobarbaz'
+                scaffold.startproject(self.args, self.path)
+                interpolate.assert_any_call(self.path/'testapp', name='testapp',
+                                            secret_key='foobarbaz')
 
     def test_settings_is_our_settings(self, os, subpr):
         scaffold.startproject(self.args, self.path)
         settings = self.path/'testapp/testapp/settings.py'
         self.assertTrue('opal' in settings.contents)
+
+    def test_sets_random_secret_key(self, os, subpr):
+        with patch.object(scaffold, 'get_random_secret_key') as rnd:
+            rnd.return_value = 'MyRandomKey'
+            scaffold.startproject(self.args, self.path)
+            settings = self.path/'testapp/testapp/settings.py'
+            self.assertTrue("SECRET_KEY = 'MyRandomKey'" in settings.contents)
+            rnd.assert_called_with()
 
     def test_has_js_dir(self, os, subpr):
         scaffold.startproject(self.args, self.path)
