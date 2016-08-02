@@ -1344,7 +1344,7 @@ class Demographics(PatientSubrecord):
     date_of_death = models.DateField(null=True, blank=True)
     post_code = models.CharField(max_length=20, blank=True, null=True)
     gp_practice_code = models.CharField(max_length=20, blank=True, null=True)
-    birth_place = ForeignKeyOrFreeText(Destination)
+    birth_place = ForeignKeyOrFreeText(Destination, verbose_name="Country of birth")
     ethnicity = ForeignKeyOrFreeText(Ethnicity)
     death_indicator = models.BooleanField(default=False)
 
