@@ -1,11 +1,39 @@
 describe('OPAL Directives', function(){
 
     var element, scope, $timeout, $httpBackend;
+    var responseMarkUp = ' \
+      <ui-select class="col-sm-8" multiple ng-model="value" on-remove="onRemove($item, $model)" on-select="onSelect($item, $model)" theme="bootstrap"> \
+        <ui-select-match>[[ $item.display_name ]]</ui-select-match> \
+        <ui-select-choices repeat="i.name as i in tagsList | filter:$select.search" value="[[ $select.selected.name ]]"> \
+          <div ng-bind-html="i.display_name | highlight: $select.search"></div>  \
+        </ui-select-choices> \
+      </ui-select> \
+    ';
+
+    var metaData = {tags: {
+      id_inpatients: {
+        direct_add: true,
+        display_name: "ID Inpatients",
+        name: "id_inpatients",
+        parent_tag: "infectious_diseases",
+        slug: "infectious_diseases-id_inpatients"
+      },
+      infectious_diseases: {
+        direct_add: false,
+        display_name: "Infectious Diseases",
+        name: "infectious_diseases",
+        }
+      }
+    }
+
+    beforeEach(module('ui.select'));
 
     beforeEach(module('opal.directives', function($provide){
-      $provide.value('Metadata', function(){
+      $provide.service('Metadata', function(){
         return {
-          then: function(fn){ fn({}); }
+          then: function(fn){
+            fn(metaData);
+          }
         };
       });
     }));
@@ -15,10 +43,11 @@ describe('OPAL Directives', function(){
 
       inject(function($injector){
         $timeout = $injector.get('$timeout');
-        $httpBackend = $injector.get('$httpBackend');
         $rootScope = $injector.get('$rootScope');
+        $templateCache = $injector.get('$templateCache');
       });
 
+      $templateCache.put('/templates/ng_templates/tag_select.html', responseMarkUp);
       scope = $rootScope.$new();
     });
 
@@ -230,23 +259,58 @@ describe('OPAL Directives', function(){
 
     describe("tag-select", function(){
       var markup = '<form name="form"><div id="test" tag-select ng-model="editing.tagging"></div></form>';
-      var responseMarkUp = ' \
-        <ui-select class="col-sm-8" multiple ng-model="value" on-remove="onRemove($item, $model)" on-select="onSelect($item, $model)" theme="bootstrap"> \
-          <ui-select-match>[[ $item.display_name ]]</ui-select-match> \
-          <ui-select-choices repeat="i.name as i in tagsList | filter:$select.search" value="[[ $select.selected.name ]]"> \
-            <div ng-bind-html="i.display_name | highlight: $select.search"></div>  \
-          </ui-select-choices> \
-        </ui-select> \
-      ';
-
 
       it("should render a template", function(){
-        $httpBackend.expectGET('/templates/partials/tag_select.html').respond(responseMarkUp);
-        scope.editing = {tagging: {tropical: true}};
+        scope.editing = {tagging: {}};
         compileDirective(markup);
-        var input = angular.element($(element).find("input")[0]);
+        var input = angular.element($(element).find(".ui-select-container")[0]);
         var testScope = input.scope();
-        expect(testScope.value).toBe(undefined);
+        expect(testScope.value).toEqual([]);
+      });
+
+      it("should copy values through to the select 2", function(){
+        scope.editing = {tagging: {id_inpatients: true}};
+        compileDirective(markup);
+        var input = angular.element($(element).find(".ui-select-container")[0]);
+        var testScope = input.scope();
+        expect(testScope.value.length).toBe(1)
+        expect(testScope.value[0].display_name).toBe("ID Inpatients");
+      });
+
+      it("should update editing if something is added", function(){
+        scope.editing = {tagging: {}};
+        compileDirective(markup);
+        var input = angular.element($(element).find(".ui-select-container")[0]);
+        var testScope = input.scope();
+        testScope.onSelect(metaData.tags.id_inpatients, "id_inpatients");
+        expect(scope.editing.tagging.id_inpatients).toBe(true);
+      });
+
+      it("should update editing if something is removed", function(){
+        scope.editing = {tagging: {id_inpatients: true}};
+        compileDirective(markup);
+        var input = angular.element($(element).find(".ui-select-container")[0]);
+        var testScope = input.scope();
+        testScope.onRemove(metaData.tags.id_inpatients, "id_inpatients");
+        expect(scope.editing.tagging.id_inpatients).toBe(false);
+      });
+
+      it("should not remove from if its not in tags", function(){
+        scope.editing = {tagging: {id_inpatients: true, microHaem: true}};
+        compileDirective(markup);
+        var input = angular.element($(element).find(".ui-select-container")[0]);
+        var testScope = input.scope();
+        testScope.onRemove(metaData.tags.id_inpatients, "id_inpatients");
+        expect(scope.editing.tagging.microHaem).toBe(true);
+      });
+
+      it("should not remove from if its a parent tag", function(){
+        scope.editing = {tagging: {id_inpatients: true, infectious_diseases: true}};
+        compileDirective(markup);
+        var input = angular.element($(element).find(".ui-select-container")[0]);
+        var testScope = input.scope();
+        testScope.onRemove(metaData.tags.id_inpatients, "id_inpatients");
+        expect(scope.editing.tagging.infectious_diseases).toBe(true);
       });
     });
 });

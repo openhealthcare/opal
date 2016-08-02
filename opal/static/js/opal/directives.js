@@ -319,7 +319,7 @@ directives.directive("tagSelect", function(Metadata){
   return {
     require: "?ngModel",
     scope: true,
-    templateUrl: "/templates/partials/tag_select.html",
+    templateUrl: "/templates/ng_templates/tag_select.html",
     link: function(scope, element, attrs, ngModel){
       if (!ngModel) return;
       Metadata.then(function(metadata){
