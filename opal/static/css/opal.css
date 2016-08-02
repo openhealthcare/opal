@@ -1077,3 +1077,7 @@ a.table-link:hover{
 .orange{
   color: #f76c51
 }
+
+.small-icon, .list-group-item .btn i.small-icon{
+  font-size: 12px;
+}
