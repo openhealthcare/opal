@@ -1,5 +1,17 @@
 ### 0.7.1 (Minor Release)
 
+Completes the refactor of front end data, no longer using the `/api/v0.1/options/` API internally.
+This is slated for removal in 0.8.0.
+
+Updates DRF APIs - we now expect either Token or DjangoSession auth.
+
+Fixes several small bugs with scaffolded applications -  the setting of `STATIC_ROOT` and
+`SECRET_KEY`, generating forms for NullBooleanFields, requirements.txt.
+
+Adds an `aligned_pair` templatetag to the `panels` library.
+
+Updates the label for `Demographics.birth_place` to indicate that this should be a country.
+
 ### 0.7.0 (Major Release)
 
 #### Episode Categories
