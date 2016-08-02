@@ -2,13 +2,13 @@ describe('OPAL Directives', function(){
 
     var element, scope, $timeout, $httpBackend;
 
-    beforeEach(module('opal.directives'), function($provide){
+    beforeEach(module('opal.directives', function($provide){
       $provide.value('Metadata', function(){
         return {
           then: function(fn){ fn({}); }
         };
       });
-    });
+    }));
 
     beforeEach(function(){
       var $rootScope;
@@ -241,7 +241,7 @@ describe('OPAL Directives', function(){
 
 
       it("should render a template", function(){
-        // $httpBackend.expectGet('/templates/partials/tag_select.html').respond(responseMarkUp);
+        $httpBackend.expectGET('/templates/partials/tag_select.html').respond(responseMarkUp);
         scope.editing = {tagging: {tropical: true}};
         compileDirective(markup);
         var input = angular.element($(element).find("input")[0]);
