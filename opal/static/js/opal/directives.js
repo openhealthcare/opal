@@ -313,3 +313,46 @@ directives.directive("dateOfBirth", function(){
     }
   };
 });
+
+
+directives.directive("tagSelect", function(Metadata){
+  return {
+    require: "?ngModel",
+    scope: true,
+    templateUrl: "/templates/partials/tag_select.html",
+    link: function(scope, element, attrs, ngModel){
+      if (!ngModel) return;
+      Metadata.then(function(metadata){
+        scope.onRemove = function($item, $model){
+            ngModel.$modelValue[$model] = false;
+        };
+
+        scope.onSelect = function($item, $model){
+            ngModel.$modelValue[$model] = true;
+        };
+
+        ngModel.$render = function(){
+          // get all existing tag names that are direct add
+          // filter the meta data tags for these
+          // return the meta data
+          var tagNames = [];
+          scope.something = [];
+
+          _.each(ngModel.$modelValue, function(v, k){
+              if(v){
+                tagNames.push(k);
+              }
+          })
+
+          scope.value = _.filter(metadata.tags, function(tagData){
+            return _.contains(tagNames, tagData.name) && tagData.direct_add;
+          });
+
+          scope.tagsList = _.filter(_.values(metadata.tags), function(option){
+              return option.direct_add;
+          }).sort(function(x, y){ return y.name < x.name; });
+        };
+      });
+    }
+  };
+});

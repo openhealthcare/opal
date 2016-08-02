@@ -1,16 +1,26 @@
 describe('OPAL Directives', function(){
 
-    var element, scope, $timeout;
+    var element, scope, $timeout, $httpBackend;
 
-    beforeEach(module('opal.directives'));
+    beforeEach(module('opal.directives'), function($provide){
+      $provide.value('Metadata', function(){
+        return {
+          then: function(fn){ fn({}); }
+        };
+      });
+    });
 
-    beforeEach(inject(function($rootScope, $compile) {
-        scope = $rootScope.$new();
-    }));
+    beforeEach(function(){
+      var $rootScope;
 
-    beforeEach(inject(function(_$timeout_) {
-        $timeout = _$timeout_;
-    }));
+      inject(function($injector){
+        $timeout = $injector.get('$timeout');
+        $httpBackend = $injector.get('$httpBackend');
+        $rootScope = $injector.get('$rootScope');
+      });
+
+      scope = $rootScope.$new();
+    });
 
     function compileDirective(tpl){
         // inject allows you to use AngularJS dependency injection
@@ -216,5 +226,27 @@ describe('OPAL Directives', function(){
             var testScope = input.scope();
             expect(testScope.value).toBe("19/10/2001");
         });
+    });
+
+    describe("tag-select", function(){
+      var markup = '<form name="form"><div id="test" tag-select ng-model="editing.tagging"></div></form>';
+      var responseMarkUp = ' \
+        <ui-select class="col-sm-8" multiple ng-model="value" on-remove="onRemove($item, $model)" on-select="onSelect($item, $model)" theme="bootstrap"> \
+          <ui-select-match>[[ $item.display_name ]]</ui-select-match> \
+          <ui-select-choices repeat="i.name as i in tagsList | filter:$select.search" value="[[ $select.selected.name ]]"> \
+            <div ng-bind-html="i.display_name | highlight: $select.search"></div>  \
+          </ui-select-choices> \
+        </ui-select> \
+      ';
+
+
+      it("should render a template", function(){
+        // $httpBackend.expectGet('/templates/partials/tag_select.html').respond(responseMarkUp);
+        scope.editing = {tagging: {tropical: true}};
+        compileDirective(markup);
+        var input = angular.element($(element).find("input")[0]);
+        var testScope = input.scope();
+        expect(testScope.value).toBe(undefined);
+      });
     });
 });

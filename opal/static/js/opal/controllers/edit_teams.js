@@ -1,12 +1,13 @@
 angular.module('opal.controllers').controller(
     'EditTeamsCtrl', function(
-        $scope, $modalInstance, $modal, $q, ngProgressLite,
-        TagService, episode) {
+        $scope, $modalInstance, $modal, $q, ngProgressLite, episode) {
 
-        $scope.editing = {};
-
-        var currentTags = episode.getTags();
-        $scope.tagService = new TagService(currentTags);
+        if(episode.tagging.length){
+          $scope.editing = {tagging: episode.tagging[0].makeCopy()};
+        }
+        else{
+          $scope.editing.tagging = {};
+        }
 
         //
         // Save the teams.
@@ -14,7 +15,7 @@ angular.module('opal.controllers').controller(
   	    $scope.save = function(result) {
               ngProgressLite.set(0);
               ngProgressLite.start();
-              episode.tagging[0].save($scope.tagService.toSave()).then(function() {
+              episode.tagging[0].save($scope.editing.tagging).then(function() {
                 ngProgressLite.done();
       			    $modalInstance.close(result);
   		    });
