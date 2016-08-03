@@ -174,13 +174,18 @@ h1 small { color: #eff; }
     -webkit-transition:.5s;
     transition:.5s;
 
-   background-color: #9cc96b; /* Green */
-   border-color: #9cc96b; /* Green */
+     background-color: #9cc96b; /* Green */
+     border-color: #9cc96b; /* Green */
  }
 .btn-primary:hover,
-.btn-primary:focus {
+.btn-primary:focus{
     background-color: #87bd4b;
     border-color: #87bd4b;
+}
+
+.btn-primary.active{
+  background-color: #75A341;
+  border-color: #75A341;
 }
 
 table.table > tbody > tr.diagnosis-table-issue > td{
