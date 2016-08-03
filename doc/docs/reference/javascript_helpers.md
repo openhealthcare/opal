@@ -21,6 +21,11 @@ OPAL provides some built-in Angular directives for your project to use.
 
 Creates an input field that assumes to base field is a moment and handles validation and parsing. It assumes no one is born in the future or is over 150 years old.
 
+#### tag-select
+Creates an input field that takes in a tagging dict, an object of with the keys of tag names to true. It produces a multi select box where users can remove or add tags that have the direct_add field
+(as defined by meta data) set to true.
+
+
 #### one-click-only
 
 A directive that if set with no arguments, or set to true, will only allow a button to be
