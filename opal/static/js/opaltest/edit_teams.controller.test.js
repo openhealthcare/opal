@@ -134,12 +134,22 @@ describe('EditTeamsCtrl', function(){
             expect($scope.editing).toEqual({tagging: {tropical: true}});
         });
 
+        it('should not set an empty object if there are no tags', function(){
+          episode.tagging = [];
+          $controller('EditTeamsCtrl', {
+              $scope: $scope,
+              $window: $window,
+              $modalInstance: modalInstance,
+              episode: episode
+          });
+            expect($scope.editing).toEqual({tagging: {}});
+        });
+
         it('should fetch the options', function() {
             $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
             $rootScope.$apply();
             $httpBackend.flush();
         });
-
     });
 
     describe('save()', function() {
