@@ -167,7 +167,7 @@ class UpdatesFromDictMixin(object):
         to_add = set(new_values) - set(existing_values)
         to_remove = set(existing_values) - set(new_values)
 
-        if len(new_values) != len(values):
+        if len(set(new_values)) != len(set(values)):
             # the only way this should happen is if one of the incoming
             # values is a synonym for another incoming value so lets check this
             synonym_found = False
