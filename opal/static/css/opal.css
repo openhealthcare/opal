@@ -183,9 +183,10 @@ h1 small { color: #eff; }
     border-color: #87bd4b;
 }
 
-.btn-primary.active{
-  background-color: #75A341;
-  border-color: #75A341;
+.btn-default.active{
+  background-color: #5fa2dd;
+  border-color: #5fa2dd;
+  color: #fff;
 }
 
 table.table > tbody > tr.diagnosis-table-issue > td{
