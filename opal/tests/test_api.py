@@ -666,7 +666,6 @@ class EpisodeTestCase(OpalTestCase):
             "demographics" : {
                 "first_name": "Alain",
                 "surname": "Anderson",
-                "sex": "Male",
                 "hospital_number": "9999000999",
             }
         }
@@ -677,7 +676,6 @@ class EpisodeTestCase(OpalTestCase):
         demographics = patient.demographics_set.get()
         self.assertEqual("Alain", demographics.first_name)
         self.assertEqual("Anderson", demographics.surname)
-        self.assertEqual("Male", demographics.sex)
 
     def test_create_sets_location(self):
         pcount = models.Patient.objects.filter(

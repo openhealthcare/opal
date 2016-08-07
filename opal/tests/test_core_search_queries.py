@@ -162,18 +162,18 @@ class DatabaseQueryTestCase(OpalTestCase):
         query = queries.DatabaseQuery(self.user, self.name_criteria)
         self.assertEqual([self.episode], query.get_episodes())
 
-    def test_get_episodes_searching_ft_or_fk_field(self):
-        criteria = [
-            {
-                u'column': u'demographics',
-                u'field': u'Sex',
-                u'combine': u'and',
-                u'query': u'Female',
-                u'queryType': u'Equals'
-            }
-        ]
-        query = queries.DatabaseQuery(self.user, criteria)
-        self.assertEqual([self.episode], query.get_episodes())
+    # def test_get_episodes_searching_ft_or_fk_field(self):
+    #     criteria = [
+    #         {
+    #             u'column': u'demographics',
+    #             u'field': u'Sex',
+    #             u'combine': u'and',
+    #             u'query': u'Female',
+    #             u'queryType': u'Equals'
+    #         }
+    #     ]
+    #     query = queries.DatabaseQuery(self.user, criteria)
+    #     self.assertEqual([self.episode], query.get_episodes())
 
     def test_get_patient_summaries(self):
         query = queries.DatabaseQuery(self.user, self.name_criteria)

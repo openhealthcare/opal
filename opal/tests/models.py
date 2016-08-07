@@ -89,12 +89,21 @@ if not getattr(models.Patient, 'demographics_set', None):
 
         hospital_number = dmodels.CharField(max_length=200, blank=True, null=True)
         nhs_number = dmodels.CharField(max_length=200, blank=True, null=True)
-        first_name = dmodels.CharField(max_length=200, blank=True, null=True)
-        surname = dmodels.CharField(max_length=200, blank=True, null=True)
-        date_of_birth = dmodels.DateField(blank=True, null=True)
-        sex = fields.ForeignKeyOrFreeText(models.Gender)
-        birth_place = fields.ForeignKeyOrFreeText(models.Destination)
+
+        surname = dmodels.CharField(max_length=255, blank=True)
+        first_name = dmodels.CharField(max_length=255, blank=True)
+        middle_name = dmodels.CharField(max_length=255, blank=True, null=True)
+        title = fields.ForeignKeyOrFreeText(models.Title)
+        date_of_birth = dmodels.DateField(null=True, blank=True)
+        marital_status = fields.ForeignKeyOrFreeText(models.MaritalStatus)
+        religion = dmodels.CharField(max_length=255, blank=True, null=True)
+        date_of_death = dmodels.DateField(null=True, blank=True)
+        post_code = dmodels.CharField(max_length=20, blank=True, null=True)
+        gp_practice_code = dmodels.CharField(max_length=20, blank=True, null=True)
+        birth_place = fields.ForeignKeyOrFreeText(models.Destination, verbose_name="Country of birth")
+        ethnicity = fields.ForeignKeyOrFreeText(models.Ethnicity)
         death_indicator = dmodels.BooleanField(default=False)
+        sex = fields.ForeignKeyOrFreeText(models.Gender)
 
         pid_fields = 'first_name', 'surname',
 
