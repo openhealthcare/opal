@@ -22,7 +22,7 @@ class HatWearer(models.EpisodeSubrecord):
 
     name = dmodels.CharField(max_length=200)
     hats = dmodels.ManyToManyField(Hat, related_name="hat_wearers")
-
+    wearing_a_hat = dmodels.BooleanField(default=True)
 
 class HouseOwner(models.PatientSubrecord):
     pass
@@ -94,6 +94,7 @@ if not getattr(models.Patient, 'demographics_set', None):
         date_of_birth = dmodels.DateField(blank=True, null=True)
         sex = fields.ForeignKeyOrFreeText(models.Gender)
         birth_place = fields.ForeignKeyOrFreeText(models.Destination)
+        death_indicator = dmodels.BooleanField(default=False)
 
         pid_fields = 'first_name', 'surname',
 
@@ -104,6 +105,7 @@ if not getattr(models.Episode, 'location_set', None):
 
         ward = dmodels.CharField(max_length=200, blank=True, null=True)
         bed = dmodels.CharField(max_length=200, blank=True, null=True)
+
 
 
 if not getattr(models.Episode, 'symptoms', None):

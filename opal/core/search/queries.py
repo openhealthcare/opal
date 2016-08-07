@@ -135,10 +135,17 @@ class DatabaseQuery(QueryBackend):
         )
 
     def _episodes_for_boolean_fields(self, query, field, contains):
-        model = get_model_name_from_column_name(query['column'])
+        model = get_model_from_api_name(query['column'])
+        model_name = get_model_name_from_column_name(query['column'])
         val = query['query'] == 'true'
-        kw = {'{0}__{1}'.format(model.replace('_', ''), field): val}
-        eps = models.Episode.objects.filter(**kw)
+        kw = {'{0}__{1}'.format(model_name, field): val}
+        if issubclass(model, models.EpisodeSubrecord):
+            eps = models.Episode.objects.filter(**kw)
+        elif issubclass(model, models.PatientSubrecord):
+            pats = models.Patient.objects.filter(**kw)
+            eps = []
+            for p in pats:
+                eps += list(p.episode_set.all())
         return eps
 
     def _episodes_for_date_fields(self, query, field, contains):

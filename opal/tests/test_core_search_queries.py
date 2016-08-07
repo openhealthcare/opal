@@ -12,6 +12,7 @@ from opal.tests.episodes import RestrictedEpisodeCategory
 
 from opal.core.search import queries
 
+from opal.tests import models as testmodels
 
 class PatientSummaryTestCase(OpalTestCase):
 
@@ -84,6 +85,36 @@ class DatabaseQueryTestCase(OpalTestCase):
                 u'queryType': u'Equals'
             }
         ]
+
+    def test_episodes_for_boolean_fields(self):
+        criteria = dict(
+            column='demographics', field='Death Indicator',
+            combine='and', query='false', queryType='Equals'
+        )
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
+
+    def test_episodes_for_boolean_fields_episode_subrecord(self):
+        criteria = dict(
+            column='hat_wearer', field='Wearing A Hat',
+            combine='and', query='true', queryType='Equals'
+        )
+        hatwearer = testmodels.HatWearer(episode=self.episode, wearing_a_hat=True)
+        hatwearer.save()
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
+
+    def test_episodes_for_date_fields(self):
+        pass
+
+    def test_episodes_for_date_fields_patient_subrecord(self):
+        pass
+
+    def test_episodes_for_m2m_fields(self):
+        pass
+
+    def test_episodes_for_m2m_fields_patient_subrecord(self):
+        pass
 
     def test_filter_restricted_only_user(self):
         self.user.profile.restricted_only   = True
