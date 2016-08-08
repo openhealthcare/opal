@@ -169,11 +169,19 @@ class DatabaseQuery(QueryBackend):
             return eps
 
     def _episodes_for_many_to_many_fields(self, query, field_obj):
-        model = get_model_name_from_column_name(query['column'])
+        model = get_model_from_api_name(query['column'])
+        model_name = get_model_name_from_column_name(query['column'])
         related_field = query["field"].lower()
-        key = "%s__%s__name" % (model, related_field)
+        key = "%s__%s__name" % (model_name, related_field)
         kwargs = {key: query["query"]}
-        return models.Episode.objects.filter(**kwargs)
+        if issubclass(model, models.EpisodeSubrecord):
+            return models.Episode.objects.filter(**kwargs)
+        elif issubclass(model, models.PatientSubrecord):
+            pats = models.Patient.objects.filter(**kwargs)
+            eps = []
+            for p in pats:
+                eps += list(p.episode_set.all())
+            return eps
 
     def _episodes_for_fkorft_fields(self, query, field, contains, Mod):
         model = get_model_name_from_column_name(query['column'])

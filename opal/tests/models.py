@@ -48,6 +48,10 @@ class HoundOwner(models.EpisodeSubrecord):
     dog = fields.ForeignKeyOrFreeText(Dog, verbose_name="hound")
 
 
+class FavouriteDogs(models.PatientSubrecord):
+    dogs = dmodels.ManyToManyField(Dog, related_name='favourite_dogs')
+
+
 class Colour(models.EpisodeSubrecord):
     _clonable = False
     _advanced_searchable = False
