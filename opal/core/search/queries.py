@@ -149,7 +149,8 @@ class DatabaseQuery(QueryBackend):
         return eps
 
     def _episodes_for_date_fields(self, query, field, contains):
-        model = get_model_name_from_column_name(query['column'])
+        model = get_model_from_api_name(query['column'])
+        model_name = get_model_name_from_column_name(query['column'])
         qtype = ''
         val = datetime.datetime.strptime(query['query'], "%d/%m/%Y")
         if query['queryType'] == 'Before':
@@ -157,9 +158,15 @@ class DatabaseQuery(QueryBackend):
         elif query['queryType'] == 'After':
             qtype = '__gte'
 
-        kw = {'{0}__{1}{2}'.format(model, field, qtype): val}
-        eps = models.Episode.objects.filter(**kw)
-        return eps
+        kw = {'{0}__{1}{2}'.format(model_name, field, qtype): val}
+        if issubclass(model, models.EpisodeSubrecord):
+            return models.Episode.objects.filter(**kw)
+        elif issubclass(model, models.PatientSubrecord):
+            pats = models.Patient.objects.filter(**kw)
+            eps = []
+            for p in pats:
+                eps += list(p.episode_set.all())
+            return eps
 
     def _episodes_for_many_to_many_fields(self, query, field_obj):
         model = get_model_name_from_column_name(query['column'])

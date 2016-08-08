@@ -9,8 +9,8 @@ from opal.core import lookuplists
 
 
 class Birthday(models.PatientSubrecord):
-    birth_date = dmodels.DateField()
-    party = dmodels.DateTimeField()
+    birth_date = dmodels.DateField(blank=True, null=True)
+    party = dmodels.DateTimeField(blank=True, null=True)
 
 
 class Hat(lookuplists.LookupList):
@@ -40,6 +40,7 @@ class Dog(lookuplists.LookupList):
 class DogOwner(models.EpisodeSubrecord):
     name = dmodels.CharField(max_length=200)
     dog = fields.ForeignKeyOrFreeText(Dog)
+    ownership_start_date = dmodels.DateField(blank=True, null=True)
 
 
 class HoundOwner(models.EpisodeSubrecord):

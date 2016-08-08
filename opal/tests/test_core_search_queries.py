@@ -105,10 +105,26 @@ class DatabaseQueryTestCase(OpalTestCase):
         self.assertEqual([self.episode], query.get_episodes())
 
     def test_episodes_for_date_fields(self):
-        pass
+        criteria = dict(
+            column='dog_owner', field='Ownership Start Date',
+            combine='and', query='1/12/1999', queryType='Equals'
+        )
+        dogowner = testmodels.DogOwner(
+            episode=self.episode, ownership_start_date=date(1999, 12, 1))
+        dogowner.save()
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
 
     def test_episodes_for_date_fields_patient_subrecord(self):
-        pass
+        criteria = dict(
+            column='birthday', field='Birth Date',
+            combine='and', query='1/12/1999', queryType='Equals'
+        )
+        birthday = testmodels.Birthday(
+            patient=self.patient, birth_date=date(1999, 12, 1))
+        birthday.save()
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
 
     def test_episodes_for_m2m_fields(self):
         pass
