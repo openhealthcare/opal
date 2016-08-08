@@ -134,19 +134,27 @@ class DatabaseQuery(QueryBackend):
             reverse=True
         )
 
+    def _episodes_for_filter_kwargs(self, filter_kwargs, model):
+        """
+        For a given MODEL, return the Episodes that match for FILTER_KWARGS,
+        understanding how to handle both EpispdeSubrecord and PatientSubrecord
+        appropriately.
+        """
+        if issubclass(model, models.EpisodeSubrecord):
+            return models.Episode.objects.filter(**filter_kwargs)
+        elif issubclass(model, models.PatientSubrecord):
+            pats = models.Patient.objects.filter(**filter_kwargs)
+            eps = []
+            for p in pats:
+                eps += list(p.episode_set.all())
+            return eps
+
     def _episodes_for_boolean_fields(self, query, field, contains):
         model = get_model_from_api_name(query['column'])
         model_name = get_model_name_from_column_name(query['column'])
         val = query['query'] == 'true'
         kw = {'{0}__{1}'.format(model_name, field): val}
-        if issubclass(model, models.EpisodeSubrecord):
-            eps = models.Episode.objects.filter(**kw)
-        elif issubclass(model, models.PatientSubrecord):
-            pats = models.Patient.objects.filter(**kw)
-            eps = []
-            for p in pats:
-                eps += list(p.episode_set.all())
-        return eps
+        return self._episodes_for_filter_kwargs(kw, model)
 
     def _episodes_for_date_fields(self, query, field, contains):
         model = get_model_from_api_name(query['column'])
@@ -159,14 +167,7 @@ class DatabaseQuery(QueryBackend):
             qtype = '__gte'
 
         kw = {'{0}__{1}{2}'.format(model_name, field, qtype): val}
-        if issubclass(model, models.EpisodeSubrecord):
-            return models.Episode.objects.filter(**kw)
-        elif issubclass(model, models.PatientSubrecord):
-            pats = models.Patient.objects.filter(**kw)
-            eps = []
-            for p in pats:
-                eps += list(p.episode_set.all())
-            return eps
+        return self._episodes_for_filter_kwargs(kw, model)
 
     def _episodes_for_many_to_many_fields(self, query, field_obj):
         model = get_model_from_api_name(query['column'])
@@ -174,14 +175,7 @@ class DatabaseQuery(QueryBackend):
         related_field = query["field"].lower()
         key = "%s__%s__name" % (model_name, related_field)
         kwargs = {key: query["query"]}
-        if issubclass(model, models.EpisodeSubrecord):
-            return models.Episode.objects.filter(**kwargs)
-        elif issubclass(model, models.PatientSubrecord):
-            pats = models.Patient.objects.filter(**kwargs)
-            eps = []
-            for p in pats:
-                eps += list(p.episode_set.all())
-            return eps
+        return self._episodes_for_filter_kwargs(kwargs, model)
 
     def _episodes_for_fkorft_fields(self, query, field, contains, Mod):
         model = get_model_name_from_column_name(query['column'])
