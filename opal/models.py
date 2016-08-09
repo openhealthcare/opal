@@ -54,12 +54,7 @@ def deserialize_date(value):
     return dt.date()
 
 
-class UpdatesFromDictMixin(object):
-    """
-    Mixin class to provide the serialization/deserialization
-    fields, as well as update logic for our JSON APIs.
-    """
-
+class FieldsSerialisable(object):
     @classmethod
     def _get_fieldnames_to_serialize(cls):
         """
@@ -87,6 +82,13 @@ class UpdatesFromDictMixin(object):
         fieldnames = fieldnames + many_to_manys
 
         return fieldnames
+
+
+class UpdatesFromDictMixin(FieldsSerialisable):
+    """
+    Mixin class to provide the serialization/deserialization
+    fields, as well as update logic for our JSON APIs.
+    """
 
     @classmethod
     def _get_fieldnames_to_extract(cls):
@@ -192,10 +194,14 @@ class UpdatesFromDictMixin(object):
         field.add(*to_add)
         field.remove(*to_remove)
 
-    def update_from_dict(self, data, user, force=False):
+    def update_from_dict(self, data, user, fields=None, force=False):
         logging.info("updating {0} with {1} for {2}".format(
             self.__class__.__name__, data, user)
         )
+
+        if fields is None:
+            fields = set(self._get_fieldnames_to_serialize())
+
         if self.consistency_token and not force:
             try:
                 consistency_token = data.pop('consistency_token')
@@ -208,7 +214,6 @@ class UpdatesFromDictMixin(object):
             if consistency_token != self.consistency_token:
                 raise exceptions.ConsistencyError
 
-        fields = set(self._get_fieldnames_to_serialize())
 
         post_save = []
 
@@ -252,6 +257,37 @@ class UpdatesFromDictMixin(object):
 
         for some_func in post_save:
             some_func()
+
+        return self
+
+
+class ToDictMixin(FieldsSerialisable):
+    """ serialises a model to a dictionary
+    """
+
+    def _to_dict(self, user, fieldnames):
+        """
+        Allow a subset of FIELDNAMES
+        """
+
+        d = {}
+        for name in fieldnames:
+            getter = getattr(self, 'get_' + name, None)
+            if getter is not None:
+                value = getter(user)
+            else:
+                field_type = self._get_field_type(name)
+                if field_type == models.fields.related.ManyToManyField:
+                    qs = getattr(self, name).all()
+                    value = [i.to_dict(user) for i in qs]
+                else:
+                    value = getattr(self, name)
+            d[name] = value
+
+        return d
+
+    def to_dict(self, user):
+        return self._to_dict(user, self._get_fieldnames_to_serialize())
 
 
 class Filter(models.Model):
@@ -774,7 +810,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         return d
 
 
-class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
+class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
     consistency_token = models.CharField(max_length=8)
     _is_singleton = False
     _advanced_searchable = True
