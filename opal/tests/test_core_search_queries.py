@@ -12,6 +12,7 @@ from opal.tests.episodes import RestrictedEpisodeCategory
 
 from opal.core.search import queries
 
+from opal.tests import models as testmodels
 
 class PatientSummaryTestCase(OpalTestCase):
 
@@ -84,6 +85,103 @@ class DatabaseQueryTestCase(OpalTestCase):
                 u'queryType': u'Equals'
             }
         ]
+
+    def test_episodes_for_boolean_fields(self):
+        criteria = dict(
+            column='demographics', field='Death Indicator',
+            combine='and', query='false', queryType='Equals'
+        )
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
+
+    def test_episodes_for_boolean_fields_episode_subrecord(self):
+        criteria = dict(
+            column='hat_wearer', field='Wearing A Hat',
+            combine='and', query='true', queryType='Equals'
+        )
+        hatwearer = testmodels.HatWearer(episode=self.episode, wearing_a_hat=True)
+        hatwearer.save()
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
+
+    def test_episodes_for_date_fields(self):
+        criteria = dict(
+            column='dog_owner', field='Ownership Start Date',
+            combine='and', query='1/12/1999', queryType='Equals'
+        )
+        dogowner = testmodels.DogOwner(
+            episode=self.episode, ownership_start_date=date(1999, 12, 1))
+        dogowner.save()
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
+
+    def test_episodes_for_date_fields_patient_subrecord(self):
+        criteria = dict(
+            column='birthday', field='Birth Date',
+            combine='and', query='1/12/1999', queryType='Equals'
+        )
+        birthday = testmodels.Birthday(
+            patient=self.patient, birth_date=date(1999, 12, 1))
+        birthday.save()
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
+
+    def test_episodes_for_date_fields_before(self):
+        criteria = dict(
+            column='dog_owner', field='Ownership Start Date',
+            combine='and', query='1/12/2000', queryType='Before'
+        )
+        dogowner = testmodels.DogOwner(
+            episode=self.episode, ownership_start_date=date(1999, 12, 1))
+        dogowner.save()
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
+
+    def test_episodes_for_date_fields_after(self):
+        criteria = dict(
+            column='dog_owner', field='Ownership Start Date',
+            combine='and', query='1/12/1998', queryType='After'
+        )
+        dogowner = testmodels.DogOwner(
+            episode=self.episode, ownership_start_date=date(1999, 12, 1))
+        dogowner.save()
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
+
+    def test_episodes_for_m2m_fields(self):
+        criteria = dict(
+            column='hat_wearer', field='Hats',
+            combine='and', query='Bowler', queryType='Equals'
+        )
+
+        bowler = testmodels.Hat(name='Bowler')
+        bowler.save()
+
+        hatwearer = testmodels.HatWearer(episode=self.episode)
+        hatwearer.save()
+        hatwearer.hats.add(bowler)
+        hatwearer.save()
+
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
+
+    def test_episodes_for_m2m_fields_patient_subrecord(self):
+        criteria = dict(
+            column='favourite_dogs', field='Dogs',
+            combine='and', query='Dalmation', queryType='Equals'
+        )
+
+        dalmation = testmodels.Dog(name='Dalmation')
+        dalmation.save()
+
+        favouritedogs = testmodels.FavouriteDogs(patient=self.patient)
+        favouritedogs.save()
+
+        favouritedogs.dogs.add(dalmation)
+        favouritedogs.save()
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
+
 
     def test_filter_restricted_only_user(self):
         self.user.profile.restricted_only   = True
