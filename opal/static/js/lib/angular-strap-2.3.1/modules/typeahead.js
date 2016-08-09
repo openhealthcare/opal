@@ -155,7 +155,7 @@ angular.module('mgcrea.ngStrap.typeahead', [ 'mgcrea.ngStrap.tooltip', 'mgcrea.n
       angular.forEach([ 'html', 'container', 'trimValue' ], function(key) {
         if (angular.isDefined(attr[key]) && falseValueRegExp.test(attr[key])) options[key] = false;
       });
-      element.attr('autocomplete', 'false');
+      element.attr('autocomplete', 'off');
       var filter = options.filter || defaults.filter;
       var limit = options.limit || defaults.limit;
       var comparator = options.comparator || defaults.comparator;
