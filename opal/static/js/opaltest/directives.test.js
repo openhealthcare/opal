@@ -1,6 +1,7 @@
 describe('OPAL Directives', function(){
 
     var element, scope, $timeout;
+    beforeEach(module('opal'));
 
     beforeEach(module('opal.directives'));
 
@@ -149,6 +150,76 @@ describe('OPAL Directives', function(){
             $(element).click();
             expect(clickfn.calls.count()).toEqual(1);
             expect($(element).prop('disabled')).toBe(false);
+        });
+    });
+
+    describe('clipboard', function(){
+        var markup = '<button class="btn btn-primary" clipboard data-clipboard-target="#content">copy</button>'
+        var growlSuccessSpy, growlErrorSpy, clipboardSpy;
+        var successFn;
+        var errorFn;
+        var growl;
+
+        beforeEach(inject(function(_growl_) {
+            growl = _growl_;
+            spyOn(growl, "error");
+            spyOn(growl, "success");
+        }));
+
+
+        beforeEach(function(){
+            clipboardSpy = jasmine.createSpy('clipboard');
+            clipboardSpy.and.callFake(function(x, y){
+
+                if(x === "success"){
+                    successFn = y
+                }
+                else if(x === "error"){
+                    errorFn = y
+                }
+                else{
+                  fail();
+                }
+            });
+            spyOn(window, "Clipboard").and.returnValue({on: clipboardSpy});
+            compileDirective(markup);
+        })
+
+        it('should display the growl success message on success', function(){
+          successFn();
+          scope.$digest();
+          expect(growl.success).toHaveBeenCalledWith('Copied');
+        });
+
+        it('should display the growl error message on fail', function(){
+          errorFn("can't");
+          expect(growl.error).toHaveBeenCalledWith("Failed to copy can't");
+        });
+
+        it('should not display the growl error message if the directive is told not to', function(){
+          var markup = '<button class="btn btn-primary" clipboard clipboard-show-growl="false" data-clipboard-target="#content">copy</button>'
+          compileDirective(markup);
+          successFn();
+          errorFn();
+          expect(growl.success.calls.any()).toBe(false);
+        });
+
+        it('should call the success function if provided', function(){
+            scope.called = function(){}
+            spyOn(scope, "called");
+            var markup = '<button class="btn btn-primary" clipboard clipboard-success="called()" data-clipboard-target="#content">copy</button>'
+            compileDirective(markup);
+            successFn();
+            expect(scope.called).toHaveBeenCalled();
+        });
+
+        it('should call the error function if provided', function(){
+            scope.called = function(){}
+            spyOn(scope, "called");
+            var markup = '<button class="btn btn-primary" clipboard clipboard-error="called()" data-clipboard-target="#content">copy</button>'
+            compileDirective(markup);
+            errorFn();
+            expect(scope.called).toHaveBeenCalled();
         });
     });
 
