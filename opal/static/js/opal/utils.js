@@ -87,7 +87,8 @@ OPAL._track = function($location, $analytics){
         path = $location.path();
 
         track = _.some(this.tracking.opal_angular_exclude_tracking_prefix, function(prefix){
-            return path.startsWith(prefix);
+
+            return path.indexOf((prefix)) === 0;
         });
 
         if(!track){
