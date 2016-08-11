@@ -54,7 +54,7 @@ def deserialize_date(value):
     return dt.date()
 
 
-class FieldsSerialisable(object):
+class SerialisableFields(object):
     @classmethod
     def _get_fieldnames_to_serialize(cls):
         """
@@ -84,7 +84,7 @@ class FieldsSerialisable(object):
         return fieldnames
 
 
-class UpdatesFromDictMixin(FieldsSerialisable):
+class UpdatesFromDictMixin(SerialisableFields):
     """
     Mixin class to provide the serialization/deserialization
     fields, as well as update logic for our JSON APIs.
@@ -194,13 +194,10 @@ class UpdatesFromDictMixin(FieldsSerialisable):
         field.add(*to_add)
         field.remove(*to_remove)
 
-    def update_from_dict(self, data, user, fields=None, force=False):
+    def update_from_dict(self, data, user, force=False):
         logging.info("updating {0} with {1} for {2}".format(
-            self.__class__.__name__, data, user)
-        )
-
-        if fields is None:
-            fields = set(self._get_fieldnames_to_serialize())
+            self.__class__.__name__, data, user
+        ))
 
         if self.consistency_token and not force:
             try:
@@ -215,6 +212,7 @@ class UpdatesFromDictMixin(FieldsSerialisable):
                 raise exceptions.ConsistencyError
 
 
+        fields = set(self._get_fieldnames_to_serialize())
         post_save = []
 
         unknown_fields = set(data.keys()) - fields
@@ -258,10 +256,8 @@ class UpdatesFromDictMixin(FieldsSerialisable):
         for some_func in post_save:
             some_func()
 
-        return self
 
-
-class ToDictMixin(FieldsSerialisable):
+class ToDictMixin(SerialisableFields):
     """ serialises a model to a dictionary
     """
 

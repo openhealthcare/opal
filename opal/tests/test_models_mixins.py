@@ -9,9 +9,9 @@ from mock import patch
 
 from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.test import OpalTestCase
-from opal.tests.models import Hat
+from opal.tests import models as test_models
 
-from opal.models import UpdatesFromDictMixin
+from opal.models import UpdatesFromDictMixin, SerialisableFields
 
 
 class DatingModel(UpdatesFromDictMixin, models.Model):
@@ -23,12 +23,50 @@ class UpdatableModelInstance(UpdatesFromDictMixin, models.Model):
     foo = models.CharField(max_length=200, blank=True, null=True)
     bar = models.CharField(max_length=200, blank=True, null=True)
     pid = models.CharField(max_length=200, blank=True, null=True)
-    hatty = ForeignKeyOrFreeText(Hat)
+    hatty = ForeignKeyOrFreeText(test_models.Hat)
 
     pid_fields = 'pid', 'hatty'
 
 
-class UpdatesFromDictMixin(OpalTestCase):
+class SerialisableFieldsTestCase(OpalTestCase):
+    def test_get_fieldnames_to_serialise_with_many_to_many(self):
+        self.assertTrue(
+            isinstance(test_models.HatWearer(), SerialisableFields)
+        )
+        names = test_models.HatWearer._get_fieldnames_to_serialize()
+        expected = [
+            'id',
+            'created',
+            'updated',
+            'created_by_id',
+            'updated_by_id',
+            'consistency_token',
+            'episode_id',
+            'name',
+            'wearing_a_hat',
+            'hats'
+        ]
+        self.assertEqual(expected, names)
+
+    def test_get_fieldnames_to_serialise_with_fk_or_ft(self):
+        names = test_models.HoundOwner._get_fieldnames_to_serialize()
+        expected = [
+            'id',
+            'created',
+            'updated',
+            'created_by_id',
+            'updated_by_id',
+            'consistency_token',
+            'episode_id',
+            'name',
+            u'dog_fk_id',
+            'dog_ft',
+            'dog'
+        ]
+        self.assertEqual(expected, names)
+
+
+class UpdatesFromDictMixinTestCase(OpalTestCase):
     def setUp(self):
         self.model = UpdatableModelInstance
 
@@ -55,5 +93,5 @@ class UpdatesFromDictMixin(OpalTestCase):
             with patch.object(instance, 'save'):
                 mock_type.return_value = models.DateTimeField
 
-                instance.update_from_dict(data, None)
+                result = instance.update_from_dict(data, None)
                 self.assertEqual(expected, instance.datetime)
