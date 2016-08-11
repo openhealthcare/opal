@@ -974,30 +974,6 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
 
             subrecord.update_from_dict(a_dict, user, force=force)
 
-    def _to_dict(self, user, fieldnames):
-        """
-        Allow a subset of FIELDNAMES
-        """
-
-        d = {}
-        for name in fieldnames:
-            getter = getattr(self, 'get_' + name, None)
-            if getter is not None:
-                value = getter(user)
-            else:
-                field_type = self._get_field_type(name)
-                if field_type == models.fields.related.ManyToManyField:
-                    qs = getattr(self, name).all()
-                    value = [i.to_dict(user) for i in qs]
-                else:
-                    value = getattr(self, name)
-            d[name] = value
-
-        return d
-
-    def to_dict(self, user):
-        return self._to_dict(user, self._get_fieldnames_to_serialize())
-
 
 class PatientSubrecord(Subrecord):
     patient = models.ForeignKey(Patient)
