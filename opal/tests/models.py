@@ -9,8 +9,8 @@ from opal.core import lookuplists
 
 
 class Birthday(models.PatientSubrecord):
-    birth_date = dmodels.DateField()
-    party = dmodels.DateTimeField()
+    birth_date = dmodels.DateField(blank=True, null=True)
+    party = dmodels.DateTimeField(blank=True, null=True)
 
 
 class Hat(lookuplists.LookupList):
@@ -22,7 +22,7 @@ class HatWearer(models.EpisodeSubrecord):
 
     name = dmodels.CharField(max_length=200)
     hats = dmodels.ManyToManyField(Hat, related_name="hat_wearers")
-
+    wearing_a_hat = dmodels.BooleanField(default=True)
 
 class HouseOwner(models.PatientSubrecord):
     pass
@@ -40,11 +40,16 @@ class Dog(lookuplists.LookupList):
 class DogOwner(models.EpisodeSubrecord):
     name = dmodels.CharField(max_length=200)
     dog = fields.ForeignKeyOrFreeText(Dog)
+    ownership_start_date = dmodels.DateField(blank=True, null=True)
 
 
 class HoundOwner(models.EpisodeSubrecord):
     name = dmodels.CharField(max_length=200)
     dog = fields.ForeignKeyOrFreeText(Dog, verbose_name="hound")
+
+
+class FavouriteDogs(models.PatientSubrecord):
+    dogs = dmodels.ManyToManyField(Dog, related_name='favourite_dogs')
 
 
 class Colour(models.EpisodeSubrecord):
@@ -94,6 +99,7 @@ if not getattr(models.Patient, 'demographics_set', None):
         date_of_birth = dmodels.DateField(blank=True, null=True)
         sex = fields.ForeignKeyOrFreeText(models.Gender)
         birth_place = fields.ForeignKeyOrFreeText(models.Destination)
+        death_indicator = dmodels.BooleanField(default=False)
 
         pid_fields = 'first_name', 'surname',
 
@@ -104,6 +110,7 @@ if not getattr(models.Episode, 'location_set', None):
 
         ward = dmodels.CharField(max_length=200, blank=True, null=True)
         bed = dmodels.CharField(max_length=200, blank=True, null=True)
+
 
 
 if not getattr(models.Episode, 'symptoms', None):

@@ -1,7 +1,16 @@
 {% extends 'opal.html' %}
+
+
 {% load forms %}
-{% block angularapp %}{% endblock %}
+{% load panels %}
+{% load staticfiles %}
+
 {% block content %}
+<script type="text/javascript" src="{% static "js/lib/highlight/highlight.pack.js" %}"></script>
+
+<link href="{% static "js/lib/highlight/styles/default.css" %}" rel="stylesheet" media="all">
+
+
 <div class="container content-offset">
   <div class="panel panel-primary">
     <!-- Default panel contents -->
@@ -22,6 +31,7 @@
           <h3>Presentation</h3>
           <ul class="list-inline lead">
             <li><a href="#Panels">Panels</a></li>
+            <li><a href="#AlignedPair">Aligned Pairs</a></li>
           </ul>
 
           <h3>Interaction</h3>
@@ -109,15 +119,44 @@
           </div>
           <!-- Demo -->
         </div>
-
       </div>
 
+      <hr />
+
+      <a class="anchor" name="AlignedPair"></a>
+      <div class="row">
+        <div class="col-md-8">
+          <h3>Aligned Pairs <a href="#AlignedPair">{% icon 'fa-paragraph' %}</a></h3>
+          <p class="lead">
+            Use on occasions when we want to display information in key - value pairs to
+            users but that data is not tabular.
+          </p>
+          <div class="row col-md-offset-3">
+            <div class="col-md-12">
+              {% aligned_pair model="43" label="First Data Point" %}
+              {% aligned_pair model="22" label="Next Data Point" %}
+            </div>
+          </div>
+        </div>
+      </div> <!-- row -->
+      <div class="row">
+        <div class="col-md-8">
+          <h3>Usage:</h3>
+          <pre><code class="python hljs">
+{% templatetag openblock %} load panels {% templatetag closeblock %}
+{% templatetag openblock %} aligned_pair model="43" label="First Data Point" {% templatetag closeblock %}
+{% templatetag openblock %} aligned_pair model="22" label="Next Data Point" {% templatetag closeblock %}
+          </code></pre>
+        </div>
+      </div>
 
       <div class="row">
         <div class="col-md-12">
           <h2>Interaction</h2>
         </div>
       </div>
+
+      <hr />
 
       <a class="anchor" name="Modals"></a>
       <div class="row">
@@ -225,7 +264,7 @@
           <!-- Demo -->
           <div class="row col-md-offset-3">
             <form class="form form-horizontal">
-              {% checkbox label="Make it so" %}
+              {% checkbox label="Make it so" model="dummy_model" %}
             </form>
           </div>
           <!-- Demo -->
@@ -311,4 +350,5 @@
     if (location.hash) shiftWindow();
     window.addEventListener("hashchange", shiftWindow);
   </script>
+  <script>hljs.initHighlightingOnLoad();</script>
   {% endblock %}

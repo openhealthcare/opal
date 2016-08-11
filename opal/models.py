@@ -167,7 +167,7 @@ class UpdatesFromDictMixin(object):
         to_add = set(new_values) - set(existing_values)
         to_remove = set(existing_values) - set(new_values)
 
-        if len(new_values) != len(values):
+        if len(set(new_values)) != len(set(values)):
             # the only way this should happen is if one of the incoming
             # values is a synonym for another incoming value so lets check this
             synonym_found = False
@@ -1344,7 +1344,7 @@ class Demographics(PatientSubrecord):
     date_of_death = models.DateField(null=True, blank=True)
     post_code = models.CharField(max_length=20, blank=True, null=True)
     gp_practice_code = models.CharField(max_length=20, blank=True, null=True)
-    birth_place = ForeignKeyOrFreeText(Destination)
+    birth_place = ForeignKeyOrFreeText(Destination, verbose_name="Country of birth")
     ethnicity = ForeignKeyOrFreeText(Ethnicity)
     death_indicator = models.BooleanField(default=False)
 

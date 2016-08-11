@@ -6,5 +6,5 @@
 {% if f['type'] == 'date' %}{{ '{' + '% datepicker ' }} field="{{ f["model"] }}.{{ f["name"] }}" {{' %' +'}' }}{% endif %}
 {% if f['type'] == 'date_time' %}{{ '{' + '% datetimepicker ' }} field="{{ f["model"] }}.{{ f["name"] }}" {{' %' +'}' }}{% endif %}
 {% if f['type'] == 'text' %}{{ '{' + '% textarea ' }} field="{{ f["model"] }}.{{ f["name"] }}" {{' %' +'}' }}{% endif %}
-{% if f['type'] == 'boolean' %}{{ '{' + '% checkbox ' }} field="{{ f["model"] }}.{{ f["name"] }}" {{' %' +'}' }}{% endif %}
+{% if f['type'] == 'boolean' or f['type'] == 'null_boolean' %}{{ '{' + '% checkbox ' }} field="{{ f["model"] }}.{{ f["name"] }}" {{' %' +'}' }}{% endif %}
 {% endif %}{% endfor %}

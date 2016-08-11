@@ -40,3 +40,20 @@ Arguments:
 
 * `model`: The model we want to render our panel for
 * `whenfield`: String of the field that we're using to sort by.
+
+### {% aligned_pair ... %}
+
+Render a key value pair in their own Bootstrap row using columns of width `md-4` each.
+Particularly useful for occasions when we have multiple entries that need to be presented one after
+another but the data is not naturally tabular.
+
+```html
+{% load panels %}
+{% aligned_pair model="episode.start_date | shortDate" label="Start Date" %}
+{% aligned_pair model="22" label="Next Data Point" %}
+```
+
+Arguments:
+
+* `label`: The left hand item, to be rendered bold.
+* `model`: The right hand item, to be rendered as an angular expression

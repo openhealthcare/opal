@@ -134,15 +134,31 @@ class DatabaseQuery(QueryBackend):
             reverse=True
         )
 
+    def _episodes_for_filter_kwargs(self, filter_kwargs, model):
+        """
+        For a given MODEL, return the Episodes that match for FILTER_KWARGS,
+        understanding how to handle both EpispdeSubrecord and PatientSubrecord
+        appropriately.
+        """
+        if issubclass(model, models.EpisodeSubrecord):
+            return models.Episode.objects.filter(**filter_kwargs)
+        elif issubclass(model, models.PatientSubrecord):
+            pats = models.Patient.objects.filter(**filter_kwargs)
+            eps = []
+            for p in pats:
+                eps += list(p.episode_set.all())
+            return eps
+
     def _episodes_for_boolean_fields(self, query, field, contains):
-        model = get_model_name_from_column_name(query['column'])
+        model = get_model_from_api_name(query['column'])
+        model_name = get_model_name_from_column_name(query['column'])
         val = query['query'] == 'true'
-        kw = {'{0}__{1}'.format(model.replace('_', ''), field): val}
-        eps = models.Episode.objects.filter(**kw)
-        return eps
+        kw = {'{0}__{1}'.format(model_name, field): val}
+        return self._episodes_for_filter_kwargs(kw, model)
 
     def _episodes_for_date_fields(self, query, field, contains):
-        model = get_model_name_from_column_name(query['column'])
+        model = get_model_from_api_name(query['column'])
+        model_name = get_model_name_from_column_name(query['column'])
         qtype = ''
         val = datetime.datetime.strptime(query['query'], "%d/%m/%Y")
         if query['queryType'] == 'Before':
@@ -150,16 +166,16 @@ class DatabaseQuery(QueryBackend):
         elif query['queryType'] == 'After':
             qtype = '__gte'
 
-        kw = {'{0}__{1}{2}'.format(model, field, qtype): val}
-        eps = models.Episode.objects.filter(**kw)
-        return eps
+        kw = {'{0}__{1}{2}'.format(model_name, field, qtype): val}
+        return self._episodes_for_filter_kwargs(kw, model)
 
     def _episodes_for_many_to_many_fields(self, query, field_obj):
-        model = get_model_name_from_column_name(query['column'])
+        model = get_model_from_api_name(query['column'])
+        model_name = get_model_name_from_column_name(query['column'])
         related_field = query["field"].lower()
-        key = "%s__%s__name" % (model, related_field)
+        key = "%s__%s__name" % (model_name, related_field)
         kwargs = {key: query["query"]}
-        return models.Episode.objects.filter(**kwargs)
+        return self._episodes_for_filter_kwargs(kwargs, model)
 
     def _episodes_for_fkorft_fields(self, query, field, contains, Mod):
         model = get_model_name_from_column_name(query['column'])

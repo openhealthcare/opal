@@ -26,3 +26,9 @@ class LookupListFormTestCase(OpalTestCase):
 
         with self.assertRaises(ValueError):
             form.save()
+
+    def test_valid_synonym(self):
+        hat = Hat.objects.create(name="Cowboy")
+        form = HatForm()
+        form.cleaned_data = dict(name="Stetson")
+        self.assertEqual("Stetson", form.clean_name())

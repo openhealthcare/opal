@@ -70,6 +70,7 @@ module.exports = function(config){
             'opal/controllers_module.js',
             'opal/controllers/*.js',
             'opal/app.js',
+            'opal/routes.js',
             '../../core/search/static/js/search/controllers/*',
             '../../core/search/static/js/search/services/*',
             'opaltest/*.js',

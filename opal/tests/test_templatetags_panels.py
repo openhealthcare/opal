@@ -72,3 +72,16 @@ class RecordTimelineTestCase(OpalTestCase):
 class TemasPanelTestCase(OpalTestCase):
     def test_teams_panel(self):
         self.assertEqual({}, panels.teams_panel())
+
+
+class AlignedPairsTestCase(OpalTestCase):
+    def test_aligned_pairs(self):
+        template = Template(
+            """
+            {% load panels %}
+            {% aligned_pair model="episode.start_date | shortDate" label="Start Date"%}
+            """
+        )
+        result = template.render(Context({}))
+        self.assertIn('[[ episode.start_date | shortDate ]]', result)
+        self.assertIn('Start Date', result)
