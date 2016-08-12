@@ -658,17 +658,6 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         return self.category.end
 
     @property
-    def is_discharged(self):
-        """
-        Predicate property to determine if we're discharged.
-        """
-        if not self.active:
-            return True
-        if self.discharge_date:
-            return True
-        return False
-
-    @property
     def category(self):
         from opal.core import episodes
         return episodes.EpisodeCategory.get(self.category_name.lower())(self)
