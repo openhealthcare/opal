@@ -12,6 +12,17 @@ class StringportTestCase(TestCase):
         import collections
         self.assertEqual(collections, utils.stringport('collections'))
 
+    def test_import_no_period(self):
+        with self.assertRaises(ImportError):
+            utils.stringport('wotcha')
+
+    def test_import_perioded_thing(self):
+        self.assertEqual(TestCase, utils.stringport('django.test.TestCase'))
+
+    def test_empty_name_is_valueerror(self):
+        with self.assertRaises(ValueError):
+            utils.stringport('')
+
 
 class ItersubclassesTestCase(TestCase):
     def test_tree_structure(self):
