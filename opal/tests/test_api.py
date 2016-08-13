@@ -28,10 +28,16 @@ from opal.core import api
 
 
 class OPALRouterTestCase(TestCase):
+
     def test_default_base_name(self):
         class ViewSet:
             base_name = 'the name'
         self.assertEqual(api.OPALRouter().get_default_base_name(ViewSet), 'the name')
+
+    def test_default_base_name_unset(self):
+        class ColourViewSet:
+            queryset = Colour.objects.all()
+        self.assertEqual(api.OPALRouter().get_default_base_name(ColourViewSet), 'colour')
 
 
 class RecordTestCase(TestCase):
