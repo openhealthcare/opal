@@ -14,6 +14,10 @@ Updates the label for `Demographics.birth_place` to indicate that this should be
 
 Adds the `clipboard` directive to give the user one click copy to clipboard.
 
+#### Updates to the Dependency Graph
+
+* Django Axes 1.4.0 -> 1.7.0
+
 ### 0.7.0 (Major Release)
 
 #### Episode Categories
