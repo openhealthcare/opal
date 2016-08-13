@@ -120,10 +120,10 @@ class UpdatesFromDictMixin(object):
             if isinstance(value, ForeignKeyOrFreeText):
                 return ForeignKeyOrFreeText
 
-        except KeyError:
+        except AttributeError:
             pass
 
-        raise Exception('Unexpected fieldname: %s' % name)
+        raise exceptions.UnexpectedFieldNameError('Unexpected fieldname: %s' % name)
 
 
     @classmethod
