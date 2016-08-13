@@ -182,6 +182,10 @@ class PatientTestCase(OpalTestCase):
 
 
 class SubrecordTestCase(OpalTestCase):
+
+    def test_get_display_name_from_property(self):
+        self.assertEqual('Wearer of Hats', HatWearer.get_display_name())
+
     def test_date_time_deserialisation(self):
         patient, _ = self.new_patient_and_episode_please()
         birthday_date = "10/1/2000"
