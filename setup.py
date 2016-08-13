@@ -48,7 +48,7 @@ setup(
         'requests',
         'django==1.8.13',
         'django-reversion==1.8.7',
-        'django-axes==1.4.0',
+        'django-axes==1.7.0',
         'djangorestframework==3.2.2',
         'django-compressor==1.5',
         'python-dateutil==2.4.2',
