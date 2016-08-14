@@ -41,6 +41,11 @@ class ItersubclassesTestCase(TestCase):
         results = {i for i in utils._itersubclasses(A)}
         self.assertEqual(results, set([B, D]))
 
+    def test_old_style_classes(self):
+        class Old: pass
+        with self.assertRaises(TypeError):
+            list(utils._itersubclasses(Old))
+
 
 class FindTemplateTestCase(TestCase):
 
