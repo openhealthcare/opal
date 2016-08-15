@@ -562,6 +562,18 @@ class TaggingTestCase(TestCase):
         self.assertIsNone(tag.updated_by)
         self.assertIsNone(tag.updated)
 
+    def test_tag_episoe_with_id(self):
+        self.assertEqual(list(self.episode.get_tag_names(self.user)), [])
+        self.mock_request.data = {'micro': True, 'id': self.episode.id}
+        response = api.TaggingViewSet().update(self.mock_request, pk=self.episode.pk)
+        self.assertEqual(202, response.status_code)
+        self.assertEqual(list(self.episode.get_tag_names(self.user)), ['micro'])
+        tag = models.Tagging.objects.get()
+        self.assertEqual(tag.created.date(), timezone.now().date())
+        self.assertEqual(tag.created_by, self.user)
+        self.assertIsNone(tag.updated_by)
+        self.assertIsNone(tag.updated)
+
     def test_untag_episode(self):
         self.assertEqual(list(self.episode.get_tag_names(self.user)), [])
         self.episode.set_tag_names(['micro'], self.user)
