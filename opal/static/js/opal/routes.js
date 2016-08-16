@@ -25,15 +25,16 @@ app.config(
              .when('/patient/:patient_id/access_log', {
                  controller: 'PatientRecordAccessLogCtrl',
                  resolve: {
-                     patient: function(patientLoader){ return patientLoader(); }
+                     patient: function(patientLoader){ return patientLoader(); },
                  },
                  templateUrl: '/templates/patient_record_access_log.html'
              })
              .when('/patient/:patient_id/:view?', {
 			     controller: 'PatientDetailCtrl',
                  resolve: {
-				     patient: function(patientLoader) { return patientLoader(); },
+        				     patient: function(patientLoader) { return patientLoader(); },
                      profile: function(UserProfile){ return UserProfile; }
+                     metadata: function(Metadata){ return Metadata(); }
                  },
 			     templateUrl: function(params){ return '/templates/patient_detail.html' }
              })
