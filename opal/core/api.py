@@ -191,16 +191,6 @@ class SubrecordViewSet(viewsets.ViewSet):
     This is the base viewset for our subrecords.
     """
 
-    def _item_to_dict(self, item, user):
-        """
-        Given an item, serialize either the patient or episode it is a
-        subrecord of.
-        """
-        try:
-            return item.episode.to_dict(user)
-        except AttributeError:
-            return item.patient.to_dict(user)
-
     def create(self, request):
         """
         * Create a subrecord

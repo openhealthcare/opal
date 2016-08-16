@@ -55,6 +55,7 @@ module.exports = function(config){
             'lib/utils/underscore.js',
             'lib/utils/showdown.js',
             'lib/utils/moment.js',
+            'lib/utils/clipboard.js',
             'lib/bower_components/angular-growl-v2/build/angular-growl.js',
             'lib/bower_components/ment.io/dist/mentio.js',
             'lib/bower_components/ment.io/dist/templates.js',
