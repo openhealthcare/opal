@@ -12,7 +12,9 @@ from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.test import OpalTestCase
 from opal.tests import models as test_models
 
-from opal.models import UpdatesFromDictMixin, SerialisableFields
+from opal.models import (
+    UpdatesFromDictMixin, SerialisableFields, ToDictMixin
+)
 
 
 class DatingModel(UpdatesFromDictMixin, models.Model):
@@ -25,8 +27,14 @@ class UpdatableModelInstance(UpdatesFromDictMixin, models.Model):
     bar = models.CharField(max_length=200, blank=True, null=True)
     pid = models.CharField(max_length=200, blank=True, null=True)
     hatty = ForeignKeyOrFreeText(test_models.Hat)
-
     pid_fields = 'pid', 'hatty'
+
+
+class GetterModel(ToDictMixin, models.Model):
+    foo = models.CharField(max_length=200, blank=True, null=True)
+
+    def get_foo(self, user):
+        return "gotten"
 
 
 class SerialisableFieldsTestCase(OpalTestCase):
@@ -66,6 +74,16 @@ class SerialisableFieldsTestCase(OpalTestCase):
         ]
         self.assertEqual(expected, names)
 
+
+class ToDictMixinTestCase(OpalTestCase):
+    def setUp(self):
+        self.model_instance = GetterModel(foo="blah")
+
+    def test_getter_is_used(self):
+        self.assertEqual(
+            self.model_instance.to_dict(self.user),
+            dict(foo="gotten", id=None)
+        )
 
 class UpdatesFromDictMixinTestCase(OpalTestCase):
     def setUp(self):
