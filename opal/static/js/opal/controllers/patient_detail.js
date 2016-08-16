@@ -26,6 +26,7 @@ angular.module('opal.controllers').controller(
                     }
                 }
             }
+            $scope.metadata = metadata;
         }
 
         $scope.switch_to_episode = function(index, $event){
