@@ -14,7 +14,7 @@ app.config(
 			 resolve: {
 				 episodedata: function(patientListLoader) { return patientListLoader(); },
                  metadata   : function(Metadata){ return Metadata },
-                 profile    : function(UserProfile){ return UserProfile; },
+                 profile    : function(UserProfile){ return UserProfile; }
 			 },
 			 templateUrl: function(params){
                  var target =  '/templates/patient_list.html';
@@ -25,7 +25,7 @@ app.config(
              .when('/patient/:patient_id/access_log', {
                  controller: 'PatientRecordAccessLogCtrl',
                  resolve: {
-                     patient: function(patientLoader){ return patientLoader(); },
+                     patient: function(patientLoader){ return patientLoader(); }
                  },
                  templateUrl: '/templates/patient_record_access_log.html'
              })
