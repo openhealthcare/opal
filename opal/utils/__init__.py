@@ -36,7 +36,6 @@ def stringport(module):
                 raise ImportError(msg)
         except ImportError, e:
             raise ImportError(msg)
-        raise ImportError(msg)
 
 
 def _itersubclasses(cls, _seen=None):
