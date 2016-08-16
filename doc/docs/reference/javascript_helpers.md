@@ -22,9 +22,24 @@ OPAL provides some built-in Angular directives for your project to use.
 Creates an input field that assumes to base field is a moment and handles validation and parsing. It assumes no one is born in the future or is over 150 years old.
 
 #### tag-select
-Creates an input field that takes in a tagging dict, an object of with the keys of tag names to true. It produces a multi select box where users can remove or add tags that have the direct_add field
-(as defined by meta data) set to true.
 
+Creates a multi select box where users can remove or add tags. Only tags set as `direct_add` tags can be set here.
+This property is set on individual `PatientList` subclasses, and passed to the front end with the `Metadata` service.
+
+We set the Angular model to be a copy of an episode's tagging.
+
+```js
+$scope.editing.tagging = episode.tagging[0].makeCopy();
+```
+
+We can instantiate the tag-select widget in our markup as follows.
+
+```html
+<div tag-select ng-model="editing.tagging" metadata="metadata" class="col-sm-8">
+</div>
+```
+
+Note: this directive will load the `Metadata` service over HTTP if it has not been loaded already.
 
 #### one-click-only
 
