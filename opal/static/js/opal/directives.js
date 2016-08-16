@@ -261,6 +261,52 @@ directives.directive('oneClickOnly', function(){
   };
 });
 
+directives.directive('clipboard', function(growl) {
+    "use strict";
+    // The MIT License (MIT)
+    // Copyright (c) 2015 Sachin N
+    // copied from https://github.com/sachinchoolur/ngclipboard
+    // extended to give a growl notification by default
+
+    var GROWL_SUCCESS = "Copied";
+    var GROWL_FAILURE = "Failed to copy";
+
+    return {
+        restrict: 'A',
+        scope: {
+            clipboardSuccess: '&',
+            clipboardError: '&',
+            clipboardShowGrowl: '=',
+        },
+        link: function(scope, element) {
+            var clipboard = new Clipboard(element[0]);
+
+            clipboard.on('success', function(e) {
+              scope.$apply(function () {
+                if(scope.clipboardShowGrowl !== false){
+                  growl.success(GROWL_SUCCESS);
+                }
+                scope.clipboardSuccess({
+                  e: e
+                });
+              });
+            });
+
+            clipboard.on('error', function(e) {
+              scope.$apply(function () {
+                if(scope.clipboardShowGrowl !== false){
+                    growl.error(GROWL_FAILURE + ' ' + e);
+                }
+                scope.clipboardError({
+                  e: e
+                });
+              });
+            });
+        }
+    };
+});
+
+
 directives.directive("dateOfBirth", function(){
   return {
     require: "?ngModel",
@@ -310,6 +356,49 @@ directives.directive("dateOfBirth", function(){
             }
         }
       };
+    }
+  };
+});
+
+
+directives.directive("tagSelect", function(Metadata){
+  return {
+    require: "?ngModel",
+    scope: true,
+    templateUrl: "/templates/ng_templates/tag_select.html",
+    link: function(scope, element, attrs, ngModel){
+      if (!ngModel) return;
+      Metadata.then(function(metadata){
+        scope.onRemove = function($item, $model){
+            ngModel.$modelValue[$model] = false;
+        };
+
+        scope.onSelect = function($item, $model){
+            ngModel.$modelValue[$model] = true;
+        };
+
+        ngModel.$render = function(){
+          // get all existing tag names that are direct add
+          // filter the meta data tags for these
+          // return the meta data
+          var tagNames = [];
+          scope.something = [];
+
+          _.each(ngModel.$modelValue, function(v, k){
+              if(v){
+                tagNames.push(k);
+              }
+          })
+
+          scope.value = _.filter(metadata.tags, function(tagData){
+            return _.contains(tagNames, tagData.name) && tagData.direct_add;
+          });
+
+          scope.tagsList = _.filter(_.values(metadata.tags), function(option){
+              return option.direct_add;
+          }).sort(function(x, y){ return y.name < x.name; });
+        };
+      });
     }
   };
 });

@@ -65,7 +65,7 @@ def plugin_opal_angular_deps():
 @register.inclusion_tag('plugins/angular_exclude_tracking.html')
 def plugin_opal_angular_tracking_exclude():
     def yield_property(property_name):
-        app = application.OpalApplication
+        app = application.get_app()
         app_and_plugins = itertools.chain(plugins.plugins(), [app])
 
         for plugin in app_and_plugins:

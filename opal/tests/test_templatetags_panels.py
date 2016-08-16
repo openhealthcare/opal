@@ -28,7 +28,7 @@ class RecordPanelTestCase(OpalTestCase):
 
     def test_model_pass_through(self):
         result = panels.record_panel(HatWearer)
-        self.assertEqual(result["title"], "HatWearer")
+        self.assertEqual(result["title"], "Wearer of Hats")
         self.assertEqual(
             result["detail_template"], HatWearer.get_detail_template()
         )
@@ -42,7 +42,7 @@ class RecordPanelTestCase(OpalTestCase):
         )
         ctx = {"models": {"HatWearer": HatWearer}}
         result = template.render(Context(ctx))
-        self.assertIn('HatWearer', result)
+        self.assertIn('Wearer of Hats', result)
 
     def test_error_thrown(self):
         template = Template(
