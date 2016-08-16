@@ -12,7 +12,7 @@ from opal import models
 from opal.core import exceptions
 from opal.models import (
     Subrecord, Tagging, Team, Patient, InpatientAdmission, Symptom,
-    SymptomComplex
+    SymptomComplex, UserProfile
 )
 from opal.core.test import OpalTestCase
 import opal.tests.test_patient_lists # To make sure test tagged lists are pulled in
@@ -182,6 +182,10 @@ class PatientTestCase(OpalTestCase):
 
 
 class SubrecordTestCase(OpalTestCase):
+
+    def test_get_display_name_from_property(self):
+        self.assertEqual('Wearer of Hats', HatWearer.get_display_name())
+
     def test_date_time_deserialisation(self):
         patient, _ = self.new_patient_and_episode_please()
         birthday_date = "10/1/2000"
@@ -677,6 +681,20 @@ class TaggingTestCase(OpalTestCase):
         schema = Tagging.build_field_schema()
         for field in fields:
             self.assertIn(field, schema)
+
+
+class TeamTestCase(OpalTestCase):
+
+    def test_for_restricted_user(self):
+        profile, _ = UserProfile.objects.get_or_create(user=self.user)
+        profile.restricted_only = True
+        profile.save()
+        self.assertEqual([], Team.for_user(self.user))
+
+    def test_has_subteams(self):
+        t = Team()
+        self.assertEqual(False, t.has_subteams)
+
 
 
 class TaggingImportTestCase(OpalTestCase):

@@ -25,6 +25,25 @@ class EpisodeTest(OpalTestCase):
     def test_singleton_subrecord_created(self):
         self.assertEqual(1, self.episode.episodename_set.count())
 
+    def test_is_discharged_inactive(self):
+        self.episode.active = False
+        self.assertEqual(True, self.episode.is_discharged)
+
+    def test_is_discharged_discharge_date(self):
+        self.episode.active = True
+        self.episode.discharge_date = datetime.date(2010, 2, 24)
+        self.assertEqual(True, self.episode.is_discharged)
+
+    def test_is_discharged_not_discharged(self):
+        self.episode.active = True
+        self.assertEqual(False, self.episode.is_discharged)
+
+    def test_is_discharged_from_date(self):
+        today = datetime.date.today()
+        yesterday = today - datetime.timedelta(days=1)
+        self.episode.discharge_date = yesterday
+        self.assertEqual(True, self.episode.is_discharged)
+
     def test_category(self):
         self.episode.category_name = 'Inpatient'
         self.assertEqual(self.episode.category.__class__, InpatientEpisode)

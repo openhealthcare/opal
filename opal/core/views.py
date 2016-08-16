@@ -30,12 +30,6 @@ class OpalSerializer(DjangoJSONEncoder):
                     o, datetime.datetime.min.time()
                 ), settings.DATE_FORMAT
             )
-        elif isinstance(o, datetime.datetime):
-            return format(
-                datetime.datetime.combine(
-                    o, datetime.datetime.min.time()
-                ), settings.DATETIME_FORMAT
-            )
         super(OpalSerializer, self).default(o)
 
 

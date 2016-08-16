@@ -7,6 +7,7 @@ import pytz
 from django.db import models
 from mock import patch
 
+from opal.core import exceptions
 from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.test import OpalTestCase
 from opal.tests import models as test_models
@@ -83,6 +84,10 @@ class UpdatesFromDictMixinTestCase(OpalTestCase):
         fnames = self.model._get_fieldnames_to_extract()
         self.assertFalse('hatty_fk_id' in fnames)
         self.assertFalse('hatty_ft' in fnames)
+
+    def test_get_field_type_unknown(self):
+        with self.assertRaises(exceptions.UnexpectedFieldNameError):
+            self.model._get_field_type('not_a_real_field')
 
     def test_update_from_dict_datetime(self):
         data = {'datetime': '04/11/1953 12:20:00'}

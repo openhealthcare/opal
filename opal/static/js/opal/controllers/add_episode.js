@@ -4,8 +4,7 @@ angular.module('opal.controllers')
         function($scope, $http,
                  $timeout, $routeParams,
                  $modalInstance, $rootScope,
-                 Episode, FieldTranslater, Referencedata,
-                 TagService,
+                 Episode, FieldTranslater,
                  referencedata,
                  demographics,
                  tags){
@@ -16,24 +15,24 @@ angular.module('opal.controllers')
 
 	        $scope.editing = {
                 tagging: [{}],
-		        location: {},
+    		        location: {},
                 demographics: demographics
 	        };
 
-            if(tags.tag){
-                currentTags = [tags.tag];
-            }
+          $scope.editing.tagging = {};
 
-            if(tags.subtag){
-                // if there's a subtag, don't tag with the parent tag
-                currentTags = [tags.subtag];
-            }
+          if(tags.tag){
+            $scope.editing.tagging[tags.tag] = true;
+          }
 
-            $scope.tagService = new TagService(currentTags);
+          if(tags.subtag){
+            $scope.editing.tagging[tags.subtag] = true;
+          }
 
 	        $scope.save = function() {
-                $scope.editing.tagging = [$scope.tagService.toSave()];
-                var toSave = FieldTranslater.jsToPatient($scope.editing)
+            var toSave = FieldTranslater.jsToPatient($scope.editing)
+            // this is not good
+            toSave.tagging = [toSave.tagging];
 
 		        $http.post('/api/v0.1/episode/', toSave).success(function(episode) {
 			        episode = new Episode(episode);

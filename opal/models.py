@@ -122,10 +122,10 @@ class UpdatesFromDictMixin(SerialisableFields):
             if isinstance(value, ForeignKeyOrFreeText):
                 return ForeignKeyOrFreeText
 
-        except KeyError:
+        except AttributeError:
             pass
 
-        raise Exception('Unexpected fieldname: %s' % name)
+        raise exceptions.UnexpectedFieldNameError('Unexpected fieldname: %s' % name)
 
 
     @classmethod
@@ -1636,7 +1636,7 @@ class PatientConsultation(EpisodeSubrecord):
         if incoming_value:
             self.when = deserialize_datetime(incoming_value)
         else:
-            self.when = datetime.datetime.now()
+            self.when = timezone.make_aware(datetime.datetime.now())
 
 
 class SymptomComplex(EpisodeSubrecord):

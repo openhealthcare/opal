@@ -19,6 +19,7 @@ class Hat(lookuplists.LookupList):
 
 class HatWearer(models.EpisodeSubrecord):
     _sort = 'name'
+    _title = 'Wearer of Hats'
 
     name = dmodels.CharField(max_length=200)
     hats = dmodels.ManyToManyField(Hat, related_name="hat_wearers")
