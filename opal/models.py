@@ -122,6 +122,41 @@ class SerialisableFields(object):
             return getattr(cls, name).verbose_name.title()
 
 
+    @classmethod
+    def build_field_schema(cls):
+        field_schema = []
+        for fieldname in cls._get_fieldnames_to_serialize():
+            if fieldname in ['id', 'patient_id', 'episode_id']:
+                continue
+            elif fieldname.endswith('_fk_id'):
+                continue
+            elif fieldname.endswith('_ft'):
+                continue
+
+            getter = getattr(cls, 'get_field_type_for_' + fieldname, None)
+            if getter is None:
+                field = cls._get_field_type(fieldname)
+                if field in [models.CharField, ForeignKeyOrFreeText]:
+                    field_type = 'string'
+                else:
+                    field_type = camelcase_to_underscore(field.__name__[:-5])
+            else:
+                field_type = getter()
+            lookup_list = None
+            if cls._get_field_type(fieldname) == ForeignKeyOrFreeText:
+                fld = getattr(cls, fieldname)
+                lookup_list = camelcase_to_underscore(fld.foreign_model.__name__)
+            title = cls._get_field_title(fieldname)
+
+            field_schema.append({'name': fieldname,
+                                 'title': title,
+                                 'type': field_type,
+                                 'lookup_list': lookup_list,
+                                 'model': cls.__name__
+                                 })
+        return field_schema
+
+
 class UpdatesFromDictMixin(SerialisableFields):
     """
     Mixin class to provide the deserialization
@@ -830,40 +865,6 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
             return cls._title
         else:
             return cls._meta.object_name
-
-    @classmethod
-    def build_field_schema(cls):
-        field_schema = []
-        for fieldname in cls._get_fieldnames_to_serialize():
-            if fieldname in ['id', 'patient_id', 'episode_id']:
-                continue
-            elif fieldname.endswith('_fk_id'):
-                continue
-            elif fieldname.endswith('_ft'):
-                continue
-
-            getter = getattr(cls, 'get_field_type_for_' + fieldname, None)
-            if getter is None:
-                field = cls._get_field_type(fieldname)
-                if field in [models.CharField, ForeignKeyOrFreeText]:
-                    field_type = 'string'
-                else:
-                    field_type = camelcase_to_underscore(field.__name__[:-5])
-            else:
-                field_type = getter()
-            lookup_list = None
-            if cls._get_field_type(fieldname) == ForeignKeyOrFreeText:
-                fld = getattr(cls, fieldname)
-                lookup_list = camelcase_to_underscore(fld.foreign_model.__name__)
-            title = cls._get_field_title(fieldname)
-
-            field_schema.append({'name': fieldname,
-                                 'title': title,
-                                 'type': field_type,
-                                 'lookup_list': lookup_list,
-                                 'model': cls.__name__
-                                 })
-        return field_schema
 
     @classmethod
     def _build_template_selection(cls, episode_type=None, patient_list=None, suffix=None, prefix=None):

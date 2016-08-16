@@ -37,42 +37,43 @@ class GetterModel(ToDictMixin, models.Model):
         return "gotten"
 
 
-class SerialisableFieldsTestCase(OpalTestCase):
-    def test_get_fieldnames_to_serialise_with_many_to_many(self):
-        self.assertTrue(
-            isinstance(test_models.HatWearer(), SerialisableFields)
-        )
-        names = test_models.HatWearer._get_fieldnames_to_serialize()
-        expected = [
-            'id',
-            'created',
-            'updated',
-            'created_by_id',
-            'updated_by_id',
-            'consistency_token',
-            'episode_id',
-            'name',
-            'wearing_a_hat',
-            'hats'
-        ]
-        self.assertEqual(expected, names)
+class SerialisableModel(SerialisableFields, models.Model):
+    pid = models.CharField(max_length=200, blank=True, null=True)
+    hatty = ForeignKeyOrFreeText(test_models.Hat)
 
-    def test_get_fieldnames_to_serialise_with_fk_or_ft(self):
-        names = test_models.HoundOwner._get_fieldnames_to_serialize()
-        expected = [
+
+class SerialisableFieldsTestCase(OpalTestCase):
+
+    def test_get_fieldnames(self):
+        names = SerialisableModel._get_fieldnames_to_serialize()
+        expected = set([
             'id',
-            'created',
-            'updated',
-            'created_by_id',
-            'updated_by_id',
-            'consistency_token',
-            'episode_id',
-            'name',
-            u'dog_fk_id',
-            'dog_ft',
-            'dog'
+            'pid',
+            'hatty',
+            'hatty_ft',
+            'hatty_fk_id',
+        ])
+        self.assertEqual(expected, set(names))
+
+    def test_build_field_schema(self):
+        schema = SerialisableModel.build_field_schema()
+        expected = [
+            {
+                'model': 'SerialisableModel',
+                'lookup_list': None,
+                'type': 'string',
+                'name': 'pid',
+                'title': u'Pid'
+            },
+            {
+                'model': 'SerialisableModel',
+                'lookup_list': 'hat',
+                'type': 'string',
+                'name': 'hatty',
+                'title': 'Hatty'
+            }
         ]
-        self.assertEqual(expected, names)
+        self.assertEqual(schema, expected)
 
 
 class ToDictMixinTestCase(OpalTestCase):
