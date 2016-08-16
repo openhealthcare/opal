@@ -55,6 +55,10 @@ def deserialize_date(value):
 
 
 class SerialisableFields(object):
+    """
+    Mixin class that handles the getting of fields
+    and field types for serialisation/deserialization
+    """
     @classmethod
     def _get_fieldnames_to_serialize(cls):
         """
@@ -83,29 +87,6 @@ class SerialisableFields(object):
 
         return fieldnames
 
-
-class UpdatesFromDictMixin(SerialisableFields):
-    """
-    Mixin class to provide the serialization/deserialization
-    fields, as well as update logic for our JSON APIs.
-    """
-
-    @classmethod
-    def _get_fieldnames_to_extract(cls):
-        """
-        Return a list of fieldname to extract - which means dumping
-        PID fields.
-        """
-        fieldnames = cls._get_fieldnames_to_serialize()
-        if hasattr(cls, 'pid_fields'):
-            for fname in cls.pid_fields:
-                if fname in fieldnames:
-                    fieldnames.remove(fname)
-                    if cls._get_field_type(fname) == ForeignKeyOrFreeText:
-                        fieldnames.remove(fname + '_fk_id')
-                        fieldnames.remove(fname + '_ft')
-        return fieldnames
-
     @classmethod
     def _get_field_type(cls, name):
         try:
@@ -127,7 +108,6 @@ class UpdatesFromDictMixin(SerialisableFields):
 
         raise exceptions.UnexpectedFieldNameError('Unexpected fieldname: %s' % name)
 
-
     @classmethod
     def _get_field_title(cls, name):
         try:
@@ -140,6 +120,29 @@ class UpdatesFromDictMixin(SerialisableFields):
         except FieldDoesNotExist:
             # else its foreign key or free text
             return getattr(cls, name).verbose_name.title()
+
+
+class UpdatesFromDictMixin(SerialisableFields):
+    """
+    Mixin class to provide the deserialization
+    fields, as well as update logic for our JSON APIs.
+    """
+
+    @classmethod
+    def _get_fieldnames_to_extract(cls):
+        """
+        Return a list of fieldname to extract - which means dumping
+        PID fields.
+        """
+        fieldnames = cls._get_fieldnames_to_serialize()
+        if hasattr(cls, 'pid_fields'):
+            for fname in cls.pid_fields:
+                if fname in fieldnames:
+                    fieldnames.remove(fname)
+                    if cls._get_field_type(fname) == ForeignKeyOrFreeText:
+                        fieldnames.remove(fname + '_fk_id')
+                        fieldnames.remove(fname + '_ft')
+        return fieldnames
 
     @classmethod
     def get_field_type_for_consistency_token(cls):
@@ -194,10 +197,14 @@ class UpdatesFromDictMixin(SerialisableFields):
         field.add(*to_add)
         field.remove(*to_remove)
 
-    def update_from_dict(self, data, user, force=False):
+    def update_from_dict(self, data, user, force=False, fields=None):
         logging.info("updating {0} with {1} for {2}".format(
             self.__class__.__name__, data, user
         ))
+
+        if fields is None:
+            fields = set(self._get_fieldnames_to_serialize())
+
 
         if self.consistency_token and not force:
             try:
@@ -211,8 +218,6 @@ class UpdatesFromDictMixin(SerialisableFields):
             if consistency_token != self.consistency_token:
                 raise exceptions.ConsistencyError
 
-
-        fields = set(self._get_fieldnames_to_serialize())
         post_save = []
 
         unknown_fields = set(data.keys()) - fields
@@ -261,13 +266,16 @@ class ToDictMixin(SerialisableFields):
     """ serialises a model to a dictionary
     """
 
-    def _to_dict(self, user, fieldnames):
+    def to_dict(self, user, fields=None):
         """
         Allow a subset of FIELDNAMES
         """
 
+        if fields is None:
+            fields = self._get_fieldnames_to_serialize()
+
         d = {}
-        for name in fieldnames:
+        for name in fields:
             getter = getattr(self, 'get_' + name, None)
             if getter is not None:
                 value = getter(user)
@@ -281,9 +289,6 @@ class ToDictMixin(SerialisableFields):
             d[name] = value
 
         return d
-
-    def to_dict(self, user):
-        return self._to_dict(user, self._get_fieldnames_to_serialize())
 
 
 class Filter(models.Model):
