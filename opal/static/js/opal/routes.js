@@ -34,7 +34,7 @@ app.config(
                  resolve: {
         				     patient: function(patientLoader) { return patientLoader(); },
                      profile: function(UserProfile){ return UserProfile; },
-                     metadata: function(Metadata){ return Metadata(); }
+                     metadata: function(Metadata){ return Metadata; }
                  },
 			     templateUrl: function(params){ return '/templates/patient_detail.html' }
              })

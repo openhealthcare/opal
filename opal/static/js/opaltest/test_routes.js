@@ -48,8 +48,9 @@ describe('Routes', function() {
 
         it('should resolve injected things', function() {
             var resolve = $route.routes['/patient/:patient_id/:view?'].resolve;
-            expect(resolve.patient(function(){return {}})).toEqual({});
+            expect(resolve.patient(function(){return {};})).toEqual({});
             expect(resolve.profile('Profile')).toEqual('Profile');
+            expect(resolve.metadata('Metadata')).toBe('Metadata');
         });
 
         it('should know the template', function() {
