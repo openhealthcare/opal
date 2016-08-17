@@ -7,7 +7,7 @@ The following reference guides are available:
 -|-
 [opal.models.Episode](episode.md)| The central Episode model
 [opal.models.Patient](patient.md) | The Patient model
-[opal.models.Subrecord](subrecord base class) | for subrecords of Episodes or Patients
+[opal.models.Subrecord](subrecords.md) | for subrecords of Episodes or Patients
 [opal.models.*](mixins.md) | Mixin helpers for useful functionality
 
 ### OPAL Core
