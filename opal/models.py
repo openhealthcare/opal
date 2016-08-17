@@ -54,12 +54,11 @@ def deserialize_date(value):
     return dt.date()
 
 
-class UpdatesFromDictMixin(object):
+class SerialisableFields(object):
     """
-    Mixin class to provide the serialization/deserialization
-    fields, as well as update logic for our JSON APIs.
+    Mixin class that handles the getting of fields
+    and field types for serialisation/deserialization
     """
-
     @classmethod
     def _get_fieldnames_to_serialize(cls):
         """
@@ -89,22 +88,6 @@ class UpdatesFromDictMixin(object):
         return fieldnames
 
     @classmethod
-    def _get_fieldnames_to_extract(cls):
-        """
-        Return a list of fieldname to extract - which means dumping
-        PID fields.
-        """
-        fieldnames = cls._get_fieldnames_to_serialize()
-        if hasattr(cls, 'pid_fields'):
-            for fname in cls.pid_fields:
-                if fname in fieldnames:
-                    fieldnames.remove(fname)
-                    if cls._get_field_type(fname) == ForeignKeyOrFreeText:
-                        fieldnames.remove(fname + '_fk_id')
-                        fieldnames.remove(fname + '_ft')
-        return fieldnames
-
-    @classmethod
     def _get_field_type(cls, name):
         try:
             return type(cls._meta.get_field_by_name(name)[0])
@@ -125,7 +108,6 @@ class UpdatesFromDictMixin(object):
 
         raise exceptions.UnexpectedFieldNameError('Unexpected fieldname: %s' % name)
 
-
     @classmethod
     def _get_field_title(cls, name):
         try:
@@ -138,6 +120,64 @@ class UpdatesFromDictMixin(object):
         except FieldDoesNotExist:
             # else its foreign key or free text
             return getattr(cls, name).verbose_name.title()
+
+
+    @classmethod
+    def build_field_schema(cls):
+        field_schema = []
+        for fieldname in cls._get_fieldnames_to_serialize():
+            if fieldname in ['id', 'patient_id', 'episode_id']:
+                continue
+            elif fieldname.endswith('_fk_id'):
+                continue
+            elif fieldname.endswith('_ft'):
+                continue
+
+            getter = getattr(cls, 'get_field_type_for_' + fieldname, None)
+            if getter is None:
+                field = cls._get_field_type(fieldname)
+                if field in [models.CharField, ForeignKeyOrFreeText]:
+                    field_type = 'string'
+                else:
+                    field_type = camelcase_to_underscore(field.__name__[:-5])
+            else:
+                field_type = getter()
+            lookup_list = None
+            if cls._get_field_type(fieldname) == ForeignKeyOrFreeText:
+                fld = getattr(cls, fieldname)
+                lookup_list = camelcase_to_underscore(fld.foreign_model.__name__)
+            title = cls._get_field_title(fieldname)
+
+            field_schema.append({'name': fieldname,
+                                 'title': title,
+                                 'type': field_type,
+                                 'lookup_list': lookup_list,
+                                 'model': cls.__name__
+                                 })
+        return field_schema
+
+
+class UpdatesFromDictMixin(SerialisableFields):
+    """
+    Mixin class to provide the deserialization
+    fields, as well as update logic for our JSON APIs.
+    """
+
+    @classmethod
+    def _get_fieldnames_to_extract(cls):
+        """
+        Return a list of fieldname to extract - which means dumping
+        PID fields.
+        """
+        fieldnames = cls._get_fieldnames_to_serialize()
+        if hasattr(cls, 'pid_fields'):
+            for fname in cls.pid_fields:
+                if fname in fieldnames:
+                    fieldnames.remove(fname)
+                    if cls._get_field_type(fname) == ForeignKeyOrFreeText:
+                        fieldnames.remove(fname + '_fk_id')
+                        fieldnames.remove(fname + '_ft')
+        return fieldnames
 
     @classmethod
     def get_field_type_for_consistency_token(cls):
@@ -192,10 +232,15 @@ class UpdatesFromDictMixin(object):
         field.add(*to_add)
         field.remove(*to_remove)
 
-    def update_from_dict(self, data, user, force=False):
+    def update_from_dict(self, data, user, force=False, fields=None):
         logging.info("updating {0} with {1} for {2}".format(
-            self.__class__.__name__, data, user)
-        )
+            self.__class__.__name__, data, user
+        ))
+
+        if fields is None:
+            fields = set(self._get_fieldnames_to_serialize())
+
+
         if self.consistency_token and not force:
             try:
                 consistency_token = data.pop('consistency_token')
@@ -207,8 +252,6 @@ class UpdatesFromDictMixin(object):
 
             if consistency_token != self.consistency_token:
                 raise exceptions.ConsistencyError
-
-        fields = set(self._get_fieldnames_to_serialize())
 
         post_save = []
 
@@ -252,6 +295,35 @@ class UpdatesFromDictMixin(object):
 
         for some_func in post_save:
             some_func()
+
+
+class ToDictMixin(SerialisableFields):
+    """ serialises a model to a dictionary
+    """
+
+    def to_dict(self, user, fields=None):
+        """
+        Allow a subset of FIELDNAMES
+        """
+
+        if fields is None:
+            fields = self._get_fieldnames_to_serialize()
+
+        d = {}
+        for name in fields:
+            getter = getattr(self, 'get_' + name, None)
+            if getter is not None:
+                value = getter(user)
+            else:
+                field_type = self._get_field_type(name)
+                if field_type == models.fields.related.ManyToManyField:
+                    qs = getattr(self, name).all()
+                    value = [i.to_dict(user) for i in qs]
+                else:
+                    value = getattr(self, name)
+            d[name] = value
+
+        return d
 
 
 class Filter(models.Model):
@@ -626,17 +698,6 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         return self.category.end
 
     @property
-    def is_discharged(self):
-        """
-        Predicate property to determine if we're discharged.
-        """
-        if not self.active:
-            return True
-        if self.discharge_date:
-            return True
-        return False
-
-    @property
     def category(self):
         from opal.core import episodes
         return episodes.EpisodeCategory.get(self.category_name.lower())(self)
@@ -774,7 +835,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         return d
 
 
-class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
+class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
     consistency_token = models.CharField(max_length=8)
     _is_singleton = False
     _advanced_searchable = True
@@ -804,40 +865,6 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
             return cls._title
         else:
             return cls._meta.object_name
-
-    @classmethod
-    def build_field_schema(cls):
-        field_schema = []
-        for fieldname in cls._get_fieldnames_to_serialize():
-            if fieldname in ['id', 'patient_id', 'episode_id']:
-                continue
-            elif fieldname.endswith('_fk_id'):
-                continue
-            elif fieldname.endswith('_ft'):
-                continue
-
-            getter = getattr(cls, 'get_field_type_for_' + fieldname, None)
-            if getter is None:
-                field = cls._get_field_type(fieldname)
-                if field in [models.CharField, ForeignKeyOrFreeText]:
-                    field_type = 'string'
-                else:
-                    field_type = camelcase_to_underscore(field.__name__[:-5])
-            else:
-                field_type = getter()
-            lookup_list = None
-            if cls._get_field_type(fieldname) == ForeignKeyOrFreeText:
-                fld = getattr(cls, fieldname)
-                lookup_list = camelcase_to_underscore(fld.foreign_model.__name__)
-            title = cls._get_field_title(fieldname)
-
-            field_schema.append({'name': fieldname,
-                                 'title': title,
-                                 'type': field_type,
-                                 'lookup_list': lookup_list,
-                                 'model': cls.__name__
-                                 })
-        return field_schema
 
     @classmethod
     def _build_template_selection(cls, episode_type=None, patient_list=None, suffix=None, prefix=None):
@@ -941,30 +968,6 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
                 subrecord = cls(**{schema_name: parent})
 
             subrecord.update_from_dict(a_dict, user, force=force)
-
-    def _to_dict(self, user, fieldnames):
-        """
-        Allow a subset of FIELDNAMES
-        """
-
-        d = {}
-        for name in fieldnames:
-            getter = getattr(self, 'get_' + name, None)
-            if getter is not None:
-                value = getter(user)
-            else:
-                field_type = self._get_field_type(name)
-                if field_type == models.fields.related.ManyToManyField:
-                    qs = getattr(self, name).all()
-                    value = [i.to_dict(user) for i in qs]
-                else:
-                    value = getattr(self, name)
-            d[name] = value
-
-        return d
-
-    def to_dict(self, user):
-        return self._to_dict(user, self._get_fieldnames_to_serialize())
 
 
 class PatientSubrecord(Subrecord):

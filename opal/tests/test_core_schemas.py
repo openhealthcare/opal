@@ -90,6 +90,7 @@ class ListRecordsTestCase(TestCase):
             'tagging': tagging_serialized,
             'colour': colour_serialized
         }
+
         self.assertEqual(expected, schemas.list_records())
 
 
