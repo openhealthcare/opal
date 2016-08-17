@@ -12,7 +12,7 @@ Adds an `aligned_pair` templatetag to the `panels` library.
 
 Updates the label for `Demographics.birth_place` to indicate that this should be a country.
 
-Adds the `clipboard` directive give the user one click copy to clipboard.
+Adds the `clipboard` directive to give the user one click copy to clipboard.
 
 Adds a `tag-select` directive that renders a widget for editing the tags for an episode.
 
