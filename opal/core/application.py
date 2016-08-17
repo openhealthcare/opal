@@ -79,7 +79,6 @@ class OpalApplication(object):
             "js/opal/services/record_editor.js",
             "js/opal/services/copy_to_category.js",
             "js/opal/services/patientlist_loader.js",
-            "js/opal/services/tag_service.js",
             'js/opal/services/fields_translater.js',
             'js/opal/services/referencedata.js',
             'js/opal/services/metadata.js',
