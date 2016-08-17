@@ -16,6 +16,8 @@ Adds the `clipboard` directive to give the user one click copy to clipboard.
 
 Adds a `tag-select` directive that renders a widget for editing the tags for an episode.
 
+Adds metadata to the scope for patient detail views
+
 #### Updates to the Dependency Graph
 
 * Django Axes 1.4.0 -> 1.7.0
