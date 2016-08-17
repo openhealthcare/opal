@@ -1,8 +1,7 @@
 ## OPAL mixins
 
 ### SerialisableFields
-provides the fields that a model uses for the
-fields below for example
+provides the fields that are on the model for example
 if we have an allergy model with a field drug
 it might serialise like below
 
@@ -11,7 +10,7 @@ it might serialise like below
 
 ### ToDictMixin
 provides a method that serialises a model
-to a dictionary based on its fields for example
+to a dictionary for example
 if we have an allergy model with a field drug
 it might serialise like below
 
