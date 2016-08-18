@@ -5,7 +5,7 @@ import json
 from datetime import date
 
 from django.core.serializers.json import DjangoJSONEncoder
-from mock import patch
+from mock import patch, MagicMock, mock_open
 
 from opal import models
 from opal.core.test import OpalTestCase
@@ -238,10 +238,68 @@ class FilterViewTestCase(OpalTestCase):
 
 class FilterDetailViewTestCase(OpalTestCase):
 
+    def setUp(self):
+        self.filt = models.Filter(user=self.user, name='testfilter', criteria='[]')
+        self.filt.save()
+
     def test_get(self):
-        filt = models.Filter(user=self.user, name='testfilter', criteria='[]')
-        filt.save()
         request = self.rf.get('/filter/1/')
         request.user = self.user
-        data = json.loads(views.FilterDetailView.as_view()(request, pk=filt.pk).content)
-        self.assertEqual({'name': 'testfilter', 'criteria': [], 'id': filt.id}, data)
+        data = json.loads(views.FilterDetailView.as_view()(
+            request, pk=self.filt.pk).content)
+        self.assertEqual({'name': 'testfilter',
+                          'criteria': [],
+                          'id': self.filt.id}, data)
+
+    def test_filter_detail_no_filter(self):
+        view = views.FilterDetailView()
+        response = view.dispatch(pk=323)
+        self.assertEqual(404, response.status_code)
+
+    def test_put(self):
+        view = views.FilterDetailView()
+        view.request = MagicMock(name='Mock Request')
+        view.request.read.return_value = json.dumps({'criteria': [],
+                                                     'name': 'My Name'})
+        view.filter = self.filt
+        resp = view.put()
+        self.assertEqual(200, resp.status_code)
+
+    def test_delete(self):
+        view = views.FilterDetailView()
+        view.request = MagicMock(name='Mock Request')
+        view.filter = self.filt
+        view.delete()
+        self.assertEqual(0, models.Filter.objects.count())
+
+
+class ExtractResultViewTestCase(OpalTestCase):
+
+    @patch('celery.result.AsyncResult')
+    def test_get(self, async_result):
+        view = views.ExtractResultView()
+        async_result.return_value.state = 'The State'
+
+        resp = view.get(task_id=490)
+        self.assertEqual(200, resp.status_code)
+
+
+class ExtractFileView(OpalTestCase):
+
+    @patch('celery.result.AsyncResult')
+    def test_get(self, async_result):
+        view = views.ExtractFileView()
+        async_result.return_value.state = 'SUCCESS'
+        async_result.return_value.get.return_value = 'foo.txt'
+
+        m = mock_open(read_data='This is a file')
+        with patch('opal.core.search.views.open', m, create=True) as m:
+            resp = view.get(task_id=437878)
+            self.assertEqual(200, resp.status_code)
+
+    @patch('celery.result.AsyncResult')
+    def test_get_not_successful(self, async_result):
+        view = views.ExtractFileView()
+        async_result.return_value.state = 'FAILURE'
+        with self.assertRaises(ValueError):
+            view.get(task_id=8902321890)

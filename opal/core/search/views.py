@@ -133,7 +133,7 @@ class FilterDetailView(LoginRequiredMixin, View):
     def dispatch(self, *args, **kwargs):
         try:
             self.filter = models.Filter.objects.get(pk=kwargs['pk'])
-        except models.Episode.DoesNotExist:
+        except models.Filter.DoesNotExist:
             return HttpResponseNotFound()
         return super(FilterDetailView, self).dispatch(*args, **kwargs)
 
@@ -157,9 +157,9 @@ class ExtractResultView(View):
         Tell the client about the state of the extract
         """
         from celery.result import AsyncResult
-        import taskrunner
+        from opal.core import celery
         task_id = kwargs['task_id']
-        result = AsyncResult(id=task_id, app=taskrunner.celery.app)
+        result = AsyncResult(id=task_id, app=celery.app)
 
         return _build_json_response({'state': result.state})
 
@@ -167,14 +167,15 @@ class ExtractResultView(View):
 class ExtractFileView(View):
     def get(self, *args, **kwargs):
         from celery.result import AsyncResult
-        import taskrunner
+        from opal.core import celery
         task_id = kwargs['task_id']
-        result = AsyncResult(id=task_id, app=taskrunner.celery.app)
+        result = AsyncResult(id=task_id, app=celery.app)
         if result.state != 'SUCCESS':
             raise ValueError('Wrong Task Larry!')
-        print result.state
         fname = result.get()
-        resp = HttpResponse(open(fname, 'rb').read())
+        with open(fname, 'rb') as fh:
+            contents = fh.read()
+        resp = HttpResponse(contents)
         disp = 'attachment; filename="{0}extract{1}.zip"'.format(
             settings.OPAL_BRAND_NAME, datetime.datetime.now().isoformat())
         resp['Content-Disposition'] = disp
