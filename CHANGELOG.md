@@ -1,3 +1,5 @@
+### 0.8.0 (Major Release)
+
 ### 0.7.1 (Minor Release)
 
 Completes the refactor of front end data, no longer using the `/api/v0.1/options/` API internally.
