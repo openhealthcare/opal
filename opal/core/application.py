@@ -5,7 +5,6 @@ from opal.utils import stringport
 
 
 class OpalApplication(object):
-    schema_module = None
     core_javascripts = {
         'opal.upstream.deps': [
             "js/lib/modernizr.js",
