@@ -114,13 +114,18 @@ class SerialisableFields(object):
             field = cls._meta.get_field(name)
 
             if isinstance(field, models.ManyToOneRel):
-                return field.related_model._meta.verbose_name_plural.title()
+                field_name = field.related_model._meta.verbose_name_plural
+            else:
+                field_name = field.verbose_name
 
-            return field.verbose_name.title()
         except FieldDoesNotExist:
             # else its foreign key or free text
-            return getattr(cls, name).verbose_name.title()
+            field_name = getattr(cls, name).verbose_name
 
+        if field_name.islower():
+            field_name = field_name.title()
+
+        return field_name
 
     @classmethod
     def build_field_schema(cls):
