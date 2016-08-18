@@ -2,6 +2,7 @@
 Tests create_singletons command
 """
 from django.template import Template, Context
+from django.test import override_settings
 from opal.core.test import OpalTestCase
 from opal.templatetags import panels
 from opal.tests.models import Demographics
@@ -23,12 +24,12 @@ class RecordPanelTestCase(OpalTestCase):
             full_width=False,
             is_patient_subrecord=True,
         )
-        result = panels.record_panel(Demographics())
-        self.assertEqual(expected, result)
+        result = panels.record_panel(Context({}), Demographics())
+        self.assertEqual(expected, result.dicts[-1])
 
     def test_model_pass_through(self):
-        result = panels.record_panel(HatWearer)
-        self.assertEqual(result["title"], "HatWearer")
+        result = panels.record_panel(Context({}), HatWearer)
+        self.assertEqual(result["title"], "Wearer of Hats")
         self.assertEqual(
             result["detail_template"], HatWearer.get_detail_template()
         )
@@ -36,13 +37,33 @@ class RecordPanelTestCase(OpalTestCase):
             result["singleton"], False
         )
 
+
+    def test_context(self):
+        """ context should include logic from template
+            context processors, but should not
+            pollute the global context with this information.
+        """
+        template = Template(
+            '{% load panels %}{{ title }}{% record_panel models.HatWearer %}{{ title }}'
+        )
+        ctx = {"models": {"HatWearer": HatWearer}, "title": "someTitle"}
+        result = str(template.render(Context(ctx)))
+        self.assertTrue(result.startswith('someTitle'))
+        self.assertTrue(result.endswith('someTitle'))
+
+        # the rest of the result should just use the hat wearter title
+        # so lets just remove the start and end
+        result = result.split("someTitle", 1)[1].rsplit("someTitle", 1)[0]
+        self.assertFalse("someTitle" in result)
+        self.assertIn(HatWearer.get_display_name(), result)
+
     def test_render(self):
         template = Template(
             '{% load panels %}{% record_panel models.HatWearer %}'
         )
         ctx = {"models": {"HatWearer": HatWearer}}
         result = template.render(Context(ctx))
-        self.assertIn('HatWearer', result)
+        self.assertIn('Wearer of Hats', result)
 
     def test_error_thrown(self):
         template = Template(
@@ -72,3 +93,16 @@ class RecordTimelineTestCase(OpalTestCase):
 class TemasPanelTestCase(OpalTestCase):
     def test_teams_panel(self):
         self.assertEqual({}, panels.teams_panel())
+
+
+class AlignedPairsTestCase(OpalTestCase):
+    def test_aligned_pairs(self):
+        template = Template(
+            """
+            {% load panels %}
+            {% aligned_pair model="episode.start_date | shortDate" label="Start Date"%}
+            """
+        )
+        result = template.render(Context({}))
+        self.assertIn('[[ episode.start_date | shortDate ]]', result)
+        self.assertIn('Start Date', result)

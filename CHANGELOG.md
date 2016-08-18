@@ -1,3 +1,27 @@
+### 0.7.1 (Minor Release)
+
+Completes the refactor of front end data, no longer using the `/api/v0.1/options/` API internally.
+This is slated for removal in 0.8.0.
+
+Updates DRF APIs - we now expect either Token or DjangoSession auth.
+
+Fixes several small bugs with scaffolded applications -  the setting of `STATIC_ROOT` and
+`SECRET_KEY`, generating forms for NullBooleanFields, requirements.txt.
+
+Adds an `aligned_pair` templatetag to the `panels` library.
+
+Updates the label for `Demographics.birth_place` to indicate that this should be a country.
+
+Adds the `clipboard` directive to give the user one click copy to clipboard.
+
+Adds a `tag-select` directive that renders a widget for editing the tags for an episode.
+
+Adds metadata to the scope for patient detail views
+
+#### Updates to the Dependency Graph
+
+* Django Axes 1.4.0 -> 1.7.0
+
 ### 0.7.0 (Major Release)
 
 #### Episode Categories
@@ -43,6 +67,9 @@ Patient Detail and Custom DetailViews in 0.6.
 #### Additional utilities
 
 Adds a datetimepicker templatetag that will render widgets for a Datetime field including time.
+
+Adds a `date_of_birth_field` templatetag that renders a date of birth field complete with inteligent
+validation. (Note this change also includes removing the old _partial/ template)
 
 Updates dependency graph:
 

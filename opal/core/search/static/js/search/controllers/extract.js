@@ -1,7 +1,7 @@
 angular.module('opal.controllers').controller(
     'ExtractCtrl', function($scope, $http, $window, $modal, $timeout,
                             PatientSummary, Paginator, Referencedata,
-                            ngProgressLite, profile, filters, options, schema){
+                            ngProgressLite, profile, filters, schema){
 
         Referencedata.then(function(referencedata){
 

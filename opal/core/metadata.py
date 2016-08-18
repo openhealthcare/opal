@@ -10,7 +10,7 @@ These should eventually be moved out.
 from opal.core import discoverable
 
 class Metadata(discoverable.DiscoverableFeature):
-    module_name = 'medatada'
+    module_name = 'metadata'
 
 class MacrosMetadata(Metadata):
     slug = 'macros'

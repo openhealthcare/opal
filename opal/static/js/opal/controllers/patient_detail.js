@@ -2,11 +2,10 @@ angular.module('opal.controllers').controller(
     'PatientDetailCtrl',
     function(
         $rootScope, $scope, $modal, $location, $routeParams,
-        Flow, Item, patient, options, profile
+        Flow, Item, patient, profile, metadata
     ){
         $scope.profile = profile;
         $scope.patient = patient;
-        $scope.options = options;
         $scope.episode = patient.episodes[0];
         $scope.view = null;
 
@@ -27,6 +26,7 @@ angular.module('opal.controllers').controller(
                     }
                 }
             }
+            $scope.metadata = metadata;
         }
 
         $scope.switch_to_episode = function(index, $event){

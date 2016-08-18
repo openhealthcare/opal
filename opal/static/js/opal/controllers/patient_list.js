@@ -1,9 +1,9 @@
 angular.module('opal.controllers').controller(
     'PatientListCtrl', function($scope, $q, $http, $cookieStore,
                                 $location, $routeParams,
-                                $modal, $rootScope,
-                                growl, Flow, Item, Episode, episodedata,
-                                options, $window, profile, episodeVisibility){
+                                $modal, $rootScope, $window,
+                                growl, Flow, Item, Episode,
+                                episodedata, metadata, profile, episodeVisibility){
 
         $scope.ready = false;
         var version = window.version;
@@ -20,8 +20,7 @@ angular.module('opal.controllers').controller(
             $scope.episodes = episodedata.data;
             $rootScope.state = 'normal';
             $scope.url = $location.url();
-
-            $scope.options = options;
+            $scope.metadata = metadata;
             $scope.listView = true;
 
             $scope.num_episodes = _.keys($scope.episodes).length;
@@ -40,7 +39,7 @@ angular.module('opal.controllers').controller(
             var tags = $routeParams.slug.split('-')
             $scope.currentTag = tags[0];
             $scope.currentSubTag = tags.length == 2 ? tags[1] : "";
-            $scope.tag_display = options.tag_display;
+            $scope.tag_display = metadata.tag_display;
             var pertinantTag = $scope.currentSubTag || $scope.currentTag;
         }
 
@@ -103,12 +102,12 @@ angular.module('opal.controllers').controller(
       };
 
         $scope.jumpToTag = function(tag){
-            if(_.contains(_.keys(options.tag_hierarchy), tag)){
+            if(_.contains(_.keys(metadata.tag_hierarchy), tag)){
                 $location.path($scope.path_base + tag)
             }else{
-                for(var prop in options.tag_hierarchy){
-                    if(options.tag_hierarchy.hasOwnProperty(prop)){
-                        if(_.contains(_.values(options.tag_hierarchy[prop]), tag)){
+                for(var prop in metadata.tag_hierarchy){
+                    if(metadata.tag_hierarchy.hasOwnProperty(prop)){
+                        if(_.contains(_.values(metadata.tag_hierarchy[prop]), tag)){
                             $location.path($scope.path_base + prop + '-' + tag)
                         }
                     }
@@ -231,11 +230,11 @@ angular.module('opal.controllers').controller(
                                 }
                             }
                             var msg = episode.demographics[0].first_name + " " + episode.demographics[0].surname;
-                            var newTags = _.intersection(_.keys(episode.tagging[0]), _.keys(options.tags));
+                            var newTags = _.intersection(_.keys(episode.tagging[0]), _.keys(metadata.tags));
                             var newTag;
 
                             if(newTags.length > 1){
-                              var tagObjs = _.filter(options.tags, function(t){ return _.contains(newTags, t.name); });
+                              var tagObjs = _.filter(metadata.tags, function(t){ return _.contains(newTags, t.name); });
                               if($scope.currentSubTag.length){
                                 newTag = _.findWhere(tagObjs, {parent_tag: $scope.currentTag}).name;
                               }
@@ -246,7 +245,7 @@ angular.module('opal.controllers').controller(
                             else{
                               newTag = newTags[0];
                             }
-                            msg += " added to the " + options.tags[newTag].display_name + " list";
+                            msg += " added to the " + metadata.tags[newTag].display_name + " list";
                             growl.success(msg);
 
   		                }
@@ -332,7 +331,7 @@ angular.module('opal.controllers').controller(
       };
 
       $scope.is_tag_visible_in_list = function(tag){
-          return _.contains(options.tag_visible_in_list, tag);
+          return _.contains(metadata.tag_visible_in_list, tag);
       };
 
       $scope.editNamedItem  = function(episode, name, iix) {

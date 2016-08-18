@@ -13,8 +13,8 @@ app.config(
 			 controller: 'PatientListCtrl',
 			 resolve: {
 				 episodedata: function(patientListLoader) { return patientListLoader(); },
-				 options    : function(Options) { return Options; },
-                 profile    : function(UserProfile){ return UserProfile; },
+                 metadata   : function(Metadata){ return Metadata },
+                 profile    : function(UserProfile){ return UserProfile; }
 			 },
 			 templateUrl: function(params){
                  var target =  '/templates/patient_list.html';
@@ -32,9 +32,9 @@ app.config(
              .when('/patient/:patient_id/:view?', {
 			     controller: 'PatientDetailCtrl',
                  resolve: {
-				     patient: function(patientLoader) { return patientLoader(); },
-				     options: function(Options) { return Options; },
-                     profile: function(UserProfile){ return UserProfile; }
+        				     patient: function(patientLoader) { return patientLoader(); },
+                     profile: function(UserProfile){ return UserProfile; },
+                     metadata: function(Metadata){ return Metadata; }
                  },
 			     templateUrl: function(params){ return '/templates/patient_detail.html' }
              })
@@ -48,7 +48,6 @@ app.config(
                  resolve: {
                      profile: function(UserProfile){ return UserProfile; },
                      schema: function(extractSchemaLoader){ return extractSchemaLoader; },
-				     options: function(Options) { return Options; },
                      filters: function(filtersLoader){ return filtersLoader(); }
                  }
              })

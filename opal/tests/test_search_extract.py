@@ -132,6 +132,7 @@ class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
             'hospital_number',
             'nhs_number',
             'date_of_birth',
+            'death_indicator',
             'sex_fk_id',
             'sex_ft',
             'birth_place_fk_id',
@@ -141,9 +142,9 @@ class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
         ]
         expected_row = [
             1, 'None', 'None', 'None', 'None', '12345678',
-            'None', '1976-01-01', 'None', '', 'None', '', '', ''
+            'None', '1976-01-01', 'False', 'None', '', 'None', '', '', ''
         ]
-        self.assertEqual(headers, expected_headers)
+        self.assertEqual(expected_headers, headers)
         self.assertEqual(row, expected_row)
 
 
@@ -152,7 +153,7 @@ class ZipArchiveTestCase(PatientEpisodeTestCase):
     @patch('opal.core.search.extract.zipfile')
     def test_episode_subrecords(self, zipfile):
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
-        expected = len([i for i in subrecords.episode_subrecords()]) + 6
+        expected = len([i for i in subrecords.episode_subrecords()]) + 7
         self.assertEqual(expected, zipfile.ZipFile.return_value.__enter__.return_value.write.call_count)
 
     @patch('opal.core.search.extract.subrecord_csv')

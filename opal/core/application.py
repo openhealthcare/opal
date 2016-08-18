@@ -20,9 +20,8 @@ class OpalApplication(object):
 
             "js/lib/angular-ui-utils-0.1.0/ui-utils.js",
             "js/lib/ui-bootstrap-tpls-0.11.0.js",
-
+            "js/lib/utils/clipboard.js",
             "bootstrap-3.1.0/js/bootstrap.js",
-
             "js/lib/angular-strap-2.3.1/modules/compiler.js",
             "js/lib/angular-strap-2.3.1/modules/tooltip.js",
             "js/lib/angular-strap-2.3.1/modules/tooltip.tpl.js",
@@ -80,7 +79,6 @@ class OpalApplication(object):
             "js/opal/services/record_editor.js",
             "js/opal/services/copy_to_category.js",
             "js/opal/services/patientlist_loader.js",
-            "js/opal/services/tag_service.js",
             'js/opal/services/fields_translater.js',
             'js/opal/services/referencedata.js',
             'js/opal/services/metadata.js',

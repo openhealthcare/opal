@@ -34,6 +34,7 @@ describe('PatientDetailCtrl', function(){
             provisional: false,
         }]
     };
+    var metadata = {some: "metadata"};
 
     var columns = {
         "default": [
@@ -105,7 +106,8 @@ describe('PatientDetailCtrl', function(){
             Flow        : Flow,
             patient     : patient,
             options     : options,
-            profile     : profile
+            profile     : profile,
+            metadata    : metadata
         });
 
     });
@@ -130,6 +132,9 @@ describe('PatientDetailCtrl', function(){
             expect($scope.switch_to_episode).toHaveBeenCalledWith(0);
         });
 
+        it('should hoist the metaddata', function(){
+            expect($scope.metadata.some).toBe('metadata');
+        });
     });
 
     describe('switch_to_episode()', function() {

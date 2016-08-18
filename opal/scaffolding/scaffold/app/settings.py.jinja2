@@ -157,6 +157,7 @@ INSTALLED_APPS = (
     'axes',
     'reversion',
     'rest_framework',
+    'rest_framework.authtoken',
     'compressor',
     'opal',
     'opal.core.search',
@@ -234,6 +235,9 @@ OPAL_LOG_OUT_DURATION = OPAL_LOG_OUT_MINUTES*60*1000
 # OPAL_EXTRA_HEADER = ''
 # OPAL_EXTRA_APPLICATION = ''
 
+# Uncomment this if you want to implement custom dynamic flows.
+# OPAL_FLOW_SERVICE = 'AppFlow'
+
 INTEGRATING = False
 #
 # Uncomment these if you are integrating with other upstream systems via
@@ -252,6 +256,13 @@ DEFAULT_DOMAIN = 'http://{{ name }}.com/'
 
 OPAL_BRAND_NAME = '{{ name }}'
 VERSION_NUMBER  = '<0.0.1'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    )
+}
 
 try:
     from local_settings import *

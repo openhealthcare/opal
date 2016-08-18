@@ -1,6 +1,8 @@
 """
 Templatetags for panels
 """
+import copy
+
 from django import template
 from opal.core.subrecords import patient_subrecords
 
@@ -9,8 +11,9 @@ from opal.utils import camelcase_to_underscore
 register = template.Library()
 
 
-@register.inclusion_tag('_helpers/record_panel.html')
+@register.inclusion_tag('_helpers/record_panel.html', takes_context=True)
 def record_panel(
+    context,
     model,
     editable=1,
     title=None,
@@ -26,6 +29,7 @@ def record_panel(
     Editable is an angular expression
     to be evaluated
     """
+    context = copy.copy(context)
 
     if name is None:
         if isinstance(model, str):
@@ -38,7 +42,7 @@ def record_panel(
     if title is None:
         title = model.get_display_name()
 
-    return {
+    ctx = {
         'name': name,
         'singleton': getattr(model, '_is_singleton', False),
         'title': title,
@@ -51,6 +55,9 @@ def record_panel(
         'full_width': full_width,
         'is_patient_subrecord': model.__class__ in patient_subrecords()
     }
+
+    context.dicts.append(ctx)
+    return context
 
 
 @register.inclusion_tag('_helpers/record_timeline.html')
@@ -69,3 +76,10 @@ def record_timeline(model, whenfield):
 @register.inclusion_tag('_helpers/teams_panel.html')
 def teams_panel():
     return {}
+
+@register.inclusion_tag('_helpers/aligned_pair.html')
+def aligned_pair(model=None, label=None):
+    return {
+        'model': model,
+        'label': label
+    }

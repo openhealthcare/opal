@@ -19,6 +19,8 @@ pages:
       - Roles & Permissions: guides/roles_and_permissions.md
       - Tagging: guides/tagging.md
       - JSON API: guides/json_api.md
+      - Referencedata: guides/referencedata.md
+      - Metadata: guides/metadata.md
       - Lookup Lists: guides/lookup_lists.md
       - Templates: guides/templates.md
       - Context Processors: guides/context_processors.md
@@ -34,6 +36,7 @@ pages:
       - Episode Categories: reference/episode_categories.md
       - reference/patient.md
       - Subrecords: reference/subrecords.md
+      - Mixins: reference/mixins.md
       - OpalApplication: reference/opal_application.md
       - reference/episode_service.md
       - reference/item_service.md
@@ -60,7 +63,7 @@ dev_addr: 0.0.0.0:8965
 include_next_prev: false
 
 extra:
-  version: v0.7.0
+  version: v0.7.1
 
 markdown_extensions:
     - fenced_code
