@@ -362,6 +362,11 @@ class SubrecordTestCase(OpalTestCase):
         only_words = FamousLastWords._get_field_title("words")
         self.assertEqual(only_words, "Only Words")
 
+    def test_verbose_name_abbreviation(self):
+        # if a word is an abbreviation already, don't title case it!
+        osd = DogOwner._get_field_title("ownership_start_date")
+        self.assertEqual(osd, "OSD")
+
 
 class BulkUpdateFromDictsTest(OpalTestCase):
 

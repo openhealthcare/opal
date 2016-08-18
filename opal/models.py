@@ -118,12 +118,12 @@ class SerialisableFields(object):
             else:
                 field_name = field.verbose_name
 
-            if field_name.islower():
-                field_name = field_name.title()
-
         except FieldDoesNotExist:
             # else its foreign key or free text
             field_name = getattr(cls, name).verbose_name
+
+        if field_name.islower():
+            field_name = field_name.title()
 
         return field_name
 
