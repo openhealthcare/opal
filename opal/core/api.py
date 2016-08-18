@@ -21,15 +21,6 @@ from opal.core.patient_lists import (
 
 app = application.get_app()
 
-# TODO This is stupid - we can fully deprecate this please?
-try:
-    options = stringport(settings.OPAL_OPTIONS_MODULE)
-    micro_test_defaults = options.micro_test_defaults
-except AttributeError:
-    class options:
-        model_names = []
-    micro_test_defaults = []
-
 class OPALRouter(routers.DefaultRouter):
     def get_default_base_name(self, viewset):
         name = getattr(viewset, 'base_name', None)
@@ -82,43 +73,6 @@ class ExtractSchemaViewSet(viewsets.ViewSet):
 
     def list(self, request):
         return Response(schemas.extract_schema())
-
-
-# TODO:
-# Deprecate this fully
-class OptionsViewSet(viewsets.ViewSet):
-    """
-    Returns various metadata concerning this OPAL instance:
-    Lookuplists, micro test defaults, tag hierarchy, macros.
-    """
-    base_name = 'options'
-
-    def list(self, request):
-
-        data = {}
-        subclasses = LookupList.__subclasses__()
-        for model in subclasses:
-            options = list(model.objects.all().values_list("name", flat=True))
-            data[model.get_api_name()] = options
-
-        model_to_ct = ContentType.objects.get_for_models(
-            *subclasses
-        )
-
-        for model, ct in model_to_ct.iteritems():
-            synonyms = Synonym.objects.filter(content_type=ct).values_list(
-                "name", flat=True
-            )
-            data[model.get_api_name()].extend(synonyms)
-
-        for name in data:
-            data[name].sort()
-
-        data.update(metadata.MicroTestDefaultsMetadata.to_dict())
-        data.update(metadata.MacrosMetadata.to_dict())
-        data.update(TaggedPatientListMetadata.to_dict(user=request.user))
-        data.update(FirstListMetadata.to_dict(user=request.user))
-        return Response(data)
 
 
 class ReferenceDataViewSet(viewsets.ViewSet):
@@ -374,7 +328,6 @@ router.register('tagging', TaggingViewSet)
 router.register('patientlist', PatientListViewSet)
 router.register('patientrecordaccess', PatientRecordAccessViewSet)
 
-router.register('options', OptionsViewSet)
 router.register('referencedata', ReferenceDataViewSet)
 router.register('metadata', MetadataViewSet)
 
