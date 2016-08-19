@@ -49,6 +49,7 @@ class OpalTestCase(TestCase):
     def assertStatusCode(
             self, path, expected_status_code, follow=True, msg=None
     ):
+        self.client.login(username=self.USERNAME, password=self.PASSWORD)
         response = self.client.get(path, follow=follow)
         self.assertEqual(expected_status_code, response.status_code, msg)
 
