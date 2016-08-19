@@ -243,6 +243,13 @@ class FilterViewTestCase(BaseSearchTestCase):
         with self.assertRaises(PermissionDenied):
             view.dispatch()
 
+    def test_logged_in_dispatch(self):
+        # we should error if we're logged in
+        view = views.FilterView()
+        request = self.get_logged_in_request()
+        view.request = self.get_logged_in_request()
+        view.dispatch(request)
+
     def test_get(self):
         models.Filter(user=self.user, name='testfilter', criteria='[]').save()
         self.assertEqual(1, models.Filter.objects.count())
