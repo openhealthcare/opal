@@ -22,16 +22,7 @@ from opal.utils.banned_passwords import banned
 
 app = application.get_app()
 
-# TODO This is stupid - we can fully deprecate this please?
-try:
-    options = stringport(settings.OPAL_OPTIONS_MODULE)
-    micro_test_defaults = options.micro_test_defaults
-except AttributeError:
-    class options:
-        micro_test_defaults = []
-
 Synonym = models.Synonym
-
 
 class PatientListTemplateView(TemplateView):
 

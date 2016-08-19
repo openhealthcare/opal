@@ -1,5 +1,7 @@
 ### 0.8.0 (Major Release)
 
+Removes `Options` both from the JSON API, and the Angular service.
+
 ### 0.7.1 (Minor Release)
 
 Completes the refactor of front end data, no longer using the `/api/v0.1/options/` API internally.
