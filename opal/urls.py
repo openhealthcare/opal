@@ -52,8 +52,6 @@ urlpatterns = patterns(
         views.DeleteItemConfirmationView.as_view()),
 
     # New Public facing API urls
-    url(r'api/v0.1/episode/admit', csrf_exempt(api.APIAdmitEpisodeView.as_view())),
-    url(r'api/v0.1/episode/refer', csrf_exempt(api.APIReferPatientView.as_view())),
     url(r'api/v0.1/', include(api.router.urls)),
     url(r'^templates/record/(?P<model>[a-z_\-]+).html$',
         views.RecordTemplateView.as_view(), name="record_view"),
