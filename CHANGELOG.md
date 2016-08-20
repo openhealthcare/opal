@@ -1,6 +1,7 @@
 ### 0.8.0 (Major Release)
 
 Removes `Options` both from the JSON API, and the Angular service.
+Removes legacy APIs `/api/v0.1/episode/admit` and `/api/v0.1/episode/refer`.
 
 ### 0.7.1 (Minor Release)
 

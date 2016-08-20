@@ -346,35 +346,6 @@ def register_plugin_apis():
 
 register_plugin_apis()
 
-class APIAdmitEpisodeView(View):
-    """
-    Admit an episode from upstream!
-    """
-    def post(self, *args, **kwargs):
-        data = _get_request_data(self.request)
-        resp = {'ok': 'Got your admission just fine - thanks!'}
-        return _build_json_response(resp)
-
-
-class APIReferPatientView(View):
-    """
-    Refer a patient
-    """
-    # TODO - explore when this is used - seems like there should be a better way?
-    def post(self, *args, **kwargs):
-        """
-        Expects PATIENT, EPISODE, TARGET
-        """
-        data = _get_request_data(self.request)
-        episode = Episode.objects.get(pk=data['episode'])
-        current_tags = episode.get_tag_names(None)
-        if not data['target'] in current_tags:
-            current_tags.append(data['target'])
-            episode.set_tag_names(current_tags, None)
-        resp = {'ok': 'Got your referral just fine - thanks!'}
-        return _build_json_response(resp)
-
-
 class EpisodeListApi(View):
     """
     Return serialised subsets of active episodes by tag.
