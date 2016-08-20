@@ -339,10 +339,12 @@ for subrecord in subrecords():
 
     router.register(sub_name, SubViewSet)
 
-for plugin in plugins.plugins():
-    for api in plugin.apis:
-        router.register(*api)
+def register_plugin_apis():
+    for plugin in plugins.plugins():
+        for api in plugin.apis:
+            router.register(*api)
 
+register_plugin_apis()
 
 class APIAdmitEpisodeView(View):
     """

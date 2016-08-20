@@ -48,16 +48,6 @@ class RecordTestCase(TestCase):
         self.assertEqual([{}], api.RecordViewSet().list(None).data)
 
 
-class EpisodeListApiTestCase(OpalTestCase):
-    def test_episode_list_view(self):
-        request = MagicMock(name='mock request')
-        request.user = self.user
-        view = api.EpisodeListApi()
-        view.request = request
-        resp = view.get(tag="eater", subtag="herbivore")
-        self.assertEqual(200, resp.status_code)
-
-
 class ExtractSchemaTestCase(TestCase):
 
     @patch('opal.core.api.schemas')
@@ -732,3 +722,25 @@ class PatientListTestCase(TestCase):
     def test_retrieve_episodes_not_found(self):
         response = api.PatientListViewSet().retrieve(self.mock_request, pk='not a real list at all')
         self.assertEqual(404, response.status_code)
+
+
+class RegisterPluginsTestCase(OpalTestCase):
+
+    @patch('opal.core.api.plugins.plugins')
+    def test_register(self, plugins):
+        mock_plugin = MagicMock(name='Mock Plugin')
+        mock_plugin.apis = [('thingapi', None)]
+        plugins.return_value = [mock_plugin]
+        with patch.object(api.router, 'register') as register:
+            api.register_plugin_apis()
+            register.assert_called_with('thingapi', None)
+
+
+class EpisodeListApiTestCase(OpalTestCase):
+    def test_episode_list_view(self):
+        request = MagicMock(name='mock request')
+        request.user = self.user
+        view = api.EpisodeListApi()
+        view.request = request
+        resp = view.get(tag="eater", subtag="herbivore")
+        self.assertEqual(200, resp.status_code)
