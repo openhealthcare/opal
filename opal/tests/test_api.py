@@ -14,7 +14,7 @@ from mock import patch, MagicMock
 from rest_framework.reverse import reverse
 
 from opal import models
-from opal.tests.models import Colour, PatientColour, HatWearer, Hat
+from opal.tests.models import Colour, PatientColour, HatWearer, Hat, Demographics
 from opal.core import metadata
 from opal.core.test import OpalTestCase
 from opal.core.views import _build_json_response
@@ -579,6 +579,17 @@ class EpisodeTestCase(OpalTestCase):
         pcount = models.Patient.objects.filter(
             demographics__hospital_number="999000999").count()
         self.assertEqual(1, pcount)
+
+    def test_create_without_hospital_number(self):
+        self.mock_request.data = {
+            "tagging"           :[ { "micro":True }],
+            "date_of_admission" : "14/01/2015",
+            "demographics"      : {
+                "first_name": "James"
+            }
+        }
+        response = api.EpisodeViewSet().create(self.mock_request)
+        self.assertEqual(1, Demographics.objects.filter(first_name='James').count())
 
     def test_create_sets_demographics(self):
         pcount = models.Patient.objects.filter(
