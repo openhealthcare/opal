@@ -101,7 +101,15 @@ angular.module('opal.services').service('FieldTranslater', function($rootScope){
   };
 
   this.jsToSubrecord = function(subrecordJs, subrecordName){
+      var toSkip = ['episode', 'columnName', 'formController']
+
       _.forEach(subrecordJs, function(fieldValue, fieldName){
+        // TODO don't hard code these
+        if(_.contains(toSkip, fieldName)){
+          // don't send the episode back up
+          delete subrecordJs[fieldName];
+          return;
+        }
         var fieldMapping = self.lookUpField(subrecordName, fieldName);
         if(fieldMapping){
           subrecordJs[fieldName] = self.translateJsToField(fieldMapping, fieldValue);

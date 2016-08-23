@@ -82,6 +82,16 @@ describe('services', function() {
           expect(result.demographics).toEqual(patientData.demographics[0]);
       });
 
+      it("should strip episode, columnName and formController", function(){
+          jsPatientData.episode = {};
+          jsPatientData.columnName = "someColumnName";
+          jsPatientData.formController = "someFormController";
+          var result = FieldTranslater.jsToPatient(jsPatientData);
+          expect(_.contains(result, "episode")).toBe(false);
+          expect(_.contains(result, "columnName")).toBe(false);
+          expect(_.contains(result, "formController")).toBe(false);
+      });
+
       it('should handle single empty strings', function(){
         it("should remove the spaces from around ints and floats", function(){
             jsPatientData.demographics.age = "";
