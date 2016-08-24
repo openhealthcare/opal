@@ -1,0 +1,10 @@
+<div class="form-group">
+  <label class="control-label col-sm-3">Date</label>
+  <div class="col-sm-8">
+    <input type="text" class="form-control" uib-datepicker-popup="'dd/MM/yyyy"
+           ng-init="{{modelname}}_open = false"
+           ng-model="{{ model }}" is-open="{{ modelname }}_open"
+           ng-blur="" ng-focus="{{ modelname }}_open = true"
+           close-text="Close" />
+  </div>
+</div>
