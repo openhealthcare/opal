@@ -1,5 +1,5 @@
 """
-Unittests for Episodes
+Unittests for opal.models.Episode
 """
 import datetime
 
@@ -162,50 +162,3 @@ class EpisodeCategoryTestCase(OpalTestCase):
         self.episode.discharge_date = self.yesterday
         self.episode.save()
         self.assertEqual(self.episode.end, self.yesterday)
-
-
-class EpisodeManagerTestCase(OpalTestCase):
-    def setUp(self):
-        self.patient = Patient.objects.create()
-        self.episode = self.patient.create_episode()
-
-        # make sure many to many serialisation goes as epected
-        top = Hat.objects.create(name="top")
-        hw = HatWearer.objects.create(episode=self.episode)
-        hw.hats.add(top)
-
-        # make sure free text or foreign key serialisation goes as expected
-        # for actual foriegn keys
-        Dog.objects.create(name="Jemima")
-        do = DogOwner.objects.create(episode=self.episode)
-        do.dog = "Jemima"
-        do.save()
-
-        # make sure it goes as expected for strings
-        DogOwner.objects.create(episode=self.episode, dog="Philip")
-
-    def test_serialised_fields(self):
-        as_dict = Episode.objects.serialised(self.user, [self.episode])[0]
-        expected = [
-            'id', 'category_name', 'active', 'date_of_admission', 'discharge_date',
-            'consistency_token', 'date_of_episode', 'stage'
-        ]
-
-        for field in expected:
-            self.assertIn(field, as_dict)
-
-        dogs = set(i["dog"] for i in as_dict["dog_owner"])
-
-        self.assertEqual(dogs, {"Jemima", "Philip"})
-        self.assertEqual(as_dict["hat_wearer"][0]["hats"], ["top"])
-
-    def test_serialised_equals_to_dict(self):
-        """ Serialised is an optimisation
-        """
-        as_dict = Episode.objects.serialised(
-            self.user, [self.episode], episode_history=True
-        )
-
-        expected = self.episode.to_dict(self.user)
-
-        self.assertEqual(as_dict[0], expected)

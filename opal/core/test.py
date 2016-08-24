@@ -20,15 +20,20 @@ class OpalTestCase(TestCase):
     def rf(self):
         return RequestFactory()
 
+    def make_user(self, password, **kwargs):
+        user = User.objects.create(**kwargs)
+        user.set_password(self.PASSWORD)
+        user.save()
+        return user
+
     @cached_property
     def user(self):
-        user = User.objects.create(
+        user = self.make_user(
+            self.PASSWORD,
             username=self.USERNAME,
             is_staff=True,
             is_superuser=True
         )
-        user.set_password(self.PASSWORD)
-        user.save()
         profile, _ = UserProfile.objects.get_or_create(
             user=user,
             can_extract=True
