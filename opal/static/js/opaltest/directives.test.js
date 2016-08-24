@@ -25,10 +25,6 @@ describe('OPAL Directives', function(){
         }
       }
     }
-    beforeEach(module('opal'));
-
-
-    beforeEach(module('ui.select'));
 
     beforeEach(module('opal.directives', function($provide){
       $provide.service('Metadata', function(){

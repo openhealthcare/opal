@@ -1,4 +1,4 @@
-var directives = angular.module('opal.directives', []);
+var directives = angular.module('opal.directives', ['ui.select', 'opal.services']);
 
 directives.directive("fixHeight", function () {
     return function (scope, element, attrs) {
