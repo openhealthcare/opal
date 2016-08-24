@@ -26,9 +26,11 @@ controllers.controller('RootCtrl', function($scope, $location) {
 });
 
 controllers.config(function($datepickerProvider) {
+
   angular.extend($datepickerProvider.defaults, {
       autoclose: true,
       dateFormat: 'dd/MM/yyyy',
       dateType: 'string'
   });
+
 })
