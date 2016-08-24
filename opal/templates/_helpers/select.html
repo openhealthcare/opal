@@ -47,24 +47,18 @@
       {% endif %}
       {% if help_template %}
       <p class="text-muted pointer"
-         title="Help"
-         data-placement="bottom"
+         popover-title="Help"
+         popover-placement="bottom"
          data-auto-close="true"
-         data-template-url="{{ help_template }}"
+         uib-popover-template="'{{ help_template }}'"
          name="{{ model }}"
-         bs-popover
+
          >
           <i class="fa fa-question-circle"></i>
           More details about {{ label }}
       </p>
       <script type="text/ng-template" id="{{ help_template }}">
-        <div class="popover">
-          <div class="arrow"></div>
-          <h3 class="popover-title" ng-bind="title" ng-show="title"></h3>
-          <div class="popover-content">
-            {% include help_template %}
-          </div>
-        </div>
+        {% include help_template %}
       </script>
       {% endif %}
     </div>
