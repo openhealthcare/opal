@@ -8,8 +8,7 @@
             data-html="1"
             data-template="search/search_results.html"
             data-watch-options=true
-            bs-typeahead
-            bs-options="i as i.display for i in results"
+            uib-typeahead="i as i.display for i in results | filter:$viewValue | limitTo:8"
           {% else %}
             ng-model="query.searchTerm"
           {% endif %}

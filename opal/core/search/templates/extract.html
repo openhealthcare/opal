@@ -74,8 +74,7 @@
                            class="form-control content-offset-below-10"
                            ng-model="query.query"
                            ng-show="isText(query.column, query.field) && query.field != null"
-                           bs-options="x for x in query.lookup_list"
-                           bs-typeahead
+                           uib-typeahead="x for x in query.lookup_list | filter:$viewValue | limitTo:8"
                            placeholder="4. Add your value"
                            ng-keypress="$event.keyCode == 13 && search()"
                            set-focus-if="isText(query.column, query.field) && query.field != null  && query.queryType != null"
