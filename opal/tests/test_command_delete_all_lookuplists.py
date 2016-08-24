@@ -18,8 +18,10 @@ class DeleteLookupListsTestCase(OpalTestCase):
             name='Bad Head'
         )
         self.assertEqual(1, Symptom.objects.count())
+        self.assertEqual(1, Synonym.objects.count())
 
         cmd = delete_all_lookup_lists.Command()
         cmd.handle()
 
         self.assertEqual(0, Symptom.objects.count())
+        self.assertEqual(0, Synonym.objects.count())
