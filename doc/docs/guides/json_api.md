@@ -37,9 +37,15 @@ More details on DRF authentication are available in
 
 
 ### Permissioning
-OPAL uses DRF permissions as well, to make life easier OPAL ships with
-opal.core.api.LoginRequiredViewset which adds the permission class
-IsAuthenticated to your viewset, more details on DRF permissions are available [in the DRF documentation](http://www.django-rest-framework.org/api-guide/permissions/).
+
+OPAL uses the DRF permissions system for JSON APIs.
+
+OPAL ships with `opal.core.api.LoginRequiredViewset` which adds the permission class
+IsAuthenticated by default. Developers are strongly encouraged to ensure that APIs which
+serve patient data are restricted to logged in users.
+
+More details on DRF permissions are available [in the DRF documentation](http://www.django-rest-framework.org/api-guide/permissions/)
+.
 
 #### Session Based
 Session based authentication enables users logged in via the standard Django auth mechanism
