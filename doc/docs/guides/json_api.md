@@ -35,6 +35,12 @@ the OPAL scaffolding) will enable Sesison and Token based authentication.
 More details on DRF authentication are available in
 [their excellent documentation](http://www.django-rest-framework.org/api-guide/authentication/).
 
+
+### Permissioning
+OPAL uses DRF permissions as well, to make life easier OPAL ships with
+opal.core.api.LoginRequiredViewset which adds the permission class
+IsAuthenticated to your viewset, more details on DRF permissions are available [in the DRF documentation](http://www.django-rest-framework.org/api-guide/permissions/).
+
 #### Session Based
 Session based authentication enables users logged in via the standard Django auth mechanism
 to use the API. This is what most OPAL applications in the browser will use.

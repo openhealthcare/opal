@@ -292,7 +292,6 @@ class EpisodeViewSet(LoginRequiredViewset):
 
 class PatientViewSet(LoginRequiredViewset):
     base_name = 'patient'
-    permission_classes = (IsAuthenticated,)
 
     def retrieve(self, request, pk=None):
         patient = Patient.objects.get(pk=pk)
@@ -302,7 +301,6 @@ class PatientViewSet(LoginRequiredViewset):
 
 class PatientRecordAccessViewSet(LoginRequiredViewset):
     base_name = 'patientrecordaccess'
-    permission_classes = (IsAuthenticated,)
 
     def retrieve(self, request, pk=None):
         return _build_json_response([
@@ -341,8 +339,9 @@ for subrecord in subrecords():
 
     router.register(sub_name, SubViewSet)
 
-for plugin in plugins.plugins():
-    for api in plugin.apis:
-        router.register(*api)
+def register_plugin_apis():
+    for plugin in plugins.plugins():
+        for api in plugin.apis:
+            router.register(*api)
 
 register_plugin_apis()

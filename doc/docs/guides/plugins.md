@@ -81,6 +81,15 @@ of your plugin.
 
 These APIs will then be available and self-documenting fom the standard OPAL url `/api/v0.1/`
 
+APIs should probably require the user to be logged in. We can do this with django rest framework permission classes.
+
+To make life easier Opal ships with opal.core.api.LoginRequiredViewset which adds the rest framework permission class IsAuthenticated to your viewset.
+e.g.
+
+    class PingViewSet(LoginRequiredViewset):
+        def list(self, request):
+            return Response('pong')    
+
 ### Adding Actions to the sidebar
 
 Actions can be added to the sidebar by setting the `actions` attribute of your plugin.
