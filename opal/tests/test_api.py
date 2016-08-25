@@ -528,7 +528,7 @@ class EpisodeTestCase(OpalTestCase):
         self.demographics.hospital_number = '123123123'
         self.demographics.save()
         self.mock_request.data = {
-            "tagging"          :[ { "micro":True }],
+            "tagging"          : { "micro":True },
             "date_of_admission": "14/01/2015",
             "demographics"     : {
                 "hospital_number": self.demographics.hospital_number
@@ -544,7 +544,7 @@ class EpisodeTestCase(OpalTestCase):
             demographics__hospital_number="999000999").count()
         self.assertEqual(0, pcount)
         self.mock_request.data = {
-            "tagging"           :[ { "micro":True }],
+            "tagging"           : { "micro":True },
             "date_of_admission" : "14/01/2015",
             "demographics"      : {
                 "hospital_number": "999000999"
@@ -572,7 +572,7 @@ class EpisodeTestCase(OpalTestCase):
 
     def test_create_without_hospital_number(self):
         self.mock_request.data = {
-            "tagging"           :[ { "micro":True }],
+            "tagging"           : { "micro":True },
             "date_of_admission" : "14/01/2015",
             "demographics"      : {
                 "first_name": "James"
@@ -586,7 +586,7 @@ class EpisodeTestCase(OpalTestCase):
             demographics__hospital_number="9999000999").count()
         self.assertEqual(0, pcount)
         self.mock_request.data = {
-            "tagging"                :[ { "micro":True }],
+            "tagging"                :{"micro": True},
             "date_of_admission"      : "14/01/2015",
             "demographics" : {
                 "first_name": "Alain",
@@ -609,7 +609,7 @@ class EpisodeTestCase(OpalTestCase):
             demographics__hospital_number="9999000999").count()
         self.assertEqual(0, pcount)
         self.mock_request.data = {
-            "tagging"                :[ { "micro":True }],
+            "tagging"                :{"micro": True},
             "date_of_admission"      : "14/01/2015",
             "demographics" : {
                 "hospital_number": "9999000999",
@@ -631,7 +631,7 @@ class EpisodeTestCase(OpalTestCase):
             demographics__hospital_number="9999000999").count()
         self.assertEqual(0, pcount)
         self.mock_request.data = {
-            "tagging"                :[ { "micro":True }],
+            "tagging"                :{"micro": True},
             "date_of_admission"      : "14/01/2015",
             "demographics" : {
                 "hospital_number": "9999000999",
