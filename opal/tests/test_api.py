@@ -764,13 +764,3 @@ class RegisterPluginsTestCase(OpalTestCase):
         with patch.object(api.router, 'register') as register:
             api.register_plugin_apis()
             register.assert_called_with('thingapi', None)
-
-
-class EpisodeListApiTestCase(OpalTestCase):
-    def test_episode_list_view(self):
-        request = MagicMock(name='mock request')
-        request.user = self.user
-        view = api.EpisodeListApi()
-        view.request = request
-        resp = view.get(tag="eater", subtag="herbivore")
-        self.assertEqual(200, resp.status_code)
