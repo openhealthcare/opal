@@ -12,11 +12,12 @@ class Command(BaseCommand):
     synonyms.
     """
     def delete(self):
+        for item in Synonym.objects.all():
+            item.delete()
+
         for model in LookupList.__subclasses__():
             for item in model.objects.all():
                 item.delete()
-        for item in Synonym.objects.all():
-            item.delete()
 
     def handle(self, *args, **kw):
         self.delete()

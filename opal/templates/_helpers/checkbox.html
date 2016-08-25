@@ -1,9 +1,9 @@
 <div class="checkbox checkbox-primary col-sm-offset-3">
   <input {% if disabled %}ng-disabled="{{ disabled }}"{% endif %}
-         class="" id="checkbox_{{model}}" type="checkbox"
+         class="" id="checkbox_{{modelname}}_[[ $index ]]" type="checkbox"
          ng-model="{{ model }}" {% if change %}ng-change="{{ change }}"{% endif %}
          />
-  <label for="checkbox_{{model}}">{{ label }}</label>
+  <label for="checkbox_{{ modelname }}_[[ $index ]]">{{ label }}</label>
   {% if help_text %}
   <br />
   <span class="text-muted" style="margin-left: -20px;">
