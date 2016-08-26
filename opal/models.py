@@ -262,13 +262,6 @@ class UpdatesFromDictMixin(SerialisableFields):
         for name in fields:
             value = data.get(name, None)
 
-            if name.endswith('_fk_id'):
-                if name[:-6] in fields:
-                    continue
-            if name.endswith('_ft'):
-                if name[:-3] in fields:
-                    continue
-
             if name == 'consistency_token':
                 continue # shouldn't be needed - Javascripts bug?
             setter = getattr(self, 'set_' + name, None)

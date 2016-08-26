@@ -53,6 +53,9 @@ class SerialisableFieldsTestCase(OpalTestCase):
         ])
         self.assertEqual(expected, set(names))
 
+    def test_get_field_type(self):
+        self.assertEqual(models.ForeignKey, SerialisableModel._get_field_type('patient_id'))
+
     def test_build_field_schema(self):
         schema = SerialisableModel.build_field_schema()
         expected = [
@@ -72,6 +75,8 @@ class SerialisableFieldsTestCase(OpalTestCase):
             }
         ]
         self.assertEqual(schema, expected)
+
+
 
 
 class ToDictMixinTestCase(OpalTestCase):
