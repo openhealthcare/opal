@@ -33,10 +33,12 @@ urlpatterns = patterns(
     url(r'^templates/patient_detail.html$',
         views.PatientDetailTemplateView.as_view(), name="patient_detail"),
     url(r'^templates/episode_detail.html/(?P<pk>\d+)/?$',
-        views.EpisodeDetailTemplateView.as_view()),
+        views.EpisodeDetailTemplateView.as_view(), name="episode_detail"),
 
     url(r'^templates/modals/undischarge.html/?$',
-        views.UndischargeTemplateView.as_view()),
+        views.UndischargeTemplateView.as_view(),
+        name="undischarge_tempate_view"
+        ),
     url(r'^templates/modals/add_episode.html/?$',
         views.AddEpisodeTemplateView.as_view()),
     url(r'^templates/modals/hospital_number.html/?$',
@@ -87,5 +89,9 @@ for plugin in plugins.plugins():
 
 urlpatterns += patterns(
     '',
-    url(r'templates/(?P<template_name>[0-9a-z_/]+.html)', views.RawTemplateView.as_view())
+    url(
+        r'templates/(?P<template_name>[0-9a-z_/]+.html)',
+        views.RawTemplateView.as_view(),
+        name="raw_template_view"
+    )
 )

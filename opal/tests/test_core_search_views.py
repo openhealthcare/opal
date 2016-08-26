@@ -5,6 +5,8 @@ import json
 from datetime import date
 
 from django.core.serializers.json import DjangoJSONEncoder
+from django.contrib.auth.models import AnonymousUser
+from django.core.exceptions import PermissionDenied
 from mock import patch, MagicMock, mock_open
 
 from opal import models
@@ -28,6 +30,26 @@ class BaseSearchTestCase(OpalTestCase):
             "Sean", "Connery", "007"
         )
 
+    def get_logged_in_request(self, url=None):
+        if url is None:
+            url = "/"
+        request = self.rf.get(url)
+        request.user = self.user
+        return request
+
+    def get_not_logged_in_request(self, url=None):
+        if url is None:
+            url = "/"
+        request = self.rf.get(url)
+        request.user = AnonymousUser()
+        return request
+
+    def get_response(self, url=None, view=None):
+        request = self.get_logged_in_request(url)
+        if view is None:
+            view = self.view
+        return self.view(request)
+
     def tearDown(self):
         self.patient.delete()
         super(BaseSearchTestCase, self).tearDown()
@@ -40,19 +62,22 @@ class PatientSearchTestCase(BaseSearchTestCase):
         self.view = views.patient_search_view
         super(PatientSearchTestCase, self).setUp()
 
+    def test_not_logged_in(self):
+        request = self.get_not_logged_in_request()
+        with self.assertRaises(PermissionDenied):
+            self.view(request)
+
     # Searching for a patient that doesn't exist by Hospital Number
     def test_patient_does_not_exist_number(self):
-        request = self.rf.get('%s?hospital_number=notareanumber' % self.url)
-        request.user = self.user
-        resp = self.view(request)
+        url = '%s?hospital_number=notareanumber' % self.url
+        resp = self.get_response(url)
         data = json.loads(resp.content)
         self.assertEqual([], data)
 
     # Searching for a patient that exists by Hospital Number
     def test_patient_exists_number(self):
-        request = self.rf.get('/search/patient/?hospital_number=007')
-        request.user = self.user
-        resp = self.view(request)
+        url = '/search/patient/?hospital_number=007'
+        resp = self.get_response(url)
         data = json.loads(resp.content)
         expected = [self.patient.to_dict(self.user)]
 
@@ -64,9 +89,8 @@ class PatientSearchTestCase(BaseSearchTestCase):
     # restricted teams that the user is not a member of.
 
     def test_must_provide_hospital_number(self):
-        request = self.rf.get('/search/patient/')
-        request.user = self.user
-        resp = self.view(request)
+        url = "/search/patient/"
+        resp = self.get_response(url)
         self.assertEqual(400, resp.status_code)
 
 
@@ -106,41 +130,36 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
         )
         self.episode.save()
 
+    def test_not_logged_in(self):
+        request = self.get_not_logged_in_request()
+        with self.assertRaises(PermissionDenied):
+            self.view(request)
+
     def test_must_provide_name_or_hospital_number(self):
-        request = self.rf.get(self.url)
-        request.user = self.user
-        resp = self.view(request)
+        resp = self.get_response(self.url)
         self.assertEqual(400, resp.status_code)
 
     # Searching for a patient that exists by partial name match
     def test_patient_exists_partial_name(self):
-        request = self.rf.get("%s?query=Co" % self.url)
-        request.user = self.user
-        resp = self.view(request)
+        resp = self.get_response("%s?query=Co" % self.url)
         data = json.loads(resp.content)
         self.assertEqual(self.expected, data)
 
     # Searching for a patient that exists by partial HN match
     def test_patient_exists_partial_number(self):
-        request = self.rf.get('%s?query=07' % self.url)
-        request.user = self.user
-        resp = self.view(request)
+        resp = self.get_response('%s?query=07' % self.url)
         data = json.loads(resp.content)
         self.assertEqual(self.expected, data)
 
     # Searching for a patient that exists by name
     def test_patient_exists_name(self):
-        request = self.rf.get('%s?query=Connery' % self.url)
-        request.user = self.user
-        resp = self.view(request)
+        resp = self.get_response('%s?query=Connery' % self.url)
         data = json.loads(resp.content)
         self.assertEqual(self.expected, data)
 
     # Searching for a patient that doesn't exist by Hospital Number
     def test_patient_does_not_exist_number(self):
-        request = self.rf.get('%s?query=notareanumber' % self.url)
-        request.user = self.user
-        resp = self.view(request)
+        resp = self.get_response('%s?query=notareanumber' % self.url)
         data = json.loads(resp.content)
         self.assertEqual(self.empty_expected, data)
 
@@ -171,9 +190,7 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
         blofeld_patient, blofeld_episode = self.create_patient(
             "Ernst", "Blofeld", "23422"
         )
-        request = self.rf.get('{}/?query=James%20Bond'.format(self.url))
-        request.user = self.user
-        resp = self.view(request)
+        resp = self.get_response('{}/?query=James%20Bond'.format(self.url))
         data = json.loads(resp.content)["object_list"]
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]["first_name"], "James")
@@ -187,6 +204,12 @@ class SearchTemplateTestCase(OpalTestCase):
 
 
 class ExtractSearchViewTestCase(BaseSearchTestCase):
+
+    def test_not_logged_in_post(self):
+        view = views.ExtractSearchView()
+        view.request = self.get_not_logged_in_request()
+        with self.assertRaises(PermissionDenied):
+            view.post()
 
     def test_post(self):
         data = json.dumps([
@@ -211,10 +234,24 @@ class ExtractSearchViewTestCase(BaseSearchTestCase):
             self.assertEqual(self.patient.id, resp['object_list'][0]['patient_id'])
 
 
-class FilterViewTestCase(OpalTestCase):
+class FilterViewTestCase(BaseSearchTestCase):
+
+    def test_not_logged_in_dispatch(self):
+        view = views.FilterView()
+        view.request = self.get_not_logged_in_request()
+
+        with self.assertRaises(PermissionDenied):
+            view.dispatch()
+
+    def test_logged_in_dispatch(self):
+        # we should error if we're logged in
+        view = views.FilterView()
+        request = self.get_logged_in_request()
+        view.request = self.get_logged_in_request()
+        view.dispatch(request)
 
     def test_get(self):
-        filt = models.Filter(user=self.user, name='testfilter', criteria='[]').save()
+        models.Filter(user=self.user, name='testfilter', criteria='[]').save()
         self.assertEqual(1, models.Filter.objects.count())
 
         view = views.FilterView()
@@ -236,15 +273,15 @@ class FilterViewTestCase(OpalTestCase):
             self.assertEqual(1, models.Filter.objects.count())
 
 
-class FilterDetailViewTestCase(OpalTestCase):
+class FilterDetailViewTestCase(BaseSearchTestCase):
 
     def setUp(self):
+        super(FilterDetailViewTestCase, self).setUp()
         self.filt = models.Filter(user=self.user, name='testfilter', criteria='[]')
         self.filt.save()
 
     def test_get(self):
-        request = self.rf.get('/filter/1/')
-        request.user = self.user
+        request = self.get_logged_in_request('/filter/1/')
         data = json.loads(views.FilterDetailView.as_view()(
             request, pk=self.filt.pk).content)
         self.assertEqual({'name': 'testfilter',
@@ -253,42 +290,59 @@ class FilterDetailViewTestCase(OpalTestCase):
 
     def test_filter_detail_no_filter(self):
         view = views.FilterDetailView()
+        view.request = self.get_logged_in_request()
         response = view.dispatch(pk=323)
         self.assertEqual(404, response.status_code)
 
+    def test_not_logged_in_dispatch(self):
+        view = views.FilterDetailView()
+        view.request = self.get_not_logged_in_request()
+
+        with self.assertRaises(PermissionDenied):
+            view.dispatch()
+
     def test_put(self):
         view = views.FilterDetailView()
-        view.request = MagicMock(name='Mock Request')
-        view.request.read.return_value = json.dumps({'criteria': [],
-                                                     'name': 'My Name'})
-        view.filter = self.filt
-        resp = view.put()
-        self.assertEqual(200, resp.status_code)
+        view.request = self.get_logged_in_request()
+        with patch.object(view.request, "read") as criteria:
+            criteria.return_value = json.dumps(
+                {'criteria': [], 'name': 'My Name'}
+            )
+            view.filter = self.filt
+            resp = view.put()
+            self.assertEqual(200, resp.status_code)
 
     def test_delete(self):
         view = views.FilterDetailView()
-        view.request = MagicMock(name='Mock Request')
+        view.request = self.get_logged_in_request()
         view.filter = self.filt
         view.delete()
         self.assertEqual(0, models.Filter.objects.count())
 
 
-class ExtractResultViewTestCase(OpalTestCase):
+class ExtractResultViewTestCase(BaseSearchTestCase):
 
     @patch('celery.result.AsyncResult')
     def test_get(self, async_result):
         view = views.ExtractResultView()
+        view.request = self.get_logged_in_request()
         async_result.return_value.state = 'The State'
-
         resp = view.get(task_id=490)
         self.assertEqual(200, resp.status_code)
 
 
-class ExtractFileView(OpalTestCase):
+class ExtractFileView(BaseSearchTestCase):
+
+    def test_get_not_logged_in(self):
+        view = views.ExtractFileView()
+        view.request = self.get_not_logged_in_request()
+        with self.assertRaises(PermissionDenied):
+            resp = view.get(task_id=8902321890)
 
     @patch('celery.result.AsyncResult')
     def test_get(self, async_result):
         view = views.ExtractFileView()
+        view.request = self.get_logged_in_request()
         async_result.return_value.state = 'SUCCESS'
         async_result.return_value.get.return_value = 'foo.txt'
 
@@ -300,6 +354,7 @@ class ExtractFileView(OpalTestCase):
     @patch('celery.result.AsyncResult')
     def test_get_not_successful(self, async_result):
         view = views.ExtractFileView()
+        view.request = self.get_logged_in_request("/")
         async_result.return_value.state = 'FAILURE'
         with self.assertRaises(ValueError):
             view.get(task_id=8902321890)
