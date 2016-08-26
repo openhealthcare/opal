@@ -84,7 +84,7 @@ class SerialisableFields(object):
         many_to_manys = [field.name for field in fields if m2m(field)]
 
         fieldnames = fieldnames + many_to_manys
-
+        fieldnames = [f for f in fieldnames if not any((f.endswith('_fk_id'), f.endswith('_ft')))]
         return fieldnames
 
     @classmethod
@@ -179,9 +179,6 @@ class UpdatesFromDictMixin(SerialisableFields):
             for fname in cls.pid_fields:
                 if fname in fieldnames:
                     fieldnames.remove(fname)
-                    if cls._get_field_type(fname) == ForeignKeyOrFreeText:
-                        fieldnames.remove(fname + '_fk_id')
-                        fieldnames.remove(fname + '_ft')
         return fieldnames
 
     @classmethod

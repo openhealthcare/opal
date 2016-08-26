@@ -157,16 +157,12 @@ class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
             'nhs_number',
             'date_of_birth',
             'death_indicator',
-            'sex_fk_id',
-            'sex_ft',
-            'birth_place_fk_id',
-            'birth_place_ft',
             'sex',
             'birth_place',
         ]
         expected_row = [
             1, 'None', 'None', 'None', 'None', '12345678',
-            'None', '1976-01-01', 'False', 'None', '', 'None', '', '', ''
+            'None', '1976-01-01', 'False', '', ''
         ]
         self.assertEqual(expected_headers, headers)
         self.assertEqual(row, expected_row)
