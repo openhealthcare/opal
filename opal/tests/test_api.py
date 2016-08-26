@@ -4,14 +4,15 @@ Tests for the OPAL API
 import json
 from datetime import date, timedelta, datetime
 from django.utils import timezone
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.db import DataError
 from django.contrib.contenttypes.models import ContentType
 from mock import patch, MagicMock
 
+from rest_framework.test import APIClient
 from rest_framework.reverse import reverse
+from rest_framework import status
 
 from opal import models
 from opal.tests.models import Colour, PatientColour, HatWearer, Hat, Demographics
@@ -25,6 +26,43 @@ from opal.core.exceptions import APIError
 from opal.tests.test_patient_lists import TaggingTestPatientList # flake8: noqa
 
 from opal.core import api
+
+class LoginRequredTestCase(OpalTestCase):
+    """
+        we expect almost all views to 401
+    """
+    def setUp(self):
+        self.patient, self.episode = self.new_patient_and_episode_please()
+        self.request = self.rf.get("/")
+        self.hat_wearer = HatWearer.objects.create(episode=self.episode)
+
+    def get_urls(self):
+        return [
+            reverse('record-list', request=self.request),
+            reverse('extract-schema-list', request=self.request),
+            reverse('referencedata-list', request=self.request),
+            reverse('metadata-list', request=self.request),
+            reverse('episode-list', request=self.request),
+            reverse('userprofile-list', request=self.request),
+            reverse(
+                'patient-detail',
+                kwargs=dict(pk=self.patient.id),
+                request=self.request
+            ),
+            reverse(
+                'hat_wearer-detail',
+                kwargs=dict(pk=self.hat_wearer.id),
+                request=self.request
+            )
+        ]
+
+    def test_403(self):
+        for url in self.get_urls():
+            response = self.client.get(url)
+            self.assertEqual(
+                response.status_code,
+                status.HTTP_403_FORBIDDEN
+            )
 
 
 class OPALRouterTestCase(TestCase):
@@ -421,14 +459,6 @@ class UserProfileTestCase(TestCase):
             response = api.UserProfileViewSet().list(self.mock_request)
             self.assertEqual(True, response.data['readonly'])
 
-    def test_user_profile_not_logged_in(self):
-        mock_request = MagicMock(name='request')
-        mock_request.user.is_authenticated.return_value = False
-        response = api.UserProfileViewSet().list(mock_request)
-        self.assertEqual(401, response.status_code)
-
-
-
 
 class TaggingTestCase(TestCase):
 
@@ -528,7 +558,7 @@ class EpisodeTestCase(OpalTestCase):
         self.demographics.hospital_number = '123123123'
         self.demographics.save()
         self.mock_request.data = {
-            "tagging"          :[ { "micro":True }],
+            "tagging"          : { "micro":True },
             "date_of_admission": "14/01/2015",
             "demographics"     : {
                 "hospital_number": self.demographics.hospital_number
@@ -544,7 +574,7 @@ class EpisodeTestCase(OpalTestCase):
             demographics__hospital_number="999000999").count()
         self.assertEqual(0, pcount)
         self.mock_request.data = {
-            "tagging"           :[ { "micro":True }],
+            "tagging"           : { "micro":True },
             "date_of_admission" : "14/01/2015",
             "demographics"      : {
                 "hospital_number": "999000999"
@@ -572,7 +602,7 @@ class EpisodeTestCase(OpalTestCase):
 
     def test_create_without_hospital_number(self):
         self.mock_request.data = {
-            "tagging"           :[ { "micro":True }],
+            "tagging"           : { "micro":True },
             "date_of_admission" : "14/01/2015",
             "demographics"      : {
                 "first_name": "James"
@@ -586,7 +616,7 @@ class EpisodeTestCase(OpalTestCase):
             demographics__hospital_number="9999000999").count()
         self.assertEqual(0, pcount)
         self.mock_request.data = {
-            "tagging"                :[ { "micro":True }],
+            "tagging"                :{"micro": True},
             "date_of_admission"      : "14/01/2015",
             "demographics" : {
                 "first_name": "Alain",
@@ -609,7 +639,7 @@ class EpisodeTestCase(OpalTestCase):
             demographics__hospital_number="9999000999").count()
         self.assertEqual(0, pcount)
         self.mock_request.data = {
-            "tagging"                :[ { "micro":True }],
+            "tagging"                :{"micro": True},
             "date_of_admission"      : "14/01/2015",
             "demographics" : {
                 "hospital_number": "9999000999",
@@ -631,7 +661,7 @@ class EpisodeTestCase(OpalTestCase):
             demographics__hospital_number="9999000999").count()
         self.assertEqual(0, pcount)
         self.mock_request.data = {
-            "tagging"                :[ { "micro":True }],
+            "tagging"                :{"micro": True},
             "date_of_admission"      : "14/01/2015",
             "demographics" : {
                 "hospital_number": "9999000999",
@@ -734,13 +764,3 @@ class RegisterPluginsTestCase(OpalTestCase):
         with patch.object(api.router, 'register') as register:
             api.register_plugin_apis()
             register.assert_called_with('thingapi', None)
-
-
-class EpisodeListApiTestCase(OpalTestCase):
-    def test_episode_list_view(self):
-        request = MagicMock(name='mock request')
-        request.user = self.user
-        view = api.EpisodeListApi()
-        view.request = request
-        resp = view.get(tag="eater", subtag="herbivore")
-        self.assertEqual(200, resp.status_code)

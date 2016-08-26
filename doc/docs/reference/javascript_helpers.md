@@ -110,3 +110,8 @@ calculates a persons current age from their date of birth
 Displays Boolean fields as a checkbox (e.g. either [ ] or [X])
 
     [[ item.boolean_field | boxed]]
+
+
+### Angular HTTP Interceptors
+
+opal uses opal.services.LogoutInterceptor to intercept all failed responses from the server. If they're a 401 or a 403 we redirect the user to the login page, otherwise it passes them through.

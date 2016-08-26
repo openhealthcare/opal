@@ -2,7 +2,7 @@ describe('UserProfile', function(){
     "use strict";
 
     var mock, $httpBackend, $window, $routeParams;
-    var UserProfile;
+    var UserProfile, $q, $rootScope;
     var profile_data = {
         roles: {
             default: ['doctor', 'consultant'],
@@ -14,7 +14,6 @@ describe('UserProfile', function(){
         module('opal.services');
 
         mock = { alert: jasmine.createSpy() };
-
         inject(function($injector){
             UserProfile    = $injector.get('UserProfile');
             $q             = $injector.get('$q');

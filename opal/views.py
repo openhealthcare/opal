@@ -24,7 +24,7 @@ app = application.get_app()
 
 Synonym = models.Synonym
 
-class PatientListTemplateView(TemplateView):
+class PatientListTemplateView(LoginRequiredMixin, TemplateView):
 
     def dispatch(self, *args, **kwargs):
         try:
@@ -79,7 +79,7 @@ class PatientListTemplateView(TemplateView):
             return self.patient_list().get_template_names()
         return [PatientList.template_name]
 
-class PatientDetailTemplateView(TemplateView):
+class PatientDetailTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'patient_detail.html'
 
     def get_context_data(self, **kwargs):
@@ -95,7 +95,7 @@ class PatientDetailTemplateView(TemplateView):
         return context
 
 # TODO: ?Remove this ?
-class EpisodeDetailTemplateView(TemplateView):
+class EpisodeDetailTemplateView(LoginRequiredMixin, TemplateView):
     def get(self, *args, **kwargs):
         self.episode = get_object_or_404(models.Episode, pk=kwargs['pk'])
         return super(EpisodeDetailTemplateView, self).get(*args, **kwargs)
@@ -267,7 +267,7 @@ class ReopenEpisodeTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'reopen_episode_modal.html'
 
 
-class UndischargeTemplateView(TemplateView):
+class UndischargeTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'undischarge_modal.html'
 
 class DischargeEpisodeTemplateView(LoginRequiredMixin, TemplateView):
@@ -282,14 +282,14 @@ class DeleteItemConfirmationView(LoginRequiredMixin, TemplateView):
     template_name = 'delete_item_confirmation_modal.html'
 
 
-class RawTemplateView(TemplateView):
+class RawTemplateView(LoginRequiredMixin, TemplateView):
     """
     Failover view for templates - just look for this path in Django!
     """
-    def dispatch(self, *args, **kw):
+    def get(self, *args, **kw):
         self.template_name = kw['template_name']
         try:
             get_template(self.template_name)
         except TemplateDoesNotExist:
             return HttpResponseNotFound()
-        return super(RawTemplateView, self).dispatch(*args, **kw)
+        return super(RawTemplateView, self).get(*args, **kw)

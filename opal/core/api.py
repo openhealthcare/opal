@@ -6,6 +6,7 @@ from django.views.generic import View
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import routers, status, viewsets
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from opal.models import (
     Episode, Synonym, Patient, PatientRecordAccess, PatientSubrecord
@@ -53,8 +54,10 @@ def episode_from_pk(fn):
             return Response({'error': 'Episode does not exist'}, status=status.HTTP_404_NOT_FOUND)
     return get_item
 
+class LoginRequiredViewset(viewsets.ViewSet):
+    permission_classes = (IsAuthenticated,)
 
-class RecordViewSet(viewsets.ViewSet):
+class RecordViewSet(LoginRequiredViewset):
     """
     Return the serialization of all active record types ready to
     initialize on the client side.
@@ -65,7 +68,7 @@ class RecordViewSet(viewsets.ViewSet):
         return Response(schemas.list_records())
 
 
-class ExtractSchemaViewSet(viewsets.ViewSet):
+class ExtractSchemaViewSet(LoginRequiredViewset):
     """
     Returns the schema to build our extract query builder
     """
@@ -75,7 +78,7 @@ class ExtractSchemaViewSet(viewsets.ViewSet):
         return Response(schemas.extract_schema())
 
 
-class ReferenceDataViewSet(viewsets.ViewSet):
+class ReferenceDataViewSet(LoginRequiredViewset):
     """
     API for referencedata
     """
@@ -120,7 +123,7 @@ class ReferenceDataViewSet(viewsets.ViewSet):
         return Response({'error': 'Item does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 
-class MetadataViewSet(viewsets.ViewSet):
+class MetadataViewSet(LoginRequiredViewset):
     """
     Our metadata API
     """
@@ -140,7 +143,7 @@ class MetadataViewSet(viewsets.ViewSet):
             return Response({'error': 'Metadata does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 
-class SubrecordViewSet(viewsets.ViewSet):
+class SubrecordViewSet(LoginRequiredViewset):
     """
     This is the base viewset for our subrecords.
     """
@@ -199,22 +202,18 @@ class SubrecordViewSet(viewsets.ViewSet):
         return Response('deleted', status=status.HTTP_202_ACCEPTED)
 
 
-class UserProfileViewSet(viewsets.ViewSet):
+class UserProfileViewSet(LoginRequiredViewset):
     """
     Returns the user profile details for the currently logged in user
     """
     base_name = 'userprofile'
 
     def list(self, request):
-        if not request.user.is_authenticated():
-            return Response(
-                {'error': 'Only valid for authenticated users'},
-                status=status.HTTP_401_UNAUTHORIZED)
         profile = request.user.profile
         return Response(profile.to_dict())
 
 
-class TaggingViewSet(viewsets.ViewSet):
+class TaggingViewSet(LoginRequiredViewset):
     """
     Returns taggings associated with episodes
     """
@@ -233,7 +232,7 @@ class TaggingViewSet(viewsets.ViewSet):
         return Response(episode.tagging_dict(request.user)[0], status=status.HTTP_202_ACCEPTED)
 
 
-class EpisodeViewSet(viewsets.ViewSet):
+class EpisodeViewSet(LoginRequiredViewset):
     """
     Episodes of care
     """
@@ -273,7 +272,7 @@ class EpisodeViewSet(viewsets.ViewSet):
         episode.update_from_dict(request.data, request.user)
         location = episode.location_set.get()
         location.update_from_dict(location_data, request.user)
-        episode.set_tag_names([n for n, v in tagging[0].items() if v], request.user)
+        episode.set_tag_names(tagging.keys(), request.user)
         serialised = episode.to_dict(request.user)
 
         return _build_json_response(serialised, status_code=status.HTTP_201_CREATED)
@@ -291,7 +290,7 @@ class EpisodeViewSet(viewsets.ViewSet):
         return _build_json_response(episode.to_dict(request.user))
 
 
-class PatientViewSet(viewsets.ViewSet):
+class PatientViewSet(LoginRequiredViewset):
     base_name = 'patient'
 
     def retrieve(self, request, pk=None):
@@ -300,7 +299,7 @@ class PatientViewSet(viewsets.ViewSet):
         return _build_json_response(patient.to_dict(request.user))
 
 
-class PatientRecordAccessViewSet(viewsets.ViewSet):
+class PatientRecordAccessViewSet(LoginRequiredViewset):
     base_name = 'patientrecordaccess'
 
     def retrieve(self, request, pk=None):
@@ -308,8 +307,9 @@ class PatientRecordAccessViewSet(viewsets.ViewSet):
             a.to_dict(request.user) for a in PatientRecordAccess.objects.filter(patient_id=pk)
         ])
 
-class PatientListViewSet(viewsets.ViewSet):
+class PatientListViewSet(LoginRequiredViewset):
     base_name = 'patientlist'
+    permission_classes = (IsAuthenticated,)
 
     def retrieve(self, request, pk=None):
         try:
@@ -345,15 +345,3 @@ def register_plugin_apis():
             router.register(*api)
 
 register_plugin_apis()
-
-class EpisodeListApi(View):
-    """
-    Return serialised subsets of active episodes by tag.
-    """
-    def get(self, *args, **kwargs):
-        # while we manage transition lets allow a fall back to the old way
-        name = kwargs['tag']
-        if 'subtag' in kwargs:
-            name += '-' + kwargs['subtag']
-        patient_list = PatientList.get(name)()
-        return _build_json_response(patient_list.to_dict(self.request.user))

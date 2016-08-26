@@ -18,8 +18,7 @@ from opal.tests import models as testmodels
 class BaseViewTestCase(OpalTestCase):
 
     def setUp(self):
-        self.patient = models.Patient.objects.create()
-        self.episode = self.patient.create_episode()
+        self.patient, self.episode = self.new_patient_and_episode_please()
 
     def get_request(self, path):
         request = self.rf.get(path)
@@ -37,6 +36,32 @@ class BaseViewTestCase(OpalTestCase):
         v.args = args
         v.kwargs = kw
         return v
+
+
+class LoginRequredTestCase(OpalTestCase):
+    """
+        we expect almost all views to 401
+    """
+    def setUp(self):
+        self.patient, self.episode = self.new_patient_and_episode_please()
+        self.request = self.rf.get("/")
+
+    def get_urls(self):
+        return [
+            reverse("patient_list_template_view", kwargs=dict(slug="eater-herbivore")),
+            reverse("patient_detail"),
+            reverse("episode_detail", kwargs=dict(pk=self.episode.id)),
+            reverse("undischarge_tempate_view"),
+            reverse("raw_template_view", kwargs=dict(template_name="not_a_real_template.html")),
+        ]
+
+    def test_redirect_to_login(self):
+        for url in self.get_urls():
+            response = self.client.get(url, follow=True)
+            self.assertEqual(
+                response.request["PATH_INFO"],
+                '/accounts/login/'
+            )
 
 
 class PatientListTemplateViewTestCase(BaseViewTestCase):
@@ -111,7 +136,6 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
 
 
     def test_get_column_context(self):
-
         view = views.PatientListTemplateView()
 
         class PL(patient_lists.PatientList):
