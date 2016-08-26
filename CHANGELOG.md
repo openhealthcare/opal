@@ -17,6 +17,8 @@ viewset that requires the user to be logged in.
 We also now require the user to be logged in for any
 use of the search functionality.
 
+Adds a custom interceptor that logs the user out if the we receive a 403 or 401 from the server
+
 
 
 ### 0.7.1 (Minor Release)
