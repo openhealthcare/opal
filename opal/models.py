@@ -133,10 +133,6 @@ class SerialisableFields(object):
         for fieldname in cls._get_fieldnames_to_serialize():
             if fieldname in ['id', 'patient_id', 'episode_id']:
                 continue
-            elif fieldname.endswith('_fk_id'):
-                continue
-            elif fieldname.endswith('_ft'):
-                continue
 
             getter = getattr(cls, 'get_field_type_for_' + fieldname, None)
             if getter is None:
