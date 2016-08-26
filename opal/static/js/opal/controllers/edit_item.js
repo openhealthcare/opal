@@ -92,7 +92,6 @@ angular.module('opal.controllers').controller(
                 ngProgressLite.set(0);
                 ngProgressLite.start();
                 $scope.preSave($scope.editing);
-
                 to_save = [item.save($scope.editing[item.columnName])];
                 if(!angular.equals($scope.the_episode.makeCopy(), $scope.episode)){
                     to_save.push($scope.the_episode.save($scope.episode));
@@ -136,6 +135,5 @@ angular.module('opal.controllers').controller(
                 });
                 angular.extend($scope.editing[item.columnName], data);
             };
-
 
     });
