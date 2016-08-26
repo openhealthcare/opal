@@ -272,7 +272,7 @@ class EpisodeViewSet(LoginRequiredViewset):
         episode.update_from_dict(request.data, request.user)
         location = episode.location_set.get()
         location.update_from_dict(location_data, request.user)
-        episode.set_tag_names([n for n, v in tagging[0].items() if v], request.user)
+        episode.set_tag_names(tagging.keys(), request.user)
         serialised = episode.to_dict(request.user)
 
         return _build_json_response(serialised, status_code=status.HTTP_201_CREATED)
