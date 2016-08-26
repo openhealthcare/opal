@@ -15,6 +15,8 @@ viewset that requires the user to be logged in.
 We also now require the user to be logged in for any
 use of the search functionality.
 
+The API will no longer serialise the _ft or _fk_id fields of FreeTextOrForeignKey fields - these
+are internal implementation details of the server that are not useful on the client side.
 
 
 ### 0.7.1 (Minor Release)
