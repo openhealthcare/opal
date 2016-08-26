@@ -1,11 +1,5 @@
 ### 0.8.0 (Major Release)
 
-Upgrades angular to v1.5.8 (from 1.3.11) you can see their change log (here)[https://github.com/angular/angular.js/blob/master/CHANGELOG.md]
-
-Updates angular-cookies and angular-mocks to v1.5.8 (both from 1.3.11)
-
-Updates angular-ui-select to 0.19.4 from 0.13.2
-
 Removes `Options` both from the JSON API, and the Angular service.
 Removes legacy APIs `/api/v0.1/episode/admit` and `/api/v0.1/episode/refer`.
 
@@ -14,12 +8,21 @@ The opal.core.api.EpisodeViewSet.create now expects tagging to be an object rath
 All apis should be permissioned with Django REST framework permission classes. The default implementation uses opal.core.api.LoginRequiredViewset, a standard drf
 viewset that requires the user to be logged in.
 
-We also now require the user to be logged in for any
+We now require the user to be logged in for any
 use of the search functionality.
 
 Adds a custom interceptor that logs the user out if the we receive a 403 or 401 from the server
 
+Removes `opal.models.Tagging.import_from_reversion`. This one-off classmethod on tagging
+was introduced to aid with the upgrade from Opal 4.x to 5.0 and has no further utility.
 
+#### Updates to the Dependency Graph
+
+Upgrades angular to v1.5.8 (from 1.3.11) you can see their change log (here)[https://github.com/angular/angular.js/blob/master/CHANGELOG.md]
+
+Updates angular-cookies and angular-mocks to v1.5.8 (both from 1.3.11)
+
+Updates angular-ui-select to 0.19.4 from 0.13.2
 
 ### 0.7.1 (Minor Release)
 
