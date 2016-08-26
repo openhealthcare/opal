@@ -9,6 +9,8 @@ Updates angular-ui-select to 0.19.4 from 0.13.2
 Removes `Options` both from the JSON API, and the Angular service.
 Removes legacy APIs `/api/v0.1/episode/admit` and `/api/v0.1/episode/refer`.
 
+Removes the models `GP`, `CommunityNurse` and `LocatedModel`.
+
 All apis should be permissioned with Django REST framework permission classes. The default implementation uses opal.core.api.LoginRequiredViewset, a standard drf
 viewset that requires the user to be logged in.
 
