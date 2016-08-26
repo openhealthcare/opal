@@ -3,7 +3,13 @@
 Removes `Options` both from the JSON API, and the Angular service.
 Removes legacy APIs `/api/v0.1/episode/admit` and `/api/v0.1/episode/refer`.
 
-### 0.7.1 (Minor Release)
+The opal.core.api.EpisodeViewSet.create now expects tagging to be an object rather than a list, similar to how it details with demographics and location.
+
+All apis should be permissioned with Django REST framework permission classes. The default implementation uses opal.core.api.LoginRequiredViewset, a standard drf
+viewset that requires the user to be logged in.
+
+We also now require the user to be logged in for any
+use of the search functionality.
 
 Completes the refactor of front end data, no longer using the `/api/v0.1/options/` API internally.
 This is slated for removal in 0.8.0.

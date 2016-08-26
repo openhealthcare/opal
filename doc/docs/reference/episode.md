@@ -107,3 +107,14 @@ be serialised
 #### Episode.objects.search
 
 As a useful utility, the episode manager has a search method that will search on first name, last name and/or hospital number, under the hood it uses [Patient search](patient.md#patientobjectssearch)
+
+
+### opal.core.api.EpisodeViewSet
+
+Gives you an api for create/update/list/retrieve apis for episodes. Its recommended that you use [opal.core.patient_lists](patient_list.md) rather than the list api, as this gives you more flexibility.
+
+The Create api accepts {
+    demographics: {{ a serialised demographics model }},
+    location: {{ a serialised location model }}.
+    tagging: {{ a dictionary of tag names to True }}
+}
