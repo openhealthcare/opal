@@ -16,6 +16,8 @@ Adds a custom interceptor that logs the user out if the we receive a 403 or 401 
 Removes `opal.models.Tagging.import_from_reversion`. This one-off classmethod on tagging
 was introduced to aid with the upgrade from Opal 4.x to 5.0 and has no further utility.
 
+Adds a Unique Together constraint for (Tagging.user, Tagging.episode, Tagging.value)
+
 #### Updates to the Dependency Graph
 
 Upgrades angular to v1.5.8 (from 1.3.11) you can see their change log (here)[https://github.com/angular/angular.js/blob/master/CHANGELOG.md]
