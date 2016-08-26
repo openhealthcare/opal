@@ -46,6 +46,11 @@ class ItersubclassesTestCase(TestCase):
         with self.assertRaises(TypeError):
             list(utils._itersubclasses(Old))
 
+    def test_when_called_with_type(self):
+        expected = type.__subclasses__(type)
+        for s in expected:
+            self.assertIn(s, list(utils._itersubclasses(type)))
+
 
 class FindTemplateTestCase(TestCase):
 

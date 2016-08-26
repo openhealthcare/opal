@@ -15,7 +15,7 @@ from rest_framework.reverse import reverse
 from rest_framework import status
 
 from opal import models
-from opal.tests.models import Colour, PatientColour, HatWearer, Hat
+from opal.tests.models import Colour, PatientColour, HatWearer, Hat, Demographics
 from opal.core import metadata
 from opal.core.test import OpalTestCase
 from opal.core.views import _build_json_response
@@ -600,6 +600,17 @@ class EpisodeTestCase(OpalTestCase):
             demographics__hospital_number="999000999").count()
         self.assertEqual(1, pcount)
 
+    def test_create_without_hospital_number(self):
+        self.mock_request.data = {
+            "tagging"           :[ { "micro":True }],
+            "date_of_admission" : "14/01/2015",
+            "demographics"      : {
+                "first_name": "James"
+            }
+        }
+        response = api.EpisodeViewSet().create(self.mock_request)
+        self.assertEqual(1, Demographics.objects.filter(first_name='James').count())
+
     def test_create_sets_demographics(self):
         pcount = models.Patient.objects.filter(
             demographics__hospital_number="9999000999").count()
@@ -741,3 +752,15 @@ class PatientListTestCase(TestCase):
     def test_retrieve_episodes_not_found(self):
         response = api.PatientListViewSet().retrieve(self.mock_request, pk='not a real list at all')
         self.assertEqual(404, response.status_code)
+
+
+class RegisterPluginsTestCase(OpalTestCase):
+
+    @patch('opal.core.api.plugins.plugins')
+    def test_register(self, plugins):
+        mock_plugin = MagicMock(name='Mock Plugin')
+        mock_plugin.apis = [('thingapi', None)]
+        plugins.return_value = [mock_plugin]
+        with patch.object(api.router, 'register') as register:
+            api.register_plugin_apis()
+            register.assert_called_with('thingapi', None)

@@ -292,7 +292,6 @@ class EpisodeViewSet(LoginRequiredViewset):
 
 class PatientViewSet(LoginRequiredViewset):
     base_name = 'patient'
-    permission_classes = (IsAuthenticated,)
 
     def retrieve(self, request, pk=None):
         patient = Patient.objects.get(pk=pk)
@@ -302,7 +301,6 @@ class PatientViewSet(LoginRequiredViewset):
 
 class PatientRecordAccessViewSet(LoginRequiredViewset):
     base_name = 'patientrecordaccess'
-    permission_classes = (IsAuthenticated,)
 
     def retrieve(self, request, pk=None):
         return _build_json_response([
@@ -341,35 +339,9 @@ for subrecord in subrecords():
 
     router.register(sub_name, SubViewSet)
 
-for plugin in plugins.plugins():
-    for api in plugin.apis:
-        router.register(*api)
+def register_plugin_apis():
+    for plugin in plugins.plugins():
+        for api in plugin.apis:
+            router.register(*api)
 
-
-class APIAdmitEpisodeView(View):
-    """
-    Admit an episode from upstream!
-    """
-    def post(self, *args, **kwargs):
-        data = _get_request_data(self.request)
-        resp = {'ok': 'Got your admission just fine - thanks!'}
-        return _build_json_response(resp)
-
-
-class APIReferPatientView(View):
-    """
-    Refer a patient
-    """
-    # TODO - explore when this is used - seems like there should be a better way?
-    def post(self, *args, **kwargs):
-        """
-        Expects PATIENT, EPISODE, TARGET
-        """
-        data = _get_request_data(self.request)
-        episode = Episode.objects.get(pk=data['episode'])
-        current_tags = episode.get_tag_names(None)
-        if not data['target'] in current_tags:
-            current_tags.append(data['target'])
-            episode.set_tag_names(current_tags, None)
-        resp = {'ok': 'Got your referral just fine - thanks!'}
-        return _build_json_response(resp)
+register_plugin_apis()
