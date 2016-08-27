@@ -7,7 +7,6 @@ angular.module('opal.controllers').controller(
 
         $scope.ready = false;
         var version = window.version;
-
         if(episodedata.status == 'error'){
             if($cookieStore.get('opal.lastPatientList')){
                 $cookieStore.remove('opal.lastPatientList');
