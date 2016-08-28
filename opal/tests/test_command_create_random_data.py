@@ -131,3 +131,18 @@ class PatientGeneratorTestCase(OpalTestCase):
         self.assertEqual(0, Patient.objects.count())
         p = self.gen.make()
         self.assertEqual(1, Patient.objects.count())
+
+
+class CommandTestCase(OpalTestCase):
+
+    def test_handle(self):
+        com = crd.Command()
+        with patch.object(crd.PatientGenerator, 'make') as maker:
+            com.handle(number='23')
+            self.assertEqual(23, maker.call_count)
+
+    def test_handle_default_100(self):
+        com = crd.Command()
+        with patch.object(crd.PatientGenerator, 'make') as maker:
+            com.handle(number=None)
+            self.assertEqual(100, maker.call_count)
