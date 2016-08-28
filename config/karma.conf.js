@@ -34,7 +34,7 @@ module.exports = function(config){
             "lib/bower_components/angular-mocks/angular-mocks.js",
 
             'lib/angular-ui-utils-0.1.0/ui-utils.js',
-            'lib/angular-ui-bootstrap-0.10.0/ui-bootstrap-tpls.js',
+            'lib/angular-ui-bootstrap-0.14.3/ui-bootstrap-tpls.js',
             'lib/angular-strap-2.3.1/angular-strap.js',
             'lib/angular-strap-2.3.1/modules/compiler.js',
             'lib/angular-strap-2.3.1/modules/tooltip.js',
