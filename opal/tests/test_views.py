@@ -280,6 +280,21 @@ class CheckPasswordResetViewTestCase(BaseViewTestCase):
         )
         self.assertEqual(mockresponse, response)
 
+    @patch('opal.views.login')
+    def test_login_no_profile_force_change(self, login):
+        mockresponse = MagicMock(name='Response')
+        mockresponse.status_code = 302
+        login.return_value = mockresponse
+        user = self.make_user('thepassword')
+        req = self.rf.get('/login/')
+        req.user = user
+        response = views.check_password_reset(req)
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(
+            '/accounts/change-password',
+            response.get('Location')
+        )
+
 
 class FormTemplateViewTestCase(BaseViewTestCase):
 
