@@ -41,6 +41,7 @@ class Dog(lookuplists.LookupList):
 class DogOwner(models.EpisodeSubrecord):
     name = dmodels.CharField(max_length=200)
     dog = fields.ForeignKeyOrFreeText(Dog)
+    least_favourite_dog = fields.ForeignKeyOrFreeText(Dog, related_name='hated_dogs')
     ownership_start_date = dmodels.DateField(blank=True, null=True, verbose_name="OSD")
 
 

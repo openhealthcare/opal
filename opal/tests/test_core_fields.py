@@ -1,8 +1,11 @@
+"""
+Unittests for the opal.core.fields module
+"""
+from django.contrib.contenttypes.models import ContentType
+
 from opal.core.test import OpalTestCase
 from opal.tests import models as test_models
-from django.contrib.contenttypes.models import ContentType
 from opal.models import Synonym
-
 
 class TestForeignKeyOrFreeText(OpalTestCase):
 
