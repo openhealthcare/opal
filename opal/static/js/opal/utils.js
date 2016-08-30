@@ -27,7 +27,7 @@ OPAL._configure = function(mod){
       $resourceProvider.defaults.stripTrailingSlashes = false;
   });
 
-  mod.config(function(KeepaliveProvider, IdleProvider) {
+  mod.config(function(IdleProvider) {
     // show log out modal after 10 mins
     IdleProvider.idle(600);
     var opalTimeout = window.OPAL_TIMEOUT || 900;
@@ -86,6 +86,7 @@ OPAL.run = function(app){
         '$rootScope',
         'ngProgressLite',
         '$modal',
+        '$window',
         '$location',
         '$analytics',
         'Idle',
@@ -119,7 +120,7 @@ OPAL._track = function($location, $analytics){
     }
 };
 
-OPAL._run = function($rootScope, ngProgressLite, $modal, $location, $analytics, Idle) {
+OPAL._run = function($rootScope, ngProgressLite, $modal, $window, $location, $analytics, Idle) {
     if(Idle){
       Idle.watch();
     }
@@ -176,12 +177,8 @@ OPAL._run = function($rootScope, ngProgressLite, $modal, $location, $analytics, 
       );
      });
 
-    // $rootScope.$on('IdleEnd', function() {
-      // alert('idle end');
-    // });
-
     $rootScope.$on('IdleTimeout', function() {
-      window.location.pathname = '/accounts/logout/';
+      $window.location.pathname = '/accounts/logout/';
     });
 };
 
