@@ -19,7 +19,8 @@ OPAL.module = function(namespace, dependencies){
         'angulartics',
         'angulartics.google.analytics',
         'LocalStorageModule',
-    ]
+        'ngIdle'
+    ];
 
     _.each(implicit_dependencies, function(dependency){
         if(!_.contains(dependencies, dependency)){
@@ -66,6 +67,12 @@ OPAL.module = function(namespace, dependencies){
         $resourceProvider.defaults.stripTrailingSlashes = false;
     });
 
+    mod.config(function(KeepaliveProvider, IdleProvider) {
+      // show log out modal after 10 mins
+      IdleProvider.idle(600);
+      IdleProvider.timeout(window.OPAL_TIMEOUT);
+    });
+
     return mod;
 };
 
@@ -76,6 +83,7 @@ OPAL.run = function(app){
         '$modal',
         '$location',
         '$analytics',
+        'Idle',
         OPAL._run
     ]);
 };
@@ -106,7 +114,10 @@ OPAL._track = function($location, $analytics){
     }
 };
 
-OPAL._run = function($rootScope, ngProgressLite, $modal, $location, $analytics) {
+OPAL._run = function($rootScope, ngProgressLite, $modal, $location, $analytics, Idle) {
+    if(Idle){
+      Idle.watch();
+    }
 
     // Let's allow people to know what version they're running
     $rootScope.OPAL_VERSION = version;
@@ -151,6 +162,22 @@ OPAL._run = function($rootScope, ngProgressLite, $modal, $location, $analytics) 
             reset, reset
         );
     };
+
+    $rootScope.$on('IdleStart', function() {
+      $rootScope.open_modal(
+        'KeyBoardShortcutsCtrl',
+        '/templates/logout_modal.html',
+        'lg'
+      );
+     });
+
+    // $rootScope.$on('IdleEnd', function() {
+      // alert('idle end');
+    // });
+
+    $rootScope.$on('IdleTimeout', function() {
+      window.location.pathname = '/accounts/logout/';
+    });
 };
 
 

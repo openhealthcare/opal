@@ -28,13 +28,14 @@
       LOG_OUT_DURATION: {{OPAL_LOG_OUT_DURATION}}
       }
       {% if GLOSSOLALIA_URL %}
-      settings.GLOSSOLALIA_URL = '{{ GLOSSOLALIA_URL }}';
-      settings.BROADCAST_ENDPONT = settings.GLOSSOLALIA_URL.replace('http', 'ws') + 'ws';
-      {% endif %}
-      var version = '{{VERSION_NUMBER}}';
+        settings.GLOSSOLALIA_URL = '{{ GLOSSOLALIA_URL }}';
+        settings.BROADCAST_ENDPONT = settings.GLOSSOLALIA_URL.replace('http', 'ws') + 'ws';
+        {% endif %}
+        var version = '{{VERSION_NUMBER}}';
       {% if OPAL_FLOW_SERVICE %}
-      var OPAL_FLOW_SERVICE = '{{ OPAL_FLOW_SERVICE }}';
+        var OPAL_FLOW_SERVICE = '{{ OPAL_FLOW_SERVICE }}';
       {% endif %}
+      var OPAL_TIMEOUT = {{ settings.OPAL_LOG_OUT_DURATION }} || 60 * 15;
     </script>
     <!-- google analytics -->
     <script>
@@ -67,7 +68,6 @@
     {% endblock %}
 
     {% application_javascripts %}
-    <script type="text/javascript" src="{% static "js/opal/timer.js" %}"></script>
     {% endcompress %}
 
     <link href='//fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
@@ -112,24 +112,11 @@
     {% block content %}
 	<div class="outer-container" ng-view autoscroll="true" ng-hide="ready==false"></div>
     {% endblock %}
-    {% include 'logout_modal.html' %}
     <div growl></div>
 
     {% block loading %}
       {% include "partials/_loading.html" %}
     {% endblock %}
-    <script>
-        // temporary for try outs
-        jQuery(function($){
-
-        	// Touch Device Detection
-        	var isTouchDevice = 'ontouchstart' in document.documentElement;
-        	if( isTouchDevice ) {
-        		$('body').addClass('touch');
-        	}
-
-        });
-    </script>
   </body>
 
 </html>
