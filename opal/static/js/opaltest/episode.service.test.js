@@ -174,7 +174,7 @@ describe('Episode', function() {
     });
 
     it('Should convert date attributes to Date objects', function () {
-        expect(episode.date_of_admission).toEqual(new Date(2013, 10, 19))
+        expect(episode.date_of_admission).toEqual(new Date(2013, 10, 19));
     });
 
     it('should create Items', function() {
@@ -198,13 +198,31 @@ describe('Episode', function() {
     });
 
     it('getTags() should get the current tags', function(){
-        expect(episode.getTags()).toEqual(['mine', 'tropical'])
+        expect(episode.getTags()).toEqual(['mine', 'tropical']);
+    });
+
+    it('should return tags if tagging is an Item()', function() {
+        episode.tagging = [{makeCopy: function(){ return {
+            mine    : true,
+            tropical: true,
+            id      : false
+        } }}]
+        expect(episode.getTags()).toEqual(['mine', 'tropical']);
     });
 
     it('hasTags() Should know if the episode has a given tag', function () {
         expect(episode.hasTag('tropical')).toEqual(true);
     });
 
+    it('newItem() should create an Item', function() {
+        var item = episode.newItem('diagnosis');
+        expect(item.makeCopy()).toEqual({
+            id               : undefined,
+            condition        : undefined,
+            provisional      : undefined,
+            date_of_diagnosis: undefined
+        })
+    });
 
     it('should be able to add a new item', function() {
         var item = new Item(
@@ -216,6 +234,15 @@ describe('Episode', function() {
         expect(episode.getNumberOfItems('diagnosis')).toBe(2);
         episode.addItem(item);
         expect(episode.getNumberOfItems('diagnosis')).toBe(3);
+    });
+
+    it('removeItem() should remove an item from our episode', function() {
+        // Note: Diagnoses end up ordered differently to the declared order
+        // above as they are sorted by date.
+        expect(episode.diagnosis.length).toEqual(2);
+        episode.removeItem(episode.diagnosis[1]);
+        expect(episode.diagnosis.length).toEqual(1);
+        expect(episode.diagnosis[0].id).toBe(103);
     });
 
     it('Should be able to produce a copy of attributes', function () {
