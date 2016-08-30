@@ -3,6 +3,8 @@
 Removes `Options` both from the JSON API, and the Angular service.
 Removes legacy APIs `/api/v0.1/episode/admit` and `/api/v0.1/episode/refer`.
 
+Removes the models `GP`, `CommunityNurse` and `LocatedModel`.
+
 The opal.core.api.EpisodeViewSet.create now expects tagging to be an object rather than a list, similar to how it details with demographics and location.
 
 All apis should be permissioned with Django REST framework permission classes. The default implementation uses opal.core.api.LoginRequiredViewset, a standard drf
