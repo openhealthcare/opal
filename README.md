@@ -10,7 +10,7 @@ OPAL is a full stack framework that makes building digital tools for health care
 It builds on established Open Source technologies with a track record of helping developers
 build easy to maintain, robust applications.
 
-Most notably, it makes use of [Django](https://djangoproject.com/), [Angular JS](https://angularjs.org/)
+Most notably, it makes use of [Django](https://djangoproject.com/), [AngularJS](https://angularjs.org/)
 and [Bootstrap](http://getbootstrap.com/).
 
 From there, OPAL provides you with a common batteries-included architecture for writing healthcare
