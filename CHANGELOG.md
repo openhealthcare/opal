@@ -13,6 +13,9 @@ viewset that requires the user to be logged in.
 We now require the user to be logged in for any
 use of the search functionality.
 
+The API will no longer serialise the _ft or _fk_id fields of FreeTextOrForeignKey fields - these
+are internal implementation details of the server that are not useful on the client side.
+
 Adds a custom interceptor that logs the user out if the we receive a 403 or 401 from the server
 
 Removes `opal.models.Tagging.import_from_reversion`. This one-off classmethod on tagging

@@ -50,10 +50,11 @@ class SerialisableFieldsTestCase(OpalTestCase):
             'id',
             'pid',
             'hatty',
-            'hatty_ft',
-            'hatty_fk_id',
         ])
         self.assertEqual(expected, set(names))
+
+    def test_get_field_type(self):
+        self.assertEqual(models.ForeignKey, SerialisableModel._get_field_type('patient_id'))
 
     def test_build_field_schema(self):
         schema = SerialisableModel.build_field_schema()
@@ -76,6 +77,8 @@ class SerialisableFieldsTestCase(OpalTestCase):
         self.assertEqual(schema, expected)
 
 
+
+
 class ToDictMixinTestCase(OpalTestCase):
     def setUp(self):
         self.model_instance = GetterModel(foo="blah")
@@ -91,7 +94,7 @@ class UpdatesFromDictMixinTestCase(OpalTestCase):
         self.model = UpdatableModelInstance
 
     def test_get_fieldnames_to_serialize(self):
-        expected = ['id', 'foo', 'bar', 'pid', 'hatty_fk_id', 'hatty_ft', 'hatty']
+        expected = ['id', 'foo', 'bar', 'pid', 'hatty']
         self.assertEqual(expected, self.model._get_fieldnames_to_serialize())
 
     def test_get_fieldnames_to_extract(self):

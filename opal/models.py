@@ -84,7 +84,7 @@ class SerialisableFields(object):
         many_to_manys = [field.name for field in fields if m2m(field)]
 
         fieldnames = fieldnames + many_to_manys
-
+        fieldnames = [f for f in fieldnames if not any((f.endswith('_fk_id'), f.endswith('_ft')))]
         return fieldnames
 
     @classmethod
@@ -133,10 +133,6 @@ class SerialisableFields(object):
         for fieldname in cls._get_fieldnames_to_serialize():
             if fieldname in ['id', 'patient_id', 'episode_id']:
                 continue
-            elif fieldname.endswith('_fk_id'):
-                continue
-            elif fieldname.endswith('_ft'):
-                continue
 
             getter = getattr(cls, 'get_field_type_for_' + fieldname, None)
             if getter is None:
@@ -179,9 +175,6 @@ class UpdatesFromDictMixin(SerialisableFields):
             for fname in cls.pid_fields:
                 if fname in fieldnames:
                     fieldnames.remove(fname)
-                    if cls._get_field_type(fname) == ForeignKeyOrFreeText:
-                        fieldnames.remove(fname + '_fk_id')
-                        fieldnames.remove(fname + '_ft')
         return fieldnames
 
     @classmethod
@@ -268,13 +261,6 @@ class UpdatesFromDictMixin(SerialisableFields):
 
         for name in fields:
             value = data.get(name, None)
-
-            if name.endswith('_fk_id'):
-                if name[:-6] in fields:
-                    continue
-            if name.endswith('_ft'):
-                if name[:-3] in fields:
-                    continue
 
             if name == 'consistency_token':
                 continue # shouldn't be needed - Javascripts bug?
