@@ -35,7 +35,7 @@
       {% if OPAL_FLOW_SERVICE %}
         var OPAL_FLOW_SERVICE = '{{ OPAL_FLOW_SERVICE }}';
       {% endif %}
-      var OPAL_TIMEOUT = {{ settings.OPAL_LOG_OUT_DURATION }} || 60 * 15;
+      var OPAL_TIMEOUT = {{ settings.OPAL_LOG_OUT_DURATION }};
     </script>
     <!-- google analytics -->
     <script>
