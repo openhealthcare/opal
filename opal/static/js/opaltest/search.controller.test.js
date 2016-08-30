@@ -1,60 +1,32 @@
 describe('SearchCtrl', function (){
-    var $scope, location;
+    "use strict";
+    var $scope, location, controller;
     var Flow;
-    var profile, schema, options, locationDetails;
+    var profile, schema, options;
     var patientSummary = {};
-
-    beforeEach(function(){
-        module('opal', function($provide) {
-            $provide.value('$analytics', function(){
-                return {
-                    pageTrack: function(x){}
-                };
-            });
-
-            $provide.provider('$analytics', function(){
-                this.$get = function() {
-                    return {
-                        virtualPageviews: function(x){},
-                        settings: {
-                            pageTracking: false,
-                        },
-                        pageTrack: function(x){}
-                     };
-                };
-            });
-        });
-    });
+    var $rootScope, $httpBackend, fakeWindow;
 
     beforeEach(module('opal.controllers'));
 
     beforeEach(function(){
-        locationDetails = {};
-        $window = {location: locationDetails };
-
-        module(function($provide) {
-          $provide.value('$window', $window);
-        });
-
-        inject(function($injector){
-
+      inject(function($injector){
         $rootScope   = $injector.get('$rootScope');
         $scope       = $rootScope.$new();
-        $controller  = $injector.get('$controller');
+        var $controller  = $injector.get('$controller');
         Flow         = $injector.get('Flow');
         $httpBackend = $injector.get('$httpBackend');
         location = $injector.get('$location');
-        $window = $injector.get('$window');
 
         schema  = {};
         options = {};
         profile = {};
 
-
         spyOn(location, 'path').and.returnValue("/search");
+        fakeWindow = {location: {pathname: undefined}};
 
         controller = $controller('SearchCtrl', {
             $scope         : $scope,
+            $window        : fakeWindow,
             $location      : location,
             Flow: Flow,
             options        : options,
@@ -63,7 +35,8 @@ describe('SearchCtrl', function (){
             PatientSummary: patientSummary
         });
 
-    });});
+      });
+    });
 
     afterEach(function() {
         $httpBackend.verifyNoOutstandingExpectation();
@@ -91,7 +64,7 @@ describe('SearchCtrl', function (){
                 page_number: 1
             });
 
-            expectedUrl = "/search/simple/?query=Bond&page_number=1";
+            var expectedUrl = "/search/simple/?query=Bond&page_number=1";
             $httpBackend.expectGET(expectedUrl).respond({
                 page_number: 1,
                 object_list: [],
@@ -102,24 +75,24 @@ describe('SearchCtrl', function (){
         });
 
         it("should redirect to the search page if we're not in search", function(){
-            locationDetails.href = "";
-            locationDetails.pathname = "/somewhere";
+            fakeWindow.location.href = ""
+            fakeWindow.location.pathname = "/somewhere";
             $scope.query.searchTerm = "Bond";
             $scope.search();
-            expectedUrl = "/#/search?query=Bond";
-            expect(locationDetails.href).toEqual(expectedUrl);
+            var expectedUrl = "/#/search?query=Bond";
+            expect(fakeWindow.location.href).toEqual(expectedUrl);
         });
 
         it("should update the url if on the search page", function(){
-            locationDetails.href = "unchanged";
-            locationDetails.pathname = "/";
+            fakeWindow.location.href = "unchanged";
+            fakeWindow.location.pathname = "/";
             $scope.query.searchTerm = "Bond";
             $scope.search();
-            expectedSearch = {
+            var expectedSearch = {
                 query: "Bond",
             };
             expect(location.search()).toEqual(expectedSearch);
-            expect(locationDetails.href).toEqual("unchanged");
+            expect(fakeWindow.location.href).toEqual("unchanged");
         });
     });
 
@@ -127,7 +100,7 @@ describe('SearchCtrl', function (){
         it('should watch the autocomplete and query if it changes', function(){
           $scope.query.autocompleteSearchTerm = "autocomplete";
           $scope.query.searchTerm = "";
-          expectedUrl = "/search/simple/?query=autocomplete";
+          var expectedUrl = "/search/simple/?query=autocomplete";
           $httpBackend.expectGET(expectedUrl).respond({
               page_number: 1,
               object_list: [],

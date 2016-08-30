@@ -6,6 +6,43 @@ if(undefined === OPAL_FLOW_SERVICE){
     var OPAL_FLOW_SERVICE = null;
 }
 
+OPAL._configure = function(mod){
+  // See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags
+  mod.config(function($interpolateProvider) {
+    $interpolateProvider.startSymbol('[[');
+    $interpolateProvider.endSymbol(']]');
+  });
+
+  mod.config(['growlProvider', function(growlProvider) {
+      growlProvider.globalTimeToLive(5000);
+  }]);
+
+
+  // IE8 compatability mode!
+  mod.config(function($sceProvider){
+      $sceProvider.enabled(false);
+  });
+
+  mod.config(function($resourceProvider) {
+      $resourceProvider.defaults.stripTrailingSlashes = false;
+  });
+
+  mod.config(function(IdleProvider) {
+    // show log out modal after 10 mins
+    IdleProvider.idle(settings.OPAL_LOG_OUT_DURATION || 600);
+    var opalTimeout = 900;
+    IdleProvider.timeout(opalTimeout);
+  });
+
+  if(OPAL._trackingConfig.manualTrack){
+    mod.config(function($analyticsProvider) {
+        $analyticsProvider.virtualPageviews(false);
+    });
+  }
+
+  return mod;
+}
+
 OPAL.module = function(namespace, dependencies){
     dependencies = dependencies || [];
 
@@ -19,7 +56,8 @@ OPAL.module = function(namespace, dependencies){
         'angulartics',
         'angulartics.google.analytics',
         'LocalStorageModule',
-    ]
+        'ngIdle'
+    ];
 
     _.each(implicit_dependencies, function(dependency){
         if(!_.contains(dependencies, dependency)){
@@ -28,7 +66,7 @@ OPAL.module = function(namespace, dependencies){
     });
 
 
-    this.tracking = {
+    OPAL._trackingConfig = {
       manualTrack: window.OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX || window.OPAL_ANGULAR_EXCLUDE_TRACKING_QS,
       opal_angular_exclude_tracking_prefix: window.OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX || [],
       opal_angular_exclude_tracking_qs: window.OPAL_ANGULAR_EXCLUDE_TRACKING_QS || []
@@ -40,33 +78,7 @@ OPAL.module = function(namespace, dependencies){
 
     var mod = angular.module(namespace, dependencies);
 
-    if(this.tracking.manualTrack){
-      mod.config(function($analyticsProvider) {
-          $analyticsProvider.virtualPageviews(false);
-      });
-    }
-
-    // See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags
-    mod.config(function($interpolateProvider) {
-	    $interpolateProvider.startSymbol('[[');
-	    $interpolateProvider.endSymbol(']]');
-    });
-
-    mod.config(['growlProvider', function(growlProvider) {
-        growlProvider.globalTimeToLive(5000);
-    }]);
-
-
-    // IE8 compatability mode!
-    mod.config(function($sceProvider){
-        $sceProvider.enabled(false);
-    });
-
-    mod.config(function($resourceProvider) {
-        $resourceProvider.defaults.stripTrailingSlashes = false;
-    });
-
-    return mod;
+    return OPAL._configure(mod);
 };
 
 OPAL.run = function(app){
@@ -74,8 +86,10 @@ OPAL.run = function(app){
         '$rootScope',
         'ngProgressLite',
         '$modal',
+        '$window',
         '$location',
         '$analytics',
+        'Idle',
         OPAL._run
     ]);
 };
@@ -83,16 +97,16 @@ OPAL.run = function(app){
 OPAL._track = function($location, $analytics){
     var track, not_qs, path;
 
-    if(this.tracking.manualTrack){
+    if(OPAL._trackingConfig.manualTrack){
         path = $location.path();
 
-        track = _.some(this.tracking.opal_angular_exclude_tracking_prefix, function(prefix){
+        track = _.some(OPAL._trackingConfig.opal_angular_exclude_tracking_prefix, function(prefix){
 
             return path.indexOf((prefix)) === 0;
         });
 
         if(!track){
-            not_qs = _.some(this.tracking.opal_angular_exclude_tracking_qs, function(qs){
+            not_qs = _.some(OPAL._trackingConfig.opal_angular_exclude_tracking_qs, function(qs){
                 return path === qs;
             });
 
@@ -106,7 +120,10 @@ OPAL._track = function($location, $analytics){
     }
 };
 
-OPAL._run = function($rootScope, ngProgressLite, $modal, $location, $analytics) {
+OPAL._run = function($rootScope, ngProgressLite, $modal, $window, $location, $analytics, Idle) {
+    if(Idle){
+      Idle.watch();
+    }
 
     // Let's allow people to know what version they're running
     $rootScope.OPAL_VERSION = version;
@@ -151,6 +168,18 @@ OPAL._run = function($rootScope, ngProgressLite, $modal, $location, $analytics) 
             reset, reset
         );
     };
+
+    $rootScope.$on('IdleStart', function() {
+      $rootScope.open_modal(
+        'KeyBoardShortcutsCtrl',
+        '/templates/logout_modal.html',
+        'lg'
+      );
+     });
+
+    $rootScope.$on('IdleTimeout', function() {
+      $window.location.pathname = '/accounts/logout/';
+    });
 };
 
 

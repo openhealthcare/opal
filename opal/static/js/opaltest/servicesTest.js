@@ -1,7 +1,8 @@
 describe('services', function() {
     "use strict";
 
-    var columns, episodeData, records, list_schema, mockWindow;
+    var columns, episodeData, records, list_schema, mockWindow, $httpBackend;
+    var $window, $q, $rootScope;
 
     var profile = {
         readonly   : false,
@@ -9,28 +10,19 @@ describe('services', function() {
         can_see_pid: function(){return true; }
     };
 
+
     beforeEach(function(){
-        module('opal', function($provide) {
-            $provide.value('$analytics', function(){
-                return {
-                    pageTrack: function(x){}
-                };
-            });
+      module('opal.services', function($provide) {
+          $provide.value('UserProfile', function(){ return profile; });
+      });
 
-            $provide.provider('$analytics', function(){
-                this.$get = function() {
-                    return {
-                        virtualPageviews: function(x){},
-                        settings: {
-                            pageTracking: false,
-                        },
-                        pageTrack: function(x){}
-                     };
-                };
-            });
+      module('opal');
 
-        });
+      inject(function($injector){
+          $window     = $injector.get('$window');
+      });
 
+      spyOn($window, 'alert')
     });
 
     beforeEach(function() {
@@ -99,18 +91,10 @@ describe('services', function() {
     });
 
     describe('extractSchemaLoader', function(){
-        var mock, extractSchemaLoader;
+        var extractSchemaLoader;
 
         beforeEach(function(){
-            mock = { alert: jasmine.createSpy() };
 
-            module(function($provide) {
-                $provide.value('$window', mock);
-            });
-
-            module('opal.services', function($provide) {
-                $provide.value('UserProfile', function(){ return profile; });
-            });
 
             inject(function($injector){
                 extractSchemaLoader = $injector.get('extractSchemaLoader');
@@ -140,7 +124,7 @@ describe('services', function() {
             $rootScope.$apply();
             $httpBackend.flush();
 
-            expect(mock.alert).toHaveBeenCalledWith(
+            expect($window.alert).toHaveBeenCalledWith(
                 'Extract schema could not be loaded');
         });
     });
@@ -149,10 +133,6 @@ describe('services', function() {
         var Schema, schema;
 
         beforeEach(function() {
-            module('opal.services', function($provide) {
-                $provide.value('UserProfile', function(){ return profile; });
-            });
-
             inject(function($injector) {
                 Schema = $injector.get('Schema');
             });
@@ -172,74 +152,4 @@ describe('services', function() {
             expect(schema.isSingleton('diagnosis')).toBe(false);
         });
     });
-
-    describe('episodeLoader', function() {
-        var episodeLoader, $httpBackend;
-
-        beforeEach(function() {
-            module(function($provide) {
-                $provide.value('UserProfile', function(){ return profile; });
-            });
-
-            inject(function($injector) {
-                episodeLoader = $injector.get('episodeLoader');
-                $httpBackend = $injector.get('$httpBackend');
-                $rootScope = $injector.get('$rootScope');
-                $route = $injector.get('$route');
-            });
-        });
-
-        xit('should resolve to a single episode', function() {
-            // TODO unskip this
-            // Skipping this, because I can't work out how to set $route.current
-            // so that episodeLoader can access it.
-            var promise = episodeLoader();
-            var episode;
-
-            $route.current = {params: {id: 123}};
-            $httpBackend.whenGET('/schema/').respond(columns);
-            // TODO trailing slash?
-            $httpBackend.whenGET('/episode/123').respond(episodeData);
-            promise.then(function(value) {
-                episode = value;
-            });
-
-            $httpBackend.flush();
-            $rootScope.$apply();
-
-            expect(episode.id).toBe(123);
-        });
-    });
-
-    describe('UserProfile', function(){
-        var mock, $httpBackend, UserProfile;
-
-        beforeEach(function(){
-            mock = { alert: jasmine.createSpy() };
-
-            module(function($provide){
-                $provide.value('$window', mock);
-            });
-
-            inject(function($injector){
-                UserProfile    = $injector.get('UserProfile');
-                $q             = $injector.get('$q');
-                $httpBackend   = $injector.get('$httpBackend');
-                $rootScope     = $injector.get('$rootScope');
-            });
-        });
-
-        it('should alert if the HTTP request errors', function(){
-            var result;
-
-            $httpBackend.expectGET('/api/v0.1/userprofile/');
-            $httpBackend.whenGET('/api/v0.1/userprofile/').respond(500, 'NO');
-
-            $rootScope.$apply();
-            $httpBackend.flush();
-
-            expect(mock.alert).toHaveBeenCalledWith('UserProfile could not be loaded');
-        });
-    });
-
 });
