@@ -6,6 +6,43 @@ if(undefined === OPAL_FLOW_SERVICE){
     var OPAL_FLOW_SERVICE = null;
 }
 
+OPAL._configure = function(mod){
+  // See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags
+  mod.config(function($interpolateProvider) {
+    $interpolateProvider.startSymbol('[[');
+    $interpolateProvider.endSymbol(']]');
+  });
+
+  mod.config(['growlProvider', function(growlProvider) {
+      growlProvider.globalTimeToLive(5000);
+  }]);
+
+
+  // IE8 compatability mode!
+  mod.config(function($sceProvider){
+      $sceProvider.enabled(false);
+  });
+
+  mod.config(function($resourceProvider) {
+      $resourceProvider.defaults.stripTrailingSlashes = false;
+  });
+
+  mod.config(function(KeepaliveProvider, IdleProvider) {
+    // show log out modal after 10 mins
+    IdleProvider.idle(600);
+    var opalTimeout = window.OPAL_TIMEOUT || 900;
+    IdleProvider.timeout(opalTimeout);
+  });
+
+  if(OPAL._trackingConfig.manualTrack){
+    mod.config(function($analyticsProvider) {
+        $analyticsProvider.virtualPageviews(false);
+    });
+  }
+
+  return mod;
+}
+
 OPAL.module = function(namespace, dependencies){
     dependencies = dependencies || [];
 
@@ -29,7 +66,7 @@ OPAL.module = function(namespace, dependencies){
     });
 
 
-    this.tracking = {
+    OPAL._trackingConfig = {
       manualTrack: window.OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX || window.OPAL_ANGULAR_EXCLUDE_TRACKING_QS,
       opal_angular_exclude_tracking_prefix: window.OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX || [],
       opal_angular_exclude_tracking_qs: window.OPAL_ANGULAR_EXCLUDE_TRACKING_QS || []
@@ -41,40 +78,7 @@ OPAL.module = function(namespace, dependencies){
 
     var mod = angular.module(namespace, dependencies);
 
-    if(this.tracking.manualTrack){
-      mod.config(function($analyticsProvider) {
-          $analyticsProvider.virtualPageviews(false);
-      });
-    }
-
-    // See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags
-    mod.config(function($interpolateProvider) {
-	    $interpolateProvider.startSymbol('[[');
-	    $interpolateProvider.endSymbol(']]');
-    });
-
-    mod.config(['growlProvider', function(growlProvider) {
-        growlProvider.globalTimeToLive(5000);
-    }]);
-
-
-    // IE8 compatability mode!
-    mod.config(function($sceProvider){
-        $sceProvider.enabled(false);
-    });
-
-    mod.config(function($resourceProvider) {
-        $resourceProvider.defaults.stripTrailingSlashes = false;
-    });
-
-    mod.config(function(KeepaliveProvider, IdleProvider) {
-      // show log out modal after 10 mins
-      IdleProvider.idle(600);
-      var opalTimeout = window.OPAL_TIMEOUT || 900;
-      IdleProvider.timeout(opalTimeout);
-    });
-
-    return mod;
+    return OPAL._configure(mod);
 };
 
 OPAL.run = function(app){
@@ -92,16 +96,16 @@ OPAL.run = function(app){
 OPAL._track = function($location, $analytics){
     var track, not_qs, path;
 
-    if(this.tracking.manualTrack){
+    if(OPAL._trackingConfig.manualTrack){
         path = $location.path();
 
-        track = _.some(this.tracking.opal_angular_exclude_tracking_prefix, function(prefix){
+        track = _.some(OPAL._trackingConfig.opal_angular_exclude_tracking_prefix, function(prefix){
 
             return path.indexOf((prefix)) === 0;
         });
 
         if(!track){
-            not_qs = _.some(this.tracking.opal_angular_exclude_tracking_qs, function(qs){
+            not_qs = _.some(OPAL._trackingConfig.opal_angular_exclude_tracking_qs, function(qs){
                 return path === qs;
             });
 

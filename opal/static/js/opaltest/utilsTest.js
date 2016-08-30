@@ -49,15 +49,15 @@ describe('utils.OPAL._track', function(){
         location = jasmine.createSpyObj('location', ['path', 'url']);
         analytics = jasmine.createSpyObj('analytics', ['pageTrack']);
 
-        OPAL.tracking.manualTrack = true;
-        OPAL.tracking.opal_angular_exclude_tracking_prefix = ['something'];
-        OPAL.tracking.opal_angular_exclude_tracking_qs = ['anotherThing'];
+        OPAL._trackingConfig.manualTrack = true;
+        OPAL._trackingConfig.opal_angular_exclude_tracking_prefix = ['something'];
+        OPAL._trackingConfig.opal_angular_exclude_tracking_qs = ['anotherThing'];
     });
 
     afterEach(function(){
-      OPAL.tracking.manualTrack = false;
-      OPAL.tracking.opal_angular_exclude_tracking_prefix = [];
-      OPAL.tracking.opal_angular_exclude_tracking_qs = [];
+      OPAL._trackingConfig.manualTrack = false;
+      OPAL._trackingConfig.opal_angular_exclude_tracking_prefix = [];
+      OPAL._trackingConfig.opal_angular_exclude_tracking_qs = [];
     })
 
     it('should track if not excluded', function(){
