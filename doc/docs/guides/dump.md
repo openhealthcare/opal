@@ -2,11 +2,11 @@
 # Your implementation
 
 
-Your implementation is a Django project with some extras. 
+Your implementation is a Django project with some extras.
 
 ## OPAL settings
 
-OPAL_LOG_OUT_DURATION = The number of milliseconds after which to log out our user
+OPAL_LOG_OUT_DURATION = The number of seconds after which to log out our user
 
 OPAL_BRAND_NAME = The branding to be displayed as the masthead
 
@@ -68,5 +68,3 @@ Create a template url in the django layer
     $ heroku run python manage.py syncdb --migrate --app $YOUR_APP_NAME
     $ heroku run python manage.py load_lookup_lists -f data/lookuplists/lookuplists.json --app $YOUR_APP_NAME
     $ heroku run python manage.py createinitialrevisions --app $YOUR_APP_NAME
-
-

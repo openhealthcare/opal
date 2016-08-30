@@ -29,8 +29,8 @@ OPAL._configure = function(mod){
 
   mod.config(function(IdleProvider) {
     // show log out modal after 10 mins
-    IdleProvider.idle(600);
-    var opalTimeout = window.OPAL_TIMEOUT || 900;
+    IdleProvider.idle(settings.OPAL_LOG_OUT_DURATION || 600);
+    var opalTimeout = 900;
     IdleProvider.timeout(opalTimeout);
   });
 
