@@ -1002,6 +1002,9 @@ class Tagging(TrackedModel, models.Model):
     archived = models.BooleanField(default=False)
     value    = models.CharField(max_length=200, blank=True, null=True)
 
+    class Meta:
+        unique_together = (('value', 'episode', 'user'))
+
     def __unicode__(self):
         if self.user is not None:
             return 'User: %s - %s - archived: %s' % (
