@@ -220,7 +220,6 @@ angular.module('opal.controllers').controller(
                         }
                     });
                 }
-
                 $scope.async_waiting = true;
                 $http.post(
                     '/search/extract/download',
