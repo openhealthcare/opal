@@ -100,10 +100,6 @@ angular.module('opal.services').factory('RecordEditor', function(
     };
 
     self.newItem = function(name){
-      if (!episode[name]) {
-          episode[name] = [];
-      }
-
       var iix = episode[name].length;
       var item = self.getItem(name, iix);
 
