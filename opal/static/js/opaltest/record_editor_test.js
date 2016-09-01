@@ -52,6 +52,7 @@ describe('RecordEditor', function(){
             {
                 name: 'demographics',
                 single: true,
+                modal_size: 'xl',
                 fields: [
                     {name: 'name', type: 'string'},
                     {name: 'date_of_birth', type: 'date'},
@@ -123,12 +124,32 @@ describe('RecordEditor', function(){
               var modalPromise = deferred.promise;
 
               spyOn($modal, 'open').and.returnValue({result: modalPromise}  );
-              episode.recordEditor.editItem('demographics', 0);
+              episode.recordEditor.editItem('diagnosis', 1);
               $scope.$digest();
               callArgs = $modal.open.calls.mostRecent().args;
               expect(callArgs.length).toBe(1);
               expect(callArgs[0].controller).toBe('EditItemCtrl');
-              expect(callArgs[0].templateUrl).toBe('/templates/modals/demographics.html/');
+              expect(callArgs[0].templateUrl).toBe('/templates/modals/diagnosis.html/');
+              var resolves = callArgs[0].resolve;
+              expect(resolves.item()).toEqual(episode.recordEditor.getItem('diagnosis', 1));
+              expect(resolves.profile()).toEqual(profile);
+              expect(resolves.episode()).toEqual(episode);
+              expect(resolves.metadata(null)).toEqual(null);
+              expect(resolves.referencedata(null)).toEqual(null);
+              expect(callArgs[0].size).toBe('lg');
+          });
+
+          it('should pull modal size through from the schema if it exists', function() {
+              var deferred, callArgs;
+              deferred = $q.defer();
+              deferred.resolve();
+              var modalPromise = deferred.promise;
+
+              spyOn($modal, 'open').and.returnValue({result: modalPromise}  );
+              episode.recordEditor.editItem('demographics', 0);
+              $scope.$digest();
+              callArgs = $modal.open.calls.mostRecent().args;
+              expect(callArgs[0].size).toBe('xl');
           });
 
           it('should open the use route slug appropriately', function(){
@@ -183,7 +204,6 @@ describe('RecordEditor', function(){
               expect($rootScope.state).toBe('normal');
           });
 
-
       });
 
       describe('delete item', function(){
@@ -199,6 +219,9 @@ describe('RecordEditor', function(){
                 expect(callArgs[0].templateUrl).toBe(
                   '/templates/modals/delete_item_confirmation.html/'
                 );
+              var resolves = callArgs[0].resolve;
+              expect(resolves.item()).toEqual(episode.recordEditor.getItem('diagnosis', 0));
+              expect(resolves.profile(null)).toEqual(profile);
             });
 
             describe('for a readonly user', function(){
