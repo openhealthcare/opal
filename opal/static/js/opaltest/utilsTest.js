@@ -42,13 +42,8 @@ describe('Utils.OPAL._run', function (){
 });
 
 describe('utils.OPAL._track', function(){
-    var location;
-    var analytics;
 
     beforeEach(function(){
-        location = jasmine.createSpyObj('location', ['path', 'url']);
-        analytics = jasmine.createSpyObj('analytics', ['pageTrack']);
-
         OPAL.tracking.manualTrack = true;
         OPAL.tracking.opal_angular_exclude_tracking_prefix = ['something'];
         OPAL.tracking.opal_angular_exclude_tracking_qs = ['anotherThing'];
@@ -61,22 +56,30 @@ describe('utils.OPAL._track', function(){
     })
 
     it('should track if not excluded', function(){
+      var location = jasmine.createSpyObj('location', ['path', 'url']);
+      var analytics = jasmine.createSpyObj('analytics', ['pageTrack']);
       location.path.and.returnValue("trackThis");
       location.url.and.returnValue("trackThis?that=this");
       OPAL._track(location, analytics);
-      expect(analytics.pageTrack).toHaveBeenCalledWith("trackThis?that=this");
+      analytics.pageTrack.calls.allArgs();
+      expect(analytics.pageTrack.calls.allArgs()).toEqual([['trackThis?that=this']]);
     })
 
     it('should not track get urls if the url is excluded from tracking', function(){
+      var location = jasmine.createSpyObj('location', ['path', 'url']);
+      var analytics = jasmine.createSpyObj('analytics', ['pageTrack']);
       location.path.and.returnValue("somethingElse");
       OPAL._track(location, analytics);
       expect(analytics.pageTrack).not.toHaveBeenCalled();
     });
 
     it('should not track the query params if the url is excluding query params from tracking', function(){
+      var location = jasmine.createSpyObj('location', ['path', 'url']);
+      var analytics = jasmine.createSpyObj('analytics', ['pageTrack']);
       location.url.and.returnValue("anotherThing?something=tree");
       location.path.and.returnValue("anotherThing")
       OPAL._track(location, analytics);
-      expect(analytics.pageTrack).toHaveBeenCalledWith('anotherThing');
+      console.error(analytics.pageTrack.calls.allArgs());
+      expect(analytics.pageTrack.calls.allArgs()).toEqual([['anotherThing']]);
     });
 });
