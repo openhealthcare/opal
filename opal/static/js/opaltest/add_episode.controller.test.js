@@ -1,5 +1,8 @@
 describe('AddEpisodeCtrl', function (){
+    "use strict";
+
     var $scope, $httpBackend, $rootScope;
+    var Schema
     var modalInstance;
     var columns = {
         "default": [
@@ -55,7 +58,7 @@ describe('AddEpisodeCtrl', function (){
         });
         $rootScope.fields = angular.copy(columns.default);
 
-        schema = new Schema(columns.default);
+        var schema = new Schema(columns.default);
         modalInstance = $modal.open({template: 'Notatemplate'});
         $scope = $rootScope.$new();
 

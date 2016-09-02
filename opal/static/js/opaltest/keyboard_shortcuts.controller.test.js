@@ -1,4 +1,6 @@
 describe('KeyboardShortcutsCtrl', function() {
+    "use strict";
+
     var $controller, $scope;
     var modalInstance = {dismiss: function(){}};
 

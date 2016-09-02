@@ -1,4 +1,6 @@
 describe('RootCtrl', function() {
+    "use strict";
+
     var $controller, $scope;
 
     beforeEach(module('opal.controllers'));

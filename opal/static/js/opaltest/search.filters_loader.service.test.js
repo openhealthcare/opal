@@ -4,7 +4,8 @@
 describe('filtersLoader', function(){
     "use strict";
 
-    var filtersLoader, mockWindow, $httpBackend
+    var $rootScope, $httpBackend
+    var filtersLoader, mockWindow;
 
     beforeEach(function(){
         module('opal.services');
@@ -17,8 +18,9 @@ describe('filtersLoader', function(){
         });
 
         inject(function($injector){
-            filtersLoader = $injector.get('filtersLoader');
+            $rootScope    = $injector.get('$rootScope');
             $httpBackend  = $injector.get('$httpBackend');
+            filtersLoader = $injector.get('filtersLoader');
         });
 
     });
