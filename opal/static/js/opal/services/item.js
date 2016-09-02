@@ -84,7 +84,6 @@ angular.module('opal.services')
                     item.id = episode.id;
                     attrs.id = episode.id;
                 }
-
 	            if (angular.isDefined(item.id)) {
 		            method = 'put';
 		            url += attrs.id + '/';
@@ -92,7 +91,6 @@ angular.module('opal.services')
 		            method = 'post';
 		            attrs.episode_id = episode.id;
 	            }
-
 	            $http[method](url, attrs).then(function(response) {
 		            item.initialise(response.data);
 		            if (method == 'post') {

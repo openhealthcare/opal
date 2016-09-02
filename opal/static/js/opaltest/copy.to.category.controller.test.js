@@ -1,5 +1,7 @@
 describe('CopyToCategoryCtrl', function(){
-    var $scope, $httpBackend, $modal, $rootScope, $window;
+    "use strict";
+
+    var $scope, $httpBackend, $modal, $rootScope, $window, $controller;
     var modalInstance;
     var patient, category;
 
@@ -16,7 +18,7 @@ describe('CopyToCategoryCtrl', function(){
         });
 
         patient = {};
-        category_name = 'newcategory';
+        var category_name = 'newcategory';
         modalInstance = $modal.open({template: 'notatemplate'});
 
         $controller('CopyToCategoryCtrl', {

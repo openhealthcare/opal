@@ -1,7 +1,10 @@
 describe('SearchCtrl', function (){
-    var $scope, location;
+    "use strict";
+
+    var $scope, $httpBackend, $window, $rootScope, $controller;
+    var location;
     var Flow;
-    var profile, schema, options, locationDetails;
+    var profile, schema, options, locationDetails, controller;
     var patientSummary = {};
 
     beforeEach(function(){
@@ -20,7 +23,7 @@ describe('SearchCtrl', function (){
                             pageTracking: false,
                         },
                         pageTrack: function(x){}
-                     };
+                    };
                 };
             });
         });
@@ -33,37 +36,37 @@ describe('SearchCtrl', function (){
         $window = {location: locationDetails };
 
         module(function($provide) {
-          $provide.value('$window', $window);
+            $provide.value('$window', $window);
         });
 
         inject(function($injector){
 
-        $rootScope   = $injector.get('$rootScope');
-        $scope       = $rootScope.$new();
-        $controller  = $injector.get('$controller');
-        Flow         = $injector.get('Flow');
-        $httpBackend = $injector.get('$httpBackend');
-        location = $injector.get('$location');
-        $window = $injector.get('$window');
+            $rootScope   = $injector.get('$rootScope');
+            $scope       = $rootScope.$new();
+            $controller  = $injector.get('$controller');
+            Flow         = $injector.get('Flow');
+            $httpBackend = $injector.get('$httpBackend');
+            location = $injector.get('$location');
+            $window = $injector.get('$window');
 
-        schema  = {};
-        options = {};
-        profile = {};
+            schema  = {};
+            options = {};
+            profile = {};
 
 
-        spyOn(location, 'path').and.returnValue("/search");
+            spyOn(location, 'path').and.returnValue("/search");
 
-        controller = $controller('SearchCtrl', {
-            $scope         : $scope,
-            $location      : location,
-            Flow: Flow,
-            options        : options,
-            schema         : schema,
-            profile        : profile,
-            PatientSummary: patientSummary
-        });
+            controller = $controller('SearchCtrl', {
+                $scope         : $scope,
+                $location      : location,
+                Flow: Flow,
+                options        : options,
+                schema         : schema,
+                profile        : profile,
+                PatientSummary: patientSummary
+            });
 
-    });});
+        });});
 
     afterEach(function() {
         $httpBackend.verifyNoOutstandingExpectation();
@@ -91,7 +94,7 @@ describe('SearchCtrl', function (){
                 page_number: 1
             });
 
-            expectedUrl = "/search/simple/?query=Bond&page_number=1";
+            var expectedUrl = "/search/simple/?query=Bond&page_number=1";
             $httpBackend.expectGET(expectedUrl).respond({
                 page_number: 1,
                 object_list: [],
@@ -106,7 +109,7 @@ describe('SearchCtrl', function (){
             locationDetails.pathname = "/somewhere";
             $scope.query.searchTerm = "Bond";
             $scope.search();
-            expectedUrl = "/#/search?query=Bond";
+            var expectedUrl = "/#/search?query=Bond";
             expect(locationDetails.href).toEqual(expectedUrl);
         });
 
@@ -115,7 +118,7 @@ describe('SearchCtrl', function (){
             locationDetails.pathname = "/";
             $scope.query.searchTerm = "Bond";
             $scope.search();
-            expectedSearch = {
+            var expectedSearch = {
                 query: "Bond",
             };
             expect(location.search()).toEqual(expectedSearch);
@@ -125,16 +128,16 @@ describe('SearchCtrl', function (){
 
     describe("it should autocomplete the search if necessary", function(){
         it('should watch the autocomplete and query if it changes', function(){
-          $scope.query.autocompleteSearchTerm = "autocomplete";
-          $scope.query.searchTerm = "";
-          expectedUrl = "/search/simple/?query=autocomplete";
-          $httpBackend.expectGET(expectedUrl).respond({
-              page_number: 1,
-              object_list: [],
-              total_pages: 1
-          });
-          $scope.$apply();
-          $httpBackend.flush();
+            $scope.query.autocompleteSearchTerm = "autocomplete";
+            $scope.query.searchTerm = "";
+            var expectedUrl = "/search/simple/?query=autocomplete";
+            $httpBackend.expectGET(expectedUrl).respond({
+                page_number: 1,
+                object_list: [],
+                total_pages: 1
+            });
+            $scope.$apply();
+            $httpBackend.flush();
         });
     });
 

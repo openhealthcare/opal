@@ -1,6 +1,8 @@
 describe('DeleteItemConfirmationCtrl', function(){
-    var $scope, $timeout;
-    var item, $modalInstance;
+    "use strict";
+
+    var $scope, $timeout, $modal, $q, $controller, $rootScope;
+    var item, $modalInstance, controller;
 
     beforeEach(function(){
         module('opal', function($provide) {

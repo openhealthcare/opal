@@ -1,6 +1,7 @@
 describe('services', function() {
     "use strict";
 
+    var $httpBackend, $q, $rootScope;
     var columns, episodeData, records, list_schema, mockWindow;
 
     var profile = {

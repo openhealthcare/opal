@@ -1,4 +1,5 @@
 describe('Utils.OPAL._run', function (){
+    "use strict";
 
     it('Should add open_modal to the root scope.', function () {
         var mock_scope = { $on: function(){} };
@@ -42,6 +43,9 @@ describe('Utils.OPAL._run', function (){
 });
 
 describe('utils.OPAL._track', function(){
+    "use strict";
+
+
     var location;
     var analytics;
 
