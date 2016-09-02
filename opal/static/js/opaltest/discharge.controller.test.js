@@ -160,7 +160,7 @@ describe('DischargeEpisodeCtrl', function(){
             $httpBackend.expectPUT('/api/v0.1/episode/555/').respond({});
             spyOn(modalInstance, 'close')
 
-            $scope.discharge(); // <- this is the function we're testing
+            $scope.discharge();
 
             $httpBackend.flush();
             $httpBackend.verifyNoOutstandingRequest();
