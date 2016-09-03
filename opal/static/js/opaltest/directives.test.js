@@ -1,6 +1,8 @@
 describe('OPAL Directives', function(){
+    "use strict";
 
-    var element, scope, $timeout, $httpBackend;
+    var $templateCache, $timeout, $httpBackend;
+    var element, scope;
     var responseMarkUp = ' \
       <ui-select class="col-sm-8" multiple ng-model="value" on-remove="onRemove($item, $model)" on-select="onSelect($item, $model)" theme="bootstrap"> \
         <ui-select-match>[[ $item.display_name ]]</ui-select-match> \

@@ -1,4 +1,6 @@
 describe('app', function() {
+    "use strict";
+
     var $location, $route, $rootScope, $httpBackend;
 
     beforeEach(function() {

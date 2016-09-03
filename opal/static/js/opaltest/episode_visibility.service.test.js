@@ -1,4 +1,6 @@
 describe('episodeVisibility', function(){
+    "use strict";
+
     var $scope, episode, episodeVisibility, episodeData;
 
     var profile = {
