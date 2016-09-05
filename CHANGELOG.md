@@ -27,7 +27,7 @@ Removes the `static` argument from the forms `input` tag. Developers should move
 
 #### Updates to the Dependency Graph
 
-Upgrades angular to v1.5.8 (from 1.3.11) you can see their change log (here)[https://github.com/angular/angular.js/blob/master/CHANGELOG.md]
+Upgrades angular to v1.5.8 (from 1.3.11) you can see their change log [here](https://github.com/angular/angular.js/blob/master/CHANGELOG.md)
 
 Updates angular-cookies and angular-mocks to v1.5.8 (both from 1.3.11)
 
