@@ -1222,14 +1222,14 @@ class Travel_reason(lookuplists.LookupList):
 """
 Base models
 """
-
-
 class Demographics(PatientSubrecord):
     _is_singleton = True
     _icon = 'fa fa-user'
 
     hospital_number = models.CharField(max_length=255, blank=True)
-    nhs_number = models.CharField(max_length=255, blank=True, null=True)
+    nhs_number = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name="NHS Number"
+    )
 
     surname = models.CharField(max_length=255, blank=True)
     first_name = models.CharField(max_length=255, blank=True)
@@ -1240,8 +1240,10 @@ class Demographics(PatientSubrecord):
     religion = models.CharField(max_length=255, blank=True, null=True)
     date_of_death = models.DateField(null=True, blank=True)
     post_code = models.CharField(max_length=20, blank=True, null=True)
-    gp_practice_code = models.CharField(max_length=20, blank=True, null=True)
-    birth_place = ForeignKeyOrFreeText(Destination, verbose_name="Country of birth")
+    gp_practice_code = models.CharField(
+        max_length=20, blank=True, null=True, verbose_name="GP Practice Code"
+    )
+    birth_place = ForeignKeyOrFreeText(Destination, verbose_name="Country Of Birth")
     ethnicity = ForeignKeyOrFreeText(Ethnicity)
     death_indicator = models.BooleanField(default=False)
 

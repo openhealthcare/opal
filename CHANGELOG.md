@@ -23,6 +23,8 @@ was introduced to aid with the upgrade from Opal 4.x to 5.0 and has no further u
 
 Adds a Unique Together constraint for (Tagging.user, Tagging.episode, Tagging.value)
 
+Removes the `static` argument from the forms `input` tag. Developers should move to the `static` tag.
+
 #### Updates to the Dependency Graph
 
 Upgrades angular to v1.5.8 (from 1.3.11) you can see their change log (here)[https://github.com/angular/angular.js/blob/master/CHANGELOG.md]

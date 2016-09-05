@@ -145,7 +145,6 @@ def _input(*args, **kwargs):
         'enter'     : enter,
         'maxlength' : maxlength,
         'datepicker': datepicker,
-        'static': kwargs.pop("static", None)
     })
 
     return ctx
@@ -248,7 +247,6 @@ def select(*args, **kwargs):
         'other_label': other_label,
         'tagging': tagging,
         'multiple': multiple,
-        'static': kwargs.pop("static", None)
     })
 
     return ctx
