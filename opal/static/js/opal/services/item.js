@@ -2,8 +2,8 @@ angular.module('opal.services')
     .factory('Item', function($http, $q, $injector, FieldTranslater) {
         return function(attrs, episode, columnSchema) {
 	        var item = this;
-          this.episode =  episode;
-          this.formController = 'EditItemCtrl';
+            this.episode =  episode;
+            this.formController = 'EditItemCtrl';
 
 	        this.initialise = function(attrs) {
 	            // Copy all attributes to item, and change any date fields to Date objects
@@ -23,16 +23,16 @@ angular.module('opal.services')
 
 
 	        this.columnName = columnSchema.name;
-          this.sort = columnSchema.sort;
-          this.size = columnSchema.modal_size;
+            this.sort = columnSchema.sort;
+            this.size = columnSchema.modal_size;
 
-          this.isSingleton = function(){
-              return columnSchema.single
-          };
+            this.isSingleton = function(){
+                return columnSchema.single
+            };
 
-          this.isReadOnly = function(){
-              return columnSchema.readOnly;
-          };
+            this.isReadOnly = function(){
+                return columnSchema.readOnly;
+            };
 
             //
             // Returns a clone of the editable fields + consistency token so that
@@ -84,7 +84,6 @@ angular.module('opal.services')
                     item.id = episode.id;
                     attrs.id = episode.id;
                 }
-
 	            if (angular.isDefined(item.id)) {
 		            method = 'put';
 		            url += attrs.id + '/';
@@ -92,7 +91,6 @@ angular.module('opal.services')
 		            method = 'post';
 		            attrs.episode_id = episode.id;
 	            }
-
 	            $http[method](url, attrs).then(function(response) {
 		            item.initialise(response.data);
 		            if (method == 'post') {

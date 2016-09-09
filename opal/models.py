@@ -84,7 +84,7 @@ class SerialisableFields(object):
         many_to_manys = [field.name for field in fields if m2m(field)]
 
         fieldnames = fieldnames + many_to_manys
-
+        fieldnames = [f for f in fieldnames if not any((f.endswith('_fk_id'), f.endswith('_ft')))]
         return fieldnames
 
     @classmethod
@@ -133,10 +133,6 @@ class SerialisableFields(object):
         for fieldname in cls._get_fieldnames_to_serialize():
             if fieldname in ['id', 'patient_id', 'episode_id']:
                 continue
-            elif fieldname.endswith('_fk_id'):
-                continue
-            elif fieldname.endswith('_ft'):
-                continue
 
             getter = getattr(cls, 'get_field_type_for_' + fieldname, None)
             if getter is None:
@@ -179,9 +175,6 @@ class UpdatesFromDictMixin(SerialisableFields):
             for fname in cls.pid_fields:
                 if fname in fieldnames:
                     fieldnames.remove(fname)
-                    if cls._get_field_type(fname) == ForeignKeyOrFreeText:
-                        fieldnames.remove(fname + '_fk_id')
-                        fieldnames.remove(fname + '_ft')
         return fieldnames
 
     @classmethod
@@ -268,13 +261,6 @@ class UpdatesFromDictMixin(SerialisableFields):
 
         for name in fields:
             value = data.get(name, None)
-
-            if name.endswith('_fk_id'):
-                if name[:-6] in fields:
-                    continue
-            if name.endswith('_ft'):
-                if name[:-3] in fields:
-                    continue
 
             if name == 'consistency_token':
                 continue # shouldn't be needed - Javascripts bug?
@@ -415,33 +401,6 @@ class Synonym(models.Model):
 
     def __unicode__(self):
         return self.name
-
-
-class LocatedModel(models.Model):
-    address_line1 = models.CharField("Address line 1", max_length = 45,
-                                     blank=True, null=True)
-    address_line2 = models.CharField("Address line 2", max_length = 45,
-                                     blank=True, null=True)
-    city = models.CharField(max_length = 50, blank = True)
-    county = models.CharField("County", max_length = 40,
-                              blank=True, null=True)
-    post_code = models.CharField("Post Code", max_length = 10,
-                                 blank=True, null=True)
-
-    class Meta:
-        abstract = True
-
-
-class GP(LocatedModel):
-    name = models.CharField(blank=True, null=True, max_length=255)
-    tel1 = models.CharField(blank=True, null=True, max_length=50)
-    tel2 = models.CharField(blank=True, null=True, max_length=50)
-
-
-class CommunityNurse(LocatedModel):
-    name = models.CharField(blank=True, null=True, max_length=255)
-    tel1 = models.CharField(blank=True, null=True, max_length=50)
-    tel2 = models.CharField(blank=True, null=True, max_length=50)
 
 
 class Macro(models.Model):
@@ -1002,6 +961,9 @@ class Tagging(TrackedModel, models.Model):
     archived = models.BooleanField(default=False)
     value    = models.CharField(max_length=200, blank=True, null=True)
 
+    class Meta:
+        unique_together = (('value', 'episode', 'user'))
+
     def __unicode__(self):
         if self.user is not None:
             return 'User: %s - %s - archived: %s' % (
@@ -1260,14 +1222,14 @@ class Travel_reason(lookuplists.LookupList):
 """
 Base models
 """
-
-
 class Demographics(PatientSubrecord):
     _is_singleton = True
     _icon = 'fa fa-user'
 
     hospital_number = models.CharField(max_length=255, blank=True)
-    nhs_number = models.CharField(max_length=255, blank=True, null=True)
+    nhs_number = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name="NHS Number"
+    )
 
     surname = models.CharField(max_length=255, blank=True)
     first_name = models.CharField(max_length=255, blank=True)
@@ -1278,8 +1240,10 @@ class Demographics(PatientSubrecord):
     religion = models.CharField(max_length=255, blank=True, null=True)
     date_of_death = models.DateField(null=True, blank=True)
     post_code = models.CharField(max_length=20, blank=True, null=True)
-    gp_practice_code = models.CharField(max_length=20, blank=True, null=True)
-    birth_place = ForeignKeyOrFreeText(Destination, verbose_name="Country of birth")
+    gp_practice_code = models.CharField(
+        max_length=20, blank=True, null=True, verbose_name="GP Practice Code"
+    )
+    birth_place = ForeignKeyOrFreeText(Destination, verbose_name="Country Of Birth")
     ethnicity = ForeignKeyOrFreeText(Ethnicity)
     death_indicator = models.BooleanField(default=False)
 

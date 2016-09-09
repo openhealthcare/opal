@@ -3,13 +3,11 @@ describe('DischargeEpisodeCtrl', function(){
 
     var $scope, $modal, $httpBackend, $window, $rootScope, $controller;
     var Episode;
-    var modalInstance, episodeData;
-    var episode, tags;
-
+    var modalInstance, episodeData, episode, tags, fields, records;
     var mkcontroller;
 
-    var fields = {};
-    var records = {
+    fields = {};
+    records = {
         "default": [
             {
                 name: 'demographics',
@@ -63,38 +61,39 @@ describe('DischargeEpisodeCtrl', function(){
             }
         ]
     };
-
-
     _.each(records.default, function(c){
         fields[c.name] = c;
     });
 
 
-    episodeData = {
-        date_of_admission: '',
-        tagging: [{tropical: true}],
-        demographics: [
-            {
-                patient_id: 1234,
-                name: 'Jane doe'
-            }
-        ],
-        location: [
-            {
-                category: 'Inpatient'
-            }
-        ]
-    }
-
     beforeEach(function(){
+        episodeData = {
+            id: '555',
+            date_of_admission: '',
+            tagging: [{tropical: true}],
+            demographics: [
+                {
+                    patient_id: 1234,
+                    name: 'Jane doe'
+                }
+            ],
+            location: [
+                {
+                    category: 'Inpatient'
+                }
+            ]
+        }
+
+
+
         module('opal.controllers');
 
         inject(function($injector){
-            $httpBackend = $injector.get('$httpBackend');
             $rootScope   = $injector.get('$rootScope');
             $scope       = $rootScope.$new();
             $window      = $injector.get('$window');
             $controller  = $injector.get('$controller');
+            $httpBackend = $injector.get('$httpBackend');
             $modal       = $injector.get('$modal');
             Episode      = $injector.get('Episode');
         });
@@ -103,7 +102,6 @@ describe('DischargeEpisodeCtrl', function(){
         tags = {};
         $rootScope.fields = fields;
         episode = new Episode(episodeData)
-
 
         mkcontroller = function(tags){
             $controller('DischargeEpisodeCtrl', {
@@ -115,19 +113,19 @@ describe('DischargeEpisodeCtrl', function(){
             });
         }
         mkcontroller(tags)
+        $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
     });
 
-    describe('Setup', function(){
+    describe('Set up the controller', function(){
+
+        afterEach(function(){
+            $httpBackend.flush();
+        })
 
         it('should have the current and new categories', function() {
             expect($scope.editing.category).toEqual('Discharged');
         });
 
-        it('should set the category if we ar review', function() {
-            episode.location[0].category = 'Review';
-            mkcontroller();
-            expect($scope.editing.category).toEqual('Unfollow');
-        });
 
         it('should handle arbitrary categories', function() {
             episode.location[0].category = 'Dead';
@@ -156,10 +154,19 @@ describe('DischargeEpisodeCtrl', function(){
     describe('discharge()', function() {
 
         it('should discharge the patient', function() {
-            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+
+            $httpBackend.expectPUT('/api/v0.1/tagging/555/').respond({});
+            $httpBackend.expectPOST('/api/v0.1/location/').respond({});
+            $httpBackend.expectPUT('/api/v0.1/episode/555/').respond({});
+            spyOn(modalInstance, 'close')
+
             $scope.discharge();
-            $rootScope.$apply();
+
             $httpBackend.flush();
+            $httpBackend.verifyNoOutstandingRequest();
+            $httpBackend.verifyNoOutstandingExpectation();
+
+            expect(modalInstance.close).toHaveBeenCalledWith('discharged')
         });
 
     });

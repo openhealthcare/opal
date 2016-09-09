@@ -114,8 +114,6 @@ for subclass in episode_subrecords():
     if not subclass._meta.abstract and not getattr(subclass, "_no_admin", False):
         admin.site.register(subclass, EpisodeSubRecordAdmin)
 
-admin.site.register(models.GP, MyAdmin)
-admin.site.register(models.CommunityNurse, MyAdmin)
 admin.site.register(models.ContactNumber, MyAdmin)
 #admin.site.register(models.Team, TeamAdmin)
 admin.site.register(models.Role, MyAdmin)

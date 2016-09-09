@@ -4,7 +4,8 @@
 describe('Filter', function(){
     "use strict";
 
-    var Filter, mockWindow, $httpBackend
+    var $rootScope, $httpBackend
+    var Filter, mockWindow;
 
     beforeEach(function(){
         module('opal.services');
@@ -17,8 +18,9 @@ describe('Filter', function(){
         });
 
         inject(function($injector){
-            Filter       = $injector.get('Filter');
             $httpBackend = $injector.get('$httpBackend');
+            $rootScope   = $injector.get('$rootScope');
+            Filter       = $injector.get('Filter');
         });
 
     });

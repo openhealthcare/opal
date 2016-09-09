@@ -1,4 +1,6 @@
 describe('schema', function(){
+    "use strict";
+
     var Schema, schema;
 
     var exampleSchemaData = [
