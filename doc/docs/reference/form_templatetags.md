@@ -28,7 +28,6 @@ Keywords:
 * `show`  A string that contains an Angular expression for the ng-show directive
 * `hide`  A string that contains an Angular expression for the ng-hide directive
 * `required` Label to show when we're required
-* `mindate` Expression to use to set the minimum possible date
 
 ### {% datepicker ... %}
 

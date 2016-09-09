@@ -173,10 +173,6 @@ def input(*args, **kwargs):
 
 @register.inclusion_tag('_helpers/datepicker.html')
 def datepicker(*args, **kwargs):
-    if 'mindate' in kwargs:
-        kwargs['data'] = [
-            ('min-date', kwargs['mindate'])
-        ]
     kwargs["datepicker"] = True
     return _input(*args, **kwargs)
 

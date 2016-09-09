@@ -129,14 +129,12 @@ class DatepickerTestCase(TestCase):
         rendered = template.render(Context({}))
         self.assertIn('ng-model="bai"', rendered)
         self.assertIn('hai', rendered)
-        self.assertIn('data-min-date="2013-12-22"', rendered)
 
 class DateTimePickerTestCase(TestCase):
     def test_generic(self):
         template = Template('{% load forms %}{% datetimepicker field="Colour.name" %}')
         rendered = template.render(Context({}))
         self.assertEqual(rendered.count('ng-model="editing.colour.name"'), 2)
-        self.assertIn('date-type="date"', rendered)
 
     def test_label_date(self):
         template = Template('{% load forms %}{% datetimepicker field="Colour.name" date_label="something" %}')

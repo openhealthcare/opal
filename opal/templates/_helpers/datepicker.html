@@ -9,6 +9,10 @@
            max-date="maxDate"
            datepicker-options="dateOptions"
            ng-focus="{{ modelname }}_open=true"
-           close-text="Close" />
+           close-text="Close"
+           {% if change %}
+           ng-change="{{ change }}"
+           {% endif %}
+           />
   </div>
 </div>
