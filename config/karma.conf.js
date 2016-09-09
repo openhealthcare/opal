@@ -34,7 +34,10 @@ module.exports = function(config){
             "lib/bower_components/angular-mocks/angular-mocks.js",
 
             'lib/angular-ui-utils-0.1.0/ui-utils.js',
-            'lib/angular-ui-bootstrap-0.14.3/ui-bootstrap-tpls.js',
+
+            "lib/ui-bootstrap-tpls-0.14.3.js",
+//            'lib/angular-ui-bootstrap-0.14.3/ui-bootstrap-tpls.js',
+
             "lib/angulartics-0.17.2/angulartics.min.js",
             "lib/angulartics-0.17.2/angulartics-ga.min.js",
             'lib/ngprogress-lite/ngprogress-lite.js',
