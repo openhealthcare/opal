@@ -83,9 +83,10 @@ OPAL ships with some managemnent commands for importing and exporting lookup lis
 
 Prints all lookuplists as JSON to stdout.
 
-#### load_lookup_lists -f [filename]
+#### load_lookup_lists
 
-Loads lookup lists in the OPAL JSON format.
+Loads lookup lists from all plugins/apps in the OPAL JSON format. The lookup lists are expected to be in
+{{ app }}/data/lookuplists.json
 
 #### delete_all_lookuplists
 
