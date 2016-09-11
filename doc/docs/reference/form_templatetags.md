@@ -59,7 +59,6 @@ Keywords:
 * `required` Label to show when we're required
 * `enter` expression to evaluate if the user presses return when in this input
 * `maxlength` maximum number of characters for this input. Will render the form invalid and display help text if exceeded.
-* `static` an Angular expression that will swap the display to be a static input if it evaluates to `true`
 
 #### Inputs for subrecord fields
 
