@@ -3,10 +3,10 @@
 ### Utility functions
 
 #### get_app
-returns the Opal application you're using, ie the child class of the OpalApplication mentioned below. For more information on the structure of opal applications see the [guide section](/guides/components_overview/)
+Returns the Opal application you're using, ie the child class of the OpalApplication mentioned below. For more information on the structure of opal applications see the [guide section](/guides/components_overview/)
 
 #### get_all_components
-returns an iterator of all the of the [plugins](/guides/plugins/) and the result of get_app above
+Returns an iterator of all the of the [plugins](/guides/plugins/) and the result of get_app above
 
 ## OpalApplication
 
