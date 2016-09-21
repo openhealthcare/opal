@@ -8,11 +8,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 
-# load in opal
-# for plugin i plugins
-# load in application
-
-
 def load_lookuplist_item(model, item):
     from opal.models import Synonym
     content_type = ContentType.objects.get_for_model(model)

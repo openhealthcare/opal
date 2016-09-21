@@ -33,14 +33,14 @@ class CommandTestCase(OpalTestCase):
         c._from_file(plugin)
         self.assertEqual(path.called, False)
 
-    @patch('opal.management.commands.load_lookup_lists.plugins')
+    @patch('opal.management.commands.load_lookup_lists.application.get_all_components')
     @patch('opal.management.commands.load_lookup_lists.load_lookuplist')
     @patch('opal.management.commands.load_lookup_lists.Command._from_file')
-    def test_handle(self, is_file, load_lookup_lists, plugins):
+    def test_handle(self, is_file, load_lookup_lists, get_all_components):
         plugin = MagicMock()
         plugin.directory = MagicMock(return_value="somePlugin")
         plugin.__name__ = "somePlugin"
-        plugins.return_value = [plugin]
+        get_all_components.return_value = [plugin]
         is_file.return_value = {}
         load_lookup_lists.return_value = (1, 2, 3)
 

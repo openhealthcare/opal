@@ -44,6 +44,11 @@ We can then create clinics in any installed app, and they will be available from
 Plugins can define flows. They should return a dictionary of flows from the
 flows() method of the plugin class.
 
+### Getting a plugin directory
+
+Each plugin has a utility directory method that returns
+the file system position of the module.
+
 ### Adding URLS
 
 Add an urls.py, then add to your plugin class as YourPlugin.urls

@@ -8,7 +8,8 @@ from optparse import make_option
 from django.core.management.base import BaseCommand
 
 from opal.core.lookuplists import load_lookuplist
-from opal.core.plugins import plugins
+from opal.core import application
+import itertools
 
 LOOKUPLIST_LOCATION = os.path.join("{}", "data", "lookuplists.json")
 
@@ -33,7 +34,8 @@ class Command(BaseCommand):
             return {}
 
     def handle(self, *args, **options):
-        for plugin in plugins():
+        application_and_plugins = application.get_all_components()
+        for plugin in application_and_plugins:
             data = self._from_file(plugin)
             msg = "\nFor {}".format(plugin.__name__)
             num, created, synonyms_created = load_lookuplist(data)
