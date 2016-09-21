@@ -86,7 +86,7 @@ Prints all lookuplists as JSON to stdout.
 #### load_lookup_lists
 
 Loads lookup lists from all plugins/apps in the OPAL JSON format. The lookup lists are expected to be in
-{{ app }}/data/lookuplists.json
+`{{ app }}/data/lookuplists.json`
 
 #### delete_all_lookuplists
 
