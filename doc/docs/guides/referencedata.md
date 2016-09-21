@@ -82,13 +82,13 @@ Reference data can be provided at application or plugin level in a file named `l
 
 ```JSON
 {
-    "name_of_lookuplist": {
+    "name_of_lookuplist": [
         {
             "name": "Value of lookuplist item",
             "synonyms": ["Synonym 1",]
-        }
-        ...
-    }
+        
+        },
+    ]
 }
 ```
 
