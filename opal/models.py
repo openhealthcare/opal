@@ -95,7 +95,7 @@ class SerialisableFields(object):
             pass
 
         # TODO: Make this dynamic
-        if name in ['patient_id', 'episode_id', 'gp_id', 'nurse_id']:
+        if name in ['patient_id', 'episode_id']:
             return models.ForeignKey
 
         try:
