@@ -5,7 +5,7 @@ import inspect
 import os
 import subprocess
 import sys
-
+import shutil
 from django.utils.crypto import get_random_string
 import ffs
 from ffs import nix
@@ -59,8 +59,44 @@ def _set_settings_module(name):
     django.setup()
     return
 
+def start_plugin(name, USERLAND):
+    name = name
 
-def startproject(args, USERLAND_HERE):
+    write('Bootstrapping "{0}" - your new OPAL plugin...'.format(name))
+
+    if 'opal' in name:
+        reponame = name
+        name = name.replace('opal-', '')
+    else:
+        reponame = 'opal-{0}'.format(name)
+
+    root = USERLAND/reponame
+
+    # 1. Copy across scaffold
+    shutil.copytree(PLUGIN_SCAFFOLD, root)
+
+    # 2n. Interpolate scaffold
+    interpolate_dir(root, name=name)
+
+    # 3. Rename the code dir
+    code_root = root/name
+    nix.mv(root/'app', code_root)
+
+    # 4. Create some extra directories.
+    templates = code_root/'templates'
+    templates.mkdir()
+    static = code_root/'static'
+    static.mkdir()
+    jsdir = static/'js/{0}'.format(name)
+    jsdir.mkdir()
+    controllers = jsdir/'controllers'
+    controllers.mkdir()
+    services = jsdir/'services'
+    services.mkdir()
+    return
+
+
+def start_project(name, USERLAND_HERE):
     """
     In which we perform the steps required to start a new OPAL project.
 
@@ -75,7 +111,6 @@ def startproject(args, USERLAND_HERE):
     9. Create a superuser
     10. Initialise our git repo
     """
-    name = args.name
 
     project_dir = USERLAND_HERE/name
     if project_dir:
