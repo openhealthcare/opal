@@ -19,7 +19,7 @@ class CommandTestCase(OpalTestCase):
         path.return_value.json_load.return_value = {}
         c = loader.Command()
         c._from_file(plugin)
-        path.assert_called_with('somePlugin/data/lookuplists.json')
+        path.assert_called_with('somePlugin/data/lookuplists/lookuplists.json')
 
     @patch('opal.management.commands.load_lookup_lists.os.path.isfile')
     @patch('opal.management.commands.load_lookup_lists.ffs.Path')

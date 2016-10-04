@@ -9,9 +9,11 @@ from django.core.management.base import BaseCommand
 
 from opal.core.lookuplists import load_lookuplist
 from opal.core import application
-import itertools
 
-LOOKUPLIST_LOCATION = os.path.join("{}", "data", "lookuplists.json")
+
+LOOKUPLIST_LOCATION = os.path.join(
+    "{}", "data", "lookuplists", "lookuplists.json"
+)
 
 
 class Command(BaseCommand):
