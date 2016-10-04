@@ -46,8 +46,8 @@ flows() method of the plugin class.
 
 ### Getting a plugin directory
 
-Each plugin has a utility directory method that returns
-the file system position of the module.
+Each plugin has a `directory()` method that returns
+the file system location of the module.
 
 ### Adding URLS
 

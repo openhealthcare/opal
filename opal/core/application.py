@@ -152,7 +152,7 @@ class OpalApplication(object):
     @classmethod
     def directory(cls):
         """
-        Give the plugins directory
+        Return the filesystem path to the app directory
         """
         return os.path.realpath(os.path.dirname(inspect.getfile(cls)))
 
@@ -164,8 +164,8 @@ def get_app():
 
 
 def get_all_components():
-    """ All components of an opal application, ie
-        the initial plugin and the application
+    """ 
+    All components of an Opal application - all plugins and the application.
     """
     return itertools.chain(
         plugins.plugins(), [get_app()]
