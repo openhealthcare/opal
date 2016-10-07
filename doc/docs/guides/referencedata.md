@@ -78,7 +78,7 @@ referencedata into the forms we build, eiether by detecting their use automatica
 ### Providing data for lookuplists
 
 Reference data can be provided at application or plugin level in a file named `lookuplists.json` found in the
-`{{ app_or_plugin }}/data` directory. This data should be in the OPAL JSON format.
+`{{ app_or_plugin }}/data/lookuplists` directory. This data should be in the OPAL JSON format.
 
 ```JSON
 {
@@ -86,7 +86,7 @@ Reference data can be provided at application or plugin level in a file named `l
         {
             "name": "Value of lookuplist item",
             "synonyms": ["Synonym 1",]
-        
+
         },
     ]
 }
@@ -103,7 +103,7 @@ Prints all lookuplists as JSON to stdout.
 #### load_lookup_lists
 
 Loads lookup lists from all plugins/apps in the OPAL JSON format. The lookup lists are expected to be in
-`{{ app }}/data/lookuplists.json`
+`{{ app }}/data/lookuplists/lookuplists.json`
 
 #### delete_all_lookuplists
 
