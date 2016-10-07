@@ -13,7 +13,6 @@ class OpalApplicationTestCase(TestCase):
             javascripts = ['test.js']
             styles = ['app.css']
 
-
         self.app = App
 
     def test_get_core_javascripts(self):
@@ -49,6 +48,10 @@ class OpalApplicationTestCase(TestCase):
     def test_get_styles(self):
         self.assertEqual(['app.css'], self.app.get_styles())
 
+    @patch("opal.core.application.inspect.getfile")
+    def test_directory(self, getfile):
+        getfile.return_value = "/"
+        self.assertEqual(application.OpalApplication.directory(), "/")
 
 
 class GetAppTestCase(TestCase):
@@ -57,3 +60,16 @@ class GetAppTestCase(TestCase):
         mock_app = MagicMock('Mock App')
         subclasses.return_value = [mock_app]
         self.assertEqual(mock_app, application.get_app())
+
+
+class GetAllComponentsTestCase(TestCase):
+    @patch('opal.core.application.OpalApplication.__subclasses__')
+    @patch('opal.core.plugins.plugins')
+    def test_get_app(self, plugins, subclasses):
+        mock_app = MagicMock('Mock App')
+        plugin = MagicMock()
+        plugins.return_value = [plugin]
+        subclasses.return_value = [mock_app]
+        self.assertEqual(
+            [plugin, mock_app], list(application.get_all_components())
+        )

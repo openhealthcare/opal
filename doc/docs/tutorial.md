@@ -135,7 +135,7 @@ By convention, we store data in the <code>./data/lookuplists</code> directory of
 
 Now let's import the data:
 
-    python manage.py load_lookup_lists -f data/lookuplists/lookuplists.json
+    python manage.py load_lookup_lists
 
 Now refresh your application and try adding a new diagnosis to your patient. As you start to type in
 the condition field, you'l see that the conditions we just imported appear as suggestions:

@@ -2,10 +2,10 @@ from opal.core.test import OpalTestCase
 from opal.models import Synonym
 from opal.tests.models import Hat
 from django.contrib.contenttypes.models import ContentType
+from opal.core.lookuplists import load_lookuplist
 
 
-class LookupListTestCase(OpalTestCase):
-
+class AbstractLookupListTestCase(OpalTestCase):
     def setUp(self):
         self.hat = Hat.objects.create(name="Cowboy")
         ct = ContentType.objects.get_for_model(Hat)
@@ -15,6 +15,38 @@ class LookupListTestCase(OpalTestCase):
             name="Stetson"
         )
 
+
+class LookupListLoadingTestCase(AbstractLookupListTestCase):
+    def test_create_instance(self):
+        data = {"hat": [dict(name="Bowler", synonyms=[])]}
+        _, created, _ = load_lookuplist(data)
+        self.assertEqual(created, 1)
+
+    def test_dont_create_instance(self):
+        data = {"hat": [dict(name="Cowboy", synonyms=[])]}
+        _, created, _ = load_lookuplist(data)
+        self.assertEqual(created, 0)
+
+    def test_create_synonym(self):
+        data = {"hat": [dict(name="Cowboy", synonyms=["Ten Gallon"])]}
+        _, created, synonyms = load_lookuplist(data)
+        self.assertEqual(created, 0)
+        self.assertEqual(synonyms, 1)
+
+    def test_dont_create_synonym(self):
+        data = {"hat": [dict(name="Cowboy", synonyms=["Stetson"])]}
+        _, created, synonyms = load_lookuplist(data)
+        self.assertEqual(created, 0)
+        self.assertEqual(synonyms, 0)
+
+    def test_create_instance_and_synonym(self):
+        data = {"hat": [dict(name="Bowler", synonyms=["Derby"])]}
+        _, created, synonyms = load_lookuplist(data)
+        self.assertEqual(created, 1)
+        self.assertEqual(synonyms, 1)
+
+
+class LookupListClassTestCase(AbstractLookupListTestCase):
     def test_unicode(self):
         self.assertEqual(unicode(self.hat), "Cowboy")
 

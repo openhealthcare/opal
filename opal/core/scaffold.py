@@ -59,6 +59,12 @@ def _set_settings_module(name):
     django.setup()
     return
 
+def create_lookuplists(root_dir):
+    lookuplists_dir = root_dir/'data/lookuplists'
+    lookuplists_dir.mkdir()
+    lookuplists = lookuplists_dir/"lookuplists.json"
+    lookuplists.touch()
+
 def start_plugin(name, USERLAND):
     name = name
 
@@ -83,6 +89,7 @@ def start_plugin(name, USERLAND):
     nix.mv(root/'app', code_root)
 
     # 4. Create some extra directories.
+    create_lookuplists(code_root)
     templates = code_root/'templates'
     templates.mkdir()
     static = code_root/'static'
@@ -124,11 +131,10 @@ def start_project(name, USERLAND_HERE):
 
     write("Bootstrapping your OPAL project...")
 
-    # 2. Create empty directories
-    lookuplists = project_dir/'data/lookuplists'
-    lookuplists.mkdir()
+    if not project_dir:
+        project_dir.mkdir()
 
-    # 3. Copy across the scaffold
+    # Copy across the scaffold
     with SCAFFOLD:
         for p in SCAFFOLD.ls():
             target = project_dir/p[-1]
@@ -139,17 +145,17 @@ def start_project(name, USERLAND_HERE):
     gitignore.mv(project_dir/'.gitignore')
 
 
-    # 3. Interpolate the project data
+    # Interpolate the project data
     interpolate_dir(project_dir, name=name, secret_key=get_random_secret_key())
 
     app_dir = project_dir/name
 
-    # 5. Django Startproject creates some things - let's kill them &
+    # Django Startproject creates some things - let's kill them &
     # replace with our own things.
     nix.rm(app_dir, recursive=True, force=True)
     nix.mv(project_dir/'app', app_dir)
 
-    # 7. Create extra directories we need
+    #  Create extra directories we need
     js = app_dir/'static/js/{0}'.format(name)
     css = app_dir/'static/css'
     js.mkdir()
@@ -169,6 +175,9 @@ def start_project(name, USERLAND_HERE):
 
     This means that we can run collectstatic OK.
     """
+
+    # Create lookup lists
+    create_lookuplists(app_dir)
 
     # We have this here because it uses name from above.
     def manage(command):

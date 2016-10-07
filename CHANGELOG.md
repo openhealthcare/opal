@@ -25,6 +25,8 @@ Adds a Unique Together constraint for (Tagging.user, Tagging.episode, Tagging.va
 
 Removes the `static` argument from the forms `input` tag. Developers should move to the `static` tag.
 
+Look up lists now load in from individual apps. The look for a file at {{ app }}/data/lookuplists.json
+
 #### Updates to the Dependency Graph
 
 Upgrades angular to v1.5.8 (from 1.3.11) you can see their change log [here](https://github.com/angular/angular.js/blob/master/CHANGELOG.md)

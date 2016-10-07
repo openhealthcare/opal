@@ -69,6 +69,12 @@ class StartpluginTestCase(OpalTestCase):
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(services_dir.is_dir)
 
+    def test_has_lookuplists(self):
+        rpath = 'opal-testplugin/testplugin/data/lookuplists/lookuplists.json'
+        lookuplists = self.path/rpath
+        scaffold.start_plugin(self.args, self.path)
+        self.assertTrue(bool(lookuplists))
+
 
 @patch('subprocess.check_call')
 @patch('os.system')
@@ -92,10 +98,10 @@ class StartprojectTestCase(OpalTestCase):
         scaffold.start_project(self.args, self.path)
         os.assert_any_call('django-admin.py startproject testapp')
 
-    def test_has_lookuplists_dir(self, os, subpr):
-        lookuplists = self.path/'testapp/data/lookuplists'
+    def test_has_lookuplists(self, os, subpr):
         scaffold.start_project(self.args, self.path)
-        self.assertTrue(lookuplists.is_dir)
+        lookuplists = self.path/'testapp/testapp/data/lookuplists/lookuplists.json'
+        self.assertTrue(bool(lookuplists))
 
     def test_has_gitignore(self, os, subpr):
         scaffold.start_project(self.args, self.path)
