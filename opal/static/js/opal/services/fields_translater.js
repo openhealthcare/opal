@@ -7,7 +7,6 @@ angular.module('opal.services').service('FieldTranslater', function($rootScope){
   var DATE_FORMAT = 'DD/MM/YYYY';
   var DATETIME_FORMAT = 'DD/MM/YYYY HH:mm:ss';
 
-
   this.lookUpField = function(subrecordName, fieldName){
       var fieldBySubrecord = $rootScope.fields[subrecordName];
       if(!fieldBySubrecord){
@@ -18,7 +17,6 @@ angular.module('opal.services').service('FieldTranslater', function($rootScope){
           return x.name == fieldName;
       });
   };
-
 
   this.translateFieldsToJs = function(fieldMapping, fieldValue){
       if(fieldMapping.type == 'date'){
@@ -50,17 +48,19 @@ angular.module('opal.services').service('FieldTranslater', function($rootScope){
   };
 
   this.subRecordToJs = function(subrecord, subrecordName){
+    var jsonResult = {};
     _.forEach(subrecord, function(fieldValue, fieldName){
-        if(fieldValue){
-            var fieldMapping = self.lookUpField(subrecordName, fieldName);
-            if(fieldMapping){
-              subrecord[fieldName] = self.translateFieldsToJs(fieldMapping, fieldValue);
-            }
-        }
+      var fieldMapping = self.lookUpField(subrecordName, fieldName);
+      if(fieldMapping){
+        jsonResult[fieldName] = self.translateFieldsToJs(fieldMapping, fieldValue);
+      }
+      else{
+        jsonResult[fieldName] = fieldValue;
+      }
     });
 
-    return subrecord;
-  }
+    return jsonResult;
+  };
 
   this.cleanString = function(fieldValue){
     if(angular.isString(fieldValue)){
@@ -72,7 +72,7 @@ angular.module('opal.services').service('FieldTranslater', function($rootScope){
     }
 
     return fieldValue;
-  }
+  };
 
   this.translateJsToField = function(fieldMapping, fieldValue){
       if(fieldValue !== undefined && fieldValue !== null){
@@ -101,13 +101,19 @@ angular.module('opal.services').service('FieldTranslater', function($rootScope){
   };
 
   this.jsToSubrecord = function(subrecordJs, subrecordName){
-      _.forEach(subrecordJs, function(fieldValue, fieldName){
-        var fieldMapping = self.lookUpField(subrecordName, fieldName);
-        if(fieldMapping){
-          subrecordJs[fieldName] = self.translateJsToField(fieldMapping, fieldValue);
-        }
-      });
-      return subrecordJs;
+    var newSubrecord = {};
+
+    _.forEach(subrecordJs, function(fieldValue, fieldName){
+      var fieldMapping = self.lookUpField(subrecordName, fieldName);
+      if(fieldMapping){
+        newSubrecord[fieldName] = self.translateJsToField(fieldMapping, fieldValue);
+      }
+      else{
+        newSubrecord[fieldName] = fieldValue;
+      }
+    });
+
+    return newSubrecord;
   };
 
   this.itersingleSubrecords = function(patient, someFun){
@@ -115,20 +121,29 @@ angular.module('opal.services').service('FieldTranslater', function($rootScope){
     * iterates over subrecords of the form editing.demographics.firstname
     */
     _.forEach(patient, function(allSubrecords, subrecordName){
-      someFun(allSubrecords, subrecordName);
+      patient[subrecordName] = someFun(allSubrecords, subrecordName);
     });
     return patient;
   };
-
 
   this.iterateSubrecords = function(patient, someFun){
     /*
     * iterates over subrecords of the form demographics: [{first_name: 'Sue'}]
     */
     _.forEach(patient, function(allSubrecords, subrecordName){
-      _.forEach(allSubrecords, function(subrecordFields){
-        someFun(subrecordFields, subrecordName);
-      });
+
+      // we assume all subrecords are in fields
+      // and anything else are actual fields on the patient
+      // e.g. the patient's id, so we just copy those over
+      if($rootScope.fields[subrecordName]){
+        patient[subrecordName] = [];
+        _.forEach(allSubrecords, function(subrecordFields){
+          patient[subrecordName].push(someFun(subrecordFields, subrecordName));
+        });
+      }
+      else{
+        patient[subrecordName] = allSubrecords;
+      }
     });
     return patient;
   };

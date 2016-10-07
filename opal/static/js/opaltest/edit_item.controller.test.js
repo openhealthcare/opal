@@ -169,9 +169,9 @@ describe('EditItemCtrl', function (){
     });
 
     describe('newly-created-controller', function (){
-        it('Should have columname investigation', function () {
-            expect($scope.columnName).toBe('investigation');
-        });
+      it('Should have columname investigation', function () {
+          expect($scope.columnName).toBe('investigation');
+      });
     });
 
     describe('editingMode()', function() {
