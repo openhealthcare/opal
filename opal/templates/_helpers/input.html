@@ -36,13 +36,13 @@
            {% endif %}
            />
     {% if maxlength %}
-        <span class="help-block" ng-show="form.{{ modelname }}.$invalid">
+        <span class="help-block" ng-show="{{ formname }}.{{ modelname }}.$invalid && {{ formname }}.{{ modelname }}.$error.maxlength">
           Maximum length is {{ maxlength }}
         </span>
     {% endif %}
     {% if required %}
       <span ng-show="{{ formname }}.{{ modelname }}.$dirty && {{ formname }}.{{ modelname }}.$error.required">
-        {{ required }}
+        {{ label }} is required
       </span>
     {% endif %}
   </div>

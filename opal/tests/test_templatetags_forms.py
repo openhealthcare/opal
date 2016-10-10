@@ -183,11 +183,6 @@ class SelectTestCase(TestCase):
         rendered = template.render(Context({}))
         self.assertIn('informative help text', rendered)
 
-    def test_required_no_formname(self):
-        tpl = Template('{% load forms %}{% select label="hai" model="bai" required=True %}')
-        with self.assertRaises(ValueError):
-            tpl.render(Context({}))
-
     def test_load_from_model(self):
         tpl = Template('{% load forms %}{% select field="DogOwner.dog" %}')
         rendered = tpl.render(Context({}))
