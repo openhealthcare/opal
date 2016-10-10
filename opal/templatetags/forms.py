@@ -124,10 +124,6 @@ def _input(*args, **kwargs):
     maxlength = kwargs.pop('maxlength', None) or ctx.get("maxlength")
     datepicker = kwargs.pop("datepicker", False)
 
-    if required:
-        if not formname:
-            raise ValueError('You must pass formname if you pass required')
-
     if icon:
         icon = _icon_classes(icon)
 
