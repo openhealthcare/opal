@@ -70,11 +70,11 @@ directives.directive("scrollEpisodes", function(){
 
 directives.directive("freezeHeaders", function () {
     return {
-      restrict: 'A',
+    restrict: 'A',
       link: function (scope, element, attrs) {
           var $el = $(element).find('table');
 
-          $el.stickyTableHeaders({
+        $el.stickyTableHeaders({
               scrollableArea: $(element),
           });
       }
@@ -281,6 +281,7 @@ directives.directive('checkForm', function(){
             $element.prop( "disabled", true );
             hadError = true;
             scope.checkForm.$setSubmitted();
+            scope.$apply();
           }
         }
 
@@ -290,7 +291,7 @@ directives.directive('checkForm', function(){
               $element.prop( "disabled", false);
             }
             else if(_.size(scope.checkForm.$error) && scope.checkForm.$submitted){
-              $element.prop( "disabled", true);
+            $element.prop( "disabled", true);
             }
         });
       });

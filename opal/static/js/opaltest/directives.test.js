@@ -177,6 +177,16 @@ describe('OPAL Directives', function(){
             scope.editing = {foo: 'bar'}
             compileDirective(markup);
         });
+    })
+
+    describe("freezeHeaders", function(){
+      it('should apply the stick table headers jquery directive', function(){
+          $.fn.stickyTableHeaders = function(){};
+          spyOn($.fn, "stickyTableHeaders");
+          var markup = '<div freeze-headers><table></tablre></div>';
+          compileDirective(markup);
+          expect($.fn.stickyTableHeaders).toHaveBeenCalled();
+      });
     });
 
     describe('oneClickOnly', function(){
@@ -216,7 +226,7 @@ describe('OPAL Directives', function(){
             btn.click();
             var innerscope = angular.element(btn).scope();
             expect(btn.prop('disabled')).toBe(true);
-            expect(clickfn.calls.count()).toEqual(0);
+            expect(clickfn).not.toHaveBeenCalled();
             expect(innerscope.form.$submitted).toBe(true);
         });
 
