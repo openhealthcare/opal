@@ -107,11 +107,6 @@ class InputTest(TestCase):
         tpl = Template('{% load forms %}{% input label="hai" model="bai[0].something" %}')
         self.assertIn('bai0_something', tpl.render(Context({})))
 
-    def test_required_no_formname(self):
-        tpl = Template('{% load forms %}{% input label="hai" model="bai" required=True%}')
-        with self.assertRaises(ValueError):
-            tpl.render(Context({}))
-
 
 class CheckboxTestCase(TestCase):
 
@@ -187,11 +182,6 @@ class SelectTestCase(TestCase):
         template = Template('{% load forms %}{% select label="hai" model="bai" lookuplist="[1,2,3]" help_text="informative help text" %}')
         rendered = template.render(Context({}))
         self.assertIn('informative help text', rendered)
-
-    def test_required_no_formname(self):
-        tpl = Template('{% load forms %}{% select label="hai" model="bai" required=True %}')
-        with self.assertRaises(ValueError):
-            tpl.render(Context({}))
 
     def test_load_from_model(self):
         tpl = Template('{% load forms %}{% select field="DogOwner.dog" %}')

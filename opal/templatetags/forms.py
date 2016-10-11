@@ -94,6 +94,7 @@ def extract_common_args(kwargs):
     args["modelname"] = model_name
     args["autofocus"] = kwargs.pop("autofocus", None)
     args["help_text"] = kwargs.pop("help_text", None)
+    args["formname"] = kwargs.pop('formname', 'form')
     disabled = kwargs.pop('disabled', None)
 
     if disabled:
@@ -117,16 +118,11 @@ def _input(*args, **kwargs):
 
     icon = kwargs.pop('icon', None)
     required = kwargs.pop('required', False)
-    formname = kwargs.pop('formname', None)
     unit = kwargs.pop('unit', None)
     data = kwargs.pop('data', [])
     enter = kwargs.pop('enter', None)
     maxlength = kwargs.pop('maxlength', None) or ctx.get("maxlength")
     datepicker = kwargs.pop("datepicker", False)
-
-    if required:
-        if not formname:
-            raise ValueError('You must pass formname if you pass required')
 
     if icon:
         icon = _icon_classes(icon)
@@ -139,7 +135,6 @@ def _input(*args, **kwargs):
         'visibility': visibility,
         'icon'      : icon,
         'required'  : required,
-        'formname'  : formname,
         'unit'      : unit,
         'data'      : data,
         'enter'     : enter,
@@ -212,7 +207,6 @@ def select(*args, **kwargs):
     lookuplist = kwargs.pop("lookuplist", ctx.get("lookuplist", None))
     required = kwargs.pop("required", ctx.get("required", False))
 
-    form_name = kwargs.pop('formname', None)
     other = kwargs.pop('other', False)
     help_template = kwargs.pop('help', None)
     placeholder = kwargs.pop("placeholder", None)
@@ -221,10 +215,6 @@ def select(*args, **kwargs):
     default_null = kwargs.pop('default_null', True)
     tagging = kwargs.pop('tagging', True)
     multiple = kwargs.pop('multiple', False)
-
-    if required:
-        if not form_name:
-            raise ValueError('You must pass formname if you pass required')
 
     if lookuplist is None:
         other_show = None
@@ -236,7 +226,6 @@ def select(*args, **kwargs):
         'lookuplist': lookuplist,
         'placeholder': placeholder,
         'default_null': default_null,
-        'form_name': form_name,
         'directives': args,
         'visibility': visibility,
         'help_template': help_template,
