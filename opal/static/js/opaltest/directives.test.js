@@ -204,6 +204,59 @@ describe('OPAL Directives', function(){
         });
     });
 
+    describe('checkForm', function(){
+        it('should disable the button if there are errors', function(){
+            scope.editing = {something: ""};
+            var markup = '<form name="form"><input required ng-model="editing.something"><button check-form="form">Save</button></form>';
+            compileDirective(markup);
+            var btn = $(element.find("button"));
+            btn.click();
+            var innerscope = angular.element(btn).scope();
+            expect(btn.prop('disabled')).toBe(true);
+            expect(innerscope.form.$submitted).toBe(true);
+        });
+
+        it('should undisable the button if all errors are fixed', function(){
+          scope.editing = {something: ""};
+          var markup = '<form name="form"><input required ng-model="editing.something"><button check-form="form">Save</button></form>';
+          compileDirective(markup);
+          var btn = $(element.find("button"));
+          btn.click();
+          var innerscope = angular.element(btn).scope();
+          var input = $(element.find("input"));
+          expect(btn.prop('disabled')).toBe(true);
+          expect(innerscope.form.$submitted).toBe(true);
+          scope.editing.something = 'hello';
+          scope.$apply();
+          expect(btn.prop('disabled')).toBe(false);
+        });
+
+        it('should change the button to disabled if the form has been submitted', function(){
+          scope.editing = {something: ""};
+          var markup = '<form name="form"><input required ng-model="editing.something"><button check-form="form">Save</button></form>';
+          compileDirective(markup);
+          var btn = $(element.find("button"));
+          btn.click();
+          var innerscope = angular.element(btn).scope();
+          var input = $(element.find("input"));
+          expect(btn.prop('disabled')).toBe(true);
+          expect(innerscope.form.$submitted).toBe(true);
+          scope.editing.something = 'hello';
+          scope.$apply();
+          expect(btn.prop('disabled')).toBe(false);
+        });
+
+        it('should disable buttons on click and call through', function(){
+            var clickfn = jasmine.createSpy('clickfn');
+            scope.clickfn = clickfn;
+            var markup = '<button one-click-only ng-click="clickfn()">Save</button>';
+            compileDirective(markup);
+            $(element).click();
+            expect(clickfn.calls.count()).toEqual(1);
+            expect($(element).prop('disabled')).toBe(true);
+        });
+    });
+
     describe('clipboard', function(){
         var markup = '<button class="btn btn-primary" clipboard data-clipboard-target="#content">copy</button>'
         var growlSuccessSpy, growlErrorSpy, clipboardSpy;

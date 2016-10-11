@@ -261,6 +261,44 @@ directives.directive('oneClickOnly', function(){
   };
 });
 
+directives.directive('checkForm', function(){
+  // if the form has errors,
+  //    set the submitted flag
+  //    disable the button
+  //    if the errors are fixed,
+  //        undisable the button
+  // else
+  //     mirror the one click only behaviour
+  return {
+    scope: {
+      checkForm: "=",
+    },
+    link: function(scope, $element){
+      var hadError = false;
+      $element.on('click', function(){
+        if(!scope.checkForm.$valid){
+          if(!$element.prop('disabled')){
+            $element.prop( "disabled", true );
+            hadError = true;
+            scope.checkForm.$setSubmitted();
+          }
+        }
+
+        scope.$watch("checkForm.$valid", function(){
+            if(scope.checkForm.$valid && hadError){
+              hadError = false;
+              $element.prop( "disabled", false);
+            }
+            else if(_.size(scope.checkForm.$error) && scope.checkForm.$submitted){
+              $element.prop( "disabled", true);
+            }
+        });
+      });
+
+    }
+  }
+});
+
 directives.directive('clipboard', function(growl) {
     "use strict";
     // The MIT License (MIT)

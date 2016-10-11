@@ -490,7 +490,7 @@ table { font-size: 12px; }
 
 .table.search tbody tr td { padding: 8px; }
 
-input.ng-invalid.ng-dirty { background-color : #fcc; }
+input.ng-invalid.ng-dirty, .ng-submitted input.ng-invalid-required{ background-color : #fcc; }
 
 .errored-state input, .errored-state .ui-select-toggle, .errored-state .ui-select-multiple{
     background-color: #fcc;
