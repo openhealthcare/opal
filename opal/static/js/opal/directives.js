@@ -290,7 +290,7 @@ directives.directive('checkForm', function(){
               $element.prop( "disabled", false);
             }
             else if(_.size(scope.checkForm.$error) && scope.checkForm.$submitted){
-              $element.prop( "disabled", true);
+            $element.prop( "disabled", true);
             }
         });
       });
