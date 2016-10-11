@@ -47,6 +47,26 @@ A directive that if set with no arguments, or set to true, will only allow a but
 clicked on once and then it'll be disabled. Useful for example to make sure that multiple save requests aren't
 accidentally triggered.
 
+#### check-form
+
+Similar to one click only but it takes the form in use as an argument
+
+e.g.
+```html
+<button check-form="form" ng-click="sendDataToTheServer">click me</button>
+```
+
+This checks the form for valid on click.
+
+If the form is then not valid. It will not call the second function, but mark the form as submitted and disable the button.
+
+It will watch for the form to become valid and undisable the button when that happens.
+
+If the form is valid, it will allow the ng-click function to be called.
+
+This means that if you only want to show error messages after the user has clicked the save button you can do so with the
+form.$submitted variable.
+
 #### scroll-top
 
 Adds a click handler to the element that when click will animate the body of the element to scroll to the top

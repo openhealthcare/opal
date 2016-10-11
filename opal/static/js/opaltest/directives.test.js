@@ -207,12 +207,16 @@ describe('OPAL Directives', function(){
     describe('checkForm', function(){
         it('should disable the button if there are errors', function(){
             scope.editing = {something: ""};
-            var markup = '<form name="form"><input required ng-model="editing.something"><button check-form="form">Save</button></form>';
+            var clickfn = jasmine.createSpy('clickfn');
+            scope.clickfn = clickfn;
+
+            var markup = '<form name="form"><input required ng-model="editing.something" ng-click="clickfn()"><button check-form="form">Save</button></form>';
             compileDirective(markup);
             var btn = $(element.find("button"));
             btn.click();
             var innerscope = angular.element(btn).scope();
             expect(btn.prop('disabled')).toBe(true);
+            expect(clickfn.calls.count()).toEqual(0);
             expect(innerscope.form.$submitted).toBe(true);
         });
 
