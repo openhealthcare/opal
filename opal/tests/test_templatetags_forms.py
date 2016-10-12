@@ -5,7 +5,8 @@ from django.template import Template, Context
 from django.test import TestCase
 
 from opal.templatetags.forms import (
-    process_steps, infer_from_subrecord_field_path, date_of_birth_field
+    process_steps, infer_from_subrecord_field_path, date_of_birth_field,
+    extract_common_args
 )
 
 
@@ -15,7 +16,7 @@ class TestInferFromSubrecordPath(TestCase):
         self.assertEqual(ctx["label"], "Name")
         self.assertTrue("lookuplist" not in ctx)
         self.assertEqual(ctx["model"], "editing.dog_owner.name")
-        self.assertFalse(ctx["required"])
+        self.assertTrue(ctx["required"])
 
         ctx = infer_from_subrecord_field_path("DogOwner.dog")
         self.assertEqual(ctx["label"], "Dog")
@@ -31,6 +32,16 @@ class TestInferFromSubrecordPath(TestCase):
         self.assertEqual(ctx["label"], "Hats")
         self.assertEqual(ctx["model"], "editing.hat_wearer.hats")
         self.assertEqual(ctx["lookuplist"], "hat_list")
+
+
+class ExtractCommonArgsTestCase(TestCase):
+    def test_required_override(self):
+        tag_kwargs = dict(field="Demographics.hospital_number", required=True)
+        ctx = extract_common_args(tag_kwargs)
+        self.assertTrue(ctx["required"])
+        tag_kwargs = dict(field="Demographics.hospital_number", required=False)
+        ctx = extract_common_args(tag_kwargs)
+        self.assertFalse(ctx["required"])
 
 
 class TextareaTest(TestCase):

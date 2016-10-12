@@ -72,7 +72,14 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
                 field.related_model.get_api_name()
             )
 
-    ctx["required"] = getattr(field, "required", False)
+
+    if hasattr(field, "formfield"):
+        ctx["required"] = field.formfield().required
+    else:
+        # ForeignKeyOrFreeText are never required at this time
+        # so if we can't work out if its required, lets default
+        # to false
+        ctx["required"] = False
 
     if hasattr(field, "max_length"):
         ctx["maxlength"] = field.max_length
@@ -95,6 +102,9 @@ def extract_common_args(kwargs):
     args["autofocus"] = kwargs.pop("autofocus", None)
     args["help_text"] = kwargs.pop("help_text", None)
     args["formname"] = kwargs.pop('formname', 'form')
+
+    # required could have been set via the model
+    args["required"] = kwargs.pop('required', args.pop("required", False))
     disabled = kwargs.pop('disabled', None)
 
     if disabled:
@@ -117,7 +127,6 @@ def _input(*args, **kwargs):
         ctx["lookuplist"] = kwargs.pop("lookuplist")
 
     icon = kwargs.pop('icon', None)
-    required = kwargs.pop('required', False)
     unit = kwargs.pop('unit', None)
     data = kwargs.pop('data', [])
     enter = kwargs.pop('enter', None)
@@ -134,7 +143,6 @@ def _input(*args, **kwargs):
         'directives': args,
         'visibility': visibility,
         'icon'      : icon,
-        'required'  : required,
         'unit'      : unit,
         'data'      : data,
         'enter'     : enter,
@@ -205,7 +213,6 @@ def select(*args, **kwargs):
     """
     ctx = extract_common_args(kwargs)
     lookuplist = kwargs.pop("lookuplist", ctx.get("lookuplist", None))
-    required = kwargs.pop("required", ctx.get("required", False))
 
     other = kwargs.pop('other', False)
     help_template = kwargs.pop('help', None)
@@ -231,7 +238,6 @@ def select(*args, **kwargs):
         'help_template': help_template,
         'other': other,
         'model_name': ctx["model"].replace('.', '_').replace('[','').replace(']', '').replace('editing_', ''),
-        'required': required,
         'other_show': other_show,
         'other_label': other_label,
         'tagging': tagging,
