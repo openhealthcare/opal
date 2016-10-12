@@ -473,9 +473,7 @@ class Patient(models.Model):
         """
         if "demographics" not in dict_of_list_of_upgrades:
             if not self.id:
-                raise ValueError(
-                    "demographics are required when creating a new patient"
-                )
+                dict_of_list_of_upgrades["demographics"] = [{}]
 
         if not self.id:
             self.save()
