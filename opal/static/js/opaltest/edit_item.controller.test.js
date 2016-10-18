@@ -2,7 +2,7 @@ describe('EditItemCtrl', function (){
     "use strict";
 
     var $scope, $cookieStore, $timeout, $modal, $httpBackend;
-    var item, Item;
+    var item, Item, existingEpisode;
     var dialog, Episode, episode, ngProgressLite, $q, $rootScope;
     var Schema, $controller, controller, fakeModalInstance;
 
@@ -104,6 +104,7 @@ describe('EditItemCtrl', function (){
                     {name: 'result', type: 'string'},
                     {name: 'consistency_token', type: 'string'},
                     {name: 'test', type: 'string'},
+                    {name: 'c_difficile_toxin', type: 'string'}
                 ]
             }
         ]
@@ -268,7 +269,7 @@ describe('EditItemCtrl', function (){
 
     describe('testType', function(){
         beforeEach(function(){
-            var existingEpisode = new Episode(angular.copy(episodeData));
+            existingEpisode = new Episode(angular.copy(episodeData));
 
             // when we prepopulate we should not remove the consistency_token
             existingEpisode.microbiology_test = [{
@@ -298,13 +299,69 @@ describe('EditItemCtrl', function (){
             // We need to fire the promise - the http expectation is set above.
             $scope.$apply();
 
-        })
+        });
+
+        it('on initialisation, update the test type, but not the test details', function(){
+          $scope = $rootScope.$new();
+          item.test = "C diff";
+          item.c_difficile_toxin = "someToxin";
+          controller = $controller('EditItemCtrl', {
+              $scope        : $scope,
+              $cookieStore  : $cookieStore,
+              $timeout      : $timeout,
+              $modalInstance: fakeModalInstance,
+              item          : item,
+              metadata      : metadata,
+              profile       : profile,
+              episode       : existingEpisode,
+              ngProgressLite: ngProgressLite,
+              referencedata: referencedata,
+          });
+          expect($scope.editing.microbiology_test.test).toEqual("C diff");
+          expect($scope.editing.microbiology_test.c_difficile_toxin).toEqual("someToxin");
+        });
+
+        it("if the test hasn't changed, don't nuke clean other fields", function(){
+          $scope.editing.microbiology_test.test = "C diff";
+          $scope.$digest();
+          expect($scope.editing.microbiology_test.c_difficile_toxin).toEqual("pending");
+          $scope.editing.microbiology_test.c_difficile_toxin = "someToxin";
+          $scope.editing.microbiology_test.test = "C diff";
+          $scope.$digest();
+          expect($scope.editing.microbiology_test.c_difficile_toxin).toEqual("someToxin");
+        });
 
         it('should prepopulate microbiology tests', function(){
             $scope.editing.microbiology_test.test = "C diff";
             $scope.$digest();
             expect($scope.editing.microbiology_test.c_difficile_antigen).toEqual("pending");
             expect($scope.editing.microbiology_test.c_difficile_toxin).toEqual("pending");
+            $scope.editing.microbiology_test.test = ""
+            $scope.$digest();
+            expect($scope.editing.microbiology_test.c_difficile_antigen).not.toEqual("pending");
+            expect($scope.editing.microbiology_test.c_difficile_toxin).not.toEqual("pending");
+            expect($scope.editing.microbiology_test.consistency_token).toEqual("23423223");
+        });
+
+        it('should should not clean id, date ordered or episode id', function(){
+            var today = moment().format('DD/MM/YYYY');
+            $scope.editing.microbiology_test.test = "C diff";
+            $scope.editing.microbiology_test.alert_investigation = true;
+            $scope.$digest();
+            $scope.editing.microbiology_test.c_difficile_antigen = "pending";
+            $scope.editing.microbiology_test.episode_id = 1;
+            $scope.editing.microbiology_test.id = 2;
+            $scope.editing.microbiology_test.date_ordered = today;
+            $scope.editing.microbiology_test.consistency_token = "122112";
+            $scope.editing.microbiology_test.test = "";
+            $scope.$digest();
+
+            expect($scope.editing.microbiology_test.c_difficile_antigen).not.toEqual("pending");
+            expect($scope.editing.microbiology_test.episode_id).toBe(1);
+            expect($scope.editing.microbiology_test.id).toBe(2);
+            expect($scope.editing.microbiology_test.consistency_token).toBe("122112");
+            expect($scope.editing.microbiology_test.date_ordered).toBe(today);
+            expect($scope.editing.microbiology_test.alert_investigation).toBe(true);
         });
     });
 
