@@ -11,27 +11,38 @@ from opal.templatetags.forms import (
 
 
 class TestInferFromSubrecordPath(TestCase):
-    def test_infer_from_path(self):
+    def test_infer_char_field(self):
         ctx = infer_from_subrecord_field_path("DogOwner.name")
         self.assertEqual(ctx["label"], "Name")
         self.assertTrue("lookuplist" not in ctx)
         self.assertEqual(ctx["model"], "editing.dog_owner.name")
+
+    def test_infer_required_fields(self):
+        ctx = infer_from_subrecord_field_path("DogOwner.name")
         self.assertTrue(ctx["required"])
 
+    def test_infer_foreign_key_for_free_text(self):
         ctx = infer_from_subrecord_field_path("DogOwner.dog")
         self.assertEqual(ctx["label"], "Dog")
         self.assertEqual(ctx["model"], "editing.dog_owner.dog")
         self.assertEqual(ctx["lookuplist"], "dog_list")
         self.assertFalse(ctx["required"])
 
+    def test_get_label_from_the_model(self):
         ctx = infer_from_subrecord_field_path("Demographics.hospital_number")
         self.assertEqual(ctx["label"], "Hospital Number")
 
-        # many to many
+    def test_infer_many_to_many_fields(self):
         ctx = infer_from_subrecord_field_path("HatWearer.hats")
         self.assertEqual(ctx["label"], "Hats")
         self.assertEqual(ctx["model"], "editing.hat_wearer.hats")
         self.assertEqual(ctx["lookuplist"], "hat_list")
+
+    def test_infer_blank_fields(self):
+        # at present we consider blank fields even if they are aren't nullable
+        # to be not required
+        ctx = infer_from_subrecord_field_path("Birthday.birth_date")
+        self.assertFalse(ctx["required"])
 
 
 class ExtractCommonArgsTestCase(TestCase):

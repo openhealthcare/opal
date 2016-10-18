@@ -9,7 +9,7 @@ from opal.core import lookuplists
 
 
 class Birthday(models.PatientSubrecord):
-    birth_date = dmodels.DateField(blank=True, null=True)
+    birth_date = dmodels.DateField(blank=True)
     party = dmodels.DateTimeField(blank=True, null=True)
 
 
