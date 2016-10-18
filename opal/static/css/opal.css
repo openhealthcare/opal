@@ -490,7 +490,6 @@ table { font-size: 12px; }
 
 .table.search tbody tr td { padding: 8px; }
 
-input.ng-invalid.ng-dirty,
 .ng-submitted input.ng-invalid-required,
 .ng-submitted input.ng-invalid-required-if-not-empty,
 .input.invalid{
