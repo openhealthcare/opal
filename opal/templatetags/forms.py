@@ -74,7 +74,10 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
 
 
     if hasattr(field, "formfield"):
-        ctx["required"] = field.formfield().required
+        # TODO remove the blankable condition and make sure
+        # all fields are null=False
+        blankable =  getattr(field, "blank", True)
+        ctx["required"] = (not blankable) or field.formfield().required
     else:
         # ForeignKeyOrFreeText are never required at this time
         # so if we can't work out if its required, lets default

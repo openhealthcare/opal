@@ -7,7 +7,7 @@
   >
     <div class="row">
       <label class="radio-inline" ng-repeat="item in {{ lookuplist }}">
-        <input required class="" type="radio" name="{{ modelname }}" value="[[ item ]]" ng-model="{{ model }}">
+        <input {% if required %}required{% endif %} class="" type="radio" name="{{ modelname }}" value="[[ item ]]" ng-model="{{ model }}">
         [[ item ]]
       </label>
     </div>
