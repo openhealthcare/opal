@@ -44,13 +44,6 @@ angular.module('opal.controllers').controller(
 		        };
                 var watchName = "editing." + item.columnName + ".test"
 		        $scope.$watch(watchName, function(testName) {
-
-                    _.each(_.keys($scope.editing[item.columnName]), function(field){
-                        if(field !== "test" && field !== "date_ordered" && field !== "alert_investigation"  && field !== "id" && field !== "episode_id" && field !== "consistency_token"){
-                            $scope.editing[item.columnName][field] = undefined;
-                        }
-                    });
-
 			        $scope.testType = $scope.microbiology_test_lookup[testName];
                     if( _.isUndefined(testName) || _.isUndefined($scope.testType) ){
                         return;
