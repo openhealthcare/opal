@@ -1547,7 +1547,7 @@ class SymptomComplex(EpisodeSubrecord):
         abstract = True
 
     symptoms = models.ManyToManyField(
-        Symptom, related_name="symptoms"
+        Symptom, related_name="symptoms", blank=True
     )
     duration = models.CharField(max_length=255, blank=True, null=True)
     details = models.TextField(blank=True, null=True)
