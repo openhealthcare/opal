@@ -1,7 +1,7 @@
 {% load panels %}
 {% load forms %}
-<div class="container-fluid content-offset">
-  <div class="panel panel-primary panel-container">
+<div class="container-fluid content-offset {% block container_classes %}{% endblock %}">
+  <div class="panel panel-primary panel-container {% block panel_classes %}{% endblock %}">
     <!-- Default panel contents -->
     <div class="panel-heading">
       <h1>
@@ -15,7 +15,7 @@
       </h1>
     </div>
 
-    <div class="panel-body">
+    <div class="panel-body {% block panel_body_classes %}{% endblock %}">
       <div class="row">
         {% block content %}
 
