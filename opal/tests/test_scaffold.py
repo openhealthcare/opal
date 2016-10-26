@@ -75,6 +75,16 @@ class StartpluginTestCase(OpalTestCase):
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(bool(lookuplists))
 
+    def test_creates_manifest(self):
+        rpath = 'opal-testplugin/MANIFEST.in'
+        manifest = self.path/rpath
+        scaffold.start_plugin(self.args, self.path)
+        self.assertTrue(bool(manifest))
+        with open(manifest) as m:
+            contents = m.read()
+            self.assertIn("recursive-include testplugin/static *", contents)
+            self.assertIn("recursive-include testplugin/templates *", contents)
+
 
 @patch('subprocess.check_call')
 @patch('os.system')
@@ -164,6 +174,16 @@ class StartprojectTestCase(OpalTestCase):
         readme = self.path/'testapp/testapp/assets/README.md'
         self.assertTrue(readme.is_file)
 
+    def test_creates_manifest(self, os, subpr):
+        scaffold.start_project(self.args, self.path)
+        manifest = self.path/'testapp/MANIFEST.in'
+        self.assertTrue(bool(manifest))
+        with open(manifest) as m:
+            contents = m.read()
+            self.assertIn("recursive-include testapp/static *", contents)
+            self.assertIn("recursive-include testapp/templates *", contents)
+            self.assertIn("recursive-include testapp/assets *", contents)
+
     def test_runs_makemigrations(self, os, subpr):
         scaffold.start_project(self.args, self.path)
         subpr.assert_any_call(['python', 'testapp/manage.py',
@@ -182,6 +202,7 @@ class StartprojectTestCase(OpalTestCase):
     def test_initialize_git(self, os, subpr):
         scaffold.start_project(self.args, self.path)
         os.assert_any_call('cd testapp; git init')
+
 
 
 @patch("ffs.Path.__lshift__")
