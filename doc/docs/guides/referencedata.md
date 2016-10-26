@@ -75,6 +75,23 @@ referencedata into the forms we build, eiether by detecting their use automatica
 {% select label="List of Conditions" lookuplist="referencedata.diagnosis" %}
 ```
 
+### Providing data for lookuplists
+
+Reference data can be provided at application or plugin level in a file named `lookuplists.json` found in the
+`{{ app_or_plugin }}/data/lookuplists` directory. This data should be in the OPAL JSON format.
+
+```JSON
+{
+    "name_of_lookuplist": [
+        {
+            "name": "Value of lookuplist item",
+            "synonyms": ["Synonym 1",]
+
+        },
+    ]
+}
+```
+
 ### Management commands
 
 OPAL ships with some managemnent commands for importing and exporting lookup lists
@@ -83,9 +100,10 @@ OPAL ships with some managemnent commands for importing and exporting lookup lis
 
 Prints all lookuplists as JSON to stdout.
 
-#### load_lookup_lists -f [filename]
+#### load_lookup_lists
 
-Loads lookup lists in the OPAL JSON format.
+Loads lookup lists from all plugins/apps in the OPAL JSON format. The lookup lists are expected to be in
+`{{ app }}/data/lookuplists/lookuplists.json`
 
 #### delete_all_lookuplists
 

@@ -1,5 +1,7 @@
 describe('SaveFilterCtrl', function() {
-    var $scope;
+    "use strict";
+
+    var $scope, $httpBackend, $controller, $rootScope, $modal;
     var modalInstance;
     var mock_ng_progress;
 
@@ -12,6 +14,7 @@ describe('SaveFilterCtrl', function() {
             $rootScope   = $injector.get('$rootScope');
             $scope       = $rootScope.$new();
             $controller  = $injector.get('$controller');
+            $modal       = $injector.get('$modal');
         });
 
         modalInstance = $modal.open({template: 'notatemplate'});

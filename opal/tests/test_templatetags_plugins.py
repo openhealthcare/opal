@@ -78,3 +78,19 @@ class PluginAngularDepsTestCase(OpalTestCase):
         deps = list(opalplugins.plugin_opal_angular_deps()['deps']())
         expected = ['js/test.angular.mod.js']
         self.assertEqual(expected, deps)
+
+class PluginOPALAngularTrackingExcludeTestCase(OpalTestCase):
+
+    @patch('opal.templatetags.plugins.plugins.plugins')
+    def test_prefixes(self, plugins):
+        plugins.return_value = [TestPlugin]
+        expected_prefix = []
+        expected_qs = [
+            "/search",
+            "/extract",
+        ]
+        context = opalplugins.plugin_opal_angular_tracking_exclude()
+        prefixes = list(context['excluded_tracking_prefix'])
+        qs = list(context['excluded_tracking_qs'])
+        self.assertEqual(expected_prefix, prefixes)
+        self.assertEqual(expected_qs, qs)

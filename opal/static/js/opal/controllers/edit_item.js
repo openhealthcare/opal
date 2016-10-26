@@ -42,27 +42,32 @@ angular.module('opal.controllers').controller(
 				        };
 			        };
 		        };
-                var watchName = "editing." + item.columnName + ".test"
-		        $scope.$watch(watchName, function(testName) {
-
-                    _.each(_.keys($scope.editing[item.columnName]), function(field){
-                        if(field !== "test" && field !== "date_ordered" && field !== "alert_investigation"  && field !== "id" && field !== "episode_id" && field !== "consistency_token"){
-                            $scope.editing[item.columnName][field] = undefined;
-                        }
-                    });
-
+            var watchName= "editing." + item.columnName + ".test"
+		        $scope.$watch(watchName, function(testName, oldValue) {
 			        $scope.testType = $scope.microbiology_test_lookup[testName];
-                    if( _.isUndefined(testName) || _.isUndefined($scope.testType) ){
-                        return;
-                    }
+              if(oldValue == testName){
+                return;
+              }
 
-                    if($scope.testType in $scope.micro_test_defaults){
-                        _.each(_.pairs($scope.micro_test_defaults[$scope.testType]), function(values){
-                            var field =  values[0];
-                            var val =  values[1];
-                            $scope.editing[item.columnName][field] = val;
-                        });
-                    }
+              _.each(_.keys($scope.editing[item.columnName]), function(field){
+                  if(field !== "test" && field !== "date_ordered" && field !== "alert_investigation"  && field !== "id" && field !== "episode_id" && field !== "consistency_token"){
+                      $scope.editing[item.columnName][field] = undefined;
+                  }
+              });
+
+              if( _.isUndefined(testName) || _.isUndefined($scope.testType) ){
+                  return;
+              }
+
+              if($scope.testType in $scope.micro_test_defaults){
+                  _.each(_.pairs($scope.micro_test_defaults[$scope.testType]), function(values){
+                      var field =  values[0];
+                      var val =  values[1];
+                      if(!$scope.editing[item.columnName][field]){
+                          $scope.editing[item.columnName][field] = val;
+                      }
+                  });
+              }
 		        });
 	        };
 
@@ -92,7 +97,6 @@ angular.module('opal.controllers').controller(
                 ngProgressLite.set(0);
                 ngProgressLite.start();
                 $scope.preSave($scope.editing);
-
                 to_save = [item.save($scope.editing[item.columnName])];
                 if(!angular.equals($scope.the_episode.makeCopy(), $scope.episode)){
                     to_save.push($scope.the_episode.save($scope.episode));
@@ -136,6 +140,5 @@ angular.module('opal.controllers').controller(
                 });
                 angular.extend($scope.editing[item.columnName], data);
             };
-
 
     });

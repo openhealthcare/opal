@@ -14,9 +14,8 @@ Source code is available at https://github.com/openhealthcare/opal/
 """
 
 # allow setup.py to be run from any path
+HERE = os.path.realpath(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
-
-HERE = os.path.realpath(os.path.dirname(__file__))
 
 VERSION_FILE = os.path.join(HERE, "opal/_version.py")
 verstrline = open(VERSION_FILE, "rt").read()
@@ -48,7 +47,7 @@ setup(
         'requests',
         'django==1.8.13',
         'django-reversion==1.8.7',
-        'django-axes==1.4.0',
+        'django-axes==1.7.0',
         'djangorestframework==3.2.2',
         'django-compressor==1.5',
         'python-dateutil==2.4.2',

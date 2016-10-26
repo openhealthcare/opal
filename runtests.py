@@ -17,7 +17,6 @@ settings.configure(DEBUG=True,
                            'ENGINE': 'django.db.backends.sqlite3',
                        }
                    },
-                   OPAL_OPTIONS_MODULE = 'opal.tests.dummy_options_module',
                    PROJECT_PATH=PROJECT_PATH,
                    ROOT_URLCONF='opal.urls',
                    USE_TZ=True,
@@ -50,6 +49,7 @@ settings.configure(DEBUG=True,
                                    'django.contrib.admin',
                                    'reversion',
                                    'compressor',
+                                   'axes',
                                    'djcelery',
                                    'opal',
                                    'opal.core.search',
@@ -67,7 +67,6 @@ settings.configure(DEBUG=True,
                    CELERY_ALWAYS_EAGER=True
 )
 
-from opal.tests import dummy_options_module
 from opal.tests import dummy_opal_application
 
 

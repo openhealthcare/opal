@@ -54,12 +54,11 @@ def deserialize_date(value):
     return dt.date()
 
 
-class UpdatesFromDictMixin(object):
+class SerialisableFields(object):
     """
-    Mixin class to provide the serialization/deserialization
-    fields, as well as update logic for our JSON APIs.
+    Mixin class that handles the getting of fields
+    and field types for serialisation/deserialization
     """
-
     @classmethod
     def _get_fieldnames_to_serialize(cls):
         """
@@ -85,8 +84,85 @@ class UpdatesFromDictMixin(object):
         many_to_manys = [field.name for field in fields if m2m(field)]
 
         fieldnames = fieldnames + many_to_manys
-
+        fieldnames = [f for f in fieldnames if not any((f.endswith('_fk_id'), f.endswith('_ft')))]
         return fieldnames
+
+    @classmethod
+    def _get_field_type(cls, name):
+        try:
+            return type(cls._meta.get_field_by_name(name)[0])
+        except models.FieldDoesNotExist:
+            pass
+
+        # TODO: Make this dynamic
+        if name in ['patient_id', 'episode_id']:
+            return models.ForeignKey
+
+        try:
+            value = getattr(cls, name)
+            if isinstance(value, ForeignKeyOrFreeText):
+                return ForeignKeyOrFreeText
+
+        except AttributeError:
+            pass
+
+        raise exceptions.UnexpectedFieldNameError('Unexpected fieldname: %s' % name)
+
+    @classmethod
+    def _get_field_title(cls, name):
+        try:
+            field = cls._meta.get_field(name)
+
+            if isinstance(field, models.ManyToOneRel):
+                field_name = field.related_model._meta.verbose_name_plural
+            else:
+                field_name = field.verbose_name
+
+        except FieldDoesNotExist:
+            # else its foreign key or free text
+            field_name = getattr(cls, name).verbose_name
+
+        if field_name.islower():
+            field_name = field_name.title()
+
+        return field_name
+
+    @classmethod
+    def build_field_schema(cls):
+        field_schema = []
+        for fieldname in cls._get_fieldnames_to_serialize():
+            if fieldname in ['id', 'patient_id', 'episode_id']:
+                continue
+
+            getter = getattr(cls, 'get_field_type_for_' + fieldname, None)
+            if getter is None:
+                field = cls._get_field_type(fieldname)
+                if field in [models.CharField, ForeignKeyOrFreeText]:
+                    field_type = 'string'
+                else:
+                    field_type = camelcase_to_underscore(field.__name__[:-5])
+            else:
+                field_type = getter()
+            lookup_list = None
+            if cls._get_field_type(fieldname) == ForeignKeyOrFreeText:
+                fld = getattr(cls, fieldname)
+                lookup_list = camelcase_to_underscore(fld.foreign_model.__name__)
+            title = cls._get_field_title(fieldname)
+
+            field_schema.append({'name': fieldname,
+                                 'title': title,
+                                 'type': field_type,
+                                 'lookup_list': lookup_list,
+                                 'model': cls.__name__
+                                 })
+        return field_schema
+
+
+class UpdatesFromDictMixin(SerialisableFields):
+    """
+    Mixin class to provide the deserialization
+    fields, as well as update logic for our JSON APIs.
+    """
 
     @classmethod
     def _get_fieldnames_to_extract(cls):
@@ -99,45 +175,7 @@ class UpdatesFromDictMixin(object):
             for fname in cls.pid_fields:
                 if fname in fieldnames:
                     fieldnames.remove(fname)
-                    if cls._get_field_type(fname) == ForeignKeyOrFreeText:
-                        fieldnames.remove(fname + '_fk_id')
-                        fieldnames.remove(fname + '_ft')
         return fieldnames
-
-    @classmethod
-    def _get_field_type(cls, name):
-        try:
-            return type(cls._meta.get_field_by_name(name)[0])
-        except models.FieldDoesNotExist:
-            pass
-
-        # TODO: Make this dynamic
-        if name in ['patient_id', 'episode_id', 'gp_id', 'nurse_id']:
-            return models.ForeignKey
-
-        try:
-            value = getattr(cls, name)
-            if isinstance(value, ForeignKeyOrFreeText):
-                return ForeignKeyOrFreeText
-
-        except KeyError:
-            pass
-
-        raise Exception('Unexpected fieldname: %s' % name)
-
-
-    @classmethod
-    def _get_field_title(cls, name):
-        try:
-            field = cls._meta.get_field(name)
-
-            if isinstance(field, models.ManyToOneRel):
-                return field.related_model._meta.verbose_name_plural.title()
-
-            return field.verbose_name.title()
-        except FieldDoesNotExist:
-            # else its foreign key or free text
-            return getattr(cls, name).verbose_name.title()
 
     @classmethod
     def get_field_type_for_consistency_token(cls):
@@ -192,10 +230,15 @@ class UpdatesFromDictMixin(object):
         field.add(*to_add)
         field.remove(*to_remove)
 
-    def update_from_dict(self, data, user, force=False):
+    def update_from_dict(self, data, user, force=False, fields=None):
         logging.info("updating {0} with {1} for {2}".format(
-            self.__class__.__name__, data, user)
-        )
+            self.__class__.__name__, data, user
+        ))
+
+        if fields is None:
+            fields = set(self._get_fieldnames_to_serialize())
+
+
         if self.consistency_token and not force:
             try:
                 consistency_token = data.pop('consistency_token')
@@ -208,8 +251,6 @@ class UpdatesFromDictMixin(object):
             if consistency_token != self.consistency_token:
                 raise exceptions.ConsistencyError
 
-        fields = set(self._get_fieldnames_to_serialize())
-
         post_save = []
 
         unknown_fields = set(data.keys()) - fields
@@ -220,13 +261,6 @@ class UpdatesFromDictMixin(object):
 
         for name in fields:
             value = data.get(name, None)
-
-            if name.endswith('_fk_id'):
-                if name[:-6] in fields:
-                    continue
-            if name.endswith('_ft'):
-                if name[:-3] in fields:
-                    continue
 
             if name == 'consistency_token':
                 continue # shouldn't be needed - Javascripts bug?
@@ -252,6 +286,35 @@ class UpdatesFromDictMixin(object):
 
         for some_func in post_save:
             some_func()
+
+
+class ToDictMixin(SerialisableFields):
+    """ serialises a model to a dictionary
+    """
+
+    def to_dict(self, user, fields=None):
+        """
+        Allow a subset of FIELDNAMES
+        """
+
+        if fields is None:
+            fields = self._get_fieldnames_to_serialize()
+
+        d = {}
+        for name in fields:
+            getter = getattr(self, 'get_' + name, None)
+            if getter is not None:
+                value = getter(user)
+            else:
+                field_type = self._get_field_type(name)
+                if field_type == models.fields.related.ManyToManyField:
+                    qs = getattr(self, name).all()
+                    value = [i.to_dict(user) for i in qs]
+                else:
+                    value = getattr(self, name)
+            d[name] = value
+
+        return d
 
 
 class Filter(models.Model):
@@ -340,33 +403,6 @@ class Synonym(models.Model):
         return self.name
 
 
-class LocatedModel(models.Model):
-    address_line1 = models.CharField("Address line 1", max_length = 45,
-                                     blank=True, null=True)
-    address_line2 = models.CharField("Address line 2", max_length = 45,
-                                     blank=True, null=True)
-    city = models.CharField(max_length = 50, blank = True)
-    county = models.CharField("County", max_length = 40,
-                              blank=True, null=True)
-    post_code = models.CharField("Post Code", max_length = 10,
-                                 blank=True, null=True)
-
-    class Meta:
-        abstract = True
-
-
-class GP(LocatedModel):
-    name = models.CharField(blank=True, null=True, max_length=255)
-    tel1 = models.CharField(blank=True, null=True, max_length=50)
-    tel2 = models.CharField(blank=True, null=True, max_length=50)
-
-
-class CommunityNurse(LocatedModel):
-    name = models.CharField(blank=True, null=True, max_length=255)
-    tel1 = models.CharField(blank=True, null=True, max_length=50)
-    tel2 = models.CharField(blank=True, null=True, max_length=50)
-
-
 class Macro(models.Model):
     """
     A Macro is a user-expandable text sequence that allows us to
@@ -437,9 +473,7 @@ class Patient(models.Model):
         """
         if "demographics" not in dict_of_list_of_upgrades:
             if not self.id:
-                raise ValueError(
-                    "demographics are required when creating a new patient"
-                )
+                dict_of_list_of_upgrades["demographics"] = [{}]
 
         if not self.id:
             self.save()
@@ -626,17 +660,6 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         return self.category.end
 
     @property
-    def is_discharged(self):
-        """
-        Predicate property to determine if we're discharged.
-        """
-        if not self.active:
-            return True
-        if self.discharge_date:
-            return True
-        return False
-
-    @property
     def category(self):
         from opal.core import episodes
         return episodes.EpisodeCategory.get(self.category_name.lower())(self)
@@ -774,7 +797,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         return d
 
 
-class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
+class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
     consistency_token = models.CharField(max_length=8)
     _is_singleton = False
     _advanced_searchable = True
@@ -804,40 +827,6 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
             return cls._title
         else:
             return cls._meta.object_name
-
-    @classmethod
-    def build_field_schema(cls):
-        field_schema = []
-        for fieldname in cls._get_fieldnames_to_serialize():
-            if fieldname in ['id', 'patient_id', 'episode_id']:
-                continue
-            elif fieldname.endswith('_fk_id'):
-                continue
-            elif fieldname.endswith('_ft'):
-                continue
-
-            getter = getattr(cls, 'get_field_type_for_' + fieldname, None)
-            if getter is None:
-                field = cls._get_field_type(fieldname)
-                if field in [models.CharField, ForeignKeyOrFreeText]:
-                    field_type = 'string'
-                else:
-                    field_type = camelcase_to_underscore(field.__name__[:-5])
-            else:
-                field_type = getter()
-            lookup_list = None
-            if cls._get_field_type(fieldname) == ForeignKeyOrFreeText:
-                fld = getattr(cls, fieldname)
-                lookup_list = camelcase_to_underscore(fld.foreign_model.__name__)
-            title = cls._get_field_title(fieldname)
-
-            field_schema.append({'name': fieldname,
-                                 'title': title,
-                                 'type': field_type,
-                                 'lookup_list': lookup_list,
-                                 'model': cls.__name__
-                                 })
-        return field_schema
 
     @classmethod
     def _build_template_selection(cls, episode_type=None, patient_list=None, suffix=None, prefix=None):
@@ -942,30 +931,6 @@ class Subrecord(UpdatesFromDictMixin, TrackedModel, models.Model):
 
             subrecord.update_from_dict(a_dict, user, force=force)
 
-    def _to_dict(self, user, fieldnames):
-        """
-        Allow a subset of FIELDNAMES
-        """
-
-        d = {}
-        for name in fieldnames:
-            getter = getattr(self, 'get_' + name, None)
-            if getter is not None:
-                value = getter(user)
-            else:
-                field_type = self._get_field_type(name)
-                if field_type == models.fields.related.ManyToManyField:
-                    qs = getattr(self, name).all()
-                    value = [i.to_dict(user) for i in qs]
-                else:
-                    value = getattr(self, name)
-            d[name] = value
-
-        return d
-
-    def to_dict(self, user):
-        return self._to_dict(user, self._get_fieldnames_to_serialize())
-
 
 class PatientSubrecord(Subrecord):
     patient = models.ForeignKey(Patient)
@@ -993,6 +958,9 @@ class Tagging(TrackedModel, models.Model):
     episode  = models.ForeignKey(Episode, null=False)
     archived = models.BooleanField(default=False)
     value    = models.CharField(max_length=200, blank=True, null=True)
+
+    class Meta:
+        unique_together = (('value', 'episode', 'user'))
 
     def __unicode__(self):
         if self.user is not None:
@@ -1022,79 +990,6 @@ class Tagging(TrackedModel, models.Model):
     def build_field_schema():
         return [{'name': t, 'type':'boolean'} for t in
                 patient_lists.TaggedPatientList.get_tag_names()]
-
-
-    @classmethod
-    def import_from_reversion(cls):
-        # a one off function that syncs the tags with archived tags with the
-        # existing tags
-        from collections import defaultdict
-        deleted = reversion.get_deleted(cls)
-        episode_id_to_team_dict = defaultdict(set)
-        episode_id_to_user_dict = defaultdict(set)
-
-        for deleted_item in deleted:
-            data = json.loads(deleted_item.serialized_data)[0]['fields']
-            episode_id = data["episode"]
-
-            if not Episode.objects.filter(id=episode_id).exists():
-                continue
-
-            team_id = data.get("team")
-
-            if team_id and not Team.objects.filter(id=team_id).exists():
-                continue
-
-            if "tag_name" in data:
-                qs = Team.objects.filter(name=data["tag_name"])
-                if qs.exists():
-                    team_id = qs.first().id
-
-            user_id = data.get("user")
-
-            if user_id and not User.objects.filter(id=user_id).exists():
-                continue
-
-            if user_id:
-                episode_id_to_user_dict[episode_id].add(user_id)
-            elif team_id:
-                episode_id_to_team_dict[episode_id].add(team_id)
-
-
-        team_taggings = Tagging.objects.filter(episode_id__in=episode_id_to_team_dict.keys())
-
-        for tagging in team_taggings:
-            relevent_set = episode_id_to_team_dict[tagging.episode_id]
-            if tagging.team_id and tagging.team_id in relevent_set:
-                relevent_set.remove(tagging.team_id)
-
-        tagging_objs = []
-        for episode_id, team_ids in episode_id_to_team_dict.iteritems():
-            for team_id in team_ids:
-                tagging_objs.append(Tagging(episode_id=episode_id, team_id=team_id, archived=True))
-
-        try:
-            user_taggins = Tagging.objects.filter(episode_id__in=episode_id_to_user_dict.keys())
-
-            for tagging in user_taggins:
-                relevent_set = episode_id_to_user_dict[tagging.episode_id]
-                if tagging.user_id and tagging.user_id in relevent_set:
-                    relevent_set.remove(tagging.user_id)
-
-            user_team = Team.objects.get(name="mine")
-
-            for episode_id, user_ids in episode_id_to_user_dict.iteritems():
-                for user_id in user_ids:
-                    tagging_objs.append(Tagging(
-                        episode_id=episode_id,
-                        team_id=user_team.id,
-                        user_id=user_id,
-                        archived=True
-                    ))
-        except Team.DoesNotExist:
-            pass # We don't have a mine team here
-
-        Tagging.objects.bulk_create(tagging_objs)
 
 
 """
@@ -1325,14 +1220,14 @@ class Travel_reason(lookuplists.LookupList):
 """
 Base models
 """
-
-
 class Demographics(PatientSubrecord):
     _is_singleton = True
     _icon = 'fa fa-user'
 
     hospital_number = models.CharField(max_length=255, blank=True)
-    nhs_number = models.CharField(max_length=255, blank=True, null=True)
+    nhs_number = models.CharField(
+        max_length=255, blank=True, null=True, verbose_name="NHS Number"
+    )
 
     surname = models.CharField(max_length=255, blank=True)
     first_name = models.CharField(max_length=255, blank=True)
@@ -1343,8 +1238,10 @@ class Demographics(PatientSubrecord):
     religion = models.CharField(max_length=255, blank=True, null=True)
     date_of_death = models.DateField(null=True, blank=True)
     post_code = models.CharField(max_length=20, blank=True, null=True)
-    gp_practice_code = models.CharField(max_length=20, blank=True, null=True)
-    birth_place = ForeignKeyOrFreeText(Destination, verbose_name="Country of birth")
+    gp_practice_code = models.CharField(
+        max_length=20, blank=True, null=True, verbose_name="GP Practice Code"
+    )
+    birth_place = ForeignKeyOrFreeText(Destination, verbose_name="Country Of Birth")
     ethnicity = ForeignKeyOrFreeText(Ethnicity)
     death_indicator = models.BooleanField(default=False)
 
@@ -1639,7 +1536,7 @@ class PatientConsultation(EpisodeSubrecord):
         if incoming_value:
             self.when = deserialize_datetime(incoming_value)
         else:
-            self.when = datetime.datetime.now()
+            self.when = timezone.make_aware(datetime.datetime.now())
 
 
 class SymptomComplex(EpisodeSubrecord):
@@ -1650,7 +1547,7 @@ class SymptomComplex(EpisodeSubrecord):
         abstract = True
 
     symptoms = models.ManyToManyField(
-        Symptom, related_name="symptoms"
+        Symptom, related_name="symptoms", blank=True
     )
     duration = models.CharField(max_length=255, blank=True, null=True)
     details = models.TextField(blank=True, null=True)

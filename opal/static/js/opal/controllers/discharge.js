@@ -72,7 +72,6 @@ controllers.controller(
                     taggingAttrs[$scope.currentTag] = false;
                 }
 	        }
-
 	        tagging.save(taggingAttrs).then(function(){
                 location.save(locationAttrs).then(function(){
                     episode.save(episodeAttrs).then(function(){

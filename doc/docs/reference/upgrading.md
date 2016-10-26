@@ -3,7 +3,21 @@
 This document provides instructions for specific steps required to upgrading your OPAL
 application to a later version where there are extra steps required.
 
+### 0.7.1 -> 0.8.0
+
+#### Options
+
+Options are now an ex-API. Applications should convert to use either Referencedata (canonical terms for common data), or
+Metadata (App specific data you wish to pass into the front end).
+
 ### 0.7.0 -> 0.7.1
+
+#### Downstream dependencies
+
+OPAL 0.7.1 updates the expected version of Django Axes to 1.7.0 - you will wish to update
+this in your requirements.txt or similar accordingly.
+
+#### DRF Authentication
 
 We highly recommend that applications explicitly set Django Rest Framework authentication
 classes in their `settings.py`.

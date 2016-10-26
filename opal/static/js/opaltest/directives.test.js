@@ -1,16 +1,59 @@
 describe('OPAL Directives', function(){
+    "use strict";
 
-    var element, scope, $timeout;
+    var $templateCache, $timeout, $httpBackend;
+    var element, scope;
+    var responseMarkUp = ' \
+      <ui-select class="col-sm-8" multiple ng-model="value" on-remove="onRemove($item, $model)" on-select="onSelect($item, $model)" theme="bootstrap"> \
+        <ui-select-match>[[ $item.display_name ]]</ui-select-match> \
+        <ui-select-choices repeat="i.name as i in tagsList | filter:$select.search" value="[[ $select.selected.name ]]"> \
+          <div ng-bind-html="i.display_name | highlight: $select.search"></div>  \
+        </ui-select-choices> \
+      </ui-select> \
+    ';
 
-    beforeEach(module('opal.directives'));
+    var metaData = {tags: {
+      id_inpatients: {
+        direct_add: true,
+        display_name: "ID Inpatients",
+        name: "id_inpatients",
+        parent_tag: "infectious_diseases",
+        slug: "infectious_diseases-id_inpatients"
+      },
+      infectious_diseases: {
+        direct_add: false,
+        display_name: "Infectious Diseases",
+        name: "infectious_diseases",
+        }
+      }
+    }
+    beforeEach(module('opal'));
 
-    beforeEach(inject(function($rootScope, $compile) {
-        scope = $rootScope.$new();
+
+    beforeEach(module('ui.select'));
+
+    beforeEach(module('opal.directives', function($provide){
+      $provide.service('Metadata', function(){
+        return {
+          then: function(fn){
+            fn(metaData);
+          }
+        };
+      });
     }));
 
-    beforeEach(inject(function(_$timeout_) {
-        $timeout = _$timeout_;
-    }));
+    beforeEach(function(){
+      var $rootScope;
+
+      inject(function($injector){
+        $timeout = $injector.get('$timeout');
+        $rootScope = $injector.get('$rootScope');
+        $templateCache = $injector.get('$templateCache');
+      });
+
+      $templateCache.put('/templates/ng_templates/tag_select.html', responseMarkUp);
+      scope = $rootScope.$new();
+    });
 
     function compileDirective(tpl){
         // inject allows you to use AngularJS dependency injection
@@ -119,6 +162,15 @@ describe('OPAL Directives', function(){
       });
     });
 
+    describe('parentHeight', function(){
+        it('should be markdowny', function(){
+            var markup = '<div style="height: 200px"><div markdown="foo"></div></div>';
+            scope.editing = {foo: 'bar'}
+            compileDirective(markup);
+            expect($(element).height()).toBe(200);
+        });
+    });
+
     describe('markdown', function(){
         it('should be markdowny', function(){
             var markup = '<div markdown="foo"></div>';
@@ -126,6 +178,16 @@ describe('OPAL Directives', function(){
             compileDirective(markup);
         });
     })
+
+    describe("freezeHeaders", function(){
+      it('should apply the stick table headers jquery directive', function(){
+          $.fn.stickyTableHeaders = function(){};
+          spyOn($.fn, "stickyTableHeaders");
+          var markup = '<div freeze-headers><table></tablre></div>';
+          compileDirective(markup);
+          expect($.fn.stickyTableHeaders).toHaveBeenCalled();
+      });
+    });
 
     describe('oneClickOnly', function(){
         it('should disable buttons on click and call through', function(){
@@ -149,6 +211,133 @@ describe('OPAL Directives', function(){
             $(element).click();
             expect(clickfn.calls.count()).toEqual(1);
             expect($(element).prop('disabled')).toBe(false);
+        });
+    });
+
+    describe('checkForm', function(){
+        it('should disable the button if there are errors', function(){
+            scope.editing = {something: ""};
+            var clickfn = jasmine.createSpy('clickfn');
+            scope.clickfn = clickfn;
+
+            var markup = '<form name="form"><input required ng-model="editing.something" ng-click="clickfn()"><button check-form="form">Save</button></form>';
+            compileDirective(markup);
+            var btn = $(element.find("button"));
+            btn.click();
+            var innerscope = angular.element(btn).scope();
+            expect(btn.prop('disabled')).toBe(true);
+            expect(clickfn).not.toHaveBeenCalled();
+            expect(innerscope.form.$submitted).toBe(true);
+        });
+
+        it('should undisable the button if all errors are fixed', function(){
+          scope.editing = {something: ""};
+          var markup = '<form name="form"><input required ng-model="editing.something"><button check-form="form">Save</button></form>';
+          compileDirective(markup);
+          var btn = $(element.find("button"));
+          btn.click();
+          var innerscope = angular.element(btn).scope();
+          var input = $(element.find("input"));
+          expect(btn.prop('disabled')).toBe(true);
+          expect(innerscope.form.$submitted).toBe(true);
+          scope.editing.something = 'hello';
+          scope.$apply();
+          expect(btn.prop('disabled')).toBe(false);
+        });
+
+        it('should change the button to disabled if the form has been submitted', function(){
+          scope.editing = {something: ""};
+          var markup = '<form name="form"><input required ng-model="editing.something"><button check-form="form">Save</button></form>';
+          compileDirective(markup);
+          var btn = $(element.find("button"));
+          btn.click();
+          var innerscope = angular.element(btn).scope();
+          var input = $(element.find("input"));
+          expect(btn.prop('disabled')).toBe(true);
+          expect(innerscope.form.$submitted).toBe(true);
+          scope.editing.something = 'hello';
+          scope.$apply();
+          expect(btn.prop('disabled')).toBe(false);
+        });
+
+        it('should disable buttons on click and call through', function(){
+            var clickfn = jasmine.createSpy('clickfn');
+            scope.clickfn = clickfn;
+            var markup = '<button one-click-only ng-click="clickfn()">Save</button>';
+            compileDirective(markup);
+            $(element).click();
+            expect(clickfn.calls.count()).toEqual(1);
+            expect($(element).prop('disabled')).toBe(true);
+        });
+    });
+
+    describe('clipboard', function(){
+        var markup = '<button class="btn btn-primary" clipboard data-clipboard-target="#content">copy</button>'
+        var growlSuccessSpy, growlErrorSpy, clipboardSpy;
+        var successFn;
+        var errorFn;
+        var growl;
+
+        beforeEach(inject(function(_growl_) {
+            growl = _growl_;
+            spyOn(growl, "error");
+            spyOn(growl, "success");
+        }));
+
+
+        beforeEach(function(){
+            clipboardSpy = jasmine.createSpy('clipboard');
+            clipboardSpy.and.callFake(function(x, y){
+
+                if(x === "success"){
+                    successFn = y
+                }
+                else if(x === "error"){
+                    errorFn = y
+                }
+                else{
+                  fail();
+                }
+            });
+            spyOn(window, "Clipboard").and.returnValue({on: clipboardSpy});
+            compileDirective(markup);
+        })
+
+        it('should display the growl success message on success', function(){
+          successFn();
+          scope.$digest();
+          expect(growl.success).toHaveBeenCalledWith('Copied');
+        });
+
+        it('should display the growl error message on fail', function(){
+          errorFn("can't");
+          expect(growl.error).toHaveBeenCalledWith("Failed to copy can't");
+        });
+
+        it('should not display the growl error message if the directive is told not to', function(){
+          var markup = '<button class="btn btn-primary" clipboard clipboard-show-growl="false" data-clipboard-target="#content">copy</button>'
+          compileDirective(markup);
+          successFn();
+          errorFn();
+          expect(growl.success.calls.any()).toBe(false);
+        });
+
+        it('should call the success function if provided', function(){
+            scope.called = function(){}
+            spyOn(scope, "called");
+            var markup = '<button class="btn btn-primary" clipboard clipboard-success="called()" data-clipboard-target="#content">copy</button>'
+            compileDirective(markup);
+            successFn();
+            expect(scope.called).toHaveBeenCalled();
+        });
+
+        it('should call the error function if provided', function(){
+            scope.called = function(){}
+            spyOn(scope, "called");
+            var markup = '<button class="btn btn-primary" clipboard clipboard-error="called()" data-clipboard-target="#content">copy</button>'
+            compileDirective(markup);
+            errorFn();
+            expect(scope.called).toHaveBeenCalled();
         });
     });
 
@@ -216,5 +405,62 @@ describe('OPAL Directives', function(){
             var testScope = input.scope();
             expect(testScope.value).toBe("19/10/2001");
         });
+    });
+
+    describe("tag-select", function(){
+      var markup = '<form name="form"><div id="test" tag-select ng-model="editing.tagging"></div></form>';
+
+      it("should render a template", function(){
+        scope.editing = {tagging: {}};
+        compileDirective(markup);
+        var input = angular.element($(element).find(".ui-select-container")[0]);
+        var testScope = input.scope();
+        expect(testScope.value).toEqual([]);
+      });
+
+      it("should copy values through to the select 2", function(){
+        scope.editing = {tagging: {id_inpatients: true}};
+        compileDirective(markup);
+        var input = angular.element($(element).find(".ui-select-container")[0]);
+        var testScope = input.scope();
+        expect(testScope.value.length).toBe(1)
+        expect(testScope.value[0].display_name).toBe("ID Inpatients");
+      });
+
+      it("should update editing if something is added", function(){
+        scope.editing = {tagging: {}};
+        compileDirective(markup);
+        var input = angular.element($(element).find(".ui-select-container")[0]);
+        var testScope = input.scope();
+        testScope.onSelect(metaData.tags.id_inpatients, "id_inpatients");
+        expect(scope.editing.tagging.id_inpatients).toBe(true);
+      });
+
+      it("should update editing if something is removed", function(){
+        scope.editing = {tagging: {id_inpatients: true}};
+        compileDirective(markup);
+        var input = angular.element($(element).find(".ui-select-container")[0]);
+        var testScope = input.scope();
+        testScope.onRemove(metaData.tags.id_inpatients, "id_inpatients");
+        expect(scope.editing.tagging.id_inpatients).toBe(false);
+      });
+
+      it("should not remove from if its not in tags", function(){
+        scope.editing = {tagging: {id_inpatients: true, microHaem: true}};
+        compileDirective(markup);
+        var input = angular.element($(element).find(".ui-select-container")[0]);
+        var testScope = input.scope();
+        testScope.onRemove(metaData.tags.id_inpatients, "id_inpatients");
+        expect(scope.editing.tagging.microHaem).toBe(true);
+      });
+
+      it("should not remove from if its a parent tag", function(){
+        scope.editing = {tagging: {id_inpatients: true, infectious_diseases: true}};
+        compileDirective(markup);
+        var input = angular.element($(element).find(".ui-select-container")[0]);
+        var testScope = input.scope();
+        testScope.onRemove(metaData.tags.id_inpatients, "id_inpatients");
+        expect(scope.editing.tagging.infectious_diseases).toBe(true);
+      });
     });
 });

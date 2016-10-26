@@ -44,6 +44,11 @@ We can then create clinics in any installed app, and they will be available from
 Plugins can define flows. They should return a dictionary of flows from the
 flows() method of the plugin class.
 
+### Getting a plugin directory
+
+Each plugin has a `directory()` method that returns
+the file system location of the module.
+
 ### Adding URLS
 
 Add an urls.py, then add to your plugin class as YourPlugin.urls
@@ -80,6 +85,22 @@ of your plugin.
         ]
 
 These APIs will then be available and self-documenting fom the standard OPAL url `/api/v0.1/`
+
+### Permissioning
+
+Developers are strongly encouraged to ensure that APIs which
+serve patient data are restricted to logged in users. Django Rest Framework `ViewSet` classes
+have an [extensive permissioning system](http://www.django-rest-framework.org/api-guide/permissions/).
+
+Opal ships with the base ViewSet class `opal.core.api.LoginRequiredViewset` which adds the Django
+Rest Framework permission class IsAuthenticated to your viewset.
+
+
+```python
+    class PingViewSet(LoginRequiredViewset):
+        def list(self, request):
+            return Response('pong')
+```
 
 ### Adding Actions to the sidebar
 

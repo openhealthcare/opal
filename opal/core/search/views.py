@@ -4,7 +4,9 @@ OPAL Search views
 import datetime
 import json
 from copy import copy
+from functools import wraps
 
+from django.core.exceptions import PermissionDenied
 from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotFound
 from django.views.decorators.http import require_http_methods
@@ -24,12 +26,30 @@ class SaveFilterModalView(TemplateView):
     template_name = 'save_filter_modal.html'
 
 
-class SearchTemplateView(TemplateView):
+class SearchTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'search.html'
 
 
-class ExtractTemplateView(TemplateView):
+class ExtractTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'extract.html'
+
+
+def ajax_login_required(view):
+    @wraps(view)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            raise PermissionDenied
+        return view(request, *args, **kwargs)
+    return wrapper
+
+
+def ajax_login_required_view(view):
+    @wraps(view)
+    def wrapper(self, *args, **kwargs):
+        if not self.request.user.is_authenticated():
+            raise PermissionDenied
+        return view(self, *args, **kwargs)
+    return wrapper
 
 
 def _add_pagination(eps, page_number):
@@ -45,6 +65,7 @@ def _add_pagination(eps, page_number):
 
 @with_no_caching
 @require_http_methods(['GET'])
+@ajax_login_required
 def patient_search_view(request):
     hospital_number = request.GET.get("hospital_number")
 
@@ -65,6 +86,7 @@ def patient_search_view(request):
 
 @with_no_caching
 @require_http_methods(['GET'])
+@ajax_login_required
 def simple_search_view(request):
     page_number = int(request.GET.get("page_number", 1))
     query_string = request.GET.get("query")
@@ -77,6 +99,7 @@ def simple_search_view(request):
 
 
 class ExtractSearchView(View):
+    @ajax_login_required_view
     def post(self, *args, **kwargs):
         request_data = _get_request_data(self.request)
         page_number = 1
@@ -94,7 +117,7 @@ class ExtractSearchView(View):
 
 
 class DownloadSearchView(View):
-
+    @ajax_login_required_view
     def post(self, *args, **kwargs):
         if getattr(settings, 'EXTRACT_ASYNC', None):
             criteria = _get_request_data(self.request)['criteria']
@@ -116,7 +139,11 @@ class DownloadSearchView(View):
         return resp
 
 
-class FilterView(LoginRequiredMixin, View):
+class FilterView(View):
+
+    @ajax_login_required_view
+    def dispatch(self, *args, **kwargs):
+        super(FilterView, self).dispatch(*args, **kwargs)
 
     def get(self, *args, **kwargs):
         filters = models.Filter.objects.filter(user=self.request.user)
@@ -129,11 +156,12 @@ class FilterView(LoginRequiredMixin, View):
         return _build_json_response(self.filter.to_dict())
 
 
-class FilterDetailView(LoginRequiredMixin, View):
+class FilterDetailView(View):
+    @ajax_login_required_view
     def dispatch(self, *args, **kwargs):
         try:
             self.filter = models.Filter.objects.get(pk=kwargs['pk'])
-        except models.Episode.DoesNotExist:
+        except models.Filter.DoesNotExist:
             return HttpResponseNotFound()
         return super(FilterDetailView, self).dispatch(*args, **kwargs)
 
@@ -151,30 +179,33 @@ class FilterDetailView(LoginRequiredMixin, View):
 
 
 class ExtractResultView(View):
-
+    @ajax_login_required_view
     def get(self, *args, **kwargs):
         """
         Tell the client about the state of the extract
         """
         from celery.result import AsyncResult
-        import taskrunner
+        from opal.core import celery
         task_id = kwargs['task_id']
-        result = AsyncResult(id=task_id, app=taskrunner.celery.app)
+        result = AsyncResult(id=task_id, app=celery.app)
 
         return _build_json_response({'state': result.state})
 
 
 class ExtractFileView(View):
+
+    @ajax_login_required_view
     def get(self, *args, **kwargs):
         from celery.result import AsyncResult
-        import taskrunner
+        from opal.core import celery
         task_id = kwargs['task_id']
-        result = AsyncResult(id=task_id, app=taskrunner.celery.app)
+        result = AsyncResult(id=task_id, app=celery.app)
         if result.state != 'SUCCESS':
             raise ValueError('Wrong Task Larry!')
-        print result.state
         fname = result.get()
-        resp = HttpResponse(open(fname, 'rb').read())
+        with open(fname, 'rb') as fh:
+            contents = fh.read()
+        resp = HttpResponse(contents)
         disp = 'attachment; filename="{0}extract{1}.zip"'.format(
             settings.OPAL_BRAND_NAME, datetime.datetime.now().isoformat())
         resp['Content-Disposition'] = disp

@@ -1,7 +1,8 @@
 describe('services', function() {
     "use strict";
 
-    var columns, episodeData, options, records, list_schema, mockWindow;
+    var $httpBackend, $q, $rootScope;
+    var columns, episodeData, records, list_schema, mockWindow;
 
     var profile = {
         readonly   : false,
@@ -96,26 +97,6 @@ describe('services', function() {
                 date_of_diagnosis: '19/03/2006'
             }]
         };
-        options =  {
-            travel_reason: [
-                "British Armed Forces",
-                "Business",
-                "Child visiting family",
-                "Civilian sea/air crew",
-                "Foreign Student",
-                "Foreign Visitor",
-                "Holiday",
-                "Migrant",
-                "Military",
-                "New Entrant to UK",
-                "Professional",
-                "Tourism",
-                "UK Citizen Living Abroad",
-                "VFR",
-                "Visiting Friends and Relatives",
-                "Work"
-            ]
-        }
     });
 
     describe('extractSchemaLoader', function(){
@@ -190,49 +171,6 @@ describe('services', function() {
         it('should know whether a column is a singleton', function() {
             expect(schema.isSingleton('demographics')).toBe(true);
             expect(schema.isSingleton('diagnosis')).toBe(false);
-        });
-    });
-
-    describe('Options', function(){
-        var mock, Options;
-
-        beforeEach(function(){
-            mock = { alert: jasmine.createSpy() };
-
-            module(function($provide){
-                $provide.value('$window', mock);
-            });
-
-            inject(function($injector){
-                Options        = $injector.get('Options');
-                $q             = $injector.get('$q');
-                $httpBackend   = $injector.get('$httpBackend');
-                $rootScope     = $injector.get('$rootScope');
-            });
-        });
-
-        it('should fetch the options', function(){
-            var result
-
-            $httpBackend.whenGET('/api/v0.1/options/').respond(options);
-
-            Options.then(function(r){ result = r; });
-
-            $rootScope.$apply();
-            $httpBackend.flush();
-
-            expect(result).toEqual(options);
-        });
-
-        it('should alert if the HTTP request errors', function(){
-            var result;
-
-            $httpBackend.whenGET('/api/v0.1/options/').respond(500, 'NO');
-
-            $rootScope.$apply();
-            $httpBackend.flush();
-
-            expect(mock.alert).toHaveBeenCalledWith('Options could not be loaded');
         });
     });
 

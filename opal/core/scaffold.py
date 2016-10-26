@@ -5,7 +5,7 @@ import inspect
 import os
 import subprocess
 import sys
-
+import shutil
 from django.utils.crypto import get_random_string
 import ffs
 from ffs import nix
@@ -59,8 +59,51 @@ def _set_settings_module(name):
     django.setup()
     return
 
+def create_lookuplists(root_dir):
+    lookuplists_dir = root_dir/'data/lookuplists'
+    lookuplists_dir.mkdir()
+    lookuplists = lookuplists_dir/"lookuplists.json"
+    lookuplists.touch()
 
-def startproject(args, USERLAND_HERE):
+def start_plugin(name, USERLAND):
+    name = name
+
+    write('Bootstrapping "{0}" - your new OPAL plugin...'.format(name))
+
+    if 'opal' in name:
+        reponame = name
+        name = name.replace('opal-', '')
+    else:
+        reponame = 'opal-{0}'.format(name)
+
+    root = USERLAND/reponame
+
+    # 1. Copy across scaffold
+    shutil.copytree(PLUGIN_SCAFFOLD, root)
+
+    # 2n. Interpolate scaffold
+    interpolate_dir(root, name=name)
+
+    # 3. Rename the code dir
+    code_root = root/name
+    nix.mv(root/'app', code_root)
+
+    # 4. Create some extra directories.
+    create_lookuplists(code_root)
+    templates = code_root/'templates'
+    templates.mkdir()
+    static = code_root/'static'
+    static.mkdir()
+    jsdir = static/'js/{0}'.format(name)
+    jsdir.mkdir()
+    controllers = jsdir/'controllers'
+    controllers.mkdir()
+    services = jsdir/'services'
+    services.mkdir()
+    return
+
+
+def start_project(name, USERLAND_HERE):
     """
     In which we perform the steps required to start a new OPAL project.
 
@@ -75,7 +118,6 @@ def startproject(args, USERLAND_HERE):
     9. Create a superuser
     10. Initialise our git repo
     """
-    name = args.name
 
     project_dir = USERLAND_HERE/name
     if project_dir:
@@ -89,11 +131,10 @@ def startproject(args, USERLAND_HERE):
 
     write("Bootstrapping your OPAL project...")
 
-    # 2. Create empty directories
-    lookuplists = project_dir/'data/lookuplists'
-    lookuplists.mkdir()
+    if not project_dir:
+        project_dir.mkdir()
 
-    # 3. Copy across the scaffold
+    # Copy across the scaffold
     with SCAFFOLD:
         for p in SCAFFOLD.ls():
             target = project_dir/p[-1]
@@ -104,17 +145,17 @@ def startproject(args, USERLAND_HERE):
     gitignore.mv(project_dir/'.gitignore')
 
 
-    # 3. Interpolate the project data
+    # Interpolate the project data
     interpolate_dir(project_dir, name=name, secret_key=get_random_secret_key())
 
     app_dir = project_dir/name
 
-    # 5. Django Startproject creates some things - let's kill them &
+    # Django Startproject creates some things - let's kill them &
     # replace with our own things.
     nix.rm(app_dir, recursive=True, force=True)
     nix.mv(project_dir/'app', app_dir)
 
-    # 7. Create extra directories we need
+    #  Create extra directories we need
     js = app_dir/'static/js/{0}'.format(name)
     css = app_dir/'static/css'
     js.mkdir()
@@ -134,6 +175,9 @@ def startproject(args, USERLAND_HERE):
 
     This means that we can run collectstatic OK.
     """
+
+    # Create lookup lists
+    create_lookuplists(app_dir)
 
     # We have this here because it uses name from above.
     def manage(command):

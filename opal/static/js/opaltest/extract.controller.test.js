@@ -1,8 +1,8 @@
 describe('ExtractCtrl', function(){
     "use strict";
 
-    var $scope, $httpBackend, schema, $window, $timeout, $modal, Item;
-    var PatientSummary;
+    var $scope, $httpBackend, schema, $window, $timeout, $modal, $rootScope, $controller, Item;
+    var PatientSummary, Schema;
 
     var optionsData = {
         condition: ['Another condition', 'Some condition'],
@@ -113,7 +113,7 @@ describe('ExtractCtrl', function(){
 
         var schema = new Schema(columnsData);
 
-        controller = $controller('ExtractCtrl',  {
+        var controller = $controller('ExtractCtrl',  {
             $scope : $scope,
             $modal: $modal,
             profile: {},
@@ -367,6 +367,28 @@ describe('ExtractCtrl', function(){
             $rootScope.$apply();
             $httpBackend.flush();
             $timeout.flush()
+        });
+
+        it('should re-ping if we are pending', function(){
+            $httpBackend.expectPOST('/search/extract/download').respond({extract_id: '349'});
+            var status_counter = 0;
+            var status_responder = function(){
+                if(status_counter == 0){
+                    status_counter ++;
+                    return [200, {state: 'PENDING'}]
+                }
+                return [200, {state: 'SUCCESS'}];
+            }
+            $httpBackend.when('GET', '/search/extract/result/349').respond(status_responder)
+            $scope.async_extract();
+            $timeout.flush()
+            $rootScope.$apply();
+            $httpBackend.flush();
+
+            $timeout.flush()
+            $rootScope.$apply();
+            $httpBackend.flush();
+            expect($scope.async_ready).toBe(true);
         });
 
         it('should alert if we fail', function() {

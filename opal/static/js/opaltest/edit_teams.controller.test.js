@@ -75,7 +75,9 @@ describe('EditTeamsCtrl', function(){
 
     var episodeData = {
         date_of_admission: '',
-        tagging: [{tropical: true}],
+        tagging: [{
+          tropical: true,
+        }],
         demographics: [
             {
                 patient_id: 1234,
@@ -87,7 +89,7 @@ describe('EditTeamsCtrl', function(){
                 category: 'Inpatient'
             }
         ]
-    }
+    };
 
 
     beforeEach(function(){
@@ -111,18 +113,17 @@ describe('EditTeamsCtrl', function(){
                 {
                     save: function(a){
                         return {then: function(fn) { fn(); }}
+                    },
+                    makeCopy: function(){
+                      return {tropical: true};
                     }
                 }
         ];
-        var mockTagService = function(){
-            this.toSave = function(){ return {}; }
-        };
 
         $controller('EditTeamsCtrl', {
             $scope: $scope,
             $window: $window,
             $modalInstance: modalInstance,
-            TagService: mockTagService,
             episode: episode
         });
     });
@@ -130,7 +131,18 @@ describe('EditTeamsCtrl', function(){
     describe('Setup', function() {
 
         it('should have an editing object', function() {
-            expect($scope.editing).toEqual({});
+            expect($scope.editing).toEqual({tagging: {tropical: true}});
+        });
+
+        it('should not set an empty object if there are no tags', function(){
+          episode.tagging = [];
+          $controller('EditTeamsCtrl', {
+              $scope: $scope,
+              $window: $window,
+              $modalInstance: modalInstance,
+              episode: episode
+          });
+            expect($scope.editing).toEqual({tagging: {}});
         });
 
         it('should fetch the options', function() {
@@ -138,7 +150,6 @@ describe('EditTeamsCtrl', function(){
             $rootScope.$apply();
             $httpBackend.flush();
         });
-
     });
 
     describe('save()', function() {

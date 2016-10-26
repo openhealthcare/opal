@@ -1,6 +1,9 @@
 describe('AddEpisodeCtrl', function (){
+    "use strict";
+
     var $scope, $httpBackend, $rootScope;
-    var modalInstance, mockTagService, tagServiceToSave;
+    var Schema
+    var modalInstance;
     var columns = {
         "default": [
             {
@@ -46,11 +49,6 @@ describe('AddEpisodeCtrl', function (){
         var $controller, $modal
         $scope = {};
 
-        tagServiceToSave = jasmine.createSpy('toSave').and.returnValue({"id_inpatients": true});
-        mockTagService = jasmine.createSpy('TagService').and.returnValue(
-            {toSave: tagServiceToSave}
-        );
-
         inject(function($injector){
             $controller  = $injector.get('$controller');
             $modal       = $injector.get('$modal');
@@ -60,7 +58,7 @@ describe('AddEpisodeCtrl', function (){
         });
         $rootScope.fields = angular.copy(columns.default);
 
-        schema = new Schema(columns.default);
+        var schema = new Schema(columns.default);
         modalInstance = $modal.open({template: 'Notatemplate'});
         $scope = $rootScope.$new();
 
@@ -68,22 +66,14 @@ describe('AddEpisodeCtrl', function (){
             $scope        : $scope,
             $modalInstance: modalInstance,
             referencedata : referencedata,
-            TagService    : mockTagService,
             demographics  : {},
             tags          : {tag: 'id', subtag: 'id_inpatients'}
         });
 
         $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
-        $httpBackend.expectGET('/api/v0.1/referencedata/').respond(referencedata);
         $scope.$apply();
         $httpBackend.flush();
 
-    });
-
-    describe('initial state', function() {
-        it('should know the current tags', function() {
-            expect(mockTagService).toHaveBeenCalledWith(['id_inpatients']);
-        });
     });
 
     describe('save()', function(){
@@ -93,7 +83,6 @@ describe('AddEpisodeCtrl', function (){
             $scope.editing.date_of_admission = moment(new Date(13, 1, 2014));
             $scope.editing.demographics.date_of_birth = moment(new Date(13, 1, 1914));
             $scope.save();
-            expect(tagServiceToSave).toHaveBeenCalled();
             $httpBackend.flush();
         });
 

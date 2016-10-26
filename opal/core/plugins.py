@@ -1,8 +1,11 @@
 """
 OPAL PLugin - base class and helpers
 """
+import inspect
+import os
 from django.conf import settings
 from opal.utils import _itersubclasses
+
 
 class OpalPlugin(object):
     """
@@ -28,6 +31,13 @@ class OpalPlugin(object):
         Given a USER, return a list of extra roles that this user has.
         """
         return {}
+
+    @classmethod
+    def directory(cls):
+        """
+        Give the plugins directory
+        """
+        return os.path.realpath(os.path.dirname(inspect.getfile(cls)))
 
 
 REGISTRY = set()

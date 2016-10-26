@@ -12,7 +12,7 @@ from opal import models
 from opal.core import exceptions
 from opal.models import (
     Subrecord, Tagging, Team, Patient, InpatientAdmission, Symptom,
-    SymptomComplex
+    SymptomComplex, UserProfile
 )
 from opal.core.test import OpalTestCase
 import opal.tests.test_patient_lists # To make sure test tagged lists are pulled in
@@ -117,8 +117,8 @@ class PatientTestCase(OpalTestCase):
             ]
         }
 
-        with self.assertRaises(ValueError):
-            original_patient.bulk_update(d, self.user)
+        original_patient.bulk_update(d, self.user)
+        self.assertIsNone(original_patient.demographics_set.first().hospital_number)
 
     def test_bulk_update_tagging_ignored(self):
         original_patient = models.Patient()
@@ -182,6 +182,10 @@ class PatientTestCase(OpalTestCase):
 
 
 class SubrecordTestCase(OpalTestCase):
+
+    def test_get_display_name_from_property(self):
+        self.assertEqual('Wearer of Hats', HatWearer.get_display_name())
+
     def test_date_time_deserialisation(self):
         patient, _ = self.new_patient_and_episode_please()
         birthday_date = "10/1/2000"
@@ -357,6 +361,11 @@ class SubrecordTestCase(OpalTestCase):
     def test_verbose_name(self):
         only_words = FamousLastWords._get_field_title("words")
         self.assertEqual(only_words, "Only Words")
+
+    def test_verbose_name_abbreviation(self):
+        # if a word is an abbreviation already, don't title case it!
+        osd = DogOwner._get_field_title("ownership_start_date")
+        self.assertEqual(osd, "OSD")
 
 
 class BulkUpdateFromDictsTest(OpalTestCase):
@@ -679,190 +688,18 @@ class TaggingTestCase(OpalTestCase):
             self.assertIn(field, schema)
 
 
-class TaggingImportTestCase(OpalTestCase):
+class TeamTestCase(OpalTestCase):
 
-    def test_tagging_import_from_reversion(self):
-        import reversion
-        from django.db import transaction
-        patient = Patient.objects.create()
+    def test_for_restricted_user(self):
+        profile, _ = UserProfile.objects.get_or_create(user=self.user)
+        profile.restricted_only = True
+        profile.save()
+        self.assertEqual([], Team.for_user(self.user))
 
-        with transaction.atomic(), reversion.create_revision():
-            team_1 = Team.objects.create(name='team 1', title='team 1')
-            team_2 = Team.objects.create(name='team 2', title='team 2')
-            mine = Team.objects.create(name='mine', title='mine')
-            user_1 = self.user
-            user_2 = User.objects.create(
-                username="someone",
-                is_staff=False,
-                is_superuser=False
-            )
+    def test_has_subteams(self):
+        t = Team()
+        self.assertEqual(False, t.has_subteams)
 
-            # episode 1 has a tag and an archived tag
-            episode_1 = patient.create_episode(
-                category="testepisode",
-            )
-
-            # episode 2 had 1 tag, it was deleted, then it was readded
-            episode_2 = patient.create_episode(
-                category="testepisode",
-            )
-
-            # episode 3 has 2 tags and no new tags
-            episode_3 = patient.create_episode(
-                category="testepisode",
-            )
-
-            # episode 4 has no tags and 2 deleted tags
-            episode_4 = patient.create_episode(
-                category="testepisode",
-            )
-
-            # episode 5 has only user tags, 1 is deleted the other is not
-            episode_5 = patient.create_episode(
-                category="testepisode",
-            )
-
-
-            # episode 6 has only 1 user tag which has been deleted and replaced
-            episode_6 = patient.create_episode(
-                category="testepisode",
-            )
-
-            # episode 7 has a mixture of both types of user tags and episode tags
-            episode_7 = patient.create_episode(
-                category="testepisode",
-            )
-
-            # episode 1
-            Tagging.objects.create(episode=episode_1, team=team_1)
-            deleted_tag = Tagging.objects.create(episode=episode_1, team=team_2)
-
-        with transaction.atomic(), reversion.create_revision():
-            deleted_tag.delete()
-
-        with transaction.atomic(), reversion.create_revision():
-            deleted_tag = Tagging.objects.create(episode=episode_2, team=team_1)
-
-        with transaction.atomic(), reversion.create_revision():
-            deleted_tag.delete()
-
-            # episode 2
-            Tagging.objects.create(episode=episode_2, team=team_1)
-
-            # episode 3
-            Tagging.objects.create(episode=episode_3, team=team_1)
-            Tagging.objects.create(episode=episode_3, team=team_2)
-
-            # episode 4
-            to_delete_1 = Tagging.objects.create(episode=episode_4, team=team_1)
-            to_delete_2 = Tagging.objects.create(episode=episode_4, team=team_2)
-
-
-        with transaction.atomic(), reversion.create_revision():
-            to_delete_1.delete()
-            to_delete_2.delete()
-
-        # episode 5
-        with transaction.atomic(), reversion.create_revision():
-            Tagging.objects.create(episode=episode_5, team=mine, user=user_1)
-            to_delete = Tagging.objects.create(episode=episode_5, team=mine, user=user_2)
-
-        with transaction.atomic(), reversion.create_revision():
-            to_delete.delete()
-
-        # episode 6
-        with transaction.atomic(), reversion.create_revision():
-            to_delete = Tagging.objects.create(episode=episode_6, team=mine, user=user_1)
-
-        with transaction.atomic(), reversion.create_revision():
-            to_delete.delete()
-
-        with transaction.atomic(), reversion.create_revision():
-            Tagging.objects.create(episode=episode_6, team=mine, user=user_1)
-
-        # episode 7
-        with transaction.atomic(), reversion.create_revision():
-            Tagging.objects.create(episode=episode_7, team=mine, user=user_1)
-            to_delete_1 = Tagging.objects.create(episode=episode_7, team=mine, user=user_2)
-
-            Tagging.objects.create(episode=episode_7, team=team_1)
-            to_delete_2 = Tagging.objects.create(episode=episode_7, team=team_2)
-
-        with transaction.atomic(), reversion.create_revision():
-            to_delete_1.delete()
-            to_delete_2.delete()
-
-        Tagging.import_from_reversion()
-
-        self.assertTrue(Tagging.objects.filter(
-            episode=episode_1, team=team_1, archived=False
-            ).exists()
-        )
-        self.assertTrue(Tagging.objects.filter(
-            episode=episode_1, team=team_2, archived=True
-            ).exists()
-        )
-        self.assertEqual(Tagging.objects.filter(episode=episode_1).count(), 2)
-
-        self.assertTrue(Tagging.objects.filter(
-            episode=episode_2, team=team_1, archived=False
-            ).exists()
-        )
-        self.assertEqual(Tagging.objects.filter(episode=episode_2).count(), 1)
-
-        self.assertTrue(Tagging.objects.filter(
-            episode=episode_3, team=team_1, archived=False
-            ).exists()
-        )
-        self.assertTrue(Tagging.objects.filter(
-            episode=episode_3, team=team_2, archived=False
-            ).exists()
-        )
-        self.assertEqual(Tagging.objects.filter(episode=episode_1).count(), 2)
-
-        self.assertTrue(Tagging.objects.filter(
-            episode=episode_4, team=team_1, archived=True
-            ).exists()
-        )
-        self.assertTrue(Tagging.objects.filter(
-            episode=episode_4, team=team_2, archived=True
-            ).exists()
-        )
-        self.assertEqual(Tagging.objects.filter(episode=episode_1).count(), 2)
-
-        self.assertTrue(Tagging.objects.filter(
-            episode=episode_5, team=mine, user=user_1, archived=False
-            ).exists()
-        )
-        self.assertTrue(Tagging.objects.filter(
-            episode=episode_5, team=mine, user=user_2, archived=True
-            ).exists()
-        )
-        self.assertEqual(Tagging.objects.filter(episode=episode_5).count(), 2)
-
-        self.assertTrue(Tagging.objects.filter(
-            episode=episode_6, team=mine, user=user_1, archived=False
-            ).exists()
-        )
-        self.assertEqual(Tagging.objects.filter(episode=episode_6).count(), 1)
-
-        self.assertTrue(Tagging.objects.filter(
-            episode=episode_7, team=mine, user=user_1, archived=False
-            ).exists()
-        )
-        self.assertTrue(Tagging.objects.filter(
-            episode=episode_7, team=mine, user=user_2, archived=True
-            ).exists()
-        )
-        self.assertTrue(Tagging.objects.filter(
-            episode=episode_7, team=team_1, archived=False
-            ).exists()
-        )
-        self.assertTrue(Tagging.objects.filter(
-            episode=episode_7, team=team_2, archived=True
-            ).exists()
-        )
-        self.assertEqual(Tagging.objects.filter(episode=episode_7).count(), 4)
 
 
 class AbstractDemographicsTestCase(OpalTestCase):

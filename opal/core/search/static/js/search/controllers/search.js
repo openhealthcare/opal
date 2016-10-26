@@ -119,5 +119,4 @@ angular.module('opal.controllers').controller(
             $location.path('/episode/'+$scope.getEpisodeID(patient));
         };
 
-        window.scope = $scope;
     });

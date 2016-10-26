@@ -14,7 +14,7 @@
 </div>
 <div class="modal-body" {% block modal_body_extra %}{% endblock %}>
   {% block modal_body %}
-    <form name="form" class="form-horizontal" novalidate>
+    <form name="form" ng-submit="" class="form-horizontal" novalidate>
       {% include column.get_form_template %}
     </form>
   {% endblock %}
@@ -34,8 +34,7 @@
   {% endif %}
 
   {% block modal_save %}
-  <button one-click-only class="btn btn-primary" ng-click="save('save')"
-          ng-disabled="form.$invalid || saving">
+  <button check-form="form" class="btn btn-primary" ng-click="form.$valid && save('save')">
     <i class="fa fa-save"></i>
     Save
   </button>

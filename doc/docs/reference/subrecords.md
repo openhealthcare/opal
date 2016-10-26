@@ -3,6 +3,8 @@
 OPAL Subrecords are models that relate to either Patients or Episodes, and inherit from
 base classes `opal.models.PatientSubrecord` or `opal.models.EpisodeSubrecord`
 
+They themselves inherit from the mixins `opal.models.ToDictMixin`, `opal.models.UpdateFromDict`
+
 ### Properties
 
 #### Subrecord._angular_service
@@ -127,15 +129,6 @@ Keywords:
 Classmethod to add a custom footer to a modal, used for example to denote if
 the data from a model has been sourced from an external source
 
-#### Subrecord.update_from_dict()
-An instance method that will update a model with a dictionary. This method is used
-to provides a hook for changing the way a subrecord handles being updated from serialised
-data.
-
-For example on a new allergy
-    allergy.update_from_dict({"drug": "penicillin"})
-
-will update the allergy to have the correct drug
 
 #### Subrecord.bulk_update_from_dicts()
 

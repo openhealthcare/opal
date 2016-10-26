@@ -1,6 +1,7 @@
 describe('ReopenEpisodeCtrl', function (){
     "use strict"
-    var $scope,  $timeout, $rootScope, $httpBackend;
+
+    var $scope,  $timeout, $rootScope, $httpBackend, $controller, $modal;
     var Episode;
     var dialog, patient, tag, subtag;
     var modalInstance, mkcontroller;

@@ -414,6 +414,16 @@ describe('PatientListCtrl', function() {
             expect($scope.episode.id).toBe(episode.id);
         });
 
+        it('should not call select_episode if the episode is still present', function() {
+            expect($scope.episode.id).toEqual(episodeData.id);
+            spyOn($scope, 'select_episode');
+            episodeVisibility.and.callFake(function(episode){
+                return true;
+            });
+            $scope.getVisibleEpisodes();
+            expect($scope.select_episode.calls.count()).toBe(0);
+        });
+
         it('if no episodes are available, keep using the last selected one', function(){
             /*
             so if episode visibility does not filter

@@ -1,11 +1,13 @@
 """
 Application helpers for OPAL
 """
-from opal.utils import stringport
+import inspect
+import os
+import itertools
+from opal.core import plugins
 
 
 class OpalApplication(object):
-    schema_module = None
     core_javascripts = {
         'opal.upstream.deps': [
             "js/lib/modernizr.js",
@@ -20,9 +22,8 @@ class OpalApplication(object):
 
             "js/lib/angular-ui-utils-0.1.0/ui-utils.js",
             "js/lib/ui-bootstrap-tpls-0.11.0.js",
-
+            "js/lib/utils/clipboard.js",
             "bootstrap-3.1.0/js/bootstrap.js",
-
             "js/lib/angular-strap-2.3.1/modules/compiler.js",
             "js/lib/angular-strap-2.3.1/modules/tooltip.js",
             "js/lib/angular-strap-2.3.1/modules/tooltip.tpl.js",
@@ -46,6 +47,7 @@ class OpalApplication(object):
             "js/lib/bower_components/ment.io/dist/templates.js",
             # "js/ui-select/dist/select.js",
             "js/lib/bower_components/angular-ui-select/dist/select.js",
+            "js/lib/bower_components/ng-idle/angular-idle.js",
             "js/lib/bower_components/angular-local-storage/dist/angular-local-storage.js",
             "js/lib/bower_components/ment.io/dist/templates.js",
             "js/lib/bower_components/angular-growl-v2/build/angular-growl.js",
@@ -67,6 +69,7 @@ class OpalApplication(object):
             "js/opal/services/flow.js",
             "js/opal/services/user_profile.js",
             "js/opal/services/item.js",
+            "js/opal/services/http_interceptors.js",
             "js/opal/services/episode.js",
             "js/opal/services/episode_visibility.js",
             "js/opal/services/episode_loader.js",
@@ -74,13 +77,11 @@ class OpalApplication(object):
             "js/opal/services/record_loader.js",
             "js/opal/services/extract_schema_loader.js",
             "js/opal/services/schema.js",
-            "js/opal/services/options.js",
             "js/opal/services/patient_loader.js",
             "js/opal/services/episode_resource.js",
             "js/opal/services/record_editor.js",
             "js/opal/services/copy_to_category.js",
             "js/opal/services/patientlist_loader.js",
-            "js/opal/services/tag_service.js",
             'js/opal/services/fields_translater.js',
             'js/opal/services/referencedata.js',
             'js/opal/services/metadata.js',
@@ -148,10 +149,24 @@ class OpalApplication(object):
         """
         return klass.styles
 
-
+    @classmethod
+    def directory(cls):
+        """
+        Return the filesystem path to the app directory
+        """
+        return os.path.realpath(os.path.dirname(inspect.getfile(cls)))
 
 def get_app():
     """
     Return the current Opal Application
     """
     return OpalApplication.__subclasses__()[0]
+
+
+def get_all_components():
+    """ 
+    All components of an Opal application - all plugins and the application.
+    """
+    return itertools.chain(
+        plugins.plugins(), [get_app()]
+    )

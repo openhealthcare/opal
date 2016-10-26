@@ -6,6 +6,7 @@ import json
 from mock import mock_open, Mock, patch
 
 from django.core.urlresolvers import reverse
+from django.test import override_settings
 
 from opal.core.test import OpalTestCase
 from opal import models
@@ -16,7 +17,8 @@ from opal.core import subrecords
 MOCKING_FILE_NAME_OPEN = "opal.core.search.extract.open"
 
 
-class TestViewGet(OpalTestCase):
+class TestViewPOSTTestCase(OpalTestCase):
+
     def test_check_view(self):
         # a vanilla check to make sure that the view returns a zip file
         url = reverse("extract_download")
@@ -38,6 +40,28 @@ class TestViewGet(OpalTestCase):
 
         response = self.client.post(url, post_data)
 
+        self.assertEqual(response.status_code, 200)
+
+    @override_settings(EXTRACT_ASYNC=True)
+    def test_check_view_with_sync_extract(self):
+        url = reverse("extract_download")
+        post_data = {
+            "criteria":
+                   json.dumps([{
+                    "combine": "and",
+                    "column": "demographics",
+                    "field": "Surname",
+                    "queryType": "Contains",
+                    "query": "a",
+                    "lookup_list": [],
+                }])
+        }
+
+        self.assertTrue(
+            self.client.login(username=self.user.username, password=self.PASSWORD)
+        )
+
+        response = self.client.post(url, json.dumps(post_data), content_type='appliaction/json')
         self.assertEqual(response.status_code, 200)
 
 
@@ -133,16 +157,12 @@ class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
             'nhs_number',
             'date_of_birth',
             'death_indicator',
-            'sex_fk_id',
-            'sex_ft',
-            'birth_place_fk_id',
-            'birth_place_ft',
             'sex',
             'birth_place',
         ]
         expected_row = [
             1, 'None', 'None', 'None', 'None', '12345678',
-            'None', '1976-01-01', 'False', 'None', '', 'None', '', '', ''
+            'None', '1976-01-01', 'False', '', ''
         ]
         self.assertEqual(expected_headers, headers)
         self.assertEqual(row, expected_row)

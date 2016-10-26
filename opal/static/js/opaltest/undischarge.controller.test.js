@@ -1,5 +1,7 @@
 describe('UndischargeCtrl', function() {
-    var $scope, $httpBackend, $modal, $window;
+    "use strict";
+
+    var $rootScope, $scope, $httpBackend, $modal, $window, $controller;
     var Episode;
     var modalInstance, episode, episodeData;
 

@@ -6,7 +6,6 @@ In which we expose useful commandline functionality to our users.
 import argparse
 import inspect
 import os
-import shutil
 import subprocess
 import sys
 
@@ -47,7 +46,7 @@ def _find_application_name():
     sys.exit(1)
 
 def startproject(args):
-    scaffold_utils.startproject(args, USERLAND_HERE)
+    scaffold_utils.start_project(args.name, USERLAND_HERE)
     return
 
 def startplugin(args):
@@ -59,39 +58,7 @@ def startplugin(args):
     * Rename the code dir
     * Create template/static directories
     """
-    name = args.name
-
-    print 'Bootstrapping "{0}" - your new OPAL plugin...'.format(name)
-
-    if 'opal' in name:
-        reponame = name
-        name = name.replace('opal-', '')
-    else:
-        reponame = 'opal-{0}'.format(name)
-
-    root = USERLAND_HERE/reponame
-
-    # 1. Copy across scaffold
-    shutil.copytree(PLUGIN_SCAFFOLD, root)
-
-    # 2n. Interpolate scaffold
-    scaffold_utils.interpolate_dir(root, name=name)
-
-    # 3. Rename the code dir
-    code_root = root/name
-    nix.mv(root/'app', code_root)
-
-    # 4. Create some extra directories.
-    templates = code_root/'templates'
-    templates.mkdir()
-    static = code_root/'static'
-    static.mkdir()
-    jsdir = static/'js/{0}'.format(name)
-    jsdir.mkdir()
-    controllers = jsdir/'controllers'
-    controllers.mkdir()
-    services = jsdir/'services'
-    services.mkdir()
+    scaffold_utils.start_plugin(args.name, USERLAND_HERE)
     return
 
 

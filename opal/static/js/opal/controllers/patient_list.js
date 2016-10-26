@@ -54,7 +54,7 @@ angular.module('opal.controllers').controller(
     		    visibleEpisodes.sort(compareEpisodes);
 
             if($scope.rows && visibleEpisodes.length){
-              var episodePresent = _.any($scope.visibleEpisodes, function(x){
+              var episodePresent = _.any(visibleEpisodes, function(x){
                   return x.id === $scope.episode.id;
               });
 

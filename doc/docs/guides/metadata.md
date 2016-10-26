@@ -6,6 +6,9 @@ data about a patient or episode of care, or coded [reference data](referencedata
 OPAL provides a simple API for working with such data via the `opal.core.metadata.Metadata`
 [discoverable](discoverable.md).
 
+metadata is made available on the scopes for patient lists and
+patient details
+
 ### Defining Metadata
 
 Defining metadata uses the same pattern as all [discoverable](discoverable.md) features, we

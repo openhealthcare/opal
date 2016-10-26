@@ -4,17 +4,18 @@ Tests for the OPAL API
 import json
 from datetime import date, timedelta, datetime
 from django.utils import timezone
-from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.db import DataError
 from django.contrib.contenttypes.models import ContentType
 from mock import patch, MagicMock
 
+from rest_framework.test import APIClient
 from rest_framework.reverse import reverse
+from rest_framework import status
 
 from opal import models
-from opal.tests.models import Colour, PatientColour, HatWearer, Hat
+from opal.tests.models import Colour, PatientColour, HatWearer, Hat, Demographics
 from opal.core import metadata
 from opal.core.test import OpalTestCase
 from opal.core.views import _build_json_response
@@ -26,12 +27,55 @@ from opal.tests.test_patient_lists import TaggingTestPatientList # flake8: noqa
 
 from opal.core import api
 
+class LoginRequredTestCase(OpalTestCase):
+    """
+        we expect almost all views to 401
+    """
+    def setUp(self):
+        self.patient, self.episode = self.new_patient_and_episode_please()
+        self.request = self.rf.get("/")
+        self.hat_wearer = HatWearer.objects.create(episode=self.episode)
+
+    def get_urls(self):
+        return [
+            reverse('record-list', request=self.request),
+            reverse('extract-schema-list', request=self.request),
+            reverse('referencedata-list', request=self.request),
+            reverse('metadata-list', request=self.request),
+            reverse('episode-list', request=self.request),
+            reverse('userprofile-list', request=self.request),
+            reverse(
+                'patient-detail',
+                kwargs=dict(pk=self.patient.id),
+                request=self.request
+            ),
+            reverse(
+                'hat_wearer-detail',
+                kwargs=dict(pk=self.hat_wearer.id),
+                request=self.request
+            )
+        ]
+
+    def test_403(self):
+        for url in self.get_urls():
+            response = self.client.get(url)
+            self.assertEqual(
+                response.status_code,
+                status.HTTP_403_FORBIDDEN
+            )
+
 
 class OPALRouterTestCase(TestCase):
+
     def test_default_base_name(self):
         class ViewSet:
             base_name = 'the name'
         self.assertEqual(api.OPALRouter().get_default_base_name(ViewSet), 'the name')
+
+    def test_default_base_name_unset(self):
+        class ColourViewSet:
+            queryset = Colour.objects.all()
+        self.assertEqual(api.OPALRouter().get_default_base_name(ColourViewSet), 'colour')
 
 
 class RecordTestCase(TestCase):
@@ -42,116 +86,12 @@ class RecordTestCase(TestCase):
         self.assertEqual([{}], api.RecordViewSet().list(None).data)
 
 
-class EpisodeListApiTestCase(OpalTestCase):
-    def test_episode_list_view(self):
-        request = MagicMock(name='mock request')
-        request.user = self.user
-        view = api.EpisodeListApi()
-        view.request = request
-        resp = view.get(tag="eater", subtag="herbivore")
-        self.assertEqual(200, resp.status_code)
-
-
 class ExtractSchemaTestCase(TestCase):
 
     @patch('opal.core.api.schemas')
     def test_records(self, schemas):
         schemas.extract_schema.return_value = [{}]
         self.assertEqual([{}], api.ExtractSchemaViewSet().list(None).data)
-
-
-class OptionTestCase(TestCase):
-    def setUp(self):
-        self.top = Hat.objects.create(name="top")
-        self.bowler = Hat.objects.create(name="bowler")
-        self.synonym_name = "high"
-        self.user = User.objects.create(username='testuser')
-        content_type = ContentType.objects.get_for_model(Hat)
-        models.Synonym.objects.get_or_create(
-            content_type=content_type,
-            object_id=self.top.id,
-            name=self.synonym_name
-        )
-        mock_request = MagicMock(name='mock request')
-        mock_request.user = self.user
-        request = mock_request
-        self.request = request
-        self.viewset = api.OptionsViewSet()
-        self.viewset.request = mock_request
-        self.response = self.viewset.list(request)
-
-    def test_options_loader(self):
-        result = self.response.data
-        self.assertIn("hat", result)
-        self.assertEqual(set(result["hat"]), {"top", "bowler", "high"})
-        self.assertEqual(self.response.status_code, 200)
-
-    def test_first_list_slug(self):
-        result = self.response.data
-        self.assertEqual('carnivore', result['first_list_slug'])
-
-    def test_first_list_slug_no_lists(self):
-        def nongen():
-            for x in range(0, 0):
-                yield x
-
-        with patch.object(api.PatientList, 'for_user') as for_user:
-            for_user.return_value = nongen()
-            result = self.viewset.list(self.request).data
-            self.assertEqual('', result['first_list_slug'])
-
-    def test_tag_display(self):
-        result = self.response.data
-        self.assertEqual('Herbivores', result['tag_display']['herbivore'])
-
-    def test_tag_visible_in_list(self):
-        result = self.response.data
-        self.assertIn('carnivore', result['tag_visible_in_list'])
-
-    def test_tag_direct_add(self):
-        result = self.response.data
-        # .direct_add = False
-        self.assertNotIn('carnivore', result['tag_direct_add'])
-        # .direct_add = default
-        self.assertIn('herbivore', result['tag_direct_add'])
-
-    def test_tag_slug(self):
-        result = self.response.data
-        self.assertEqual('eater-herbivore', result['tag_slugs']['herbivore'])
-
-    def test_tags(self):
-        result = self.response.data
-
-        expected = {
-            "carnivore": {
-                'direct_add': False,
-                'display_name': 'Carnivores',
-                'slug': 'carnivore',
-                'name': 'carnivore'
-            },
-            "herbivore": {
-                'direct_add': True,
-                'display_name': 'Herbivores',
-                'slug': 'eater-herbivore',
-                'name': 'herbivore',
-                'parent_tag': 'eater'
-            },
-              'omnivore': {
-                'direct_add': True,
-                'display_name': 'Omnivore',
-                'name': 'omnivore',
-                'slug': 'eater-omnivore',
-                'parent_tag': 'eater'
-            },
-              'mine': {
-                'direct_add': True,
-                'display_name': 'Mine',
-                'name': 'mine',
-                'slug': 'mine'
-            }
-        }
-
-        self.assertEqual(expected, result['tags'])
 
 
 class ReferenceDataViewSetTestCase(OpalTestCase):
@@ -519,14 +459,6 @@ class UserProfileTestCase(TestCase):
             response = api.UserProfileViewSet().list(self.mock_request)
             self.assertEqual(True, response.data['readonly'])
 
-    def test_user_profile_not_logged_in(self):
-        mock_request = MagicMock(name='request')
-        mock_request.user.is_authenticated.return_value = False
-        response = api.UserProfileViewSet().list(mock_request)
-        self.assertEqual(401, response.status_code)
-
-
-
 
 class TaggingTestCase(TestCase):
 
@@ -547,6 +479,18 @@ class TaggingTestCase(TestCase):
     def test_tag_episode(self):
         self.assertEqual(list(self.episode.get_tag_names(self.user)), [])
         self.mock_request.data = {'micro': True}
+        response = api.TaggingViewSet().update(self.mock_request, pk=self.episode.pk)
+        self.assertEqual(202, response.status_code)
+        self.assertEqual(list(self.episode.get_tag_names(self.user)), ['micro'])
+        tag = models.Tagging.objects.get()
+        self.assertEqual(tag.created.date(), timezone.now().date())
+        self.assertEqual(tag.created_by, self.user)
+        self.assertIsNone(tag.updated_by)
+        self.assertIsNone(tag.updated)
+
+    def test_tag_episoe_with_id(self):
+        self.assertEqual(list(self.episode.get_tag_names(self.user)), [])
+        self.mock_request.data = {'micro': True, 'id': self.episode.id}
         response = api.TaggingViewSet().update(self.mock_request, pk=self.episode.pk)
         self.assertEqual(202, response.status_code)
         self.assertEqual(list(self.episode.get_tag_names(self.user)), ['micro'])
@@ -614,7 +558,7 @@ class EpisodeTestCase(OpalTestCase):
         self.demographics.hospital_number = '123123123'
         self.demographics.save()
         self.mock_request.data = {
-            "tagging"          :[ { "micro":True }],
+            "tagging"          : { "micro":True },
             "date_of_admission": "14/01/2015",
             "demographics"     : {
                 "hospital_number": self.demographics.hospital_number
@@ -630,7 +574,7 @@ class EpisodeTestCase(OpalTestCase):
             demographics__hospital_number="999000999").count()
         self.assertEqual(0, pcount)
         self.mock_request.data = {
-            "tagging"           :[ { "micro":True }],
+            "tagging"           : { "micro":True },
             "date_of_admission" : "14/01/2015",
             "demographics"      : {
                 "hospital_number": "999000999"
@@ -656,12 +600,23 @@ class EpisodeTestCase(OpalTestCase):
             demographics__hospital_number="999000999").count()
         self.assertEqual(1, pcount)
 
+    def test_create_without_hospital_number(self):
+        self.mock_request.data = {
+            "tagging"           : { "micro":True },
+            "date_of_admission" : "14/01/2015",
+            "demographics"      : {
+                "first_name": "James"
+            }
+        }
+        response = api.EpisodeViewSet().create(self.mock_request)
+        self.assertEqual(1, Demographics.objects.filter(first_name='James').count())
+
     def test_create_sets_demographics(self):
         pcount = models.Patient.objects.filter(
             demographics__hospital_number="9999000999").count()
         self.assertEqual(0, pcount)
         self.mock_request.data = {
-            "tagging"                :[ { "micro":True }],
+            "tagging"                :{"micro": True},
             "date_of_admission"      : "14/01/2015",
             "demographics" : {
                 "first_name": "Alain",
@@ -684,7 +639,7 @@ class EpisodeTestCase(OpalTestCase):
             demographics__hospital_number="9999000999").count()
         self.assertEqual(0, pcount)
         self.mock_request.data = {
-            "tagging"                :[ { "micro":True }],
+            "tagging"                :{"micro": True},
             "date_of_admission"      : "14/01/2015",
             "demographics" : {
                 "hospital_number": "9999000999",
@@ -706,7 +661,7 @@ class EpisodeTestCase(OpalTestCase):
             demographics__hospital_number="9999000999").count()
         self.assertEqual(0, pcount)
         self.mock_request.data = {
-            "tagging"                :[ { "micro":True }],
+            "tagging"                :{"micro": True},
             "date_of_admission"      : "14/01/2015",
             "demographics" : {
                 "hospital_number": "9999000999",
@@ -797,3 +752,15 @@ class PatientListTestCase(TestCase):
     def test_retrieve_episodes_not_found(self):
         response = api.PatientListViewSet().retrieve(self.mock_request, pk='not a real list at all')
         self.assertEqual(404, response.status_code)
+
+
+class RegisterPluginsTestCase(OpalTestCase):
+
+    @patch('opal.core.api.plugins.plugins')
+    def test_register(self, plugins):
+        mock_plugin = MagicMock(name='Mock Plugin')
+        mock_plugin.apis = [('thingapi', None)]
+        plugins.return_value = [mock_plugin]
+        with patch.object(api.router, 'register') as register:
+            api.register_plugin_apis()
+            register.assert_called_with('thingapi', None)

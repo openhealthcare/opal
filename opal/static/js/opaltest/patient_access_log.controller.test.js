@@ -1,5 +1,8 @@
 describe('PatientAccessLogCtrl', function() {
+    "use strict";
+
     var $httpBackend, $rootScope, $scope, $controller;
+    var controller;
 
     beforeEach(module('opal.controllers'));
 

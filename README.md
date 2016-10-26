@@ -1,34 +1,35 @@
 OPAL
 ====
 
-[![Build Status](https://travis-ci.org/openhealthcare/opal.svg?branch=v0.6.0)](https://travis-ci.org/openhealthcare/opal)
-[![Coverage Status](https://coveralls.io/repos/github/openhealthcare/opal/badge.svg?branch=v0.7.0)](https://coveralls.io/github/openhealthcare/opal?branch=v0.7.0) 
+[![Build Status](https://travis-ci.org/openhealthcare/opal.svg?branch=v0.8.0)](https://travis-ci.org/openhealthcare/opal)
+[![Coverage Status](https://coveralls.io/repos/github/openhealthcare/opal/badge.svg?branch=v0.8.0)](https://coveralls.io/github/openhealthcare/opal?branch=v0.8.0)
+[![PyPI version](https://badge.fury.io/py/opal.svg)](https://badge.fury.io/py/opal)
 
 OPAL is a full stack framework that makes building digital tools for health care easy.
 
 It builds on established Open Source technologies with a track record of helping developers
 build easy to maintain, robust applications.
 
-Most notably, it makes use of [Django](https://djangoproject.com/), [Angular JS](https://angularjs.org/) 
+Most notably, it makes use of [Django](https://djangoproject.com/), [AngularJS](https://angularjs.org/)
 and [Bootstrap](http://getbootstrap.com/).
 
 From there, OPAL provides you with a common batteries-included architecture for writing healthcare
 applications, and a composable modular framework that takes advantage of generic, re-usable components.
 
-OPAL is entirely Open ([Source](https://github.com/openhealthcare/opal) & 
+OPAL is entirely Open ([Source](https://github.com/openhealthcare/opal) &
 [Governance](https://github.com/openhealthcare/opal/issues)) as are the wide library of plugins.
 
 OPAL was created by [Open Health Care UK](http://openhealthcare.org.uk), because it makes Healthcare IT Less Bad.
 
-We'd love you to get involved by using what we make, reporting bugs/suggesting improvements, and fixing bugs/updating documentation/making improvements. 
+We'd love you to get involved by using what we make, reporting bugs/suggesting improvements, and fixing bugs/updating documentation/making improvements.
 
 ## More comprehensive documentation
 
 Documentation is available at: [http://opal.openhealthcare.org.uk/docs/](http://opal.openhealthcare.org.uk/docs/)
 
-Documentation for specific branches are available at e.g. [http://opal.openhealthcare.org.uk/docs/v0.6.0/](http://opal.openhealthcare.org.uk/docs/v0.6.0/)
+Documentation for specific branches are available at e.g. [http://opal.openhealthcare.org.uk/docs/v0.7.1/](http://opal.openhealthcare.org.uk/docs/v0.7.1/)
 
-The documentation is a work in progress, and we welcome any feedback or contributions to it ! 
+The documentation is a work in progress, and we welcome any feedback or contributions to it !
 
 
 Open governance

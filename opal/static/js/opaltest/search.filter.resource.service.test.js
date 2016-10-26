@@ -4,15 +4,17 @@
 describe('FilterResource', function(){
     "use strict";
 
-    var FilterResource, $httpBackend
+    var $rootScope, $httpBackend
+    var FilterResource;
 
     beforeEach(function(){
         module('opal.services');
         module('opal.controllers');
 
         inject(function($injector){
-            FilterResource = $injector.get('FilterResource');
             $httpBackend   = $injector.get('$httpBackend');
+            $rootScope     = $injector.get('$rootScope');
+            FilterResource = $injector.get('FilterResource');
         });
 
     });
