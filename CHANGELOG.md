@@ -1,6 +1,6 @@
 ### 0.7.2 (Minor Release)
-Fixes episode category in copy to category
 
+Fixes a bug with the copy to category API not setting category name.
 
 ### 0.7.1 (Minor Release)
 
