@@ -1,3 +1,7 @@
+### 0.7.2 (Minor Release)
+Fixes episode category in copy to category
+
+
 ### 0.7.1 (Minor Release)
 
 Completes the refactor of front end data, no longer using the `/api/v0.1/options/` API internally.
