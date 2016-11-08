@@ -2,7 +2,7 @@ describe('EditItemCtrl', function (){
     "use strict";
 
     var $scope, $cookieStore, $timeout, $modal, $httpBackend;
-    var item, Item;
+    var item, Item, existingEpisode;
     var dialog, Episode, episode, ngProgressLite, $q, $rootScope;
     var Schema, $controller, controller, fakeModalInstance;
 
@@ -104,6 +104,7 @@ describe('EditItemCtrl', function (){
                     {name: 'result', type: 'string'},
                     {name: 'consistency_token', type: 'string'},
                     {name: 'test', type: 'string'},
+                    {name: 'c_difficile_toxin', type: 'string'}
                 ]
             }
         ]
@@ -223,7 +224,6 @@ describe('EditItemCtrl', function (){
             var args = $modal.open.calls.mostRecent().args[0];
             expect(args.templateUrl).toEqual('/templates/modals/delete_item_confirmation.html/');
             expect(args.controller).toEqual('DeleteItemConfirmationCtrl');
-            expect(args.size).toEqual('lg');
         });
 
     });
@@ -268,7 +268,7 @@ describe('EditItemCtrl', function (){
 
     describe('testType', function(){
         beforeEach(function(){
-            var existingEpisode = new Episode(angular.copy(episodeData));
+            existingEpisode = new Episode(angular.copy(episodeData));
 
             // when we prepopulate we should not remove the consistency_token
             existingEpisode.microbiology_test = [{
@@ -298,7 +298,37 @@ describe('EditItemCtrl', function (){
             // We need to fire the promise - the http expectation is set above.
             $scope.$apply();
 
-        })
+        });
+
+        it('on initialisation, update the test type, but not the test details', function(){
+          $scope = $rootScope.$new();
+          item.test = "C diff";
+          item.c_difficile_toxin = "someToxin";
+          controller = $controller('EditItemCtrl', {
+              $scope        : $scope,
+              $cookieStore  : $cookieStore,
+              $timeout      : $timeout,
+              $modalInstance: fakeModalInstance,
+              item          : item,
+              metadata      : metadata,
+              profile       : profile,
+              episode       : existingEpisode,
+              ngProgressLite: ngProgressLite,
+              referencedata: referencedata,
+          });
+          expect($scope.editing.microbiology_test.test).toEqual("C diff");
+          expect($scope.editing.microbiology_test.c_difficile_toxin).toEqual("someToxin");
+        });
+
+        it("if the test hasn't changed, don't nuke clean other fields", function(){
+          $scope.editing.microbiology_test.test = "C diff";
+          $scope.$digest();
+          expect($scope.editing.microbiology_test.c_difficile_toxin).toEqual("pending");
+          $scope.editing.microbiology_test.c_difficile_toxin = "someToxin";
+          $scope.editing.microbiology_test.test = "C diff";
+          $scope.$digest();
+          expect($scope.editing.microbiology_test.c_difficile_toxin).toEqual("someToxin");
+        });
 
         it('should prepopulate microbiology tests', function(){
             $scope.editing.microbiology_test.test = "C diff";

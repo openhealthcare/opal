@@ -36,7 +36,6 @@ angular.module('opal.controllers').controller(
             modal = $modal.open({
   				templateUrl: '/templates/modals/add_episode.html/',
   				controller: 'AddEpisodeCtrl',
-                size: 'lg',
   				resolve: {
   					referencedata: function(Referencedata) {
                         return Referencedata;

@@ -1,5 +1,15 @@
 # opal.core.application
 
+### Utility functions
+
+#### get_app
+
+Returns the application class for the currently active application.
+
+#### get_all_components
+
+Returns an iterator of all the of the [plugins](/guides/plugins/) and the current application
+
 ## OpalApplication
 
 The base class for your main application entrypoints is opal.core.application.OpalApplication.
@@ -68,6 +78,10 @@ Defaults to returning the `OpalApplication.javascripts` property.
 application.get_javascripts()
 # -> ['js/one.js', 'js/two.js', ...]
 ```
+
+#### OpalApplication.directory
+
+Returns the file system location of the module.
 
 #### OpalApplication.get_menu_items()
 

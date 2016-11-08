@@ -25,6 +25,26 @@ Adds a Unique Together constraint for (Tagging.user, Tagging.episode, Tagging.va
 
 Removes the `static` argument from the forms `input` tag. Developers should move to the `static` tag.
 
+Look up lists now load in from individual apps. The look for a file at {{ app }}/data/lookuplists.json
+
+Adds the checkForm directive
+
+e.g.
+
+```html
+<button check-form="form" ng-click="sendDataToTheServer">click me</button>
+```
+
+This adds default form submission behaviour to the a button. It will check if the form is valid, and if its not it will mark the button as disabled until it becomes valid.
+
+It will also set the form as submitted.
+
+We also now show the required error if the form has been submitted or if the field is dirty, so that the user doesn't get an ugly "fill this field in now" message when
+opening the modal/pathway but will get the error after they click submit.
+
+We remove the _modal option to set on subrecords. This is because we now use large modals across the board.
+
+
 #### Updates to the Dependency Graph
 
 Upgrades angular to v1.5.8 (from 1.3.11) you can see their change log [here](https://github.com/angular/angular.js/blob/master/CHANGELOG.md)

@@ -95,7 +95,7 @@ class SerialisableFields(object):
             pass
 
         # TODO: Make this dynamic
-        if name in ['patient_id', 'episode_id', 'gp_id', 'nurse_id']:
+        if name in ['patient_id', 'episode_id']:
             return models.ForeignKey
 
         try:
@@ -473,9 +473,7 @@ class Patient(models.Model):
         """
         if "demographics" not in dict_of_list_of_upgrades:
             if not self.id:
-                raise ValueError(
-                    "demographics are required when creating a new patient"
-                )
+                dict_of_list_of_upgrades["demographics"] = [{}]
 
         if not self.id:
             self.save()
@@ -1284,7 +1282,6 @@ class Location(EpisodeSubrecord):
 class Treatment(EpisodeSubrecord):
     _sort = 'start_date'
     _icon = 'fa fa-flask'
-    _modal = 'lg'
 
     drug          = ForeignKeyOrFreeText(Drug)
     dose          = models.CharField(max_length=255, blank=True)
@@ -1352,7 +1349,6 @@ class Investigation(EpisodeSubrecord):
     _title = 'Investigations'
     _sort = 'date_ordered'
     _icon = 'fa fa-crosshairs'
-    _modal = 'lg'
 
     test                  = models.CharField(max_length=255)
     date_ordered          = models.DateField(null=True, blank=True)
@@ -1517,7 +1513,6 @@ class ReferralRoute(EpisodeSubrecord):
 class PatientConsultation(EpisodeSubrecord):
     _sort = 'when'
     _icon = 'fa fa-comments'
-    _modal = 'lg'
     _list_limit = 3
     _title = "Patient Consultation"
     _angular_service = 'PatientConsultationRecord'
@@ -1549,7 +1544,7 @@ class SymptomComplex(EpisodeSubrecord):
         abstract = True
 
     symptoms = models.ManyToManyField(
-        Symptom, related_name="symptoms"
+        Symptom, related_name="symptoms", blank=True
     )
     duration = models.CharField(max_length=255, blank=True, null=True)
     details = models.TextField(blank=True, null=True)

@@ -52,7 +52,6 @@ describe('RecordEditor', function(){
             {
                 name: 'demographics',
                 single: true,
-                modal_size: 'xl',
                 fields: [
                     {name: 'name', type: 'string'},
                     {name: 'date_of_birth', type: 'date'},
@@ -136,7 +135,6 @@ describe('RecordEditor', function(){
               expect(resolves.episode()).toEqual(episode);
               expect(resolves.metadata(null)).toEqual(null);
               expect(resolves.referencedata(null)).toEqual(null);
-              expect(callArgs[0].size).toBe('lg');
           });
 
           it('should pull modal size through from the schema if it exists', function() {
@@ -149,7 +147,6 @@ describe('RecordEditor', function(){
               episode.recordEditor.editItem('demographics', 0);
               $scope.$digest();
               callArgs = $modal.open.calls.mostRecent().args;
-              expect(callArgs[0].size).toBe('xl');
           });
 
           it('should open the use route slug appropriately', function(){

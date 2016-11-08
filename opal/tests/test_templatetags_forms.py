@@ -5,32 +5,54 @@ from django.template import Template, Context
 from django.test import TestCase
 
 from opal.templatetags.forms import (
-    process_steps, infer_from_subrecord_field_path, date_of_birth_field
+    process_steps, infer_from_subrecord_field_path, date_of_birth_field,
+    extract_common_args
 )
 
 
 class TestInferFromSubrecordPath(TestCase):
-    def test_infer_from_path(self):
+    def test_infer_char_field(self):
         ctx = infer_from_subrecord_field_path("DogOwner.name")
         self.assertEqual(ctx["label"], "Name")
         self.assertTrue("lookuplist" not in ctx)
         self.assertEqual(ctx["model"], "editing.dog_owner.name")
-        self.assertFalse(ctx["required"])
 
+    def test_infer_required_fields(self):
+        ctx = infer_from_subrecord_field_path("DogOwner.name")
+        self.assertTrue(ctx["required"])
+
+    def test_infer_foreign_key_for_free_text(self):
         ctx = infer_from_subrecord_field_path("DogOwner.dog")
         self.assertEqual(ctx["label"], "Dog")
         self.assertEqual(ctx["model"], "editing.dog_owner.dog")
         self.assertEqual(ctx["lookuplist"], "dog_list")
         self.assertFalse(ctx["required"])
 
+    def test_get_label_from_the_model(self):
         ctx = infer_from_subrecord_field_path("Demographics.hospital_number")
         self.assertEqual(ctx["label"], "Hospital Number")
 
-        # many to many
+    def test_infer_many_to_many_fields(self):
         ctx = infer_from_subrecord_field_path("HatWearer.hats")
         self.assertEqual(ctx["label"], "Hats")
         self.assertEqual(ctx["model"], "editing.hat_wearer.hats")
         self.assertEqual(ctx["lookuplist"], "hat_list")
+
+    def test_infer_blank_fields(self):
+        # at present we consider blank fields even if they are aren't nullable
+        # to be not required
+        ctx = infer_from_subrecord_field_path("Birthday.birth_date")
+        self.assertFalse(ctx["required"])
+
+
+class ExtractCommonArgsTestCase(TestCase):
+    def test_required_override(self):
+        tag_kwargs = dict(field="Demographics.hospital_number", required=True)
+        ctx = extract_common_args(tag_kwargs)
+        self.assertTrue(ctx["required"])
+        tag_kwargs = dict(field="Demographics.hospital_number", required=False)
+        ctx = extract_common_args(tag_kwargs)
+        self.assertFalse(ctx["required"])
 
 
 class TextareaTest(TestCase):
@@ -107,11 +129,6 @@ class InputTest(TestCase):
         tpl = Template('{% load forms %}{% input label="hai" model="bai[0].something" %}')
         self.assertIn('bai0_something', tpl.render(Context({})))
 
-    def test_required_no_formname(self):
-        tpl = Template('{% load forms %}{% input label="hai" model="bai" required=True%}')
-        with self.assertRaises(ValueError):
-            tpl.render(Context({}))
-
 
 class CheckboxTestCase(TestCase):
 
@@ -185,11 +202,6 @@ class SelectTestCase(TestCase):
         template = Template('{% load forms %}{% select label="hai" model="bai" lookuplist="[1,2,3]" help_text="informative help text" %}')
         rendered = template.render(Context({}))
         self.assertIn('informative help text', rendered)
-
-    def test_required_no_formname(self):
-        tpl = Template('{% load forms %}{% select label="hai" model="bai" required=True %}')
-        with self.assertRaises(ValueError):
-            tpl.render(Context({}))
 
     def test_load_from_model(self):
         tpl = Template('{% load forms %}{% select field="DogOwner.dog" %}')

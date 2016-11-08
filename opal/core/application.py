@@ -1,7 +1,10 @@
 """
 Application helpers for OPAL
 """
-from opal.utils import stringport
+import inspect
+import os
+import itertools
+from opal.core import plugins
 
 
 class OpalApplication(object):
@@ -131,10 +134,24 @@ class OpalApplication(object):
         """
         return klass.styles
 
-
+    @classmethod
+    def directory(cls):
+        """
+        Return the filesystem path to the app directory
+        """
+        return os.path.realpath(os.path.dirname(inspect.getfile(cls)))
 
 def get_app():
     """
     Return the current Opal Application
     """
     return OpalApplication.__subclasses__()[0]
+
+
+def get_all_components():
+    """ 
+    All components of an Opal application - all plugins and the application.
+    """
+    return itertools.chain(
+        plugins.plugins(), [get_app()]
+    )

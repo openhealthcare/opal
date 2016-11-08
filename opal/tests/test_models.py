@@ -117,8 +117,8 @@ class PatientTestCase(OpalTestCase):
             ]
         }
 
-        with self.assertRaises(ValueError):
-            original_patient.bulk_update(d, self.user)
+        original_patient.bulk_update(d, self.user)
+        self.assertIsNone(original_patient.demographics_set.first().hospital_number)
 
     def test_bulk_update_tagging_ignored(self):
         original_patient = models.Patient()

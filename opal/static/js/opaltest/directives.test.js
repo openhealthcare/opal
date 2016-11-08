@@ -162,6 +162,15 @@ describe('OPAL Directives', function(){
       });
     });
 
+    describe('parentHeight', function(){
+        it('should be markdowny', function(){
+            var markup = '<div style="height: 200px"><div markdown="foo"></div></div>';
+            scope.editing = {foo: 'bar'}
+            compileDirective(markup);
+            expect($(element).height()).toBe(200);
+        });
+    });
+
     describe('markdown', function(){
         it('should be markdowny', function(){
             var markup = '<div markdown="foo"></div>';
@@ -169,6 +178,16 @@ describe('OPAL Directives', function(){
             compileDirective(markup);
         });
     })
+
+    describe("freezeHeaders", function(){
+      it('should apply the stick table headers jquery directive', function(){
+          $.fn.stickyTableHeaders = function(){};
+          spyOn($.fn, "stickyTableHeaders");
+          var markup = '<div freeze-headers><table></tablre></div>';
+          compileDirective(markup);
+          expect($.fn.stickyTableHeaders).toHaveBeenCalled();
+      });
+    });
 
     describe('oneClickOnly', function(){
         it('should disable buttons on click and call through', function(){
@@ -192,6 +211,63 @@ describe('OPAL Directives', function(){
             $(element).click();
             expect(clickfn.calls.count()).toEqual(1);
             expect($(element).prop('disabled')).toBe(false);
+        });
+    });
+
+    describe('checkForm', function(){
+        it('should disable the button if there are errors', function(){
+            scope.editing = {something: ""};
+            var clickfn = jasmine.createSpy('clickfn');
+            scope.clickfn = clickfn;
+
+            var markup = '<form name="form"><input required ng-model="editing.something" ng-click="clickfn()"><button check-form="form">Save</button></form>';
+            compileDirective(markup);
+            var btn = $(element.find("button"));
+            btn.click();
+            var innerscope = angular.element(btn).scope();
+            expect(btn.prop('disabled')).toBe(true);
+            expect(clickfn).not.toHaveBeenCalled();
+            expect(innerscope.form.$submitted).toBe(true);
+        });
+
+        it('should undisable the button if all errors are fixed', function(){
+          scope.editing = {something: ""};
+          var markup = '<form name="form"><input required ng-model="editing.something"><button check-form="form">Save</button></form>';
+          compileDirective(markup);
+          var btn = $(element.find("button"));
+          btn.click();
+          var innerscope = angular.element(btn).scope();
+          var input = $(element.find("input"));
+          expect(btn.prop('disabled')).toBe(true);
+          expect(innerscope.form.$submitted).toBe(true);
+          scope.editing.something = 'hello';
+          scope.$apply();
+          expect(btn.prop('disabled')).toBe(false);
+        });
+
+        it('should change the button to disabled if the form has been submitted', function(){
+          scope.editing = {something: ""};
+          var markup = '<form name="form"><input required ng-model="editing.something"><button check-form="form">Save</button></form>';
+          compileDirective(markup);
+          var btn = $(element.find("button"));
+          btn.click();
+          var innerscope = angular.element(btn).scope();
+          var input = $(element.find("input"));
+          expect(btn.prop('disabled')).toBe(true);
+          expect(innerscope.form.$submitted).toBe(true);
+          scope.editing.something = 'hello';
+          scope.$apply();
+          expect(btn.prop('disabled')).toBe(false);
+        });
+
+        it('should disable buttons on click and call through', function(){
+            var clickfn = jasmine.createSpy('clickfn');
+            scope.clickfn = clickfn;
+            var markup = '<button one-click-only ng-click="clickfn()">Save</button>';
+            compileDirective(markup);
+            $(element).click();
+            expect(clickfn.calls.count()).toEqual(1);
+            expect($(element).prop('disabled')).toBe(true);
         });
     });
 

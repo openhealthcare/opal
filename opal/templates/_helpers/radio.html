@@ -2,10 +2,23 @@
      {% if visibility %} {{ visibility|safe }} {% endif %}
      >
   <label class="control-label col-sm-3">{{ label }}</label>
-  <div class="col-sm-8">
-    <label class="radio-inline" ng-repeat="item in {{ lookuplist }}">
-      <input class="" type="radio" value="[[ item ]]" ng-model="{{ model }}">
-      [[ item ]]
-    </label>
+  <div class="col-sm-8"
+    ng-class='{"has-error": {{ formname }}.$submitted && {{ formname }}.{{ modelname }}.$error.required}'
+  >
+    <div class="row">
+      <label class="radio-inline" ng-repeat="item in {{ lookuplist }}">
+        <input {% if required %}required{% endif %} class="" type="radio" name="{{ modelname }}" value="[[ item ]]" ng-model="{{ model }}">
+        [[ item ]]
+      </label>
+    </div>
+    {% if required %}
+      <div class="row" ng-show="{{ formname }}.$submitted && {{ formname }}.{{ modelname }}.$error.required">
+        <div class="col-md-12">
+          <span class="help-block" >
+            {{ label }} is required
+          </span>
+        </div>
+      </div>
+    {% endif %}
   </div>
 </div>
