@@ -56,6 +56,10 @@ OPAL.module = function(namespace, dependencies){
         growlProvider.globalTimeToLive(5000);
     }]);
 
+    mod.config(['$modalProvider', function($modalProvider) {
+        $modalProvider.options.size = "lg";
+    }]);
+
 
     // IE8 compatability mode!
     mod.config(function($sceProvider){
@@ -128,7 +132,7 @@ OPAL._run = function($rootScope, ngProgressLite, $modal, $location, $analytics) 
         ngProgressLite.set(0);
     });
 
-    $rootScope.open_modal = function(controller, template, size, resolves){
+    $rootScope.open_modal = function(controller, template, resolves){
         $rootScope.state = 'modal';
 
         resolve = {};
@@ -145,7 +149,6 @@ OPAL._run = function($rootScope, ngProgressLite, $modal, $location, $analytics) 
         return $modal.open({
             controller : controller,
             templateUrl: template,
-            size       : size,
             resolve    : resolve
         }).result.then(
             reset, reset

@@ -45,14 +45,6 @@ particularly verbose.
     class BloodPressureReading(EpisodeSubrecord):
         _list_limit = 3
 
-#### Subrecord._modal
-
-String to indicate a non-default modal size to be used for editing this `Subrecord`.
-Valid options are: 'lg', 'sm'. Typically used for complex forms or the display of
-additional contextually sensitive information when editing or entering data.
-
-    class Antimicrobial(EpisodeSubrecord):
-        _modal = 'lg'
 
 #### Subrecord._sort
 

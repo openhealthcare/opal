@@ -65,9 +65,6 @@ class SerializeModelTestCase(TestCase):
     def test_serialize_sort(self):
         self.assertEqual('name', schemas.serialize_model(HatWearer)['sort'])
 
-    def test_serialize_modal(self):
-        self.assertEqual('lg', schemas.serialize_model(FamousLastWords)['modal_size'])
-
     def test_serialize_readonly(self):
         self.assertEqual(True, schemas.serialize_model(FamousLastWords)['readOnly'])
 

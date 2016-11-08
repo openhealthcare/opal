@@ -6,10 +6,10 @@ OPAL provides some methods on the Angular $rootScope object.
 
 #### open_modal
 
-    $rootScope.open_modal(controller, template, size, {episode: episode})
+    $rootScope.open_modal(controller, template, {episode: episode})
 
 Open an arbitrary controller in a modal, passing in the name of the controller,
-the url for the template, the size of the modal window (either 'sm' or 'lg').
+the url for the template.
 
 You may also pass through a dictionary of items to resolve.
 
