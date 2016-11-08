@@ -42,6 +42,8 @@ It will also set the form as submitted.
 We also now show the required error if the form has been submitted or if the field is dirty, so that the user doesn't get an ugly "fill this field in now" message when
 opening the modal/pathway but will get the error after they click submit.
 
+We remove the _modal option to set on subrecords. This is because we now use large modals across the board.
+
 
 #### Updates to the Dependency Graph
 

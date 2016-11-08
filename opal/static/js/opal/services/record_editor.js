@@ -76,12 +76,6 @@ angular.module('opal.services').factory('RecordEditor', function(
               }
           };
 
-          if(item.size){
-              modal_opts.size = item.size;
-          }else{
-              modal_opts.size = 'lg';
-          }
-
           var modal = $modal.open(modal_opts);
 
           modal.result.then(function(result) {

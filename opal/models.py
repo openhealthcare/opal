@@ -1282,7 +1282,6 @@ class Location(EpisodeSubrecord):
 class Treatment(EpisodeSubrecord):
     _sort = 'start_date'
     _icon = 'fa fa-flask'
-    _modal = 'lg'
 
     drug          = ForeignKeyOrFreeText(Drug)
     dose          = models.CharField(max_length=255, blank=True)
@@ -1350,7 +1349,6 @@ class Investigation(EpisodeSubrecord):
     _title = 'Investigations'
     _sort = 'date_ordered'
     _icon = 'fa fa-crosshairs'
-    _modal = 'lg'
 
     test                  = models.CharField(max_length=255)
     date_ordered          = models.DateField(null=True, blank=True)
@@ -1515,7 +1513,6 @@ class ReferralRoute(EpisodeSubrecord):
 class PatientConsultation(EpisodeSubrecord):
     _sort = 'when'
     _icon = 'fa fa-comments'
-    _modal = 'lg'
     _list_limit = 3
     _title = "Patient Consultation"
     _angular_service = 'PatientConsultationRecord'

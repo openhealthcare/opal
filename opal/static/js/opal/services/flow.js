@@ -28,7 +28,6 @@ angular.module(
                 var deferred = $q.defer();
                 var target = ApplicationFlow.enter();
                 result = $modal.open({
-                    size: 'lg',
                     backdrop: 'static',
                     templateUrl: target.template,
                     controller:  target.controller,
@@ -47,7 +46,6 @@ angular.module(
                 var deferred = $q.defer();
                 var target = ApplicationFlow.exit(episode)
                 result = $modal.open({
-                    size: 'lg',
                     backdrop: 'static',
                     templateUrl: target.template,
                     controller:  target.controller,

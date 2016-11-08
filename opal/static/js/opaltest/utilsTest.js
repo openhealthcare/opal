@@ -18,13 +18,12 @@ describe('Utils.OPAL._run', function (){
         spyOn(mock_then, 'result');
 
         OPAL._run(mock_scope, {}, mock_modal)
-        mock_scope.open_modal('TestCtrl', 'template.html', 'lg', {episode: {}})
+        mock_scope.open_modal('TestCtrl', 'template.html', {episode: {}})
 
         var call_args = mock_modal.open.calls.mostRecent().args[0];
 
         expect(call_args.controller).toBe('TestCtrl');
         expect(call_args.templateUrl).toBe('template.html');
-        expect(call_args.size).toBe('lg');
         expect(call_args.resolve.episode()).toEqual({});
     });
 
@@ -82,5 +81,24 @@ describe('utils.OPAL._track', function(){
       location.path.and.returnValue("anotherThing")
       OPAL._track(location, analytics);
       expect(analytics.pageTrack).toHaveBeenCalledWith('anotherThing');
+    });
+});
+
+describe("OPAL.module", function(){
+    var $modal;
+    var provider = {options: {}};
+    var $templateRequest;
+
+    var dependency, mock, provider, something;
+    beforeEach(module('opal', function($modalProvider){
+      provider = $modalProvider;
+    }));
+
+    // this is required for the provider to take effect
+    beforeEach(inject(function () {}));
+
+    it("should set the modal options to have a size of 'lg'", function(){
+      expect(provider.options.size).toEqual('lg');
+
     });
 });

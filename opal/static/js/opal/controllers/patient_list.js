@@ -87,7 +87,6 @@ angular.module('opal.controllers').controller(
           $scope.open_modal(
             'EditTeamsCtrl',
             '/templates/modals/edit_teams.html',
-            'lg',
             {episode: $scope.episode}
           ).then(function(){
               if(!$scope.episode.hasTag(pertinantTag)){
