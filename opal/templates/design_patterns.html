@@ -5,6 +5,8 @@
 {% load panels %}
 {% load staticfiles %}
 
+{% block angularapp %}{% endblock %}
+
 {% block content %}
 <script type="text/javascript" src="{% static "js/lib/highlight/highlight.pack.js" %}"></script>
 
@@ -55,72 +57,7 @@
         </div>
       </div>
 
-      <a class="anchor" name="Panels"></a>
-      <div class="row">
-        <div class="col-md-8">
-          <h3>Panels <a href="#Panels">{% icon 'fa-paragraph' %}</a></h3>
-          <p class="lead">
-            A way of presenting discrete units of information.
-          </p>
-          <h4>Panel Primary</h4>
-          <!-- Demo -->
-
-          <div class="panel panel-primary">
-            <div class="panel-heading">
-              <h3>
-                The Heading
-              </h3>
-            </div>
-            <div class="panel-body">
-              <div class="row">
-                <div class="col-md-12">
-                  <p>The Body</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Demo -->
-
-          <h4>Panel Default</h4>
-          <!-- Demo -->
-
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h3>
-                The Heading
-              </h3>
-            </div>
-            <div class="panel-body">
-              <div class="row">
-                <div class="col-md-12">
-                  <p>The Body</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Demo -->
-
-          <h4>Panel Active</h4>
-          <!-- Demo -->
-
-          <div class="panel panel-active">
-            <div class="panel-heading">
-              <h3>
-                The Heading
-              </h3>
-            </div>
-            <div class="panel-body">
-              <div class="row">
-                <div class="col-md-12">
-                  <p>The Body</p>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Demo -->
-        </div>
-      </div>
-
+      {% include "patterns/panels.html" %}
       <hr />
 
       <a class="anchor" name="AlignedPair"></a>
