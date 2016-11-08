@@ -373,17 +373,6 @@ angular.module('opal.controllers').controller(
             $scope.rix = rix;
         }
 
-        $scope.controller_for_episode = function(controller, template, size, episode){
-            $modal.open({
-                controller : controller,
-                templateUrl: template,
-                size       : size,
-                resolve    : {
-                    episode: function(){ return episode }
-                }
-            });
-        }
-
         $scope.keyboard_shortcuts = function(){
             $modal.open({
                 controller: "KeyBoardShortcutsCtrl",
