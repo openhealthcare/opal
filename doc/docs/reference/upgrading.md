@@ -10,6 +10,14 @@ application to a later version where there are extra steps required.
 Options are now an ex-API. Applications should convert to use either Referencedata (canonical terms for common data), or
 Metadata (App specific data you wish to pass into the front end).
 
+#### UI Components
+
+Those applications relying on Angular strap ui components (Typeahead, Popover,
+Tooltip, Datepicker, Timepicker) should convert their templates to use the Angular UI Boostrap equivalents, or the
+OPAL templatetags.
+
+Full documentation of the markup and options for these components is found [here](http://angular-ui.github.io/bootstrap/versioned-docs/0.14.3/)
+
 ### 0.7.0 -> 0.7.1
 
 #### Downstream dependencies

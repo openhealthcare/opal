@@ -1,5 +1,20 @@
 ### 0.8.0 (Major Release)
 
+#### Angular UI Libraries
+
+0.8.0 consolidates Angular UI libraries bundled with OPAL. We have removed Angular Strap, and
+switched all components using it to their Angular UI Bootstrap equivalents.
+
+This is a breaking change.
+
+Applications taking advantage of the `Forms` templatetag library should require no updates, but will see
+some minor differences in visual style of widgets.
+
+Detailed upgrade guides for the components affected (Typeahead, Popover,
+Tooltip, Datepicker, Timepicker) are available in the upgrade reference documentation.
+
+#### Misc changes
+
 Removes `Options` both from the JSON API, and the Angular service.
 Removes legacy APIs `/api/v0.1/episode/admit` and `/api/v0.1/episode/refer`.
 
