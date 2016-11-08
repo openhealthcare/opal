@@ -11,20 +11,28 @@ describe('Utils.OPAL._run', function (){
     });
 
     it('Should open a modal with the arguments', function () {
+        var passedFunction;
         var mock_scope = { $on: function(){} };
-        var mock_then  = { result: { then: function(){} } };
+        var mock_then = {
+          result: {
+            then: function(x){ passedFunction = x; }
+          }
+        };
         var mock_modal = { open: function(){ return mock_then } };
         spyOn(mock_modal, 'open').and.callThrough();
         spyOn(mock_then, 'result');
 
         OPAL._run(mock_scope, {}, mock_modal)
-        mock_scope.open_modal('TestCtrl', 'template.html', {episode: {}})
+        var fake_modal = mock_scope.open_modal('TestCtrl', 'template.html', {episode: {}})
 
         var call_args = mock_modal.open.calls.mostRecent().args[0];
 
         expect(call_args.controller).toBe('TestCtrl');
         expect(call_args.templateUrl).toBe('template.html');
         expect(call_args.resolve.episode()).toEqual({});
+        expect(mock_scope.state).toBe('modal');
+        passedFunction();
+        expect(mock_scope.state).toBe('normal');
     });
 
     describe('indexOf for IE8', function(){
@@ -85,11 +93,9 @@ describe('utils.OPAL._track', function(){
 });
 
 describe("OPAL.module", function(){
-    var $modal;
-    var provider = {options: {}};
-    var $templateRequest;
+  describe('configure modal size', function(){
+    var provider;
 
-    var dependency, mock, provider, something;
     beforeEach(module('opal', function($modalProvider){
       provider = $modalProvider;
     }));
@@ -99,6 +105,6 @@ describe("OPAL.module", function(){
 
     it("should set the modal options to have a size of 'lg'", function(){
       expect(provider.options.size).toEqual('lg');
-
     });
+  });
 });
