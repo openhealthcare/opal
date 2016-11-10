@@ -12,6 +12,7 @@ angular.module('opal.controllers').controller(
             $scope.episode_category = episode.category;
             $scope.editing = {};
             $scope.editing[item.columnName] = item.makeCopy();
+            $scope.metadata = metadata;
 
             $scope.editingMode = function(){
                 return !_.isUndefined($scope.editing[item.columnName].id);

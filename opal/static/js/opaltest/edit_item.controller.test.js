@@ -175,6 +175,12 @@ describe('EditItemCtrl', function (){
         });
     });
 
+    describe('scope setup', function(){
+      it('Should hoist metadata onto the scope', function () {
+          expect($scope.metadata).toBe(metadata);
+      });
+    })
+
     describe('editingMode()', function() {
 
         it('should know if this is edit or add', function() {
