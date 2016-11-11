@@ -1,6 +1,6 @@
 {% load forms %}
-<div class="form-group" {% if visibility %} {{ visibility|safe }} {% endif %} >
-  <span ng-class="{ 'errored-state': {{ form_name }}.{{ model_name }}.$dirty && !{{ form_name }}.{{ model_name }}.$valid }">
+<div class="form-group" {% if visibility %} {{ visibility|safe }} {% endif %} >  
+  <span ng-class="{ 'errored-state': {{ formname }}.{{ model_name }}.$dirty && !{{ formname }}.{{ model_name }}.$valid }">
     {% if label %}
     <label class="control-label col-sm-3">
       {{ label }}
