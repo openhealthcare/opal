@@ -28,8 +28,9 @@ Keywords:
 * `show`  A string that contains an Angular expression for the ng-show directive
 * `hide`  A string that contains an Angular expression for the ng-hide directive
 * `required` Label to show when we're required
+* `mindate` Angular Javascript expression to return the minimum posible date
 
-### {% datepicker ... %}
+### {% datetimepicker ... %}
 
 Generates a date time fields, a date field on one line and a time field on another
 

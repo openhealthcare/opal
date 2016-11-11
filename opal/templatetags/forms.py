@@ -180,8 +180,10 @@ def input(*args, **kwargs):
 @register.inclusion_tag('_helpers/datepicker.html')
 def datepicker(*args, **kwargs):
     kwargs["datepicker"] = True
-    return _input(*args, **kwargs)
-
+    context = _input(*args, **kwargs)
+    if 'mindate' in kwargs:
+        context['mindate'] = kwargs['mindate']
+    return context
 
 @register.inclusion_tag('_helpers/radio.html')
 def radio(*args, **kwargs):
