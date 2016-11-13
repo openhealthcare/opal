@@ -2,7 +2,7 @@ describe('ExtractCtrl', function(){
     "use strict";
 
     var $scope, $httpBackend, schema, $window, $timeout, $modal, Item;
-    var PatientSummary;
+    var PatientSummary, $controller, Schema, controller;
 
     var optionsData = {
         condition: ['Another condition', 'Some condition'],
@@ -290,6 +290,29 @@ describe('ExtractCtrl', function(){
             expect($scope.criteria[0].lookup_list).toEqual(['thing']);
         });
 
+        it('should reset the searched critera', function(){
+            $scope.searched = true;
+            $scope._lookuplist_watch();
+            expect($scope.searched).toBe(false);
+        });
+
+        it('should reset async waiting', function(){
+          $scope.async_waiting = true;
+          $scope._lookuplist_watch();
+          expect($scope.async_waiting).toBe(false);
+        });
+
+        it('should reset async ready', function(){
+          $scope.async_ready = true;
+          $scope._lookuplist_watch();
+          expect($scope.async_ready).toBe(false);
+        });
+
+        it('should clean the results', function(){
+          $scope.results = [{something: "interesting"}];
+          $scope._lookuplist_watch();
+          expect($scope.results).toEqual([]);
+        });
     });
 
     describe('Search', function(){
@@ -318,16 +341,30 @@ describe('ExtractCtrl', function(){
             $httpBackend.flush();
             $httpBackend.verifyNoOutstandingExpectation();
             $httpBackend.verifyNoOutstandingRequest();
+            expect($scope.searched).toBe(true);
         });
 
         it('should handle errors', function(){
             spyOn($window, 'alert');
             $httpBackend.expectPOST('/search/extract/').respond(500, {});
+            $scope.criteria[0] = {
+                combine    : "and",
+                column     : "symptoms",
+                field      : "symptoms",
+                queryType  : "contains",
+                query      : "cough",
+                lookup_list: []
+            }
             $scope.search();
             $httpBackend.flush();
             expect($window.alert).toHaveBeenCalled();
         });
 
+        it('should handle not send a search if there are no criteria', function(){
+            $scope.search();
+            $httpBackend.verifyNoOutstandingExpectation()
+            expect($scope.searched).toBe(true);
+        });
     });
 
     describe('async_extract', function() {
