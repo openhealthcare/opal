@@ -77,11 +77,6 @@ describe('PatientDetailCtrl', function(){
         can_see_pid: function(){return true; }
     };
 
-    var options = {
-        condition: ['Another condition', 'Some condition'],
-        tag_hierarchy :{'tropical': []}
-    }
-
     beforeEach(function(){
         module('opal');
 
@@ -105,7 +100,6 @@ describe('PatientDetailCtrl', function(){
             $routeParams: $routeParams,
             Flow        : Flow,
             patient     : patient,
-            options     : options,
             profile     : profile,
             metadata    : metadata
         });
@@ -116,6 +110,10 @@ describe('PatientDetailCtrl', function(){
 
         it('should set up state', function(){
             expect($scope.patient).toEqual(patient)
+        });
+
+        it('should set up the metadata', function(){
+            expect($scope.metadata).toEqual(metadata);
         });
 
         it('should call switch_to_view', function() {
