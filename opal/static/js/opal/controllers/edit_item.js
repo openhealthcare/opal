@@ -103,10 +103,9 @@ angular.module('opal.controllers').controller(
                 }
 
                 $q.all(to_save).then(function() {
-                    ngProgressLite.done();
+                ngProgressLite.done();
       			    $modalInstance.close(result);
 		        });
-
 	        };
 
             // Let's have a nice way to kill the modal.
