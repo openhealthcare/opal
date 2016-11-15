@@ -13,6 +13,8 @@ from django.views.decorators.http import require_http_methods
 from django.views.generic import View, TemplateView
 from django.core.paginator import Paginator
 
+from rest_framework import status
+
 from opal import models
 from opal.core.views import (LoginRequiredMixin, _build_json_response,
                              _get_request_data, with_no_caching)
@@ -103,6 +105,12 @@ class ExtractSearchView(View):
     def post(self, *args, **kwargs):
         request_data = _get_request_data(self.request)
         page_number = 1
+
+        if not request_data:
+            return _build_json_response(
+                dict(error="No search criteria provied"),
+                status_code=status.HTTP_400_BAD_REQUEST
+            )
 
         if "page_number" in request_data[0]:
             page_number = request_data[0].pop("page_number", 1)

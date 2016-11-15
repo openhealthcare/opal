@@ -233,6 +233,20 @@ class ExtractSearchViewTestCase(BaseSearchTestCase):
             self.assertEqual(1, resp['total_count'])
             self.assertEqual(self.patient.id, resp['object_list'][0]['patient_id'])
 
+    def test_post_with_no_data(self):
+        data = json.dumps([])
+        request = self.rf.post('extract')
+        request.user = self.user
+        view = views.ExtractSearchView()
+        view.request = request
+        with patch.object(view.request, 'read') as mock_read:
+            mock_read.return_value = data
+            resp = view.post()
+            self.assertEqual(resp.status_code, 400)
+            self.assertEqual(json.loads(resp.content), dict(
+                error="No search criteria provied"
+            ))
+
 
 class FilterViewTestCase(BaseSearchTestCase):
 

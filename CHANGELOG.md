@@ -53,6 +53,12 @@ Updates angular-cookies and angular-mocks to v1.5.8 (both from 1.3.11)
 
 Updates angular-ui-select to 0.19.4 from 0.13.2
 
+### 0.7.2 (Minor Release)
+
+Fixes a bug with the copy to category API not setting category name.
+
+Removes the hangover use of options in the list of teams per episode in the patient list
+
 ### 0.7.1 (Minor Release)
 
 Completes the refactor of front end data, no longer using the `/api/v0.1/options/` API internally.
