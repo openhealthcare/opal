@@ -325,7 +325,7 @@ class SubrecordTestCase(OpalTestCase):
         find.assert_called_with([
             'modals/test/subrecord_modal.html',
             'modals/subrecord_modal.html',
-            'modal_bases/form_modal_base.html'
+            'base_templates/form_modal_base.html'
         ])
 
     @patch('opal.models.find_template')
@@ -334,7 +334,7 @@ class SubrecordTestCase(OpalTestCase):
         find.assert_called_with([
             'modals/inpatient/subrecord_modal.html',
             'modals/subrecord_modal.html',
-            'modal_bases/form_modal_base.html'
+            'base_templates/form_modal_base.html'
         ])
 
     @patch('opal.models.find_template')

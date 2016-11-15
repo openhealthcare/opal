@@ -891,7 +891,7 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
             episode_type=episode_type, patient_list=patient_list,
             suffix='_modal.html', prefix='modals')
         if cls.get_form_template():
-            templates.append("modal_bases/form_modal_base.html")
+            templates.append("base_templates/form_modal_base.html")
         return find_template(templates)
 
     @classmethod

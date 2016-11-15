@@ -1,4 +1,4 @@
-{% extends 'modal_bases/form_modal_base.html' %}
+{% extends 'base_templates/form_modal_base.html' %}
 {% block modal_body %}
   <form name="form" ng-submit="" class="form-horizontal" novalidate>
     <div class="row">
@@ -9,7 +9,6 @@
       </div>
       <div class="col-md-4">
         {% block side_column %}
-          {% include 'modals/_allergies_sidebar.html' %}
         {% endblock side_column %}
       </div>
     </div>
