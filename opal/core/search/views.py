@@ -143,7 +143,7 @@ class FilterView(View):
 
     @ajax_login_required_view
     def dispatch(self, *args, **kwargs):
-        super(FilterView, self).dispatch(*args, **kwargs)
+        return super(FilterView, self).dispatch(*args, **kwargs)
 
     def get(self, *args, **kwargs):
         filters = models.Filter.objects.filter(user=self.request.user)

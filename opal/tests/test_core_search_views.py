@@ -248,7 +248,8 @@ class FilterViewTestCase(BaseSearchTestCase):
         view = views.FilterView()
         request = self.get_logged_in_request()
         view.request = self.get_logged_in_request()
-        view.dispatch(request)
+        response = view.dispatch(request)
+        self.assertEqual(response.status_code, 200)
 
     def test_get(self):
         models.Filter(user=self.user, name='testfilter', criteria='[]').save()
