@@ -1,12 +1,14 @@
 """
 Templatetags for form/modal helpers
 """
+import json
 from django import template
 from django.db import models
 from opal.core.subrecords import get_subrecord_from_model_name
 from opal.core import fields
 
 register = template.Library()
+
 
 def _visibility_clauses(show, hide):
     """
@@ -23,6 +25,7 @@ def _visibility_clauses(show, hide):
         else:
             visibility = show
     return visibility
+
 
 def _icon_classes(name):
     """
@@ -50,6 +53,7 @@ def _model_and_field_from_path(fieldname):
         field = model._meta.get_field(field_name)
     return model, field
 
+
 def infer_from_subrecord_field_path(subRecordFieldPath):
     _, field_name = subRecordFieldPath.split('.')
     model, field = _model_and_field_from_path(subRecordFieldPath)
@@ -61,7 +65,13 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
         field_name
     )
 
-    if hasattr(field, "foreign_model"):
+    # for all django fields we'll get an empty list back
+    # we default for free text or foreign keys
+    choices = getattr(field, "choices", [])
+
+    if choices:
+        ctx["lookuplist"] = json.dumps(dict(choices).values())
+    elif hasattr(field, "foreign_model"):
         ctx["lookuplist"] = "{}_list".format(
             field.foreign_model.get_api_name()
         )
@@ -105,6 +115,9 @@ def extract_common_args(kwargs):
     args["autofocus"] = kwargs.pop("autofocus", None)
     args["help_text"] = kwargs.pop("help_text", None)
     args["formname"] = kwargs.pop('formname', 'form')
+    args["visibility"] = _visibility_clauses(
+        kwargs.pop('show', None), kwargs.pop('hide', None)
+    )
 
     # required could have been set via the model
     args["required"] = kwargs.pop('required', args.pop("required", False))
@@ -123,6 +136,7 @@ def datetimepicker(*args, **kwargs):
     ctx["time_label"] = kwargs.pop("time_label", "Time")
     return ctx
 
+
 def _input(*args, **kwargs):
     ctx = extract_common_args(kwargs)
 
@@ -139,12 +153,8 @@ def _input(*args, **kwargs):
     if icon:
         icon = _icon_classes(icon)
 
-    visibility = _visibility_clauses(kwargs.pop('show', None),
-                                     kwargs.pop('hide', None))
-
     ctx.update({
         'directives': args,
-        'visibility': visibility,
         'icon'      : icon,
         'unit'      : unit,
         'data'      : data,
@@ -177,6 +187,7 @@ def input(*args, **kwargs):
     """
     return _input(*args, **kwargs)
 
+
 @register.inclusion_tag('_helpers/input.html')
 def datepicker(*args, **kwargs):
     if 'mindate' in kwargs:
@@ -189,15 +200,8 @@ def datepicker(*args, **kwargs):
 
 @register.inclusion_tag('_helpers/radio.html')
 def radio(*args, **kwargs):
-    visibility = _visibility_clauses(kwargs.pop('show', None),
-                                     kwargs.pop('hide', None))
     ctx = extract_common_args(kwargs)
-
-    ctx.update({
-        'lookuplist': kwargs.pop('lookuplist', None),
-        'visibility': visibility
-    })
-
+    ctx["lookuplist"] = kwargs.pop("lookuplist", ctx.get("lookuplist", None))
     return ctx
 
 
@@ -220,8 +224,6 @@ def select(*args, **kwargs):
     other = kwargs.pop('other', False)
     help_template = kwargs.pop('help', None)
     placeholder = kwargs.pop("placeholder", None)
-    visibility = _visibility_clauses(kwargs.pop('show', None),
-                                     kwargs.pop('hide', None))
     default_null = kwargs.pop('default_null', True)
     tagging = kwargs.pop('tagging', True)
     multiple = kwargs.pop('multiple', False)
@@ -237,7 +239,6 @@ def select(*args, **kwargs):
         'placeholder': placeholder,
         'default_null': default_null,
         'directives': args,
-        'visibility': visibility,
         'help_template': help_template,
         'other': other,
         'model_name': ctx["model"].replace('.', '_').replace('[','').replace(']', '').replace('editing_', ''),
@@ -251,14 +252,9 @@ def select(*args, **kwargs):
 
 @register.inclusion_tag('_helpers/textarea.html')
 def textarea(*args, **kwargs):
-    visibility = _visibility_clauses(kwargs.pop('show', None),
-                                     kwargs.pop('hide', None))
-
     ctx = extract_common_args(kwargs)
     ctx.update({
         'macros'    : kwargs.pop('macros', False),
-        'visibility': visibility
-
     })
 
     return ctx

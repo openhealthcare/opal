@@ -75,10 +75,25 @@ class FamousLastWords(models.PatientSubrecord):
 
     words = dmodels.CharField(verbose_name="only words", max_length=200, blank=True, null=True)
 
+
 class EpisodeName(models.EpisodeSubrecord):
     _is_singleton = True
 
     name = dmodels.CharField(max_length=200, blank=True, null=True)
+
+
+COLOUR_CHOICES = (
+    ('purple', 'purple'),
+    ('yellow', 'yellow'),
+    ('blue', 'blue'),
+)
+
+
+class FavouriteColour(models.PatientSubrecord):
+    _is_singleton = True
+    name = dmodels.CharField(
+        max_length=200, blank=True, null=True, choices=COLOUR_CHOICES
+    )
 
 
 class ExternalSubRecord(
