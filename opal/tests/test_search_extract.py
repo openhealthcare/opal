@@ -173,7 +173,7 @@ class ZipArchiveTestCase(PatientEpisodeTestCase):
     @patch('opal.core.search.extract.zipfile')
     def test_episode_subrecords(self, zipfile):
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
-        expected = len([i for i in subrecords.episode_subrecords()]) + 7
+        expected = len([i for i in subrecords.episode_subrecords()]) + 8
         self.assertEqual(expected, zipfile.ZipFile.return_value.__enter__.return_value.write.call_count)
 
     @patch('opal.core.search.extract.subrecord_csv')

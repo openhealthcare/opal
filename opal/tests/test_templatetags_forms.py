@@ -44,6 +44,10 @@ class TestInferFromSubrecordPath(TestCase):
         ctx = infer_from_subrecord_field_path("Birthday.birth_date")
         self.assertFalse(ctx["required"])
 
+    def test_infer_choice_fields_from_charfield(self):
+        ctx = infer_from_subrecord_field_path("FavouriteColour.name")
+        self.assertEqual(ctx["lookuplist"], '["purple", "blue", "yellow"]')
+
 
 class ExtractCommonArgsTestCase(TestCase):
     def test_required_override(self):
@@ -53,6 +57,16 @@ class ExtractCommonArgsTestCase(TestCase):
         tag_kwargs = dict(field="Demographics.hospital_number", required=False)
         ctx = extract_common_args(tag_kwargs)
         self.assertFalse(ctx["required"])
+
+    def test_visibility_show(self):
+        show_kwargs = dict(show="yes", model="something")
+        ctx = extract_common_args(show_kwargs)
+        self.assertEqual(ctx['visibility'], ' ng-show="yes"')
+
+    def test_visibility_hide(self):
+        show_kwargs = dict(hide="yes", model="something")
+        ctx = extract_common_args(show_kwargs)
+        self.assertEqual(ctx['visibility'], 'ng-hide="yes"')
 
 
 class TextareaTest(TestCase):
@@ -182,6 +196,18 @@ class RadioTestCase(TestCase):
         rendered = template.render(Context({}))
         self.assertIn('ng-model="bai"', rendered)
         self.assertIn('hai', rendered)
+
+    def test_radio_lookuplists(self):
+        template = Template('{% load forms %}{% radio field="FavouriteColour.name" lookuplist="[\'rainbow\']" %}')
+        rendered = template.render(Context({}))
+        self.assertIn('rainbow', rendered)
+        # make sure we're overwriting the existing choice field
+        self.assertNotIn('purple', rendered)
+
+    def test_radio_infer_lookuplists(self):
+        template = Template('{% load forms %}{% radio field="FavouriteColour.name" %}')
+        rendered = template.render(Context({}))
+        self.assertIn('purple', rendered)
 
 
 class SelectTestCase(TestCase):

@@ -1,5 +1,6 @@
 ### 0.8.0 (Major Release)
 
+
 #### Angular UI Libraries
 
 0.8.0 consolidates Angular UI libraries bundled with OPAL. We have removed Angular Strap, and
@@ -12,6 +13,23 @@ some minor differences in visual style of widgets.
 
 Detailed upgrade guides for the components affected (Typeahead, Popover,
 Tooltip, Datepicker, Timepicker) are available in the upgrade reference documentation.
+
+
+#### Choices in form templatetags
+
+Template tags that use the 'field' attribute to point to a subrecord field will now infer a lookup list from the Choices of the field if it exists.
+
+Note unlike the traditional choices implementation only the last value of the choices is used and saved to the database
+
+```python
+  Colours = (
+    ('P', 'Purple'),
+    ('R', 'Red'),
+  )
+```
+
+What is displayed to the user and saved to the database is 'Purple' or 'Red' respectively.
+
 
 #### Misc changes
 
