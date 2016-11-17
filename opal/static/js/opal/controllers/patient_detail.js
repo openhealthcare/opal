@@ -10,6 +10,8 @@ angular.module('opal.controllers').controller(
         $scope.view = null;
 
         $scope.initialise = function(){
+            $scope.metadata = metadata;
+
             if($routeParams.view){
                 if(_.isNaN(parseInt($routeParams.view))){
                     $scope.switch_to_view($routeParams.view);

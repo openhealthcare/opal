@@ -164,7 +164,7 @@ class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
     def post(self, request, pk=None, category=None, **kwargs):
         old = models.Episode.objects.get(pk=pk)
         new = models.Episode(patient=old.patient,
-                             category=category,
+                             category_name=category,
                              date_of_admission=old.date_of_admission)
         new.save()
 

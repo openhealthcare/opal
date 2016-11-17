@@ -403,6 +403,7 @@ class CopyToCategoryViewTestCase(BaseViewTestCase):
         new_episode = models.Episode.objects.exclude(id=self.episode.id).get()
         self.assertEqual(new_episode.hatwearer_set.get().name, "hat wearer")
         self.assertEqual(new_episode.colour_set.count(), 0)
+        self.assertEqual(new_episode.category_name, "Outpatient")
 
         # a singleton will be created but not populate it
         self.assertEqual(
