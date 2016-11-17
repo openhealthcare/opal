@@ -57,6 +57,12 @@ opening the modal/pathway but will get the error after they click submit.
 
 We remove the _modal option to set on subrecords. This is because we now use large modals across the board.
 
+#### Template re-naming
+
+Modal_base has now been moved into a folder called base_templates. Its also now got a form_modal_base and a two_column_form_modal_base. The latter two templates add validation around saving.
+
+The standard edit item models and others now inherit from the form_modal_base.
+
 
 #### Updates to the Dependency Graph
 

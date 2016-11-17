@@ -14,14 +14,10 @@
 </div>
 <div class="modal-body" {% block modal_body_extra %}{% endblock %}>
   {% block modal_body %}
-    <form name="form" ng-submit="" class="form-horizontal" novalidate>
-      {% include column.get_form_template %}
-    </form>
   {% endblock %}
 </div>
 <div class="modal-footer">
   {% block pop_buttons %}{% endblock %}
-
   {% if not single %}
       {% block modal_delete %}
         <span class="float-left" ng-show="editingMode()">
@@ -34,10 +30,12 @@
   {% endif %}
 
   {% block modal_save %}
-  <button check-form="form" class="btn btn-primary" ng-click="form.$valid && save('save')">
-    <i class="fa fa-save"></i>
-    Save
-  </button>
+  <span ng-hide="form">
+    <button check-form="form" class="btn btn-primary" ng-click="save('save')">
+      <i class="fa fa-save"></i>
+      Save
+    </button>
+  </span>
   {% endblock %}
   {% block modal_cancel %}
   <button class="btn" ng-click="cancel()">Cancel</button>

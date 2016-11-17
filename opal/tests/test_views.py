@@ -367,10 +367,10 @@ class BannedViewTestCase(BaseViewTestCase):
 class RawTemplateViewTestCase(BaseViewTestCase):
 
     def test_get_existing_template(self):
-        request = self.get_request('modal_base.html')
+        request = self.get_request('base_templates/modal_base.html')
         view = self.setup_view(
             views.RawTemplateView, request)
-        resp = view.dispatch(request, template_name='modal_base.html')
+        resp = view.dispatch(request, template_name='base_templates/modal_base.html')
         self.assertEqual(200, resp.status_code)
 
     def test_get_non_existing_template(self):
