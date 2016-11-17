@@ -1,5 +1,18 @@
 ### 0.8.0 (Major Release)
 
+Template tags that use the 'field' attribute to point to a subrecord field will now infer a lookup list from the Choices of the field if it exists.
+
+Note unlike the traditional choices implementation only the last value of the choices is used and saved to the database
+
+```python
+  Colours = (
+    ('P', 'Purple'),
+    ('R', 'Red'),
+  )
+```
+
+What is displayed to the user and saved to the database is 'Purple' or 'Red' respectively.
+
 Removes `Options` both from the JSON API, and the Angular service.
 Removes legacy APIs `/api/v0.1/episode/admit` and `/api/v0.1/episode/refer`.
 

@@ -11,7 +11,8 @@ Generates a checkbox
 
 Keywords:
 
-* `field` a string of the model name '.' field from this it calculates the label, model and will infer the lookuplist if required. For example {% checkbox field="DogOwner.dog" %}
+* `field` a string of the models api name '.' field which infers attributes for the model, for more information see
+[Inference from subrecord fields](#inference-from-subrecord-fields)
 * `label` The Label with which to describe this field
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
 * `disabled` If this exists, we use this as the expression for the ng-disabled directive
@@ -22,7 +23,8 @@ Generates a datepicker
 
 Keywords:
 
-* `field` a string of the models api name '.' field from this it calculates the label, model and will infer the lookuplist if required. For example {% datepicker field="DogOwner.dog" %}
+* `field` a string of the models api name '.' field which infers attributes for the model, for more information see
+[Inference from subrecord fields](#inference-from-subrecord-fields)
 * `label` The Label with which to describe this field
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
 * `show`  A string that contains an Angular expression for the ng-show directive
@@ -30,13 +32,14 @@ Keywords:
 * `required` Label to show when we're required
 * `mindate` Expression to use to set the minimum possible date
 
-### {% datepicker ... %}
+### {% datetimepicker ... %}
 
 Generates a date time fields, a date field on one line and a time field on another
 
 Keywords:
 
-* `field` a string of the models api name '.' field from this it calculates the label, model and will infer the lookuplist if required. For example {% datetimepicker field="DogOwner.vet_appointment" %}
+* `field` a string of the models api name '.' field which infers attributes for the model, for more information see
+[Inference from subrecord fields](#inference-from-subrecord-fields)
 * `date_label` The Label with which to describe the date field (defaults to 'Date')
 * `time_label` The Label with which to describe the date field (defaults to 'Time')
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
@@ -50,7 +53,8 @@ The input template tag generates you a form input that will play nicely with OPA
 
 Keywords:
 
-* `field` a string of the models api name '.' field from this it calculates the label, model and will infer the lookuplist if required. For example {% input field="DogOwner.dog" %}
+* `field` a string of the models api name '.' field which infers attributes for the model, for more information see
+[Inference from subrecord fields](#inference-from-subrecord-fields)
 * `label` The Label with which to describe this field
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
 * `show`  A string that contains an Angular expression for the ng-show directive
@@ -60,12 +64,6 @@ Keywords:
 * `enter` expression to evaluate if the user presses return when in this input
 * `maxlength` maximum number of characters for this input. Will render the form invalid and display help text if exceeded.
 
-#### Inputs for subrecord fields
-
-A very common pattern is to render form fields that relate to fields of `Subrecords`. The input templatetag
-accepts a `field` argument, from which it will infer the label, model and lookuplist by introspecting the relevant subrecord model.
-
-    {% input field="allergies.drug" %}
 
 #### Inputs with units
 
@@ -88,6 +86,7 @@ Keywords:
 * `show`  A string that contains an Angular expression for the ng-show directive
 * `hide`  A string that contains an Angular expression for the ng-hide directive
 * `lookuplist` an Angular expression that evaluates to an array containing the radio values
+
 
 ### {% select ... %}
 
@@ -117,6 +116,40 @@ Keywords:
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
 * `show`  A string that contains an Angular expression for the ng-show directive
 * `hide`  A string that contains an Angular expression for the ng-hide directive
+
+
+#### Inference from subrecord fields
+
+A very common pattern is to render form fields that relate to fields of `Subrecords`. Template tags will use this to infer useful information. The display name will be set to the verbose_name and the the ng-model will be inferred.
+
+If its required, it will set as a required field. If its a CharField with a max length it will set a validation rule accordingly.
+
+If the field is a free text or foreign key we will infer the lookup list.
+
+Alternatively if the field has choices attatched to it we will infer the choices into the field.
+
+```html
+{% input field="Allergies.drug" %}
+```
+
+Note unlike the traditional choices implementation only the last value of the choices is used and saved to the database
+
+```python
+  Colours = (
+    ('P', 'Purple'),
+    ('R', 'Red'),
+  )
+```
+
+What is displayed to the user and saved to the database is 'Purple' or 'Red' respectively.
+
+All inferences can be overridden by declarations in the template tag. For Example
+
+```html
+{% input field="Allergies.drug" label="Something else" %}
+```
+
+Will render the input with a different label.
 
 
 ### {% static ... %}
