@@ -1,0 +1,16 @@
+{% extends 'base_templates/form_modal_base.html' %}
+{% block modal_body %}
+  <form name="form" ng-submit="" class="form-horizontal" novalidate>
+    <div class="row">
+      <div class="col-md-8">
+        {% block form %}
+          {% include column.get_form_template %}
+        {% endblock form %}
+      </div>
+      <div class="col-md-4">
+        {% block side_column %}
+        {% endblock side_column %}
+      </div>
+    </div>
+  </form>
+{% endblock %}

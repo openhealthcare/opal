@@ -175,6 +175,12 @@ describe('EditItemCtrl', function (){
         });
     });
 
+    describe('scope setup', function(){
+      it('Should hoist metadata onto the scope', function () {
+          expect($scope.metadata).toBe(metadata);
+      });
+    })
+
     describe('editingMode()', function() {
 
         it('should know if this is edit or add', function() {
@@ -224,7 +230,6 @@ describe('EditItemCtrl', function (){
             var args = $modal.open.calls.mostRecent().args[0];
             expect(args.templateUrl).toEqual('/templates/modals/delete_item_confirmation.html/');
             expect(args.controller).toEqual('DeleteItemConfirmationCtrl');
-            expect(args.size).toEqual('lg');
         });
 
     });

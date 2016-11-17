@@ -118,7 +118,6 @@ angular.module('opal.controllers').controller(
             };
 
             $scope.addFilter = function(){
-                $scope.searched = false;
                 $scope.criteria.push(_.clone($scope.model));
             };
 
@@ -126,7 +125,6 @@ angular.module('opal.controllers').controller(
                 if($scope.criteria.length == 1){
                     return
                 }
-                $scope.searched = false;
                 $scope.criteria.splice(index, 1);
             };
 
@@ -139,7 +137,6 @@ angular.module('opal.controllers').controller(
             };
 
             $scope.removeCriteria = function(){
-                $scope.searched = false;
                 $scope.criteria = [_.clone($scope.model)];
             };
 
@@ -161,6 +158,8 @@ angular.module('opal.controllers').controller(
                 });
                 $scope.async_waiting = false;
                 $scope.async_ready = false;
+                $scope.searched = false;
+                $scope.results = [];
             }
 
             $scope.$watch('criteria', $scope._lookuplist_watch, true);
@@ -174,21 +173,24 @@ angular.module('opal.controllers').controller(
 
                 if(queryParams.length){
                     queryParams[0].page_number = pageNumber;
-                }
-                ngProgressLite.set(0);
-                ngProgressLite.start();
-                $http.post('/search/extract/', queryParams).success(
-                    function(response){
-                        $scope.results = _.map(response.object_list, function(o){
-                            return new PatientSummary(o);
+                    ngProgressLite.set(0);
+                    ngProgressLite.start();
+                    $http.post('/search/extract/', queryParams).success(
+                        function(response){
+                            $scope.results = _.map(response.object_list, function(o){
+                                return new PatientSummary(o);
+                            });
+                            $scope.searched = true;
+                            $scope.paginator = new Paginator($scope.search, response);
+                            ngProgressLite.done();
+                        }).error(function(e){
+                            ngProgressLite.set(0);
+                            $window.alert('ERROR: Could not process this search. Please report it to the OPAL team')
                         });
-                        $scope.searched = true;
-                        $scope.paginator = new Paginator($scope.search, response);
-                        ngProgressLite.done();
-                    }).error(function(e){
-                        ngProgressLite.set(0);
-                        $window.alert('ERROR: Could not process this search. Please report it to the OPAL team')
-                    });
+                }
+                else{
+                  $scope.searched = true;
+                }
             };
 
             $scope.async_extract = function(){

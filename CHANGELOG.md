@@ -1,5 +1,18 @@
 ### 0.8.0 (Major Release)
 
+Template tags that use the 'field' attribute to point to a subrecord field will now infer a lookup list from the Choices of the field if it exists.
+
+Note unlike the traditional choices implementation only the last value of the choices is used and saved to the database
+
+```python
+  Colours = (
+    ('P', 'Purple'),
+    ('R', 'Red'),
+  )
+```
+
+What is displayed to the user and saved to the database is 'Purple' or 'Red' respectively.
+
 Removes `Options` both from the JSON API, and the Angular service.
 Removes legacy APIs `/api/v0.1/episode/admit` and `/api/v0.1/episode/refer`.
 
@@ -42,6 +55,14 @@ It will also set the form as submitted.
 We also now show the required error if the form has been submitted or if the field is dirty, so that the user doesn't get an ugly "fill this field in now" message when
 opening the modal/pathway but will get the error after they click submit.
 
+We remove the _modal option to set on subrecords. This is because we now use large modals across the board.
+
+#### Template re-naming
+
+Modal_base has now been moved into a folder called base_templates. Its also now got a form_modal_base and a two_column_form_modal_base. The latter two templates add validation around saving.
+
+The standard edit item models and others now inherit from the form_modal_base.
+
 
 #### Updates to the Dependency Graph
 
@@ -50,6 +71,12 @@ Upgrades angular to v1.5.8 (from 1.3.11) you can see their change log [here](htt
 Updates angular-cookies and angular-mocks to v1.5.8 (both from 1.3.11)
 
 Updates angular-ui-select to 0.19.4 from 0.13.2
+
+### 0.7.2 (Minor Release)
+
+Fixes a bug with the copy to category API not setting category name.
+
+Removes the hangover use of options in the list of teams per episode in the patient list
 
 ### 0.7.1 (Minor Release)
 

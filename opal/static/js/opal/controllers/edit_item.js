@@ -12,6 +12,7 @@ angular.module('opal.controllers').controller(
             $scope.episode_category = episode.category;
             $scope.editing = {};
             $scope.editing[item.columnName] = item.makeCopy();
+            $scope.metadata = metadata;
 
             $scope.editingMode = function(){
                 return !_.isUndefined($scope.editing[item.columnName].id);
@@ -78,7 +79,6 @@ angular.module('opal.controllers').controller(
                 var modal = $modal.open({
                     templateUrl: '/templates/modals/delete_item_confirmation.html/',
                     controller: 'DeleteItemConfirmationCtrl',
-                    size: 'lg',
                     resolve: {
                         item: function() {
                             return item;
@@ -103,10 +103,9 @@ angular.module('opal.controllers').controller(
                 }
 
                 $q.all(to_save).then(function() {
-                    ngProgressLite.done();
+                ngProgressLite.done();
       			    $modalInstance.close(result);
 		        });
-
 	        };
 
             // Let's have a nice way to kill the modal.
