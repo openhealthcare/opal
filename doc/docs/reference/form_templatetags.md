@@ -129,7 +129,7 @@ If the field is a free text or foreign key we will infer the lookup list.
 Alternatively if the field has choices attatched to it we will infer the choices into the field.
 
 ```html
-{% input field="allergies.drug" %}
+{% input field="Allergies.drug" %}
 ```
 
 Note unlike the traditional choices implementation only the last value of the choices is used and saved to the database
@@ -146,7 +146,7 @@ What is displayed to the user and saved to the database is 'Purple' or 'Red' res
 All inferences can be overridden by declarations in the template tag. For Example
 
 ```html
-{% input field="allergies.drug" label="Something else" %}
+{% input field="Allergies.drug" label="Something else" %}
 ```
 
 Will render the input with a different label.
