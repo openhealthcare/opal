@@ -10,13 +10,15 @@ application to a later version where there are extra steps required.
 Options are now an ex-API. Applications should convert to use either Referencedata (canonical terms for common data), or
 Metadata (App specific data you wish to pass into the front end).
 
-#### Base templates
+#### extending modal_base.html
 
 We now have different base templates for modals, forms and two column modal forms (essentially a form with a side bar).
 
 The form templates add validation checks around the saving to catch any validation errors a form might through. They assume the existence of a form called 'form'.
 
 As part of this modal_base has been moved into a folder in templates called base_templates
+
+Rename any templates extending `modal_base.html` to extend the correct template in `base_templates/` - `modal_base.html` or `modal_form_base.html`. 
 
 
 ### 0.7.0 -> 0.7.1
