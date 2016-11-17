@@ -14,12 +14,13 @@
 
 
 <div class="container content-offset">
-  <div class="panel panel-primary">
+  <div class="panel">
     <!-- Default panel contents -->
     <div class="panel-heading">
       <h2>
         OPAL Design Patterns
       </h2>
+      <hr />
     </div>
 
     <div class="panel-body">
@@ -45,17 +46,20 @@
           <ul class="list-inline lead">
             <li><a href="#Buttons">Buttons</a></li>
             <li><a href="#Checkboxes">Checkboxes</a></li>
-            <li><a href="#CheckboxLists">Checkbox Lists</a></li>
-            <li><a href="#RadioButtons">Radio buttons</a></li>
           </ul>
         </div>
       </div> <!-- Row -->
 
-      <div class="row">
-        <div class="col-md-12">
-          <h2>Presentation</h2>
-        </div>
-      </div>
+    </div> <!-- PAnel body -->
+  </div><!-- panel -->
+
+
+  <div class="panel">
+    <div class="panel-heading">
+      <h2>Presentation</h2>
+      <hr />
+    </div>
+    <div class="panel-body">
 
       {% include "patterns/panels.html" %}
       <hr />
@@ -87,13 +91,17 @@
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-md-12">
-          <h2>Interaction</h2>
-        </div>
-      </div>
 
+    </div> <!-- PAnel body -->
+  </div><!-- panel -->
+
+
+  <div class="panel ">
+    <div class="panel-heading">
+      <h2>Interaction</h2>
       <hr />
+    </div>
+    <div class="panel-body">
 
       <a class="anchor" name="Modals"></a>
       <div class="row">
@@ -105,7 +113,7 @@
           </p>
           <!-- Demo -->
           <div class="row col-md-offset-3">
-            <div class="col-md-12">
+            <div class="col-md-12 modal-lg">
               <div class="modal-header">
                 <button type="button" class="close" ng-click="cancel()">×</button>
                 <h3>
@@ -128,44 +136,21 @@
               </div>
             </div>
           </div>
-          <p class="lead">
-            Modals are available in three sizes - default, large and small.
-          </p>
-          <div class="row col-md-offset-3">
-            <div class="col-md-12 modal-lg">
-              <div class="modal-header">
-                <button type="button" class="close" ng-click="cancel()">×</button>
-                <h3>
-                  <i class="glyphicon glyphicon-plus"></i>
-                  Larger Modal Header
-                </h3>
-              </div>
-              <div class="modal-body">
-                <p class="lead">
-                  When we have complex information or interactions, we can use a large modal.
-                </p>
-              </div>
-              <div class="modal-footer">
-                <button class="btn btn-primary">
-                  <i class="fa fa-save"></i>
-                  Primary button
-                </button>
-                <button class="btn">Cancel button</button>
-              </div>
-              <!-- Demo -->
-            </div>
-
-          </div>
 
         </div>
       </div>
 
 
-      <div class="row">
-        <div class="col-md-12">
-          <h2>Forms</h2>
-        </div>
-      </div>
+    </div> <!-- PAnel body -->
+  </div><!-- panel -->
+
+
+  <div class="panel">
+    <div class="panel-heading">
+      <h2>Forms</h2>
+      <hr />
+    </div>
+    <div class="panel-body">
 
       <a class="anchor" name="Buttons"></a>
       <div class="row">
@@ -208,74 +193,6 @@
         </div>
       </div>
 
-
-      <hr />
-
-      <a name="CheckboxLists" class="anchor"></a>
-      <div class="row">
-        <div class="col-md-8">
-          <h3>Checkbox Lists <a href="#CheckboxLists">{% icon 'fa-paragraph' %}</a></h3>
-          <p class="lead">
-            List of items which each have a boolean state.
-          </p>
-          <p class="lead">
-            When used in a form, should be aligned with the form inputs <small>(typically offset-md-3)</small>.
-          </p>
-          <!-- Demo -->
-          <div class="row col-md-offset-3">
-            <div class="col-md-6">
-              <h4>Name of Group</h4>
-              <div class="checkbox checkbox-primary">
-                <input type="checkbox" id="checkbox1" checked>
-                <label for="checkbox1">List Item selected</label>
-                <i class="fa fa-bullseye pull-right"></i>
-              </div>
-              <div class="checkbox checkbox-primary">
-                <input type="checkbox" id="checkbox2" >
-                <label for="checkbox2">List Item unselected</label>
-                <i class="fa fa-bullseye pull-right"></i>
-              </div>
-            </div>
-          </div>
-          <!-- Demo -->
-        </div>
-      </div>
-
-      <hr />
-
-      <a name="RadioButtons" class="anchor"></a>
-      <div class="row">
-        <div class="col-md-8">
-          <h3>Radio Buttons <a href="#RadioButtons">{% icon 'fa-paragraph' %}</a></h3>
-          <p class="lead">
-            List of mutually exclusive items
-          </p>
-          <p class="lead">
-            When used in a form, should be aligned with the form inputs <small>(typically offset-md-3)</small>.
-          </p>
-          <!-- Demo -->
-          <div class="row col-md-offset-3">
-            <div class="col-md-6">
-              <h4>Name of Group</h4>
-              <div class="radio radio-primary">
-                <input type="radio" name="radio2" id="radio3" value="option1">
-                <label for="radio3">
-                  One
-                </label>
-                <i class="fa fa-bullseye pull-right"></i>
-              </div>
-              <div class="radio radio-primary">
-                <input type="radio" name="radio2" id="radio4" value="option2" checked>
-                <label for="radio4">
-                  Two
-                </label>
-                <i class="fa fa-bullseye pull-right"></i>
-              </div>
-            </div>
-          </div>
-          <!-- Demo -->
-        </div>
-      </div>
 
       <hr />
 
