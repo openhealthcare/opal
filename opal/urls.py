@@ -5,6 +5,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 from django.views.decorators.csrf import csrf_exempt
+from django.views.generic import TemplateView
 from opal.utils import camelcase_to_underscore
 from opal import views
 from opal.core import api, subrecords
@@ -59,7 +60,11 @@ urlpatterns = patterns(
         views.RecordTemplateView.as_view(), name="record_view"),
     url(r'^templates/forms/(?P<model>[a-z_\-]+).html/?$',
         views.FormTemplateView.as_view(), name="form_view"),
+    url(r'^design-patterns/$', TemplateView.as_view(template_name='design_patterns.html'),
+        name='design_patterns'),
+
 )
+
 
 # Generated subrecord template views
 for subrecord_model in subrecords.subrecords():
