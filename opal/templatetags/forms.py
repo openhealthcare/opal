@@ -188,15 +188,13 @@ def input(*args, **kwargs):
     return _input(*args, **kwargs)
 
 
-@register.inclusion_tag('_helpers/input.html')
+@register.inclusion_tag('_helpers/datepicker.html')
 def datepicker(*args, **kwargs):
-    if 'mindate' in kwargs:
-        kwargs['data'] = [
-            ('min-date', kwargs['mindate'])
-        ]
     kwargs["datepicker"] = True
-    return _input(*[a for a in args] + ["bs-datepicker"], **kwargs)
-
+    context = _input(*args, **kwargs)
+    if 'mindate' in kwargs:
+        context['mindate'] = kwargs['mindate']
+    return context
 
 @register.inclusion_tag('_helpers/radio.html')
 def radio(*args, **kwargs):

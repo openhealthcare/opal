@@ -3,13 +3,13 @@
 <div class="row screen-only">
   <div class="col-md-12">
     <h1 >
-      <div class="btn-group pull-left" dropdown is-open="status.isopen">
-        <button type="button" class="btn btn-secondary dropdown-toggle" ng-disabled="disabled">
+      <div class="btn-group pull-left" uib-dropdown is-open="status.isopen">
+        <button type="button" class="btn btn-secondary" uib-dropdown-toggle ng-disabled="disabled" id="list-dropdown">
           <i class="fa fa-user-md"></i>
           {{ patient_list.display_name }}
           <i class="fa fa-angle-down"></i>
         </button>
-        <ul class="dropdown-menu slides" role="menu">
+        <ul class="uib-dropdown-menu slides" role="menu" aria-labelledby="list-dropdown">
           {% for list in lists %}
           {% if list.get_slug != list_slug %}
           <li>
@@ -55,7 +55,7 @@
     <li class="list-group-item" ng-show="profile.can_see_pid()">
       <p>
         <a class="btn btn-secondary screen-only" ng-href='[[ "#/patient/" + episode.demographics[0].patient_id + "/" + episode.id]]'>
-            <i class="fa fa-search-plus"></i> Patient Details
+          <i class="fa fa-search-plus"></i> Patient Details
         </a>
       </p>
     </li>

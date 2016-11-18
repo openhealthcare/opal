@@ -25,8 +25,8 @@
                 <div class="col-md-10">
                   <select class="form-control content-offset-below-10" ng-model="query.column"
                           ng-change="resetFilter($index, ['combine', 'column'])"
-                          data-trigger="focus" bs-tooltip="tooltip"
-                          data-placement="top" data-title="1. Select a Column"
+                          tooltip-trigger="focus"
+                          tooltip-placement="top" uib-tooltip="1. Select a Column"
                           set-focus-if="!query.column"
                           >
                     <option ng-repeat="col in columns" value="[[col.name]]">
@@ -36,8 +36,8 @@
                   <span ng-repeat="col in columns"
                         ng-show="query.column == col.name">
                     <select class="form-control content-offset-below-10" ng-model="query.field"
-                            data-trigger="focus" bs-tooltip="tooltip"
-                            data-placement="top" data-title="2. Select a field"
+                            tooltip-trigger="focus"
+                            tooltip-placement="top" uib-tooltip="2. Select a field"
                             set-focus-if="query.field == null && query.column != null"
                             >
                       <option ng-repeat="field in searchableFields(col)">[[field]]</option>
@@ -46,8 +46,8 @@
                   <span ng-show="query.column != 'tagging'">
                     <select class="form-control content-offset-below-10"
                             ng-show="query.field != null && isText(query.column, query.field)"
-                            ng-model="query.queryType" data-trigger="focus" bs-tooltip="tooltip"
-                            data-placement="top" data-title="3. Select your query type"
+                            ng-model="query.queryType" tooltip-trigger="focus"
+                            tooltip-placement="top" uib-tooltip="3. Select your query type"
                             set-focus-if="query.field != null && !isDate(query.column, query.field)"
                             >
                       <option>Equals</option>
@@ -55,16 +55,16 @@
                     </select>
                     <select class="form-control content-offset-below-10"
                             ng-show="query.field != null && isDate(query.column, query.field)"
-                            ng-model="query.queryType" data-trigger="focus" bs-tooltip="tooltip"
-                            data-placement="top" data-title="3. Select your query type"
+                            ng-model="query.queryType" tooltip-trigger="focus"
+                            tooltip-placement="top" uib-tooltip="3. Select your query type"
                             set-focus-if="query.field != null && isDate(query.column, query.field)" >
                       <option>Before</option>
                       <option>After</option>
                     </select>
                     <select class="form-control content-offset-below-10" ng-model="query.query"
                             ng-show="isBoolean(query.column, query.field) && query.field != null"
-                            data-trigger="focus" bs-tooltip="tooltip"
-                            data-placement="top" data-title="3. Select your query type"
+                            tooltip-trigger="focus"
+                            tooltip-placement="top" uib-tooltip="3. Select your query type"
                             set-focus-if="isBoolean(query.column, query.field) && query.field != null"
                             >
                       <option>true</option>
@@ -74,8 +74,7 @@
                            class="form-control content-offset-below-10"
                            ng-model="query.query"
                            ng-show="isText(query.column, query.field) && query.field != null"
-                           bs-options="x for x in query.lookup_list"
-                           bs-typeahead
+                           uib-typeahead="x for x in query.lookup_list | filter:$viewValue | limitTo:8"
                            placeholder="4. Add your value"
                            ng-keypress="$event.keyCode == 13 && search()"
                            set-focus-if="isText(query.column, query.field) && query.field != null  && query.queryType != null"
@@ -84,17 +83,17 @@
                            class="form-control content-offset-below-10"
                            ng-show="isDate(query.column, query.field) && query.field != null"
                            ng-keypress="$event.keyCode == 13 && search()"
-                           data-trigger="focus" bs-tooltip="tooltip"
-                           data-placement="top" data-title="4. Add your value"
+                           tooltip-trigger="focus"
+                           tooltip-placement="top" uib-tooltip="4. Add your value"
             	           ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
             	           placeholder="dd/mm/yyyy"
                            set-focus-if="isDate(query.column, query.field) && query.field != null && query.queryType != null"
                            />
                       <span ng-show="isSelect(query.column, query.field)">
                           <select ng-model="query.query" class="form-control content-offset-below-10"
-                                  data-trigger="focus" bs-tooltip="tooltip"
+                                  tooltip-trigger="focus"
                                   ng-keypress="$event.keyCode == 13 && search()"
-                                  data-placement="top" data-title="4. Select one of the below">
+                                  tooltip-placement="top" uib-tooltip="4. Select one of the below">
                               <option ng-repeat="i in symptom_list track by $index">[[ i ]]</option>
                           </select>
                       </span>

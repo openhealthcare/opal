@@ -1,0 +1,20 @@
+<div class="form-group">
+  <label class="control-label col-sm-3">{{ label }}</label>
+  <div class="col-sm-8">
+    <input type="text" class="form-control"
+           uib-datepicker-popup="dd/MM/yyyy"
+           ng-model="{{ model }}"
+           is-open="{{ modelname }}_open"
+           min-date="{{ mindate}}"
+           max-date="maxDate"
+           show-button-bar="false"
+           show-weeks="false"
+           datepicker-options="{startingDay: 1}"
+           ng-focus="{{ modelname }}_open=true"
+           close-text="Close"
+           {% if change %}
+           ng-change="{{ change }}"
+           {% endif %}
+           />
+  </div>
+</div>

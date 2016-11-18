@@ -10,15 +10,14 @@
            autocomplete="off"
            {% for d in directives %}{{ d }} {% endfor %}
            {% if lookuplist %}
-             bs-typeahead
-             bs-options="i for i in {{ lookuplist }}"
+           uib-typeahead="i for i in {{ lookuplist }} | filter:$viewValue | limitTo:8"
            {% endif %}
            name="{{ modelname }}"
            {% if required %}
            required
            {% endif %}
            {% if change %}
-            ng-change="{{ change }}"
+           ng-change="{{ change }}"
            {% endif %}
            {% if data %}
            {% for key, val in data %}

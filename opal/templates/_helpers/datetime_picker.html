@@ -3,8 +3,10 @@
 <div class="form-group">
   <label class="control-label col-sm-3">{{ time_label }}</label>
   <div class="col-sm-8">
-  <input type="text" size="8" class="form-control" ng-model="{{ model }}"
-         ng-change="{{ change }}"
-         data-autoclose="1" bs-timepicker>
+    <uib-timepicker
+      {% if change %}
+      ng-change="{{ change }}"
+      {% endif %}
+      ng-model="{{ model }}" ></uib-timepicker>
   </div>
 </div>
