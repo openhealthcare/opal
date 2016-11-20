@@ -11,4 +11,8 @@ coverage-js
 *~
 *#
 *DS_Store
+<<<<<<< HEAD
 *.bak
+=======
+node_modules
+>>>>>>> 0284dc2... We can safely ignore node_modules
