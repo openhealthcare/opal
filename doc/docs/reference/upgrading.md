@@ -29,6 +29,14 @@ As part of this modal_base has been moved into a folder in templates called base
 
 Rename any templates extending `modal_base.html` to extend the correct template in `base_templates/` - `modal_base.html` or `modal_form_base.html`.
 
+#### Add episode modal url
+
+The add episode modal previously available at
+`/templates/modals/add_episode.html/` is now not available at the url with a trailing slash.
+Any controllers attempting to open the modal e.g. custom list flows should update their
+`$modal.open` call to remove the trailing slash.
+
+
 ### 0.7.0 -> 0.7.1
 
 #### Downstream dependencies

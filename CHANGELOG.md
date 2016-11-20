@@ -31,6 +31,16 @@ Note unlike the traditional choices implementation only the last value of the ch
 What is displayed to the user and saved to the database is 'Purple' or 'Red' respectively.
 
 
+#### Team model removed
+
+The team model, marked for removal since 0.6.0 has now been removed.
+
+As part of this change, the add episode modal previously available at
+`/templates/modals/add_episode.html/` is now not available at the url with a trailing slash.
+Any controllers attempting to open the modal e.g. custom list flows should update their
+`$modal.open` call to remove the trailing slash.
+
+
 #### Misc changes
 
 Removes `Options` both from the JSON API, and the Angular service.
@@ -76,6 +86,7 @@ We also now show the required error if the form has been submitted or if the fie
 opening the modal/pathway but will get the error after they click submit.
 
 We remove the _modal option to set on subrecords. This is because we now use large modals across the board.
+
 
 #### Template re-naming
 
