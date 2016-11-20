@@ -4,13 +4,12 @@ Unittests for Patients
 from django.contrib.auth.models import User
 from django.test import TestCase
 
-from opal.models import Patient, Team, Episode
+from opal.models import Patient, Episode
 
 class PatientTest(TestCase):
 
     def setUp(self):
         self.patient = Patient.objects.create()
-        self.micro   = Team.objects.create(name='microbiology', title='microbiology')
 
     def test_singleton_subrecord_created(self):
         self.assertEqual(1, self.patient.famouslastwords_set.count())
@@ -32,4 +31,3 @@ class PatientTest(TestCase):
         self.patient.create_episode()
         self.patient.create_episode()
         self.assertIsNone(self.patient.get_active_episode())
-

@@ -6,7 +6,7 @@ from datetime import date
 from django.db import transaction
 import reversion
 
-from opal.models import Episode, Patient, Team
+from opal.models import Episode, Patient
 from opal.core.test import OpalTestCase
 from opal.tests.episodes import RestrictedEpisodeCategory
 
@@ -74,8 +74,6 @@ class DatabaseQueryTestCase(OpalTestCase):
         self.demographics.date_of_birth = self.DATE_OF_BIRTH
         self.demographics.save()
 
-        self.general_team, _ = Team.objects.get_or_create(
-            name='general', title='General Team')
         self.name_criteria = [
             {
                 u'column': u'demographics',

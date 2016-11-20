@@ -11,7 +11,7 @@ from django.utils import timezone
 from opal import models
 from opal.core import exceptions
 from opal.models import (
-    Subrecord, Tagging, Team, Patient, InpatientAdmission, Symptom,
+    Subrecord, Tagging, Patient, InpatientAdmission, Symptom,
     SymptomComplex, UserProfile
 )
 from opal.core.test import OpalTestCase
@@ -686,19 +686,6 @@ class TaggingTestCase(OpalTestCase):
         schema = Tagging.build_field_schema()
         for field in fields:
             self.assertIn(field, schema)
-
-
-class TeamTestCase(OpalTestCase):
-
-    def test_for_restricted_user(self):
-        profile, _ = UserProfile.objects.get_or_create(user=self.user)
-        profile.restricted_only = True
-        profile.save()
-        self.assertEqual([], Team.for_user(self.user))
-
-    def test_has_subteams(self):
-        t = Team()
-        self.assertEqual(False, t.has_subteams)
 
 
 
