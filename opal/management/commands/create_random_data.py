@@ -122,7 +122,7 @@ def foreign_key_or_free_text_generator(field, **kwargs):
 def text_field_generator(*args, **kwargs):
     result = ""
     choices = adjectives + nouns
-    for i in xrange(20):
+    for i in range(20):
         result += " " + random.choice(choices)
 
     return result
@@ -143,7 +143,7 @@ class PatientGenerator(object):
 
     def get_hospital_numbers(self, amount, seed=0):
         template = "00000000"
-        numbers = xrange(seed, amount)
+        numbers = range(seed, amount)
         hospital_numbers = []
         for number in numbers:
             hospital_numbers.append("%s%s" % (template[:len(str(number))], number))
@@ -340,5 +340,5 @@ class Command(BaseCommand):
             number = 100
         p = PatientGenerator()
 
-        for i in xrange(number):
+        for i in range(number):
             p.make()
