@@ -603,7 +603,7 @@ class PatientConsultationTestCase(OpalTestCase):
         )
 
     def test_if_when_is_set(self):
-        when = datetime.datetime(2016, 06, 10, 12, 2, 20)
+        when = datetime.datetime(2016, 6, 10, 12, 2, 20)
         patient_consultation_dict = dict(
             when='10/06/2016 12:02:20',
         )
