@@ -129,7 +129,7 @@ class SubrecordCSVTestCase(PatientEpisodeTestCase):
             'name'
         ]
         expected_row = [
-            'None', 'None', 'None', 'None', str(self.episode.id), 'blue'
+            u'None', u'None', u'None', u'None', str(self.episode.id), u'blue'
         ]
         self.assertEqual(headers, expected_headers)
         self.assertEqual(row, expected_row)

@@ -12,6 +12,7 @@ import logging
 from opal.models import Episode
 from opal.core.subrecords import episode_subrecords, patient_subrecords
 
+from six import u
 
 def subrecord_csv(episodes, subrecord, file_name):
     """
@@ -30,7 +31,9 @@ def subrecord_csv(episodes, subrecord, file_name):
         writer.writerow(field_names)
         subrecords = subrecord.objects.filter(episode__in=episodes)
         for sub in subrecords:
-            writer.writerow([str(getattr(sub, f)).encode('UTF-8') for f in field_names])
+            writer.writerow([
+                u(str(getattr(sub, f))) for f in field_names
+            ])
     logging.info("finished writing for %s" % subrecord)
 
 
