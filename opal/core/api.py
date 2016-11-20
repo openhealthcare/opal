@@ -95,7 +95,7 @@ class ReferenceDataViewSet(LoginRequiredViewset):
             *subclasses
         )
 
-        for model, ct in model_to_ct.iteritems():
+        for model, ct in model_to_ct.items():
             synonyms = Synonym.objects.filter(content_type=ct).values_list(
                 "name", flat=True
             )
@@ -227,7 +227,7 @@ class TaggingViewSet(LoginRequiredViewset):
     def update(self, request, episode):
         if 'id' in request.data:
             del request.data['id']
-        tag_names = [n for n, v in request.data.items() if v]
+        tag_names = [n for n, v in list(request.data.items()) if v]
         episode.set_tag_names(tag_names, request.user)
         return Response(episode.tagging_dict(request.user)[0], status=status.HTTP_202_ACCEPTED)
 
@@ -272,7 +272,7 @@ class EpisodeViewSet(LoginRequiredViewset):
         episode.update_from_dict(request.data, request.user)
         location = episode.location_set.get()
         location.update_from_dict(location_data, request.user)
-        episode.set_tag_names(tagging.keys(), request.user)
+        episode.set_tag_names(list(tagging.keys()), request.user)
         serialised = episode.to_dict(request.user)
 
         return _build_json_response(serialised, status_code=status.HTTP_201_CREATED)
