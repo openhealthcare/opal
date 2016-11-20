@@ -427,9 +427,9 @@ class ManyToManyTestSubrecordWithLookupListTest(TestCase):
         )
         response = self.viewset().update(mock_request, pk=hat_wearer.pk)
         self.assertEqual(400, response.status_code)
-        hw = HatWearer.objects.get(name="Jane")
+        hw = HatWearer.objects.get(name=u"Jane")
         hat_names = hw.hats.all().values_list("name", flat=True)
-        self.assertEqual(list(hat_names), [unicode(self.bowler.name)])
+        self.assertEqual(list(hat_names), [self.bowler.name])
 
 
 class UserProfileTestCase(TestCase):
