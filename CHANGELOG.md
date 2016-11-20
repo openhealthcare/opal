@@ -30,6 +30,15 @@ Note unlike the traditional choices implementation only the last value of the ch
 
 What is displayed to the user and saved to the database is 'Purple' or 'Red' respectively.
 
+#### Python 3
+
+Opal 0.8.0 is the first version of Opal to support Python 3. This has meant changing the default
+ordering of `PatientList` instances to 0 rather than None.
+
+Moving forwards we expect all new code in Opal to be compatible with both Python 2.7 and 3.5.
+
+This introduces an explicit Opal dependency on the Six module for maintaining codebases that span
+Python 2.x and 3.x.
 
 #### Misc changes
 
