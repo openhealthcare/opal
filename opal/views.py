@@ -109,10 +109,6 @@ class EpisodeDetailTemplateView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class AddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'add_episode_modal.html'
-
-
 class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'opal.html'
 
