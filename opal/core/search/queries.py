@@ -272,13 +272,13 @@ class DatabaseQuery(QueryBackend):
                 patient_summaries[patient_id] = PatientSummary(episode)
 
         patients = models.Patient.objects.filter(
-            id__in=patient_summaries.keys()
+            id__in=list(patient_summaries.keys())
         )
         patients = patients.prefetch_related("demographics_set")
 
         results = []
 
-        for patient_id, patient_summary in patient_summaries.iteritems():
+        for patient_id, patient_summary in patient_summaries.items():
             patient = next(p for p in patients if p.id == patient_id)
             demographic = patient.demographics_set.get()
 
