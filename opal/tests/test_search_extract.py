@@ -160,11 +160,14 @@ class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
             'sex',
             'birth_place',
         ]
+        self.assertEqual(headers[0], 'episode_id')
+        for h in expected_headers:
+            self.assertTrue(h in headers)
+
         expected_row = [
-            1, 'None', 'None', 'None', 'None', '12345678',
-            'None', '1976-01-01', 'False', '', ''
+            1, u'None', u'None', u'None', u'None', u'12345678',
+            u'None', u'1976-01-01', u'False', u'', u''
         ]
-        self.assertEqual(expected_headers, headers)
         self.assertEqual(row, expected_row)
 
 

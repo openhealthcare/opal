@@ -80,7 +80,7 @@ def patient_subrecord_csv(episodes, subrecord, file_name):
 
         for sub in subs:
             row = [patient_to_episode[sub.patient_id]]
-            row.extend(str(getattr(sub, f)).encode('UTF-8') for f in field_names)
+            row.extend(u(str(getattr(sub, f))) for f in field_names)
             writer.writerow(row)
     logging.info("finished patient subrecord %s" % subrecord)
 
