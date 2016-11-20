@@ -114,7 +114,6 @@ class AddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(AddEpisodeTemplateView, self).get_context_data(**kwargs)
-        context['teams'] = models.Team.for_user(self.request.user)
         return context
 
 

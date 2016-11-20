@@ -342,54 +342,6 @@ class ContactNumber(models.Model):
         return u'{0}: {1}'.format(self.name, self.number)
 
 
-class Team(models.Model):
-    """
-    This model is no longer relevant and marked for removal.
-
-    In pre 0.6 versions of OPAL this was in fact a mis-named
-    Patient list model.
-
-    As of 0.6 defining lists has been moved to declarative subclasses
-    of opal.core.patient_lists.PatientList
-
-    See the 0.5.x -> 0.6.x documentation for upgrade strategies.
-    """
-    HELP_RESTRICTED = "Whether this team is restricted to only a subset of users"
-
-    name           = models.CharField(max_length=250,
-                                      help_text="This should only have letters and underscores")
-    title          = models.CharField(max_length=250)
-    parent         = models.ForeignKey('self', blank=True, null=True)
-    active         = models.BooleanField(default=True)
-    order          = models.IntegerField(blank=True, null=True)
-    #TODO: Move this somewhere else
-    useful_numbers = models.ManyToManyField(ContactNumber, blank=True)
-    restricted     = models.BooleanField(default=False,
-                                         help_text=HELP_RESTRICTED)
-    direct_add     = models.BooleanField(default=True)
-    show_all       = models.BooleanField(default=False)
-    visible_in_list = models.BooleanField(default=True)
-
-    def __unicode__(self):
-        return self.title
-
-    @classmethod
-    def for_user(klass, user):
-        """
-        Return the set of teams this user has access to.
-        """
-        profile, _ = UserProfile.objects.get_or_create(user=user)
-        if profile.restricted_only:
-            teams = []
-        else:
-            teams = klass.objects.filter(active=True, restricted=False).order_by('order')
-        return teams
-
-    @property
-    def has_subteams(self):
-        return self.team_set.count() > 0
-
-
 class Synonym(models.Model):
     name = models.CharField(max_length=255)
     content_type = models.ForeignKey(ContentType)
@@ -953,7 +905,6 @@ class Tagging(TrackedModel, models.Model):
     _advanced_searchable = True
     _title = 'Teams'
 
-    team     = models.ForeignKey(Team, blank=True, null=True)
     user     = models.ForeignKey(User, null=True, blank=True)
     episode  = models.ForeignKey(Episode, null=False)
     archived = models.BooleanField(default=False)
@@ -1438,12 +1389,6 @@ class UserProfile(models.Model):
             roles.update(plugin().roles(self.user))
         roles['default'] = [r.name for r in self.roles.all()]
         return roles
-
-    def get_teams(self):
-        """
-        Return an iterable of teams for this user.
-        """
-        return Team.for_user(self.user)
 
     @property
     def can_see_pid(self):
