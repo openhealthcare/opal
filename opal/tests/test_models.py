@@ -453,7 +453,7 @@ class BulkUpdateFromDictsTest(OpalTestCase):
         )
 
         result = FamousLastWords.objects.get()
-        self.assertEqual(result.words, famous_last_words[0].values()[0])
+        self.assertEqual(result.words, list(famous_last_words[0].values())[0])
 
 
 class InpatientAdmissionTestCase(OpalTestCase):
