@@ -15,7 +15,11 @@ Metadata (App specific data you wish to pass into the front end).
 
 Those applications relying on Angular strap ui components (Typeahead, Popover,
 Tooltip, Datepicker, Timepicker) should convert their templates to use the Angular UI Boostrap equivalents, or the
-OPAL templatetags.
+OPAL templatetags. 
+
+If you are simply using Opal templatetags from `forms` and not overriding these templates, then the transition should be seamless. Otherwise, searching your codebase for html files containing `bs-` and looking for angular strap components is a good start.
+
+Applications or plugins with javascript tests may need to update their includes to remove references to old library files.
 
 Full documentation of the markup and options for these components is found [here](http://angular-ui.github.io/bootstrap/versioned-docs/0.14.3/)
 
