@@ -537,7 +537,7 @@ class EpisodeTestCase(OpalTestCase):
         self.expected["episode_history"][0]["date_of_admission"] = "14/01/2014"
 
     def test_retrieve_episode(self):
-        response = json.loads(api.EpisodeViewSet().retrieve(self.mock_request, pk=self.episode.pk).content)
+        response = json.loads(api.EpisodeViewSet().retrieve(self.mock_request, pk=self.episode.pk).content.decode('UTF-8'))
         self.assertEqual(self.expected, response)
 
     def test_retrieve_nonexistent_episode(self):
@@ -567,7 +567,7 @@ class EpisodeTestCase(OpalTestCase):
         response = api.EpisodeViewSet().create(self.mock_request)
         self.assertEqual(201, response.status_code)
         self.assertEqual(2, self.patient.episode_set.count())
-        self.assertEqual("14/01/2015", json.loads(response.content)['date_of_admission'])
+        self.assertEqual("14/01/2015", json.loads(response.content.decode('UTF-8'))['date_of_admission'])
 
     def test_create_new_patient(self):
         pcount = models.Patient.objects.filter(
@@ -731,7 +731,7 @@ class PatientRecordAccessViewSetTestCase(OpalTestCase):
         mock_request.user = self.user
         models.PatientRecordAccess.objects.create(patient=patient, user=self.user)
         response = api.PatientRecordAccessViewSet().retrieve(mock_request, pk=patient.pk).content
-        loaded = json.loads(response)
+        loaded = json.loads(response.decode('UTF-8'))
         self.assertEqual(patient.id, loaded[0]['patient'])
         self.assertEqual(self.user.username, loaded[0]['username'])
 
