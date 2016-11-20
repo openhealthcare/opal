@@ -1,6 +1,8 @@
 """
 Unittests for opal.utils
 """
+import sys
+
 from django.test import TestCase
 from django.db.models import ForeignKey, CharField
 
@@ -42,9 +44,11 @@ class ItersubclassesTestCase(TestCase):
         self.assertEqual(results, set([B, D]))
 
     def test_old_style_classes(self):
-        class Old: pass
-        with self.assertRaises(TypeError):
-            list(utils._itersubclasses(Old))
+        if sys.version_info[0] < 3:
+
+            class Old: pass
+            with self.assertRaises(TypeError):
+                list(utils._itersubclasses(Old))
 
     def test_when_called_with_type(self):
         expected = type.__subclasses__(type)
