@@ -73,8 +73,6 @@ class RecordPanelTestCase(OpalTestCase):
         with self.assertRaises(ValueError) as e:
             template.render(Context(ctx))
 
-        self.assertEqual(e.exception.message, 'Unable to find a subrecord')
-
 
 class RecordTimelineTestCase(OpalTestCase):
     def test_record_timeline(self):
