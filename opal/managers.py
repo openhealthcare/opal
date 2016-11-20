@@ -10,6 +10,7 @@ from django.db.models import Q
 from opal.core.subrecords import (
     episode_subrecords, patient_subrecords
 )
+from functools import reduce
 
 class PatientQueryset(models.QuerySet):
     def search(self, some_query):
@@ -95,9 +96,9 @@ class EpisodeQueryset(models.QuerySet):
         for e in episodes:
             d = e.to_dict(user, shallow=True)
 
-            for key, value in episode_subs[e.id].items():
+            for key, value in list(episode_subs[e.id].items()):
                 d[key] = value
-            for key, value in patient_subs[e.patient_id].items():
+            for key, value in list(patient_subs[e.patient_id].items()):
                 d[key] = value
 
             d['tagging'] = [taggings[e.id]]
