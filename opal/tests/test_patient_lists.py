@@ -90,7 +90,7 @@ class TestPatientList(OpalTestCase):
         self.assertEqual(1, TaggingTestNotSubTag.order)
 
     def test_order_unimplemented(self):
-        self.assertEqual(None, PatientList.order)
+        self.assertEqual(0, PatientList.order)
 
     def test_order_respected_by_list(self):
         expected = [

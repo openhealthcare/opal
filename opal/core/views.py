@@ -35,6 +35,8 @@ class OpalSerializer(DjangoJSONEncoder):
 
 def _get_request_data(request):
     data = request.read()
+    if hasattr(data, 'decode'):
+        data = data.decode('UTF-8')
     return json.loads(data)
 
 def _build_json_response(data, status_code=200):

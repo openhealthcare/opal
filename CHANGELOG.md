@@ -41,6 +41,24 @@ Any controllers attempting to open the modal e.g. custom list flows should updat
 `$modal.open` call to remove the trailing slash.
 
 
+#### Python 3
+
+Opal 0.8.0 is the first version of Opal to support Python 3. This has meant changing the default
+ordering of `PatientList` instances to 0 rather than None.
+
+Moving forwards we expect all new code in Opal to be compatible with both Python 2.7 and 3.5.
+
+This introduces an explicit Opal dependency on the Six module for maintaining codebases that span
+Python 2.x and 3.x.
+
+
+#### Template re-naming
+
+Modal_base has now been moved into a folder called base_templates. Its also now got a form_modal_base and a two_column_form_modal_base. The latter two templates add validation around saving.
+
+The standard edit item models and others now inherit from the form_modal_base.
+
+
 #### Misc changes
 
 Removes `Options` both from the JSON API, and the Angular service.
@@ -87,12 +105,8 @@ opening the modal/pathway but will get the error after they click submit.
 
 We remove the _modal option to set on subrecords. This is because we now use large modals across the board.
 
-
-#### Template re-naming
-
-Modal_base has now been moved into a folder called base_templates. Its also now got a form_modal_base and a two_column_form_modal_base. The latter two templates add validation around saving.
-
-The standard edit item models and others now inherit from the form_modal_base.
+The default admin url is now `/admin/` - rather than `/admin/?` this results in more readable
+admin urls and is closer to what most applications do with the Django admin.
 
 
 #### Updates to the Dependency Graph

@@ -99,17 +99,6 @@ angular.module('opal.controllers').controller(
           });
       };
 
-      $scope.$on('change', function(event, episode) {
-          episode = new Episode(episode);
-          if($scope.episodes[episode.id]){
-              $scope.episodes[episode.id] = episode;
-              var rix = getRowIxFromEpisodeId(episode.id);
-              if(rix != -1){
-                  $scope.rows[rix] = episode;
-              }
-          }
-      });
-
         $scope.jumpToTag = function(tag){
             if(_.contains(_.keys(metadata.tag_hierarchy), tag)){
                 $location.path($scope.path_base + tag)

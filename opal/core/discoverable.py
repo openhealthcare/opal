@@ -2,6 +2,7 @@
 OPAL utilities for discoverable functionality
 """
 from django.conf import settings
+from six import with_metaclass
 
 from opal.core import exceptions
 from opal.utils import camelcase_to_underscore, _itersubclasses, stringport
@@ -37,12 +38,11 @@ class DiscoverableMeta(type):
         return newfeature
 
 
-class DiscoverableFeature(object):
+class DiscoverableFeature(with_metaclass(DiscoverableMeta, object)):
     """
     Base discoverable feature providing common patterns for
     re-usable features.
     """
-    __metaclass__ = DiscoverableMeta
     module_name = None
     display_name = None
     slug = None

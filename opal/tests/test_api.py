@@ -194,7 +194,7 @@ class SubrecordTestCase(OpalTestCase):
         self.assertEqual(self.user, colour.created_by)
         self.assertIsNone(colour.updated)
         self.assertIsNone(colour.updated_by)
-        self.assertEqual('blue', json.loads(response.content)['name'])
+        self.assertEqual('blue', json.loads(response.content.decode('UTF-8'))['name'])
 
     def test_create_patient_subrecord(self):
         mock_request = MagicMock(name='mock request')
@@ -202,7 +202,7 @@ class SubrecordTestCase(OpalTestCase):
         mock_request.data = {'name': 'blue', 'episode_id': self.episode.pk,
                              'patient_id': self.patient.pk}
         response = self.patientviewset().create(mock_request)
-        self.assertEqual('blue', json.loads(response.content)['name'])
+        self.assertEqual('blue', json.loads(response.content.decode('UTF-8'))['name'])
 
     def test_create_nonexistant_episode(self):
         mock_request = MagicMock(name='mock request')
@@ -243,7 +243,7 @@ class SubrecordTestCase(OpalTestCase):
         self.assertEqual(self.user, updated_colour.created_by)
         self.assertEqual(date.today(), updated_colour.updated.date())
         self.assertEqual(202, response.status_code)
-        self.assertEqual('green', json.loads(response.content)['name'])
+        self.assertEqual('green', json.loads(response.content.decode('UTF-8'))['name'])
 
     def test_update_item_changed(self):
         created = timezone.now() - timedelta(1)
@@ -427,9 +427,9 @@ class ManyToManyTestSubrecordWithLookupListTest(TestCase):
         )
         response = self.viewset().update(mock_request, pk=hat_wearer.pk)
         self.assertEqual(400, response.status_code)
-        hw = HatWearer.objects.get(name="Jane")
+        hw = HatWearer.objects.get(name=u"Jane")
         hat_names = hw.hats.all().values_list("name", flat=True)
-        self.assertEqual(list(hat_names), [unicode(self.bowler.name)])
+        self.assertEqual(list(hat_names), [self.bowler.name])
 
 
 class UserProfileTestCase(TestCase):
@@ -536,7 +536,7 @@ class EpisodeTestCase(OpalTestCase):
         self.expected["episode_history"][0]["date_of_admission"] = "14/01/2014"
 
     def test_retrieve_episode(self):
-        response = json.loads(api.EpisodeViewSet().retrieve(self.mock_request, pk=self.episode.pk).content)
+        response = json.loads(api.EpisodeViewSet().retrieve(self.mock_request, pk=self.episode.pk).content.decode('UTF-8'))
         self.assertEqual(self.expected, response)
 
     def test_retrieve_nonexistent_episode(self):
@@ -546,7 +546,7 @@ class EpisodeTestCase(OpalTestCase):
     def test_list(self):
         response = api.EpisodeViewSet().list(self.mock_request)
         self.assertEqual(200, response.status_code)
-        response_content = json.loads(response.content)
+        response_content = json.loads(response.content.decode('UTF-8'))
         self.assertEqual([self.expected], response_content)
 
     def test_list_unauthenticated(self):
@@ -566,7 +566,7 @@ class EpisodeTestCase(OpalTestCase):
         response = api.EpisodeViewSet().create(self.mock_request)
         self.assertEqual(201, response.status_code)
         self.assertEqual(2, self.patient.episode_set.count())
-        self.assertEqual("14/01/2015", json.loads(response.content)['date_of_admission'])
+        self.assertEqual("14/01/2015", json.loads(response.content.decode('UTF-8'))['date_of_admission'])
 
     def test_create_new_patient(self):
         pcount = models.Patient.objects.filter(
@@ -685,7 +685,7 @@ class EpisodeTestCase(OpalTestCase):
         response = api.EpisodeViewSet().update(self.mock_request, pk=episode.pk)
         e = models.Episode.objects.get(pk=episode.pk)
         self.assertEqual(date(2015, 1, 14), e.date_of_admission)
-        response_dict = json.loads(response.content)
+        response_dict = json.loads(response.content.decode('UTF-8'))
         self.assertEqual(response_dict["date_of_admission"], "14/01/2015")
 
     def test_update_nonexistent(self):
@@ -730,7 +730,7 @@ class PatientRecordAccessViewSetTestCase(OpalTestCase):
         mock_request.user = self.user
         models.PatientRecordAccess.objects.create(patient=patient, user=self.user)
         response = api.PatientRecordAccessViewSet().retrieve(mock_request, pk=patient.pk).content
-        loaded = json.loads(response)
+        loaded = json.loads(response.decode('UTF-8'))
         self.assertEqual(patient.id, loaded[0]['patient'])
         self.assertEqual(self.user.username, loaded[0]['username'])
 

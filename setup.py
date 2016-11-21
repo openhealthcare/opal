@@ -53,5 +53,6 @@ setup(
         'python-dateutil==2.4.2',
         'django-celery==3.1.17',
         'celery==3.1.19',
+        'six>=1.10.0',
         ]
 )
