@@ -31,9 +31,10 @@ Note unlike the traditional choices implementation only the last value of the ch
 What is displayed to the user and saved to the database is 'Purple' or 'Red' respectively.
 
 
-#### Team model removed
+#### Model removals
 
-The team model, marked for removal since 0.6.0 has now been removed.
+The models `Team`, `GP`, `CommunityNurse` and `LocatedModel` - marked for removal since 0.6.0
+have now been removed.
 
 As part of this change, the add episode modal previously available at
 `/templates/modals/add_episode.html/` is now not available at the url with a trailing slash.
@@ -63,8 +64,6 @@ The standard edit item models and others now inherit from the form_modal_base.
 
 Removes `Options` both from the JSON API, and the Angular service.
 Removes legacy APIs `/api/v0.1/episode/admit` and `/api/v0.1/episode/refer`.
-
-Removes the models `GP`, `CommunityNurse` and `LocatedModel`.
 
 The opal.core.api.EpisodeViewSet.create now expects tagging to be an object rather than a list, similar to how it details with demographics and location.
 
