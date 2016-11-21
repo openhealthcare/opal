@@ -23,7 +23,7 @@ urlpatterns = patterns(
     url(r'^accounts/templates/account_detail.html',
         views.AccountDetailTemplateView.as_view()),
     url(r'^accounts/banned', views.BannedView.as_view(), name='banned'),
-    url(r'^admin/?', include(admin.site.urls)),
+    url(r'^admin/', include(admin.site.urls)),
 
     url(r'^episode/(?P<pk>\d+)/actions/copyto/(?P<category>[a-zA-Z_\-]+)/?$',
         views.EpisodeCopyToCategoryView.as_view()),
