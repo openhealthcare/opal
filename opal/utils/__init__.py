@@ -24,7 +24,7 @@ def stringport(module):
                    (Is it on sys.path? Does it have syntax errors?)" % module
     try:
         return importlib.import_module(module)
-    except ImportError, e:
+    except ImportError as e:
         try:
             if '.' not in module:
                 raise
@@ -34,7 +34,7 @@ def stringport(module):
                 return getattr(module, obj)
             else:
                 raise ImportError(msg)
-        except ImportError, e:
+        except ImportError as e:
             raise ImportError(msg)
 
 

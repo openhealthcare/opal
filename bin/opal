@@ -40,9 +40,9 @@ def _find_application_name():
             if d/'settings.py':
                 return d[-1]
 
-    print "\n\nCripes!\n"
-    print "We can't figure out what the name of your application is :(\n"
-    print "Are you in the application root directory? \n\n"
+    print("\n\nCripes!\n")
+    print("We can't figure out what the name of your application is :(\n")
+    print("Are you in the application root directory? \n\n")
     sys.exit(1)
 
 def startproject(args):
@@ -100,12 +100,12 @@ def scaffold(args):
                 continue
             if not thing.get_display_template():
                 if args.dry_run:
-                    print 'No Display template for {0}'.format(thing)
+                    print('No Display template for {0}'.format(thing))
                 else:
                     scaffold_utils.create_display_template_for(thing, SCAFFOLDING_BASE)
             if not thing.get_modal_template():
                 if args.dry_run:
-                    print 'No Form template for {0}'.format(thing)
+                    print('No Form template for {0}'.format(thing))
                 else:
                     scaffold_utils.create_form_template_for(thing, SCAFFOLDING_BASE)
     return
@@ -114,7 +114,7 @@ def _run_py_tests(args):
     """
     Run our Python test suite
     """
-    print "Running Python Unit Tests"
+    print("Running Python Unit Tests")
 
     # We have a custom test runner - e.g. it's OPAL itself or a plugin.
     if _userland_here_has__file('runtests.py'):
@@ -135,9 +135,9 @@ def _run_py_tests(args):
             test_args = ['coverage', 'run', 'manage.py', 'test',]
 
     else:
-        print "\n\nCripes!\n"
-        print "We can't figure out how to run your tests :(\n"
-        print "Are you in the root directory? \n\n"
+        print("\n\nCripes!\n")
+        print("We can't figure out how to run your tests :(\n")
+        print("Are you in the root directory? \n\n")
         sys.exit(1)
 
     try:
@@ -157,7 +157,7 @@ def _run_js_tests(args):
     """
     Run our Javascript test suite
     """
-    print "Running Javascript Unit Tests"
+    print("Running Javascript Unit Tests")
     env = os.environ.copy()
     if TRAVIS:
         karma = './node_modules/karma/bin/karma'
@@ -241,33 +241,33 @@ def checkout(args):
         existing_packages = subprocess.check_output(["ls"]).split("\n")
         uncommitted = []
 
-        for package_name, version in package_name_version.iteritems():
+        for package_name, version in package_name_version.items():
             if package_name in existing_packages:
                 with SOURCE_DIR/package_name:
                     if check_for_uncommitted():
                         uncommitted.append(package_name)
 
         if len(uncommitted):
-            print "we have uncommited changes in {} quitting".format(
+            print("we have uncommited changes in {} quitting".format(
                 ", ".join(uncommitted)
-            )
+            ))
             return
 
-        for package_name, version in package_name_version.iteritems():
+        for package_name, version in package_name_version.items():
             if package_name in existing_packages:
                 with SOURCE_DIR/package_name:
-                    print "checking out {0} to {1}".format(
+                    print("checking out {0} to {1}".format(
                         package_name, version
-                    )
+                    ))
                     os.system("git checkout {}".format(version))
                     os.system("python setup.py develop")
             else:
-                print "cloning {}".format(package_name)
+                print("cloning {}".format(package_name))
                 os.system("git clone {}".format(package_name))
                 with SOURCE_DIR/package_name:
-                    print "checking out {0} to {1}".format(
+                    print("checking out {0} to {1}".format(
                         package_name, version
-                    )
+                    ))
                     os.system("git checkout {}".format(version))
                     os.system("python setup.py develop")
 

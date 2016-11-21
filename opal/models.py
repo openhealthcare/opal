@@ -66,7 +66,7 @@ class SerialisableFields(object):
         """
         # TODO update to use the django 1.8 meta api
         fieldnames = [f.attname for f in cls._meta.fields]
-        for name, value in vars(cls).items():
+        for name, value in list(vars(cls).items()):
             if isinstance(value, ForeignKeyOrFreeText):
                 fieldnames.append(name)
         # Sometimes FKorFT fields are defined on the parent now we have
@@ -339,7 +339,7 @@ class ContactNumber(models.Model):
     number = models.CharField(max_length=255)
 
     def __unicode__(self):
-        return u'{0}: {1}'.format(self.name, self.number)
+        return '{0}: {1}'.format(self.name, self.number)
 
 
 class Team(models.Model):
@@ -442,7 +442,7 @@ class Patient(models.Model):
         except models.ObjectDoesNotExist:
             return 'Patient {0}'.format(self.id)
         except:
-            print self.id
+            print(self.id)
             raise
 
     def create_episode(self, **kwargs):
@@ -482,7 +482,7 @@ class Patient(models.Model):
         if not self.episode_set.exists():
             episode = self.create_episode()
 
-        for api_name, list_of_upgrades in dict_of_list_of_upgrades.iteritems():
+        for api_name, list_of_upgrades in dict_of_list_of_upgrades.items():
 
             # for the moment we'll ignore tagging as its weird
             if(api_name == "tagging"):
@@ -634,7 +634,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         except AttributeError:
             return 'Episode: {0}'.format(self.pk)
         except Exception as e:
-            print e.__class__
+            print(e.__class__)
             return self.date_of_admission
 
     def save(self, *args, **kwargs):
@@ -807,11 +807,11 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
 
     def __unicode__(self):
         if self.created:
-            return u'{0}: {1} {2}'.format(
+            return '{0}: {1} {2}'.format(
                 self.get_api_name(), self.id, self.created
             )
         else:
-            return u'{0}: {1}'.format(self.get_api_name(), self.id)
+            return '{0}: {1}'.format(self.get_api_name(), self.id)
 
     @classmethod
     def get_api_name(cls):
@@ -1269,7 +1269,7 @@ class Location(EpisodeSubrecord):
 
     def __unicode__(self):
         demographics = self.episode.patient.demographics_set.get()
-        return u'Location for {0}({1}) {2} {3} {4} {5}'.format(
+        return 'Location for {0}({1}) {2} {3} {4} {5}'.format(
             demographics.name,
             demographics.hospital_number,
             self.category,
@@ -1325,7 +1325,7 @@ class Diagnosis(EpisodeSubrecord):
         abstract = True
 
     def __unicode__(self):
-        return u'Diagnosis for {0}: {1} - {2}'.format(
+        return 'Diagnosis for {0}: {1} - {2}'.format(
             self.episode.patient.demographics_set.get().name,
             self.condition,
             self.date_of_diagnosis
@@ -1402,7 +1402,7 @@ class Role(models.Model):
     name = models.CharField(max_length=200)
 
     def __unicode__(self):
-        return unicode(self.name)
+        return str(self.name)
 
 
 class UserProfile(models.Model):
@@ -1447,12 +1447,12 @@ class UserProfile(models.Model):
 
     @property
     def can_see_pid(self):
-        all_roles = itertools.chain(*self.get_roles().values())
+        all_roles = itertools.chain(*list(self.get_roles().values()))
         return not any(r for r in all_roles if r == "researcher" or r == "scientist")
 
     @property
     def explicit_access_only(self):
-        all_roles = itertools.chain(*self.get_roles().values())
+        all_roles = itertools.chain(*list(self.get_roles().values()))
         return any(r for r in all_roles if r == "scientist")
 
 

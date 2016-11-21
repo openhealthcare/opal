@@ -71,14 +71,14 @@ class PatientSearchTestCase(BaseSearchTestCase):
     def test_patient_does_not_exist_number(self):
         url = '%s?hospital_number=notareanumber' % self.url
         resp = self.get_response(url)
-        data = json.loads(resp.content)
+        data = json.loads(resp.content.decode('UTF-8'))
         self.assertEqual([], data)
 
     # Searching for a patient that exists by Hospital Number
     def test_patient_exists_number(self):
         url = '/search/patient/?hospital_number=007'
         resp = self.get_response(url)
-        data = json.loads(resp.content)
+        data = json.loads(resp.content.decode('UTF-8'))
         expected = [self.patient.to_dict(self.user)]
 
         expected = json.loads(json.dumps(expected, cls=DjangoJSONEncoder))
@@ -142,25 +142,25 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
     # Searching for a patient that exists by partial name match
     def test_patient_exists_partial_name(self):
         resp = self.get_response("%s?query=Co" % self.url)
-        data = json.loads(resp.content)
+        data = json.loads(resp.content.decode('UTF-8'))
         self.assertEqual(self.expected, data)
 
     # Searching for a patient that exists by partial HN match
     def test_patient_exists_partial_number(self):
         resp = self.get_response('%s?query=07' % self.url)
-        data = json.loads(resp.content)
+        data = json.loads(resp.content.decode('UTF-8'))
         self.assertEqual(self.expected, data)
 
     # Searching for a patient that exists by name
     def test_patient_exists_name(self):
         resp = self.get_response('%s?query=Connery' % self.url)
-        data = json.loads(resp.content)
+        data = json.loads(resp.content.decode('UTF-8'))
         self.assertEqual(self.expected, data)
 
     # Searching for a patient that doesn't exist by Hospital Number
     def test_patient_does_not_exist_number(self):
         resp = self.get_response('%s?query=notareanumber' % self.url)
-        data = json.loads(resp.content)
+        data = json.loads(resp.content.decode('UTF-8'))
         self.assertEqual(self.empty_expected, data)
 
     # Searching for a patient that doesn't exist by name
@@ -168,7 +168,7 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
         request = self.rf.get('%s/?query=notareaname' % self.url)
         request.user = self.user
         resp = self.view(request)
-        data = json.loads(resp.content)
+        data = json.loads(resp.content.decode('UTF-8'))
         self.assertEqual(self.empty_expected, data)
 
     # Searching for a patient that exists by Hospital Number
@@ -176,7 +176,7 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
         request = self.rf.get('%s/?query=007' % self.url)
         request.user = self.user
         resp = self.view(request)
-        data = json.loads(resp.content)
+        data = json.loads(resp.content.decode('UTF-8'))
         self.assertEqual(self.expected, data)
 
     # searching by James Bond should only yield James Bond
@@ -191,7 +191,7 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
             "Ernst", "Blofeld", "23422"
         )
         resp = self.get_response('{}/?query=James%20Bond'.format(self.url))
-        data = json.loads(resp.content)["object_list"]
+        data = json.loads(resp.content.decode('UTF-8'))["object_list"]
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]["first_name"], "James")
         self.assertEqual(data[0]["surname"], "Bond")
@@ -229,7 +229,7 @@ class ExtractSearchViewTestCase(BaseSearchTestCase):
         with patch.object(view.request, 'read') as mock_read:
             mock_read.return_value = data
 
-            resp = json.loads(view.post().content)
+            resp = json.loads(view.post().content.decode('UTF-8'))
             self.assertEqual(1, resp['total_count'])
             self.assertEqual(self.patient.id, resp['object_list'][0]['patient_id'])
 
@@ -243,7 +243,7 @@ class ExtractSearchViewTestCase(BaseSearchTestCase):
             mock_read.return_value = data
             resp = view.post()
             self.assertEqual(resp.status_code, 400)
-            self.assertEqual(json.loads(resp.content), dict(
+            self.assertEqual(json.loads(resp.content.decode('UTF-8')), dict(
                 error="No search criteria provied"
             ))
 
@@ -273,7 +273,7 @@ class FilterViewTestCase(BaseSearchTestCase):
         view.request = self.rf.get('/filter')
         view.request.user = self.user
 
-        data = json.loads(view.get().content)
+        data = json.loads(view.get().content.decode('UTF-8'))
         self.assertEqual([{'name': 'testfilter', 'criteria': [], 'id': 1}], data)
 
     def test_post(self):
@@ -298,7 +298,7 @@ class FilterDetailViewTestCase(BaseSearchTestCase):
     def test_get(self):
         request = self.get_logged_in_request('/filter/1/')
         data = json.loads(views.FilterDetailView.as_view()(
-            request, pk=self.filt.pk).content)
+            request, pk=self.filt.pk).content.decode('UTF-8'))
         self.assertEqual({'name': 'testfilter',
                           'criteria': [],
                           'id': self.filt.id}, data)

@@ -11,3 +11,4 @@ coverage-js
 *~
 *#
 *DS_Store
+*.bak

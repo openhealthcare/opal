@@ -1,6 +1,8 @@
 """
 Tests for our modal/form helpers
 """
+import json
+
 from django.template import Template, Context
 from django.test import TestCase
 
@@ -46,7 +48,9 @@ class TestInferFromSubrecordPath(TestCase):
 
     def test_infer_choice_fields_from_charfield(self):
         ctx = infer_from_subrecord_field_path("FavouriteColour.name")
-        self.assertEqual(ctx["lookuplist"], '["purple", "blue", "yellow"]')
+        choices = json.loads(ctx["lookuplist"])
+        for choice in ["purple", "blue", "yellow"]:
+            self.assertTrue(choice in choices)
 
 
 class ExtractCommonArgsTestCase(TestCase):

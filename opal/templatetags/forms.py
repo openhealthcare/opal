@@ -70,7 +70,7 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
     choices = getattr(field, "choices", [])
 
     if choices:
-        ctx["lookuplist"] = json.dumps(dict(choices).values())
+        ctx["lookuplist"] = json.dumps(list(dict(choices).values()))
     elif hasattr(field, "foreign_model"):
         ctx["lookuplist"] = "{}_list".format(
             field.foreign_model.get_api_name()

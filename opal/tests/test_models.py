@@ -453,7 +453,7 @@ class BulkUpdateFromDictsTest(OpalTestCase):
         )
 
         result = FamousLastWords.objects.get()
-        self.assertEqual(result.words, famous_last_words[0].values()[0])
+        self.assertEqual(result.words, list(famous_last_words[0].values())[0])
 
 
 class InpatientAdmissionTestCase(OpalTestCase):
@@ -603,7 +603,7 @@ class PatientConsultationTestCase(OpalTestCase):
         )
 
     def test_if_when_is_set(self):
-        when = datetime.datetime(2016, 06, 10, 12, 2, 20)
+        when = datetime.datetime(2016, 6, 10, 12, 2, 20)
         patient_consultation_dict = dict(
             when='10/06/2016 12:02:20',
         )
