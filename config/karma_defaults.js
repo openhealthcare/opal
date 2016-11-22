@@ -1,4 +1,8 @@
-module.exports = function(karmaDir, staticRoute, coverageFiles, includedFiles){
+module.exports = function(karmaDir, coverageFiles, includedFiles){
+    // karmaDir: The karma dir that we get from the plugin, usually __dirname
+    // coverageFiles: The files to run coverralls on
+    // includedFiles: The files to include in the karma conf
+
     var OPAL_DEPENDENCIES = [
       "lib/bower_components/angular/angular.js",
       "lib/bower_components/angular-route/angular-route.js",
@@ -32,22 +36,17 @@ module.exports = function(karmaDir, staticRoute, coverageFiles, includedFiles){
       'opal/controllers/*.js',
     ];
 
-    if(!allFiles){
-      allFiles = coverageFiles;
+    if(!includedFiles){
+      includedFiles = coverageFiles;
     }
     var browsers, coverageReporter, opalRoute;
-    var basePath = __dirname + "../opal/static/js";
+    var basePath = __dirname + "/../opal/static/js";
 
     var preprocessors = {};
-    var files = OPAL_DEPENDENCIES.slice();
 
     coverageFiles.forEach(function(a){
-      preprocessors[basePath+ a] = 'coverage';
+      preprocessors[a] = 'coverage';
     });
-
-    includedFiles.forEach(function(a){
-      files.push(basePath + a);
-    })
 
     if(process.env.TRAVIS){
         browsers = ["Firefox"];
@@ -69,7 +68,7 @@ module.exports = function(karmaDir, staticRoute, coverageFiles, includedFiles){
         frameworks: ['jasmine'],
         browsers: browsers,
         basePath:  basePath,
-        files: files,
+        files: OPAL_DEPENDENCIES.concat(includedFiles),
 
         // Stolen from http://oligofren.wordpress.com/2014/05/27/running-karma-tests-on-browserstack/
         browserDisconnectTimeout : 10000, // default 2000

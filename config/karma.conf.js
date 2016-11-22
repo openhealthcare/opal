@@ -1,12 +1,11 @@
 module.exports = function(config){
     var karmaDefaults = require('./karma_defaults.js');
     var karmaDir = __dirname;
-    var staticRoute = "../../opal/opal/static/js";
     var coverageFiles = [
       'opal/**/*.js',
       '../../core/search/static/js/search/**/*.js',
     ];
-    var files = [
+    var includedFiles = [
       'opal/app.js',
       'opal/routes.js',
       '../../core/search/static/js/search/controllers/*',
@@ -14,7 +13,6 @@ module.exports = function(config){
       'opaltest/*.js',
     ];
 
-    var defaultConfig = karmaDefaults(karmaDir, staticRoute, coverageFiles, includedFiles);
-    console.error(defaultConfig);
+    var defaultConfig = karmaDefaults(karmaDir, coverageFiles, includedFiles);
     config.set(defaultConfig);
 }
