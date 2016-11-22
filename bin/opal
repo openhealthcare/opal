@@ -169,7 +169,7 @@ def _run_js_tests(args):
         karma,
         'start',
         'config/karma.conf.js',
-        '--single-run'
+        '--single-run',
     ]
 
     try:
