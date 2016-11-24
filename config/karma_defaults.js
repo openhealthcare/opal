@@ -1,7 +1,11 @@
-module.exports = function(karmaDir, coverageFiles, includedFiles){
-    // karmaDir: The karma dir that we get from the plugin, usually __dirname
-    // coverageFiles: The files to run coverralls on
+module.exports = function(includedFiles, baseDir, coverageFiles){
     // includedFiles: The files to include in the karma conf
+    // baseDir: The base directory of the module that you're using to run tests
+    // coverageFiles: The files to run coverralls on, if no coverage
+    // files are passed in, coverralls won't be used
+    var useCoverage = !!coverageFiles;
+    var browsers, coverageReporter, opalRoute;
+    var basePath = __dirname + "/../opal/static/js";
 
     var OPAL_DEPENDENCIES = [
       "lib/bower_components/angular/angular.js",
@@ -36,12 +40,6 @@ module.exports = function(karmaDir, coverageFiles, includedFiles){
       'opal/controllers/*.js',
     ];
 
-    if(!includedFiles){
-      includedFiles = coverageFiles;
-    }
-    var browsers, coverageReporter, opalRoute;
-    var basePath = __dirname + "/../opal/static/js";
-
     var preprocessors = {};
 
     coverageFiles.forEach(function(a){
@@ -50,21 +48,25 @@ module.exports = function(karmaDir, coverageFiles, includedFiles){
 
     if(process.env.TRAVIS){
         browsers = ["Firefox"];
-        coverageReporter = {
-            type: 'lcovonly', // lcov or lcovonly are required for generating lcov.info files
-            dir: karmaDir + '/../coverage/',
-        };
+        if(useCoverage){
+          coverageReporter = {
+              type: 'lcovonly', // lcov or lcovonly are required for generating lcov.info files
+              dir: baseDir + '/coverage/',
+          };
+        }
     }
     else{
         browsers = ['PhantomJS'];
-        coverageReporter = {
-            type : 'html',
-            dir : '../../../htmlcov/js/'
-        };
+        if(useCoverage){
+          coverageReporter = {
+              type : 'html',
+              dir : '../../htmlcov/js/'
+          };
+        }
     }
 
 
-    return {
+    var defaults = {
         frameworks: ['jasmine'],
         browsers: browsers,
         basePath:  basePath,
@@ -76,7 +78,13 @@ module.exports = function(karmaDir, coverageFiles, includedFiles){
         browserNoActivityTimeout : 4*60*1000, //default 10000
         captureTimeout : 4*60*1000, //default 60000
         preprocessors: preprocessors,
-        reporters: ['progress', 'coverage'],
-        coverageReporter: coverageReporter
+        reporters: ['progress'],
     };
+
+    if(useCoverage){
+      defaults.reporters = ['progress', 'coverage'];
+      defaults.coverageReporter = coverageReporter;
+    }
+
+    return defaults;
 };

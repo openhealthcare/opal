@@ -1,6 +1,6 @@
 module.exports = function(config){
     var karmaDefaults = require('./karma_defaults.js');
-    var karmaDir = __dirname;
+    var baseDir = __dirname + "/..";
     var coverageFiles = [
       'opal/**/*.js',
       '../../core/search/static/js/search/**/*.js',
@@ -13,6 +13,6 @@ module.exports = function(config){
       'opaltest/*.js',
     ];
 
-    var defaultConfig = karmaDefaults(karmaDir, coverageFiles, includedFiles);
+    var defaultConfig = karmaDefaults(includedFiles, baseDir, coverageFiles);
     config.set(defaultConfig);
 }
