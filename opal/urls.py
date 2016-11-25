@@ -77,7 +77,7 @@ for subrecord_model in subrecords.subrecords():
             {'model': subrecord_model},
             name=url_name
         ),
-        url(r'^templates/modals/%s.html/(?P<list>[a-z_\-]+/?)$' % sub_url,
+        url(r'^templates/modals/%s.html/(?P<list>[0-9a-z_\-]+/?)$' % sub_url,
             views.ModalTemplateView.as_view(),
             {'model': subrecord_model},
             name=url_name
