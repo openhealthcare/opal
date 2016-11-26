@@ -17,6 +17,13 @@ Of course you can use any test framework you choose, although Opal doesn't curre
 for any other frameworks.
 </small></blockquote>
 
+### Installing javascript testing tools
+
+To installing Karma, Jasmine and Phantomjs in a local directory:
+
+```bash
+npm install jasmine-core karma karma-coverage karma-jasmine karma-phantomjs-launcher
+```
 
 ### Setting up the karma environment for your application
 
