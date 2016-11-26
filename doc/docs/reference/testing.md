@@ -33,8 +33,41 @@ In your karma config just `require('[[ path to opal ]]/config/karma_defaults.js'
 
 The function takes in the files you want to include and runs karma tests on them.
 
-If you want to run coverage tests, pass in the base directory your application and the files you want to run coverage on.
+```js
+// config/karma.config.js
 
-locally this will put a at the base directory of your application + '../../htmlcov/js/'.
+module.exports = function(config){
+  var opalPath = '../../opal';
+ 
+  var karmaDefaults = require(opalPath + '/config/karma_defaults.js');
+  var baseDir = __dirname + '/..';
+  var includedFiles = [
+     ...
+  ];
 
-On travis it would put it on at the base directory of your application + '/coverage'
+  var defaultConfig = karmaDefaults(includedFiles, baseDir);
+  config.set(defaultConfig);
+};
+```
+
+## Test Coverage
+
+The Opal test runner has a `-c` option which runs coverage reports for both Python and Javascript code:
+
+```bash
+opal test -c
+```
+
+Python test coverage uses the `coverage` tool and you may want to set include/excludes in a `.coveragerc`.
+
+Javascript test files to be reported on should be passed as an extra argument to `karmaDefaults`: 
+
+```js
+  var coverageFiles = [
+     ...
+  ];
+  var defaultConfig = karmaDefaults(includedFiles, baseDir, coverageFiles);
+```
+
+HTML test coverage reports will be output to the directory `htmlcov` and `htmlcov/js` at the root of your application.
+
