@@ -54,5 +54,10 @@ setup(
         'django-celery==3.1.17',
         'celery==3.1.19',
         'six>=1.10.0',
-        ]
+        ],
+    classifiers = [
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3.5",
+    ],
 )
