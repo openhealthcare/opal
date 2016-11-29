@@ -97,8 +97,13 @@ def date_generator(*args, **kwargs):
         first_day = start_date.day
     else:
         first_day = 1
-    day = random.randint(first_day, last_day)
+
+    if first_day == last_day:
+        day = first_day
+    else:
+        day = random.randint(first_day, last_day)
     return date(year, month, day)
+
 
 def date_time_generator(*args, **kwargs):
     d = date_generator(*args, **kwargs)
