@@ -46,6 +46,12 @@ class DateGeneratorTestCase(OpalTestCase):
         self.assertGreaterEqual(date, start)
         self.assertLessEqual(date, end)
 
+    def test_date_generator_same_day(self):
+        start = datetime.date.today()
+        end = datetime.date.today()
+        date = crd.date_generator(start_date=start, end_date=end)
+        self.assertEqual(date.today(), date)
+
 class DateTimeGeneratorTestCase(OpalTestCase):
     def test_datetime_generator_returns_datetime(self):
         self.assertIsInstance(crd.date_time_generator(), datetime.datetime)
@@ -123,7 +129,7 @@ class PatientGeneratorTestCase(OpalTestCase):
         self.assertEqual(0, patient.episode_set.count())
         with patch.object(crd.random, 'choice') as randchoice:
             randchoice.return_value = True
-            episode = self.gen.create_episode(patient)
+            self.gen.create_episode(patient)
             randchoice.assert_called_with([True, False])
         self.assertEqual(1, patient.episode_set.count())
 
