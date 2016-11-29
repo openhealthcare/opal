@@ -60,7 +60,7 @@ module.exports = function(includedFiles, baseDir, coverageFiles){
         if(useCoverage){
           coverageReporter = {
               type : 'html',
-              dir : '../../htmlcov/js/'
+              dir : baseDir + '/htmlcov/js/'
           };
         }
     }
