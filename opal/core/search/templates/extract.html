@@ -117,8 +117,8 @@
               </div>
             </span>
             <div class="content-offset-20 content-offset-below-10">
-              <button type="button" class="btn" ng-disabled="searched==false"
-                      ng-show="searched"
+              <button type="button" class="btn"
+                      ng-show="searched && completeCriteria().length "
                       ng-click="removeCriteria()">
                 Clear search
               </button>
@@ -197,7 +197,7 @@
         </div>
 
         <div class="col-sm-4 text-center" ng-class="{'col-sm-push-4': !profile.can_extract}">
-          <button ng-click="search()"
+          <button ng-disabled="searched && !completeCriteria().length" ng-click="search()"
                   class="btn btn-primary btn-lg"
                   >
             <span class="glyphicon glyphicon-search"></span>
@@ -206,9 +206,12 @@
         </div>
       </div>
     </div> <!-- Row -->
-    <div ng-hide="!searched || results.length" class="row">
-      <div class="col-sm-4 col-sm-push-4 lead text-center">
+    <div ng-show="searched" class="row">
+      <div ng-show="completeCriteria().length && !results.length" class="col-sm-4 col-sm-push-4 lead text-center">
         Sorry, no results match your search.
+      </div>
+      <div ng-show="!completeCriteria().length" class="col-sm-4 col-sm-push-4 lead text-center">
+        Sorry, we need at least one search filter to run a search
       </div>
     </div>
     <div ng-show="searched && results.length">
