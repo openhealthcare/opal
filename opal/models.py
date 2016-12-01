@@ -110,21 +110,18 @@ class SerialisableFields(object):
 
     @classmethod
     def _get_field(cls, name):
-
+        try:
+            return cls._meta.get_field(name)
+        except FieldDoesNotExist:
+            return getattr(cls, name)
 
     @classmethod
     def _get_field_title(cls, name):
-        try:
-            field = cls._meta.get_field(name)
-
-            if isinstance(field, models.ManyToOneRel):
-                field_name = field.related_model._meta.verbose_name_plural
-            else:
-                field_name = field.verbose_name
-
-        except FieldDoesNotExist:
-            # else its foreign key or free text
-            field_name = getattr(cls, name).verbose_name
+        field = cls._get_field(name)
+        if isinstance(field, models.ManyToOneRel):
+            field_name = field.related_model._meta.verbose_name_plural
+        else:
+            field_name = field.verbose_name
 
         if field_name.islower():
             field_name = field_name.title()
@@ -132,8 +129,15 @@ class SerialisableFields(object):
         return field_name
 
     @classmethod
-    def _get_field_defaults(cls, name):
-        pass
+    def _get_field_default(cls, name):
+        field = cls._get_field(name)
+        default = field.get_default()
+
+        # for blank fields the result is a blank string, lets just remove that
+        if default == '':
+            return None
+
+        return default
 
     @classmethod
     def build_field_schema(cls):
@@ -156,11 +160,13 @@ class SerialisableFields(object):
                 fld = getattr(cls, fieldname)
                 lookup_list = camelcase_to_underscore(fld.foreign_model.__name__)
             title = cls._get_field_title(fieldname)
+            default = cls._get_field_default(fieldname)
 
             field_schema.append({'name': fieldname,
                                  'title': title,
                                  'type': field_type,
                                  'lookup_list': lookup_list,
+                                 'default': default,
                                  'model': cls.__name__
                                  })
         return field_schema
