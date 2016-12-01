@@ -109,6 +109,10 @@ class SerialisableFields(object):
         raise exceptions.UnexpectedFieldNameError('Unexpected fieldname: %s' % name)
 
     @classmethod
+    def _get_field(cls, name):
+
+
+    @classmethod
     def _get_field_title(cls, name):
         try:
             field = cls._meta.get_field(name)
@@ -126,6 +130,10 @@ class SerialisableFields(object):
             field_name = field_name.title()
 
         return field_name
+
+    @classmethod
+    def _get_field_defaults(cls, name):
+        pass
 
     @classmethod
     def build_field_schema(cls):
