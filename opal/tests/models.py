@@ -47,7 +47,7 @@ class DogOwner(models.EpisodeSubrecord):
 
 class HoundOwner(models.EpisodeSubrecord):
     name = dmodels.CharField(max_length=200, default=lambda: "Philipa")
-    dog = fields.ForeignKeyOrFreeText(Dog, verbose_name="hound")
+    dog = fields.ForeignKeyOrFreeText(Dog, verbose_name="hound", default=lambda: "spaniel")
 
 
 class FavouriteDogs(models.PatientSubrecord):

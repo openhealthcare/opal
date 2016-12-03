@@ -34,16 +34,15 @@ angular.module('opal.services')
                 return columnSchema.readOnly;
             };
 
-            //
-            // Returns a clone of the editable fields + consistency token so that
-            // we can then update them in isolation elsewhere.
-            //
+          //
+          // Returns a clone of the editable fields + consistency token so that
+          // we can then update them in isolation elsewhere.
+          //
 	        this.makeCopy = function() {
 	            var field, value;
 	            var copy = {id: item.id};
 
-	            for (var fix = 0; fix < columnSchema.fields.length; fix++) {
-		            field = columnSchema.fields[fix];
+              _.each(columnSchema.fields, function(field){
 		            value = item[field.name];
 		            if (field.type == 'date' && item[field.name]) {
 		                // Convert values of date fields to strings of format DD/MM/YYYY
@@ -51,9 +50,14 @@ angular.module('opal.services')
                     }else if(field.type == 'date_time' && item[field.name]) {
                         copy[field.name] = moment(value).toDate();
 		            } else {
-		                copy[field.name] = _.clone(value);
+                    if(field.default && !item.id){
+                      copy[field.name] = _.clone(field.default);
+                    }
+                    else{
+  		                copy[field.name] = _.clone(value);
+                    }
 		            }
-	            }
+	            });
 
 	            return copy;
 	        };

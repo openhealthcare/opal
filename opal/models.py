@@ -137,6 +137,12 @@ class SerialisableFields(object):
         if default == '':
             return None
 
+        if isinstance(default, datetime.date):
+            raise exceptions.APIError(
+                "{0}.{1} returned a date as a default, Opal currently does not " \
+                "sending dates/datetimes as defaults".format(cls, name)
+            )
+
         return default
 
     @classmethod

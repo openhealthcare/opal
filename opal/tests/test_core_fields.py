@@ -3,6 +3,7 @@ Unittests for the opal.core.fields module
 """
 from django.contrib.contenttypes.models import ContentType
 
+from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.test import OpalTestCase
 from opal.tests import models as test_models
 from opal.models import Synonym
@@ -20,6 +21,11 @@ class TestForeignKeyOrFreeText(OpalTestCase):
     def test_set_max_length(self):
         field = getattr(test_models.HoundOwner, "dog")
         self.assertEqual(field.max_length, 255)
+
+    def test_get_raises(self):
+        field = ForeignKeyOrFreeText(test_models.Hat)
+        result = field.__get__(self, ForeignKeyOrFreeText)
+        self.assertEqual(result, 'Unknown Lookuplist Entry')
 
     def test_synonyms_addition(self):
         ct = ContentType.objects.get_for_model(
