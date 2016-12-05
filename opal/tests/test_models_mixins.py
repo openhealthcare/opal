@@ -64,6 +64,7 @@ class SerialisableFieldsTestCase(OpalTestCase):
                 'lookup_list': None,
                 'type': 'string',
                 'name': 'pid',
+                'default': None,
                 'title': u'Pid'
             },
             {
@@ -71,12 +72,11 @@ class SerialisableFieldsTestCase(OpalTestCase):
                 'lookup_list': 'hat',
                 'type': 'string',
                 'name': 'hatty',
+                'default': None,
                 'title': 'Hatty'
             }
         ]
         self.assertEqual(schema, expected)
-
-
 
 
 class ToDictMixinTestCase(OpalTestCase):
