@@ -1,6 +1,5 @@
 ### 0.8.0 (Major Release)
 
-
 #### Angular UI Libraries
 
 0.8.0 consolidates Angular UI libraries bundled with OPAL. We have removed Angular Strap, and
@@ -48,35 +47,16 @@ Modal_base has now been moved into a folder called base_templates. Its also now 
 
 The standard edit item models and others now inherit from the form_modal_base.
 
-
-#### Misc changes
-
-Removes `Options` both from the JSON API, and the Angular service.
-Removes legacy APIs `/api/v0.1/episode/admit` and `/api/v0.1/episode/refer`.
-
-Removes the models `GP`, `CommunityNurse` and `LocatedModel`.
-
-The opal.core.api.EpisodeViewSet.create now expects tagging to be an object rather than a list, similar to how it details with demographics and location.
+#### Authorization and permissions
 
 All apis should be permissioned with Django REST framework permission classes. The default implementation uses opal.core.api.LoginRequiredViewset, a standard drf
 viewset that requires the user to be logged in.
 
-We now require the user to be logged in for any
-use of the search functionality.
+We now require the user to be logged in for any use of the search functionality.
 
-The API will no longer serialise the _ft or _fk_id fields of FreeTextOrForeignKey fields - these
-are internal implementation details of the server that are not useful on the client side.
+Added a custom interceptor that logs the user out if the we receive a 403 or 401 from the server
 
-Adds a custom interceptor that logs the user out if the we receive a 403 or 401 from the server
-
-Removes `opal.models.Tagging.import_from_reversion`. This one-off classmethod on tagging
-was introduced to aid with the upgrade from Opal 4.x to 5.0 and has no further utility.
-
-Adds a Unique Together constraint for (Tagging.user, Tagging.episode, Tagging.value)
-
-Removes the `static` argument from the forms `input` tag. Developers should move to the `static` tag.
-
-Look up lists now load in from individual apps. The look for a file at {{ app }}/data/lookuplists.json
+#### Form Validation
 
 Adds the checkForm directive
 
@@ -90,10 +70,29 @@ This adds default form submission behaviour to the a button. It will check if th
 
 It will also set the form as submitted.
 
-We also now show the required error if the form has been submitted or if the field is dirty, so that the user doesn't get an ugly "fill this field in now" message when
-opening the modal/pathway but will get the error after they click submit.
+We also now show the required error if the form has been submitted or if the field is dirty, so that the user doesn't get an ugly "fill this field in now" message when opening the modal/pathway but will get the error after they click submit.
 
-We remove the _modal option to set on subrecords. This is because we now use large modals across the board.
+#### Removals
+
+Opal 0.8.0 removes a number of un-used features that have been slated for removal for some time:
+
+* `Options` - both from the JSON API, and the Angular service.
+* The legacy APIs `/api/v0.1/episode/admit` and `/api/v0.1/episode/refer`.
+* The models `GP`, `CommunityNurse` and `LocatedModel`.
+* `opal.models.Tagging.import_from_reversion`. This one-off classmethod on tagging was introduced to aid with the upgrade from Opal 4.x to 5.0 and has no further utility.
+* The `static` argument from the forms `input` tag. Developers should move to the `static` tag.
+* The _modal option to set on subrecords. This is because we now use large modals across the board.
+
+#### Misc changes
+
+The opal.core.api.EpisodeViewSet.create now expects tagging to be an object rather than a list, similar to how it details with demographics and location.
+
+The API will no longer serialise the _ft or _fk_id fields of FreeTextOrForeignKey fields - these
+are internal implementation details of the server that are not useful on the client side.
+
+Adds a Unique Together constraint for (Tagging.user, Tagging.episode, Tagging.value)
+
+Look up lists now load in from individual apps. The look for a file at {{ app }}/data/lookuplists.json
 
 The default admin url is now `/admin/` - rather than `/admin/?` this results in more readable
 admin urls and is closer to what most applications do with the Django admin.
