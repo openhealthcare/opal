@@ -13,6 +13,9 @@ some minor differences in visual style of widgets.
 Detailed upgrade guides for the components affected (Typeahead, Popover,
 Tooltip, Datepicker, Timepicker) are available in the upgrade reference documentation.
 
+#### Defaults for Client Side subrecords
+
+We pull through default values from subrecord fields into the Opal `Schema` and use those values when initializing the relevant Item instance for a new subrecord. This should greatly reduce the need to use custom Angular subrecord services to set defaults.
 
 #### Choices in form templatetags
 
