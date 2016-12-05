@@ -49,7 +49,7 @@ The standard edit item models and others now inherit from the form_modal_base.
 
 #### Authorization and permissions
 
-All apis should be permissioned with Django REST framework permission classes. The default implementation uses opal.core.api.LoginRequiredViewset, a standard drf
+All APIs should be permissioned with Django REST framework permission classes. The default implementation uses opal.core.api.LoginRequiredViewset, a standard drf
 viewset that requires the user to be logged in.
 
 We now require the user to be logged in for any use of the search functionality.
