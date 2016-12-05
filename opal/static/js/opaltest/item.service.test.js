@@ -146,7 +146,7 @@ describe('services', function() {
             expect(copy.condition).toBe('flu');
         });
 
-        it('defaults should not overwrite existin data', function(){
+        it('defaults should not overwrite existing data', function(){
           var existing = new Item(episodeData.diagnosis[0], mockEpisode, columns.fields.diagnosis);
           expect(existing.condition).toBe('Dengue');
           var copy = existing.makeCopy();
