@@ -48,6 +48,7 @@ The following reference guides are available:
 |
 -|-
 [Changelog](changelog.md) | Opal Changelog
-[Upgrading](upgrading.md) | Upgrading between Opal versions
+[Upgrading](upgrading.md) | Upgrading between Opal> versions
 [Javascript dependencies](javascript_dependencies.md)| External javascript libraries available |
 [Testing](testing.md) | Testing
+[Contributing](contributing.md) | Contributing to Opal

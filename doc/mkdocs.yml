@@ -51,6 +51,7 @@ pages:
       - Patient Lists: reference/patient_list.md
       - Search JS Services: reference/search_js_services.md
       - Changelog: reference/changelog.md
+      - Testing: reference/testing.md
       - Contributing: reference/contributing.md
       - Upgrading: reference/upgrading.md
 
