@@ -47,6 +47,8 @@ Let's have a look at what that created for you:
             urls.py             # Django Urlconf
             wsgi.py
 
+            patient_lists.py    # these create the [lists](/guides/list_views/) for you application
+
             assets/             # Your static files directory
             templates/          # Your template directory
             migrations/         # Your Database migrations directory
