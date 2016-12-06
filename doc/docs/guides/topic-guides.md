@@ -45,3 +45,9 @@ A list of all available topic guides.
 |||
 |--|--|
 |[Search](search.md)|Default search implementation|
+
+
+### Working on Opal itself
+|||
+|--|--|
+[Contributing](contributing.md) | Contributing to Opal

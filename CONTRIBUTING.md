@@ -19,11 +19,19 @@ If you want to contribute an enhancement or fix to Opal:
 * Make your changes
 * Make sure that our test suite still runs, and that your changes are covered by tests (running `opal test -c` in the root directory of the repository will
 run both python and javascript tests, as well as generate HTML code coverage reports.)
+* Update the Opal documentation to be
 * Commit the changes and push to your fork
 * Submi a pull request to Opal
 
 At this stage, we will assign someone to review your changes before merging. We might ask you to make some changes to your pull request before
 merging, but in general, we are biased towards accepting contributions from the community.
+
+That said, we won't merge your pull request if:
+
+* It doesn't come with tests
+* It doesn't update the relevant documentation
+
+Don't worry though - we're happy to guide new contributors through this process.
 
 If you want to discuss ideas you have for changes before making them, you can always propose enhancements on
 the [Github Issue tracker](http://github.com/opal/issues) or post questions and open discussions on the

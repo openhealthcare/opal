@@ -30,6 +30,8 @@ pages:
       - Patient List Views: guides/list_views.md
       - Discoverable Features: guides/discoverable.md
       - Search Overview: guides/search.md
+      - Contributing: guides/contributing.md
+
 
   - Reference:
       - The Episode model: reference/episode.md
@@ -52,7 +54,6 @@ pages:
       - Search JS Services: reference/search_js_services.md
       - Changelog: reference/changelog.md
       - Testing: reference/testing.md
-      - Contributing: reference/contributing.md
       - Upgrading: reference/upgrading.md
 
 theme: mkdocs

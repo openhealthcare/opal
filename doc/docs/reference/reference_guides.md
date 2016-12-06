@@ -51,4 +51,3 @@ The following reference guides are available:
 [Upgrading](upgrading.md) | Upgrading between Opal> versions
 [Javascript dependencies](javascript_dependencies.md)| External javascript libraries available |
 [Testing](testing.md) | Testing
-[Contributing](contributing.md) | Contributing to Opal
