@@ -1,4 +1,4 @@
-## OPAL mixins
+## Opal mixins
 
 ### SerialisableFields
 provides the fields that are on the model for example

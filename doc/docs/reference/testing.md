@@ -11,9 +11,9 @@ side components of your application.
 
 ## Javascript testing
 
-By default, we recommend using Jasmine and Karma to test your javascript code.  
+By default, we recommend using Jasmine and Karma to test your javascript code.
 <blockquote><small>
-Of course you can use any test framework you choose, although Opal doesn't currently ship with helpers 
+Of course you can use any test framework you choose, although Opal doesn't currently ship with helpers
 for any other frameworks.
 </small></blockquote>
 
@@ -27,7 +27,7 @@ npm install jasmine-core karma karma-coverage karma-jasmine karma-phantomjs-laun
 
 ### Setting up the karma environment for your application
 
-If you'd like to run karma tests, OPAL ships with a function to give you a default karma config.
+If you'd like to run karma tests, Opal ships with a function to give you a default karma config.
 
 In your karma config just `require('[[ path to opal ]]/config/karma_defaults.js')`
 
@@ -38,7 +38,7 @@ The function takes in the files you want to include and runs karma tests on them
 
 module.exports = function(config){
   var opalPath = '../../opal';
- 
+
   var karmaDefaults = require(opalPath + '/config/karma_defaults.js');
   var baseDir = __dirname + '/..';
   var includedFiles = [
@@ -60,7 +60,7 @@ opal test -c
 
 Python test coverage uses the `coverage` tool and you may want to set include/excludes in a `.coveragerc`.
 
-Javascript test files to be reported on should be passed as an extra argument to `karmaDefaults`: 
+Javascript test files to be reported on should be passed as an extra argument to `karmaDefaults`:
 
 ```js
   var coverageFiles = [
@@ -70,4 +70,3 @@ Javascript test files to be reported on should be passed as an extra argument to
 ```
 
 HTML test coverage reports will be output to the directory `htmlcov` and `htmlcov/js` at the root of your application.
-

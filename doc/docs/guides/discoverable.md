@@ -1,6 +1,6 @@
-# OPAL Discoverable Features
+# Opal Discoverable Features
 
-OPAL makes extensive use of the case of discoverable features. These are pieces of
+Opal makes extensive use of the case of discoverable features. These are pieces of
 composable functionality that can be implemented by any plugin or application,
 simply by declaring a class with the appropriate fields and methods implemented. (Details
 of exactly which fields and methods vary by feature.)

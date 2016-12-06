@@ -1,6 +1,6 @@
-# OPAL Patient Detail Views
+# Opal Patient Detail Views
 
-OPAL provides all patients with a detail view.
+Opal provides all patients with a detail view.
 
 The default detail view will allow the user to switch between all of a patient's
 [episodes](datamodel.md), as well as editing patient information linked to the patient
@@ -10,7 +10,7 @@ rather than an episode. (Allergies for example.)
 
 The base template for a patient detail view is `./opal/templates/patient_detail_base.html`,
 although you can override or customise that for your application most easily by implementing
-a `./templates/patient_detail.html` and customising specific blocks, as the OPAL implementation
+a `./templates/patient_detail.html` and customising specific blocks, as the Opal implementation
 simply includes the base template.
 
 Each episode will display using the template appropriate for it's `EpisodeCategory` - for instance
@@ -39,7 +39,7 @@ a particular view of one episode. For instance, you might like to have a specifi
 all of the lab results for a patient, which would be overwhelming were they all displayed in the
 episode detail view.
 
-OPAL's PatientDetailView allows you to do just this. To add an additional view to a patient you
+Opal's PatientDetailView allows you to do just this. To add an additional view to a patient you
 simply declare a PatientDetailView class:
 
     # detail.py

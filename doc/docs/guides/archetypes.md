@@ -1,6 +1,6 @@
 # Core Clinical Archetypes
 
-OPAL ships with a wide range of core clinical concepts implemented as Abstract Subrecords.
+Opal ships with a wide range of core clinical concepts implemented as Abstract Subrecords.
 Applications that are generated via the `$ opal startproject` command will automatically
 contain concrete implementations of these models in the application.
 

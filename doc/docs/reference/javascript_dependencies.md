@@ -1,6 +1,6 @@
-## OPAL Javscript Dependencies
+## Opal Javscript Dependencies
 
-OPAL makes use of a number of upstream dependencies which are available for
+Opal makes use of a number of upstream dependencies which are available for
 devleopers to use in building applications.
 
 |

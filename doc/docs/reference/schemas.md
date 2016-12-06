@@ -1,4 +1,4 @@
-## OPAL Schemas
+## Opal Schemas
 
 Opal Schemas allow dynamic representation of columns within a table
 

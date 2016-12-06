@@ -1,4 +1,4 @@
-site_name: OPAL
+site_name: Opal
 docs_dir: docs
 pages:
   - Home: index.md

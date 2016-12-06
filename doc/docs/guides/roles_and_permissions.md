@@ -1,6 +1,6 @@
-## Roles & Permissions in OPAL
+## Roles & Permissions in Opal
 
-OPAL provides some global per-user flags, which are set in the UserProfile model, as well
+Opal provides some global per-user flags, which are set in the UserProfile model, as well
 as more detailed permissions available via roles.
 
 ### The UserProfile model
