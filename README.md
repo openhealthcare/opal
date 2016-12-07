@@ -49,8 +49,8 @@ You could also tweet us at [@opalframework](http://twitter.com/opalframework) - 
 
 Opal is Licensed under the GNU Affero GPLv3
 
-Communications
-======
+## Communications
+
 * Email: hello@openhealthcare.org.uk
 * Twitter: [@opalframework](https://twitter.com/opalframework)
 * Mailing List: https://groups.google.com/forum/?ohc-dev#!forum/ohc-opal
