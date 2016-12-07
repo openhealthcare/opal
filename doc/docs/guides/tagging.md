@@ -1,6 +1,6 @@
 # Tagging
 
-Episodes in OPAL may be tagged. This is commonly used as a mechanism to
+Episodes in Opal may be tagged. This is commonly used as a mechanism to
 record that a particular team is looking after a patient - via `TaggedPatientList`,
 but also to group patients.
 

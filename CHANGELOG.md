@@ -2,7 +2,7 @@
 
 #### Angular UI Libraries
 
-0.8.0 consolidates Angular UI libraries bundled with OPAL. We have removed Angular Strap, and
+0.8.0 consolidates Angular UI libraries bundled with Opal. We have removed Angular Strap, and
 switched all components using it to their Angular UI Bootstrap equivalents.
 
 This is a breaking change.
@@ -150,7 +150,7 @@ Renames `Episode.category` -> `Episode.category_name`.
 
 The Restful Episode JSON API previously available at `/episode/:pk/` is now moved into
 `/api/v0.1/episode/:pk/` for consistency with the rest of our JSON APIs.
-The OPAL Angular layer has been updated to reflect this, and
+The Opal Angular layer has been updated to reflect this, and
 should handle the transition seamlessly, but code calling the API directly should update
 to reflect the new URL.
 
@@ -236,7 +236,7 @@ this allows patterns like:
 #### Upgrade instructions:
 
 Full upgrade instructions to work through any backwards incompatible changes are
-provided in the OPAL docs.
+provided in the Opal docs.
 
 ### 0.5.5 (Minor Release)
 Changes the way old tags are handled.
@@ -276,7 +276,7 @@ New Service for PatientSummary()
 
 **Analytics**
 
-Moves Analytics integration into OPAL core with the ability to blacklist pages that should never be reported
+Moves Analytics integration into Opal core with the ability to blacklist pages that should never be reported
 
 **List view**
 
@@ -344,7 +344,7 @@ http://opal.openhealthcare.org.uk/docs/reference/form_templatetags/
 **API Documentation**
 
 
-OPAL JSON APIs are now fully self-documenting for all updated instances
+Opal JSON APIs are now fully self-documenting for all updated instances
 http://opal.openhealthcare.org.uk/docs/guides/json_api/
 
 ### 0.3 (Major release)

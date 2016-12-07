@@ -3,8 +3,8 @@
 
 ## EpisodeCategory
 
-OPAL Episodes have an associated category. These categories are implemented as subclasses
-of `opal.core.episodes.EpisodeCategory`. This class is an OPAL [DiscoverableFeature](../guides/discoverable.md)
+Opal Episodes have an associated category. These categories are implemented as subclasses
+of `opal.core.episodes.EpisodeCategory`. This class is an Opal [DiscoverableFeature](../guides/discoverable.md)
 and thus inherits all of the core Discoverable API.
 
 The category of any episode can be accessed as the `.category` property of any `Episode` instance.
@@ -26,6 +26,6 @@ Returns the Stop date of this episode type
 
 ## InpatientEpisode
 
-This is the defualt EpisodeCategory imlpementation - applications started with OPAL's scaffolding
+This is the defualt EpisodeCategory imlpementation - applications started with Opal's scaffolding
 scripts will use this as the `OpalApplication.default_episode_category`. It sets the detail template to
 `detail/inpatient.html`

@@ -1,4 +1,4 @@
-## OPAL Schemas
+## Opal Schemas
 
 Opal schemas provide a JSON representation of the structure of subrecords. Opal uses these schemas internally to construct the `Item` classes in AngularJS on the client side.
 

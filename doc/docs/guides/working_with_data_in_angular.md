@@ -1,6 +1,6 @@
 # Working with Clinical Data in Angular
 
-OPAL provides a range of Angular services for working with clinical data on
+Opal provides a range of Angular services for working with clinical data on
 the front end.
 
 ## The Episode Service

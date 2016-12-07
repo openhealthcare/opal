@@ -39,7 +39,7 @@ The lookup list will automatically be added to the admin.
 
 ### Reference data JSON API
 
-Reference data is available over the OPAL JSON API.
+Reference data is available over the Opal JSON API.
 
 You may either load all lookuplists at once via the `/api/v0.1/referencedata/` endpoint, or
 individual lookuplists by name - for example all diagnoses from `/api/v0.1/referencedata/diagnosis/`.
@@ -65,7 +65,7 @@ Lookuplists will then be available either as properties of the `referencedata` o
 
 ### Using referencedata in forms
 
-The OPAL [form templatetag library](../reference/form_templatetags.md) allow us to easily incorporate
+The Opal [form templatetag library](../reference/form_templatetags.md) allow us to easily incorporate
 referencedata into the forms we build, eiether by detecting their use automatically when we have
 `ForeignKeyOrFreeText` fields, or explicitly by passing an argument.
 
@@ -78,7 +78,7 @@ referencedata into the forms we build, eiether by detecting their use automatica
 ### Providing data for lookuplists
 
 Reference data can be provided at application or plugin level in a file named `lookuplists.json` found in the
-`{{ app_or_plugin }}/data/lookuplists` directory. This data should be in the OPAL JSON format.
+`{{ app_or_plugin }}/data/lookuplists` directory. This data should be in the Opal JSON format.
 
 ```JSON
 {
@@ -94,7 +94,7 @@ Reference data can be provided at application or plugin level in a file named `l
 
 ### Management commands
 
-OPAL ships with some managemnent commands for importing and exporting lookup lists
+Opal ships with some managemnent commands for importing and exporting lookup lists
 
 #### dump_lookup_lists
 
@@ -102,7 +102,7 @@ Prints all lookuplists as JSON to stdout.
 
 #### load_lookup_lists
 
-Loads lookup lists from all plugins/apps in the OPAL JSON format. The lookup lists are expected to be in
+Loads lookup lists from all plugins/apps in the Opal JSON format. The lookup lists are expected to be in
 `{{ app }}/data/lookuplists/lookuplists.json`
 
 #### delete_all_lookuplists

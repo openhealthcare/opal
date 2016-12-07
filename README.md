@@ -1,11 +1,11 @@
-OPAL
+Opal
 ====
 
 [![Build Status](https://travis-ci.org/openhealthcare/opal.svg?branch=v0.8.0)](https://travis-ci.org/openhealthcare/opal)
 [![Coverage Status](https://coveralls.io/repos/github/openhealthcare/opal/badge.svg?branch=v0.8.0)](https://coveralls.io/github/openhealthcare/opal?branch=v0.8.0)
 [![PyPI version](https://badge.fury.io/py/opal.svg)](https://badge.fury.io/py/opal)
 
-OPAL is a full stack framework that makes building digital tools for health care easy.
+Opal is a full stack web framework that makes building digital tools for health care easy.
 
 It builds on established Open Source technologies with a track record of helping developers
 build easy to maintain, robust applications.
@@ -13,58 +13,44 @@ build easy to maintain, robust applications.
 Most notably, it makes use of [Django](https://djangoproject.com/), [AngularJS](https://angularjs.org/)
 and [Bootstrap](http://getbootstrap.com/).
 
-From there, OPAL provides you with a common batteries-included architecture for writing healthcare
+From there, Opal provides you with a common batteries-included architecture for writing healthcare
 applications, and a composable modular framework that takes advantage of generic, re-usable components.
 
-OPAL is entirely Open ([Source](https://github.com/openhealthcare/opal) &
+Opal is entirely Open ([Source](https://github.com/openhealthcare/opal) &
 [Governance](https://github.com/openhealthcare/opal/issues)) as are the wide library of plugins.
 
-OPAL was created by [Open Health Care UK](http://openhealthcare.org.uk), because it makes Healthcare IT Less Bad.
+Opal was created by [Open Health Care UK](http://openhealthcare.org.uk), because it makes Healthcare IT Less Bad.
 
 We'd love you to get involved by using what we make, reporting bugs/suggesting improvements, and fixing bugs/updating documentation/making improvements.
 
-## More comprehensive documentation
+## Documentation
 
-Documentation is available at: [http://opal.openhealthcare.org.uk/docs/](http://opal.openhealthcare.org.uk/docs/)
+Documentation is available at: [http://opal.openhealthcare.org.uk/docs/](http://opal.openhealthcare.org.uk/docs/).
 
-Documentation for specific branches are available at e.g. [http://opal.openhealthcare.org.uk/docs/v0.7.1/](http://opal.openhealthcare.org.uk/docs/v0.7.1/)
+If you're just getting started we suggest:
 
-The documentation is a work in progress, and we welcome any feedback or contributions to it !
+* [Installation instructions](http://opal.openhealthcare.org.uk/docs/installation/)
+* [The introductory tutorial](http://opal.openhealthcare.org.uk/docs/tutorial/)
+* Reading through some [High level topic guides](http://opal.openhealthcare.org.uk/docs/guides/topic-guides/)
+
+The documentation are updated frequently, and we welcome any feedback or contributions to it. If you find any problems,
+or feel that anything needs clarifying in any way, please take 30 seconds to fill out a new isue [here](https://github.com/openhealthcare/opal/issues/new).
+
+Documentation for old and developmetn branches are available at e.g. [http://opal.openhealthcare.org.uk/docs/v0.7.1/](http://opal.openhealthcare.org.uk/docs/v0.7.1/)
+
+## Getting more help
+
+If you're looking for help and support, feel free to post to our [Mailing list](https://groups.google.com/forum/?ohc-dev#!forum/ohc-opal)
+
+You could also tweet us at [@opalframework](http://twitter.com/opalframework) - although it can be hard to give long form support there !
 
 
-Open governance
-===============
+## Open source
 
-Roadmap: https://github.com/openhealthcare/opal/wiki/Roadmap
-
-Discussion List: https://groups.google.com/forum/?ohc-dev#!forum/ohc-opal
-
-Access: availability of the latest source code, developer
-support mechanisms, public roadmap, and transparency of
-decision-making
-
-Development: the ability of developers to influence the content
-and direction of the project
-
-Derivatives: the ability for developers to create and distribute
-derivatives of the source code in the form of spin-off projects,
-handsets or applications.
-
-Community: a community structure that does not discriminate
-between developers
-
-(from http://www.visionmobile.com/blog/2011/07/the-open-governance-index-measuring-openness-from-android-to-webkit/)
-
-Open source
-======
-GNU Affero GPLv3
+Opal is Licensed under the GNU Affero GPLv3
 
 Communications
 ======
-hello@openhealthcare.org.uk
-
-http://www.openhealthcare.org.uk
-
-https://twitter.com/ohcuk
-
-https://groups.google.com/forum/?ohc-dev#!forum/ohc-opal
+* Email: hello@openhealthcare.org.uk
+* Twitter: [@opalframework](https://twitter.com/opalframework)
+* Mailing List: https://groups.google.com/forum/?ohc-dev#!forum/ohc-opal

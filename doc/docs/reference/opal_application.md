@@ -14,9 +14,9 @@ Returns an iterator of all the of the [plugins](/guides/plugins/) and the curren
 
 The base class for your main application entrypoints is opal.core.application.OpalApplication.
 
-You must subclass this in order for OPAL to discover your application.
+You must subclass this in order for Opal to discover your application.
 
-If you started your OPAL project via `$ opal startproject yourproject` then this will have been
+If you started your Opal project via `$ opal startproject yourproject` then this will have been
 generated for you, and located in `yourproject/yourproject/__init__.py`
 
 ### Properties
@@ -48,7 +48,7 @@ A list of items to add to the top level menu
 
 A list of stylesheets that our application would like to include. These should be strings
 representing paths ready for staticfiles. Defaults to `[]`. These styles are included after
-the default OPAL styles.
+the default Opal styles.
 
 ```python
 class MyApplication(OpalApplication):

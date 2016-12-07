@@ -1,8 +1,8 @@
-## OPAL Javascript Helpers
+## Opal Javascript Helpers
 
 ### $rootScope methods
 
-OPAL provides some methods on the Angular $rootScope object.
+Opal provides some methods on the Angular $rootScope object.
 
 #### open_modal
 
@@ -15,7 +15,7 @@ You may also pass through a dictionary of items to resolve.
 
 ### Angular Directives
 
-OPAL provides some built-in Angular directives for your project to use.
+Opal provides some built-in Angular directives for your project to use.
 
 #### date-of-birth
 
@@ -87,7 +87,7 @@ copied.
 
 ### Angular Filters
 
-OPAL provides some built-in Angular filters for your project to use.
+Opal provides some built-in Angular filters for your project to use.
 
 #### short-date
 

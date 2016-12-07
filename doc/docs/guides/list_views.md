@@ -1,11 +1,11 @@
-# OPAL Patient List views
+# Opal Patient List views
 
-OPAL provides support for displaying lists of patients, both via a spreadsheet like view,
+Opal provides support for displaying lists of patients, both via a spreadsheet like view,
 and with a card based view.
 
 ### Defining lists
 
-OPAL patient lists are subclasses of `opal.core.patient_lists.PatientList`.
+Opal patient lists are subclasses of `opal.core.patient_lists.PatientList`.
 
 Typically these are found in a `patient_lists.py` module of your application or plugin. (Lists _can_ be
 defined elsewhere, but may not be autodiscovered.)
@@ -48,7 +48,7 @@ The list view is constructed by rendering a column for each record, in the order
 defined in the schema, and a row for each episode in the list.
 
 The template for each cell should live in `./templates/records/*`. In order to
-select the appropriate template for a given episode, OPAL looks in the following
+select the appropriate template for a given episode, Opal looks in the following
 locations:
 
     records/{episode_type}/{list slug}/{record_name}.html
@@ -92,7 +92,7 @@ This allows users to add and remove patients from lists as they see fit, rather 
 to infer it from other properties of the patient (e.g. their current location for instance.)
 which can be particularly challenging for some clinical services.
 
-OPAL provides a specific subclass for working with Tagged Patient Lists:
+Opal provides a specific subclass for working with Tagged Patient Lists:
 
     # patient_lists.py
     from opal.core import patient_lists
@@ -106,7 +106,7 @@ you specify.
 
 ### Invalid Tagged Patient Lists
 
-Tag names may not have hyphens in them - OPAL uses hyphens to distinguish between tags and subtags
+Tag names may not have hyphens in them - Opal uses hyphens to distinguish between tags and subtags
 in the urls for lists, so attempting to define one will raise an exception.
 
     class MyList(TaggedPatientList):

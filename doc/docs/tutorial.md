@@ -1,6 +1,6 @@
-## Writing a clinical service with OPAL
+## Writing a clinical service with Opal
 
-This tutorial will walk you through the creation of a new OPAL service.
+This tutorial will walk you through the creation of a new Opal service.
 
 The application we're going to be building will help clinical users to manage the patients on a ward in a hospital.
 
@@ -12,12 +12,12 @@ So that I can treat them effectively and safely.
 
 ### Bootstrapping a new project
 
-We assume that you've already [Installed OPAL](installation.md). You can tell which version of opal is installed
+We assume that you've already [Installed Opal](installation.md). You can tell which version of opal is installed
 by running this command
 
     $ opal --version
 
-At the start a new project, OPAL will bootstrap the initial project structure, including
+At the start a new project, Opal will bootstrap the initial project structure, including
 a Djano project, some core datamodels (complete with JSON APIs) and a general application structure.
 
 From the commandline:
@@ -79,13 +79,13 @@ areas that are enabled by default - team lists, search and the admin area.
 
 <img src="/img/tutorial-welcome.png" width="600" style="margin: 12px auto; border: 1px solid black;"/>
 
-OPAL applications are a collection of single page Angular apps that talk to the Django
+Opal applications are a collection of single page Angular apps that talk to the Django
 server-side layer via JSON APIs. The Team Lists and Search options here are two examples of
 front-end Angular single page apps.
 
 ### Team lists
 
-Most clinical services will need at some stage to generate a list of patients - so OPAL provides
+Most clinical services will need at some stage to generate a list of patients - so Opal provides
 this functionality enabled by default.
 
 The [list view](/guides/list_views/) is a spreadhseet-style list of patients - try navigating
@@ -102,7 +102,7 @@ of care for a patient - but we'll come to that in a second.
 </small></blockquote>
 
 The columns you see initially are just a few of the standard clinical models that come with
-OPAL - for instance the Diagnosis model in your new application inherits from a model that
+Opal - for instance the Diagnosis model in your new application inherits from a model that
 looks a lot like this:
 
     class Diagnosis(EpisodeSubrecord):
@@ -117,7 +117,7 @@ looks a lot like this:
 ### Lookup Lists
 
 You will notice that the condition field has a custom field type - `ForeignKeyOrFreeText`.
-This is a custom field type that we use with OPAL when we want to use a
+This is a custom field type that we use with Opal when we want to use a
 [Lookup List](/guides/lookup_lists/).
 
 Lookup Lists allow us to reference canonical lists of available terminology as a foreign key, while
@@ -126,7 +126,7 @@ we record high quality coded data, while allowing users an easy way to enter unu
 cases.
 
 You'll need to import the data for a terminology before you can start to take advantage of that.
-For now, let's use the reference data from elCID (An OPAL application maintained by Open Health Care):
+For now, let's use the reference data from elCID (An Opal application maintained by Open Health Care):
 
     wget https://raw.githubusercontent.com/openhealthcare/elcid/master/data/lookuplists/lookuplists.json -P data/lookuplists
 
@@ -146,10 +146,10 @@ the condition field, you'l see that the conditions we just imported appear as su
 
 ### Add your own data models
 
-So far we've begun to get a sense of the batteries-included parts of OPAL,
+So far we've begun to get a sense of the batteries-included parts of Opal,
 but before long, you're going to need to create models for your own needs.
 
-Most OPAL models are [Subrecords](/guides/datamodel/) - they relate to either a patient, or
+Most Opal models are [Subrecords](/guides/datamodel/) - they relate to either a patient, or
 an episode (an episode is for example, an admission to hospital).
 
 Let's see how that works by creating a TODO list model that is assigned to
@@ -166,10 +166,10 @@ which provides us with some extra functionality:
 
 * A relationship to an episode, linked to a patient
 * JSON APIs for creating, retrieving and updating it
-* Ensuring that the OPAL Angular layer knows it exists
+* Ensuring that the Opal Angular layer knows it exists
 * Some metadata fields, like created, updated, created_by, updated_by
 
-Next, we're going to let OPAL take care of the boilerplate that we'll need to use this
+Next, we're going to let Opal take care of the boilerplate that we'll need to use this
 model in our application. From the commandline:
 
     $ opal scaffold mynewapp
@@ -194,7 +194,7 @@ The default detail template simply displays each field on a new line:
 
 The default form template will display each field on a new line, with some basic
 appropriate form field types set.
-It uses the OPAL form helpers templatetag library.
+It uses the Opal form helpers templatetag library.
 
 ```html
 {% load forms %}
@@ -208,17 +208,17 @@ It uses the OPAL form helpers templatetag library.
 
 Now let's add our TODO list model as a column in the Spreadsheet-like list view.
 
-Patient Lists in OPAL are subclasses of `opal.core.patient_lists.PatientList`, and
+Patient Lists in Opal are subclasses of `opal.core.patient_lists.PatientList`, and
 they live in `patient_lists.py` files of our Django apps.
 
 <blockquote><small>
 Technically these can live anywhere you like - although if you put them in other places
 you're responsible for making sure that they're imported at startup.
-<br />OPAL guarantees
+<br />Opal guarantees
 to autodiscover lists in `app.patient_list` modules.
 </small></blockquote>
 
-You can see the basic list that the OPAL application scaffold created for you in
+You can see the basic list that the Opal application scaffold created for you in
 `yournewapp/patient_lists.py`.
 
 ```python
@@ -260,7 +260,7 @@ need to tweak the templates they generate with whatever logic makes sense for yo
 application.
 
 For us, you'll notice that the value of `TODOItem.completed` simply displays as false -
-which is not particularly useful. So let's update that using the OPAL
+which is not particularly useful. So let's update that using the Opal
 [Boxed filter](/reference/javascript_helpers/). In `mynewapp/templates/records/todo_item.html`
 change the last line to look like this:
 
@@ -295,7 +295,7 @@ comprising a patient's care than is available on the list page.
 
 #### JSON APIs
 
-OPAL automatically creates self-documenting JSON APIs for your interacting with the data
+Opal automatically creates self-documenting JSON APIs for your interacting with the data
 in your application. You can inspect these APIs interactively at the url:
 
     http://localhost:8000/api/v0.1/
@@ -305,5 +305,5 @@ in your application. You can inspect these APIs interactively at the url:
 
 ### What next?
 
-This is just a glimpse at the full range of functionality that comes with OPAL - there is
+This is just a glimpse at the full range of functionality that comes with Opal - there is
 much more to discover in the [Topic Guides](/guides/topic-guides/).
