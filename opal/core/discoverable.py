@@ -1,5 +1,5 @@
 """
-OPAL utilities for discoverable functionality
+Opal utilities for discoverable functionality
 """
 from django.conf import settings
 from six import with_metaclass
