@@ -171,6 +171,12 @@ class SortableFeatureTestCase(OpalTestCase):
         with self.assertRaises(ValueError):
             Nope.list()
 
+    def test_sortable_raises_exception_if_order_duplicated(self):
+        with self.assertRaises(exceptions.InvalidDiscoverableFeatureError):
+            class DuplicateSorted3(SortedFeature):
+                order = 3
+
+
 class SometimesFeature(discoverable.DiscoverableFeature, discoverable.RestrictableFeature):
     module_name = 'sometimes'
 
