@@ -128,6 +128,7 @@ def check_password_reset(request, *args, **kwargs):
     """
     Check to see if the user needs to reset their password
     """
+    raise ValueError('lol')
     response = login(request, *args, **kwargs)
     if response.status_code == 302:
         try:
