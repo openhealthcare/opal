@@ -133,11 +133,57 @@ class TabbedPatientListGroup(discoverable.DiscoverableFeature):
 
     @classmethod
     def get_template_names(klass):
+        """
+        A hook for dynamically customising the template_name(s) to be used
+        for displaying the list group at the head of the list.
+
+        Returns an iterable of template names.
+        Defaults to the `.template_name` property
+        """
         return [klass.template_name]
 
     @classmethod
+    def for_list(klass, patient_list):
+        """
+        Returns the group for a given PatientList.
+        Raises ValueError if not passed a PatientList
+        """
+        msg = 'TabbedPatientListGroup.for_list must be passed a PatientList'
+        try:
+            if not issubclass(patient_list, PatientList):
+                raise ValueError(msg)
+        except TypeError:
+                raise ValueError(msg)
+
+        for group in klass.list():
+            if patient_list in group.get_member_lists():
+                return group
+
+    @classmethod
     def get_member_lists(klass):
-        return klass.member_lists
+        """
+        A hook for dynamically customising the members of this list group.
+
+        Returns an iterable of PatientLists
+        Defaults to the `.member_lists` property
+        """
+        for l in klass.member_lists:
+            yield l
+
+    @classmethod
+    def get_member_lists_for_user(klass, user):
+        """
+        Returns an iterable of the visible member lists for a given USER
+        """
+        for l in klass.get_member_lists():
+            if l.visible_to(user):
+                yield l
+
+    @classmethod
+    def visible_to(klass, user):
+        if len(list(klass.get_member_lists_for_user(user))) > 0:
+            return True
+        return False
 
 
 """
