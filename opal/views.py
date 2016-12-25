@@ -71,9 +71,14 @@ class PatientListTemplateView(LoginRequiredMixin, TemplateView):
         context['list_slug'] = list_slug
         context['patient_list'] = self.patient_list
         context['lists'] = PatientList.for_user(self.request.user)
-        # context['list_group'] = TabbedPatientListGroup.for_context(
-        #     user=self.request.user, patient_list=self.patient_list
-        # )
+
+        context['list_group'] = None
+        if self.patient_list:
+            group = TabbedPatientListGroup.for_list(self.patient_list)
+            if group:
+                if group.visible_to(self.request.user):
+                    context['list_group'] = group
+
         context['columns'] = self.get_column_context(**kwargs)
         return context
 

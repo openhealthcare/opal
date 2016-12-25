@@ -215,6 +215,10 @@ class TabbedPatientListGroupTestCase(OpalTestCase):
         self.assertEqual(['patient_lists/tabbed_list_group.html'],
                          TestTabbedPatientListGroup.get_template_names())
 
+    def test_get_template(self):
+        self.assertEqual('patient_lists/tabbed_list_group.html',
+                         TestTabbedPatientListGroup.get_template())
+
     def test_get_member_lists(self):
         expected = [TaggingTestSameTagPatientList, TaggingTestPatientList, InvisibleList]
         members = list(TestTabbedPatientListGroup.get_member_lists())

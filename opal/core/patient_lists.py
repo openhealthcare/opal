@@ -143,6 +143,13 @@ class TabbedPatientListGroup(discoverable.DiscoverableFeature):
         return [klass.template_name]
 
     @classmethod
+    def get_template(klass):
+        """
+        Return the first existing template from .get_template_names() or None
+        """
+        return utils.find_template(klass.get_template_names())
+
+    @classmethod
     def for_list(klass, patient_list):
         """
         Returns the group for a given PatientList.
@@ -181,6 +188,10 @@ class TabbedPatientListGroup(discoverable.DiscoverableFeature):
 
     @classmethod
     def visible_to(klass, user):
+        """
+        Predicate function to determine whether this list is meaningfully
+        visible to this USER
+        """
         if len(list(klass.get_member_lists_for_user(user))) > 0:
             return True
         return False
