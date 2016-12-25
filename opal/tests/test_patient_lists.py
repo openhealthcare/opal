@@ -10,8 +10,11 @@ from opal.models import Patient, Team, UserProfile
 from opal.core.test import OpalTestCase
 
 from opal.core import patient_lists
-from opal.core.patient_lists import PatientList, TaggedPatientList
+from opal.core.patient_lists import PatientList, TaggedPatientList, TabbedPatientListGroup
 
+"""
+Begin discoverable definitions for test cases
+"""
 
 class TaggingTestPatientList(TaggedPatientList):
     display_name = "Herbivores"
@@ -49,6 +52,14 @@ class TaggingTestSameTagPatientList(TaggedPatientList):
             models.Demographics,
         ]
 
+
+class TestTabbedPatientListGroup(TabbedPatientListGroup):
+    member_lists = [TaggingTestSameTagPatientList, TaggingTestPatientList]
+
+
+"""
+Begin Tests
+"""
 
 class TestPatientList(OpalTestCase):
 
@@ -101,7 +112,8 @@ class TestPatientList(OpalTestCase):
         self.assertEqual(expected, list(PatientList.list()))
 
     def test_get_template_names_default(self):
-        self.assertEqual(['patient_lists/spreadsheet_list.html'], PatientList().get_template_names())
+        self.assertEqual(['patient_lists/spreadsheet_list.html'],
+                         PatientList().get_template_names())
 
     def test_get_template_names_overridden_proerty(self):
         self.assertEqual(['carnivore.html'], TaggingTestNotSubTag().get_template_names())
@@ -109,22 +121,6 @@ class TestPatientList(OpalTestCase):
     def test_known_abstract_subclasses_not_in_list(self):
         lists = list(PatientList.list())
         self.assertNotIn(TaggedPatientList, lists)
-
-class FirstListMetadataTestCase(OpalTestCase):
-
-    def test_first_list_slug(self):
-        slug = patient_lists.FirstListMetadata.to_dict(user=self.user)
-        self.assertEqual({'first_list_slug': 'carnivore'}, slug)
-
-    def test_first_list_slug_no_lists_for_user(self):
-        def nongen():
-            for x in range(0, 0):
-                yield x
-
-        with patch.object(patient_lists.PatientList, 'for_user') as for_user:
-            for_user.return_value = nongen()
-            slug = patient_lists.FirstListMetadata.to_dict(user=self.user)
-            self.assertEqual({'first_list_slug': ''}, slug)
 
 
 class TestTaggedPatientList(OpalTestCase):
@@ -190,3 +186,31 @@ class TestTaggedPatientList(OpalTestCase):
         taglist = TaggedPatientList.get_tag_names()
         expected = {'carnivore', 'herbivore', 'omnivore', 'eater'}
         self.assertEqual(set(taglist), expected)
+
+
+class TabbedPatientListGroupTestCase(OpalTestCase):
+
+    def test_get_template_names(self):
+        self.assertEqual(['patient_lists/tabbed_list_group.html'],
+                         TestTabbedPatientListGroup.get_template_names())
+
+    def test_get_member_lists(self):
+        self.assertEqual([TaggingTestSameTagPatientList, TaggingTestPatientList],
+                         TestTabbedPatientListGroup.get_member_lists())
+
+
+class FirstListMetadataTestCase(OpalTestCase):
+
+    def test_first_list_slug(self):
+        slug = patient_lists.FirstListMetadata.to_dict(user=self.user)
+        self.assertEqual({'first_list_slug': 'carnivore'}, slug)
+
+    def test_first_list_slug_no_lists_for_user(self):
+        def nongen():
+            for x in range(0, 0):
+                yield x
+
+        with patch.object(patient_lists.PatientList, 'for_user') as for_user:
+            for_user.return_value = nongen()
+            slug = patient_lists.FirstListMetadata.to_dict(user=self.user)
+            self.assertEqual({'first_list_slug': ''}, slug)

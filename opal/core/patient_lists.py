@@ -119,6 +119,31 @@ class TaggedPatientList(PatientList, utils.AbstractBase):
         return possible
 
 
+"""
+Sometimes we group lists for display purposes.
+"""
+class TabbedPatientListGroup(discoverable.DiscoverableFeature):
+    """
+    Groups of Patient Lists to display as tabs at the top of
+    any list in the group
+    """
+    module_name   = 'patient_lists'
+    member_lists  = []
+    template_name = 'patient_lists/tabbed_list_group.html'
+
+    @classmethod
+    def get_template_names(klass):
+        return [klass.template_name]
+
+    @classmethod
+    def get_member_lists(klass):
+        return klass.member_lists
+
+
+"""
+Begin Definitions of Patient List App Metadata entries
+"""
+
 class FirstListMetadata(metadata.Metadata):
     slug = 'first_list_slug'
 

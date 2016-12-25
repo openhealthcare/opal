@@ -12,7 +12,7 @@ from django.views.decorators.http import require_http_methods
 
 from opal import models
 from opal.core import application, detail, episodes, exceptions
-from opal.core.patient_lists import PatientList
+from opal.core.patient_lists import PatientList, TabbedPatientListGroup
 from opal.core.subrecords import (
     episode_subrecords, subrecords, get_subrecord_from_api_name
 )
@@ -71,6 +71,9 @@ class PatientListTemplateView(LoginRequiredMixin, TemplateView):
         context['list_slug'] = list_slug
         context['patient_list'] = self.patient_list
         context['lists'] = PatientList.for_user(self.request.user)
+        # context['list_group'] = TabbedPatientListGroup.for_context(
+        #     user=self.request.user, patient_list=self.patient_list
+        # )
         context['columns'] = self.get_column_context(**kwargs)
         return context
 
