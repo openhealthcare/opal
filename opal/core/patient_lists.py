@@ -173,7 +173,7 @@ class TabbedPatientListGroup(discoverable.DiscoverableFeature):
         Predicate function to determine whether this list is meaningfully
         visible to this USER
         """
-        if len(list(klass.get_member_lists_for_user(user))) > 0:
+        if len(list(klass.get_member_lists_for_user(user))) > 1:
             return True
         return False
 
