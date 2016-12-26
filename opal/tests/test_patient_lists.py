@@ -239,6 +239,9 @@ class TabbedPatientListGroupTestCase(OpalTestCase):
             TabbedPatientListGroup.for_list(2)
         with self.assertRaises(ValueError):
             TabbedPatientListGroup.for_list('Carnivores')
+        with self.assertRaises(ValueError):
+            TabbedPatientListGroup.for_list(OpalTestCase)
+
 
     def test_visible_to(self):
         self.assertTrue(TestTabbedPatientListGroup.visible_to(self.user))
