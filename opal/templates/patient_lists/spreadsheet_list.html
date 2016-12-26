@@ -1,4 +1,5 @@
 {% extends 'layouts/left_panel.html' %}
+{% load patient_lists %}
 {% block heading %}
 <div class="row screen-only">
   <div class="col-md-12">
@@ -124,6 +125,7 @@
 </div>
 
 <div class="patient-list-container hidden-sm always-on-print-block" freeze-headers fix-height>
+  {% if list_group %}{% tabbed_list_group %}{% endif %}
   <table class="table table-bordered bg-white patient-list">
     <thead class="table-header">
   	  <tr>
