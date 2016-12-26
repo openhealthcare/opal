@@ -26,3 +26,33 @@ The main, or parent tag for this list. Should be lowercase, with no numbers or d
 #### TaggedPatientList.subtag
 
 The child tag for this list. Should be lowercase, with no numbers or dashes. Underscores are OK.
+
+## TabbedPatientListGroup
+
+Groups of Patient Lists to display as tabs at the top of any list in the group.
+
+### Properties
+
+#### TabbedPatientListGroup.member_lists
+
+A list containing the `PatientList` subclasses in this group.
+
+### Classmethods
+
+#### TabbedPatientListGroup.for_list
+
+Returns the group for a given PatientList. Raises ValueError if not passed a PatientList
+
+#### TabbedPatientListGroup.get_member_lists
+
+A hook for dynamically customising the members of this list group.
+
+Returns an iterable of PatientLists. Defaults to the `.member_lists` property
+
+#### TabbedPatientListGroup.get_member_lists_for_user
+
+Returns an iterable of the visible member lists for a given USER
+
+#### TabbedPatientListGroup.visible_to
+
+Predicate function to determine whether this list is meaningfully visible to this USER
