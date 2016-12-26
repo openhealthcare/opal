@@ -129,25 +129,6 @@ class TabbedPatientListGroup(discoverable.DiscoverableFeature):
     """
     module_name   = 'patient_lists'
     member_lists  = []
-    template_name = 'patient_lists/tabbed_list_group.html'
-
-    @classmethod
-    def get_template_names(klass):
-        """
-        A hook for dynamically customising the template_name(s) to be used
-        for displaying the list group at the head of the list.
-
-        Returns an iterable of template names.
-        Defaults to the `.template_name` property
-        """
-        return [klass.template_name]
-
-    @classmethod
-    def get_template(klass):
-        """
-        Return the first existing template from .get_template_names() or None
-        """
-        return utils.find_template(klass.get_template_names())
 
     @classmethod
     def for_list(klass, patient_list):
