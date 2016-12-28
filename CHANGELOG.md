@@ -1,9 +1,8 @@
 ### 0.8.0 (Major Release)
 
-
 #### Angular UI Libraries
 
-0.8.0 consolidates Angular UI libraries bundled with OPAL. We have removed Angular Strap, and
+0.8.0 consolidates Angular UI libraries bundled with Opal. We have removed Angular Strap, and
 switched all components using it to their Angular UI Bootstrap equivalents.
 
 This is a breaking change.
@@ -14,6 +13,10 @@ some minor differences in visual style of widgets.
 Detailed upgrade guides for the components affected (Typeahead, Popover,
 Tooltip, Datepicker, Timepicker) are available in the upgrade reference documentation.
 
+#### Defaults for Client Side subrecords
+
+We pull through default values from subrecord fields into the Opal `Schema` and use those values when initializing the relevant
+Item instance for a new subrecord. This should greatly reduce the need to use custom Angular subrecord services to set defaults.
 
 #### Choices in form templatetags
 
@@ -52,13 +55,25 @@ Moving forwards we expect all new code in Opal to be compatible with both Python
 This introduces an explicit Opal dependency on the Six module for maintaining codebases that span
 Python 2.x and 3.x.
 
+#### Tabbed Patient List Groups
+
+Adds the class `opal.core.patient_lists.TabbedPatientListGroup` which displays groups of related
+lists as tabs at the top of each member list.
 
 #### Template re-naming
 
-Modal_base has now been moved into a folder called base_templates. Its also now got a form_modal_base and a two_column_form_modal_base. The latter two templates add validation around saving.
+Modal_base has now been moved into a folder called base_templates. Its also now got a form_modal_base and a two_column_form_modal_base.
+The latter two templates add validation around saving.
 
 The standard edit item models and others now inherit from the form_modal_base.
 
+#### Authorization and permissions
+All APIs should be permissioned with Django REST framework permission classes. The default implementation uses
+opal.core.api.LoginRequiredViewset, a standard DRF viewset that requires the user to be logged in.
+
+We now require the user to be logged in for any use of the search functionality.
+
+Added a custom interceptor that logs the user out if the we receive a 403 or 401 from the server
 
 #### Misc changes
 
@@ -81,11 +96,7 @@ Adds a custom interceptor that logs the user out if the we receive a 403 or 401 
 Removes `opal.models.Tagging.import_from_reversion`. This one-off classmethod on tagging
 was introduced to aid with the upgrade from Opal 4.x to 5.0 and has no further utility.
 
-Adds a Unique Together constraint for (Tagging.user, Tagging.episode, Tagging.value)
-
-Removes the `static` argument from the forms `input` tag. Developers should move to the `static` tag.
-
-Look up lists now load in from individual apps. The look for a file at {{ app }}/data/lookuplists.json
+#### Form Validation
 
 Adds the checkForm directive
 
@@ -99,10 +110,29 @@ This adds default form submission behaviour to the a button. It will check if th
 
 It will also set the form as submitted.
 
-We also now show the required error if the form has been submitted or if the field is dirty, so that the user doesn't get an ugly "fill this field in now" message when
-opening the modal/pathway but will get the error after they click submit.
+We also now show the required error if the form has been submitted or if the field is dirty, so that the user doesn't get an ugly "fill this field in now" message when opening the modal/pathway but will get the error after they click submit.
 
-We remove the _modal option to set on subrecords. This is because we now use large modals across the board.
+#### Removals
+
+Opal 0.8.0 removes a number of un-used features that have been slated for removal for some time:
+
+* `Options` - both from the JSON API, and the Angular service.
+* The legacy APIs `/api/v0.1/episode/admit` and `/api/v0.1/episode/refer`.
+* The models `GP`, `CommunityNurse` and `LocatedModel`.
+* `opal.models.Tagging.import_from_reversion`. This one-off classmethod on tagging was introduced to aid with the upgrade from Opal 4.x to 5.0 and has no further utility.
+* The `static` argument from the forms `input` tag. Developers should move to the `static` tag.
+* The _modal option to set on subrecords. This is because we now use large modals across the board.
+
+#### Misc changes
+
+The opal.core.api.EpisodeViewSet.create now expects tagging to be an object rather than a list, similar to how it details with demographics and location.
+
+The API will no longer serialise the _ft or _fk_id fields of FreeTextOrForeignKey fields - these
+are internal implementation details of the server that are not useful on the client side.
+
+Adds a Unique Together constraint for (Tagging.user, Tagging.episode, Tagging.value)
+
+Look up lists now load in from individual apps. The look for a file at {{ app }}/data/lookuplists.json
 
 The default admin url is now `/admin/` - rather than `/admin/?` this results in more readable
 admin urls and is closer to what most applications do with the Django admin.
@@ -158,7 +188,7 @@ Renames `Episode.category` -> `Episode.category_name`.
 
 The Restful Episode JSON API previously available at `/episode/:pk/` is now moved into
 `/api/v0.1/episode/:pk/` for consistency with the rest of our JSON APIs.
-The OPAL Angular layer has been updated to reflect this, and
+The Opal Angular layer has been updated to reflect this, and
 should handle the transition seamlessly, but code calling the API directly should update
 to reflect the new URL.
 
@@ -244,7 +274,7 @@ this allows patterns like:
 #### Upgrade instructions:
 
 Full upgrade instructions to work through any backwards incompatible changes are
-provided in the OPAL docs.
+provided in the Opal docs.
 
 ### 0.5.5 (Minor Release)
 Changes the way old tags are handled.
@@ -284,7 +314,7 @@ New Service for PatientSummary()
 
 **Analytics**
 
-Moves Analytics integration into OPAL core with the ability to blacklist pages that should never be reported
+Moves Analytics integration into Opal core with the ability to blacklist pages that should never be reported
 
 **List view**
 
@@ -352,7 +382,7 @@ http://opal.openhealthcare.org.uk/docs/reference/form_templatetags/
 **API Documentation**
 
 
-OPAL JSON APIs are now fully self-documenting for all updated instances
+Opal JSON APIs are now fully self-documenting for all updated instances
 http://opal.openhealthcare.org.uk/docs/guides/json_api/
 
 ### 0.3 (Major release)

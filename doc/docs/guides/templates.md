@@ -1,6 +1,6 @@
-# Templates in OPAL
+# Templates in Opal
 
-OPAL uses a mixture of Django and Angular templates.
+Opal uses a mixture of Django and Angular templates.
 
 ### Angular templates
 
@@ -9,12 +9,12 @@ Angular interpolation, which allows us to mix Django template interpolation in t
 designed to be rendered by Angular on the client side.
 
     <!-- app_details_snippet.html -->
-    {{ OPAL_BRAND_NAME }} [[ OPAL_VERSION ]]
+    {{ OPAL_BRAND_NAME }} [[ Opal_VERSION ]]
 
 ### Generic Template URL
 
 On many occasions we simply want to fetch a template from the server in our Angular code
-without any further processing. OPAL provides a default catchall HTML template url which
+without any further processing. Opal provides a default catchall HTML template url which
 will render .html files direct from disk.
 
     # opal.urls

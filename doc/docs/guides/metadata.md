@@ -3,7 +3,7 @@
 Applications commonly need to pass data to the front end which is not either clinical
 data about a patient or episode of care, or coded [reference data](referencedata.md).
 
-OPAL provides a simple API for working with such data via the `opal.core.metadata.Metadata`
+Opal provides a simple API for working with such data via the `opal.core.metadata.Metadata`
 [discoverable](discoverable.md).
 
 metadata is made available on the scopes for patient lists and

@@ -1,6 +1,6 @@
 # Panel helpers
 
-OPAL comes with a selection of templatetags for rendering OPAL panels
+Opal comes with a selection of templatetags for rendering Opal panels
 for a given subrecord. These panels also allow the user to
 see instances of the model against the current value of `episode` in
 Angular `$scope`. The user can also create new

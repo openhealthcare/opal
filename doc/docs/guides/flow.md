@@ -1,6 +1,6 @@
-# Flow hooks in OPAL
+# Flow hooks in Opal
 
-OPAL provides various hooks that developers can use to customise behaviour at certain key points in a
+Opal provides various hooks that developers can use to customise behaviour at certain key points in a
 patient's journey through a clinical service - for example when a patient is discharged.
 
 These hooks are associated with verbs `enter`, `exit`.
@@ -19,7 +19,7 @@ OPAL_FLOW_SERVICE = 'MyAppFlow'
 ```
 
 Flow services must define an `enter` and an `exit` method, which both return the appropriate
-angular controller and template to use. Although OPAL provides sensible default controllers and
+angular controller and template to use. Although Opal provides sensible default controllers and
 templates for these common actions, applications with custom flows may customise these methods
 as required.
 

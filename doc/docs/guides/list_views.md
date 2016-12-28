@@ -1,11 +1,11 @@
-# OPAL Patient List views
+# Opal Patient List views
 
-OPAL provides support for displaying lists of patients, both via a spreadsheet like view,
+Opal provides support for displaying lists of patients, both via a spreadsheet like view,
 and with a card based view.
 
 ### Defining lists
 
-OPAL patient lists are subclasses of `opal.core.patient_lists.PatientList`.
+Opal patient lists are subclasses of `opal.core.patient_lists.PatientList`.
 
 Typically these are found in a `patient_lists.py` module of your application or plugin. (Lists _can_ be
 defined elsewhere, but may not be autodiscovered.)
@@ -48,7 +48,7 @@ The list view is constructed by rendering a column for each record, in the order
 defined in the schema, and a row for each episode in the list.
 
 The template for each cell should live in `./templates/records/*`. In order to
-select the appropriate template for a given episode, OPAL looks in the following
+select the appropriate template for a given episode, Opal looks in the following
 locations:
 
     records/{episode_type}/{list slug}/{record_name}.html
@@ -92,7 +92,7 @@ This allows users to add and remove patients from lists as they see fit, rather 
 to infer it from other properties of the patient (e.g. their current location for instance.)
 which can be particularly challenging for some clinical services.
 
-OPAL provides a specific subclass for working with Tagged Patient Lists:
+Opal provides a specific subclass for working with Tagged Patient Lists:
 
     # patient_lists.py
     from opal.core import patient_lists
@@ -106,7 +106,7 @@ you specify.
 
 ### Invalid Tagged Patient Lists
 
-Tag names may not have hyphens in them - OPAL uses hyphens to distinguish between tags and subtags
+Tag names may not have hyphens in them - Opal uses hyphens to distinguish between tags and subtags
 in the urls for lists, so attempting to define one will raise an exception.
 
     class MyList(TaggedPatientList):
@@ -141,3 +141,68 @@ For instance, we could define a Patient List that was only available to Django S
         @classmethod
         def visible_to(klass, user):
             return user.is_superuser
+
+## Grouping related Patient Lists
+
+We commonly require groups of patient lists for a single clinical service. For example a busy
+outpatients cinic might have one list of people in the waiting room, one list of people being
+triaged, one list for people waiting to see the medical staff, and another for people who have
+been seen but need review - for instance because they have outstanding test results.
+
+Opal provides the `TabbedPatientListGroup` class to help with this case. Tabbed Patient List
+Groups are an ordered collection of related Patient Lists that are displayed as tabs at the
+top of any list in the group.
+
+### Defining a Tabbed Patient List Group
+
+Defining a group can be as simple as declaring member lists in a property.
+
+```python
+# yourapp/patient_lists.py
+
+from opal.core import patient_lists
+
+# ... Define your lists here
+
+class MyListGroup(patient_lists.TabbedPatientListGroup):
+    member_lists = [MyFirstPatientList, MySecondPatientList, ...]
+```
+
+
+<blockquote><small>
+Tabbed Patient List Groups are a Discoverable feature, we expect them to be in a
+module named patient_lists.py in one of the Django apps in your application.
+</small></blockquote>
+
+### Customising membership
+
+The members of your group can be determined dynamically by overriding the `get_member_lists`
+classmethod of your group:
+
+```python
+class MyListGroup(patient_lists.TabbedPatientListGroup):
+    @classmethod
+    def get_member_lists(klass):
+        # return an iterable of PatientList subclasses
+```
+
+### Restricting access
+
+By default, the UI for a `TabbedPatientListGroup` is shown at the top of any member `PatientList`
+as long as there are more than one members of the group visible to the given user.
+
+This behaviour can be customised by overriding the `visible_to` classmethod:
+
+```python
+class MyListGroup(patient_lists.TabbedPatientListGroup):
+    @classmethod
+    def visible_to(klass, user):
+        # return True or False appropriately
+```
+
+### Customising templates
+
+Applications may customise the UI for Tabbed Patient List Groups by customising the template
+`patient_lists/tabbed_list_group.html`.
+
+The default template simply extends `patient_lists/tabbed_list_group_base.html`.

@@ -28,7 +28,7 @@ describe('services', function() {
                     sort: 'date_of_diagnosis',
                     fields: [
                         {name: 'date_of_diagnosis', type: 'date'},
-                        {name: 'condition', type: 'string'},
+                        {name: 'condition', type: 'string', default: 'flu'},
                         {name: 'provisional', type: 'boolean'},
                     ]
                 }
@@ -116,7 +116,6 @@ describe('services', function() {
         it('should have correct attributes', function() {
             expect(item.id).toBe(101)
             expect(item.name).toBe('John Smith');
-
         });
 
         it('should convert values of date fields to moment objects', function() {
@@ -138,6 +137,20 @@ describe('services', function() {
                 date_of_birth: new Date(1980, 6, 31),
                 created: new Date(2015, 3, 7, 11, 45)
             });
+        });
+
+        it('should make a copy with defaults', function(){
+            var newItem = new Item({}, mockEpisode, columns.fields.diagnosis);
+            expect(!!newItem.condition).toBe(false);
+            var copy = newItem.makeCopy();
+            expect(copy.condition).toBe('flu');
+        });
+
+        it('defaults should not overwrite existing data', function(){
+          var existing = new Item(episodeData.diagnosis[0], mockEpisode, columns.fields.diagnosis);
+          expect(existing.condition).toBe('Dengue');
+          var copy = existing.makeCopy();
+          expect(copy.condition).toBe('Dengue');
         });
 
         describe('communicating with server', function() {

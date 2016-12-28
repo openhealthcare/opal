@@ -4,7 +4,7 @@
 
 Your implementation is a Django project with some extras.
 
-## OPAL settings
+## Opal settings
 
 OPAL_LOG_OUT_DURATION = The number of milliseconds after which to log out our user
 
@@ -20,7 +20,7 @@ Models should be defined in your project.
 
 They should subclass opal.models.EpisodeSubrecord or opal.models.PatientSubrecord as appropriate.
 
-Subrecords have some extra entrypoints that are used by OPAL.
+Subrecords have some extra entrypoints that are used by Opal.
 
 ### _is_singleton
 
