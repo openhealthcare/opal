@@ -224,9 +224,6 @@ class DatabaseQuery(QueryBackend):
         field = query['field'].replace(' ', '_').lower()
         Mod = get_model_from_api_name(column_name)
 
-        if column_name.lower() == 'tags':
-            Mod = models.Tagging
-
         named_fields = [f for f in Mod._meta.fields if f.name == field]
 
         if len(named_fields) == 1 and isinstance(named_fields[0],djangomodels.BooleanField):
