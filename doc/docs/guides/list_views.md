@@ -141,3 +141,68 @@ For instance, we could define a Patient List that was only available to Django S
         @classmethod
         def visible_to(klass, user):
             return user.is_superuser
+
+## Grouping related Patient Lists
+
+We commonly require groups of patient lists for a single clinical service. For example a busy
+outpatients cinic might have one list of people in the waiting room, one list of people being
+triaged, one list for people waiting to see the medical staff, and another for people who have
+been seen but need review - for instance because they have outstanding test results.
+
+Opal provides the `TabbedPatientListGroup` class to help with this case. Tabbed Patient List
+Groups are an ordered collection of related Patient Lists that are displayed as tabs at the
+top of any list in the group.
+
+### Defining a Tabbed Patient List Group
+
+Defining a group can be as simple as declaring member lists in a property.
+
+```python
+# yourapp/patient_lists.py
+
+from opal.core import patient_lists
+
+# ... Define your lists here
+
+class MyListGroup(patient_lists.TabbedPatientListGroup):
+    member_lists = [MyFirstPatientList, MySecondPatientList, ...]
+```
+
+
+<blockquote><small>
+Tabbed Patient List Groups are a Discoverable feature, we expect them to be in a
+module named patient_lists.py in one of the Django apps in your application.
+</small></blockquote>
+
+### Customising membership
+
+The members of your group can be determined dynamically by overriding the `get_member_lists`
+classmethod of your group:
+
+```python
+class MyListGroup(patient_lists.TabbedPatientListGroup):
+    @classmethod
+    def get_member_lists(klass):
+        # return an iterable of PatientList subclasses
+```
+
+### Restricting access
+
+By default, the UI for a `TabbedPatientListGroup` is shown at the top of any member `PatientList`
+as long as there are more than one members of the group visible to the given user.
+
+This behaviour can be customised by overriding the `visible_to` classmethod:
+
+```python
+class MyListGroup(patient_lists.TabbedPatientListGroup):
+    @classmethod
+    def visible_to(klass, user):
+        # return True or False appropriately
+```
+
+### Customising templates
+
+Applications may customise the UI for Tabbed Patient List Groups by customising the template
+`patient_lists/tabbed_list_group.html`.
+
+The default template simply extends `patient_lists/tabbed_list_group_base.html`.
