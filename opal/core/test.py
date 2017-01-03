@@ -1,5 +1,5 @@
 """
-OPAL Test base classes
+OPAL Testing utilities
 """
 import json
 
@@ -10,7 +10,6 @@ from django.utils.functional import cached_property
 
 from opal.core.views import OpalSerializer
 from opal.models import UserProfile, Patient
-
 
 class OpalTestCase(TestCase):
     USERNAME = "testuser"
