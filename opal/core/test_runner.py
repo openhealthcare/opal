@@ -23,6 +23,7 @@ def _run_py_tests(args):
     Run our Python test suite
     """
     write("Running Python Unit Tests")
+    test_args = None
 
     # We have a custom test runner - e.g. it's OPAL itself or a plugin.
     if _has_file(args.userland_here, 'runtests.py'):
@@ -48,16 +49,17 @@ def _run_py_tests(args):
         write("Are you in the root directory? \n\n")
         sys.exit(1)
 
-    try:
-        subprocess.check_call(test_args)
-    except subprocess.CalledProcessError:
-        sys.exit(1)
-
-    if args.coverage:
+    if test_args:
         try:
-            subprocess.check_call(['coverage', 'html'])
+            subprocess.check_call(test_args)
         except subprocess.CalledProcessError:
             sys.exit(1)
+
+        if args.coverage:
+            try:
+                subprocess.check_call(['coverage', 'html'])
+            except subprocess.CalledProcessError:
+                sys.exit(1)
 
     return
 
