@@ -7,6 +7,8 @@ import sys
 
 import ffs
 
+from opal.utils import write
+
 TRAVIS = os.environ.get('TRAVIS', False)
 
 def _has_file(where, filename):
@@ -20,7 +22,7 @@ def _run_py_tests(args):
     """
     Run our Python test suite
     """
-    print("Running Python Unit Tests")
+    write("Running Python Unit Tests")
 
     # We have a custom test runner - e.g. it's OPAL itself or a plugin.
     if _has_file(args.userland_here, 'runtests.py'):
@@ -41,9 +43,9 @@ def _run_py_tests(args):
             test_args = ['coverage', 'run', 'manage.py', 'test',]
 
     else:
-        print("\n\nCripes!\n")
-        print("We can't figure out how to run your tests :(\n")
-        print("Are you in the root directory? \n\n")
+        write("\n\nCripes!\n")
+        write("We can't figure out how to run your tests :(\n")
+        write("Are you in the root directory? \n\n")
         sys.exit(1)
 
     try:
@@ -63,7 +65,7 @@ def _run_js_tests(args):
     """
     Run our Javascript test suite
     """
-    print("Running Javascript Unit Tests")
+    write("Running Javascript Unit Tests")
     env = os.environ.copy()
     if TRAVIS:
         karma = './node_modules/karma/bin/karma'
