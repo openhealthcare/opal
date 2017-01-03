@@ -1,5 +1,5 @@
 """
-unittests for opal.core.search.queries
+Unittests for opal.core.search.queries
 """
 from datetime import date
 
@@ -263,6 +263,23 @@ class DatabaseQueryTestCase(OpalTestCase):
         self.assertEqual("Female", demographics.sex)
         query = queries.DatabaseQuery(self.user, criteria)
         self.assertEqual([self.episode], query.get_episodes())
+
+    def test_get_episodes_searching_episode_subrecord_ft_or_fk_fields(self):
+        criteria = [
+            {
+                u'column': u'dog_owner',
+                u'field': u'Dog',
+                u'combine': u'and',
+                u'query': u'Terrier',
+                u'queryType': u'Equals'
+            }
+        ]
+        dog_owner = testmodels.DogOwner.objects.create(episode=self.episode)
+        dog_owner.dog = 'Terrier'
+        dog_owner.save()
+        query = queries.DatabaseQuery(self.user, criteria)
+        self.assertEqual([self.episode], query.get_episodes())
+
 
     def test_get_patient_summaries(self):
         query = queries.DatabaseQuery(self.user, self.name_criteria)
