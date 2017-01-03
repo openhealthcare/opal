@@ -188,7 +188,7 @@ class DatabaseQuery(QueryBackend):
             from opal.models import Synonym
             synonym = Synonym.objects.get(content_type=content_type, name=name)
             name = synonym.content_object.name
-        except Synonym.DoesNotExist: # maybe this is pointless exception bouncing?
+        except Synonym.DoesNotExist:
             pass # That's fine.
 
         kw_fk = {'{0}__{1}_fk__name{2}'.format(model.replace('_', ''), field, contains): name}

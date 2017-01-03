@@ -4,9 +4,11 @@ unittests for opal.core.search.queries
 from datetime import date
 
 from django.db import transaction
+from django.contrib.contenttypes.models import ContentType
+
 import reversion
 
-from opal.models import Episode, Patient, Team
+from opal.models import Episode, Patient, Team, Synonym, Gender
 from opal.core.test import OpalTestCase
 from opal.tests.episodes import RestrictedEpisodeCategory
 
@@ -239,6 +241,26 @@ class DatabaseQueryTestCase(OpalTestCase):
                 u'queryType': u'Equals'
             }
         ]
+        query = queries.DatabaseQuery(self.user, criteria)
+        self.assertEqual([self.episode], query.get_episodes())
+
+    def test_episodes_searching_fk_or_ft_fields_with_synonym_values(self):
+        criteria = [
+            {
+                u'column': u'demographics',
+                u'field': u'Sex',
+                u'combine': u'and',
+                u'query': u'F',
+                u'queryType': u'Equals'
+            }
+        ]
+        female = Gender.objects.create(name="Female")
+        ct = ContentType.objects.get_for_model(Gender)
+        Synonym.objects.create(content_type=ct, name="F", object_id=female.id)
+        demographics = self.patient.demographics_set.get()
+        demographics.sex = "F"
+        demographics.save()
+        self.assertEqual("Female", demographics.sex)
         query = queries.DatabaseQuery(self.user, criteria)
         self.assertEqual([self.episode], query.get_episodes())
 
