@@ -19,6 +19,17 @@ class RunPyTestsTestCase(OpalTestCase):
         test_runner._run_py_tests(mock_args)
         check_call.assert_called_once_with(['python', 'runtests.py'])
 
+    @patch('subprocess.check_call')
+    def test_run_tests_with_test_arg(self, check_call):
+        mock_args = MagicMock(name="args")
+        mock_args.userland_here = ffs.Path('.')
+        mock_args.coverage = False
+        mock_args.test = 'opal.tests.foo'
+        test_runner._run_py_tests(mock_args)
+        check_call.assert_called_once_with(['python', 'runtests.py', 'opal.tests.foo'])
+
+
+
 
 class RunJSTestsTestCase(OpalTestCase):
     pass
