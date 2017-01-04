@@ -1,6 +1,8 @@
 """
 Unittests fror opal.core.test_runner
 """
+import subprocess
+
 import ffs
 from mock import MagicMock, patch, call
 
@@ -18,6 +20,17 @@ class RunPyTestsTestCase(OpalTestCase):
         mock_args.test = None
         test_runner._run_py_tests(mock_args)
         check_call.assert_called_once_with(['python', 'runtests.py'])
+
+    @patch('subprocess.check_call')
+    @patch.object(test_runner.sys, 'exit')
+    def test_run_tests_errors(self, exiter, check_call):
+        mock_args = MagicMock(name="args")
+        mock_args.userland_here = ffs.Path('.')
+        mock_args.coverage = False
+        mock_args.test = None
+        check_call.side_effect = subprocess.CalledProcessError(None, None)
+        test_runner._run_py_tests(mock_args)
+        exiter.assert_called_once_with(1)
 
     @patch('subprocess.check_call')
     def test_run_tests_with_test_arg(self, check_call):
@@ -41,6 +54,18 @@ class RunPyTestsTestCase(OpalTestCase):
         ]
 
         check_call.assert_has_calls(calls)
+
+    @patch('subprocess.check_call')
+    @patch.object(test_runner.sys, 'exit')
+    def test_run_tests_with_coverage_errors(self, exiter, check_call):
+        mock_args = MagicMock(name="args")
+        mock_args.userland_here = ffs.Path('.')
+        mock_args.coverage = True
+        mock_args.test = None
+        check_call.side_effect = [None, subprocess.CalledProcessError(None, None)]
+        test_runner._run_py_tests(mock_args)
+        self.assertEqual(2, check_call.call_count)
+        exiter.assert_called_once_with(1)
 
     @patch('subprocess.check_call')
     @patch.object(test_runner, '_has_file')
@@ -127,6 +152,14 @@ class RunJSTestsTestCase(OpalTestCase):
             ],
             check_call.call_args[0][0]
         )
+
+    @patch('subprocess.check_call')
+    @patch.object(test_runner.sys, 'exit')
+    def test_error_in_call(self, exiter, check_call):
+        check_call.side_effect = subprocess.CalledProcessError(None, None)
+        mock_args = MagicMock(name="args")
+        test_runner._run_js_tests(mock_args)
+        exiter.assert_called_with(1)
 
 
 class RunTestsTestCase(OpalTestCase):
