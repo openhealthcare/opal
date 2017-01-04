@@ -655,6 +655,11 @@ class InpatientAdmissionTestCase(OpalTestCase):
             datetime.date.today()
         )
 
+    def test_update_from_dict_no_id_or_patient_id(self):
+        a = InpatientAdmission()
+        with self.assertRaises(ValueError):
+            a.update_from_dict({})
+
 
 class PatientConsultationTestCase(OpalTestCase):
     def setUp(self):
