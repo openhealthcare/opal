@@ -1,6 +1,6 @@
-# OPAL Search overview
+# Opal Search overview
 
-The OPAL Search backend is switchable using the settings value OPAL_SEARCH_BACKEND.
+The Opal Search backend is switchable using the settings value Opal_SEARCH_BACKEND.
 
 By default it will do a database query.
 

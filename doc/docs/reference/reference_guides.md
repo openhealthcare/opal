@@ -1,4 +1,4 @@
-## OPAL Reference material
+## Opal Reference material
 
 The following reference guides are available:
 
@@ -10,10 +10,10 @@ The following reference guides are available:
 [opal.models.Subrecord](subrecords.md) | for subrecords of Episodes or Patients
 [opal.models.*](mixins.md) | Mixin helpers for useful functionality
 
-### OPAL Core
+### Opal Core
 |
 -|-
-[opal.core.application](opal_application.md) | OPAL Application objects|
+[opal.core.application](opal_application.md) | Opal Application objects|
 [opal.core.detail](detail_views.md)|Detail Views - Custom views over one or many episodes.|
 [opal.core.episodes](episode_categories.md)|Episode Categories - Controlling the behaviour of different types of episode|
 [opal.core.schemas](schemas.md)|Schemas - Dynamic columns for the table views|
@@ -32,11 +32,11 @@ The following reference guides are available:
 
 |
 -|-
-[The forms Templatetag library](form_templatetags.md) | The building blocks for OPAL forms
+[The forms Templatetag library](form_templatetags.md) | The building blocks for Opal forms
 [The panels Templatetag library](panels_templatetags.md) | Rendering record panels
 [Javascript Helpers](javascript_helpers.md)| Angular filters and $rootScope methods
 
-### OPAL Search module
+### Opal Search module
 
 |
 -|-
@@ -47,6 +47,7 @@ The following reference guides are available:
 
 |
 -|-
-[Changelog](changelog.md) | OPAL Changelog
-[Upgrading](upgrading.md) | Upgrading between OPAL versions
+[Changelog](changelog.md) | Opal Changelog
+[Upgrading](upgrading.md) | Upgrading between Opal> versions
 [Javascript dependencies](javascript_dependencies.md)| External javascript libraries available |
+[Testing](testing.md) | Testing

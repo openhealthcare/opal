@@ -1,12 +1,14 @@
 """
-unittests for opal.core.search.queries
+Unittests for opal.core.search.queries
 """
 from datetime import date
 
 from django.db import transaction
+from django.contrib.contenttypes.models import ContentType
+
 import reversion
 
-from opal.models import Episode, Patient
+from opal.models import Episode, Patient, Synonym, Gender
 from opal.core.test import OpalTestCase
 from opal.tests.episodes import RestrictedEpisodeCategory
 
@@ -239,6 +241,43 @@ class DatabaseQueryTestCase(OpalTestCase):
         ]
         query = queries.DatabaseQuery(self.user, criteria)
         self.assertEqual([self.episode], query.get_episodes())
+
+    def test_episodes_searching_fk_or_ft_fields_with_synonym_values(self):
+        criteria = [
+            {
+                u'column': u'demographics',
+                u'field': u'Sex',
+                u'combine': u'and',
+                u'query': u'F',
+                u'queryType': u'Equals'
+            }
+        ]
+        female = Gender.objects.create(name="Female")
+        ct = ContentType.objects.get_for_model(Gender)
+        Synonym.objects.create(content_type=ct, name="F", object_id=female.id)
+        demographics = self.patient.demographics_set.get()
+        demographics.sex = "F"
+        demographics.save()
+        self.assertEqual("Female", demographics.sex)
+        query = queries.DatabaseQuery(self.user, criteria)
+        self.assertEqual([self.episode], query.get_episodes())
+
+    def test_get_episodes_searching_episode_subrecord_ft_or_fk_fields(self):
+        criteria = [
+            {
+                u'column': u'dog_owner',
+                u'field': u'Dog',
+                u'combine': u'and',
+                u'query': u'Terrier',
+                u'queryType': u'Equals'
+            }
+        ]
+        dog_owner = testmodels.DogOwner.objects.create(episode=self.episode)
+        dog_owner.dog = 'Terrier'
+        dog_owner.save()
+        query = queries.DatabaseQuery(self.user, criteria)
+        self.assertEqual([self.episode], query.get_episodes())
+
 
     def test_get_patient_summaries(self):
         query = queries.DatabaseQuery(self.user, self.name_criteria)

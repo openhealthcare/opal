@@ -1,4 +1,4 @@
-site_name: OPAL
+site_name: Opal
 docs_dir: docs
 pages:
   - Home: index.md
@@ -30,6 +30,9 @@ pages:
       - Patient List Views: guides/list_views.md
       - Discoverable Features: guides/discoverable.md
       - Search Overview: guides/search.md
+      - Contributing: guides/contributing.md
+      - Development environment: guides/development_environment.md
+
 
   - Reference:
       - The Episode model: reference/episode.md
@@ -51,6 +54,7 @@ pages:
       - Patient Lists: reference/patient_list.md
       - Search JS Services: reference/search_js_services.md
       - Changelog: reference/changelog.md
+      - Testing: reference/testing.md
       - Upgrading: reference/upgrading.md
 
 theme: mkdocs
@@ -63,7 +67,7 @@ dev_addr: 0.0.0.0:8965
 include_next_prev: false
 
 extra:
-  version: v0.8.1
+  version: v0.8.0
 
 markdown_extensions:
     - fenced_code

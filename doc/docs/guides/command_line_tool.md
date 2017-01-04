@@ -1,23 +1,23 @@
-## The OPAL Command line tool
+## The Opal Command line tool
 
-OPAL ships with a helpful command line tool that helps with administrative tasks.
+Opal ships with a helpful command line tool that helps with administrative tasks.
 
-The `opal` script should be on your system path if you installed OPAL via setup.py or
+The `opal` script should be on your system path if you installed Opal via setup.py or
 pip. You can check whether it is available by running this command:
 
     $ opal -v
 
 ### startproject &lt;name&gt;
 
-Creates a new OPAL project.
+Creates a new Opal project.
 
 This creates boilerplate and a default configuration for your new project, including
 creating a new underlying Django project, updating default settings to be compatible
-with OPAL, creating directories and code boilerplate, and running initial migrations.
+with Opal, creating directories and code boilerplate, and running initial migrations.
 
 ### startplugin &lt;name&gt;
 
-Creates boilerplate code, and directory structures for a new OPAL plugin.
+Creates boilerplate code, and directory structures for a new Opal plugin.
 
 ### scaffold &lt;appname&gt;
 
@@ -48,8 +48,8 @@ test module, case or method to run.
 
 Ensure that all of our application plugins and packages are on the correct branch.
 
-This is particularly useful when working on OPAL itself, or when you have multiple
-projects that use different versions of OPAL or plugins. It will assume that github
+This is particularly useful when working on Opal itself, or when you have multiple
+projects that use different versions of Opal or plugins. It will assume that github
 based requirements will be installed in development via `python setup.py develop`.
 
 This command will parse your project's `requirements.txt`, and then ensure that any

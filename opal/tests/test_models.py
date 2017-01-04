@@ -17,8 +17,9 @@ from opal.models import (
 from opal.core.test import OpalTestCase
 import opal.tests.test_patient_lists # To make sure test tagged lists are pulled in
 from opal.tests.models import (
-    FamousLastWords, PatientColour, ExternalSubRecord, SymptomComplex, PatientConsultation,
-    Birthday, DogOwner, HatWearer, HouseOwner
+    FamousLastWords, PatientColour, ExternalSubRecord, SymptomComplex,
+    PatientConsultation, Birthday, DogOwner, HatWearer, HouseOwner, HoundOwner,
+    Colour
 )
 
 class PatientRecordAccessTestCase(OpalTestCase):
@@ -366,6 +367,38 @@ class SubrecordTestCase(OpalTestCase):
         # if a word is an abbreviation already, don't title case it!
         osd = DogOwner._get_field_title("ownership_start_date")
         self.assertEqual(osd, "OSD")
+
+    def test_get_defaults(self):
+        self.assertEqual("Catherine", DogOwner._get_field_default("name"))
+
+    def test_callable_defaults(self):
+        self.assertEqual("Philipa", HoundOwner._get_field_default("name"))
+
+    def test_defaults_if_there_are_no_defaults(self):
+        self.assertEqual(None, HatWearer._get_field_default("name"))
+
+    def test_get_defaults_from_free_text_and_foreign_key(self):
+        self.assertEqual("spaniel", DogOwner._get_field_default("dog"))
+
+    def test_get_defaults_from_free_text_and_foreign_key_lambda(self):
+        self.assertEqual("spaniel", HoundOwner._get_field_default("dog"))
+
+    def test_get_defaults_from_ftfk_when_there_are_no_defaults(self):
+        self.assertEqual(None, Colour._get_field_default("name"))
+
+    def test_get_defaults_with_an_datetime_throws_an_error(self):
+        name = Colour._meta.get_field("name")
+        with patch.object(name, "get_default") as get_default:
+            get_default.return_value = datetime.datetime.now()
+            with self.assertRaises(exceptions.APIError):
+                Colour._get_field_default("name")
+
+    def test_get_defaults_with_a_date_throws_an_error(self):
+        name = Colour._meta.get_field("name")
+        with patch.object(name, "get_default") as get_default:
+            get_default.return_value = datetime.date.today()
+            with self.assertRaises(exceptions.APIError):
+                Colour._get_field_default("name")
 
 
 class BulkUpdateFromDictsTest(OpalTestCase):

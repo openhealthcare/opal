@@ -1,6 +1,6 @@
-## Upgrading Your OPAL Application
+## Upgrading Your Opal Application
 
-This document provides instructions for specific steps required to upgrading your OPAL
+This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
 ### 0.7.1 -> 0.8.0
@@ -15,7 +15,7 @@ Metadata (App specific data you wish to pass into the front end).
 
 Those applications relying on Angular strap ui components (Typeahead, Popover,
 Tooltip, Datepicker, Timepicker) should convert their templates to use the Angular UI Boostrap equivalents, or the
-OPAL templatetags. 
+Opal templatetags.
 
 If you are simply using Opal templatetags from `forms` and not overriding these templates, then the transition should be seamless. Otherwise, searching your codebase for html files containing `bs-` and looking for angular strap components is a good start.
 
@@ -45,7 +45,7 @@ Any controllers attempting to open the modal e.g. custom list flows should updat
 
 #### Downstream dependencies
 
-OPAL 0.7.1 updates the expected version of Django Axes to 1.7.0 - you will wish to update
+Opal 0.7.1 updates the expected version of Django Axes to 1.7.0 - you will wish to update
 this in your requirements.txt or similar accordingly.
 
 #### DRF Authentication
@@ -53,7 +53,7 @@ this in your requirements.txt or similar accordingly.
 We highly recommend that applications explicitly set Django Rest Framework authentication
 classes in their `settings.py`.
 
-By default OPAL now uses session and token auth, which will require a migration to install
+By default Opal now uses session and token auth, which will require a migration to install
 the DRF Token authentication app.
 
 ```python
@@ -74,7 +74,7 @@ REST_FRAMEWORK = {
 
 ### 6.x -> 7.x
 
-#### Upgrading OPAL
+#### Upgrading Opal
 
 How you do this depends on how you have configured your application, but updating your
 requirements.txt to update the version should work.
@@ -83,12 +83,12 @@ requirements.txt to update the version should work.
     opal==0.7.0
 
 After re-installing (via for instance `pip install -r requirements.txt`) you will need to
-run the migrations for OPAL 0.6.x
+run the migrations for Opal 0.6.x
 
     $ python manage.py migrate opal
 
 
-If you are inheriting from the abstract models in OPAL e.g. `Demographics` then you should
+If you are inheriting from the abstract models in Opal e.g. `Demographics` then you should
 run a makemigrations command to update to the 0.7.x data model.
 
     python manage.py makemigrations yourapp
@@ -97,7 +97,7 @@ run a makemigrations command to update to the 0.7.x data model.
 
 #### Breaking changes
 
-OPAL 0.7 contains a number of breaking changes.
+Opal 0.7 contains a number of breaking changes.
 
 ##### Name changes
 
@@ -105,7 +105,7 @@ OPAL 0.7 contains a number of breaking changes.
 directly sets category, you will be required to update all instances where this happens.
 
 The `/episode/:pk/` API has moved to `/api/v0.1/episode/:pk/` so any code (typically
-javascript) code that directly saves to this API endpoint rather than using the OPAL JS
+javascript) code that directly saves to this API endpoint rather than using the Opal JS
 `Episode` services should work immediately when re-pointed at the new URL.
 
 ##### Moving from options to referencedata and metadata
@@ -133,7 +133,7 @@ to use this new tag.
 
 ### 5.x -> 6.x
 
-#### Upgrading OPAL
+#### Upgrading Opal
 
 How you do this depends on how you have configured your application, but updating your
 requirements.txt to update the version should work.
@@ -142,19 +142,19 @@ requirements.txt to update the version should work.
     opal==0.6.0
 
 After re-installing (via for instance `pip install -r requirements.txt`) you will need to
-run the migrations for OPAL 0.6.x
+run the migrations for Opal 0.6.x
 
     $ python manage.py migrate opal
 
 #### Changes to abstract models
 
-If you are inheriting from the abstract models in OPAL e.g. `Demographics` then you should
+If you are inheriting from the abstract models in Opal e.g. `Demographics` then you should
 run a makemigrations command to update to the 0.6.x data model.
 
     python manage.py makemigrations yourapp
     python manage.py migrate yourapp
 
-You should note that as of OPAL 0.6.x `Demographics` now splits names into first, surname,
+You should note that as of Opal 0.6.x `Demographics` now splits names into first, surname,
 middle name and title. The previous `name` field will be converted to be `first_name`.
 
 Strategies for updating your data to use the appropriate fields will vary from application
@@ -163,11 +163,11 @@ here](https://github.com/openhealthcare/acute/blob/master/acute/migrations/0004_
 
 #### Update settings
 
-Many of the default OPAL templates now assume that the `'opal.context_processors.models'`
+Many of the default Opal templates now assume that the `'opal.context_processors.models'`
 Context Processor is available - you should add that to the `TEMPLATE_CONTEXT_PROCESSORS`
 setting in your application's `settings.py`
 
-The default date formats in OPAL have changed - and so you should update your `DATE_X`
+The default date formats in Opal have changed - and so you should update your `DATE_X`
 settings to match:
 
 ```python
@@ -179,7 +179,7 @@ DATETIME_INPUT_FORMATS = ['%d/%m/%Y %H:%M:%S']
 
 #### Upgrade plugins
 
-A number of OPAL plugins have new releases to work with the changes in OPAL 0.6.x
+A number of Opal plugins have new releases to work with the changes in Opal 0.6.x
 
 * opal-referral - Upgrade to 0.1.4
 * opal-wardround - Upgrade to 0.6.0
@@ -188,7 +188,7 @@ A number of OPAL plugins have new releases to work with the changes in OPAL 0.6.
 * opal-dashboard - Upgrade to 0.1.3
 
 Meanwhile the `opal-taskrunner` plugin has now been deprecated, this functionality now
-living natively within OPAL core.
+living natively within Opal core.
 
 #### Update your Teams to be PatientLists
 
@@ -230,11 +230,11 @@ of the options available for Patient Lists.
 #### Form and Display templates.
 
 We may now be missing some form or display templates, as your application may be
-relying on templates previously in OPAL. To discover which these are, run
+relying on templates previously in Opal. To discover which these are, run
 
     $ opal scaffold --dry-run
 
-You may either create templates by hand, or have OPAL generate boilerplate templates for you
+You may either create templates by hand, or have Opal generate boilerplate templates for you
 by running `$ opal scaffold`.
 
 Modal templates already in your application will likely be referencing invalid paths
@@ -281,9 +281,9 @@ to Djangomigrations.
     $ python manage.py makemigrations yourapp
     $ python manage.py migrate yourapp --fake-initial
 
-#### OPAL
+#### Opal
 
-Next you will need to upgrade the OPAL version itself.
+Next you will need to upgrade the Opal version itself.
 
 How you do this depends on how you have configured your application, but updating your
 requirements.txt to update the version should work. This will also update FFS and Django
@@ -294,7 +294,7 @@ Axes as well as adding Python Dateutil.
 
 #### Migrations.
 
-OPAL has fresh migrations in 0.5.x, which we should run. There are also changes to the
+Opal has fresh migrations in 0.5.x, which we should run. There are also changes to the
 base abstract model classes (to add created/updated timestamps) so you'll need to create
 fresh migrations for your own application.
 
@@ -307,7 +307,7 @@ application's requirements file.
 
 #### Tags
 
-As of 0.5.5, old tags in OPAL are stored directly on the Tagging model rather than via
+As of 0.5.5, old tags in Opal are stored directly on the Tagging model rather than via
 Djano Reversion. We can import those old tags by doing the following.
 
     $ python manage.py shell

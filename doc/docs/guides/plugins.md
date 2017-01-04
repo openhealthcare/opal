@@ -1,11 +1,11 @@
 ## Writing Plugins
 
-OPAL Plugins are Django apps on the server side, and collections of angular.js
+Opal Plugins are Django apps on the server side, and collections of angular.js
 models for the client.
 
 ### Getting started with your plugin
 
-The OPAL commandline tool will bootstrap your plugin for you - just run:
+The Opal commandline tool will bootstrap your plugin for you - just run:
 
     $ opal startplugin yourcoolplugin
 
@@ -63,7 +63,7 @@ There are some restricted namespaces for these...
 
 ### Adding APIs
 
-OPAL uses Django Rest Framweork to provide APIs, and you may add to these from your plugin.
+Opal uses Django Rest Framweork to provide APIs, and you may add to these from your plugin.
 By convention, APIs live in `yourplugin/api.py`. You are expected to provide a
 `rest_framework.viewsets.ViewSet` subclass, which you then detail as the `.apis` attribute
 of your plugin.
@@ -84,7 +84,7 @@ of your plugin.
             ('ping', api.PingViewSet)
         ]
 
-These APIs will then be available and self-documenting fom the standard OPAL url `/api/v0.1/`
+These APIs will then be available and self-documenting fom the standard Opal url `/api/v0.1/`
 
 ### Permissioning
 

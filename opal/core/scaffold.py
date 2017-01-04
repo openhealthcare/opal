@@ -12,17 +12,13 @@ from ffs import nix
 from ffs.contrib import mold
 
 import opal
+from opal.utils import write
 
 OPAL             = ffs.Path(opal.__file__).parent
 SCAFFOLDING_BASE = OPAL/'scaffolding'
 SCAFFOLD         = SCAFFOLDING_BASE/'scaffold'
 PLUGIN_SCAFFOLD  = SCAFFOLDING_BASE/'plugin_scaffold'
 
-
-def write(what):
-    if 'runtests.py' in sys.argv:
-        return
-    sys.stdout.write("{0}\n".format(what))
 
 # TODO: This is backported from Django 1.9.x - after we upgrade to target
 # Django 1.9.x can we kill this and import it from there please.

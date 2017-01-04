@@ -28,6 +28,7 @@ class OpalApplicationTestCase(TestCase):
             "js/opal/controllers/edit_teams.js",
             "js/opal/controllers/delete_item_confirmation.js",
             "js/opal/controllers/account.js",
+            "js/opal/controllers/discharge.js",
             "js/opal/controllers/undischarge.js",
             "js/opal/controllers/copy_to_category.js",
             "js/opal/controllers/keyboard_shortcuts.js",

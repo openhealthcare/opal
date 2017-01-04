@@ -11,5 +11,5 @@ coverage-js
 *~
 *#
 *DS_Store
-node_modules
 *.bak
+node_modules

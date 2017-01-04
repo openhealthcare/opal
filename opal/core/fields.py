@@ -12,10 +12,11 @@ class ForeignKeyOrFreeText(property):
     field.  If found, references foreign model in ForeignKey, otherwise stores
     string in CharField.
     """
-    def __init__(self, foreign_model, related_name=None, verbose_name=None):
+    def __init__(self, foreign_model, related_name=None, verbose_name=None, default=None):
         self.foreign_model = foreign_model
         self.related_name = related_name
         self._verbose_name = verbose_name
+        self.default = default
 
         # for use in the fields, lookup lists essentially have
         #  a max length based on the char field that's used internally
@@ -41,6 +42,12 @@ class ForeignKeyOrFreeText(property):
         fk_field.contribute_to_class(cls, self.fk_field_name)
         ft_field = CharField(max_length=255, blank=True, null=True, default='')
         ft_field.contribute_to_class(cls, self.ft_field_name)
+
+    def get_default(self):
+        if callable(self.default):
+            return self.default()
+        else:
+            return self.default
 
     def __set__(self, inst, val):
         if val is None:

@@ -86,6 +86,7 @@ class OpalApplication(object):
             "js/opal/controllers/edit_teams.js",
             "js/opal/controllers/delete_item_confirmation.js",
             "js/opal/controllers/account.js",
+            "js/opal/controllers/discharge.js",
             "js/opal/controllers/undischarge.js",
             "js/opal/controllers/copy_to_category.js",
             "js/opal/controllers/keyboard_shortcuts.js",
@@ -149,7 +150,7 @@ def get_app():
 
 
 def get_all_components():
-    """ 
+    """
     All components of an Opal application - all plugins and the application.
     """
     return itertools.chain(

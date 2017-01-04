@@ -5,6 +5,9 @@ import sys
 
 from django.test import TestCase
 from django.db.models import ForeignKey, CharField
+from mock import patch
+
+from opal.core.test import OpalTestCase
 
 from opal import utils
 
@@ -68,3 +71,12 @@ class FindTemplateTestCase(TestCase):
 
     def test_find_template_none_exists(self):
         self.assertEqual(None, utils.find_template(['baser.html', 'basest.html']))
+
+
+class WriteTestCase(OpalTestCase):
+
+    def test_write(self):
+        with patch.object(utils, 'sys') as mocksys:
+            mocksys.argv = ['not', 'te$targs']
+            utils.write('this')
+            mocksys.stdout.write.assert_called_with('this\n')

@@ -2,13 +2,13 @@
 
 ### Editing Records
 
-The editing of records is a key component of any OPAL application. A key pattern is to edit
-or create an individual record in a modal containing the form for just that record. OPAL provides
+The editing of records is a key component of any Opal application. A key pattern is to edit
+or create an individual record in a modal containing the form for just that record. Opal provides
 the Angular Controller `opal.controllers.EditItemCtrl` for doing just this
 
 ### Customising the Angular Controller
 
-OPAL uses the `formController` attribute of an `Item` to determine which Angular Controller to use. This
+Opal uses the `formController` attribute of an `Item` to determine which Angular Controller to use. This
 defaults to `opal.controllers.EditItemCtrl`. Individual Subrecords may customise this by implementing an Angualar record Service
 and overriding the formController attribute.
 
@@ -65,11 +65,11 @@ Client side validation for forms requires a pattern and a help block && uses ng-
 
 ### Helpers
 
-OPAL contains a number of helpers for developing forms and input modals.
+Opal contains a number of helpers for developing forms and input modals.
 
 Many of these are located in the forms template tag library, which is a
 Django templatetag library that understands the context of common patterns with
-OPAL for creating forms and modals.
+Opal for creating forms and modals.
 
 It provides helpers for various input types that will allow you to render consistent
 forms, with less verbose templates.

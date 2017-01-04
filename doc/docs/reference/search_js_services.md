@@ -1,4 +1,4 @@
-# OPAL Core Search Javascript Services
+# Opal Core Search Javascript Services
 
 ## Filter
 

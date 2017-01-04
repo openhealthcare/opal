@@ -1,7 +1,7 @@
 # Form Helpers
 
-OPAL comes with a selection of templatetags that can help you with the
-repetitive task of generating Bootstrap and OPAL compatible markup for
+Opal comes with a selection of templatetags that can help you with the
+repetitive task of generating Bootstrap and Opal compatible markup for
 your forms.
 
 
@@ -49,7 +49,7 @@ Keywords:
 
 ### {% input ... %}
 
-The input template tag generates you a form input that will play nicely with OPAL's styling.
+The input template tag generates you a form input that will play nicely with Opal's styling.
 
 Keywords:
 

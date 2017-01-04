@@ -1,6 +1,6 @@
-## The OPAL Data model
+## The Opal Data model
 
-The OPAL data model allows for patients to have multiple sequential or concurrent
+The Opal data model allows for patients to have multiple sequential or concurrent
 `Episodes of care`. Some information is linked to an `Episode`, some is linked to
 a `Patient`.
 
@@ -51,7 +51,7 @@ display or structure, which are documented in the
 
 ### Core Clinical Data Model
 
-OPAL ships with a wide range of core clinical concepts implemented as Abstract Subrecords.
+Opal ships with a wide range of core clinical concepts implemented as Abstract Subrecords.
 Applications that are generated via the `$ opal startproject` command will automatically
 contain concrete implementations of these models in the application.
 
@@ -59,7 +59,7 @@ Full documentation of these models is available in the [Archetypes](archetypes.m
 
 ### Reference Data
 
-OPAL comes with a set of clinical terminology data models out of the box. - we often
+Opal comes with a set of clinical terminology data models out of the box. - we often
 want to link our records to one of these - for example to record a type of condition
 a patient might have, or a drug they are taking.
 

@@ -18,14 +18,7 @@ class {{ name.title() }}Plugin(plugins.OpalPlugin):
             # 'js/{{ name }}/services/larry.js',
         ]
     }
-
-    def restricted_teams(self, user):
-        """
-        Return any restricted teams for particualr users that our
-        plugin may define.
-        """
-        return []
-
+    
     def list_schemas(self):
         """
         Return any patient list schemas that our plugin may define.

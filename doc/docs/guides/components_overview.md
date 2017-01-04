@@ -1,23 +1,23 @@
-# Components of an OPAL application
+# Components of an Opal application
 
-OPAL applications will typically be made up of several types of components.
+Opal applications will typically be made up of several types of components.
 
-![Layers of an OPAL application](../img/OPALLayers.png)
+![Layers of an Opal application](../img/OpalLayers.png)
 
-### OPAL
+### Opal
 
-The core OPAL framework provides you with a range of commonly required elements
+The core Opal framework provides you with a range of commonly required elements
 of clinical applications.
 
 It contains a core [data model](datamodel.md) for persisting clinical information,
 as well core clinical archetypes out of the box that build on many
 years of collaboratively modelling clinical concepts by medical domain experts.
 
-OPAL also makes it easy to integrate standard clinical [reference data](lookup_lists.md)
+Opal also makes it easy to integrate standard clinical [reference data](lookup_lists.md)
 into your application - things like medical diagnoses, tests, drugs et cetera.
 
 Some common functional components end up in to most clinical applications, and many
-of these come with OPAL as "batteries included" - immediately available modular features
+of these come with Opal as "batteries included" - immediately available modular features
 that can be simply re-used without having to reinvent the wheel.
 
 For example:
@@ -31,7 +31,7 @@ For example:
 
 ### Plugins
 
-OPAL plugins are intended to provide high quality generic, composable, re-usable chunks of
+Opal plugins are intended to provide high quality generic, composable, re-usable chunks of
 functionality that can be "dropped in" to an application. For example, installing the
 [Dashboards](https://github.com/openhealthcare/opal-dashboards) plugin allows you to easily
 create clinical dashboards within your application. The
@@ -47,7 +47,7 @@ An application is the collection of configuration and bespoke functionality that
 provided to an individual institution - it's the thing that you would look to deploy.
 
 Example applications include [elCID](https://github.com/openhealthcare/elcid) - a for managing
-infection patients, or [OPAL-Renal](https://github.com/openhealthcare/opal-renal) - an MDT &
+infection patients, or [Opal-Renal](https://github.com/openhealthcare/opal-renal) - an MDT &
 handover tool for Renal wards.
 
 A hospital might have multiple clinical services running on one application, or multiple
@@ -55,10 +55,10 @@ applications that integrate with one another.
 
 ### Opinionated but Pluggable
 
-OPAL is an opinionated framework. It expects the developer to structure code in a
+Opal is an opinionated framework. It expects the developer to structure code in a
 certain way.
 
-OPAL expects features to be implemented as single page Angular.js applications, with the server
+Opal expects features to be implemented as single page Angular.js applications, with the server
 mostly figuring as an API endpoint for reading and writing data.
 
 That said, the technology stack of Django, Angular & Bootstrap allows the confident user a huge
