@@ -91,22 +91,60 @@ class RunPyTestsTestCase(OpalTestCase):
 
 class RunJSTestsTestCase(OpalTestCase):
 
+    def setUp(self):
+        self.TRAVIS = test_runner.TRAVIS
+
+    def tearDown(self):
+        test_runner.TRAVIS = self.TRAVIS
+
     @patch('subprocess.check_call')
     def test_run_tests(self, check_call):
         mock_args = MagicMock(name="args")
         mock_args.userland_here = ffs.Path('.')
         mock_args.coverage = False
         mock_args.test = None
+        test_runner.TRAVIS = False
         test_runner._run_js_tests(mock_args)
         self.assertEqual(
             ['karma', 'start', 'config/karma.conf.js', '--single-run'],
             check_call.call_args[0][0]
         )
 
-
-
-
+    @patch('subprocess.check_call')
+    def test_run_tests_travis(self, check_call):
+        mock_args = MagicMock(name="args")
+        mock_args.userland_here = ffs.Path('.')
+        mock_args.coverage = False
+        mock_args.test = None
+        test_runner.TRAVIS = True
+        test_runner._run_js_tests(mock_args)
+        self.assertEqual(
+            [
+                './node_modules/karma/bin/karma',
+                'start',
+                'config/karma.conf.js',
+                '--single-run'
+            ],
+            check_call.call_args[0][0]
+        )
 
 
 class RunTestsTestCase(OpalTestCase):
-    pass
+
+    @patch.object(test_runner, '_run_js_tests')
+    @patch.object(test_runner, '_run_py_tests')
+    def test_run_tests(self, py, js):
+        mock_args = MagicMock(name='Args')
+        mock_args.what = 'all'
+        test_runner.run_tests(mock_args)
+        py.assert_called_with(mock_args)
+        js.assert_called_with(mock_args)
+
+    @patch.object(test_runner, '_run_js_tests')
+    @patch.object(test_runner, '_run_py_tests')
+    def test_run_py_tests(self, py, js):
+        mock_args = MagicMock(name='Args')
+        mock_args.what = ['py']
+        test_runner.run_tests(mock_args)
+        py.assert_called_with(mock_args)
+        self.assertEqual(0, js.call_count)
