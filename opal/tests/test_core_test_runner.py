@@ -90,7 +90,22 @@ class RunPyTestsTestCase(OpalTestCase):
 
 
 class RunJSTestsTestCase(OpalTestCase):
-    pass
+
+    @patch('subprocess.check_call')
+    def test_run_tests(self, check_call):
+        mock_args = MagicMock(name="args")
+        mock_args.userland_here = ffs.Path('.')
+        mock_args.coverage = False
+        mock_args.test = None
+        test_runner._run_js_tests(mock_args)
+        self.assertEqual(
+            ['karma', 'start', 'config/karma.conf.js', '--single-run'],
+            check_call.call_args[0][0]
+        )
+
+
+
+
 
 
 class RunTestsTestCase(OpalTestCase):
