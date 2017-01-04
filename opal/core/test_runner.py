@@ -87,7 +87,7 @@ def _run_js_tests(args):
         subprocess.check_call(sub_args, env=env)
     except subprocess.CalledProcessError:
         sys.exit(1)
-    except OSError, e:
+    except OSError as e:
         if e.errno == errno.ENOENT:
             write("\n\nCripes!\n")
             write("We can't find the karma executable")
