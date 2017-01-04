@@ -3,6 +3,7 @@ Generic OPAL utilities
 """
 import importlib
 import re
+import sys
 
 from django.template import TemplateDoesNotExist
 from django.template.loader import select_template
@@ -70,3 +71,8 @@ def find_template(template_list):
         return select_template(template_list).template.name
     except TemplateDoesNotExist:
         return None
+
+def write(what):
+    if 'runtests.py' in sys.argv:
+        return
+    sys.stdout.write("{0}\n".format(what))

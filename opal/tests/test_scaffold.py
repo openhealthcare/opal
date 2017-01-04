@@ -16,13 +16,6 @@ from opal.core.scaffold import (
 )
 from opal.core import scaffold
 
-class WriteTestCase(OpalTestCase):
-
-    def test_write(self):
-        with patch.object(scaffold, 'sys') as mocksys:
-            mocksys.argv = ['not', 'te$targs']
-            scaffold.write('this')
-            mocksys.stdout.write.assert_called_with('this\n')
 
 class StartpluginTestCase(OpalTestCase):
     def setUp(self):
