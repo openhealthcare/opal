@@ -181,6 +181,34 @@ class PatientTestCase(OpalTestCase):
         self.assertEqual(location.bed, "a bed")
         self.assertEqual(location.ward, "a ward")
 
+    def test_bulk_update_create_new_episode_for_preexisting_patient_if_not_passed_explicitly(self):
+        original_patient = models.Patient()
+
+        d = {
+            "demographics": [{
+                "first_name": "Samantha",
+                "surname": "Sun",
+                "hospital_number": "123312"
+            }],
+            "hat_wearer": [
+                {"name": "bowler"},
+                {"name": "wizard"},
+            ],
+            "location": [
+                {
+                    "ward": "a ward",
+                    "bed": "a bed"
+                },
+            ]
+        }
+        original_patient.save()
+        original_patient.create_episode()
+        self.assertEqual(1, original_patient.episode_set.count())
+        original_patient.bulk_update(d, self.user)
+
+        patient = Patient.objects.get()
+        self.assertEqual(2, original_patient.episode_set.count())
+
 
 class SubrecordTestCase(OpalTestCase):
 

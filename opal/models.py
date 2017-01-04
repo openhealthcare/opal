@@ -450,13 +450,17 @@ class Patient(models.Model):
         if not self.id:
             self.save()
 
-        # we never want to be in the position where we don't have an episode
+        # We never want to be in the position where we don't have an episode.
+        # If this patient has never had an episode, we create one now.
+        # If the patient has preexisting episodes, we will either use an episode
+        # passed in to us as a kwarg, or create a fresh episode for this bulk update
+        # once we're sure we have episode subrecord data to save.
         if not self.episode_set.exists():
             episode = self.create_episode()
 
         for api_name, list_of_upgrades in dict_of_list_of_upgrades.items():
 
-            # for the moment we'll ignore tagging as its weird
+            # for the moment we'll ignore tagging as it's weird
             if(api_name == "tagging"):
                 continue
             model = get_subrecord_from_api_name(api_name=api_name)
@@ -467,7 +471,7 @@ class Patient(models.Model):
 
                 model.bulk_update_from_dicts(episode, list_of_upgrades, user, force=force)
             else:
-                # its a patient subrecord
+                # it's a patient subrecord
                 model.bulk_update_from_dicts(self, list_of_upgrades, user, force=force)
 
 
