@@ -1,6 +1,7 @@
 """
 Command line test runner entrypoints
 """
+import errno
 import os
 import subprocess
 import sys
@@ -85,6 +86,13 @@ def _run_js_tests(args):
     try:
         subprocess.check_call(sub_args, env=env)
     except subprocess.CalledProcessError:
+        sys.exit(1)
+    except OSError, e:
+        if e.errno == errno.ENOENT:
+            write("\n\nCripes!\n")
+            write("We can't find the karma executable")
+            write("Please consult the Opal documentation aobut installing the")
+            write("Javascript testing tools requried to run Javascript tests")
         sys.exit(1)
     return
 
