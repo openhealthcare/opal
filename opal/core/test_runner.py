@@ -90,9 +90,12 @@ def _run_js_tests(args):
     except OSError as e:
         if e.errno == errno.ENOENT:
             write("\n\nCripes!\n")
-            write("We can't find the karma executable")
+            write("We can't find the karma executable\n")
             write("Please consult the Opal documentation aobut installing the")
-            write("Javascript testing tools requried to run Javascript tests")
+            write("Javascript testing tools requried to run Javascript tests:")
+            write("http://opal.openhealthcare.org.uk/docs/reference/reference_guides/testing/")
+            write("\nAlternatively run just the Python test sutite with")
+            write("opal test py")
         sys.exit(1)
     return
 
