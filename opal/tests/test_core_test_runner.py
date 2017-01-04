@@ -153,9 +153,9 @@ class RunJSTestsTestCase(OpalTestCase):
             check_call.call_args[0][0]
         )
 
-    @patch('subprocess.check_call')
+    @patch.object(test_runner.subprocess, 'check_call')
     @patch.object(test_runner.sys, 'exit')
-    def test_error_in_call(self, exiter, check_call):
+    def test_generic_error_in_call(self, exiter, check_call):
         check_call.side_effect = subprocess.CalledProcessError(None, None)
         mock_args = MagicMock(name="args")
         test_runner._run_js_tests(mock_args)
@@ -164,12 +164,12 @@ class RunJSTestsTestCase(OpalTestCase):
     @patch('subprocess.check_call')
     @patch.object(test_runner.sys, 'exit')
     @patch.object(test_runner, 'write')
-    def test_error_in_call(self, writer, exiter, check_call):
+    def test_oserror_in_call(self, writer, exiter, check_call):
         check_call.side_effect = OSError(2, 'No such file or directory')
         mock_args = MagicMock(name="args")
         test_runner._run_js_tests(mock_args)
         exiter.assert_called_with(1)
-        writer.assert_any_call("We can't find the karma executable")
+        writer.assert_any_call("We can't find the karma executable\n")
 
 
 class RunTestsTestCase(OpalTestCase):
