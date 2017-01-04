@@ -7,7 +7,7 @@ from django.contrib.auth.models import User
 
 from opal.core.episodes import InpatientEpisode
 from opal.core.test import OpalTestCase
-from opal.models import Patient, Episode, Team, Tagging
+from opal.models import Patient, Episode, Tagging
 
 from opal.tests import test_patient_lists # ensure the lists are loaded
 from opal.tests.models import Hat, HatWearer, Dog, DogOwner
@@ -16,9 +16,6 @@ class EpisodeTest(OpalTestCase):
 
     def setUp(self):
         self.patient, self.episode = self.new_patient_and_episode_please()
-        self.hiv     = Team.objects.create(name='hiv', title='HIV')
-        self.mine    = Team.objects.create(name='mine', title='Mine')
-        self.micro   = Team.objects.create(name='microbiology', title='Microbiology')
         self.episode.stage = "Active TB"
         self.episode.save()
 

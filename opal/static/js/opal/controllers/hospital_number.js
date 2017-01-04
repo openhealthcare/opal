@@ -34,7 +34,7 @@ angular.module('opal.controllers').controller(
 	    };
         var addPatient = function(demographics){
             modal = $modal.open({
-  				templateUrl: '/templates/modals/add_episode.html/',
+  				templateUrl: '/templates/modals/add_episode.html',
   				controller: 'AddEpisodeCtrl',
   				resolve: {
   					referencedata: function(Referencedata) {
