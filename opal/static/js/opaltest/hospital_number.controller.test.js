@@ -2,7 +2,7 @@ describe('HospitalNumberCtrl', function(){
     "use strict";
     var $scope, $timeout, $modal, modalInstance, $http, $q, $rootScope, $controller;
     var tags, columns, _patientData, patientData, Episode, controller, mkcontroller;
-    var $httpBackend;
+    var $httpBackend, $window;
 
     var fields = {};
     columns = {
@@ -168,30 +168,10 @@ describe('HospitalNumberCtrl', function(){
     }
 
     beforeEach(function(){
-        module('opal', function($provide) {
-            $provide.value('$analytics', function(){
-                return {
-                    pageTrack: function(x){}
-                };
-            });
-
-            $provide.provider('$analytics', function(){
-                this.$get = function() {
-                    return {
-                        virtualPageviews: function(x){},
-                        settings: {
-                            pageTracking: false,
-                        },
-                        pageTrack: function(x){}
-                    };
-                };
-            });
-        });
-
+        module('opal');
         module('opal.services', function($provide) {
             $provide.value('UserProfile', function(){ return profile; });
         });
-
     });
 
     beforeEach(function(){
@@ -203,6 +183,7 @@ describe('HospitalNumberCtrl', function(){
             $controller  = $injector.get('$controller');
             $timeout     = $injector.get('$timeout');
             $modal       = $injector.get('$modal');
+            $window      = $injector.get('$window');
             Episode      = $injector.get('Episode');
         });
 
@@ -217,6 +198,7 @@ describe('HospitalNumberCtrl', function(){
                 $timeout:       $timeout,
                 $modal:         $modal,
                 $modalInstance: modalInstance,
+                $window:        $window,
                 tags:           {tag: 'mine', subtag: ''},
                 hospital_number: with_hosp_num
             });
@@ -425,6 +407,22 @@ describe('HospitalNumberCtrl', function(){
             });
         });
 
+    });
+
+    describe('findByHospitalNumber()', function(){
+      it("should handle error's", function(){
+        spyOn(Episode, 'findByHospitalNumber');
+        spyOn($window, 'alert');
+        spyOn(modalInstance, 'close');
+        $scope.modal = {hospitalNumber: "1"};
+        $scope.findByHospitalNumber();
+        expect(Episode.findByHospitalNumber).toHaveBeenCalled();
+        var callArgs = Episode.findByHospitalNumber.calls.argsFor(0);
+        callArgs[1].error();
+
+        expect($window.alert).toHaveBeenCalledWith('ERROR: More than one patient found with hospital number');
+        expect(modalInstance.close).toHaveBeenCalledWith(null);
+      });
     });
 
     describe('addForPatient()', function(){
