@@ -5,14 +5,14 @@
     {% if icon %}<i class="{{icon}}"></i> {% endif %}
     {{ label }}
   </label>
-  <div ng-class="{{ formname }}.$submitted && {{ formname }}.{{ modelname }}.$error.required" class="col-sm-{% if unit %}2{% else %}8{% endif %}">
+  <div ng-class="{{ formname }}.$submitted && {{ formname }}[{{ element_name }}].$error.required" class="col-sm-{% if unit %}2{% else %}8{% endif %}">
 	<input class="form-control" type="text" ng-model="{{ model }}"
            autocomplete="off"
            {% for d in directives %}{{ d }} {% endfor %}
            {% if lookuplist %}
            uib-typeahead="i for i in {{ lookuplist }} | filter:$viewValue | limitTo:8"
            {% endif %}
-           name="{{ modelname }}"
+           name="[[ {{ element_name }} ]]"
            {% if required %}
            required
            {% endif %}
@@ -35,12 +35,12 @@
            {% endif %}
            />
     {% if maxlength %}
-        <span class="help-block" ng-show="({{ formname }}.$submitted || {{ formname }}.{{ modelname }}.$invalid) && {{ formname }}.{{ modelname }}.$error.maxlength">
+        <span class="help-block" ng-show="({{ formname }}.$submitted || {{ formname }}[{{ element_name }}].$invalid) && {{ formname }}[{{ element_name }}].$error.maxlength">
           Maximum length is {{ maxlength }}
         </span>
     {% endif %}
     {% if required %}
-      <span class="help-block" ng-show="({{ formname }}.{{ modelname }}.$dirty || {{ formname }}.$submitted) && {{ formname }}.{{ modelname }}.$error.required">
+      <span class="help-block" ng-show="({{ formname }}[{{ element_name }}].$dirty || {{ formname }}.$submitted) && {{ formname }}[{{ element_name }}].$error.required">
         {{ label }} is required
       </span>
     {% endif %}
