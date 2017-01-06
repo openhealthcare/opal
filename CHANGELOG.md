@@ -35,7 +35,7 @@ What is displayed to the user and saved to the database is 'Purple' or 'Red' res
 
 #### element name in template tags
 
-The html attribute 'name' used to be, by default inferred from the model name. Now we will do this by default but you can also set it to an angular expression with the element name property, e.g.
+The html attribute 'name' for form elements generated with the Opal `{% forms %}` templatetag library used to be inferred from the model name. Although this remains the default you can also set it with an angular expression:
 
 ```html
 {% select field="Demographics.first_name" element_name="some_angular_variable" %}
