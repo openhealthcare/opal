@@ -32,8 +32,16 @@ Note unlike the traditional choices implementation only the last value of the ch
 
 What is displayed to the user and saved to the database is 'Purple' or 'Red' respectively.
 
+#### element name in template tags
 
-#### Python 3
+The html attribute 'name' used to be, by default inferred from the model name. Now we will do this by default but you can also set it to an angular expression with the element name property, e.g.
+
+```html
+{% select field="Demographics.first_name" element_name="some_angular_variable" %}
+```
+
+
+ #### Python 3
 
 Opal 0.8.0 is the first version of Opal to support Python 3. This has meant changing the default
 ordering of `PatientList` instances to 0 rather than None.
