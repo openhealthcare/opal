@@ -15,7 +15,8 @@ Tooltip, Datepicker, Timepicker) are available in the upgrade reference document
 
 #### Defaults for Client Side subrecords
 
-We pull through default values from subrecord fields into the Opal `Schema` and use those values when initializing the relevant Item instance for a new subrecord. This should greatly reduce the need to use custom Angular subrecord services to set defaults.
+We pull through default values from subrecord fields into the Opal `Schema` and use those values when initializing the relevant
+Item instance for a new subrecord. This should greatly reduce the need to use custom Angular subrecord services to set defaults.
 
 #### Choices in form templatetags
 
@@ -41,7 +42,18 @@ The html attribute 'name' used to be, by default inferred from the model name. N
 ```
 
 
- #### Python 3
+#### Model removals
+
+The models `Team`, `GP`, `CommunityNurse` and `LocatedModel` - marked for removal since 0.6.0
+have now been removed.
+
+As part of this change, the add episode modal previously available at
+`/templates/modals/add_episode.html/` is now not available at the url with a trailing slash.
+Any controllers attempting to open the modal e.g. custom list flows should update their
+`$modal.open` call to remove the trailing slash.
+
+
+#### Python 3
 
 Opal 0.8.0 is the first version of Opal to support Python 3. This has meant changing the default
 ordering of `PatientList` instances to 0 rather than None.
@@ -51,17 +63,22 @@ Moving forwards we expect all new code in Opal to be compatible with both Python
 This introduces an explicit Opal dependency on the Six module for maintaining codebases that span
 Python 2.x and 3.x.
 
+#### Tabbed Patient List Groups
+
+Adds the class `opal.core.patient_lists.TabbedPatientListGroup` which displays groups of related
+lists as tabs at the top of each member list.
 
 #### Template re-naming
 
-Modal_base has now been moved into a folder called base_templates. Its also now got a form_modal_base and a two_column_form_modal_base. The latter two templates add validation around saving.
+Modal_base has now been moved into a folder called base_templates. Its also now got a form_modal_base and a two_column_form_modal_base.
+The latter two templates add validation around saving.
 
 The standard edit item models and others now inherit from the form_modal_base.
 
 #### Authorization and permissions
 
-All APIs should be permissioned with Django REST framework permission classes. The default implementation uses opal.core.api.LoginRequiredViewset, a standard drf
-viewset that requires the user to be logged in.
+All APIs should be permissioned with Django REST framework permission classes. The default implementation uses
+opal.core.api.LoginRequiredViewset, a standard DRF viewset that requires the user to be logged in.
 
 We now require the user to be logged in for any use of the search functionality.
 

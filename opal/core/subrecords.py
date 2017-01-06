@@ -1,5 +1,5 @@
 """
-OPAL subrecords - helpers, iterators et cetera
+Opal subrecords - helpers, iterators et cetera
 """
 from opal.utils import _itersubclasses
 

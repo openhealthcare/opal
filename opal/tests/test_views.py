@@ -12,7 +12,7 @@ from opal.core.episodes import InpatientEpisode
 from opal.core.test import OpalTestCase
 
 # this is used just to import the class for EpisodeListApiTestCase
-from opal.tests.test_patient_lists import TaggingTestPatientList # flake8: noqa
+from opal.tests.test_patient_lists import TaggingTestPatientList, TestTabbedPatientListGroup # flake8: noqa
 from opal.tests import models as testmodels
 
 class BaseViewTestCase(OpalTestCase):
@@ -109,6 +109,31 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
         context_data = view.get_context_data(slug="eater-herbivore")
         expected = list(patient_lists.PatientList.for_user(self.user))
         self.assertEqual(expected, list(context_data['lists']))
+
+    def test_get_context_data_list_group(self):
+        url = reverse("patient_list_template_view", kwargs=dict(slug="eater-herbivore"))
+        request = self.get_request(url)
+        view = self.setup_view(views.PatientListTemplateView, request, slug="eater-herbivore")
+        view.patient_list = TaggingTestPatientList
+        context_data = view.get_context_data(slug="eater-herbivore")
+        self.assertEqual(TestTabbedPatientListGroup, context_data['list_group'])
+
+    def test_get_context_data_list_group_no_list(self):
+        url = reverse("patient_list_template_view", kwargs=dict(slug="carnivore"))
+        request = self.get_request(url)
+        view = self.setup_view(views.PatientListTemplateView, request, slug="carnivore")
+        view.patient_list = None
+        context_data = view.get_context_data(slug="carnivore")
+        self.assertEqual(None, context_data['list_group'])
+
+    def test_get_context_data_list_group_no_group_for_list(self):
+        from opal.tests.test_patient_lists import TaggingTestNotSubTag as CarnivoreList
+        url = reverse("patient_list_template_view", kwargs=dict(slug="carnivore"))
+        request = self.get_request(url)
+        view = self.setup_view(views.PatientListTemplateView, request, slug="carnivore")
+        view.patient_list = CarnivoreList
+        context_data = view.get_context_data(slug="carnivore")
+        self.assertEqual(None, context_data['list_group'])
 
     def test_get_context_data_list_slug(self):
         url = reverse("patient_list_template_view", kwargs=dict(slug="eater-herbivore"))
@@ -219,13 +244,6 @@ class EpisodeDetailTemplateViewTestCase(BaseViewTestCase):
         with self.assertRaises(http.Http404):
             resp = view.get(request, pk=self.episode.pk+345)
 
-
-class AddEpisodeTemplateViewTestCase(BaseViewTestCase):
-
-    def test_default_should_200(self):
-        request = self.get_request(
-            '/add_episode_template_modal.html')
-        self.should_200(views.AddEpisodeTemplateView, request)
 
 
 class IndexViewTestCase(BaseViewTestCase):

@@ -433,10 +433,19 @@ i.delete,
 .nav-tabs li {
     padding: 4px 0px;
 }
-.nav-tabs li.active a {
-    background-color: #5fa2dd; /* Blue */
+
+.nav-tabs.nav-justified li.active a,
+.nav-tabs.nav-justified li.active a:hover {
+    background-color: #f76c51; /* Red */
     color: white;
+    border-bottom-width: 0px;
+    padding-bottom: 11px
 }
+
+.patient-list-group { background-color:  #e7ebee; border-bottom: 2px solid #f76c51; margin-bottom: 3px; }
+.patient-list-group ul { background-color:  #e7ebee; }
+.patient-list-group ul li { padding-top: 0px; padding-bottom: 0px; background-color: white; }
+
 
 /*  Modals  */
 

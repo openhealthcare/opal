@@ -11,7 +11,7 @@ from django.utils import timezone
 from opal import models
 from opal.core import exceptions
 from opal.models import (
-    Subrecord, Tagging, Team, Patient, InpatientAdmission, Symptom,
+    Subrecord, Tagging, Patient, InpatientAdmission, Symptom,
     SymptomComplex, UserProfile
 )
 from opal.core.test import OpalTestCase
@@ -180,6 +180,34 @@ class PatientTestCase(OpalTestCase):
         location = episode.location_set.get()
         self.assertEqual(location.bed, "a bed")
         self.assertEqual(location.ward, "a ward")
+
+    def test_bulk_update_create_new_episode_for_preexisting_patient_if_not_passed_explicitly(self):
+        original_patient = models.Patient()
+
+        d = {
+            "demographics": [{
+                "first_name": "Samantha",
+                "surname": "Sun",
+                "hospital_number": "123312"
+            }],
+            "hat_wearer": [
+                {"name": "bowler"},
+                {"name": "wizard"},
+            ],
+            "location": [
+                {
+                    "ward": "a ward",
+                    "bed": "a bed"
+                },
+            ]
+        }
+        original_patient.save()
+        original_patient.create_episode()
+        self.assertEqual(1, original_patient.episode_set.count())
+        original_patient.bulk_update(d, self.user)
+
+        patient = Patient.objects.get()
+        self.assertEqual(2, original_patient.episode_set.count())
 
 
 class SubrecordTestCase(OpalTestCase):
@@ -627,6 +655,11 @@ class InpatientAdmissionTestCase(OpalTestCase):
             datetime.date.today()
         )
 
+    def test_update_from_dict_no_id_or_patient_id(self):
+        a = InpatientAdmission()
+        with self.assertRaises(ValueError):
+            a.update_from_dict({})
+
 
 class PatientConsultationTestCase(OpalTestCase):
     def setUp(self):
@@ -719,19 +752,6 @@ class TaggingTestCase(OpalTestCase):
         schema = Tagging.build_field_schema()
         for field in fields:
             self.assertIn(field, schema)
-
-
-class TeamTestCase(OpalTestCase):
-
-    def test_for_restricted_user(self):
-        profile, _ = UserProfile.objects.get_or_create(user=self.user)
-        profile.restricted_only = True
-        profile.save()
-        self.assertEqual([], Team.for_user(self.user))
-
-    def test_has_subteams(self):
-        t = Team()
-        self.assertEqual(False, t.has_subteams)
 
 
 
