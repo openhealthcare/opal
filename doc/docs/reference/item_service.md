@@ -10,6 +10,8 @@ to interacting with subrecord in the client.
 Returns a clone of the editable fields + consistency token so that
 we can then update them in isolation elsewhere.
 
+The copy of item has an _local object. This contains the uniqueName used by the object in form fields, and can be used to contain any other variables that you do not want sent back to the server.
+
 #### Item.save
 
 Saves attributes to the server.

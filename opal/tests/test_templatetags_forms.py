@@ -52,6 +52,12 @@ class TestInferFromSubrecordPath(TestCase):
         for choice in ["purple", "blue", "yellow"]:
             self.assertTrue(choice in choices)
 
+    def test_infer_element_name(self):
+        ctx = infer_from_subrecord_field_path("Birthday.birth_date")
+        self.assertEquals(
+            ctx["element_name"],
+            "editing.birthday._local.uniqueName + '_birth_date'"
+        )
 
 
 class ExtractCommonArgsTestCase(TestCase):

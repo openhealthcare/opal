@@ -1,5 +1,13 @@
 ### 0.8.0 (Major Release)
 
+#### Client side form attributes on Item
+_local is introduced on the form version of the item, this is a js object that can be used for any form meta data.
+
+By default it uses a uniqueName key to help generate a unique 'name' for the html input/radio/select/etc tags.
+
+It is also used to generate meta data for the datepicker.
+
+
 #### Angular UI Libraries
 
 0.8.0 consolidates Angular UI libraries bundled with Opal. We have removed Angular Strap, and
