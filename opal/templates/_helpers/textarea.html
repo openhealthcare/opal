@@ -3,6 +3,7 @@
   <div class="col-sm-8">
 	<textarea class="form-control" {% if disabled %}ng-disabled="{{ disabled }}" {% endif %}
               ng-model="{{ model }}" rows="5"
+              name="[[ {{ element_name }} ]]"
               {% if macros %}{% include 'partials/_mentio_edit_item.html' %}{% endif %}
               ></textarea>
     {% if help_text %}

@@ -33,6 +33,25 @@ Note unlike the traditional choices implementation only the last value of the ch
 
 What is displayed to the user and saved to the database is 'Purple' or 'Red' respectively.
 
+#### element name in template tags
+
+The html attribute 'name' for form elements generated with the Opal `{% forms %}` templatetag library used to be inferred from the model name. Although this remains the default you can also set it with an angular expression:
+
+```html
+{% select field="Demographics.first_name" element_name="...Your Angular expression..." %}
+```
+
+
+#### Model removals
+
+The models `Team`, `GP`, `CommunityNurse` and `LocatedModel` - marked for removal since 0.6.0
+have now been removed.
+
+As part of this change, the add episode modal previously available at
+`/templates/modals/add_episode.html/` is now not available at the url with a trailing slash.
+Any controllers attempting to open the modal e.g. custom list flows should update their
+`$modal.open` call to remove the trailing slash.
+
 
 #### Python 3
 

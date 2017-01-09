@@ -53,6 +53,7 @@ class TestInferFromSubrecordPath(TestCase):
             self.assertTrue(choice in choices)
 
 
+
 class ExtractCommonArgsTestCase(TestCase):
     def test_required_override(self):
         tag_kwargs = dict(field="Demographics.hospital_number", required=True)
@@ -81,6 +82,11 @@ class TextareaTest(TestCase):
         rendered = self.template.render(Context({}))
         self.assertIn('ng-model="bai"', rendered)
         self.assertIn('hai', rendered)
+
+    def test_element_name(self):
+        tpl = Template('{% load forms %}{% textarea label="hai" model="bai" element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('name="[[ onions ]]"', rendered)
 
 
 class InputTest(TestCase):
@@ -147,6 +153,21 @@ class InputTest(TestCase):
         tpl = Template('{% load forms %}{% input label="hai" model="bai[0].something" %}')
         self.assertIn('bai0_something', tpl.render(Context({})))
 
+    def test_element_name(self):
+        tpl = Template('{% load forms %}{% input label="hai" model="bai" element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('name="[[ onions ]]"', rendered)
+
+    def test_max_length_error(self):
+        tpl = Template('{% load forms %}{% input label="hai" model="bai" element_name="onions" maxlength="50" %}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('"(form.$submitted || form[onions].$invalid) && form[onions].$error.maxlength', rendered)
+
+    def test_required_error(self):
+        tpl = Template('{% load forms %}{% input label="hai" model="bai" element_name="onions" required=True %}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('(form[onions].$dirty || form.$submitted) && form[onions].$error.required', rendered)
+
 
 class CheckboxTestCase(TestCase):
 
@@ -155,6 +176,16 @@ class CheckboxTestCase(TestCase):
         rendered = template.render(Context({}))
         self.assertIn('ng-model="bai"', rendered)
         self.assertIn('hai', rendered)
+
+    def test_element_name(self):
+        tpl = Template('{% load forms %}{% checkbox label="hai" model="bai" element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('name="[[ onions ]]"', rendered)
+
+    def test_set_element_id(self):
+        tpl = Template('{% load forms %}{% checkbox label="hai" model="bai" element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('id="checkbox_[[ onions ]]"', rendered)
 
 
 class DatepickerTestCase(TestCase):
@@ -169,6 +200,17 @@ class DatepickerTestCase(TestCase):
         template = Template('{% load forms %}{% datepicker label="hai" model="bai" mindate="Date(2013, 12, 22)" %}')
         rendered = template.render(Context({}))
         self.assertIn('min-date="Date(2013, 12, 22)"', rendered)
+
+    def test_element_name(self):
+        tpl = Template('{% load forms %}{% datepicker label="hai" model="bai" element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('name="[[ onions ]]"', rendered)
+
+    def test_is_open(self):
+        tpl = Template('{% load forms %}{% datepicker label="hai" model="bai" element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('is-open="form[onions + \'_open\']', rendered)
+        self.assertIn('ng-focus="form[onions + \'_open\']=true"', rendered)
 
 
 class DateTimePickerTestCase(TestCase):
@@ -213,6 +255,16 @@ class RadioTestCase(TestCase):
         rendered = template.render(Context({}))
         self.assertIn('purple', rendered)
 
+    def test_element_name(self):
+        tpl = Template('{% load forms %}{% radio label="hai" model="bai" element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('name="[[ onions ]]"', rendered)
+
+    def test_element_name_required(self):
+        tpl = Template('{% load forms %}{% radio label="hai" model="bai" element_name="onions" required=True %}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('form.$submitted && form[onions].$error.required"', rendered)
+
 
 class SelectTestCase(TestCase):
 
@@ -251,6 +303,17 @@ class SelectTestCase(TestCase):
         self.assertIn("editing.cat_owner.cat", rendered)
         self.assertIn("cat_list", rendered)
         self.assertIn("Cat", rendered)
+
+    def test_element_name(self):
+        tpl = Template('{% load forms %}{% select label="hai" model="bai" element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('name="[[ onions ]]"', rendered)
+
+    def test_element_name_required(self):
+        tpl = Template('{% load forms %}{% select label="hai" model="bai" element_name="onions" required=True %}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('"form.$submitted && form[onions].$error.required"', rendered)
+
 
 class StaticTestCase(TestCase):
 

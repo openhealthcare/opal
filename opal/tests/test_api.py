@@ -466,7 +466,6 @@ class TaggingTestCase(TestCase):
         self.patient = models.Patient.objects.create()
         self.episode = models.Episode.objects.create(patient=self.patient)
         self.user    = User.objects.create(username='testuser')
-        self.micro   = models.Team.objects.create(name='micro', title='microbiology')
         self.mock_request = MagicMock(name='request')
         self.mock_request.user = self.user
 

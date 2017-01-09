@@ -362,54 +362,6 @@ class ContactNumber(models.Model):
         return '{0}: {1}'.format(self.name, self.number)
 
 
-class Team(models.Model):
-    """
-    This model is no longer relevant and marked for removal.
-
-    In pre 0.6 versions of OPAL this was in fact a mis-named
-    Patient list model.
-
-    As of 0.6 defining lists has been moved to declarative subclasses
-    of opal.core.patient_lists.PatientList
-
-    See the 0.5.x -> 0.6.x documentation for upgrade strategies.
-    """
-    HELP_RESTRICTED = "Whether this team is restricted to only a subset of users"
-
-    name           = models.CharField(max_length=250,
-                                      help_text="This should only have letters and underscores")
-    title          = models.CharField(max_length=250)
-    parent         = models.ForeignKey('self', blank=True, null=True)
-    active         = models.BooleanField(default=True)
-    order          = models.IntegerField(blank=True, null=True)
-    #TODO: Move this somewhere else
-    useful_numbers = models.ManyToManyField(ContactNumber, blank=True)
-    restricted     = models.BooleanField(default=False,
-                                         help_text=HELP_RESTRICTED)
-    direct_add     = models.BooleanField(default=True)
-    show_all       = models.BooleanField(default=False)
-    visible_in_list = models.BooleanField(default=True)
-
-    def __unicode__(self):
-        return self.title
-
-    @classmethod
-    def for_user(klass, user):
-        """
-        Return the set of teams this user has access to.
-        """
-        profile, _ = UserProfile.objects.get_or_create(user=user)
-        if profile.restricted_only:
-            teams = []
-        else:
-            teams = klass.objects.filter(active=True, restricted=False).order_by('order')
-        return teams
-
-    @property
-    def has_subteams(self):
-        return self.team_set.count() > 0
-
-
 class Synonym(models.Model):
     name = models.CharField(max_length=255)
     content_type = models.ForeignKey(ContentType)
@@ -498,13 +450,17 @@ class Patient(models.Model):
         if not self.id:
             self.save()
 
-        # we never want to be in the position where we don't have an episode
+        # We never want to be in the position where we don't have an episode.
+        # If this patient has never had an episode, we create one now.
+        # If the patient has preexisting episodes, we will either use an episode
+        # passed in to us as a kwarg, or create a fresh episode for this bulk update
+        # once we're sure we have episode subrecord data to save.
         if not self.episode_set.exists():
             episode = self.create_episode()
 
         for api_name, list_of_upgrades in dict_of_list_of_upgrades.items():
 
-            # for the moment we'll ignore tagging as its weird
+            # for the moment we'll ignore tagging as it's weird
             if(api_name == "tagging"):
                 continue
             model = get_subrecord_from_api_name(api_name=api_name)
@@ -515,7 +471,7 @@ class Patient(models.Model):
 
                 model.bulk_update_from_dicts(episode, list_of_upgrades, user, force=force)
             else:
-                # its a patient subrecord
+                # it's a patient subrecord
                 model.bulk_update_from_dicts(self, list_of_upgrades, user, force=force)
 
 
@@ -973,7 +929,6 @@ class Tagging(TrackedModel, models.Model):
     _advanced_searchable = True
     _title = 'Teams'
 
-    team     = models.ForeignKey(Team, blank=True, null=True)
     user     = models.ForeignKey(User, null=True, blank=True)
     episode  = models.ForeignKey(Episode, null=False)
     archived = models.BooleanField(default=False)
@@ -1458,12 +1413,6 @@ class UserProfile(models.Model):
             roles.update(plugin().roles(self.user))
         roles['default'] = [r.name for r in self.roles.all()]
         return roles
-
-    def get_teams(self):
-        """
-        Return an iterable of teams for this user.
-        """
-        return Team.for_user(self.user)
 
     @property
     def can_see_pid(self):
