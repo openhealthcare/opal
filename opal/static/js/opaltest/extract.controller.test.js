@@ -490,4 +490,14 @@ describe('ExtractCtrl', function(){
         });
     });
 
+    describe('save()', function() {
+
+        it('should save() the data', function() {
+            spyOn($modal, 'open').and.returnValue({result: {then: jasmine.createSpy()}});
+            $scope.save();
+            expect($modal.open).toHaveBeenCalled();
+        });
+
+    });
+
 });
