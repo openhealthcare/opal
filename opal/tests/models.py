@@ -25,6 +25,14 @@ class HatWearer(models.EpisodeSubrecord):
     hats = dmodels.ManyToManyField(Hat, related_name="hat_wearers")
     wearing_a_hat = dmodels.BooleanField(default=True)
 
+
+class InvisibleHatWearer(models.EpisodeSubrecord):
+    BULK_DESERIALISED = False
+    name = dmodels.CharField(max_length=200)
+    hats = dmodels.ManyToManyField(Hat, related_name="hat_wearers")
+    wearing_a_hat = dmodels.BooleanField(default=True)
+
+
 class HouseOwner(models.PatientSubrecord):
     pass
 
@@ -51,6 +59,11 @@ class HoundOwner(models.EpisodeSubrecord):
 
 
 class FavouriteDogs(models.PatientSubrecord):
+    dogs = dmodels.ManyToManyField(Dog, related_name='favourite_dogs')
+
+
+class InvisibleDogs(models.PatientSubrecord):
+    BULK_DESERIALISED = False
     dogs = dmodels.ManyToManyField(Dog, related_name='favourite_dogs')
 
 
