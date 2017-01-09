@@ -86,7 +86,7 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
     if hasattr(field, "formfield"):
         # TODO remove the blankable condition and make sure
         # all fields are null=False
-        blankable =  getattr(field, "blank", True)
+        blankable = getattr(field, "blank", True)
         ctx["required"] = (not blankable) or field.formfield().required
     else:
         # ForeignKeyOrFreeText are never required at this time
@@ -109,9 +109,15 @@ def extract_common_args(kwargs):
         if field in kwargs:
             args[field] = kwargs[field]
 
-    model_name = args["model"].replace('.', '_').replace("editing_", "")
-    model_name = model_name.replace("[", "").replace("]", "")
-    args["modelname"] = model_name
+    element_name = kwargs.pop('element_name', args.get('element_name'))
+
+    if element_name:
+        args["element_name"] = element_name
+    else:
+        model_name = args["model"].replace('.', '_').replace("editing_", "")
+        model_name = model_name.replace("[", "").replace("]", "")
+        args["element_name"] = "'{}'".format(model_name)
+
     args["autofocus"] = kwargs.pop("autofocus", None)
     args["help_text"] = kwargs.pop("help_text", None)
     args["formname"] = kwargs.pop('formname', 'form')
@@ -127,6 +133,7 @@ def extract_common_args(kwargs):
         args["disabled"] = disabled
 
     return args
+
 
 @register.inclusion_tag('_helpers/datetime_picker.html')
 def datetimepicker(*args, **kwargs):
@@ -239,7 +246,6 @@ def select(*args, **kwargs):
         'directives': args,
         'help_template': help_template,
         'other': other,
-        'model_name': ctx["model"].replace('.', '_').replace('[','').replace(']', '').replace('editing_', ''),
         'other_show': other_show,
         'other_label': other_label,
         'tagging': tagging,

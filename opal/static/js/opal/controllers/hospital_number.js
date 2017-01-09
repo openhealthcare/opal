@@ -6,6 +6,7 @@ angular.module('opal.controllers').controller(
              $modalInstance,
              $http,
              $q,
+             $window,
              Episode,
              tags,
              hospital_number) {
@@ -24,9 +25,9 @@ angular.module('opal.controllers').controller(
                     newPatient: $scope.newPatient,
                     newForPatient: $scope.newForPatient,
                     error: function(){
-			            // This shouldn't happen, but we should probably handle it better
-			            alert('ERROR: More than one patient found with hospital number');
-                        $modalInstance.close(null)
+  			            // This shouldn't happen, but we should probably handle it better
+  			            $window.alert('ERROR: More than one patient found with hospital number');
+                          $modalInstance.close(null)
                     }
                 }
             );
