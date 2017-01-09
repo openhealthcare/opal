@@ -3,25 +3,25 @@ angular.module('opal.controllers').controller(
                            $timeout, ngProgressLite,
                            $q, $window, Flow,
                            PatientSummary, Paginator) {
-      "use strict";
+        "use strict";
 
-      var searchUrl = "/search";
-      var inSearch = $location.path() === searchUrl;
+        var searchUrl = "/search";
+        var inSearch = $location.path() === searchUrl;
 	    $scope.query = {searchTerm: '', autocompleteSearchTerm: ''};
-      $scope.searchColumns = ['query'];
-      $scope.limit = 10;
+        $scope.searchColumns = ['query'];
+        $scope.limit = 10;
 	    $scope.results = [];
 	    $scope.searched = false;
 	    $scope.episode_category_list = ['OPAT', 'Inpatient', 'Outpatient', 'Review'];
 	    $scope.hospital_list = ['Heart Hospital', 'NHNN', 'UCH'];
-      $scope.paginator = new Paginator($scope.search);
+        $scope.paginator = new Paginator($scope.search);
 
-      var getQueryParam = function(){
-          if($scope.query.searchTerm.length){
-            return $scope.query.searchTerm;
-          }
-          return $scope.query.autocompleteSearchTerm;
-      }
+        var getQueryParam = function(){
+            if($scope.query.searchTerm.length){
+                return $scope.query.searchTerm;
+            }
+            return $scope.query.autocompleteSearchTerm;
+        }
 
         $scope.disableShortcuts = function(){
             $rootScope.state = "search";
@@ -32,12 +32,12 @@ angular.module('opal.controllers').controller(
         };
 
         var queryBackend = function(queryParams){
-          var queryString = $.param(queryParams);
-          return $http.get('/search/simple/?' + queryString).success(function(response) {
-            $scope.results = _.map(response.object_list, function(o){
-                return new PatientSummary(o);
+            var queryString = $.param(queryParams);
+            return $http.get('/search/simple/?' + queryString).success(function(response) {
+                $scope.results = _.map(response.object_list, function(o){
+                    return new PatientSummary(o);
+                });
             });
-          });
         };
 
         $scope.loadResults = function(){
@@ -77,14 +77,14 @@ angular.module('opal.controllers').controller(
         // if they select from
         // the drop down list
         $scope.$on('$typeahead.select', function(event, patientSummary) {
-          $window.location.href = patientSummary.link;
+            $window.location.href = patientSummary.link;
         });
 
 
         $scope.$watch("query.autocompleteSearchTerm", function(){
-          if($scope.query.autocompleteSearchTerm.length){
-            queryBackend({query: $scope.query.autocompleteSearchTerm});
-          }
+            if($scope.query.autocompleteSearchTerm.length){
+                queryBackend({query: $scope.query.autocompleteSearchTerm});
+            }
         });
 
 	    $scope.search = function(pageNumber) {
