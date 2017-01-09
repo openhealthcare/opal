@@ -464,12 +464,21 @@ describe('ExtractCtrl', function(){
     describe('editFilter()', function() {
 
         it('should open the modal', function() {
-            spyOn($modal, 'open').and.returnValue({result: {then: jasmine.createSpy()}});
+            spyOn($modal, 'open').and.returnValue({result: {then: function(f){f()}}});
             var mock_default = jasmine.createSpy();
             var mock_event = {preventDefault: mock_default};
             $scope.filters = [{}]
             $scope.editFilter(mock_event, {}, 0);
             expect($modal.open).toHaveBeenCalled();
+        });
+
+        it('should pass the params', function() {
+            spyOn($modal, 'open').and.returnValue({result: {then: function(f){f()}}});
+            var mock_default = jasmine.createSpy();
+            var mock_event = {preventDefault: mock_default};
+            $scope.editFilter(mock_event, {}, 0);
+            var resolves = $modal.open.calls.mostRecent().args[0].resolve;
+            expect(resolves.params()).toEqual($scope.filters[0]);
         });
 
     });
@@ -493,9 +502,16 @@ describe('ExtractCtrl', function(){
     describe('save()', function() {
 
         it('should save() the data', function() {
-            spyOn($modal, 'open').and.returnValue({result: {then: jasmine.createSpy()}});
+            spyOn($modal, 'open').and.returnValue({result: {then: function(f){f()}}});
             $scope.save();
             expect($modal.open).toHaveBeenCalled();
+        });
+
+        it('should pass the params', function() {
+            spyOn($modal, 'open').and.returnValue({result: {then: function(f){f()}}});
+            $scope.save();
+            var resolves = $modal.open.calls.mostRecent().args[0].resolve;
+            expect(resolves.params()).toEqual({name: null, criteria: $scope.completeCriteria()});
         });
 
     });
