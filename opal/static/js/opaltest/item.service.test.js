@@ -131,12 +131,16 @@ describe('services', function() {
         });
 
         it('should be able to produce copy of attributes', function() {
-            expect(item.makeCopy()).toEqual({
-                id: 101,
-                name: 'John Smith',
-                date_of_birth: new Date(1980, 6, 31),
-                created: new Date(2015, 3, 7, 11, 45)
-            });
+          var copy = item.makeCopy();
+          var id = copy._client.id;
+          expect(id.indexOf('demographics')).toBe(0)
+          delete copy._client;
+          expect(copy).toEqual({
+              id: 101,
+              name: 'John Smith',
+              date_of_birth: new Date(1980, 6, 31),
+              created: new Date(2015, 3, 7, 11, 45)
+          });
         });
 
         it('should make a copy with defaults', function(){
