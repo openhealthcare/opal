@@ -64,6 +64,10 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
         model.get_api_name(),
         field_name
     )
+    ctx['element_name'] = "editing.{0}._client.id + '_{1}'".format(
+        model.get_api_name(),
+        field_name
+    )
 
     # for all django fields we'll get an empty list back
     # we default for free text or foreign keys

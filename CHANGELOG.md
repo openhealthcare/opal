@@ -4,6 +4,13 @@
 
 if set to false, this subrecord will not be deserialised by either a patient or an episode
 
+
+#### Fixes bugs in add many subrecord radio buttons
+
+Previously multiple radio buttons for the same subrecord field on the same page would
+not appear to the user to update correctly. This has now been fixed.
+
+
 #### Angular UI Libraries
 
 0.8.0 consolidates Angular UI libraries bundled with Opal. We have removed Angular Strap, and
