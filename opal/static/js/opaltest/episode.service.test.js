@@ -206,7 +206,7 @@ describe('Episode', function() {
             mine    : true,
             tropical: true,
             id      : false
-        } }}]
+        }; }}];
         expect(episode.getTags()).toEqual(['mine', 'tropical']);
     });
 
@@ -215,13 +215,11 @@ describe('Episode', function() {
     });
 
     it('newItem() should create an Item', function() {
-        var item = episode.newItem('diagnosis');
-        expect(item.makeCopy()).toEqual({
-            id               : undefined,
-            condition        : undefined,
-            provisional      : undefined,
-            date_of_diagnosis: undefined
-        })
+        var dd = new moment();
+        var item = episode.newItem('diagnosis', {
+          columnName: 'diagnosis'
+        });
+        expect(item.columnName).toBe('diagnosis');
     });
 
     it('should be able to add a new item', function() {

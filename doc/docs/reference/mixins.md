@@ -16,6 +16,11 @@ it might serialise like below
 
     allergy.to_dict() -> {"id": 1, "drug": "penicillin"}
 
+#### ToDictMixin._bulk_serialise
+
+Used by episode and patient. This flag is used to determine whether the item is serialised as part of Episode/Patient.to_dict.
+
+
 ### UpdateFromDict
 provides a method that updates a model
 based on a dictionary of fields, for example
