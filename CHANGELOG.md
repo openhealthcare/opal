@@ -58,7 +58,7 @@ Any controllers attempting to open the modal e.g. custom list flows should updat
 Opal 0.8.0 is the first version of Opal to support Python 3. This has meant changing the default
 ordering of `PatientList` instances to 0 rather than None.
 
-Moving forwards we expect all new code in Opal to be compatible with both Python 2.7 and 3.5.
+Moving forwards we expect all new code in Opal to be compatible both Python 2.7 / 3.4 / 3.5 / 3.6.
 
 This introduces an explicit Opal dependency on the Six module for maintaining codebases that span
 Python 2.x and 3.x.
