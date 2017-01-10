@@ -1,6 +1,6 @@
 ### 0.8.0 (Major Release)
 
-#### ToDictMixin.BULK_SERIALISE
+#### ToDictMixin._bulk_serialise
 
 if set to false, this subrecord will not be deserialised by either a patient or an episode
 

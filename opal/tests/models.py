@@ -27,7 +27,7 @@ class HatWearer(models.EpisodeSubrecord):
 
 
 class InvisibleHatWearer(models.EpisodeSubrecord):
-    BULK_SERIALISE = False
+    _bulk_serialise = False
     name = dmodels.CharField(max_length=200)
     wearing_a_hat = dmodels.BooleanField(default=True)
 
@@ -62,7 +62,7 @@ class FavouriteDogs(models.PatientSubrecord):
 
 
 class InvisibleDog(models.PatientSubrecord):
-    BULK_SERIALISE = False
+    _bulk_serialise = False
     name = dmodels.CharField(max_length=200, default="Catherine")
 
 

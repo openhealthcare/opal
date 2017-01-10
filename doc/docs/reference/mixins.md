@@ -16,7 +16,7 @@ it might serialise like below
 
     allergy.to_dict() -> {"id": 1, "drug": "penicillin"}
 
-adds the BULK_SERIALISE flag, which is used by episode and patient. This flag is used to determine whether the item is serialised as part of Episode/Patient deserialisation.
+adds the _bulk_serialise flag, which is used by episode and patient. This flag is used to determine whether the item is serialised as part of Episode/Patient deserialisation.
 
 
 ### UpdateFromDict

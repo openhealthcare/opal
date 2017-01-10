@@ -311,7 +311,7 @@ class UpdatesFromDictMixin(SerialisableFields):
 class ToDictMixin(SerialisableFields):
     """ serialises a model to a dictionary
     """
-    BULK_SERIALISE = True
+    _bulk_serialise = True
 
     def to_dict(self, user, fields=None):
         """
@@ -485,7 +485,7 @@ class Patient(models.Model):
             }
 
         for model in patient_subrecords():
-            if model.BULK_SERIALISE:
+            if model._bulk_serialise:
                 subrecords = model.objects.filter(patient_id=self.id)
                 d[model.get_api_name()] = [subrecord.to_dict(user) for subrecord in subrecords]
         return d
@@ -755,7 +755,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
             return d
 
         for model in patient_subrecords():
-            if model.BULK_SERIALISE:
+            if model._bulk_serialise:
                 subrecords = model.objects.filter(patient_id=self.patient.id)
 
                 if subrecords:
@@ -763,7 +763,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
                         subrecord.to_dict(user) for subrecord in subrecords
                     ]
         for model in episode_subrecords():
-            if model.BULK_SERIALISE:
+            if model._bulk_serialise:
                 subrecords = model.objects.filter(episode_id=self.id)
 
                 if subrecords:
