@@ -10,7 +10,9 @@ from django.test import override_settings
 
 from opal.core.test import OpalTestCase
 from opal import models
-from opal.tests.models import Colour, PatientColour, Demographics
+from opal.tests.models import (
+    Colour, PatientColour, Demographics, HatWearer, HouseOwner
+)
 from opal.core.search import extract
 from opal.core import subrecords
 
@@ -173,11 +175,14 @@ class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
 
 class ZipArchiveTestCase(PatientEpisodeTestCase):
 
+    @patch('opal.core.search.extract.episode_subrecords')
+    @patch('opal.core.search.extract.patient_subrecords')
     @patch('opal.core.search.extract.zipfile')
-    def test_episode_subrecords(self, zipfile):
+    def test_episode_subrecords(self, zipfile, patient_subrecords, episode_subrecords):
+        episode_subrecords.return_value = [HatWearer]
+        patient_subrecords.return_value = [HouseOwner]
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
-        expected = len([i for i in subrecords.episode_subrecords()]) + 8
-        self.assertEqual(expected, zipfile.ZipFile.return_value.__enter__.return_value.write.call_count)
+        self.assertEqual(4, zipfile.ZipFile.return_value.__enter__.return_value.write.call_count)
 
     @patch('opal.core.search.extract.subrecord_csv')
     @patch('opal.core.search.extract.zipfile')

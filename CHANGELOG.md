@@ -1,9 +1,15 @@
 ### 0.8.0 (Major Release)
 
+#### ToDictMixin._bulk_serialise
+
+adds a flag to the to dict mixin to determine whether the item is serialised as part of Episode/Patient.to_dict
+
+
 #### Fixes bugs in add many subrecord radio buttons
 
 Previously multiple radio buttons for the same subrecord field on the same page would
 not appear to the user to update correctly. This has now been fixed.
+
 
 #### Angular UI Libraries
 
