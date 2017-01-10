@@ -41,7 +41,7 @@ angular.module('opal.services')
 	        this.makeCopy = function() {
 	            var field, value;
 	            var copy = {id: item.id};
-              copy._local = {uniqueName: _.uniqueId(item.columnName)};
+              copy._client = {id: _.uniqueId(item.columnName)};
 
               _.each(columnSchema.fields, function(field){
 		            value = item[field.name];
@@ -76,7 +76,7 @@ angular.module('opal.services')
 	            var deferred = $q.defer();
 	            var url = '/api/v0.1/' + this.columnName + '/';
 	            var method;
-              delete attrs._local;
+              delete attrs._client;
               attrs = this.castToType(attrs);
 
                 // Tagging to teams are represented as a pseudo subrecord.

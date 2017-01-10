@@ -56,7 +56,7 @@ class TestInferFromSubrecordPath(TestCase):
         ctx = infer_from_subrecord_field_path("Birthday.birth_date")
         self.assertEquals(
             ctx["element_name"],
-            "editing.birthday._local.uniqueName + '_birth_date'"
+            "editing.birthday._client.id + '_birth_date'"
         )
 
 

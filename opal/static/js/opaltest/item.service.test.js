@@ -132,9 +132,9 @@ describe('services', function() {
 
         it('should be able to produce copy of attributes', function() {
           var copy = item.makeCopy();
-          var uniqueName = copy._local.uniqueName;
-          expect(uniqueName.indexOf('demographics')).toBe(0)
-          delete copy._local;
+          var id = copy._client.id;
+          expect(id.indexOf('demographics')).toBe(0)
+          delete copy._client;
           expect(copy).toEqual({
               id: 101,
               name: 'John Smith',

@@ -1,12 +1,9 @@
 ### 0.8.0 (Major Release)
 
-#### Client side form attributes on Item
-_local is introduced on the form version of the item, this is a js object that can be used for any form meta data.
+#### Fixes bugs in add many subrecord radio buttons
 
-By default it uses a uniqueName key to help generate a unique 'name' for the html input/radio/select/etc tags.
-
-It is also used to generate meta data for the datepicker.
-
+Previously multiple radio buttons for the same subrecord field on the same page would
+not appear to the user to update correctly. This has now been fixed.
 
 #### Angular UI Libraries
 
