@@ -27,9 +27,8 @@ class HatWearer(models.EpisodeSubrecord):
 
 
 class InvisibleHatWearer(models.EpisodeSubrecord):
-    BULK_DESERIALISED = False
+    BULK_SERIALISE = False
     name = dmodels.CharField(max_length=200)
-    hats = dmodels.ManyToManyField(Hat, related_name="hat_wearers")
     wearing_a_hat = dmodels.BooleanField(default=True)
 
 
@@ -62,9 +61,9 @@ class FavouriteDogs(models.PatientSubrecord):
     dogs = dmodels.ManyToManyField(Dog, related_name='favourite_dogs')
 
 
-class InvisibleDogs(models.PatientSubrecord):
-    BULK_DESERIALISED = False
-    dogs = dmodels.ManyToManyField(Dog, related_name='favourite_dogs')
+class InvisibleDog(models.PatientSubrecord):
+    BULK_SERIALISE = False
+    name = dmodels.CharField(max_length=200, default="Catherine")
 
 
 class Colour(models.EpisodeSubrecord):

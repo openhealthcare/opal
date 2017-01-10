@@ -19,7 +19,7 @@ import opal.tests.test_patient_lists # To make sure test tagged lists are pulled
 from opal.tests.models import (
     FamousLastWords, PatientColour, ExternalSubRecord, SymptomComplex,
     PatientConsultation, Birthday, DogOwner, HatWearer, HouseOwner, HoundOwner,
-    Colour, InvisibleHatWearer, InvisibleDogs
+    Colour
 )
 
 class PatientRecordAccessTestCase(OpalTestCase):

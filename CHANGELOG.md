@@ -1,5 +1,9 @@
 ### 0.8.0 (Major Release)
 
+#### ToDictMixin.BULK_SERIALISE
+
+if set to false, this subrecord will not be deserialised by either a patient or an episode
+
 #### Angular UI Libraries
 
 0.8.0 consolidates Angular UI libraries bundled with Opal. We have removed Angular Strap, and
