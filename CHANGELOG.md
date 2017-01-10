@@ -2,7 +2,7 @@
 
 #### ToDictMixin._bulk_serialise
 
-if set to false, this subrecord will not be deserialised by either a patient or an episode
+adds a flag to the to dict mixin to determine whether the item is serialised as part of Episode/Patient.to_dict
 
 
 #### Fixes bugs in add many subrecord radio buttons
