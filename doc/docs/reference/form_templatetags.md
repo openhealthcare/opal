@@ -16,7 +16,7 @@ Keywords:
 * `label` The Label with which to describe this field
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
 * `disabled` If this exists, we use this as the expression for the ng-disabled directive
-* `element_name` If this exists this is an angular expression that is set to the 'name' attribute of the html element
+* `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html element
 
 
 ### {% datepicker ... %}
@@ -33,7 +33,7 @@ Keywords:
 * `hide`  A string that contains an Angular expression for the ng-hide directive
 * `required` Label to show when we're required
 * `mindate` Angular Javascript expression to return the minimum possible date
-* `element_name` If this exists this is an angular expression that is set to the 'name' attribute of the html element
+* `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html element
 
 ### {% datetimepicker ... %}
 
@@ -46,8 +46,8 @@ Keywords:
 * `date_label` The Label with which to describe the date field (defaults to 'Date')
 * `time_label` The Label with which to describe the date field (defaults to 'Time')
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
-* `change`  an angular directive that fires on change
-* `element_name` If this exists this is an angular expression that is set to the 'name' attribute of the html datetime picker element
+* `change`  an Angular directive that fires on change
+* `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html datetime picker element
 
 
 
@@ -67,7 +67,7 @@ Keywords:
 * `required` Label to show when we're required
 * `enter` expression to evaluate if the user presses return when in this input
 * `maxlength` maximum number of characters for this input. Will render the form invalid and display help text if exceeded.
-* `element_name` If this exists this is an angular expression that is set to the 'name' attribute of the html element
+* `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html element
 
 
 #### Inputs with units
@@ -91,7 +91,7 @@ Keywords:
 * `show`  A string that contains an Angular expression for the ng-show directive
 * `hide`  A string that contains an Angular expression for the ng-hide directive
 * `lookuplist` an Angular expression that evaluates to an array containing the radio values
-* `element_name` If this exists this is an angular expression that is set to the 'name' attribute of the html element
+* `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html element
 
 
 ### {% select ... %}
@@ -109,7 +109,7 @@ Keywords:
 * `other` A boolean parameter that if true, provides a free text option when 'Other' is selected
 * `help` a template to use as the contents of a help popover
 * `static` an Angular expression that will swap the display to be a static input if it evaluates to `true`
-* `element_name` If this exists this is an angular expression that is set to the 'name' attribute of the html element*
+* `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html element*
 
 ### {% textarea ... %}
 
@@ -122,7 +122,7 @@ Keywords:
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
 * `show`  A string that contains an Angular expression for the ng-show directive
 * `hide`  A string that contains an Angular expression for the ng-hide directive
-* `element_name` If this exists this is an angular expression that is set to the 'name' attribute of the html element
+* `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html element
 
 
 #### Inference from subrecord fields
