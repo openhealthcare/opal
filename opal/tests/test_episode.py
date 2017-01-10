@@ -12,7 +12,7 @@ from opal.models import Patient, Episode, Tagging
 
 from opal.tests import test_patient_lists # ensure the lists are loaded
 from opal.tests.models import (
-    Hat, HatWearer, Dog, DogOwner, InvisibleDog, InvisibleHatWearer
+    Hat, HatWearer, Dog, DogOwner, InvisibleHatWearer
 )
 
 class EpisodeTest(OpalTestCase):
@@ -90,16 +90,6 @@ class EpisodeTest(OpalTestCase):
         to_dict = episode.to_dict(self.user)
         self.assertNotIn(InvisibleHatWearer.get_api_name(), to_dict)
 
-    @patch('opal.models.patient_subrecords')
-    @patch('opal.models.episode_subrecords')
-    def test_not_bulk_serialisable_patient_subrecords(
-        self, episode_subrecords, patient_subrecords
-    ):
-        episode_subrecords.return_value = []
-        patient_subrecords.return_value = [InvisibleDog]
-        patient, _ = self.new_patient_and_episode_please()
-        to_dict = patient.to_dict(self.user)
-        self.assertNotIn(InvisibleDog.get_api_name(), to_dict)
 
     def test_to_dict_with_multiple_episodes(self):
         self.episode.date_of_admission = datetime.date(2015, 7, 25)
