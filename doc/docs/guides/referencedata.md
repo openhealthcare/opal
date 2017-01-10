@@ -35,7 +35,7 @@ $ python manage.py schemamigration --atuo yourapp
 $ python manage.py migrate yourapp
 ```
 
-The lookup list will automatically be added to the admin.
+The lookup list will automatically be added to the admin, where you can manually add entries.
 
 ### Reference data JSON API
 
@@ -78,7 +78,8 @@ referencedata into the forms we build, eiether by detecting their use automatica
 ### Providing data for lookuplists
 
 Reference data can be provided at application or plugin level in a file named `lookuplists.json` found in the
-`{{ app_or_plugin }}/data/lookuplists` directory. This data should be in the Opal JSON format.
+`{{ app_or_plugin }}/data/lookuplists` directory. This data should be in the Opal JSON format. The name value
+of each lookuplist should be the return value of that lookuplist's `get_api_name()` method.
 
 ```JSON
 {
@@ -92,13 +93,19 @@ Reference data can be provided at application or plugin level in a file named `l
 }
 ```
 
+Once this data is stored in the lookuplists file, we can batch load it into our application with the command
+
+```bash
+python manage.py load_lookup_lists
+```
+
 ### Management commands
 
 Opal ships with some managemnent commands for importing and exporting lookup lists
 
 #### dump_lookup_lists
 
-Prints all lookuplists as JSON to stdout.
+Prints all loockuplists as JSON to stdout.
 
 #### load_lookup_lists
 
