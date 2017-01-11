@@ -16,13 +16,13 @@ def import_from_apps(module):
     This way we allow our implementation, or plugins, to define their
     own ward rounds.
     """
+    global IMPORTED_FROM_APPS
     if not module in IMPORTED_FROM_APPS:
         for app in settings.INSTALLED_APPS:
             try:
                 stringport('{0}.{1}'.format(app, module))
             except ImportError:
                 pass # not a problem
-        global IMPORTED_FROM_APPS
         IMPORTED_FROM_APPS.add(module)
         return
 
