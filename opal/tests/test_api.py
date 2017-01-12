@@ -7,6 +7,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.db import DataError
+from django.http import Http404
 from django.contrib.contenttypes.models import ContentType
 from mock import patch, MagicMock
 
@@ -63,6 +64,30 @@ class LoginRequredTestCase(OpalTestCase):
                 response.status_code,
                 status.HTTP_403_FORBIDDEN
             )
+
+
+class TestDecorators(OpalTestCase):
+    def test_patient_from_pk(self):
+        patient, _ = self.new_patient_and_episode_please()
+        some_func = MagicMock()
+        request = MagicMock()
+        some_self = MagicMock()
+        decorated = api.patient_from_pk(some_func)
+        decorated(some_self, request, patient.id)
+        some_func.assert_called_once_with(some_self, request, patient)
+
+    def test_no_patient_exists_exception(self):
+        self.assertEqual(models.Patient.objects.count(), 0)
+        with self.assertRaises(Http404) as e:
+            some_func = MagicMock()
+            request = MagicMock()
+            some_self = MagicMock()
+            decorated = api.patient_from_pk(some_func)
+            decorated(some_self, request, 1)
+        self.assertEqual(
+            e.exception.message,
+            "No Patient matches the given query."
+        )
 
 
 class OPALRouterTestCase(TestCase):

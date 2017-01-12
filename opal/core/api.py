@@ -3,6 +3,7 @@ Public facing API views
 """
 from django.conf import settings
 from django.views.generic import View
+from django.shortcuts import get_object_or_404
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import routers, status, viewsets
 from rest_framework.response import Response
@@ -31,6 +32,7 @@ class OPALRouter(routers.DefaultRouter):
 
 router = OPALRouter()
 
+
 def item_from_pk(fn):
     """
     Decorator that passes an instance or returns a 404 from pk kwarg.
@@ -43,6 +45,7 @@ def item_from_pk(fn):
         return fn(self, request, item)
     return get_item
 
+
 def episode_from_pk(fn):
     """
     Decorator that passes an episode or returns a 404 from pk kwarg.
@@ -53,6 +56,17 @@ def episode_from_pk(fn):
         except Episode.DoesNotExist:
             return Response({'error': 'Episode does not exist'}, status=status.HTTP_404_NOT_FOUND)
     return get_item
+
+
+def patient_from_pk(fn):
+    """
+    Decorator that passes an episode or returns a 404 from pk kwarg.
+    """
+    def get_item(self, request, pk=None):
+        item = get_object_or_404(Patient.objects.all(), pk=pk)
+        return fn(self, request, item)
+    return get_item
+
 
 class LoginRequiredViewset(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)

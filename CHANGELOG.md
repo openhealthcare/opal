@@ -1,5 +1,10 @@
 ### 0.8.0 (Major Release)
 
+#### opal.core.api.patient_from_pk
+
+a decorator that changes a method that is passed a pk, to a method that is passed a patient
+
+
 #### ToDictMixin._bulk_serialise
 
 adds a flag to the to dict mixin to determine whether the item is serialised as part of Episode/Patient.to_dict
