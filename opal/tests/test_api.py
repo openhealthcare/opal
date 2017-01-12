@@ -85,7 +85,7 @@ class TestDecorators(OpalTestCase):
             decorated = api.patient_from_pk(some_func)
             decorated(some_self, request, 1)
         self.assertEqual(
-            e.exception.message,
+            str(e.exception),
             "No Patient matches the given query."
         )
 
