@@ -12,6 +12,10 @@ The `patient_lists` module defines a number of classes for working with lists of
 
 How we want to refer to this list on screen to users.
 
+#### PatientList.comparator_service
+
+A custom comparator service to set sort order within a list. Defaults to None.
+
 ## TaggedPatientList
 
 Tagged Patient Lists inherit from Patient Lists - as such they have all of the same methods and properties
