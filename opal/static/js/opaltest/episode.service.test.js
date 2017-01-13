@@ -169,6 +169,23 @@ describe('Episode', function() {
         expect(johnSmith.compare(anneAngela)).toEqual(-1);
     });
 
+    it('should be equal for non UCH hospitals', function() {
+        var datacopy = angular.copy(episodeData);
+        datacopy.location[0].hospital = 'RFH';
+        var first       = new Episode(datacopy);
+        var second      = new Episode(datacopy);
+        expect(first.compare(second)).toEqual(0);
+    });
+
+    it('should allow custom comparators to be passed.', function() {
+        var comparators = [jasmine.createSpy().and.returnValue(-1000)];
+        var first       = new Episode(episodeData);
+        var second      = new Episode(episodeData);
+        expect(first.compare(second, comparators)).toEqual(0);
+        expect(comparators[0]).toHaveBeenCalledWith(first)
+        expect(comparators[0]).toHaveBeenCalledWith(second)
+    });
+
     it('Should have access to the attributes', function () {
         expect(episode.active).toEqual(true);
     });
