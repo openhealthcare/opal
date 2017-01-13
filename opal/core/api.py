@@ -71,6 +71,7 @@ def patient_from_pk(fn):
 class LoginRequiredViewset(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
 
+
 class RecordViewSet(LoginRequiredViewset):
     """
     Return the serialization of all active record types ready to
@@ -307,8 +308,8 @@ class EpisodeViewSet(LoginRequiredViewset):
 class PatientViewSet(LoginRequiredViewset):
     base_name = 'patient'
 
-    def retrieve(self, request, pk=None):
-        patient = Patient.objects.get(pk=pk)
+    @patient_from_pk
+    def retrieve(self, request, patient):
         PatientRecordAccess.objects.create(patient=patient, user=request.user)
         return _build_json_response(patient.to_dict(request.user))
 
