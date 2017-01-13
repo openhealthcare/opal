@@ -58,7 +58,7 @@ angular.module('opal.controllers').controller(
             if($scope.comparators){
                 return p1.compare(p2, $scope.comparators);
             }else{
-		        return p1.compare(p2);
+                return p1.compare(p2);
             }
 	    };
 
