@@ -775,11 +775,13 @@ describe('PatientListCtrl', function() {
 
     describe('editNamedItem', function() {
 
-        it('should call reset_state() when we return', function() {
-            spyOn($scope.episode.recordEditor, 'editItem').and.returnValue(
+        it('should re-check visibility if we edit tagging', function() {
+            spyOn($scope, 'getVisibleEpisodes');
+            $scope.episode.recordEditor.editItem.and.returnValue(
                 { then: function(f){ f() }}
             );
-            $scope.editNamedItem($scope.episode, 'diagnosis', 0);
+            $scope.editNamedItem($scope.episode, 'tagging', 0);
+            expect($scope.getVisibleEpisodes).toHaveBeenCalledWith();
         });
 
         it('should call through to the record editor when we add an item', function() {
