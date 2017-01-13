@@ -203,14 +203,6 @@ describe('PatientListCtrl', function() {
 
     }));
 
-    describe('newNamedItem', function(){
-        it('should pass through the current scopes tags', function(){
-          spyOn(episode.recordEditor, "newItem");
-          $scope.newNamedItem(episode, "someName");
-          expect(episode.recordEditor.newItem).toHaveBeenCalledWith("someName")
-        });
-    });
-
     describe("edit Tags", function(){
       it('should filter an episode if the episode does not have the same tags', function(){
         // imitate the case where we remove all the tags
@@ -753,6 +745,14 @@ describe('PatientListCtrl', function() {
       });
     });
 
+    describe('newNamedItem', function(){
+        it('should pass through the current scopes tags', function(){
+          spyOn(episode.recordEditor, "newItem");
+          $scope.newNamedItem(episode, "someName");
+          expect(episode.recordEditor.newItem).toHaveBeenCalledWith("someName")
+        });
+    });
+
     describe('editing an item', function() {
         it('should call through to the record editor', function(){
             $scope.editNamedItem($scope.episode, 'demographics', 0);
@@ -777,5 +777,15 @@ describe('PatientListCtrl', function() {
         });
     });
 
+    describe('keyboard_shortcuts()', function() {
+        it('should open the modal', function() {
+            spyOn($modal, 'open');
+            $scope.keyboard_shortcuts()
+            expect($modal.open).toHaveBeenCalledWith({
+                controller: 'KeyBoardShortcutsCtrl',
+                templateUrl: 'list_keyboard_shortcuts.html'
+            })
+        });
+    });
 
 });
