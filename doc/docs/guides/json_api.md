@@ -24,7 +24,7 @@ by registering them directly with the router.
 
     router.register('ping', PingViewSet)
 
-Apis can make use of method decorators item_from_pk, episode_from_pk and patient_from_pk that will replace a pk passed into a method with self.model, Episode or Patient respectively.
+APIs can make use of method decorators `item_from_pk`, `episode_from_pk` and `patient_from_pk` that will replace a pk passed into a method with self.model, Episode or Patient respectively.
 
 e.g.
 
