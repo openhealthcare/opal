@@ -467,6 +467,16 @@ describe('PatientListCtrl', function() {
 
         });
 
+        describe('n', function() {
+
+            it('should addEpisode()', function() {
+                spyOn($scope, 'addEpisode');
+                $scope.$broadcast('keydown', { keyCode: 78 });
+                expect($scope.addEpisode).toHaveBeenCalledWith();
+            });
+
+        });
+
     });
 
     describe('print()', function() {
