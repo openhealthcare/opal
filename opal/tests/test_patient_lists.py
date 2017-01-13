@@ -10,7 +10,8 @@ from opal.models import Patient, UserProfile
 from opal.core.test import OpalTestCase
 
 from opal.core import patient_lists
-from opal.core.patient_lists import PatientList, TaggedPatientList, TabbedPatientListGroup
+from opal.core.patient_lists import (PatientList, TaggedPatientList, TabbedPatientListGroup,
+                                     PatientListComparatorMetadata)
 
 """
 Begin discoverable definitions for test cases
@@ -21,6 +22,7 @@ class TaggingTestPatientList(TaggedPatientList):
     tag = "eater"
     subtag = "herbivore"
     order = 4
+    comparator_service = 'HerbivoresSortOrder'
 
     schema = [
         models.Demographics,
@@ -265,3 +267,10 @@ class FirstListMetadataTestCase(OpalTestCase):
             for_user.return_value = nongen()
             slug = patient_lists.FirstListMetadata.to_dict(user=self.user)
             self.assertEqual({'first_list_slug': ''}, slug)
+
+
+class ComparatorMetadataTestCase(OpalTestCase):
+
+    def test_to_dict(self):
+        comparators = PatientListComparatorMetadata.to_dict(user=self.user)
+        self.assertEqual({'eater-herbivore': 'HerbivoresSortOrder'}, comparators['patient_list_comparators'])

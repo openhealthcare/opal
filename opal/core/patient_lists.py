@@ -251,3 +251,14 @@ class TaggedPatientListMetadata(metadata.Metadata):
             direct_add=True,
         )
         return data
+
+
+class PatientListComparatorMetadata(metadata.Metadata):
+    slug = 'patient_list_comparators'
+
+    @classmethod
+    def to_dict(klass, user=None, **kw):
+        lists = [p for p in PatientList.for_user(user) if p.comparator_service]
+        return {klass.slug: {
+            plist.get_slug(): plist.comparator_service for plist in lists
+        }}
