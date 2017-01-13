@@ -148,20 +148,6 @@ angular.module('opal.services')
   		            function(p) { return parseInt(p.location[0].bed) }
   	            ];
 
-                // Todo: remove this UCH list specific code from Opal
-                if($routeParams.tag === "walkin" && $routeParams.subtag === "walkin_review"){
-                    var getName = function(x){
-                        var surname = x.demographics[0].surname.toLowerCase()
-                        var first_name = x.demographics[0].first_name.toLowerCase()
-                        return first_name + " " + surname;
-                    };
-
-                    comparators = [
-                        function(p){ return p.date_of_episode },
-                        function(p){ return getName(p) }
-                    ]
-                }
-
                 var v1, v2;
   	            for (var ix = 0; ix < comparators.length; ix++) {
   		            v1 = comparators[ix](episode);
