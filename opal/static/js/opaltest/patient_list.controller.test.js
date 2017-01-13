@@ -773,14 +773,17 @@ describe('PatientListCtrl', function() {
         });
     });
 
-    describe('adding an item', function() {
-        var iix;
+    describe('editNamedItem', function() {
 
-        beforeEach(function() {
-            iix = episodeData.diagnosis.length;
+        it('should call reset_state() when we return', function() {
+            spyOn($scope.episode.recordEditor, 'editItem').and.returnValue(
+                { then: function(f){ f() }}
+            );
+            $scope.editNamedItem($scope.episode, 'diagnosis', 0);
         });
 
-        it('should call through to the record editor', function() {
+        it('should call through to the record editor when we add an item', function() {
+            var iix = episodeData.diagnosis.length;
             $scope.editNamedItem($scope.episode, "diagnosis", iix);
             expect($scope.episode.recordEditor.editItem).toHaveBeenCalledWith(
                 'diagnosis', iix
