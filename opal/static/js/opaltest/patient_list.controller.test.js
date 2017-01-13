@@ -764,16 +764,24 @@ describe('PatientListCtrl', function() {
         });
     });
 
-    describe('editing an item', function() {
+    describe('is_tag_visible_in_list', function() {
+
+        it('should return if the tag is visible', function() {
+            expect($scope.is_tag_visible_in_list('tropical')).toEqual(false);
+            $scope.metadata.tag_visible_in_list = ['tropical'];
+            expect($scope.is_tag_visible_in_list('tropical')).toEqual(true);
+        });
+
+    });
+
+    describe('editNamedItem', function() {
+
         it('should call through to the record editor', function(){
             $scope.editNamedItem($scope.episode, 'demographics', 0);
             expect($scope.episode.recordEditor.editItem).toHaveBeenCalledWith(
                 'demographics', 0
             );
         });
-    });
-
-    describe('editNamedItem', function() {
 
         it('should re-check visibility if we edit tagging', function() {
             spyOn($scope, 'getVisibleEpisodes');
