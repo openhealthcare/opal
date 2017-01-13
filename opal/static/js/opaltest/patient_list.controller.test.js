@@ -754,6 +754,20 @@ describe('PatientListCtrl', function() {
             var isRemoved = _.contains(displayed_episodes, selectedEpisodeId);
             expect(isRemoved).toBe(true);
         });
+
+        it('should call removeFromList', function() {
+            var selectedEpisodeId = $scope.episode.id;
+            profile.readonly = false;
+            spyOn($scope, 'removeFromList');
+            spyOn($scope.episode.tagging[0], 'save').and.returnValue({
+                then: function(f){ f() }
+            })
+            $scope.removeFromMine($scope.episode);
+            $scope.$apply();
+
+            expect($scope.removeFromList).toHaveBeenCalledWith($scope.episode)
+        });
+
     });
 
     describe('newNamedItem', function(){
