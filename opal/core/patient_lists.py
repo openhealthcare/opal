@@ -11,9 +11,10 @@ class PatientList(discoverable.DiscoverableFeature,
     A view of a list shown on the list page, complete with schema that
     define the columns shown and a queryset that defines the episodes shown
     """
-    module_name   = 'patient_lists'
-    template_name = 'patient_lists/spreadsheet_list.html'
-    order         = 0
+    module_name        = 'patient_lists'
+    template_name      = 'patient_lists/spreadsheet_list.html'
+    order              = 0
+    comparator_service = None
 
     @classmethod
     def list(klass):
