@@ -1,7 +1,7 @@
 angular.module('opal.controllers').controller(
     'PatientListCtrl', function($scope, $q, $http, $cookieStore,
                                 $location, $routeParams,
-                                $modal, $rootScope, $window,
+                                $modal, $rootScope, $window, $injector,
                                 growl, Flow, Item, Episode,
                                 episodedata, metadata, profile, episodeVisibility){
 
@@ -40,7 +40,27 @@ angular.module('opal.controllers').controller(
             $scope.currentSubTag = tags.length == 2 ? tags[1] : "";
             $scope.tag_display = metadata.tag_display;
             var pertinantTag = $scope.currentSubTag || $scope.currentTag;
+
+            //
+            // These are used for setting custom list sort orders
+            //
+            $scope.comparators = null;
+
+            if($scope.metadata.patient_list_comparators &&
+               _.has($scope.metadata.patient_list_comparators, $routeParams.slug)){
+                $scope.comparators = $injector.get(
+                    $scope.metadata.patient_list_comparators[$routeParams.slug]
+                );
+            }
         }
+
+	    $scope.compareEpisodes = function(p1, p2) {
+            if($scope.comparators){
+                return p1.compare(p2, $scope.comparators);
+            }else{
+		        return p1.compare(p2);
+            }
+	    };
 
 	    $scope.getVisibleEpisodes = function() {
 		    var visibleEpisodes = [];
@@ -50,7 +70,7 @@ angular.module('opal.controllers').controller(
                 return episodeVisibility(episode, $scope);
             });
 
-    		visibleEpisodes.sort(compareEpisodes);
+    		visibleEpisodes.sort($scope.compareEpisodes);
 
             if($scope.rows && visibleEpisodes.length){
                 var episodePresent = _.any(visibleEpisodes, function(x){
@@ -76,10 +96,6 @@ angular.module('opal.controllers').controller(
         $scope.isSelectedEpisode = function(episode){
             return episode === $scope.episode;
         }
-
-	    function compareEpisodes(p1, p2) {
-		    return p1.compare(p2);
-	    };
 
         $scope.editTags = function(){
             $rootScope.state = 'modal';

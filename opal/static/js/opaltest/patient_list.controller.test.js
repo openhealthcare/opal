@@ -4,6 +4,7 @@ describe('PatientListCtrl', function() {
     var schema, Episode, Item, episode, episodeVisibility;
     var profile, episode2;
     var $scope, $cookieStore, $controller, $q, $dialog, $httpBackend;
+    var $$injector;
     var $location, $routeParams, $http;
     var Flow;
     var episodedata, controller;
@@ -137,9 +138,9 @@ describe('PatientListCtrl', function() {
     beforeEach(module('opal.controllers'));
 
     beforeEach(inject(function($injector){
-        Schema   = $injector.get('Schema');
-        Episode  = $injector.get('Episode');
-        Item     = $injector.get('Item');
+        Schema       = $injector.get('Schema');
+        Episode      = $injector.get('Episode');
+        Item         = $injector.get('Item');
         $rootScope   = $injector.get('$rootScope');
         $scope       = $rootScope.$new();
         $cookieStore = $injector.get('$cookieStore');
@@ -151,6 +152,7 @@ describe('PatientListCtrl', function() {
         $httpBackend = $injector.get('$httpBackend');
         $location    = $injector.get('$location');
         Flow         = $injector.get('Flow');
+        $$injector   = $injector.get('$injector');
         episodeVisibility = $injector.get('episodeVisibility');
 
         schema = new Schema(columns.default);
@@ -178,23 +180,24 @@ describe('PatientListCtrl', function() {
         metadata = metaData;
         $routeParams.slug = 'tropical';
 
-        _makecontroller = function(){
+        _makecontroller = function(metadata){
+            var md = metadata || metaData;
             return $controller('PatientListCtrl', {
-                $rootScope    : $rootScope,
-                $scope        : $scope,
-                $q            : $q,
-                $http         : $http,
-                $cookieStore  : $cookieStore,
-                $location     : $location,
-                $routeParams  : $routeParams,
-                $window       : fakeWindow,
-                growl         : growl,
-                Flow          : Flow,
-                schema        : schema,
-                episodedata   : episodedata,
-                profile       : profile,
-                metadata      : metadata,
-                viewDischarged: false,
+                $rootScope       : $rootScope,
+                $scope           : $scope,
+                $q               : $q,
+                $http            : $http,
+                $cookieStore     : $cookieStore,
+                $location        : $location,
+                $routeParams     : $routeParams,
+                $window          : fakeWindow,
+                $injector        : $$injector,
+                growl            : growl,
+                Flow             : Flow,
+                schema           : schema,
+                episodedata      : episodedata,
+                profile          : profile,
+                metadata         : md,
                 episodeVisibility: episodeVisibility
             });
         }
@@ -269,6 +272,19 @@ describe('PatientListCtrl', function() {
             expect($scope.rows.length).toBe(1);
         });
 
+        it('should have no comparators by default', function() {
+            expect($scope.comparators).toBe(null);
+        });
+
+        it('should load a comparator service if one is set in the metadata', function() {
+            spyOn($$injector, 'get').and.returnValue([]);
+            var md = angular.copy(metaData)
+            md.patient_list_comparators = {tropical: 'TheTropicalCompareService'};
+            _makecontroller(md)
+            expect($$injector.get).toHaveBeenCalledWith('TheTropicalCompareService');
+            expect($scope.comparators).toEqual([]);
+        });
+
     });
 
     describe('Unknown list', function() {
@@ -289,6 +305,17 @@ describe('PatientListCtrl', function() {
             _makecontroller();
             expect(fakeWindow.location.href).toBe("/404");
         });
+    });
+
+    describe('_compare', function() {
+
+        it('should use the list comparators if they exist', function() {
+            spyOn(episode, 'compare');
+            $scope.comparators = [];
+            $scope.compareEpisodes(episode, episode2);
+            expect(episode.compare).toHaveBeenCalledWith(episode2, [])
+        });
+
     });
 
     describe('isSelectedEpisode()', function() {
