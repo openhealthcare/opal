@@ -150,25 +150,6 @@ describe('Episode', function() {
         });
     });
 
-    it('should run walkin comparison in walkin review', function(){
-        $routeParams.tag = "walkin";
-        $routeParams.subtag = "walkin_review";
-        var anneAngelaData = angular.copy(episodeData);
-        var johnSmith = new Episode(episodeData);
-        anneAngelaData.demographics[0].first_name = "Anne";
-        anneAngelaData.demographics[0].surname = "Angela";
-        var anneAngela = new Episode(anneAngelaData);
-        expect(johnSmith.compare(anneAngela)).toEqual(1);
-
-        johnSmith.date_of_episode = new Date(2015, 10, 11);
-        var johnSmithOld = new Episode(episodeData);
-        johnSmithOld.date_of_episode = new Date(2015, 10, 10);
-        expect(johnSmithOld.compare(johnSmith)).toEqual(-1);
-
-        anneAngela.date_of_episode = new Date(2015, 10, 12);
-        expect(johnSmith.compare(anneAngela)).toEqual(-1);
-    });
-
     it('should be equal for non UCH hospitals', function() {
         var datacopy = angular.copy(episodeData);
         datacopy.location[0].hospital = 'RFH';
