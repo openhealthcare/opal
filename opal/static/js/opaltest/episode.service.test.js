@@ -234,6 +234,12 @@ describe('Episode', function() {
         expect(episode.getNumberOfItems('diagnosis')).toBe(3);
     });
 
+    it('should addItems() for items without an entry on episode', function() {
+        var item = {columnName: 'notareal_column'};
+        episode.addItem(item);
+        expect(episode.notareal_column).toEqual([item]);
+    });
+
     it('removeItem() should remove an item from our episode', function() {
         // Note: Diagnoses end up ordered differently to the declared order
         // above as they are sorted by date.
