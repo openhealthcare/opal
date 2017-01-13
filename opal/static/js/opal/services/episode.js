@@ -158,7 +158,7 @@ angular.module('opal.services')
   		                function(p) { return CATEGORIES.indexOf(p.location[0].category) },
   		                function(p) { return p.location[0].hospital },
   		                function(p) {
-  		                    if (p.location[0].hospital == 'UC4H' &&
+  		                    if (p.location[0].hospital == 'UCH' &&
                                 p.location[0].ward.match(/^T\d+/)) {
   			                    return parseInt(p.location[0].ward.substring(1));
   		                    } else {
