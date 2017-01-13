@@ -563,7 +563,8 @@ describe('PatientListCtrl', function() {
                 }
             );
             $scope.addEpisode();
-            expect(growl.success).toHaveBeenCalledWith('John Smith added to the OPAT Referral list');
+            expect(growl.success).toHaveBeenCalledWith(
+                'John Smith added to the OPAT Referral list');
         });
 
         it('should add the new episode to episodes if it has the current tag', function() {
@@ -573,13 +574,14 @@ describe('PatientListCtrl', function() {
             expect($scope.rows.length).toBe(2);
         });
 
-        it('should not add the new episode to episodes if it does not have the current tag', function() {
-            episodeData2.tagging = [{'mine': true, 'id_inpatients': true}];
-            spyOn(Flow, 'enter').and.callFake(fake_episode_resolver);
-            expect($scope.rows.length).toBe(1);
-            $scope.addEpisode();
-            expect($scope.rows.length).toBe(1);
-        });
+        it('should not add the new episode to episodes if it does not have the current tag',
+           function() {
+               episodeData2.tagging = [{'mine': true, 'id_inpatients': true}];
+               spyOn(Flow, 'enter').and.callFake(fake_episode_resolver);
+               expect($scope.rows.length).toBe(1);
+               $scope.addEpisode();
+               expect($scope.rows.length).toBe(1);
+           });
 
         describe('for a readonly user', function(){
             beforeEach(function(){
@@ -593,6 +595,22 @@ describe('PatientListCtrl', function() {
             afterEach(function(){
                 profile.readonly = false;
             });
+        });
+
+        describe('When the modal is dismissed', function() {
+
+            it('should reset the state', function() {
+                spyOn(Flow, 'enter').and.callFake(
+                    function(){
+                        return {
+                            then : function(cb, eb){ eb() }
+                        }
+                    }
+                );
+                $scope.addEpisode()
+                expect($rootScope.state).toEqual('normal');
+            });
+
         });
     });
 
