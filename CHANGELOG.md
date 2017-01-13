@@ -2,12 +2,12 @@
 
 #### opal.core.api.patient_from_pk
 
-a decorator that changes a method that is passed a pk, to a method that is passed a patient
+A decorator that changes a method that is passed a pk, to a method that is passed a patient.
 
 
 #### ToDictMixin._bulk_serialise
 
-adds a flag to the to dict mixin to determine whether the item is serialised as part of Episode/Patient.to_dict
+Adds a flag to the to dict mixin to determine whether the item is serialised as part of `Episode/Patient.to_dict`.
 
 
 #### Fixes bugs in add many subrecord radio buttons
