@@ -1398,7 +1398,7 @@ class UserProfile(models.Model):
     can_extract           = models.BooleanField(default=False, help_text=HELP_EXTRACT)
     readonly              = models.BooleanField(default=False, help_text=HELP_READONLY)
     restricted_only       = models.BooleanField(default=False, help_text=HELP_RESTRICTED)
-    roles                 = models.ManyToManyField(Role)
+    roles                 = models.ManyToManyField(Role, blank=True)
 
     def to_dict(self):
         return dict(
