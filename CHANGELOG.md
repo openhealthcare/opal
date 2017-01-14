@@ -57,7 +57,6 @@ The html attribute 'name' for form elements generated with the Opal `{% forms %}
 {% select field="Demographics.first_name" element_name="...Your Angular expression..." %}
 ```
 
-
 #### Model removals
 
 The models `Team`, `GP`, `CommunityNurse` and `LocatedModel` - marked for removal since 0.6.0
@@ -140,6 +139,10 @@ Look up lists now load in from individual apps. The look for a file at {{ app }}
 
 The default admin url is now `/admin/` - rather than `/admin/?` this results in more readable
 admin urls and is closer to what most applications do with the Django admin.
+
+The roles field `opal.models.UserProfile.roles` has been updated to be `blank=True`. This allows the editing
+of users without specific roles assigned in the Django admin. Although this introduces no changes at the
+database level, this does introduce a migration.
 
 #### Updates to the Dependency Graph
 

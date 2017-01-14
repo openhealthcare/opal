@@ -5,11 +5,23 @@ application to a later version where there are extra steps required.
 
 ### 0.7.1 -> 0.8.0
 
+#### Upgrading Opal
+
+How you do this depends on how you have configured your application, but updating your
+requirements.txt to update the version should work.
+
+    # requirements.txt
+    opal==0.8.0
+
+After re-installing (via for instance `pip install -r requirements.txt`) you will need to
+run the migrations for Opal 0.6.x
+
+    $ python manage.py migrate opal
+
 #### Options
 
 Options are now an ex-API. Applications should convert to use either Referencedata (canonical terms for common data), or
 Metadata (App specific data you wish to pass into the front end).
-
 
 #### UI Components
 
