@@ -128,6 +128,37 @@ set to false, users will not be able to add the tag for this list.
         tag = 'liaisonpatients'
         direct_add = False
 
+
+### Customising Sort order of Episodes
+
+By default, PatientLists sort according to the Angular method `Episode.compare`. You may override this
+on a list-by-list basis by setting the `comparator_service` attribute.
+
+```python
+class MySortedList(PatientList):
+    comparator_service = 'MyComparatorService'
+```
+
+This attribute should be the name of an Angular service that returns a list of comparator functions.
+For instance, to sort by Episode.category_name then Episode id:
+
+```javascript
+angular.module('opal.services')
+    .factory('MyComparatorService', function(){
+        "use strict";
+        return [
+            function(e){ return e.category_name },
+            function(e){ return e.id }
+        ]
+    })
+```
+
+<blockquote><small>
+The file containing your comparator service must be included in the javascripts <br />
+of your application or plugin in order to be available on the client.
+</small></blockquote>
+
+
 ### Access Control
 
 As PatientLists are a [RestrictableFeature](discoverable.md#restrictable-features), Access control

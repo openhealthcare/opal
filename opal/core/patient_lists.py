@@ -11,9 +11,10 @@ class PatientList(discoverable.DiscoverableFeature,
     A view of a list shown on the list page, complete with schema that
     define the columns shown and a queryset that defines the episodes shown
     """
-    module_name   = 'patient_lists'
-    template_name = 'patient_lists/spreadsheet_list.html'
-    order         = 0
+    module_name        = 'patient_lists'
+    template_name      = 'patient_lists/spreadsheet_list.html'
+    order              = 0
+    comparator_service = None
 
     @classmethod
     def list(klass):
@@ -250,3 +251,14 @@ class TaggedPatientListMetadata(metadata.Metadata):
             direct_add=True,
         )
         return data
+
+
+class PatientListComparatorMetadata(metadata.Metadata):
+    slug = 'patient_list_comparators'
+
+    @classmethod
+    def to_dict(klass, user=None, **kw):
+        lists = [p for p in PatientList.for_user(user) if p.comparator_service]
+        return {klass.slug: {
+            plist.get_slug(): plist.comparator_service for plist in lists
+        }}

@@ -83,6 +83,11 @@ Python 2.x and 3.x.
 Adds the class `opal.core.patient_lists.TabbedPatientListGroup` which displays groups of related
 lists as tabs at the top of each member list.
 
+#### PatientList sort order
+
+To enable custom sort orders for individual `PatientList`s we introduce the `comparator_service` attribute.
+This names an Angular service which will return a list of comparator functions.
+
 #### Template re-naming
 
 Modal_base has now been moved into a folder called base_templates. Its also now got a form_modal_base and a two_column_form_modal_base.

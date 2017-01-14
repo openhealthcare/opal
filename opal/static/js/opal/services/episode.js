@@ -11,7 +11,7 @@ angular.module('opal.services')
 	        var episode = this;
 	        var column, field, attrs;
 
-          episode.recordEditor = new RecordEditor(episode);
+            episode.recordEditor = new RecordEditor(episode);
 
             // We would like everything for which we have data that is a field to
             // be an instantiated instance of Item - not just those fields in the
@@ -129,57 +129,37 @@ angular.module('opal.services')
                 return copy
             };
 
-	        this.compare = function(other) {
-                if($routeParams.tag === "walkin" && $routeParams.subtag === "walkin_review"){
-                    var getName = function(x){
-                        var surname = x.demographics[0].surname.toLowerCase()
-                        var first_name = x.demographics[0].first_name.toLowerCase()
-                        return first_name + " " + surname;
-                    };
-
-                    if(other.date_of_episode > this.date_of_episode){
-                        return -1;
-                    }
-                    else if(other.date_of_episode < this.date_of_episode){
-                        return 1;
-                    }
-                    else if(getName(other) > getName(this)){
-                        return -1;
-                    }
-                    else if(getName(other) < getName(this)){
-                        return 1;
-                    }
-
-                    return 0;
-                }
-                else{
-                    var v1, v2;
-  	                var comparators = [
-  		                function(p) { return CATEGORIES.indexOf(p.location[0].category) },
-  		                function(p) { return p.location[0].hospital },
-  		                function(p) {
-  		                    if (p.location[0].hospital == 'UCH' &&
-                                p.location[0].ward.match(/^T\d+/)) {
-  			                    return parseInt(p.location[0].ward.substring(1));
-  		                    } else {
-  			                    return p.location[0].ward
-  		                    }
-  		                },
-  		                function(p) { return parseInt(p.location[0].bed) }
-  	                ];
-
-  	                for (var ix = 0; ix < comparators.length; ix++) {
-  		                v1 = comparators[ix](episode);
-  		                v2 = comparators[ix](other);
-  		                if (v1 < v2) {
-  		                    return -1;
-  		                } else if (v1 > v2) {
-  		                    return 1;
+	        this.compare = function(other, comparators) {
+                //
+                // The default comparators we use for our Episode sorting in lists
+                //
+                var comparators = comparators || [
+  		            function(p) { return CATEGORIES.indexOf(p.location[0].category) },
+  		            function(p) { return p.location[0].hospital },
+                    // TODO: remove this UCH specific code from Opal
+  		            function(p) {
+  		                if (p.location[0].hospital == 'UCH' &&
+                            p.location[0].ward.match(/^T\d+/)) {
+  			                return parseInt(p.location[0].ward.substring(1));
+  		                } else {
+  			                return p.location[0].ward
   		                }
-  	                }
+  		            },
+  		            function(p) { return parseInt(p.location[0].bed) }
+  	            ];
 
-  	                return 0;
-                }
+                var v1, v2;
+  	            for (var ix = 0; ix < comparators.length; ix++) {
+  		            v1 = comparators[ix](episode);
+  		            v2 = comparators[ix](other);
+  		            if (v1 < v2) {
+  		                return -1;
+  		            } else if (v1 > v2) {
+  		                return 1;
+  		            }
+  	            }
+
+  	            return 0;
 	        };
 
             //
@@ -251,8 +231,8 @@ recently changed it - refresh the page and try again');
         Episode.findByHospitalNumber = function(number, callbacks){
             var deferred = $q.defer();
             var result = {
-    				patients: [],
-    				hospitalNumber: number
+    			patients: [],
+    			hospitalNumber: number
 			};
             // record loader is sued by the field translater to
             // cast the results fields
@@ -273,8 +253,8 @@ recently changed it - refresh the page and try again');
                     .success(function(response) {
 					    // We have retrieved patient records matching the hospital number
   					    result.patients = response;
-                // cast the patient fields
-                deferred.resolve(result);
+                        // cast the patient fields
+                        deferred.resolve(result);
 
 				    });
             }else{
