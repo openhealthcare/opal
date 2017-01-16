@@ -5,11 +5,23 @@ application to a later version where there are extra steps required.
 
 ### 0.7.1 -> 0.8.0
 
+#### Upgrading Opal
+
+How you do this depends on how you have configured your application, but updating your
+requirements.txt to update the version should work.
+
+    # requirements.txt
+    opal==0.8.0
+
+After re-installing (via for instance `pip install -r requirements.txt`) you will need to
+run the migrations for Opal 0.6.x
+
+    $ python manage.py migrate opal
+
 #### Options
 
 Options are now an ex-API. Applications should convert to use either Referencedata (canonical terms for common data), or
 Metadata (App specific data you wish to pass into the front end).
-
 
 #### UI Components
 
@@ -32,6 +44,14 @@ The form templates add validation checks around the saving to catch any validati
 As part of this modal_base has been moved into a folder in templates called base_templates
 
 Rename any templates extending `modal_base.html` to extend the correct template in `base_templates/` - `modal_base.html` or `modal_form_base.html`.
+
+#### Add episode modal url
+
+The add episode modal previously available at
+`/templates/modals/add_episode.html/` is now not available at the url with a trailing slash.
+Any controllers attempting to open the modal e.g. custom list flows should update their
+`$modal.open` call to remove the trailing slash.
+
 
 ### 0.7.0 -> 0.7.1
 

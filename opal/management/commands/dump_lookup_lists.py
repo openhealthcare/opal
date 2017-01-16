@@ -12,7 +12,7 @@ from opal.models import Synonym
 from opal.core.lookuplists import LookupList
 
 class Command(BaseCommand):
-    
+
     def _to_json(self, data):
         self.stdout.write(json.dumps(data, indent=2))
         return
@@ -24,8 +24,8 @@ class Command(BaseCommand):
             content_type = ContentType.objects.get_for_model(model)
             items = []
             for item in model.objects.all():
-                synonyms = [s.name for s in 
-                            Synonym.objects.filter(content_type=content_type, 
+                synonyms = [s.name for s in
+                            Synonym.objects.filter(content_type=content_type,
                                                    object_id=item.id) ]
                 items.append({'name': item.name, 'synonyms': synonyms})
             data[model.__name__.lower()] = items

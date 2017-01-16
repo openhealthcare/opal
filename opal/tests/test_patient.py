@@ -1,16 +1,17 @@
 """
 Unittests for Patients
 """
-from django.contrib.auth.models import User
-from django.test import TestCase
+from mock import patch
+from opal.core.test import OpalTestCase
 
-from opal.models import Patient, Team, Episode
+from opal.models import Patient, Episode
+from opal.tests.models import InvisibleDog
 
-class PatientTest(TestCase):
+
+class PatientTest(OpalTestCase):
 
     def setUp(self):
         self.patient = Patient.objects.create()
-        self.micro   = Team.objects.create(name='microbiology', title='microbiology')
 
     def test_singleton_subrecord_created(self):
         self.assertEqual(1, self.patient.famouslastwords_set.count())
@@ -20,7 +21,7 @@ class PatientTest(TestCase):
         self.assertEqual(Episode, type(episode))
 
     def test_get_active_episode(self):
-        episode1 = self.patient.create_episode()
+        self.patient.create_episode()
         episode2 = self.patient.create_episode()
         episode2.set_tag_names(['microbiology'], None)
         self.assertEqual(episode2.id, self.patient.get_active_episode().id)
@@ -33,3 +34,15 @@ class PatientTest(TestCase):
         self.patient.create_episode()
         self.assertIsNone(self.patient.get_active_episode())
 
+    @patch('opal.models.patient_subrecords')
+    @patch('opal.models.episode_subrecords')
+    def test_not_bulk_serialisable_patient_subrecords(
+        self, episode_subrecords, patient_subrecords
+    ):
+        episode_subrecords.return_value = []
+        patient_subrecords.return_value = [InvisibleDog]
+        patient, episode = self.new_patient_and_episode_please()
+        InvisibleDog.objects.create(patient=patient)
+        to_dict = patient.to_dict(self.user)
+        self.assertNotIn(InvisibleDog.get_api_name(), to_dict)
+        self.assertNotIn(InvisibleDog.get_api_name(), to_dict['episodes'][1])

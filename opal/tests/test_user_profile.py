@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from mock import patch
 
-from opal.models import UserProfile, Team
+from opal.models import UserProfile
 
 class UserProfileTest(TestCase):
 
@@ -16,12 +16,6 @@ class UserProfileTest(TestCase):
 
     def test_get_roles(self):
         self.assertEqual({'default': []}, self.profile.get_roles())
-
-    def test_get_teams(self):
-        teams = list(Team.objects.filter(active=True, restricted=False))
-        user_teams = self.profile.get_teams()
-        for t in teams:
-            self.assertIn(t, user_teams)
 
     def test_can_see_pid(self):
         with patch.object(UserProfile, 'get_roles') as mock_roles:

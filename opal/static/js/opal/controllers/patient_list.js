@@ -1,7 +1,7 @@
 angular.module('opal.controllers').controller(
     'PatientListCtrl', function($scope, $q, $http, $cookieStore,
                                 $location, $routeParams,
-                                $modal, $rootScope, $window,
+                                $modal, $rootScope, $window, $injector,
                                 growl, Flow, Item, Episode,
                                 episodedata, metadata, profile, episodeVisibility){
 
@@ -28,7 +28,7 @@ angular.module('opal.controllers').controller(
             $scope._ =  _;
 
   	        $scope.query = {
-              hospital_number: '', first_name: '', surname: '', ward: '', bed: ''
+                hospital_number: '', first_name: '', surname: '', ward: '', bed: ''
             };
             $scope.$location = $location;
             $scope.path_base = '/list/';
@@ -40,7 +40,27 @@ angular.module('opal.controllers').controller(
             $scope.currentSubTag = tags.length == 2 ? tags[1] : "";
             $scope.tag_display = metadata.tag_display;
             var pertinantTag = $scope.currentSubTag || $scope.currentTag;
+
+            //
+            // These are used for setting custom list sort orders
+            //
+            $scope.comparators = null;
+
+            if($scope.metadata.patient_list_comparators &&
+               _.has($scope.metadata.patient_list_comparators, $routeParams.slug)){
+                $scope.comparators = $injector.get(
+                    $scope.metadata.patient_list_comparators[$routeParams.slug]
+                );
+            }
         }
+
+	    $scope.compareEpisodes = function(p1, p2) {
+            if($scope.comparators){
+                return p1.compare(p2, $scope.comparators);
+            }else{
+                return p1.compare(p2);
+            }
+	    };
 
 	    $scope.getVisibleEpisodes = function() {
 		    var visibleEpisodes = [];
@@ -50,18 +70,18 @@ angular.module('opal.controllers').controller(
                 return episodeVisibility(episode, $scope);
             });
 
-    		    visibleEpisodes.sort(compareEpisodes);
+    		visibleEpisodes.sort($scope.compareEpisodes);
 
             if($scope.rows && visibleEpisodes.length){
-              var episodePresent = _.any(visibleEpisodes, function(x){
-                  return x.id === $scope.episode.id;
-              });
+                var episodePresent = _.any(visibleEpisodes, function(x){
+                    return x.id === $scope.episode.id;
+                });
 
-              if(!episodePresent){
-                $scope.select_episode(visibleEpisodes[0], 0);
-              }
+                if(!episodePresent){
+                    $scope.select_episode(visibleEpisodes[0], 0);
+                }
             }
-    		    return visibleEpisodes;
+    		return visibleEpisodes;
 	    };
 
 	    $scope.rows = $scope.getVisibleEpisodes();
@@ -77,27 +97,23 @@ angular.module('opal.controllers').controller(
             return episode === $scope.episode;
         }
 
-	    function compareEpisodes(p1, p2) {
-		    return p1.compare(p2);
-	    };
-
-      $scope.editTags = function(){
-          $rootScope.state = 'modal';
-          $scope.open_modal(
-            'EditTeamsCtrl',
-            '/templates/modals/edit_teams.html',
-            {episode: $scope.episode}
-          ).then(function(){
-              if(!$scope.episode.hasTag(pertinantTag)){
-                delete $scope.episodes[$scope.episode.id];
-                $scope.rows = _.filter($scope.rows, function(e){
-                    return e.id !== $scope.episode.id;
-                });
-              }
-              $rootScope.state = 'normal';
-              $scope.episode = $scope.rows[0];
-          });
-      };
+        $scope.editTags = function(){
+            $rootScope.state = 'modal';
+            $scope.open_modal(
+                'EditTeamsCtrl',
+                '/templates/modals/edit_teams.html',
+                {episode: $scope.episode}
+            ).then(function(){
+                if(!$scope.episode.hasTag(pertinantTag)){
+                    delete $scope.episodes[$scope.episode.id];
+                    $scope.rows = _.filter($scope.rows, function(e){
+                        return e.id !== $scope.episode.id;
+                    });
+                }
+                $rootScope.state = 'normal';
+                $scope.episode = $scope.rows[0];
+            });
+        };
 
         $scope.jumpToTag = function(tag){
             if(_.contains(_.keys(metadata.tag_hierarchy), tag)){
@@ -221,16 +237,16 @@ angular.module('opal.controllers').controller(
                             var newTag;
 
                             if(newTags.length > 1){
-                              var tagObjs = _.filter(metadata.tags, function(t){ return _.contains(newTags, t.name); });
-                              if($scope.currentSubTag.length){
-                                newTag = _.findWhere(tagObjs, {parent_tag: $scope.currentTag}).name;
-                              }
-                              else{
-                                newTag = _.findWhere(tagObjs, {name: $scope.currentTag}).name;
-                              }
+                                var tagObjs = _.filter(metadata.tags, function(t){ return _.contains(newTags, t.name); });
+                                if($scope.currentSubTag.length){
+                                    newTag = _.findWhere(tagObjs, {parent_tag: $scope.currentTag}).name;
+                                }
+                                else{
+                                    newTag = _.findWhere(tagObjs, {name: $scope.currentTag}).name;
+                                }
                             }
                             else{
-                              newTag = newTags[0];
+                                newTag = newTags[0];
                             }
                             msg += " added to the " + metadata.tags[newTag].display_name + " list";
                             growl.success(msg);
@@ -256,17 +272,17 @@ angular.module('opal.controllers').controller(
 	    };
 
         $scope.removeFromList = function(episode){
-          delete $scope.episodes[episode.id];
-          $scope.rows = $scope.getVisibleEpisodes();
-          $scope.num_episodes -= 1;
-          $scope.episode = $scope.rows[0];
+            delete $scope.episodes[episode.id];
+            $scope.rows = $scope.getVisibleEpisodes();
+            $scope.num_episodes -= 1;
+            $scope.episode = $scope.rows[0];
         }
 
         $scope._post_discharge = function(result, episode){
-    			$rootScope.state = 'normal';
-    			if (result == 'discharged' | result == 'moved') {
-            $scope.removeFromList(episode);
-    			};
+    		$rootScope.state = 'normal';
+    		if (result == 'discharged' | result == 'moved') {
+                $scope.removeFromList(episode);
+    		};
         };
 
 	    $scope.dischargeEpisode = function(episode) {
@@ -274,13 +290,13 @@ angular.module('opal.controllers').controller(
 
 		    $rootScope.state = 'modal';
             var exit = Flow.exit(episode,
-                {
-                    current_tags: {
-                        tag   : $scope.currentTag,
-                        subtag: $scope.currentSubTag
-                    },
-                }
-            );
+                                 {
+                                     current_tags: {
+                                         tag   : $scope.currentTag,
+                                         subtag: $scope.currentSubTag
+                                     },
+                                 }
+                                );
 
             exit.then(function(result) {
                 //
@@ -290,7 +306,7 @@ angular.module('opal.controllers').controller(
                 //
                 if(result && result.then){
                     result.then(function(r){
-                      $scope._post_discharge(r, episode);
+                        $scope._post_discharge(r, episode);
                     });
                 }else{
                     $scope._post_discharge(result, episode);
@@ -298,46 +314,46 @@ angular.module('opal.controllers').controller(
 		    });
 	    };
 
-      $scope.removeFromMine = function(episode){
-          if(profile.readonly){
-              return null;
-          }
+        $scope.removeFromMine = function(episode){
+            if(profile.readonly){
+                return null;
+            }
 
-          var modal;
-          var tagging = episode.tagging[0];
-          editing = tagging.makeCopy();
-          editing.mine = false;
-          tagging.save(editing).then(function(){
-              $scope.removeFromList(episode);
-          });
+            var modal;
+            var tagging = episode.tagging[0];
+            editing = tagging.makeCopy();
+            editing.mine = false;
+            tagging.save(editing).then(function(){
+                $scope.removeFromList(episode);
+            });
 
-      };
+        };
 
-      $scope.newNamedItem = function(episode, name) {
-          return episode.recordEditor.newItem(name);
-      };
+        $scope.newNamedItem = function(episode, name) {
+            return episode.recordEditor.newItem(name);
+        };
 
-      $scope.is_tag_visible_in_list = function(tag){
-          return _.contains(metadata.tag_visible_in_list, tag);
-      };
+        $scope.is_tag_visible_in_list = function(tag){
+            return _.contains(metadata.tag_visible_in_list, tag);
+        };
 
-      $scope.editNamedItem  = function(episode, name, iix) {
-          var reset_state = function(result){
-              if (name == 'tagging') {
-                  // User may have removed current tag
-                  $scope.rows = $scope.getVisibleEpisodes();
-              }
-              var item = _.last(episode[name]);
+        $scope.editNamedItem  = function(episode, name, iix) {
+            var reset_state = function(result){
+                if (name == 'tagging') {
+                    // User may have removed current tag
+                    $scope.rows = $scope.getVisibleEpisodes();
+                }
+                var item = _.last(episode[name]);
 
-              if (episode[name].sort){
-                  episode.sortColumn(item.columnName, item.sort);
-              }
-          };
+                if (episode[name].sort){
+                    episode.sortColumn(item.columnName, item.sort);
+                }
+            };
 
-          episode.recordEditor.editItem(name, iix).then(function(result){
-              reset_state(result);
-          });
-      };
+            episode.recordEditor.editItem(name, iix).then(function(result){
+                reset_state(result);
+            });
+        };
 
 	    function goUp() {
 		    var episode;

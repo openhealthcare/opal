@@ -150,23 +150,21 @@ describe('Episode', function() {
         });
     });
 
-    it('should run walkin comparison in walkin review', function(){
-        $routeParams.tag = "walkin";
-        $routeParams.subtag = "walkin_review";
-        var anneAngelaData = angular.copy(episodeData);
-        var johnSmith = new Episode(episodeData);
-        anneAngelaData.demographics[0].first_name = "Anne";
-        anneAngelaData.demographics[0].surname = "Angela";
-        var anneAngela = new Episode(anneAngelaData);
-        expect(johnSmith.compare(anneAngela)).toEqual(1);
+    it('should be equal for non UCH hospitals', function() {
+        var datacopy = angular.copy(episodeData);
+        datacopy.location[0].hospital = 'RFH';
+        var first       = new Episode(datacopy);
+        var second      = new Episode(datacopy);
+        expect(first.compare(second)).toEqual(0);
+    });
 
-        johnSmith.date_of_episode = new Date(2015, 10, 11);
-        var johnSmithOld = new Episode(episodeData);
-        johnSmithOld.date_of_episode = new Date(2015, 10, 10);
-        expect(johnSmithOld.compare(johnSmith)).toEqual(-1);
-
-        anneAngela.date_of_episode = new Date(2015, 10, 12);
-        expect(johnSmith.compare(anneAngela)).toEqual(-1);
+    it('should allow custom comparators to be passed.', function() {
+        var comparators = [jasmine.createSpy().and.returnValue(-1000)];
+        var first       = new Episode(episodeData);
+        var second      = new Episode(episodeData);
+        expect(first.compare(second, comparators)).toEqual(0);
+        expect(comparators[0]).toHaveBeenCalledWith(first)
+        expect(comparators[0]).toHaveBeenCalledWith(second)
     });
 
     it('Should have access to the attributes', function () {
@@ -206,7 +204,7 @@ describe('Episode', function() {
             mine    : true,
             tropical: true,
             id      : false
-        } }}]
+        }; }}];
         expect(episode.getTags()).toEqual(['mine', 'tropical']);
     });
 
@@ -215,13 +213,11 @@ describe('Episode', function() {
     });
 
     it('newItem() should create an Item', function() {
-        var item = episode.newItem('diagnosis');
-        expect(item.makeCopy()).toEqual({
-            id               : undefined,
-            condition        : undefined,
-            provisional      : undefined,
-            date_of_diagnosis: undefined
-        })
+        var dd = new moment();
+        var item = episode.newItem('diagnosis', {
+          columnName: 'diagnosis'
+        });
+        expect(item.columnName).toBe('diagnosis');
     });
 
     it('should be able to add a new item', function() {
@@ -234,6 +230,12 @@ describe('Episode', function() {
         expect(episode.getNumberOfItems('diagnosis')).toBe(2);
         episode.addItem(item);
         expect(episode.getNumberOfItems('diagnosis')).toBe(3);
+    });
+
+    it('should addItems() for items without an entry on episode', function() {
+        var item = {columnName: 'notareal_column'};
+        episode.addItem(item);
+        expect(episode.notareal_column).toEqual([item]);
     });
 
     it('removeItem() should remove an item from our episode', function() {

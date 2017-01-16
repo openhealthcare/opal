@@ -2,8 +2,6 @@
 
 #### Opal is a full stack framework that makes building digital tools for health care easy.
 
-<img src="/img/clinical.advice.png" width="600px;" style="margin: 12px auto; border: 1px solid black;"/>
-
 Opal builds deep clinical domain specific functionality on top of
 [Django](https://djangoproject.com/), [Angular](https://angularjs.org/)
 and [Bootstrap](http://getbootstrap.com/) to help developers quickly build easy to maintain,

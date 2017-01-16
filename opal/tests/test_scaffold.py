@@ -1,9 +1,11 @@
 """
 Unittests for opal.core.scaffold
 """
+import shutil
+import subprocess
+
 from mock import patch, MagicMock, Mock
 import ffs
-import shutil
 
 from django.conf import settings
 
@@ -181,6 +183,14 @@ class StartprojectTestCase(OpalTestCase):
         scaffold.start_project(self.args, self.path)
         subpr.assert_any_call(['python', 'testapp/manage.py',
                                   'makemigrations', 'testapp', '--traceback'])
+
+    @patch.object(scaffold.sys, 'exit')
+    def test_if_subprocess_errors(self, exiter, os, subpr):
+        subpr.side_effect = subprocess.CalledProcessError(None, None)
+        scaffold.start_project(self.args, self.path)
+        subpr.assert_any_call(['python', 'testapp/manage.py',
+                                  'makemigrations', 'testapp', '--traceback'])
+        exiter.assert_any_call(1)
 
     def test_runs_migrate(self, os, subpr):
         scaffold.start_project(self.args, self.path)

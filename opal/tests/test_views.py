@@ -245,13 +245,6 @@ class EpisodeDetailTemplateViewTestCase(BaseViewTestCase):
             resp = view.get(request, pk=self.episode.pk+345)
 
 
-class AddEpisodeTemplateViewTestCase(BaseViewTestCase):
-
-    def test_default_should_200(self):
-        request = self.get_request(
-            '/add_episode_template_modal.html')
-        self.should_200(views.AddEpisodeTemplateView, request)
-
 
 class IndexViewTestCase(BaseViewTestCase):
 

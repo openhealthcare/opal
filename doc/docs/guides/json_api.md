@@ -24,6 +24,20 @@ by registering them directly with the router.
 
     router.register('ping', PingViewSet)
 
+APIs can make use of method decorators `item_from_pk`, `episode_from_pk` and `patient_from_pk` that will replace a pk passed into a method with self.model, Episode or Patient respectively.
+
+e.g.
+
+```python
+class SomeBespokeViewset(viewsets.Viewset):
+  model = ClinicialInformation
+
+  @item_from_pk
+  def some_api_endpoint(self, request, clinical_information):
+    # Some logic
+
+```
+
 ### Authentication
 
 Opal uses

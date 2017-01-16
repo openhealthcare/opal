@@ -12,7 +12,7 @@ angular.module('opal.controllers').controller(
             $scope.episode_category = episode.category;
             $scope.editing = {};
             $scope.editing[item.columnName] = item.makeCopy();
-            $scope.metadata = metadata;
+            $scope.metadata = metadata
 
             $scope.editingMode = function(){
                 return !_.isUndefined($scope.editing[item.columnName].id);
@@ -51,7 +51,7 @@ angular.module('opal.controllers').controller(
               }
 
               _.each(_.keys($scope.editing[item.columnName]), function(field){
-                  if(field !== "test" && field !== "date_ordered" && field !== "alert_investigation"  && field !== "id" && field !== "episode_id" && field !== "consistency_token"){
+                  if(field !== "test" && field !== "_client" && field !== "date_ordered" && field !== "alert_investigation"  && field !== "id" && field !== "episode_id" && field !== "consistency_token"){
                       $scope.editing[item.columnName][field] = undefined;
                   }
               });

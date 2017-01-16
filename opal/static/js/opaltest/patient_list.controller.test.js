@@ -4,6 +4,7 @@ describe('PatientListCtrl', function() {
     var schema, Episode, Item, episode, episodeVisibility;
     var profile, episode2;
     var $scope, $cookieStore, $controller, $q, $dialog, $httpBackend;
+    var $$injector;
     var $location, $routeParams, $http;
     var Flow;
     var episodedata, controller;
@@ -103,17 +104,17 @@ describe('PatientListCtrl', function() {
                 name: "tropical"
             },
             mine: {
-              direct_add: true,
-              display_name: 'Mine',
-              name: 'mine',
-              slug: 'mine'
+                direct_add: true,
+                display_name: 'Mine',
+                name: 'mine',
+                slug: 'mine'
             },
             icu: {
-              direct_add: true,
-              display_name: 'ICU',
-              name: 'icu',
-              slug: 'icu'
-          }
+                direct_add: true,
+                display_name: 'ICU',
+                name: 'icu',
+                slug: 'icu'
+            }
         }
     };
 
@@ -137,9 +138,9 @@ describe('PatientListCtrl', function() {
     beforeEach(module('opal.controllers'));
 
     beforeEach(inject(function($injector){
-        Schema   = $injector.get('Schema');
-        Episode  = $injector.get('Episode');
-        Item     = $injector.get('Item');
+        Schema       = $injector.get('Schema');
+        Episode      = $injector.get('Episode');
+        Item         = $injector.get('Item');
         $rootScope   = $injector.get('$rootScope');
         $scope       = $rootScope.$new();
         $cookieStore = $injector.get('$cookieStore');
@@ -151,6 +152,7 @@ describe('PatientListCtrl', function() {
         $httpBackend = $injector.get('$httpBackend');
         $location    = $injector.get('$location');
         Flow         = $injector.get('Flow');
+        $$injector   = $injector.get('$injector');
         episodeVisibility = $injector.get('episodeVisibility');
 
         schema = new Schema(columns.default);
@@ -178,23 +180,24 @@ describe('PatientListCtrl', function() {
         metadata = metaData;
         $routeParams.slug = 'tropical';
 
-        _makecontroller = function(){
+        _makecontroller = function(metadata){
+            var md = metadata || metaData;
             return $controller('PatientListCtrl', {
-                $rootScope    : $rootScope,
-                $scope        : $scope,
-                $q            : $q,
-                $http         : $http,
-                $cookieStore  : $cookieStore,
-                $location     : $location,
-                $routeParams  : $routeParams,
-                $window       : fakeWindow,
-                growl         : growl,
-                Flow          : Flow,
-                schema        : schema,
-                episodedata   : episodedata,
-                profile       : profile,
-                metadata      : metadata,
-                viewDischarged: false,
+                $rootScope       : $rootScope,
+                $scope           : $scope,
+                $q               : $q,
+                $http            : $http,
+                $cookieStore     : $cookieStore,
+                $location        : $location,
+                $routeParams     : $routeParams,
+                $window          : fakeWindow,
+                $injector        : $$injector,
+                growl            : growl,
+                Flow             : Flow,
+                schema           : schema,
+                episodedata      : episodedata,
+                profile          : profile,
+                metadata         : md,
                 episodeVisibility: episodeVisibility
             });
         }
@@ -203,51 +206,43 @@ describe('PatientListCtrl', function() {
 
     }));
 
-    describe('newNamedItem', function(){
-        it('should pass through the current scopes tags', function(){
-          spyOn(episode.recordEditor, "newItem");
-          $scope.newNamedItem(episode, "someName");
-          expect(episode.recordEditor.newItem).toHaveBeenCalledWith("someName")
-        });
-    });
-
     describe("edit Tags", function(){
-      it('should filter an episode if the episode does not have the same tags', function(){
-        // imitate the case where we remove all the tags
-        $scope.episodes[episode.id] = episode;
-        $scope.episodes[episode2.id] = episode2;
-        $scope.rows = [episode, episode2];
-        var scopeChanged = false;
-        $rootScope.$watch("state.modal", function(ca){
-          scopeChanged = true;
-        });
-
-        $scope.open_modal = function(){};
-        spyOn($scope, "open_modal").and.returnValue({then: function(fn){ episode.tagging = [{}]; fn(); }});
-        $scope.editTags();
-        $scope.$apply();
-        expect($scope.rows).toEqual([episode2]);
-        expect($scope.episodes[episode.id]).toBe(undefined);
-        expect($scope.open_modal).toHaveBeenCalled();
-        expect(scopeChanged).toBe(true);
-        expect($rootScope.state).toBe("normal");
-      });
-
-      it('should leave the episode if it does have the pertinant tag', function(){
         it('should filter an episode if the episode does not have the same tags', function(){
-          // imitate the case where we remove all the tags
-          $scope.episodes[episode.id] = episode;
-          episode.tagging.micro_orth = true;
-          $scope.episodes[episode2.id] = episode2;
-          $scope.rows = [episode, episode2];
-          $scope.open_modal = function(){};
-          spyOn($scope, "open_modal").and.returnValue({then: function(fn){ delete episode.tagging.micro_orth; fn(); }});
-          $scope.editTags();
-          expect($scope.rows).toEqual([episode, episode2]);
-          expect($scope.episodes[episode.id]).toBe(episode);
-          expect($scope.open_modal).toHaveBeenCalled();
+            // imitate the case where we remove all the tags
+            $scope.episodes[episode.id] = episode;
+            $scope.episodes[episode2.id] = episode2;
+            $scope.rows = [episode, episode2];
+            var scopeChanged = false;
+            $rootScope.$watch("state.modal", function(ca){
+                scopeChanged = true;
+            });
+
+            $scope.open_modal = function(){};
+            spyOn($scope, "open_modal").and.returnValue({then: function(fn){ episode.tagging = [{}]; fn(); }});
+            $scope.editTags();
+            $scope.$apply();
+            expect($scope.rows).toEqual([episode2]);
+            expect($scope.episodes[episode.id]).toBe(undefined);
+            expect($scope.open_modal).toHaveBeenCalled();
+            expect(scopeChanged).toBe(true);
+            expect($rootScope.state).toBe("normal");
         });
-      });
+
+        it('should leave the episode if it does have the pertinant tag', function(){
+            it('should filter an episode if the episode does not have the same tags', function(){
+                // imitate the case where we remove all the tags
+                $scope.episodes[episode.id] = episode;
+                episode.tagging.micro_orth = true;
+                $scope.episodes[episode2.id] = episode2;
+                $scope.rows = [episode, episode2];
+                $scope.open_modal = function(){};
+                spyOn($scope, "open_modal").and.returnValue({then: function(fn){ delete episode.tagging.micro_orth; fn(); }});
+                $scope.editTags();
+                expect($scope.rows).toEqual([episode, episode2]);
+                expect($scope.episodes[episode.id]).toBe(episode);
+                expect($scope.open_modal).toHaveBeenCalled();
+            });
+        });
     });
 
 
@@ -277,6 +272,19 @@ describe('PatientListCtrl', function() {
             expect($scope.rows.length).toBe(1);
         });
 
+        it('should have no comparators by default', function() {
+            expect($scope.comparators).toBe(null);
+        });
+
+        it('should load a comparator service if one is set in the metadata', function() {
+            spyOn($$injector, 'get').and.returnValue([]);
+            var md = angular.copy(metaData)
+            md.patient_list_comparators = {tropical: 'TheTropicalCompareService'};
+            _makecontroller(md)
+            expect($$injector.get).toHaveBeenCalledWith('TheTropicalCompareService');
+            expect($scope.comparators).toEqual([]);
+        });
+
     });
 
     describe('Unknown list', function() {
@@ -297,6 +305,17 @@ describe('PatientListCtrl', function() {
             _makecontroller();
             expect(fakeWindow.location.href).toBe("/404");
         });
+    });
+
+    describe('_compare', function() {
+
+        it('should use the list comparators if they exist', function() {
+            spyOn(episode, 'compare');
+            $scope.comparators = [];
+            $scope.compareEpisodes(episode, episode2);
+            expect(episode.compare).toHaveBeenCalledWith(episode2, [])
+        });
+
     });
 
     describe('isSelectedEpisode()', function() {
@@ -362,29 +381,29 @@ describe('PatientListCtrl', function() {
         var episodeData3;
 
         beforeEach(function(){
-          $scope.episodes[episode.id] = episode;
-          $scope.episodes[episode2.id] = episode2;
-          episodeData3 = angular.copy(episodeData2);
-          episodeData3.id = 125;
-          episodeData3.demographics[0].first_name = "Suzy";
-          episodeData3.demographics[0].surname = "Vega";
+            $scope.episodes[episode.id] = episode;
+            $scope.episodes[episode2.id] = episode2;
+            episodeData3 = angular.copy(episodeData2);
+            episodeData3.id = 125;
+            episodeData3.demographics[0].first_name = "Suzy";
+            episodeData3.demographics[0].surname = "Vega";
 
-          $scope.episodes[episodeData3.id] = new Episode(episodeData3);
+            $scope.episodes[episodeData3.id] = new Episode(episodeData3);
 
-          $scope.rows = [
-            episode,
-            episode2,
-            $scope.episodes[episodeData3.id]
-          ];
+            $scope.rows = [
+                episode,
+                episode2,
+                $scope.episodes[episodeData3.id]
+            ];
 
-          $scope.episode = episode;
+            $scope.episode = episode;
         });
 
 
         it('should select the only available episode if filtered to one', function(){
             /*
-            so if episode visibility filters out all but one response
-            we expect that episode to now be selected
+              so if episode visibility filters out all but one response
+              we expect that episode to now be selected
             */
             expect($scope.episode.id).toEqual(episodeData.id);
 
@@ -399,9 +418,9 @@ describe('PatientListCtrl', function() {
 
         it('should maintain the same episode if its still present', function(){
             /*
-            so if episode visibility does not filter
-            anything out, we expect the in scope episode to
-            be the same
+              so if episode visibility does not filter
+              anything out, we expect the in scope episode to
+              be the same
             */
             expect($scope.episode.id).toEqual(episodeData.id);
 
@@ -426,9 +445,9 @@ describe('PatientListCtrl', function() {
 
         it('if no episodes are available, keep using the last selected one', function(){
             /*
-            so if episode visibility does not filter
-            anything out, we expect the in scope episode to
-            be the same
+              so if episode visibility does not filter
+              anything out, we expect the in scope episode to
+              be the same
             */
             expect($scope.episode.id).toEqual(episodeData.id);
 
@@ -456,12 +475,33 @@ describe('PatientListCtrl', function() {
             expect($location.url).toHaveBeenCalledWith($scope.episode.link);
         });
 
-        it('should go up', function() {
-            $scope.$broadcast('keydown', { keyCode: 38 });
+        describe('Moving episode', function() {
+            beforeEach(function(){
+                $scope.rows.push(episode2)
+            });
+
+            it('should go up', function() {
+                $scope.rix = 1;
+                $scope.$broadcast('keydown', { keyCode: 38 });
+                expect($scope.rix).toEqual(0);
+            });
+
+            it('should go down', function() {
+                expect($scope.rix).toEqual(0);
+                $scope.$broadcast('keydown', { keyCode: 40 });
+                expect($scope.rix).toEqual(1);
+            });
+
         });
 
-        it('should go up', function() {
-            $scope.$broadcast('keydown', { keyCode: 40 });
+        describe('n', function() {
+
+            it('should addEpisode()', function() {
+                spyOn($scope, 'addEpisode');
+                $scope.$broadcast('keydown', { keyCode: 78 });
+                expect($scope.addEpisode).toHaveBeenCalledWith();
+            });
+
         });
 
     });
@@ -529,38 +569,39 @@ describe('PatientListCtrl', function() {
         });
 
         it('should print the correct message even dependent on the current tag', function(){
-          $scope.currentTag = 'tropical';
-          spyOn(Flow, 'enter').and.callFake(
-              function(){
-                  return {
-                      then : function(fn){ fn({
-                          then: function(fn){ fn(new Episode(episodeData) ) }
-                      })}
-                  }
-              }
-          );
-          $scope.addEpisode();
-          expect(growl.success).toHaveBeenCalledWith('John Smith added to the Tropical list');
+            $scope.currentTag = 'tropical';
+            spyOn(Flow, 'enter').and.callFake(
+                function(){
+                    return {
+                        then : function(fn){ fn({
+                            then: function(fn){ fn(new Episode(episodeData) ) }
+                        })}
+                    }
+                }
+            );
+            $scope.addEpisode();
+            expect(growl.success).toHaveBeenCalledWith('John Smith added to the Tropical list');
         });
 
         it('should print the correct message even in the case of multiple tags with hierarchies on the current tag', function(){
-          $scope.currentTag = 'opat';
-          $scope.currentSubTag = 'opat_referrals';
-          var episodeData3 = angular.copy(episodeData);
-          episodeData3.tagging = [
-              {opat: true, opat_referrals: true, mine: true}
-          ];
-          spyOn(Flow, 'enter').and.callFake(
-              function(){
-                  return {
-                      then : function(fn){ fn({
-                          then: function(fn){ fn(new Episode(episodeData3) ) }
-                      })}
-                  }
-              }
-          );
-          $scope.addEpisode();
-          expect(growl.success).toHaveBeenCalledWith('John Smith added to the OPAT Referral list');
+            $scope.currentTag = 'opat';
+            $scope.currentSubTag = 'opat_referrals';
+            var episodeData3 = angular.copy(episodeData);
+            episodeData3.tagging = [
+                {opat: true, opat_referrals: true, mine: true}
+            ];
+            spyOn(Flow, 'enter').and.callFake(
+                function(){
+                    return {
+                        then : function(fn){ fn({
+                            then: function(fn){ fn(new Episode(episodeData3) ) }
+                        })}
+                    }
+                }
+            );
+            $scope.addEpisode();
+            expect(growl.success).toHaveBeenCalledWith(
+                'John Smith added to the OPAT Referral list');
         });
 
         it('should add the new episode to episodes if it has the current tag', function() {
@@ -570,13 +611,14 @@ describe('PatientListCtrl', function() {
             expect($scope.rows.length).toBe(2);
         });
 
-        it('should not add the new episode to episodes if it does not have the current tag', function() {
-            episodeData2.tagging = [{'mine': true, 'id_inpatients': true}];
-            spyOn(Flow, 'enter').and.callFake(fake_episode_resolver);
-            expect($scope.rows.length).toBe(1);
-            $scope.addEpisode();
-            expect($scope.rows.length).toBe(1);
-        });
+        it('should not add the new episode to episodes if it does not have the current tag',
+           function() {
+               episodeData2.tagging = [{'mine': true, 'id_inpatients': true}];
+               spyOn(Flow, 'enter').and.callFake(fake_episode_resolver);
+               expect($scope.rows.length).toBe(1);
+               $scope.addEpisode();
+               expect($scope.rows.length).toBe(1);
+           });
 
         describe('for a readonly user', function(){
             beforeEach(function(){
@@ -590,6 +632,22 @@ describe('PatientListCtrl', function() {
             afterEach(function(){
                 profile.readonly = false;
             });
+        });
+
+        describe('When the modal is dismissed', function() {
+
+            it('should reset the state', function() {
+                spyOn(Flow, 'enter').and.callFake(
+                    function(){
+                        return {
+                            then : function(cb, eb){ eb() }
+                        }
+                    }
+                );
+                $scope.addEpisode()
+                expect($rootScope.state).toEqual('normal');
+            });
+
         });
     });
 
@@ -620,8 +678,8 @@ describe('PatientListCtrl', function() {
                 $scope.episodes[episodeData.id] = episode;
                 $scope.episodes[episodeData2.id] = episode2;
                 $scope.rows = [
-                  $scope.episodes[episode.id],
-                  $scope.episodes[episode2.id]
+                    $scope.episodes[episode.id],
+                    $scope.episodes[episode2.id]
                 ];
                 $scope._post_discharge('discharged', episode);
                 var first_name = $scope.select_episode.calls.allArgs()[0][0].demographics[0].first_name;
@@ -723,53 +781,88 @@ describe('PatientListCtrl', function() {
     });
 
     describe('removeFromMine()', function() {
-      it('should be null if readonly', function() {
-          profile.readonly = true;
+        it('should be null if readonly', function() {
+            profile.readonly = true;
 
-          var rows = _.map($scope.rows, function(episode){
-            return episode.id;
-          });
-          expect($scope.removeFromMine($scope.episode));
-          $rootScope.$apply();
-          var newRows = _.map($scope.rows, function(episode){
-            return episode.id;
-          });
-          expect(rows).toEqual(newRows);
-      });
+            var rows = _.map($scope.rows, function(episode){
+                return episode.id;
+            });
+            expect($scope.removeFromMine($scope.episode));
+            $rootScope.$apply();
+            var newRows = _.map($scope.rows, function(episode){
+                return episode.id;
+            });
+            expect(rows).toEqual(newRows);
+        });
 
-      it('should remove the mine tag', function() {
-          var selectedEpisodeId = $scope.episode.id;
-          profile.readonly = false;
-          $scope.removeFromMine($scope.episode);
-          $rootScope.$apply();
+        it('should remove the mine tag', function() {
+            var selectedEpisodeId = $scope.episode.id;
+            profile.readonly = false;
+            $scope.removeFromMine($scope.episode);
+            $rootScope.$apply();
 
-          // the episode should be removed from the displayed episodes
-          var displayed_episodes = _.map($scope.rows, function(episode){
-            return episode.id;
-          });
+            // the episode should be removed from the displayed episodes
+            var displayed_episodes = _.map($scope.rows, function(episode){
+                return episode.id;
+            });
 
-          var isRemoved = _.contains(displayed_episodes, selectedEpisodeId);
-          expect(isRemoved).toBe(true);
-      });
+            var isRemoved = _.contains(displayed_episodes, selectedEpisodeId);
+            expect(isRemoved).toBe(true);
+        });
+
+        it('should call removeFromList', function() {
+            var selectedEpisodeId = $scope.episode.id;
+            profile.readonly = false;
+            spyOn($scope, 'removeFromList');
+            spyOn($scope.episode.tagging[0], 'save').and.returnValue({
+                then: function(f){ f() }
+            })
+            $scope.removeFromMine($scope.episode);
+            $scope.$apply();
+
+            expect($scope.removeFromList).toHaveBeenCalledWith($scope.episode)
+        });
+
     });
 
-    describe('editing an item', function() {
+    describe('newNamedItem', function(){
+        it('should pass through the current scopes tags', function(){
+            spyOn(episode.recordEditor, "newItem");
+            $scope.newNamedItem(episode, "someName");
+            expect(episode.recordEditor.newItem).toHaveBeenCalledWith("someName")
+        });
+    });
+
+    describe('is_tag_visible_in_list', function() {
+
+        it('should return if the tag is visible', function() {
+            expect($scope.is_tag_visible_in_list('tropical')).toEqual(false);
+            $scope.metadata.tag_visible_in_list = ['tropical'];
+            expect($scope.is_tag_visible_in_list('tropical')).toEqual(true);
+        });
+
+    });
+
+    describe('editNamedItem', function() {
+
         it('should call through to the record editor', function(){
             $scope.editNamedItem($scope.episode, 'demographics', 0);
             expect($scope.episode.recordEditor.editItem).toHaveBeenCalledWith(
                 'demographics', 0
             );
         });
-    });
 
-    describe('adding an item', function() {
-        var iix;
-
-        beforeEach(function() {
-            iix = episodeData.diagnosis.length;
+        it('should re-check visibility if we edit tagging', function() {
+            spyOn($scope, 'getVisibleEpisodes');
+            $scope.episode.recordEditor.editItem.and.returnValue(
+                { then: function(f){ f() }}
+            );
+            $scope.editNamedItem($scope.episode, 'tagging', 0);
+            expect($scope.getVisibleEpisodes).toHaveBeenCalledWith();
         });
 
-        it('should call through to the record editor', function() {
+        it('should call through to the record editor when we add an item', function() {
+            var iix = episodeData.diagnosis.length;
             $scope.editNamedItem($scope.episode, "diagnosis", iix);
             expect($scope.episode.recordEditor.editItem).toHaveBeenCalledWith(
                 'diagnosis', iix
@@ -777,5 +870,15 @@ describe('PatientListCtrl', function() {
         });
     });
 
+    describe('keyboard_shortcuts()', function() {
+        it('should open the modal', function() {
+            spyOn($modal, 'open');
+            $scope.keyboard_shortcuts()
+            expect($modal.open).toHaveBeenCalledWith({
+                controller: 'KeyBoardShortcutsCtrl',
+                templateUrl: 'list_keyboard_shortcuts.html'
+            })
+        });
+    });
 
 });

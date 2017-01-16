@@ -2,23 +2,23 @@
 Unittests for opal.models.Episode
 """
 import datetime
+from mock import patch
 
 from django.contrib.auth.models import User
 
 from opal.core.episodes import InpatientEpisode
 from opal.core.test import OpalTestCase
-from opal.models import Patient, Episode, Team, Tagging
+from opal.models import Patient, Episode, Tagging
 
 from opal.tests import test_patient_lists # ensure the lists are loaded
-from opal.tests.models import Hat, HatWearer, Dog, DogOwner
+from opal.tests.models import (
+    Hat, HatWearer, Dog, DogOwner, InvisibleHatWearer
+)
 
 class EpisodeTest(OpalTestCase):
 
     def setUp(self):
         self.patient, self.episode = self.new_patient_and_episode_please()
-        self.hiv     = Team.objects.create(name='hiv', title='HIV')
-        self.mine    = Team.objects.create(name='mine', title='Mine')
-        self.micro   = Team.objects.create(name='microbiology', title='Microbiology')
         self.episode.stage = "Active TB"
         self.episode.save()
 
@@ -82,6 +82,15 @@ class EpisodeTest(OpalTestCase):
 
         self.assertEqual(as_dict["stage"], "Active TB")
 
+
+    @patch('opal.models.episode_subrecords')
+    def test_not_bulk_serialisable_episode_subrecords(self, episode_subrecords):
+        episode_subrecords.return_value = [InvisibleHatWearer]
+        _, episode = self.new_patient_and_episode_please()
+        to_dict = episode.to_dict(self.user)
+        self.assertNotIn(InvisibleHatWearer.get_api_name(), to_dict)
+
+
     def test_to_dict_with_multiple_episodes(self):
         self.episode.date_of_admission = datetime.date(2015, 7, 25)
         self.episode.save()
@@ -125,7 +134,9 @@ class EpisodeTest(OpalTestCase):
         serialised = self.episode.to_dict(self.user)
         self.assertEqual(2, len(serialised['episode_history']))
 
-    def test_to_dict_episode_with_many_to_many(self):
+    @patch('opal.models.episode_subrecords')
+    def test_to_dict_episode_with_many_to_many(self, episode_subrecords):
+        episode_subrecords.return_value = [HatWearer]
         prev = self.patient.create_episode()
         bowler = Hat.objects.create(name="bowler")
         top = Hat.objects.create(name="top")

@@ -114,7 +114,7 @@ looks a lot like this:
         class Meta:
             abstract = True
 
-### Lookup Lists
+### Reference data
 
 You will notice that the condition field has a custom field type - `ForeignKeyOrFreeText`.
 This is a custom field type that we use with Opal when we want to use a
@@ -143,6 +143,13 @@ Now refresh your application and try adding a new diagnosis to your patient. As 
 the condition field, you'l see that the conditions we just imported appear as suggestions:
 
 <img src="/img/tutorial-conditions.png" style="margin: 12px auto; border: 1px solid black;"/>
+
+
+<blockquote><small>
+You can add your own Lookup Lists to your application. <br />
+For more details consult the
+<a href="../guides/referencedata/#adding-a-lookup-list">Reference Data guide</a>.
+</small></blockquote>
 
 ### Add your own data models
 

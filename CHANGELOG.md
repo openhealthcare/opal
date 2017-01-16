@@ -1,5 +1,21 @@
 ### 0.8.0 (Major Release)
 
+#### opal.core.api.patient_from_pk
+
+A decorator that changes a method that is passed a pk, to a method that is passed a patient.
+
+
+#### ToDictMixin._bulk_serialise
+
+Adds a flag to the to dict mixin to determine whether the item is serialised as part of `Episode/Patient.to_dict`.
+
+
+#### Fixes bugs in add many subrecord radio buttons
+
+Previously multiple radio buttons for the same subrecord field on the same page would
+not appear to the user to update correctly. This has now been fixed.
+
+
 #### Angular UI Libraries
 
 0.8.0 consolidates Angular UI libraries bundled with Opal. We have removed Angular Strap, and
@@ -33,13 +49,31 @@ Note unlike the traditional choices implementation only the last value of the ch
 
 What is displayed to the user and saved to the database is 'Purple' or 'Red' respectively.
 
+#### element name in template tags
+
+The html attribute 'name' for form elements generated with the Opal `{% forms %}` templatetag library used to be inferred from the model name. Although this remains the default you can also set it with an angular expression:
+
+```html
+{% select field="Demographics.first_name" element_name="...Your Angular expression..." %}
+```
+
+#### Model removals
+
+The models `Team`, `GP`, `CommunityNurse` and `LocatedModel` - marked for removal since 0.6.0
+have now been removed.
+
+As part of this change, the add episode modal previously available at
+`/templates/modals/add_episode.html/` is now not available at the url with a trailing slash.
+Any controllers attempting to open the modal e.g. custom list flows should update their
+`$modal.open` call to remove the trailing slash.
+
 
 #### Python 3
 
 Opal 0.8.0 is the first version of Opal to support Python 3. This has meant changing the default
 ordering of `PatientList` instances to 0 rather than None.
 
-Moving forwards we expect all new code in Opal to be compatible with both Python 2.7 and 3.5.
+Moving forwards we expect all new code in Opal to be compatible both Python 2.7 / 3.4 / 3.5 / 3.6.
 
 This introduces an explicit Opal dependency on the Six module for maintaining codebases that span
 Python 2.x and 3.x.
@@ -48,6 +82,11 @@ Python 2.x and 3.x.
 
 Adds the class `opal.core.patient_lists.TabbedPatientListGroup` which displays groups of related
 lists as tabs at the top of each member list.
+
+#### PatientList sort order
+
+To enable custom sort orders for individual `PatientList`s we introduce the `comparator_service` attribute.
+This names an Angular service which will return a list of comparator functions.
 
 #### Template re-naming
 
@@ -105,6 +144,10 @@ Look up lists now load in from individual apps. The look for a file at {{ app }}
 
 The default admin url is now `/admin/` - rather than `/admin/?` this results in more readable
 admin urls and is closer to what most applications do with the Django admin.
+
+The roles field `opal.models.UserProfile.roles` has been updated to be `blank=True`. This allows the editing
+of users without specific roles assigned in the Django admin. Although this introduces no changes at the
+database level, this does introduce a migration.
 
 #### Updates to the Dependency Graph
 

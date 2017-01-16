@@ -348,7 +348,7 @@ describe('EditItemCtrl', function (){
             expect($scope.editing.microbiology_test.consistency_token).toEqual("23423223");
         });
 
-        it('should should not clean id, date ordered or episode id', function(){
+        it('should should not clean _client, id, date ordered or episode id', function(){
             var today = moment().format('DD/MM/YYYY');
             $scope.editing.microbiology_test.test = "C diff";
             $scope.editing.microbiology_test.alert_investigation = true;
@@ -359,8 +359,9 @@ describe('EditItemCtrl', function (){
             $scope.editing.microbiology_test.date_ordered = today;
             $scope.editing.microbiology_test.consistency_token = "122112";
             $scope.editing.microbiology_test.test = "";
+            $scope.editing.microbiology_test._client.something = "important"
             $scope.$digest();
-
+            expect($scope.editing.microbiology_test._client.something).toEqual("important");
             expect($scope.editing.microbiology_test.c_difficile_antigen).not.toEqual("pending");
             expect($scope.editing.microbiology_test.episode_id).toBe(1);
             expect($scope.editing.microbiology_test.id).toBe(2);

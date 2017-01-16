@@ -8,7 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 
 import reversion
 
-from opal.models import Episode, Patient, Team, Synonym, Gender
+from opal.models import Episode, Patient, Synonym, Gender
 from opal.core.test import OpalTestCase
 from opal.tests.episodes import RestrictedEpisodeCategory
 
@@ -76,8 +76,6 @@ class DatabaseQueryTestCase(OpalTestCase):
         self.demographics.date_of_birth = self.DATE_OF_BIRTH
         self.demographics.save()
 
-        self.general_team, _ = Team.objects.get_or_create(
-            name='general', title='General Team')
         self.name_criteria = [
             {
                 u'column': u'demographics',

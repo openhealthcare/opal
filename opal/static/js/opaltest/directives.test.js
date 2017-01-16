@@ -247,17 +247,14 @@ describe('OPAL Directives', function(){
 
         it('should change the button to disabled if the form has been submitted', function(){
           scope.editing = {something: ""};
-          var markup = '<form name="form"><input required ng-model="editing.something"><button check-form="form">Save</button></form>';
+          var markup = '<form name="form"><input ng-model="editing.something"><button check-form="form">Save</button></form>';
           compileDirective(markup);
           var btn = $(element.find("button"));
           btn.click();
           var innerscope = angular.element(btn).scope();
           var input = $(element.find("input"));
+          expect(innerscope.form.$valid).toBe(true);
           expect(btn.prop('disabled')).toBe(true);
-          expect(innerscope.form.$submitted).toBe(true);
-          scope.editing.something = 'hello';
-          scope.$apply();
-          expect(btn.prop('disabled')).toBe(false);
         });
 
         it('should disable buttons on click and call through', function(){

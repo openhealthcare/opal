@@ -117,15 +117,6 @@ class EpisodeDetailTemplateView(LoginRequiredMixin, TemplateView):
         return context
 
 
-class AddEpisodeTemplateView(LoginRequiredMixin, TemplateView):
-    template_name = 'add_episode_modal.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(AddEpisodeTemplateView, self).get_context_data(**kwargs)
-        context['teams'] = models.Team.for_user(self.request.user)
-        return context
-
-
 class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'opal.html'
 
