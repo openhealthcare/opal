@@ -20,7 +20,7 @@ describe('CopyToCategoryCtrl', function(){
         patient = {};
         var category_name = 'newcategory';
         modalInstance = $modal.open({template: 'notatemplate'});
-
+        spyOn($window, 'alert');
         $controller('CopyToCategoryCtrl', {
             $scope: $scope,
             patient: patient,
@@ -65,6 +65,21 @@ describe('CopyToCategoryCtrl', function(){
             $httpBackend.flush();
 
             expect(modalInstance.close).toHaveBeenCalled()
+        });
+
+        it('should close the modal even if we failed', function() {
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+            $httpBackend.expectPOST('/episode/2/actions/copyto/newcategory')
+                .respond(500, '');
+
+            spyOn(modalInstance, 'close');
+            patient.active_episode_id = 2;
+            $scope.import_existing();
+
+            $rootScope.$apply();
+            $httpBackend.flush();
+            expect($window.alert).toHaveBeenCalled();
+            expect(modalInstance.close).toHaveBeenCalled();
         });
 
     })
