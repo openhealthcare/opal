@@ -289,17 +289,19 @@ directives.directive('checkForm', function(){
             $element.prop( "disabled", true );
           }
         }
-        scope.$watch("checkForm.$valid", function(){
-            if(scope.checkForm.$valid && hadError){
-              hadError = false;
-              $element.prop( "disabled", false);
-            }
-            else if(_.size(scope.checkForm.$error) && scope.checkForm.$submitted){
-              $element.prop( "disabled", true);
-            }
-        });
       });
 
+      scope.$watch("checkForm.$valid", function(){
+        if(scope.checkForm){
+          if(scope.checkForm.$valid && hadError){
+            hadError = false;
+            $element.prop( "disabled", false);
+          }
+          else if(_.size(scope.checkForm.$error) && scope.checkForm.$submitted){
+            $element.prop( "disabled", true);
+          }
+        }
+      });
     }
   }
 });
