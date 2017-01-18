@@ -8,8 +8,8 @@ angular.module('opal.services')
         var DATE_FORMAT = 'DD/MM/YYYY';
 
         Episode = function(resource) {
-	        var episode = this;
-	        var column, field, attrs;
+            var episode = this;
+            var column, field, attrs;
 
             episode.recordEditor = new RecordEditor(episode);
 
@@ -54,9 +54,9 @@ angular.module('opal.services')
                 this.link = "/patient/" + episode.demographics[0].patient_id + "/" + episode.id;
             };
 
-	        this.getNumberOfItems = function(columnName) {
-	            return episode[columnName].length;
-	        };
+            this.getNumberOfItems = function(columnName) {
+                return episode[columnName].length;
+            };
 
             // Getter function to return active episode tags.
             // Default implementation just hits tagging
@@ -78,44 +78,44 @@ angular.module('opal.services')
                 return this.getTags().indexOf(tag) != -1;
             }
 
-	        this.newItem = function(columnName, opts) {
+            this.newItem = function(columnName, opts) {
                 if(!opts){ opts = {}; }
 
                 if(!opts.column){
                     opts.column = $rootScope.fields[columnName];
                 }
 
-	            var attrs = {};
-	            return new Item(attrs, episode, opts.column);
-	        };
+                var attrs = {};
+                return new Item(attrs, episode, opts.column);
+            };
 
-	        this.getItem = function(columnName, iix) {
-	            return episode[columnName][iix];
-	        };
+            this.getItem = function(columnName, iix) {
+                return episode[columnName][iix];
+            };
 
             //
             // add an item (e.g. instance of a subfield) to this episode
             //
-	        this.addItem = function(item) {
+            this.addItem = function(item) {
                 // Sometimes we add an item from a non-active schema.
                 if(!episode[item.columnName]){
                     episode[item.columnName] = [];
                 }
-	            episode[item.columnName].push(item);
+                episode[item.columnName].push(item);
                 if(item.sort){
                     this.sortColumn(item.columnName, item.sort);
                 }
-	        };
+            };
 
-	        this.removeItem = function(item) {
-	            var items = episode[item.columnName];
-	            for (iix = 0; iix < items.length; iix++) {
-		            if (item.id == items[iix].id) {
-		                items.splice(iix, 1);
-		                break;
-		            };
-	            };
-	        };
+            this.removeItem = function(item) {
+                var items = episode[item.columnName];
+                for (iix = 0; iix < items.length; iix++) {
+                    if (item.id == items[iix].id) {
+                        items.splice(iix, 1);
+                        break;
+                    };
+                };
+            };
 
             this.makeCopy = function(){
                 var copy = {
@@ -129,38 +129,38 @@ angular.module('opal.services')
                 return copy
             };
 
-	        this.compare = function(other, comparators) {
+            this.compare = function(other, comparators) {
                 //
                 // The default comparators we use for our Episode sorting in lists
                 //
                 var comparators = comparators || [
-  		            function(p) { return CATEGORIES.indexOf(p.location[0].category) },
-  		            function(p) { return p.location[0].hospital },
+                    function(p) { return CATEGORIES.indexOf(p.location[0].category) },
+                    function(p) { return p.location[0].hospital },
                     // TODO: remove this UCH specific code from Opal
-  		            function(p) {
-  		                if (p.location[0].hospital == 'UCH' &&
+                    function(p) {
+                        if (p.location[0].hospital == 'UCH' &&
                             p.location[0].ward.match(/^T\d+/)) {
-  			                return parseInt(p.location[0].ward.substring(1));
-  		                } else {
-  			                return p.location[0].ward
-  		                }
-  		            },
-  		            function(p) { return parseInt(p.location[0].bed) }
-  	            ];
+                            return parseInt(p.location[0].ward.substring(1));
+                        } else {
+                            return p.location[0].ward
+                        }
+                    },
+                    function(p) { return parseInt(p.location[0].bed) }
+                ];
 
                 var v1, v2;
-  	            for (var ix = 0; ix < comparators.length; ix++) {
-  		            v1 = comparators[ix](episode);
-  		            v2 = comparators[ix](other);
-  		            if (v1 < v2) {
-  		                return -1;
-  		            } else if (v1 > v2) {
-  		                return 1;
-  		            }
-  	            }
+                for (var ix = 0; ix < comparators.length; ix++) {
+                    v1 = comparators[ix](episode);
+                    v2 = comparators[ix](other);
+                    if (v1 < v2) {
+                        return -1;
+                    } else if (v1 > v2) {
+                        return 1;
+                    }
+                }
 
-  	            return 0;
-	        };
+                return 0;
+            };
 
             //
             //  Save our Episode.
@@ -190,17 +190,17 @@ angular.module('opal.services')
                 $http[method](url, attrs).then(
                     function(response){
                         episode.initialise(response.data);
-		                deferred.resolve();
+                        deferred.resolve();
                     },
                     function(response) {
-		                // TODO handle error better
-		                if (response.status == 409) {
-			                alert('Item could not be saved because somebody else has \
+                        // TODO handle error better
+                        if (response.status == 409) {
+                            alert('Item could not be saved because somebody else has \
 recently changed it - refresh the page and try again');
-		                } else {
-			                alert('Item could not be saved');
-		                };
-		            }
+                        } else {
+                            alert('Item could not be saved');
+                        };
+                    }
                 );
 
                 return deferred.promise;
@@ -231,9 +231,9 @@ recently changed it - refresh the page and try again');
         Episode.findByHospitalNumber = function(number, callbacks){
             var deferred = $q.defer();
             var result = {
-    			patients: [],
-    			hospitalNumber: number
-			};
+                patients: [],
+                hospitalNumber: number
+            };
             // record loader is sued by the field translater to
             // cast the results fields
             deferred.promise.then(function(result){
@@ -248,15 +248,15 @@ recently changed it - refresh the page and try again');
             });
 
             if(number){
-			    // The user entered a hospital number
-			    $http.get('/search/patient/?hospital_number=' + number)
+                // The user entered a hospital number
+                $http.get('/search/patient/?hospital_number=' + number)
                     .success(function(response) {
-					    // We have retrieved patient records matching the hospital number
-  					    result.patients = response;
+                        // We have retrieved patient records matching the hospital number
+                        result.patients = response;
                         // cast the patient fields
                         deferred.resolve(result);
 
-				    });
+                    });
             }else{
                 deferred.resolve(result);
             }
