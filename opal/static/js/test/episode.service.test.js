@@ -333,6 +333,13 @@ describe('Episode', function() {
 
         });
 
+        describe('isDischarged()', function() {
+
+            it('should return true', function() {
+                expect(episode.isDischarged()).toEqual(true);
+            });
+
+        });
 
         describe('findByHospitalNumber()', function (){
             it('Should call the newPatient callback', function () {
