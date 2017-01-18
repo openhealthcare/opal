@@ -288,6 +288,14 @@ tr.selected, .spreadsheet-view.selected {
 }
 .navbar i { font-size: 18px; }
 
+ul.dropdown-menu li .search-suggest {
+      padding: 6px 12px;
+}
+
+ul.dropdown-menu li.active .search-suggest {
+  background-color: #5fa2dd;
+}
+
 /* Growl messages */
 .growl-container.growl-fixed.top-right {
   top: 54px;
