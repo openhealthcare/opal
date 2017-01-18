@@ -10,7 +10,7 @@ module.exports = function(config){
       'opal/routes.js',
       '../../core/search/static/js/search/controllers/*',
       '../../core/search/static/js/search/services/*',
-      'opaltest/*.js',
+      'test/*.js',
       '../../core/search/static/js/test/*',
     ];
 
