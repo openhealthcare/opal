@@ -73,13 +73,13 @@ angular.module('opal.controllers').controller(
             $scope.query.searchTerm = "";
         });
 
-        // redirect to the patient
+        // Redirect to the patient
         // if they select from
-        // the drop down list
-        $scope.$on('$typeahead.select', function(event, patientSummary) {
-            $window.location.href = patientSummary.link;
-        });
-
+        // the autocomplete search
+        $scope.selected = function(item, model, label){
+            $scope.query.autocompleteSearchTerm = "";
+            $window.location.href = item.link;
+        }
 
         $scope.$watch("query.autocompleteSearchTerm", function(){
             if($scope.query.autocompleteSearchTerm.length){
