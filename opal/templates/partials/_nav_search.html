@@ -24,8 +24,8 @@
           ng-model="query.autocompleteSearchTerm"
           typeahead-on-select="selected($item, $model, $label)"
           typeahead-template-url="searchSuggestTemplate.html"
+          typeahead-focus-first="false"
           uib-typeahead="i for i in results | limitTo:8"
-
           {% else %}
             ng-model="query.searchTerm"
           {% endif %}
