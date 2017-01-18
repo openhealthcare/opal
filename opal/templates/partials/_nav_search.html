@@ -1,7 +1,8 @@
 <script type="text/ng-template" id="searchSuggestTemplate.html">
-  <h4 class="inline orange">
-    [[ match.label.first_name ]] [[ match.label.surname ]]
-  </h4>
+  <div class="search-suggest">
+    <h4 class="inline orange">
+      [[ match.label.first_name ]] [[ match.label.surname ]]
+    </h4>
     <span ng-show="match.value.dateOfBirth">
     ([[ match.label.dateOfBirth | shortDate ]])
     </span>
@@ -9,7 +10,10 @@
     [[ match.label.hospitalNumber ]]
     - [[ match.label.count ]] Episode<span ng-show="match.label.count > 1">s</span> ([[ match.label.categories|title ]]) [[ match.label.years ]]
     </div>
+  </div>
+  </div>
 </script>
+
 
 <div ng-show="$location.path().indexOf('/search')">
   <div ng-controller="SearchCtrl">
@@ -18,8 +22,10 @@
         <input
           {% if AUTOCOMPLETE_SEARCH %}
           ng-model="query.autocompleteSearchTerm"
+          typeahead-on-select="selected($item, $model, $label)"
           typeahead-template-url="searchSuggestTemplate.html"
           uib-typeahead="i for i in results | limitTo:8"
+
           {% else %}
             ng-model="query.searchTerm"
           {% endif %}
