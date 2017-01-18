@@ -16,7 +16,7 @@ angular.module('opal.controllers').controller(
 	    $scope.hospital_list = ['Heart Hospital', 'NHNN', 'UCH'];
         $scope.paginator = new Paginator($scope.search);
 
-        var getQueryParam = function(){
+        $scope.getQueryParam = function(){
             if($scope.query.searchTerm.length){
                 return $scope.query.searchTerm;
             }
@@ -95,7 +95,7 @@ angular.module('opal.controllers').controller(
             }
 
             _.each($scope.searchColumns, function(c){
-                params[c] = getQueryParam();
+                params[c] = $scope.getQueryParam();
             });
 
             if($window.location.pathname !== "/"){
