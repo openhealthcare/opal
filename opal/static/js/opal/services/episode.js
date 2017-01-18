@@ -195,10 +195,10 @@ angular.module('opal.services')
                     function(response) {
                         // TODO handle error better
                         if (response.status == 409) {
-                            alert('Item could not be saved because somebody else has \
+                            $window.alert('Item could not be saved because somebody else has \
 recently changed it - refresh the page and try again');
                         } else {
-                            alert('Item could not be saved');
+                            $window.alert('Item could not be saved');
                         };
                     }
                 );

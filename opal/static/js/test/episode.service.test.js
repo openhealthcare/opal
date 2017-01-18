@@ -313,6 +313,24 @@ describe('Episode', function() {
                 expect(episode.date_of_admission).toEqual(new Date(2013, 10, 20))
             });
 
+            it('should cope with consistency token errors', function() {
+                spyOn($window, 'alert');
+                $httpBackend.expectPUT('/api/v0.1/episode/555/', attrsJsonDate)
+                    .respond(409, {'error': 'Consistency tokens'});
+                episode.save(attrsJsonDate);
+                $httpBackend.flush();
+                expect($window.alert).toHaveBeenCalled();
+            });
+
+            it('should cope with 500 errors', function() {
+                spyOn($window, 'alert');
+                $httpBackend.expectPUT('/api/v0.1/episode/555/', attrsJsonDate)
+                    .respond(500, {'error': 'Cripes!'});
+                episode.save(attrsJsonDate);
+                $httpBackend.flush();
+                expect($window.alert).toHaveBeenCalledWith('Item could not be saved');
+            });
+
         });
 
 
