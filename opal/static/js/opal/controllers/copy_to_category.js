@@ -31,6 +31,9 @@ controllers.controller(
             CopyToCategory($scope.patient.active_episode_id, category_name).then(
                 function(episode){
                     $modalInstance.close(episode);
+                },
+                function(episode){
+                    $modalInstance.close(episode);
                 }
             )
         };

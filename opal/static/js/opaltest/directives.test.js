@@ -2,7 +2,7 @@ describe('OPAL Directives', function(){
     "use strict";
 
     var $templateCache, $timeout, $httpBackend;
-    var element, scope;
+    var element, scope, $exceptionHandler;
     var responseMarkUp = ' \
       <ui-select class="col-sm-8" multiple ng-model="value" on-remove="onRemove($item, $model)" on-select="onSelect($item, $model)" theme="bootstrap"> \
         <ui-select-match>[[ $item.display_name ]]</ui-select-match> \
@@ -49,6 +49,7 @@ describe('OPAL Directives', function(){
         $timeout = $injector.get('$timeout');
         $rootScope = $injector.get('$rootScope');
         $templateCache = $injector.get('$templateCache');
+        $exceptionHandler = $injector.get('$exceptionHandler');
       });
 
       $templateCache.put('/templates/ng_templates/tag_select.html', responseMarkUp);
@@ -247,24 +248,30 @@ describe('OPAL Directives', function(){
 
         it('should change the button to disabled if the form has been submitted', function(){
           scope.editing = {something: ""};
-          var markup = '<form name="form"><input ng-model="editing.something"><button check-form="form">Save</button></form>';
+          scope.clickfn = jasmine.createSpy('clickfn');
+          var markup = '<form name="form"><input ng-model="editing.something"><button check-form="form" ng-click="clickfn()">Save</button></form>';
           compileDirective(markup);
           var btn = $(element.find("button"));
           btn.click();
+          scope.$apply();
           var innerscope = angular.element(btn).scope();
           var input = $(element.find("input"));
           expect(innerscope.form.$valid).toBe(true);
           expect(btn.prop('disabled')).toBe(true);
+          expect(scope.clickfn.calls.count()).toEqual(1);
         });
 
-        it('should disable buttons on click and call through', function(){
-            var clickfn = jasmine.createSpy('clickfn');
-            scope.clickfn = clickfn;
-            var markup = '<button one-click-only ng-click="clickfn()">Save</button>';
-            compileDirective(markup);
-            $(element).click();
-            expect(clickfn.calls.count()).toEqual(1);
-            expect($(element).prop('disabled')).toBe(true);
+        it('should handle the issue for when the form var is removed on submission', function(){
+          scope.editing = {something: ""};
+          scope.clickfn = jasmine.createSpy('clickfn');
+          var markup = '<form name="form"><input ng-model="editing.something"><button check-form="form" ng-click="clickfn()">Save</button></form>';
+          compileDirective(markup);
+          scope.$apply();
+          var btn = $(element.find("button"));
+          var innerscope = angular.element(btn).scope();
+          expect(!!innerscope.form).toBe(true);
+          innerscope.form = undefined;
+          scope.$apply();
         });
     });
 

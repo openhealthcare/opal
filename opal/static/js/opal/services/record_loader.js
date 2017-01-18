@@ -1,11 +1,14 @@
 angular.module('opal.services')
     .factory('recordLoader', function($q, $http, $rootScope, $window){
-        var deferred = $q.defer();
-        $http.get('/api/v0.1/record/').then(function(response){
-            var fields = response.data;
-            $rootScope.fields = fields;
-            deferred.resolve(fields)
-        }, function(){ $window.alert('Records could not be loaded')}
-                                           );
-        return deferred.promise;
+    "use strict";
+
+    var deferred = $q.defer();
+    var url = '/api/v0.1/record/';
+    $http({ cache: true, url: url, method: 'GET'}).then(function(response){
+        var fields = response.data;
+        $rootScope.fields = fields;
+        deferred.resolve(fields)
+    }, function(){ $window.alert('Records could not be loaded')}
+                                       );
+    return deferred.promise;
 });
