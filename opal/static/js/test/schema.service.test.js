@@ -70,13 +70,14 @@ describe('schema', function(){
         schema = new Schema(exampleSchemaData);
     })
 
-    it('should filter advanced searchable columns', function () {
-        expect(schema.getAdvancedSearchColumns()).toEqual([exampleSchemaData[1]]);
-    });
-
     it('should keep a publically accessible version of the columns', function(){
         expect(schema.columns).toEqual(exampleSchemaData);
     })
+
+    it('should throw an error if asked for a non-column', function() {
+        expect(function(){ schema.getColumn('notarealcolumn'); })
+            .toThrow(new Error('No such column with name: "notarealcolumn"'))
+    });
 
     it('should recognise singletons', function(){
         expect(schema.isSingleton("demographics")).toBeFalsy();
@@ -87,4 +88,9 @@ describe('schema', function(){
         expect(schema.isReadOnly("tagging")).toBeFalsy();
         expect(schema.isReadOnly("demographics")).toBeTruthy();
     });
+
+    it('should filter advanced searchable columns', function () {
+        expect(schema.getAdvancedSearchColumns()).toEqual([exampleSchemaData[1]]);
+    });
+
 });

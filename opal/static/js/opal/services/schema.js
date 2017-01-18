@@ -1,10 +1,10 @@
 angular.module('opal.services').factory('Schema', function() {
     return function(columns) {
-	    this.columns = columns;
+        this.columns = columns;
 
-	    this.getNumberOfColumns = function() {
-	        return columns.length;
-	    };
+        this.getNumberOfColumns = function() {
+            return columns.length;
+        };
 
 	    this.getColumn = function(columnName) {
             var result = _.find(columns, function(c){
@@ -15,7 +15,7 @@ angular.module('opal.services').factory('Schema', function() {
                 return result;
             }
 
-	        throw 'No such column with name: "' + columnName + '"';
+	        throw new Error('No such column with name: "' + columnName + '"');
 	    };
 
 	    this.isSingleton = function(columnName) {
