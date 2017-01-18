@@ -11,6 +11,7 @@ module.exports = function(config){
       '../../core/search/static/js/search/controllers/*',
       '../../core/search/static/js/search/services/*',
       'opaltest/*.js',
+      '../../core/search/static/js/test/*',
     ];
 
     var defaultConfig = karmaDefaults(includedFiles, baseDir, coverageFiles);
