@@ -150,6 +150,15 @@ describe('Episode', function() {
         });
     });
 
+    it('should compare comparators that are different', function() {
+        var datacopy = angular.copy(episodeData);
+        datacopy.location[0].bed = '87';
+        var first       = new Episode(episodeData);
+        var second      = new Episode(datacopy);
+        expect(first.compare(second)).toEqual(-1);
+        expect(second.compare(first)).toEqual(1);
+    });
+
     it('should be equal for non UCH hospitals', function() {
         var datacopy = angular.copy(episodeData);
         datacopy.location[0].hospital = 'RFH';
