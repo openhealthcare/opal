@@ -279,6 +279,29 @@ class FormRenderTestCase(OpalTestCase):
             '{% load forms %}\n{% checkbox  field="Colour.name"  %}'
         )
 
+    @patch('ffs.Path.__bool__')
+    @patch('ffs.Path.__nonzero__')
+    @patch('ffs.Path.mkdir')
+    @patch.object(Colour, "build_field_schema")
+    def test_makes_forms_dir_if_does_not_exist(self, build_field_schema, mkdir, nonzero,
+                                               booler, lshift):
+        build_field_schema.return_value = {
+            'lookup_list': None,
+            'model': 'Colour',
+            'name': 'name',
+            'title': 'Name',
+            'type': 'null_boolean'
+        },
+
+        # We need both of these to make sure this works on both Python3 and Python2
+        nonzero.return_value = False
+        booler.return_value = False
+
+        scaffold_path = ffs.Path(settings.PROJECT_PATH)/'scaffolding'
+        create_form_template_for(Colour, scaffold_path)
+        mkdir.assert_called_once_with()
+
+
 
 @patch("ffs.Path.__lshift__")
 class RecordRenderTestCase(OpalTestCase):
