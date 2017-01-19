@@ -153,25 +153,34 @@ filters.filter('daysSince', function(daysToFilter){
 
 
 filters.filter('future', function(){
-    return function(input, includeToday){
-        var today = new Date();
+    return function(i, includeToday){
+      if(!i){
+        return false;
+      }
+      var today = new moment();
+      var input = moment(i);
 
-				if(includeToday){
-	        return input >= today;
-				}
-        return input > today;
+			if(includeToday && input.isSame(today, "day")){
+        return true;
+			}
+      return input.isAfter(today, "day");
     };
 });
 
-filters.filter('past', function(){
-    return function(input, includeToday){
-			var today = new Date();
+filters.filter('past', function(toMomentFilter){
+  return function(i, includeToday){
+    if(!i){
+      return false;
+    }
 
-			if(includeToday){
-				return input <= today;
-			}
-			return input < today;
-    };
+    var today = new moment();
+    var input = toMomentFilter(i);
+
+    if(includeToday && input.isSame(today, "day")){
+      return true;
+    }
+    return input.isBefore(today, "day");
+  };
 });
 
 filters.filter('age', function(toMomentFilter){

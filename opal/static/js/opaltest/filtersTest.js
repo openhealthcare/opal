@@ -263,11 +263,15 @@ describe('filters', function() {
                 futureFilter = $injector.get('futureFilter');
 
             });
-            today = new Date();
+            today = moment();
         });
 
+        it('should return false if undefined', function(){
+          expect(futureFilter(undefined)).toBe(false);
+        })
+
         it('should return true if in the future', function(){
-            var tomorrow = today.setDate(today.getDate()+10);
+            var tomorrow = today.add(1, "days");
             expect(futureFilter(tomorrow)).toBe(true);
         });
 
@@ -280,7 +284,7 @@ describe('filters', function() {
         });
 
         it('should return fals if in the past', function(){
-            var yesterday = today.setDate(today.getDate()-10);
+            var yesterday = today.subtract(1, "days");
             expect(futureFilter(yesterday)).toBe(false);
         });
     });
@@ -293,16 +297,20 @@ describe('filters', function() {
                 pastFilter = $injector.get('pastFilter');
 
             });
-            today = new Date();
+            today = moment();
         });
 
+        it('should return false if undefined', function(){
+          expect(pastFilter(undefined)).toBe(false);
+        })
+
         it('should return true if in the future and passed a moment', function(){
-            var tomorrow = moment(today.setDate(today.getDate()+10));
+            var tomorrow = today.add(1, "days");
             expect(pastFilter(tomorrow)).toBe(false);
         });
 
         it('should return false if in the future', function(){
-            var tomorrow = today.setDate(today.getDate()+10);
+            var tomorrow =  today.add(1, "days");
             expect(pastFilter(tomorrow)).toBe(false);
         });
 
@@ -315,12 +323,12 @@ describe('filters', function() {
         });
 
         it('should return true if in the past', function(){
-            var yesterday = today.setDate(today.getDate()-10);
+            var yesterday = today.subtract(1, "days");
             expect(pastFilter(yesterday)).toBe(true);
         });
 
         it('should return true if in the past and passed a moment', function(){
-            var yesterday = moment(today.setDate(today.getDate()-10));
+            var yesterday = today.subtract(1, "days");
             expect(pastFilter(yesterday)).toBe(true);
         });
     });
