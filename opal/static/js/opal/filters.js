@@ -159,6 +159,13 @@ filters.filter('future', function(){
     }
 });
 
+filters.filter('past', function(){
+    return function(input){
+        var today = new Date();
+        return input <= today;
+    }
+});
+
 filters.filter('age', function(toMomentFilter){
     return function(input){
         if(!input){
