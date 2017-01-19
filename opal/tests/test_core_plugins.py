@@ -30,3 +30,14 @@ class RegisterPluginsTestCase(OpalTestCase):
             assert len(w) == 1
             assert issubclass(w[-1].category, DeprecationWarning)
             assert "no longer required" in str(w[-1].message)
+
+
+class PluginsPluginsTestCase(OpalTestCase):
+
+    def test_plugins_warns(self):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
+            plugins.plugins()
+            assert len(w) == 1
+            assert issubclass(w[-1].category, DeprecationWarning)
+            assert "slated for removal" in str(w[-1].message)

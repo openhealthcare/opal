@@ -780,7 +780,7 @@ class PatientListTestCase(TestCase):
 
 class RegisterPluginsTestCase(OpalTestCase):
 
-    @patch('opal.core.api.plugins.plugins')
+    @patch('opal.core.api.plugins.OpalPlugin.list')
     def test_register(self, plugins):
         mock_plugin = MagicMock(name='Mock Plugin')
         mock_plugin.get_apis.return_value = [('thingapi', None)]
