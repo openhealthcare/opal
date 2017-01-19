@@ -59,8 +59,7 @@ class OpalPlugin(discoverable.DiscoverableFeature):
         return {}
 
 
-# These two are only here for legacy reasons.
-# TODO: Consider removing and updating elsewhere.
+# TODO 0.9.0: Remove these
 def register(what):
     warnthem = """
 
