@@ -281,6 +281,42 @@ describe('filters', function() {
         });
     });
 
+    describe('past', function(){
+        var pastFilter, today;
+
+        beforeEach(function(){
+            inject(function($injector){
+                pastFilter = $injector.get('pastFilter')
+
+            });
+            today = new Date();
+        });
+
+        it('should return true if in the future and passed a moment', function(){
+            var tomorrow = moment(today.setDate(today.getDate()+10));
+            expect(pastFilter(tomorrow)).toBe(false);
+        });
+
+        it('should return false if in the future', function(){
+            var tomorrow = today.setDate(today.getDate()+10);
+            expect(pastFilter(tomorrow)).toBe(false);
+        });
+
+        it('should return true if today', function(){
+            expect(pastFilter(new Date())).toBe(true);
+        });
+
+        it('should return true if in the past', function(){
+            var yesterday = today.setDate(today.getDate()-10);
+            expect(pastFilter(yesterday)).toBe(true);
+        });
+
+        it('should return true if in the past and passed a moment', function(){
+            var yesterday = moment(today.setDate(today.getDate()-10));
+            expect(pastFilter(yesterday)).toBe(true);
+        });
+    });
+
     describe('age', function(){
         var ageFilter, today;
 
