@@ -153,10 +153,25 @@ filters.filter('daysSince', function(daysToFilter){
 
 
 filters.filter('future', function(){
-    return function(input){
+    return function(input, includeToday){
         var today = new Date();
-        return input >= today;
-    }
+
+				if(includeToday){
+	        return input >= today;
+				}
+        return input > today;
+    };
+});
+
+filters.filter('past', function(){
+    return function(input, includeToday){
+			var today = new Date();
+
+			if(includeToday){
+				return input <= today;
+			}
+			return input < today;
+    };
 });
 
 filters.filter('age', function(toMomentFilter){
