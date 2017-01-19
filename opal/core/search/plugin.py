@@ -22,5 +22,3 @@ class SearchPlugin(plugins.OpalPlugin):
             "js/search/controllers/save_filter.js",
         ]
     }
-
-plugins.register(SearchPlugin)

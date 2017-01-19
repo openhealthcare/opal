@@ -1413,7 +1413,7 @@ class UserProfile(models.Model):
         Return a roles dictionary for this user
         """
         roles = {}
-        for plugin in plugins.plugins():
+        for plugin in plugins.OpalPlugin.list():
             roles.update(plugin().roles(self.user))
         roles['default'] = [r.name for r in self.roles.all()]
         return roles

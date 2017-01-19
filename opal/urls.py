@@ -87,7 +87,7 @@ urlpatterns += staticfiles_urlpatterns()
 
 from opal.core import plugins
 
-for plugin in plugins.plugins():
+for plugin in plugins.OpalPlugin.list():
     urlpatterns += plugin.get_urls()
 
 urlpatterns += patterns(
