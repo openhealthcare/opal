@@ -45,7 +45,7 @@ def application_actions():
         app = application.get_app()
         for action in app.actions:
             yield action
-        for plugin in plugins.plugins():
+        for plugin in plugins.OpalPlugin.list():
             for action in plugin.actions:
                 yield action
     return dict(actions=actions)

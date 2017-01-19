@@ -152,5 +152,5 @@ def get_all_components():
     All components of an Opal application - all plugins and the application.
     """
     return itertools.chain(
-        plugins.plugins(), [get_app()]
+        plugins.OpalPlugin.list(), [get_app()]
     )

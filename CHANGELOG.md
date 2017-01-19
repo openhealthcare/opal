@@ -1,5 +1,13 @@
 ### 0.8.0 (Major Release)
 
+#### Plugins
+
+Plugins have been refactored and are now `DiscoverableFeatures`. This should have no impact on existing
+plugins, however the functions `opal.core.plugins.register` and `opal.core.plugins.plugins` are slated for
+removal in 0.9.0
+
+When creating new plugins we will place the plugin definition class in `plugin.py` rather than `__init__.py`
+
 #### opal.core.api.patient_from_pk
 
 A decorator that changes a method that is passed a pk, to a method that is passed a patient.
@@ -130,6 +138,7 @@ Opal 0.8.0 removes a number of un-used features that have been slated for remova
 * `opal.models.Tagging.import_from_reversion`. This one-off classmethod on tagging was introduced to aid with the upgrade from Opal 4.x to 5.0 and has no further utility.
 * The `static` argument from the forms `input` tag. Developers should move to the `static` tag.
 * The _modal option to set on subrecords. This is because we now use large modals across the board.
+
 
 #### Misc changes
 

@@ -66,7 +66,7 @@ class ApplicationStylesTestCase(OpalTestCase):
 
 class ApplicatoinActionsTestCase(OpalTestCase):
 
-    @patch('opal.templatetags.application.plugins.plugins')
+    @patch('opal.templatetags.application.plugins.OpalPlugin.list')
     @patch('opal.templatetags.application.application.get_app')
     def test_application_actions(self, get_app, get_plugins):
         mock_app = MagicMock(name='Application')
