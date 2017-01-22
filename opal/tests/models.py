@@ -73,7 +73,7 @@ class Colour(models.EpisodeSubrecord):
     _angular_service = 'Colour'
     _icon = "fa fa-comments"
 
-    name = dmodels.CharField(max_length=200)
+    name = dmodels.CharField(max_length=200, null=True, blank=True)
 
 
 class PatientColour(models.PatientSubrecord):
