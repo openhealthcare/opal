@@ -77,7 +77,7 @@ class Colour(models.EpisodeSubrecord):
 
 
 class PatientColour(models.PatientSubrecord):
-    name = dmodels.CharField(max_length=200)
+    name = dmodels.CharField(max_length=200, blank=True, null=True)
     _exclude_from_extract = True
 
 
