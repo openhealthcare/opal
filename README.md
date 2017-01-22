@@ -44,6 +44,9 @@ If you're looking for help and support, feel free to post to our [Mailing list](
 
 You could also tweet us at [@opalframework](http://twitter.com/opalframework) - although it can be hard to give long form support there !
 
+## Contributing
+
+Check out [CONTRIBUTING.md](./CONTRIBUTING.md) for information about getting involved.
 
 ## Open source
 

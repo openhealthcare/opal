@@ -65,7 +65,7 @@ class GetAppTestCase(TestCase):
 
 class GetAllComponentsTestCase(TestCase):
     @patch('opal.core.application.OpalApplication.__subclasses__')
-    @patch('opal.core.plugins.plugins')
+    @patch('opal.core.plugins.OpalPlugin.list')
     def test_get_app(self, plugins, subclasses):
         mock_app = MagicMock('Mock App')
         plugin = MagicMock()

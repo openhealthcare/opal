@@ -19,7 +19,7 @@ class TestPlugin(plugins.OpalPlugin):
 
 class PluginJavascriptsTestCase(OpalTestCase):
 
-    @patch('opal.templatetags.plugins.plugins.plugins')
+    @patch('opal.templatetags.plugins.plugins.OpalPlugin.list')
     def test_plugin_javascripts(self, plugins):
         plugins.return_value = [TestPlugin]
         result = opalplugins.plugin_javascripts('opal.test')
@@ -32,7 +32,7 @@ class PluginJavascriptsTestCase(OpalTestCase):
 
 class PluginStylesheetsTestCase(OpalTestCase):
 
-    @patch('opal.templatetags.plugins.plugins.plugins')
+    @patch('opal.templatetags.plugins.plugins.OpalPlugin.list')
     def test_plugin_stylesheets(self, plugins):
         plugins.return_value = [TestPlugin]
         css = list(opalplugins.plugin_stylesheets()['styles']())
@@ -41,7 +41,7 @@ class PluginStylesheetsTestCase(OpalTestCase):
 
 class PluginHeadExtraTestCase(OpalTestCase):
 
-    @patch('opal.templatetags.plugins.plugins.plugins')
+    @patch('opal.templatetags.plugins.plugins.OpalPlugin.list')
     def test_plugin_head_extra(self, plugins):
         plugins.return_value = [TestPlugin]
         context = opalplugins.plugin_head_extra({})
@@ -62,7 +62,7 @@ class MenuItemOrderingTest(OpalTestCase):
 
 class PluginMenuitemsTestCase(OpalTestCase):
 
-    @patch('opal.templatetags.plugins.plugins.plugins')
+    @patch('opal.templatetags.plugins.plugins.OpalPlugin.list')
     def test_plugin_menuitems(self, plugins):
         plugins.return_value = [TestPlugin]
         menuitems = opalplugins.plugin_menuitems()['items']
@@ -72,7 +72,7 @@ class PluginMenuitemsTestCase(OpalTestCase):
 
 class PluginAngularDepsTestCase(OpalTestCase):
 
-    @patch('opal.templatetags.plugins.plugins.plugins')
+    @patch('opal.templatetags.plugins.plugins.OpalPlugin.list')
     def test_plugin_angular_deps(self, plugins):
         plugins.return_value = [TestPlugin]
         deps = list(opalplugins.plugin_opal_angular_deps()['deps']())
@@ -81,7 +81,7 @@ class PluginAngularDepsTestCase(OpalTestCase):
 
 class PluginOPALAngularTrackingExcludeTestCase(OpalTestCase):
 
-    @patch('opal.templatetags.plugins.plugins.plugins')
+    @patch('opal.templatetags.plugins.plugins.OpalPlugin.list')
     def test_prefixes(self, plugins):
         plugins.return_value = [TestPlugin]
         expected_prefix = []

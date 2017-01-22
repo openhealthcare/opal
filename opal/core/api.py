@@ -355,8 +355,8 @@ for subrecord in subrecords():
     router.register(sub_name, SubViewSet)
 
 def register_plugin_apis():
-    for plugin in plugins.plugins():
-        for api in plugin.apis:
+    for plugin in plugins.OpalPlugin.list():
+        for api in plugin.get_apis():
             router.register(*api)
 
 register_plugin_apis()

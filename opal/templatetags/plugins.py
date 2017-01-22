@@ -12,7 +12,7 @@ register = template.Library()
 @register.inclusion_tag('plugins/javascripts.html')
 def plugin_javascripts(namespace):
     def scripts():
-        for plugin in plugins.plugins():
+        for plugin in plugins.OpalPlugin.list():
             if namespace in plugin.javascripts:
                 for javascript in plugin.javascripts[namespace]:
                     yield javascript
@@ -21,7 +21,7 @@ def plugin_javascripts(namespace):
 @register.inclusion_tag('plugins/stylesheets.html')
 def plugin_stylesheets():
     def styles():
-        for plugin in plugins.plugins():
+        for plugin in plugins.OpalPlugin.list():
             for sheet in plugin.stylesheets:
                 yield sheet
     return dict(styles=styles)
@@ -29,7 +29,7 @@ def plugin_stylesheets():
 @register.inclusion_tag('plugins/head_extra.html', takes_context=True)
 def plugin_head_extra(context):
     def templates():
-        for plugin in plugins.plugins():
+        for plugin in plugins.OpalPlugin.list():
             for tpl in plugin.head_extra:
                     yield tpl
     ctx = context
@@ -48,7 +48,7 @@ def sort_menu_items(items):
 @register.inclusion_tag('plugins/menuitems.html')
 def plugin_menuitems():
     def items():
-        for plugin in plugins.plugins():
+        for plugin in plugins.OpalPlugin.list():
             for i in plugin.menuitems:
                 yield i
 
@@ -57,7 +57,7 @@ def plugin_menuitems():
 @register.inclusion_tag('plugins/angular_module_deps.html')
 def plugin_opal_angular_deps():
     def deps():
-        for plugin in plugins.plugins():
+        for plugin in plugins.OpalPlugin.list():
             for i in plugin.angular_module_deps:
                 yield i
     return dict(deps=deps)
@@ -66,7 +66,7 @@ def plugin_opal_angular_deps():
 def plugin_opal_angular_tracking_exclude():
     def yield_property(property_name):
         app = application.get_app()
-        app_and_plugins = itertools.chain(plugins.plugins(), [app])
+        app_and_plugins = itertools.chain(plugins.OpalPlugin.list(), [app])
 
         for plugin in app_and_plugins:
             excluded_tracking_prefixes = getattr(plugin, property_name, [])

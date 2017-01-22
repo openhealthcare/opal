@@ -3,14 +3,19 @@ OPAL PLugin - base class and helpers
 """
 import inspect
 import os
-from django.conf import settings
-from opal.utils import _itersubclasses
+import warnings
+
+from opal.core import discoverable
+
+warnings.simplefilter('once', DeprecationWarning)
 
 
-class OpalPlugin(object):
+class OpalPlugin(discoverable.DiscoverableFeature):
     """
     Base class from which all of our plugins inherit.
     """
+    module_name = 'plugin'
+
     urls        = []
     javascripts = []
     apis        = []
@@ -20,9 +25,30 @@ class OpalPlugin(object):
     head_extra  = []
     angular_module_deps = []
 
+    @classmethod
+    def get_urls(klass):
+        """
+        Return the urls
+        """
+        return klass.urls
+
+    @classmethod
+    def get_apis(klass):
+        """
+        Return the apis
+        """
+        return klass.apis
+
+    @classmethod
+    def directory(cls):
+        """
+        Give the plugins directory
+        """
+        return os.path.realpath(os.path.dirname(inspect.getfile(cls)))
+
     def flows(self):
         """
-        Return any extra flows our plugin may hav.e
+        Return any extra flows our plugin may have.
         """
         return {}
 
@@ -32,38 +58,31 @@ class OpalPlugin(object):
         """
         return {}
 
-    @classmethod
-    def directory(cls):
-        """
-        Give the plugins directory
-        """
-        return os.path.realpath(os.path.dirname(inspect.getfile(cls)))
 
-
-REGISTRY = set()
-AUTODISCOVERED = False
-
+# TODO 0.9.0: Remove these
 def register(what):
-    #print 'registering', what
-    REGISTRY.add(what)
+    warnthem = """
 
-def autodiscover():
-    from opal.utils import stringport
-    global AUTODISCOVERED
+opal.core.plugins.register is no longer required and will be removed in Opal 0.9.0
+There is no need to register {0} as
+Plugins are now discoverable features.
 
-    for a in settings.INSTALLED_APPS:
-        stringport(a)
-    AUTODISCOVERED = True
-
-    return REGISTRY
+Please consult the Opal documentation on Plugins for more information.
+""".format(what)
+    warnings.warn(warnthem, DeprecationWarning, stacklevel=2)
+    pass
 
 def plugins():
     """
     Generator function for plugin instances
     """
-    global AUTODISCOVERED
+    warnthem = """
 
-    if not AUTODISCOVERED:
-        autodiscover()
-    for m in REGISTRY:
-        yield m
+opal.core.plugins.plugins is slated for removal in Opal 0.9.0
+
+Plugins are now discoverable features, an iterable of subclasses may be accessed via
+
+opal.core.plugins.OpalPlugin.list
+"""
+    warnings.warn(warnthem, DeprecationWarning, stacklevel=2)
+    return OpalPlugin.list()
