@@ -64,23 +64,26 @@ angular.module('opal.controllers').controller(
 
 	    $scope.getVisibleEpisodes = function() {
 		    var visibleEpisodes = [];
-            var episode_list = [];
+        var episode_list = [];
+        var episodePresent;
 
-            visibleEpisodes = _.filter($scope.episodes, function(episode){
-                return episodeVisibility(episode, $scope);
-            });
+        visibleEpisodes = _.filter($scope.episodes, function(episode){
+            return episodeVisibility(episode, $scope);
+        });
 
     		visibleEpisodes.sort($scope.compareEpisodes);
 
-            if($scope.rows && visibleEpisodes.length){
-                var episodePresent = _.any(visibleEpisodes, function(x){
-                    return x.id === $scope.episode.id;
-                });
+        if($scope.rows && visibleEpisodes.length){
+          if($scope.episode){
+            episodePresent = _.any(visibleEpisodes, function(x){
+                return x.id === $scope.episode.id;
+            });
+          }
 
-                if(!episodePresent){
-                    $scope.select_episode(visibleEpisodes[0], 0);
-                }
-            }
+          if(!episodePresent){
+              $scope.select_episode(visibleEpisodes[0], 0);
+          }
+        }
     		return visibleEpisodes;
 	    };
 
