@@ -399,6 +399,15 @@ describe('PatientListCtrl', function() {
             $scope.episode = episode;
         });
 
+        it('should select the only available episode if there is no episode selected, function()', function(){
+          delete $scope.episode;
+          episodeVisibility.and.callFake(function(episode){
+              return true;
+          });
+          $scope.getVisibleEpisodes();
+          expect($scope.episode.id).toBe(episode.id);
+        });
+
 
         it('should select the only available episode if filtered to one', function(){
             /*
