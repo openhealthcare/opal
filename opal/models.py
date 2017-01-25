@@ -59,6 +59,11 @@ class SerialisableFields(object):
     Mixin class that handles the getting of fields
     and field types for serialisation/deserialization
     """
+
+    # should this be serialised as part of the ususal schema/extract
+    _serialisable = True
+
+
     @classmethod
     def _get_fieldnames_to_serialize(cls):
         """
