@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-OPAL Admin script.
+Opal Admin script.
 In which we expose useful commandline functionality to our users.
 """
 import argparse
@@ -26,7 +26,7 @@ PLUGIN_SCAFFOLD  = SCAFFOLDING_BASE/'plugin_scaffold'
 
 def _find_application_name():
     """
-    Return the name of the current OPAL application
+    Return the name of the current Opal application
     """
     for d in  USERLAND_HERE.ls():
         if d.is_dir:
@@ -189,16 +189,16 @@ def checkout(args):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="OPAL a Clinical Transactional Digital Services Framework",
+        description="Opal - a full stack web framework for health care applications.",
         usage="opal <command> [<args>]",
         epilog="Brought to you by Open Health Care UK"
     )
     parser.add_argument(
         '--version', '-v',
         action='version',
-        version = 'OPAL {0}'.format(opal.__version__)
+        version = 'Opal {0}'.format(opal.__version__)
     )
-    subparsers = parser.add_subparsers(help="OPAL Commands")
+    subparsers = parser.add_subparsers(help="Opal Commands")
 
     parser_project = subparsers.add_parser(
         'startproject'
