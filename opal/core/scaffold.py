@@ -1,5 +1,5 @@
 """
-OPAL scaffolding and code generation
+Opal scaffolding and code generation
 """
 import inspect
 import os
@@ -64,7 +64,7 @@ def create_lookuplists(root_dir):
 def start_plugin(name, USERLAND):
     name = name
 
-    write('Bootstrapping "{0}" - your new OPAL plugin...'.format(name))
+    write('Bootstrapping "{0}" - your new Opal plugin...'.format(name))
 
     if 'opal' in name:
         reponame = name
@@ -101,7 +101,7 @@ def start_plugin(name, USERLAND):
 
 def start_project(name, USERLAND_HERE):
     """
-    In which we perform the steps required to start a new OPAL project.
+    In which we perform the steps required to start a new Opal project.
 
     1. Run Django' Startproject
     2. Create a data/lookuplists dir
@@ -125,7 +125,7 @@ def start_project(name, USERLAND_HERE):
     write("Creating project dir at {0}".format(project_dir))
     os.system('django-admin.py startproject {0}'.format(name))
 
-    write("Bootstrapping your OPAL project...")
+    write("Bootstrapping your Opal project...")
 
     if not project_dir:
         project_dir.mkdir()
