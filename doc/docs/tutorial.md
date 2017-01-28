@@ -128,7 +128,7 @@ cases.
 You'll need to import the data for a terminology before you can start to take advantage of that.
 For now, let's use the reference data from elCID (An Opal application maintained by Open Health Care):
 
-    wget https://raw.githubusercontent.com/openhealthcare/elcid/master/data/lookuplists/lookuplists.json -P data/lookuplists
+    wget https://raw.githubusercontent.com/openhealthcare/elcid/master/data/lookuplists/lookuplists.json -P yourapp/data/lookuplists
 
 
 <blockquote><small>
