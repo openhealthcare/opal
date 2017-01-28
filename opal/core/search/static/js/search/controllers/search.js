@@ -12,8 +12,6 @@ angular.module('opal.controllers').controller(
         $scope.limit = 10;
 	    $scope.results = [];
 	    $scope.searched = false;
-	    $scope.episode_category_list = ['OPAT', 'Inpatient', 'Outpatient', 'Review'];
-	    $scope.hospital_list = ['Heart Hospital', 'NHNN', 'UCH'];
         $scope.paginator = new Paginator($scope.search);
 
         $scope.getQueryParam = function(){

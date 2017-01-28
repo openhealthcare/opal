@@ -72,8 +72,6 @@ angular.module('opal.controllers').controller(
 		        });
 	        };
 
-	        $scope.episode_category_list = ['Inpatient', 'Outpatient', 'Review'];
-
             $scope.delete = function(result){
                 $modalInstance.close(result);
                 var modal = $modal.open({

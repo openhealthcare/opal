@@ -8,7 +8,6 @@
 <div class="modal-body">
   <form class="form-horizontal" name="form">
     {% include models.Demographics.get_form_template %}
-    {% select label="Category" model="editing.location.category" lookuplist="episode_category_list" %}
     {% select label="Hospital" model="editing.location.hospital" lookuplist="hospital_list" %}
     {% input label="Ward" model="editing.location.ward" %}
     {% input label="Bed" model="editing.location.bed" %}
