@@ -22,7 +22,7 @@ class FavouriteColours(metadata.Metadata):
     slug = 'favourite-colour'
 
     @classmethod
-    def to_dict(klass):
+    def to_dict(klass, user):
         return {'favourite_colour': settings.FAVOURITE_COLOUR}
 ```
 
