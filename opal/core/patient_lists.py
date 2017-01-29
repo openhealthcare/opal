@@ -41,7 +41,9 @@ class Column(object):
 
 
 class ModelColumn(Column):
+
     def __init__(self, patient_list, model):
+        self.model = model
         self.patient_list = patient_list
         from opal.models import Subrecord
         if not issubclass(model, Subrecord):
@@ -58,6 +60,11 @@ class ModelColumn(Column):
         self.detail_template_path = model.get_detail_template(
             patient_list=self.patient_list()
         )
+
+    def to_dict(self, **kwargs):
+        dicted = super(ModelColumn, self).to_dict(**kwargs)
+        dicted['model_column'] = True
+        return dicted
 
 
 class PatientList(discoverable.DiscoverableFeature,

@@ -116,9 +116,23 @@ class ColumnTestCase(OpalTestCase):
 
 class ModelColumnTestCase(OpalTestCase):
 
+    def test_sets_model(self):
+        c = patient_lists.ModelColumn(
+            MagicMock(name='mock list'),
+            models.Demographics
+        )
+        self.assertEqual(models.Demographics, c.model)
+
     def test_pass_in_not_a_model(self):
         with self.assertRaises(ValueError):
             patient_lists.ModelColumn(None, OpalTestCase)
+
+    def test_to_dict_sets_model_column(self):
+        c = patient_lists.ModelColumn(
+            MagicMock(name='mock list'),
+            models.Demographics
+        )
+        self.assertEqual(True, c.to_dict()['model_column'])
 
 class TestPatientList(OpalTestCase):
 
@@ -155,7 +169,8 @@ class TestPatientList(OpalTestCase):
                 'name': 'demographics',
                 'single': True,
                 'template_path': 'records/demographics.html',
-                'title': 'Demographics'
+                'title': 'Demographics',
+                'model_column': True
             }
         ]
         self.assertEqual(dicts, TaggingTestPatientList.schema_to_dicts())
