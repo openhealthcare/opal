@@ -3,7 +3,7 @@ This module defines the base PatientList classes.
 """
 from opal import utils
 from opal.core import discoverable, exceptions, metadata
-from opal.utils import camelcase_to_underscore
+
 
 class Column(object):
 
@@ -49,8 +49,8 @@ class ModelColumn(Column):
         if not issubclass(model, Subrecord):
             raise ValueError('Model must be a opal.models.Subrecord subclass')
 
-        self.name = camelcase_to_underscore(model.__name__)
-        self.title = getattr(model, '_title', self.name.replace('_', ' ').title())
+        self.name = model.get_api_name()
+        self.title = model.get_display_name()
         self.single = model._is_singleton
         self.icon = getattr(model, '_icon', '')
         self.list_limit = getattr(model, '_list_limit', None)
