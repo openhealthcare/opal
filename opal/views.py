@@ -43,25 +43,7 @@ class PatientListTemplateView(LoginRequiredMixin, TemplateView):
         if not self.patient_list:
             return []
 
-        context = []
-        for column in self.patient_list.schema:
-            column_context = {}
-            name = camelcase_to_underscore(column.__name__)
-            column_context['name'] = name
-            column_context['title'] = getattr(column, '_title',
-                                              name.replace('_', ' ').title())
-            column_context['single'] = column._is_singleton
-            column_context['icon'] = getattr(column, '_icon', '')
-            column_context['list_limit'] = getattr(column, '_list_limit', None)
-            column_context['template_path'] = column.get_display_template(
-                patient_list=self.patient_list()
-            )
-            column_context['detail_template_path'] = column.get_detail_template(
-                patient_list=self.patient_list()
-            )
-            context.append(column_context)
-
-        return context
+        return self.patient_list.schema_to_dicts()
 
     def get_context_data(self, **kwargs):
         context = super(PatientListTemplateView, self).get_context_data(**kwargs)

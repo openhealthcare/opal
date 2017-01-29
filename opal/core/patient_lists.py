@@ -3,6 +3,68 @@ This module defines the base PatientList classes.
 """
 from opal import utils
 from opal.core import discoverable, exceptions, metadata
+from opal.utils import camelcase_to_underscore
+
+class Column(object):
+
+    def __init__(self, patient_list,
+                 model=None, name=None, title=None, singleton=None, icon=None,
+                 limit=None, template_path=None, detail_template_path=None):
+        """
+        Set up initial properties from either models or explicit arguments
+        """
+        self.patient_list = patient_list
+        from opal.models import Subrecord
+        if model:
+            if issubclass(model, Subrecord):
+                self.infer_from_model(model)
+            else:
+                raise ValueError('Model must be a opal.models.Subrecord subclass')
+
+        if name:
+            self.name = name
+        if title:
+            self.title = title
+        if singleton:
+            self.single = singleton
+        if icon:
+            self.icon = icon
+        if limit:
+            self.list_limit = limit
+        if template_path:
+            self.template_path = template_path
+        if detail_template_path:
+            self.detail_template_path = detail_template_path
+
+        required = ['name', 'title', 'template_path']
+        for attr in required:
+            if not hasattr(self, attr):
+                raise ValueError(
+                    'Column must have a {0} either explicitly or from a model'.format(attr))
+
+    def infer_from_model(self, model):
+        self.name = camelcase_to_underscore(model.__name__)
+        self.title = getattr(model, '_title', self.name.replace('_', ' ').title())
+        self.single = model._is_singleton
+        self.icon = getattr(model, '_icon', '')
+        self.list_limit = getattr(model, '_list_limit', None)
+        self.template_path = model.get_display_template(
+            patient_list=self.patient_list()
+        )
+        self.detail_template_path = model.get_detail_template(
+            patient_list=self.patient_list()
+        )
+
+    def to_dict(self, **kwargs):
+        return dict(
+            name=self.name,
+            title=self.title,
+            single=self.single,
+            icon=self.icon,
+            list_limit=self.list_limit,
+            template_path=self.template_path,
+            detail_template_path=self.detail_template_path
+        )
 
 
 class PatientList(discoverable.DiscoverableFeature,
@@ -42,6 +104,17 @@ class PatientList(discoverable.DiscoverableFeature,
     @property
     def schema(self):
         raise ValueError("this needs to be implemented")
+
+    @classmethod
+    def schema_to_dicts(klass):
+        columns = []
+
+        for column in klass.schema:
+            if isinstance(column, Column):
+                columns.append(column.to_dict())
+            else:
+                columns.append(Column(klass, model=column).to_dict())
+        return columns
 
     @property
     def queryset(self):
