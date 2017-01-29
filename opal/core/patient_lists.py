@@ -24,7 +24,7 @@ class Column(object):
 
         required = ['name', 'title', 'template_path']
         for attr in required:
-            if not hasattr(self, attr):
+            if getattr(self, attr) is None:
                 raise ValueError(
                     'Column must have a {0}'.format(attr))
 
@@ -41,12 +41,11 @@ class Column(object):
 
 
 class ModelColumn(Column):
-    def __init__(self, patient_list, model=None):
+    def __init__(self, patient_list, model):
         self.patient_list = patient_list
         from opal.models import Subrecord
-        if model:
-            if not issubclass(model, Subrecord):
-                raise ValueError('Model must be a opal.models.Subrecord subclass')
+        if not issubclass(model, Subrecord):
+            raise ValueError('Model must be a opal.models.Subrecord subclass')
 
         self.name = camelcase_to_underscore(model.__name__)
         self.title = getattr(model, '_title', self.name.replace('_', ' ').title())
@@ -107,7 +106,7 @@ class PatientList(discoverable.DiscoverableFeature,
             if isinstance(column, Column):
                 columns.append(column.to_dict())
             else:
-                columns.append(ModelColumn(klass, model=column).to_dict())
+                columns.append(ModelColumn(klass, column).to_dict())
         return columns
 
     @property

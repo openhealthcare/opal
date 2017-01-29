@@ -85,8 +85,40 @@ Begin Tests
 class ColumnTestCase(OpalTestCase):
 
     def test_set_non_inferred_attributes(self):
-        pass
+        c = patient_lists.Column(
+            name='foo',
+            title='Foo',
+            singleton=True,
+            icon='fa-ya',
+            limit=5,
+            template_path='foo/bar',
+            detail_template_path='car/dar'
+        )
+        self.assertEqual(c.name, 'foo')
+        self.assertEqual(c.title, 'Foo')
+        self.assertEqual(c.single, True)
+        self.assertEqual(c.icon, 'fa-ya')
+        self.assertEqual(c.list_limit, 5)
+        self.assertEqual(c.template_path, 'foo/bar')
+        self.assertEqual(c.detail_template_path, 'car/dar')
 
+    def test_raises_if_no_name(self):
+        with self.assertRaises(ValueError):
+            patient_lists.Column(title='foo', template_path='foo/bar')
+
+    def test_raises_if_no_title(self):
+        with self.assertRaises(ValueError):
+            patient_lists.Column(name='foo', template_path='foo/bar')
+
+    def test_raises_if_no_template_path(self):
+        with self.assertRaises(ValueError):
+            patient_lists.Column(title='Foo', name='foo')
+
+class ModelColumnTestCase(OpalTestCase):
+
+    def test_pass_in_not_a_model(self):
+        with self.assertRaises(ValueError):
+            patient_lists.ModelColumn(None, OpalTestCase)
 
 class TestPatientList(OpalTestCase):
 
@@ -113,6 +145,41 @@ class TestPatientList(OpalTestCase):
 
     def test_visible_to(self):
         self.assertTrue(TaggingTestPatientList.visible_to(self.user))
+
+    def test_schema_to_dicts(self):
+        dicts = [
+            {
+                'detail_template_path': 'records/demographics_detail.html',
+                'icon': '',
+                'list_limit': None,
+                'name': 'demographics',
+                'single': True,
+                'template_path': 'records/demographics.html',
+                'title': 'Demographics'
+            }
+        ]
+        self.assertEqual(dicts, TaggingTestPatientList.schema_to_dicts())
+
+    def test_schema_to_dicts_with_column(self):
+
+        class ColList(patient_lists.PatientList):
+            schema = [
+                patient_lists.Column(title='Foo', name='Bar',
+                                     template_path='foo/bar')
+            ]
+
+        dicts = [
+            {
+                'detail_template_path': None,
+                'icon': None,
+                'list_limit': None,
+                'name': 'Bar',
+                'single': None,
+                'template_path': 'foo/bar',
+                'title': 'Foo'
+            }
+        ]
+        self.assertEqual(dicts, ColList.schema_to_dicts())
 
     def test_visible_to_restricted_only(self):
         self.assertFalse(TaggingTestPatientList.visible_to(self.restricted_user))
