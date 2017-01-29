@@ -82,6 +82,12 @@ class TestEmptyTabbedPatientListGroup(TabbedPatientListGroup):
 Begin Tests
 """
 
+class ColumnTestCase(OpalTestCase):
+
+    def test_set_non_inferred_attributes(self):
+        pass
+
+
 class TestPatientList(OpalTestCase):
 
     def setUp(self):
