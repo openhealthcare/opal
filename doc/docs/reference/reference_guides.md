@@ -43,7 +43,7 @@ The following reference guides are available:
 [Making Search Queries](search_queries.md) | Search query backends and helper functions
 
 
-### Miscenlaneous documentation
+### Miscellaneous documentation
 
 |
 -|-
