@@ -22,9 +22,10 @@ class FavouriteColours(metadata.Metadata):
     slug = 'favourite-colour'
 
     @classmethod
-    def to_dict(klass):
+    def to_dict(klass, **kwargs):
         return {'favourite_colour': settings.FAVOURITE_COLOUR}
 ```
+The to_dict method will be passed the current user as a keyword argument.
 
 ### Accessing Metadata on the front end
 
