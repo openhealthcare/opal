@@ -22,7 +22,7 @@ class Column(object):
         self.template_path = template_path
         self.detail_template_path = detail_template_path
 
-        required = ['name', 'title', 'template_path']
+        required = ['title', 'template_path']
         for attr in required:
             if getattr(self, attr) is None:
                 raise ValueError(

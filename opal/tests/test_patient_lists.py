@@ -102,10 +102,6 @@ class ColumnTestCase(OpalTestCase):
         self.assertEqual(c.template_path, 'foo/bar')
         self.assertEqual(c.detail_template_path, 'car/dar')
 
-    def test_raises_if_no_name(self):
-        with self.assertRaises(ValueError):
-            patient_lists.Column(title='foo', template_path='foo/bar')
-
     def test_raises_if_no_title(self):
         with self.assertRaises(ValueError):
             patient_lists.Column(name='foo', template_path='foo/bar')
