@@ -36,10 +36,24 @@ link text to our list.
 
 ### Schemas
 
-Schemas are lists of Subrecords that we would like to display in our list. By default we
-render the subrecord display_template, and allow editing and addition of each subrecord in
-place.
+The schema attribute declares the columns of a PatientList. The entries in a schema may either
+be `Subrecord` instances, or instances of `opal.core.patient_lists.Column`.
 
+### Custom Columns
+
+It can be useful to have non-subrecord columns for instance because you want to allow a composite
+column fo mulitple `Subrecords` or because we want to simply render arbitrary markup.
+
+Columns require the title, and template_path to be set, and are simply included in the schema
+list at the appropriate time.
+
+```python
+class MyMarkupList(patient_lists.PatientList):
+    schema = [
+        patient_lists.Column(title='Foo', template_path='foo/bar')
+    ]
+
+```
 
 ### Template selection
 
