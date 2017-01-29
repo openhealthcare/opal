@@ -39,13 +39,14 @@ link text to our list.
 The schema attribute declares the columns of a PatientList. The entries in a schema may either
 be `Subrecord` instances, or instances of `opal.core.patient_lists.Column`.
 
-### Custom Columns
+#### Custom Columns
 
-It can be useful to have non-subrecord columns for instance because you want to allow a composite
+Although most schema entries will be subrecords, it can be useful to have non-subrecord columns.
+For instance because you want to allow a composite
 column fo mulitple `Subrecords` or because we want to simply render arbitrary markup.
 
 Columns require the title, and template_path to be set, and are simply included in the schema
-list at the appropriate time.
+list.
 
 ```python
 class MyMarkupList(patient_lists.PatientList):
