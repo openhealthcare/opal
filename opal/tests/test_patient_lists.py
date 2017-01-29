@@ -174,6 +174,8 @@ class TestPatientList(OpalTestCase):
     def test_schema_to_dicts_with_column(self):
 
         class ColList(patient_lists.PatientList):
+            display_name = 'Columny List'
+
             schema = [
                 patient_lists.Column(title='Foo', name='Bar',
                                      template_path='foo/bar')
