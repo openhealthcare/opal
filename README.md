@@ -26,6 +26,7 @@ We'd love you to get involved by using what we make, reporting bugs/suggesting i
 ## Documentation
 
 Documentation is available at: [http://opal.openhealthcare.org.uk/docs/](http://opal.openhealthcare.org.uk/docs/).
+(The source is in this repository at `./doc`)
 
 If you're just getting started we suggest:
 
