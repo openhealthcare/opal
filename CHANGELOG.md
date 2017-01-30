@@ -96,6 +96,11 @@ lists as tabs at the top of each member list.
 To enable custom sort orders for individual `PatientList`s we introduce the `comparator_service` attribute.
 This names an Angular service which will return a list of comparator functions.
 
+#### PatientList Arbitrary columns
+
+We now explicitly enable columns in spreadhseet lists that are not tied to subrecords. These can be
+included in PatientList schema instances as explicit Column() entries.
+
 #### Template re-naming
 
 Modal_base has now been moved into a folder called base_templates. Its also now got a form_modal_base and a two_column_form_modal_base.
