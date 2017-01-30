@@ -32,18 +32,28 @@ def serialize_schema(schema):
     return [serialize_model(column) for column in schema]
 
 
-def _get_all_fields():
-    response = {
-        subclass.get_api_name(): serialize_model(subclass)
-        for subclass in subrecords()
-    }
-    response['tagging'] = serialize_model(models.Tagging)
-    return response
+def get_serialised_subrecords():
+    extract_subrecords = (
+        i for i in subrecords() if i._serialisable
+    )
+    return serialize_schema(
+        itertools.chain([models.Tagging], extract_subrecords)
+    )
 
 
 def list_records():
-    return _get_all_fields()
+    """
+    This populates the schema api providing the meta field
+    information for every subrecord
+    """
+    serialised_subrecords = get_serialised_subrecords()
+    return {
+        subrecord["name"]: subrecord for subrecord in serialised_subrecords
+    }
 
 
 def extract_schema():
-    return serialize_schema(itertools.chain([models.Tagging], subrecords()))
+    """
+    This populates the data used by the extract fields api
+    """
+    return get_serialised_subrecords()

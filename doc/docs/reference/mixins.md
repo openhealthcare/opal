@@ -7,6 +7,10 @@ it might serialise like below
 
     Allergy._get_fieldnames_to_serialize() -> ["id", "drug"]
 
+if you don't want your subrecord serialised as part of the record api
+or extract schema api (what is used by advanced search), set _serialisable=False
+on your subrecord
+
 
 ### ToDictMixin
 provides a method that serialises a model
