@@ -36,7 +36,11 @@ def application_stylesheets():
     def styles():
         app = application.get_app()
         for style in app.get_styles():
-            yield style
+            if style.endswith(".scss"):
+                mime_type = "text/x-scss"
+            else:
+                mime_type = "text/css"
+            yield style, mime_type
     return dict(styles=styles)
 
 @register.inclusion_tag('plugins/actions.html')
