@@ -1,3 +1,10 @@
+### 0.8.1 (Minor Release)
+
+### PatientList.get_queryset arguments
+
+PatientList.get_queryset() is passed an extra keyword argument - `user`.
+This is the current `User` object.
+
 ### 0.8.0 (Major Release)
 
 #### Plugins
