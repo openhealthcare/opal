@@ -470,6 +470,15 @@ describe('PatientListCtrl', function() {
         });
     });
 
+    describe('jump to episode detail', function(){
+
+        it('should go to the episode link', function(){
+            spyOn($location, 'url');
+            $scope.jumpToEpisodeDetail($scope.episode);
+            expect($location.url).toHaveBeenCalledWith($scope.episode.link);
+        })
+    })
+
     describe('keydown watch', function() {
 
         it('should open keyboard shortcuts', function() {

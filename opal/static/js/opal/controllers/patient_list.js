@@ -118,6 +118,10 @@ angular.module('opal.controllers').controller(
             });
         };
 
+        $scope.jumpToEpisodeDetail = function(episode){
+            $location.url(episode.link);
+        }
+
         $scope.jumpToTag = function(tag){
             if(_.contains(_.keys(metadata.tag_hierarchy), tag)){
                 $location.path($scope.path_base + tag)
@@ -158,7 +162,7 @@ angular.module('opal.controllers').controller(
                     break;
                 case 13:
                     if(profile.can_see_pid()){
-                        $location.url($scope.episode.link);
+                        $scope.jumpToEpisodeDetail($scope.episode);
                     }
                     break;
     			case 38: // up
