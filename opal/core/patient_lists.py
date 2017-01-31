@@ -120,7 +120,7 @@ class PatientList(discoverable.DiscoverableFeature,
     def queryset(self):
         raise ValueError("this needs to be implemented")
 
-    def get_queryset(self):
+    def get_queryset(self, user=None):
         return self.queryset
 
     def get_template_names(self):
@@ -128,7 +128,7 @@ class PatientList(discoverable.DiscoverableFeature,
 
     def to_dict(self, user):
         # only bringing in active seems a sensible default at this time
-        return self.get_queryset().serialised_active(user)
+        return self.get_queryset(user=user).serialised_active(user)
 
 
 class TaggedPatientList(PatientList, utils.AbstractBase):
@@ -172,7 +172,7 @@ class TaggedPatientList(PatientList, utils.AbstractBase):
                 tags.append(patientlist.subtag)
         return tags
 
-    def get_queryset(self):
+    def get_queryset(self, **kwargs):
         from opal.models import Episode # Avoid circular import from opal.models
 
         filter_kwargs = dict(tagging__archived=False)
