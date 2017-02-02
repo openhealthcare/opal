@@ -273,6 +273,33 @@ describe('OPAL Directives', function(){
           innerscope.form = undefined;
           scope.$apply();
         });
+
+        it('should handle the case when the form is submitted in an invalid state, these are then corrected, then made invalid, then corrected', function(){
+            /*
+            * we had the case that the validation button was stuck in an invalid
+            * state if the user entered invalid options after the form was submitted
+            * even after they were fixed, the button remained disabled
+            */
+            scope.editing = {something: ""};
+            var markup = '<form name="form"><input required ng-model="editing.something"><button check-form="form">Save</button></form>';
+            compileDirective(markup);
+            var btn = $(element.find("button"));
+            btn.click();
+            var innerscope = angular.element(btn).scope();
+            var input = $(element.find("input"));
+            expect(btn.prop('disabled')).toBe(true);
+            expect(innerscope.form.$submitted).toBe(true);
+            scope.editing.something = 'hello';
+            scope.$apply();
+            expect(btn.prop('disabled')).toBe(false);
+            scope.editing.something = "";
+            scope.$apply();
+            expect(btn.prop('disabled')).toBe(true);
+
+            scope.editing.something = 'hello';
+            scope.$apply();
+            expect(btn.prop('disabled')).toBe(false);
+        });
     });
 
     describe('clipboard', function(){
