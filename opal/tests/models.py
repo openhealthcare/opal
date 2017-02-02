@@ -6,6 +6,7 @@ from django.db import models as dmodels
 from opal.core import fields
 from opal import models
 from opal.core import lookuplists
+from opal.utils import AbstractBase
 
 
 class Birthday(models.PatientSubrecord):
@@ -27,6 +28,12 @@ class HatWearer(models.EpisodeSubrecord):
 
 
 class InvisibleHatWearer(models.EpisodeSubrecord):
+    _ignore_as_subrecord = True
+    name = dmodels.CharField(max_length=200)
+    wearing_a_hat = dmodels.BooleanField(default=True)
+
+
+class AbstractHatWearer(models.EpisodeSubrecord, AbstractBase):
     name = dmodels.CharField(max_length=200)
     wearing_a_hat = dmodels.BooleanField(default=True)
 
@@ -63,6 +70,10 @@ class FavouriteDogs(models.PatientSubrecord):
 class InvisibleDog(models.PatientSubrecord):
     _ignore_as_subrecord = True
     name = dmodels.CharField(max_length=200, default="Catherine")
+
+
+class AbstractDog(models.PatientSubrecord, AbstractBase):
+    name = dmodels.CharField(max_length=200)
 
 
 class Colour(models.EpisodeSubrecord):

@@ -2,17 +2,27 @@
 Unittests for the opal.core.subrecords module
 """
 from opal.core.test import OpalTestCase
-from opal.tests.models import HatWearer, FamousLastWords
+from opal.tests import models as tmodels
 
 from opal.core import subrecords
 
 
 class EpisodeSubrecordsTestCase(OpalTestCase):
+    def setUp(self):
+        super(EpisodeSubrecordsTestCase, self).setUp()
+        self.episode_subrecords = {i for i in subrecords.episode_subrecords()}
+
+    def test_dont_include_patient_subrecords(self):
+        self.assertNotIn(tmodels.FamousLastWords, self.episode_subrecords)
 
     def test_get_episode_subrecords(self):
-        episode_subrecords = {i for i in subrecords.episode_subrecords()]
-        self.assertNotIn(FamousLastWords, episode_subrecords)
-        self.assertIn(HatWearer, episode_subrecords)
+        self.assertIn(tmodels.HatWearer, self.episode_subrecords)
+
+    def test_dont_include_ignore_as_subrecord(self):
+        self.assertNotIn(tmodels.InvisibleHatWearer, self.episode_subrecords)
+
+    def test_dont_include_abstract_subrecords(self):
+        self.assertNotIn(tmodels.AbstractHatWearer, self.episode_subrecords)
 
 
 class PatientSubrecordsTestCase(OpalTestCase):
@@ -21,35 +31,38 @@ class PatientSubrecordsTestCase(OpalTestCase):
         self.patient_subrecords = {i for i in subrecords.patient_subrecords()}
 
     def test_get_patient_subrecords(self):
-        self.assertIn(FamousLastWords, patient_subrecords)
+        self.assertIn(tmodels.FamousLastWords, self.patient_subrecords)
 
     def test_dont_include_ignore_as_subrecord(self):
-        self.assertNotIn(InvisibleDog, patient_subrecords)
+        self.assertNotIn(tmodels.InvisibleDog, self.patient_subrecords)
 
     def test_dont_include_episode_subrecords(self):
-        self.assertNotIn(HatWearer, patient_subrecords)
+        self.assertNotIn(tmodels.HatWearer, self.patient_subrecords)
+
+    def test_dont_include_abstract_subrecords(self):
+        self.assertNotIn(tmodels.AbstractDog, self.patient_subrecords)
 
 
 class SubrecordsTestCase(OpalTestCase):
 
     def test_subrecords(self):
         all_subrecords = [i for i in subrecords.subrecords()]
-        self.assertIn(FamousLastWords, all_subrecords)
-        self.assertIn(HatWearer, all_subrecords)
+        self.assertIn(tmodels.FamousLastWords, all_subrecords)
+        self.assertIn(tmodels.HatWearer, all_subrecords)
 
 
 class GetSubrecordFromAPINameTestCase(OpalTestCase):
 
     def test_get_get_subrecord_from_api_name(self):
-        hatwearer_api_name = HatWearer.get_api_name()
-        famous_api_name = FamousLastWords.get_api_name()
+        hatwearer_api_name = tmodels.HatWearer.get_api_name()
+        famous_api_name = tmodels.FamousLastWords.get_api_name()
         self.assertEqual(
-            HatWearer,
+            tmodels.HatWearer,
             subrecords.get_subrecord_from_api_name(hatwearer_api_name)
         )
 
         self.assertEqual(
-            FamousLastWords,
+            tmodels.FamousLastWords,
             subrecords.get_subrecord_from_api_name(famous_api_name)
         )
 
@@ -62,12 +75,12 @@ class GetSubrecordFromModelNameTestCase(OpalTestCase):
 
     def test_get_get_subrecord_from_model_name(self):
         self.assertEqual(
-            HatWearer,
+            tmodels.HatWearer,
             subrecords.get_subrecord_from_model_name("HatWearer")
         )
 
         self.assertEqual(
-            FamousLastWords,
+            tmodels.FamousLastWords,
             subrecords.get_subrecord_from_model_name("FamousLastWords")
         )
 
