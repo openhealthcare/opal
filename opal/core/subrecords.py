@@ -10,7 +10,7 @@ def episode_subrecords():
     """
     from opal.models import EpisodeSubrecord
     for model in _itersubclasses(EpisodeSubrecord):
-        if model._meta.abstract:
+        if model._meta.abstract or model._ignore_as_subrecord:
             continue
         yield model
 
@@ -21,7 +21,7 @@ def patient_subrecords():
     """
     from opal.models import PatientSubrecord
     for model in _itersubclasses(PatientSubrecord):
-        if model._meta.abstract:
+        if model._meta.abstract or model._ignore_as_subrecord:
             continue
         yield model
 
@@ -41,6 +41,7 @@ def get_subrecord_from_api_name(api_name):
         if subrecord.get_api_name() == api_name:
             return subrecord
     raise ValueError("unable to find a model for {}".format(api_name))
+
 
 def get_subrecord_from_model_name(model_name):
     for subrecord in subrecords():

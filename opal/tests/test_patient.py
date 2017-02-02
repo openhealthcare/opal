@@ -36,7 +36,7 @@ class PatientTest(OpalTestCase):
 
     @patch('opal.models.patient_subrecords')
     @patch('opal.models.episode_subrecords')
-    def test_not_bulk_serialisable_patient_subrecords(
+    def test_dont_include_ignore_as_subrecord(
         self, episode_subrecords, patient_subrecords
     ):
         episode_subrecords.return_value = []

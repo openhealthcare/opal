@@ -6,19 +6,27 @@ from opal.tests.models import HatWearer, FamousLastWords
 
 from opal.core import subrecords
 
+
 class EpisodeSubrecordsTestCase(OpalTestCase):
 
     def test_get_episode_subrecords(self):
-        episode_subrecords = [i for i in subrecords.episode_subrecords()]
+        episode_subrecords = {i for i in subrecords.episode_subrecords()]
         self.assertNotIn(FamousLastWords, episode_subrecords)
         self.assertIn(HatWearer, episode_subrecords)
 
 
 class PatientSubrecordsTestCase(OpalTestCase):
+    def setUp(self):
+        super(PatientSubrecordsTestCase, self).setUp()
+        self.patient_subrecords = {i for i in subrecords.patient_subrecords()}
 
     def test_get_patient_subrecords(self):
-        patient_subrecords = [i for i in subrecords.patient_subrecords()]
         self.assertIn(FamousLastWords, patient_subrecords)
+
+    def test_dont_include_ignore_as_subrecord(self):
+        self.assertNotIn(InvisibleDog, patient_subrecords)
+
+    def test_dont_include_episode_subrecords(self):
         self.assertNotIn(HatWearer, patient_subrecords)
 
 

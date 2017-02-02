@@ -84,6 +84,14 @@ An iterable of strings that correspond to fieldnames that contain Patient Identi
 
 This is used when creating data extracts to exclude PID from e.g. CSV downloads.
 
+
+#### Subrecord._ignore_as_subrecord
+
+False by default. If set to True this subrecord is not considered a subrecord by the system for the cases where we iterate over subrecords.
+
+This includes serialisation, deserialisation and the creation of the schema.
+
+
 ### Methods
 
 #### Subrecord.get_display_template()

@@ -311,8 +311,6 @@ class UpdatesFromDictMixin(SerialisableFields):
 class ToDictMixin(SerialisableFields):
     """ serialises a model to a dictionary
     """
-    _bulk_serialise = True
-
     def to_dict(self, user, fields=None):
         """
         Allow a subset of FIELDNAMES
@@ -485,9 +483,8 @@ class Patient(models.Model):
             }
 
         for model in patient_subrecords():
-            if model._bulk_serialise:
-                subrecords = model.objects.filter(patient_id=self.id)
-                d[model.get_api_name()] = [subrecord.to_dict(user) for subrecord in subrecords]
+            subrecords = model.objects.filter(patient_id=self.id)
+            d[model.get_api_name()] = [subrecord.to_dict(user) for subrecord in subrecords]
         return d
 
     def update_from_demographics_dict(self, demographics_data, user):
@@ -755,21 +752,19 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
             return d
 
         for model in patient_subrecords():
-            if model._bulk_serialise:
-                subrecords = model.objects.filter(patient_id=self.patient.id)
+            subrecords = model.objects.filter(patient_id=self.patient.id)
 
-                if subrecords:
-                    d[model.get_api_name()] = [
-                        subrecord.to_dict(user) for subrecord in subrecords
-                    ]
+            if subrecords:
+                d[model.get_api_name()] = [
+                    subrecord.to_dict(user) for subrecord in subrecords
+                ]
         for model in episode_subrecords():
-            if model._bulk_serialise:
-                subrecords = model.objects.filter(episode_id=self.id)
+            subrecords = model.objects.filter(episode_id=self.id)
 
-                if subrecords:
-                    d[model.get_api_name()] = [
-                        subrecord.to_dict(user) for subrecord in subrecords
-                    ]
+            if subrecords:
+                d[model.get_api_name()] = [
+                    subrecord.to_dict(user) for subrecord in subrecords
+                ]
 
         d['tagging'] = self.tagging_dict(user)
 
@@ -781,6 +776,7 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
     consistency_token = models.CharField(max_length=8)
     _is_singleton = False
     _advanced_searchable = True
+    _ignore_as_subrecord = False
 
     class Meta:
         abstract = True
