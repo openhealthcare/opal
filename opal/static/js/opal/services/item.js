@@ -101,9 +101,6 @@ angular.module('opal.services')
 		            if (method == 'post') {
 		                episode.addItem(item);
 		            }
-                else{
-                    self = _.extend(self, response.data);
-                }
 		            deferred.resolve();
 	            }, function(response) {
 		            // handle error better
