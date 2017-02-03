@@ -53,14 +53,25 @@ class ApplicationJavascriptTestCase(OpalTestCase):
 class ApplicationStylesTestCase(OpalTestCase):
 
     @patch('opal.templatetags.application.application.get_app')
-    def test_core_styles(self, get_app):
+    def test_core_styles_with_css(self, get_app):
         mock_app = MagicMock(name='Application')
         mock_app.get_styles.return_value = ['test.css']
         get_app.return_value = mock_app
 
         result = list(application.application_stylesheets()['styles']())
 
-        self.assertEqual(['test.css'], result)
+        self.assertEqual([("test.css", "text/css",)], result)
+        mock_app.get_styles.assert_called_with()
+
+    @patch('opal.templatetags.application.application.get_app')
+    def test_core_styles_with_scss(self, get_app):
+        mock_app = MagicMock(name='Application')
+        mock_app.get_styles.return_value = ['test.scss']
+        get_app.return_value = mock_app
+
+        result = list(application.application_stylesheets()['styles']())
+
+        self.assertEqual([("test.scss", "text/x-scss",)], result)
         mock_app.get_styles.assert_called_with()
 
 
