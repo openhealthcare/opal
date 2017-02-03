@@ -5,6 +5,11 @@
 PatientList.get_queryset() is passed an extra keyword argument - `user`.
 This is the current `User` object.
 
+#### Removed Subrecord._bulk_serialise
+
+This flag no longer exists
+
+
 ### 0.8.0 (Major Release)
 
 #### Plugins
