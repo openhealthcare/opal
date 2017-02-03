@@ -1,5 +1,5 @@
 """
-WSGI config for elcid project.
+Default WSGI config for an Opal project.
 
 This module contains the WSGI application used by Django's development server
 and any production WSGI deployments. It should expose a module-level variable
@@ -28,5 +28,3 @@ try:
     application = Cling(get_wsgi_application())
 except ImportError:
     application = get_wsgi_application()
-
-
