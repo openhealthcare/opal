@@ -5,10 +5,6 @@
 PatientList.get_queryset() is passed an extra keyword argument - `user`.
 This is the current `User` object.
 
-#### Subrecord._ignore_as_subrecord
-
-removes the _bulk_serialise flag and replaces it with an ignore as subrecord flag. This means the subrecord does not appear in the opal.core.subrecords.subrecords/episode_subrecords/patient_subrecords iterables.
-
 
 ### 0.8.0 (Major Release)
 
