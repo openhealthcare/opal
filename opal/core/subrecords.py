@@ -10,7 +10,7 @@ def episode_subrecords():
     """
     from opal.models import EpisodeSubrecord
     for model in _itersubclasses(EpisodeSubrecord):
-        if model._meta.abstract or model._ignore_as_subrecord:
+        if model._meta.abstract or model._exclude_from_subrecords:
             continue
         yield model
 
@@ -21,7 +21,7 @@ def patient_subrecords():
     """
     from opal.models import PatientSubrecord
     for model in _itersubclasses(PatientSubrecord):
-        if model._meta.abstract or model._ignore_as_subrecord:
+        if model._meta.abstract or model._exclude_from_subrecords:
             continue
         yield model
 

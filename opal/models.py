@@ -776,7 +776,7 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
     consistency_token = models.CharField(max_length=8)
     _is_singleton = False
     _advanced_searchable = True
-    _ignore_as_subrecord = False
+    _exclude_from_subrecords = False
 
     class Meta:
         abstract = True

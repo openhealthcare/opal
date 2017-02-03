@@ -28,7 +28,7 @@ class HatWearer(models.EpisodeSubrecord):
 
 
 class InvisibleHatWearer(models.EpisodeSubrecord):
-    _ignore_as_subrecord = True
+    _exclude_from_subrecords = True
     name = dmodels.CharField(max_length=200)
     wearing_a_hat = dmodels.BooleanField(default=True)
 
@@ -68,7 +68,7 @@ class FavouriteDogs(models.PatientSubrecord):
 
 
 class InvisibleDog(models.PatientSubrecord):
-    _ignore_as_subrecord = True
+    _exclude_from_subrecords = True
     name = dmodels.CharField(max_length=200, default="Catherine")
 
 

@@ -18,7 +18,7 @@ class EpisodeSubrecordsTestCase(OpalTestCase):
     def test_get_episode_subrecords(self):
         self.assertIn(tmodels.HatWearer, self.episode_subrecords)
 
-    def test_dont_include_ignore_as_subrecord(self):
+    def test_dont_include_exclude_from_subrecords(self):
         self.assertNotIn(tmodels.InvisibleHatWearer, self.episode_subrecords)
 
     def test_dont_include_abstract_subrecords(self):
@@ -33,7 +33,7 @@ class PatientSubrecordsTestCase(OpalTestCase):
     def test_get_patient_subrecords(self):
         self.assertIn(tmodels.FamousLastWords, self.patient_subrecords)
 
-    def test_dont_include_ignore_as_subrecord(self):
+    def test_dont_include_exclude_from_subrecords(self):
         self.assertNotIn(tmodels.InvisibleDog, self.patient_subrecords)
 
     def test_dont_include_episode_subrecords(self):
