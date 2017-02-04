@@ -9,10 +9,21 @@ describe('ExtractCtrl', function(){
     var optionsData = {
         condition: ['Another condition', 'Some condition'],
         tag_hierarchy :{'tropical': []}
-    }
+    };
+
+    var pulledInData = {
+      dogs: ['Poodle', 'Dalmation'],
+      hats: ['Bowler', 'Top', 'Sun']
+    };
+
     var referencedata = {
-        dogs: ['Poodle', 'Dalmation'],
-        hats: ['Bowler', 'Top', 'Sun']
+      load: function(){
+          return {
+            then: function(fn){
+              fn({toLookuplists: function(){ return pulledInData;}});
+            }
+          };
+      }
     };
 
     var columnsData = [
@@ -122,11 +133,11 @@ describe('ExtractCtrl', function(){
             options: optionsData,
             filters: [],
             schema : schema,
-            PatientSummary: PatientSummary
+            PatientSummary: PatientSummary,
+            Referencedata: referencedata
         });
 
         $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
-        $httpBackend.expectGET('/api/v0.1/referencedata/').respond(referencedata);
         $scope.$apply();
         $httpBackend.flush();
 

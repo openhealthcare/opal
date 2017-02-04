@@ -72,7 +72,7 @@ angular.module('opal.services').factory('RecordEditor', function(
                   profile: function(UserProfile) { return profile; },
                   episode: function() { return episode; },
                   metadata: function(Metadata) { return Metadata.load(); },
-                  referencedata: function(Referencedata){ return Referencedata; }
+                  referencedata: function(Referencedata){ return Referencedata.load(); }
               }
           };
 

@@ -32,7 +32,7 @@ angular.module(
                     templateUrl: target.template,
                     controller:  target.controller,
                     resolve: {
-                        referencedata:   function(Referencedata){ return Referencedata },
+                        referencedata:   function(Referencedata){ return Referencedata.load() },
                         metadata:        function(Metadata){ return Metadata.load(); },
                         tags:            function(){ return config.current_tags},
                         hospital_number: function(){ return config.hospital_number; }
@@ -52,7 +52,7 @@ angular.module(
                     keyboard: false,
                     resolve: {
                         episode      : function() { return episode; },
-                        referencedata: function(Referencedata){ return Referencedata },
+                        referencedata: function(Referencedata){ return Referencedata.load() },
                         metadata     : function(Metadata){ return Metadata.load(); },
                         tags         : function() { return config.current_tags; },
 			        }

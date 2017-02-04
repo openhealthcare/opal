@@ -29,9 +29,7 @@ describe('Referencedata', function(){
         var result
 
         $httpBackend.whenGET('/api/v0.1/referencedata/').respond(referencedata);
-
-        Referencedata.then(function(r){ result = r; });
-
+        Referencedata.load().then(function(r){ result = r; });
         $rootScope.$apply();
         $httpBackend.flush();
 
@@ -42,7 +40,7 @@ describe('Referencedata', function(){
         var result;
 
         $httpBackend.whenGET('/api/v0.1/referencedata/').respond(500, 'NO');
-
+        Referencedata.load();
         $rootScope.$apply();
         $httpBackend.flush();
 
@@ -54,12 +52,10 @@ describe('Referencedata', function(){
 
         $httpBackend.whenGET('/api/v0.1/referencedata/').respond(referencedata);
 
-        Referencedata.then(function(r){ result = r; });
+        Referencedata.load().then(function(r){ result = r; });
         $rootScope.$apply();
         $httpBackend.flush();
-
-        expect(result.toLookuplists()).toEqual({foo_list: ['bar']})
-
-    })
+        expect(result.toLookuplists()).toEqual({foo_list: ['bar']});
+    });
 
 });

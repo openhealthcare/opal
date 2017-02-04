@@ -6,6 +6,7 @@ describe('RecordEditor', function(){
     var Flow, Episode, episode;
     var controller;
     var metadata = {load: function(){}};
+    var referencedata = {load: function(){}};
 
     var profile = {
         readonly   : false,
@@ -102,6 +103,7 @@ describe('RecordEditor', function(){
         });
 
         spyOn(metadata, "load").and.returnValue("some metadata");
+        spyOn(referencedata, "load").and.returnValue("some referencedata");
 
         inject(function($injector){
             $rootScope = $injector.get('$rootScope');
@@ -137,7 +139,7 @@ describe('RecordEditor', function(){
               expect(resolves.profile()).toEqual(profile);
               expect(resolves.episode()).toEqual(episode);
               expect(resolves.metadata(metadata)).toEqual("some metadata");
-              expect(resolves.referencedata(null)).toEqual(null);
+              expect(resolves.referencedata(referencedata)).toEqual("some referencedata");
           });
 
           it('should pull modal size through from the schema if it exists', function() {

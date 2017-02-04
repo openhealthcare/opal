@@ -3,7 +3,7 @@ angular.module('opal.controllers').controller(
                             PatientSummary, Paginator, Referencedata,
                             ngProgressLite, profile, filters, schema){
 
-        Referencedata.then(function(referencedata){
+        Referencedata.load().then(function(referencedata){
 
             var underscoreToCapWords = function(str) {
                 return str.toLowerCase().replace(/_/g, ' ').replace(
