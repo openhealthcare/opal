@@ -33,7 +33,7 @@ angular.module(
                     controller:  target.controller,
                     resolve: {
                         referencedata:   function(Referencedata){ return Referencedata },
-                        metadata:        function(Metadata){ return Metadata },
+                        metadata:        function(Metadata){ return Metadata.load(); },
                         tags:            function(){ return config.current_tags},
                         hospital_number: function(){ return config.hospital_number; }
                     }
@@ -53,7 +53,7 @@ angular.module(
                     resolve: {
                         episode      : function() { return episode; },
                         referencedata: function(Referencedata){ return Referencedata },
-                        metadata     : function(Metadata){ return Metadata },
+                        metadata     : function(Metadata){ return Metadata.load(); },
                         tags         : function() { return config.current_tags; },
 			        }
 		        }).result

@@ -20,12 +20,16 @@ angular.module('opal.services').factory('Metadata', function($q, $http, $window)
     };
 
 
-    $http({ cache: true, url: url, method: 'GET'}).then(function(response) {
-        deferred.resolve(new Metadata(response.data));
-    }, function() {
-	    // handle error better
-	    $window.alert('Metadata could not be loaded');
-    });
+    return {
+      load: function(){
+        $http({ cache: true, url: url, method: 'GET'}).then(function(response) {
+            deferred.resolve(new Metadata(response.data));
+        }, function() {
+    	    // handle error better
+    	    $window.alert('Metadata could not be loaded');
+        });
 
-    return deferred.promise;
+        return deferred.promise;
+      }
+    };
 });

@@ -7,13 +7,13 @@ app.config(
              controller: 'PatientListRedirectCtrl',
              templateUrl: '/templates/loading_page.html',
              resolve: {
-                 metadata: function(Metadata){ return Metadata; }
+                 metadata: function(Metadata){ return Metadata.load(); }
              }
          }).when('/list/:slug', {
 			 controller: 'PatientListCtrl',
 			 resolve: {
 				 episodedata: function(patientListLoader) { return patientListLoader(); },
-                 metadata   : function(Metadata){ return Metadata },
+                 metadata   : function(Metadata){ return Metadata.load(); },
                  profile    : function(UserProfile){ return UserProfile; }
 			 },
 			 templateUrl: function(params){
@@ -34,7 +34,7 @@ app.config(
                  resolve: {
         				     patient: function(patientLoader) { return patientLoader(); },
                      profile: function(UserProfile){ return UserProfile; },
-                     metadata: function(Metadata){ return Metadata; }
+                     metadata: function(Metadata){ return Metadata.load(); }
                  },
 			     templateUrl: function(params){ return '/templates/patient_detail.html' }
              })

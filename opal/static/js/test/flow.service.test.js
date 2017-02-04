@@ -5,17 +5,18 @@
 describe('Flow ', function(){
     "use strict";
     var $httpBackend, $modal, $rootScope;
-    var options, Flow, Metadata, Referencedata;
+    var options, Flow, Referencedata;
+    var metadata = {load: function(){}};
 
     beforeEach(function(){
 
         module('opal.services');
         module('opal.controllers');
+        spyOn(metadata, "load").and.returnValue("some metadata");
 
         inject(function($injector){
             Flow          = $injector.get('Flow');
             Referencedata = $injector.get('Referencedata');
-            Metadata      = $injector.get('Metadata');
             $modal        = $injector.get('$modal');
             $rootScope    = $injector.get('$rootScope');
             $httpBackend  = $injector.get('$httpBackend');
@@ -33,8 +34,8 @@ describe('Flow ', function(){
             var resolves = args[0].resolve;
             expect(resolves.tags()).toEqual(undefined);
             expect(resolves.hospital_number()).toEqual('555-456');
-            expect(resolves.referencedata(Referencedata)).toEqual(Referencedata)
-            expect(resolves.metadata(Metadata)).toEqual(Metadata)
+            expect(resolves.referencedata(Referencedata)).toEqual(Referencedata);
+            expect(resolves.metadata(metadata)).toEqual("some metadata");
         });
     });
 
@@ -47,8 +48,8 @@ describe('Flow ', function(){
             var resolves = args[0].resolve;
             expect(resolves.tags()).toEqual({});
             expect(resolves.episode()).toEqual('episode');
-            expect(resolves.referencedata(Referencedata)).toEqual(Referencedata)
-            expect(resolves.metadata(Metadata)).toEqual(Metadata)
+            expect(resolves.referencedata(Referencedata)).toEqual(Referencedata);
+            expect(resolves.metadata(metadata)).toEqual("some metadata");
         });
 
     });

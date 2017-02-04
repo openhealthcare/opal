@@ -5,9 +5,12 @@ describe('Routes', function() {
     "use strict";
 
     var $route;
+    var metadata;
 
     beforeEach(function(){
         module('opal');
+        metadata = {load: function(){}};
+        spyOn(metadata, "load").and.returnValue("some metadata");
 
         inject(function($injector){
             $route   = $injector.get('$route');
@@ -17,7 +20,7 @@ describe('Routes', function() {
     describe('/list/', function() {
         it('should load Metadata', function() {
             var resolve = $route.routes['/list/'].resolve;
-            expect(resolve.metadata('Metadata')).toBe('Metadata');
+            expect(resolve.metadata(metadata)).toBe("some metadata");
         });
     });
 
@@ -26,7 +29,7 @@ describe('Routes', function() {
         it('should resolve injected things', function() {
             var resolve = $route.routes['/list/:slug'].resolve;
             expect( resolve.episodedata( function(){ return {} } ) ).toEqual({});
-            expect(resolve.metadata('Metadata')).toBe('Metadata');
+            expect(resolve.metadata(metadata)).toBe("some metadata");
             expect(resolve.profile('Profile')).toEqual('Profile');
         });
 
@@ -50,7 +53,7 @@ describe('Routes', function() {
             var resolve = $route.routes['/patient/:patient_id/:view?'].resolve;
             expect(resolve.patient(function(){return {};})).toEqual({});
             expect(resolve.profile('Profile')).toEqual('Profile');
-            expect(resolve.metadata('Metadata')).toBe('Metadata');
+            expect(resolve.metadata(metadata)).toBe("some metadata");
         });
 
         it('should know the template', function() {

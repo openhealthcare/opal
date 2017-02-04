@@ -5,6 +5,7 @@ describe('RecordEditor', function(){
     var $rootScope, $q, $controller;
     var Flow, Episode, episode;
     var controller;
+    var metadata = {load: function(){}};
 
     var profile = {
         readonly   : false,
@@ -100,6 +101,8 @@ describe('RecordEditor', function(){
             });
         });
 
+        spyOn(metadata, "load").and.returnValue("some metadata");
+
         inject(function($injector){
             $rootScope = $injector.get('$rootScope');
             $scope = $rootScope.$new();
@@ -133,7 +136,7 @@ describe('RecordEditor', function(){
               expect(resolves.item()).toEqual(episode.recordEditor.getItem('diagnosis', 1));
               expect(resolves.profile()).toEqual(profile);
               expect(resolves.episode()).toEqual(episode);
-              expect(resolves.metadata(null)).toEqual(null);
+              expect(resolves.metadata(metadata)).toEqual("some metadata");
               expect(resolves.referencedata(null)).toEqual(null);
           });
 

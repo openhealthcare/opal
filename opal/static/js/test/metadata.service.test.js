@@ -30,7 +30,7 @@ describe('Metadata', function(){
 
         $httpBackend.whenGET('/api/v0.1/metadata/').respond(metadata);
 
-        Metadata.then(function(r){ result = r; });
+        Metadata.load().then(function(r){ result = r; });
 
         $rootScope.$apply();
         $httpBackend.flush();
@@ -42,7 +42,7 @@ describe('Metadata', function(){
         var result;
 
         $httpBackend.whenGET('/api/v0.1/metadata/').respond(500, 'NO');
-
+        Metadata.load();
         $rootScope.$apply();
         $httpBackend.flush();
 
