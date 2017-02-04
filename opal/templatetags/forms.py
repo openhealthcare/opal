@@ -86,7 +86,6 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
                 field.related_model.get_api_name()
             )
 
-
     if hasattr(field, "formfield"):
         # TODO remove the blankable condition and make sure
         # all fields are null=False
@@ -225,7 +224,8 @@ def select(*args, **kwargs):
     - model: Angular model
     - label: User visible label
     - lookuplist: Name or value of the lookuplist
-    - other: (False) Boolean to indicate that we should allow free text if the item is not in the list
+    - other: (False) Boolean to indicate that we should allow free text if the
+             item is not in the list
     """
     ctx = extract_common_args(kwargs)
     lookuplist = kwargs.pop("lookuplist", ctx.get("lookuplist", None))
@@ -240,7 +240,8 @@ def select(*args, **kwargs):
     if lookuplist is None:
         other_show = None
     else:
-        other_show = "{1} != null && {0}.indexOf({1}) == -1".format(lookuplist, ctx["model"])
+        other_show = "{1} != null && {0}.indexOf({1}) == -1".format(
+            lookuplist, ctx["model"])
     other_label = '{0} Other'.format(ctx["label"])
 
     ctx.update({
@@ -258,14 +259,16 @@ def select(*args, **kwargs):
 
     return ctx
 
+
 @register.inclusion_tag('_helpers/textarea.html')
 def textarea(*args, **kwargs):
     ctx = extract_common_args(kwargs)
     ctx.update({
-        'macros'    : kwargs.pop('macros', False),
+        'macros': kwargs.pop('macros', False),
     })
 
     return ctx
+
 
 @register.inclusion_tag('_helpers/static.html')
 def static(fieldname):
@@ -277,6 +280,7 @@ def static(fieldname):
                 label=model._get_field_title(field_name),
                 datep=isinstance(field, models.DateField)
     )
+
 
 @register.inclusion_tag('_helpers/icon.html')
 def icon(name):
