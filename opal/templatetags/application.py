@@ -7,6 +7,7 @@ from opal.core import application, plugins
 
 register = template.Library()
 
+
 @register.inclusion_tag('plugins/menuitems.html')
 def application_menuitems():
     def items():
@@ -14,6 +15,7 @@ def application_menuitems():
         for i in app.menuitems:
             yield i
     return dict(items=items)
+
 
 @register.inclusion_tag('plugins/javascripts.html')
 def core_javascripts(namespace):
@@ -23,6 +25,7 @@ def core_javascripts(namespace):
             yield javascript
     return dict(javascripts=scripts)
 
+
 @register.inclusion_tag('plugins/javascripts.html')
 def application_javascripts():
     def scripts():
@@ -30,6 +33,7 @@ def application_javascripts():
         for javascript in app.get_javascripts():
             yield javascript
     return dict(javascripts=scripts)
+
 
 @register.inclusion_tag('plugins/stylesheets.html')
 def application_stylesheets():
@@ -42,6 +46,7 @@ def application_stylesheets():
                 mime_type = "text/css"
             yield style, mime_type
     return dict(styles=styles)
+
 
 @register.inclusion_tag('plugins/actions.html')
 def application_actions():

@@ -9,13 +9,16 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.stdout.write("Duplicate detection starting...")
-        demographics = Patient.objects.all()[0].demographics_set.get().__class__.objects.all()
+        klass = Patient.objects.all()[0].demographics_set.get().__class__
+        demographics = klass.objects.all()
         patients = Patient.objects.count()
         suspicious = []
         suspicious_ids = {}
 
         for i, patient in enumerate(Patient.objects.all()):
-            progress = '({0}% - {1} found)'.format(int(float(i+1)/patients*100), len(suspicious))
+            progress = '({0}% - {1} found)'.format(
+                int(float(i + 1) / patients * 100), len(suspicious)
+            )
             patient_demographics = patient.demographics_set.get()
             self.stdout.write(
                 '{0} Examining {1} {2}'.format(

@@ -9,6 +9,7 @@ from opal.core import plugins, application
 
 register = template.Library()
 
+
 @register.inclusion_tag('plugins/javascripts.html')
 def plugin_javascripts(namespace):
     def scripts():
@@ -81,6 +82,8 @@ def plugin_opal_angular_tracking_exclude():
                 yield i
 
     return dict(
-        excluded_tracking_prefix=yield_property("opal_angular_exclude_tracking_prefix"),
-        excluded_tracking_qs=yield_property("opal_angular_exclude_tracking_qs")
+        excluded_tracking_prefix=yield_property(
+            "opal_angular_exclude_tracking_prefix"),
+        excluded_tracking_qs=yield_property(
+            "opal_angular_exclude_tracking_qs")
     )
