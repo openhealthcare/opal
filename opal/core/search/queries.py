@@ -2,14 +2,10 @@
 Allow us to make search queries
 """
 import datetime
-import operator
-import itertools
-from collections import Counter
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import models as djangomodels
 from django.conf import settings
-from django.db.models import Q
 
 from opal import models
 from opal.core import fields, subrecords
@@ -110,15 +106,16 @@ class DatabaseQuery(QueryBackend):
     """
 
     def fuzzy_query(self):
-        """ fuzzy queries break apart the query string by spaces and search a
-            number of fields based on the underlying tokens.
+        """
+        Fuzzy queries break apart the query string by spaces and search a
+        number of fields based on the underlying tokens.
 
-            We then search hospital number, first name and surname by those fields
-            and order by the occurances
+        We then search hospital number, first name and surname by those fields
+        and order by the occurances
 
-            so if you put in Anna Lisa, even though this is a first name split
-            becasuse Anna and Lisa will both be found, this will rank higher
-            than an Anna or a Lisa, although both of those will also be found
+        so if you put in Anna Lisa, even though this is a first name split
+        becasuse Anna and Lisa will both be found, this will rank higher
+        than an Anna or a Lisa, although both of those will also be found
         """
         some_query = self.query
         patients = models.Patient.objects.search(some_query)
@@ -189,10 +186,12 @@ class DatabaseQuery(QueryBackend):
             synonym = Synonym.objects.get(content_type=content_type, name=name)
             name = synonym.content_object.name
         except Synonym.DoesNotExist:
-            pass # That's fine.
+            pass  # That's fine.
 
-        kw_fk = {'{0}__{1}_fk__name{2}'.format(model.replace('_', ''), field, contains): name}
-        kw_ft = {'{0}__{1}_ft{2}'.format(model.replace('_', ''), field, contains): query['query']}
+        kw_fk = {'{0}__{1}_fk__name{2}'.format(model.replace('_', ''),
+                                               field, contains): name}
+        kw_ft = {'{0}__{1}_ft{2}'.format(model.replace('_', ''),
+                                         field, contains): query['query']}
 
         if issubclass(Mod, models.EpisodeSubrecord):
 
@@ -226,19 +225,27 @@ class DatabaseQuery(QueryBackend):
 
         named_fields = [f for f in Mod._meta.fields if f.name == field]
 
-        if len(named_fields) == 1 and isinstance(named_fields[0],djangomodels.BooleanField):
+        if len(named_fields) == 1 and isinstance(named_fields[0],
+                                                 djangomodels.BooleanField):
             eps = self._episodes_for_boolean_fields(query, field, contains)
 
-        elif len(named_fields) == 1 and isinstance(named_fields[0], djangomodels.DateField):
+        elif len(named_fields) == 1 and isinstance(named_fields[0],
+                                                   djangomodels.DateField):
             eps = self._episodes_for_date_fields(query, field, contains)
 
-        elif hasattr(Mod, field) and isinstance(getattr(Mod, field), fields.ForeignKeyOrFreeText):
+        elif hasattr(Mod, field) and isinstance(getattr(Mod, field),
+                                                fields.ForeignKeyOrFreeText):
             eps = self._episodes_for_fkorft_fields(query, field, contains, Mod)
-        elif hasattr(Mod, field) and isinstance(Mod._meta.get_field(field), djangomodels.ManyToManyField):
-            eps = self._episodes_for_many_to_many_fields(query, Mod._meta.get_field(field))
+
+        elif hasattr(Mod, field) and isinstance(Mod._meta.get_field(field),
+                                                djangomodels.ManyToManyField):
+            eps = self._episodes_for_many_to_many_fields(
+                query, Mod._meta.get_field(field))
+
         else:
             model_name = get_model_name_from_column_name(query['column'])
-            kw = {'{0}__{1}{2}'.format(model_name, field, contains): query['query']}
+            queryset_path = '{0}__{1}{2}'.format(model_name, field, contains)
+            kw = {queryset_path: query['query']}
 
             if Mod == models.Tagging:
                 tag_name = query['field'].replace(" ", "_").title()
@@ -281,7 +288,7 @@ class DatabaseQuery(QueryBackend):
 
             result = {k: getattr(demographic, k) for k in [
                 "first_name", "surname", "hospital_number", "date_of_birth"
-                ]}
+            ]}
 
             result.update(patient_summary.to_dict())
             results.append(result)
@@ -298,13 +305,18 @@ class DatabaseQuery(QueryBackend):
         rest = all_matches[1:]
 
         for combine, episodes in rest:
-            methods = {'and': 'intersection', 'or': 'union', 'not': 'difference'}
+            methods = {
+                'and': 'intersection',
+                'or' : 'union',
+                'not': 'difference'
+            }
             working = getattr(set(episodes), methods[combine])(working)
 
         return working
 
     def get_episodes(self):
-        return episodes_for_user(self._episodes_without_restrictions(), self.user)
+        return episodes_for_user(
+            self._episodes_without_restrictions(), self.user)
 
     def get_patient_summaries(self):
         eps = self._episodes_without_restrictions()
@@ -326,11 +338,16 @@ class DatabaseQuery(QueryBackend):
         """
         Provide a textual description of the current search
         """
-        filters = "\n".join("{combine} {column} {field} {queryType} {query}".format(**f) for f in self.query)
+        filteritem = "{combine} {column} {field} {queryType} {query}"
+        filters = "\n".join(
+            filteritem.format(**f) for f in self.query
+        )
         return """{username} ({date})
 Searching for:
 {filters}
-""".format(username=self.user.username, date=datetime.datetime.now(), filters=filters)
+""".format(username=self.user.username,
+           date=datetime.datetime.now(),
+           filters=filters)
 
 
 def create_query(user, criteria):

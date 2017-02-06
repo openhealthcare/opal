@@ -4,6 +4,7 @@ Plugin definition for opal.core.search
 from opal.core.search import urls
 from opal.core import plugins
 
+
 class SearchPlugin(plugins.OpalPlugin):
     """
     The plugin entrypoint for OPAL's core search functionality
