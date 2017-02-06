@@ -1,5 +1,5 @@
 """
-Templatetags for working with OPAL applications
+Templatetags for working with Opal applications
 """
 from django import template
 

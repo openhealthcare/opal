@@ -1,5 +1,5 @@
 """
-Application helpers for OPAL
+Application helpers for Opal
 """
 import inspect
 import os
