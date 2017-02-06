@@ -1,5 +1,5 @@
 """
-Module entrypoint for core OPAL views
+Module entrypoint for core Opal views
 """
 from django.conf import settings
 from django.contrib.auth.views import login

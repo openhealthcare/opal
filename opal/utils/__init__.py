@@ -1,5 +1,5 @@
 """
-Generic OPAL utilities
+Generic Opal utilities
 """
 import importlib
 import re

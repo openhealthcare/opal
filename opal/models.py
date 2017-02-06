@@ -1,5 +1,5 @@
 """
-OPAL Django Models
+Opal Django Models
 """
 import datetime
 import functools
