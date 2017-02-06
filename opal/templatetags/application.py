@@ -8,11 +8,11 @@ from opal.core import application, plugins
 register = template.Library()
 
 
-@register.inclusion_tag('plugins/menuitems.html')
-def application_menuitems():
+@register.inclusion_tag('plugins/menuitems.html', takes_context=True)
+def application_menuitems(context):
     def items():
         app = application.get_app()
-        for i in app.menuitems:
+        for i in app.get_menu_items(user=context['request'].user):
             yield i
     return dict(items=items)
 
