@@ -5,7 +5,6 @@ from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
-from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django import forms
 

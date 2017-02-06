@@ -18,7 +18,6 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.urlresolvers import reverse
 from django.core.exceptions import FieldDoesNotExist
 from django.utils.functional import cached_property
-import reversion
 
 from opal.core import (
     application, exceptions, lookuplists, plugins, patient_lists, tagging
