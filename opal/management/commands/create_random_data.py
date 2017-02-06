@@ -19,7 +19,10 @@ from django.db.models import (
     NullBooleanField
 )
 
-Demographics = [s for s in patient_subrecords() if s.get_api_name() == 'demographics'][0]
+Demographics = [
+    s for s in patient_subrecords()
+    if s.get_api_name() == 'demographics'
+][0]
 
 first_names = [
     "Jane", "James", "Chandeep", "Samantha", "Oliver", "Charlie",

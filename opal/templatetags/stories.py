@@ -5,10 +5,10 @@ import os
 
 from django import template
 from django.conf import settings
-#from django.template.loaders.app_directories import app_template_dirs
 from django.template.loaders.app_directories import get_app_template_dirs
 
 register = template.Library()
+
 
 @register.inclusion_tag('_helpers/story.html')
 def story(label, story_dir):

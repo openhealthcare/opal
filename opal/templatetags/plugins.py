@@ -46,8 +46,12 @@ def sort_menu_items(items):
     # have an index or if there are multiple with the
     # same index then its done alphabetically
 
-    alphabetic = lambda x: x["display"]
-    index_sorting = lambda x: x.get("index", 100)
+    def alphabetic(x):
+        return x["display"]
+
+    def index_sorting(x):
+        return x.get("index", 100)
+
     return sorted(sorted(items, key=alphabetic), key=index_sorting)
 
 
