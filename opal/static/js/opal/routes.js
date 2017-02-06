@@ -14,7 +14,7 @@ app.config(
 			 resolve: {
 				 episodedata: function(patientListLoader) { return patientListLoader(); },
                  metadata   : function(Metadata){ return Metadata.load(); },
-                 profile    : function(UserProfile){ return UserProfile; }
+                 profile    : function(UserProfile){ return UserProfile.load(); }
 			 },
 			 templateUrl: function(params){
                  var target =  '/templates/patient_list.html';
@@ -33,7 +33,7 @@ app.config(
 			     controller: 'PatientDetailCtrl',
                  resolve: {
         				     patient: function(patientLoader) { return patientLoader(); },
-                     profile: function(UserProfile){ return UserProfile; },
+                     profile: function(UserProfile){ return UserProfile.load(); },
                      metadata: function(Metadata){ return Metadata.load(); }
                  },
 			     templateUrl: function(params){ return '/templates/patient_detail.html' }
@@ -46,7 +46,7 @@ app.config(
                  controller: 'ExtractCtrl',
                  templateUrl: '/search/templates/extract.html',
                  resolve: {
-                     profile: function(UserProfile){ return UserProfile; },
+                     profile: function(UserProfile){ return UserProfile.load(); },
                      schema: function(extractSchemaLoader){ return extractSchemaLoader; },
                      filters: function(filtersLoader){ return filtersLoader(); }
                  }

@@ -22,6 +22,7 @@ describe('UserProfile', function(){
             $window        = $injector.get('$window');
             $routeParams   = $injector.get('$routeParams');
         });
+        UserProfile.load();
     });
 
     it('should alert if the HTTP request errors', function(){
@@ -34,12 +35,17 @@ describe('UserProfile', function(){
         expect($window.alert).toHaveBeenCalledWith('UserProfile could not be loaded');
     });
 
+    afterEach(function() {
+        $httpBackend.verifyNoOutstandingExpectation();
+        $httpBackend.verifyNoOutstandingRequest();
+    });
+
     describe('valid requests', function() {
         var profile
 
         beforeEach(function(){
             $httpBackend.expectGET('/api/v0.1/userprofile/').respond(profile_data);
-            UserProfile.then(function(r){profile = r});
+            UserProfile.load().then(function(r){profile = r});
             $rootScope.$apply();
             $httpBackend.flush();
         });

@@ -263,7 +263,7 @@ describe('ReopenEpisodeCtrl', function (){
 
     describe('reopen()', function() {
       it('should save with the tags.', function() {
-          $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+          // $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
           spyOn(patient.episodes[0].tagging[0], 'save').and.returnValue(
               {then: function(f){f()}}
           )
@@ -273,7 +273,6 @@ describe('ReopenEpisodeCtrl', function (){
           mkcontroller();
           $scope.model.episodeId = '0';
           $scope.reopen();
-          $httpBackend.flush();
           $rootScope.$apply();
           expect(modalInstance.close).toHaveBeenCalled();
       });

@@ -128,6 +128,11 @@ describe('EditTeamsCtrl', function(){
         });
     });
 
+    afterEach(function() {
+        $httpBackend.verifyNoOutstandingExpectation();
+        $httpBackend.verifyNoOutstandingRequest();
+    });
+
     describe('Setup', function() {
 
         it('should have an editing object', function() {
@@ -144,22 +149,12 @@ describe('EditTeamsCtrl', function(){
           });
             expect($scope.editing).toEqual({tagging: {}});
         });
-
-        it('should fetch the options', function() {
-            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
-            $rootScope.$apply();
-            $httpBackend.flush();
-        });
     });
 
     describe('save()', function() {
-
         it('should save', function() {
-            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
             spyOn(modalInstance, 'close');
             $scope.save('close');
-            $rootScope.$apply();
-            $httpBackend.flush();
             expect(modalInstance.close).toHaveBeenCalledWith('close');
         });
 

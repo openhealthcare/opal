@@ -120,7 +120,7 @@ describe('EditItemCtrl', function (){
 
     beforeEach(function(){
         module(function($provide) {
-            $provide.value('UserProfile', function(){ return profile; });
+            $provide.value('UserProfile', {load: function(){ return profile; }});
         });
 
         inject(function($injector){

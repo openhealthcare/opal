@@ -6,7 +6,6 @@ angular.module('opal.services').factory('RecordEditor', function(
     var self = this;
 
     self.deleteItem = function(name, iix){
-
       var item = self.getItem(name, iix);
       var deferred = $q.defer();
 
@@ -18,7 +17,7 @@ angular.module('opal.services').factory('RecordEditor', function(
 
       $rootScope.state = 'modal';
 
-      UserProfile.then(function(profile){
+      UserProfile.load().then(function(profile){
         if(profile.readonly){
             deferred.resolve();
             return deferred.promise;
@@ -58,7 +57,7 @@ angular.module('opal.services').factory('RecordEditor', function(
 
       var deferred = $q.defer();
 
-      UserProfile.then(function(profile){
+      UserProfile.load().then(function(profile){
         if(profile.readonly){
             deferred.resolve();
         }
@@ -69,7 +68,7 @@ angular.module('opal.services').factory('RecordEditor', function(
               controller: item.formController,
               resolve: {
                   item: function() { return item; },
-                  profile: function(UserProfile) { return profile; },
+                  profile: profile,
                   episode: function() { return episode; },
                   metadata: function(Metadata) { return Metadata.load(); },
                   referencedata: function(Referencedata){ return Referencedata.load(); }

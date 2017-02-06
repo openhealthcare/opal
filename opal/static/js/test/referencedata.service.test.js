@@ -11,7 +11,11 @@ describe('Referencedata', function(){
         mock = { alert: jasmine.createSpy() };
 
         module('opal.services', function($provide) {
-            $provide.value('UserProfile', function(){ return profile; });
+            $provide.value('UserProfile', {
+              load: {
+                then: function(fn){ return fn(profile); }
+              }
+            });
         });
 
         module(function($provide){

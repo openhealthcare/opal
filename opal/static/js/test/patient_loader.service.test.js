@@ -1,7 +1,7 @@
 //
 // Unit tests for our patient loader service
 //
-describe('patientLoader', function() {
+fdescribe('patientLoader', function() {
     "use strict";
 
     var $httpBackend, $route, $rootScope;
@@ -28,15 +28,15 @@ describe('patientLoader', function() {
             $rootScope    = $injector.get('$rootScope');
         });
 
-        $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+        // $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
         $httpBackend.expectGET('/api/v0.1/record/').respond({});
         $httpBackend.expectGET('/api/v0.1/patient/123/').respond(response);
         $route.current = { params: { patient_id: '123' } };
     });
 
-    afterEach(function(){
-        $rootScope.$apply();
-        $httpBackend.flush()
+    afterEach(function() {
+        $httpBackend.verifyNoOutstandingExpectation();
+        $httpBackend.verifyNoOutstandingRequest();
     });
 
     describe('load patients', function() {

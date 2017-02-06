@@ -51,7 +51,9 @@ describe('episodeVisibility', function(){
         module('opal.services');
 
         module('opal.services', function($provide) {
-            $provide.value('UserProfile', function(){ return profile; });
+            $provide.value('UserProfile', {
+              load: function(){ return profile; }
+            });
         });
 
         inject(function($injector){

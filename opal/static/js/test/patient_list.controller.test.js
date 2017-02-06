@@ -132,7 +132,9 @@ describe('PatientListCtrl', function() {
     }
 
     beforeEach(module('opal.services', function($provide) {
-        $provide.value('UserProfile', function(){ return profile; });
+        $provide.value('UserProfile', {
+          load: function(){ return profile; }
+        });
     }));
 
     beforeEach(module('opal.controllers'));

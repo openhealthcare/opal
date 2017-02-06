@@ -6,11 +6,14 @@ describe('Routes', function() {
 
     var $route;
     var metadata;
+    var userProfile;
 
     beforeEach(function(){
         module('opal');
         metadata = {load: function(){}};
+        userProfile = {load: function(){}};
         spyOn(metadata, "load").and.returnValue("some metadata");
+        spyOn(userProfile, "load").and.returnValue("some user profile");
 
         inject(function($injector){
             $route   = $injector.get('$route');
@@ -30,7 +33,7 @@ describe('Routes', function() {
             var resolve = $route.routes['/list/:slug'].resolve;
             expect( resolve.episodedata( function(){ return {} } ) ).toEqual({});
             expect(resolve.metadata(metadata)).toBe("some metadata");
-            expect(resolve.profile('Profile')).toEqual('Profile');
+            expect(resolve.profile(userProfile)).toEqual("some user profile");
         });
 
         it('should add the slug to the template url', function() {
@@ -52,7 +55,7 @@ describe('Routes', function() {
         it('should resolve injected things', function() {
             var resolve = $route.routes['/patient/:patient_id/:view?'].resolve;
             expect(resolve.patient(function(){return {};})).toEqual({});
-            expect(resolve.profile('Profile')).toEqual('Profile');
+            expect(resolve.profile(userProfile)).toEqual("some user profile");
             expect(resolve.metadata(metadata)).toBe("some metadata");
         });
 
@@ -66,7 +69,7 @@ describe('Routes', function() {
     describe('/extract', function() {
         it('should resolve injected things', function() {
             var resolve = $route.routes['/extract'].resolve;
-            expect(resolve.profile('Profile')).toEqual('Profile');
+            expect(resolve.profile(userProfile)).toEqual("some user profile");
             expect(resolve.schema('Schema')).toEqual('Schema');
             expect(resolve.filters(function(){return {}})).toEqual({});
         });

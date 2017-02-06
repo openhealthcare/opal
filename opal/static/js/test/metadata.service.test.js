@@ -11,7 +11,9 @@ describe('Metadata', function(){
         mock = { alert: jasmine.createSpy() };
 
         module('opal.services', function($provide) {
-            $provide.value('UserProfile', function(){ return profile; });
+            $provide.value('UserProfile', {
+              load: function(){ return profile; }
+            });
         });
 
         module(function($provide){
