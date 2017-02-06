@@ -1,13 +1,21 @@
 ### 0.8.1 (Minor Release)
 
-### PatientList.get_queryset arguments
+#### PatientList.get_queryset arguments
 
-PatientList.get_queryset() is passed an extra keyword argument - `user`.
+PatientList.get_queryset() is now passed an extra keyword argument - `user`.
 This is the current `User` object.
 
 #### Removed Subrecord._bulk_serialise
 
 This flag no longer exists
+
+#### Overriding default Menu Items behaviour
+
+The `get_menu_items` method of Opal Application objects is now passed an extra keyword argument - `user`.
+This is the current `User` object.
+
+The templatetag application_menuitems now uses this method to render navigation menus, allowing dynamic
+customisation of menu contents based on user.
 
 
 ### 0.8.0 (Major Release)
