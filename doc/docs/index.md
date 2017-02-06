@@ -1,6 +1,6 @@
 ## Opal Documentation
 
-#### Opal is a full stack framework that makes building digital tools for health care easy.
+_Opal is a full stack framework that makes building digital tools for health care easy._
 
 Opal builds deep clinical domain specific functionality on top of
 [Django](https://djangoproject.com/), [Angular](https://angularjs.org/)
