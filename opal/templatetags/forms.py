@@ -141,7 +141,7 @@ def extract_common_args(kwargs):
 @register.inclusion_tag('_helpers/datetime_picker.html')
 def datetimepicker(*args, **kwargs):
     ctx = extract_common_args(kwargs)
-    ctx["date_picker_args"] = [('date-type', 'date',), ('autoclose', 1,),]
+    ctx["date_picker_args"] = [('date-type', 'date',), ('autoclose', 1,), ]
     ctx["date_label"] = kwargs.pop("date_label", "Date")
     ctx["time_label"] = kwargs.pop("time_label", "Time")
     return ctx
@@ -205,6 +205,7 @@ def datepicker(*args, **kwargs):
     if 'mindate' in kwargs:
         context['mindate'] = kwargs['mindate']
     return context
+
 
 @register.inclusion_tag('_helpers/radio.html')
 def radio(*args, **kwargs):
@@ -274,11 +275,11 @@ def textarea(*args, **kwargs):
 def static(fieldname):
     _, field_name = fieldname.split('.')
     model, field = _model_and_field_from_path(fieldname)
-    return dict(model="editing.{0}.{1}".format(model.get_api_name(),
-                                               field_name
-                                           ),
-                label=model._get_field_title(field_name),
-                datep=isinstance(field, models.DateField)
+    return dict(
+        model="editing.{0}.{1}".format(model.get_api_name(),
+                                       field_name),
+        label=model._get_field_title(field_name),
+        datep=isinstance(field, models.DateField)
     )
 
 
@@ -295,6 +296,7 @@ def icon(name):
 @register.inclusion_tag('_helpers/date_of_birth_field.html')
 def date_of_birth_field(model_name="editing.demographics.date_of_birth"):
     return dict(model_name=model_name)
+
 
 @register.inclusion_tag('_helpers/process_steps.html')
 def process_steps(*args, **kwargs):

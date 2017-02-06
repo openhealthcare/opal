@@ -1,9 +1,9 @@
 from django.conf.urls import patterns, include, url
 
+from opal.urls import urlpatterns as opatterns
+
 from django.contrib import admin
 admin.autodiscover()
-
-from opal.urls import urlpatterns as opatterns
 
 urlpatterns = patterns(
     '',

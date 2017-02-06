@@ -6,7 +6,6 @@ import logging
 from optparse import make_option
 import random
 
-from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from django.utils.functional import cached_property
 from django.utils import timezone
@@ -112,11 +111,15 @@ def date_time_generator(*args, **kwargs):
     d = date_generator(*args, **kwargs)
     hours = random.randint(0, 23)
     minutes = random.randint(0, 59)
-    return timezone.make_aware(datetime(d.year, d.month, d.day, hours, minutes))
+    return timezone.make_aware(
+        datetime(d.year, d.month, d.day, hours, minutes)
+    )
 
 
 def foreign_key_or_free_text_generator(field, **kwargs):
-    all_options = field.foreign_model.objects.all().values_list("name", flat=True)
+    all_options = field.foreign_model.objects.all().values_list(
+        "name", flat=True
+    )
 
     if random.randint(1, 10) <= PROB_OF_FREE_TEXT:
         return string_generator(field)
@@ -154,12 +157,17 @@ class PatientGenerator(object):
         numbers = range(seed, amount)
         hospital_numbers = []
         for number in numbers:
-            hospital_numbers.append("%s%s" % (template[:len(str(number))], number))
+            hospital_numbers.append(
+                "%s%s" % (template[:len(str(number))], number)
+            )
         return hospital_numbers
 
     def get_birth_date(self):
-        eighteen_years_ago = date.today() - timedelta(days=18*365)
-        return date_generator(start_date=date(1920, 1, 1), end_date=eighteen_years_ago)
+        eighteen_years_ago = date.today() - timedelta(days=18 * 365)
+        return date_generator(
+            start_date=date(1920, 1, 1),
+            end_date=eighteen_years_ago
+        )
 
     def get_unique_hospital_numbers(self, amount):
         """ return a uniqe amount of hospital numbers
@@ -193,16 +201,20 @@ class PatientGenerator(object):
         return episode
 
     def make(self):
-        patient = models.Patient.objects.create()
-        demographics = patient.demographics_set.get()
-        hospital_number = random.randint(1000, 2000000)  # self.get_unique_hospital_numbers(1)[0]
-        hospital_number = str(hospital_number)
-        demographics.name=self.get_name()
-        demographics.hospital_number=hospital_number
-        demographics.nhs_number=hospital_number
-        demographics.date_of_birth=self.get_birth_date()
-        demographics.sex=random.choice(['Female', 'Male', 'Not Known', 'Not Specified'])
-        demographics.birth_place = foreign_key_or_free_text_generator(Demographics.birth_place)
+        sexes = ['Female', 'Male', 'Not Known', 'Not Specified']
+
+        patient                      = models.Patient.objects.create()
+        demographics                 = patient.demographics_set.get()
+        hospital_number              = random.randint(1000, 2000000)
+        hospital_number              = str(hospital_number)
+        demographics.name            = self.get_name()
+        demographics.hospital_number = hospital_number
+        demographics.nhs_number      = hospital_number
+        demographics.date_of_birth   = self.get_birth_date()
+        demographics.sex             = random.choice(sexes)
+        demographics.birth_place     = foreign_key_or_free_text_generator(
+            Demographics.birth_place
+        )
         demographics.save()
 
         self.create_episode(patient)
