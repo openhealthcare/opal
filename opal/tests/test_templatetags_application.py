@@ -26,11 +26,9 @@ class ApplicationMenuitemsTestCase(OpalTestCase):
     def test_application_menuitems_passes_through_user(self, get_app):
         mock_app = MagicMock(name='Application')
         mock_user = MagicMock(name='User')
-        mock_request = MagicMock(name='Request')
-        mock_request.user = mock_user
-        context = {'request': mock_request}
+        context = {'user': mock_user}
         get_app.return_value = mock_app
-        result = list(application.application_menuitems(context)['items']())
+        list(application.application_menuitems(context)['items']())
         mock_app.get_menu_items.assert_called_with(user=mock_user)
 
 

@@ -12,7 +12,7 @@ register = template.Library()
 def application_menuitems(context):
     def items():
         app = application.get_app()
-        for i in app.get_menu_items(user=context['request'].user):
+        for i in app.get_menu_items(user=context['user']):
             yield i
     return dict(items=items)
 
