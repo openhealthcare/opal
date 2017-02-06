@@ -117,7 +117,7 @@ class OpalApplication(object):
         return klass.javascripts
 
     @classmethod
-    def get_menu_items(klass):
+    def get_menu_items(klass, user=None):
         """
         Default implementation of get_menu_items()
 
