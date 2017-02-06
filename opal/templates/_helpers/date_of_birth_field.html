@@ -4,11 +4,11 @@
     [[ {{ model_name }} | shortDate ]]
   </p>
 </div>
-<div ng-hide="editing.demographics.external_system" class="form-group">
+<div ng-class="{'has-error': form.date_of_birth.$invalid}" ng-hide="editing.demographics.external_system" class="form-group">
   <label class="control-label col-sm-3">Date Of Birth</label>
   <div class="col-sm-8">
     <div date-of-birth ng-model="{{ model_name }}"></div>
-    <span class="help-block" ng-show="form[element_name].$invalid">
+    <span class="help-block" ng-show="form.date_of_birth.$invalid">
       Please enter a valid date of birth
     </span>
   </div>
