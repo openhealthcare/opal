@@ -5,19 +5,16 @@ from django.conf import settings
 from django.contrib.auth.views import login
 from django.http import HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
-from django.template.loader import select_template, get_template
+from django.template.loader import get_template
 from django.template import TemplateDoesNotExist
 from django.views.generic import TemplateView, View
-from django.views.decorators.http import require_http_methods
 
 from opal import models
-from opal.core import application, detail, episodes, exceptions
+from opal.core import application, detail, episodes
 from opal.core.patient_lists import PatientList, TabbedPatientListGroup
-from opal.core.subrecords import (
-    episode_subrecords, subrecords, get_subrecord_from_api_name
-)
-from opal.core.views import LoginRequiredMixin, _get_request_data, _build_json_response
-from opal.utils import camelcase_to_underscore, stringport
+from opal.core.subrecords import episode_subrecords, get_subrecord_from_api_name
+from opal.core.views import LoginRequiredMixin, _build_json_response
+from opal.utils import camelcase_to_underscore
 from opal.utils.banned_passwords import banned
 
 app = application.get_app()
