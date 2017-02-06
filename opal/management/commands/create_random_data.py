@@ -220,7 +220,9 @@ class PatientGenerator(object):
         self.create_episode(patient)
 
         for subrecord in episode_subrecords():
-            s = EpisodeSubrecordGenerator(subrecord, patient.episode_set.first())
+            s = EpisodeSubrecordGenerator(
+                subrecord, patient.episode_set.first()
+            )
             s.make()
 
         for subrecord in patient_subrecords():

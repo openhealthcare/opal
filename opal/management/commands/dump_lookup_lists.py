@@ -3,13 +3,13 @@ Load a series of lookup lists into our instance.
 """
 import collections
 import json
-from optparse import make_option
 
 from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand
 
 from opal.models import Synonym
 from opal.core.lookuplists import LookupList
+
 
 class Command(BaseCommand):
 
@@ -26,7 +26,7 @@ class Command(BaseCommand):
             for item in model.objects.all():
                 synonyms = [s.name for s in
                             Synonym.objects.filter(content_type=content_type,
-                                                   object_id=item.id) ]
+                                                   object_id=item.id)]
                 items.append({'name': item.name, 'synonyms': synonyms})
             data[model.__name__.lower()] = items
 

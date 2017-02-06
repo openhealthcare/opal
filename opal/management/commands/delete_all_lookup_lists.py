@@ -6,6 +6,7 @@ from django.core.management.base import BaseCommand
 from opal.models import Synonym
 from opal.core.lookuplists import LookupList
 
+
 class Command(BaseCommand):
     """
     Management command to delete all lookuplists and related

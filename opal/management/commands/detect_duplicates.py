@@ -3,7 +3,8 @@ Detect duplicates or suspiciously similar patients
 """
 from django.core.management.base import BaseCommand
 
-from opal.models import Patient, Episode
+from opal.models import Patient
+
 
 class Command(BaseCommand):
 
@@ -49,7 +50,8 @@ class Command(BaseCommand):
                     add_to_suspicious(d.patient, patient)
                 if d.date_of_birth:
                     if patient_demographics.date_of_birth:
-                        if d.date_of_birth == patient_demographics.date_of_birth:
+                        patient_dob = patient_demographics.date_of_birth
+                        if d.date_of_birth == patient_dob:
                             add_to_suspicious(d.patient, patient)
 
         self.stdout.write("X" * 80)

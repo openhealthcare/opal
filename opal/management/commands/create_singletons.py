@@ -7,6 +7,7 @@ from django.core.management.base import BaseCommand
 from opal.models import Patient, Episode
 from opal.core.subrecords import patient_subrecords, episode_subrecords
 
+
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
