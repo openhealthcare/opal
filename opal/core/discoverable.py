@@ -5,7 +5,9 @@ from django.conf import settings
 from six import with_metaclass
 
 from opal.core import exceptions
-from opal.utils import camelcase_to_underscore, _itersubclasses, stringport
+from opal.utils import (
+    camelcase_to_underscore, _itersubclasses, stringport, AbstractBase
+)
 
 # So we only do it once
 IMPORTED_FROM_APPS = set()
@@ -31,10 +33,73 @@ def get_subclass(module, klass):
     return _itersubclasses(klass)
 
 
+class DiscoverableManager(object):
+
+    def all(self):
+        return list(get_subclass(self.feature.module_name, self.feature))
+
+    def filter(self, *args, **kwargs):
+        """
+        Return all matching instances of a feature based on a Django
+        Queryset-like interface.
+        """
+        def feature_filter(feature):
+            match = True
+            for attribute in kwargs:
+                if not hasattr(feature, attribute):
+                    msg = "Invalid Query: At least one {0} implementation " \
+                          "does not have a {1} attribute."
+                    raise ValueError(msg.format(self.feature, attribute))
+                if getattr(feature, attribute) != kwargs[attribute]:
+                    match = False
+            return match
+
+        return [f for f in self.all() if feature_filter(f)]
+
+    def get(self, *args, **kwargs):
+        """
+        Return a single instance of a feature based on a Django Queryset-like
+        interface.
+        """
+        matches = self.filter(*args, **kwargs)
+        if len(matches) > 1:
+            raise ValueError("More than one matching {0} for {1}".format(
+                str(self.feature), str(kwargs)
+            ))
+        if len(matches) == 0:
+            raise ValueError("No matching {0} for {1}".format(
+                str(self.feature), str(kwargs)
+            ))
+        return matches[0]
+
+
 class DiscoverableMeta(type):
-    def __new__(cls, name, bases, dct):
-        newfeature = type.__new__(cls, name, bases, dct)
+
+    def __new__(cls, name, bases, attrs):
+        newfeature = type.__new__(cls, name, bases, attrs)
         newfeature.is_valid()
+        if 'implementations' in attrs:
+            if not isinstance(attrs['implementations'], DiscoverableManager):
+                msg = "DiscoverableFeature.implementations must be a " \
+                      "DiscoverableManager subclass"
+                raise ValueError(msg)
+            else:
+                newfeature.implementations.feature = newfeature
+        else:
+            klassstr = "<class 'opal.core.discoverable.DiscoverableFeature'>"
+            should_have_manager = False
+            if klassstr in [str(c) for c in bases]:
+                should_have_manager = True
+            if AbstractBase in bases:
+                should_have_manager = True
+
+            if should_have_manager:
+                newfeature.implementations = DiscoverableManager()
+                newfeature.implementations.feature = newfeature
+            else:
+                if name != 'DiscoverableFeature':
+                    if hasattr(newfeature, 'implementations'):
+                        newfeature.implementations = None
         return newfeature
 
 
