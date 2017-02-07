@@ -1,4 +1,4 @@
 # -*- mode: conf -*-
 [flake8]
 ignore  = E203,E221
-exclude = migrations,opal/tests,node_modules
+exclude = migrations,opal/tests,node_modules,setup.py,windows-runner.py

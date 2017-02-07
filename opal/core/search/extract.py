@@ -14,6 +14,7 @@ from opal.core.subrecords import episode_subrecords, patient_subrecords
 
 from six import u
 
+
 def subrecord_csv(episodes, subrecord, file_name):
     """
     Given an iterable of EPISODES, the SUBRECORD we want to serialise,
@@ -39,7 +40,8 @@ def subrecord_csv(episodes, subrecord, file_name):
 
 def episode_csv(episodes, user, file_name):
     """
-    Given an iterable of EPISODES, create a CSV file containing Episode details.
+    Given an iterable of EPISODES, create a CSV file containing
+    Episode details.
     """
     logging.info("writing eposides")
     with open(file_name, "w") as csv_file:
