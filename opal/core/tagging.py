@@ -3,6 +3,7 @@ Tagging OPAL episodes
 """
 from opal.core import patient_lists
 
+
 def parent(tag):
     """
     Returns the parent tag, or None if the current

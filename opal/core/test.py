@@ -11,6 +11,7 @@ from django.utils.functional import cached_property
 from opal.core.views import OpalSerializer
 from opal.models import UserProfile, Patient
 
+
 class OpalTestCase(TestCase):
     USERNAME = "testuser"
     PASSWORD = "password"
@@ -39,7 +40,6 @@ class OpalTestCase(TestCase):
         )
         return user
 
-
     def post_json(self, path, data):
         json_data = json.dumps(data, cls=OpalSerializer)
         return self.client.post(
@@ -48,7 +48,9 @@ class OpalTestCase(TestCase):
 
     def put_json(self, path, data):
         json_data = json.dumps(data, cls=OpalSerializer)
-        return self.client.put(path, content_type='application/json', data=json_data)
+        return self.client.put(path,
+                               content_type='application/json',
+                               data=json_data)
 
     def assertStatusCode(
             self, path, expected_status_code, follow=True, msg=None
