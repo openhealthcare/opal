@@ -838,7 +838,7 @@ describe('PatientListCtrl', function() {
             $scope.removeFromMine($scope.episode);
             $scope.$apply();
 
-            expect($scope.removeFromList).toHaveBeenCalledWith($scope.episode)
+            expect($scope.removeFromList).toHaveBeenCalledWith($scope.episode.id);
         });
 
     });
