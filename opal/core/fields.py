@@ -2,6 +2,7 @@ from opal.utils import camelcase_to_underscore
 from django.db.models import ForeignKey, CharField
 from django.contrib.contenttypes.models import ContentType
 
+
 class ForeignKeyOrFreeText(property):
     """Field-like object that stores either foreign key or free text.
 
@@ -12,7 +13,8 @@ class ForeignKeyOrFreeText(property):
     field.  If found, references foreign model in ForeignKey, otherwise stores
     string in CharField.
     """
-    def __init__(self, foreign_model, related_name=None, verbose_name=None, default=None):
+    def __init__(self, foreign_model,
+                 related_name=None, verbose_name=None, default=None):
         self.foreign_model = foreign_model
         self.related_name = related_name
         self._verbose_name = verbose_name
@@ -20,7 +22,7 @@ class ForeignKeyOrFreeText(property):
 
         # for use in the fields, lookup lists essentially have
         #  a max length based on the char field that's used internally
-        self.max_length=255
+        self.max_length = 255
 
     @property
     def verbose_name(self):
@@ -59,7 +61,8 @@ class ForeignKeyOrFreeText(property):
             val = val.strip()
             try:
                 from opal.models import Synonym
-                synonym = Synonym.objects.get(content_type=content_type, name=val)
+                synonym = Synonym.objects.get(
+                    content_type=content_type, name=val)
                 vals.append(synonym.content_object.name)
             except Synonym.DoesNotExist:
                 vals.append(val)
