@@ -91,7 +91,9 @@ class QueryBackend(object):
 
     def patients_as_json(self):
         patients = self.get_patients()
-        return [p.to_dict(self.user) for p in patients]
+        return [
+            p.to_dict(self.user) for p in patients
+        ]
 
 
 class DatabaseQuery(QueryBackend):
@@ -296,8 +298,10 @@ class DatabaseQuery(QueryBackend):
         return results
 
     def _episodes_without_restrictions(self):
-        all_matches = [(q['combine'], self.episodes_for_criteria(q))
-                       for q in self.query]
+        all_matches = [
+            (q['combine'], self.episodes_for_criteria(q))
+            for q in self.query
+        ]
         if not all_matches:
             return []
 
@@ -357,6 +361,7 @@ def create_query(user, criteria):
         loaded after this module
     """
     if hasattr(settings, "OPAL_SEARCH_BACKEND"):
-        return stringport(settings.OPAL_SEARCH_BACKEND)(user, criteria)
+        query_backend = stringport(settings.OPAL_SEARCH_BACKEND)
+        return query_backend(user, criteria)
 
     return DatabaseQuery(user, criteria)
