@@ -120,10 +120,6 @@ class PatientGeneratorTestCase(OpalTestCase):
     def test_get_birth_date_returns_date(self):
         self.assertIsInstance(self.gen.get_birth_date(), datetime.date)
 
-    def test_get_unique_hospital_numbers(self):
-        numbers = self.gen.get_unique_hospital_numbers(10)
-        self.assertEqual(10, len(numbers))
-
     def test_create_episode(self):
         patient = Patient.objects.create()
         self.assertEqual(0, patient.episode_set.count())
@@ -137,6 +133,38 @@ class PatientGeneratorTestCase(OpalTestCase):
         self.assertEqual(0, Patient.objects.count())
         p = self.gen.make()
         self.assertEqual(1, Patient.objects.count())
+
+
+class SubrecordGeneratorTestCase(OpalTestCase):
+
+    def test_is_null_field_for_null_boolean(self):
+        generator = crd.SubRecordGenerator()
+        with patch.object(crd.random, 'randint') as randint:
+            randint.return_value = 1
+
+            self.assertEqual(True, generator.is_null_field(crd.NullBooleanField))
+
+    def test_is_empty_string(self):
+        generator = crd.SubRecordGenerator()
+        with patch.object(crd.random, 'randint') as randint:
+            randint.return_value = 1
+
+            self.assertEqual(True, generator.is_empty_string_field(
+                crd.CharField
+            ))
+
+    def test_make_empty_string_fields(self):
+        p, e = self.new_patient_and_episode_please()
+        with patch.object(crd.EpisodeSubrecordGenerator, 'get_instance') as get_instance:
+            generator = crd.EpisodeSubrecordGenerator(crd.models.Demographics, e)
+            with patch.object(generator, 'is_empty_string_field') as empty_string:
+                empty_string.return_value = True
+                mock_instance = MagicMock(name='Mock Instance')
+                get_instance.return_value = mock_instance
+                generator.make()
+                self.assertEqual("", mock_instance.post_code)
+
+
 
 
 class CommandTestCase(OpalTestCase):

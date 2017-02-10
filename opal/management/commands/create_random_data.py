@@ -152,40 +152,12 @@ class PatientGenerator(object):
         last_name = random.choice(last_names)
         return "%s %s" % (first_name, last_name)
 
-    def get_hospital_numbers(self, amount, seed=0):
-        template = "00000000"
-        numbers = range(seed, amount)
-        hospital_numbers = []
-        for number in numbers:
-            hospital_numbers.append(
-                "%s%s" % (template[:len(str(number))], number)
-            )
-        return hospital_numbers
-
     def get_birth_date(self):
         eighteen_years_ago = date.today() - timedelta(days=18 * 365)
         return date_generator(
             start_date=date(1920, 1, 1),
             end_date=eighteen_years_ago
         )
-
-    def get_unique_hospital_numbers(self, amount):
-        """ return a uniqe amount of hospital numbers
-        """
-        existing = True
-        hospital_numbers = []
-        seed = 0
-
-        while existing:
-            hospital_numbers.extend(self.get_hospital_numbers(amount))
-            existing = Demographics.objects.filter(
-                hospital_number__in=hospital_numbers
-            ).count()
-            if existing:
-                seed = seed + amount
-                amount = amount - existing
-
-        return hospital_numbers
 
     def create_episode(self, patient):
         dob = patient.demographics_set.first().date_of_birth
@@ -264,7 +236,8 @@ class SubRecordGenerator(object):
                         yield field
 
     def is_null_field(self, field):
-        """ should we make this field null
+        """
+        Should we make this field null
         """
         if random.randint(1, 10) <= self.PROB_OF_NONE:
             if field == NullBooleanField:
@@ -276,10 +249,11 @@ class SubRecordGenerator(object):
         return False
 
     def is_empty_string_field(self, field):
-        """ should we make this field empty
+        """
+        Should we make this field empty
         """
         if random.randint(1, 10) <= self.PROB_OF_NONE:
-            if field == CharField and getattr(field, "blank", False):
+            if field == CharField:
                 return True
 
         return False
