@@ -7,6 +7,7 @@ from opal.models import Synonym
 from opal.core.lookuplists import LookupList
 from opal.utils import write
 
+
 class Command(BaseCommand):
     """
     Management command to delete all lookuplists and related
