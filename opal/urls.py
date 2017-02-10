@@ -6,8 +6,9 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib import admin
 from django.views.generic import TemplateView
 from opal import views
-from opal.core import api, subrecords
+from opal.core import api, subrecords, plugins
 from opal.forms import ChangePasswordForm
+
 
 urlpatterns = patterns(
     '',
@@ -96,13 +97,11 @@ for subrecord_model in subrecords.subrecords():
             views.ModalTemplateView.as_view(),
             {'model': subrecord_model},
             name=url_name
-        ),
+        )
     )
 
 
 urlpatterns += staticfiles_urlpatterns()
-
-from opal.core import plugins
 
 for plugin in plugins.OpalPlugin.list():
     urlpatterns += plugin.get_urls()

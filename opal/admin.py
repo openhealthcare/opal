@@ -18,26 +18,35 @@ from opal.core.subrecords import episode_subrecords, patient_subrecords
 
 admin.site.unregister(User)
 
+
 class UserProfileInline(admin.StackedInline):
     model = UserProfile
     filter_horizontal = ('roles',)
 
+
 class FilterInline(admin.StackedInline):
     model = models.Filter
 
-class UserProfileAdmin(UserAdmin):
-    inlines = [ UserProfileInline, FilterInline,]
 
-class MyAdmin(reversion.VersionAdmin): pass
+class UserProfileAdmin(UserAdmin):
+    inlines = [UserProfileInline, FilterInline, ]
+
+
+class MyAdmin(reversion.VersionAdmin):
+    pass
+
 
 class EpisodeAdmin(reversion.VersionAdmin):
-    list_display = ['patient', 'active', 'date_of_admission', 'discharge_date',]
+    list_display = [
+        'patient', 'active', 'date_of_admission', 'discharge_date'
+    ]
     list_filter = ['active', ]
     search_fields = [
         'patient__demographics__first_name',
         'patient__demographics__surname',
         'patient__demographics__hospital_number'
     ]
+
 
 class PatientAdmin(reversion.VersionAdmin):
     search_fields = [
@@ -46,9 +55,9 @@ class PatientAdmin(reversion.VersionAdmin):
         'demographics__hospital_number'
     ]
 
+
 class TaggingAdmin(reversion.VersionAdmin):
     list_display = ['value', 'episode']
-
 
 
 class PatientSubRecordAdmin(reversion.VersionAdmin):
@@ -72,6 +81,7 @@ class SynonymInline(GenericTabularInline):
 
 
 class LookupListForm(forms.ModelForm):
+
     def clean_name(self):
         object_class = self.instance.__class__
         name = self.cleaned_data["name"]
@@ -100,11 +110,13 @@ admin.site.register(models.Tagging, TaggingAdmin)
 
 
 for subclass in patient_subrecords():
-    if not subclass._meta.abstract and not getattr(subclass, "_no_admin", False):
+    if not subclass._meta.abstract and not getattr(
+            subclass, "_no_admin", False):
         admin.site.register(subclass, PatientSubRecordAdmin)
 
 for subclass in episode_subrecords():
-    if not subclass._meta.abstract and not getattr(subclass, "_no_admin", False):
+    if not subclass._meta.abstract and not getattr(
+            subclass, "_no_admin", False):
         admin.site.register(subclass, EpisodeSubRecordAdmin)
 
 admin.site.register(models.ContactNumber, MyAdmin)
