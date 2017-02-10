@@ -63,14 +63,16 @@ class OpalPlugin(discoverable.DiscoverableFeature):
 def register(what):
     warnthem = """
 
-opal.core.plugins.register is no longer required and will be removed in Opal 0.9.0
-There is no need to register {0} as
-Plugins are now discoverable features.
+opal.core.plugins.register is no longer required and will be removed in
+Opal 0.9.0
+
+There is no need to register {0} as Plugins are now discoverable features.
 
 Please consult the Opal documentation on Plugins for more information.
 """.format(what)
     warnings.warn(warnthem, DeprecationWarning, stacklevel=2)
     pass
+
 
 def plugins():
     """
@@ -80,7 +82,8 @@ def plugins():
 
 opal.core.plugins.plugins is slated for removal in Opal 0.9.0
 
-Plugins are now discoverable features, an iterable of subclasses may be accessed via
+Plugins are now discoverable features, an iterable of subclasses
+may be accessed via
 
 opal.core.plugins.OpalPlugin.list
 """

@@ -278,8 +278,8 @@ angular.module('opal.controllers').controller(
                 });
 	    };
 
-        $scope.removeFromList = function(episode){
-            delete $scope.episodes[episode.id];
+        $scope.removeFromList = function(episode_id){
+            delete $scope.episodes[episode_id];
             $scope.rows = $scope.getVisibleEpisodes();
             $scope.num_episodes -= 1;
             $scope.episode = $scope.rows[0];
@@ -287,9 +287,9 @@ angular.module('opal.controllers').controller(
 
         $scope._post_discharge = function(result, episode){
     		$rootScope.state = 'normal';
-    		if (result == 'discharged' | result == 'moved') {
-                $scope.removeFromList(episode);
-    		};
+      		if (result == 'discharged' | result == 'moved') {
+                  $scope.removeFromList(episode.id);
+      		};
         };
 
 	    $scope.dischargeEpisode = function(episode) {
@@ -331,7 +331,7 @@ angular.module('opal.controllers').controller(
             editing = tagging.makeCopy();
             editing.mine = false;
             tagging.save(editing).then(function(){
-                $scope.removeFromList(episode);
+                $scope.removeFromList(episode.id);
             });
 
         };

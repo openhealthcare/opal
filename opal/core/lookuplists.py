@@ -88,7 +88,8 @@ class LookupList(models.Model):
             this ct
         """
         if synonym_exists(self.__class__, self.name):
-            err_str = "{0}, or a synonym of one, already exists with the name {1}"
+            err_str = "{0}, or a synonym of one, already exists with the " \
+                      "name {1}"
             class_name = self.__class__.__name__
             raise ValueError(err_str.format(class_name, self.name))
         return super(LookupList, self).save(*args, **kwargs)

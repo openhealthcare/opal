@@ -13,7 +13,7 @@ def serialize_model(model):
         'single'      : model._is_singleton,
         'advanced_searchable': model._advanced_searchable,
         'fields'      : model.build_field_schema(),
-        }
+    }
     if hasattr(model, '_sort'):
         col['sort'] = model._sort
     if hasattr(model, '_read_only'):

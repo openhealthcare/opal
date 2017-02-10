@@ -9,8 +9,10 @@ These should eventually be moved out.
 """
 from opal.core import discoverable
 
+
 class Metadata(discoverable.DiscoverableFeature):
     module_name = 'metadata'
+
 
 class MacrosMetadata(Metadata):
     slug = 'macros'
@@ -22,6 +24,7 @@ class MacrosMetadata(Metadata):
         return {
             klass.slug: Macro.to_dict()
         }
+
 
 class MicroTestDefaultsMetadata(Metadata):
     slug = 'micro_test_defaults'
