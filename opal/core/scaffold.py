@@ -100,6 +100,7 @@ def start_plugin(name, USERLAND):
     controllers.mkdir()
     services = jsdir/'services'
     services.mkdir()
+    write('Plugin complete at {0}'.format(reponame))
     return
 
 

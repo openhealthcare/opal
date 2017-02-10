@@ -157,14 +157,14 @@ class SubrecordGeneratorTestCase(OpalTestCase):
         p, e = self.new_patient_and_episode_please()
         with patch.object(crd.EpisodeSubrecordGenerator, 'get_instance') as get_instance:
             generator = crd.EpisodeSubrecordGenerator(crd.models.Demographics, e)
-            with patch.object(generator, 'is_empty_string_field') as empty_string:
-                empty_string.return_value = True
-                mock_instance = MagicMock(name='Mock Instance')
-                get_instance.return_value = mock_instance
-                generator.make()
-                self.assertEqual("", mock_instance.post_code)
-
-
+            with patch.object(crd.SubRecordGenerator, 'is_null_field') as null_field:
+                null_field.return_value = False
+                with patch.object(generator, 'is_empty_string_field') as empty_string:
+                    empty_string.return_value = True
+                    mock_instance = MagicMock(name='Mock Instance')
+                    get_instance.return_value = mock_instance
+                    generator.make()
+                    self.assertEqual("", mock_instance.post_code)
 
 
 class CommandTestCase(OpalTestCase):

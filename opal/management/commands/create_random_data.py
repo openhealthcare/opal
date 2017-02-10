@@ -9,14 +9,15 @@ import random
 from django.core.management.base import BaseCommand
 from django.utils.functional import cached_property
 from django.utils import timezone
-
-from opal import models
-from opal.core.fields import ForeignKeyOrFreeText
-from opal.core.subrecords import episode_subrecords, patient_subrecords
 from django.db.models import (
     CharField, DateField, DateTimeField, BooleanField, TextField,
     NullBooleanField
 )
+
+from opal import models
+from opal.core.fields import ForeignKeyOrFreeText
+from opal.core.subrecords import episode_subrecords, patient_subrecords
+from opal.utils import write
 
 Demographics = [
     s for s in patient_subrecords()
@@ -264,6 +265,7 @@ class SubRecordGenerator(object):
         for field in self.get_fields():
             if field.name == "consistency_token":
                 setattr(instance, field.name, consistency_generator())
+
             if self.is_null_field(field):
                 setattr(instance, field.name, None)
             elif self.is_empty_string_field(field):
@@ -337,4 +339,6 @@ class Command(BaseCommand):
         p = PatientGenerator()
 
         for i in range(number):
+            msg = 'Generating Patient {0} / {1}'.format(i+1, number)
+            write(msg)
             p.make()
