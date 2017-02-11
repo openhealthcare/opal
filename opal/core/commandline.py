@@ -192,6 +192,7 @@ def checkout(args):
                 write('{0} is missing'.format(package_name))
                 return
 
+
 def parse_args(args):
     """
     Set up Argparse argument parser and route ourselves to the
