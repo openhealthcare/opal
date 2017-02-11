@@ -10,6 +10,14 @@ from opal.core.test import OpalTestCase
 from opal.core import commandline
 
 
+class FindApplicationNameTestCase(OpalTestCase):
+
+    def test_not_found(self):
+        with patch.object(commandline.sys, 'exit') as exiter:
+            commandline._find_application_name()
+            exiter.assert_called_with(1)
+
+
 class StartprojectTestCase(OpalTestCase):
 
     def test_startproject(self):
@@ -28,6 +36,31 @@ class StartpluginTestCase(OpalTestCase):
         with patch.object(commandline.scaffold_utils, 'start_plugin') as sp:
             commandline.startplugin(mock_args)
             sp.assert_called_with('pluginname', commandline.USERLAND_HERE)
+
+
+@patch('subprocess.check_call')
+@patch('os.system')
+class ScaffoldTestCase(OpalTestCase):
+
+    def test_scaffold(self, os, sub):
+        mock_args = MagicMock(name='Mock Args')
+        mock_args.app = 'opal'
+        mock_args.dry_run = False
+        with patch.object(commandline, '_find_application_name') as namer:
+            namer.return_value = 'opal.tests'
+            commandline.scaffold(mock_args)
+            os.assert_any_call('python manage.py makemigrations opal --traceback ')
+            os.assert_any_call('python manage.py migrate opal --traceback')
+
+    def test_dry_run(self, os, sub):
+        mock_args = MagicMock(name='Mock Args')
+        mock_args.app = 'opal'
+        mock_args.dry_run = True
+        with patch.object(commandline, '_find_application_name') as namer:
+            namer.return_value = 'opal.tests'
+            commandline.scaffold(mock_args)
+            os.assert_any_call('python manage.py makemigrations opal --traceback --dry-run')
+
 
 
 class ParseArgsTestCase(OpalTestCase):

@@ -14,6 +14,7 @@ import ffs
 import opal
 from opal.core import scaffold as scaffold_utils
 from opal.core import test_runner
+from opal.utils import stringport, write
 
 USERLAND_HERE    = ffs.Path('.').abspath
 SCRIPT_HERE      = ffs.Path(__file__).parent
@@ -32,9 +33,9 @@ def _find_application_name():
             if d/'settings.py':
                 return d[-1]
 
-    print("\n\nCripes!\n")
-    print("We can't figure out what the name of your application is :(\n")
-    print("Are you in the application root directory? \n\n")
+    write("\n\nCripes!\n")
+    write("We can't figure out what the name of your application is :(\n")
+    write("Are you in the application root directory? \n\n")
     sys.exit(1)
 
 
@@ -76,8 +77,8 @@ def scaffold(args):
 
     makemigrations_cmd = "python manage.py makemigrations {app} " \
                          "--traceback {dry_run}"
-    makemigrations_cmd.format(app=app, dry_run=dry_run)
-    migrate_cmd = 'python manage.py migrate {app} --traceback '.format(app=app)
+    makemigrations_cmd = makemigrations_cmd.format(app=app, dry_run=dry_run)
+    migrate_cmd = 'python manage.py migrate {app} --traceback'.format(app=app)
 
     os.system(makemigrations_cmd)
     if not args.dry_run:
@@ -85,7 +86,6 @@ def scaffold(args):
 
     # 2. Let's create some display templates
     from opal.models import Subrecord, EpisodeSubrecord, PatientSubrecord
-    from opal.utils import stringport
 
     models = stringport('{0}.models'.format(app))
     for i in dir(models):
