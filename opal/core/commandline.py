@@ -10,8 +10,6 @@ import subprocess
 import sys
 
 import ffs
-from ffs import nix
-from ffs.contrib import mold
 
 import opal
 from opal.core import scaffold as scaffold_utils
@@ -24,11 +22,12 @@ SCAFFOLDING_BASE = OPAL/'scaffolding'
 SCAFFOLD         = SCAFFOLDING_BASE/'scaffold'
 PLUGIN_SCAFFOLD  = SCAFFOLDING_BASE/'plugin_scaffold'
 
+
 def _find_application_name():
     """
     Return the name of the current Opal application
     """
-    for d in  USERLAND_HERE.ls():
+    for d in USERLAND_HERE.ls():
         if d.is_dir:
             if d/'settings.py':
                 return d[-1]
@@ -38,9 +37,11 @@ def _find_application_name():
     print("Are you in the application root directory? \n\n")
     sys.exit(1)
 
+
 def startproject(args):
     scaffold_utils.start_project(args.name, USERLAND_HERE)
     return
+
 
 def startplugin(args):
     """
@@ -53,6 +54,7 @@ def startplugin(args):
     """
     scaffold_utils.start_plugin(args.name, USERLAND_HERE)
     return
+
 
 def scaffold(args):
     """
@@ -72,8 +74,9 @@ def scaffold(args):
     if args.dry_run:
         dry_run = '--dry-run'
 
-    makemigrations_cmd = 'python manage.py makemigrations {app} --traceback {dry_run}'.format(
-        app=app, dry_run=dry_run)
+    makemigrations_cmd = "python manage.py makemigrations {app} " \
+                         "--traceback {dry_run}"
+    makemigrations_cmd.format(app=app, dry_run=dry_run)
     migrate_cmd = 'python manage.py migrate {app} --traceback '.format(app=app)
 
     os.system(makemigrations_cmd)
@@ -94,12 +97,16 @@ def scaffold(args):
                 if args.dry_run:
                     print('No Display template for {0}'.format(thing))
                 else:
-                    scaffold_utils.create_display_template_for(thing, SCAFFOLDING_BASE)
+                    scaffold_utils.create_display_template_for(
+                        thing, SCAFFOLDING_BASE
+                    )
             if not thing.get_modal_template():
                 if args.dry_run:
                     print('No Form template for {0}'.format(thing))
                 else:
-                    scaffold_utils.create_form_template_for(thing, SCAFFOLDING_BASE)
+                    scaffold_utils.create_form_template_for(
+                        thing, SCAFFOLDING_BASE
+                    )
     return
 
 
@@ -107,6 +114,7 @@ def test(args):
     args.userland_here = USERLAND_HERE
     test_runner.run_tests(args)
     return
+
 
 def check_for_uncommitted():
     changes = subprocess.check_output(["git", "status", "--porcelain"])
@@ -120,7 +128,9 @@ def get_requirements():
     """
 
     with USERLAND_HERE:
-        requirements = subprocess.check_output(["less", "requirements.txt"]).split("\n")
+        requirements = subprocess.check_output(
+            ["less", "requirements.txt"]
+        ).split("\n")
 
         package_to_version = {}
 
@@ -135,9 +145,8 @@ def get_requirements():
 
 def parse_github_urls(some_url):
     """
-    takes in something that looks like a git hub url in a fabfile e.g.
-    -e git+https://github.com/openhealthcare/opal-referral.git@v0.1.2#egg=opal_referral
-    returns opal-referral
+    takes in something that looks like a Github url in a requirements.txt
+    file and returns the package name
     """
 
     if "github" in some_url and "opal" in some_url:
@@ -187,16 +196,19 @@ def checkout(args):
                     os.system("git checkout {}".format(version))
                     os.system("python setup.py develop")
 
+
 def main():
+    description = "Opal - a full stack web framework for health " \
+                  "care applications."
     parser = argparse.ArgumentParser(
-        description="Opal - a full stack web framework for health care applications.",
+        description=description,
         usage="opal <command> [<args>]",
         epilog="Brought to you by Open Health Care UK"
     )
     parser.add_argument(
         '--version', '-v',
         action='version',
-        version = 'Opal {0}'.format(opal.__version__)
+        version='Opal {0}'.format(opal.__version__)
     )
     subparsers = parser.add_subparsers(help="Opal Commands")
 
@@ -216,10 +228,12 @@ def main():
 
     parser_scaffold = subparsers.add_parser("scaffold")
     parser_scaffold.add_argument('app', help='Django app to scaffold')
+    scaffold_help = "Just print the templates we would create - don't " \
+                    "actually create them"
     parser_scaffold.add_argument(
         '--dry-run',
         action='store_true',
-        help="Just print the templates we would create - don't actually create them")
+        help=scaffold_help)
     parser_scaffold.set_defaults(func=scaffold)
 
     parser_test = subparsers.add_parser("test")
@@ -229,7 +243,8 @@ def main():
         '-t', '--test', help='Test case or method to run'
     )
     parser_test.add_argument(
-        '-c', '--coverage', action='store_true', help='Generate a test coverage report'
+        '-c', '--coverage', action='store_true',
+        help='Generate a test coverage report'
     )
     parser_test.set_defaults(func=test)
 
