@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 """
 Commandline entrypoint for Opal
+
+This is the file used by our python packaging as a setup.py script
 """
 from opal.core.commandline import main
 

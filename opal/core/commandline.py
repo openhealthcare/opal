@@ -95,14 +95,14 @@ def scaffold(args):
                 continue
             if not thing.get_display_template():
                 if args.dry_run:
-                    print('No Display template for {0}'.format(thing))
+                    write('No Display template for {0}'.format(thing))
                 else:
                     scaffold_utils.create_display_template_for(
                         thing, SCAFFOLDING_BASE
                     )
             if not thing.get_modal_template():
                 if args.dry_run:
-                    print('No Form template for {0}'.format(thing))
+                    write('No Form template for {0}'.format(thing))
                 else:
                     scaffold_utils.create_form_template_for(
                         thing, SCAFFOLDING_BASE
