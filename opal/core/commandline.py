@@ -197,7 +197,11 @@ def checkout(args):
                     os.system("python setup.py develop")
 
 
-def main():
+def parse_args(args):
+    """
+    Set up Argparse argument parser and route ourselves to the
+    target function.
+    """
     description = "Opal - a full stack web framework for health " \
                   "care applications."
     parser = argparse.ArgumentParser(
@@ -251,7 +255,10 @@ def main():
     parser_checkout = subparsers.add_parser("checkout")
     parser_checkout.set_defaults(func=checkout)
 
-    args = parser.parse_args()
+    args = parser.parse_args(args)
     args.func(args)
-
     sys.exit(0)
+
+
+def main():
+    parse_args(sys.argv[1:])
