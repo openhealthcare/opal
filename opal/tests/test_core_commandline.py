@@ -28,12 +28,12 @@ class FindApplicationNameTestCase(OpalTestCase):
         nz.return_value = True
         bl.return_value = True
 
-        name = commandline._find_application_name()
+        name = commandline.find_application_name()
         self.assertEqual('opalapp', name)
 
     def test_not_found(self):
         with patch.object(commandline.sys, 'exit') as exiter:
-            commandline._find_application_name()
+            commandline.find_application_name()
             exiter.assert_called_with(1)
 
 
@@ -65,7 +65,7 @@ class ScaffoldTestCase(OpalTestCase):
         mock_args = MagicMock(name='Mock Args')
         mock_args.app = 'opal'
         mock_args.dry_run = False
-        with patch.object(commandline, '_find_application_name') as namer:
+        with patch.object(commandline, 'find_application_name') as namer:
             namer.return_value = 'opal.tests'
             commandline.scaffold(mock_args)
             os.assert_any_call('python manage.py makemigrations opal --traceback ')
@@ -75,7 +75,7 @@ class ScaffoldTestCase(OpalTestCase):
         mock_args = MagicMock(name='Mock Args')
         mock_args.app = 'opal'
         mock_args.dry_run = True
-        with patch.object(commandline, '_find_application_name') as namer:
+        with patch.object(commandline, 'find_application_name') as namer:
             namer.return_value = 'opal.tests'
             commandline.scaffold(mock_args)
             os.assert_any_call('python manage.py makemigrations opal --traceback --dry-run')
@@ -88,7 +88,7 @@ class ScaffoldTestCase(OpalTestCase):
         mock_args = MagicMock(name='Mock Args')
         mock_args.app = 'opal'
         mock_args.dry_run = False
-        with patch.object(commandline, '_find_application_name') as namer:
+        with patch.object(commandline, 'find_application_name') as namer:
             with patch.object(commandline.scaffold_utils, 'create_display_template_for') as c:
                 namer.return_value = 'opal.tests'
                 commandline.scaffold(mock_args)
@@ -102,7 +102,7 @@ class ScaffoldTestCase(OpalTestCase):
         mock_args = MagicMock(name='Mock Args')
         mock_args.app = 'opal'
         mock_args.dry_run = True
-        with patch.object(commandline, '_find_application_name') as namer:
+        with patch.object(commandline, 'find_application_name') as namer:
             with patch.object(commandline, 'write') as writer:
                 namer.return_value = 'opal.tests'
                 commandline.scaffold(mock_args)
@@ -116,7 +116,7 @@ class ScaffoldTestCase(OpalTestCase):
         mock_args = MagicMock(name='Mock Args')
         mock_args.app = 'opal'
         mock_args.dry_run = False
-        with patch.object(commandline, '_find_application_name') as namer:
+        with patch.object(commandline, 'find_application_name') as namer:
             with patch.object(commandline.scaffold_utils, 'create_form_template_for') as c:
                 namer.return_value = 'opal.tests'
                 commandline.scaffold(mock_args)
@@ -130,7 +130,7 @@ class ScaffoldTestCase(OpalTestCase):
         mock_args = MagicMock(name='Mock Args')
         mock_args.app = 'opal'
         mock_args.dry_run = True
-        with patch.object(commandline, '_find_application_name') as namer:
+        with patch.object(commandline, 'find_application_name') as namer:
             with patch.object(commandline, 'write') as writer:
                 namer.return_value = 'opal.tests'
                 commandline.scaffold(mock_args)
@@ -151,6 +151,14 @@ class TestTestCase(OpalTestCase):
 @patch('os.system')
 class CheckoutTestCase(OpalTestCase):
 
+    def test_check_for_uncommitted(self, os, check_call, check_output):
+        check_output.return_value = ""
+        self.assertEqual(0, commandline.check_for_uncommitted())
+
+    def test_check_for_uncommitted_with_changes(self, os, check_call, check_output):
+        check_output.return_value = "' M opal/tests/test_core_commandline.py\n'"
+        self.assertEqual(41, commandline.check_for_uncommitted())
+
     def test_get_requirements(self, os, check_call, check_output):
         requirements = """
 Django==1.9.1
@@ -162,6 +170,48 @@ Django==1.9.1
             'opal': 'v10.8.0'
         }
         self.assertEqual(expected, r)
+
+    @patch('ffs.Path.ls')
+    def test_checkout(self, ls, os, check_call, check_output):
+        mock_args = MagicMock(name='Mock Args')
+        ls.return_value = ['opal', 'someotherpackage']
+        with patch.object(commandline, 'get_requirements') as reqs:
+            with patch.object(commandline, 'write') as writer:
+                reqs.return_value = {
+                    'opal': 'v10.8.0'
+                }
+                commandline.checkout(mock_args)
+                os.assert_any_call('git checkout v10.8.0')
+                os.assert_any_call('python setup.py develop')
+                writer.assert_any_call('checking out opal to v10.8.0')
+
+    @patch('ffs.Path.ls')
+    def test_checkout_clones_package(self, ls, os, check_call, check_output):
+        mock_args = MagicMock(name='Mock Args')
+        ls.return_value = ['opal', 'someotherpackage']
+        with patch.object(commandline, 'get_requirements') as reqs:
+            with patch.object(commandline, 'write') as writer:
+                reqs.return_value = {
+                    'opal'          : 'v10.8.0',
+                    'missingpackage': '1.0'
+                }
+                commandline.checkout(mock_args)
+                writer.assert_any_call('missingpackage is missing')
+
+    @patch('ffs.Path.ls')
+    def test_checkout_with_uncommitted(self, ls, os, check_call, check_output):
+        mock_args = MagicMock(name='Mock Args')
+        ls.return_value = ['opal']
+        with patch.object(commandline, 'get_requirements') as reqs:
+            with patch.object(commandline, 'write') as writer:
+                with patch.object(commandline, 'check_for_uncommitted') as checker:
+                    reqs.return_value = {
+                        'opal'          : 'v10.8.0',
+                    }
+                    checker.return_value = 41
+                    commandline.checkout(mock_args)
+                    writer.assert_any_call('We have uncommitted changes in opal')
+                    writer.assert_any_call('Abandonning attempt to check out to requirements.txt')
 
 
 class ParseArgsTestCase(OpalTestCase):

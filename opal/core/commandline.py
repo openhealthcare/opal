@@ -24,7 +24,7 @@ SCAFFOLD         = SCAFFOLDING_BASE/'scaffold'
 PLUGIN_SCAFFOLD  = SCAFFOLDING_BASE/'plugin_scaffold'
 
 
-def _find_application_name():
+def find_application_name():
     """
     Return the name of the current Opal application
     """
@@ -66,7 +66,7 @@ def scaffold(args):
     3. Create forms
     """
     app = args.app
-    name = _find_application_name()
+    name = find_application_name()
     scaffold_utils._set_settings_module(name)
     sys.path.append(os.path.abspath('.'))
 
@@ -135,7 +135,7 @@ def get_requirements():
         package_to_version = {}
 
         for requirement in requirements:
-            parsed_url = parse_github_urls(requirement)
+            parsed_url = parse_github_url(requirement)
 
             if parsed_url:
                 package_to_version.update(parsed_url)
@@ -143,7 +143,7 @@ def get_requirements():
     return package_to_version
 
 
-def parse_github_urls(some_url):
+def parse_github_url(some_url):
     """
     takes in something that looks like a Github url in a requirements.txt
     file and returns the package name
@@ -163,39 +163,34 @@ def checkout(args):
     package_name_version = get_requirements()
     SOURCE_DIR = USERLAND_HERE.parent
     with SOURCE_DIR:
-        existing_packages = subprocess.check_output(["ls"]).split("\n")
+        ls_source = [str(f) for f in SOURCE_DIR.ls()]
         uncommitted = []
 
         for package_name, version in package_name_version.items():
-            if package_name in existing_packages:
+            if package_name in ls_source:
                 with SOURCE_DIR/package_name:
                     if check_for_uncommitted():
                         uncommitted.append(package_name)
 
         if len(uncommitted):
-            print("we have uncommited changes in {} quitting".format(
+            write("We have uncommitted changes in {}".format(
                 ", ".join(uncommitted)
             ))
+            write('Abandonning attempt to check out to requirements.txt')
             return
 
         for package_name, version in package_name_version.items():
-            if package_name in existing_packages:
+            if package_name in ls_source:
                 with SOURCE_DIR/package_name:
-                    print("checking out {0} to {1}".format(
+                    write("checking out {0} to {1}".format(
                         package_name, version
                     ))
                     os.system("git checkout {}".format(version))
                     os.system("python setup.py develop")
             else:
-                print("cloning {}".format(package_name))
-                os.system("git clone {}".format(package_name))
-                with SOURCE_DIR/package_name:
-                    print("checking out {0} to {1}".format(
-                        package_name, version
-                    ))
-                    os.system("git checkout {}".format(version))
-                    os.system("python setup.py develop")
-
+                write('Unable to checkout versions from requirements')
+                write('{0} is missing'.format(package_name))
+                return
 
 def parse_args(args):
     """
