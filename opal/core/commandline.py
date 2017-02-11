@@ -1,6 +1,6 @@
-#!/usr/bin/env python
 """
-Opal Admin script.
+Opal comandline tool.
+
 In which we expose useful commandline functionality to our users.
 """
 import argparse
@@ -240,6 +240,3 @@ def main():
     args.func(args)
 
     sys.exit(0)
-
-if __name__ == '__main__':
-    main()
