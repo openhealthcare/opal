@@ -4,12 +4,14 @@ angular.module('opal.services')
                                            $route,
                                            Episode,
                                            recordLoader) {
-        return function() {
+        return function(slug) {
             "use strict";
 
-	        var deferred = $q.defer();
-            var params = $route.current.params;
-            var target = '/api/v0.1/patientlist/' + params.slug + '/';
+  	        var deferred = $q.defer();
+            if(!slug){
+              slug = $route.current.params.slug;
+            }
+            var target = '/api/v0.1/patientlist/' + slug + '/';
 
             var getEpisodesPromise = $http.get(target);
 
