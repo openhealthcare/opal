@@ -43,6 +43,7 @@ pages:
       - OpalApplication: reference/opal_application.md
       - reference/episode_service.md
       - reference/item_service.md
+      - reference/loaders.md
       - reference/patient_summary_service.md
       - Form helpers: reference/form_templatetags.md
       - Panel Template tags: reference/panels_templatetags.md
