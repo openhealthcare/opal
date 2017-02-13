@@ -10,6 +10,9 @@ from opal.utils import AbstractBase
 
 from opal.core import discoverable
 
+"""
+BEGIN COMPLICATED CLASS SETUP
+"""
 class NewOpalObjectType(object):
     pass
 
@@ -42,9 +45,13 @@ class RedColour(ColourFeature):
 class SeaGreenColour(ColourFeature):
     display_name = 'Sea Green'
 
+class BombManager(discoverable.DiscoverableManager):
+    pass
+
 class BombFeature(discoverable.DiscoverableFeature):
     module_name = 'bombs'
     blow_up = False
+    implementations = BombManager()
 
     @classmethod
     def is_valid(klass):
@@ -53,8 +60,43 @@ class BombFeature(discoverable.DiscoverableFeature):
             raise InvalidDiscoverableFeatureError('BLOWING UP')
 
 
-class Threat(BombFeature): pass
+class Threat(BombFeature):
+    pass
 
+class AbstractThreat(BombFeature, AbstractBase):
+    pass
+
+class SortedFeature(discoverable.SortableFeature,
+                    discoverable.DiscoverableFeature):
+    module_name = 'sorted'
+
+class Sorted2(SortedFeature):
+    order = 2
+
+class Sorted3(SortedFeature):
+    order = 3
+
+class Sorted1(SortedFeature):
+    order = 1
+
+class SometimesFeature(discoverable.DiscoverableFeature,
+                       discoverable.RestrictableFeature):
+    module_name = 'sometimes'
+
+class Available(SometimesFeature): pass
+
+class Unavailable(SometimesFeature):
+
+    @classmethod
+    def visible_to(self, user):
+        return False
+
+
+"""
+END COMPLICATED CLASS SETUP
+
+BEGIN TEST CASES
+"""
 
 class AppImporterTestCase(OpalTestCase):
 
@@ -69,6 +111,140 @@ class AppImporterTestCase(OpalTestCase):
 
         # should only be called once because we should only import once
         self.assertEqual(stringport_mock.call_count, 1)
+
+
+class DiscoverableManagerTestCase(OpalTestCase):
+
+    def test_set_up_by_default_by_metaclass(self):
+        self.assertIsInstance(
+            ColourFeature.implementations,
+            discoverable.DiscoverableManager
+        )
+
+    def test_if_overidden_dont_kill_override_in_metaclass(self):
+        self.assertNotEqual(
+                BombFeature.implementations.__class__,
+                discoverable.DiscoverableManager
+        )
+        self.assertIsInstance(
+            BombFeature.implementations,
+            BombManager
+        )
+
+    def test_if_overridden_by_non_manager_class_blow_up(self):
+        with self.assertRaises(ValueError):
+            class SillyFeature(discoverable.DiscoverableFeature):
+                implementations = str()
+
+    def test_no_manager_on_subclasses(self):
+        self.assertEqual(None, BlueColour.implementations)
+
+    def test_manager_on_abstract_base_subclasses(self):
+        self.assertIsInstance(
+            AbstractThreat.implementations,
+            discoverable.DiscoverableManager
+        )
+
+    def test_manager_knows_about_feature(self):
+        self.assertEqual(ColourFeature, ColourFeature.implementations.feature)
+
+    def test_all(self):
+        self.assertEqual(
+            [BlueColour, RedColour, SeaGreenColour],
+            ColourFeature.implementations.all()
+        )
+
+    # TODO: Validity
+    # TODO: No module_name ????
+
+    def test_all_empty(self):
+        self.assertEqual([], WatFeature.implementations.all())
+
+    def test_get(self):
+        self.assertEqual(
+            MySlugFeature,
+            SlugFeature.implementations.get(slug='my-slug')
+        )
+        self.assertEqual(
+            MySlugFeature,
+            SlugFeature.implementations.get(display_name='My Slug Defined Slug')
+        )
+
+    def test_get_not_an_attr(self):
+        with self.assertRaises(ValueError):
+            ColourFeature.implementations.get(notarealthing='Homeopathy')
+
+    def test_get_many_attributes(self):
+        self.assertEqual(
+            MySlugFeature,
+            SlugFeature.implementations.get(
+                slug='my-slug',
+                display_name='My Slug Defined Slug'
+            )
+        )
+
+    def test_get_many_attributes_some_no_match(self):
+        with self.assertRaises(ValueError):
+            SlugFeature.implementations.get(
+                slug='not-my-slug',
+                display_name='My Slug Defined Slug'
+            )
+
+    def test_get_more_than_one_raises(self):
+        with self.assertRaises(ValueError):
+            ColourFeature.implementations.get(module_name='colours')
+
+    def test_get_no_results_raises(self):
+        with self.assertRaises(ValueError):
+            ColourFeature.implementations.get(display_name='Wednesday')
+
+    def test_filter(self):
+        self.assertEqual(
+            [MySlugFeature],
+            SlugFeature.implementations.filter(slug='my-slug')
+        )
+        self.assertEqual(
+            [MySlugFeature],
+            SlugFeature.implementations.filter(display_name='My Slug Defined Slug')
+        )
+
+    def test_filter_returns_many(self):
+        self.assertEqual(
+            [BlueColour, RedColour, SeaGreenColour],
+            ColourFeature.implementations.filter(module_name='colours')
+        )
+
+    def test_filter_not_an_attr(self):
+        with self.assertRaises(ValueError):
+            ColourFeature.implementations.filter(notarealthing='Homeopathy')
+
+
+    def test_filter_many_attributes(self):
+        self.assertEqual(
+            [MySlugFeature],
+            SlugFeature.implementations.filter(
+                slug='my-slug',
+                display_name='My Slug Defined Slug'
+            )
+        )
+
+    def test_filter_no_results(self):
+        self.assertEqual(
+            [],
+            SlugFeature.implementations.filter(
+                slug='lol-nobody-would-choose-this-as-a-slug',
+            )
+        )
+
+    def test_filter_many_attributes_one_not_an_attr(self):
+        self.assertEqual(
+            [],
+            SlugFeature.implementations.filter(
+                slug='not-my-slug',
+                display_name='My Slug Defined Slug'
+            )
+        )
+
 
 
 class DiscoverableFeatureTestCase(OpalTestCase):
@@ -145,20 +321,6 @@ class DiscoverableFeatureTestCase(OpalTestCase):
         self.assertEqual(results, set([B, D, E]))
 
 
-class SortedFeature(discoverable.SortableFeature,
-                    discoverable.DiscoverableFeature):
-    module_name = 'sorted'
-
-class Sorted2(SortedFeature):
-    order = 2
-
-class Sorted3(SortedFeature):
-    order = 3
-
-class Sorted1(SortedFeature):
-    order = 1
-
-
 class SortableFeatureTestCase(OpalTestCase):
 
     def test_list_respects_order(self):
@@ -170,17 +332,6 @@ class SortableFeatureTestCase(OpalTestCase):
 
         with self.assertRaises(ValueError):
             Nope.list()
-
-class SometimesFeature(discoverable.DiscoverableFeature, discoverable.RestrictableFeature):
-    module_name = 'sometimes'
-
-class Available(SometimesFeature): pass
-
-class Unavailable(SometimesFeature):
-
-    @classmethod
-    def visible_to(self, user):
-        return False
 
 
 class RestrictableFeatureTestCase(OpalTestCase):
