@@ -104,6 +104,12 @@ describe('services', function() {
         };
 
         beforeEach(function() {
+            mockWindow = { alert: jasmine.createSpy() };
+
+            module(function($provide) {
+                $provide.value('$window', mockWindow);
+            });
+
             inject(function($injector) {
                 Item = $injector.get('Item');
                 $rootScope = $injector.get('$rootScope');
@@ -236,22 +242,32 @@ describe('services', function() {
 
             describe('deleting item', function() {
                 beforeEach(function() {
-                    item = new Item(episodeData.diagnosis[1], mockEpisode, columns.fields.diagnosis);
-                    $httpBackend.whenDELETE('/api/v0.1/diagnosis/103/').respond();
+                    item = new Item(episodeData.diagnosis[1],
+                                    mockEpisode, columns.fields.diagnosis);
                 });
 
                 it('should hit server', function() {
+                    $httpBackend.whenDELETE('/api/v0.1/diagnosis/103/').respond();
                     $httpBackend.expectDELETE('/api/v0.1/diagnosis/103/');
                     item.destroy();
                     $httpBackend.flush();
                 });
 
                 it('should notify episode', function() {
+                    $httpBackend.whenDELETE('/api/v0.1/diagnosis/103/').respond();
                     spyOn(mockEpisode, 'removeItem');
                     item.destroy();
                     $httpBackend.flush();
                     expect(mockEpisode.removeItem).toHaveBeenCalled();
                 });
+
+                it('should alert() when we fail a destroy call.', function() {
+                    $httpBackend.whenDELETE('/api/v0.1/diagnosis/103/').respond(500);
+                    item.destroy()
+                    $httpBackend.flush()
+                    expect(mockWindow.alert).toHaveBeenCalledWith('Item could not be deleted')
+                });
+
             });
         });
     });
