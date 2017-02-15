@@ -1,5 +1,5 @@
 """
-Combined admin for OPAL models
+Combined admin for Opal models
 """
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
