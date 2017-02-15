@@ -46,12 +46,6 @@ class OpalPlugin(discoverable.DiscoverableFeature):
         """
         return os.path.realpath(os.path.dirname(inspect.getfile(cls)))
 
-    def flows(self):
-        """
-        Return any extra flows our plugin may have.
-        """
-        return {}
-
     def roles(self, user):
         """
         Given a USER, return a list of extra roles that this user has.
