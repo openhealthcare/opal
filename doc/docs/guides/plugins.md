@@ -39,11 +39,6 @@ We can then create clinics in any installed app, and they will be available from
     Clinic.get('outpatients)
     # -> OutpatientsClinic
 
-### Defining new flows
-
-Plugins can define flows. They should return a dictionary of flows from the
-flows() method of the plugin class.
-
 ### Getting a plugin directory
 
 Each plugin has a `directory()` method that returns
