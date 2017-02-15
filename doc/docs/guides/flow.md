@@ -1,7 +1,7 @@
 # Flow hooks in Opal
 
-Opal provides various hooks that developers can use to customise behaviour at certain key points in a
-patient's journey through a clinical service - for example when a patient is discharged.
+Opal provides various hooks that developers can use to customise behaviour at certain key points
+in a patient's journey through a clinical service - for example when a patient is discharged.
 
 These hooks are associated with verbs `enter`, `exit`.
 
@@ -25,9 +25,11 @@ as required.
 
 ### The enter verb
 
-The enter verb is called when a patient is added to a service - for instance by adding a patient to a team list.
+The enter verb is called when a patient is added to a service - for instance by adding a patient
+to a team list.
 
-Implementations of enter are expected to return a dictionary of the controller and template they wish to be called.
+Implementations of enter are expected to return a dictionary of the controller and template they
+wish to be called.
 
     enter: function(){
             return {
@@ -36,18 +38,22 @@ Implementations of enter are expected to return a dictionary of the controller a
             }
         }
 
-A common strategy is to examine angular `$route` or `$routeParams` to determine where the user is in the application.
-For instance you may wish to have custom controllers for a particular patient list, or the search results page.
+A common strategy is to examine angular `$route` or `$routeParams` to determine where the user is
+in the application.
+For instance you may wish to have custom controllers for a particular patient list, or the search
+results page.
 
 ### The exit verb
 
-The exit verb is called when a patient is moving through a service - for instance when we discharge a patient, or end
+The exit verb is called when a patient is moving through a service - for instance when we
+discharge a patient, or end
 one phase of a clinical pathway.
 
-Implementations of exit are expected to return a dictionary of the controller and template they wish to be called.
+Implementations of exit are expected to return a dictionary of the controller and template
+they wish to be called.
 
-The enter verb will receive the episode that we are acting on - for instance a controller that acts differently for
-deceased patients might look as follows
+The enter verb will receive the episode that we are acting on - for instance a controller
+that acts differently for deceased patients might look as follows
 
     exit: function(episode){
           if(episode.demographics[0].deceased){
