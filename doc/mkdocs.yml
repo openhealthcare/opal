@@ -30,6 +30,7 @@ pages:
       - Patient List Views: guides/list_views.md
       - Discoverable Features: guides/discoverable.md
       - Search Overview: guides/search.md
+      - Django Admin: guides/django_admin.md
       - Contributing: guides/contributing.md
       - Development environment: guides/development_environment.md
 

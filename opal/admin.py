@@ -1,5 +1,5 @@
 """
-Combined admin for OPAL models
+Combined admin for Opal models
 """
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
@@ -60,7 +60,7 @@ class TaggingAdmin(reversion.VersionAdmin):
     list_display = ['value', 'episode']
 
 
-class PatientSubRecordAdmin(reversion.VersionAdmin):
+class PatientSubrecordAdmin(reversion.VersionAdmin):
     search_fields = [
         'patient__demographics__first_name',
         'patient__demographics__surname',
@@ -68,7 +68,7 @@ class PatientSubRecordAdmin(reversion.VersionAdmin):
     ]
 
 
-class EpisodeSubRecordAdmin(reversion.VersionAdmin):
+class EpisodeSubrecordAdmin(reversion.VersionAdmin):
     search_fields = [
         'episode__patient__demographics__first_name',
         'episode__patient__demographics__surname',
@@ -112,12 +112,12 @@ admin.site.register(models.Tagging, TaggingAdmin)
 for subclass in patient_subrecords():
     if not subclass._meta.abstract and not getattr(
             subclass, "_no_admin", False):
-        admin.site.register(subclass, PatientSubRecordAdmin)
+        admin.site.register(subclass, PatientSubrecordAdmin)
 
 for subclass in episode_subrecords():
     if not subclass._meta.abstract and not getattr(
             subclass, "_no_admin", False):
-        admin.site.register(subclass, EpisodeSubRecordAdmin)
+        admin.site.register(subclass, EpisodeSubrecordAdmin)
 
 admin.site.register(models.ContactNumber, MyAdmin)
 admin.site.register(models.Role, MyAdmin)
