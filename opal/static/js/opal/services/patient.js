@@ -22,6 +22,16 @@ angular.module('opal.services').service('Patient', function(Episode, FieldTransl
       }
     }).reverse();
 
+    
+    // TODO: There are edge cases here - e.g. We are viewing Episode 3,
+    // which has a custom detail view which only displays some elements 
+    // based on demographics - e.g. "only display the parental consent 
+    // details if the patient is under 18". This won't have access to 
+    // changed Demographics if we change them.
+    
+    // We're replacing any patient subrecords with a reference to the 
+    // copy of the patient subrecord on the first episode - becuase 
+    // EditItem requires an episode to work with.
     var episodeValues = _.values(patientData.episodes);
     if(episodeValues.length){
       _.each(this, function(v, k){
