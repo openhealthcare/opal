@@ -35,25 +35,29 @@ pages:
 
 
   - Reference:
+      # javscript
+      - reference/javascript/episode_service.md
+      - reference/javascript/patient_service.md
+      - reference/javascript/item_service.md
+      - reference/javascript/loaders.md
+      - reference/javascript/patient_summary_service.md
+      - Search JS Services: reference/javascript/search_js_services.md
+      - Javascript helpers: reference/javascript/javascript_helpers.md
+      - Javascript dependencies: reference/javascript/javascript_dependencies.md
+
+      # python
       - The Episode model: reference/episode.md
       - Episode Categories: reference/episode_categories.md
       - reference/patient.md
       - Subrecords: reference/subrecords.md
       - Mixins: reference/mixins.md
       - OpalApplication: reference/opal_application.md
-      - reference/episode_service.md
-      - reference/item_service.md
-      - reference/loaders.md
-      - reference/patient_summary_service.md
       - Form helpers: reference/form_templatetags.md
       - Panel Template tags: reference/panels_templatetags.md
-      - Javascript helpers: reference/javascript_helpers.md
-      - Javascript dependencies: reference/javascript_dependencies.md
       - Schemas: reference/schemas.md
       - Search Queries: reference/search_queries.md
       - Detail Views: reference/detail_views.md
       - Patient Lists: reference/patient_list.md
-      - Search JS Services: reference/search_js_services.md
       - Changelog: reference/changelog.md
       - Testing: reference/testing.md
       - Upgrading: reference/upgrading.md

@@ -1,5 +1,8 @@
 ### 0.8.1 (Minor Release)
 
+#### Patients as a service
+Patient becomes a service in angular. This takes in a patient as loaded by the patient loader or another service. It translates the patient's episodes into the js Episode service and translate's the subrecords into Items.
+
 #### PatientList.get_queryset arguments
 
 PatientList.get_queryset() is now passed an extra keyword argument - `user`.
