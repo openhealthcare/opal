@@ -1,5 +1,5 @@
 angular.module('opal.services')
-    .factory('Item', function($http, $q, $injector, FieldTranslater) {
+    .factory('Item', function($http, $q, $injector, $window, FieldTranslater) {
         return function(attrs, episode, columnSchema) {
 	        var item = this;
             this.episode =  episode;
@@ -119,13 +119,16 @@ recently changed it - refresh the page and try again');
 	            var deferred = $q.defer();
 	            var url = '/api/v0.1/' + item.columnName + '/' + item.id + '/';
 
-	            $http['delete'](url).then(function(response) {
-		            episode.removeItem(item);
-		            deferred.resolve();
-	            }, function(response) {
-		            // handle error better
-		            alert('Item could not be deleted');
-	            });
+	            $http['delete'](url).then(
+                    function(response) {
+		                episode.removeItem(item);
+		                deferred.resolve();
+	                },
+                    function(response) {
+		                // handle error better
+		                $window.alert('Item could not be deleted');
+	                });
+
 	            return deferred.promise;
 	        };
 

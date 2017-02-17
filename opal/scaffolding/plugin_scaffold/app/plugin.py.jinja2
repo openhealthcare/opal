@@ -25,12 +25,6 @@ class {{ name.title() }}Plugin(plugins.OpalPlugin):
         """
         return {}
 
-    def flows(self):
-        """
-        Return any custom flows that our plugin may define
-        """
-        return {}
-
     def roles(self, user):
         """
         Given a (Django) USER object, return any extra roles defined
