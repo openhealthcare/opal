@@ -1,7 +1,8 @@
 ### 0.8.1 (Minor Release)
 
 #### Patients as a service
-Patient becomes a service in angular. This takes in a patient as loaded by the patient loader or another service. It translates the patient's episodes into the js Episode service and translate's the subrecords into Items.
+
+Patient becomes a service in angular. This takes in a patient as loaded by the patient loader or another service. It casts the data to Episode or Item instances as appropriate.
 
 #### PatientList.get_queryset arguments
 
