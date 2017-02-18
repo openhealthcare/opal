@@ -138,7 +138,7 @@ class DiscoverableFeature(with_metaclass(DiscoverableMeta, object)):
 
         # We don't want to list() invalid features that have been suppressed
         def valid_generator():
-            for k in get_subclass(klass.module_name, klass):
+            for k in klass.implementations.all():
                 try:
                     k.is_valid()
                     yield k
@@ -151,7 +151,8 @@ class DiscoverableFeature(with_metaclass(DiscoverableMeta, object)):
         """
         Return a specific subclass by slug
         """
-        for sub in klass.list():
+        # TODO: We've not implemented calling callables in filter args yet
+        for sub in klass.implementations.all():
             if sub.get_slug() == name:
                 return sub
         raise ValueError('No {0} implementation with slug {1}'.format(
@@ -169,7 +170,8 @@ class SortableFeature(object):
         if klass.module_name is None:
             raise ValueError('Must set {0}.module_name for {0}'.format(klass))
         klasses = sorted(
-            get_subclass(klass.module_name, klass), key=lambda x: x.order
+            klass.implementations.all(),
+            key=lambda x: x.order
         )
         return klasses
 
@@ -181,7 +183,9 @@ class RestrictableFeature(object):
         """
         Return the set of instances that this USER can see.
         """
+        # TODO: We've not found a way to make all() respect sort order itself yet
         for k in klass.list():
+#        for k in klass.implementations.all():
             if k.visible_to(user):
                 yield k
 

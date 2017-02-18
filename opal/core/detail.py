@@ -1,6 +1,7 @@
 """
 Declaring custom patient detail views.
 """
+from opal import utils
 from opal.core import discoverable
 
 
@@ -10,7 +11,7 @@ class BasePatientDetailView(discoverable.SortableFeature,
     module_name = 'detail'
 
 
-class PatientDetailView(BasePatientDetailView):
+class PatientDetailView(BasePatientDetailView, utils.AbstractBase):
     slug         = None
     display_name = None
     template     = None

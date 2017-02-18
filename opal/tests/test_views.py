@@ -206,6 +206,7 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
         request = self.get_request('/templates/patient_list.html/eater-herbivore')
         self.should_200(views.PatientListTemplateView, request, slug='eater-herbivore')
 
+
 class PatientDetailTemplateViewTestCase(BaseViewTestCase):
 
     def test_get_context_data_episode_types(self):
