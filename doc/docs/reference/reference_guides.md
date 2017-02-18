@@ -18,6 +18,7 @@ The following reference guides are available:
 [opal.core.episodes](episode_categories.md)|Episode Categories - Controlling the behaviour of different types of episode|
 [opal.core.schemas](schemas.md)|Schemas - Dynamic columns for the table views|
 [opal.core.patient_lists](patient_list.md)|Patient Lists - defining different types of list|
+[opal.core.plugin](plugin.md)| Plugins - defining plugins to package reusable functionality
 
 ### Angular Services
 |

@@ -52,7 +52,7 @@ Naturally, these can point to views in your plugin!
 
 ### Adding Javascript
 
-add to static, then add to your plugin class as YourPlugin.javascripts
+Add to static, then add to your plugin class as YourPlugin.javascripts
 
 There are some restricted namespaces for these...
 
