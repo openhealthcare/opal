@@ -53,6 +53,7 @@ pages:
       - Subrecords: reference/subrecords.md
       - Mixins: reference/mixins.md
       - OpalApplication: reference/opal_application.md
+      - OpalPlugin: reference/plugin.md
       - Form helpers: reference/form_templatetags.md
       - Panel Template tags: reference/panels_templatetags.md
       - Schemas: reference/schemas.md
