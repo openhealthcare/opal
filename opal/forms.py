@@ -1,10 +1,11 @@
 """
-Custom forms for OPAL!
+Custom forms for Opal!
 """
 from django.forms import ValidationError
 from django.contrib.auth.forms import AdminPasswordChangeForm
 
 from opal.utils.banned_passwords import banned
+
 
 class ChangePasswordForm(AdminPasswordChangeForm):
     """
@@ -18,11 +19,16 @@ class ChangePasswordForm(AdminPasswordChangeForm):
 
         # At least MIN_LENGTH long
         if len(password1) < self.MIN_LENGTH:
-            raise ValidationError("The new password must be at least %d characters long." % self.MIN_LENGTH)
+            err = "The new password must be at least %d characters long."
+            raise ValidationError(
+                err % self.MIN_LENGTH
+            )
 
         # Must not be a banned word
         if password1 in banned:
-            raise ValidationError("Sorry, %s is too common a password." % password1)
+            raise ValidationError(
+                "Sorry, %s is too common a password." % password1
+            )
 
         return password1
 

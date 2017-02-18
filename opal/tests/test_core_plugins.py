@@ -11,8 +11,6 @@ from opal.tests.test_templatetags_plugins import TestPlugin
 from opal.core import plugins
 
 class OpalPluginTestCase(OpalTestCase):
-    def test_flows(self):
-        self.assertEqual({}, plugins.OpalPlugin().flows())
 
     @patch("opal.core.plugins.inspect.getfile")
     def test_directory(self, getfile):

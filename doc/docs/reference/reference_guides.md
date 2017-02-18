@@ -18,14 +18,17 @@ The following reference guides are available:
 [opal.core.episodes](episode_categories.md)|Episode Categories - Controlling the behaviour of different types of episode|
 [opal.core.schemas](schemas.md)|Schemas - Dynamic columns for the table views|
 [opal.core.patient_lists](patient_list.md)|Patient Lists - defining different types of list|
+[opal.core.plugin](plugin.md)| Plugins - defining plugins to package reusable functionality
 
 ### Angular Services
 |
 -|-
-[Episode](episode_service.md) | Episode objects
-[Item](item_service.md) |  Subrecord objects
-[PatientSummary](patient_summary_service.md) | Patient search result summaries
-[Search Services](search_js_services.md) | Services from the Search module|
+[Patient](javascript/patient_service.md) | Patient objects
+[Episode](javascript/episode_service.md) | Episode objects
+[Item](javascript/item_service.md) |  Subrecord objects
+[PatientSummary](javascript/patient_summary_service.md) | Patient search result summaries
+[Search Services](javascript/search_js_services.md) | Services from the Search module|
+[Loaders](javascript/loaders.md) | JS Services that load in from patient list, episode and patient apis
 
 
 ### Helper libraries
@@ -34,7 +37,7 @@ The following reference guides are available:
 -|-
 [The forms Templatetag library](form_templatetags.md) | The building blocks for Opal forms
 [The panels Templatetag library](panels_templatetags.md) | Rendering record panels
-[Javascript Helpers](javascript_helpers.md)| Angular filters and $rootScope methods
+[Javascript Helpers](javascript/javascript_helpers.md)| Angular filters and $rootScope methods
 
 ### Opal Search module
 
@@ -49,5 +52,5 @@ The following reference guides are available:
 -|-
 [Changelog](changelog.md) | Opal Changelog
 [Upgrading](upgrading.md) | Upgrading between Opal> versions
-[Javascript dependencies](javascript_dependencies.md)| External javascript libraries available |
+[Javascript dependencies](javascript/javascript_dependencies.md)| External javascript libraries available |
 [Testing](testing.md) | Testing

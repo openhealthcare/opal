@@ -56,6 +56,7 @@ class OpalApplication(object):
             "js/opal/services/item.js",
             "js/opal/services/http_interceptors.js",
             "js/opal/services/episode.js",
+            "js/opal/services/patient.js",
             "js/opal/services/episode_visibility.js",
             "js/opal/services/episode_loader.js",
             "js/opal/services/patient_summary.js",

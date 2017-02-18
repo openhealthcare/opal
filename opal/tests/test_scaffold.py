@@ -301,6 +301,16 @@ class RecordRenderTestCase(OpalTestCase):
         mkdir.assert_called_once_with()
 
 
+class GetTemplateDirFromRecordTestCase(OpalTestCase):
+
+    def test_get_template_dir_from_record(self):
+        with patch.object(scaffold.inspect, 'getfile') as getter:
+            getter.return_value = 'me/you.pyc'
+            d = scaffold._get_template_dir_from_record(MagicMock())
+            self.assertEqual('me/templates', str(d))
+
+
+
 @patch("ffs.Path.__lshift__")
 class FormRenderTestCase(OpalTestCase):
     def test_form_render(self, lshift):

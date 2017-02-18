@@ -77,10 +77,17 @@ class SerialisableFields(object):
             fieldnames.append(f[:-6])
 
         fields = cls._meta.get_fields(include_parents=True)
-        m2m = lambda x: isinstance(x, (
-            models.fields.related.ManyToManyField,
-            models.fields.related.ManyToManyRel
-        ))
+
+        def m2m(x):
+            """
+            Predicate function to determine whether something
+            is a ManyToMany field
+            """
+            return isinstance(x, (
+                models.fields.related.ManyToManyField,
+                models.fields.related.ManyToManyRel
+            ))
+
         many_to_manys = [field.name for field in fields if m2m(field)]
 
         fieldnames = fieldnames + many_to_manys
@@ -144,7 +151,7 @@ class SerialisableFields(object):
 
         if isinstance(default, datetime.date):
             raise exceptions.APIError(
-                "{0}.{1} returned a date as a default, Opal currently does " \
+                "{0}.{1} returned a date as a default, Opal currently does "
                 "not support sending dates/datetimes as defaults".format(
                     cls, name
                 )
@@ -267,7 +274,6 @@ class UpdatesFromDictMixin(SerialisableFields):
         if fields is None:
             fields = set(self._get_fieldnames_to_serialize())
 
-
         if self.consistency_token and not force:
             try:
                 consistency_token = data.pop('consistency_token')
@@ -292,7 +298,7 @@ class UpdatesFromDictMixin(SerialisableFields):
             value = data.get(name, None)
 
             if name == 'consistency_token':
-                continue # shouldn't be needed - Javascripts bug?
+                continue  # shouldn't be needed - Javascripts bug?
             setter = getattr(self, 'set_' + name, None)
             if setter is not None:
                 setter(value, user, data)
@@ -307,9 +313,10 @@ class UpdatesFromDictMixin(SerialisableFields):
                                               value,
                                               field_type))
                     else:
+                        DateTimeField = models.fields.DateTimeField
                         if value and field_type == models.fields.DateField:
                             value = deserialize_date(value)
-                        elif value and field_type == models.fields.DateTimeField:
+                        elif value and field_type == DateTimeField:
                             value = deserialize_datetime(value)
 
                         setattr(self, name, value)
@@ -469,9 +476,10 @@ class Patient(models.Model):
 
         # We never want to be in the position where we don't have an episode.
         # If this patient has never had an episode, we create one now.
-        # If the patient has preexisting episodes, we will either use an episode
-        # passed in to us as a kwarg, or create a fresh episode for this bulk
-        # update once we're sure we have episode subrecord data to save.
+        # If the patient has preexisting episodes, we will either use an
+        # episode passed in to us as a kwarg, or create a fresh episode for
+        # this bulk update once we're sure we have episode subrecord data to
+        # save.
         if not self.episode_set.exists():
             episode = self.create_episode()
 
@@ -493,7 +501,6 @@ class Patient(models.Model):
                 model.bulk_update_from_dicts(self, list_of_upgrades, user,
                                              force=force)
 
-
     def to_dict(self, user):
         active_episode = self.get_active_episode()
         d = {
@@ -501,7 +508,7 @@ class Patient(models.Model):
             'episodes': {episode.id: episode.to_dict(user) for episode in
                          self.episode_set.all()},
             'active_episode_id': active_episode.id if active_episode else None,
-            }
+        }
 
         for model in patient_subrecords():
             subrecords = model.objects.filter(patient_id=self.id)
@@ -521,7 +528,6 @@ class Patient(models.Model):
             for subclass in patient_subrecords():
                 if subclass._is_singleton:
                     subclass.objects.create(patient=self)
-
 
 
 class PatientRecordAccess(models.Model):
@@ -773,7 +779,8 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
             'start'            : self.start,
             'end'              : self.end,
             'stage'            : self.stage,
-            }
+        }
+
         if shallow:
             return d
 
@@ -1003,7 +1010,7 @@ class Tagging(TrackedModel, models.Model):
 
     @staticmethod
     def build_field_schema():
-        return [{'name': t, 'type':'boolean'} for t in
+        return [{'name': t, 'type': 'boolean'} for t in
                 patient_lists.TaggedPatientList.get_tag_names()]
 
 
@@ -1017,7 +1024,8 @@ class Antimicrobial_route(lookuplists.LookupList):
         verbose_name = "Antimicrobial route"
 
 
-class Antimicrobial(lookuplists.LookupList): pass
+class Antimicrobial(lookuplists.LookupList):
+    pass
 
 
 class Antimicrobial_adverse_event(lookuplists.LookupList):
@@ -1206,29 +1214,35 @@ class Micro_test_stool_parasitology_pcr(lookuplists.LookupList):
 
 
 class Micro_test_stool_pcr(lookuplists.LookupList):
+
     class Meta:
         verbose_name = "Micro test stool PCR"
         verbose_name_plural = "Micro tests stool PCR"
 
 
 class Micro_test_swab_pcr(lookuplists.LookupList):
+
     class Meta:
         verbose_name = "Micro test swab PCR"
         verbose_name_plural = "Micro tests swab PCR"
 
 
 class Micro_test_syphilis_serology(lookuplists.LookupList):
+
     class Meta:
         verbose_name = "Micro test syphilis serology"
         verbose_name_plural = "Micro tests syphilis serology"
 
 
 class Micro_test_viral_load(lookuplists.LookupList):
+
     class Meta:
         verbose_name = "Micro test viral load"
         verbose_name_plural = "Micro tests viral load"
 
+
 class Microbiology_organism(lookuplists.LookupList):
+
     class Meta:
         verbose_name = "Microbiology organism"
 
@@ -1249,7 +1263,6 @@ class Title(lookuplists.LookupList):
     pass
 
 
-
 class Travel_reason(lookuplists.LookupList):
     class Meta:
         verbose_name = "Travel reason"
@@ -1258,6 +1271,8 @@ class Travel_reason(lookuplists.LookupList):
 """
 Base models
 """
+
+
 class Demographics(PatientSubrecord):
     _is_singleton = True
     _icon = 'fa fa-user'
@@ -1315,7 +1330,7 @@ class Location(EpisodeSubrecord):
             self.hospital,
             self.ward,
             self.bed
-            )
+        )
 
 
 class Treatment(EpisodeSubrecord):
@@ -1339,8 +1354,6 @@ class Allergies(PatientSubrecord):
     drug        = ForeignKeyOrFreeText(Drug)
     provisional = models.BooleanField(default=False, verbose_name="Suspected?")
     details     = models.CharField(max_length=255, blank=True)
-
-
 
     class Meta:
         abstract = True
@@ -1451,15 +1464,16 @@ class UserProfile(models.Model):
     """
     HELP_RESTRICTED = "This user will only see teams that they have been " \
                       "specifically added to"
-    HELP_READONLY    = "This user will only be able to read data - they have " \
-                       "no write/edit permissions"
+    HELP_READONLY    = "This user will only be able to read data - they " \
+                       "have no write/edit permissions"
     HELP_EXTRACT     = "This user will be able to download data from " \
                        "advanced searches"
-    HELP_PW          = "Force this user to change their password on the next " \
-                       "login"
+    HELP_PW          = "Force this user to change their password on the " \
+                       "next login"
 
     user                  = models.OneToOneField(User, related_name='profile')
-    force_password_change = models.BooleanField(default=True, help_text=HELP_PW)
+    force_password_change = models.BooleanField(default=True,
+                                                help_text=HELP_PW)
     can_extract           = models.BooleanField(default=False,
                                                 help_text=HELP_EXTRACT)
     readonly              = models.BooleanField(default=False,
@@ -1474,7 +1488,7 @@ class UserProfile(models.Model):
             can_extract=self.can_extract,
             filters=[f.to_dict() for f in self.user.filter_set.all()],
             roles=self.get_roles()
-            )
+        )
 
     def get_roles(self):
         """
@@ -1490,7 +1504,8 @@ class UserProfile(models.Model):
     def can_see_pid(self):
         all_roles = itertools.chain(*list(self.get_roles().values()))
         # TODO: Remove these hardcoded role anmes
-        return not any(r for r in all_roles if r == "researcher" or r == "scientist")
+        return not any(r for r in
+                       all_roles if r == "researcher" or r == "scientist")
 
     @property
     def explicit_access_only(self):
@@ -1559,7 +1574,6 @@ class PatientConsultation(EpisodeSubrecord):
     _list_limit = 3
     _title = "Patient Consultation"
     _angular_service = 'PatientConsultationRecord'
-
 
     class Meta:
         abstract = True

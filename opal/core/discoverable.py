@@ -12,6 +12,7 @@ from opal.utils import (
 # So we only do it once
 IMPORTED_FROM_APPS = set()
 
+
 def import_from_apps(module):
     """
     Iterate through installed apps attempting to import app.wardrounds
@@ -19,14 +20,15 @@ def import_from_apps(module):
     own ward rounds.
     """
     global IMPORTED_FROM_APPS
-    if not module in IMPORTED_FROM_APPS:
+    if module not in IMPORTED_FROM_APPS:
         for app in settings.INSTALLED_APPS:
             try:
                 stringport('{0}.{1}'.format(app, module))
             except ImportError:
-                pass # not a problem
+                pass  # not a problem
         IMPORTED_FROM_APPS.add(module)
         return
+
 
 def get_subclass(module, klass):
     import_from_apps(module)
@@ -113,14 +115,17 @@ class DiscoverableFeature(with_metaclass(DiscoverableMeta, object)):
     slug = None
 
     @classmethod
-    def is_valid(klass): pass
+    def is_valid(klass):
+        pass
 
     @classmethod
     def get_slug(klass):
         if klass.slug is not None:
             return klass.slug
         if klass.display_name is None:
-            raise ValueError('Must set display_name or slug for {0}'.format(klass))
+            raise ValueError(
+                'Must set display_name or slug for {0}'.format(klass)
+            )
         return camelcase_to_underscore(klass.display_name).replace(' ', '')
 
     @classmethod
@@ -138,7 +143,7 @@ class DiscoverableFeature(with_metaclass(DiscoverableMeta, object)):
                     k.is_valid()
                     yield k
                 except exceptions.InvalidDiscoverableFeatureError:
-                    continue # Just don't list() it
+                    continue  # Just don't list() it
         return valid_generator()
 
     @classmethod
@@ -149,7 +154,8 @@ class DiscoverableFeature(with_metaclass(DiscoverableMeta, object)):
         for sub in klass.list():
             if sub.get_slug() == name:
                 return sub
-        raise ValueError('No {0} implementation with slug {1}'.format(klass, name))
+        raise ValueError('No {0} implementation with slug {1}'.format(
+            klass, name))
 
 
 class SortableFeature(object):
@@ -162,7 +168,9 @@ class SortableFeature(object):
         """
         if klass.module_name is None:
             raise ValueError('Must set {0}.module_name for {0}'.format(klass))
-        klasses = sorted(get_subclass(klass.module_name, klass), key=lambda x: x.order)
+        klasses = sorted(
+            get_subclass(klass.module_name, klass), key=lambda x: x.order
+        )
         return klasses
 
 

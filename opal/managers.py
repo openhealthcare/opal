@@ -12,6 +12,7 @@ from opal.core.subrecords import (
 )
 from functools import reduce
 
+
 class PatientQueryset(models.QuerySet):
     def search(self, some_query):
         """
@@ -59,7 +60,8 @@ class EpisodeQueryset(models.QuerySet):
                 episode_subs[sub.episode_id][name].append(sub.to_dict(user))
         return episode_subs
 
-    def serialised(self, user, episodes, historic_tags=False, episode_history=False):
+    def serialised(self, user, episodes,
+                   historic_tags=False, episode_history=False):
         """
         Return a set of serialised EPISODES.
 
@@ -77,8 +79,8 @@ class EpisodeQueryset(models.QuerySet):
             for sub in subrecords:
                 patient_subs[sub.patient_id][name].append(sub.to_dict(user))
 
-        # We do this here because it's an order of magnitude quicker than hitting
-        # episode.tagging_dict() for each episode in a loop.
+        # We do this here because it's an order of magnitude quicker than
+        # hitting episode.tagging_dict() for each episode in a loop.
         taggings = defaultdict(dict)
         from opal.models import Tagging
         qs = Tagging.objects.filter(episode__in=episodes)
