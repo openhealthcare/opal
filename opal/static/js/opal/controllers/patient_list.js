@@ -201,7 +201,8 @@ angular.module('opal.controllers').controller(
                         tag: $scope.currentTag,
                         subtag: $scope.currentSubTag
                     }
-                }
+                },
+                $scope
             );
 
             $rootScope.state = 'modal';
@@ -292,7 +293,8 @@ angular.module('opal.controllers').controller(
                         tag   : $scope.currentTag,
                         subtag: $scope.currentSubTag
                     },
-                }
+                },
+                $scope
             );
 
             exit.then(function(result) {
