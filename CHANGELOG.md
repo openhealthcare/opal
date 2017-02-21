@@ -1,4 +1,5 @@
 ### 0.7.5 (Minor Release)
+flows now take a context argument which is the scope when the flow has been entered
 
 
 ### 0.7.4 (Minor Release)
