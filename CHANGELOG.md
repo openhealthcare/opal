@@ -1,3 +1,14 @@
+### 0.7.5 (Minor Release)
+
+
+### 0.7.4 (Minor Release)
+Adds  a past filter, future and past filters now take a
+boolean argument as to whether you should include today
+
+
+### 0.7.3 (Minor Release)
+Fixes a bug whereby celery tasks are not autodiscovered - will have affected users of async extract functionality.
+
 ### 0.7.2 (Minor Release)
 
 Fixes a bug with the copy to category API not setting category name.
