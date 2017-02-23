@@ -1,12 +1,16 @@
 ### 0.7.5 (Minor Release)
 
+The flow enter and exif functions now take an optional context argument. When called from PatientList or PatientDetail controllers this is the parent scope when the flow has been entered.
+
+Note: The current Flow API is likely to undergo substantial revision in Opal 0.9 / 0.10 do contact us on the mailing list if you are relying heavily upon it or would like to let us know your needs.
 
 ### 0.7.4 (Minor Release)
+
 Adds  a past filter, future and past filters now take a
 boolean argument as to whether you should include today
 
-
 ### 0.7.3 (Minor Release)
+
 Fixes a bug whereby celery tasks are not autodiscovered - will have affected users of async extract functionality.
 
 ### 0.7.2 (Minor Release)
