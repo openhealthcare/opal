@@ -1,4 +1,4 @@
-describe('services', function() {
+describe('Item', function() {
     "use strict";
 
     var columns, episodeData, options, records, list_schema, mockWindow, $rootScope;
