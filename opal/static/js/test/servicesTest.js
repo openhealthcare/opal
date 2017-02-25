@@ -123,44 +123,6 @@ describe('services', function() {
         });
     });
 
-    describe('episodeLoader', function() {
-        var episodeLoader, $httpBackend;
-
-        beforeEach(function() {
-            module(function($provide) {
-                $provide.value('UserProfile', function(){ return profile; });
-            });
-
-            inject(function($injector) {
-                episodeLoader = $injector.get('episodeLoader');
-                $httpBackend = $injector.get('$httpBackend');
-                $rootScope = $injector.get('$rootScope');
-                $route = $injector.get('$route');
-            });
-        });
-
-        xit('should resolve to a single episode', function() {
-            // TODO unskip this
-            // Skipping this, because I can't work out how to set $route.current
-            // so that episodeLoader can access it.
-            var promise = episodeLoader();
-            var episode;
-
-            $route.current = {params: {id: 123}};
-            $httpBackend.whenGET('/schema/').respond(columns);
-            // TODO trailing slash?
-            $httpBackend.whenGET('/episode/123').respond(episodeData);
-            promise.then(function(value) {
-                episode = value;
-            });
-
-            $httpBackend.flush();
-            $rootScope.$apply();
-
-            expect(episode.id).toBe(123);
-        });
-    });
-
     describe('UserProfile', function(){
         var mock, $httpBackend, UserProfile;
 
