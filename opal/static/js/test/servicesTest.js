@@ -123,34 +123,6 @@ describe('services', function() {
         });
     });
 
-    describe('Schema', function() {
-        var Schema, schema;
-
-        beforeEach(function() {
-            module('opal.services', function($provide) {
-                $provide.value('UserProfile', function(){ return profile; });
-            });
-
-            inject(function($injector) {
-                Schema = $injector.get('Schema');
-            });
-            schema = new Schema(_.values(columns.fields));
-        });
-
-        it('should be able to get the number of columns', function() {
-            expect(schema.getNumberOfColumns()).toBe(2);
-        });
-
-        it('should be able to get a column', function() {
-            expect(schema.getColumn('diagnosis').name).toBe('diagnosis');
-        });
-
-        it('should know whether a column is a singleton', function() {
-            expect(schema.isSingleton('demographics')).toBe(true);
-            expect(schema.isSingleton('diagnosis')).toBe(false);
-        });
-    });
-
     describe('episodeLoader', function() {
         var episodeLoader, $httpBackend;
 
