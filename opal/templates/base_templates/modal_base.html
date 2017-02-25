@@ -30,12 +30,19 @@
   {% endif %}
 
   {% block modal_save %}
-  <span ng-hide="form">
-    <button check-form="form" class="btn btn-primary" ng-click="save('save')">
-      <i class="fa fa-save"></i>
-      Save
+
+  <span ng-show="form">
+    <button check-form="form" class="btn btn-primary" ng-click="form.$valid && save('save')">
+      <i class="fa fa-save"></i> Save
     </button>
   </span>
+  <span ng-hide="form">
+    <button class="btn btn-primary" ng-click="save('save')">
+      <i class="fa fa-save"></i> Save
+    </button>
+  </span>
+
+
   {% endblock %}
   {% block modal_cancel %}
   <button class="btn" ng-click="cancel()">Cancel</button>
