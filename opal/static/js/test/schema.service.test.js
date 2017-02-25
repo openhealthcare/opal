@@ -39,28 +39,6 @@ describe('schema', function(){
     ]
 
     beforeEach(function(){
-        module('opal', function($provide) {
-            $provide.value('$analytics', function(){
-                return {
-                    pageTrack: function(x){}
-                }
-            });
-
-            $provide.provider('$analytics', function(){
-                this.$get = function() {
-                    return {
-                        virtualPageviews: function(x){},
-                        settings: {
-                            pageTracking: false,
-                        },
-                        pageTrack: function(x){}
-                     };
-                };
-            });
-        });
-    });
-
-    beforeEach(function(){
         module('opal.services');
 
         inject(function($injector) {

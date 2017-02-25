@@ -5,28 +5,7 @@ describe('DeleteItemConfirmationCtrl', function(){
     var item, $modalInstance, controller;
 
     beforeEach(function(){
-        module('opal', function($provide) {
-            $provide.value('$analytics', function(){
-                return {
-                    pageTrack: function(x){}
-                }
-            });
-
-            $provide.provider('$analytics', function(){
-                this.$get = function() {
-                    return {
-                        virtualPageviews: function(x){},
-                        settings: {
-                            pageTracking: false,
-                        },
-                        pageTrack: function(x){}
-                     };
-                };
-            });
-        });
-    });
-
-    beforeEach(function(){
+        module('opal');
         inject(function($injector){
             $rootScope  = $injector.get('$rootScope');
             $scope      = $rootScope.$new();
