@@ -122,36 +122,4 @@ describe('services', function() {
                 'Extract schema could not be loaded');
         });
     });
-
-    describe('UserProfile', function(){
-        var mock, $httpBackend, UserProfile;
-
-        beforeEach(function(){
-            mock = { alert: jasmine.createSpy() };
-
-            module(function($provide){
-                $provide.value('$window', mock);
-            });
-
-            inject(function($injector){
-                UserProfile    = $injector.get('UserProfile');
-                $q             = $injector.get('$q');
-                $httpBackend   = $injector.get('$httpBackend');
-                $rootScope     = $injector.get('$rootScope');
-            });
-        });
-
-        it('should alert if the HTTP request errors', function(){
-            var result;
-
-            $httpBackend.expectGET('/api/v0.1/userprofile/');
-            $httpBackend.whenGET('/api/v0.1/userprofile/').respond(500, 'NO');
-
-            $rootScope.$apply();
-            $httpBackend.flush();
-
-            expect(mock.alert).toHaveBeenCalledWith('UserProfile could not be loaded');
-        });
-    });
-
 });
