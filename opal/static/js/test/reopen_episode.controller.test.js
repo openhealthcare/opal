@@ -158,31 +158,10 @@ describe('ReopenEpisodeCtrl', function (){
             }
         },
         "id": 2
-    }
+    };
 
     beforeEach(function(){
-        module('opal', function($provide) {
-            $provide.value('$analytics', function(){
-                return {
-                    pageTrack: function(x){}
-                }
-            });
-
-            $provide.provider('$analytics', function(){
-                this.$get = function() {
-                    return {
-                        virtualPageviews: function(x){},
-                        settings: {
-                            pageTracking: false,
-                        },
-                        pageTrack: function(x){}
-                     };
-                };
-            });
-        });
-    });
-
-    beforeEach(function(){
+        module('opal');
         inject(function($injector){
             $rootScope   = $injector.get('$rootScope');
             $scope       = $rootScope.$new();
@@ -198,10 +177,9 @@ describe('ReopenEpisodeCtrl', function (){
         patient = angular.copy(patientData);
         patient.episodes = _.map(_.keys(patient.episodes), function(k){
             return new Episode(patientData.episodes[k]);
-        })
+        });
         tag = 'mine';
         subtag = null;
-
 
         mkcontroller = function(){
             $controller('ReopenEpisodeCtrl', {

@@ -5,7 +5,7 @@ from datetime import date
 
 from django.db import transaction
 from django.contrib.contenttypes.models import ContentType
-
+from mock import patch, MagicMock
 import reversion
 
 from opal.models import Episode, Patient, Synonym, Gender
@@ -182,6 +182,30 @@ class DatabaseQueryTestCase(OpalTestCase):
         query = queries.DatabaseQuery(self.user, [criteria])
         self.assertEqual([self.episode], query.get_episodes())
 
+    def test_episodes_for_criteria_episode_subrecord_string_field(self):
+        criteria = [
+            {
+                u'column': u'hat_wearer',
+                u'field': u'Name',
+                u'combine': u'and',
+                u'query': u'Bowler',
+                u'queryType': u'Equals'
+            }
+        ]
+        query = queries.DatabaseQuery(self.user, criteria)
+        res = query.episodes_for_criteria(criteria[0])
+        self.assertEqual([], list(res))
+
+    def test_episodes_without_restrictions_no_matches(self):
+        query = queries.DatabaseQuery(self.user, self.name_criteria)
+        query.query = []
+        result = query._episodes_without_restrictions()
+        self.assertEqual([], result)
+
+    def test_episodes_without_restrictions(self):
+        query = queries.DatabaseQuery(self.user, self.name_criteria)
+        result = query._episodes_without_restrictions()
+        self.assertEqual(self.episode, list(result)[0])
 
     def test_filter_restricted_only_user(self):
         self.user.profile.restricted_only   = True
@@ -227,6 +251,20 @@ class DatabaseQueryTestCase(OpalTestCase):
 
     def test_get_episodes(self):
         query = queries.DatabaseQuery(self.user, self.name_criteria)
+        self.assertEqual([self.episode], query.get_episodes())
+
+    def test_get_episodes_multi_query(self):
+        criteria = [
+            {
+                u'column': u'demographics',
+                u'field': u'Sex',
+                u'combine': u'and',
+                u'query': u'Female',
+                u'queryType': u'Equals'
+            },
+            self.name_criteria[0]
+        ]
+        query = queries.DatabaseQuery(self.user, criteria)
         self.assertEqual([self.episode], query.get_episodes())
 
     def test_get_episodes_searching_ft_or_fk_field(self):
@@ -323,3 +361,16 @@ class DatabaseQueryTestCase(OpalTestCase):
             'categories': [u'Inpatient']
         }]
         self.assertEqual(expected, summaries)
+
+
+class CreateQueryTestCase(OpalTestCase):
+
+    @patch('opal.core.search.queries.stringport')
+    def test_from_settings(self, stringport):
+        mock_backend = MagicMock('Mock Backend')
+        stringport.return_value = mock_backend
+
+        with self.settings(OPAL_SEARCH_BACKEND='mybackend'):
+            backend = queries.create_query(self.user, [])
+            self.assertEqual(mock_backend.return_value, backend)
+            mock_backend.assert_called_with(self.user, [])

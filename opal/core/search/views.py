@@ -3,7 +3,6 @@ OPAL Search views
 """
 import datetime
 import json
-from copy import copy
 from functools import wraps
 
 from django.core.exceptions import PermissionDenied

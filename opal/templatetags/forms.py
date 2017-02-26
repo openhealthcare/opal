@@ -86,7 +86,6 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
                 field.related_model.get_api_name()
             )
 
-
     if hasattr(field, "formfield"):
         # TODO remove the blankable condition and make sure
         # all fields are null=False
@@ -142,7 +141,7 @@ def extract_common_args(kwargs):
 @register.inclusion_tag('_helpers/datetime_picker.html')
 def datetimepicker(*args, **kwargs):
     ctx = extract_common_args(kwargs)
-    ctx["date_picker_args"] = [('date-type', 'date',), ('autoclose', 1,),]
+    ctx["date_picker_args"] = [('date-type', 'date',), ('autoclose', 1,), ]
     ctx["date_label"] = kwargs.pop("date_label", "Date")
     ctx["time_label"] = kwargs.pop("time_label", "Time")
     return ctx
@@ -207,6 +206,7 @@ def datepicker(*args, **kwargs):
         context['mindate'] = kwargs['mindate']
     return context
 
+
 @register.inclusion_tag('_helpers/radio.html')
 def radio(*args, **kwargs):
     ctx = extract_common_args(kwargs)
@@ -225,7 +225,8 @@ def select(*args, **kwargs):
     - model: Angular model
     - label: User visible label
     - lookuplist: Name or value of the lookuplist
-    - other: (False) Boolean to indicate that we should allow free text if the item is not in the list
+    - other: (False) Boolean to indicate that we should allow free text if the
+             item is not in the list
     """
     ctx = extract_common_args(kwargs)
     lookuplist = kwargs.pop("lookuplist", ctx.get("lookuplist", None))
@@ -240,7 +241,8 @@ def select(*args, **kwargs):
     if lookuplist is None:
         other_show = None
     else:
-        other_show = "{1} != null && {0}.indexOf({1}) == -1".format(lookuplist, ctx["model"])
+        other_show = "{1} != null && {0}.indexOf({1}) == -1".format(
+            lookuplist, ctx["model"])
     other_label = '{0} Other'.format(ctx["label"])
 
     ctx.update({
@@ -258,25 +260,28 @@ def select(*args, **kwargs):
 
     return ctx
 
+
 @register.inclusion_tag('_helpers/textarea.html')
 def textarea(*args, **kwargs):
     ctx = extract_common_args(kwargs)
     ctx.update({
-        'macros'    : kwargs.pop('macros', False),
+        'macros': kwargs.pop('macros', False),
     })
 
     return ctx
+
 
 @register.inclusion_tag('_helpers/static.html')
 def static(fieldname):
     _, field_name = fieldname.split('.')
     model, field = _model_and_field_from_path(fieldname)
-    return dict(model="editing.{0}.{1}".format(model.get_api_name(),
-                                               field_name
-                                           ),
-                label=model._get_field_title(field_name),
-                datep=isinstance(field, models.DateField)
+    return dict(
+        model="editing.{0}.{1}".format(model.get_api_name(),
+                                       field_name),
+        label=model._get_field_title(field_name),
+        datep=isinstance(field, models.DateField)
     )
+
 
 @register.inclusion_tag('_helpers/icon.html')
 def icon(name):
@@ -291,6 +296,7 @@ def icon(name):
 @register.inclusion_tag('_helpers/date_of_birth_field.html')
 def date_of_birth_field(model_name="editing.demographics.date_of_birth"):
     return dict(model_name=model_name)
+
 
 @register.inclusion_tag('_helpers/process_steps.html')
 def process_steps(*args, **kwargs):

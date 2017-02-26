@@ -12,11 +12,13 @@ from opal.utils import write
 
 TRAVIS = os.environ.get('TRAVIS', False)
 
+
 def _has_file(where, filename):
     """
-    Predicate function to determine whether we have FILENAME is to be found in WHERE
+    Predicate function to determine whether we have FILENAME
+    is to be found in WHERE
     """
-    return bool(ffs.Path(where/filename))
+    return bool(ffs.Path(where / filename))
 
 
 def _run_py_tests(args):
@@ -28,7 +30,7 @@ def _run_py_tests(args):
 
     # We have a custom test runner - e.g. it's OPAL itself or a plugin.
     if _has_file(args.userland_here, 'runtests.py'):
-        test_args= ['python', 'runtests.py']
+        test_args = ['python', 'runtests.py']
         if args.test:
             test_args.append(args.test)
         if args.coverage:
@@ -42,7 +44,7 @@ def _run_py_tests(args):
             test_args.append(args.test)
 
         if args.coverage:
-            test_args = ['coverage', 'run', 'manage.py', 'test',]
+            test_args = ['coverage', 'run', 'manage.py', 'test', ]
 
     else:
         write("\n\nCripes!\n")
@@ -63,6 +65,7 @@ def _run_py_tests(args):
                 sys.exit(1)
 
     return
+
 
 def _run_js_tests(args):
     """
@@ -93,11 +96,15 @@ def _run_js_tests(args):
             write("We can't find the karma executable\n")
             write("Please consult the Opal documentation aobut installing the")
             write("Javascript testing tools requried to run Javascript tests:")
-            write("http://opal.openhealthcare.org.uk/docs/reference/reference_guides/testing/")
+            write(
+                "http://opal.openhealthcare.org.uk/docs/reference/"
+                "reference_guides/testing/"
+            )
             write("\nAlternatively run just the Python test sutite with")
             write("opal test py")
         sys.exit(1)
     return
+
 
 def run_tests(args):
     """

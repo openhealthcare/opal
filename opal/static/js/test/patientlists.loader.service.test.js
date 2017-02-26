@@ -47,4 +47,12 @@ describe('PatientListLoaderTest', function(){
         expect(result.status).toEqual('error');
         expect(result.data).toEqual({error: "NOT FOUND"});
     });
-})
+
+    it('should look up lists based on slug if passed in', function(){
+      $route.current = {params: {slug: 'mylist'}};
+      $httpBackend.whenGET('/api/v0.1/patientlist/yourlist/').respond([]);
+      patientListLoader("yourlist");
+      $rootScope.$apply();
+      $httpBackend.flush();
+    });
+});

@@ -33,7 +33,7 @@ describe('recordLoader', function(){
     it('should fetch the record data', function(){
         var result;
         $httpBackend.whenGET('/api/v0.1/record/').respond(recordSchema);
-        recordLoader.then(function(r){ result = r; });
+        recordLoader.load().then(function(r){ result = r; });
         $rootScope.$apply();
         $httpBackend.flush();
         expect(result).toEqual(recordSchema);
@@ -43,6 +43,7 @@ describe('recordLoader', function(){
     it('should alert if the HTTP request errors', function(){
         var result;
         $httpBackend.whenGET('/api/v0.1/record/').respond(500, 'NO');
+        recordLoader.load().then(function(r){ result = r; });
         $rootScope.$apply();
         $httpBackend.flush();
         expect(mock.alert).toHaveBeenCalledWith('Records could not be loaded');

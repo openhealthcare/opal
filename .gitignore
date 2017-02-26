@@ -13,3 +13,4 @@ coverage-js
 *DS_Store
 *.bak
 node_modules
+*.swp

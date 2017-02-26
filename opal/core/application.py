@@ -1,5 +1,5 @@
 """
-Application helpers for OPAL
+Application helpers for Opal
 """
 import inspect
 import os
@@ -33,7 +33,7 @@ class OpalApplication(object):
             # "js/ui-select/dist/select.js",
             "js/lib/bower_components/angular-ui-select/dist/select.js",
             "js/lib/bower_components/ng-idle/angular-idle.js",
-            "js/lib/bower_components/angular-local-storage/dist/angular-local-storage.js",
+            "js/lib/bower_components/angular-local-storage/dist/angular-local-storage.js",  # noqa: E501
             "js/lib/bower_components/ment.io/dist/templates.js",
             "js/lib/bower_components/angular-growl-v2/build/angular-growl.js",
             "js/lib/jquery-plugins/idle-timer.js",
@@ -56,6 +56,7 @@ class OpalApplication(object):
             "js/opal/services/item.js",
             "js/opal/services/http_interceptors.js",
             "js/opal/services/episode.js",
+            "js/opal/services/patient.js",
             "js/opal/services/episode_visibility.js",
             "js/opal/services/episode_loader.js",
             "js/opal/services/patient_summary.js",
@@ -117,7 +118,7 @@ class OpalApplication(object):
         return klass.javascripts
 
     @classmethod
-    def get_menu_items(klass):
+    def get_menu_items(klass, user=None):
         """
         Default implementation of get_menu_items()
 
@@ -139,6 +140,7 @@ class OpalApplication(object):
         Return the filesystem path to the app directory
         """
         return os.path.realpath(os.path.dirname(inspect.getfile(cls)))
+
 
 def get_app():
     """

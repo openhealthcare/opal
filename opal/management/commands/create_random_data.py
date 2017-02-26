@@ -6,20 +6,23 @@ import logging
 from optparse import make_option
 import random
 
-from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from django.utils.functional import cached_property
 from django.utils import timezone
-
-from opal import models
-from opal.core.fields import ForeignKeyOrFreeText
-from opal.core.subrecords import episode_subrecords, patient_subrecords
 from django.db.models import (
     CharField, DateField, DateTimeField, BooleanField, TextField,
     NullBooleanField
 )
 
-Demographics = [s for s in patient_subrecords() if s.get_api_name() == 'demographics'][0]
+from opal import models
+from opal.core.fields import ForeignKeyOrFreeText
+from opal.core.subrecords import episode_subrecords, patient_subrecords
+from opal.utils import write
+
+Demographics = [
+    s for s in patient_subrecords()
+    if s.get_api_name() == 'demographics'
+][0]
 
 first_names = [
     "Jane", "James", "Chandeep", "Samantha", "Oliver", "Charlie",
@@ -109,11 +112,15 @@ def date_time_generator(*args, **kwargs):
     d = date_generator(*args, **kwargs)
     hours = random.randint(0, 23)
     minutes = random.randint(0, 59)
-    return timezone.make_aware(datetime(d.year, d.month, d.day, hours, minutes))
+    return timezone.make_aware(
+        datetime(d.year, d.month, d.day, hours, minutes)
+    )
 
 
 def foreign_key_or_free_text_generator(field, **kwargs):
-    all_options = field.foreign_model.objects.all().values_list("name", flat=True)
+    all_options = field.foreign_model.objects.all().values_list(
+        "name", flat=True
+    )
 
     if random.randint(1, 10) <= PROB_OF_FREE_TEXT:
         return string_generator(field)
@@ -146,35 +153,12 @@ class PatientGenerator(object):
         last_name = random.choice(last_names)
         return "%s %s" % (first_name, last_name)
 
-    def get_hospital_numbers(self, amount, seed=0):
-        template = "00000000"
-        numbers = range(seed, amount)
-        hospital_numbers = []
-        for number in numbers:
-            hospital_numbers.append("%s%s" % (template[:len(str(number))], number))
-        return hospital_numbers
-
     def get_birth_date(self):
-        eighteen_years_ago = date.today() - timedelta(days=18*365)
-        return date_generator(start_date=date(1920, 1, 1), end_date=eighteen_years_ago)
-
-    def get_unique_hospital_numbers(self, amount):
-        """ return a uniqe amount of hospital numbers
-        """
-        existing = True
-        hospital_numbers = []
-        seed = 0
-
-        while existing:
-            hospital_numbers.extend(self.get_hospital_numbers(amount))
-            existing = Demographics.objects.filter(
-                hospital_number__in=hospital_numbers
-            ).count()
-            if existing:
-                seed = seed + amount
-                amount = amount - existing
-
-        return hospital_numbers
+        eighteen_years_ago = date.today() - timedelta(days=18 * 365)
+        return date_generator(
+            start_date=date(1920, 1, 1),
+            end_date=eighteen_years_ago
+        )
 
     def create_episode(self, patient):
         dob = patient.demographics_set.first().date_of_birth
@@ -190,22 +174,28 @@ class PatientGenerator(object):
         return episode
 
     def make(self):
-        patient = models.Patient.objects.create()
-        demographics = patient.demographics_set.get()
-        hospital_number = random.randint(1000, 2000000)  # self.get_unique_hospital_numbers(1)[0]
-        hospital_number = str(hospital_number)
-        demographics.name=self.get_name()
-        demographics.hospital_number=hospital_number
-        demographics.nhs_number=hospital_number
-        demographics.date_of_birth=self.get_birth_date()
-        demographics.sex=random.choice(['Female', 'Male', 'Not Known', 'Not Specified'])
-        demographics.birth_place = foreign_key_or_free_text_generator(Demographics.birth_place)
+        sexes = ['Female', 'Male', 'Not Known', 'Not Specified']
+
+        patient                      = models.Patient.objects.create()
+        demographics                 = patient.demographics_set.get()
+        hospital_number              = random.randint(1000, 2000000)
+        hospital_number              = str(hospital_number)
+        demographics.name            = self.get_name()
+        demographics.hospital_number = hospital_number
+        demographics.nhs_number      = hospital_number
+        demographics.date_of_birth   = self.get_birth_date()
+        demographics.sex             = random.choice(sexes)
+        demographics.birth_place     = foreign_key_or_free_text_generator(
+            Demographics.birth_place
+        )
         demographics.save()
 
         self.create_episode(patient)
 
         for subrecord in episode_subrecords():
-            s = EpisodeSubrecordGenerator(subrecord, patient.episode_set.first())
+            s = EpisodeSubrecordGenerator(
+                subrecord, patient.episode_set.first()
+            )
             s.make()
 
         for subrecord in patient_subrecords():
@@ -247,7 +237,8 @@ class SubRecordGenerator(object):
                         yield field
 
     def is_null_field(self, field):
-        """ should we make this field null
+        """
+        Should we make this field null
         """
         if random.randint(1, 10) <= self.PROB_OF_NONE:
             if field == NullBooleanField:
@@ -259,10 +250,11 @@ class SubRecordGenerator(object):
         return False
 
     def is_empty_string_field(self, field):
-        """ should we make this field empty
+        """
+        Should we make this field empty
         """
         if random.randint(1, 10) <= self.PROB_OF_NONE:
-            if field == CharField and getattr(field, "blank", False):
+            if field == CharField:
                 return True
 
         return False
@@ -273,6 +265,7 @@ class SubRecordGenerator(object):
         for field in self.get_fields():
             if field.name == "consistency_token":
                 setattr(instance, field.name, consistency_generator())
+
             if self.is_null_field(field):
                 setattr(instance, field.name, None)
             elif self.is_empty_string_field(field):
@@ -346,4 +339,6 @@ class Command(BaseCommand):
         p = PatientGenerator()
 
         for i in range(number):
+            msg = 'Generating Patient {0} / {1}'.format(i+1, number)
+            write(msg)
             p.make()

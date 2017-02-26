@@ -1,3 +1,3 @@
 """
-Templatetags for OPAL
+Templatetags for Opal
 """

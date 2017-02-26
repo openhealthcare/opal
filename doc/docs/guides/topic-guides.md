@@ -7,8 +7,8 @@ A list of all available topic guides.
 |||
 |--|--|
 |[Opal - Applications, Plugins](components_overview.md) | How Opal components hang together|
-|[Command line tool](command_line_tool.md) | running admin tasks from the command line|
-|[Discoverable](discoverable.md)| design patterns and library for creating easily reusable features |
+|[Command line tool](command_line_tool.md) | Running admin tasks from the command line|
+|[Discoverable](discoverable.md)| Design patterns and library for creating easily reusable features |
 |[Plugins](plugins.md)| Available interfaces for Opal plugins|
 |[List of Plugins](plugins_list.md)| A list of available high quality plugins|
 
@@ -45,6 +45,7 @@ A list of all available topic guides.
 |||
 |--|--|
 |[Search](search.md)|Default search implementation|
+|[Django Admin](django_admin.md)|Working with Opal models in the Django Admin|
 
 
 ### Working on Opal itself

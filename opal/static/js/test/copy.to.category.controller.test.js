@@ -50,9 +50,7 @@ describe('CopyToCategoryCtrl', function(){
     })
 
     describe('import_existing()', function(){
-
         it('should close the modal', function(){
-            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
             $httpBackend.expectPOST('/episode/2/actions/copyto/newcategory').respond({
                 demographics: [{patient_id: 2}]
             });
@@ -68,7 +66,6 @@ describe('CopyToCategoryCtrl', function(){
         });
 
         it('should close the modal even if we failed', function() {
-            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
             $httpBackend.expectPOST('/episode/2/actions/copyto/newcategory')
                 .respond(500, '');
 

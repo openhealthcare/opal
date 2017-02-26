@@ -138,17 +138,17 @@ describe('Episode', function() {
     describe('initialisation', function() {
 
         it('should throw if there is no patient ID', function() {
-            expect(function(){ new Episode({} )}).toThrow();
+            expect(function(){ new Episode({});}).toThrow();
         });
 
         it('should cast dates on the episode if appropriate', function(){
             var episodeDataCloned = angular.copy(episodeData);
             var newEpisode = new Episode(episodeDataCloned);
-            expect(moment(newEpisode.date_of_admission).format('DD/MM/YYYY')).toEqual("19/11/2013")
-            expect(moment(newEpisode.start).format('DD/MM/YYYY')).toEqual("19/11/2013")
-            expect(moment(newEpisode.end).format('DD/MM/YYYY')).toEqual("25/05/2016")
-            expect(moment(newEpisode.date_of_episode).format('DD/MM/YYYY')).toEqual("20/11/2013")
-            expect(moment(newEpisode.discharge_date).format('DD/MM/YYYY')).toEqual("25/05/2016")
+            expect(moment(newEpisode.date_of_admission).format('DD/MM/YYYY')).toEqual("19/11/2013");
+            expect(moment(newEpisode.start).format('DD/MM/YYYY')).toEqual("19/11/2013");
+            expect(moment(newEpisode.end).format('DD/MM/YYYY')).toEqual("25/05/2016");
+            expect(moment(newEpisode.date_of_episode).format('DD/MM/YYYY')).toEqual("20/11/2013");
+            expect(moment(newEpisode.discharge_date).format('DD/MM/YYYY')).toEqual("25/05/2016");
         });
     });
 

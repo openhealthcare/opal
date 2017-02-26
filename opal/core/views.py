@@ -39,13 +39,14 @@ def _get_request_data(request):
         data = data.decode('UTF-8')
     return json.loads(data)
 
+
 def _build_json_response(data, status_code=200):
     response = HttpResponse()
     response['Content-Type'] = 'application/json'
     response.content = json.dumps(data, cls=OpalSerializer)
-    # response.content = '<html><body>'+json.dumps(data, cls=DjangoJSONEncoder)+'</body></html>'
     response.status_code = status_code
     return response
+
 
 def with_no_caching(view):
     @functools.wraps(view)
@@ -57,6 +58,7 @@ def with_no_caching(view):
         return response
 
     return no_cache
+
 
 class ModelViewSet(
         mixins.CreateModelMixin,
