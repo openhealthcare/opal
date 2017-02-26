@@ -27,6 +27,11 @@ describe('Metadata', function(){
         });
     });
 
+    afterEach(function(){
+      $httpBackend.verifyNoOutstandingExpectation();
+      $httpBackend.verifyNoOutstandingRequest();
+    });
+
     it('should fetch the metadata', function(){
         var result
 

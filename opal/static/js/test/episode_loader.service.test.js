@@ -23,15 +23,18 @@ describe('episodeLoader', function() {
             $window       = $injector.get('$window');
         });
 
-        $httpBackend.expectGET('/api/v0.1/record/').respond({})
-    })
+        $httpBackend.expectGET('/api/v0.1/record/').respond({});
+    });
 
+    afterEach(function(){
+      $httpBackend.verifyNoOutstandingExpectation();
+      $httpBackend.verifyNoOutstandingRequest();
+    });
 
     describe('fetch episodes', function() {
 
         it('should hit the api', function() {
-            $route.current = { params: { id: 123 } }
-
+            $route.current = { params: { id: 123 } };
             $httpBackend.expectGET('/api/v0.1/episode/123/').respond(episodeData);
             var promise = episodeLoader();
             $rootScope.$apply();
