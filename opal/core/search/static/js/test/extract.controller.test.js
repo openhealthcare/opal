@@ -162,7 +162,18 @@ describe('ExtractCtrl', function(){
             expect($scope.completeCriteria().length).toBe(1);
         });
 
-    })
+        it("should update the critieria to or if we're of anyOrAll is 'any'", function(){
+          $scope.anyOrAll = "any";
+          $scope.completeCriteria();
+          expect($scope.criteria[0].combine).toBe('or');
+        });
+
+        it("should update the critieria to and if we're of anyOrAll is 'all'", function(){
+          $scope.anyOrAll = "all";
+          $scope.completeCriteria();
+          expect($scope.criteria[0].combine).toBe('and');
+        });
+    });
 
     describe('Getting searchable fields', function(){
 
@@ -263,17 +274,17 @@ describe('ExtractCtrl', function(){
     describe('resetFilter()', function(){
 
         it('should reset the criteria', function(){
-            $scope.criteria[0].field = "demographics";
-            $scope.criteria[0].column = "name";
-            $scope.criteria[0].combine = "or";
-            $scope.criteria[0].query = "Jane";
-            $scope.criteria[0].queryType = "contains";
-            $scope.resetFilter(0, ["combine", "field"]);
-            expect($scope.criteria[0].combine).toEqual("or");
-            expect($scope.criteria[0].field).toEqual("demographics");
-            expect($scope.criteria[0].column).toEqual(null);
-            expect($scope.criteria[0].query).toEqual(null);
-            expect($scope.criteria[0].queryType).toEqual(null);
+            var criteria = {
+              column: "demographics",
+              field: "name",
+              query: "Jane",
+              queryType: "contains"
+            }
+            $scope.resetFilter(criteria);
+            expect(criteria.column).toEqual("demographics");
+            expect(criteria.field).toEqual(null);
+            expect(criteria.query).toEqual(null);
+            expect(criteria.queryType).toEqual(null);
         })
 
     });
@@ -371,8 +382,8 @@ describe('ExtractCtrl', function(){
 
         it('should handle not send a search if there are no criteria', function(){
             $scope.search();
-            $httpBackend.verifyNoOutstandingExpectation()
             expect($scope.searched).toBe(true);
+            $httpBackend.verifyNoOutstandingExpectation();
         });
     });
 

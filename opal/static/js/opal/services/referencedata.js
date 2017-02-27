@@ -33,7 +33,7 @@ angular.module('opal.services').factory('Referencedata', function($q, $http, $wi
                 lookuplists[list_name + '_list'] = self[list_name];
             });
             return lookuplists;
-        }
+        };
 
         self.initialize();
         return self;
