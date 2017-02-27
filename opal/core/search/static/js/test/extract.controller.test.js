@@ -85,25 +85,7 @@ describe('ExtractCtrl', function(){
     ];
 
     beforeEach(function(){
-        module('opal', function($provide) {
-            $provide.value('$analytics', function(){
-                return {
-                    pageTrack: function(x){}
-                }
-            });
-
-            $provide.provider('$analytics', function(){
-                this.$get = function() {
-                    return {
-                        virtualPageviews: function(x){},
-                        settings: {
-                            pageTracking: false,
-                        },
-                        pageTrack: function(x){}
-                    };
-                };
-            });
-        });
+        module('opal');
     });
 
     beforeEach(function(){
@@ -136,7 +118,16 @@ describe('ExtractCtrl', function(){
         $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
         $scope.$apply();
         $httpBackend.flush();
+    });
 
+    describe('set up', function(){
+      it('should set up any or all options', function(){
+        expect($scope.combinations).toEqual(["all", "any"]);
+      });
+
+      it('should set up any or all default', function(){
+        expect($scope.anyOrAll).toBe("all");
+      });
     });
 
     describe('Getting Complete Criteria', function(){
