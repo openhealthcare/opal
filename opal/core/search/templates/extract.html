@@ -11,6 +11,20 @@
     <div class="panel-body">
       <form class="form form-inline">
         <div class="row">
+          <div class="col-md-9 content-offset-10 content-offset-below-20">
+            <div class="form-inline">
+              <div class="form-group ">
+                Match patients for
+                <select class="form-control" ng-model="extract.combine">
+                  <option>all</option>
+                  <option>any</option>
+                </select>
+                of the following rules
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
           <div class="col-md-9">
             <span ng-repeat="query in criteria">
               <div class="row">
@@ -121,40 +135,6 @@
                       ng-click="removeCriteria()">
                 Clear search
               </button>
-            </div>
-          </div>
-          <div class="col-md-3">
-            <div class="panel panel-default">
-              <div class="panel-heading">
-                <h4><i class="fa fa-save saved-search"></i>Saved Searches</h4>
-              </div>
-
-              <div class="panel-body">
-                <ul ng-show="filters.length" class="list-group">
-                  <li class="list-group-item" ng-repeat="f in filters">
-                    <strong>
-                      <a href="#" ng-click="jumpToFilter($event, f)">
-                        [[f.name]]
-                      </a>
-                      <a href="#" ng-click="editFilter($event, f, $index)" >
-                        <span class="glyphicon glyphicon-edit"></span>
-                      </a>
-                    </strong>
-                  </li>
-                </ul>
-                <div ng-show="!filters.length">
-                  You have no saved searches
-                </div>
-              </div>
-              <div ng-show="searched && results.length > 0" class="panel-footer text-center">
-                <button type="button"
-                        class="btn btn-secondary"
-                        ng-click="save()"
-                        >
-                  <span class="glyphicon glyphicon-floppy-disk"></span>
-                  Save this search
-                </button>
-              </div>
             </div>
           </div>
         </div>
