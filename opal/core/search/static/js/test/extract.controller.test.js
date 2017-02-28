@@ -12,8 +12,15 @@ describe('ExtractCtrl', function(){
     }
     var referencedata = {
         dogs: ['Poodle', 'Dalmation'],
-        hats: ['Bowler', 'Top', 'Sun']
+        hats: ['Bowler', 'Top', 'Sun'],
+        toLookuplists: function(){
+          return {
+            dogs_list: ['Poodle', 'Dalmation'],
+            hats_list: ['Bowler', 'Top', 'Sun']
+          };
+        }
     };
+
 
     var columnsData = [
         {
@@ -122,11 +129,11 @@ describe('ExtractCtrl', function(){
             options: optionsData,
             filters: [],
             schema : schema,
+            referencedata: referencedata,
             PatientSummary: PatientSummary
         });
 
         $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
-        $httpBackend.expectGET('/api/v0.1/referencedata/').respond(referencedata);
         $scope.$apply();
         $httpBackend.flush();
 

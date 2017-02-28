@@ -48,7 +48,8 @@ app.config(
                  resolve: {
                      profile: function(UserProfile){ return UserProfile; },
                      schema: function(extractSchemaLoader){ return extractSchemaLoader; },
-                     filters: function(filtersLoader){ return filtersLoader(); }
+                     filters: function(filtersLoader){ return filtersLoader(); },
+                     referencedata: function(Referencedata){ return Referencedata; }
                  }
              })
              .when('/account', {
