@@ -45,7 +45,7 @@ angular.module('opal.controllers').controller(
 
     $scope.readableQuery = function(someQuery){
       if(!someQuery){
-        return undefined;
+        return someQuery;
       }
       var result = someQuery;
       if(someQuery === "Equals"){
