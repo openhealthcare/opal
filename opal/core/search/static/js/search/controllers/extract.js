@@ -39,6 +39,18 @@ angular.module('opal.controllers').controller(
 
     $scope.criteria = [_.clone($scope.model)];
 
+    $scope.readableQuery = function(someQuery){
+      var result = someQuery;
+      if(someQuery === "Equals"){
+        result = "is";
+      }
+      if(someQuery === "Before" || someQuery === "After"){
+        result = "is " + result;
+      }
+
+      return result.toLowerCase();
+    };
+
     $scope.completeCriteria =  function(){
       var combine;
 

@@ -1107,3 +1107,7 @@ a.table-link:hover{
 .small-icon, .list-group-item .btn i.small-icon{
   font-size: 12px;
 }
+
+hr.bold{
+  border-color: #d9534f;
+}
