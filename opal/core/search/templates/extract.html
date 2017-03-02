@@ -17,9 +17,14 @@
                 </span>
                 <span ng-show="completeCriteria().length">
                   <h4>Your Criteria</h4>
-                  Find patients where
+                  Find patients where the
                   <span ng-repeat="query in completeCriteria()">
-                    <strong>[[ query.column | title ]] [[ query.field ]]</strong> [[ readableQuery(query.queryType) ]] <strong>[[ query.query ]]</strong>
+                    <span ng-hide="query.column === 'Tagging'">
+                      <strong>[[ columnToDisplayName[query.column] ]] [[ query.field ]]</strong> [[ readableQuery(query.queryType) ]] <strong>[[ query.query ]]</strong>
+                    </span>
+                    <span ng-show="query.column === 'Tagging'">
+                      patient has been under the <strong>[[ query.field ]]</strong> team
+                    </span>
                     <span ng-hide="$last">[[ query.combine ]]</span>
                   </span>
                 </span>
@@ -152,42 +157,41 @@
                 </div>
               </div>
             </form>
-          </div>
-        </div>
 
-
-        <div class="row">
-          <div class="col-sm-4" ng-show="profile.can_extract">
-            {% if EXTRACT_ASYNC %}
-            <button class="btn btn-lg"
-                    ng-class="{'btn-primary': async_ready, 'btn-secondary': !async_ready}"
-                    ng-show="searched && results.length > 0"
-                    ng-click="async_extract()">
-              <span ng-hide="async_waiting">
-                <i class="glyphicon glyphicon-download"></i>
-                Download this data
-              </span>
-              <span ng-show="async_waiting && !async_ready">
-                <i class="fa fa-cog fa-spin" ></i>
-                Building your extract... this could take some time...
-              </span>
-              <span ng-show="async_ready">
-                <i class="glyphicon glyphicon-download"></i>
-                Ready - Download your extract
-              </span>
-            </button>
-            {% else %}
-            <form action="/search/extract/download" method="post" target="_blank">
-              <input name="criteria" type="hidden" value="[[ JSON.stringify(criteria) ]]">
-              {% csrf_token %}
-              <button type="submit"
-                      class="btn btn-secondary btn-lg"
-                      ng-show="searched && results.length > 0">
-                <span class="glyphicon glyphicon-download"></span>
-                Download these results
-              </button>
-            </form>
-            {% endif %}
+            <div class="row">
+              <div class="col-sm-4" ng-show="profile.can_extract">
+                {% if EXTRACT_ASYNC %}
+                <button class="btn btn-lg"
+                        ng-class="{'btn-primary': async_ready, 'btn-secondary': !async_ready}"
+                        ng-show="searched && results.length > 0"
+                        ng-click="async_extract()">
+                  <span ng-hide="async_waiting">
+                    <i class="glyphicon glyphicon-download"></i>
+                    Download this data
+                  </span>
+                  <span ng-show="async_waiting && !async_ready">
+                    <i class="fa fa-cog fa-spin" ></i>
+                    Building your extract... this could take some time...
+                  </span>
+                  <span ng-show="async_ready">
+                    <i class="glyphicon glyphicon-download"></i>
+                    Ready - Download your extract
+                  </span>
+                </button>
+                {% else %}
+                <form action="/search/extract/download" method="post" target="_blank">
+                  <input name="criteria" type="hidden" value="[[ JSON.stringify(criteria) ]]">
+                  {% csrf_token %}
+                  <button type="submit"
+                          class="btn btn-secondary btn-lg"
+                          ng-show="searched && results.length > 0">
+                    <span class="glyphicon glyphicon-download"></span>
+                    Download these results
+                  </button>
+                </form>
+                {% endif %}
+              </div>
+            </div>
           </div>
         </div>
       </div> <!-- Row -->

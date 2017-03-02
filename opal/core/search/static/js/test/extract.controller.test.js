@@ -99,7 +99,7 @@ describe('ExtractCtrl', function(){
             $controller  = $injector.get('$controller');
             Schema = $injector.get('Schema');
             PatientSummary = $injector.get('PatientSummary');
-            Item = $injector.get('Item')
+            Item = $injector.get('Item');
         });
 
         var schema = new Schema(columnsData);
@@ -127,6 +127,12 @@ describe('ExtractCtrl', function(){
 
       it('should set up any or all default', function(){
         expect($scope.anyOrAll).toBe("all");
+      });
+
+      it('should set a column mapping of name to display name', function(){
+        expect($scope.columnToDisplayName).toEqual({
+          demographics: 'Demographics', symptoms: 'Symptoms'
+        });
       });
     });
 
@@ -243,6 +249,26 @@ describe('ExtractCtrl', function(){
             expect($scope.criteria.length).toBe(2);
         });
 
+    });
+
+    describe('readableQuery()', function(){
+        it('should return null if its handed a null', function(){
+          // we hand the function null if we're looking at tagging
+          expect($scope.readableQuery(null)).toBe(null);
+        });
+
+        it('should lower case the result', function(){
+          expect($scope.readableQuery('Contains')).toBe('contains');
+        });
+
+        it('should add "is" as a prefix for time queries', function(){
+          expect($scope.readableQuery('Before')).toBe('is before');
+          expect($scope.readableQuery('After')).toBe('is after');
+        });
+
+        it('should change equals to "is"', function(){
+          expect($scope.readableQuery('Equals')).toBe('is');
+        });
     });
 
     describe('removeFilter()', function(){
