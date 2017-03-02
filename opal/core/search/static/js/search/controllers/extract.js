@@ -145,9 +145,11 @@ angular.module('opal.controllers').controller(
 
     $scope.removeFilter = function(index){
         if($scope.criteria.length == 1){
-            return
+            $scope.removeCriteria();
         }
-        $scope.criteria.splice(index, 1);
+        else{
+            $scope.criteria.splice(index, 1);
+        }
     };
 
     $scope.resetFilter = function(query){

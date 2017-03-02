@@ -247,10 +247,11 @@ describe('ExtractCtrl', function(){
 
     describe('removeFilter()', function(){
 
-        it('should always leave 1 filter', function(){
+        it('should always leave an empty filter', function(){
             expect($scope.criteria.length).toBe(1);
             $scope.removeFilter();
             expect($scope.criteria.length).toBe(1);
+            expect($scope.criteria[0].column).toBe(null);
         });
 
         it('should remove a criteria', function(){
