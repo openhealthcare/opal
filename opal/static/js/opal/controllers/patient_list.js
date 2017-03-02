@@ -211,7 +211,8 @@ angular.module('opal.controllers').controller(
                         tag: $scope.currentTag,
                         subtag: $scope.currentSubTag
                     }
-                }
+                },
+                $scope
             );
 
             $rootScope.state = 'modal';
@@ -297,13 +298,14 @@ angular.module('opal.controllers').controller(
 
 		    $rootScope.state = 'modal';
             var exit = Flow.exit(episode,
-                                 {
-                                     current_tags: {
-                                         tag   : $scope.currentTag,
-                                         subtag: $scope.currentSubTag
-                                     },
-                                 }
-                                );
+                {
+                    current_tags: {
+                        tag   : $scope.currentTag,
+                        subtag: $scope.currentSubTag
+                    },
+                },
+                $scope
+            );
 
             exit.then(function(result) {
                 //

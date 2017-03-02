@@ -57,7 +57,8 @@ angular.module('opal.controllers').controller(
                         tag   : $scope.currentTag,
                         subtag: $scope.currentSubTag
                     }
-                }
+                },
+                $scope
             );
 
             exit.then(function(result) {
@@ -65,6 +66,6 @@ angular.module('opal.controllers').controller(
 		    });
 	    };
 
-        $scope.initialise();
+      $scope.initialise();
     }
 );

@@ -3,6 +3,7 @@ describe('EditTeamsCtrl', function(){
 
     var $scope, $rootScope, $httpBackend, $window, $modal, $controller;
     var Episode;
+    var UserProfile;
     var modalInstance;
     var episode
     var options = {
@@ -81,7 +82,8 @@ describe('EditTeamsCtrl', function(){
         demographics: [
             {
                 patient_id: 1234,
-                name: 'Jane doe'
+                first_name: 'Jane',
+                surname: "Doe"
             }
         ],
         location: [
@@ -94,6 +96,13 @@ describe('EditTeamsCtrl', function(){
 
     beforeEach(function(){
         module('opal.controllers');
+        UserProfile = {
+          then: function(fn){
+            fn('someProfile');
+          }
+        };
+
+        spyOn(UserProfile, "then").and.callThrough();
 
         inject(function($injector){
             $httpBackend = $injector.get('$httpBackend');
@@ -124,7 +133,8 @@ describe('EditTeamsCtrl', function(){
             $scope: $scope,
             $window: $window,
             $modalInstance: modalInstance,
-            episode: episode
+            episode: episode,
+            UserProfile: UserProfile
         });
     });
 
@@ -132,6 +142,12 @@ describe('EditTeamsCtrl', function(){
 
         it('should have an editing object', function() {
             expect($scope.editing).toEqual({tagging: {tropical: true}});
+        });
+
+        it('should put profile and editingname on the scope', function(){
+          expect(UserProfile.then).toHaveBeenCalled();
+          expect($scope.editingName).toBe("Jane Doe");
+          expect(!!$scope.profile).toBe(true);
         });
 
         it('should not set an empty object if there are no tags', function(){
