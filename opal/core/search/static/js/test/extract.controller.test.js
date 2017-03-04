@@ -12,8 +12,15 @@ describe('ExtractCtrl', function(){
     }
     var referencedata = {
         dogs: ['Poodle', 'Dalmation'],
-        hats: ['Bowler', 'Top', 'Sun']
+        hats: ['Bowler', 'Top', 'Sun'],
+        toLookuplists: function(){
+          return {
+            dogs_list: ['Poodle', 'Dalmation'],
+            hats_list: ['Bowler', 'Top', 'Sun']
+          };
+        }
     };
+
 
     var columnsData = [
         {
@@ -78,25 +85,7 @@ describe('ExtractCtrl', function(){
     ];
 
     beforeEach(function(){
-        module('opal', function($provide) {
-            $provide.value('$analytics', function(){
-                return {
-                    pageTrack: function(x){}
-                }
-            });
-
-            $provide.provider('$analytics', function(){
-                this.$get = function() {
-                    return {
-                        virtualPageviews: function(x){},
-                        settings: {
-                            pageTracking: false,
-                        },
-                        pageTrack: function(x){}
-                    };
-                };
-            });
-        });
+        module('opal');
     });
 
     beforeEach(function(){
@@ -122,14 +111,23 @@ describe('ExtractCtrl', function(){
             options: optionsData,
             filters: [],
             schema : schema,
+            referencedata: referencedata,
             PatientSummary: PatientSummary
         });
 
         $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
-        $httpBackend.expectGET('/api/v0.1/referencedata/').respond(referencedata);
         $scope.$apply();
         $httpBackend.flush();
+    });
 
+    describe('set up', function(){
+      it('should set up any or all options', function(){
+        expect($scope.combinations).toEqual(["all", "any"]);
+      });
+
+      it('should set up any or all default', function(){
+        expect($scope.anyOrAll).toBe("all");
+      });
     });
 
     describe('Getting Complete Criteria', function(){
@@ -155,7 +153,18 @@ describe('ExtractCtrl', function(){
             expect($scope.completeCriteria().length).toBe(1);
         });
 
-    })
+        it("should update the critieria to or if we're of anyOrAll is 'any'", function(){
+          $scope.anyOrAll = "any";
+          $scope.completeCriteria();
+          expect($scope.criteria[0].combine).toBe('or');
+        });
+
+        it("should update the critieria to and if we're of anyOrAll is 'all'", function(){
+          $scope.anyOrAll = "all";
+          $scope.completeCriteria();
+          expect($scope.criteria[0].combine).toBe('and');
+        });
+    });
 
     describe('Getting searchable fields', function(){
 
@@ -238,10 +247,11 @@ describe('ExtractCtrl', function(){
 
     describe('removeFilter()', function(){
 
-        it('should always leave 1 filter', function(){
+        it('should always leave an empty filter', function(){
             expect($scope.criteria.length).toBe(1);
             $scope.removeFilter();
             expect($scope.criteria.length).toBe(1);
+            expect($scope.criteria[0].column).toBe(null);
         });
 
         it('should remove a criteria', function(){
@@ -256,17 +266,17 @@ describe('ExtractCtrl', function(){
     describe('resetFilter()', function(){
 
         it('should reset the criteria', function(){
-            $scope.criteria[0].field = "demographics";
-            $scope.criteria[0].column = "name";
-            $scope.criteria[0].combine = "or";
-            $scope.criteria[0].query = "Jane";
-            $scope.criteria[0].queryType = "contains";
-            $scope.resetFilter(0, ["combine", "field"]);
-            expect($scope.criteria[0].combine).toEqual("or");
-            expect($scope.criteria[0].field).toEqual("demographics");
-            expect($scope.criteria[0].column).toEqual(null);
-            expect($scope.criteria[0].query).toEqual(null);
-            expect($scope.criteria[0].queryType).toEqual(null);
+            var criteria = {
+              column: "demographics",
+              field: "name",
+              query: "Jane",
+              queryType: "contains"
+            }
+            $scope.resetFilter(criteria);
+            expect(criteria.column).toEqual("demographics");
+            expect(criteria.field).toEqual(null);
+            expect(criteria.query).toEqual(null);
+            expect(criteria.queryType).toEqual(null);
         })
 
     });
@@ -364,8 +374,8 @@ describe('ExtractCtrl', function(){
 
         it('should handle not send a search if there are no criteria', function(){
             $scope.search();
-            $httpBackend.verifyNoOutstandingExpectation()
             expect($scope.searched).toBe(true);
+            $httpBackend.verifyNoOutstandingExpectation();
         });
     });
 
