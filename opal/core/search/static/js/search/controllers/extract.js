@@ -16,6 +16,10 @@ angular.module('opal.controllers').controller(
     $scope.JSON = window.JSON;
     $scope.filters = filters;
     $scope.columns = schema.getAdvancedSearchColumns();
+    $scope.columnToDisplayName = _.reduce($scope.columns,function(a,b) {
+      a[b.name] = b.display_name;
+      return a;
+    },{});
     $scope.searched = false;
     $scope.currentPageNumber = 1;
     $scope.paginator = new Paginator($scope.search);
@@ -38,6 +42,21 @@ angular.module('opal.controllers').controller(
     };
 
     $scope.criteria = [_.clone($scope.model)];
+
+    $scope.readableQuery = function(someQuery){
+      if(!someQuery){
+        return someQuery;
+      }
+      var result = someQuery;
+      if(someQuery === "Equals"){
+        result = "is";
+      }
+      if(someQuery === "Before" || someQuery === "After"){
+        result = "is " + result;
+      }
+
+      return result.toLowerCase();
+    };
 
     $scope.completeCriteria =  function(){
       var combine;
