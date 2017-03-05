@@ -21,6 +21,10 @@ This is the current `User` object.
 The templatetag application_menuitems now uses this method to render navigation menus, allowing dynamic
 customisation of menu contents based on user.
 
+#### Misc Changes
+
+Updates the custom `UserAdmin` so that the email, first and last name fields from the Django `User` model
+are in the add user form not just the edit user form.
 
 ### 0.8.0 (Major Release)
 
