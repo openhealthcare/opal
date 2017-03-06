@@ -1,5 +1,8 @@
 ### 0.8.1 (Minor Release)
 
+#### Removing ReopenEpisodeCtrl
+To our knowledge this is not used.
+
 #### Patients as a service
 
 Patient becomes a service in angular. This takes in a patient as loaded by the patient loader or another service. It casts the data to Episode or Item instances as appropriate.
