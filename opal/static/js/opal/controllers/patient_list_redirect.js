@@ -11,7 +11,7 @@ angular.module('opal.controllers').controller(
             $location.replace();
         };
 
-        var last_list = $cookies.get('opal.lastPatientList');
+        var last_list = $cookies.get('opal.previousPatientList');
         if(last_list){
             replacePath(last_list);
         }else{

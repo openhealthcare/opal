@@ -143,7 +143,7 @@ describe('PatientListCtrl', function() {
         Item         = $injector.get('Item');
         $rootScope   = $injector.get('$rootScope');
         $scope       = $rootScope.$new();
-        $cookies = $injector.get('$cookies');
+        $cookies     = $injector.get('$cookies');
         $controller  = $injector.get('$controller');
         $q           = $injector.get('$q');
         $modal       = $injector.get('$modal');
@@ -172,7 +172,8 @@ describe('PatientListCtrl', function() {
 
         spyOn(episode.recordEditor, 'deleteItem').and.returnValue(promise);
         spyOn(episode.recordEditor, 'editItem').and.returnValue(promise);
-        spyOn($cookies, 'put').and.callThrough();
+        spyOn($cookies, 'put').and.stub();
+
 
         episodedata = {status: 'success', data: {123: episode} };
         episodeVisibility = jasmine.createSpy().and.callFake(episodeVisibility);
@@ -264,7 +265,7 @@ describe('PatientListCtrl', function() {
         });
 
         it('should set the URL of the last list visited', function() {
-            expect($cookies.put).toHaveBeenCalledWith('opal.lastPatientList', 'tropical');
+            expect($cookies.put).toHaveBeenCalledWith('opal.previousPatientList', 'tropical');
         });
 
         it('should should set rows and episodes', function() {
@@ -288,19 +289,19 @@ describe('PatientListCtrl', function() {
     });
 
     describe('Unknown list', function() {
-
         it('should redirect to list if set from a cookie', function(){
-            $cookies.put('opal.lastPatientList', 'randomlist');
+            spyOn($cookies, "get").and.returnValue('randomlist')
             spyOn($location, 'path');
             spyOn($cookies, 'remove');
             episodedata.status = 'error'
             _makecontroller();
             expect($location.path).toHaveBeenCalledWith('/list/');
-            expect($cookies.remove).toHaveBeenCalledWith('opal.lastPatientList');
+            expect($cookies.remove).toHaveBeenCalledWith('opal.previousPatientList');
+            expect($cookies.get).toHaveBeenCalledWith('opal.previousPatientList')
         })
 
         it('should redirect to /404', function() {
-            $cookies.remove('opal.lastPatientList');
+            $cookies.remove('opal.previousPatientList');
             episodedata.status = 'error';
             _makecontroller();
             expect(fakeWindow.location.href).toBe("/404");

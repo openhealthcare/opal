@@ -25,7 +25,7 @@ describe('PatientListRedirectListCtrl', function() {
   it('should redirect to the cookie store list', function() {
       var $cookies = {
           get: function(someKey){
-              if(someKey === 'opal.lastPatientList'){
+              if(someKey === 'opal.previousPatientList'){
                   return "cookietag"
               }
               throw "unknown argument " + someKey;
@@ -51,7 +51,7 @@ describe('PatientListRedirectListCtrl', function() {
             metadata: metadata
         });
         expect($location.path).toHaveBeenCalledWith("/list/carnivore-eater/");
-        expect($cookies.get).toHaveBeenCalledWith("opal.lastPatientList");
+        expect($cookies.get).toHaveBeenCalledWith("opal.previousPatientList");
     });
 
 });
