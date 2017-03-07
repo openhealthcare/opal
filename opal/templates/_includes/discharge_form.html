@@ -1,4 +1,12 @@
 {% load forms %}
+
+<div class="text-center" ng-show="currentCategory == 'Followup'">
+  <input type="hidden" ng-model="editing.category" value="Discharged">
+  <p class="lead">
+    Confirm discharge and no further follow-up is required.
+  </p>
+</div>
+
 {% datepicker label="Discharge date" model="editing.discharge_date" hide="editing.category=='Unfollow' || currentCategory=='Discharged'" mindate="[[editing.date_of_admission]]"%}
 
 <div
@@ -43,13 +51,7 @@
 
 </div>
 
-<div ng-show="currentCategory == 'Followup'">
-  <input type="hidden" ng-model="editing.category" value="Discharged">
-  <p>
-    Confirm discharge and no further follow-up is required.
-  </p>
-</div>
 
 <div ng-show="currentCategory == 'Discharged'">
-  <p>Confirm discharge.</p>
+  <p class="lead">Confirm discharge.</p>
 </div>
