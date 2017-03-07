@@ -24,6 +24,11 @@ Opal 0.8.1 removes some minor features which, to our knowledge are not used by a
 * ReopenEpisodeCtrl - applications may implement their own 're-open' episode flow, but Opal no longer handles this out of the box.
 * Subrecord._bulk_serialise - this flag has been removed 
 
+#### Misc Changes
+
+Updates the custom `UserAdmin` so that the email, first and last name fields from the Django `User` model
+are in the add user form not just the edit user form.
+
 ### 0.8.0 (Major Release)
 
 #### Plugins
@@ -196,6 +201,21 @@ Upgrades angular to v1.5.8 (from 1.3.11) you can see their change log [here](htt
 Updates angular-cookies and angular-mocks to v1.5.8 (both from 1.3.11)
 
 Updates angular-ui-select to 0.19.4 from 0.13.2
+
+### 0.7.5 (Minor Release)
+
+The flow enter and exif functions now take an optional context argument. When called from PatientList or PatientDetail controllers this is the parent scope when the flow has been entered.
+
+Note: The current Flow API is likely to undergo substantial revision in Opal 0.9 / 0.10 do contact us on the mailing list if you are relying heavily upon it or would like to let us know your needs.
+
+### 0.7.4 (Minor Release)
+
+Adds  a past filter, future and past filters now take a
+boolean argument as to whether you should include today
+
+### 0.7.3 (Minor Release)
+
+Fixes a bug whereby celery tasks are not autodiscovered - will have affected users of async extract functionality.
 
 ### 0.7.2 (Minor Release)
 

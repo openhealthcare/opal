@@ -64,6 +64,7 @@ describe('Routes', function() {
         it('should resolve injected things', function() {
             var resolve = $route.routes['/extract'].resolve;
             expect(resolve.profile('Profile')).toEqual('Profile');
+            expect(resolve.referencedata('Referencedata')).toEqual('Referencedata');
             expect(resolve.schema('Schema')).toEqual('Schema');
             expect(resolve.filters(function(){return {}})).toEqual({});
         });

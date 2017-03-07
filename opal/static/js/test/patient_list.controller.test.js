@@ -554,16 +554,21 @@ describe('PatientListCtrl', function() {
 
     describe('adding an episode', function() {
         var fake_episode_resolver = function(){
-            return {then : function(fn){ fn(new Episode(episodeData2)) }};
+            return {then : function(fn){ fn(new Episode(episodeData2)); }};
         };
 
         it('should call flow', function() {
             spyOn(Flow, 'enter').and.callFake(fake_episode_resolver);
             $scope.addEpisode();
-            expect(Flow.enter).toHaveBeenCalledWith({current_tags: {
-                tag: $scope.currentTag,
-                subtag: $scope.currentSubTag
-            }})
+            expect(Flow.enter).toHaveBeenCalledWith(
+              {
+                current_tags: {
+                  tag: $scope.currentTag,
+                  subtag: $scope.currentSubTag
+                }
+              },
+              $scope
+          );
         });
 
         it('should allow the enter flow to resolve with a promise', function() {
@@ -581,7 +586,7 @@ describe('PatientListCtrl', function() {
             expect(Flow.enter).toHaveBeenCalledWith({current_tags: {
                 tag: $scope.currentTag,
                 subtag: $scope.currentSubTag
-            }});
+            }}, $scope);
 
             expect(growl.success).toHaveBeenCalledWith('John Smith added to the Mine list');
         });

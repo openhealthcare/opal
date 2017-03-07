@@ -218,6 +218,20 @@ class DatepickerTestCase(TestCase):
         self.assertIn('is-open="form[onions + \'_open\']', rendered)
         self.assertIn('ng-focus="form[onions + \'_open\']=true"', rendered)
 
+    def test_hide(self):
+        tpl = Template(
+            '{% load forms %}{% datepicker label="hai" model="bai" hide="onions"%}'
+        )
+        rendered = tpl.render(Context({}))
+        self.assertIn('ng-hide="onions"', rendered)
+
+    def test_show(self):
+        tpl = Template(
+            '{% load forms %}{% datepicker label="hai" model="bai" hide="onions"%}'
+        )
+        rendered = tpl.render(Context({}))
+        self.assertIn('ng-hide="onions"', rendered)
+
 
 class DateTimePickerTestCase(TestCase):
     def test_generic(self):
@@ -239,6 +253,20 @@ class DateTimePickerTestCase(TestCase):
         template = Template('{% load forms %}{% datetimepicker field="Colour.name" change="something()" %}')
         rendered = template.render(Context({}))
         self.assertEqual(rendered.count("something()"), 2)
+
+    def test_hide(self):
+        tpl = Template(
+            '{% load forms %}{% datetimepicker label="hai" model="bai" hide="onions"%}'
+        )
+        rendered = tpl.render(Context({}))
+        self.assertIn('ng-hide="onions"', rendered)
+
+    def test_show(self):
+        tpl = Template(
+            '{% load forms %}{% datetimepicker label="hai" model="bai" hide="onions"%}'
+        )
+        rendered = tpl.render(Context({}))
+        self.assertIn('ng-hide="onions"', rendered)
 
 
 class RadioTestCase(TestCase):
