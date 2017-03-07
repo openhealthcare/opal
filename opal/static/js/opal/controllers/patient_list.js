@@ -1,5 +1,5 @@
 angular.module('opal.controllers').controller(
-    'PatientListCtrl', function($scope, $q, $http, $cookieStore,
+    'PatientListCtrl', function($scope, $q, $http, $cookies,
                                 $location, $routeParams,
                                 $modal, $rootScope, $window, $injector,
                                 growl, Flow, Item, Episode,
@@ -8,8 +8,8 @@ angular.module('opal.controllers').controller(
         $scope.ready = false;
         var version = window.version;
         if(episodedata.status == 'error'){
-            if($cookieStore.get('opal.lastPatientList')){
-                $cookieStore.remove('opal.lastPatientList');
+            if($cookies.get('opal.previousPatientList')){
+                $cookies.remove('opal.previousPatientList');
                 $location.path('/list/')
                 return
             }
@@ -34,7 +34,7 @@ angular.module('opal.controllers').controller(
             $scope.path_base = '/list/';
             $scope.profile = profile;
 
-            $cookieStore.put('opal.lastPatientList', $routeParams.slug);
+            $cookies.put('opal.previousPatientList', $routeParams.slug);
             var tags = $routeParams.slug.split('-')
             $scope.currentTag = tags[0];
             $scope.currentSubTag = tags.length == 2 ? tags[1] : "";

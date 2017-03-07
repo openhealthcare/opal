@@ -15,11 +15,12 @@ OPAL.module = function(namespace, dependencies){
 
     var implicit_dependencies = [
         'angular-growl',
+        'ngCookies',
         'mentio',
         'angulartics',
         'angulartics.google.analytics',
         'LocalStorageModule',
-    ]
+    ];
 
     _.each(implicit_dependencies, function(dependency){
         if(!_.contains(dependencies, dependency)){
@@ -45,6 +46,12 @@ OPAL.module = function(namespace, dependencies){
           $analyticsProvider.virtualPageviews(false);
       });
     }
+
+    mod.config(function($cookiesProvider) {
+        var future = new Date();
+        future.setFullYear(future.getFullYear() + 1);
+        $cookiesProvider.defaults.expires = future;
+    });
 
     // See http://stackoverflow.com/questions/8302928/angularjs-with-django-conflicting-template-tags
     mod.config(function($interpolateProvider) {

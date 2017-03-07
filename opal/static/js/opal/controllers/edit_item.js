@@ -1,5 +1,5 @@
 angular.module('opal.controllers').controller(
-    'EditItemCtrl', function($scope, $cookieStore, $timeout,
+    'EditItemCtrl', function($scope, $timeout,
                              $modalInstance, $modal, $q,
                              ngProgressLite,
                              referencedata, metadata,
