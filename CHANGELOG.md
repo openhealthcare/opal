@@ -2,12 +2,12 @@
 
 #### Cookies for the future
 
-We now use the $cookies api as part of moving to angular v1.5.8.
+We now use the `$cookies` api as part of moving to angular v1.5.8.
 
 The default expiry of cookies is now a year in the future.
 
-The cookie name previously stored as 'opal.lastPatientList' is now
-opal.previousPatientList
+The cookie name previously stored as `opal.lastPatientList` is now
+`opal.previousPatientList`.
 
 #### Patients as a service
 
