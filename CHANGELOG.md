@@ -9,10 +9,6 @@ Patient becomes a service in angular. This takes in a patient as loaded by the p
 PatientList.get_queryset() is now passed an extra keyword argument - `user`.
 This is the current `User` object.
 
-#### Removed Subrecord._bulk_serialise
-
-This flag no longer exists
-
 #### Overriding default Menu Items behaviour
 
 The `get_menu_items` method of Opal Application objects is now passed an extra keyword argument - `user`.
@@ -20,6 +16,13 @@ This is the current `User` object.
 
 The templatetag application_menuitems now uses this method to render navigation menus, allowing dynamic
 customisation of menu contents based on user.
+
+#### Removals
+
+Opal 0.8.1 removes some minor features which, to our knowledge are not used by any applications in active development.
+
+* ReopenEpisodeCtrl - applications may implement their own 're-open' episode flow, but Opal no longer handles this out of the box.
+* Subrecord._bulk_serialise - this flag has been removed 
 
 #### Misc Changes
 

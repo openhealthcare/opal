@@ -24,7 +24,6 @@ class OpalApplicationTestCase(OpalTestCase):
             "js/opal/controllers/patient_detail.js",
             "js/opal/controllers/hospital_number.js",
             "js/opal/controllers/add_episode.js",
-            "js/opal/controllers/reopen_episode.js",
             "js/opal/controllers/edit_item.js",
             "js/opal/controllers/edit_teams.js",
             "js/opal/controllers/delete_item_confirmation.js",
