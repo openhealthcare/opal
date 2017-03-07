@@ -26,6 +26,10 @@ customisation of menu contents based on user.
 Updates the custom `UserAdmin` so that the email, first and last name fields from the Django `User` model
 are in the add user form not just the edit user form.
 
+test settings now use opal.urls as the default url conf. This is so you your plugins urls that load through the opal url conf as well as your own plugins
+urls.
+
+
 ### 0.8.0 (Major Release)
 
 #### Plugins
