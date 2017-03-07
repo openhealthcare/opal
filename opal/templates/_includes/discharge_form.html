@@ -7,6 +7,10 @@
   </p>
 </div>
 
+<div class="text-center" ng-show="currentCategory == 'Discharged'">
+  <p class="lead">Confirm discharge.</p>
+</div>
+
 {% datepicker label="Discharge date" model="editing.discharge_date" hide="editing.category=='Unfollow' || currentCategory=='Discharged'" mindate="[[editing.date_of_admission]]"%}
 
 <div
@@ -49,9 +53,4 @@
     </label>
   </div>
 
-</div>
-
-
-<div ng-show="currentCategory == 'Discharged'">
-  <p class="lead">Confirm discharge.</p>
 </div>
