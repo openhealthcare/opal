@@ -202,12 +202,9 @@ class SubrecordTestCase(OpalTestCase):
             )
         )
 
-    def test_retrieve(self):
-        with patch.object(self.model.objects, 'get') as mockget:
-            mockget.return_value.to_dict.return_value = 'serialized colour'
-
-            response = self.viewset().retrieve(MagicMock(name='request'), pk=1)
-            self.assertEqual('serialized colour', response.data)
+    def test_list(self):
+        response = self.viewset().list(None)
+        self.assertEqual([], json.loads(response.content))
 
     def test_create(self):
         mock_request = MagicMock(name='mock request')
@@ -243,6 +240,13 @@ class SubrecordTestCase(OpalTestCase):
 
         with self.assertRaises(APIError) as e:
             response = self.client.post(url, data=data)
+
+    def test_retrieve(self):
+        with patch.object(self.model.objects, 'get') as mockget:
+            mockget.return_value.to_dict.return_value = 'serialized colour'
+
+            response = self.viewset().retrieve(MagicMock(name='request'), pk=1)
+            self.assertEqual('serialized colour', response.data)
 
 
     def test_update(self):
