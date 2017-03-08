@@ -14,7 +14,7 @@ from opal.core import application, exceptions, metadata, plugins, schemas
 from opal.core.lookuplists import LookupList
 from opal.utils import camelcase_to_underscore
 from opal.core.subrecords import subrecords
-from opal.core.views import _build_json_response
+from opal.core.views import json_response
 from opal.core.patient_lists import PatientList
 
 
@@ -202,7 +202,7 @@ class SubrecordViewSet(LoginRequiredViewset):
         subrecord.update_from_dict(request.data, request.user)
         episode = Episode.objects.get(pk=episode.pk)
 
-        return _build_json_response(
+        return json_response(
             subrecord.to_dict(request.user),
             status_code=status.HTTP_201_CREATED
         )
@@ -223,7 +223,7 @@ class SubrecordViewSet(LoginRequiredViewset):
                 {'error': 'Item has changed'},
                 status=status.HTTP_409_CONFLICT
             )
-        return _build_json_response(
+        return json_response(
             item.to_dict(request.user),
             status_code=status.HTTP_202_ACCEPTED
         )
@@ -277,7 +277,7 @@ class EpisodeViewSet(LoginRequiredViewset):
     base_name = 'episode'
 
     def list(self, request):
-        return _build_json_response(
+        return json_response(
             [e.to_dict(request.user) for e in Episode.objects.all()]
         )
 
@@ -315,7 +315,7 @@ class EpisodeViewSet(LoginRequiredViewset):
         episode.set_tag_names(list(tagging.keys()), request.user)
         serialised = episode.to_dict(request.user)
 
-        return _build_json_response(
+        return json_response(
             serialised, status_code=status.HTTP_201_CREATED
         )
 
@@ -323,15 +323,15 @@ class EpisodeViewSet(LoginRequiredViewset):
     def update(self, request, episode):
         try:
             episode.update_from_dict(request.data, request.user)
-            return _build_json_response(
+            return json_response(
                 episode.to_dict(request.user, shallow=True)
             )
         except exceptions.ConsistencyError:
-            return _build_json_response({'error': 'Item has changed'}, 409)
+            return json_response({'error': 'Item has changed'}, 409)
 
     @episode_from_pk
     def retrieve(self, request, episode):
-        return _build_json_response(episode.to_dict(request.user))
+        return json_response(episode.to_dict(request.user))
 
 
 class PatientViewSet(LoginRequiredViewset):
@@ -340,14 +340,14 @@ class PatientViewSet(LoginRequiredViewset):
     @patient_from_pk
     def retrieve(self, request, patient):
         PatientRecordAccess.objects.create(patient=patient, user=request.user)
-        return _build_json_response(patient.to_dict(request.user))
+        return json_response(patient.to_dict(request.user))
 
 
 class PatientRecordAccessViewSet(LoginRequiredViewset):
     base_name = 'patientrecordaccess'
 
     def retrieve(self, request, pk=None):
-        return _build_json_response([
+        return json_response([
             a.to_dict(request.user) for a in
             PatientRecordAccess.objects.filter(patient_id=pk)
         ])
@@ -365,7 +365,7 @@ class PatientListViewSet(LoginRequiredViewset):
                 {'error': 'List does not exist'},
                 status=status.HTTP_404_NOT_FOUND
             )
-        return _build_json_response(patientlist.to_dict(request.user))
+        return json_response(patientlist.to_dict(request.user))
 
 
 router.register('patient', PatientViewSet)

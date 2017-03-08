@@ -19,7 +19,7 @@ from opal import models
 from opal.tests.models import Colour, PatientColour, HatWearer, Hat, Demographics
 from opal.core import metadata
 from opal.core.test import OpalTestCase
-from opal.core.views import _build_json_response
+from opal.core.views import json_response
 from opal.core.exceptions import APIError
 
 # this is used just to import the class for
@@ -738,7 +738,7 @@ class PatientTestCase(OpalTestCase):
 
     def test_retrieve_patient(self):
         response = api.PatientViewSet().retrieve(self.mock_request, pk=self.patient.pk).content
-        expected = _build_json_response(self.patient.to_dict(None)).content
+        expected = json_response(self.patient.to_dict(None)).content
         self.assertEqual(expected, response)
 
     def test_stores_access_log(self):
@@ -769,7 +769,7 @@ class PatientListTestCase(TestCase):
     def test_retrieve_episodes(self, patient_list):
         instantiated_list = patient_list.get.return_value.return_value
         instantiated_list.to_dict.return_value = {}
-        expected = _build_json_response({}).content
+        expected = json_response({}).content
         response = api.PatientListViewSet().retrieve(self.mock_request, pk='mylist').content
         self.assertEqual(expected, response)
 
