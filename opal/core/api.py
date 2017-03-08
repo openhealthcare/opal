@@ -142,7 +142,8 @@ class ReferenceDataViewSet(LoginRequiredViewset):
             return json_response(values)
 
         return json_response(
-            {'error': 'Item does not exist'}, status_code=status.HTTP_404_NOT_FOUND
+            {'error': 'Item does not exist'},
+            status_code=status.HTTP_404_NOT_FOUND
         )
 
 
@@ -216,7 +217,7 @@ class SubrecordViewSet(LoginRequiredViewset):
             item.update_from_dict(request.data, request.user)
         except exceptions.APIError:
             return json_response({'error': 'Unexpected field name'},
-                            status_code=status.HTTP_400_BAD_REQUEST)
+                                 status_code=status.HTTP_400_BAD_REQUEST)
         except exceptions.ConsistencyError:
             return json_response(
                 {'error': 'Item has changed'},
