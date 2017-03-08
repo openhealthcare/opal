@@ -49,6 +49,7 @@ def json_response(data, status_code=200):
     """
     response = HttpResponse()
     response['Content-Type'] = 'application/json'
+    response.data = data
     response.content = json.dumps(data, cls=OpalSerializer)
     response.status_code = status_code
     return response
