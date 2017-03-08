@@ -38,6 +38,11 @@ Opal 0.8.1 removes some minor features which, to our knowledge are not used by a
 We have re-named `opal.core.views._build_json_response` to `opal.core.views.json_response`. This will issue a
 warning for the remainder of the 0.8.x branch, before being removed entirely in Opal 0.9.0.
 
+#### Subrecord List API
+
+We have added a list method to the default Opal JSON API for subrecords - you may now obtain a list of all instances
+of a given subrecord from the API endpoint `/api/v0.1/$api_name/`.
+
 #### Misc Changes
 
 Updates the custom `UserAdmin` so that the email, first and last name fields from the Django `User` model
