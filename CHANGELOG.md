@@ -31,7 +31,12 @@ customisation of menu contents based on user.
 Opal 0.8.1 removes some minor features which, to our knowledge are not used by any applications in active development.
 
 * ReopenEpisodeCtrl - applications may implement their own 're-open' episode flow, but Opal no longer handles this out of the box.
-* Subrecord._bulk_serialise - this flag has been removed 
+* Subrecord._bulk_serialise - this flag has been removed
+
+#### Pending removals
+
+We have re-named `opal.core.views._build_json_response` to `opal.core.views.json_response`. This will issue a
+warning for the remainder of the 0.8.x branch, before being removed entirely in Opal 0.9.0.
 
 #### Misc Changes
 
