@@ -1,5 +1,5 @@
 """
-OPAL Search views
+Opal Search views
 """
 import datetime
 import json
