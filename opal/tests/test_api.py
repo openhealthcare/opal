@@ -206,6 +206,36 @@ class SubrecordTestCase(OpalTestCase):
         response = self.viewset().list(None)
         self.assertEqual([], json.loads(response.content))
 
+    def test_list_with_some_contents(self):
+        c1 = Colour(name="blue", episode=self.episode).save()
+        c2 = Colour(name="red", episode=self.episode).save()
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        response = self.viewset().list(mock_request)
+        data = [
+            {
+                u'consistency_token': u'',
+                u'created': None,
+                u'created_by_id': None,
+                u'episode_id': 1,
+                u'id': 1,
+                u'name': u'blue',
+                u'updated': None,
+                u'updated_by_id': None
+            },
+            {
+                u'consistency_token': u'',
+                u'created': None,
+                u'created_by_id': None,
+                u'episode_id': 1,
+                u'id': 2,
+                u'name': u'red',
+                u'updated': None,
+                u'updated_by_id': None
+            }
+        ]
+        self.assertEqual(data, json.loads(response.content))
+
     def test_create(self):
         mock_request = MagicMock(name='mock request')
         mock_request.user = self.user
