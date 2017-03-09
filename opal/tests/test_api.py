@@ -204,7 +204,7 @@ class SubrecordTestCase(OpalTestCase):
 
     def test_list(self):
         response = self.viewset().list(None)
-        self.assertEqual([], json.loads(response.content))
+        self.assertEqual([], json.loads(response.content.decode('UTF-8')))
 
     def test_list_with_some_contents(self):
         c1 = Colour(name="blue", episode=self.episode).save()
@@ -234,7 +234,7 @@ class SubrecordTestCase(OpalTestCase):
                 u'updated_by_id': None
             }
         ]
-        self.assertEqual(data, json.loads(response.content))
+        self.assertEqual(data, json.loads(response.content.decode('UTF-8')))
 
     def test_create(self):
         mock_request = MagicMock(name='mock request')
