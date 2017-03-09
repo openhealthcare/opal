@@ -290,7 +290,15 @@ describe('Episode', function() {
                     id               : 555,
                     active           : true,
                     date_of_admission: '20/11/2013',
-                    discharge_date   : null
+                    discharge_date   : null,
+                    demographics: [{
+                        id: 101,
+                        patient_id: 99,
+                        first_name: 'John',
+                        surname: "Smith",
+                        date_of_birth: '31/07/1980',
+                        hospital_number: '555'
+                    }]
                 };
 
                 episode = new Episode(episodeData);
@@ -311,6 +319,14 @@ describe('Episode', function() {
                 episode.save(attrsJsonDate);
                 $httpBackend.flush();
                 expect(episode.date_of_admission).toEqual(new Date(2013, 10, 20))
+            });
+
+            it('Should translate dates to strings', function () {
+                var toSave = angular.copy(attrsJsonDate);
+                toSave.date_of_admission = new Date(2013, 10, 20);
+                $httpBackend.expectPUT('/api/v0.1/episode/555/', attrsJsonDate);
+                episode.save(toSave);
+                $httpBackend.flush();
             });
 
             it('should cope with consistency token errors', function() {
