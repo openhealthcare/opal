@@ -79,6 +79,7 @@ describe('PatientDetailCtrl', function(){
 
     beforeEach(function(){
         module('opal');
+        var Episode;
 
         inject(function($injector){
             $rootScope   = $injector.get('$rootScope');
