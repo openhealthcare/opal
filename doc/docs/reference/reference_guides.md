@@ -19,6 +19,7 @@ The following reference guides are available:
 [opal.core.schemas](schemas.md)|Schemas - Dynamic columns for the table views|
 [opal.core.patient_lists](patient_list.md)|Patient Lists - defining different types of list|
 [opal.core.plugin](plugin.md)| Plugins - defining plugins to package reusable functionality
+[opal.core.views](core_views.md)| Views - helper functions for working with Django views
 
 ### Angular Services
 |

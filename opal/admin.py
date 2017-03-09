@@ -29,6 +29,16 @@ class FilterInline(admin.StackedInline):
 
 
 class UserProfileAdmin(UserAdmin):
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': (
+                'username', 'first_name',
+                'last_name', 'email',
+                'password1', 'password2'
+            )
+        }),
+    )
     inlines = [UserProfileInline, FilterInline, ]
 
 

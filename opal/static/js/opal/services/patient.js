@@ -30,9 +30,8 @@ angular.module('opal.services').service('Patient', function(Episode, FieldTransl
     // changed Demographics if we change them.
 
     // We're replacing any patient subrecords with a reference to the
-    // copy of the patient subrecord on the first episode - becuase
     // EditItem requires an episode to work with.
-    var episodeValues = _.values(patientData.episodes);
+    var episodeValues = _.values(this.episodes);
     if(episodeValues.length){
       _.each(this, function(v, k){
           if(k in episodeValues[0]){

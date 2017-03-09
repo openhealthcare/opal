@@ -1,7 +1,7 @@
 describe('EditItemCtrl', function (){
     "use strict";
 
-    var $scope, $cookieStore, $timeout, $modal, $httpBackend;
+    var $scope, $timeout, $modal, $httpBackend;
     var item, Item, existingEpisode;
     var dialog, Episode, episode, ngProgressLite, $q, $rootScope;
     var Schema, $controller, controller, fakeModalInstance;
@@ -129,7 +129,6 @@ describe('EditItemCtrl', function (){
             $controller    = $injector.get('$controller');
             $q             = $injector.get('$q');
             $httpBackend   = $injector.get('$httpBackend');
-            $cookieStore   = $injector.get('$cookieStore');
             $timeout       = $injector.get('$timeout');
             $modal         = $injector.get('$modal');
             ngProgressLite = $injector.get('ngProgressLite');
@@ -156,7 +155,6 @@ describe('EditItemCtrl', function (){
 
         controller = $controller('EditItemCtrl', {
             $scope        : $scope,
-            $cookieStore  : $cookieStore,
             $timeout      : $timeout,
             $modalInstance: fakeModalInstance,
             item          : item,
@@ -291,7 +289,6 @@ describe('EditItemCtrl', function (){
             $scope = $rootScope.$new();
             controller = $controller('EditItemCtrl', {
                 $scope        : $scope,
-                $cookieStore  : $cookieStore,
                 $timeout      : $timeout,
                 $modalInstance: fakeModalInstance,
                 item          : item,
@@ -312,7 +309,6 @@ describe('EditItemCtrl', function (){
           item.c_difficile_toxin = "someToxin";
           controller = $controller('EditItemCtrl', {
               $scope        : $scope,
-              $cookieStore  : $cookieStore,
               $timeout      : $timeout,
               $modalInstance: fakeModalInstance,
               item          : item,
