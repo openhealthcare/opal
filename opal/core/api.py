@@ -175,6 +175,13 @@ class SubrecordViewSet(LoginRequiredViewset):
     This is the base viewset for our subrecords.
     """
 
+    def list(self, request):
+        """
+        Return all instances of this subrecord as a list.
+        """
+        queryset = self.model.objects.all()
+        return json_response([s.to_dict(request.user) for s in queryset])
+
     def create(self, request):
         """
         * Create a subrecord

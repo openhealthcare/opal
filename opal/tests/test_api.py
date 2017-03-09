@@ -202,12 +202,39 @@ class SubrecordTestCase(OpalTestCase):
             )
         )
 
-    def test_retrieve(self):
-        with patch.object(self.model.objects, 'get') as mockget:
-            mockget.return_value.to_dict.return_value = 'serialized colour'
+    def test_list(self):
+        response = self.viewset().list(None)
+        self.assertEqual([], json.loads(response.content.decode('UTF-8')))
 
-            response = self.viewset().retrieve(MagicMock(name='request'), pk=1)
-            self.assertEqual('serialized colour', response.data)
+    def test_list_with_some_contents(self):
+        c1 = Colour(name="blue", episode=self.episode).save()
+        c2 = Colour(name="red", episode=self.episode).save()
+        mock_request = MagicMock(name='mock request')
+        mock_request.user = self.user
+        response = self.viewset().list(mock_request)
+        data = [
+            {
+                u'consistency_token': u'',
+                u'created': None,
+                u'created_by_id': None,
+                u'episode_id': 1,
+                u'id': 1,
+                u'name': u'blue',
+                u'updated': None,
+                u'updated_by_id': None
+            },
+            {
+                u'consistency_token': u'',
+                u'created': None,
+                u'created_by_id': None,
+                u'episode_id': 1,
+                u'id': 2,
+                u'name': u'red',
+                u'updated': None,
+                u'updated_by_id': None
+            }
+        ]
+        self.assertEqual(data, json.loads(response.content.decode('UTF-8')))
 
     def test_create(self):
         mock_request = MagicMock(name='mock request')
@@ -243,6 +270,13 @@ class SubrecordTestCase(OpalTestCase):
 
         with self.assertRaises(APIError) as e:
             response = self.client.post(url, data=data)
+
+    def test_retrieve(self):
+        with patch.object(self.model.objects, 'get') as mockget:
+            mockget.return_value.to_dict.return_value = 'serialized colour'
+
+            response = self.viewset().retrieve(MagicMock(name='request'), pk=1)
+            self.assertEqual('serialized colour', response.data)
 
 
     def test_update(self):
