@@ -321,6 +321,14 @@ describe('Episode', function() {
                 expect(episode.date_of_admission).toEqual(new Date(2013, 10, 20))
             });
 
+            it('Should translate dates to strings', function () {
+                var toSave = angular.copy(attrsJsonDate);
+                toSave.date_of_admission = new Date(2013, 10, 20);
+                $httpBackend.expectPUT('/api/v0.1/episode/555/', attrsJsonDate);
+                episode.save(toSave);
+                $httpBackend.flush();
+            });
+
             it('should cope with consistency token errors', function() {
                 spyOn($window, 'alert');
                 $httpBackend.expectPUT('/api/v0.1/episode/555/', attrsJsonDate)
