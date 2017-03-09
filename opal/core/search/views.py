@@ -165,9 +165,9 @@ class ExtractResultView(View):
         Tell the client about the state of the extract
         """
         from celery.result import AsyncResult
-        import taskrunner
+        from opal.core.celery import app
         task_id = kwargs['task_id']
-        result = AsyncResult(id=task_id, app=taskrunner.celery.app)
+        result = AsyncResult(id=task_id, app=app)
 
         return _build_json_response({'state': result.state})
 
@@ -175,9 +175,9 @@ class ExtractResultView(View):
 class ExtractFileView(View):
     def get(self, *args, **kwargs):
         from celery.result import AsyncResult
-        import taskrunner
+        from opal.core.celery import app
         task_id = kwargs['task_id']
-        result = AsyncResult(id=task_id, app=taskrunner.celery.app)
+        result = AsyncResult(id=task_id, app=app)
         if result.state != 'SUCCESS':
             raise ValueError('Wrong Task Larry!')
         print result.state
