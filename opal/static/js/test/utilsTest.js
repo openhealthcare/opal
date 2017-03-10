@@ -107,4 +107,21 @@ describe("OPAL.module", function(){
       expect(provider.options.size).toEqual('lg');
     });
   });
+
+  describe('should set the default cookie to a year in the future', function(){
+    var provider;
+
+    beforeEach(module('opal', function($cookiesProvider){
+      provider = $cookiesProvider;
+    }));
+
+    // this is required for the provider to take effect
+    beforeEach(inject(function () {}));
+
+    it("should set the modal options to have a size of 'lg'", function(){
+      expect(provider.defaults.expires.getFullYear()).toEqual(
+        new Date().getFullYear() + 1
+      );
+    });
+  });
 });

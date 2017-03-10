@@ -1,4 +1,4 @@
-fdescribe('UserProfile', function(){
+describe('UserProfile', function(){
     "use strict";
 
     var mock, $httpBackend, $window, $routeParams, $log;

@@ -80,5 +80,15 @@ describe('Patient', function() {
       var patient = new Patient(patientData);
       expect(patient.demographics[0].first_name).toBe('Sue');
     });
+
+    it('should hoise the first episodes record editor onto it', function(){
+      var patient = new Patient(patientData);
+
+      // they should both be pointing at the same object
+      expect(patient.recordEditor).toBe(patient.episodes[0].recordEditor);
+
+      // they should not be null
+      expect(!!patient.recordEditor).toBe(true);
+    });
   });
 });

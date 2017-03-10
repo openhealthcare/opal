@@ -154,7 +154,7 @@ describe('DischargeEpisodeCtrl', function(){
 
             $httpBackend.expectPUT('/api/v0.1/tagging/555/').respond({});
             $httpBackend.expectPOST('/api/v0.1/location/').respond({});
-            $httpBackend.expectPUT('/api/v0.1/episode/555/').respond({});
+            $httpBackend.expectPUT('/api/v0.1/episode/555/').respond(episodeData);
             spyOn(modalInstance, 'close')
 
             $scope.discharge();

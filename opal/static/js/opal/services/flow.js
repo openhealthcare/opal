@@ -3,28 +3,30 @@ angular.module(
 ).factory(
     'Flow',
     function($q, $http, $modal, $cacheFactory, $injector){
+        var ApplicationFlow;
+
         if(OPAL_FLOW_SERVICE){
-            var ApplicationFlow = $injector.get(OPAL_FLOW_SERVICE);
+            ApplicationFlow = $injector.get(OPAL_FLOW_SERVICE);
         }else{
-            var ApplicationFlow = {
+            ApplicationFlow = {
                 enter:  function(){
                     return {
                     'controller': 'HospitalNumberCtrl',
                     'template'  : '/templates/modals/hospital_number.html/'
-                    }
+                  };
                 },
                 exit: function(){
                     return  {
                     'controller': 'DischargeEpisodeCtrl',
                     'template'  : '/templates/modals/discharge_episode.html/'
-                    }
+                  };
                 }
             };
         }
 
         var Flow = {
 
-            enter: function(config){
+            enter: function(config, context){
                 var deferred = $q.defer();
                 var target = ApplicationFlow.enter();
                 result = $modal.open({
@@ -35,16 +37,17 @@ angular.module(
                         referencedata:   function(Referencedata){ return Referencedata.load() },
                         metadata:        function(Metadata){ return Metadata.load(); },
                         tags:            function(){ return config.current_tags},
-                        hospital_number: function(){ return config.hospital_number; }
+                        hospital_number: function(){ return config.hospital_number; },
+                        context:         function(){ return context; }
                     }
                 }).result;
                 deferred.resolve(result);
                 return deferred.promise;
             },
 
-            exit: function(episode, config){
+            exit: function(episode, config, context){
                 var deferred = $q.defer();
-                var target = ApplicationFlow.exit(episode)
+                var target = ApplicationFlow.exit(episode);
                 result = $modal.open({
                     backdrop: 'static',
                     templateUrl: target.template,
@@ -55,13 +58,14 @@ angular.module(
                         referencedata: function(Referencedata){ return Referencedata.load() },
                         metadata     : function(Metadata){ return Metadata.load(); },
                         tags         : function() { return config.current_tags; },
-			        }
-		        }).result
+                        context      : function(){ return context; }
+      			        }
+                }).result;
                 deferred.resolve(result);
-                return deferred.promise
+                return deferred.promise;
             }
 
-        }
+        };
         return Flow;
     }
 );

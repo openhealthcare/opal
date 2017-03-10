@@ -1,6 +1,12 @@
 angular.module('opal.controllers').controller(
     'EditTeamsCtrl', function(
-        $scope, $modalInstance, $modal, $q, ngProgressLite, episode) {
+        $scope, $modalInstance, $modal, $q, ngProgressLite, episode, UserProfile) {
+
+        UserProfile.load().then(function(profile){
+          $scope.editingName = episode.demographics[0].first_name + ' ' + episode.demographics[0].surname;
+          $scope.profile = profile;
+        })
+
 
         if(episode.tagging.length){
           $scope.editing = {tagging: episode.tagging[0].makeCopy()};

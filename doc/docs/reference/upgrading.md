@@ -3,6 +3,14 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+
+### 0.8.0 -> 0.8.1
+
+#### Upgrading Opal
+
+We've removed the undocumented `ReopenEpisodeCtrl` from Opal. Applications wishing to retain this functionality may
+copy the controller from the v0.7.1 branch (opal/static/js/opal/controllers/reopen_episode.js). However we would warn developers that this flow has proven to be problematic and confusing for users whenever used - hence the removal. 
+
 ### 0.7.1 -> 0.8.0
 
 #### Upgrading Opal

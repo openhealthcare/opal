@@ -4,7 +4,6 @@ Public facing API views
 from django.shortcuts import get_object_or_404
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import routers, status, viewsets
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
 from opal.models import (
@@ -14,7 +13,7 @@ from opal.core import application, exceptions, metadata, plugins, schemas
 from opal.core.lookuplists import LookupList
 from opal.utils import camelcase_to_underscore
 from opal.core.subrecords import subrecords
-from opal.core.views import _build_json_response
+from opal.core.views import json_response
 from opal.core.patient_lists import PatientList
 
 
@@ -40,9 +39,9 @@ def item_from_pk(fn):
         try:
             item = self.model.objects.get(pk=pk)
         except self.model.DoesNotExist:
-            return Response(
+            return json_response(
                 {'error': 'Item does not exist'},
-                status=status.HTTP_404_NOT_FOUND
+                status_code=status.HTTP_404_NOT_FOUND
             )
         return fn(self, request, item)
     return get_item
@@ -56,9 +55,9 @@ def episode_from_pk(fn):
         try:
             return fn(self, request, Episode.objects.get(pk=pk))
         except Episode.DoesNotExist:
-            return Response(
+            return json_response(
                 {'error': 'Episode does not exist'},
-                status=status.HTTP_404_NOT_FOUND
+                status_code=status.HTTP_404_NOT_FOUND
             )
     return get_item
 
@@ -85,7 +84,7 @@ class RecordViewSet(LoginRequiredViewset):
     base_name = 'record'
 
     def list(self, request):
-        return Response(schemas.list_records())
+        return json_response(schemas.list_records())
 
 
 class ExtractSchemaViewSet(LoginRequiredViewset):
@@ -95,7 +94,7 @@ class ExtractSchemaViewSet(LoginRequiredViewset):
     base_name = 'extract-schema'
 
     def list(self, request):
-        return Response(schemas.extract_schema())
+        return json_response(schemas.extract_schema())
 
 
 class ReferenceDataViewSet(LoginRequiredViewset):
@@ -123,7 +122,7 @@ class ReferenceDataViewSet(LoginRequiredViewset):
 
         for name in data:
             data[name].sort()
-        return Response(data)
+        return json_response(data)
 
     def retrieve(self, request, pk=None):
         the_list = None
@@ -140,10 +139,11 @@ class ReferenceDataViewSet(LoginRequiredViewset):
                 'name', flat=True
             )
             values += list(synonyms)
-            return Response(values)
+            return json_response(values)
 
-        return Response(
-            {'error': 'Item does not exist'}, status=status.HTTP_404_NOT_FOUND
+        return json_response(
+            {'error': 'Item does not exist'},
+            status_code=status.HTTP_404_NOT_FOUND
         )
 
 
@@ -157,16 +157,16 @@ class MetadataViewSet(LoginRequiredViewset):
         data = {}
         for meta in metadata.Metadata.list():
             data.update(meta.to_dict(user=request.user))
-        return Response(data)
+        return json_response(data)
 
     def retrieve(self, request, pk=None):
         try:
             meta = metadata.Metadata.get(pk)
-            return Response(meta.to_dict(user=request.user))
+            return json_response(meta.to_dict(user=request.user))
         except ValueError:
-            return Response(
+            return json_response(
                 {'error': 'Metadata does not exist'},
-                status=status.HTTP_404_NOT_FOUND
+                status_code=status.HTTP_404_NOT_FOUND
             )
 
 
@@ -174,6 +174,13 @@ class SubrecordViewSet(LoginRequiredViewset):
     """
     This is the base viewset for our subrecords.
     """
+
+    def list(self, request):
+        """
+        Return all instances of this subrecord as a list.
+        """
+        queryset = self.model.objects.all()
+        return json_response([s.to_dict(request.user) for s in queryset])
 
     def create(self, request):
         """
@@ -190,8 +197,8 @@ class SubrecordViewSet(LoginRequiredViewset):
         try:
             episode = Episode.objects.get(pk=request.data['episode_id'])
         except Episode.DoesNotExist:
-            return Response(
-                'Nonexistant episode', status=status.HTTP_400_BAD_REQUEST
+            return json_response(
+                'Nonexistant episode', status_code=status.HTTP_400_BAD_REQUEST
             )
 
         if isinstance(subrecord, PatientSubrecord):
@@ -202,28 +209,28 @@ class SubrecordViewSet(LoginRequiredViewset):
         subrecord.update_from_dict(request.data, request.user)
         episode = Episode.objects.get(pk=episode.pk)
 
-        return _build_json_response(
+        return json_response(
             subrecord.to_dict(request.user),
             status_code=status.HTTP_201_CREATED
         )
 
     @item_from_pk
     def retrieve(self, request, item):
-        return Response(item.to_dict(request.user))
+        return json_response(item.to_dict(request.user))
 
     @item_from_pk
     def update(self, request, item):
         try:
             item.update_from_dict(request.data, request.user)
         except exceptions.APIError:
-            return Response({'error': 'Unexpected field name'},
-                            status=status.HTTP_400_BAD_REQUEST)
+            return json_response({'error': 'Unexpected field name'},
+                                 status_code=status.HTTP_400_BAD_REQUEST)
         except exceptions.ConsistencyError:
-            return Response(
+            return json_response(
                 {'error': 'Item has changed'},
-                status=status.HTTP_409_CONFLICT
+                status_code=status.HTTP_409_CONFLICT
             )
-        return _build_json_response(
+        return json_response(
             item.to_dict(request.user),
             status_code=status.HTTP_202_ACCEPTED
         )
@@ -231,7 +238,7 @@ class SubrecordViewSet(LoginRequiredViewset):
     @item_from_pk
     def destroy(self, request, item):
         item.delete()
-        return Response('deleted', status=status.HTTP_202_ACCEPTED)
+        return json_response('deleted', status_code=status.HTTP_202_ACCEPTED)
 
 
 class UserProfileViewSet(LoginRequiredViewset):
@@ -242,7 +249,7 @@ class UserProfileViewSet(LoginRequiredViewset):
 
     def list(self, request):
         profile = request.user.profile
-        return Response(profile.to_dict())
+        return json_response(profile.to_dict())
 
 
 class TaggingViewSet(LoginRequiredViewset):
@@ -253,9 +260,9 @@ class TaggingViewSet(LoginRequiredViewset):
 
     @episode_from_pk
     def retrieve(self, request, episode):
-        return Response(
+        return json_response(
             episode.tagging_dict(request.user)[0],
-            status=status.HTTP_200_OK
+            status_code=status.HTTP_200_OK
         )
 
     @episode_from_pk
@@ -264,9 +271,9 @@ class TaggingViewSet(LoginRequiredViewset):
             del request.data['id']
         tag_names = [n for n, v in list(request.data.items()) if v]
         episode.set_tag_names(tag_names, request.user)
-        return Response(
+        return json_response(
             episode.tagging_dict(request.user)[0],
-            status=status.HTTP_202_ACCEPTED
+            status_code=status.HTTP_202_ACCEPTED
         )
 
 
@@ -277,7 +284,7 @@ class EpisodeViewSet(LoginRequiredViewset):
     base_name = 'episode'
 
     def list(self, request):
-        return _build_json_response(
+        return json_response(
             [e.to_dict(request.user) for e in Episode.objects.all()]
         )
 
@@ -315,7 +322,7 @@ class EpisodeViewSet(LoginRequiredViewset):
         episode.set_tag_names(list(tagging.keys()), request.user)
         serialised = episode.to_dict(request.user)
 
-        return _build_json_response(
+        return json_response(
             serialised, status_code=status.HTTP_201_CREATED
         )
 
@@ -323,15 +330,15 @@ class EpisodeViewSet(LoginRequiredViewset):
     def update(self, request, episode):
         try:
             episode.update_from_dict(request.data, request.user)
-            return _build_json_response(
+            return json_response(
                 episode.to_dict(request.user, shallow=True)
             )
         except exceptions.ConsistencyError:
-            return _build_json_response({'error': 'Item has changed'}, 409)
+            return json_response({'error': 'Item has changed'}, 409)
 
     @episode_from_pk
     def retrieve(self, request, episode):
-        return _build_json_response(episode.to_dict(request.user))
+        return json_response(episode.to_dict(request.user))
 
 
 class PatientViewSet(LoginRequiredViewset):
@@ -340,14 +347,14 @@ class PatientViewSet(LoginRequiredViewset):
     @patient_from_pk
     def retrieve(self, request, patient):
         PatientRecordAccess.objects.create(patient=patient, user=request.user)
-        return _build_json_response(patient.to_dict(request.user))
+        return json_response(patient.to_dict(request.user))
 
 
 class PatientRecordAccessViewSet(LoginRequiredViewset):
     base_name = 'patientrecordaccess'
 
     def retrieve(self, request, pk=None):
-        return _build_json_response([
+        return json_response([
             a.to_dict(request.user) for a in
             PatientRecordAccess.objects.filter(patient_id=pk)
         ])
@@ -361,11 +368,11 @@ class PatientListViewSet(LoginRequiredViewset):
         try:
             patientlist = PatientList.get(pk)()
         except ValueError:
-            return Response(
+            return json_response(
                 {'error': 'List does not exist'},
-                status=status.HTTP_404_NOT_FOUND
+                status_code=status.HTTP_404_NOT_FOUND
             )
-        return _build_json_response(patientlist.to_dict(request.user))
+        return json_response(patientlist.to_dict(request.user))
 
 
 router.register('patient', PatientViewSet)

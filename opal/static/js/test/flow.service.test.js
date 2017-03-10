@@ -28,7 +28,7 @@ describe('Flow ', function(){
 
     describe('enter', function(){
         it('should call the modal with the enter flow', function(){
-            Flow.enter({hospital_number: '555-456'});
+            Flow.enter({hospital_number: '555-456'}, {some: "context"});
             var args = $modal.open.calls.mostRecent().args;
             expect(args[0].controller).toEqual('HospitalNumberCtrl');
             expect(args[0].templateUrl).toEqual('/templates/modals/hospital_number.html/');
@@ -37,12 +37,13 @@ describe('Flow ', function(){
             expect(resolves.hospital_number()).toEqual('555-456');
             expect(resolves.referencedata(referencedata)).toEqual("some reference data");
             expect(resolves.metadata(metadata)).toEqual("some metadata");
+            expect(resolves.context()).toEqual({some: "context"});
         });
     });
 
     describe('exit', function(){
         it('should call exit', function(){
-            Flow.exit('episode', {current_tags: {}});
+            Flow.exit('episode', {current_tags: {}}, {some: "context"});
             var args = $modal.open.calls.mostRecent().args;
             expect(args[0].controller).toEqual('DischargeEpisodeCtrl');
             expect(args[0].templateUrl).toEqual('/templates/modals/discharge_episode.html/');
@@ -51,8 +52,8 @@ describe('Flow ', function(){
             expect(resolves.episode()).toEqual('episode');
             expect(resolves.referencedata(referencedata)).toEqual("some reference data");
             expect(resolves.metadata(metadata)).toEqual("some metadata");
+
+            expect(resolves.context()).toEqual({some: "context"});
         });
-
     });
-
-})
+});

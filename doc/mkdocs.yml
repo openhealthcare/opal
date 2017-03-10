@@ -54,12 +54,14 @@ pages:
       - Mixins: reference/mixins.md
       - OpalApplication: reference/opal_application.md
       - OpalPlugin: reference/plugin.md
+      - Core.Views: reference/core_views.md
       - Form helpers: reference/form_templatetags.md
       - Panel Template tags: reference/panels_templatetags.md
       - Schemas: reference/schemas.md
       - Search Queries: reference/search_queries.md
       - Detail Views: reference/detail_views.md
       - Patient Lists: reference/patient_list.md
+      # Misc
       - Changelog: reference/changelog.md
       - Testing: reference/testing.md
       - Upgrading: reference/upgrading.md

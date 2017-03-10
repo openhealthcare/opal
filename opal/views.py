@@ -15,7 +15,7 @@ from opal.core.patient_lists import PatientList, TabbedPatientListGroup
 from opal.core.subrecords import (
     episode_subrecords, get_subrecord_from_api_name
 )
-from opal.core.views import LoginRequiredMixin, _build_json_response
+from opal.core.views import LoginRequiredMixin, json_response
 from opal.utils import camelcase_to_underscore
 from opal.utils.banned_passwords import banned
 
@@ -173,7 +173,7 @@ class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
                 item.episode = new
                 item.save()
         serialised = new.to_dict(self.request.user)
-        return _build_json_response(serialised)
+        return json_response(serialised)
 
 
 """
