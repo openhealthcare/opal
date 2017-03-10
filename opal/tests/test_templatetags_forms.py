@@ -49,8 +49,7 @@ class TestInferFromSubrecordPath(TestCase):
     def test_infer_choice_fields_from_charfield(self):
         ctx = infer_from_subrecord_field_path("FavouriteColour.name")
         choices = json.loads(ctx["lookuplist"])
-        for choice in ["purple", "blue", "yellow"]:
-            self.assertTrue(choice in choices)
+        self.assertEqual(choices, ["purple", "yellow", "blue"])
 
     def test_infer_element_name(self):
         ctx = infer_from_subrecord_field_path("Birthday.birth_date")
