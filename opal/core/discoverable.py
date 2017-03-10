@@ -24,8 +24,11 @@ def import_from_apps(module):
                 target_module = '{0}.{1}'.format(app, module)
                 stringport(target_module)
             except ImportError as e:
-                expected_err = "No module named {0}".format(module)
-                if str(e) == expected_err:
+                expected_errs = [
+                    "No module named {0}".format(module),  # Python 2.x
+                    "No module named '{0}'".format(target_module)  # Python 3.x
+                ]
+                if str(e) in expected_errs:
                     continue  # not a problem - we expect this
                 raise  # a problem - probably inside the target module.
         IMPORTED_FROM_APPS.add(module)
