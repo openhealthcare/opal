@@ -21,9 +21,13 @@ def import_from_apps(module):
     if module not in IMPORTED_FROM_APPS:
         for app in settings.INSTALLED_APPS:
             try:
-                stringport('{0}.{1}'.format(app, module))
-            except ImportError:
-                pass  # not a problem
+                target_module = '{0}.{1}'.format(app, module)
+                stringport(target_module)
+            except ImportError as e:
+                expected_err = "No module named {0}".format(module)
+                if str(e) == expected_err:
+                    continue  # not a problem - we expect this
+                raise  # a problem - probably inside the target module.
         IMPORTED_FROM_APPS.add(module)
         return
 
