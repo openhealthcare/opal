@@ -1,4 +1,4 @@
-angular.module('opal.services').factory('Referencedata', function($q, $http, $window) {
+angular.module('opal.services').factory('Referencedata', function($q, $http, $window, $log) {
 
     "use strict";
 
@@ -38,16 +38,22 @@ angular.module('opal.services').factory('Referencedata', function($q, $http, $wi
         return self;
     };
 
+    var load = function(){
+      var deferred = $q.defer();
+      $http({ cache: true, url: url, method: 'GET'}).then(function(response) {
+          deferred.resolve(new Referencedata(response.data));
+      }, function() {
+        // handle error better
+        $window.alert('Referencedata could not be loaded');
+      });
+      return deferred.promise;
+    };
+
     return {
-      load: function(){
-        var deferred = $q.defer();
-        $http({ cache: true, url: url, method: 'GET'}).then(function(response) {
-            deferred.resolve(new Referencedata(response.data));
-        }, function() {
-    	    // handle error better
-    	    $window.alert('Referencedata could not be loaded');
-        });
-        return deferred.promise;
+      load: load,
+      then: function(fn){
+        $log.error("this api is being deprecated, please use Referencedata.load()");
+        load().then(function(result){ fn(result); });
       }
-    }
+    };
 });

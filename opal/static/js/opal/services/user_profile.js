@@ -1,5 +1,5 @@
 angular.module('opal.services')
-    .service('UserProfile', function($q, $http, $window, $routeParams) {
+    .service('UserProfile', function($q, $http, $window, $routeParams, $log) {
         var UserProfile = function(profiledata){
             var profile = this;
 
@@ -39,20 +39,26 @@ angular.module('opal.services')
             };
         };
 
+        var load = function(){
+          var deferred = $q.defer();
+
+          url = '/api/v0.1/userprofile/';
+
+          $http({ cache: true, url: url, method: 'GET'}).then(function(response) {
+            deferred.resolve(new UserProfile(response.data) );
+          }, function() {
+            // handle error better
+            $window.alert('UserProfile could not be loaded');
+          });
+
+          return deferred.promise;
+        };
+
         return {
-          load: function(){
-            var deferred = $q.defer();
-
-            url = '/api/v0.1/userprofile/';
-
-            $http({ cache: true, url: url, method: 'GET'}).then(function(response) {
-              deferred.resolve(new UserProfile(response.data) );
-            }, function() {
-              // handle error better
-              $window.alert('UserProfile could not be loaded');
-            });
-
-            return deferred.promise;
+          load: load,
+          then: function(fn){
+            $log.error("this api is being deprecated, please use UserProfile.load()");
+            load().then(function(result){ fn(result); });
           }
         };
     });

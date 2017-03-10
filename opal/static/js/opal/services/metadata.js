@@ -1,4 +1,4 @@
-angular.module('opal.services').factory('Metadata', function($q, $http, $window) {
+angular.module('opal.services').factory('Metadata', function($q, $http, $window, $log) {
     "use strict";
 
     var url = '/api/v0.1/metadata/';
@@ -18,18 +18,23 @@ angular.module('opal.services').factory('Metadata', function($q, $http, $window)
         return self;
     };
 
+    var load = function(){
+      var deferred = $q.defer();
+      $http({ cache: true, url: url, method: 'GET'}).then(function(response) {
+          deferred.resolve(new Metadata(response.data));
+      }, function() {
+        // handle error better
+        $window.alert('Metadata could not be loaded');
+      });
+
+      return deferred.promise;
+    };
 
     return {
-      load: function(){
-        var deferred = $q.defer();
-        $http({ cache: true, url: url, method: 'GET'}).then(function(response) {
-            deferred.resolve(new Metadata(response.data));
-        }, function() {
-    	    // handle error better
-    	    $window.alert('Metadata could not be loaded');
-        });
-
-        return deferred.promise;
+      load: load,
+      then: function(fn){
+        $log.error("this api is being deprecated, please use Metadata.load()");
+        load().then(function(result){ fn(result); });
       }
     };
 });

@@ -17,14 +17,15 @@ describe('ExtractCtrl', function(){
     };
 
     var referencedata = {
-      load: function(){
-          return {
-            then: function(fn){
-              fn({toLookuplists: function(){ return pulledInData;}});
-            }
-          };
+      dogs: ['Poodle', 'Dalmation'],
+      hats: ['Bowler', 'Top', 'Sun'],
+      toLookuplists: function(){
+        return {
+          dogs_list: ['Poodle', 'Dalmation'],
+          hats_list: ['Bowler', 'Top', 'Sun']
+        };
       }
-    };
+    }
 
     var columnsData = [
         {
@@ -134,12 +135,10 @@ describe('ExtractCtrl', function(){
             filters: [],
             schema : schema,
             PatientSummary: PatientSummary,
-            Referencedata: referencedata
+            referencedata: referencedata
         });
 
-
         $scope.$apply();
-        // $httpBackend.flush();
 
     });
 

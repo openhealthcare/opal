@@ -1,7 +1,7 @@
-describe('UserProfile', function(){
+fdescribe('UserProfile', function(){
     "use strict";
 
-    var mock, $httpBackend, $window, $routeParams;
+    var mock, $httpBackend, $window, $routeParams, $log;
     var UserProfile, $q, $rootScope;
     var profile_data = {
         roles: {
@@ -21,11 +21,26 @@ describe('UserProfile', function(){
             $rootScope     = $injector.get('$rootScope');
             $window        = $injector.get('$window');
             $routeParams   = $injector.get('$routeParams');
+            $log = $injector.get('$log');
         });
-        UserProfile.load();
+        spyOn($log, "error");
+    });
+
+    it('then should call through to load', function(){
+        spyOn(UserProfile, "load").and.callThrough();
+        var result;
+        $httpBackend.whenGET('/api/v0.1/userprofile/').respond(profile_data);
+        UserProfile.then(function(r){ result = r; });
+        $rootScope.$apply();
+        $httpBackend.flush();
+        expect(result.roles.tropical).toEqual(result.roles.tropical);
+        expect($log.error).toHaveBeenCalledWith(
+          'this api is being deprecated, please use UserProfile.load()'
+        );
     });
 
     it('should alert if the HTTP request errors', function(){
+        UserProfile.load();
         $httpBackend.expectGET('/api/v0.1/userprofile/').respond(500, 'NO');
         spyOn($window, 'alert');
 

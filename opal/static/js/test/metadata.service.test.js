@@ -1,7 +1,7 @@
 describe('Metadata', function(){
     "use strict"
 
-    var $httpBackend, $rootScope;
+    var $httpBackend, $rootScope, $log;
     var mock, Metadata;
     var metadata = {
         foo: 'bar'
@@ -20,16 +20,33 @@ describe('Metadata', function(){
             $provide.value('$window', mock);
         });
 
+        $log = jasmine.createSpyObj(['error']);
+
         inject(function($injector){
             Metadata       = $injector.get('Metadata');
             $httpBackend   = $injector.get('$httpBackend');
             $rootScope     = $injector.get('$rootScope');
+            $log = $injector.get('$log');
         });
+        spyOn($log, "error");
     });
 
     afterEach(function(){
       $httpBackend.verifyNoOutstandingExpectation();
       $httpBackend.verifyNoOutstandingRequest();
+    });
+
+    it('then should call through to load', function(){
+        spyOn(Metadata, "load").and.callThrough();
+        var result;
+        $httpBackend.whenGET('/api/v0.1/metadata/').respond(metadata);
+        Metadata.then(function(r){ result = r; });
+        $rootScope.$apply();
+        $httpBackend.flush();
+        expect(result.get('foo')).toEqual('bar');
+        expect($log.error).toHaveBeenCalledWith(
+          'this api is being deprecated, please use Metadata.load()'
+        );
     });
 
     it('should fetch the metadata', function(){

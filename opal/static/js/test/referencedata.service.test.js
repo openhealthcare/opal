@@ -1,7 +1,7 @@
 describe('Referencedata', function(){
     "use strict"
 
-    var $httpBackend, $rootScope;
+    var $httpBackend, $rootScope, $log;
     var mock, Referencedata;
     var referencedata = {
         foo: ['bar']
@@ -26,11 +26,26 @@ describe('Referencedata', function(){
             Referencedata  = $injector.get('Referencedata');
             $httpBackend   = $injector.get('$httpBackend');
             $rootScope     = $injector.get('$rootScope');
+            $log = $injector.get('$log');
         });
+        spyOn($log, "error");
+    });
+
+    it('then should call through to load', function(){
+        spyOn(Referencedata, "load").and.callThrough();
+        var result;
+        $httpBackend.whenGET('/api/v0.1/referencedata/').respond(referencedata);
+        Referencedata.then(function(r){ result = r; });
+        $rootScope.$apply();
+        $httpBackend.flush();
+        expect(result.get('foo')).toEqual(['bar']);
+        expect($log.error).toHaveBeenCalledWith(
+          'this api is being deprecated, please use Referencedata.load()'
+        );
     });
 
     it('should fetch the referencedata', function(){
-        var result
+        var result;
 
         $httpBackend.whenGET('/api/v0.1/referencedata/').respond(referencedata);
         Referencedata.load().then(function(r){ result = r; });

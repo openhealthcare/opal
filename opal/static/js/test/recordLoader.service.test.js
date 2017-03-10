@@ -1,7 +1,7 @@
 describe('recordLoader', function(){
     "use strict"
 
-    var $httpBackend, $rootScope, recordLoader;
+    var $httpBackend, $rootScope, recordLoader, $log;
     var mock;
     var recordSchema = {
         'demographics': {
@@ -27,14 +27,30 @@ describe('recordLoader', function(){
             recordLoader   = $injector.get('recordLoader');
             $httpBackend   = $injector.get('$httpBackend');
             $rootScope     = $injector.get('$rootScope');
+            $log = $injector.get('$log');
         });
+        spyOn($log, "error");
+    });
+
+    it('then should call through to load', function(){
+        spyOn(recordLoader, "load").and.callThrough();
+        var result;
+        $httpBackend.whenGET('/api/v0.1/record/').respond(recordSchema);
+        recordLoader.then(function(r){ result = r; });
+        $rootScope.$apply();
+        $httpBackend.flush();
+        expect(result).toEqual(recordSchema);
+        expect($rootScope.fields).toEqual(recordSchema);
+        expect($log.error).toHaveBeenCalledWith(
+          'this api is being deprecated, please use recordLoader.load()'
+        );
     });
 
     it('should fetch the record data', function(){
         var result;
         $httpBackend.whenGET('/api/v0.1/record/').respond(recordSchema);
         recordLoader.load().then(function(r){ result = r; });
-        $rootScope.$apply();
+        $rootScope.$apply()
         $httpBackend.flush();
         expect(result).toEqual(recordSchema);
         expect($rootScope.fields).toEqual(recordSchema);
