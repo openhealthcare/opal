@@ -42,7 +42,7 @@ describe('recordLoader', function(){
         expect(result).toEqual(recordSchema);
         expect($rootScope.fields).toEqual(recordSchema);
         expect($log.error).toHaveBeenCalledWith(
-          'this api is being deprecated, please use recordLoader.load()'
+          'This api is being deprecated and will be removed in 0.9.0. Please use recordLoader.load()'
         );
     });
 

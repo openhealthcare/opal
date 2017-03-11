@@ -52,7 +52,8 @@ angular.module('opal.services').factory('Referencedata', function($q, $http, $wi
     return {
       load: load,
       then: function(fn){
-        $log.error("this api is being deprecated, please use Referencedata.load()");
+        // TODO: 0.9.0
+        $log.error("This api is being deprecated and will be removed in 0.9.0. Please use Referencedata.load()");
         load().then(function(result){ fn(result); });
       }
     };

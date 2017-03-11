@@ -35,7 +35,7 @@ describe('UserProfile', function(){
         $httpBackend.flush();
         expect(result.roles.tropical).toEqual(result.roles.tropical);
         expect($log.error).toHaveBeenCalledWith(
-          'this api is being deprecated, please use UserProfile.load()'
+          'This api is being deprecated and will be removed in 0.9.0. Please use UserProfile.load()'
         );
     });
 
