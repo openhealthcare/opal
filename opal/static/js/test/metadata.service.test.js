@@ -45,7 +45,7 @@ describe('Metadata', function(){
         $httpBackend.flush();
         expect(result.get('foo')).toEqual('bar');
         expect($log.error).toHaveBeenCalledWith(
-          'This api is being deprecated and will be removed in 0.9.0. Please use Metadata.load()'
+          'This API is being deprecated and will be removed in 0.9.0. Please use Metadata.load()'
         );
     });
 

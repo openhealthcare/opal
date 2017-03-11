@@ -58,7 +58,7 @@ angular.module('opal.services')
           load: load,
           then: function(fn){
             // TODO: 0.9.0
-            $log.error("This api is being deprecated and will be removed in 0.9.0. Please use UserProfile.load()");
+            $log.error("This API is being deprecated and will be removed in 0.9.0. Please use UserProfile.load()");
             load().then(function(result){ fn(result); });
           }
         };
