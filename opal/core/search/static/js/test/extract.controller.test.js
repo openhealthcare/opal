@@ -9,18 +9,23 @@ describe('ExtractCtrl', function(){
     var optionsData = {
         condition: ['Another condition', 'Some condition'],
         tag_hierarchy :{'tropical': []}
-    }
-    var referencedata = {
-        dogs: ['Poodle', 'Dalmation'],
-        hats: ['Bowler', 'Top', 'Sun'],
-        toLookuplists: function(){
-          return {
-            dogs_list: ['Poodle', 'Dalmation'],
-            hats_list: ['Bowler', 'Top', 'Sun']
-          };
-        }
     };
 
+    var pulledInData = {
+      dogs: ['Poodle', 'Dalmation'],
+      hats: ['Bowler', 'Top', 'Sun']
+    };
+
+    var referencedata = {
+      dogs: ['Poodle', 'Dalmation'],
+      hats: ['Bowler', 'Top', 'Sun'],
+      toLookuplists: function(){
+        return {
+          dogs_list: ['Poodle', 'Dalmation'],
+          hats_list: ['Bowler', 'Top', 'Sun']
+        };
+      }
+    }
 
     var columnsData = [
         {
@@ -111,13 +116,11 @@ describe('ExtractCtrl', function(){
             options: optionsData,
             filters: [],
             schema : schema,
-            referencedata: referencedata,
-            PatientSummary: PatientSummary
+            PatientSummary: PatientSummary,
+            referencedata: referencedata
         });
 
-        $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
         $scope.$apply();
-        $httpBackend.flush();
     });
 
     describe('set up', function(){
@@ -364,6 +367,7 @@ describe('ExtractCtrl', function(){
                     {categories: []}
                 ]
             });
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
             $scope.criteria[0] = {
                 combine    : "and",
                 column     : "symptoms",

@@ -34,9 +34,9 @@ angular.module(
                     templateUrl: target.template,
                     controller:  target.controller,
                     resolve: {
-                        referencedata:   function(Referencedata){ return Referencedata; },
-                        metadata:        function(Metadata){ return Metadata; },
-                        tags:            function(){ return config.current_tags; },
+                        referencedata:   function(Referencedata){ return Referencedata.load() },
+                        metadata:        function(Metadata){ return Metadata.load(); },
+                        tags:            function(){ return config.current_tags},
                         hospital_number: function(){ return config.hospital_number; },
                         context:         function(){ return context; }
                     }
@@ -55,8 +55,8 @@ angular.module(
                     keyboard: false,
                     resolve: {
                         episode      : function() { return episode; },
-                        referencedata: function(Referencedata){ return Referencedata; },
-                        metadata     : function(Metadata){ return Metadata; },
+                        referencedata: function(Referencedata){ return Referencedata.load() },
+                        metadata     : function(Metadata){ return Metadata.load(); },
                         tags         : function() { return config.current_tags; },
                         context      : function(){ return context; }
       			        }

@@ -7,7 +7,9 @@ describe('Episode', function() {
 
     beforeEach(function() {
         module('opal.services', function($provide) {
-            $provide.value('UserProfile', function(){ return profile; });
+            $provide.value('UserProfile', {
+              load: function(){ return profile; }
+            });
         });
 
         tag_hierarchy = {

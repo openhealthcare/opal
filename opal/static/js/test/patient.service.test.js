@@ -61,16 +61,9 @@ describe('Patient', function() {
       $rootScope    = $injector.get('$rootScope');
     });
 
-    $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
     $route.current = { params: { patient_id: '123' } };
     $rootScope.fields = angular.copy(fields);
   });
-
-  afterEach(function(){
-    $rootScope.$apply();
-    $httpBackend.flush();
-  });
-
 
   describe('patient', function() {
     it('should sort patient episodes', function() {

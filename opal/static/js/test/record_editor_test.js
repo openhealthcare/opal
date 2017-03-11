@@ -4,7 +4,7 @@ describe('RecordEditor', function(){
     var $scope, $modal, $routeParams;
     var $rootScope, $q, $controller;
     var Flow, Episode, episode;
-    var controller;
+    var controller, UserProfile;
 
     var profile = {
         readonly   : false,
@@ -91,15 +91,7 @@ describe('RecordEditor', function(){
     });
 
     beforeEach(function(){
-        module('opal.services', function($provide) {
-            $provide.factory('UserProfile', function ($q, $rootScope) {
-                var deferred = $q.defer();
-                deferred.resolve(profile);
-                var profilePromise = deferred.promise;
-                return profilePromise;
-            });
-        });
-
+        module('opal.services');
         inject(function($injector){
             $rootScope = $injector.get('$rootScope');
             $scope = $rootScope.$new();
@@ -108,6 +100,13 @@ describe('RecordEditor', function(){
             $modal = $injector.get('$modal');
             Episode = $injector.get('Episode');
             $q = $injector.get('$q');
+            UserProfile = $injector.get('UserProfile');
+        });
+
+        spyOn(UserProfile, "load").and.callFake(function(fn){
+          return {
+            then: function(fn){ return fn(profile);}
+          };
         });
 
         $rootScope.fields = fields;
@@ -121,6 +120,13 @@ describe('RecordEditor', function(){
               deferred = $q.defer();
               deferred.resolve();
               var modalPromise = deferred.promise;
+              var fakeMetadaa = {
+                load: function(){ return "some metadata"; }
+              };
+
+              var fakeReferencedata = {
+                load: function(){ return "some reference data"; }
+              };
 
               spyOn($modal, 'open').and.returnValue({result: modalPromise}  );
               episode.recordEditor.editItem('diagnosis', 1);
@@ -131,10 +137,9 @@ describe('RecordEditor', function(){
               expect(callArgs[0].templateUrl).toBe('/templates/modals/diagnosis.html/');
               var resolves = callArgs[0].resolve;
               expect(resolves.item()).toEqual(episode.recordEditor.getItem('diagnosis', 1));
-              expect(resolves.profile()).toEqual(profile);
               expect(resolves.episode()).toEqual(episode);
-              expect(resolves.metadata(null)).toEqual(null);
-              expect(resolves.referencedata(null)).toEqual(null);
+              expect(resolves.metadata(fakeMetadaa)).toEqual("some metadata");
+              expect(resolves.referencedata(fakeReferencedata)).toEqual( "some reference data");
           });
 
           it('should pull modal size through from the schema if it exists', function() {

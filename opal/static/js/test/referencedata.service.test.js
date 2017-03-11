@@ -1,7 +1,7 @@
 describe('Referencedata', function(){
     "use strict"
 
-    var $httpBackend, $rootScope;
+    var $httpBackend, $rootScope, $log;
     var mock, Referencedata;
     var referencedata = {
         foo: ['bar']
@@ -11,7 +11,11 @@ describe('Referencedata', function(){
         mock = { alert: jasmine.createSpy() };
 
         module('opal.services', function($provide) {
-            $provide.value('UserProfile', function(){ return profile; });
+            $provide.value('UserProfile', {
+              load: {
+                then: function(fn){ return fn(profile); }
+              }
+            });
         });
 
         module(function($provide){
@@ -22,16 +26,29 @@ describe('Referencedata', function(){
             Referencedata  = $injector.get('Referencedata');
             $httpBackend   = $injector.get('$httpBackend');
             $rootScope     = $injector.get('$rootScope');
+            $log = $injector.get('$log');
         });
+        spyOn($log, "error");
+    });
+
+    it('then should call through to load', function(){
+        spyOn(Referencedata, "load").and.callThrough();
+        var result;
+        $httpBackend.whenGET('/api/v0.1/referencedata/').respond(referencedata);
+        Referencedata.then(function(r){ result = r; });
+        $rootScope.$apply();
+        $httpBackend.flush();
+        expect(result.get('foo')).toEqual(['bar']);
+        expect($log.error).toHaveBeenCalledWith(
+          'This API is being deprecated and will be removed in 0.9.0. Please use Referencedata.load()'
+        );
     });
 
     it('should fetch the referencedata', function(){
-        var result
+        var result;
 
         $httpBackend.whenGET('/api/v0.1/referencedata/').respond(referencedata);
-
-        Referencedata.then(function(r){ result = r; });
-
+        Referencedata.load().then(function(r){ result = r; });
         $rootScope.$apply();
         $httpBackend.flush();
 
@@ -42,7 +59,7 @@ describe('Referencedata', function(){
         var result;
 
         $httpBackend.whenGET('/api/v0.1/referencedata/').respond(500, 'NO');
-
+        Referencedata.load();
         $rootScope.$apply();
         $httpBackend.flush();
 
@@ -54,12 +71,10 @@ describe('Referencedata', function(){
 
         $httpBackend.whenGET('/api/v0.1/referencedata/').respond(referencedata);
 
-        Referencedata.then(function(r){ result = r; });
+        Referencedata.load().then(function(r){ result = r; });
         $rootScope.$apply();
         $httpBackend.flush();
-
-        expect(result.toLookuplists()).toEqual({foo_list: ['bar']})
-
-    })
+        expect(result.toLookuplists()).toEqual({foo_list: ['bar']});
+    });
 
 });

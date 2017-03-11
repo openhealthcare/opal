@@ -14,7 +14,7 @@ angular.module('opal.services').factory('patientLoader', function(
         var getPatientPromise = $http.get(target);
 
 
-        $q.all([recordLoader, getPatientPromise]).then(
+        $q.all([recordLoader.load(), getPatientPromise]).then(
             function(results)   {
                 var patient = new Patient(results[1].data);
                 deferred.resolve(patient);

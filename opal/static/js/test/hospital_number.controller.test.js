@@ -170,7 +170,9 @@ describe('HospitalNumberCtrl', function(){
     beforeEach(function(){
         module('opal');
         module('opal.services', function($provide) {
-            $provide.value('UserProfile', function(){ return profile; });
+            $provide.value('UserProfile', {
+              load: function(){ return profile; }
+            });
         });
     });
 

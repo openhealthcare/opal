@@ -1,7 +1,7 @@
 describe('UserProfile', function(){
     "use strict";
 
-    var mock, $httpBackend, $window, $routeParams;
+    var mock, $httpBackend, $window, $routeParams, $log;
     var UserProfile, $q, $rootScope;
     var profile_data = {
         roles: {
@@ -21,10 +21,26 @@ describe('UserProfile', function(){
             $rootScope     = $injector.get('$rootScope');
             $window        = $injector.get('$window');
             $routeParams   = $injector.get('$routeParams');
+            $log = $injector.get('$log');
         });
+        spyOn($log, "error");
+    });
+
+    it('then should call through to load', function(){
+        spyOn(UserProfile, "load").and.callThrough();
+        var result;
+        $httpBackend.whenGET('/api/v0.1/userprofile/').respond(profile_data);
+        UserProfile.then(function(r){ result = r; });
+        $rootScope.$apply();
+        $httpBackend.flush();
+        expect(result.roles.tropical).toEqual(result.roles.tropical);
+        expect($log.error).toHaveBeenCalledWith(
+          'This API is being deprecated and will be removed in 0.9.0. Please use UserProfile.load()'
+        );
     });
 
     it('should alert if the HTTP request errors', function(){
+        UserProfile.load();
         $httpBackend.expectGET('/api/v0.1/userprofile/').respond(500, 'NO');
         spyOn($window, 'alert');
 
@@ -34,12 +50,17 @@ describe('UserProfile', function(){
         expect($window.alert).toHaveBeenCalledWith('UserProfile could not be loaded');
     });
 
+    afterEach(function() {
+        $httpBackend.verifyNoOutstandingExpectation();
+        $httpBackend.verifyNoOutstandingRequest();
+    });
+
     describe('valid requests', function() {
         var profile
 
         beforeEach(function(){
             $httpBackend.expectGET('/api/v0.1/userprofile/').respond(profile_data);
-            UserProfile.then(function(r){profile = r});
+            UserProfile.load().then(function(r){profile = r});
             $rootScope.$apply();
             $httpBackend.flush();
         });

@@ -16,13 +16,11 @@ describe('RootCtrl', function() {
     }));
 
     describe('keydown', function(){
-
         it('should broadcast', function() {
             spyOn($scope, '$broadcast');
             $scope.keydown('wat');
             expect($scope.$broadcast).toHaveBeenCalledWith('keydown', 'wat');
         });
-
     });
 
 });
