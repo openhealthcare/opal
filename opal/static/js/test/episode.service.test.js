@@ -201,6 +201,10 @@ describe('Episode', function() {
         expect(episode.getItem('diagnosis', 1).id).toEqual(102);
     });
 
+    it('should return the name of the patient', function() {
+        expect(episode.getFullName()).toEqual('John Smith');
+    });
+
     it('should know how many items it has in each column', function() {
         expect(episode.getNumberOfItems('demographics')).toBe(1);
         expect(episode.getNumberOfItems('diagnosis')).toBe(2);
