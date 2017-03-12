@@ -80,7 +80,7 @@ dev_addr: 0.0.0.0:8965
 include_next_prev: false
 
 extra:
-  version: v0.8.1
+  version: v0.8.2
 
 markdown_extensions:
     - fenced_code
