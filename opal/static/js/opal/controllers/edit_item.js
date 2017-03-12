@@ -11,6 +11,7 @@ angular.module('opal.controllers').controller(
             // Make that category available to the template.
             $scope.episode_category = episode.category;
             $scope.editing = {};
+            $scope.item = item;
             $scope.editing[item.columnName] = item.makeCopy();
             $scope.metadata = metadata
 
