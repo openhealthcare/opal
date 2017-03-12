@@ -535,6 +535,11 @@ class UserTestCase(TestCase):
             response = api.UserViewSet().list(self.mock_request)
             self.assertEqual([self.user.profile.to_dict()], response.data)
 
+    def test_retrieve(self):
+        with patch.object(self.user, 'is_authenticated', return_value=True):
+            response = api.UserViewSet().retrieve(self.mock_request, pk=1)
+            self.assertEqual(self.user.profile.to_dict(), response.data)
+
 
 class TaggingTestCase(TestCase):
 

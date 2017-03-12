@@ -266,6 +266,13 @@ class UserViewSet(LoginRequiredViewset):
         data = [p.to_dict() for p in UserProfile.objects.all()]
         return json_response(data)
 
+    def retrieve(self, request, pk=None):
+        """
+        Serialise a single user via UserProfile
+        """
+        profile = UserProfile.objects.get(user__id=pk)
+        return json_response(profile.to_dict())
+
 
 class TaggingViewSet(LoginRequiredViewset):
     """
