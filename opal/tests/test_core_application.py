@@ -1,15 +1,16 @@
 """
 Unittests for opal.core.application
 """
-from django.test import TestCase
 from mock import patch, MagicMock
+
+from opal.core.test import OpalTestCase
 
 from opal.core import application
 
-class OpalApplicationTestCase(TestCase):
+class OpalApplicationTestCase(OpalTestCase):
+
     def setUp(self):
         class App(application.OpalApplication):
-            flow_module = 'opal.tests.flows'
             javascripts = ['test.js']
             styles = ['app.css']
 
@@ -23,7 +24,6 @@ class OpalApplicationTestCase(TestCase):
             "js/opal/controllers/patient_detail.js",
             "js/opal/controllers/hospital_number.js",
             "js/opal/controllers/add_episode.js",
-            "js/opal/controllers/reopen_episode.js",
             "js/opal/controllers/edit_item.js",
             "js/opal/controllers/edit_teams.js",
             "js/opal/controllers/delete_item_confirmation.js",
@@ -46,6 +46,11 @@ class OpalApplicationTestCase(TestCase):
             [],
             application.OpalApplication.get_menu_items())
 
+    def test_get_menu_items_takes_user(self):
+        self.assertEqual(
+            [],
+            application.OpalApplication.get_menu_items(user=self.user))
+
     def test_get_styles(self):
         self.assertEqual(['app.css'], self.app.get_styles())
 
@@ -55,7 +60,8 @@ class OpalApplicationTestCase(TestCase):
         self.assertEqual(application.OpalApplication.directory(), "/")
 
 
-class GetAppTestCase(TestCase):
+class GetAppTestCase(OpalTestCase):
+
     @patch('opal.core.application.OpalApplication.__subclasses__')
     def test_get_app(self, subclasses):
         mock_app = MagicMock('Mock App')
@@ -63,7 +69,8 @@ class GetAppTestCase(TestCase):
         self.assertEqual(mock_app, application.get_app())
 
 
-class GetAllComponentsTestCase(TestCase):
+class GetAllComponentsTestCase(OpalTestCase):
+
     @patch('opal.core.application.OpalApplication.__subclasses__')
     @patch('opal.core.plugins.OpalPlugin.list')
     def test_get_app(self, plugins, subclasses):

@@ -27,10 +27,6 @@
       var settings = {
       LOG_OUT_DURATION: {{OPAL_LOG_OUT_DURATION}}
       }
-      {% if GLOSSOLALIA_URL %}
-      settings.GLOSSOLALIA_URL = '{{ GLOSSOLALIA_URL }}';
-      settings.BROADCAST_ENDPONT = settings.GLOSSOLALIA_URL.replace('http', 'ws') + 'ws';
-      {% endif %}
       var version = '{{VERSION_NUMBER}}';
       {% if OPAL_FLOW_SERVICE %}
       var OPAL_FLOW_SERVICE = '{{ OPAL_FLOW_SERVICE }}';
@@ -81,15 +77,16 @@
     <link href="{% static "css/ngprogress-lite.css" %}" rel="stylesheet" media="screen">
 	<link href="{% static "js/lib/bower_components/angular-growl-v2/build/angular-growl.css" %}" rel="stylesheet" media="screen">
 
-    {% compress css %}
 
-	<link href="{% static "css/opal.css" %}" rel="stylesheet" media="all">
-    {% endcompress %}
     <link href="{% static "css/print.css" %}" rel="stylesheet" media="print">
     <link href="{% static "css/screen.css" %}" rel="stylesheet" media="screen">
 
-    {% plugin_stylesheets %}
-    {% application_stylesheets %}
+    {% compress css %}
+    	<link href="{% static "css/opal.css" %}" rel="stylesheet" media="all">
+      {% plugin_stylesheets %}
+      {% application_stylesheets %}
+    {% endcompress %}
+
 
     <link rel="shortcut icon" href="{% static 'img/ohc-icon.png' %}">
 

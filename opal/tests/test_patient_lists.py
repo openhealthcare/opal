@@ -130,6 +130,7 @@ class ModelColumnTestCase(OpalTestCase):
         )
         self.assertEqual(True, c.to_dict()['model_column'])
 
+
 class TestPatientList(OpalTestCase):
 
     def setUp(self):
@@ -152,6 +153,12 @@ class TestPatientList(OpalTestCase):
                           new_callable=PropertyMock) as queryset:
             queryset.return_value = mock_queryset
             self.assertEqual(mock_queryset, PatientList().get_queryset())
+
+    def test_to_dict_passes_queryset(self):
+        with patch.object(PatientList, 'get_queryset') as gq:
+            with patch.object(PatientList, 'queryset', new_callable=PropertyMock) as q:
+                PatientList().to_dict('my_user')
+                gq.assert_called_with(user='my_user')
 
     def test_visible_to(self):
         self.assertTrue(TaggingTestPatientList.visible_to(self.user))

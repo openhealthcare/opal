@@ -33,16 +33,3 @@ class PatientTest(OpalTestCase):
         self.patient.create_episode()
         self.patient.create_episode()
         self.assertIsNone(self.patient.get_active_episode())
-
-    @patch('opal.models.patient_subrecords')
-    @patch('opal.models.episode_subrecords')
-    def test_not_bulk_serialisable_patient_subrecords(
-        self, episode_subrecords, patient_subrecords
-    ):
-        episode_subrecords.return_value = []
-        patient_subrecords.return_value = [InvisibleDog]
-        patient, episode = self.new_patient_and_episode_please()
-        InvisibleDog.objects.create(patient=patient)
-        to_dict = patient.to_dict(self.user)
-        self.assertNotIn(InvisibleDog.get_api_name(), to_dict)
-        self.assertNotIn(InvisibleDog.get_api_name(), to_dict['episodes'][1])

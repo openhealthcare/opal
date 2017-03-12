@@ -87,7 +87,7 @@ class PatientList(discoverable.DiscoverableFeature,
 
     @classmethod
     def visible_to(klass, user):
-        from opal.models import UserProfile # Avoid circular import from opal.models
+        from opal.models import UserProfile  # Avoid circular import
 
         profile, _ = UserProfile.objects.get_or_create(user=user)
         if profile.restricted_only:
@@ -120,7 +120,7 @@ class PatientList(discoverable.DiscoverableFeature,
     def queryset(self):
         raise ValueError("this needs to be implemented")
 
-    def get_queryset(self):
+    def get_queryset(self, user=None):
         return self.queryset
 
     def get_template_names(self):
@@ -128,7 +128,7 @@ class PatientList(discoverable.DiscoverableFeature,
 
     def to_dict(self, user):
         # only bringing in active seems a sensible default at this time
-        return self.get_queryset().serialised_active(user)
+        return self.get_queryset(user=user).serialised_active(user)
 
 
 class TaggedPatientList(PatientList, utils.AbstractBase):
@@ -172,8 +172,8 @@ class TaggedPatientList(PatientList, utils.AbstractBase):
                 tags.append(patientlist.subtag)
         return tags
 
-    def get_queryset(self):
-        from opal.models import Episode # Avoid circular import from opal.models
+    def get_queryset(self, **kwargs):
+        from opal.models import Episode  # Avoid circular import in opal.models
 
         filter_kwargs = dict(tagging__archived=False)
         if getattr(self, "subtag", None):
@@ -196,6 +196,8 @@ class TaggedPatientList(PatientList, utils.AbstractBase):
 """
 Sometimes we group lists for display purposes.
 """
+
+
 class TabbedPatientListGroup(discoverable.DiscoverableFeature):
     """
     Groups of Patient Lists to display as tabs at the top of
@@ -256,6 +258,7 @@ class TabbedPatientListGroup(discoverable.DiscoverableFeature):
 Begin Definitions of Patient List App Metadata entries
 """
 
+
 class FirstListMetadata(metadata.Metadata):
     slug = 'first_list_slug'
 
@@ -263,7 +266,7 @@ class FirstListMetadata(metadata.Metadata):
     def to_dict(klass, user=None, **kw):
         try:
             slug = next(PatientList.for_user(user)).get_slug()
-        except StopIteration: # No lists for this user
+        except StopIteration:  # No lists for this user
             slug = ''
         return {
             klass.slug: slug

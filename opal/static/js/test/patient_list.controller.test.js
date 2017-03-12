@@ -3,7 +3,7 @@ describe('PatientListCtrl', function() {
     var episodeData, episodeData2, metaData, patientData, Schema;
     var schema, Episode, Item, episode, episodeVisibility;
     var profile, episode2;
-    var $scope, $cookieStore, $controller, $q, $dialog, $httpBackend;
+    var $scope, $cookies, $controller, $q, $dialog, $httpBackend;
     var $$injector;
     var $location, $routeParams, $http;
     var Flow;
@@ -143,7 +143,7 @@ describe('PatientListCtrl', function() {
         Item         = $injector.get('Item');
         $rootScope   = $injector.get('$rootScope');
         $scope       = $rootScope.$new();
-        $cookieStore = $injector.get('$cookieStore');
+        $cookies     = $injector.get('$cookies');
         $controller  = $injector.get('$controller');
         $q           = $injector.get('$q');
         $modal       = $injector.get('$modal');
@@ -172,7 +172,8 @@ describe('PatientListCtrl', function() {
 
         spyOn(episode.recordEditor, 'deleteItem').and.returnValue(promise);
         spyOn(episode.recordEditor, 'editItem').and.returnValue(promise);
-        spyOn($cookieStore, 'put').and.callThrough();
+        spyOn($cookies, 'put').and.stub();
+
 
         episodedata = {status: 'success', data: {123: episode} };
         episodeVisibility = jasmine.createSpy().and.callFake(episodeVisibility);
@@ -187,7 +188,7 @@ describe('PatientListCtrl', function() {
                 $scope           : $scope,
                 $q               : $q,
                 $http            : $http,
-                $cookieStore     : $cookieStore,
+                $cookies     : $cookies,
                 $location        : $location,
                 $routeParams     : $routeParams,
                 $window          : fakeWindow,
@@ -264,7 +265,7 @@ describe('PatientListCtrl', function() {
         });
 
         it('should set the URL of the last list visited', function() {
-            expect($cookieStore.put).toHaveBeenCalledWith('opal.lastPatientList', 'tropical');
+            expect($cookies.put).toHaveBeenCalledWith('opal.previousPatientList', 'tropical');
         });
 
         it('should should set rows and episodes', function() {
@@ -288,19 +289,19 @@ describe('PatientListCtrl', function() {
     });
 
     describe('Unknown list', function() {
-
         it('should redirect to list if set from a cookie', function(){
-            $cookieStore.put('opal.lastPatientList', 'randomlist');
+            spyOn($cookies, "get").and.returnValue('randomlist')
             spyOn($location, 'path');
-            spyOn($cookieStore, 'remove');
+            spyOn($cookies, 'remove');
             episodedata.status = 'error'
             _makecontroller();
             expect($location.path).toHaveBeenCalledWith('/list/');
-            expect($cookieStore.remove).toHaveBeenCalledWith('opal.lastPatientList');
+            expect($cookies.remove).toHaveBeenCalledWith('opal.previousPatientList');
+            expect($cookies.get).toHaveBeenCalledWith('opal.previousPatientList')
         })
 
         it('should redirect to /404', function() {
-            $cookieStore.remove('opal.lastPatientList');
+            $cookies.remove('opal.previousPatientList');
             episodedata.status = 'error';
             _makecontroller();
             expect(fakeWindow.location.href).toBe("/404");
@@ -470,6 +471,15 @@ describe('PatientListCtrl', function() {
         });
     });
 
+    describe('jump to episode detail', function(){
+
+        it('should go to the episode link', function(){
+            spyOn($location, 'url');
+            $scope.jumpToEpisodeDetail($scope.episode);
+            expect($location.url).toHaveBeenCalledWith($scope.episode.link);
+        })
+    })
+
     describe('keydown watch', function() {
 
         it('should open keyboard shortcuts', function() {
@@ -545,16 +555,21 @@ describe('PatientListCtrl', function() {
 
     describe('adding an episode', function() {
         var fake_episode_resolver = function(){
-            return {then : function(fn){ fn(new Episode(episodeData2)) }};
+            return {then : function(fn){ fn(new Episode(episodeData2)); }};
         };
 
         it('should call flow', function() {
             spyOn(Flow, 'enter').and.callFake(fake_episode_resolver);
             $scope.addEpisode();
-            expect(Flow.enter).toHaveBeenCalledWith({current_tags: {
-                tag: $scope.currentTag,
-                subtag: $scope.currentSubTag
-            }})
+            expect(Flow.enter).toHaveBeenCalledWith(
+              {
+                current_tags: {
+                  tag: $scope.currentTag,
+                  subtag: $scope.currentSubTag
+                }
+              },
+              $scope
+          );
         });
 
         it('should allow the enter flow to resolve with a promise', function() {
@@ -572,7 +587,7 @@ describe('PatientListCtrl', function() {
             expect(Flow.enter).toHaveBeenCalledWith({current_tags: {
                 tag: $scope.currentTag,
                 subtag: $scope.currentSubTag
-            }});
+            }}, $scope);
 
             expect(growl.success).toHaveBeenCalledWith('John Smith added to the Mine list');
         });
@@ -829,7 +844,7 @@ describe('PatientListCtrl', function() {
             $scope.removeFromMine($scope.episode);
             $scope.$apply();
 
-            expect($scope.removeFromList).toHaveBeenCalledWith($scope.episode)
+            expect($scope.removeFromList).toHaveBeenCalledWith($scope.episode.id);
         });
 
     });

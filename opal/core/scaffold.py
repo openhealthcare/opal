@@ -29,10 +29,11 @@ def get_random_secret_key():
     chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
     return get_random_string(50, chars)
 
+
 def interpolate_dir(directory, **context):
     """
-    Recursively iterate through .jinja2 files below DIRECTORY, rendering them as
-    files with CONTEXT.
+    Recursively iterate through .jinja2 files below DIRECTORY, rendering them
+    as files with CONTEXT.
     """
     # Frist, let's deal with files at our current level.
     for t in directory.ls('*.jinja2', all=True):
@@ -47,6 +48,7 @@ def interpolate_dir(directory, **context):
             interpolate_dir(t, **context)
     return
 
+
 def _set_settings_module(name):
     os.environ['DJANGO_SETTINGS_MODULE'] = '{0}.settings'.format(name)
     if '.' not in sys.path:
@@ -55,11 +57,13 @@ def _set_settings_module(name):
     django.setup()
     return
 
+
 def create_lookuplists(root_dir):
     lookuplists_dir = root_dir/'data/lookuplists'
     lookuplists_dir.mkdir()
     lookuplists = lookuplists_dir/"lookuplists.json"
     lookuplists.touch()
+
 
 def start_plugin(name, USERLAND):
     name = name
@@ -96,6 +100,7 @@ def start_plugin(name, USERLAND):
     controllers.mkdir()
     services = jsdir/'services'
     services.mkdir()
+    write('Plugin complete at {0}'.format(reponame))
     return
 
 
@@ -140,7 +145,6 @@ def start_project(name, USERLAND_HERE):
     gitignore = project_dir/'gitignore'
     gitignore.mv(project_dir/'.gitignore')
 
-
     # Interpolate the project data
     interpolate_dir(project_dir, name=name, secret_key=get_random_secret_key())
 
@@ -156,8 +160,10 @@ def start_project(name, USERLAND_HERE):
     css = app_dir/'static/css'
     js.mkdir()
     css.mkdir()
-    nix.mv(app_dir/'static/js/app/routes.js', app_dir/'static/js/{0}/routes.js'.format(name))
-    nix.mv(app_dir/'static/js/app/flow.js', app_dir/'static/js/{0}/flow.js'.format(name))
+    nix.mv(app_dir/'static/js/app/routes.js',
+           app_dir/'static/js/{0}/routes.js'.format(name))
+    nix.mv(app_dir/'static/js/app/flow.js',
+           app_dir/'static/js/{0}/flow.js'.format(name))
 
     templates = app_dir/'templates'/name
     templates.mkdir()
@@ -166,8 +172,8 @@ def start_project(name, USERLAND_HERE):
     assets.mkdir()
     assets_explainer = assets/'README.md'
     assets_explainer << """
-    This placeholder file is here to ensure that there we still have our STATICFILES_DIRS target
-    if we commit generated code to source control.
+    This placeholder file is here to ensure that there we still have our
+    STATICFILES_DIRS target if we commit generated code to source control.
 
     This means that we can run collectstatic OK.
     """
@@ -188,7 +194,7 @@ def start_project(name, USERLAND_HERE):
         return
 
     # 8. Run Django's migrations
-    write( 'Creating Database')
+    write('Creating Database')
     manage('makemigrations {0}'.format(name))
     manage('migrate')
 
@@ -212,7 +218,10 @@ def start_project(name, USERLAND_HERE):
 
 
 def _strip_non_user_fields(schema):
-    exclude = ['created', 'updated', 'created_by_id', 'updated_by_id', 'consistency_token']
+    exclude = [
+        'created', 'updated', 'created_by_id',
+        'updated_by_id', 'consistency_token'
+    ]
     return [f for f in schema if f['name'] not in exclude]
 
 
@@ -245,10 +254,12 @@ def create_display_template_for(record, scaffold_base):
     template = records/'{0}.html'.format(name)
     fields = _strip_non_user_fields(record.build_field_schema())
     contents = mold.cast(display_template, record=record, fields=fields)
-    # We often get lots of lines containing just spaces as a Jinja2 artifact. Lose them.
+    # We often get lots of lines containing just spaces as a Jinja2
+    # artifact. Lose them.
     contents = "\n".join(l for l in contents.split("\n") if l.strip())
     template << contents
     return
+
 
 def create_form_template_for(record, scaffold_base):
     """
@@ -266,7 +277,8 @@ def create_form_template_for(record, scaffold_base):
     template = forms/'{0}_form.html'.format(name)
     fields = _strip_non_user_fields(record.build_field_schema())
     contents = mold.cast(form_template, record=record, fields=fields)
-    # We often get lots of lines containing just spaces as a Jinja2 artifact. Lose them.
+    # We often get lots of lines containing just spaces as a Jinja2
+    # artifact. Lose them.
     contents = "\n".join(l for l in contents.split("\n") if l.strip())
     template << contents
     return

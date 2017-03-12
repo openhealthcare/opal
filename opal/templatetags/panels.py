@@ -73,9 +73,11 @@ def record_timeline(model, whenfield):
         'whenfield': whenfield,
     }
 
+
 @register.inclusion_tag('_helpers/teams_panel.html')
 def teams_panel():
     return {}
+
 
 @register.inclusion_tag('_helpers/aligned_pair.html')
 def aligned_pair(model=None, label=None):

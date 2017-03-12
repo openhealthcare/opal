@@ -78,9 +78,11 @@ Similar to scroll-top, this moves the scroll bar to the top of the page but does
 #### copy to clipboard
 
 ##### e.g.
-    <button clipboard data-clipboard-target="#content-to-copy">
-    Copy to Clipboard
-    </button>
+```html
+<button clipboard data-clipboard-target="#content-to-copy">
+Copy to Clipboard
+</button>
+```
 
 This is a wrapper around clipboard.js, it lets the user copy text from an element that matches the selector you pass it. It will present a growl message saying that the text has been
 copied.

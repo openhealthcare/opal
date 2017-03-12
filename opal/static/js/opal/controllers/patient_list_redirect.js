@@ -1,5 +1,5 @@
 angular.module('opal.controllers').controller(
-    'PatientListRedirectCtrl', function($scope, $cookieStore, $location, metadata){
+    'PatientListRedirectCtrl', function($scope, $cookies, $location, metadata){
         "use strict";
         var target;
         $scope.ready = false;
@@ -11,7 +11,7 @@ angular.module('opal.controllers').controller(
             $location.replace();
         };
 
-        var last_list = $cookieStore.get('opal.lastPatientList');
+        var last_list = $cookies.get('opal.previousPatientList');
         if(last_list){
             replacePath(last_list);
         }else{

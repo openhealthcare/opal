@@ -14,6 +14,7 @@ from opal.core.subrecords import episode_subrecords, patient_subrecords
 
 from six import u
 
+
 def subrecord_csv(episodes, subrecord, file_name):
     """
     Given an iterable of EPISODES, the SUBRECORD we want to serialise,
@@ -39,7 +40,8 @@ def subrecord_csv(episodes, subrecord, file_name):
 
 def episode_csv(episodes, user, file_name):
     """
-    Given an iterable of EPISODES, create a CSV file containing Episode details.
+    Given an iterable of EPISODES, create a CSV file containing
+    Episode details.
     """
     logging.info("writing eposides")
     with open(file_name, "w") as csv_file:
@@ -51,8 +53,12 @@ def episode_csv(episodes, user, file_name):
         writer.writeheader()
 
         for episode in episodes:
-            row = {h: str(getattr(episode, h)).encode('UTF-8') for h in fieldnames}
-            row["tagging"] = ';'.join(episode.get_tag_names(user, historic=True))
+            row = {
+                h: str(getattr(episode, h)).encode('UTF-8') for h in fieldnames
+            }
+            row["tagging"] = ';'.join(
+                episode.get_tag_names(user, historic=True)
+            )
             writer.writerow(row)
     logging.info("finished writing episodes")
 
@@ -72,7 +78,8 @@ def patient_subrecord_csv(episodes, subrecord, file_name):
                 field_names.remove(fname)
 
         patient_to_episode = {e.patient_id: e.id for e in episodes}
-        subs = subrecord.objects.filter(patient__in=list(patient_to_episode.keys()))
+        subs = subrecord.objects.filter(
+            patient__in=list(patient_to_episode.keys()))
 
         headers = list(field_names)
         headers.insert(0, "episode_id")
@@ -129,9 +136,10 @@ def zip_archive(episodes, description, user):
 
     return target
 
+
 def async_extract(user, criteria):
     """
     Given the user and the criteria, let's run an async extract.
     """
-    from opal.core.search import queries, tasks
+    from opal.core.search import tasks
     return tasks.extract.delay(user, criteria).id

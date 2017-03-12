@@ -1,4 +1,4 @@
-describe('services', function() {
+describe('Item', function() {
     "use strict";
 
     var columns, episodeData, options, records, list_schema, mockWindow, $rootScope;
@@ -104,6 +104,12 @@ describe('services', function() {
         };
 
         beforeEach(function() {
+            mockWindow = { alert: jasmine.createSpy() };
+
+            module(function($provide) {
+                $provide.value('$window', mockWindow);
+            });
+
             inject(function($injector) {
                 Item = $injector.get('Item');
                 $rootScope = $injector.get('$rootScope');
@@ -203,6 +209,49 @@ describe('services', function() {
 
             });
 
+            describe('Failing save() calls', function() {
+                var $httpBackend, item, editing;
+
+                beforeEach(function() {
+                    inject(function($injector) {
+                        $httpBackend = $injector.get('$httpBackend');
+                    });
+                    item = new Item(
+                        episodeData.demographics[0],
+                        mockEpisode,
+                        columns.fields.demographics
+                    );
+                    editing = {
+                        id: 101,
+                        name: 'John Smythe',
+                        date_of_birth: '30/07/1980'
+                    };
+                });
+
+                afterEach(function() {
+                    $httpBackend.verifyNoOutstandingExpectation();
+                    $httpBackend.verifyNoOutstandingRequest();
+                });
+
+                it('should tell us if there was a conflict', function() {
+                    var msg = 'Item could not be saved because somebody else has \
+recently changed it - refresh the page and try again';
+                    $httpBackend.whenPUT('/api/v0.1/demographics/101/').respond(409);
+                    item.save(editing);
+                    $httpBackend.flush();
+                    expect(mockWindow.alert).toHaveBeenCalledWith(msg);
+                });
+
+                it('should tell us if there is an error', function() {
+                    var msg = 'Item could not be saved';
+                    $httpBackend.whenPUT('/api/v0.1/demographics/101/').respond(500);
+                    item.save(editing);
+                    $httpBackend.flush();
+                    expect(mockWindow.alert).toHaveBeenCalledWith(msg);
+                });
+
+            });
+
             describe('saving new item', function() {
                 var attrs;
 
@@ -236,22 +285,32 @@ describe('services', function() {
 
             describe('deleting item', function() {
                 beforeEach(function() {
-                    item = new Item(episodeData.diagnosis[1], mockEpisode, columns.fields.diagnosis);
-                    $httpBackend.whenDELETE('/api/v0.1/diagnosis/103/').respond();
+                    item = new Item(episodeData.diagnosis[1],
+                                    mockEpisode, columns.fields.diagnosis);
                 });
 
                 it('should hit server', function() {
+                    $httpBackend.whenDELETE('/api/v0.1/diagnosis/103/').respond();
                     $httpBackend.expectDELETE('/api/v0.1/diagnosis/103/');
                     item.destroy();
                     $httpBackend.flush();
                 });
 
                 it('should notify episode', function() {
+                    $httpBackend.whenDELETE('/api/v0.1/diagnosis/103/').respond();
                     spyOn(mockEpisode, 'removeItem');
                     item.destroy();
                     $httpBackend.flush();
                     expect(mockEpisode.removeItem).toHaveBeenCalled();
                 });
+
+                it('should alert() when we fail a destroy call.', function() {
+                    $httpBackend.whenDELETE('/api/v0.1/diagnosis/103/').respond(500);
+                    item.destroy()
+                    $httpBackend.flush()
+                    expect(mockWindow.alert).toHaveBeenCalledWith('Item could not be deleted')
+                });
+
             });
         });
     });

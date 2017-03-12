@@ -83,7 +83,10 @@ application.get_javascripts()
 
 Returns the file system location of the module.
 
-#### OpalApplication.get_menu_items()
+#### OpalApplication.get_menu_items(user=None)
+
+Hook to customise the visibility of menu items to e.g. restrict some based on the current
+user.
 
 #### OpalApplication.get_styles()
 

@@ -9,7 +9,8 @@ angular.module('opal.controllers')
                  demographics,
                  tags){
             "use strict";
-            var currentTags = [];
+          var currentTags = [];
+          var DATE_FORMAT = 'DD/MM/YYYY';
 
             _.extend($scope, referencedata.toLookuplists());
 
@@ -30,7 +31,15 @@ angular.module('opal.controllers')
           }
 
 	        $scope.save = function() {
-            var toSave = FieldTranslater.jsToPatient($scope.editing)
+            var doa = $scope.editing.date_of_admission;
+            if (doa) {
+              if(!angular.isString(doa)){
+                doa = moment(doa).format(DATE_FORMAT);
+              }
+              $scope.editing.date_of_admission = doa;
+            }
+
+            var toSave = FieldTranslater.jsToPatient($scope.editing);
 
 		        $http.post('/api/v0.1/episode/', toSave).success(function(episode) {
 			        episode = new Episode(episode);

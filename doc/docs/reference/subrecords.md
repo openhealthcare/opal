@@ -84,6 +84,7 @@ An iterable of strings that correspond to fieldnames that contain Patient Identi
 
 This is used when creating data extracts to exclude PID from e.g. CSV downloads.
 
+
 ### Methods
 
 #### Subrecord.get_display_template()

@@ -3,19 +3,23 @@ Detect duplicates or suspiciously similar patients
 """
 from django.core.management.base import BaseCommand
 
-from opal.models import Patient, Episode
+from opal.models import Patient
+
 
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.stdout.write("Duplicate detection starting...")
-        demographics = Patient.objects.all()[0].demographics_set.get().__class__.objects.all()
+        klass = Patient.objects.all()[0].demographics_set.get().__class__
+        demographics = klass.objects.all()
         patients = Patient.objects.count()
         suspicious = []
         suspicious_ids = {}
 
         for i, patient in enumerate(Patient.objects.all()):
-            progress = '({0}% - {1} found)'.format(int(float(i+1)/patients*100), len(suspicious))
+            progress = '({0}% - {1} found)'.format(
+                int(float(i + 1) / patients * 100), len(suspicious)
+            )
             patient_demographics = patient.demographics_set.get()
             self.stdout.write(
                 '{0} Examining {1} {2}'.format(
@@ -46,7 +50,8 @@ class Command(BaseCommand):
                     add_to_suspicious(d.patient, patient)
                 if d.date_of_birth:
                     if patient_demographics.date_of_birth:
-                        if d.date_of_birth == patient_demographics.date_of_birth:
+                        patient_dob = patient_demographics.date_of_birth
+                        if d.date_of_birth == patient_dob:
                             add_to_suspicious(d.patient, patient)
 
         self.stdout.write("X" * 80)

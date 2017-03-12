@@ -5,7 +5,9 @@ from django import template
 
 register = template.Library()
 
-@register.inclusion_tag('patient_lists/tabbed_list_group.html', takes_context=True)
+
+@register.inclusion_tag('patient_lists/tabbed_list_group.html',
+                        takes_context=True)
 def tabbed_list_group(context):
     group = context['list_group']
     user = context['request'].user

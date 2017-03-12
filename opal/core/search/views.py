@@ -1,9 +1,8 @@
 """
-OPAL Search views
+Opal Search views
 """
 import datetime
 import json
-from copy import copy
 from functools import wraps
 
 from django.core.exceptions import PermissionDenied
@@ -16,7 +15,7 @@ from django.core.paginator import Paginator
 from rest_framework import status
 
 from opal import models
-from opal.core.views import (LoginRequiredMixin, _build_json_response,
+from opal.core.views import (LoginRequiredMixin, json_response,
                              _get_request_data, with_no_caching)
 from opal.core.search import queries
 from opal.core.search.extract import zip_archive, async_extract
@@ -72,7 +71,7 @@ def patient_search_view(request):
     hospital_number = request.GET.get("hospital_number")
 
     if hospital_number is None:
-        return _build_json_response({'error': "No search terms"}, 400)
+        return json_response({'error': "No search terms"}, 400)
 
     criteria = [{
         "queryType": "Equals",
@@ -83,7 +82,7 @@ def patient_search_view(request):
     }]
 
     query = queries.create_query(request.user, criteria)
-    return _build_json_response(query.patients_as_json())
+    return json_response(query.patients_as_json())
 
 
 @with_no_caching
@@ -93,11 +92,11 @@ def simple_search_view(request):
     page_number = int(request.GET.get("page_number", 1))
     query_string = request.GET.get("query")
     if not query_string:
-        return _build_json_response({'error': "No search terms"}, 400)
+        return json_response({'error': "No search terms"}, 400)
 
     query = queries.create_query(request.user, query_string)
     result = query.fuzzy_query()
-    return _build_json_response(_add_pagination(result, page_number))
+    return json_response(_add_pagination(result, page_number))
 
 
 class ExtractSearchView(View):
@@ -107,7 +106,7 @@ class ExtractSearchView(View):
         page_number = 1
 
         if not request_data:
-            return _build_json_response(
+            return json_response(
                 dict(error="No search criteria provied"),
                 status_code=status.HTTP_400_BAD_REQUEST
             )
@@ -121,7 +120,7 @@ class ExtractSearchView(View):
         )
         eps = query.get_patient_summaries()
 
-        return _build_json_response(_add_pagination(eps, page_number))
+        return json_response(_add_pagination(eps, page_number))
 
 
 class DownloadSearchView(View):
@@ -133,7 +132,7 @@ class DownloadSearchView(View):
                 self.request.user,
                 json.loads(criteria)
             )
-            return _build_json_response({'extract_id': extract_id})
+            return json_response({'extract_id': extract_id})
 
         query = queries.create_query(
             self.request.user, json.loads(self.request.POST['criteria'])
@@ -155,13 +154,13 @@ class FilterView(View):
 
     def get(self, *args, **kwargs):
         filters = models.Filter.objects.filter(user=self.request.user)
-        return _build_json_response([f.to_dict() for f in filters])
+        return json_response([f.to_dict() for f in filters])
 
     def post(self, *args, **kwargs):
         data = _get_request_data(self.request)
         self.filter = models.Filter(user=self.request.user)
         self.filter.update_from_dict(data)
-        return _build_json_response(self.filter.to_dict())
+        return json_response(self.filter.to_dict())
 
 
 class FilterDetailView(View):
@@ -174,16 +173,16 @@ class FilterDetailView(View):
         return super(FilterDetailView, self).dispatch(*args, **kwargs)
 
     def get(self, *args, **kwargs):
-        return _build_json_response(self.filter.to_dict())
+        return json_response(self.filter.to_dict())
 
     def put(self, *args, **kwargs):
         data = _get_request_data(self.request)
         self.filter.update_from_dict(data)
-        return _build_json_response(self.filter.to_dict())
+        return json_response(self.filter.to_dict())
 
     def delete(self, *args, **kwargs):
         self.filter.delete()
-        return _build_json_response('')
+        return json_response('')
 
 
 class ExtractResultView(View):
@@ -197,7 +196,7 @@ class ExtractResultView(View):
         task_id = kwargs['task_id']
         result = AsyncResult(id=task_id, app=celery.app)
 
-        return _build_json_response({'state': result.state})
+        return json_response({'state': result.state})
 
 
 class ExtractFileView(View):

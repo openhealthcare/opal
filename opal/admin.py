@@ -1,11 +1,10 @@
 """
-Combined admin for OPAL models
+Combined admin for Opal models
 """
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
-from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
 from django import forms
 
@@ -19,26 +18,45 @@ from opal.core.subrecords import episode_subrecords, patient_subrecords
 
 admin.site.unregister(User)
 
+
 class UserProfileInline(admin.StackedInline):
     model = UserProfile
     filter_horizontal = ('roles',)
 
+
 class FilterInline(admin.StackedInline):
     model = models.Filter
 
-class UserProfileAdmin(UserAdmin):
-    inlines = [ UserProfileInline, FilterInline,]
 
-class MyAdmin(reversion.VersionAdmin): pass
+class UserProfileAdmin(UserAdmin):
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': (
+                'username', 'first_name',
+                'last_name', 'email',
+                'password1', 'password2'
+            )
+        }),
+    )
+    inlines = [UserProfileInline, FilterInline, ]
+
+
+class MyAdmin(reversion.VersionAdmin):
+    pass
+
 
 class EpisodeAdmin(reversion.VersionAdmin):
-    list_display = ['patient', 'active', 'date_of_admission', 'discharge_date',]
+    list_display = [
+        'patient', 'active', 'date_of_admission', 'discharge_date'
+    ]
     list_filter = ['active', ]
     search_fields = [
         'patient__demographics__first_name',
         'patient__demographics__surname',
         'patient__demographics__hospital_number'
     ]
+
 
 class PatientAdmin(reversion.VersionAdmin):
     search_fields = [
@@ -47,12 +65,12 @@ class PatientAdmin(reversion.VersionAdmin):
         'demographics__hospital_number'
     ]
 
+
 class TaggingAdmin(reversion.VersionAdmin):
     list_display = ['value', 'episode']
 
 
-
-class PatientSubRecordAdmin(reversion.VersionAdmin):
+class PatientSubrecordAdmin(reversion.VersionAdmin):
     search_fields = [
         'patient__demographics__first_name',
         'patient__demographics__surname',
@@ -60,7 +78,7 @@ class PatientSubRecordAdmin(reversion.VersionAdmin):
     ]
 
 
-class EpisodeSubRecordAdmin(reversion.VersionAdmin):
+class EpisodeSubrecordAdmin(reversion.VersionAdmin):
     search_fields = [
         'episode__patient__demographics__first_name',
         'episode__patient__demographics__surname',
@@ -73,6 +91,7 @@ class SynonymInline(GenericTabularInline):
 
 
 class LookupListForm(forms.ModelForm):
+
     def clean_name(self):
         object_class = self.instance.__class__
         name = self.cleaned_data["name"]
@@ -101,12 +120,14 @@ admin.site.register(models.Tagging, TaggingAdmin)
 
 
 for subclass in patient_subrecords():
-    if not subclass._meta.abstract and not getattr(subclass, "_no_admin", False):
-        admin.site.register(subclass, PatientSubRecordAdmin)
+    if not subclass._meta.abstract and not getattr(
+            subclass, "_no_admin", False):
+        admin.site.register(subclass, PatientSubrecordAdmin)
 
 for subclass in episode_subrecords():
-    if not subclass._meta.abstract and not getattr(subclass, "_no_admin", False):
-        admin.site.register(subclass, EpisodeSubRecordAdmin)
+    if not subclass._meta.abstract and not getattr(
+            subclass, "_no_admin", False):
+        admin.site.register(subclass, EpisodeSubrecordAdmin)
 
 admin.site.register(models.ContactNumber, MyAdmin)
 admin.site.register(models.Role, MyAdmin)

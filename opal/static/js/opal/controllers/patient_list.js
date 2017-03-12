@@ -1,5 +1,5 @@
 angular.module('opal.controllers').controller(
-    'PatientListCtrl', function($scope, $q, $http, $cookieStore,
+    'PatientListCtrl', function($scope, $q, $http, $cookies,
                                 $location, $routeParams,
                                 $modal, $rootScope, $window, $injector,
                                 growl, Flow, Item, Episode,
@@ -8,8 +8,8 @@ angular.module('opal.controllers').controller(
         $scope.ready = false;
         var version = window.version;
         if(episodedata.status == 'error'){
-            if($cookieStore.get('opal.lastPatientList')){
-                $cookieStore.remove('opal.lastPatientList');
+            if($cookies.get('opal.previousPatientList')){
+                $cookies.remove('opal.previousPatientList');
                 $location.path('/list/')
                 return
             }
@@ -34,7 +34,7 @@ angular.module('opal.controllers').controller(
             $scope.path_base = '/list/';
             $scope.profile = profile;
 
-            $cookieStore.put('opal.lastPatientList', $routeParams.slug);
+            $cookies.put('opal.previousPatientList', $routeParams.slug);
             var tags = $routeParams.slug.split('-')
             $scope.currentTag = tags[0];
             $scope.currentSubTag = tags.length == 2 ? tags[1] : "";
@@ -118,6 +118,10 @@ angular.module('opal.controllers').controller(
             });
         };
 
+        $scope.jumpToEpisodeDetail = function(episode){
+            $location.url(episode.link);
+        }
+
         $scope.jumpToTag = function(tag){
             if(_.contains(_.keys(metadata.tag_hierarchy), tag)){
                 $location.path($scope.path_base + tag)
@@ -158,7 +162,7 @@ angular.module('opal.controllers').controller(
                     break;
                 case 13:
                     if(profile.can_see_pid()){
-                        $location.url($scope.episode.link);
+                        $scope.jumpToEpisodeDetail($scope.episode);
                     }
                     break;
     			case 38: // up
@@ -207,7 +211,8 @@ angular.module('opal.controllers').controller(
                         tag: $scope.currentTag,
                         subtag: $scope.currentSubTag
                     }
-                }
+                },
+                $scope
             );
 
             $rootScope.state = 'modal';
@@ -274,8 +279,8 @@ angular.module('opal.controllers').controller(
                 });
 	    };
 
-        $scope.removeFromList = function(episode){
-            delete $scope.episodes[episode.id];
+        $scope.removeFromList = function(episode_id){
+            delete $scope.episodes[episode_id];
             $scope.rows = $scope.getVisibleEpisodes();
             $scope.num_episodes -= 1;
             $scope.episode = $scope.rows[0];
@@ -283,9 +288,9 @@ angular.module('opal.controllers').controller(
 
         $scope._post_discharge = function(result, episode){
     		$rootScope.state = 'normal';
-    		if (result == 'discharged' | result == 'moved') {
-                $scope.removeFromList(episode);
-    		};
+      		if (result == 'discharged' | result == 'moved') {
+                  $scope.removeFromList(episode.id);
+      		};
         };
 
 	    $scope.dischargeEpisode = function(episode) {
@@ -293,13 +298,14 @@ angular.module('opal.controllers').controller(
 
 		    $rootScope.state = 'modal';
             var exit = Flow.exit(episode,
-                                 {
-                                     current_tags: {
-                                         tag   : $scope.currentTag,
-                                         subtag: $scope.currentSubTag
-                                     },
-                                 }
-                                );
+                {
+                    current_tags: {
+                        tag   : $scope.currentTag,
+                        subtag: $scope.currentSubTag
+                    },
+                },
+                $scope
+            );
 
             exit.then(function(result) {
                 //
@@ -327,7 +333,7 @@ angular.module('opal.controllers').controller(
             editing = tagging.makeCopy();
             editing.mine = false;
             tagging.save(editing).then(function(){
-                $scope.removeFromList(episode);
+                $scope.removeFromList(episode.id);
             });
 
         };

@@ -9,29 +9,6 @@ The Search plugin bundled with Opal core provides a default database based searc
 for your application, and is scheduled to provide hooks for e.g. using Elastic Search as your
 serach backend.
 
-### opal.core.collaborative
-
-The Collaborative plugin bundled with Opal core provides a mechanism for providing realtime
-collaborative editing of patient data within lists, by providing a streaming websocket link
-of updates from other open sessions. (Requires [Glossolalia](https://github.com/openhealthcare/glossolalia) ).
-
-### opal-opat
-
-The [OPAT](https://github.com/openhealthcare/opal-opat) plugin provides a set of teams, flows
-and record types for running a BSAC OPAT clinic.
-
-### opal-research
-
-The [Research](https://github.com/openhealthcare/opal-research) plugin allows an Opal application to be used as the
-data collection method for multiple concurrent research studies, including researcher blinding, a
-structured role & permission framework.
-
-### opal-walk-in
-
-The [Walk In](https://github.com/openhealthcare/opal-walk-in) plugin supports the operation of
-drop in services within your institution, including registration, triage, escalation &
-discharge summaries.
-
 ### opal-wardround
 
 The [Wardround](https://github.com/openhealthcare/opal-wardround) plugin provides structured virtual
@@ -58,11 +35,6 @@ dashboards featuring arbitrary metrics, displayed within your application.
 The [Observations](https://github.com/openhealthcare/opal-observations) plugin caters for the recording and
 display of electronic observations data.
 
-### opal-analytics
-
-The [Analytics](https://github.com/openhealthcare/opal-analytics) plugin allows you to integrate
-your application with Google or Piwik Analytics with a minimum of fuss.
-
 ### opal-guidelines
 
 The [Guidelines](https://github.com/openhealthcare/opal-guidelines) plugin presents contextual links to clinical
@@ -70,8 +42,7 @@ guidelines in use at your institution when viewing records of patients whose con
 
 Can be used with national or local guidelines.
 
+### opal-pathway
 
-### opal-iframe-api
-
-The [Iframe Api](https://github.com/openhealthcare/opal-iframe-api) plugin allows you to set up an api key.
-With this Api key you can create templates to view subrecords for embedding in for example iframes.
+The [Pathway](https://github.com/openhealthcare/opal-guidelines) plugin provides a comprehensive extensible
+forms library for Opal applications.

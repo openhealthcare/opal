@@ -66,6 +66,20 @@ describe('services', function() {
         };
     });
 
+    describe('translateFieldsToJs()', function() {
+        it('should convert dates to moments', function() {
+            var f = FieldTranslater.translateFieldsToJs({type:'date'}, new Date(2014, 2, 3));
+            expect(moment.isMoment(f)).toEqual(true);
+        });
+
+        it('should convert date times to moments', function() {
+            var f = FieldTranslater.translateFieldsToJs(
+                {type:'date_time'}, new Date(2014, 2, 3, 11, 45, 9)
+            );
+            expect(moment.isMoment(f)).toEqual(true);
+        });
+    });
+
     describe("jsToPatient", function(){
       it("should cast date and datetime fields", function(){
           var result = FieldTranslater.jsToPatient(jsPatientData);

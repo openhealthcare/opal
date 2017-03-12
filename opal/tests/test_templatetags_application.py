@@ -15,11 +15,21 @@ class ApplicationMenuitemsTestCase(OpalTestCase):
     @patch('opal.templatetags.application.application.get_app')
     def test_application_menuitems(self, get_app):
         mock_app = MagicMock(name='Application')
-        mock_app.menuitems = [{'display': 'test'}]
+        mock_app.get_menu_items.return_value = [{'display': 'test'}]
         get_app.return_value = mock_app
-        result = list(application.application_menuitems()['items']())
+        ctx = MagicMock(name='Context')
+        result = list(application.application_menuitems(ctx)['items']())
         expected = [{'display': 'test'}]
         self.assertEqual(expected, result)
+
+    @patch('opal.templatetags.application.application.get_app')
+    def test_application_menuitems_passes_through_user(self, get_app):
+        mock_app = MagicMock(name='Application')
+        mock_user = MagicMock(name='User')
+        context = {'user': mock_user}
+        get_app.return_value = mock_app
+        list(application.application_menuitems(context)['items']())
+        mock_app.get_menu_items.assert_called_with(user=mock_user)
 
 
 class CoreJavascriptTestCase(OpalTestCase):
@@ -53,14 +63,25 @@ class ApplicationJavascriptTestCase(OpalTestCase):
 class ApplicationStylesTestCase(OpalTestCase):
 
     @patch('opal.templatetags.application.application.get_app')
-    def test_core_styles(self, get_app):
+    def test_core_styles_with_css(self, get_app):
         mock_app = MagicMock(name='Application')
         mock_app.get_styles.return_value = ['test.css']
         get_app.return_value = mock_app
 
         result = list(application.application_stylesheets()['styles']())
 
-        self.assertEqual(['test.css'], result)
+        self.assertEqual([("test.css", "text/css",)], result)
+        mock_app.get_styles.assert_called_with()
+
+    @patch('opal.templatetags.application.application.get_app')
+    def test_core_styles_with_scss(self, get_app):
+        mock_app = MagicMock(name='Application')
+        mock_app.get_styles.return_value = ['test.scss']
+        get_app.return_value = mock_app
+
+        result = list(application.application_stylesheets()['styles']())
+
+        self.assertEqual([("test.scss", "text/x-scss",)], result)
         mock_app.get_styles.assert_called_with()
 
 

@@ -1,28 +1,28 @@
 """
-Module entrypoint for core OPAL views
+Module entrypoint for core Opal views
 """
 from django.conf import settings
 from django.contrib.auth.views import login
 from django.http import HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
-from django.template.loader import select_template, get_template
+from django.template.loader import get_template
 from django.template import TemplateDoesNotExist
 from django.views.generic import TemplateView, View
-from django.views.decorators.http import require_http_methods
 
 from opal import models
-from opal.core import application, detail, episodes, exceptions
+from opal.core import application, detail, episodes
 from opal.core.patient_lists import PatientList, TabbedPatientListGroup
 from opal.core.subrecords import (
-    episode_subrecords, subrecords, get_subrecord_from_api_name
+    episode_subrecords, get_subrecord_from_api_name
 )
-from opal.core.views import LoginRequiredMixin, _get_request_data, _build_json_response
-from opal.utils import camelcase_to_underscore, stringport
+from opal.core.views import LoginRequiredMixin, json_response
+from opal.utils import camelcase_to_underscore
 from opal.utils.banned_passwords import banned
 
 app = application.get_app()
 
 Synonym = models.Synonym
+
 
 class PatientListTemplateView(LoginRequiredMixin, TemplateView):
 
@@ -46,7 +46,9 @@ class PatientListTemplateView(LoginRequiredMixin, TemplateView):
         return self.patient_list.schema_to_dicts()
 
     def get_context_data(self, **kwargs):
-        context = super(PatientListTemplateView, self).get_context_data(**kwargs)
+        context = super(
+            PatientListTemplateView, self
+        ).get_context_data(**kwargs)
         list_slug = None
         if self.patient_list:
             list_slug = self.patient_list.get_slug()
@@ -69,20 +71,28 @@ class PatientListTemplateView(LoginRequiredMixin, TemplateView):
             return self.patient_list().get_template_names()
         return [PatientList.template_name]
 
+
 class PatientDetailTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'patient_detail.html'
 
     def get_context_data(self, **kwargs):
-        context = super(PatientDetailTemplateView, self).get_context_data(**kwargs)
+        context = super(
+            PatientDetailTemplateView, self
+        ).get_context_data(**kwargs)
 
         # django likes to try and initialise classes, even when we
         # don't want it to, so vars it
-        context['episode_categories'] = [vars(i) for i in episodes.EpisodeCategory.list()]
+        context['episode_categories'] = [
+            vars(i) for i in episodes.EpisodeCategory.list()
+        ]
 
-        # We cast this to a list because it's a generator but we want to consume
-        # it twice in the template
-        context['detail_views'] = list(detail.PatientDetailView.for_user(self.request.user))
+        # We cast this to a list because it's a generator but we want to
+        # consume it twice in the template
+        context['detail_views'] = list(
+            detail.PatientDetailView.for_user(self.request.user)
+        )
         return context
+
 
 # TODO: ?Remove this ?
 class EpisodeDetailTemplateView(LoginRequiredMixin, TemplateView):
@@ -91,11 +101,16 @@ class EpisodeDetailTemplateView(LoginRequiredMixin, TemplateView):
         return super(EpisodeDetailTemplateView, self).get(*args, **kwargs)
 
     def get_template_names(self):
-        names = ['detail/{0}.html'.format(self.episode.category_name.lower()), 'detail/default.html']
+        names = [
+            'detail/{0}.html'.format(self.episode.category_name.lower()),
+            'detail/default.html'
+        ]
         return names
 
     def get_context_data(self, **kwargs):
-        context = super(EpisodeDetailTemplateView, self).get_context_data(**kwargs)
+        context = super(
+            EpisodeDetailTemplateView, self
+        ).get_context_data(**kwargs)
         return context
 
 
@@ -138,6 +153,7 @@ def check_password_reset(request, *args, **kwargs):
 
 """Internal (Legacy) API View"""
 
+
 class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
     """
     Copy an episode to a given category, excluding tagging.
@@ -157,11 +173,14 @@ class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
                 item.episode = new
                 item.save()
         serialised = new.to_dict(self.request.user)
-        return _build_json_response(serialised)
+        return json_response(serialised)
+
 
 """
 Template views for OPAL
 """
+
+
 class FormTemplateView(LoginRequiredMixin, TemplateView):
     """
     This view renders the form template for our field.
@@ -205,14 +224,20 @@ class ModalTemplateView(LoginRequiredMixin, TemplateView):
         self.list_slug = kw.get('list', None)
         self.template_name = self.get_template_from_model()
         if self.template_name is None:
-            raise ValueError('No modal Template available for {0}'.format(self.column.__name__))
+            raise ValueError(
+                'No modal Template available for {0}'.format(
+                    self.column.__name__
+                )
+            )
         self.name = camelcase_to_underscore(self.column.__name__)
         return super(ModalTemplateView, self).dispatch(*a, **kw)
 
     def get_context_data(self, **kwargs):
         context = super(ModalTemplateView, self).get_context_data(**kwargs)
         context['name'] = self.name
-        context['title'] = getattr(self.column, '_title', self.name.replace('_', ' ').title())
+        context['title'] = getattr(
+            self.column, '_title', self.name.replace('_', ' ').title()
+        )
         context['icon'] = getattr(self.column, '_icon', '')
         # pylint: disable=W0201
         context['single'] = self.column._is_singleton
@@ -240,6 +265,7 @@ class BannedView(TemplateView):
         data['banned'] = banned
         return data
 
+
 class HospitalNumberTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'hospital_number_modal.html'
 
@@ -250,6 +276,7 @@ class ReopenEpisodeTemplateView(LoginRequiredMixin, TemplateView):
 
 class UndischargeTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'undischarge_modal.html'
+
 
 class DischargeEpisodeTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'discharge_episode_modal.html'
