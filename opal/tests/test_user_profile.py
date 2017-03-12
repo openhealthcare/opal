@@ -10,9 +10,13 @@ from opal.models import UserProfile
 class UserProfileTest(TestCase):
 
     def setUp(self):
-        self.user = User(username='testing')
+        self.user = User(username='testing', first_name='Test', last_name='User')
         self.user.save()
         self.profile, _ = UserProfile.objects.get_or_create(user=self.user)
+
+    def test_to_dict_has_full_name(self):
+        as_dict = self.profile.to_dict()
+        self.assertEqual('Test User', as_dict['full_name'])
 
     def test_get_roles(self):
         self.assertEqual({'default': []}, self.profile.get_roles())

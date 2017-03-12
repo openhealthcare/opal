@@ -506,7 +506,8 @@ class UserProfileTestCase(TestCase):
                 'readonly'   : False,
                 'can_extract': False,
                 'filters'    : [],
-                'roles'      : {'default': []}
+                'roles'      : {'default': []},
+                'full_name'  : ''
             }
             self.assertEqual(expected, response.data)
 

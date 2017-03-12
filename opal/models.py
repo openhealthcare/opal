@@ -1487,7 +1487,8 @@ class UserProfile(models.Model):
             readonly=self.readonly,
             can_extract=self.can_extract,
             filters=[f.to_dict() for f in self.user.filter_set.all()],
-            roles=self.get_roles()
+            roles=self.get_roles(),
+            full_name=self.user.get_full_name()
         )
 
     def get_roles(self):
