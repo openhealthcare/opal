@@ -29,7 +29,7 @@ describe('recordLoader', function(){
             $rootScope     = $injector.get('$rootScope');
             $log = $injector.get('$log');
         });
-        spyOn($log, "error");
+        spyOn($log, "warn");
     });
 
     it('then should call through to load', function(){
@@ -41,7 +41,7 @@ describe('recordLoader', function(){
         $httpBackend.flush();
         expect(result).toEqual(recordSchema);
         expect($rootScope.fields).toEqual(recordSchema);
-        expect($log.error).toHaveBeenCalledWith(
+        expect($log.warn).toHaveBeenCalledWith(
           'This API is being deprecated and will be removed in 0.9.0. Please use recordLoader.load()'
         );
     });

@@ -28,7 +28,7 @@ describe('Referencedata', function(){
             $rootScope     = $injector.get('$rootScope');
             $log = $injector.get('$log');
         });
-        spyOn($log, "error");
+        spyOn($log, "warn");
     });
 
     it('then should call through to load', function(){
@@ -39,7 +39,7 @@ describe('Referencedata', function(){
         $rootScope.$apply();
         $httpBackend.flush();
         expect(result.get('foo')).toEqual(['bar']);
-        expect($log.error).toHaveBeenCalledWith(
+        expect($log.warn).toHaveBeenCalledWith(
           'This API is being deprecated and will be removed in 0.9.0. Please use Referencedata.load()'
         );
     });

@@ -23,7 +23,7 @@ describe('UserProfile', function(){
             $routeParams   = $injector.get('$routeParams');
             $log = $injector.get('$log');
         });
-        spyOn($log, "error");
+        spyOn($log, "warn");
     });
 
     it('then should call through to load', function(){
@@ -34,7 +34,7 @@ describe('UserProfile', function(){
         $rootScope.$apply();
         $httpBackend.flush();
         expect(result.roles.tropical).toEqual(result.roles.tropical);
-        expect($log.error).toHaveBeenCalledWith(
+        expect($log.warn).toHaveBeenCalledWith(
           'This API is being deprecated and will be removed in 0.9.0. Please use UserProfile.load()'
         );
     });
