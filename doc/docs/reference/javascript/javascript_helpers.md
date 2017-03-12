@@ -99,7 +99,7 @@ Given a User ID, inserts the full name of a user into the element the directive 
 
 #### avatarForUser
 
-Intended for use on an `img` tag, given a User Id, sets the src attribute to the correct
+Intended for use on an `img` tag, given a User ID, sets the src attribute to the correct
 avatar URL.
 
 ```html
