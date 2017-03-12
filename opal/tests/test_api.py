@@ -508,7 +508,8 @@ class UserProfileTestCase(TestCase):
                 'filters'    : [],
                 'roles'      : {'default': []},
                 'full_name'  : '',
-                'avatar_url' : 'http://gravatar.com/avatar/5d9c68c6c50ed3d02a2fcf54f63993b6?s=80&r=g&d=identicon'
+                'avatar_url' : 'http://gravatar.com/avatar/5d9c68c6c50ed3d02a2fcf54f63993b6?s=80&r=g&d=identicon',
+                'user_id'    : 1
             }
             self.assertEqual(expected, response.data)
 

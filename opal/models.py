@@ -1487,14 +1487,15 @@ class UserProfile(models.Model):
         """
         Return the serialised version of this UserProfile to send to the client
         """
-        return dict(
-            readonly=self.readonly,
-            can_extract=self.can_extract,
-            filters=[f.to_dict() for f in self.user.filter_set.all()],
-            roles=self.get_roles(),
-            full_name=self.user.get_full_name(),
-            avatar_url=self.get_avatar_url()
-        )
+        return {
+            'readonly'   : self.readonly,
+            'can_extract': self.can_extract,
+            'filters'    : [f.to_dict() for f in self.user.filter_set.all()],
+            'roles'      : self.get_roles(),
+            'full_name'  : self.user.get_full_name(),
+            'avatar_url' : self.get_avatar_url(),
+            'user_id'    : self.user.pk
+        }
 
     def get_avatar_url(self):
         """

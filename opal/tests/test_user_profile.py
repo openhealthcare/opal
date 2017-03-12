@@ -28,6 +28,9 @@ class UserProfileTest(TestCase):
         as_dict = self.profile.to_dict()
         self.assertTrue('avatar_url' in as_dict)
 
+    def test_to_dict_has_id(self):
+        self.assertEqual(1, self.profile.to_dict()['user_id'])
+
     def test_get_avatar_url(self):
         self.profile.user.email = 'test@example.com'
         self.profile.user.save()
