@@ -3,6 +3,7 @@ Opal Django Models
 """
 import datetime
 import functools
+import hashlib
 import itertools
 import json
 import logging
@@ -1483,13 +1484,32 @@ class UserProfile(models.Model):
     roles                 = models.ManyToManyField(Role, blank=True)
 
     def to_dict(self):
+        """
+        Return the serialised version of this UserProfile to send to the client
+        """
         return dict(
             readonly=self.readonly,
             can_extract=self.can_extract,
             filters=[f.to_dict() for f in self.user.filter_set.all()],
             roles=self.get_roles(),
-            full_name=self.user.get_full_name()
+            full_name=self.user.get_full_name(),
+            avatar_url=self.get_avatar_url()
         )
+
+    def get_avatar_url(self):
+        """
+        Return the URL at which the avatar for this user may be found
+        """
+        # In order for avatars to still be useful when we have no email,
+        # we want a consistent identicon that is not the same for everyone
+        # e.g. users without emails don't all use the avatar for ''
+        if self.user.email:
+            to_hash = self.user.email.lower().encode('UTF-8')
+        else:
+            to_hash = self.user.username.encode('UTF-8')
+        hashed = hashlib.md5(to_hash).hexdigest()
+        gravatar = 'http://gravatar.com/avatar/{0}?s=80&r=g&d=identicon'
+        return gravatar.format(hashed)
 
     def get_roles(self):
         """

@@ -507,7 +507,8 @@ class UserProfileTestCase(TestCase):
                 'can_extract': False,
                 'filters'    : [],
                 'roles'      : {'default': []},
-                'full_name'  : ''
+                'full_name'  : '',
+                'avatar_url' : 'http://gravatar.com/avatar/5d9c68c6c50ed3d02a2fcf54f63993b6?s=80&r=g&d=identicon'
             }
             self.assertEqual(expected, response.data)
 
