@@ -506,10 +506,10 @@ describe('OPAL Directives', function(){
             $httpBackend.whenGET('/api/v0.1/user/1/').respond(userdata)
         })
 
-        describe('fullNameFor', function() {
+        describe('fullNameForUser', function() {
 
             it('should set the contents to be the name of the user', function() {
-                compileDirective('<span full-name-for="1"></span>');
+                compileDirective('<span full-name-for-user="1"></span>');
                 $httpBackend.flush();
                 $rootScope.$apply();
                 expect($(element).text()).toEqual('Jane Doe')
@@ -517,10 +517,10 @@ describe('OPAL Directives', function(){
 
         });
 
-        describe('avatarFor', function() {
+        describe('avatarForUser', function() {
 
             it('should set the src', function() {
-                compileDirective('<img avatar-for="1" />');
+                compileDirective('<img avatar-for-user="1" />');
                 $httpBackend.flush();
                 $rootScope.$apply();
                 expect($(element).attr('src')).toEqual('http://localhost/avatar.gif');

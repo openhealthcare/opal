@@ -449,11 +449,11 @@ directives.directive("tagSelect", function(Metadata){
 });
 
 
-directives.directive('fullNameFor', function(User){
+directives.directive('fullNameForUser', function(User){
     return {
         link: function(scope, element, attrs){
-            if(attrs.fullNameFor){
-                User.get(attrs.fullNameFor).then(
+            if(attrs.fullNameForUser){
+                User.get(attrs.fullNameForUser).then(
                     function(user){
                         $(element).text(user.full_name)
                     }
@@ -463,11 +463,11 @@ directives.directive('fullNameFor', function(User){
     }
 });
 
-directives.directive('avatarFor', function(User){
+directives.directive('avatarForUser', function(User){
     return {
         link: function(scope, element, attrs){
-            if(attrs.avatarFor){
-                User.get(attrs.avatarFor).then(
+            if(attrs.avatarForUser){
+                User.get(attrs.avatarForUser).then(
                     function(user){
                         $(element).attr('src', user.avatar_url);
                     }
