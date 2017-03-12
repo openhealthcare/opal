@@ -105,14 +105,16 @@ The columns you see initially are just a few of the standard clinical models tha
 Opal - for instance the Diagnosis model in your new application inherits from a model that
 looks a lot like this:
 
-    class Diagnosis(EpisodeSubrecord):
-        condition         = ForeignKeyOrFreeText(Condition)
-        provisional       = models.BooleanField(default=False)
-        details           = models.CharField(max_length=255, blank=True)
-        date_of_diagnosis = models.DateField(blank=True, null=True)
+```python
+class Diagnosis(EpisodeSubrecord):
+    condition         = ForeignKeyOrFreeText(Condition)
+    provisional       = models.BooleanField(default=False)
+    details           = models.CharField(max_length=255, blank=True)
+    date_of_diagnosis = models.DateField(blank=True, null=True)
 
-        class Meta:
-            abstract = True
+    class Meta:
+        abstract = True
+```
 
 ### Reference data
 
@@ -128,7 +130,7 @@ cases.
 You'll need to import the data for a terminology before you can start to take advantage of that.
 For now, let's use the reference data from elCID (An Opal application maintained by Open Health Care):
 
-    wget https://raw.githubusercontent.com/openhealthcare/elcid/master/data/lookuplists/lookuplists.json -P yourapp/data/lookuplists
+    wget https://raw.githubusercontent.com/openhealthcare/elcid/master/data/lookuplists/lookuplists.json -P mynewapp/data/lookuplists
 
 
 <blockquote><small>
@@ -162,11 +164,13 @@ an episode (an episode is for example, an admission to hospital).
 Let's see how that works by creating a TODO list model that is assigned to
 episodes of care. In your `mynewapp/models.py` :
 
-    class TODOItem(models.EpisodeSubrecord):
-        job       = fields.CharField(max_length=200)
-        due_date  = fields.DateField(blank=True, null=True)
-        details   = fields.TextField(blank=True, null=True)
-        completed = fields.BooleanField(default=False)
+```
+class TODOItem(models.EpisodeSubrecord):
+    job       = fields.CharField(max_length=200)
+    due_date  = fields.DateField(blank=True, null=True)
+    details   = fields.TextField(blank=True, null=True)
+    completed = fields.BooleanField(default=False)
+```
 
 This is simply a Django model, apart from the parent class `models.EpisodeSubrecord`
 which provides us with some extra functionality:
