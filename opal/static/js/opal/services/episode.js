@@ -58,6 +58,11 @@ angular.module('opal.services')
                 this[columnName] = _.sortBy(this[columnName], sortBy).reverse();
             },
 
+            // Return the name of the patient suitable for display to humans
+            getFullName: function(){
+                return this.demographics[0].first_name + ' ' + this.demographics[0].surname;
+            },
+
             getNumberOfItems: function(columnName) {
                 return this[columnName].length;
             },

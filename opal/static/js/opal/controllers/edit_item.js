@@ -19,8 +19,8 @@ angular.module('opal.controllers').controller(
                 return !_.isUndefined($scope.editing[item.columnName].id);
             };
 
-            // This is the patientname displayed in the modal header
-  	        $scope.editingName = item.episode.demographics[0].first_name + ' ' + episode.demographics[0].surname;
+            // This is the patient name displayed in the modal header
+     	    $scope.editingName = episode.getFullName();
 
             $scope.columnName = item.columnName;
             _.extend($scope, referencedata.toLookuplists());
