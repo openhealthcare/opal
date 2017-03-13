@@ -40,6 +40,7 @@ pages:
       - reference/javascript/episode_service.md
       - reference/javascript/patient_service.md
       - reference/javascript/item_service.md
+      - reference/javascript/user_service.md
       - reference/javascript/loaders.md
       - reference/javascript/patient_summary_service.md
       - Search JS Services: reference/javascript/search_js_services.md
@@ -47,11 +48,14 @@ pages:
       - Javascript dependencies: reference/javascript/javascript_dependencies.md
 
       # python
+      # Models
       - The Episode model: reference/episode.md
-      - Episode Categories: reference/episode_categories.md
+      - Mixins: reference/mixins.md
       - reference/patient.md
       - Subrecords: reference/subrecords.md
-      - Mixins: reference/mixins.md
+      - UserProfile: reference/user_profile_model.md
+
+      - Episode Categories: reference/episode_categories.md
       - OpalApplication: reference/opal_application.md
       - OpalPlugin: reference/plugin.md
       - Core.Views: reference/core_views.md

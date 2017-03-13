@@ -87,6 +87,27 @@ Copy to Clipboard
 This is a wrapper around clipboard.js, it lets the user copy text from an element that matches the selector you pass it. It will present a growl message saying that the text has been
 copied.
 
+#### fullNameForUser
+
+Given a User ID, inserts the full name of a user into the element the directive is on
+
+```html
+<span full-name-for-user="2"></span>
+<!-- Becomes -->
+<span>Jane Doe</span>
+```
+
+#### avatarForUser
+
+Intended for use on an `img` tag, given a User ID, sets the src attribute to the correct
+avatar URL.
+
+```html
+<img avatar-for-user="1" />
+<!-- Becomes -->
+<img src="http://gravatar.com....." />
+```
+
 ### Angular Filters
 
 Opal provides some built-in Angular filters for your project to use.

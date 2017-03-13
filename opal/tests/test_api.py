@@ -506,7 +506,10 @@ class UserProfileTestCase(TestCase):
                 'readonly'   : False,
                 'can_extract': False,
                 'filters'    : [],
-                'roles'      : {'default': []}
+                'roles'      : {'default': []},
+                'full_name'  : '',
+                'avatar_url' : 'http://gravatar.com/avatar/5d9c68c6c50ed3d02a2fcf54f63993b6?s=80&r=g&d=identicon',
+                'user_id'    : 1
             }
             self.assertEqual(expected, response.data)
 
@@ -517,6 +520,25 @@ class UserProfileTestCase(TestCase):
             profile.save()
             response = api.UserProfileViewSet().list(self.mock_request)
             self.assertEqual(True, response.data['readonly'])
+
+
+class UserTestCase(TestCase):
+
+    def setUp(self):
+        self.user = User.objects.create(username='testuser')
+        models.UserProfile.objects.create(user=self.user)
+        self.mock_request = MagicMock(name='request')
+        self.mock_request.user = self.user
+
+    def test_list(self):
+        with patch.object(self.user, 'is_authenticated', return_value=True):
+            response = api.UserViewSet().list(self.mock_request)
+            self.assertEqual([self.user.profile.to_dict()], response.data)
+
+    def test_retrieve(self):
+        with patch.object(self.user, 'is_authenticated', return_value=True):
+            response = api.UserViewSet().retrieve(self.mock_request, pk=1)
+            self.assertEqual(self.user.profile.to_dict(), response.data)
 
 
 class TaggingTestCase(TestCase):

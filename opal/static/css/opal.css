@@ -1111,3 +1111,7 @@ a.table-link:hover{
 hr.bold{
   border-color: #d9534f;
 }
+
+.text-avatar{
+    height: 20px;
+}
