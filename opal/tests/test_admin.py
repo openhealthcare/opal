@@ -51,7 +51,7 @@ class EpisodeAdminTestCase(AdminTestCase):
 
 
 class PatientAdminTestCase(AdminTestCase):
-    def patient_detail_url(self):
+    def test_patient_detail_url(self):
         admin = PatientAdmin(Patient, self.site)
         self.assertEqual(
             admin.patient_detail_url(self.patient),
