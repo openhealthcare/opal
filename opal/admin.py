@@ -6,6 +6,7 @@ from django.contrib.contenttypes.admin import GenericTabularInline
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 from django.core.exceptions import ValidationError
+from django.utils.html import format_html
 from django import forms
 
 import reversion
@@ -48,7 +49,11 @@ class MyAdmin(reversion.VersionAdmin):
 
 class EpisodeAdmin(reversion.VersionAdmin):
     list_display = [
-        'patient', 'active', 'date_of_admission', 'discharge_date'
+        'patient',
+        'active',
+        'date_of_admission',
+        'discharge_date',
+        'episode_detail_url'
     ]
     list_filter = ['active', ]
     search_fields = [
@@ -57,13 +62,27 @@ class EpisodeAdmin(reversion.VersionAdmin):
         'patient__demographics__hospital_number'
     ]
 
+    def episode_detail_url(self, obj):
+        url = "/#/patient/{0}/{1}".format(obj.patient_id, obj.id)
+        return format_html("<a href='{url}'>{url}</a>", url=url)
+
+    episode_detail_url.short_description = "Episode Detail URL"
+
 
 class PatientAdmin(reversion.VersionAdmin):
+    list_display = ('__str__', 'patient_detail_url')
+
     search_fields = [
         'demographics__first_name',
         'demographics__surname',
         'demographics__hospital_number'
     ]
+
+    def patient_detail_url(self, obj):
+        url = "/#/patient/{0}".format(obj.id)
+        return format_html("<a href='{url}'>{url}</a>", url=url)
+
+    patient_detail_url.short_description = "Patient Detail Url"
 
 
 class EpisodeSubrecordAdmin(reversion.VersionAdmin):
