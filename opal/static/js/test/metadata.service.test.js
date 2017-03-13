@@ -20,7 +20,7 @@ describe('Metadata', function(){
             $provide.value('$window', mock);
         });
 
-        $log = jasmine.createSpyObj(['error']);
+        $log = jasmine.createSpyObj(['warn']);
 
         inject(function($injector){
             Metadata       = $injector.get('Metadata');
@@ -28,7 +28,7 @@ describe('Metadata', function(){
             $rootScope     = $injector.get('$rootScope');
             $log = $injector.get('$log');
         });
-        spyOn($log, "error");
+        spyOn($log, "warn");
     });
 
     afterEach(function(){
@@ -44,7 +44,7 @@ describe('Metadata', function(){
         $rootScope.$apply();
         $httpBackend.flush();
         expect(result.get('foo')).toEqual('bar');
-        expect($log.error).toHaveBeenCalledWith(
+        expect($log.warn).toHaveBeenCalledWith(
           'This API is being deprecated and will be removed in 0.9.0. Please use Metadata.load()'
         );
     });

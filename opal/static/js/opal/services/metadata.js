@@ -34,7 +34,7 @@ angular.module('opal.services').factory('Metadata', function($q, $http, $window,
       load: load,
       then: function(fn){
         // TODO: 0.9.0
-        $log.error("This API is being deprecated and will be removed in 0.9.0. Please use Metadata.load()");
+        $log.warn("This API is being deprecated and will be removed in 0.9.0. Please use Metadata.load()");
         load().then(function(result){ fn(result); });
       }
     };
