@@ -1,3 +1,9 @@
+### 0.8.2 (Minor Release)
+
+#### Episode.getFullName()
+
+Adds a utility method to the `Episode` service that returns a human readable patient name.
+
 ### 0.8.1 (Minor Release)
 
 #### Cookies for the future
