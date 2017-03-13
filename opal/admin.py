@@ -66,7 +66,21 @@ class PatientAdmin(reversion.VersionAdmin):
     ]
 
 
+class EpisodeSubrecordAdmin(reversion.VersionAdmin):
+    search_fields = [
+        'episode__patient__demographics__first_name',
+        'episode__patient__demographics__surname',
+        'episode__patient__demographics__hospital_number',
+    ]
+
+
 class TaggingAdmin(reversion.VersionAdmin):
+    search_fields = [
+        'episode__patient__demographics__first_name',
+        'episode__patient__demographics__surname',
+        'episode__patient__demographics__hospital_number',
+        'value'
+    ]
     list_display = ['value', 'episode']
 
 
@@ -75,14 +89,6 @@ class PatientSubrecordAdmin(reversion.VersionAdmin):
         'patient__demographics__first_name',
         'patient__demographics__surname',
         'patient__demographics__hospital_number',
-    ]
-
-
-class EpisodeSubrecordAdmin(reversion.VersionAdmin):
-    search_fields = [
-        'episode__patient__demographics__first_name',
-        'episode__patient__demographics__surname',
-        'episode__patient__demographics__hospital_number',
     ]
 
 
