@@ -15,7 +15,7 @@ describe('RecordEditor', function(){
     var options = {
         condition: ['Another condition', 'Some condition'],
         tag_hierarchy :{'tropical': []}
-    }
+    };
 
     var episodeData = {
         id: 123,
@@ -91,7 +91,22 @@ describe('RecordEditor', function(){
     });
 
     beforeEach(function(){
-        module('opal.services');
+        module('opal.services', function($provide) {
+          $provide.factory('UserProfile', function ($q, $rootScope) {
+            var deferred = $q.defer();
+            deferred.resolve(profile);
+            var profilePromise = deferred.promise;
+            return {
+              then: function(fb){ return fb(profile); },
+              load: function(){
+                return {
+                  then: function(fb){ return fb(profile); }
+                }
+              }
+            }
+            return profilePromise;
+          });
+        });
         inject(function($injector){
             $rootScope = $injector.get('$rootScope');
             $scope = $rootScope.$new();
