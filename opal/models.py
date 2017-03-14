@@ -160,6 +160,23 @@ class SerialisableFields(object):
 
         return default
 
+
+    @classmethod
+    def get_field_description(cls, name):
+        field = cls._get_field(name)
+        description = getattr(field, 'help_text', "")
+        if description:
+            return description
+
+    @classmethod
+    def get_field_enum(cls, name):
+        field = cls._get_field(name)
+        choices =  getattr(field, "choices", [])
+
+        if choices:
+            return [i[1] for i in choices]
+
+
     @classmethod
     def build_field_schema(cls):
         field_schema = []
@@ -184,14 +201,18 @@ class SerialisableFields(object):
                 )
             title = cls._get_field_title(fieldname)
             default = cls._get_field_default(fieldname)
+            field = {
+                'name': fieldname,
+                'title': title,
+                'type': field_type,
+                'lookup_list': lookup_list,
+                'default': default,
+                'model': cls.__name__,
+                'description': cls.get_field_description(fieldname),
+                'enum': cls.get_field_enum(fieldname)
+            }
 
-            field_schema.append({'name': fieldname,
-                                 'title': title,
-                                 'type': field_type,
-                                 'lookup_list': lookup_list,
-                                 'default': default,
-                                 'model': cls.__name__
-                                 })
+            field_schema.append(field)
         return field_schema
 
 

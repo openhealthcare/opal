@@ -71,10 +71,10 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
 
     # for all django fields we'll get an empty list back
     # we default for free text or foreign keys
-    choices = getattr(field, "choices", [])
+    enum = model.get_field_enum(field_name)
 
-    if choices:
-        ctx["lookuplist"] = json.dumps([i[1] for i in choices])
+    if enum:
+        ctx["lookuplist"] = json.dumps(enum)
     elif hasattr(field, "foreign_model"):
         ctx["lookuplist"] = "{}_list".format(
             field.foreign_model.get_api_name()
