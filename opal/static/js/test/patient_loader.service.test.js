@@ -42,21 +42,24 @@ describe('patientLoader', function() {
             $rootScope    = $injector.get('$rootScope');
         });
 
+        $httpBackend.expectGET('/api/v0.1/record/').respond({});
+        $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+
         $route.current = { params: { patient_id: '123' } };
     });
 
+    afterEach(function(){
+      $rootScope.$apply();
+      $httpBackend.flush();
+      $httpBackend.verifyNoOutstandingRequest();
+      $httpBackend.verifyNoOutstandingExpectation();
+    });
 
 
     describe('load patients', function() {
-      afterEach(function(){
-        $httpBackend.flush();
-        $httpBackend.verifyNoOutstandingExpectation();
-        $httpBackend.verifyNoOutstandingRequest();
-      });
 
       beforeEach(function(){
         $httpBackend.expectGET('/api/v0.1/patient/123/').respond(response);
-        $httpBackend.expectGET('/api/v0.1/record/').respond({});
       });
 
       it('should load some patients', function() {
@@ -68,15 +71,9 @@ describe('patientLoader', function() {
     });
 
     describe('patient API errors', function() {
-      afterEach(function(){
-        $httpBackend.flush();
-        $httpBackend.verifyNoOutstandingExpectation();
-        $httpBackend.verifyNoOutstandingRequest();
-      });
 
       it('should alert() the user', function() {
         $httpBackend.expectGET('/api/v0.1/patient/123/').respond(500);
-        $httpBackend.expectGET('/api/v0.1/record/').respond({});
         patientLoader().then(function(patient){
           expect(mockWindow.alert).toHaveBeenCalledWith('Patient could not be loaded');
         });

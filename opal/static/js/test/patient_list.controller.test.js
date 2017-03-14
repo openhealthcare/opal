@@ -527,6 +527,14 @@ describe('PatientListCtrl', function() {
 
     });
 
+    describe('getRowIxFromEpisodeId()', function() {
+
+        it('should return -1 if the id is not an episode we know about', function() {
+            expect($scope.getRowIxFromEpisodeId(73872387)).toEqual(-1)
+        });
+
+    });
+
     describe('print()', function() {
 
         it('should print', function() {
@@ -658,6 +666,27 @@ describe('PatientListCtrl', function() {
             afterEach(function(){
                 profile.readonly = false;
             });
+        });
+
+        describe('When a promise returned by flow is rejected', function() {
+            it('should reset the state', function() {
+                spyOn(Flow, 'enter').and.callFake(
+                    function(){
+                        return {
+                            then : function(cb, eb){ cb(
+                                {
+                                    then: function(cb, eb){
+                                        eb();
+                                    }
+                                }
+                            ) }
+                        }
+                    }
+                );
+                $scope.addEpisode()
+                expect($rootScope.state).toEqual('normal');
+            });
+
         });
 
         describe('When the modal is dismissed', function() {

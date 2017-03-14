@@ -53,7 +53,7 @@ class EpisodeAdmin(reversion.VersionAdmin):
         'active',
         'date_of_admission',
         'discharge_date',
-        'episode_detail_url'
+        'episode_detail_link'
     ]
     list_filter = ['active', ]
     search_fields = [
@@ -63,14 +63,21 @@ class EpisodeAdmin(reversion.VersionAdmin):
     ]
 
     def episode_detail_url(self, obj):
-        url = "/#/patient/{0}/{1}".format(obj.patient_id, obj.id)
-        return format_html("<a href='{url}'>{url}</a>", url=url)
+        return "/#/patient/{0}/{1}".format(obj.patient_id, obj.id)
+
+    def episode_detail_link(self, obj):
+        return format_html(
+            "<a href='{url}'>{url}</a>", url=self.episode_detail_url(obj)
+        )
+
+    def view_on_site(self, obj):
+        return self.episode_detail_url(obj)
 
     episode_detail_url.short_description = "Episode Detail URL"
 
 
 class PatientAdmin(reversion.VersionAdmin):
-    list_display = ('__str__', 'patient_detail_url')
+    list_display = ('__str__', 'patient_detail_link')
 
     search_fields = [
         'demographics__first_name',
@@ -79,8 +86,15 @@ class PatientAdmin(reversion.VersionAdmin):
     ]
 
     def patient_detail_url(self, obj):
-        url = "/#/patient/{0}".format(obj.id)
-        return format_html("<a href='{url}'>{url}</a>", url=url)
+        return "/#/patient/{0}".format(obj.id)
+
+    def patient_detail_link(self, obj):
+        return format_html(
+            "<a href='{url}'>{url}</a>", url=self.patient_detail_url(obj)
+        )
+
+    def view_on_site(self, obj):
+        return self.patient_detail_url(obj)
 
     patient_detail_url.short_description = "Patient Detail Url"
 

@@ -67,7 +67,7 @@ describe('SearchCtrl', function (){
                 PatientSummary : PatientSummary
             });
 
-            // $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
 
         });});
 
@@ -82,7 +82,6 @@ describe('SearchCtrl', function (){
             $httpBackend.expectGET('/search/simple/?query=jane').respond(
                 {object_list: [{categories: []}]}
             );
-            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
             expect($scope.query.searchTerm.length).toBe(0);
             $scope.query.autocompleteSearchTerm = 'jane';
             expect($scope.getQueryParam()).toEqual('jane');
@@ -96,11 +95,13 @@ describe('SearchCtrl', function (){
         it('should set state', function() {
             $scope.disableShortcuts();
             expect($scope.state).toEqual('search');
+            $httpBackend.flush();
         });
 
         it('should set state', function() {
             $scope.enableShortcuts();
             expect($scope.state).toEqual('normal');
+            $httpBackend.flush();
         });
 
     });
@@ -111,6 +112,7 @@ describe('SearchCtrl', function (){
             $scope.selected({link: '/#/foo/bar'});
             expect($scope.query.autocompleteSearchTerm).toEqual("");
             expect($window.location.href).toEqual('/#/foo/bar');
+            $httpBackend.flush();
         });
 
     });
@@ -139,6 +141,7 @@ describe('SearchCtrl', function (){
             $scope.search();
             var expectedUrl = "/#/search?query=Bond";
             expect(locationDetails.href).toEqual(expectedUrl);
+            $httpBackend.flush();
         });
 
         it('should take page numbers into account', function() {
@@ -148,6 +151,7 @@ describe('SearchCtrl', function (){
             $scope.search(3);
             var expectedUrl = "/#/search?page_number=3&query=Bond";
             expect(locationDetails.href).toEqual(expectedUrl);
+            $httpBackend.flush();
         });
 
         it("should update the url if on the search page", function(){
@@ -160,6 +164,7 @@ describe('SearchCtrl', function (){
             };
             expect(location.search()).toEqual(expectedSearch);
             expect(locationDetails.href).toEqual("unchanged");
+            $httpBackend.flush();
         });
     });
 
@@ -188,6 +193,7 @@ describe('SearchCtrl', function (){
                 }
             }
             expect($scope.getEpisodeID(patient)).toEqual('42');
+            $httpBackend.flush();
         });
 
     });
@@ -196,6 +202,7 @@ describe('SearchCtrl', function (){
         it('Should call location.path()', function () {
             $scope.jumpToEpisode({active_episode_id: 555});
             expect(location.path).toHaveBeenCalledWith('/episode/555');
+            $httpBackend.flush();
         });
     });
 
