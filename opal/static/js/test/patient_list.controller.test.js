@@ -527,6 +527,14 @@ describe('PatientListCtrl', function() {
 
     });
 
+    describe('getRowIxFromEpisodeId()', function() {
+
+        it('should return -1 if the id is not an episode we know about', function() {
+            expect($scope.getRowIxFromEpisodeId(73872387)).toEqual(-1)
+        });
+
+    });
+
     describe('print()', function() {
 
         it('should print', function() {
