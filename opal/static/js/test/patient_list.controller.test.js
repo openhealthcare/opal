@@ -668,6 +668,27 @@ describe('PatientListCtrl', function() {
             });
         });
 
+        describe('When a promise returned by flow is rejected', function() {
+            it('should reset the state', function() {
+                spyOn(Flow, 'enter').and.callFake(
+                    function(){
+                        return {
+                            then : function(cb, eb){ cb(
+                                {
+                                    then: function(cb, eb){
+                                        eb();
+                                    }
+                                }
+                            ) }
+                        }
+                    }
+                );
+                $scope.addEpisode()
+                expect($rootScope.state).toEqual('normal');
+            });
+
+        });
+
         describe('When the modal is dismissed', function() {
 
             it('should reset the state', function() {
