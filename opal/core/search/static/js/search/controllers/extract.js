@@ -61,6 +61,7 @@ angular.module('opal.controllers').controller(
     $scope.completeCriteria =  function(){
       var combine;
 
+
       // queries can look at either all of the options, or any of them
       // ie 'and' conjunctions or 'or'
       if($scope.anyOrAll === 'all'){
@@ -88,6 +89,12 @@ angular.module('opal.controllers').controller(
       _.each(criteria, function(c){
         c.combine = combine;
       });
+
+      if(criteria.length){
+        if(!$scope.selectedInfo){
+          $scope.selectInfo($scope.criteria[0])
+        }
+      }
 
       return criteria;
     };
@@ -142,6 +149,13 @@ angular.module('opal.controllers').controller(
         }
     };
 
+    $scope.selectedInfo;
+
+    $scope.selectInfo = function(query){
+      $scope.selectedInfo = query;
+    }
+
+
     $scope.isBoolean = function(column, field){
         return $scope.isType(column, field, ["boolean", "null_boolean"]);
     };
@@ -163,6 +177,9 @@ angular.module('opal.controllers').controller(
     };
 
     $scope.removeFilter = function(index){
+        if($scope.selectedInfo === $scope.criteria[index]){
+          $scope.selectedInfo = undefined;
+        }
         if($scope.criteria.length == 1){
             $scope.removeCriteria();
         }
