@@ -20,7 +20,7 @@ angular.module('opal.controllers').controller(
             };
 
             // This is the patient name displayed in the modal header
-     	    $scope.editingName = episode.getFullName();
+            $scope.editingName = episode.getFullName();
 
             $scope.columnName = item.columnName;
             _.extend($scope, referencedata.toLookuplists());
@@ -31,22 +31,22 @@ angular.module('opal.controllers').controller(
             };
 
             // TODO - don't hardcode this
-	        if (item.columnName == 'microbiology_test' || item.columnName == 'lab_test' || item.columnName == 'investigation') {
-		        $scope.microbiology_test_list = [];
-		        $scope.microbiology_test_lookup = {};
-		        $scope.micro_test_defaults =  metadata.micro_test_defaults;
+            if (item.columnName == 'microbiology_test' || item.columnName == 'lab_test' || item.columnName == 'investigation') {
+                $scope.microbiology_test_list = [];
+                $scope.microbiology_test_lookup = {};
+                $scope.micro_test_defaults =  metadata.micro_test_defaults;
 
-		        for (var name in referencedata){
-			        if (name.indexOf('micro_test') == 0) {
-				        for (var ix = 0; ix < referencedata[name].length; ix++) {
-					        $scope.microbiology_test_list.push(referencedata[name][ix]);
-					        $scope.microbiology_test_lookup[referencedata[name][ix]] = name;
-				        };
-			        };
-		        };
+                for (var name in referencedata){
+                    if (name.indexOf('micro_test') == 0) {
+                        for (var ix = 0; ix < referencedata[name].length; ix++) {
+                            $scope.microbiology_test_list.push(referencedata[name][ix]);
+                            $scope.microbiology_test_lookup[referencedata[name][ix]] = name;
+                        };
+                    };
+                };
             var watchName= "editing." + item.columnName + ".test"
-		        $scope.$watch(watchName, function(testName, oldValue) {
-			        $scope.testType = $scope.microbiology_test_lookup[testName];
+                $scope.$watch(watchName, function(testName, oldValue) {
+                    $scope.testType = $scope.microbiology_test_lookup[testName];
               if(oldValue == testName){
                 return;
               }
@@ -70,8 +70,8 @@ angular.module('opal.controllers').controller(
                       }
                   });
               }
-		        });
-	        };
+                });
+            };
 
             $scope.delete = function(result){
                 $modalInstance.close(result);

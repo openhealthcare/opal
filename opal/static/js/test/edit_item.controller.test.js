@@ -228,6 +228,7 @@ describe('EditItemCtrl', function (){
             var args = $modal.open.calls.mostRecent().args[0];
             expect(args.templateUrl).toEqual('/templates/modals/delete_item_confirmation.html/');
             expect(args.controller).toEqual('DeleteItemConfirmationCtrl');
+            expect(args.resolve.item()).toEqual(item)
         });
 
     });
