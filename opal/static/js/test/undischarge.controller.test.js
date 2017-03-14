@@ -73,6 +73,7 @@ describe('UndischargeCtrl', function() {
 
     describe('confirm', function() {
         it('should confirm', function() {
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
             $httpBackend.expectPUT('/api/v0.1/episode/221/').respond(episodeData);
             $httpBackend.expectPUT('/api/v0.1/location/12/').respond({});
             $scope.confirm();
