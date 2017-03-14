@@ -1,5 +1,8 @@
 ### 0.8.2 (Minor Release)
 
+### Episode/Patient links in admin
+In the admin, episodes and patients lists now have links to the patient detail pages.
+
 ### User data for the client
 
 Adds a `User` Angular service that enables applications to use user data.

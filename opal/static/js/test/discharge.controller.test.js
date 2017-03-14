@@ -82,7 +82,9 @@ describe('DischargeEpisodeCtrl', function(){
                     category: 'Inpatient'
                 }
             ]
-        };
+        }
+
+
 
         module('opal.controllers');
 
@@ -109,20 +111,21 @@ describe('DischargeEpisodeCtrl', function(){
                 episode: episode,
                 tags: tags
             });
-        };
-        mkcontroller(tags);
+        }
+        mkcontroller(tags)
+        $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
     });
 
     describe('Set up the controller', function(){
 
         afterEach(function(){
-          $httpBackend.verifyNoOutstandingExpectation();
-          $httpBackend.verifyNoOutstandingRequest();
-        });
+            $httpBackend.flush();
+        })
 
         it('should have the current and new categories', function() {
             expect($scope.editing.category).toEqual('Discharged');
         });
+
 
         it('should handle arbitrary categories', function() {
             episode.location[0].category = 'Dead';

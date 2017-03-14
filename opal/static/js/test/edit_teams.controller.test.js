@@ -97,9 +97,14 @@ describe('EditTeamsCtrl', function(){
     beforeEach(function(){
         module('opal.controllers');
         UserProfile = {
+          then: function(fn){
+            fn('someProfile');
+          },
           load: function(){
             return {
-              then: function(fn){ fn('someProfile'); }
+              then: function(fn){
+                fn('someProfile');
+              }
             };
           }
         };
@@ -140,11 +145,6 @@ describe('EditTeamsCtrl', function(){
         });
     });
 
-    afterEach(function() {
-        $httpBackend.verifyNoOutstandingExpectation();
-        $httpBackend.verifyNoOutstandingRequest();
-    });
-
     describe('Setup', function() {
 
         it('should have an editing object', function() {
@@ -163,17 +163,26 @@ describe('EditTeamsCtrl', function(){
               $scope: $scope,
               $window: $window,
               $modalInstance: modalInstance,
-              UserProfile: UserProfile,
               episode: episode
           });
             expect($scope.editing).toEqual({tagging: {}});
         });
+
+        it('should fetch the options', function() {
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+            $rootScope.$apply();
+            $httpBackend.flush();
+        });
     });
 
     describe('save()', function() {
+
         it('should save', function() {
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
             spyOn(modalInstance, 'close');
             $scope.save('close');
+            $rootScope.$apply();
+            $httpBackend.flush();
             expect(modalInstance.close).toHaveBeenCalledWith('close');
         });
 

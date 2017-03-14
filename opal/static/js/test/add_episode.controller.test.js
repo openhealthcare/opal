@@ -60,6 +60,11 @@ describe('AddEpisodeCtrl', function (){
             demographics  : {},
             tags          : {tag: 'id', subtag: 'id_inpatients'}
         });
+
+        $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
+        $scope.$apply();
+        $httpBackend.flush();
+
     });
 
     describe('save()', function(){

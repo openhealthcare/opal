@@ -29,13 +29,14 @@ angular.module('opal.services').factory('Metadata', function($q, $http, $window,
 
       return deferred.promise;
     };
+    var promise = load();
 
     return {
-      load: load,
+      load: function(){ return promise; },
       then: function(fn){
         // TODO: 0.9.0
         $log.warn("This API is being deprecated and will be removed in 0.9.0. Please use Metadata.load()");
-        load().then(function(result){ fn(result); });
+        promise.then(function(result){ fn(result); });
       }
     };
 });
