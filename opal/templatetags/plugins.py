@@ -14,7 +14,7 @@ register = template.Library()
 def plugin_javascripts(namespace):
     def scripts():
         for plugin in plugins.OpalPlugin.list():
-            if namespace in plugin.javascripts:
+            if namespace in plugin.get_javascripts():
                 for javascript in plugin.javascripts[namespace]:
                     yield javascript
     return dict(javascripts=scripts)
@@ -24,8 +24,12 @@ def plugin_javascripts(namespace):
 def plugin_stylesheets():
     def styles():
         for plugin in plugins.OpalPlugin.list():
-            for sheet in plugin.stylesheets:
-                yield sheet
+            for style in plugin.get_styles():
+                if style.endswith(".scss"):
+                    mime_type = "text/x-scss"
+                else:
+                    mime_type = "text/css"
+                yield style, mime_type
     return dict(styles=styles)
 
 
