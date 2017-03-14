@@ -124,6 +124,27 @@ describe('OPAL Directives', function(){
             $(element).click();
             expect($.fn.animate).toHaveBeenCalledWith({ scrollTop: '0' });
         });
+
+        it('should set the class when at top', function() {
+            var markup = '<button scroll-top></button>';
+            spyOn($.fn, 'scrollTop').and.returnValue(0)
+            spyOn(window, 'requestAnimationFrame').and.callFake(function(f){f()});
+            compileDirective(markup);
+            $(window).trigger('scroll.scrollTop')
+            var btn = $(element.find("button"));
+            expect($(element[0]).hasClass('hidden-at-top')).toBe(true);
+        });
+
+        it('should remove the class when below top', function() {
+            var markup = '<button scroll-top></button>';
+            spyOn($.fn, 'scrollTop').and.returnValue(100)
+            spyOn(window, 'requestAnimationFrame').and.callFake(function(f){f()});
+            compileDirective(markup);
+            $(window).trigger('scroll.scrollTop')
+            var btn = $(element.find("button"));
+            expect($(element[0]).hasClass('hidden-at-top')).toBe(false);
+        });
+
     })
 
     describe('goToTop', function(){
