@@ -42,18 +42,36 @@ class AdminTestCase(OpalTestCase):
 
 
 class EpisodeAdminTestCase(AdminTestCase):
-    def test_episode_detail_url(self):
-        admin = EpisodeAdmin(Episode, self.site)
+    def setUp(self):
+        super(EpisodeAdminTestCase, self).setUp()
+        self.admin = EpisodeAdmin(Episode, self.site)
+
+    def test_episode_detail_link(self):
         self.assertEqual(
-            admin.episode_detail_url(self.episode),
+            self.admin.episode_detail_link(self.episode),
             "<a href='/#/patient/1/1'>/#/patient/1/1</a>"
+        )
+
+    def test_view_on_site(self):
+        self.assertEqual(
+            self.admin.view_on_site(self.episode),
+            '/#/patient/1/1'
         )
 
 
 class PatientAdminTestCase(AdminTestCase):
-    def test_patient_detail_url(self):
-        admin = PatientAdmin(Patient, self.site)
+    def setUp(self):
+        super(PatientAdminTestCase, self).setUp()
+        self.admin = PatientAdmin(Patient, self.site)
+
+    def test_patient_detail_link(self):
         self.assertEqual(
-            admin.patient_detail_url(self.patient),
+            self.admin.patient_detail_link(self.patient),
             "<a href='/#/patient/1'>/#/patient/1</a>"
+        )
+
+    def test_view_on_site(self):
+        self.assertEqual(
+            self.admin.view_on_site(self.patient),
+            '/#/patient/1'
         )
