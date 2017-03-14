@@ -197,6 +197,7 @@ describe('EditItemCtrl', function (){
     });
 
     describe('Saving items', function (){
+
         it('Should save the current item', function () {
             $scope.$digest();
             var callArgs;
@@ -217,6 +218,25 @@ describe('EditItemCtrl', function (){
             expect(callArgs.length).toBe(1);
             expect(callArgs[0]).toBe($scope.editing.investigation);
         });
+
+        it('should save the episode if we have changed it', function() {
+            $scope.$digest();
+            var callArgs;
+            var deferred = $q.defer();
+            spyOn(item, 'save');
+            spyOn(episode, 'save').and.callFake(function() {
+                return deferred.promise;
+            });
+            $scope.episode.date_of_admission = new Date();
+            $scope.save('save');
+            deferred.resolve("episode returned");
+            $scope.$digest();
+
+            callArgs = episode.save.calls.mostRecent().args;
+            expect(callArgs.length).toBe(1);
+            expect(callArgs[0]).toBe($scope.episode);
+        });
+
     });
 
     describe('delete()', function() {
