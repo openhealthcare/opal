@@ -1,5 +1,5 @@
 """
-OPAL Episode categories
+Opal Episode categories
 
 An episode of care in OPAL can be one of many things:
 
