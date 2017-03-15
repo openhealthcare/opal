@@ -52,6 +52,20 @@ class OpalPlugin(discoverable.DiscoverableFeature):
         """
         return {}
 
+    @classmethod
+    def get_styles(klass):
+        """
+        Return the stylesheets for our plugin
+        """
+        return klass.stylesheets
+
+    @classmethod
+    def get_javascripts(klass):
+        """
+        Return the javascripts for our plugin
+        """
+        return klass.javascripts
+
 
 # TODO 0.9.0: Remove these
 def register(what):

@@ -98,3 +98,23 @@ returning the `apis` attribute.
 ### OpalPlugin.directory()
 
 Returns the path to the directory containing the file in which this plugin is defined.
+
+#### OpalPlugin.get_javascripts()
+
+Return a dictionary angular module to file of the plugin's javasctipts as paths to them ready for staticfiles.
+Defaults to returning the `OpalPlugin.javascripts` property.
+
+```python
+plugin.get_javascripts()
+# -> {'opal.test': ['js/test/notreal.js']}
+```
+
+#### OpalPlugin.get_styles()
+
+Return a list of the plugin's stylesheets as paths to them ready for staticfiles.
+Defaults to returning the contents of `OpalPlugin.styles`.
+
+```python
+plugin.get_styles()
+# -> ['css/app.css', ...]
+``
