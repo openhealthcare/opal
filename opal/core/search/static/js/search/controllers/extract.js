@@ -172,6 +172,10 @@ angular.module('opal.controllers').controller(
         return $scope.isType(column, field, "date");
     };
 
+    $scope.isDateTime = function(column, field){
+        return $scope.isType(column, field, "date");
+    };
+
     $scope.addFilter = function(){
         $scope.criteria.push(_.clone($scope.model));
     };

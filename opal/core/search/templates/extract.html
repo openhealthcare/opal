@@ -152,7 +152,7 @@
                     </div>
                     <div ng-hide="$last" class="row">
                       <div class="col-md-10 col-md-push-1">
-                        <hr />
+                        <hr class="divider" />
                       </div>
                     </div>
                   </span>
@@ -167,8 +167,19 @@
                   </div>
                 </div>
                 <div class="col-md-3">
-                  <div class="extract-search" ng-show="selectedInfo">
-                    <strong>[[ selectedInfo.column ]]</strong> - [[ selectedInfo.field ]]
+                  <div class="search-info" ng-show="selectedInfo">
+                    <div class="search-info-title">
+                      <strong>[[ selectedInfo.column | title ]]</strong> - [[ selectedInfo.field | title ]]
+                    </div>
+                    <span ng-show="isBoolean(selectedInfo.column, selectedInfo.field)">
+                      [True/False]
+                    </span>
+                    <span ng-show="isText(selectedInfo.column, selectedInfo.field)">
+                      [Text]
+                    </span>
+                    <span ng-show="isDate(selectedInfo.column, selectedInfo.field)">
+                      [Date]
+                    </span>
                   </div>
                 </div>
               </div>
