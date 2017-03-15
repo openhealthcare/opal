@@ -158,6 +158,15 @@ angular.module('opal.controllers').controller(
         return $scope.isType(column, field, "date");
     };
 
+    $scope.isDateTime = function(column, field){
+        return $scope.isType(column, field, "date_time");
+    };
+
+    $scope.isDateType = function(column, field){
+        // if the field is a date or a date time
+        return $scope.isDate(column, field) || $scope.isDateTime(column, field);
+    };
+
     $scope.addFilter = function(){
         $scope.criteria.push(_.clone($scope.model));
     };
@@ -171,10 +180,10 @@ angular.module('opal.controllers').controller(
         }
     };
 
-    $scope.resetFilter = function(query){
+    $scope.resetFilter = function(query, fieldsTypes){
       // when we change the column, reset the rest of the query
       _.each(query, function(v, k){
-        if(k !== 'column' && k in $scope.model){
+        if(!_.contains(fieldsTypes, k) && k in $scope.model){
           query[k] = $scope.model[k];
         }
       });

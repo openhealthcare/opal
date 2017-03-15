@@ -58,7 +58,7 @@
                 <div class="row">
                   <div class="col-md-10">
                     <select class="form-control" ng-model="query.column"
-                            ng-change="resetFilter(query)"
+                            ng-change="resetFilter(query, ['column'])"
                             tooltip-trigger="focus"
                             tooltip-placement="top" uib-tooltip="1. Select a Column"
                             set-focus-if="!query.column && criteria.length > 1"
@@ -71,6 +71,7 @@
                           ng-show="query.column == col.name">
                       <select class="form-control" ng-model="query.field"
                               tooltip-trigger="focus"
+                              ng-change="resetFilter(query, ['column', 'field'])"
                               tooltip-placement="top" uib-tooltip="2. Select a field"
                               set-focus-if="query.field == null && query.column != null"
                               >
@@ -79,24 +80,24 @@
                     </span>
                     <span ng-show="query.column != 'tagging'">
                       <select class="form-control"
-                              ng-show="query.field != null && isText(query.column, query.field)"
+                              ng-show="isText(query.column, query.field)"
                               ng-model="query.queryType" tooltip-trigger="focus"
                               tooltip-placement="top" uib-tooltip="3. Select your query type"
-                              set-focus-if="query.field != null && !isDate(query.column, query.field)"
+                              set-focus-if="query.field != null && !isDateType(query.column, query.field)"
                               >
                         <option>Equals</option>
                         <option ng-show="isText(query.column, query.field)">Contains</option>
                       </select>
                       <select class="form-control"
-                              ng-show="query.field != null && isDate(query.column, query.field)"
+                              ng-show="isDateType(query.column, query.field)"
                               ng-model="query.queryType" tooltip-trigger="focus"
                               tooltip-placement="top" uib-tooltip="3. Select your query type"
-                              set-focus-if="query.field != null && isDate(query.column, query.field)" >
+                              set-focus-if="query.field != null && isDateType(query.column, query.field)" >
                         <option>Before</option>
                         <option>After</option>
                       </select>
                       <select class="form-control" ng-model="query.query"
-                              ng-show="isBoolean(query.column, query.field) && query.field != null"
+                              ng-show="isBoolean(query.column, query.field)"
                               tooltip-trigger="focus"
                               tooltip-placement="top" uib-tooltip="3. Select your query type"
                               set-focus-if="isBoolean(query.column, query.field) && query.field != null"
@@ -107,7 +108,7 @@
                       <input type="text"
                              class="form-control"
                              ng-model="query.query"
-                             ng-show="isText(query.column, query.field) && query.field != null"
+                             ng-show="isText(query.column, query.field)"
                              uib-typeahead="x for x in query.lookup_list | filter:$viewValue | limitTo:8"
                              placeholder="4. Add your value"
                              ng-keypress="$event.keyCode == 13 && search()"
@@ -115,13 +116,13 @@
                              />
                       <input type="text" ng-model="query.query"
                              class="form-control"
-                             ng-show="isDate(query.column, query.field) && query.field != null"
+                             ng-show="isDateType(query.column, query.field)"
                              ng-keypress="$event.keyCode == 13 && search()"
                              tooltip-trigger="focus"
                              tooltip-placement="top" uib-tooltip="4. Add your value"
               	           ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
               	           placeholder="dd/mm/yyyy"
-                             set-focus-if="isDate(query.column, query.field) && query.field != null && query.queryType != null"
+                             set-focus-if="isDateType(query.column, query.field) && query.field != null && query.queryType != null"
                              />
                         <span ng-show="isSelect(query.column, query.field)">
                             <select ng-model="query.query" class="form-control"

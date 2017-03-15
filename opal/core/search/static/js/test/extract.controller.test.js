@@ -69,7 +69,13 @@ describe('ExtractCtrl', function(){
                     "lookup_list": null,
                     "name": "date_of_birth",
                     "type": "date"
-                }
+                },
+                {
+                    "title": "Last Appointment",
+                    "lookup_list": null,
+                    "name": "last_appointment",
+                    "type": "date_time"
+                },
             ]
         },
         {
@@ -244,6 +250,13 @@ describe('ExtractCtrl', function(){
             expect($scope.isDate("Demographics", "date_of_birth")).toBe(true);
         });
 
+        it('should find date time fields', function(){
+            expect($scope.isDateTime("Demographics", "last_appointment")).toBe(true);
+        });
+
+        it('should find date type fields', function(){
+            expect($scope.isDateType("Demographics", "date_of_birth")).toBe(true);
+        });
     });
 
     describe('addFilter()', function(){
@@ -296,20 +309,33 @@ describe('ExtractCtrl', function(){
 
     describe('resetFilter()', function(){
 
-        it('should reset the criteria', function(){
+        it('should reset the column', function(){
             var criteria = {
               column: "demographics",
               field: "name",
               query: "Jane",
               queryType: "contains"
-            }
-            $scope.resetFilter(criteria);
+            };
+            $scope.resetFilter(criteria, ['column']);
             expect(criteria.column).toEqual("demographics");
             expect(criteria.field).toEqual(null);
             expect(criteria.query).toEqual(null);
             expect(criteria.queryType).toEqual(null);
-        })
+        });
 
+        it('should reset the field', function(){
+            var criteria = {
+              column: "demographics",
+              field: "name",
+              query: "Jane",
+              queryType: "contains"
+            };
+            $scope.resetFilter(criteria, ['column', 'field']);
+            expect(criteria.column).toEqual("demographics");
+            expect(criteria.field).toEqual("name");
+            expect(criteria.query).toEqual(null);
+            expect(criteria.queryType).toEqual(null);
+        });
     });
 
     describe('removeCriteria', function(){
