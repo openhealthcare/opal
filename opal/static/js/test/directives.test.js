@@ -229,20 +229,31 @@ describe('OPAL Directives', function(){
     });
 
     describe('parentHeight', function(){
+
         it('should be markdowny', function(){
             var markup = '<div style="height: 200px"><div markdown="foo"></div></div>';
             scope.editing = {foo: 'bar'}
             compileDirective(markup);
             expect($(element).height()).toBe(200);
         });
+
     });
 
     describe('markdown', function(){
+
         it('should be markdowny', function(){
             var markup = '<div markdown="foo"></div>';
             scope.editing = {foo: 'bar'}
             compileDirective(markup);
+            expect($(element).html()).toEqual('<p>bar  </p>');
         });
+
+        it("should do nothing if we can't find item or editing", function(){
+            var markup = '<div markdown="foo"></div>';
+            compileDirective(markup);
+            expect($(element).html()).toEqual('');
+        });
+
     })
 
     describe("freezeHeaders", function(){
