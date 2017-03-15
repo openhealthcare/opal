@@ -20,7 +20,7 @@
                   Find patients where the
                   <span ng-repeat="query in completeCriteria()">
                     <span ng-hide="query.column === 'Tagging'">
-                      <strong>[[ columnToDisplayName[query.column] ]] [[ query.field ]]</strong> [[ readableQuery(query.queryType) ]] <strong>[[ query.query ]]</strong>
+                      <strong>[[ findColumn(query.column).display_name ]] [[ findField(query.column, query.field).title ]]</strong> [[ readableQuery(query.queryType) ]] <strong>[[ query.query ]]</strong>
                     </span>
                     <span ng-show="query.column === 'Tagging'">
                       patient has been under the <strong>[[ query.field ]]</strong> team
@@ -53,13 +53,12 @@
                   </div>
                 </div>
               </div>
-
               <div class="row">
                 <div class="col-md-9">
                   <span ng-repeat="query in criteria">
                     <div class="row">
                       <div class="col-md-1">
-                        <button type="button" class="btn btn-default content-offset-25" ng-disabled="!query.column && !query.field"
+                        <button type="button" class="btn btn-default square-button content-offset-25" ng-disabled="!query.column && !query.field"
                                 ng-click="selectInfo(query)" ng-class="{'btn-default': selectedInfo !== query, 'btn-info': selectedInfo === query}"
                                 >
                           <span class="fa fa-info"></span>
@@ -67,40 +66,39 @@
                       </div>
                       <div class="col-md-10">
                         <select class="form-control content-offset-25" ng-model="query.column"
-                                ng-change="resetFilter(query)"
+                                ng-change="resetFilter(query, ['column'])"
                                 tooltip-trigger="focus"
                                 tooltip-placement="top" uib-tooltip="1. Select a Column"
-                                set-focus-if="!query.column && criteria.length > 1"
+                                set-focus-if="!query.column"
                                 >
                           <option ng-repeat="col in columns" value="[[col.name]]">
                             [[col.display_name]]
                           </option>
                         </select>
-                        <span ng-repeat="col in columns"
-                              ng-show="query.column == col.name">
-                          <select class="form-control content-offset-25" ng-model="query.field"
-                                  tooltip-trigger="focus"
-                                  tooltip-placement="top" uib-tooltip="2. Select a field"
-                                  set-focus-if="query.field == null && query.column != null"
-                                  >
-                            <option ng-repeat="field in searchableFields(col)">[[field]]</option>
-                          </select>
-                        </span>
+                        <select class="form-control content-offset-25" ng-model="query.field"
+                                tooltip-trigger="focus"
+                                ng-show="query.column"
+                                ng-change="resetFilter(query, ['column', 'field'])"
+                                tooltip-placement="top" uib-tooltip="2. Select a field"
+                                set-focus-if="query.field == null && query.column != null"
+                                >
+                          <option value="[[ field.name ]]" ng-repeat="field in searchableFields(query.column)">[[ field.title ]]</option>
+                        </select>
                         <span ng-show="query.column != 'tagging'">
                           <select class="form-control content-offset-25"
-                                  ng-show="query.field != null && isText(query.column, query.field)"
+                                  ng-show="isText(query.column, query.field)"
                                   ng-model="query.queryType" tooltip-trigger="focus"
                                   tooltip-placement="top" uib-tooltip="3. Select your query type"
-                                  set-focus-if="query.field != null && !isDate(query.column, query.field)"
+                                  set-focus-if="isText(query.column, query.field)"
                                   >
                             <option>Equals</option>
                             <option ng-show="isText(query.column, query.field)">Contains</option>
                           </select>
                           <select class="form-control content-offset-25"
-                                  ng-show="query.field != null && isDate(query.column, query.field)"
+                                  ng-show="isDateType(query.column, query.field)"
                                   ng-model="query.queryType" tooltip-trigger="focus"
                                   tooltip-placement="top" uib-tooltip="3. Select your query type"
-                                  set-focus-if="query.field != null && isDate(query.column, query.field)" >
+                                  set-focus-if="isDateType(query.column, query.field)" >
                             <option>Before</option>
                             <option>After</option>
                           </select>
@@ -116,7 +114,7 @@
                           <input type="text"
                                  class="form-control content-offset-25"
                                  ng-model="query.query"
-                                 ng-show="isText(query.column, query.field) && query.field != null"
+                                 ng-show="isText(query.column, query.field)"
                                  uib-typeahead="x for x in query.lookup_list | filter:$viewValue | limitTo:8"
                                  placeholder="4. Add your value"
                                  ng-keypress="$event.keyCode == 13 && search()"
@@ -124,13 +122,13 @@
                                  />
                           <input type="text" ng-model="query.query"
                                  class="form-control content-offset-25"
-                                 ng-show="isDate(query.column, query.field) && query.field != null"
+                                 ng-show="isDateType(query.column, query.field)"
                                  ng-keypress="$event.keyCode == 13 && search()"
                                  tooltip-trigger="focus"
                                  tooltip-placement="top" uib-tooltip="4. Add your value"
                   	           ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
                   	           placeholder="dd/mm/yyyy"
-                                 set-focus-if="isDate(query.column, query.field) && query.field != null && query.queryType != null"
+                                 set-focus-if="isDate(query.column, query.field) && query.queryType != null"
                                  />
                             <span ng-show="isSelect(query.column, query.field)">
                                 <select ng-model="query.query" class="form-control content-offset-25"
@@ -143,11 +141,25 @@
                         </div>
                       </span>
                       <div class="col-md-1 text-right">
-                        <button type="button" class="btn btn-dange content-offset-25"
-                                ng-click="removeFilter($index)"
-                                >
-                          <span class="glyphicon glyphicon-minus"></span>
-                        </button>
+                        <div class="row">
+                          <div class="col-md-12">
+                            <button type="button" class="btn btn-dange content-offset-25"
+                                    ng-click="removeFilter($index)"
+                                    >
+                              <span class="glyphicon glyphicon-minus"></span>
+
+                            </button>
+                          </div>
+                        </div>
+                        <div ng-show="$last" class="row  content-offset">
+                          <div class="col-md-12">
+                            <button type="button" class="btn btn-primary"
+                                    ng-click="addFilter()"
+                                    >
+                              <span class="glyphicon glyphicon-plus"></span>
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <div ng-hide="$last" class="row">
@@ -156,30 +168,35 @@
                       </div>
                     </div>
                   </span>
-                  <div class="row content-offset-25">
-                    <div class="col-md-12 text-right">
-                      <button type="button" class="btn btn-primary"
-                              ng-click="addFilter()"
-                              >
-                        <span class="glyphicon glyphicon-plus"></span>
-                      </button>
-                    </div>
-                  </div>
                 </div>
                 <div class="col-md-3">
                   <div class="search-info" ng-show="selectedInfo">
                     <div class="search-info-title">
-                      <strong>[[ selectedInfo.column | title ]]</strong> - [[ selectedInfo.field | title ]]
+                      <strong>[[ findColumn(selectedInfo.column).display_name ]]</strong>
                     </div>
-                    <span ng-show="isBoolean(selectedInfo.column, selectedInfo.field)">
-                      [True/False]
+                     <div>
+                       <strong>[[ findField(selectedInfo.column, selectedInfo.field).title ]]</strong>
+                     </div>
+                    <span ng-show="selectedInfo.column !== 'tagging'">
+                      <span ng-show="isBoolean(selectedInfo.column, selectedInfo.field)">
+                        [True/False]
+                      </span>
+                      <span ng-show="isText(selectedInfo.column, selectedInfo.field)">
+                        [Text]
+                        <div ng-show="selectedInfo.lookup_list && selectedInfo.lookup_list.length">
+                          Any result is possible, but a curated list of [[ findField(selectedInfo.column, selectedInfo.field).lookup_list | underscoreToSpaces ]]s is suggested.
+                        </div>
+                      </span>
+                      <span ng-show="isDate(selectedInfo.column, selectedInfo.field)">
+                        [Date]
+                      </span>
+                      <span ng-show="isDateTime(selectedInfo.column, selectedInfo.field)">
+                        [Date & Time]
+                      </span>
                     </span>
-                    <span ng-show="isText(selectedInfo.column, selectedInfo.field)">
-                      [Text]
-                    </span>
-                    <span ng-show="isDate(selectedInfo.column, selectedInfo.field)">
-                      [Date]
-                    </span>
+                    <div>
+                      [[ findField(selectedInfo.column, selectedInfo.field).description ]]
+                    </div>
                   </div>
                 </div>
               </div>

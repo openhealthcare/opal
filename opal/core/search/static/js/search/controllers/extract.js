@@ -16,15 +16,10 @@ angular.module('opal.controllers').controller(
     $scope.JSON = window.JSON;
     $scope.filters = filters;
     $scope.columns = schema.getAdvancedSearchColumns();
-    $scope.columnToDisplayName = _.reduce($scope.columns,function(a,b) {
-      a[b.name] = b.display_name;
-      return a;
-    },{});
     $scope.searched = false;
     $scope.currentPageNumber = 1;
     $scope.paginator = new Paginator($scope.search);
 
-    // todo, remove symptom from here
     var NOT_ADVANCED_SEARCHABLE = [
         "created", "updated", "created_by_id", "updated_by_id"
     ];
@@ -90,70 +85,78 @@ angular.module('opal.controllers').controller(
         c.combine = combine;
       });
 
-      if(criteria.length){
-        if(!$scope.selectedInfo){
-          $scope.selectInfo($scope.criteria[0])
-        }
-      }
+
 
       return criteria;
     };
 
-    $scope.searchableFields = function(column){
+    $scope.searchableFields = function(columnName){
+        var column = $scope.findColumn(columnName);
         // TODO - don't hard-code this
-        if(column.name == 'microbiology_test'){
-            return [
-                'Test',
-                'Date Ordered',
-                'Details',
-                'Microscopy',
-                'Organism',
-                'Sensitive Antibiotics',
-                'Resistant Antibiotics'
-            ]
+        if(column){
+          if(column.name == 'microbiology_test'){
+              return [
+                  'Test',
+                  'Date Ordered',
+                  'Details',
+                  'Microscopy',
+                  'Organism',
+                  'Sensitive Antibiotics',
+                  'Resistant Antibiotics'
+              ]
+          }
+          return _.map(
+              _.reject(
+                  column.fields,
+                  function(c){
+                      if(_.contains(NOT_ADVANCED_SEARCHABLE, c.name)){
+                          return true;
+                      }
+                      return c.type == 'token' ||  c.type ==  'list';
+                  }),
+              function(c){ return c; }
+          ).sort();
         }
-        return _.map(
-            _.reject(
-                column.fields,
-                function(c){
-                    if(_.contains(NOT_ADVANCED_SEARCHABLE, c.name)){
-                        return true;
-                    }
-                    return c.type == 'token' ||  c.type ==  'list';
-                }),
-            function(c){ return underscoreToCapWords(c.name); }
-        ).sort();
+    };
+
+    $scope.findColumn = function(columnName){
+      if(!columnName){
+        return;
+      }
+      return _.findWhere($scope.columns, {name: columnName});
+    }
+
+    $scope.findField = function(columnName, fieldName){
+      /*
+      * returns the field object from the schema when given column.name and field.name
+      */
+      var column = $scope.findColumn(columnName);
+      if(!column){return;}
+      return _.findWhere(
+          column.fields, {name: fieldName}
+      );
     };
 
     $scope.isType = function(column, field, type){
+        var theField = $scope.findField(column, field);
         if(!column || !field){
             return false;
         }
-        var col = _.find(
-            $scope.columns,
-            function(item){
-                return item.name == column.toLowerCase().replace( / /g,  '_')
-            });
-        var theField =  _.find(
-            col.fields,
-            function(f){
-                return f.name == field.toLowerCase().replace( / /g,  '_')
-            });
-        if(!theField){ return false }
+        if(!theField){ return false; }
         if (_.isArray(type)){
             var match = false;
-            _.each(type, function(t){ if(t == theField.type){ match = true} });
+            _.each(type, function(t){ if(t == theField.type){ match = true; } });
             return match;
         }else{
             return theField.type == type;
         }
     };
 
-    $scope.selectedInfo;
+    $scope.selectedInfo = undefined;
 
     $scope.selectInfo = function(query){
       $scope.selectedInfo = query;
-    }
+    };
 
 
     $scope.isBoolean = function(column, field){
@@ -162,7 +165,7 @@ angular.module('opal.controllers').controller(
 
     $scope.isText = function(column, field){
         return $scope.isType(column, field, "string") || $scope.isType(column, field, "text");
-    }
+    };
 
     $scope.isSelect = function(column, field){
         return $scope.isType(column, field, "many_to_many");
@@ -173,7 +176,12 @@ angular.module('opal.controllers').controller(
     };
 
     $scope.isDateTime = function(column, field){
-        return $scope.isType(column, field, "date");
+        return $scope.isType(column, field, "date_time");
+    };
+
+    $scope.isDateType = function(column, field){
+        // if the field is a date or a date time
+        return $scope.isDate(column, field) || $scope.isDateTime(column, field);
     };
 
     $scope.addFilter = function(){
@@ -192,30 +200,35 @@ angular.module('opal.controllers').controller(
         }
     };
 
-    $scope.resetFilter = function(query){
+    $scope.resetFilter = function(query, fieldsTypes){
       // when we change the column, reset the rest of the query
       _.each(query, function(v, k){
-        if(k !== 'column' && k in $scope.model){
+        if(!_.contains(fieldsTypes, k) && k in $scope.model){
           query[k] = $scope.model[k];
         }
       });
+      if(query.column && query.field){
+        $scope.selectInfo(query);
+      }
+      else{
+        if($scope.selectedInfo && !$scope.selectedInfo.field){
+          $scope.selectInfo(undefined);
+        }
+      }
     };
 
     $scope.removeCriteria = function(){
         $scope.criteria = [_.clone($scope.model)];
     };
 
+
     //
     // Determine the appropriate lookup list for this field if
     // one exists.
     //
-    $scope._lookuplist_watch = function(){
+    $scope.refresh = function(){
         _.map($scope.criteria, function(c){
-            var column = _.findWhere($scope.columns, {name: c.column});
-            if(!column){return;}
-            if(!c.field){return;}
-            var field = _.findWhere(
-                column.fields, {name: c.field.toLowerCase().replace(/ /g, '_')});
+            var field = $scope.findField(c.column, c.field)
             if(!field){return; }
             if(field.lookup_list){
                 c.lookup_list = $scope[field.lookup_list + '_list'];
@@ -227,7 +240,7 @@ angular.module('opal.controllers').controller(
         $scope.results = [];
     }
 
-    $scope.$watch('criteria', $scope._lookuplist_watch, true);
+    $scope.$watch('criteria', $scope.refresh, true);
 
     $scope.search = function(pageNumber){
         if(!pageNumber){

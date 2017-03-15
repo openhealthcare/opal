@@ -210,6 +210,13 @@ filters.filter('title', function(){
     };
 });
 
+filters.filter('underscoreToSpaces', function(){
+  return function(str){
+		str = ( str === undefined || str === null ) ? '' : str;
+    return str.toString().replace(/_/g, ' ');
+  };
+});
+
 filters.filter('totalDays', function(toMomentFilter){
     return function(item){
         if(!item.start_date){ return null; }

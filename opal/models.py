@@ -160,7 +160,6 @@ class SerialisableFields(object):
 
         return default
 
-
     @classmethod
     def get_field_description(cls, name):
         field = cls._get_field(name)
@@ -1035,8 +1034,15 @@ class Tagging(TrackedModel, models.Model):
 
     @staticmethod
     def build_field_schema():
-        return [{'name': t, 'type': 'boolean'} for t in
-                patient_lists.TaggedPatientList.get_tag_names()]
+        # t.title is wrong, but its the better than nothing
+        result = []
+        for tag in patient_lists.TaggedPatientList.get_tag_names():
+            result.append({
+                'name': tag,
+                'type': 'boolean',
+                'title': tag.replace("_", " ").title()
+            })
+        return result
 
 
 """
@@ -1304,23 +1310,27 @@ class Demographics(PatientSubrecord):
 
     hospital_number = models.CharField(max_length=255, blank=True)
     nhs_number = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name="NHS Number"
+        max_length=255, blank=True, null=True, verbose_name="NHS Number",
     )
 
     surname = models.CharField(max_length=255, blank=True)
     first_name = models.CharField(max_length=255, blank=True)
     middle_name = models.CharField(max_length=255, blank=True, null=True)
     title = ForeignKeyOrFreeText(Title)
-    date_of_birth = models.DateField(null=True, blank=True)
+    date_of_birth = models.DateField(
+        null=True, blank=True, verbose_name="Date of Birth"
+    )
     marital_status = ForeignKeyOrFreeText(MaritalStatus)
     religion = models.CharField(max_length=255, blank=True, null=True)
-    date_of_death = models.DateField(null=True, blank=True)
+    date_of_death = models.DateField(
+        null=True, blank=True, verbose_name="Date of Death"
+    )
     post_code = models.CharField(max_length=20, blank=True, null=True)
     gp_practice_code = models.CharField(
         max_length=20, blank=True, null=True, verbose_name="GP Practice Code"
     )
     birth_place = ForeignKeyOrFreeText(Destination,
-                                       verbose_name="Country Of Birth")
+                                       verbose_name="Country of Birth")
     ethnicity = ForeignKeyOrFreeText(Ethnicity)
     death_indicator = models.BooleanField(default=False)
 
@@ -1564,6 +1574,7 @@ class InpatientAdmission(PatientSubrecord, ExternallySourcedModel):
     _title = "Inpatient Admissions"
     _icon = 'fa fa-map-marker'
     _sort = "-admitted"
+    _advanced_searchable = False
 
     datetime_of_admission = models.DateTimeField(blank=True, null=True)
     datetime_of_discharge = models.DateTimeField(blank=True, null=True)
