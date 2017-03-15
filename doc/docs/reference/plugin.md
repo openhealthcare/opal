@@ -101,7 +101,7 @@ Returns the path to the directory containing the file in which this plugin is de
 
 #### OpalPlugin.get_javascripts()
 
-Return a dictionary angular module to file of the plugin's javasctipts as paths to them ready for staticfiles.
+Return a dictionary of namespaced javascript files as paths to them ready for staticfiles.
 Defaults to returning the `OpalPlugin.javascripts` property.
 
 ```python
