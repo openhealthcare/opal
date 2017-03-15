@@ -97,6 +97,7 @@ describe('OPAL Directives', function(){
                 '<table><thead height="200"></thead></table></div>';
 
             compileDirective(markup);
+            spyOn(scope, 'isScrolledIntoView').and.returnValue(false);
 
             spyOn(element[0], 'getBoundingClientRect').and.returnValue({top:0, bottom:-2})
 
@@ -109,6 +110,18 @@ describe('OPAL Directives', function(){
             spyOn(scope, 'isSelectedEpisode').and.returnValue(true);
             var markup = '<div scroll-episodes="isSelectedEpisode"></div>';
             compileDirective(markup);
+            spyOn(scope, 'isScrolledIntoView').and.returnValue(false);
+
+            scope.$broadcast('keydown',{ keyCode: 40});
+            expect(scope.isSelectedEpisode).toHaveBeenCalled();
+        });
+
+        it('should not scroll if we are in view', function(){
+            scope.isSelectedEpisode = true
+            spyOn(scope, 'isSelectedEpisode').and.returnValue(true);
+            var markup = '<div scroll-episodes="isSelectedEpisode"></div>';
+            compileDirective(markup);
+
             scope.$broadcast('keydown',{ keyCode: 40});
             expect(scope.isSelectedEpisode).toHaveBeenCalled();
         });
@@ -159,21 +172,52 @@ describe('OPAL Directives', function(){
 
     describe('placeholder', function() {
 
-        it('should display the', function() {
-            spyOn($, "support");
+        it('should still have a placeholder if we supprt them', function() {
             $.support.placeholder = true;
             var markup = '<input placeholder="foo" />';
             compileDirective(markup);
             expect(_.contains(element[0], 'placeholder="foo"'));
         });
 
-        it('should display the', function() {
+        it('should set the value', function() {
             spyOn($, "support");
             $.support.placeholder = false;
             var markup = '<input placeholder="foo" />';
             compileDirective(markup);
+            $timeout.flush();
+            expect($(element).val()).toEqual('foo')
+        });
+
+        it('focus() should nuke the value', function() {
+            spyOn($, "support");
+            $.support.placeholder = false;
+            var markup = '<input placeholder="foo" />';
+            compileDirective(markup);
+            $timeout.flush();
+            $(element[0]).triggerHandler('focus')
+            expect($(element).val()).toEqual('')
+        });
+
+        it('focus() then blur() should keep the value', function() {
+            spyOn($, "support");
+            $.support.placeholder = false;
+            var markup = '<input placeholder="foo" />';
+            compileDirective(markup);
+            $timeout.flush();
+            $(element[0]).triggerHandler('focus')
+            $(element[0]).triggerHandler('blur')
+            expect($(element).val()).toEqual('foo')
+        });
+
+        it('should return if a password', function() {
+            spyOn($, "support");
+            $.support.placeholder = false;
+            var markup = '<input type="password" placeholder="foo" />';
+            compileDirective(markup);
             expect(_.contains(element[0], 'placeholder="foo"'));
         });
+
+        it
 
     });
 
