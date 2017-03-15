@@ -7,10 +7,25 @@ from mock import patch
 
 from opal.core.test import OpalTestCase
 
-from opal.tests.test_templatetags_plugins import TestPlugin
 from opal.core import plugins
 
+
 class OpalPluginTestCase(OpalTestCase):
+    def setUp(self):
+        class TestPlugin1(plugins.OpalPlugin):
+            javascripts = {
+                'opal.test': ['js/test/notreal.js']
+            }
+            stylesheets = ['css/test/notreal.css']
+            head_extra = ['notareal_template.html']
+            menuitems =[ { 'display': 'test' } ]
+            angular_module_deps = ['js/test.angular.mod.js']
+
+        class TestPlugin2(plugins.OpalPlugin):
+            stylesheets = ['css/test/notreal.scss']
+
+        self.plugin1 = TestPlugin1
+        self.plugin2 = TestPlugin2
 
     @patch("opal.core.plugins.inspect.getfile")
     def test_directory(self, getfile):
@@ -18,6 +33,17 @@ class OpalPluginTestCase(OpalTestCase):
         plugin = list(plugins.OpalPlugin.list())[0]
         self.assertEqual(plugin.directory(), "/")
 
+    def test_get_css_styles(self):
+        self.assertEqual(
+            self.plugin1.get_styles(),
+             ['css/test/notreal.css']
+        )
+
+    def test_get_javascripts(self):
+        self.assertEqual(
+            self.plugin1.get_javascripts(),
+             {'opal.test': ['js/test/notreal.js']}
+        )
 
 class RegisterPluginsTestCase(OpalTestCase):
 
@@ -31,7 +57,6 @@ class RegisterPluginsTestCase(OpalTestCase):
 
 
 class PluginsPluginsTestCase(OpalTestCase):
-
     def test_plugins_warns(self):
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter('always')

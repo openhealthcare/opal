@@ -12,6 +12,9 @@ Also adds some directives to make it easy to render User names and avatars.
 
 Adds a utility method to the `Episode` service that returns a human readable patient name.
 
+#### Plugin.get_javascripts, Plugin.get_styles
+
+Enhances the API available for plugins to include javascript and css by adding methods on `opal.core.plugins.OpalPlugin`
 
 ### 0.8.1 (Minor Release)
 
