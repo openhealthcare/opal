@@ -14,9 +14,7 @@ Adds a utility method to the `Episode` service that returns a human readable pat
 
 #### Plugin.get_javascripts, Plugin.get_styles
 
-Adds a similar api to application for getting scripts/stylesheets and fixes
-issues around it
-
+Enhances the API available for plugins to include javascript and css by adding methods on `opal.core.plugins.OpalPlugin`
 
 ### 0.8.1 (Minor Release)
 
