@@ -221,13 +221,6 @@ describe('OPAL Directives', function(){
 
     });
 
-    describe('slashkeyfocus', function() {
-        it('should do something', function() {
-            var markup = '<input slash-key-focus />';
-            compileDirective(markup);
-        });
-    });
-
     describe('parentHeight', function(){
 
         it('should be markdowny', function(){
@@ -255,6 +248,21 @@ describe('OPAL Directives', function(){
         });
 
     })
+
+    describe('slashkeyfocus', function() {
+
+        it('should focus if we press /', function() {
+            var markup = '<input slash-key-focus="!state || state===\'normal\'"/>';
+            compileDirective(markup);
+            expect($(element).is(":focus")).toEqual(false)
+            spyOn(element[0], 'focus')
+            var e = $.Event('keyup.keyFocus');
+            e.keyCode = 191
+            $(window).trigger(e)
+            expect(element[0].focus).toHaveBeenCalled()
+        });
+
+    });
 
     describe("freezeHeaders", function(){
         it('should apply the stick table headers jquery directive', function(){
