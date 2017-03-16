@@ -262,6 +262,17 @@ describe('OPAL Directives', function(){
             expect(element[0].focus).toHaveBeenCalled()
         });
 
+        it('should blur if we ESC', function() {
+            var markup = '<input slash-key-focus="!state || state===\'normal\'"/>';
+            compileDirective(markup);
+            document.body.appendChild(element[0]);
+            var e = $.Event('keyup.keyBlur')
+            e.keyCode = 27
+            spyOn(element[0], 'blur').and.callThrough()
+            $(element).focus().trigger(e)
+            expect(element[0].blur).toHaveBeenCalled()
+        });
+
     });
 
     describe("freezeHeaders", function(){
