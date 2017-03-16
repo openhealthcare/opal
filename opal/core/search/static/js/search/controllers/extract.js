@@ -6,11 +6,6 @@ angular.module('opal.controllers').controller(
   ){
     "use strict";
 
-    var underscoreToCapWords = function(str) {
-        return str.toLowerCase().replace(/_/g, ' ').replace(
-                /(?:\b)(\w)/g, function(s, p){ return p.toUpperCase(); });
-    };
-
     $scope.profile = profile;
     $scope.limit = 10;
     $scope.JSON = window.JSON;
@@ -103,7 +98,7 @@ angular.module('opal.controllers').controller(
                   'Organism',
                   'Sensitive Antibiotics',
                   'Resistant Antibiotics'
-              ]
+              ];
           }
           return _.map(
               _.reject(
@@ -124,7 +119,7 @@ angular.module('opal.controllers').controller(
         return;
       }
       return _.findWhere($scope.columns, {name: columnName});
-    }
+    };
 
     $scope.findField = function(columnName, fieldName){
       /*
@@ -228,7 +223,7 @@ angular.module('opal.controllers').controller(
     //
     $scope.refresh = function(){
         _.map($scope.criteria, function(c){
-            var field = $scope.findField(c.column, c.field)
+            var field = $scope.findField(c.column, c.field);
             if(!field){return; }
             if(field.lookup_list){
                 c.lookup_list = $scope[field.lookup_list + '_list'];
@@ -238,7 +233,7 @@ angular.module('opal.controllers').controller(
         $scope.async_ready = false;
         $scope.searched = false;
         $scope.results = [];
-    }
+    };
 
     $scope.$watch('criteria', $scope.refresh, true);
 
@@ -299,7 +294,7 @@ angular.module('opal.controllers').controller(
                     }
                 }
             });
-        }
+        };
         $scope.async_waiting = true;
         $http.post(
             '/search/extract/download',
