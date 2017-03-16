@@ -181,10 +181,8 @@ _indexof = function(elt /*, from*/)
 		}
 		return -1;
 	};
-if (!Array.prototype.indexOf) {
-	Array.prototype.indexOf = _indexof
-}
 
+if (!Array.prototype.indexOf) {	Array.prototype.indexOf = _indexof };
 
 // From http://stackoverflow.com/a/3937924/2463201
 jQuery.support.placeholder = (function(){
@@ -192,13 +190,12 @@ jQuery.support.placeholder = (function(){
 	return 'placeholder' in i;
 })();
 
-
 // Fuck you Internet Explorer 8
-if (typeof String.prototype.trim !== 'function') {
-	String.prototype.trim = function() {
-		return this.replace(/^\s+|\s+$/g, '');
-	}
+_trim = function() {
+	return this.replace(/^\s+|\s+$/g, '');
 }
+
+if (typeof String.prototype.trim !== 'function') { String.prototype.trim = _trim };
 
 
 // // From http://stackoverflow.com/a/2897510/2463201

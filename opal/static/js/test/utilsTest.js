@@ -38,6 +38,7 @@ describe('Utils.OPAL._run', function (){
     describe('indexOf for IE8', function(){
         beforeEach(function(){
             Array.prototype._indexof = _indexof;
+            String.prototype._trim = _trim;
         })
 
         it('should return the index of the thing', function(){
@@ -46,7 +47,13 @@ describe('Utils.OPAL._run', function (){
             expect([1,2,3]._indexof(0)).toEqual(-1);
         });
 
-    })
+    });
+
+    describe('_trim()', function() {
+        it('should remove whitespace', function() {
+            expect('  hah '._trim()).toEqual('hah');
+        });
+    });
 });
 
 describe('utils.OPAL._track', function(){
