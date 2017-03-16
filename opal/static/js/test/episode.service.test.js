@@ -290,7 +290,15 @@ describe('Episode', function() {
                     id               : 555,
                     active           : true,
                     date_of_admission: '20/11/2013',
-                    discharge_date   : null
+                    discharge_date   : null,
+                    demographics: [{
+                        id: 101,
+                        patient_id: 99,
+                        first_name: 'John',
+                        surname: "Smith",
+                        date_of_birth: '31/07/1980',
+                        hospital_number: '555'
+                    }]
                 };
 
                 episode = new Episode(episodeData);
