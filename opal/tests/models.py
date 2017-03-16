@@ -114,7 +114,8 @@ COLOUR_CHOICES = (
 class FavouriteColour(models.PatientSubrecord):
     _is_singleton = True
     name = dmodels.CharField(
-        max_length=200, blank=True, null=True, choices=COLOUR_CHOICES
+        max_length=200, blank=True, null=True, choices=COLOUR_CHOICES,
+        help_text="orange is the new black"
     )
 
 

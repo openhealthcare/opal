@@ -5,22 +5,22 @@ import datetime
 from mock import patch, MagicMock
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.utils import timezone
 
 from opal import models
 from opal.core import exceptions
 from opal.models import (
     Subrecord, Tagging, Patient, InpatientAdmission, Symptom,
-    SymptomComplex, UserProfile
 )
 from opal.core.test import OpalTestCase
-import opal.tests.test_patient_lists # To make sure test tagged lists are pulled in
+from opal.core import patient_lists
+from opal.tests import test_patient_lists
 from opal.tests.models import (
     FamousLastWords, PatientColour, ExternalSubRecord, SymptomComplex,
     PatientConsultation, Birthday, DogOwner, HatWearer, HouseOwner, HoundOwner,
-    Colour
+    Colour, FavouriteColour
 )
+
 
 class PatientRecordAccessTestCase(OpalTestCase):
 
@@ -391,6 +391,14 @@ class SubrecordTestCase(OpalTestCase):
         only_words = FamousLastWords._get_field_title("words")
         self.assertEqual(only_words, "Only Words")
 
+    def test_enum(self):
+        enum = FavouriteColour.get_field_enum('name')
+        self.assertEqual(enum, ["purple", "yellow", "blue"])
+
+    def test_description(self):
+        description = FavouriteColour.get_field_description('name')
+        self.assertEqual(description, "orange is the new black")
+
     def test_verbose_name_abbreviation(self):
         # if a word is an abbreviation already, don't title case it!
         osd = DogOwner._get_field_title("ownership_start_date")
@@ -746,13 +754,15 @@ class TaggingTestCase(OpalTestCase):
     def test_form_template(self):
         self.assertEqual('tagging_modal.html', Tagging.get_form_template())
 
-    def test_field_schema(self):
-        names = ['eater', 'herbivore', 'carnivore']
-        fields = [{'name': tagname, 'type': 'boolean'} for tagname in names]
+    @patch.object(patient_lists.TaggedPatientList, "list")
+    def test_field_schema(self, patient_list):
+        patient_list.return_value = [test_patient_lists.TaggingTestPatientList]
+        expected = [
+            {'name': 'eater', 'title': 'Eater', 'type': 'boolean'},
+            {'type': 'boolean', 'name': 'herbivore', 'title': 'Herbivore'}
+        ]
         schema = Tagging.build_field_schema()
-        for field in fields:
-            self.assertIn(field, schema)
-
+        self.assertEqual(expected, schema)
 
 
 class AbstractDemographicsTestCase(OpalTestCase):
