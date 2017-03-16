@@ -161,6 +161,21 @@ class SerialisableFields(object):
         return default
 
     @classmethod
+    def get_field_description(cls, name):
+        field = cls._get_field(name)
+        description = getattr(field, 'help_text', "")
+        if description:
+            return description
+
+    @classmethod
+    def get_field_enum(cls, name):
+        field = cls._get_field(name)
+        choices = getattr(field, "choices", [])
+
+        if choices:
+            return [i[1] for i in choices]
+
+    @classmethod
     def build_field_schema(cls):
         field_schema = []
         for fieldname in cls._get_fieldnames_to_serialize():
@@ -184,14 +199,18 @@ class SerialisableFields(object):
                 )
             title = cls._get_field_title(fieldname)
             default = cls._get_field_default(fieldname)
+            field = {
+                'name': fieldname,
+                'title': title,
+                'type': field_type,
+                'lookup_list': lookup_list,
+                'default': default,
+                'model': cls.__name__,
+                'description': cls.get_field_description(fieldname),
+                'enum': cls.get_field_enum(fieldname)
+            }
 
-            field_schema.append({'name': fieldname,
-                                 'title': title,
-                                 'type': field_type,
-                                 'lookup_list': lookup_list,
-                                 'default': default,
-                                 'model': cls.__name__
-                                 })
+            field_schema.append(field)
         return field_schema
 
 
@@ -1011,8 +1030,15 @@ class Tagging(TrackedModel, models.Model):
 
     @staticmethod
     def build_field_schema():
-        return [{'name': t, 'type': 'boolean'} for t in
-                patient_lists.TaggedPatientList.get_tag_names()]
+        # t.title is wrong, but its the better than nothing
+        result = []
+        for tag in patient_lists.TaggedPatientList.get_tag_names():
+            result.append({
+                'name': tag,
+                'type': 'boolean',
+                'title': tag.replace("_", " ").title()
+            })
+        return result
 
 
 """
@@ -1280,23 +1306,27 @@ class Demographics(PatientSubrecord):
 
     hospital_number = models.CharField(max_length=255, blank=True)
     nhs_number = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name="NHS Number"
+        max_length=255, blank=True, null=True, verbose_name="NHS Number",
     )
 
     surname = models.CharField(max_length=255, blank=True)
     first_name = models.CharField(max_length=255, blank=True)
     middle_name = models.CharField(max_length=255, blank=True, null=True)
     title = ForeignKeyOrFreeText(Title)
-    date_of_birth = models.DateField(null=True, blank=True)
+    date_of_birth = models.DateField(
+        null=True, blank=True, verbose_name="Date of Birth"
+    )
     marital_status = ForeignKeyOrFreeText(MaritalStatus)
     religion = models.CharField(max_length=255, blank=True, null=True)
-    date_of_death = models.DateField(null=True, blank=True)
+    date_of_death = models.DateField(
+        null=True, blank=True, verbose_name="Date of Death"
+    )
     post_code = models.CharField(max_length=20, blank=True, null=True)
     gp_practice_code = models.CharField(
         max_length=20, blank=True, null=True, verbose_name="GP Practice Code"
     )
     birth_place = ForeignKeyOrFreeText(Destination,
-                                       verbose_name="Country Of Birth")
+                                       verbose_name="Country of Birth")
     ethnicity = ForeignKeyOrFreeText(Ethnicity)
     death_indicator = models.BooleanField(default=False)
 
@@ -1540,6 +1570,7 @@ class InpatientAdmission(PatientSubrecord, ExternallySourcedModel):
     _title = "Inpatient Admissions"
     _icon = 'fa fa-map-marker'
     _sort = "-admitted"
+    _advanced_searchable = False
 
     datetime_of_admission = models.DateTimeField(blank=True, null=True)
     datetime_of_discharge = models.DateTimeField(blank=True, null=True)

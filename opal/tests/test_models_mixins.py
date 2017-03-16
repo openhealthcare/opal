@@ -61,6 +61,8 @@ class SerialisableFieldsTestCase(OpalTestCase):
         expected = [
             {
                 'model': 'SerialisableModel',
+                'description': None,
+                'enum': None,
                 'lookup_list': None,
                 'type': 'string',
                 'name': 'pid',
@@ -69,6 +71,8 @@ class SerialisableFieldsTestCase(OpalTestCase):
             },
             {
                 'model': 'SerialisableModel',
+                'description': None,
+                'enum': None,
                 'lookup_list': 'hat',
                 'type': 'string',
                 'name': 'hatty',
@@ -88,6 +92,7 @@ class ToDictMixinTestCase(OpalTestCase):
             self.model_instance.to_dict(self.user),
             dict(foo="gotten", id=None)
         )
+
 
 class UpdatesFromDictMixinTestCase(OpalTestCase):
     def setUp(self):
