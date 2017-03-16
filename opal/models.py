@@ -170,11 +170,10 @@ class SerialisableFields(object):
     @classmethod
     def get_field_enum(cls, name):
         field = cls._get_field(name)
-        choices =  getattr(field, "choices", [])
+        choices = getattr(field, "choices", [])
 
         if choices:
             return [i[1] for i in choices]
-
 
     @classmethod
     def build_field_schema(cls):

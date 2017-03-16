@@ -1,5 +1,5 @@
 """
-Templatetags for working with OPAL plugins
+Templatetags for working with Opal plugins
 """
 import itertools
 

@@ -97,6 +97,7 @@ describe('OPAL Directives', function(){
                 '<table><thead height="200"></thead></table></div>';
 
             compileDirective(markup);
+            spyOn(scope, 'isScrolledIntoView').and.returnValue(false);
 
             spyOn(element[0], 'getBoundingClientRect').and.returnValue({top:0, bottom:-2})
 
@@ -109,6 +110,18 @@ describe('OPAL Directives', function(){
             spyOn(scope, 'isSelectedEpisode').and.returnValue(true);
             var markup = '<div scroll-episodes="isSelectedEpisode"></div>';
             compileDirective(markup);
+            spyOn(scope, 'isScrolledIntoView').and.returnValue(false);
+
+            scope.$broadcast('keydown',{ keyCode: 40});
+            expect(scope.isSelectedEpisode).toHaveBeenCalled();
+        });
+
+        it('should not scroll if we are in view', function(){
+            scope.isSelectedEpisode = true
+            spyOn(scope, 'isSelectedEpisode').and.returnValue(true);
+            var markup = '<div scroll-episodes="isSelectedEpisode"></div>';
+            compileDirective(markup);
+
             scope.$broadcast('keydown',{ keyCode: 40});
             expect(scope.isSelectedEpisode).toHaveBeenCalled();
         });
@@ -124,6 +137,27 @@ describe('OPAL Directives', function(){
             $(element).click();
             expect($.fn.animate).toHaveBeenCalledWith({ scrollTop: '0' });
         });
+
+        it('should set the class when at top', function() {
+            var markup = '<button scroll-top></button>';
+            spyOn($.fn, 'scrollTop').and.returnValue(0)
+            spyOn(window, 'requestAnimationFrame').and.callFake(function(f){f()});
+            compileDirective(markup);
+            $(window).trigger('scroll.scrollTop')
+            var btn = $(element.find("button"));
+            expect($(element[0]).hasClass('hidden-at-top')).toBe(true);
+        });
+
+        it('should remove the class when below top', function() {
+            var markup = '<button scroll-top></button>';
+            spyOn($.fn, 'scrollTop').and.returnValue(100)
+            spyOn(window, 'requestAnimationFrame').and.callFake(function(f){f()});
+            compileDirective(markup);
+            $(window).trigger('scroll.scrollTop')
+            var btn = $(element.find("button"));
+            expect($(element[0]).hasClass('hidden-at-top')).toBe(false);
+        });
+
     })
 
     describe('goToTop', function(){
@@ -138,47 +172,108 @@ describe('OPAL Directives', function(){
 
     describe('placeholder', function() {
 
-        it('should display the', function() {
-            spyOn($, "support");
+        it('should still have a placeholder if we supprt them', function() {
             $.support.placeholder = true;
             var markup = '<input placeholder="foo" />';
             compileDirective(markup);
             expect(_.contains(element[0], 'placeholder="foo"'));
         });
 
-        it('should display the', function() {
+        it('should set the value', function() {
             spyOn($, "support");
             $.support.placeholder = false;
             var markup = '<input placeholder="foo" />';
             compileDirective(markup);
+            $timeout.flush();
+            expect($(element).val()).toEqual('foo')
+        });
+
+        it('focus() should nuke the value', function() {
+            spyOn($, "support");
+            $.support.placeholder = false;
+            var markup = '<input placeholder="foo" />';
+            compileDirective(markup);
+            $timeout.flush();
+            $(element[0]).triggerHandler('focus')
+            expect($(element).val()).toEqual('')
+        });
+
+        it('focus() then blur() should keep the value', function() {
+            spyOn($, "support");
+            $.support.placeholder = false;
+            var markup = '<input placeholder="foo" />';
+            compileDirective(markup);
+            $timeout.flush();
+            $(element[0]).triggerHandler('focus')
+            $(element[0]).triggerHandler('blur')
+            expect($(element).val()).toEqual('foo')
+        });
+
+        it('should return if a password', function() {
+            spyOn($, "support");
+            $.support.placeholder = false;
+            var markup = '<input type="password" placeholder="foo" />';
+            compileDirective(markup);
             expect(_.contains(element[0], 'placeholder="foo"'));
         });
 
-    });
+        it
 
-    describe('slashkeyfocus', function() {
-        it('should do something', function() {
-            var markup = '<input slash-key-focus />';
-            compileDirective(markup);
-        });
     });
 
     describe('parentHeight', function(){
+
         it('should be markdowny', function(){
             var markup = '<div style="height: 200px"><div markdown="foo"></div></div>';
             scope.editing = {foo: 'bar'}
             compileDirective(markup);
             expect($(element).height()).toBe(200);
         });
+
     });
 
     describe('markdown', function(){
+
         it('should be markdowny', function(){
             var markup = '<div markdown="foo"></div>';
             scope.editing = {foo: 'bar'}
             compileDirective(markup);
+            expect($(element).html()).toEqual('<p>bar  </p>');
         });
+
+        it("should do nothing if we can't find item or editing", function(){
+            var markup = '<div markdown="foo"></div>';
+            compileDirective(markup);
+            expect($(element).html()).toEqual('');
+        });
+
     })
+
+    describe('slashkeyfocus', function() {
+
+        it('should focus if we press /', function() {
+            var markup = '<input slash-key-focus="!state || state===\'normal\'"/>';
+            compileDirective(markup);
+            expect($(element).is(":focus")).toEqual(false)
+            spyOn(element[0], 'focus')
+            var e = $.Event('keyup.keyFocus');
+            e.keyCode = 191
+            $(window).trigger(e)
+            expect(element[0].focus).toHaveBeenCalled()
+        });
+
+        it('should blur if we ESC', function() {
+            var markup = '<input slash-key-focus="!state || state===\'normal\'"/>';
+            compileDirective(markup);
+            document.body.appendChild(element[0]);
+            var e = $.Event('keyup.keyBlur')
+            e.keyCode = 27
+            spyOn(element[0], 'blur').and.callThrough()
+            $(element).focus().trigger(e)
+            expect(element[0].blur).toHaveBeenCalled()
+        });
+
+    });
 
     describe("freezeHeaders", function(){
         it('should apply the stick table headers jquery directive', function(){
