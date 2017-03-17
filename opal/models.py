@@ -1656,7 +1656,19 @@ class SymptomComplex(EpisodeSubrecord):
     symptoms = models.ManyToManyField(
         Symptom, related_name="symptoms", blank=True
     )
-    duration = models.CharField(max_length=255, blank=True, null=True)
+    DURATION_CHOICES = (
+        ('3 days or less', '3 days or less',),
+        ('4-10 days', '4-10 days',),
+        ('11-21 days', '11-21 days',),
+        ('22 days to 3 months', '22 days to 3 months',),
+        ('over 3 months', 'over 3 months',),
+    )
+    duration = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        choices=DURATION_CHOICES
+    )
     details = models.TextField(blank=True, null=True)
 
     def to_dict(self, user):
