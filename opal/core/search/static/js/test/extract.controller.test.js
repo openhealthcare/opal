@@ -112,13 +112,89 @@ describe('ExtractCtrl', function(){
             "readOnly": false,
             "advanced_searchable": true,
             "fields": [
-                {
-                    "title": "Some test",
-                    "lookup_list": null,
-                    "name": "some_tests",
-                    "type": "many_to_many"
-                }
-            ]
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "test",
+                title: "Test",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "date_ordered",
+                title: "Date Ordered",
+                type: "date"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "details",
+                title: "Details",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "microscopy",
+                title: "Microscopy",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "organism",
+                title: "Organism",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "sensitive_antibiotics",
+                title: "Sensitive Antibiotics",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "resistant_antibiotics",
+                title: "Resistant Antibiotics",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "igm",
+                title: "IGM",
+                type: "string"
+              },
+            ],
+
+
         }
     ];
 
@@ -228,7 +304,10 @@ describe('ExtractCtrl', function(){
                 'Sensitive Antibiotics',
                 'Resistant Antibiotics'
             ];
-            expect($scope.searchableFields('microbiology_test')).toEqual(expected);
+            var result  = _.map(
+              $scope.searchableFields('microbiology_test'), "title"
+            );
+            expect(result).toEqual(expected);
         });
     });
 

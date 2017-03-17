@@ -90,15 +90,19 @@ angular.module('opal.controllers').controller(
         // TODO - don't hard-code this
         if(column){
           if(column.name == 'microbiology_test'){
-              return [
-                  'Test',
-                  'Date Ordered',
-                  'Details',
-                  'Microscopy',
-                  'Organism',
-                  'Sensitive Antibiotics',
-                  'Resistant Antibiotics'
-              ];
+            var micro_fields = [
+              "test",
+              "date_ordered",
+              "details",
+              "microscopy",
+              "organism",
+              "sensitive_antibiotics",
+              "resistant_antibiotics"
+            ];
+
+            return _.filter($scope.findColumn("microbiology_test").fields, function(field){
+                return _.contains(micro_fields, field.name)
+            })
           }
           return _.map(
               _.reject(
