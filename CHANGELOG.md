@@ -1,5 +1,8 @@
 ### 0.8.2 (Minor Release)
 
+### PUT to the episode API returns the episode with all its subrecords
+Previously it only returned the episode. Now it matches the episode create api end point
+
 ### Episode/Patient links in admin
 In the admin, episodes and patients lists now have links to the patient detail pages.
 
