@@ -322,14 +322,18 @@ describe('ExtractCtrl', function(){
     });
 
     describe('resetFilter()', function(){
+        var criteria;
+        beforeEach(function(){
+          criteria = {
+            column: "demographics",
+            field: "name",
+            query: "Jane",
+            queryType: "contains"
+          };
+        });
 
         it('should reset the column', function(){
-            var criteria = {
-              column: "demographics",
-              field: "name",
-              query: "Jane",
-              queryType: "contains"
-            };
+
             $scope.resetFilter(criteria, ['column']);
             expect(criteria.column).toEqual("demographics");
             expect(criteria.field).toEqual(null);
@@ -338,17 +342,17 @@ describe('ExtractCtrl', function(){
         });
 
         it('should reset the field', function(){
-            var criteria = {
-              column: "demographics",
-              field: "name",
-              query: "Jane",
-              queryType: "contains"
-            };
             $scope.resetFilter(criteria, ['column', 'field']);
             expect(criteria.column).toEqual("demographics");
             expect(criteria.field).toEqual("name");
             expect(criteria.query).toEqual(null);
             expect(criteria.queryType).toEqual(null);
+        });
+
+        it('should empty the selectedInfo', function(){
+            $scope.selectedInfo = "some info";
+            $scope.resetFilter(criteria, ['column']);
+            expect($scope.selectedInfo).toBe(undefined);
         });
     });
 
