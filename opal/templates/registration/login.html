@@ -8,13 +8,12 @@
     <div class="panel panel-primary login">
       <div class="panel-heading">
         <h1>
-            <img src="{% static 'img/ohc-trans.png' %}" />
-
+          <img src="{% if OPAL_LOGO_PATH %}{% static OPAL_LOGO_PATH %}{% else %}{% static 'img/ohc-trans.png' %}{% endif %}" />
         {{OPAL_BRAND_NAME}}
         </h1>
       </div>
 
-      <div class="panel-body">    
+      <div class="panel-body">
         {% if form.errors %}
           <p>Your username and password didn't match. Please try again.</p>
         {% endif %}
@@ -23,7 +22,7 @@
 	      {% csrf_token %}
 	      <div class="form-group">
 		    <div class="col-sm-12">
-              <input type="text" id="username" name="username"  placeholder="Username" 
+              <input type="text" id="username" name="username"  placeholder="Username"
                      autocomplete="off"
                      class="form-control"
                      autofocus="autofocus"
