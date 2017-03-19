@@ -7,4 +7,6 @@
 {% if f['type'] == 'date_time' %}{{ '{' + '% datetimepicker ' }} field="{{ f["model"] }}.{{ f["name"] }}" {{' %' +'}' }}{% endif %}
 {% if f['type'] == 'text' %}{{ '{' + '% textarea ' }} field="{{ f["model"] }}.{{ f["name"] }}" {{' %' +'}' }}{% endif %}
 {% if f['type'] == 'boolean' or f['type'] == 'null_boolean' %}{{ '{' + '% checkbox ' }} field="{{ f["model"] }}.{{ f["name"] }}" {{' %' +'}' }}{% endif %}
+{% if f['type'] == 'float' %}{{ '{' + '% input ' }} field="{{ f["model"] }}.{{ f["name"] }}" {{' %' +'}' }}{% endif %}
+{% if f['type'] == 'integer' %}{{ '{' + '% input ' }} field="{{ f["model"] }}.{{ f["name"] }}" {{' %' +'}' }}{% endif %}
 {% endif %}{% endfor %}

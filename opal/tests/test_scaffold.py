@@ -382,6 +382,36 @@ class FormRenderTestCase(OpalTestCase):
             '{% load forms %}\n{% checkbox  field="Colour.name"  %}'
         )
 
+    @patch.object(Colour, "build_field_schema")
+    def test_integer_render(self, build_field_schema, lshift):
+        build_field_schema.return_value = {
+            'lookup_list': None,
+            'model': 'Colour',
+            'name': 'number',
+            'title': 'Number',
+            'type': 'integer'
+        },
+        scaffold_path = ffs.Path(settings.PROJECT_PATH)/'scaffolding'
+        create_form_template_for(Colour, scaffold_path)
+        lshift.assert_called_once_with(
+            '{% load forms %}\n{% input  field="Colour.number"  %}'
+        )
+
+    @patch.object(Colour, "build_field_schema")
+    def test_float_render(self, build_field_schema, lshift):
+        build_field_schema.return_value = {
+            'lookup_list': None,
+            'model': 'Colour',
+            'name': 'number',
+            'title': 'Number',
+            'type': 'float'
+        },
+        scaffold_path = ffs.Path(settings.PROJECT_PATH)/'scaffolding'
+        create_form_template_for(Colour, scaffold_path)
+        lshift.assert_called_once_with(
+            '{% load forms %}\n{% input  field="Colour.number"  %}'
+        )
+
     @patch('ffs.Path.__bool__')
     @patch('ffs.Path.__nonzero__')
     @patch('ffs.Path.mkdir')
