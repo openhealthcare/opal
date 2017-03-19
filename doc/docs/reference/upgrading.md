@@ -3,13 +3,32 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
-
 ### 0.8.0 -> 0.8.1
 
 #### Upgrading Opal
 
-We've removed the undocumented `ReopenEpisodeCtrl` from Opal. Applications wishing to retain this functionality may
-copy the controller from the v0.7.1 branch (opal/static/js/opal/controllers/reopen_episode.js). However we would warn developers that this flow has proven to be problematic and confusing for users whenever used - hence the removal.
+How you do this depends on how you have configured your application, but updating your
+requirements.txt to update the version should work.
+
+    # requirements.txt
+    opal==0.8.0
+
+There are no Opal migrations for this version.
+
+#### PatientList.get_queryset
+
+The `PatientList.get_queryset` method now takes keyword arguments - at the current time
+it is only passed `user` - the user for the current request, but in the future this may
+be extended, so applications should consider using `**kwargs` to ensure this method
+does not raise exceptions in the future.
+
+#### ReopenEpisodeCtrl
+
+We've removed the undocumented `ReopenEpisodeCtrl` from Opal. Applications wishing
+to retain this functionality may copy the controller from the v0.7.1 branch
+(opal/static/js/opal/controllers/reopen_episode.js). However we would warn developers
+that this flow has proven to be problematic and confusing for users whenever
+used - hence the removal.
 
 ### 0.7.1 -> 0.8.0
 
