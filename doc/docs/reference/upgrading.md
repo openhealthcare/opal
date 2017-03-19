@@ -9,7 +9,7 @@ application to a later version where there are extra steps required.
 #### Upgrading Opal
 
 We've removed the undocumented `ReopenEpisodeCtrl` from Opal. Applications wishing to retain this functionality may
-copy the controller from the v0.7.1 branch (opal/static/js/opal/controllers/reopen_episode.js). However we would warn developers that this flow has proven to be problematic and confusing for users whenever used - hence the removal. 
+copy the controller from the v0.7.1 branch (opal/static/js/opal/controllers/reopen_episode.js). However we would warn developers that this flow has proven to be problematic and confusing for users whenever used - hence the removal.
 
 ### 0.7.1 -> 0.8.0
 
@@ -51,7 +51,7 @@ The form templates add validation checks around the saving to catch any validati
 
 As part of this modal_base has been moved into a folder in templates called base_templates
 
-Rename any templates extending `modal_base.html` to extend the correct template in `base_templates/` - `modal_base.html` or `modal_form_base.html`.
+Rename any templates extending `modal_base.html` to extend the correct template in `base_templates/`. This will be either `modal_base.html` or `modal_form_base.html`.
 
 #### Add episode modal url
 
@@ -60,6 +60,9 @@ The add episode modal previously available at
 Any controllers attempting to open the modal e.g. custom list flows should update their
 `$modal.open` call to remove the trailing slash.
 
+#### Admin URL
+
+The Admin url has changed to require a trailing slash, so any links to `/admin` - for instance, in a custom menu bar, will need to be updated to `/admin/`.
 
 ### 0.7.0 -> 0.7.1
 
