@@ -89,7 +89,7 @@ angular.module('opal.controllers').controller(
         var column = $scope.findColumn(columnName);
         // TODO - don't hard-code this
         if(column){
-          if(column.name == 'microbiology_test'){
+          if(column.name == 'microbiology_test' || column.name == 'investigation'){
             var micro_fields = [
               "test",
               "date_ordered",

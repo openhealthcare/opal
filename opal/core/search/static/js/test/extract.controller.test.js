@@ -193,8 +193,95 @@ describe('ExtractCtrl', function(){
                 type: "string"
               },
             ],
-
-
+        },
+        {
+            "single": false,
+            "name": "investigation",
+            "display_name": "Investigation",
+            "readOnly": false,
+            "advanced_searchable": true,
+            "fields": [
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "test",
+                title: "Test",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "date_ordered",
+                title: "Date Ordered",
+                type: "date"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "details",
+                title: "Details",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "microscopy",
+                title: "Microscopy",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "organism",
+                title: "Organism",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "sensitive_antibiotics",
+                title: "Sensitive Antibiotics",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "resistant_antibiotics",
+                title: "Resistant Antibiotics",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "igm",
+                title: "IGM",
+                type: "string"
+              },
+            ],
         }
     ];
 
@@ -306,6 +393,22 @@ describe('ExtractCtrl', function(){
             ];
             var result  = _.map(
               $scope.searchableFields('microbiology_test'), "title"
+            );
+            expect(result).toEqual(expected);
+        });
+
+        it('should special case investigations fields', function(){
+            var expected = [
+                'Test',
+                'Date Ordered',
+                'Details',
+                'Microscopy',
+                'Organism',
+                'Sensitive Antibiotics',
+                'Resistant Antibiotics'
+            ];
+            var result  = _.map(
+              $scope.searchableFields('investigation'), "title"
             );
             expect(result).toEqual(expected);
         });
@@ -660,7 +763,7 @@ describe('ExtractCtrl', function(){
     describe('Getting searchable columns', function(){
         it('should only get the columns that are advanced searchable', function(){
             expect($scope.columns).toEqual([
-              columnsData[1], columnsData[2], columnsData[3]
+              columnsData[1], columnsData[2], columnsData[3], columnsData[4]
             ]);
         });
     });
