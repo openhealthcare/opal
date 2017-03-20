@@ -14,7 +14,7 @@
       </button>
 
 	  <a class="navbar-brand" href="/#/">
-        <img src="{% static 'img/ohc-trans.png' %}" />
+        <img src="{% if OPAL_LOGO_PATH %}{% static OPAL_LOGO_PATH %}{% else %}{% static 'img/ohc-trans.png' %}{% endif %}" />
         {{OPAL_BRAND_NAME}}
         <small><small>
           {{ VERSION_NUMBER }}
