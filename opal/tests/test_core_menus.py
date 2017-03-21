@@ -12,13 +12,13 @@ from opal.core import menus
 
 class MenuItemTestCase(OpalTestCase):
 
-    def test_sets_properties_to_none_if_empty(self):
+    def test_sets_properties__if_empty(self):
         item = menus.MenuItem()
-        self.assertEqual(item.template_name, None)
-        self.assertEqual(item.activepattern, None)
-        self.assertEqual(item.href, None)
-        self.assertEqual(item.icon, None)
-        self.assertEqual(item.display, None)
+        self.assertEqual(item.template_name, "")
+        self.assertEqual(item.activepattern, "")
+        self.assertEqual(item.href, "")
+        self.assertEqual(item.icon, "")
+        self.assertEqual(item.display, "")
         self.assertEqual(item.index, 100)
 
     def test_sets_kwargs(self):

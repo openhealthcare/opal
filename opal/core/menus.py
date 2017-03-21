@@ -9,11 +9,11 @@ warnings.simplefilter('once', DeprecationWarning)
 class MenuItem(object):
 
     def __init__(self, **kwargs):
-        self.template_name = kwargs.get('template_name', None)
-        self.activepattern = kwargs.get('activepattern', None)
-        self.href          = kwargs.get('href', None)
-        self.icon          = kwargs.get('icon', None)
-        self.display       = kwargs.get('display', None)
+        self.template_name = kwargs.get('template_name', "")
+        self.activepattern = kwargs.get('activepattern', "")
+        self.href          = kwargs.get('href', "")
+        self.icon          = kwargs.get('icon', "")
+        self.display       = kwargs.get('display', "")
         self.index         = kwargs.get('index', 100)
 
     def __repr__(self):
