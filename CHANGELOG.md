@@ -16,6 +16,10 @@ Adds a utility method to the `Episode` service that returns a human readable pat
 
 Enhances the API available for plugins to include javascript and css by adding methods on `opal.core.plugins.OpalPlugin`
 
+#### Misc changes
+
+Adds a new filter - `underscore-to-spaces` for removing underscores from strings.
+
 ### 0.8.1 (Minor Release)
 
 #### Cookies for the future
