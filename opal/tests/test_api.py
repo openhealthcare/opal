@@ -675,6 +675,15 @@ class EpisodeTestCase(OpalTestCase):
         self.assertIsNone(episode.updated)
         self.assertIsNone(episode.updated_by)
 
+        self.assertEqual(
+            len(response.data["demographics"]),
+            1,
+        )
+
+        self.assertTrue(
+            response.data["tagging"][0]["micro"]
+        )
+
         self.assertEqual(201, response.status_code)
         pcount = models.Patient.objects.filter(
             demographics__hospital_number="999000999").count()
@@ -768,6 +777,11 @@ class EpisodeTestCase(OpalTestCase):
         self.assertEqual(date(2015, 1, 14), e.date_of_admission)
         response_dict = json.loads(response.content.decode('UTF-8'))
         self.assertEqual(response_dict["date_of_admission"], "14/01/2015")
+        self.assertEqual(
+            len(response_dict["demographics"]),
+            1
+        )
+
 
     def test_update_nonexistent(self):
         self.mock_request.data = {"date_of_admission": "14/01/2015"}
