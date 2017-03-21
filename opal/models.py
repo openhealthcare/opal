@@ -178,6 +178,7 @@ class SerialisableFields(object):
     @classmethod
     def build_field_schema(cls):
         field_schema = []
+
         for fieldname in cls._get_fieldnames_to_serialize():
             if fieldname in ['id', 'patient_id', 'episode_id']:
                 continue
@@ -688,7 +689,8 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     @property
     def category(self):
         from opal.core import episodes
-        return episodes.EpisodeCategory.get(self.category_name.lower())(self)
+        category = episodes.EpisodeCategory.get(self.category_name.lower())
+        return category(self)
 
     def visible_to(self, user):
         """

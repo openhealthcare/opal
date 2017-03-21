@@ -388,6 +388,26 @@ describe('filters', function() {
     });
 
 
+    describe('underscoreToSpaces', function(){
+        var underscoreToSpaces;
+
+        beforeEach(function(){
+            inject(function($injector){
+                underscoreToSpaces = $injector.get('underscoreToSpacesFilter');
+            });
+        });
+
+        it('Should return the change underscores to spaces', function () {
+            expect(underscoreToSpaces('hello_world')).toBe('hello world');
+        });
+
+        it('Should handle nulls', function () {
+            expect(underscoreToSpaces(null)).toBe('');
+            expect(underscoreToSpaces(undefined)).toBe('');
+        });
+    });
+
+
     describe('totalDays', function(){
         var totalDaysFilter, today;
 

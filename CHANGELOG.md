@@ -25,9 +25,13 @@ This new setting allows applications to set the path at which the app logo is se
 If `OPAL_LOGO_PATH` is set, the value is passed to the `{% static %}` templatetag to set the `src` atribute
 of an image in the default application header and login screen.
 
+#### Misc changes
+
+Adds a new filter - `underscore-to-spaces` for removing underscores from strings.
+
 ### Minor fixes
 
-Fixes a bug in the allergies form.
+Fixes a bug where the allergies form rendered the provisional field twice
 
 ### 0.8.1 (Minor Release)
 
