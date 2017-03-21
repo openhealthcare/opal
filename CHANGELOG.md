@@ -11,19 +11,23 @@ In the admin, episodes and patients lists now have links to the patient detail p
 Adds a `User` Angular service that enables applications to use user data.
 Also adds some directives to make it easy to render User names and avatars.
 
-#### Episode.getFullName()
+### Episode.getFullName()
 
 Adds a utility method to the `Episode` service that returns a human readable patient name.
 
-#### Plugin.get_javascripts, Plugin.get_styles
+### Plugin.get_javascripts, Plugin.get_styles
 
 Enhances the API available for plugins to include javascript and css by adding methods on `opal.core.plugins.OpalPlugin`
 
-#### OPAL_LOGO_PATH
+### OPAL_LOGO_PATH
 
 This new setting allows applications to set the path at which the app logo is served.
 If `OPAL_LOGO_PATH` is set, the value is passed to the `{% static %}` templatetag to set the `src` atribute
 of an image in the default application header and login screen.
+
+### Minor fixes
+
+Fixes a bug in the allergies form.
 
 ### 0.8.1 (Minor Release)
 
