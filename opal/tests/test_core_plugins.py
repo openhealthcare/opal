@@ -6,6 +6,7 @@ import warnings
 from mock import patch
 
 from opal.core.test import OpalTestCase
+from opal.core import menus
 
 from opal.core import plugins
 
@@ -18,7 +19,7 @@ class OpalPluginTestCase(OpalTestCase):
             }
             stylesheets = ['css/test/notreal.css']
             head_extra = ['notareal_template.html']
-            menuitems =[ { 'display': 'test' } ]
+            menuitems = [ menus.MenuItem(display='test') ]
             angular_module_deps = ['js/test.angular.mod.js']
 
         class TestPlugin2(plugins.OpalPlugin):

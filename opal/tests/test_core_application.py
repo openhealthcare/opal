@@ -5,7 +5,7 @@ from mock import patch, MagicMock
 
 from opal.core.test import OpalTestCase
 
-from opal.core import application
+from opal.core import application, menus
 
 class OpalApplicationTestCase(OpalTestCase):
 
@@ -43,13 +43,25 @@ class OpalApplicationTestCase(OpalTestCase):
 
     def test_get_menu_items(self):
         self.assertEqual(
-            [],
+            application.OpalApplication.menuitems,
             application.OpalApplication.get_menu_items())
 
-    def test_get_menu_items_takes_user(self):
-        self.assertEqual(
-            [],
-            application.OpalApplication.get_menu_items(user=self.user))
+    def test_get_menu_items_includes_logout_for_authenticated_users(self):
+        user = self.user
+        user.is_authenticated = True
+        menuitems = application.OpalApplication.get_menu_items(user=user)
+        self.assertEqual(1, len([m for m in menuitems if m.icon == 'fa-sign-out']))
+
+    def test_get_menu_items_includes_admin_for_superuser(self):
+        user = self.user
+        user.is_authenticated = True
+        user.is_staff = True
+        menuitems = application.OpalApplication.get_menu_items(user=user)
+        self.assertEqual(1, len([m for m in menuitems if m.href == '/admin/']))
+
+    def test_get_menu(self):
+        menu = application.OpalApplication.get_menu()
+        self.assertIsInstance(menu, menus.Menu)
 
     def test_get_styles(self):
         self.assertEqual(['app.css'], self.app.get_styles())
