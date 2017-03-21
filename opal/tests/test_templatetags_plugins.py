@@ -1,6 +1,8 @@
 """
 Unittests for the opal.templatetags.plugins module
 """
+import warnings
+
 from mock import patch
 
 from opal.core import plugins
@@ -72,10 +74,11 @@ class PluginTestCase(OpalTestCase):
         self.assertEqual(expected_qs, qs)
 
     def test_plugin_menuitems(self, plugins):
-        plugins.return_value = [self.plugin1]
-        menuitems = opalplugins.plugin_menuitems()['items']
-        expected = [{'display': 'test'}]
-        self.assertEqual(expected, menuitems)
+        with warnings.catch_warnings(record=True):
+            plugins.return_value = [self.plugin1]
+            menuitems = opalplugins.plugin_menuitems()['items']
+            expected = [{'display': 'test'}]
+            self.assertEqual(expected, menuitems)
 
 
 class MenuItemOrderingTest(OpalTestCase):

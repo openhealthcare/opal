@@ -47,7 +47,8 @@ Please consult the Opal documentation on menus for more information.
                 self.items.append(item)
             else:
                 self.items.append(MenuItem(**item))
-                warnings.warn(warnthem.format(item))
+                warnings.warn(warnthem.format(item), DeprecationWarning,
+                              stacklevel=2)
 
         for plugin in plugins.OpalPlugin.list():
             for item in plugin.menuitems:
@@ -55,7 +56,8 @@ Please consult the Opal documentation on menus for more information.
                     self.items.append(item)
                 else:
                     self.items.append(MenuItem(**item))
-                    warnings.warn(warnthem.format(item))
+                    warnings.warn(warnthem.format(item), DeprecationWarning,
+                                  stacklevel=2)
 
     def __iter__(self):
 
