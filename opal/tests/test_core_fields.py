@@ -8,6 +8,7 @@ from opal.core.test import OpalTestCase
 from opal.tests import models as test_models
 from opal.models import Synonym
 
+
 class TestForeignKeyOrFreeText(OpalTestCase):
 
     def test_unset_verbose_name(self):
@@ -17,6 +18,10 @@ class TestForeignKeyOrFreeText(OpalTestCase):
     def test_set_verbose_name(self):
         field = getattr(test_models.HoundOwner, "dog")
         self.assertEqual(field.verbose_name, "hound")
+
+    def test_set_help_text(self):
+        field = getattr(test_models.DogOwner, "dog")
+        self.assertEqual(field.help_text, "good dog")
 
     def test_set_max_length(self):
         field = getattr(test_models.HoundOwner, "dog")

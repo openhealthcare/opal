@@ -13,12 +13,19 @@ class ForeignKeyOrFreeText(property):
     field.  If found, references foreign model in ForeignKey, otherwise stores
     string in CharField.
     """
-    def __init__(self, foreign_model,
-                 related_name=None, verbose_name=None, default=None):
+    def __init__(
+        self,
+        foreign_model,
+        related_name=None,
+        verbose_name=None,
+        help_text=None,
+        default=None
+    ):
         self.foreign_model = foreign_model
         self.related_name = related_name
         self._verbose_name = verbose_name
         self.default = default
+        self.help_text = help_text
 
         # for use in the fields, lookup lists essentially have
         #  a max length based on the char field that's used internally

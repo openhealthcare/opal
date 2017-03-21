@@ -68,6 +68,7 @@ pages:
       - Detail Views: reference/detail_views.md
       - Patient Lists: reference/patient_list.md
       # Misc
+      - Settings: reference/settings.md
       - Changelog: reference/changelog.md
       - Testing: reference/testing.md
       - Upgrading: reference/upgrading.md

@@ -353,7 +353,7 @@ class EpisodeViewSet(LoginRequiredViewset):
         try:
             episode.update_from_dict(request.data, request.user)
             return json_response(
-                episode.to_dict(request.user, shallow=True)
+                episode.to_dict(request.user)
             )
         except exceptions.ConsistencyError:
             return json_response({'error': 'Item has changed'}, 409)
