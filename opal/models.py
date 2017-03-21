@@ -1380,12 +1380,15 @@ class Treatment(EpisodeSubrecord):
     _sort = 'start_date'
     _icon = 'fa fa-flask'
 
+    HELP_START = "The date on which the patient began receiving this \
+treatment."
+
     drug          = ForeignKeyOrFreeText(Drug)
     dose          = models.CharField(max_length=255, blank=True)
     route         = ForeignKeyOrFreeText(Drugroute)
     start_date    = models.DateField(
         null=True, blank=True,
-        help_text="The date on which the patient began receiving this treatment."
+        help_text=HELP_START
     )
     end_date      = models.DateField(null=True, blank=True)
     frequency     = ForeignKeyOrFreeText(Drugfreq)
