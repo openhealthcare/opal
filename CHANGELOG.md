@@ -29,6 +29,9 @@ of an image in the default application header and login screen.
 
 Adds a new filter - `underscore-to-spaces` for removing underscores from strings.
 
+The options for `SymptomComplex.duration` have moved from the default form template to a choices
+declaration on the model. These are scheduled to move again to a lookuplist.
+
 ### Minor fixes
 
 Fixes a bug where the allergies form rendered the provisional field twice
