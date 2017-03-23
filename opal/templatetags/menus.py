@@ -20,6 +20,6 @@ def menu(context):
     menu = app.get_menu(user=context['user'])
 
     context.dicts.append({
-         'menu': menu,
+        'menu': menu,
     })
     return context

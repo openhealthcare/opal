@@ -74,4 +74,4 @@ Please consult the Opal documentation on menus for more information.
 
         items = sorted(sorted(self.items, key=alphabetic), key=index_sorting)
 
-        return ( i for i in items )
+        return (i for i in items)
