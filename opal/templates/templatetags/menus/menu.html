@@ -1,0 +1,19 @@
+{% load forms %}
+<ul class="nav navbar-nav navbar-right">
+  {% for item in menu %}
+    {% if item.template_name %}
+      {% include item.template_name %}
+    {% else %}
+      <li {% if item.activepattern %}ng-class="{active: $location.absUrl().indexOf('{{ item.activepattern }}') != -1}"{% endif %}>
+        <a href="{{ item.href }}">
+          {% if item.icon %} {% icon item.icon %} {% endif %}
+          {% if item.display %}
+          <span class="hidden-sm">
+            {{ item.display }}
+          </span>
+          {% endif %}
+        </a>
+      </li>
+    {% endif %}
+  {% endfor %}
+</ul>
