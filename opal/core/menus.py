@@ -74,8 +74,4 @@ Please consult the Opal documentation on menus for more information.
 
         items = sorted(sorted(self.items, key=alphabetic), key=index_sorting)
 
-        def gen():
-            for i in items:
-                yield i
-
-        return gen()
+        return ( i for i in items )
