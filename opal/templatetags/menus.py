@@ -11,7 +11,7 @@ register = template.Library()
 
 
 @register.inclusion_tag('templatetags/menus/menu.html', takes_context=True)
-def menu(context, classes):
+def menu(context):
     """
     Render the menu for this application.
     """
@@ -20,7 +20,6 @@ def menu(context, classes):
     menu = app.get_menu(user=context['user'])
 
     context.dicts.append({
-        'classes': classes,
-        'menu'   : menu,
+         'menu': menu,
     })
     return context
