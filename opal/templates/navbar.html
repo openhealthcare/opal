@@ -23,7 +23,7 @@
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="main-navbar">
-      {% menu "navbar-right" %}
+      {% menu %}
       {% if user.profile.can_see_pid %}
         {% include 'partials/_nav_search.html' %}
       {% endif %}
