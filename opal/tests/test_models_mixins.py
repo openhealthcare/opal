@@ -56,6 +56,66 @@ class SerialisableFieldsTestCase(OpalTestCase):
     def test_get_field_type(self):
         self.assertEqual(models.ForeignKey, SerialisableModel._get_field_type('patient_id'))
 
+    def test_get_human_readable_type_boolean(self):
+        with patch.object(SerialisableModel, "_get_field") as get_field:
+            get_field.return_value = models.BooleanField()
+            self.assertEqual(
+                SerialisableModel.get_human_readable_type("tree"),
+                "Either True or False",
+            )
+
+    def test_get_human_readable_type_null_boolean(self):
+            with patch.object(SerialisableModel, "_get_field") as get_field:
+                get_field.return_value = models.NullBooleanField()
+                self.assertEqual(
+                    SerialisableModel.get_human_readable_type("tree"),
+                    "Either True, False or None",
+                )
+
+    def test_get_human_readable_type_date_field(self):
+            with patch.object(SerialisableModel, "_get_field") as get_field:
+                get_field.return_value = models.DateField()
+                self.assertEqual(
+                    SerialisableModel.get_human_readable_type("tree"),
+                    "Date",
+                )
+
+    def test_get_human_readable_type_datetime_field(self):
+            with patch.object(SerialisableModel, "_get_field") as get_field:
+                get_field.return_value = models.DateTimeField()
+                self.assertEqual(
+                    SerialisableModel.get_human_readable_type("tree"),
+                    "Date & Time",
+                )
+
+    def test_get_human_readable_type_numeric_field(self):
+        numeric_fields = [
+            models.AutoField,
+            models.BigIntegerField,
+            models.IntegerField,
+            models.FloatField,
+            models.DecimalField
+        ]
+        for numeric_field in numeric_fields:
+            with patch.object(SerialisableModel, "_get_field") as get_field:
+                get_field.return_value = numeric_field()
+                self.assertEqual(
+                    SerialisableModel.get_human_readable_type("tree"),
+                    "Number"
+                )
+
+    def test_get_human_readable_type_reverse_foreign_key_field(self):
+        self.assertEqual(
+            test_models.HatWearer.get_human_readable_type("created_by"),
+            "One of the Users"
+        )
+
+    def test_get_human_readable_type_many_to_many_field(self):
+        self.assertEqual(
+            test_models.HatWearer.get_human_readable_type("hats"),
+            "Some of the Hats"
+        )
+
     def test_build_field_schema(self):
         schema = SerialisableModel.build_field_schema()
         expected = [

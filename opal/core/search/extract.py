@@ -8,14 +8,55 @@ import tempfile
 import zipfile
 import functools
 import logging
+from collections import OrderedDict
+from django.template import Context, loader
 
 from opal.models import Episode
-from opal.core.subrecords import episode_subrecords, patient_subrecords
+from opal.core.subrecords import (
+    episode_subrecords, patient_subrecords, subrecords
+)
 
 from six import u
 
 
-def subrecord_csv(episodes, subrecord, file_name):
+def field_to_dict(subrecord, field_name):
+    return dict(
+        display_name=subrecord._get_field_title(field_name),
+        description=subrecord.get_field_description(field_name),
+        type_display_name=subrecord.get_human_readable_type(field_name),
+    )
+
+
+def get_data_dictionary():
+    schema = {}
+    for subrecord in subrecords():
+        field_names = subrecord._get_fieldnames_to_extract()
+        record_schema = [field_to_dict(subrecord, i) for i in field_names]
+        schema[subrecord.get_display_name()] = record_schema
+    field_names = Episode._get_fieldnames_to_extract()
+    field_names.remove("start")
+    field_names.remove("end")
+    schema["Episode"] = [field_to_dict(Episode, i) for i in field_names]
+    schema["Episode"].append(dict(
+        display_name="Start",
+        type_display_name = "Date & Time"
+    ))
+    schema["Episode"].append(dict(
+        display_name="End",
+        type_display_name = "Date & Time"
+    ))
+    return OrderedDict(sorted(schema.items(), key=lambda t: t[0]))
+
+
+def write_data_dictionary(file_name):
+    dictionary = get_data_dictionary()
+    t = loader.get_template("extract_data_schema.html")
+    ctx = Context(dict(schema=dictionary))
+    rendered = t.render(ctx)
+    with open(file_name, "w") as f:
+        f.write(rendered)
+
+def episode_subrecord_csv(episodes, subrecord, file_name):
     """
     Given an iterable of EPISODES, the SUBRECORD we want to serialise,
     write a csv file for the data in this subrecord for these episodes.
@@ -107,6 +148,11 @@ def zip_archive(episodes, description, user):
         make_file_path = functools.partial(os.path.join, target_dir, zipfolder)
         zip_relative_file_path = functools.partial(os.path.join, zipfolder)
 
+        file_name = "data_dict.html"
+        full_file_name = make_file_path(file_name)
+        write_data_dictionary(full_file_name)
+        z.write(full_file_name, zip_relative_file_path(file_name))
+
         file_name = "episodes.csv"
         full_file_name = make_file_path(file_name)
         episode_csv(episodes, user, full_file_name)
@@ -117,7 +163,7 @@ def zip_archive(episodes, description, user):
                 continue
             file_name = '{0}.csv'.format(subrecord.get_api_name())
             full_file_name = make_file_path(file_name)
-            subrecord_csv(episodes, subrecord, full_file_name)
+            episode_subrecord_csv(episodes, subrecord, full_file_name)
             z.write(full_file_name, zip_relative_file_path(file_name))
 
         for subrecord in patient_subrecords():
