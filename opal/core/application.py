@@ -57,6 +57,7 @@ class OpalApplication(object):
             "js/opal/services_module.js",
             "js/opal/services/flow.js",
             "js/opal/services/user_profile.js",
+            "js/opal/services/alert.js",
             "js/opal/services/user.js",
             "js/opal/services/item.js",
             "js/opal/services/http_interceptors.js",
@@ -80,6 +81,7 @@ class OpalApplication(object):
         ],
         'opal.controllers': [
             "js/opal/controllers_module.js",
+            "js/opal/controllers/alert.js",
             "js/opal/controllers/patient_list_redirect.js",
             "js/opal/controllers/patient_list.js",
             "js/opal/controllers/patient_detail.js",
@@ -93,7 +95,7 @@ class OpalApplication(object):
             "js/opal/controllers/undischarge.js",
             "js/opal/controllers/copy_to_category.js",
             "js/opal/controllers/keyboard_shortcuts.js",
-            "js/opal/controllers/patient_access_log.js"
+            "js/opal/controllers/patient_access_log.js",
         ]
     }
     javascripts   = []

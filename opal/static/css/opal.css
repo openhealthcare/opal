@@ -461,6 +461,9 @@ i.delete,
     background: #9cc96b;
     color: white;
 }
+.modal-header.alert {
+    background: #f76c51; /* red */
+}
 
 .modal .btn,
 .modal select,

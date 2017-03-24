@@ -1,0 +1,23 @@
+{% extends 'base_templates/modal_base.html' %}
+{% block modal_header_class %}alert{% endblock %}
+{% block icon_name %}fa fa-warning{% endblock %}
+{% block title %}[[ title ]]{% endblock %}
+{% block modal_body %}
+<div class="row">
+  <div class="col-md-10 col-md-offset-1">
+    <p class="lead">
+      [[ message ]]
+    </p>
+    <p class="content-offset">
+      <center>
+        <button class="btn btn-default" ng-click="cancel()">
+          [[ dismiss_text ]]
+        </button>
+      </center>
+    </p>
+  </div>
+</div>
+{% endblock %}
+{% block modal_save %}{% endblock %}
+
+{% block modal_cancel %}{% endblock %}

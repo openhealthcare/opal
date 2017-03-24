@@ -123,6 +123,7 @@ class ReferenceDataViewSet(LoginRequiredViewset):
 
         for name in data:
             data[name].sort()
+        raise Exception('Lols')
         return json_response(data)
 
     def retrieve(self, request, pk=None):

@@ -1,4 +1,4 @@
-angular.module('opal.services').factory('Referencedata', function($q, $http, $window, $log) {
+angular.module('opal.services').factory('Referencedata', function($q, $http, $window, $log, Alert) {
 
     "use strict";
 
@@ -40,11 +40,15 @@ angular.module('opal.services').factory('Referencedata', function($q, $http, $wi
 
     var load = function(){
       var deferred = $q.defer();
-      $http({ cache: true, url: url, method: 'GET'}).then(function(response) {
+        $http({ cache: false, url: url, method: 'GET'}).then(function(response) {
           deferred.resolve(new Referencedata(response.data));
       }, function() {
-        // handle error better
-        $window.alert('Referencedata could not be loaded');
+          var msg = "Apologies, but it seems we're having some problems loading "
+          msg += "the data to run the application. We've seen this problem clear "
+          msg += "up if you reload the page, a solution which we suggest to you "
+          msg += "now only reluctantly and with great regret."
+          Alert.open(msg, 'Unexpected Error')
+          deferred.reject()
       });
       return deferred.promise;
     };
