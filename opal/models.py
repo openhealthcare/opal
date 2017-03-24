@@ -495,12 +495,14 @@ class Patient(models.Model):
         if not self.id:
             self.save()
 
+        #
         # We never want to be in the position where we don't have an episode.
         # If this patient has never had an episode, we create one now.
         # If the patient has preexisting episodes, we will either use an
         # episode passed in to us as a kwarg, or create a fresh episode for
         # this bulk update once we're sure we have episode subrecord data to
         # save.
+        #
         if not self.episode_set.exists():
             episode = self.create_episode()
 
@@ -1306,9 +1308,12 @@ class Demographics(PatientSubrecord):
     _is_singleton = True
     _icon = 'fa fa-user'
 
-    hospital_number = models.CharField(max_length=255, blank=True)
+    hospital_number = models.CharField(
+        max_length=255, blank=True,
+        help_text="The unique identifier for this patient at the hospital."
+    )
     nhs_number = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name="NHS Number",
+        max_length=255, blank=True, null=True, verbose_name="NHS Number"
     )
 
     surname = models.CharField(max_length=255, blank=True)
@@ -1330,7 +1335,10 @@ class Demographics(PatientSubrecord):
     birth_place = ForeignKeyOrFreeText(Destination,
                                        verbose_name="Country of Birth")
     ethnicity = ForeignKeyOrFreeText(Ethnicity)
-    death_indicator = models.BooleanField(default=False)
+    death_indicator = models.BooleanField(
+        default=False,
+        help_text="This field will be True if the patient is deceased."
+    )
 
     sex = ForeignKeyOrFreeText(Gender)
 
@@ -1346,7 +1354,9 @@ class Location(EpisodeSubrecord):
     _is_singleton = True
     _icon = 'fa fa-map-marker'
 
-    category = models.CharField(max_length=255, blank=True)
+    category = models.CharField(
+        max_length=255, blank=True
+    )
     hospital = models.CharField(max_length=255, blank=True)
     ward = models.CharField(max_length=255, blank=True)
     bed = models.CharField(max_length=255, blank=True)
@@ -1370,10 +1380,16 @@ class Treatment(EpisodeSubrecord):
     _sort = 'start_date'
     _icon = 'fa fa-flask'
 
+    HELP_START = "The date on which the patient began receiving this \
+treatment."
+
     drug          = ForeignKeyOrFreeText(Drug)
     dose          = models.CharField(max_length=255, blank=True)
     route         = ForeignKeyOrFreeText(Drugroute)
-    start_date    = models.DateField(null=True, blank=True)
+    start_date    = models.DateField(
+        null=True, blank=True,
+        help_text=HELP_START
+    )
     end_date      = models.DateField(null=True, blank=True)
     frequency     = ForeignKeyOrFreeText(Drugfreq)
 
@@ -1385,7 +1401,10 @@ class Allergies(PatientSubrecord):
     _icon = 'fa fa-warning'
 
     drug        = ForeignKeyOrFreeText(Drug)
-    provisional = models.BooleanField(default=False, verbose_name="Suspected?")
+    provisional = models.BooleanField(
+        default=False, verbose_name="Suspected?",
+        help_text="True if the allergy is only suspected. Defaults to False."
+    )
     details     = models.CharField(max_length=255, blank=True)
 
     class Meta:
@@ -1402,8 +1421,11 @@ class Diagnosis(EpisodeSubrecord):
     _icon = 'fa fa-stethoscope'
 
     condition         = ForeignKeyOrFreeText(Condition)
-    provisional       = models.BooleanField(default=False,
-                                            verbose_name="Provisional?")
+    provisional       = models.BooleanField(
+        default=False,
+        verbose_name="Provisional?",
+        help_text="True if the diagnosis is provisional. Defaults to False"
+    )
     details           = models.CharField(max_length=255, blank=True)
     date_of_diagnosis = models.DateField(blank=True, null=True)
 
@@ -1634,7 +1656,10 @@ class PatientConsultation(EpisodeSubrecord):
         abstract = True
 
     when = models.DateTimeField(null=True, blank=True)
-    initials = models.CharField(max_length=255, blank=True)
+    initials = models.CharField(
+        max_length=255, blank=True,
+        help_text="The initials of the user who gave the consult."
+    )
     reason_for_interaction = ForeignKeyOrFreeText(
         PatientConsultationReasonForInteraction
 
@@ -1665,11 +1690,15 @@ class SymptomComplex(EpisodeSubrecord):
         ('22 days to 3 months', '22 days to 3 months',),
         ('over 3 months', 'over 3 months',),
     )
+    HELP_DURATION = "The duration for which the patient had been experiencing \
+these symptoms when recorded."
+
     duration = models.CharField(
         max_length=255,
         blank=True,
         null=True,
-        choices=DURATION_CHOICES
+        choices=DURATION_CHOICES,
+        help_text=HELP_DURATION
     )
     details = models.TextField(blank=True, null=True)
 
