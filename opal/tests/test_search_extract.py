@@ -14,7 +14,7 @@ from opal.tests.models import (
     Colour, PatientColour, Demographics, HatWearer, HouseOwner
 )
 from opal.core.search import extract
-from opal.core import subrecords
+
 
 MOCKING_FILE_NAME_OPEN = "opal.core.search.extract.open"
 
@@ -176,7 +176,7 @@ class TestGetDataDirectory(PatientEpisodeTestCase):
     @patch("opal.core.search.extract.subrecords")
     def test_alphabetically_ordered(self, subrecords):
         subrecords.return_value = HatWearer, HouseOwner, Colour
-        expected = extract.get_data_dictionary().keys()
+        expected = list(extract.get_data_dictionary())
         self.assertEqual(
             expected,
             ['Colour', 'Episode', 'HouseOwner', 'Wearer of Hats']

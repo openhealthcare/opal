@@ -39,11 +39,11 @@ def get_data_dictionary():
     schema["Episode"] = [field_to_dict(Episode, i) for i in field_names]
     schema["Episode"].append(dict(
         display_name="Start",
-        type_display_name = "Date & Time"
+        type_display_name="Date & Time"
     ))
     schema["Episode"].append(dict(
         display_name="End",
-        type_display_name = "Date & Time"
+        type_display_name="Date & Time"
     ))
     return OrderedDict(sorted(schema.items(), key=lambda t: t[0]))
 
@@ -55,6 +55,7 @@ def write_data_dictionary(file_name):
     rendered = t.render(ctx)
     with open(file_name, "w") as f:
         f.write(rendered)
+
 
 def episode_subrecord_csv(episodes, subrecord, file_name):
     """

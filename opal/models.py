@@ -157,10 +157,7 @@ class SerialisableFields(object):
             else:
                 t = "Some of the {}"
             related = cls._get_field(field).rel.to
-            if isinstance(related, Subrecord):
-                return t.format(related.get_display_name())
-            else:
-                return t.format(related._meta.verbose_name_plural.title())
+            return t.format(related._meta.verbose_name_plural.title())
 
         enum = cls.get_field_enum(field)
 
@@ -254,7 +251,6 @@ class SerialisableFields(object):
             'enum': cls.get_field_enum(fieldname)
         }
         return field
-
 
     @classmethod
     def build_field_schema(cls):
