@@ -90,8 +90,198 @@ describe('ExtractCtrl', function(){
                     "lookup_list": "symptoms",
                     "name": "symptoms",
                     "type": "many_to_many"
+                },
+                {
+                    "title":"Consistency Token",
+                    "lookup_list":null,
+                    "name":"consistency_token",
+                    "type":"token"
+                },
+                {
+                    "title":"Created",
+                    "lookup_list":null,
+                    "name":"created",
+                    "type":"date_time"
                 }
             ]
+        },
+        {
+            "single": false,
+            "name": "microbiology_test",
+            "display_name": "Microbiology Test",
+            "readOnly": false,
+            "advanced_searchable": true,
+            "fields": [
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "test",
+                title: "Test",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "date_ordered",
+                title: "Date Ordered",
+                type: "date"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "details",
+                title: "Details",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "microscopy",
+                title: "Microscopy",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "organism",
+                title: "Organism",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "sensitive_antibiotics",
+                title: "Sensitive Antibiotics",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "resistant_antibiotics",
+                title: "Resistant Antibiotics",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "igm",
+                title: "IGM",
+                type: "string"
+              },
+            ],
+        },
+        {
+            "single": false,
+            "name": "investigation",
+            "display_name": "Investigation",
+            "readOnly": false,
+            "advanced_searchable": true,
+            "fields": [
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "test",
+                title: "Test",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "date_ordered",
+                title: "Date Ordered",
+                type: "date"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "details",
+                title: "Details",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "microscopy",
+                title: "Microscopy",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "organism",
+                title: "Organism",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "sensitive_antibiotics",
+                title: "Sensitive Antibiotics",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "resistant_antibiotics",
+                title: "Resistant Antibiotics",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "igm",
+                title: "IGM",
+                type: "string"
+              },
+            ],
         }
     ];
 
@@ -139,12 +329,6 @@ describe('ExtractCtrl', function(){
       it('should set up any or all default', function(){
         expect($scope.anyOrAll).toBe("all");
       });
-
-      it('should set a column mapping of name to display name', function(){
-        expect($scope.columnToDisplayName).toEqual({
-          demographics: 'Demographics', symptoms: 'Symptoms'
-        });
-      });
     });
 
     describe('Getting Complete Criteria', function(){
@@ -185,20 +369,16 @@ describe('ExtractCtrl', function(){
 
     describe('Getting searchable fields', function(){
 
-        it('should exclude token fields', function(){
-            var col = {fields: [
-                {name: 'consistency_token', type: 'token'},
-                {name: 'hospital', type: 'string'},
-            ]}
-            expect($scope.searchableFields(col)).toEqual(['Hospital'])
-        });
 
-        it('should capitalze the field names', function(){
-            var col = {fields: [
-                {name: 'hospital_number', type: 'string'},
-                {name: 'hospital', type: 'string'},
-            ]};
-            expect($scope.searchableFields(col)).toEqual(['Hospital', 'Hospital Number']);
+        it('should exclude token and not advanced searchable fields', function(){
+          var symptomsExpected = {
+            title: 'Symptoms',
+            lookup_list: 'symptoms',
+            name: 'symptoms',
+            type: 'many_to_many'
+          };
+
+          expect($scope.searchableFields('symptoms')).toEqual([symptomsExpected]);
         });
 
         it('should special case Micro Test fields', function(){
@@ -211,17 +391,27 @@ describe('ExtractCtrl', function(){
                 'Sensitive Antibiotics',
                 'Resistant Antibiotics'
             ];
-            expect($scope.searchableFields({name: 'microbiology_test'})).toEqual(expected);
+            var result  = _.map(
+              $scope.searchableFields('microbiology_test'), "title"
+            );
+            expect(result).toEqual(expected);
         });
 
-        it('should filter out timestamp fields', function(){
-            var col = {fields: [
-                {name: 'created', type: 'date'},
-                {name: 'hospital', type: 'string'},
-            ]}
-            expect($scope.searchableFields(col)).toEqual(['Hospital'])
+        it('should special case investigations fields', function(){
+            var expected = [
+                'Test',
+                'Date Ordered',
+                'Details',
+                'Microscopy',
+                'Organism',
+                'Sensitive Antibiotics',
+                'Resistant Antibiotics'
+            ];
+            var result  = _.map(
+              $scope.searchableFields('investigation'), "title"
+            );
+            expect(result).toEqual(expected);
         });
-
     });
 
     describe('Checking field type', function(){
@@ -235,27 +425,33 @@ describe('ExtractCtrl', function(){
         });
 
         it('should find boolean fields', function(){
-            expect($scope.isBoolean("Demographics", "dead")).toEqual(true);
+            expect($scope.isBoolean("demographics", "dead")).toEqual(true);
         });
 
         it('should find string fields', function(){
-            expect($scope.isText("Demographics", "name")).toBe(true);
+            expect($scope.isText("demographics", "name")).toBe(true);
         });
 
         it('should find select fields', function(){
-            expect($scope.isSelect("Symptoms", "symptoms")).toBe(true);
+            expect($scope.isSelect("symptoms", "symptoms")).toBe(true);
         });
 
         it('should find date fields', function(){
-            expect($scope.isDate("Demographics", "date_of_birth")).toBe(true);
+            expect($scope.isDate("demographics", "date_of_birth")).toBe(true);
         });
 
         it('should find date time fields', function(){
-            expect($scope.isDateTime("Demographics", "last_appointment")).toBe(true);
+            expect($scope.isDateTime("demographics", "last_appointment")).toBe(true);
         });
 
         it('should find date type fields', function(){
-            expect($scope.isDateType("Demographics", "date_of_birth")).toBe(true);
+            expect($scope.isDateType("demographics", "date_of_birth")).toBe(true);
+        });
+    });
+
+    describe('Find Field', function(){
+        it('should return the field', function(){
+          expect(!!$scope.findField("demographics", "dead")).toEqual(true);
         });
     });
 
@@ -308,14 +504,18 @@ describe('ExtractCtrl', function(){
     });
 
     describe('resetFilter()', function(){
+        var criteria;
+        beforeEach(function(){
+          criteria = {
+            column: "demographics",
+            field: "name",
+            query: "Jane",
+            queryType: "contains"
+          };
+        });
 
         it('should reset the column', function(){
-            var criteria = {
-              column: "demographics",
-              field: "name",
-              query: "Jane",
-              queryType: "contains"
-            };
+
             $scope.resetFilter(criteria, ['column']);
             expect(criteria.column).toEqual("demographics");
             expect(criteria.field).toEqual(null);
@@ -324,17 +524,17 @@ describe('ExtractCtrl', function(){
         });
 
         it('should reset the field', function(){
-            var criteria = {
-              column: "demographics",
-              field: "name",
-              query: "Jane",
-              queryType: "contains"
-            };
             $scope.resetFilter(criteria, ['column', 'field']);
             expect(criteria.column).toEqual("demographics");
             expect(criteria.field).toEqual("name");
             expect(criteria.query).toEqual(null);
             expect(criteria.queryType).toEqual(null);
+        });
+
+        it('should empty the selectedInfo', function(){
+            $scope.selectedInfo = "some info";
+            $scope.resetFilter(criteria, ['column']);
+            expect($scope.selectedInfo).toBe(undefined);
         });
     });
 
@@ -348,38 +548,37 @@ describe('ExtractCtrl', function(){
 
     });
 
-    describe('_lookuplist_watch', function(){
-
+    describe('refresh', function(){
         it('should set the lookuplist', function(){
             $scope.symptoms_list = ['thing']
             $scope.criteria[0].column = "symptoms";
 
             $scope.criteria[0].field = 'symptoms';
-            $scope._lookuplist_watch();
+            $scope.refresh();
             expect($scope.criteria[0].lookup_list).toEqual(['thing']);
         });
 
         it('should reset the searched critera', function(){
             $scope.searched = true;
-            $scope._lookuplist_watch();
+            $scope.refresh();
             expect($scope.searched).toBe(false);
         });
 
         it('should reset async waiting', function(){
           $scope.async_waiting = true;
-          $scope._lookuplist_watch();
+          $scope.refresh();
           expect($scope.async_waiting).toBe(false);
         });
 
         it('should reset async ready', function(){
           $scope.async_ready = true;
-          $scope._lookuplist_watch();
+          $scope.refresh();
           expect($scope.async_ready).toBe(false);
         });
 
         it('should clean the results', function(){
           $scope.results = [{something: "interesting"}];
-          $scope._lookuplist_watch();
+          $scope.refresh();
           expect($scope.results).toEqual([]);
         });
     });
@@ -563,7 +762,9 @@ describe('ExtractCtrl', function(){
 
     describe('Getting searchable columns', function(){
         it('should only get the columns that are advanced searchable', function(){
-            expect($scope.columns).toEqual([columnsData[1], columnsData[2]])
+            expect($scope.columns).toEqual([
+              columnsData[1], columnsData[2], columnsData[3], columnsData[4]
+            ]);
         });
     });
 

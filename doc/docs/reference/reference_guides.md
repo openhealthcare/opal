@@ -20,7 +20,7 @@ The following reference guides are available:
 [opal.core.schemas](schemas.md)|Schemas - Dynamic columns for the table views|
 [opal.core.patient_lists](patient_list.md)|Patient Lists - defining different types of list|
 [opal.core.plugin](plugin.md)| Plugins - defining plugins to package reusable functionality
-[opal.core.views](core_views.md)| Views - helper functions for working with Django views
+[opal.core.menus](core_menus.md)| Menus - declaring application menus
 
 ### Angular Services
 |
@@ -40,6 +40,7 @@ The following reference guides are available:
 -|-
 [The forms Templatetag library](form_templatetags.md) | The building blocks for Opal forms
 [The panels Templatetag library](panels_templatetags.md) | Rendering record panels
+[The menus Templatetag library](menus_templatetags.md) | Rendering application menus
 [Javascript Helpers](javascript/javascript_helpers.md)| Angular directives, filters and $rootScope methods
 
 ### Opal Search module
@@ -53,7 +54,8 @@ The following reference guides are available:
 
 |
 -|-
+[Settings](settings.md) | Opal settings
 [Changelog](changelog.md) | Opal Changelog
-[Upgrading](upgrading.md) | Upgrading between Opal> versions
+[Upgrading](upgrading.md) | Upgrading between Opal versions
 [Javascript dependencies](javascript/javascript_dependencies.md)| External javascript libraries available |
 [Testing](testing.md) | Testing

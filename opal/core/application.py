@@ -2,9 +2,13 @@
 Application helpers for Opal
 """
 import inspect
-import os
 import itertools
-from opal.core import plugins
+import os
+
+from django.core.urlresolvers import reverse
+from django.contrib.auth.views import logout as logout_view
+
+from opal.core import plugins, menus
 
 
 class OpalApplication(object):
@@ -89,13 +93,20 @@ class OpalApplication(object):
             "js/opal/controllers/undischarge.js",
             "js/opal/controllers/copy_to_category.js",
             "js/opal/controllers/keyboard_shortcuts.js",
-            "js/opal/controllers/patient_access_log.js"
+            "js/opal/controllers/patient_access_log.js",
+            "js/opal/controllers/lookup_list_reference.js"
         ]
     }
     javascripts   = []
     styles        = []
     actions       = []
-    menuitems     = []
+    menuitems     = [
+        menus.MenuItem(
+            href="/#/list/", activepattern="/list/",
+            icon="fa-table", display="Lists",
+            index=0
+        )
+    ]
     default_episode_category = 'Inpatient'
 
     opal_angular_exclude_tracking_qs = [
@@ -121,11 +132,29 @@ class OpalApplication(object):
     def get_menu_items(klass, user=None):
         """
         Default implementation of get_menu_items()
-
-        By default we just return the menuitems property of the application,
-        which is itself set to [] by default.
         """
-        return klass.menuitems
+        logout = menus.MenuItem(
+            href=reverse(logout_view), icon="fa-sign-out", index=1000
+        )
+        admin = menus.MenuItem(
+            href="/admin/", icon="fa-cogs", display="Admin",
+            index=999
+        )
+        items = []
+        items += klass.menuitems
+        if user:
+            if user.is_authenticated:
+                items.append(logout)
+                if user.is_staff:
+                    items.append(admin)
+        return items
+
+    @classmethod
+    def get_menu(klass, user=None):
+        """
+        Return the Menu for this application.
+        """
+        return menus.Menu(user=user)
 
     @classmethod
     def get_styles(klass):
