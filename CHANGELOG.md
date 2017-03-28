@@ -19,6 +19,10 @@ Adds a utility method to the `Episode` service that returns a human readable pat
 
 Enhances the API available for plugins to include javascript and css by adding methods on `opal.core.plugins.OpalPlugin`
 
+#### Adds 'element_type' argument for the form
+
+Numeric database fields will now infer to the forms template tag as the html5 type="number". This means on mobile devices it will bring up the numeric keypad. This can be set manually in the form with 'element_type'.
+
 ### 0.8.1 (Minor Release)
 
 #### Cookies for the future

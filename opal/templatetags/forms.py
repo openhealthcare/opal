@@ -74,6 +74,7 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
         models.DecimalField,
         models.BigIntegerField,
         models.FloatField,
+        models.PositiveIntegerField
     )
 
     if field.__class__ in numeric_fields:
