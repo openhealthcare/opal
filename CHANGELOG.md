@@ -31,6 +31,14 @@ This new setting allows applications to set the path at which the app logo is se
 If `OPAL_LOGO_PATH` is set, the value is passed to the `{% static %}` templatetag to set the `src` atribute
 of an image in the default application header and login screen.
 
+#### Inactive episodes in PatientLists
+
+Changes the behaviour of `opal.core.PatientList.to_dict` to serialise inactive
+episodes by default rather than filtering by Episode.active == True.
+
+`opal.core.TaggedPatientList.to_dict` continues to filter by Episode.active ==
+True by default.
+
 #### Misc changes
 
 Adds a new filter - `underscore-to-spaces` for removing underscores from strings.
