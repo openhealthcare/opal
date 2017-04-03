@@ -49,7 +49,7 @@ Fixes a bug where the allergies form rendered the provisional field twice
 #### Updates to the Dependency Graph
 
 Upgrades Font Awesome from 4.3.0 -> 4.7.0
->>>>>>> v0.8.2
+
 
 ### 0.8.1 (Minor Release)
 
