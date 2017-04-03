@@ -1,15 +1,26 @@
 ## Opal mixins
 
 ### SerialisableFields
-provides the fields that are on the model for example
+Provides the fields that are on the model for example
 if we have an allergy model with a field drug
 it might serialise like below
 
     Allergy._get_fieldnames_to_serialize() -> ["id", "drug"]
 
 
+#### build_schema_for_field_name
+Takes in a field name and returns a json description of the field.
+
+#### get_human_readable_type
+provides a human readable description of the field name for example
+Date & Time for a DateTime Field.
+
+#### get_lookup_list_api_name
+provides the api name of the lookup list related to the field if it exists
+
+
 ### ToDictMixin
-provides a method that serialises a model
+Provides a method that serialises a model
 to a dictionary for example
 if we have an allergy model with a field drug
 it might serialise like below
@@ -18,11 +29,11 @@ it might serialise like below
 
 
 ### UpdateFromDict
-provides a method that updates a model
+Provides a method that updates a model
 based on a dictionary of fields, for example
 
 For example on a new allergy
 
     allergy.update_from_dict({"drug": "penicillin"})
 
-will update the allergy to have the drug penicillin
+will update the allergy to have the drug penicillin.

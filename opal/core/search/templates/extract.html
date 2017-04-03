@@ -184,7 +184,12 @@
                       <span ng-show="isText(selectedInfo.column, selectedInfo.field)">
                         [Text]
                         <div ng-show="selectedInfo.lookup_list && selectedInfo.lookup_list.length">
-                          Any result is possible, but a curated list of [[ findField(selectedInfo.column, selectedInfo.field).lookup_list | underscoreToSpaces ]]s is suggested.
+                          Normally coded as a
+                          <a href=""
+                             class="orange-link"
+                             ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: findField(selectedInfo.column, selectedInfo.field).lookup_list, lookuplist: selectedInfo.lookup_list })">
+                            [[ findField(selectedInfo.column, selectedInfo.field).lookup_list | underscoreToSpaces ]]</a>
+                          but free text entries are possible.
                         </div>
                       </span>
                       <span ng-show="isDate(selectedInfo.column, selectedInfo.field)">

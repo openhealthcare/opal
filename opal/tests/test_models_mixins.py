@@ -142,6 +142,25 @@ class SerialisableFieldsTestCase(OpalTestCase):
         ]
         self.assertEqual(schema, expected)
 
+    def test_build_schema_for_field_name(self):
+        expected_fields = [
+            "name",
+            "title",
+            "type",
+            "lookup_list",
+            "default",
+            "model",
+            "description",
+            "enum"
+        ]
+
+        result = test_models.Colour.build_schema_for_field_name("name")
+        self.assertEqual(set(result), set(expected_fields))
+
+    def test_get_lookup_list_api_name(self):
+        result = test_models.HoundOwner.get_lookup_list_api_name("dog")
+        self.assertEqual(result, "dog")
+
 
 class ToDictMixinTestCase(OpalTestCase):
     def setUp(self):

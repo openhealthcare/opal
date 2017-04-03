@@ -149,7 +149,7 @@ def zip_archive(episodes, description, user):
         make_file_path = functools.partial(os.path.join, target_dir, zipfolder)
         zip_relative_file_path = functools.partial(os.path.join, zipfolder)
 
-        file_name = "data_dict.html"
+        file_name = "data_dictionary.html"
         full_file_name = make_file_path(file_name)
         write_data_dictionary(full_file_name)
         z.write(full_file_name, zip_relative_file_path(file_name))
