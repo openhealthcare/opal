@@ -198,7 +198,6 @@ class TaggedPatientList(PatientList, utils.AbstractBase):
         return self.get_queryset(user=user).serialised_active(user)
 
 
-
 """
 Sometimes we group lists for display purposes.
 """
