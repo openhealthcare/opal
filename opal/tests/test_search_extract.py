@@ -94,18 +94,19 @@ class SubrecordCSVTestCase(PatientEpisodeTestCase):
         file_name = "fake file name"
 
         self.mocked_extract(
-            extract.subrecord_csv,
-            [[], Colour, file_name]
+            extract.episode_subrecord_csv,
+            [[], self.user, Colour, file_name]
         )
         headers = csv.writer().writerow.call_args_list[0][0][0]
         self.assertEqual(csv.writer().writerow.call_count, 1)
         expected_headers = [
-            'created',
-            'updated',
-            'created_by_id',
-            'updated_by_id',
-            'episode_id',
-            'name'
+            'Patient',
+            'Created',
+            'Updated',
+            'Created By',
+            'Updated By',
+            'Episode',
+            'Name'
         ]
         self.assertEqual(headers, expected_headers)
 
@@ -116,22 +117,23 @@ class SubrecordCSVTestCase(PatientEpisodeTestCase):
         colour = Colour.objects.create(episode=self.episode, name='blue')
 
         self.mocked_extract(
-            extract.subrecord_csv,
-            [[self.episode], Colour, file_name]
+            extract.episode_subrecord_csv,
+            [[self.episode], self.user, Colour, file_name]
         )
 
         headers = csv.writer().writerow.call_args_list[0][0][0]
         row = csv.writer().writerow.call_args_list[1][0][0]
         expected_headers = [
-            'created',
-            'updated',
-            'created_by_id',
-            'updated_by_id',
-            'episode_id',
-            'name'
+            'Patient',
+            'Created',
+            'Updated',
+            'Created By',
+            'Updated By',
+            'Episode',
+            'Name'
         ]
         expected_row = [
-            u'None', u'None', u'None', u'None', str(self.episode.id), u'blue'
+            str(self.patient.id), u'None', u'None', u'None', u'None', str(self.episode.id), u'blue'
         ]
         self.assertEqual(headers, expected_headers)
         self.assertEqual(row, expected_row)
@@ -145,30 +147,33 @@ class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
         file_name = "fake file name"
         self.mocked_extract(
             extract.patient_subrecord_csv,
-            [[self.episode], Demographics, file_name]
+            [[self.episode], self.user, Demographics, file_name]
         )
         headers = csv.writer().writerow.call_args_list[0][0][0]
         row = csv.writer().writerow.call_args_list[1][0][0]
         expected_headers = [
-            'episode_id',
-            'created',
-            'updated',
-            'created_by_id',
-            'updated_by_id',
-            'hospital_number',
-            'nhs_number',
-            'date_of_birth',
-            'death_indicator',
-            'sex',
-            'birth_place',
+            'Patient',
+            'Episode',
+            'Created',
+            'Updated',
+            'Created By',
+            'Updated By',
+            'Hospital Number',
+            'Nhs Number',
+            'Date Of Birth',
+            'Death Indicator',
+            'Sex',
+            'Birth Place',
         ]
-        self.assertEqual(headers[0], 'episode_id')
         for h in expected_headers:
-            self.assertTrue(h in headers)
+            self.assertTrue(
+                h in headers,
+                "{0} not in {1}".format(h, headers)
+            )
 
         expected_row = [
-            1, u'None', u'None', u'None', u'None', u'12345678',
-            u'None', u'1976-01-01', u'False', u'', u''
+                '1', u'None', u'None', u'None', u'None', u'1',
+                u'12345678', u'None', u'1976-01-01', u'False', u'', u''
         ]
         self.assertEqual(row, expected_row)
 
@@ -184,7 +189,7 @@ class ZipArchiveTestCase(PatientEpisodeTestCase):
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
         self.assertEqual(4, zipfile.ZipFile.return_value.__enter__.return_value.write.call_count)
 
-    @patch('opal.core.search.extract.subrecord_csv')
+    @patch('opal.core.search.extract.episode_subrecord_csv')
     @patch('opal.core.search.extract.zipfile')
     def test_exclude_episode_subrecords(self, zipfile, subrecords):
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
