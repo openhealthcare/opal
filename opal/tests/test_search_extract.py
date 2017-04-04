@@ -337,3 +337,27 @@ class TestEpisodeSubrecordCsvRenderer(OpalTestCase):
     def test_get_rows(self):
         rendered = self.renderer.get_row(self.colour)
         self.assertEqual(["1", "1", "blue"], rendered)
+
+class TestInheritedRenderer(OpalTestCase):
+    def setUp(self):
+        class ColourCsvRenderer(extract.EpisodeSubrecordCsvRenderer):
+            name = extract.Column(
+                display_name="Some Colour",
+                value=lambda self, instance: "Some value"
+            )
+
+        _, self.episode = self.new_patient_and_episode_please()
+        self.colour = Colour.objects.create(
+            name="blue", episode=self.episode
+        )
+        self.renderer = ColourCsvRenderer(
+            Colour, self.user, fields=["patient", "episode_id", "name"]
+        )
+
+    def test_get_header(self):
+        expected = ["Patient", "Episode", "Some Colour"]
+        self.assertEqual(expected, self.renderer.get_headers())
+
+    def test_get_rows(self):
+        rendered = self.renderer.get_row(self.colour)
+        self.assertEqual(["1", "1", "Some value"], rendered)

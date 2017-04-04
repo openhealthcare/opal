@@ -16,12 +16,31 @@ from opal.core.subrecords import (
     episode_subrecords, patient_subrecords, subrecords
 )
 
-from six import u
+from six import u, with_metaclass
 
-Column = namedtuple("Column", "display_name, value")
+Column = namedtuple("Column", ["display_name", "value"])
 
 
-class CsvRenderer(object):
+class CsvRendererMetaClass(type):
+    def __new__(cls, name, bases, attrs):
+        _fields = []
+        for field_name, val in attrs.items():
+            if isinstance(val, Column):
+                _fields.append(field_name)
+
+        parents = [b for b in bases if isinstance(b, CsvRendererMetaClass)]
+        for parent in parents:
+            for field in parent._fields:
+                if field not in _fields:
+                    _fields.append(field_name)
+
+        attrs["_fields"] = _fields
+        return super(
+            CsvRendererMetaClass, cls
+        ).__new__(cls, name, bases, attrs)
+
+
+class CsvRenderer(with_metaclass(CsvRendererMetaClass)):
     """
         An Abstract base class of the other csv renderers
     """
@@ -36,7 +55,7 @@ class CsvRenderer(object):
     def get_field_names_to_render(self):
         field_names = self.model._get_fieldnames_to_extract()
         field_names.remove("consistency_token")
-        return field_names
+        return self.__class__._fields + field_names
 
     def get_field_title(self, field_name):
         return self.model._get_field_title(field_name)
@@ -115,7 +134,6 @@ class PatientSubrecordCsvRenderer(CsvRenderer):
             PatientSubrecordCsvRenderer, self
         ).get_field_names_to_render()
         field_names.remove("id")
-        field_names.insert(0, "episode")
         return field_names
 
 
@@ -130,7 +148,6 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
             EpisodeSubrecordCsvRenderer, self
         ).get_field_names_to_render()
         field_names.remove("id")
-        field_names.insert(0, "patient")
         return field_names
 
 
