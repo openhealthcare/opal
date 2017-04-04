@@ -4,7 +4,7 @@ Utilities for extracting data from OPAL
 import datetime
 import csv
 import os
-from collections import OrderedDict
+from collections import OrderedDict, namedtuple
 import tempfile
 import zipfile
 import functools
@@ -18,12 +18,20 @@ from opal.core.subrecords import (
 
 from six import u
 
+Column = namedtuple("Column", "display_name, value")
 
-class CsvRender(object):
-    def __init__(self, model, user):
+
+class CsvRenderer(object):
+    """
+        An Abstract base class of the other csv renderers
+    """
+    def __init__(self, model, user, fields=None):
         self.model = model
         self.user = user
-        self.fields = self.get_field_names_to_render()
+        if fields:
+            self.fields = fields
+        else:
+            self.fields = self.get_field_names_to_render()
 
     def get_field_names_to_render(self):
         field_names = self.model._get_fieldnames_to_extract()
@@ -33,90 +41,97 @@ class CsvRender(object):
     def get_field_title(self, field_name):
         return self.model._get_field_title(field_name)
 
-    def get_headers(self):
-        field_names = self.get_field_names_to_render()
-        return [
-            self.get_field_title(fn) for fn in field_names
-        ]
+    def get_field_value(self, field_name, data):
+        col_value = data[field_name]
+        if isinstance(col_value, list):
+            return "; ".join(u(str(i).encode('UTF-8')) for i in col_value)
+        else:
+            return u(str(col_value).encode('UTF-8'))
 
-    def get_row(self, instance):
-        as_dict = instance.to_dict(user=self.user, fields=self.fields)
+    def get_headers(self):
+        result = []
+        for field in self.fields:
+            if hasattr(self, field):
+                result.append(getattr(self, field).display_name)
+            else:
+                result.append(self.get_field_title(field))
+        return result
+
+    def get_row(self, instance, *args, **kwargs):
+        fields = [i for i in self.fields if not hasattr(self, i)]
+        as_dict = instance.to_dict(user=self.user, fields=fields)
 
         result = []
+        for field in self.fields:
+            if hasattr(self, field):
+                some_fn = getattr(self, field).value
 
-        for f in self.fields:
-            col_value = as_dict[f]
-            if isinstance(col_value, list):
                 result.append(
-                    "; ".join(u(str(i).encode('UTF-8')) for i in col_value)
+                    some_fn(self, instance, *args, **kwargs)
                 )
             else:
-                result.append(u(str(col_value).encode('UTF-8')))
+                result.append(self.get_field_value(field, as_dict))
 
         return result
 
 
-class EpisodeCsvRender(CsvRender):
-    def __init__(self, user):
-        super(EpisodeCsvRender, self).__init__(Episode, user)
+class EpisodeCsvRenderer(CsvRenderer):
+    tagging = Column(
+        display_name="Tagging",
+        value=lambda self, instance: "; ".join(
+            instance.get_tag_names(self.user)
+        )
+    )
 
-    def get_headers(self):
-        headers = super(EpisodeCsvRender, self).get_headers()
-        headers.append("Tagging")
-        return headers
+    start = Column(
+        display_name="Start",
+        value=lambda self, instance: instance.start
+    )
 
-    def get_row(self, instance):
-        row = super(EpisodeCsvRender, self).get_row(instance)
-        row.append(';'.join(
-            instance.get_tag_names(self.user, historic=True)
-        ))
-        return row
+    end = Column(
+        display_name="End",
+        value=lambda self, instance: instance.end
+    )
 
-    def get_field_title(self, field_name):
-        if field_name == "start" or field_name == "end":
-            return field_name.title()
-        else:
-            return super(EpisodeCsvRender, self).get_field_title(
-                field_name
-            )
+    def __init__(self, user, fields=None):
+        super(EpisodeCsvRenderer, self).__init__(Episode, user, fields=fields)
 
-
-class PatientSubrecordCsvRender(CsvRender):
     def get_field_names_to_render(self):
         field_names = super(
-            PatientSubrecordCsvRender, self
+            EpisodeCsvRenderer, self
         ).get_field_names_to_render()
-        field_names.remove("id")
+        field_names.append("tagging")
         return field_names
 
-    def get_headers(self):
-        headers = super(PatientSubrecordCsvRender, self).get_headers()
-        headers.insert(0, "Episode")
-        return headers
 
-    def get_row(self, instance, episode_id):
-        row = super(PatientSubrecordCsvRender, self).get_row(instance)
-        row.insert(0, str(episode_id))
-        return row
+class PatientSubrecordCsvRenderer(CsvRenderer):
+    episode = Column(
+        display_name="Episode",
+        value=lambda self, instance, episode_id: str(episode_id)
+    )
 
-
-class EpisodeSubrecordCsvRender(CsvRender):
     def get_field_names_to_render(self):
         field_names = super(
-            EpisodeSubrecordCsvRender, self
+            PatientSubrecordCsvRenderer, self
         ).get_field_names_to_render()
         field_names.remove("id")
+        field_names.insert(0, "episode")
         return field_names
 
-    def get_headers(self):
-        headers = super(EpisodeSubrecordCsvRender, self).get_headers()
-        headers.insert(0, "Patient")
-        return headers
 
-    def get_row(self, instance):
-        row = super(EpisodeSubrecordCsvRender, self).get_row(instance)
-        row.insert(0, str(instance.episode.patient_id))
-        return row
+class EpisodeSubrecordCsvRenderer(CsvRenderer):
+    patient = Column(
+        display_name="Patient",
+        value=lambda self, instance: str(instance.episode.patient_id)
+    )
+
+    def get_field_names_to_render(self):
+        field_names = super(
+            EpisodeSubrecordCsvRenderer, self
+        ).get_field_names_to_render()
+        field_names.remove("id")
+        field_names.insert(0, "patient")
+        return field_names
 
 
 def field_to_dict(subrecord, field_name):
@@ -165,7 +180,7 @@ def episode_subrecord_csv(episodes, user, subrecord, file_name):
     logging.info("writing for %s" % subrecord)
     with open(file_name, "w") as csv_file:
         writer = csv.writer(csv_file)
-        extractor = EpisodeSubrecordCsvRender(subrecord, user)
+        extractor = EpisodeSubrecordCsvRenderer(subrecord, user)
         writer.writerow(extractor.get_headers())
         subrecords = subrecord.objects.filter(episode__in=episodes)
         for sub in subrecords:
@@ -180,7 +195,7 @@ def episode_csv(episodes, user, file_name):
     """
     logging.info("writing eposides")
     with open(file_name, "w") as csv_file:
-        extractor = EpisodeCsvRender(user)
+        extractor = EpisodeCsvRenderer(user)
         writer = csv.writer(csv_file)
         writer.writerow(extractor.get_headers())
 
@@ -203,7 +218,7 @@ def patient_subrecord_csv(episodes, user, subrecord, file_name):
             patient__in=list(patient_to_episode.keys())
         )
 
-        extractor = PatientSubrecordCsvRender(subrecord, user)
+        extractor = PatientSubrecordCsvRenderer(subrecord, user)
         writer.writerow(extractor.get_headers())
 
         for sub in subs:

@@ -210,3 +210,130 @@ class AsyncExtractTestCase(OpalTestCase):
     def test_async(self, delay):
         extract.async_extract(self.user, 'THIS')
         delay.assert_called_with(self.user, 'THIS')
+
+
+class TestBasicCsvRenderer(OpalTestCase):
+    def test_init(self):
+        renderer = extract.CsvRenderer(Colour, self.user, fields=["trees"])
+        self.assertEqual(renderer.model, Colour)
+        self.assertEqual(renderer.user, self.user)
+        self.assertEqual(renderer.fields, ["trees"])
+
+        renderer = extract.CsvRenderer(Colour, self.user)
+        self.assertEqual(renderer.fields, renderer.get_field_names_to_render())
+
+    def test_get_field_names_to_render(self):
+        with patch.object(Colour, "_get_fieldnames_to_extract") as field_names:
+            field_names.return_value = ["name", "consistency_token"]
+            renderer = extract.CsvRenderer(Colour, self.user)
+            self.assertEqual(
+                renderer.fields,
+                ["name"]
+            )
+
+    def test_get_headers(self):
+        with patch.object(Colour, "_get_fieldnames_to_extract") as field_names:
+            field_names.return_value = ["name", "consistency_token"]
+            renderer = extract.CsvRenderer(Colour, self.user)
+            self.assertEqual(
+                renderer.get_headers(),
+                ["Name"]
+            )
+
+    def test_get_row(self):
+        with patch.object(Colour, "_get_fieldnames_to_extract") as field_names:
+            _, episode = self.new_patient_and_episode_please()
+            colour = Colour.objects.create(name="Blue", episode=episode)
+            field_names.return_value = ["name", "consistency_token"]
+            renderer = extract.CsvRenderer(Colour, self.user)
+            self.assertEqual(
+                renderer.get_row(colour),
+                ["Blue"]
+            )
+
+    def test_get_field_title(self):
+        with patch.object(Colour, "_get_field_title") as title:
+            title.return_value = "Hello"
+            renderer = extract.CsvRenderer(Colour, self.user)
+            self.assertEqual(
+                renderer.get_field_title("name"),
+                "Hello"
+            )
+
+class TestComplexCsvRenderer(OpalTestCase):
+    def setUp(self):
+        class ComplexStep(extract.CsvRenderer):
+            blues = extract.Column(
+                display_name = "all the blues",
+                value= lambda self, instance, hue: hue
+            )
+
+        _, self.episode = self.new_patient_and_episode_please()
+        self.colour = Colour.objects.create(name="Blue", episode=self.episode)
+        self.complex_step = ComplexStep(
+            Colour, self.user, fields=["blues", "name"]
+        )
+
+    def test_get_headers(self):
+        self.assertEqual(
+            self.complex_step.get_headers(),
+            ["all the blues", "Name"]
+        )
+
+    def test_get_row(self):
+        self.assertEqual(
+            self.complex_step.get_row(self.colour, "#0000FF"),
+            ['#0000FF', u'Blue']
+        )
+
+
+class TestEpisodeCsvRenderer(OpalTestCase):
+    def test_init(self):
+        renderer = extract.EpisodeCsvRenderer(self.user)
+        self.assertEqual(renderer.model, models.Episode)
+
+        renderer = extract.EpisodeCsvRenderer(self.user, fields=["id"])
+        self.assertEqual(renderer.fields, ["id"])
+
+    def test_with_tagging(self):
+        renderer = extract.EpisodeCsvRenderer(self.user)
+        _, episode = self.new_patient_and_episode_please()
+        episode.set_tag_names(["trees", "leaves"], self.user)
+        self.assertIn("Tagging", renderer.get_headers())
+        self.assertIn("trees; leaves", renderer.get_row(episode))
+
+
+class TestPatientSubrecordCsvRenderer(OpalTestCase):
+    def setUp(self):
+        self.patient, self.episode = self.new_patient_and_episode_please()
+        self.patient_colour = PatientColour.objects.create(
+            name="blue", patient=self.patient
+        )
+        self.renderer = extract.PatientSubrecordCsvRenderer(
+            PatientColour, self.user, fields=["patient_id", "episode", "name"]
+        )
+
+    def test_get_header(self):
+        self.assertEqual(["Patient", "Episode", "Name"], self.renderer.get_headers())
+
+    def test_get_rows(self):
+        rendered = self.renderer.get_row(self.patient_colour, self.episode.id)
+        self.assertEqual(["1", "1", "blue"], rendered)
+
+
+class TestEpisodeSubrecordCsvRenderer(OpalTestCase):
+    def setUp(self):
+        _, self.episode = self.new_patient_and_episode_please()
+        self.colour = Colour.objects.create(
+            name="blue", episode=self.episode
+        )
+        self.renderer = extract.EpisodeSubrecordCsvRenderer(
+            Colour, self.user, fields=["patient", "episode_id", "name"]
+        )
+
+    def test_get_header(self):
+        self.assertEqual(["Patient", "Episode", "Name"], self.renderer.get_headers())
+
+    def test_get_rows(self):
+        rendered = self.renderer.get_row(self.colour)
+        self.assertEqual(["1", "1", "blue"], rendered)
