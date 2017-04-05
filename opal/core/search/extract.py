@@ -4,15 +4,16 @@ Utilities for extracting data from OPAL
 import datetime
 import csv
 import os
+from copy import copy
 import tempfile
 import zipfile
 import functools
 import logging
+from six import text_type
+
 
 from opal.models import Episode
 from opal.core.subrecords import episode_subrecords, patient_subrecords
-
-from six import u
 
 
 class CsvRenderer(object):
@@ -29,25 +30,22 @@ class CsvRenderer(object):
         return field_names
 
     def get_headers(self):
-        return self.fields
+        return copy(self.fields)
 
     def get_row(self, instance, *args, **kwargs):
         return [
-            str(getattr(self.model, h)).encode('UTF-8') for h in self.fields
+            text_type(getattr(instance, h)) for h in self.fields
         ]
 
 
 class EpisodeCsvRenderer(CsvRenderer):
-    def __init__(self, model, user):
+    def __init__(self, user):
         self.user = user
-        self.model = Episode
+        super(EpisodeCsvRenderer, self).__init__(Episode)
 
     def get_headers(self):
         headers = super(EpisodeCsvRenderer, self).get_headers()
         headers.append("tagging")
-        for index, header in enumerate(headers):
-            if header == "id":
-                headers[index] = "episode_id"
         return headers
 
     def get_row(self, instance):
@@ -60,23 +58,28 @@ class EpisodeCsvRenderer(CsvRenderer):
 class PatientSubrecordCsvRenderer(CsvRenderer):
     def get_headers(self):
         headers = super(PatientSubrecordCsvRenderer, self).get_headers()
-        headers.insert(1, "episode_id")
+        headers.insert(0, "episode_id")
         return headers
 
     def get_field_names_to_render(self):
-        field_names = self.model._get_fieldnames_to_extract()
+        field_names = super(
+            PatientSubrecordCsvRenderer, self
+        ).get_field_names_to_render()
         field_names.remove("id")
+        field_names.remove("patient_id")
         return field_names
 
     def get_row(self, instance, episode_id):
         row = super(PatientSubrecordCsvRenderer, self).get_row(instance)
-        row.insert(1, episode_id)
+        row.insert(0, text_type(episode_id))
         return row
 
 
 class EpisodeSubrecordCsvRenderer(CsvRenderer):
     def get_field_names_to_render(self):
-        field_names = self.model._get_fieldnames_to_extract()
+        field_names = super(
+            EpisodeSubrecordCsvRenderer, self
+        ).get_field_names_to_render()
         field_names.remove("id")
         return field_names
 
@@ -93,9 +96,9 @@ def subrecord_csv(episodes, subrecord, file_name):
         writer.writerow(renderer.get_headers())
         subrecords = subrecord.objects.filter(episode__in=episodes)
         for sub in subrecords:
-            writer.writerow([
+            writer.writerow(
                 renderer.get_row(sub)
-            ])
+            )
     logging.info("finished writing for %s" % subrecord)
 
 
@@ -106,7 +109,7 @@ def episode_csv(episodes, user, file_name):
     """
     logging.info("writing eposides")
     with open(file_name, "w") as csv_file:
-        renderer = EpisodeCsvRenderer()
+        renderer = EpisodeCsvRenderer(user)
         writer = csv.writer(csv_file)
         writer.writerow(renderer.get_headers())
 
