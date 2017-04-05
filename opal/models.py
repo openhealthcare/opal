@@ -788,22 +788,27 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         episode_history = episodes_for_user(episode_history, user)
         return [e.to_dict(user, shallow=True) for e in episode_history]
 
-    def to_dict(self, user, shallow=False):
+    def to_dict(self, user, fields=None, shallow=False):
         """
         Serialisation to JSON for Episodes
         """
-        d = {
-            'id'               : self.id,
-            'category_name'    : self.category_name,
-            'active'           : self.active,
-            'date_of_admission': self.date_of_admission,
-            'date_of_episode'  : self.date_of_episode,
-            'discharge_date'   : self.discharge_date,
-            'consistency_token': self.consistency_token,
-            'start'            : self.start,
-            'end'              : self.end,
-            'stage'            : self.stage,
-        }
+
+        # TODO this should be using get field names to serialise...
+        if not fields:
+            fields = [
+                "id",
+                "category_name",
+                "active",
+                "date_of_admission",
+                "date_of_episode",
+                "discharge_date",
+                "consistency_token",
+                "start",
+                "end",
+                "stage"
+            ]
+
+        d = {field: getattr(self, field) for field in fields}
 
         if shallow:
             return d
@@ -1702,10 +1707,12 @@ these symptoms when recorded."
     )
     details = models.TextField(blank=True, null=True)
 
-    def to_dict(self, user):
-        field_names = self.__class__._get_fieldnames_to_serialize()
+    def to_dict(self, user, fields=None):
+        if not fields:
+            fields = self.__class__._get_fieldnames_to_serialize()
+
         result = {
-            i: getattr(self, i) for i in field_names if not i == "symptoms"
+            i: getattr(self, i) for i in fields if not i == "symptoms"
         }
         result["symptoms"] = list(self.symptoms.values_list("name", flat=True))
         return result

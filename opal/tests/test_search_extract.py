@@ -4,6 +4,7 @@ Unittests for opal.core.search.extract
 import datetime
 import json
 from mock import mock_open, Mock, patch
+from six import u
 
 from django.core.urlresolvers import reverse
 from django.test import override_settings
@@ -94,18 +95,19 @@ class SubrecordCSVTestCase(PatientEpisodeTestCase):
         file_name = "fake file name"
 
         self.mocked_extract(
-            extract.subrecord_csv,
-            [[], Colour, file_name]
+            extract.episode_subrecord_csv,
+            [[], self.user, Colour, file_name]
         )
         headers = csv.writer().writerow.call_args_list[0][0][0]
         self.assertEqual(csv.writer().writerow.call_count, 1)
         expected_headers = [
-            'created',
-            'updated',
-            'created_by_id',
-            'updated_by_id',
-            'episode_id',
-            'name'
+            'Patient',
+            'Created',
+            'Updated',
+            'Created By',
+            'Updated By',
+            'Episode',
+            'Name'
         ]
         self.assertEqual(headers, expected_headers)
 
@@ -116,22 +118,23 @@ class SubrecordCSVTestCase(PatientEpisodeTestCase):
         colour = Colour.objects.create(episode=self.episode, name='blue')
 
         self.mocked_extract(
-            extract.subrecord_csv,
-            [[self.episode], Colour, file_name]
+            extract.episode_subrecord_csv,
+            [[self.episode], self.user, Colour, file_name]
         )
 
         headers = csv.writer().writerow.call_args_list[0][0][0]
         row = csv.writer().writerow.call_args_list[1][0][0]
         expected_headers = [
-            'created',
-            'updated',
-            'created_by_id',
-            'updated_by_id',
-            'episode_id',
-            'name'
+            'Patient',
+            'Created',
+            'Updated',
+            'Created By',
+            'Updated By',
+            'Episode',
+            'Name'
         ]
         expected_row = [
-            u'None', u'None', u'None', u'None', str(self.episode.id), u'blue'
+            str(self.patient.id), u'None', u'None', u'None', u'None', str(self.episode.id), u'blue'
         ]
         self.assertEqual(headers, expected_headers)
         self.assertEqual(row, expected_row)
@@ -145,30 +148,33 @@ class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
         file_name = "fake file name"
         self.mocked_extract(
             extract.patient_subrecord_csv,
-            [[self.episode], Demographics, file_name]
+            [[self.episode], self.user, Demographics, file_name]
         )
         headers = csv.writer().writerow.call_args_list[0][0][0]
         row = csv.writer().writerow.call_args_list[1][0][0]
         expected_headers = [
-            'episode_id',
-            'created',
-            'updated',
-            'created_by_id',
-            'updated_by_id',
-            'hospital_number',
-            'nhs_number',
-            'date_of_birth',
-            'death_indicator',
-            'sex',
-            'birth_place',
+            'Patient',
+            'Episode',
+            'Created',
+            'Updated',
+            'Created By',
+            'Updated By',
+            'Hospital Number',
+            'Nhs Number',
+            'Date Of Birth',
+            'Death Indicator',
+            'Sex',
+            'Birth Place',
         ]
-        self.assertEqual(headers[0], 'episode_id')
         for h in expected_headers:
-            self.assertTrue(h in headers)
+            self.assertTrue(
+                h in headers,
+                "{0} not in {1}".format(h, headers)
+            )
 
         expected_row = [
-            1, u'None', u'None', u'None', u'None', u'12345678',
-            u'None', u'1976-01-01', u'False', u'', u''
+                '1', u'None', u'None', u'None', u'None', u'1',
+                u'12345678', u'None', u'1976-01-01', u'False', u'', u''
         ]
         self.assertEqual(row, expected_row)
 
@@ -184,7 +190,7 @@ class ZipArchiveTestCase(PatientEpisodeTestCase):
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
         self.assertEqual(4, zipfile.ZipFile.return_value.__enter__.return_value.write.call_count)
 
-    @patch('opal.core.search.extract.subrecord_csv')
+    @patch('opal.core.search.extract.episode_subrecord_csv')
     @patch('opal.core.search.extract.zipfile')
     def test_exclude_episode_subrecords(self, zipfile, subrecords):
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
@@ -205,3 +211,154 @@ class AsyncExtractTestCase(OpalTestCase):
     def test_async(self, delay):
         extract.async_extract(self.user, 'THIS')
         delay.assert_called_with(self.user, 'THIS')
+
+
+class TestBasicCsvRenderer(OpalTestCase):
+    def test_init(self):
+        renderer = extract.CsvRenderer(Colour, self.user, fields=["trees"])
+        self.assertEqual(renderer.model, Colour)
+        self.assertEqual(renderer.user, self.user)
+        self.assertEqual(renderer.fields, ["trees"])
+
+        renderer = extract.CsvRenderer(Colour, self.user)
+        self.assertEqual(renderer.fields, renderer.get_field_names_to_render())
+
+    def test_get_field_names_to_render(self):
+        with patch.object(Colour, "_get_fieldnames_to_extract") as field_names:
+            field_names.return_value = ["name", "consistency_token"]
+            renderer = extract.CsvRenderer(Colour, self.user)
+            self.assertEqual(
+                renderer.fields,
+                ["name"]
+            )
+
+    def test_get_headers(self):
+        with patch.object(Colour, "_get_fieldnames_to_extract") as field_names:
+            field_names.return_value = ["name", "consistency_token"]
+            renderer = extract.CsvRenderer(Colour, self.user)
+            self.assertEqual(
+                renderer.get_headers(),
+                ["Name"]
+            )
+
+    def test_get_row(self):
+        with patch.object(Colour, "_get_fieldnames_to_extract") as field_names:
+            _, episode = self.new_patient_and_episode_please()
+            colour = Colour.objects.create(name="Blue", episode=episode)
+            field_names.return_value = ["name", "consistency_token"]
+            renderer = extract.CsvRenderer(Colour, self.user)
+            self.assertEqual(
+                renderer.get_row(colour),
+                ["Blue"]
+            )
+
+    def test_get_field_title(self):
+        with patch.object(Colour, "_get_field_title") as title:
+            title.return_value = "Hello"
+            renderer = extract.CsvRenderer(Colour, self.user)
+            self.assertEqual(
+                renderer.get_field_title("name"),
+                "Hello"
+            )
+
+class TestComplexCsvRenderer(OpalTestCase):
+    def setUp(self):
+        class ComplexStep(extract.CsvRenderer):
+            blues = extract.Column(
+                display_name = "all the blues",
+                value= lambda self, instance, hue: hue
+            )
+
+        _, self.episode = self.new_patient_and_episode_please()
+        self.colour = Colour.objects.create(name="Blue", episode=self.episode)
+        self.complex_step = ComplexStep(
+            Colour, self.user, fields=["blues", "name"]
+        )
+
+    def test_get_headers(self):
+        self.assertEqual(
+            self.complex_step.get_headers(),
+            ["all the blues", "Name"]
+        )
+
+    def test_get_row(self):
+        self.assertEqual(
+            self.complex_step.get_row(self.colour, "#0000FF"),
+            ['#0000FF', u'Blue']
+        )
+
+
+class TestEpisodeCsvRenderer(OpalTestCase):
+    def test_init(self):
+        renderer = extract.EpisodeCsvRenderer(self.user)
+        self.assertEqual(renderer.model, models.Episode)
+
+        renderer = extract.EpisodeCsvRenderer(self.user, fields=["id"])
+        self.assertEqual(renderer.fields, ["id"])
+
+    def test_with_tagging(self):
+        renderer = extract.EpisodeCsvRenderer(self.user)
+        _, episode = self.new_patient_and_episode_please()
+        episode.set_tag_names(["trees", "leaves"], self.user)
+        self.assertIn("Tagging", renderer.get_headers())
+        self.assertIn("trees; leaves", renderer.get_row(episode))
+
+
+class TestPatientSubrecordCsvRenderer(OpalTestCase):
+    def setUp(self):
+        self.patient, self.episode = self.new_patient_and_episode_please()
+        self.patient_colour = PatientColour.objects.create(
+            name="blue", patient=self.patient
+        )
+        self.renderer = extract.PatientSubrecordCsvRenderer(
+            PatientColour, self.user, fields=["patient_id", "episode", "name"]
+        )
+
+    def test_get_header(self):
+        self.assertEqual([u("Patient"), u("Episode"), u("Name")], self.renderer.get_headers())
+
+    def test_get_rows(self):
+        rendered = self.renderer.get_row(self.patient_colour, self.episode.id)
+        self.assertEqual([u("1"), u("1"), u("blue")], rendered)
+
+
+class TestEpisodeSubrecordCsvRenderer(OpalTestCase):
+    def setUp(self):
+        _, self.episode = self.new_patient_and_episode_please()
+        self.colour = Colour.objects.create(
+            name="blue", episode=self.episode
+        )
+        self.renderer = extract.EpisodeSubrecordCsvRenderer(
+            Colour, self.user, fields=["patient", "episode_id", "name"]
+        )
+
+    def test_get_header(self):
+        self.assertEqual([u("Patient"), u("Episode"), u("Name")], self.renderer.get_headers())
+
+    def test_get_rows(self):
+        rendered = self.renderer.get_row(self.colour)
+        self.assertEqual([u("1"), u("1"), u("blue")], rendered)
+
+class TestInheritedRenderer(OpalTestCase):
+    def setUp(self):
+        class ColourCsvRenderer(extract.EpisodeSubrecordCsvRenderer):
+            name = extract.Column(
+                display_name="Some Colour",
+                value=lambda self, instance: "Some value"
+            )
+
+        _, self.episode = self.new_patient_and_episode_please()
+        self.colour = Colour.objects.create(
+            name="blue", episode=self.episode
+        )
+        self.renderer = ColourCsvRenderer(
+            Colour, self.user, fields=["patient", "episode_id", "name"]
+        )
+
+    def test_get_header(self):
+        expected = [u("Patient"), u("Episode"), u("Some Colour")]
+        self.assertEqual(expected, self.renderer.get_headers())
+
+    def test_get_rows(self):
+        rendered = self.renderer.get_row(self.colour)
+        self.assertEqual([u("1"), u("1"), u("Some value")], rendered)
