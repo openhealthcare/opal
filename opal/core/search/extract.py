@@ -77,7 +77,7 @@ class CsvRenderer(with_metaclass(CsvRendererMetaClass)):
 class EpisodeCsvRenderer(CsvRenderer):
     tagging = Column(
         value=lambda self, instance: text_type(";".join(
-            instance.get_tag_names(self.user)
+            instance.get_tag_names(self.user, historic=True)
         ))
     )
 
