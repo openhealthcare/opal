@@ -71,6 +71,10 @@ class FavouriteDogs(models.PatientSubrecord):
     dogs = dmodels.ManyToManyField(Dog, related_name='favourite_dogs')
 
 
+class FavouriteNumber(models.PatientSubrecord):
+    number = dmodels.IntegerField(blank=True, null=True)
+
+
 class InvisibleDog(models.PatientSubrecord):
     _exclude_from_subrecords = True
     name = dmodels.CharField(max_length=200, default="Catherine")
