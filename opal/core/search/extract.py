@@ -16,7 +16,8 @@ from opal.core.subrecords import (
     episode_subrecords, patient_subrecords, subrecords
 )
 
-from six import u, with_metaclass
+from six import with_metaclass
+from django.utils.translation import ugettext as _
 
 Column = namedtuple("Column", ["display_name", "value"])
 
@@ -63,17 +64,17 @@ class CsvRenderer(with_metaclass(CsvRendererMetaClass)):
     def get_field_value(self, field_name, data):
         col_value = data[field_name]
         if isinstance(col_value, list):
-            return "; ".join(u(str(i).encode('UTF-8')) for i in col_value)
+            return "; ".join(_(str(i).encode('UTF-8')) for i in col_value)
         else:
-            return u(str(col_value))
+            return _(str(col_value))
 
     def get_headers(self):
         result = []
         for field in self.fields:
             if hasattr(self, field):
-                result.append(u(getattr(self, field).display_name))
+                result.append(_(getattr(self, field).display_name))
             else:
-                result.append(u(self.get_field_title(field)))
+                result.append(_(self.get_field_title(field)))
         return result
 
     def get_row(self, instance, *args, **kwargs):
@@ -97,7 +98,7 @@ class CsvRenderer(with_metaclass(CsvRendererMetaClass)):
 class EpisodeCsvRenderer(CsvRenderer):
     tagging = Column(
         display_name="Tagging",
-        value=lambda self, instance: u("; ".join(
+        value=lambda self, instance: _("; ".join(
             instance.get_tag_names(self.user)
         ))
     )
@@ -126,7 +127,7 @@ class EpisodeCsvRenderer(CsvRenderer):
 class PatientSubrecordCsvRenderer(CsvRenderer):
     episode = Column(
         display_name="Episode",
-        value=lambda self, instance, episode_id: u(str(episode_id))
+        value=lambda self, instance, episode_id: _(str(episode_id))
     )
 
     def get_field_names_to_render(self):
@@ -140,7 +141,7 @@ class PatientSubrecordCsvRenderer(CsvRenderer):
 class EpisodeSubrecordCsvRenderer(CsvRenderer):
     patient = Column(
         display_name="Patient",
-        value=lambda self, instance: u(str(instance.episode.patient_id))
+        value=lambda self, instance: _(str(instance.episode.patient_id))
     )
 
     def get_field_names_to_render(self):
