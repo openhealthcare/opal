@@ -101,6 +101,7 @@ class SubrecordCSVTestCase(PatientEpisodeTestCase):
         headers = csv.writer().writerow.call_args_list[0][0][0]
         self.assertEqual(csv.writer().writerow.call_count, 1)
         expected_headers = [
+            'patient_id',
             'created',
             'updated',
             'created_by_id',
@@ -124,6 +125,7 @@ class SubrecordCSVTestCase(PatientEpisodeTestCase):
         headers = csv.writer().writerow.call_args_list[0][0][0]
         row = csv.writer().writerow.call_args_list[1][0][0]
         expected_headers = [
+            'patient_id',
             'created',
             'updated',
             'created_by_id',
@@ -132,7 +134,7 @@ class SubrecordCSVTestCase(PatientEpisodeTestCase):
             'name'
         ]
         expected_row = [
-            u'None', u'None', u'None', u'None', str(self.episode.id), u'blue'
+            "1", 'None', 'None', 'None', 'None', str(self.episode.id), u'blue'
         ]
         self.assertEqual(headers, expected_headers)
         self.assertEqual(row, expected_row)
@@ -170,6 +172,7 @@ class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
             'updated',
             'created_by_id',
             'updated_by_id',
+            'patient_id',
             'hospital_number',
             'nhs_number',
             'date_of_birth',
@@ -182,7 +185,7 @@ class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
             self.assertTrue(h in headers)
 
         expected_row = [
-            '1', u'None', u'None', u'None', u'None', u'12345678',
+            '1', u'None', u'None', u'None', u'None', '1', u'12345678',
             u'None', u'1976-01-01', u'False', u'', u''
         ]
         self.assertEqual(row, expected_row)
@@ -293,7 +296,7 @@ class TestPatientSubrecordCsvRenderer(OpalTestCase):
             "patient_id", "name", "consistency_token", "id"
         ]
         renderer = extract.PatientSubrecordCsvRenderer(PatientColour)
-        self.assertEqual(["episode_id", "name"], renderer.get_headers())
+        self.assertEqual(["episode_id", "patient_id", "name"], renderer.get_headers())
 
     def test_get_row(self, field_names_to_extract):
         field_names_to_extract.return_value = [
@@ -301,7 +304,7 @@ class TestPatientSubrecordCsvRenderer(OpalTestCase):
         ]
         renderer = extract.PatientSubrecordCsvRenderer(PatientColour)
         rendered = renderer.get_row(self.patient_colour, self.episode.id)
-        self.assertEqual(["1", u("blue")], rendered)
+        self.assertEqual(["1", "1", "blue"], rendered)
 
 
 @patch.object(Colour, "_get_fieldnames_to_extract")
@@ -318,7 +321,7 @@ class TestEpisodeSubrecordCsvRenderer(OpalTestCase):
             "episode_id", "name", "consistency_token", "id"
         ]
         renderer = extract.EpisodeSubrecordCsvRenderer(Colour)
-        self.assertEqual([u("episode_id"), u("name")], renderer.get_headers())
+        self.assertEqual(["patient_id", "episode_id", "name"], renderer.get_headers())
 
     def test_get_row(self, field_names_to_extract):
         field_names_to_extract.return_value = [
@@ -326,4 +329,4 @@ class TestEpisodeSubrecordCsvRenderer(OpalTestCase):
         ]
         renderer = extract.EpisodeSubrecordCsvRenderer(Colour)
         rendered = renderer.get_row(self.colour)
-        self.assertEqual(["1", u("blue")], rendered)
+        self.assertEqual(["1", "1", "blue"], rendered)
