@@ -69,6 +69,17 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
         field_name
     )
 
+    numeric_fields = (
+        models.IntegerField,
+        models.DecimalField,
+        models.BigIntegerField,
+        models.FloatField,
+        models.PositiveIntegerField
+    )
+
+    if field.__class__ in numeric_fields:
+        ctx["element_type"] = "number"
+
     # for all django fields we'll get an empty list back
     # we default for free text or foreign keys
     enum = model.get_field_enum(field_name)
@@ -113,6 +124,9 @@ def extract_common_args(kwargs):
             args[field] = kwargs[field]
 
     element_name = kwargs.pop('element_name', args.get('element_name'))
+    args["element_type"] = kwargs.pop(
+        'element_type', args.get('element_type', 'text')
+    )
 
     if element_name:
         args["element_name"] = element_name

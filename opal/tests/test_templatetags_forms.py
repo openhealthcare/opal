@@ -58,6 +58,17 @@ class TestInferFromSubrecordPath(TestCase):
             "editing.birthday._client.id + '_birth_date'"
         )
 
+    def test_infer_element_type_number(self):
+        ctx = infer_from_subrecord_field_path("FavouriteNumber.number")
+        self.assertEquals(
+            ctx["element_type"],
+            "number"
+        )
+
+    def test_infer_element_type_text(self):
+        ctx = infer_from_subrecord_field_path("HoundOwner.name")
+        self.assertNotIn("element_type", ctx)
+
 
 class ExtractCommonArgsTestCase(TestCase):
     def test_required_override(self):
@@ -77,6 +88,11 @@ class ExtractCommonArgsTestCase(TestCase):
         show_kwargs = dict(hide="yes", model="something")
         ctx = extract_common_args(show_kwargs)
         self.assertEqual(ctx['visibility'], 'ng-hide="yes"')
+
+    def test_element_type(self):
+        tag_kwargs = dict(field="FavouriteNumber.number", element_type="text")
+        ctx = extract_common_args(tag_kwargs)
+        self.assertEqual(ctx["element_type"], "text")
 
 
 class TextareaTest(TestCase):
@@ -101,6 +117,13 @@ class InputTest(TestCase):
         rendered = tpl.render(Context({}))
         self.assertIn("editing.dog_owner.dog", rendered)
         self.assertIn("dog_list", rendered)
+
+    def test_element_type(self):
+        tpl = Template(
+            '{% load forms %}{% input field="FavouriteNumber.number" %}'
+        )
+        rendered = tpl.render(Context({}))
+        self.assertIn('type="number"', rendered)
 
     def test_use_verbose_name_from_model(self):
         tpl = Template('{% load forms %}{% input field="HoundOwner.dog" %}')
