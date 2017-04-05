@@ -95,7 +95,7 @@ class SubrecordCSVTestCase(PatientEpisodeTestCase):
         file_name = "fake file name"
 
         self.mocked_extract(
-            extract.subrecord_csv,
+            extract.episode_subrecord_csv,
             [[], Colour, file_name]
         )
         headers = csv.writer().writerow.call_args_list[0][0][0]
@@ -118,7 +118,7 @@ class SubrecordCSVTestCase(PatientEpisodeTestCase):
         colour = Colour.objects.create(episode=self.episode, name='blue')
 
         self.mocked_extract(
-            extract.subrecord_csv,
+            extract.episode_subrecord_csv,
             [[self.episode], Colour, file_name]
         )
 
@@ -202,7 +202,7 @@ class ZipArchiveTestCase(PatientEpisodeTestCase):
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
         self.assertEqual(4, zipfile.ZipFile.return_value.__enter__.return_value.write.call_count)
 
-    @patch('opal.core.search.extract.subrecord_csv')
+    @patch('opal.core.search.extract.episode_subrecord_csv')
     @patch('opal.core.search.extract.zipfile')
     def test_exclude_episode_subrecords(self, zipfile, subrecords):
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
