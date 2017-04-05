@@ -246,6 +246,17 @@ class TestBasicCsvRenderer(OpalTestCase):
                 ["Name"]
             )
 
+    def test_list_render(self):
+        _, episode = self.new_patient_and_episode_please()
+        colour = Colour.objects.create(name="Blue", episode=episode)
+        normal_to_dict = colour.to_dict(self.user)
+        normal_to_dict["name"] = ["onions", "kettles"]
+        with patch.object(colour, "to_dict") as to_dicted:
+            to_dicted.return_value = normal_to_dict
+            renderer = extract.CsvRenderer(Colour, self.user)
+            result = renderer.get_row(colour)
+            self.assertIn("onions; kettles", result)
+
     def test_get_row(self):
         with patch.object(Colour, "_get_fieldnames_to_extract") as field_names:
             _, episode = self.new_patient_and_episode_please()
