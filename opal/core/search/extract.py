@@ -116,7 +116,7 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
         return field_names
 
 
-def subrecord_csv(episodes, subrecord, file_name):
+def episode_subrecord_csv(episodes, subrecord, file_name):
     """
     Given an iterable of EPISODES, the SUBRECORD we want to serialise,
     write a csv file for the data in this subrecord for these episodes.
@@ -198,7 +198,7 @@ def zip_archive(episodes, description, user):
                 continue
             file_name = '{0}.csv'.format(subrecord.get_api_name())
             full_file_name = make_file_path(file_name)
-            subrecord_csv(episodes, subrecord, full_file_name)
+            episode_subrecord_csv(episodes, subrecord, full_file_name)
             z.write(full_file_name, zip_relative_file_path(file_name))
 
         for subrecord in patient_subrecords():
