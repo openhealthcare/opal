@@ -258,21 +258,30 @@ class TestBasicCsvRenderer(OpalTestCase):
                 ["Blue"]
             )
 
+
 class TestEpisodeCsvRenderer(OpalTestCase):
+
     def test_init(self):
         renderer = extract.EpisodeCsvRenderer(self.user)
         self.assertEqual(renderer.model, models.Episode)
 
-    def test_with_tagging(self):
+    def test_get_headers(self):
         renderer = extract.EpisodeCsvRenderer(self.user)
         _, episode = self.new_patient_and_episode_please()
         episode.set_tag_names(["trees", "leaves"], self.user)
         self.assertIn("tagging", renderer.get_headers())
+
+    def test_get_row(self):
+        renderer = extract.EpisodeCsvRenderer(self.user)
+        _, episode = self.new_patient_and_episode_please()
+        episode.set_tag_names(["trees", "leaves"], self.user)
         self.assertIn("trees;leaves", renderer.get_row(episode))
+
 
 
 @patch.object(PatientColour, "_get_fieldnames_to_extract")
 class TestPatientSubrecordCsvRenderer(OpalTestCase):
+
     def setUp(self):
         self.patient, self.episode = self.new_patient_and_episode_please()
         self.patient_colour = PatientColour.objects.create(
@@ -286,7 +295,7 @@ class TestPatientSubrecordCsvRenderer(OpalTestCase):
         renderer = extract.PatientSubrecordCsvRenderer(PatientColour)
         self.assertEqual(["episode_id", "name"], renderer.get_headers())
 
-    def test_get_rows(self, field_names_to_extract):
+    def test_get_row(self, field_names_to_extract):
         field_names_to_extract.return_value = [
             "patient_id", "name", "consistency_token", "id"
         ]
@@ -297,6 +306,7 @@ class TestPatientSubrecordCsvRenderer(OpalTestCase):
 
 @patch.object(Colour, "_get_fieldnames_to_extract")
 class TestEpisodeSubrecordCsvRenderer(OpalTestCase):
+
     def setUp(self):
         _, self.episode = self.new_patient_and_episode_please()
         self.colour = Colour.objects.create(
@@ -310,7 +320,7 @@ class TestEpisodeSubrecordCsvRenderer(OpalTestCase):
         renderer = extract.EpisodeSubrecordCsvRenderer(Colour)
         self.assertEqual([u("episode_id"), u("name")], renderer.get_headers())
 
-    def test_get_rows(self, field_names_to_extract):
+    def test_get_row(self, field_names_to_extract):
         field_names_to_extract.return_value = [
             "episode_id", "name", "consistency_token", "id"
         ]
