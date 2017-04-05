@@ -4,6 +4,7 @@ Unittests for opal.core.search.extract
 import datetime
 import json
 from mock import mock_open, Mock, patch
+from six import u
 
 from django.core.urlresolvers import reverse
 from django.test import override_settings
@@ -314,11 +315,11 @@ class TestPatientSubrecordCsvRenderer(OpalTestCase):
         )
 
     def test_get_header(self):
-        self.assertEqual(["Patient", "Episode", "Name"], self.renderer.get_headers())
+        self.assertEqual([u("Patient"), u("Episode"), u("Name")], self.renderer.get_headers())
 
     def test_get_rows(self):
         rendered = self.renderer.get_row(self.patient_colour, self.episode.id)
-        self.assertEqual(["1", "1", "blue"], rendered)
+        self.assertEqual([u("1"), u("1"), u("blue")], rendered)
 
 
 class TestEpisodeSubrecordCsvRenderer(OpalTestCase):
@@ -332,11 +333,11 @@ class TestEpisodeSubrecordCsvRenderer(OpalTestCase):
         )
 
     def test_get_header(self):
-        self.assertEqual(["Patient", "Episode", "Name"], self.renderer.get_headers())
+        self.assertEqual([u("Patient"), u("Episode"), u("Name")], self.renderer.get_headers())
 
     def test_get_rows(self):
         rendered = self.renderer.get_row(self.colour)
-        self.assertEqual(["1", "1", "blue"], rendered)
+        self.assertEqual([u("1"), u("1"), u("blue")], rendered)
 
 class TestInheritedRenderer(OpalTestCase):
     def setUp(self):
@@ -355,9 +356,9 @@ class TestInheritedRenderer(OpalTestCase):
         )
 
     def test_get_header(self):
-        expected = ["Patient", "Episode", "Some Colour"]
+        expected = [u("Patient"), u("Episode"), u("Some Colour")]
         self.assertEqual(expected, self.renderer.get_headers())
 
     def test_get_rows(self):
         rendered = self.renderer.get_row(self.colour)
-        self.assertEqual(["1", "1", "Some value"], rendered)
+        self.assertEqual([u("1"), u("1"), u("Some value")], rendered)
