@@ -15,7 +15,7 @@ from opal.models import Episode
 from opal.core.subrecords import episode_subrecords, patient_subrecords
 
 
-Column = namedtuple("Column", ["value"])
+Column = namedtuple("Column", ["display_name", "value"])
 
 
 class CsvRendererMetaClass(type):
@@ -57,8 +57,17 @@ class CsvRenderer(with_metaclass(CsvRendererMetaClass)):
 
         return result
 
+    def get_field_title(self, field_name):
+        return self.model._get_field_title(field_name)
+
     def get_headers(self):
-        return copy(self.fields)
+        result = []
+        for field in self.fields:
+            if hasattr(self, field):
+                result.append(getattr(self, field).display_name)
+            else:
+                result.append(self.get_field_title(field))
+        return result
 
     def get_row(self, instance, *args, **kwargs):
         result = []
@@ -76,9 +85,20 @@ class CsvRenderer(with_metaclass(CsvRendererMetaClass)):
 
 class EpisodeCsvRenderer(CsvRenderer):
     tagging = Column(
+        display_name="Tagging",
         value=lambda self, instance: text_type(";".join(
             instance.get_tag_names(self.user, historic=True)
         ))
+    )
+
+    start = Column(
+        display_name="Start",
+        value=lambda self, instance: instance.start
+    )
+
+    end = Column(
+        display_name="End",
+        value=lambda self, instance: instance.end
     )
 
     def __init__(self, user):
@@ -92,6 +112,7 @@ class EpisodeCsvRenderer(CsvRenderer):
 
 class PatientSubrecordCsvRenderer(CsvRenderer):
     episode_id = Column(
+        display_name="Episode",
         value=lambda self, instance, episode_id: text_type(episode_id)
     )
 
@@ -105,7 +126,8 @@ class PatientSubrecordCsvRenderer(CsvRenderer):
 
 class EpisodeSubrecordCsvRenderer(CsvRenderer):
     patient_id = Column(
-        value=lambda self, instance: text_type(instance.episode.patient_id)
+        value=lambda self, instance: text_type(instance.episode.patient_id),
+        display_name="Patient"
     )
 
     def get_field_names_to_render(self):
