@@ -151,7 +151,7 @@ class EpisodeCSVTestCase(PatientEpisodeTestCase):
                 [[self.episode], self.user, 'fake file name']
             )
             headers = csv.writer().writerow.call_args_list[0][0][0]
-            self.assertEqual(['start', 'end', 'tagging'], headers)
+            self.assertEqual(['tagging', 'start', 'end'], headers)
 
 
 class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
