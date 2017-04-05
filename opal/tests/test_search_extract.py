@@ -148,8 +148,8 @@ class EpisodeCSVTestCase(PatientEpisodeTestCase):
                 extract.episode_csv,
                 [[self.episode], self.user, 'fake file name']
             )
-            fieldnames = csv.DictWriter.call_args_list[0][1]['fieldnames']
-            self.assertEqual(['start', 'end', 'tagging'], fieldnames)
+            headers = csv.writer().writerow.call_args_list[0][0][0]
+            self.assertEqual(['start', 'end', 'tagging'], headers)
 
 
 class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
