@@ -28,6 +28,13 @@ Adds a utility method to the `Episode` service that returns a human readable pat
 
 Enhances the API available for plugins to include javascript and css by adding methods on `opal.core.plugins.OpalPlugin`
 
+#### 'element_type' argument for the form template tags
+
+Numeric database fields are now set as the html5 type="number" when rendering 
+them with the forms templatetag library. This means on mobile devices it will
+bring up the numeric keypad. The element type can now be set via the template
+tag API with the 'element_type' argument.
+
 #### OPAL_LOGO_PATH
 
 This new setting allows applications to set the path at which the app logo is served.
@@ -56,6 +63,7 @@ Fixes a bug where the allergies form rendered the provisional field twice
 #### Updates to the Dependency Graph
 
 Upgrades Font Awesome from 4.3.0 -> 4.7.0
+
 
 ### 0.8.1 (Minor Release)
 
