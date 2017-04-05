@@ -45,7 +45,7 @@ def episode_csv(episodes, user, file_name):
     """
     logging.info("writing eposides")
     with open(file_name, "w") as csv_file:
-        fieldnames = Episode._get_fieldnames_to_serialize()
+        fieldnames = Episode._get_fieldnames_to_extract()
         fieldnames.remove('consistency_token')
         headers = list(fieldnames)
         headers.append("tagging")
