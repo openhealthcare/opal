@@ -42,10 +42,13 @@ class CsvRenderer(with_metaclass(CsvRendererMetaClass)):
     """
         An Abstract base class of the other csv renderers
     """
-    def __init__(self, model, user):
+    def __init__(self, model, user, fields=None):
         self.model = model
         self.user = user
-        self.fields = self.get_field_names_to_render()
+        if fields:
+            self.fields = fields
+        else:
+            self.fields = self.get_field_names_to_render()
 
     def get_field_names_to_render(self):
         field_names = self.model._get_fieldnames_to_extract()

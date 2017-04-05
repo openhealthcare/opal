@@ -218,6 +218,16 @@ class TestBasicCsvRenderer(OpalTestCase):
         renderer = extract.CsvRenderer(Colour, self.user)
         self.assertEqual(renderer.fields, renderer.get_field_names_to_render())
 
+    def test_set_fields(self):
+        renderer = extract.CsvRenderer(Colour, self.user, fields=[
+            "name", "episode_id"
+        ])
+        self.assertEqual(renderer.fields, ["name", "episode_id"])
+        self.assertEqual(
+            renderer.get_headers(),
+            ["Name", "Episode"]
+        )
+
     def test_get_field_names_to_render(self):
         with patch.object(Colour, "_get_fieldnames_to_extract") as field_names:
             field_names.return_value = ["name", "consistency_token"]
