@@ -5,18 +5,40 @@ import datetime
 import csv
 import os
 from copy import copy
+from collections import namedtuple
 import tempfile
 import zipfile
 import functools
 import logging
-from six import text_type
-
-
+from six import text_type, with_metaclass
 from opal.models import Episode
 from opal.core.subrecords import episode_subrecords, patient_subrecords
 
 
-class CsvRenderer(object):
+Column = namedtuple("Column", ["value"])
+
+
+class CsvRendererMetaClass(type):
+    """
+        a meta class that less us declare fields to
+        append to the standard _get_fieldnames_to_extract
+    """
+    def __new__(cls, name, bases, attrs):
+        _fields = [i for i, v in attrs.items() if isinstance(v, Column)]
+
+        parents = [b for b in bases if isinstance(b, CsvRendererMetaClass)]
+        for parent in parents:
+            for field in parent._fields:
+                if field not in _fields:
+                    _fields.append(field)
+
+        attrs["_fields"] = _fields
+        return super(
+            CsvRendererMetaClass, cls
+        ).__new__(cls, name, bases, attrs)
+
+
+class CsvRenderer(with_metaclass(CsvRendererMetaClass)):
     """
         An Abstract base class of the other csv renderers
     """
@@ -27,35 +49,52 @@ class CsvRenderer(object):
     def get_field_names_to_render(self):
         field_names = self.model._get_fieldnames_to_extract()
         field_names.remove("consistency_token")
-        return field_names
+        result = copy(self.__class__._fields)
+        cls_fields = set(self.__class__._fields)
+        for field_name in field_names:
+            if field_name not in cls_fields:
+                result.append(field_name)
+
+        return result
 
     def get_headers(self):
         return copy(self.fields)
 
     def get_row(self, instance, *args, **kwargs):
-        return [
-            text_type(getattr(instance, h)) for h in self.fields
-        ]
+        result = []
+
+        for field in self.fields:
+            if hasattr(self, field):
+                some_fn = getattr(self, field).value
+                result.append(
+                    some_fn(self, instance, *args, **kwargs)
+                )
+            else:
+                result.append(text_type(getattr(instance, field)))
+        return result
 
 
 class EpisodeCsvRenderer(CsvRenderer):
+    tagging = Column(
+        value=lambda self, instance: text_type(";".join(
+            instance.get_tag_names(self.user, historic=True)
+        ))
+    )
+
     def __init__(self, user):
         self.user = user
         super(EpisodeCsvRenderer, self).__init__(Episode)
 
     def get_headers(self):
         headers = super(EpisodeCsvRenderer, self).get_headers()
-        headers.append("tagging")
         return headers
-
-    def get_row(self, instance):
-        row = super(EpisodeCsvRenderer, self).get_row(instance)
-        tags = ";".join(instance.get_tag_names(self.user, historic=True))
-        row.append(tags)
-        return row
 
 
 class PatientSubrecordCsvRenderer(CsvRenderer):
+    episode_id = Column(
+        value=lambda self, instance, episode_id: text_type(episode_id)
+    )
+
     def get_field_names_to_render(self):
         field_names = super(
             PatientSubrecordCsvRenderer, self
@@ -63,34 +102,18 @@ class PatientSubrecordCsvRenderer(CsvRenderer):
         field_names.remove("id")
         return field_names
 
-    def get_headers(self):
-        headers = super(PatientSubrecordCsvRenderer, self).get_headers()
-        headers.insert(0, "episode_id")
-        return headers
-
-    def get_row(self, instance, episode_id):
-        row = super(PatientSubrecordCsvRenderer, self).get_row(instance)
-        row.insert(0, text_type(episode_id))
-        return row
-
 
 class EpisodeSubrecordCsvRenderer(CsvRenderer):
+    patient_id = Column(
+        value=lambda self, instance: text_type(instance.episode.patient_id)
+    )
+
     def get_field_names_to_render(self):
         field_names = super(
             EpisodeSubrecordCsvRenderer, self
         ).get_field_names_to_render()
         field_names.remove("id")
         return field_names
-
-    def get_headers(self):
-        headers = super(EpisodeSubrecordCsvRenderer, self).get_headers()
-        headers.insert(0, "patient_id")
-        return headers
-
-    def get_row(self, instance):
-        row = super(EpisodeSubrecordCsvRenderer, self).get_row(instance)
-        row.insert(0, text_type(instance.episode.patient_id))
-        return row
 
 
 def subrecord_csv(episodes, subrecord, file_name):
