@@ -330,3 +330,35 @@ class TestEpisodeSubrecordCsvRenderer(OpalTestCase):
         renderer = extract.EpisodeSubrecordCsvRenderer(Colour)
         rendered = renderer.get_row(self.colour)
         self.assertEqual(["1", "1", "blue"], rendered)
+
+
+
+@patch.object(Colour, "_get_fieldnames_to_extract")
+class TestInheritedRenderer(OpalTestCase):
+    def setUp(self):
+        class ColourCsvRenderer(extract.EpisodeSubrecordCsvRenderer):
+            name = extract.Column(
+                value=lambda self, instance: "Some value"
+            )
+
+        _, self.episode = self.new_patient_and_episode_please()
+        self.colour = Colour.objects.create(
+            name="blue", episode=self.episode
+        )
+        self.colourCsvRenderer = ColourCsvRenderer
+
+    def test_get_header(self, field_names_to_extract):
+        field_names_to_extract.return_value = [
+            "episode_id", "name", "consistency_token", "id"
+        ]
+        renderer = self.colourCsvRenderer(Colour)
+        expected = ['name', 'patient_id', 'episode_id']
+        self.assertEqual(expected, renderer.get_headers())
+
+    def test_get_rows(self, field_names_to_extract):
+        field_names_to_extract.return_value = [
+            "episode_id", "name", "consistency_token", "id"
+        ]
+        renderer = self.colourCsvRenderer(Colour)
+        rendered = renderer.get_row(self.colour)
+        self.assertEqual(["Some value", "1", "1"], rendered)
