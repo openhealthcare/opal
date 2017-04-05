@@ -56,18 +56,17 @@ class EpisodeCsvRenderer(CsvRenderer):
 
 
 class PatientSubrecordCsvRenderer(CsvRenderer):
-    def get_headers(self):
-        headers = super(PatientSubrecordCsvRenderer, self).get_headers()
-        headers.insert(0, "episode_id")
-        return headers
-
     def get_field_names_to_render(self):
         field_names = super(
             PatientSubrecordCsvRenderer, self
         ).get_field_names_to_render()
         field_names.remove("id")
-        field_names.remove("patient_id")
         return field_names
+
+    def get_headers(self):
+        headers = super(PatientSubrecordCsvRenderer, self).get_headers()
+        headers.insert(0, "episode_id")
+        return headers
 
     def get_row(self, instance, episode_id):
         row = super(PatientSubrecordCsvRenderer, self).get_row(instance)
@@ -82,6 +81,16 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
         ).get_field_names_to_render()
         field_names.remove("id")
         return field_names
+
+    def get_headers(self):
+        headers = super(EpisodeSubrecordCsvRenderer, self).get_headers()
+        headers.insert(0, "patient_id")
+        return headers
+
+    def get_row(self, instance):
+        row = super(EpisodeSubrecordCsvRenderer, self).get_row(instance)
+        row.insert(0, text_type(instance.episode.patient_id))
+        return row
 
 
 def subrecord_csv(episodes, subrecord, file_name):
