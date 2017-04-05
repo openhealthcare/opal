@@ -96,7 +96,7 @@ class EpisodeSubrecordCSVTestCase(PatientEpisodeTestCase):
 
         self.mocked_extract(
             extract.episode_subrecord_csv,
-            [[], Colour, file_name]
+            [[], self.user, Colour, file_name]
         )
         headers = csv.writer().writerow.call_args_list[0][0][0]
         self.assertEqual(csv.writer().writerow.call_count, 1)
@@ -119,7 +119,7 @@ class EpisodeSubrecordCSVTestCase(PatientEpisodeTestCase):
 
         self.mocked_extract(
             extract.episode_subrecord_csv,
-            [[self.episode], Colour, file_name]
+            [[self.episode], self.user, Colour, file_name]
         )
 
         headers = csv.writer().writerow.call_args_list[0][0][0]
@@ -148,7 +148,7 @@ class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
         file_name = "fake file name"
         self.mocked_extract(
             extract.patient_subrecord_csv,
-            [[self.episode], Demographics, file_name]
+            [[self.episode], self.user, Demographics, file_name]
         )
         headers = csv.writer().writerow.call_args_list[0][0][0]
         row = csv.writer().writerow.call_args_list[1][0][0]
@@ -213,15 +213,15 @@ class AsyncExtractTestCase(OpalTestCase):
 
 class TestBasicCsvRenderer(OpalTestCase):
     def test_init(self):
-        renderer = extract.CsvRenderer(Colour)
+        renderer = extract.CsvRenderer(Colour, self.user)
         self.assertEqual(renderer.model, Colour)
-        renderer = extract.CsvRenderer(Colour)
+        renderer = extract.CsvRenderer(Colour, self.user)
         self.assertEqual(renderer.fields, renderer.get_field_names_to_render())
 
     def test_get_field_names_to_render(self):
         with patch.object(Colour, "_get_fieldnames_to_extract") as field_names:
             field_names.return_value = ["name", "consistency_token"]
-            renderer = extract.CsvRenderer(Colour)
+            renderer = extract.CsvRenderer(Colour, self.user)
             self.assertEqual(
                 renderer.fields,
                 ["name"]
@@ -230,7 +230,7 @@ class TestBasicCsvRenderer(OpalTestCase):
     def test_get_headers(self):
         with patch.object(Colour, "_get_fieldnames_to_extract") as field_names:
             field_names.return_value = ["name", "consistency_token"]
-            renderer = extract.CsvRenderer(Colour)
+            renderer = extract.CsvRenderer(Colour, self.user)
             self.assertEqual(
                 renderer.get_headers(),
                 ["Name"]
@@ -241,7 +241,7 @@ class TestBasicCsvRenderer(OpalTestCase):
             _, episode = self.new_patient_and_episode_please()
             colour = Colour.objects.create(name="Blue", episode=episode)
             field_names.return_value = ["name", "consistency_token"]
-            renderer = extract.CsvRenderer(Colour)
+            renderer = extract.CsvRenderer(Colour, self.user)
             self.assertEqual(
                 renderer.get_row(colour),
                 ["Blue"]
@@ -251,6 +251,19 @@ class TestEpisodeCsvRenderer(OpalTestCase):
     def test_init(self):
         renderer = extract.EpisodeCsvRenderer(self.user)
         self.assertEqual(renderer.model, models.Episode)
+
+    def test_headers(self):
+        expected = {
+            "Start",
+            "End",
+            "Created",
+            "Updated",
+            "Created By",
+            "Updated By",
+            "Patient"
+        }
+        renderer = extract.EpisodeCsvRenderer(self.user)
+        self.assertEqual(len(expected - set(renderer.get_headers())), 0)
 
     def test_with_tagging(self):
         renderer = extract.EpisodeCsvRenderer(self.user)
@@ -276,14 +289,14 @@ class TestPatientSubrecordCsvRenderer(OpalTestCase):
         field_names_to_extract.return_value = [
             "patient_id", "name", "consistency_token", "id"
         ]
-        renderer = extract.PatientSubrecordCsvRenderer(PatientColour)
+        renderer = extract.PatientSubrecordCsvRenderer(PatientColour, self.user)
         self.assertEqual(["Episode", "Patient", "Name"], renderer.get_headers())
 
     def test_get_rows(self, field_names_to_extract):
         field_names_to_extract.return_value = [
             "patient_id", "name", "consistency_token", "id"
         ]
-        renderer = extract.PatientSubrecordCsvRenderer(PatientColour)
+        renderer = extract.PatientSubrecordCsvRenderer(PatientColour, self.user)
         rendered = renderer.get_row(self.patient_colour, self.episode.id)
         self.assertEqual(["1", "1", "blue"], rendered)
 
@@ -300,14 +313,14 @@ class TestEpisodeSubrecordCsvRenderer(OpalTestCase):
         field_names_to_extract.return_value = [
             "episode_id", "name", "consistency_token", "id"
         ]
-        renderer = extract.EpisodeSubrecordCsvRenderer(Colour)
+        renderer = extract.EpisodeSubrecordCsvRenderer(Colour, self.user)
         self.assertEqual(["Patient", "Episode", "Name"], renderer.get_headers())
 
     def test_get_rows(self, field_names_to_extract):
         field_names_to_extract.return_value = [
             "episode_id", "name", "consistency_token", "id"
         ]
-        renderer = extract.EpisodeSubrecordCsvRenderer(Colour)
+        renderer = extract.EpisodeSubrecordCsvRenderer(Colour, self.user)
         rendered = renderer.get_row(self.colour)
         self.assertEqual(["1", "1", "blue"], rendered)
 
@@ -332,7 +345,7 @@ class TestInheritedRenderer(OpalTestCase):
         field_names_to_extract.return_value = [
             "episode_id", "name", "consistency_token", "id"
         ]
-        renderer = self.colourCsvRenderer(Colour)
+        renderer = self.colourCsvRenderer(Colour, self.user)
         expected = ['Wowzer', 'Patient', 'Episode']
         self.assertEqual(expected, renderer.get_headers())
 
@@ -340,6 +353,6 @@ class TestInheritedRenderer(OpalTestCase):
         field_names_to_extract.return_value = [
             "episode_id", "name", "consistency_token", "id"
         ]
-        renderer = self.colourCsvRenderer(Colour)
+        renderer = self.colourCsvRenderer(Colour, self.user)
         rendered = renderer.get_row(self.colour)
         self.assertEqual(["Some value", "1", "1"], rendered)

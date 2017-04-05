@@ -42,8 +42,9 @@ class CsvRenderer(with_metaclass(CsvRendererMetaClass)):
     """
         An Abstract base class of the other csv renderers
     """
-    def __init__(self, model):
+    def __init__(self, model, user):
         self.model = model
+        self.user = user
         self.fields = self.get_field_names_to_render()
 
     def get_field_names_to_render(self):
@@ -69,17 +70,27 @@ class CsvRenderer(with_metaclass(CsvRendererMetaClass)):
                 result.append(self.get_field_title(field))
         return result
 
-    def get_row(self, instance, *args, **kwargs):
-        result = []
+    def get_field_value(self, field_name, data):
+        col_value = data[field_name]
+        if isinstance(col_value, list):
+            return "; ".join(text_type(i) for i in col_value)
+        else:
+            return text_type(col_value)
 
+    def get_row(self, instance, *args, **kwargs):
+        as_dict = instance.to_dict(user=self.user)
+
+        result = []
         for field in self.fields:
             if hasattr(self, field):
                 some_fn = getattr(self, field).value
+
                 result.append(
                     some_fn(self, instance, *args, **kwargs)
                 )
             else:
-                result.append(text_type(getattr(instance, field)))
+                result.append(self.get_field_value(field, as_dict))
+
         return result
 
 
@@ -101,9 +112,33 @@ class EpisodeCsvRenderer(CsvRenderer):
         value=lambda self, instance: instance.end
     )
 
+    created = Column(
+        display_name="Created",
+        value=lambda self, instance: instance.created
+    )
+
+    updated = Column(
+        display_name="Updated",
+        value=lambda self, instance: instance.updated
+    )
+
+    created_by_id = Column(
+        display_name="Created By",
+        value=lambda self, instance: instance.created_by_id
+    )
+
+    updated_by_id = Column(
+        display_name="Updated By",
+        value=lambda self, instance: instance.updated_by_id
+    )
+
+    patient_id = Column(
+        display_name="Patient",
+        value=lambda self, instance: instance.patient_id
+    )
+
     def __init__(self, user):
-        self.user = user
-        super(EpisodeCsvRenderer, self).__init__(Episode)
+        super(EpisodeCsvRenderer, self).__init__(Episode, user)
 
     def get_headers(self):
         headers = super(EpisodeCsvRenderer, self).get_headers()
@@ -138,7 +173,7 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
         return field_names
 
 
-def episode_subrecord_csv(episodes, subrecord, file_name):
+def episode_subrecord_csv(episodes, user, subrecord, file_name):
     """
     Given an iterable of EPISODES, the SUBRECORD we want to serialise,
     write a csv file for the data in this subrecord for these episodes.
@@ -146,7 +181,7 @@ def episode_subrecord_csv(episodes, subrecord, file_name):
     logging.info("writing for %s" % subrecord)
     with open(file_name, "w") as csv_file:
         writer = csv.writer(csv_file)
-        renderer = EpisodeSubrecordCsvRenderer(subrecord)
+        renderer = EpisodeSubrecordCsvRenderer(subrecord, user)
         writer.writerow(renderer.get_headers())
         subrecords = subrecord.objects.filter(episode__in=episodes)
         for sub in subrecords:
@@ -173,7 +208,7 @@ def episode_csv(episodes, user, file_name):
     logging.info("finished writing episodes")
 
 
-def patient_subrecord_csv(episodes, subrecord, file_name):
+def patient_subrecord_csv(episodes, user, subrecord, file_name):
     """
     Given an iterable of EPISODES, and the patient SUBRECORD we want to
     create a CSV file for the data in this subrecord for these episodes.
@@ -181,7 +216,7 @@ def patient_subrecord_csv(episodes, subrecord, file_name):
 
     with open(file_name, "w") as csv_file:
         writer = csv.writer(csv_file)
-        renderer = PatientSubrecordCsvRenderer(subrecord)
+        renderer = PatientSubrecordCsvRenderer(subrecord, user)
         writer.writerow(renderer.get_headers())
 
         patient_to_episode = {e.patient_id: e.id for e in episodes}
@@ -220,7 +255,7 @@ def zip_archive(episodes, description, user):
                 continue
             file_name = '{0}.csv'.format(subrecord.get_api_name())
             full_file_name = make_file_path(file_name)
-            episode_subrecord_csv(episodes, subrecord, full_file_name)
+            episode_subrecord_csv(episodes, user, subrecord, full_file_name)
             z.write(full_file_name, zip_relative_file_path(file_name))
 
         for subrecord in patient_subrecords():
@@ -228,7 +263,7 @@ def zip_archive(episodes, description, user):
                 continue
             file_name = '{0}.csv'.format(subrecord.get_api_name())
             full_file_name = make_file_path(file_name)
-            patient_subrecord_csv(episodes, subrecord, full_file_name)
+            patient_subrecord_csv(episodes, user, subrecord, full_file_name)
             z.write(full_file_name, zip_relative_file_path(file_name))
 
         file_name = 'filter.txt'
