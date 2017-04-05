@@ -27,7 +27,10 @@ Enhances the API available for plugins to include javascript and css by adding m
 
 #### 'element_type' argument for the form template tags
 
-Numeric database fields will now infer to the forms template tag as the html5 type="number". This means on mobile devices it will bring up the numeric keypad. This can be set manually in the form with 'element_type'.
+Numeric database fields are now set as the html5 type="number" when rendering 
+them with the forms templatetag library. This means on mobile devices it will
+bring up the numeric keypad. The element type can now be set via the template
+tag API with the 'element_type' argument.
 
 #### OPAL_LOGO_PATH
 
