@@ -138,6 +138,20 @@ class SubrecordCSVTestCase(PatientEpisodeTestCase):
         self.assertEqual(row, expected_row)
 
 
+class EpisodeCSVTestCase(PatientEpisodeTestCase):
+
+    @patch('opal.core.search.extract.csv')
+    def test_uses_fieldnames_to_extract(self, csv):
+        with patch.object(extract.Episode, '_get_fieldnames_to_extract') as extractor:
+            extractor.return_value = ['start', 'end', 'consistency_token']
+            self.mocked_extract(
+                extract.episode_csv,
+                [[self.episode], self.user, 'fake file name']
+            )
+            fieldnames = csv.DictWriter.call_args_list[0][1]['fieldnames']
+            self.assertEqual(['start', 'end', 'tagging'], fieldnames)
+
+
 class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
 
     @patch("opal.core.search.extract.csv")
