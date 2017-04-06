@@ -1,15 +1,15 @@
 """
-Utilities for extracting data from OPAL
+Utilities for extracting data from Opal applications
 """
-import datetime
-import csv
-import os
 from copy import copy
+import csv
+import datetime
+import functools
+import logging
+import os
 from collections import namedtuple
 import tempfile
 import zipfile
-import functools
-import logging
 from six import text_type, with_metaclass
 from opal.models import Episode
 from opal.core.subrecords import subrecords, episode_subrecords
