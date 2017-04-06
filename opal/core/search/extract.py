@@ -1,47 +1,49 @@
 """
 Utilities for extracting data from Opal applications
 """
-from copy import copy
 import csv
 import datetime
 import functools
 import logging
 import os
-from collections import namedtuple
 import tempfile
 import zipfile
-from six import text_type, with_metaclass
+from six import text_type
 from opal.models import Episode
 from opal.core.subrecords import subrecords, episode_subrecords
 
 
-Column = namedtuple("Column", ["display_name", "value"])
+class Column(object):
+    """ A custom column class that will render a custom value
 
-
-class CsvRendererMetaClass(type):
+        * name is similar to api_name on a field
+          if it matches and existig field api name in the extract
+          fields this will override it
+        * value is that takes in whatever arguments
+          are passed to get_row
+        * display name is what is used in the header
     """
-        a meta class that less us declare fields to
-        append to the standard _get_fieldnames_to_extract
-    """
-    def __new__(cls, name, bases, attrs):
-        _fields = [i for i, v in attrs.items() if isinstance(v, Column)]
+    def __init__(self, name, value=None, display_name=None):
+        self.name = name
+        self.value = value
 
-        parents = [b for b in bases if isinstance(b, CsvRendererMetaClass)]
-        for parent in parents:
-            for field in parent._fields:
-                if field not in _fields:
-                    _fields.append(field)
+        if value:
+            self.value = value
+        else:
+            self.value = lambda renderer, obj: getattr(obj, self.name)
 
-        attrs["_fields"] = _fields
-        return super(
-            CsvRendererMetaClass, cls
-        ).__new__(cls, name, bases, attrs)
+        if display_name:
+            self.display_name = display_name
+        else:
+            self.display_name = self.name.title()
 
 
-class CsvRenderer(with_metaclass(CsvRendererMetaClass)):
+class CsvRenderer(object):
     """
         An Abstract base class of the other csv renderers
     """
+    custom_fields = []
+
     def __init__(self, model, queryset, user, fields=None):
         self.queryset = queryset
         self.model = model
@@ -51,13 +53,19 @@ class CsvRenderer(with_metaclass(CsvRendererMetaClass)):
         else:
             self.fields = self.get_field_names_to_render()
 
+    def get_custom_field_names(self):
+        return [custom_field.name for custom_field in self.custom_fields]
+
+    def get_custom_field(self, field_name):
+        return next(i for i in self.custom_fields if i.name == field_name)
+
     def get_field_names_to_render(self):
         field_names = self.model._get_fieldnames_to_extract()
         field_names.remove("consistency_token")
-        result = copy(self.__class__._fields)
-        cls_fields = set(self.__class__._fields)
+        result = self.get_custom_field_names()
+        custom_fields_set = set(result)
         for field_name in field_names:
-            if field_name not in cls_fields:
+            if field_name not in custom_fields_set:
                 result.append(field_name)
 
         return result
@@ -68,8 +76,8 @@ class CsvRenderer(with_metaclass(CsvRendererMetaClass)):
     def get_headers(self):
         result = []
         for field in self.fields:
-            if hasattr(self, field):
-                result.append(getattr(self, field).display_name)
+            if field in self.get_custom_field_names():
+                result.append(self.get_custom_field(field).display_name)
             else:
                 result.append(self.get_field_title(field))
         return result
@@ -85,10 +93,10 @@ class CsvRenderer(with_metaclass(CsvRendererMetaClass)):
         as_dict = instance.to_dict(user=self.user)
 
         result = []
-        for field in self.fields:
-            if hasattr(self, field):
-                some_fn = getattr(self, field).value
 
+        for field in self.fields:
+            if field in self.get_custom_field_names():
+                some_fn = self.get_custom_field(field).value
                 result.append(
                     some_fn(self, instance, *args, **kwargs)
                 )
@@ -113,53 +121,30 @@ class CsvRenderer(with_metaclass(CsvRendererMetaClass)):
 
 
 class EpisodeCsvRenderer(CsvRenderer):
-    tagging = Column(
-        display_name="Tagging",
-        value=lambda self, instance: text_type(";".join(
-            instance.get_tag_names(self.user, historic=True)
-        ))
-    )
-
-    start = Column(
-        display_name="Start",
-        value=lambda self, instance: instance.start
-    )
-
-    end = Column(
-        display_name="End",
-        value=lambda self, instance: instance.end
-    )
-
-    created = Column(
-        display_name="Created",
-        value=lambda self, instance: instance.created
-    )
-
-    updated = Column(
-        display_name="Updated",
-        value=lambda self, instance: instance.updated
-    )
-
-    created_by_id = Column(
-        display_name="Created By",
-        value=lambda self, instance: instance.created_by_id
-    )
-
-    updated_by_id = Column(
-        display_name="Updated By",
-        value=lambda self, instance: instance.updated_by_id
-    )
-
-    patient_id = Column(
-        display_name="Patient",
-        value=lambda self, instance: instance.patient_id
+    custom_fields = (
+        Column(
+            "tagging",
+            value=lambda self, instance: text_type(";".join(
+                instance.get_tag_names(self.user, historic=True)
+            ))
+        ),
+        Column("start"),
+        Column("end"),
+        Column("created"),
+        Column("updated"),
+        Column("created_by_id", display_name="Created By"),
+        Column("updated_by_id", display_name="Updated By"),
+        Column("patient_id", display_name="Patient"),
     )
 
 
 class PatientSubrecordCsvRenderer(CsvRenderer):
-    episode_id = Column(
-        display_name="Episode",
-        value=lambda self, instance, episode_id: text_type(episode_id)
+    custom_fields = (
+        Column(
+            "episode_id",
+            display_name="Episode",
+            value=lambda self, instance, episode_id: text_type(episode_id)
+        ),
     )
 
     def __init__(self, model, episode_queryset, user, fields=None):
@@ -186,9 +171,12 @@ class PatientSubrecordCsvRenderer(CsvRenderer):
 
 
 class EpisodeSubrecordCsvRenderer(CsvRenderer):
-    patient_id = Column(
-        value=lambda self, instance: text_type(instance.episode.patient_id),
-        display_name="Patient"
+    custom_fields = (
+        Column(
+            "patient_id",
+            display_name="Patient",
+            value=lambda self, instance: text_type(instance.episode.patient_id)
+        ),
     )
 
     def get_field_names_to_render(self):
