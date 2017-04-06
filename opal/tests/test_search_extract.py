@@ -3,7 +3,7 @@ Unittests for opal.core.search.extract
 """
 import datetime
 import json
-from mock import mock_open, Mock, patch
+from mock import mock_open, patch
 
 from django.core.urlresolvers import reverse
 from django.test import override_settings
@@ -14,8 +14,6 @@ from opal.tests.models import (
     Colour, PatientColour, Demographics, HatWearer, HouseOwner
 )
 from opal.core.search import extract
-from opal.core import subrecords
-from six import u
 
 MOCKING_FILE_NAME_OPEN = "opal.core.search.extract.open"
 
@@ -87,120 +85,28 @@ class PatientEpisodeTestCase(OpalTestCase):
             some_fun(*args)
 
 
-class EpisodeSubrecordCSVTestCase(PatientEpisodeTestCase):
-
-    @patch("opal.core.search.extract.csv")
-    def test_no_episodes(self, csv):
-        csv.writer = Mock()
-        file_name = "fake file name"
-
-        self.mocked_extract(
-            extract.episode_subrecord_csv,
-            [[], self.user, Colour, file_name]
-        )
-        headers = csv.writer().writerow.call_args_list[0][0][0]
-        self.assertEqual(csv.writer().writerow.call_count, 1)
-        expected_headers = [
-            'Patient',
-            'Created',
-            'Updated',
-            'Created By',
-            'Updated By',
-            'Episode',
-            'Name'
-        ]
-        self.assertEqual(headers, expected_headers)
-
-    @patch("opal.core.search.extract.csv")
-    def test_with_subrecords(self, csv):
-        csv.writer = Mock()
-        file_name = "fake file name"
-        colour = Colour.objects.create(episode=self.episode, name='blue')
-
-        self.mocked_extract(
-            extract.episode_subrecord_csv,
-            [[self.episode], self.user, Colour, file_name]
-        )
-
-        headers = csv.writer().writerow.call_args_list[0][0][0]
-        row = csv.writer().writerow.call_args_list[1][0][0]
-        expected_headers = [
-            'Patient',
-            'Created',
-            'Updated',
-            'Created By',
-            'Updated By',
-            'Episode',
-            'Name'
-        ]
-        expected_row = [
-            "1", 'None', 'None', 'None', 'None', str(self.episode.id), u'blue'
-        ]
-        self.assertEqual(headers, expected_headers)
-        self.assertEqual(row, expected_row)
-
-
-class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
-
-    @patch("opal.core.search.extract.csv")
-    def test_strips_pid(self, csv):
-        csv.writer = Mock()
-        file_name = "fake file name"
-        self.mocked_extract(
-            extract.patient_subrecord_csv,
-            [[self.episode], self.user, Demographics, file_name]
-        )
-        headers = csv.writer().writerow.call_args_list[0][0][0]
-        row = csv.writer().writerow.call_args_list[1][0][0]
-        expected_headers = [
-            'Episode',
-            'Created',
-            'Updated',
-            'Created By',
-            'Updated By',
-            'Patient',
-            'Hospital Number',
-            'Nhs Number',
-            'Date Of Birth',
-            'Death Indicator',
-            'Sex',
-            'Birth Place',
-        ]
-        self.assertEqual(headers[0], 'Episode')
-        for h in expected_headers:
-            self.assertIn(h, headers)
-
-        expected_row = [
-            '1', u'None', u'None', u'None', u'None', '1', u'12345678',
-            u'None', u'1976-01-01', u'False', u'', u''
-        ]
-        self.assertEqual(row, expected_row)
-
-
 class ZipArchiveTestCase(PatientEpisodeTestCase):
 
-    @patch('opal.core.search.extract.episode_subrecords')
-    @patch('opal.core.search.extract.patient_subrecords')
+    @patch('opal.core.search.extract.subrecords')
     @patch('opal.core.search.extract.zipfile')
-    def test_episode_subrecords(self, zipfile, patient_subrecords, episode_subrecords):
-        episode_subrecords.return_value = [HatWearer]
-        patient_subrecords.return_value = [HouseOwner]
+    def test_episode_subrecords(self, zipfile, subrecords):
+        subrecords.return_value = [HatWearer, HouseOwner]
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
-        self.assertEqual(4, zipfile.ZipFile.return_value.__enter__.return_value.write.call_count)
+        call_args = zipfile.ZipFile.return_value.__enter__.return_value.write.call_args_list
+        self.assertEqual(3, len(call_args))
+        self.assertTrue(call_args[0][0][0].endswith("episodes.csv"))
+        self.assertTrue(call_args[1][0][0].endswith("hat_wearer.csv"))
+        self.assertTrue(call_args[2][0][0].endswith("house_owner.csv"))
 
-    @patch('opal.core.search.extract.episode_subrecord_csv')
+    @patch('opal.core.search.extract.subrecords')
+    @patch('opal.core.search.extract.EpisodeCsvRenderer')
     @patch('opal.core.search.extract.zipfile')
-    def test_exclude_episode_subrecords(self, zipfile, subrecords):
+    def test_exclude_subrecords(self, zipfile, csv_renderer, subrecords):
+        # if the subrecord is marked as _exclude_from_extract, skip it
+        subrecords.return_value = [Colour]
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
-        subs = [a[0][1] for a in subrecords.call_args_list]
-        self.assertFalse(Colour in subs)
-
-    @patch('opal.core.search.extract.patient_subrecord_csv')
-    @patch('opal.core.search.extract.zipfile')
-    def test_exclude_patient_subrecords(self, zipfile, subrecords):
-        extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
-        subs = [a[0][1] for a in subrecords.call_args_list]
-        self.assertFalse(PatientColour in subs)
+        self.assertEqual(csv_renderer.call_count, 1)
+        self.assertEqual(csv_renderer.call_args[0][0], models.Episode)
 
 
 class AsyncExtractTestCase(OpalTestCase):
@@ -211,15 +117,15 @@ class AsyncExtractTestCase(OpalTestCase):
         delay.assert_called_with(self.user, 'THIS')
 
 
-class TestBasicCsvRenderer(OpalTestCase):
+class TestBasicCsvRenderer(PatientEpisodeTestCase):
     def test_init(self):
-        renderer = extract.CsvRenderer(Colour, self.user)
+        renderer = extract.CsvRenderer(Colour, Colour.objects.all(), self.user)
         self.assertEqual(renderer.model, Colour)
-        renderer = extract.CsvRenderer(Colour, self.user)
+        renderer = extract.CsvRenderer(Colour, Colour.objects.all(), self.user)
         self.assertEqual(renderer.fields, renderer.get_field_names_to_render())
 
     def test_set_fields(self):
-        renderer = extract.CsvRenderer(Colour, self.user, fields=[
+        renderer = extract.CsvRenderer(Colour, Colour.objects.all(), self.user, fields=[
             "name", "episode_id"
         ])
         self.assertEqual(renderer.fields, ["name", "episode_id"])
@@ -231,7 +137,9 @@ class TestBasicCsvRenderer(OpalTestCase):
     def test_get_field_names_to_render(self):
         with patch.object(Colour, "_get_fieldnames_to_extract") as field_names:
             field_names.return_value = ["name", "consistency_token"]
-            renderer = extract.CsvRenderer(Colour, self.user)
+            renderer = extract.CsvRenderer(
+                Colour,  Colour.objects.all(), self.user
+            )
             self.assertEqual(
                 renderer.fields,
                 ["name"]
@@ -240,7 +148,9 @@ class TestBasicCsvRenderer(OpalTestCase):
     def test_get_headers(self):
         with patch.object(Colour, "_get_fieldnames_to_extract") as field_names:
             field_names.return_value = ["name", "consistency_token"]
-            renderer = extract.CsvRenderer(Colour, self.user)
+            renderer = extract.CsvRenderer(
+                Colour, Colour.objects.all(), self.user
+            )
             self.assertEqual(
                 renderer.get_headers(),
                 ["Name"]
@@ -253,7 +163,7 @@ class TestBasicCsvRenderer(OpalTestCase):
         normal_to_dict["name"] = ["onions", "kettles"]
         with patch.object(colour, "to_dict") as to_dicted:
             to_dicted.return_value = normal_to_dict
-            renderer = extract.CsvRenderer(Colour, self.user)
+            renderer = extract.CsvRenderer(Colour, Colour.objects.all(), self.user)
             result = renderer.get_row(colour)
             self.assertIn("onions; kettles", result)
 
@@ -262,15 +172,51 @@ class TestBasicCsvRenderer(OpalTestCase):
             _, episode = self.new_patient_and_episode_please()
             colour = Colour.objects.create(name="Blue", episode=episode)
             field_names.return_value = ["name", "consistency_token"]
-            renderer = extract.CsvRenderer(Colour, self.user)
+            renderer = extract.CsvRenderer(Colour, Colour.objects.all(), self.user)
             self.assertEqual(
                 renderer.get_row(colour),
                 ["Blue"]
             )
 
-class TestEpisodeCsvRenderer(OpalTestCase):
+    def test_get_rows(self):
+        _, episode = self.new_patient_and_episode_please()
+        colour = Colour.objects.create(name="Blue", episode=episode)
+        renderer = extract.CsvRenderer(
+            Colour, Colour.objects.all(), self.user
+        )
+        with patch.object(renderer, "get_row") as get_row:
+            get_row.return_value = ["some_row"]
+            result = list(renderer.get_rows())
+
+        get_row.assert_called_with(colour)
+        self.assertEqual(result, [["some_row"]])
+
+    @patch("opal.core.search.extract.csv")
+    def test_write_to_file(self, csv):
+        _, episode = self.new_patient_and_episode_please()
+        Colour.objects.create(name="Blue", episode=episode)
+        renderer = extract.CsvRenderer(
+            Colour, Colour.objects.all(), self.user
+        )
+        with patch.object(renderer, "get_rows"):
+            with patch.object(renderer, "get_headers"):
+                renderer.get_rows.return_value = [["row"]]
+                renderer.get_headers.return_value = ["header"]
+                self.mocked_extract(renderer.write_to_file, ["some file"])
+                self.assertEqual(renderer.get_rows.call_count, 1)
+                self.assertEqual(renderer.get_headers.call_count, 1)
+                self.assertEqual(csv.writer().writerow.call_count, 2)
+                self.assertEqual(csv.writer().writerow.mock_calls[0][1][0], ["header"])
+                self.assertEqual(csv.writer().writerow.mock_calls[1][1][0], ["row"])
+
+
+class TestEpisodeCsvRenderer(PatientEpisodeTestCase):
     def test_init(self):
-        renderer = extract.EpisodeCsvRenderer(self.user)
+        renderer = extract.EpisodeCsvRenderer(
+            models.Episode,
+            models.Episode.objects.all(),
+            self.user
+        )
         self.assertEqual(renderer.model, models.Episode)
 
     def test_headers(self):
@@ -283,11 +229,19 @@ class TestEpisodeCsvRenderer(OpalTestCase):
             "Updated By",
             "Patient"
         }
-        renderer = extract.EpisodeCsvRenderer(self.user)
+        renderer = extract.EpisodeCsvRenderer(
+            models.Episode,
+            models.Episode.objects.all(),
+            self.user
+        )
         self.assertEqual(len(expected - set(renderer.get_headers())), 0)
 
     def test_with_tagging(self):
-        renderer = extract.EpisodeCsvRenderer(self.user)
+        renderer = extract.EpisodeCsvRenderer(
+            models.Episode,
+            models.Episode.objects.all(),
+            self.user
+        )
 
         self.assertIn("Tagging", renderer.get_headers())
 
@@ -299,7 +253,7 @@ class TestEpisodeCsvRenderer(OpalTestCase):
 
 
 @patch.object(PatientColour, "_get_fieldnames_to_extract")
-class TestPatientSubrecordCsvRenderer(OpalTestCase):
+class TestPatientSubrecordCsvRenderer(PatientEpisodeTestCase):
     def setUp(self):
         self.patient, self.episode = self.new_patient_and_episode_please()
         self.patient_colour = PatientColour.objects.create(
@@ -310,20 +264,28 @@ class TestPatientSubrecordCsvRenderer(OpalTestCase):
         field_names_to_extract.return_value = [
             "patient_id", "name", "consistency_token", "id"
         ]
-        renderer = extract.PatientSubrecordCsvRenderer(PatientColour, self.user)
+        renderer = extract.PatientSubrecordCsvRenderer(
+            PatientColour,
+            models.Episode.objects.all(),
+            self.user
+        )
         self.assertEqual(["Episode", "Patient", "Name"], renderer.get_headers())
 
     def test_get_rows(self, field_names_to_extract):
         field_names_to_extract.return_value = [
             "patient_id", "name", "consistency_token", "id"
         ]
-        renderer = extract.PatientSubrecordCsvRenderer(PatientColour, self.user)
+        renderer = extract.PatientSubrecordCsvRenderer(
+            PatientColour,
+            models.Episode.objects.all(),
+            self.user
+        )
         rendered = renderer.get_row(self.patient_colour, self.episode.id)
         self.assertEqual(["1", "1", "blue"], rendered)
 
 
 @patch.object(Colour, "_get_fieldnames_to_extract")
-class TestEpisodeSubrecordCsvRenderer(OpalTestCase):
+class TestEpisodeSubrecordCsvRenderer(PatientEpisodeTestCase):
     def setUp(self):
         _, self.episode = self.new_patient_and_episode_please()
         self.colour = Colour.objects.create(
@@ -334,21 +296,26 @@ class TestEpisodeSubrecordCsvRenderer(OpalTestCase):
         field_names_to_extract.return_value = [
             "episode_id", "name", "consistency_token", "id"
         ]
-        renderer = extract.EpisodeSubrecordCsvRenderer(Colour, self.user)
+        renderer = extract.EpisodeSubrecordCsvRenderer(
+            Colour,
+            models.Episode.objects.all(),
+            self.user
+        )
         self.assertEqual(["Patient", "Episode", "Name"], renderer.get_headers())
 
     def test_get_rows(self, field_names_to_extract):
         field_names_to_extract.return_value = [
             "episode_id", "name", "consistency_token", "id"
         ]
-        renderer = extract.EpisodeSubrecordCsvRenderer(Colour, self.user)
+        renderer = extract.EpisodeSubrecordCsvRenderer(
+            Colour, models.Episode.objects.all(), self.user
+        )
         rendered = renderer.get_row(self.colour)
         self.assertEqual(["1", "1", "blue"], rendered)
 
 
-
 @patch.object(Colour, "_get_fieldnames_to_extract")
-class TestInheritedRenderer(OpalTestCase):
+class TestInheritedRenderer(PatientEpisodeTestCase):
     def setUp(self):
         class ColourCsvRenderer(extract.EpisodeSubrecordCsvRenderer):
             name = extract.Column(
@@ -366,7 +333,9 @@ class TestInheritedRenderer(OpalTestCase):
         field_names_to_extract.return_value = [
             "episode_id", "name", "consistency_token", "id"
         ]
-        renderer = self.colourCsvRenderer(Colour, self.user)
+        renderer = self.colourCsvRenderer(
+            Colour, models.Episode.objects.all(), self.user
+        )
         expected = ['Wowzer', 'Patient', 'Episode']
         self.assertEqual(expected, renderer.get_headers())
 
@@ -374,6 +343,8 @@ class TestInheritedRenderer(OpalTestCase):
         field_names_to_extract.return_value = [
             "episode_id", "name", "consistency_token", "id"
         ]
-        renderer = self.colourCsvRenderer(Colour, self.user)
+        renderer = self.colourCsvRenderer(
+            Colour, models.Episode.objects.all(), self.user
+        )
         rendered = renderer.get_row(self.colour)
         self.assertEqual(["Some value", "1", "1"], rendered)

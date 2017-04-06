@@ -12,7 +12,7 @@ import functools
 import logging
 from six import text_type, with_metaclass
 from opal.models import Episode
-from opal.core.subrecords import episode_subrecords, patient_subrecords
+from opal.core.subrecords import subrecords, episode_subrecords
 
 
 Column = namedtuple("Column", ["display_name", "value"])
@@ -42,7 +42,8 @@ class CsvRenderer(with_metaclass(CsvRendererMetaClass)):
     """
         An Abstract base class of the other csv renderers
     """
-    def __init__(self, model, user, fields=None):
+    def __init__(self, model, queryset, user, fields=None):
+        self.queryset = queryset
         self.model = model
         self.user = user
         if fields:
@@ -96,6 +97,20 @@ class CsvRenderer(with_metaclass(CsvRendererMetaClass)):
 
         return result
 
+    def get_rows(self):
+        for instance in self.queryset:
+            yield self.get_row(instance)
+
+    def write_to_file(self, file_name):
+        logging.info("writing for {}".format(self.model))
+        with open(file_name, "w") as csv_file:
+            writer = csv.writer(csv_file)
+            writer.writerow(self.get_headers())
+            for row in self.get_rows():
+                writer.writerow(row)
+
+        logging.info("finished writing for {}".format(self.model))
+
 
 class EpisodeCsvRenderer(CsvRenderer):
     tagging = Column(
@@ -140,13 +155,6 @@ class EpisodeCsvRenderer(CsvRenderer):
         value=lambda self, instance: instance.patient_id
     )
 
-    def __init__(self, user):
-        super(EpisodeCsvRenderer, self).__init__(Episode, user)
-
-    def get_headers(self):
-        headers = super(EpisodeCsvRenderer, self).get_headers()
-        return headers
-
 
 class PatientSubrecordCsvRenderer(CsvRenderer):
     episode_id = Column(
@@ -154,12 +162,27 @@ class PatientSubrecordCsvRenderer(CsvRenderer):
         value=lambda self, instance, episode_id: text_type(episode_id)
     )
 
+    def __init__(self, model, episode_queryset, user, fields=None):
+        self.patient_to_episode = {
+            e.patient_id: e.id for e in episode_queryset
+        }
+        queryset = model.objects.filter(
+            patient__in=list(self.patient_to_episode.keys()))
+
+        super(PatientSubrecordCsvRenderer, self).__init__(
+            model, queryset, user, fields
+        )
+
     def get_field_names_to_render(self):
         field_names = super(
             PatientSubrecordCsvRenderer, self
         ).get_field_names_to_render()
         field_names.remove("id")
         return field_names
+
+    def get_rows(self):
+        for sub in self.queryset:
+            yield self.get_row(sub, self.patient_to_episode[sub.patient_id])
 
 
 class EpisodeSubrecordCsvRenderer(CsvRenderer):
@@ -175,62 +198,12 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
         field_names.remove("id")
         return field_names
 
+    def __init__(self, model, episode_queryset, user, fields=None):
+        queryset = model.objects.filter(episode__in=episode_queryset)
 
-def episode_subrecord_csv(episodes, user, subrecord, file_name):
-    """
-    Given an iterable of EPISODES, the SUBRECORD we want to serialise,
-    write a csv file for the data in this subrecord for these episodes.
-    """
-    logging.info("writing for %s" % subrecord)
-    with open(file_name, "w") as csv_file:
-        writer = csv.writer(csv_file)
-        renderer = EpisodeSubrecordCsvRenderer(subrecord, user)
-        writer.writerow(renderer.get_headers())
-        subrecords = subrecord.objects.filter(episode__in=episodes)
-        for sub in subrecords:
-            writer.writerow(
-                renderer.get_row(sub)
-            )
-    logging.info("finished writing for %s" % subrecord)
-
-
-def episode_csv(episodes, user, file_name):
-    """
-    Given an iterable of EPISODES, create a CSV file containing
-    Episode details.
-    """
-    logging.info("writing eposides")
-    with open(file_name, "w") as csv_file:
-        renderer = EpisodeCsvRenderer(user)
-        writer = csv.writer(csv_file)
-        writer.writerow(renderer.get_headers())
-
-        for episode in episodes:
-            writer.writerow(renderer.get_row(episode))
-
-    logging.info("finished writing episodes")
-
-
-def patient_subrecord_csv(episodes, user, subrecord, file_name):
-    """
-    Given an iterable of EPISODES, and the patient SUBRECORD we want to
-    create a CSV file for the data in this subrecord for these episodes.
-    """
-
-    with open(file_name, "w") as csv_file:
-        writer = csv.writer(csv_file)
-        renderer = PatientSubrecordCsvRenderer(subrecord, user)
-        writer.writerow(renderer.get_headers())
-
-        patient_to_episode = {e.patient_id: e.id for e in episodes}
-        subs = subrecord.objects.filter(
-            patient__in=list(patient_to_episode.keys()))
-
-        for sub in subs:
-            writer.writerow(
-                renderer.get_row(sub, patient_to_episode[sub.patient_id])
-            )
-    logging.info("finished patient subrecord %s" % subrecord)
+        super(EpisodeSubrecordCsvRenderer, self).__init__(
+            model, queryset, user, fields
+        )
 
 
 def zip_archive(episodes, description, user):
@@ -250,30 +223,26 @@ def zip_archive(episodes, description, user):
 
         file_name = "episodes.csv"
         full_file_name = make_file_path(file_name)
-        episode_csv(episodes, user, full_file_name)
+        renderer = EpisodeCsvRenderer(Episode, episodes, user)
+        renderer.write_to_file(full_file_name)
         z.write(full_file_name, zip_relative_file_path(file_name))
 
-        for subrecord in episode_subrecords():
+        for subrecord in subrecords():
             if getattr(subrecord, '_exclude_from_extract', False):
                 continue
             file_name = '{0}.csv'.format(subrecord.get_api_name())
             full_file_name = make_file_path(file_name)
-            episode_subrecord_csv(episodes, user, subrecord, full_file_name)
-            z.write(full_file_name, zip_relative_file_path(file_name))
+            if subrecord in episode_subrecords():
+                renderer = EpisodeSubrecordCsvRenderer(
+                    subrecord, episodes, user
+                )
+            else:
+                renderer = PatientSubrecordCsvRenderer(
+                    subrecord, episodes, user
+                )
 
-        for subrecord in patient_subrecords():
-            if getattr(subrecord, '_exclude_from_extract', False):
-                continue
-            file_name = '{0}.csv'.format(subrecord.get_api_name())
-            full_file_name = make_file_path(file_name)
-            patient_subrecord_csv(episodes, user, subrecord, full_file_name)
+            renderer.write_to_file(full_file_name)
             z.write(full_file_name, zip_relative_file_path(file_name))
-
-        file_name = 'filter.txt'
-        full_file_name = make_file_path(file_name)
-        with open(full_file_name, 'w') as description_file:
-            description_file.write(description)
-        z.write(full_file_name, zip_relative_file_path(file_name))
 
     return target
 
