@@ -85,18 +85,44 @@ class PatientEpisodeTestCase(OpalTestCase):
             some_fun(*args)
 
 
-class ZipArchiveTestCase(PatientEpisodeTestCase):
+class ZipArchiveTestCase(OpalTestCase):
 
     @patch('opal.core.search.extract.subrecords')
     @patch('opal.core.search.extract.zipfile')
-    def test_episode_subrecords(self, zipfile, subrecords):
+    def test_subrecords(self, zipfile, subrecords):
+        patient, episode = self.new_patient_and_episode_please()
         subrecords.return_value = [HatWearer, HouseOwner]
+        HatWearer.objects.create(name="Indiana", episode=episode)
+        HouseOwner.objects.create(patient=patient)
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
         call_args = zipfile.ZipFile.return_value.__enter__.return_value.write.call_args_list
         self.assertEqual(3, len(call_args))
         self.assertTrue(call_args[0][0][0].endswith("episodes.csv"))
         self.assertTrue(call_args[1][0][0].endswith("hat_wearer.csv"))
         self.assertTrue(call_args[2][0][0].endswith("house_owner.csv"))
+
+    @patch('opal.core.search.extract.subrecords')
+    @patch('opal.core.search.extract.zipfile')
+    def test_subrecords_if_none(self, zipfile, subrecords):
+        # if there are no subrecords we don't expect them to write to the file
+        patient, episode = self.new_patient_and_episode_please()
+        subrecords.return_value = [HatWearer, HouseOwner]
+        HouseOwner.objects.create(patient=patient)
+        extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
+        call_args = zipfile.ZipFile.return_value.__enter__.return_value.write.call_args_list
+        self.assertEqual(2, len(call_args))
+        self.assertTrue(call_args[0][0][0].endswith("episodes.csv"))
+        self.assertTrue(call_args[1][0][0].endswith("house_owner.csv"))
+
+    @patch('opal.core.search.extract.subrecords')
+    @patch('opal.core.search.extract.zipfile')
+    def test_subrecords_if_empty_query(self, zipfile, subrecords):
+        # if there are no subrecords we don't expect them to write to the file
+        subrecords.return_value = [HatWearer, HouseOwner]
+        extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
+        call_args = zipfile.ZipFile.return_value.__enter__.return_value.write.call_args_list
+        self.assertEqual(1, len(call_args))
+        self.assertTrue(call_args[0][0][0].endswith("episodes.csv"))
 
     @patch('opal.core.search.extract.subrecords')
     @patch('opal.core.search.extract.EpisodeCsvRenderer')
@@ -123,6 +149,15 @@ class TestBasicCsvRenderer(PatientEpisodeTestCase):
         self.assertEqual(renderer.model, Colour)
         renderer = extract.CsvRenderer(Colour, Colour.objects.all(), self.user)
         self.assertEqual(renderer.fields, renderer.get_field_names_to_render())
+
+    def test_0_count(self):
+        renderer = extract.CsvRenderer(Colour, Colour.objects.all(), self.user)
+        self.assertEqual(renderer.count(), 0)
+
+    def test_1_count(self):
+        Colour.objects.create(name="Blue", episode=self.episode)
+        renderer = extract.CsvRenderer(Colour, Colour.objects.all(), self.user)
+        self.assertEqual(renderer.count(), 1)
 
     def test_set_fields(self):
         renderer = extract.CsvRenderer(Colour, Colour.objects.all(), self.user, fields=[

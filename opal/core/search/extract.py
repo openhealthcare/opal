@@ -115,8 +115,12 @@ class CsvRenderer(object):
         for instance in self.queryset:
             yield self.get_row(instance)
 
+    def count(self):
+        return self.queryset.count()
+
     def write_to_file(self, file_name):
         logging.info("writing for {}".format(self.model))
+
         with open(file_name, "w") as csv_file:
             writer = csv.writer(csv_file)
             writer.writerow(self.get_headers())
@@ -234,9 +238,9 @@ def zip_archive(episodes, description, user):
                 renderer = PatientSubrecordCsvRenderer(
                     subrecord, episodes, user
                 )
-
-            renderer.write_to_file(full_file_name)
-            z.write(full_file_name, zip_relative_file_path(file_name))
+            if renderer.count():
+                renderer.write_to_file(full_file_name)
+                z.write(full_file_name, zip_relative_file_path(file_name))
 
     return target
 
