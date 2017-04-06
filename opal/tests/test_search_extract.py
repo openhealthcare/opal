@@ -250,7 +250,6 @@ class TestEpisodeCsvRenderer(PatientEpisodeTestCase):
         self.assertIn("trees;leaves", renderer.get_row(self.episode))
 
 
-
 @patch.object(PatientColour, "_get_fieldnames_to_extract")
 class TestPatientSubrecordCsvRenderer(PatientEpisodeTestCase):
 
@@ -282,6 +281,20 @@ class TestPatientSubrecordCsvRenderer(PatientEpisodeTestCase):
         )
         rendered = renderer.get_row(self.patient_colour, self.episode.id)
         self.assertEqual(["1", "1", "blue"], rendered)
+
+    def test_get_rows(self, field_names_to_extract):
+        field_names_to_extract.return_value = [
+            "patient_id", "name", "consistency_token", "id"
+        ]
+        renderer = extract.PatientSubrecordCsvRenderer(
+            PatientColour,
+            models.Episode.objects.all(),
+            self.user
+        )
+        rendered = list(
+            renderer.get_rows()
+        )
+        self.assertEqual([["1", "1", "blue"]], rendered)
 
 
 @patch.object(Colour, "_get_fieldnames_to_extract")
