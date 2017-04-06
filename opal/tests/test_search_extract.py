@@ -145,11 +145,29 @@ class TestBasicCsvRenderer(PatientEpisodeTestCase):
                 ["name"]
             )
 
+    def test_fields_uses_fields_arg(self):
+            renderer = extract.CsvRenderer(
+                Colour,  Colour.objects.all(), self.user, fields=["name"]
+            )
+            self.assertEqual(
+                renderer.fields,
+                ["name"]
+            )
+
     def test_get_headers(self):
         with patch.object(Colour, "_get_fieldnames_to_extract") as field_names:
             field_names.return_value = ["name", "consistency_token"]
             renderer = extract.CsvRenderer(
                 Colour, Colour.objects.all(), self.user
+            )
+            self.assertEqual(
+                renderer.get_headers(),
+                ["Name"]
+            )
+
+    def test_get_headers_uses_fields_arg(self):
+            renderer = extract.CsvRenderer(
+                Colour,  Colour.objects.all(), self.user, fields=["name"]
             )
             self.assertEqual(
                 renderer.get_headers(),
@@ -163,7 +181,9 @@ class TestBasicCsvRenderer(PatientEpisodeTestCase):
         normal_to_dict["name"] = ["onions", "kettles"]
         with patch.object(colour, "to_dict") as to_dicted:
             to_dicted.return_value = normal_to_dict
-            renderer = extract.CsvRenderer(Colour, Colour.objects.all(), self.user)
+            renderer = extract.CsvRenderer(
+                Colour, Colour.objects.all(), self.user
+            )
             result = renderer.get_row(colour)
             self.assertIn("onions; kettles", result)
 
@@ -172,11 +192,24 @@ class TestBasicCsvRenderer(PatientEpisodeTestCase):
             _, episode = self.new_patient_and_episode_please()
             colour = Colour.objects.create(name="Blue", episode=episode)
             field_names.return_value = ["name", "consistency_token"]
-            renderer = extract.CsvRenderer(Colour, Colour.objects.all(), self.user)
+            renderer = extract.CsvRenderer(
+                Colour, Colour.objects.all(), self.user
+            )
             self.assertEqual(
                 renderer.get_row(colour),
                 ["Blue"]
             )
+
+    def test_get_row_uses_fields_arg(self):
+        _, episode = self.new_patient_and_episode_please()
+        colour = Colour.objects.create(name="Blue", episode=episode)
+        renderer = extract.CsvRenderer(
+            Colour,  Colour.objects.all(), self.user, fields=["name"]
+        )
+        self.assertEqual(
+            renderer.get_row(colour),
+            ["Blue"]
+        )
 
     def test_get_rows(self):
         _, episode = self.new_patient_and_episode_please()
