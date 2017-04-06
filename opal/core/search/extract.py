@@ -13,7 +13,7 @@ from opal.models import Episode
 from opal.core.subrecords import subrecords, episode_subrecords
 
 
-class Column(object):
+class CsvColumn(object):
     """ A custom column class that will render a custom value
 
         * name is similar to api_name on a field
@@ -42,7 +42,9 @@ class CsvRenderer(object):
     """
         An Abstract base class of the other csv renderers
     """
-    custom_fields = []
+
+    # overrides of model fields for the csv columns
+    non_field_csv_columns = []
 
     def __init__(self, model, queryset, user, fields=None):
         self.queryset = queryset
@@ -53,19 +55,21 @@ class CsvRenderer(object):
         else:
             self.fields = self.get_field_names_to_render()
 
-    def get_custom_field_names(self):
-        return [custom_field.name for custom_field in self.custom_fields]
+    def get_non_field_csv_column_names(self):
+        return [csv_column.name for csv_column in self.non_field_csv_columns]
 
-    def get_custom_field(self, field_name):
-        return next(i for i in self.custom_fields if i.name == field_name)
+    def get_non_field_csv_columns(self, field_name):
+        return next(
+            i for i in self.non_field_csv_columns if i.name == field_name
+        )
 
     def get_field_names_to_render(self):
         field_names = self.model._get_fieldnames_to_extract()
         field_names.remove("consistency_token")
-        result = self.get_custom_field_names()
-        custom_fields_set = set(result)
+        result = self.get_non_field_csv_column_names()
+        non_field_csv_columns_set = set(result)
         for field_name in field_names:
-            if field_name not in custom_fields_set:
+            if field_name not in non_field_csv_columns_set:
                 result.append(field_name)
 
         return result
@@ -76,8 +80,10 @@ class CsvRenderer(object):
     def get_headers(self):
         result = []
         for field in self.fields:
-            if field in self.get_custom_field_names():
-                result.append(self.get_custom_field(field).display_name)
+            if field in self.get_non_field_csv_column_names():
+                result.append(
+                    self.get_non_field_csv_columns(field).display_name
+                )
             else:
                 result.append(self.get_field_title(field))
         return result
@@ -95,8 +101,8 @@ class CsvRenderer(object):
         result = []
 
         for field in self.fields:
-            if field in self.get_custom_field_names():
-                some_fn = self.get_custom_field(field).value
+            if field in self.get_non_field_csv_column_names():
+                some_fn = self.get_non_field_csv_columns(field).value
                 result.append(
                     some_fn(self, instance, *args, **kwargs)
                 )
@@ -121,29 +127,29 @@ class CsvRenderer(object):
 
 
 class EpisodeCsvRenderer(CsvRenderer):
-    custom_fields = (
-        Column(
+    non_field_csv_columns = (
+        CsvColumn(
             "tagging",
-            value=lambda self, instance: text_type(";".join(
-                instance.get_tag_names(self.user, historic=True)
+            value=lambda renderer, instance: text_type(";".join(
+                instance.get_tag_names(renderer.user, historic=True)
             ))
         ),
-        Column("start"),
-        Column("end"),
-        Column("created"),
-        Column("updated"),
-        Column("created_by_id", display_name="Created By"),
-        Column("updated_by_id", display_name="Updated By"),
-        Column("patient_id", display_name="Patient"),
+        CsvColumn("start"),
+        CsvColumn("end"),
+        CsvColumn("created"),
+        CsvColumn("updated"),
+        CsvColumn("created_by_id", display_name="Created By"),
+        CsvColumn("updated_by_id", display_name="Updated By"),
+        CsvColumn("patient_id", display_name="Patient"),
     )
 
 
 class PatientSubrecordCsvRenderer(CsvRenderer):
-    custom_fields = (
-        Column(
+    non_field_csv_columns = (
+        CsvColumn(
             "episode_id",
             display_name="Episode",
-            value=lambda self, instance, episode_id: text_type(episode_id)
+            value=lambda renderer, instance, episode_id: text_type(episode_id)
         ),
     )
 
@@ -171,8 +177,8 @@ class PatientSubrecordCsvRenderer(CsvRenderer):
 
 
 class EpisodeSubrecordCsvRenderer(CsvRenderer):
-    custom_fields = (
-        Column(
+    non_field_csv_columns = (
+        CsvColumn(
             "patient_id",
             display_name="Patient",
             value=lambda self, instance: text_type(instance.episode.patient_id)
