@@ -305,27 +305,74 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
         return result
 
 
-def zip_flat_extract(episodes, description, user):
+def zip_flat_extract(episodes, description, user, specific_columns=None):
+    # creates a zip file containing a csv where one episodie is one row
+    # with all of their subrecords flattened into the one row
+    # you can pass in a dictionary of specific_columns
+    # this should be a dictionary of subrecord api name
+    # to a list of fields from that subrecord
+    # if you pass in subrecord api name and an empty array or None
+    # all fields from that subrecord will be brought in
+    # e.g.
+    # {
+    #    "demographics": ["first_name"],
+    #    "allergies": []
+    # }
+    # will get you a give you a row with the first name
+    # of demographics and all the allergies fields
+
     target_dir = tempfile.mkdtemp()
     target = os.path.join(target_dir, 'extract.zip')
     zipfolder = '{0}.{1}'.format(user.username, datetime.date.today())
     make_file_path = functools.partial(os.path.join, target_dir, zipfolder)
     zip_relative_file_path = functools.partial(os.path.join, zipfolder)
 
-    episode_renderer = EpisodeCsvRenderer(Episode, episodes, user)
+    if specific_columns:
+        episode_api_name = "episode"
+        if episode_api_name in specific_columns:
+            specific_fields = specific_columns[episode_api_name]
+            if specific_fields:
+                for required_field in ["patient_id", "id"]:
+                    if required_field not in specific_fields:
+                        specific_fields.insert(0, required_field)
+
+            episode_renderer = EpisodeCsvRenderer(
+                Episode,
+                episodes,
+                user,
+                fields=specific_fields
+            )
+        else:
+            episode_renderer = EpisodeCsvRenderer(
+                Episode,
+                episodes,
+                user,
+                fields=["patient_id", "id"]
+            )
+    else:
+        episode_renderer = EpisodeCsvRenderer(Episode, episodes, user)
+
     subrecord_renderers = []
 
     for subrecord in subrecords():
+        specific_fields = None
+
+        if specific_columns:
+            if subrecord.get_api_name() not in specific_columns:
+                continue
+            else:
+                specific_fields = specific_columns[subrecord.get_api_name()]
+
         if getattr(subrecord, '_exclude_from_extract', False):
             continue
 
         if subrecord in episode_subrecords():
             renderer = EpisodeSubrecordCsvRenderer(
-                subrecord, episodes, user, flat=True
+                subrecord, episodes, user, flat=True, fields=specific_fields
             )
         else:
             renderer = PatientSubrecordCsvRenderer(
-                subrecord, episodes, user, flat=True
+                subrecord, episodes, user, flat=True, fields=specific_fields
             )
         if renderer.count():
             subrecord_renderers.append(renderer)

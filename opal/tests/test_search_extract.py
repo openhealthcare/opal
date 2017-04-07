@@ -209,6 +209,37 @@ class ZipFlatExtractTestCase(OpalTestCase):
         headers_call = csv_writer().writerow.call_args_list[0][0][0]
         self.assertIn("Tagging", headers_call)
 
+    def test_specific_columns_excludes_other_records(self, csv_writer, zipfile, subrecords):
+        patient, episode = self.new_patient_and_episode_please()
+        subrecords.return_value = [HatWearer, HouseOwner]
+        HatWearer.objects.create(name="Indiana", episode=episode)
+        HouseOwner.objects.create(patient=patient)
+        extract.zip_flat_extract(
+            models.Episode.objects.all(), 'this', self.user,
+            specific_columns={HatWearer.get_api_name(): None}
+        )
+        self.assertEqual(csv_writer().writerow.call_count, 2)
+        headers_call = csv_writer().writerow.call_args_list[0][0][0]
+        self.assertNotIn("Tagging", headers_call)
+        self.assertIn("Wearer of Hats-1 Name", headers_call)
+        self.assertNotIn("House Owner-1 Created", headers_call)
+
+    def test_use_episode_columns_if_passed_in(self, csv_writer, zipfile, subrecords):
+        patient, episode = self.new_patient_and_episode_please()
+        subrecords.return_value = [HatWearer, HouseOwner]
+        HatWearer.objects.create(name="Indiana", episode=episode)
+        HouseOwner.objects.create(patient=patient)
+        extract.zip_flat_extract(
+            models.Episode.objects.all(), 'this', self.user,
+            specific_columns={"episode": ["tagging"]}
+        )
+        self.assertEqual(csv_writer().writerow.call_count, 2)
+        headers_call = csv_writer().writerow.call_args_list[0][0][0]
+        self.assertEqual(
+            ['ID', 'Patient', 'Tagging'],
+            headers_call
+        )
+
 
 @patch('opal.core.search.extract.subrecords')
 @patch('opal.core.search.extract.zipfile')
