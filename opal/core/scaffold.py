@@ -61,8 +61,6 @@ def _set_settings_module(name):
 def create_lookuplists(root_dir):
     lookuplists_dir = root_dir/'data/lookuplists'
     lookuplists_dir.mkdir()
-    lookuplists = lookuplists_dir/"lookuplists.json"
-    lookuplists.touch()
 
 
 def start_plugin(name, USERLAND):

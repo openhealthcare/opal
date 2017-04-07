@@ -107,8 +107,8 @@ class ZipFlatExtractTestCase(OpalTestCase):
         self.assertIn("End", headers_call)
         self.assertIn("Wearer of Hats-1 Name", headers_call)
         self.assertIn("Wearer of Hats-2 Name", headers_call)
-        self.assertIn("HouseOwner-1 Created", headers_call)
-        self.assertIn("HouseOwner-2 Created", headers_call)
+        self.assertIn("House Owner-1 Created", headers_call)
+        self.assertIn("House Owner-2 Created", headers_call)
 
 
     def test_exclude_empty_subrecords(self, csv_writer, zipfile, subrecords):
@@ -490,6 +490,8 @@ class TestPatientSubrecordCsvRenderer(OpalTestCase):
         self.assertEqual([["1", "1", "blue"]], rendered)
 
     def test_get_rows_same_patient(self, field_names_to_extract):
+        patient = self.new_patient_and_episode_please()
+        patient.create_episode()
         field_names_to_extract.return_value = [
             "patient_id", "name", "consistency_token", "id"
         ]
@@ -498,9 +500,6 @@ class TestPatientSubrecordCsvRenderer(OpalTestCase):
             name="blue", patient=patient
         )
 
-        PatientColour.objects.create(
-            name="green", patient=patient
-        )
         renderer = extract.PatientSubrecordCsvRenderer(
             PatientColour,
             models.Episode.objects.all(),
@@ -511,7 +510,7 @@ class TestPatientSubrecordCsvRenderer(OpalTestCase):
         )
         self.assertEqual([
             ["1", "1", "blue"],
-            ["1", "1", "green"]
+            ["2", "1", "blue"]
         ], rendered)
 
     def test_get_flat_headers(self, field_names_to_extract):
@@ -527,8 +526,8 @@ class TestPatientSubrecordCsvRenderer(OpalTestCase):
             PatientColour, models.Episode.objects.all(), self.user, flat=True
         )
         expected = [
-            'PatientColour-1 Name',
-            'PatientColour-2 Name'
+            'Patient Colour-1 Name',
+            'Patient Colour-2 Name'
         ]
         self.assertEqual(renderer.get_flat_headers(), expected)
 
