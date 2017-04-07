@@ -321,12 +321,6 @@ class TestEpisodeCsvRenderer(PatientEpisodeTestCase):
 @patch.object(PatientColour, "_get_fieldnames_to_extract")
 class TestPatientSubrecordCsvRenderer(OpalTestCase):
 
-    # def setUp(self):
-    #     self.patient, self.episode = self.new_patient_and_episode_please()
-    #     self.patient_colour = PatientColour.objects.create(
-    #         name="blue", patient=self.patient
-    #     )
-
     def test_get_header(self, field_names_to_extract):
         field_names_to_extract.return_value = [
             "patient_id", "name", "consistency_token", "id"
