@@ -27,7 +27,7 @@ Enhances the API available for plugins to include javascript and css by adding m
 
 #### 'element_type' argument for the form template tags
 
-Numeric database fields are now set as the html5 type="number" when rendering 
+Numeric database fields are now set as the html5 type="number" when rendering
 them with the forms templatetag library. This means on mobile devices it will
 bring up the numeric keypad. The element type can now be set via the template
 tag API with the 'element_type' argument.
@@ -52,6 +52,8 @@ Adds a new filter - `underscore-to-spaces` for removing underscores from strings
 
 The options for `SymptomComplex.duration` have moved from the default form template to a choices
 declaration on the model. These are scheduled to move again to a lookuplist.
+
+The default value of `Subrecord.get_display_name` now uses Django `Meta.verbose_name`.
 
 #### Minor fixes
 
