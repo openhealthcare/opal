@@ -858,8 +858,9 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
     def get_display_name(cls):
         if hasattr(cls, '_title'):
             return cls._title
-        else:
-            return cls._meta.object_name
+        if cls._meta.verbose_name.islower():
+            return cls._meta.verbose_name.title()
+        return cls._meta.verbose_name
 
     @classmethod
     def _build_template_selection(cls, episode_type=None, patient_list=None,
