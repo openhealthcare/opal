@@ -8,7 +8,8 @@ import logging
 import os
 import tempfile
 import zipfile
-from six import text_type
+from six import text_type, moves
+from django.db.models import Count, Max
 from opal.models import Episode
 from opal.core.subrecords import subrecords, episode_subrecords
 
@@ -202,6 +203,23 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
         super(EpisodeSubrecordCsvRenderer, self).__init__(
             model, queryset, user, fields
         )
+
+    def get_flat_headers(self):
+        e_values = self.queryset.values("episode_id")
+        annotated = e_values.annotate(Count("episode_id"))
+
+        aggregated = annotated.aggregate(Max('episode_id__count'))[
+            "episode_id__count__max"
+        ]
+        result = []
+        for i in moves.xrange(aggregated):
+            for header in self.get_headers():
+                result.append("{0}-{1} {2}".format(
+                    self.model.get_display_name(),
+                    i + 1,
+                    header
+                ))
+        return result
 
 
 def zip_archive(episodes, description, user):
