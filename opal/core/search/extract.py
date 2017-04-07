@@ -185,6 +185,55 @@ class PatientSubrecordCsvRenderer(CsvRenderer):
             for episode_id in self.patient_to_episode[sub.patient_id]:
                 yield self.get_row(sub, episode_id)
 
+    @cached_property
+    def row_length(self):
+        return len(self.get_headers()) * self.repititions
+
+    @cached_property
+    def repititions(self):
+        e_values = self.queryset.values("patient_id")
+        annotated = e_values.annotate(Count("patient_id"))
+        return annotated.aggregate(Max('patient_id__count'))[
+            "patient_id__count__max"
+        ]
+
+    @cached_property
+    def episode_id_to_serialised_instance_dict(self):
+        episode_id_to_serialised_instance = defaultdict(list)
+
+        for sub in self.queryset:
+            for episode_id in self.patient_to_episode[sub.patient_id]:
+                episode_id_to_serialised_instance[episode_id].append(
+                    self.get_row(sub, episode_id)
+                )
+
+        return episode_id_to_serialised_instance
+
+    def get_flat_row_for_episode_id(self, episode_id):
+        serialised_instances = self.episode_id_to_serialised_instance_dict[
+            episode_id
+        ]
+        row = []
+        for serialised in serialised_instances:
+            row.extend(serialised)
+            if not len(row) == self.row_length:
+                import ipdb; ipdb.set_trace()
+                row.extend(
+                    "" for i in moves.xrange(self.row_length - len(row))
+                )
+        return row
+
+    def get_flat_headers(self):
+        result = []
+        for i in moves.xrange(self.repititions):
+            for header in self.get_headers():
+                result.append("{0}-{1} {2}".format(
+                    self.model.get_display_name(),
+                    i + 1,
+                    header
+                ))
+        return result
+
 
 class EpisodeSubrecordCsvRenderer(CsvRenderer):
     non_field_csv_columns = (
@@ -210,7 +259,7 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
         )
 
     @cached_property
-    def repitions(self):
+    def repititions(self):
         e_values = self.queryset.values("episode_id")
         annotated = e_values.annotate(Count("episode_id"))
         return annotated.aggregate(Max('episode_id__count'))[
@@ -219,7 +268,7 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
 
     @cached_property
     def row_length(self):
-        return len(self.get_headers()) * self.repitions
+        return len(self.get_headers()) * self.repititions
 
     def get_flat_row_for_episode_id(self, episode_id):
         by_episode_id = self.queryset.filter(episode_id=episode_id)
@@ -232,7 +281,7 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
 
     def get_flat_headers(self):
         result = []
-        for i in moves.xrange(self.repitions):
+        for i in moves.xrange(self.repititions):
             for header in self.get_headers():
                 result.append("{0}-{1} {2}".format(
                     self.model.get_display_name(),

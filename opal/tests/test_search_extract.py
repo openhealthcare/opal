@@ -319,7 +319,7 @@ class TestEpisodeCsvRenderer(PatientEpisodeTestCase):
 
 
 @patch.object(PatientColour, "_get_fieldnames_to_extract")
-class TestPatientSubrecordCsvRenderer(PatientEpisodeTestCase):
+class TestPatientSubrecordCsvRenderer(OpalTestCase):
 
     def setUp(self):
         self.patient, self.episode = self.new_patient_and_episode_please()
@@ -342,6 +342,7 @@ class TestPatientSubrecordCsvRenderer(PatientEpisodeTestCase):
         field_names_to_extract.return_value = [
             "patient_id", "name", "consistency_token", "id"
         ]
+        self.new_patient_and_episode_please()
         renderer = extract.PatientSubrecordCsvRenderer(
             PatientColour,
             models.Episode.objects.all(),
@@ -352,8 +353,8 @@ class TestPatientSubrecordCsvRenderer(PatientEpisodeTestCase):
 
     def test_get_rows(self, field_names_to_extract):
         field_names_to_extract.return_value = [
-            "patient_id", "name", "consistency_token", "id"
-        ]
+            "patient_id", "name", "consistency_token", "id"]
+        self.new_patient_and_episode_please()
         renderer = extract.PatientSubrecordCsvRenderer(
             PatientColour,
             models.Episode.objects.all(),
@@ -368,9 +369,10 @@ class TestPatientSubrecordCsvRenderer(PatientEpisodeTestCase):
         field_names_to_extract.return_value = [
             "patient_id", "name", "consistency_token", "id"
         ]
+        patient, _ = self.new_patient_and_episode_please()
 
         PatientColour.objects.create(
-            name="green", patient=self.patient
+            name="green", patient=patient
         )
         renderer = extract.PatientSubrecordCsvRenderer(
             PatientColour,
@@ -384,6 +386,49 @@ class TestPatientSubrecordCsvRenderer(PatientEpisodeTestCase):
             ["1", "1", "blue"],
             ["1", "1", "green"]
         ], rendered)
+
+    def test_get_flat_headers(self, field_names_to_extract):
+        field_names_to_extract.return_value = [
+            "episode_id", "name", "consistency_token", "id"
+        ]
+        patient_1, _ = self.new_patient_and_episode_please()
+        patient_2, _ = self.new_patient_and_episode_please()
+        PatientColour.objects.create(name="red", patient=patient_1)
+        PatientColour.objects.create(name="purple", patient=patient_2)
+        PatientColour.objects.create(name="green", patient=patient_2)
+        renderer = extract.PatientSubrecordCsvRenderer(
+            PatientColour, models.Episode.objects.all(), self.user
+        )
+        expected = [
+            'PatientColour-1 Episode',
+            'PatientColour-1 Name',
+            'PatientColour-2 Episode',
+            'PatientColour-2 Name'
+        ]
+        self.assertEqual(renderer.get_flat_headers(), expected)
+
+    def test_get_flat_row_by_episode_id(self, field_names_to_extract):
+        field_names_to_extract.return_value = [
+            "episode_id", "name", "consistency_token", "id"
+        ]
+        patient_1, episode_1 = self.new_patient_and_episode_please()
+        patient_2, episode_2 = self.new_patient_and_episode_please()
+        PatientColour.objects.create(name="red", patient=patient_1)
+        PatientColour.objects.create(name="purple", patient=patient_2)
+        PatientColour.objects.create(name="green", patient=patient_2)
+        renderer = extract.PatientSubrecordCsvRenderer(
+            PatientColour, models.Episode.objects.all(), self.user
+        )
+        row_1 = renderer.get_flat_row_for_episode_id(episode_1.id)
+        self.assertEqual(
+            row_1,
+            ["1", "red", "", ""]
+        )
+        row_2 = renderer.get_flat_row_for_episode_id(episode_2.id)
+        self.assertEqual(
+            row_2,
+            ["2", "purple", "2", "green"]
+        )
 
 
 @patch.object(Colour, "_get_fieldnames_to_extract")
