@@ -216,11 +216,10 @@ class PatientSubrecordCsvRenderer(CsvRenderer):
         row = []
         for serialised in serialised_instances:
             row.extend(serialised)
-            if not len(row) == self.row_length:
-                import ipdb; ipdb.set_trace()
-                row.extend(
-                    "" for i in moves.xrange(self.row_length - len(row))
-                )
+        if not len(row) == self.row_length:
+            row.extend(
+                "" for i in moves.xrange(self.row_length - len(row))
+            )
         return row
 
     def get_flat_headers(self):
