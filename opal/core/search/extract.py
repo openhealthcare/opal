@@ -223,7 +223,7 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
         for instance in by_episode_id:
             row.extend(self.get_row(instance))
         if not len(row) == self.row_length:
-            row.extend("" for i in xrange(self.row_length - len(row)))
+            row.extend("" for i in moves.xrange(self.row_length - len(row)))
         return row
 
     def get_flat_headers(self):
