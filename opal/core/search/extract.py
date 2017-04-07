@@ -8,7 +8,7 @@ import logging
 import os
 import tempfile
 import zipfile
-from six import text_type
+from six import text_type, moves
 from django.db.models import Count, Max
 from django.utils.functional import cached_property
 from opal.models import Episode
@@ -209,7 +209,9 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
     def repitions(self):
         e_values = self.queryset.values("episode_id")
         annotated = e_values.annotate(Count("episode_id"))
-        return annotated.aggregate(Max('episode_id__count')).values()[0]
+        return annotated.aggregate(Max('episode_id__count'))[
+            "episode_id__count__max"
+        ]
 
     @cached_property
     def row_length(self):
@@ -226,7 +228,7 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
 
     def get_flat_headers(self):
         result = []
-        for i in xrange(self.repitions):
+        for i in moves.xrange(self.repitions):
             for header in self.get_headers():
                 result.append("{0}-{1} {2}".format(
                     self.model.get_display_name(),
