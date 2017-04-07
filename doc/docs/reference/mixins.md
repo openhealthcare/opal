@@ -12,12 +12,13 @@ it might serialise like below
 Takes in a field name and returns a json description of the field.
 
 #### get_human_readable_type
-provides a human readable description of the field name for example
+
+Provides a human readable description of the field name for example
 Date & Time for a DateTime Field.
 
 #### get_lookup_list_api_name
-provides the api name of the lookup list related to the field if it exists
 
+Provides the api name of the lookup list related to the field if it exists
 
 ### ToDictMixin
 Provides a method that serialises a model
