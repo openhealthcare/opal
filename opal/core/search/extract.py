@@ -8,7 +8,9 @@ import logging
 import os
 import tempfile
 import zipfile
-from six import text_type
+from six import text_type, moves
+from django.db.models import Count, Max
+from django.utils.functional import cached_property
 from opal.models import Episode
 from opal.core.subrecords import subrecords, episode_subrecords
 
@@ -202,6 +204,38 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
         super(EpisodeSubrecordCsvRenderer, self).__init__(
             model, queryset, user, fields
         )
+
+    @cached_property
+    def repitions(self):
+        e_values = self.queryset.values("episode_id")
+        annotated = e_values.annotate(Count("episode_id"))
+        return annotated.aggregate(Max('episode_id__count'))[
+            "episode_id__count__max"
+        ]
+
+    @cached_property
+    def row_length(self):
+        return len(self.get_headers()) * self.repitions
+
+    def get_flat_row_for_episode_id(self, episode_id):
+        by_episode_id = self.queryset.filter(episode_id=episode_id)
+        row = []
+        for instance in by_episode_id:
+            row.extend(self.get_row(instance))
+        if not len(row) == self.row_length:
+            row.extend("" for i in moves.xrange(self.row_length - len(row)))
+        return row
+
+    def get_flat_headers(self):
+        result = []
+        for i in moves.xrange(self.repitions):
+            for header in self.get_headers():
+                result.append("{0}-{1} {2}".format(
+                    self.model.get_display_name(),
+                    i + 1,
+                    header
+                ))
+        return result
 
 
 def zip_archive(episodes, description, user):
