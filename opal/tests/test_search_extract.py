@@ -96,10 +96,11 @@ class ZipArchiveTestCase(OpalTestCase):
         HouseOwner.objects.create(patient=patient)
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
         call_args = zipfile.ZipFile.return_value.__enter__.return_value.write.call_args_list
-        self.assertEqual(3, len(call_args))
-        self.assertTrue(call_args[0][0][0].endswith("episodes.csv"))
-        self.assertTrue(call_args[1][0][0].endswith("hat_wearer.csv"))
-        self.assertTrue(call_args[2][0][0].endswith("house_owner.csv"))
+        self.assertEqual(4, len(call_args))
+        self.assertTrue(call_args[0][0][0].endswith("data_dictionary.html"))
+        self.assertTrue(call_args[1][0][0].endswith("episodes.csv"))
+        self.assertTrue(call_args[2][0][0].endswith("hat_wearer.csv"))
+        self.assertTrue(call_args[3][0][0].endswith("house_owner.csv"))
 
     @patch('opal.core.search.extract.subrecords')
     @patch('opal.core.search.extract.zipfile')
@@ -110,9 +111,10 @@ class ZipArchiveTestCase(OpalTestCase):
         HouseOwner.objects.create(patient=patient)
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
         call_args = zipfile.ZipFile.return_value.__enter__.return_value.write.call_args_list
-        self.assertEqual(2, len(call_args))
-        self.assertTrue(call_args[0][0][0].endswith("episodes.csv"))
-        self.assertTrue(call_args[1][0][0].endswith("house_owner.csv"))
+        self.assertEqual(3, len(call_args))
+        self.assertTrue(call_args[0][0][0].endswith("data_dictionary.html"))
+        self.assertTrue(call_args[1][0][0].endswith("episodes.csv"))
+        self.assertTrue(call_args[2][0][0].endswith("house_owner.csv"))
 
     @patch('opal.core.search.extract.subrecords')
     @patch('opal.core.search.extract.zipfile')
@@ -121,8 +123,9 @@ class ZipArchiveTestCase(OpalTestCase):
         subrecords.return_value = [HatWearer, HouseOwner]
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
         call_args = zipfile.ZipFile.return_value.__enter__.return_value.write.call_args_list
-        self.assertEqual(1, len(call_args))
-        self.assertTrue(call_args[0][0][0].endswith("episodes.csv"))
+        self.assertEqual(2, len(call_args))
+        self.assertTrue(call_args[0][0][0].endswith("data_dictionary.html"))
+        self.assertTrue(call_args[1][0][0].endswith("episodes.csv"))
 
     @patch('opal.core.search.extract.subrecords')
     @patch('opal.core.search.extract.EpisodeCsvRenderer')

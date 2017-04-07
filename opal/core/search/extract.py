@@ -41,7 +41,7 @@ class CsvColumn(object):
             self.display_name = display_name
         else:
             self.display_name = self.name.title()
-            
+
 
 class CsvRenderer(object):
     """
