@@ -405,12 +405,10 @@ class TestPatientSubrecordCsvRenderer(OpalTestCase):
         PatientColour.objects.create(name="purple", patient=patient_2)
         PatientColour.objects.create(name="green", patient=patient_2)
         renderer = extract.PatientSubrecordCsvRenderer(
-            PatientColour, models.Episode.objects.all(), self.user
+            PatientColour, models.Episode.objects.all(), self.user, flat=True
         )
         expected = [
-            'PatientColour-1 Episode',
             'PatientColour-1 Name',
-            'PatientColour-2 Episode',
             'PatientColour-2 Name'
         ]
         self.assertEqual(renderer.get_flat_headers(), expected)
@@ -425,17 +423,17 @@ class TestPatientSubrecordCsvRenderer(OpalTestCase):
         PatientColour.objects.create(name="purple", patient=patient_2)
         PatientColour.objects.create(name="green", patient=patient_2)
         renderer = extract.PatientSubrecordCsvRenderer(
-            PatientColour, models.Episode.objects.all(), self.user
+            PatientColour, models.Episode.objects.all(), self.user, flat=True
         )
         row_1 = renderer.get_flat_row_for_episode_id(episode_1.id)
         self.assertEqual(
             row_1,
-            ["1", "red", "", ""]
+            ["red", ""]
         )
         row_2 = renderer.get_flat_row_for_episode_id(episode_2.id)
         self.assertEqual(
             row_2,
-            ["2", "purple", "2", "green"]
+            ["purple", "green"]
         )
 
 
@@ -452,21 +450,17 @@ class TestEpisodeSubrecordCsvRenderer(OpalTestCase):
         Colour.objects.create(name="purple", episode=episode_2)
         Colour.objects.create(name="green", episode=episode_2)
         renderer = extract.EpisodeSubrecordCsvRenderer(
-            Colour, models.Episode.objects.all(), self.user
+            Colour, models.Episode.objects.all(), self.user, flat=True
         )
         expected = [
-            'Colour-1 Patient',
-            'Colour-1 Episode',
             'Colour-1 Name',
-            'Colour-2 Patient',
-            'Colour-2 Episode',
             'Colour-2 Name'
         ]
         self.assertEqual(renderer.get_flat_headers(), expected)
 
     def test_get_flat_row_by_episode_id(self, field_names_to_extract):
         field_names_to_extract.return_value = [
-            "episode_id", "name", "consistency_token", "id"
+            "name", "consistency_token", "id"
         ]
         _, episode_1 = self.new_patient_and_episode_please()
         _, episode_2 = self.new_patient_and_episode_please()
@@ -474,17 +468,17 @@ class TestEpisodeSubrecordCsvRenderer(OpalTestCase):
         Colour.objects.create(name="purple", episode=episode_2)
         Colour.objects.create(name="green", episode=episode_2)
         renderer = extract.EpisodeSubrecordCsvRenderer(
-            Colour, models.Episode.objects.all(), self.user
+            Colour, models.Episode.objects.all(), self.user, flat=True
         )
         row_1 = renderer.get_flat_row_for_episode_id(episode_1.id)
         self.assertEqual(
             row_1,
-            ["1", "1", "red", "", "", ""]
+            ["red", ""]
         )
         row_2 = renderer.get_flat_row_for_episode_id(episode_2.id)
         self.assertEqual(
             row_2,
-            ["2", "2", "purple", "2", "2", "green"]
+            ["purple", "green"]
         )
 
     def test_get_flat_row_by_episode_id_where_none_exists(
@@ -498,24 +492,22 @@ class TestEpisodeSubrecordCsvRenderer(OpalTestCase):
         Colour.objects.create(name="purple", episode=episode_2)
         Colour.objects.create(name="green", episode=episode_2)
         renderer = extract.EpisodeSubrecordCsvRenderer(
-            Colour, models.Episode.objects.all(), self.user
+            Colour, models.Episode.objects.all(), self.user, flat=True
         )
         row_1 = renderer.get_flat_row_for_episode_id(episode_1.id)
         self.assertEqual(
             row_1,
-            ["", "", "", "", "", ""]
+            ["", ""]
         )
         row_2 = renderer.get_flat_row_for_episode_id(episode_2.id)
         self.assertEqual(
             row_2,
-            ["2", "2", "purple", "2", "2", "green"]
+            ["purple","green"]
         )
 
     def test_get_header(self, field_names_to_extract):
         _, episode = self.new_patient_and_episode_please()
-        colour = Colour.objects.create(
-            name="blue", episode=episode
-        )
+
         field_names_to_extract.return_value = [
             "episode_id", "name", "consistency_token", "id"
         ]

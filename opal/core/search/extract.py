@@ -26,7 +26,7 @@ class CsvColumn(object):
           are passed to get_row
         * display name is what is used in the header
     """
-    def __init__(self, name, value=None, display_name=None):
+    def __init__(self, name, value=None, display_name=None, flat=False):
         self.name = name
         self.value = value
 
@@ -160,7 +160,7 @@ class PatientSubrecordCsvRenderer(CsvRenderer):
         ),
     )
 
-    def __init__(self, model, episode_queryset, user, fields=None):
+    def __init__(self, model, episode_queryset, user, fields=None, flat=False):
         self.patient_to_episode = defaultdict(list)
 
         for episode in episode_queryset:
@@ -169,6 +169,7 @@ class PatientSubrecordCsvRenderer(CsvRenderer):
         queryset = model.objects.filter(
             patient__in=list(self.patient_to_episode.keys()))
 
+        self.flat = flat
         super(PatientSubrecordCsvRenderer, self).__init__(
             model, queryset, user, fields
         )
@@ -178,6 +179,13 @@ class PatientSubrecordCsvRenderer(CsvRenderer):
             PatientSubrecordCsvRenderer, self
         ).get_field_names_to_render()
         field_names.remove("id")
+
+        if self.flat:
+            for_removal = ["patient", "patient_id", "episode", "episode_id"]
+
+            for to_remove in for_removal:
+                if to_remove in field_names:
+                    field_names.remove(to_remove)
         return field_names
 
     def get_rows(self):
@@ -248,9 +256,16 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
             EpisodeSubrecordCsvRenderer, self
         ).get_field_names_to_render()
         field_names.remove("id")
+        if self.flat:
+            for_removal = ["patient", "patient_id", "episode", "episode_id"]
+
+            for to_remove in for_removal:
+                if to_remove in field_names:
+                    field_names.remove(to_remove)
         return field_names
 
-    def __init__(self, model, episode_queryset, user, fields=None):
+    def __init__(self, model, episode_queryset, user, fields=None, flat=False):
+        self.flat = flat
         queryset = model.objects.filter(episode__in=episode_queryset)
 
         super(EpisodeSubrecordCsvRenderer, self).__init__(
