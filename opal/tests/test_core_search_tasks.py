@@ -9,9 +9,9 @@ from opal.core.search import tasks
 
 class ExtractTestCase(OpalTestCase):
 
-    @patch('opal.core.search.extract.zip_archive')
-    def test_extract(self, zip_archive):
-        zip_archive.return_value = 'Help'
+    @patch('opal.core.search.extract.zip_nested_extract')
+    def test_extract(self, zip_nested_extract):
+        zip_nested_extract.return_value = 'Help'
         criteria = [
             {
                 u'column': u'demographics',

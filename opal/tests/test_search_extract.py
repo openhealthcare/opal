@@ -11,7 +11,7 @@ from django.test import override_settings
 from opal.core.test import OpalTestCase
 from opal import models
 from opal.tests.models import (
-    Colour, PatientColour, Demographics, HatWearer, HouseOwner
+    Colour, PatientColour, Demographics, HatWearer, HouseOwner, FavouriteNumber
 )
 from opal.core.search import extract
 
@@ -84,53 +84,172 @@ class PatientEpisodeTestCase(OpalTestCase):
         with patch(MOCKING_FILE_NAME_OPEN, m, create=True):
             some_fun(*args)
 
+@patch('opal.core.search.extract.subrecords')
+@patch('opal.core.search.extract.zipfile')
+@patch('opal.core.search.extract.csv.writer')
+class ZipFlatExtractTestCase(OpalTestCase):
 
-class ZipArchiveTestCase(OpalTestCase):
+    def test_write_headers(self, csv_writer, zipfile, subrecords):
+        # write the display names of the fields
+        patient, episode = self.new_patient_and_episode_please()
+        subrecords.return_value = [HatWearer, HouseOwner]
+        HatWearer.objects.create(name="Indiana", episode=episode)
+        HatWearer.objects.create(name="Beryl", episode=episode)
+        HouseOwner.objects.create(patient=patient)
+        HouseOwner.objects.create(patient=patient)
+        extract.zip_flat_extract(
+            models.Episode.objects.all(), 'this', self.user
+        )
+        self.assertEqual(csv_writer().writerow.call_count, 2)
+        headers_call = csv_writer().writerow.call_args_list[0][0][0]
+        self.assertIn("Tagging", headers_call)
+        self.assertIn("Start", headers_call)
+        self.assertIn("End", headers_call)
+        self.assertIn("Wearer of Hats-1 Name", headers_call)
+        self.assertIn("Wearer of Hats-2 Name", headers_call)
+        self.assertIn("HouseOwner-1 Created", headers_call)
+        self.assertIn("HouseOwner-2 Created", headers_call)
 
-    @patch('opal.core.search.extract.subrecords')
-    @patch('opal.core.search.extract.zipfile')
+
+    def test_exclude_empty_subrecords(self, csv_writer, zipfile, subrecords):
+        # if a subrecord has no models, don't write the headers
+        patient, episode = self.new_patient_and_episode_please()
+        subrecords.return_value = [HatWearer, HouseOwner]
+        HatWearer.objects.create(name="Indiana", episode=episode)
+        HatWearer.objects.create(name="Beryl", episode=episode)
+        extract.zip_flat_extract(
+            models.Episode.objects.all(), 'this', self.user
+        )
+        self.assertEqual(csv_writer().writerow.call_count, 2)
+        headers_call = csv_writer().writerow.call_args_list[0][0][0]
+        self.assertIn("Tagging", headers_call)
+        self.assertIn("Start", headers_call)
+        self.assertIn("End", headers_call)
+        self.assertIn("Wearer of Hats-1 Name", headers_call)
+        self.assertIn("Wearer of Hats-2 Name", headers_call)
+        self.assertNotIn("HouseOwner-1 Created", headers_call)
+
+    def test_one_write_per_row(self, csv_writer, zipfile, subrecords):
+        # if we've got multiple rows but they're all the same episode
+        # only write one row
+        patient, episode = self.new_patient_and_episode_please()
+        subrecords.return_value = [HatWearer, FavouriteNumber]
+        HatWearer.objects.create(name="Indiana", episode=episode)
+        HatWearer.objects.create(name="Beryl", episode=episode)
+        FavouriteNumber.objects.create(patient=patient, number=73)
+        FavouriteNumber.objects.create(patient=patient, number=42)
+        extract.zip_flat_extract(
+            models.Episode.objects.all(), 'this', self.user
+        )
+        self.assertEqual(csv_writer().writerow.call_count, 2)
+        row_call = csv_writer().writerow.call_args_list[1][0][0]
+        self.assertIn("Beryl", row_call)
+        self.assertIn("Indiana", row_call)
+        self.assertIn("73", row_call)
+        self.assertIn("42", row_call)
+
+
+    def test_write_multiple_episode_subrecord_rows(self, csv_writer, zipfile, subrecords):
+        # if we've got multiple rows but they're all the same episode
+        # only write one row
+        patient, episode_1 = self.new_patient_and_episode_please()
+        episode_2 = patient.create_episode()
+        subrecords.return_value = [HatWearer, FavouriteNumber]
+        FavouriteNumber.objects.create(patient=patient, number=43)
+        FavouriteNumber.objects.create(patient=patient, number=84)
+        extract.zip_flat_extract(
+            models.Episode.objects.all(), 'this', self.user
+        )
+        self.assertEqual(csv_writer().writerow.call_count, 3)
+        row_call_1 = csv_writer().writerow.call_args_list[1][0][0]
+        row_call_2 = csv_writer().writerow.call_args_list[2][0][0]
+        self.assertIn("43", row_call_1)
+        self.assertIn("84", row_call_1)
+        self.assertIn("43", row_call_2)
+        self.assertIn("84", row_call_2)
+
+    def test_write_multiple_patient_subrecord_rows(self, csv_writer, zipfile, subrecords):
+        patient, episode_1 = self.new_patient_and_episode_please()
+        episode_2 = patient.create_episode()
+        subrecords.return_value = [HatWearer, HouseOwner]
+        HatWearer.objects.create(name="Indiana", episode=episode_1)
+        HatWearer.objects.create(name="Beryl", episode=episode_2)
+        extract.zip_flat_extract(
+            models.Episode.objects.all(), 'this', self.user
+        )
+        self.assertEqual(csv_writer().writerow.call_count, 3)
+        row_call_1 = csv_writer().writerow.call_args_list[1][0][0]
+        row_call_2 = csv_writer().writerow.call_args_list[2][0][0]
+        self.assertIn("Indiana", row_call_1)
+        self.assertNotIn("Indiana", row_call_2)
+        self.assertIn("Beryl", row_call_2)
+        self.assertNotIn("Beryl", row_call_1)
+
+    def test_exclude_from_extract(self, csv_writer, zipfile, subrecords):
+        patient, episode = self.new_patient_and_episode_please()
+        subrecords.return_value = [HatWearer, Colour]
+        Colour.objects.create(name="Blue", episode=episode)
+        HatWearer.objects.create(name="Indiana", episode=episode)
+        extract.zip_flat_extract(
+            models.Episode.objects.all(), 'this', self.user
+        )
+        self.assertEqual(csv_writer().writerow.call_count, 2)
+        headers = csv_writer().writerow.call_args_list[0][0][0]
+        self.assertNotIn("{}-1 Name".format(Colour.get_display_name()), headers)
+
+        row_call = csv_writer().writerow.call_args_list[1][0][0]
+        self.assertNotIn("Blue", row_call)
+
+    def test_doesnt_fail_if_empty_extract(self, csv_writer, zipfile, subrecords):
+        subrecords.return_value = [HatWearer]
+        extract.zip_flat_extract(
+            models.Episode.objects.all(), 'this', self.user
+        )
+        self.assertEqual(csv_writer().writerow.call_count, 1)
+        headers_call = csv_writer().writerow.call_args_list[0][0][0]
+        self.assertIn("Tagging", headers_call)
+
+
+@patch('opal.core.search.extract.subrecords')
+@patch('opal.core.search.extract.zipfile')
+class ZipNestedExtractTestCase(OpalTestCase):
+
     def test_subrecords(self, zipfile, subrecords):
         patient, episode = self.new_patient_and_episode_please()
         subrecords.return_value = [HatWearer, HouseOwner]
         HatWearer.objects.create(name="Indiana", episode=episode)
         HouseOwner.objects.create(patient=patient)
-        extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
+        extract.zip_nested_extract(models.Episode.objects.all(), 'this', self.user)
         call_args = zipfile.ZipFile.return_value.__enter__.return_value.write.call_args_list
         self.assertEqual(3, len(call_args))
         self.assertTrue(call_args[0][0][0].endswith("episodes.csv"))
         self.assertTrue(call_args[1][0][0].endswith("hat_wearer.csv"))
         self.assertTrue(call_args[2][0][0].endswith("house_owner.csv"))
 
-    @patch('opal.core.search.extract.subrecords')
-    @patch('opal.core.search.extract.zipfile')
     def test_subrecords_if_none(self, zipfile, subrecords):
         # if there are no subrecords we don't expect them to write to the file
         patient, episode = self.new_patient_and_episode_please()
         subrecords.return_value = [HatWearer, HouseOwner]
         HouseOwner.objects.create(patient=patient)
-        extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
+        extract.zip_nested_extract(models.Episode.objects.all(), 'this', self.user)
         call_args = zipfile.ZipFile.return_value.__enter__.return_value.write.call_args_list
         self.assertEqual(2, len(call_args))
         self.assertTrue(call_args[0][0][0].endswith("episodes.csv"))
         self.assertTrue(call_args[1][0][0].endswith("house_owner.csv"))
 
-    @patch('opal.core.search.extract.subrecords')
-    @patch('opal.core.search.extract.zipfile')
     def test_subrecords_if_empty_query(self, zipfile, subrecords):
         # if there are no subrecords we don't expect them to write to the file
         subrecords.return_value = [HatWearer, HouseOwner]
-        extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
+        extract.zip_nested_extract(models.Episode.objects.all(), 'this', self.user)
         call_args = zipfile.ZipFile.return_value.__enter__.return_value.write.call_args_list
         self.assertEqual(1, len(call_args))
         self.assertTrue(call_args[0][0][0].endswith("episodes.csv"))
 
-    @patch('opal.core.search.extract.subrecords')
     @patch('opal.core.search.extract.EpisodeCsvRenderer')
-    @patch('opal.core.search.extract.zipfile')
-    def test_exclude_subrecords(self, zipfile, csv_renderer, subrecords):
+    def test_exclude_subrecords(self, csv_renderer, zipfile,  subrecords):
         # if the subrecord is marked as _exclude_from_extract, skip it
         subrecords.return_value = [Colour]
-        extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
+        extract.zip_nested_extract(models.Episode.objects.all(), 'this', self.user)
         self.assertEqual(csv_renderer.call_count, 1)
         self.assertEqual(csv_renderer.call_args[0][0], models.Episode)
 

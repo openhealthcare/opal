@@ -305,7 +305,58 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
         return result
 
 
-def zip_archive(episodes, description, user):
+def zip_flat_extract(episodes, description, user):
+    target_dir = tempfile.mkdtemp()
+    target = os.path.join(target_dir, 'extract.zip')
+    zipfolder = '{0}.{1}'.format(user.username, datetime.date.today())
+    make_file_path = functools.partial(os.path.join, target_dir, zipfolder)
+    zip_relative_file_path = functools.partial(os.path.join, zipfolder)
+
+    episode_renderer = EpisodeCsvRenderer(Episode, episodes, user)
+    subrecord_renderers = []
+
+    for subrecord in subrecords():
+        if getattr(subrecord, '_exclude_from_extract', False):
+            continue
+
+        if subrecord in episode_subrecords():
+            renderer = EpisodeSubrecordCsvRenderer(
+                subrecord, episodes, user, flat=True
+            )
+        else:
+            renderer = PatientSubrecordCsvRenderer(
+                subrecord, episodes, user, flat=True
+            )
+        if renderer.count():
+            subrecord_renderers.append(renderer)
+
+    zipfolder = '{0}.{1}'.format(user.username, datetime.date.today())
+    os.mkdir(os.path.join(target_dir, zipfolder))
+    make_file_path = functools.partial(os.path.join, target_dir, zipfolder)
+    file_name = "extract.csv"
+    full_file_name = make_file_path(file_name)
+
+    with open(full_file_name, "w") as csv_file:
+        writer = csv.writer(csv_file)
+        headers = episode_renderer.get_headers()
+        for renderer in subrecord_renderers:
+            headers.extend(renderer.get_flat_headers())
+        writer.writerow(headers)
+
+        for episode in episodes:
+            row = episode_renderer.get_row(episode)
+
+            for renderer in subrecord_renderers:
+                row.extend(renderer.get_flat_row_for_episode_id(episode.id))
+            writer.writerow(row)
+
+    with zipfile.ZipFile(target, mode='w') as z:
+        z.write(full_file_name, zip_relative_file_path(file_name))
+
+    return target
+
+
+def zip_nested_extract(episodes, description, user):
     """
     Given an iterable of EPISODES, the DESCRIPTION of this set of episodes,
     and the USER for which we are extracting, create a zip archive suitable
