@@ -15,8 +15,9 @@ from six import text_type
 
 from opal.models import Episode
 from opal.core.subrecords import (
-    episode_subrecords, patient_subrecords, subrecords
+    episode_subrecords, subrecords
 )
+
 
 class CsvColumn(object):
     """ A custom column class that will render a custom value
