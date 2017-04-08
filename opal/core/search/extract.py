@@ -148,6 +148,7 @@ class EpisodeCsvRenderer(CsvRenderer):
         CsvColumn("created_by_id", display_name="Created By"),
         CsvColumn("updated_by_id", display_name="Updated By"),
         CsvColumn("patient_id", display_name="Patient"),
+        CsvColumn("id", display_name="Episode"),
     )
 
 

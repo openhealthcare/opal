@@ -238,7 +238,7 @@ class ZipFlatExtractTestCase(OpalTestCase):
         self.assertEqual(csv_writer().writerow.call_count, 2)
         headers_call = csv_writer().writerow.call_args_list[0][0][0]
         self.assertEqual(
-            ['ID', 'Patient', 'Tagging'],
+            ['Episode', 'Patient', 'Tagging'],
             headers_call
         )
 
@@ -254,7 +254,7 @@ class ZipFlatExtractTestCase(OpalTestCase):
         self.assertEqual(csv_writer().writerow.call_count, 2)
         headers_call = csv_writer().writerow.call_args_list[0][0][0]
         self.assertEqual(
-            ['ID', 'Patient', 'Tagging'],
+            ['Episode', 'Patient', 'Tagging'],
             headers_call
         )
 
@@ -278,7 +278,7 @@ class ZipFlatExtractTestCase(OpalTestCase):
         self.assertEqual(
             [
                 'Patient',
-                'ID',
+                'Episode',
                 'Wearer of Hats-1 Created',
                 'Wearer of Hats-1 Name'
             ],
@@ -487,6 +487,7 @@ class TestEpisodeCsvRenderer(PatientEpisodeTestCase):
         expected = {
             "Start",
             "End",
+            "Episode",
             "Created",
             "Updated",
             "Created By",
@@ -571,7 +572,6 @@ class TestPatientSubrecordCsvRenderer(OpalTestCase):
         field_names_to_extract.return_value = [
             "patient_id", "name", "consistency_token", "id"
         ]
-        patient, _ = self.new_patient_and_episode_please()
         PatientColour.objects.create(
             name="blue", patient=patient
         )
