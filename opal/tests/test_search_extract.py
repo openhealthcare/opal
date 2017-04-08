@@ -3,7 +3,7 @@ Unittests for opal.core.search.extract
 """
 import datetime
 import json
-from mock import mock_open, patch, Mock
+from mock import mock_open, patch
 
 from django.core.urlresolvers import reverse
 from django.test import override_settings
@@ -210,6 +210,8 @@ class ZipFlatExtractTestCase(OpalTestCase):
         self.assertIn("Tagging", headers_call)
 
     def test_specific_columns_excludes_other_records(self, csv_writer, zipfile, subrecords):
+        # if we don't pass in houseowner and we do pass in
+        # hatwearer, then we should only see hatwearer
         patient, episode = self.new_patient_and_episode_please()
         subrecords.return_value = [HatWearer, HouseOwner]
         HatWearer.objects.create(name="Indiana", episode=episode)
@@ -237,6 +239,49 @@ class ZipFlatExtractTestCase(OpalTestCase):
         headers_call = csv_writer().writerow.call_args_list[0][0][0]
         self.assertEqual(
             ['ID', 'Patient', 'Tagging'],
+            headers_call
+        )
+
+    def test_only_use_specifc_subrecords(self, csv_writer, zipfile, subrecords):
+        patient, episode = self.new_patient_and_episode_please()
+        subrecords.return_value = [HatWearer, HouseOwner]
+        HatWearer.objects.create(name="Indiana", episode=episode)
+        HouseOwner.objects.create(patient=patient)
+        extract.zip_flat_extract(
+            models.Episode.objects.all(), 'this', self.user,
+            specific_columns={"episode": ["tagging"]}
+        )
+        self.assertEqual(csv_writer().writerow.call_count, 2)
+        headers_call = csv_writer().writerow.call_args_list[0][0][0]
+        self.assertEqual(
+            ['ID', 'Patient', 'Tagging'],
+            headers_call
+        )
+
+    def test_if_none_show_all_fields_subrecord(self, csv_writer, zipfile, subrecords):
+        patient, episode = self.new_patient_and_episode_please()
+        subrecords.return_value = [HatWearer, HouseOwner]
+        HatWearer.objects.create(name="Indiana", episode=episode)
+        Colour.objects.create(name="red", episode=episode)
+
+        with patch.object(HatWearer, "_get_fieldnames_to_extract") as field_names:
+            field_names.return_value = [
+                "id", "created", "name", "consistency_token"
+            ]
+
+            extract.zip_flat_extract(
+                models.Episode.objects.all(), 'this', self.user,
+                specific_columns={"hat_wearer": None}
+            )
+        self.assertEqual(csv_writer().writerow.call_count, 2)
+        headers_call = csv_writer().writerow.call_args_list[0][0][0]
+        self.assertEqual(
+            [
+                'Patient',
+                'ID',
+                'Wearer of Hats-1 Created',
+                'Wearer of Hats-1 Name'
+            ],
             headers_call
         )
 
@@ -521,7 +566,7 @@ class TestPatientSubrecordCsvRenderer(OpalTestCase):
         self.assertEqual([["1", "1", "blue"]], rendered)
 
     def test_get_rows_same_patient(self, field_names_to_extract):
-        patient = self.new_patient_and_episode_please()
+        patient, _ = self.new_patient_and_episode_please()
         patient.create_episode()
         field_names_to_extract.return_value = [
             "patient_id", "name", "consistency_token", "id"
