@@ -1,8 +1,9 @@
 """
-Context Processors for OPAL
+Context Processors for Opal
 """
 from django.conf import settings as s
 from django.utils.functional import SimpleLazyObject
+
 from opal.core.subrecords import subrecords as subrecords_iterator
 
 
