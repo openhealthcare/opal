@@ -490,12 +490,11 @@ class TestPatientSubrecordCsvRenderer(OpalTestCase):
         self.assertEqual([["1", "1", "blue"]], rendered)
 
     def test_get_rows_same_patient(self, field_names_to_extract):
-        patient = self.new_patient_and_episode_please()
+        patient, _ = self.new_patient_and_episode_please()
         patient.create_episode()
         field_names_to_extract.return_value = [
             "patient_id", "name", "consistency_token", "id"
         ]
-        patient, _ = self.new_patient_and_episode_please()
         PatientColour.objects.create(
             name="blue", patient=patient
         )
