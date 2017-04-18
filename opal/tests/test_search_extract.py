@@ -552,6 +552,7 @@ class TestPatientSubrecordCsvRenderer(OpalTestCase):
         PatientColour.objects.create(
             name="blue", patient=patient
         )
+
         renderer = extract.PatientSubrecordCsvRenderer(
             PatientColour,
             models.Episode.objects.all(),
@@ -571,7 +572,6 @@ class TestPatientSubrecordCsvRenderer(OpalTestCase):
         field_names_to_extract.return_value = [
             "patient_id", "name", "consistency_token", "id"
         ]
-        patient, _ = self.new_patient_and_episode_please()
         PatientColour.objects.create(
             name="blue", patient=patient
         )
