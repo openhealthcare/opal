@@ -8,6 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 from mock import patch, MagicMock
 import reversion
 
+from opal.core.search.search_query import SearchQuery
 from opal.models import Episode, Patient, Synonym, Gender
 from opal.core.test import OpalTestCase
 from opal.tests.episodes import RestrictedEpisodeCategory
@@ -195,6 +196,29 @@ class DatabaseQueryTestCase(OpalTestCase):
         query = queries.DatabaseQuery(self.user, criteria)
         res = query.episodes_for_criteria(criteria[0])
         self.assertEqual([], list(res))
+
+    def test_episodes_for_criteria_search_query_used(self):
+        criteria = [
+            {
+                u'column': u'hat_wearer',
+                u'field': u'Name',
+                u'combine': u'and',
+                u'query': u'Bowler',
+                u'queryType': u'Equals'
+            }
+        ]
+
+        class HatWearerQuery(object):
+            def query(self, given_query):
+                pass
+
+        with patch.object(SearchQuery, "get") as search_query_get:
+            with patch.object(HatWearerQuery, "query") as hat_wearer_query:
+                search_query_get.return_value = HatWearerQuery
+                query = queries.DatabaseQuery(self.user, criteria)
+                query.episodes_for_criteria(criteria[0])
+                search_query_get.assert_called_once_with("hat_wearer")
+                hat_wearer_query.assert_called_once_with(criteria[0])
 
     def test_episodes_without_restrictions_no_matches(self):
         query = queries.DatabaseQuery(self.user, self.name_criteria)

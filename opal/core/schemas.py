@@ -4,6 +4,7 @@ Utilities for dealing with Opal Schemas
 import itertools
 from opal.core.subrecords import subrecords
 from opal import models
+from opal.core.search.search_query import SearchQuery
 
 
 def serialize_model(model):
@@ -46,4 +47,6 @@ def list_records():
 
 
 def extract_schema():
-    return serialize_schema(itertools.chain([models.Tagging], subrecords()))
+    custom_queries = [i().to_dict() for i in SearchQuery.list()]
+    schema = serialize_schema(itertools.chain([models.Tagging], subrecords()))
+    return custom_queries + schema
