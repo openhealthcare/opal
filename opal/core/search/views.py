@@ -18,7 +18,7 @@ from opal import models
 from opal.core.views import (LoginRequiredMixin, json_response,
                              _get_request_data, with_no_caching)
 from opal.core.search import queries
-from opal.core.search.extract import zip_archive, async_extract
+from opal.core.search.extract import zip_nested_extract, async_extract
 
 PAGINATION_AMOUNT = 10
 
@@ -138,7 +138,9 @@ class DownloadSearchView(View):
             self.request.user, json.loads(self.request.POST['criteria'])
         )
         episodes = query.get_episodes()
-        fname = zip_archive(episodes, query.description(), self.request.user)
+        fname = zip_nested_extract(
+            episodes, query.description(), self.request.user
+        )
         resp = HttpResponse(open(fname, 'rb').read())
         disp = 'attachment; filename="{0}extract{1}.zip"'.format(
             settings.OPAL_BRAND_NAME, datetime.datetime.now().isoformat())
