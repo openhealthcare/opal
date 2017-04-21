@@ -64,6 +64,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         components = application.get_all_components()
         for component in components:
+
             self.set_counter()
 
             data = self.from_component(component)
