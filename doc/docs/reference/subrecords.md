@@ -1,6 +1,6 @@
-## OPAL Subrecords
+## Opal Subrecords
 
-OPAL Subrecords are models that relate to either Patients or Episodes, and inherit from
+Opal Subrecords are models that relate to either Patients or Episodes, and inherit from
 base classes `opal.models.PatientSubrecord` or `opal.models.EpisodeSubrecord`
 
 They themselves inherit from the mixins `opal.models.ToDictMixin`, `opal.models.UpdateFromDict`
