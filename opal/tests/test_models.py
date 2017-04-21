@@ -74,9 +74,27 @@ class PatientTestCase(OpalTestCase):
 
         colours = patient.patientcolour_set.all()
         self.assertEqual(len(colours), 2)
+        self.assertTrue(patient.episode_set.exists())
+
+    def test_bulk_update_patient_subrecords_respects_order(self):
+        patient = models.Patient()
+
+        d = {
+            "demographics": [{
+                "first_name": "Samantha",
+                "surname": "Sun",
+                "hospital_number": "123312"
+            }],
+            "patient_colour": [
+                {"name": "green"},
+                {"name": "purple"},
+            ]
+        }
+        patient.bulk_update(d, self.user)
+        colours = patient.patientcolour_set.all()
         self.assertEqual(colours[0].name, "green")
         self.assertEqual(colours[1].name, "purple")
-        self.assertTrue(patient.episode_set.exists())
+
 
     def test_bulk_update_with_existing_patient_episode(self):
         original_patient = models.Patient()
