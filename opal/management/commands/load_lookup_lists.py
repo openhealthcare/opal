@@ -67,7 +67,7 @@ class Command(BaseCommand):
 
             self.set_counter()
 
-            data = self.from_component(component)
+            self.from_component(component)
 
             msg = "\nFor {}".format(component.__name__)
             msg += "\nLoaded {0} lookup lists\n".format(self.num)
