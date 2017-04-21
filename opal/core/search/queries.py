@@ -10,7 +10,7 @@ from django.conf import settings
 from opal import models
 from opal.core import fields, subrecords
 from opal.utils import stringport
-from opal.core.search.search_query import SearchQuery
+from opal.core.search.search_rule import SearchRule
 
 
 def get_model_name_from_column_name(column_name):
@@ -223,10 +223,10 @@ class DatabaseQuery(QueryBackend):
 
         column_name = query['column']
 
-        search_query = SearchQuery.get(column_name)
+        search_rule = SearchRule.get(column_name)
 
-        if search_query:
-            return search_query().query(query)
+        if search_rule:
+            return search_rule().query(query)
 
         field = query['field'].replace(' ', '_').lower()
         Mod = get_model_from_api_name(column_name)

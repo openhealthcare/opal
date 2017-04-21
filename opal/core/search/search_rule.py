@@ -1,31 +1,30 @@
 from opal.core.discoverable import DiscoverableFeature
+from opal.core.exceptions import Error
 from opal.utils import camelcase_to_underscore
 from opal.models import Episode, deserialize_date
 
 
-class SearchException(Exception):
+class SearchException(Error):
     pass
 
 
-class SearchQueryField(object):
+class SearchRuleField(object):
     lookup_list = None
     enum = None
     description = None
     slug = None
     display_name = None
 
-    def get_slug(self):
-        if self.slug is not None:
-            return self.slug
+    @classmethod
+    def get_slug(klass):
+        if klass.slug is not None:
+            return klass.slug
 
-        if self.display_name is None:
+        if klass.display_name is None:
             raise ValueError(
-                'Must set display_name for {0}'.format(self)
+                'Must set display_name for {0}'.format(klass)
             )
-        return camelcase_to_underscore(self.display_name).replace(' ', '')
-
-    def get_display_name(self):
-        return self.display_name
+        return camelcase_to_underscore(klass.display_name).replace(' ', '')
 
     def to_dict(self):
         return dict(
@@ -44,8 +43,8 @@ class SearchQueryField(object):
         raise NotImplementedError("please implement a query")
 
 
-class SearchQuery(DiscoverableFeature):
-    module_name = "search_query"
+class SearchRule(DiscoverableFeature):
+    module_name = "search_rule"
     fields = []
 
     def get_fields(self):
@@ -71,12 +70,12 @@ class SearchQuery(DiscoverableFeature):
     def query(self, given_query):
         given_field = given_query['field']
         query_field = next(
-            f() for f in self.get_fields() if f().get_slug() == given_field
+            f for f in self.get_fields() if f.get_slug() == given_field
         )
-        return query_field.query(given_query)
+        return query_field().query(given_query)
 
 
-class EpisodeStart(SearchQueryField):
+class EpisodeStart(SearchRuleField):
     display_name = "Start"
     description = "Episode Start"
     field_type = "date_time"
@@ -92,7 +91,7 @@ class EpisodeStart(SearchQueryField):
             raise SearchException(err.format(given_query['queryType']))
 
 
-class EpisodeEnd(SearchQueryField):
+class EpisodeEnd(SearchRuleField):
     display_name = "End"
     description = "Episode End"
     field_type = "date_time"
@@ -108,7 +107,7 @@ class EpisodeEnd(SearchQueryField):
             raise SearchException(err.format(given_query['queryType']))
 
 
-class EpisodeQuery(SearchQuery):
+class EpisodeQuery(SearchRule):
     display_name = "Episode"
     slug = "episode"
     fields = (EpisodeStart, EpisodeEnd,)
