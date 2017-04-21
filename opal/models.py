@@ -966,6 +966,8 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
                 msg = "attempted creation of multiple fields on a singleton {}"
                 raise ValueError(msg.format(cls.__name__))
 
+        result = []
+
         for a_dict in list_of_dicts:
             if "id" in a_dict or cls._is_singleton:
                 if cls._is_singleton:
@@ -978,6 +980,8 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
                 subrecord = cls(**{schema_name: parent})
 
             subrecord.update_from_dict(a_dict, user, force=force)
+            result.append(subrecord)
+        return result
 
 
 class PatientSubrecord(Subrecord):

@@ -459,7 +459,7 @@ class BulkUpdateFromDictsTest(OpalTestCase):
             {"name": "blue"}
         ]
         patient = Patient.objects.create()
-        PatientColour.bulk_update_from_dicts(
+        colours = PatientColour.bulk_update_from_dicts(
             patient, patient_colours, self.user
         )
         expected_patient_colours = set(["purple", "blue"])
@@ -469,7 +469,8 @@ class BulkUpdateFromDictsTest(OpalTestCase):
         self.assertEqual(
             expected_patient_colours, new_patient_colours
         )
-
+        self.assertEqual(colours[0].name, "purple")
+        self.assertEqual(colours[1].name, "blue")
 
     def test_bulk_update_existing_from_dict(self):
         patient = Patient.objects.create()
@@ -482,15 +483,18 @@ class BulkUpdateFromDictsTest(OpalTestCase):
             {"name": "purple", "id": patient_colours[0].id},
             {"name": "blue", "id": patient_colours[1].id}
         ]
-        PatientColour.bulk_update_from_dicts(
+        colours = PatientColour.bulk_update_from_dicts(
             patient, patient_colours, self.user
         )
-        expected_patient_colours = set(["purple", "blue"])
-        new_patient_colours = set(PatientColour.objects.values_list(
+        expected_patient_colours = ["purple", "blue"]
+        new_patient_colours = list(PatientColour.objects.values_list(
             "name", flat=True
         ))
         self.assertEqual(
             expected_patient_colours, new_patient_colours
+        )
+        self.assertEqual(
+            expected_patient_colours, [i.name for i in colours]
         )
 
     def test_bulk_update_multiple_singletons_from_dict(self):

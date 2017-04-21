@@ -1,6 +1,6 @@
-## Opal Subrecords
+## OPAL Subrecords
 
-Opal Subrecords are models that relate to either Patients or Episodes, and inherit from
+OPAL Subrecords are models that relate to either Patients or Episodes, and inherit from
 base classes `opal.models.PatientSubrecord` or `opal.models.EpisodeSubrecord`
 
 They themselves inherit from the mixins `opal.models.ToDictMixin`, `opal.models.UpdateFromDict`
@@ -45,6 +45,14 @@ particularly verbose.
     class BloodPressureReading(EpisodeSubrecord):
         _list_limit = 3
 
+#### Subrecord._modal
+
+String to indicate a non-default modal size to be used for editing this `Subrecord`.
+Valid options are: 'lg', 'sm'. Typically used for complex forms or the display of
+additional contextually sensitive information when editing or entering data.
+
+    class Antimicrobial(EpisodeSubrecord):
+        _modal = 'lg'
 
 #### Subrecord._sort
 
@@ -83,7 +91,6 @@ This implicitly defaults to False.
 An iterable of strings that correspond to fieldnames that contain Patient Identifiable Data (PID).
 
 This is used when creating data extracts to exclude PID from e.g. CSV downloads.
-
 
 ### Methods
 
@@ -129,7 +136,7 @@ A Classmethod to allow the creation of multiple objects.
 
 Takes in the parent model - an episode
 for EpisodeSubrecords a patient for PatientSubrecords. Under the covers it iterates
-over all the subrecords, adds in the parent relationship and calls update_from_dict
+over all the subrecords, adds in the parent relationship and calls update_from_dict. It returns a list of the objects updated.
 
 ### Subrecord Mixins
 
