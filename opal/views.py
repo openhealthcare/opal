@@ -123,7 +123,7 @@ def get_brand_name():
 setting and will be removed in Opal 0.9.0
 """
     warnings.warn(warnthem, DeprecationWarning, stacklevel=2)
-    return getattr(settings, 'OPAL_BRAND_NAME', 'OPAL')
+    return getattr(settings, 'OPAL_BRAND_NAME', 'Opal')
 
 def get_settings():
     warnthem = """
@@ -204,7 +204,7 @@ class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
 
 
 """
-Template views for OPAL
+Template views for Opal
 """
 
 
