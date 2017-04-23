@@ -117,6 +117,7 @@ class EpisodeDetailTemplateView(LoginRequiredMixin, TemplateView):
         ).get_context_data(**kwargs)
         return context
 
+
 def get_brand_name():
     warnthem = """
     The `brand_name` context variable is available via the OPAL_BRAND_NAME
@@ -125,12 +126,14 @@ setting and will be removed in Opal 0.9.0
     warnings.warn(warnthem, DeprecationWarning, stacklevel=2)
     return getattr(settings, 'OPAL_BRAND_NAME', 'Opal')
 
+
 def get_settings():
     warnthem = """
     The `settings` context variable will be removed in Opal 0.9.0
     """
     warnings.warn(warnthem, DeprecationWarning, stacklevel=2)
     return settings
+
 
 def get_extra_application():
     warnthem = """
@@ -139,6 +142,7 @@ OPAL_EXTRA_APPLICATION setting and will be removed in Opal 0.9.0
 """
     warnings.warn(warnthem, DeprecationWarning, stacklevel=2)
     return settings.OPAL_EXTRA_APPLICATION
+
 
 class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'opal.html'
