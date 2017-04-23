@@ -52,6 +52,11 @@ class StartpluginTestCase(OpalTestCase):
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(static_dir.is_dir)
 
+    def test_creates_css_directory(self):
+        css_dir = self.path/'opal-testplugin/testplugin/static/css'
+        scaffold.start_plugin(self.args, self.path)
+        self.assertTrue(css_dir.is_dir)
+
     def test_creates_controllers_directory(self):
         rpath = 'opal-testplugin/testplugin/static/js/testplugin/controllers'
         controllers_dir = self.path/rpath
