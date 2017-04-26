@@ -23,7 +23,8 @@ Adds a utility method to the `Episode` service that returns a human readable pat
 
 #### Plugin.get_javascripts, Plugin.get_styles
 
-Enhances the API available for plugins to include javascript and css by adding methods on `opal.core.plugins.OpalPlugin`
+Enhances the API available for plugins to include javascript and css by adding methods on
+`opal.core.plugins.OpalPlugin`
 
 #### 'element_type' argument for the form template tags
 
@@ -35,8 +36,8 @@ tag API with the 'element_type' argument.
 #### OPAL_LOGO_PATH
 
 This new setting allows applications to set the path at which the app logo is served.
-If `OPAL_LOGO_PATH` is set, the value is passed to the `{% static %}` templatetag to set the `src` atribute
-of an image in the default application header and login screen.
+If `OPAL_LOGO_PATH` is set, the value is passed to the `{% static %}` templatetag to set
+the `src` atribute of an image in the default application header and login screen.
 
 #### Inactive episodes in PatientLists
 
@@ -45,6 +46,12 @@ episodes by default rather than filtering by Episode.active == True.
 
 `opal.core.TaggedPatientList.to_dict` continues to filter by Episode.active ==
 True by default.
+
+#### Notice of future removals
+
+The context variables `brand_name` `settings` and `extra_application` in `opal.views.IndexView`
+are no longer helpful thanks to the settings context processor. These will be removed in
+0.9.0 and emit warnings until then.
 
 #### Misc changes
 

@@ -1,6 +1,8 @@
 """
 Unittests for opal.views
 """
+import warnings
+
 from django import http
 from django.core.urlresolvers import reverse
 from mock import patch, MagicMock
@@ -245,6 +247,32 @@ class EpisodeDetailTemplateViewTestCase(BaseViewTestCase):
         with self.assertRaises(http.Http404):
             resp = view.get(request, pk=self.episode.pk+345)
 
+
+class RemovedSettingsWarningsTestCase(OpalTestCase):
+    def test_get_brand_name(self):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
+            views.get_brand_name()
+            assert len(w) == 1
+            assert issubclass(w[-1].category, DeprecationWarning)
+            assert "will be removed" in str(w[-1].message)
+
+    def test_get_settings(self):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
+            views.get_settings()
+            assert len(w) == 1
+            assert issubclass(w[-1].category, DeprecationWarning)
+            assert "will be removed" in str(w[-1].message)
+
+
+    def test_get_extra_application(self):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
+            views.get_extra_application()
+            assert len(w) == 1
+            assert issubclass(w[-1].category, DeprecationWarning)
+            assert "will be removed" in str(w[-1].message)
 
 
 class IndexViewTestCase(BaseViewTestCase):
