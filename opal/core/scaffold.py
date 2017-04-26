@@ -94,6 +94,8 @@ def start_plugin(name, USERLAND):
     static.mkdir()
     jsdir = static/'js/{0}'.format(name)
     jsdir.mkdir()
+    cssdir = static/'css'
+    cssdir.mkdir()
     controllers = jsdir/'controllers'
     controllers.mkdir()
     services = jsdir/'services'
