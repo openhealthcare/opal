@@ -18,7 +18,7 @@ from opal.core.scaffold import (
 )
 from opal.core import scaffold
 
-
+@patch('os.system')
 class StartpluginTestCase(OpalTestCase):
     def setUp(self):
         self.path = ffs.Path.newdir()
@@ -28,49 +28,49 @@ class StartpluginTestCase(OpalTestCase):
         ffs.rm_r(self.path)
 
     @patch("opal.core.scaffold.shutil.copytree", side_effect=shutil.copytree)
-    def test_tree_copied(self, shutil):
+    def test_tree_copied(self, shutil, os):
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(shutil.called)
 
-    def test_creates_the_app_directory(self):
+    def test_creates_the_app_directory(self, os):
         test_plugin = self.path/'opal-testplugin/testplugin'
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(test_plugin.is_dir)
 
-    def test_creates_appropriate_directory_with_opal_prefix(self):
+    def test_creates_appropriate_directory_with_opal_prefix(self, os):
         test_plugin = self.path/'opal-testplugin/testplugin'
         scaffold.start_plugin("opal-testplugin", self.path)
         self.assertTrue(test_plugin.is_dir)
 
-    def test_creates_template_directory(self):
+    def test_creates_template_directory(self, os):
         template_dir = self.path/'opal-testplugin/testplugin/templates'
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(template_dir.is_dir)
 
-    def test_creates_static_directory(self):
+    def test_creates_static_directory(self, os):
         static_dir = self.path/'opal-testplugin/testplugin/static'
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(static_dir.is_dir)
 
-    def test_creates_controllers_directory(self):
+    def test_creates_controllers_directory(self, os):
         rpath = 'opal-testplugin/testplugin/static/js/testplugin/controllers'
         controllers_dir = self.path/rpath
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(controllers_dir.is_dir)
 
-    def test_creates_services_directory(self):
+    def test_creates_services_directory(self, os):
         rpath = 'opal-testplugin/testplugin/static/js/testplugin/services'
         services_dir = self.path/rpath
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(services_dir.is_dir)
 
-    def test_has_lookuplists_dir(self):
+    def test_has_lookuplists_dir(self, os):
         rpath = 'opal-testplugin/testplugin/data/lookuplists/'
         lookuplists = self.path/rpath
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(bool(lookuplists))
 
-    def test_creates_manifest(self):
+    def test_creates_manifest(self, os):
         rpath = 'opal-testplugin/MANIFEST.in'
         manifest = self.path/rpath
         scaffold.start_plugin(self.args, self.path)
@@ -80,6 +80,9 @@ class StartpluginTestCase(OpalTestCase):
             self.assertIn("recursive-include testplugin/static *", contents)
             self.assertIn("recursive-include testplugin/templates *", contents)
 
+    def test_initialize_git(self, os):
+        scaffold.start_plugin(self.args, self.path)
+        os.assert_any_call('cd testplugin; git init')
 
 @patch('subprocess.check_call')
 @patch('os.system')
