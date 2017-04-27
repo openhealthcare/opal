@@ -78,8 +78,10 @@ def scaffold(args):
     if not args.nomigrations:
         makemigrations_cmd = "python manage.py makemigrations {app} " \
                              "--traceback {dry_run}"
-        makemigrations_cmd = makemigrations_cmd.format(app=app, dry_run=dry_run)
-        migrate_cmd = 'python manage.py migrate {app} --traceback'.format(app=app)
+        makemigrations_cmd = makemigrations_cmd.format(
+            app=app, dry_run=dry_run)
+        migrate_cmd = 'python manage.py migrate {app} --traceback'.format(
+            app=app)
 
         os.system(makemigrations_cmd)
         if not args.dry_run:
