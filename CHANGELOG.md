@@ -26,11 +26,12 @@ Adds a utility method to the `Episode` service that returns a human readable pat
 
 #### Plugin.get_javascripts, Plugin.get_styles
 
-Enhances the API available for plugins to include javascript and css by adding methods on `opal.core.plugins.OpalPlugin`
+Enhances the API available for plugins to include javascript and css by adding methods on
+`opal.core.plugins.OpalPlugin`
 
 #### 'element_type' argument for the form template tags
 
-Numeric database fields are now set as the html5 type="number" when rendering 
+Numeric database fields are now set as the html5 type="number" when rendering
 them with the forms templatetag library. This means on mobile devices it will
 bring up the numeric keypad. The element type can now be set via the template
 tag API with the 'element_type' argument.
@@ -38,8 +39,8 @@ tag API with the 'element_type' argument.
 #### OPAL_LOGO_PATH
 
 This new setting allows applications to set the path at which the app logo is served.
-If `OPAL_LOGO_PATH` is set, the value is passed to the `{% static %}` templatetag to set the `src` atribute
-of an image in the default application header and login screen.
+If `OPAL_LOGO_PATH` is set, the value is passed to the `{% static %}` templatetag to set
+the `src` atribute of an image in the default application header and login screen.
 
 #### Inactive episodes in PatientLists
 
@@ -49,12 +50,20 @@ episodes by default rather than filtering by Episode.active == True.
 `opal.core.TaggedPatientList.to_dict` continues to filter by Episode.active ==
 True by default.
 
+#### Notice of future removals
+
+The context variables `brand_name` `settings` and `extra_application` in `opal.views.IndexView`
+are no longer helpful thanks to the settings context processor. These will be removed in
+0.9.0 and emit warnings until then.
+
 #### Misc changes
 
 Adds a new filter - `underscore-to-spaces` for removing underscores from strings.
 
 The options for `SymptomComplex.duration` have moved from the default form template to a choices
 declaration on the model. These are scheduled to move again to a lookuplist.
+
+The default value of `Subrecord.get_display_name` now uses Django `Meta.verbose_name`.
 
 #### Minor fixes
 

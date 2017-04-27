@@ -367,6 +367,25 @@ class TestPatientSubrecordCsvRenderer(PatientEpisodeTestCase):
         )
         self.assertEqual([["1", "1", "blue"]], rendered)
 
+    def test_get_rows_same_patient(self, field_names_to_extract):
+        self.patient.create_episode()
+        field_names_to_extract.return_value = [
+            "patient_id", "name", "consistency_token", "id"
+        ]
+
+        renderer = extract.PatientSubrecordCsvRenderer(
+            PatientColour,
+            models.Episode.objects.all(),
+            self.user
+        )
+        rendered = list(
+            renderer.get_rows()
+        )
+        self.assertEqual([
+            ["1", "1", "blue"],
+            ["2", "1", "blue"]
+        ], rendered)
+
 
 @patch.object(Colour, "_get_fieldnames_to_extract")
 class TestEpisodeSubrecordCsvRenderer(PatientEpisodeTestCase):

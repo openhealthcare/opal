@@ -17,8 +17,8 @@ from opal.core import patient_lists
 from opal.tests import test_patient_lists
 from opal.tests.models import (
     FamousLastWords, PatientColour, ExternalSubRecord, SymptomComplex,
-    PatientConsultation, Birthday, DogOwner, HatWearer, HouseOwner, HoundOwner,
-    Colour, FavouriteColour
+    PatientConsultation, Birthday, DogOwner, HatWearer, InvisibleHatWearer, HouseOwner,
+    HoundOwner, Colour, FavouriteColour
 )
 
 
@@ -74,9 +74,27 @@ class PatientTestCase(OpalTestCase):
 
         colours = patient.patientcolour_set.all()
         self.assertEqual(len(colours), 2)
+        self.assertTrue(patient.episode_set.exists())
+
+    def test_bulk_update_patient_subrecords_respects_order(self):
+        patient = models.Patient()
+
+        d = {
+            "demographics": [{
+                "first_name": "Samantha",
+                "surname": "Sun",
+                "hospital_number": "123312"
+            }],
+            "patient_colour": [
+                {"name": "green"},
+                {"name": "purple"},
+            ]
+        }
+        patient.bulk_update(d, self.user)
+        colours = patient.patientcolour_set.all()
         self.assertEqual(colours[0].name, "green")
         self.assertEqual(colours[1].name, "purple")
-        self.assertTrue(patient.episode_set.exists())
+
 
     def test_bulk_update_with_existing_patient_episode(self):
         original_patient = models.Patient()
@@ -214,6 +232,19 @@ class SubrecordTestCase(OpalTestCase):
 
     def test_get_display_name_from_property(self):
         self.assertEqual('Wearer of Hats', HatWearer.get_display_name())
+
+    def test_get_display_name_from_meta_verbose_name(self):
+        self.assertEqual(
+            'Invisible Wearer of Hats',
+            InvisibleHatWearer.get_display_name()
+        )
+
+    def test_get_display_name_from_verbose_name_but_capwords(self):
+        self.assertEqual(
+            'Dog Owner',
+            DogOwner.get_display_name()
+        )
+
 
     def test_date_time_deserialisation(self):
         patient, _ = self.new_patient_and_episode_please()
@@ -446,7 +477,7 @@ class BulkUpdateFromDictsTest(OpalTestCase):
             {"name": "blue"}
         ]
         patient = Patient.objects.create()
-        PatientColour.bulk_update_from_dicts(
+        colours = PatientColour.bulk_update_from_dicts(
             patient, patient_colours, self.user
         )
         expected_patient_colours = set(["purple", "blue"])
@@ -456,7 +487,8 @@ class BulkUpdateFromDictsTest(OpalTestCase):
         self.assertEqual(
             expected_patient_colours, new_patient_colours
         )
-
+        self.assertEqual(colours[0].name, "purple")
+        self.assertEqual(colours[1].name, "blue")
 
     def test_bulk_update_existing_from_dict(self):
         patient = Patient.objects.create()
@@ -469,15 +501,18 @@ class BulkUpdateFromDictsTest(OpalTestCase):
             {"name": "purple", "id": patient_colours[0].id},
             {"name": "blue", "id": patient_colours[1].id}
         ]
-        PatientColour.bulk_update_from_dicts(
+        colours = PatientColour.bulk_update_from_dicts(
             patient, patient_colours, self.user
         )
-        expected_patient_colours = set(["purple", "blue"])
-        new_patient_colours = set(PatientColour.objects.values_list(
+        expected_patient_colours = ["purple", "blue"]
+        new_patient_colours = list(PatientColour.objects.values_list(
             "name", flat=True
         ))
         self.assertEqual(
             expected_patient_colours, new_patient_colours
+        )
+        self.assertEqual(
+            expected_patient_colours, [i.name for i in colours]
         )
 
     def test_bulk_update_multiple_singletons_from_dict(self):

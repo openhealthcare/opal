@@ -2,12 +2,19 @@ angular.module('opal.controllers').controller(
     'PatientDetailCtrl',
     function(
         $rootScope, $scope, $modal, $location, $routeParams,
-        Flow, Item, patient, profile, metadata
+        Flow, Item, patientLoader, patient, profile, metadata
     ){
         $scope.profile = profile;
         $scope.patient = patient;
         $scope.episode = patient.episodes[0];
         $scope.view = null;
+
+        $scope.refresh = function(){
+          patientLoader().then(function(refreshedPatient){
+            $scope.patient = refreshedPatient;
+            $scope.episode = _.findWhere($scope.patient.episodes, {id: $scope.episode.id});
+          });
+        };
 
         $scope.initialise = function(){
             $scope.metadata = metadata;

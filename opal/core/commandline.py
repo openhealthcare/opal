@@ -75,14 +75,17 @@ def scaffold(args):
     if args.dry_run:
         dry_run = '--dry-run'
 
-    makemigrations_cmd = "python manage.py makemigrations {app} " \
-                         "--traceback {dry_run}"
-    makemigrations_cmd = makemigrations_cmd.format(app=app, dry_run=dry_run)
-    migrate_cmd = 'python manage.py migrate {app} --traceback'.format(app=app)
+    if not args.nomigrations:
+        makemigrations_cmd = "python manage.py makemigrations {app} " \
+                             "--traceback {dry_run}"
+        makemigrations_cmd = makemigrations_cmd.format(
+            app=app, dry_run=dry_run)
+        migrate_cmd = 'python manage.py migrate {app} --traceback'.format(
+            app=app)
 
-    os.system(makemigrations_cmd)
-    if not args.dry_run:
-        os.system(migrate_cmd)
+        os.system(makemigrations_cmd)
+        if not args.dry_run:
+            os.system(migrate_cmd)
 
     # 2. Let's create some display templates
     from opal.models import Subrecord, EpisodeSubrecord, PatientSubrecord
@@ -234,6 +237,11 @@ def parse_args(args):
         '--dry-run',
         action='store_true',
         help=scaffold_help)
+    parser_scaffold.add_argument(
+        '--nomigrations',
+        action='store_true',
+        help="Don't run Django migration related commands"
+    )
     parser_scaffold.set_defaults(func=scaffold)
 
     parser_test = subparsers.add_parser("test")
