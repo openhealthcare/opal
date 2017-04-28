@@ -20,4 +20,44 @@ The backend takes in a dictionary with the following fields
 The Opal search allows you to write a custom rule, for example if you don't want to query by a subrecord.
 
 #### opal.core.search.SearchRule
-Is a [discoverable](../guides/discoverable.md)
+Is a [discoverable](../guides/discoverable.md). A SearchRule a query that appears like a normal subrecord
+query in the interface.
+
+It is defined with a bunch of search rules queries that appear like subrecord model fields in the
+front end.
+
+The SearchRuleField has a query method that returns a list of Episodes.
+
+The SearchRuleField must define a field_type, these then provide the following operators
+to the front end
+
+|  field_type | queryType   |
+|---|---|
+|  string | equals, contains  |
+|  date_time | before, after  |
+|  date | before, after  |
+
+ie if you state the field is a string, the user will be provided with an
+equals/contains, which will be passed to the query as given_query["queryType"]
+
+
+
+For example
+
+```python
+class SomeField(SearchRuleField):
+    display_name = "Some Field" # the display name of the field
+    description = "A Description for the user to explain what this field means"
+    field_type = "date_time" # what kind of filter that is offered, datetime will off before and after
+
+    def query(self, given_query):
+        return Episode.objects.all()
+
+
+class MyCustomQuery(SearchRule):
+    display_name = "My Custom Query"
+    fields = (SomeField,)
+```
+
+
+Here Along with subrecords, there will be "My Custom Query" in the advanced search page's first query column. When its selected the user will be givena  second query showing "Some Field" and then given the option of before/after and a date picker.
