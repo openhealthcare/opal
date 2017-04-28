@@ -82,10 +82,11 @@ class EpisodeStart(SearchRuleField):
 
     def query(self, given_query):
         val = deserialize_date(given_query['query'])
+        RemovedNones = (i for i in Episode.objects.all() if i.start)
         if given_query['queryType'] == 'Before':
-            return (i for i in Episode.objects.all() if i.start <= val)
+            return (i for i in RemovedNones if i.start <= val)
         elif given_query['queryType'] == 'After':
-            return (i for i in Episode.objects.all() if i.start >= val)
+            return (i for i in RemovedNones if i.start >= val)
         else:
             err = "unrecognised query type for the start episode query with {}"
             raise SearchException(err.format(given_query['queryType']))
@@ -98,10 +99,11 @@ class EpisodeEnd(SearchRuleField):
 
     def query(self, given_query):
         val = deserialize_date(given_query['query'])
+        RemovedNones = (i for i in Episode.objects.all() if i.end)
         if given_query['queryType'] == 'Before':
-            return (i for i in Episode.objects.all() if i.end <= val)
+            return (i for i in RemovedNones if i.end <= val)
         elif given_query['queryType'] == 'After':
-            return (i for i in Episode.objects.all() if i.end >= val)
+            return (i for i in RemovedNones if i.end >= val)
         else:
             err = "unrecognised query type for the end episode query with {}"
             raise SearchException(err.format(given_query['queryType']))

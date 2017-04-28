@@ -105,6 +105,18 @@ class EpisodeQueryTestCase(OpalTestCase):
             list(self.episode_query.query(query_end))[0], self.episode
         )
 
+    def test_episode_end_when_none(self):
+        self.episode.discharge_date = None
+        self.episode.save()
+        query_end = dict(
+            queryType="Before",
+            query="1/8/2017",
+            field="end"
+        )
+        self.assertEqual(
+            list(self.episode_query.query(query_end)), []
+        )
+
     def test_episode_end_after(self):
         query_end = dict(
             queryType="After",
@@ -152,6 +164,18 @@ class EpisodeQueryTestCase(OpalTestCase):
         )
         self.assertEqual(
             list(self.episode_query.query(query_end))[0], self.episode
+        )
+
+    def test_episode_start_when_none(self):
+        self.episode.date_of_admission = None
+        self.episode.save()
+        query_end = dict(
+            queryType="Before",
+            query="1/8/2017",
+            field="start"
+        )
+        self.assertEqual(
+            list(self.episode_query.query(query_end)), []
         )
 
     def test_episode_start_not_found(self):
