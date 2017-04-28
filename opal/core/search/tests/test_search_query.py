@@ -7,15 +7,16 @@ from django.db import transaction
 from django.contrib.contenttypes.models import ContentType
 from mock import patch, MagicMock
 import reversion
+from opal.tests.episodes import RestrictedEpisodeCategory
 
 from opal.core.search.search_rule import SearchRule
-from opal.models import Episode, Patient, Synonym, Gender
+from opal.models import Patient, Synonym, Gender
 from opal.core.test import OpalTestCase
-from opal.tests.episodes import RestrictedEpisodeCategory
 
 from opal.core.search import queries
 
 from opal.tests import models as testmodels
+
 
 class PatientSummaryTestCase(OpalTestCase):
 
@@ -36,6 +37,7 @@ class PatientSummaryTestCase(OpalTestCase):
         episode2 = patient.create_episode(discharge_date=the_date)
         summary.update(episode2)
         self.assertEqual(summary.end, the_date)
+
 
 class QueryBackendTestCase(OpalTestCase):
 
@@ -100,7 +102,9 @@ class DatabaseQueryTestCase(OpalTestCase):
             column='hat_wearer', field='Wearing A Hat',
             combine='and', query='true', queryType='Equals'
         )
-        hatwearer = testmodels.HatWearer(episode=self.episode, wearing_a_hat=True)
+        hatwearer = testmodels.HatWearer(
+            episode=self.episode, wearing_a_hat=True
+        )
         hatwearer.save()
         query = queries.DatabaseQuery(self.user, [criteria])
         self.assertEqual([self.episode], query.get_episodes())
@@ -232,14 +236,14 @@ class DatabaseQueryTestCase(OpalTestCase):
         self.assertEqual(self.episode, list(result)[0])
 
     def test_filter_restricted_only_user(self):
-        self.user.profile.restricted_only   = True
+        self.user.profile.restricted_only = True
         self.user.profile.save()
         self.patient.create_episode(category='Inpatient')
         query = queries.DatabaseQuery(self.user, self.name_criteria)
         self.assertEqual([], query.get_episodes())
 
     def test_filter_in_restricted_episode_types(self):
-        self.user.profile.restricted_only   = True
+        self.user.profile.restricted_only = True
         self.user.profile.save()
         episode2 = self.patient.create_episode(category_name='Restricted')
         self.assertEqual('Restricted', episode2.category_name)
@@ -259,7 +263,6 @@ class DatabaseQueryTestCase(OpalTestCase):
             lookup_list=[],
             queryType=None
         )]
-
 
         with transaction.atomic(), reversion.create_revision():
             other_episode = self.patient.create_episode()
@@ -340,7 +343,6 @@ class DatabaseQueryTestCase(OpalTestCase):
         query = queries.DatabaseQuery(self.user, criteria)
         self.assertEqual([self.episode], query.get_episodes())
 
-
     def test_get_patient_summaries(self):
         query = queries.DatabaseQuery(self.user, self.name_criteria)
         summaries = query.get_patient_summaries()
@@ -363,11 +365,11 @@ class DatabaseQueryTestCase(OpalTestCase):
             we expect it to aggregate these into summaries
         """
         start_date = date(day=1, month=2, year=2014)
-        episode_2 = self.patient.create_episode(
+        self.patient.create_episode(
             date_of_episode=start_date
         )
         end_date = date(day=1, month=2, year=2016)
-        episode_3 = self.patient.create_episode(
+        self.patient.create_episode(
             date_of_episode=end_date
         )
         query = queries.DatabaseQuery(self.user, self.name_criteria)
