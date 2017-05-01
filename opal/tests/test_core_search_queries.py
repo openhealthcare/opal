@@ -94,6 +94,42 @@ class DatabaseQueryTestCase(OpalTestCase):
         query = queries.DatabaseQuery(self.user, [criteria])
         self.assertEqual([self.episode], query.get_episodes())
 
+    def test_episodes_for_number_fields_greater_than(self):
+        testmodels.FavouriteNumber.objects.create(
+            patient=self.patient, number=10
+        )
+        criteria = dict(
+            column='favourite_number',
+            field='number',
+            combine='and',
+            query=1,
+            queryType='Greater Than'
+        )
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
+
+        criteria["query"] = 100
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([], query.get_episodes())
+
+    def test_episodes_for_number_fields_less_than(self):
+        testmodels.FavouriteNumber.objects.create(
+            patient=self.patient, number=10
+        )
+        criteria = dict(
+            column='favourite_number',
+            field='number',
+            combine='and',
+            query=11,
+            queryType='Less Than'
+        )
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
+
+        criteria["query"] = 1
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([], query.get_episodes())
+
     def test_episodes_for_boolean_fields_episode_subrecord(self):
         criteria = dict(
             column='hat_wearer', field='Wearing A Hat',
