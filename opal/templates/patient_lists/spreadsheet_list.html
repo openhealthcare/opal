@@ -1,5 +1,6 @@
 {% extends 'layouts/left_panel.html' %}
 {% load patient_lists %}
+{% load subrecord_display %}
 {% block heading %}
 <div class="row screen-only">
   <div class="col-md-12">
@@ -81,11 +82,11 @@
   </div>
   <div class="panel-body">
     <p>
-	  <input class="form-control" ng-model="query.hospital_number"
+	  <input class="form-control" ng-model="query.hospital_number" ng-change="filterEpisodes()"
              ui-event="{focus: 'focusOnQuery()', blur: 'blurOnQuery()'}"
              type="text" class="input-small" placeholder="Hospital #">
 	  <input class="form-control" ng-model="query.name" ui-event="{focus: 'focusOnQuery()', blur: 'blurOnQuery()'}"
-             type="text" class="input-small" placeholder="Name">
+              ng-change="filterEpisodes()" type="text" class="input-small" placeholder="Name">
     </p>
   </div>
 </div>
@@ -109,12 +110,12 @@
           <div class="row">
             <div class="col-sm-6">
               <div ng-repeat="item in row.demographics">
-                {% include models.Demographics.get_display_template %}
+                {% subrecord_display models.Demographics patient_list.get_template_prefixes %}
               </div>
             </div>
             <div class="col-sm-6">
               <div ng-repeat="item in row.diagnosis">
-                {% include models.Diagnosis.get_display_template %}
+                {% subrecord_display models.Diagnosis patient_list.get_template_prefixes %}
               </div>
             </div>
           </div>
@@ -151,7 +152,7 @@
   		    <li ng-repeat="item in row.{{column.name}} {% if column.list_limit %} |limitTo:{{ column.list_limit }}{% endif %} track by $index"
   			    ng-dblclick="editNamedItem(row, '{{column.name}}', $index);$event.stopPropagation()"
   			    >
-  			  {% include column.template_path %}
+  			  {% subrecord_display column.model patient_list.get_template_prefixes %}
   		    </li>
 
   		    {% if not column.single %}
