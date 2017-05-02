@@ -178,27 +178,35 @@ class DatabaseQuery(QueryBackend):
         kw = {'{0}__{1}{2}'.format(model_name, field, qtype): val}
         return self._episodes_for_filter_kwargs(kw, model)
 
-    def _episodes_for_many_to_many_fields(self, query, field_obj):
+    def _episodes_for_many_to_many_fields(self, query, field, Mod):
         model = get_model_from_api_name(query['column'])
         model_name = get_model_name_from_column_name(query['column'])
+        not_synonym = self._get_name_from_synonym(
+            getattr(model, field).field.related_model, query['query']
+        )
+        name = not_synonym or query['query']
         related_field = query["field"].lower()
         key = "%s__%s__name" % (model_name, related_field)
-        kwargs = {key: query["query"]}
+        kwargs = {key: name}
         return self._episodes_for_filter_kwargs(kwargs, model)
+
+    def _get_name_from_synonym(self, field, name):
+        try:
+            content_type = ContentType.objects.get_for_model(field)
+            from opal.models import Synonym
+            synonym = Synonym.objects.get(content_type=content_type, name=name)
+            return synonym.content_object.name
+        except Synonym.DoesNotExist:
+            return
 
     def _episodes_for_fkorft_fields(self, query, field, contains, Mod):
         model = get_model_name_from_column_name(query['column'])
 
-        # Look up to see if there is a synonym.
-        content_type = ContentType.objects.get_for_model(
-            getattr(Mod, field).foreign_model)
-        name = query['query']
-        try:
-            from opal.models import Synonym
-            synonym = Synonym.objects.get(content_type=content_type, name=name)
-            name = synonym.content_object.name
-        except Synonym.DoesNotExist:
-            pass  # That's fine.
+        not_synonym = self._get_name_from_synonym(
+            getattr(Mod, field).foreign_model, query['query']
+        )
+
+        name = not_synonym or query['query']
 
         kw_fk = {'{0}__{1}_fk__name{2}'.format(model.replace('_', ''),
                                                field, contains): name}
@@ -253,7 +261,8 @@ class DatabaseQuery(QueryBackend):
         elif hasattr(Mod, field) and isinstance(Mod._meta.get_field(field),
                                                 djangomodels.ManyToManyField):
             eps = self._episodes_for_many_to_many_fields(
-                query, Mod._meta.get_field(field))
+                query, field, Mod
+            )
 
         else:
             model_name = get_model_name_from_column_name(query['column'])
