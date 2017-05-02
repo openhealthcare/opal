@@ -101,7 +101,7 @@ def start_plugin(name, USERLAND):
     services = jsdir/'services'
     services.mkdir()
     # 5. Initialize git repo
-    os.system('cd {0}; git init'.format(name))
+    os.system('cd {0}; git init'.format(reponame))
 
     write('Plugin complete at {0}'.format(reponame))
     return
