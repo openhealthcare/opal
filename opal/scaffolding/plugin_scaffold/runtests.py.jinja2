@@ -3,11 +3,6 @@ Standalone test runner for {{ name }} plugin
 """
 import os
 import sys
-from opal.core import application
-
-class Application(application.OpalApplication):
-    pass
-
 from django.conf import settings
 
 settings.configure(DEBUG=True,
@@ -40,6 +35,12 @@ settings.configure(DEBUG=True,
 
 import django
 django.setup()
+
+from opal.core import application
+
+class Application(application.OpalApplication):
+    pass
+
 
 from django.test.runner import DiscoverRunner
 test_runner = DiscoverRunner(verbosity=1)
