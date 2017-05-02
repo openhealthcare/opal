@@ -187,16 +187,11 @@ class DatabaseQueryTestCase(OpalTestCase):
     def test_episodes_for_m2m_fields(self):
         criteria = dict(
             column='hat_wearer', field='Hats',
-            combine='and', query='Derby', queryType='Equals'
+            combine='and', query='Bowler', queryType='Equals'
         )
 
-        bowler = testmodels.Hat.objects.create(name='Bowler')
-        content_type = ContentType.objects.get_for_model(testmodels.Hat)
-        Synonym.objects.get_or_create(
-            content_type=content_type,
-            object_id=bowler.id,
-            name="Derby"
-        )
+        bowler = testmodels.Hat(name='Bowler')
+        bowler.save()
 
         hatwearer = testmodels.HatWearer(episode=self.episode)
         hatwearer.save()
@@ -209,11 +204,16 @@ class DatabaseQueryTestCase(OpalTestCase):
     def test_episodes_for_m2m_fields_with_synonyms(self):
         criteria = dict(
             column='hat_wearer', field='Hats',
-            combine='and', query='Bowler', queryType='Equals'
+            combine='and', query='Derby', queryType='Equals'
         )
 
-        bowler = testmodels.Hat(name='Bowler')
-        bowler.save()
+        bowler = testmodels.Hat.objects.create(name='Bowler')
+        content_type = ContentType.objects.get_for_model(testmodels.Hat)
+        Synonym.objects.get_or_create(
+            content_type=content_type,
+            object_id=bowler.id,
+            name="Derby"
+        )
 
         hatwearer = testmodels.HatWearer(episode=self.episode)
         hatwearer.save()
