@@ -61,7 +61,9 @@ class ForeignKeyOrFreeText(property):
             fk_kwargs['related_name'] = self.related_name
         fk_field = models.ForeignKey(self.foreign_model, **fk_kwargs)
         fk_field.contribute_to_class(cls, self.fk_field_name)
-        ft_field = models.CharField(max_length=255, blank=True, null=True, default='')
+        ft_field = models.CharField(
+            max_length=255, blank=True, null=True, default=''
+        )
         ft_field.contribute_to_class(cls, self.ft_field_name)
 
     def get_default(self):
