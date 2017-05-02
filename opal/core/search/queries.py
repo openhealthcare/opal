@@ -155,6 +155,16 @@ class DatabaseQuery(QueryBackend):
         kw = {'{0}__{1}'.format(model_name, field): val}
         return self._episodes_for_filter_kwargs(kw, model)
 
+    def _episodes_for_number_fields(self, query, field, contains):
+        model = get_model_from_api_name(query['column'])
+        model_name = get_model_name_from_column_name(query['column'])
+        if query['queryType'] == 'Greater Than':
+            qtype = '__gt'
+        elif query['queryType'] == 'Less Than':
+            qtype = '__lt'
+        kw = {'{0}__{1}{2}'.format(model_name, field, qtype): query['query']}
+        return self._episodes_for_filter_kwargs(kw, model)
+
     def _episodes_for_date_fields(self, query, field, contains):
         model = get_model_from_api_name(query['column'])
         model_name = get_model_name_from_column_name(query['column'])
@@ -234,7 +244,8 @@ class DatabaseQuery(QueryBackend):
         elif len(named_fields) == 1 and isinstance(named_fields[0],
                                                    djangomodels.DateField):
             eps = self._episodes_for_date_fields(query, field, contains)
-
+        elif len(named_fields) == 1 and fields.is_numeric(named_fields[0]):
+            eps = self._episodes_for_number_fields(query, field, contains)
         elif hasattr(Mod, field) and isinstance(getattr(Mod, field),
                                                 fields.ForeignKeyOrFreeText):
             eps = self._episodes_for_fkorft_fields(query, field, contains, Mod)

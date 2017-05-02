@@ -102,6 +102,15 @@
                             <option>Before</option>
                             <option>After</option>
                           </select>
+                          <select class="form-control content-offset-25" ng-model="query.queryType"
+                                  ng-show="isNumber(query.column, query.field) && query.field != null"
+                                  tooltip-trigger="focus"
+                                  tooltip-placement="top" uib-tooltip="3. Select your query type"
+                                  set-focus-if="isNumber(query.column, query.field) && query.field != null"
+                                  >
+                            <option>Greater Than</option>
+                            <option>Less Than</option>
+                          </select>
                           <select class="form-control content-offset-25" ng-model="query.query"
                                   ng-show="isBoolean(query.column, query.field) && query.field != null"
                                   tooltip-trigger="focus"
@@ -111,6 +120,14 @@
                             <option>true</option>
                             <option>false</option>
                           </select>
+                          <input type="number"
+                                 class="form-control content-offset-25"
+                                 ng-model="query.query"
+                                 ng-show="isNumber(query.column, query.field)"
+                                 placeholder="4. Add your value"
+                                 ng-keypress="$event.keyCode == 13 && search()"
+                                 set-focus-if="isNumber(query.column, query.field) && query.field != null  && query.queryType != null"
+                                 />
                           <input type="text"
                                  class="form-control content-offset-25"
                                  ng-model="query.query"
