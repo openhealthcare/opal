@@ -1,5 +1,8 @@
 ### 0.8.2 (Minor Release)
 
+#### A Data Dictionary In The Extract
+The Extract zip file has a data dictionary with human readable metadata about each field.
+
 #### Enhanced Application menus
 
 The application menu API, previously python dicts stored in attributes on either plugin or
