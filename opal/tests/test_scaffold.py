@@ -88,7 +88,7 @@ class StartpluginTestCase(OpalTestCase):
 
     def test_initialize_git(self, os):
         scaffold.start_plugin(self.args, self.path)
-        os.assert_any_call('cd testplugin; git init')
+        os.assert_any_call('cd opal-testplugin; git init')
 
 @patch('subprocess.check_call')
 @patch('os.system')
