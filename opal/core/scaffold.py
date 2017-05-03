@@ -80,7 +80,7 @@ def start_plugin(name, USERLAND):
     shutil.copytree(PLUGIN_SCAFFOLD, root)
 
     # 2n. Interpolate scaffold
-    interpolate_dir(root, name=name)
+    interpolate_dir(root, name=name, version=opal.__version__)
 
     # 3. Rename the code dir
     code_root = root/name

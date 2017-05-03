@@ -1,3 +1,0 @@
-python-dateutil==2.4.2
-mock
-opal
