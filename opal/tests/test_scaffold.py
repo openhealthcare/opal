@@ -52,6 +52,11 @@ class StartpluginTestCase(OpalTestCase):
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(static_dir.is_dir)
 
+    def test_calls_interpolate_dir(self, os):
+        with patch.object(scaffold, 'interpolate_dir') as interpolate:
+            scaffold.start_plugin(self.args, self.path)
+            self.assertEqual(interpolate.call_args[1]["name"], "testplugin")
+            self.assertIn("version", interpolate.call_args[1])
 
     def test_creates_css_directory(self, os):
         css_dir = self.path/'opal-testplugin/testplugin/static/css'
