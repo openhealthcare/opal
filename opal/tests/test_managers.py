@@ -3,7 +3,10 @@ Unittests for opal.managers
 """
 from opal.core.test import OpalTestCase
 from opal.models import Patient, Episode
+from opal import managers
+from django.contrib.auth.models import User
 from opal.tests.models import Hat, HatWearer, Dog, DogOwner
+
 
 class PatientManagerTestCase(OpalTestCase):
     def setUp(self):
@@ -68,8 +71,7 @@ class PatientManagerTestCase(OpalTestCase):
 class EpisodeManagerTestCase(OpalTestCase):
 
     def setUp(self):
-        self.patient = Patient.objects.create()
-        self.episode = self.patient.create_episode()
+        self.patient, self.episode = self.new_patient_and_episode_please()
 
         # make sure many to many serialisation goes as epected
         top = Hat.objects.create(name="top")
@@ -142,3 +144,50 @@ class EpisodeManagerTestCase(OpalTestCase):
             self.user, [self.episode], episode_history=False
         )
         self.assertEqual(as_dict[0]['tagging'][0], {'id': 1})
+
+    def test_search_by_tags(self):
+        # we should be able to search with a list of tags
+        self.new_patient_and_episode_please()
+        _, episode_3 = self.new_patient_and_episode_please()
+        self.episode.set_tag_names(["tree"], self.user)
+        episode_3.set_tag_names(["plant"], self.user)
+        result = Episode.objects.search_by_tags(["tree", "plant"])
+        self.assertEqual([i.id for i in result], [1, 3])
+
+    def test_dont_return_historic_unless_asked(self):
+        # by default we should not return historic tags
+        self.new_patient_and_episode_please()
+        _, episode_3 = self.new_patient_and_episode_please()
+        self.episode.set_tag_names(["tree"], self.user)
+        episode_3.set_tag_names(["plant"], self.user)
+        self.episode.set_tag_names([], self.user)
+        result = Episode.objects.search_by_tags(["tree", "plant"])
+        self.assertEqual(result.get().id, 3)
+
+    def test_search_by_tags_with_user(self):
+        # get only the correct user's tags
+        user_2 = User.objects.create(username="other user", password="whatevs")
+        self.new_patient_and_episode_please()
+        _, episode_3 = self.new_patient_and_episode_please()
+        self.episode.set_tag_names(["mine"], user_2)
+        episode_3.set_tag_names(["mine"], self.user)
+        result = Episode.objects.search_by_tags(["mine"], user=self.user)
+        self.assertEqual(result.get().id, 3)
+
+    def test_search_by_tags_with_historic(self):
+        # we should be able to search with a list of tags
+        self.new_patient_and_episode_please()
+        _, episode_3 = self.new_patient_and_episode_please()
+        self.episode.set_tag_names(["tree"], self.user)
+        episode_3.set_tag_names(["plant"], self.user)
+        episode_3.set_tag_names([], self.user)
+        result = Episode.objects.search_by_tags(
+            ["tree", "plant"], historic=True
+        )
+        self.assertEqual([i.id for i in result], [1, 3])
+
+    def test_returns_a_queryset(self):
+        result = Episode.objects.search_by_tags(
+            ["tree", "plant"], historic=True
+        )
+        self.assertEqual(result.__class__, managers.EpisodeQueryset)
