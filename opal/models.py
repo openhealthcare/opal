@@ -940,13 +940,22 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
         return templates
 
     @classmethod
-    def get_display_template(cls, episode_type=None, patient_list=None):
+    def get_display_template(cls, list_prefixes=None):
         """
         Return the active display template for our record
         """
-        templates = cls._build_template_selection(
-            episode_type=episode_type, patient_list=patient_list,
-            suffix='.html', prefix='records')
+
+        name = cls.get_api_name()
+        list_prefixes = list_prefixes or []
+
+        templates = []
+
+        for list_prefix in list_prefixes:
+            templates.append(
+                'records/{0}/{1}.html'.format(list_prefix, name)
+            )
+
+        templates.append('records/{0}.html'.format(name))
         return find_template(templates)
 
     @classmethod
