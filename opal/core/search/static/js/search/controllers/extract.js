@@ -157,7 +157,6 @@ angular.module('opal.controllers').controller(
       $scope.selectedInfo = query;
     };
 
-
     $scope.isBoolean = function(column, field){
         return $scope.isType(column, field, ["boolean", "null_boolean"]);
     };
@@ -181,6 +180,10 @@ angular.module('opal.controllers').controller(
     $scope.isDateType = function(column, field){
         // if the field is a date or a date time
         return $scope.isDate(column, field) || $scope.isDateTime(column, field);
+    };
+
+    $scope.isNumber = function(column, field){
+        return $scope.isType(column, field, ["float", "big_integer", "integer", "positive_integer_field", "decimal"]);
     };
 
     $scope.addFilter = function(){

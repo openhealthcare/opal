@@ -4,6 +4,9 @@
 	<textarea class="form-control" {% if disabled %}ng-disabled="{{ disabled }}" {% endif %}
               ng-model="{{ model }}" rows="5"
               name="[[ {{ element_name }} ]]"
+              {% if change %}
+              ng-change="{{ change }}"
+              {% endif %}
               {% if macros %}{% include 'partials/_mentio_edit_item.html' %}{% endif %}
               ></textarea>
     {% if help_text %}

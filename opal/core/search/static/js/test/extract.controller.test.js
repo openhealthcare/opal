@@ -65,6 +65,12 @@ describe('ExtractCtrl', function(){
                     "type": "boolean"
                 },
                 {
+                    "title": "Age",
+                    "lookup_list": null,
+                    "name": "age",
+                    "type": "integer"
+                },
+                {
                     "title": "Date of Birth",
                     "lookup_list": null,
                     "name": "date_of_birth",
@@ -438,6 +444,10 @@ describe('ExtractCtrl', function(){
 
         it('should find date fields', function(){
             expect($scope.isDate("demographics", "date_of_birth")).toBe(true);
+        });
+
+        it('should find number fields', function(){
+            expect($scope.isNumber("demographics", "age")).toBe(true);
         });
 
         it('should find date time fields', function(){

@@ -122,6 +122,52 @@ class SerialisableFields(object):
         )
 
     @classmethod
+    def get_human_readable_type(cls, field_name):
+        field_type = cls._get_field(field_name)
+
+        if isinstance(field_type, models.BooleanField):
+            return "Either True or False"
+        if isinstance(field_type, models.NullBooleanField):
+            return "Either True, False or None"
+        if isinstance(field_type, models.DateTimeField):
+            return "Date & Time"
+        if isinstance(field_type, models.DateField):
+            return "Date"
+
+        numeric_fields = (
+            models.AutoField,
+            models.BigIntegerField,
+            models.IntegerField,
+            models.FloatField,
+            models.DecimalField,
+        )
+        if isinstance(field_type, numeric_fields):
+            return "Number"
+
+        if isinstance(field_type, ForeignKeyOrFreeText):
+            t = "Normally coded as a {} but free text entries are possible."
+            return t.format(field_type.foreign_model._meta.object_name.lower())
+
+        related_fields = (
+            models.ForeignKey, models.ManyToManyField,
+        )
+        if isinstance(field_type, related_fields):
+            if isinstance(field_type, models.ForeignKey):
+                t = "One of the {}"
+            else:
+                t = "Some of the {}"
+            related = field_type.rel.to
+            return t.format(related._meta.verbose_name_plural.title())
+
+        enum = cls.get_field_enum(field_name)
+
+        if enum:
+            return "One of {}".format(",".join(enum))
+
+        else:
+            return "Text Field"
+
+    @classmethod
     def _get_field(cls, name):
         try:
             return cls._meta.get_field(name)
@@ -176,42 +222,49 @@ class SerialisableFields(object):
             return [i[1] for i in choices]
 
     @classmethod
+    def get_lookup_list_api_name(cls, field_name):
+        lookup_list = None
+        if cls._get_field_type(field_name) == ForeignKeyOrFreeText:
+            fld = getattr(cls, field_name)
+            lookup_list = camelcase_to_underscore(
+                fld.foreign_model.__name__
+            )
+        return lookup_list
+
+    @classmethod
+    def build_schema_for_field_name(cls, field_name):
+        getter = getattr(cls, 'get_field_type_for_' + field_name, None)
+        if getter is None:
+            field = cls._get_field_type(field_name)
+            if field in [models.CharField, ForeignKeyOrFreeText]:
+                field_type = 'string'
+            else:
+                field_type = camelcase_to_underscore(field.__name__[:-5])
+        else:
+            field_type = getter()
+
+        title = cls._get_field_title(field_name)
+        default = cls._get_field_default(field_name)
+        field = {
+            'name': field_name,
+            'title': title,
+            'type': field_type,
+            'lookup_list': cls.get_lookup_list_api_name(field_name),
+            'default': default,
+            'model': cls.__name__,
+            'description': cls.get_field_description(field_name),
+            'enum': cls.get_field_enum(field_name)
+        }
+        return field
+
+    @classmethod
     def build_field_schema(cls):
         field_schema = []
 
         for fieldname in cls._get_fieldnames_to_serialize():
             if fieldname in ['id', 'patient_id', 'episode_id']:
                 continue
-
-            getter = getattr(cls, 'get_field_type_for_' + fieldname, None)
-            if getter is None:
-                field = cls._get_field_type(fieldname)
-                if field in [models.CharField, ForeignKeyOrFreeText]:
-                    field_type = 'string'
-                else:
-                    field_type = camelcase_to_underscore(field.__name__[:-5])
-            else:
-                field_type = getter()
-            lookup_list = None
-            if cls._get_field_type(fieldname) == ForeignKeyOrFreeText:
-                fld = getattr(cls, fieldname)
-                lookup_list = camelcase_to_underscore(
-                    fld.foreign_model.__name__
-                )
-            title = cls._get_field_title(fieldname)
-            default = cls._get_field_default(fieldname)
-            field = {
-                'name': fieldname,
-                'title': title,
-                'type': field_type,
-                'lookup_list': lookup_list,
-                'default': default,
-                'model': cls.__name__,
-                'description': cls.get_field_description(fieldname),
-                'enum': cls.get_field_enum(fieldname)
-            }
-
-            field_schema.append(field)
+            field_schema.append(cls.build_schema_for_field_name(fieldname))
         return field_schema
 
 
@@ -966,6 +1019,8 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
                 msg = "attempted creation of multiple fields on a singleton {}"
                 raise ValueError(msg.format(cls.__name__))
 
+        result = []
+
         for a_dict in list_of_dicts:
             if "id" in a_dict or cls._is_singleton:
                 if cls._is_singleton:
@@ -978,6 +1033,8 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
                 subrecord = cls(**{schema_name: parent})
 
             subrecord.update_from_dict(a_dict, user, force=force)
+            result.append(subrecord)
+        return result
 
 
 class PatientSubrecord(Subrecord):

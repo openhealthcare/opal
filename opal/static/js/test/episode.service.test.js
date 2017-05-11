@@ -216,11 +216,22 @@ describe('Episode', function() {
 
     it('should return tags if tagging is an Item()', function() {
         episode.tagging = [{makeCopy: function(){ return {
-            mine    : true,
+            mine: true,
             tropical: true,
-            id      : false
+            id: 1,
+            _client: {something: 'else'}
         }; }}];
         expect(episode.getTags()).toEqual(['mine', 'tropical']);
+    });
+
+    it('should filter out _client from tags', function() {
+        episode.tagging = [{makeCopy: function(){ return {
+            mine: true,
+            tropical: true,
+            id: 1,
+            _client: {something: 'else'}
+        }; }}];
+        expect(episode.getTags().indexOf('_client')).toEqual(-1);
     });
 
     it('hasTags() Should know if the episode has a given tag', function () {
