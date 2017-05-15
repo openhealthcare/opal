@@ -1,0 +1,46 @@
+{% load forms %}
+<div class="container content-offset">
+  <div class="panel panel-primary panel-container">
+    <div class="panel-heading">
+      <h2>
+        <i class="fa fa-user-md"></i>
+        [[ tag_display[currentTag] ]]
+      </h2>
+    </div>
+    <div class="panel-body">
+      <div class="row screen-only">
+        <form class="form-inline">
+          <div class="col-md-12">
+            {% include "patient_lists/partials/list_dropdown_menu.html" %}
+            <div class="form-group pull-right">
+              <label class="offset-right-5" for="listfilter">{% icon "fa-filter" %} Filter </label>
+              <input ui-event="{focus: 'focusOnQuery()', blur: 'blurOnQuery()'}" ng-model="query.hospital_number" type="text" class="form-control" id="listfilter" placeholder="Name or Hospital Num">
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="row">
+        <div class="col-md-8 col-md-push-2">
+          <div ng-repeat="row in rows" class="panel panel-default content-offset patient-row">
+            <a class="panel-link" href="{{ patient_list.card_link }}">
+              {% include patient_list.card_header_template %}
+              {% include patient_list.card_body_template %}
+            </a>
+            {% include patient_list.card_footer_template %}
+          </div>
+        </div>
+      </div>
+      <div class="empty-list" ng-hide="num_episodes > 0">
+        <p class="lead text-center">
+          There are no patients on this list.
+        </p>
+        <p class="lead text-center">
+          <span class="screen-only">
+            Would you like to <a href="/pathway/#/add_patient">add one</a>?
+          </span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

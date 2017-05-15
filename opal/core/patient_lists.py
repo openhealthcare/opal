@@ -259,6 +259,14 @@ class TabbedPatientListGroup(discoverable.DiscoverableFeature):
         return False
 
 
+class CardListPatientList(PatientList, utils.AbstractBase):
+    card_header_template = "patient_lists/partials/card_header.html"
+    card_body_template = "patient_lists/partials/card_body.html"
+    card_footer_template = "patient_lists/partials/card_footer.html"
+    card_link = "[[ '/#/patient/' + row.demographics[0].patient_id ]]"
+    template_name = "patient_lists/card_list.html"
+
+
 """
 Begin Definitions of Patient List App Metadata entries
 """

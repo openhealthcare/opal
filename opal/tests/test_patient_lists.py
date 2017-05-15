@@ -1,18 +1,19 @@
 """
 Unittests for opal.core.patient_lists
 """
+from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from mock import MagicMock, PropertyMock, patch
 
 from opal.core import exceptions
 from opal.tests import models
-from opal.models import Episode, Patient, UserProfile
+from opal.models import Episode, Patient, UserProfile, Demographics
 from opal.core.test import OpalTestCase
 
 from opal.core import patient_lists
 from opal.core.patient_lists import (
     PatientList, TaggedPatientList, TabbedPatientListGroup,
-    PatientListComparatorMetadata
+    PatientListComparatorMetadata, CardListPatientList
 )
 
 """
@@ -80,10 +81,34 @@ class TestTabbedPatientListGroup(TabbedPatientListGroup):
 class TestEmptyTabbedPatientListGroup(TabbedPatientListGroup):
     member_lists = [InvisibleList]
 
+
+class TestCardList(CardListPatientList):
+    slug = "some_card_list"
+    order = 105
+    schema = [
+        models.Demographics,
+    ]
+
+    @property
+    def card_header_template(self):
+        return CardListPatientList.card_header_template
+
+    @property
+    def card_body_template(self):
+        return CardListPatientList.card_body_template
+
+    @property
+    def card_footer_template(self):
+        return CardListPatientList.card_footer_template
+
+    @property
+    def card_link(self):
+        return CardListPatientList.card_link
+
+
 """
 Begin Tests
 """
-
 class ColumnTestCase(OpalTestCase):
 
     def test_set_non_inferred_attributes(self):
@@ -240,6 +265,7 @@ class TestPatientList(OpalTestCase):
             TaggingTestPatientList,
             TaggingTestSameTagPatientList,
             InvisibleList,
+            TestCardList
         ]
         self.assertEqual(expected, list(PatientList.list()))
 
@@ -362,12 +388,62 @@ class TabbedPatientListGroupTestCase(OpalTestCase):
         with self.assertRaises(ValueError):
             TabbedPatientListGroup.for_list(OpalTestCase)
 
-
     def test_visible_to(self):
         self.assertTrue(TestTabbedPatientListGroup.visible_to(self.user))
 
     def test_invisible_to_if_member_lists_for_user_empty(self):
         self.assertFalse(TestEmptyTabbedPatientListGroup.visible_to(self.user))
+
+
+class CardListGroupTestCase(OpalTestCase):
+
+    def setUp(self):
+        self.assertTrue(
+            self.client.login(
+                username=self.user.username, password=self.PASSWORD
+            )
+        )
+        self.url = reverse(
+            "patient_list_template_view", kwargs=dict(slug="some_card_list")
+        )
+
+    def test_vanilla_get(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    @patch(
+        "opal.tests.test_patient_lists.TestCardList.card_footer_template",
+        new_callable=PropertyMock
+    )
+    @patch(
+        "opal.tests.test_patient_lists.TestCardList.card_body_template",
+        new_callable=PropertyMock
+    )
+    @patch(
+        "opal.tests.test_patient_lists.TestCardList.card_header_template",
+        new_callable=PropertyMock
+    )
+    @patch(
+        "opal.tests.test_patient_lists.TestCardList.card_link",
+        new_callable=PropertyMock
+    )
+    def test_get_template_columns(self, card_link, header, body, footer):
+        # make sure we include all the constituents of the patient list
+        self.client.get(self.url)
+        header.return_value = CardListPatientList.card_header_template
+        body.return_value = CardListPatientList.card_body_template
+        card_link.return_value = CardListPatientList.card_link
+        header.assert_called_once()
+        body.assert_called_once()
+        footer.assert_called_once()
+        card_link.assert_called_once()
+
+    @patch("opal.tests.models.Demographics.get_display_template")
+    def test_get_card_body(self, display_template):
+        # make sure that the schema is called
+        display_template.return_value = Demographics.get_display_template()
+        self.client.get(self.url)
+        display_template.assert_called_once()
 
 
 class FirstListMetadataTestCase(OpalTestCase):
