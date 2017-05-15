@@ -3,23 +3,24 @@
   <div class="panel panel-primary panel-container">
     <div class="panel-heading">
       <h2>
-        <i class="fa fa-user-md"></i>
-        {{ patient_list.display_name }}
+        {% block list_header %}
+          <i class="fa fa-user-md"></i>
+          {{ patient_list.display_name }}
+        {% endblock %}
       </h2>
     </div>
     <div class="panel-body">
-      <div class="row screen-only">
-        <form class="form-inline">
-          <div class="col-md-12">
-            {% block list_actions %}
+      {% block list_actions %}
+        <div class="row screen-only">
+          <form class="form-inline">
+            <div class="col-md-12">
               {% block list_select %}
                 {% include "patient_lists/partials/list_dropdown_menu.html" %}
               {% endblock %}
-            {% endblock %}
-          </div>
-        </form>
-      </div>
-
+            </div>
+          </form>
+        </div>
+      {% endblock %}
       <div class="row">
         <div class="col-md-8 col-md-push-2">
           <div ng-repeat="row in rows" class="panel panel-default content-offset patient-row">
