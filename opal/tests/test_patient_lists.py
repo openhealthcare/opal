@@ -13,7 +13,7 @@ from opal.core.test import OpalTestCase
 from opal.core import patient_lists
 from opal.core.patient_lists import (
     PatientList, TaggedPatientList, TabbedPatientListGroup,
-    PatientListComparatorMetadata, CardPatientList
+    PatientListComparatorMetadata
 )
 
 """
@@ -80,31 +80,6 @@ class TestTabbedPatientListGroup(TabbedPatientListGroup):
 
 class TestEmptyTabbedPatientListGroup(TabbedPatientListGroup):
     member_lists = [InvisibleList]
-
-
-class TestCardList(CardPatientList):
-    slug = "some_card_list"
-    order = 105
-    schema = [
-        models.Demographics,
-    ]
-
-    @property
-    def card_header_template(self):
-        return CardPatientList.card_header_template
-
-    @property
-    def card_body_template(self):
-        return CardPatientList.card_body_template
-
-    @property
-    def card_footer_template(self):
-        # footer is not there so lets just return the body just so we've got a template
-        return CardPatientList.card_body_template
-
-    @property
-    def card_link(self):
-        return CardPatientList.card_link
 
 
 """
@@ -266,7 +241,6 @@ class TestPatientList(OpalTestCase):
             TaggingTestPatientList,
             TaggingTestSameTagPatientList,
             InvisibleList,
-            TestCardList
         ]
         self.assertEqual(expected, list(PatientList.list()))
 
@@ -394,66 +368,6 @@ class TabbedPatientListGroupTestCase(OpalTestCase):
 
     def test_invisible_to_if_member_lists_for_user_empty(self):
         self.assertFalse(TestEmptyTabbedPatientListGroup.visible_to(self.user))
-
-
-class CardListTestCase(OpalTestCase):
-
-    def setUp(self):
-        self.assertTrue(
-            self.client.login(
-                username=self.user.username, password=self.PASSWORD
-            )
-        )
-        self.url = reverse(
-            "patient_list_template_view", kwargs=dict(slug="some_card_list")
-        )
-
-    def test_vanilla_get(self):
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-
-    @patch(
-        "opal.tests.test_patient_lists.TestCardList.card_footer_template",
-        new_callable=PropertyMock
-    )
-    @patch(
-        "opal.tests.test_patient_lists.TestCardList.card_body_template",
-        new_callable=PropertyMock
-    )
-    @patch(
-        "opal.tests.test_patient_lists.TestCardList.card_header_template",
-        new_callable=PropertyMock
-    )
-    @patch(
-        "opal.tests.test_patient_lists.TestCardList.card_link",
-        new_callable=PropertyMock
-    )
-    def test_get_template_sections(self, card_link, header, body, footer):
-        # make sure we include all the constituents of the patient list
-        self.client.get(self.url)
-        header.return_value = CardPatientList.card_header_template
-        body.return_value = CardPatientList.card_body_template
-        card_link.return_value = CardPatientList.card_link
-        header.assert_called_once()
-        self.assertEqual(header.call_count, 1)
-        self.assertEqual(body.call_count, 1)
-        self.assertEqual(footer.call_count, 2)
-
-    @patch(
-        "opal.tests.test_patient_lists.TestCardList.card_footer_template",
-        new_callable=PropertyMock
-    )
-    def test_allows_footer_to_be_none(self, footer):
-        footer.return_value = None
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, 200)
-
-    @patch("opal.tests.models.Demographics.get_display_template")
-    def test_get_card_body(self, display_template):
-        # make sure that the schema is called
-        display_template.return_value = Demographics.get_display_template()
-        self.client.get(self.url)
-        display_template.assert_called_once()
 
 
 class FirstListMetadataTestCase(OpalTestCase):
