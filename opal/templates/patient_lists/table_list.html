@@ -18,7 +18,9 @@
     <a href="{% block row_link %}[[ '/#/patient/' + row.demographics[0].patient_id ]]{% endblock %}">
       {% for column in columns %}
         <td>
-          {% include column.template_path %}
+          <p ng-repeat="item in row.{{column.name}}">
+            {% include column.template_path %}
+          </p>
         </td>
       {% endfor %}
     </a>
