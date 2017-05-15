@@ -434,9 +434,9 @@ class CardListGroupTestCase(OpalTestCase):
         body.return_value = CardListPatientList.card_body_template
         card_link.return_value = CardListPatientList.card_link
         header.assert_called_once()
-        body.assert_called_once()
-        footer.assert_called_once()
-        card_link.assert_called_once()
+        self.assertEqual(header.call_count, 1)
+        self.assertEqual(body.call_count, 1)
+        self.assertEqual(footer.call_count, 2)
 
     @patch(
         "opal.tests.test_patient_lists.TestCardList.card_footer_template",
