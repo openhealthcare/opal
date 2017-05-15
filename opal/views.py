@@ -237,12 +237,13 @@ class FormTemplateView(LoginRequiredMixin, TemplateView):
 
 class ModalTemplateView(LoginRequiredMixin, TemplateView):
     def get_template_from_model(self):
-        patient_list = None
+        list_prefixes = None
 
         if self.list_slug:
             patient_list = PatientList.get(self.list_slug)()
+            list_prefixes = patient_list.get_template_prefixes()
         return self.column.get_modal_template(
-            patient_list=patient_list
+            prefixes=list_prefixes
         )
 
     def dispatch(self, *a, **kw):
