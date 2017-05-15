@@ -21,6 +21,21 @@ A custom comparator service to set sort order within a list. Defaults to None.
 Tagged Patient Lists inherit from Patient Lists - as such they have all of the same methods and properties
 of Patient Lists.
 
+## CardPatientList
+
+A Patient list that is displayed as a set of 'cards', more analagous to a twitter stream than a spread sheet.
+
+By default this uses the same api as the standard spread sheet api. It allows the following hooks to be overrideen
+
+card_header_template - should be a panel heading, probably wrapped in the bootstrap 'panel-heading' class
+
+card_body_template - should be a panel body, probably wrapped in the bootstrap 'panel-body' class. By default this takes your schema and displays it as two columns
+
+card_footer_template - should be a panel footer, should contain any additional actions connected to the episode that you want to add, for example, removing the episode from the list.
+
+card_link - if you click on on the header/body this is the link that the user will be directed to
+
+
 ### Properties
 
 #### TaggedPatientList.tag

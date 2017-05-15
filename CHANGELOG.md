@@ -1,5 +1,8 @@
 ### 0.8.2 (Minor Release)
 
+#### Adds the CardPatientList
+This displays the patient list as a series of 'cards', more analagous to a twitter stream than a spreadsheet like the default list.
+
 #### A Data Dictionary In The Extract
 The Extract zip file has a data dictionary with human readable metadata about each field.
 

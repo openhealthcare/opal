@@ -13,7 +13,7 @@ from opal.core.test import OpalTestCase
 from opal.core import patient_lists
 from opal.core.patient_lists import (
     PatientList, TaggedPatientList, TabbedPatientListGroup,
-    PatientListComparatorMetadata, CardListPatientList
+    PatientListComparatorMetadata, CardPatientList
 )
 
 """
@@ -82,7 +82,7 @@ class TestEmptyTabbedPatientListGroup(TabbedPatientListGroup):
     member_lists = [InvisibleList]
 
 
-class TestCardList(CardListPatientList):
+class TestCardList(CardPatientList):
     slug = "some_card_list"
     order = 105
     schema = [
@@ -91,19 +91,19 @@ class TestCardList(CardListPatientList):
 
     @property
     def card_header_template(self):
-        return CardListPatientList.card_header_template
+        return CardPatientList.card_header_template
 
     @property
     def card_body_template(self):
-        return CardListPatientList.card_body_template
+        return CardPatientList.card_body_template
 
     @property
     def card_footer_template(self):
-        return CardListPatientList.card_footer_template
+        return CardPatientList.card_footer_template
 
     @property
     def card_link(self):
-        return CardListPatientList.card_link
+        return CardPatientList.card_link
 
 
 """
@@ -430,9 +430,9 @@ class CardListGroupTestCase(OpalTestCase):
     def test_get_template_columns(self, card_link, header, body, footer):
         # make sure we include all the constituents of the patient list
         self.client.get(self.url)
-        header.return_value = CardListPatientList.card_header_template
-        body.return_value = CardListPatientList.card_body_template
-        card_link.return_value = CardListPatientList.card_link
+        header.return_value = CardPatientList.card_header_template
+        body.return_value = CardPatientList.card_body_template
+        card_link.return_value = CardPatientList.card_link
         header.assert_called_once()
         self.assertEqual(header.call_count, 1)
         self.assertEqual(body.call_count, 1)

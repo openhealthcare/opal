@@ -259,7 +259,7 @@ class TabbedPatientListGroup(discoverable.DiscoverableFeature):
         return False
 
 
-class CardListPatientList(PatientList, utils.AbstractBase):
+class CardPatientList(PatientList, utils.AbstractBase):
     card_header_template = "patient_lists/partials/card_header.html"
     card_body_template = "patient_lists/partials/card_body.html"
     card_footer_template = "patient_lists/partials/card_footer.html"
