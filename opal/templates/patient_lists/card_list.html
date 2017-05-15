@@ -11,11 +11,11 @@
       <div class="row screen-only">
         <form class="form-inline">
           <div class="col-md-12">
-            {% include "patient_lists/partials/list_dropdown_menu.html" %}
-            <div class="form-group pull-right">
-              <label class="offset-right-5" for="listfilter">{% icon "fa-filter" %} Filter </label>
-              <input ui-event="{focus: 'focusOnQuery()', blur: 'blurOnQuery()'}" ng-model="query.hospital_number" type="text" class="form-control" id="listfilter" placeholder="Name or Hospital Num">
-            </div>
+            {% block list_actions %}
+              {% block list_select %}
+                {% include "patient_lists/partials/list_dropdown_menu.html" %}
+              {% endblock %}
+            {% endblock %}
           </div>
         </form>
       </div>
@@ -41,7 +41,7 @@
         </p>
         <p class="lead text-center">
           <span class="screen-only">
-            Would you like to <a href="/pathway/#/add_patient">add one</a>?
+            Would you like to {% block add_patient_if_none %}<a href="" ng-click="addEpisode()">add one</a>{% endblock %}
           </span>
         </p>
       </div>
