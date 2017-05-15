@@ -438,6 +438,15 @@ class CardListGroupTestCase(OpalTestCase):
         footer.assert_called_once()
         card_link.assert_called_once()
 
+    @patch(
+        "opal.tests.test_patient_lists.TestCardList.card_footer_template",
+        new_callable=PropertyMock
+    )
+    def test_allows_footer_to_be_none(self, footer):
+        footer.return_value = None
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
     @patch("opal.tests.models.Demographics.get_display_template")
     def test_get_card_body(self, display_template):
         # make sure that the schema is called

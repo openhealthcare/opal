@@ -27,7 +27,9 @@
               {% include patient_list.card_header_template %}
               {% include patient_list.card_body_template %}
             </a>
-            {% include patient_list.card_footer_template %}
+            {% if patient_list.card_footer_template %}
+              {% include patient_list.card_footer_template %}
+            {% endif %}
           </div>
         </div>
       </div>
