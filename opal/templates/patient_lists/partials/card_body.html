@@ -13,11 +13,7 @@
                 {{ column.title }}
               </strong></h4>
               <p ng-repeat="item in row.{{column.name}}">
-                {% if column.model_column %}
                   {% include column.template_path %}
-                {% else %}
-
-                {% endif %}
               </p>
             </div>
           </div>
