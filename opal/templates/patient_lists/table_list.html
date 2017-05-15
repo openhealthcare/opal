@@ -1,5 +1,7 @@
-{% block list_select %}
-  {% include "patient_lists/partials/list_dropdown_menu.html" %}
+{% block list_actions %}
+  {% block list_select %}
+    {% include "patient_lists/partials/list_dropdown_menu.html" %}
+  {% endblock %}
 {% endblock %}
 <table>
   {% block table_header %}
@@ -11,7 +13,7 @@
       </th>
     {% endfor %}
   </tr>
-  {% end_block %}
+  {% endblock %}
   <tr ng-repeat="row in rows" class="{% block table_class %}{% endblock %}">
     <a href="{% block row_link %}[[ '/#/patient/' + row.demographics[0].patient_id ]]{% endblock %}">
       {% for column in columns %}
@@ -29,7 +31,7 @@
   </p>
   <p class="lead text-center">
     <span class="screen-only">
-      Would you like to <a href="" ng-click="addEpisode()">add one</a>?
+      Would you like to {% block add_patient_if_none %}<a href="" ng-click="addEpisode()">add one?</a>{% endblock %}
     </span>
   </p>
 </span>
