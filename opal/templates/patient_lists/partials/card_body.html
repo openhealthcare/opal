@@ -12,7 +12,7 @@
                 {% endif %}
                 {{ column.title }}
               </strong></h4>
-              <p ng-repeat="item in row.diagnosis">
+              <p ng-repeat="item in row.{{column.name}}">
                 {% if column.model_column %}
                   {% include column.template_path %}
                 {% else %}
@@ -35,7 +35,7 @@
                 {% endif %}
                 {{ column.title }}
               </strong></h4>
-              <p ng-repeat="item in row.diagnosis">
+              <p ng-repeat="item in row.{{column.name}}">
                 {% include column.detail_template_path %}
               </p>
             {% endif %}
