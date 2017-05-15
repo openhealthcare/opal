@@ -99,7 +99,8 @@ class TestCardList(CardPatientList):
 
     @property
     def card_footer_template(self):
-        return CardPatientList.card_footer_template
+        # footer is not there so lets just return the body just so we've got a template
+        return CardPatientList.card_body_template
 
     @property
     def card_link(self):
@@ -395,7 +396,7 @@ class TabbedPatientListGroupTestCase(OpalTestCase):
         self.assertFalse(TestEmptyTabbedPatientListGroup.visible_to(self.user))
 
 
-class CardListGroupTestCase(OpalTestCase):
+class CardListTestCase(OpalTestCase):
 
     def setUp(self):
         self.assertTrue(
@@ -427,7 +428,7 @@ class CardListGroupTestCase(OpalTestCase):
         "opal.tests.test_patient_lists.TestCardList.card_link",
         new_callable=PropertyMock
     )
-    def test_get_template_columns(self, card_link, header, body, footer):
+    def test_get_template_sections(self, card_link, header, body, footer):
         # make sure we include all the constituents of the patient list
         self.client.get(self.url)
         header.return_value = CardPatientList.card_header_template
