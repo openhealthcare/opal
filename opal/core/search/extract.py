@@ -296,19 +296,18 @@ def zip_archive(episodes, description, user):
     """
     target_dir = tempfile.mkdtemp()
     target = os.path.join(target_dir, 'extract.zip')
-    zipfolder = '{0}.{1}'.format(user.username, datetime.date.today())
-    root_dir = os.path.join(target_dir, zipfolder)
-    os.mkdir(root_dir)
-    zip_relative_file_path = functools.partial(os.path.join, zipfolder)
-    generate_files(os.path.join(target_dir, zipfolder), episodes, user)
 
     with zipfile.ZipFile(target, mode='w') as z:
         zipfolder = '{0}.{1}'.format(user.username, datetime.date.today())
+        root_dir = os.path.join(target_dir, zipfolder)
+        os.mkdir(root_dir)
+        zip_relative_file_path = functools.partial(os.path.join, zipfolder)
+        generate_files(os.path.join(target_dir, zipfolder), episodes, user)
         file_names = generate_files(root_dir, episodes, user)
         for full_file_name, file_name in file_names:
             z.write(
                 full_file_name,
-                os.path.join(full_file_name, zip_relative_file_path(file_name))
+                zip_relative_file_path(file_name)
             )
 
     return target
