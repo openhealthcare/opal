@@ -1,4 +1,5 @@
 {% load forms %}
+{% if num_lists > 1 %}
 <h1 >
   <div class="btn-group pull-left" uib-dropdown is-open="status.isopen">
     <button type="button" class="btn btn-secondary" uib-dropdown-toggle ng-disabled="disabled" id="list-dropdown">
@@ -19,3 +20,4 @@
     </ul>
   </div>
 </h1>
+{% endif %}
