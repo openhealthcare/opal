@@ -117,14 +117,14 @@ class OpalApplication(object):
         """
         Return core javascripts for a given NAMESPACE
         """
-        return klass.core_javascripts[namespace]
+        return [x for x in klass.core_javascripts[namespace]]
 
     @classmethod
     def get_javascripts(klass):
         """
         Return the javascripts for our application
         """
-        return klass.javascripts
+        return [x for x in klass.javascripts]
 
     @classmethod
     def get_menu_items(klass, user=None):
@@ -161,7 +161,7 @@ class OpalApplication(object):
         """
         Return the stylesheets for our application
         """
-        return klass.styles
+        return [x for x in klass.styles]
 
     @classmethod
     def directory(cls):

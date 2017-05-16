@@ -1,3 +1,5 @@
+### 0.9.0 (Major Release)
+
 ### 0.8.2 (Minor Release)
 
 #### Adds the Card Patient List template and the Table Patient List Template
