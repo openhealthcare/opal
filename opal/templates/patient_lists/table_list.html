@@ -11,7 +11,7 @@
     </div>
   {% endblock %}
   <div class="row content-offset-25">
-    <div class="col-md-10 col-md-push-1 bg-white">
+    <div class="{% block table_container_classes %}col-md-10 col-md-push-1 bg-white{% endblock %}">
       <table class="table table-hover">
         {% block table_header %}
           <thead>
