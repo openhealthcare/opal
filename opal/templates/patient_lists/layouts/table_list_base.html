@@ -4,7 +4,9 @@
       <form class="form-inline">
         <div class="col-md-12">
           {% block list_select %}
+          <h1>
             {% include "patient_lists/partials/list_dropdown_menu.html" %}
+          </h1>
           {% endblock %}
         </div>
       </form>
@@ -12,7 +14,7 @@
   {% endblock %}
   <div class="row content-offset-25">
     <div class="{% block table_container_classes %}col-md-10 col-md-push-1 bg-white{% endblock %}">
-      <table class="table table-hover">
+      <table class="{% block table_classes %}table table-hover{% endblock %}">
         {% block table_header %}
           <thead>
             <tr>
@@ -31,8 +33,10 @@
               {% for column in columns %}
                 <td class="table-link-cell">
                   <a title="[[ row.demographics[0].first_name ]] [[ row.demographics[0].surname ]]" class="table-link" href="{% block row_link %}[[ '/#/patient/' + row.demographics[0].patient_id ]]{% endblock %}">
-                    <div class="row" ng-repeat="item in row.{{column.name}}">
-                      {% include column.template_path %}
+                    <div class="container">
+                      <div class="row" ng-repeat="item in row.{{column.name}}">
+                        {% include column.template_path %}
+                      </div>
                     </div>
                   </a>
                 </td>
