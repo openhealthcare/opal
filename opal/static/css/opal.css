@@ -27,6 +27,10 @@ a {
 
 p a, .orange-link, .list-inline.lead li a { color: #f76c51; }
 
+td.table-link-cell{
+  position: relative
+}
+
 a.table-link::before {
   content: "";
   display: block;
@@ -37,7 +41,7 @@ a.table-link::before {
   height: 100%;
 }
 
-a.table-link:hover{
+a.table-link:hover, a.table-link:active{
   text-decoration: none;
   color: #333;
 }

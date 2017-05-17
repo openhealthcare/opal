@@ -1,6 +1,8 @@
 """
 Unittests for opal.views
 """
+import warnings
+
 from django import http
 from django.core.urlresolvers import reverse
 from mock import patch, MagicMock
@@ -109,6 +111,15 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
         context_data = view.get_context_data(slug="eater-herbivore")
         expected = list(patient_lists.PatientList.for_user(self.user))
         self.assertEqual(expected, list(context_data['lists']))
+
+    def test_get_context_data_num_lists(self):
+        url = reverse("patient_list_template_view", kwargs=dict(slug="eater-herbivore"))
+        request = self.get_request(url)
+        view = self.setup_view(views.PatientListTemplateView, request, slug="eater-herbivore")
+        view.patient_list = TaggingTestPatientList
+
+        context_data = view.get_context_data(slug="eater-herbivore")
+        self.assertEqual(4, context_data['num_lists'])
 
     def test_get_context_data_list_group(self):
         url = reverse("patient_list_template_view", kwargs=dict(slug="eater-herbivore"))
@@ -245,6 +256,32 @@ class EpisodeDetailTemplateViewTestCase(BaseViewTestCase):
         with self.assertRaises(http.Http404):
             resp = view.get(request, pk=self.episode.pk+345)
 
+
+class RemovedSettingsWarningsTestCase(OpalTestCase):
+    def test_get_brand_name(self):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
+            views.get_brand_name()
+            assert len(w) == 1
+            assert issubclass(w[-1].category, DeprecationWarning)
+            assert "will be removed" in str(w[-1].message)
+
+    def test_get_settings(self):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
+            views.get_settings()
+            assert len(w) == 1
+            assert issubclass(w[-1].category, DeprecationWarning)
+            assert "will be removed" in str(w[-1].message)
+
+
+    def test_get_extra_application(self):
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter('always')
+            views.get_extra_application()
+            assert len(w) == 1
+            assert issubclass(w[-1].category, DeprecationWarning)
+            assert "will be removed" in str(w[-1].message)
 
 
 class IndexViewTestCase(BaseViewTestCase):

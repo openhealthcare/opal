@@ -21,6 +21,17 @@ A custom comparator service to set sort order within a list. Defaults to None.
 Tagged Patient Lists inherit from Patient Lists - as such they have all of the same methods and properties
 of Patient Lists.
 
+## Card Patient List Template
+Change your patientlist template_name to "patient_lists/card_list.html".
+
+This will display the patient list as a series of 'cards', more analagous to a twitter stream than a spreadsheet like the default list.
+
+## Table Patient list Template
+Change your patientlist template_name to "patient_lists/card_list.html".
+
+This will display the patient list as a series of 'cards', more analagous to a twitter stream than a spreadsheet like the default list.
+
+
 ### Properties
 
 #### TaggedPatientList.tag

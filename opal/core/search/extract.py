@@ -1,6 +1,7 @@
 """
 Utilities for extracting data from Opal applications
 """
+from collections import OrderedDict
 import csv
 import datetime
 import functools
@@ -8,10 +9,15 @@ import logging
 import os
 import tempfile
 import zipfile
+
+from django.template import Context, loader
 from six import text_type
+
 from collections import defaultdict
 from opal.models import Episode
-from opal.core.subrecords import subrecords, episode_subrecords
+from opal.core.subrecords import (
+    episode_subrecords, subrecords
+)
 
 
 class CsvColumn(object):
@@ -184,6 +190,44 @@ class PatientSubrecordCsvRenderer(CsvRenderer):
                 yield self.get_row(sub, episode_id)
 
 
+def field_to_dict(subrecord, field_name):
+    return dict(
+        display_name=subrecord._get_field_title(field_name),
+        description=subrecord.get_field_description(field_name),
+        type_display_name=subrecord.get_human_readable_type(field_name),
+    )
+
+
+def get_data_dictionary():
+    schema = {}
+    for subrecord in subrecords():
+        field_names = subrecord._get_fieldnames_to_extract()
+        record_schema = [field_to_dict(subrecord, i) for i in field_names]
+        schema[subrecord.get_display_name()] = record_schema
+    field_names = Episode._get_fieldnames_to_extract()
+    field_names.remove("start")
+    field_names.remove("end")
+    schema["Episode"] = [field_to_dict(Episode, i) for i in field_names]
+    schema["Episode"].append(dict(
+        display_name="Start",
+        type_display_name="Date & Time"
+    ))
+    schema["Episode"].append(dict(
+        display_name="End",
+        type_display_name="Date & Time"
+    ))
+    return OrderedDict(sorted(schema.items(), key=lambda t: t[0]))
+
+
+def write_data_dictionary(file_name):
+    dictionary = get_data_dictionary()
+    t = loader.get_template("extract_data_schema.html")
+    ctx = Context(dict(schema=dictionary))
+    rendered = t.render(ctx)
+    with open(file_name, "w") as f:
+        f.write(rendered)
+
+
 class EpisodeSubrecordCsvRenderer(CsvRenderer):
     non_field_csv_columns = (
         CsvColumn(
@@ -222,6 +266,11 @@ def zip_archive(episodes, description, user):
         os.mkdir(os.path.join(target_dir, zipfolder))
         make_file_path = functools.partial(os.path.join, target_dir, zipfolder)
         zip_relative_file_path = functools.partial(os.path.join, zipfolder)
+
+        file_name = "data_dictionary.html"
+        full_file_name = make_file_path(file_name)
+        write_data_dictionary(full_file_name)
+        z.write(full_file_name, zip_relative_file_path(file_name))
 
         file_name = "episodes.csv"
         full_file_name = make_file_path(file_name)

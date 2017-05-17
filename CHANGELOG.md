@@ -1,4 +1,14 @@
+### 0.9.0 (Major Release)
+
 ### 0.8.2 (Minor Release)
+
+#### Adds the Card Patient List template and the Table Patient List Template
+Adds the template "patient_lists/card_list.html" and"patient_lists/table_list.html"  for patient lists.
+
+Change your patient_list.template_name to point to this template and it will display the patient list as a series of 'cards', more analagous to a twitter stream than a spreadsheet like the default list.
+
+#### A Data Dictionary In The Extract
+The Extract zip file has a data dictionary with human readable metadata about each field.
 
 #### Enhanced Application menus
 
@@ -23,7 +33,8 @@ Adds a utility method to the `Episode` service that returns a human readable pat
 
 #### Plugin.get_javascripts, Plugin.get_styles
 
-Enhances the API available for plugins to include javascript and css by adding methods on `opal.core.plugins.OpalPlugin`
+Enhances the API available for plugins to include javascript and css by adding methods on
+`opal.core.plugins.OpalPlugin`
 
 #### 'element_type' argument for the form template tags
 
@@ -35,8 +46,8 @@ tag API with the 'element_type' argument.
 #### OPAL_LOGO_PATH
 
 This new setting allows applications to set the path at which the app logo is served.
-If `OPAL_LOGO_PATH` is set, the value is passed to the `{% static %}` templatetag to set the `src` atribute
-of an image in the default application header and login screen.
+If `OPAL_LOGO_PATH` is set, the value is passed to the `{% static %}` templatetag to set
+the `src` atribute of an image in the default application header and login screen.
 
 #### Inactive episodes in PatientLists
 
@@ -45,6 +56,12 @@ episodes by default rather than filtering by Episode.active == True.
 
 `opal.core.TaggedPatientList.to_dict` continues to filter by Episode.active ==
 True by default.
+
+#### Notice of future removals
+
+The context variables `brand_name` `settings` and `extra_application` in `opal.views.IndexView`
+are no longer helpful thanks to the settings context processor. These will be removed in
+0.9.0 and emit warnings until then.
 
 #### Misc changes
 

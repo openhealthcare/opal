@@ -30,8 +30,10 @@ String that provides the name of the icon to use for forms, column headings etc.
 Boolean that determines whether this subrecord is a singleton.
 There may only be one of each singleton Subrecord, which is created whth the parent.
 
+```python
     class Demographics(PatientSubrecord):
         _is_singleton = True
+```
 
 For this case, when a `Patient` is created, an empty `Demographics` instance will
 automatically be created.
@@ -42,48 +44,54 @@ Integer to indicate the maximum number of entries to display in list view for th
 model. Useful for record types where many entries will accrue, or where display is
 particularly verbose.
 
+```python
     class BloodPressureReading(EpisodeSubrecord):
         _list_limit = 3
-
+```
 
 #### Subrecord._sort
 
 Name of the field by which we want to sort these records when displaying.
 
+```python
     class Antimicrobial(EpisodeSubrecord):
         _sort = 'start_date'
+```
 
 #### Subrecord._title
 
 String we would like to use for user-facing display of this record type.
 
+```python
     class Antimicrobial(EpisodeSubrecord):
         _title = 'Abx'
-
+```
 
 #### Subrecord._clonable
 
 A Boolean that is True by default used by `opal.views.EpisodeCopyToCategoryView`
 to determine if instances of this record should be copied across.
 
+```python
     class Antimicrobial(EpisodeSubrecord):
         _clonable = 'False'
-
+```
 
 #### Subrecord._exclude_from_extract
 
 Boolean to specify that this subrecord should be excluded from any standard data extract.
 This implicitly defaults to False.
 
+```python
     class Antimicrobial(EpisodeSubrecord):
         _exclude_from_extract = 'Abx'
+```
 
 #### Subrecord.pid_fields
 
 An iterable of strings that correspond to fieldnames that contain Patient Identifiable Data (PID).
 
 This is used when creating data extracts to exclude PID from e.g. CSV downloads.
-
 
 ### Methods
 
@@ -129,7 +137,7 @@ A Classmethod to allow the creation of multiple objects.
 
 Takes in the parent model - an episode
 for EpisodeSubrecords a patient for PatientSubrecords. Under the covers it iterates
-over all the subrecords, adds in the parent relationship and calls update_from_dict
+over all the subrecords, adds in the parent relationship and calls update_from_dict. It returns a list of the objects updated.
 
 ### Subrecord Mixins
 
