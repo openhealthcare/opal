@@ -42,15 +42,10 @@ describe('patientLoader', function() {
             $rootScope    = $injector.get('$rootScope');
         });
 
-        $httpBackend.expectGET('/api/v0.1/record/').respond({});
-        $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
-
         $route.current = { params: { patient_id: '123' } };
     });
 
     afterEach(function(){
-      $rootScope.$apply();
-      $httpBackend.flush();
       $httpBackend.verifyNoOutstandingRequest();
       $httpBackend.verifyNoOutstandingExpectation();
     });
@@ -59,25 +54,34 @@ describe('patientLoader', function() {
     describe('load patients', function() {
       it('should load a patient from route params', function() {
         $httpBackend.expectGET('/api/v0.1/patient/123/').respond(response);
+        $httpBackend.expectGET('/api/v0.1/record/').respond({});
         patientLoader().then(function(patient){
           expect(patient.demographics[0].first_name).toEqual("Sue");
         });
+        $rootScope.$apply();
+        $httpBackend.flush();
       });
 
       it('should load a patient an argument', function() {
         $httpBackend.expectGET('/api/v0.1/patient/124/').respond(response);
+        $httpBackend.expectGET('/api/v0.1/record/').respond({});
         patientLoader("124").then(function(patient){
           expect(patient.demographics[0].first_name).toEqual("Sue");
         });
+        $rootScope.$apply();
+        $httpBackend.flush();
       });
     });
 
     describe('patient API errors', function() {
       it('should alert() the user', function() {
         $httpBackend.expectGET('/api/v0.1/patient/123/').respond(500);
+        $httpBackend.expectGET('/api/v0.1/record/').respond({});
         patientLoader().then(function(patient){
           expect(mockWindow.alert).toHaveBeenCalledWith('Patient could not be loaded');
         });
+        $rootScope.$apply();
+        $httpBackend.flush();
       });
     });
 
