@@ -72,8 +72,8 @@ def generate_prefixes_category_or_list(
     """
 
     warnthem = """
-    opal.models.Subrecord.{} no longer takes
-    patient_list or episode_type.
+    opal.models.Subrecord.{} will longer take
+    patient_list or episode_type in 0.9.0.
 
     Please pass in a a list of prefixes instead
     """.format(method_name)
@@ -970,7 +970,7 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
     def _build_template_selection(cls, episode_type=None, patient_list=None,
                                   suffix=None, prefix=None):
         warnthem = """
-        This method is no longer used,
+        This method will no longer be availabe in 0.9.0,
         please use Subrecord._get_template instead
         """
         warnings.warn(warnthem, DeprecationWarning, stacklevel=2)
