@@ -206,7 +206,10 @@ class DatabaseQuery(QueryBackend):
             getattr(Mod, field).foreign_model, query['query']
         )
 
-        name = not_synonym or query['query']
+        if not_synonym is None:
+            name = query['query']
+        else:
+            name = not_synonym
 
         kw_fk = {'{0}__{1}_fk__name{2}'.format(model.replace('_', ''),
                                                field, contains): name}
