@@ -1003,9 +1003,11 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
         """
         Return the active display template for our record
         """
+        if prefixes is None:
+            prefixes = []
 
         if patient_list or episode_type:
-            prefixes = generate_prefixes_category_or_list(
+            prefixes = prefixes + generate_prefixes_category_or_list(
                 "get_display_template",
                 patient_list=patient_list,
                 episode_category=episode_type
@@ -1032,7 +1034,7 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
             prefixes = []
 
         if patient_list or episode_type:
-            prefixes = generate_prefixes_category_or_list(
+            prefixes = prefixes + generate_prefixes_category_or_list(
                 "get_detail_template",
                 patient_list=patient_list,
                 episode_category=episode_type
@@ -1056,8 +1058,11 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
     def get_form_template(
         cls, prefixes=None, patient_list=None, episode_type=None
     ):
+        if prefixes is None:
+            prefixes = []
+
         if patient_list or episode_type:
-            prefixes = generate_prefixes_category_or_list(
+            prefixes = prefixes + generate_prefixes_category_or_list(
                 "get_form_template",
                 patient_list=patient_list,
                 episode_category=episode_type
@@ -1079,8 +1084,11 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
         """
         Return the active form template for our record
         """
+        if prefixes is None:
+            prefixes = []
+
         if patient_list or episode_type:
-            prefixes = generate_prefixes_category_or_list(
+            prefixes = prefixes + generate_prefixes_category_or_list(
                 "get_form_template",
                 patient_list=patient_list,
                 episode_category=episode_type
