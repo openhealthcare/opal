@@ -953,18 +953,18 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
 
     @classmethod
     def _get_template(cls, template, prefixes=None):
-        result = []
+        template_locations = []
 
         if prefixes is None:
             prefixes = []
 
         for prefix in prefixes:
-            result.append(
+            template_locations.append(
                 template.format(os.path.join(prefix, cls.get_api_name()))
             )
 
-        result.append(template.format(cls.get_api_name()))
-        return find_template(result)
+        template_locations.append(template.format(cls.get_api_name()))
+        return find_template(template_locations)
 
     @classmethod
     def _build_template_selection(cls, episode_type=None, patient_list=None,
