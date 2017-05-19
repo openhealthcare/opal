@@ -302,7 +302,6 @@ def zip_archive(episodes, description, user):
         root_dir = os.path.join(target_dir, zipfolder)
         os.mkdir(root_dir)
         zip_relative_file_path = functools.partial(os.path.join, zipfolder)
-        generate_files(os.path.join(target_dir, zipfolder), episodes, user)
         file_names = generate_files(root_dir, episodes, user)
         for full_file_name, file_name in file_names:
             z.write(
