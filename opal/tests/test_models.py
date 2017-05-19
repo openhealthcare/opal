@@ -1,6 +1,7 @@
 """
 Unittests for opal.models
 """
+import os
 import datetime
 import warnings
 from mock import patch, MagicMock
@@ -18,8 +19,8 @@ from opal.core import patient_lists
 from opal.tests import test_patient_lists
 from opal.tests.models import (
     FamousLastWords, PatientColour, ExternalSubRecord, SymptomComplex,
-    PatientConsultation, Birthday, DogOwner, HatWearer, InvisibleHatWearer, HouseOwner,
-    HoundOwner, Colour, FavouriteColour
+    PatientConsultation, Birthday, DogOwner, HatWearer, InvisibleHatWearer,
+    HouseOwner, HoundOwner, Colour, FavouriteColour
 )
 
 
@@ -230,6 +231,24 @@ class PatientTestCase(OpalTestCase):
 
 
 class SubrecordTestCase(OpalTestCase):
+
+    @patch('opal.models.find_template')
+    def test_get_template(self, find):
+        find.return_value = "found"
+        result = Subrecord._get_template("a_{}_b", [])
+        find.assert_called_once_with(["a_subrecord_b"])
+        self.assertEqual(result, "found")
+
+    @patch('opal.models.find_template')
+    def test_get_template_with_prefixes(self, find):
+        find.return_value = "found"
+        result = Subrecord._get_template("a_{}_b", ["onions"])
+
+        find.assert_called_once_with([
+            os.path.join("a_onions", "subrecord_b"),
+            "a_subrecord_b"
+        ])
+        self.assertEqual(result, "found")
 
     def test_build_template_selection_patient_list(self):
         with warnings.catch_warnings(record=True):
