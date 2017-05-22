@@ -106,7 +106,7 @@ Keywords:
 directory for example:
 
 ```python
-  Subrecord.get_display_template(prefixs["example"])
+  Subrecord.get_display_template(prefixes=["example"])
 ```
 
 Would use the first template it found, looking at:
@@ -133,7 +133,7 @@ Keywords:
 directory for example:
 
 ```python
-  Subrecord.get_display_template(prefixs["example"])
+  Subrecord.get_display_template(prefixes=["example"])
 ```
 
 Would use the first template it found, looking at:
@@ -154,7 +154,7 @@ Keywords:
 directory for example:
 
 ```python
-  Subrecord.get_form_template(prefixs["example"])
+  Subrecord.get_form_template(prefixes=["example"])
 ```
 
 Would use the first template it found, looking at:
