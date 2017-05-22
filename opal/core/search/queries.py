@@ -2,9 +2,12 @@
 Allow us to make search queries
 """
 import datetime
+import operator
+from functools import reduce
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import models as djangomodels
+from django.db.models import Q
 from django.conf import settings
 
 from opal import models
@@ -178,58 +181,122 @@ class DatabaseQuery(QueryBackend):
         kw = {'{0}__{1}{2}'.format(model_name, field, qtype): val}
         return self._episodes_for_filter_kwargs(kw, model)
 
-    def _episodes_for_many_to_many_fields(self, query, field, Mod):
-        model = get_model_from_api_name(query['column'])
-        model_name = get_model_name_from_column_name(query['column'])
-        not_synonym = self._get_name_from_synonym(
-            getattr(model, field).field.related_model, query['query']
-        )
-        name = not_synonym or query['query']
-        related_field = query["field"].lower()
-        key = "%s__%s__name" % (model_name, related_field)
-        kwargs = {key: name}
-        return self._episodes_for_filter_kwargs(kwargs, model)
+    def _episodes_for_fkft_many_to_many_fields(
+        self, query, field, contains, Mod
+    ):
+        # looks for subrecords with many to many relations to the
+        # fk or ft fields.
+        related_query_name = Mod._meta.model_name
 
-    def _get_name_from_synonym(self, field, name):
+        related_model = getattr(Mod, field).field.related_model
+
+        not_synonym = self._get_names_from_synonyms(
+            related_model, query['query'], contains
+        )
+
+        non_synonym_query = {
+            '{0}__{1}__name{2}'.format(
+                related_query_name, field, contains
+            ): query['query']
+        }
+
+        q_objects = [Q(**non_synonym_query)]
+
+        if issubclass(Mod, models.EpisodeSubrecord):
+            qs = models.Episode.objects.all()
+        elif issubclass(Mod, models.PatientSubrecord):
+            qs = models.Patient.objects.all()
+
+        if query["queryType"] == "Contains":
+            # add in those that have synonyms that contain the query
+            # expression
+            for name in not_synonym:
+                keyword = "{0}__{1}__name".format(
+                    related_query_name, field
+                )
+                q_objects.append(Q(**{keyword: name}))
+        else:
+            if not_synonym:
+                synonym_equals = {
+                    '{0}__{1}__name'.format(
+                        related_query_name, field
+                    ): not_synonym[0]
+                }
+                q_objects.append(Q(**synonym_equals))
+
+        qs = qs.filter(reduce(operator.or_, q_objects)).distinct()
+
+        if qs.model == models.Episode:
+            return qs
+        else:
+            # otherwise its a patient
+            return models.Episode.objects.filter(patient__in=qs).distinct()
+
+    def _get_names_from_synonyms(self, related_model, name, contains):
+        from opal.models import Synonym
         try:
-            content_type = ContentType.objects.get_for_model(field)
-            from opal.models import Synonym
-            synonym = Synonym.objects.get(content_type=content_type, name=name)
-            return synonym.content_object.name
+            content_type = ContentType.objects.get_for_model(related_model)
+            filter_key_words = dict(content_type=content_type)
+            filter_key_words["name{0}".format(contains)] = name
+            synonyms = Synonym.objects.filter(**filter_key_words)
+            return [synonym.content_object.name for synonym in synonyms]
         except Synonym.DoesNotExist:
             return
 
     def _episodes_for_fkorft_fields(self, query, field, contains, Mod):
-        model = get_model_name_from_column_name(query['column'])
-
-        not_synonym = self._get_name_from_synonym(
-            getattr(Mod, field).foreign_model, query['query']
+        related_query_name = Mod._meta.model_name
+        # get all synonyms, if this is an 'Equal' query,
+        # the return should be a query set containing a single
+        # response.
+        # Otherwise its all of names of fields that have synonyms
+        # that contain the query
+        not_synonym = self._get_names_from_synonyms(
+            getattr(Mod, field).foreign_model, query['query'], contains
         )
 
-        if not_synonym is None:
-            name = query['query']
-        else:
-            name = not_synonym
-
-        kw_fk = {'{0}__{1}_fk__name{2}'.format(model.replace('_', ''),
-                                               field, contains): name}
-        kw_ft = {'{0}__{1}_ft{2}'.format(model.replace('_', ''),
-                                         field, contains): query['query']}
-
         if issubclass(Mod, models.EpisodeSubrecord):
-
-            qs_fk = models.Episode.objects.filter(**kw_fk)
-            qs_ft = models.Episode.objects.filter(**kw_ft)
-            eps = set(list(qs_fk) + list(qs_ft))
-
+            qs = models.Episode.objects.all()
         elif issubclass(Mod, models.PatientSubrecord):
-            qs_fk = models.Patient.objects.filter(**kw_fk)
-            qs_ft = models.Patient.objects.filter(**kw_ft)
-            pats = set(list(qs_fk) + list(qs_ft))
-            eps = []
-            for p in pats:
-                eps += list(p.episode_set.all())
-        return eps
+            qs = models.Patient.objects.all()
+
+        foreign_key_query = {
+            '{0}__{1}_fk__name{2}'.format(
+                related_query_name, field, contains
+            ): query['query']
+        }
+
+        free_text_query = {
+            '{0}__{1}_ft{2}'.format(
+                related_query_name, field, contains
+            ): query['query']
+        }
+
+        q_objects = [Q(**foreign_key_query), Q(**free_text_query)]
+
+        if query["queryType"] == "Contains":
+            # add in those that have synonyms that contain the query
+            # expression
+            for name in not_synonym:
+                keyword = "{0}__{1}_fk_name".format(
+                    related_query_name, field
+                )
+                q_objects.append(Q(**{keyword: name}))
+        else:
+            if not_synonym:
+                synonym_equals = {
+                    '{0}__{1}_fk__name'.format(
+                        related_query_name, field
+                    ): not_synonym[0]
+                }
+                q_objects.append(Q(**synonym_equals))
+
+        qs = qs.filter(reduce(operator.or_, q_objects)).distinct()
+
+        if qs.model == models.Episode:
+            return qs
+        else:
+            # otherwise its a patient
+            return models.Episode.objects.filter(patient__in=qs).distinct()
 
     def episodes_for_criteria(self, criteria):
         """
@@ -263,8 +330,8 @@ class DatabaseQuery(QueryBackend):
 
         elif hasattr(Mod, field) and isinstance(Mod._meta.get_field(field),
                                                 djangomodels.ManyToManyField):
-            eps = self._episodes_for_many_to_many_fields(
-                query, field, Mod
+            eps = self._episodes_for_fkft_many_to_many_fields(
+                query, field, contains, Mod
             )
 
         else:

@@ -64,8 +64,7 @@ class DatabaseQueryTestCase(OpalTestCase):
     DATE_OF_EPISODE = date(day=1, month=2, year=2015)
 
     def setUp(self):
-        self.patient = Patient.objects.create()
-        self.episode = self.patient.create_episode()
+        self.patient, self.episode = self.new_patient_and_episode_please()
         self.episode.date_of_episode = self.DATE_OF_EPISODE
         self.episode.save()
         self.demographics = self.patient.demographics_set.get()
@@ -201,7 +200,7 @@ class DatabaseQueryTestCase(OpalTestCase):
         query = queries.DatabaseQuery(self.user, [criteria])
         self.assertEqual([self.episode], query.get_episodes())
 
-    def test_episodes_for_m2m_fields_with_synonyms(self):
+    def test_episodes_for_m2m_fields_equals_with_synonyms(self):
         criteria = dict(
             column='hat_wearer', field='Hats',
             combine='and', query='Derby', queryType='Equals'
@@ -223,6 +222,65 @@ class DatabaseQueryTestCase(OpalTestCase):
         query = queries.DatabaseQuery(self.user, [criteria])
         self.assertEqual([self.episode], query.get_episodes())
 
+    def test_episodes_for_m2m_fields_contains_synonym_and_name(self):
+        criteria = dict(
+            column='hat_wearer', field='Hats',
+            combine='and', query='Der', queryType='Contains'
+        )
+
+        bowler = testmodels.Hat.objects.create(name='Bowler')
+        content_type = ContentType.objects.get_for_model(testmodels.Hat)
+        Synonym.objects.get_or_create(
+            content_type=content_type,
+            object_id=bowler.id,
+            name="Derby"
+        )
+
+        hatwearer = testmodels.HatWearer(episode=self.episode)
+        hatwearer.save()
+        hatwearer.hats.add(bowler)
+        hatwearer.save()
+
+        # now we add another episode with an actual hat
+        derbishire = testmodels.Hat.objects.create(name='derbishire')
+        _, other_episode = self.new_patient_and_episode_please()
+
+        hatwearer = testmodels.HatWearer(episode=other_episode)
+        hatwearer.save()
+        hatwearer.hats.add(derbishire)
+        hatwearer.save()
+
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode, other_episode], query.get_episodes())
+
+    def test_distinct_episodes_for_m2m_fields_containing_synonsyms_and_names(
+        self
+    ):
+        criteria = dict(
+            column='hat_wearer', field='Hats',
+            combine='and', query='Der', queryType='Contains'
+        )
+
+        bowler = testmodels.Hat.objects.create(name='Bowler')
+        content_type = ContentType.objects.get_for_model(testmodels.Hat)
+        Synonym.objects.get_or_create(
+            content_type=content_type,
+            object_id=bowler.id,
+            name="Derby"
+        )
+
+        hatwearer = testmodels.HatWearer(episode=self.episode)
+        hatwearer.save()
+        hatwearer.hats.add(bowler)
+        hatwearer.save()
+
+        derbishire = testmodels.Hat.objects.create(name='derbishire')
+        hatwearer.hats.add(derbishire)
+        hatwearer.save()
+
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
+
     def test_episodes_for_m2m_fields_patient_subrecord(self):
         criteria = dict(
             column='favourite_dogs', field='Dogs',
@@ -232,13 +290,203 @@ class DatabaseQueryTestCase(OpalTestCase):
         dalmation = testmodels.Dog(name='Dalmation')
         dalmation.save()
 
-        favouritedogs = testmodels.FavouriteDogs(patient=self.patient)
-        favouritedogs.save()
+        favouritedogs = testmodels.FavouriteDogs.objects.create(
+            patient=self.patient
+        )
 
         favouritedogs.dogs.add(dalmation)
-        favouritedogs.save()
         query = queries.DatabaseQuery(self.user, [criteria])
         self.assertEqual([self.episode], query.get_episodes())
+
+    def test_episodes_for_fkorft_fields_for_patient_subrecord(self):
+        criteria = dict(
+            column='demographics', field='sex',
+            combine='and', query='Unknown', queryType='Equals'
+        )
+        unknown = Gender(name='Unknown')
+        unknown.save()
+        demographics = self.patient.demographics_set.first()
+        demographics.sex = 'Unknown'
+        demographics.save()
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
+
+    def test_episodes_for_fkorft_fields_for_patient_subrecord_with_multiple_episodes(self):
+        criteria = dict(
+            column='demographics', field='sex',
+            combine='and', query='Unknown', queryType='Equals'
+        )
+        unknown = Gender(name='Unknown')
+        unknown.save()
+        demographics = self.patient.demographics_set.first()
+        demographics.sex = 'Unknown'
+        demographics.save()
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
+
+    def test_episodes_for_fkorft_fields_exact_episode_subrecord(self):
+        criteria = dict(
+            column='hound_owner', field='dog',
+            combine='and', query='Dalmation', queryType='Equals'
+        )
+
+        dalmation = testmodels.Dog(name='Dalmation')
+        dalmation.save()
+
+        hound_owner = testmodels.HoundOwner.objects.create(
+            episode=self.episode
+        )
+        hound_owner.dog = "Dalmation"
+        hound_owner.save()
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
+
+    def test_episode_for_exact_fkorft_synonym(self):
+        criteria = dict(
+            column='hound_owner', field='dog',
+            combine='and', query='Dalmation', queryType='Equals'
+        )
+
+        spotted_dog = testmodels.Hat.objects.create(name='Spotted Dog')
+        content_type = ContentType.objects.get_for_model(testmodels.Hat)
+        Synonym.objects.get_or_create(
+            content_type=content_type,
+            object_id=spotted_dog.id,
+            name="Dalmation"
+        )
+
+        hound_owner = testmodels.HoundOwner.objects.create(
+            episode=self.episode
+        )
+        hound_owner.dog = "Dalmation"
+        hound_owner.save()
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
+
+    def test_episode_for_exact_fkorft_free_text(self):
+        criteria = dict(
+            column='hound_owner', field='dog',
+            combine='and', query='dalmation', queryType='Equals'
+        )
+
+        hound_owner = testmodels.HoundOwner.objects.create(
+            episode=self.episode
+        )
+        hound_owner.dog = "Dalmation"
+        hound_owner.save()
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
+
+    def test_episode_for_fkorft_fields_contains_episode_subrecord(self):
+        criteria = dict(
+            column='hound_owner', field='dog',
+            combine='and', query='dal', queryType='Contains'
+        )
+
+        dalmation = testmodels.Dog(name='Dalmation')
+        dalmation.save()
+
+        hound_owner = testmodels.HoundOwner.objects.create(
+            episode=self.episode
+        )
+        hound_owner.dog = "Dalmation"
+        hound_owner.save()
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
+
+    def test_episode_fkorft_for_contains_synonym(self):
+        criteria = dict(
+            column='hound_owner', field='dog',
+            combine='and', query='dal', queryType='Contains'
+        )
+
+        spotted_dog = testmodels.Hat.objects.create(name='Spotted Dog')
+        content_type = ContentType.objects.get_for_model(testmodels.Hat)
+        Synonym.objects.get_or_create(
+            content_type=content_type,
+            object_id=spotted_dog.id,
+            name="Dalmation"
+        )
+
+        hound_owner = testmodels.HoundOwner.objects.create(
+            episode=self.episode
+        )
+        hound_owner.dog = "Dalmation"
+        hound_owner.save()
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
+
+    def test_episode_fkorft_for_contains_ft(self):
+        criteria = dict(
+            column='hound_owner', field='dog',
+            combine='and', query='dal', queryType='Contains'
+        )
+
+        hound_owner = testmodels.HoundOwner.objects.create(
+            episode=self.episode
+        )
+        hound_owner.dog = "Dalmation"
+        hound_owner.save()
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode], query.get_episodes())
+
+    def test_episode_fkorft_for_contains_synonym_name_and_ft(self):
+        criteria = dict(
+            column='hound_owner', field='dog',
+            combine='and', query='dal', queryType='Contains'
+        )
+
+        spotted_dog = testmodels.Hat.objects.create(name='Spotted Dog')
+        content_type = ContentType.objects.get_for_model(testmodels.Hat)
+        Synonym.objects.get_or_create(
+            content_type=content_type,
+            object_id=spotted_dog.id,
+            name="Dalmation"
+        )
+
+        hound_owner = testmodels.HoundOwner.objects.create(
+            episode=self.episode
+        )
+        hound_owner.dog = "Dalmation"
+        hound_owner.save()
+
+        _, episode_2 = self.new_patient_and_episode_please()
+        hound_owner = testmodels.HoundOwner.objects.create(
+            episode=episode_2
+        )
+        hound_owner.dog = "Dalwinion"
+        hound_owner.save()
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode, episode_2], query.get_episodes())
+
+    def test_episode_fkorft_contains_distinct(self):
+        criteria = dict(
+            column='hound_owner', field='dog',
+            combine='and', query='dal', queryType='Contains'
+        )
+
+        spotted_dog = testmodels.Hat.objects.create(name='Spotted Dog')
+        content_type = ContentType.objects.get_for_model(testmodels.Hat)
+        Synonym.objects.get_or_create(
+            content_type=content_type,
+            object_id=spotted_dog.id,
+            name="Dalmation"
+        )
+
+        hound_owner = testmodels.HoundOwner.objects.create(
+            episode=self.episode
+        )
+        hound_owner.dog = "Dalmation"
+        hound_owner.save()
+        episode_2 = self.patient.create_episode()
+
+        hound_owner = testmodels.HoundOwner.objects.create(
+            episode=episode_2
+        )
+        hound_owner.dog = "Dalwinion"
+        hound_owner.save()
+        query = queries.DatabaseQuery(self.user, [criteria])
+        self.assertEqual([self.episode, episode_2], query.get_episodes())
 
     def test_episodes_for_criteria_episode_subrecord_string_field(self):
         criteria = [
