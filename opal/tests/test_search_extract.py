@@ -89,14 +89,14 @@ class GenerateFilesTestCase(OpalTestCase):
     @patch('opal.core.search.extract.subrecords')
     @patch('opal.core.search.extract.CsvRenderer.write_to_file')
     @patch('opal.core.search.extract.write_data_dictionary')
-    def test_generate_files(
+    def test_generate_csv_files(
         self, write_data_dictionary, write_to_file, subrecords
     ):
         patient, episode = self.new_patient_and_episode_please()
         subrecords.return_value = [HatWearer, HouseOwner]
         HatWearer.objects.create(name="Indiana", episode=episode)
         HouseOwner.objects.create(patient=patient)
-        results = extract.generate_files(
+        results = extract.generate_csv_files(
             "somewhere", models.Episode.objects.all(), self.user
         )
         expected = [
@@ -122,7 +122,7 @@ class GenerateFilesTestCase(OpalTestCase):
         self, write_data_dictionary, write_to_file, csv_renderer, subrecords
     ):
         subrecords.return_value = [Colour]
-        extract.generate_files(
+        extract.generate_csv_files(
             "somewhere", models.Episode.objects.all(), self.user
         )
         self.assertEqual(csv_renderer.call_count, 0)

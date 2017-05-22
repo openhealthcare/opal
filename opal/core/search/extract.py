@@ -252,7 +252,7 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
         )
 
 
-def generate_files(root_dir, episodes, user):
+def generate_csv_files(root_dir, episodes, user):
     """ Generate the files and return a tuple of absolute_file_name, file_name
     """
     file_names = []
@@ -302,7 +302,7 @@ def zip_archive(episodes, description, user):
         root_dir = os.path.join(target_dir, zipfolder)
         os.mkdir(root_dir)
         zip_relative_file_path = functools.partial(os.path.join, zipfolder)
-        file_names = generate_files(root_dir, episodes, user)
+        file_names = generate_csv_files(root_dir, episodes, user)
         for full_file_name, file_name in file_names:
             z.write(
                 full_file_name,
