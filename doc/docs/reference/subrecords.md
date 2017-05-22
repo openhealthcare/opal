@@ -98,9 +98,7 @@ This is used when creating data extracts to exclude PID from e.g. CSV downloads.
 #### Subrecord.get_display_template()
 
 Classmethod to locate the display template for our record. By default this
-looks in the location `{{ template_dir }}/records/{{ subrecord api name }}html`.
-
-It defaults to [Subrecord.get_detail_template](#subrecordget_detail_template) if the template doesn't exist.
+looks in the location `{{ template_dir }}/records/{{ subrecord api name }}.html`.
 
 Keywords:
 
