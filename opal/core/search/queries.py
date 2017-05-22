@@ -234,14 +234,11 @@ class DatabaseQuery(QueryBackend):
 
     def _get_names_from_synonyms(self, related_model, name, contains):
         from opal.models import Synonym
-        try:
-            content_type = ContentType.objects.get_for_model(related_model)
-            filter_key_words = dict(content_type=content_type)
-            filter_key_words["name{0}".format(contains)] = name
-            synonyms = Synonym.objects.filter(**filter_key_words)
-            return [synonym.content_object.name for synonym in synonyms]
-        except Synonym.DoesNotExist:
-            return
+        content_type = ContentType.objects.get_for_model(related_model)
+        filter_key_words = dict(content_type=content_type)
+        filter_key_words["name{0}".format(contains)] = name
+        synonyms = Synonym.objects.filter(**filter_key_words)
+        return [synonym.content_object.name for synonym in synonyms]
 
     def _episodes_for_fkorft_fields(self, query, field, contains, Mod):
         related_query_name = Mod._meta.model_name
