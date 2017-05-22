@@ -176,7 +176,7 @@ Keywords:
 directory for example:
 
 ```python
-  Subrecord.get_modal_template(prefixs["example"])
+  Subrecord.get_modal_template(prefixes=["example"])
 ```
 
 Would use the first template it found, looking at:
