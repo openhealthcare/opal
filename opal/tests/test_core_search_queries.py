@@ -8,13 +8,13 @@ from django.contrib.contenttypes.models import ContentType
 from mock import patch, MagicMock
 import reversion
 
-from opal.models import Episode, Patient, Synonym, Gender
+from opal.models import Synonym, Gender
 from opal.core.test import OpalTestCase
-from opal.tests.episodes import RestrictedEpisodeCategory
 
 from opal.core.search import queries
 
 from opal.tests import models as testmodels
+
 
 class PatientSummaryTestCase(OpalTestCase):
 
@@ -35,6 +35,7 @@ class PatientSummaryTestCase(OpalTestCase):
         episode2 = patient.create_episode(discharge_date=the_date)
         summary.update(episode2)
         self.assertEqual(summary.end, the_date)
+
 
 class QueryBackendTestCase(OpalTestCase):
 

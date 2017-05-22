@@ -308,10 +308,8 @@ class DatabaseQuery(QueryBackend):
         if querytype == 'Contains':
             contains = '__icontains'
 
-        column_name = query['column']
-
         field = query['field'].replace(' ', '_').lower()
-        Mod = get_model_from_api_name(column_name)
+        Mod = get_model_from_api_name(query['column'])
 
         named_fields = [f for f in Mod._meta.fields if f.name == field]
 
@@ -333,7 +331,6 @@ class DatabaseQuery(QueryBackend):
             eps = self._episodes_for_fkft_many_to_many_fields(
                 query, field, contains, Mod
             )
-
         else:
             model_name = get_model_name_from_column_name(query['column'])
             queryset_path = '{0}__{1}{2}'.format(model_name, field, contains)
