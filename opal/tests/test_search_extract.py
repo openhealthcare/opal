@@ -85,6 +85,49 @@ class PatientEpisodeTestCase(OpalTestCase):
             some_fun(*args)
 
 
+class GenerateFilesTestCase(OpalTestCase):
+    @patch('opal.core.search.extract.subrecords')
+    @patch('opal.core.search.extract.CsvRenderer.write_to_file')
+    @patch('opal.core.search.extract.write_data_dictionary')
+    def test_generate_csv_files(
+        self, write_data_dictionary, write_to_file, subrecords
+    ):
+        patient, episode = self.new_patient_and_episode_please()
+        subrecords.return_value = [HatWearer, HouseOwner]
+        HatWearer.objects.create(name="Indiana", episode=episode)
+        HouseOwner.objects.create(patient=patient)
+        results = extract.generate_csv_files(
+            "somewhere", models.Episode.objects.all(), self.user
+        )
+        expected = [
+            ('somewhere/data_dictionary.html', 'data_dictionary.html'),
+            ('somewhere/episodes.csv', 'episodes.csv'),
+            ('somewhere/hat_wearer.csv', 'hat_wearer.csv'),
+            ('somewhere/house_owner.csv', 'house_owner.csv')
+        ]
+        self.assertEqual(expected, results)
+        self.assertEqual(
+            write_data_dictionary.call_args[0][0],
+            'somewhere/data_dictionary.html'
+        )
+        self.assertEqual(
+            write_to_file.call_args[0], ('somewhere/house_owner.csv',)
+        )
+
+    @patch('opal.core.search.extract.subrecords')
+    @patch('opal.core.search.extract.EpisodeSubrecordCsvRenderer')
+    @patch('opal.core.search.extract.CsvRenderer.write_to_file')
+    @patch('opal.core.search.extract.write_data_dictionary')
+    def test_exclude_subrecords(
+        self, write_data_dictionary, write_to_file, csv_renderer, subrecords
+    ):
+        subrecords.return_value = [Colour]
+        extract.generate_csv_files(
+            "somewhere", models.Episode.objects.all(), self.user
+        )
+        self.assertEqual(csv_renderer.call_count, 0)
+
+
 class ZipArchiveTestCase(OpalTestCase):
 
     @patch('opal.core.search.extract.subrecords')
@@ -126,16 +169,6 @@ class ZipArchiveTestCase(OpalTestCase):
         self.assertEqual(2, len(call_args))
         self.assertTrue(call_args[0][0][0].endswith("data_dictionary.html"))
         self.assertTrue(call_args[1][0][0].endswith("episodes.csv"))
-
-    @patch('opal.core.search.extract.subrecords')
-    @patch('opal.core.search.extract.EpisodeCsvRenderer')
-    @patch('opal.core.search.extract.zipfile')
-    def test_exclude_subrecords(self, zipfile, csv_renderer, subrecords):
-        # if the subrecord is marked as _exclude_from_extract, skip it
-        subrecords.return_value = [Colour]
-        extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
-        self.assertEqual(csv_renderer.call_count, 1)
-        self.assertEqual(csv_renderer.call_args[0][0], models.Episode)
 
 
 class AsyncExtractTestCase(OpalTestCase):
