@@ -112,9 +112,7 @@ directory for example:
 Would use the first template it found, looking at:
 
 ```
-{{ template_dir }}/records/example/subrecord_detail.html
 {{ template_dir }}/records/example/subrecord.html
-{{ template_dir }}/records/subrecord_detail.html
 {{ template_dir }}/records/subrecord.html
 ```
 
@@ -138,7 +136,9 @@ directory for example:
 
 Would use the first template it found, looking at:
 ```
+{{ template_dir }}/records/example/subrecord_detail.html
 {{ template_dir }}/records/example/subrecord.html
+{{ template_dir }}/records/subrecord_detail.html
 {{ template_dir }}/records/subrecord.html
 ```
 
