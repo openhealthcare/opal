@@ -15,6 +15,9 @@ from opal.core.search import queries
 
 from opal.tests import models as testmodels
 
+# don't remove this, we use it to discover the restricted episode category
+from opal.tests.episodes import RestrictedEpisodeCategory
+
 
 class PatientSummaryTestCase(OpalTestCase):
 
@@ -401,8 +404,8 @@ class DatabaseQueryTestCase(OpalTestCase):
             combine='and', query='dal', queryType='Contains'
         )
 
-        spotted_dog = testmodels.Hat.objects.create(name='Spotted Dog')
-        content_type = ContentType.objects.get_for_model(testmodels.Hat)
+        spotted_dog = testmodels.Dog.objects.create(name='Spotted Dog')
+        content_type = ContentType.objects.get_for_model(testmodels.Dog)
         Synonym.objects.get_or_create(
             content_type=content_type,
             object_id=spotted_dog.id,
@@ -437,8 +440,8 @@ class DatabaseQueryTestCase(OpalTestCase):
             combine='and', query='dal', queryType='Contains'
         )
 
-        spotted_dog = testmodels.Hat.objects.create(name='Spotted Dog')
-        content_type = ContentType.objects.get_for_model(testmodels.Hat)
+        spotted_dog = testmodels.Dog.objects.create(name='Spotted Dog')
+        content_type = ContentType.objects.get_for_model(testmodels.Dog)
         Synonym.objects.get_or_create(
             content_type=content_type,
             object_id=spotted_dog.id,
@@ -466,8 +469,8 @@ class DatabaseQueryTestCase(OpalTestCase):
             combine='and', query='dal', queryType='Contains'
         )
 
-        spotted_dog = testmodels.Hat.objects.create(name='Spotted Dog')
-        content_type = ContentType.objects.get_for_model(testmodels.Hat)
+        spotted_dog = testmodels.Dog.objects.create(name='Spotted Dog')
+        content_type = ContentType.objects.get_for_model(testmodels.Dog)
         Synonym.objects.get_or_create(
             content_type=content_type,
             object_id=spotted_dog.id,
@@ -515,14 +518,14 @@ class DatabaseQueryTestCase(OpalTestCase):
         self.assertEqual(self.episode, list(result)[0])
 
     def test_filter_restricted_only_user(self):
-        self.user.profile.restricted_only   = True
+        self.user.profile.restricted_only = True
         self.user.profile.save()
         self.patient.create_episode(category='Inpatient')
         query = queries.DatabaseQuery(self.user, self.name_criteria)
         self.assertEqual([], query.get_episodes())
 
     def test_filter_in_restricted_episode_types(self):
-        self.user.profile.restricted_only   = True
+        self.user.profile.restricted_only = True
         self.user.profile.save()
         episode2 = self.patient.create_episode(category_name='Restricted')
         self.assertEqual('Restricted', episode2.category_name)

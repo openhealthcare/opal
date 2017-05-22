@@ -274,7 +274,7 @@ class DatabaseQuery(QueryBackend):
             # add in those that have synonyms that contain the query
             # expression
             for name in not_synonym:
-                keyword = "{0}__{1}_fk_name".format(
+                keyword = "{0}__{1}_fk__name".format(
                     related_query_name, field
                 )
                 q_objects.append(Q(**{keyword: name}))
