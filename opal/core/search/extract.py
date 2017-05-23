@@ -11,7 +11,7 @@ import tempfile
 import zipfile
 
 from django.template import Context, loader
-from django.utils.encoding import force_str
+from django.utils.encoding import force_bytes
 from six import text_type
 
 from collections import defaultdict
@@ -19,6 +19,13 @@ from opal.models import Episode
 from opal.core.subrecords import (
     episode_subrecords, subrecords
 )
+
+
+def _encode_to_utf8(some_var):
+    if not isinstance(some_var, text_type):
+        return some_var
+    else:
+        return some_var.encode("UTF-8")
 
 
 class CsvColumn(object):
@@ -112,11 +119,10 @@ class CsvRenderer(object):
             if field in self.get_non_field_csv_column_names():
                 some_fn = self.get_non_field_csv_columns(field).value
                 result.append(
-                    force_str(some_fn(self, instance, *args, **kwargs))
+                    force_bytes(some_fn(self, instance, *args, **kwargs))
                 )
             else:
-                result.append(force_str(self.get_field_value(field, as_dict)))
-
+                result.append(force_bytes(self.get_field_value(field, as_dict)))
         return result
 
     def get_rows(self):
@@ -133,7 +139,7 @@ class CsvRenderer(object):
             writer = csv.writer(csv_file)
             writer.writerow(self.get_headers())
             for row in self.get_rows():
-                writer.writerow(row)
+                writer.writerow([_encode_to_utf8(i) for i in row])
 
         logging.info("finished writing for {}".format(self.model))
 
