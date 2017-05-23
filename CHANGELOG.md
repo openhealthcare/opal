@@ -72,7 +72,7 @@ Fixes a bug where the allergies form rendered the provisional field twice
 #### Updates to the Dependency Graph
 
 Upgrades Font Awesome from 4.3.0 -> 4.7.0
-
+Upgrades Jinja2 from 2.8 -> 2.9.6
 
 ### 0.8.1 (Minor Release)
 
