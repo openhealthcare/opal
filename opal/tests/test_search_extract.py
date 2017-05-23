@@ -274,7 +274,7 @@ class TestBasicCsvRenderer(PatientEpisodeTestCase):
                 Colour, Colour.objects.all(), self.user
             )
             result = renderer.get_row(colour)
-            self.assertIn(b"onions; kettles", result)
+            self.assertIn("onions; kettles", result)
 
     def test_get_row(self):
         with patch.object(Colour, "_get_fieldnames_to_extract") as field_names:
@@ -286,7 +286,7 @@ class TestBasicCsvRenderer(PatientEpisodeTestCase):
             )
             self.assertEqual(
                 renderer.get_row(colour),
-                [b"Blue"]
+                ["Blue"]
             )
 
 
@@ -298,7 +298,7 @@ class TestBasicCsvRenderer(PatientEpisodeTestCase):
         )
         self.assertEqual(
             renderer.get_row(colour),
-            [b"Blue"]
+            ["Blue"]
         )
 
     def test_get_rows(self):
@@ -370,7 +370,7 @@ class TestEpisodeCsvRenderer(PatientEpisodeTestCase):
         self.episode.set_tag_names(["trees"], self.user)
         # make sure we keep historic tags
         self.episode.set_tag_names(["leaves"], self.user)
-        self.assertIn(b"trees;leaves", renderer.get_row(self.episode))
+        self.assertIn("trees;leaves", renderer.get_row(self.episode))
 
 
 @patch.object(PatientColour, "_get_fieldnames_to_extract")
@@ -403,7 +403,7 @@ class TestPatientSubrecordCsvRenderer(PatientEpisodeTestCase):
             self.user
         )
         rendered = renderer.get_row(self.patient_colour, self.episode.id)
-        self.assertEqual([b"1", b"1", b"blue"], rendered)
+        self.assertEqual(["1", "1", "blue"], rendered)
 
     def test_get_rows(self, field_names_to_extract):
         field_names_to_extract.return_value = [
@@ -417,7 +417,7 @@ class TestPatientSubrecordCsvRenderer(PatientEpisodeTestCase):
         rendered = list(
             renderer.get_rows()
         )
-        self.assertEqual([[b"1", b"1", b"blue"]], rendered)
+        self.assertEqual([["1", "1", "blue"]], rendered)
 
     def test_get_rows_same_patient(self, field_names_to_extract):
         self.patient.create_episode()
@@ -434,8 +434,8 @@ class TestPatientSubrecordCsvRenderer(PatientEpisodeTestCase):
             renderer.get_rows()
         )
         self.assertEqual([
-            [b"1", b"1", b"blue"],
-            [b"2", b"1", b"blue"]
+            ["1", "1", "blue"],
+            ["2", "1", "blue"]
         ], rendered)
 
 
@@ -466,4 +466,4 @@ class TestEpisodeSubrecordCsvRenderer(PatientEpisodeTestCase):
             Colour, models.Episode.objects.all(), self.user
         )
         rendered = renderer.get_row(self.colour)
-        self.assertEqual([b"1", b"1", b"blue"], rendered)
+        self.assertEqual(["1", "1", "blue"], rendered)

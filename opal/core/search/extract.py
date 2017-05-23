@@ -25,7 +25,7 @@ def _encode_to_utf8(some_var):
     if not isinstance(some_var, text_type):
         return some_var
     else:
-        return some_var.encode("UTF-8")
+        return force_bytes(some_var)
 
 
 class CsvColumn(object):
@@ -119,10 +119,10 @@ class CsvRenderer(object):
             if field in self.get_non_field_csv_column_names():
                 some_fn = self.get_non_field_csv_columns(field).value
                 result.append(
-                    force_bytes(some_fn(self, instance, *args, **kwargs))
+                    some_fn(self, instance, *args, **kwargs)
                 )
             else:
-                result.append(force_bytes(self.get_field_value(field, as_dict)))
+                result.append(self.get_field_value(field, as_dict))
         return result
 
     def get_rows(self):
