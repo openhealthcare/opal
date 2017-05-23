@@ -11,6 +11,7 @@ import tempfile
 import zipfile
 
 from django.template import Context, loader
+from django.utils.encoding import force_str
 from six import text_type
 
 from collections import defaultdict
@@ -111,10 +112,10 @@ class CsvRenderer(object):
             if field in self.get_non_field_csv_column_names():
                 some_fn = self.get_non_field_csv_columns(field).value
                 result.append(
-                    some_fn(self, instance, *args, **kwargs)
+                    force_str(some_fn(self, instance, *args, **kwargs))
                 )
             else:
-                result.append(self.get_field_value(field, as_dict))
+                result.append(force_str(self.get_field_value(field, as_dict)))
 
         return result
 

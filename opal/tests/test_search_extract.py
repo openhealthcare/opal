@@ -6,7 +6,7 @@ import json
 
 from django.core.urlresolvers import reverse
 from django.test import override_settings
-from mock import mock_open, patch, Mock
+from mock import mock_open, patch, Mock, MagicMock
 
 from opal.core.test import OpalTestCase
 from opal import models
@@ -270,6 +270,20 @@ class TestBasicCsvRenderer(PatientEpisodeTestCase):
                 renderer.get_row(colour),
                 ["Blue"]
             )
+
+    def test_get_row_cast_unicode(self):
+        instance = MagicMock()
+        instance.to_dict.return_value = {
+            "hello": u'\u0160\u0110\u0106\u017d\u0107\u017e\u0161\u0111'
+        }
+        renderer = extract.CsvRenderer(
+            Colour, Colour.objects.all(), self.user
+        )
+        renderer.fields = ["hello"]
+        r = "\xc5\xa0\xc4\x90\xc4\x86\xc5\xbd\xc4\x87\xc5\xbe\xc5\xa1\xc4\x91"
+        self.assertEqual(
+            renderer.get_row(instance), [r]
+        )
 
     def test_get_row_uses_fields_arg(self):
         _, episode = self.new_patient_and_episode_please()
