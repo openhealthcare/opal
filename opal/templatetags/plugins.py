@@ -2,13 +2,11 @@
 Templatetags for working with Opal plugins
 """
 import itertools
-import warnings
 
 from django import template
 
 from opal.core import plugins, application
 
-warnings.simplefilter('once', DeprecationWarning)
 register = template.Library()
 
 
@@ -44,42 +42,6 @@ def plugin_head_extra(context):
     ctx = context
     ctx['head_extra'] = templates
     return ctx
-
-
-# TODO 0.9.0: Remove this
-def sort_menu_items(items):
-    # sorting of menu item is done withan index
-    # property (lower = first), if they don't
-    # have an index or if there are multiple with the
-    # same index then its done alphabetically
-
-    def alphabetic(x):
-        return x["display"]
-
-    def index_sorting(x):
-        return x.get("index", 100)
-
-    return sorted(sorted(items, key=alphabetic), key=index_sorting)
-
-
-# TODO 0.9.0: Remove this
-@register.inclusion_tag('plugins/menuitems.html')
-def plugin_menuitems():
-    warnthem = """
-opal.templatetags.plugins.plugin_menuitems has been replaced
-by opal.templatetags.menus and will be removed in Opal 0.9.0
-
-You should replace calls to {% plugin_menuitems %} with the newer
-{% menu %} templatetag.
-"""
-    warnings.warn(warnthem, DeprecationWarning, stacklevel=2)
-
-    def items():
-        for plugin in plugins.OpalPlugin.list():
-            for i in plugin.menuitems:
-                yield i
-
-    return dict(items=sort_menu_items(items()))
 
 
 @register.inclusion_tag('plugins/angular_module_deps.html')

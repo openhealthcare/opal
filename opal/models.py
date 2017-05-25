@@ -58,38 +58,6 @@ def deserialize_date(value):
     return dt.date()
 
 
-def generate_prefixes_category_or_list(
-    method_name, patient_list=None, episode_category=None
-):
-    """ this method is used to translate the deprecated method
-        of passing in patient list or category to
-        Subrecord.get_display_template
-        Subrecord.get_detail_template
-        Subrecord.get_form_template
-
-        into the new method of passing in a prefix.
-        It also warns the user about the deprecation
-    """
-
-    warnthem = """
-    opal.models.Subrecord.{} will longer take
-    patient_list or episode_type in 0.9.0.
-
-    Please pass in a a list of prefixes instead
-    """.format(method_name)
-
-    prefixes = []
-    warnings.warn(warnthem, DeprecationWarning, stacklevel=2)
-
-    if patient_list:
-        prefixes = patient_list.get_template_prefixes()
-
-    if episode_category:
-        prefixes = [episode_category.lower()]
-
-    return prefixes
-
-
 class SerialisableFields(object):
     """
     Mixin class that handles the getting of fields
@@ -967,51 +935,12 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
         return find_template(template_locations)
 
     @classmethod
-    def _build_template_selection(cls, episode_type=None, patient_list=None,
-                                  suffix=None, prefix=None):
-        warnthem = """
-        This method will no longer be availabe in 0.9.0,
-        please use Subrecord._get_template instead
-        """
-        warnings.warn(warnthem, DeprecationWarning, stacklevel=2)
-
-        name = cls.get_api_name()
-
-        templates = []
-        if patient_list and episode_type:
-            raise ValueError(
-                "you can not get both a patient list and episode type"
-            )
-        if patient_list:
-            list_prefixes = patient_list.get_template_prefixes()
-
-            for list_prefix in list_prefixes:
-                templates.append('{0}/{1}/{2}{3}'.format(prefix, list_prefix,
-                                                         name, suffix))
-        if episode_type:
-            templates.append('{0}/{1}/{2}{3}'.format(prefix,
-                                                     episode_type.lower(),
-                                                     name, suffix))
-
-        templates.append('{0}/{1}{2}'.format(prefix, name, suffix))
-        return templates
-
-    @classmethod
-    def get_display_template(
-        cls, episode_type=None, patient_list=None, prefixes=None
-    ):
+    def get_display_template(cls, prefixes=None):
         """
         Return the active display template for our record
         """
         if prefixes is None:
             prefixes = []
-
-        if patient_list or episode_type:
-            prefixes = prefixes + generate_prefixes_category_or_list(
-                "get_display_template",
-                patient_list=patient_list,
-                episode_category=episode_type
-            )
 
         return cls._get_template(
             os.path.join("records", "{}.html"),
@@ -1019,9 +948,7 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
         )
 
     @classmethod
-    def get_detail_template(
-        cls, patient_list=None, episode_type=None, prefixes=None
-    ):
+    def get_detail_template(cls, prefixes=None):
         """
         Return the active detail template for our record
         """
@@ -1032,13 +959,6 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
 
         if prefixes is None:
             prefixes = []
-
-        if patient_list or episode_type:
-            prefixes = prefixes + generate_prefixes_category_or_list(
-                "get_detail_template",
-                patient_list=patient_list,
-                episode_category=episode_type
-            )
 
         templates = []
 
@@ -1055,18 +975,9 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
         return find_template(templates)
 
     @classmethod
-    def get_form_template(
-        cls, prefixes=None, patient_list=None, episode_type=None
-    ):
+    def get_form_template(cls, prefixes=None):
         if prefixes is None:
             prefixes = []
-
-        if patient_list or episode_type:
-            prefixes = prefixes + generate_prefixes_category_or_list(
-                "get_form_template",
-                patient_list=patient_list,
-                episode_category=episode_type
-            )
 
         return cls._get_template(
             template=os.path.join("forms", "{}_form.html"),
@@ -1078,21 +989,12 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
         return reverse("form_view", kwargs=dict(model=cls.get_api_name()))
 
     @classmethod
-    def get_modal_template(
-        cls, prefixes=None, patient_list=None, episode_type=None
-    ):
+    def get_modal_template(cls, prefixes=None):
         """
         Return the active form template for our record
         """
         if prefixes is None:
             prefixes = []
-
-        if patient_list or episode_type:
-            prefixes = prefixes + generate_prefixes_category_or_list(
-                "get_form_template",
-                patient_list=patient_list,
-                episode_category=episode_type
-            )
 
         result = cls._get_template(
             template=os.path.join("modals", "{}_modal.html"),
