@@ -6,8 +6,6 @@ import itertools
 import os
 
 from django.core.urlresolvers import reverse
-from django.contrib.auth.views import logout as logout_view
-
 from opal.core import plugins, menus
 
 
@@ -119,20 +117,22 @@ class OpalApplication(object):
         """
         Return core javascripts for a given NAMESPACE
         """
-        return klass.core_javascripts[namespace]
+        return [x for x in klass.core_javascripts[namespace]]
 
     @classmethod
     def get_javascripts(klass):
         """
         Return the javascripts for our application
         """
-        return klass.javascripts
+        return [x for x in klass.javascripts]
 
     @classmethod
     def get_menu_items(klass, user=None):
         """
         Default implementation of get_menu_items()
         """
+        # we import here as settings must be set before this is imported
+        from django.contrib.auth.views import logout as logout_view
         logout = menus.MenuItem(
             href=reverse(logout_view), icon="fa-sign-out", index=1000
         )
@@ -161,7 +161,7 @@ class OpalApplication(object):
         """
         Return the stylesheets for our application
         """
-        return klass.styles
+        return [x for x in klass.styles]
 
     @classmethod
     def directory(cls):

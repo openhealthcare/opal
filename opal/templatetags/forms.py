@@ -69,15 +69,7 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
         field_name
     )
 
-    numeric_fields = (
-        models.IntegerField,
-        models.DecimalField,
-        models.BigIntegerField,
-        models.FloatField,
-        models.PositiveIntegerField
-    )
-
-    if field.__class__ in numeric_fields:
+    if fields.is_numeric(field):
         ctx["element_type"] = "number"
 
     # for all django fields we'll get an empty list back

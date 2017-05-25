@@ -70,13 +70,18 @@ angular.module('opal.services')
             // Getter function to return active episode tags.
             // Default implementation just hits tagging
             getTags: function(){
+                var tags;
+
                 if(this.tagging[0].makeCopy){
-                    var tags =  this.tagging[0].makeCopy()
+                    tags =  this.tagging[0].makeCopy();
                 }else{
-                    var tags = this.tagging[0]
+                    tags = this.tagging[0];
                 }
-                delete tags.id
-                return _.filter(_.keys(tags),  function(t){return tags[t]})
+                var tagKeys = _.keys(tags);
+                tagKeys = _.filter(tagKeys, function(tagKey){
+                  return tagKey !== "_client" && tagKey !== "id";
+                });
+                return _.filter(tagKeys,  function(t){return tags[t];});
             },
 
             //

@@ -1,5 +1,5 @@
 """
-Plugin definition for the {{ name }} OPAL plugin
+Plugin definition for the {{ name }} Opal plugin
 """
 from opal.core import plugins
 
@@ -7,7 +7,7 @@ from {{ name }}.urls import urlpatterns
 
 class {{ name.title() }}Plugin(plugins.OpalPlugin):
     """
-    Main entrypoint to expose this plugin to our OPAL application.
+    Main entrypoint to expose this plugin to our Opal application.
     """
     urls = urlpatterns
     javascripts = {
@@ -31,4 +31,3 @@ class {{ name.title() }}Plugin(plugins.OpalPlugin):
         by our plugin.
         """
         return {}
-

@@ -57,21 +57,22 @@ describe('patientLoader', function() {
 
 
     describe('load patients', function() {
-
-      beforeEach(function(){
+      it('should load a patient from route params', function() {
         $httpBackend.expectGET('/api/v0.1/patient/123/').respond(response);
-      });
-
-      it('should load some patients', function() {
         patientLoader().then(function(patient){
           expect(patient.demographics[0].first_name).toEqual("Sue");
         });
       });
 
+      it('should load a patient an argument', function() {
+        $httpBackend.expectGET('/api/v0.1/patient/124/').respond(response);
+        patientLoader("124").then(function(patient){
+          expect(patient.demographics[0].first_name).toEqual("Sue");
+        });
+      });
     });
 
     describe('patient API errors', function() {
-
       it('should alert() the user', function() {
         $httpBackend.expectGET('/api/v0.1/patient/123/').respond(500);
         patientLoader().then(function(patient){

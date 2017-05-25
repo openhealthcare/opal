@@ -109,6 +109,11 @@ class TextareaTest(TestCase):
         rendered = tpl.render(Context({}))
         self.assertIn('name="[[ onions ]]"', rendered)
 
+    def test_change(self):
+        tpl = Template('{% load forms %}{% textarea label="hai" change="doStuff" model="bai" element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('ng-change="doStuff"', rendered)
+
 
 class InputTest(TestCase):
 
@@ -196,6 +201,11 @@ class InputTest(TestCase):
         rendered = tpl.render(Context({}))
         self.assertIn('(form[onions].$dirty || form.$submitted) && form[onions].$error.required', rendered)
 
+    def test_change(self):
+        tpl = Template('{% load forms %}{% input label="hai" change="doStuff" model="bai" element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('ng-change="doStuff"', rendered)
+
 
 class CheckboxTestCase(TestCase):
 
@@ -214,6 +224,11 @@ class CheckboxTestCase(TestCase):
         tpl = Template('{% load forms %}{% checkbox label="hai" model="bai" element_name="onions"%}')
         rendered = tpl.render(Context({}))
         self.assertIn('id="checkbox_[[ onions ]]"', rendered)
+
+    def test_change(self):
+        tpl = Template('{% load forms %}{% checkbox label="hai" change="doStuff" model="bai" element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('ng-change="doStuff"', rendered)
 
 
 class DatepickerTestCase(TestCase):
@@ -253,6 +268,11 @@ class DatepickerTestCase(TestCase):
         )
         rendered = tpl.render(Context({}))
         self.assertIn('ng-hide="onions"', rendered)
+
+    def test_change(self):
+        tpl = Template('{% load forms %}{% datepicker label="hai" change="doStuff" model="bai" element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('ng-change="doStuff"', rendered)
 
 
 class DateTimePickerTestCase(TestCase):
@@ -321,6 +341,11 @@ class RadioTestCase(TestCase):
         rendered = tpl.render(Context({}))
         self.assertIn('form.$submitted && form[onions].$error.required"', rendered)
 
+    def test_change(self):
+        tpl = Template('{% load forms %}{% radio label="hai" change="doStuff" model="bai" element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('ng-change="doStuff"', rendered)
+
 
 class SelectTestCase(TestCase):
 
@@ -369,6 +394,11 @@ class SelectTestCase(TestCase):
         tpl = Template('{% load forms %}{% select label="hai" model="bai" element_name="onions" required=True %}')
         rendered = tpl.render(Context({}))
         self.assertIn('"form.$submitted && form[onions].$error.required"', rendered)
+
+    def test_change(self):
+        tpl = Template('{% load forms %}{% select label="hai" change="doStuff" model="bai" element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('ng-change="doStuff"', rendered)
 
 
 class StaticTestCase(TestCase):

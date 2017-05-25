@@ -1,5 +1,5 @@
 """
-Urls for OPAL's search functionality
+Urls for Opal's search functionality
 """
 from django.conf.urls import patterns, url
 
@@ -7,7 +7,6 @@ from opal.core.search import views
 
 urlpatterns = patterns(
     '',
-
     url(r'^search/templates/search.html/?$',
         views.SearchTemplateView.as_view()),
 
