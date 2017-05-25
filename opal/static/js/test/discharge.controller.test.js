@@ -113,15 +113,9 @@ describe('DischargeEpisodeCtrl', function(){
           });
         }
         mkcontroller(tags)
-        $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
     });
 
     describe('Set up the controller', function(){
-
-        afterEach(function(){
-            $httpBackend.flush();
-        })
-
         it('should have the current and new categories', function() {
             expect($scope.editing.category).toEqual('Discharged');
         });

@@ -322,9 +322,7 @@ describe('ExtractCtrl', function(){
             referencedata: referencedata
         });
 
-        $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
         $scope.$apply();
-        $httpBackend.flush();
     });
 
     describe('set up', function(){
@@ -596,6 +594,7 @@ describe('ExtractCtrl', function(){
     describe('Search', function(){
 
         it('should ask the server for results', function(){
+
             $httpBackend.expectPOST("/search/extract/").respond({
                 page_number: 1,
                 total_pages: 1,
@@ -604,7 +603,7 @@ describe('ExtractCtrl', function(){
                     {categories: []}
                 ]
             });
-            // $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
             $scope.criteria[0] = {
                 combine    : "and",
                 column     : "symptoms",
