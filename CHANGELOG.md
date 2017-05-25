@@ -1,5 +1,10 @@
 ### 0.8.2 (Minor Release)
 
+#### Adds the CardPatientList
+Adds the template "patient_lists/card_list.html" for patient lists.
+
+Change your patient_list.template_name to point to this template and it will display the patient list as a series of 'cards', more analagous to a twitter stream than a spreadsheet like the default list.
+
 #### A Data Dictionary In The Extract
 The Extract zip file has a data dictionary with human readable metadata about each field.
 

@@ -1,12 +1,13 @@
 """
 Unittests for opal.core.patient_lists
 """
+from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from mock import MagicMock, PropertyMock, patch
 
 from opal.core import exceptions
 from opal.tests import models
-from opal.models import Episode, Patient, UserProfile
+from opal.models import Episode, Patient, UserProfile, Demographics
 from opal.core.test import OpalTestCase
 
 from opal.core import patient_lists
@@ -80,10 +81,10 @@ class TestTabbedPatientListGroup(TabbedPatientListGroup):
 class TestEmptyTabbedPatientListGroup(TabbedPatientListGroup):
     member_lists = [InvisibleList]
 
+
 """
 Begin Tests
 """
-
 class ColumnTestCase(OpalTestCase):
 
     def test_set_non_inferred_attributes(self):
@@ -361,7 +362,6 @@ class TabbedPatientListGroupTestCase(OpalTestCase):
             TabbedPatientListGroup.for_list('Carnivores')
         with self.assertRaises(ValueError):
             TabbedPatientListGroup.for_list(OpalTestCase)
-
 
     def test_visible_to(self):
         self.assertTrue(TestTabbedPatientListGroup.visible_to(self.user))
