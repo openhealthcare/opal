@@ -2,14 +2,18 @@
 Allow us to make search queries
 """
 import datetime
+import operator
+from functools import reduce
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import models as djangomodels
+from django.db.models import Q
 from django.conf import settings
 
 from opal import models
 from opal.core import fields, subrecords
 from opal.utils import stringport
+from opal.core.search.search_rule import SearchRule
 
 
 def get_model_name_from_column_name(column_name):
@@ -178,47 +182,161 @@ class DatabaseQuery(QueryBackend):
         kw = {'{0}__{1}{2}'.format(model_name, field, qtype): val}
         return self._episodes_for_filter_kwargs(kw, model)
 
-    def _episodes_for_many_to_many_fields(self, query, field_obj):
-        model = get_model_from_api_name(query['column'])
-        model_name = get_model_name_from_column_name(query['column'])
-        related_field = query["field"].lower()
-        key = "%s__%s__name" % (model_name, related_field)
-        kwargs = {key: query["query"]}
-        return self._episodes_for_filter_kwargs(kwargs, model)
+    def _get_lookuplist_names_for_query_string(
+            self, lookuplist, query_string, contains):
+        """
+        Returns a list of canonical terms from a given LOOKUPLIST that match
+        QUERY_STRING respecting CONTAINS - which will be one of:
+        '__iexact'
+        '__icontains'
+        """
+        from opal.models import Synonym
+        content_type = ContentType.objects.get_for_model(lookuplist)
+        filter_key_words = dict(content_type=content_type)
+        filter_key_words["name{0}".format(contains)] = query_string
+        synonyms = Synonym.objects.filter(**filter_key_words)
+        return [synonym.content_object.name for synonym in synonyms]
 
-    def _episodes_for_fkorft_fields(self, query, field, contains, Mod):
-        model = get_model_name_from_column_name(query['column'])
+    def _episodes_for_fkft_many_to_many_fields(
+        self, query, field, contains, Mod
+    ):
+        """
+        Returns episodes that match QUERY.
 
-        # Look up to see if there is a synonym.
-        content_type = ContentType.objects.get_for_model(
-            getattr(Mod, field).foreign_model)
-        name = query['query']
-        try:
-            from opal.models import Synonym
-            synonym = Synonym.objects.get(content_type=content_type, name=name)
-            name = synonym.content_object.name
-        except Synonym.DoesNotExist:
-            pass  # That's fine.
+        We are dealing with Django ManyToMany fields that link a subrecord
+        to an Opal Lookuplist.
 
-        kw_fk = {'{0}__{1}_fk__name{2}'.format(model.replace('_', ''),
-                                               field, contains): name}
-        kw_ft = {'{0}__{1}_ft{2}'.format(model.replace('_', ''),
-                                         field, contains): query['query']}
+        We need to construct a database query that will match episodes where:
+
+        1) The .name attribute of the FK target matches the query string
+        2) A synonym of the FK target matches the query string
+        """
+        # looks for subrecords with many to many relations to the
+        # fk or ft fields.
+        related_query_name = Mod._meta.model_name
 
         if issubclass(Mod, models.EpisodeSubrecord):
-
-            qs_fk = models.Episode.objects.filter(**kw_fk)
-            qs_ft = models.Episode.objects.filter(**kw_ft)
-            eps = set(list(qs_fk) + list(qs_ft))
-
+            qs = models.Episode.objects.all()
         elif issubclass(Mod, models.PatientSubrecord):
-            qs_fk = models.Patient.objects.filter(**kw_fk)
-            qs_ft = models.Patient.objects.filter(**kw_ft)
-            pats = set(list(qs_fk) + list(qs_ft))
-            eps = []
-            for p in pats:
-                eps += list(p.episode_set.all())
-        return eps
+            qs = models.Patient.objects.all()
+
+        lookuplist = getattr(Mod, field).field.related_model
+        lookuplist_names = self._get_lookuplist_names_for_query_string(
+            lookuplist, query['query'], contains
+        )
+
+        # 1)
+        non_synonym_query = {
+            '{0}__{1}__name{2}'.format(
+                related_query_name, field, contains
+            ): query['query']
+        }
+
+        q_objects = [Q(**non_synonym_query)]
+
+        # 2)
+        if query["queryType"] == "Contains":
+            # add in those that have synonyms that contain the query
+            # expression
+            for name in lookuplist_names:
+                keyword = "{0}__{1}__name".format(
+                    related_query_name, field
+                )
+                q_objects.append(Q(**{keyword: name}))
+        else:
+            if lookuplist_names:
+                synonym_equals = {
+                    '{0}__{1}__name'.format(
+                        related_query_name, field
+                    ): lookuplist_names[0]
+                    # Only one lookuplist entry can have matched because
+                    # we're after an exact match on the query string rather
+                    # than looking for all matches inside synonym names so
+                    # we just take the [0]
+                }
+                q_objects.append(Q(**synonym_equals))
+
+        qs = qs.filter(reduce(operator.or_, q_objects)).distinct()
+
+        if qs.model == models.Episode:
+            return qs
+        else:
+            # otherwise its a patient
+            return models.Episode.objects.filter(patient__in=qs).distinct()
+
+    def _episodes_for_fkorft_fields(self, query, field, contains, Mod):
+        """
+        Returns episodes that match QUERY.
+
+        We are dealing with the Opal FreeTextOrForeignKey field.
+
+        We need to construct a database query that will match episodes where:
+
+        1) The free text value matches the query string
+        2) The name of the foreign key value matches the query string
+          - 2.1) This may be the canonical form (the .name attribute)
+          - 2.2) This may be a synonymous form (a Synonym with a content_type)
+                 that matches FIELD.foreign_model
+        """
+        related_query_name = Mod._meta.model_name
+        if issubclass(Mod, models.EpisodeSubrecord):
+            qs = models.Episode.objects.all()
+        elif issubclass(Mod, models.PatientSubrecord):
+            qs = models.Patient.objects.all()
+
+        # 1)
+        free_text_query = {
+            '{0}__{1}_ft{2}'.format(
+                related_query_name, field, contains
+            ): query['query']
+        }
+
+        # get all synonyms, if this is an 'Equal' query,
+        # the return should be a list containing a single response.
+        # Otherwise it's all of names of fields that have synonyms
+        # that contain the query
+        lookuplist_names = self._get_lookuplist_names_for_query_string(
+            getattr(Mod, field).foreign_model, query['query'], contains
+        )
+
+        # 2.1)
+        foreign_key_query = {
+            '{0}__{1}_fk__name{2}'.format(
+                related_query_name, field, contains
+            ): query['query']
+        }
+
+        q_objects = [Q(**foreign_key_query), Q(**free_text_query)]
+
+        # 2.2
+        if query["queryType"] == "Contains":
+            # add in those that have synonyms that contain the query
+            # expression
+            for name in lookuplist_names:
+                keyword = "{0}__{1}_fk__name".format(
+                    related_query_name, field
+                )
+                q_objects.append(Q(**{keyword: name}))
+        else:
+            if lookuplist_names:
+                synonym_equals = {
+                    '{0}__{1}_fk__name'.format(
+                        related_query_name, field
+                        # Only one lookuplist entry can have matched because
+                        # we're after an exact match on the query string rather
+                        # than looking for all matches inside synonym names so
+                        # we just take the [0]
+                    ): lookuplist_names[0]
+                }
+                q_objects.append(Q(**synonym_equals))
+
+        qs = qs.filter(reduce(operator.or_, q_objects)).distinct()
+
+        if qs.model == models.Episode:
+            return qs
+        else:
+            # otherwise its a patient
+            return models.Episode.objects.filter(patient__in=qs).distinct()
 
     def episodes_for_criteria(self, criteria):
         """
@@ -231,6 +349,11 @@ class DatabaseQuery(QueryBackend):
             contains = '__icontains'
 
         column_name = query['column']
+
+        search_rule = SearchRule.get(column_name)
+
+        if search_rule:
+            return search_rule().query(query)
 
         field = query['field'].replace(' ', '_').lower()
         Mod = get_model_from_api_name(column_name)
@@ -252,9 +375,9 @@ class DatabaseQuery(QueryBackend):
 
         elif hasattr(Mod, field) and isinstance(Mod._meta.get_field(field),
                                                 djangomodels.ManyToManyField):
-            eps = self._episodes_for_many_to_many_fields(
-                query, Mod._meta.get_field(field))
-
+            eps = self._episodes_for_fkft_many_to_many_fields(
+                query, field, contains, Mod
+            )
         else:
             model_name = get_model_name_from_column_name(query['column'])
             queryset_path = '{0}__{1}{2}'.format(model_name, field, contains)

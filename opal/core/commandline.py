@@ -115,6 +115,7 @@ def scaffold(args):
 
 def test(args):
     args.userland_here = USERLAND_HERE
+    args.opal_location = OPAL.parent
     test_runner.run_tests(args)
     return
 

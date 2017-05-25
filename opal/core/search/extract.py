@@ -11,6 +11,7 @@ import tempfile
 import zipfile
 
 from django.template import Context, loader
+from django.utils.encoding import force_bytes
 from six import text_type
 
 from collections import defaultdict
@@ -18,6 +19,13 @@ from opal.models import Episode
 from opal.core.subrecords import (
     episode_subrecords, subrecords
 )
+
+
+def _encode_to_utf8(some_var):
+    if not isinstance(some_var, text_type):
+        return some_var
+    else:
+        return force_bytes(some_var)
 
 
 class CsvColumn(object):
@@ -115,7 +123,6 @@ class CsvRenderer(object):
                 )
             else:
                 result.append(self.get_field_value(field, as_dict))
-
         return result
 
     def get_rows(self):
@@ -132,7 +139,7 @@ class CsvRenderer(object):
             writer = csv.writer(csv_file)
             writer.writerow(self.get_headers())
             for row in self.get_rows():
-                writer.writerow(row)
+                writer.writerow([_encode_to_utf8(i) for i in row])
 
         logging.info("finished writing for {}".format(self.model))
 
@@ -252,6 +259,42 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
         )
 
 
+def generate_csv_files(root_dir, episodes, user):
+    """ Generate the files and return a tuple of absolute_file_name, file_name
+    """
+    file_names = []
+
+    file_name = "data_dictionary.html"
+    full_file_name = os.path.join(root_dir, file_name)
+    write_data_dictionary(full_file_name)
+    file_names.append((full_file_name, file_name,))
+
+    file_name = "episodes.csv"
+    full_file_name = os.path.join(root_dir, file_name)
+    renderer = EpisodeCsvRenderer(Episode, episodes, user)
+    renderer.write_to_file(full_file_name)
+    file_names.append((full_file_name, file_name,))
+
+    for subrecord in subrecords():
+        if getattr(subrecord, '_exclude_from_extract', False):
+            continue
+        file_name = '{0}.csv'.format(subrecord.get_api_name())
+        full_file_name = os.path.join(root_dir, file_name)
+        if subrecord in episode_subrecords():
+            renderer = EpisodeSubrecordCsvRenderer(
+                subrecord, episodes, user
+            )
+        else:
+            renderer = PatientSubrecordCsvRenderer(
+                subrecord, episodes, user
+            )
+        if renderer.count():
+            renderer.write_to_file(full_file_name)
+            file_names.append((full_file_name, file_name,))
+
+    return file_names
+
+
 def zip_archive(episodes, description, user):
     """
     Given an iterable of EPISODES, the DESCRIPTION of this set of episodes,
@@ -263,37 +306,15 @@ def zip_archive(episodes, description, user):
 
     with zipfile.ZipFile(target, mode='w') as z:
         zipfolder = '{0}.{1}'.format(user.username, datetime.date.today())
-        os.mkdir(os.path.join(target_dir, zipfolder))
-        make_file_path = functools.partial(os.path.join, target_dir, zipfolder)
+        root_dir = os.path.join(target_dir, zipfolder)
+        os.mkdir(root_dir)
         zip_relative_file_path = functools.partial(os.path.join, zipfolder)
-
-        file_name = "data_dictionary.html"
-        full_file_name = make_file_path(file_name)
-        write_data_dictionary(full_file_name)
-        z.write(full_file_name, zip_relative_file_path(file_name))
-
-        file_name = "episodes.csv"
-        full_file_name = make_file_path(file_name)
-        renderer = EpisodeCsvRenderer(Episode, episodes, user)
-        renderer.write_to_file(full_file_name)
-        z.write(full_file_name, zip_relative_file_path(file_name))
-
-        for subrecord in subrecords():
-            if getattr(subrecord, '_exclude_from_extract', False):
-                continue
-            file_name = '{0}.csv'.format(subrecord.get_api_name())
-            full_file_name = make_file_path(file_name)
-            if subrecord in episode_subrecords():
-                renderer = EpisodeSubrecordCsvRenderer(
-                    subrecord, episodes, user
-                )
-            else:
-                renderer = PatientSubrecordCsvRenderer(
-                    subrecord, episodes, user
-                )
-            if renderer.count():
-                renderer.write_to_file(full_file_name)
-                z.write(full_file_name, zip_relative_file_path(file_name))
+        file_names = generate_csv_files(root_dir, episodes, user)
+        for full_file_name, file_name in file_names:
+            z.write(
+                full_file_name,
+                zip_relative_file_path(file_name)
+            )
 
     return target
 

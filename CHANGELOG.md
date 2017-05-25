@@ -2,6 +2,10 @@
 
 ### 0.8.2 (Minor Release)
 
+#### OPAL_LOCATION is added as a system variable when running js tests
+If you run opal test js, your karma config is now run in an environment that has
+access to the OPAL_LOCATION variable which points to the opal parent directory.
+
 #### A Data Dictionary In The Extract
 The Extract zip file has a data dictionary with human readable metadata about each field.
 
@@ -74,7 +78,7 @@ Fixes a bug where the allergies form rendered the provisional field twice
 #### Updates to the Dependency Graph
 
 Upgrades Font Awesome from 4.3.0 -> 4.7.0
-
+Upgrades Jinja2 from 2.8 -> 2.9.6
 
 ### 0.8.1 (Minor Release)
 

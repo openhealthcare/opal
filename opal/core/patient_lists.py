@@ -58,7 +58,7 @@ class ModelColumn(Column):
             patient_list=self.patient_list()
         )
         self.detail_template_path = model.get_detail_template(
-            patient_list=self.patient_list()
+            prefixes=self.patient_list().get_template_prefixes()
         )
 
     def to_dict(self, **kwargs):
