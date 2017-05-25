@@ -12,28 +12,6 @@ from opal.templatetags import application
 class TestPlugin(plugins.OpalPlugin):
     actions = ['pluginaction.html']
 
-class ApplicationMenuitemsTestCase(OpalTestCase):
-
-    @patch('opal.templatetags.application.application.get_app')
-    def test_application_menuitems(self, get_app):
-        with warnings.catch_warnings(record=True):
-            mock_app = MagicMock(name='Application')
-            mock_app.get_menu_items.return_value = [{'display': 'test'}]
-            get_app.return_value = mock_app
-            ctx = MagicMock(name='Context')
-            result = list(application.application_menuitems(ctx)['items']())
-            expected = [{'display': 'test'}]
-            self.assertEqual(expected, result)
-
-    @patch('opal.templatetags.application.application.get_app')
-    def test_application_menuitems_passes_through_user(self, get_app):
-        mock_app = MagicMock(name='Application')
-        mock_user = MagicMock(name='User')
-        context = {'user': mock_user}
-        get_app.return_value = mock_app
-        list(application.application_menuitems(context)['items']())
-        mock_app.get_menu_items.assert_called_with(user=mock_user)
-
 
 class CoreJavascriptTestCase(OpalTestCase):
 
