@@ -248,9 +248,10 @@ class DatabaseQuery(QueryBackend):
                     '{0}__{1}__name'.format(
                         related_query_name, field
                     ): lookuplist_names[0]
-                    # Only one lookuplist entry can have matched becayse we're
-                    # after an exact match on the query string rather than looking
-                    # for all matches inside synonym names so we just take the [0]
+                    # Only one lookuplist entry can have matched because
+                    # we're after an exact match on the query string rather
+                    # than looking for all matches inside synonym names so
+                    # we just take the [0]
                 }
                 q_objects.append(Q(**synonym_equals))
 
@@ -320,9 +321,10 @@ class DatabaseQuery(QueryBackend):
                 synonym_equals = {
                     '{0}__{1}_fk__name'.format(
                         related_query_name, field
-                        # Only one lookuplist entry can have matched becayse we're
-                        # after an exact match on the query string rather than looking
-                        # for all matches inside synonym names so we just take the [0]
+                        # Only one lookuplist entry can have matched because
+                        # we're after an exact match on the query string rather
+                        # than looking for all matches inside synonym names so
+                        # we just take the [0]
                     ): lookuplist_names[0]
                 }
                 q_objects.append(Q(**synonym_equals))
