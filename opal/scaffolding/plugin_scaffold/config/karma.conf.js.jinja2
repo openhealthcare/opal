@@ -1,13 +1,5 @@
 module.exports = function(config){
-  var opalPath;
-  if(process.env.TRAVIS){
-    python_version = process.env.TRAVIS_PYTHON_VERSION;
-    opalPath = '/home/travis/virtualenv/python' + python_version + '/src/opal';
-  }
-  else{
-    // this should point to the location of Opal on your machine, it may be in the virtualenv
-    opalPath = '../../opal';
-  }
+  var opalPath = process.env.OPAL_LOCATION;
   var karmaDefaults = require(opalPath + '/config/karma_defaults.js');
   var baseDir = __dirname + '/..';
   var coverageFiles = [

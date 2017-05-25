@@ -154,6 +154,10 @@ class RunJSTestsTestCase(OpalTestCase):
         )
         self.assertIn("OPAL_LOCATION", check_call.call_args[1]["env"])
 
+        self.assertTrue(
+            isinstance(check_call.call_args[1]["env"]["OPAL_LOCATION"], str)
+        )
+
     @patch.object(test_runner.subprocess, 'check_call')
     @patch.object(test_runner.sys, 'exit')
     def test_generic_error_in_call(self, exiter, check_call):
