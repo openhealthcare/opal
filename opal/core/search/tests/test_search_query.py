@@ -7,16 +7,20 @@ from django.db import transaction
 from django.contrib.contenttypes.models import ContentType
 from mock import patch, MagicMock
 import reversion
+from opal.tests.episodes import RestrictedEpisodeCategory
 
+from opal.core.search.search_rule import SearchRule
 from opal.models import Synonym, Gender
+
 from opal.core.test import OpalTestCase
 
 from opal.core.search import queries
 
 from opal.tests import models as testmodels
 
+
 # don't remove this, we use it to discover the restricted episode category
-from opal.tests.episodes import RestrictedEpisodeCategory
+from opal.tests.episodes import RestrictedEpisodeCategory  # NOQA
 
 
 class PatientSummaryTestCase(OpalTestCase):
@@ -138,7 +142,9 @@ class DatabaseQueryTestCase(OpalTestCase):
             column='hat_wearer', field='Wearing A Hat',
             combine='and', query='true', queryType='Equals'
         )
-        hatwearer = testmodels.HatWearer(episode=self.episode, wearing_a_hat=True)
+        hatwearer = testmodels.HatWearer(
+            episode=self.episode, wearing_a_hat=True
+        )
         hatwearer.save()
         query = queries.DatabaseQuery(self.user, [criteria])
         self.assertEqual([self.episode], query.get_episodes())
@@ -506,6 +512,29 @@ class DatabaseQueryTestCase(OpalTestCase):
         res = query.episodes_for_criteria(criteria[0])
         self.assertEqual([], list(res))
 
+    def test_episodes_for_criteria_search_rule_used(self):
+        criteria = [
+            {
+                u'column': u'hat_wearer',
+                u'field': u'Name',
+                u'combine': u'and',
+                u'query': u'Bowler',
+                u'queryType': u'Equals'
+            }
+        ]
+
+        class HatWearerQuery(object):
+            def query(self, given_query):
+                pass
+
+        with patch.object(SearchRule, "get") as search_rule_get:
+            with patch.object(HatWearerQuery, "query") as hat_wearer_query:
+                search_rule_get.return_value = HatWearerQuery
+                query = queries.DatabaseQuery(self.user, criteria)
+                query.episodes_for_criteria(criteria[0])
+                search_rule_get.assert_called_once_with("hat_wearer")
+                hat_wearer_query.assert_called_once_with(criteria[0])
+
     def test_episodes_without_restrictions_no_matches(self):
         query = queries.DatabaseQuery(self.user, self.name_criteria)
         query.query = []
@@ -545,7 +574,6 @@ class DatabaseQueryTestCase(OpalTestCase):
             lookup_list=[],
             queryType=None
         )]
-
 
         with transaction.atomic(), reversion.create_revision():
             other_episode = self.patient.create_episode()
@@ -626,7 +654,6 @@ class DatabaseQueryTestCase(OpalTestCase):
         query = queries.DatabaseQuery(self.user, criteria)
         self.assertEqual([self.episode], query.get_episodes())
 
-
     def test_get_patient_summaries(self):
         query = queries.DatabaseQuery(self.user, self.name_criteria)
         summaries = query.get_patient_summaries()
@@ -649,11 +676,11 @@ class DatabaseQueryTestCase(OpalTestCase):
             we expect it to aggregate these into summaries
         """
         start_date = date(day=1, month=2, year=2014)
-        episode_2 = self.patient.create_episode(
+        self.patient.create_episode(
             date_of_episode=start_date
         )
         end_date = date(day=1, month=2, year=2016)
-        episode_3 = self.patient.create_episode(
+        self.patient.create_episode(
             date_of_episode=end_date
         )
         query = queries.DatabaseQuery(self.user, self.name_criteria)

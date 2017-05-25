@@ -235,14 +235,14 @@ class SubrecordTestCase(OpalTestCase):
     @patch('opal.models.find_template')
     def test_get_template(self, find):
         find.return_value = "found"
-        result = Subrecord._get_template("a_{}_b", [])
+        result = Subrecord._get_template("a_{}_b")
         find.assert_called_once_with(["a_subrecord_b"])
         self.assertEqual(result, "found")
 
     @patch('opal.models.find_template')
     def test_get_template_with_prefixes(self, find):
         find.return_value = "found"
-        result = Subrecord._get_template("a_{}_b", ["onions"])
+        result = Subrecord._get_template("a_{}_b", prefixes=["onions"])
 
         find.assert_called_once_with([
             os.path.join("a_onions", "subrecord_b"),

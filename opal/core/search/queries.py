@@ -13,6 +13,7 @@ from django.conf import settings
 from opal import models
 from opal.core import fields, subrecords
 from opal.utils import stringport
+from opal.core.search.search_rule import SearchRule
 
 
 def get_model_name_from_column_name(column_name):
@@ -347,8 +348,15 @@ class DatabaseQuery(QueryBackend):
         if querytype == 'Contains':
             contains = '__icontains'
 
+        column_name = query['column']
+
+        search_rule = SearchRule.get(column_name)
+
+        if search_rule:
+            return search_rule().query(query)
+
         field = query['field'].replace(' ', '_').lower()
-        Mod = get_model_from_api_name(query['column'])
+        Mod = get_model_from_api_name(column_name)
 
         named_fields = [f for f in Mod._meta.fields if f.name == field]
 
