@@ -152,6 +152,11 @@ class RunJSTestsTestCase(OpalTestCase):
             ],
             check_call.call_args[0][0]
         )
+        self.assertIn("OPAL_LOCATION", check_call.call_args[1]["env"])
+
+        self.assertTrue(
+            isinstance(check_call.call_args[1]["env"]["OPAL_LOCATION"], str)
+        )
 
     @patch.object(test_runner.subprocess, 'check_call')
     @patch.object(test_runner.sys, 'exit')
