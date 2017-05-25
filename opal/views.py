@@ -1,7 +1,6 @@
 """
 Module entrypoint for core Opal views
 """
-from django.conf import settings
 from django.contrib.auth.views import login
 from django.http import HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect

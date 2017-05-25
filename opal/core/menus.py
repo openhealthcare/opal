@@ -30,7 +30,6 @@ class Menu(object):
         # list attached to the active Application class.
         # Which is suboptimal.
         app_items = app.get_menu_items(user=self.user)
-        warnthem = """"""
         for item in app_items:
             self.items.append(item)
 
