@@ -161,6 +161,17 @@ class SerialisableFieldsTestCase(OpalTestCase):
         result = test_models.HoundOwner.get_lookup_list_api_name("dog")
         self.assertEqual(result, "dog")
 
+    def test_get_lookup_list_many_to_many_api_name(self):
+        result = test_models.HatWearer.get_lookup_list_api_name("hats")
+        self.assertEqual(result, "hat")
+
+    def test_get_lookup_list_uses_api_name(self):
+        with patch.object(test_models.Dog, "get_api_name") as get_api_name:
+            get_api_name.return_value = "hound"
+            result = test_models.HoundOwner.get_lookup_list_api_name("dog")
+            self.assertEqual(result, "hound")
+            get_api_name.assert_called_once_with()
+
 
 class ToDictMixinTestCase(OpalTestCase):
     def setUp(self):

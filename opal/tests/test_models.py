@@ -97,7 +97,6 @@ class PatientTestCase(OpalTestCase):
         self.assertEqual(colours[0].name, "green")
         self.assertEqual(colours[1].name, "purple")
 
-
     def test_bulk_update_with_existing_patient_episode(self):
         original_patient = models.Patient()
         original_patient.save()
