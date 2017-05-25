@@ -157,6 +157,10 @@ angular.module('opal.controllers').controller(
       $scope.selectedInfo = query;
     };
 
+    $scope.isEnum = function(column, field){
+        return $scope.isText(column, field) &&
+    }
+
     $scope.isBoolean = function(column, field){
         return $scope.isType(column, field, ["boolean", "null_boolean"]);
     };
