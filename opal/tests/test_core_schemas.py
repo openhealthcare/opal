@@ -75,6 +75,30 @@ tagging_serialized = {
     'advanced_searchable': True,
 }
 
+episode_serialised = {
+    'fields': [
+        {
+            'enum': None,
+            'lookup_list': None,
+            'name': 'start',
+            'title': 'Start',
+            'type': 'date_time',
+            'description': "Episode Start"
+        },
+        {
+            'enum': None,
+            'lookup_list': None,
+            'name': 'end',
+            'title': 'End',
+            'type': 'date_time',
+            'description': "Episode End"
+        }
+    ],
+    'display_name': 'Episode',
+    'name': 'episode',
+    'advanced_searchable': True,
+}
+
 
 class SerializeModelTestCase(TestCase):
     def test_serialize(self):
@@ -115,5 +139,6 @@ class ExtractSchemaTestCase(TestCase):
     def test_list_records(self, tagging, subrecords):
         subrecords.return_value = [Colour]
         tagging.return_value = []
-        self.assertEqual(tagging_serialized, schemas.extract_schema()[0])
-        self.assertEqual(colour_serialized, schemas.extract_schema()[1])
+        self.assertEqual(episode_serialised, schemas.extract_schema()[0])
+        self.assertEqual(tagging_serialized, schemas.extract_schema()[1])
+        self.assertEqual(colour_serialized, schemas.extract_schema()[2])

@@ -82,15 +82,12 @@ describe('DischargeEpisodeCtrl', function(){
                     category: 'Inpatient'
                 }
             ]
-        }
-
-
+        };
 
         module('opal.controllers');
 
         inject(function($injector){
             $rootScope   = $injector.get('$rootScope');
-            $scope       = $rootScope.$new();
             $window      = $injector.get('$window');
             $controller  = $injector.get('$controller');
             $httpBackend = $injector.get('$httpBackend');
@@ -103,25 +100,22 @@ describe('DischargeEpisodeCtrl', function(){
         $rootScope.fields = fields;
         episode = new Episode(episodeData)
 
-        mkcontroller = function(tags){
-            $controller('DischargeEpisodeCtrl', {
-                $scope: $scope,
-                $window: $window,
-                $modalInstance: modalInstance,
-                episode: episode,
-                tags: tags
-            });
+        mkcontroller = function(tags, _episode){
+          _episode = _episode || episode;
+          $scope = $rootScope.$new();
+
+          $controller('DischargeEpisodeCtrl', {
+              $scope: $scope,
+              $window: $window,
+              $modalInstance: modalInstance,
+              episode: _episode,
+              tags: tags
+          });
         }
         mkcontroller(tags)
-        $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
     });
 
     describe('Set up the controller', function(){
-
-        afterEach(function(){
-            $httpBackend.flush();
-        })
-
         it('should have the current and new categories', function() {
             expect($scope.editing.category).toEqual('Discharged');
         });
@@ -167,6 +161,39 @@ describe('DischargeEpisodeCtrl', function(){
             $httpBackend.verifyNoOutstandingExpectation();
 
             expect(modalInstance.close).toHaveBeenCalledWith('discharged')
+        });
+
+        it('should remove the discharge date if category is Unfollow', function() {
+            $httpBackend.expectPUT('/api/v0.1/tagging/555/').respond({});
+            $httpBackend.expectPOST('/api/v0.1/location/').respond({});
+
+            var expected = {"id":"555","date_of_admission": "","discharge_date": null};
+            $httpBackend.expectPUT('/api/v0.1/episode/555/', expected).respond(episodeData);
+
+            var alteredEpisodeData = angular.copy(episodeData);
+            alteredEpisodeData.discharge_date = moment();
+            mkcontroller(tags, new Episode(alteredEpisodeData));
+            $scope.editing.category = "Unfollow";
+            $scope.discharge();
+            $httpBackend.flush();
+            $httpBackend.verifyNoOutstandingRequest();
+            $httpBackend.verifyNoOutstandingExpectation();
+        });
+
+        it('should use the discharge date from editing if the category is not Unfollow', function() {
+            $httpBackend.expectPUT('/api/v0.1/tagging/555/').respond({});
+            $httpBackend.expectPOST('/api/v0.1/location/').respond({});
+            var alteredEpisodeData = angular.copy(episodeData);
+            alteredEpisodeData.discharge_date = moment(new Date(20016, 6, 6));
+
+            var expected = {"id":"555","date_of_admission": "","discharge_date": "06/07/20016"};
+            $httpBackend.expectPUT('/api/v0.1/episode/555/', expected).respond(alteredEpisodeData);
+            mkcontroller(tags, new Episode(alteredEpisodeData));
+            $scope.editing.category = "Followup";
+            $scope.discharge();
+            $httpBackend.flush();
+            $httpBackend.verifyNoOutstandingRequest();
+            $httpBackend.verifyNoOutstandingExpectation();
         });
 
     });
