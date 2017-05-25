@@ -1,13 +1,10 @@
 """
 Templatetags for working with Opal applications
 """
-import warnings
-
 from django import template
 
 from opal.core import application, plugins
 
-warnings.simplefilter('once', DeprecationWarning)
 register = template.Library()
 
 
