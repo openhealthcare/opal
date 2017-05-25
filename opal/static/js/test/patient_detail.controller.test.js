@@ -2,7 +2,7 @@ describe('PatientDetailCtrl', function(){
     "use strict";
 
     var $scope, $rootScope, $controller, $modal, $routeParams, $httpBackend;
-    var Flow;
+    var Flow, patientLoader, Episode;
     var patient;
     var controller;
     var episodeData = {
@@ -13,7 +13,8 @@ describe('PatientDetailCtrl', function(){
         demographics: [{
             id: 101,
             patient_id: 99,
-            name: 'John Smith',
+            first_name: 'John',
+            surname: "Smith",
             date_of_birth: '1980-07-31'
         }],
         tagging: [{'mine': true, 'tropical': true}],
@@ -42,7 +43,8 @@ describe('PatientDetailCtrl', function(){
                 name: 'demographics',
                 single: true,
                 fields: [
-                    {name: 'name', type: 'string'},
+                    {name: 'first_name', type: 'string'},
+                    {name: 'surname', type: 'string'},
                     {name: 'date_of_birth', type: 'date'},
                 ]},
             {
@@ -79,6 +81,7 @@ describe('PatientDetailCtrl', function(){
 
     beforeEach(function(){
         module('opal');
+        patientLoader = jasmine.createSpy();
 
         inject(function($injector){
             $rootScope   = $injector.get('$rootScope');
@@ -90,10 +93,12 @@ describe('PatientDetailCtrl', function(){
             Episode      = $injector.get('Episode');
         });
 
-        $rootScope.fields = fields
+        $rootScope.fields = fields;
         patient = {episodes: [new Episode(angular.copy(episodeData))] };
 
-        Flow = {exit: jasmine.createSpy().and.returnValue({then: function(fn){ fn() }}) };
+        Flow = {exit: jasmine.createSpy().and.returnValue({
+          then: function(fn){ fn(); }
+        }) };
 
         controller = $controller('PatientDetailCtrl', {
             $scope      : $scope,
@@ -101,7 +106,8 @@ describe('PatientDetailCtrl', function(){
             Flow        : Flow,
             patient     : patient,
             profile     : profile,
-            metadata    : metadata
+            metadata    : metadata,
+            patientLoader: patientLoader
         });
 
     });
@@ -144,6 +150,34 @@ describe('PatientDetailCtrl', function(){
             expect($scope.episode).toBe(patient.episodes[0]);
         });
 
+    });
+
+    describe('refresh()', function(){
+
+      beforeEach(function(){
+        var nameChanged = angular.copy(episodeData);
+        nameChanged.demographics[0].first_name = "Gerald";
+        patient = {
+          episodes: [new Episode(nameChanged)],
+          demographics: [nameChanged.demographics[0]]
+        };
+
+        patientLoader.and.returnValue({
+          then: function(fn){
+            fn(patient);
+          }
+        });
+      });
+
+      it('should refresh the patient', function(){
+        $scope.refresh();
+        expect($scope.patient.demographics[0].first_name).toBe("Gerald");
+      });
+
+      it('should update the current episode on the scope', function(){
+        $scope.refresh();
+        expect($scope.episode.demographics[0].first_name).toBe("Gerald");
+      });
     });
 
     describe('switch_to_view()', function() {

@@ -61,8 +61,6 @@ def _set_settings_module(name):
 def create_lookuplists(root_dir):
     lookuplists_dir = root_dir/'data/lookuplists'
     lookuplists_dir.mkdir()
-    lookuplists = lookuplists_dir/"lookuplists.json"
-    lookuplists.touch()
 
 
 def start_plugin(name, USERLAND):
@@ -82,7 +80,7 @@ def start_plugin(name, USERLAND):
     shutil.copytree(PLUGIN_SCAFFOLD, root)
 
     # 2n. Interpolate scaffold
-    interpolate_dir(root, name=name)
+    interpolate_dir(root, name=name, version=opal.__version__)
 
     # 3. Rename the code dir
     code_root = root/name
@@ -96,10 +94,15 @@ def start_plugin(name, USERLAND):
     static.mkdir()
     jsdir = static/'js/{0}'.format(name)
     jsdir.mkdir()
+    cssdir = static/'css'
+    cssdir.mkdir()
     controllers = jsdir/'controllers'
     controllers.mkdir()
     services = jsdir/'services'
     services.mkdir()
+    # 5. Initialize git repo
+    os.system('cd {0}; git init'.format(reponame))
+
     write('Plugin complete at {0}'.format(reponame))
     return
 

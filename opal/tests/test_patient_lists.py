@@ -6,12 +6,14 @@ from mock import MagicMock, PropertyMock, patch
 
 from opal.core import exceptions
 from opal.tests import models
-from opal.models import Patient, UserProfile
+from opal.models import Episode, Patient, UserProfile
 from opal.core.test import OpalTestCase
 
 from opal.core import patient_lists
-from opal.core.patient_lists import (PatientList, TaggedPatientList, TabbedPatientListGroup,
-                                     PatientListComparatorMetadata)
+from opal.core.patient_lists import (
+    PatientList, TaggedPatientList, TabbedPatientListGroup,
+    PatientListComparatorMetadata
+)
 
 """
 Begin discoverable definitions for test cases
@@ -154,11 +156,26 @@ class TestPatientList(OpalTestCase):
             queryset.return_value = mock_queryset
             self.assertEqual(mock_queryset, PatientList().get_queryset())
 
-    def test_to_dict_passes_queryset(self):
+    @patch('opal.models.Episode.objects.serialised')
+    def test_to_dict_passes_queryset(self, serialised):
+        serialised.return_value = {}
         with patch.object(PatientList, 'get_queryset') as gq:
             with patch.object(PatientList, 'queryset', new_callable=PropertyMock) as q:
-                PatientList().to_dict('my_user')
+                dicted = PatientList().to_dict('my_user')
                 gq.assert_called_with(user='my_user')
+                self.assertEqual({}, dicted)
+
+    def test_to_dict_inactive_episodes(self):
+        p, e = self.new_patient_and_episode_please()
+        e.active = False
+        e.save()
+
+        class All(patient_lists.PatientList):
+            display_name = 'all'
+            queryset = Episode.objects.all()
+
+        self.assertEqual(e.id, All().to_dict(self.user)[0]['id'])
+
 
     def test_visible_to(self):
         self.assertTrue(TaggingTestPatientList.visible_to(self.user))
@@ -302,6 +319,14 @@ class TestTaggedPatientList(OpalTestCase):
         taglist = TaggedPatientList.get_tag_names()
         expected = {'carnivore', 'herbivore', 'omnivore', 'eater', 'shh'}
         self.assertEqual(set(taglist), expected)
+
+    def test_to_dict_inactive_episodes(self):
+        p, e = self.new_patient_and_episode_please()
+        e.set_tag_names(['carnivore'], self.user)
+        self.assertEqual(e.pk, TaggingTestNotSubTag().to_dict(self.user)[0]['id'])
+        e.active = False
+        e.save()
+        self.assertEqual(0, len(TaggingTestNotSubTag().to_dict(self.user)))
 
 
 class TabbedPatientListGroupTestCase(OpalTestCase):

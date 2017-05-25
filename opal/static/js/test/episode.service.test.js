@@ -7,7 +7,9 @@ describe('Episode', function() {
 
     beforeEach(function() {
         module('opal.services', function($provide) {
-            $provide.value('UserProfile', function(){ return profile; });
+            $provide.value('UserProfile', {
+              load: function(){ return profile; }
+            });
         });
 
         tag_hierarchy = {
@@ -199,6 +201,10 @@ describe('Episode', function() {
         expect(episode.getItem('diagnosis', 1).id).toEqual(102);
     });
 
+    it('should return the name of the patient', function() {
+        expect(episode.getFullName()).toEqual('John Smith');
+    });
+
     it('should know how many items it has in each column', function() {
         expect(episode.getNumberOfItems('demographics')).toBe(1);
         expect(episode.getNumberOfItems('diagnosis')).toBe(2);
@@ -210,11 +216,22 @@ describe('Episode', function() {
 
     it('should return tags if tagging is an Item()', function() {
         episode.tagging = [{makeCopy: function(){ return {
-            mine    : true,
+            mine: true,
             tropical: true,
-            id      : false
+            id: 1,
+            _client: {something: 'else'}
         }; }}];
         expect(episode.getTags()).toEqual(['mine', 'tropical']);
+    });
+
+    it('should filter out _client from tags', function() {
+        episode.tagging = [{makeCopy: function(){ return {
+            mine: true,
+            tropical: true,
+            id: 1,
+            _client: {something: 'else'}
+        }; }}];
+        expect(episode.getTags().indexOf('_client')).toEqual(-1);
     });
 
     it('hasTags() Should know if the episode has a given tag', function () {
@@ -290,7 +307,15 @@ describe('Episode', function() {
                     id               : 555,
                     active           : true,
                     date_of_admission: '20/11/2013',
-                    discharge_date   : null
+                    discharge_date   : null,
+                    demographics: [{
+                        id: 101,
+                        patient_id: 99,
+                        first_name: 'John',
+                        surname: "Smith",
+                        date_of_birth: '31/07/1980',
+                        hospital_number: '555'
+                    }]
                 };
 
                 episode = new Episode(episodeData);
@@ -311,6 +336,14 @@ describe('Episode', function() {
                 episode.save(attrsJsonDate);
                 $httpBackend.flush();
                 expect(episode.date_of_admission).toEqual(new Date(2013, 10, 20))
+            });
+
+            it('Should translate dates to strings', function () {
+                var toSave = angular.copy(attrsJsonDate);
+                toSave.date_of_admission = new Date(2013, 10, 20);
+                $httpBackend.expectPUT('/api/v0.1/episode/555/', attrsJsonDate);
+                episode.save(toSave);
+                $httpBackend.flush();
             });
 
             it('should cope with consistency token errors', function() {

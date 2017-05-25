@@ -99,10 +99,17 @@ describe('EditTeamsCtrl', function(){
         UserProfile = {
           then: function(fn){
             fn('someProfile');
+          },
+          load: function(){
+            return {
+              then: function(fn){
+                fn('someProfile');
+              }
+            };
           }
         };
 
-        spyOn(UserProfile, "then").and.callThrough();
+        spyOn(UserProfile, "load").and.callThrough();
 
         inject(function($injector){
             $httpBackend = $injector.get('$httpBackend');
@@ -145,7 +152,7 @@ describe('EditTeamsCtrl', function(){
         });
 
         it('should put profile and editingname on the scope', function(){
-          expect(UserProfile.then).toHaveBeenCalled();
+          expect(UserProfile.load).toHaveBeenCalled();
           expect($scope.editingName).toBe("Jane Doe");
           expect(!!$scope.profile).toBe(true);
         });

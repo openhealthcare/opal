@@ -1,84 +1,102 @@
 //
-// This is the main Episode class for OPAL.
+// This is the main Episode class for Opal
 //
 angular.module('opal.services')
     .factory('Episode', function(
         $http, $q, $rootScope, $routeParams, $window,
         Item, RecordEditor, FieldTranslater) {
+        "use strict";
+
+        // TODO: Set this with a more idiomatic Angular way, and set it once.
         var DATE_FORMAT = 'DD/MM/YYYY';
+        var Episode = function(resource) {
+            this.initialise(resource);
+        }
 
-        Episode = function(resource) {
-            var episode = this;
-            var column, field, attrs;
+        // TODO - Pull these from the schema? Also cast them to moments
+        // Note - these are date fields on the episode itself - which is not currently
+        // serialised and sent with the schema !
+        var date_fields = ['date_of_admission', 'discharge_date', 'date_of_episode', 'start', 'end'];
 
-            episode.recordEditor = new RecordEditor(episode);
-
-            // We would like everything for which we have data that is a field to
-            // be an instantiated instance of Item - not just those fields in the
-            // currently applicable schema.
-            _.each($rootScope.fields, function(field){
-                if(resource[field.name]){
-                    resource[field.name] = _.map(
-                        resource[field.name],
-                        function(attrs){ return new Item(attrs, episode, field); });
-                    if(field.sort){
-                        resource[field.name] = _.sortBy(resource[field.name], field.sort).reverse();
-                    }
-                }else{ resource[field.name] = []; }
-            });
-
-            // Sort a particular column according to schema params.
-            this.sortColumn = function(columnName, sortBy){
-                episode[columnName] = _.sortBy(episode[columnName], sortBy).reverse();
-            }
-
-            //
-            // TODO - Pull these from the schema? Also cast them to moments
-            // Note - these are date fields on the episode itself - which is not currently
-            // serialised and sent with the schema !
-            var date_fields = ['date_of_admission', 'discharge_date', 'date_of_episode', 'start', 'end'];
+        Episode.prototype = {
 
             // Constructor to update from attrs and parse datish fields
-            this.initialise = function(attrs){
-                angular.extend(episode, attrs)
+            initialise: function(data){
+                var self = this;
+                // We would like a way to open a modal that edits subrecords.
+                self.recordEditor = new RecordEditor(self); // TODO: Rename or refactor this.
+
+                // We would like everything for which we have data that is a field to
+                // be an instantiated instance of Item
+                _.each($rootScope.fields, function(field){
+                    if(data[field.name]){
+                        data[field.name] = _.map(
+                            data[field.name],
+                            function(attrs){ return new Item(attrs, self, field); });
+                        if(field.sort){
+                            data[field.name] = _.sortBy(data[field.name], field.sort).reverse();
+                        }
+                    }else{ data[field.name] = []; }
+                });
+                angular.extend(self, data)
                 // Convert string-serialised dates into native JavaScriptz
                 _.each(date_fields, function(field){
-                    if(attrs[field]){
-                        var parsed = moment(attrs[field], DATE_FORMAT);
-                        episode[field] = parsed.toDate();
+                    if(data[field]){
+                        var parsed = moment(data[field], DATE_FORMAT);
+                        self[field] = parsed.toDate();
                     }
                 });
-                if(!episode.demographics || episode.demographics.length == 0 || !episode.demographics[0].patient_id){
+                if(!self.demographics || self.demographics.length == 0 || !self.demographics[0].patient_id){
                     throw "Episode() initialization data must contain demographics with a patient id."
                 }
-                this.link = "/patient/" + episode.demographics[0].patient_id + "/" + episode.id;
-            };
+                self.link = "/patient/" + self.demographics[0].patient_id + "/" + self.id;
 
-            this.getNumberOfItems = function(columnName) {
-                return episode[columnName].length;
-            };
+            },
+
+            // Sort a particular column according to schema params.
+            sortColumn: function(columnName, sortBy){
+                this[columnName] = _.sortBy(this[columnName], sortBy).reverse();
+            },
+
+            // Return the name of the patient suitable for display to humans
+            getFullName: function(){
+                return this.demographics[0].first_name + ' ' + this.demographics[0].surname;
+            },
+
+            getNumberOfItems: function(columnName) {
+                return this[columnName].length;
+            },
 
             // Getter function to return active episode tags.
             // Default implementation just hits tagging
-            this.getTags = function(){
+            getTags: function(){
+                var tags;
+
                 if(this.tagging[0].makeCopy){
-                    var tags =  this.tagging[0].makeCopy()
+                    tags =  this.tagging[0].makeCopy();
                 }else{
-                    var tags = this.tagging[0]
+                    tags = this.tagging[0];
                 }
-                delete tags.id
-                return _.filter(_.keys(tags),  function(t){return tags[t]})
-            };
+                var tagKeys = _.keys(tags);
+                tagKeys = _.filter(tagKeys, function(tagKey){
+                  return tagKey !== "_client" && tagKey !== "id";
+                });
+                return _.filter(tagKeys,  function(t){return tags[t];});
+            },
 
             //
             // Boolean predicate function to determine whether
             // this episode has the given TAG
             //
-            this.hasTag = function(tag){
+            hasTag: function(tag){
                 return this.getTags().indexOf(tag) != -1;
-            }
+            },
 
-            this.newItem = function(columnName, opts) {
+            //
+            // Create a new Item of type COLUMNNAME
+            //
+            newItem: function(columnName, opts) {
+                var self = this;
                 if(!opts){ opts = {}; }
 
                 if(!opts.column){
@@ -86,50 +104,53 @@ angular.module('opal.services')
                 }
 
                 var attrs = {};
-                return new Item(attrs, episode, opts.column);
-            };
+                return new Item(attrs, self, opts.column);
+            },
 
-            this.getItem = function(columnName, iix) {
-                return episode[columnName][iix];
-            };
+            getItem: function(columnName, iix) {
+                return this[columnName][iix];
+            },
+
 
             //
-            // add an item (e.g. instance of a subfield) to this episode
+            // add an item (e.g. instance of a subrecord) to this episode
             //
-            this.addItem = function(item) {
+            addItem: function(item) {
                 // Sometimes we add an item from a non-active schema.
-                if(!episode[item.columnName]){
-                    episode[item.columnName] = [];
+                // TODO: Do we really do this any more?
+                if(!this[item.columnName]){
+                    this[item.columnName] = [];
                 }
-                episode[item.columnName].push(item);
+                this[item.columnName].push(item);
                 if(item.sort){
                     this.sortColumn(item.columnName, item.sort);
                 }
-            };
+            },
 
-            this.removeItem = function(item) {
-                var items = episode[item.columnName];
-                for (iix = 0; iix < items.length; iix++) {
+            removeItem: function(item) {
+                var items = this[item.columnName];
+                for (var iix = 0; iix < items.length; iix++) {
                     if (item.id == items[iix].id) {
                         items.splice(iix, 1);
                         break;
                     };
                 };
-            };
+            },
 
-            this.makeCopy = function(){
+            makeCopy: function(){
                 var copy = {
-                    id               : episode.id,
-                    category_name    : episode.category_name,
-                    date_of_admission: episode.date_of_admission,
-                    date_of_episode  : episode.date_of_episode,
-                    discharge_date   : episode.discharge_date,
-                    consistency_token: episode.consistency_token
+                    id               : this.id,
+                    category_name    : this.category_name,
+                    date_of_admission: this.date_of_admission,
+                    date_of_episode  : this.date_of_episode,
+                    discharge_date   : this.discharge_date,
+                    consistency_token: this.consistency_token
                 }
                 return copy
-            };
+            },
 
-            this.compare = function(other, comparators) {
+            compare: function(other, comparators) {
+                var self = this;
                 //
                 // The default comparators we use for our Episode sorting in lists
                 //
@@ -150,7 +171,7 @@ angular.module('opal.services')
 
                 var v1, v2;
                 for (var ix = 0; ix < comparators.length; ix++) {
-                    v1 = comparators[ix](episode);
+                    v1 = comparators[ix](self);
                     v2 = comparators[ix](other);
                     if (v1 < v2) {
                         return -1;
@@ -160,7 +181,7 @@ angular.module('opal.services')
                 }
 
                 return 0;
-            };
+            },
 
             //
             //  Save our Episode.
@@ -169,11 +190,12 @@ angular.module('opal.services')
             //  2. Send our data to the server
             //  3. Handle the response.
             //
-            this.save = function(attrs){
+            save: function(attrs){
+                var self = this;
                 var value;
                 var deferred = $q.defer();
                 var url = '/api/v0.1/episode/' + attrs.id + '/';
-                method = 'put';
+                var method = 'put';
 
                 _.each(date_fields, function(field){
                     if(attrs[field]){
@@ -189,7 +211,7 @@ angular.module('opal.services')
 
                 $http[method](url, attrs).then(
                     function(response){
-                        episode.initialise(response.data);
+                        self.initialise(response.data);
                         deferred.resolve();
                     },
                     function(response) {
@@ -204,18 +226,17 @@ recently changed it - refresh the page and try again');
                 );
 
                 return deferred.promise;
-            };
+            },
+
 
             //
             // Predicate to determine whether this episode is discharged or not
             //
-            this.isDischarged = function(){
-                return episode.location[0].category == 'Discharged' ||
-                    (episode.discharge_date && moment(episode.discharge_date).isBefore(moment()));
+            isDischarged: function(){
+                return this.location[0].category == 'Discharged' ||
+                    (this.discharge_date && moment(this.discharge_date).isBefore(moment()));
             }
-
-            this.initialise(resource)
-        };
+        }; // Closes prototype
 
         //
         // takes two arguments, the hospital number and a hash of callbacks.
@@ -234,7 +255,7 @@ recently changed it - refresh the page and try again');
                 patients: [],
                 hospitalNumber: number
             };
-            // record loader is sued by the field translater to
+            // record loader is used by the field translater to
             // cast the results fields
             deferred.promise.then(function(result){
                 if(!result.patients.length){
@@ -262,4 +283,5 @@ recently changed it - refresh the page and try again');
             }
         }
         return Episode
+
     });

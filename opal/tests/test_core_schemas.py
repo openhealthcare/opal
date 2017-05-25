@@ -21,34 +21,46 @@ colour_serialized = dict(
          'type': 'date_time',
          'name': 'created',
          'default': None,
+         'enum': None,
+         'description': None,
          'title': 'Created'},
         {'model': 'Colour',
          'lookup_list': None,
          'type': 'date_time',
          'name': 'updated',
          'default': None,
+         'enum': None,
+         'description': None,
          'title': 'Updated'},
         {'model': 'Colour',
          'lookup_list': None,
          'default': None,
          'name': 'created_by_id',
          'title': 'Created By',
+         'enum': None,
+         'description': None,
          'type': 'forei'},
         {'model': 'Colour',
          'lookup_list': None,
          'default': None,
+         'enum': None,
+         'description': None,
          'name': 'updated_by_id',
          'title': 'Updated By',
          'type': 'forei'},
         {'model': 'Colour',
          'lookup_list': None,
          'default': None,
+         'enum': None,
+         'description': None,
          'name': 'consistency_token',
          'title': 'Consistency Token',
          'type': 'token'},
         {'model': 'Colour',
          'lookup_list': None,
          'default': None,
+         'enum': None,
+         'description': None,
          'name': 'name',
          'title': 'Name',
          'type': 'string'},
@@ -60,6 +72,30 @@ tagging_serialized = {
     'single': True,
     'display_name': 'Teams',
     'name': 'tagging',
+    'advanced_searchable': True,
+}
+
+episode_serialised = {
+    'fields': [
+        {
+            'enum': None,
+            'lookup_list': None,
+            'name': 'start',
+            'title': 'Start',
+            'type': 'date_time',
+            'description': "Episode Start"
+        },
+        {
+            'enum': None,
+            'lookup_list': None,
+            'name': 'end',
+            'title': 'End',
+            'type': 'date_time',
+            'description': "Episode End"
+        }
+    ],
+    'display_name': 'Episode',
+    'name': 'episode',
     'advanced_searchable': True,
 }
 
@@ -103,5 +139,6 @@ class ExtractSchemaTestCase(TestCase):
     def test_list_records(self, tagging, subrecords):
         subrecords.return_value = [Colour]
         tagging.return_value = []
-        self.assertEqual(tagging_serialized, schemas.extract_schema()[0])
-        self.assertEqual(colour_serialized, schemas.extract_schema()[1])
+        self.assertEqual(episode_serialised, schemas.extract_schema()[0])
+        self.assertEqual(tagging_serialized, schemas.extract_schema()[1])
+        self.assertEqual(colour_serialized, schemas.extract_schema()[2])

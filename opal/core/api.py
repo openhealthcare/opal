@@ -7,7 +7,8 @@ from rest_framework import routers, status, viewsets
 from rest_framework.permissions import IsAuthenticated
 
 from opal.models import (
-    Episode, Synonym, Patient, PatientRecordAccess, PatientSubrecord
+    Episode, Synonym, Patient, PatientRecordAccess,
+    PatientSubrecord, UserProfile
 )
 from opal.core import application, exceptions, metadata, plugins, schemas
 from opal.core.lookuplists import LookupList
@@ -252,6 +253,27 @@ class UserProfileViewSet(LoginRequiredViewset):
         return json_response(profile.to_dict())
 
 
+class UserViewSet(LoginRequiredViewset):
+    """
+    Provides applications with information about all system users
+    """
+    base_name = 'user'
+
+    def list(self, request):
+        """
+        Serialise all opal.models.UserProfile objects
+        """
+        data = [p.to_dict() for p in UserProfile.objects.all()]
+        return json_response(data)
+
+    def retrieve(self, request, pk=None):
+        """
+        Serialise a single user via UserProfile
+        """
+        profile = UserProfile.objects.get(user__id=pk)
+        return json_response(profile.to_dict())
+
+
 class TaggingViewSet(LoginRequiredViewset):
     """
     Returns taggings associated with episodes
@@ -331,7 +353,7 @@ class EpisodeViewSet(LoginRequiredViewset):
         try:
             episode.update_from_dict(request.data, request.user)
             return json_response(
-                episode.to_dict(request.user, shallow=True)
+                episode.to_dict(request.user)
             )
         except exceptions.ConsistencyError:
             return json_response({'error': 'Item has changed'}, 409)
@@ -380,6 +402,7 @@ router.register('episode', EpisodeViewSet)
 router.register('record', RecordViewSet)
 router.register('extract-schema', ExtractSchemaViewSet)
 router.register('userprofile', UserProfileViewSet)
+router.register('user', UserViewSet)
 router.register('tagging', TaggingViewSet)
 router.register('patientlist', PatientListViewSet)
 router.register('patientrecordaccess', PatientRecordAccessViewSet)

@@ -49,8 +49,7 @@ class TestInferFromSubrecordPath(TestCase):
     def test_infer_choice_fields_from_charfield(self):
         ctx = infer_from_subrecord_field_path("FavouriteColour.name")
         choices = json.loads(ctx["lookuplist"])
-        for choice in ["purple", "blue", "yellow"]:
-            self.assertTrue(choice in choices)
+        self.assertEqual(choices, ["purple", "yellow", "blue"])
 
     def test_infer_element_name(self):
         ctx = infer_from_subrecord_field_path("Birthday.birth_date")
@@ -58,6 +57,17 @@ class TestInferFromSubrecordPath(TestCase):
             ctx["element_name"],
             "editing.birthday._client.id + '_birth_date'"
         )
+
+    def test_infer_element_type_number(self):
+        ctx = infer_from_subrecord_field_path("FavouriteNumber.number")
+        self.assertEquals(
+            ctx["element_type"],
+            "number"
+        )
+
+    def test_infer_element_type_text(self):
+        ctx = infer_from_subrecord_field_path("HoundOwner.name")
+        self.assertNotIn("element_type", ctx)
 
 
 class ExtractCommonArgsTestCase(TestCase):
@@ -79,6 +89,11 @@ class ExtractCommonArgsTestCase(TestCase):
         ctx = extract_common_args(show_kwargs)
         self.assertEqual(ctx['visibility'], 'ng-hide="yes"')
 
+    def test_element_type(self):
+        tag_kwargs = dict(field="FavouriteNumber.number", element_type="text")
+        ctx = extract_common_args(tag_kwargs)
+        self.assertEqual(ctx["element_type"], "text")
+
 
 class TextareaTest(TestCase):
     def setUp(self):
@@ -94,6 +109,11 @@ class TextareaTest(TestCase):
         rendered = tpl.render(Context({}))
         self.assertIn('name="[[ onions ]]"', rendered)
 
+    def test_change(self):
+        tpl = Template('{% load forms %}{% textarea label="hai" change="doStuff" model="bai" element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('ng-change="doStuff"', rendered)
+
 
 class InputTest(TestCase):
 
@@ -102,6 +122,13 @@ class InputTest(TestCase):
         rendered = tpl.render(Context({}))
         self.assertIn("editing.dog_owner.dog", rendered)
         self.assertIn("dog_list", rendered)
+
+    def test_element_type(self):
+        tpl = Template(
+            '{% load forms %}{% input field="FavouriteNumber.number" %}'
+        )
+        rendered = tpl.render(Context({}))
+        self.assertIn('type="number"', rendered)
 
     def test_use_verbose_name_from_model(self):
         tpl = Template('{% load forms %}{% input field="HoundOwner.dog" %}')
@@ -174,6 +201,11 @@ class InputTest(TestCase):
         rendered = tpl.render(Context({}))
         self.assertIn('(form[onions].$dirty || form.$submitted) && form[onions].$error.required', rendered)
 
+    def test_change(self):
+        tpl = Template('{% load forms %}{% input label="hai" change="doStuff" model="bai" element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('ng-change="doStuff"', rendered)
+
 
 class CheckboxTestCase(TestCase):
 
@@ -192,6 +224,11 @@ class CheckboxTestCase(TestCase):
         tpl = Template('{% load forms %}{% checkbox label="hai" model="bai" element_name="onions"%}')
         rendered = tpl.render(Context({}))
         self.assertIn('id="checkbox_[[ onions ]]"', rendered)
+
+    def test_change(self):
+        tpl = Template('{% load forms %}{% checkbox label="hai" change="doStuff" model="bai" element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('ng-change="doStuff"', rendered)
 
 
 class DatepickerTestCase(TestCase):
@@ -231,6 +268,11 @@ class DatepickerTestCase(TestCase):
         )
         rendered = tpl.render(Context({}))
         self.assertIn('ng-hide="onions"', rendered)
+
+    def test_change(self):
+        tpl = Template('{% load forms %}{% datepicker label="hai" change="doStuff" model="bai" element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('ng-change="doStuff"', rendered)
 
 
 class DateTimePickerTestCase(TestCase):
@@ -299,6 +341,11 @@ class RadioTestCase(TestCase):
         rendered = tpl.render(Context({}))
         self.assertIn('form.$submitted && form[onions].$error.required"', rendered)
 
+    def test_change(self):
+        tpl = Template('{% load forms %}{% radio label="hai" change="doStuff" model="bai" element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('ng-change="doStuff"', rendered)
+
 
 class SelectTestCase(TestCase):
 
@@ -347,6 +394,11 @@ class SelectTestCase(TestCase):
         tpl = Template('{% load forms %}{% select label="hai" model="bai" element_name="onions" required=True %}')
         rendered = tpl.render(Context({}))
         self.assertIn('"form.$submitted && form[onions].$error.required"', rendered)
+
+    def test_change(self):
+        tpl = Template('{% load forms %}{% select label="hai" change="doStuff" model="bai" element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('ng-change="doStuff"', rendered)
 
 
 class StaticTestCase(TestCase):

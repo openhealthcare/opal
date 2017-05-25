@@ -69,12 +69,15 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
         field_name
     )
 
+    if fields.is_numeric(field):
+        ctx["element_type"] = "number"
+
     # for all django fields we'll get an empty list back
     # we default for free text or foreign keys
-    choices = getattr(field, "choices", [])
+    enum = model.get_field_enum(field_name)
 
-    if choices:
-        ctx["lookuplist"] = json.dumps(list(dict(choices).values()))
+    if enum:
+        ctx["lookuplist"] = json.dumps(enum)
     elif hasattr(field, "foreign_model"):
         ctx["lookuplist"] = "{}_list".format(
             field.foreign_model.get_api_name()
@@ -113,6 +116,9 @@ def extract_common_args(kwargs):
             args[field] = kwargs[field]
 
     element_name = kwargs.pop('element_name', args.get('element_name'))
+    args["element_type"] = kwargs.pop(
+        'element_type', args.get('element_type', 'text')
+    )
 
     if element_name:
         args["element_name"] = element_name

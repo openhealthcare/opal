@@ -63,21 +63,23 @@ By convention, APIs live in `yourplugin/api.py`. You are expected to provide a
 `rest_framework.viewsets.ViewSet` subclass, which you then detail as the `.apis` attribute
 of your plugin.
 
-    # yourplugin/api.py
-    from rest_framework.viewsets import ViewSet
-    from rest_framework.response import Response
+```python
+# yourplugin/api.py
+from rest_framework.viewsets import ViewSet
+from rest_framework.response import Response
 
-    class PingViewSet(ViewSet):
-        def list(self, request): return Response('pong')
+class PingViewSet(ViewSet):
+    def list(self, request): return Response('pong')
 
-    # yourplugin/__init__.py
-    from opal.core.plugins import OpalPlugin
-    from yourplugin import api
+# yourplugin/plugin.py
+from opal.core.plugins import OpalPlugin
+from yourplugin import api
 
-    class YourPlugin(OpalPlugin):
-        apis = [
-            ('ping', api.PingViewSet)
-        ]
+class YourPlugin(OpalPlugin):
+    apis = [
+        ('ping', api.PingViewSet)
+    ]
+```
 
 These APIs will then be available and self-documenting fom the standard Opal url `/api/v0.1/`
 
@@ -103,9 +105,11 @@ Actions can be added to the sidebar by setting the `actions` attribute of your p
 Actions is expected to be an iterable of strings which are templates to be included in
 the sidebar. By convention, actions will live in `./templates/actions/` .
 
-    # __init__.py:
-    class Plugin(OpalPlugin):
-        actions = ('actions/javascript_alert.html', 'actions/dummy_button.html')
+```python
+# plugin.py:
+class Plugin(OpalPlugin):
+    actions = ('actions/javascript_alert.html', 'actions/dummy_button.html')
+```
 
 And then in the template:
 
@@ -121,6 +125,20 @@ And then in the template:
 Dependencies listed in `angular_module_deps` will be added to all Angular modules (as long as they
 use the OPAL.module() API. If not, you're on your own. We could monkey patch angular.module, but we
 won't for now.
+
+### Adding Menu items
+
+Plugins may add items to the main Opal Menu by setting the `menuitems` attribute.
+This attribute should be an iterable of [`MenuItem`](../reference/core_menus.md) objects.
+
+```python
+from opal.core import menus
+
+class YourPlugin(OpalPlugin):
+    menuitems = [
+        menus.MenuItem(href="/your-url", icon="fa-user")
+    ]
+```
 
 ### Installing plugins
 

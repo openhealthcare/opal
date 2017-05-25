@@ -1,3 +1,83 @@
+### 0.8.2 (Minor Release)
+
+#### OPAL_LOCATION is added as a system variable when running js tests
+If you run opal test js, your karma config is now run in an environment that has
+access to the OPAL_LOCATION variable which points to the opal parent directory.
+
+#### A Data Dictionary In The Extract
+The Extract zip file has a data dictionary with human readable metadata about each field.
+
+#### Enhanced Application menus
+
+The application menu API, previously python dicts stored in attributes on either plugin or
+application subclasses, now consists of the new `opal.core.menus.MenuItem` class, enabling
+enhanced customisation and flexibility.
+
+#### PUT to the episode API returns the episode with all its subrecords
+Previously it only returned the episode. Now it matches the episode create api end point
+
+#### Episode/Patient links in admin
+In the admin, episodes and patients lists now have links to the patient detail pages.
+
+#### User data for the client
+
+Adds a `User` Angular service that enables applications to use user data.
+Also adds some directives to make it easy to render User names and avatars.
+
+#### Episode.getFullName()
+
+Adds a utility method to the `Episode` service that returns a human readable patient name.
+
+#### Plugin.get_javascripts, Plugin.get_styles
+
+Enhances the API available for plugins to include javascript and css by adding methods on
+`opal.core.plugins.OpalPlugin`
+
+#### 'element_type' argument for the form template tags
+
+Numeric database fields are now set as the html5 type="number" when rendering
+them with the forms templatetag library. This means on mobile devices it will
+bring up the numeric keypad. The element type can now be set via the template
+tag API with the 'element_type' argument.
+
+#### OPAL_LOGO_PATH
+
+This new setting allows applications to set the path at which the app logo is served.
+If `OPAL_LOGO_PATH` is set, the value is passed to the `{% static %}` templatetag to set
+the `src` atribute of an image in the default application header and login screen.
+
+#### Inactive episodes in PatientLists
+
+Changes the behaviour of `opal.core.PatientList.to_dict` to serialise inactive
+episodes by default rather than filtering by Episode.active == True.
+
+`opal.core.TaggedPatientList.to_dict` continues to filter by Episode.active ==
+True by default.
+
+#### Notice of future removals
+
+The context variables `brand_name` `settings` and `extra_application` in `opal.views.IndexView`
+are no longer helpful thanks to the settings context processor. These will be removed in
+0.9.0 and emit warnings until then.
+
+#### Misc changes
+
+Adds a new filter - `underscore-to-spaces` for removing underscores from strings.
+
+The options for `SymptomComplex.duration` have moved from the default form template to a choices
+declaration on the model. These are scheduled to move again to a lookuplist.
+
+The default value of `Subrecord.get_display_name` now uses Django `Meta.verbose_name`.
+
+#### Minor fixes
+
+Fixes a bug where the allergies form rendered the provisional field twice
+
+#### Updates to the Dependency Graph
+
+Upgrades Font Awesome from 4.3.0 -> 4.7.0
+Upgrades Jinja2 from 2.8 -> 2.9.6
+
 ### 0.8.1 (Minor Release)
 
 #### Cookies for the future

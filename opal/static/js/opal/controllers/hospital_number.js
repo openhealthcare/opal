@@ -39,7 +39,7 @@ angular.module('opal.controllers').controller(
   				controller: 'AddEpisodeCtrl',
   				resolve: {
   					referencedata: function(Referencedata) {
-                        return Referencedata;
+                        return Referencedata.load();
                     },
   					demographics: function() {
   						return demographics
