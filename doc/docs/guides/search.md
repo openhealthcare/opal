@@ -15,15 +15,26 @@ The backend takes in a dictionary with the following fields
 }
 
 
+### The Advanced search interface
+
+The Opal advanced search interface at `/#/extract` allows users to specify rules by which to query for episodes.
+
+By default this allows users to construct simple logical queries based on the values of any subrecord field.
+
+The interface respects the types of fields - for instance using before/after for date fields or equals/contains
+for text fields.
+
+This screen also allows users to download episode data for the cohort that matches the specified rules.
+
 ### Custom Search Rules
 
-The Opal search allows you to write a custom rule, for example if you don't want to query by a subrecord.
+These rules are extensible, allowing custom rules that perform more advanced queries to be inserted.
 
 #### opal.core.search.SearchRule
-Is a [discoverable](../guides/discoverable.md). A SearchRule a query that appears like a normal subrecord
-query in the interface.
 
-It is defined with a bunch of search rules queries that appear like subrecord model fields in the
+Is a [discoverable](../guides/discoverable.md).
+
+It is defined with a group of SearchRuleFields that appear like subrecord model fields in the
 front end.
 
 The SearchRuleField has a query method that returns a list of Episodes.
@@ -58,6 +69,3 @@ class MyCustomQuery(SearchRule):
     display_name = "My Custom Query"
     fields = (SomeField,)
 ```
-
-
-Here Along with subrecords, there will be "My Custom Query" in the advanced search page's first query column. When its selected the user will be givena  second query showing "Some Field" and then given the option of before/after and a date picker.
