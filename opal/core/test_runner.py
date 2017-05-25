@@ -73,6 +73,10 @@ def _run_js_tests(args):
     """
     write("Running Javascript Unit Tests")
     env = os.environ.copy()
+
+    # used by the karma config file where to find the opal karma defaults
+    env["OPAL_LOCATION"] = args.opal_location
+
     if TRAVIS:
         karma = './node_modules/karma/bin/karma'
     else:
