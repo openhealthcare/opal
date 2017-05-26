@@ -152,7 +152,7 @@
                                         tooltip-trigger="focus"
                                         ng-keypress="$event.keyCode == 13 && search()"
                                         tooltip-placement="top" uib-tooltip="4. Select one of the below">
-                                    <option ng-repeat="i in symptom_list track by $index">[[ i ]]</option>
+                                    <option ng-repeat="i in query.lookup_list track by $index">[[ i ]]</option>
                                 </select>
                             </span>
                         </div>
@@ -198,6 +198,18 @@
                       <span ng-show="isBoolean(selectedInfo.column, selectedInfo.field)">
                         [True/False]
                       </span>
+                      <span ng-show="isSelect(selectedInfo.column, selectedInfo.field)">
+
+                        <div ng-show="selectedInfo.lookup_list && selectedInfo.lookup_list.length">
+                          [a
+                          <a href=""
+                             class="orange-link"
+                             ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: findField(selectedInfo.column, selectedInfo.field).lookup_list, lookuplist: selectedInfo.lookup_list })">
+                            [[ findField(selectedInfo.column, selectedInfo.field).lookup_list | underscoreToSpaces ]]
+                          </a>]
+                        </div>
+                      </span>
+                      <span ng-show
                       <span ng-show="isText(selectedInfo.column, selectedInfo.field)">
                         [Text]
                         <div ng-show="selectedInfo.lookup_list && selectedInfo.lookup_list.length">
