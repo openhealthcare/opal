@@ -172,6 +172,12 @@ class SerialisableFieldsTestCase(OpalTestCase):
             self.assertEqual(result, "hound")
             get_api_name.assert_called_once_with()
 
+    def test_get_lookup_list_api_name_when_none(self):
+        # when we're not in a M2M field or a FK or FT field then
+        # then we should just return None
+        result = test_models.HoundOwner.get_lookup_list_api_name("name")
+        self.assertIsNone(result)
+
 
 class ToDictMixinTestCase(OpalTestCase):
     def setUp(self):
