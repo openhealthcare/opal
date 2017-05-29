@@ -6,7 +6,7 @@ contain concrete implementations of these models in the application.
 
 ## Common Metadata fields
 
-All subrecords will contain the following fields, which are not repreated individually
+All subrecords will contain the following fields, which are not repeated individually
 
 
 Field|Type|Length

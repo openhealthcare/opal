@@ -21,7 +21,7 @@ If you want to contribute an enhancement or fix to Opal:
 run both python and javascript tests, as well as generate HTML code coverage reports.)
 * Update the Opal documentation to be
 * Commit the changes and push to your fork
-* Submi a pull request to Opal
+* Submit a pull request to Opal
 
 At this stage, we will assign someone to review your changes before merging. We might ask you to make some changes to your pull request before
 merging, but in general, we are biased towards accepting contributions from the community.

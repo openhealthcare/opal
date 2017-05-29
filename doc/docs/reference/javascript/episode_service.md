@@ -57,7 +57,7 @@ Example usage:
 Takes a string, opens a modal from which the user can create a new subrecord of type `name`.
 
 ```js
-epiode.recordEditor.newItem('diagnosis'):
+episode.recordEditor.newItem('diagnosis'):
 // -> Opens a modal with the diagnosis form and will create a new diagnosis on save
 ```
 

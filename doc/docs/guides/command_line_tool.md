@@ -53,4 +53,4 @@ projects that use different versions of Opal or plugins. It will assume that git
 based requirements will be installed in development via `python setup.py develop`.
 
 This command will parse your project's `requirements.txt`, and then ensure that any
-Github sources are checked out loclaly to the branch specified therein.
+Github sources are checked out locally to the branch specified therein.

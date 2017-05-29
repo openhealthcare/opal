@@ -29,7 +29,7 @@ Keywords:
 
 ### {% record_timeline ... %}
 
-Similar to `record_panel`, `record_timeline` renders a penel for a given record as a timeline - particularly
+Similar to `record_panel`, `record_timeline` renders a panel for a given record as a timeline - particularly
 useful for subrecord types where the date is a key field.
 
     {% load panels %}

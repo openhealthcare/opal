@@ -28,7 +28,7 @@ We can then create clinics in any installed app, and they will be available from
     class OutpatientsClinic(Clinic):
         name = 'Outpatients'
 
-        # Add your custom clnic functionality here e.g.
+        # Add your custom clinic functionality here e.g.
         def book_appointment(self, date, patient):
             pass
 
@@ -58,7 +58,7 @@ There are some restricted namespaces for these...
 
 ### Adding APIs
 
-Opal uses Django Rest Framweork to provide APIs, and you may add to these from your plugin.
+Opal uses Django Rest Framework to provide APIs, and you may add to these from your plugin.
 By convention, APIs live in `yourplugin/api.py`. You are expected to provide a
 `rest_framework.viewsets.ViewSet` subclass, which you then detail as the `.apis` attribute
 of your plugin.
@@ -81,7 +81,7 @@ class YourPlugin(OpalPlugin):
     ]
 ```
 
-These APIs will then be available and self-documenting fom the standard Opal url `/api/v0.1/`
+These APIs will then be available and self-documenting from the standard Opal url `/api/v0.1/`
 
 ### Permissioning
 
