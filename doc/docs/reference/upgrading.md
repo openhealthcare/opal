@@ -160,7 +160,7 @@ refactoring to use the new `recordEditor` API.)
 
 The signatures of Flow `enter` and `exit` methods has changed to no longer accept
 options as a positional argument, and enter/exit controllers will no longer be initialized
-with access to options as a resovled provider. They will have access to either/both of
+with access to options as a resolved provider. They will have access to either/both of
 `referencedata` and `metadata` so if your application includes custom flow controllers that
 use `options` you will need to refactor these to use the new x-data arguments instead.
 
@@ -350,7 +350,7 @@ application's requirements file.
 #### Tags
 
 As of 0.5.5, old tags in Opal are stored directly on the Tagging model rather than via
-Djano Reversion. We can import those old tags by doing the following.
+Django Reversion. We can import those old tags by doing the following.
 
     $ python manage.py shell
 

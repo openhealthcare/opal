@@ -75,7 +75,7 @@ A python iterable of items to add to the main menu of our application.
 
 A Python iterable of templates to include as actions - e.g. additional buttons to add to the
 context of a detail, list or other view. These are visible everywhere by default, so care should
-be taken to ensire appropriate show/hide logic is present.
+be taken to ensure appropriate show/hide logic is present.
 
 - - -
 

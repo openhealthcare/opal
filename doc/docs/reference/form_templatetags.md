@@ -71,7 +71,7 @@ Keywords:
 * `enter` expression to evaluate if the user presses return when in this input
 * `maxlength` maximum number of characters for this input. Will render the form invalid and display help text if exceeded.
 * `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html element
-* `element_type` If this exists it sets the input 'type' on the html tag. For numeric fields set by the 'field' paramenter this will default to number. Otherwise it will just default to 'text'.
+* `element_type` If this exists it sets the input 'type' on the html tag. For numeric fields set by the 'field' parameter this will default to number. Otherwise it will just default to 'text'.
 
 
 #### Inputs with units
@@ -140,7 +140,7 @@ If its required, it will set as a required field. If its a CharField with a max 
 
 If the field is a free text or foreign key we will infer the lookup list.
 
-Alternatively if the field has choices attatched to it we will infer the choices into the field.
+Alternatively if the field has choices attached to it we will infer the choices into the field.
 
 ```html
 {% input field="Allergies.drug" %}

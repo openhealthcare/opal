@@ -44,7 +44,7 @@ Opal uses
 [Django Rest Framework](http://www.django-rest-framework.org/) (DRF) to
 provide APIs. DRF ships with multiple authentication
 mechanisms which are highly configurable. By default, Opal applications (e.g. created with
-the Opal scaffolding) will enable Sesison and Token based authentication.
+the Opal scaffolding) will enable Session and Token based authentication.
 
 More details on DRF authentication are available in
 [their excellent documentation](http://www.django-rest-framework.org/api-guide/authentication/).

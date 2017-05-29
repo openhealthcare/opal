@@ -2,7 +2,7 @@
 
 The `opal.models.Episode` class represents an episode of care for a patient. This can be either
 an inpatient stay, an outpatient treatment, a telephone liaison, an appointment at a clinic,
-or any other arbitrarially defined period of care.
+or any other arbitrarily defined period of care.
 
 ### Fields
 
@@ -10,7 +10,7 @@ or any other arbitrarially defined period of care.
 
 The category of this episode - e.g. inpatient, outpatient et cetera.
 This defaults to whatever is set on your application's subclass of
-`opal.core.application.OpalApplication` - which itseflf defaults to 'inpatient'.
+`opal.core.application.OpalApplication` - which itself defaults to 'inpatient'.
 
 #### Episode.patient
 
