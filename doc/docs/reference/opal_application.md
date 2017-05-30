@@ -12,7 +12,7 @@ Returns an iterator of all the of the [plugins](/guides/plugins/) and the curren
 
 ## OpalApplication
 
-The base class for your main application entrypoints is opal.core.application.OpalApplication.
+The base class for your main application entry point is opal.core.application.OpalApplication.
 
 You must subclass this in order for Opal to discover your application.
 
@@ -61,7 +61,7 @@ Classmethod API for OpalApplication instances:
 
 #### OpalApplication.get_core_javascripts(namespace)
 
-Return a list of the core javascript files specified within a given namespace. These wil be
+Return a list of the core javascript files specified within a given namespace. These will be
 relative paths ready for staticfiles.
 
 ```python
@@ -71,7 +71,7 @@ application.get_core_javascripts('opal.utils')
 
 #### OpalApplication.get_javascripts()
 
-Return a list of the application's javasctipts as paths to them ready for staticfiles.
+Return a list of the application's javascripts as paths to them ready for staticfiles.
 Defaults to returning the `OpalApplication.javascripts` property.
 
 ```python

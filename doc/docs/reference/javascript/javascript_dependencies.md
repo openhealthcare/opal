@@ -1,7 +1,7 @@
-## Opal Javscript Dependencies
+## Opal Javascript Dependencies
 
 Opal makes use of a number of upstream dependencies which are available for
-devleopers to use in building applications.
+developers to use in building applications.
 
 |
 -|-

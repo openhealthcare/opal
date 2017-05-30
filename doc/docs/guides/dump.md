@@ -36,7 +36,7 @@ Effectively this defaults to camel_case_to_underscore() on the class name.
 
 ### _sort
 
-_sort names a field by which we would like to sorth the display of subrecords.
+_sort names a field by which we would like to sort the display of subrecords.
 
 ### _read_only
 
