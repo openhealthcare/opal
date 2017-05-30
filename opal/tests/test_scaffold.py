@@ -6,6 +6,7 @@ import subprocess
 
 from mock import patch, MagicMock, Mock
 import ffs
+import opal
 
 from django.conf import settings
 
@@ -95,6 +96,15 @@ class StartpluginTestCase(OpalTestCase):
         scaffold.start_plugin(self.args, self.path)
         os.assert_any_call('cd opal-testplugin; git init')
 
+    def test_creates_requirements(self, os):
+        rpath = 'opal-testplugin/requirements.txt'
+        requirements = self.path/rpath
+        scaffold.start_plugin(self.args, self.path)
+        self.assertTrue(bool(requirements))
+        with open(requirements) as r:
+            contents = r.read()
+            self.assertIn('opal=={}'.format(opal.__version__), contents)
+
 @patch('subprocess.check_call')
 @patch('os.system')
 class StartprojectTestCase(OpalTestCase):
@@ -133,7 +143,8 @@ class StartprojectTestCase(OpalTestCase):
                 rnd.return_value = 'foobarbaz'
                 scaffold.start_project(self.args, self.path)
                 interpolate.assert_any_call(self.path/'testapp', name='testapp',
-                                            secret_key='foobarbaz')
+                                            secret_key='foobarbaz',
+                                            version=opal.__version__)
 
     def test_settings_is_our_settings(self, os, subpr):
         scaffold.start_project(self.args, self.path)
@@ -219,6 +230,14 @@ class StartprojectTestCase(OpalTestCase):
     def test_initialize_git(self, os, subpr):
         scaffold.start_project(self.args, self.path)
         os.assert_any_call('cd testapp; git init')
+
+    def test_creates_requirements(self, os, subpr):
+        scaffold.start_project(self.args, self.path)
+        requirements = self.path/'testapp/requirements.txt'
+        self.assertTrue(bool(requirements))
+        with open(requirements) as r:
+            contents = r.read()
+            self.assertIn('opal=={}'.format(opal.__version__), contents)
 
 
 @patch("ffs.Path.__lshift__")
