@@ -17,7 +17,7 @@ def menu(context):
     """
     context = copy.copy(context)
     app = application.get_app()
-    menu = app.get_menu(user=context.get('user', None))
+    menu = app.get_menu(user=context['user'])
 
     context.dicts.append({
         'menu': menu,
