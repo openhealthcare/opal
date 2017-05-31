@@ -9,7 +9,10 @@ class WarningsTestCase(OpalTestCase):
     def test_warning(self, warn):
         tpl = Template('{% load template_warnings %}{% warn "interesting" %}')
         tpl.render(Context({}))
-        self.assertEqual(warn.call_args_list[1][0][0], '"interesting"')
+        # django calls warning a lot, so lets make sure that
+        # our call is used at least once
+        all_args = [i[0][0] for i in warn.call_args_list]
+        self.assertIn('"interesting"', all_args)
 
     def test_warning_error(self, warn):
         with self.assertRaises(ValueError) as err:
