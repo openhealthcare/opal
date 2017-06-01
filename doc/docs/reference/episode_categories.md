@@ -26,6 +26,6 @@ Returns the Stop date of this episode type
 
 ## InpatientEpisode
 
-This is the defualt EpisodeCategory imlpementation - applications started with Opal's scaffolding
+This is the default EpisodeCategory imlpementation - applications started with Opal's scaffolding
 scripts will use this as the `OpalApplication.default_episode_category`. It sets the detail template to
 `detail/inpatient.html`

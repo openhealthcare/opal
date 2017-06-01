@@ -228,11 +228,16 @@ class SerialisableFields(object):
     @classmethod
     def get_lookup_list_api_name(cls, field_name):
         lookup_list = None
-        if cls._get_field_type(field_name) == ForeignKeyOrFreeText:
+        field_type = cls._get_field_type(field_name)
+        if field_type == ForeignKeyOrFreeText:
             fld = getattr(cls, field_name)
             lookup_list = camelcase_to_underscore(
-                fld.foreign_model.__name__
+                fld.foreign_model.get_api_name()
             )
+        elif field_type == models.fields.related.ManyToManyField:
+            related_model = getattr(cls, field_name).field.related_model
+            if issubclass(related_model, lookuplists.LookupList):
+                return related_model.get_api_name()
         return lookup_list
 
     @classmethod

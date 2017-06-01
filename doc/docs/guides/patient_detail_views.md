@@ -34,7 +34,7 @@ Record Panels.
 
 ### Custom Patient Detail Views
 
-Sometimes we also need to display information about a patient across multiple episodes, or simlply
+Sometimes we also need to display information about a patient across multiple episodes, or simply
 a particular view of one episode. For instance, you might like to have a specific view for showing
 all of the lab results for a patient, which would be overwhelming were they all displayed in the
 episode detail view.

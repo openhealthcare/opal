@@ -63,7 +63,7 @@ This checks the form for valid on click.
 
 If the form is then not valid. It will not call the second function, but mark the form as submitted and disable the button.
 
-It will watch for the form to become valid and undisable the button when that happens.
+It will watch for the form to become valid and enable the button when that happens.
 
 If the form is valid, it will allow the ng-click function to be called.
 
