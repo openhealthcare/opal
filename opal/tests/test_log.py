@@ -17,7 +17,7 @@ class LogOutputTestCase(OpalTestCase):
         logger.error('confidential error')
         self.assertTrue(send_mail.called)
         expected_subject = "Amazing Opal App error"
-        expected_body = "censored"
+        expected_body = "Potentially identifiable data suppressed"
         call_args = send_mail.call_args
         self.assertEqual(expected_subject, call_args[0][0])
         self.assertIn(expected_body, call_args[0][1])
@@ -28,7 +28,7 @@ class LogOutputTestCase(OpalTestCase):
         logger.error('%s error', "confidential")
         self.assertTrue(send_mail.called)
         expected_subject = "Amazing Opal App error"
-        expected_body = "censored"
+        expected_body = "Potentially identifiable data suppressed"
         call_args = send_mail.call_args
         self.assertEqual(expected_subject, call_args[0][0])
         self.assertIn(expected_body, call_args[0][1])
@@ -49,7 +49,7 @@ class LogOutputTestCase(OpalTestCase):
         emailer.emit(record)
         self.assertEqual(
             emitter.call_args[0][0].exc_text,
-            "from some_file.py:20\nsent to host None on application Amazing Opal App from user testuser with GET"
+            "Exception raised at some_file.py:20\nRequest to host None on application Amazing Opal App from user testuser with GET"
         )
 
     @mock.patch('opal.core.log.AdminEmailHandler.emit')
@@ -74,7 +74,7 @@ class LogOutputTestCase(OpalTestCase):
             emailer.emit(record)
         self.assertEqual(
             emitter.call_args[0][0].exc_text,
-            "from some_file.py:20\nsent to host somewhere on application Amazing Opal App from user anonymous with GET"
+            "Exception raised at some_file.py:20\nRequest to host somewhere on application Amazing Opal App from user anonymous with GET"
         )
 
     def test_no_email_on_info(self, send_mail, stream_handler):
