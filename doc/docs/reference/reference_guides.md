@@ -21,6 +21,7 @@ The following reference guides are available:
 [opal.core.patient_lists](patient_list.md)|Patient Lists - defining different types of list|
 [opal.core.plugin](plugin.md)| Plugins - defining plugins to package reusable functionality
 [opal.core.menus](core_menus.md)| Menus - declaring application menus
+[opal.core.log](core_log.md)| Log Helpers - custom email error loggers
 
 ### Angular Services
 |
