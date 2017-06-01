@@ -30,14 +30,14 @@ class OpalPlugin(discoverable.DiscoverableFeature):
         """
         Return the urls
         """
-        return klass.urls
+        return [u for u in klass.urls]
 
     @classmethod
     def get_apis(klass):
         """
         Return the apis
         """
-        return klass.apis
+        return [a for a in klass.apis]
 
     @classmethod
     def directory(cls):
@@ -51,6 +51,20 @@ class OpalPlugin(discoverable.DiscoverableFeature):
         Given a USER, return a list of extra roles that this user has.
         """
         return {}
+
+    @classmethod
+    def get_styles(klass):
+        """
+        Return the stylesheets for our plugin
+        """
+        return [s for s in klass.stylesheets]
+
+    @classmethod
+    def get_javascripts(klass):
+        """
+        Return the javascripts for our plugin
+        """
+        return [j for j in klass.javascripts]
 
 
 # TODO 0.9.0: Remove these

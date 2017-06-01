@@ -58,7 +58,7 @@ class ModelColumn(Column):
             patient_list=self.patient_list()
         )
         self.detail_template_path = model.get_detail_template(
-            patient_list=self.patient_list()
+            prefixes=self.patient_list().get_template_prefixes()
         )
 
     def to_dict(self, **kwargs):
@@ -127,8 +127,8 @@ class PatientList(discoverable.DiscoverableFeature,
         return [self.template_name]
 
     def to_dict(self, user):
-        # only bringing in active seems a sensible default at this time
-        return self.get_queryset(user=user).serialised_active(user)
+        from opal.models import Episode
+        return Episode.objects.serialised(user, self.get_queryset(user=user))
 
 
 class TaggedPatientList(PatientList, utils.AbstractBase):
@@ -191,6 +191,11 @@ class TaggedPatientList(PatientList, utils.AbstractBase):
         if hasattr(self, 'subtag'):
             possible.append("{0}.{1}".format(self.tag, self.subtag))
         return possible
+
+    def to_dict(self, user):
+        # As opposed to general lists, we only ever want active episodes
+        # for tagged lists
+        return self.get_queryset(user=user).serialised_active(user)
 
 
 """

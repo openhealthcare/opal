@@ -234,6 +234,9 @@ OPAL_LOG_OUT_DURATION = OPAL_LOG_OUT_MINUTES*60*1000
 # OPAL_EXTRA_HEADER = ''
 # OPAL_EXTRA_APPLICATION = ''
 
+# Uncomment this to swap out the logo used by this application
+# OPAL_LOGO_PATH = 'img/ohc-trans.png'
+
 # Uncomment this if you want to implement custom dynamic flows.
 # OPAL_FLOW_SERVICE = 'AppFlow'
 
@@ -264,5 +267,5 @@ REST_FRAMEWORK = {
 
 try:
     from local_settings import *
-except:
+except ImportError:
     pass

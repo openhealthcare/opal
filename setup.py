@@ -42,9 +42,9 @@ setup(
     scripts=['bin/opal'],
     install_requires=[
         'ffs>=0.0.8.1',
-        'letter',
-        'jinja2',
-        'requests',
+        'letter==0.4.1',
+        'jinja2==2.9.6',
+        'requests==2.7.0',
         'django==1.8.13',
         'django-reversion==1.8.7',
         'django-axes==1.7.0',

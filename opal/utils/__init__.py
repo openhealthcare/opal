@@ -27,8 +27,6 @@ def stringport(module):
     Given a string representing a python module or path-to-object
     import that module and return it.
     """
-    msg = "Could not import module '%s'\
-                   (Is it on sys.path? Does it have syntax errors?)" % module
     try:
         return importlib.import_module(module)
     except ImportError:
@@ -40,9 +38,9 @@ def stringport(module):
             if hasattr(module, obj):
                 return getattr(module, obj)
             else:
-                raise ImportError(msg)
+                raise
         except ImportError:
-            raise ImportError(msg)
+            raise
 
 
 def _itersubclasses(cls, _seen=None):

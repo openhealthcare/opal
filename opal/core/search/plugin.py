@@ -10,6 +10,7 @@ class SearchPlugin(plugins.OpalPlugin):
     The plugin entrypoint for OPAL's core search functionality
     """
     urls = urls.urlpatterns
+    stylesheets = ["css/search.css"]
     javascripts = {
         'opal.services': [
             'js/search/services/filter.js',

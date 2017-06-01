@@ -56,11 +56,73 @@ class SerialisableFieldsTestCase(OpalTestCase):
     def test_get_field_type(self):
         self.assertEqual(models.ForeignKey, SerialisableModel._get_field_type('patient_id'))
 
+    def test_get_human_readable_type_boolean(self):
+        with patch.object(SerialisableModel, "_get_field") as get_field:
+            get_field.return_value = models.BooleanField()
+            self.assertEqual(
+                SerialisableModel.get_human_readable_type("tree"),
+                "Either True or False",
+            )
+
+    def test_get_human_readable_type_null_boolean(self):
+            with patch.object(SerialisableModel, "_get_field") as get_field:
+                get_field.return_value = models.NullBooleanField()
+                self.assertEqual(
+                    SerialisableModel.get_human_readable_type("tree"),
+                    "Either True, False or None",
+                )
+
+    def test_get_human_readable_type_date_field(self):
+            with patch.object(SerialisableModel, "_get_field") as get_field:
+                get_field.return_value = models.DateField()
+                self.assertEqual(
+                    SerialisableModel.get_human_readable_type("tree"),
+                    "Date",
+                )
+
+    def test_get_human_readable_type_datetime_field(self):
+            with patch.object(SerialisableModel, "_get_field") as get_field:
+                get_field.return_value = models.DateTimeField()
+                self.assertEqual(
+                    SerialisableModel.get_human_readable_type("tree"),
+                    "Date & Time",
+                )
+
+    def test_get_human_readable_type_numeric_field(self):
+        numeric_fields = [
+            models.AutoField,
+            models.BigIntegerField,
+            models.IntegerField,
+            models.FloatField,
+            models.DecimalField
+        ]
+        for numeric_field in numeric_fields:
+            with patch.object(SerialisableModel, "_get_field") as get_field:
+                get_field.return_value = numeric_field()
+                self.assertEqual(
+                    SerialisableModel.get_human_readable_type("tree"),
+                    "Number"
+                )
+
+    def test_get_human_readable_type_reverse_foreign_key_field(self):
+        self.assertEqual(
+            test_models.HatWearer.get_human_readable_type("created_by"),
+            "One of the Users"
+        )
+
+    def test_get_human_readable_type_many_to_many_field(self):
+        self.assertEqual(
+            test_models.HatWearer.get_human_readable_type("hats"),
+            "Some of the Hats"
+        )
+
     def test_build_field_schema(self):
         schema = SerialisableModel.build_field_schema()
         expected = [
             {
                 'model': 'SerialisableModel',
+                'description': None,
+                'enum': None,
                 'lookup_list': None,
                 'type': 'string',
                 'name': 'pid',
@@ -69,6 +131,8 @@ class SerialisableFieldsTestCase(OpalTestCase):
             },
             {
                 'model': 'SerialisableModel',
+                'description': None,
+                'enum': None,
                 'lookup_list': 'hat',
                 'type': 'string',
                 'name': 'hatty',
@@ -77,6 +141,42 @@ class SerialisableFieldsTestCase(OpalTestCase):
             }
         ]
         self.assertEqual(schema, expected)
+
+    def test_build_schema_for_field_name(self):
+        expected_fields = [
+            "name",
+            "title",
+            "type",
+            "lookup_list",
+            "default",
+            "model",
+            "description",
+            "enum"
+        ]
+
+        result = test_models.Colour.build_schema_for_field_name("name")
+        self.assertEqual(set(result), set(expected_fields))
+
+    def test_get_lookup_list_api_name(self):
+        result = test_models.HoundOwner.get_lookup_list_api_name("dog")
+        self.assertEqual(result, "dog")
+
+    def test_get_lookup_list_many_to_many_api_name(self):
+        result = test_models.HatWearer.get_lookup_list_api_name("hats")
+        self.assertEqual(result, "hat")
+
+    def test_get_lookup_list_uses_api_name(self):
+        with patch.object(test_models.Dog, "get_api_name") as get_api_name:
+            get_api_name.return_value = "hound"
+            result = test_models.HoundOwner.get_lookup_list_api_name("dog")
+            self.assertEqual(result, "hound")
+            get_api_name.assert_called_once_with()
+
+    def test_get_lookup_list_api_name_when_none(self):
+        # when we're not in a M2M field or a FK or FT field then
+        # then we should just return None
+        result = test_models.HoundOwner.get_lookup_list_api_name("name")
+        self.assertIsNone(result)
 
 
 class ToDictMixinTestCase(OpalTestCase):
@@ -88,6 +188,7 @@ class ToDictMixinTestCase(OpalTestCase):
             self.model_instance.to_dict(self.user),
             dict(foo="gotten", id=None)
         )
+
 
 class UpdatesFromDictMixinTestCase(OpalTestCase):
     def setUp(self):

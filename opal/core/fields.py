@@ -1,6 +1,18 @@
 from opal.utils import camelcase_to_underscore
-from django.db.models import ForeignKey, CharField
+from django.db import models
 from django.contrib.contenttypes.models import ContentType
+
+
+def is_numeric(field):
+    numeric_fields = (
+        models.IntegerField,
+        models.DecimalField,
+        models.BigIntegerField,
+        models.FloatField,
+        models.PositiveIntegerField
+    )
+
+    return field.__class__ in numeric_fields
 
 
 class ForeignKeyOrFreeText(property):
@@ -13,12 +25,19 @@ class ForeignKeyOrFreeText(property):
     field.  If found, references foreign model in ForeignKey, otherwise stores
     string in CharField.
     """
-    def __init__(self, foreign_model,
-                 related_name=None, verbose_name=None, default=None):
+    def __init__(
+        self,
+        foreign_model,
+        related_name=None,
+        verbose_name=None,
+        help_text=None,
+        default=None
+    ):
         self.foreign_model = foreign_model
         self.related_name = related_name
         self._verbose_name = verbose_name
         self.default = default
+        self.help_text = help_text
 
         # for use in the fields, lookup lists essentially have
         #  a max length based on the char field that's used internally
@@ -40,9 +59,11 @@ class ForeignKeyOrFreeText(property):
         fk_kwargs = dict(blank=True, null=True)
         if self.related_name:
             fk_kwargs['related_name'] = self.related_name
-        fk_field = ForeignKey(self.foreign_model, **fk_kwargs)
+        fk_field = models.ForeignKey(self.foreign_model, **fk_kwargs)
         fk_field.contribute_to_class(cls, self.fk_field_name)
-        ft_field = CharField(max_length=255, blank=True, null=True, default='')
+        ft_field = models.CharField(
+            max_length=255, blank=True, null=True, default=''
+        )
         ft_field.contribute_to_class(cls, self.ft_field_name)
 
     def get_default(self):

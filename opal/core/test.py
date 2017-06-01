@@ -1,5 +1,5 @@
 """
-OPAL Testing utilities
+Opal Testing utilities
 """
 import json
 

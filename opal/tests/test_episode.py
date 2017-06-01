@@ -82,6 +82,13 @@ class EpisodeTest(OpalTestCase):
 
         self.assertEqual(as_dict["stage"], "Active TB")
 
+    def test_get_field_names_to_extract(self):
+        # field names to extract should be the same
+        # as the field names to serialise
+        self.assertEqual(
+            Episode._get_fieldnames_to_serialize(),
+            Episode._get_fieldnames_to_extract()
+        )
 
     @patch('opal.models.episode_subrecords')
     def test_not_bulk_serialisable_episode_subrecords(self, episode_subrecords):

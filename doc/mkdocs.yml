@@ -8,63 +8,89 @@ pages:
   - Reference: reference/reference_guides.md
 
   - Topic Guides:
+      # Opal
       - Component Overview: guides/components_overview.md
       - Command Line tool: guides/command_line_tool.md
+      - Discoverable Features: guides/discoverable.md
       - Plugins: guides/plugins.md
       - Plugin List: guides/plugins_list.md
+
+      # Data and business logic
       - Data Model: guides/datamodel.md
       - Archetypes: guides/archetypes.md
+      - Referencedata: guides/referencedata.md
+      - Metadata: guides/metadata.md
       - Angular Models: guides/working_with_data_in_angular.md
       - Flow: guides/flow.md
       - Roles & Permissions: guides/roles_and_permissions.md
       - Tagging: guides/tagging.md
       - JSON API: guides/json_api.md
-      - Referencedata: guides/referencedata.md
-      - Metadata: guides/metadata.md
-      - Lookup Lists: guides/lookup_lists.md
+
+      # Presentation and templating
       - Templates: guides/templates.md
       - Context Processors: guides/context_processors.md
       - Static Files: guides/static_files.md
       - Forms: guides/forms.md
       - Patient Detail Views: guides/patient_detail_views.md
       - Patient List Views: guides/list_views.md
-      - Discoverable Features: guides/discoverable.md
+
+      # Optional components
       - Search Overview: guides/search.md
       - Django Admin: guides/django_admin.md
+
+      # Working on Opal itself
       - Contributing: guides/contributing.md
       - Development environment: guides/development_environment.md
 
+      # Other guides
+      - Deployment: guides/deployment.md
 
   - Reference:
-      # javscript
-      - reference/javascript/episode_service.md
-      - reference/javascript/patient_service.md
-      - reference/javascript/item_service.md
-      - reference/javascript/loaders.md
-      - reference/javascript/patient_summary_service.md
-      - Search JS Services: reference/javascript/search_js_services.md
-      - Javascript helpers: reference/javascript/javascript_helpers.md
-      - Javascript dependencies: reference/javascript/javascript_dependencies.md
-
       # python
+      # Models
       - The Episode model: reference/episode.md
-      - Episode Categories: reference/episode_categories.md
-      - reference/patient.md
+      - The Patient model: reference/patient.md
       - Subrecords: reference/subrecords.md
+      - UserProfile: reference/user_profile_model.md
       - Mixins: reference/mixins.md
+
+      # Opal Core
       - OpalApplication: reference/opal_application.md
+      - Detail Views: reference/detail_views.md
+      - Episode Categories: reference/episode_categories.md
+      - Schemas: reference/schemas.md
+      - Patient Lists: reference/patient_list.md
       - OpalPlugin: reference/plugin.md
       - Core.Views: reference/core_views.md
+      - Menus: reference/core_menus.md
+
+      # Angular Services
+      - reference/javascript/patient_service.md
+      - reference/javascript/episode_service.md
+      - reference/javascript/item_service.md
+      - reference/javascript/user_service.md
+      - reference/javascript/patient_summary_service.md
+      - Search JS Services: reference/javascript/search_js_services.md
+      - reference/javascript/loaders.md
+
+
+      # Helper libraries
       - Form helpers: reference/form_templatetags.md
       - Panel Template tags: reference/panels_templatetags.md
-      - Schemas: reference/schemas.md
+      - Menu Template tag: reference/menus_templatetags.md
+      - Javascript helpers: reference/javascript/javascript_helpers.md
+
+      # Search
       - Search Queries: reference/search_queries.md
-      - Detail Views: reference/detail_views.md
-      - Patient Lists: reference/patient_list.md
+
       # Misc
+      - Settings: reference/settings.md
       - Changelog: reference/changelog.md
       - Testing: reference/testing.md
+      - Javascript dependencies: reference/javascript/javascript_dependencies.md
       - Upgrading: reference/upgrading.md
+
+
 
 theme: mkdocs
 theme: cerulean
@@ -76,7 +102,7 @@ dev_addr: 0.0.0.0:8965
 include_next_prev: false
 
 extra:
-  version: v0.8.1
+  version: v0.8.2
 
 markdown_extensions:
     - fenced_code

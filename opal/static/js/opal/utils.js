@@ -2,9 +2,7 @@ var OPAL = {};
 if(undefined === version){
     var version = 'test';
 }
-if(undefined === OPAL_FLOW_SERVICE){
-    var OPAL_FLOW_SERVICE = null;
-}
+try { angular.module("opal.config") } catch(err) { /* failed to require */ angular.module('opal.config', [])}
 
 OPAL.module = function(namespace, dependencies){
     dependencies = dependencies || [];
@@ -183,10 +181,8 @@ _indexof = function(elt /*, from*/)
 		}
 		return -1;
 	};
-if (!Array.prototype.indexOf) {
-	Array.prototype.indexOf = _indexof
-}
 
+if (!Array.prototype.indexOf) {	Array.prototype.indexOf = _indexof };
 
 // From http://stackoverflow.com/a/3937924/2463201
 jQuery.support.placeholder = (function(){
@@ -194,29 +190,9 @@ jQuery.support.placeholder = (function(){
 	return 'placeholder' in i;
 })();
 
-
 // Fuck you Internet Explorer 8
-if (typeof String.prototype.trim !== 'function') {
-	String.prototype.trim = function() {
-		return this.replace(/^\s+|\s+$/g, '');
-	}
+_trim = function() {
+	return this.replace(/^\s+|\s+$/g, '');
 }
 
-
-// // From http://stackoverflow.com/a/2897510/2463201
-// jQuery.fn.getCursorPosition = function() {
-//     var self = this;
-// 	var input = self.get(0);
-// 	if (!input) return; // No (input) element found
-// 	if ('selectionStart' in input) {
-// 		// Standard-compliant browsers
-// 		return input.selectionStart;
-// 	} else if (document.selection) {
-// 		// IE
-// 		input.focus();
-// 		var sel = document.selection.createRange();
-// 		var selLen = document.selection.createRange().text.length;
-// 		sel.moveStart('character', -input.value.length);
-// 		return sel.text.length - selLen;
-// 	}
-// }
+if (typeof String.prototype.trim !== 'function') { String.prototype.trim = _trim };

@@ -5,7 +5,7 @@ angular.module('opal.controllers').controller(
         $scope.episode = episode;
 
         $scope.confirm = function(){
-            
+
             $scope.episode.discharge_date = null;
             $scope.episode.save(episode.makeCopy()).then(function(){
                 var location = $scope.episode.location[0].makeCopy();
@@ -15,11 +15,11 @@ angular.module('opal.controllers').controller(
                     $modalInstance.close($scope.episode);
                 });
             });
-        }
+        };
 
         $scope.cancel = function(){
             $modalInstance.close(null);
-        }
-        
+        };
+
     }
 );
