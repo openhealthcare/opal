@@ -1,5 +1,5 @@
 ### 0.8.2.2 (Minor Release)
-Adds in the elCID test runner into opal. This allows one to run send error emails removing any confidential patient data
+Adds a custom email logger. This enables Django error emails which removing any confidential patient data
 
 ### 0.8.2.1 (Minor Release)
 Adds in the karma config to the MANIFEST.in so that we include the karma configs on pip install.
