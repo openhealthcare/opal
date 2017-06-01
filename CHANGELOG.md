@@ -1,3 +1,7 @@
+### 0.8.2.2 (Minor Release)
+Add the allow_add_patient and allow_edit_teams options to the patient lists.
+
+
 ### 0.8.2.1 (Minor Release)
 Adds in the karma config to the MANIFEST.in so that we include the karma configs on pip install.
 
