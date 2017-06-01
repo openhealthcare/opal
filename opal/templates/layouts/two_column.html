@@ -25,6 +25,11 @@
               [[ episode.demographics[0].first_name ]]
               [[ episode.demographics[0].surname ]]
             </h3>
+            <ul class="list-group">
+               <li class="list-group-item">
+                 {% include 'partials/_episode_actions.html' %}
+               </li>
+             </ul>
           </div>
         </div>
         {% block sidebar_panels %}{% endblock %}
