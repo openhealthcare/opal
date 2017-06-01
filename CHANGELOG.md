@@ -1,4 +1,9 @@
+
 ### 0.9.0 (Major Release)
+
+### 0.8.2.1 (Exceedingly Minor Release)
+
+Adds in the karma config to the MANIFEST.in so that we include the karma configs on pip install.
 
 ### 0.8.2 (Minor Release)
 
