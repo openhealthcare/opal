@@ -19,11 +19,15 @@ A custom comparator service to set sort order within a list. Defaults to None.
 
 #### PatientList.allow_add_patient
 
-Whether we should show the add patient button. Defaults to True.
+Whether we should show the add patient button.
+
+Defaults to `True`.
 
 #### PatientList.allow_edit_teams
 
-Whether we should allow the user to edit teams
+Whether we should allow the user to edit teams. 
+
+`Defaults to True`
 
 ## TaggedPatientList
 
