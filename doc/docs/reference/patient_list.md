@@ -16,6 +16,15 @@ How we want to refer to this list on screen to users.
 
 A custom comparator service to set sort order within a list. Defaults to None.
 
+
+#### PatientList.allow_add_patient
+
+Whether we should show the add patient button. Defaults to True.
+
+#### PatientList.allow_edit_teams
+
+Whether we should allow the user to edit teams
+
 ## TaggedPatientList
 
 Tagged Patient Lists inherit from Patient Lists - as such they have all of the same methods and properties
