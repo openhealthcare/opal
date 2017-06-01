@@ -8,13 +8,13 @@ class ConfidentialEmailer(AdminEmailHandler):
         self.include_html = False
 
     def get_brand_name(self):
-        return getattr(settings, "OPAL_BRAND_NAME", "unnamed opal app")
+        return getattr(settings, "OPAL_BRAND_NAME", "Unnamed Opal app")
 
     def format_subject(self, subject):
         return "{} error".format(self.get_brand_name())
 
     def emit(self, record):
-        record.msg = 'censored'
+        record.msg = 'Potentially identifiable data suppressed'
         record.args = []
         detail = ""
         if hasattr(record, "request") and record.request:
@@ -23,7 +23,7 @@ class ConfidentialEmailer(AdminEmailHandler):
             else:
                 user = "anonymous"
 
-            msg = "sent to host {0} on application {1} from user {2} with {3}"
+            msg = "Request to host {0} on application {1} from user {2} with {3}"
 
             detail = msg.format(
                 record.request.META.get("HTTP_HOST"),
@@ -33,7 +33,7 @@ class ConfidentialEmailer(AdminEmailHandler):
             )
         record.request = None
 
-        record.exc_text = "from {0}:{1}".format(
+        record.exc_text = "Exception raised at {0}:{1}".format(
             record.filename,
             record.lineno
         )
