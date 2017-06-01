@@ -147,9 +147,10 @@ class DatabaseQuery(QueryBackend):
             return models.Episode.objects.filter(**filter_kwargs)
         elif issubclass(model, models.PatientSubrecord):
             pats = models.Patient.objects.filter(**filter_kwargs)
-            return models.Episode.objects.filter(
-                patient__in=pats
-            )
+            eps = []
+            for p in pats:
+                eps += list(p.episode_set.all())
+            return eps
 
     def _episodes_for_boolean_fields(self, query, field, contains):
         model = get_model_from_api_name(query['column'])
