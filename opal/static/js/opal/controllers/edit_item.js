@@ -22,7 +22,7 @@ angular.module('opal.controllers').controller(
   	        $scope.editingName = item.episode.demographics[0].first_name + ' ' + episode.demographics[0].surname;
 
             $analytics.eventTrack(item.columnName, {
-              category: "EditItem", label: episode.category_name
+              category: "EditItem", label: episode.category_name, value: "Fred"
             });
 
             $scope.columnName = item.columnName;
