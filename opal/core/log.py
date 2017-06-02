@@ -23,9 +23,9 @@ class ConfidentialEmailer(AdminEmailHandler):
             else:
                 user = "anonymous"
 
-            msg = "Request to host {0} on application {1} from user {2} with {3}"
+            m = "Request to host {0} on application {1} from user {2} with {3}"
 
-            detail = msg.format(
+            detail = m.format(
                 record.request.META.get("HTTP_HOST"),
                 self.get_brand_name(),
                 user,
