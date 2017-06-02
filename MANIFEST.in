@@ -5,3 +5,4 @@ recursive-include opal/core/collaborative/static *
 recursive-include opal/core/collaborative/templates *
 recursive-include opal/core/search/static *
 recursive-include opal/core/search/templates *
+recursive-include opal/tests/js_config *
