@@ -1,5 +1,5 @@
-
 ### 0.9.0 (Major Release)
+Add the allow_add_patient and allow_edit_teams options to the patient lists.
 
 ### 0.8.2.1 (Exceedingly Minor Release)
 
