@@ -35,7 +35,7 @@ The `Episode` service has a convenient API that allows you to open a modal to ed
 a new or existing subrecord.
 
 ```js
-epiode.recordEditor.newItem('diagnosis'):
+episode.recordEditor.newItem('diagnosis'):
 // -> Opens a modal with the diagnosis form and will create a new diagnosis on save
 
 episode.recordEditor.editItem('diagnosis', 0);

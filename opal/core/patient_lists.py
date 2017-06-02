@@ -55,7 +55,7 @@ class ModelColumn(Column):
         self.icon = getattr(model, '_icon', '')
         self.list_limit = getattr(model, '_list_limit', None)
         self.template_path = model.get_display_template(
-            patient_list=self.patient_list()
+            prefixes=self.patient_list().get_template_prefixes()
         )
         self.detail_template_path = model.get_detail_template(
             prefixes=self.patient_list().get_template_prefixes()

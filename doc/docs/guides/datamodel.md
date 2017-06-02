@@ -33,7 +33,7 @@ base class.
 ### Records
 
 A `Subrecord` consists of a collection of fields that constitute a record. For example, one could
-implement a Demograpics `Subrecord` as follows:
+implement a Demographics `Subrecord` as follows:
 
     class Demographics(PatientSubrecord):
         name             = models.CharField(max_length=255, blank=True)

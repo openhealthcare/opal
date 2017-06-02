@@ -73,26 +73,6 @@ class MenuTestCase(OpalTestCase):
         menu = menus.Menu(user=self.user)
         self.assertEqual(menu_items, menu.items)
 
-    def test_sets_items_from_app_dict(self, get_app, plugin_list):
-        with warnings.catch_warnings(record=True):
-            get_app.return_value = self.app
-            plugin_list.return_value = []
-            menu_items = [{'display': 'Display Name'}]
-            self.app.get_menu_items.return_value = menu_items
-            menu = menus.Menu(user=self.user)
-            self.assertEqual('Display Name', menu.items[0].display)
-
-    def test_sets_items_from_plugin_dict(self, get_app, plugin_list):
-        with warnings.catch_warnings(record=True):
-            get_app.return_value = self.app
-            menu_items = [{'display': 'Display Name'}]
-            mock_plugin = MagicMock(name='Plugin')
-            mock_plugin.menuitems = menu_items
-            plugin_list.return_value = [mock_plugin]
-            menu = menus.Menu(user=self.user)
-            self.assertEqual('Display Name', menu.items[0].display)
-
-
     def test_iter_sorts(self, get_app, plugin_list):
         get_app.return_value = self.app
         plugin_list.return_value = []

@@ -18,7 +18,7 @@ by running this command
     $ opal --version
 
 At the start a new project, Opal will bootstrap the initial project structure, including
-a Djano project, some core datamodels (complete with JSON APIs) and a general application structure.
+a Django project, some core datamodels (complete with JSON APIs) and a general application structure.
 
 From the commandline:
 
@@ -88,7 +88,7 @@ front-end Angular single page apps.
 Most clinical services will need at some stage to generate a list of patients - so Opal provides
 this functionality enabled by default.
 
-The [list view](/guides/list_views/) is a spreadhseet-style list of patients - try navigating
+The [list view](/guides/list_views/) is a spreadsheet-style list of patients - try navigating
 to the list view and adding a patient with the `add patient` button.
 
 <img src="/img/tutorial-list.png" width="600" style="margin: 12px auto; border: 1px solid black;"/>
@@ -142,7 +142,7 @@ Now let's import the data:
     python manage.py load_lookup_lists
 
 Now refresh your application and try adding a new diagnosis to your patient. As you start to type in
-the condition field, you'l see that the conditions we just imported appear as suggestions:
+the condition field, you'll see that the conditions we just imported appear as suggestions:
 
 <img src="/img/tutorial-conditions.png" style="margin: 12px auto; border: 1px solid black;"/>
 

@@ -26,19 +26,6 @@ describe('UserProfile', function(){
         spyOn($log, "warn");
     });
 
-    it('then should call through to load', function(){
-        spyOn(UserProfile, "load").and.callThrough();
-        var result;
-        $httpBackend.whenGET('/api/v0.1/userprofile/').respond(profile_data);
-        UserProfile.then(function(r){ result = r; });
-        $rootScope.$apply();
-        $httpBackend.flush();
-        expect(result.roles.tropical).toEqual(result.roles.tropical);
-        expect($log.warn).toHaveBeenCalledWith(
-          'This API is being deprecated and will be removed in 0.9.0. Please use UserProfile.load()'
-        );
-    });
-
     it('should alert if the HTTP request errors', function(){
         UserProfile.load();
         $httpBackend.expectGET('/api/v0.1/userprofile/').respond(500, 'NO');

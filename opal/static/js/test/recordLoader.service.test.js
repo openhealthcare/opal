@@ -32,20 +32,6 @@ describe('recordLoader', function(){
         spyOn($log, "warn");
     });
 
-    it('then should call through to load', function(){
-        spyOn(recordLoader, "load").and.callThrough();
-        var result;
-        $httpBackend.whenGET('/api/v0.1/record/').respond(recordSchema);
-        recordLoader.then(function(r){ result = r; });
-        $rootScope.$apply();
-        $httpBackend.flush();
-        expect(result).toEqual(recordSchema);
-        expect($rootScope.fields).toEqual(recordSchema);
-        expect($log.warn).toHaveBeenCalledWith(
-          'This API is being deprecated and will be removed in 0.9.0. Please use recordLoader.load()'
-        );
-    });
-
     it('should fetch the record data', function(){
         var result;
         $httpBackend.whenGET('/api/v0.1/record/').respond(recordSchema);

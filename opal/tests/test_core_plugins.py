@@ -2,7 +2,6 @@
 Unittests for opal.core.plugins
 """
 import copy
-import warnings
 
 from mock import patch
 
@@ -74,24 +73,3 @@ class OpalPluginTestCase(OpalTestCase):
         js_orig = copy.copy(js)
         js.append('icanhazcheezburgerify.js')
         self.assertEqual(js_orig, self.plugin1.get_javascripts())
-
-
-class RegisterPluginsTestCase(OpalTestCase):
-
-    def test_register_warns(self):
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter('always')
-            plugins.register(None)
-            assert len(w) == 1
-            assert issubclass(w[-1].category, DeprecationWarning)
-            assert "no longer required" in str(w[-1].message)
-
-
-class PluginsPluginsTestCase(OpalTestCase):
-    def test_plugins_warns(self):
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter('always')
-            plugins.plugins()
-            assert len(w) == 1
-            assert issubclass(w[-1].category, DeprecationWarning)
-            assert "slated for removal" in str(w[-1].message)

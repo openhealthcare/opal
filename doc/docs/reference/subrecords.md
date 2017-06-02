@@ -28,7 +28,7 @@ String that provides the name of the icon to use for forms, column headings etc.
 #### Subrecord._is_singleton
 
 Boolean that determines whether this subrecord is a singleton.
-There may only be one of each singleton Subrecord, which is created whth the parent.
+There may only be one of each singleton Subrecord, which is created with the parent.
 
 ```python
     class Demographics(PatientSubrecord):

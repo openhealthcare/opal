@@ -3,7 +3,6 @@ Unittests for opal.models
 """
 import os
 import datetime
-import warnings
 from mock import patch, MagicMock
 
 from django.conf import settings
@@ -249,56 +248,6 @@ class SubrecordTestCase(OpalTestCase):
         ])
         self.assertEqual(result, "found")
 
-    def test_build_template_selection_patient_list(self):
-        with warnings.catch_warnings(record=True):
-            patient_list = MagicMock()
-            patient_list.get_template_prefixes.return_value = ["trees"]
-            result = Subrecord._build_template_selection(
-                suffix=".html",
-                prefix="some_prefix",
-                patient_list=patient_list
-            )
-            self.assertEqual(
-                [
-                    'some_prefix/trees/subrecord.html',
-                    'some_prefix/subrecord.html'
-                ],
-                result
-            )
-
-    @patch('opal.models.find_template')
-    def test_build_template_selection_episode_type(self, find):
-        with warnings.catch_warnings(record=True):
-            episode_type = "Trees"
-            result = Subrecord._build_template_selection(
-                suffix=".html",
-                prefix="some_prefix",
-                episode_type=episode_type
-            )
-            self.assertEqual(
-                [
-                    'some_prefix/trees/subrecord.html',
-                    'some_prefix/subrecord.html'
-                ],
-                result
-            )
-
-    def test_build_template_selection_value_error(self):
-        with self.assertRaises(ValueError) as v:
-            with warnings.catch_warnings(record=True):
-                episode_type = "Trees"
-                patient_list = "Shrubbery"
-                Subrecord._build_template_selection(
-                    suffix=".html",
-                    prefix="some_prefix",
-                    episode_type=episode_type,
-                    patient_list=patient_list
-                )
-            self.assertEqual(
-                str(v),
-                "you can not get both a patient list and episode type"
-            )
-
     def test_get_display_name_from_property(self):
         self.assertEqual('Wearer of Hats', HatWearer.get_display_name())
 
@@ -341,39 +290,6 @@ class SubrecordTestCase(OpalTestCase):
         Subrecord.get_display_template()
         find.assert_called_with(['records/subrecord.html'])
 
-    @patch('opal.models.find_template')
-    def test_display_template_list(self, find):
-        patient_list = MagicMock()
-        patient_list.get_template_prefixes = MagicMock(return_value=["test"])
-        Subrecord.get_display_template(patient_list=patient_list)
-        find.assert_called_with([
-            'records/test/subrecord.html',
-            'records/subrecord.html',
-        ])
-
-    @patch('opal.models.find_template')
-    def test_display_template_list_and_prefix(self, find):
-        patient_list = MagicMock()
-        patient_list.get_template_prefixes = MagicMock(return_value=["test"])
-        Subrecord.get_display_template(
-            prefixes=["onions"],
-            patient_list=patient_list
-        )
-        find.assert_called_with([
-            'records/onions/subrecord.html',
-            'records/test/subrecord.html',
-            'records/subrecord.html'
-        ])
-
-    @patch('opal.models.find_template')
-    def test_display_template_episode_type(self, find):
-        with warnings.catch_warnings(record=True):
-            Subrecord.get_display_template(episode_type='Inpatient')
-            find.assert_called_with([
-                'records/inpatient/subrecord.html',
-                'records/subrecord.html',
-            ])
-
     def test_detail_template_does_not_exist(self):
         self.assertEqual(None, Subrecord.get_detail_template())
 
@@ -384,49 +300,6 @@ class SubrecordTestCase(OpalTestCase):
             'records/subrecord_detail.html',
             'records/subrecord.html'
         ])
-
-    @patch('opal.models.find_template')
-    def test_detail_template_list(self, find):
-        with warnings.catch_warnings(record=True):
-            patient_list = MagicMock()
-            patient_list.get_prefixes.return_value = []
-            Subrecord.get_detail_template(patient_list=patient_list)
-            find.assert_called_with([
-                'records/subrecord_detail.html',
-                'records/subrecord.html'
-            ])
-
-    @patch('opal.models.find_template')
-    def test_detail_template_list_and_prefix(self, find):
-        patient_list = MagicMock()
-        patient_list.get_template_prefixes = MagicMock(return_value=["test"])
-        Subrecord.get_detail_template(
-            prefixes=["onions"],
-            patient_list=patient_list
-        )
-        find.assert_called_with([
-            'records/onions/subrecord_detail.html',
-            'records/onions/subrecord.html',
-            'records/test/subrecord_detail.html',
-            'records/test/subrecord.html',
-            'records/subrecord_detail.html',
-            'records/subrecord.html'
-        ])
-
-    @patch('opal.models.find_template')
-    def test_detail_template_episode_type(self, find):
-        with warnings.catch_warnings(record=True):
-            find.return_value = None
-            Subrecord.get_detail_template(episode_type='Inpatient')
-            self.assertEqual(
-                find.call_args_list[0][0][0],
-                [
-                    'records/inpatient/subrecord_detail.html',
-                    'records/inpatient/subrecord.html',
-                    'records/subrecord_detail.html',
-                    'records/subrecord.html'
-                ]
-            )
 
     @patch('opal.models.find_template')
     def test_detail_template_prefixes(self, find):
@@ -455,40 +328,6 @@ class SubrecordTestCase(OpalTestCase):
         self.assertEqual(url, '/templates/forms/subrecord.html')
 
     @patch('opal.models.find_template')
-    def test_form_template_list(self, find):
-        with warnings.catch_warnings(record=True):
-            patient_list = MagicMock()
-            patient_list.get_template_prefixes = MagicMock(return_value=["test"])
-            Subrecord.get_form_template(patient_list=patient_list)
-            find.assert_called_with([
-                'forms/test/subrecord_form.html',
-                'forms/subrecord_form.html'
-            ])
-
-    @patch('opal.models.find_template')
-    def test_form_template_list_and_prefix(self, find):
-        patient_list = MagicMock()
-        patient_list.get_template_prefixes = MagicMock(return_value=["test"])
-        Subrecord.get_form_template(
-            prefixes=["onions"],
-            patient_list=patient_list
-        )
-        find.assert_called_with([
-            'forms/onions/subrecord_form.html',
-            'forms/test/subrecord_form.html',
-            'forms/subrecord_form.html'
-        ])
-
-    @patch('opal.models.find_template')
-    def test_form_template_episode_type(self, find):
-        with warnings.catch_warnings(record=True):
-            Subrecord.get_form_template(episode_type='Inpatient')
-            find.assert_called_with([
-                'forms/inpatient/subrecord_form.html',
-                'forms/subrecord_form.html'
-            ])
-
-    @patch('opal.models.find_template')
     def test_form_template_prefixes(self, find):
         Subrecord.get_form_template(prefixes=['onions'])
         find.assert_called_with([
@@ -505,61 +344,6 @@ class SubrecordTestCase(OpalTestCase):
         modal.return_value = None
         Subrecord.get_modal_template()
         find.assert_called_with(['modals/subrecord_modal.html'])
-
-    @patch('opal.models.find_template')
-    def test_modal_template_list_and_prefix(self, find):
-        patient_list = MagicMock()
-        patient_list.get_template_prefixes = MagicMock(return_value=["test"])
-        Subrecord.get_modal_template(
-            prefixes=["onions"],
-            patient_list=patient_list
-        )
-        find.assert_called_with([
-            'modals/onions/subrecord_modal.html',
-            'modals/test/subrecord_modal.html',
-            'modals/subrecord_modal.html'
-        ])
-
-    @patch('opal.models.find_template')
-    def test_modal_template_list(self, find):
-        with warnings.catch_warnings(record=True):
-            find.return_value = None
-            patient_list = MagicMock()
-            patient_list.get_template_prefixes = MagicMock(return_value=["test"])
-            with patch.object(Subrecord, "get_form_template") as get_form:
-                get_form.return_value = True
-                Subrecord.get_modal_template(patient_list=patient_list)
-                self.assertEqual(
-                    find.call_args_list[0][0][0],
-                    [
-                        'modals/test/subrecord_modal.html',
-                        'modals/subrecord_modal.html',
-                    ]
-                )
-                self.assertEqual(
-                    find.call_args_list[1][0][0],
-                    ['base_templates/form_modal_base.html']
-                )
-
-    @patch('opal.models.find_template')
-    def test_modal_template_episode_type(self, find):
-        with warnings.catch_warnings(record=True):
-            find.return_value = None
-            with patch.object(Subrecord, "get_form_template") as get_form:
-                get_form.return_value = True
-                Subrecord.get_modal_template(episode_type='Inpatient')
-
-                self.assertEqual(
-                    find.call_args_list[0][0][0],
-                    [
-                        'modals/inpatient/subrecord_modal.html',
-                        'modals/subrecord_modal.html',
-                    ]
-                )
-                self.assertEqual(
-                    find.call_args_list[1][0][0],
-                    ['base_templates/form_modal_base.html']
-                )
 
     def test_get_normal_field_title(self):
         name_title = PatientColour._get_field_title("name")

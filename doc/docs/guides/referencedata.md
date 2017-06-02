@@ -66,7 +66,7 @@ Lookuplists will then be available either as properties of the `referencedata` o
 ### Using referencedata in forms
 
 The Opal [form templatetag library](../reference/form_templatetags.md) allow us to easily incorporate
-referencedata into the forms we build, eiether by detecting their use automatically when we have
+referencedata into the forms we build, either by detecting their use automatically when we have
 `ForeignKeyOrFreeText` fields, or explicitly by passing an argument.
 
 ```html
@@ -101,7 +101,7 @@ python manage.py load_lookup_lists
 
 ### Management commands
 
-Opal ships with some managemnent commands for importing and exporting lookup lists
+Opal ships with some management commands for importing and exporting lookup lists
 
 #### dump_lookup_lists
 
