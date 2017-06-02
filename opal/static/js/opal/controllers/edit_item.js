@@ -1,7 +1,7 @@
 angular.module('opal.controllers').controller(
     'EditItemCtrl', function($scope, $timeout,
                              $modalInstance, $modal, $q,
-                             ngProgressLite,
+                             ngProgressLite, $analytics,
                              referencedata, metadata,
                              profile, item, episode) {
             $scope.profile = profile;
@@ -18,6 +18,10 @@ angular.module('opal.controllers').controller(
             $scope.editingMode = function(){
                 return !_.isUndefined($scope.editing[item.columnName].id);
             };
+
+            $analytics.eventTrack(item.columnName, {
+              category: "EditItem", label: episode.category_name
+            });
 
             // This is the patient name displayed in the modal header
             $scope.editingName = episode.getFullName();
