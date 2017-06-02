@@ -2,29 +2,8 @@ describe('AddEpisodeCtrl', function (){
     "use strict";
 
     var $scope, $httpBackend, $rootScope;
-    var Schema
+    var Schema, testHelper;
     var modalInstance;
-    var fields = {
-        'demographics': {
-            name: "demographics",
-            single: true,
-            fields: [
-                {name: 'name', type: 'string'},
-                {name: 'date_of_birth', type: 'date'},
-                {name: 'created', type: 'date_time'},
-            ],
-        },
-        "diagnosis": {
-            name: "diagnosis",
-            single: false,
-            sort: 'date_of_diagnosis',
-            fields: [
-                {name: 'date_of_diagnosis', type: 'date'},
-                {name: 'condition', type: 'string', default: 'flu'},
-                {name: 'provisional', type: 'boolean'},
-            ]
-        }
-    };
 
     var referencedata = {
         dogs: ['Poodle', 'Dalmation'],
@@ -37,6 +16,8 @@ describe('AddEpisodeCtrl', function (){
 
     beforeEach(function(){
         module('opal');
+        module('opalTest');
+
         var $controller, $modal;
         $scope = {};
 
@@ -46,8 +27,9 @@ describe('AddEpisodeCtrl', function (){
             $httpBackend = $injector.get('$httpBackend');
             Schema       = $injector.get('Schema');
             $rootScope   = $injector.get('$rootScope');
+            testHelper = $injector.get('testHelper');
         });
-        $rootScope.fields = fields;
+        $rootScope.fields = testHelper.getRecordLoaderData();
 
         // var schema = new Schema(columns.default);
         modalInstance = $modal.open({template: 'Notatemplate'});
