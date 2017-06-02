@@ -5,7 +5,7 @@ module.exports = function(includedFiles, baseDir, coverageFiles){
     // files are passed in, coverralls won't be used
     var useCoverage = !!coverageFiles;
     var browsers, coverageReporter, opalRoute;
-    var basePath = __dirname + "/../opal/static/js";
+    var basePath = __dirname + "/../../static/js";
 
     var OPAL_DEPENDENCIES = [
       "lib/bower_components/angular/angular.js",
