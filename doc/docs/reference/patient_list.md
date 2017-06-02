@@ -27,7 +27,7 @@ Defaults to `True`.
 
 Whether we should allow the user to edit teams. 
 
-`Defaults to True`
+Defaults to `True`
 
 ## TaggedPatientList
 
