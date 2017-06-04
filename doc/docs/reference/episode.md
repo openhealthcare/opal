@@ -108,6 +108,13 @@ be serialised
 
 As a useful utility, the episode manager has a search method that will search on first name, last name and/or hospital number, under the hood it uses [Patient search](patient.md#patientobjectssearch)
 
+#### Episode.objects.search_by_tags
+
+A useful utility to let you search episodes for specific tags. It takes in a list of tags, and whether you want to include historic tags (e.g. tags that are no longer active, it defaults to False). It takes an optional user argument for if you want to pass in the 'mine' tag.
+
+```python
+Episode.objects.search_by_tags(['inpatients', 'outpatients'])
+```
 
 ### opal.core.api.EpisodeViewSet
 

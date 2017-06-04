@@ -41,6 +41,17 @@ class EpisodeQueryset(models.QuerySet):
         )
         return self.filter(patient_id__in=patients)
 
+    def search_by_tags(self, some_tags, user=None, historic=False):
+        some_tags_set = set(some_tags)
+        result = []
+        for episode in self.all():
+            tag_names = set(
+                episode.get_tag_names(user=user, historic=historic)
+            )
+            if tag_names.intersection(some_tags_set):
+                result.append(episode.id)
+        return self.filter(id__in=result)
+
     def serialised_episode_subrecords(self, episodes, user):
         """
         Return all serialised subrecords for this set of EPISODES

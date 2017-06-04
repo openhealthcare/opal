@@ -7,6 +7,11 @@ access to the OPAL_LOCATION variable which points to the opal parent directory.
 #### A Data Dictionary In The Extract
 The Extract zip file has a data dictionary with human readable metadata about each field.
 
+#### Search tags utility
+The Episode manager now lets you search_by_tags and search by a list of tags. It also takes an optional
+user argument for if you want to search by 'mine', and a boolean historic argument (defaults to False)
+for if you want to search for old tags.
+
 #### Enhanced Application menus
 
 The application menu API, previously python dicts stored in attributes on either plugin or
