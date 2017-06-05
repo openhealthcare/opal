@@ -1,8 +1,10 @@
-### 0.8.2.2 (Minor Release)
-Adds a custom email logger. This enables Django error emails which removing any confidential patient data
+### 0.8.3 (Minor Release)
 
-### 0.8.2.1 (Minor Release)
-Adds in the karma config to the MANIFEST.in so that we include the karma configs on pip install.
+#### opal.log.ConfidentialEmailer
+Adds a custom email logger. This enables Django error emails which remove any confidential patient data.
+
+Also adds in the karma config to the MANIFEST.in so that we include the karma configs on pip install. It also moves it
+to "opal/tests/js_config/karma_defaults.js".
 
 ### 0.8.2 (Minor Release)
 

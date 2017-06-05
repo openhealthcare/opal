@@ -3,6 +3,19 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+### 0.8.2 -> 0.8.3
+No changes.
+
+### 0.8.1 -> 0.8.2
+The application menu API, previously python dicts stored in attributes on either plugin or
+application subclasses, now consists of the new `opal.core.menus.MenuItem` class, enabling
+enhanced customisation and flexibility.
+
+If you previously were adding Menu Items with the dictionary format. These should be
+coverted to use a `MenuItem` class.
+
+
+
 ### 0.8.0 -> 0.8.1
 
 #### Upgrading Opal
