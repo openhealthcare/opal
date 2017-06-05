@@ -35,7 +35,9 @@ angular.module('opal.services').service('Patient', function(Episode, FieldTransl
     if(episodeValues.length){
       _.each(this, function(v, k){
           if(k in episodeValues[0]){
+            if(k !== "id"){
               self[k] = episodeValues[0][k];
+            }
           }
       });
       this.recordEditor = episodeValues[0].recordEditor;
