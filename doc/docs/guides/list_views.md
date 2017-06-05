@@ -8,7 +8,7 @@ and with a card based view.
 Opal patient lists are subclasses of `opal.core.patient_lists.PatientList`.
 
 Typically these are found in a `patient_lists.py` module of your application or plugin. (Lists _can_ be
-defined elsewhere, but may not be autodiscovered.)
+defined elsewhere, but may not be auto discovered.)
 
 A basic list needs only define it's `display_name` a `queryset` of episodes to display, and
 a `schema` of subrecords to show for each episode.
@@ -43,7 +43,7 @@ be `Subrecord` instances, or instances of `opal.core.patient_lists.Column`.
 
 Although most schema entries will be subrecords, it can be useful to have non-subrecord columns.
 For instance because you want to allow a composite
-column fo mulitple `Subrecords` or because we want to simply render arbitrary markup.
+column of multiple `Subrecords` or because we want to simply render arbitrary markup.
 
 Columns require the title, and template_path to be set, and are simply included in the schema
 list.
@@ -74,7 +74,7 @@ locations:
 ### Querysets
 
 The queryset property of your list should contain all of the episodes for this particular
-list. On occasion we require a more dynamic queryset, in which case we can ovreride the
+list. On occasion we require a more dynamic queryset, in which case we can override the
 `get_queryset` method.
 
     # patient_lists.py
@@ -134,7 +134,7 @@ in the urls for lists, so attempting to define one will raise an exception.
 Sometimes, we want to control the flow of patients onto, off, or between lists a little more closely.
 For instance, we might need to ensure additional data collection at points in a patient journey.
 
-In order to accomplish this, we often implement custom patient flows that wil programatically tag
+In order to accomplish this, we often implement custom patient flows that will programatically tag
 episodes to tagged lists. In those cases we will want to prevent users from manually adding or
 removing the tags themselves. This can be easily accomplished via the `direct_add` property. When
 set to false, users will not be able to add the tag for this list.
@@ -191,7 +191,7 @@ For instance, we could define a Patient List that was only available to Django S
 ## Grouping related Patient Lists
 
 We commonly require groups of patient lists for a single clinical service. For example a busy
-outpatients cinic might have one list of people in the waiting room, one list of people being
+outpatients clinic might have one list of people in the waiting room, one list of people being
 triaged, one list for people waiting to see the medical staff, and another for people who have
 been seen but need review - for instance because they have outstanding test results.
 

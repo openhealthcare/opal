@@ -16,7 +16,7 @@ the module in which it should expect to find instances.
         module_name = 'myfeature'
 
 
-This now gives us acces to various interfaces which come with the library. We can access
+This now gives us access to various interfaces which come with the library. We can access
 all subclasses of `MyFeature` by calling `MyFeature.list()` - which will look through all
 Django apps in our application, and look for a module named `myfeature.py`. The `list()`
 method then returns any subclasses of `MyFeature`.
@@ -24,9 +24,9 @@ method then returns any subclasses of `MyFeature`.
 ### Slugs and Display Names
 
 We often want to define human and machine readable strings to name our features. Display
-names are intended for people - feel free to include spaces, numbers and puctuation. Slugs
-are intended for machines - so no spaces, numbers, hypens, periods or other punctuation. By
-default, if there is a display name and no explicit slug, we wil 'slugify' the display name.
+names are intended for people - feel free to include spaces, numbers and punctuation. Slugs
+are intended for machines - so no spaces, numbers, hyphens, periods or other punctuation. By
+default, if there is a display name and no explicit slug, we will 'slugify' the display name.
 
     class MyNameFeature(MyFeature):
         display_name = 'Hello World'
@@ -42,7 +42,7 @@ default, if there is a display name and no explicit slug, we wil 'slugify' the d
 
 ### Retrieving Subclasses
 
-Once we define a `display_name` or `slug` for sublasses of our feature, we can then fetch them via
+Once we define a `display_name` or `slug` for subclasses of our feature, we can then fetch them via
 the `get()` api.
 
     class RedFeature(MyFeature):

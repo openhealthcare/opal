@@ -3,6 +3,19 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+### 0.8.2 -> 0.8.3
+No changes.
+
+### 0.8.1 -> 0.8.2
+The application menu API, previously python dicts stored in attributes on either plugin or
+application subclasses, now consists of the new `opal.core.menus.MenuItem` class, enabling
+enhanced customisation and flexibility.
+
+If you previously were adding Menu Items with the dictionary format. These should be
+coverted to use a `MenuItem` class.
+
+
+
 ### 0.8.0 -> 0.8.1
 
 #### Upgrading Opal
@@ -160,7 +173,7 @@ refactoring to use the new `recordEditor` API.)
 
 The signatures of Flow `enter` and `exit` methods has changed to no longer accept
 options as a positional argument, and enter/exit controllers will no longer be initialized
-with access to options as a resovled provider. They will have access to either/both of
+with access to options as a resolved provider. They will have access to either/both of
 `referencedata` and `metadata` so if your application includes custom flow controllers that
 use `options` you will need to refactor these to use the new x-data arguments instead.
 
@@ -350,7 +363,7 @@ application's requirements file.
 #### Tags
 
 As of 0.5.5, old tags in Opal are stored directly on the Tagging model rather than via
-Djano Reversion. We can import those old tags by doing the following.
+Django Reversion. We can import those old tags by doing the following.
 
     $ python manage.py shell
 

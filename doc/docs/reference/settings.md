@@ -16,7 +16,7 @@ Scaffolded applications set this to 15 minutes by default. Unit is milliseconds.
 ## OPAL_LOGO_PATH
 
 If `OPAL_LOGO_PATH` is set, the value is passed to the `{% static %}` templatetag to set the
-`src` atribute of an image in the default application header and login screen.
+`src` attribute of an image in the default application header and login screen.
 
 ## VERSION_NUMBER
 

@@ -16,7 +16,7 @@ The Opal scaffold application comes with a `Procfile` ready for Heroku deploymen
 default `requirements.txt` includes some dependencies that allow us to easily deploy to
 Heroku.
 
-(Other PaaS and cloud technologies are available, and Opal should deploy fairly easliy
+(Other PaaS and cloud technologies are available, and Opal should deploy fairly easily
 to any of them!)
 
 ### Deploying to Heroku
