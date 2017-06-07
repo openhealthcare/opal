@@ -7,13 +7,19 @@ angular.module('opalTest').service('testHelper', function(Episode){
     id: 123,
     active: true,
     category_name: "Inpatient",
+    consistency_token: undefined,
     prev_episodes: [],
-    next_episodes: [],
+    discharge_date: "25/05/2016",
+    date_of_episode: "20/11/2013",
+    date_of_admission: "19/11/2013",
+    start: "19/11/2013",
+    end: "25/05/2016",
     demographics: [{
       id: 101,
       patient_id: 99,
-      name: 'John Smith',
-      date_of_birth: '1980-07-31'
+      first_name: "John",
+      surname: "Smith",
+      date_of_birth: '31/07/1980'
     }],
     tagging: [{'mine': true, 'tropical': true}],
     location: [{
@@ -21,7 +27,7 @@ angular.module('opalTest').service('testHelper', function(Episode){
       hospital: 'UCH',
       ward: 'T10',
       bed: '15',
-      date_of_admission: '2013-08-01',
+      date_of_admission: '01/08/2013',
     }],
     diagnosis: [
       {

@@ -3,124 +3,11 @@ describe('Episode', function() {
 
     var Episode, EpisodeResource, Item, $scope, $rootScope, columns, $window;
     var episode, episodeData, resource, tag_hierarchy, fields;
-    var $routeParams;
+    var $routeParams, testHelper;
 
     beforeEach(function() {
-        module('opal.services', function($provide) {
-            $provide.value('UserProfile', {
-              load: function(){ return profile; }
-            });
-        });
-
-        tag_hierarchy = {
-            'mine'    : [],
-            'tropical': [],
-            'micro'   : [
-                'ortho', 'haem'
-            ]
-        };
-
-        columns = {
-            "fields": {
-                'demographics': {
-                    name: "demographics",
-                    single: true,
-                    fields: [
-                        {name: 'first_name', type: 'string'},
-                        {name: 'surname', type: 'string'},
-                        {name: 'date_of_birth', type: 'date'},
-                    ]
-                },
-                "diagnosis": {
-                    name: "diagnosis",
-                    single: false,
-                    sort: 'date_of_diagnosis',
-                    fields: [
-                        {name: 'date_of_diagnosis', type: 'date'},
-                        {name: 'condition', type: 'string'},
-                        {name: 'provisional', type: 'boolean'},
-                    ]
-                },
-                microbiology_test: {
-                    name: "microbiology_test",
-                    single: false,
-                    fields: [
-                        {name: 'date_ordered', type: 'date'}
-                    ]
-                },
-                general_note: {
-                    name: 'general_note',
-                    fields: [
-                        {name: 'date', type: 'date'}
-                    ]
-                },
-                microbiology_input: {
-                    name: 'microbiology_input',
-                    fields: [
-                        {name: 'initials', type: 'string'},
-                        {name: 'when', type: 'datetime'}
-                    ]
-                },
-                antimicrobial: {
-                    name: 'antimicrobial',
-                    fields: [
-                        {name: 'start_date', type: 'date'}
-                    ]
-                }
-            },
-            "list_schema": {
-                "default": [
-                    'demographics',
-                    'diagnosis'
-                ]
-            }
-        };
-
-        episodeData = {
-            id: 123,
-            date_of_admission: "19/11/2013",
-            category_name: 'inpatient',
-            active: true,
-            discharge_date: "25/05/2016",
-            date_of_episode: "20/11/2013",
-            start: "19/11/2013",
-            end: "25/05/2016",
-            tagging: [{
-                mine: true,
-                tropical: true
-                }],
-            demographics: [{
-                id: 101,
-                patient_id: 99,
-                first_name: 'John',
-                surname: "Smith",
-                date_of_birth: '31/07/1980',
-                hospital_number: '555'
-            }],
-            location: [{
-                category: 'Inepisode',
-                hospital: 'UCH',
-                ward: 'T10',
-                bed: '15',
-                date_of_admission: '01/08/2013'
-            }],
-            diagnosis: [{
-                id: 102,
-                condition: 'Dengue',
-                provisional: true,
-                date_of_diagnosis: '20/04/2007'
-            }, {
-                id: 103,
-                condition: 'Malaria',
-                provisional: false,
-                date_of_diagnosis: '03/19/2006'
-            }]
-        };
-
-        fields = {};
-        _.each(columns.fields, function(c){
-            fields[c.name] = c;
-        });
+        module('opal.services');
+        module('opalTest');
 
         inject(function($injector) {
             Episode = $injector.get('Episode');
@@ -129,10 +16,10 @@ describe('Episode', function() {
             $scope      = $rootScope.$new();
             $routeParams = $injector.get('$routeParams');
             $window      = $injector.get('$window');
+            testHelper = $injector.get('testHelper');
         });
-        $rootScope.fields = fields;
-
-        episode = new Episode(angular.copy(episodeData));
+        episode = testHelper.newEpisode($rootScope);
+        episodeData = testHelper.getEpisodeData();
     });
 
     describe('initialisation', function() {
@@ -142,8 +29,7 @@ describe('Episode', function() {
         });
 
         it('should cast dates on the episode if appropriate', function(){
-            var episodeDataCloned = angular.copy(episodeData);
-            var newEpisode = new Episode(episodeDataCloned);
+            var newEpisode = new Episode(episodeData);
             expect(moment(newEpisode.date_of_admission).format('DD/MM/YYYY')).toEqual("19/11/2013");
             expect(moment(newEpisode.start).format('DD/MM/YYYY')).toEqual("19/11/2013");
             expect(moment(newEpisode.end).format('DD/MM/YYYY')).toEqual("25/05/2016");
@@ -198,7 +84,7 @@ describe('Episode', function() {
     });
 
     it('should be able to get specific item', function() {
-        expect(episode.getItem('diagnosis', 1).id).toEqual(102);
+        expect(episode.getItem('diagnosis', 1).id).toEqual(103);
     });
 
     it('should return the name of the patient', function() {
@@ -251,7 +137,7 @@ describe('Episode', function() {
             {id: 104, condition: 'Ebola', provisional: false,
              date_of_diagnosis: '19/02/2005'},
             episode,
-            columns.fields.diagnosis
+            testHelper.getRecordLoaderData().diagnosis
         );
         expect(episode.getNumberOfItems('diagnosis')).toBe(2);
         episode.addItem(item);
@@ -270,7 +156,7 @@ describe('Episode', function() {
         expect(episode.diagnosis.length).toEqual(2);
         episode.removeItem(episode.diagnosis[1]);
         expect(episode.diagnosis.length).toEqual(1);
-        expect(episode.diagnosis[0].id).toBe(103);
+        expect(episode.diagnosis[0].id).toBe(102);
     });
 
     it('Should be able to produce a copy of attributes', function () {
@@ -279,7 +165,7 @@ describe('Episode', function() {
             date_of_admission: new Date(2013, 10, 19),
             date_of_episode: new Date(2013, 10, 20),
             discharge_date: new Date(2016, 4, 25),
-            category_name: 'inpatient',
+            category_name: 'Inpatient',
             consistency_token: undefined
         });
     });
