@@ -32,6 +32,18 @@ class PatientQueryset(models.QuerySet):
         return qs
 
 
+class EpisodeSubrecordQueryset(models.QuerySet):
+    def serialise_for_episodes(self, episodes, user):
+        qs = self.filter(episode__in=episodes)
+        return [i.to_dict(user) for i in qs]
+
+
+class PatientSubrecordQueryset(models.QuerySet):
+    def serialise_for_patients(self, patients, user):
+        qs = self.filter(patient__in=patients)
+        return [i.to_dict(user) for i in qs]
+
+
 class EpisodeQueryset(models.QuerySet):
 
     def search(self, some_query):
@@ -51,13 +63,14 @@ class EpisodeQueryset(models.QuerySet):
 
         for model in episode_subrecords():
             name = model.get_api_name()
-            subrecords = model.objects.filter(episode__in=episodes)
+            serialised = model.objects.serialise_for_episodes(
+                episodes, user
+            )
+            for serialised_dict in serialised:
+                episode_subs[serialised_dict["episode_id"]][name].append(
+                    serialised_dict
+                )
 
-            for related in model._meta.many_to_many:
-                subrecords = subrecords.prefetch_related(related.attname)
-
-            for sub in subrecords:
-                episode_subs[sub.episode_id][name].append(sub.to_dict(user))
         return episode_subs
 
     def serialised(self, user, episodes,
@@ -68,16 +81,20 @@ class EpisodeQueryset(models.QuerySet):
         If HISTORIC_TAGS is Truthy, return deleted tags as well.
         If EPISODE_HISTORY is Truthy return historic episodes as well.
         """
-        patient_ids = [e.patient_id for e in episodes]
+        from opal.models import Patient
+        patients = Patient.objects.filter(episode__in=episodes)
         patient_subs = defaultdict(lambda: defaultdict(list))
 
         episode_subs = self.serialised_episode_subrecords(episodes, user)
+
         for model in patient_subrecords():
             name = model.get_api_name()
-            subrecords = model.objects.filter(patient__in=patient_ids)
+            serialised = model.objects.serialise_for_patients(patients, user)
 
-            for sub in subrecords:
-                patient_subs[sub.patient_id][name].append(sub.to_dict(user))
+            for serialised_dict in serialised:
+                patient_subs[serialised_dict["patient_id"]][name].append(
+                    serialised_dict
+                )
 
         # We do this here because it's an order of magnitude quicker than
         # hitting episode.tagging_dict() for each episode in a loop.
