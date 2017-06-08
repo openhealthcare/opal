@@ -132,7 +132,7 @@
                                  class="form-control content-offset-25"
                                  ng-model="query.query"
                                  ng-if="isText(query.column, query.field)"
-                                 uib-typeahead="x for x in query.lookup_list | filter:$viewValue | limitTo:8"
+                                 uib-typeahead="x for x in getChoices(query.column, query.field) | filter:$viewValue | limitTo:8"
                                  placeholder="4. Add your value"
                                  ng-keypress="$event.keyCode == 13 && search()"
                                  set-focus-if="isText(query.column, query.field) && query.field != null  && query.queryType != null"
@@ -152,7 +152,7 @@
                                         tooltip-trigger="focus"
                                         ng-keypress="$event.keyCode == 13 && search()"
                                         tooltip-placement="top" uib-tooltip="4. Select one of the below">
-                                    <option ng-repeat="i in symptom_list track by $index">[[ i ]]</option>
+                                    <option ng-repeat="i in query.lookup_list track by $index">[[ i ]]</option>
                                 </select>
                             </span>
                         </div>
@@ -198,15 +198,30 @@
                       <span ng-show="isBoolean(selectedInfo.column, selectedInfo.field)">
                         [True/False]
                       </span>
+                      <span ng-show="isSelect(selectedInfo.column, selectedInfo.field)">
+
+                        <div ng-show="selectedInfo.lookup_list && selectedInfo.lookup_list.length">
+                          [a
+                          <a href=""
+                             class="orange-link"
+                             ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: findField(selectedInfo.column, selectedInfo.field).lookup_list, lookuplist: selectedInfo.lookup_list })">
+                            [[ findField(selectedInfo.column, selectedInfo.field).lookup_list | underscoreToSpaces ]]
+                          </a>]
+                        </div>
+                      </span>
+                      <span ng-show
                       <span ng-show="isText(selectedInfo.column, selectedInfo.field)">
                         [Text]
-                        <div ng-show="selectedInfo.lookup_list && selectedInfo.lookup_list.length">
+                        <div ng-show="findField(selectedInfo.column, selectedInfo.field).lookup_list">
                           Normally coded as a
                           <a href=""
                              class="orange-link"
                              ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: findField(selectedInfo.column, selectedInfo.field).lookup_list, lookuplist: selectedInfo.lookup_list })">
                             [[ findField(selectedInfo.column, selectedInfo.field).lookup_list | underscoreToSpaces ]]</a>
                           but free text entries are possible.
+                        </div>
+                        <div ng-show="selectedInfo.enum && selectedInfo.enum.length">
+                          one of <span ng-repeat="i in selectedInfo.enum">[[ i ]] </span>
                         </div>
                       </span>
                       <span ng-show="isDate(selectedInfo.column, selectedInfo.field)">

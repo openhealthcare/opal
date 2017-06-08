@@ -50,6 +50,9 @@ module.exports = function(config){
 };
 ```
 
+If run from opal test js, we set the path to opal as an env variable called
+OPAL_LOCATION
+
 ## Test Coverage
 
 The Opal test runner has a `-c` option which runs coverage reports for both Python and Javascript code:

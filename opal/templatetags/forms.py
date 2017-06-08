@@ -78,16 +78,10 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
 
     if enum:
         ctx["lookuplist"] = json.dumps(enum)
-    elif hasattr(field, "foreign_model"):
-        ctx["lookuplist"] = "{}_list".format(
-            field.foreign_model.get_api_name()
-        )
     else:
-        related_model = field.related_model
-        if related_model:
-            ctx["lookuplist"] = "{}_list".format(
-                field.related_model.get_api_name()
-            )
+        lookuplist_api_name = model.get_lookup_list_api_name(field_name)
+        if lookuplist_api_name:
+            ctx["lookuplist"] = "{}_list".format(lookuplist_api_name)
 
     if hasattr(field, "formfield"):
         # TODO remove the blankable condition and make sure

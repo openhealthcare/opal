@@ -322,9 +322,7 @@ describe('ExtractCtrl', function(){
             referencedata: referencedata
         });
 
-        $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
         $scope.$apply();
-        $httpBackend.flush();
     });
 
     describe('set up', function(){
@@ -549,25 +547,32 @@ describe('ExtractCtrl', function(){
     });
 
     describe('removeCriteria', function(){
-
         it('should reset the criteria', function(){
             $scope.criteria.push('hello world');
             $scope.removeCriteria();
             expect($scope.criteria.length).toBe(1);
         });
+    });
 
+    describe('getChoices', function(){
+        it('should get a lookup list and suffix it', function(){
+            spyOn($scope, "findField").and.returnValue({
+              lookup_list: "dogs"
+            });
+            var result = $scope.getChoices("some", "field");
+            expect(result).toEqual(['Poodle', 'Dalmation']);
+        });
+
+        it('should get an enum', function(){
+          spyOn($scope, "findField").and.returnValue({
+            enum: [1, 2, 3]
+          });
+          var result = $scope.getChoices("some", "field");
+          expect(result).toEqual([1, 2, 3]);
+        });
     });
 
     describe('refresh', function(){
-        it('should set the lookuplist', function(){
-            $scope.symptoms_list = ['thing']
-            $scope.criteria[0].column = "symptoms";
-
-            $scope.criteria[0].field = 'symptoms';
-            $scope.refresh();
-            expect($scope.criteria[0].lookup_list).toEqual(['thing']);
-        });
-
         it('should reset the searched critera', function(){
             $scope.searched = true;
             $scope.refresh();
@@ -596,6 +601,7 @@ describe('ExtractCtrl', function(){
     describe('Search', function(){
 
         it('should ask the server for results', function(){
+
             $httpBackend.expectPOST("/search/extract/").respond({
                 page_number: 1,
                 total_pages: 1,
@@ -604,7 +610,7 @@ describe('ExtractCtrl', function(){
                     {categories: []}
                 ]
             });
-            // $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
             $scope.criteria[0] = {
                 combine    : "and",
                 column     : "symptoms",

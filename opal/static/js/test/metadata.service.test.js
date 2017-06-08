@@ -36,19 +36,6 @@ describe('Metadata', function(){
       $httpBackend.verifyNoOutstandingRequest();
     });
 
-    it('then should call through to load', function(){
-        spyOn(Metadata, "load").and.callThrough();
-        var result;
-        $httpBackend.whenGET('/api/v0.1/metadata/').respond(metadata);
-        Metadata.then(function(r){ result = r; });
-        $rootScope.$apply();
-        $httpBackend.flush();
-        expect(result.get('foo')).toEqual('bar');
-        expect($log.warn).toHaveBeenCalledWith(
-          'This API is being deprecated and will be removed in 0.9.0. Please use Metadata.load()'
-        );
-    });
-
     it('should fetch the metadata', function(){
         var result
 

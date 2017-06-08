@@ -1,11 +1,29 @@
 ### 0.9.0 (Major Release)
+Add the allow_add_patient and allow_edit_teams options to the patient lists.
 
-### 0.8.2 (Minor Release)
+#### Removes Deprecated functionality in ReferenceData, Metadata, UserProfile and recordLoader
+Previously these would make their http request when imported into a file. They now require you to call .load()
+for them to return the promise that loads in their respective data.
+
 
 #### Adds the Card Patient List template and the Table Patient List Template
 Adds the template "patient_lists/card_list.html" and"patient_lists/table_list.html"  for patient lists.
 
 Change your patient_list.template_name to point to this template and it will display the patient list as a series of 'cards', more analagous to a twitter stream than a spreadsheet like the default list.
+
+### 0.8.3 (Minor Release)
+
+#### opal.log.ConfidentialEmailer
+Adds a custom email logger. This enables Django error emails which remove any confidential patient data.
+
+Also adds in the karma config to the MANIFEST.in so that we include the karma configs on pip install. It also moves it
+to "opal/tests/js_config/karma_defaults.js".
+
+### 0.8.2 (Minor Release)
+
+#### OPAL_LOCATION is added as a system variable when running js tests
+If you run opal test js, your karma config is now run in an environment that has
+access to the OPAL_LOCATION variable which points to the opal parent directory.
 
 #### A Data Dictionary In The Extract
 The Extract zip file has a data dictionary with human readable metadata about each field.
@@ -79,7 +97,7 @@ Fixes a bug where the allergies form rendered the provisional field twice
 #### Updates to the Dependency Graph
 
 Upgrades Font Awesome from 4.3.0 -> 4.7.0
-
+Upgrades Jinja2 from 2.8 -> 2.9.6
 
 ### 0.8.1 (Minor Release)
 

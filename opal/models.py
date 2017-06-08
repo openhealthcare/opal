@@ -8,6 +8,8 @@ import itertools
 import json
 import logging
 import random
+import warnings
+import os
 
 from django.conf import settings
 from django.utils import timezone
@@ -29,6 +31,8 @@ from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.subrecords import (
     episode_subrecords, patient_subrecords, get_subrecord_from_api_name
 )
+
+warnings.simplefilter('once', DeprecationWarning)
 
 
 def get_default_episode_type():
@@ -224,11 +228,16 @@ class SerialisableFields(object):
     @classmethod
     def get_lookup_list_api_name(cls, field_name):
         lookup_list = None
-        if cls._get_field_type(field_name) == ForeignKeyOrFreeText:
+        field_type = cls._get_field_type(field_name)
+        if field_type == ForeignKeyOrFreeText:
             fld = getattr(cls, field_name)
             lookup_list = camelcase_to_underscore(
-                fld.foreign_model.__name__
+                fld.foreign_model.get_api_name()
             )
+        elif field_type == models.fields.related.ManyToManyField:
+            related_model = getattr(cls, field_name).field.related_model
+            if issubclass(related_model, lookuplists.LookupList):
+                return related_model.get_api_name()
         return lookup_list
 
     @classmethod
@@ -716,7 +725,6 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         except AttributeError:
             return 'Episode: {0}'.format(self.pk)
         except Exception as e:
-            print(e.__class__)
             return self.date_of_admission
 
     def save(self, *args, **kwargs):
@@ -916,85 +924,91 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
         return cls._meta.verbose_name
 
     @classmethod
-    def _build_template_selection(cls, episode_type=None, patient_list=None,
-                                  suffix=None, prefix=None):
-        name = cls.get_api_name()
+    def _get_template(cls, template, prefixes=None):
+        template_locations = []
 
-        templates = []
-        if patient_list and episode_type:
-            raise ValueError(
-                "you can not get both a patient list and episode type"
+        if prefixes is None:
+            prefixes = []
+
+        for prefix in prefixes:
+            template_locations.append(
+                template.format(os.path.join(prefix, cls.get_api_name()))
             )
-        if patient_list:
-            list_prefixes = patient_list.get_template_prefixes()
 
-            for list_prefix in list_prefixes:
-                templates.append('{0}/{1}/{2}{3}'.format(prefix, list_prefix,
-                                                         name, suffix))
-        if episode_type:
-            templates.append('{0}/{1}/{2}{3}'.format(prefix,
-                                                     episode_type.lower(),
-                                                     name, suffix))
-
-        templates.append('{0}/{1}{2}'.format(prefix, name, suffix))
-        return templates
+        template_locations.append(template.format(cls.get_api_name()))
+        return find_template(template_locations)
 
     @classmethod
-    def get_display_template(cls, episode_type=None, patient_list=None):
+    def get_display_template(cls, prefixes=None):
         """
         Return the active display template for our record
         """
-        templates = cls._build_template_selection(
-            episode_type=episode_type, patient_list=patient_list,
-            suffix='.html', prefix='records')
-        return find_template(templates)
+        if prefixes is None:
+            prefixes = []
+
+        return cls._get_template(
+            os.path.join("records", "{}.html"),
+            prefixes=prefixes
+        )
 
     @classmethod
-    def get_detail_template(cls, patient_list=None, episode_type=None):
+    def get_detail_template(cls, prefixes=None):
         """
         Return the active detail template for our record
         """
-        if patient_list and episode_type:
-            raise ValueError(
-                "you can not get both a patient list and episode type"
-            )
-        name = camelcase_to_underscore(cls.__name__)
+        file_locations = [
+            'records/{0}_detail.html',
+            'records/{0}.html'
+        ]
+
+        if prefixes is None:
+            prefixes = []
+
         templates = []
-        if episode_type:
-            templates.append('records/{0}/{1}_detail.html'.format(
-                episode_type.lower(), name)
-            )
 
-            templates.append('records/{0}/{1}.html'.format(
-                episode_type.lower(), name)
-            )
+        for prefix in prefixes:
+            for file_location in file_locations:
+                templates.append(file_location.format(
+                    os.path.join(prefix, cls.get_api_name())
+                ))
 
-        templates.append('records/{0}_detail.html'.format(name))
-        templates.append('records/{0}.html'.format(name))
+        for file_location in file_locations:
+            templates.append(
+                file_location.format(cls.get_api_name())
+            )
         return find_template(templates)
 
     @classmethod
-    def get_form_template(cls, patient_list=None, episode_type=None):
-        templates = cls._build_template_selection(
-            episode_type=episode_type, patient_list=patient_list,
-            suffix='_form.html', prefix='forms')
-        return find_template(templates)
+    def get_form_template(cls, prefixes=None):
+        if prefixes is None:
+            prefixes = []
+
+        return cls._get_template(
+            template=os.path.join("forms", "{}_form.html"),
+            prefixes=prefixes
+        )
 
     @classmethod
     def get_form_url(cls):
         return reverse("form_view", kwargs=dict(model=cls.get_api_name()))
 
     @classmethod
-    def get_modal_template(cls, patient_list=None, episode_type=None):
+    def get_modal_template(cls, prefixes=None):
         """
         Return the active form template for our record
         """
-        templates = cls._build_template_selection(
-            episode_type=episode_type, patient_list=patient_list,
-            suffix='_modal.html', prefix='modals')
-        if cls.get_form_template():
-            templates.append("base_templates/form_modal_base.html")
-        return find_template(templates)
+        if prefixes is None:
+            prefixes = []
+
+        result = cls._get_template(
+            template=os.path.join("modals", "{}_modal.html"),
+            prefixes=prefixes
+        )
+
+        if not result and cls.get_form_template():
+            result = find_template(["base_templates/form_modal_base.html"])
+
+        return result
 
     @classmethod
     def bulk_update_from_dicts(

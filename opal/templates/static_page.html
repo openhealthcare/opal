@@ -1,0 +1,10 @@
+{% extends 'opal.html' %}
+
+{% block content %}
+
+  {{ block.super}}
+  <div class="static-content">
+    {% block static_content %}{% endblock %}
+  </div>
+
+{% endblock %}

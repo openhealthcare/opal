@@ -1,8 +1,6 @@
 """
 Unittests for opal.views
 """
-import warnings
-
 from django import http
 from django.core.urlresolvers import reverse
 from mock import patch, MagicMock
@@ -257,33 +255,6 @@ class EpisodeDetailTemplateViewTestCase(BaseViewTestCase):
             resp = view.get(request, pk=self.episode.pk+345)
 
 
-class RemovedSettingsWarningsTestCase(OpalTestCase):
-    def test_get_brand_name(self):
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter('always')
-            views.get_brand_name()
-            assert len(w) == 1
-            assert issubclass(w[-1].category, DeprecationWarning)
-            assert "will be removed" in str(w[-1].message)
-
-    def test_get_settings(self):
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter('always')
-            views.get_settings()
-            assert len(w) == 1
-            assert issubclass(w[-1].category, DeprecationWarning)
-            assert "will be removed" in str(w[-1].message)
-
-
-    def test_get_extra_application(self):
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter('always')
-            views.get_extra_application()
-            assert len(w) == 1
-            assert issubclass(w[-1].category, DeprecationWarning)
-            assert "will be removed" in str(w[-1].message)
-
-
 class IndexViewTestCase(BaseViewTestCase):
 
     def test_should_200(self):
@@ -381,7 +352,8 @@ class ModalTemplateViewTestCase(BaseViewTestCase):
         get_modal_template.return_value = "eater/colour_modal.html"
         result = view.get_template_from_model()
         self.assertEqual(
-            TaggingTestPatientList, get_modal_template.call_args[1]["patient_list"].__class__
+            ['eater', 'eater.herbivore'],
+            get_modal_template.call_args[1]["prefixes"]
         )
         self.assertEqual(result, "eater/colour_modal.html")
 

@@ -35,8 +35,12 @@ describe('OPAL Directives', function(){
     beforeEach(module('opal.directives', function($provide){
         $provide.service('Metadata', function(){
             return {
-                then: function(fn){
-                    fn(metaData);
+                load: function(){
+                  return {
+                    then: function(fn){
+                        fn(metaData);
+                    }
+                  };
                 }
             };
         });

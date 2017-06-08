@@ -3,9 +3,9 @@ import re
 from setuptools import setup, find_packages
 
 long_desc = """
-OPAL is a web framework for building highly usable healthcare applications.
+Opal is a web framework for building highly usable healthcare applications.
 
-OPAL builds deep clinical domain specific functionality on top of Django, Angular
+Opal builds deep clinical domain specific functionality on top of Django, Angular
 and Bootstrap to help developers quickly build easy to maintain,
 robust clinical applications.
 
@@ -43,7 +43,7 @@ setup(
     install_requires=[
         'ffs>=0.0.8.1',
         'letter==0.4.1',
-        'jinja2==2.8',
+        'jinja2==2.9.6',
         'requests==2.7.0',
         'django==1.8.13',
         'django-reversion==1.8.7',

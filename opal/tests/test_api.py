@@ -3,6 +3,7 @@ Tests for the OPAL API
 """
 import json
 from datetime import date, timedelta, datetime
+
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.test import TestCase
@@ -201,6 +202,15 @@ class SubrecordTestCase(OpalTestCase):
                 username=self.user.username, password=self.PASSWORD
             )
         )
+        # We don't want API Errors to print noise at the terminal so let's monkey
+        # patch StreamHandler.emit
+        from logging import StreamHandler
+        self._emit = StreamHandler.emit
+        StreamHandler.emit = MagicMock('Mock Stream Handler')
+
+    def tearDown(self):
+        from logging import StreamHandler
+        StreamHandler.emit = self._emit
 
     def test_list(self):
         response = self.viewset().list(None)

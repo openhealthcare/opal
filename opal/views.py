@@ -1,9 +1,6 @@
 """
 Module entrypoint for core Opal views
 """
-import warnings
-
-from django.conf import settings
 from django.contrib.auth.views import login
 from django.http import HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
@@ -20,8 +17,6 @@ from opal.core.subrecords import (
 from opal.core.views import LoginRequiredMixin, json_response
 from opal.utils import camelcase_to_underscore
 from opal.utils.banned_passwords import banned
-
-warnings.simplefilter('once', DeprecationWarning)
 
 app = application.get_app()
 
@@ -119,43 +114,8 @@ class EpisodeDetailTemplateView(LoginRequiredMixin, TemplateView):
         return context
 
 
-def get_brand_name():
-    warnthem = """
-    The `brand_name` context variable is available via the OPAL_BRAND_NAME
-setting and will be removed in Opal 0.9.0
-"""
-    warnings.warn(warnthem, DeprecationWarning, stacklevel=2)
-    return getattr(settings, 'OPAL_BRAND_NAME', 'Opal')
-
-
-def get_settings():
-    warnthem = """
-    The `settings` context variable will be removed in Opal 0.9.0
-    """
-    warnings.warn(warnthem, DeprecationWarning, stacklevel=2)
-    return settings
-
-
-def get_extra_application():
-    warnthem = """
-    The `extra_application` context variable is available via the
-OPAL_EXTRA_APPLICATION setting and will be removed in Opal 0.9.0
-"""
-    warnings.warn(warnthem, DeprecationWarning, stacklevel=2)
-    return settings.OPAL_EXTRA_APPLICATION
-
-
 class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'opal.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(IndexView, self).get_context_data(**kwargs)
-        context['brand_name'] = get_brand_name
-        context['settings'] = get_settings
-        if hasattr(settings, 'OPAL_EXTRA_APPLICATION'):
-            context['extra_application'] = get_extra_application
-
-        return context
 
 
 def check_password_reset(request, *args, **kwargs):
@@ -238,12 +198,13 @@ class FormTemplateView(LoginRequiredMixin, TemplateView):
 
 class ModalTemplateView(LoginRequiredMixin, TemplateView):
     def get_template_from_model(self):
-        patient_list = None
+        list_prefixes = None
 
         if self.list_slug:
             patient_list = PatientList.get(self.list_slug)()
+            list_prefixes = patient_list.get_template_prefixes()
         return self.column.get_modal_template(
-            patient_list=patient_list
+            prefixes=list_prefixes
         )
 
     def dispatch(self, *a, **kw):

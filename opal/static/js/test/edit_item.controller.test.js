@@ -5,6 +5,7 @@ describe('EditItemCtrl', function (){
     var item, Item, existingEpisode;
     var dialog, Episode, episode, ngProgressLite, $q, $rootScope;
     var Schema, $controller, controller, fakeModalInstance;
+    var $analytics;
 
     var referencedata = {
         dogs: ['Poodle', 'Dalmation'],
@@ -36,6 +37,7 @@ describe('EditItemCtrl', function (){
     var episodeData = {
         id: 123,
         active: true,
+        category_name: "Inpatient",
         prev_episodes: [],
         next_episodes: [],
         demographics: [{
@@ -122,6 +124,7 @@ describe('EditItemCtrl', function (){
         module(function($provide) {
             $provide.value('UserProfile', {load: function(){ return profile; }});
         });
+        $analytics = jasmine.createSpyObj(["eventTrack"]);
 
         inject(function($injector){
             Item           = $injector.get('Item');
@@ -163,6 +166,7 @@ describe('EditItemCtrl', function (){
             episode       : episode,
             ngProgressLite: ngProgressLite,
             referencedata: referencedata,
+            $analytics: $analytics
         });
 
     });
@@ -176,6 +180,12 @@ describe('EditItemCtrl', function (){
     describe('scope setup', function(){
       it('Should hoist metadata onto the scope', function () {
           expect($scope.metadata).toBe(metadata);
+      });
+
+      it('should track analytics data', function(){
+          expect($analytics.eventTrack).toHaveBeenCalledWith(
+            "investigation", {category: "EditItem", label: "Inpatient"}
+          );
       });
     })
 

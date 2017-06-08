@@ -27,8 +27,7 @@ angular.module('opal.controllers').controller(
         column     : null,
         field      : null,
         queryType  : null,
-        query      : null,
-        lookup_list: []
+        query      : null
     };
 
     $scope.criteria = [_.clone($scope.model)];
@@ -79,8 +78,6 @@ angular.module('opal.controllers').controller(
       _.each(criteria, function(c){
         c.combine = combine;
       });
-
-
 
       return criteria;
     };
@@ -157,6 +154,18 @@ angular.module('opal.controllers').controller(
       $scope.selectedInfo = query;
     };
 
+    $scope.getChoices = function(column, field){
+      var modelField = $scope.findField(column, field);
+
+      if(modelField.lookup_list && modelField.lookup_list.length){
+        return $scope[modelField.lookup_list + "_list"];
+      }
+
+      if(modelField.enum){
+        return modelField.enum;
+      }
+    };
+
     $scope.isBoolean = function(column, field){
         return $scope.isType(column, field, ["boolean", "null_boolean"]);
     };
@@ -229,17 +238,10 @@ angular.module('opal.controllers').controller(
     // one exists.
     //
     $scope.refresh = function(){
-        _.map($scope.criteria, function(c){
-            var field = $scope.findField(c.column, c.field);
-            if(!field){return; }
-            if(field.lookup_list){
-                c.lookup_list = $scope[field.lookup_list + '_list'];
-            }
-        });
-        $scope.async_waiting = false;
-        $scope.async_ready = false;
-        $scope.searched = false;
-        $scope.results = [];
+      $scope.async_waiting = false;
+      $scope.async_ready = false;
+      $scope.searched = false;
+      $scope.results = [];
     };
 
     $scope.$watch('criteria', $scope.refresh, true);

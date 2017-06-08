@@ -55,10 +55,10 @@ class ModelColumn(Column):
         self.icon = getattr(model, '_icon', '')
         self.list_limit = getattr(model, '_list_limit', None)
         self.template_path = model.get_display_template(
-            patient_list=self.patient_list()
+            prefixes=self.patient_list().get_template_prefixes()
         )
         self.detail_template_path = model.get_detail_template(
-            patient_list=self.patient_list()
+            prefixes=self.patient_list().get_template_prefixes()
         )
 
     def to_dict(self, **kwargs):
@@ -77,6 +77,11 @@ class PatientList(discoverable.DiscoverableFeature,
     template_name      = 'patient_lists/spreadsheet_list.html'
     order              = 0
     comparator_service = None
+    # whether we display the add patient button
+    allow_add_patient  = True
+
+    # whether we allow the user to edit the teams the patient is under
+    allow_edit_teams = True
 
     @classmethod
     def list(klass):

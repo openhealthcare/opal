@@ -3,6 +3,7 @@ source =
     opal
 omit =
     opal/tests/*
+    opal/core/search/tests/*
     */migrations/*
 
 [report]
