@@ -413,7 +413,7 @@ directives.directive("tagSelect", function(Metadata){
     templateUrl: "/templates/ng_templates/tag_select.html",
     link: function(scope, element, attrs, ngModel){
       if (!ngModel) return;
-      Metadata.then(function(metadata){
+      Metadata.load().then(function(metadata){
         scope.onRemove = function($item, $model){
             ngModel.$modelValue[$model] = false;
         };

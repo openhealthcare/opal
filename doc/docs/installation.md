@@ -26,7 +26,7 @@ You should now have the `opal` commandline tools installed.
 Let's just check that you do:
 
     $ opal --version
-    Opal 0.8.0
+    Opal {{ config.extra.version }}
 
 ### Step 3: There is no step 3.
 
