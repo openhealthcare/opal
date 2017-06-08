@@ -75,11 +75,6 @@ test_settings_config = dict(
             }
         },
         'handlers': {
-            'console': {
-                'level': 'ERROR',
-                'filters': ['require_debug_false'],
-                'class': 'logging.StreamHandler'
-            },
             'mail_admins': {
                 'level': 'ERROR',
                 'filters': ['require_debug_false'],
@@ -88,7 +83,7 @@ test_settings_config = dict(
         },
         'loggers': {
             'django.request': {
-                'handlers': ['console', 'mail_admins'],
+                'handlers': ['mail_admins'],
                 'level': 'ERROR',
                 'propagate': True,
             },
