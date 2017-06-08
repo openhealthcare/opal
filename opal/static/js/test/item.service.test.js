@@ -3,12 +3,17 @@ describe('Item', function() {
 
     var columns, episodeData, recordSchema, list_schema, mockWindow;
     var testHelper, $rootScope, Item, $httpBackend, item, episode;
+    var angularServiceMock;
 
     beforeEach(function() {
+        angularServiceMock = jasmine.createSpy();
         mockWindow = { alert: jasmine.createSpy() };
         module('opal.services', function($provide){
             $provide.service('Demographics', function(){
-                return function(x){ return x };
+                return function(x){
+                  angularServiceMock(x);
+                  return x;
+                };
             });
             $provide.value('$window', mockWindow);
         });
@@ -27,6 +32,13 @@ describe('Item', function() {
         spyOn(episode, "addItem");
         spyOn(episode, "removeItem");
         item = new Item(episodeData.demographics[0], episode, recordSchema.demographics);
+    });
+
+    it('should call a service function if one exists', function(){
+      var demographicsWithService = angular.copy(recordSchema.demographics);
+      demographicsWithService.angular_service = 'Demographics';
+      new Item(episodeData.demographics[0], episode, demographicsWithService);
+      expect(angularServiceMock).toHaveBeenCalled();
     });
 
     it('should have correct attributes', function() {
