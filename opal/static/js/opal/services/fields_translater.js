@@ -141,11 +141,6 @@ angular.module('opal.services').service('FieldTranslater', function($rootScope){
 
   this.patientToJs = function(originalPatient){
     var patient = self.iterateSubrecords(originalPatient, self.subRecordToJs);
-
-    if(patient.merged && patient.merged.length){
-        patient.merged = [self.patientToJs(patient.merged[0])];
-    }
-
     return patient;
   };
 });

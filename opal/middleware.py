@@ -1,5 +1,5 @@
 """
-OPAL Middlewares
+Opal Middlewares
 """
 # Hat tip:
 # http://kevinzhang.org/posts/django-angularjs-and-csrf-xsrf-protection.html

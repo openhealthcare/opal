@@ -23,14 +23,18 @@
     {% plugin_opal_angular_tracking_exclude %}
 
     <script type="text/javascript">
+      angular.module('opal.config', []).value(
+        'OPAL_FLOW_SERVICE',
+        {% if OPAL_FLOW_SERVICE %}'{{ OPAL_FLOW_SERVICE }}'{% else %}null{% endif %}
+      );
+    </script>
+
+    <script type="text/javascript">
       var initials = "{{request.user.first_name|slice:":1"}} {{request.user.last_name}}"
       var settings = {
       LOG_OUT_DURATION: {{OPAL_LOG_OUT_DURATION}}
       }
       var version = '{{VERSION_NUMBER}}';
-      {% if OPAL_FLOW_SERVICE %}
-      var OPAL_FLOW_SERVICE = '{{ OPAL_FLOW_SERVICE }}';
-      {% endif %}
     </script>
     <!-- google analytics -->
     <script>

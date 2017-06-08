@@ -3,11 +3,8 @@ OPAL PLugin - base class and helpers
 """
 import inspect
 import os
-import warnings
 
 from opal.core import discoverable
-
-warnings.simplefilter('once', DeprecationWarning)
 
 
 class OpalPlugin(discoverable.DiscoverableFeature):
@@ -30,14 +27,14 @@ class OpalPlugin(discoverable.DiscoverableFeature):
         """
         Return the urls
         """
-        return klass.urls
+        return [u for u in klass.urls]
 
     @classmethod
     def get_apis(klass):
         """
         Return the apis
         """
-        return klass.apis
+        return [a for a in klass.apis]
 
     @classmethod
     def directory(cls):
@@ -52,34 +49,16 @@ class OpalPlugin(discoverable.DiscoverableFeature):
         """
         return {}
 
+    @classmethod
+    def get_styles(klass):
+        """
+        Return the stylesheets for our plugin
+        """
+        return [s for s in klass.stylesheets]
 
-# TODO 0.9.0: Remove these
-def register(what):
-    warnthem = """
-
-opal.core.plugins.register is no longer required and will be removed in
-Opal 0.9.0
-
-There is no need to register {0} as Plugins are now discoverable features.
-
-Please consult the Opal documentation on Plugins for more information.
-""".format(what)
-    warnings.warn(warnthem, DeprecationWarning, stacklevel=2)
-    pass
-
-
-def plugins():
-    """
-    Generator function for plugin instances
-    """
-    warnthem = """
-
-opal.core.plugins.plugins is slated for removal in Opal 0.9.0
-
-Plugins are now discoverable features, an iterable of subclasses
-may be accessed via
-
-opal.core.plugins.OpalPlugin.list
-"""
-    warnings.warn(warnthem, DeprecationWarning, stacklevel=2)
-    return OpalPlugin.list()
+    @classmethod
+    def get_javascripts(klass):
+        """
+        Return the javascripts for our plugin
+        """
+        return [j for j in klass.javascripts]

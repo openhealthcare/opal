@@ -246,7 +246,6 @@ class EpisodeDetailTemplateViewTestCase(BaseViewTestCase):
             resp = view.get(request, pk=self.episode.pk+345)
 
 
-
 class IndexViewTestCase(BaseViewTestCase):
 
     def test_should_200(self):
@@ -344,7 +343,8 @@ class ModalTemplateViewTestCase(BaseViewTestCase):
         get_modal_template.return_value = "eater/colour_modal.html"
         result = view.get_template_from_model()
         self.assertEqual(
-            TaggingTestPatientList, get_modal_template.call_args[1]["patient_list"].__class__
+            ['eater', 'eater.herbivore'],
+            get_modal_template.call_args[1]["prefixes"]
         )
         self.assertEqual(result, "eater/colour_modal.html")
 

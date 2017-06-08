@@ -92,7 +92,7 @@ describe('Item', function() {
                 "Visiting Friends and Relatives",
                 "Work"
             ]
-        }
+        };
     });
 
     describe('Item', function() {

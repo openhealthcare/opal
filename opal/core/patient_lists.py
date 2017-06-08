@@ -55,10 +55,10 @@ class ModelColumn(Column):
         self.icon = getattr(model, '_icon', '')
         self.list_limit = getattr(model, '_list_limit', None)
         self.template_path = model.get_display_template(
-            patient_list=self.patient_list()
+            prefixes=self.patient_list().get_template_prefixes()
         )
         self.detail_template_path = model.get_detail_template(
-            patient_list=self.patient_list()
+            prefixes=self.patient_list().get_template_prefixes()
         )
 
     def to_dict(self, **kwargs):
@@ -77,6 +77,11 @@ class PatientList(discoverable.DiscoverableFeature,
     template_name      = 'patient_lists/spreadsheet_list.html'
     order              = 0
     comparator_service = None
+    # whether we display the add patient button
+    allow_add_patient  = True
+
+    # whether we allow the user to edit the teams the patient is under
+    allow_edit_teams = True
 
     @classmethod
     def list(klass):
@@ -127,8 +132,8 @@ class PatientList(discoverable.DiscoverableFeature,
         return [self.template_name]
 
     def to_dict(self, user):
-        # only bringing in active seems a sensible default at this time
-        return self.get_queryset(user=user).serialised_active(user)
+        from opal.models import Episode
+        return Episode.objects.serialised(user, self.get_queryset(user=user))
 
 
 class TaggedPatientList(PatientList, utils.AbstractBase):
@@ -191,6 +196,11 @@ class TaggedPatientList(PatientList, utils.AbstractBase):
         if hasattr(self, 'subtag'):
             possible.append("{0}.{1}".format(self.tag, self.subtag))
         return possible
+
+    def to_dict(self, user):
+        # As opposed to general lists, we only ever want active episodes
+        # for tagged lists
+        return self.get_queryset(user=user).serialised_active(user)
 
 
 """

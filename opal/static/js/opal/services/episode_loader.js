@@ -7,7 +7,7 @@ angular.module('opal.services')
             episode_id = $route.current.params.id;
         }
 	    var deferred = $q.defer();
-	    recordLoader.then(function(records) {
+	    recordLoader.load().then(function(records) {
 	        EpisodeResource.get({id: episode_id}, function(resource) {
 		        var episode = new Episode(resource);
 		        deferred.resolve(episode);

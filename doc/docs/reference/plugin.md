@@ -75,7 +75,7 @@ A python iterable of items to add to the main menu of our application.
 
 A Python iterable of templates to include as actions - e.g. additional buttons to add to the
 context of a detail, list or other view. These are visible everywhere by default, so care should
-be taken to ensire appropriate show/hide logic is present.
+be taken to ensure appropriate show/hide logic is present.
 
 - - -
 
@@ -98,3 +98,23 @@ returning the `apis` attribute.
 ### OpalPlugin.directory()
 
 Returns the path to the directory containing the file in which this plugin is defined.
+
+#### OpalPlugin.get_javascripts()
+
+Return a dictionary of namespaced javascript files as paths to them ready for staticfiles.
+Defaults to returning the `OpalPlugin.javascripts` property.
+
+```python
+plugin.get_javascripts()
+# -> {'opal.test': ['js/test/notreal.js']}
+```
+
+#### OpalPlugin.get_styles()
+
+Return a list of the plugin's stylesheets as paths to them ready for staticfiles.
+Defaults to returning the contents of `OpalPlugin.styles`.
+
+```python
+plugin.get_styles()
+# -> ['css/app.css', ...]
+``

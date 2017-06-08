@@ -170,7 +170,9 @@ describe('HospitalNumberCtrl', function(){
     beforeEach(function(){
         module('opal');
         module('opal.services', function($provide) {
-            $provide.value('UserProfile', function(){ return profile; });
+            $provide.value('UserProfile', {
+              load: function(){ return profile; }
+            });
         });
     });
 
@@ -242,10 +244,15 @@ describe('HospitalNumberCtrl', function(){
 
             deferred = $q.defer();
 
+            var fakeReferencedata = {
+                load: function(){ return "some reference data"; }
+              };
+
+
             spyOn($modal, 'open').and.returnValue({result: deferred.promise});
             $scope.newPatient({patients: [], hospitalNumber: 123})
             var resolves = $modal.open.calls.mostRecent().args[0].resolve;
-            expect(_.has(resolves, 'referencedata')).toBe(true);
+            expect(resolves.referencedata(fakeReferencedata)).toEqual('some reference data');
             expect(resolves.demographics()).toEqual({ hospital_number: 123});
             expect(resolves.tags()).toEqual({tag: 'mine', subtag: ''});
         });

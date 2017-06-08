@@ -15,7 +15,7 @@ angular.module('opal.services')
 
             var getEpisodesPromise = $http.get(target);
 
-            $q.all([recordLoader, getEpisodesPromise]).then(function(results){
+            $q.all([recordLoader.load(), getEpisodesPromise]).then(function(results){
                 // record loader updates the global scope
                 var episodesResult = results[1];
                 var episodes = {};

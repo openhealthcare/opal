@@ -39,7 +39,7 @@ directives.directive("scrollEpisodes", function(){
             }
         }
 
-        function isScrolledIntoView(element, parent){
+        scope.isScrolledIntoView = function(element, parent){
             var elementTop    = element.getBoundingClientRect().top ,
                 elementBottom = element.getBoundingClientRect().bottom;
             return elementTop >= thHeight && elementBottom <= window.innerHeight;
@@ -50,7 +50,7 @@ directives.directive("scrollEpisodes", function(){
                 // up
                 if(e.keyCode === 38){
                     event.preventDefault();
-                    if(!isScrolledIntoView(element[0], patientListContainer[0])){
+                    if(!scope.isScrolledIntoView(element[0], patientListContainer[0])){
                         element[0].scrollIntoView(true);
                     }
                     adjustForThead();
@@ -58,7 +58,7 @@ directives.directive("scrollEpisodes", function(){
                 // down
                 else if(e.keyCode === 40){
                     event.preventDefault();
-                    if(!isScrolledIntoView(element[0], patientListContainer[0])){
+                    if(!scope.isScrolledIntoView(element[0], patientListContainer[0])){
                         element[0].scrollIntoView(false);
                     }
                     adjustForThead();
@@ -130,7 +130,7 @@ directives.directive('placeholder', function($timeout){
 				return;
 			}
 			$timeout(function(){
-				elm.val(attrs.placeholder).focus(function(){
+				$(elm).val(attrs.placeholder).focus(function(){
 					if ($(this).val() == $(this).attr('placeholder')) {
 						$(this).val('');
 					}
@@ -413,7 +413,7 @@ directives.directive("tagSelect", function(Metadata){
     templateUrl: "/templates/ng_templates/tag_select.html",
     link: function(scope, element, attrs, ngModel){
       if (!ngModel) return;
-      Metadata.then(function(metadata){
+      Metadata.load().then(function(metadata){
         scope.onRemove = function($item, $model){
             ngModel.$modelValue[$model] = false;
         };
@@ -446,4 +446,33 @@ directives.directive("tagSelect", function(Metadata){
       });
     }
   };
+});
+
+
+directives.directive('fullNameForUser', function(User){
+    return {
+        link: function(scope, element, attrs){
+            if(attrs.fullNameForUser){
+                User.get(attrs.fullNameForUser).then(
+                    function(user){
+                        $(element).text(user.full_name)
+                    }
+                )
+            }
+        }
+    }
+});
+
+directives.directive('avatarForUser', function(User){
+    return {
+        link: function(scope, element, attrs){
+            if(attrs.avatarForUser){
+                User.get(attrs.avatarForUser).then(
+                    function(user){
+                        $(element).attr('src', user.avatar_url);
+                    }
+                )
+            }
+        }
+    }
 });

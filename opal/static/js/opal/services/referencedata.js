@@ -1,8 +1,7 @@
-angular.module('opal.services').factory('Referencedata', function($q, $http, $window) {
+angular.module('opal.services').factory('Referencedata', function($q, $http, $window, $log) {
 
     "use strict";
 
-    var deferred = $q.defer();
     var url = '/api/v0.1/referencedata/';
 
     var Referencedata = function(data){
@@ -33,19 +32,24 @@ angular.module('opal.services').factory('Referencedata', function($q, $http, $wi
                 lookuplists[list_name + '_list'] = self[list_name];
             });
             return lookuplists;
-        }
+        };
 
         self.initialize();
         return self;
     };
 
+    var load = function(){
+      var deferred = $q.defer();
+      $http({ cache: true, url: url, method: 'GET'}).then(function(response) {
+          deferred.resolve(new Referencedata(response.data));
+      }, function() {
+        // handle error better
+        $window.alert('Referencedata could not be loaded');
+      });
+      return deferred.promise;
+    };
 
-    $http({ cache: true, url: url, method: 'GET'}).then(function(response) {
-        deferred.resolve(new Referencedata(response.data));
-    }, function() {
-	    // handle error better
-	    $window.alert('Referencedata could not be loaded');
-    });
-
-    return deferred.promise;
+    return {
+      load: load
+    };
 });

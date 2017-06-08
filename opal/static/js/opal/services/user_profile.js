@@ -1,5 +1,5 @@
 angular.module('opal.services')
-    .factory('UserProfile', function($q, $http, $window, $routeParams) {
+    .service('UserProfile', function($q, $http, $window, $routeParams, $log) {
         var UserProfile = function(profiledata){
             var profile = this;
 
@@ -26,7 +26,7 @@ angular.module('opal.services')
                     return false;
                 }
                 return true;
-            }
+            };
 
             this.can_edit = function(record_name){
                 // This is non-scalable.
@@ -36,20 +36,25 @@ angular.module('opal.services')
                     }
                 }
                 return true;
-            }
-
+            };
         };
 
-        var deferred = $q.defer();
+        var load = function(){
+          var deferred = $q.defer();
 
-        url = '/api/v0.1/userprofile/';
+          url = '/api/v0.1/userprofile/';
 
-        $http({ cache: true, url: url, method: 'GET'}).then(function(response) {
-          deferred.resolve(new UserProfile(response.data) );
-        }, function() {
-          // handle error better
-          $window.alert('UserProfile could not be loaded');
-        });
+          $http({ cache: true, url: url, method: 'GET'}).then(function(response) {
+            deferred.resolve(new UserProfile(response.data) );
+          }, function() {
+            // handle error better
+            $window.alert('UserProfile could not be loaded');
+          });
 
-        return deferred.promise;
+          return deferred.promise;
+        };
+
+        return {
+          load: load
+        };
     });

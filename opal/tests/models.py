@@ -29,6 +29,9 @@ class HatWearer(models.EpisodeSubrecord):
 
 class InvisibleHatWearer(models.EpisodeSubrecord):
     _exclude_from_subrecords = True
+    class Meta:
+        verbose_name = 'Invisible Wearer of Hats'
+
     name = dmodels.CharField(max_length=200)
     wearing_a_hat = dmodels.BooleanField(default=True)
 
@@ -52,8 +55,12 @@ class Dog(lookuplists.LookupList):
 
 
 class DogOwner(models.EpisodeSubrecord):
-    name = dmodels.CharField(max_length=200, default="Catherine")
-    dog = fields.ForeignKeyOrFreeText(Dog, default="spaniel")
+    name = dmodels.CharField(
+        max_length=200, default="Catherine"
+    )
+    dog = fields.ForeignKeyOrFreeText(
+        Dog, default="spaniel", help_text="good dog"
+    )
     least_favourite_dog = fields.ForeignKeyOrFreeText(Dog, related_name='hated_dogs')
     ownership_start_date = dmodels.DateField(blank=True, null=True, verbose_name="OSD")
 
@@ -65,6 +72,10 @@ class HoundOwner(models.EpisodeSubrecord):
 
 class FavouriteDogs(models.PatientSubrecord):
     dogs = dmodels.ManyToManyField(Dog, related_name='favourite_dogs')
+
+
+class FavouriteNumber(models.PatientSubrecord):
+    number = dmodels.IntegerField(blank=True, null=True)
 
 
 class InvisibleDog(models.PatientSubrecord):
@@ -114,7 +125,8 @@ COLOUR_CHOICES = (
 class FavouriteColour(models.PatientSubrecord):
     _is_singleton = True
     name = dmodels.CharField(
-        max_length=200, blank=True, null=True, choices=COLOUR_CHOICES
+        max_length=200, blank=True, null=True, choices=COLOUR_CHOICES,
+        help_text="orange is the new black"
     )
 
 

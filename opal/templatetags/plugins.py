@@ -1,5 +1,5 @@
 """
-Templatetags for working with OPAL plugins
+Templatetags for working with Opal plugins
 """
 import itertools
 
@@ -14,7 +14,7 @@ register = template.Library()
 def plugin_javascripts(namespace):
     def scripts():
         for plugin in plugins.OpalPlugin.list():
-            if namespace in plugin.javascripts:
+            if namespace in plugin.get_javascripts():
                 for javascript in plugin.javascripts[namespace]:
                     yield javascript
     return dict(javascripts=scripts)
@@ -24,8 +24,12 @@ def plugin_javascripts(namespace):
 def plugin_stylesheets():
     def styles():
         for plugin in plugins.OpalPlugin.list():
-            for sheet in plugin.stylesheets:
-                yield sheet
+            for style in plugin.get_styles():
+                if style.endswith(".scss"):
+                    mime_type = "text/x-scss"
+                else:
+                    mime_type = "text/css"
+                yield style, mime_type
     return dict(styles=styles)
 
 
@@ -38,31 +42,6 @@ def plugin_head_extra(context):
     ctx = context
     ctx['head_extra'] = templates
     return ctx
-
-
-def sort_menu_items(items):
-    # sorting of menu item is done withan index
-    # property (lower = first), if they don't
-    # have an index or if there are multiple with the
-    # same index then its done alphabetically
-
-    def alphabetic(x):
-        return x["display"]
-
-    def index_sorting(x):
-        return x.get("index", 100)
-
-    return sorted(sorted(items, key=alphabetic), key=index_sorting)
-
-
-@register.inclusion_tag('plugins/menuitems.html')
-def plugin_menuitems():
-    def items():
-        for plugin in plugins.OpalPlugin.list():
-            for i in plugin.menuitems:
-                yield i
-
-    return dict(items=sort_menu_items(items()))
 
 
 @register.inclusion_tag('plugins/angular_module_deps.html')

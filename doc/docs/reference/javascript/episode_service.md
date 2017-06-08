@@ -20,6 +20,15 @@ Return a list of the current tags this episode has as strings.
     episode.getTags();
     // ['mine', 'infectioncontrol']
 
+#### Episode.getFullName
+
+Return a human readable version of the Patient name suitable for rendering.
+
+```javascript
+episode.getFullName()
+// -> 'Jane Doe'
+```
+
 #### Episode.hasTag
 
 Predicate function that determines whether the episode is tagged with a given tag.
@@ -48,7 +57,7 @@ Example usage:
 Takes a string, opens a modal from which the user can create a new subrecord of type `name`.
 
 ```js
-epiode.recordEditor.newItem('diagnosis'):
+episode.recordEditor.newItem('diagnosis'):
 // -> Opens a modal with the diagnosis form and will create a new diagnosis on save
 ```
 

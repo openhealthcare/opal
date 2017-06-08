@@ -65,6 +65,7 @@ class ScaffoldTestCase(OpalTestCase):
         mock_args = MagicMock(name='Mock Args')
         mock_args.app = 'opal'
         mock_args.dry_run = False
+        mock_args.nomigrations = False
         with patch.object(commandline, 'find_application_name') as namer:
             namer.return_value = 'opal.tests'
             commandline.scaffold(mock_args)
@@ -75,10 +76,23 @@ class ScaffoldTestCase(OpalTestCase):
         mock_args = MagicMock(name='Mock Args')
         mock_args.app = 'opal'
         mock_args.dry_run = True
+        mock_args.nomigrations = False
         with patch.object(commandline, 'find_application_name') as namer:
             namer.return_value = 'opal.tests'
             commandline.scaffold(mock_args)
             os.assert_any_call('python manage.py makemigrations opal --traceback --dry-run')
+
+    def test_nomigrations(self, os, sub):
+        mock_args = MagicMock(name='Mock Args')
+        mock_args.app = 'opal'
+        mock_args.dry_run = True
+        mock_args.nomigrations = True
+        with patch.object(commandline, 'find_application_name') as namer:
+            namer.return_value = 'opal.tests'
+            commandline.scaffold(mock_args)
+            #os.assert_any_call('python manage.py makemigrations opal --traceback --dry-run')
+            self.assertFalse(os.called)
+
 
     @patch('opal.models.EpisodeSubrecord.get_display_template')
     def test_episode_subrecord_no_display_template(self, episub, os, sub):
@@ -143,6 +157,9 @@ class TestTestCase(OpalTestCase):
         mock_args = MagicMock(name='Mock Args')
         with patch.object(commandline.test_runner, 'run_tests') as rt:
             commandline.test(mock_args)
+            mock_args_call = rt.call_args[0][0]
+            self.assertTrue(mock_args_call.userland_here.endswith("opal"))
+            self.assertTrue(mock_args_call.opal_location.endswith("opal"))
             rt.assert_called_with(mock_args)
 
 

@@ -15,6 +15,7 @@ Keywords:
 [Inference from subrecord fields](#inference-from-subrecord-fields)
 * `label` The Label with which to describe this field
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
+* `change`  A javascript function that fires if the field has changed
 * `disabled` If this exists, we use this as the expression for the ng-disabled directive
 * `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html element
 
@@ -29,6 +30,7 @@ Keywords:
 [Inference from subrecord fields](#inference-from-subrecord-fields)
 * `label` The Label with which to describe this field
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
+* `change`  A javascript function that fires if the field has changed
 * `show`  A string that contains an Angular expression for the ng-show directive
 * `hide`  A string that contains an Angular expression for the ng-hide directive
 * `required` Label to show when we're required
@@ -46,7 +48,7 @@ Keywords:
 * `date_label` The Label with which to describe the date field (defaults to 'Date')
 * `time_label` The Label with which to describe the date field (defaults to 'Time')
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
-* `change`  an Angular directive that fires on change
+* `change`  A javascript function that fires if the field has changed
 * `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html datetime picker element
 
 
@@ -61,6 +63,7 @@ Keywords:
 [Inference from subrecord fields](#inference-from-subrecord-fields)
 * `label` The Label with which to describe this field
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
+* `change`  A javascript function that fires if the field has changed
 * `show`  A string that contains an Angular expression for the ng-show directive
 * `hide`  A string that contains an Angular expression for the ng-hide directive
 * `lookuplist` an Angular expression that evaluates to an array containing the lookuplist values
@@ -68,6 +71,7 @@ Keywords:
 * `enter` expression to evaluate if the user presses return when in this input
 * `maxlength` maximum number of characters for this input. Will render the form invalid and display help text if exceeded.
 * `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html element
+* `element_type` If this exists it sets the input 'type' on the html tag. For numeric fields set by the 'field' parameter this will default to number. Otherwise it will just default to 'text'.
 
 
 #### Inputs with units
@@ -88,6 +92,7 @@ Keywords:
 * `field` a string of the models api name '.' field from this it calculates the label, model and will infer the lookuplist if required. For example {% radio field="DogOwner.dog" %}
 * `label` The Label with which to describe this input
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
+* `change`  A javascript function that fires if the field has changed
 * `show`  A string that contains an Angular expression for the ng-show directive
 * `hide`  A string that contains an Angular expression for the ng-hide directive
 * `lookuplist` an Angular expression that evaluates to an array containing the radio values
@@ -103,6 +108,7 @@ Keywords:
 * `field` a string of the models api name '.' field from this it calculates the label, model and will infer the lookuplist if required. For example {% select field="DogOwner.dog" %}
 * `label` The Label with which to describe this input
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
+*  `change`  A javascript function that fires if the field has changed
 * `show`  A string that contains an Angular expression for the ng-show directive
 * `hide`  A string that contains an Angular expression for the ng-hide directive
 * `lookuplist` an Angular expression that evaluates to an array containing the radio values
@@ -120,6 +126,7 @@ Keywords:
 * `field` a string of the models api name '.' field from this it calculates the label, model and will infer the lookuplist if required. For example {% textarea field="DogOwner.dog" %}
 * `label` The Label with which to describe this input
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
+*  `change`  A javascript function that fires if the field has changed
 * `show`  A string that contains an Angular expression for the ng-show directive
 * `hide`  A string that contains an Angular expression for the ng-hide directive
 * `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html element
@@ -133,7 +140,7 @@ If its required, it will set as a required field. If its a CharField with a max 
 
 If the field is a free text or foreign key we will infer the lookup list.
 
-Alternatively if the field has choices attatched to it we will infer the choices into the field.
+Alternatively if the field has choices attached to it we will infer the choices into the field.
 
 ```html
 {% input field="Allergies.drug" %}

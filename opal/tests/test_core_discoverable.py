@@ -70,6 +70,21 @@ class AppImporterTestCase(OpalTestCase):
         # should only be called once because we should only import once
         self.assertEqual(stringport_mock.call_count, 1)
 
+    @override_settings(INSTALLED_APPS=("opal",))
+    @patch("opal.core.discoverable.stringport")
+    def test_importerror_no_module(self, stringport_mock):
+        discoverable.import_from_apps('notarealmodule')
+        # should be called but suppress the importerror that happens
+        self.assertEqual(stringport_mock.call_count, 1)
+
+    @override_settings(INSTALLED_APPS=("opal",))
+    @patch("opal.core.discoverable.stringport")
+    def test_importerror_error_in_target_module(self, stringport_mock):
+        with self.assertRaises(ImportError):
+            stringport_mock.side_effect = ImportError('cannot import thing inside your target module')
+            discoverable.import_from_apps('blowingupmodule')
+            self.assertEqual(stringport_mock.call_count, 1)
+
 
 class DiscoverableFeatureTestCase(OpalTestCase):
 

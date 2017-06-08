@@ -177,7 +177,7 @@ angular.module('opal.controllers').controller(
             }
 	    });
 
-	    function getRowIxFromEpisodeId(episodeId) {
+	    $scope.getRowIxFromEpisodeId = function(episodeId) {
 		    for (var rix = 0; rix < $scope.rows.length; rix++) {
 			    if ($scope.rows[rix].id == episodeId) {
 				    return rix;
@@ -236,7 +236,7 @@ angular.module('opal.controllers').controller(
                                 if(!$scope.currentSubTag || episode.tagging[0][$scope.currentSubTag]){
   			                        $scope.episodes[episode.id] = episode;
   			                        $scope.rows = $scope.getVisibleEpisodes();
-  			                        rowIx = getRowIxFromEpisodeId(episode.id);
+  			                        rowIx = $scope.getRowIxFromEpisodeId(episode.id);
                                     $scope.num_episodes += 1;
                                 }
                             }

@@ -1,14 +1,14 @@
 Opal
 ====
 
-[![Build Status](https://travis-ci.org/openhealthcare/opal.svg?branch=v0.8.1)](https://travis-ci.org/openhealthcare/opal)
-[![Coverage Status](https://coveralls.io/repos/github/openhealthcare/opal/badge.svg?branch=v0.8.1)](https://coveralls.io/github/openhealthcare/opal?branch=v0.8.1)
+[![Build Status](https://travis-ci.org/openhealthcare/opal.svg?branch=v0.9.0)](https://travis-ci.org/openhealthcare/opal)
+[![Coverage Status](https://coveralls.io/repos/github/openhealthcare/opal/badge.svg?branch=v0.9.0)](https://coveralls.io/github/openhealthcare/opal?branch=v0.8.2)
 [![PyPI version](https://badge.fury.io/py/opal.svg)](https://badge.fury.io/py/opal)
 
 
 Opal is a full stack web framework that makes building digital tools for health care easy.
 
-It builds on established Open Source technologies with a track record of helping developers
+It builds on established open source technologies with a track record of helping developers
 build easy to maintain, robust applications.
 
 Most notably, it makes use of [Django](https://djangoproject.com/), [AngularJS](https://angularjs.org/)
@@ -17,7 +17,7 @@ and [Bootstrap](http://getbootstrap.com/).
 From there, Opal provides you with a common batteries-included architecture for writing healthcare
 applications, and a composable modular framework that takes advantage of generic, re-usable components.
 
-Opal is entirely Open ([Source](https://github.com/openhealthcare/opal) &
+Opal is entirely open ([source](https://github.com/openhealthcare/opal) &
 [Governance](https://github.com/openhealthcare/opal/issues)) as are the wide library of plugins.
 
 Opal was created by [Open Health Care UK](http://openhealthcare.org.uk), because it makes Healthcare IT Less Bad.

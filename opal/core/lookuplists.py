@@ -1,5 +1,5 @@
 """
-OPAL Lookuplists
+Opal Lookuplists
 """
 import logging
 

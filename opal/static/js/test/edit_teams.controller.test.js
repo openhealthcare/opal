@@ -97,12 +97,16 @@ describe('EditTeamsCtrl', function(){
     beforeEach(function(){
         module('opal.controllers');
         UserProfile = {
-          then: function(fn){
-            fn('someProfile');
+          load: function(){
+            return {
+              then: function(fn){
+                fn('someProfile');
+              }
+            };
           }
         };
 
-        spyOn(UserProfile, "then").and.callThrough();
+        spyOn(UserProfile, "load").and.callThrough();
 
         inject(function($injector){
             $httpBackend = $injector.get('$httpBackend');
@@ -145,7 +149,7 @@ describe('EditTeamsCtrl', function(){
         });
 
         it('should put profile and editingname on the scope', function(){
-          expect(UserProfile.then).toHaveBeenCalled();
+          expect(UserProfile.load).toHaveBeenCalled();
           expect($scope.editingName).toBe("Jane Doe");
           expect(!!$scope.profile).toBe(true);
         });
@@ -162,20 +166,17 @@ describe('EditTeamsCtrl', function(){
         });
 
         it('should fetch the options', function() {
-            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
-            $rootScope.$apply();
-            $httpBackend.flush();
+            expect($scope.profile).toBe("someProfile");
+            expect(UserProfile.load).toHaveBeenCalled();
         });
     });
 
     describe('save()', function() {
 
         it('should save', function() {
-            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
             spyOn(modalInstance, 'close');
             $scope.save('close');
             $rootScope.$apply();
-            $httpBackend.flush();
             expect(modalInstance.close).toHaveBeenCalledWith('close');
         });
 

@@ -1,7 +1,6 @@
 {% load static %}
 
-{% load application %}
-{% load plugins %}
+{% load menus %}
 <nav class="navbar navbar-default navbar-primary navbar-fixed-top screen-only top-navbar" role="navigation">
   <div class="container-fluid">
     <!-- Brand and toggle get grouped for better mobile display -->
@@ -14,7 +13,7 @@
       </button>
 
 	  <a class="navbar-brand" href="/#/">
-        <img src="{% static 'img/ohc-trans.png' %}" />
+        <img src="{% if OPAL_LOGO_PATH %}{% static OPAL_LOGO_PATH %}{% else %}{% static 'img/ohc-trans.png' %}{% endif %}" />
         {{OPAL_BRAND_NAME}}
         <small><small>
           {{ VERSION_NUMBER }}
@@ -24,42 +23,7 @@
 
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="main-navbar">
-      <ul class="nav navbar-nav navbar-right">
-        {% if request.user.is_authenticated %}
-	    <li ng-class="{active: $location.path().indexOf('/list/') == 0}">
-          <a href="/#/list/">
-            <i class="fa fa-table"></i>
-            <span class="hidden-sm">
-              Lists
-            </span>
-          </a>
-        </li>
-
-        {% application_menuitems %}
-        {% if not user.profile.explicit_access_only %}
-          {% plugin_menuitems %}
-        {% endif %}
-        {% if request.user.is_staff %}
-	    <li>
-          <a href="/admin/">
-            <i class="fa fa-cogs"></i>
-            <span class="hidden-sm">Admin</span>
-          </a>
-        </li>
-        {% endif %}
-
-        <!-- <li > -->
-        <!--   <a href="#/account" title="Your Account"> -->
-        <!--     <i class="fa fa-user"></i> -->
-        <!--   </a> -->
-        <!-- </li> -->
-	    <li><a href="{% url 'django.contrib.auth.views.logout' %}" title="Log out">
-            <i class="fa fa-sign-out"></i>
-        </a></li>
-
-        {% endif %}
-
-      </ul>
+      {% menu %}
       {% if user.profile.can_see_pid %}
         {% include 'partials/_nav_search.html' %}
       {% endif %}

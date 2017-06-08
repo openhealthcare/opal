@@ -1,7 +1,7 @@
 angular.module('opal.controllers').controller(
     'EditItemCtrl', function($scope, $timeout,
                              $modalInstance, $modal, $q,
-                             ngProgressLite,
+                             ngProgressLite, $analytics,
                              referencedata, metadata,
                              profile, item, episode) {
             $scope.profile = profile;
@@ -11,6 +11,7 @@ angular.module('opal.controllers').controller(
             // Make that category available to the template.
             $scope.episode_category = episode.category;
             $scope.editing = {};
+            $scope.item = item;
             $scope.editing[item.columnName] = item.makeCopy();
             $scope.metadata = metadata
 
@@ -18,8 +19,12 @@ angular.module('opal.controllers').controller(
                 return !_.isUndefined($scope.editing[item.columnName].id);
             };
 
-            // This is the patientname displayed in the modal header
-  	        $scope.editingName = item.episode.demographics[0].first_name + ' ' + episode.demographics[0].surname;
+            $analytics.eventTrack(item.columnName, {
+              category: "EditItem", label: episode.category_name
+            });
+
+            // This is the patient name displayed in the modal header
+            $scope.editingName = episode.getFullName();
 
             $scope.columnName = item.columnName;
             _.extend($scope, referencedata.toLookuplists());
@@ -30,22 +35,22 @@ angular.module('opal.controllers').controller(
             };
 
             // TODO - don't hardcode this
-	        if (item.columnName == 'microbiology_test' || item.columnName == 'lab_test' || item.columnName == 'investigation') {
-		        $scope.microbiology_test_list = [];
-		        $scope.microbiology_test_lookup = {};
-		        $scope.micro_test_defaults =  metadata.micro_test_defaults;
+            if (item.columnName == 'microbiology_test' || item.columnName == 'lab_test' || item.columnName == 'investigation') {
+                $scope.microbiology_test_list = [];
+                $scope.microbiology_test_lookup = {};
+                $scope.micro_test_defaults =  metadata.micro_test_defaults;
 
-		        for (var name in referencedata){
-			        if (name.indexOf('micro_test') == 0) {
-				        for (var ix = 0; ix < referencedata[name].length; ix++) {
-					        $scope.microbiology_test_list.push(referencedata[name][ix]);
-					        $scope.microbiology_test_lookup[referencedata[name][ix]] = name;
-				        };
-			        };
-		        };
+                for (var name in referencedata){
+                    if (name.indexOf('micro_test') == 0) {
+                        for (var ix = 0; ix < referencedata[name].length; ix++) {
+                            $scope.microbiology_test_list.push(referencedata[name][ix]);
+                            $scope.microbiology_test_lookup[referencedata[name][ix]] = name;
+                        };
+                    };
+                };
             var watchName= "editing." + item.columnName + ".test"
-		        $scope.$watch(watchName, function(testName, oldValue) {
-			        $scope.testType = $scope.microbiology_test_lookup[testName];
+                $scope.$watch(watchName, function(testName, oldValue) {
+                    $scope.testType = $scope.microbiology_test_lookup[testName];
               if(oldValue == testName){
                 return;
               }
@@ -69,8 +74,8 @@ angular.module('opal.controllers').controller(
                       }
                   });
               }
-		        });
-	        };
+                });
+            };
 
             $scope.delete = function(result){
                 $modalInstance.close(result);

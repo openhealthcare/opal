@@ -7,7 +7,7 @@ units of functionality to build your application. This page lists some of the be
 
 The Search plugin bundled with Opal core provides a default database based search implementation
 for your application, and is scheduled to provide hooks for e.g. using Elastic Search as your
-serach backend.
+search backend.
 
 ### opal-wardround
 

@@ -2,11 +2,29 @@
 Unittests for the opal.core.fields module
 """
 from django.contrib.contenttypes.models import ContentType
+from django.db import models
 
-from opal.core.fields import ForeignKeyOrFreeText
+from opal.core.fields import ForeignKeyOrFreeText, is_numeric
 from opal.core.test import OpalTestCase
 from opal.tests import models as test_models
 from opal.models import Synonym
+
+
+class TestIsNumeric(OpalTestCase):
+    def test_is_numeric_true(self):
+        numeric_fields = (
+            models.IntegerField,
+            models.DecimalField,
+            models.BigIntegerField,
+            models.FloatField,
+            models.PositiveIntegerField
+        )
+        for field in numeric_fields:
+            self.assertTrue(is_numeric(field()))
+
+    def test_is_numeric_false(self):
+        self.assertFalse(is_numeric(models.CharField))
+
 
 class TestForeignKeyOrFreeText(OpalTestCase):
 
@@ -17,6 +35,10 @@ class TestForeignKeyOrFreeText(OpalTestCase):
     def test_set_verbose_name(self):
         field = getattr(test_models.HoundOwner, "dog")
         self.assertEqual(field.verbose_name, "hound")
+
+    def test_set_help_text(self):
+        field = getattr(test_models.DogOwner, "dog")
+        self.assertEqual(field.help_text, "good dog")
 
     def test_set_max_length(self):
         field = getattr(test_models.HoundOwner, "dog")

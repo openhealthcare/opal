@@ -3,10 +3,13 @@ Opal Django Models
 """
 import datetime
 import functools
+import hashlib
 import itertools
 import json
 import logging
 import random
+import warnings
+import os
 
 from django.conf import settings
 from django.utils import timezone
@@ -28,6 +31,8 @@ from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.subrecords import (
     episode_subrecords, patient_subrecords, get_subrecord_from_api_name
 )
+
+warnings.simplefilter('once', DeprecationWarning)
 
 
 def get_default_episode_type():
@@ -121,6 +126,52 @@ class SerialisableFields(object):
         )
 
     @classmethod
+    def get_human_readable_type(cls, field_name):
+        field_type = cls._get_field(field_name)
+
+        if isinstance(field_type, models.BooleanField):
+            return "Either True or False"
+        if isinstance(field_type, models.NullBooleanField):
+            return "Either True, False or None"
+        if isinstance(field_type, models.DateTimeField):
+            return "Date & Time"
+        if isinstance(field_type, models.DateField):
+            return "Date"
+
+        numeric_fields = (
+            models.AutoField,
+            models.BigIntegerField,
+            models.IntegerField,
+            models.FloatField,
+            models.DecimalField,
+        )
+        if isinstance(field_type, numeric_fields):
+            return "Number"
+
+        if isinstance(field_type, ForeignKeyOrFreeText):
+            t = "Normally coded as a {} but free text entries are possible."
+            return t.format(field_type.foreign_model._meta.object_name.lower())
+
+        related_fields = (
+            models.ForeignKey, models.ManyToManyField,
+        )
+        if isinstance(field_type, related_fields):
+            if isinstance(field_type, models.ForeignKey):
+                t = "One of the {}"
+            else:
+                t = "Some of the {}"
+            related = field_type.rel.to
+            return t.format(related._meta.verbose_name_plural.title())
+
+        enum = cls.get_field_enum(field_name)
+
+        if enum:
+            return "One of {}".format(",".join(enum))
+
+        else:
+            return "Text Field"
+
+    @classmethod
     def _get_field(cls, name):
         try:
             return cls._meta.get_field(name)
@@ -160,37 +211,69 @@ class SerialisableFields(object):
         return default
 
     @classmethod
+    def get_field_description(cls, name):
+        field = cls._get_field(name)
+        description = getattr(field, 'help_text', "")
+        if description:
+            return description
+
+    @classmethod
+    def get_field_enum(cls, name):
+        field = cls._get_field(name)
+        choices = getattr(field, "choices", [])
+
+        if choices:
+            return [i[1] for i in choices]
+
+    @classmethod
+    def get_lookup_list_api_name(cls, field_name):
+        lookup_list = None
+        field_type = cls._get_field_type(field_name)
+        if field_type == ForeignKeyOrFreeText:
+            fld = getattr(cls, field_name)
+            lookup_list = camelcase_to_underscore(
+                fld.foreign_model.get_api_name()
+            )
+        elif field_type == models.fields.related.ManyToManyField:
+            related_model = getattr(cls, field_name).field.related_model
+            if issubclass(related_model, lookuplists.LookupList):
+                return related_model.get_api_name()
+        return lookup_list
+
+    @classmethod
+    def build_schema_for_field_name(cls, field_name):
+        getter = getattr(cls, 'get_field_type_for_' + field_name, None)
+        if getter is None:
+            field = cls._get_field_type(field_name)
+            if field in [models.CharField, ForeignKeyOrFreeText]:
+                field_type = 'string'
+            else:
+                field_type = camelcase_to_underscore(field.__name__[:-5])
+        else:
+            field_type = getter()
+
+        title = cls._get_field_title(field_name)
+        default = cls._get_field_default(field_name)
+        field = {
+            'name': field_name,
+            'title': title,
+            'type': field_type,
+            'lookup_list': cls.get_lookup_list_api_name(field_name),
+            'default': default,
+            'model': cls.__name__,
+            'description': cls.get_field_description(field_name),
+            'enum': cls.get_field_enum(field_name)
+        }
+        return field
+
+    @classmethod
     def build_field_schema(cls):
         field_schema = []
+
         for fieldname in cls._get_fieldnames_to_serialize():
             if fieldname in ['id', 'patient_id', 'episode_id']:
                 continue
-
-            getter = getattr(cls, 'get_field_type_for_' + fieldname, None)
-            if getter is None:
-                field = cls._get_field_type(fieldname)
-                if field in [models.CharField, ForeignKeyOrFreeText]:
-                    field_type = 'string'
-                else:
-                    field_type = camelcase_to_underscore(field.__name__[:-5])
-            else:
-                field_type = getter()
-            lookup_list = None
-            if cls._get_field_type(fieldname) == ForeignKeyOrFreeText:
-                fld = getattr(cls, fieldname)
-                lookup_list = camelcase_to_underscore(
-                    fld.foreign_model.__name__
-                )
-            title = cls._get_field_title(fieldname)
-            default = cls._get_field_default(fieldname)
-
-            field_schema.append({'name': fieldname,
-                                 'title': title,
-                                 'type': field_type,
-                                 'lookup_list': lookup_list,
-                                 'default': default,
-                                 'model': cls.__name__
-                                 })
+            field_schema.append(cls.build_schema_for_field_name(fieldname))
         return field_schema
 
 
@@ -474,12 +557,14 @@ class Patient(models.Model):
         if not self.id:
             self.save()
 
+        #
         # We never want to be in the position where we don't have an episode.
         # If this patient has never had an episode, we create one now.
         # If the patient has preexisting episodes, we will either use an
         # episode passed in to us as a kwarg, or create a fresh episode for
         # this bulk update once we're sure we have episode subrecord data to
         # save.
+        #
         if not self.episode_set.exists():
             episode = self.create_episode()
 
@@ -668,7 +753,8 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     @property
     def category(self):
         from opal.core import episodes
-        return episodes.EpisodeCategory.get(self.category_name.lower())(self)
+        category = episodes.EpisodeCategory.get(self.category_name.lower())
+        return category(self)
 
     def visible_to(self, user):
         """
@@ -834,89 +920,96 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
     def get_display_name(cls):
         if hasattr(cls, '_title'):
             return cls._title
-        else:
-            return cls._meta.object_name
+        if cls._meta.verbose_name.islower():
+            return cls._meta.verbose_name.title()
+        return cls._meta.verbose_name
 
     @classmethod
-    def _build_template_selection(cls, episode_type=None, patient_list=None,
-                                  suffix=None, prefix=None):
-        name = cls.get_api_name()
+    def _get_template(cls, template, prefixes=None):
+        template_locations = []
 
-        templates = []
-        if patient_list and episode_type:
-            raise ValueError(
-                "you can not get both a patient list and episode type"
+        if prefixes is None:
+            prefixes = []
+
+        for prefix in prefixes:
+            template_locations.append(
+                template.format(os.path.join(prefix, cls.get_api_name()))
             )
-        if patient_list:
-            list_prefixes = patient_list.get_template_prefixes()
 
-            for list_prefix in list_prefixes:
-                templates.append('{0}/{1}/{2}{3}'.format(prefix, list_prefix,
-                                                         name, suffix))
-        if episode_type:
-            templates.append('{0}/{1}/{2}{3}'.format(prefix,
-                                                     episode_type.lower(),
-                                                     name, suffix))
-
-        templates.append('{0}/{1}{2}'.format(prefix, name, suffix))
-        return templates
+        template_locations.append(template.format(cls.get_api_name()))
+        return find_template(template_locations)
 
     @classmethod
-    def get_display_template(cls, episode_type=None, patient_list=None):
+    def get_display_template(cls, prefixes=None):
         """
         Return the active display template for our record
         """
-        templates = cls._build_template_selection(
-            episode_type=episode_type, patient_list=patient_list,
-            suffix='.html', prefix='records')
-        return find_template(templates)
+        if prefixes is None:
+            prefixes = []
+
+        return cls._get_template(
+            os.path.join("records", "{}.html"),
+            prefixes=prefixes
+        )
 
     @classmethod
-    def get_detail_template(cls, patient_list=None, episode_type=None):
+    def get_detail_template(cls, prefixes=None):
         """
         Return the active detail template for our record
         """
-        if patient_list and episode_type:
-            raise ValueError(
-                "you can not get both a patient list and episode type"
-            )
-        name = camelcase_to_underscore(cls.__name__)
+        file_locations = [
+            'records/{0}_detail.html',
+            'records/{0}.html'
+        ]
+
+        if prefixes is None:
+            prefixes = []
+
         templates = []
-        if episode_type:
-            templates.append('records/{0}/{1}_detail.html'.format(
-                episode_type.lower(), name)
-            )
 
-            templates.append('records/{0}/{1}.html'.format(
-                episode_type.lower(), name)
-            )
+        for prefix in prefixes:
+            for file_location in file_locations:
+                templates.append(file_location.format(
+                    os.path.join(prefix, cls.get_api_name())
+                ))
 
-        templates.append('records/{0}_detail.html'.format(name))
-        templates.append('records/{0}.html'.format(name))
+        for file_location in file_locations:
+            templates.append(
+                file_location.format(cls.get_api_name())
+            )
         return find_template(templates)
 
     @classmethod
-    def get_form_template(cls, patient_list=None, episode_type=None):
-        templates = cls._build_template_selection(
-            episode_type=episode_type, patient_list=patient_list,
-            suffix='_form.html', prefix='forms')
-        return find_template(templates)
+    def get_form_template(cls, prefixes=None):
+        if prefixes is None:
+            prefixes = []
+
+        return cls._get_template(
+            template=os.path.join("forms", "{}_form.html"),
+            prefixes=prefixes
+        )
 
     @classmethod
     def get_form_url(cls):
         return reverse("form_view", kwargs=dict(model=cls.get_api_name()))
 
     @classmethod
-    def get_modal_template(cls, patient_list=None, episode_type=None):
+    def get_modal_template(cls, prefixes=None):
         """
         Return the active form template for our record
         """
-        templates = cls._build_template_selection(
-            episode_type=episode_type, patient_list=patient_list,
-            suffix='_modal.html', prefix='modals')
-        if cls.get_form_template():
-            templates.append("base_templates/form_modal_base.html")
-        return find_template(templates)
+        if prefixes is None:
+            prefixes = []
+
+        result = cls._get_template(
+            template=os.path.join("modals", "{}_modal.html"),
+            prefixes=prefixes
+        )
+
+        if not result and cls.get_form_template():
+            result = find_template(["base_templates/form_modal_base.html"])
+
+        return result
 
     @classmethod
     def bulk_update_from_dicts(
@@ -941,6 +1034,8 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
                 msg = "attempted creation of multiple fields on a singleton {}"
                 raise ValueError(msg.format(cls.__name__))
 
+        result = []
+
         for a_dict in list_of_dicts:
             if "id" in a_dict or cls._is_singleton:
                 if cls._is_singleton:
@@ -953,6 +1048,8 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
                 subrecord = cls(**{schema_name: parent})
 
             subrecord.update_from_dict(a_dict, user, force=force)
+            result.append(subrecord)
+        return result
 
 
 class PatientSubrecord(Subrecord):
@@ -1010,8 +1107,15 @@ class Tagging(TrackedModel, models.Model):
 
     @staticmethod
     def build_field_schema():
-        return [{'name': t, 'type': 'boolean'} for t in
-                patient_lists.TaggedPatientList.get_tag_names()]
+        # t.title is wrong, but its the better than nothing
+        result = []
+        for tag in patient_lists.TaggedPatientList.get_tag_names():
+            result.append({
+                'name': tag,
+                'type': 'boolean',
+                'title': tag.replace("_", " ").title()
+            })
+        return result
 
 
 """
@@ -1277,7 +1381,10 @@ class Demographics(PatientSubrecord):
     _is_singleton = True
     _icon = 'fa fa-user'
 
-    hospital_number = models.CharField(max_length=255, blank=True)
+    hospital_number = models.CharField(
+        max_length=255, blank=True,
+        help_text="The unique identifier for this patient at the hospital."
+    )
     nhs_number = models.CharField(
         max_length=255, blank=True, null=True, verbose_name="NHS Number"
     )
@@ -1286,18 +1393,25 @@ class Demographics(PatientSubrecord):
     first_name = models.CharField(max_length=255, blank=True)
     middle_name = models.CharField(max_length=255, blank=True, null=True)
     title = ForeignKeyOrFreeText(Title)
-    date_of_birth = models.DateField(null=True, blank=True)
+    date_of_birth = models.DateField(
+        null=True, blank=True, verbose_name="Date of Birth"
+    )
     marital_status = ForeignKeyOrFreeText(MaritalStatus)
     religion = models.CharField(max_length=255, blank=True, null=True)
-    date_of_death = models.DateField(null=True, blank=True)
+    date_of_death = models.DateField(
+        null=True, blank=True, verbose_name="Date of Death"
+    )
     post_code = models.CharField(max_length=20, blank=True, null=True)
     gp_practice_code = models.CharField(
         max_length=20, blank=True, null=True, verbose_name="GP Practice Code"
     )
     birth_place = ForeignKeyOrFreeText(Destination,
-                                       verbose_name="Country Of Birth")
+                                       verbose_name="Country of Birth")
     ethnicity = ForeignKeyOrFreeText(Ethnicity)
-    death_indicator = models.BooleanField(default=False)
+    death_indicator = models.BooleanField(
+        default=False,
+        help_text="This field will be True if the patient is deceased."
+    )
 
     sex = ForeignKeyOrFreeText(Gender)
 
@@ -1313,7 +1427,9 @@ class Location(EpisodeSubrecord):
     _is_singleton = True
     _icon = 'fa fa-map-marker'
 
-    category = models.CharField(max_length=255, blank=True)
+    category = models.CharField(
+        max_length=255, blank=True
+    )
     hospital = models.CharField(max_length=255, blank=True)
     ward = models.CharField(max_length=255, blank=True)
     bed = models.CharField(max_length=255, blank=True)
@@ -1337,10 +1453,16 @@ class Treatment(EpisodeSubrecord):
     _sort = 'start_date'
     _icon = 'fa fa-flask'
 
+    HELP_START = "The date on which the patient began receiving this \
+treatment."
+
     drug          = ForeignKeyOrFreeText(Drug)
     dose          = models.CharField(max_length=255, blank=True)
     route         = ForeignKeyOrFreeText(Drugroute)
-    start_date    = models.DateField(null=True, blank=True)
+    start_date    = models.DateField(
+        null=True, blank=True,
+        help_text=HELP_START
+    )
     end_date      = models.DateField(null=True, blank=True)
     frequency     = ForeignKeyOrFreeText(Drugfreq)
 
@@ -1352,7 +1474,10 @@ class Allergies(PatientSubrecord):
     _icon = 'fa fa-warning'
 
     drug        = ForeignKeyOrFreeText(Drug)
-    provisional = models.BooleanField(default=False, verbose_name="Suspected?")
+    provisional = models.BooleanField(
+        default=False, verbose_name="Suspected?",
+        help_text="True if the allergy is only suspected. Defaults to False."
+    )
     details     = models.CharField(max_length=255, blank=True)
 
     class Meta:
@@ -1369,8 +1494,11 @@ class Diagnosis(EpisodeSubrecord):
     _icon = 'fa fa-stethoscope'
 
     condition         = ForeignKeyOrFreeText(Condition)
-    provisional       = models.BooleanField(default=False,
-                                            verbose_name="Provisional?")
+    provisional       = models.BooleanField(
+        default=False,
+        verbose_name="Provisional?",
+        help_text="True if the diagnosis is provisional. Defaults to False"
+    )
     details           = models.CharField(max_length=255, blank=True)
     date_of_diagnosis = models.DateField(blank=True, null=True)
 
@@ -1483,12 +1611,33 @@ class UserProfile(models.Model):
     roles                 = models.ManyToManyField(Role, blank=True)
 
     def to_dict(self):
-        return dict(
-            readonly=self.readonly,
-            can_extract=self.can_extract,
-            filters=[f.to_dict() for f in self.user.filter_set.all()],
-            roles=self.get_roles()
-        )
+        """
+        Return the serialised version of this UserProfile to send to the client
+        """
+        return {
+            'readonly'   : self.readonly,
+            'can_extract': self.can_extract,
+            'filters'    : [f.to_dict() for f in self.user.filter_set.all()],
+            'roles'      : self.get_roles(),
+            'full_name'  : self.user.get_full_name(),
+            'avatar_url' : self.get_avatar_url(),
+            'user_id'    : self.user.pk
+        }
+
+    def get_avatar_url(self):
+        """
+        Return the URL at which the avatar for this user may be found
+        """
+        # In order for avatars to still be useful when we have no email,
+        # we want a consistent identicon that is not the same for everyone
+        # e.g. users without emails don't all use the avatar for ''
+        if self.user.email:
+            to_hash = self.user.email.lower().encode('UTF-8')
+        else:
+            to_hash = self.user.username.encode('UTF-8')
+        hashed = hashlib.md5(to_hash).hexdigest()
+        gravatar = 'http://gravatar.com/avatar/{0}?s=80&r=g&d=identicon'
+        return gravatar.format(hashed)
 
     def get_roles(self):
         """
@@ -1518,6 +1667,7 @@ class InpatientAdmission(PatientSubrecord, ExternallySourcedModel):
     _title = "Inpatient Admissions"
     _icon = 'fa fa-map-marker'
     _sort = "-admitted"
+    _advanced_searchable = False
 
     datetime_of_admission = models.DateTimeField(blank=True, null=True)
     datetime_of_discharge = models.DateTimeField(blank=True, null=True)
@@ -1579,7 +1729,10 @@ class PatientConsultation(EpisodeSubrecord):
         abstract = True
 
     when = models.DateTimeField(null=True, blank=True)
-    initials = models.CharField(max_length=255, blank=True)
+    initials = models.CharField(
+        max_length=255, blank=True,
+        help_text="The initials of the user who gave the consult."
+    )
     reason_for_interaction = ForeignKeyOrFreeText(
         PatientConsultationReasonForInteraction
 
@@ -1603,7 +1756,23 @@ class SymptomComplex(EpisodeSubrecord):
     symptoms = models.ManyToManyField(
         Symptom, related_name="symptoms", blank=True
     )
-    duration = models.CharField(max_length=255, blank=True, null=True)
+    DURATION_CHOICES = (
+        ('3 days or less', '3 days or less',),
+        ('4-10 days', '4-10 days',),
+        ('11-21 days', '11-21 days',),
+        ('22 days to 3 months', '22 days to 3 months',),
+        ('over 3 months', 'over 3 months',),
+    )
+    HELP_DURATION = "The duration for which the patient had been experiencing \
+these symptoms when recorded."
+
+    duration = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+        choices=DURATION_CHOICES,
+        help_text=HELP_DURATION
+    )
     details = models.TextField(blank=True, null=True)
 
     def to_dict(self, user):

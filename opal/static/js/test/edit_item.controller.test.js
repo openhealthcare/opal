@@ -5,6 +5,7 @@ describe('EditItemCtrl', function (){
     var item, Item, existingEpisode;
     var dialog, Episode, episode, ngProgressLite, $q, $rootScope;
     var Schema, $controller, controller, fakeModalInstance;
+    var $analytics;
 
     var referencedata = {
         dogs: ['Poodle', 'Dalmation'],
@@ -36,6 +37,7 @@ describe('EditItemCtrl', function (){
     var episodeData = {
         id: 123,
         active: true,
+        category_name: "Inpatient",
         prev_episodes: [],
         next_episodes: [],
         demographics: [{
@@ -120,8 +122,9 @@ describe('EditItemCtrl', function (){
 
     beforeEach(function(){
         module(function($provide) {
-            $provide.value('UserProfile', function(){ return profile; });
+            $provide.value('UserProfile', {load: function(){ return profile; }});
         });
+        $analytics = jasmine.createSpyObj(["eventTrack"]);
 
         inject(function($injector){
             Item           = $injector.get('Item');
@@ -163,6 +166,7 @@ describe('EditItemCtrl', function (){
             episode       : episode,
             ngProgressLite: ngProgressLite,
             referencedata: referencedata,
+            $analytics: $analytics
         });
 
     });
@@ -176,6 +180,12 @@ describe('EditItemCtrl', function (){
     describe('scope setup', function(){
       it('Should hoist metadata onto the scope', function () {
           expect($scope.metadata).toBe(metadata);
+      });
+
+      it('should track analytics data', function(){
+          expect($analytics.eventTrack).toHaveBeenCalledWith(
+            "investigation", {category: "EditItem", label: "Inpatient"}
+          );
       });
     })
 
@@ -197,6 +207,7 @@ describe('EditItemCtrl', function (){
     });
 
     describe('Saving items', function (){
+
         it('Should save the current item', function () {
             $scope.$digest();
             var callArgs;
@@ -217,6 +228,25 @@ describe('EditItemCtrl', function (){
             expect(callArgs.length).toBe(1);
             expect(callArgs[0]).toBe($scope.editing.investigation);
         });
+
+        it('should save the episode if we have changed it', function() {
+            $scope.$digest();
+            var callArgs;
+            var deferred = $q.defer();
+            spyOn(item, 'save');
+            spyOn(episode, 'save').and.callFake(function() {
+                return deferred.promise;
+            });
+            $scope.episode.date_of_admission = new Date();
+            $scope.save('save');
+            deferred.resolve("episode returned");
+            $scope.$digest();
+
+            callArgs = episode.save.calls.mostRecent().args;
+            expect(callArgs.length).toBe(1);
+            expect(callArgs[0]).toBe($scope.episode);
+        });
+
     });
 
     describe('delete()', function() {
@@ -228,6 +258,7 @@ describe('EditItemCtrl', function (){
             var args = $modal.open.calls.mostRecent().args[0];
             expect(args.templateUrl).toEqual('/templates/modals/delete_item_confirmation.html/');
             expect(args.controller).toEqual('DeleteItemConfirmationCtrl');
+            expect(args.resolve.item()).toEqual(item)
         });
 
     });

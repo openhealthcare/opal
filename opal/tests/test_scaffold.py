@@ -6,6 +6,7 @@ import subprocess
 
 from mock import patch, MagicMock, Mock
 import ffs
+import opal
 
 from django.conf import settings
 
@@ -18,7 +19,7 @@ from opal.core.scaffold import (
 )
 from opal.core import scaffold
 
-
+@patch('os.system')
 class StartpluginTestCase(OpalTestCase):
     def setUp(self):
         self.path = ffs.Path.newdir()
@@ -28,49 +29,60 @@ class StartpluginTestCase(OpalTestCase):
         ffs.rm_r(self.path)
 
     @patch("opal.core.scaffold.shutil.copytree", side_effect=shutil.copytree)
-    def test_tree_copied(self, shutil):
+    def test_tree_copied(self, shutil, os):
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(shutil.called)
 
-    def test_creates_the_app_directory(self):
+    def test_creates_the_app_directory(self, os):
         test_plugin = self.path/'opal-testplugin/testplugin'
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(test_plugin.is_dir)
 
-    def test_creates_appropriate_directory_with_opal_prefix(self):
+    def test_creates_appropriate_directory_with_opal_prefix(self, os):
         test_plugin = self.path/'opal-testplugin/testplugin'
         scaffold.start_plugin("opal-testplugin", self.path)
         self.assertTrue(test_plugin.is_dir)
 
-    def test_creates_template_directory(self):
+    def test_creates_template_directory(self, os):
         template_dir = self.path/'opal-testplugin/testplugin/templates'
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(template_dir.is_dir)
 
-    def test_creates_static_directory(self):
+    def test_creates_static_directory(self, os):
         static_dir = self.path/'opal-testplugin/testplugin/static'
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(static_dir.is_dir)
 
-    def test_creates_controllers_directory(self):
+    def test_calls_interpolate_dir(self, os):
+        with patch.object(scaffold, 'interpolate_dir') as interpolate:
+            scaffold.start_plugin(self.args, self.path)
+            self.assertEqual(interpolate.call_args[1]["name"], "testplugin")
+            self.assertIn("version", interpolate.call_args[1])
+
+    def test_creates_css_directory(self, os):
+        css_dir = self.path/'opal-testplugin/testplugin/static/css'
+        scaffold.start_plugin(self.args, self.path)
+        self.assertTrue(css_dir.is_dir)
+
+    def test_creates_controllers_directory(self, os):
         rpath = 'opal-testplugin/testplugin/static/js/testplugin/controllers'
         controllers_dir = self.path/rpath
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(controllers_dir.is_dir)
 
-    def test_creates_services_directory(self):
+    def test_creates_services_directory(self, os):
         rpath = 'opal-testplugin/testplugin/static/js/testplugin/services'
         services_dir = self.path/rpath
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(services_dir.is_dir)
 
-    def test_has_lookuplists(self):
-        rpath = 'opal-testplugin/testplugin/data/lookuplists/lookuplists.json'
+    def test_has_lookuplists_dir(self, os):
+        rpath = 'opal-testplugin/testplugin/data/lookuplists/'
         lookuplists = self.path/rpath
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(bool(lookuplists))
 
-    def test_creates_manifest(self):
+    def test_creates_manifest(self, os):
         rpath = 'opal-testplugin/MANIFEST.in'
         manifest = self.path/rpath
         scaffold.start_plugin(self.args, self.path)
@@ -80,6 +92,18 @@ class StartpluginTestCase(OpalTestCase):
             self.assertIn("recursive-include testplugin/static *", contents)
             self.assertIn("recursive-include testplugin/templates *", contents)
 
+    def test_initialize_git(self, os):
+        scaffold.start_plugin(self.args, self.path)
+        os.assert_any_call('cd opal-testplugin; git init')
+
+    def test_creates_requirements(self, os):
+        rpath = 'opal-testplugin/requirements.txt'
+        requirements = self.path/rpath
+        scaffold.start_plugin(self.args, self.path)
+        self.assertTrue(bool(requirements))
+        with open(requirements) as r:
+            contents = r.read()
+            self.assertIn('opal=={}'.format(opal.__version__), contents)
 
 @patch('subprocess.check_call')
 @patch('os.system')
@@ -103,9 +127,9 @@ class StartprojectTestCase(OpalTestCase):
         scaffold.start_project(self.args, self.path)
         os.assert_any_call('django-admin.py startproject testapp')
 
-    def test_has_lookuplists(self, os, subpr):
+    def test_has_lookuplists_dir(self, os, subpr):
         scaffold.start_project(self.args, self.path)
-        lookuplists = self.path/'testapp/testapp/data/lookuplists/lookuplists.json'
+        lookuplists = self.path/'testapp/testapp/data/lookuplists/'
         self.assertTrue(bool(lookuplists))
 
     def test_has_gitignore(self, os, subpr):
@@ -119,7 +143,8 @@ class StartprojectTestCase(OpalTestCase):
                 rnd.return_value = 'foobarbaz'
                 scaffold.start_project(self.args, self.path)
                 interpolate.assert_any_call(self.path/'testapp', name='testapp',
-                                            secret_key='foobarbaz')
+                                            secret_key='foobarbaz',
+                                            version=opal.__version__)
 
     def test_settings_is_our_settings(self, os, subpr):
         scaffold.start_project(self.args, self.path)
@@ -205,6 +230,14 @@ class StartprojectTestCase(OpalTestCase):
     def test_initialize_git(self, os, subpr):
         scaffold.start_project(self.args, self.path)
         os.assert_any_call('cd testapp; git init')
+
+    def test_creates_requirements(self, os, subpr):
+        scaffold.start_project(self.args, self.path)
+        requirements = self.path/'testapp/requirements.txt'
+        self.assertTrue(bool(requirements))
+        with open(requirements) as r:
+            contents = r.read()
+            self.assertIn('opal=={}'.format(opal.__version__), contents)
 
 
 @patch("ffs.Path.__lshift__")
@@ -380,6 +413,36 @@ class FormRenderTestCase(OpalTestCase):
         create_form_template_for(Colour, scaffold_path)
         lshift.assert_called_once_with(
             '{% load forms %}\n{% checkbox  field="Colour.name"  %}'
+        )
+
+    @patch.object(Colour, "build_field_schema")
+    def test_integer_render(self, build_field_schema, lshift):
+        build_field_schema.return_value = {
+            'lookup_list': None,
+            'model': 'Colour',
+            'name': 'number',
+            'title': 'Number',
+            'type': 'integer'
+        },
+        scaffold_path = ffs.Path(settings.PROJECT_PATH)/'scaffolding'
+        create_form_template_for(Colour, scaffold_path)
+        lshift.assert_called_once_with(
+            '{% load forms %}\n{% input  field="Colour.number"  %}'
+        )
+
+    @patch.object(Colour, "build_field_schema")
+    def test_float_render(self, build_field_schema, lshift):
+        build_field_schema.return_value = {
+            'lookup_list': None,
+            'model': 'Colour',
+            'name': 'number',
+            'title': 'Number',
+            'type': 'float'
+        },
+        scaffold_path = ffs.Path(settings.PROJECT_PATH)/'scaffolding'
+        create_form_template_for(Colour, scaffold_path)
+        lshift.assert_called_once_with(
+            '{% load forms %}\n{% input  field="Colour.number"  %}'
         )
 
     @patch('ffs.Path.__bool__')

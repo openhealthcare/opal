@@ -1,5 +1,5 @@
 """
-Tagging OPAL episodes
+Tagging Opal episodes
 """
 from opal.core import patient_lists
 

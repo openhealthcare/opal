@@ -1,7 +1,6 @@
 """
 Module entrypoint for core Opal views
 """
-from django.conf import settings
 from django.contrib.auth.views import login
 from django.http import HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
@@ -117,15 +116,6 @@ class EpisodeDetailTemplateView(LoginRequiredMixin, TemplateView):
 class IndexView(LoginRequiredMixin, TemplateView):
     template_name = 'opal.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(IndexView, self).get_context_data(**kwargs)
-        context['brand_name'] = getattr(settings, 'OPAL_BRAND_NAME', 'OPAL')
-        context['settings'] = settings
-        if hasattr(settings, 'OPAL_EXTRA_APPLICATION'):
-            context['extra_application'] = settings.OPAL_EXTRA_APPLICATION
-
-        return context
-
 
 def check_password_reset(request, *args, **kwargs):
     """
@@ -177,7 +167,7 @@ class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
 
 
 """
-Template views for OPAL
+Template views for Opal
 """
 
 
@@ -207,12 +197,13 @@ class FormTemplateView(LoginRequiredMixin, TemplateView):
 
 class ModalTemplateView(LoginRequiredMixin, TemplateView):
     def get_template_from_model(self):
-        patient_list = None
+        list_prefixes = None
 
         if self.list_slug:
             patient_list = PatientList.get(self.list_slug)()
+            list_prefixes = patient_list.get_template_prefixes()
         return self.column.get_modal_template(
-            patient_list=patient_list
+            prefixes=list_prefixes
         )
 
     def dispatch(self, *a, **kw):
