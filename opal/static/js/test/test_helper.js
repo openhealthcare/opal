@@ -34,11 +34,13 @@ angular.module('opalTest').service('testHelper', function(Episode){
         id: 102,
         condition: 'Dengue',
         provisional: true,
+        date_of_diagnosis: '01/06/2013'
       },
       {
         id: 103,
         condition: 'Malaria',
         provisional: false,
+        date_of_diagnosis: '01/07/2013'
       }
     ]
   };
@@ -68,9 +70,12 @@ angular.module('opalTest').service('testHelper', function(Episode){
     diagnosis: {
       name: 'diagnosis',
       single: false,
+      icon: "fa fa-stethoscope",
+      sort: "date_of_diagnosis",
       fields: [
           {name: 'condition', type: 'string'},
           {name: 'provisional', type: 'boolean'},
+          {name: 'date_of_diagnosis', type: 'date'},
       ]
     },
     investigation: {

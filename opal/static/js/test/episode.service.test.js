@@ -84,7 +84,7 @@ describe('Episode', function() {
     });
 
     it('should be able to get specific item', function() {
-        expect(episode.getItem('diagnosis', 1).id).toEqual(103);
+        expect(episode.getItem('diagnosis', 1).id).toEqual(102);
     });
 
     it('should return the name of the patient', function() {
@@ -150,13 +150,18 @@ describe('Episode', function() {
         expect(episode.notareal_column).toEqual([item]);
     });
 
+    it('should sort items by their "sort" field if available' , function(){
+        expect(episode.diagnosis[0].id).toBe(103);
+        expect(episode.diagnosis[1].id).toBe(102);
+    });
+
     it('removeItem() should remove an item from our episode', function() {
         // Note: Diagnoses end up ordered differently to the declared order
         // above as they are sorted by date.
         expect(episode.diagnosis.length).toEqual(2);
         episode.removeItem(episode.diagnosis[1]);
         expect(episode.diagnosis.length).toEqual(1);
-        expect(episode.diagnosis[0].id).toBe(102);
+        expect(episode.diagnosis[0].id).toBe(103);
     });
 
     it('Should be able to produce a copy of attributes', function () {
