@@ -218,13 +218,15 @@ they come from and how they are referenced by that system.
 These fields are then often used in forms to make the data read only
 
 
-### Patient Subrecord Managers
+### Subrecord Managers
 
 #### PatientSubrecord.objects.serialise_for_patients
+
 When we serialise a patient or episode we serialise all subrecords related to it.
 This is the method used when we serialise an entire patient or episode(s)
 
 
 #### EpisodeSubrecord.objects.serialise_for_episodes
+
 When we serialise a patient or episode we serialise all subrecords related to it.
 This is the method used when we serialise episode(s)
