@@ -117,7 +117,7 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
         view.patient_list = TaggingTestPatientList
 
         context_data = view.get_context_data(slug="eater-herbivore")
-        self.assertEqual(4, context_data['num_lists'])
+        self.assertEqual(3, context_data['num_lists'])
 
     def test_get_context_data_list_group(self):
         url = reverse("patient_list_template_view", kwargs=dict(slug="eater-herbivore"))
