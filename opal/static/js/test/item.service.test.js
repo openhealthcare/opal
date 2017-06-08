@@ -1,175 +1,138 @@
 describe('Item', function() {
     "use strict";
 
-    var columns, episodeData, options, records, list_schema, mockWindow, $rootScope;
+    var columns, episodeData, recordSchema, list_schema, mockWindow;
+    var testHelper, $rootScope, Item, $httpBackend, item, episode;
 
     beforeEach(function() {
+        mockWindow = { alert: jasmine.createSpy() };
         module('opal.services', function($provide){
             $provide.service('Demographics', function(){
                 return function(x){ return x };
             });
+            $provide.value('$window', mockWindow);
+        });
+        module('opalTest');
+
+        inject(function($injector) {
+          testHelper = $injector.get('testHelper');
+          Item = $injector.get('Item');
+          $rootScope = $injector.get('$rootScope');
+          $httpBackend = $injector.get('$httpBackend');
         });
 
-        columns = {
-            "fields": {
-                'demographics': {
-                    name: "demographics",
-                    single: true,
-                    fields: [
-                        {name: 'name', type: 'string'},
-                        {name: 'date_of_birth', type: 'date'},
-                        {name: 'created', type: 'date_time'},
-                    ],
-                    angular_service: 'Demographics'
-                },
-                "diagnosis": {
-                    name: "diagnosis",
-                    single: false,
-                    sort: 'date_of_diagnosis',
-                    fields: [
-                        {name: 'date_of_diagnosis', type: 'date'},
-                        {name: 'condition', type: 'string', default: 'flu'},
-                        {name: 'provisional', type: 'boolean'},
-                    ]
-                }
-            }
-        };
-
-        records = columns.fields;
-
-        episodeData = {
-            id: 123,
-            date_of_admission: "19/11/2013",
-            active: true,
-            discharge_date: null,
-            date_of_episode: null,
-            tagging: [{
-                mine: true,
-                tropical: true
-                }],
-            demographics: [{
-                id: 101,
-                name: 'John Smith',
-                date_of_birth: '31/07/1980',
-                hospital_number: '555',
-                created: "07/04/2015 11:45:00"
-            }],
-            location: [{
-                category: 'Inepisode',
-                hospital: 'UCH',
-                ward: 'T10',
-                bed: '15',
-                date_of_admission: '01/08/2013',
-            }],
-            diagnosis: [{
-                id: 102,
-                condition: 'Dengue',
-                provisional: true,
-                date_of_diagnosis: '20/04/2007',
-            }, {
-                id: 103,
-                condition: 'Malaria',
-                provisional: false,
-                date_of_diagnosis: '19/03/2006'
-            }]
-        };
-        options =  {
-            travel_reason: [
-                "British Armed Forces",
-                "Business",
-                "Child visiting family",
-                "Civilian sea/air crew",
-                "Foreign Student",
-                "Foreign Visitor",
-                "Holiday",
-                "Migrant",
-                "Military",
-                "New Entrant to UK",
-                "Professional",
-                "Tourism",
-                "UK Citizen Living Abroad",
-                "VFR",
-                "Visiting Friends and Relatives",
-                "Work"
-            ]
-        };
+        recordSchema = testHelper.getRecordLoaderData();
+        episodeData = testHelper.getEpisodeData();
+        episode = testHelper.newEpisode($rootScope);
+        spyOn(episode, "addItem");
+        spyOn(episode, "removeItem");
+        item = new Item(episodeData.demographics[0], episode, recordSchema.demographics);
     });
 
-    describe('Item', function() {
-        var Item, item;
-        var mockEpisode = {
-            addItem: function(item) {},
-            removeItem: function(item) {},
-            demographics: [{name: 'Name'}]
-        };
+    it('should have correct attributes', function() {
+        expect(item.id).toBe(101)
+        expect(item.first_name).toBe('John');
+        expect(item.surname).toBe('Smith');
+    });
 
-        beforeEach(function() {
-            mockWindow = { alert: jasmine.createSpy() };
+    it('should convert values of date fields to moment objects', function() {
+        expect(item.date_of_birth.toDate()).toEqual(new Date(1980, 6, 31));
+    });
 
-            module(function($provide) {
-                $provide.value('$window', mockWindow);
+    it('should convert values of date time fields to moment objects', function() {
+        expect(item.created.toDate()).toEqual(new Date(2015, 3, 7, 11, 45));
+    });
+
+    it('should supply a default formController of editItem', function() {
+        expect(item.formController).toEqual('EditItemCtrl');
+    });
+
+    it('should be able to produce copy of attributes', function() {
+      var copy = item.makeCopy();
+      var id = copy._client.id;
+      expect(id.indexOf('demographics')).toBe(0)
+      var specificCopy = _.pick(copy, "id", "first_name", "surname", "date_of_birth", "created");
+      expect(specificCopy).toEqual({
+          id: 101,
+          first_name: "John",
+          surname: "Smith",
+          date_of_birth: new Date(1980, 6, 31),
+          created: new Date(2015, 3, 7, 11, 45)
+      });
+    });
+
+    it('should make a copy with defaults', function(){
+        var diagnosisSchema = angular.copy(recordSchema.diagnosis);
+        var condition = _.findWhere(diagnosisSchema.fields, {name: "condition"});
+        condition.default = 'flu';
+        var newItem = new Item({}, episode, diagnosisSchema);
+        expect(!!newItem.condition).toBe(false);
+        var copy = newItem.makeCopy();
+        expect(copy.condition).toBe('flu');
+    });
+
+    it('defaults should not overwrite existing data', function(){
+      var existing = new Item(episodeData.diagnosis[0], episode, recordSchema.diagnosis);
+      expect(existing.condition).toBe('Dengue');
+      var copy = existing.makeCopy();
+      expect(copy.condition).toBe('Dengue');
+    });
+
+    describe('communicating with server', function() {
+        afterEach(function() {
+            $httpBackend.verifyNoOutstandingExpectation();
+            $httpBackend.verifyNoOutstandingRequest();
+        });
+
+        describe('saving existing item', function() {
+            var attrsWithJsonDate;
+
+            beforeEach(function() {
+                attrsWithJsonDate = {
+                    id: 101,
+                    name: 'John Smythe',
+                    date_of_birth: '30/07/1980'
+                };
+                item = new Item(episodeData.demographics[0],
+                                episode,
+                                recordSchema.demographics);
+                $httpBackend.whenPUT('/api/v0.1/demographics/101/')
+                    .respond(attrsWithJsonDate);
             });
 
-            inject(function($injector) {
-                Item = $injector.get('Item');
-                $rootScope = $injector.get('$rootScope');
+            it('should hit server', function() {
+                $httpBackend.expectPUT('/api/v0.1/demographics/101/', attrsWithJsonDate);
+                item.save(attrsWithJsonDate);
+                $httpBackend.flush();
             });
 
-            $rootScope.fields = columns.fields;
-            item = new Item(episodeData.demographics[0], mockEpisode, columns.fields.demographics);
+            it('should update item attributes', function() {
+                item.save(attrsWithJsonDate);
+                $httpBackend.flush();
+                expect(item.id).toBe(101);
+                expect(item.name).toBe('John Smythe');
+                expect(item.date_of_birth.toDate()).toEqual(new Date(1980, 6, 30));
+            });
+
         });
 
-        it('should have correct attributes', function() {
-            expect(item.id).toBe(101)
-            expect(item.name).toBe('John Smith');
-        });
-
-        it('should convert values of date fields to moment objects', function() {
-            expect(item.date_of_birth.toDate()).toEqual(new Date(1980, 6, 31));
-        });
-
-        it('should convert values of date time fields to moment objects', function() {
-            expect(item.created.toDate()).toEqual(new Date(2015, 3, 7, 11, 45));
-        });
-
-        it('should supply a default formController of editItem', function() {
-            expect(item.formController).toEqual('EditItemCtrl');
-        });
-
-        it('should be able to produce copy of attributes', function() {
-          var copy = item.makeCopy();
-          var id = copy._client.id;
-          expect(id.indexOf('demographics')).toBe(0)
-          delete copy._client;
-          expect(copy).toEqual({
-              id: 101,
-              name: 'John Smith',
-              date_of_birth: new Date(1980, 6, 31),
-              created: new Date(2015, 3, 7, 11, 45)
-          });
-        });
-
-        it('should make a copy with defaults', function(){
-            var newItem = new Item({}, mockEpisode, columns.fields.diagnosis);
-            expect(!!newItem.condition).toBe(false);
-            var copy = newItem.makeCopy();
-            expect(copy.condition).toBe('flu');
-        });
-
-        it('defaults should not overwrite existing data', function(){
-          var existing = new Item(episodeData.diagnosis[0], mockEpisode, columns.fields.diagnosis);
-          expect(existing.condition).toBe('Dengue');
-          var copy = existing.makeCopy();
-          expect(copy.condition).toBe('Dengue');
-        });
-
-        describe('communicating with server', function() {
-            var $httpBackend, item;
+        describe('Failing save() calls', function() {
+            var $httpBackend, item, editing;
 
             beforeEach(function() {
                 inject(function($injector) {
                     $httpBackend = $injector.get('$httpBackend');
                 });
+                item = new Item(
+                    episodeData.demographics[0],
+                    episode,
+                    recordSchema.demographics
+                );
+                editing = {
+                    id: 101,
+                    name: 'John Smythe',
+                    date_of_birth: '30/07/1980'
+                };
             });
 
             afterEach(function() {
@@ -177,141 +140,82 @@ describe('Item', function() {
                 $httpBackend.verifyNoOutstandingRequest();
             });
 
-            describe('saving existing item', function() {
-                var attrsWithJsonDate;
-
-                beforeEach(function() {
-                    attrsWithJsonDate = {
-                        id: 101,
-                        name: 'John Smythe',
-                        date_of_birth: '30/07/1980'
-                    };
-                    item = new Item(episodeData.demographics[0],
-                                    mockEpisode,
-                                    columns.fields.demographics);
-                    $httpBackend.whenPUT('/api/v0.1/demographics/101/')
-                        .respond(attrsWithJsonDate);
-                });
-
-                it('should hit server', function() {
-                    $httpBackend.expectPUT('/api/v0.1/demographics/101/', attrsWithJsonDate);
-                    item.save(attrsWithJsonDate);
-                    $httpBackend.flush();
-                });
-
-                it('should update item attributes', function() {
-                    item.save(attrsWithJsonDate);
-                    $httpBackend.flush();
-                    expect(item.id).toBe(101);
-                    expect(item.name).toBe('John Smythe');
-                    expect(item.date_of_birth.toDate()).toEqual(new Date(1980, 6, 30));
-                });
-
-            });
-
-            describe('Failing save() calls', function() {
-                var $httpBackend, item, editing;
-
-                beforeEach(function() {
-                    inject(function($injector) {
-                        $httpBackend = $injector.get('$httpBackend');
-                    });
-                    item = new Item(
-                        episodeData.demographics[0],
-                        mockEpisode,
-                        columns.fields.demographics
-                    );
-                    editing = {
-                        id: 101,
-                        name: 'John Smythe',
-                        date_of_birth: '30/07/1980'
-                    };
-                });
-
-                afterEach(function() {
-                    $httpBackend.verifyNoOutstandingExpectation();
-                    $httpBackend.verifyNoOutstandingRequest();
-                });
-
-                it('should tell us if there was a conflict', function() {
-                    var msg = 'Item could not be saved because somebody else has \
+            it('should tell us if there was a conflict', function() {
+                var msg = 'Item could not be saved because somebody else has \
 recently changed it - refresh the page and try again';
-                    $httpBackend.whenPUT('/api/v0.1/demographics/101/').respond(409);
-                    item.save(editing);
-                    $httpBackend.flush();
-                    expect(mockWindow.alert).toHaveBeenCalledWith(msg);
-                });
-
-                it('should tell us if there is an error', function() {
-                    var msg = 'Item could not be saved';
-                    $httpBackend.whenPUT('/api/v0.1/demographics/101/').respond(500);
-                    item.save(editing);
-                    $httpBackend.flush();
-                    expect(mockWindow.alert).toHaveBeenCalledWith(msg);
-                });
-
+                $httpBackend.whenPUT('/api/v0.1/demographics/101/').respond(409);
+                item.save(editing);
+                $httpBackend.flush();
+                expect(mockWindow.alert).toHaveBeenCalledWith(msg);
             });
 
-            describe('saving new item', function() {
-                var attrs;
-
-                beforeEach(function() {
-                    attrs = {id: 104, condition: 'Ebola', provisional: false};
-                    item = new Item({}, mockEpisode, columns.fields.diagnosis);
-                    $httpBackend.whenPOST('/api/v0.1/diagnosis/').respond(attrs);
-                });
-
-                it('should hit server', function() {
-                    $httpBackend.expectPOST('/api/v0.1/diagnosis/');
-                    item.save(attrs);
-                    $httpBackend.flush();
-                });
-
-                it('should set item attributes', function() {
-                    item.save(attrs);
-                    $httpBackend.flush();
-                    expect(item.id).toBe(104);
-                    expect(item.condition).toBe('Ebola');
-                    expect(item.provisional).toBe(false);
-                });
-
-                it('should notify episode', function() {
-                    spyOn(mockEpisode, 'addItem');
-                    item.save(attrs);
-                    $httpBackend.flush();
-                    expect(mockEpisode.addItem).toHaveBeenCalled();
-                });
+            it('should tell us if there is an error', function() {
+                var msg = 'Item could not be saved';
+                $httpBackend.whenPUT('/api/v0.1/demographics/101/').respond(500);
+                item.save(editing);
+                $httpBackend.flush();
+                expect(mockWindow.alert).toHaveBeenCalledWith(msg);
             });
 
-            describe('deleting item', function() {
-                beforeEach(function() {
-                    item = new Item(episodeData.diagnosis[1],
-                                    mockEpisode, columns.fields.diagnosis);
-                });
+        });
 
-                it('should hit server', function() {
-                    $httpBackend.whenDELETE('/api/v0.1/diagnosis/103/').respond();
-                    $httpBackend.expectDELETE('/api/v0.1/diagnosis/103/');
-                    item.destroy();
-                    $httpBackend.flush();
-                });
+        describe('saving new item', function() {
+            var attrs;
 
-                it('should notify episode', function() {
-                    $httpBackend.whenDELETE('/api/v0.1/diagnosis/103/').respond();
-                    spyOn(mockEpisode, 'removeItem');
-                    item.destroy();
-                    $httpBackend.flush();
-                    expect(mockEpisode.removeItem).toHaveBeenCalled();
-                });
-
-                it('should alert() when we fail a destroy call.', function() {
-                    $httpBackend.whenDELETE('/api/v0.1/diagnosis/103/').respond(500);
-                    item.destroy()
-                    $httpBackend.flush()
-                    expect(mockWindow.alert).toHaveBeenCalledWith('Item could not be deleted')
-                });
-
+            beforeEach(function() {
+                attrs = {id: 104, condition: 'Ebola', provisional: false};
+                item = new Item({}, episode, recordSchema.diagnosis);
+                $httpBackend.whenPOST('/api/v0.1/diagnosis/').respond(attrs);
             });
+
+            it('should hit server', function() {
+                $httpBackend.expectPOST('/api/v0.1/diagnosis/');
+                item.save(attrs);
+                $httpBackend.flush();
+            });
+
+            it('should set item attributes', function() {
+                item.save(attrs);
+                $httpBackend.flush();
+                expect(item.id).toBe(104);
+                expect(item.condition).toBe('Ebola');
+                expect(item.provisional).toBe(false);
+            });
+
+            it('should notify episode', function() {
+                item.save(attrs);
+                $httpBackend.flush();
+                expect(episode.addItem).toHaveBeenCalled();
+            });
+        });
+
+        describe('deleting item', function() {
+            beforeEach(function() {
+                item = new Item(episodeData.diagnosis[1],
+                                episode, recordSchema.diagnosis);
+            });
+
+            it('should hit server', function() {
+                $httpBackend.whenDELETE('/api/v0.1/diagnosis/103/').respond();
+                $httpBackend.expectDELETE('/api/v0.1/diagnosis/103/');
+                item.destroy();
+                $httpBackend.flush();
+            });
+
+            it('should notify episode', function() {
+                $httpBackend.whenDELETE('/api/v0.1/diagnosis/103/').respond();
+                item.destroy();
+                $httpBackend.flush();
+                expect(episode.removeItem).toHaveBeenCalled();
+            });
+
+            it('should alert() when we fail a destroy call.', function() {
+                $httpBackend.whenDELETE('/api/v0.1/diagnosis/103/').respond(500);
+                item.destroy()
+                $httpBackend.flush()
+                expect(mockWindow.alert).toHaveBeenCalledWith('Item could not be deleted')
+            });
+
         });
     });
 });
