@@ -22,16 +22,6 @@ class Command(BaseCommand):
         self.set_counter()
         return super(Command, self).__init__(*a, **k)
 
-    option_list = BaseCommand.option_list + (
-        make_option(
-            "-f",
-            "--file",
-            dest="filename",
-            help="specify import file",
-            metavar="FILE"
-        ),
-    )
-
     def set_counter(self):
         self.num = 0
         self.created = 0
