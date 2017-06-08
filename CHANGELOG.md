@@ -1,9 +1,18 @@
-
 ### 0.9.0 (Major Release)
+Add the allow_add_patient and allow_edit_teams options to the patient lists.
 
-### 0.8.2.1 (Exceedingly Minor Release)
+#### Removes Deprecated functionality in ReferenceData, Metadata, UserProfile and recordLoader
+Previously these would make their http request when imported into a file. They now require you to call .load()
+for them to return the promise that loads in their respective data.
 
-Adds in the karma config to the MANIFEST.in so that we include the karma configs on pip install.
+
+### 0.8.3 (Minor Release)
+
+#### opal.log.ConfidentialEmailer
+Adds a custom email logger. This enables Django error emails which remove any confidential patient data.
+
+Also adds in the karma config to the MANIFEST.in so that we include the karma configs on pip install. It also moves it
+to "opal/tests/js_config/karma_defaults.js".
 
 ### 0.8.2 (Minor Release)
 

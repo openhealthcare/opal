@@ -7,6 +7,7 @@ describe('Patient', function() {
   var $httpBackend, $route, $rootScope, Patient, EpisodeSpy;
 
   var patientData = {
+    id: 1,
     demographics: [{first_name: "Sue", surname: "Jackson", patient_id: 1}],
     episodes: {
       122: {id: 122, start: "20/01/2016", end: "20/02/2016", demographics: [{first_name: "Sue", surname: "Jackson", patient_id: 1}]},
@@ -89,6 +90,11 @@ describe('Patient', function() {
 
       // they should not be null
       expect(!!patient.recordEditor).toBe(true);
+    });
+
+    it('should not hoist the id field', function(){
+      var patient = new Patient(patientData);
+      expect(patient.id).toBe(1);
     });
   });
 });

@@ -149,7 +149,8 @@ def start_project(name, USERLAND_HERE):
     gitignore.mv(project_dir/'.gitignore')
 
     # Interpolate the project data
-    interpolate_dir(project_dir, name=name, secret_key=get_random_secret_key())
+    interpolate_dir(project_dir, name=name, secret_key=get_random_secret_key(),
+                    version=opal.__version__)
 
     app_dir = project_dir/name
 

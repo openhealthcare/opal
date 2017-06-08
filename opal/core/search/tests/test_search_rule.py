@@ -30,6 +30,12 @@ class SearchRuleFieldTestCase(OpalTestCase):
             SomeOtherSearchRuleField().get_slug(), "customfieldyouknow"
         )
 
+    def test_slug_if_no_slug_or_display_name(self):
+        class SluglessSearchRuleField(search_rule.SearchRuleField):
+            description = "Invalid for slugs"
+        with self.assertRaises(ValueError):
+            SluglessSearchRuleField.get_slug()
+
     def test_query(self):
         with self.assertRaises(NotImplementedError) as nie:
             self.custom_field.query("some query")

@@ -77,6 +77,11 @@ class PatientList(discoverable.DiscoverableFeature,
     template_name      = 'patient_lists/spreadsheet_list.html'
     order              = 0
     comparator_service = None
+    # whether we display the add patient button
+    allow_add_patient  = True
+
+    # whether we allow the user to edit the teams the patient is under
+    allow_edit_teams = True
 
     @classmethod
     def list(klass):
