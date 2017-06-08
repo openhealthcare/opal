@@ -724,7 +724,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
             return self.date_of_admission
         except AttributeError:
             return 'Episode: {0}'.format(self.pk)
-        except Exception as e:
+        except Exception:
             return self.date_of_admission
 
     def save(self, *args, **kwargs):

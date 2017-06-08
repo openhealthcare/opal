@@ -1,14 +1,24 @@
 ### 0.9.0 (Major Release)
+
+#### Theming support
+
+Improvements and better documentation and guides for theming applications. Particularly
+of note are changes to `opal.html` and `base.html`, as well as the addition of the
+`static_page.html` template.
+
+This version also includes extensive improved support for customising the templates that
+display patient lists, detail views, menus and forms amongst other things.
+
+For full documentation, consult the theming guide in the documentation.
+
+#### Misc Changes
+
 Add the allow_add_patient and allow_edit_teams options to the patient lists.
 
 #### Removes Deprecated functionality in ReferenceData, Metadata, UserProfile and recordLoader
+
 Previously these would make their http request when imported into a file. They now require you to call .load()
 for them to return the promise that loads in their respective data.
-
-#### Adds the Card Patient List template and the Table Patient List Template
-Adds the template "patient_lists/card_list.html" and"patient_lists/table_list.html"  for patient lists.
-
-Change your patient_list.template_name to point to this template and it will display the patient list as a series of 'cards', more analagous to a twitter stream than a spreadsheet like the default list.
 
 ### 0.8.3 (Minor Release)
 
