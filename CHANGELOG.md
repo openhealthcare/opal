@@ -5,7 +5,6 @@ Add the allow_add_patient and allow_edit_teams options to the patient lists.
 Previously these would make their http request when imported into a file. They now require you to call .load()
 for them to return the promise that loads in their respective data.
 
-
 #### Adds the Card Patient List template and the Table Patient List Template
 Adds the template "patient_lists/card_list.html" and"patient_lists/table_list.html"  for patient lists.
 
