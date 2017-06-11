@@ -16,6 +16,23 @@ class MenuItem(object):
     def __repr__(self):
         return u"<Opal MenuItem href: '{0}'>".format(self.href)
 
+    def __eq__(self, other):
+        if not isinstance(other, MenuItem):
+            return NotImplemented
+
+        return (self.template_name == other.template_name and
+                self.activepattern == other.activepattern and
+                self.href == other.href and
+                self.icon == other.icon and
+                self.display == other.display and
+                self.index == other.index)
+
+    def __ne__(self, other):
+        if not isinstance(other, MenuItem):
+            return NotImplemented
+
+        return not self == other
+
 
 class Menu(object):
 
