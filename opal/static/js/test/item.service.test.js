@@ -2,7 +2,7 @@ describe('Item', function() {
     "use strict";
 
     var columns, episodeData, recordSchema, list_schema, mockWindow;
-    var testHelper, $rootScope, Item, $httpBackend, item, episode;
+    var opalTestHelper, $rootScope, Item, $httpBackend, item, episode;
     var angularServiceMock;
 
     beforeEach(function() {
@@ -20,15 +20,15 @@ describe('Item', function() {
         module('opalTest');
 
         inject(function($injector) {
-          testHelper = $injector.get('testHelper');
+          opalTestHelper = $injector.get('opalTestHelper');
           Item = $injector.get('Item');
           $rootScope = $injector.get('$rootScope');
           $httpBackend = $injector.get('$httpBackend');
         });
 
-        recordSchema = testHelper.getRecordLoaderData();
-        episodeData = testHelper.getEpisodeData();
-        episode = testHelper.newEpisode($rootScope);
+        recordSchema = opalTestHelper.getRecordLoaderData();
+        episodeData = opalTestHelper.getEpisodeData();
+        episode = opalTestHelper.newEpisode($rootScope);
         spyOn(episode, "addItem");
         spyOn(episode, "removeItem");
         item = new Item(episodeData.demographics[0], episode, recordSchema.demographics);

@@ -3,7 +3,7 @@ describe('Episode', function() {
 
     var Episode, EpisodeResource, Item, $scope, $rootScope, columns, $window;
     var episode, episodeData, resource, tag_hierarchy, fields;
-    var $routeParams, testHelper;
+    var $routeParams, opalTestHelper;
 
     beforeEach(function() {
         module('opal.services');
@@ -16,10 +16,10 @@ describe('Episode', function() {
             $scope      = $rootScope.$new();
             $routeParams = $injector.get('$routeParams');
             $window      = $injector.get('$window');
-            testHelper = $injector.get('testHelper');
+            opalTestHelper = $injector.get('opalTestHelper');
         });
-        episode = testHelper.newEpisode($rootScope);
-        episodeData = testHelper.getEpisodeData();
+        episode = opalTestHelper.newEpisode($rootScope);
+        episodeData = opalTestHelper.getEpisodeData();
     });
 
     describe('initialisation', function() {
@@ -137,7 +137,7 @@ describe('Episode', function() {
             {id: 104, condition: 'Ebola', provisional: false,
              date_of_diagnosis: '19/02/2005'},
             episode,
-            testHelper.getRecordLoaderData().diagnosis
+            opalTestHelper.getRecordLoaderData().diagnosis
         );
         expect(episode.getNumberOfItems('diagnosis')).toBe(2);
         episode.addItem(item);

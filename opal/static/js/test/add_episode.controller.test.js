@@ -2,7 +2,7 @@ describe('AddEpisodeCtrl', function (){
     "use strict";
 
     var $scope, $httpBackend, $rootScope;
-    var Schema, testHelper;
+    var Schema, opalTestHelper;
     var modalInstance;
 
     var referencedata = {
@@ -27,9 +27,9 @@ describe('AddEpisodeCtrl', function (){
             $httpBackend = $injector.get('$httpBackend');
             Schema       = $injector.get('Schema');
             $rootScope   = $injector.get('$rootScope');
-            testHelper = $injector.get('testHelper');
+            opalTestHelper = $injector.get('opalTestHelper');
         });
-        $rootScope.fields = testHelper.getRecordLoaderData();
+        $rootScope.fields = opalTestHelper.getRecordLoaderData();
 
         // var schema = new Schema(columns.default);
         modalInstance = $modal.open({template: 'Notatemplate'});

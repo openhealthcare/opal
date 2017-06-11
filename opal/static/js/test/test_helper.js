@@ -1,7 +1,24 @@
 var app = OPAL.module('opalTest', []);
 
-angular.module('opalTest').service('testHelper', function(Episode){
+angular.module('opalTest').service('opalTestHelper', function(Patient, Episode){
   "use strict";
+
+  var demographics = [{
+    id: 101,
+    patient_id: 99,
+    first_name: "John",
+    surname: "Smith",
+    date_of_birth: '31/07/1980',
+    created: "07/04/2015 11:45:00"
+  }]
+
+  var patientData = {
+    active_episode_id: null,
+    demographics: demographics,
+    episodes: {
+      "123": episodeData
+    }
+  }
 
   var episodeData = {
     id: 123,
@@ -14,17 +31,10 @@ angular.module('opalTest').service('testHelper', function(Episode){
     date_of_admission: "19/11/2013",
     start: "19/11/2013",
     end: "25/05/2016",
-    demographics: [{
-      id: 101,
-      patient_id: 99,
-      first_name: "John",
-      surname: "Smith",
-      date_of_birth: '31/07/1980',
-      created: "07/04/2015 11:45:00"
-    }],
+    demographics: demographics,
     tagging: [{'mine': true, 'tropical': true}],
     location: [{
-      category: 'Inepisode',
+      category: 'Inpatient',
       hospital: 'UCH',
       ward: 'T10',
       bed: '15',
@@ -97,6 +107,30 @@ angular.module('opalTest').service('testHelper', function(Episode){
           {name: 'test', type: 'string'},
           {name: 'c_difficile_toxin', type: 'string'}
       ]
+    },
+    tagging: {
+        "name": "tagging",
+        "single": true,
+        "display_name": "Teams",
+        "advanced_searchable": true,
+        "fields": [
+            {
+                "type": "boolean",
+                "name": "mine"
+            },
+            {
+                "type": "boolean",
+                "name": "tropical"
+            },
+            {
+                "type": "boolean",
+                "name": "main"
+            },
+            {
+                "type": "boolean",
+                "name": "secondary"
+            }
+        ]
     }
   };
 
@@ -149,8 +183,19 @@ angular.module('opalTest').service('testHelper', function(Episode){
   };
 
   return {
-    newEpisode: function(rootScope){
+    newPatient: function(rootScope){
       rootScope.fields = angular.copy(recordLoaderData);
+      return new Patient(angular.copy(patientData));
+    },
+    getPatientData: function(){
+      return angular.copy(patientDataA);
+    },
+    newEpisode: function(rootScope, ed){
+      rootScope.fields = angular.copy(recordLoaderData);
+      if(ed){
+        return new Episode(ed);
+      }
+
       return new Episode(episodeData);
     },
     getEpisodeData: function(){

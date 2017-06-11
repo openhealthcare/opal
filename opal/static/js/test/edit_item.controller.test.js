@@ -2,7 +2,7 @@ describe('EditItemCtrl', function (){
     "use strict";
 
     var $scope, $timeout, $modal, $httpBackend;
-    var item, Item, existingEpisode, testHelper;
+    var item, Item, existingEpisode, opalTestHelper;
     var dialog, Episode, episode, ngProgressLite, $q, $rootScope;
     var $controller, controller, fakeModalInstance;
     var $analytics, metadataCopy, profile, referencedata;
@@ -26,13 +26,13 @@ describe('EditItemCtrl', function (){
             ngProgressLite = $injector.get('ngProgressLite');
             $rootScope = $injector.get('$rootScope');
             $modal         = $injector.get('$modal');
-            testHelper = $injector.get('testHelper');
+            opalTestHelper = $injector.get('opalTestHelper');
         });
 
-        episode = testHelper.newEpisode($rootScope);
-        metadataCopy = testHelper.getMetaData();
-        profile = testHelper.getUserProfile();
-        referencedata = testHelper.getReferenceData();
+        episode = opalTestHelper.newEpisode($rootScope);
+        metadataCopy = opalTestHelper.getMetaData();
+        profile = opalTestHelper.getUserProfile();
+        referencedata = opalTestHelper.getReferenceData();
         $scope = $rootScope.$new();
         item = new Item(
             {columnName: 'investigation'},
@@ -193,7 +193,7 @@ describe('EditItemCtrl', function (){
 
     describe('testType', function(){
         beforeEach(function(){
-            existingEpisode = new Episode(testHelper.getEpisodeData());
+            existingEpisode = new Episode(opalTestHelper.getEpisodeData());
 
             // when we prepopulate we should not remove the consistency_token
             existingEpisode.microbiology_test = [{
