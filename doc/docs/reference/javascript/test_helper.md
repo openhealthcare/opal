@@ -18,11 +18,18 @@ To bring it in, import the module and inject the service.
 
 The helper has the following functions.
 
-`newEpisode` provides a new episode. It needs to passed in rootScope as as part
+`newEpisode` provides a new episode. It needs to passed in rootScope as part
 of getting a new episode we update the rootSchema to have the schema
-information about subrecords.
+information about subrecords. One can pass in an optional dictionary as the
+second argument as the args to make the episode. Otherwise it will be created
+with the data from `getEpisodeData`.
 
 `getEpisodeData` provides the raw data as pull in from the episode api.
+
+`newPatient` provides a new patient. It needs to be passed in rootScope. As it
+will update the rootScope.fields as part of making a new patient.
+
+`getPatientData` provides the raw data as pulled in from the patient api.
 
 
 ##### Data Loaders
