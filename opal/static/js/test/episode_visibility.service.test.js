@@ -1,7 +1,8 @@
 describe('episodeVisibility', function(){
     "use strict";
 
-    var $scope, episode, episodeVisibility, episodeData;
+    var $scope, episode, episodeVisibility, episodeData, opalTestHelper;
+    var $rootScope;
 
     var profile = {
         readonly   : false,
@@ -9,55 +10,19 @@ describe('episodeVisibility', function(){
         can_see_pid: function(){return true; }
     };
 
-    episodeData = {
-        id: 123,
-        date_of_admission: "19/11/2013",
-        active: true,
-        discharge_date: null,
-        date_of_episode: null,
-        tagging: [{
-            mine: true,
-            tropical: true
-        }],
-        demographics: [{
-            id: 101,
-            first_name: 'John',
-            surname: ' Smith',
-            date_of_birth: '31/071980',
-            hospital_number: '555'
-        }],
-        location: [{
-            category: 'Inepisode',
-            hospital: 'UCH',
-            ward: 'T10',
-            bed: '15',
-            date_of_admission: '01/08/2013',
-        }],
-        diagnosis: [{
-            id: 102,
-            condition: 'Dengue',
-            provisional: true,
-            date_of_diagnosis: '20/04/2007'
-        }, {
-            id: 103,
-            condition: 'Malaria',
-            provisional: false,
-            date_of_diagnosis: '19/03/2006'
-        }]
-    };
-
 
     beforeEach(function(){
-        module('opal.services');
-
-        module('opal.services', function($provide) {
-            $provide.value('UserProfile', {
-              load: function(){ return profile; }
-            });
-        });
+       module('opal.services', function($provide) {
+           $provide.value('UserProfile', {
+             load: function(){ return profile; }
+           });
+       });
+        module('opalTest');
 
         inject(function($injector){
             episodeVisibility = $injector.get('episodeVisibility');
+            $rootScope = $injector.get('$rootScope');
+            opalTestHelper = $injector.get('opalTestHelper');
         });
 
         $scope = {
@@ -68,7 +33,7 @@ describe('episodeVisibility', function(){
                 ward: ''
             }
         }
-        episode = episodeData;
+        episode = opalTestHelper.newEpisode($rootScope);
     });
     it('should allow inactive episodes on mine', function(){
         episode.active = false;
@@ -84,6 +49,13 @@ describe('episodeVisibility', function(){
         $scope.query.hospital_number = '123'
         expect(episodeVisibility(episode, $scope)).toBe(false);
     });
+
+    it('should include the hospital number if the filter passes', function(){
+      $scope.currentTag = 'tropical';
+      $scope.query.hospital_number = '1111111111'
+      expect(episodeVisibility(episode, $scope)).toBe(true);
+    });
+
     it('should allow if the hospital number filter passes', function(){
         $scope.currentTag = 'tropical';
         expect(episodeVisibility(episode, $scope)).toBe(true);

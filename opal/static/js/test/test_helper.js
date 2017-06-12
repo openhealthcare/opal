@@ -8,6 +8,7 @@ angular.module('opalTest').service('opalTestHelper', function(Patient, Episode){
     patient_id: 99,
     first_name: "John",
     surname: "Smith",
+    hospital_number: '1111111111',
     date_of_birth: '31/07/1980',
     created: "07/04/2015 11:45:00"
   }]
