@@ -3,7 +3,6 @@ Load a series of lookup lists into our instance.
 """
 import os
 import ffs
-from optparse import make_option
 
 from django.core.management.base import BaseCommand
 
