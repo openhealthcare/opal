@@ -173,7 +173,7 @@ angular.module('opalTest').service('opalTestHelper', function(Patient, Episode){
       }
     };
 
-    spyOn(loader.load).and.callThrough();
+    spyOn(loader, "load").and.callThrough();
     return loader;
   };
 
