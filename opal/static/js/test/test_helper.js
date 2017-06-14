@@ -13,14 +13,6 @@ angular.module('opalTest').service('opalTestHelper', function(Patient, Episode){
     created: "07/04/2015 11:45:00"
   }]
 
-  var patientData = {
-    active_episode_id: null,
-    demographics: demographics,
-    episodes: {
-      "123": episodeData
-    }
-  }
-
   var episodeData = {
     id: 123,
     active: true,
@@ -56,6 +48,14 @@ angular.module('opalTest').service('opalTestHelper', function(Patient, Episode){
       }
     ]
   };
+
+  var patientData = {
+    active_episode_id: "123",
+    demographics: demographics,
+    episodes: {
+      "123": episodeData
+    }
+  }
 
   var recordLoaderData = {
     demographics: {
@@ -189,7 +189,7 @@ angular.module('opalTest').service('opalTestHelper', function(Patient, Episode){
       return new Patient(angular.copy(patientData));
     },
     getPatientData: function(){
-      return angular.copy(patientDataA);
+      return angular.copy(patientData);
     },
     newEpisode: function(rootScope, ed){
       rootScope.fields = angular.copy(recordLoaderData);

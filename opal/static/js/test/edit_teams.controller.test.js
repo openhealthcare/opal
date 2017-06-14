@@ -9,7 +9,7 @@ describe('EditTeamsCtrl', function(){
 
     beforeEach(function(){
         module('opal.controllers');
-        module('opalTest');;
+        module('opalTest');
 
         inject(function($injector){
             $httpBackend = $injector.get('$httpBackend');

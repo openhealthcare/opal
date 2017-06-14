@@ -4,37 +4,28 @@ describe('episodeVisibility', function(){
     var $scope, episode, episodeVisibility, episodeData, opalTestHelper;
     var $rootScope;
 
-    var profile = {
-        readonly   : false,
-        can_extract: true,
-        can_see_pid: function(){return true; }
-    };
 
 
     beforeEach(function(){
-       module('opal.services', function($provide) {
-           $provide.value('UserProfile', {
-             load: function(){ return profile; }
-           });
-       });
-        module('opalTest');
+      module('opal.services');
+      module('opalTest');
+      inject(function($injector){
+        episodeVisibility = $injector.get('episodeVisibility');
+        $rootScope = $injector.get('$rootScope');
+        opalTestHelper = $injector.get('opalTestHelper');
+      });
 
-        inject(function($injector){
-            episodeVisibility = $injector.get('episodeVisibility');
-            $rootScope = $injector.get('$rootScope');
-            opalTestHelper = $injector.get('opalTestHelper');
-        });
-
-        $scope = {
-            currentTag: 'micro',
-            currentSubTag: 'all',
-            query: {
-                hospital_number: '',
-                ward: ''
-            }
+      $scope = {
+        currentTag: 'micro',
+        currentSubTag: 'all',
+        query: {
+            hospital_number: '',
+            ward: ''
         }
-        episode = opalTestHelper.newEpisode($rootScope);
+      }
+      episode = opalTestHelper.newEpisode($rootScope);
     });
+
     it('should allow inactive episodes on mine', function(){
         episode.active = false;
         $scope.currentTag = 'mine';
