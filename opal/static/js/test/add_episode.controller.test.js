@@ -16,7 +16,7 @@ describe('AddEpisodeCtrl', function (){
 
     beforeEach(function(){
         module('opal');
-        module('opalTest');
+        module('opal.test');
 
         var $controller, $modal;
         $scope = {};

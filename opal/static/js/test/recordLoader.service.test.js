@@ -20,7 +20,7 @@ describe('recordLoader', function(){
         module('opal.services', function($provide){
             $provide.value('$window', mock);
         });
-        module('opalTest');
+        module('opal.test');
 
         inject(function($injector){
             recordLoader   = $injector.get('recordLoader');

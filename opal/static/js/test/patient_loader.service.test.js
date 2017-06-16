@@ -10,7 +10,7 @@ describe('patientLoader', function() {
 
     beforeEach(function(){
         module('opal.services');
-        module('opalTest');
+        module('opal.test');
 
         mockWindow = { alert: jasmine.createSpy() };
 

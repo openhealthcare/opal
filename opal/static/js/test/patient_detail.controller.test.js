@@ -7,7 +7,7 @@ describe('PatientDetailCtrl', function(){
 
     beforeEach(function(){
         module('opal');
-        module('opalTest');
+        module('opal.test');
         patientLoader = jasmine.createSpy();
 
         inject(function($injector){

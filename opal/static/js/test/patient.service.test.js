@@ -9,7 +9,7 @@ describe('Patient', function() {
 
   beforeEach(function(){
     module('opal.services');
-    module('opalTest');
+    module('opal.test');
 
     inject(function($injector){
       Patient = $injector.get('Patient');

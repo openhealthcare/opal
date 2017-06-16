@@ -6,7 +6,7 @@ describe('services', function() {
 
     beforeEach(function(){
       module('opal.services');
-      module('opalTest');
+      module('opal.test');
       inject(function($injector){
           $rootScope   = $injector.get('$rootScope');
           FieldTranslater = $injector.get('FieldTranslater');

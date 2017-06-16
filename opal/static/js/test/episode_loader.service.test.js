@@ -9,7 +9,7 @@ describe('episodeLoader', function() {
 
     beforeEach(function(){
         module('opal');
-        module('opalTest');
+        module('opal.test');
 
         inject(function($injector){
             episodeLoader = $injector.get('episodeLoader');

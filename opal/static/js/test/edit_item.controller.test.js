@@ -9,7 +9,7 @@ describe('EditItemCtrl', function (){
 
     beforeEach(function(){
       module('opal.controllers');
-      module('opalTest');
+      module('opal.test');
     });
 
     beforeEach(function(){

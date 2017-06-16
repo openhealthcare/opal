@@ -17,7 +17,7 @@ describe('Item', function() {
             });
             $provide.value('$window', mockWindow);
         });
-        module('opalTest');
+        module('opal.test');
 
         inject(function($injector) {
           opalTestHelper = $injector.get('opalTestHelper');

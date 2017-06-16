@@ -8,7 +8,7 @@ describe('episodeVisibility', function(){
 
     beforeEach(function(){
       module('opal.services');
-      module('opalTest');
+      module('opal.test');
       inject(function($injector){
         episodeVisibility = $injector.get('episodeVisibility');
         $rootScope = $injector.get('$rootScope');

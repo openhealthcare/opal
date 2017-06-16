@@ -8,7 +8,7 @@ describe('DischargeEpisodeCtrl', function(){
 
     beforeEach(function(){
         module('opal.controllers');
-        module('opalTest');
+        module('opal.test');
 
         inject(function($injector){
             $rootScope   = $injector.get('$rootScope');

@@ -23,7 +23,7 @@ describe('PatientListCtrl', function() {
 
     beforeEach(function(){
       module('opal.controllers');
-      module('opalTest');
+      module('opal.test');
 
       inject(function($injector){
         Episode      = $injector.get('Episode');

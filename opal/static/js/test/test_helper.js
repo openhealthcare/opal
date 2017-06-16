@@ -1,6 +1,6 @@
-var app = OPAL.module('opalTest', []);
+var app = OPAL.module('opal.test', []);
 
-angular.module('opalTest').service('opalTestHelper', function(Patient, Episode){
+angular.module('opal.test').service('opalTestHelper', function(Patient, Episode){
   "use strict";
 
   var demographics = [{

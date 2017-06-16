@@ -7,7 +7,7 @@ describe('Episode', function() {
 
     beforeEach(function() {
         module('opal.services');
-        module('opalTest');
+        module('opal.test');
 
         inject(function($injector) {
             Episode = $injector.get('Episode');
