@@ -5,12 +5,8 @@ describe('RecordEditor', function(){
     var $rootScope, $q, $controller;
     var Flow, Episode, episode;
     var controller, UserProfile;
-
-    var profile = {
-        readonly   : false,
-        can_extract: true,
-        can_see_pid: function(){return true; }
-    };
+    var opalTestHelper;
+    var profile;
 
     var options = {
         condition: ['Another condition', 'Some condition'],
@@ -91,22 +87,9 @@ describe('RecordEditor', function(){
     });
 
     beforeEach(function(){
-        module('opal.services', function($provide) {
-          $provide.factory('UserProfile', function ($q, $rootScope) {
-            var deferred = $q.defer();
-            deferred.resolve(profile);
-            var profilePromise = deferred.promise;
-            return {
-              then: function(fb){ return fb(profile); },
-              load: function(){
-                return {
-                  then: function(fb){ return fb(profile); }
-                }
-              }
-            }
-            return profilePromise;
-          });
-        });
+        module('opal.services');
+        module('opalTest');
+
         inject(function($injector){
             $rootScope = $injector.get('$rootScope');
             $scope = $rootScope.$new();
@@ -116,7 +99,10 @@ describe('RecordEditor', function(){
             Episode = $injector.get('Episode');
             $q = $injector.get('$q');
             UserProfile = $injector.get('UserProfile');
+            opalTestHelper = $injector.get('opalTestHelper');
         });
+
+        profile = opalTestHelper.getUserProfile();
 
         spyOn(UserProfile, "load").and.callFake(function(fn){
           return {
