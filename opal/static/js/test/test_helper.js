@@ -50,6 +50,7 @@ angular.module('opalTest').service('opalTestHelper', function(Patient, Episode){
   };
 
   var patientData = {
+    id: 1,
     active_episode_id: "123",
     demographics: demographics,
     episodes: {
