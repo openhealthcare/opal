@@ -1,4 +1,4 @@
-fdescribe('RecordEditor', function(){
+describe('RecordEditor', function(){
     "use strict";
 
     var $scope, $modal, $routeParams;
