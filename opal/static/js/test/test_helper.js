@@ -136,14 +136,38 @@ angular.module('opalTest').service('opalTestHelper', function(Patient, Episode){
   };
 
   var metadata = {
-      tag_hierarchy :{'tropical': []},
+      tag_hierarchy :{'tropical': [], 'inpatients': ['icu']},
       micro_test_defaults: {
           micro_test_c_difficile: {
               c_difficile_antigen: "pending",
               c_difficile_toxin: "pending"
           }
       },
-      macros: []
+      macros: [],
+      tag_display: {'tropical': 'Tropical', 'icu': "ICU"},
+      tags: {
+          opat_referrals: {
+              display_name: "OPAT Referral",
+              parent_tag: "opat",
+              name: "opat_referrals"
+          },
+          tropical: {
+              display_name: "Tropical",
+              name: "tropical"
+          },
+          mine: {
+              direct_add: true,
+              display_name: 'Mine',
+              name: 'mine',
+              slug: 'mine'
+          },
+          icu: {
+              direct_add: true,
+              display_name: 'ICU',
+              name: 'icu',
+              slug: 'icu'
+          }
+      }
   };
 
   var referencedata = {
