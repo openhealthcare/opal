@@ -10,13 +10,7 @@ describe('Referencedata', function(){
     beforeEach(function(){
         mock = { alert: jasmine.createSpy() };
 
-        module('opal.services', function($provide) {
-            $provide.value('UserProfile', {
-              load: {
-                then: function(fn){ return fn(profile); }
-              }
-            });
-        });
+        module('opal.services');
 
         module(function($provide){
             $provide.value('$window', mock);
