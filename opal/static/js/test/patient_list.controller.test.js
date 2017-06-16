@@ -17,15 +17,6 @@ describe('PatientListCtrl', function() {
         print: function(){}
     }
 
-    profile = {
-        can_edit: function(x){
-            return true;
-        },
-        readonly   : false,
-        can_extract: true,
-        can_see_pid: function(){return true; }
-    };
-
     var growl = {
         success: jasmine.createSpy()
     }
@@ -74,6 +65,7 @@ describe('PatientListCtrl', function() {
 
         episodedata = {status: 'success', data: {123: episode} };
         episodeVisibility = jasmine.createSpy().and.callFake(episodeVisibility);
+        profile = opalTestHelper.getUserProfile();
 
         metaData = opalTestHelper.getMetaData();
         $routeParams.slug = 'tropical';
