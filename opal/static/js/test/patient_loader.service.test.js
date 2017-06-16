@@ -4,30 +4,13 @@
 describe('patientLoader', function() {
     "use strict";
 
-    var $httpBackend, $route, $rootScope;
-    var mockWindow;
+    var $httpBackend, $route, $rootScope, response;
+    var mockWindow, opalTestHelper;
     var patientLoader;
-
-    var response = {
-        demographics: [{first_name: "Sue", surname: "Jackson", patient_id: 1}],
-        episodes: {
-            122: {
-                id: 122, start: "20/01/2016", end: "20/02/2016",
-                demographics: [{first_name: "Sue", surname: "Jackson", patient_id: 1}]},
-            123: {
-                id: 123, start: "20/01/2016", end: undefined,
-                demographics: [{first_name: "Sue", surname: "Jackson", patient_id: 1}]},
-            124: {
-                id: 124, start: undefined, end: "20/03/2016",
-                demographics: [{first_name: "Sue", surname: "Jackson", patient_id: 1}]},
-            125: {
-                id: 125, start: undefined, end: undefined,
-                demographics: [{first_name: "Sue", surname: "Jackson", patient_id: 1}]}
-        }
-    };
 
     beforeEach(function(){
         module('opal.services');
+        module('opalTest');
 
         mockWindow = { alert: jasmine.createSpy() };
 
@@ -35,12 +18,16 @@ describe('patientLoader', function() {
             $provide.value('$window', mockWindow);
         });
 
+
         inject(function($injector){
             patientLoader = $injector.get('patientLoader');
             $httpBackend  = $injector.get('$httpBackend');
             $route        = $injector.get('$route');
             $rootScope    = $injector.get('$rootScope');
+            opalTestHelper    = $injector.get('opalTestHelper');
         });
+
+        response = opalTestHelper.getPatientData();
 
         $route.current = { params: { patient_id: '123' } };
     });
@@ -56,7 +43,7 @@ describe('patientLoader', function() {
         $httpBackend.expectGET('/api/v0.1/patient/123/').respond(response);
         $httpBackend.expectGET('/api/v0.1/record/').respond({});
         patientLoader().then(function(patient){
-          expect(patient.demographics[0].first_name).toEqual("Sue");
+          expect(patient.demographics[0].first_name).toEqual("John");
         });
         $rootScope.$apply();
         $httpBackend.flush();
@@ -66,7 +53,7 @@ describe('patientLoader', function() {
         $httpBackend.expectGET('/api/v0.1/patient/124/').respond(response);
         $httpBackend.expectGET('/api/v0.1/record/').respond({});
         patientLoader("124").then(function(patient){
-          expect(patient.demographics[0].first_name).toEqual("Sue");
+          expect(patient.demographics[0].first_name).toEqual("John");
         });
         $rootScope.$apply();
         $httpBackend.flush();
