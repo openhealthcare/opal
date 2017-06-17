@@ -5,108 +5,11 @@ describe('EditTeamsCtrl', function(){
     var Episode;
     var UserProfile;
     var modalInstance;
-    var episode
-    var options = {
-        tag_display: {
-            tropical: 'Tropical',
-            virology: 'Virology'
-        },
-        tag_direct_add: ['tropical', 'virology']
-    };
-    var fields = {};
-    var records = {
-        "default": [
-            {
-                name: 'demographics',
-                single: true,
-                fields: [
-                    {name: 'name', type: 'string'},
-                    {name: 'date_of_birth', type: 'date'},
-                ]},
-            {
-                name: 'location',
-                single: true,
-                fields: [
-                    {name: 'category', type: 'string'},
-                    {name: 'hospital', type: 'string'},
-                    {name: 'ward', type: 'string'},
-                    {name: 'bed', type: 'string'},
-                    {name: 'date_of_admission', type: 'date'},
-                    {name: 'tags', type: 'list'},
-                ]},
-            {
-                name: 'diagnosis',
-                single: false,
-                fields: [
-                    {name: 'condition', type: 'string'},
-                    {name: 'provisional', type: 'boolean'},
-                ]},
-            {
-                "name": "tagging",
-                "single": true,
-                "display_name": "Teams",
-                "advanced_searchable": true,
-                "fields": [
-                    {
-                        "type": "boolean",
-                        "name": "mine"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "tropical"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "main"
-                    },
-                    {
-                        "type": "boolean",
-                        "name": "secondary"
-                    }
-                ]
-            }
-        ]
-    };
-
-
-    _.each(records.default, function(c){
-        fields[c.name] = c;
-    });
-
-
-    var episodeData = {
-        date_of_admission: '',
-        tagging: [{
-          tropical: true,
-        }],
-        demographics: [
-            {
-                patient_id: 1234,
-                first_name: 'Jane',
-                surname: "Doe"
-            }
-        ],
-        location: [
-            {
-                category: 'Inpatient'
-            }
-        ]
-    };
-
+    var episode, opalTestHelper;
 
     beforeEach(function(){
         module('opal.controllers');
-        UserProfile = {
-          load: function(){
-            return {
-              then: function(fn){
-                fn('someProfile');
-              }
-            };
-          }
-        };
-
-        spyOn(UserProfile, "load").and.callThrough();
+        module('opal.test');
 
         inject(function($injector){
             $httpBackend = $injector.get('$httpBackend');
@@ -116,11 +19,13 @@ describe('EditTeamsCtrl', function(){
             $controller  = $injector.get('$controller');
             $modal       = $injector.get('$modal');
             Episode      = $injector.get('Episode');
+            opalTestHelper = $injector.get('opalTestHelper');
         });
 
+        UserProfile = opalTestHelper.getUserProfileLoader();
+
         modalInstance = $modal.open({template: 'notatemplate'});
-        $rootScope.fields = fields;
-        episode = new Episode(episodeData);
+        episode = opalTestHelper.newEpisode($rootScope);
 
         episode.tagging = [
                 {
@@ -150,7 +55,7 @@ describe('EditTeamsCtrl', function(){
 
         it('should put profile and editingname on the scope', function(){
           expect(UserProfile.load).toHaveBeenCalled();
-          expect($scope.editingName).toBe("Jane Doe");
+          expect($scope.editingName).toBe("John Smith");
           expect(!!$scope.profile).toBe(true);
         });
 
@@ -166,7 +71,7 @@ describe('EditTeamsCtrl', function(){
         });
 
         it('should fetch the options', function() {
-            expect($scope.profile).toBe("someProfile");
+            expect($scope.profile).toEqual(opalTestHelper.getUserProfile());
             expect(UserProfile.load).toHaveBeenCalled();
         });
     });

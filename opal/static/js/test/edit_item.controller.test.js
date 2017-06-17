@@ -2,128 +2,17 @@ describe('EditItemCtrl', function (){
     "use strict";
 
     var $scope, $timeout, $modal, $httpBackend;
-    var item, Item, existingEpisode;
+    var item, Item, existingEpisode, opalTestHelper;
     var dialog, Episode, episode, ngProgressLite, $q, $rootScope;
-    var Schema, $controller, controller, fakeModalInstance;
-    var $analytics;
-
-    var referencedata = {
-        dogs: ['Poodle', 'Dalmation'],
-        hats: ['Bowler', 'Top', 'Sun'],
-        micro_test_c_difficile: [
-            "C diff", "Clostridium difficile"
-        ],
-        micro_test_stool_parasitology_pcr: [
-            "Stool Parasitology PCR"
-        ],
-        micro_test_defaults: {
-            micro_test_c_difficile: {
-                c_difficile_antigen: "pending",
-                c_difficile_toxin: "pending"
-            }
-        },
-        toLookuplists: function(){return {}}
-    };
-    var metadata = {
-        tag_hierarchy :{'tropical': []},
-        micro_test_defaults: {
-            micro_test_c_difficile: {
-                c_difficile_antigen: "pending",
-                c_difficile_toxin: "pending"
-            }
-        }
-    };
-
-    var episodeData = {
-        id: 123,
-        active: true,
-        category_name: "Inpatient",
-        prev_episodes: [],
-        next_episodes: [],
-        demographics: [{
-            id: 101,
-            patient_id: 99,
-            name: 'John Smith',
-            date_of_birth: '1980-07-31'
-        }],
-        tagging: [{'mine': true, 'tropical': true}],
-        location: [{
-            category: 'Inepisode',
-            hospital: 'UCH',
-            ward: 'T10',
-            bed: '15',
-            date_of_admission: '2013-08-01',
-        }],
-        diagnosis: [{
-            id: 102,
-            condition: 'Dengue',
-            provisional: true,
-        }, {
-            id: 103,
-            condition: 'Malaria',
-            provisional: false,
-        }]
-    };
-
-    var columns = {
-        "default": [
-            {
-                name: 'demographics',
-                single: true,
-                fields: [
-                    {name: 'name', type: 'string'},
-                    {name: 'date_of_birth', type: 'date'},
-                ]},
-            {
-                name: 'location',
-                single: true,
-                fields: [
-                    {name: 'category', type: 'string'},
-                    {name: 'hospital', type: 'string'},
-                    {name: 'ward', type: 'string'},
-                    {name: 'bed', type: 'string'},
-                    {name: 'date_of_admission', type: 'date'},
-                    {name: 'tags', type: 'list'},
-                ]},
-            {
-                name: 'diagnosis',
-                single: false,
-                fields: [
-                    {name: 'condition', type: 'string'},
-                    {name: 'provisional', type: 'boolean'},
-                ]},
-            {
-                name:  'investigation',
-                single: false,
-                fields: [
-                    {name: 'result', type: 'string'},
-                ]
-            },
-            {
-                name:  'microbiology_test',
-                single: false,
-                fields: [
-                    {name: 'result', type: 'string'},
-                    {name: 'consistency_token', type: 'string'},
-                    {name: 'test', type: 'string'},
-                    {name: 'c_difficile_toxin', type: 'string'}
-                ]
-            }
-        ]
-    };
-
-    var profile = {
-        readonly   : false,
-        can_extract: true,
-        can_see_pid: function(){return true; }
-    };
-
-    beforeEach(module('opal.controllers'));
+    var $controller, controller, fakeModalInstance;
+    var $analytics, metadataCopy, profile, referencedata;
 
     beforeEach(function(){
-        module(function($provide) {
-            $provide.value('UserProfile', {load: function(){ return profile; }});
-        });
+      module('opal.controllers');
+      module('opal.test');
+    });
+
+    beforeEach(function(){
         $analytics = jasmine.createSpyObj(["eventTrack"]);
 
         inject(function($injector){
@@ -135,19 +24,20 @@ describe('EditItemCtrl', function (){
             $timeout       = $injector.get('$timeout');
             $modal         = $injector.get('$modal');
             ngProgressLite = $injector.get('ngProgressLite');
-            Schema         = $injector.get('Schema');
             $rootScope = $injector.get('$rootScope');
             $modal         = $injector.get('$modal');
+            opalTestHelper = $injector.get('opalTestHelper');
         });
 
-        $rootScope.fields = columns.default;
+        episode = opalTestHelper.newEpisode($rootScope);
+        metadataCopy = opalTestHelper.getMetaData();
+        profile = opalTestHelper.getUserProfile();
+        referencedata = opalTestHelper.getReferenceData();
         $scope = $rootScope.$new();
-        var schema = new Schema(columns.default);
-        episode = new Episode(episodeData);
         item = new Item(
             {columnName: 'investigation'},
             episode,
-            columns['default'][3]
+            $rootScope.fields.investigation
         );
 
         fakeModalInstance = {
@@ -161,7 +51,7 @@ describe('EditItemCtrl', function (){
             $timeout      : $timeout,
             $modalInstance: fakeModalInstance,
             item          : item,
-            metadata      : metadata,
+            metadata      : metadataCopy,
             profile       : profile,
             episode       : episode,
             ngProgressLite: ngProgressLite,
@@ -179,7 +69,7 @@ describe('EditItemCtrl', function (){
 
     describe('scope setup', function(){
       it('Should hoist metadata onto the scope', function () {
-          expect($scope.metadata).toBe(metadata);
+          expect($scope.metadata).toBe(metadataCopy);
       });
 
       it('should track analytics data', function(){
@@ -303,7 +193,7 @@ describe('EditItemCtrl', function (){
 
     describe('testType', function(){
         beforeEach(function(){
-            existingEpisode = new Episode(angular.copy(episodeData));
+            existingEpisode = new Episode(opalTestHelper.getEpisodeData());
 
             // when we prepopulate we should not remove the consistency_token
             existingEpisode.microbiology_test = [{
@@ -314,7 +204,7 @@ describe('EditItemCtrl', function (){
             item = new Item(
                 existingEpisode.microbiology_test[0],
                 existingEpisode,
-                columns['default'][4]
+                $rootScope.fields.microbiology_test
             );
 
             $scope = $rootScope.$new();
@@ -323,7 +213,7 @@ describe('EditItemCtrl', function (){
                 $timeout      : $timeout,
                 $modalInstance: fakeModalInstance,
                 item          : item,
-                metadata      : metadata,
+                metadata      : metadataCopy,
                 profile       : profile,
                 episode       : existingEpisode,
                 ngProgressLite: ngProgressLite,
@@ -343,7 +233,7 @@ describe('EditItemCtrl', function (){
               $timeout      : $timeout,
               $modalInstance: fakeModalInstance,
               item          : item,
-              metadata      : metadata,
+              metadata      : metadataCopy,
               profile       : profile,
               episode       : existingEpisode,
               ngProgressLite: ngProgressLite,

@@ -1,12 +1,12 @@
 describe('PatientListCtrl', function() {
     "use strict";
-    var episodeData, episodeData2, metaData, patientData, Schema;
-    var schema, Episode, Item, episode, episodeVisibility;
+    var episodeData, episodeData2, metaData, patientData;
+    var Episode, Item, episode, episodeVisibility;
     var profile, episode2;
     var $scope, $cookies, $controller, $q, $dialog, $httpBackend;
     var $$injector;
     var $location, $routeParams, $http;
-    var Flow;
+    var Flow, opalTestHelper;
     var episodedata, controller;
     var $modal, metadata, $rootScope;
 
@@ -17,130 +17,15 @@ describe('PatientListCtrl', function() {
         print: function(){}
     }
 
-    var fields = {};
-    var columns = {
-        "default": [
-            {
-                name: 'demographics',
-                single: true,
-                fields: [
-                    {name: 'name', type: 'string'},
-                    {name: 'date_of_birth', type: 'date'},
-                ]},
-            {
-                name: 'location',
-                single: true,
-                fields: [
-                    {name: 'category_name', type: 'string'},
-                    {name: 'hospital', type: 'string'},
-                    {name: 'ward', type: 'string'},
-                    {name: 'bed', type: 'string'},
-                    {name: 'date_of_admission', type: 'date'},
-                    {name: 'tags', type: 'list'},
-                ]},
-            {
-                name: 'diagnosis',
-                single: false,
-                fields: [
-                    {name: 'condition', type: 'string'},
-                    {name: 'provisional', type: 'boolean'},
-                ]},
-            {
-                name: 'tagging',
-                single: true,
-                fields: [
-                    {name: 'mine', type: 'boolean'},
-                    {name: 'tropical', type: 'boolean'}
-                ]
-            }
-        ]
-    };
-
-    _.each(columns.default, function(c){
-        fields[c.name] = c;
-    });
-
-    episodeData = {
-        id: 123,
-        active: true,
-        prev_episodes: [],
-        next_episodes: [],
-        demographics: [{
-            id: 101,
-            patient_id: 99,
-            first_name: 'John',
-            surname: 'Smith'
-        }],
-        tagging: [{'mine': true, 'tropical': true}],
-        location: [{
-            category: 'Inepisode',
-            hospital: 'UCH',
-            ward: 'T10',
-            bed: '15',
-        }],
-        diagnosis: [{
-            id: 102,
-            condition: 'Dengue',
-            provisional: true,
-        }, {
-            id: 103,
-            condition: 'Malaria',
-            provisional: false,
-        }]
-    };
-
-    metaData = {
-        condition: ['Another condition', 'Some condition'],
-        tag_hierarchy: {'tropical': [], 'inpatients': ['icu']},
-        tag_display: {'tropical': 'Tropical', 'icu': "ICU"},
-        tags: {
-            opat_referrals: {
-                display_name: "OPAT Referral",
-                parent_tag: "opat",
-                name: "opat_referrals"
-            },
-            tropical: {
-                display_name: "Tropical",
-                name: "tropical"
-            },
-            mine: {
-                direct_add: true,
-                display_name: 'Mine',
-                name: 'mine',
-                slug: 'mine'
-            },
-            icu: {
-                direct_add: true,
-                display_name: 'ICU',
-                name: 'icu',
-                slug: 'icu'
-            }
-        }
-    };
-
-    profile = {
-        can_edit: function(x){
-            return true;
-        },
-        readonly   : false,
-        can_extract: true,
-        can_see_pid: function(){return true; }
-    };
-
     var growl = {
         success: jasmine.createSpy()
     }
 
-    beforeEach(module('opal.services', function($provide) {
-        $provide.value('UserProfile', {
-          load: function(){ return profile; }
-        });
-    }));
+    beforeEach(function(){
+      module('opal.controllers');
+      module('opal.test');
 
-    beforeEach(module('opal.controllers'));
-
-    beforeEach(inject(function($injector){
-        Schema       = $injector.get('Schema');
+      inject(function($injector){
         Episode      = $injector.get('Episode');
         Item         = $injector.get('Item');
         $rootScope   = $injector.get('$rootScope');
@@ -156,16 +41,17 @@ describe('PatientListCtrl', function() {
         Flow         = $injector.get('Flow');
         $$injector   = $injector.get('$injector');
         episodeVisibility = $injector.get('episodeVisibility');
+        opalTestHelper = $injector.get('opalTestHelper');
+      });
 
-        schema = new Schema(columns.default);
-        $rootScope.fields = fields;
 
+        episode = opalTestHelper.newEpisode($rootScope);
+
+        episodeData = opalTestHelper.getEpisodeData();
         episodeData2 = angular.copy(episodeData);
         episodeData2.id = 124;
         episodeData2.demographics[0].first_name = "Suzanne";
         episodeData2.demographics[0].surname = "Vega";
-
-        episode = new Episode(episodeData);
         episode2 = new Episode(episodeData2);
 
         var deferred = $q.defer();
@@ -179,8 +65,9 @@ describe('PatientListCtrl', function() {
 
         episodedata = {status: 'success', data: {123: episode} };
         episodeVisibility = jasmine.createSpy().and.callFake(episodeVisibility);
+        profile = opalTestHelper.getUserProfile();
 
-        metadata = metaData;
+        metaData = opalTestHelper.getMetaData();
         $routeParams.slug = 'tropical';
 
         _makecontroller = function(metadata){
@@ -197,7 +84,6 @@ describe('PatientListCtrl', function() {
                 $injector        : $$injector,
                 growl            : growl,
                 Flow             : Flow,
-                schema           : schema,
                 episodedata      : episodedata,
                 profile          : profile,
                 metadata         : md,
@@ -207,7 +93,7 @@ describe('PatientListCtrl', function() {
 
         controller = _makecontroller();
 
-    }));
+    });
 
     describe("edit Tags", function(){
         it('should filter an episode if the episode does not have the same tags', function(){
@@ -853,15 +739,17 @@ describe('PatientListCtrl', function() {
         it('should remove the mine tag', function() {
             var selectedEpisodeId = $scope.episode.id;
             profile.readonly = false;
+            spyOn($scope.episode.tagging[0], "save").and.returnValue({
+                then: function(fn){fn();}
+            });
             $scope.removeFromMine($scope.episode);
-            $rootScope.$apply();
 
             // the episode should be removed from the displayed episodes
             var displayed_episodes = _.map($scope.rows, function(episode){
                 return episode.id;
             });
 
-            var isRemoved = _.contains(displayed_episodes, selectedEpisodeId);
+            var isRemoved = !_.contains(displayed_episodes, selectedEpisodeId);
             expect(isRemoved).toBe(true);
         });
 

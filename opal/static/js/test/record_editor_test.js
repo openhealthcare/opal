@@ -5,17 +5,8 @@ describe('RecordEditor', function(){
     var $rootScope, $q, $controller;
     var Flow, Episode, episode;
     var controller, UserProfile;
-
-    var profile = {
-        readonly   : false,
-        can_extract: true,
-        can_see_pid: function(){return true; }
-    };
-
-    var options = {
-        condition: ['Another condition', 'Some condition'],
-        tag_hierarchy :{'tropical': []}
-    };
+    var opalTestHelper;
+    var profile;
 
     var episodeData = {
         id: 123,
@@ -91,22 +82,9 @@ describe('RecordEditor', function(){
     });
 
     beforeEach(function(){
-        module('opal.services', function($provide) {
-          $provide.factory('UserProfile', function ($q, $rootScope) {
-            var deferred = $q.defer();
-            deferred.resolve(profile);
-            var profilePromise = deferred.promise;
-            return {
-              then: function(fb){ return fb(profile); },
-              load: function(){
-                return {
-                  then: function(fb){ return fb(profile); }
-                }
-              }
-            }
-            return profilePromise;
-          });
-        });
+        module('opal.services');
+        module('opal.test');
+
         inject(function($injector){
             $rootScope = $injector.get('$rootScope');
             $scope = $rootScope.$new();
@@ -116,7 +94,10 @@ describe('RecordEditor', function(){
             Episode = $injector.get('Episode');
             $q = $injector.get('$q');
             UserProfile = $injector.get('UserProfile');
+            opalTestHelper = $injector.get('opalTestHelper');
         });
+
+        profile = opalTestHelper.getUserProfile();
 
         spyOn(UserProfile, "load").and.callFake(function(fn){
           return {
@@ -124,8 +105,9 @@ describe('RecordEditor', function(){
           };
         });
 
-        $rootScope.fields = fields;
-        episode = new Episode(angular.copy(episodeData));
+        episode = opalTestHelper.newEpisode($rootScope);
+        // $rootScope.fields = fields;
+        // episode = new Episode(angular.copy(episodeData));
     });
 
     describe("edit item", function(){
@@ -282,7 +264,7 @@ describe('RecordEditor', function(){
 
     describe("get item", function(){
       it("should handle the case where there is no subrecords of this type on the episode", function(){
-        var result = episode.recordEditor.getItem("something", 0);
+        var result = episode.recordEditor.getItem("microbiology_test", 0);
         expect(result).not.toBe(undefined);
       });
 
@@ -293,7 +275,8 @@ describe('RecordEditor', function(){
 
       it("should not create if it can find the expected value", function(){
         var result = episode.recordEditor.getItem("diagnosis", 1);
-        expect(result.condition).toBe('Malaria');
+        // get's Dengue because its ordered by -date_of_diagnosis
+        expect(result.condition).toBe('Dengue');
       });
     })
 
@@ -323,12 +306,12 @@ describe('RecordEditor', function(){
         var deferred, callArgs;
         deferred = $q.defer();
         spyOn($modal, 'open').and.returnValue({result: deferred.promise});
-        episode.recordEditor.newItem('something');
+        episode.recordEditor.newItem('microbiology_test');
         $scope.$digest();
         callArgs = $modal.open.calls.mostRecent().args;
         expect(callArgs.length).toBe(1);
         expect(callArgs[0].controller).toBe('EditItemCtrl');
-        expect(callArgs[0].templateUrl).toBe('/templates/modals/something.html/');
+        expect(callArgs[0].templateUrl).toBe('/templates/modals/microbiology_test.html/');
       });
 
       it('should respond to $routeParams.slug', function(){

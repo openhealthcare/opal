@@ -2,7 +2,7 @@ describe('recordLoader', function(){
     "use strict"
 
     var $httpBackend, $rootScope, recordLoader, $log;
-    var mock;
+    var mock, opalTestHelper;
     var recordSchema = {
         'demographics': {
             name: "demographics",
@@ -17,19 +17,20 @@ describe('recordLoader', function(){
 
     beforeEach(function(){
         mock = { alert: jasmine.createSpy() };
-        module('opal.services');
-
-        module(function($provide){
+        module('opal.services', function($provide){
             $provide.value('$window', mock);
         });
+        module('opal.test');
 
         inject(function($injector){
             recordLoader   = $injector.get('recordLoader');
             $httpBackend   = $injector.get('$httpBackend');
             $rootScope     = $injector.get('$rootScope');
             $log = $injector.get('$log');
+            opalTestHelper = $injector.get('opalTestHelper');
         });
         spyOn($log, "warn");
+        recordSchema = opalTestHelper.getRecordLoaderData();
     });
 
     it('should fetch the record data', function(){

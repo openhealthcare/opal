@@ -5,15 +5,11 @@ describe('episodeLoader', function() {
     "use strict"
 
     var $httpBackend, $route, $rootScope, $window;
-    var episodeLoader, episodeData;
-
-    episodeData = {
-        demographics: [{patient_id: 1234}],
-        tagging: [{}]
-    }
+    var episodeLoader, episodeData, opalTestHelper;
 
     beforeEach(function(){
         module('opal');
+        module('opal.test');
 
         inject(function($injector){
             episodeLoader = $injector.get('episodeLoader');
@@ -21,7 +17,9 @@ describe('episodeLoader', function() {
             $rootScope    = $injector.get('$rootScope');
             $httpBackend  = $injector.get('$httpBackend');
             $window       = $injector.get('$window');
+            opalTestHelper = $injector.get('opalTestHelper');
         });
+        episodeData = opalTestHelper.getEpisodeData();
     });
 
 
