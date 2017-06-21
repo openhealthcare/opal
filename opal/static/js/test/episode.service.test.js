@@ -279,6 +279,36 @@ describe('Episode', function() {
                 expect(mock_new).toHaveBeenCalled();
             });
 
+            it('Should call the error callback on error', function () {
+                var mock_new = jasmine.createSpy('Mock for new patient')
+                var search_url = '/search/patient/';
+                search_url += '?hospital_number=notarealnumber'
+                $httpBackend.expectGET(search_url).respond([1, 2, 3]);
+                var err = jasmine.createSpy();
+
+                Episode.findByHospitalNumber('notarealnumber', {
+                  newPatient: mock_new,
+                  error: err
+                })
+
+                $httpBackend.flush();
+                $scope.$digest();
+                expect(err).toHaveBeenCalled();
+            });
+
+            it('should handle the case where no number is passed in', function(){
+              var mock_new = jasmine.createSpy('Mock for new patient');
+
+              Episode.findByHospitalNumber(null, {
+                newPatient: mock_new
+              });
+
+              $scope.$digest();
+
+              expect(mock_new).toHaveBeenCalled();
+            });
+
+
             it('Should cast the new patient and call the newForPatient callback', function () {
                 var mock_new = jasmine.createSpy('Mock for new patient')
                 var search_url = '/search/patient/';
