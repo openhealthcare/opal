@@ -39,12 +39,6 @@ angular.module('opal.services').service('FieldTranslater', function($rootScope){
           }
           return moment(fieldValue, DATETIME_FORMAT);
       }
-      //
-      // TODO: Handle this conversion better
-      //
-      if (fieldMapping.type == 'integer' && fieldMapping.name == 'time') {
-          return parseInt('' + fieldValue.hour() + fieldValue.minute());
-      }
 
       return fieldValue;
   };
