@@ -429,10 +429,15 @@ class UpdatesFromDictMixin(SerialisableFields):
                                               field_type))
                     else:
                         DateTimeField = models.fields.DateTimeField
-                        if value and field_type == models.fields.DateField:
-                            value = deserialize_date(value)
-                        elif value and field_type == DateTimeField:
-                            value = deserialize_datetime(value)
+                        try:
+                            if value and field_type == models.fields.DateField:
+                                value = deserialize_date(value)
+                            elif value and field_type == DateTimeField:
+                                value = deserialize_datetime(value)
+                        except:
+                            raise exceptions.APIError(
+                                "failed to parse %s %s %s".format(self, name, value)
+                            )
 
                         setattr(self, name, value)
 
