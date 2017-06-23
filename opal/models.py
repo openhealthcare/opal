@@ -403,7 +403,7 @@ class UpdatesFromDictMixin(SerialisableFields):
                             elif value and field_type == DateTimeField:
                                 value = deserialize_datetime(value)
                         except:
-                            print "failed to parse %s %s %s".format(
+                            print "failed to parse {0} {1} {2}".format(
                                 self.__class__.__name__, name, value
                             )
                             raise
