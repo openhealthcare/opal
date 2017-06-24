@@ -7,29 +7,6 @@ describe('SearchCtrl', function (){
     var profile, schema, options, locationDetails, controller;
     var PatientSummary, $analytics;
 
-    // beforeEach(function(){
-        // module('opal', function($provide) {
-            // $provide.value('$analytics', function(){
-            //     return {
-            //         pageTrack: function(x){}
-            //     };
-            // });
-
-            // $provide.provider('$analytics', function(){
-            //     this.$get = function() {
-            //         return {
-            //             virtualPageviews: function(x){},
-            //             settings: {
-            //                 pageTracking: false,
-            //             },
-            //             pageTrack: function(x){}
-            //             eventTrack: function(x, y){}
-            //         };
-            //     };
-            // });
-        // });
-    // });
-
     beforeEach(module('opal.controllers'));
 
     beforeEach(function(){
@@ -113,7 +90,7 @@ describe('SearchCtrl', function (){
             expect($window.location.href).toEqual('/#/foo/bar');
         });
 
-        fit('should register to analytics', function(){
+        it('should register to analytics', function(){
             spyOn($analytics, 'eventTrack');
             $scope.selected({
               link: '/#/foo/123',
