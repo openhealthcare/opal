@@ -1,6 +1,6 @@
 angular.module('opal.controllers').controller(
   'SearchCtrl', function(
-    $rootScope, $scope, $http, $location,
+    $rootScope, $scope, $http, $location, $analytics,
     ngProgressLite, $q, $window, PatientSummary, Paginator
   ){
   "use strict";
@@ -75,6 +75,13 @@ angular.module('opal.controllers').controller(
   // if they select from
   // the autocomplete search
   $scope.selected = function(item, model, label){
+    $analytics.eventTrack(
+      "AutocompleteSearch-" + item.patientId,
+      {
+        category: "AutocompleteSearch",
+        label: item.categories
+      }
+    );
     $scope.query.autocompleteSearchTerm = "";
     $window.location.href = item.link;
   }
