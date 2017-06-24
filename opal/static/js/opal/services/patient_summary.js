@@ -22,6 +22,7 @@ angular.module('opal.services').factory('PatientSummary', function(UserProfile) 
             }
             this.first_name = jsonResponse.first_name;
             this.surname = jsonResponse.surname;
+            this.patientId = jsonResponse.patient_id;
             this.count = jsonResponse.count;
             this.dateOfBirth = moment(jsonResponse.date_of_birth, 'DD/MM/YYYY');
             this.categories = jsonResponse.categories.join(", ");

@@ -5,29 +5,7 @@ describe('SearchCtrl', function (){
     var location;
     var Flow;
     var profile, schema, options, locationDetails, controller;
-    var PatientSummary;
-
-    beforeEach(function(){
-        module('opal', function($provide) {
-            $provide.value('$analytics', function(){
-                return {
-                    pageTrack: function(x){}
-                };
-            });
-
-            $provide.provider('$analytics', function(){
-                this.$get = function() {
-                    return {
-                        virtualPageviews: function(x){},
-                        settings: {
-                            pageTracking: false,
-                        },
-                        pageTrack: function(x){}
-                    };
-                };
-            });
-        });
-    });
+    var PatientSummary, $analytics;
 
     beforeEach(module('opal.controllers'));
 
@@ -49,6 +27,7 @@ describe('SearchCtrl', function (){
             $httpBackend   = $injector.get('$httpBackend');
             location       = $injector.get('$location');
             $window        = $injector.get('$window');
+            $analytics     = $injector.get('$analytics');
 
             schema  = {};
             options = {};
@@ -64,7 +43,8 @@ describe('SearchCtrl', function (){
                 options        : options,
                 schema         : schema,
                 profile        : profile,
-                PatientSummary : PatientSummary
+                PatientSummary : PatientSummary,
+                $analytics: $analytics
             });
 
 
@@ -108,6 +88,22 @@ describe('SearchCtrl', function (){
             $scope.selected({link: '/#/foo/bar'});
             expect($scope.query.autocompleteSearchTerm).toEqual("");
             expect($window.location.href).toEqual('/#/foo/bar');
+        });
+
+        it('should register to analytics', function(){
+            spyOn($analytics, 'eventTrack');
+            $scope.selected({
+              link: '/#/foo/123',
+              patientId: 123,
+              categories: "Inpatient, OPAT"
+            });
+            expect($analytics.eventTrack).toHaveBeenCalledWith(
+              "AutocompleteSearch-123",
+              {
+                category: "AutocompleteSearch",
+                label: "Inpatient, OPAT"
+              }
+            );
         });
 
     });
