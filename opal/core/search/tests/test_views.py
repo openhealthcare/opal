@@ -204,7 +204,7 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
         """
         # we need to make sure we're all logged in before we start
         self.assertIsNotNone(self.user)
-        for i in xrange(100):
+        for i in range(100):
             self.create_patient(
                 "James", "Bond", str(i)
             )
@@ -212,7 +212,7 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
         with self.assertNumQueries(35):
             self.get_response('{}/?query=Bond'.format(self.url))
 
-        for i in xrange(20):
+        for i in range(20):
             self.create_patient(
                 "James", "Blofelt", str(i)
             )
