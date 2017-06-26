@@ -7,7 +7,7 @@ from mock import MagicMock, PropertyMock, patch
 
 from opal.core import exceptions
 from opal.tests import models
-from opal.models import Episode, Patient, UserProfile, Demographics
+from opal.models import Episode, Patient, UserProfile
 from opal.core.test import OpalTestCase
 
 from opal.core import patient_lists
