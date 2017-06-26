@@ -1,0 +1,53 @@
+{% load forms %}
+<div class="container content-offset">
+  <div class="panel panel-primary panel-container">
+    <div class="panel-heading patient-list-header">
+      <h2>
+        {% block list_header %}
+          <i class="fa fa-user-md"></i>
+          {{ patient_list.display_name }}
+        {% endblock %}
+      </h2>
+    </div>
+    <div class="panel-body">
+      {% block list_actions %}
+        <div class="row screen-only">
+          <form class="form-inline">
+            <div class="col-md-12">
+              {% block list_select %}
+              <h1>
+                {% include "patient_lists/partials/list_dropdown_menu.html" %}
+              </h1>
+              {% endblock %}
+            </div>
+          </form>
+        </div>
+      {% endblock %}
+      <div class="row">
+        <div class="col-md-8 col-md-push-2">
+          <div ng-repeat="row in rows" class="panel panel-default content-offset patient-row">
+            <a class="panel-link" href="{% block card_link %}[[ '/#/patient/' + row.demographics[0].patient_id ]]{% endblock %}">
+              {% block card_header %}
+                {% include "patient_lists/partials/card_header.html" %}
+              {% endblock %}
+              {% block card_body %}
+                {% include "patient_lists/partials/card_body.html" %}
+              {% endblock %}
+            </a>
+            {% block card_footer %}{% endblock %}
+          </div>
+        </div>
+      </div>
+      <div class="empty-list" ng-hide="num_episodes > 0">
+        <p class="lead text-center">
+          There are no patients on this list.
+        </p>
+        <p class="lead text-center">
+          <span class="screen-only">
+            Would you like to {% block add_patient_if_none %}<a href="" ng-click="addEpisode()">add one?</a>{% endblock %}
+          </span>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

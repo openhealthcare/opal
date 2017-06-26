@@ -110,6 +110,15 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
         expected = list(patient_lists.PatientList.for_user(self.user))
         self.assertEqual(expected, list(context_data['lists']))
 
+    def test_get_context_data_num_lists(self):
+        url = reverse("patient_list_template_view", kwargs=dict(slug="eater-herbivore"))
+        request = self.get_request(url)
+        view = self.setup_view(views.PatientListTemplateView, request, slug="eater-herbivore")
+        view.patient_list = TaggingTestPatientList
+
+        context_data = view.get_context_data(slug="eater-herbivore")
+        self.assertIsInstance(context_data['num_lists'], int)
+
     def test_get_context_data_list_group(self):
         url = reverse("patient_list_template_view", kwargs=dict(slug="eater-herbivore"))
         request = self.get_request(url)

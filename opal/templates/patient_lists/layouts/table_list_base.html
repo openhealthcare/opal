@@ -1,0 +1,61 @@
+<div class="container-fluid content-offset">
+  {% block list_actions %}
+    <div class="row screen-only">
+      <form class="form-inline">
+        <div class="col-md-12">
+          {% block list_select %}
+          <h1>
+            {% include "patient_lists/partials/list_dropdown_menu.html" %}
+          </h1>
+          {% endblock %}
+        </div>
+      </form>
+    </div>
+  {% endblock %}
+  <div class="row content-offset-25">
+    <div class="{% block table_container_classes %}col-md-10 col-md-push-1 bg-white{% endblock %}">
+      <table class="{% block table_classes %}table table-hover{% endblock %}">
+        {% block table_header %}
+          <thead>
+            <tr>
+              {% for column in columns %}
+                <th>
+                  <i class="{{ column.icon }}"></i>
+                  {{ column.title }}
+                </th>
+              {% endfor %}
+            </tr>
+          </thead>
+        {% endblock %}
+        <tbody>
+          <tr ng-repeat="row in rows" class="{% block table_class %}{% endblock %}">
+            {% block table_row %}
+              {% for column in columns %}
+                <td class="table-link-cell">
+                  <a title="[[ row.demographics[0].first_name ]] [[ row.demographics[0].surname ]]" class="table-link" href="{% block row_link %}[[ '/#/patient/' + row.demographics[0].patient_id ]]{% endblock %}">
+                    <div class="container">
+                      <div class="row" ng-repeat="item in row.{{column.name}}">
+                        {% include column.template_path %}
+                      </div>
+                    </div>
+                  </a>
+                </td>
+              {% endfor %}
+            {% endblock %}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="empty-list" ng-hide="num_episodes > 0">
+    <p class="lead text-center">
+      There are no patients on this list.
+    </p>
+    <p class="lead text-center">
+      <span class="screen-only">
+        Would you like to {% block add_patient_if_none %}<a href="" ng-click="addEpisode()">add one?</a>{% endblock %}
+      </span>
+    </p>
+  </div>
+
+</div>

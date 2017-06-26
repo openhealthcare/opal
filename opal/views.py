@@ -53,7 +53,8 @@ class PatientListTemplateView(LoginRequiredMixin, TemplateView):
             list_slug = self.patient_list.get_slug()
         context['list_slug'] = list_slug
         context['patient_list'] = self.patient_list
-        context['lists'] = PatientList.for_user(self.request.user)
+        context['lists'] = list(PatientList.for_user(self.request.user))
+        context['num_lists'] = len(context['lists'])
 
         context['list_group'] = None
         if self.patient_list:

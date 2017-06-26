@@ -1,0 +1,21 @@
+{% load forms %}
+{% if num_lists > 1 %}
+<div class="btn-group pull-left" uib-dropdown is-open="status.isopen">
+  <button type="button" class="btn btn-secondary" uib-dropdown-toggle ng-disabled="disabled" id="list-dropdown">
+    <i class="fa fa-user-md"></i>
+    {{ patient_list.display_name }}
+    <i class="fa fa-angle-down"></i>
+  </button>
+  <ul class="uib-dropdown-menu slides" role="menu" aria-labelledby="list-dropdown">
+    {% for list in lists %}
+    {% if list.get_slug != list_slug %}
+    <li>
+      <a href="#/list/{{ list.get_slug }}">
+        {{ list.display_name }}
+      </a>
+    </li>
+    {% endif %}
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}
