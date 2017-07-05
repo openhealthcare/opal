@@ -1,5 +1,5 @@
 angular.module('opal.controllers').controller('FindPatientCtrl',
-  function(scope, Episode, step, episode, $alert) {
+  function(scope, Episode, step, episode, $window) {
     "use strict";
 
     scope.lookup_hospital_number = function() {
@@ -10,7 +10,7 @@ angular.module('opal.controllers').controller('FindPatientCtrl',
                 newForPatient: scope.new_for_patient,
                 error        : function(){
                     // this shouldn't happen, but we should probably handle it better
-                    $alert('ERROR: More than one patient found with hospital number');
+                    $window.alert('ERROR: More than one patient found with hospital number');
                 }
             });
     };
