@@ -870,19 +870,19 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
             return d
 
         for model in patient_subrecords():
-            subrecords = model.objects.filter(patient_id=self.patient.id)
-
+            subrecords = model.objects.serialise_for_patients(
+                [self.patient], user
+            )
             if subrecords:
-                d[model.get_api_name()] = [
-                    subrecord.to_dict(user) for subrecord in subrecords
-                ]
+                d[model.get_api_name()] = subrecords
+
         for model in episode_subrecords():
-            subrecords = model.objects.filter(episode_id=self.id)
+            subrecords = model.objects.serialise_for_episodes(
+                [self], user
+            )
 
             if subrecords:
-                d[model.get_api_name()] = [
-                    subrecord.to_dict(user) for subrecord in subrecords
-                ]
+                d[model.get_api_name()] = subrecords
 
         d['tagging'] = self.tagging_dict(user)
 
@@ -1054,6 +1054,8 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
 class PatientSubrecord(Subrecord):
     patient = models.ForeignKey(Patient)
 
+    objects = managers.PatientSubrecordQueryset.as_manager()
+
     class Meta:
         abstract = True
 
@@ -1062,6 +1064,7 @@ class EpisodeSubrecord(Subrecord):
     _clonable = True
 
     episode = models.ForeignKey(Episode, null=False)
+    objects = managers.EpisodeSubrecordQueryset.as_manager()
 
     class Meta:
         abstract = True

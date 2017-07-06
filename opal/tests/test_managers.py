@@ -3,7 +3,9 @@ Unittests for opal.managers
 """
 from opal.core.test import OpalTestCase
 from opal.models import Patient, Episode
-from opal.tests.models import Hat, HatWearer, Dog, DogOwner
+from opal.tests.models import Hat, HatWearer, Dog, DogOwner, HouseOwner
+from mock import patch
+
 
 class PatientManagerTestCase(OpalTestCase):
     def setUp(self):
@@ -62,7 +64,6 @@ class PatientManagerTestCase(OpalTestCase):
         """
         query = Patient.objects.search('je rien')
         self.assertEqual(query.get(), self.patient_1)
-
 
 
 class EpisodeManagerTestCase(OpalTestCase):
@@ -142,3 +143,23 @@ class EpisodeManagerTestCase(OpalTestCase):
             self.user, [self.episode], episode_history=False
         )
         self.assertEqual(as_dict[0]['tagging'][0], {'id': 1})
+
+
+class TestEpisodeSubrecordQueryset(OpalTestCase):
+    @patch.object(HatWearer, "to_dict")
+    def test_serialise_for_episodes(self, td):
+        td.return_value = {"some": "dict"}
+        _, episode = self.new_patient_and_episode_please()
+        HatWearer.objects.create(episode=episode)
+        found = HatWearer.objects.serialise_for_episodes([episode], self.user)
+        self.assertEqual(found, [{"some": "dict"}])
+
+
+class TestPatientSubrecordQueryset(OpalTestCase):
+    @patch.object(HouseOwner, "to_dict")
+    def test_serialise_for_patients(self, td):
+        td.return_value = {"some": "dict"}
+        patient, _ = self.new_patient_and_episode_please()
+        HouseOwner.objects.create(patient=patient)
+        found = HouseOwner.objects.serialise_for_patients([patient], self.user)
+        self.assertEqual(found, [{"some": "dict"}])
