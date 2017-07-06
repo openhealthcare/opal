@@ -18,6 +18,8 @@ def multisave(context, subrecord):
     return add_common_context(context, subrecord)
 
 
-@register.inclusion_tag('_helpers/collapsed_multisave.html', takes_context=True)
+@register.inclusion_tag(
+    '_helpers/collapsed_multisave.html', takes_context=True
+)
 def collapsed_multisave(context, subrecord):
     return add_common_context(context, subrecord)
