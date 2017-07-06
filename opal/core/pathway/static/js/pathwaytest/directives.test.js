@@ -81,6 +81,19 @@ describe('pathway directives', function(){
         expect(modalCallArgs.resolve.pathwayDefinition(pathwayLoader)).toEqual("pathway result");
         expect(pathwayLoader.load).toHaveBeenCalledWith("someSpy", 2, 1);
       });
+
+      it('should pass through the pathway name when the modal is opened', function(){
+        pathwayLoader = jasmine.createSpyObj(["load"]);
+        pathwayLoader.load.and.returnValue("pathway result");
+        var markup = '<a href="#" open-pathway="someFakePathway"></a>';
+        element = $compile(markup)(scope);
+        scope.$digest();
+        $(element).click();
+        scope.$digest();
+        expect(mockModal.open).toHaveBeenCalled();
+        var modalCallArgs = mockModal.open.calls.argsFor(0)[0];
+        expect(modalCallArgs.resolve.pathwayName()).toEqual("someFakePathway");
+      });
     })
 
     it('should work without a call back', function(){

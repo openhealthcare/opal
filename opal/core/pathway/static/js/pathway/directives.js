@@ -247,6 +247,7 @@ directives.directive("openPathway", function($parse, $rootScope, Referencedata, 
               }
             },
             pathwayCallback: function(){ return pathwayCallback; },
+            pathwayName: function(){ return pathwaySlug; },
             metadata: function(){ return Metadata.load(); },
             referencedata: function(){ return Referencedata.load(); },
           }

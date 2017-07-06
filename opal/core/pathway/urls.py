@@ -21,7 +21,15 @@ urlpatterns = patterns(
         name="pathway"
     ),
     url(
-        r'^pathway/detail/(?P<name>[0-9a-z_-]+)/(?P<patient_id>[0-9]+)/(?P<episode_id>[0-9]+)?$',
+        r'^pathway/detail/(?P<name>[0-9a-z_-]+)/(?P<patient_id>[0-9]+)$',
+        api.PathwayApi.as_view({
+            'post': 'create',
+            'get': 'retrieve'
+        }),
+        name="pathway"
+    ),
+    url(
+        r'^pathway/detail/(?P<name>[0-9a-z_-]+)/(?P<patient_id>[0-9]+)/(?P<episode_id>[0-9]+)$',
         api.PathwayApi.as_view({
             'post': 'create',
             'get': 'retrieve'
