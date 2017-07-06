@@ -45,6 +45,7 @@ A list of all available topic guides.
 |||
 |--|--|
 |[Search](search.md)|Default search implementation|
+|[Pathway](pathways.md)|Build forms with multiple models, easily|
 |[Django Admin](django_admin.md)|Working with Opal models in the Django Admin|
 
 

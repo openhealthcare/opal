@@ -49,6 +49,7 @@ The following reference guides are available:
 |
 -|-
 [Making Search Queries](search_queries.md) | Search query backends and helper functions
+[Pathway](pathways.md)|Simple or complicated multilayed forms|
 
 
 ### Miscellaneous documentation
