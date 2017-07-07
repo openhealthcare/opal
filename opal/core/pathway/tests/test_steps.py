@@ -88,7 +88,7 @@ class StepTestCase(OpalTestCase):
                 template="some_template.html"
             )
         self.assertEqual(
-            str(er.exception), "a step needs either a display_name or a model"
+            str(er.exception), "A step needs either a display_name or a model"
         )
 
     def test_no_template(self):
@@ -97,5 +97,5 @@ class StepTestCase(OpalTestCase):
                 display_name="no template"
             )
         self.assertEqual(
-            str(er.exception), "a step needs either a template or a model"
+            str(er.exception), "A step needs either a template or a model"
         )
