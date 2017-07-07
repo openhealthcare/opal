@@ -1403,7 +1403,8 @@ class Demographics(PatientSubrecord):
     )
     post_code = models.CharField(max_length=20, blank=True, null=True)
     gp_practice_code = models.CharField(
-        max_length=20, blank=True, null=True, verbose_name=b("GP Practice Code")
+        max_length=20, blank=True, null=True,
+        verbose_name=b("GP Practice Code")
     )
     birth_place = ForeignKeyOrFreeText(Destination,
                                        verbose_name=b("Country of Birth"))
@@ -1472,11 +1473,13 @@ treatment."
 
 class Allergies(PatientSubrecord):
     _icon = 'fa fa-warning'
+    HELP_PROVISIONAL = "True if the allergy is only suspected. \
+Defaults to False."
 
     drug        = ForeignKeyOrFreeText(Drug)
     provisional = models.BooleanField(
         default=False, verbose_name=b("Suspected?"),
-        help_text=b("True if the allergy is only suspected. Defaults to False.")
+        help_text=b(HELP_PROVISIONAL)
     )
     details     = models.CharField(max_length=255, blank=True)
 
