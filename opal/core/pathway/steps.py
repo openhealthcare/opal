@@ -7,18 +7,18 @@ from opal.core.exceptions import InitializationError
 
 def delete_others(data, model, patient=None, episode=None):
     """
-        deletes all subrecords that are not in data
+    Deletes all subrecords that are not in data
     """
     if issubclass(model, EpisodeSubrecord):
         existing = model.objects.filter(episode=episode)
     elif issubclass(model, PatientSubrecord):
         existing = model.objects.filter(patient=patient)
     else:
-        err = "delete others called with {} requires a subrecord"
+        err = "Delete others called with {} requires a subrecord"
         raise exceptions.APIError(err.format(model.__name__))
 
     if model._is_singleton:
-        err = "you can't mass delete a singleton for {}"
+        err = "You can't mass delete a singleton for {}"
         raise exceptions.APIError(err.format(model.__name__))
 
     existing_data = data.get(model.get_api_name(), [])
@@ -31,10 +31,10 @@ def delete_others(data, model, patient=None, episode=None):
 
 def extract_pathway_field(some_fun):
     """
-        assumes a method with the name get_
-        it removes the prefix and looks for that attribute in the kwargs
-        otherwise looks for it on the on the step
-        otherwise call through
+    Assumes a method with the name get_
+    it removes the prefix and looks for that attribute in the kwargs
+    otherwise looks for it on the on the step
+    otherwise call through
     """
     @wraps(some_fun)
     def func_wrapper(self):
@@ -52,14 +52,14 @@ def extract_pathway_field(some_fun):
 
 class Step(object):
     """
-        a step object should either have a model
-        or
-            display name
-            template
-            icon (optional)
-            api_name (optional)
-            step_controller (optional)
-            model_api_name (optional)
+    A step object should either have a model
+    or
+        display name
+        template
+        icon (optional)
+        api_name (optional)
+        step_controller (optional)
+        model_api_name (optional)
     """
     step_controller = "DefaultStep"
 
@@ -71,14 +71,14 @@ class Step(object):
             if not getattr(self, "display_name", None):
                 if "display_name" not in kwargs:
                     er = (
-                        'a step needs either a display_name'
+                        'A step needs either a display_name'
                         ' or a model'
                     )
                     raise InitializationError(er)
             if not getattr(self, "template", None):
                 if "template" not in kwargs:
                     er = (
-                        'a step needs either a template'
+                        'A step needs either a template'
                         ' or a model'
                     )
                     raise InitializationError(er)
