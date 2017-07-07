@@ -1383,10 +1383,10 @@ class Demographics(PatientSubrecord):
 
     hospital_number = models.CharField(
         max_length=255, blank=True,
-        help_text="The unique identifier for this patient at the hospital."
+        help_text=b("The unique identifier for this patient at the hospital.")
     )
     nhs_number = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name="NHS Number"
+        max_length=255, blank=True, null=True, verbose_name=b("NHS Number")
     )
 
     surname = models.CharField(max_length=255, blank=True)
@@ -1394,23 +1394,23 @@ class Demographics(PatientSubrecord):
     middle_name = models.CharField(max_length=255, blank=True, null=True)
     title = ForeignKeyOrFreeText(Title)
     date_of_birth = models.DateField(
-        null=True, blank=True, verbose_name="Date of Birth"
+        null=True, blank=True, verbose_name=b("Date of Birth")
     )
     marital_status = ForeignKeyOrFreeText(MaritalStatus)
     religion = models.CharField(max_length=255, blank=True, null=True)
     date_of_death = models.DateField(
-        null=True, blank=True, verbose_name="Date of Death"
+        null=True, blank=True, verbose_name=b("Date of Death")
     )
     post_code = models.CharField(max_length=20, blank=True, null=True)
     gp_practice_code = models.CharField(
-        max_length=20, blank=True, null=True, verbose_name="GP Practice Code"
+        max_length=20, blank=True, null=True, verbose_name=b("GP Practice Code")
     )
     birth_place = ForeignKeyOrFreeText(Destination,
-                                       verbose_name="Country of Birth")
+                                       verbose_name=b("Country of Birth"))
     ethnicity = ForeignKeyOrFreeText(Ethnicity)
     death_indicator = models.BooleanField(
         default=False,
-        help_text="This field will be True if the patient is deceased."
+        help_text=b("This field will be True if the patient is deceased.")
     )
 
     sex = ForeignKeyOrFreeText(Gender)
@@ -1461,7 +1461,7 @@ treatment."
     route         = ForeignKeyOrFreeText(Drugroute)
     start_date    = models.DateField(
         null=True, blank=True,
-        help_text=HELP_START
+        help_text=b(HELP_START)
     )
     end_date      = models.DateField(null=True, blank=True)
     frequency     = ForeignKeyOrFreeText(Drugfreq)
@@ -1475,8 +1475,8 @@ class Allergies(PatientSubrecord):
 
     drug        = ForeignKeyOrFreeText(Drug)
     provisional = models.BooleanField(
-        default=False, verbose_name="Suspected?",
-        help_text="True if the allergy is only suspected. Defaults to False."
+        default=False, verbose_name=b("Suspected?"),
+        help_text=b("True if the allergy is only suspected. Defaults to False.")
     )
     details     = models.CharField(max_length=255, blank=True)
 
@@ -1496,8 +1496,8 @@ class Diagnosis(EpisodeSubrecord):
     condition         = ForeignKeyOrFreeText(Condition)
     provisional       = models.BooleanField(
         default=False,
-        verbose_name="Provisional?",
-        help_text="True if the diagnosis is provisional. Defaults to False"
+        verbose_name=b("Provisional?"),
+        help_text=b("True if the diagnosis is provisional. Defaults to False")
     )
     details           = models.CharField(max_length=255, blank=True)
     date_of_diagnosis = models.DateField(blank=True, null=True)
@@ -1731,7 +1731,7 @@ class PatientConsultation(EpisodeSubrecord):
     when = models.DateTimeField(null=True, blank=True)
     initials = models.CharField(
         max_length=255, blank=True,
-        help_text="The initials of the user who gave the consult."
+        help_text=b("The initials of the user who gave the consult.")
     )
     reason_for_interaction = ForeignKeyOrFreeText(
         PatientConsultationReasonForInteraction
@@ -1763,8 +1763,8 @@ class SymptomComplex(EpisodeSubrecord):
         ('22 days to 3 months', '22 days to 3 months',),
         ('over 3 months', 'over 3 months',),
     )
-    HELP_DURATION = "The duration for which the patient had been experiencing \
-these symptoms when recorded."
+    HELP_DURATION = b("The duration for which the patient had been experiencing \
+these symptoms when recorded.")
 
     duration = models.CharField(
         max_length=255,
