@@ -21,6 +21,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.urlresolvers import reverse
 from django.core.exceptions import FieldDoesNotExist
 from django.utils.functional import cached_property
+from django.utils.encoding import force_str
 from six import b
 
 from opal.core import (
@@ -167,7 +168,7 @@ class SerialisableFields(object):
         enum = cls.get_field_enum(field_name)
 
         if enum:
-            return "One of {}".format(",".join(enum))
+            return "One of {}".format(",".join([force_str(e) for e in enum]))
 
         else:
             return "Text Field"
