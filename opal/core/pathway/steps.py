@@ -2,10 +2,7 @@ from functools import wraps
 from opal.models import EpisodeSubrecord, PatientSubrecord
 from opal.utils import camelcase_to_underscore
 from opal.core import exceptions
-
-
-class InitializationError(exceptions.Error):
-    pass
+from opal.core.exceptions import InitializationError
 
 
 def delete_others(data, model, patient=None, episode=None):
