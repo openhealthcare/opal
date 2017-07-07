@@ -1,5 +1,5 @@
 //
-// Main OPAL Referrals plugin application!
+// Main Opal Pathway Angular application
 //
 var opalshim = OPAL.module('opal', [])
 
