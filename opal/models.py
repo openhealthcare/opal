@@ -21,6 +21,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.urlresolvers import reverse
 from django.core.exceptions import FieldDoesNotExist
 from django.utils.functional import cached_property
+from six import b
 
 from opal.core import (
     application, exceptions, lookuplists, plugins, patient_lists, tagging
@@ -487,8 +488,8 @@ class Macro(models.Model):
     enter "github-style" #foo text blocks from an admin defined
     list and then have them expand to cover frequent entries.
     """
-    HELP_TITLE = "The text that will display in the dropdown. No spaces!"
-    HELP_EXPANDED = "This is thte text that it will expand to."
+    HELP_TITLE = b("The text that will display in the dropdown. No spaces!")
+    HELP_EXPANDED = b("This is the text that it will expand to.")
 
     title    = models.CharField(max_length=200, help_text=HELP_TITLE)
     expanded = models.TextField(help_text=HELP_EXPANDED)
@@ -1600,13 +1601,13 @@ class UserProfile(models.Model):
 
     user                  = models.OneToOneField(User, related_name='profile')
     force_password_change = models.BooleanField(default=True,
-                                                help_text=HELP_PW)
+                                                help_text=b(HELP_PW))
     can_extract           = models.BooleanField(default=False,
-                                                help_text=HELP_EXTRACT)
+                                                help_text=b(HELP_EXTRACT))
     readonly              = models.BooleanField(default=False,
-                                                help_text=HELP_READONLY)
+                                                help_text=b(HELP_READONLY))
     restricted_only       = models.BooleanField(default=False,
-                                                help_text=HELP_RESTRICTED)
+                                                help_text=b(HELP_RESTRICTED))
     roles                 = models.ManyToManyField(Role, blank=True)
 
     def to_dict(self):
