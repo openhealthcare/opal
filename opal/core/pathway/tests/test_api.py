@@ -59,7 +59,7 @@ class PathwaySaveViewTestCase(OpalTestCase):
         expected = {
             'patient_id': 1, 'redirect_url': u'/#/patient/1/1', 'episode_id': 1
         }
-        self.assertEqual(json.loads(response.content), expected)
+        self.assertEqual(json.loads(response.content.decode('utf8')), expected)
 
 
 @patch("opal.core.pathway.pathways.Pathway.get")

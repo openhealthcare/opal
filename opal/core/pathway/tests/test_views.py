@@ -36,33 +36,36 @@ class PathwayTemplateViewTestCase(OpalTestCase):
             test_pathways.PagePathwayExample(), is_modal=True
         )
         self.assertEqual(response.status_code, 200)
-        self.assertIn("modal-body", response.content)
-        self.assertIn('form name="form"', response.content)
+        content = str(response.content)
+        self.assertIn("modal-body", content)
+        self.assertIn('form name="form"', content)
 
         # make sure the icon is rendered
-        self.assertIn('fa fa-something', response.content)
+        self.assertIn('fa fa-something', content)
 
     def test_integration_page_non_modal(self):
         response = self.get_response(
             test_pathways.PagePathwayExample(), is_modal=False
         )
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn("modal-body", response.content)
-        self.assertIn('form name="form"', response.content)
+        content = str(response.content)
+        self.assertNotIn("modal-body", content)
+        self.assertIn('form name="form"', content)
 
         # make sure the icon is rendered
-        self.assertIn('fa fa-something', response.content)
+        self.assertIn('fa fa-something', content)
 
     def test_integration_wizard_modal(self):
         response = self.get_response(
             test_pathways.WizardPathwayExample(), is_modal=True
         )
         self.assertEqual(response.status_code, 200)
-        self.assertIn("modal-body", response.content)
-        self.assertIn('form name="form"', response.content)
+        content = str(response.content)
+        self.assertIn("modal-body", content)
+        self.assertIn('form name="form"', content)
 
         # make sure the icon is rendered
-        self.assertIn('fa fa-something', response.content)
+        self.assertIn('fa fa-something', content)
 
     def test_integration_wizard_non_modal(self):
         response = self.get_response(
@@ -70,11 +73,12 @@ class PathwayTemplateViewTestCase(OpalTestCase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertNotIn("modal-body", response.content)
-        self.assertIn('form name="form"', response.content)
+        content = str(response.content)
+        self.assertNotIn("modal-body", content)
+        self.assertIn('form name="form"', content)
 
         # make sure the icon is rendere
-        self.assertIn('fa fa-something', response.content)
+        self.assertIn('fa fa-something', content)
 
     def test_login_required(self):
         response = self.get_response(
@@ -98,5 +102,5 @@ class PathwayTemplateViewTestCase(OpalTestCase):
                 )
 
             self.assertEqual(response.status_code, 200)
-            self.assertIn("Colour", response.content)
-            self.assertIn('fa fa-something', response.content)
+            self.assertIn("Colour", str(response.content))
+            self.assertIn('fa fa-something', str(response.content))
