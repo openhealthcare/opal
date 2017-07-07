@@ -1757,11 +1757,11 @@ class SymptomComplex(EpisodeSubrecord):
         Symptom, related_name="symptoms", blank=True
     )
     DURATION_CHOICES = (
-        ('3 days or less', '3 days or less',),
-        ('4-10 days', '4-10 days',),
-        ('11-21 days', '11-21 days',),
-        ('22 days to 3 months', '22 days to 3 months',),
-        ('over 3 months', 'over 3 months',),
+        (b('3 days or less'), b('3 days or less')),
+        (b('4-10 days'), b('4-10 days')),
+        (b('11-21 days'), b('11-21 days')),
+        (b('22 days to 3 months'), b('22 days to 3 months')),
+        (b('over 3 months'), b('over 3 months'))
     )
     HELP_DURATION = b("The duration for which the patient had been experiencing \
 these symptoms when recorded.")
