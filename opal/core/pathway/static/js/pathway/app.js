@@ -9,9 +9,7 @@
       'opal.filters',
       'opal.services',
       'opal.directives',
-      'opal.controllers',
-      'opal.controllers',
-      'opal.services'
+      'opal.controllers'
   ]);
 
   OPAL.run(app);
