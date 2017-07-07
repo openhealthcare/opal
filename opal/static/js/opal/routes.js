@@ -1,3 +1,4 @@
+(function(){
 var app = angular.module('opal');
 
 app.config(
@@ -58,3 +59,4 @@ app.config(
 		     })
              .otherwise({redirectTo: '/'});
      }]);
+})();
