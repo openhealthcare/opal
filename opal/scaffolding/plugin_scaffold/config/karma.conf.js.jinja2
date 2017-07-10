@@ -1,6 +1,6 @@
 module.exports = function(config){
   var opalPath = process.env.OPAL_LOCATION;
-  var karmaDefaults = require(opalPath + '/config/karma_defaults.js');
+  var karmaDefaults = require(opalPath + '/opal/tests/js_config/karma_defaults.js');
   var baseDir = __dirname + '/..';
   var coverageFiles = [
     __dirname+'/../{{ name }}/static/js/{{ name }}/**/*.js',
