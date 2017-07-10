@@ -32,6 +32,7 @@ A list of all available topic guides.
 
 |||
 |--|--|
+|[Theming](theming.md)|How to theme your application|
 |[Templates](templates.md)|Server and client side templating |
 |[Default Context Processors](context_processors.md)|Opal Django context processors|
 |[Static Files](static_files.md)| How Opal handles static files|
