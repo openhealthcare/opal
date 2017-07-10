@@ -612,7 +612,7 @@ class EpisodeTestCase(OpalTestCase):
 
         # add a date to make sure serialisation works as expected
         self.demographics.date_of_birth = date(2010, 1, 1)
-        self.demographics.created = datetime.now()
+        self.demographics.created = timezone.now()
         self.episode.date_of_admission = date(2014, 1, 14)
         self.episode.active = True
         self.episode.save()

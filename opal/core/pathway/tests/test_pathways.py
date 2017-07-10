@@ -2,6 +2,7 @@ import mock
 import json
 import datetime
 
+from django.utils import timezone
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
 from opal.core import exceptions
@@ -300,10 +301,12 @@ class TestRemoveUnChangedSubrecords(OpalTestCase):
             consistency_token="unchanged",
             name="Red",
             episode=self.episode,
-            created=datetime.datetime.now()
+            created=timezone.now()
         )
         provided_dict = colour.to_dict(self.user)
-        provided_dict = json.loads(json.dumps(provided_dict, cls=OpalSerializer))
+        provided_dict = json.loads(
+            json.dumps(provided_dict, cls=OpalSerializer)
+        )
         provided_dict.pop("episode_id")
 
         result = self.pathway_example.remove_unchanged_subrecords(
