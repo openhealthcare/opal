@@ -53,8 +53,10 @@ test_settings_config = dict(
         'axes',
         'djcelery',
         'opal',
+        'opal.tests',
         'opal.core.search',
-        'opal.tests'
+        'opal.core.pathway.tests.pathway_test',
+        'opal.core.pathway',
     ),
     MIGRATION_MODULES={
         'opal': 'opal.nomigrations'

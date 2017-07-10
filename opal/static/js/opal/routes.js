@@ -58,6 +58,8 @@
                  templateUrl: '/accounts/templates/account_detail.html'
   	     })
              .otherwise({redirectTo: '/'});
+
      }]
   );
+
 })();

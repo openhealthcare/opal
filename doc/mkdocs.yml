@@ -36,6 +36,7 @@ pages:
 
       # Optional components
       - Search Overview: guides/search.md
+      - Pathway Overview: guides/pathways.md
       - Django Admin: guides/django_admin.md
 
       # Working on Opal itself
@@ -82,6 +83,9 @@ pages:
 
       # Search
       - Search Queries: reference/search_queries.md
+
+      # Pathways
+      - Pathway Creation: reference/pathways.md
 
       # Misc
       - Settings: reference/settings.md
