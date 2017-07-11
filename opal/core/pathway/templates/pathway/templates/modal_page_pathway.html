@@ -1,0 +1,33 @@
+{% extends "pathway/templates/modal_pathway_base.html" %}
+{% load forms %}
+{% block pathway_body %}
+  {% if pathway.get_steps|length > 1 %}
+    {% for step in pathway.get_steps %}
+      <div pathway-step="{{ step.get_api_name }}" class="row">
+        <div class="col-md-10 col-md-push-1">
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h3>
+                {% if step.get_icon %}
+                  {% icon step.get_icon %}
+                {% endif %}
+                {{ step.get_display_name }}
+              </h3>
+            </div>
+            <div class="panel-body">
+                {% include step.get_template %}
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    {% with step=pathway.get_steps.0 %}
+      <div pathway-step="{{ step.get_api_name }}" class="row">
+        <div class="col-md-12">
+          {% include step.get_template %}
+        </div>
+      </div>
+    {% endwith %}
+  {% endif %}
+{% endblock pathway_body %}

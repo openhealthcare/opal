@@ -11,6 +11,11 @@ display patient lists, detail views, menus and forms amongst other things.
 
 For full documentation, consult the theming guide in the documentation.
 
+#### Pathway
+
+Moves the opal-pathway module into the opal core. Pathways is an extensible way
+of creating forms that involve multiple subrecords.
+
 #### Misc Changes
 
 Add the allow_add_patient and allow_edit_teams options to the patient lists.

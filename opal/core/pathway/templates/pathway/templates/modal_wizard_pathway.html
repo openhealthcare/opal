@@ -1,0 +1,42 @@
+{% extends "pathway/templates/modal_pathway_base.html" %}
+{% load forms %}
+{% block pathway_header %}
+  <h2>
+    {% if pathway.icon %}{% icon pathway.icon %}{% endif %}  {{ pathway.display_name }}
+    <span ng-show="episode">
+      (<a href="/#/patient/[[ episode.demographics[0].patient_id ]]/[[ episode.demographics[0].id ]]">[[ episode.demographics[0].first_name ]] [[ episode.demographics[0].surname ]]</a>)
+    </span>
+    - [[ pathway.currentStep.display_name ]]
+  </h2>
+  {% block process_steps %}
+  <div ng-show="pathway.numSteps > 2" class="pathway-process-steps">
+    {% process_steps process_steps="pathway.steps" click="clickIcon" show_titles=False active="progress_step.display_name === pathway.currentStep.display_name" complete="pathway.stepIndex(progress_step) < pathway.currentIndex" disabled="pathway.stepIndex(progress_step) > pathway.currentIndex" %}
+  </div>
+  {% endblock %}
+{% endblock pathway_header %}
+
+{% block pathway_body %}
+  {% for step in pathway.get_steps %}
+    <div pathway-step="{{ step.get_api_name }}">
+      <div ng-show="pathway.currentStep.display_name === '{{ step.get_display_name }}'" class="pathway-process-steps-padding">
+        <div class="row">
+          <div class="col-md-10 col-md-push-1">
+            {% include step.get_template %}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endfor %}
+{% endblock pathway_body %}
+
+{% block pathway_footer %}
+<div class="modal-footer">
+  <div class="row">
+    <div class="col-md-10 col-md-push-1">
+      {% include "pathway/partial/cancel_button.html" %}
+      {% include "pathway/partial/wizard_next_button.html" %}
+      {% include "pathway/partial/wizard_back_button.html" %}
+    </div>
+  </div>
+</div>
+{% endblock pathway_footer %}

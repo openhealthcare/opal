@@ -25,3 +25,7 @@ class InvalidDiscoverableFeatureError(Error):
 
 class UnexpectedFieldNameError(Error):
     pass
+
+
+class InitializationError(Error):
+    pass
