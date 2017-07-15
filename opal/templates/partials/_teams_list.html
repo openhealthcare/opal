@@ -1,0 +1,12 @@
+<h4>
+  <i class="fa fa-users"></i> Teams
+  <i class="fa edit fa-pencil pointer pull-right"
+     ng-click="{{ edit_teams }}"></i>
+</h4>
+<hr />
+<h4
+   ng-repeat="tag in episode.getTags()"
+   ng-show="metadata.tag_visible_in_list.indexOf(tag) != -1"
+   >
+  <a href="/#/list/[[ metadata.tags[tag].slug ]]" >[[ metadata.tags[tag].display_name ]]</a>
+</h4>
