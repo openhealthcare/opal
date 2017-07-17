@@ -27,6 +27,7 @@ pages:
       - JSON API: guides/json_api.md
 
       # Presentation and templating
+      - Theming: guides/theming.md
       - Templates: guides/templates.md
       - Context Processors: guides/context_processors.md
       - Static Files: guides/static_files.md
