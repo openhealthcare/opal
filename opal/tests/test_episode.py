@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 
 from opal.core.episodes import InpatientEpisode
 from opal.core.test import OpalTestCase
-from opal.models import Patient, Episode, Tagging
+from opal.models import Patient, Episode, Tagging, UserProfile
 
 from opal.tests import test_patient_lists # ensure the lists are loaded
 from opal.tests.models import (
@@ -163,20 +163,39 @@ class EpisodeCategoryTestCase(OpalTestCase):
         self.episode.date_of_episode = self.today
         self.episode.date_of_admission = self.yesterday
         self.episode.save()
-        self.assertEqual(self.episode.start, self.today)
+
+        self.assertEqual(self.episode.category.start, self.today)
 
     def test_start_date_of_admission(self):
         self.episode.date_of_admission = self.yesterday
         self.episode.save()
-        self.assertEqual(self.episode.start, self.yesterday)
+        self.assertEqual(
+            self.episode.category.start, self.yesterday
+        )
 
-    def test_start_date_of_episode(self):
+    def test_end_date_of_episode(self):
         self.episode.date_of_episode = self.today
         self.episode.discharge_date = self.yesterday
         self.episode.save()
-        self.assertEqual(self.episode.end, self.today)
+        self.assertEqual(self.episode.category.end, self.today)
 
-    def test_start_date_of_admission(self):
+    def test_end_date_of_admission(self):
         self.episode.discharge_date = self.yesterday
         self.episode.save()
-        self.assertEqual(self.episode.end, self.yesterday)
+        self.assertEqual(
+            self.episode.category.end, self.yesterday
+        )
+
+    def test_episode_visible_false(self):
+        user = User.objects.create()
+        UserProfile.objects.create(user=user, restricted_only=True)
+        self.assertFalse(
+            self.episode.category.episode_visible_to(self.episode, user)
+        )
+
+    def test_episode_visible_true(self):
+        user = User.objects.create()
+        UserProfile.objects.create(user=user, restricted_only=False)
+        self.assertTrue(
+            self.episode.category.episode_visible_to(self.episode, user)
+        )

@@ -31,9 +31,17 @@ controllers.controller(
 
         $scope.episode = episode.makeCopy();
         if(!$scope.episode.discharge_date){
-            $scope.editing.discharge_date = moment().format('DD/MM/YYYY');
-        }else{
-            $scope.editing.discharge_date = $scope.episode.discharge_date;
+          $scope.editing.discharge_date = moment().format('DD/MM/YYYY');
+        }
+        else{
+          $scope.editing.discharge_date = $scope.episode.discharge_date
+        }
+
+        if(!$scope.episode.end){
+          $scope.editing.end = moment().format('DD/MM/YYYY');
+        }
+        else{
+          $scope.editing.end = $scope.episode.end
         }
 
         //
@@ -61,8 +69,7 @@ controllers.controller(
             if($scope.editing.category == 'Unfollow') {
                 // No longer under active review does not set a discharge date
                 episodeAttrs.discharge_date = null;
-            }else{
-                episodeAttrs.discharge_date = $scope.editing.discharge_date;
+                episodeAttrs.end = null;
             }
 
 	        if ($scope.editing.category != 'Followup') {

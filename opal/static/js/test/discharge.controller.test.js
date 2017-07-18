@@ -64,7 +64,7 @@ describe('DischargeEpisodeCtrl', function(){
             expect($scope.currentSubTag).toEqual('tropical');
         });
 
-        it('should set the discahrge date from the episode if it exists', function() {
+        it('should set the discharge date/end from the episode if it exists', function() {
             episode.discharge_date = new Date(2000, 0, 1);
             mkcontroller();
             expect($scope.editing.discharge_date).toEqual(new Date(2000, 0, 1))
@@ -90,7 +90,7 @@ describe('DischargeEpisodeCtrl', function(){
             expect(modalInstance.close).toHaveBeenCalledWith('discharged')
         });
 
-        it('should remove the discharge date if category is Unfollow', function() {
+        it('should remove the discharge date/end if category is Unfollow', function() {
             $httpBackend.expectPUT('/api/v0.1/tagging/123/').respond({});
             $httpBackend.expectPOST('/api/v0.1/location/').respond({});
 
@@ -98,6 +98,8 @@ describe('DischargeEpisodeCtrl', function(){
               id:123,
               date_of_admission: "19/11/2013",
               discharge_date: null,
+              start: "19/11/2013",
+              end: null,
               category_name:"Inpatient",
               date_of_episode: "20/11/2013"
             };
@@ -113,18 +115,21 @@ describe('DischargeEpisodeCtrl', function(){
             $httpBackend.verifyNoOutstandingExpectation();
         });
 
-        it('should use the discharge date from editing if the category is not Unfollow', function() {
+        it('should use the discharge date/end from editing if the category is not Unfollow', function() {
             $httpBackend.expectPUT('/api/v0.1/tagging/123/').respond({});
             $httpBackend.expectPOST('/api/v0.1/location/').respond({});
             var alteredEpisodeData = angular.copy(episodeData);
-            alteredEpisodeData.discharge_date = moment(new Date(20016, 6, 6));
+            alteredEpisodeData.discharge_date = moment(new Date(2016, 6, 6));
+            alteredEpisodeData.end = moment(new Date(2016, 6, 6));
 
             var expected = {
               id: 123,
-              date_of_admission: "19/11/2013",
-              discharge_date: "06/07/20016",
               category_name: "Inpatient",
-              date_of_episode: "20/11/2013"
+              date_of_admission: "19/11/2013",
+              date_of_episode: "20/11/2013",
+              discharge_date: "06/07/2016",
+              start: "19/11/2013",
+              end: "06/07/2016"
             };
             $httpBackend.expectPUT('/api/v0.1/episode/123/', expected).respond(alteredEpisodeData);
             mkcontroller(tags, new Episode(alteredEpisodeData));

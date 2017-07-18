@@ -37,6 +37,7 @@ angular.module('opal.controllers')
                 doa = moment(doa).format(DATE_FORMAT);
               }
               $scope.editing.date_of_admission = doa;
+              $scope.editing.start = doa;
             }
 
             var toSave = FieldTranslater.jsToPatient($scope.editing);

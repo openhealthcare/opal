@@ -144,7 +144,9 @@ angular.module('opal.services')
                     date_of_admission: this.date_of_admission,
                     date_of_episode  : this.date_of_episode,
                     discharge_date   : this.discharge_date,
-                    consistency_token: this.consistency_token
+                    consistency_token: this.consistency_token,
+                    start: this.start,
+                    end: this.end
                 }
                 return copy
             },

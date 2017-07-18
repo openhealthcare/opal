@@ -699,6 +699,8 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     category_name     = models.CharField(
         max_length=200, default=get_default_episode_type
     )
+    start = models.DateField(null=True, blank=True)
+    end = models.DateField(null=True, blank=True)
     patient           = models.ForeignKey(Patient)
     active            = models.BooleanField(default=False)
     date_of_admission = models.DateField(null=True, blank=True)
@@ -742,14 +744,6 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         fields = super(Episode, cls)._get_fieldnames_to_serialize()
         fields.extend(["start", "end"])
         return fields
-
-    @cached_property
-    def start(self):
-        return self.category.start
-
-    @cached_property
-    def end(self):
-        return self.category.end
 
     @property
     def category(self):

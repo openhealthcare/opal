@@ -614,6 +614,7 @@ class EpisodeTestCase(OpalTestCase):
         self.demographics.date_of_birth = date(2010, 1, 1)
         self.demographics.created = timezone.now()
         self.episode.date_of_admission = date(2014, 1, 14)
+        self.episode.start = date(2014, 1, 15)
         self.episode.active = True
         self.episode.save()
         self.user = User.objects.create(username='testuser')
@@ -622,8 +623,9 @@ class EpisodeTestCase(OpalTestCase):
         self.mock_request.query_params = {}
         self.expected = self.episode.to_dict(self.user)
         self.expected["date_of_admission"] = "14/01/2014"
-        self.expected["start"] = "14/01/2014"
-        self.expected["episode_history"][0]["start"] = "14/01/2014"
+        self.expected["start"] = "15/01/2014"
+        self.expected["end"] = None
+        self.expected["episode_history"][0]["start"] = "15/01/2014"
         self.expected["episode_history"][0]["date_of_admission"] = "14/01/2014"
 
     def test_retrieve_episode(self):
@@ -637,8 +639,8 @@ class EpisodeTestCase(OpalTestCase):
     def test_list(self):
         response = api.EpisodeViewSet().list(self.mock_request)
         self.assertEqual(200, response.status_code)
-        response_content = json.loads(response.content.decode('UTF-8'))
-        self.assertEqual([self.expected], response_content)
+        response_content = json.loads(response.content.decode('UTF-8'))[0]
+        self.assertEqual(self.expected, response_content)
 
     def test_list_unauthenticated(self):
         pass #TODO TEST THIS
