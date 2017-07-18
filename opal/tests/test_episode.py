@@ -2,7 +2,7 @@
 Unittests for opal.models.Episode
 """
 import datetime
-from mock import patch
+from mock import patch, MagicMock
 
 from django.contrib.auth.models import User
 
@@ -160,30 +160,37 @@ class EpisodeCategoryTestCase(OpalTestCase):
         self.yesterday = self.today - datetime.timedelta(1)
 
     def test_start_date_of_episode(self):
-        self.episode.date_of_episode = self.today
-        self.episode.date_of_admission = self.yesterday
-        self.episode.save()
-
-        self.assertEqual(self.episode.category.start, self.today)
+        episode = MagicMock()
+        episode.date_of_episode = self.today
+        episode.date_of_admission = self.yesterday
+        category = InpatientEpisode(episode)
+        self.assertEqual(category.start, self.today)
 
     def test_start_date_of_admission(self):
-        self.episode.date_of_admission = self.yesterday
-        self.episode.save()
+        episode = MagicMock()
+        episode.date_of_admission = self.yesterday
+        episode.date_of_episode = None
+        category = InpatientEpisode(episode)
+
         self.assertEqual(
-            self.episode.category.start, self.yesterday
+            category.start, self.yesterday
         )
 
     def test_end_date_of_episode(self):
-        self.episode.date_of_episode = self.today
-        self.episode.discharge_date = self.yesterday
-        self.episode.save()
-        self.assertEqual(self.episode.category.end, self.today)
+        episode = MagicMock()
+        episode.date_of_episode = self.today
+        episode.discharge_date = self.yesterday
+        category = InpatientEpisode(episode)
+        self.assertEqual(category.end, self.today)
 
     def test_end_date_of_admission(self):
-        self.episode.discharge_date = self.yesterday
-        self.episode.save()
+        episode = MagicMock()
+        episode.discharge_date = self.yesterday
+        episode.date_of_episode = None
+        category = InpatientEpisode(episode)
+
         self.assertEqual(
-            self.episode.category.end, self.yesterday
+            category.end, self.yesterday
         )
 
     def test_episode_visible_false(self):
