@@ -162,12 +162,12 @@ class PatientGenerator(object):
 
     def create_episode(self, patient):
         dob = patient.demographics_set.first().date_of_birth
-        kwargs = dict(date_of_admission=date_generator(start_date=dob))
+        kwargs = dict(start=date_generator(start_date=dob))
         episode_finished = random.choice([True, False])
 
         if episode_finished:
-            kwargs["discharge_date"] = date_generator(
-                start_date=kwargs["date_of_admission"]
+            kwargs["end"] = date_generator(
+                start_date=kwargs["start"]
             )
 
         episode = patient.create_episode(**kwargs)

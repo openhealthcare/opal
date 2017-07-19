@@ -49,20 +49,6 @@ class EpisodeCategory(DiscoverableFeature):
     def __init__(self, episode):
         self.episode = episode
 
-    @property
-    def start(self):
-        if self.episode.date_of_episode:
-            return self.episode.date_of_episode
-        else:
-            return self.episode.date_of_admission
-
-    @property
-    def end(self):
-        if self.episode.date_of_episode:
-            return self.episode.date_of_episode
-        else:
-            return self.episode.discharge_date
-
 
 class InpatientEpisode(EpisodeCategory):
     display_name    = 'Inpatient'

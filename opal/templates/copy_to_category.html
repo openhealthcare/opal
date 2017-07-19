@@ -19,8 +19,8 @@
           >
 	    <td>[[patient.demographics[0].hospital_number]]</td>
 	    <td>[[patient.demographics[0].first_name]] [[patient.demographics[0].surname]]</td>
-	    <td>[[ patient.episodes[patient.active_episode_id].date_of_admission | shortDate ]]</td>
-        <td>[[ patient.episodes[patient.active_episode_id].discharge_date | shortDate ]]</td>
+	    <td>[[ patient.episodes[patient.active_episode_id].start | shortDate ]]</td>
+        <td>[[ patient.episodes[patient.active_episode_id].end | shortDate ]]</td>
 	    <td>
           <i class="glyphicon glyphicon-new-window"></i>
         </td>

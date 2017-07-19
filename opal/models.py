@@ -701,11 +701,9 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     )
     patient           = models.ForeignKey(Patient)
     active            = models.BooleanField(default=False)
-    date_of_admission = models.DateField(null=True, blank=True)
-    # TODO rename to date_of_discharge?
-    discharge_date    = models.DateField(null=True, blank=True)
-    date_of_episode   = models.DateField(blank=True, null=True)
     consistency_token = models.CharField(max_length=8)
+    start = models.DateField(null=True, blank=True)
+    end = models.DateField(blank=True, null=True)
 
     # stage is at what stage of an episode flow is the
     # patient at
@@ -721,13 +719,13 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
             return '%s | %s | %s' % (demographics.hospital_number,
                                      demographics.name,
-                                     self.date_of_admission)
+                                     self.start)
         except models.ObjectDoesNotExist:
-            return self.date_of_admission
+            return self.start
         except AttributeError:
             return 'Episode: {0}'.format(self.pk)
         except Exception:
-            return self.date_of_admission
+            return self.start
 
     def save(self, *args, **kwargs):
         created = not bool(self.id)
@@ -742,14 +740,6 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         fields = super(Episode, cls)._get_fieldnames_to_serialize()
         fields.extend(["start", "end"])
         return fields
-
-    @cached_property
-    def start(self):
-        return self.category.start
-
-    @cached_property
-    def end(self):
-        return self.category.end
 
     @property
     def category(self):
@@ -846,7 +836,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         """
         from opal.core.search.queries import episodes_for_user
 
-        order = 'date_of_episode', 'date_of_admission', 'discharge_date'
+        order = 'start', 'end'
         episode_history = self.patient.episode_set.order_by(*order)
         episode_history = episodes_for_user(episode_history, user)
         return [e.to_dict(user, shallow=True) for e in episode_history]
@@ -859,9 +849,8 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
             'id'               : self.id,
             'category_name'    : self.category_name,
             'active'           : self.active,
-            'date_of_admission': self.date_of_admission,
-            'date_of_episode'  : self.date_of_episode,
-            'discharge_date'   : self.discharge_date,
+            'start'            : self.start,
+            'end'              : self.end,
             'consistency_token': self.consistency_token,
             'start'            : self.start,
             'end'              : self.end,

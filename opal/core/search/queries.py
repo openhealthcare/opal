@@ -398,9 +398,7 @@ class DatabaseQuery(QueryBackend):
         return eps
 
     def _get_aggregate_patients_from_episodes(self, episodes):
-        # at the moment we use date_of_admission/discharge only if
-        # date_of_episode is null, because of this we can't do this
-        # in a vanilla orm query
+        # at the moment we use start/end only
         patient_summaries = {}
 
         for episode in episodes:

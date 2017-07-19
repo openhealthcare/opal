@@ -50,10 +50,10 @@ describe('AddEpisodeCtrl', function (){
               "tagging":{"id":true,"id_inpatients":true},
               "location":{},
               "demographics":{"date_of_birth":"22/01/1970"},
-              "date_of_admission":"22/01/2000"
+              "start": "22/01/2000"
             };
             $httpBackend.expectPOST('/api/v0.1/episode/', expected).respond({demographics:[{patient_id: 1}]});
-            $scope.editing.date_of_admission = new Date(2000, 0, 22);
+            $scope.editing.start = new Date(2000, 0, 22);
             $scope.editing.demographics.date_of_birth = new Date(1970, 0, 22);
             $scope.save();
             $httpBackend.flush();

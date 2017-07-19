@@ -127,7 +127,7 @@ describe('EditItemCtrl', function (){
             spyOn(episode, 'save').and.callFake(function() {
                 return deferred.promise;
             });
-            $scope.episode.date_of_admission = new Date();
+            $scope.episode.start = new Date();
             $scope.save('save');
             deferred.resolve("episode returned");
             $scope.$digest();

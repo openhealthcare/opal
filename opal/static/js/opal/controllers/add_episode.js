@@ -31,12 +31,12 @@ angular.module('opal.controllers')
           }
 
 	        $scope.save = function() {
-            var doa = $scope.editing.date_of_admission;
+            var doa = $scope.editing.start;
             if (doa) {
               if(!angular.isString(doa)){
                 doa = moment(doa).format(DATE_FORMAT);
               }
-              $scope.editing.date_of_admission = doa;
+              $scope.editing.start = doa;
             }
 
             var toSave = FieldTranslater.jsToPatient($scope.editing);

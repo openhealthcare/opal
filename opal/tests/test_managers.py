@@ -64,7 +64,6 @@ class PatientManagerTestCase(OpalTestCase):
         self.assertEqual(query.get(), self.patient_1)
 
 
-
 class EpisodeManagerTestCase(OpalTestCase):
 
     def setUp(self):
@@ -110,8 +109,8 @@ class EpisodeManagerTestCase(OpalTestCase):
     def test_serialised_fields(self):
         as_dict = Episode.objects.serialised(self.user, [self.episode])[0]
         expected = [
-            'id', 'category_name', 'active', 'date_of_admission', 'discharge_date',
-            'consistency_token', 'date_of_episode', 'stage'
+            'id', 'category_name', 'active', 'start', 'end',
+            'consistency_token', 'stage'
         ]
 
         for field in expected:

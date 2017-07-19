@@ -613,7 +613,8 @@ class EpisodeTestCase(OpalTestCase):
         # add a date to make sure serialisation works as expected
         self.demographics.date_of_birth = date(2010, 1, 1)
         self.demographics.created = timezone.now()
-        self.episode.date_of_admission = date(2014, 1, 14)
+        self.episode.start = date(2014, 1, 14)
+        self.episode.end = date(2014, 1, 15)
         self.episode.active = True
         self.episode.save()
         self.user = User.objects.create(username='testuser')
@@ -621,10 +622,10 @@ class EpisodeTestCase(OpalTestCase):
         self.mock_request.user = self.user
         self.mock_request.query_params = {}
         self.expected = self.episode.to_dict(self.user)
-        self.expected["date_of_admission"] = "14/01/2014"
         self.expected["start"] = "14/01/2014"
+        self.expected["end"] = "15/01/2014"
+        self.expected["episode_history"][0]["end"] = "15/01/2014"
         self.expected["episode_history"][0]["start"] = "14/01/2014"
-        self.expected["episode_history"][0]["date_of_admission"] = "14/01/2014"
 
     def test_retrieve_episode(self):
         response = json.loads(api.EpisodeViewSet().retrieve(self.mock_request, pk=self.episode.pk).content.decode('UTF-8'))
@@ -637,8 +638,8 @@ class EpisodeTestCase(OpalTestCase):
     def test_list(self):
         response = api.EpisodeViewSet().list(self.mock_request)
         self.assertEqual(200, response.status_code)
-        response_content = json.loads(response.content.decode('UTF-8'))
-        self.assertEqual([self.expected], response_content)
+        response_content = json.loads(response.content.decode('UTF-8'))[0]
+        self.assertEqual(self.expected, response_content)
 
     def test_list_unauthenticated(self):
         pass #TODO TEST THIS
@@ -649,7 +650,7 @@ class EpisodeTestCase(OpalTestCase):
         self.demographics.save()
         self.mock_request.data = {
             "tagging"          : { "micro":True },
-            "date_of_admission": "14/01/2015",
+            "start": "14/01/2015",
             "demographics"     : {
                 "hospital_number": self.demographics.hospital_number
             }
@@ -657,7 +658,7 @@ class EpisodeTestCase(OpalTestCase):
         response = api.EpisodeViewSet().create(self.mock_request)
         self.assertEqual(201, response.status_code)
         self.assertEqual(2, self.patient.episode_set.count())
-        self.assertEqual("14/01/2015", json.loads(response.content.decode('UTF-8'))['date_of_admission'])
+        self.assertEqual("14/01/2015", json.loads(response.content.decode('UTF-8'))['start'])
 
     def test_create_new_patient(self):
         pcount = models.Patient.objects.filter(
@@ -665,7 +666,7 @@ class EpisodeTestCase(OpalTestCase):
         self.assertEqual(0, pcount)
         self.mock_request.data = {
             "tagging"           : { "micro":True },
-            "date_of_admission" : "14/01/2015",
+            "start" : "14/01/2015",
             "demographics"      : {
                 "hospital_number": "999000999"
             }
@@ -702,7 +703,7 @@ class EpisodeTestCase(OpalTestCase):
     def test_create_without_hospital_number(self):
         self.mock_request.data = {
             "tagging"           : { "micro":True },
-            "date_of_admission" : "14/01/2015",
+            "start" : "14/01/2015",
             "demographics"      : {
                 "first_name": "James"
             }
@@ -716,7 +717,7 @@ class EpisodeTestCase(OpalTestCase):
         self.assertEqual(0, pcount)
         self.mock_request.data = {
             "tagging"                : { "micro":True },
-            "date_of_admission"      : "14/01/2015",
+            "start"      : "14/01/2015",
             "demographics" : {
                 "first_name": "Alain",
                 "surname": "Anderson",
@@ -739,7 +740,7 @@ class EpisodeTestCase(OpalTestCase):
         self.assertEqual(0, pcount)
         self.mock_request.data = {
             "tagging"                : { "micro":True },
-            "date_of_admission"      : "14/01/2015",
+            "start"      : "14/01/2015",
             "demographics" : {
                 "hospital_number": "9999000999",
             },
@@ -761,7 +762,7 @@ class EpisodeTestCase(OpalTestCase):
         self.assertEqual(0, pcount)
         self.mock_request.data = {
             "tagging"                : { "micro":True },
-            "date_of_admission"      : "14/01/2015",
+            "start"      : "14/01/2015",
             "demographics" : {
                 "hospital_number": "9999000999",
             },
@@ -780,13 +781,13 @@ class EpisodeTestCase(OpalTestCase):
 
     def test_update(self):
         patient, episode = self.new_patient_and_episode_please()
-        self.assertEqual(None, episode.date_of_admission)
-        self.mock_request.data = {"date_of_admission": "14/01/2015"}
+        self.assertEqual(None, episode.start)
+        self.mock_request.data = {"start": "14/01/2015"}
         response = api.EpisodeViewSet().update(self.mock_request, pk=episode.pk)
         e = models.Episode.objects.get(pk=episode.pk)
-        self.assertEqual(date(2015, 1, 14), e.date_of_admission)
+        self.assertEqual(date(2015, 1, 14), e.start)
         response_dict = json.loads(response.content.decode('UTF-8'))
-        self.assertEqual(response_dict["date_of_admission"], "14/01/2015")
+        self.assertEqual(response_dict["start"], "14/01/2015")
         self.assertEqual(
             len(response_dict["demographics"]),
             1
@@ -794,7 +795,7 @@ class EpisodeTestCase(OpalTestCase):
 
 
     def test_update_nonexistent(self):
-        self.mock_request.data = {"date_of_admission": "14/01/2015"}
+        self.mock_request.data = {"start": "14/01/2015"}
         response = api.EpisodeViewSet().update(self.mock_request, pk=8993939)
         self.assertEqual(404, response.status_code)
 
@@ -803,7 +804,7 @@ class EpisodeTestCase(OpalTestCase):
         episode.consistency_token = 'FFFF'
         episode.save()
         self.mock_request.data = {
-            "date_of_admission": "14/01/2015",
+            "start": "14/01/2015",
             "consistency_token": "EEEE"
         }
         response = api.EpisodeViewSet().update(self.mock_request, pk=episode.pk)

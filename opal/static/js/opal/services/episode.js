@@ -11,14 +11,33 @@ angular.module('opal.services')
         var DATE_FORMAT = 'DD/MM/YYYY';
         var Episode = function(resource) {
             this.initialise(resource);
+
         }
 
         // TODO - Pull these from the schema? Also cast them to moments
         // Note - these are date fields on the episode itself - which is not currently
         // serialised and sent with the schema !
-        var date_fields = ['date_of_admission', 'discharge_date', 'date_of_episode', 'start', 'end'];
+        var date_fields = ['start', 'end'];
 
         Episode.prototype = {
+            get discharge_date(){
+              throw "Discharge date is deprecated in opal 0.9.0, use end";
+            },
+            set discharge_date(x){
+              throw "Discharge date is deprecated in opal 0.9.0, use end";
+            },
+            get date_of_admission (){
+              throw "Date of admission is deprecated in opal 0.9.0, use start";
+            },
+            set date_of_admission (x){
+              throw "Date of admission is deprecated in opal 0.9.0, use start";
+            },
+            get date_of_episode (){
+              throw "Date of episode is deprecated in opal 0.9.0, use start";
+            },
+            set date_of_episode (x){
+              throw "Date of episode is deprecated in opal 0.9.0, use start";
+            },
 
             // Constructor to update from attrs and parse datish fields
             initialise: function(data){
@@ -50,6 +69,13 @@ angular.module('opal.services')
                     throw "Episode() initialization data must contain demographics with a patient id."
                 }
                 self.link = "/patient/" + self.demographics[0].patient_id + "/" + self.id;
+
+                if(data.discharge_date){
+                  debugger;
+                }
+
+
+
 
             },
 
@@ -141,10 +167,9 @@ angular.module('opal.services')
                 var copy = {
                     id               : this.id,
                     category_name    : this.category_name,
-                    date_of_admission: this.date_of_admission,
-                    date_of_episode  : this.date_of_episode,
-                    discharge_date   : this.discharge_date,
-                    consistency_token: this.consistency_token
+                    consistency_token: this.consistency_token,
+                    start: this.start,
+                    end: this.end
                 }
                 return copy
             },
@@ -234,9 +259,10 @@ recently changed it - refresh the page and try again');
             //
             isDischarged: function(){
                 return this.location[0].category == 'Discharged' ||
-                    (this.discharge_date && moment(this.discharge_date).isBefore(moment()));
+                    (this.end && moment(this.end).isBefore(moment()));
             }
         }; // Closes prototype
+
 
         //
         // takes two arguments, the hospital number and a hash of callbacks.
@@ -282,6 +308,8 @@ recently changed it - refresh the page and try again');
                 deferred.resolve(result);
             }
         }
+
+
         return Episode
 
     });

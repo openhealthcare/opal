@@ -30,11 +30,8 @@ describe('Episode', function() {
 
         it('should cast dates on the episode if appropriate', function(){
             var newEpisode = new Episode(episodeData);
-            expect(moment(newEpisode.date_of_admission).format('DD/MM/YYYY')).toEqual("19/11/2013");
             expect(moment(newEpisode.start).format('DD/MM/YYYY')).toEqual("19/11/2013");
             expect(moment(newEpisode.end).format('DD/MM/YYYY')).toEqual("25/05/2016");
-            expect(moment(newEpisode.date_of_episode).format('DD/MM/YYYY')).toEqual("20/11/2013");
-            expect(moment(newEpisode.discharge_date).format('DD/MM/YYYY')).toEqual("25/05/2016");
         });
     });
 
@@ -69,7 +66,49 @@ describe('Episode', function() {
     });
 
     it('Should convert date attributes to Date objects', function () {
-        expect(episode.date_of_admission).toEqual(new Date(2013, 10, 19));
+        expect(episode.start).toEqual(new Date(2013, 10, 19));
+    });
+
+    it('Should raise an error if they try to get discharge date', function(){
+        var shouldThrow = function(){episode.discharge_date; };
+        expect(shouldThrow).toThrow(
+          "Discharge date is deprecated in opal 0.9.0, use end"
+        );
+    });
+
+    it('Should raise an error if they try to set discharge date', function(){
+      var shouldThrow = function(){episode.discharge_date = "as";}
+      expect(shouldThrow).toThrow(
+        "Discharge date is deprecated in opal 0.9.0, use end"
+      );
+    });
+
+    it('Should raise an error if they try to set date of admission', function(){
+      var shouldThrow = function(){episode.date_of_admission = "as";}
+      expect(shouldThrow).toThrow(
+        "Date of admission is deprecated in opal 0.9.0, use end"
+      );
+    });
+
+    it('Should raise an error if they try to get date of admission', function(){
+      var shouldThrow = function(){episode.date_of_admission; };
+      expect(shouldThrow).toThrow(
+        "Date of admission is deprecated in opal 0.9.0, use end"
+      );
+    });
+
+    it('Should raise an error if they try to get date of episode', function(){
+      var shouldThrow = function(){episode.date_of_episode = "as";}
+      expect(shouldThrow).toThrow(
+        "Date of episode is deprecated in opal 0.9.0, use end"
+      );
+    });
+
+    it('Should raise an error if they try to set date of episode', function(){
+      var shouldThrow = function(){episode.date_of_episode; };
+      expect(shouldThrow).toThrow(
+        "Date of episode is deprecated in opal 0.9.0, use end"
+      );
     });
 
     it('should create Items', function() {
@@ -167,9 +206,8 @@ describe('Episode', function() {
     it('Should be able to produce a copy of attributes', function () {
         expect(episode.makeCopy()).toEqual({
             id: 123,
-            date_of_admission: new Date(2013, 10, 19),
-            date_of_episode: new Date(2013, 10, 20),
-            discharge_date: new Date(2016, 4, 25),
+            start: new Date(2013, 10, 19),
+            end: new Date(2016, 4, 25),
             category_name: 'Inpatient',
             consistency_token: undefined
         });
@@ -197,8 +235,8 @@ describe('Episode', function() {
                 attrsJsonDate = {
                     id               : 555,
                     active           : true,
-                    date_of_admission: '20/11/2013',
-                    discharge_date   : null,
+                    start: '20/11/2013',
+                    end: null,
                     demographics: [{
                         id: 101,
                         patient_id: 99,
@@ -226,12 +264,12 @@ describe('Episode', function() {
                 $httpBackend.expectPUT('/api/v0.1/episode/555/', attrsJsonDate);
                 episode.save(attrsJsonDate);
                 $httpBackend.flush();
-                expect(episode.date_of_admission).toEqual(new Date(2013, 10, 20))
+                expect(episode.start).toEqual(new Date(2013, 10, 20))
             });
 
             it('Should translate dates to strings', function () {
                 var toSave = angular.copy(attrsJsonDate);
-                toSave.date_of_admission = new Date(2013, 10, 20);
+                toSave.start = new Date(2013, 10, 20);
                 $httpBackend.expectPUT('/api/v0.1/episode/555/', attrsJsonDate);
                 episode.save(toSave);
                 $httpBackend.flush();
@@ -258,11 +296,9 @@ describe('Episode', function() {
         });
 
         describe('isDischarged()', function() {
-
             it('should return true', function() {
                 expect(episode.isDischarged()).toEqual(true);
             });
-
         });
 
         describe('findByHospitalNumber()', function (){
