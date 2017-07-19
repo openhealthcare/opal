@@ -849,8 +849,6 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
             'id'               : self.id,
             'category_name'    : self.category_name,
             'active'           : self.active,
-            'start'            : self.start,
-            'end'              : self.end,
             'consistency_token': self.consistency_token,
             'start'            : self.start,
             'end'              : self.end,
