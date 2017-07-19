@@ -1,5 +1,16 @@
 ### 0.9.0 (Major Release)
 
+#### Good bye date_of_episode, discharge_date, date_of_admission
+and hello `start` and `end`. There is a migration that sets
+`start` to date_of_episode if it exists, otherwise it uses date of admission. `end` will be date_of_episode if it exists, otherwise
+it will use discharge_date.
+
+Episode category will no longer be used, so if you define `start` and
+`end` in your episode category. This logic should be moved into
+your flows and you'll need to put in a migration to populate existing
+episodes.
+
+
 #### Theming support
 
 Improvements and better documentation and guides for theming applications. Particularly

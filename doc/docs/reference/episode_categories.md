@@ -16,14 +16,6 @@ The category of any episode can be accessed as the `.category` property of any `
 This is the template used within the [Patient Detail View](../guides/patient_detail_views.md) to display
 information about episodes of this category.
 
-#### EpisodeCategory.start
-
-Returns the Start date of this episode type.
-
-#### EpisodeCategory.stop
-
-Returns the Stop date of this episode type
-
 ## InpatientEpisode
 
 This is the default EpisodeCategory imlpementation - applications started with Opal's scaffolding

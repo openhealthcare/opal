@@ -20,18 +20,13 @@ A foreign key relationship to the patient for whom this episode concerns.
 
 A boolean to provide a quick lookup for whether this is an active or closed episode.
 
-#### Episode.date_of_admission
+#### Episode.start
 
-If this is an inpatient episode, the date of admission.
+This should be the start of the episode. If this is an inpatient episode, the date of admission.
 
-#### Episode.discharge_date
+#### Episode.end
 
-If this is an inpatient episode, the date of discharge.
-
-#### Episode.date_of_episode
-
-If this is an episode that occurs on one date (like a clinic visit or telephone liaison), the
-date of that event.
+This should be the end of the episode. If this is an inpatient episode, the date of discharge.
 
 #### Episode.consistency_token
 

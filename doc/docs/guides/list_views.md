@@ -85,7 +85,7 @@ list. On occasion we require a more dynamic queryset, in which case we can overr
     class MyWeeklyList(patient_lists.PatientList):
         def get_queryset(self):
             one_week_ago = datetime.date.today() - datetime.timedelta(days=1)
-            return Episode.objects.filter(date_of_admission__gte=one_week_ago)
+            return Episode.objects.filter(start__gte=one_week_ago)
 
 ### Ordering Lists
 
