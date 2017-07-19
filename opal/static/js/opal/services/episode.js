@@ -69,14 +69,6 @@ angular.module('opal.services')
                     throw "Episode() initialization data must contain demographics with a patient id."
                 }
                 self.link = "/patient/" + self.demographics[0].patient_id + "/" + self.id;
-
-                if(data.discharge_date){
-                  debugger;
-                }
-
-
-
-
             },
 
             // Sort a particular column according to schema params.

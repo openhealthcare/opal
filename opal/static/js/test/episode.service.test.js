@@ -86,28 +86,28 @@ describe('Episode', function() {
     it('Should raise an error if they try to set date of admission', function(){
       var shouldThrow = function(){episode.date_of_admission = "as";}
       expect(shouldThrow).toThrow(
-        "Date of admission is deprecated in opal 0.9.0, use end"
+        "Date of admission is deprecated in opal 0.9.0, use start"
       );
     });
 
     it('Should raise an error if they try to get date of admission', function(){
       var shouldThrow = function(){episode.date_of_admission; };
       expect(shouldThrow).toThrow(
-        "Date of admission is deprecated in opal 0.9.0, use end"
+        "Date of admission is deprecated in opal 0.9.0, use start"
       );
     });
 
     it('Should raise an error if they try to get date of episode', function(){
       var shouldThrow = function(){episode.date_of_episode = "as";}
       expect(shouldThrow).toThrow(
-        "Date of episode is deprecated in opal 0.9.0, use end"
+        "Date of episode is deprecated in opal 0.9.0, use start"
       );
     });
 
     it('Should raise an error if they try to set date of episode', function(){
       var shouldThrow = function(){episode.date_of_episode; };
       expect(shouldThrow).toThrow(
-        "Date of episode is deprecated in opal 0.9.0, use end"
+        "Date of episode is deprecated in opal 0.9.0, use start"
       );
     });
 
