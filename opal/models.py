@@ -20,7 +20,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.urlresolvers import reverse
 from django.core.exceptions import FieldDoesNotExist
-from django.utils.functional import cached_property
 from django.utils.encoding import force_str
 from six import b
 
