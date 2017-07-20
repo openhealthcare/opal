@@ -13,7 +13,7 @@ It contains a core [data model](datamodel.md) for persisting clinical informatio
 as well core clinical archetypes out of the box that build on many
 years of collaboratively modelling clinical concepts by medical domain experts.
 
-Opal also makes it easy to integrate standard clinical [reference data](lookup_lists.md)
+Opal also makes it easy to integrate standard clinical [reference data](referencedata.md)
 into your application - things like medical diagnoses, tests, drugs et cetera.
 
 Some common functional components end up in to most clinical applications, and many

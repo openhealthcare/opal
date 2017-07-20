@@ -17,6 +17,13 @@ def is_numeric(field):
     return field.__class__ in numeric_fields
 
 
+def enum(*args):
+    """
+    Given ARGS, return a Django style choices tuple-of-tuples
+    """
+    return tuple((i, i) for i in args)
+
+
 class ForeignKeyOrFreeText(property):
     """Field-like object that stores either foreign key or free text.
 
