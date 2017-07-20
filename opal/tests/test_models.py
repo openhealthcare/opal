@@ -3,6 +3,7 @@ Unittests for opal.models
 """
 import os
 import datetime
+from collections import namedtuple
 from mock import patch, MagicMock
 
 from django.conf import settings
@@ -368,6 +369,15 @@ class SubrecordTestCase(OpalTestCase):
     def test_enum(self):
         enum = FavouriteColour.get_field_enum('name')
         self.assertEqual(enum, ["purple", "yellow", "blue"])
+
+    def test_enum_force_text(self):
+        with patch.object(FavouriteColour, "_get_field") as get_field:
+            FakeField = namedtuple('FakeField', 'choices')
+            get_field.return_value = FakeField(choices=[
+                (0, b'\xc3\xb6\xc3\xa4\xc3\xbc')
+            ])
+            enum = FavouriteColour.get_field_enum('name')
+            self.assertEqual(enum, ["öäü"])
 
     def test_description(self):
         description = FavouriteColour.get_field_description('name')
