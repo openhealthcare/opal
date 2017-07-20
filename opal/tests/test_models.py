@@ -377,7 +377,7 @@ class SubrecordTestCase(OpalTestCase):
                 (0, b'\xc3\xb6\xc3\xa4\xc3\xbc')
             ])
             enum = FavouriteColour.get_field_enum('name')
-            self.assertEqual(enum, ["öäü"])
+            self.assertEqual(enum, [u'\xf6\xe4\xfc'])
 
     def test_description(self):
         description = FavouriteColour.get_field_description('name')
