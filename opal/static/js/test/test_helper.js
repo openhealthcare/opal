@@ -99,6 +99,7 @@
         single: false,
         fields: [
             {name: 'result', type: 'string'},
+            {name: 'date_ordered', type: 'date'},
         ]
       },
       microbiology_test: {
