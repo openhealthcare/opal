@@ -13,6 +13,7 @@ import os
 
 from django.conf import settings
 from django.utils import timezone
+from django.utils.encoding import force_text
 from django.db import models, transaction
 from django.db.models import Q
 from django.contrib.auth.models import User
@@ -225,7 +226,7 @@ class SerialisableFields(object):
         choices = getattr(field, "choices", [])
 
         if choices:
-            return [i[1] for i in choices]
+            return [force_text(i[1]) for i in choices]
 
     @classmethod
     def get_lookup_list_api_name(cls, field_name):
