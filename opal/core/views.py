@@ -10,9 +10,9 @@ from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.core.serializers.json import DjangoJSONEncoder
-from rest_framework import mixins, viewsets
 from django.conf import settings
-
+from rest_framework import mixins, viewsets
+import six
 
 class LoginRequiredMixin(object):
     @method_decorator(login_required)
@@ -22,6 +22,8 @@ class LoginRequiredMixin(object):
 
 class OpalSerializer(DjangoJSONEncoder):
     def default(self, o):
+        if isinstance(o, six.binary_type):
+            return o.decode('utf-8')
         if isinstance(o, datetime.datetime):
             return format(o, settings.DATETIME_FORMAT)
         elif isinstance(o, datetime.date):
