@@ -14,6 +14,7 @@ from django.conf import settings
 from rest_framework import mixins, viewsets
 import six
 
+
 class LoginRequiredMixin(object):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
