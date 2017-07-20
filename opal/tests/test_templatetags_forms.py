@@ -2,6 +2,7 @@
 Tests for our modal/form helpers
 """
 import json
+from mock import patch
 
 from django.template import Template, Context
 from django.test import TestCase
@@ -10,6 +11,7 @@ from opal.templatetags.forms import (
     process_steps, infer_from_subrecord_field_path, date_of_birth_field,
     extract_common_args
 )
+from opal.core.views import OpalSerializer
 
 
 class TestInferFromSubrecordPath(TestCase):
@@ -50,6 +52,17 @@ class TestInferFromSubrecordPath(TestCase):
         ctx = infer_from_subrecord_field_path("FavouriteColour.name")
         choices = json.loads(ctx["lookuplist"])
         self.assertEqual(choices, ["purple", "yellow", "blue"])
+
+    @patch("opal.templatetags.forms.json")
+    def test_infer_choice_fields_from_charfield_with_serialiser(self, js):
+        js.dumps.return_value = '["purple", "yellow", "blue"]'
+        ctx = infer_from_subrecord_field_path("FavouriteColour.name")
+        choices = json.loads(ctx["lookuplist"])
+        self.assertEqual(choices, ["purple", "yellow", "blue"])
+        js.dumps.assert_called_once_with(
+            ["purple", "yellow", "blue"],
+            cls=OpalSerializer
+        )
 
     def test_infer_element_name(self):
         ctx = infer_from_subrecord_field_path("Birthday.birth_date")
