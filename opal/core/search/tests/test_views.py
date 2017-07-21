@@ -7,9 +7,10 @@ from datetime import date
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
-from mock import patch, MagicMock, mock_open
+from mock import patch, mock_open
 
 from opal import models
+from opal.tests import models as tmodels
 from opal.core.test import OpalTestCase
 from opal.core.search import views
 
@@ -195,6 +196,29 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]["first_name"], "James")
         self.assertEqual(data[0]["surname"], "Bond")
+
+    def test_number_of_queries(self):
+        """ Pagination should make sure we
+            do the same number of queries
+            despite the number of results.
+        """
+        # we need to make sure we're all logged in before we start
+        self.assertIsNotNone(self.user)
+        for i in range(100):
+            self.create_patient(
+                "James", "Bond", str(i)
+            )
+
+        with self.assertNumQueries(35):
+            self.get_response('{}/?query=Bond'.format(self.url))
+
+        for i in range(20):
+            self.create_patient(
+                "James", "Blofelt", str(i)
+            )
+
+        with self.assertNumQueries(35):
+            self.get_response('{}/?query=Blofelt'.format(self.url))
 
 
 class SearchTemplateTestCase(OpalTestCase):
