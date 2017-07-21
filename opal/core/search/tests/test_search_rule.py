@@ -90,3 +90,115 @@ class SearchRuleTestCase(OpalTestCase):
             result = search_rule.SearchRule().query(query)
             self.assertEqual(result, "some_result")
             some_mock_query().query.assert_called_once_with(query)
+
+
+class EpisodeQueryTestCase(OpalTestCase):
+    def setUp(self, *args, **kwargs):
+        super(EpisodeQueryTestCase, self).setUp(*args, **kwargs)
+        _, self.episode = self.new_patient_and_episode_please()
+        self.episode.start = datetime.date(2017, 1, 1)
+        self.episode.end = datetime.date(2017, 1, 5)
+        self.episode.save()
+        self.episode_query = search_rule.EpisodeQuery()
+
+    def test_episode_end_start(self):
+        query_end = dict(
+            queryType="Before",
+            query="1/8/2017",
+            field="end"
+        )
+        self.assertEqual(
+            list(self.episode_query.query(query_end))[0], self.episode
+        )
+
+    def test_episode_end_when_none(self):
+        self.episode.discharge_date = None
+        self.episode.save()
+        query_end = dict(
+            queryType="Before",
+            query="1/8/2017",
+            field="end"
+        )
+        self.assertEqual(
+            list(self.episode_query.query(query_end)), []
+        )
+
+    def test_episode_end_after(self):
+        query_end = dict(
+            queryType="After",
+            query="1/8/2015",
+            field="end"
+        )
+        self.assertEqual(
+            list(self.episode_query.query(query_end))[0], self.episode
+        )
+
+    def test_episode_end_not_found(self):
+        query_end = dict(
+            queryType="Before",
+            query="1/8/2010",
+            field="end"
+        )
+        self.assertEqual(
+            list(self.episode_query.query(query_end)), []
+        )
+
+    def test_episode_end_wrong_query_param(self):
+        query_end = dict(
+            queryType="asdfsadf",
+            query="1/8/2010",
+            field="end"
+        )
+        with self.assertRaises(search_rule.SearchException):
+            self.episode_query.query(query_end)
+
+    def test_episode_start_before(self):
+        query_end = dict(
+            queryType="Before",
+            query="1/8/2017",
+            field="start"
+        )
+        self.assertEqual(
+            list(self.episode_query.query(query_end))[0], self.episode
+        )
+
+    def test_episode_start_after(self):
+        query_end = dict(
+            queryType="After",
+            query="1/8/2015",
+            field="start"
+        )
+        self.assertEqual(
+            list(self.episode_query.query(query_end))[0], self.episode
+        )
+
+    def test_episode_start_when_none(self):
+        self.episode.date_of_admission = None
+        self.episode.save()
+        query_end = dict(
+            queryType="Before",
+            query="1/8/2017",
+            field="start"
+        )
+        self.assertEqual(
+            list(self.episode_query.query(query_end)), []
+        )
+
+    def test_episode_start_not_found(self):
+        query_end = dict(
+            queryType="Before",
+            query="1/8/2011",
+            field="start"
+        )
+        self.assertEqual(
+            list(self.episode_query.query(query_end)), []
+        )
+
+    def test_episode_start_wrong_query_param(self):
+        query_end = dict(
+            queryType="asdfsadf",
+            query="1/8/2010",
+            field="start"
+        )
+        with self.assertRaises(search_rule.SearchException):
+            self.episode_query.query(query_end)
