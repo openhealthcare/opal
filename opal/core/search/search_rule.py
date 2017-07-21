@@ -1,7 +1,6 @@
 from opal.core.discoverable import DiscoverableFeature
 from opal.core.exceptions import Error
 from opal.utils import camelcase_to_underscore
-from opal.models import Episode, deserialize_date
 
 
 class SearchException(Error):
