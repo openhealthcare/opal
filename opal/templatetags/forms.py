@@ -6,6 +6,7 @@ from django import template
 from django.db import models
 from opal.core.subrecords import get_subrecord_from_model_name
 from opal.core import fields
+from opal.core.views import OpalSerializer
 
 register = template.Library()
 
@@ -77,7 +78,7 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
     enum = model.get_field_enum(field_name)
 
     if enum:
-        ctx["lookuplist"] = json.dumps(enum)
+        ctx["lookuplist"] = json.dumps(enum, cls=OpalSerializer)
     else:
         lookuplist_api_name = model.get_lookup_list_api_name(field_name)
         if lookuplist_api_name:

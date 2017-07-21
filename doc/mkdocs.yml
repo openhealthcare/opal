@@ -65,6 +65,8 @@ pages:
       - OpalPlugin: reference/plugin.md
       - Core.Views: reference/core_views.md
       - Menus: reference/core_menus.md
+      - Log: reference/loggers.md
+      - Fields: reference/core_fields.md
 
       # Angular Services
       - reference/javascript/patient_service.md

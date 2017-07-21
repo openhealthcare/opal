@@ -7,7 +7,7 @@
 {% else %}
 <div ng-repeat="parent in [episode]">
 {% endif %}
-  <div {% if only_display_if_exists %}ng-show="parent.{{ name }}.length && parent.{{ name }}[0].consistency_token"{% endif %} class="panel panel-default">
+  <div {% if only_display_if_exists %}ng-show="parent.{{ name }}.length && parent.{{ name }}[0].consistency_token"{% endif %} class="panel panel-default record-panel">
     <div class="panel-heading">
       <h3>
         <i class="{{ icon }}"></i> {{ title }}

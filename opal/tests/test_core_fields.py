@@ -4,10 +4,12 @@ Unittests for the opal.core.fields module
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
-from opal.core.fields import ForeignKeyOrFreeText, is_numeric
 from opal.core.test import OpalTestCase
 from opal.tests import models as test_models
 from opal.models import Synonym
+
+from opal.core import fields
+from opal.core.fields import ForeignKeyOrFreeText, is_numeric
 
 
 class TestIsNumeric(OpalTestCase):
@@ -25,6 +27,15 @@ class TestIsNumeric(OpalTestCase):
     def test_is_numeric_false(self):
         self.assertFalse(is_numeric(models.CharField))
 
+
+class TestEnum(OpalTestCase):
+    def test_enum(self):
+        choices = (
+            ('one', 'one'),
+            ('2', '2'),
+            ('III', 'III')
+        )
+        self.assertEqual(choices, fields.enum('one', '2', 'III'))
 
 class TestForeignKeyOrFreeText(OpalTestCase):
 
