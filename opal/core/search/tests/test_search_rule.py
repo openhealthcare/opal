@@ -112,7 +112,7 @@ class EpisodeQueryTestCase(OpalTestCase):
         )
 
     def test_episode_end_when_none(self):
-        self.episode.discharge_date = None
+        self.episode.end = None
         self.episode.save()
         query_end = dict(
             queryType="Before",
@@ -173,7 +173,7 @@ class EpisodeQueryTestCase(OpalTestCase):
         )
 
     def test_episode_start_when_none(self):
-        self.episode.date_of_admission = None
+        self.episode.start = None
         self.episode.save()
         query_end = dict(
             queryType="Before",
