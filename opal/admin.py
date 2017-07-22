@@ -51,6 +51,7 @@ class EpisodeAdmin(reversion.VersionAdmin):
     list_display = [
         'patient',
         'active',
+        'start',
         'end',
         'episode_detail_link'
     ]
