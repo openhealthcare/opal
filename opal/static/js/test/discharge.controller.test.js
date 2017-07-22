@@ -140,6 +140,31 @@ describe('DischargeEpisodeCtrl', function(){
             $httpBackend.verifyNoOutstandingExpectation();
         });
 
+        it('should nuke the current end tag if there is one', function() {
+            var tags = {tag:'inpatients', subtag: 'icu'};
+            var alteredEpisodeData = angular.copy(episodeData);
+            alteredEpisodeData.tagging[0].inpatients = true;
+            alteredEpisodeData.tagging[0].icu = true;
+
+            mkcontroller(tags, new Episode(alteredEpisodeData))
+                expectedTagging
+            var expectedTagging = {
+                id: 123,
+                icu: false,
+                tropical: true,
+                mine: true
+            };
+
+            $httpBackend.expectPUT('/api/v0.1/tagging/123/', expectedTagging).respond({});
+            $httpBackend.expectPOST('/api/v0.1/location/').respond({});
+            $httpBackend.expectPUT('/api/v0.1/episode/123/').respond(episodeData);
+            $scope.discharge();
+            $httpBackend.flush();
+            $httpBackend.verifyNoOutstandingRequest();
+            $httpBackend.verifyNoOutstandingExpectation();
+
+        });
+
     });
 
     describe('cancel()', function(){
