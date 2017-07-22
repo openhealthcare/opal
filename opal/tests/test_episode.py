@@ -2,13 +2,13 @@
 Unittests for opal.models.Episode
 """
 import datetime
-from mock import patch
+from mock import patch, MagicMock
 
 from django.contrib.auth.models import User
 
 from opal.core.episodes import InpatientEpisode
 from opal.core.test import OpalTestCase
-from opal.models import Patient, Episode, Tagging
+from opal.models import Patient, Episode, Tagging, UserProfile
 
 from opal.tests import test_patient_lists # ensure the lists are loaded
 from opal.tests.models import (
@@ -74,8 +74,8 @@ class EpisodeTest(OpalTestCase):
     def test_to_dict_fields(self):
         as_dict = self.episode.to_dict(self.user)
         expected = [
-            'id', 'category_name', 'active', 'date_of_admission', 'discharge_date',
-            'consistency_token', 'date_of_episode', 'start', 'end', 'stage'
+            'id', 'category_name', 'active',
+            'consistency_token', 'start', 'end', 'stage'
         ]
         for field in expected:
             self.assertIn(field, as_dict)
@@ -99,42 +99,42 @@ class EpisodeTest(OpalTestCase):
 
 
     def test_to_dict_with_multiple_episodes(self):
-        self.episode.date_of_admission = datetime.date(2015, 7, 25)
+        self.episode.start = datetime.date(2015, 7, 25)
         self.episode.save()
         prev = self.patient.create_episode()
-        prev.date_of_admission = datetime.date(2012, 7, 25)
-        prev.discharge_date = datetime.date(2012, 8, 12)
+        prev.start = datetime.date(2012, 7, 25)
+        prev.end = datetime.date(2012, 8, 12)
         prev.active=False
         prev.save()
 
         serialised = self.episode.to_dict(self.user)
         self.assertEqual(2, len(serialised['episode_history']))
         self.assertEqual(datetime.date(2012, 7, 25),
-                         serialised['episode_history'][0]['date_of_admission'])
+                         serialised['episode_history'][0]['start'])
 
     def test_to_dict_episode_ordering(self):
         patient = Patient.objects.create()
         prev = patient.create_episode()
-        prev.date_of_admission = datetime.date(2012, 7, 25)
-        prev.discharge_date = datetime.date(2012, 8, 12)
+        prev.start = datetime.date(2012, 7, 25)
+        prev.end = datetime.date(2012, 8, 12)
         prev.active = False
         prev.save()
 
         previouser = patient.create_episode()
-        previouser.date_of_admission = datetime.date(2011, 7, 25)
+        previouser.start = datetime.date(2011, 7, 25)
         previouser.active = False
         previouser.save()
 
         episode = patient.create_episode()
-        episode.date_of_admission = datetime.date(2014, 6, 23)
+        episode.start = datetime.date(2014, 6, 23)
         episode.save()
 
         serialised = episode.to_dict(self.user)
         self.assertEqual(3, len(serialised['episode_history']))
         self.assertEqual(datetime.date(2011, 7, 25),
-                         serialised['episode_history'][0]['date_of_admission'])
+                         serialised['episode_history'][0]['start'])
         self.assertEqual(datetime.date(2012, 7, 25),
-                         serialised['episode_history'][1]['date_of_admission'])
+                         serialised['episode_history'][1]['start'])
 
     def test_to_dict_episode_history_includes_no_dates(self):
         prev = self.patient.create_episode()
@@ -159,24 +159,16 @@ class EpisodeCategoryTestCase(OpalTestCase):
         self.today = datetime.date.today()
         self.yesterday = self.today - datetime.timedelta(1)
 
-    def test_start_date_of_episode(self):
-        self.episode.date_of_episode = self.today
-        self.episode.date_of_admission = self.yesterday
-        self.episode.save()
-        self.assertEqual(self.episode.start, self.today)
+    def test_episode_visible_false(self):
+        user = User.objects.create()
+        UserProfile.objects.create(user=user, restricted_only=True)
+        self.assertFalse(
+            self.episode.category.episode_visible_to(self.episode, user)
+        )
 
-    def test_start_date_of_admission(self):
-        self.episode.date_of_admission = self.yesterday
-        self.episode.save()
-        self.assertEqual(self.episode.start, self.yesterday)
-
-    def test_start_date_of_episode(self):
-        self.episode.date_of_episode = self.today
-        self.episode.discharge_date = self.yesterday
-        self.episode.save()
-        self.assertEqual(self.episode.end, self.today)
-
-    def test_start_date_of_admission(self):
-        self.episode.discharge_date = self.yesterday
-        self.episode.save()
-        self.assertEqual(self.episode.end, self.yesterday)
+    def test_episode_visible_true(self):
+        user = User.objects.create()
+        UserProfile.objects.create(user=user, restricted_only=False)
+        self.assertTrue(
+            self.episode.category.episode_visible_to(self.episode, user)
+        )

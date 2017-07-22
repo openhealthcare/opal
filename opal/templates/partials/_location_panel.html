@@ -15,28 +15,20 @@
                   [[ episode.category_name ]]
                 </div>
               </div>
-              <div class="row" ng-show="episode.date_of_admission">
+              <div class="row" ng-show="episode.start">
                 <div class="col-md-4">
                   <b>Admitted</b>
                 </div>
                 <div class="col-md-8">
-                  [[ episode.date_of_admission | shortDate ]]
+                  [[ episode.start | shortDate ]]
                 </div>
               </div>
-              <div class="row" ng-show="episode.discharge_date">
+              <div class="row" ng-show="episode.end">
                 <div class="col-md-4">
                   <b>Discharged</b>
                 </div>
                 <div class="col-md-8">
-                  [[ episode.discharge_date | shortDate ]]
-                </div>
-              </div>
-              <div class="row" ng-show="episode.date_of_episode">
-                <div class="col-md-4">
-                  <b>Date</b>
-                </div>
-                <div class="col-md-8">
-                  [[ episode.date_of_episode | shortDate ]]
+                  [[ episode.end | shortDate ]]
                 </div>
               </div>
               <div class="row">

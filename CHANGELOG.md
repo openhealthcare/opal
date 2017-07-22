@@ -1,5 +1,22 @@
 ### 0.9.0 (Major Release)
 
+#### Good bye date_of_episode, discharge_date, date_of_admission
+
+And hello `episode.start` and `episode.end`. These fields on the `Episode` model
+replace the multiple ways of recording Episode duration in Opal.
+
+There is a migration that sets `start` to date_of_episode if it  exists, otherwise 
+it uses date of admission. 
+
+`end` will be date_of_episode if it exists, otherwise it will use discharge_date.
+
+Note that this means we no longer refer to start and end properties on the 
+Episode category. If you override `start` and `end` in a custom episode category
+you should update to use the Episode model fields. This logic should be moved into
+your flows and you'll need to put in a migration to populate existing
+episodes.
+
+
 #### Theming support
 
 Improvements and better documentation and guides for theming applications. Particularly

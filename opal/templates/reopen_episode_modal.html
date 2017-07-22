@@ -13,8 +13,8 @@
 		      <span ng-show="episode.location[0].hospital">[[ episode.location[0].hospital ]]</span>
 		      <span ng-show="episode.date_of_admission">[[ episode.date_of_admission | shortDate ]]</span>
 		      -
-		      <span ng-show="episode.discharge_date">[[ episode.discharge_date | shortDate ]]</span>
-              <span ng-hide="episode.discharge_date">UNKNOWN</span>
+		      <span ng-show="episode.end">[[ episode.end | shortDate ]]</span>
+              <span ng-hide="episode.end">UNKNOWN</span>
 	        </label>
 	        <label class="radio">
 		      <input type="radio" ng-model="model.episodeId" value="None">

@@ -153,7 +153,7 @@ class EpisodeCopyToCategoryView(LoginRequiredMixin, View):
         old = models.Episode.objects.get(pk=pk)
         new = models.Episode(patient=old.patient,
                              category_name=category,
-                             date_of_admission=old.date_of_admission)
+                             start=old.start)
         new.save()
 
         for sub in episode_subrecords():
