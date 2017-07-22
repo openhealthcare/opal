@@ -25,7 +25,7 @@ Defaults to `True`.
 
 #### PatientList.allow_edit_teams
 
-Whether we should allow the user to edit teams. 
+Whether we should allow the user to edit teams.
 
 Defaults to `True`
 

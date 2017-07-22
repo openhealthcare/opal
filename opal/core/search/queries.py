@@ -7,7 +7,7 @@ from functools import reduce
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import models as djangomodels
-from django.db.models import Q
+from django.db.models import Q, Max
 from django.conf import settings
 
 from opal import models
@@ -122,20 +122,15 @@ class DatabaseQuery(QueryBackend):
         so if you put in Anna Lisa, even though this is a first name split
         becasuse Anna and Lisa will both be found, this will rank higher
         than an Anna or a Lisa, although both of those will also be found
+
+        it returns a list of patients ordered by their most recent episode id
         """
         some_query = self.query
         patients = models.Patient.objects.search(some_query)
-        episodes = models.Episode.objects.filter(
-            patient__id__in=patients.values_list("id", flat=True)
+        patients = patients.annotate(
+            max_episode_id=Max('episode__id')
         )
-        patient_summaries = self._get_aggregate_patients_from_episodes(
-            episodes
-        )
-        return sorted(
-            patient_summaries,
-            key=lambda x: x["count"],
-            reverse=True
-        )
+        return patients.order_by("-max_episode_id")
 
     def _episodes_for_filter_kwargs(self, filter_kwargs, model):
         """
@@ -397,7 +392,7 @@ class DatabaseQuery(QueryBackend):
                     eps += list(p.episode_set.all())
         return eps
 
-    def _get_aggregate_patients_from_episodes(self, episodes):
+    def get_aggregate_patients_from_episodes(self, episodes):
         # at the moment we use start/end only
         patient_summaries = {}
 
@@ -463,7 +458,7 @@ class DatabaseQuery(QueryBackend):
             patient__episode__in=episode_ids
         )
         filtered_eps = episodes_for_user(all_eps, self.user)
-        return self._get_aggregate_patients_from_episodes(filtered_eps)
+        return self.get_aggregate_patients_from_episodes(filtered_eps)
 
     def get_patients(self):
         patients = set(e.patient for e in self.get_episodes())
