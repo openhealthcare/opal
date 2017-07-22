@@ -700,9 +700,9 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     )
     patient           = models.ForeignKey(Patient)
     active            = models.BooleanField(default=False)
+    start             = models.DateField(null=True, blank=True)
+    end               = models.DateField(blank=True, null=True)
     consistency_token = models.CharField(max_length=8)
-    start = models.DateField(null=True, blank=True)
-    end = models.DateField(blank=True, null=True)
 
     # stage is at what stage of an episode flow is the
     # patient at
