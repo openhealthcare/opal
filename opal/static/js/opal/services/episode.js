@@ -138,12 +138,7 @@ angular.module('opal.services')
                     function(p) { return p.location[0].hospital },
                     // TODO: remove this UCH specific code from Opal
                     function(p) {
-                        if (p.location[0].hospital == 'UCH' &&
-                            p.location[0].ward.match(/^T\d+/)) {
-                            return parseInt(p.location[0].ward.substring(1));
-                        } else {
-                            return p.location[0].ward
-                        }
+                        return p.location[0].ward
                     },
                     function(p) { return parseInt(p.location[0].bed) }
                 ];
