@@ -174,10 +174,7 @@ angular.module('opal.services')
                 var comparators = comparators || [
                     function(p) { return CATEGORIES.indexOf(p.location[0].category) },
                     function(p) { return p.location[0].hospital },
-                    // TODO: remove this UCH specific code from Opal
-                    function(p) {
-                        return p.location[0].ward
-                    },
+                    function(p) { return p.location[0].ward },
                     function(p) { return parseInt(p.location[0].bed) }
                 ];
 
