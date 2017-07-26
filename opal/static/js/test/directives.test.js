@@ -628,5 +628,22 @@ describe('OPAL Directives', function(){
         });
     });
 
+    describe('timeSet', function(){
+      var markup = ""
+      it("should add a new date to the scope if there isn't alread one", function(){
 
+      });
+
+      it("should use the existing date if there is one", function(){
+
+      });
+
+      it('should update the outside scope if the internal var is changed', function(){
+
+      });
+
+      it('should update the inside scope if the external var is changed', function(){
+
+      });
+    });
 });

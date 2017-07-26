@@ -476,3 +476,50 @@ directives.directive('avatarForUser', function(User){
         }
     }
 });
+
+directives.directive("timeSet", function ($parse) {
+  return {
+    restrict: 'A',
+    scope: true,
+    link: function (scope, element, attrs) {
+      "use strict";
+
+
+      var updateParent = true;
+      var updateChild = true;
+
+      var updateFromParent = function(){
+        updateChild = false;
+        var populated = $parse(attrs.timeSet)(scope);
+        if(!populated){
+          scope.internal = {time_field: new Date()};
+        }
+        else{
+          scope.internal = {
+            time_field: moment(populated, 'HH:mm:ss').toDate()
+          };
+        }
+        updateChild = true;
+      }
+
+      updateFromParent();
+
+      scope.$watch("internal.time_field", function(newVal, oldVal){
+        if(updateChild && newVal.getTime() !== oldVal.getTime()){
+          updateParent = false;
+          var populated = $parse(attrs.timeSet);
+          var asTimeStr = moment(scope.internal.time_field).format("HH:mm:ss");
+          populated.assign(scope, asTimeStr);
+          var change = $parse(attrs.timeSetChange)(scope);
+          updateParent = true;
+        }
+      });
+
+      scope.$watch(attrs.timeSet, function(){
+        if(updateParent){
+          updateFromParent();
+        }
+      });
+    }
+  }
+});

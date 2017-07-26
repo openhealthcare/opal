@@ -208,6 +208,12 @@ def datepicker(*args, **kwargs):
     return context
 
 
+@register.inclusion_tag('_helpers/timepicker.html')
+def timepicker(*args, **kwargs):
+    context = extract_common_args(kwargs)
+    return context
+
+
 @register.inclusion_tag('_helpers/radio.html')
 def radio(*args, **kwargs):
     ctx = extract_common_args(kwargs)

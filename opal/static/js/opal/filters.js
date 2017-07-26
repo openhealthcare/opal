@@ -95,6 +95,12 @@ filters.filter('shortDateTime', function(shortDateFilter, hhmmFilter){
 });
 
 
+filters.filter('shortTime', function(shortDateFilter, hhmmFilter){
+	return function(input){
+		return hhmmFilter(moment(input, 'HH:mm:ss'))
+	};
+});
+
 filters.filter('momentDateFormat', function(toMomentFilter){
 	return function(input, format){
 			if(!input){

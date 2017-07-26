@@ -244,6 +244,28 @@ class CheckboxTestCase(TestCase):
         self.assertIn('ng-change="doStuff"', rendered)
 
 
+class TimepickerTestCase(TestCase):
+    def test_visibility(self):
+        template = Template('{% load forms %}{% timepicker show="someVar" field="Dinner.time" %}')
+        rendered = template.render(Context({}))
+        self.assertIn('ng-show="someVar"', rendered)
+
+    def test_change(self):
+        template = Template('{% load forms %}{% timepicker change="someVar()" field="Dinner.time" %}')
+        rendered = template.render(Context({}))
+        self.assertIn('change="someVar()"', rendered)
+
+    def test_model(self):
+        template = Template('{% load forms %}{% timepicker model="trees" field="Dinner.time" %}')
+        rendered = template.render(Context({}))
+        self.assertIn('trees', rendered)
+
+    def test_label(self):
+        template = Template('{% load forms %}{% timepicker label="trees" field="Dinner.time" %}')
+        rendered = template.render(Context({}))
+        self.assertIn('trees', rendered)
+
+
 class DatepickerTestCase(TestCase):
 
     def test_datepicker(self):
