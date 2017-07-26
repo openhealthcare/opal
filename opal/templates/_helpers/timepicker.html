@@ -4,8 +4,7 @@
   <label class="control-label col-sm-3">{{ label }}</label>
   <div class="col-sm-8">
     <div {% if change %}time-set-change="{{ change }}" {% endif %}time-set="{{ model }}">
-      <uib-timepicker
-        ng-model="internal.time_field"></uib-timepicker>
-      </div>
+      <uib-timepicker ng-model="internal.time_field"></uib-timepicker>
+    </div>
   </div>
 </div>

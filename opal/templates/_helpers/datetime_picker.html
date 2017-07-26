@@ -1,14 +1,7 @@
 {% load forms %}
-{% datepicker label=date_label change=change model=model data=date_picker_args %}
-<div class="form-group"
+<span
      {% if visibility %} {{ visibility|safe }} {% endif %}
      >
-  <label class="control-label col-sm-3">{{ time_label }}</label>
-  <div class="col-sm-8">
-    <uib-timepicker
-      {% if change %}
-      ng-change="{{ change }}"
-      {% endif %}
-      ng-model="{{ model }}" ></uib-timepicker>
-  </div>
-</div>
+{% datepicker label=date_label change=change model=model data=date_picker_args %}
+{% timepicker label=time_label change=change model=model %}
+</span>
