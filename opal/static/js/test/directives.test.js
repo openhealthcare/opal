@@ -1,7 +1,7 @@
 describe('OPAL Directives', function(){
     "use strict";
 
-    var $templateCache, $timeout, $httpBackend, $rootScope;
+    var $templateCache, $timeout, $httpBackend, $rootScope, $compile;
     var element, scope, $exceptionHandler;
     var responseMarkUp = ' \
       <ui-select class="col-sm-8" multiple ng-model="value" on-remove="onRemove($item, $model)" on-select="onSelect($item, $model)" theme="bootstrap"> \
@@ -54,6 +54,7 @@ describe('OPAL Directives', function(){
             $templateCache    = $injector.get('$templateCache');
             $exceptionHandler = $injector.get('$exceptionHandler');
             $httpBackend      = $injector.get('$httpBackend');
+            $compile = $injector.get('$compile');
         });
 
         $templateCache.put('/templates/ng_templates/tag_select.html', responseMarkUp);
@@ -629,21 +630,54 @@ describe('OPAL Directives', function(){
     });
 
     describe('timeSet', function(){
-      var markup = ""
-      it("should add a new date to the scope if there isn't alread one", function(){
+      var markup = "<div time-set-change='someFun()' time-set='editing.subrecord.someField'><div>[[ internal.time_field ]]</div></div>";
 
+      it("should add a new date to the scope if there isn't alread one", function(){
+        var compiled = $compile(markup)(scope);
+        var innerScope = angular.element($(compiled).find("div")[0]).scope();
+        scope.$digest();
+        var now = new Date();
+        expect(_.isDate(innerScope.internal.time_field)).toBe(true);
+        expect(innerScope.internal.time_field.getHours()).toBe(now.getHours());
+        expect(innerScope.internal.time_field.getMinutes()).toBe(now.getMinutes());
       });
 
       it("should use the existing date if there is one", function(){
-
+        scope.editing = {
+          subrecord: {someField: "20:12:10"}
+        }
+        var compiled = $compile(markup)(scope);
+        var innerScope = angular.element($(compiled).find("div")[0]).scope();
+        scope.$digest();
+        expect(_.isDate(innerScope.internal.time_field)).toBe(true);
+        expect(innerScope.internal.time_field.getHours()).toBe(20);
+        expect(innerScope.internal.time_field.getMinutes()).toBe(12);
       });
 
       it('should update the outside scope if the internal var is changed', function(){
-
+        scope.editing = {
+          subrecord: {someField: "20:12:10"}
+        }
+        var compiled = $compile(markup)(scope);
+        var innerScope = angular.element($(compiled).find("div")[0]).scope();
+        scope.$digest();
+        innerScope.internal.time_field = new Date(2017, 12, 12, 10, 23)
+        scope.$digest();
+        expect(scope.editing.subrecord.someField).toBe("10:23:00");
       });
 
       it('should update the inside scope if the external var is changed', function(){
-
+        scope.editing = {
+          subrecord: {someField: "20:12:10"}
+        }
+        var compiled = $compile(markup)(scope);
+        var innerScope = angular.element($(compiled).find("div")[0]).scope();
+        scope.$digest();
+        scope.editing.subrecord.someField = "21:50:10"
+        scope.$digest();
+        expect(_.isDate(innerScope.internal.time_field)).toBe(true);
+        expect(innerScope.internal.time_field.getHours()).toBe(21);
+        expect(innerScope.internal.time_field.getMinutes()).toBe(50);
       });
     });
 });

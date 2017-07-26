@@ -6,6 +6,8 @@
     [[ item.{{ f['name'] }} | shortDate ]]
    {% elif f['type'] == 'date_time' %}
     [[ item.{{ f['name'] }} | shortDateTime ]]
+   {% elif f['type'] == 'time' %}
+    [[ item.{{ f['name'] }} | shortTime ]]
    {% else %}
     [[ item.{{ f['name'] }} ]]
    {% endif %}
