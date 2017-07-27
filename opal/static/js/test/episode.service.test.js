@@ -51,20 +51,20 @@ describe('Episode', function() {
         expect(first.compare(second)).toEqual(0);
       });
 
-      it('should compare on start negative', function(){
-        var first = new Episode(episodeData);
-        first.start = moment(new Date(2017, 11, 1));
-        var second = new Episode(episodeData);
-        second.start = moment(new Date(2017, 12, 1));
-        expect(first.compare(second)).toEqual(-1);
-      });
-
       it('should compare on start positive', function(){
         var first = new Episode(episodeData);
         first.start = moment(new Date(2017, 11, 1));
         var second = new Episode(episodeData);
-        second.start = moment(new Date(2017, 10, 1));
+        second.start = moment(new Date(2017, 12, 1));
         expect(first.compare(second)).toEqual(1);
+      });
+
+      it('should compare on start negative', function(){
+        var first = new Episode(episodeData);
+        first.start = moment(new Date(2017, 11, 1));
+        var second = new Episode(episodeData);
+        second.start = moment(new Date(2017, 10, 1));
+        expect(first.compare(second)).toEqual(-1);
       });
 
       it('should compare on first_name equal', function(){
@@ -120,8 +120,8 @@ describe('Episode', function() {
         expect(episode.active).toEqual(true);
     });
 
-    it('Should convert date attributes to Date objects', function () {
-        expect(episode.start).toEqual(new Date(2013, 10, 19));
+    it('Should convert date attributes to moment objects', function () {
+        expect(episode.start.toDate()).toEqual(new Date(2013, 10, 19));
     });
 
     it('Should raise an error if they try to get discharge date', function(){
@@ -259,13 +259,12 @@ describe('Episode', function() {
     });
 
     it('Should be able to produce a copy of attributes', function () {
-        expect(episode.makeCopy()).toEqual({
-            id: 123,
-            start: new Date(2013, 10, 19),
-            end: new Date(2016, 4, 25),
-            category_name: 'Inpatient',
-            consistency_token: undefined
-        });
+        var copy = episode.makeCopy();
+        expect(copy.id).toBe(123);
+        expect(copy.category_name).toBe('Inpatient');
+        expect(copy.consistency_token).toBe(undefined);
+        expect(copy.start.toDate()).toEqual(new Date(2013, 10, 19));
+        expect(copy.end.toDate()).toEqual(new Date(2016, 4, 25));
     });
 
     describe('communicating with server', function (){
@@ -319,7 +318,7 @@ describe('Episode', function() {
                 $httpBackend.expectPUT('/api/v0.1/episode/555/', attrsJsonDate);
                 episode.save(attrsJsonDate);
                 $httpBackend.flush();
-                expect(episode.start).toEqual(new Date(2013, 10, 20))
+                expect(episode.start.toDate()).toEqual(new Date(2013, 10, 20));
             });
 
             it('Should translate dates to strings', function () {

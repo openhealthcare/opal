@@ -62,12 +62,10 @@ angular.module('opal.services')
                     }else{ data[field.name] = []; }
                 });
                 angular.extend(self, data)
-                // Convert string-serialised dates into native JavaScriptz
                 _.each(date_fields, function(field){
-                    if(data[field]){
-                        var parsed = moment(data[field], DATE_FORMAT);
-                        self[field] = parsed.toDate();
-                    }
+                  if(data[field]){
+                    self[field] = moment(data[field], DATE_FORMAT);
+                  }
                 });
                 if(!self.demographics || self.demographics.length == 0 || !self.demographics[0].patient_id){
                     throw "Episode() initialization data must contain demographics with a patient id."
@@ -164,8 +162,8 @@ angular.module('opal.services')
                     id               : this.id,
                     category_name    : this.category_name,
                     consistency_token: this.consistency_token,
-                    start: this.start,
-                    end: this.end
+                    start: moment(this.start),
+                    end: moment(this.end)
                 }
                 return copy
             },
@@ -176,7 +174,12 @@ angular.module('opal.services')
                 // The default comparators we use for our Episode sorting in lists
                 //
                 var comparators = comparators || [
-                    function(p) { return p.start },
+                    function(p) {
+                      if(p.start){
+                        // we want to order by -start date
+                        return -p.start.toDate().getTime();
+                      }
+                    },
                     function(p) { return p.first_name },
                     function(p) { return p.surname }
                 ];
