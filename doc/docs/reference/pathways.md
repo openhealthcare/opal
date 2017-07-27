@@ -47,6 +47,42 @@ existing data for that patient/episode.
 
 ### Customising The Server-side Logic
 
+A Step tries to take as much info of the model, but you don't actually need a model.
+You just need a display name and a template.
+
+e.g.
+``` python
+Step(
+  template="pathway/steps/my_step.html"
+  display_name="MyDisplayOnlySTep"
+)
+```
+
+The above will render just fine.
+
+Alternatively, you can override any fields that it would usually take from the model.
+The below example, will override the template and not just use the Demographics form template..
+e.g.
+
+``` python
+Step(
+  template="pathway/steps/my_step.html"
+  model=Demographics
+)
+```
+
+The Step.base_template is what wraps every step. By default its a bootstrap panel, populated
+with the step display name and step icon and includes the step template inside.
+
+You can override this by overriding the base_template. e.g.
+
+``` python
+Step(
+  base_template="pathway/steps/addicted_to_base.html"
+  model=Demographics
+)
+```
+
 If you want to add any custom save logic for your step, you can put in a `pre_save` method. This is passed the full data dictionary that has been received from the client and the patient and episode that the pathways been saved for, if they exist (If you're saving a pathway for a new patient/episode, they won't have been created at this time).
 
 
@@ -55,12 +91,14 @@ If you want to add any custom save logic for your step, you can put in a `pre_sa
 If the model is not a singleton, by default it will be show in the form as
 a multiple section that allows the user to add one or more models.
 
+If you don't wish this to happen, pass `multiple=False` to the Step
+
 This displays a delete button for existing subrecords.
 
 By default, any subrecords that are deleted, or are not included in the data sent back
 to the server are deleted.
 
-If you don't wish this to happen, pass `delete_others=False` to the `MultiSaveStep`.
+If you don't wish this to happen, pass `delete_others=False` to the Step.
 
 ```python
 import pathway
@@ -70,7 +108,7 @@ class SimplePathway(pathway.Pathway):
     display_name = 'A simple pathway'
     slug         = 'simples'
     steps        = (
-        pathways.MultiSaveStep(model=models.Allergies, delete_others=True),
+        pathways.Step(model=models.Allergies, delete_others=True),
         models.Treatment,
         models.PastMedicalHistory
     )

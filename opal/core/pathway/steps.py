@@ -62,10 +62,25 @@ class Step(object):
         model_api_name (optional)
     """
     step_controller = "DefaultStep"
+    base_template = "pathway/steps/step_base_template.html"
+    multiple_template = "pathway/steps/multi_save.html"
 
-    def __init__(self, model=None, **kwargs):
+    def __init__(self, model=None, multiple=None, **kwargs):
         self.model = model
         self.other_args = kwargs
+        self.multiple = multiple
+
+        if self.multiple is None and self.model:
+            self.multiple = not self.model._is_singleton
+        elif self.multiple and not self.model:
+            raise exceptions.APIError(
+                "Mulitsave requires a model to be passed in"
+            )
+
+
+        # this is only used if its a multiple model step
+        # it decides whether we want to delete the ones that aren't return
+        self.delete_others = kwargs.pop("delete_others", True)
 
         if not self.model:
             if not getattr(self, "display_name", None):
@@ -85,7 +100,10 @@ class Step(object):
 
     @extract_pathway_field
     def get_template(self):
-        return self.model.get_form_template()
+        if self.multiple:
+            return self.multiple_template
+        else:
+            return self.model.get_form_template()
 
     @extract_pathway_field
     def get_display_name(self):
@@ -107,6 +125,9 @@ class Step(object):
     def get_step_controller(self):
         return self.other_args.get("step_controller", self.step_controller)
 
+    def get_base_template(self):
+        return self.other_args.get("base_template", self.base_template)
+
     @extract_pathway_field
     def get_model_api_name(self):
         if self.model:
@@ -127,24 +148,8 @@ class Step(object):
         return result
 
     def pre_save(self, data, user, patient=None, episode=None):
-        pass
-
-
-class MultiModelStep(Step):
-    template = "pathway/steps/multi_save.html"
-
-    def __init__(self, *args, **kwargs):
-        if "model" not in kwargs:
-            raise exceptions.APIError(
-                "Mulitsave requires a model to be passed in"
-            )
-        self.delete_others = kwargs.pop("delete_others", True)
-        super(MultiModelStep, self).__init__(*args, **kwargs)
-
-    def pre_save(self, data, user, patient=None, episode=None):
-        if self.delete_others:
+        if self.multiple and self.delete_others:
             delete_others(data, self.model, patient=patient, episode=episode)
-        super(MultiModelStep, self).pre_save(data, user, patient, episode)
 
 
 class FindPatientStep(Step):
@@ -152,3 +157,10 @@ class FindPatientStep(Step):
     step_controller = "FindPatientCtrl"
     display_name = "Find Patient"
     icon = "fa fa-user"
+
+
+class HelpTextStep(Step):
+    base_template = "pathway/steps/step_help_text_template.html"
+
+    def get_help_text(self):
+        return self.other_args.get("help_text", "").strip()

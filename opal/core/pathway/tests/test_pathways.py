@@ -2,6 +2,7 @@ import mock
 import json
 import datetime
 
+from opal.core.exceptions import InitializationError
 from django.utils import timezone
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
@@ -14,7 +15,7 @@ from opal.tests.models import (
 )
 from opal.core.pathway.tests.pathway_test.pathways import PagePathwayExample
 
-from opal.core.pathway.steps import Step, MultiModelStep, delete_others
+from opal.core.pathway.steps import Step, delete_others
 
 from opal.core.pathway import pathways, Pathway, WizardPathway
 
@@ -121,27 +122,27 @@ class DeleteOthersTestCase(OpalTestCase):
             )
 
 
-class MultiModelSaveTestCase(OpalTestCase):
+class MultipleTestCase(OpalTestCase):
     def setUp(self):
-        super(MultiModelSaveTestCase, self).setUp()
+        super(MultipleTestCase, self).setUp()
         self.patient, self.episode = self.new_patient_and_episode_please()
         self.existing_colour = Colour.objects.create(
             episode=self.episode, name="red"
         )
 
     def test_init_raises(self):
-        with self.assertRaises(exceptions.APIError):
-            MultiModelStep()
+        with self.assertRaises(InitializationError):
+            Step(save=True)
 
     def test_pre_save_no_delete(self):
-        multi_save = MultiModelStep(model=Colour, delete_others=False)
+        multi_save = Step(model=Colour, multiple=True, delete_others=False)
         multi_save.pre_save(
             {'colour': []}, Colour, patient=self.patient, episode=self.episode
         )
         self.assertEqual(Colour.objects.get().id, self.existing_colour.id)
 
     def test_pre_save_with_delete(self):
-        multi_save = MultiModelStep(model=Colour)
+        multi_save = Step(model=Colour, multiple=True)
         multi_save.pre_save(
             {'colour': []}, Colour, patient=self.patient, episode=self.episode
         )
