@@ -26,6 +26,9 @@ var CATEGORIES = [
 ];
 ```
 
+#### Order Order
+Episodes in the patient list are now ordered by start, first_name and surname
+
 
 #### Theming support
 

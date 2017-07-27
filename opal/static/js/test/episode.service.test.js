@@ -35,30 +35,85 @@ describe('Episode', function() {
         });
     });
 
-    it('should compare comparators that are different', function() {
-        var datacopy = angular.copy(episodeData);
-        datacopy.location[0].bed = '87';
-        var first       = new Episode(episodeData);
-        var second      = new Episode(datacopy);
-        expect(first.compare(second)).toEqual(-1);
-        expect(second.compare(first)).toEqual(1);
-    });
+    describe('compare', function(){
+      it('should allow custom comparators to be passed.', function() {
+          var comparators = [jasmine.createSpy().and.returnValue(-1000)];
+          var first       = new Episode(episodeData);
+          var second      = new Episode(episodeData);
+          expect(first.compare(second, comparators)).toEqual(0);
+          expect(comparators[0]).toHaveBeenCalledWith(first)
+          expect(comparators[0]).toHaveBeenCalledWith(second)
+      });
 
-    it('should be equal for non UCH hospitals', function() {
-        var datacopy = angular.copy(episodeData);
-        datacopy.location[0].hospital = 'RFH';
-        var first       = new Episode(datacopy);
-        var second      = new Episode(datacopy);
+      it('should compare on start equal', function(){
+        var first = new Episode(episodeData);
+        var second = new Episode(episodeData);
         expect(first.compare(second)).toEqual(0);
-    });
+      });
 
-    it('should allow custom comparators to be passed.', function() {
-        var comparators = [jasmine.createSpy().and.returnValue(-1000)];
-        var first       = new Episode(episodeData);
-        var second      = new Episode(episodeData);
-        expect(first.compare(second, comparators)).toEqual(0);
-        expect(comparators[0]).toHaveBeenCalledWith(first)
-        expect(comparators[0]).toHaveBeenCalledWith(second)
+      it('should compare on start negative', function(){
+        var first = new Episode(episodeData);
+        first.start = moment(new Date(2017, 11, 1));
+        var second = new Episode(episodeData);
+        second.start = moment(new Date(2017, 12, 1));
+        expect(first.compare(second)).toEqual(-1);
+      });
+
+      it('should compare on start positive', function(){
+        var first = new Episode(episodeData);
+        first.start = moment(new Date(2017, 11, 1));
+        var second = new Episode(episodeData);
+        second.start = moment(new Date(2017, 10, 1));
+        expect(first.compare(second)).toEqual(1);
+      });
+
+      it('should compare on first_name equal', function(){
+        var first = new Episode(episodeData);
+        first.first_name = "Jane"
+        var second = new Episode(episodeData);
+        second.first_name = "Jane"
+        expect(first.compare(second)).toEqual(0);
+      });
+
+      it('should compare on first_name negative', function(){
+        var first = new Episode(episodeData);
+        first.first_name = "Jane"
+        var second = new Episode(episodeData);
+        second.first_name = "Steve"
+        expect(first.compare(second)).toEqual(-1);
+      });
+
+      it('should compare on first_name positive', function(){
+        var first = new Episode(episodeData);
+        first.first_name = "Steve"
+        var second = new Episode(episodeData);
+        second.first_name = "Jane"
+        expect(first.compare(second)).toEqual(1);
+      });
+
+      it('should compare on surname equal', function(){
+        var first = new Episode(episodeData);
+        first.sirname = "Marlowe"
+        var second = new Episode(episodeData);
+        second.sirname = "Marlowe"
+        expect(first.compare(second)).toEqual(0);
+      });
+
+      it('should compare on surname positive', function(){
+        var first = new Episode(episodeData);
+        first.surname = "Shakespeare"
+        var second = new Episode(episodeData);
+        second.surname = "Marlowe"
+        expect(first.compare(second)).toEqual(1);
+      });
+
+      it('should compare on surname negative', function(){
+        var first = new Episode(episodeData);
+        first.surname = "Marlowe"
+        var second = new Episode(episodeData);
+        second.surname = "Shakespeare"
+        expect(first.compare(second)).toEqual(-1);
+      });
     });
 
     it('Should have access to the attributes', function () {

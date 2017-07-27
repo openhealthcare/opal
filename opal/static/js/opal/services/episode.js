@@ -176,10 +176,9 @@ angular.module('opal.services')
                 // The default comparators we use for our Episode sorting in lists
                 //
                 var comparators = comparators || [
-                    function(p) { return CATEGORIES.indexOf(p.location[0].category) },
-                    function(p) { return p.location[0].hospital },
-                    function(p) { return p.location[0].ward },
-                    function(p) { return parseInt(p.location[0].bed) }
+                    function(p) { return p.start },
+                    function(p) { return p.first_name },
+                    function(p) { return p.surname }
                 ];
 
                 var v1, v2;
