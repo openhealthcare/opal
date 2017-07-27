@@ -16,6 +16,8 @@ you should update to use the Episode model fields. This logic should be moved in
 your flows and you'll need to put in a migration to populate existing
 episodes.
 
+start and end are both cast to moments (rather than raw js Dates) on episode.initialisation
+
 #### Removes a js global declaration of categories
 previously we declared CATEGORIES globally. Lets not do this.
 
