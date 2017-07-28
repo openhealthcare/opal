@@ -104,7 +104,9 @@ class StepTestCase(OpalTestCase):
 
 class HelpTextStepTestCase(OpalTestCase):
     def test_get_help_text(self):
-        s = HelpTextStep(display_name="fake", help_text=" interesting ")
+        s = HelpTextStep(
+            display_name="fake", template="", help_text=" interesting "
+        )
         self.assertEqual(
             s.get_help_text(), "interesting"
         )
@@ -114,7 +116,9 @@ class HelpTextStepTestCase(OpalTestCase):
             display_name = "some pathway"
             slug = "some_pathway"
             steps = (
-                HelpTextStep(display_name="fake", help_text=" interesting "),
+                HelpTextStep(
+                    display_name="fake", template="", help_text=" interesting "
+                ),
             )
-        url = reverse("pathway_template", kwargs=dict(slug="some_pathway"))
+        url = reverse("pathway_template", kwargs=dict(name="some_pathway"))
         self.assertStatusCode(url, 200)
