@@ -12,7 +12,9 @@
           </h3>
         </div>
         <div class="panel-body">
-          {% include step.get_template %}
+          {% block step_form %}
+            {% include step.get_template %}
+          {% endblock %}
         </div>
       </div>
     </div> <!-- Col -->
