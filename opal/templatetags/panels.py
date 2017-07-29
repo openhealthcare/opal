@@ -2,6 +2,7 @@
 Templatetags for panels
 """
 import copy
+from django.core.urlresolvers import reverse
 
 from django import template
 from opal.core.subrecords import patient_subrecords
@@ -80,8 +81,26 @@ def teams_panel():
 
 
 @register.inclusion_tag('_helpers/aligned_pair.html')
-def aligned_pair(model=None, label=None):
+def aligned_pair(model, label=None):
     return {
         'model': model,
         'label': label
     }
+
+
+@register.inclusion_tag('_helpers/cached_model_modal.html')
+def cached_model_modal(model, prefix=None):
+    """
+        renders a text in the angular template format
+        ie
+        <script type="text/ng-template" id="/tpl.html">
+            Content of the template.
+        </script>
+
+        if you put in a model and a patient list
+        it will do the reverse logic for you
+    """
+    return dict(
+        url=model.get_modal_url(prefix),
+        template=model.get_modal_template(prefix)
+    )
