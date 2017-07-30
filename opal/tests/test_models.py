@@ -327,6 +327,14 @@ class SubrecordTestCase(OpalTestCase):
         url = Subrecord.get_form_url()
         self.assertEqual(url, '/templates/forms/subrecord.html')
 
+    def test_get_modal_template_url(self):
+        url = Colour.get_modal_url()
+        self.assertEqual(url, '/templates/modals/colour.html')
+
+    def test_get_modal_template_url_with_prefix(self):
+        url = Colour.get_modal_url(prefix="onions")
+        self.assertEqual(url, '/templates/modals/colour.html/onions')
+
     @patch('opal.models.find_template')
     def test_form_template_prefixes(self, find):
         Subrecord.get_form_template(prefixes=['onions'])

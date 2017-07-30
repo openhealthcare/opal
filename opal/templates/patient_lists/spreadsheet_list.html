@@ -224,7 +224,7 @@
 {% for column in columns %}
   {% if column.model %}
     {% for prefix in column.prefixes %}
-      {% cached_model_modal column.model prefix=column.prefixes %}
+      {% cached_subrecord_modal column.model prefix=column.prefixes %}
     {% endfor %}
   {% endif %}
 {% endfor %}

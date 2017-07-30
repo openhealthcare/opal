@@ -54,7 +54,8 @@ def record_panel(
         'noentries': noentries,
         'only_display_if_exists': only_display_if_exists,
         'full_width': full_width,
-        'is_patient_subrecord': model.__class__ in patient_subrecords()
+        'is_patient_subrecord': model.__class__ in patient_subrecords(),
+        'model': model
     }
 
     context.dicts.append(ctx)
@@ -88,8 +89,8 @@ def aligned_pair(model, label=None):
     }
 
 
-@register.inclusion_tag('_helpers/cached_model_modal.html')
-def cached_model_modal(model, prefix=None):
+@register.inclusion_tag('_helpers/cached_subrecord_modal.html', takes_context=True)
+def cached_subrecord_modal(context, subrecord, prefix=None):
     """
         renders a text in the angular template format
         ie
@@ -100,7 +101,18 @@ def cached_model_modal(model, prefix=None):
         if you put in a model and a patient list
         it will do the reverse logic for you
     """
-    return dict(
-        url=model.get_modal_url(prefix),
-        template=model.get_modal_template(prefix)
-    )
+    child_context = copy.copy(context)
+    child_context.update(dict(
+        url=subrecord.get_modal_url(prefix),
+        template=subrecord.get_modal_template(prefix),
+
+        # we need to pass in the same context variables as
+        # opal.views.ModalTemplateView.get_context_data
+        name=subrecord.get_api_name(),
+        title=subrecord.get_display_name(),
+        icon=subrecord.get_icon(),
+        single=subrecord._is_singleton,
+        column=subrecord
+    ))
+
+    return child_context

@@ -34,20 +34,16 @@
       </p>
       {% endif %}
       {% if help_template %}
-      <p class="text-muted pointer"
-         popover-title="Help"
-         popover-placement="bottom"
-         data-auto-close="true"
-         uib-popover-template="'{{ help_template }}'"
-         name="{{ model }}"
-
-         >
-        <i class="fa fa-question-circle"></i>
-        More details about {{ label }}
-      </p>
-      <script type="text/ng-template" id="{{ help_template }}">
-        {% include help_template %}
-      </script>
+        <p class="text-muted pointer"
+           popover-title="Help"
+           popover-placement="bottom"
+           data-auto-close="true"
+           uib-popover-template="'/templates/{{ help_template }}'"
+           name="{{ model }}"
+           >
+          <i class="fa fa-question-circle"></i>
+          More details about {{ label }}
+        </p>
       {% endif %}
     </div>
   </span>

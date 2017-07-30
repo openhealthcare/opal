@@ -1,3 +1,4 @@
+{% load panels %}
 {% comment %}
   if we're looking at a patient subrecord and the patient exists use the patient as the parent
   otherwise use the episode as the parent
@@ -57,3 +58,4 @@
     </ul>
   </div>
 </div>
+{% cached_subrecord_modal model %}
