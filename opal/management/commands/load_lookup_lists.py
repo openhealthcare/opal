@@ -3,7 +3,6 @@ Load a series of lookup lists into our instance.
 """
 import os
 import ffs
-from optparse import make_option
 
 from django.core.management.base import BaseCommand
 
@@ -21,16 +20,6 @@ class Command(BaseCommand):
     def __init__(self, *a, **k):
         self.set_counter()
         return super(Command, self).__init__(*a, **k)
-
-    option_list = BaseCommand.option_list + (
-        make_option(
-            "-f",
-            "--file",
-            dest="filename",
-            help="specify import file",
-            metavar="FILE"
-        ),
-    )
 
     def set_counter(self):
         self.num = 0
