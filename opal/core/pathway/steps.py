@@ -77,7 +77,6 @@ class Step(object):
                 "Mulitsave requires a model to be passed in"
             )
 
-
         # this is only used if its a multiple model step
         # it decides whether we want to delete the ones that aren't return
         self.delete_others = kwargs.pop("delete_others", True)
