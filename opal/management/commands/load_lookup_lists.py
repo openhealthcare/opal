@@ -71,7 +71,6 @@ class Command(BaseCommand):
 
         self.stdout.write(msg)
 
-    @transaction.atomic()
     def handle_explicit_filename(self, **kwargs):
         filename = kwargs['filename']
         contents = self.from_path(ffs.Path(filename).abspath)
@@ -79,6 +78,7 @@ class Command(BaseCommand):
         self.load(contents)
         self.print_status(filename)
 
+    @transaction.atomic()
     def handle(self, *args, **options):
         if options.get('filename', None):
             return self.handle_explicit_filename(**options)
