@@ -2,7 +2,6 @@
 Templatetags for panels
 """
 import copy
-from django.core.urlresolvers import reverse
 
 from django import template
 from opal.core.subrecords import patient_subrecords
@@ -89,7 +88,9 @@ def aligned_pair(model, label=None):
     }
 
 
-@register.inclusion_tag('_helpers/cached_subrecord_modal.html', takes_context=True)
+@register.inclusion_tag(
+    '_helpers/cached_subrecord_modal.html', takes_context=True
+)
 def cached_subrecord_modal(context, subrecord, prefix=None):
     """
         renders a text in the angular template format
