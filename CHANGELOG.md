@@ -19,18 +19,12 @@ episodes.
 start and end are both cast to moments (rather than raw js Dates) on episode.initialisation
 
 #### Removes a js global declaration of categories
-previously we declared CATEGORIES globally. Lets not do this.
 
-``` js
-// TODO make this a service
-var CATEGORIES = [
-    'Inepisode', 'Review', 'Followup', 'Transferred', 'Discharged', 'Deceased'
-];
-```
+Previously we declared CATEGORIES globally. This has now been removed
 
 #### Order Order
-Episodes in the patient list are now ordered by start, first_name and surname
 
+Episodes in the patient list are now ordered by start, first_name and surname
 
 #### Theming support
 
