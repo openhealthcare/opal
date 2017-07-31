@@ -22,7 +22,7 @@ class OpalTestCase(TestCase):
 
     def make_user(self, password, **kwargs):
         user = User.objects.create(**kwargs)
-        user.set_password(self.PASSWORD)
+        user.set_password(password)
         user.save()
         return user
 
