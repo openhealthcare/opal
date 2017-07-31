@@ -112,6 +112,8 @@ Prints all loockuplists as JSON to stdout.
 Loads lookup lists from all plugins/apps in the Opal JSON format. The lookup lists are expected to be in
 `{{ app }}/data/lookuplists/lookuplists.json`
 
+Optionally you can pass in an explicit filename with the `-f` argument.
+
 #### delete_all_lookuplists
 
 Deletes all currently lookuplist values and related synonyms
