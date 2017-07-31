@@ -14,10 +14,6 @@ angular.module('opal.services')
 
         }
 
-        var CATEGORIES = [
-          'Inepisode', 'Review', 'Followup', 'Transferred', 'Discharged', 'Deceased'
-        ]
-
         // TODO - Pull these from the schema? Also cast them to moments
         // Note - these are date fields on the episode itself - which is not currently
         // serialised and sent with the schema !
