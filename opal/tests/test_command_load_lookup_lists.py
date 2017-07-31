@@ -50,6 +50,15 @@ class CommandTestCase(OpalTestCase):
         for e in expected:
             self.assertTrue(len([c for c in calls if c.endswith(e)]) == 1)
 
+    def test_handle_explicit_filename(self):
+        c = loader.Command()
+        with patch.object(c, 'stdout') as stdout:
+            c.handle(filename='this.json')
+            stdout.write.assert_any_call(
+                '\nFor this.json\nLoaded 0 lookup lists\n\n\nNew items report:\n\n\n0 new items 0 new synonyms'
+            )
+
+
     def test_handle(self):
         c = loader.Command()
         with patch.object(c, 'stdout') as stdout:
@@ -57,3 +66,9 @@ class CommandTestCase(OpalTestCase):
             stdout.write.assert_any_call(
                 '\nFor SearchPlugin\nLoaded 0 lookup lists\n\n\nNew items report:\n\n\n0 new items 0 new synonyms'
             )
+
+    def test_handle_with_filename(self):
+        c = loader.Command()
+        with patch.object(c, 'handle_explicit_filename') as handler:
+            c.handle(filename="this.json")
+            handler.assert_called_with(filename='this.json')

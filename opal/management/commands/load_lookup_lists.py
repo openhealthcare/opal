@@ -6,6 +6,7 @@ import ffs
 from optparse import make_option
 
 from django.core.management.base import BaseCommand
+from django.db import transaction
 
 from opal.core.lookuplists import load_lookuplist
 from opal.core import application, lookuplists
@@ -61,18 +62,31 @@ class Command(BaseCommand):
         self.created += created
         self.synonyms += synonyms
 
+    def print_status(self, name):
+        msg = "\nFor {}".format(name)
+        msg += "\nLoaded {0} lookup lists\n".format(self.num)
+        msg += "\n\nNew items report:\n\n\n"
+        msg += "{0} new items".format(self.created)
+        msg += " {0} new synonyms".format(self.synonyms)
+
+        self.stdout.write(msg)
+
+    @transaction.atomic()
+    def handle_explicit_filename(self, **kwargs):
+        filename = kwargs['filename']
+        contents = self.from_path(ffs.Path(filename).abspath)
+        self.set_counter()
+        self.load(contents)
+        self.print_status(filename)
+
     def handle(self, *args, **options):
+        if options.get('filename', None):
+            return self.handle_explicit_filename(**options)
+
         components = application.get_all_components()
         for component in components:
 
             self.set_counter()
 
             self.from_component(component)
-
-            msg = "\nFor {}".format(component.__name__)
-            msg += "\nLoaded {0} lookup lists\n".format(self.num)
-            msg += "\n\nNew items report:\n\n\n"
-            msg += "{0} new items".format(self.created)
-            msg += " {0} new synonyms".format(self.synonyms)
-
-            self.stdout.write(msg)
+            self.print_status(component.__name__)
