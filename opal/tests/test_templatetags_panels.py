@@ -2,7 +2,6 @@
 Tests create_singletons command
 """
 from django.template import Template, Context
-from django.test import override_settings
 from opal.core.test import OpalTestCase
 from opal.templatetags import panels
 from opal.tests.models import Demographics
@@ -11,10 +10,11 @@ from opal.tests.models import HatWearer
 
 class RecordPanelTestCase(OpalTestCase):
     def test_record_panel(self):
+        d = Demographics()
         expected = dict(
             name='demographics',
             singleton=True,
-            title='Demographics',
+            title=u'Demographics',
             detail_template='records/demographics_detail.html',
             icon=None,
             editable=1,
@@ -23,9 +23,10 @@ class RecordPanelTestCase(OpalTestCase):
             only_display_if_exists=False,
             full_width=False,
             is_patient_subrecord=True,
+            model=d
         )
-        result = panels.record_panel(Context({}), Demographics())
-        self.assertEqual(expected, result.dicts[-1])
+        result = panels.record_panel(Context({}), d).dicts[-1]
+        self.assertEqual(expected, result)
 
     def test_model_pass_through(self):
         result = panels.record_panel(Context({}), HatWearer)
@@ -36,7 +37,6 @@ class RecordPanelTestCase(OpalTestCase):
         self.assertEqual(
             result["singleton"], False
         )
-
 
     def test_context(self):
         """ context should include logic from template
@@ -104,3 +104,18 @@ class AlignedPairsTestCase(OpalTestCase):
         result = template.render(Context({}))
         self.assertIn('[[ episode.start_date | shortDate ]]', result)
         self.assertIn('Start Date', result)
+
+
+class CachedSubrecordModalTestCase(OpalTestCase):
+    def test_subrecord_modal_cache(self):
+        expected = dict(
+            name='demographics',
+            title='Demographics',
+            template='base_templates/form_modal_base.html',
+            icon=None,
+            single=True,
+            column=Demographics,
+            url='/templates/modals/demographics.html'
+        )
+        result = panels.cached_subrecord_modal({}, Demographics)
+        self.assertEqual(expected, result)

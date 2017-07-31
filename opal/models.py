@@ -981,6 +981,14 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
         return reverse("form_view", kwargs=dict(model=cls.get_api_name()))
 
     @classmethod
+    def get_modal_url(cls, prefix=None):
+        url_kwargs = {}
+        if prefix:
+            url_kwargs = {"list": prefix}
+        url_name = "{}_modal".format(cls.get_api_name())
+        return reverse(url_name, kwargs=url_kwargs)
+
+    @classmethod
     def get_modal_template(cls, prefixes=None):
         """
         Return the active form template for our record
