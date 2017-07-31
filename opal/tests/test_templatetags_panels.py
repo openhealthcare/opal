@@ -14,7 +14,7 @@ class RecordPanelTestCase(OpalTestCase):
         expected = dict(
             name='demographics',
             singleton=True,
-            title=u'Demographics',
+            title='Demographics',
             detail_template='records/demographics_detail.html',
             icon=None,
             editable=1,
@@ -23,10 +23,9 @@ class RecordPanelTestCase(OpalTestCase):
             only_display_if_exists=False,
             full_width=False,
             is_patient_subrecord=True,
-            model=d
         )
         result = panels.record_panel(Context({}), d).dicts[-1]
-        self.assertEqual(expected, result)
+        self.assertEqual(expected, result.dicts[-1])
 
     def test_model_pass_through(self):
         result = panels.record_panel(Context({}), HatWearer)

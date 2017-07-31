@@ -3,7 +3,7 @@
 #### help text templates in select template tags are loaded in from the server
 This means they won't have access to local django context
 
-#### modals for subrecords in patient lists and detail pages are cached
+#### modals for subrecords in patient lists are cached on load
 These are now cached in an angular ng-template script tag in the page. This means that modals will load instantaniously for the user. It does mean that you can't use angular templates within your modals, we would recommend using client side rendering instead.
 
 #### cached_subrecord_modal

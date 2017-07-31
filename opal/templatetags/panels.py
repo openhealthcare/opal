@@ -53,8 +53,7 @@ def record_panel(
         'noentries': noentries,
         'only_display_if_exists': only_display_if_exists,
         'full_width': full_width,
-        'is_patient_subrecord': model.__class__ in patient_subrecords(),
-        'model': model
+        'is_patient_subrecord': model.__class__ in patient_subrecords()
     }
 
     context.dicts.append(ctx)
