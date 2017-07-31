@@ -24,7 +24,7 @@ class RecordPanelTestCase(OpalTestCase):
             full_width=False,
             is_patient_subrecord=True,
         )
-        result = panels.record_panel(Context({}), d).dicts[-1]
+        result = panels.record_panel(Context({}), d)
         self.assertEqual(expected, result.dicts[-1])
 
     def test_model_pass_through(self):
