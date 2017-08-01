@@ -9,6 +9,9 @@ Typically pathways are forms that allow the user to enter information that spans
 The pathway provides Wizards, long multi-model forms, custom validation and much more,
 all usable either in full page or modal contexts.
 
+If you're new to using pathways you might like to go through the
+[Pathway tutorial](../tutorials/pathway_tutorial.md).
+
 <blockquote><small>
 See the
 <a href="../../reference/pathways/">Pathway reference documentation</a>
@@ -205,10 +208,9 @@ The step is the step definition from the server - the output of
 The `episode` is an instance of the javascript Episode class - not the output
 of `Episode.makeCopy()`.
 
-steps can declare optional `preSave` method on their scope. This is passed
-the editing dictionary which will then be saved and can be altered in place
-if necessary.
-
+Before a copy of the form data is sent back to the server, it is passed to the
+`preSave` method of each step controller. Step controllers may alter this data
+here if required to e.g. add implicit data points not contained in the form.
 
 
 ## Complex Steps With Multiple Instances Per Subrecord

@@ -43,7 +43,7 @@ class SimplePathway(pathway.PagePathway):
     steps        = (
         pathways.Step(model=models.PastMedicalHistory)
     )
- ```
+```
 
 ### Model Steps
 
