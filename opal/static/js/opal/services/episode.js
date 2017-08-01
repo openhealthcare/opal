@@ -154,12 +154,19 @@ angular.module('opal.services')
             },
 
             makeCopy: function(){
+                var start, end;
+                if(this.start){
+                  start = moment(this.start);
+                }
+                if(this.end){
+                  end = moment(this.end);
+                }
                 var copy = {
                     id               : this.id,
                     category_name    : this.category_name,
                     consistency_token: this.consistency_token,
-                    start: moment(this.start),
-                    end: moment(this.end)
+                    start: start,
+                    end: end
                 }
                 return copy
             },
