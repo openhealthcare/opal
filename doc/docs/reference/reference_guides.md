@@ -45,7 +45,7 @@ The following reference guides are available:
 [The menus Templatetag library](menus_templatetags.md) | Rendering application menus
 [Javascript Helpers](javascript/javascript_helpers.md)| Angular directives, filters and $rootScope methods
 
-### Opal Search module
+### Opal core modules
 
 |
 -|-
