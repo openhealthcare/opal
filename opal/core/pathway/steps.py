@@ -79,8 +79,8 @@ class Step(object):
 
         if self.multiple and not self.model:
             raise exceptions.InitializationError(
-                "Steps with multiple forms are only available with "\
-                "Subrecords. Please pass in a `model` argument to"\
+                "Steps with multiple forms are only available with "
+                "Subrecords. Please pass in a `model` argument to"
                 "use multiple forms within a step."
             )
 
