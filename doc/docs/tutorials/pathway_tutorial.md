@@ -21,7 +21,7 @@ Let's look at a page pathway definition.
 
 ```python
 # yourapp/pathways.py
-import opal.core import pathway
+from opal.core import pathway
 
 class MyPathway(pathway.PagePathway):
     display_name = 'My Awesome Pathway'
@@ -35,7 +35,7 @@ A Pathway should have at least one `Step` - a section within the form.
 `Steps` are defined on the pathway class using the `Pathway.steps` tuple.
 
 ```python
-import opal.core import pathway
+from opal.core import pathway
 from myapp import models
 
 class SimplePathway(pathway.PagePathway):
@@ -55,7 +55,7 @@ For instance, to create a pathway with three steps to record a
 patient's allergies, treatment and past medical history, we could use the following:
 
 ```python
-import opal.core import pathway
+from opal.core import pathway
 from myapp import models
 
 class SimplePathway(pathway.PagePathway):
