@@ -3,7 +3,11 @@ docs_dir: docs
 pages:
   - Home: index.md
   - installation.md
-  - tutorial.md
+  - Tutorial: tutorial.md
+  - Tutorials:
+    # Early steps with Opal
+    - tutorials/pathway_tutorial.md
+    - tutorials/theming_tutorial.md
   - Guides: guides/topic-guides.md
   - Reference: reference/reference_guides.md
 
@@ -88,7 +92,7 @@ pages:
       - Search Queries: reference/search_queries.md
 
       # Pathways
-      - Pathway Creation: reference/pathways.md
+      - Pathway: reference/pathways.md
 
       # Misc
       - Settings: reference/settings.md

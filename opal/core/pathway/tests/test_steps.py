@@ -1,12 +1,18 @@
 from opal.core.test import OpalTestCase
+from django.core.urlresolvers import reverse
 from opal.tests import models as test_models
 
-from opal.core.pathway import Step
+from opal.core.pathway import Step, HelpTextStep, PagePathway
 from opal.core.pathway.steps import InitializationError
 from opal.core.pathway.tests.pathway_test.pathways import SomeComplicatedStep
 
 
 class StepTestCase(OpalTestCase):
+
+    def test_step_cant_be_multiple_without_a_model(self):
+        with self.assertRaises(InitializationError):
+            Step(multiple=True)
+
     def test_to_dict_model_passed_in(self):
         step_dict = Step(model=test_models.Colour).to_dict()
         self.assertEqual(
@@ -99,3 +105,25 @@ class StepTestCase(OpalTestCase):
         self.assertEqual(
             str(er.exception), "A step needs either a template or a model"
         )
+
+
+class HelpTextStepTestCase(OpalTestCase):
+    def test_get_help_text(self):
+        s = HelpTextStep(
+            display_name="fake", template="", help_text=" interesting "
+        )
+        self.assertEqual(
+            s.get_help_text(), "interesting"
+        )
+
+    def test_step_render(self):
+        class SomePathway(PagePathway):
+            display_name = "some pathway"
+            slug = "some_pathway"
+            steps = (
+                HelpTextStep(
+                    display_name="fake", template="", help_text=" interesting "
+                ),
+            )
+        url = reverse("pathway_template", kwargs=dict(name="some_pathway"))
+        self.assertStatusCode(url, 200)
