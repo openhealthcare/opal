@@ -70,9 +70,14 @@ class Step(object):
         self.other_args = kwargs
         self.multiple = multiple
 
+        # We only infer from the model if the user did not pass in a value
         if self.multiple is None and self.model:
-            self.multiple = not self.model._is_singleton
-        elif self.multiple and not self.model:
+            if self.model._is_singleton:
+                self.multiple = False
+            else:
+                self.multiple = True
+
+        if self.multiple and not self.model:
             raise exceptions.APIError(
                 "Mulitsave requires a model to be passed in"
             )
