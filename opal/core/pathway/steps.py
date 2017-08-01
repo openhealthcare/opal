@@ -78,8 +78,10 @@ class Step(object):
                 self.multiple = True
 
         if self.multiple and not self.model:
-            raise exceptions.APIError(
-                "Mulitsave requires a model to be passed in"
+            raise exceptions.InitializationError(
+                "Steps with multiple forms are only available with "\
+                "Subrecords. Please pass in a `model` argument to"\
+                "use multiple forms within a step."
             )
 
         # this is only used if its a multiple model step

@@ -8,6 +8,11 @@ from opal.core.pathway.tests.pathway_test.pathways import SomeComplicatedStep
 
 
 class StepTestCase(OpalTestCase):
+
+    def test_step_cant_be_multiple_without_a_model(self):
+        with self.assertRaises(InitializationError):
+            Step(multiple=True)
+
     def test_to_dict_model_passed_in(self):
         step_dict = Step(model=test_models.Colour).to_dict()
         self.assertEqual(
