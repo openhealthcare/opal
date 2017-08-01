@@ -267,6 +267,17 @@ describe('Episode', function() {
         expect(copy.end.toDate()).toEqual(new Date(2016, 4, 25));
     });
 
+    it('start and end should be null if not set', function(){
+      var copy = episode.makeCopy();
+      delete copy.start;
+      delete copy.end;
+      expect(copy.id).toBe(123);
+      expect(copy.category_name).toBe('Inpatient');
+      expect(copy.consistency_token).toBe(undefined);
+      expect(copy.start).toEqual(undefined);
+      expect(copy.end).toEqual(undefined);
+    });
+
     describe('communicating with server', function (){
         var $httpBackend, episode;
 
