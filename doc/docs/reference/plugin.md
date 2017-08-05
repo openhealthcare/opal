@@ -117,4 +117,9 @@ Defaults to returning the contents of `OpalPlugin.styles`.
 ```python
 plugin.get_styles()
 # -> ['css/app.css', ...]
-``
+```
+
+#### OpalPlugin.angular_module_deps
+
+When you initialise an angular application you need to register dependencies
+This allows you to add to the dependencies of the default opal application
