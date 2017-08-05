@@ -7,8 +7,8 @@ This means they won't have access to local django context
 These are now cached in an angular ng-template script tag in the page. This means that modals will load instantaniously for the user. It does mean that you can't use angular templates within your modals, we would recommend using client side rendering instead.
 
 #### cached_subrecord_modal
-This takes in a subrecord and caches its
-modal template inside and an angular ng-template script tag
+A template tag that takes in a subrecord and renders it with a template that caches its
+modal template inside an angular ng-template script tag
 
 
 #### Good bye date_of_episode, discharge_date, date_of_admission

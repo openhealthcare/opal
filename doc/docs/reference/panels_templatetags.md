@@ -60,6 +60,12 @@ Arguments:
 
 #### {% cached_subrecord_modal subrecord, prefix(optional) %}
 
+```html
+{% load panels %}
+{% cached_subrecord_modal models.Demographics prefix="walkin" %}
+```
+
+
 Render the subrecords modal inline in an angular ng-template script tag so that it
 loads instantaniously for the user.
 
