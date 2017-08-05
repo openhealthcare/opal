@@ -80,7 +80,7 @@ def teams_panel():
 
 
 @register.inclusion_tag('_helpers/aligned_pair.html')
-def aligned_pair(model, label=None):
+def aligned_pair(model=None, label=None):
     return {
         'model': model,
         'label': label
