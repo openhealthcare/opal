@@ -126,6 +126,21 @@ describe('Pathway', function() {
       expect(treatment.makeCopy).toHaveBeenCalledWith();
     });
 
+    it('should update an existing dictionary', function(){
+      var existingEditing = {location: [{ward: "212"}]}
+      var demographics = jasmine.createSpyObj(["makeCopy"]);
+      $rootScope.fields = {
+        demographics: {single: true},
+      };
+      demographics.makeCopy.and.returnValue({first_name: "Wilma"});
+      var episode = {demographics: [demographics]};
+      var result = pathway.populateEditingDict(episode);
+      pathway.populateEditingDict(episode, existingEditing);
+      expect(existingEditing.location[0].ward).toBe("212");
+      console.error(existingEditing);
+      expect(existingEditing.demographics.first_name).toBe("Wilma");
+    });
+
     it("should populate an empty dictionary if an episode isn't provided", function(){
       var result = pathway.populateEditingDict();
       expect(result).toEqual({});

@@ -19,8 +19,18 @@ angular.module('opal.services').service('Pathway', function(
         var step = _.findWhere(this.steps, {api_name: apiName});
         step.scope = stepScope;
       },
-      populateEditingDict: function(episode){
-        var editing = {};
+
+      populateEditingDict: function(episode, editing){
+        /*
+        * receives an optional editing argument
+        * this is the current stage of editing
+        * this is an empty object at the beginning
+        * but can be the existing scope
+        */
+        if(!editing){
+          editing = {};
+        }
+
         if(episode){
           var self = this;
           _.each($rootScope.fields, function(value, key){
