@@ -137,7 +137,6 @@ describe('Pathway', function() {
       var result = pathway.populateEditingDict(episode);
       pathway.populateEditingDict(episode, existingEditing);
       expect(existingEditing.location[0].ward).toBe("212");
-      console.error(existingEditing);
       expect(existingEditing.demographics.first_name).toBe("Wilma");
     });
 
