@@ -23,7 +23,7 @@ angular.module('opal.services').service('Pathway', function(
       populateEditingDict: function(episode, editing){
         /*
         * receives an optional editing argument
-        * this is the current stage of editing
+        * this is the data from the form so far (e.g. $scope.editing)
         * this is an empty object at the beginning
         * but can be the existing scope
         */
