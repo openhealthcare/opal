@@ -12,14 +12,15 @@ describe('WizardPathway', function() {
         'step_controller': 'DefaultStep',
         'icon': 'fa fa-user',
         'template_url': '/templates/pathway/find_patient_form.html',
-        'display_name': 'Find Patient'
+        'display_name': 'Find Patient',
+        'api_name': 'find_patient'
       },
       {
-        'api_name': 'location',
         'step_controller': 'DefaultStep',
         'icon': 'fa fa-map-marker',
         'template_url': '/templates/pathway/blood_culture_location.html',
-        'display_name': 'Location'
+        'display_name': 'Location',
+        'api_name': 'location',
       }
     ],
     'title': 'Add Patient'
@@ -63,25 +64,20 @@ describe('WizardPathway', function() {
 
   describe("hasPrevious", function(){
     it("should return true if there are previous steps", function(){
-      pathway.currentIndex = 1;
-      expect(pathway.hasPrevious()).toBe(true);
+      pathway.goNext();
+      expect(!!pathway.hasPrevious()).toBe(true);
     });
 
     it("should return false if there aren't previous steps", function(){
-      expect(pathway.hasPrevious()).toBe(false);
+      expect(!!pathway.hasPrevious()).toBe(false);
     });
   });
 
-  describe("next", function(){
-    it("should add to the currentIndex", function(){
-      expect(pathway.next()).toBe(1);
-    });
-  });
-
-  describe("previous", function(){
-    it("should subtract from the currentIndex", function(){
-      pathway.currentIndex = 1;
-      expect(pathway.previous()).toBe(0);
+  describe('goToStep', function(){
+    it('should go to a step with that api name', function(){
+      pathway.goToStep('location');
+      expect(pathway.currentIndex).toBe(1);
+      expect(pathway.currentStep.api_name).toBe('location');
     });
   });
 
@@ -105,8 +101,12 @@ describe('WizardPathway', function() {
   });
 
   describe("stepIndex", function(){
-    it("should move current variables to the next step", function(){
-      expect(pathway.stepIndex(pathway.steps[1])).toBe(1);
+    it("should return the idx of the step", function(){
+      expect(pathway.stepIndex(pathway.steps[1].api_name)).toBe(1);
+    });
+
+    it("should throw an exception if there is no step by that name", function(){
+      expect(function(){ pathway.stepIndex("non existent") }).toThrow();
     });
   });
 

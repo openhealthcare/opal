@@ -10,7 +10,7 @@
   </h2>
   {% block process_steps %}
   <div ng-show="pathway.numSteps > 2" class="pathway-process-steps">
-    {% process_steps process_steps="pathway.steps" click="clickIcon" show_titles=False active="progress_step.display_name === pathway.currentStep.display_name" complete="pathway.stepIndex(progress_step) < pathway.currentIndex" disabled="pathway.stepIndex(progress_step) > pathway.currentIndex" %}
+    {% process_steps process_steps="pathway.steps" click="clickIcon" show_titles=False active="progress_step.display_name === pathway.currentStep.display_name" complete="pathway.stepIndex(progress_step.api_name) < pathway.currentIndex" disabled="pathway.stepIndex(progress_step.api_name) > pathway.currentIndex" %}
   </div>
   {% endblock %}
 {% endblock pathway_header %}
