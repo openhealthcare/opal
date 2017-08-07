@@ -22,6 +22,15 @@ you should update to use the Episode model fields. This logic should be moved in
 your flows and you'll need to put in a migration to populate existing
 episodes.
 
+start and end are both cast to moments (rather than raw js Dates) on episode.initialisation
+
+#### Removes a js global declaration of categories
+
+Previously we declared CATEGORIES globally. This has now been removed
+
+#### Order Order
+
+Episodes in the patient list are now ordered by start, first_name and surname
 
 #### Theming support
 
@@ -42,6 +51,9 @@ of creating forms that involve multiple subrecords.
 #### Misc Changes
 
 Add the allow_add_patient and allow_edit_teams options to the patient lists.
+
+We added support for a `--file` or `-f` option for the `load_lookup_lists` command which
+allows the user to specify a particular file outside of the default locations.
 
 #### Removes Deprecated functionality in ReferenceData, Metadata, UserProfile and recordLoader
 

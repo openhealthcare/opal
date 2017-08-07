@@ -48,9 +48,7 @@ def _itersubclasses(cls, _seen=None):
     Recursively iterate through subclasses
     """
     abstract_classes = AbstractBase.__subclasses__()
-    if not isinstance(cls, type):
-        raise TypeError('itersubclasses must be called with '
-                        'new-style classes, not %.100r' % cls)
+
     if _seen is None:
         _seen = set()
     try:

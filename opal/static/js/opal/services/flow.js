@@ -65,6 +65,7 @@ angular.module(
       			    }
                 }).result;
 
+                deferred.resolve(result);
                 return deferred.promise;
             }
 
