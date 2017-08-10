@@ -19,12 +19,9 @@
                   <h4>Your Criteria</h4>
                   Find patients where the
                   <span ng-repeat="query in completeCriteria()">
-                    <span ng-hide="query.column === 'Tagging'">
-                      <strong>[[ findColumn(query.column).display_name ]] [[ findField(query.column, query.field).title ]]</strong> [[ readableQuery(query.queryType) ]] <strong>[[ query.query ]]</strong>
-                    </span>
-                    <span ng-show="query.column === 'Tagging'">
-                      patient has been under the <strong>[[ query.field ]]</strong> team
-                    </span>
+                    <strong>[[ findColumn(query.column).display_name ]] [[ findField(query.column, query.field).title ]]</strong> [[ readableQueryType(query.queryType) ]]
+                    <strong ng-show="query.queryType === 'Any Of'">[[ query.query|displayArray:"or" ]]</strong>
+                    <strong ng-hide="query.queryType === 'Any Of'">[[ query.query|displayArray ]]</strong>
                     <span ng-hide="$last">[[ query.combine ]]</span>
                   </span>
                 </span>
@@ -84,79 +81,101 @@
                                 >
                           <option value="[[ field.name ]]" ng-repeat="field in searchableFields(query.column)">[[ field.title ]]</option>
                         </select>
-                        <span ng-show="query.column != 'tagging'">
-                          <select class="form-control content-offset-25"
-                                  ng-show="isText(query.column, query.field)"
-                                  ng-model="query.queryType" tooltip-trigger="focus"
-                                  tooltip-placement="top" uib-tooltip="3. Select your query type"
-                                  set-focus-if="isText(query.column, query.field)"
-                                  >
-                            <option>Equals</option>
-                            <option ng-show="isText(query.column, query.field)">Contains</option>
-                          </select>
-                          <select class="form-control content-offset-25"
-                                  ng-show="isDateType(query.column, query.field)"
-                                  ng-model="query.queryType" tooltip-trigger="focus"
-                                  tooltip-placement="top" uib-tooltip="3. Select your query type"
-                                  set-focus-if="isDateType(query.column, query.field)" >
-                            <option>Before</option>
-                            <option>After</option>
-                          </select>
-                          <select class="form-control content-offset-25" ng-model="query.queryType"
-                                  ng-show="isNumber(query.column, query.field) && query.field != null"
-                                  tooltip-trigger="focus"
-                                  tooltip-placement="top" uib-tooltip="3. Select your query type"
-                                  set-focus-if="isNumber(query.column, query.field) && query.field != null"
-                                  >
-                            <option>Greater Than</option>
-                            <option>Less Than</option>
-                          </select>
-                          <select class="form-control content-offset-25" ng-model="query.query"
-                                  ng-show="isBoolean(query.column, query.field) && query.field != null"
-                                  tooltip-trigger="focus"
-                                  tooltip-placement="top" uib-tooltip="3. Select your query type"
-                                  set-focus-if="isBoolean(query.column, query.field) && query.field != null"
-                                  >
-                            <option>true</option>
-                            <option>false</option>
-                          </select>
-                          <input type="number"
-                                 class="form-control content-offset-25"
-                                 ng-model="query.query"
-                                 ng-if="isNumber(query.column, query.field)"
-                                 placeholder="4. Add your value"
-                                 ng-keypress="$event.keyCode == 13 && search()"
-                                 set-focus-if="isNumber(query.column, query.field) && query.field != null  && query.queryType != null"
-                                 />
-                          <input type="text"
-                                 class="form-control content-offset-25"
-                                 ng-model="query.query"
-                                 ng-if="isText(query.column, query.field)"
-                                 uib-typeahead="x for x in getChoices(query.column, query.field) | filter:$viewValue | limitTo:8"
-                                 placeholder="4. Add your value"
-                                 ng-keypress="$event.keyCode == 13 && search()"
-                                 set-focus-if="isText(query.column, query.field) && query.field != null  && query.queryType != null"
-                                 />
-                          <input type="text" ng-model="query.query"
-                                 class="form-control content-offset-25"
-                                 ng-if="isDateType(query.column, query.field)"
-                                 ng-keypress="$event.keyCode == 13 && search()"
-                                 tooltip-trigger="focus"
-                                 tooltip-placement="top" uib-tooltip="4. Add your value"
-                  	           ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
-                  	           placeholder="dd/mm/yyyy"
-                                 set-focus-if="isDate(query.column, query.field) && query.queryType != null"
-                                 />
-                            <span ng-if="isSelect(query.column, query.field)">
-                                <select ng-model="query.query" class="form-control content-offset-25"
+                        <select class="form-control content-offset-25"
+                                ng-show="isText(query.column, query.field)"
+                                ng-model="query.queryType" tooltip-trigger="focus"
+                                tooltip-placement="top" uib-tooltip="3. Select your query type"
+                                set-focus-if="isText(query.column, query.field)"
+                                >
+                          <option>Equals</option>
+                          <option ng-show="isText(query.column, query.field)">Contains</option>
+                        </select>
+                        <select class="form-control content-offset-25"
+                                ng-show="isDateType(query.column, query.field)"
+                                ng-model="query.queryType" tooltip-trigger="focus"
+                                tooltip-placement="top" uib-tooltip="3. Select your query type"
+                                set-focus-if="isDateType(query.column, query.field)" >
+                          <option>Before</option>
+                          <option>After</option>
+                        </select>
+                        <select class="form-control content-offset-25" ng-model="query.queryType"
+                                ng-show="isNumber(query.column, query.field) && query.field != null"
+                                tooltip-trigger="focus"
+                                tooltip-placement="top" uib-tooltip="3. Select your query type"
+                                set-focus-if="isNumber(query.column, query.field) && query.field != null"
+                                >
+                          <option>Greater Than</option>
+                          <option>Less Than</option>
+                        </select>
+                        <select class="form-control content-offset-25" ng-model="query.query"
+                                ng-show="isBoolean(query.column, query.field) && query.field != null"
+                                tooltip-trigger="focus"
+                                tooltip-placement="top" uib-tooltip="3. Select your query type"
+                                set-focus-if="isBoolean(query.column, query.field) && query.field != null"
+                                >
+                          <option>true</option>
+                          <option>false</option>
+                        </select>
+                        <input type="number"
+                               class="form-control content-offset-25"
+                               ng-model="query.query"
+                               ng-if="isNumber(query.column, query.field)"
+                               placeholder="4. Add your value"
+                               ng-keypress="$event.keyCode == 13 && search()"
+                               set-focus-if="isNumber(query.column, query.field) && query.field != null  && query.queryType != null"
+                               />
+                        <input type="text"
+                               class="form-control content-offset-25"
+                               ng-model="query.query"
+                               ng-if="isText(query.column, query.field)"
+                               uib-typeahead="x for x in getChoices(query.column, query.field) | filter:$viewValue | limitTo:8"
+                               placeholder="4. Add your value"
+                               ng-keypress="$event.keyCode == 13 && search()"
+                               set-focus-if="isText(query.column, query.field) && query.field != null  && query.queryType != null"
+                               />
+                        <input type="text" ng-model="query.query"
+                               class="form-control content-offset-25"
+                               ng-if="isDateType(query.column, query.field)"
+                               ng-keypress="$event.keyCode == 13 && search()"
+                               tooltip-trigger="focus"
+                               tooltip-placement="top" uib-tooltip="4. Add your value"
+                	           ng-pattern="/^(0?[1-9]|[12][0-9]|3[01])\/(0?[1-9]|1[012])\/(\d{4})$/"
+                	           placeholder="dd/mm/yyyy"
+                               set-focus-if="isDate(query.column, query.field) && query.queryType != null"
+                               />
+                          <span ng-if="isSelect(query.column, query.field)">
+                            <select ng-model="query.query" class="form-control content-offset-25"
+                              tooltip-trigger="focus"
+                              ng-keypress="$event.keyCode == 13 && search()"
+                              tooltip-placement="top" uib-tooltip="4. Select one of the below">
+                              <option ng-repeat="i in getChoices(query.column, query.field) track by $index">[[ i ]]</option>
+                            </select>
+                          </span>
+                          <span ng-if="isSelectMany(query.column, query.field)">
+                            <select class="form-control content-offset-25"
+                                    ng-model="query.queryType" tooltip-trigger="focus"
+                                    tooltip-placement="top" uib-tooltip="3. Select your query type"
+                                    set-focus-if="query.column && query.field" >
+                              <option>Any Of</option>
+                              <option>All Of</option>
+                            </select>
+                            <div class="row">
+                              <div class="col-sm-12 content-offset-10">
+                                <ui-select multiple theme="bootstrap" ng-model="query.query" class="form-control"
+                                        style="min-width: 100%;"
                                         tooltip-trigger="focus"
+                                        name="select-query"
                                         ng-keypress="$event.keyCode == 13 && search()"
-                                        tooltip-placement="top" uib-tooltip="4. Select one of the below">
-                                    <option ng-repeat="i in getChoices(query.column, query.field) track by $index">[[ i ]]</option>
-                                </select>
-                            </span>
+                                      >
+                                    <ui-select-match placeholder="4. Select Some Of...">[[ $item ]]</ui-select-match>
+                                    <ui-select-choices repeat="i in getChoices(query.column, query.field) | filter:$select.search">
+                                      <div ng-bind-html="i | highlight: $select.search"></div>
+                                    </ui-select-choices>
+                                </ui-select>
+                              </div>
+                            </div>
+                          </span>
                         </div>
-                      </span>
                       <div class="col-md-1 text-right">
                         <div class="row">
                           <div class="col-md-12">
@@ -194,42 +213,40 @@
                      <div>
                        <strong>[[ findField(selectedInfo.column, selectedInfo.field).title ]]</strong>
                      </div>
-                    <span ng-show="selectedInfo.column !== 'tagging'">
-                      <span ng-show="isBoolean(selectedInfo.column, selectedInfo.field)">
-                        [True/False]
-                      </span>
-                      <span ng-show="isSelect(selectedInfo.column, selectedInfo.field)">
+                    <span ng-show="isBoolean(selectedInfo.column, selectedInfo.field)">
+                      [True/False]
+                    </span>
+                    <span ng-show="isSelect(selectedInfo.column, selectedInfo.field)">
 
-                        <div ng-show="selectedInfo.lookup_list && selectedInfo.lookup_list.length">
-                          [a
-                          <a href=""
-                             class="orange-link"
-                             ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: findField(selectedInfo.column, selectedInfo.field).lookup_list, lookuplist: selectedInfo.lookup_list })">
-                            [[ findField(selectedInfo.column, selectedInfo.field).lookup_list | underscoreToSpaces ]]
-                          </a>]
-                        </div>
-                      </span>
-                      <span ng-show
-                      <span ng-show="isText(selectedInfo.column, selectedInfo.field)">
-                        [Text]
-                        <div ng-show="findField(selectedInfo.column, selectedInfo.field).lookup_list">
-                          Normally coded as a
-                          <a href=""
-                             class="orange-link"
-                             ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: findField(selectedInfo.column, selectedInfo.field).lookup_list, lookuplist: selectedInfo.lookup_list })">
-                            [[ findField(selectedInfo.column, selectedInfo.field).lookup_list | underscoreToSpaces ]]</a>
-                          but free text entries are possible.
-                        </div>
-                        <div ng-show="selectedInfo.enum && selectedInfo.enum.length">
-                          one of <span ng-repeat="i in selectedInfo.enum">[[ i ]] </span>
-                        </div>
-                      </span>
-                      <span ng-show="isDate(selectedInfo.column, selectedInfo.field)">
-                        [Date]
-                      </span>
-                      <span ng-show="isDateTime(selectedInfo.column, selectedInfo.field)">
-                        [Date & Time]
-                      </span>
+                      <div ng-show="selectedInfo.lookup_list && selectedInfo.lookup_list.length">
+                        [a
+                        <a href=""
+                           class="orange-link"
+                           ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: findField(selectedInfo.column, selectedInfo.field).lookup_list, lookuplist: selectedInfo.lookup_list })">
+                          [[ findField(selectedInfo.column, selectedInfo.field).lookup_list | underscoreToSpaces ]]
+                        </a>]
+                      </div>
+                    </span>
+                    <span ng-show
+                    <span ng-show="isText(selectedInfo.column, selectedInfo.field)">
+                      [Text]
+                      <div ng-show="findField(selectedInfo.column, selectedInfo.field).lookup_list">
+                        Normally coded as a
+                        <a href=""
+                           class="orange-link"
+                           ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: findField(selectedInfo.column, selectedInfo.field).lookup_list, lookuplist: selectedInfo.lookup_list })">
+                          [[ findField(selectedInfo.column, selectedInfo.field).lookup_list | underscoreToSpaces ]]</a>
+                        but free text entries are possible.
+                      </div>
+                      <div ng-show="selectedInfo.enum && selectedInfo.enum.length">
+                        one of <span ng-repeat="i in selectedInfo.enum">[[ i ]] </span>
+                      </div>
+                    </span>
+                    <span ng-show="isDate(selectedInfo.column, selectedInfo.field)">
+                      [Date]
+                    </span>
+                    <span ng-show="isDateTime(selectedInfo.column, selectedInfo.field)">
+                      [Date & Time]
                     </span>
                     <div>
                       [[ findField(selectedInfo.column, selectedInfo.field).description ]]

@@ -1,7 +1,7 @@
 from opal.core.discoverable import DiscoverableFeature
 from opal.core.exceptions import Error
 from opal.utils import camelcase_to_underscore
-from opal.models import Episode, deserialize_date
+from opal.models import Episode, Tagging, deserialize_date
 
 
 class SearchException(Error):
@@ -109,7 +109,47 @@ class EpisodeEnd(SearchRuleField):
             raise SearchException(err.format(given_query['queryType']))
 
 
+class EpisodeTeam(SearchRuleField):
+    ALL_OF = "All Of"
+    ANY_OF = "Any Of"
+
+    display_name = "Team"
+    description = "The team that looked after that episode of care"
+    field_type = "many_to_many_multi_select"
+
+    @property
+    def enum(self):
+        return [i["title"] for i in Tagging.build_field_schema()]
+
+    def translate_titles_to_names(self, titles):
+        result = []
+        for schema in Tagging.build_field_schema():
+            if schema["title"] in titles:
+                result.append(schema["name"])
+        return result
+
+    def query(self, given_query):
+        query_type = given_query["queryType"]
+        team_display_names = given_query['query']
+        if not query_type == self.ALL_OF:
+            if not query_type == self.ANY_OF:
+                err = """
+                    unrecognised query type for the episode team query with {}
+                """.strip()
+                raise SearchException(err.format(query_type))
+
+        team_names = self.translate_titles_to_names(team_display_names)
+        qs = Episode.objects.all()
+        if given_query["queryType"] == self.ALL_OF:
+            for team_name in team_names:
+                qs = qs.filter(tagging__value=team_name)
+        else:
+            qs = qs.filter(tagging__value__in=team_names)
+
+        return qs
+
+
 class EpisodeQuery(SearchRule):
     display_name = "Episode"
     slug = "episode"
-    fields = (EpisodeStart, EpisodeEnd,)
+    fields = (EpisodeStart, EpisodeEnd, EpisodeTeam,)

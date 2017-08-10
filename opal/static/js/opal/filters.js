@@ -210,6 +210,25 @@ filters.filter('title', function(){
     };
 });
 
+filters.filter('displayArray', function(){
+	return function(rawArray, conjunction){
+		if(!_.isArray(rawArray)){
+			return rawArray;
+		}
+		var someArray = angular.copy(rawArray);
+		if(!conjunction){
+			conjunction = 'and';
+		}
+		if(someArray.length === 1){
+			return someArray[0]
+		}
+
+		var lastWord = someArray.pop();
+		var firstPart = someArray.join(", ")
+		return firstPart + " " + conjunction + " " + lastWord;
+	}
+});
+
 filters.filter('underscoreToSpaces', function(){
   return function(str){
 		str = ( str === undefined || str === null ) ? '' : str;
