@@ -147,7 +147,7 @@
                   	           placeholder="dd/mm/yyyy"
                                  set-focus-if="isDate(query.column, query.field) && query.queryType != null"
                                  />
-                            <span ng-show="isSelect(query.column, query.field)">
+                            <span ng-if="isSelect(query.column, query.field)">
                                 <select ng-model="query.query" class="form-control content-offset-25"
                                         tooltip-trigger="focus"
                                         ng-keypress="$event.keyCode == 13 && search()"
