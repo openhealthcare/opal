@@ -33,6 +33,10 @@ describe('filters', function() {
           "onions, tomatoes or lettuce"
         );
       });
+
+      it('should just return the result if the array is only a single element', function(){
+        expect(displayArray(['onions'])).toEqual("onions");
+      });
     });
 
     describe('microresultFilter', function(){
