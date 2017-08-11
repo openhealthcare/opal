@@ -140,13 +140,17 @@ class EpisodeTeam(SearchRuleField):
 
         team_names = self.translate_titles_to_names(team_display_names)
         qs = Episode.objects.all()
+        import ipdb; ipdb.set_trace()
         if given_query["queryType"] == self.ALL_OF:
             for team_name in team_names:
+                print '===' * 20
+                print team_name
+                print '===' * 20
                 qs = qs.filter(tagging__value=team_name)
         else:
             qs = qs.filter(tagging__value__in=team_names)
 
-        return qs
+        return qs.distinct()
 
 
 class EpisodeQuery(SearchRule):

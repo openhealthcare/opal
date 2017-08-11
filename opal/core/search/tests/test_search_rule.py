@@ -202,3 +202,55 @@ class EpisodeQueryTestCase(OpalTestCase):
         )
         with self.assertRaises(search_rule.SearchException):
             self.episode_query.query(query_end)
+
+
+class EpisodeTeamQueryTestCase(OpalTestCase):
+    def setUp(self, *args, **kwargs):
+        super(EpisodeTeamQueryTestCase, self).setUp(*args, **kwargs)
+        _, self.episode_1 = self.new_patient_and_episode_please()
+        _, self.episode_2 = self.new_patient_and_episode_please()
+        _, self.episode_3 = self.new_patient_and_episode_please()
+        self.episode_query = search_rule.EpisodeQuery()
+
+    def test_episode_team_wrong_query_param(self):
+        query_end = dict(
+            queryType="asdfsadf",
+            query="1/8/2010",
+            field="team"
+        )
+        with self.assertRaises(search_rule.SearchException):
+            self.episode_query.query(query_end)
+
+    def test_episode_team_all_of_one(self):
+        with patch.object(search_rule.Tagging, "build_field_schema") as bfs:
+            bfs.return_value = [
+                dict(
+                    name="plant",
+                    title="Plant"
+                ),
+                dict(
+                    name="tree",
+                    title="Tree"
+                ),
+            ]
+        self.episode_1.tagging_set.create(value="tree", archived=True)
+        self.episode_1.tagging_set.create(value="plant", archived=False)
+        self.episode_2.tagging_set.create(value="plant", archived=False)
+        query_end = dict(
+            queryType="All Of",
+            query=["Plant"],
+            field="team"
+        )
+        result = self.episode_query.query(query_end)
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0].id, self.episode_1.id)
+        self.assertEqual(result[1].id, self.episode_2.id)
+
+    def test_episode_team_all_of_many(self):
+        pass
+
+    def test_episide_team_any_of_one(self):
+        pass
+
+    def test_episide_team_any_of_many(self):
+        pass
