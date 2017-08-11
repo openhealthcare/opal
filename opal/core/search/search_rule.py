@@ -123,9 +123,19 @@ class EpisodeTeam(SearchRuleField):
 
     def translate_titles_to_names(self, titles):
         result = []
+        titles_not_found = set(titles)
         for schema in Tagging.build_field_schema():
             if schema["title"] in titles:
                 result.append(schema["name"])
+                titles_not_found.remove(schema["title"])
+
+        if titles_not_found:
+            raise SearchException(
+                "unable to find the tag titled {}".format(
+                    ",".join(titles_not_found)
+                )
+            )
+
         return result
 
     def query(self, given_query):
@@ -140,12 +150,8 @@ class EpisodeTeam(SearchRuleField):
 
         team_names = self.translate_titles_to_names(team_display_names)
         qs = Episode.objects.all()
-        import ipdb; ipdb.set_trace()
         if given_query["queryType"] == self.ALL_OF:
             for team_name in team_names:
-                print '===' * 20
-                print team_name
-                print '===' * 20
                 qs = qs.filter(tagging__value=team_name)
         else:
             qs = qs.filter(tagging__value__in=team_names)
