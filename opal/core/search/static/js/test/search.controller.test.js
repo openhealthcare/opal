@@ -184,12 +184,4 @@ describe('SearchCtrl', function (){
         });
 
     });
-
-    describe('jumpToEpisode()', function (){
-        it('Should call location.path()', function () {
-            $scope.jumpToEpisode({active_episode_id: 555});
-            expect(location.path).toHaveBeenCalledWith('/episode/555');
-        });
-    });
-
 });
