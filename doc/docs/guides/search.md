@@ -47,6 +47,10 @@ to the front end
 |  string | equals, contains  |
 |  date_time | before, after  |
 |  date | before, after  |
+|  boolean | true, false  |
+|  null_boolean | true, false  |
+|  many_to_many | a list of the lookup list for this field  |
+|  many_to_many_multi_select | a multi select field, defined by the enum field from the rule  |
 
 ie if you state the field is a string, the user will be provided with an
 equals/contains, which will be passed to the query as given_query["queryType"]
