@@ -782,16 +782,6 @@ describe('ExtractCtrl', function(){
 
     });
 
-    describe('jumpToEpisode()', function() {
-
-        it('should open the tab', function() {
-            spyOn($window, 'open');
-            $scope.jumpToEpisode({id: 2});
-            expect($window.open).toHaveBeenCalledWith('#/episode/2', '_blank');
-        });
-
-    });
-
     describe('Getting searchable columns', function(){
         it('should only get the columns that are advanced searchable', function(){
             expect($scope.columns).toEqual([
