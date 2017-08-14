@@ -1,7 +1,7 @@
 angular.module('opal.controllers').controller( 'ExtractCtrl',
   function(
     $scope, $http, $window, $modal, $timeout, PatientSummary, Paginator,
-    referencedata, ngProgressLite, profile, filters, schema
+    referencedata, ngProgressLite, profile, filters, schema, Query
   ){
     "use strict";
 
@@ -20,69 +20,66 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
     _.extend($scope, referencedata.toLookuplists());
 
     $scope.combinations = ["all", "any"];
-    $scope.anyOrAll = $scope.combinations[0];
+    $scope.query = new Query($scope.combinations[0]);
 
-    $scope.model = {
-        column     : null,
-        field      : null,
-        queryType  : null,
-        query      : null
-    };
+    // $scope.model = {
+    //     column     : null,
+    //     field      : null,
+    //     queryType  : null,
+    //     query      : null
+    // };
+    //
+    // $scope.criteria = [_.clone($scope.model)];
 
-    $scope.criteria = [_.clone($scope.model)];
+    // $scope.readableQuery = function(someQuery){
+    //   if(!someQuery){
+    //     return someQuery;
+    //   }
+    //   var result = someQuery;
+    //   if(someQuery === "Equals"){
+    //     result = "is";
+    //   }
+    //   if(someQuery === "Before" || someQuery === "After"){
+    //     result = "is " + result;
+    //   }
+    //
+    //   return result.toLowerCase();
+    // };
 
-    $scope.readableQueryType = function(someQuery){
-      if(!someQuery){
-        return someQuery;
-      }
-      var result = someQuery;
-      if(someQuery === "Equals"){
-        result = "is";
-      }
-      if(someQuery === "Before" || someQuery === "After"){
-        result = "is " + result;
-      }
-      if(someQuery === "All Of" || someQuery === "Any Of"){
-        result = "is"
-      }
-
-      return result.toLowerCase();
-    };
-
-    $scope.completeCriteria =  function(){
-      var combine;
-
-
-      // queries can look at either all of the options, or any of them
-      // ie 'and' conjunctions or 'or'
-      if($scope.anyOrAll === 'all'){
-        combine = "and";
-      }
-      else{
-        combine = 'or';
-      }
-
-      // remove incomplete criteria
-      var criteria = _.filter($scope.criteria, function(c){
-          // Teams are a special case - they are essentially boolean
-          if(c.column == 'tagging' && c.field){
-              return true;
-          }
-          // Ensure we have a query otherwise
-          if(c.column &&  c.field &&  c.query){
-              return true;
-          }
-          c.combine = combine;
-          // If not, we ignore this clause
-          return false;
-      });
-
-      _.each(criteria, function(c){
-        c.combine = combine;
-      });
-
-      return criteria;
-    };
+    // $scope.completeCriteria =  function(){
+    //   var combine;
+    //
+    //
+    //   // queries can look at either all of the options, or any of them
+    //   // ie 'and' conjunctions or 'or'
+    //   if($scope.anyOrAll === 'all'){
+    //     combine = "and";
+    //   }
+    //   else{
+    //     combine = 'or';
+    //   }
+    //
+    //   // remove incomplete criteria
+    //   var criteria = _.filter($scope.criteria, function(c){
+    //       // Teams are a special case - they are essentially boolean
+    //       if(c.column == 'tagging' && c.field){
+    //           return true;
+    //       }
+    //       // Ensure we have a query otherwise
+    //       if(c.column &&  c.field &&  c.query){
+    //           return true;
+    //       }
+    //       c.combine = combine;
+    //       // If not, we ignore this clause
+    //       return false;
+    //   });
+    //
+    //   _.each(criteria, function(c){
+    //     c.combine = combine;
+    //   });
+    //
+    //   return criteria;
+    // };
 
     $scope.searchableFields = function(columnName){
         var column = $scope.findColumn(columnName);
@@ -180,10 +177,6 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
         return $scope.isType(column, field, "many_to_many");
     };
 
-    $scope.isSelectMany = function(column, field){
-        return $scope.isType(column, field, "many_to_many_multi_select");
-    };
-
     $scope.isDate = function(column, field){
         return $scope.isType(column, field, "date");
     };
@@ -206,24 +199,22 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
     };
 
     $scope.removeFilter = function(index){
-        if($scope.selectedInfo === $scope.criteria[index]){
-          $scope.selectedInfo = undefined;
-        }
-        if($scope.criteria.length == 1){
-            $scope.removeCriteria();
-        }
-        else{
-            $scope.criteria.splice(index, 1);
-        }
+        $scope.query.removeFilter(index);
+        // if($scope.selectedInfo === $scope.criteria[index]){
+        //   $scope.selectedInfo = undefined;
+        // }
+        // if($scope.criteria.length == 1){
+        //     $scope.removeCriteria();
+        // }
+        // else{
+        //     $scope.criteria.splice(index, 1);
+        // }
     };
 
-    $scope.resetFilter = function(query, fieldsTypes){
+    $scope.resetFilter = function(queryRow, fieldsTypes){
       // when we change the column, reset the rest of the query
-      _.each(query, function(v, k){
-        if(!_.contains(fieldsTypes, k) && k in $scope.model){
-          query[k] = $scope.model[k];
-        }
-      });
+      $scope.query.resetFilter(queryRow, fieldsTypes);
+
       if(query.column && query.field){
         $scope.selectInfo(query);
       }
@@ -250,7 +241,7 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
       $scope.results = [];
     };
 
-    $scope.$watch('criteria', $scope.refresh, true);
+    $scope.$watch('query.criteria', $scope.refresh, true);
 
     $scope.search = function(pageNumber){
         if(!pageNumber){
@@ -353,5 +344,4 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
     $scope.jumpToEpisode = function(episode){
         window.open('#/episode/'+episode.id, '_blank');
     };
-
 });

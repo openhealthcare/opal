@@ -1,7 +1,6 @@
-(function(){
-  var app = angular.module('opal');
+var app = angular.module('opal');
 
-  app.config(
+app.config(
     ['$routeProvider',
      function($routeProvider) {
          $routeProvider.when('/list/',{
@@ -11,13 +10,13 @@
                  metadata: function(Metadata){ return Metadata.load(); }
              }
          }).when('/list/:slug', {
-  		 controller: 'PatientListCtrl',
-  		 resolve: {
-  			 episodedata: function(patientListLoader) { return patientListLoader(); },
+			 controller: 'PatientListCtrl',
+			 resolve: {
+				 episodedata: function(patientListLoader) { return patientListLoader(); },
                  metadata   : function(Metadata){ return Metadata.load(); },
                  profile    : function(UserProfile){ return UserProfile.load(); }
-  		 },
-  		 templateUrl: function(params){
+			 },
+			 templateUrl: function(params){
                  var target =  '/templates/patient_list.html';
                  target += '/' + params.slug;
                  return target;
@@ -31,17 +30,17 @@
                  templateUrl: '/templates/patient_record_access_log.html'
              })
              .when('/patient/:patient_id/:view?', {
-  		     controller: 'PatientDetailCtrl',
+			     controller: 'PatientDetailCtrl',
                  resolve: {
         				     patient: function(patientLoader) { return patientLoader(); },
                      profile: function(UserProfile){ return UserProfile.load(); },
                      metadata: function(Metadata){ return Metadata.load(); }
                  },
-  		     templateUrl: function(params){ return '/templates/patient_detail.html' }
+			     templateUrl: function(params){ return '/templates/patient_detail.html' }
              })
              .when('/search', {
-  		     controller: 'SearchCtrl',
-  		     templateUrl: '/search/templates/search.html',
+			     controller: 'SearchCtrl',
+			     templateUrl: '/search/templates/search.html',
              })
              .when('/extract', {
                  controller: 'ExtractCtrl',
@@ -53,13 +52,19 @@
                      referencedata: function(Referencedata){ return Referencedata.load(); }
                  }
              })
+             .when('/extract_filter', {
+                 controller: 'ExtractCtrl',
+                 templateUrl: '/search/templates/extract_slice.html',
+                 resolve: {
+                     profile: function(UserProfile){ return UserProfile.load(); },
+                     schema: function(extractSchemaLoader){ return extractSchemaLoader; },
+                     filters: function(filtersLoader){ return filtersLoader(); },
+                     referencedata: function(Referencedata){ return Referencedata.load(); }
+                 }
+             })
              .when('/account', {
                  controller: 'AccountCtrl',
                  templateUrl: '/accounts/templates/account_detail.html'
-  	     })
+		     })
              .otherwise({redirectTo: '/'});
-
-     }]
-  );
-
-})();
+     }]);
