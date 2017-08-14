@@ -1,4 +1,4 @@
-angular.module('opal.services').factory('Query', function(){
+angular.module('opal.services').factory('ExtractQuery', function(){
   var baseModel = {
     column     : null,
     field      : null,
@@ -6,13 +6,13 @@ angular.module('opal.services').factory('Query', function(){
     query      : null
   };
 
-  var QueryBuilder = function(anyOrAll){
+  var ExtractQuery = function(anyOrAll){
     this.criteria = [_.clone(baseModel)];
     this.anyOrAll = anyOrAll;
   };
 
-  QueryBuilder.prototype = {
-    readableQuery: function(someQuery){
+  ExtractQuery.prototype = {
+    readableQueryType: function(someQuery){
       if(!someQuery){
         return someQuery;
       }
@@ -22,6 +22,9 @@ angular.module('opal.services').factory('Query', function(){
       }
       if(someQuery === "Before" || someQuery === "After"){
         result = "is " + result;
+      }
+      if(someQuery === "All Of" || someQuery === "Any Of"){
+        result = "is"
       }
 
       return result.toLowerCase();
@@ -56,7 +59,7 @@ angular.module('opal.services').factory('Query', function(){
       return criteria
     },
     addFilter: function(){
-        this.criteria.push(_.clone(this.model));
+        this.criteria.push(_.clone(baseModel));
     },
     removeFilter: function(index){
         if(this.selectedInfo === this.criteria[index]){
@@ -71,25 +74,16 @@ angular.module('opal.services').factory('Query', function(){
     },
     resetFilter: function(queryRow, fieldsTypes){
       // when we change the column, reset the rest of the query
-      _.each(query, function(v, k){
-        if(!_.contains(fieldsTypes, k) && k in this.model){
-          query[k] = baseModel[k];
+      _.each(queryRow, function(v, k){
+        if(!_.contains(fieldsTypes, k) && k in baseModel){
+          queryRow[k] = baseModel[k];
         }
       });
-
-      // if(query.column && query.field){
-      //   this.selectInfo(query);
-      // }
-      // else{
-      //   if(this.selectedInfo && !this.selectedInfo.field){
-      //     this.selectInfo(undefined);
-      //   }
-      // }
     },
     removeCriteria: function(){
-        this.criteria = [_.clone(this.model)];
+        this.criteria = [_.clone(baseModel)];
     }
   }
 
-  return QueryBuilder;
+  return ExtractQuery;
 });

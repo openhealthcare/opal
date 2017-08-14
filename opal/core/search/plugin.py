@@ -17,7 +17,7 @@ class SearchPlugin(plugins.OpalPlugin):
             'js/search/services/filters_loader.js',
             'js/search/services/filter_resource.js',
             "js/search/services/paginator.js",
-            "js/search/services/query_builder.js",
+            "js/search/services/extract_query.js",
         ],
         'opal.controllers': [
             'js/search/controllers/search.js',

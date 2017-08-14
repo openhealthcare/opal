@@ -12,14 +12,14 @@
           <div class="col-md-12">
             <div class="row">
               <div class="col-md-6">
-                <span ng-hide="completeCriteria().length">
+                <span ng-hide="extractQuery.completeCriteria().length">
                   <h4>Please enter a query</h4>
                 </span>
-                <span ng-show="completeCriteria().length">
+                <span ng-show="extractQuery.completeCriteria().length">
                   <h4>Your Criteria</h4>
                   Find patients where the
-                  <span ng-repeat="query in completeCriteria()">
-                    <strong>[[ findColumn(query.column).display_name ]] [[ findField(query.column, query.field).title ]]</strong> [[ readableQueryType(query.queryType) ]]
+                  <span ng-repeat="query in extractQuery.completeCriteria()">
+                    <strong>[[ findColumn(query.column).display_name ]] [[ findField(query.column, query.field).title ]]</strong> [[ extractQuery.readableQueryType(query.queryType) ]]
                     <strong ng-show="query.queryType === 'Any Of'">[[ query.query|displayArray:"or" ]]</strong>
                     <strong ng-hide="query.queryType === 'Any Of'">[[ query.query|displayArray ]]</strong>
                     <span ng-hide="$last">[[ query.combine ]]</span>
@@ -27,7 +27,7 @@
                 </span>
               </div>
               <div class="col-md-6 text-right">
-                <button ng-disabled="searched && !completeCriteria().length" ng-click="search()"
+                <button ng-disabled="searched && !extractQuery.completeCriteria().length" ng-click="search()"
                         class="btn btn-primary btn-lg"
                         >
                   <span class="glyphicon glyphicon-search"></span>
@@ -42,7 +42,7 @@
                   <div class="form-inline">
                     <div class="form-group ">
                       Match patients for
-                      <select class="form-control" ng-model="anyOrAll">
+                      <select class="form-control" ng-model="extractQuery.anyOrAll">
                         <option ng-repeat="combination in combinations">[[ combination ]]</option>
                       </select>
                       of the following rules
@@ -52,7 +52,7 @@
               </div>
               <div class="row">
                 <div class="col-md-9">
-                  <span ng-repeat="query in criteria">
+                  <span ng-repeat="query in extractQuery.criteria">
                     <div class="row">
                       <div class="col-md-1">
                         <button type="button" class="btn btn-default square-button content-offset-25" ng-disabled="!query.column && !query.field"
@@ -190,7 +190,7 @@
                         <div ng-show="$last" class="row  content-offset">
                           <div class="col-md-12">
                             <button type="button" class="btn btn-primary"
-                                    ng-click="addFilter()"
+                                    ng-click="extractQuery.addFilter()"
                                     >
                               <span class="glyphicon glyphicon-plus"></span>
                             </button>
@@ -277,7 +277,7 @@
                 </button>
                 {% else %}
                 <form action="/search/extract/download" method="post" target="_blank">
-                  <input name="criteria" type="hidden" value="[[ JSON.stringify(criteria) ]]">
+                  <input name="criteria" type="hidden" value="[[ JSON.stringify(extractQuery.criteria) ]]">
                   {% csrf_token %}
                   <button type="submit"
                           class="btn btn-secondary btn-lg"
@@ -293,10 +293,10 @@
         </div>
       </div> <!-- Row -->
       <div ng-show="searched" class="row">
-        <div ng-show="completeCriteria().length && !results.length" class="col-sm-4 col-sm-push-4 lead text-center">
+        <div ng-show="extractQuery.completeCriteria().length && !results.length" class="col-sm-4 col-sm-push-4 lead text-center">
           Sorry, no results match your search.
         </div>
-        <div ng-show="!completeCriteria().length" class="col-sm-4 col-sm-push-4 lead text-center">
+        <div ng-show="!extractQuery.completeCriteria().length" class="col-sm-4 col-sm-push-4 lead text-center">
           Sorry, we need at least one search filter to run a search
         </div>
       </div>

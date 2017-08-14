@@ -331,49 +331,11 @@ describe('ExtractCtrl', function(){
       });
 
       it('should set up any or all default', function(){
-        expect($scope.anyOrAll).toBe("all");
+        expect($scope.extractQuery.anyOrAll).toBe("all");
       });
     });
 
-    describe('Getting Complete Criteria', function(){
-
-        it('should be true if we have a query', function(){
-            $scope.criteria[0].column = 'demographics';
-            $scope.criteria[0].field = 'surname';
-            $scope.criteria[0].queryType = 'contains';
-            $scope.criteria[0].query = 'jane';
-            expect($scope.completeCriteria().length).toBe(1);
-        });
-
-        it('should be false if we have no query', function(){
-            $scope.criteria[0].column = 'demographics';
-            $scope.criteria[0].field = 'name';
-            $scope.criteria[0].queryType = 'contains';
-            expect($scope.completeCriteria().length).toBe(0);
-        });
-
-        it('tagging should always be true', function(){
-            $scope.criteria[0].column = 'tagging';
-            $scope.criteria[0].field = 'Inpatients';
-            expect($scope.completeCriteria().length).toBe(1);
-        });
-
-        it("should update the critieria to or if we're of anyOrAll is 'any'", function(){
-          $scope.anyOrAll = "any";
-          $scope.completeCriteria();
-          expect($scope.criteria[0].combine).toBe('or');
-        });
-
-        it("should update the critieria to and if we're of anyOrAll is 'all'", function(){
-          $scope.anyOrAll = "all";
-          $scope.completeCriteria();
-          expect($scope.criteria[0].combine).toBe('and');
-        });
-    });
-
     describe('Getting searchable fields', function(){
-
-
         it('should exclude token and not advanced searchable fields', function(){
           var symptomsExpected = {
             title: 'Symptoms',
@@ -471,62 +433,6 @@ describe('ExtractCtrl', function(){
         });
     });
 
-    describe('addFilter()', function(){
-
-        it('should add a criteria', function(){
-            expect($scope.criteria.length).toBe(1);
-            $scope.addFilter();
-            expect($scope.criteria.length).toBe(2);
-        });
-
-    });
-
-    describe('readableQueryType()', function(){
-        it('should return null if its handed a null', function(){
-          // we hand the function null if we're looking at tagging
-          expect($scope.readableQueryType(null)).toBe(null);
-        });
-
-        it('should lower case the result', function(){
-          expect($scope.readableQueryType('Contains')).toBe('contains');
-        });
-
-        it('should add "is" as a prefix for time queries', function(){
-          expect($scope.readableQueryType('Before')).toBe('is before');
-          expect($scope.readableQueryType('After')).toBe('is after');
-        });
-
-        it('should change equals to "is"', function(){
-          expect($scope.readableQueryType('Equals')).toBe('is');
-        });
-
-        it('should change All Of to "is"', function(){
-          expect($scope.readableQueryType('All Of')).toBe('is');
-        });
-
-        it('should change Any Of to "is"', function(){
-          expect($scope.readableQueryType('Any Of')).toBe('is');
-        });
-    });
-
-    describe('removeFilter()', function(){
-
-        it('should always leave an empty filter', function(){
-            expect($scope.criteria.length).toBe(1);
-            $scope.removeFilter();
-            expect($scope.criteria.length).toBe(1);
-            expect($scope.criteria[0].column).toBe(null);
-        });
-
-        it('should remove a criteria', function(){
-            $scope.addFilter();
-            expect($scope.criteria.length).toBe(2);
-            $scope.removeFilter();
-            expect($scope.criteria.length).toBe(1);
-        });
-
-    });
-
     describe('resetFilter()', function(){
         var criteria;
         beforeEach(function(){
@@ -538,21 +444,12 @@ describe('ExtractCtrl', function(){
           };
         });
 
-        it('should reset the column', function(){
-
+        it('should call through to reset the column', function(){
+            spyOn($scope.extractQuery, 'resetFilter');
             $scope.resetFilter(criteria, ['column']);
-            expect(criteria.column).toEqual("demographics");
-            expect(criteria.field).toEqual(null);
-            expect(criteria.query).toEqual(null);
-            expect(criteria.queryType).toEqual(null);
-        });
-
-        it('should reset the field', function(){
-            $scope.resetFilter(criteria, ['column', 'field']);
-            expect(criteria.column).toEqual("demographics");
-            expect(criteria.field).toEqual("name");
-            expect(criteria.query).toEqual(null);
-            expect(criteria.queryType).toEqual(null);
+            expect($scope.extractQuery.resetFilter).toHaveBeenCalledWith(
+              criteria, ['column']
+            )
         });
 
         it('should empty the selectedInfo', function(){
@@ -562,13 +459,7 @@ describe('ExtractCtrl', function(){
         });
     });
 
-    describe('removeCriteria', function(){
-        it('should reset the criteria', function(){
-            $scope.criteria.push('hello world');
-            $scope.removeCriteria();
-            expect($scope.criteria.length).toBe(1);
-        });
-    });
+
 
     describe('getChoices', function(){
         it('should get a lookup list and suffix it', function(){
@@ -627,7 +518,7 @@ describe('ExtractCtrl', function(){
                 ]
             });
             $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
-            $scope.criteria[0] = {
+            $scope.extractQuery.criteria[0] = {
                 combine    : "and",
                 column     : "symptoms",
                 field      : "symptoms",
@@ -648,7 +539,7 @@ describe('ExtractCtrl', function(){
         it('should handle errors', function(){
             spyOn($window, 'alert');
             $httpBackend.expectPOST('/search/extract/').respond(500, {});
-            $scope.criteria[0] = {
+            $scope.extractQuery.criteria[0] = {
                 combine    : "and",
                 column     : "symptoms",
                 field      : "symptoms",
@@ -754,7 +645,7 @@ describe('ExtractCtrl', function(){
             var mock_default = jasmine.createSpy();
             var mock_event = {preventDefault: mock_default};
             $scope.jumpToFilter(mock_event, {criteria: []});
-            expect($scope.criteria).toEqual([]);
+            expect($scope.extractQuery.criteria).toEqual([]);
             expect(mock_default).toHaveBeenCalledWith();
         });
 
@@ -802,7 +693,7 @@ describe('ExtractCtrl', function(){
             spyOn($modal, 'open').and.returnValue({result: {then: function(f){f()}}});
             $scope.save();
             var resolves = $modal.open.calls.mostRecent().args[0].resolve;
-            expect(resolves.params()).toEqual({name: null, criteria: $scope.completeCriteria()});
+            expect(resolves.params()).toEqual({name: null, criteria: $scope.extractQuery.completeCriteria()});
         });
 
     });

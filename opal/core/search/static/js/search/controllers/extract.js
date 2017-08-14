@@ -1,7 +1,7 @@
 angular.module('opal.controllers').controller( 'ExtractCtrl',
   function(
     $scope, $http, $window, $modal, $timeout, PatientSummary, Paginator,
-    referencedata, ngProgressLite, profile, filters, schema
+    referencedata, ngProgressLite, profile, filters, schema, ExtractQuery
   ){
     "use strict";
 
@@ -20,69 +20,71 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
     _.extend($scope, referencedata.toLookuplists());
 
     $scope.combinations = ["all", "any"];
-    $scope.anyOrAll = $scope.combinations[0];
-
-    $scope.model = {
-        column     : null,
-        field      : null,
-        queryType  : null,
-        query      : null
-    };
-
-    $scope.criteria = [_.clone($scope.model)];
-
-    $scope.readableQueryType = function(someQuery){
-      if(!someQuery){
-        return someQuery;
-      }
-      var result = someQuery;
-      if(someQuery === "Equals"){
-        result = "is";
-      }
-      if(someQuery === "Before" || someQuery === "After"){
-        result = "is " + result;
-      }
-      if(someQuery === "All Of" || someQuery === "Any Of"){
-        result = "is"
-      }
-
-      return result.toLowerCase();
-    };
-
-    $scope.completeCriteria =  function(){
-      var combine;
+    // $scope.anyOrAll = $scope.combinations[0];
+    //
+    // $scope.model = {
+    //     column     : null,
+    //     field      : null,
+    //     queryType  : null,
+    //     query      : null
+    // };
 
 
-      // queries can look at either all of the options, or any of them
-      // ie 'and' conjunctions or 'or'
-      if($scope.anyOrAll === 'all'){
-        combine = "and";
-      }
-      else{
-        combine = 'or';
-      }
+    // $scope.criteria = [_.clone($scope.model)];
+    $scope.extractQuery = new ExtractQuery($scope.combinations[0]);
 
-      // remove incomplete criteria
-      var criteria = _.filter($scope.criteria, function(c){
-          // Teams are a special case - they are essentially boolean
-          if(c.column == 'tagging' && c.field){
-              return true;
-          }
-          // Ensure we have a query otherwise
-          if(c.column &&  c.field &&  c.query){
-              return true;
-          }
-          c.combine = combine;
-          // If not, we ignore this clause
-          return false;
-      });
+    // $scope.readableQueryType = function(someQuery){
+    //   if(!someQuery){
+    //     return someQuery;
+    //   }
+    //   var result = someQuery;
+    //   if(someQuery === "Equals"){
+    //     result = "is";
+    //   }
+    //   if(someQuery === "Before" || someQuery === "After"){
+    //     result = "is " + result;
+    //   }
+    //   if(someQuery === "All Of" || someQuery === "Any Of"){
+    //     result = "is"
+    //   }
+    //
+    //   return result.toLowerCase();
+    // };
 
-      _.each(criteria, function(c){
-        c.combine = combine;
-      });
-
-      return criteria;
-    };
+    // $scope.completeCriteria =  function(){
+    //   var combine;
+    //
+    //
+    //   // queries can look at either all of the options, or any of them
+    //   // ie 'and' conjunctions or 'or'
+    //   if($scope.anyOrAll === 'all'){
+    //     combine = "and";
+    //   }
+    //   else{
+    //     combine = 'or';
+    //   }
+    //
+    //   // remove incomplete criteria
+    //   var criteria = _.filter($scope.criteria, function(c){
+    //       // Teams are a special case - they are essentially boolean
+    //       if(c.column == 'tagging' && c.field){
+    //           return true;
+    //       }
+    //       // Ensure we have a query otherwise
+    //       if(c.column &&  c.field &&  c.query){
+    //           return true;
+    //       }
+    //       c.combine = combine;
+    //       // If not, we ignore this clause
+    //       return false;
+    //   });
+    //
+    //   _.each(criteria, function(c){
+    //     c.combine = combine;
+    //   });
+    //
+    //   return criteria;
+    // };
 
     $scope.searchableFields = function(columnName){
         var column = $scope.findColumn(columnName);
@@ -201,29 +203,30 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
         return $scope.isType(column, field, ["float", "big_integer", "integer", "positive_integer_field", "decimal"]);
     };
 
-    $scope.addFilter = function(){
-        $scope.criteria.push(_.clone($scope.model));
-    };
+    // $scope.addFilter = function(){
+    //     $scope.criteria.push(_.clone($scope.model));
+    // };
 
-    $scope.removeFilter = function(index){
-        if($scope.selectedInfo === $scope.criteria[index]){
-          $scope.selectedInfo = undefined;
-        }
-        if($scope.criteria.length == 1){
-            $scope.removeCriteria();
-        }
-        else{
-            $scope.criteria.splice(index, 1);
-        }
-    };
+    // $scope.removeFilter = function(index){
+    //     if($scope.selectedInfo === $scope.criteria[index]){
+    //       $scope.selectedInfo = undefined;
+    //     }
+    //     if($scope.criteria.length == 1){
+    //         $scope.removeCriteria();
+    //     }
+    //     else{
+    //         $scope.criteria.splice(index, 1);
+    //     }
+    // };
 
     $scope.resetFilter = function(query, fieldsTypes){
       // when we change the column, reset the rest of the query
-      _.each(query, function(v, k){
-        if(!_.contains(fieldsTypes, k) && k in $scope.model){
-          query[k] = $scope.model[k];
-        }
-      });
+      $scope.extractQuery.resetFilter(query, fieldsTypes);
+      // _.each(query, function(v, k){
+      //   if(!_.contains(fieldsTypes, k) && k in $scope.model){
+      //     query[k] = $scope.model[k];
+      //   }
+      // });
       if(query.column && query.field){
         $scope.selectInfo(query);
       }
@@ -234,9 +237,9 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
       }
     };
 
-    $scope.removeCriteria = function(){
-        $scope.criteria = [_.clone($scope.model)];
-    };
+    // $scope.removeCriteria = function(){
+    //     $scope.criteria = [_.clone($scope.model)];
+    // };
 
 
     //
@@ -250,14 +253,14 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
       $scope.results = [];
     };
 
-    $scope.$watch('criteria', $scope.refresh, true);
+    $scope.$watch('extractQuery.criteria', $scope.refresh, true);
 
     $scope.search = function(pageNumber){
         if(!pageNumber){
             pageNumber = 1;
         }
 
-        var queryParams = $scope.completeCriteria();
+        var queryParams = $scope.extractQuery.completeCriteria();
 
         if(queryParams.length){
             queryParams[0].page_number = pageNumber;
@@ -313,7 +316,7 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
         $scope.async_waiting = true;
         $http.post(
             '/search/extract/download',
-            {criteria: JSON.stringify($scope.criteria)}
+            {criteria: JSON.stringify($scope.extractQuery.criteria)}
         ).then(function(result){
             $scope.extract_id = result.data.extract_id;
             ping_until_success();
@@ -322,7 +325,7 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
 
     $scope.jumpToFilter = function($event, filter){
         $event.preventDefault();
-        $scope.criteria = filter.criteria;
+        $scope.extractQuery.criteria = filter.criteria;
     };
 
     $scope.editFilter = function($event, filter, $index){
@@ -343,7 +346,7 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
         templateUrl: '/search/templates/modals/save_filter_modal.html/',
         controller: 'SaveFilterCtrl',
         resolve: {
-          params: function() { return {name: null, criteria: $scope.completeCriteria()}; }
+          params: function() { return {name: null, criteria: $scope.extractQuery.completeCriteria()}; }
         }
       }).result.then(function(result){
         $scope.filters.push(result);
