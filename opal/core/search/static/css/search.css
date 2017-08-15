@@ -20,7 +20,37 @@
   margin-bottom: -5px;
 }
 
-
 .extract-search .square-button{
   width: 34px;
+}
+
+.extract-table-container {
+    height: 300px;
+    border: 1px solid #ddd;
+}
+
+.extract-table-container table {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+    width: 100%;
+}
+.extract-table-container table thead {
+    /* head takes the height it requires,
+    and it's not scaled when table is resized */
+    flex: 0 0 auto;
+    width: 100%;
+}
+.extract-table-container table tbody {
+    /* body takes all the remaining available space */
+    flex: 1 1 auto;
+    display: block;
+    overflow-y: scroll;
+}
+.extract-table-container table tbody tr {
+    width: 100%;
+}
+.extract-table-container table thead, table tbody tr {
+    display: table;
+    table-layout: fixed;
 }

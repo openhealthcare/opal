@@ -7,11 +7,23 @@ angular.module('opal.services').factory('ExtractQuery', function(){
   };
 
   var ExtractQuery = function(anyOrAll){
+    // the seatch query
     this.criteria = [_.clone(baseModel)];
+
+    // whether the user would like an 'or' conjunction or and 'and'
     this.anyOrAll = anyOrAll;
+
+    // the search fields
+    this.fields = [];
   };
 
   ExtractQuery.prototype = {
+    addField: function(someField){
+      // add a field to the fields
+      this.fields.push(someField);
+    },
+    removeField: function(someField){
+    },
     readableQueryType: function(someQuery){
       if(!someQuery){
         return someQuery;

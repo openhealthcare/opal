@@ -101,6 +101,7 @@ def simple_search_view(request):
     episodes = models.Episode.objects.filter(
         id__in=paginated_patients.values_list("id", flat=True)
     )
+    import ipdb; ipdb.set_trace()
     paginated["object_list"] = query.get_aggregate_patients_from_episodes(
         episodes
     )

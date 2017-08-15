@@ -1,0 +1,141 @@
+{% load forms %}
+<div class="row">
+  <div class="col-md-3">
+    <div style="position: relative; height: 300px; width: 100%">
+      {% include "partials/search/query_description.html" %}
+      <div style="position: absolute; bottom: 0">
+        <a class="btn btn-lg btn-primary">
+          {% icon "fa-save" %} Save this extract
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-5">
+    <div class="extract-table-container">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>
+              Record
+            </th>
+            <th>
+              Field
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="subrecord_field in flattenedSchema">
+            <td>[[ subrecord_field[0] ]]</td>
+            <td>[[ subrecord_field[1] ]]</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-md-3">
+    <div style="position: relative; height: 300px; width: 100%">
+      <div style="position: absolute; bottom: 0; text-align: center">
+        <a class="btn btn-lg btn-primary">
+          {% icon "fa-cloud-download" %} Get Data
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+<hr class="bold" />
+<div class="row">
+  <div class="col-md-12">
+    <h3>Add Fields</h3>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-3">
+    <div class="extract-table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>
+              <h3>Records</h3>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-class="{active: column.name === fieldsSubrecord.name }" ng-repeat="column in columns">
+            <td >
+              <a ng-click="selectFieldSubrecord(column)" class="pointer" style="display: block">[[ column.display_name ]]</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-md-3 col-md-push-1">
+    <div class="extract-table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>
+              <h3>[[ fieldsSubrecord.display_name ]]</h3>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-class="{active: field.name === fieldInfo.name }" ng-repeat="field in fieldsSubrecord.fields">
+            <td>
+              <a ng-click="setFieldInfo(field)" style="display: block" class="pointer">
+                [[ field.title ]]
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="col-md-4 col-md-push-2">
+    <div class="search-info" ng-show="fieldInfo">
+      <div class="search-info-title">
+        <strong>[[ findColumn(fieldInfo.column).display_name ]]</strong>
+      </div>
+       <div>
+         <strong>[[ findField(fieldInfo.column, fieldInfo.field).title ]]</strong>
+       </div>
+      <span ng-show="isBoolean(fieldInfo.column, fieldInfo.field)">
+        [True/False]
+      </span>
+      <span ng-show="isSelect(fieldInfo.column, fieldInfo.field)">
+
+        <div ng-show="fieldInfo.lookup_list && fieldInfo.lookup_list.length">
+          [a
+          <a href=""
+             class="orange-link"
+             ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: findField(fieldInfo.column, fieldInfo.field).lookup_list, lookuplist: fieldInfo.lookup_list })">
+            [[ findField(fieldInfo.column, fieldInfo.field).lookup_list | underscoreToSpaces ]]
+          </a>]
+        </div>
+      </span>
+      <span ng-show="isText(fieldInfo.column, fieldInfo.field)">
+        [Text]
+        <div ng-show="findField(fieldInfo.column, fieldInfo.field).lookup_list">
+          Normally coded as a
+          <a href=""
+             class="orange-link"
+             ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: findField(fieldInfo.column, fieldInfo.field).lookup_list, lookuplist: fieldInfo.lookup_list })">
+            [[ findField(fieldInfo.column, fieldInfo.field).lookup_list | underscoreToSpaces ]]</a>
+          but free text entries are possible.
+        </div>
+        <div ng-show="fieldInfo.enum && fieldInfo.enum.length">
+          one of <span ng-repeat="i in fieldInfo.enum">[[ i ]] </span>
+        </div>
+      </span>
+      <span ng-show="isDate(fieldInfo.column, fieldInfo.field)">
+        [Date]
+      </span>
+      <span ng-show="isDateTime(fieldInfo.column, fieldInfo.field)">
+        [Date & Time]
+      </span>
+      <div>
+        [[ findField(fieldInfo.column, fieldInfo.field).description ]]
+      </div>
+    </div>
+  </div>
+</div>

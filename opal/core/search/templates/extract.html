@@ -7,24 +7,33 @@
           Patient Search
         </h2>
       </div>
-      <div class="panel-body">
+      <div class="row content-offset-below-25">
+        <div class="col-md-12">
+          <div class="patient-list-group">
+            <ul class="nav nav-tabs nav-justified" role="tablist">
+              <li role="presentation" ng-class="{active: state==='query'}">
+                <a href="" ng-click="state='query'" aria-controls="home" role="tab" data-toggle="tab">
+                  Query
+                </a>
+              </li>
+              <li role="presentation" ng-class="{active: state==='slice'}">
+                <a href="" ng-click="state='slice'" aria-controls="home" role="tab" data-toggle="tab">
+                  Extract
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div ng-show="state === 'slice'" class="panel-body">
+        {% include 'partials/search/extract_fields.html' %}
+      </div>
+      <div ng-show="state === 'query'" class="panel-body">
         <div class="row">
           <div class="col-md-12">
             <div class="row">
               <div class="col-md-6">
-                <span ng-hide="extractQuery.completeCriteria().length">
-                  <h4>Please enter a query</h4>
-                </span>
-                <span ng-show="extractQuery.completeCriteria().length">
-                  <h4>Your Criteria</h4>
-                  Find patients where the
-                  <span ng-repeat="query in extractQuery.completeCriteria()">
-                    <strong>[[ findColumn(query.column).display_name ]] [[ findField(query.column, query.field).title ]]</strong> [[ extractQuery.readableQueryType(query.queryType) ]]
-                    <strong ng-show="query.queryType === 'Any Of'">[[ query.query|displayArray:"or" ]]</strong>
-                    <strong ng-hide="query.queryType === 'Any Of'">[[ query.query|displayArray ]]</strong>
-                    <span ng-hide="$last">[[ query.combine ]]</span>
-                  </span>
-                </span>
+                {% include "partials/search/query_description.html" %}
               </div>
               <div class="col-md-6 text-right">
                 <button ng-disabled="searched && !extractQuery.completeCriteria().length" ng-click="search()"
@@ -183,7 +192,6 @@
                                     ng-click="removeFilter($index)"
                                     >
                               <span class="glyphicon glyphicon-minus"></span>
-
                             </button>
                           </div>
                         </div>
@@ -227,7 +235,6 @@
                         </a>]
                       </div>
                     </span>
-                    <span ng-show
                     <span ng-show="isText(selectedInfo.column, selectedInfo.field)">
                       [Text]
                       <div ng-show="findField(selectedInfo.column, selectedInfo.field).lookup_list">
