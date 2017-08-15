@@ -6,7 +6,12 @@ angular.module('opal.services').factory('ExtractQuery', function(){
     query      : null
   };
 
-  var ExtractQuery = function(anyOrAll){
+  var requiredExtractFieldNames = [
+    ['demographics', 'date_of_birth'],
+    ['demographics', 'gender'],
+  ]
+
+  var ExtractQuery = function(schema, anyOrAll){
     // the seatch query
     this.criteria = [_.clone(baseModel)];
 
@@ -15,14 +20,33 @@ angular.module('opal.services').factory('ExtractQuery', function(){
 
     // the search fields
     this.fields = [];
+    this.requiredExtractFields = [];
+    // _.each(requiredExtractFieldNames, function(requiredExtractFieldName){
+    //   _.each(schema, function(column){
+    //     _.each(column.fields, function(field){
+    //       if(column.name === requiredExtractFieldName[0] && ){
+    //
+    //       }
+    //     });
+    //   });
+    // });
   };
 
   ExtractQuery.prototype = {
-    addField: function(someField){
-      // add a field to the fields
-      this.fields.push(someField);
+    addField: function(someSubrecord, someField){
+      // add a field to the extract fields
+      this.fields.push([someSubrecord, someField]);
     },
-    removeField: function(someField){
+    removeField: function(someSubrecord, someField){
+      // remove a field from the extract fields
+      this.fields = _.filter(this.fields, function(subrecordField){
+        if(subrecordField[0].name === someSubrecord.name){
+          if(subrecordField[1].name === someField.name){
+            return false;
+          }
+        }
+        return true;
+      });
     },
     readableQueryType: function(someQuery){
       if(!someQuery){

@@ -24,9 +24,9 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="subrecord_field in flattenedSchema">
-            <td>[[ subrecord_field[0] ]]</td>
-            <td>[[ subrecord_field[1] ]]</td>
+          <tr ng-repeat="subrecord_field in extractQuery.fields">
+            <td>[[ subrecord_field[0].display_name ]]</td>
+            <td>[[ subrecord_field[1].title ]] <a class="pull-right" ng-click="extractQuery.removeField(subrecord_field[0], subrecord_field[1])" href="">{% icon "fa-minus-circle" %}</a></td>
           </tr>
         </tbody>
       </table>
@@ -94,47 +94,54 @@
   <div class="col-md-4 col-md-push-2">
     <div class="search-info" ng-show="fieldInfo">
       <div class="search-info-title">
-        <strong>[[ findColumn(fieldInfo.column).display_name ]]</strong>
+        <strong>[[ findColumn(fieldsSubrecord.name).display_name ]]</strong>
       </div>
        <div>
-         <strong>[[ findField(fieldInfo.column, fieldInfo.field).title ]]</strong>
+         <strong>[[ fieldInfo.title ]]</strong>
        </div>
-      <span ng-show="isBoolean(fieldInfo.column, fieldInfo.field)">
+      <span ng-show="isBoolean(fieldsSubrecord.name, fieldInfo.name)">
         [True/False]
       </span>
-      <span ng-show="isSelect(fieldInfo.column, fieldInfo.field)">
+      <span ng-show="isSelect(fieldsSubrecord.name, fieldInfo.name)">
 
         <div ng-show="fieldInfo.lookup_list && fieldInfo.lookup_list.length">
           [a
           <a href=""
              class="orange-link"
-             ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: findField(fieldInfo.column, fieldInfo.field).lookup_list, lookuplist: fieldInfo.lookup_list })">
-            [[ findField(fieldInfo.column, fieldInfo.field).lookup_list | underscoreToSpaces ]]
+             ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: fieldInfo.lookup_list, lookuplist: fieldInfo.lookup_list })">
+            [[ findField(fieldsSubrecord.name, fieldInfo.name).lookup_list | underscoreToSpaces ]]
           </a>]
         </div>
       </span>
-      <span ng-show="isText(fieldInfo.column, fieldInfo.field)">
+      <span ng-show="isText(fieldsSubrecord.name, fieldInfo.name)">
         [Text]
-        <div ng-show="findField(fieldInfo.column, fieldInfo.field).lookup_list">
+        <div ng-show="fieldInfo.lookup_list">
           Normally coded as a
           <a href=""
              class="orange-link"
-             ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: findField(fieldInfo.column, fieldInfo.field).lookup_list, lookuplist: fieldInfo.lookup_list })">
-            [[ findField(fieldInfo.column, fieldInfo.field).lookup_list | underscoreToSpaces ]]</a>
+             ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: fieldInfo.lookup_list, lookuplist: getChoices(fieldsSubrecord.name, fieldInfo.name) })">
+            [[ fieldInfo.lookup_list | underscoreToSpaces ]]</a>
           but free text entries are possible.
         </div>
         <div ng-show="fieldInfo.enum && fieldInfo.enum.length">
           one of <span ng-repeat="i in fieldInfo.enum">[[ i ]] </span>
         </div>
       </span>
-      <span ng-show="isDate(fieldInfo.column, fieldInfo.field)">
+      <span ng-show="isDate(fieldsSubrecord.name, fieldInfo.name)">
         [Date]
       </span>
-      <span ng-show="isDateTime(fieldInfo.column, fieldInfo.field)">
+      <span ng-show="isDateTime(fieldsSubrecord.name, fieldInfo.name)">
         [Date & Time]
       </span>
       <div>
-        [[ findField(fieldInfo.column, fieldInfo.field).description ]]
+        <div style="position: relative; padding-bottom: 50px">
+          [[ fieldInfo.description ]]
+          <div style="position: absolute; bottom: 0; right: 0">
+            <a ng-click="extractQuery.addField(fieldsSubrecord, fieldInfo)" class="btn btn-primary">
+              {% icon "fa-plus-circle" %} Add To Extract
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </div>

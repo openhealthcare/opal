@@ -52,16 +52,6 @@ app.config(
                      referencedata: function(Referencedata){ return Referencedata.load(); }
                  }
              })
-             .when('/extract_filter', {
-                 controller: 'ExtractCtrl',
-                 templateUrl: '/search/templates/extract_slice.html',
-                 resolve: {
-                     profile: function(UserProfile){ return UserProfile.load(); },
-                     schema: function(extractSchemaLoader){ return extractSchemaLoader; },
-                     filters: function(filtersLoader){ return filtersLoader(); },
-                     referencedata: function(Referencedata){ return Referencedata.load(); }
-                 }
-             })
              .when('/account', {
                  controller: 'AccountCtrl',
                  templateUrl: '/accounts/templates/account_detail.html'
