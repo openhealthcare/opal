@@ -47,7 +47,7 @@ app.config(
                  templateUrl: '/search/templates/extract.html',
                  resolve: {
                      profile: function(UserProfile){ return UserProfile.load(); },
-                     schema: function(extractSchemaLoader){ return extractSchemaLoader; },
+                     extractSchema: function(extractSchemaLoader){ return extractSchemaLoader; },
                      filters: function(filtersLoader){ return filtersLoader(); },
                      referencedata: function(Referencedata){ return Referencedata.load(); }
                  }

@@ -64,8 +64,6 @@ class OpalApplication(object):
             "js/opal/services/episode_loader.js",
             "js/opal/services/patient_summary.js",
             "js/opal/services/record_loader.js",
-            "js/opal/services/extract_schema_loader.js",
-            "js/opal/services/schema.js",
             "js/opal/services/patient_loader.js",
             "js/opal/services/episode_resource.js",
             "js/opal/services/record_editor.js",

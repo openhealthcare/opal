@@ -3,7 +3,7 @@ describe('ExtractCtrl', function(){
 
 
     var $scope, $httpBackend, schema, $window, $timeout, $modal, Item;
-    var PatientSummary, $controller, Schema, controller, $rootScope;
+    var PatientSummary, $controller, ExtractSchema, controller, $rootScope;
 
 
     var optionsData = {
@@ -304,12 +304,12 @@ describe('ExtractCtrl', function(){
             $modal       = $injector.get('$modal');
             $timeout     = $injector.get('$timeout');
             $controller  = $injector.get('$controller');
-            Schema = $injector.get('Schema');
+            ExtractSchema = $injector.get('ExtractSchema');
             PatientSummary = $injector.get('PatientSummary');
             Item = $injector.get('Item');
         });
 
-        var schema = new Schema(columnsData);
+        var extractSchema = new ExtractSchema(columnsData);
 
         var controller = $controller('ExtractCtrl',  {
             $scope : $scope,
@@ -317,7 +317,7 @@ describe('ExtractCtrl', function(){
             profile: {},
             options: optionsData,
             filters: [],
-            schema : schema,
+            extractSchema : extractSchema,
             PatientSummary: PatientSummary,
             referencedata: referencedata
         });

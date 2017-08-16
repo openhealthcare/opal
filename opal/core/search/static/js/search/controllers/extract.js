@@ -9,8 +9,7 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
     $scope.limit = 10;
     $scope.JSON = window.JSON;
     $scope.filters = filters;
-    $scope.columns = schema.getAdvancedSearchColumns();
-
+    $scope.columns = extractSchema.getAdvancedSearchColumns();
     // used by the fields tab
     $scope.fieldsSubrecord = $scope.columns[0];
     $scope.selectFieldSubrecord = function(fieldsSubrecord){
