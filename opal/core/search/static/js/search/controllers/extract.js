@@ -13,8 +13,8 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
     // used by the download extract
     // a slice is a cut of data, a field that we want to download
     $scope.slices = $scope.columns[0];
-    $scope.selectFieldSubrecord = function(slice){
-      $scope.fieldsSubrecord = fieldsSubrecord;
+    $scope.selectSliceSubrecord = function(sliceSubrecord){
+      $scope.sliceSubrecord = sliceSubrecord;
     }
     $scope.setFieldInfo = function(field){
       $scope.fieldInfo = field

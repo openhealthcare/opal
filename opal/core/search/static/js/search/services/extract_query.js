@@ -24,15 +24,15 @@ angular.module('opal.services').factory('ExtractQuery', function(){
   };
 
   ExtractQuery.prototype = {
-    addSlice: function(someSubrecord, someField){
+    addSlice: function(someField){
       // add a field to the extract fields
-      this.slice.push([someSubrecord, someField]);
+      this.slice.push(someField);
     },
-    removeSlice: function(someSubrecord, someField){
+    removeSlice: function(someField){
       // remove a field from the extract fields
-      this.slice = _.filter(this.slice, function(subrecordField){
-        if(subrecordField[0].name === someSubrecord.name){
-          if(subrecordField[1].name === someField.name){
+      this.slice = _.filter(this.slice, function(slicedFields){
+        if(someField.subrecord.name === slicedFields.subrecord.name){
+          if(someField.name === slicedFields.name){
             return false;
           }
         }

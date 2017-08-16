@@ -24,9 +24,9 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="subrecord_field in extractQuery.slice">
-            <td>[[ subrecord_field[0].display_name ]]</td>
-            <td>[[ subrecord_field[1].title ]] <a class="pull-right" ng-click="extractQuery.removeSlice(subrecord_field[0], subrecord_field[1])" href="">{% icon "fa-minus-circle" %}</a></td>
+          <tr ng-repeat="field in extractQuery.slice">
+            <td>[[ field.subrecord.display_name ]]</td>
+            <td>[[ field.title ]] <a class="pull-right" ng-click="extractQuery.removeSlice(field)" href="">{% icon "fa-minus-circle" %}</a></td>
           </tr>
         </tbody>
       </table>
@@ -60,9 +60,9 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-class="{active: column.name === fieldsSubrecord.name }" ng-repeat="column in columns">
+          <tr ng-class="{active: column.name === fieldInfo.subrecord.name }" ng-repeat="column in columns">
             <td >
-              <a ng-click="selectFieldSubrecord(column)" class="pointer" style="display: block">[[ column.display_name ]]</a>
+              <a ng-click="selectSliceSubrecord(column)" class="pointer" style="display: block">[[ column.display_name ]]</a>
             </td>
           </tr>
         </tbody>
@@ -75,12 +75,12 @@
         <thead>
           <tr>
             <th>
-              <h3>[[ fieldsSubrecord.display_name ]]</h3>
+              <h3>[[ sliceSubrecord.display_name ]]</h3>
             </th>
           </tr>
         </thead>
         <tbody>
-          <tr ng-class="{active: field.name === fieldInfo.name }" ng-repeat="field in fieldsSubrecord.fields">
+          <tr ng-class="{active: field.name === fieldInfo.name }" ng-repeat="field in sliceSubrecord.fields">
             <td>
               <a ng-click="setFieldInfo(field)" style="display: block" class="pointer">
                 [[ field.title ]]
@@ -94,32 +94,32 @@
   <div class="col-md-4 col-md-push-2">
     <div class="search-info" ng-show="fieldInfo">
       <div class="search-info-title">
-        <strong>[[ findColumn(fieldsSubrecord.name).display_name ]]</strong>
+        <strong>[[ fieldInfo.subrecord.display_name ]]</strong>
       </div>
        <div>
          <strong>[[ fieldInfo.title ]]</strong>
        </div>
-      <span ng-show="isBoolean(fieldsSubrecord.name, fieldInfo.name)">
+      <span ng-show="isBoolean(fieldInfo.subrecord.name, fieldInfo.name)">
         [True/False]
       </span>
-      <span ng-show="isSelect(fieldsSubrecord.name, fieldInfo.name)">
+      <span ng-show="isSelect(fieldInfo.subrecord.name, fieldInfo.name)">
 
         <div ng-show="fieldInfo.lookup_list && fieldInfo.lookup_list.length">
           [a
           <a href=""
              class="orange-link"
              ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: fieldInfo.lookup_list, lookuplist: fieldInfo.lookup_list })">
-            [[ findField(fieldsSubrecord.name, fieldInfo.name).lookup_list | underscoreToSpaces ]]
+            [[ findField(fieldInfo.subrecord.name, fieldInfo.name).lookup_list | underscoreToSpaces ]]
           </a>]
         </div>
       </span>
-      <span ng-show="isText(fieldsSubrecord.name, fieldInfo.name)">
+      <span ng-show="isText(fieldInfo.subrecord.name, fieldInfo.name)">
         [Text]
         <div ng-show="fieldInfo.lookup_list">
           Normally coded as a
           <a href=""
              class="orange-link"
-             ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: fieldInfo.lookup_list, lookuplist: getChoices(fieldsSubrecord.name, fieldInfo.name) })">
+             ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: fieldInfo.lookup_list, lookuplist: getChoices(fieldInfo.subrecord.name, fieldInfo.name) })">
             [[ fieldInfo.lookup_list | underscoreToSpaces ]]</a>
           but free text entries are possible.
         </div>
@@ -127,17 +127,17 @@
           one of <span ng-repeat="i in fieldInfo.enum">[[ i ]] </span>
         </div>
       </span>
-      <span ng-show="isDate(fieldsSubrecord.name, fieldInfo.name)">
+      <span ng-show="isDate(fieldInfo.subrecord.name, fieldInfo.name)">
         [Date]
       </span>
-      <span ng-show="isDateTime(fieldsSubrecord.name, fieldInfo.name)">
+      <span ng-show="isDateTime(fieldInfo.subrecord.name, fieldInfo.name)">
         [Date & Time]
       </span>
       <div>
         <div style="position: relative; padding-bottom: 50px">
           [[ fieldInfo.description ]]
           <div style="position: absolute; bottom: 0; right: 0">
-            <a ng-click="extractQuery.addSlice(fieldsSubrecord, fieldInfo)" class="btn btn-primary">
+            <a ng-click="extractQuery.addSlice(fieldInfo)" class="btn btn-primary">
               {% icon "fa-plus-circle" %} Add To Extract
             </a>
           </div>
