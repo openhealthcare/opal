@@ -1,7 +1,7 @@
 angular.module('opal.controllers').controller( 'ExtractCtrl',
   function(
     $scope, $http, $window, $modal, $timeout, PatientSummary, Paginator,
-    referencedata, ngProgressLite, profile, filters, schema, ExtractQuery
+    referencedata, ngProgressLite, profile, filters, extractSchema, ExtractQuery
   ){
     "use strict";
 
