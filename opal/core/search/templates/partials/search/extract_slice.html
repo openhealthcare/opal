@@ -24,9 +24,9 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="subrecord_field in extractQuery.fields">
+          <tr ng-repeat="subrecord_field in extractQuery.slice">
             <td>[[ subrecord_field[0].display_name ]]</td>
-            <td>[[ subrecord_field[1].title ]] <a class="pull-right" ng-click="extractQuery.removeField(subrecord_field[0], subrecord_field[1])" href="">{% icon "fa-minus-circle" %}</a></td>
+            <td>[[ subrecord_field[1].title ]] <a class="pull-right" ng-click="extractQuery.removeSlice(subrecord_field[0], subrecord_field[1])" href="">{% icon "fa-minus-circle" %}</a></td>
           </tr>
         </tbody>
       </table>
@@ -137,7 +137,7 @@
         <div style="position: relative; padding-bottom: 50px">
           [[ fieldInfo.description ]]
           <div style="position: absolute; bottom: 0; right: 0">
-            <a ng-click="extractQuery.addField(fieldsSubrecord, fieldInfo)" class="btn btn-primary">
+            <a ng-click="extractQuery.addSlice(fieldsSubrecord, fieldInfo)" class="btn btn-primary">
               {% icon "fa-plus-circle" %} Add To Extract
             </a>
           </div>

@@ -19,7 +19,7 @@ angular.module('opal.services').factory('ExtractQuery', function(){
     this.anyOrAll = anyOrAll;
 
     // the search fields
-    this.fields = [];
+    this.slice = [];
     this.requiredExtractFields = [];
     // _.each(requiredExtractFieldNames, function(requiredExtractFieldName){
     //   _.each(schema, function(column){
@@ -33,13 +33,13 @@ angular.module('opal.services').factory('ExtractQuery', function(){
   };
 
   ExtractQuery.prototype = {
-    addField: function(someSubrecord, someField){
+    addSlice: function(someSubrecord, someField){
       // add a field to the extract fields
-      this.fields.push([someSubrecord, someField]);
+      this.slice.push([someSubrecord, someField]);
     },
-    removeField: function(someSubrecord, someField){
+    removeSlice: function(someSubrecord, someField){
       // remove a field from the extract fields
-      this.fields = _.filter(this.fields, function(subrecordField){
+      this.slice = _.filter(this.slice, function(subrecordField){
         if(subrecordField[0].name === someSubrecord.name){
           if(subrecordField[1].name === someField.name){
             return false;
