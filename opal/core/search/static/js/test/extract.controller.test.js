@@ -4,6 +4,7 @@ describe('ExtractCtrl', function(){
 
     var $scope, $httpBackend, schema, $window, $timeout, $modal, Item;
     var PatientSummary, $controller, ExtractSchema, controller, $rootScope;
+    var extractSchema;
 
 
     var optionsData = {
@@ -309,7 +310,7 @@ describe('ExtractCtrl', function(){
             Item = $injector.get('Item');
         });
 
-        var extractSchema = new ExtractSchema(columnsData);
+        extractSchema = new ExtractSchema(columnsData);
 
         var controller = $controller('ExtractCtrl',  {
             $scope : $scope,
@@ -336,17 +337,6 @@ describe('ExtractCtrl', function(){
     });
 
     describe('Getting searchable fields', function(){
-        it('should exclude token and not advanced searchable fields', function(){
-          var symptomsExpected = {
-            title: 'Symptoms',
-            lookup_list: 'symptoms',
-            name: 'symptoms',
-            type: 'many_to_many'
-          };
-
-          expect($scope.searchableFields('symptoms')).toEqual([symptomsExpected]);
-        });
-
         it('should special case Micro Test fields', function(){
             var expected = [
                 'Test',
@@ -458,8 +448,6 @@ describe('ExtractCtrl', function(){
             expect($scope.selectedInfo).toBe(undefined);
         });
     });
-
-
 
     describe('getChoices', function(){
         it('should get a lookup list and suffix it', function(){
@@ -674,10 +662,25 @@ describe('ExtractCtrl', function(){
     });
 
     describe('Getting searchable columns', function(){
-        it('should only get the columns that are advanced searchable', function(){
-            expect($scope.columns).toEqual([
-              columnsData[1], columnsData[2], columnsData[3], columnsData[4]
-            ]);
+        it('should set up columns on the scope', function(){
+            expect($scope.columns[0].fields[0].name).toEqual("consistency_token");
+        });
+
+        it('should call through to the sceham', function(){
+          spyOn(extractSchema, "getAdvancedSearchColumns").and.returnValue(
+            $scope.columns
+          );
+          $controller('ExtractCtrl',  {
+              $scope : $scope,
+              $modal: $modal,
+              profile: {},
+              options: optionsData,
+              filters: [],
+              extractSchema : extractSchema,
+              PatientSummary: PatientSummary,
+              referencedata: referencedata
+          });
+          expect(extractSchema.getAdvancedSearchColumns).toHaveBeenCalled();
         });
     });
 

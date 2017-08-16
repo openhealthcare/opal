@@ -59,26 +59,32 @@ describe('schema', function(){
     })
 
     it('should keep a publically accessible version of the columns', function(){
-        expect(schema.columns).toEqual(exampleSchemaData);
+        var result = angular.copy(schema.columns);
+        _.each(result, function(subrecord){
+          _.each(subrecord.fields, function(field){
+            delete field.subrecord;
+          });
+        });
+        expect(result).toEqual(exampleSchemaData);
     })
 
-    it('should throw an error if asked for a non-column', function() {
-        expect(function(){ schema.getColumn('notarealcolumn'); })
-            .toThrow(new Error('No such column with name: "notarealcolumn"'))
+    it('should set up a reference on fields to the subrecord', function(){
+        expect(schema.columns[0].fields[0].subrecord).toBe(schema.columns[0]);
     });
 
-    it('should recognise singletons', function(){
-        expect(schema.isSingleton("demographics")).toBeFalsy();
-        expect(schema.isSingleton("tagging")).toBeTruthy();
-        expect(schema.isSingleton("diagnosis")).not.toBeTruthy();
-    });
-
-    it('should recognise read only', function(){
-        expect(schema.isReadOnly("tagging")).toBeFalsy();
-        expect(schema.isReadOnly("demographics")).toBeTruthy();
+    it('should throw an error if the subrecord field has already been populated', function(){
+      var flawedSchemaData = angular.copy(exampleSchemaData);
+      flawedSchemaData[0].fields[0].subrecord = "bah";
+      expect(function(){ new ExtractSchema(flawedSchemaData);}).toThrow();
     });
 
     it('should filter advanced searchable columns', function () {
-        expect(schema.getAdvancedSearchColumns()).toEqual([exampleSchemaData[1]]);
+        var expected = [angular.copy(exampleSchemaData[1])];
+        _.each(expected, function(e){
+          _.each(e.fields, function(f){
+            f.subrecord = e;
+          });
+        });
+        expect(schema.getAdvancedSearchColumns()).toEqual(expected);
     });
 });

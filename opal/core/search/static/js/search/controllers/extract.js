@@ -10,9 +10,10 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
     $scope.JSON = window.JSON;
     $scope.filters = filters;
     $scope.columns = extractSchema.getAdvancedSearchColumns();
-    // used by the fields tab
-    $scope.fieldsSubrecord = $scope.columns[0];
-    $scope.selectFieldSubrecord = function(fieldsSubrecord){
+    // used by the download extract
+    // a slice is a cut of data, a field that we want to download
+    $scope.slices = $scope.columns[0];
+    $scope.selectFieldSubrecord = function(slice){
       $scope.fieldsSubrecord = fieldsSubrecord;
     }
     $scope.setFieldInfo = function(field){

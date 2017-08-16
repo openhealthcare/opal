@@ -11,7 +11,7 @@ angular.module('opal.services').factory('ExtractQuery', function(){
     ['demographics', 'gender'],
   ]
 
-  var ExtractQuery = function(schema, anyOrAll){
+  var ExtractQuery = function(anyOrAll){
     // the seatch query
     this.criteria = [_.clone(baseModel)];
 
@@ -21,15 +21,6 @@ angular.module('opal.services').factory('ExtractQuery', function(){
     // the search fields
     this.slice = [];
     this.requiredExtractFields = [];
-    // _.each(requiredExtractFieldNames, function(requiredExtractFieldName){
-    //   _.each(schema, function(column){
-    //     _.each(column.fields, function(field){
-    //       if(column.name === requiredExtractFieldName[0] && ){
-    //
-    //       }
-    //     });
-    //   });
-    // });
   };
 
   ExtractQuery.prototype = {
