@@ -73,7 +73,7 @@ describe('Routes', function() {
         it('should resolve injected things', function() {
             var resolve = $route.routes['/extract'].resolve;
             expect(resolve.referencedata(referencedata)).toEqual('some reference data');
-            expect(resolve.schema('Schema')).toEqual('Schema');
+            expect(resolve.extractSchema('Schema')).toEqual('Schema');
             expect(resolve.profile(userProfile)).toEqual("some user profile");
             expect(resolve.filters(function(){return {}})).toEqual({});
         });
