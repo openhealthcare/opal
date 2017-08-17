@@ -4,7 +4,7 @@
     <div class="extract-slice-side-bar">
       {% include "partials/search/query_description.html" %}
       <div class="extract-slice-side-button">
-        <a class="btn btn-lg btn-primary">
+        <a class="btn btn-lg btn-secondary">
           {% icon "fa-save" %} Save this extract
         </a>
       </div>
@@ -35,9 +35,39 @@
   <div class="col-md-3">
     <div class="extract-slice-side-bar">
       <div class="extract-slice-side-button">
-        <a class="btn btn-lg btn-primary">
-          {% icon "fa-cloud-download" %} Get Data
-        </a>
+        {% if user.profile.can_extract %}
+          {% if EXTRACT_ASYNC %}
+            <button class="btn btn-lg"
+                    ng-class="{'btn-primary': async_ready, 'btn-secondary': !async_ready}"
+                    analytics-category="search" analytics-event="extract-download"
+                    analytics-on
+                    ng-click="async_extract()">
+              <span ng-hide="async_waiting">
+                {% icon "fa-cloud-download" %} Get Data
+              </span>
+              <span ng-show="async_waiting && !async_ready">
+                <i class="fa fa-cog fa-spin" ></i>
+                Building your extract... this could take some time...
+              </span>
+              <span ng-show="async_ready">
+                <i class="glyphicon glyphicon-download"></i>
+                Ready - Download your extract
+              </span>
+            </button>
+          {% else %}
+            <form action="/search/extract/download" method="post" target="_blank">
+              <input name="criteria" type="hidden" value="[[ JSON.stringify(extractQuery.criteria) ]]">
+              <input name="data_slice" type="hidden" value="[[ JSON.stringify(extractQuery.getDataSlice()) ]]">
+              {% csrf_token %}
+              <button type="submit"
+                      class="btn btn-primary btn-lg"
+                      analytics-category="search" analytics-event="extract-download"
+                >
+                {% icon "fa-cloud-download" %} Get Data
+              </button>
+            </form>
+          {% endif %}
+        {% endif %}
       </div>
     </div>
   </div>

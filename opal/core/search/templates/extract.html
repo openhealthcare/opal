@@ -263,12 +263,14 @@
               </div>
             </form>
             <div class="row">
-              <div class="col-sm-4" ng-show="profile.can_extract">
+              <div class="col-sm-4">
                 {% if user.profile.can_extract %}
                   {% if EXTRACT_ASYNC %}
                     <button class="btn btn-lg"
                             ng-class="{'btn-primary': async_ready, 'btn-secondary': !async_ready}"
                             ng-show="searched && results.length > 0"
+                            analytics-category="search" analytics-event="extract-download"
+                            analytics-on
                             ng-click="async_extract()">
                       <span ng-hide="async_waiting">
                         <i class="glyphicon glyphicon-download"></i>
@@ -290,6 +292,7 @@
                       {% csrf_token %}
                       <button type="submit"
                               class="btn btn-secondary btn-lg"
+                              analytics-category="search" analytics-event="extract-download"
                               ng-show="searched && results.length > 0">
                         <span class="glyphicon glyphicon-download"></span>
                         Download these results
