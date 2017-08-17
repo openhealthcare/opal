@@ -101,7 +101,6 @@ def simple_search_view(request):
     episodes = models.Episode.objects.filter(
         id__in=paginated_patients.values_list("id", flat=True)
     )
-    import ipdb; ipdb.set_trace()
     paginated["object_list"] = query.get_aggregate_patients_from_episodes(
         episodes
     )
@@ -136,18 +135,31 @@ class DownloadSearchView(View):
     @ajax_login_required_view
     def post(self, *args, **kwargs):
         if getattr(settings, 'EXTRACT_ASYNC', None):
-            criteria = _get_request_data(self.request)['criteria']
+            request_data = _get_request_data(self.request)
+            criteria = request_data['criteria']
+            data_slice = request_data.get('slice')
+            extract_query = dict(
+                criteria=criteria,
+                data_slice=data_slice
+            )
             extract_id = async_extract(
                 self.request.user,
-                json.loads(criteria)
+                json.loads(extract_query)
             )
             return json_response({'extract_id': extract_id})
 
+        criteria = json.loads(self.request.POST['criteria'])
+        data_slice = json.loads(self.request.POST['data_slice'])
         query = queries.create_query(
-            self.request.user, json.loads(self.request.POST['criteria'])
+            self.request.user, criteria
         )
         episodes = query.get_episodes()
-        fname = zip_archive(episodes, query.description(), self.request.user)
+        fname = zip_archive(
+            episodes,
+            query.description(),
+            self.request.user,
+            fields=data_slice
+        )
         resp = HttpResponse(open(fname, 'rb').read())
         disp = 'attachment; filename="{0}extract{1}.zip"'.format(
             settings.OPAL_BRAND_NAME, datetime.datetime.now().isoformat())

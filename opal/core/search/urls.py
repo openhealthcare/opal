@@ -25,6 +25,9 @@ urlpatterns = patterns(
     url(r'^search/extract/$',
         views.ExtractSearchView.as_view(), name="extract_search"),
 
+    url(r'^search/extract/download$',
+        views.DownloadSearchView.as_view(), name="extract_download"),
+
     url(r'^search/filters/?$',
         views.FilterView.as_view(), name="extract_filters"),
 

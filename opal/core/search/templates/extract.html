@@ -264,35 +264,38 @@
             </form>
             <div class="row">
               <div class="col-sm-4" ng-show="profile.can_extract">
-                {% if EXTRACT_ASYNC %}
-                <button class="btn btn-lg"
-                        ng-class="{'btn-primary': async_ready, 'btn-secondary': !async_ready}"
-                        ng-show="searched && results.length > 0"
-                        ng-click="async_extract()">
-                  <span ng-hide="async_waiting">
-                    <i class="glyphicon glyphicon-download"></i>
-                    Download this data
-                  </span>
-                  <span ng-show="async_waiting && !async_ready">
-                    <i class="fa fa-cog fa-spin" ></i>
-                    Building your extract... this could take some time...
-                  </span>
-                  <span ng-show="async_ready">
-                    <i class="glyphicon glyphicon-download"></i>
-                    Ready - Download your extract
-                  </span>
-                </button>
-                {% else %}
-                <form action="/search/extract/download" method="post" target="_blank">
-                  <input name="criteria" type="hidden" value="[[ JSON.stringify(extractQuery.criteria) ]]">
-                  {% csrf_token %}
-                  <button type="submit"
-                          class="btn btn-secondary btn-lg"
-                          ng-show="searched && results.length > 0">
-                    <span class="glyphicon glyphicon-download"></span>
-                    Download these results
-                  </button>
-                </form>
+                {% if user.profile.can_extract %}
+                  {% if EXTRACT_ASYNC %}
+                    <button class="btn btn-lg"
+                            ng-class="{'btn-primary': async_ready, 'btn-secondary': !async_ready}"
+                            ng-show="searched && results.length > 0"
+                            ng-click="async_extract()">
+                      <span ng-hide="async_waiting">
+                        <i class="glyphicon glyphicon-download"></i>
+                        Download this data
+                      </span>
+                      <span ng-show="async_waiting && !async_ready">
+                        <i class="fa fa-cog fa-spin" ></i>
+                        Building your extract... this could take some time...
+                      </span>
+                      <span ng-show="async_ready">
+                        <i class="glyphicon glyphicon-download"></i>
+                        Ready - Download your extract
+                      </span>
+                    </button>
+                  {% else %}
+                    <form action="/search/extract/download" method="post" target="_blank">
+                      <input name="criteria" type="hidden" value="[[ JSON.stringify(extractQuery.criteria) ]]">
+                      <input name="data_slice" type="hidden" value="[[ JSON.stringify(extractQuery.getDataSlice()) ]]">
+                      {% csrf_token %}
+                      <button type="submit"
+                              class="btn btn-secondary btn-lg"
+                              ng-show="searched && results.length > 0">
+                        <span class="glyphicon glyphicon-download"></span>
+                        Download these results
+                      </button>
+                    </form>
+                  {% endif %}
                 {% endif %}
               </div>
             </div>

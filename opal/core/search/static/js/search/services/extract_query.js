@@ -39,6 +39,18 @@ angular.module('opal.services').factory('ExtractQuery', function(){
         return true;
       });
     },
+    getDataSlice: function(){
+      var result = {}
+      _.each(this.slice, function(field){
+        if(!(field.subrecord.name in result)){
+          result[field.subrecord.name] = [];
+        }
+        result[field.subrecord.name].push(
+          field.name
+        );
+      });
+      return result;
+    },
     readableQueryType: function(someQuery){
       if(!someQuery){
         return someQuery;

@@ -10,15 +10,15 @@ import os
 import tempfile
 import zipfile
 
+from django.utils.functional import cached_property
+from django.db.models import Count, Max
 from django.template import Context, loader
 from django.utils.encoding import force_bytes
 from six import text_type
 
 from collections import defaultdict
 from opal.models import Episode
-from opal.core.subrecords import (
-    episode_subrecords, subrecords
-)
+from opal.core import subrecords
 
 
 def _encode_to_utf8(some_var):
@@ -207,7 +207,7 @@ def field_to_dict(subrecord, field_name):
 
 def get_data_dictionary():
     schema = {}
-    for subrecord in subrecords():
+    for subrecord in subrecords.subrecords():
         field_names = subrecord._get_fieldnames_to_extract()
         record_schema = [field_to_dict(subrecord, i) for i in field_names]
         schema[subrecord.get_display_name()] = record_schema
@@ -259,6 +259,154 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
         )
 
 
+class NestedEpisodeCsvRenderer(EpisodeCsvRenderer):
+    def get_nested_row(self, episode_id):
+        return super(NestedEpisodeCsvRenderer, self).get_row(
+            Episode.objects.get(id=episode_id)
+        )
+
+
+class NestedEpisodeSubrecordCsvRenderer(EpisodeSubrecordCsvRenderer):
+    @cached_property
+    def repetitions(self):
+        if self.model._is_singleton:
+            return 1
+
+        if not self.queryset:
+            return 0
+
+        annotated = self.queryset.values('episode_id').annotate(
+            Count('episode_id')
+        )
+        return annotated.aggregate(Max('episode_id__count'))[
+            "episode_id__count__max"
+        ]
+
+    @cached_property
+    def row_length(self):
+        return len(self.get_headers())
+
+    def get_headers(self):
+        single_headers = super(
+            NestedEpisodeSubrecordCsvRenderer, self
+        ).get_headers()
+        result = []
+
+        if len(self.repetitions) == 1:
+            return single_headers
+
+        for rep in range(self.repetitions):
+            result.extend("{0} {1}".format(i, rep) for i in single_headers)
+        return result
+
+    def get_nested_row(self, episode_id):
+        nested_subrecords = self.queryset.filter(episode_id=episode_id)
+        result = []
+        for nested_subrecord in nested_subrecords:
+            result.extend(self.get_row(nested_subrecord))
+
+        while len(result) < self.row_length:
+            result.append(None)
+        return result
+
+
+class NestedPatientSubrecordCsvRenderer(PatientSubrecordCsvRenderer):
+    @cached_property
+    def repetitions(self):
+        if self.model._is_singleton:
+            return 1
+
+        if not self.queryset:
+            return 0
+
+        annotated = self.queryset.values('patient_id').annotate(
+            Count('patient_id')
+        )
+        return annotated.aggregate(Max('patient_id__count'))[
+            "patient_id__count__max"
+        ]
+
+    @cached_property
+    def row_length(self):
+        return len(self.get_headers())
+
+    def get_headers(self):
+        single_headers = super(
+            NestedPatientSubrecordCsvRenderer, self
+        ).get_headers()
+        result = []
+        if self.repetitions == 1:
+            return single_headers
+        for rep in range(self.repetitions):
+            result.extend("{0} {1}".format(i, rep) for i in single_headers)
+        return result
+
+    def get_nested_row(self, episode_id):
+        nested_subrecords = self.queryset.filter(
+            patient__episode=Episode.objects.get(id=episode_id)
+        )
+        result = []
+        for nested_subrecord in nested_subrecords:
+            result.extend(self.get_row(nested_subrecord, episode_id))
+
+        while len(result) < self.row_length:
+            result.append(None)
+        return result
+
+
+def generate_nested_csv_files(root_dir, episodes, user, field_dict):
+    """ Generate a a single csv file and the data dictionary
+
+        The field_dict should be {api_name: field_name}
+
+        The csv file will only contain the files mentioned in the field_dict
+    """
+    file_names = []
+    data_dict_file_name = "data_dictionary.html"
+    full_file_name = os.path.join(root_dir, data_dict_file_name)
+    write_data_dictionary(full_file_name)
+    file_names.append((full_file_name, data_dict_file_name,))
+    csv_file_name = "extract.csv"
+    full_file_name = os.path.join(root_dir, csv_file_name)
+    file_names.append((full_file_name, csv_file_name,))
+    episode_api_name = "episode"
+    renderers = []
+
+    if episode_api_name in field_dict:
+        renderers.append(NestedEpisodeCsvRenderer(
+            Episode, episodes, user, fields=field_dict[episode_api_name]
+        ))
+
+    for model_api_name, model_fields in field_dict.items():
+        if model_api_name == episode_api_name:
+            continue
+
+        subrecord = subrecords.get_subrecord_from_api_name(model_api_name)
+        if subrecord in subrecords.episode_subrecords():
+            renderers.append(NestedEpisodeSubrecordCsvRenderer(
+                subrecord, episodes, user, fields=model_fields
+            ))
+        else:
+            renderers.append(NestedPatientSubrecordCsvRenderer(
+                subrecord, episodes, user, fields=model_fields
+            ))
+
+    with open(full_file_name, 'w') as csv_file:
+        writer = csv.writer(csv_file)
+        headers = []
+        for renderer in renderers:
+            headers.extend(renderer.get_headers())
+        writer.writerow(headers)
+
+        for episode in episodes:
+            row = []
+            for renderer in renderers:
+                row.extend(renderer.get_nested_row(episode.id))
+
+            writer.writerow(row)
+    return file_names
+
+
 def generate_csv_files(root_dir, episodes, user):
     """ Generate the files and return a tuple of absolute_file_name, file_name
     """
@@ -275,12 +423,12 @@ def generate_csv_files(root_dir, episodes, user):
     renderer.write_to_file(full_file_name)
     file_names.append((full_file_name, file_name,))
 
-    for subrecord in subrecords():
+    for subrecord in subrecords.subrecords():
         if getattr(subrecord, '_exclude_from_extract', False):
             continue
         file_name = '{0}.csv'.format(subrecord.get_api_name())
         full_file_name = os.path.join(root_dir, file_name)
-        if subrecord in episode_subrecords():
+        if subrecord in subrecords.episode_subrecords():
             renderer = EpisodeSubrecordCsvRenderer(
                 subrecord, episodes, user
             )
@@ -295,7 +443,7 @@ def generate_csv_files(root_dir, episodes, user):
     return file_names
 
 
-def zip_archive(episodes, description, user):
+def zip_archive(episodes, description, user, fields=None):
     """
     Given an iterable of EPISODES, the DESCRIPTION of this set of episodes,
     and the USER for which we are extracting, create a zip archive suitable
@@ -309,7 +457,13 @@ def zip_archive(episodes, description, user):
         root_dir = os.path.join(target_dir, zipfolder)
         os.mkdir(root_dir)
         zip_relative_file_path = functools.partial(os.path.join, zipfolder)
-        file_names = generate_csv_files(root_dir, episodes, user)
+        if fields:
+            file_names = generate_nested_csv_files(
+                root_dir, episodes, user, fields
+            )
+        else:
+            file_names = generate_csv_files(root_dir, episodes, user)
+
         for full_file_name, file_name in file_names:
             z.write(
                 full_file_name,
@@ -319,9 +473,9 @@ def zip_archive(episodes, description, user):
     return target
 
 
-def async_extract(user, criteria):
+def async_extract(user, extract_query):
     """
     Given the user and the criteria, let's run an async extract.
     """
     from opal.core.search import tasks
-    return tasks.extract.delay(user, criteria).id
+    return tasks.extract.delay(user, extract_query).id

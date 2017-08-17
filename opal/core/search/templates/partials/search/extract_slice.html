@@ -1,9 +1,9 @@
 {% load forms %}
 <div class="row">
   <div class="col-md-3">
-    <div style="position: relative; height: 300px; width: 100%">
+    <div class="extract-slice-side-bar">
       {% include "partials/search/query_description.html" %}
-      <div style="position: absolute; bottom: 0">
+      <div class="extract-slice-side-button">
         <a class="btn btn-lg btn-primary">
           {% icon "fa-save" %} Save this extract
         </a>
@@ -33,8 +33,8 @@
     </div>
   </div>
   <div class="col-md-3">
-    <div style="position: relative; height: 300px; width: 100%">
-      <div style="position: absolute; bottom: 0; text-align: center">
+    <div class="extract-slice-side-bar">
+      <div class="extract-slice-side-button">
         <a class="btn btn-lg btn-primary">
           {% icon "fa-cloud-download" %} Get Data
         </a>
@@ -62,7 +62,7 @@
         <tbody>
           <tr ng-class="{active: column.name === fieldInfo.subrecord.name }" ng-repeat="column in columns">
             <td >
-              <a ng-click="selectSliceSubrecord(column)" class="pointer" style="display: block">[[ column.display_name ]]</a>
+              <a ng-click="selectSliceSubrecord(column)" class="pointer">[[ column.display_name ]]</a>
             </td>
           </tr>
         </tbody>
@@ -82,7 +82,7 @@
         <tbody>
           <tr ng-class="{active: field.name === fieldInfo.name }" ng-repeat="field in sliceSubrecord.fields">
             <td>
-              <a ng-click="setFieldInfo(field)" style="display: block" class="pointer">
+              <a ng-click="setFieldInfo(field)" class="pointer">
                 [[ field.title ]]
               </a>
             </td>
@@ -134,9 +134,9 @@
         [Date & Time]
       </span>
       <div>
-        <div style="position: relative; padding-bottom: 50px">
+        <div class="extract-slice-field-description">
           [[ fieldInfo.description ]]
-          <div style="position: absolute; bottom: 0; right: 0">
+          <div class="extract-slice-field-add">
             <a ng-click="extractQuery.addSlice(fieldInfo)" class="btn btn-primary">
               {% icon "fa-plus-circle" %} Add To Extract
             </a>

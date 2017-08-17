@@ -245,7 +245,10 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
         $scope.async_waiting = true;
         $http.post(
             '/search/extract/download',
-            {criteria: JSON.stringify($scope.extractQuery.criteria)}
+            {
+              criteria: JSON.stringify($scope.extractQuery.criteria),
+              data_slice: JSON.stringify($scope.extractQuery.getDataSlice())
+            }
         ).then(function(result){
             $scope.extract_id = result.data.extract_id;
             ping_until_success();

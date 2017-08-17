@@ -24,6 +24,8 @@
   width: 34px;
 }
 
+
+/* the data slicing */
 .extract-table-container {
     height: 300px;
     border: 1px solid #ddd;
@@ -51,7 +53,31 @@
 .extract-table-container table tbody tr {
     width: 100%;
 }
+
+.extract-table-container table tbody tr a {
+    display: block;
+}
+
 .extract-table-container table thead, .extract-table-container table tbody tr {
     display: table;
     table-layout: fixed;
+}
+.extract-slice-side-bar{
+    position: relative;
+    height: 300px;
+    width: 100%
+}
+.extract-slice-side-button{
+    position: absolute;
+    bottom: 0;
+}
+.extract-slice-field-description{
+    position: relative;
+    padding-bottom: 50px;
+}
+
+.extract-slice-field-add{
+    position: absolute;
+    bottom: 0;
+    right: 0
 }
