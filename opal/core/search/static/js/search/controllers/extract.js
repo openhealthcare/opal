@@ -12,7 +12,6 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
     $scope.columns = extractSchema.getAdvancedSearchColumns();
     // used by the download extract
     // a slice is a cut of data, a field that we want to download
-    $scope.slices = $scope.columns[0];
     $scope.selectSliceSubrecord = function(sliceSubrecord){
       $scope.sliceSubrecord = sliceSubrecord;
     }

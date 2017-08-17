@@ -334,6 +334,10 @@ describe('ExtractCtrl', function(){
       it('should set up any or all default', function(){
         expect($scope.extractQuery.anyOrAll).toBe("all");
       });
+
+      it('should default the page state to query', function(){
+        expect($scope.state).toBe('query');
+      });
     });
 
     describe('Getting searchable fields', function(){
@@ -685,7 +689,6 @@ describe('ExtractCtrl', function(){
     });
 
     describe('save()', function() {
-
         it('should save() the data', function() {
             spyOn($modal, 'open').and.returnValue({result: {then: function(f){f()}}});
             $scope.save();
@@ -698,7 +701,19 @@ describe('ExtractCtrl', function(){
             var resolves = $modal.open.calls.mostRecent().args[0].resolve;
             expect(resolves.params()).toEqual({name: null, criteria: $scope.extractQuery.completeCriteria()});
         });
-
     });
 
+    describe('selectSliceSubrecord', function(){
+      it('should select the slice subrecord', function(){
+        $scope.selectSliceSubrecord("something");
+        expect($scope.sliceSubrecord).toBe("something");
+      });
+    });
+
+    describe('setFieldInfo', function(){
+      it('should set the field info', function(){
+        $scope.setFieldInfo("something");
+        expect($scope.fieldInfo).toBe("something");
+      });
+    });
 });
