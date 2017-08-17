@@ -327,14 +327,6 @@ describe('ExtractCtrl', function(){
     });
 
     describe('set up', function(){
-      it('should set up any or all options', function(){
-        expect($scope.combinations).toEqual(["all", "any"]);
-      });
-
-      it('should set up any or all default', function(){
-        expect($scope.extractQuery.anyOrAll).toBe("all");
-      });
-
       it('should default the page state to query', function(){
         expect($scope.state).toBe('query');
       });

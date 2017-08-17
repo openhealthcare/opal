@@ -1,19 +1,58 @@
 describe('ExtractQuery', function(){
   "use strict";
 
-  var ExtractQuery, extractQuery;
+  var ExtractQuery, extractQuery, schema;
+
   beforeEach(function(){
     module('opal.services');
     inject(function($injector){
       ExtractQuery = $injector.get('ExtractQuery');
     });
-    extractQuery = new ExtractQuery('all')
+    schema = jasmine.createSpyObj(["findField"]);
+    var createFakeSubrecord = function(y, x){
+
+      return {
+        name: x,
+        subrecord: {name: y}
+      }
+    };
+    schema.findField.and.callFake(createFakeSubrecord);
+    extractQuery = new ExtractQuery(schema);
+  });
+
+  describe('setUp', function(){
+    it('should set up any or all options', function(){
+      expect(extractQuery.combinations).toEqual(["all", "any"]);
+    });
+
+    it('should set up any or all default', function(){
+      expect(extractQuery.anyOrAll).toBe("all");
+    });
+
+    it('should setUp required extract fields', function(){
+      expect(extractQuery.requiredExtractFields).toEqual([
+        {name: "date_of_birth", subrecord: {name: "demographics"}},
+        {name: "sex", subrecord: {name: "demographics"}},
+      ]);
+    });
   });
 
   describe('addSlice()', function(){
     it('should add a field to the slice', function(){
       extractQuery.addSlice("someField");
-      expect(extractQuery.slices).toEqual(["someField"]);
+      expect(_.last(extractQuery.slices)).toEqual("someField");
+    });
+  });
+
+  describe('sliceIsRequired()', function(){
+    it('should be true if the slice is required', function(){
+      var required = extractQuery.requiredExtractFields[0];
+      expect(extractQuery.sliceIsRequired(required)).toBe(true);
+    });
+
+    it('should be false if the slice is not required', function(){
+      var required = extractQuery.requiredExtractFields[0];
+      expect(extractQuery.sliceIsRequired(required)).toBe(true);
     });
   });
 
@@ -21,7 +60,9 @@ describe('ExtractQuery', function(){
     it('should add a field to the slice', function(){
       extractQuery.slices.push("someField");
       extractQuery.removeSlice("someField");
-      expect(extractQuery.slices.length).toBe(0);
+      expect(extractQuery.slices.length).toBe(
+        extractQuery.requiredExtractFields.length
+      );
     });
   });
 

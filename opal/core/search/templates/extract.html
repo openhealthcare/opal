@@ -49,10 +49,10 @@
               <div class="row">
                 <div class="col-md-9 content-offset-10">
                   <div class="form-inline">
-                    <div class="form-group ">
+                    <div class="form-group">
                       Match patients for
                       <select class="form-control" ng-model="extractQuery.anyOrAll">
-                        <option ng-repeat="combination in combinations">[[ combination ]]</option>
+                        <option ng-repeat="combination in extractQuery.combinations">[[ combination ]]</option>
                       </select>
                       of the following rules
                     </div>

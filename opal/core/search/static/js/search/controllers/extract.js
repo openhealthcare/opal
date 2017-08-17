@@ -31,8 +31,7 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
 
     _.extend($scope, referencedata.toLookuplists());
 
-    $scope.combinations = ["all", "any"];
-    $scope.extractQuery = new ExtractQuery($scope.combinations[0]);
+    $scope.extractQuery = new ExtractQuery(extractSchema);
 
     $scope.searchableFields = function(columnName){
         var column = $scope.findColumn(columnName);

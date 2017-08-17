@@ -6,21 +6,27 @@ angular.module('opal.services').factory('ExtractQuery', function(){
     query      : null
   };
 
-  var requiredExtractFieldNames = [
-    ['demographics', 'date_of_birth'],
-    ['demographics', 'gender'],
-  ]
-
-  var ExtractQuery = function(anyOrAll){
+  var ExtractQuery = function(schema){
     // the seatch query
     this.criteria = [_.clone(baseModel)];
+    this.combinations = ["all", "any"];
+    this.requiredExtractFieldNames = [
+      ['demographics', 'date_of_birth'],
+      ['demographics', 'sex'],
+    ]
+    this.requiredExtractFields = [];
+    _.each(this.requiredExtractFieldNames, function(subrecordAndFieldName){
+      this.requiredExtractFields.push(
+        schema.findField(subrecordAndFieldName[0], subrecordAndFieldName[1])
+      );
+    }, this);
 
     // whether the user would like an 'or' conjunction or and 'and'
-    this.anyOrAll = anyOrAll;
+    this.anyOrAll = this.combinations[0];
 
     // the columns in the download
-    this.slices = [];
-    this.requiredExtractFields = [];
+    // shallow copies ftw
+    this.slices = _.clone(this.requiredExtractFields);
   };
 
   ExtractQuery.prototype = {
@@ -33,6 +39,9 @@ angular.module('opal.services').factory('ExtractQuery', function(){
       this.slices = _.filter(this.slices, function(slicedField){
         return someField !== slicedField;
       });
+    },
+    sliceIsRequired: function(someField){
+      return _.indexOf(this.requiredExtractFields, someField) !== -1;
     },
     getDataSlices: function(){
       var result = {}

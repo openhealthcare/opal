@@ -15,9 +15,25 @@ angular.module('opal.services').factory('ExtractSchema', function() {
 
   ExtractSchema.prototype = {
     getAdvancedSearchColumns: function(){
-        return _.filter(this.columns, function(c){
-            return c.advanced_searchable
-        })
+      return _.filter(this.columns, function(c){
+        return c.advanced_searchable
+      });
+    },
+    findColumn: function(columnName){
+      if(!columnName){
+        return;
+      }
+      return _.findWhere(this.columns, {name: columnName});
+    },
+    findField: function(columnName, fieldName){
+      /*
+      * returns the field object from the schema when given column.name and field.name
+      */
+      var column = this.findColumn(columnName);
+      if(!column){return;}
+      return _.findWhere(
+          column.fields, {name: fieldName}
+      );
     }
   }
 
