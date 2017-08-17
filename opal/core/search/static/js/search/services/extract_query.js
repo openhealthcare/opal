@@ -18,30 +18,25 @@ angular.module('opal.services').factory('ExtractQuery', function(){
     // whether the user would like an 'or' conjunction or and 'and'
     this.anyOrAll = anyOrAll;
 
-    // the search fields
-    this.slice = [];
+    // the columns in the download
+    this.slices = [];
     this.requiredExtractFields = [];
   };
 
   ExtractQuery.prototype = {
     addSlice: function(someField){
       // add a field to the extract fields
-      this.slice.push(someField);
+      this.slices.push(someField);
     },
     removeSlice: function(someField){
       // remove a field from the extract fields
-      this.slice = _.filter(this.slice, function(slicedFields){
-        if(someField.subrecord.name === slicedFields.subrecord.name){
-          if(someField.name === slicedFields.name){
-            return false;
-          }
-        }
-        return true;
+      this.slices = _.filter(this.slices, function(slicedField){
+        return someField !== slicedField;
       });
     },
-    getDataSlice: function(){
+    getDataSlices: function(){
       var result = {}
-      _.each(this.slice, function(field){
+      _.each(this.slices, function(field){
         if(!(field.subrecord.name in result)){
           result[field.subrecord.name] = [];
         }

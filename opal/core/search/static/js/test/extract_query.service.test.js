@@ -10,6 +10,47 @@ describe('ExtractQuery', function(){
     extractQuery = new ExtractQuery('all')
   });
 
+  describe('addSlice()', function(){
+    it('should add a field to the slice', function(){
+      extractQuery.addSlice("someField");
+      expect(extractQuery.slices).toEqual(["someField"]);
+    });
+  });
+
+  describe('removeSlice()', function(){
+    it('should add a field to the slice', function(){
+      extractQuery.slices.push("someField");
+      extractQuery.removeSlice("someField");
+      expect(extractQuery.slices.length).toBe(0);
+    });
+  });
+
+  describe('getDataSlices()', function(){
+    it('should handle the case where there are many slices', function(){
+      extractQuery.slices = [
+        {
+          subrecord: {name: "episode"},
+          name: "start"
+        },
+        {
+          subrecord: {name: "episode"},
+          name: "end"
+        },
+        {
+          subrecord: {name: "diagnosis"},
+          name: "condition"
+        }
+      ];
+      var result = extractQuery.getDataSlices();
+      var expected = {
+        episode: ["start", "end"],
+        diagnosis: ["condition"]
+      };
+
+      expect(result).toEqual(expected);
+    });
+  });
+
   describe('Getting Complete Criteria', function(){
     it('should be true if we have a query', function(){
         extractQuery.criteria[0].column = 'demographics';

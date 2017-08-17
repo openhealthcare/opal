@@ -30,12 +30,6 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
         "created", "updated", "created_by_id", "updated_by_id"
     ];
 
-    $scope.flattenedSchema = [];
-    _.each($scope.columns, function(subrecord){
-      _.each(subrecord.fields, function(field){
-        $scope.flattenedSchema.push([subrecord.display_name, field.title]);
-      });
-    });
     _.extend($scope, referencedata.toLookuplists());
 
     $scope.combinations = ["all", "any"];
@@ -247,7 +241,7 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
             '/search/extract/download',
             {
               criteria: JSON.stringify($scope.extractQuery.criteria),
-              data_slice: JSON.stringify($scope.extractQuery.getDataSlice())
+              data_slice: JSON.stringify($scope.extractQuery.getDataSlices())
             }
         ).then(function(result){
             $scope.extract_id = result.data.extract_id;

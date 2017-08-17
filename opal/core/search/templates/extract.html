@@ -288,7 +288,7 @@
                   {% else %}
                     <form action="/search/extract/download" method="post" target="_blank">
                       <input name="criteria" type="hidden" value="[[ JSON.stringify(extractQuery.criteria) ]]">
-                      <input name="data_slice" type="hidden" value="[[ JSON.stringify(extractQuery.getDataSlice()) ]]">
+                      <input name="data_slice" type="hidden" value="[[ JSON.stringify(extractQuery.getDataSlices()) ]]">
                       {% csrf_token %}
                       <button type="submit"
                               class="btn btn-secondary btn-lg"

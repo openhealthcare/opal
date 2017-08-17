@@ -24,7 +24,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="field in extractQuery.slice">
+          <tr ng-repeat="field in extractQuery.slices">
             <td>[[ field.subrecord.display_name ]]</td>
             <td>[[ field.title ]] <a class="pull-right" ng-click="extractQuery.removeSlice(field)" href="">{% icon "fa-minus-circle" %}</a></td>
           </tr>
@@ -57,7 +57,7 @@
           {% else %}
             <form action="/search/extract/download" method="post" target="_blank">
               <input name="criteria" type="hidden" value="[[ JSON.stringify(extractQuery.criteria) ]]">
-              <input name="data_slice" type="hidden" value="[[ JSON.stringify(extractQuery.getDataSlice()) ]]">
+              <input name="data_slice" type="hidden" value="[[ JSON.stringify(extractQuery.getDataSlices()) ]]">
               {% csrf_token %}
               <button type="submit"
                       class="btn btn-primary btn-lg"
