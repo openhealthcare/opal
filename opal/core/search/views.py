@@ -139,17 +139,17 @@ class DownloadSearchView(View):
             criteria = request_data['criteria']
             data_slice = request_data.get('slice')
             extract_query = dict(
-                criteria=criteria,
-                data_slice=data_slice
+                criteria=json.loads(criteria),
+                data_slice=json.loads(data_slice)
             )
             extract_id = async_extract(
                 self.request.user,
-                json.loads(extract_query)
+                extract_query
             )
             return json_response({'extract_id': extract_id})
 
         criteria = json.loads(self.request.POST['criteria'])
-        data_slice = json.loads(self.request.POST['data_slice'])
+        data_slice = json.loads(self.request.POST['slice'])
         query = queries.create_query(
             self.request.user, criteria
         )

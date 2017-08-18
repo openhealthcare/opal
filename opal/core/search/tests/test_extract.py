@@ -51,7 +51,8 @@ class TestViewPOSTTestCase(OpalTestCase):
                     "queryType": "Contains",
                     "query": "a",
                     "lookup_list": [],
-                }])
+                }]),
+            "slice": json.dumps({})
         }
 
         self.assertTrue(
@@ -74,7 +75,8 @@ class TestViewPOSTTestCase(OpalTestCase):
                     "queryType": "Contains",
                     "query": "a",
                     "lookup_list": [],
-                }])
+                }]),
+                "slice": json.dumps({})
         }
 
         self.assertTrue(
@@ -104,7 +106,7 @@ class PatientEpisodeTestCase(OpalTestCase):
 
 
 class GenerateFilesTestCase(OpalTestCase):
-    @patch('opal.core.search.extract.subrecords')
+    @patch('opal.core.search.extract.subrecords.subrecords')
     @patch('opal.core.search.extract.CsvRenderer.write_to_file')
     @patch('opal.core.search.extract.write_data_dictionary')
     def test_generate_csv_files(
@@ -132,7 +134,7 @@ class GenerateFilesTestCase(OpalTestCase):
             write_to_file.call_args[0], ('somewhere/house_owner.csv',)
         )
 
-    @patch('opal.core.search.extract.subrecords')
+    @patch('opal.core.search.extract.subrecords.subrecords')
     @patch('opal.core.search.extract.EpisodeSubrecordCsvRenderer')
     @patch('opal.core.search.extract.CsvRenderer.write_to_file')
     @patch('opal.core.search.extract.write_data_dictionary')
@@ -146,10 +148,9 @@ class GenerateFilesTestCase(OpalTestCase):
         self.assertEqual(csv_renderer.call_count, 0)
 
 
+@patch('opal.core.search.extract.subrecords.subrecords')
+@patch('opal.core.search.extract.zipfile')
 class ZipArchiveTestCase(OpalTestCase):
-
-    @patch('opal.core.search.extract.subrecords')
-    @patch('opal.core.search.extract.zipfile')
     def test_subrecords(self, zipfile, subrecords):
         patient, episode = self.new_patient_and_episode_please()
         subrecords.return_value = [HatWearer, HouseOwner]
@@ -163,8 +164,6 @@ class ZipArchiveTestCase(OpalTestCase):
         self.assertTrue(call_args[2][0][0].endswith("hat_wearer.csv"))
         self.assertTrue(call_args[3][0][0].endswith("house_owner.csv"))
 
-    @patch('opal.core.search.extract.subrecords')
-    @patch('opal.core.search.extract.zipfile')
     def test_subrecords_if_none(self, zipfile, subrecords):
         # if there are no subrecords we don't expect them to write to the file
         patient, episode = self.new_patient_and_episode_please()
@@ -177,8 +176,6 @@ class ZipArchiveTestCase(OpalTestCase):
         self.assertTrue(call_args[1][0][0].endswith("episodes.csv"))
         self.assertTrue(call_args[2][0][0].endswith("house_owner.csv"))
 
-    @patch('opal.core.search.extract.subrecords')
-    @patch('opal.core.search.extract.zipfile')
     def test_subrecords_if_empty_query(self, zipfile, subrecords):
         # if there are no subrecords we don't expect them to write to the file
         subrecords.return_value = [HatWearer, HouseOwner]
