@@ -219,7 +219,7 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
                 $timeout(ping_until_success, 1000);
                 return;
             }
-            $http.get('/search/extract/result/'+ $scope.extract_id).then(function(result){
+            $http.get('/search/extract/status/'+ $scope.extract_id).then(function(result){
                 if(result.data.state == 'FAILURE'){
                     $window.alert('FAILURE');
                     $scope.async_waiting = false;

@@ -206,7 +206,7 @@ class FilterDetailView(View):
         return json_response('')
 
 
-class ExtractResultView(View):
+class ExtractStatusView(View):
     @ajax_login_required_view
     def get(self, *args, **kwargs):
         """

@@ -37,56 +37,6 @@ class TestEncodeToUTF8(OpalTestCase):
         )
 
 
-class TestViewPOSTTestCase(OpalTestCase):
-
-    def test_check_view(self):
-        # a vanilla check to make sure that the view returns a zip file
-        url = reverse("extract_download")
-        post_data = {
-            "criteria":
-                json.dumps([{
-                    "combine": "and",
-                    "column": "demographics",
-                    "field": "Surname",
-                    "queryType": "Contains",
-                    "query": "a",
-                    "lookup_list": [],
-                }]),
-            "slice": json.dumps({})
-        }
-
-        self.assertTrue(
-            self.client.login(username=self.user.username, password=self.PASSWORD)
-        )
-
-        response = self.client.post(url, post_data)
-
-        self.assertEqual(response.status_code, 200)
-
-    @override_settings(EXTRACT_ASYNC=True)
-    def test_check_view_with_sync_extract(self):
-        url = reverse("extract_download")
-        post_data = {
-            "criteria":
-                   json.dumps([{
-                    "combine": "and",
-                    "column": "demographics",
-                    "field": "Surname",
-                    "queryType": "Contains",
-                    "query": "a",
-                    "lookup_list": [],
-                }]),
-                "slice": json.dumps({})
-        }
-
-        self.assertTrue(
-            self.client.login(username=self.user.username, password=self.PASSWORD)
-        )
-
-        response = self.client.post(url, json.dumps(post_data), content_type='appliaction/json')
-        self.assertEqual(response.status_code, 200)
-
-
 class PatientEpisodeTestCase(OpalTestCase):
     def setUp(self):
         self.patient, self.episode = self.new_patient_and_episode_please()

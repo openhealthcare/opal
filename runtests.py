@@ -67,6 +67,7 @@ test_settings_config = dict(
             'django.template.loaders.app_directories.Loader',
         )
     ),),
+    CELERY_RESULT_BACKEND='djcelery.backends.database:DatabaseBackend',
     CELERY_ALWAYS_EAGER=True,
     LOGGING = {
         'version': 1,

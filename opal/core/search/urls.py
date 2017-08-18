@@ -34,8 +34,8 @@ urlpatterns = patterns(
     url(r'^search/filters/(?P<pk>\d+)/?$',
         views.FilterDetailView.as_view(), name="extract_filters"),
 
-    url(r'^search/extract/result/(?P<task_id>[a-zA-Z0-9-]*)',
-        views.ExtractResultView.as_view(), name='extract_result'),
+    url(r'^search/extract/status/(?P<task_id>[a-zA-Z0-9-]*)',
+        views.ExtractStatusView.as_view(), name='extract_status'),
 
     url(r'^search/extract/download/(?P<task_id>[a-zA-Z0-9-]*)',
         views.ExtractFileView.as_view(), name='extract_file'),
