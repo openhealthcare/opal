@@ -2,16 +2,14 @@
 Unittests for opal.core.search.extract
 """
 import datetime
-import json
 
-from django.core.urlresolvers import reverse
-from django.test import override_settings
-from mock import mock_open, patch, Mock, MagicMock
+from mock import mock_open, patch
 
 from opal.core.test import OpalTestCase
 from opal import models
 from opal.tests.models import (
-    Colour, PatientColour, Demographics, HatWearer, HouseOwner
+    Colour, PatientColour, Demographics, HatWearer, HouseOwner, EpisodeName,
+    FamousLastWords
 )
 from opal.core.search import extract
 from six import u
@@ -59,14 +57,14 @@ class GenerateFilesTestCase(OpalTestCase):
     @patch('opal.core.search.extract.subrecords.subrecords')
     @patch('opal.core.search.extract.CsvRenderer.write_to_file')
     @patch('opal.core.search.extract.write_data_dictionary')
-    def test_generate_csv_files(
+    def test_generate_multi_csv_extract(
         self, write_data_dictionary, write_to_file, subrecords
     ):
         patient, episode = self.new_patient_and_episode_please()
         subrecords.return_value = [HatWearer, HouseOwner]
         HatWearer.objects.create(name="Indiana", episode=episode)
         HouseOwner.objects.create(patient=patient)
-        results = extract.generate_csv_files(
+        results = extract.generate_multi_csv_extract(
             "somewhere", models.Episode.objects.all(), self.user
         )
         expected = [
@@ -92,7 +90,7 @@ class GenerateFilesTestCase(OpalTestCase):
         self, write_data_dictionary, write_to_file, csv_renderer, subrecords
     ):
         subrecords.return_value = [Colour]
-        extract.generate_csv_files(
+        extract.generate_multi_csv_extract(
             "somewhere", models.Episode.objects.all(), self.user
         )
         self.assertEqual(csv_renderer.call_count, 0)
@@ -134,6 +132,31 @@ class ZipArchiveTestCase(OpalTestCase):
         self.assertEqual(2, len(call_args))
         self.assertTrue(call_args[0][0][0].endswith("data_dictionary.html"))
         self.assertTrue(call_args[1][0][0].endswith("episodes.csv"))
+
+    @patch('opal.core.search.extract.generate_nested_csv_files')
+    @patch('opal.core.search.extract.generate_multi_csv_extract')
+    def test_nested_extract_called(self, multi, nested, zipfile, subrecords):
+        extract.zip_archive(
+            models.Episode.objects.all(),
+            'this',
+            self.user,
+            fields="some fields"
+        )
+        self.assertTrue(nested.call_count, 1)
+        self.assertFalse(multi.called)
+
+    @patch('opal.core.search.extract.generate_nested_csv_files')
+    @patch('opal.core.search.extract.generate_multi_csv_extract')
+    def test_nested_extract_not_called(
+        self, multi, nested, zipfile, subrecords
+    ):
+        extract.zip_archive(
+            models.Episode.objects.all(),
+            'this',
+            self.user,
+        )
+        self.assertTrue(multi.call_count, 1)
+        self.assertFalse(nested.called)
 
 
 class AsyncExtractTestCase(OpalTestCase):
@@ -235,7 +258,6 @@ class TestBasicCsvRenderer(PatientEpisodeTestCase):
                 renderer.get_row(colour),
                 ["Blue"]
             )
-
 
     def test_get_row_uses_fields_arg(self):
         _, episode = self.new_patient_and_episode_please()
@@ -386,6 +408,264 @@ class TestPatientSubrecordCsvRenderer(PatientEpisodeTestCase):
         ], rendered)
 
 
+class NestedEpisodeCsvRendererTestCase(PatientEpisodeTestCase):
+    def setUp(self):
+        super(NestedEpisodeCsvRendererTestCase, self).setUp()
+        self.episode.start = datetime.date.today()
+        self.renderer = extract.NestedEpisodeCsvRenderer(
+            models.Episode,
+            models.Episode.objects.all(),
+            self.user,
+            fields=["start"]
+        )
+
+    def test_get_headers(self):
+        self.assertEqual(
+            self.renderer.get_headers(),
+            ["Start"]
+        )
+
+    def test_nested_get_row(self):
+        self.assertEqual(
+            self.renderer.get_nested_row(self.episode),
+            [datetime.date.today()]
+        )
+
+
+class NestedEpisodeSubrecordCsvRendererTestCase(PatientEpisodeTestCase):
+    def setUp(self):
+        super(NestedEpisodeSubrecordCsvRendererTestCase, self).setUp()
+        self.patient_2, self.episode_2 = self.new_patient_and_episode_please()
+        self.colour_1 = Colour.objects.create(
+            name="blue", episode=self.episode
+        )
+        self.colour_2 = Colour.objects.create(
+            name="green", episode=self.episode
+        )
+        self.renderer = extract.NestedEpisodeSubrecordCsvRenderer(
+            Colour,
+            models.Episode.objects.all(),
+            self.user,
+            fields=["name"]
+        )
+
+    def test_repetitions(self):
+        self.assertEqual(self.renderer.repetitions, 2)
+
+    def test_row_length(self):
+        self.assertEqual(self.renderer.row_length, 2)
+
+    def test_get_headers(self):
+        self.assertEqual(
+            self.renderer.get_headers(),
+            ["Colour 1 Name", "Colour 2 Name"]
+        )
+
+    def test_get_nested_row_populated(self):
+        result = self.renderer.get_nested_row(self.episode)
+        self.assertEqual(
+            result, ['blue', 'green']
+        )
+
+    def test_get_nested_row_not_populated(self):
+        result = self.renderer.get_nested_row(
+            self.episode_2
+        )
+        self.assertEqual(
+            result, ['', '']
+        )
+
+
+class NestedEpisodeSubrecordCsvRendererWhenNoneTestCase(
+    PatientEpisodeTestCase
+):
+    def setUp(self):
+        super(NestedEpisodeSubrecordCsvRendererWhenNoneTestCase, self).setUp()
+        self.colour = Colour.objects.create(
+            name="blue", episode=self.episode
+        )
+        self.renderer = extract.NestedEpisodeSubrecordCsvRenderer(
+            Colour,
+            models.Episode.objects.all(),
+            self.user,
+            fields=["name"]
+        )
+
+    def test_repetitions(self):
+        self.assertEqual(self.renderer.repetitions, 1)
+
+    def test_row_length(self):
+        self.assertEqual(self.renderer.row_length, 1)
+
+    def test_get_headers(self):
+        self.assertEqual(
+            self.renderer.get_headers(),
+            ['Colour Name']
+        )
+
+    def test_get_nested_row_populated(self):
+        result = self.renderer.get_nested_row(self.episode)
+        self.assertEqual(
+            result, ['blue']
+        )
+
+
+class NestedEpisodeSubrecordCsvRendererWhenOneTestCase(
+    PatientEpisodeTestCase
+):
+    def setUp(self):
+        super(NestedEpisodeSubrecordCsvRendererWhenOneTestCase, self).setUp()
+        self.renderer = extract.NestedEpisodeSubrecordCsvRenderer(
+            Colour,
+            models.Episode.objects.all(),
+            self.user,
+            fields=["name"]
+        )
+
+    def test_repetitions(self):
+        self.assertEqual(self.renderer.repetitions, 0)
+
+    def test_row_length(self):
+        self.assertEqual(self.renderer.row_length, 0)
+
+    def test_get_headers(self):
+        self.assertEqual(
+            self.renderer.get_headers(),
+            []
+        )
+
+    def test_get_nested_row_populated(self):
+        result = self.renderer.get_nested_row(self.episode)
+        self.assertEqual(
+            result, []
+        )
+
+    def test_with_singleton(self):
+        renderer = extract.NestedEpisodeSubrecordCsvRenderer(
+            EpisodeName,
+            models.Episode.objects.all(),
+            self.user,
+            fields=["name"]
+        )
+        self.assertEqual(renderer.repetitions, 1)
+
+
+class NestedPatientSubrecordCsvRendererTestCase(PatientEpisodeTestCase):
+    def setUp(self):
+        super(NestedPatientSubrecordCsvRendererTestCase, self).setUp()
+        self.patient_2, self.episode_2 = self.new_patient_and_episode_please()
+        self.colour_1 = PatientColour.objects.create(
+            name="blue", patient=self.patient
+        )
+        self.colour_2 = PatientColour.objects.create(
+            name="green", patient=self.patient
+        )
+        self.renderer = extract.NestedPatientSubrecordCsvRenderer(
+            PatientColour,
+            models.Episode.objects.all(),
+            self.user,
+            fields=["name"]
+        )
+
+    def test_repetitions(self):
+        self.assertEqual(self.renderer.repetitions, 2)
+
+    def test_row_length(self):
+        self.assertEqual(self.renderer.row_length, 2)
+
+    def test_get_headers(self):
+        self.assertEqual(
+            self.renderer.get_headers(),
+            ["Patient Colour 1 Name", "Patient Colour 2 Name"]
+        )
+
+    def test_get_nested_row_populated(self):
+        result = self.renderer.get_nested_row(self.episode)
+        self.assertEqual(
+            result, ['blue', 'green']
+        )
+
+    def test_get_nested_row_not_populated(self):
+        result = self.renderer.get_nested_row(self.episode_2)
+        self.assertEqual(
+            result, ['', '']
+        )
+
+
+class NestedPatientSubrecordCsvRendererWhenNoneTestCase(
+    PatientEpisodeTestCase
+):
+    def setUp(self):
+        super(NestedPatientSubrecordCsvRendererWhenNoneTestCase, self).setUp()
+        self.colour = PatientColour.objects.create(
+            name="blue", patient=self.patient
+        )
+        self.renderer = extract.NestedPatientSubrecordCsvRenderer(
+            PatientColour,
+            models.Episode.objects.all(),
+            self.user,
+            fields=["name"]
+        )
+
+    def test_repetitions(self):
+        self.assertEqual(self.renderer.repetitions, 1)
+
+    def test_row_length(self):
+        self.assertEqual(self.renderer.row_length, 1)
+
+    def test_get_headers(self):
+        self.assertEqual(
+            self.renderer.get_headers(),
+            ['Patient Colour Name']
+        )
+
+    def test_get_nested_row_populated(self):
+        result = self.renderer.get_nested_row(self.episode)
+        self.assertEqual(
+            result, ['blue']
+        )
+
+
+class NestedPatientSubrecordCsvRendererWhenOneTestCase(
+    PatientEpisodeTestCase
+):
+    def setUp(self):
+        super(NestedPatientSubrecordCsvRendererWhenOneTestCase, self).setUp()
+        self.renderer = extract.NestedPatientSubrecordCsvRenderer(
+            PatientColour,
+            models.Episode.objects.all(),
+            self.user,
+            fields=["name"]
+        )
+
+    def test_repetitions(self):
+        self.assertEqual(self.renderer.repetitions, 0)
+
+    def test_row_length(self):
+        self.assertEqual(self.renderer.row_length, 0)
+
+    def test_get_headers(self):
+        self.assertEqual(
+            self.renderer.get_headers(),
+            []
+        )
+
+    def test_get_nested_row_populated(self):
+        result = self.renderer.get_nested_row(self.episode)
+        self.assertEqual(
+            result, []
+        )
+
+    def test_with_singleton(self):
+        renderer = extract.NestedPatientSubrecordCsvRenderer(
+            FamousLastWords,
+            models.Episode.objects.all(),
+            self.user,
+            fields=["name"]
+        )
+        self.assertEqual(renderer.repetitions, 1)
+
+
 @patch.object(Colour, "_get_fieldnames_to_extract")
 class TestEpisodeSubrecordCsvRenderer(PatientEpisodeTestCase):
     def setUp(self):
@@ -403,7 +683,9 @@ class TestEpisodeSubrecordCsvRenderer(PatientEpisodeTestCase):
             models.Episode.objects.all(),
             self.user
         )
-        self.assertEqual(["Patient", "Episode", "Name"], renderer.get_headers())
+        self.assertEqual(
+            ["Patient", "Episode", "Name"], renderer.get_headers()
+        )
 
     def test_get_row(self, field_names_to_extract):
         field_names_to_extract.return_value = [

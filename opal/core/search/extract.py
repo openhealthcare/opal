@@ -260,20 +260,56 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
 
 
 class NestedEpisodeCsvRenderer(EpisodeCsvRenderer):
-    def get_nested_row(self, episode_id):
+    def get_nested_row(self, episode):
         return super(NestedEpisodeCsvRenderer, self).get_row(
-            Episode.objects.get(id=episode_id)
+            episode
         )
 
 
-class NestedEpisodeSubrecordCsvRenderer(EpisodeSubrecordCsvRenderer):
+class AbstractNestedSubrecordCsvRenderer(object):
+    @cached_property
+    def row_length(self):
+        return len(self.get_headers())
+
+    def get_headers(self):
+        single_headers = super(
+            AbstractNestedSubrecordCsvRenderer, self
+        ).get_headers()
+
+        if self.repetitions == 1:
+            return [
+                "{0} {1}".format(
+                    self.model.get_display_name(),
+                    i
+                ) for i in single_headers
+            ]
+
+        result = []
+
+        for rep in range(self.repetitions):
+            result.extend(
+                (
+                    "{0} {1} {2}".format(
+                        self.model.get_display_name(),
+                        rep + 1,
+                        i
+                    ) for i in single_headers
+                )
+            )
+        return result
+
+
+class NestedEpisodeSubrecordCsvRenderer(
+    AbstractNestedSubrecordCsvRenderer,
+    EpisodeSubrecordCsvRenderer
+):
     @cached_property
     def repetitions(self):
-        if self.model._is_singleton:
-            return 1
-
         if not self.queryset:
             return 0
+
+        if self.model._is_singleton:
+            return 1
 
         annotated = self.queryset.values('episode_id').annotate(
             Count('episode_id')
@@ -282,42 +318,28 @@ class NestedEpisodeSubrecordCsvRenderer(EpisodeSubrecordCsvRenderer):
             "episode_id__count__max"
         ]
 
-    @cached_property
-    def row_length(self):
-        return len(self.get_headers())
-
-    def get_headers(self):
-        single_headers = super(
-            NestedEpisodeSubrecordCsvRenderer, self
-        ).get_headers()
-        result = []
-
-        if len(self.repetitions) == 1:
-            return single_headers
-
-        for rep in range(self.repetitions):
-            result.extend("{0} {1}".format(i, rep) for i in single_headers)
-        return result
-
-    def get_nested_row(self, episode_id):
-        nested_subrecords = self.queryset.filter(episode_id=episode_id)
+    def get_nested_row(self, episode):
+        nested_subrecords = self.queryset.filter(episode=episode)
         result = []
         for nested_subrecord in nested_subrecords:
             result.extend(self.get_row(nested_subrecord))
 
         while len(result) < self.row_length:
-            result.append(None)
+            result.append('')
         return result
 
 
-class NestedPatientSubrecordCsvRenderer(PatientSubrecordCsvRenderer):
+class NestedPatientSubrecordCsvRenderer(
+    AbstractNestedSubrecordCsvRenderer,
+    PatientSubrecordCsvRenderer
+):
     @cached_property
     def repetitions(self):
+        if not self.queryset.exists():
+            return 0
+
         if self.model._is_singleton:
             return 1
-
-        if not self.queryset:
-            return 0
 
         annotated = self.queryset.values('patient_id').annotate(
             Count('patient_id')
@@ -326,31 +348,16 @@ class NestedPatientSubrecordCsvRenderer(PatientSubrecordCsvRenderer):
             "patient_id__count__max"
         ]
 
-    @cached_property
-    def row_length(self):
-        return len(self.get_headers())
-
-    def get_headers(self):
-        single_headers = super(
-            NestedPatientSubrecordCsvRenderer, self
-        ).get_headers()
-        result = []
-        if self.repetitions == 1:
-            return single_headers
-        for rep in range(self.repetitions):
-            result.extend("{0} {1}".format(i, rep) for i in single_headers)
-        return result
-
-    def get_nested_row(self, episode_id):
+    def get_nested_row(self, episode):
         nested_subrecords = self.queryset.filter(
-            patient__episode=Episode.objects.get(id=episode_id)
+            patient__episode=episode
         )
         result = []
         for nested_subrecord in nested_subrecords:
-            result.extend(self.get_row(nested_subrecord, episode_id))
+            result.extend(self.get_row(nested_subrecord, episode.id))
 
         while len(result) < self.row_length:
-            result.append(None)
+            result.append('')
         return result
 
 
@@ -401,13 +408,13 @@ def generate_nested_csv_files(root_dir, episodes, user, field_dict):
         for episode in episodes:
             row = []
             for renderer in renderers:
-                row.extend(renderer.get_nested_row(episode.id))
+                row.extend(renderer.get_nested_row(episode))
 
             writer.writerow(row)
     return file_names
 
 
-def generate_csv_files(root_dir, episodes, user):
+def generate_multi_csv_extract(root_dir, episodes, user):
     """ Generate the files and return a tuple of absolute_file_name, file_name
     """
     file_names = []
@@ -462,7 +469,7 @@ def zip_archive(episodes, description, user, fields=None):
                 root_dir, episodes, user, fields
             )
         else:
-            file_names = generate_csv_files(root_dir, episodes, user)
+            file_names = generate_multi_csv_extract(root_dir, episodes, user)
 
         for full_file_name, file_name in file_names:
             z.write(
