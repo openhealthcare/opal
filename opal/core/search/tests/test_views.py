@@ -430,7 +430,7 @@ class DownloadTestCase(BaseSearchTestCase):
             self.url, post_data, content_type='appliaction/json'
         )
         self.assertEqual(create_task.status_code, 200)
-        content = json.loads(create_task.content)
+        content = json.loads(create_task.content.decode())
         status_url = reverse('extract_status', kwargs=dict(
             task_id=content["extract_id"]
         ))
@@ -438,7 +438,7 @@ class DownloadTestCase(BaseSearchTestCase):
         status_result = self.client.get(status_url)
         self.assertEqual(status_result.status_code, 200)
         self.assertEqual(
-            json.loads(status_result.content)['state'],
+            json.loads(status_result.content.decode())['state'],
             "PENDING"
         )
 
