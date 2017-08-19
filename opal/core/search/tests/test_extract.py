@@ -574,7 +574,7 @@ class NestedEpisodeCsvRendererTestCase(PatientEpisodeTestCase):
     def test_get_headers(self):
         self.assertEqual(
             self.renderer.get_headers(),
-            ["Start"]
+            ["Episode Start"]
         )
 
     def test_nested_get_row(self):
