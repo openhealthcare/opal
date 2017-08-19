@@ -99,10 +99,12 @@ class GenerateMultiFilesTestCase(OpalTestCase):
 class GenerateNestedFilesTestCase(OpalTestCase):
     @patch('opal.core.search.extract.csv')
     @patch('opal.core.search.extract.write_data_dictionary')
+    @patch('opal.core.search.extract.subrecords.subrecords')
     def test_generate_nested_csv_extract(
-        self, write_data_dictionary, csv
+        self, subrecords, write_data_dictionary, csv
     ):
         patient, episode = self.new_patient_and_episode_please()
+        subrecords.return_value = [FamousLastWords, HatWearer]
         HatWearer.objects.create(name="Indiana", episode=episode)
         HatWearer.objects.create(
             name="Tommy Cooper",
