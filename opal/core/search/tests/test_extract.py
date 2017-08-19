@@ -97,9 +97,9 @@ class GenerateMultiFilesTestCase(OpalTestCase):
         self.assertEqual(csv_renderer.call_count, 0)
 
 
+@patch('opal.core.search.extract.csv')
+@patch('opal.core.search.extract.write_data_dictionary')
 class GenerateNestedFilesTestCase(OpalTestCase):
-    @patch('opal.core.search.extract.csv')
-    @patch('opal.core.search.extract.write_data_dictionary')
     def test_generate_nested_csv_extract(
         self, write_data_dictionary, csv
     ):
@@ -173,7 +173,80 @@ class GenerateNestedFilesTestCase(OpalTestCase):
             expected_row
         )
 
+    def test_generate_nested_csv_extract_with_episode(
+        self, write_data_dictionary, csv
+    ):
+        patient, episode = self.new_patient_and_episode_please()
+        episode.start = datetime.date(2017, 1, 12)
+        episode.save()
+        HatWearer.objects.create(name="Indiana", episode=episode)
+        HatWearer.objects.create(
+            name="Tommy Cooper",
+            wearing_a_hat=False,
+            episode=episode
+        )
+        FamousLastWords.objects.update(
+            words="oops",
+            patient=patient
+        )
+        m = mock_open()
+        field_args = OrderedDict()
+        field_args["episode"] = [
+            'start'
+        ]
+        field_args[HatWearer.get_api_name()] = [
+            'name',
+            'wearing_a_hat'
+        ]
 
+        with patch(MOCKING_FILE_NAME_OPEN, m, create=True):
+            results = extract.generate_nested_csv_extract(
+                "somewhere",
+                models.Episode.objects.all(),
+                self.user,
+                field_args
+            )
+        expected = [
+            ('somewhere/data_dictionary.html', 'data_dictionary.html'),
+            ('somewhere/extract.csv', 'extract.csv'),
+        ]
+        self.assertEqual(expected, results)
+        self.assertEqual(
+            write_data_dictionary.call_args[0][0],
+            'somewhere/data_dictionary.html'
+        )
+
+        write_row = csv.writer().writerow;
+
+        self.assertEqual(
+            len(write_row.call_args_list[0][0][0]),
+            len(write_row.call_args_list[1][0][0]),
+        )
+
+        expected_headers = [
+            'Episode Start',
+            'Wearer of Hats 1 Name',
+            'Wearer of Hats 1 Wearing A Hat',
+            'Wearer of Hats 2 Name',
+            'Wearer of Hats 2 Wearing A Hat'
+        ]
+        self.assertEqual(
+            write_row.call_args_list[0][0][0],
+            expected_headers
+        )
+
+        expected_row = [
+            datetime.date(2017, 1, 12),
+            'Indiana',
+            'True',
+            'Tommy Cooper',
+            'False'
+        ]
+
+        self.assertEqual(
+            write_row.call_args_list[1][0][0],
+            expected_row
+        )
 
 @patch('opal.core.search.extract.subrecords.subrecords')
 @patch('opal.core.search.extract.zipfile')

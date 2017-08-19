@@ -260,6 +260,13 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
 
 
 class NestedEpisodeCsvRenderer(EpisodeCsvRenderer):
+    def get_headers(self):
+        single_headers = super(
+            NestedEpisodeCsvRenderer, self
+        ).get_headers()
+
+        return ["Episode {}".format(i) for i in single_headers]
+
     def get_nested_row(self, episode):
         return super(NestedEpisodeCsvRenderer, self).get_row(
             episode
