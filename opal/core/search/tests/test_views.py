@@ -424,7 +424,7 @@ class DownloadTestCase(BaseSearchTestCase):
                     "query": "a",
                     "lookup_list": [],
                 }]),
-            "slice": json.dumps({})
+            "data_slice": json.dumps({})
         })
         create_task = self.client.post(
             self.url, post_data, content_type='appliaction/json'
@@ -455,7 +455,7 @@ class DownloadTestCase(BaseSearchTestCase):
                     "query": "a",
                     "lookup_list": [],
                 }]),
-            "slice": json.dumps({})
+            "data_slice": json.dumps({})
         }
 
         self.assertTrue(

@@ -452,7 +452,7 @@ describe('ExtractCtrl', function(){
 
     describe('getChoices', function(){
         it('should get a lookup list and suffix it', function(){
-            spyOn($scope, "findField").and.returnValue({
+            spyOn(extractSchema, "findField").and.returnValue({
               lookup_list: "dogs"
             });
             var result = $scope.getChoices("some", "field");
@@ -460,7 +460,7 @@ describe('ExtractCtrl', function(){
         });
 
         it('should get an enum', function(){
-          spyOn($scope, "findField").and.returnValue({
+          spyOn(extractSchema, "findField").and.returnValue({
             enum: [1, 2, 3]
           });
           var result = $scope.getChoices("some", "field");
@@ -663,25 +663,8 @@ describe('ExtractCtrl', function(){
     });
 
     describe('Getting searchable columns', function(){
-        it('should set up columns on the scope', function(){
-            expect($scope.columns[0].fields[0].name).toEqual("consistency_token");
-        });
-
-        it('should call through to the sceham', function(){
-          spyOn(extractSchema, "getAdvancedSearchColumns").and.returnValue(
-            $scope.columns
-          );
-          $controller('ExtractCtrl',  {
-              $scope : $scope,
-              $modal: $modal,
-              profile: {},
-              options: optionsData,
-              filters: [],
-              extractSchema : extractSchema,
-              PatientSummary: PatientSummary,
-              referencedata: referencedata
-          });
-          expect(extractSchema.getAdvancedSearchColumns).toHaveBeenCalled();
+        it('should set up the schema on the scope', function(){
+            expect(!!$scope.extractSchema.columns).toBe(true);
         });
     });
 
