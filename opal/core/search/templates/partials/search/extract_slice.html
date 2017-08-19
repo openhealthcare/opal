@@ -90,7 +90,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-class="{active: column.name === fieldInfo.subrecord.name }" ng-repeat="column in columns">
+          <tr ng-class="{active: column.name === fieldInfo.subrecord.name }" ng-repeat="column in extractSchema.columns">
             <td >
               <a ng-click="selectSliceSubrecord(column)" class="pointer">[[ column.display_name ]]</a>
             </td>

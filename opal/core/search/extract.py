@@ -361,7 +361,7 @@ class NestedPatientSubrecordCsvRenderer(
         return result
 
 
-def generate_nested_csv_files(root_dir, episodes, user, field_dict):
+def generate_nested_csv_extract(root_dir, episodes, user, field_dict):
     """ Generate a a single csv file and the data dictionary
 
         The field_dict should be {api_name: field_name}
@@ -465,7 +465,7 @@ def zip_archive(episodes, description, user, fields=None):
         os.mkdir(root_dir)
         zip_relative_file_path = functools.partial(os.path.join, zipfolder)
         if fields:
-            file_names = generate_nested_csv_files(
+            file_names = generate_nested_csv_extract(
                 root_dir, episodes, user, fields
             )
         else:

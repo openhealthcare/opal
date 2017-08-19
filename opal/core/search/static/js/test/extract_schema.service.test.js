@@ -68,6 +68,10 @@ describe('schema', function(){
         expect(result).toEqual(exampleSchemaData);
     })
 
+    it('should return the find the field', function(){
+      expect(!!schema.findField("demographics", "name")).toEqual(true);
+    });
+
     it('should set up a reference on fields to the subrecord', function(){
         expect(schema.columns[0].fields[0].subrecord).toBe(schema.columns[0]);
     });

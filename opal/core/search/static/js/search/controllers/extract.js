@@ -9,7 +9,8 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
     $scope.limit = 10;
     $scope.JSON = window.JSON;
     $scope.filters = filters;
-    $scope.columns = extractSchema.getAdvancedSearchColumns();
+    // $scope.columns = extractSchema.getAdvancedSearchColumns();
+    $scope.extractSchema = extractSchema;
     // used by the download extract
     // a slice is a cut of data, a field that we want to download
     $scope.selectSliceSubrecord = function(sliceSubrecord){
@@ -34,7 +35,7 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
     $scope.extractQuery = new ExtractQuery(extractSchema);
 
     $scope.searchableFields = function(columnName){
-        var column = $scope.findColumn(columnName);
+        var column = extractSchema.findColumn(columnName);
         // TODO - don't hard-code this
         if(column){
           if(column.name == 'microbiology_test' || column.name == 'investigation'){
@@ -48,7 +49,7 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
               "resistant_antibiotics"
             ];
 
-            return _.filter($scope.findColumn("microbiology_test").fields, function(field){
+            return _.filter(extractSchema.findColumn("microbiology_test").fields, function(field){
                 return _.contains(micro_fields, field.name)
             })
           }
@@ -66,26 +67,8 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
         }
     };
 
-    $scope.findColumn = function(columnName){
-      if(!columnName){
-        return;
-      }
-      return _.findWhere($scope.columns, {name: columnName});
-    };
-
-    $scope.findField = function(columnName, fieldName){
-      /*
-      * returns the field object from the schema when given column.name and field.name
-      */
-      var column = $scope.findColumn(columnName);
-      if(!column){return;}
-      return _.findWhere(
-          column.fields, {name: fieldName}
-      );
-    };
-
     $scope.isType = function(column, field, type){
-        var theField = $scope.findField(column, field);
+        var theField = extractSchema.findField(column, field);
         if(!column || !field){
             return false;
         }
@@ -106,7 +89,7 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
     };
 
     $scope.getChoices = function(column, field){
-      var modelField = $scope.findField(column, field);
+      var modelField = extractSchema.findField(column, field);
 
       if(modelField.lookup_list && modelField.lookup_list.length){
         return $scope[modelField.lookup_list + "_list"];

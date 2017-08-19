@@ -66,6 +66,16 @@ describe('ExtractCtrl', function(){
                     "type": "boolean"
                 },
                 {
+                    "default": null,
+                    "description": null,
+                    "enum": null,
+                    "lookup_list": "gender",
+                    "model": "Demographics",
+                    "name": "sex",
+                    "title": "Sex",
+                    "type": "string"
+                },
+                {
                     "title": "Age",
                     "lookup_list": null,
                     "name": "age",
@@ -413,11 +423,6 @@ describe('ExtractCtrl', function(){
         });
     });
 
-    describe('Find Field', function(){
-        it('should return the field', function(){
-          expect(!!$scope.findField("demographics", "dead")).toEqual(true);
-        });
-    });
 
     describe('resetFilter()', function(){
         var criteria;
@@ -561,7 +566,7 @@ describe('ExtractCtrl', function(){
 
         it('should post to the url', function() {
             $httpBackend.expectPOST('/search/extract/download').respond({extract_id: '23'});
-            $httpBackend.expectGET('/search/extract/result/23').respond({state: 'SUCCESS'})
+            $httpBackend.expectGET('/search/extract/status/23').respond({state: 'SUCCESS'})
             $scope.async_extract();
             $timeout.flush()
             $rootScope.$apply();
@@ -592,7 +597,7 @@ describe('ExtractCtrl', function(){
                 }
                 return [200, {state: 'SUCCESS'}];
             }
-            $httpBackend.when('GET', '/search/extract/result/349').respond(status_responder)
+            $httpBackend.when('GET', '/search/extract/status/349').respond(status_responder)
             $scope.async_extract();
             $timeout.flush()
             $rootScope.$apply();
@@ -606,7 +611,7 @@ describe('ExtractCtrl', function(){
 
         it('should alert if we fail', function() {
             $httpBackend.expectPOST('/search/extract/download').respond({extract_id: '23'});
-            $httpBackend.expectGET('/search/extract/result/23').respond({state: 'FAILURE'})
+            $httpBackend.expectGET('/search/extract/status/23').respond({state: 'FAILURE'})
             spyOn($window, 'alert');
             $scope.async_extract();
             $timeout.flush()

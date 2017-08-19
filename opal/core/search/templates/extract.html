@@ -77,7 +77,7 @@
                                 tooltip-placement="top" uib-tooltip="1. Select a Column"
                                 set-focus-if="!query.column"
                                 >
-                          <option ng-repeat="col in columns" value="[[col.name]]">
+                          <option ng-repeat="col in extractSchema.columns" value="[[col.name]]">
                             [[col.display_name]]
                           </option>
                         </select>
@@ -216,10 +216,10 @@
                 <div class="col-md-3">
                   <div class="search-info" ng-show="selectedInfo">
                     <div class="search-info-title">
-                      <strong>[[ findColumn(selectedInfo.column).display_name ]]</strong>
+                      <strong>[[ extractSchema.findColumn(selectedInfo.column).display_name ]]</strong>
                     </div>
                      <div>
-                       <strong>[[ findField(selectedInfo.column, selectedInfo.field).title ]]</strong>
+                       <strong>[[ extractSchema.findField(selectedInfo.column, selectedInfo.field).title ]]</strong>
                      </div>
                     <span ng-show="isBoolean(selectedInfo.column, selectedInfo.field)">
                       [True/False]
@@ -230,19 +230,19 @@
                         [a
                         <a href=""
                            class="orange-link"
-                           ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: findField(selectedInfo.column, selectedInfo.field).lookup_list, lookuplist: selectedInfo.lookup_list })">
-                          [[ findField(selectedInfo.column, selectedInfo.field).lookup_list | underscoreToSpaces ]]
+                           ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: extractScheam.findField(selectedInfo.column, selectedInfo.field).lookup_list, lookuplist: selectedInfo.lookup_list })">
+                          [[ extractSchema.findField(selectedInfo.column, selectedInfo.field).lookup_list | underscoreToSpaces ]]
                         </a>]
                       </div>
                     </span>
                     <span ng-show="isText(selectedInfo.column, selectedInfo.field)">
                       [Text]
-                      <div ng-show="findField(selectedInfo.column, selectedInfo.field).lookup_list">
+                      <div ng-show="extractSchema.findField(selectedInfo.column, selectedInfo.field).lookup_list">
                         Normally coded as a
                         <a href=""
                            class="orange-link"
-                           ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: findField(selectedInfo.column, selectedInfo.field).lookup_list, lookuplist: selectedInfo.lookup_list })">
-                          [[ findField(selectedInfo.column, selectedInfo.field).lookup_list | underscoreToSpaces ]]</a>
+                           ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: extractSchema.findField(selectedInfo.column, selectedInfo.field).lookup_list, lookuplist: selectedInfo.lookup_list })">
+                          [[ extractSchema.findField(selectedInfo.column, selectedInfo.field).lookup_list | underscoreToSpaces ]]</a>
                         but free text entries are possible.
                       </div>
                       <div ng-show="selectedInfo.enum && selectedInfo.enum.length">
@@ -256,7 +256,7 @@
                       [Date & Time]
                     </span>
                     <div>
-                      [[ findField(selectedInfo.column, selectedInfo.field).description ]]
+                      [[ extractSchema.findField(selectedInfo.column, selectedInfo.field).description ]]
                     </div>
                   </div>
                 </div>

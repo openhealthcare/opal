@@ -1,6 +1,6 @@
 angular.module('opal.services').factory('ExtractSchema', function() {
   var ExtractSchema = function(columns){
-    this.columns = angular.copy(columns);
+    this.columns = this.getAdvancedSearchColumns(columns);
 
     // set up a reference from the field to the subrecord
     _.each(this.columns, function(c){
@@ -11,11 +11,13 @@ angular.module('opal.services').factory('ExtractSchema', function() {
         f.subrecord = c;
       });
     });
-  }
+  };
+
 
   ExtractSchema.prototype = {
-    getAdvancedSearchColumns: function(){
-      return _.filter(this.columns, function(c){
+    getAdvancedSearchColumns: function(c){
+      columns = angular.copy(c);
+      return _.filter(columns, function(c){
         return c.advanced_searchable
       });
     },

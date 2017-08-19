@@ -53,7 +53,7 @@ class PatientEpisodeTestCase(OpalTestCase):
             some_fun(*args)
 
 
-class GenerateFilesTestCase(OpalTestCase):
+class GenerateMultiFilesTestCase(OpalTestCase):
     @patch('opal.core.search.extract.subrecords.subrecords')
     @patch('opal.core.search.extract.CsvRenderer.write_to_file')
     @patch('opal.core.search.extract.write_data_dictionary')
@@ -96,6 +96,83 @@ class GenerateFilesTestCase(OpalTestCase):
         self.assertEqual(csv_renderer.call_count, 0)
 
 
+class GenerateNestedFilesTestCase(OpalTestCase):
+    @patch('opal.core.search.extract.csv')
+    @patch('opal.core.search.extract.write_data_dictionary')
+    def test_generate_nested_csv_extract(
+        self, write_data_dictionary, csv
+    ):
+        patient, episode = self.new_patient_and_episode_please()
+        HatWearer.objects.create(name="Indiana", episode=episode)
+        HatWearer.objects.create(
+            name="Tommy Cooper",
+            wearing_a_hat=False,
+            episode=episode
+        )
+        FamousLastWords.objects.update(
+            words="oops",
+            patient=patient
+        )
+        m = mock_open()
+        with patch(MOCKING_FILE_NAME_OPEN, m, create=True):
+            results = extract.generate_nested_csv_extract(
+                "somewhere",
+                models.Episode.objects.all(),
+                self.user,
+                {
+                    HatWearer.get_api_name(): [
+                        'name',
+                        'wearing_a_hat'
+                    ],
+                    FamousLastWords.get_api_name(): [
+                        'words'
+                    ]
+                }
+            )
+        expected = [
+            ('somewhere/data_dictionary.html', 'data_dictionary.html'),
+            ('somewhere/extract.csv', 'extract.csv'),
+        ]
+        self.assertEqual(expected, results)
+        self.assertEqual(
+            write_data_dictionary.call_args[0][0],
+            'somewhere/data_dictionary.html'
+        )
+
+        write_row = csv.writer().writerow;
+
+        self.assertEqual(
+            len(write_row.call_args_list[0][0][0]),
+            len(write_row.call_args_list[1][0][0]),
+        )
+
+        expected_headers = [
+            'Famous Last Words Only Words',
+            'Wearer of Hats 1 Name',
+            'Wearer of Hats 1 Wearing A Hat',
+            'Wearer of Hats 2 Name',
+            'Wearer of Hats 2 Wearing A Hat'
+        ]
+        self.assertEqual(
+            write_row.call_args_list[0][0][0],
+            expected_headers
+        )
+
+        expected_row = [
+            'oops',
+            'Indiana',
+            'True',
+            'Tommy Cooper',
+            'False'
+        ]
+
+        self.assertEqual(
+            write_row.call_args_list[1][0][0],
+            expected_row
+        )
+
+
+
 @patch('opal.core.search.extract.subrecords.subrecords')
 @patch('opal.core.search.extract.zipfile')
 class ZipArchiveTestCase(OpalTestCase):
@@ -133,7 +210,7 @@ class ZipArchiveTestCase(OpalTestCase):
         self.assertTrue(call_args[0][0][0].endswith("data_dictionary.html"))
         self.assertTrue(call_args[1][0][0].endswith("episodes.csv"))
 
-    @patch('opal.core.search.extract.generate_nested_csv_files')
+    @patch('opal.core.search.extract.generate_nested_csv_extract')
     @patch('opal.core.search.extract.generate_multi_csv_extract')
     def test_nested_extract_called(self, multi, nested, zipfile, subrecords):
         extract.zip_archive(
@@ -145,7 +222,7 @@ class ZipArchiveTestCase(OpalTestCase):
         self.assertTrue(nested.call_count, 1)
         self.assertFalse(multi.called)
 
-    @patch('opal.core.search.extract.generate_nested_csv_files')
+    @patch('opal.core.search.extract.generate_nested_csv_extract')
     @patch('opal.core.search.extract.generate_multi_csv_extract')
     def test_nested_extract_not_called(
         self, multi, nested, zipfile, subrecords
