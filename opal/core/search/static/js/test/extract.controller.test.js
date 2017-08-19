@@ -666,6 +666,20 @@ describe('ExtractCtrl', function(){
         it('should set up the schema on the scope', function(){
             expect(!!$scope.extractSchema.columns).toBe(true);
         });
+
+        it('should exclude token and not advanced searchable fields', function(){
+          var symptomsExpected = {
+            title: 'Symptoms',
+            lookup_list: 'symptoms',
+            name: 'symptoms',
+            type: 'many_to_many'
+          };
+
+          var result = $scope.searchableFields('symptoms');
+          delete result[0].subrecord;
+
+          expect(result).toEqual([symptomsExpected]);
+        });
     });
 
     describe('save()', function() {
