@@ -2,6 +2,7 @@
 Unittests for opal.core.search.extract
 """
 import datetime
+from collections import OrderedDict
 
 from mock import mock_open, patch
 
@@ -99,12 +100,10 @@ class GenerateMultiFilesTestCase(OpalTestCase):
 class GenerateNestedFilesTestCase(OpalTestCase):
     @patch('opal.core.search.extract.csv')
     @patch('opal.core.search.extract.write_data_dictionary')
-    @patch('opal.core.search.extract.subrecords.subrecords')
     def test_generate_nested_csv_extract(
-        self, subrecords, write_data_dictionary, csv
+        self, write_data_dictionary, csv
     ):
         patient, episode = self.new_patient_and_episode_please()
-        subrecords.return_value = [FamousLastWords, HatWearer]
         HatWearer.objects.create(name="Indiana", episode=episode)
         HatWearer.objects.create(
             name="Tommy Cooper",
@@ -116,20 +115,21 @@ class GenerateNestedFilesTestCase(OpalTestCase):
             patient=patient
         )
         m = mock_open()
+        field_args = OrderedDict()
+        field_args[FamousLastWords.get_api_name()] = [
+            'words'
+        ]
+        field_args[HatWearer.get_api_name()] = [
+            'name',
+            'wearing_a_hat'
+        ]
+
         with patch(MOCKING_FILE_NAME_OPEN, m, create=True):
             results = extract.generate_nested_csv_extract(
                 "somewhere",
                 models.Episode.objects.all(),
                 self.user,
-                {
-                    HatWearer.get_api_name(): [
-                        'name',
-                        'wearing_a_hat'
-                    ],
-                    FamousLastWords.get_api_name(): [
-                        'words'
-                    ]
-                }
+                field_args
             )
         expected = [
             ('somewhere/data_dictionary.html', 'data_dictionary.html'),
