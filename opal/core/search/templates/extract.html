@@ -305,19 +305,19 @@
               </div>
             </div>
           </div>
-        </div> <!-- Row -->
-        <div ng-show="searched" class="row">
-          <div ng-show="extractQuery.completeCriteria().length && !results.length" class="col-sm-4 col-sm-push-4 lead text-center">
-            Sorry, no results match your search.
+          <div ng-show="searched" class="row">
+            <div ng-show="extractQuery.completeCriteria().length && !results.length" class="col-sm-4 col-sm-push-4 lead text-center">
+              Sorry, no results match your search.
+            </div>
+            <div ng-show="!extractQuery.completeCriteria().length" class="col-sm-4 col-sm-push-4 lead text-center">
+              Sorry, we need at least one search filter to run a search
+            </div>
           </div>
-          <div ng-show="!extractQuery.completeCriteria().length" class="col-sm-4 col-sm-push-4 lead text-center">
-            Sorry, we need at least one search filter to run a search
+          <div class="content-offset-below" ng-show="searched && results.length">
+            {% include 'partials/_patient_summary_list.html' %}
           </div>
         </div>
-        <div class="content-offset-below" ng-show="searched && results.length">
-          {% include 'partials/_patient_summary_list.html' %}
+        {% include 'extract_footer.html' %}
         </div>
-      </div>
-      {% include 'extract_footer.html' %}
-    </div>
+      </div> <!-- Row -->
   </div>
