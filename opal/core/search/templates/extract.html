@@ -242,7 +242,7 @@
                           Normally coded as a
                           <a href=""
                              class="orange-link"
-                             ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: extractSchema.findField(selectedInfo.column, selectedInfo.field).lookup_list, lookuplist: selectedInfo.lookup_list })">
+                             ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: extractSchema.findField(selectedInfo.column, selectedInfo.field).lookup_list, lookuplist: getChoices(selectedInfo.column, selectedInfo.field)  })">
                             [[ extractSchema.findField(selectedInfo.column, selectedInfo.field).lookup_list | underscoreToSpaces ]]</a>
                           but free text entries are possible.
                         </div>
