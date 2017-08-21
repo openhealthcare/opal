@@ -90,3 +90,7 @@
 .extract-hover:hover{
   background-color: #f5f5f5;
 }
+
+.extract-fields-table{
+  border: 1px solid #ddd;
+}
