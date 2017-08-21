@@ -81,3 +81,12 @@
     bottom: 0;
     right: 0
 }
+
+.extract-slice-table-link:hover{
+    text-decoration: none;
+    color: inherit;
+}
+
+.extract-hover:hover{
+  background-color: #f5f5f5;
+}

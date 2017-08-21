@@ -25,47 +25,9 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
     $scope.paginator = new Paginator($scope.search);
     $scope.state = 'query';
 
-
-    var NOT_ADVANCED_SEARCHABLE = [
-        "created", "updated", "created_by_id", "updated_by_id"
-    ];
-
     _.extend($scope, referencedata.toLookuplists());
 
     $scope.extractQuery = new ExtractQuery(extractSchema);
-
-    $scope.searchableFields = function(columnName){
-        var column = extractSchema.findColumn(columnName);
-        // TODO - don't hard-code this
-        if(column){
-          if(column.name == 'microbiology_test' || column.name == 'investigation'){
-            var micro_fields = [
-              "test",
-              "date_ordered",
-              "details",
-              "microscopy",
-              "organism",
-              "sensitive_antibiotics",
-              "resistant_antibiotics"
-            ];
-
-            return _.filter(extractSchema.findColumn("microbiology_test").fields, function(field){
-                return _.contains(micro_fields, field.name)
-            })
-          }
-          return _.map(
-              _.reject(
-                  column.fields,
-                  function(c){
-                      if(_.contains(NOT_ADVANCED_SEARCHABLE, c.name)){
-                          return true;
-                      }
-                      return c.type == 'token' ||  c.type ==  'list';
-                  }),
-              function(c){ return c; }
-          ).sort();
-        }
-    };
 
     $scope.isType = function(column, field, type){
         var theField = extractSchema.findField(column, field);

@@ -340,40 +340,10 @@ describe('ExtractCtrl', function(){
       it('should default the page state to query', function(){
         expect($scope.state).toBe('query');
       });
-    });
 
-    describe('Getting searchable fields', function(){
-        it('should special case Micro Test fields', function(){
-            var expected = [
-                'Test',
-                'Date Ordered',
-                'Details',
-                'Microscopy',
-                'Organism',
-                'Sensitive Antibiotics',
-                'Resistant Antibiotics'
-            ];
-            var result  = _.map(
-              $scope.searchableFields('microbiology_test'), "title"
-            );
-            expect(result).toEqual(expected);
-        });
-
-        it('should special case investigations fields', function(){
-            var expected = [
-                'Test',
-                'Date Ordered',
-                'Details',
-                'Microscopy',
-                'Organism',
-                'Sensitive Antibiotics',
-                'Resistant Antibiotics'
-            ];
-            var result  = _.map(
-              $scope.searchableFields('investigation'), "title"
-            );
-            expect(result).toEqual(expected);
-        });
+      it('should set up the schema on the scope', function(){
+          expect(!!$scope.extractSchema.columns).toBe(true);
+      })
     });
 
     describe('Checking field type', function(){
@@ -660,26 +630,6 @@ describe('ExtractCtrl', function(){
             expect(resolves.params()).toEqual($scope.filters[0]);
         });
 
-    });
-
-    describe('Getting searchable columns', function(){
-        it('should set up the schema on the scope', function(){
-            expect(!!$scope.extractSchema.columns).toBe(true);
-        });
-
-        it('should exclude token and not advanced searchable fields', function(){
-          var symptomsExpected = {
-            title: 'Symptoms',
-            lookup_list: 'symptoms',
-            name: 'symptoms',
-            type: 'many_to_many'
-          };
-
-          var result = $scope.searchableFields('symptoms');
-          delete result[0].subrecord;
-
-          expect(result).toEqual([symptomsExpected]);
-        });
     });
 
     describe('save()', function() {

@@ -89,7 +89,7 @@
                                   tooltip-placement="top" uib-tooltip="2. Select a field"
                                   set-focus-if="query.field == null && query.column != null"
                                   >
-                            <option value="[[ field.name ]]" ng-repeat="field in searchableFields(query.column)">[[ field.title ]]</option>
+                            <option value="[[ field.name ]]" ng-repeat="field in extractSchema.findColumn(query.column).fields">[[ field.title ]]</option>
                           </select>
                           <select class="form-control content-offset-25"
                                   ng-show="isText(query.column, query.field)"
