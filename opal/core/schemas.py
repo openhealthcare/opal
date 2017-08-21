@@ -46,6 +46,6 @@ def list_records():
 
 
 def extract_schema():
-    custom_queries = [i().to_dict() for i in SearchRule.list()]
+    custom_rules = [i().to_dict() for i in SearchRule.list()]
     schema = serialize_schema(subrecords())
-    return custom_queries + schema
+    return custom_rules + schema
