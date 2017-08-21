@@ -32,7 +32,9 @@ angular.module('opal.services').factory('ExtractQuery', function(){
   ExtractQuery.prototype = {
     addSlice: function(someField){
       // add a field to the extract fields
-      this.slices.push(someField);
+      if(_.indexOf(this.slices, someField) == -1){
+        this.slices.push(someField);
+      }
     },
     removeSlice: function(someField){
       // remove a field from the extract fields

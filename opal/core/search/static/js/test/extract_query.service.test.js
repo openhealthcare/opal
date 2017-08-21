@@ -42,6 +42,16 @@ describe('ExtractQuery', function(){
       extractQuery.addSlice("someField");
       expect(_.last(extractQuery.slices)).toEqual("someField");
     });
+
+    it('should not add a field to the slice if the field already exists', function(){
+      // a single slice should only be allowed to be added once.
+      extractQuery.addSlice("someField");
+      var expected = _.clone(extractQuery.slices);
+      extractQuery.addSlice("someField");
+      var found = _.clone(extractQuery.slices);
+      expect(found).toEqual(expected);
+    });
+
   });
 
   describe('sliceIsRequired()', function(){
