@@ -95,6 +95,20 @@ class OpalApplication(object):
             "js/opal/controllers/lookup_list_reference.js"
         ]
     }
+    core_styles = {
+        'lib': [
+            ("js/lib/c3-0.4.10/c3.css", "all"),
+	        ("bootstrap-3.1.0/css/bootstrap.css", "all"),
+	        ("css/select.css", "all"),
+            ("css/bootstrap-datepicker.css", "all"),
+	        ("css/font-awesome/css/font-awesome.css", "all"),
+	        ("css/awesome-bootstrap-checkbox.css", "all"),
+            ("css/ngprogress-lite.css", "screen"),
+	        ("js/lib/bower_components/angular-growl-v2/build/angular-growl.css", "screen"),
+            ("css/print.css", "print"),
+            ("css/screen.css", "screen"),
+        ]
+    }
     javascripts   = []
     styles        = []
     actions       = []
@@ -118,6 +132,13 @@ class OpalApplication(object):
         Return core javascripts for a given NAMESPACE
         """
         return [x for x in klass.core_javascripts[namespace]]
+
+    @classmethod
+    def get_core_styles(klass, namespace):
+        """
+        return core stylesheets for a given NAMESPACE
+        """
+        return [x for x in klass.core_styles[namespace]]
 
     @classmethod
     def get_javascripts(klass):

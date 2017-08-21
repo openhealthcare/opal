@@ -1,0 +1,279 @@
+
+/* Generic Colours */
+h1 small { color: #eff; }
+a {
+    -o-transition:.5s;
+    -ms-transition:.5s;
+    -moz-transition:.5s;
+    -webkit-transition:.5s;
+    transition:.5s;
+    color: rgb(77, 77, 77);
+}
+
+p a, .orange-link, .list-inline.lead li a { color: #f76c51; }
+.bg-white {
+    background-color: white;
+}
+.bg-primary {
+    color: white;
+    background-color: #9cc96b; /* Green */
+}
+.panel-container { margin-top: 20px; }
+
+.panel.panel-primary .panel-heading a{
+    color: white;
+}
+
+.panel.panel-primary .panel-heading a:hover{
+    text-decoration: none;
+    color: #f76c51;
+}
+
+.panel-primary .panel-default .panel-heading.bg-secondary,
+.bg-secondary {
+    background-color: #f76c51; /* red */
+    border-bottom: none;
+    color: white;
+}
+
+.panel-primary .panel-default .panel-heading.bg-active,
+.bg-active {
+    background-color: #5fa2dd; /* Blue */
+    border-bottom: none;
+    color: white;
+}
+.panel.panel-primary {
+    border-color: #9cc96b; /* Green */
+}
+
+.panel.panel-primary .panel-heading {
+    color: white;
+    border-color: #9cc96b; /* Green */
+    background-color: #5fa2dd; /* Blue */
+    background-color: #f76c51; /* red */
+    background-color: #9cc96b; /* Green */
+}
+
+.btn.btn-text-left {
+    text-align: left;
+}
+
+.btn.btn-primary {
+    -o-transition:.5s;
+    -ms-transition:.5s;
+    -moz-transition:.5s;
+    -webkit-transition:.5s;
+    transition:.5s;
+    border-radius: 4px;
+    color: white;
+     background-color: #9cc96b; /* Green */
+     border-color: #9cc96b; /* Green */
+ }
+.btn.btn-primary:hover,
+.btnn.btn-primary:focus{
+    background-color: #87bd4b;
+    border-color: #87bd4b;
+}
+.btn.btn-secondary {
+    border-radius: 4px;
+}
+.btn.btn-default.active{
+  background-color: #5fa2dd;
+  border-color: #5fa2dd;
+  color: #fff;
+}
+
+table.table > tbody > tr.diagnosis-table-issue > td{
+  background-color: #fcc;
+}
+
+.btn-secondary {
+
+    -o-transition:.5s;
+    -ms-transition:.5s;
+    -moz-transition:.5s;
+    -webkit-transition:.5s;
+    transition:.5s;
+    background-color: #f76447;
+    border-color: #f76c51;
+    color: #fff
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+    background-color: #f54928;
+    border-color: #f54f2f;
+    color: #fff
+}
+
+p.sidebar-help{
+    color: #999;
+    font-size: 18px;
+    line-height: 26px;
+}
+
+i.help {
+    color: #46b9d8;
+}
+
+/** Navbar **/
+.top-navbar {
+    color: #8a6d3b;
+    padding: 0px;
+    background-color: white;
+    border-bottom: 1px solid black;
+}
+
+.navbar-nav li:hover,
+.navbar-nav li:hover a,
+.navbar-nav li.active a,
+.navbar-nav li.active{
+	background: #f76c51;
+    color: white;
+}
+
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:focus,
+.navbar-default .navbar-nav > li > a:hover{
+    background-color: #f76c51;
+    color: white;
+}
+
+
+ul.dropdown-menu li.active .search-suggest {
+  background-color: #5fa2dd;
+}
+
+.panel-primary .panel-default .panel-heading,
+.panel-default .panel-heading {
+    border-bottom: 3px solid #f76c51;
+    background-color: white;
+    color: #333;
+}
+.panel-primary .panel-active .panel-heading,
+.panel-active .panel-heading {
+    background-color: white;
+    color: #333;
+    border-bottom: 3px solid #5fa2dd; /* Blue */
+}
+.panel-primary .panel-active {
+    border-color: #ddd;
+}
+/* ngProgress overrides */
+.ngProgressLiteBar {
+  background-color: firebrick;
+  box-shadow: 0 0 10px 0; /* Inherits the font color */
+  top: 50px;
+}
+
+.ngProgressLite .ngProgressLiteBarShadow {
+  display: none;
+}
+.open > .dropdown-menu.slides li a {
+  color: #000;
+}
+.dropdown-menu.slides li a{
+  color: #fff;
+}
+.dropdown-menu.slides {
+  -webkit-transform-origin: top;
+  transform-origin: top;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
+  -webkit-transform: scale(1, 0);
+  transform: scale(1, 0);
+  display: block;
+
+  transition: all 0.2s ease-out;
+  -webkit-transition: all 0.2s ease-out;
+}
+.dropup .dropdown-menu.slides {
+  -webkit-transform-origin: bottom;
+  transform-origin: bottom;
+}
+.dropup > .dropdown-menu.slides:after {
+  border-bottom: 0;
+  border-top: 6px solid rgba(39, 45, 51, 0.9);
+  top: auto;
+  display: inline-block;
+  bottom: -6px;
+  content: '';
+  position: absolute;
+  left: 50%;
+  border-right: 6px solid transparent;
+  border-left: 6px solid transparent;
+}
+.nav-tabs.nav-justified li.active a,
+.nav-tabs.nav-justified li.active a:hover {
+    background-color: #f76c51; /* Red */
+    color: white;
+    border-bottom-width: 0px;
+    padding-bottom: 11px
+}
+/*  Modals  */
+
+.modal-header {
+    /* padding: 0px 0px 0px 15px; */
+    background: #9cc96b;
+    color: white;
+}
+
+.modal .btn,
+.modal select,
+.modal input {
+  font-size: 18px;
+}
+.modal .form-control {
+  height: 44px;
+}
+
+.modal textarea.form-control {
+    height: auto
+}
+
+@media (max-width: 800px){
+    .modal-dialog{
+        margin: 0px auto;
+    }
+    .modal-lg {
+        width: 100%;
+    }
+}
+
+/* Forms */
+
+.ng-submitted input.ng-invalid-required,
+.ng-submitted input.ng-invalid-required-if-not-empty,
+.input.invalid{
+  background-color : #fcc;
+}
+
+.errored-state input, .errored-state .ui-select-toggle, .errored-state .ui-select-multiple{
+    background-color: #fcc;
+}
+
+.form-control[disabled].btn-default[disabled].ui-select-toggle{
+    cursor: not-allowed;
+    background-color: #eee;
+    opacity: 1;
+}
+
+.warning-state input, .warning-state .ui-select-toggle{
+    background-color: #FFF793;
+}
+
+.warning-state .checkbox label::before{
+    background-color: #FFF793;
+}
+
+
+.edit_item:hover {
+    background-color: #f76c51; /* red */
+    color: white;
+    cursor: pointer;
+}
+.edit_item span { display: none; }
+.edit_item:hover span { display: inline; }
+.loading {
+  background-color: #9cc96b;
+}

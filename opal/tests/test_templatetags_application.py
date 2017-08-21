@@ -51,7 +51,7 @@ class ApplicationStylesTestCase(OpalTestCase):
 
         result = list(application.application_stylesheets()['styles']())
 
-        self.assertEqual([("test.css", "text/css",)], result)
+        self.assertEqual([("test.css", "text/css", "screen")], result)
         mock_app.get_styles.assert_called_with()
 
     @patch('opal.templatetags.application.application.get_app')
@@ -62,7 +62,7 @@ class ApplicationStylesTestCase(OpalTestCase):
 
         result = list(application.application_stylesheets()['styles']())
 
-        self.assertEqual([("test.scss", "text/x-scss",)], result)
+        self.assertEqual([("test.scss", "text/x-scss", "screen")], result)
         mock_app.get_styles.assert_called_with()
 
 

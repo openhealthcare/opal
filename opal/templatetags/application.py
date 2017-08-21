@@ -26,16 +26,33 @@ def application_javascripts():
     return dict(javascripts=scripts)
 
 
+def get_mime_type(stylesheet):
+    """
+    Return the appropriate mime type for the stylesheet
+    """
+    if stylesheet.endswith(".scss"):
+        return "text/x-scss"
+    else:
+        return "text/css"
+
+
+@register.inclusion_tag('plugins/stylesheets.html')
+def core_stylesheets(namespace):
+    app = application.get_app()
+
+    def styles():
+        for style, media in app.get_core_styles(namespace):
+            yield style, get_mime_type(style), media
+
+    return dict(styles=styles)
+
+
 @register.inclusion_tag('plugins/stylesheets.html')
 def application_stylesheets():
     def styles():
         app = application.get_app()
         for style in app.get_styles():
-            if style.endswith(".scss"):
-                mime_type = "text/x-scss"
-            else:
-                mime_type = "text/css"
-            yield style, mime_type
+            yield style, get_mime_type(style), "screen"
     return dict(styles=styles)
 
 
