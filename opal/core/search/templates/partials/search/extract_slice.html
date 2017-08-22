@@ -66,7 +66,9 @@
               <tbody>
                 <tr ng-class="{active: column.name === sliceSubrecord.name}" ng-repeat="column in extractSchema.columns">
                   <td class="extract-hover">
-                    <a ng-click="selectSliceSubrecord(column)" class="pointer extract-slice-table-link">[[ column.display_name ]]</a>
+                    <a ng-click="selectSliceSubrecord(column)" class="pointer extract-slice-table-link">
+                      [[ column.display_name ]]
+                    </a>
                   </td>
                 </tr>
               </tbody>

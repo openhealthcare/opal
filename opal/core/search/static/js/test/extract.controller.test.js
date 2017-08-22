@@ -342,8 +342,16 @@ describe('ExtractCtrl', function(){
       });
 
       it('should set up the schema on the scope', function(){
-          expect(!!$scope.extractSchema.columns).toBe(true);
-      })
+        expect(!!$scope.extractSchema.columns).toBe(true);
+      });
+
+      it('should set the selected info', function(){
+        expect($scope.sliceSubrecord.name).toBe('demographics');
+      });
+
+      it('should set the fieldInfo', function(){
+        expect($scope.fieldInfo.name).toBe('name');
+      });
     });
 
     describe('Checking field type', function(){

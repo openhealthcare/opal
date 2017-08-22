@@ -27,6 +27,9 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
 
     _.extend($scope, referencedata.toLookuplists());
 
+    $scope.selectSliceSubrecord(extractSchema.columns[0]);
+    $scope.setFieldInfo($scope.sliceSubrecord.fields[0]);
+
     $scope.extractQuery = new ExtractQuery(extractSchema);
 
     $scope.isType = function(column, field, type){
