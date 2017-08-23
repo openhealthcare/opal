@@ -38,7 +38,10 @@ directives.directive("saveMultipleWrapper", function($parse){
 
       var getNewRecord = function(){
         return {
-          _client: {completed: false}
+          _client: {
+            completed: false,
+            id: _.uniqueId(sc.model_name)
+          }
         }
       }
 
