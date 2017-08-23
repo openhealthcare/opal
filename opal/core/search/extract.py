@@ -123,7 +123,7 @@ class CsvRenderer(object):
                 )
             else:
                 result.append(self.get_field_value(field, as_dict))
-        return result
+        return [_encode_to_utf8(i) for i in result]
 
     def get_rows(self):
         for instance in self.queryset:
@@ -139,7 +139,7 @@ class CsvRenderer(object):
             writer = csv.writer(csv_file)
             writer.writerow(self.get_headers())
             for row in self.get_rows():
-                writer.writerow([_encode_to_utf8(i) for i in row])
+                writer.writerow([i for i in row])
 
         logging.info("finished writing for {}".format(self.model))
 

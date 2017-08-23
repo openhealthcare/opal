@@ -100,6 +100,38 @@ class GenerateMultiFilesTestCase(OpalTestCase):
 @patch('opal.core.search.extract.csv')
 @patch('opal.core.search.extract.write_data_dictionary')
 class GenerateNestedFilesTestCase(OpalTestCase):
+    def test_with_non_asci_charecters(
+        self, write_data_dictionary, csv
+    ):
+        patient, episode = self.new_patient_and_episode_please()
+        HatWearer.objects.create(
+            name=u("\u0160\u0110\u0106\u017d\u0107\u017e\u0161\u0111"),
+            wearing_a_hat=False,
+            episode=episode
+        )
+        field_args = {}
+        field_args[HatWearer.get_api_name()] = [
+            'name'
+        ]
+        m = mock_open()
+        with patch(MOCKING_FILE_NAME_OPEN, m, create=True):
+            extract.generate_nested_csv_extract(
+                "somewhere",
+                models.Episode.objects.all(),
+                self.user,
+                field_args
+            )
+
+        r = b"\xc5\xa0\xc4\x90\xc4\x86\xc5\xbd\xc4\x87\xc5\xbe\xc5\xa1\xc4\x91"
+        self.assertEqual(
+            csv.writer().writerow.call_args_list[0][0][0][0],
+            'Wearer of Hats Name'
+        )
+        self.assertEqual(
+            csv.writer().writerow.call_args_list[1][0][0][0],
+            r
+        )
+
     def test_generate_nested_csv_extract(
         self, write_data_dictionary, csv
     ):
