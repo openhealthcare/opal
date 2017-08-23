@@ -146,25 +146,32 @@ directives.directive('placeholder', function($timeout){
 
 directives.directive('markdown', function () {
 	return function postLink (scope, element, attrs) {
-	    var prefix = 'item';
-	    if( _.isUndefined(scope['item']) ){
-		    if(! _.isUndefined(scope['editing']) )
-		    {
-			    prefix = 'editing';
-		    }
-		    else
-		    {
-			    return;
-		    }
-	    }
-	    scope.$watch(prefix + '.' + attrs.markdown, function(){
-		    var converter = new Showdown.converter({extensions: [OpalDown]});
-            if(scope[prefix][attrs.markdown]){
-                var contents = converter.makeHtml(scope[prefix][attrs.markdown]);
-		        element.html(contents);
-            }
-		}
-		            );
+    var renderMarkdown = function(unrendered){
+      var converter = new Showdown.converter({extensions: [OpalDown]});
+      element.html(converter.makeHtml(unrendered));
+    }
+
+    if(attrs.markdown){
+      var prefix = 'item';
+      if( _.isUndefined(scope['item']) ){
+  	    if(! _.isUndefined(scope['editing']) )
+  	    {
+  		    prefix = 'editing';
+  	    }
+  	    else
+  	    {
+  		    return;
+  	    }
+      }
+      scope.$watch(prefix + '.' + attrs.markdown, function(){
+        if(scope[prefix][attrs.markdown]){
+          renderMarkdown(scope[prefix][attrs.markdown]);
+        }
+  		});
+    }
+    else{
+      renderMarkdown(element.text())
+    }
 	};
 });
 

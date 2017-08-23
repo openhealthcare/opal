@@ -3,6 +3,42 @@ describe('filters', function() {
 
     beforeEach(module('opal.filters'));
 
+    describe('displayArray', function(){
+      var displayArray;
+
+      beforeEach(function(){
+          inject(function($injector){
+              displayArray  = $injector.get('displayArrayFilter');
+          });
+      });
+
+      it('should return the original if its not an array', function(){
+        expect(displayArray('onions')).toBe('onions');
+      });
+
+      it('should combine with and', function(){
+        expect(displayArray(['onions', 'lettuce'])).toEqual(
+          "onions and lettuce"
+        );
+      });
+
+      it('should combine with or', function(){
+        expect(displayArray(['onions', 'lettuce'], "or")).toEqual(
+          "onions or lettuce"
+        );
+      });
+
+      it('should add commas', function(){
+        expect(displayArray(['onions', "tomatoes", 'lettuce'], "or")).toEqual(
+          "onions, tomatoes or lettuce"
+        );
+      });
+
+      it('should just return the result if the array is only a single element', function(){
+        expect(displayArray(['onions'])).toEqual("onions");
+      });
+    });
+
     describe('microresultFilter', function(){
         var microresult;
 

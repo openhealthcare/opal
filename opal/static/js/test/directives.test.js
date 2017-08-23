@@ -238,6 +238,11 @@ describe('OPAL Directives', function(){
     });
 
     describe('markdown', function(){
+        it('should render markdown', function(){
+            var markup = '<div markdown># foo</div>';
+            compileDirective(markup);
+            expect($(element).html()).toEqual('<h1 id="foo">foo</h1>');
+        });
 
         it('should be markdowny', function(){
             var markup = '<div markdown="foo"></div>';

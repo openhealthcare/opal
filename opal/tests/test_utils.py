@@ -46,18 +46,6 @@ class ItersubclassesTestCase(TestCase):
         results = {i for i in utils._itersubclasses(A)}
         self.assertEqual(results, set([B, D]))
 
-    def test_old_style_classes(self):
-        if sys.version_info[0] < 3:
-            class Old:
-                pass
-            with self.assertRaises(TypeError) as er:
-                list(utils._itersubclasses(Old))
-
-            self.assertIn(
-                "itersubclasses must be called with new-style classes",
-                str(er.exception)
-            )
-
     def test_when_called_with_type(self):
         expected = type.__subclasses__(type)
         for s in expected:

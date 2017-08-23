@@ -1,7 +1,7 @@
 describe('schema', function(){
     "use strict";
 
-    var Schema, schema;
+    var ExtractSchema, schema;
 
     var exampleSchemaData = [
         {
@@ -52,10 +52,10 @@ describe('schema', function(){
         module('opal.services');
 
         inject(function($injector) {
-            Schema = $injector.get('Schema');
+            ExtractSchema = $injector.get('ExtractSchema');
         })
 
-        schema = new Schema(exampleSchemaData);
+        schema = new ExtractSchema(exampleSchemaData);
     })
 
     it('should keep a publically accessible version of the columns', function(){
@@ -80,9 +80,5 @@ describe('schema', function(){
 
     it('should filter advanced searchable columns', function () {
         expect(schema.getAdvancedSearchColumns()).toEqual([exampleSchemaData[1]]);
-    });
-
-    it('should be able to get the number of columns', function() {
-        expect(schema.getNumberOfColumns()).toBe(3);
     });
 });

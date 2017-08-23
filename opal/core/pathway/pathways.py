@@ -9,7 +9,7 @@ from opal.core import discoverable, subrecords
 from opal.models import Patient
 from opal.utils import AbstractBase
 from opal.core.views import OpalSerializer
-from opal.core.pathway import MultiModelStep, Step
+from opal.core.pathway import Step
 
 
 class RedirectsToPatientMixin(object):
@@ -121,7 +121,7 @@ class Pathway(discoverable.DiscoverableFeature):
                 if step._is_singleton:
                     all_steps.append(Step(model=step))
                 else:
-                    all_steps.append(MultiModelStep(model=step))
+                    all_steps.append(Step(model=step, multiple=True))
             else:
                 all_steps.append(step)
 
