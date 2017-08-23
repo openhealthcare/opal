@@ -94,7 +94,7 @@ episode_serialised = {
             'description': "Episode End"
         },
         {
-            'description': 'The team that looked after that episode of care',
+            'description': 'The team(s) related to an episode of care',
             'enum': [],
             'lookup_list': None,
             'name': 'team',
