@@ -153,7 +153,7 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
         }
     };
 
-    $scope.async_extract = function(){
+    $scope.async_extract = function(usingDataSlice){
         if($scope.async_ready){
             $window.open('/search/extract/download/' + $scope.extract_id, '_blank');
             return null;
@@ -183,12 +183,15 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
             });
         };
         $scope.async_waiting = true;
+        var postArgs = {criteria: JSON.stringify($scope.extractQuery.criteria)};
+        if(usingDataSlice){
+          postArgs['data_slice'] = JSON.stringify(
+            $scope.extractQuery.getDataSlices()
+          );
+        }
         $http.post(
             '/search/extract/download',
-            {
-              criteria: JSON.stringify($scope.extractQuery.criteria),
-              data_slice: JSON.stringify($scope.extractQuery.getDataSlices())
-            }
+            postArgs
         ).then(function(result){
             $scope.extract_id = result.data.extract_id;
             ping_until_success();

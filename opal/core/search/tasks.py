@@ -10,7 +10,7 @@ def extract(user, extract_query):
     episodes = query.get_episodes()
     fname = extract.zip_archive(
         episodes, query.description(), user, fields=extract_query.get(
-            "data_slice"
+            "data_slice", None
         )
     )
     return fname

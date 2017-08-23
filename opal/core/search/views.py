@@ -137,11 +137,12 @@ class DownloadSearchView(View):
         if getattr(settings, 'EXTRACT_ASYNC', None):
             request_data = _get_request_data(self.request)
             criteria = request_data['criteria']
-            data_slice = request_data.get('data_slice')
+            data_slice = request_data.get('data_slice', None)
             extract_query = dict(
                 criteria=json.loads(criteria),
-                data_slice=json.loads(data_slice)
             )
+            if data_slice:
+                extract_query["data_slice"] = json.loads(data_slice)
             extract_id = async_extract(
                 self.request.user,
                 extract_query
@@ -149,7 +150,11 @@ class DownloadSearchView(View):
             return json_response({'extract_id': extract_id})
 
         criteria = json.loads(self.request.POST['criteria'])
-        data_slice = json.loads(self.request.POST['data_slice'])
+        if 'data_slice' in self.request.POST:
+            data_slice = json.loads(self.request.POST['data_slice'])
+        else:
+            data_slice = None
+
         query = queries.create_query(
             self.request.user, criteria
         )

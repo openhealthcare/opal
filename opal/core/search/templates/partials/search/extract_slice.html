@@ -10,7 +10,8 @@
                 ng-class="{'btn-primary': async_ready, 'btn-secondary': !async_ready}"
                 analytics-category="search" analytics-event="extract-download"
                 analytics-on
-                ng-click="async_extract()">
+                ng-disabled="!searched"
+                ng-click="async_extract(true)">
           <span ng-hide="async_waiting">
             {% icon "fa-cloud-download" %} Get Data
           </span>
@@ -31,6 +32,7 @@
           <button type="submit"
                   class="btn btn-primary btn-lg"
                   analytics-category="search" analytics-event="extract-download"
+                  ng-disabled="!searched"
             >
             {% icon "fa-cloud-download" %} Get Data
           </button>
