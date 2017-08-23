@@ -4,9 +4,8 @@
 {% load plugins %}
 
 <!doctype html>
-{% block angulardefinition %}
-<html xmlns:ng="http://angularjs.org" id="ng-app" ng-app="{% block ngapp %}opal{% endblock %}" ng-controller="RootCtrl" ng-keydown="keydown($event)">
-{% endblock %}
+
+<html {% block angulardefinition %}xmlns:ng="http://angularjs.org" id="ng-app" ng-app="{% block ngapp %}opal{% endblock %}" ng-controller="RootCtrl" ng-keydown="keydown($event)"{% endblock %}>
   <head>
 
 	<!--[if lte IE 8]>
@@ -16,16 +15,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/> <!--320-->
 	<title>{{ OPAL_BRAND_NAME }}</title>
 
-    {% compress js %}
     {% core_javascripts 'opal.upstream.deps' %}
+    {% compress js %}
+    {% block opal_js %}
     {% plugin_javascripts 'opal.upstream.deps' %}
     {% plugin_opal_angular_deps %}
     {% plugin_opal_angular_tracking_exclude %}
 
     <script type="text/javascript">
       angular.module('opal.config', []).value(
-        'OPAL_FLOW_SERVICE',
-        {% if OPAL_FLOW_SERVICE %}'{{ OPAL_FLOW_SERVICE }}'{% else %}null{% endif %}
+      'OPAL_FLOW_SERVICE',
+      {% if OPAL_FLOW_SERVICE %}'{{ OPAL_FLOW_SERVICE }}'{% else %}null{% endif %}
       );
     </script>
 
@@ -52,8 +52,6 @@
       {% endif %}
     </script>
 
-
-
     {% core_javascripts 'opal.utils' %}
 
     {% core_javascripts 'opal.services' %}
@@ -62,12 +60,13 @@
     {% plugin_javascripts 'opal.controllers' %}
 
     {% block angularapp %}
-	<script type="text/javascript" src="{% static "js/opal/app.js" %}"></script>
-	<script type="text/javascript" src="{% static "js/opal/routes.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/app.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/routes.js" %}"></script>
     {% endblock %}
 
     {% application_javascripts %}
     <script type="text/javascript" src="{% static "js/opal/timer.js" %}"></script>
+    {% endblock opal_js %}
     {% endcompress %}
 
     <link href='//fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css'>
@@ -86,9 +85,9 @@
     <link href="{% static "css/screen.css" %}" rel="stylesheet" media="screen">
 
     {% compress css %}
-      <link href="{% static "css/opal.css" %}" rel="stylesheet" media="all">
-      {% plugin_stylesheets %}
-      {% application_stylesheets %}
+    <link href="{% static "css/opal.css" %}" rel="stylesheet" media="all">
+    {% plugin_stylesheets %}
+    {% application_stylesheets %}
     {% endcompress %}
 
 
@@ -110,16 +109,16 @@
   <body>
     {% block application %}{% endblock %}
     <script>
-        // temporary for try outs
-        jQuery(function($){
+      // temporary for try outs
+      jQuery(function($){
 
-        	// Touch Device Detection
-        	var isTouchDevice = 'ontouchstart' in document.documentElement;
-        	if( isTouchDevice ) {
-        		$('body').addClass('touch');
-        	}
+      // Touch Device Detection
+      var isTouchDevice = 'ontouchstart' in document.documentElement;
+      if( isTouchDevice ) {
+      $('body').addClass('touch');
+      }
 
-        });
+      });
     </script>
   </body>
 
