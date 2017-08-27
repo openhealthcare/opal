@@ -716,15 +716,17 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         try:
             demographics = self.patient.demographics_set.get()
 
-            return '%s | %s | %s' % (demographics.hospital_number,
-                                     demographics.name,
-                                     self.start)
+            return 'episode: %s %s %s %s' % (
+                self.id,
+                demographics.hospital_number,
+                demographics.name,
+                self.start
+            )
         except models.ObjectDoesNotExist:
-            return self.start
-        except AttributeError:
-            return 'Episode: {0}'.format(self.pk)
-        except Exception:
-            return self.start
+            return 'episode: %s %s' % (
+                self.id,
+                self.start
+            )
 
     def save(self, *args, **kwargs):
         created = not bool(self.id)
