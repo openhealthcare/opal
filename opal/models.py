@@ -716,10 +716,11 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         try:
             demographics = self.patient.demographics_set.get()
 
-            return 'episode: %s %s %s %s' % (
+            return 'episode: %s %s %s %s %s' % (
                 self.id,
                 demographics.hospital_number,
-                demographics.name,
+                demographics.first_name,
+                demographics.surname,
                 self.start
             )
         except models.ObjectDoesNotExist:
