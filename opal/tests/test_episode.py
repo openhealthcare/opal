@@ -6,6 +6,7 @@ from mock import patch, MagicMock
 
 from django.contrib.auth.models import User
 
+from six import text_type
 from opal.core.episodes import InpatientEpisode
 from opal.core.test import OpalTestCase
 from opal.models import Patient, Episode, Tagging, UserProfile
@@ -30,8 +31,8 @@ class EpisodeTest(OpalTestCase):
             first_name="Wilma", surname="Flintstone", hospital_number="123"
         )
         self.assertEqual(
-            unicode(self.episode),
-            "episode: 1 123 Wilma Flintstone 2017-01-01"
+            text_type(self.episode),
+            "Episode: 1 - 123 - Wilma Flintstone - 2017-01-01"
         )
 
     def test_unicode_without_start(self):
@@ -39,8 +40,8 @@ class EpisodeTest(OpalTestCase):
             first_name="Wilma", surname="Flintstone", hospital_number="123"
         )
         self.assertEqual(
-            unicode(self.episode),
-            "episode: 1 123 Wilma Flintstone None"
+            text_type(self.episode),
+            "Episode: 1 - 123 - Wilma Flintstone - None"
         )
 
     def test_unicode_without_demographics(self):
@@ -48,15 +49,15 @@ class EpisodeTest(OpalTestCase):
         self.episode.start = datetime.date(2017, 1, 1)
         self.episode.save()
         self.assertEqual(
-            unicode(self.episode),
-            "episode: 1 2017-01-01"
+            text_type(self.episode),
+            "Episode: 1 - 2017-01-01"
         )
 
     def test_unicode_without_demographics_without_start(self):
         self.patient.demographics_set.all().delete()
         self.assertEqual(
-            unicode(self.episode),
-            "episode: 1 None"
+            text_type(self.episode),
+            "Episode: 1 - None"
         )
 
     def test_singleton_subrecord_created(self):

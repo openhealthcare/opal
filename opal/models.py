@@ -1,6 +1,7 @@
 """
 Opal Django Models
 """
+from __future__ import unicode_literals
 import datetime
 import functools
 import hashlib
@@ -32,6 +33,7 @@ from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.subrecords import (
     episode_subrecords, patient_subrecords, get_subrecord_from_api_name
 )
+from django.utils.encoding import python_2_unicode_compatible
 
 warnings.simplefilter('once', DeprecationWarning)
 
@@ -461,14 +463,18 @@ class Filter(models.Model):
         self.save()
 
 
+@python_2_unicode_compatible
 class ContactNumber(models.Model):
     name = models.CharField(max_length=255)
     number = models.CharField(max_length=255)
 
-    def __unicode__(self):
-        return '{0}: {1}'.format(self.name, self.number)
+    def __str__(self):
+        return '{0}: {1} - {2}'.format(
+            self.__class__.__name__, self.name, self.number
+        )
 
 
+@python_2_unicode_compatible
 class Synonym(models.Model):
     name = models.CharField(max_length=255)
     content_type = models.ForeignKey(ContentType)
@@ -478,10 +484,14 @@ class Synonym(models.Model):
     class Meta:
         unique_together = (('name', 'content_type'))
 
-    def __unicode__(self):
-        return self.name
+    def __str__(self):
+        return "{0}: {1}".format(
+            self.__class__.__name__,
+            self.name
+        )
 
 
+@python_2_unicode_compatible
 class Macro(models.Model):
     """
     A Macro is a user-expandable text sequence that allows us to
@@ -494,8 +504,8 @@ class Macro(models.Model):
     title    = models.CharField(max_length=200, help_text=HELP_TITLE)
     expanded = models.TextField(help_text=HELP_EXPANDED)
 
-    def __unicode__(self):
-        return self.title
+    def __str__(self):
+        return "{0}: {1}".format(self.__class__.__name__, self.title)
 
     @classmethod
     def to_dict(klass):
@@ -506,20 +516,25 @@ class Macro(models.Model):
                 for m in klass.objects.all()]
 
 
+@python_2_unicode_compatible
 class Patient(models.Model):
 
     objects = managers.PatientQueryset.as_manager()
 
-    def __unicode__(self):
+    def __str__(self):
         try:
             demographics = self.demographics_set.get()
-            return '%s | %s %s' % (
+            return '%s: %s - %s %s' % (
+                self.__class__.__name__,
                 demographics.hospital_number,
                 demographics.first_name,
                 demographics.surname
             )
         except models.ObjectDoesNotExist:
-            return 'Patient {0}'.format(self.id)
+            return '{0}: {1}'.format(
+                self.__class__.__name__,
+                self.id
+            )
         except:
             print(self.id)
             raise
@@ -688,6 +703,7 @@ class TrackedModel(models.Model):
             self.created = timezone.now()
 
 
+@python_2_unicode_compatible
 class Episode(UpdatesFromDictMixin, TrackedModel):
     """
     An individual episode of care.
@@ -712,11 +728,12 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
     objects = managers.EpisodeQueryset.as_manager()
 
-    def __unicode__(self):
+    def __str__(self):
         try:
             demographics = self.patient.demographics_set.get()
 
-            return 'episode: %s %s %s %s %s' % (
+            return '%s: %s - %s - %s %s - %s' % (
+                self.__class__.__name__,
                 self.id,
                 demographics.hospital_number,
                 demographics.first_name,
@@ -724,7 +741,8 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
                 self.start
             )
         except models.ObjectDoesNotExist:
-            return 'episode: %s %s' % (
+            return '%s: %s - %s' % (
+                self.__class__.__name__,
                 self.id,
                 self.start
             )
@@ -881,6 +899,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         return d
 
 
+@python_2_unicode_compatible
 class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
     consistency_token = models.CharField(max_length=8)
     _is_singleton = False
@@ -890,13 +909,12 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
     class Meta:
         abstract = True
 
-    def __unicode__(self):
-        if self.created:
-            return '{0}: {1} {2}'.format(
-                self.get_api_name(), self.id, self.created
-            )
-        else:
-            return '{0}: {1}'.format(self.get_api_name(), self.id)
+    def __str__(self):
+        return '%s: %s - %s' % (
+            self.__class__.__name__,
+            self.id,
+            self.created
+        )
 
     @classmethod
     def get_api_name(cls):
@@ -1058,6 +1076,7 @@ class EpisodeSubrecord(Subrecord):
         abstract = True
 
 
+@python_2_unicode_compatible
 class Tagging(TrackedModel, models.Model):
     _is_singleton = True
     _advanced_searchable = True
@@ -1071,13 +1090,19 @@ class Tagging(TrackedModel, models.Model):
     class Meta:
         unique_together = (('value', 'episode', 'user'))
 
-    def __unicode__(self):
+    def __str__(self):
         if self.user is not None:
-            return 'User: %s - %s - archived: %s' % (
-                self.user.username, self.value, self.archived
+            return '%s: User: %s - archived: %s' % (
+                self.__class__.__name__,
+                self.user.username,
+                self.archived
             )
         else:
-            return "%s - archived: %s" % (self.value, self.archived)
+            return "%s: %s - archived: %s" % (
+                self.__class__.__name__,
+                self.value,
+                self.archived
+            )
 
     @staticmethod
     def get_api_name():
@@ -1414,6 +1439,7 @@ class Demographics(PatientSubrecord):
         abstract = True
 
 
+@python_2_unicode_compatible
 class Location(EpisodeSubrecord):
     _is_singleton = True
     _icon = 'fa fa-map-marker'
@@ -1428,11 +1454,9 @@ class Location(EpisodeSubrecord):
     class Meta:
         abstract = True
 
-    def __unicode__(self):
-        demographics = self.episode.patient.demographics_set.get()
-        return 'Location for {0}({1}) {2} {3} {4} {5}'.format(
-            demographics.name,
-            demographics.hospital_number,
+    def __str__(self):
+        return '{0}: {1} {2} {3} {4}'.format(
+            self.__class__.__name__,
             self.category,
             self.hospital,
             self.ward,
@@ -1477,6 +1501,7 @@ Defaults to False."
         abstract = True
 
 
+@python_2_unicode_compatible
 class Diagnosis(EpisodeSubrecord):
     """
     This is a working-diagnosis list, will often contain things that are
@@ -1498,7 +1523,7 @@ class Diagnosis(EpisodeSubrecord):
     class Meta:
         abstract = True
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Diagnosis for {0}: {1} - {2}'.format(
             self.episode.patient.demographics_set.get().name,
             self.condition,

@@ -11,7 +11,7 @@ from django.utils import timezone
 from opal import models
 from opal.core import exceptions
 from opal.models import (
-    Subrecord, Tagging, Patient, InpatientAdmission, Symptom,
+    Subrecord, Tagging, Patient, InpatientAdmission, Symptom, ContactNumber
 )
 from opal.core.test import OpalTestCase
 from opal.core import patient_lists
@@ -742,6 +742,29 @@ class TaggingTestCase(OpalTestCase):
         schema = Tagging.build_field_schema()
         self.assertEqual(expected, schema)
 
+    def test_tagging_with_user_to_string(self):
+        _, episode = self.new_patient_and_episode_please()
+        self.user.username = "test_user"
+        tag = Tagging.objects.create(
+            user=self.user,
+            episode=episode,
+            archived=True
+        )
+        self.assertEqual(
+            str(tag), "Tagging: User: test_user - archived: True"
+        )
+
+    def test_tagging_without_user_to_string(self):
+        _, episode = self.new_patient_and_episode_please()
+        tag = Tagging.objects.create(
+            value="A&E",
+            episode=episode,
+            archived=True
+        )
+        self.assertEqual(
+            str(tag), "Tagging: A&E - archived: True"
+        )
+
 
 class AbstractDemographicsTestCase(OpalTestCase):
     def test_name(self):
@@ -756,4 +779,16 @@ class ExternalSystemTestCase(OpalTestCase):
         self.assertEqual(
             ExternalSubRecord.get_modal_footer_template(),
             "partials/_sourced_modal_footer.html"
+        )
+
+
+class TestContactNumber(OpalTestCase):
+    def test_to_string(self):
+        contact_number = ContactNumber.objects.create(
+            name="Wilma",
+            number="Bedrock 243"
+        )
+        self.assertEqual(
+            str(contact_number),
+            "ContactNumber: Wilma - Bedrock 243"
         )

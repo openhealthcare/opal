@@ -2,6 +2,7 @@ from django.test import TestCase
 
 from opal.models import Macro
 
+
 class MacroTest(TestCase):
     def setUp(self):
         self.m1 = Macro(title="hai", expanded="Why Hello there!")
@@ -19,3 +20,8 @@ class MacroTest(TestCase):
             dict(label="brb", expanded="Be right back...")
         ]
         self.assertEqual(serialised, Macro.to_dict())
+
+    def test_to_string(self):
+        self.assertEqual(
+            str(self.m1), "Macro: hai"
+        )
