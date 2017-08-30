@@ -535,9 +535,6 @@ class Patient(models.Model):
                 self.__class__.__name__,
                 self.id
             )
-        except:
-            print(self.id)
-            raise
 
     def create_episode(self, **kwargs):
         return self.episode_set.create(**kwargs)
@@ -1455,8 +1452,9 @@ class Location(EpisodeSubrecord):
         abstract = True
 
     def __str__(self):
-        return '{0}: {1} {2} {3} {4}'.format(
+        return '{0}: {1} - {2} - {3} - {4} - {5}'.format(
             self.__class__.__name__,
+            self.id,
             self.category,
             self.hospital,
             self.ward,
@@ -1524,8 +1522,9 @@ class Diagnosis(EpisodeSubrecord):
         abstract = True
 
     def __str__(self):
-        return 'Diagnosis for {0}: {1} - {2}'.format(
-            self.episode.patient.demographics_set.get().name,
+        return '%s: %s - %s - %s' % (
+            self.__class__.__name__,
+            self.id,
             self.condition,
             self.date_of_diagnosis
         )

@@ -11,7 +11,12 @@ from django.utils import timezone
 from opal import models
 from opal.core import exceptions
 from opal.models import (
-    Subrecord, Tagging, Patient, InpatientAdmission, Symptom, ContactNumber
+    Subrecord,
+    Tagging,
+    Patient,
+    InpatientAdmission,
+    Symptom,
+    ContactNumber,
 )
 from opal.core.test import OpalTestCase
 from opal.core import patient_lists
@@ -19,7 +24,7 @@ from opal.tests import test_patient_lists
 from opal.tests.models import (
     FamousLastWords, PatientColour, ExternalSubRecord, SymptomComplex,
     PatientConsultation, Birthday, DogOwner, HatWearer, InvisibleHatWearer,
-    HouseOwner, HoundOwner, Colour, FavouriteColour
+    HouseOwner, HoundOwner, Colour, FavouriteColour, Diagnosis, Location
 )
 
 
@@ -791,4 +796,36 @@ class TestContactNumber(OpalTestCase):
         self.assertEqual(
             str(contact_number),
             "ContactNumber: Wilma - Bedrock 243"
+        )
+
+
+class TestLocation(OpalTestCase):
+    def test_to_string(self):
+        _, episode = self.new_patient_and_episode_please()
+        Location.objects.update(
+            episode=episode,
+            category="inpatient",
+            hospital="St Mungo's",
+            ward="4",
+            bed="1"
+        )
+
+        location = Location.objects.get()
+
+        self.assertEqual(
+            str(location), "Location: 1 - inpatient - St Mungo's - 4 - 1"
+        )
+
+
+class TestDiagnosis(OpalTestCase):
+    def test_to_string(self):
+        _, episode = self.new_patient_and_episode_please()
+        diagnosis = Diagnosis.objects.create(
+            episode=episode,
+            condition="Cough",
+            date_of_diagnosis=datetime.date(2017, 1, 12)
+        )
+
+        self.assertEqual(
+            str(diagnosis), "Diagnosis: 1 - Cough - 2017-01-12"
         )
