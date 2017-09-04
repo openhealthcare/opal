@@ -1,7 +1,7 @@
 //
 // Main Opal Pathway Angular application
 //
-(function(){
+!(function(){
   var app = OPAL.module('opal.pathway', [
       'ngRoute',
       'ngProgressLite',
