@@ -1,4 +1,4 @@
-(function(){
+!(function(){
   var app = OPAL.module('opal', [
       'ngRoute',
       'ngProgressLite',

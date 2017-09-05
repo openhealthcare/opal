@@ -114,7 +114,7 @@ class EpisodeTeam(SearchRuleField):
     ANY_OF = "Any Of"
 
     display_name = "Team"
-    description = "The team that looked after that episode of care"
+    description = "The team(s) related to an episode of care"
     field_type = "many_to_many_multi_select"
 
     @property
