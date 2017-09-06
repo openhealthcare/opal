@@ -124,12 +124,21 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
 
     $scope.$watch('extractQuery.criteria', $scope.refresh, true);
 
+    $scope.getCritieraAndPageNumber = function(pageNumber){
+      var queryParams = $scope.extractQuery.completeCriteria();
+      if(queryParams.length){
+        queryParams[0].page_number = pageNumber;
+      }
+
+      return queryParams;
+    }
+
     $scope.search = function(pageNumber){
         if(!pageNumber){
             pageNumber = 1;
         }
 
-        var queryParams = $scope.extractQuery.completeCriteria();
+        var queryParams = $scope.getCritieraAndPageNumber(pageNumber);
 
         if(queryParams.length){
             queryParams[0].page_number = pageNumber;
@@ -137,6 +146,14 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
             ngProgressLite.start();
             $http.post('/search/extract/', queryParams).success(
                 function(response){
+
+                    // if the criteria has changed after the search has been
+                    // send, don't update the search results, just discard them
+                    var currentQueryParams = $scope.getCritieraAndPageNumber(pageNumber);
+                    if(JSON.stringify(queryParams) !== JSON.stringify(currentQueryParams)){
+                      return
+                    }
+
                     $scope.results = _.map(response.object_list, function(o){
                         return new PatientSummary(o);
                     });

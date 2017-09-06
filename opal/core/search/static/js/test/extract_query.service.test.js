@@ -120,14 +120,22 @@ describe('ExtractQuery', function(){
 
     it("should update the critieria to or if we're of anyOrAll is 'any'", function(){
       extractQuery.anyOrAll = "any";
-      extractQuery.completeCriteria();
-      expect(extractQuery.criteria[0].combine).toBe('or');
+      extractQuery.criteria[0].column = 'demographics';
+      extractQuery.criteria[0].field = 'surname';
+      extractQuery.criteria[0].queryType = 'contains';
+      extractQuery.criteria[0].query = 'jane';
+      var result = extractQuery.completeCriteria();
+      expect(result[0].combine).toBe('or');
     });
 
     it("should update the critieria to and if we're of anyOrAll is 'all'", function(){
       extractQuery.anyOrAll = "all";
-      extractQuery.completeCriteria();
-      expect(extractQuery.criteria[0].combine).toBe('and');
+      extractQuery.criteria[0].column = 'demographics';
+      extractQuery.criteria[0].field = 'surname';
+      extractQuery.criteria[0].queryType = 'contains';
+      extractQuery.criteria[0].query = 'jane';
+      var result = extractQuery.completeCriteria();
+      expect(result[0].combine).toBe('and');
     });
   });
 

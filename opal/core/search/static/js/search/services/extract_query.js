@@ -86,8 +86,16 @@ angular.module('opal.services').factory('ExtractQuery', function(){
         combine = 'or';
       }
 
+      // remove the angular hash key
+      var criteria = angular.copy(this.criteria);
+      _.each(criteria, function(query){
+          query = _.filter(query, function(v, k){
+            return k === "%%hashKey";
+          });
+      });
+
       // remove incomplete criteria
-      var criteria = _.filter(this.criteria, function(c){
+      criteria = _.filter(criteria, function(c){
           // Ensure we have a query otherwise
           if(c.column &&  c.field &&  c.query){
               return true;

@@ -472,8 +472,24 @@ describe('ExtractCtrl', function(){
         });
     });
 
-    describe('Search', function(){
+    describe('getCritieraAndPageNumber', function(){
+      it('should get the critera and the page number', function(){
+          var criteria = [{
+              combine    : "and",
+              column     : "symptoms",
+              field      : "symptoms",
+              queryType  : "contains",
+              query      : "cough",
+              lookup_list: []
+          }];
+          $scope.extractQuery.criteria = criteria;
+          var expected = angular.copy(criteria);
+          expected[0]["page_number"] = 1;
+          expect($scope.getCritieraAndPageNumber(1)).toEqual(expected);
+      });
+    });
 
+    describe('Search', function(){
         it('should ask the server for results', function(){
 
             $httpBackend.expectPOST("/search/extract/").respond({
@@ -503,6 +519,46 @@ describe('ExtractCtrl', function(){
             expect($scope.searched).toBe(true);
         });
 
+        it('should not replace the search results if they have subsequently been updated the criteria', function(){
+            $httpBackend.expectPOST("/search/extract/").respond({
+                page_number: 1,
+                total_pages: 1,
+                total_count: 0,
+                object_list: [
+                    {
+                      categories: [],
+                      first_name: "Wilma"
+                    }
+                ]
+            });
+
+            $scope.extractQuery.criteria[0] = {
+                combine    : "and",
+                column     : "symptoms",
+                field      : "symptoms",
+                queryType  : "contains",
+                query      : "cough",
+                lookup_list: []
+            };
+
+            $scope.search();
+
+            $scope.extractQuery.criteria[0] = {
+                combine    : "and",
+                column     : "diagnosis",
+                field      : "condition",
+                queryType  : "contains",
+                query      : "cough",
+                lookup_list: []
+            };
+
+            $httpBackend.flush();
+            $httpBackend.verifyNoOutstandingExpectation();
+            $httpBackend.verifyNoOutstandingRequest();
+            // the results should not be updated because the query has changed
+            expect($scope.results.length).toBe(0);
+        });
+
         it('should handle errors', function(){
             spyOn($window, 'alert');
             $httpBackend.expectPOST('/search/extract/').respond(500, {});
@@ -516,6 +572,7 @@ describe('ExtractCtrl', function(){
             }
             $scope.search();
             $httpBackend.flush();
+
             expect($window.alert).toHaveBeenCalled();
         });
 
@@ -601,9 +658,7 @@ describe('ExtractCtrl', function(){
 
             expect($scope.async_ready).toBe(false);
             expect($window.alert).toHaveBeenCalledWith('FAILURE');
-
         });
-
     });
 
     describe('jumpToFilter()', function() {
