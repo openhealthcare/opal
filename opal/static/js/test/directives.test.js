@@ -282,6 +282,19 @@ describe('OPAL Directives', function(){
             expect(element[0].blur).toHaveBeenCalled()
         });
 
+        it('it should remove the on event if the slash-key-focus is removed', function(){
+          var markup = '<input slash-key-focus="!state"/>';
+          compileDirective(markup);
+          expect($(element).is(":focus")).toEqual(false)
+          spyOn(element[0], 'focus')
+          scope.$apply();
+          scope.state = true;
+          scope.$apply();
+          var e = $.Event('keyup.keyFocus');
+          e.keyCode = 191
+          $(window).trigger(e)
+          expect(element[0].focus).not.toHaveBeenCalled();
+        });
     });
 
     describe("freezeHeaders", function(){
