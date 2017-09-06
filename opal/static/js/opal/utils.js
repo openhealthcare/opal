@@ -182,8 +182,6 @@ _indexof = function(elt /*, from*/)
 		return -1;
 	};
 
-if (!Array.prototype.indexOf) {	Array.prototype.indexOf = _indexof };
-
 // From http://stackoverflow.com/a/3937924/2463201
 jQuery.support.placeholder = (function(){
 	var i = document.createElement('input');

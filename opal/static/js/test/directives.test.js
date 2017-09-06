@@ -20,6 +20,13 @@ describe('OPAL Directives', function(){
             parent_tag: "infectious_diseases",
             slug: "infectious_diseases-id_inpatients"
         },
+        id_liason: {
+            direct_add: true,
+            display_name: "ID Liason",
+            name: "id_liason",
+            parent_tag: "infectious_diseases",
+            slug: "infectious_diseases-id_inpatients"
+        },
         infectious_diseases: {
             direct_add: false,
             display_name: "Infectious Diseases",
@@ -534,7 +541,7 @@ describe('OPAL Directives', function(){
         });
     });
 
-    describe('date-of-birth', function(){
+    describe('dateOfBirth', function(){
         var scopeBinding = {date_of_birth: moment("10/12/1999", "DD/MM/YYYY", true)}
         var testScope;
         var input;
@@ -546,6 +553,14 @@ describe('OPAL Directives', function(){
             input = angular.element($(element).find("input")[0]);
             testScope = input.scope();
         });
+
+        it('should throw if no model is set', function(){
+          var markup = '<div id="test" date-of-birth name="date_of_birth"></div>';
+          scope.editing = scopeBinding;
+          expect(function(){ compileDirective(markup) }).toThrow(
+            "date-of-birth requires an ng-model to be set"
+          );
+        })
 
         it('should change change the core moment into a date string', function(){
             expect(testScope.value).toEqual("10/12/1999");
@@ -576,6 +591,10 @@ describe('OPAL Directives', function(){
             expect(testScope.numberCheck.test("wrongwrong")).toBe(false);
         });
 
+        it("should mark as invalid if its not a valid date", function(){
+            expect(testScope.numberCheck.test("12/14/2000")).toBe(false);
+        });
+
         it("should mark as invalid if the date is over 150", function(){
             expect(testScope.numberCheck.test("10/1/1200")).toBe(false);
         });
@@ -600,8 +619,16 @@ describe('OPAL Directives', function(){
         });
     });
 
-    describe("tag-select", function(){
+    describe("tagSelect", function(){
         var markup = '<form name="form"><div id="test" tag-select ng-model="editing.tagging"></div></form>';
+
+        it("requires ng-model to be set", function(){
+          var markup = '<div tag-select></div>';
+          expect(function(){ compileDirective(markup) }).toThrow(
+            "tag-select requires an ng-model to be set"
+          );
+        });
+
 
         it("should render a template", function(){
             scope.editing = {tagging: {}};
@@ -619,6 +646,20 @@ describe('OPAL Directives', function(){
             expect(testScope.value.length).toBe(1)
             expect(testScope.value[0].display_name).toBe("ID Inpatients");
         });
+
+        it("should sort the copied values by alphabetical order", function(){
+          scope.editing = {tagging: {
+            id_inpatients: true,
+            id_liason: true
+          }};
+          compileDirective(markup);
+          var input = angular.element($(element).find(".ui-select-container")[0]);
+          var testScope = input.scope();
+          expect(testScope.value.length).toBe(2)
+          expect(testScope.value[0].display_name).toBe("ID Inpatients");
+          expect(testScope.value[1].display_name).toBe("ID Liason");
+        });
+
 
         it("should update editing if something is added", function(){
             scope.editing = {tagging: {}};

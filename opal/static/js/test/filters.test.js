@@ -406,6 +406,10 @@ describe('filters', function() {
         it('Should uppercase the input', function () {
             expect(upperFilter('this')).toBe('THIS');
         });
+
+        it('should return null if input is not set', function(){
+            expect(upperFilter(undefined)).toBe(null);
+        });
     });
 
     describe('title', function(){
