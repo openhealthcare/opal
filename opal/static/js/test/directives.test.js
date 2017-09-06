@@ -90,6 +90,51 @@ describe('OPAL Directives', function(){
         });
     });
 
+    describe('setFocusIf', function(){
+        it('should set focus if true', function(){
+          var markup = '<input type="text" set-focus-if="true" />';
+          compileDirective(markup);
+          spyOn(element[0],'focus');
+          $timeout.flush();
+          expect(element[0].focus).toHaveBeenCalled();
+        });
+
+        it('should not set focus if false', function(){
+          var markup = '<input type="text" set-focus-if="false" />';
+          compileDirective(markup);
+          spyOn(element[0],'focus');
+          $timeout.verifyNoPendingTasks();
+        });
+
+        it('should set focus on change to positive', function(){
+          scope.something = true;
+          var markup = '<input type="text" set-focus-if="!something" />';
+          compileDirective(markup);
+          spyOn(element[0],'focus');
+
+          $timeout.verifyNoPendingTasks();
+          scope.something = false;
+          scope.$apply();
+          $timeout.flush();
+          expect(element[0].focus).toHaveBeenCalled();
+        });
+
+        it('should not set focus on change to negative', function(){
+          scope.something = false;
+          var markup = '<input type="text" set-focus-if="!something" />';
+          compileDirective(markup);
+          spyOn(element[0],'focus');
+
+          $timeout.flush();
+          expect(element[0].focus).toHaveBeenCalled();
+
+          scope.something = true;
+          scope.$apply();
+
+          $timeout.verifyNoPendingTasks();
+        });
+    });
+
     describe('scrollEpisodes', function(){
 
         it('should check on down', function(){
