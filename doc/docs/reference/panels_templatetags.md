@@ -57,3 +57,19 @@ Arguments:
 
 * `label`: The left hand item, to be rendered bold.
 * `model`: The right hand item, to be rendered as an angular expression
+
+#### {% cached_subrecord_modal subrecord, prefix(optional) %}
+
+```html
+{% load panels %}
+{% cached_subrecord_modal models.Demographics prefix="walkin" %}
+```
+
+
+Render the subrecords modal inline in an angular ng-template script tag so that it
+loads instantaniously for the user.
+
+Arguments:
+
+* `subrecord`: the subrecord to have its modal cached.
+* `prefix`: specify a prefix for the modal, if required

@@ -54,11 +54,12 @@ class ModelColumn(Column):
         self.single = model._is_singleton
         self.icon = getattr(model, '_icon', '')
         self.list_limit = getattr(model, '_list_limit', None)
+        self.prefixes = self.patient_list().get_template_prefixes()
         self.template_path = model.get_display_template(
-            prefixes=self.patient_list().get_template_prefixes()
+            prefixes=self.prefixes
         )
         self.detail_template_path = model.get_detail_template(
-            prefixes=self.patient_list().get_template_prefixes()
+            prefixes=self.prefixes
         )
 
     def to_dict(self, **kwargs):

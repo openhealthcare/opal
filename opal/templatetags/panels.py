@@ -85,3 +85,34 @@ def aligned_pair(model=None, label=None):
         'model': model,
         'label': label
     }
+
+
+@register.inclusion_tag(
+    '_helpers/cached_subrecord_modal.html', takes_context=True
+)
+def cached_subrecord_modal(context, subrecord, prefix=None):
+    """
+        renders a text in the angular template format
+        ie
+        <script type="text/ng-template" id="/tpl.html">
+            Content of the template.
+        </script>
+
+        if you put in a model and a patient list
+        it will do the reverse logic for you
+    """
+    child_context = copy.copy(context)
+    child_context.update(dict(
+        url=subrecord.get_modal_url(prefix),
+        template=subrecord.get_modal_template(prefix),
+
+        # we need to pass in the same context variables as
+        # opal.views.ModalTemplateView.get_context_data
+        name=subrecord.get_api_name(),
+        title=subrecord.get_display_name(),
+        icon=subrecord.get_icon(),
+        single=subrecord._is_singleton,
+        column=subrecord
+    ))
+
+    return child_context

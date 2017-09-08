@@ -1,5 +1,6 @@
 {% extends 'layouts/left_panel.html' %}
 {% load patient_lists %}
+{% load panels %}
 {% block heading %}
 <div class="row screen-only">
   <div class="col-md-12">
@@ -221,6 +222,14 @@
 {% endblock %}
 
 {% block footer %}
+
+{% for column in columns %}
+  {% if column.model %}
+    {% for prefix in column.prefixes %}
+      {% cached_subrecord_modal column.model prefix=prefix %}
+    {% endfor %}
+  {% endif %}
+{% endfor %}
 
 {% include 'keyboard_shortcuts_modal.html' %}
 

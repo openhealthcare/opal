@@ -164,6 +164,11 @@ Would use the first template it found, looking at:
 ```
 
 
+#### Subrecord.get_modal_url(prefix=None)
+
+A Classmethod that returns the url for the modal for this subrecord
+
+
 #### Subrecord.get_modal_template()
 
 Classmethod to locate the active template for our record. Returns the name of a template or None.
