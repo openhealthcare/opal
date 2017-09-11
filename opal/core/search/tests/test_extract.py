@@ -13,7 +13,7 @@ from opal.tests.models import (
     FamousLastWords
 )
 from opal.core.search import extract
-from six import u
+from six import u, b
 
 
 MOCKING_FILE_NAME_OPEN = "opal.core.search.extract.open"
@@ -193,11 +193,11 @@ class GenerateNestedFilesTestCase(OpalTestCase):
         )
 
         expected_row = [
-            'oops',
-            'Indiana',
-            'True',
-            'Tommy Cooper',
-            'False'
+            b'oops',
+            b'Indiana',
+            b'True',
+            b'Tommy Cooper',
+            b'False'
         ]
 
         self.assertEqual(
@@ -269,16 +269,17 @@ class GenerateNestedFilesTestCase(OpalTestCase):
 
         expected_row = [
             datetime.date(2017, 1, 12),
-            'Indiana',
-            'True',
-            'Tommy Cooper',
-            'False'
+            b'Indiana',
+            b'True',
+            b'Tommy Cooper',
+            b'False'
         ]
 
         self.assertEqual(
             write_row.call_args_list[1][0][0],
             expected_row
         )
+
 
 @patch('opal.core.search.extract.subrecords.subrecords')
 @patch('opal.core.search.extract.zipfile')
@@ -428,7 +429,7 @@ class TestBasicCsvRenderer(PatientEpisodeTestCase):
                 Colour, Colour.objects.all(), self.user
             )
             result = renderer.get_row(colour)
-            self.assertIn("onions; kettles", result)
+            self.assertIn(b"onions; kettles", result)
 
     def test_get_row(self):
         with patch.object(Colour, "_get_fieldnames_to_extract") as field_names:
@@ -440,7 +441,7 @@ class TestBasicCsvRenderer(PatientEpisodeTestCase):
             )
             self.assertEqual(
                 renderer.get_row(colour),
-                ["Blue"]
+                [b"Blue"]
             )
 
     def test_get_row_uses_fields_arg(self):
@@ -451,7 +452,7 @@ class TestBasicCsvRenderer(PatientEpisodeTestCase):
         )
         self.assertEqual(
             renderer.get_row(colour),
-            ["Blue"]
+            [b"Blue"]
         )
 
     def test_get_rows(self):
@@ -483,7 +484,7 @@ class TestBasicCsvRenderer(PatientEpisodeTestCase):
                 self.assertEqual(renderer.get_headers.call_count, 1)
                 self.assertEqual(csv.writer().writerow.call_count, 2)
                 self.assertEqual(csv.writer().writerow.mock_calls[0][1][0], ["header"])
-                self.assertEqual(csv.writer().writerow.mock_calls[1][1][0], [b"row"])
+                self.assertEqual(csv.writer().writerow.mock_calls[1][1][0], ["row"])
 
 
 class TestEpisodeCsvRenderer(PatientEpisodeTestCase):
@@ -523,7 +524,7 @@ class TestEpisodeCsvRenderer(PatientEpisodeTestCase):
         self.episode.set_tag_names(["trees"], self.user)
         # make sure we keep historic tags
         self.episode.set_tag_names(["leaves"], self.user)
-        self.assertIn("trees;leaves", renderer.get_row(self.episode))
+        self.assertIn(b"trees;leaves", renderer.get_row(self.episode))
 
 
 @patch.object(PatientColour, "_get_fieldnames_to_extract")
@@ -556,7 +557,7 @@ class TestPatientSubrecordCsvRenderer(PatientEpisodeTestCase):
             self.user
         )
         rendered = renderer.get_row(self.patient_colour, self.episode.id)
-        self.assertEqual(["1", "1", "blue"], rendered)
+        self.assertEqual([b"1", b"1", b"blue"], rendered)
 
     def test_get_rows(self, field_names_to_extract):
         field_names_to_extract.return_value = [
@@ -570,7 +571,7 @@ class TestPatientSubrecordCsvRenderer(PatientEpisodeTestCase):
         rendered = list(
             renderer.get_rows()
         )
-        self.assertEqual([["1", "1", "blue"]], rendered)
+        self.assertEqual([[b"1", b"1", b"blue"]], rendered)
 
     def test_get_rows_same_patient(self, field_names_to_extract):
         self.patient.create_episode()
@@ -587,8 +588,8 @@ class TestPatientSubrecordCsvRenderer(PatientEpisodeTestCase):
             renderer.get_rows()
         )
         self.assertEqual([
-            ["1", "1", "blue"],
-            ["2", "1", "blue"]
+            [b"1", b"1", b"blue"],
+            [b"2", b"1", b"blue"]
         ], rendered)
 
 
@@ -648,7 +649,7 @@ class NestedEpisodeSubrecordCsvRendererTestCase(PatientEpisodeTestCase):
     def test_get_nested_row_populated(self):
         result = self.renderer.get_nested_row(self.episode)
         self.assertEqual(
-            result, ['blue', 'green']
+            result, [b'blue', b'green']
         )
 
     def test_get_nested_row_not_populated(self):
@@ -690,7 +691,7 @@ class NestedEpisodeSubrecordCsvRendererWhenNoneTestCase(
     def test_get_nested_row_populated(self):
         result = self.renderer.get_nested_row(self.episode)
         self.assertEqual(
-            result, ['blue']
+            result, [b'blue']
         )
 
 
@@ -766,7 +767,7 @@ class NestedPatientSubrecordCsvRendererTestCase(PatientEpisodeTestCase):
     def test_get_nested_row_populated(self):
         result = self.renderer.get_nested_row(self.episode)
         self.assertEqual(
-            result, ['blue', 'green']
+            result, [b'blue', b'green']
         )
 
     def test_get_nested_row_not_populated(self):
@@ -806,7 +807,7 @@ class NestedPatientSubrecordCsvRendererWhenNoneTestCase(
     def test_get_nested_row_populated(self):
         result = self.renderer.get_nested_row(self.episode)
         self.assertEqual(
-            result, ['blue']
+            result, [b'blue']
         )
 
 
@@ -879,4 +880,4 @@ class TestEpisodeSubrecordCsvRenderer(PatientEpisodeTestCase):
             Colour, models.Episode.objects.all(), self.user
         )
         rendered = renderer.get_row(self.colour)
-        self.assertEqual(["1", "1", "blue"], rendered)
+        self.assertEqual([b"1", b"1", b"blue"], rendered)
