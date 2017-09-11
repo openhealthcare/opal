@@ -472,7 +472,7 @@ describe('ExtractCtrl', function(){
         });
     });
 
-    describe('getCritieraAndPageNumber', function(){
+    describe('getQueryParams', function(){
       it('should get the critera and the page number', function(){
           var criteria = [{
               combine    : "and",
@@ -485,8 +485,42 @@ describe('ExtractCtrl', function(){
           $scope.extractQuery.criteria = criteria;
           var expected = angular.copy(criteria);
           expected[0]["page_number"] = 1;
-          expect($scope.getCritieraAndPageNumber(1)).toEqual(expected);
+          expect($scope.getQueryParams(1)).toEqual(expected);
       });
+
+      it('should remove the hash key', function(){
+          var expected = [{
+              combine    : "and",
+              column     : "symptoms",
+              field      : "symptoms",
+              queryType  : "contains",
+              query      : "cough",
+              lookup_list: [],
+          }];
+
+          var criteria = angular.copy(expected);
+          criteria["%%hashKey"] = 123;
+          $scope.extractQuery.criteria = criteria;
+          var expected = angular.copy(criteria);
+          expected[0]["page_number"] = 1;
+          expect($scope.getQueryParams(1)).toEqual(expected);
+      });
+
+      it('should copy the criteria', function(){
+        var criteria = [{
+            combine    : "and",
+            column     : "symptoms",
+            field      : "symptoms",
+            queryType  : "contains",
+            query      : "cough",
+            lookup_list: []
+        }];
+        $scope.extractQuery.criteria = criteria;
+        criteria[0].page_number = 1;
+        expect($scope.getQueryParams(1)).toEqual(criteria);
+        expect($scope.getQueryParams(1)).not.toBe(criteria);
+      });
+
     });
 
     describe('Search', function(){

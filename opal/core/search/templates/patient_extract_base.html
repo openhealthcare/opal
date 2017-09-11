@@ -12,13 +12,13 @@
           <div class="col-md-12">
             <div class="row">
               <div class="col-md-6">
-                <span ng-hide="completeCriteria().length">
+                <span ng-hide="extractQuery.completeCriteria().length">
                   <h4>Please enter a query</h4>
                 </span>
-                <span ng-show="completeCriteria().length">
+                <span ng-show="extractQuery.completeCriteria().length">
                   <h4>Your Criteria</h4>
                   Find patients where the
-                  <span ng-repeat="query in completeCriteria()">
+                  <span ng-repeat="query in extractQuery.completeCriteria()">
                     <span ng-hide="query.column === 'Tagging'">
                       <strong>[[ findColumn(query.column).display_name ]] [[ findField(query.column, query.field).title ]]</strong> [[ readableQuery(query.queryType) ]] <strong>[[ query.query ]]</strong>
                     </span>
@@ -30,7 +30,7 @@
                 </span>
               </div>
               <div class="col-md-6 text-right">
-                <button ng-disabled="searched && !completeCriteria().length" ng-click="search()"
+                <button ng-disabled="searched && !extractQuery.completeCriteria().length" ng-click="search()"
                         class="btn btn-primary btn-lg"
                         >
                   <span class="glyphicon glyphicon-search"></span>

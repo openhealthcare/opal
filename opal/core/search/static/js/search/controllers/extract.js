@@ -124,11 +124,20 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
 
     $scope.$watch('extractQuery.criteria', $scope.refresh, true);
 
-    $scope.getCritieraAndPageNumber = function(pageNumber){
-      var queryParams = $scope.extractQuery.completeCriteria();
+    $scope.getQueryParams = function(pageNumber){
+      // the query params are the complete criteria and the
+      // page number without the angular hash key
+      var queryParams = angular.copy($scope.extractQuery.completeCriteria());
       if(queryParams.length){
         queryParams[0].page_number = pageNumber;
       }
+
+      // remove the angular hash key
+      _.each(queryParams, function(query){
+          query = _.filter(query, function(v, k){
+            return k === "%%hashKey";
+          });
+      });
 
       return queryParams;
     }
@@ -138,7 +147,7 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
             pageNumber = 1;
         }
 
-        var queryParams = $scope.getCritieraAndPageNumber(pageNumber);
+        var queryParams = $scope.getQueryParams(pageNumber);
 
         if(queryParams.length){
             queryParams[0].page_number = pageNumber;
@@ -149,7 +158,7 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
 
                     // if the criteria has changed after the search has been
                     // send, don't update the search results, just discard them
-                    var currentQueryParams = $scope.getCritieraAndPageNumber(pageNumber);
+                    var currentQueryParams = $scope.getQueryParams(pageNumber);
                     if(JSON.stringify(queryParams) !== JSON.stringify(currentQueryParams)){
                       return
                     }
