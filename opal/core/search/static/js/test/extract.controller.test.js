@@ -693,6 +693,45 @@ describe('ExtractCtrl', function(){
             expect($scope.async_ready).toBe(false);
             expect($window.alert).toHaveBeenCalledWith('FAILURE');
         });
+
+        it('should query with a data slice', function(){
+          $scope.extractQuery.criteria = [{
+            "column": "demographics",
+            "field": "first_name",
+            "queryType":"Contains",
+            "query":"a",
+            "combine":"and"
+          }];
+          spyOn($scope.extractQuery, "getDataSlices").and.returnValue([{
+            "demographics": ["first_name", "surname"]
+          }]);
+
+          var expected = {
+            criteria: JSON.stringify([{
+              "column": "demographics",
+              "field": "first_name",
+              "queryType":"Contains",
+              "query":"a",
+              "combine":"and"
+            }]),
+            data_slice: JSON.stringify([{
+              "demographics": ["first_name", "surname"]
+            }])
+          };
+
+          $httpBackend.expectPOST('/search/extract/download', expected).respond({extract_id: '23'});
+          $httpBackend.expectGET('/search/extract/status/23').respond({state: 'SUCCESS'})
+
+          $scope.async_extract(true);
+          $timeout.flush()
+          $rootScope.$apply();
+          $httpBackend.flush();
+
+          expect($scope.extract_id).toBe('23');
+          $rootScope.$apply();
+
+          expect($scope.async_ready).toBe(true);
+        });
     });
 
     describe('jumpToFilter()', function() {

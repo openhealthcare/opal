@@ -455,11 +455,13 @@ class DownloadTestCase(BaseSearchTestCase):
                     "query": "a",
                     "lookup_list": [],
                 }]),
-            "data_slice": json.dumps({})
         }
 
         self.assertTrue(
-            self.client.login(username=self.user.username, password=self.PASSWORD)
+            self.client.login(
+                username=self.user.username,
+                password=self.PASSWORD
+            )
         )
 
         response = self.client.post(url, post_data)
