@@ -37,6 +37,23 @@ describe('ExtractQuery', function(){
     });
   });
 
+  describe('addSubrecordSlices', function(){
+    it('should add all fields for a subrecord', function(){
+      extractQuery.slices = [];
+      extractQuery.addSlice("someField");
+
+      var someSubrecord = {
+        fields: [
+          "someField", "someOtherField"
+        ]
+      }
+      extractQuery.addSubrecordSlices(someSubrecord);
+      var expected = ["someField", "someOtherField"];
+      var found = _.clone(extractQuery.slices);
+      expect(found).toEqual(expected);
+    });
+  });
+
   describe('addSlice()', function(){
     it('should add a field to the slice', function(){
       extractQuery.addSlice("someField");
@@ -66,10 +83,115 @@ describe('ExtractQuery', function(){
     });
   });
 
+  describe('isSliceAdded()', function(){
+    it('should be true if the slice is added', function(){
+      extractQuery.addSlice("something");
+      expect(extractQuery.isSliceAdded("something")).toBe(true);
+    });
+
+    it('should be false if the slice is added', function(){
+      extractQuery.addSlice("something else");
+      expect(extractQuery.isSliceAdded("something")).toBe(false);
+    });
+  });
+
+  describe('isSubrecordAdded()', function(){
+    it('should be true if all fields for the subrecord have been added', function(){
+      var someSubrecord = {}
+      var field1 = {
+        name: "someField",
+        subrecord: someSubrecord
+      }
+
+      var field2 = {
+        name: "someOtherField",
+        subrecord: someSubrecord
+      }
+      someSubrecord.fields = [
+          field1, field2
+      ];
+      extractQuery.addSlice(field1);
+      extractQuery.addSlice(field2);
+      expect(extractQuery.isSubrecordAdded(someSubrecord)).toBe(true);
+    });
+
+    it('should be false if only some of the fields for the subrecord have been added', function(){
+      var someSubrecord = {}
+      var field1 = {
+        name: "someField",
+        subrecord: someSubrecord
+      }
+
+      var field2 = {
+        name: "someOtherField",
+        subrecord: someSubrecord
+      }
+      someSubrecord.fields = [
+          field1, field2
+      ];
+
+      extractQuery.addSlice(field1);
+      expect(extractQuery.isSubrecordAdded(someSubrecord)).toBe(false);
+    });
+  });
+
+  describe('addSubrecordSlices()', function(){
+    it('it should add all fields for the subrecord', function(){
+      var someSubrecord = {}
+      var field1 = {
+        name: "someField",
+        subrecord: someSubrecord
+      }
+
+      var field2 = {
+        name: "someOtherField",
+        subrecord: someSubrecord
+      }
+      someSubrecord.fields = [
+          field1, field2
+      ];
+
+      extractQuery.addSubrecordSlices(someSubrecord);
+      var slices = _.pluck(extractQuery.slices, "name");
+      expect(slices.indexOf("someField") !== -1).toBe(true);
+      expect(slices.indexOf("someOtherField") !== -1).toBe(true);
+    });
+  });
+
+  describe('removeSubrecordSlices', function(){
+    it('it should remove all fields for the subrecord', function(){
+      var someSubrecord = {}
+      var field1 = {
+        name: "someField",
+        subrecord: someSubrecord
+      }
+
+      var field2 = {
+        name: "someOtherField",
+        subrecord: someSubrecord
+      }
+      someSubrecord.fields = [
+          field1, field2
+      ];
+      extractQuery.addSubrecordSlices(someSubrecord);
+      extractQuery.removeSubrecordSlices(someSubrecord);
+      var slices = _.pluck(extractQuery.slices, "name");
+      expect(slices.indexOf("someField") === -1).toBe(true);
+      expect(slices.indexOf("someOtherField") === -1).toBe(true);
+    });
+  });
+
   describe('removeSlice()', function(){
     it('should add a field to the slice', function(){
       extractQuery.slices.push("someField");
       extractQuery.removeSlice("someField");
+      expect(extractQuery.slices.length).toBe(
+        extractQuery.requiredExtractFields.length
+      );
+    });
+
+    it('should not remove a required field', function(){
+      extractQuery.removeSlice(extractQuery.requiredExtractFields[0]);
       expect(extractQuery.slices.length).toBe(
         extractQuery.requiredExtractFields.length
       );
