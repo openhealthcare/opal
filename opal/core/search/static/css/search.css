@@ -24,53 +24,34 @@
   width: 34px;
 }
 
-
-/* the data slicing */
-.extract-table-container {
-    height: 300px;
-    border: 1px solid #ddd;
+.extract-selector{
+  border: 1px solid #ddd;
 }
 
-.extract-table-container table {
-    display: flex;
-    flex-flow: column;
-    height: 100%;
-    width: 100%;
-}
-.extract-table-container table thead {
-    /* head takes the height it requires,
-    and it's not scaled when table is resized */
-    flex: 0 0 auto;
-    width: 100%;
+.extract-selector-rows{
+  height: 280px;
+  overflow-y: auto;
 }
 
-.extract-table-container table tbody {
-    /* body takes all the remaining available space */
-    flex: 1 1 auto;
-    display: block;
-    overflow-y: scroll;
-}
-.extract-table-container table tbody tr {
-    width: 100%;
+.extract-selector-header{
+  padding: 8px;
+  border-bottom: 2px solid #ddd;
 }
 
-.extract-table-container table tbody tr a {
-    display: block;
+.extract-selector-row{
+  border-top: 1px solid #ddd;
+  font-size: 12px;
 }
 
-.extract-table-container table thead, .extract-table-container table tbody tr {
-    display: table;
-    table-layout: fixed;
+.extract-selector-row.active{
+  background-color: #f5f5f5;
 }
-.extract-slice-side-bar{
-    position: relative;
-    height: 300px;
-    width: 100%
+
+.extract-selector-row a{
+  display: block;
+  padding: 8px;
 }
-.extract-slice-side-button{
-    position: absolute;
-    bottom: 0;
-}
+
 .extract-slice-field-description{
     position: relative;
     padding-bottom: 50px;

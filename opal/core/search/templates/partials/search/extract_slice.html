@@ -47,119 +47,49 @@
 </div>
 <!-- The Add Fields row -->
 <div class="row">
-  <div class="col-md-12">
-    <h3>Available Fields</h3>
+  <div class="col-md-12 content-offset-below-10">
+    <h3 class="inline">Available Fields</h3>
+    <p class="inline sidebar-help">
+      - Select Fields for your extract.
+    </p>
   </div>
 </div>
 <div class="row">
-  <div class="col-md-12">
+  <div class="col-md-10 col-md-push-1">
     <div class="row">
-      <div class="col-md-10 col-md-push-1">
-        <div class="col-md-3">
-          <div class="extract-table-container">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>
-                    <h5>Records</h5>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr ng-class="{active: column.name === sliceSubrecord.name}" ng-repeat="column in extractSchema.columns">
-                  <td class="extract-hover">
-                    <a ng-class="{'text-muted': extractQuery.isSubrecordAdded(column)}" ng-click="selectSliceSubrecord(column)" class="pointer extract-slice-table-link">
-                      [[ column.display_name ]]
-                    </a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+      <div class="col-md-5">
+        <div class="extract-selector">
+          <div class="extract-selector-header">
+            <h5>Records</h5>
           </div>
-        </div>
-        <div class="col-md-3 col-md-push-1">
-          <div class="extract-table-container">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>
-                    <h5>[[ sliceSubrecord.display_name ]]
-                      <a href="" ng-show="!extractQuery.isSubrecordAdded(sliceSubrecord)" ng-click="extractQuery.addSubrecordSlices(sliceSubrecord)" class="pull-right">
-                        <i class="fa fa-plus-circle"></i>
-                      </a>
-                      <a href="" ng-show="extractQuery.isSubrecordAdded(sliceSubrecord)" ng-click="extractQuery.removeSubrecordSlices(sliceSubrecord)" class="pull-right">
-                        <i class="fa fa-minus-circle"></i>
-                      </a>
-                    </h5>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr ng-class="{active: field.name === fieldInfo.name}" ng-repeat="field in sliceSubrecord.fields">
-                  <td class="extract-hover">
-                    <a ng-click="setFieldInfo(field)" ng-class="{'text-muted': extractQuery.isSliceAdded(field)}" class="pointer extract-slice-table-link">
-                      [[ field.title ]]
-                    </a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-        <div class="col-md-4 col-md-push-2">
-          <div class="search-info" ng-show="fieldInfo">
-            <div class="search-info-title">
-              <strong>[[ fieldInfo.subrecord.display_name ]]</strong>
+          <div class="extract-selector-rows">
+            <div class="extract-hover extract-selector-row" ng-class="{active: column.name === sliceSubrecord.name}" ng-repeat="column in extractSchema.columns">
+              <a ng-class="{'text-muted': extractQuery.isSubrecordAdded(column)}" ng-click="selectSliceSubrecord(column)" class="pointer extract-slice-table-link">
+                [[ column.display_name ]]
+              </a>
             </div>
-             <div>
-               <strong>[[ fieldInfo.title ]]</strong>
-             </div>
-            <span ng-show="isBoolean(fieldInfo.subrecord.name, fieldInfo.name)">
-              [True/False]
-            </span>
-            <span ng-show="isSelect(fieldInfo.subrecord.name, fieldInfo.name)">
-
-              <div ng-show="fieldInfo.lookup_list && fieldInfo.lookup_list.length">
-                [a
-                <a href=""
-                   class="orange-link"
-                   ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: fieldInfo.lookup_list, lookuplist: fieldInfo.lookup_list })">
-                  [[ findField(fieldInfo.subrecord.name, fieldInfo.name).lookup_list | underscoreToSpaces ]]
-                </a>]
-              </div>
-            </span>
-            <span ng-show="isText(fieldInfo.subrecord.name, fieldInfo.name)">
-              [Text]
-              <div ng-show="fieldInfo.lookup_list">
-                Normally coded as a
-                <a href=""
-                   class="orange-link"
-                   ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: fieldInfo.lookup_list, lookuplist: getChoices(fieldInfo.subrecord.name, fieldInfo.name) })">
-                  [[ fieldInfo.lookup_list | underscoreToSpaces ]]</a>
-                but free text entries are possible.
-              </div>
-              <div ng-show="fieldInfo.enum && fieldInfo.enum.length">
-                one of <span ng-repeat="i in fieldInfo.enum">[[ i ]] </span>
-              </div>
-            </span>
-            <span ng-show="isDate(fieldInfo.subrecord.name, fieldInfo.name)">
-              [Date]
-            </span>
-            <span ng-show="isDateTime(fieldInfo.subrecord.name, fieldInfo.name)">
-              [Date & Time]
-            </span>
-            <div>
-              <div class="extract-slice-field-description">
-                [[ fieldInfo.description ]]
-                <div class="extract-slice-field-add">
-                  <a ng-show="!extractQuery.isSliceAdded(fieldInfo)" ng-click="extractQuery.addSlice(fieldInfo)" class="btn btn-primary">
-                    {% icon "fa-plus-circle" %} Add To Extract
-                  </a>
-                  <a ng-show="extractQuery.isSliceAdded(fieldInfo)" ng-click="extractQuery.removeSlice(fieldInfo)" class="btn btn-primary">
-                    {% icon "fa-minus-circle" %} Remove From Extract
-                  </a>
-                </div>
-              </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-5 col-md-push-2">
+        <div class="extract-selector">
+          <div class="extract-selector-header">
+            <h5>[[ sliceSubrecord.display_name ]]
+              <a href="" ng-show="!extractQuery.isSubrecordAdded(sliceSubrecord)" ng-click="extractQuery.addSubrecordSlices(sliceSubrecord)" class="pull-right">
+                <i class="fa fa-plus-circle"></i>
+              </a>
+              <a href="" ng-show="extractQuery.isSubrecordAdded(sliceSubrecord)" ng-click="extractQuery.removeSubrecordSlices(sliceSubrecord)" class="pull-right">
+                <i class="fa fa-minus-circle"></i>
+              </a>
+            </h5>
+          </div>
+          <div class="extract-selector-rows">
+            <div class="extract-hover extract-selector-row" ng-class="{active: field.name === fieldInfo.name}" ng-repeat="field in sliceSubrecord.fields">
+              <a ng-click="setFieldInfo(field)" ng-class="{'text-muted': extractQuery.isSliceAdded(field)}" class="pointer extract-slice-table-link">
+                [[ field.title ]]
+                <i ng-show="!extractQuery.isSliceAdded(field)" ng-click="extractQuery.addSlice(field)" class="fa fa-plus-circle pull-right"></i>
+                <i ng-show="extractQuery.isSliceAdded(field)" ng-click="extractQuery.removeSlice(field)" class="fa fa-minus-circle pull-right"></i>
+              </a>
             </div>
           </div>
         </div>
@@ -174,40 +104,92 @@
 </div>
 <!-- the fields that have been added -->
 <div class="row">
-  <div class="col-md-12">
-    <h3>Your Fields</h3>
+  <div class="col-md-12 content-offset-below-10">
+    <h3 class="inline">Your Fields</h3>
+    <p class="inline sidebar-help">
+      - The fields you select will make up your csv extract.
+    </p>
   </div>
 </div>
 <div class="row">
-  <div class="col-md-4">
-    <p class="sidebar-help">
-      The Fields you select will make up your csv extract.
-    </p>
-  </div>
-  <div class="col-md-6">
-    <table class="table table-striped extract-fields-table">
-      <thead>
-        <tr>
-          <th>
-            Record
-          </th>
-          <th>
-            Field
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr ng-repeat="field in extractQuery.slices">
-          <td>[[ field.subrecord.display_name ]]</td>
-          <td>[[ field.title ]] <a ng-hide="extractQuery.sliceIsRequired(field)" class="pull-right" ng-click="extractQuery.removeSlice(field)" href="">{% icon "fa-minus-circle" %}</a></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  <div class="col-md-3">
-    <div class="extract-slice-side-bar">
-      <div class="extract-slice-side-button">
+  <div class="col-md-10 col-md-push-1">
+    <div class="row">
+      <div class="col-md-6">
+        <table class="table table-striped extract-fields-table">
+          <thead>
+            <tr>
+              <th>
+                Record
+              </th>
+              <th>
+                Field
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-click="setFieldInfo(field)" class="extract-hover pointer" ng-repeat="field in extractQuery.slices">
+              <td>[[ field.subrecord.display_name ]]</td>
+              <td>[[ field.title ]] <a ng-hide="extractQuery.sliceIsRequired(field)" class="pull-right" ng-click="extractQuery.removeSlice(field)" href="">{% icon "fa-minus-circle" %}</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-md-4 col-md-push-2">
+        <div class="search-info" ng-show="fieldInfo">
+          <div class="search-info-title">
+            <strong>[[ fieldInfo.subrecord.display_name ]]</strong>
+          </div>
+           <div>
+             <strong>[[ fieldInfo.title ]]</strong>
+           </div>
+          <span ng-show="isBoolean(fieldInfo.subrecord.name, fieldInfo.name)">
+            [True/False]
+          </span>
+          <span ng-show="isSelect(fieldInfo.subrecord.name, fieldInfo.name)">
 
+            <div ng-show="fieldInfo.lookup_list && fieldInfo.lookup_list.length">
+              [a
+              <a href=""
+                 class="orange-link"
+                 ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: fieldInfo.lookup_list, lookuplist: fieldInfo.lookup_list })">
+                [[ findField(fieldInfo.subrecord.name, fieldInfo.name).lookup_list | underscoreToSpaces ]]
+              </a>]
+            </div>
+          </span>
+          <span ng-show="isText(fieldInfo.subrecord.name, fieldInfo.name)">
+            [Text]
+            <div ng-show="fieldInfo.lookup_list">
+              Normally coded as a
+              <a href=""
+                 class="orange-link"
+                 ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: fieldInfo.lookup_list, lookuplist: getChoices(fieldInfo.subrecord.name, fieldInfo.name) })">
+                [[ fieldInfo.lookup_list | underscoreToSpaces ]]</a>
+              but free text entries are possible.
+            </div>
+            <div ng-show="fieldInfo.enum && fieldInfo.enum.length">
+              one of <span ng-repeat="i in fieldInfo.enum">[[ i ]] </span>
+            </div>
+          </span>
+          <span ng-show="isDate(fieldInfo.subrecord.name, fieldInfo.name)">
+            [Date]
+          </span>
+          <span ng-show="isDateTime(fieldInfo.subrecord.name, fieldInfo.name)">
+            [Date & Time]
+          </span>
+          <div>
+            <div class="extract-slice-field-description">
+              [[ fieldInfo.description ]]
+              <div class="extract-slice-field-add">
+                <a ng-show="!extractQuery.isSliceAdded(fieldInfo)" ng-click="extractQuery.addSlice(fieldInfo)" class="btn btn-primary">
+                  {% icon "fa-plus-circle" %} Add To Extract
+                </a>
+                <a ng-show="extractQuery.isSliceAdded(fieldInfo)" ng-click="extractQuery.removeSlice(fieldInfo)" class="btn btn-primary">
+                  {% icon "fa-minus-circle" %} Remove From Extract
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
