@@ -38,6 +38,11 @@ There may only be one of each singleton Subrecord, which is created with the par
 For this case, when a `Patient` is created, an empty `Demographics` instance will
 automatically be created.
 
+#### Subrecord._advanced_searchable
+
+Boolean that determines whether this subrecord can be queries in the extract screen (default is True).
+
+
 #### Subrecord._list_limit
 
 Integer to indicate the maximum number of entries to display in list view for this

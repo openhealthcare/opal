@@ -291,6 +291,7 @@ class UpdatesFromDictMixin(SerialisableFields):
         PID fields.
         """
         fieldnames = cls._get_fieldnames_to_serialize()
+        fieldnames = [i for i in fieldnames if not i == 'consistency_token']
         if hasattr(cls, 'pid_fields'):
             for fname in cls.pid_fields:
                 if fname in fieldnames:

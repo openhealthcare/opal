@@ -49,6 +49,7 @@
                  resolve: {
                      profile: function(UserProfile){ return UserProfile.load(); },
                      extractSchema: function(extractSchemaLoader){ return extractSchemaLoader; },
+                     dataDictionary: function(dataDictionaryLoader){ return dataDictionaryLoader.load(); },
                      filters: function(filtersLoader){ return filtersLoader(); },
                      referencedata: function(Referencedata){ return Referencedata.load(); }
                  }

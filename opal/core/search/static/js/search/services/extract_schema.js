@@ -1,4 +1,4 @@
-angular.module('opal.services').factory('ExtractSchema', function() {
+angular.module('opal.services').factory('ExtractSchema', function(Schema) {
   "use strict";
 
   var NOT_ADVANCED_SEARCHABLE = [
@@ -6,30 +6,16 @@ angular.module('opal.services').factory('ExtractSchema', function() {
   ];
 
   var ExtractSchema = function(columns){
-    this.columns = this.getAdvancedSearchColumns(columns);
-    _.each(this.columns, function(column){
+    columns = _.each(columns, function(column){
       column.fields = this.getAdvancedSearchFields(column);
     }, this);
 
-    // set up a reference from the field to the subrecord
-    _.each(this.columns, function(c){
-      _.each(c.fields, function(f){
-        if(f.subrecord){
-          throw 'the subrecord field has been declared on a namespace we need'
-        }
-        f.subrecord = c;
-      });
-    });
+    Schema.call(this, columns);
   };
 
+  ExtractSchema.prototype = angular.copy(Schema.prototype);
 
-  ExtractSchema.prototype = {
-    getAdvancedSearchColumns: function(c){
-      var columns = angular.copy(c);
-      return _.filter(columns, function(c){
-        return c.advanced_searchable
-      });
-    },
+  var additionalPrototype= {
     getAdvancedSearchFields: function(column){
       if(column.name == 'microbiology_test' || column.name == 'investigation'){
         var micro_fields = [
@@ -58,23 +44,8 @@ angular.module('opal.services').factory('ExtractSchema', function() {
           function(c){ return c; }
       ).sort()
     },
-    findColumn: function(columnName){
-      if(!columnName){
-        return;
-      }
-      return _.findWhere(this.columns, {name: columnName});
-    },
-    findField: function(columnName, fieldName){
-      /*
-      * returns the field object from the schema when given column.name and field.name
-      */
-      var column = this.findColumn(columnName);
-      if(!column){return;}
-      return _.findWhere(
-          column.fields, {name: fieldName}
-      );
-    }
   }
+  _.extend(ExtractSchema.prototype, additionalPrototype);
 
   return ExtractSchema
 });

@@ -506,7 +506,7 @@ class TestEpisodeCsvRenderer(PatientEpisodeTestCase):
             "Created By",
             "Updated By",
             "Patient",
-            "Tagging"
+            "Team"
         }
         renderer = extract.EpisodeCsvRenderer(
             models.Episode,

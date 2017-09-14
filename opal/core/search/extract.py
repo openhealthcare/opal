@@ -9,6 +9,7 @@ import logging
 import os
 import tempfile
 import zipfile
+from opal.core.schemas import serialize_model
 
 from django.utils.functional import cached_property
 from django.db.models import Count, Max
@@ -147,7 +148,7 @@ class CsvRenderer(object):
 class EpisodeCsvRenderer(CsvRenderer):
     non_field_csv_columns = (
         CsvColumn(
-            "tagging",
+            "team",
             value=lambda renderer, instance: text_type(";".join(
                 instance.get_tag_names(renderer.user, historic=True)
             ))
@@ -199,10 +200,34 @@ class PatientSubrecordCsvRenderer(CsvRenderer):
 
 def field_to_dict(subrecord, field_name):
     return dict(
-        display_name=subrecord._get_field_title(field_name),
+        title=subrecord._get_field_title(field_name),
         description=subrecord.get_field_description(field_name),
         type_display_name=subrecord.get_human_readable_type(field_name),
+        type=subrecord._get_field_type(field_name)
     )
+
+
+def get_data_dictionary_schema():
+    schema = []
+
+    for subrecord in subrecords.subrecords():
+        serialised = serialize_model(subrecord)
+        extract_fields = subrecord._get_fieldnames_to_extract()
+        serialised['fields'] = [
+            i for i in serialised['fields'] if i["name"] in extract_fields
+        ]
+        schema.append(serialised)
+
+    episode_fields = Episode.build_field_schema()
+    only = Episode._get_fieldnames_to_extract()
+    fields = [i for i in episode_fields if i["name"] in only]
+
+    schema.append(dict(
+        name='episode',
+        display_name='Episode',
+        fields=fields
+    ))
+    return schema
 
 
 def get_data_dictionary():
@@ -212,17 +237,8 @@ def get_data_dictionary():
         record_schema = [field_to_dict(subrecord, i) for i in field_names]
         schema[subrecord.get_display_name()] = record_schema
     field_names = Episode._get_fieldnames_to_extract()
-    field_names.remove("start")
-    field_names.remove("end")
+
     schema["Episode"] = [field_to_dict(Episode, i) for i in field_names]
-    schema["Episode"].append(dict(
-        display_name="Start",
-        type_display_name="Date & Time"
-    ))
-    schema["Episode"].append(dict(
-        display_name="End",
-        type_display_name="Date & Time"
-    ))
     return OrderedDict(sorted(schema.items(), key=lambda t: t[0]))
 
 

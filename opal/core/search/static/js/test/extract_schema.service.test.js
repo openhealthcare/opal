@@ -6,7 +6,6 @@ describe('ExtractSchema', function(){
     var exampleSchemaData = [
         {
             "single": true,
-            "advanced_searchable": false,
             "readOnly": false,
             "name": "tagging",
             "display_name":"Teams",
@@ -20,7 +19,6 @@ describe('ExtractSchema', function(){
             "name":"demographics",
             "display_name":"Demographics",
             "readOnly": true    ,
-            "advanced_searchable": true,
             "fields":[
                 {
                     "title":"Name",
@@ -34,7 +32,6 @@ describe('ExtractSchema', function(){
             "name": "diagnosis",
             "single": false,
             "sort": 'date_of_diagnosis',
-            "advanced_searchable": true,
             "fields": [
                 {"name": 'date_of_diagnosis', "type": 'date'},
                 {"name": 'condition', "type": 'string'},
@@ -46,7 +43,6 @@ describe('ExtractSchema', function(){
             "name": "microbiology_test",
             "display_name": "Microbiology Test",
             "readOnly": false,
-            "advanced_searchable": true,
             "fields": [
               {
                 default: null,
@@ -135,7 +131,6 @@ describe('ExtractSchema', function(){
             "name": "investigation",
             "display_name": "Investigation",
             "readOnly": false,
-            "advanced_searchable": true,
             "fields": [
               {
                 default: null,
@@ -269,7 +264,6 @@ describe('ExtractSchema', function(){
           "name": "symptoms",
           "display_name": "Symptoms",
           "readOnly": false,
-          "advanced_searchable": true,
           "fields": [
               {
                   "title": "Symptoms",

@@ -1,7 +1,8 @@
 angular.module('opal.controllers').controller( 'ExtractCtrl',
   function(
     $scope, $http, $window, $modal, $timeout, PatientSummary, Paginator,
-    referencedata, ngProgressLite, profile, filters, extractSchema, ExtractQuery
+    referencedata, ngProgressLite, profile, filters, extractSchema, dataDictionary,
+    ExtractQuery
   ){
     "use strict";
 
@@ -11,6 +12,7 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
     $scope.filters = filters;
     // $scope.columns = extractSchema.getAdvancedSearchColumns();
     $scope.extractSchema = extractSchema;
+    $scope.dataDictionary = dataDictionary;
     // used by the download extract
     // a slice is a cut of data, a field that we want to download
     $scope.selectSliceSubrecord = function(sliceSubrecord){
@@ -27,10 +29,10 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
 
     _.extend($scope, referencedata.toLookuplists());
 
-    $scope.selectSliceSubrecord(extractSchema.columns[0]);
+    $scope.selectSliceSubrecord(dataDictionary.columns[0]);
     $scope.setFieldInfo($scope.sliceSubrecord.fields[0]);
 
-    $scope.extractQuery = new ExtractQuery(extractSchema);
+    $scope.extractQuery = new ExtractQuery(dataDictionary);
 
     $scope.isType = function(column, field, type){
         var theField = extractSchema.findField(column, field);
@@ -63,39 +65,6 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
       if(modelField.enum){
         return modelField.enum;
       }
-    };
-
-    $scope.isBoolean = function(column, field){
-        return $scope.isType(column, field, ["boolean", "null_boolean"]);
-    };
-
-    $scope.isText = function(column, field){
-        return $scope.isType(column, field, "string") || $scope.isType(column, field, "text");
-    };
-
-    $scope.isSelect = function(column, field){
-        return $scope.isType(column, field, "many_to_many");
-    };
-
-    $scope.isSelectMany = function(column, field){
-        return $scope.isType(column, field, "many_to_many_multi_select");
-    };
-
-    $scope.isDate = function(column, field){
-        return $scope.isType(column, field, "date");
-    };
-
-    $scope.isDateTime = function(column, field){
-        return $scope.isType(column, field, "date_time");
-    };
-
-    $scope.isDateType = function(column, field){
-        // if the field is a date or a date time
-        return $scope.isDate(column, field) || $scope.isDateTime(column, field);
-    };
-
-    $scope.isNumber = function(column, field){
-        return $scope.isType(column, field, ["float", "big_integer", "integer", "positive_integer_field", "decimal"]);
     };
 
     $scope.resetFilter = function(query, fieldsTypes){

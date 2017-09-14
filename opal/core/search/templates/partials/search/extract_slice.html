@@ -63,7 +63,7 @@
             <h5>Records</h5>
           </div>
           <div class="extract-selector-rows">
-            <div class="extract-hover extract-selector-row" ng-class="{active: column.name === sliceSubrecord.name}" ng-repeat="column in extractSchema.columns">
+            <div class="extract-hover extract-selector-row" ng-class="{active: column.name === sliceSubrecord.name}" ng-repeat="column in dataDictionary.columns">
               <a ng-class="{'text-muted': extractQuery.isSubrecordAdded(column)}" ng-click="selectSliceSubrecord(column)" class="pointer extract-slice-table-link">
                 [[ column.display_name ]]
               </a>
@@ -140,54 +140,37 @@
             <strong>[[ fieldInfo.subrecord.display_name ]]</strong>
           </div>
            <div>
-             <strong>[[ fieldInfo.title ]]</strong>
-           </div>
-          <span ng-show="isBoolean(fieldInfo.subrecord.name, fieldInfo.name)">
-            [True/False]
-          </span>
-          <span ng-show="isSelect(fieldInfo.subrecord.name, fieldInfo.name)">
-
-            <div ng-show="fieldInfo.lookup_list && fieldInfo.lookup_list.length">
-              [a
-              <a href=""
-                 class="orange-link"
-                 ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: fieldInfo.lookup_list, lookuplist: fieldInfo.lookup_list })">
-                [[ findField(fieldInfo.subrecord.name, fieldInfo.name).lookup_list | underscoreToSpaces ]]
-              </a>]
-            </div>
-          </span>
-          <span ng-show="isText(fieldInfo.subrecord.name, fieldInfo.name)">
-            [Text]
-            <div ng-show="fieldInfo.lookup_list">
-              Normally coded as a
-              <a href=""
-                 class="orange-link"
-                 ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: fieldInfo.lookup_list, lookuplist: getChoices(fieldInfo.subrecord.name, fieldInfo.name) })">
-                [[ fieldInfo.lookup_list | underscoreToSpaces ]]</a>
-              but free text entries are possible.
-            </div>
-            <div ng-show="fieldInfo.enum && fieldInfo.enum.length">
-              one of <span ng-repeat="i in fieldInfo.enum">[[ i ]] </span>
-            </div>
-          </span>
-          <span ng-show="isDate(fieldInfo.subrecord.name, fieldInfo.name)">
-            [Date]
-          </span>
-          <span ng-show="isDateTime(fieldInfo.subrecord.name, fieldInfo.name)">
-            [Date & Time]
-          </span>
-          <div>
-            <div class="extract-slice-field-description">
-              [[ fieldInfo.description ]]
-              <div class="extract-slice-field-add">
-                <a ng-show="!extractQuery.isSliceAdded(fieldInfo)" ng-click="extractQuery.addSlice(fieldInfo)" class="btn btn-primary">
-                  {% icon "fa-plus-circle" %} Add To Extract
-                </a>
-                <a ng-show="extractQuery.isSliceAdded(fieldInfo)" ng-click="extractQuery.removeSlice(fieldInfo)" class="btn btn-primary">
-                  {% icon "fa-minus-circle" %} Remove From Extract
-                </a>
+            <strong>[[ fieldInfo.title ]]</strong>
+            <span ng-show="dataDictionary.isSejjjlect(fieldInfo.subrecord.name, fieldInfo.name)">
+              <div ng-show="dataDictionary.findField(fieldInfo.subrecord.name, fieldInfo.name).lookup_list">
+                [a
+                <a href=""
+                   class="orange-link"
+                   ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: extractScheam.findField(fieldInfo.subrecord.name, fieldInfo.name).lookup_list, lookuplist: fieldInfo.lookup_list })">
+                  [[ dataDictionary.findField(fieldInfo.subrecord.name, fieldInfo.name).lookup_list | underscoreToSpaces ]]
+                </a>]
               </div>
-            </div>
+            </span>
+            <span ng-show="dataDictionary.isText(fieldInfo.subrecord.name, fieldInfo.name)">
+              [Text]
+              <div ng-show="dataDictionary.findField(fieldInfo.subrecord.name, fieldInfo.name).lookup_list">
+                Normally coded as a
+                <a href=""
+                   class="orange-link"
+                   ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: dataDictionary.findField(fieldInfo.subrecord.name, fieldInfo.name).lookup_list, lookuplist: getChoices(fieldInfo.subrecord.name, fieldInfo.name)  })">
+                  [[ dataDictionary.findField(fieldInfo.subrecord.name, fieldInfo.name).lookup_list | underscoreToSpaces ]]</a>
+                but free text entries are possible.
+              </div>
+              <div ng-show="fieldInfo.enum && fieldInfo.enum.length">
+                one of <span ng-repeat="i in fieldInfo.enum">[[ i ]] </span>
+              </div>
+            </span>
+            <span ng-show="!dataDictionary.isText(fieldInfo.subrecord.name, fieldInfo.name) && !dataDictionary.isSelect(fieldInfo.subrecord.name, fieldInfo.name)">
+              [ [[ dataDictionary.getTypeDisplay(fieldInfo.subrecord.name, fieldInfo.name) ]] ]
+            </span>
+          </div>
+          <div>
+            [[ dataDictionary.findField(fieldInfo.subrecord.name, fieldInfo.name).description ]]
           </div>
         </div>
       </div>

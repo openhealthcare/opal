@@ -54,7 +54,6 @@ class SearchRule(DiscoverableFeature):
         return dict(
             name=self.get_slug(),
             display_name=self.display_name,
-            advanced_searchable=True,
             fields=[i().to_dict() for i in self.get_fields()]
         )
 

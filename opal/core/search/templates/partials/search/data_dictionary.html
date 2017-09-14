@@ -1,0 +1,40 @@
+<div class="row">
+  <div class="col-md-8 col-md-push-2">
+    <div ng-repeat="column in dataDictionary.columns">
+      <h3>[[ column.display_name ]]</h3>
+      <table class="table">
+        <tr>
+          <th class="col-md-3">
+            Title
+          </th>
+          <th class="col-md-4">
+            Type
+          </th>
+          <th class="col-md-5">
+            Description
+          </th>
+        </tr>
+        <tr ng-repeat="field in column.fields">
+          <td>
+            [[ field.title ]]
+          </td>
+          <td>
+            [[ dataDictionary.getTypeDisplay(field.subrecord.name, field.name) ]]
+          </td>
+          <td>
+            [[ field.description ]]
+            <div ng-show="dataDictionary.findField(field.subrecord.name, field.name).lookup_list">
+              Normally coded as a
+              <a href=""
+                 class="orange-link"
+                 ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: dataDictionary.findField(field.subrecord.name, field.name).lookup_list, lookuplist: getChoices(field.subrecord.name, field.name)  })">
+                [[ dataDictionary.findField(field.subrecord.name, field.name).lookup_list | underscoreToSpaces ]]</a>
+              but free text entries are possible.
+              </a>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>

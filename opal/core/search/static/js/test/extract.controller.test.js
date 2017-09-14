@@ -31,7 +31,6 @@ describe('ExtractCtrl', function(){
     var columnsData = [
         {
             "single": true,
-            "advanced_searchable": false,
             "readOnly": false,
             "name": "tagging",
             "display_name":"Teams",
@@ -45,7 +44,6 @@ describe('ExtractCtrl', function(){
             "name":"demographics",
             "display_name":"Demographics",
             "readOnly": true    ,
-            "advanced_searchable": true,
             "fields":[
                 {
                     "title":"Consistency Token",
@@ -100,7 +98,6 @@ describe('ExtractCtrl', function(){
             "name": "symptoms",
             "display_name": "Symptoms",
             "readOnly": false,
-            "advanced_searchable": true,
             "fields": [
                 {
                     "title": "Symptoms",
@@ -127,7 +124,6 @@ describe('ExtractCtrl', function(){
             "name": "microbiology_test",
             "display_name": "Microbiology Test",
             "readOnly": false,
-            "advanced_searchable": true,
             "fields": [
               {
                 default: null,
@@ -216,7 +212,6 @@ describe('ExtractCtrl', function(){
             "name": "investigation",
             "display_name": "Investigation",
             "readOnly": false,
-            "advanced_searchable": true,
             "fields": [
               {
                 default: null,

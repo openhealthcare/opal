@@ -13,8 +13,7 @@ Individual subrecords are serialized to the schema using the function `opal.core
 * name: the result of `Subrecord.get_api_name()`
 * display_name: the result of `Subrecord.get_display_name()`
 * single: Whether the Subrecord is a singleton
-* advanced_searchable: if the Subrecord should appear in the advanced search view
-* fields: a represention of each field 
+* fields: a represention of each field
 
 Optional fields:
 
@@ -27,15 +26,12 @@ Optional fields:
 ``` python
 
   class Colour(models.EpisodeSubrecord):
-      _advanced_searchable = False
-      _exclude_from_extract = True
       _angular_service = 'Colour'
       _icon = "fa fa-comments"
       name = dmodels.CharField(max_length=200)
 
 # becomes:...
   {
-    'advanced_searchable': False,
     'angular_service': 'Colour',
     'display_name': 'Colour',
     'fields': [
