@@ -26,45 +26,16 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
     $scope.currentPageNumber = 1;
     $scope.paginator = new Paginator($scope.search);
     $scope.state = 'query';
-
-    _.extend($scope, referencedata.toLookuplists());
-
+    $scope.referencedata = referencedata;
     $scope.selectSliceSubrecord(dataDictionary.columns[0]);
     $scope.setFieldInfo($scope.sliceSubrecord.fields[0]);
 
     $scope.extractQuery = new ExtractQuery(dataDictionary);
 
-    $scope.isType = function(column, field, type){
-        var theField = extractSchema.findField(column, field);
-        if(!column || !field){
-            return false;
-        }
-        if(!theField){ return false; }
-        if (_.isArray(type)){
-            var match = false;
-            _.each(type, function(t){ if(t == theField.type){ match = true; } });
-            return match;
-        }else{
-            return theField.type == type;
-        }
-    };
-
     $scope.selectedInfo = undefined;
 
     $scope.selectInfo = function(query){
       $scope.selectedInfo = query;
-    };
-
-    $scope.getChoices = function(column, field){
-      var modelField = extractSchema.findField(column, field);
-
-      if(modelField.lookup_list && modelField.lookup_list.length){
-        return $scope[modelField.lookup_list + "_list"];
-      }
-
-      if(modelField.enum){
-        return modelField.enum;
-      }
     };
 
     $scope.resetFilter = function(query, fieldsTypes){

@@ -12,8 +12,8 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-8 col-md-push-2">
-          {% for record_title, record_schema in schema.items %}
-            <h3>{{ record_title }}</h3>
+          {% for subrecord in dataDictionary %}
+            <h3>{{ subrecord.display_name }}</h3>
             <table class="table">
               <tr>
                 <th class="col-md-3">
@@ -26,16 +26,16 @@
                   Description
                 </th>
               </tr>
-              {% for record_field in record_schema %}
+              {% for field in subrecord.fields %}
               <tr>
                 <td class="col-md-3">
-                  {{ record_field.title }}
+                  {{ field.title }}
                 </td>
                 <td class="col-md-4">
-                  {{ record_field.type_display_name }}
+                  {{ field.type_display_name }}
                 </td>
                 <td class="col-md-5">
-                  {{ record_field.description | default_if_none:"" }}
+                  {{ field.description | default_if_none:"" }}
                 </td>
               </tr>
               {% endfor %}

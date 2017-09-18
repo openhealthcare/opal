@@ -220,14 +220,17 @@ def get_data_dictionary_schema():
 
     episode_fields = Episode.build_field_schema()
     only = Episode._get_fieldnames_to_extract()
-    fields = [i for i in episode_fields if i["name"] in only]
+    fields = sorted(
+        [i for i in episode_fields if i["name"] in only],
+        key=lambda x: x["title"]
+    )
 
     schema.append(dict(
         name='episode',
         display_name='Episode',
         fields=fields
     ))
-    return schema
+    return sorted(schema, key=lambda t: t["display_name"])
 
 
 def get_data_dictionary():

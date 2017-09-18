@@ -8,4 +8,4 @@ def extract_schema():
     schema = serialize_schema([
         s for s in subrecords() if s._advanced_searchable
     ])
-    return custom_rules + schema
+    return sorted(custom_rules + schema, key=lambda x: x["display_name"])

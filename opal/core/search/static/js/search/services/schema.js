@@ -1,7 +1,6 @@
 angular.module('opal.services').factory('Schema', function() {
     "use strict";
     var Schema = function(columns){
-      // set up a reference from the field to the subrecord
       this.columns = columns;
       _.each(this.columns, function(c){
         _.each(c.fields, function(f){
@@ -81,6 +80,17 @@ angular.module('opal.services').factory('Schema', function() {
         }
         if(this.isDateTime(columnName, field)){
           return "Date & Time"
+        }
+      },
+      getChoices: function(column, field, referencedata){
+        var modelField = this.findField(column, field);
+
+        if(modelField.lookup_list && modelField.lookup_list.length){
+          return referencedata.get(modelField.lookup_list);
+        }
+
+        if(modelField.enum){
+          return modelField.enum;
         }
       }
     }
