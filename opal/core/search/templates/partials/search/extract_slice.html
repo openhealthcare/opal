@@ -157,7 +157,7 @@
   <div class="col-md-10 col-md-push-1">
     <div class="row">
       <div class="col-md-6">
-        <table class="table table-striped extract-fields-table">
+        <table class="table extract-fields-table">
           <thead>
             <tr>
               <th>
@@ -169,8 +169,8 @@
             </tr>
           </thead>
           <tbody>
-            <tr ng-click="setFieldInfo(field)" class="extract-hover pointer" ng-repeat="field in extractQuery.slices">
-              <td>[[ field.subrecord.display_name ]]</td>
+            <tr ng-click="setFieldInfo(field)" class="extract-hover pointer" ng-class="{active: field.name === fieldInfo.name}" ng-repeat="field in extractQuery.slices">
+              <td><div></div>[[ field.subrecord.display_name ]]</td>
               <td>[[ field.title ]] <a ng-hide="extractQuery.sliceIsRequired(field)" class="pull-right" ng-click="extractQuery.removeSlice(field)" href="">{% icon "fa-minus-circle" %}</a></td>
             </tr>
           </tbody>

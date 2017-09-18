@@ -48,7 +48,18 @@
 .extract-selector-row.active{
   background-color: #f5f5f5;
   border-left: 3px solid #5fa2dd;
-  padding-left: 0;
+}
+
+.extract-fields-table tr.active td{
+  position: relative;
+}
+
+.extract-fields-table tr.active div{
+  border-left: 3px solid #5fa2dd;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
 }
 
 .extract-selector-row.selected{
