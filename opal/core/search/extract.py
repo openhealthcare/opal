@@ -8,8 +8,7 @@ import logging
 import os
 import tempfile
 import zipfile
-from opal.core.search.schemas import data_dictionary_schema
-
+from opal.core import discoverable
 from django.utils.functional import cached_property
 from django.db.models import Count, Max
 from django.template import Context, loader
@@ -19,6 +18,7 @@ from six import text_type
 from collections import defaultdict
 from opal.models import Episode
 from opal.core import subrecords
+from opal.core.search import schemas
 
 
 def _encode_to_utf8(some_var):
@@ -51,6 +51,39 @@ class CsvColumn(object):
             self.display_name = display_name
         else:
             self.display_name = self.name.title()
+
+
+class AbstractNestedSubrecordCsvRenderer(object):
+    @cached_property
+    def flat_row_length(self):
+        return len(self.get_flat_headers())
+
+    def get_flat_headers(self):
+        single_headers = super(
+            AbstractNestedSubrecordCsvRenderer, self
+        ).get_headers()
+
+        if self.flat_repetitions == 1:
+            return [
+                "{0} {1}".format(
+                    self.model.get_display_name(),
+                    i
+                ) for i in single_headers
+            ]
+
+        result = []
+
+        for rep in range(self.flat_repetitions):
+            result.extend(
+                (
+                    "{0} {1} {2}".format(
+                        self.model.get_display_name(),
+                        rep + 1,
+                        i
+                    ) for i in single_headers
+                )
+            )
+        return result
 
 
 class CsvRenderer(object):
@@ -145,26 +178,39 @@ class CsvRenderer(object):
 
         logging.info("finished writing for {}".format(self.model))
 
+    @cached_property
+    def flat_row_length(self):
+        return len(self.get_flat_headers())
 
-class EpisodeCsvRenderer(CsvRenderer):
-    non_field_csv_columns = (
-        CsvColumn(
-            "team",
-            value=lambda renderer, instance: text_type(";".join(
-                instance.get_tag_names(renderer.user, historic=True)
-            ))
-        ),
-        CsvColumn("start"),
-        CsvColumn("end"),
-        CsvColumn("created"),
-        CsvColumn("updated"),
-        CsvColumn("created_by_id", display_name="Created By"),
-        CsvColumn("updated_by_id", display_name="Updated By"),
-        CsvColumn("patient_id", display_name="Patient"),
-    )
+    def get_flat_headers(self):
+        single_headers = super(
+            CsvRenderer, self
+        ).get_headers()
+
+        if self.flat_repetitions == 1:
+            return [
+                "{0} {1}".format(
+                    self.model.get_display_name(),
+                    i
+                ) for i in single_headers
+            ]
+
+        result = []
+
+        for rep in range(self.flat_repetitions):
+            result.extend(
+                (
+                    "{0} {1} {2}".format(
+                        self.model.get_display_name(),
+                        rep + 1,
+                        i
+                    ) for i in single_headers
+                )
+            )
+        return result
 
 
-class PatientSubrecordCsvRenderer(CsvRenderer):
+class PatientSubrecordCsvRenderer(AbstractNestedSubrecordCsvRenderer, CsvRenderer):
     non_field_csv_columns = (
         CsvColumn(
             "episode_id",
@@ -198,25 +244,49 @@ class PatientSubrecordCsvRenderer(CsvRenderer):
             for episode_id in self.patient_to_episode[sub.patient_id]:
                 yield self.get_row(sub, episode_id)
 
+    @cached_property
+    def flat_repetitions(self):
+        if not self.queryset.exists():
+            return 0
 
-def field_to_dict(subrecord, field_name):
-    return dict(
-        title=subrecord._get_field_title(field_name),
-        description=subrecord.get_field_description(field_name),
-        type_display_name=subrecord.get_human_readable_type(field_name),
-        type=subrecord._get_field_type(field_name)
-    )
+        if self.model._is_singleton:
+            return 1
+
+        annotated = self.queryset.values('patient_id').annotate(
+            Count('patient_id')
+        )
+        return annotated.aggregate(Max('patient_id__count'))[
+            "patient_id__count__max"
+        ]
+
+    def get_nested_row(self, episode):
+        nested_subrecords = self.queryset.filter(
+            patient__episode=episode
+        )
+        result = []
+        for nested_subrecord in nested_subrecords:
+            result.extend(self.get_row(nested_subrecord, episode.id))
+
+        while len(result) < self.flat_row_length:
+            result.append('')
+        return result
+
+    @classmethod
+    def get_schema(cls, subrecord):
+        return schemas.extract_download_schema_for_model(subrecord)
 
 
 def write_data_dictionary(file_name):
     t = loader.get_template("extract_data_schema.html")
-    ctx = Context(dict(schema=data_dictionary_schema()))
+    ctx = Context(dict(
+        schema=ExtractCsvSerialiser.get_data_dictionary_schema())
+    )
     rendered = t.render(ctx)
     with open(file_name, "w") as f:
         f.write(rendered)
 
 
-class EpisodeSubrecordCsvRenderer(CsvRenderer):
+class EpisodeSubrecordCsvRenderer(AbstractNestedSubrecordCsvRenderer, CsvRenderer):
     non_field_csv_columns = (
         CsvColumn(
             "patient_id",
@@ -239,60 +309,12 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
             model, queryset, user, fields
         )
 
+    @classmethod
+    def get_schema(cls, subrecord):
+        return schemas.extract_download_schema_for_model(subrecord)
 
-class NestedEpisodeCsvRenderer(EpisodeCsvRenderer):
-    def get_headers(self):
-        single_headers = super(
-            NestedEpisodeCsvRenderer, self
-        ).get_headers()
-
-        return ["Episode {}".format(i) for i in single_headers]
-
-    def get_nested_row(self, episode):
-        return super(NestedEpisodeCsvRenderer, self).get_row(
-            episode
-        )
-
-
-class AbstractNestedSubrecordCsvRenderer(object):
     @cached_property
-    def row_length(self):
-        return len(self.get_headers())
-
-    def get_headers(self):
-        single_headers = super(
-            AbstractNestedSubrecordCsvRenderer, self
-        ).get_headers()
-
-        if self.repetitions == 1:
-            return [
-                "{0} {1}".format(
-                    self.model.get_display_name(),
-                    i
-                ) for i in single_headers
-            ]
-
-        result = []
-
-        for rep in range(self.repetitions):
-            result.extend(
-                (
-                    "{0} {1} {2}".format(
-                        self.model.get_display_name(),
-                        rep + 1,
-                        i
-                    ) for i in single_headers
-                )
-            )
-        return result
-
-
-class NestedEpisodeSubrecordCsvRenderer(
-    AbstractNestedSubrecordCsvRenderer,
-    EpisodeSubrecordCsvRenderer
-):
-    @cached_property
-    def repetitions(self):
+    def flat_repetitions(self):
         if not self.queryset:
             return 0
 
@@ -312,41 +334,82 @@ class NestedEpisodeSubrecordCsvRenderer(
         for nested_subrecord in nested_subrecords:
             result.extend(self.get_row(nested_subrecord))
 
-        while len(result) < self.row_length:
+        while len(result) < self.flat_row_length:
             result.append('')
         return result
 
 
-class NestedPatientSubrecordCsvRenderer(
-    AbstractNestedSubrecordCsvRenderer,
-    PatientSubrecordCsvRenderer
-):
-    @cached_property
-    def repetitions(self):
-        if not self.queryset.exists():
-            return 0
+class ExtractCsvSerialiser(CsvRenderer, discoverable.DiscoverableFeature):
+    module_name = 'extract'
 
-        if self.model._is_singleton:
-            return 1
+    @classmethod
+    def get_data_dictionary_schema(cls):
+        result = []
+        slugs_to_serialiser = {i.get_slug() for i in cls.list()}
+        result = [i.get_schema() for i in cls.list()]
 
-        annotated = self.queryset.values('patient_id').annotate(
-            Count('patient_id')
-        )
-        return annotated.aggregate(Max('patient_id__count'))[
-            "patient_id__count__max"
-        ]
+        patient_subrecords_api_names = {
+            i.get_api_name() for i in subrecords.patient_subrecords()
+        }
+
+        for subrecord in subrecords.subrecords():
+            api_name = subrecord.get_api_name()
+            if api_name not in slugs_to_serialiser:
+                if api_name in patient_subrecords_api_names:
+                    result.append(PatientSubrecordCsvRenderer.get_schema(
+                        subrecord
+                    ))
+                else:
+                    result.append(EpisodeSubrecordCsvRenderer.get_schema(
+                        subrecord
+                    ))
+        return result
+
+
+class EpisodeCsvRenderer(ExtractCsvSerialiser):
+    display_name = "Episode"
+    slug = "episode"
+    non_field_csv_columns = (
+        CsvColumn(
+            "team",
+            value=lambda renderer, instance: text_type(";".join(
+                instance.get_tag_names(renderer.user, historic=True)
+            ))
+        ),
+        CsvColumn("start"),
+        CsvColumn("end"),
+        CsvColumn("created"),
+        CsvColumn("updated"),
+        CsvColumn("created_by_id", display_name="Created By"),
+        CsvColumn("updated_by_id", display_name="Updated By"),
+        CsvColumn("patient_id", display_name="Patient"),
+    )
+
+    def get_flat_headers(self):
+        single_headers = super(
+            EpisodeCsvRenderer, self
+        ).get_headers()
+
+        return ["Episode {}".format(i) for i in single_headers]
 
     def get_nested_row(self, episode):
-        nested_subrecords = self.queryset.filter(
-            patient__episode=episode
+        return super(EpisodeCsvRenderer, self).get_row(
+            episode
         )
-        result = []
-        for nested_subrecord in nested_subrecords:
-            result.extend(self.get_row(nested_subrecord, episode.id))
 
-        while len(result) < self.row_length:
-            result.append('')
-        return result
+    @classmethod
+    def get_schema(cls):
+        schema = schemas.extract_download_schema_for_model(Episode)
+        schema["fields"].append(dict(
+            name="team",
+            title="Team",
+            type="string",
+            type_display_name="Text Field"
+        ))
+        schema["fields"] = sorted(
+            schema["fields"], key=lambda x: x["title"]
+        )
+        return schema
 
 
 def generate_nested_csv_extract(root_dir, episodes, user, field_dict):
@@ -368,7 +431,7 @@ def generate_nested_csv_extract(root_dir, episodes, user, field_dict):
     renderers = []
 
     if episode_api_name in field_dict:
-        renderers.append(NestedEpisodeCsvRenderer(
+        renderers.append(EpisodeCsvRenderer(
             Episode, episodes, user, fields=field_dict[episode_api_name]
         ))
 
@@ -378,11 +441,11 @@ def generate_nested_csv_extract(root_dir, episodes, user, field_dict):
 
         subrecord = subrecords.get_subrecord_from_api_name(model_api_name)
         if subrecord in subrecords.episode_subrecords():
-            renderers.append(NestedEpisodeSubrecordCsvRenderer(
+            renderers.append(EpisodeSubrecordCsvRenderer(
                 subrecord, episodes, user, fields=model_fields
             ))
         else:
-            renderers.append(NestedPatientSubrecordCsvRenderer(
+            renderers.append(PatientSubrecordCsvRenderer(
                 subrecord, episodes, user, fields=model_fields
             ))
 
@@ -390,7 +453,7 @@ def generate_nested_csv_extract(root_dir, episodes, user, field_dict):
         writer = csv.writer(csv_file)
         headers = []
         for renderer in renderers:
-            headers.extend(renderer.get_headers())
+            headers.extend(renderer.get_flat_headers())
         writer.writerow(headers)
 
         for episode in episodes:

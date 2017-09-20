@@ -1,7 +1,7 @@
 from opal.core.views import json_response
 from opal.core.api import LoginRequiredViewset
 from opal.core.search import schemas
-from opal.core.search.extract import data_dictionary_schema
+from opal.core.search.extract import ExtractCsvSerialiser
 
 
 class ExtractSchemaViewSet(LoginRequiredViewset):
@@ -21,4 +21,4 @@ class DataDictionaryViewSet(LoginRequiredViewset):
     base_name = 'data_dictionary'
 
     def list(self, request):
-        return json_response(data_dictionary_schema())
+        return json_response(ExtractCsvSerialiser.get_data_dictionary_schema())
