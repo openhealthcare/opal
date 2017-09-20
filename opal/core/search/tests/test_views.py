@@ -229,7 +229,9 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
             "Ernst", "Blofeld", "23422"
         )
         response = json.loads(
-            self.get_response('{}/?query=Blofeld'.format(self.url)).content
+            self.get_response(
+                '{}/?query=Blofeld'.format(self.url)
+            ).content.decode('UTF-8')
         )
         expected = {
             "total_pages": 1,
