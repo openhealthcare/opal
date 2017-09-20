@@ -3,6 +3,42 @@ describe('filters', function() {
 
     beforeEach(module('opal.filters'));
 
+    describe('displayArray', function(){
+      var displayArray;
+
+      beforeEach(function(){
+          inject(function($injector){
+              displayArray  = $injector.get('displayArrayFilter');
+          });
+      });
+
+      it('should return the original if its not an array', function(){
+        expect(displayArray('onions')).toBe('onions');
+      });
+
+      it('should combine with and', function(){
+        expect(displayArray(['onions', 'lettuce'])).toEqual(
+          "onions and lettuce"
+        );
+      });
+
+      it('should combine with or', function(){
+        expect(displayArray(['onions', 'lettuce'], "or")).toEqual(
+          "onions or lettuce"
+        );
+      });
+
+      it('should add commas', function(){
+        expect(displayArray(['onions', "tomatoes", 'lettuce'], "or")).toEqual(
+          "onions, tomatoes or lettuce"
+        );
+      });
+
+      it('should just return the result if the array is only a single element', function(){
+        expect(displayArray(['onions'])).toEqual("onions");
+      });
+    });
+
     describe('microresultFilter', function(){
         var microresult;
 
@@ -138,6 +174,30 @@ describe('filters', function() {
            inject(function(shortDateFilter) {
                expect(shortDateFilter(new Date(new Date().getFullYear(), 1, 1))).toBe('01/02');
            }));
+    });
+
+    describe('shortTime', function(){
+      var shortTime;
+
+      beforeEach(function(){
+          inject(function($injector){
+              shortTime  = $injector.get('shortTimeFilter');
+          });
+      });
+
+      it('should display the time as hh:mm from string', function(){
+          expect(shortTime('10:12:00')).toBe('10:12');
+      });
+
+      it('should display the time as hh:mm from date', function(){
+          var weCare = new Date(2017, 10, 1, 10, 12);
+          expect(shortTime(weCare)).toBe('10:12');
+      });
+
+      it('should display the time as hh:mm from date', function(){
+          var weCare = moment(new Date(2017, 10, 1, 10, 12));
+          expect(shortTime(weCare)).toBe('10:12');
+      });
     });
 
     describe('momentDateFormat()', function() {
@@ -369,6 +429,10 @@ describe('filters', function() {
 
         it('Should uppercase the input', function () {
             expect(upperFilter('this')).toBe('THIS');
+        });
+
+        it('should return null if input is not set', function(){
+            expect(upperFilter(undefined)).toBe(null);
         });
     });
 

@@ -1,5 +1,11 @@
 ### 0.9.0 (Major Release)
 
+#### We've got time on our side
+
+Adds in the {% timepicker %} template tag, that follows the same convention as
+the other template tags, ie {% timepicker field="Dinner.time" %}
+
+
 #### Good bye date_of_episode, discharge_date, date_of_admission
 
 And hello `episode.start` and `episode.end`. These fields on the `Episode` model

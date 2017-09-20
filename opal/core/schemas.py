@@ -1,7 +1,6 @@
 """
 Utilities for dealing with Opal Schemas
 """
-import itertools
 from opal.core.subrecords import subrecords
 from opal import models
 from opal.core.search.search_rule import SearchRule
@@ -47,6 +46,6 @@ def list_records():
 
 
 def extract_schema():
-    custom_queries = [i().to_dict() for i in SearchRule.list()]
-    schema = serialize_schema(itertools.chain([models.Tagging], subrecords()))
-    return custom_queries + schema
+    custom_rules = [i().to_dict() for i in SearchRule.list()]
+    schema = serialize_schema(subrecords())
+    return custom_rules + schema

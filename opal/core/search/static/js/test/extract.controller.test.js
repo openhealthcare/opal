@@ -3,7 +3,7 @@ describe('ExtractCtrl', function(){
 
 
     var $scope, $httpBackend, schema, $window, $timeout, $modal, Item;
-    var PatientSummary, $controller, Schema, controller, $rootScope;
+    var PatientSummary, $controller, ExtractSchema, controller, $rootScope;
 
 
     var optionsData = {
@@ -304,12 +304,12 @@ describe('ExtractCtrl', function(){
             $modal       = $injector.get('$modal');
             $timeout     = $injector.get('$timeout');
             $controller  = $injector.get('$controller');
-            Schema = $injector.get('Schema');
+            ExtractSchema = $injector.get('ExtractSchema');
             PatientSummary = $injector.get('PatientSummary');
             Item = $injector.get('Item');
         });
 
-        var schema = new Schema(columnsData);
+        var extractSchema = new ExtractSchema(columnsData);
 
         var controller = $controller('ExtractCtrl',  {
             $scope : $scope,
@@ -317,7 +317,7 @@ describe('ExtractCtrl', function(){
             profile: {},
             options: optionsData,
             filters: [],
-            schema : schema,
+            extractSchema : extractSchema,
             PatientSummary: PatientSummary,
             referencedata: referencedata
         });
@@ -432,6 +432,14 @@ describe('ExtractCtrl', function(){
             expect($scope.isBoolean("demographics", "dead")).toEqual(true);
         });
 
+        it('should find select many fields', function(){
+            spyOn($scope, "isType").and.returnValue(true);
+            expect($scope.isSelectMany("demographics", "dead")).toEqual(true);
+            expect($scope.isType).toHaveBeenCalledWith(
+              "demographics", "dead", "many_to_many_multi_select"
+            );
+        });
+
         it('should find string fields', function(){
             expect($scope.isText("demographics", "name")).toBe(true);
         });
@@ -473,23 +481,31 @@ describe('ExtractCtrl', function(){
 
     });
 
-    describe('readableQuery()', function(){
+    describe('readableQueryType()', function(){
         it('should return null if its handed a null', function(){
           // we hand the function null if we're looking at tagging
-          expect($scope.readableQuery(null)).toBe(null);
+          expect($scope.readableQueryType(null)).toBe(null);
         });
 
         it('should lower case the result', function(){
-          expect($scope.readableQuery('Contains')).toBe('contains');
+          expect($scope.readableQueryType('Contains')).toBe('contains');
         });
 
         it('should add "is" as a prefix for time queries', function(){
-          expect($scope.readableQuery('Before')).toBe('is before');
-          expect($scope.readableQuery('After')).toBe('is after');
+          expect($scope.readableQueryType('Before')).toBe('is before');
+          expect($scope.readableQueryType('After')).toBe('is after');
         });
 
         it('should change equals to "is"', function(){
-          expect($scope.readableQuery('Equals')).toBe('is');
+          expect($scope.readableQueryType('Equals')).toBe('is');
+        });
+
+        it('should change All Of to "is"', function(){
+          expect($scope.readableQueryType('All Of')).toBe('is');
+        });
+
+        it('should change Any Of to "is"', function(){
+          expect($scope.readableQueryType('Any Of')).toBe('is');
         });
     });
 
@@ -762,16 +778,6 @@ describe('ExtractCtrl', function(){
             $scope.editFilter(mock_event, {}, 0);
             var resolves = $modal.open.calls.mostRecent().args[0].resolve;
             expect(resolves.params()).toEqual($scope.filters[0]);
-        });
-
-    });
-
-    describe('jumpToEpisode()', function() {
-
-        it('should open the tab', function() {
-            spyOn($window, 'open');
-            $scope.jumpToEpisode({id: 2});
-            expect($window.open).toHaveBeenCalledWith('#/episode/2', '_blank');
         });
 
     });

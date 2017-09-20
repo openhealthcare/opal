@@ -202,3 +202,181 @@ class EpisodeQueryTestCase(OpalTestCase):
         )
         with self.assertRaises(search_rule.SearchException):
             self.episode_query.query(query_end)
+
+
+class EpisodeTeamQueryTestCase(OpalTestCase):
+    def setUp(self, *args, **kwargs):
+        super(EpisodeTeamQueryTestCase, self).setUp(*args, **kwargs)
+        _, self.episode_1 = self.new_patient_and_episode_please()
+        _, self.episode_2 = self.new_patient_and_episode_please()
+        _, self.episode_3 = self.new_patient_and_episode_please()
+        self.episode_query = search_rule.EpisodeQuery()
+
+    def test_episode_team_wrong_query_param(self):
+        query_end = dict(
+            queryType="asdfsadf",
+            query=["Some Team"],
+            field="team"
+        )
+        with self.assertRaises(search_rule.SearchException) as er:
+            self.episode_query.query(query_end)
+        self.assertEqual(
+            str(er.exception),
+            "unrecognised query type for the episode team query with asdfsadf"
+        )
+
+    def test_episode_team_unknown_team(self):
+        query_end = dict(
+            queryType="Any Of",
+            query=["Some Team"],
+            field="team"
+        )
+        with self.assertRaises(search_rule.SearchException) as er:
+            self.episode_query.query(query_end)
+        self.assertEqual(
+            str(er.exception),
+            "unable to find the tag titled Some Team"
+        )
+
+    def test_episode_team_all_of_one(self):
+        """
+            test all of with a single tag
+        """
+        self.episode_1.tagging_set.create(value="tree", archived=False)
+        self.episode_1.tagging_set.create(value="plant", archived=False)
+        self.episode_2.tagging_set.create(value="plant", archived=False)
+        self.episode_3.tagging_set.create(value="tree", archived=False)
+        query_end = dict(
+            queryType="All Of",
+            query=["Plant"],
+            field="team"
+        )
+        with patch.object(search_rule.Tagging, "build_field_schema") as bfs:
+            bfs.return_value = [
+                dict(
+                    name="plant",
+                    title="Plant"
+                ),
+                dict(
+                    name="tree",
+                    title="Tree"
+                ),
+            ]
+            result = self.episode_query.query(query_end)
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0].id, self.episode_1.id)
+        self.assertEqual(result[1].id, self.episode_2.id)
+
+    def test_episode_team_all_of_archived(self):
+        """
+            test archived tags are returned
+        """
+        self.episode_1.tagging_set.create(value="plant", archived=True)
+        query_end = dict(
+            queryType="All Of",
+            query=["Plant"],
+            field="team"
+        )
+        with patch.object(search_rule.Tagging, "build_field_schema") as bfs:
+            bfs.return_value = [
+                dict(
+                    name="plant",
+                    title="Plant"
+                ),
+                dict(
+                    name="tree",
+                    title="Tree"
+                ),
+            ]
+            result = self.episode_query.query(query_end)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].id, self.episode_1.id)
+
+    def test_episode_team_all_of_many(self):
+        """
+            test when looking for multiple tags only
+            episodes with all of those tags will be returned
+        """
+        self.episode_1.tagging_set.create(value="tree", archived=False)
+        self.episode_1.tagging_set.create(value="plant", archived=False)
+        self.episode_2.tagging_set.create(value="plant", archived=False)
+        self.episode_3.tagging_set.create(value="tree", archived=False)
+        query_end = dict(
+            queryType="All Of",
+            query=["Plant", "Tree"],
+            field="team"
+        )
+        with patch.object(search_rule.Tagging, "build_field_schema") as bfs:
+            bfs.return_value = [
+                dict(
+                    name="plant",
+                    title="Plant"
+                ),
+                dict(
+                    name="tree",
+                    title="Tree"
+                ),
+            ]
+            result = self.episode_query.query(query_end)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].id, self.episode_1.id)
+
+    def test_episide_team_any_of_one(self):
+        """
+            test all of with a single tag
+        """
+        self.episode_1.tagging_set.create(value="tree", archived=False)
+        self.episode_1.tagging_set.create(value="plant", archived=False)
+        self.episode_2.tagging_set.create(value="plant", archived=False)
+        self.episode_3.tagging_set.create(value="tree", archived=False)
+        query_end = dict(
+            queryType="Any Of",
+            query=["Plant"],
+            field="team"
+        )
+        with patch.object(search_rule.Tagging, "build_field_schema") as bfs:
+            bfs.return_value = [
+                dict(
+                    name="plant",
+                    title="Plant"
+                ),
+                dict(
+                    name="tree",
+                    title="Tree"
+                ),
+            ]
+            result = self.episode_query.query(query_end)
+        self.assertEqual(len(result), 2)
+        self.assertEqual(result[0].id, self.episode_1.id)
+        self.assertEqual(result[1].id, self.episode_2.id)
+
+    def test_episide_team_any_of_many(self):
+        """
+            test when looking for multiple tags only
+            episodes with all of those tags will be returned
+        """
+        self.episode_1.tagging_set.create(value="tree", archived=False)
+        self.episode_1.tagging_set.create(value="plant", archived=False)
+        self.episode_2.tagging_set.create(value="plant", archived=False)
+        self.episode_3.tagging_set.create(value="tree", archived=False)
+        query_end = dict(
+            queryType="Any Of",
+            query=["Plant", "Tree"],
+            field="team"
+        )
+        with patch.object(search_rule.Tagging, "build_field_schema") as bfs:
+            bfs.return_value = [
+                dict(
+                    name="plant",
+                    title="Plant"
+                ),
+                dict(
+                    name="tree",
+                    title="Tree"
+                ),
+            ]
+            result = self.episode_query.query(query_end)
+        self.assertEqual(len(result), 3)
+        self.assertEqual(result[0].id, self.episode_1.id)
+        self.assertEqual(result[1].id, self.episode_2.id)
+        self.assertEqual(result[2].id, self.episode_3.id)

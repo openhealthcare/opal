@@ -1,11 +1,23 @@
 describe('Utils.OPAL._run', function (){
     "use strict";
 
+    it('should reset ngProgressLite on route change error', function(){
+      var mockScope = jasmine.createSpyObj(["$on"]);
+      var ngProcessLite = jasmine.createSpyObj(['set']);
+      var mock_modal = { open: function(){} };
+      OPAL._run(mockScope, ngProcessLite, mock_modal);
+      expect(mockScope.$on).toHaveBeenCalled();
+      var runFun = mockScope.$on.calls.argsFor(2)[1];
+      expect(mockScope.$on.calls.argsFor(2)[0]).toBe('$routeChangeError');
+      runFun();
+      expect(ngProcessLite.set).toHaveBeenCalledWith(0);
+    });
+
     it('Should add open_modal to the root scope.', function () {
         var mock_scope = { $on: function(){} };
         var mock_modal = { open: function(){} };
 
-        OPAL._run(mock_scope, {}, mock_modal)
+        OPAL._run(mock_scope, {}, mock_modal);
 
         expect(mock_scope.open_modal).toBeDefined();
     });
@@ -33,26 +45,6 @@ describe('Utils.OPAL._run', function (){
         expect(mock_scope.state).toBe('modal');
         passedFunction();
         expect(mock_scope.state).toBe('normal');
-    });
-
-    describe('indexOf for IE8', function(){
-        beforeEach(function(){
-            Array.prototype._indexof = _indexof;
-            String.prototype._trim = _trim;
-        })
-
-        it('should return the index of the thing', function(){
-            expect([1,2,3]._indexof(2)).toEqual(1);
-            expect([1,2,3]._indexof(3)).toEqual(2);
-            expect([1,2,3]._indexof(0)).toEqual(-1);
-        });
-
-    });
-
-    describe('_trim()', function() {
-        it('should remove whitespace', function() {
-            expect('  hah '._trim()).toEqual('hah');
-        });
     });
 });
 
@@ -112,6 +104,65 @@ describe("OPAL.module", function(){
 
     it("should set the modal options to have a size of 'lg'", function(){
       expect(provider.options.size).toEqual('lg');
+    });
+  });
+
+  describe('configure tracking', function(){
+    var previous;
+
+    beforeEach(function(){
+      var previous = window.OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX;
+    });
+
+    afterEach(function(){
+      window.OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX = previous;
+    });
+
+    it("should set configure tracking", function(){
+      window.OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX = true;
+      var config = jasmine.createSpy();
+      spyOn(angular, "module").and.returnValue({config: config});
+      OPAL.module("someNameSpace");
+      expect(config).toHaveBeenCalled();
+      var analyticsConfiguration = config.calls.argsFor(0)[0];
+      var analyticsProvider = jasmine.createSpyObj(["virtualPageviews"])
+      analyticsConfiguration(analyticsProvider);
+      expect(analyticsProvider.virtualPageviews).toHaveBeenCalledWith(false);
+    });
+
+    it('should not configure tracking by default', function(){
+      var config = jasmine.createSpy();
+      spyOn(angular, "module").and.returnValue({config: config});
+      OPAL.module("someNameSpace");
+      expect(config).toHaveBeenCalled();
+      var analyticsConfiguration = config.calls.argsFor(0)[0];
+      var analyticsProvider = jasmine.createSpyObj(["virtualPageviews"])
+      analyticsConfiguration(analyticsProvider);
+      expect(analyticsProvider.virtualPageviews).toHaveBeenCalledWith(true);
+    });
+  });
+
+
+  describe('dependency registration', function(){
+    var implicit_dependencies = [
+      'angular-growl',
+      'ngCookies',
+      'mentio',
+      'angulartics',
+      'angulartics.google.analytics',
+      'LocalStorageModule'
+    ];
+
+    it('it should add globally scoped dependencies to the ANGULAR DEPS', function(){
+      window.OPAL_ANGULAR_DEPS = ["something"];
+      var dependencies = ["something-else"];
+      spyOn(angular, "module").and.returnValue({config: function(){}});
+      expected = dependencies.concat(implicit_dependencies);
+      expected.push("something");
+      OPAL.module("someNameSpace", dependencies);
+      expect(angular.module).toHaveBeenCalledWith(
+        "someNameSpace", expected
+      );
     });
   });
 
