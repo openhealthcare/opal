@@ -193,12 +193,13 @@ describe('pathway directives', function(){
   });
 
   describe("initialisation of multisave", function(){
-    it('should create an array on the parent scope with an empty object if none exists', function(){
+    it('should create an array on the parent scope with an empty object with an _client if none exists', function(){
       scope.editing = {greeting: undefined};
       var markup = '<div save-multiple-wrapper="editing.greeting"><div id="holla" ng-repeat="editing in model.subrecords">[[ editing.salutation ]]</div></div>';
       element = $compile(markup)(scope);
       scope.$digest();
-      expect(scope.editing.greeting).toEqual([{_client: {completed: false}}]);
+      expect(scope.editing.greeting[0]._client.completed).toBe(false);
+      expect(scope.editing.greeting[0]._client.id.indexOf("greeting")).toBe(0);
     });
 
     it('should not override completed if already set', function(){
@@ -303,7 +304,8 @@ describe('pathway directives', function(){
       innerScope.addAnother();
       scope.$digest();
       expect(scope.editing.greetings.length).toBe(3);
-      expect(scope.editing.greetings[2]).toEqual({_client: {completed: false}});
+      expect(scope.editing.greetings[2]._client.completed).toBe(false);
+      expect(scope.editing.greetings[2]._client.id.indexOf("greetings")).toBe(0);
     });
 
     it("should remove new objects when remove is clicked", function(){
