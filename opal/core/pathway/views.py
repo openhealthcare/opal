@@ -1,6 +1,8 @@
 """
 Views for the pathway OPAL Plugin
 """
+from __future__ import unicode_literals
+
 from django.views.generic import TemplateView
 from opal.core.pathway import Pathway
 from opal.core.views import LoginRequiredMixin

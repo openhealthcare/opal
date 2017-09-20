@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from opal.admin import LookupListForm, PatientAdmin, EpisodeAdmin
 from opal.core.test import OpalTestCase
 from opal.tests.models import Hat

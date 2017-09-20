@@ -1,6 +1,8 @@
 """
 Urls for the pathway OPAL plugin
 """
+from __future__ import unicode_literals
+
 from django.conf.urls import patterns, url
 
 from opal.core.pathway import views, api

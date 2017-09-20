@@ -1,6 +1,8 @@
 """
 Template tag to render a random loading gif
 """
+from __future__ import unicode_literals
+
 import random
 
 from django import template

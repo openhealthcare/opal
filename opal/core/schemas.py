@@ -1,6 +1,8 @@
 """
 Utilities for dealing with Opal Schemas
 """
+from __future__ import unicode_literals
+
 from opal.core.subrecords import subrecords
 from opal import models
 from opal.core.search.search_rule import SearchRule

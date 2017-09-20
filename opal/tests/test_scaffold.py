@@ -1,6 +1,8 @@
 """
 Unittests for opal.core.scaffold
 """
+from __future__ import unicode_literals
+
 import shutil
 import subprocess
 

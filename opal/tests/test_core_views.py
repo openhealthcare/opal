@@ -1,6 +1,8 @@
 """
 Unittests for opal.core.views
 """
+from __future__ import unicode_literals
+
 import warnings
 
 import six

@@ -1,6 +1,8 @@
 """
 Unittests for the opal.core.search.tasks module
 """
+from __future__ import unicode_literals
+
 from mock import patch
 from opal.core.test import OpalTestCase
 

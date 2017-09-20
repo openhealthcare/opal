@@ -21,6 +21,8 @@ Flow
 By registering episode category, plugins and applications can achieve a huge
 degree of flexibility over the behaviour of their episodes.
 """
+from __future__ import unicode_literals
+
 from opal.core.discoverable import DiscoverableFeature
 
 

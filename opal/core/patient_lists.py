@@ -1,6 +1,8 @@
 """
 This module defines the base PatientList classes.
 """
+from __future__ import unicode_literals
+
 from opal import utils
 from opal.core import discoverable, exceptions, metadata
 

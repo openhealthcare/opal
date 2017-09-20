@@ -1,6 +1,8 @@
 """
 unittests for opal.core.search.views
 """
+from __future__ import unicode_literals
+
 import json
 from datetime import date
 

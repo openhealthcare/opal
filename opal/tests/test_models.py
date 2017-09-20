@@ -1,6 +1,8 @@
 """
 Unittests for opal.models
 """
+from __future__ import unicode_literals
+
 import os
 import datetime
 from mock import patch, MagicMock

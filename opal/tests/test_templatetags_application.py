@@ -1,6 +1,8 @@
 """
 Unittests for the opal.templatetags.application module
 """
+from __future__ import unicode_literals
+
 import warnings
 
 from mock import patch, MagicMock

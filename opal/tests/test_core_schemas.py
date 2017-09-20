@@ -1,6 +1,8 @@
 """
 Tests for schema utilities
 """
+from __future__ import unicode_literals
+
 from django.test import TestCase
 from mock import patch
 

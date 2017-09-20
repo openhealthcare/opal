@@ -1,6 +1,8 @@
 """
 Unittests for opal.forms
 """
+from __future__ import unicode_literals
+
 from mock import MagicMock, patch
 
 from opal.core.test import OpalTestCase

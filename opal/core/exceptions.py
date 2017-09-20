@@ -1,7 +1,7 @@
 """
 Our Opal defined errors
 """
-
+from __future__ import unicode_literals
 
 class Error(Exception):
     pass

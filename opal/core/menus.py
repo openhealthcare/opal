@@ -1,6 +1,7 @@
 """
 Helpers for constructing extensible menus in Opal applications
 """
+from __future__ import unicode_literals
 
 
 class MenuItem(object):

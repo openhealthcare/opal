@@ -2,6 +2,7 @@
 Opal Django Models
 """
 from __future__ import unicode_literals
+
 import datetime
 import functools
 import hashlib

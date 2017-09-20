@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from functools import wraps
 from opal.models import EpisodeSubrecord, PatientSubrecord
 from opal.utils import camelcase_to_underscore

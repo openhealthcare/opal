@@ -1,6 +1,8 @@
 """
 Unittests for the opal.templatetags.plugins module
 """
+from __future__ import unicode_literals
+
 from mock import patch
 
 from opal.core import plugins

@@ -1,6 +1,8 @@
 """
 Application helpers for Opal
 """
+from __future__ import unicode_literals
+
 import inspect
 import itertools
 import os

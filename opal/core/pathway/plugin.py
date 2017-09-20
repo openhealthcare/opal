@@ -1,6 +1,8 @@
 """
 Plugin definition for the pathway Opal plugin
 """
+from __future__ import unicode_literals
+
 from opal.core import plugins
 from opal.core.pathway.urls import urlpatterns
 

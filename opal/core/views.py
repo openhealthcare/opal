@@ -1,6 +1,8 @@
 """
 Re-usable view components
 """
+from __future__ import unicode_literals
+
 import functools
 import json
 import datetime

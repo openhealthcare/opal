@@ -3,6 +3,8 @@ Unittests to check that the signals defined in
 opal.core.signals.worker are called at the appropriate
 times and with the appropriate signature.
 """
+from __future__ import unicode_literals
+
 from mock import MagicMock
 from django.dispatch import receiver
 

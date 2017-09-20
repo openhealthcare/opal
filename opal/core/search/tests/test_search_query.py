@@ -1,6 +1,8 @@
 """
 Unittests for opal.core.search.queries
 """
+from __future__ import unicode_literals
+
 from datetime import date
 
 from django.db import transaction

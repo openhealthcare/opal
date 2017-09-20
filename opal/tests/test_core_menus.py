@@ -1,6 +1,8 @@
 """
 Unittests for opal.core.menus
 """
+from __future__ import unicode_literals
+
 import operator
 import warnings
 

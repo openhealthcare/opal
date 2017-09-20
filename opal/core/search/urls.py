@@ -1,6 +1,8 @@
 """
 Urls for Opal's search functionality
 """
+from __future__ import unicode_literals
+
 from django.conf.urls import patterns, url
 
 from opal.core.search import views

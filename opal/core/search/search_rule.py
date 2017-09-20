@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from opal.core.discoverable import DiscoverableFeature
 from opal.core.exceptions import Error
 from opal.utils import camelcase_to_underscore

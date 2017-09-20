@@ -1,6 +1,8 @@
 """
 Episode types to use when testing OPAL
 """
+from __future__ import unicode_literals
+
 from opal.core import episodes
 
 class RestrictedEpisodeCategory(episodes.EpisodeCategory):

@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from django.utils.log import AdminEmailHandler
 from django.conf import settings
 

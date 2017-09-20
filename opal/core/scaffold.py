@@ -1,6 +1,8 @@
 """
 Opal scaffolding and code generation
 """
+from __future__ import unicode_literals
+
 import inspect
 import os
 import subprocess

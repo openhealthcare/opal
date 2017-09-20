@@ -1,6 +1,8 @@
 """
 Opal subrecords - helpers, iterators et cetera
 """
+from __future__ import unicode_literals
+
 from opal.utils import _itersubclasses
 
 

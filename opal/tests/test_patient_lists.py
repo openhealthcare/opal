@@ -1,6 +1,8 @@
 """
 Unittests for opal.core.patient_lists
 """
+from __future__ import unicode_literals
+
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from mock import MagicMock, PropertyMock, patch

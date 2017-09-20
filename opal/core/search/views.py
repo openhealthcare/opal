@@ -1,6 +1,8 @@
 """
 Opal Search views
 """
+from __future__ import unicode_literals
+
 import datetime
 import json
 from functools import wraps
