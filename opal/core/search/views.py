@@ -19,7 +19,7 @@ from opal.core.views import (LoginRequiredMixin, json_response,
                              _get_request_data, with_no_caching)
 from opal.core.search import queries
 from opal.core.search.extract import (
-    zip_archive, async_extract, get_data_dictionary
+    zip_archive, async_extract
 )
 
 PAGINATION_AMOUNT = 10
@@ -35,13 +35,6 @@ class SearchTemplateView(LoginRequiredMixin, TemplateView):
 
 class ExtractTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'extract.html'
-
-    def get_context_data(self, *args, **kwargs):
-        ctx = super(ExtractTemplateView, self).get_context_data(
-            *args, **kwargs
-        )
-        ctx["schema"] = get_data_dictionary()
-        return ctx
 
 
 def ajax_login_required(view):

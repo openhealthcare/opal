@@ -1,7 +1,6 @@
 """
 Utilities for extracting data from Opal applications
 """
-from collections import OrderedDict
 import csv
 import datetime
 import functools
@@ -9,7 +8,7 @@ import logging
 import os
 import tempfile
 import zipfile
-from opal.core.schemas import serialize_model
+from opal.core.search.schemas import data_dictionary_schema
 
 from django.utils.functional import cached_property
 from django.db.models import Count, Max
@@ -81,7 +80,9 @@ class CsvRenderer(object):
 
     def get_field_names_to_render(self):
         field_names = self.model._get_fieldnames_to_extract()
-        field_names.remove("consistency_token")
+        # its not in episode but its in all subrecords
+        if "consistency_token" in field_names:
+            field_names.remove("consistency_token")
         result = self.get_non_field_csv_column_names()
         non_field_csv_columns_set = set(result)
         for field_name in field_names:
@@ -207,48 +208,9 @@ def field_to_dict(subrecord, field_name):
     )
 
 
-def get_data_dictionary_schema():
-    schema = []
-
-    for subrecord in subrecords.subrecords():
-        serialised = serialize_model(subrecord)
-        extract_fields = subrecord._get_fieldnames_to_extract()
-        serialised['fields'] = [
-            i for i in serialised['fields'] if i["name"] in extract_fields
-        ]
-        schema.append(serialised)
-
-    episode_fields = Episode.build_field_schema()
-    only = Episode._get_fieldnames_to_extract()
-    fields = sorted(
-        [i for i in episode_fields if i["name"] in only],
-        key=lambda x: x["title"]
-    )
-
-    schema.append(dict(
-        name='episode',
-        display_name='Episode',
-        fields=fields
-    ))
-    return sorted(schema, key=lambda t: t["display_name"])
-
-
-def get_data_dictionary():
-    schema = {}
-    for subrecord in subrecords.subrecords():
-        field_names = subrecord._get_fieldnames_to_extract()
-        record_schema = [field_to_dict(subrecord, i) for i in field_names]
-        schema[subrecord.get_display_name()] = record_schema
-    field_names = Episode._get_fieldnames_to_extract()
-
-    schema["Episode"] = [field_to_dict(Episode, i) for i in field_names]
-    return OrderedDict(sorted(schema.items(), key=lambda t: t[0]))
-
-
 def write_data_dictionary(file_name):
-    dictionary = get_data_dictionary()
     t = loader.get_template("extract_data_schema.html")
-    ctx = Context(dict(schema=dictionary))
+    ctx = Context(dict(schema=data_dictionary_schema()))
     rendered = t.render(ctx)
     with open(file_name, "w") as f:
         f.write(rendered)

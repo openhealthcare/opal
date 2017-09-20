@@ -69,17 +69,10 @@ angular.module('opal.services').factory('Schema', function() {
           return this.isType(columnName, field, ["float", "big_integer", "integer", "positive_integer_field", "decimal"]);
       },
       getTypeDisplay: function(columnName, field){
-        if(this.isBoolean(columnName, field)){
-          return "True/False"
-        }
-        if(this.isText(columnName, field)){
-          return "Text"
-        }
-        if(this.isDate(columnName, field)){
-          return "Date"
-        }
-        if(this.isDateTime(columnName, field)){
-          return "Date & Time"
+        var field = this.findField(columnName, field);
+
+        if(field){
+          return field.type_display_name
         }
       },
       getChoices: function(column, field, referencedata){

@@ -227,39 +227,19 @@
                       <div class="search-info-title">
                         <strong>[[ extractSchema.findColumn(selectedInfo.column).display_name ]]</strong>
                       </div>
-                       <div>
-                        <strong>[[ extractSchema.findField(selectedInfo.column, selectedInfo.field).title ]]</strong>
-                        <span ng-show="extractSchema.isSelect(selectedInfo.column, selectedInfo.field)">
-                          <div ng-show="extractSchema.findField(selectedInfo.column, selectedInfo.field).lookup_list">
-                            [a
-                            <a href=""
-                               class="orange-link"
-                               ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: extractScheam.findField(selectedInfo.column, selectedInfo.field).lookup_list, lookuplist: selectedInfo.lookup_list })">
-                              [[ extractSchema.findField(selectedInfo.column, selectedInfo.field).lookup_list | underscoreToSpaces ]]
-                            </a>]
-                          </div>
-                        </span>
-                        <span ng-show="extractSchema.isText(selectedInfo.column, selectedInfo.field)">
-                          [Text]
-                          <div ng-show="extractSchema.findField(selectedInfo.column, selectedInfo.field).lookup_list">
-                            Normally coded as a
-                            <a href=""
-                               class="orange-link"
-                               ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: extractSchema.findField(selectedInfo.column, selectedInfo.field).lookup_list, lookuplist: extractSchema.getChoices(selectedInfo.column, selectedInfo.field, referencedata)  })">
-                              [[ extractSchema.findField(selectedInfo.column, selectedInfo.field).lookup_list | underscoreToSpaces ]]</a>
-                            but free text entries are possible.
-                          </div>
-                          <div ng-show="selectedInfo.enum && selectedInfo.enum.length">
-                            one of <span ng-repeat="i in selectedInfo.enum">[[ i ]] </span>
-                          </div>
-                        </span>
-                        <span ng-show="!extractSchema.isText(selectedInfo.column, selectedInfo.field) && !extractSchema.isSelect(selectedInfo.column, selectedInfo.field)">
-                          [ [[ extractSchema.getTypeDisplay(selectedInfo.column, selectedInfo.field) ]] ]
-                        </span>
-                      </div>
                       <div>
-                        [[ extractSchema.findField(selectedInfo.column, selectedInfo.field).description ]]
+                        <strong>[[ extractSchema.findField(selectedInfo.column, selectedInfo.field).title ]]</strong>
+                          [[ "[" + extractSchema.getTypeDisplay(selectedInfo.column, selectedInfo.field) + "]" ]]
                       </div>
+                      <div ng-show="extractSchema.isText(selectedInfo.column, selectedInfo.field) && extractSchema.findField(selectedInfo.column, selectedInfo.field).lookup_list">
+                        Normally coded as a
+                        <a href=""
+                           class="orange-link"
+                           ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: extractSchema.findField(selectedInfo.column, selectedInfo.field).lookup_list, lookuplist: extractSchema.getChoices(selectedInfo.column, selectedInfo.field, referencedata)  })">
+                          [[ extractSchema.findField(selectedInfo.column, selectedInfo.field).lookup_list | underscoreToSpaces ]]</a>
+                        but free text entries are possible.
+                      </div>
+                      [[ extractSchema.findField(selectedInfo.column, selectedInfo.field).description ]]
                     </div>
                   </div>
                 </div>

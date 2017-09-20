@@ -27,7 +27,7 @@
               Normally coded as a
               <a href=""
                  class="orange-link"
-                 ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: dataDictionary.findField(field.subrecord.name, field.name).lookup_list, lookuplist: getChoices(field.subrecord.name, field.name)  })">
+                 ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: dataDictionary.findField(field.subrecord.name, field.name).lookup_list, lookuplist: dataDictionary.getChoices(field.subrecord.name, field.name, referencedata)  })">
                 [[ dataDictionary.findField(field.subrecord.name, field.name).lookup_list | underscoreToSpaces ]]</a>
               but free text entries are possible.
               </a>

@@ -32,6 +32,7 @@ class SearchRuleField(object):
             title=self.display_name,
             type=self.field_type,
             enum=self.enum,
+            type_display_name=self.type_display_name,
             lookup_list=self.lookup_list,
             description=self.description
         )
@@ -78,6 +79,7 @@ class EpisodeStart(SearchRuleField):
     display_name = "Start"
     description = "Episode Start"
     field_type = "date_time"
+    type_display_name = "Date & Time"
 
     def query(self, given_query):
         val = deserialize_date(given_query['query'])
@@ -95,6 +97,7 @@ class EpisodeEnd(SearchRuleField):
     display_name = "End"
     description = "Episode End"
     field_type = "date_time"
+    type_display_name = "Date & Time"
 
     def query(self, given_query):
         val = deserialize_date(given_query['query'])
@@ -115,6 +118,7 @@ class EpisodeTeam(SearchRuleField):
     display_name = "Team"
     description = "The team(s) related to an episode of care"
     field_type = "many_to_many_multi_select"
+    type_display_name = "Date & Time"
 
     @property
     def enum(self):

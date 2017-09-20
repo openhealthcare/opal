@@ -59,11 +59,27 @@ def deserialize_date(value):
     return dt.date()
 
 
-class SerialisableFields(object):
+class Serialisable(object):
     """
     Mixin class that handles the getting of fields
     and field types for serialisation/deserialization
     """
+    @classmethod
+    def get_api_name(cls):
+        return camelcase_to_underscore(cls._meta.object_name)
+
+    @classmethod
+    def get_icon(cls):
+        return getattr(cls, '_icon', None)
+
+    @classmethod
+    def get_display_name(cls):
+        if hasattr(cls, '_title'):
+            return cls._title
+        if cls._meta.verbose_name.islower():
+            return cls._meta.verbose_name.title()
+        return cls._meta.verbose_name
+
     @classmethod
     def _get_fieldnames_to_serialize(cls):
         """
@@ -149,26 +165,11 @@ class SerialisableFields(object):
         if isinstance(field_type, numeric_fields):
             return "Number"
 
-        if isinstance(field_type, ForeignKeyOrFreeText):
-            t = "Normally coded as a {} but free text entries are possible."
-            return t.format(field_type.foreign_model._meta.object_name.lower())
-
         related_fields = (
             models.ForeignKey, models.ManyToManyField,
         )
         if isinstance(field_type, related_fields):
-            if isinstance(field_type, models.ForeignKey):
-                t = "One of the {}"
-            else:
-                t = "Some of the {}"
-            related = field_type.rel.to
-            return t.format(related._meta.verbose_name_plural.title())
-
-        enum = cls.get_field_enum(field_name)
-
-        if enum:
-            return "One of {}".format(",".join([force_str(e) for e in enum]))
-
+            return "Relationship"
         else:
             return "Text Field"
 
@@ -217,6 +218,26 @@ class SerialisableFields(object):
         description = getattr(field, 'help_text', "")
         if description:
             return description
+
+        enum = cls.get_field_enum(name)
+
+        if enum:
+            return "One of {}".format(",".join([force_str(e) for e in enum]))
+
+        related_fields = (
+            models.ForeignKey, models.ManyToManyField,
+        )
+
+        if isinstance(field, ForeignKeyOrFreeText):
+            t = "Text"
+
+        if isinstance(field, related_fields):
+            if isinstance(field, models.ForeignKey):
+                t = "One of the {}"
+            else:
+                t = "Some of the {}"
+            related = field.rel.to
+            return t.format(related._meta.verbose_name_plural.title())
 
     @classmethod
     def get_field_enum(cls, name):
@@ -278,7 +299,7 @@ class SerialisableFields(object):
         return field_schema
 
 
-class UpdatesFromDictMixin(SerialisableFields):
+class UpdatesFromDictMixin(Serialisable):
     """
     Mixin class to provide the deserialization
     fields, as well as update logic for our JSON APIs.
@@ -413,7 +434,7 @@ class UpdatesFromDictMixin(SerialisableFields):
             some_func()
 
 
-class ToDictMixin(SerialisableFields):
+class ToDictMixin(Serialisable):
     """ serialises a model to a dictionary
     """
     def to_dict(self, user, fields=None):
@@ -734,12 +755,6 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
             for subclass in episode_subrecords():
                 if subclass._is_singleton:
                     subclass.objects.create(episode=self)
-
-    @classmethod
-    def _get_fieldnames_to_serialize(cls):
-        fields = super(Episode, cls)._get_fieldnames_to_serialize()
-        fields.extend(["start", "end"])
-        return fields
 
     @property
     def category(self):

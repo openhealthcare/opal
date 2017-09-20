@@ -1,3 +1,4 @@
+{% load opal_string_utils %}
 <!DOCTYPE html>
 <html>
   <head>
@@ -12,7 +13,7 @@
     <div class="container-fluid">
       <div class="row">
         <div class="col-md-8 col-md-push-2">
-          {% for subrecord in dataDictionary %}
+          {% for subrecord in schema %}
             <h3>{{ subrecord.display_name }}</h3>
             <table class="table">
               <tr>
@@ -35,6 +36,9 @@
                   {{ field.type_display_name }}
                 </td>
                 <td class="col-md-5">
+                  {% if field.lookup_list %}
+                    Normally coded as a as {{ field.lookup_list | underscore_to_spaces }} but free text entries are possible.
+                  {% endif %}
                   {{ field.description | default_if_none:"" }}
                 </td>
               </tr>
