@@ -53,39 +53,6 @@ class CsvColumn(object):
             self.display_name = self.name.title()
 
 
-class AbstractNestedSubrecordCsvRenderer(object):
-    @cached_property
-    def flat_row_length(self):
-        return len(self.get_flat_headers())
-
-    def get_flat_headers(self):
-        single_headers = super(
-            AbstractNestedSubrecordCsvRenderer, self
-        ).get_headers()
-
-        if self.flat_repetitions == 1:
-            return [
-                "{0} {1}".format(
-                    self.model.get_display_name(),
-                    i
-                ) for i in single_headers
-            ]
-
-        result = []
-
-        for rep in range(self.flat_repetitions):
-            result.extend(
-                (
-                    "{0} {1} {2}".format(
-                        self.model.get_display_name(),
-                        rep + 1,
-                        i
-                    ) for i in single_headers
-                )
-            )
-        return result
-
-
 class CsvRenderer(object):
     """
         An Abstract base class of the other csv renderers
@@ -149,7 +116,6 @@ class CsvRenderer(object):
         as_dict = instance.to_dict(user=self.user)
 
         result = []
-
         for field in self.fields:
             if field in self.get_non_field_csv_column_names():
                 some_fn = self.get_non_field_csv_columns(field).value
@@ -183,9 +149,7 @@ class CsvRenderer(object):
         return len(self.get_flat_headers())
 
     def get_flat_headers(self):
-        single_headers = super(
-            CsvRenderer, self
-        ).get_headers()
+        single_headers = self.get_headers()
 
         if self.flat_repetitions == 1:
             return [
@@ -210,7 +174,7 @@ class CsvRenderer(object):
         return result
 
 
-class PatientSubrecordCsvRenderer(AbstractNestedSubrecordCsvRenderer, CsvRenderer):
+class PatientSubrecordCsvRenderer(CsvRenderer):
     non_field_csv_columns = (
         CsvColumn(
             "episode_id",
@@ -286,7 +250,7 @@ def write_data_dictionary(file_name):
         f.write(rendered)
 
 
-class EpisodeSubrecordCsvRenderer(AbstractNestedSubrecordCsvRenderer, CsvRenderer):
+class EpisodeSubrecordCsvRenderer(CsvRenderer):
     non_field_csv_columns = (
         CsvColumn(
             "patient_id",
