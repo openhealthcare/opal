@@ -1,19 +1,15 @@
-"""
-Tests for schema utilities
-"""
 from django.test import TestCase
 from mock import patch
+from opal.tests.models import Colour
 
-from opal.core import schemas
-from opal.tests.models import Colour, HatWearer, FamousLastWords
+
+from opal.core.search import schemas
 
 colour_serialized = dict(
     name='colour',
     icon="fa fa-comments",
     display_name='Colour',
     single=False,
-    angular_service='Colour',
-    form_url=u'/templates/forms/colour.html',
     fields=[
         {'model': 'Colour',
          'lookup_list': None,
@@ -66,13 +62,6 @@ colour_serialized = dict(
     ]
 )
 
-tagging_serialized = {
-    'fields': [],
-    'single': True,
-    'display_name': 'Teams',
-    'name': 'tagging',
-}
-
 episode_serialised = {
     'fields': [
         {
@@ -81,6 +70,7 @@ episode_serialised = {
             'name': 'start',
             'title': 'Start',
             'type': 'date_time',
+            'type_display_name': 'Date & Time',
             'description': "Episode Start"
         },
         {
@@ -89,6 +79,7 @@ episode_serialised = {
             'name': 'end',
             'title': 'End',
             'type': 'date_time',
+            'type_display_name': 'Date & Time',
             'description': "Episode End"
         },
         {
@@ -97,6 +88,7 @@ episode_serialised = {
             'lookup_list': None,
             'name': 'team',
             'title': 'Team',
+            'type_display_name': 'Text Field',
             'type': 'many_to_many_multi_select'
          }
     ],
@@ -105,34 +97,10 @@ episode_serialised = {
 }
 
 
-class SerializeModelTestCase(TestCase):
-    def test_serialize(self):
-        self.assertEqual(colour_serialized, schemas.serialize_model(Colour))
-
-    def test_serialize_sort(self):
-        self.assertEqual('name', schemas.serialize_model(HatWearer)['sort'])
-
-    def test_serialize_readonly(self):
-        self.assertEqual(True, schemas.serialize_model(FamousLastWords)['readOnly'])
-
-
-class SerializeSchemaTestCase(TestCase):
-    def test_serialize(self):
-        self.assertEqual(
-            [colour_serialized, colour_serialized],
-            schemas.serialize_schema([Colour, Colour])
-        )
-
-
-class ListRecordsTestCase(TestCase):
-    @patch('opal.core.schemas.subrecords')
-    @patch('opal.core.schemas.models.Tagging.build_field_schema')
-    def test_list_records(self, tagging, subrecords):
+class ExtractSchemaTestCase(TestCase):
+    @patch('opal.core.search.schemas.subrecords')
+    def test_extract_schema(self, subrecords):
         subrecords.return_value = [Colour]
-        tagging.return_value = []
-        expected = {
-            'tagging': tagging_serialized,
-            'colour': colour_serialized
-        }
 
-        self.assertEqual(expected, schemas.list_records())
+        self.assertEqual(colour_serialized, schemas.extract_schema()[0])
+        self.assertEqual(episode_serialised, schemas.extract_schema()[1])

@@ -112,14 +112,6 @@ class RecordTestCase(TestCase):
         self.assertEqual([{}], api.RecordViewSet().list(None).data)
 
 
-class ExtractSchemaTestCase(TestCase):
-
-    @patch('opal.core.api.schemas')
-    def test_records(self, schemas):
-        schemas.extract_schema.return_value = [{}]
-        self.assertEqual([{}], api.ExtractSchemaViewSet().list(None).data)
-
-
 class ReferenceDataViewSetTestCase(OpalTestCase):
 
     def setUp(self):

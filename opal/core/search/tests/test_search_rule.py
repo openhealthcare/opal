@@ -14,6 +14,7 @@ class SearchRuleFieldTestCase(OpalTestCase):
             display_name = "custom field you know"
             field_type = "string"
             slug = "some_slug"
+            type_display_name = "some field"
         self.custom_field = SomeSearchRuleField()
         super(SearchRuleFieldTestCase, self).setUp(*args, **kwargs)
 
@@ -26,6 +27,7 @@ class SearchRuleFieldTestCase(OpalTestCase):
             enum = [1, 2, 3]
             description = "its a custom field"
             display_name = "custom field you know"
+            type_display_name = "some field"
         self.assertEqual(
             SomeOtherSearchRuleField().get_slug(), "customfieldyouknow"
         )
@@ -49,7 +51,8 @@ class SearchRuleFieldTestCase(OpalTestCase):
             description="its a custom field",
             name="some_slug",
             title='custom field you know',
-            type="string"
+            type="string",
+            type_display_name="some field"
         )
         self.assertEqual(
             self.custom_field.to_dict(),

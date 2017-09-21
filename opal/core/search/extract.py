@@ -315,7 +315,6 @@ class ExtractCsvSerialiser(CsvRenderer, discoverable.DiscoverableFeature):
         patient_subrecords_api_names = {
             i.get_api_name() for i in subrecords.patient_subrecords()
         }
-
         for subrecord in subrecords.subrecords():
             api_name = subrecord.get_api_name()
             if api_name not in slugs_to_serialiser:

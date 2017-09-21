@@ -43,12 +43,12 @@ urlpatterns = patterns(
     url(
         r'^search/api/extract/$',
         api.ExtractSchemaViewSet.as_view({'get': 'list'}),
-        name="extract"
+        name="extract-schema-list"
     ),
 
     url(
         r'^search/api/data_dictionary/$',
         api.DataDictionaryViewSet.as_view({'get': 'list'}),
-        name="data_dictionary"
+        name="data-dictionary-list"
     ),
 )

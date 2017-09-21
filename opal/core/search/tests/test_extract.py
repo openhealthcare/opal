@@ -597,7 +597,7 @@ class NestedEpisodeCsvRendererTestCase(PatientEpisodeTestCase):
     def setUp(self):
         super(NestedEpisodeCsvRendererTestCase, self).setUp()
         self.episode.start = datetime.date.today()
-        self.renderer = extract.NestedEpisodeCsvRenderer(
+        self.renderer = extract.EpisodeCsvRenderer(
             models.Episode,
             models.Episode.objects.all(),
             self.user,
@@ -606,7 +606,7 @@ class NestedEpisodeCsvRendererTestCase(PatientEpisodeTestCase):
 
     def test_get_headers(self):
         self.assertEqual(
-            self.renderer.get_headers(),
+            self.renderer.get_flat_headers(),
             ["Episode Start"]
         )
 
@@ -627,7 +627,7 @@ class NestedEpisodeSubrecordCsvRendererTestCase(PatientEpisodeTestCase):
         self.colour_2 = Colour.objects.create(
             name="green", episode=self.episode
         )
-        self.renderer = extract.NestedEpisodeSubrecordCsvRenderer(
+        self.renderer = extract.EpisodeSubrecordCsvRenderer(
             Colour,
             models.Episode.objects.all(),
             self.user,
@@ -635,14 +635,14 @@ class NestedEpisodeSubrecordCsvRendererTestCase(PatientEpisodeTestCase):
         )
 
     def test_repetitions(self):
-        self.assertEqual(self.renderer.repetitions, 2)
+        self.assertEqual(self.renderer.flat_repetitions, 2)
 
     def test_row_length(self):
-        self.assertEqual(self.renderer.row_length, 2)
+        self.assertEqual(self.renderer.flat_row_length, 2)
 
     def test_get_headers(self):
         self.assertEqual(
-            self.renderer.get_headers(),
+            self.renderer.get_flat_headers(),
             ["Colour 1 Name", "Colour 2 Name"]
         )
 
@@ -669,7 +669,7 @@ class NestedEpisodeSubrecordCsvRendererWhenNoneTestCase(
         self.colour = Colour.objects.create(
             name="blue", episode=self.episode
         )
-        self.renderer = extract.NestedEpisodeSubrecordCsvRenderer(
+        self.renderer = extract.EpisodeSubrecordCsvRenderer(
             Colour,
             models.Episode.objects.all(),
             self.user,
@@ -677,14 +677,14 @@ class NestedEpisodeSubrecordCsvRendererWhenNoneTestCase(
         )
 
     def test_repetitions(self):
-        self.assertEqual(self.renderer.repetitions, 1)
+        self.assertEqual(self.renderer.flat_repetitions, 1)
 
     def test_row_length(self):
-        self.assertEqual(self.renderer.row_length, 1)
+        self.assertEqual(self.renderer.flat_row_length, 1)
 
     def test_get_headers(self):
         self.assertEqual(
-            self.renderer.get_headers(),
+            self.renderer.get_flat_headers(),
             ['Colour Name']
         )
 
@@ -700,7 +700,7 @@ class NestedEpisodeSubrecordCsvRendererWhenOneTestCase(
 ):
     def setUp(self):
         super(NestedEpisodeSubrecordCsvRendererWhenOneTestCase, self).setUp()
-        self.renderer = extract.NestedEpisodeSubrecordCsvRenderer(
+        self.renderer = extract.EpisodeSubrecordCsvRenderer(
             Colour,
             models.Episode.objects.all(),
             self.user,
@@ -708,14 +708,14 @@ class NestedEpisodeSubrecordCsvRendererWhenOneTestCase(
         )
 
     def test_repetitions(self):
-        self.assertEqual(self.renderer.repetitions, 0)
+        self.assertEqual(self.renderer.flat_repetitions, 0)
 
     def test_row_length(self):
-        self.assertEqual(self.renderer.row_length, 0)
+        self.assertEqual(self.renderer.flat_row_length, 0)
 
     def test_get_headers(self):
         self.assertEqual(
-            self.renderer.get_headers(),
+            self.renderer.get_flat_headers(),
             []
         )
 
@@ -726,13 +726,13 @@ class NestedEpisodeSubrecordCsvRendererWhenOneTestCase(
         )
 
     def test_with_singleton(self):
-        renderer = extract.NestedEpisodeSubrecordCsvRenderer(
+        renderer = extract.EpisodeSubrecordCsvRenderer(
             EpisodeName,
             models.Episode.objects.all(),
             self.user,
             fields=["name"]
         )
-        self.assertEqual(renderer.repetitions, 1)
+        self.assertEqual(renderer.flat_repetitions, 1)
 
 
 class NestedPatientSubrecordCsvRendererTestCase(PatientEpisodeTestCase):
@@ -745,7 +745,7 @@ class NestedPatientSubrecordCsvRendererTestCase(PatientEpisodeTestCase):
         self.colour_2 = PatientColour.objects.create(
             name="green", patient=self.patient
         )
-        self.renderer = extract.NestedPatientSubrecordCsvRenderer(
+        self.renderer = extract.PatientSubrecordCsvRenderer(
             PatientColour,
             models.Episode.objects.all(),
             self.user,
@@ -753,14 +753,14 @@ class NestedPatientSubrecordCsvRendererTestCase(PatientEpisodeTestCase):
         )
 
     def test_repetitions(self):
-        self.assertEqual(self.renderer.repetitions, 2)
+        self.assertEqual(self.renderer.flat_repetitions, 2)
 
     def test_row_length(self):
-        self.assertEqual(self.renderer.row_length, 2)
+        self.assertEqual(self.renderer.flat_row_length, 2)
 
     def test_get_headers(self):
         self.assertEqual(
-            self.renderer.get_headers(),
+            self.renderer.get_flat_headers(),
             ["Patient Colour 1 Name", "Patient Colour 2 Name"]
         )
 
@@ -785,7 +785,7 @@ class NestedPatientSubrecordCsvRendererWhenNoneTestCase(
         self.colour = PatientColour.objects.create(
             name="blue", patient=self.patient
         )
-        self.renderer = extract.NestedPatientSubrecordCsvRenderer(
+        self.renderer = extract.PatientSubrecordCsvRenderer(
             PatientColour,
             models.Episode.objects.all(),
             self.user,
@@ -793,14 +793,14 @@ class NestedPatientSubrecordCsvRendererWhenNoneTestCase(
         )
 
     def test_repetitions(self):
-        self.assertEqual(self.renderer.repetitions, 1)
+        self.assertEqual(self.renderer.flat_repetitions, 1)
 
     def test_row_length(self):
-        self.assertEqual(self.renderer.row_length, 1)
+        self.assertEqual(self.renderer.flat_row_length, 1)
 
     def test_get_headers(self):
         self.assertEqual(
-            self.renderer.get_headers(),
+            self.renderer.get_flat_headers(),
             ['Patient Colour Name']
         )
 
@@ -816,7 +816,7 @@ class NestedPatientSubrecordCsvRendererWhenOneTestCase(
 ):
     def setUp(self):
         super(NestedPatientSubrecordCsvRendererWhenOneTestCase, self).setUp()
-        self.renderer = extract.NestedPatientSubrecordCsvRenderer(
+        self.renderer = extract.PatientSubrecordCsvRenderer(
             PatientColour,
             models.Episode.objects.all(),
             self.user,
@@ -824,14 +824,14 @@ class NestedPatientSubrecordCsvRendererWhenOneTestCase(
         )
 
     def test_repetitions(self):
-        self.assertEqual(self.renderer.repetitions, 0)
+        self.assertEqual(self.renderer.flat_repetitions, 0)
 
     def test_row_length(self):
-        self.assertEqual(self.renderer.row_length, 0)
+        self.assertEqual(self.renderer.flat_row_length, 0)
 
     def test_get_headers(self):
         self.assertEqual(
-            self.renderer.get_headers(),
+            self.renderer.get_flat_headers(),
             []
         )
 
@@ -842,13 +842,13 @@ class NestedPatientSubrecordCsvRendererWhenOneTestCase(
         )
 
     def test_with_singleton(self):
-        renderer = extract.NestedPatientSubrecordCsvRenderer(
+        renderer = extract.PatientSubrecordCsvRenderer(
             FamousLastWords,
             models.Episode.objects.all(),
             self.user,
             fields=["name"]
         )
-        self.assertEqual(renderer.repetitions, 1)
+        self.assertEqual(renderer.flat_repetitions, 1)
 
 
 @patch.object(Colour, "_get_fieldnames_to_extract")

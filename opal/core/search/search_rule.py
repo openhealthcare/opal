@@ -118,7 +118,7 @@ class EpisodeTeam(SearchRuleField):
     display_name = "Team"
     description = "The team(s) related to an episode of care"
     field_type = "many_to_many_multi_select"
-    type_display_name = "Date & Time"
+    type_display_name = "Text Field"
 
     @property
     def enum(self):

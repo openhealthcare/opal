@@ -13,7 +13,7 @@ from opal.core.test import OpalTestCase
 from opal.tests import models as test_models
 
 from opal.models import (
-    UpdatesFromDictMixin, SerialisableFields, ToDictMixin
+    UpdatesFromDictMixin, Serialisable, ToDictMixin
 )
 
 
@@ -37,12 +37,12 @@ class GetterModel(ToDictMixin, models.Model):
         return "gotten"
 
 
-class SerialisableModel(SerialisableFields, models.Model):
+class SerialisableModel(Serialisable, models.Model):
     pid = models.CharField(max_length=200, blank=True, null=True)
     hatty = ForeignKeyOrFreeText(test_models.Hat)
 
 
-class SerialisableFieldsTestCase(OpalTestCase):
+class SerialisableTestCase(OpalTestCase):
 
     def test_get_fieldnames(self):
         names = SerialisableModel._get_fieldnames_to_serialize()
@@ -107,13 +107,13 @@ class SerialisableFieldsTestCase(OpalTestCase):
     def test_get_human_readable_type_reverse_foreign_key_field(self):
         self.assertEqual(
             test_models.HatWearer.get_human_readable_type("created_by"),
-            "One of the Users"
+            "Relationship"
         )
 
     def test_get_human_readable_type_many_to_many_field(self):
         self.assertEqual(
             test_models.HatWearer.get_human_readable_type("hats"),
-            "Some of the Hats"
+            "Relationship"
         )
 
     def test_build_field_schema(self):

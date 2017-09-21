@@ -89,7 +89,6 @@ class AbstractDog(models.PatientSubrecord, AbstractBase):
 
 class Colour(models.EpisodeSubrecord):
     _clonable = False
-    _advanced_searchable = False
     _exclude_from_extract = True
     _angular_service = 'Colour'
     _icon = "fa fa-comments"
