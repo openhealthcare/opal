@@ -14,6 +14,11 @@ class Birthday(models.PatientSubrecord):
     party = dmodels.DateTimeField(blank=True, null=True)
 
 
+class Dinner(models.EpisodeSubrecord):
+    food = dmodels.CharField(max_length=256, null=True, blank=True)
+    time = dmodels.TimeField(blank=True, null=True)
+
+
 class Hat(lookuplists.LookupList):
     pass
 

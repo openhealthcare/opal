@@ -228,17 +228,6 @@ directives.directive('setFocusIf', function($timeout) {
     };
 });
 
-// until bootstrap moves to flex box, lets grab the parent height with javascript
-directives.directive('parentHeight', function(){
-    return{
-        restrict: 'A',
-        link: function(scope, element){
-            var $element = $(element);
-            $element.css("min-height", $element.parent().height());
-        }
-    };
-});
-
 directives.directive('autofocus', ['$timeout', function($timeout) {
   return {
     restrict: 'A',
@@ -364,8 +353,9 @@ directives.directive("dateOfBirth", function(){
     scope: true,
     template: "<input name='date_of_birth' class='form-control' ng-pattern='numberCheck' ng-model='value' ng-model-options=\"{ updateOn: 'blur' }\" ng-change='onChange()'>",
     link: function(scope, element, attrs, ngModel){
-      if (!ngModel) return;
-
+      if (!ngModel){
+        throw("date-of-birth requires an ng-model to be set");
+      };
       scope.name = attrs.name
 
       scope.onChange = function(){
@@ -419,7 +409,9 @@ directives.directive("tagSelect", function(Metadata){
     scope: true,
     templateUrl: "/templates/ng_templates/tag_select.html",
     link: function(scope, element, attrs, ngModel){
-      if (!ngModel) return;
+      if (!ngModel){
+        throw("tag-select requires an ng-model to be set");
+      };
       Metadata.load().then(function(metadata){
         scope.onRemove = function($item, $model){
             ngModel.$modelValue[$model] = false;
@@ -482,4 +474,51 @@ directives.directive('avatarForUser', function(User){
             }
         }
     }
+});
+
+directives.directive("timeSet", function ($parse) {
+  return {
+    restrict: 'A',
+    scope: true,
+    link: function (scope, element, attrs) {
+      "use strict";
+
+
+      var updateParent = true;
+      var updateChild = true;
+
+      var updateFromParent = function(){
+        updateChild = false;
+        var populated = $parse(attrs.timeSet)(scope);
+        if(!populated){
+          scope.internal = {time_field: new Date()};
+        }
+        else{
+          scope.internal = {
+            time_field: moment(populated, 'HH:mm:ss').toDate()
+          };
+        }
+        updateChild = true;
+      }
+
+      updateFromParent();
+
+      scope.$watch("internal.time_field", function(newVal, oldVal){
+        if(updateChild && newVal.getTime() !== oldVal.getTime()){
+          updateParent = false;
+          var populated = $parse(attrs.timeSet);
+          var asTimeStr = moment(scope.internal.time_field).format("HH:mm:ss");
+          populated.assign(scope, asTimeStr);
+          var change = $parse(attrs.timeSetChange)(scope);
+          updateParent = true;
+        }
+      });
+
+      scope.$watch(attrs.timeSet, function(){
+        if(updateParent){
+          updateFromParent();
+        }
+      });
+    }
+  }
 });

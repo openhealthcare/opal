@@ -99,7 +99,7 @@ def simple_search_view(request):
     paginated = _add_pagination(patients, page_number)
     paginated_patients = paginated["object_list"]
     episodes = models.Episode.objects.filter(
-        id__in=paginated_patients.values_list("id", flat=True)
+        id__in=paginated_patients.values_list("episode__id", flat=True)
     )
     paginated["object_list"] = query.get_aggregate_patients_from_episodes(
         episodes

@@ -52,6 +52,15 @@ def deserialize_datetime(value):
     return value
 
 
+def deserialize_time(value):
+    input_format = settings.TIME_INPUT_FORMATS[0]
+    value = timezone.make_aware(datetime.datetime.strptime(
+        value, input_format
+    ), timezone.get_current_timezone()).time()
+
+    return value
+
+
 def deserialize_date(value):
     input_format = settings.DATE_INPUT_FORMATS[0]
     dt = datetime.datetime.strptime(
@@ -404,6 +413,8 @@ class UpdatesFromDictMixin(SerialisableFields):
                             value = deserialize_date(value)
                         elif value and field_type == DateTimeField:
                             value = deserialize_datetime(value)
+                        elif value and field_type == models.fields.TimeField:
+                            value = deserialize_time(value)
 
                         setattr(self, name, value)
 
