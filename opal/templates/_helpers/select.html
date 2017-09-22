@@ -2,11 +2,12 @@
 <div class="form-group" {% if visibility %} {{ visibility|safe }} {% endif %} >
   <span ng-class="{ 'errored-state': {{ formname }}[{{ element_name }}].$dirty && !{{ formname }}[{{ element_name }}].$valid }">
     {% if label %}
-    <label class="control-label col-sm-3">
+    <label class="control-label {% ifequal style "horizontal" %}col-sm-3{% endifequal %}">
       {{ label }}
     </label>
     {% endif %}
-  <div class="col-sm-8" ng-class='{"has-error": {{ formname }}.$submitted && {{ formname }}[{{ element_name }}].$error.required}'>
+    <div class="{% ifequal style "horizontal" %}col-sm-8{% endifequal %}"
+         ng-class='{"has-error": {{ formname }}.$submitted && {{ formname }}[{{ element_name }}].$error.required}'>
     {% if multiple %}
       <ui-select {% if tagging %}tagging {% endif %}multiple {% if autofocus %}autofocus {% endif %} {% if change %} ng-change="{{ change }}" {% endif %}{% if disabled %}ng-disabled="{{ disabled }}" {% endif %}name="[[ {{ element_name }} ]]" {% if required %}required{% endif %} ng-model="{{ model }}" theme="bootstrap" {% for d in directives %}{{ d }} {% endfor %} style="min-width: 300px;">
         <ui-select-match {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}>{% if multiple %}[[ $item ]]{% else %}[[ $select.selected ]]{% endif %}</ui-select-match>

@@ -10,6 +10,15 @@ from opal.core.views import OpalSerializer
 
 register = template.Library()
 
+def get_style(kwargs):
+    """
+    Return the style of this widget.
+    """
+    style = kwargs.get('style', 'horizontal')
+    valid_styles = ['horizontal', 'vertical']
+    if style not in valid_styles:
+        raise ValueError('{0} is not a valid form style!'.format(style))
+    return style
 
 def _visibility_clauses(show, hide):
     """
@@ -172,6 +181,7 @@ def _input(*args, **kwargs):
         'enter'     : enter,
         'maxlength' : maxlength,
         'datepicker': datepicker,
+        'style'     : get_style(kwargs),
     })
 
     return ctx
@@ -262,6 +272,7 @@ def select(*args, **kwargs):
         'other_label': other_label,
         'tagging': tagging,
         'multiple': multiple,
+        'style': get_style(kwargs)
     })
 
     return ctx
@@ -300,8 +311,12 @@ def icon(name):
 
 
 @register.inclusion_tag('_helpers/date_of_birth_field.html')
-def date_of_birth_field(model_name="editing.demographics.date_of_birth"):
-    return dict(model_name=model_name)
+def date_of_birth_field(**kwargs):
+    model_name = kwargs.get('model_name', "editing.demographics.date_of_birth")
+    return dict(
+        model_name=model_name,
+        style=get_style(kwargs)
+    )
 
 
 @register.inclusion_tag('_helpers/process_steps.html')
