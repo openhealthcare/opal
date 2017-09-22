@@ -225,6 +225,35 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
         with self.assertNumQueries(35):
             self.get_response('{}/?query=Blofelt'.format(self.url))
 
+    def test_with_multiple_patient_episodes(self):
+        self.patient.create_episode()
+        blofeld_patient, blofeld_episode = self.create_patient(
+            "Ernst", "Blofeld", "23422"
+        )
+        response = json.loads(
+            self.get_response(
+                '{}/?query=Blofeld'.format(self.url)
+            ).content.decode('UTF-8')
+        )
+        expected = {
+            "total_pages": 1,
+            "object_list": [{
+                "count": 1,
+                "first_name": "Ernst",
+                "surname": "Blofeld",
+                "start": None,
+                "patient_id": 2,
+                "hospital_number": "23422",
+                "date_of_birth": None,
+                "end": None,
+                "id": 2,
+                "categories": ["Inpatient"]
+            }],
+            "page_number": 1,
+            "total_count": 1
+        }
+        self.assertEqual(response, expected)
+
 
 class SearchTemplateTestCase(OpalTestCase):
 

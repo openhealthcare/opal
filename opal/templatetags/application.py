@@ -51,3 +51,9 @@ def application_actions():
             for action in plugin.actions:
                 yield action
     return dict(actions=actions)
+
+
+@register.inclusion_tag('plugins/angular_module_deps.html')
+def opal_angular_deps():
+    app = application.get_app()
+    return dict(deps=app.get_all_angular_module_deps())

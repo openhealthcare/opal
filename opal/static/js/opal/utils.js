@@ -7,8 +7,10 @@ try { angular.module("opal.config") } catch(err) { /* failed to require */ angul
 OPAL.module = function(namespace, dependencies){
     dependencies = dependencies || [];
 
+    var OPAL_ANGULAR_DEPS = window.OPAL_ANGULAR_DEPS;
+
     if(OPAL_ANGULAR_DEPS === undefined){
-        var OPAL_ANGULAR_DEPS = [];
+        OPAL_ANGULAR_DEPS = [];
     }
 
     var implicit_dependencies = [
@@ -38,12 +40,10 @@ OPAL.module = function(namespace, dependencies){
     });
 
     var mod = angular.module(namespace, dependencies);
-
-    if(this.tracking.manualTrack){
-      mod.config(function($analyticsProvider) {
-          $analyticsProvider.virtualPageviews(false);
-      });
-    }
+    var manualTracking = this.tracking.manualTrack;
+    mod.config(function($analyticsProvider) {
+        $analyticsProvider.virtualPageviews(!manualTracking);
+    });
 
     mod.config(function($cookiesProvider) {
         var future = new Date();
@@ -161,38 +161,8 @@ OPAL._run = function($rootScope, ngProgressLite, $modal, $location, $analytics) 
     };
 };
 
-
-// From http://stackoverflow.com/questions/3629183/why-doesnt-indexof-work-on-an-array-ie8
-_indexof = function(elt /*, from*/)
-	{
-		var len = this.length >>> 0;
-		var from = Number(arguments[1]) || 0;
-		from = (from < 0)
-		    ? Math.ceil(from)
-		    : Math.floor(from);
-		if (from < 0)
-			from += len;
-
-		for (; from < len; from++)
-		{
-			if (from in this &&
-			    this[from] === elt)
-				return from;
-		}
-		return -1;
-	};
-
-if (!Array.prototype.indexOf) {	Array.prototype.indexOf = _indexof };
-
 // From http://stackoverflow.com/a/3937924/2463201
 jQuery.support.placeholder = (function(){
 	var i = document.createElement('input');
 	return 'placeholder' in i;
 })();
-
-// Fuck you Internet Explorer 8
-_trim = function() {
-	return this.replace(/^\s+|\s+$/g, '');
-}
-
-if (typeof String.prototype.trim !== 'function') { String.prototype.trim = _trim };

@@ -1,15 +1,20 @@
 """
 Unittests for the opal.templatetags.application module
 """
+
 from __future__ import unicode_literals
 
 import warnings
 
+
 from mock import patch, MagicMock
+
+from django.template import Template, Context
 
 from opal.core import plugins
 from opal.core.test import OpalTestCase
 from opal.templatetags import application
+
 
 class TestPlugin(plugins.OpalPlugin):
     actions = ['pluginaction.html']
@@ -68,7 +73,7 @@ class ApplicationStylesTestCase(OpalTestCase):
         mock_app.get_styles.assert_called_with()
 
 
-class ApplicatoinActionsTestCase(OpalTestCase):
+class ApplicationActionsTestCase(OpalTestCase):
 
     @patch('opal.templatetags.application.plugins.OpalPlugin.list')
     @patch('opal.templatetags.application.application.get_app')
@@ -80,3 +85,16 @@ class ApplicatoinActionsTestCase(OpalTestCase):
 
         result = list(application.application_actions()['actions']())
         self.assertEqual(['action1.html', 'pluginaction.html'], result)
+
+
+@patch('opal.templatetags.application.application.get_app')
+class AngularOpalAngularDepsTestCase(OpalTestCase):
+    def test_plugin_angular_deps(self, get_app):
+        application = MagicMock()
+        application.get_all_angular_module_deps.return_value = [
+            'upstream.dependency'
+        ]
+        get_app.return_value = application
+        template = Template('{% load application %}{% opal_angular_deps %}')
+        rendered = template.render(Context({}))
+        self.assertIn('upstream.dependency', rendered)

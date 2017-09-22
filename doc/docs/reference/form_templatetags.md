@@ -37,6 +37,20 @@ Keywords:
 * `mindate` Angular Javascript expression to return the minimum possible date
 * `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html element
 
+
+### {% timepicker ... %}
+
+Generates a time picker widget
+
+Keywords:
+
+* `field` a string of the models api name '.' field which infers attributes for the model, for more information see
+[Inference from subrecord fields](#inference-from-subrecord-fields)
+* `label` The Label with which to describe the date field (defaults to 'Date')
+* `model` The model which we are editing (This is a string that references an in-scope Angular variable)
+* `change`  A javascript function that fires if the field has changed
+
+
 ### {% datetimepicker ... %}
 
 Generates a date time fields, a date field on one line and a time field on another

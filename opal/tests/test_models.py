@@ -292,6 +292,28 @@ class SubrecordTestCase(OpalTestCase):
     def test_display_template_does_not_exist(self):
         self.assertEqual(None, Subrecord.get_display_template())
 
+    def test_time_deserialisation(self):
+        _, episode = self.new_patient_and_episode_please()
+        dinner_time = "20:00:00"
+        dinner = Dinner()
+        dinner.update_from_dict(dict(
+            episode_id=episode.id,
+            time=dinner_time
+        ), self.user)
+
+        reloaded = Dinner.objects.get()
+        self.assertEqual(
+            reloaded.time, datetime.time(20)
+        )
+
+    def test_time_serialisation(self):
+        _, episode = self.new_patient_and_episode_please()
+        dinner = episode.dinner_set.create(time=datetime.time(20))
+        result = dinner.to_dict(self.user)
+        self.assertEqual(
+            result["time"], datetime.time(20, 0)
+        )
+
     @patch('opal.models.find_template')
     def test_display_template(self, find):
         Subrecord.get_display_template()

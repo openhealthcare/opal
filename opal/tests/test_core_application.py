@@ -99,6 +99,18 @@ class OpalApplicationTestCase(OpalTestCase):
         getfile.return_value = "/"
         self.assertEqual(application.OpalApplication.directory(), "/")
 
+    @patch('opal.core.application.get_all_components')
+    def test_opal_angular_deps(self, get_all_components):
+        fake_application = MagicMock()
+        fake_application.angular_module_deps = ["upstream.dependency"]
+        get_all_components.return_value = [
+            fake_application
+        ]
+        self.assertEqual(
+            application.OpalApplication.get_all_angular_module_deps(),
+            ["upstream.dependency"]
+        )
+
 
 class GetAppTestCase(OpalTestCase):
 

@@ -26,6 +26,7 @@ test_settings_config = dict(
     DATE_INPUT_FORMATS=['%d/%m/%Y'],
     DATETIME_FORMAT='d/m/Y H:i:s',
     DATETIME_INPUT_FORMATS=['%d/%m/%Y %H:%M:%S'],
+    TIME_FORMAT = "H:i:s",
     STATIC_URL='/assets/',
     COMPRESS_ROOT='/tmp/',
     TIME_ZONE='UTC',

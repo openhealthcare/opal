@@ -246,6 +246,28 @@ class CheckboxTestCase(TestCase):
         self.assertIn('ng-change="doStuff"', rendered)
 
 
+class TimepickerTestCase(TestCase):
+    def test_visibility(self):
+        template = Template('{% load forms %}{% timepicker show="someVar" field="Dinner.time" %}')
+        rendered = template.render(Context({}))
+        self.assertIn('ng-show="someVar"', rendered)
+
+    def test_change(self):
+        template = Template('{% load forms %}{% timepicker change="someVar()" field="Dinner.time" %}')
+        rendered = template.render(Context({}))
+        self.assertIn('change="someVar()"', rendered)
+
+    def test_model(self):
+        template = Template('{% load forms %}{% timepicker model="trees" field="Dinner.time" %}')
+        rendered = template.render(Context({}))
+        self.assertIn('trees', rendered)
+
+    def test_label(self):
+        template = Template('{% load forms %}{% timepicker label="trees" field="Dinner.time" %}')
+        rendered = template.render(Context({}))
+        self.assertIn('trees', rendered)
+
+
 class DatepickerTestCase(TestCase):
 
     def test_datepicker(self):
@@ -294,7 +316,7 @@ class DateTimePickerTestCase(TestCase):
     def test_generic(self):
         template = Template('{% load forms %}{% datetimepicker field="Colour.name" %}')
         rendered = template.render(Context({}))
-        self.assertEqual(rendered.count('ng-model="editing.colour.name"'), 2)
+        self.assertEqual(rendered.count('editing.colour.name'), 2)
 
     def test_label_date(self):
         template = Template('{% load forms %}{% datetimepicker field="Colour.name" date_label="something" %}')

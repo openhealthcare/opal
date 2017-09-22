@@ -27,7 +27,9 @@ class OpalSerializer(DjangoJSONEncoder):
     def default(self, o):
         if isinstance(o, six.binary_type):
             return o.decode('utf-8')
-        if isinstance(o, datetime.datetime):
+        if isinstance(o, datetime.time):
+            return format(o, settings.TIME_FORMAT)
+        elif isinstance(o, datetime.datetime):
             return format(o, settings.DATETIME_FORMAT)
         elif isinstance(o, datetime.date):
             return format(

@@ -46,15 +46,6 @@ def plugin_head_extra(context):
     return ctx
 
 
-@register.inclusion_tag('plugins/angular_module_deps.html')
-def plugin_opal_angular_deps():
-    def deps():
-        for plugin in plugins.OpalPlugin.list():
-            for i in plugin.angular_module_deps:
-                yield i
-    return dict(deps=deps)
-
-
 @register.inclusion_tag('plugins/angular_exclude_tracking.html')
 def plugin_opal_angular_tracking_exclude():
     def yield_property(property_name):

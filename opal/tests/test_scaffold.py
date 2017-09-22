@@ -13,7 +13,7 @@ import opal
 from django.conf import settings
 
 from opal.core.test import OpalTestCase
-from opal.tests.models import Colour
+from opal.tests.models import Colour, Dinner
 from opal.core import scaffold
 from opal.core.scaffold import (
     create_form_template_for,
@@ -284,6 +284,21 @@ class RecordRenderTestCase(OpalTestCase):
         )
 
     @patch.object(Colour, "build_field_schema")
+    def test_time_render(self, build_field_schema, lshift):
+        build_field_schema.return_value = {
+            'lookup_list': None,
+            'model': 'Colour',
+            'name': 'name',
+            'title': 'Name',
+            'type': 'time'
+        },
+        scaffold_path = ffs.Path(settings.PROJECT_PATH)/'scaffolding'
+        create_display_template_for(Colour, scaffold_path)
+        lshift.assert_called_once_with(
+            '<span ng-show="item.name">\n    [[ item.name | shortTime ]]\n   <br />\n</span>'
+        )
+
+    @patch.object(Colour, "build_field_schema")
     def test_boolean_render(self, build_field_schema, lshift):
         build_field_schema.return_value = {
             'lookup_list': None,
@@ -354,7 +369,7 @@ class FormRenderTestCase(OpalTestCase):
         scaffold_path = ffs.Path(settings.PROJECT_PATH)/'scaffolding'
         create_form_template_for(Colour, scaffold_path)
         lshift.assert_called_once_with(
-            '{% load forms %}\n{% input  field="Colour.name"  %}'
+            '{% load forms %}\n{% input field="Colour.name" %}'
         )
 
     @patch.object(Colour, "build_field_schema")
@@ -369,7 +384,7 @@ class FormRenderTestCase(OpalTestCase):
         scaffold_path = ffs.Path(settings.PROJECT_PATH)/'scaffolding'
         create_form_template_for(Colour, scaffold_path)
         lshift.assert_called_once_with(
-            '{% load forms %}\n{% datepicker  field="Colour.name"  %}'
+            '{% load forms %}\n{% datepicker field="Colour.name" %}'
         )
 
     @patch.object(Colour, "build_field_schema")
@@ -384,7 +399,22 @@ class FormRenderTestCase(OpalTestCase):
         scaffold_path = ffs.Path(settings.PROJECT_PATH)/'scaffolding'
         create_form_template_for(Colour, scaffold_path)
         lshift.assert_called_once_with(
-            '{% load forms %}\n{% datetimepicker  field="Colour.name"  %}'
+            '{% load forms %}\n{% datetimepicker field="Colour.name" %}'
+        )
+
+    @patch.object(Colour, "build_field_schema")
+    def test_datetime_render(self, build_field_schema, lshift):
+        build_field_schema.return_value = {
+            'lookup_list': None,
+            'model': 'Colour',
+            'name': 'name',
+            'title': 'Name',
+            'type': 'time'
+        },
+        scaffold_path = ffs.Path(settings.PROJECT_PATH)/'scaffolding'
+        create_form_template_for(Colour, scaffold_path)
+        lshift.assert_called_once_with(
+            '{% load forms %}\n{% timepicker field="Colour.name" %}'
         )
 
     @patch.object(Colour, "build_field_schema")
@@ -399,7 +429,7 @@ class FormRenderTestCase(OpalTestCase):
         scaffold_path = ffs.Path(settings.PROJECT_PATH)/'scaffolding'
         create_form_template_for(Colour, scaffold_path)
         lshift.assert_called_once_with(
-            '{% load forms %}\n{% textarea  field="Colour.name"  %}'
+            '{% load forms %}\n{% textarea field="Colour.name" %}'
         )
 
     @patch.object(Colour, "build_field_schema")
@@ -414,7 +444,7 @@ class FormRenderTestCase(OpalTestCase):
         scaffold_path = ffs.Path(settings.PROJECT_PATH)/'scaffolding'
         create_form_template_for(Colour, scaffold_path)
         lshift.assert_called_once_with(
-            '{% load forms %}\n{% checkbox  field="Colour.name"  %}'
+            '{% load forms %}\n{% checkbox field="Colour.name" %}'
         )
 
     @patch.object(Colour, "build_field_schema")
@@ -429,7 +459,7 @@ class FormRenderTestCase(OpalTestCase):
         scaffold_path = ffs.Path(settings.PROJECT_PATH)/'scaffolding'
         create_form_template_for(Colour, scaffold_path)
         lshift.assert_called_once_with(
-            '{% load forms %}\n{% input  field="Colour.number"  %}'
+            '{% load forms %}\n{% input field="Colour.number" %}'
         )
 
     @patch.object(Colour, "build_field_schema")
@@ -444,7 +474,7 @@ class FormRenderTestCase(OpalTestCase):
         scaffold_path = ffs.Path(settings.PROJECT_PATH)/'scaffolding'
         create_form_template_for(Colour, scaffold_path)
         lshift.assert_called_once_with(
-            '{% load forms %}\n{% input  field="Colour.number"  %}'
+            '{% load forms %}\n{% input field="Colour.number" %}'
         )
 
     @patch('ffs.Path.__bool__')
