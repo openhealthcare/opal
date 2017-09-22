@@ -26,7 +26,8 @@ from opal.tests import test_patient_lists
 from opal.tests.models import (
     FamousLastWords, PatientColour, ExternalSubRecord, SymptomComplex,
     PatientConsultation, Birthday, DogOwner, HatWearer, InvisibleHatWearer,
-    HouseOwner, HoundOwner, Colour, FavouriteColour, Diagnosis, Location
+    HouseOwner, HoundOwner, Colour, FavouriteColour, Diagnosis, Location,
+    Dinner
 )
 
 
