@@ -176,6 +176,30 @@ describe('filters', function() {
            }));
     });
 
+    describe('shortTime', function(){
+      var shortTime;
+
+      beforeEach(function(){
+          inject(function($injector){
+              shortTime  = $injector.get('shortTimeFilter');
+          });
+      });
+
+      it('should display the time as hh:mm from string', function(){
+          expect(shortTime('10:12:00')).toBe('10:12');
+      });
+
+      it('should display the time as hh:mm from date', function(){
+          var weCare = new Date(2017, 10, 1, 10, 12);
+          expect(shortTime(weCare)).toBe('10:12');
+      });
+
+      it('should display the time as hh:mm from date', function(){
+          var weCare = moment(new Date(2017, 10, 1, 10, 12));
+          expect(shortTime(weCare)).toBe('10:12');
+      });
+    });
+
     describe('momentDateFormat()', function() {
         var momentDateFormat;
 

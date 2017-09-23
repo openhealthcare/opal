@@ -30,6 +30,11 @@ Properties available on an OpalApplication:
 The default category is 'Inpatient', but can be overridden in the
 [OpalApplication](opal_application.md) subclass for your implementation.
 
+#### OpalApplication.angular_module_deps
+
+When you initialise an angular application you need to register dependencies.
+This allows you to add to the dependencies of the default opal application.
+
 #### OpalApplication.javascripts
 
 A list of javascripts that our application would like to include. These should be strings

@@ -52,12 +52,6 @@ class PluginTestCase(OpalTestCase):
         templates = list(context['head_extra']())
         self.assertEqual(['notareal_template.html'], templates)
 
-    def test_plugin_angular_deps(self, plugins):
-        plugins.return_value = [self.plugin1]
-        deps = list(opalplugins.plugin_opal_angular_deps()['deps']())
-        expected = ['js/test.angular.mod.js']
-        self.assertEqual(expected, deps)
-
     def test_prefixes(self, plugins):
         plugins.return_value = [self.plugin1]
         expected_prefix = []

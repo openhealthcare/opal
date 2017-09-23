@@ -198,7 +198,6 @@ class SubrecordViewSet(LoginRequiredViewset):
             request.data['patient_id'] = patient_id
 
         subrecord.update_from_dict(request.data, request.user)
-        episode = Episode.objects.get(pk=episode.pk)
 
         return json_response(
             subrecord.to_dict(request.user),
