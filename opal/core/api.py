@@ -410,7 +410,7 @@ router.register('referencedata', ReferenceDataViewSet)
 router.register('metadata', MetadataViewSet)
 
 for subrecord in subrecords():
-    sub_name = camelcase_to_underscore(subrecord.__name__)
+    sub_name = subrecord.get_api_name()
 
     class SubViewSet(SubrecordViewSet):
         base_name = sub_name
