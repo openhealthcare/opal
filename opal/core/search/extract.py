@@ -318,15 +318,16 @@ class ExtractCsvSerialiser(CsvRenderer, discoverable.DiscoverableFeature):
         for subrecord in subrecords.subrecords():
             api_name = subrecord.get_api_name()
             if api_name not in slugs_to_serialiser:
-                if api_name in patient_subrecords_api_names:
-                    result.append(PatientSubrecordCsvRenderer.get_schema(
-                        subrecord
-                    ))
-                else:
-                    result.append(EpisodeSubrecordCsvRenderer.get_schema(
-                        subrecord
-                    ))
-        return result
+                if subrecord._advanced_searchable:
+                    if api_name in patient_subrecords_api_names:
+                        result.append(PatientSubrecordCsvRenderer.get_schema(
+                            subrecord
+                        ))
+                    else:
+                        result.append(EpisodeSubrecordCsvRenderer.get_schema(
+                            subrecord
+                        ))
+        return sorted(result, key=lambda x: x["display_name"])
 
 
 class EpisodeCsvRenderer(ExtractCsvSerialiser):
