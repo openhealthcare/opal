@@ -1,6 +1,16 @@
-
 <div class="row">
-  <div class="col-md-8">
+  <div class="col-sm-12">
+    <div class="row">
+      <div class="col-md-2" ng-repeat="column in dataDictionary.columns">
+        <a class="blue-link" ng-click="scrollTo(column)" href="">
+          [[ column.display_name ]]
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
     <div ng-repeat="column in dataDictionary.columns">
       <div ng-show="!$first" class="row">
         <div class="col-md-12">
@@ -41,18 +51,6 @@
           </td>
         </tr>
       </table>
-    </div>
-  </div>
-  <div class="col-md-4">
-    <div style="position: fixed; width: 20%;" class="row">
-      <div class="col-md-6" ng-repeat="column in dataDictionary.columns">
-        <h5>
-          <a class="blue-link" ng-click="scrollTo(column)" href="">
-            <i class="[[ column.icon ]]"></i>
-            [[ column.display_name ]]
-          </a>
-        </h5>
-      </div>
     </div>
   </div>
 </div>
