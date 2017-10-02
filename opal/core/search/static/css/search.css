@@ -114,3 +114,7 @@
   position: absolute;
   left: 253px;
 }
+
+.table.data-dictionary-table{
+    font-size: 14px;
+}

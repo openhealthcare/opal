@@ -1,8 +1,8 @@
 angular.module('opal.controllers').controller( 'ExtractCtrl',
   function(
-    $scope, $http, $window, $modal, $timeout, PatientSummary, Paginator,
-    referencedata, ngProgressLite, profile, filters, extractSchema, dataDictionary,
-    ExtractQuery
+    $scope, $http, $window, $modal, $timeout, $location, $anchorScroll,
+    PatientSummary, Paginator, referencedata, ngProgressLite, profile, filters,
+    extractSchema, dataDictionary, ExtractQuery
   ){
     "use strict";
 
@@ -21,6 +21,15 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
     $scope.setFieldInfo = function(field){
       $scope.fieldInfo = field
     }
+
+    $scope.scrollTo = function(column) {
+      var old = $location.hash();
+      $location.hash(column.name);
+      $anchorScroll.yOffset = 100;
+      $anchorScroll();
+      //reset to old to keep any additional routing logic from kicking in
+      $location.hash(old);
+    };
 
     $scope.searched = false;
     $scope.currentPageNumber = 1;

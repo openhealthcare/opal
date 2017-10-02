@@ -7,15 +7,20 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <style>
+      .table.data-dictionary-table{
+          font-size: 14px;
+      }
+    </style>
     <title>Data Dictionary</title>
   </head>
   <body>
     <div class="container-fluid">
       <div class="row">
-        <div class="col-md-8 col-md-push-2">
+        <div class="col-md-8">
           {% for subrecord in schema %}
-            <h3>{{ subrecord.display_name }}</h3>
-            <table class="table">
+            <h3 id="{{ subrecord.name }}">{{ subrecord.display_name }}</h3>
+            <table class="table data-dictionary-table">
               <tr>
                 <th class="col-md-3">
                   Title
@@ -45,6 +50,20 @@
               {% endfor %}
             </table>
           {% endfor %}
+        </div>
+        <div class="col-md-4">
+          <div class="row">
+            {% for subrecord in schema %}
+            <div class="col-md-2">
+              <h5>
+                <a class="orange-link" href="#{{ subrecord.name }}">
+                  <i class="{{ subrecord.icon }}"></i>
+                  {{ subrecord.display_name }}
+                </a>
+              </h5>
+            </div>
+            {% endfor %}
+          </div>
         </div>
       </div>
     </div>
