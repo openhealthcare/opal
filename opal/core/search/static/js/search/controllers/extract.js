@@ -31,6 +31,10 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
       $location.hash(old);
     };
 
+    $scope.scrollTop = function(){
+      $window.scrollTo(0, 0);
+    }
+
     $scope.searched = false;
     $scope.currentPageNumber = 1;
     $scope.paginator = new Paginator($scope.search);

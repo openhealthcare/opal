@@ -44,10 +44,10 @@
     </div>
   </div>
   <div class="col-md-4">
-    <div class="row">
+    <div style="position: fixed; width: 20%;" class="row">
       <div class="col-md-6" ng-repeat="column in dataDictionary.columns">
         <h5>
-          <a class="orange-link" ng-click="scrollTo(column)" href="">
+          <a class="blue-link" ng-click="scrollTo(column)" href="">
             <i class="[[ column.icon ]]"></i>
             [[ column.display_name ]]
           </a>
