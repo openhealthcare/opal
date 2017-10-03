@@ -9,6 +9,7 @@ import os
 import tempfile
 import zipfile
 from opal.core import discoverable
+from django.conf import settings
 from django.utils.functional import cached_property
 from django.db.models import Count, Max
 from django.template import Context, loader
@@ -240,11 +241,19 @@ class PatientSubrecordCsvRenderer(CsvRenderer):
         return schemas.extract_download_schema_for_model(subrecord)
 
 
+def chunk_list(some_list, amount):
+    for i in xrange(0, len(some_list), amount):
+        yield some_list[i:i + amount]
+
+
 def write_data_dictionary(file_name):
-    t = loader.get_template("extract_data_schema.html")
+    t = loader.get_template("data_dictionary_download.html")
+    schema = ExtractCsvSerialiser.get_data_dictionary_schema()
     ctx = Context(dict(
-        schema=ExtractCsvSerialiser.get_data_dictionary_schema())
-    )
+        settings=settings,
+        schema=schema,
+        chunked_columns=chunk_list(schema, 5)
+    ))
     rendered = t.render(ctx)
     with open(file_name, "w") as f:
         f.write(rendered)

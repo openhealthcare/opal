@@ -122,3 +122,7 @@
 .table.data-dictionary-table{
     font-size: 14px;
 }
+
+.btn.search-top {
+  border-radius: 50%;
+}

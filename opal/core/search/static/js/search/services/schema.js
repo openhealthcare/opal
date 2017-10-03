@@ -2,6 +2,10 @@ angular.module('opal.services').factory('Schema', function() {
     "use strict";
     var Schema = function(columns){
       this.columns = columns;
+      var chunkAmount = 6;
+      this.chunkedColumns = _.groupBy(this.columns, function(element, index){
+        return Math.floor(index/chunkAmount);
+      });
       _.each(this.columns, function(c){
         _.each(c.fields, function(f){
           if(f.subrecord){
