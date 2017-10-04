@@ -4,6 +4,7 @@ Utilities for extracting data from Opal applications
 import csv
 import datetime
 import functools
+import itertools
 import logging
 import os
 import tempfile
@@ -316,26 +317,40 @@ class ExtractCsvSerialiser(CsvRenderer, discoverable.DiscoverableFeature):
     module_name = 'extract'
 
     @classmethod
-    def get_data_dictionary_schema(cls):
-        result = []
-        slugs_to_serialiser = {i.get_slug() for i in cls.list()}
-        result = [i.get_schema() for i in cls.list()]
+    def api_name_to_serialiser_cls(cls):
+        slugs_to_serialiser = {i.get_slug(): i for i in cls.list()}
 
         patient_subrecords_api_names = {
             i.get_api_name() for i in subrecords.patient_subrecords()
         }
         for subrecord in subrecords.subrecords():
             api_name = subrecord.get_api_name()
-            if api_name not in slugs_to_serialiser:
-                if subrecord._advanced_searchable:
-                    if api_name in patient_subrecords_api_names:
-                        result.append(PatientSubrecordCsvRenderer.get_schema(
-                            subrecord
-                        ))
-                    else:
-                        result.append(EpisodeSubrecordCsvRenderer.get_schema(
-                            subrecord
-                        ))
+
+            if subrecord._advanced_searchable:
+                if api_name in patient_subrecords_api_names:
+                    slugs_to_serialiser[api_name] = PatientSubrecordCsvRenderer
+                else:
+                    slugs_to_serialiser[api_name] = EpisodeSubrecordCsvRenderer
+        return slugs_to_serialiser
+
+    @classmethod
+    def get_data_dictionary_schema(cls):
+        result = []
+        api_name_to_serialiser_cls = cls.api_name_to_serialiser_cls()
+        subrecords_and_episode = itertools.chain(
+            subrecords.subrecords(), [Episode]
+        )
+
+        for some_model in subrecords_and_episode:
+            # there will be no schema if its advanced searchable false
+            # and hasn't been overridden
+            serialiser_cls = api_name_to_serialiser_cls.get(
+                some_model.get_api_name(), None
+            )
+            if serialiser_cls:
+                result.append(
+                    serialiser_cls.get_schema(some_model)
+                )
         return sorted(result, key=lambda x: x["display_name"])
 
 
@@ -371,8 +386,8 @@ class EpisodeCsvRenderer(ExtractCsvSerialiser):
         )
 
     @classmethod
-    def get_schema(cls):
-        schema = schemas.extract_download_schema_for_model(Episode)
+    def get_schema(cls, episode_cls):
+        schema = schemas.extract_download_schema_for_model(episode_cls)
         schema["fields"].append(dict(
             name="team",
             title="Team",
@@ -388,7 +403,7 @@ class EpisodeCsvRenderer(ExtractCsvSerialiser):
 def generate_nested_csv_extract(root_dir, episodes, user, field_dict):
     """ Generate a a single csv file and the data dictionary
 
-        The field_dict should be {api_name: field_name}
+        The field_dict should be {api_name: [field_names]}
 
         The csv file will only contain the files mentioned in the field_dict
     """
