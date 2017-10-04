@@ -15,6 +15,19 @@ class ExtractSchemaTestCase(OpalTestCase):
         schemas.extract_schema.return_value = [{}]
         self.assertEqual([{}], api.ExtractSchemaViewSet().list(None).data)
 
+    def test_integration_records(self):
+        self.assertTrue(api.ExtractSchemaViewSet().list(None).data)
+
+
+class DataDictionaryTestCase(OpalTestCase):
+    @patch('opal.core.search.api.ExtractCsvSerialiser')
+    def test_records(self, serialiser):
+        serialiser.get_data_dictionary_schema.return_value = [{}]
+        self.assertEqual([{}], api.DataDictionaryViewSet().list(None).data)
+
+    def test_integration_records(self):
+        self.assertTrue(api.DataDictionaryViewSet().list(None).data)
+
 
 class LoginRequredTestCase(OpalTestCase):
     """
