@@ -10,6 +10,7 @@ from opal.core.views import OpalSerializer
 
 register = template.Library()
 
+
 def get_style(kwargs):
     """
     Return the style of this widget.
@@ -19,6 +20,7 @@ def get_style(kwargs):
     if style not in valid_styles:
         raise ValueError('{0} is not a valid form style!'.format(style))
     return style
+
 
 def _visibility_clauses(show, hide):
     """
