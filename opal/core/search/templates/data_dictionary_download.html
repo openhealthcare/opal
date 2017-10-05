@@ -21,6 +21,15 @@
           margin-top: 50px;
       }
 
+      .content-offset-10{
+          margin-top: 50px;
+      }
+
+      .data-dictionary-link{
+          font-size: 16px;
+          color: #337fb2;
+      }
+
     </style>
     <title>Data Dictionary</title>
   </head>
@@ -35,9 +44,9 @@
             {% for columns in chunked_columns %}
               <div class="col-md-2" ng-repeat="columns in dataDictionary.chunkedColumns">
                 {% for column in columns %}
-                  <div class="row">
+                  <div class="row content-offset-10">
                     <div class="col-md-12">
-                      <a class="blue-link" href="#{{ column.name }}">
+                      <a class="data-dictionary-link" href="#{{ column.name }}">
                         {{ column.display_name }}
                       </a>
                     </div>

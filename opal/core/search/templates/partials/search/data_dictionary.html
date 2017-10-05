@@ -5,9 +5,9 @@
     <div class="row">
       <div class="col-md-1"></div>
       <div class="col-md-2" ng-repeat="columns in dataDictionary.chunkedColumns">
-        <div ng-repeat="column in columns" class="row">
+        <div ng-repeat="column in columns" class="row content-offset-10">
           <div class="col-md-12">
-            <a class="blue-link" scroll-to="column.name" offset="100" href="">
+            <a class="data-dictionary-link" scroll-to="column.name" offset="100" href="">
               [[ column.display_name ]]
             </a>
           </div>
@@ -28,6 +28,9 @@
         <div class="col-sm-12">
           <h3 id="[[ column.name ]]"><i class="[[ column.icon ]]"></i> [[ column.display_name ]]
           </h3>
+          <p class="lead" ng-show="column.description">
+            [[ column.description ]]
+          </p>
         </div>
       </div>
       <table class="table data-dictionary-table">
