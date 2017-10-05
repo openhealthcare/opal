@@ -19,6 +19,17 @@ key templates that you can tweak.
 By default, the home page of an opal application simply renders the `welcome.html`
 template.
 
+## Form styles
+
+Opal defaults to using Bootstrap `form-horizontal` style widgets. That means that the
+label is rendered on the same line as the form widget. You can change this to the
+vertical (default Bootstrap style )for an individual form widget by passing the `style`
+argument:
+
+```html
+{% input field="Demographics.first_name" style="vertical" %}
+```
+
 ## Custom Themes
 
 Comprehensive re-skins likely require you to write your own Opal theme. You can
