@@ -137,7 +137,7 @@ def extract_common_args(kwargs):
     args["visibility"] = _visibility_clauses(
         kwargs.pop('show', None), kwargs.pop('hide', None)
     )
-
+    args["style"] = get_style(kwargs)
     # required could have been set via the model
     args["required"] = kwargs.pop('required', args.pop("required", False))
     disabled = kwargs.pop('disabled', None)
@@ -181,7 +181,6 @@ def _input(*args, **kwargs):
         'enter'     : enter,
         'maxlength' : maxlength,
         'datepicker': datepicker,
-        'style'     : get_style(kwargs),
     })
 
     return ctx
@@ -272,7 +271,6 @@ def select(*args, **kwargs):
         'other_label': other_label,
         'tagging': tagging,
         'multiple': multiple,
-        'style': get_style(kwargs)
     })
 
     return ctx
