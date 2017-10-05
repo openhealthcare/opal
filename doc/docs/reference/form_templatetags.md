@@ -88,7 +88,7 @@ Keywords:
 * `maxlength` maximum number of characters for this input. Will render the form invalid and display help text if exceeded.
 * `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html element
 * `element_type` If this exists it sets the input 'type' on the html tag. For numeric fields set by the 'field' parameter this will default to number. Otherwise it will just default to 'text'.
-* `style` The form style to render this widget with. Possible values are `['horizontal', 'verticall']`. Defaults to 'horizontal'
+* `style` The form style to render this widget with. Possible values are `['horizontal', 'vertical']`. Defaults to 'horizontal'
 
 
 #### Inputs with units
