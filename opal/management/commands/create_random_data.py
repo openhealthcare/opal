@@ -1,6 +1,8 @@
 """
 Randomise our admission dates over the last year.
 """
+from __future__ import unicode_literals
+
 from datetime import datetime, date, timedelta
 import logging
 from optparse import make_option

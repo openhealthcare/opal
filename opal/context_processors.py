@@ -1,6 +1,8 @@
 """
 Context Processors for Opal
 """
+from __future__ import unicode_literals
+
 from django.conf import settings as s
 from django.utils.functional import SimpleLazyObject
 

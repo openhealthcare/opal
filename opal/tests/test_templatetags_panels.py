@@ -1,6 +1,8 @@
 """
 Tests create_singletons command
 """
+from __future__ import unicode_literals
+
 from django.template import Template, Context
 from django.test import override_settings
 from opal.core.test import OpalTestCase

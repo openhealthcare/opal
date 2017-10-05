@@ -1,6 +1,8 @@
 """
 Unittests for opal.core.episodes
 """
+from __future__ import unicode_literals
+
 from django.contrib.auth.models import User
 
 from opal.core import test

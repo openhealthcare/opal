@@ -1,6 +1,8 @@
 """
 Create singletons that may have been dropped
 """
+from __future__ import unicode_literals
+
 import logging
 from django.core.management.base import BaseCommand
 

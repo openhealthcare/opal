@@ -2,6 +2,8 @@
 Tests for OpalTestCase helpers that might not be explicitly used in OPAL itself
 but are useful for applications.
 """
+from __future__ import unicode_literals
+
 from mock import patch
 
 from opal.core.test import OpalTestCase

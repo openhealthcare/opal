@@ -1,6 +1,8 @@
 """
 Allow us to make search queries
 """
+from __future__ import unicode_literals
+
 import datetime
 import operator
 from functools import reduce

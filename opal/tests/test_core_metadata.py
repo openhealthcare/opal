@@ -1,6 +1,8 @@
 """
 Unittests for the opal.core.metadata module
 """
+from __future__ import unicode_literals
+
 from opal import models
 from opal.core.test import OpalTestCase
 

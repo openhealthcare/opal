@@ -1,6 +1,8 @@
 """
 Unittests for the delete all lookuplists command
 """
+from __future__ import unicode_literals
+
 from django.contrib.contenttypes.models import ContentType
 
 from opal.core.test import OpalTestCase

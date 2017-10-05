@@ -1,6 +1,8 @@
 """
 Templatetags for panels
 """
+from __future__ import unicode_literals
+
 import copy
 
 from django import template

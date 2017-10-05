@@ -1,12 +1,14 @@
 """
 Unittests for opal.core.search.extract
 """
+from __future__ import unicode_literals
+
 import datetime
 import json
 
 from django.core.urlresolvers import reverse
 from django.test import override_settings
-from mock import mock_open, patch, Mock, MagicMock
+from mock import mock_open, patch
 
 from opal.core.test import OpalTestCase
 from opal import models
@@ -14,7 +16,6 @@ from opal.tests.models import (
     Colour, PatientColour, Demographics, HatWearer, HouseOwner
 )
 from opal.core.search import extract
-from six import u
 
 
 MOCKING_FILE_NAME_OPEN = "opal.core.search.extract.open"
@@ -22,7 +23,7 @@ MOCKING_FILE_NAME_OPEN = "opal.core.search.extract.open"
 
 class TestEncodeToUTF8(OpalTestCase):
     def test_with_str(self):
-        d = u('\u0160\u0110\u0106\u017d\u0107\u017e\u0161\u0111')
+        d = '\u0160\u0110\u0106\u017d\u0107\u017e\u0161\u0111'
         r = b"\xc5\xa0\xc4\x90\xc4\x86\xc5\xbd\xc4\x87\xc5\xbe\xc5\xa1\xc4\x91"
         self.assertEqual(
             extract._encode_to_utf8(d),

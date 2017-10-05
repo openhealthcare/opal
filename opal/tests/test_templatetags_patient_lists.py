@@ -1,6 +1,8 @@
 """
 Unittests for opal.templatetags.patient_lists
 """
+from __future__ import unicode_literals
+
 from mock import MagicMock
 
 from opal.core.test import OpalTestCase

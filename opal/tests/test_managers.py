@@ -1,6 +1,8 @@
 """
 Unittests for opal.managers
 """
+from __future__ import unicode_literals
+
 from opal.core.test import OpalTestCase
 from opal.models import Patient, Episode
 from opal.tests.models import Hat, HatWearer, Dog, DogOwner

@@ -1,6 +1,8 @@
 """
 Unittests for opal.templatetags.stories
 """
+from __future__ import unicode_literals
+
 from django.test import override_settings
 from mock import patch
 from opal.core.test import OpalTestCase

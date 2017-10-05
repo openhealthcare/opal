@@ -1,6 +1,8 @@
 """
 Test util fields
 """
+from __future__ import unicode_literals
+
 from django.test import TestCase
 from six import b
 

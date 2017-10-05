@@ -3,6 +3,8 @@ Opal comandline tool.
 
 In which we expose useful commandline functionality to our users.
 """
+from __future__ import unicode_literals
+
 import argparse
 import inspect
 import os

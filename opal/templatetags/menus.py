@@ -1,6 +1,8 @@
 """
 Templatetags for rendering menus in Opal applications
 """
+from __future__ import unicode_literals
+
 import copy
 
 from django import template

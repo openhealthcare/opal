@@ -7,6 +7,8 @@ better places for.
 
 These should eventually be moved out.
 """
+from __future__ import unicode_literals
+
 from opal.core import discoverable
 
 

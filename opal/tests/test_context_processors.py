@@ -1,6 +1,8 @@
 """
 Test the opal.context_processors module
 """
+from __future__ import unicode_literals
+
 from mock import patch
 from django.test import TestCase
 from opal import context_processors

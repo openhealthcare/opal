@@ -1,6 +1,8 @@
 """
 Public facing API views
 """
+from __future__ import unicode_literals
+
 from django.shortcuts import get_object_or_404
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import routers, status, viewsets

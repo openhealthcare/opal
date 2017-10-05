@@ -1,6 +1,8 @@
 """
 Unittests for opal.views
 """
+from __future__ import unicode_literals
+
 from django import http
 from django.core.urlresolvers import reverse
 from mock import patch, MagicMock

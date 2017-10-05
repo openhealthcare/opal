@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from opal.core.test import OpalTestCase
 from opal.tests.models import Colour
 from django.template import Template, Context

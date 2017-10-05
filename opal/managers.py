@@ -1,6 +1,8 @@
 """
 Custom managers for query optimisations
 """
+from __future__ import unicode_literals
+
 from collections import defaultdict
 import operator
 

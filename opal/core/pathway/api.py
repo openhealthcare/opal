@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from rest_framework import viewsets
 from opal.core.views import _get_request_data, json_response
 from opal.core.pathway import Pathway

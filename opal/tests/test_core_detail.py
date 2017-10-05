@@ -1,6 +1,8 @@
 """
 Unittests for opal.core.detail
 """
+from __future__ import unicode_literals
+
 from opal.core.test import OpalTestCase
 
 from opal.core import detail

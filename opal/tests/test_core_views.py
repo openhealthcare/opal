@@ -1,11 +1,12 @@
 """
 Unittests for opal.core.views
 """
-import datetime
+
+from __future__ import unicode_literals
+
 import six
-
+import datetime
 from opal.core import test
-
 from opal.core import views
 
 
@@ -18,7 +19,7 @@ class SerializerTestCase(test.OpalTestCase):
 
     def test_binaries_become_utf_8(self):
         s = views.OpalSerializer()
-        binary = six.b('Hello beautiful world. I am a binary.')
+        binary = 'Hello beautiful world. I am a binary.'.encode()
         serialized = s.default(binary)
         self.assertIsInstance(serialized, six.text_type)
 

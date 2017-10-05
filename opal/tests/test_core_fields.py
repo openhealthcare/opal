@@ -1,6 +1,8 @@
 """
 Unittests for the opal.core.fields module
 """
+from __future__ import unicode_literals
+
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 

@@ -1,6 +1,8 @@
 """
 Unittests for opal.core.application
 """
+from __future__ import unicode_literals
+
 import copy
 
 from mock import patch, MagicMock

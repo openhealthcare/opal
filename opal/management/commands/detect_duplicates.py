@@ -1,6 +1,8 @@
 """
 Detect duplicates or suspiciously similar patients
 """
+from __future__ import unicode_literals
+
 from django.core.management.base import BaseCommand
 
 from opal.models import Patient
