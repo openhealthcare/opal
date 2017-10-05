@@ -172,10 +172,10 @@ describe('ExtractCtrl', function(){
             )
         });
 
-        it('should empty the selectedInfo', function(){
+        it('should change the selected info', function(){
             $scope.selectedInfo = "some info";
             $scope.resetFilter(criteria, ['column']);
-            expect($scope.selectedInfo).toBe(undefined);
+            expect($scope.selectedInfo).toBe(criteria);
         });
     });
 

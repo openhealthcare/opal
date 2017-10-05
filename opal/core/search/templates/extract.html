@@ -73,7 +73,7 @@
                     <span ng-repeat="query in extractQuery.criteria">
                       <div class="row">
                         <div class="col-md-1">
-                          <button type="button" class="btn btn-default square-button content-offset-25" ng-disabled="!query.column && !query.field"
+                          <button type="button" class="btn btn-default square-button content-offset-25" ng-disabled="!query.column"
                                   ng-click="selectInfo(query)" ng-class="{'btn-default': selectedInfo !== query, 'btn-info': selectedInfo === query}"
                                   >
                             <span class="fa fa-info"></span>
@@ -231,7 +231,7 @@
                         [[ extractSchema.findColumn(selectedInfo.column).description ]]
                         <div class="content-offset-10"></div>
                       </div>
-                      <div>
+                      <div ng-show="selectedInfo.field">
                         <strong>[[ extractSchema.findField(selectedInfo.column, selectedInfo.field).title ]]</strong>
                           [[ "[" + extractSchema.getTypeDisplay(selectedInfo.column, selectedInfo.field) + "]" ]]
                       </div>

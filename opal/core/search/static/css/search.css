@@ -3,6 +3,7 @@
   padding: 10px 15px 10px 15px;
   position: relative;
   margin-top: 10px;
+  min-height: 40px;
 }
 
 .extract-search .search-info-title{

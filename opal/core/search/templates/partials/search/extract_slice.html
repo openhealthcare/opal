@@ -96,7 +96,7 @@
       </div>
       <div class="col-md-4">
         <div class="content-offset">
-          <div class="search-info" ng-show="fieldInfo">
+          <div class="search-info">
             <div class="search-info-title">
               <strong>[[ fieldInfo.subrecord.display_name ]]</strong>
             </div>
@@ -104,7 +104,7 @@
               [[ fieldInfo.subrecord.description ]]
               <div class="content-offset-10"></div>
             </div>
-             <div>
+             <div ng-show="fieldInfo.name">
               <strong>[[ fieldInfo.title ]]</strong>
               [[ "[" + dataDictionary.getTypeDisplay(fieldInfo.subrecord.name, fieldInfo.name) + "]"]]
             </div>

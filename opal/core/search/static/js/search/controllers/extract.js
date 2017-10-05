@@ -40,14 +40,7 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
     $scope.resetFilter = function(query, fieldsTypes){
       // when we change the column, reset the rest of the query
       $scope.extractQuery.resetFilter(query, fieldsTypes);
-      if(query.column && query.field){
-        $scope.selectInfo(query);
-      }
-      else{
-        if($scope.selectedInfo && !$scope.selectedInfo.field){
-          $scope.selectInfo(undefined);
-        }
-      }
+      $scope.selectInfo(query);
     };
 
     //
