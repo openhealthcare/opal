@@ -9,7 +9,7 @@ angular.module('opal.services')
     	    deferred.resolve(new Schema(columns));
         }, function() {
     	    // handle error better
-    	    $window.alert('Extract schema could not be loaded');
+    	    $window.alert('Data dictionary could not be loaded');
         });
 
         return deferred.promise;

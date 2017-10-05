@@ -38,6 +38,7 @@ class GetterModel(ToDictMixin, models.Model):
 
 
 class SerialisableModel(Serialisable, models.Model):
+    _description = "so this is nice"
     pid = models.CharField(max_length=200, blank=True, null=True)
     hatty = ForeignKeyOrFreeText(test_models.Hat)
 
@@ -54,7 +55,14 @@ class SerialisableTestCase(OpalTestCase):
         self.assertEqual(expected, set(names))
 
     def test_get_field_type(self):
-        self.assertEqual(models.ForeignKey, SerialisableModel._get_field_type('patient_id'))
+        self.assertEqual(
+            models.ForeignKey, SerialisableModel._get_field_type('patient_id')
+        )
+
+    def test_get_description(self):
+        self.assertEqual(
+            SerialisableModel.get_description(), "so this is nice"
+        )
 
     def test_get_human_readable_type_boolean(self):
         with patch.object(SerialisableModel, "_get_field") as get_field:

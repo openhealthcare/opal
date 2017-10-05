@@ -52,6 +52,11 @@
         <div class="col-md-12">
           {% for subrecord in schema %}
             <h3 id="{{ subrecord.name }}">{{ subrecord.display_name }}</h3>
+            {% if subrecord.description %}
+              <p class="lead">
+                  {{ subrecord.description }}
+              </p>
+            {% endif %}
             <table class="table data-dictionary-table">
               <tr>
                 <th class="col-md-3">

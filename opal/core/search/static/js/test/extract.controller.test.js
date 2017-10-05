@@ -1,21 +1,9 @@
 describe('ExtractCtrl', function(){
     "use strict";
 
-
     var $scope, $httpBackend, schema, $window, $timeout, $modal, Item;
     var PatientSummary, $controller, ExtractSchema, controller, $rootScope;
-    var extractSchema;
-
-
-    var optionsData = {
-        condition: ['Another condition', 'Some condition'],
-        tag_hierarchy :{'tropical': []}
-    };
-
-    var pulledInData = {
-      dogs: ['Poodle', 'Dalmation'],
-      hats: ['Bowler', 'Top', 'Sun']
-    };
+    var extractSchema, Schema;
 
     var referencedata = {
       dogs: ['Poodle', 'Dalmation'],
@@ -30,27 +18,11 @@ describe('ExtractCtrl', function(){
 
     var columnsData = [
         {
-            "single": true,
-            "readOnly": false,
-            "name": "tagging",
-            "display_name":"Teams",
-            "fields":[
-                {"name":"opat","type":"boolean"},
-                {"name":"opat_referrals","type":"boolean"},
-            ]
-        },
-        {
             "single":false,
             "name":"demographics",
             "display_name":"Demographics",
             "readOnly": true    ,
             "fields":[
-                {
-                    "title":"Consistency Token",
-                    "lookup_list":null,
-                    "name":"consistency_token",
-                    "type":"token"
-                },
                 {
                     "title":"Name",
                     "lookup_list":null,
@@ -106,194 +78,12 @@ describe('ExtractCtrl', function(){
                     "type": "many_to_many"
                 },
                 {
-                    "title":"Consistency Token",
-                    "lookup_list":null,
-                    "name":"consistency_token",
-                    "type":"token"
-                },
-                {
                     "title":"Created",
                     "lookup_list":null,
                     "name":"created",
                     "type":"date_time"
                 }
             ]
-        },
-        {
-            "single": false,
-            "name": "microbiology_test",
-            "display_name": "Microbiology Test",
-            "readOnly": false,
-            "fields": [
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "test",
-                title: "Test",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "date_ordered",
-                title: "Date Ordered",
-                type: "date"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "details",
-                title: "Details",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "microscopy",
-                title: "Microscopy",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "organism",
-                title: "Organism",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "sensitive_antibiotics",
-                title: "Sensitive Antibiotics",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "resistant_antibiotics",
-                title: "Resistant Antibiotics",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "igm",
-                title: "IGM",
-                type: "string"
-              },
-            ],
-        },
-        {
-            "single": false,
-            "name": "investigation",
-            "display_name": "Investigation",
-            "readOnly": false,
-            "fields": [
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "test",
-                title: "Test",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "date_ordered",
-                title: "Date Ordered",
-                type: "date"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "details",
-                title: "Details",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "microscopy",
-                title: "Microscopy",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "organism",
-                title: "Organism",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "sensitive_antibiotics",
-                title: "Sensitive Antibiotics",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "resistant_antibiotics",
-                title: "Resistant Antibiotics",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "igm",
-                title: "IGM",
-                type: "string"
-              },
-            ],
         }
     ];
 
@@ -311,21 +101,23 @@ describe('ExtractCtrl', function(){
             $timeout     = $injector.get('$timeout');
             $controller  = $injector.get('$controller');
             ExtractSchema = $injector.get('ExtractSchema');
+            Schema = $injector.get('Schema');
             PatientSummary = $injector.get('PatientSummary');
             Item = $injector.get('Item');
         });
 
-        extractSchema = new ExtractSchema(columnsData);
+        var extractSchema = new ExtractSchema(angular.copy(columnsData));
+        var dataDictionary = new Schema(angular.copy(columnsData));
 
         var controller = $controller('ExtractCtrl',  {
             $scope : $scope,
             $modal: $modal,
             profile: {},
-            options: optionsData,
             filters: [],
             extractSchema : extractSchema,
             PatientSummary: PatientSummary,
-            referencedata: referencedata
+            referencedata: referencedata,
+            dataDictionary: dataDictionary
         });
 
         $scope.$apply();
@@ -334,6 +126,10 @@ describe('ExtractCtrl', function(){
     describe('set up', function(){
       it('should default the page state to query', function(){
         expect($scope.state).toBe('query');
+      });
+
+      it('should put reference data on the scope', function(){
+        expect($scope.referencedata).toBe(referencedata);
       });
 
       it('should set up the schema on the scope', function(){
@@ -347,55 +143,15 @@ describe('ExtractCtrl', function(){
       it('should set the fieldInfo', function(){
         expect($scope.fieldInfo.name).toBe('name');
       });
+
+      it('should put the extract schema on the scope', function(){
+        expect(!!$scope.dataDictionary.columns).toBe(true);
+      });
+
+      it('should put filters on the scope', function(){
+        expect(!!$scope.filters).toBe(true);
+      });
     });
-
-    describe('Checking field type', function(){
-
-        it('should be falsy for non fields', function(){
-            expect($scope.isType()).toBe(false);
-        });
-
-        it('should be falsy for nonexistent fields', function(){
-            expect($scope.isType("demographics", "towel_preference")).toBe(false);
-        });
-
-        it('should find boolean fields', function(){
-            expect($scope.isBoolean("demographics", "dead")).toEqual(true);
-        });
-
-        it('should find select many fields', function(){
-            spyOn($scope, "isType").and.returnValue(true);
-            expect($scope.isSelectMany("demographics", "dead")).toEqual(true);
-            expect($scope.isType).toHaveBeenCalledWith(
-              "demographics", "dead", "many_to_many_multi_select"
-            );
-        });
-
-        it('should find string fields', function(){
-            expect($scope.isText("demographics", "name")).toBe(true);
-        });
-
-        it('should find select fields', function(){
-            expect($scope.isSelect("symptoms", "symptoms")).toBe(true);
-        });
-
-        it('should find date fields', function(){
-            expect($scope.isDate("demographics", "date_of_birth")).toBe(true);
-        });
-
-        it('should find number fields', function(){
-            expect($scope.isNumber("demographics", "age")).toBe(true);
-        });
-
-        it('should find date time fields', function(){
-            expect($scope.isDateTime("demographics", "last_appointment")).toBe(true);
-        });
-
-        it('should find date type fields', function(){
-            expect($scope.isDateType("demographics", "date_of_birth")).toBe(true);
-        });
-    });
-
 
     describe('resetFilter()', function(){
         var criteria;
@@ -420,24 +176,6 @@ describe('ExtractCtrl', function(){
             $scope.selectedInfo = "some info";
             $scope.resetFilter(criteria, ['column']);
             expect($scope.selectedInfo).toBe(undefined);
-        });
-    });
-
-    describe('getChoices', function(){
-        it('should get a lookup list and suffix it', function(){
-            spyOn(extractSchema, "findField").and.returnValue({
-              lookup_list: "dogs"
-            });
-            var result = $scope.getChoices("some", "field");
-            expect(result).toEqual(['Poodle', 'Dalmation']);
-        });
-
-        it('should get an enum', function(){
-          spyOn(extractSchema, "findField").and.returnValue({
-            enum: [1, 2, 3]
-          });
-          var result = $scope.getChoices("some", "field");
-          expect(result).toEqual([1, 2, 3]);
         });
     });
 

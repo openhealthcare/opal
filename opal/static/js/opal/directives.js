@@ -81,6 +81,29 @@ directives.directive("freezeHeaders", function () {
     };
 });
 
+directives.directive('scrollTo', function($location, $anchorScroll){
+    return {
+      scope: {
+        scrollTo: "=",
+        offset: "="
+      },
+      link: function(scope, element, attrs){
+        element.bind("click", function(){
+          var old = $location.hash();
+
+          $location.hash(scope.scrollTo);
+
+          // we set the window offset, should be the height of the nav bar
+          // probably
+          $anchorScroll.yOffset = scope.offset;
+          $anchorScroll();
+          //reset to old to keep any additional routing logic from kicking in
+          $location.hash(old);
+        });
+      }
+    }
+});
+
 directives.directive('scrollTop', function () {
     return {
         link: function (scope, element, attrs) {

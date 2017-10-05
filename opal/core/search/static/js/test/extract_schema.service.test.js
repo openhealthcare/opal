@@ -5,16 +5,6 @@ describe('ExtractSchema', function(){
 
     var exampleSchemaData = [
         {
-            "single": true,
-            "readOnly": false,
-            "name": "tagging",
-            "display_name":"Teams",
-            "fields":[
-                {"name":"opat","type":"boolean"},
-                {"name":"opat_referrals","type":"boolean"},
-            ]
-        },
-        {
             "single":false,
             "name":"demographics",
             "display_name":"Demographics",
@@ -226,15 +216,13 @@ describe('ExtractSchema', function(){
         schema = new ExtractSchema(exampleSchemaData);
     });
 
-    it('should keep a publically accessible version advanced searchable of the columns', function(){
+    it('should keep a publically accessible version of columns', function(){
         var result = angular.copy(schema.columns);
         _.each(result, function(subrecord){
           _.each(subrecord.fields, function(field){
             delete field.subrecord;
           });
         });
-        // we expect it to exclude
-        exampleSchemaData.shift();
         var expectedColumnNames = _.map(exampleSchemaData, function(c){ return c.name })
         var foundColumnNames = _.map(result, function(r){ return r.name });
         expect(foundColumnNames).toEqual(expectedColumnNames);
@@ -258,59 +246,6 @@ describe('ExtractSchema', function(){
         expect(expected).toEqual(found);
     });
 
-    it('should remove consistency_token, created, updated, created_by and updated_by', function(){
-      var specificSchema = [{
-          "single": false,
-          "name": "symptoms",
-          "display_name": "Symptoms",
-          "readOnly": false,
-          "fields": [
-              {
-                  "title": "Symptoms",
-                  "lookup_list": "symptoms",
-                  "name": "symptoms",
-                  "type": "many_to_many"
-              },
-              {
-                  "title":"Consistency Token",
-                  "lookup_list":null,
-                  "name":"consistency_token",
-                  "type":"token"
-              },
-              {
-                  "title":"Created",
-                  "lookup_list":null,
-                  "name":"created",
-                  "type":"date_time"
-              },
-              {
-                  "title":"Updated",
-                  "lookup_list":null,
-                  "name":"updated",
-                  "type":"date_time"
-              },
-              {
-                  "title":"Created By",
-                  "lookup_list":null,
-                  "name":"created_by_id",
-                  "type":"forei"
-              },
-              {
-                  "title":"Updated By",
-                  "lookup_list":null,
-                  "name":"updated_by_id",
-                  "type":"forei"
-              },
-          ]
-      }];
-      var extractSchema = new ExtractSchema(specificSchema);
-      var foundFieldNames = _.map(extractSchema.columns[0].fields, function(f){
-        return f.name;
-      });
-      var expectedFieldNames = ["symptoms"];
-      expect(foundFieldNames).toEqual(expectedFieldNames);
-    });
-
     it('should restrict the fields to searchable fields for investigations', function(){
         var microTest = schema.findColumn('microbiology_test');
         var found = _.map(microTest.fields, function(mtf){
@@ -328,19 +263,4 @@ describe('ExtractSchema', function(){
 
         expect(expected).toEqual(found);
     });
-
-    it('should return the find the field', function(){
-      expect(!!schema.findField("demographics", "name")).toEqual(true);
-    });
-
-    it('should set up a reference on fields to the subrecord', function(){
-        expect(schema.columns[0].fields[0].subrecord).toBe(schema.columns[0]);
-    });
-
-    it('should throw an error if the subrecord field has already been populated', function(){
-      var flawedSchemaData = angular.copy(exampleSchemaData);
-      flawedSchemaData[0].fields[0].subrecord = "bah";
-      expect(function(){ new ExtractSchema(flawedSchemaData);}).toThrow();
-    });
-
 });

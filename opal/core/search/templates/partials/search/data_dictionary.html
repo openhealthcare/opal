@@ -7,7 +7,7 @@
       <div class="col-md-2" ng-repeat="columns in dataDictionary.chunkedColumns">
         <div ng-repeat="column in columns" class="row">
           <div class="col-md-12">
-            <a class="blue-link" ng-click="scrollTo(column)" href="">
+            <a class="blue-link" scroll-to="column.name" offset="100" href="">
               [[ column.display_name ]]
             </a>
           </div>

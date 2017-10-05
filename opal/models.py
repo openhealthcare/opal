@@ -78,6 +78,10 @@ class Serialisable(object):
         return camelcase_to_underscore(cls._meta.object_name)
 
     @classmethod
+    def get_description(cls):
+        return getattr(cls, "_description", None)
+
+    @classmethod
     def get_icon(cls):
         return getattr(cls, '_icon', None)
 

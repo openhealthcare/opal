@@ -227,6 +227,10 @@
                       <div class="search-info-title">
                         <strong>[[ extractSchema.findColumn(selectedInfo.column).display_name ]]</strong>
                       </div>
+                      <div ng-show="extractSchema.findColumn(selectedInfo.column).description">
+                        [[ extractSchema.findColumn(selectedInfo.column).description ]]
+                        <div class="content-offset-10"></div>
+                      </div>
                       <div>
                         <strong>[[ extractSchema.findField(selectedInfo.column, selectedInfo.field).title ]]</strong>
                           [[ "[" + extractSchema.getTypeDisplay(selectedInfo.column, selectedInfo.field) + "]" ]]

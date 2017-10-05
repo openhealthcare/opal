@@ -369,9 +369,11 @@ class TestBasicCsvRenderer(PatientEpisodeTestCase):
         self.assertEqual(renderer.count(), 1)
 
     def test_set_fields(self):
-        renderer = extract.CsvRenderer(Colour, Colour.objects.all(), self.user, fields=[
-            "name", "episode_id"
-        ])
+        renderer = extract.CsvRenderer(
+            Colour, Colour.objects.all(), self.user, fields=[
+                "name", "episode_id"
+            ]
+        )
         self.assertEqual(renderer.fields, ["name", "episode_id"])
         self.assertEqual(
             renderer.get_headers(),

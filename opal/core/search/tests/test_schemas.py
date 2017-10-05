@@ -1,5 +1,5 @@
 from django.test import TestCase
-from mock import patch
+from mock import patch, MagicMock
 from opal.tests.models import Colour
 
 
@@ -9,40 +9,8 @@ colour_serialized = dict(
     name='colour',
     icon="fa fa-comments",
     display_name='Colour',
-    single=False,
+    description="I like blue",
     fields=[
-        {'model': 'Colour',
-         'lookup_list': None,
-         'type': 'date_time',
-         'name': 'created',
-         'default': None,
-         'enum': None,
-         'description': None,
-         'title': 'Created'},
-        {'model': 'Colour',
-         'lookup_list': None,
-         'type': 'date_time',
-         'name': 'updated',
-         'default': None,
-         'enum': None,
-         'description': None,
-         'title': 'Updated'},
-        {'model': 'Colour',
-         'lookup_list': None,
-         'default': None,
-         'name': 'created_by_id',
-         'title': 'Created By',
-         'enum': None,
-         'description': 'One of the Users',
-         'type': 'forei'},
-        {'model': 'Colour',
-         'lookup_list': None,
-         'default': None,
-         'enum': None,
-         'description': 'One of the Users',
-         'name': 'updated_by_id',
-         'title': 'Updated By',
-         'type': 'forei'},
         {'model': 'Colour',
          'lookup_list': None,
          'default': None,
@@ -50,7 +18,27 @@ colour_serialized = dict(
          'description': None,
          'name': 'consistency_token',
          'title': 'Consistency Token',
+         'type_display_name': 'Text Field',
          'type': 'token'},
+        {'model': 'Colour',
+         'lookup_list': None,
+         'type': 'date_time',
+         'name': 'created',
+         'default': None,
+         'enum': None,
+         'type_display_name': 'Date & Time',
+         'description': None,
+         'title': 'Created'},
+        {'model': 'Colour',
+         'lookup_list': None,
+         'default': None,
+         'name': 'created_by_id',
+         'title': 'Created By',
+         'enum': None,
+         'description': 'One of the Users',
+         'type': 'forei',
+         'type_display_name': 'Relationship',
+         },
         {'model': 'Colour',
          'lookup_list': None,
          'default': None,
@@ -58,7 +46,27 @@ colour_serialized = dict(
          'description': None,
          'name': 'name',
          'title': 'Name',
-         'type': 'string'},
+         'type': 'string',
+         'type_display_name': 'Text Field',
+         },
+        {'model': 'Colour',
+         'lookup_list': None,
+         'type': 'date_time',
+         'name': 'updated',
+         'default': None,
+         'enum': None,
+         'description': None,
+         'type_display_name': 'Date & Time',
+         'title': 'Updated'},
+        {'model': 'Colour',
+         'lookup_list': None,
+         'default': None,
+         'enum': None,
+         'type_display_name': 'Relationship',
+         'description': 'One of the Users',
+         'name': 'updated_by_id',
+         'title': 'Updated By',
+         'type': 'forei'},
     ]
 )
 
@@ -93,14 +101,55 @@ episode_serialised = {
          }
     ],
     'display_name': 'Episode',
+    'description': None,
     'name': 'episode',
 }
 
 
+@patch('opal.core.search.schemas.subrecords')
+@patch('opal.core.search.schemas.SearchRule')
 class ExtractSchemaTestCase(TestCase):
-    @patch('opal.core.search.schemas.subrecords')
-    def test_extract_schema(self, subrecords):
+    def test_extract_schema(self, SearchRule, subrecords):
+        SearchRule.list.return_value = []
         subrecords.return_value = [Colour]
+        extract_schema = schemas.extract_search_schema()
 
-        self.assertEqual(colour_serialized, schemas.extract_schema()[0])
-        self.assertEqual(episode_serialised, schemas.extract_schema()[1])
+        self.assertEqual(colour_serialized, extract_schema[0])
+        self.assertEqual(episode_serialised, extract_schema[1])
+
+    @patch('opal.core.search.schemas.SearchRule')
+    def test_rules_are_appended(self, SearchRule, subrecords):
+        subrecords.return_value = []
+        search_rule = MagicMock()
+        SearchRule.list.return_value = [search_rule]
+        rule_to_dicted = {"display_name": "Some Search Rule"}
+        search_rule().to_dict.return_value = rule_to_dicted
+        extract_schema = schemas.extract_search_schema()
+        self.assertEqual([rule_to_dicted], extract_schema)
+
+
+class ExtractDownloadSchemaForModelTestCase(TestCase):
+    def test_extract_download_schema_for_model(self):
+        with patch.object(
+            Colour, "_get_fieldnames_to_extract"
+        ) as gfte:
+            gfte.return_value = "name"
+            result = schemas.extract_download_schema_for_model(Colour)
+            expected = dict(
+                fields=[{
+                    'model': 'Colour',
+                    'lookup_list': None,
+                    'default': None,
+                    'enum': None,
+                    'description': None,
+                    'name': 'name',
+                    'title': 'Name',
+                    'type': 'string',
+                    'type_display_name': 'Text Field',
+                }],
+                name='colour',
+                icon="fa fa-comments",
+                display_name='Colour',
+                description="I like blue",
+            )
+            self.assertEqual(result, expected)

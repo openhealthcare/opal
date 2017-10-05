@@ -20,6 +20,11 @@ Date & Time for a DateTime Field.
 
 Provides the api name of the lookup list related to the field if it exists
 
+#### get_description
+
+Returns model._description, which should be a human readable description of the
+model
+
 ### ToDictMixin
 Provides a method that serialises a model
 to a dictionary for example

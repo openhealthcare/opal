@@ -10,7 +10,6 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
     $scope.limit = 10;
     $scope.JSON = window.JSON;
     $scope.filters = filters;
-    // $scope.columns = extractSchema.getAdvancedSearchColumns();
     $scope.extractSchema = extractSchema;
     $scope.dataDictionary = dataDictionary;
     // used by the download extract
@@ -20,19 +19,6 @@ angular.module('opal.controllers').controller( 'ExtractCtrl',
     }
     $scope.setFieldInfo = function(field){
       $scope.fieldInfo = field
-    }
-
-    $scope.scrollTo = function(column) {
-      var old = $location.hash();
-      $location.hash(column.name);
-      $anchorScroll.yOffset = 100;
-      $anchorScroll();
-      //reset to old to keep any additional routing logic from kicking in
-      $location.hash(old);
-    };
-
-    $scope.scrollTop = function(){
-      $window.scrollTo(0, 0);
     }
 
     $scope.searched = false;

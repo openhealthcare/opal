@@ -16,13 +16,25 @@ describe('ExtractSchemaLoader', function() {
         $window            = $injector.get('$window');
       });
 
+      columns = {
+          'demographics': {
+              name: "demographics",
+              fields: [
+                  {name: 'first_name', type: 'string'},
+                  {name: 'surname', type: 'string'},
+                  {name: 'date_of_birth', type: 'date'},
+              ]
+        }
+      };
+
+
       spyOn($window, "alert");
     });
 
     it('should fetch the schema', function(){
       var result;
 
-      $httpBackend.whenGET('/api/v0.1/extract-schema/').respond(columns);
+      $httpBackend.whenGET('/search/api/extract/').respond(columns);
       extractSchemaLoader.then(
           function(r){ result = r; }
       );
@@ -34,7 +46,7 @@ describe('ExtractSchemaLoader', function() {
 
     it('should alert if the http request errors', function(){
       var result;
-      $httpBackend.whenGET('/api/v0.1/extract-schema/').respond(500, 'NO');
+      $httpBackend.whenGET('/search/api/extract/').respond(500, 'NO');
       extractSchemaLoader.then( function(r){ result = r; } );
       $rootScope.$apply();
       $httpBackend.flush();

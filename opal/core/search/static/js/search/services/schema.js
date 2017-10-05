@@ -1,11 +1,8 @@
 angular.module('opal.services').factory('Schema', function() {
     "use strict";
     var Schema = function(columns){
-      this.columns = columns;
-      var chunkAmount = 6;
-      this.chunkedColumns = _.groupBy(this.columns, function(element, index){
-        return Math.floor(index/chunkAmount);
-      });
+      this.columns = angular.copy(columns);
+      this.chunkedColumns = this.chunkColumns(columns);
       _.each(this.columns, function(c){
         _.each(c.fields, function(f){
           if(f.subrecord){
@@ -17,6 +14,16 @@ angular.module('opal.services').factory('Schema', function() {
     };
 
     Schema.prototype = {
+      chunkColumns: function(columns){
+        /*
+        * chunks the columns into groups of 6 so that
+        * they can be displayed in vertical columns
+        */
+        var chunkAmount = 6;
+        return _.values(_.groupBy(columns, function(element, index){
+          return Math.floor(index/chunkAmount);
+        }));
+      },
       findColumn: function(columnName){
         if(!columnName){
           return;

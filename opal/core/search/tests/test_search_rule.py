@@ -94,6 +94,21 @@ class SearchRuleTestCase(OpalTestCase):
             self.assertEqual(result, "some_result")
             some_mock_query().query.assert_called_once_with(query)
 
+    def test_to_dict(self):
+        class SomeSearchRule(search_rule.SearchRule):
+            description = "its a custom rule"
+            display_name = "custom field you know"
+            slug = "some_slug"
+            fields = []
+
+        expected = dict(
+            description="its a custom rule",
+            display_name="custom field you know",
+            name="some_slug",
+            fields=[]
+        )
+        self.assertEqual(SomeSearchRule().to_dict(), expected)
+
 
 class EpisodeQueryTestCase(OpalTestCase):
     def setUp(self, *args, **kwargs):

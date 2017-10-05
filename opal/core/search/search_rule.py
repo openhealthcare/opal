@@ -55,7 +55,8 @@ class SearchRule(DiscoverableFeature):
         return dict(
             name=self.get_slug(),
             display_name=self.display_name,
-            fields=[i().to_dict() for i in self.get_fields()]
+            fields=[i().to_dict() for i in self.get_fields()],
+            description=getattr(self, "description", None)
         )
 
     @classmethod

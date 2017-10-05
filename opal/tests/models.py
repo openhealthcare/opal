@@ -97,6 +97,7 @@ class Colour(models.EpisodeSubrecord):
     _exclude_from_extract = True
     _angular_service = 'Colour'
     _icon = "fa fa-comments"
+    _description = "I like blue"
 
     name = dmodels.CharField(max_length=200, null=True, blank=True)
 

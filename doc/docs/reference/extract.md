@@ -11,7 +11,7 @@ Takes in a field_dict of serializer slug -> \[field names\] on the serializer
 
 Generates a zip directory with an html file with a description of all the fields and a single csv file that has the fields above.
 
-#### Overriding extracts
+#### Overriding subrecord extracts
 Extracts are generated from serialisers which are looked up by the api name of the model (either an episode or a subrecord)
 
 One can override the serialisers by using the discoverable serialiser.

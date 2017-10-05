@@ -14,7 +14,7 @@ class ExtractSchemaViewSet(viewsets.ViewSet):
     permission_classes = (IsAuthenticated,)
 
     def list(self, request):
-        return json_response(schemas.extract_schema())
+        return json_response(schemas.extract_search_schema())
 
 
 class DataDictionaryViewSet(viewsets.ViewSet):
