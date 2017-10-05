@@ -2,31 +2,28 @@
 
 This module provides our base classes for downloading csv data from opal.
 
-One can override serialisers by subclassing the discoverable
-opal.core.search.extract.ExtractCsvSerialiser and giving it the api name
-of a subrecord or 'episode'
-
-
-
 
 #### generate_multi_csv_extract
 Generates a zip directory of a .csv file for every subrecord and every episode.
 
 #### generate_nested_csv_extract
-Takes in a field_dict of serializer slug -> field names on the serializer
+Takes in a field_dict of serializer slug -> \[field names\] on the serializer
 
-Generates a zip directory with an html file with a description of all the fields and a single csv file
+Generates a zip directory with an html file with a description of all the fields and a single csv file that has the fields above.
 
- extract types
+#### Overriding extracts
+Extracts are generated from serialisers which are looked up by the api name of the model (either an episode or a subrecord)
 
-There are 2 different types of extract, a nested extract and
+One can override the serialisers by using the discoverable serialiser.
 
-Given an iterable of EPISODES and a USER, return a filtered list of episodes that this user has
-the permissions to know about.
+In a file called extract.py declare a subclass to opal.core.search.extract.ExtractCsvSerialiser.
 
-    filtered_episodes = episodes_for_user(episodes, user)
+Declare it with a slug of either 'episode' or the api name of the subrecord
+that you want to override.
 
-#### fuzzy_query
+##### opal.core.search.extract.ExtractCsvSerialiser.get_schema
+takes in the 'model', returns the extract schema, ie what appears in the datadictionay
+and what is selectable when the user is decided which fields they would like.
 
-Given a partial fragment for example Jane 123, return all patients that
-have either a first name, last name or hospital number including jane or
+##### opal.core.search.get_row
+returns the row that will be outputed

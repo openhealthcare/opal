@@ -415,27 +415,24 @@ def generate_nested_csv_extract(root_dir, episodes, user, field_dict):
     csv_file_name = "extract.csv"
     full_file_name = os.path.join(root_dir, csv_file_name)
     file_names.append((full_file_name, csv_file_name,))
-    episode_api_name = "episode"
     renderers = []
-
-    if episode_api_name in field_dict:
-        renderers.append(EpisodeCsvRenderer(
-            Episode, episodes, user, fields=field_dict[episode_api_name]
-        ))
+    slugs_to_serialisers = ExtractCsvSerialiser.api_name_to_serialiser_cls()
 
     for model_api_name, model_fields in field_dict.items():
-        if model_api_name == episode_api_name:
+        if model_api_name == "episode":
+            model = Episode
+        else:
+            model = subrecords.get_subrecord_from_api_name(model_api_name)
+        serialiser_cls = slugs_to_serialisers.get(model_api_name, None)
+
+        if not serialiser_cls:
+            # if for whatever reason someone tries to extract a model api name
+            # we don't allow, just skip it
             continue
 
-        subrecord = subrecords.get_subrecord_from_api_name(model_api_name)
-        if subrecord in subrecords.episode_subrecords():
-            renderers.append(EpisodeSubrecordCsvRenderer(
-                subrecord, episodes, user, fields=model_fields
-            ))
-        else:
-            renderers.append(PatientSubrecordCsvRenderer(
-                subrecord, episodes, user, fields=model_fields
-            ))
+        renderers.append(serialiser_cls(
+            model, episodes, user, fields=field_dict[model_api_name]
+        ))
 
     with open(full_file_name, 'w') as csv_file:
         writer = csv.writer(csv_file)
@@ -465,26 +462,18 @@ def generate_multi_csv_extract(root_dir, episodes, user):
 
     file_name = "episodes.csv"
     full_file_name = os.path.join(root_dir, file_name)
-    renderer = EpisodeCsvRenderer(Episode, episodes, user)
-    renderer.write_to_file(full_file_name)
-    file_names.append((full_file_name, file_name,))
+    slugs_to_serialisers = ExtractCsvSerialiser.api_name_to_serialiser_cls()
 
-    for subrecord in subrecords.subrecords():
-        if getattr(subrecord, '_exclude_from_extract', False):
-            continue
-        file_name = '{0}.csv'.format(subrecord.get_api_name())
+    for slug, serialiser_cls in slugs_to_serialisers.items():
+        file_name = "{}.csv".format(slug)
         full_file_name = os.path.join(root_dir, file_name)
-        if subrecord in subrecords.episode_subrecords():
-            renderer = EpisodeSubrecordCsvRenderer(
-                subrecord, episodes, user
-            )
+        if slug == 'episode':
+            model = Episode
         else:
-            renderer = PatientSubrecordCsvRenderer(
-                subrecord, episodes, user
-            )
-        if renderer.count():
-            renderer.write_to_file(full_file_name)
-            file_names.append((full_file_name, file_name,))
+            model = subrecords.get_subrecord_from_api_name(slug)
+        renderer = serialiser_cls(model, episodes, user)
+        renderer.write_to_file(full_file_name)
+        file_names.append((full_file_name, file_name,))
 
     return file_names
 
