@@ -18,7 +18,7 @@ Keywords:
 * `change`  A javascript function that fires if the field has changed
 * `disabled` If this exists, we use this as the expression for the ng-disabled directive
 * `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html element
-
+* `style` The form style to render this widget with. Possible values are `['horizontal', 'vertical']`. Defaults to 'horizontal'
 
 ### {% datepicker ... %}
 
@@ -36,6 +36,7 @@ Keywords:
 * `required` Label to show when we're required
 * `mindate` Angular Javascript expression to return the minimum possible date
 * `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html element
+* `style` The form style to render this widget with. Possible values are `['horizontal', 'vertical']`. Defaults to 'horizontal'
 
 
 ### {% timepicker ... %}
@@ -49,6 +50,7 @@ Keywords:
 * `label` The Label with which to describe the date field (defaults to 'Date')
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
 * `change`  A javascript function that fires if the field has changed
+* `style` The form style to render this widget with. Possible values are `['horizontal', 'vertical']`. Defaults to 'horizontal'
 
 
 ### {% datetimepicker ... %}
@@ -64,7 +66,7 @@ Keywords:
 * `model` The model which we are editing (This is a string that references an in-scope Angular variable)
 * `change`  A javascript function that fires if the field has changed
 * `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html datetime picker element
-
+* `style` The form style to render this widget with. Possible values are `['horizontal', 'vertical']`. Defaults to 'horizontal'
 
 
 ### {% input ... %}
@@ -86,6 +88,7 @@ Keywords:
 * `maxlength` maximum number of characters for this input. Will render the form invalid and display help text if exceeded.
 * `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html element
 * `element_type` If this exists it sets the input 'type' on the html tag. For numeric fields set by the 'field' parameter this will default to number. Otherwise it will just default to 'text'.
+* `style` The form style to render this widget with. Possible values are `['horizontal', 'vertical']`. Defaults to 'horizontal'
 
 
 #### Inputs with units
@@ -111,6 +114,7 @@ Keywords:
 * `hide`  A string that contains an Angular expression for the ng-hide directive
 * `lookuplist` an Angular expression that evaluates to an array containing the radio values
 * `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html element
+* `style` The form style to render this widget with. Possible values are `['horizontal', 'vertical']`. Defaults to 'horizontal'
 
 
 ### {% select ... %}
@@ -130,6 +134,7 @@ Keywords:
 * `help` a template to use as the contents of a help popover
 * `static` an Angular expression that will swap the display to be a static input if it evaluates to `true`
 * `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html element*
+* `style` The form style to render this widget with. Possible values are `['horizontal', 'vertical']`. Defaults to 'horizontal'
 
 ### {% textarea ... %}
 
@@ -144,6 +149,7 @@ Keywords:
 * `show`  A string that contains an Angular expression for the ng-show directive
 * `hide`  A string that contains an Angular expression for the ng-hide directive
 * `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html element
+* `style` The form style to render this widget with. Possible values are `['horizontal', 'vertical']`. Defaults to 'horizontal'
 
 
 #### Inference from subrecord fields

@@ -7,11 +7,27 @@ from mock import patch
 from django.template import Template, Context
 from django.test import TestCase
 
+from opal.templatetags import forms
 from opal.templatetags.forms import (
     process_steps, infer_from_subrecord_field_path, date_of_birth_field,
     extract_common_args
 )
 from opal.core.views import OpalSerializer
+
+
+class TestGetStyleTestCase(TestCase):
+    def test_defaults_to_horizontal(self):
+        self.assertEqual('horizontal', forms.get_style({}))
+
+    def test_can_override_with_vertical(self):
+        self.assertEqual('vertical', forms.get_style({'style': 'vertical'}))
+
+    def test_can_explicitly_pass_in_horizontal(self):
+        self.assertEqual('horizontal', forms.get_style({'style':'horizontal'}))
+
+    def test_only_specific_style_values_allowed(self):
+        with self.assertRaises(ValueError):
+            forms.get_style({'style': 'inverted'})
 
 
 class TestInferFromSubrecordPath(TestCase):
@@ -490,14 +506,19 @@ class ProcessStepsTestCase(TestCase):
 class DateOfBirthTestCase(TestCase):
     def test_set_field(self):
         ctx = date_of_birth_field(model_name="something")
-        self.assertEqual(ctx, dict(model_name="something"))
+        expected = dict(
+            style="horizontal",
+            model_name="something"
+        )
+        self.assertEqual(expected, ctx)
 
     def test_default(self):
         ctx = date_of_birth_field()
-        self.assertEqual(
-            ctx,
-            dict(model_name="editing.demographics.date_of_birth")
+        expected = dict(
+            model_name="editing.demographics.date_of_birth",
+            style='horizontal'
         )
+        self.assertEqual(expected, ctx)
 
     def test_render(self):
         tpl = Template('{% load forms %}{% date_of_birth_field %}')

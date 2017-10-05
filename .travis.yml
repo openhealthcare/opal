@@ -18,7 +18,7 @@ script:
   - flake8
 after_success:
   - ls -lha coverage
-  - coveralls-lcov -v -n coverage/Firefox\ 50.0.0\ \(Linux\ 0.0.0\)/lcov.info > coverage/coverage.json
+  - coveralls-lcov -v -n coverage/Firefox\ 55.0.0\ \(Linux\ 0.0.0\)/lcov.info > coverage/coverage.json
   - cat coverage/coverage.json
   - coveralls debug --merge=coverage/coverage.json
   - coveralls --merge=coverage/coverage.json
