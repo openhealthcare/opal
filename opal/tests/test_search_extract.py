@@ -67,7 +67,7 @@ class TestViewPOSTTestCase(OpalTestCase):
         url = reverse("extract_download")
         post_data = {
             "criteria":
-                   json.dumps([{
+                json.dumps([{
                     "combine": "and",
                     "column": "demographics",
                     "field": "Surname",
@@ -149,7 +149,7 @@ class SubrecordCSVTestCase(PatientEpisodeTestCase):
             'name'
         ]
         expected_row = [
-            None, None, None, None, self.episode.id, 'blue'
+            None, None, None, None, self.episode.id, b'blue'
         ]
         self.assertEqual(headers, expected_headers)
         self.assertEqual(row, expected_row)
@@ -185,8 +185,8 @@ class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
             self.assertTrue(h in headers)
 
         expected_row = [
-            1, None, None, None, None, '12345678',
-            None, datetime.date(1976, 1, 1), False, u'', u''
+            1, None, None, None, None, b'12345678',
+            None, datetime.date(1976, 1, 1), False, b'', b''
         ]
         self.assertEqual(row, expected_row)
 
