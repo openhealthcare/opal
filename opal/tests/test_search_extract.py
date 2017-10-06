@@ -14,9 +14,27 @@ from opal.tests.models import (
     Colour, PatientColour, Demographics, HatWearer, HouseOwner
 )
 from opal.core.search import extract
-from opal.core import subrecords
+from six import u, b  # NOQA
+
 
 MOCKING_FILE_NAME_OPEN = "opal.core.search.extract.open"
+
+
+class TestEncodeToUTF8(OpalTestCase):
+    def test_with_str(self):
+        d = u('\u0160\u0110\u0106\u017d\u0107\u017e\u0161\u0111')
+        r = b"\xc5\xa0\xc4\x90\xc4\x86\xc5\xbd\xc4\x87\xc5\xbe\xc5\xa1\xc4\x91"
+        self.assertEqual(
+            extract._encode_to_utf8(d),
+            r
+        )
+
+    def test_with_other(self):
+        d = 2
+        self.assertEqual(
+            extract._encode_to_utf8(d),
+            d
+        )
 
 
 class TestViewPOSTTestCase(OpalTestCase):
@@ -113,7 +131,7 @@ class SubrecordCSVTestCase(PatientEpisodeTestCase):
     def test_with_subrecords(self, csv):
         csv.writer = Mock()
         file_name = "fake file name"
-        colour = Colour.objects.create(episode=self.episode, name='blue')
+        Colour.objects.create(episode=self.episode, name='blue')
 
         self.mocked_extract(
             extract.subrecord_csv,
@@ -131,7 +149,7 @@ class SubrecordCSVTestCase(PatientEpisodeTestCase):
             'name'
         ]
         expected_row = [
-            u'None', u'None', u'None', u'None', str(self.episode.id), u'blue'
+            None, None, None, None, self.episode.id, 'blue'
         ]
         self.assertEqual(headers, expected_headers)
         self.assertEqual(row, expected_row)
@@ -167,8 +185,8 @@ class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
             self.assertTrue(h in headers)
 
         expected_row = [
-            1, u'None', u'None', u'None', u'None', u'12345678',
-            u'None', u'1976-01-01', u'False', u'', u''
+            1, None, None, None, None, '12345678',
+            None, datetime.date(1976, 1, 1), False, u'', u''
         ]
         self.assertEqual(row, expected_row)
 
