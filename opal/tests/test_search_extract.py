@@ -94,7 +94,8 @@ class PatientEpisodeTestCase(OpalTestCase):
             hospital_number='12345678',
             first_name="Alice",
             surname="Alderney",
-            date_of_birth=datetime.date(1976,1,1)
+            date_of_birth=datetime.date(1976, 1, 1),
+            sex_ft=u('\u0160\u0110\u0106\u017d\u0107\u017e\u0161\u0111'),
         )
         super(PatientEpisodeTestCase, self).setUp()
 
@@ -146,7 +147,7 @@ class SubrecordCSVTestCase(PatientEpisodeTestCase):
             'created_by_id',
             'updated_by_id',
             'episode_id',
-            'name'
+            'name',
         ]
         expected_row = [
             None, None, None, None, self.episode.id, b'blue'
@@ -185,8 +186,17 @@ class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
             self.assertTrue(h in headers)
 
         expected_row = [
-            1, None, None, None, None, b'12345678',
-            None, datetime.date(1976, 1, 1), False, b'', b''
+            1,
+            None,
+            None,
+            None,
+            None,
+            b'12345678',
+            None,
+            datetime.date(1976, 1, 1),
+            False,
+            '\xc5\xa0\xc4\x90\xc4\x86\xc5\xbd\xc4\x87\xc5\xbe\xc5\xa1\xc4\x91',
+            ''
         ]
         self.assertEqual(row, expected_row)
 
