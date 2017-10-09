@@ -478,6 +478,28 @@ def generate_multi_csv_extract(root_dir, episodes, user):
     return file_names
 
 
+def get_description_with_fields(description, fields):
+    field_description = []
+
+    for subrecord_api_name, subrecord_fields in fields.items():
+        subrecord_cls = subrecords.get_subrecord_from_api_name(
+            subrecord_api_name
+        )
+        field_names = ", ".join(
+            subrecord_cls._get_field_title(i) for i in subrecord_fields
+        )
+        field_description.append(
+            "{} - {}".format(
+                subrecord_cls.get_display_name(),
+                field_names
+            )
+        )
+    return "{description} \nExtracting:\n{fields}".format(
+        description=description,
+        fields="\n".join(field_description)
+    )
+
+
 def zip_archive(episodes, description, user, fields=None):
     """
     Given an iterable of EPISODES, the DESCRIPTION of this set of episodes,
@@ -491,7 +513,17 @@ def zip_archive(episodes, description, user, fields=None):
         zipfolder = '{0}.{1}'.format(user.username, datetime.date.today())
         root_dir = os.path.join(target_dir, zipfolder)
         os.mkdir(root_dir)
+        query_file_name = "query.txt"
+        full_query_file_name = os.path.join(root_dir, query_file_name)
         zip_relative_file_path = functools.partial(os.path.join, zipfolder)
+        if fields:
+            description = get_description_with_fields(description, fields)
+
+        with open(full_query_file_name, "w") as f:
+            f.write(description)
+
+        z.write(full_query_file_name, zip_relative_file_path(query_file_name))
+
         if fields:
             file_names = generate_nested_csv_extract(
                 root_dir, episodes, user, fields

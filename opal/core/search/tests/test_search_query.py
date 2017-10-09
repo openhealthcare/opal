@@ -1,7 +1,7 @@
 """
 Unittests for opal.core.search.queries
 """
-from datetime import date
+from datetime import date, datetime
 
 from django.db import transaction
 from django.contrib.contenttypes.models import ContentType
@@ -194,6 +194,61 @@ class DatabaseQueryTestCase(OpalTestCase):
         dogowner.save()
         query = queries.DatabaseQuery(self.user, [criteria])
         self.assertEqual([self.episode], query.get_episodes())
+
+    @patch("opal.core.search.queries.datetime")
+    def test_description_display_name(self, dt):
+        dt.datetime.now.return_value = datetime(
+            2017, 12, 1, 10, 10
+        )
+        criteria = dict(
+            column='hat_wearer', field='name',
+            combine='and', query='jeff', queryType='Contains'
+        )
+        query = queries.DatabaseQuery(self.user, [criteria])
+        exp = "testuser (01/12/2017 10:10:00)\nSearching for:\nWearer of Hats Name Contains jeff"
+        self.assertEqual(exp, query.description())
+
+    @patch("opal.core.search.queries.datetime")
+    def test_description_field_display_name(self, dt):
+        dt.datetime.now.return_value = datetime(
+            2017, 12, 1, 10, 10
+        )
+
+        criteria = dict(
+            column='hound_owner', field='dog',
+            combine='and', query='jeff', queryType='Contains'
+        )
+        query = queries.DatabaseQuery(self.user, [criteria])
+        exp = """
+testuser (01/12/2017 10:10:00)
+Searching for:
+Hound Owner Hound Contains jeff
+""".strip()
+        self.assertEqual(exp, query.description())
+
+    @patch("opal.core.search.queries.datetime")
+    def test_description_multiple(self, dt):
+        dt.datetime.now.return_value = datetime(
+            2017, 12, 1, 10, 10
+        )
+
+        criteria_1 = dict(
+            column='hat_wearer', field='name',
+            combine='and', query='jeff', queryType='Contains'
+        )
+
+        criteria_2 = dict(
+            column='hound_owner', field='dog',
+            combine='and', query='jeff', queryType='Contains'
+        )
+        query = queries.DatabaseQuery(self.user, [criteria_1, criteria_2])
+        exp = """
+testuser (01/12/2017 10:10:00)
+Searching for:
+Wearer of Hats Name Contains jeff
+and Hound Owner Hound Contains jeff
+""".strip()
+        self.assertEqual(exp, query.description())
 
     def test_episodes_for_m2m_fields(self):
         criteria = dict(
