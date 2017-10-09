@@ -1,5 +1,5 @@
 from django.test import TestCase
-from mock import patch, MagicMock
+from mock import patch, MagicMock, PropertyMock
 from opal.tests.models import Colour
 
 
@@ -110,14 +110,18 @@ episode_serialised = {
 @patch('opal.core.search.schemas.SearchRule')
 class ExtractSchemaTestCase(TestCase):
     def test_extract_schema(self, SearchRule, subrecords):
-        SearchRule.list.return_value = []
+        from opal.core.search.search_rule import EpisodeQuery
+        SearchRule.list.return_value = [EpisodeQuery]
         subrecords.return_value = [Colour]
-        extract_schema = schemas.extract_search_schema()
 
+        with patch.object(
+            EpisodeQuery.fields[2], "enum", new_callable=PropertyMock
+        ) as all_teams:
+            all_teams.return_value = []
+            extract_schema = schemas.extract_search_schema()
         self.assertEqual(colour_serialized, extract_schema[0])
         self.assertEqual(episode_serialised, extract_schema[1])
 
-    @patch('opal.core.search.schemas.SearchRule')
     def test_rules_are_appended(self, SearchRule, subrecords):
         subrecords.return_value = []
         search_rule = MagicMock()

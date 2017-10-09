@@ -12,7 +12,7 @@ class ExtractSchemaTestCase(OpalTestCase):
 
     @patch('opal.core.search.api.schemas')
     def test_records(self, schemas):
-        schemas.extract_schema.return_value = [{}]
+        schemas.extract_search_schema.return_value = [{}]
         self.assertEqual([{}], api.ExtractSchemaViewSet().list(None).data)
 
     def test_integration_records(self):

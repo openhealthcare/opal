@@ -90,7 +90,7 @@ class GenerateMultiFilesTestCase(OpalTestCase):
     def test_exclude_subrecords(
         self, write_data_dictionary, write_to_file, csv_renderer, subrecords
     ):
-        subrecords.return_value = [Colour]
+        subrecords.return_value = [PatientColour]
         extract.generate_multi_csv_extract(
             "somewhere", models.Episode.objects.all(), self.user
         )

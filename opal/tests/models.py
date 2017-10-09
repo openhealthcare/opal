@@ -94,7 +94,6 @@ class AbstractDog(models.PatientSubrecord, AbstractBase):
 
 class Colour(models.EpisodeSubrecord):
     _clonable = False
-    _advanced_searchable = False
     _angular_service = 'Colour'
     _icon = "fa fa-comments"
     _description = "I like blue"
@@ -104,7 +103,7 @@ class Colour(models.EpisodeSubrecord):
 
 class PatientColour(models.PatientSubrecord):
     name = dmodels.CharField(max_length=200, blank=True, null=True)
-    _exclude_from_extract = True
+    _advanced_searchable = False
 
 
 class FamousLastWords(models.PatientSubrecord):

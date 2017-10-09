@@ -448,7 +448,7 @@ class DownloadTestCase(BaseSearchTestCase):
                 json.dumps([{
                     "combine": "and",
                     "column": "demographics",
-                    "field": "Surname",
+                    "field": "hospital_number",
                     "queryType": "Contains",
                     "query": "a",
                     "lookup_list": [],
@@ -479,7 +479,7 @@ class DownloadTestCase(BaseSearchTestCase):
                 json.dumps([{
                     "combine": "and",
                     "column": "demographics",
-                    "field": "Surname",
+                    "field": "hospital_number",
                     "queryType": "Contains",
                     "query": "a",
                     "lookup_list": [],
