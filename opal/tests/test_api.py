@@ -645,7 +645,6 @@ class EpisodeTestCase(OpalTestCase):
         pass #TODO TEST THIS
 
     def test_create_existing_patient(self):
-        self.demographics.name = 'Aretha Franklin'
         self.demographics.hospital_number = '123123123'
         self.demographics.save()
         self.mock_request.data = {

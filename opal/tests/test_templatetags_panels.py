@@ -2,7 +2,6 @@
 Tests create_singletons command
 """
 from django.template import Template, Context
-from django.test import override_settings
 from opal.core.test import OpalTestCase
 from opal.templatetags import panels
 from opal.tests.models import Demographics
@@ -16,7 +15,7 @@ class RecordPanelTestCase(OpalTestCase):
             singleton=True,
             title='Demographics',
             detail_template='records/demographics_detail.html',
-            icon=None,
+            icon='fa fa-user',
             editable=1,
             angular_filter=None,
             noentries=None,
@@ -36,7 +35,6 @@ class RecordPanelTestCase(OpalTestCase):
         self.assertEqual(
             result["singleton"], False
         )
-
 
     def test_context(self):
         """ context should include logic from template
@@ -70,7 +68,7 @@ class RecordPanelTestCase(OpalTestCase):
             '{% load panels %}{% record_panel models.ThisDoesntExist %}'
         )
         ctx = {"models": {"HatWearer": HatWearer}}
-        with self.assertRaises(ValueError) as e:
+        with self.assertRaises(ValueError):
             template.render(Context(ctx))
 
 
@@ -80,7 +78,7 @@ class RecordTimelineTestCase(OpalTestCase):
             name='demographics',
             title='Demographics',
             detail_template='records/demographics_detail.html',
-            icon=None,
+            icon='fa fa-user',
             editable=True,
             whenfield='when'
         )

@@ -148,11 +148,6 @@ class PatientGenerator(object):
     """ returns a whole batch of patients with a single episde
         with names, hospital numbers and dates of birth
     """
-    def get_name(self):
-        first_name = random.choice(first_names)
-        last_name = random.choice(last_names)
-        return "%s %s" % (first_name, last_name)
-
     def get_birth_date(self):
         eighteen_years_ago = date.today() - timedelta(days=18 * 365)
         return date_generator(
@@ -180,7 +175,8 @@ class PatientGenerator(object):
         demographics                 = patient.demographics_set.get()
         hospital_number              = random.randint(1000, 2000000)
         hospital_number              = str(hospital_number)
-        demographics.name            = self.get_name()
+        demographics.first_name      = random.choice(first_names)
+        demographics.surname         = random.choice(last_names)
         demographics.hospital_number = hospital_number
         demographics.nhs_number      = hospital_number
         demographics.date_of_birth   = self.get_birth_date()
