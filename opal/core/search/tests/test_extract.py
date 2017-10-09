@@ -13,7 +13,7 @@ from opal.tests.models import (
     FamousLastWords
 )
 from opal.core.search import extract
-from six import u, b
+from six import u, b  # NOQA
 
 
 MOCKING_FILE_NAME_OPEN = "opal.core.search.extract.open"
@@ -70,9 +70,9 @@ class GenerateMultiFilesTestCase(OpalTestCase):
         )
         expected = [
             ('somewhere/data_dictionary.html', 'data_dictionary.html'),
-            ('somewhere/episodes.csv', 'episodes.csv'),
             ('somewhere/hat_wearer.csv', 'hat_wearer.csv'),
-            ('somewhere/house_owner.csv', 'house_owner.csv')
+            ('somewhere/house_owner.csv', 'house_owner.csv'),
+            ('somewhere/episode.csv', 'episode.csv')
         ]
         self.assertEqual(expected, results)
         self.assertEqual(
@@ -80,7 +80,7 @@ class GenerateMultiFilesTestCase(OpalTestCase):
             'somewhere/data_dictionary.html'
         )
         self.assertEqual(
-            write_to_file.call_args[0], ('somewhere/house_owner.csv',)
+            write_to_file.call_args[0], ('somewhere/episode.csv',)
         )
 
     @patch('opal.core.search.extract.subrecords.subrecords')
@@ -173,7 +173,7 @@ class GenerateNestedFilesTestCase(OpalTestCase):
             'somewhere/data_dictionary.html'
         )
 
-        write_row = csv.writer().writerow;
+        write_row = csv.writer().writerow
 
         self.assertEqual(
             len(write_row.call_args_list[0][0][0]),
@@ -291,11 +291,12 @@ class ZipArchiveTestCase(OpalTestCase):
         HouseOwner.objects.create(patient=patient)
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
         call_args = zipfile.ZipFile.return_value.__enter__.return_value.write.call_args_list
-        self.assertEqual(4, len(call_args))
-        self.assertTrue(call_args[0][0][0].endswith("data_dictionary.html"))
-        self.assertTrue(call_args[1][0][0].endswith("episodes.csv"))
+        self.assertEqual(5, len(call_args))
+        self.assertTrue(call_args[0][0][0].endswith("query.txt"))
+        self.assertTrue(call_args[1][0][0].endswith("data_dictionary.html"))
         self.assertTrue(call_args[2][0][0].endswith("hat_wearer.csv"))
         self.assertTrue(call_args[3][0][0].endswith("house_owner.csv"))
+        self.assertTrue(call_args[4][0][0].endswith("episode.csv"))
 
     def test_subrecords_if_none(self, zipfile, subrecords):
         # if there are no subrecords we don't expect them to write to the file
@@ -304,37 +305,53 @@ class ZipArchiveTestCase(OpalTestCase):
         HouseOwner.objects.create(patient=patient)
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
         call_args = zipfile.ZipFile.return_value.__enter__.return_value.write.call_args_list
-        self.assertEqual(3, len(call_args))
-        self.assertTrue(call_args[0][0][0].endswith("data_dictionary.html"))
-        self.assertTrue(call_args[1][0][0].endswith("episodes.csv"))
+        self.assertEqual(4, len(call_args))
+        self.assertTrue(call_args[0][0][0].endswith("query.txt"))
+        self.assertTrue(call_args[1][0][0].endswith("data_dictionary.html"))
         self.assertTrue(call_args[2][0][0].endswith("house_owner.csv"))
+        self.assertTrue(call_args[3][0][0].endswith("episode.csv"))
 
     def test_subrecords_if_empty_query(self, zipfile, subrecords):
         # if there are no subrecords we don't expect them to write to the file
         subrecords.return_value = [HatWearer, HouseOwner]
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
         call_args = zipfile.ZipFile.return_value.__enter__.return_value.write.call_args_list
-        self.assertEqual(2, len(call_args))
-        self.assertTrue(call_args[0][0][0].endswith("data_dictionary.html"))
-        self.assertTrue(call_args[1][0][0].endswith("episodes.csv"))
+        self.assertEqual(3, len(call_args))
+        self.assertTrue(call_args[0][0][0].endswith("query.txt"))
+        self.assertTrue(call_args[1][0][0].endswith("data_dictionary.html"))
+        self.assertTrue(call_args[2][0][0].endswith("episode.csv"))
 
+    @patch('opal.core.search.extract.os')
+    @patch('opal.core.search.extract.write_description')
     @patch('opal.core.search.extract.generate_nested_csv_extract')
     @patch('opal.core.search.extract.generate_multi_csv_extract')
-    def test_nested_extract_called(self, multi, nested, zipfile, subrecords):
+    def test_nested_extract_called(
+        self, multi, nested, write_description, os, zipfile, subrecords
+    ):
+        write_description.return_value = ("some_file_path", "some_file",)
+        os.path.join.return_value = "some_temp_dir"
+        fields = dict(episode=["start"])
         extract.zip_archive(
             models.Episode.objects.all(),
             'this',
             self.user,
-            fields="some fields"
+            fields=fields
         )
         self.assertTrue(nested.call_count, 1)
         self.assertFalse(multi.called)
+        write_description.assert_called_once_with(
+            "this", "some_temp_dir", fields=fields
+        )
 
+    @patch('opal.core.search.extract.os')
+    @patch('opal.core.search.extract.write_description')
     @patch('opal.core.search.extract.generate_nested_csv_extract')
     @patch('opal.core.search.extract.generate_multi_csv_extract')
     def test_nested_extract_not_called(
-        self, multi, nested, zipfile, subrecords
+        self, multi, nested, write_description, os, zipfile, subrecords
     ):
+        write_description.return_value = ("some_file_path", "some_file",)
+        os.path.join.return_value = "some_temp_dir"
         extract.zip_archive(
             models.Episode.objects.all(),
             'this',
@@ -342,6 +359,9 @@ class ZipArchiveTestCase(OpalTestCase):
         )
         self.assertTrue(multi.call_count, 1)
         self.assertFalse(nested.called)
+        write_description.assert_called_once_with(
+            "this", "some_temp_dir", fields=None
+        )
 
 
 class AsyncExtractTestCase(OpalTestCase):

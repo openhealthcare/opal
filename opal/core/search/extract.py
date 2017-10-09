@@ -80,6 +80,9 @@ class CsvRenderer(object):
             i for i in self.non_field_csv_columns if i.name == field_name
         )
 
+    def exists(self):
+        return self.queryset.exists()
+
     def get_field_names_to_render(self):
         field_names = self.model._get_fieldnames_to_extract()
         # its not in episode but its in all subrecords
@@ -373,6 +376,10 @@ class EpisodeCsvRenderer(ExtractCsvSerialiser):
         CsvColumn("patient_id", display_name="Patient"),
     )
 
+    def exists(self):
+        # always have an episodes file
+        return True
+
     def get_flat_headers(self):
         single_headers = super(
             EpisodeCsvRenderer, self
@@ -460,7 +467,6 @@ def generate_multi_csv_extract(root_dir, episodes, user):
     write_data_dictionary(full_file_name)
     file_names.append((full_file_name, file_name,))
 
-    file_name = "episodes.csv"
     full_file_name = os.path.join(root_dir, file_name)
     slugs_to_serialisers = ExtractCsvSerialiser.api_name_to_serialiser_cls()
 
@@ -472,8 +478,9 @@ def generate_multi_csv_extract(root_dir, episodes, user):
         else:
             model = subrecords.get_subrecord_from_api_name(slug)
         renderer = serialiser_cls(model, episodes, user)
-        renderer.write_to_file(full_file_name)
-        file_names.append((full_file_name, file_name,))
+        if renderer.exists():
+            renderer.write_to_file(full_file_name)
+            file_names.append((full_file_name, file_name,))
 
     return file_names
 
@@ -500,6 +507,18 @@ def get_description_with_fields(description, fields):
     )
 
 
+def write_description(description, root_dir, fields=None):
+    query_file_name = "query.txt"
+    full_query_file_name = os.path.join(root_dir, query_file_name)
+    if fields:
+        description = get_description_with_fields(description, fields)
+
+    with open(full_query_file_name, "w") as f:
+        f.write(description)
+
+    return full_query_file_name, query_file_name
+
+
 def zip_archive(episodes, description, user, fields=None):
     """
     Given an iterable of EPISODES, the DESCRIPTION of this set of episodes,
@@ -513,15 +532,10 @@ def zip_archive(episodes, description, user, fields=None):
         zipfolder = '{0}.{1}'.format(user.username, datetime.date.today())
         root_dir = os.path.join(target_dir, zipfolder)
         os.mkdir(root_dir)
-        query_file_name = "query.txt"
-        full_query_file_name = os.path.join(root_dir, query_file_name)
         zip_relative_file_path = functools.partial(os.path.join, zipfolder)
-        if fields:
-            description = get_description_with_fields(description, fields)
-
-        with open(full_query_file_name, "w") as f:
-            f.write(description)
-
+        full_query_file_name, query_file_name = write_description(
+            description, root_dir, fields=fields
+        )
         z.write(full_query_file_name, zip_relative_file_path(query_file_name))
 
         if fields:
