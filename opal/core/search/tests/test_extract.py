@@ -5,6 +5,7 @@ import datetime
 from collections import OrderedDict
 
 from mock import mock_open, patch
+import os.path
 
 from opal.core.test import OpalTestCase
 from opal import models
@@ -65,15 +66,15 @@ class GenerateMultiFilesTestCase(OpalTestCase):
         subrecords.return_value = [HatWearer, HouseOwner]
         HatWearer.objects.create(name="Indiana", episode=episode)
         HouseOwner.objects.create(patient=patient)
-        results = extract.generate_multi_csv_extract(
+        results = set(extract.generate_multi_csv_extract(
             "somewhere", models.Episode.objects.all(), self.user
-        )
-        expected = [
+        ))
+        expected = set([
             ('somewhere/data_dictionary.html', 'data_dictionary.html'),
             ('somewhere/hat_wearer.csv', 'hat_wearer.csv'),
             ('somewhere/house_owner.csv', 'house_owner.csv'),
             ('somewhere/episode.csv', 'episode.csv')
-        ]
+        ])
         self.assertEqual(expected, results)
         self.assertEqual(
             write_data_dictionary.call_args[0][0],
@@ -292,11 +293,15 @@ class ZipArchiveTestCase(OpalTestCase):
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
         call_args = zipfile.ZipFile.return_value.__enter__.return_value.write.call_args_list
         self.assertEqual(5, len(call_args))
-        self.assertTrue(call_args[0][0][0].endswith("query.txt"))
-        self.assertTrue(call_args[1][0][0].endswith("data_dictionary.html"))
-        self.assertTrue(call_args[2][0][0].endswith("hat_wearer.csv"))
-        self.assertTrue(call_args[3][0][0].endswith("house_owner.csv"))
-        self.assertTrue(call_args[4][0][0].endswith("episode.csv"))
+        base_names = {os.path.basename(i[0][0]) for i in call_args}
+        expected = {
+            "query.txt",
+            "data_dictionary.html",
+            "hat_wearer.csv",
+            "house_owner.csv",
+            "episode.csv"
+        }
+        self.assertEqual(base_names, expected)
 
     def test_subrecords_if_none(self, zipfile, subrecords):
         # if there are no subrecords we don't expect them to write to the file
@@ -306,10 +311,14 @@ class ZipArchiveTestCase(OpalTestCase):
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
         call_args = zipfile.ZipFile.return_value.__enter__.return_value.write.call_args_list
         self.assertEqual(4, len(call_args))
-        self.assertTrue(call_args[0][0][0].endswith("query.txt"))
-        self.assertTrue(call_args[1][0][0].endswith("data_dictionary.html"))
-        self.assertTrue(call_args[2][0][0].endswith("house_owner.csv"))
-        self.assertTrue(call_args[3][0][0].endswith("episode.csv"))
+        base_names = {os.path.basename(i[0][0]) for i in call_args}
+        expected = {
+            "query.txt",
+            "data_dictionary.html",
+            "house_owner.csv",
+            "episode.csv"
+        }
+        self.assertEqual(base_names, expected)
 
     def test_subrecords_if_empty_query(self, zipfile, subrecords):
         # if there are no subrecords we don't expect them to write to the file

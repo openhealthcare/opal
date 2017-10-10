@@ -246,7 +246,7 @@ class PatientSubrecordCsvRenderer(CsvRenderer):
 
 
 def chunk_list(some_list, amount):
-    for i in xrange(0, len(some_list), amount):
+    for i in range(0, len(some_list), amount):
         yield some_list[i:i + amount]
 
 
