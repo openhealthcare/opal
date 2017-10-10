@@ -46,6 +46,9 @@ class CsvColumn(object):
         else:
             self.display_name = self.name.title()
 
+    def to_schema(self):
+        pass
+
 
 class CsvRenderer(object):
     """
@@ -90,9 +93,6 @@ class CsvRenderer(object):
 
     def get_field_title(self, field_name):
         return self.model._get_field_title(field_name)
-
-    def get_field_description(field_name):
-        pass
 
     def get_headers(self):
         result = []
@@ -173,6 +173,10 @@ class CsvRenderer(object):
             )
         return result
 
+    @classmethod
+    def get_schema(cls, some_model):
+        return schemas.extract_download_schema_for_model(some_model)
+
 
 class PatientSubrecordCsvRenderer(CsvRenderer):
     non_field_csv_columns = (
@@ -238,10 +242,6 @@ class PatientSubrecordCsvRenderer(CsvRenderer):
             result.append('')
         return result
 
-    @classmethod
-    def get_schema(cls, subrecord):
-        return schemas.extract_download_schema_for_model(subrecord)
-
 
 class EpisodeSubrecordCsvRenderer(CsvRenderer):
     non_field_csv_columns = (
@@ -252,13 +252,6 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
         ),
     )
 
-    def get_field_names_to_render(self):
-        field_names = super(
-            EpisodeSubrecordCsvRenderer, self
-        ).get_field_names_to_render()
-        field_names.remove("id")
-        return field_names
-
     def __init__(self, model, episode_queryset, user, fields=None):
         queryset = model.objects.filter(episode__in=episode_queryset)
 
@@ -266,9 +259,12 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
             model, queryset, user, fields
         )
 
-    @classmethod
-    def get_schema(cls, subrecord):
-        return schemas.extract_download_schema_for_model(subrecord)
+    def get_field_names_to_render(self):
+        field_names = super(
+            EpisodeSubrecordCsvRenderer, self
+        ).get_field_names_to_render()
+        field_names.remove("id")
+        return field_names
 
     def get_display_name(self):
         return self.model.get_display_name()
@@ -300,7 +296,7 @@ class EpisodeSubrecordCsvRenderer(CsvRenderer):
 
 
 class ExtractCsvSerialiser(CsvRenderer, discoverable.DiscoverableFeature):
-    module_name = 'extract'
+    module_name = 'extract_serialisers'
 
     @classmethod
     def api_name_to_serialiser_cls(cls):
@@ -311,6 +307,8 @@ class ExtractCsvSerialiser(CsvRenderer, discoverable.DiscoverableFeature):
         }
         for subrecord in subrecords.subrecords():
             api_name = subrecord.get_api_name()
+            if api_name in slugs_to_serialiser:
+                continue
 
             if subrecord._advanced_searchable:
                 if api_name in patient_subrecords_api_names:
@@ -320,13 +318,18 @@ class ExtractCsvSerialiser(CsvRenderer, discoverable.DiscoverableFeature):
         return slugs_to_serialiser
 
     @classmethod
+    def get_model_for_api_name(cls, api_name):
+        if api_name == "episode":
+            return Episode
+        return subrecords.get_subrecord_from_api_name(api_name)
+
+    @classmethod
     def get_data_dictionary_schema(cls):
         result = []
         api_name_to_serialiser_cls = cls.api_name_to_serialiser_cls()
         subrecords_and_episode = itertools.chain(
             subrecords.subrecords(), [Episode]
         )
-
         for some_model in subrecords_and_episode:
             # there will be no schema if its advanced searchable false
             # and hasn't been overridden
@@ -380,7 +383,7 @@ class EpisodeCsvRenderer(ExtractCsvSerialiser):
 
     @classmethod
     def get_schema(cls, episode_cls):
-        schema = schemas.extract_download_schema_for_model(episode_cls)
+        schema = super(EpisodeCsvRenderer, cls).get_schema(episode_cls)
         schema["fields"].append(dict(
             name="team",
             title="Team",

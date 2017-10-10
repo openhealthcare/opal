@@ -256,6 +256,15 @@ class TestBasicCsvRenderer(PatientEpisodeTestCase):
                     csv.writer().writerow.mock_calls[1][1][0], ["row"]
                 )
 
+    @patch('opal.core.search.extract_serialisers.schemas')
+    def test_get_schema(self, schemas):
+        schemas.extract_download_schema_for_model.return_value = "some_result"
+        result = extract_serialisers.CsvRenderer.get_schema(FamousLastWords)
+        schemas.extract_download_schema_for_model.assert_called_once_with(
+            FamousLastWords
+        )
+        self.assertEqual(result, "some_result")
+
 
 class TestEpisodeCsvRenderer(PatientEpisodeTestCase):
 
@@ -295,6 +304,35 @@ class TestEpisodeCsvRenderer(PatientEpisodeTestCase):
         # make sure we keep historic tags
         self.episode.set_tag_names(["leaves"], self.user)
         self.assertIn(b"trees;leaves", renderer.get_row(self.episode))
+
+    def test_get_display_name(self):
+        renderer = extract_serialisers.EpisodeCsvRenderer(
+            models.Episode,
+            models.Episode.objects.all(),
+            self.user
+        )
+
+        self.assertEqual("Episode", renderer.get_display_name())
+
+    @patch('opal.core.search.extract_serialisers.schemas')
+    def test_get_schema(self, schemas):
+        schemas.extract_download_schema_for_model.return_value = dict(
+            fields=[]
+        )
+        self.assertEqual(
+            extract_serialisers.EpisodeCsvRenderer.get_schema(models.Episode),
+            dict(
+                fields=[dict(
+                    name="team",
+                    title="Team",
+                    type="string",
+                    type_display_name="Text Field"
+                )]
+            )
+        )
+        schemas.extract_download_schema_for_model.assert_called_once_with(
+            models.Episode
+        )
 
 
 class NestedEpisodeCsvRendererTestCase(PatientEpisodeTestCase):
@@ -585,3 +623,98 @@ class TestEpisodeSubrecordCsvRenderer(PatientEpisodeTestCase):
         )
         rendered = renderer.get_row(self.colour)
         self.assertEqual([b"1", b"1", b"blue"], rendered)
+
+
+class TestExtractCsvSerialiser(PatientEpisodeTestCase):
+    def test_get_model_for_episode_api_name(self):
+        als = extract_serialisers.ExtractCsvSerialiser.get_model_for_api_name(
+            "episode"
+        )
+        self.assertEqual(als, models.Episode)
+
+    def test_get_model_for_subrecord_api_name(self):
+        als = extract_serialisers.ExtractCsvSerialiser.get_model_for_api_name(
+            "episode_name"
+        )
+        self.assertEqual(als, EpisodeName)
+
+    @patch('opal.core.search.extract_serialisers.ExtractCsvSerialiser.list')
+    @patch('opal.core.search.extract_serialisers.subrecords')
+    def test_get_api_name_to_serialiser_cls_patient_subrecord(
+        self, subrecords, discoverable_list
+    ):
+        discoverable_list.return_value = []
+        subrecords.subrecords.return_value = [FamousLastWords]
+        subrecords.patient_subrecords.return_value = [FamousLastWords]
+        r = extract_serialisers.ExtractCsvSerialiser.api_name_to_serialiser_cls()
+        ps = extract_serialisers.PatientSubrecordCsvRenderer
+        self.assertEqual(
+            r, dict(
+                famous_last_words=ps
+            )
+        )
+
+    @patch('opal.core.search.extract_serialisers.ExtractCsvSerialiser.list')
+    @patch('opal.core.search.extract_serialisers.subrecords')
+    def test_get_api_name_to_serialiser_cls_episode_subrecord(
+        self, subrecords, discoverable_list
+    ):
+        discoverable_list.return_value = []
+        subrecords.subrecords.return_value = [EpisodeName]
+        subrecords.patient_subrecords.return_value = []
+        r = extract_serialisers.ExtractCsvSerialiser.api_name_to_serialiser_cls()
+        es = extract_serialisers.EpisodeSubrecordCsvRenderer
+        self.assertEqual(
+            r, dict(
+                episode_name=es
+            )
+        )
+
+    @patch('opal.core.search.extract_serialisers.ExtractCsvSerialiser.list')
+    @patch('opal.core.search.extract_serialisers.subrecords')
+    def test_get_api_name_to_serialiser_cls_excluded(
+        self, subrecords, discoverable_list
+    ):
+        discoverable_list.return_value = []
+        subrecords.subrecords.return_value = [PatientColour]
+        subrecords.patient_subrecords.return_value = [PatientColour]
+        r = extract_serialisers.ExtractCsvSerialiser.api_name_to_serialiser_cls()
+        self.assertEqual(
+            r, dict()
+        )
+
+    @patch('opal.core.search.extract_serialisers.ExtractCsvSerialiser.list')
+    @patch('opal.core.search.extract_serialisers.subrecords')
+    def test_get_api_name_to_serialiser_cls_overridden(
+        self, subrecords, discoverable_list
+    ):
+        class EpisodeNameOverride(
+            extract_serialisers.ExtractCsvSerialiser
+        ):
+            slug = "episode_name"
+        discoverable_list.return_value = [EpisodeNameOverride]
+        subrecords.subrecords.return_value = [EpisodeName]
+        r = extract_serialisers.ExtractCsvSerialiser.api_name_to_serialiser_cls()
+        self.assertEqual(
+            r, dict(episode_name=EpisodeNameOverride)
+        )
+
+    @patch('opal.core.search.extract_serialisers.subrecords')
+    @patch(
+        'opal.core.search.extract_serialisers.EpisodeCsvRenderer.get_schema'
+    )
+    @patch('opal.core.search.extract_serialisers.CsvRenderer.get_schema')
+    def test_get_data_dictionary_schema(
+        self, get_schema, episode_get_schema, subrecords
+    ):
+        episode_get_schema.return_value = dict(display_name="episode schema")
+        get_schema.return_value = dict(display_name="csv schema")
+        subrecords.subrecords.return_value = (EpisodeName, PatientColour,)
+        ecs = extract_serialisers.ExtractCsvSerialiser
+        result = ecs.get_data_dictionary_schema()
+        self.assertEqual(
+            result, [get_schema.return_value, episode_get_schema.return_value]
+        )
+        episode_get_schema.assert_called_once_with(models.Episode)
+        # we don't call patient colour because its excluded
+        get_schema.assert_called_once_with(EpisodeName)

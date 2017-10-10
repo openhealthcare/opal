@@ -9,8 +9,6 @@ import os
 import tempfile
 import zipfile
 
-from opal.models import Episode
-from opal.core import subrecords
 from opal.core.search.extract_serialisers import ExtractCsvSerialiser
 
 from django.conf import settings
@@ -54,16 +52,13 @@ def generate_nested_csv_extract(root_dir, episodes, user, field_dict):
     slugs_to_serialisers = ExtractCsvSerialiser.api_name_to_serialiser_cls()
 
     for model_api_name, model_fields in field_dict.items():
-        if model_api_name == "episode":
-            model = Episode
-        else:
-            model = subrecords.get_subrecord_from_api_name(model_api_name)
         serialiser_cls = slugs_to_serialisers.get(model_api_name, None)
 
         if not serialiser_cls:
             # if for whatever reason someone tries to extract a model api name
             # we don't allow, just skip it
             continue
+        model = ExtractCsvSerialiser.get_model_for_api_name(model_api_name)
 
         renderers.append(serialiser_cls(
             model, episodes, user, fields=field_dict[model_api_name]
@@ -100,10 +95,7 @@ def generate_multi_csv_extract(root_dir, episodes, user):
     for slug, serialiser_cls in slugs_to_serialisers.items():
         file_name = "{}.csv".format(slug)
         full_file_name = os.path.join(root_dir, file_name)
-        if slug == 'episode':
-            model = Episode
-        else:
-            model = subrecords.get_subrecord_from_api_name(slug)
+        model = ExtractCsvSerialiser.get_model_for_api_name(slug)
         renderer = serialiser_cls(model, episodes, user)
         if renderer.exists():
             renderer.write_to_file(full_file_name)
@@ -116,14 +108,13 @@ def get_description_with_fields(episodes, user, description, fields):
     field_description = []
     slugs_to_serialisers = ExtractCsvSerialiser.api_name_to_serialiser_cls()
 
-    for subrecord_api_name, subrecord_fields in fields.items():
-        serialiser_cls = slugs_to_serialisers.get(subrecord_api_name, None)
+    for serialiser_api_name, subrecord_fields in fields.items():
+        serialiser_cls = slugs_to_serialisers.get(serialiser_api_name, None)
         if not serialiser_cls:
             continue
-        if subrecord_api_name == 'episode':
-            model = Episode
-        else:
-            model = subrecords.get_subrecord_from_api_name(subrecord_api_name)
+        model = ExtractCsvSerialiser.get_model_for_api_name(
+            serialiser_api_name
+        )
 
         serialiser = serialiser_cls(model, episodes, user, fields=fields)
 
