@@ -59,6 +59,23 @@ class SerialisableTestCase(OpalTestCase):
             models.ForeignKey, SerialisableModel._get_field_type('patient_id')
         )
 
+    def test_get_display_name_from_property(self):
+        self.assertEqual(
+            'Wearer of Hats', test_models.HatWearer.get_display_name()
+        )
+
+    def test_get_display_name_from_meta_verbose_name(self):
+        self.assertEqual(
+            'Invisible Wearer of Hats',
+            test_models.InvisibleHatWearer.get_display_name()
+        )
+
+    def test_get_display_name_from_verbose_name_but_capwords(self):
+        self.assertEqual(
+            'Dog Owner',
+            test_models.DogOwner.get_display_name()
+        )
+
     def test_get_description(self):
         self.assertEqual(
             SerialisableModel.get_description(), "so this is nice"

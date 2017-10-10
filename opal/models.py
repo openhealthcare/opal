@@ -930,18 +930,6 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
         return camelcase_to_underscore(cls._meta.object_name)
 
     @classmethod
-    def get_icon(cls):
-        return getattr(cls, '_icon', None)
-
-    @classmethod
-    def get_display_name(cls):
-        if hasattr(cls, '_title'):
-            return cls._title
-        if cls._meta.verbose_name.islower():
-            return cls._meta.verbose_name.title()
-        return cls._meta.verbose_name
-
-    @classmethod
     def _get_template(cls, template, prefixes=None):
         template_locations = []
 

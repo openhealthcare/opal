@@ -18,7 +18,7 @@ from opal.core import patient_lists
 from opal.tests import test_patient_lists
 from opal.tests.models import (
     FamousLastWords, PatientColour, ExternalSubRecord, SymptomComplex,
-    PatientConsultation, Birthday, DogOwner, HatWearer, InvisibleHatWearer,
+    PatientConsultation, Birthday, DogOwner, HatWearer,
     HouseOwner, HoundOwner, Colour, FavouriteColour, Dinner
 )
 
@@ -247,21 +247,6 @@ class SubrecordTestCase(OpalTestCase):
             "a_subrecord_b"
         ])
         self.assertEqual(result, "found")
-
-    def test_get_display_name_from_property(self):
-        self.assertEqual('Wearer of Hats', HatWearer.get_display_name())
-
-    def test_get_display_name_from_meta_verbose_name(self):
-        self.assertEqual(
-            'Invisible Wearer of Hats',
-            InvisibleHatWearer.get_display_name()
-        )
-
-    def test_get_display_name_from_verbose_name_but_capwords(self):
-        self.assertEqual(
-            'Dog Owner',
-            DogOwner.get_display_name()
-        )
 
     def test_date_time_deserialisation(self):
         patient, _ = self.new_patient_and_episode_please()
