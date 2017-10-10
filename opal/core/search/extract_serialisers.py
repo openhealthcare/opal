@@ -46,9 +46,6 @@ class CsvColumn(object):
         else:
             self.display_name = self.name.title()
 
-    def to_schema(self):
-        pass
-
 
 class CsvRenderer(object):
     """
