@@ -38,19 +38,21 @@ class PatientEpisodeTestCase(OpalTestCase):
 
 
 class GenerateMultiFilesTestCase(OpalTestCase):
-    @patch('opal.core.search.extract.subrecords.subrecords')
-    @patch('opal.core.search.extract.ExtractCsvSerialiser')
+    @patch(
+        'opal.core.search.extract.ExtractCsvSerialiser.\
+api_name_to_serialiser_cls'
+    )
     @patch('opal.core.search.extract.write_data_dictionary')
     def test_generate_multi_csv_extract(
-        self, write_data_dictionary, ExtractCsvSerialiser, subrecords
+        self, write_data_dictionary, api_name_to_serialiser_cls
     ):
         patient, episode = self.new_patient_and_episode_please()
-        ExtractCsvSerialiser.api_name_to_serialiser_cls.return_value = {
+        api_name_to_serialiser_cls.return_value = {
             "hat_wearer": extract_serialisers.EpisodeSubrecordCsvRenderer,
             "house_owner": extract_serialisers.PatientSubrecordCsvRenderer,
             "episode": extract_serialisers.EpisodeCsvRenderer
         }
-        subrecords.return_value = [HatWearer, HouseOwner]
+
         HatWearer.objects.create(name="Indiana", episode=episode)
         HouseOwner.objects.create(patient=patient)
         with patch.object(
@@ -83,20 +85,6 @@ class GenerateMultiFilesTestCase(OpalTestCase):
             write_data_dictionary.call_args[0][0],
             'somewhere/data_dictionary.html'
         )
-
-    @patch('opal.core.search.extract.subrecords.subrecords')
-    @patch('opal.core.search.extract.ExtractCsvSerialiser')
-    @patch('opal.core.search.extract.write_data_dictionary')
-    def test_exclude_subrecords(
-        self, write_data_dictionary, ExtractCsvSerialiser, subrecords
-    ):
-        ExtractCsvSerialiser.write_to_file
-        ExtractCsvSerialiser.api_name_to_serialiser_cls.return_value = {}
-        subrecords.return_value = [PatientColour]
-        extract.generate_multi_csv_extract(
-            "somewhere", models.Episode.objects.all(), self.user
-        )
-        self.assertEqual(ExtractCsvSerialiser.write_to_file.call_count, 0)
 
 
 @patch('opal.core.search.extract.csv')
@@ -402,12 +390,19 @@ Death Indicator"
         )
 
 
-@patch('opal.core.search.extract.subrecords.subrecords')
+@patch('opal.core.search.extract.ExtractCsvSerialiser.\
+api_name_to_serialiser_cls'
+)
 @patch('opal.core.search.extract.zipfile')
 class ZipArchiveTestCase(OpalTestCase):
-    def test_subrecords(self, zipfile, subrecords):
+    def test_subrecords(self, zipfile, api_name_to_serialiser_cls):
         patient, episode = self.new_patient_and_episode_please()
-        subrecords.return_value = [HatWearer, HouseOwner]
+        api_name_to_serialiser_cls.return_value = {
+            "hat_wearer": extract_serialisers.EpisodeSubrecordCsvRenderer,
+            "house_owner": extract_serialisers.PatientSubrecordCsvRenderer,
+            "episode": extract_serialisers.EpisodeCsvRenderer
+        }
+
         HatWearer.objects.create(name="Indiana", episode=episode)
         HouseOwner.objects.create(patient=patient)
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
@@ -423,10 +418,14 @@ class ZipArchiveTestCase(OpalTestCase):
         }
         self.assertEqual(base_names, expected)
 
-    def test_subrecords_if_none(self, zipfile, subrecords):
+    def test_subrecords_if_none(self, zipfile, api_name_to_serialiser_cls):
         # if there are no subrecords we don't expect them to write to the file
         patient, episode = self.new_patient_and_episode_please()
-        subrecords.return_value = [HatWearer, HouseOwner]
+        api_name_to_serialiser_cls.return_value = {
+            "hat_wearer": extract_serialisers.EpisodeSubrecordCsvRenderer,
+            "house_owner": extract_serialisers.PatientSubrecordCsvRenderer,
+            "episode": extract_serialisers.EpisodeCsvRenderer
+        }
         HouseOwner.objects.create(patient=patient)
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
         call_args = zipfile.ZipFile.return_value.__enter__.return_value.write.call_args_list
@@ -440,9 +439,13 @@ class ZipArchiveTestCase(OpalTestCase):
         }
         self.assertEqual(base_names, expected)
 
-    def test_subrecords_if_empty_query(self, zipfile, subrecords):
+    def test_subrecords_if_empty_query(self, zipfile, api_name_to_serialiser_cls):
         # if there are no subrecords we don't expect them to write to the file
-        subrecords.return_value = [HatWearer, HouseOwner]
+        api_name_to_serialiser_cls.return_value = {
+            "hat_wearer": extract_serialisers.EpisodeSubrecordCsvRenderer,
+            "house_owner": extract_serialisers.PatientSubrecordCsvRenderer,
+            "episode": extract_serialisers.EpisodeCsvRenderer
+        }
         extract.zip_archive(models.Episode.objects.all(), 'this', self.user)
         call_args = zipfile.ZipFile.return_value.__enter__.return_value.write.call_args_list
         self.assertEqual(3, len(call_args))
@@ -455,7 +458,13 @@ class ZipArchiveTestCase(OpalTestCase):
     @patch('opal.core.search.extract.generate_nested_csv_extract')
     @patch('opal.core.search.extract.generate_multi_csv_extract')
     def test_nested_extract_called(
-        self, multi, nested, write_description, os, zipfile, subrecords
+        self,
+        multi,
+        nested,
+        write_description,
+        os,
+        zipfile,
+        api_name_to_serialiser_cls
     ):
         write_description.return_value = ("some_file_path", "some_file",)
         os.path.join.return_value = "some_temp_dir"
@@ -482,7 +491,13 @@ class ZipArchiveTestCase(OpalTestCase):
     @patch('opal.core.search.extract.generate_nested_csv_extract')
     @patch('opal.core.search.extract.generate_multi_csv_extract')
     def test_nested_extract_not_called(
-        self, multi, nested, write_description, os, zipfile, subrecords
+        self,
+        multi,
+        nested,
+        write_description,
+        os,
+        zipfile,
+        api_name_to_serialiser_cls
     ):
         write_description.return_value = ("some_file_path", "some_file",)
         os.path.join.return_value = "some_temp_dir"
