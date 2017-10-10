@@ -266,7 +266,7 @@ class SubrecordTestCase(OpalTestCase):
     def test_date_time_deserialisation(self):
         patient, _ = self.new_patient_and_episode_please()
         birthday_date = "10/1/2000"
-        birthday_party= "11/2/2016 20:30:10"
+        birthday_party = "11/2/2016 20:30:10"
         birthday = Birthday()
         birthday.update_from_dict(dict(
             birth_date=birthday_date,
