@@ -235,7 +235,7 @@ class Serialisable(object):
         enum = cls.get_field_enum(name)
 
         if enum:
-            return "One of {}".format(",".join([force_str(e) for e in enum]))
+            return "One of {}".format(", ".join([force_str(e) for e in enum]))
 
         related_fields = (
             models.ForeignKey, models.ManyToManyField,

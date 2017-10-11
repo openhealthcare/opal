@@ -149,7 +149,7 @@ class SerialisableTestCase(OpalTestCase):
 
     def test_description_enum(self):
         description = test_models.FavouriteColour.get_field_description('name')
-        self.assertEqual(description, "orange is the new black")
+        self.assertEqual(description, "One of purple, yellow, blue")
 
     def test_build_field_schema(self):
         schema = SerialisableModel.build_field_schema()

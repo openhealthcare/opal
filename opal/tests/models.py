@@ -137,7 +137,6 @@ class FavouriteColour(models.PatientSubrecord):
     _is_singleton = True
     name = dmodels.CharField(
         max_length=200, blank=True, null=True, choices=COLOUR_CHOICES,
-        help_text="orange is the new black"
     )
 
 
@@ -171,7 +170,6 @@ if not getattr(models.Episode, 'location_set', None):
 
         ward = dmodels.CharField(max_length=200, blank=True, null=True)
         bed = dmodels.CharField(max_length=200, blank=True, null=True)
-
 
 
 if not getattr(models.Episode, 'symptoms', None):
