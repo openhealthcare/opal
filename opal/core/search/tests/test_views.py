@@ -14,7 +14,7 @@ from mock import patch, mock_open
 from opal import models
 from opal.tests import models as tmodels
 from opal.core.test import OpalTestCase
-from opal.core.search import views
+from opal.core.search import views, queries, extract
 
 
 class BaseSearchTestCase(OpalTestCase):
@@ -494,4 +494,103 @@ class DownloadTestCase(BaseSearchTestCase):
         )
 
         response = self.client.post(url, post_data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_non_asyc_extract_with_slice(self):
+        url = reverse("extract_download")
+        post_data = {
+            "criteria":
+                json.dumps([{
+                    "combine": "and",
+                    "column": "demographics",
+                    "field": "hospital_number",
+                    "queryType": "Contains",
+                    "query": "a",
+                    "lookup_list": [],
+                }]),
+            "data_slice":
+                json.dumps({
+                    "demographics": ["date_of_birth"]
+                })
+        }
+
+        self.assertTrue(
+            self.client.login(
+                username=self.user.username,
+                password=self.PASSWORD
+            )
+        )
+
+        response = self.client.post(url, post_data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_generate_zip(self):
+        m = mock_open(read_data='This is a file')
+        url = reverse("extract_download")
+        criteria = [{
+            "combine": "and",
+            "column": "demographics",
+            "field": "hospital_number",
+            "queryType": "Contains",
+            "query": "007",
+            "lookup_list": [],
+        }]
+
+        data_slice = {
+            "demographics": ["date_of_birth"]
+        }
+        post_data = {
+            "criteria":
+                json.dumps(criteria),
+            "data_slice":
+                json.dumps(data_slice)
+        }
+
+        self.assertTrue(
+            self.client.login(
+                username=self.user.username,
+                password=self.PASSWORD
+            )
+        )
+
+        with patch('opal.core.search.views.open', m, create=True):
+            with patch(
+                'opal.core.search.views.queries.create_query',
+                side_effect=queries.create_query
+            ) as create_query:
+                with patch(
+                    'opal.core.search.views.zip_archive',
+                    side_effect=extract.zip_archive
+                ) as zip_archive:
+                    m().read.return_value = "something"
+                    response = self.client.post(url, post_data)
+
+        self.assertEqual(
+            create_query.call_args[0][0].username, 'testuser'
+        )
+        self.assertEqual(
+            create_query.call_args[0][1], criteria
+        )
+
+        # asserting the response of the query
+        self.assertEqual(
+            zip_archive.call_args[0][0][0], self.episode
+        )
+
+        # asserting that some form of description is returned
+        self.assertTrue(
+            isinstance(zip_archive.call_args[0][1], str)
+        )
+
+        # assert that the user is passed in
+        self.assertEqual(
+            zip_archive.call_args[0][2].username, 'testuser'
+        )
+
+        # assert that the data slice is passed in
+        self.assertEqual(
+            zip_archive.call_args[1]["fields"], data_slice
+        )
+
+        self.assertTrue(m.call_args[0][0].endswith('extract.zip'))
         self.assertEqual(response.status_code, 200)
