@@ -141,6 +141,16 @@ class SerialisableTestCase(OpalTestCase):
             "Relationship"
         )
 
+    def test_description(self):
+        description = test_models.FamousLastWords.get_field_description(
+            'words'
+        )
+        self.assertEqual(description, "Ultimate popular words")
+
+    def test_description_enum(self):
+        description = test_models.FavouriteColour.get_field_description('name')
+        self.assertEqual(description, "orange is the new black")
+
     def test_build_field_schema(self):
         schema = SerialisableModel.build_field_schema()
         expected = [

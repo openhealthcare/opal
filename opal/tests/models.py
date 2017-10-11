@@ -111,7 +111,13 @@ class FamousLastWords(models.PatientSubrecord):
     _is_singleton = True
     _read_only = True
 
-    words = dmodels.CharField(verbose_name="only words", max_length=200, blank=True, null=True)
+    words = dmodels.CharField(
+        verbose_name="only words",
+        max_length=200,
+        blank=True,
+        null=True,
+        help_text="Ultimate popular words"
+    )
 
 
 class EpisodeName(models.EpisodeSubrecord):

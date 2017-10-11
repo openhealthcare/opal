@@ -376,10 +376,6 @@ class SubrecordTestCase(OpalTestCase):
         enum = FavouriteColour.get_field_enum('name')
         self.assertEqual(enum, ["purple", "yellow", "blue"])
 
-    def test_description(self):
-        description = FavouriteColour.get_field_description('name')
-        self.assertEqual(description, "orange is the new black")
-
     def test_verbose_name_abbreviation(self):
         # if a word is an abbreviation already, don't title case it!
         osd = DogOwner._get_field_title("ownership_start_date")
