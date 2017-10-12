@@ -30,7 +30,7 @@ class PatientSummaryTestCase(OpalTestCase):
         summary = queries.PatientSummary(episode)
         self.assertEqual(None, summary.start)
         the_date = date(day=27, month=1, year=1972)
-        episode2 = patient.create_episode(start=the_date)
+        episode2 = patient.create_episode(date_of_admission=the_date)
         summary.update(episode2)
         self.assertEqual(summary.start, the_date)
 
@@ -39,7 +39,7 @@ class PatientSummaryTestCase(OpalTestCase):
         summary = queries.PatientSummary(episode)
         self.assertEqual(None, summary.start)
         the_date = date(day=27, month=1, year=1972)
-        episode2 = patient.create_episode(end=the_date)
+        episode2 = patient.create_episode(discharge_date=the_date)
         summary.update(episode2)
         self.assertEqual(summary.end, the_date)
 
@@ -74,8 +74,6 @@ class DatabaseQueryTestCase(OpalTestCase):
     def setUp(self):
         self.patient, self.episode = self.new_patient_and_episode_please()
         self.episode.date_of_episode = self.DATE_OF_EPISODE
-        self.episode.start = self.DATE_OF_EPISODE
-        self.episode.end = self.DATE_OF_EPISODE
         self.episode.save()
         self.demographics = self.patient.demographics_set.get()
         self.demographics.first_name = "Sally"
@@ -264,32 +262,6 @@ class DatabaseQueryTestCase(OpalTestCase):
 
         query = queries.DatabaseQuery(self.user, [criteria])
         self.assertEqual([self.episode, other_episode], query.get_episodes())
-
-    def test_fuzzy_query(self):
-        """ It should return the patients that
-            match the criteria ordered in by
-            their related episode id descending
-        """
-        patient_1, episode_1 = self.new_patient_and_episode_please()
-        patient_2, episode_2 = self.new_patient_and_episode_please()
-        patient_3, episode_3 = self.new_patient_and_episode_please()
-        testmodels.Demographics.objects.filter(
-            patient__in=[patient_1, patient_2, patient_3]
-        ).update(
-            first_name="tree"
-        )
-        patient_2.create_episode()
-        # this patient, episode should not be found
-        self.new_patient_and_episode_please()
-        query = queries.DatabaseQuery(self.user, "tree")
-        patients = query.fuzzy_query()
-
-        # expectation is that patient 2 comes last as
-        # they have the most recent episode
-        self.assertEqual(
-            list(patients),
-            [patient_2, patient_3, patient_1]
-        )
 
     def test_distinct_episodes_for_m2m_fields_containing_synonsyms_and_names(
         self
@@ -705,11 +677,11 @@ class DatabaseQueryTestCase(OpalTestCase):
         """
         start_date = date(day=1, month=2, year=2014)
         self.patient.create_episode(
-            start=start_date
+            date_of_episode=start_date
         )
         end_date = date(day=1, month=2, year=2016)
         self.patient.create_episode(
-            end=end_date
+            date_of_episode=end_date
         )
         query = queries.DatabaseQuery(self.user, self.name_criteria)
         summaries = query.get_patient_summaries()

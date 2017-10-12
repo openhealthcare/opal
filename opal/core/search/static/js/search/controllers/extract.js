@@ -2,7 +2,7 @@ angular.module('opal.controllers').controller(
   'ExtractCtrl',
   function(
     $scope, $http, $window, $modal, $timeout, PatientSummary, Paginator,
-    referencedata, ngProgressLite, profile, filters, extractSchema
+    referencedata, ngProgressLite, profile, filters, schema
   ){
     "use strict";
 
@@ -10,7 +10,7 @@ angular.module('opal.controllers').controller(
     $scope.limit = 10;
     $scope.JSON = window.JSON;
     $scope.filters = filters;
-    $scope.columns = extractSchema.getAdvancedSearchColumns();
+    $scope.columns = schema.getAdvancedSearchColumns();
     $scope.searched = false;
     $scope.currentPageNumber = 1;
     $scope.paginator = new Paginator($scope.search);
@@ -32,7 +32,7 @@ angular.module('opal.controllers').controller(
 
     $scope.criteria = [_.clone($scope.model)];
 
-    $scope.readableQueryType = function(someQuery){
+    $scope.readableQuery = function(someQuery){
       if(!someQuery){
         return someQuery;
       }
@@ -42,9 +42,6 @@ angular.module('opal.controllers').controller(
       }
       if(someQuery === "Before" || someQuery === "After"){
         result = "is " + result;
-      }
-      if(someQuery === "All Of" || someQuery === "Any Of"){
-        result = "is"
       }
 
       return result.toLowerCase();
@@ -179,10 +176,6 @@ angular.module('opal.controllers').controller(
 
     $scope.isSelect = function(column, field){
         return $scope.isType(column, field, "many_to_many");
-    };
-
-    $scope.isSelectMany = function(column, field){
-        return $scope.isType(column, field, "many_to_many_multi_select");
     };
 
     $scope.isDate = function(column, field){
@@ -350,4 +343,9 @@ angular.module('opal.controllers').controller(
         $scope.filters.push(result);
       });
     };
+
+    $scope.jumpToEpisode = function(episode){
+        window.open('#/episode/'+episode.id, '_blank');
+    };
+
 });

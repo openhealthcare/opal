@@ -1,7 +1,7 @@
 from opal.core.discoverable import DiscoverableFeature
 from opal.core.exceptions import Error
 from opal.utils import camelcase_to_underscore
-from opal.models import Episode, Tagging, deserialize_date
+from opal.models import Episode, deserialize_date
 
 
 class SearchException(Error):
@@ -82,11 +82,11 @@ class EpisodeStart(SearchRuleField):
 
     def query(self, given_query):
         val = deserialize_date(given_query['query'])
-        qs = Episode.objects.exclude(start=None)
+        RemovedNones = (i for i in Episode.objects.all() if i.start)
         if given_query['queryType'] == 'Before':
-            return qs.filter(start__lte=val)
+            return (i for i in RemovedNones if i.start <= val)
         elif given_query['queryType'] == 'After':
-            return qs.filter(start__gte=val)
+            return (i for i in RemovedNones if i.start >= val)
         else:
             err = "unrecognised query type for the start episode query with {}"
             raise SearchException(err.format(given_query['queryType']))
@@ -99,67 +99,17 @@ class EpisodeEnd(SearchRuleField):
 
     def query(self, given_query):
         val = deserialize_date(given_query['query'])
-        qs = Episode.objects.exclude(end=None)
+        RemovedNones = (i for i in Episode.objects.all() if i.end)
         if given_query['queryType'] == 'Before':
-            return qs.filter(end__lte=val)
+            return (i for i in RemovedNones if i.end <= val)
         elif given_query['queryType'] == 'After':
-            return qs.filter(end__gte=val)
+            return (i for i in RemovedNones if i.end >= val)
         else:
-            err = "unrecognised query type for the start episode query with {}"
+            err = "unrecognised query type for the end episode query with {}"
             raise SearchException(err.format(given_query['queryType']))
-
-
-class EpisodeTeam(SearchRuleField):
-    ALL_OF = "All Of"
-    ANY_OF = "Any Of"
-
-    display_name = "Team"
-    description = "The team(s) related to an episode of care"
-    field_type = "many_to_many_multi_select"
-
-    @property
-    def enum(self):
-        return [i["title"] for i in Tagging.build_field_schema()]
-
-    def translate_titles_to_names(self, titles):
-        result = []
-        titles_not_found = set(titles)
-        for schema in Tagging.build_field_schema():
-            if schema["title"] in titles:
-                result.append(schema["name"])
-                titles_not_found.remove(schema["title"])
-
-        if titles_not_found:
-            raise SearchException(
-                "unable to find the tag titled {}".format(
-                    ",".join(titles_not_found)
-                )
-            )
-
-        return result
-
-    def query(self, given_query):
-        query_type = given_query["queryType"]
-        team_display_names = given_query['query']
-        if not query_type == self.ALL_OF:
-            if not query_type == self.ANY_OF:
-                err = """
-                    unrecognised query type for the episode team query with {}
-                """.strip()
-                raise SearchException(err.format(query_type))
-
-        team_names = self.translate_titles_to_names(team_display_names)
-        qs = Episode.objects.all()
-        if given_query["queryType"] == self.ALL_OF:
-            for team_name in team_names:
-                qs = qs.filter(tagging__value=team_name)
-        else:
-            qs = qs.filter(tagging__value__in=team_names)
-
-        return qs.distinct()
 
 
 class EpisodeQuery(SearchRule):
     display_name = "Episode"
     slug = "episode"
-    fields = (EpisodeStart, EpisodeEnd, EpisodeTeam,)
+    fields = (EpisodeStart, EpisodeEnd,)
