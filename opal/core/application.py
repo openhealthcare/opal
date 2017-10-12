@@ -62,7 +62,6 @@ class OpalApplication(object):
             "js/opal/services/patient.js",
             "js/opal/services/episode_visibility.js",
             "js/opal/services/episode_loader.js",
-            "js/opal/services/patient_summary.js",
             "js/opal/services/record_loader.js",
             "js/opal/services/extract_schema_loader.js",
             "js/opal/services/schema.js",
@@ -106,11 +105,6 @@ class OpalApplication(object):
         )
     ]
     default_episode_category = 'Inpatient'
-
-    opal_angular_exclude_tracking_qs = [
-        "/search",
-        "/extract",
-    ]
 
     @classmethod
     def get_core_javascripts(klass, namespace):

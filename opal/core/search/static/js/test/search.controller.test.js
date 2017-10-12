@@ -134,12 +134,12 @@ describe('SearchCtrl', function (){
             $httpBackend.flush();
         });
 
-        it("should redirect to the search page if we're not in search", function(){
+        it("should redirect to the search page", function(){
             locationDetails.href = "";
             locationDetails.pathname = "/somewhere";
             $scope.query.searchTerm = "Bond";
             $scope.search();
-            var expectedUrl = "/#/search?query=Bond";
+            var expectedUrl = "/search/#/?query=Bond";
             expect(locationDetails.href).toEqual(expectedUrl);
             $httpBackend.flush();
         });
@@ -149,21 +149,8 @@ describe('SearchCtrl', function (){
             locationDetails.pathname = "/somewhere";
             $scope.query.searchTerm = "Bond";
             $scope.search(3);
-            var expectedUrl = "/#/search?page_number=3&query=Bond";
+            var expectedUrl = "/search/#/?page_number=3&query=Bond";
             expect(locationDetails.href).toEqual(expectedUrl);
-            $httpBackend.flush();
-        });
-
-        it("should update the url if on the search page", function(){
-            locationDetails.href = "unchanged";
-            locationDetails.pathname = "/";
-            $scope.query.searchTerm = "Bond";
-            $scope.search();
-            var expectedSearch = {
-                query: "Bond",
-            };
-            expect(location.search()).toEqual(expectedSearch);
-            expect(locationDetails.href).toEqual("unchanged");
             $httpBackend.flush();
         });
     });

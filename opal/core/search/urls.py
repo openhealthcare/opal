@@ -7,6 +7,7 @@ from opal.core.search import views
 
 urlpatterns = patterns(
     '',
+    url(r'^search/$', views.SearchIndexView.as_view(), name="search_index"),
     url(r'^search/templates/search.html/?$',
         views.SearchTemplateView.as_view()),
 

@@ -27,6 +27,14 @@ class SaveFilterModalView(TemplateView):
     template_name = 'save_filter_modal.html'
 
 
+class SearchIndexView(LoginRequiredMixin, TemplateView):
+    """
+    Main entrypoint into the pathway portal service.
+    This is the entry point that loads in the pathway.
+    """
+    template_name = 'search/index.html'
+
+
 class SearchTemplateView(LoginRequiredMixin, TemplateView):
     template_name = 'search.html'
 

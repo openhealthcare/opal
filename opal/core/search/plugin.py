@@ -17,10 +17,17 @@ class SearchPlugin(plugins.OpalPlugin):
             'js/search/services/filters_loader.js',
             'js/search/services/filter_resource.js',
             "js/search/services/paginator.js",
+            "js/search/services/patient_summary.js",
         ],
         'opal.controllers': [
+            'js/search/app.js',
             'js/search/controllers/search.js',
             'js/search/controllers/extract.js',
             "js/search/controllers/save_filter.js",
         ]
     }
+
+    opal_angular_exclude_tracking_qs = [
+        "/search",
+        "/extract",
+    ]

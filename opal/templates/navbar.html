@@ -25,7 +25,9 @@
     <div class="collapse navbar-collapse" id="main-navbar">
       {% menu %}
       {% if user.profile.can_see_pid %}
-        {% include 'partials/_nav_search.html' %}
+        {% block nav_search %}
+          {% include 'partials/_nav_search.html' %}
+        {% endblock %}
       {% endif %}
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->

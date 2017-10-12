@@ -62,14 +62,21 @@ describe('utils.OPAL._track', function(){
 
     var location;
     var analytics;
+    var mockWindow;
 
     beforeEach(function(){
         location = jasmine.createSpyObj('location', ['path', 'url']);
         analytics = jasmine.createSpyObj('analytics', ['pageTrack']);
+        mockWindow = {
+          location: {
+            hash: "",
+            pathname: ""
+          },
+        }
 
         OPAL.tracking.manualTrack = true;
         OPAL.tracking.opal_angular_exclude_tracking_prefix = ['something'];
-        OPAL.tracking.opal_angular_exclude_tracking_qs = ['anotherThing'];
+        OPAL.tracking.opal_angular_exclude_tracking_qs = ['anotherThing/#/'];
     });
 
     afterEach(function(){
@@ -79,22 +86,26 @@ describe('utils.OPAL._track', function(){
     })
 
     it('should track if not excluded', function(){
-      location.path.and.returnValue("trackThis");
-      location.url.and.returnValue("trackThis?that=this");
-      OPAL._track(location, analytics);
-      expect(analytics.pageTrack).toHaveBeenCalledWith("trackThis?that=this");
+      location.path.and.returnValue("please");
+      location.url.and.returnValue("please?that=this");
+      mockWindow.location.hash = "track_this"
+      mockWindow.location.pathname = "/#/please"
+      OPAL._track(location, analytics, mockWindow);
+      expect(analytics.pageTrack).toHaveBeenCalledWith("please?that=this");
     })
 
     it('should not track get urls if the url is excluded from tracking', function(){
-      location.path.and.returnValue("somethingElse");
-      OPAL._track(location, analytics);
+      mockWindow.location.pathname = "somethingElse"
+      mockWindow.location.hash = "/#/"
+      OPAL._track(location, analytics, mockWindow);
       expect(analytics.pageTrack).not.toHaveBeenCalled();
     });
 
     it('should not track the query params if the url is excluding query params from tracking', function(){
-      location.url.and.returnValue("anotherThing?something=tree");
+      mockWindow.location.pathname = "anotherThing"
+      mockWindow.location.hash = "/#/"
       location.path.and.returnValue("anotherThing")
-      OPAL._track(location, analytics);
+      OPAL._track(location, analytics, mockWindow);
       expect(analytics.pageTrack).toHaveBeenCalledWith('anotherThing');
     });
 });

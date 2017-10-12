@@ -38,20 +38,6 @@ app.config(
                  },
 			     templateUrl: function(params){ return '/templates/patient_detail.html' }
              })
-             .when('/search', {
-			     controller: 'SearchCtrl',
-			     templateUrl: '/search/templates/search.html',
-             })
-             .when('/extract', {
-                 controller: 'ExtractCtrl',
-                 templateUrl: '/search/templates/extract.html',
-                 resolve: {
-                     profile: function(UserProfile){ return UserProfile.load(); },
-                     schema: function(extractSchemaLoader){ return extractSchemaLoader; },
-                     filters: function(filtersLoader){ return filtersLoader(); },
-                     referencedata: function(Referencedata){ return Referencedata.load(); }
-                 }
-             })
              .when('/account', {
                  controller: 'AccountCtrl',
                  templateUrl: '/accounts/templates/account_detail.html'
