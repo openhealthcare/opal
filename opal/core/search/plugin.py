@@ -14,6 +14,8 @@ class SearchPlugin(plugins.OpalPlugin):
     javascripts = {
         'opal.services': [
             'js/search/services/filter.js',
+            'js/search/services/extract_schema.js',
+            'js/search/services/extract_schema_loader.js',
             'js/search/services/filters_loader.js',
             'js/search/services/filter_resource.js',
             "js/search/services/paginator.js",
