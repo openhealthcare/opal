@@ -106,11 +106,6 @@ class OpalApplication(object):
     ]
     default_episode_category = 'Inpatient'
 
-    opal_angular_exclude_tracking_qs = [
-        "/search",
-        "/extract",
-    ]
-
     @classmethod
     def get_core_javascripts(klass, namespace):
         """

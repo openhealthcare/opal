@@ -19,6 +19,9 @@ class PluginTestCase(OpalTestCase):
             head_extra = ['notareal_template.html']
             menuitems = [{'display': 'test'}]
             angular_module_deps = ['js/test.angular.mod.js']
+            opal_angular_exclude_tracking_qs = [
+                "/patient_details",
+            ]
 
         class TestPlugin2(plugins.OpalPlugin):
             stylesheets = ['css/test/notreal.scss']
@@ -56,8 +59,7 @@ class PluginTestCase(OpalTestCase):
         plugins.return_value = [self.plugin1]
         expected_prefix = []
         expected_qs = [
-            "/search",
-            "/extract",
+            "/patient_details",
         ]
         context = opalplugins.plugin_opal_angular_tracking_exclude()
         prefixes = list(context['excluded_tracking_prefix'])

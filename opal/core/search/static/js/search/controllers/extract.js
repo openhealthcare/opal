@@ -2,7 +2,7 @@ angular.module('opal.controllers').controller(
   'ExtractCtrl',
   function(
     $scope, $http, $window, $modal, $timeout, PatientSummary, Paginator,
-    referencedata, ngProgressLite, profile, filters, schema
+    referencedata, ngProgressLite, profile, filters, extractSchema
   ){
     "use strict";
 
@@ -10,7 +10,7 @@ angular.module('opal.controllers').controller(
     $scope.limit = 10;
     $scope.JSON = window.JSON;
     $scope.filters = filters;
-    $scope.columns = schema.getAdvancedSearchColumns();
+    $scope.columns = extractSchema.getAdvancedSearchColumns();
     $scope.searched = false;
     $scope.currentPageNumber = 1;
     $scope.paginator = new Paginator($scope.search);
@@ -124,7 +124,7 @@ angular.module('opal.controllers').controller(
 
     $scope.findField = function(columnName, fieldName){
       /*
-      * returns the field object from the schema when given column.name and field.name
+      * returns the field object from the extractSchema when given column.name and field.name
       */
       var column = $scope.findColumn(columnName);
       if(!column){return;}

@@ -1,4 +1,4 @@
-describe('ExtractCtrl', function(){
+fdescribe('ExtractCtrl', function(){
     "use strict";
 
 
@@ -304,12 +304,12 @@ describe('ExtractCtrl', function(){
             $modal       = $injector.get('$modal');
             $timeout     = $injector.get('$timeout');
             $controller  = $injector.get('$controller');
-            Schema = $injector.get('Schema');
+            ExtractSchema = $injector.get('ExtractSchema');
             PatientSummary = $injector.get('PatientSummary');
             Item = $injector.get('Item');
         });
 
-        var schema = new Schema(columnsData);
+        var extractSchema = new ExtractSchema(columnsData);
 
         var controller = $controller('ExtractCtrl',  {
             $scope : $scope,
@@ -317,12 +317,12 @@ describe('ExtractCtrl', function(){
             profile: {},
             options: optionsData,
             filters: [],
-            schema : schema,
+            extractSchema : extractSchema,
             PatientSummary: PatientSummary,
             referencedata: referencedata
         });
 
-        $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
+        // $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
         $scope.$apply();
         $httpBackend.flush();
     });
