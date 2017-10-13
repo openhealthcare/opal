@@ -92,15 +92,7 @@ episode_serialised = {
             'title': 'End',
             'type': 'date_time',
             'description': "Episode End"
-        },
-        {
-            'description': 'The team(s) related to an episode of care',
-            'enum': [],
-            'lookup_list': None,
-            'name': 'team',
-            'title': 'Team',
-            'type': 'many_to_many_multi_select'
-         }
+        }
     ],
     'display_name': 'Episode',
     'name': 'episode',
@@ -148,4 +140,5 @@ class ExtractSchemaTestCase(TestCase):
         subrecords.return_value = [Colour]
         tagging.return_value = []
         self.assertEqual(episode_serialised, schemas.extract_schema()[0])
-        self.assertEqual(colour_serialized, schemas.extract_schema()[1])
+        self.assertEqual(tagging_serialized, schemas.extract_schema()[1])
+        self.assertEqual(colour_serialized, schemas.extract_schema()[2])
