@@ -30,7 +30,7 @@ class PatientSummaryTestCase(OpalTestCase):
         summary = queries.PatientSummary(episode)
         self.assertEqual(None, summary.start)
         the_date = date(day=27, month=1, year=1972)
-        episode2 = patient.create_episode(date_of_admission=the_date)
+        episode2 = patient.create_episode(start=the_date)
         summary.update(episode2)
         self.assertEqual(summary.start, the_date)
 
@@ -39,7 +39,7 @@ class PatientSummaryTestCase(OpalTestCase):
         summary = queries.PatientSummary(episode)
         self.assertEqual(None, summary.start)
         the_date = date(day=27, month=1, year=1972)
-        episode2 = patient.create_episode(discharge_date=the_date)
+        episode2 = patient.create_episode(end=the_date)
         summary.update(episode2)
         self.assertEqual(summary.end, the_date)
 
@@ -73,7 +73,8 @@ class DatabaseQueryTestCase(OpalTestCase):
 
     def setUp(self):
         self.patient, self.episode = self.new_patient_and_episode_please()
-        self.episode.date_of_episode = self.DATE_OF_EPISODE
+        self.episode.start = self.DATE_OF_EPISODE
+        self.episode.end = self.DATE_OF_EPISODE
         self.episode.save()
         self.demographics = self.patient.demographics_set.get()
         self.demographics.first_name = "Sally"
@@ -677,11 +678,11 @@ class DatabaseQueryTestCase(OpalTestCase):
         """
         start_date = date(day=1, month=2, year=2014)
         self.patient.create_episode(
-            date_of_episode=start_date
+            start=start_date
         )
         end_date = date(day=1, month=2, year=2016)
         self.patient.create_episode(
-            date_of_episode=end_date
+            end=end_date
         )
         query = queries.DatabaseQuery(self.user, self.name_criteria)
         summaries = query.get_patient_summaries()

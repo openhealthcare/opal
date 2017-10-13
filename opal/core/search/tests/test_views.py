@@ -125,9 +125,11 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
             "total_pages": 1,
             "total_count": 0
         }
-        self.episode.date_of_episode = date(
+        episode_date = date(
             day=15, month=10, year=2015
         )
+        self.episode.start = episode_date
+        self.episode.end = episode_date
         self.episode.save()
 
     def test_not_logged_in(self):
