@@ -2,7 +2,6 @@
 // Main Opal Search Angular application
 //
 !(function(){
-  var opal = OPAL.module('opal');
   var app = OPAL.module('opal.search', [
       'ngRoute',
       'ngProgressLite',

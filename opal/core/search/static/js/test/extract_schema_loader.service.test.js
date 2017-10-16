@@ -35,11 +35,11 @@ describe('ExtractSchemaLoader', function() {
       var result;
 
       $httpBackend.whenGET('/search/api/extract/').respond(columns);
-      extractSchemaLoader.then(
+      extractSchemaLoader.load().then(
           function(r){ result = r; }
       );
-      $rootScope.$apply();
       $httpBackend.flush();
+      $rootScope.$apply();
 
       expect(!!result.columns).toEqual(true);
     });
@@ -47,9 +47,9 @@ describe('ExtractSchemaLoader', function() {
     it('should alert if the http request errors', function(){
       var result;
       $httpBackend.whenGET('/search/api/extract/').respond(500, 'NO');
-      extractSchemaLoader.then( function(r){ result = r; } );
-      $rootScope.$apply();
+      extractSchemaLoader.load().then( function(r){ result = r; } );
       $httpBackend.flush();
+      $rootScope.$apply();
 
       expect($window.alert).toHaveBeenCalledWith(
         'Extract schema could not be loaded'
