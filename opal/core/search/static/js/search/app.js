@@ -1,5 +1,5 @@
 //
-// Main Opal Pathway Angular application
+// Main Opal Search Angular application
 //
 !(function(){
   var opal = OPAL.module('opal');
@@ -26,8 +26,8 @@
         templateUrl: '/search/templates/extract.html',
         resolve: {
             profile: function(UserProfile){ return UserProfile.load(); },
-            extractSchema: function(extractSchemaLoader){ return extractSchemaLoader; },
-            filters: function(filtersLoader){ return filtersLoader(); },
+            extractSchema: function(extractSchemaLoader){ return extractSchemaLoader.load(); },
+            filters: function(filtersLoader){ return filtersLoader.load(); },
             referencedata: function(Referencedata){ return Referencedata.load(); }
         }
     })

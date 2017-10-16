@@ -1,4 +1,4 @@
-fdescribe('app', function() {
+describe('app', function() {
     "use strict";
 
     var $route;
@@ -19,7 +19,7 @@ fdescribe('app', function() {
       spyOn(filters, "load").and.returnValue("some filters");
 
       inject(function($injector){
-        $route = $injector.get('$route');
+        $route   = $injector.get('$route');
       });
     });
 
@@ -29,8 +29,8 @@ fdescribe('app', function() {
           var routed = $route.routes['/extract'];
           var resolve = routed.resolve;
           expect(resolve.profile(profile)).toBe("some profile");
-          // expect(resolve.extractSchema(extractSchema)).toBe("some schema");
-          // expect(resolve.filters(filters)).toBe("some filters");
+          expect(resolve.extractSchema(extractSchema)).toBe("some schema");
+          expect(resolve.filters(filters)).toBe("some filters");
           expect(resolve.referencedata(referencedata)).toBe(
               "some reference data"
           );

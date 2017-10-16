@@ -20,6 +20,22 @@ class SearchRuleFieldTestCase(OpalTestCase):
     def test_slug_if_slug_provided(self):
         self.assertEqual(self.custom_field.get_slug(), "some_slug")
 
+    def test_slug_no_display_name(self):
+        class SomeSearchRuleField(search_rule.SearchRuleField):
+            lookup_list = "some_list"
+            enum = [1, 2, 3]
+            description = "its a custom field"
+            field_type = "string"
+        custom_field = SomeSearchRuleField()
+        expected = "Must set display_name for \
+<class 'opal.core.search.tests.test_search_rule.SomeSearchRuleField'>"
+        with self.assertRaises(ValueError) as v:
+            custom_field.get_slug()
+
+        self.assertEqual(
+            str(v.exception), expected
+        )
+
     def test_slug_if_slug_not_provided(self):
         class SomeOtherSearchRuleField(search_rule.SearchRuleField):
             lookuplist = "some_list"
