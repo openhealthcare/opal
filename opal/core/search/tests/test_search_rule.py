@@ -27,13 +27,11 @@ class SearchRuleFieldTestCase(OpalTestCase):
             description = "its a custom field"
             field_type = "string"
         custom_field = SomeSearchRuleField()
-        expected = "Must set display_name for \
-<class 'opal.core.search.tests.test_search_rule.SomeSearchRuleField'>"
         with self.assertRaises(ValueError) as v:
             custom_field.get_slug()
 
-        self.assertEqual(
-            str(v.exception), expected
+        self.assertTrue(
+            "Must set display_name for" in str(v.exception)
         )
 
     def test_slug_if_slug_not_provided(self):
