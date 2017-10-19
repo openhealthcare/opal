@@ -1,3 +1,8 @@
+### 0.8.1.2 (Minor Release)
+
+Previously serialization of csv's outsie the standard asci charecter set
+would throw an error. We now properly encode strings in these cases.
+
 ### 0.8.1 (Minor Release)
 
 #### Cookies for the future
