@@ -14,9 +14,27 @@ from opal.tests.models import (
     Colour, PatientColour, Demographics, HatWearer, HouseOwner
 )
 from opal.core.search import extract
-from opal.core import subrecords
+from six import u, b
+
 
 MOCKING_FILE_NAME_OPEN = "opal.core.search.extract.open"
+
+
+class TestEncodeToUTF8(OpalTestCase):
+    def test_with_str(self):
+        d = u('\u0160\u0110\u0106\u017d\u0107\u017e\u0161\u0111')
+        r = b"\xc5\xa0\xc4\x90\xc4\x86\xc5\xbd\xc4\x87\xc5\xbe\xc5\xa1\xc4\x91"
+        self.assertEqual(
+            extract._encode_to_utf8(d),
+            r
+        )
+
+    def test_with_other(self):
+        d = 2
+        self.assertEqual(
+            extract._encode_to_utf8(d),
+            d
+        )
 
 
 class TestViewPOSTTestCase(OpalTestCase):
@@ -49,7 +67,7 @@ class TestViewPOSTTestCase(OpalTestCase):
         url = reverse("extract_download")
         post_data = {
             "criteria":
-                   json.dumps([{
+                json.dumps([{
                     "combine": "and",
                     "column": "demographics",
                     "field": "Surname",
@@ -76,7 +94,8 @@ class PatientEpisodeTestCase(OpalTestCase):
             hospital_number='12345678',
             first_name="Alice",
             surname="Alderney",
-            date_of_birth=datetime.date(1976,1,1)
+            date_of_birth=datetime.date(1976, 1, 1),
+            sex_ft=u('\u0160\u0110\u0106\u017d\u0107\u017e\u0161\u0111'),
         )
         super(PatientEpisodeTestCase, self).setUp()
 
@@ -113,7 +132,7 @@ class SubrecordCSVTestCase(PatientEpisodeTestCase):
     def test_with_subrecords(self, csv):
         csv.writer = Mock()
         file_name = "fake file name"
-        colour = Colour.objects.create(episode=self.episode, name='blue')
+        Colour.objects.create(episode=self.episode, name='blue')
 
         self.mocked_extract(
             extract.subrecord_csv,
@@ -128,10 +147,10 @@ class SubrecordCSVTestCase(PatientEpisodeTestCase):
             'created_by_id',
             'updated_by_id',
             'episode_id',
-            'name'
+            'name',
         ]
         expected_row = [
-            u'None', u'None', u'None', u'None', str(self.episode.id), u'blue'
+            None, None, None, None, self.episode.id, b'blue'
         ]
         self.assertEqual(headers, expected_headers)
         self.assertEqual(row, expected_row)
@@ -162,15 +181,77 @@ class PatientSubrecordCSVTestCase(PatientEpisodeTestCase):
             'sex',
             'birth_place',
         ]
+        # header change order depending on which version
+        # of python, we don't really mind as long as episode is first
         self.assertEqual(headers[0], 'episode_id')
-        for h in expected_headers:
-            self.assertTrue(h in headers)
+        self.assertEqual(set(headers), set(expected_headers))
+
+        expected_order = {}
+        for expected_header in expected_headers:
+            idx = headers.index(expected_header)
+            expected_order[expected_header] = idx
 
         expected_row = [
-            1, u'None', u'None', u'None', u'None', u'12345678',
-            u'None', u'1976-01-01', u'False', u'', u''
+            1,
+            None,
+            None,
+            None,
+            None,
+            b'12345678',
+            None,
+            datetime.date(1976, 1, 1),
+            False,
+            b'\xc5\xa0\xc4\x90\xc4\x86\xc5\xbd\xc4\x87\xc5\xbe\xc5\xa1\xc4\x91',
+            b'',
         ]
-        self.assertEqual(row, expected_row)
+
+        # make sure all rows tally up correctly
+        self.assertEqual(
+            row[expected_order["episode_id"]], 1
+        )
+
+        self.assertEqual(
+            row[expected_order["created"]], None
+        )
+
+        self.assertEqual(
+            row[expected_order["updated"]], None
+        )
+
+        self.assertEqual(
+            row[expected_order["created_by_id"]], None
+        )
+
+        self.assertEqual(
+            row[expected_order["updated_by_id"]], None
+        )
+
+        self.assertEqual(
+            row[expected_order["hospital_number"]], b'12345678',
+        )
+
+        self.assertEqual(
+            row[expected_order["nhs_number"]], None
+        )
+
+        self.assertEqual(
+            row[expected_order["date_of_birth"]],
+            datetime.date(1976, 1, 1),
+        )
+
+        self.assertEqual(
+            row[expected_order["death_indicator"]], False
+        )
+
+        self.assertEqual(
+            row[expected_order["sex"]],
+            b'\xc5\xa0\xc4\x90\xc4\x86\xc5\xbd\xc4\x87\xc5\xbe\xc5\xa1\xc4\x91',
+        )
+
+        self.assertEqual(
+            row[expected_order["birth_place"]],
+            b'',
+        )
 
 
 class ZipArchiveTestCase(PatientEpisodeTestCase):

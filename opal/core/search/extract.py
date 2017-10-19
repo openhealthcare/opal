@@ -8,11 +8,19 @@ import tempfile
 import zipfile
 import functools
 import logging
+from six import text_type
+
+from django.utils.encoding import force_bytes
 
 from opal.models import Episode
 from opal.core.subrecords import episode_subrecords, patient_subrecords
 
-from six import u
+
+def _encode_to_utf8(some_var):
+    if not isinstance(some_var, text_type):
+        return some_var
+    else:
+        return force_bytes(some_var)
 
 
 def subrecord_csv(episodes, subrecord, file_name):
@@ -33,7 +41,7 @@ def subrecord_csv(episodes, subrecord, file_name):
         subrecords = subrecord.objects.filter(episode__in=episodes)
         for sub in subrecords:
             writer.writerow([
-                u(str(getattr(sub, f))) for f in field_names
+                _encode_to_utf8(getattr(sub, f)) for f in field_names
             ])
     logging.info("finished writing for %s" % subrecord)
 
@@ -54,7 +62,7 @@ def episode_csv(episodes, user, file_name):
 
         for episode in episodes:
             row = {
-                h: str(getattr(episode, h)).encode('UTF-8') for h in fieldnames
+                h: _encode_to_utf8(getattr(episode, h)) for h in fieldnames
             }
             row["tagging"] = ';'.join(
                 episode.get_tag_names(user, historic=True)
@@ -87,7 +95,7 @@ def patient_subrecord_csv(episodes, subrecord, file_name):
 
         for sub in subs:
             row = [patient_to_episode[sub.patient_id]]
-            row.extend(u(str(getattr(sub, f))) for f in field_names)
+            row.extend(_encode_to_utf8(getattr(sub, f)) for f in field_names)
             writer.writerow(row)
     logging.info("finished patient subrecord %s" % subrecord)
 
