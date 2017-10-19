@@ -1,5 +1,11 @@
 ### 0.9.0 (Major Release)
 
+#### Extracts Search into its own plugin
+
+Search is no completely pluggable, you need to have *some* angular controller
+called SearchCtrl, but apart from that you can plugin your own implementation
+
+
 #### We've got time on our side
 
 Adds in the {% timepicker %} template tag, that follows the same convention as
