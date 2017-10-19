@@ -122,7 +122,6 @@ describe("OPAL.module", function(){
     var previous;
 
     beforeEach(module('opal', function($cookiesProvider){
-      provider = $cookiesProvider;
       previous = window.OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX;
     }));
 
