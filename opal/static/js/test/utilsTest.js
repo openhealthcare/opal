@@ -121,9 +121,10 @@ describe("OPAL.module", function(){
   describe('configure tracking', function(){
     var previous;
 
-    beforeEach(function(){
-      var previous = window.OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX;
-    });
+    beforeEach(module('opal', function($cookiesProvider){
+      provider = $cookiesProvider;
+      previous = window.OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX;
+    }));
 
     afterEach(function(){
       window.OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX = previous;
@@ -139,17 +140,6 @@ describe("OPAL.module", function(){
       var analyticsProvider = jasmine.createSpyObj(["virtualPageviews"])
       analyticsConfiguration(analyticsProvider);
       expect(analyticsProvider.virtualPageviews).toHaveBeenCalledWith(false);
-    });
-
-    it('should not configure tracking by default', function(){
-      var config = jasmine.createSpy();
-      spyOn(angular, "module").and.returnValue({config: config});
-      OPAL.module("someNameSpace");
-      expect(config).toHaveBeenCalled();
-      var analyticsConfiguration = config.calls.argsFor(0)[0];
-      var analyticsProvider = jasmine.createSpyObj(["virtualPageviews"])
-      analyticsConfiguration(analyticsProvider);
-      expect(analyticsProvider.virtualPageviews).toHaveBeenCalledWith(true);
     });
   });
 
