@@ -73,6 +73,7 @@ class DatabaseQueryTestCase(OpalTestCase):
 
     def setUp(self):
         self.patient, self.episode = self.new_patient_and_episode_please()
+        self.episode.date_of_episode = self.DATE_OF_EPISODE
         self.episode.start = self.DATE_OF_EPISODE
         self.episode.end = self.DATE_OF_EPISODE
         self.episode.save()
@@ -263,6 +264,32 @@ class DatabaseQueryTestCase(OpalTestCase):
 
         query = queries.DatabaseQuery(self.user, [criteria])
         self.assertEqual([self.episode, other_episode], query.get_episodes())
+
+    def test_fuzzy_query(self):
+        """ It should return the patients that
+            match the criteria ordered in by
+            their related episode id descending
+        """
+        patient_1, episode_1 = self.new_patient_and_episode_please()
+        patient_2, episode_2 = self.new_patient_and_episode_please()
+        patient_3, episode_3 = self.new_patient_and_episode_please()
+        testmodels.Demographics.objects.filter(
+            patient__in=[patient_1, patient_2, patient_3]
+        ).update(
+            first_name="tree"
+        )
+        patient_2.create_episode()
+        # this patient, episode should not be found
+        self.new_patient_and_episode_please()
+        query = queries.DatabaseQuery(self.user, "tree")
+        patients = query.fuzzy_query()
+
+        # expectation is that patient 2 comes last as
+        # they have the most recent episode
+        self.assertEqual(
+            list(patients),
+            [patient_2, patient_3, patient_1]
+        )
 
     def test_distinct_episodes_for_m2m_fields_containing_synonsyms_and_names(
         self

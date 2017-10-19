@@ -23,16 +23,16 @@ from opal.core.search.extract import zip_archive, async_extract
 PAGINATION_AMOUNT = 10
 
 
-class SaveFilterModalView(TemplateView):
-    template_name = 'save_filter_modal.html'
-
-
 class SearchIndexView(LoginRequiredMixin, TemplateView):
     """
     Main entrypoint into the pathway portal service.
     This is the entry point that loads in the pathway.
     """
     template_name = 'search/index.html'
+
+
+class SaveFilterModalView(TemplateView):
+    template_name = 'save_filter_modal.html'
 
 
 class SearchTemplateView(LoginRequiredMixin, TemplateView):
@@ -103,8 +103,16 @@ def simple_search_view(request):
         return json_response({'error': "No search terms"}, 400)
 
     query = queries.create_query(request.user, query_string)
-    result = query.fuzzy_query()
-    return json_response(_add_pagination(result, page_number))
+    patients = query.fuzzy_query()
+    paginated = _add_pagination(patients, page_number)
+    paginated_patients = paginated["object_list"]
+    episodes = models.Episode.objects.filter(
+        id__in=paginated_patients.values_list("episode__id", flat=True)
+    )
+    paginated["object_list"] = query.get_aggregate_patients_from_episodes(
+        episodes
+    )
+    return json_response(paginated)
 
 
 class ExtractSearchView(View):
@@ -126,9 +134,9 @@ class ExtractSearchView(View):
             self.request.user,
             request_data,
         )
-        eps = query.get_patient_summaries()
+        patient_summaries = query.get_patient_summaries()
 
-        return json_response(_add_pagination(eps, page_number))
+        return json_response(_add_pagination(patient_summaries, page_number))
 
 
 class DownloadSearchView(View):
