@@ -5,7 +5,7 @@ describe('SearchCtrl', function (){
     var location;
     var Flow;
     var profile, schema, options, locationDetails, controller;
-    var PatientSummary;
+    var PatientSummary, $analytics;
 
     beforeEach(module('opal.controllers'));
 
@@ -27,6 +27,7 @@ describe('SearchCtrl', function (){
             $httpBackend   = $injector.get('$httpBackend');
             location       = $injector.get('$location');
             $window        = $injector.get('$window');
+            $analytics     = $injector.get('$analytics');
 
             schema  = {};
             options = {};
@@ -42,7 +43,8 @@ describe('SearchCtrl', function (){
                 options        : options,
                 schema         : schema,
                 profile        : profile,
-                PatientSummary : PatientSummary
+                PatientSummary : PatientSummary,
+                $analytics: $analytics
             });
 
 
@@ -86,6 +88,21 @@ describe('SearchCtrl', function (){
             expect($window.location.href).toEqual('/#/foo/bar');
         });
 
+        it('should register to analytics', function(){
+            spyOn($analytics, 'eventTrack');
+            $scope.selected({
+              link: '/#/foo/123',
+              patientId: 123,
+              categories: "Inpatient, OPAT"
+            });
+            expect($analytics.eventTrack).toHaveBeenCalledWith(
+              "AutocompleteSearch-123",
+              {
+                category: "AutocompleteSearch",
+                label: "Inpatient, OPAT"
+              }
+            );
+        });
     });
 
     describe('We should query for hospital number or name()', function (){
