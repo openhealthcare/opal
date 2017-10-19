@@ -1,10 +1,8 @@
 """
 Utilities for dealing with Opal Schemas
 """
-import itertools
 from opal.core.subrecords import subrecords
 from opal import models
-from opal.core.search.search_rule import SearchRule
 
 
 def serialize_model(model):
@@ -12,7 +10,6 @@ def serialize_model(model):
         'name'        : model.get_api_name(),
         'display_name': model.get_display_name(),
         'single'      : model._is_singleton,
-        'advanced_searchable': model._advanced_searchable,
         'fields'      : model.build_field_schema(),
     }
     if hasattr(model, '_sort'):
@@ -44,9 +41,3 @@ def _get_all_fields():
 
 def list_records():
     return _get_all_fields()
-
-
-def extract_schema():
-    custom_rules = [i().to_dict() for i in SearchRule.list()]
-    schema = serialize_schema(itertools.chain([models.Tagging], subrecords()))
-    return custom_rules + schema

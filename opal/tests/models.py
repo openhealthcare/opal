@@ -34,6 +34,7 @@ class HatWearer(models.EpisodeSubrecord):
 
 class InvisibleHatWearer(models.EpisodeSubrecord):
     _exclude_from_subrecords = True
+
     class Meta:
         verbose_name = 'Invisible Wearer of Hats'
 
@@ -94,24 +95,29 @@ class AbstractDog(models.PatientSubrecord, AbstractBase):
 
 class Colour(models.EpisodeSubrecord):
     _clonable = False
-    _advanced_searchable = False
-    _exclude_from_extract = True
     _angular_service = 'Colour'
     _icon = "fa fa-comments"
+    _description = "I like blue"
 
     name = dmodels.CharField(max_length=200, null=True, blank=True)
 
 
 class PatientColour(models.PatientSubrecord):
     name = dmodels.CharField(max_length=200, blank=True, null=True)
-    _exclude_from_extract = True
+    _advanced_searchable = False
 
 
 class FamousLastWords(models.PatientSubrecord):
     _is_singleton = True
     _read_only = True
 
-    words = dmodels.CharField(verbose_name="only words", max_length=200, blank=True, null=True)
+    words = dmodels.CharField(
+        verbose_name="only words",
+        max_length=200,
+        blank=True,
+        null=True,
+        help_text="Ultimate popular words"
+    )
 
 
 class EpisodeName(models.EpisodeSubrecord):
@@ -131,7 +137,6 @@ class FavouriteColour(models.PatientSubrecord):
     _is_singleton = True
     name = dmodels.CharField(
         max_length=200, blank=True, null=True, choices=COLOUR_CHOICES,
-        help_text="orange is the new black"
     )
 
 
@@ -165,7 +170,6 @@ if not getattr(models.Episode, 'location_set', None):
 
         ward = dmodels.CharField(max_length=200, blank=True, null=True)
         bed = dmodels.CharField(max_length=200, blank=True, null=True)
-
 
 
 if not getattr(models.Episode, 'symptoms', None):
