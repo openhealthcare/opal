@@ -12,6 +12,7 @@ colour_serialized = dict(
     icon="fa fa-comments",
     display_name='Colour',
     single=False,
+    advanced_searchable=False,
     angular_service='Colour',
     form_url=u'/templates/forms/colour.html',
     fields=[
@@ -71,6 +72,7 @@ tagging_serialized = {
     'single': True,
     'display_name': 'Teams',
     'name': 'tagging',
+    'advanced_searchable': True,
 }
 
 episode_serialised = {
@@ -90,18 +92,11 @@ episode_serialised = {
             'title': 'End',
             'type': 'date_time',
             'description': "Episode End"
-        },
-        {
-            'description': 'The team(s) related to an episode of care',
-            'enum': [],
-            'lookup_list': None,
-            'name': 'team',
-            'title': 'Team',
-            'type': 'many_to_many_multi_select'
-         }
+        }
     ],
     'display_name': 'Episode',
     'name': 'episode',
+    'advanced_searchable': True,
 }
 
 
@@ -136,3 +131,14 @@ class ListRecordsTestCase(TestCase):
         }
 
         self.assertEqual(expected, schemas.list_records())
+
+
+class ExtractSchemaTestCase(TestCase):
+    @patch('opal.core.schemas.subrecords')
+    @patch('opal.core.schemas.models.Tagging.build_field_schema')
+    def test_extract_schema(self, tagging, subrecords):
+        subrecords.return_value = [Colour]
+        tagging.return_value = []
+        self.assertEqual(episode_serialised, schemas.extract_schema()[0])
+        self.assertEqual(tagging_serialized, schemas.extract_schema()[1])
+        self.assertEqual(colour_serialized, schemas.extract_schema()[2])

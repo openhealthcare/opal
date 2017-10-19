@@ -98,13 +98,15 @@ class Colour(models.EpisodeSubrecord):
     _angular_service = 'Colour'
     _icon = "fa fa-comments"
     _description = "I like blue"
+    _advanced_searchable = False
+    _exclude_from_extract = True
 
     name = dmodels.CharField(max_length=200, null=True, blank=True)
 
 
 class PatientColour(models.PatientSubrecord):
     name = dmodels.CharField(max_length=200, blank=True, null=True)
-    _advanced_searchable = False
+    _exclude_from_extract = True
 
 
 class FamousLastWords(models.PatientSubrecord):
@@ -123,7 +125,12 @@ class FamousLastWords(models.PatientSubrecord):
 class EpisodeName(models.EpisodeSubrecord):
     _is_singleton = True
 
-    name = dmodels.CharField(max_length=200, blank=True, null=True)
+    name = dmodels.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        help_text="orange is the new black"
+    )
 
 
 COLOUR_CHOICES = (
