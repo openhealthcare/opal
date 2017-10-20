@@ -106,12 +106,17 @@ def simple_search_view(request):
     patients = query.fuzzy_query()
     paginated = _add_pagination(patients, page_number)
     paginated_patients = paginated["object_list"]
-    episodes = models.Episode.objects.filter(
-        id__in=paginated_patients.values_list("episode__id", flat=True)
-    )
-    paginated["object_list"] = query.get_aggregate_patients_from_episodes(
-        episodes
-    )
+
+    # on postgres it blows up if we don't manually manage this
+    if paginated_patients:
+        episodes = models.Episode.objects.filter(
+            id__in=paginated_patients.values_list("episode__id", flat=True)
+        )
+        paginated["object_list"] = query.get_aggregate_patients_from_episodes(
+            episodes
+        )
+    else:
+        paginated = []
     return json_response(paginated)
 
 
