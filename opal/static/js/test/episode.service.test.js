@@ -278,6 +278,15 @@ describe('Episode', function() {
       expect(copy.end).toEqual(undefined);
     });
 
+    it('should convert start end in makeCopy to dates', function(){
+      var copy = episode.makeCopy();
+      expect(copy.id).toBe(123);
+      expect(copy.category_name).toBe('Inpatient');
+      expect(copy.consistency_token).toBe(undefined);
+      expect(copy.start).toEqual(new Date(2013, 10, 19));
+      expect(copy.end).toEqual(new Date(2016, 4, 25));
+    });
+
     describe('communicating with server', function (){
         var $httpBackend, episode;
 
