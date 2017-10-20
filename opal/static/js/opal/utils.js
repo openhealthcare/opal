@@ -40,10 +40,12 @@ OPAL.module = function(namespace, dependencies){
     });
 
     var mod = angular.module(namespace, dependencies);
-    var manualTracking = this.tracking.manualTrack;
-    mod.config(function($analyticsProvider) {
-        $analyticsProvider.virtualPageviews(!manualTracking);
-    });
+
+    if(this.tracking.manualTrack){
+      mod.config(function($analyticsProvider) {
+          $analyticsProvider.virtualPageviews(false);
+      });
+    }
 
     mod.config(function($cookiesProvider) {
         var future = new Date();
@@ -85,18 +87,18 @@ OPAL.run = function(app){
         '$modal',
         '$location',
         '$analytics',
+        '$window',
         OPAL._run
     ]);
 };
 
-OPAL._track = function($location, $analytics){
+OPAL._track = function($location, $analytics, $window){
     var track, not_qs, path;
 
     if(this.tracking.manualTrack){
-        path = $location.path();
+        path = $window.location.pathname + $window.location.hash;
 
         track = _.some(this.tracking.opal_angular_exclude_tracking_prefix, function(prefix){
-
             return path.indexOf((prefix)) === 0;
         });
 
@@ -115,14 +117,14 @@ OPAL._track = function($location, $analytics){
     }
 };
 
-OPAL._run = function($rootScope, ngProgressLite, $modal, $location, $analytics) {
+OPAL._run = function($rootScope, ngProgressLite, $modal, $location, $analytics, $window) {
 
     // Let's allow people to know what version they're running
     $rootScope.OPAL_VERSION = version;
 
     // When route started to change.
     $rootScope.$on('$routeChangeStart', function() {
-        OPAL._track($location, $analytics);
+        OPAL._track($location, $analytics, $window);
         ngProgressLite.set(0);
         ngProgressLite.start();
     });

@@ -23,8 +23,6 @@ app = application.get_app()
 Synonym = models.Synonym
 
 
-
-
 class PatientListTemplateView(LoginRequiredMixin, TemplateView):
 
     def dispatch(self, *args, **kwargs):

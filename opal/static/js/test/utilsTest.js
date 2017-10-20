@@ -17,7 +17,7 @@ describe('Utils.OPAL._run', function (){
         var mock_scope = { $on: function(){} };
         var mock_modal = { open: function(){} };
 
-        OPAL._run(mock_scope, {}, mock_modal);
+        OPAL._run(mock_scope, {}, mock_modal)
 
         expect(mock_scope.open_modal).toBeDefined();
     });
@@ -54,14 +54,21 @@ describe('utils.OPAL._track', function(){
 
     var location;
     var analytics;
+    var mockWindow;
 
     beforeEach(function(){
         location = jasmine.createSpyObj('location', ['path', 'url']);
         analytics = jasmine.createSpyObj('analytics', ['pageTrack']);
+        mockWindow = {
+          location: {
+            hash: "",
+            pathname: ""
+          },
+        }
 
         OPAL.tracking.manualTrack = true;
         OPAL.tracking.opal_angular_exclude_tracking_prefix = ['something'];
-        OPAL.tracking.opal_angular_exclude_tracking_qs = ['anotherThing'];
+        OPAL.tracking.opal_angular_exclude_tracking_qs = ['anotherThing/#/'];
     });
 
     afterEach(function(){
@@ -71,22 +78,26 @@ describe('utils.OPAL._track', function(){
     })
 
     it('should track if not excluded', function(){
-      location.path.and.returnValue("trackThis");
-      location.url.and.returnValue("trackThis?that=this");
-      OPAL._track(location, analytics);
-      expect(analytics.pageTrack).toHaveBeenCalledWith("trackThis?that=this");
+      location.path.and.returnValue("please");
+      location.url.and.returnValue("please?that=this");
+      mockWindow.location.hash = "track_this"
+      mockWindow.location.pathname = "/#/please"
+      OPAL._track(location, analytics, mockWindow);
+      expect(analytics.pageTrack).toHaveBeenCalledWith("please?that=this");
     })
 
     it('should not track get urls if the url is excluded from tracking', function(){
-      location.path.and.returnValue("somethingElse");
-      OPAL._track(location, analytics);
+      mockWindow.location.pathname = "somethingElse"
+      mockWindow.location.hash = "/#/"
+      OPAL._track(location, analytics, mockWindow);
       expect(analytics.pageTrack).not.toHaveBeenCalled();
     });
 
     it('should not track the query params if the url is excluding query params from tracking', function(){
-      location.url.and.returnValue("anotherThing?something=tree");
+      mockWindow.location.pathname = "anotherThing"
+      mockWindow.location.hash = "/#/"
       location.path.and.returnValue("anotherThing")
-      OPAL._track(location, analytics);
+      OPAL._track(location, analytics, mockWindow);
       expect(analytics.pageTrack).toHaveBeenCalledWith('anotherThing');
     });
 });
@@ -110,9 +121,9 @@ describe("OPAL.module", function(){
   describe('configure tracking', function(){
     var previous;
 
-    beforeEach(function(){
-      var previous = window.OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX;
-    });
+    beforeEach(module('opal', function($cookiesProvider){
+      previous = window.OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX;
+    }));
 
     afterEach(function(){
       window.OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX = previous;
@@ -129,19 +140,7 @@ describe("OPAL.module", function(){
       analyticsConfiguration(analyticsProvider);
       expect(analyticsProvider.virtualPageviews).toHaveBeenCalledWith(false);
     });
-
-    it('should not configure tracking by default', function(){
-      var config = jasmine.createSpy();
-      spyOn(angular, "module").and.returnValue({config: config});
-      OPAL.module("someNameSpace");
-      expect(config).toHaveBeenCalled();
-      var analyticsConfiguration = config.calls.argsFor(0)[0];
-      var analyticsProvider = jasmine.createSpyObj(["virtualPageviews"])
-      analyticsConfiguration(analyticsProvider);
-      expect(analyticsProvider.virtualPageviews).toHaveBeenCalledWith(true);
-    });
   });
-
 
   describe('dependency registration', function(){
     var implicit_dependencies = [
