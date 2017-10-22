@@ -1,0 +1,13 @@
+<span ng-hide="extractQuery.completeCriteria().length">
+  <h4>Please enter a query</h4>
+</span>
+<span ng-show="extractQuery.completeCriteria().length">
+  <h4>Your Criteria</h4>
+  Find patients where the
+  <span ng-repeat="query in extractQuery.completeCriteria()">
+    <strong>[[ extractSchema.findColumn(query.column).display_name ]] [[ extractSchema.findField(query.column, query.field).title ]]</strong> [[ extractQuery.readableQueryType(query.queryType) ]]
+    <strong ng-show="query.queryType === 'Any Of'">[[ query.query|displayArray:"or" ]]</strong>
+    <strong ng-hide="query.queryType === 'Any Of'">[[ query.query|displayArray ]]</strong>
+    <span ng-hide="$last">[[ query.combine ]]</span>
+  </span>
+</span>

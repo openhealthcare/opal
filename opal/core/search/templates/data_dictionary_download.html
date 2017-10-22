@@ -1,0 +1,103 @@
+{% load opal_string_utils %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
+    <style>
+      body{
+          font-family: 'Lato', sans-serif;
+      }
+
+      .table.data-dictionary-table{
+          font-size: 14px;
+      }
+
+      .content-offset{
+          margin-top: 50px;
+      }
+
+      .content-offset-10{
+          margin-top: 50px;
+      }
+
+      .data-dictionary-link{
+          font-size: 16px;
+          color: #337fb2;
+      }
+
+    </style>
+    <title>Data Dictionary</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="content-offset jumbotron">
+        <h1><span class="glyphicon glyphicon-book" aria-hidden="true"></span> {{ settings.OPAL_BRAND_NAME }} Data Dictionary</h1>
+      </div>
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="row">
+            {% for columns in chunked_columns %}
+              <div class="col-md-2" ng-repeat="columns in dataDictionary.chunkedColumns">
+                {% for column in columns %}
+                  <div class="row content-offset-10">
+                    <div class="col-md-12">
+                      <a class="data-dictionary-link" href="#{{ column.name }}">
+                        {{ column.display_name }}
+                      </a>
+                    </div>
+                  </div>
+                {% endfor %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          {% for subrecord in schema %}
+            <h3 id="{{ subrecord.name }}">{{ subrecord.display_name }}</h3>
+            {% if subrecord.description %}
+              <p class="lead">
+                  {{ subrecord.description }}
+              </p>
+            {% endif %}
+            <table class="table data-dictionary-table">
+              <tr>
+                <th class="col-md-3">
+                  Title
+                </th>
+                <th class="col-md-4">
+                  Type
+                </th>
+                <th class="col-md-5">
+                  Description
+                </th>
+              </tr>
+              {% for field in subrecord.fields %}
+              <tr>
+                <td class="col-md-3">
+                  {{ field.title }}
+                </td>
+                <td class="col-md-4">
+                  {{ field.type_display_name }}
+                </td>
+                <td class="col-md-5">
+                  {% if field.lookup_list %}
+                    Normally coded as a as {{ field.lookup_list | underscore_to_spaces }} but free text entries are possible.
+                  {% endif %}
+                  {{ field.description | default_if_none:"" }}
+                </td>
+              </tr>
+              {% endfor %}
+            </table>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

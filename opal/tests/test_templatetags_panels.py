@@ -2,7 +2,6 @@
 Tests create_singletons command
 """
 from django.template import Template, Context
-from django.test import override_settings
 from opal.core.test import OpalTestCase
 from opal.templatetags import panels
 from opal.tests.models import Demographics

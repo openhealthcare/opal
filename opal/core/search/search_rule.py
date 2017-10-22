@@ -32,6 +32,7 @@ class SearchRuleField(object):
             title=self.display_name,
             type=self.field_type,
             enum=self.enum,
+            type_display_name=self.type_display_name,
             lookup_list=self.lookup_list,
             description=self.description
         )
@@ -54,8 +55,8 @@ class SearchRule(DiscoverableFeature):
         return dict(
             name=self.get_slug(),
             display_name=self.display_name,
-            advanced_searchable=True,
-            fields=[i().to_dict() for i in self.get_fields()]
+            fields=[i().to_dict() for i in self.get_fields()],
+            description=getattr(self, "description", None)
         )
 
     @classmethod
@@ -79,6 +80,7 @@ class EpisodeStart(SearchRuleField):
     display_name = "Start"
     description = "Episode Start"
     field_type = "date_time"
+    type_display_name = "Date & Time"
 
     def query(self, given_query):
         val = deserialize_date(given_query['query'])
@@ -96,6 +98,7 @@ class EpisodeEnd(SearchRuleField):
     display_name = "End"
     description = "Episode End"
     field_type = "date_time"
+    type_display_name = "Date & Time"
 
     def query(self, given_query):
         val = deserialize_date(given_query['query'])
@@ -116,6 +119,7 @@ class EpisodeTeam(SearchRuleField):
     display_name = "Team"
     description = "The team(s) related to an episode of care"
     field_type = "many_to_many_multi_select"
+    type_display_name = "Text Field"
 
     @property
     def enum(self):

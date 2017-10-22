@@ -2,17 +2,19 @@
 unittests for opal.core.search.views
 """
 import json
+from django.core.urlresolvers import reverse
 from datetime import date
 
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
+from django.test import override_settings
 from mock import patch, mock_open
 
 from opal import models
 from opal.tests import models as tmodels
 from opal.core.test import OpalTestCase
-from opal.core.search import views
+from opal.core.search import views, queries, extract
 
 
 class BaseSearchTestCase(OpalTestCase):
@@ -50,10 +52,6 @@ class BaseSearchTestCase(OpalTestCase):
         if view is None:
             view = self.view
         return self.view(request)
-
-    def tearDown(self):
-        self.patient.delete()
-        super(BaseSearchTestCase, self).tearDown()
 
 
 class PatientSearchTestCase(BaseSearchTestCase):
@@ -391,11 +389,11 @@ class FilterDetailViewTestCase(BaseSearchTestCase):
         self.assertEqual(0, models.Filter.objects.count())
 
 
-class ExtractResultViewTestCase(BaseSearchTestCase):
+class ExtractStatusViewTestCase(BaseSearchTestCase):
 
     @patch('celery.result.AsyncResult')
     def test_get(self, async_result):
-        view = views.ExtractResultView()
+        view = views.ExtractStatusView()
         view.request = self.get_logged_in_request()
         async_result.return_value.state = 'The State'
         resp = view.get(task_id=490)
@@ -429,3 +427,170 @@ class ExtractFileView(BaseSearchTestCase):
         async_result.return_value.state = 'FAILURE'
         with self.assertRaises(ValueError):
             view.get(task_id=8902321890)
+
+
+class DownloadTestCase(BaseSearchTestCase):
+    def setUp(self):
+        super(DownloadTestCase, self).setUp()
+        self.url = reverse('extract_download')
+
+    @override_settings(
+        EXTRACT_ASYNC=True
+    )
+    def test_async_integrations(self):
+        self.assertTrue(
+            self.client.login(
+                username=self.user.username, password=self.PASSWORD
+            )
+        )
+        post_data = json.dumps({
+            "criteria":
+                json.dumps([{
+                    "combine": "and",
+                    "column": "demographics",
+                    "field": "hospital_number",
+                    "queryType": "Contains",
+                    "query": "a",
+                    "lookup_list": [],
+                }]),
+            "data_slice": json.dumps({})
+        })
+        create_task = self.client.post(
+            self.url, post_data, content_type='appliaction/json'
+        )
+        self.assertEqual(create_task.status_code, 200)
+        content = json.loads(create_task.content.decode())
+        status_url = reverse('extract_status', kwargs=dict(
+            task_id=content["extract_id"]
+        ))
+
+        status_result = self.client.get(status_url)
+        self.assertEqual(status_result.status_code, 200)
+        self.assertEqual(
+            json.loads(status_result.content.decode())['state'],
+            "PENDING"
+        )
+
+    def test_non_async_extract(self):
+        # a vanilla check to make sure that the view returns a zip file
+        url = reverse("extract_download")
+        post_data = {
+            "criteria":
+                json.dumps([{
+                    "combine": "and",
+                    "column": "demographics",
+                    "field": "hospital_number",
+                    "queryType": "Contains",
+                    "query": "a",
+                    "lookup_list": [],
+                }]),
+        }
+
+        self.assertTrue(
+            self.client.login(
+                username=self.user.username,
+                password=self.PASSWORD
+            )
+        )
+
+        response = self.client.post(url, post_data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_non_asyc_extract_with_slice(self):
+        url = reverse("extract_download")
+        post_data = {
+            "criteria":
+                json.dumps([{
+                    "combine": "and",
+                    "column": "demographics",
+                    "field": "hospital_number",
+                    "queryType": "Contains",
+                    "query": "a",
+                    "lookup_list": [],
+                }]),
+            "data_slice":
+                json.dumps({
+                    "demographics": ["date_of_birth"]
+                })
+        }
+
+        self.assertTrue(
+            self.client.login(
+                username=self.user.username,
+                password=self.PASSWORD
+            )
+        )
+
+        response = self.client.post(url, post_data)
+        self.assertEqual(response.status_code, 200)
+
+    def test_generate_zip(self):
+        m = mock_open(read_data='This is a file')
+        url = reverse("extract_download")
+        criteria = [{
+            "combine": "and",
+            "column": "demographics",
+            "field": "hospital_number",
+            "queryType": "Contains",
+            "query": "007",
+            "lookup_list": [],
+        }]
+
+        data_slice = {
+            "demographics": ["date_of_birth"]
+        }
+        post_data = {
+            "criteria":
+                json.dumps(criteria),
+            "data_slice":
+                json.dumps(data_slice)
+        }
+
+        self.assertTrue(
+            self.client.login(
+                username=self.user.username,
+                password=self.PASSWORD
+            )
+        )
+
+        with patch('opal.core.search.views.open', m, create=True):
+            with patch(
+                'opal.core.search.views.queries.create_query',
+                side_effect=queries.create_query
+            ) as create_query:
+                with patch(
+                    'opal.core.search.views.zip_archive',
+                    side_effect=extract.zip_archive
+                ) as zip_archive:
+                    m().read.return_value = "something"
+                    response = self.client.post(url, post_data)
+
+        self.assertEqual(
+            create_query.call_args[0][0].username, 'testuser'
+        )
+        self.assertEqual(
+            create_query.call_args[0][1], criteria
+        )
+
+        # asserting the response of the query
+        self.assertEqual(
+            zip_archive.call_args[0][0][0], self.episode
+        )
+
+        # asserting that some form of description is returned
+        self.assertTrue(
+            isinstance(zip_archive.call_args[0][1], str)
+        )
+
+        # assert that the user is passed in
+        self.assertEqual(
+            zip_archive.call_args[0][2].username, 'testuser'
+        )
+
+        # assert that the data slice is passed in
+        self.assertEqual(
+            zip_archive.call_args[1]["fields"], data_slice
+        )
+
+        self.assertTrue(m.call_args[0][0].endswith('extract.zip'))
+        self.assertEqual(response.status_code, 200)

@@ -3,7 +3,7 @@ Urls for Opal's search functionality
 """
 from django.conf.urls import patterns, url
 
-from opal.core.search import views
+from opal.core.search import views, api
 
 urlpatterns = patterns(
     '',
@@ -34,9 +34,21 @@ urlpatterns = patterns(
     url(r'^search/filters/(?P<pk>\d+)/?$',
         views.FilterDetailView.as_view(), name="extract_filters"),
 
-    url(r'^search/extract/result/(?P<task_id>[a-zA-Z0-9-]*)',
-        views.ExtractResultView.as_view(), name='extract_result'),
+    url(r'^search/extract/status/(?P<task_id>[a-zA-Z0-9-]*)',
+        views.ExtractStatusView.as_view(), name='extract_status'),
 
     url(r'^search/extract/download/(?P<task_id>[a-zA-Z0-9-]*)',
         views.ExtractFileView.as_view(), name='extract_file'),
+
+    url(
+        r'^search/api/extract/$',
+        api.ExtractSchemaViewSet.as_view({'get': 'list'}),
+        name="extract-schema-list"
+    ),
+
+    url(
+        r'^search/api/data_dictionary/$',
+        api.DataDictionaryViewSet.as_view({'get': 'list'}),
+        name="data-dictionary-list"
+    ),
 )

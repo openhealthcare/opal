@@ -18,7 +18,7 @@ from opal.core import patient_lists
 from opal.tests import test_patient_lists
 from opal.tests.models import (
     FamousLastWords, PatientColour, ExternalSubRecord, SymptomComplex,
-    PatientConsultation, Birthday, DogOwner, HatWearer, InvisibleHatWearer,
+    PatientConsultation, Birthday, DogOwner, HatWearer,
     HouseOwner, HoundOwner, Colour, FavouriteColour, Dinner
 )
 
@@ -248,25 +248,10 @@ class SubrecordTestCase(OpalTestCase):
         ])
         self.assertEqual(result, "found")
 
-    def test_get_display_name_from_property(self):
-        self.assertEqual('Wearer of Hats', HatWearer.get_display_name())
-
-    def test_get_display_name_from_meta_verbose_name(self):
-        self.assertEqual(
-            'Invisible Wearer of Hats',
-            InvisibleHatWearer.get_display_name()
-        )
-
-    def test_get_display_name_from_verbose_name_but_capwords(self):
-        self.assertEqual(
-            'Dog Owner',
-            DogOwner.get_display_name()
-        )
-
     def test_date_time_deserialisation(self):
         patient, _ = self.new_patient_and_episode_please()
         birthday_date = "10/1/2000"
-        birthday_party= "11/2/2016 20:30:10"
+        birthday_party = "11/2/2016 20:30:10"
         birthday = Birthday()
         birthday.update_from_dict(dict(
             birth_date=birthday_date,
@@ -390,10 +375,6 @@ class SubrecordTestCase(OpalTestCase):
     def test_enum(self):
         enum = FavouriteColour.get_field_enum('name')
         self.assertEqual(enum, ["purple", "yellow", "blue"])
-
-    def test_description(self):
-        description = FavouriteColour.get_field_description('name')
-        self.assertEqual(description, "orange is the new black")
 
     def test_verbose_name_abbreviation(self):
         # if a word is an abbreviation already, don't title case it!

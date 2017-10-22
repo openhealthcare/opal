@@ -20,6 +20,7 @@ from opal.core.patient_lists import (
 Begin discoverable definitions for test cases
 """
 
+
 class TaggingTestPatientList(TaggedPatientList):
     display_name = "Herbivores"
     tag = "eater"
@@ -112,6 +113,7 @@ class ColumnTestCase(OpalTestCase):
     def test_raises_if_no_template_path(self):
         with self.assertRaises(ValueError):
             patient_lists.Column(title='Foo', name='foo')
+
 
 class ModelColumnTestCase(OpalTestCase):
 
@@ -257,8 +259,6 @@ class TestPatientList(OpalTestCase):
 
 
 class TestTaggedPatientList(OpalTestCase):
-
-
     def setUp(self):
         self.patient = Patient.objects.create()
         self.episode_1 = self.patient.create_episode()

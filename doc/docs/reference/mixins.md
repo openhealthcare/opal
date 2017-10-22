@@ -1,11 +1,7 @@
 ## Opal mixins
 
-### SerialisableFields
-Provides the fields that are on the model for example
-if we have an allergy model with a field drug
-it might serialise like below
-
-    Allergy._get_fieldnames_to_serialize() -> ["id", "drug"]
+### Serialisable
+Provides the information the display name, icon, api name of the model, along with the fields that should be serialised with the model and their titles (verbose_names) and data types (e.g. date, string).
 
 
 #### build_schema_for_field_name
@@ -19,6 +15,11 @@ Date & Time for a DateTime Field.
 #### get_lookup_list_api_name
 
 Provides the api name of the lookup list related to the field if it exists
+
+#### get_description
+
+Returns model._description, which should be a human readable description of the
+model
 
 ### ToDictMixin
 Provides a method that serialises a model

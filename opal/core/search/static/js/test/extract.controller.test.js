@@ -1,20 +1,9 @@
 describe('ExtractCtrl', function(){
     "use strict";
 
-
     var $scope, $httpBackend, schema, $window, $timeout, $modal, Item;
     var PatientSummary, $controller, ExtractSchema, controller, $rootScope;
-
-
-    var optionsData = {
-        condition: ['Another condition', 'Some condition'],
-        tag_hierarchy :{'tropical': []}
-    };
-
-    var pulledInData = {
-      dogs: ['Poodle', 'Dalmation'],
-      hats: ['Bowler', 'Top', 'Sun']
-    };
+    var extractSchema, Schema;
 
     var referencedata = {
       dogs: ['Poodle', 'Dalmation'],
@@ -29,29 +18,11 @@ describe('ExtractCtrl', function(){
 
     var columnsData = [
         {
-            "single": true,
-            "advanced_searchable": false,
-            "readOnly": false,
-            "name": "tagging",
-            "display_name":"Teams",
-            "fields":[
-                {"name":"opat","type":"boolean"},
-                {"name":"opat_referrals","type":"boolean"},
-            ]
-        },
-        {
             "single":false,
             "name":"demographics",
             "display_name":"Demographics",
             "readOnly": true    ,
-            "advanced_searchable": true,
             "fields":[
-                {
-                    "title":"Consistency Token",
-                    "lookup_list":null,
-                    "name":"consistency_token",
-                    "type":"token"
-                },
                 {
                     "title":"Name",
                     "lookup_list":null,
@@ -63,6 +34,16 @@ describe('ExtractCtrl', function(){
                     "lookup_list": null,
                     "name": "dead",
                     "type": "boolean"
+                },
+                {
+                    "default": null,
+                    "description": null,
+                    "enum": null,
+                    "lookup_list": "gender",
+                    "model": "Demographics",
+                    "name": "sex",
+                    "title": "Sex",
+                    "type": "string"
                 },
                 {
                     "title": "Age",
@@ -89,7 +70,6 @@ describe('ExtractCtrl', function(){
             "name": "symptoms",
             "display_name": "Symptoms",
             "readOnly": false,
-            "advanced_searchable": true,
             "fields": [
                 {
                     "title": "Symptoms",
@@ -98,196 +78,12 @@ describe('ExtractCtrl', function(){
                     "type": "many_to_many"
                 },
                 {
-                    "title":"Consistency Token",
-                    "lookup_list":null,
-                    "name":"consistency_token",
-                    "type":"token"
-                },
-                {
                     "title":"Created",
                     "lookup_list":null,
                     "name":"created",
                     "type":"date_time"
                 }
             ]
-        },
-        {
-            "single": false,
-            "name": "microbiology_test",
-            "display_name": "Microbiology Test",
-            "readOnly": false,
-            "advanced_searchable": true,
-            "fields": [
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "test",
-                title: "Test",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "date_ordered",
-                title: "Date Ordered",
-                type: "date"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "details",
-                title: "Details",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "microscopy",
-                title: "Microscopy",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "organism",
-                title: "Organism",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "sensitive_antibiotics",
-                title: "Sensitive Antibiotics",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "resistant_antibiotics",
-                title: "Resistant Antibiotics",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "MicrobiologyTest",
-                name: "igm",
-                title: "IGM",
-                type: "string"
-              },
-            ],
-        },
-        {
-            "single": false,
-            "name": "investigation",
-            "display_name": "Investigation",
-            "readOnly": false,
-            "advanced_searchable": true,
-            "fields": [
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "test",
-                title: "Test",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "date_ordered",
-                title: "Date Ordered",
-                type: "date"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "details",
-                title: "Details",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "microscopy",
-                title: "Microscopy",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "organism",
-                title: "Organism",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "sensitive_antibiotics",
-                title: "Sensitive Antibiotics",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "resistant_antibiotics",
-                title: "Resistant Antibiotics",
-                type: "string"
-              },
-              {
-                default: null,
-                description: null,
-                enum: null,
-                lookup_list: null,
-                model: "Investigation",
-                name: "igm",
-                title: "IGM",
-                type: "string"
-              },
-            ],
         }
     ];
 
@@ -305,226 +101,56 @@ describe('ExtractCtrl', function(){
             $timeout     = $injector.get('$timeout');
             $controller  = $injector.get('$controller');
             ExtractSchema = $injector.get('ExtractSchema');
+            Schema = $injector.get('Schema');
             PatientSummary = $injector.get('PatientSummary');
             Item = $injector.get('Item');
         });
 
-        var extractSchema = new ExtractSchema(columnsData);
+        var extractSchema = new ExtractSchema(angular.copy(columnsData));
+        var dataDictionary = new Schema(angular.copy(columnsData));
 
         var controller = $controller('ExtractCtrl',  {
             $scope : $scope,
             $modal: $modal,
             profile: {},
-            options: optionsData,
             filters: [],
             extractSchema : extractSchema,
             PatientSummary: PatientSummary,
-            referencedata: referencedata
+            referencedata: referencedata,
+            dataDictionary: dataDictionary
         });
 
         $scope.$apply();
     });
 
     describe('set up', function(){
-      it('should set up any or all options', function(){
-        expect($scope.combinations).toEqual(["all", "any"]);
+      it('should default the page state to query', function(){
+        expect($scope.state).toBe('query');
       });
 
-      it('should set up any or all default', function(){
-        expect($scope.anyOrAll).toBe("all");
+      it('should put reference data on the scope', function(){
+        expect($scope.referencedata).toBe(referencedata);
       });
-    });
 
-    describe('Getting Complete Criteria', function(){
+      it('should set up the schema on the scope', function(){
+        expect(!!$scope.extractSchema.columns).toBe(true);
+      });
 
-        it('should be true if we have a query', function(){
-            $scope.criteria[0].column = 'demographics';
-            $scope.criteria[0].field = 'surname';
-            $scope.criteria[0].queryType = 'contains';
-            $scope.criteria[0].query = 'jane';
-            expect($scope.completeCriteria().length).toBe(1);
-        });
+      it('should set the selected info', function(){
+        expect($scope.sliceSubrecord.name).toBe('demographics');
+      });
 
-        it('should be false if we have no query', function(){
-            $scope.criteria[0].column = 'demographics';
-            $scope.criteria[0].field = 'name';
-            $scope.criteria[0].queryType = 'contains';
-            expect($scope.completeCriteria().length).toBe(0);
-        });
+      it('should set the fieldInfo', function(){
+        expect($scope.fieldInfo.name).toBe('name');
+      });
 
-        it('tagging should always be true', function(){
-            $scope.criteria[0].column = 'tagging';
-            $scope.criteria[0].field = 'Inpatients';
-            expect($scope.completeCriteria().length).toBe(1);
-        });
+      it('should put the extract schema on the scope', function(){
+        expect(!!$scope.dataDictionary.columns).toBe(true);
+      });
 
-        it("should update the critieria to or if we're of anyOrAll is 'any'", function(){
-          $scope.anyOrAll = "any";
-          $scope.completeCriteria();
-          expect($scope.criteria[0].combine).toBe('or');
-        });
-
-        it("should update the critieria to and if we're of anyOrAll is 'all'", function(){
-          $scope.anyOrAll = "all";
-          $scope.completeCriteria();
-          expect($scope.criteria[0].combine).toBe('and');
-        });
-    });
-
-    describe('Getting searchable fields', function(){
-
-
-        it('should exclude token and not advanced searchable fields', function(){
-          var symptomsExpected = {
-            title: 'Symptoms',
-            lookup_list: 'symptoms',
-            name: 'symptoms',
-            type: 'many_to_many'
-          };
-
-          expect($scope.searchableFields('symptoms')).toEqual([symptomsExpected]);
-        });
-
-        it('should special case Micro Test fields', function(){
-            var expected = [
-                'Test',
-                'Date Ordered',
-                'Details',
-                'Microscopy',
-                'Organism',
-                'Sensitive Antibiotics',
-                'Resistant Antibiotics'
-            ];
-            var result  = _.map(
-              $scope.searchableFields('microbiology_test'), "title"
-            );
-            expect(result).toEqual(expected);
-        });
-
-        it('should special case investigations fields', function(){
-            var expected = [
-                'Test',
-                'Date Ordered',
-                'Details',
-                'Microscopy',
-                'Organism',
-                'Sensitive Antibiotics',
-                'Resistant Antibiotics'
-            ];
-            var result  = _.map(
-              $scope.searchableFields('investigation'), "title"
-            );
-            expect(result).toEqual(expected);
-        });
-    });
-
-    describe('Checking field type', function(){
-
-        it('should be falsy for non fields', function(){
-            expect($scope.isType()).toBe(false);
-        });
-
-        it('should be falsy for nonexistent fields', function(){
-            expect($scope.isType("demographics", "towel_preference")).toBe(false);
-        });
-
-        it('should find boolean fields', function(){
-            expect($scope.isBoolean("demographics", "dead")).toEqual(true);
-        });
-
-        it('should find select many fields', function(){
-            spyOn($scope, "isType").and.returnValue(true);
-            expect($scope.isSelectMany("demographics", "dead")).toEqual(true);
-            expect($scope.isType).toHaveBeenCalledWith(
-              "demographics", "dead", "many_to_many_multi_select"
-            );
-        });
-
-        it('should find string fields', function(){
-            expect($scope.isText("demographics", "name")).toBe(true);
-        });
-
-        it('should find select fields', function(){
-            expect($scope.isSelect("symptoms", "symptoms")).toBe(true);
-        });
-
-        it('should find date fields', function(){
-            expect($scope.isDate("demographics", "date_of_birth")).toBe(true);
-        });
-
-        it('should find number fields', function(){
-            expect($scope.isNumber("demographics", "age")).toBe(true);
-        });
-
-        it('should find date time fields', function(){
-            expect($scope.isDateTime("demographics", "last_appointment")).toBe(true);
-        });
-
-        it('should find date type fields', function(){
-            expect($scope.isDateType("demographics", "date_of_birth")).toBe(true);
-        });
-    });
-
-    describe('Find Field', function(){
-        it('should return the field', function(){
-          expect(!!$scope.findField("demographics", "dead")).toEqual(true);
-        });
-    });
-
-    describe('addFilter()', function(){
-
-        it('should add a criteria', function(){
-            expect($scope.criteria.length).toBe(1);
-            $scope.addFilter();
-            expect($scope.criteria.length).toBe(2);
-        });
-
-    });
-
-    describe('readableQueryType()', function(){
-        it('should return null if its handed a null', function(){
-          // we hand the function null if we're looking at tagging
-          expect($scope.readableQueryType(null)).toBe(null);
-        });
-
-        it('should lower case the result', function(){
-          expect($scope.readableQueryType('Contains')).toBe('contains');
-        });
-
-        it('should add "is" as a prefix for time queries', function(){
-          expect($scope.readableQueryType('Before')).toBe('is before');
-          expect($scope.readableQueryType('After')).toBe('is after');
-        });
-
-        it('should change equals to "is"', function(){
-          expect($scope.readableQueryType('Equals')).toBe('is');
-        });
-
-        it('should change All Of to "is"', function(){
-          expect($scope.readableQueryType('All Of')).toBe('is');
-        });
-
-        it('should change Any Of to "is"', function(){
-          expect($scope.readableQueryType('Any Of')).toBe('is');
-        });
-    });
-
-    describe('removeFilter()', function(){
-
-        it('should always leave an empty filter', function(){
-            expect($scope.criteria.length).toBe(1);
-            $scope.removeFilter();
-            expect($scope.criteria.length).toBe(1);
-            expect($scope.criteria[0].column).toBe(null);
-        });
-
-        it('should remove a criteria', function(){
-            $scope.addFilter();
-            expect($scope.criteria.length).toBe(2);
-            $scope.removeFilter();
-            expect($scope.criteria.length).toBe(1);
-        });
-
+      it('should put filters on the scope', function(){
+        expect(!!$scope.filters).toBe(true);
+      });
     });
 
     describe('resetFilter()', function(){
@@ -538,53 +164,18 @@ describe('ExtractCtrl', function(){
           };
         });
 
-        it('should reset the column', function(){
-
+        it('should call through to reset the column', function(){
+            spyOn($scope.extractQuery, 'resetFilter');
             $scope.resetFilter(criteria, ['column']);
-            expect(criteria.column).toEqual("demographics");
-            expect(criteria.field).toEqual(null);
-            expect(criteria.query).toEqual(null);
-            expect(criteria.queryType).toEqual(null);
+            expect($scope.extractQuery.resetFilter).toHaveBeenCalledWith(
+              criteria, ['column']
+            )
         });
 
-        it('should reset the field', function(){
-            $scope.resetFilter(criteria, ['column', 'field']);
-            expect(criteria.column).toEqual("demographics");
-            expect(criteria.field).toEqual("name");
-            expect(criteria.query).toEqual(null);
-            expect(criteria.queryType).toEqual(null);
-        });
-
-        it('should empty the selectedInfo', function(){
+        it('should change the selected info', function(){
             $scope.selectedInfo = "some info";
             $scope.resetFilter(criteria, ['column']);
-            expect($scope.selectedInfo).toBe(undefined);
-        });
-    });
-
-    describe('removeCriteria', function(){
-        it('should reset the criteria', function(){
-            $scope.criteria.push('hello world');
-            $scope.removeCriteria();
-            expect($scope.criteria.length).toBe(1);
-        });
-    });
-
-    describe('getChoices', function(){
-        it('should get a lookup list and suffix it', function(){
-            spyOn($scope, "findField").and.returnValue({
-              lookup_list: "dogs"
-            });
-            var result = $scope.getChoices("some", "field");
-            expect(result).toEqual(['Poodle', 'Dalmation']);
-        });
-
-        it('should get an enum', function(){
-          spyOn($scope, "findField").and.returnValue({
-            enum: [1, 2, 3]
-          });
-          var result = $scope.getChoices("some", "field");
-          expect(result).toEqual([1, 2, 3]);
+            expect($scope.selectedInfo).toBe(criteria);
         });
     });
 
@@ -614,8 +205,58 @@ describe('ExtractCtrl', function(){
         });
     });
 
-    describe('Search', function(){
+    describe('getQueryParams', function(){
+      it('should get the critera and the page number', function(){
+          var criteria = [{
+              combine    : "and",
+              column     : "symptoms",
+              field      : "symptoms",
+              queryType  : "contains",
+              query      : "cough",
+              lookup_list: []
+          }];
+          $scope.extractQuery.criteria = criteria;
+          var expected = angular.copy(criteria);
+          expected[0]["page_number"] = 1;
+          expect($scope.getQueryParams(1)).toEqual(expected);
+      });
 
+      it('should remove the hash key', function(){
+          var expected = [{
+              combine    : "and",
+              column     : "symptoms",
+              field      : "symptoms",
+              queryType  : "contains",
+              query      : "cough",
+              lookup_list: [],
+          }];
+
+          var criteria = angular.copy(expected);
+          criteria["%%hashKey"] = 123;
+          $scope.extractQuery.criteria = criteria;
+          var expected = angular.copy(criteria);
+          expected[0]["page_number"] = 1;
+          expect($scope.getQueryParams(1)).toEqual(expected);
+      });
+
+      it('should copy the criteria', function(){
+        var criteria = [{
+            combine    : "and",
+            column     : "symptoms",
+            field      : "symptoms",
+            queryType  : "contains",
+            query      : "cough",
+            lookup_list: []
+        }];
+        $scope.extractQuery.criteria = criteria;
+        criteria[0].page_number = 1;
+        expect($scope.getQueryParams(1)).toEqual(criteria);
+        expect($scope.getQueryParams(1)).not.toBe(criteria);
+      });
+
+    });
+
+    describe('Search', function(){
         it('should ask the server for results', function(){
 
             $httpBackend.expectPOST("/search/extract/").respond({
@@ -627,7 +268,7 @@ describe('ExtractCtrl', function(){
                 ]
             });
             $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
-            $scope.criteria[0] = {
+            $scope.extractQuery.criteria[0] = {
                 combine    : "and",
                 column     : "symptoms",
                 field      : "symptoms",
@@ -645,10 +286,50 @@ describe('ExtractCtrl', function(){
             expect($scope.searched).toBe(true);
         });
 
+        it('should not replace the search results if they have subsequently been updated the criteria', function(){
+            $httpBackend.expectPOST("/search/extract/").respond({
+                page_number: 1,
+                total_pages: 1,
+                total_count: 0,
+                object_list: [
+                    {
+                      categories: [],
+                      first_name: "Wilma"
+                    }
+                ]
+            });
+
+            $scope.extractQuery.criteria[0] = {
+                combine    : "and",
+                column     : "symptoms",
+                field      : "symptoms",
+                queryType  : "contains",
+                query      : "cough",
+                lookup_list: []
+            };
+
+            $scope.search();
+
+            $scope.extractQuery.criteria[0] = {
+                combine    : "and",
+                column     : "diagnosis",
+                field      : "condition",
+                queryType  : "contains",
+                query      : "cough",
+                lookup_list: []
+            };
+
+            $httpBackend.flush();
+            $httpBackend.verifyNoOutstandingExpectation();
+            $httpBackend.verifyNoOutstandingRequest();
+            // the results should not be updated because the query has changed
+            expect($scope.results.length).toBe(0);
+        });
+
         it('should handle errors', function(){
             spyOn($window, 'alert');
             $httpBackend.expectPOST('/search/extract/').respond(500, {});
-            $scope.criteria[0] = {
+            $scope.extractQuery.criteria[0] = {
                 combine    : "and",
                 column     : "symptoms",
                 field      : "symptoms",
@@ -658,6 +339,7 @@ describe('ExtractCtrl', function(){
             }
             $scope.search();
             $httpBackend.flush();
+
             expect($window.alert).toHaveBeenCalled();
         });
 
@@ -686,7 +368,7 @@ describe('ExtractCtrl', function(){
 
         it('should post to the url', function() {
             $httpBackend.expectPOST('/search/extract/download').respond({extract_id: '23'});
-            $httpBackend.expectGET('/search/extract/result/23').respond({state: 'SUCCESS'})
+            $httpBackend.expectGET('/search/extract/status/23').respond({state: 'SUCCESS'})
             $scope.async_extract();
             $timeout.flush()
             $rootScope.$apply();
@@ -717,7 +399,7 @@ describe('ExtractCtrl', function(){
                 }
                 return [200, {state: 'SUCCESS'}];
             }
-            $httpBackend.when('GET', '/search/extract/result/349').respond(status_responder)
+            $httpBackend.when('GET', '/search/extract/status/349').respond(status_responder)
             $scope.async_extract();
             $timeout.flush()
             $rootScope.$apply();
@@ -731,7 +413,7 @@ describe('ExtractCtrl', function(){
 
         it('should alert if we fail', function() {
             $httpBackend.expectPOST('/search/extract/download').respond({extract_id: '23'});
-            $httpBackend.expectGET('/search/extract/result/23').respond({state: 'FAILURE'})
+            $httpBackend.expectGET('/search/extract/status/23').respond({state: 'FAILURE'})
             spyOn($window, 'alert');
             $scope.async_extract();
             $timeout.flush()
@@ -743,9 +425,46 @@ describe('ExtractCtrl', function(){
 
             expect($scope.async_ready).toBe(false);
             expect($window.alert).toHaveBeenCalledWith('FAILURE');
-
         });
 
+        it('should query with a data slice', function(){
+          $scope.extractQuery.criteria = [{
+            "column": "demographics",
+            "field": "first_name",
+            "queryType":"Contains",
+            "query":"a",
+            "combine":"and"
+          }];
+          spyOn($scope.extractQuery, "getDataSlices").and.returnValue([{
+            "demographics": ["first_name", "surname"]
+          }]);
+
+          var expected = {
+            criteria: JSON.stringify([{
+              "column": "demographics",
+              "field": "first_name",
+              "queryType":"Contains",
+              "query":"a",
+              "combine":"and"
+            }]),
+            data_slice: JSON.stringify([{
+              "demographics": ["first_name", "surname"]
+            }])
+          };
+
+          $httpBackend.expectPOST('/search/extract/download', expected).respond({extract_id: '23'});
+          $httpBackend.expectGET('/search/extract/status/23').respond({state: 'SUCCESS'})
+
+          $scope.async_extract(true);
+          $timeout.flush()
+          $rootScope.$apply();
+          $httpBackend.flush();
+
+          expect($scope.extract_id).toBe('23');
+          $rootScope.$apply();
+
+          expect($scope.async_ready).toBe(true);
+        });
     });
 
     describe('jumpToFilter()', function() {
@@ -754,7 +473,7 @@ describe('ExtractCtrl', function(){
             var mock_default = jasmine.createSpy();
             var mock_event = {preventDefault: mock_default};
             $scope.jumpToFilter(mock_event, {criteria: []});
-            expect($scope.criteria).toEqual([]);
+            expect($scope.extractQuery.criteria).toEqual([]);
             expect(mock_default).toHaveBeenCalledWith();
         });
 
@@ -782,16 +501,7 @@ describe('ExtractCtrl', function(){
 
     });
 
-    describe('Getting searchable columns', function(){
-        it('should only get the columns that are advanced searchable', function(){
-            expect($scope.columns).toEqual([
-              columnsData[1], columnsData[2], columnsData[3], columnsData[4]
-            ]);
-        });
-    });
-
     describe('save()', function() {
-
         it('should save() the data', function() {
             spyOn($modal, 'open').and.returnValue({result: {then: function(f){f()}}});
             $scope.save();
@@ -802,9 +512,21 @@ describe('ExtractCtrl', function(){
             spyOn($modal, 'open').and.returnValue({result: {then: function(f){f()}}});
             $scope.save();
             var resolves = $modal.open.calls.mostRecent().args[0].resolve;
-            expect(resolves.params()).toEqual({name: null, criteria: $scope.completeCriteria()});
+            expect(resolves.params()).toEqual({name: null, criteria: $scope.extractQuery.completeCriteria()});
         });
-
     });
 
+    describe('selectSliceSubrecord', function(){
+      it('should select the slice subrecord', function(){
+        $scope.selectSliceSubrecord("something");
+        expect($scope.sliceSubrecord).toBe("something");
+      });
+    });
+
+    describe('setFieldInfo', function(){
+      it('should set the field info', function(){
+        $scope.setFieldInfo("something");
+        expect($scope.fieldInfo).toBe("something");
+      });
+    });
 });

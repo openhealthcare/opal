@@ -34,6 +34,8 @@ These rules are extensible, allowing custom rules that perform more advanced que
 
 Is a [discoverable](../guides/discoverable.md).
 
+It can optionally define a help text that will add a description into the info box.
+
 It is defined with a group of SearchRuleFields that appear like subrecord model fields in the
 front end.
 

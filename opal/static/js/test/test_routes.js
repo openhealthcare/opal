@@ -8,15 +8,18 @@ describe('Routes', function() {
     var metadata;
     var userProfile;
     var referencedata;
+    var dataDictionary;
 
     beforeEach(function(){
         module('opal');
         metadata = {load: function(){}};
         userProfile = {load: function(){}};
         referencedata = {load: function(){}};
+        dataDictionary = {load: function(){}};
         spyOn(metadata, "load").and.returnValue("some metadata");
         spyOn(userProfile, "load").and.returnValue("some user profile");
         spyOn(referencedata, "load").and.returnValue("some reference data");
+        spyOn(dataDictionary, "load").and.returnValue("some data dictionary");
 
         inject(function($injector){
             $route   = $injector.get('$route');
@@ -73,6 +76,7 @@ describe('Routes', function() {
         it('should resolve injected things', function() {
             var resolve = $route.routes['/extract'].resolve;
             expect(resolve.referencedata(referencedata)).toEqual('some reference data');
+            expect(resolve.dataDictionary(dataDictionary)).toEqual("some data dictionary");
             expect(resolve.extractSchema('Schema')).toEqual('Schema');
             expect(resolve.profile(userProfile)).toEqual("some user profile");
             expect(resolve.filters(function(){return {}})).toEqual({});

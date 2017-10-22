@@ -87,16 +87,6 @@ class RecordViewSet(LoginRequiredViewset):
         return json_response(schemas.list_records())
 
 
-class ExtractSchemaViewSet(LoginRequiredViewset):
-    """
-    Returns the schema to build our extract query builder
-    """
-    base_name = 'extract-schema'
-
-    def list(self, request):
-        return json_response(schemas.extract_schema())
-
-
 class ReferenceDataViewSet(LoginRequiredViewset):
     """
     API for referencedata
@@ -398,7 +388,6 @@ class PatientListViewSet(LoginRequiredViewset):
 router.register('patient', PatientViewSet)
 router.register('episode', EpisodeViewSet)
 router.register('record', RecordViewSet)
-router.register('extract-schema', ExtractSchemaViewSet)
 router.register('userprofile', UserProfileViewSet)
 router.register('user', UserViewSet)
 router.register('tagging', TaggingViewSet)

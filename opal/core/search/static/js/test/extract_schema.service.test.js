@@ -1,33 +1,15 @@
-describe('schema', function(){
+describe('ExtractSchema', function(){
     "use strict";
 
     var ExtractSchema, schema;
 
     var exampleSchemaData = [
         {
-            "single": true,
-            "advanced_searchable": false,
-            "readOnly": false,
-            "name": "tagging",
-            "display_name":"Teams",
-            "fields":[
-                {"name":"opat","type":"boolean"},
-                {"name":"opat_referrals","type":"boolean"},
-            ]
-        },
-        {
             "single":false,
             "name":"demographics",
             "display_name":"Demographics",
             "readOnly": true    ,
-            "advanced_searchable": true,
             "fields":[
-                {
-                    "title":"Consistency Token",
-                    "lookup_list":null,
-                    "name":"consistency_token",
-                    "type":"token"
-                },
                 {
                     "title":"Name",
                     "lookup_list":null,
@@ -37,14 +19,190 @@ describe('schema', function(){
             ]
         },
         {
-            name: "diagnosis",
-            single: false,
-            sort: 'date_of_diagnosis',
-            fields: [
-                {name: 'date_of_diagnosis', type: 'date'},
-                {name: 'condition', type: 'string'},
-                {name: 'provisional', type: 'boolean'},
+            "name": "diagnosis",
+            "single": false,
+            "sort": 'date_of_diagnosis',
+            "fields": [
+                {"name": 'date_of_diagnosis', "type": 'date'},
+                {"name": 'condition', "type": 'string'},
+                {"name": 'provisional', "type": 'boolean'},
             ]
+        },
+        {
+            "single": false,
+            "name": "microbiology_test",
+            "display_name": "Microbiology Test",
+            "readOnly": false,
+            "fields": [
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "test",
+                title: "Test",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "date_ordered",
+                title: "Date Ordered",
+                type: "date"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "details",
+                title: "Details",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "microscopy",
+                title: "Microscopy",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "organism",
+                title: "Organism",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "sensitive_antibiotics",
+                title: "Sensitive Antibiotics",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "resistant_antibiotics",
+                title: "Resistant Antibiotics",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "MicrobiologyTest",
+                name: "igm",
+                title: "IGM",
+                type: "string"
+              },
+            ],
+        },
+        {
+            "single": false,
+            "name": "investigation",
+            "display_name": "Investigation",
+            "readOnly": false,
+            "fields": [
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "test",
+                title: "Test",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "date_ordered",
+                title: "Date Ordered",
+                type: "date"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "details",
+                title: "Details",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "microscopy",
+                title: "Microscopy",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "organism",
+                title: "Organism",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "sensitive_antibiotics",
+                title: "Sensitive Antibiotics",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "resistant_antibiotics",
+                title: "Resistant Antibiotics",
+                type: "string"
+              },
+              {
+                default: null,
+                description: null,
+                enum: null,
+                lookup_list: null,
+                model: "Investigation",
+                name: "igm",
+                title: "IGM",
+                type: "string"
+              },
+            ],
         }
     ];
 
@@ -56,29 +214,53 @@ describe('schema', function(){
         })
 
         schema = new ExtractSchema(exampleSchemaData);
-    })
-
-    it('should keep a publically accessible version of the columns', function(){
-        expect(schema.columns).toEqual(exampleSchemaData);
-    })
-
-    it('should throw an error if asked for a non-column', function() {
-        expect(function(){ schema.getColumn('notarealcolumn'); })
-            .toThrow(new Error('No such column with name: "notarealcolumn"'))
     });
 
-    it('should recognise singletons', function(){
-        expect(schema.isSingleton("demographics")).toBeFalsy();
-        expect(schema.isSingleton("tagging")).toBeTruthy();
-        expect(schema.isSingleton("diagnosis")).not.toBeTruthy();
+    it('should keep a publically accessible version of columns', function(){
+        var result = angular.copy(schema.columns);
+        _.each(result, function(subrecord){
+          _.each(subrecord.fields, function(field){
+            delete field.subrecord;
+          });
+        });
+        var expectedColumnNames = _.map(exampleSchemaData, function(c){ return c.name })
+        var foundColumnNames = _.map(result, function(r){ return r.name });
+        expect(foundColumnNames).toEqual(expectedColumnNames);
     });
 
-    it('should recognise read only', function(){
-        expect(schema.isReadOnly("tagging")).toBeFalsy();
-        expect(schema.isReadOnly("demographics")).toBeTruthy();
+    it('should restrict the fields to searchable fields for micro test', function(){
+        var microTest = schema.findColumn('microbiology_test');
+        var found = _.map(microTest.fields, function(mtf){
+          return mtf.title;
+        });
+        var expected = [
+          'Test',
+          'Date Ordered',
+          'Details',
+          'Microscopy',
+          'Organism',
+          'Sensitive Antibiotics',
+          'Resistant Antibiotics'
+        ];
+
+        expect(expected).toEqual(found);
     });
 
-    it('should filter advanced searchable columns', function () {
-        expect(schema.getAdvancedSearchColumns()).toEqual([exampleSchemaData[1]]);
+    it('should restrict the fields to searchable fields for investigations', function(){
+        var microTest = schema.findColumn('microbiology_test');
+        var found = _.map(microTest.fields, function(mtf){
+          return mtf.title;
+        });
+        var expected = [
+          'Test',
+          'Date Ordered',
+          'Details',
+          'Microscopy',
+          'Organism',
+          'Sensitive Antibiotics',
+          'Resistant Antibiotics'
+        ];
+
+        expect(expected).toEqual(found);
     });
 });

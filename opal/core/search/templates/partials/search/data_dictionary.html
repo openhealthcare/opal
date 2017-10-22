@@ -1,0 +1,72 @@
+{% load forms %}
+
+<div class="row">
+  <div class="col-sm-12">
+    <div class="row">
+      <div class="col-md-1"></div>
+      <div class="col-md-2" ng-repeat="columns in dataDictionary.chunkedColumns">
+        <div ng-repeat="column in columns" class="row content-offset-10">
+          <div class="col-md-12">
+            <a class="data-dictionary-link" scroll-to="column.name" offset="100" href="">
+              [[ column.display_name ]]
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    <div ng-repeat="column in dataDictionary.columns">
+      <div ng-show="!$first" class="row">
+        <div class="col-md-12">
+          <hr class="bold" />
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm-12">
+          <h3 id="[[ column.name ]]"><i class="[[ column.icon ]]"></i> [[ column.display_name ]]
+          </h3>
+          <p class="lead" ng-show="column.description">
+            [[ column.description ]]
+          </p>
+        </div>
+      </div>
+      <table class="table data-dictionary-table">
+        <tr>
+          <th class="col-md-3">
+            Title
+          </th>
+          <th class="col-md-4">
+            Type
+          </th>
+          <th class="col-md-5">
+            Description
+          </th>
+        </tr>
+        <tr ng-repeat="field in column.fields">
+          <td>
+            [[ field.title ]]
+          </td>
+          <td>
+            [[ dataDictionary.getTypeDisplay(field.subrecord.name, field.name) ]]
+          </td>
+          <td>
+            [[ field.description ]]
+            <div ng-show="dataDictionary.findField(field.subrecord.name, field.name).lookup_list">
+              Normally coded as a
+              <a href=""
+                 class="orange-link"
+                 ng-click="open_modal('LookupListReferenceCtrl', '/templates/modals/lookuplist_reference.html', {lookuplist_name: dataDictionary.findField(field.subrecord.name, field.name).lookup_list, lookuplist: dataDictionary.getChoices(field.subrecord.name, field.name, referencedata)  })">
+                [[ dataDictionary.findField(field.subrecord.name, field.name).lookup_list | underscoreToSpaces ]]</a>
+              but free text entries are possible.
+              </a>
+            </div>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+</div>
+<div scroll-top="true" class="hidden-at-top scrollToTop"><div class="scrollToTopInner">Go to top</div></div>

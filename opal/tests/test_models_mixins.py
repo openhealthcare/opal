@@ -13,7 +13,7 @@ from opal.core.test import OpalTestCase
 from opal.tests import models as test_models
 
 from opal.models import (
-    UpdatesFromDictMixin, SerialisableFields, ToDictMixin
+    UpdatesFromDictMixin, Serialisable, ToDictMixin
 )
 
 
@@ -37,12 +37,13 @@ class GetterModel(ToDictMixin, models.Model):
         return "gotten"
 
 
-class SerialisableModel(SerialisableFields, models.Model):
+class SerialisableModel(Serialisable, models.Model):
+    _description = "so this is nice"
     pid = models.CharField(max_length=200, blank=True, null=True)
     hatty = ForeignKeyOrFreeText(test_models.Hat)
 
 
-class SerialisableFieldsTestCase(OpalTestCase):
+class SerialisableTestCase(OpalTestCase):
 
     def test_get_fieldnames(self):
         names = SerialisableModel._get_fieldnames_to_serialize()
@@ -54,7 +55,31 @@ class SerialisableFieldsTestCase(OpalTestCase):
         self.assertEqual(expected, set(names))
 
     def test_get_field_type(self):
-        self.assertEqual(models.ForeignKey, SerialisableModel._get_field_type('patient_id'))
+        self.assertEqual(
+            models.ForeignKey, SerialisableModel._get_field_type('patient_id')
+        )
+
+    def test_get_display_name_from_property(self):
+        self.assertEqual(
+            'Wearer of Hats', test_models.HatWearer.get_display_name()
+        )
+
+    def test_get_display_name_from_meta_verbose_name(self):
+        self.assertEqual(
+            'Invisible Wearer of Hats',
+            test_models.InvisibleHatWearer.get_display_name()
+        )
+
+    def test_get_display_name_from_verbose_name_but_capwords(self):
+        self.assertEqual(
+            'Dog Owner',
+            test_models.DogOwner.get_display_name()
+        )
+
+    def test_get_description(self):
+        self.assertEqual(
+            SerialisableModel.get_description(), "so this is nice"
+        )
 
     def test_get_human_readable_type_boolean(self):
         with patch.object(SerialisableModel, "_get_field") as get_field:
@@ -107,14 +132,24 @@ class SerialisableFieldsTestCase(OpalTestCase):
     def test_get_human_readable_type_reverse_foreign_key_field(self):
         self.assertEqual(
             test_models.HatWearer.get_human_readable_type("created_by"),
-            "One of the Users"
+            "Relationship"
         )
 
     def test_get_human_readable_type_many_to_many_field(self):
         self.assertEqual(
             test_models.HatWearer.get_human_readable_type("hats"),
-            "Some of the Hats"
+            "Relationship"
         )
+
+    def test_description(self):
+        description = test_models.FamousLastWords.get_field_description(
+            'words'
+        )
+        self.assertEqual(description, "Ultimate popular words")
+
+    def test_description_enum(self):
+        description = test_models.FavouriteColour.get_field_description('name')
+        self.assertEqual(description, "One of purple, yellow, blue")
 
     def test_build_field_schema(self):
         schema = SerialisableModel.build_field_schema()

@@ -12,6 +12,7 @@ class ExtractTestCase(OpalTestCase):
     @patch('opal.core.search.extract.zip_archive')
     def test_extract(self, zip_archive):
         zip_archive.return_value = 'Help'
+        data_slice = {}
         criteria = [
             {
                 u'column': u'demographics',
@@ -21,5 +22,9 @@ class ExtractTestCase(OpalTestCase):
                 u'queryType': u'Equals'
             }
         ]
-        fname = tasks.extract(self.user, criteria)
+        extract_query = dict(
+            data_slice=data_slice,
+            criteria=criteria
+        )
+        fname = tasks.extract(self.user, extract_query)
         self.assertEqual('Help', fname)

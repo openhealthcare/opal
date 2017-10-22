@@ -1,8 +1,9 @@
 .extract-search .search-info{
   border: 1px solid grey;
-  padding: 10px 15px 30px 15px;
+  padding: 10px 15px 10px 15px;
   position: relative;
   margin-top: 10px;
+  min-height: 40px;
 }
 
 .extract-search .search-info-title{
@@ -20,7 +21,110 @@
   margin-bottom: -5px;
 }
 
-
 .extract-search .square-button{
   width: 34px;
+}
+
+.data-dictionary-link{
+  font-size: 16px;
+  color: #337fb2;
+}
+
+.extract-selector{
+  border: 1px solid #ddd;
+}
+
+.extract-selector-rows{
+  height: 280px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.extract-selector-header{
+  padding: 8px;
+  border-bottom: 2px solid #ddd;
+  position: relative;
+}
+
+.extract-selector-row{
+  border-top: 1px solid #ddd;
+  padding-left: 3px;
+}
+
+.extract-selector-row.active{
+  background-color: #f5f5f5;
+  border-left: 3px solid #5fa2dd;
+}
+
+.extract-fields-table tr.active td{
+  position: relative;
+}
+
+.extract-fields-table tr.active div{
+  border-left: 3px solid #5fa2dd;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+}
+
+.extract-selector-row.selected{
+  background-color: #e0ebf5;
+}
+
+.extract-selector-row a{
+  display: block;
+  padding: 8px;
+}
+
+.extract-slice-field-description{
+    position: relative;
+    padding-bottom: 50px;
+}
+
+.extract-slice-field-add{
+    position: absolute;
+    bottom: 0;
+    right: 0
+}
+
+.extract-slice-table-link:hover{
+    text-decoration: none;
+    color: inherit;
+}
+
+.extract-hover:hover{
+  background-color: #f5f5f5;
+}
+
+.extract-fields-table{
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.data-dicionary-table{
+  font-size: 14px;
+}
+
+.extract-fields-table{
+  border: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.extract-fields-table thead tr th{
+  font-weight: 400;
+  padding: 16px;
+}
+
+.scroll-icon{
+  position: absolute;
+  right: 14px;
+}
+
+.table.data-dictionary-table{
+    font-size: 14px;
+}
+
+.btn.search-top {
+  border-radius: 50%;
 }

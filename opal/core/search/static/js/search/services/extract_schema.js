@@ -1,33 +1,51 @@
-angular.module('opal.services').factory('ExtractSchema', function() {
-    return function(columns) {
-      this.columns = columns;
+angular.module('opal.services').factory('ExtractSchema', function(Schema) {
+  "use strict";
 
-	    this.getColumn = function(columnName) {
-            var result = _.find(columns, function(c){
-                return c.name === columnName
-            })
+  var NOT_ADVANCED_SEARCHABLE = [
+      "created", "updated", "created_by_id", "updated_by_id"
+  ];
 
-            if(result){
-                return result;
-            }
+  var ExtractSchema = function(columns){
+    columns = _.each(columns, function(column){
+      column.fields = this.getAdvancedSearchFields(column);
+    }, this);
 
-	        throw new Error('No such column with name: "' + columnName + '"');
-	    };
+    Schema.call(this, columns);
+  };
 
-	    this.isSingleton = function(columnName) {
-	        var column = this.getColumn(columnName);
-	        return column.single;
-	    };
+  ExtractSchema.prototype = angular.copy(Schema.prototype);
 
-      this.isReadOnly = function(columnName) {
-          var column = this.getColumn(columnName);
-          return column.readOnly;
+  var additionalPrototype= {
+    getAdvancedSearchFields: function(column){
+      if(column.name == 'microbiology_test' || column.name == 'investigation'){
+        var micro_fields = [
+          "test",
+          "date_ordered",
+          "details",
+          "microscopy",
+          "organism",
+          "sensitive_antibiotics",
+          "resistant_antibiotics"
+        ];
+
+        return _.filter(column.fields, function(field){
+            return _.contains(micro_fields, field.name)
+        })
       }
+      return _.map(
+          _.reject(
+              column.fields,
+              function(c){
+                  if(_.contains(NOT_ADVANCED_SEARCHABLE, c.name)){
+                      return true;
+                  }
+                  return c.type == 'token' ||  c.type ==  'list';
+              }),
+          function(c){ return c; }
+      ).sort()
+    },
+  }
+  _.extend(ExtractSchema.prototype, additionalPrototype);
 
-      this.getAdvancedSearchColumns = function(){
-          return _.filter(this.columns, function(c){
-              return c.advanced_searchable
-          })
-      }
-    };
+  return ExtractSchema
 });

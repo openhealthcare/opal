@@ -2,7 +2,7 @@ describe('OPAL Directives', function(){
     "use strict";
 
     var $templateCache, $timeout, $httpBackend, $rootScope, $compile;
-    var element, scope, $exceptionHandler;
+    var element, scope, $exceptionHandler, anchorScroll, $location;
     var responseMarkUp = ' \
       <ui-select class="col-sm-8" multiple ng-model="value" on-remove="onRemove($item, $model)" on-select="onSelect($item, $model)" theme="bootstrap"> \
         <ui-select-match>[[ $item.display_name ]]</ui-select-match> \
@@ -51,6 +51,11 @@ describe('OPAL Directives', function(){
                 }
             };
         });
+
+        anchorScroll = jasmine.createSpy();
+        $provide.service('$anchorScroll', function(){
+            return anchorScroll;
+        });
     }));
 
     beforeEach(function(){
@@ -61,6 +66,7 @@ describe('OPAL Directives', function(){
             $templateCache    = $injector.get('$templateCache');
             $exceptionHandler = $injector.get('$exceptionHandler');
             $httpBackend      = $injector.get('$httpBackend');
+            $location      = $injector.get('$location');
             $compile = $injector.get('$compile');
         });
 
@@ -216,6 +222,22 @@ describe('OPAL Directives', function(){
         });
 
     })
+
+    describe('scrollTo', function(){
+      it('should animate on click', function() {
+        scope.something = "asd";
+        var markup = '<button scroll-to="something" offset="200"></button>';
+        spyOn($location, "hash").and.returnValue('something');
+        compileDirective(markup);
+        $(element).click();
+
+        // we set the window offset
+        expect(anchorScroll.yOffset).toBe(200);
+        expect($location.hash.calls.argsFor(0)).toEqual([]);
+        expect($location.hash.calls.argsFor(1)).toEqual(["asd"]);
+        expect($location.hash.calls.argsFor(2)).toEqual(["something"]);
+      });
+    });
 
     describe('goToTop', function(){
         it('should compile', function() {

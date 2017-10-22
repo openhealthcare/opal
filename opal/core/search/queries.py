@@ -468,16 +468,42 @@ class DatabaseQuery(QueryBackend):
         """
         Provide a textual description of the current search
         """
-        filteritem = "{combine} {column} {field} {queryType} {query}"
-        filters = "\n".join(
-            filteritem.format(**f) for f in self.query
+        filter_item_first_line = "{subrecord} {field} {queryType} {query}"
+        filter_item = "{combine} {subrecord} {field} {queryType} {query}"
+        line_description = []
+
+        for idx, query_line in enumerate(self.query):
+            subrecord_cls = subrecords.get_subrecord_from_api_name(
+                query_line["column"]
+            )
+            display_name = subrecord_cls.get_display_name()
+            field_display_name = subrecord_cls._get_field_title(
+                query_line["field"]
+            )
+            if idx == 0:
+                template = filter_item_first_line
+            else:
+                template = filter_item
+            line_description.append(
+                template.format(
+                    subrecord=display_name,
+                    field=field_display_name,
+                    queryType=query_line["queryType"],
+                    query=query_line["query"],
+                    combine=query_line["combine"]
+                )
+            )
+
+        filters = "\n".join(line_description)
+
+        complete_description = "{username} ({date})\nSearching for:\n{filters}"
+        return complete_description.format(
+            username=self.user.username,
+            date=datetime.datetime.now().strftime(
+                settings.DATETIME_INPUT_FORMATS[0]
+            ),
+            filters=filters
         )
-        return """{username} ({date})
-Searching for:
-{filters}
-""".format(username=self.user.username,
-           date=datetime.datetime.now(),
-           filters=filters)
 
 
 def create_query(user, criteria):
