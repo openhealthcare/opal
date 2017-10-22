@@ -20,6 +20,7 @@ from opal.core.patient_lists import (
 Begin discoverable definitions for test cases
 """
 
+
 class TaggingTestPatientList(TaggedPatientList):
     display_name = "Herbivores"
     tag = "eater"
@@ -57,6 +58,7 @@ class TaggingTestSameTagPatientList(TaggedPatientList):
             models.Demographics,
         ]
 
+
 class InvisibleList(TaggedPatientList):
     tag    = 'eater'
     subtag = 'shh'
@@ -85,6 +87,8 @@ class TestEmptyTabbedPatientListGroup(TabbedPatientListGroup):
 """
 Begin Tests
 """
+
+
 class ColumnTestCase(OpalTestCase):
 
     def test_set_non_inferred_attributes(self):
@@ -177,7 +181,6 @@ class TestPatientList(OpalTestCase):
 
         self.assertEqual(e.id, All().to_dict(self.user)[0]['id'])
 
-
     def test_visible_to(self):
         self.assertTrue(TaggingTestPatientList.visible_to(self.user))
 
@@ -185,7 +188,7 @@ class TestPatientList(OpalTestCase):
         dicts = [
             {
                 'detail_template_path': 'records/demographics_detail.html',
-                'icon': '',
+                'icon': 'fa fa-user',
                 'list_limit': None,
                 'name': 'demographics',
                 'single': True,

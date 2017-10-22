@@ -771,12 +771,6 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
                 if subclass._is_singleton:
                     subclass.objects.create(episode=self)
 
-    @classmethod
-    def _get_fieldnames_to_serialize(cls):
-        fields = super(Episode, cls)._get_fieldnames_to_serialize()
-        fields.extend(["start", "end"])
-        return fields
-
     @property
     def category(self):
         from opal.core import episodes

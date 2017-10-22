@@ -2,6 +2,8 @@
 Tests for the OPAL API
 """
 import json
+from six.moves import reload_module
+
 from datetime import date, timedelta, datetime
 
 from django.utils import timezone
@@ -279,6 +281,15 @@ class SubrecordTestCase(OpalTestCase):
             response = self.viewset().retrieve(MagicMock(name='request'), pk=1)
             self.assertEqual('serialized colour', response.data)
 
+    def test_with_defined_api_name(self):
+        with patch.object(self.model, "get_api_name") as mock_api_name:
+            mock_api_name.return_value = "something"
+            reload_module(api)
+            router = api.router
+            self.assertIn(
+                "something",
+                {i[0] for i in router.registry}
+            )
 
     def test_update(self):
         created = timezone.now() - timedelta(1)
@@ -636,7 +647,6 @@ class EpisodeTestCase(OpalTestCase):
         pass #TODO TEST THIS
 
     def test_create_existing_patient(self):
-        self.demographics.name = 'Aretha Franklin'
         self.demographics.hospital_number = '123123123'
         self.demographics.save()
         self.mock_request.data = {

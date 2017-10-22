@@ -156,27 +156,14 @@ class ExternalSubRecord(
 # We shouldn't, but we basically insist on some non-core models being there.
 if not getattr(models.Patient, 'demographics_set', None):
 
-    class Demographics(models.PatientSubrecord):
+    class Demographics(models.Demographics):
         _is_singleton = True
-
-        hospital_number = dmodels.CharField(max_length=200, blank=True, null=True)
-        nhs_number = dmodels.CharField(max_length=200, blank=True, null=True)
-        first_name = dmodels.CharField(max_length=200, blank=True, null=True)
-        surname = dmodels.CharField(max_length=200, blank=True, null=True)
-        date_of_birth = dmodels.DateField(blank=True, null=True)
-        sex = fields.ForeignKeyOrFreeText(models.Gender)
-        birth_place = fields.ForeignKeyOrFreeText(models.Destination)
-        death_indicator = dmodels.BooleanField(default=False)
-
         pid_fields = 'first_name', 'surname',
 
 if not getattr(models.Episode, 'location_set', None):
 
-    class Location(models.EpisodeSubrecord):
+    class Location(models.Location):
         _is_singleton = True
-
-        ward = dmodels.CharField(max_length=200, blank=True, null=True)
-        bed = dmodels.CharField(max_length=200, blank=True, null=True)
 
 
 if not getattr(models.Episode, 'symptoms', None):

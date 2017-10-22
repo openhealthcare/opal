@@ -137,7 +137,9 @@ class PatientTestCase(OpalTestCase):
         }
 
         original_patient.bulk_update(d, self.user)
-        self.assertIsNone(original_patient.demographics_set.first().hospital_number)
+        self.assertEqual(
+            original_patient.demographics_set.first().hospital_number, ""
+        )
 
     def test_bulk_update_tagging_ignored(self):
         original_patient = models.Patient()
