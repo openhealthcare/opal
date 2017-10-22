@@ -1,6 +1,8 @@
 """
 Templatetags for form/modal helpers
 """
+from __future__ import unicode_literals
+
 import json
 from django import template
 from django.db import models

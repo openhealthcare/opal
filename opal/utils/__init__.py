@@ -1,6 +1,8 @@
 """
 Generic Opal utilities
 """
+from __future__ import unicode_literals
+
 import importlib
 import re
 import sys

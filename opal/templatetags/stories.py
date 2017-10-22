@@ -1,6 +1,8 @@
 """
 Templatetags for user story / acceptance
 """
+from __future__ import unicode_literals
+
 import os
 
 from django import template

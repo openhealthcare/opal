@@ -1,6 +1,7 @@
 """
 Opal Middlewares
 """
+from __future__ import unicode_literals
 # Hat tip:
 # http://kevinzhang.org/posts/django-angularjs-and-csrf-xsrf-protection.html
 

@@ -1,6 +1,8 @@
 """
 Plugin definition for opal.core.search
 """
+from __future__ import unicode_literals
+
 from opal.core.search import urls
 from opal.core import plugins
 

@@ -1,6 +1,8 @@
 """
 Load a series of lookup lists into our instance.
 """
+from __future__ import unicode_literals
+
 import os
 import ffs
 from optparse import make_option

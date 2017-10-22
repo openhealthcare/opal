@@ -1,6 +1,8 @@
 """
 Unittests for opal.management.commands.load_lookup_lists
 """
+from __future__ import unicode_literals
+
 import ffs
 from mock import patch, MagicMock
 

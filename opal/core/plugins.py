@@ -1,6 +1,8 @@
 """
 OPAL PLugin - base class and helpers
 """
+from __future__ import unicode_literals
+
 import inspect
 import os
 

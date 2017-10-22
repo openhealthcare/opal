@@ -1,17 +1,34 @@
 """
 Unittests for Patients
 """
-from mock import patch
-from opal.core.test import OpalTestCase
+from __future__ import unicode_literals
 
+from opal.core.test import OpalTestCase
 from opal.models import Patient, Episode
-from opal.tests.models import InvisibleDog
 
 
 class PatientTest(OpalTestCase):
 
     def setUp(self):
         self.patient = Patient.objects.create()
+
+    def test_to_string_with_demographics(self):
+        self.patient.demographics_set.update(
+            hospital_number="123",
+            first_name="Wilma",
+            surname="Flintstone"
+        )
+        self.assertEqual(
+            str(self.patient),
+            "Patient: 123 - Wilma Flintstone"
+        )
+
+    def test_to_string_without_demographics(self):
+        self.patient.demographics_set.all().delete()
+        self.assertEqual(
+            str(self.patient),
+            "Patient: 1"
+        )
 
     def test_singleton_subrecord_created(self):
         self.assertEqual(1, self.patient.famouslastwords_set.count())

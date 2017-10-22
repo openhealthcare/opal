@@ -1,6 +1,8 @@
 """
 Declaring custom patient detail views.
 """
+from __future__ import unicode_literals
+
 from opal.core import discoverable
 
 

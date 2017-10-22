@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import os
 import re
 from setuptools import setup, find_packages

@@ -1,6 +1,8 @@
 """
 Unittests for opal.middleware
 """
+from __future__ import unicode_literals
+
 from opal.core.test import OpalTestCase
 
 from opal import middleware

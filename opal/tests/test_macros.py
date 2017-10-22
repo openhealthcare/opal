@@ -1,6 +1,9 @@
+from __future__ import unicode_literals
+
 from django.test import TestCase
 
 from opal.models import Macro
+
 
 class MacroTest(TestCase):
     def setUp(self):
@@ -19,3 +22,8 @@ class MacroTest(TestCase):
             dict(label="brb", expanded="Be right back...")
         ]
         self.assertEqual(serialised, Macro.to_dict())
+
+    def test_to_string(self):
+        self.assertEqual(
+            str(self.m1), "Macro: hai"
+        )

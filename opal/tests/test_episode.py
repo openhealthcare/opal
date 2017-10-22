@@ -1,19 +1,23 @@
 """
 Unittests for opal.models.Episode
 """
+from __future__ import unicode_literals
+
 import datetime
 from mock import patch, MagicMock
 
 from django.contrib.auth.models import User
 
+from six import text_type
 from opal.core.episodes import InpatientEpisode
 from opal.core.test import OpalTestCase
 from opal.models import Patient, Episode, Tagging, UserProfile
+from opal.tests import test_patient_lists  # NOQA ensure the lists are loaded
 
-from opal.tests import test_patient_lists # ensure the lists are loaded
 from opal.tests.models import (
-    Hat, HatWearer, Dog, DogOwner, InvisibleHatWearer
+    Hat, HatWearer, InvisibleHatWearer
 )
+
 
 class EpisodeTest(OpalTestCase):
 
@@ -21,6 +25,42 @@ class EpisodeTest(OpalTestCase):
         self.patient, self.episode = self.new_patient_and_episode_please()
         self.episode.stage = "Active TB"
         self.episode.save()
+
+    def test_unicode(self):
+        self.episode.start = datetime.date(2017, 1, 1)
+        self.episode.save()
+        self.patient.demographics_set.update(
+            first_name="Wilma", surname="Flintstone", hospital_number="123"
+        )
+        self.assertEqual(
+            text_type(self.episode),
+            "Episode: 1 - 123 - Wilma Flintstone - 2017-01-01"
+        )
+
+    def test_unicode_without_start(self):
+        self.patient.demographics_set.update(
+            first_name="Wilma", surname="Flintstone", hospital_number="123"
+        )
+        self.assertEqual(
+            text_type(self.episode),
+            "Episode: 1 - 123 - Wilma Flintstone - None"
+        )
+
+    def test_unicode_without_demographics(self):
+        self.patient.demographics_set.all().delete()
+        self.episode.start = datetime.date(2017, 1, 1)
+        self.episode.save()
+        self.assertEqual(
+            text_type(self.episode),
+            "Episode: 1 - 2017-01-01"
+        )
+
+    def test_unicode_without_demographics_without_start(self):
+        self.patient.demographics_set.all().delete()
+        self.assertEqual(
+            text_type(self.episode),
+            "Episode: 1 - None"
+        )
 
     def test_singleton_subrecord_created(self):
         self.assertEqual(1, self.episode.episodename_set.count())

@@ -1,6 +1,8 @@
 """
 Unittests for opal.management.commands.detect_duplicates
 """
+from __future__ import unicode_literals
+
 import datetime
 
 from mock import patch

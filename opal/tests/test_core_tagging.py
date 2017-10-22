@@ -1,6 +1,8 @@
 """
 Unittests for the opal.core.tagging module
 """
+from __future__ import unicode_literals
+
 from opal.core.test import OpalTestCase
 
 from opal.tests import test_patient_lists

@@ -1,6 +1,8 @@
 """
 Unittests for opal.models
 """
+from __future__ import unicode_literals
+
 import os
 import datetime
 from mock import patch, MagicMock
@@ -11,7 +13,12 @@ from django.utils import timezone
 from opal import models
 from opal.core import exceptions
 from opal.models import (
-    Subrecord, Tagging, Patient, InpatientAdmission, Symptom,
+    Subrecord,
+    Tagging,
+    Patient,
+    InpatientAdmission,
+    Symptom,
+    ContactNumber,
 )
 from opal.core.test import OpalTestCase
 from opal.core import patient_lists
@@ -19,7 +26,8 @@ from opal.tests import test_patient_lists
 from opal.tests.models import (
     FamousLastWords, PatientColour, ExternalSubRecord, SymptomComplex,
     PatientConsultation, Birthday, DogOwner, HatWearer, InvisibleHatWearer,
-    HouseOwner, HoundOwner, Colour, FavouriteColour, Dinner
+    HouseOwner, HoundOwner, Colour, FavouriteColour, Diagnosis, Location,
+    Dinner
 )
 
 
@@ -764,6 +772,29 @@ class TaggingTestCase(OpalTestCase):
         schema = Tagging.build_field_schema()
         self.assertEqual(expected, schema)
 
+    def test_tagging_with_user_to_string(self):
+        _, episode = self.new_patient_and_episode_please()
+        self.user.username = "test_user"
+        tag = Tagging.objects.create(
+            user=self.user,
+            episode=episode,
+            archived=True
+        )
+        self.assertEqual(
+            str(tag), "Tagging: User: test_user - archived: True"
+        )
+
+    def test_tagging_without_user_to_string(self):
+        _, episode = self.new_patient_and_episode_please()
+        tag = Tagging.objects.create(
+            value="A&E",
+            episode=episode,
+            archived=True
+        )
+        self.assertEqual(
+            str(tag), "Tagging: A&E - archived: True"
+        )
+
 
 class AbstractDemographicsTestCase(OpalTestCase):
     def test_name(self):
@@ -778,4 +809,48 @@ class ExternalSystemTestCase(OpalTestCase):
         self.assertEqual(
             ExternalSubRecord.get_modal_footer_template(),
             "partials/_sourced_modal_footer.html"
+        )
+
+
+class TestContactNumber(OpalTestCase):
+    def test_to_string(self):
+        contact_number = ContactNumber.objects.create(
+            name="Wilma",
+            number="Bedrock 243"
+        )
+        self.assertEqual(
+            str(contact_number),
+            "ContactNumber: Wilma - Bedrock 243"
+        )
+
+
+class TestLocation(OpalTestCase):
+    def test_to_string(self):
+        _, episode = self.new_patient_and_episode_please()
+        Location.objects.update(
+            episode=episode,
+            category="inpatient",
+            hospital="St Mungo's",
+            ward="4",
+            bed="1"
+        )
+
+        location = Location.objects.get()
+
+        self.assertEqual(
+            str(location), "Location: 1 - inpatient - St Mungo's - 4 - 1"
+        )
+
+
+class TestDiagnosis(OpalTestCase):
+    def test_to_string(self):
+        _, episode = self.new_patient_and_episode_please()
+        diagnosis = Diagnosis.objects.create(
+            episode=episode,
+            condition="Cough",
+            date_of_diagnosis=datetime.date(2017, 1, 12)
+        )
+
+        self.assertEqual(
+            str(diagnosis), "Diagnosis: 1 - Cough - 2017-01-12"
         )

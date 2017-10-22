@@ -1,6 +1,8 @@
 """
 Unittests fror opal.core.test_runner
 """
+from __future__ import unicode_literals
+
 import subprocess
 
 import ffs

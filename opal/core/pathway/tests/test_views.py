@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from opal.core.test import OpalTestCase
 from django.core.urlresolvers import reverse
 from opal.core.pathway.tests.pathway_test import pathways as test_pathways

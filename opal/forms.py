@@ -1,6 +1,8 @@
 """
 Custom forms for Opal!
 """
+from __future__ import unicode_literals
+
 from django.forms import ValidationError
 from django.contrib.auth.forms import AdminPasswordChangeForm
 

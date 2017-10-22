@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import json
 from opal.core.test import OpalTestCase
 from django.core.urlresolvers import reverse

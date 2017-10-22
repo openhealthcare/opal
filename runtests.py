@@ -1,6 +1,7 @@
 """
 Standalone test runner for OPAL plugin
 """
+from __future__ import unicode_literals
 import os
 import sys
 

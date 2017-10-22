@@ -1,6 +1,8 @@
 """
 Unittests for opal.templatetags.menus
 """
+from __future__ import unicode_literals
+
 from django.template import Context
 from mock import MagicMock
 

@@ -1,6 +1,8 @@
 """
 Tasks for our OPAL signals
 """
+from __future__ import unicode_literals
+
 from celery import shared_task
 
 from opal.models import Patient, Episode

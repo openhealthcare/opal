@@ -1,6 +1,8 @@
 """
 Models for just our tests
 """
+from __future__ import unicode_literals
+
 from django.db import models as dmodels
 
 from opal.core import fields
@@ -159,12 +161,12 @@ if not getattr(models.Patient, 'demographics_set', None):
         pid_fields = 'first_name', 'surname',
 
 if not getattr(models.Episode, 'location_set', None):
+    class Location(models.Location):
+        pass
 
-    class Location(models.EpisodeSubrecord):
-        _is_singleton = True
-
-        ward = dmodels.CharField(max_length=200, blank=True, null=True)
-        bed = dmodels.CharField(max_length=200, blank=True, null=True)
+if not getattr(models.Episode, 'diagnosis_set', None):
+    class Diagnosis(models.Diagnosis):
+        pass
 
 
 

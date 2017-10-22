@@ -1,6 +1,8 @@
 """
 Unittests for opal.core.celery
 """
+from __future__ import unicode_literals
+
 from mock import patch, MagicMock
 
 from opal.core.test import OpalTestCase

@@ -1,13 +1,17 @@
 """
 Unittests for opal.management.commands.create_random_data
 """
+from __future__ import unicode_literals
+
 import datetime
 from mock import patch, MagicMock
+from six import text_type
 
 from opal.core.test import OpalTestCase
 from opal.models import Patient
 
 from opal.management.commands import create_random_data as crd
+
 
 class StringGeneratorTestCase(OpalTestCase):
     def test_string_generator(self):
@@ -21,7 +25,7 @@ class StringGeneratorTestCase(OpalTestCase):
 class ConsistencyGeneratorTestCase(OpalTestCase):
     def test_consistency_generator(self):
         res = crd.consistency_generator()
-        self.assertIsInstance(res, str)
+        self.assertIsInstance(res, text_type)
         self.assertEqual(8, len(res))
 
 
@@ -51,6 +55,7 @@ class DateGeneratorTestCase(OpalTestCase):
         end = datetime.date.today()
         date = crd.date_generator(start_date=start, end_date=end)
         self.assertEqual(date.today(), date)
+
 
 class DateTimeGeneratorTestCase(OpalTestCase):
     def test_datetime_generator_returns_datetime(self):
@@ -98,7 +103,7 @@ class ForeignKeyOrFreeTextGenerator(OpalTestCase):
 class TextFieldGeneratorTestCase(OpalTestCase):
     def test_text_field_generator(self):
         result = crd.text_field_generator()
-        self.assertIsInstance(result, str)
+        self.assertIsInstance(result, text_type)
 
 
 class BooleanFieldGeneratorTestCase(OpalTestCase):
@@ -113,7 +118,7 @@ class PatientGeneratorTestCase(OpalTestCase):
     def test_get_name(self):
         name = self.gen.get_name()
         frist, last = name.split()
-        self.assertIsInstance(name, str)
+        self.assertIsInstance(name, text_type)
         self.assertIn(frist, crd.first_names)
         self.assertIn(last, crd.last_names)
 

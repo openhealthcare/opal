@@ -1,6 +1,8 @@
 """
 Unittests for opal.management.commands.dump_lookup_lists
 """
+from __future__ import unicode_literals
+
 from django.contrib.contenttypes.models import ContentType
 from mock import patch
 

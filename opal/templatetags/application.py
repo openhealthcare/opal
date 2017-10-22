@@ -1,6 +1,8 @@
 """
 Templatetags for working with Opal applications
 """
+from __future__ import unicode_literals
+
 from django import template
 
 from opal.core import application, plugins

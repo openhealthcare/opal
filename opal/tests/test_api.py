@@ -1,6 +1,8 @@
 """
 Tests for the OPAL API
 """
+from __future__ import unicode_literals
+
 import json
 from six.moves import reload_module
 

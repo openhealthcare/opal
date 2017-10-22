@@ -2,6 +2,8 @@
 Custom OPAL Django signals that are fired in workers
 (e.g. outside of the request/response cycle)
 """
+from __future__ import unicode_literals
+
 from django import dispatch
 from django.db.models.signals import post_save
 

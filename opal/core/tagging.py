@@ -1,6 +1,8 @@
 """
 Tagging Opal episodes
 """
+from __future__ import unicode_literals
+
 from opal.core import patient_lists
 
 

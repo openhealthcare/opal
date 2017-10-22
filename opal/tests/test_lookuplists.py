@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from opal.core.test import OpalTestCase
 from opal.models import Synonym
 from opal.tests.models import Hat
