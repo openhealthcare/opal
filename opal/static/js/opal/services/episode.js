@@ -154,20 +154,17 @@ angular.module('opal.services')
             },
 
             makeCopy: function(){
-                var start, end;
-                if(this.start){
-                  start = moment(this.start);
-                }
-                if(this.end){
-                  end = moment(this.end);
-                }
                 var copy = {
                     id               : this.id,
                     category_name    : this.category_name,
-                    consistency_token: this.consistency_token,
-                    start: start,
-                    end: end
+                    consistency_token: this.consistency_token
                 }
+
+                _.each(date_fields, function(date_field){
+                    if(this[date_field]){
+                        copy[date_field] = moment(this[date_field]).toDate();
+                    }
+                }, this);
                 return copy
             },
 
