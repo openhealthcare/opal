@@ -199,6 +199,27 @@ recently changed it - refresh the page and try again';
                 $httpBackend.flush();
                 expect(episode.addItem).toHaveBeenCalled();
             });
+
+            it('should allow us to change the episode on the item', function(){
+                // allow us to change the episode on the item and everything
+                // to work as we'd expect
+                var episodeData = opalTestHelper.getEpisodeData()
+                episodeData.id = 124;
+                var newEpisode = opalTestHelper.newEpisode(
+                    $rootScope, episodeData
+                );
+                spyOn(newEpisode, "addItem");
+                item.episode = newEpisode;
+                item.save({condition: 'Ebola', provisional: false});
+                var expected = {
+                  "condition":"Ebola",
+                  "provisional":false,
+                  "episode_id":124
+                }
+                $httpBackend.expectPOST('/api/v0.1/diagnosis/', expected);
+                $httpBackend.flush();
+                expect(newEpisode.addItem).toHaveBeenCalled();
+            });
         });
 
         describe('deleting item', function() {
