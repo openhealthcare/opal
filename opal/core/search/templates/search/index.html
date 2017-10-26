@@ -4,6 +4,7 @@
 
 {% block ngapp %}opal.search{% endblock %}
 {% block angularapp %}
+  {{ block.super }}
   {% plugin_javascripts 'opal.search' %}
 {% endblock %}
 {% block nav_search %}
