@@ -263,8 +263,8 @@ describe('Episode', function() {
         expect(copy.id).toBe(123);
         expect(copy.category_name).toBe('Inpatient');
         expect(copy.consistency_token).toBe(undefined);
-        expect(copy.start.toDate()).toEqual(new Date(2013, 10, 19));
-        expect(copy.end.toDate()).toEqual(new Date(2016, 4, 25));
+        expect(copy.start).toEqual(new Date(2013, 10, 19));
+        expect(copy.end).toEqual(new Date(2016, 4, 25));
     });
 
     it('start and end should be null if not set', function(){

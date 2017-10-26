@@ -156,10 +156,10 @@ angular.module('opal.services')
             makeCopy: function(){
                 var start, end;
                 if(this.start){
-                  start = moment(this.start);
+                  start = moment(this.start).toDate();
                 }
                 if(this.end){
-                  end = moment(this.end);
+                  end = moment(this.end).toDate();
                 }
                 var copy = {
                     id               : this.id,

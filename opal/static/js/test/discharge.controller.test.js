@@ -67,7 +67,7 @@ describe('DischargeEpisodeCtrl', function(){
         it('should set the discharge date/end from the episode if it exists', function() {
             episode.end = new Date(2000, 0, 1);
             mkcontroller();
-            expect($scope.editing.end.toDate()).toEqual(new Date(2000, 0, 1));
+            expect($scope.editing.end).toEqual(new Date(2000, 0, 1));
         });
 
         it('should set the new category to unfollow if we are a review patient', function() {
