@@ -79,7 +79,7 @@ referencedata into the forms we build, either by detecting their use automatical
 
 Reference data can be provided at application or plugin level in a file named `lookuplists.json` found in the
 `{{ app_or_plugin }}/data/lookuplists` directory. This data should be in the Opal JSON format. The name value
-of each lookuplist should be the return value of that lookuplist's `get_api_name()` method.
+of each lookuplist should be the return value of that lookuplist's `get_api_name()` method (otherwise they will fail to load), these can be found via [Schemas](../reference/schemas.md)
 
 ```JSON
 {
@@ -114,6 +114,6 @@ Loads lookup lists from all plugins/apps in the Opal JSON format. The lookup lis
 
 Optionally you can pass in an explicit filename with the `-f` argument.
 
-#### delete_all_lookuplists
+#### delete_all_lookup_lists
 
 Deletes all currently lookuplist values and related synonyms
