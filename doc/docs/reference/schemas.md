@@ -2,7 +2,7 @@
 
 Opal schemas provide a JSON representation of the structure of subrecords. Opal uses these schemas internally to construct the `Item` classes in AngularJS on the client side.
 
-The Schema for an Opal application is available at the url `/api/v0.1/extract-schema/` and contains the serialized representation of all subrecords and their fields.
+The Schema for an Opal application is available at the url `/api/v0.1/record/` and contains the serialized representation of all subrecords and their fields.
 
 ### Subrecord information
 
@@ -14,7 +14,7 @@ Individual subrecords are serialized to the schema using the function `opal.core
 * display_name: the result of `Subrecord.get_display_name()`
 * single: Whether the Subrecord is a singleton
 * advanced_searchable: if the Subrecord should appear in the advanced search view
-* fields: a represention of each field 
+* fields: a represention of each field
 
 Optional fields:
 
