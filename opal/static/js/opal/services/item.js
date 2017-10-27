@@ -2,7 +2,7 @@ angular.module('opal.services')
     .factory('Item', function($http, $q, $injector, $window, FieldTranslater) {
         return function(attrs, episode, columnSchema) {
             var item = this;
-            this.episode =  episode;
+            this.episode = episode;
             this.formController = 'EditItemCtrl';
 
             this.initialise = function(attrs) {
@@ -86,21 +86,21 @@ angular.module('opal.services')
                 // not fully initialized itself at that point.
                 // TODO: Refactor episode initialization.
                 if (this.columnName == 'tagging') {
-                    item.id = episode.id;
-                    attrs.id = episode.id;
+                    item.id = this.episode.id;
+                    attrs.id = this.episode.id;
                 }
                 if (angular.isDefined(item.id)) {
                     method = 'put';
                     url += attrs.id + '/';
                 } else {
                     method = 'post';
-                    attrs.episode_id = episode.id;
+                    attrs.episode_id = this.episode.id;
                 }
                 $http[method](url, attrs).then(
                     function(response) {
                         item.initialise(response.data);
                         if (method == 'post') {
-                            episode.addItem(item);
+                            item.episode.addItem(item);
                         }
                         deferred.resolve();
                     },
@@ -123,7 +123,7 @@ recently changed it - refresh the page and try again');
 
 	            $http['delete'](url).then(
                     function(response) {
-		                episode.removeItem(item);
+		                item.episode.removeItem(item);
 		                deferred.resolve();
 	                },
                     function(response) {
