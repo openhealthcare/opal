@@ -3,7 +3,7 @@ Urls for Opal's search functionality
 """
 from django.conf.urls import patterns, url
 
-from opal.core.search import views, api
+from opal.core.search import views
 
 urlpatterns = patterns(
     '',
