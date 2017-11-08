@@ -1,7 +1,7 @@
 """
 Plugin definition for opal.core.search
 """
-from opal.core.search import urls
+from opal.core.search import api, urls
 from opal.core import plugins
 
 
@@ -28,6 +28,10 @@ class SearchPlugin(plugins.OpalPlugin):
             "js/search/controllers/save_filter.js",
         ]
     }
+
+    apis = [
+        ('extract-schema', api.ExtractSchemaViewSet)
+    ]
 
     opal_angular_exclude_tracking_qs = [
         "/search",
