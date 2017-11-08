@@ -21,7 +21,7 @@ def migrate_backwards(app, schema_editor):
     Episode = app.get_model("opal", "Episode")
     for e in Episode.objects.all():
         e.date_of_admission = e.start
-        e.discharge_episode = e.end
+        e.discharge_date = e.end
         e.save()
 
 
