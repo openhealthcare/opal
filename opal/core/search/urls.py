@@ -40,9 +40,4 @@ urlpatterns = patterns(
 
     url(r'^search/extract/download/(?P<task_id>[a-zA-Z0-9-]*)',
         views.ExtractFileView.as_view(), name='extract_file'),
-    url(
-        r'^search/api/extract/$',
-        api.ExtractSchemaViewSet.as_view({'get': 'list'}),
-        name="extract-schema-list"
-    ),
 )
