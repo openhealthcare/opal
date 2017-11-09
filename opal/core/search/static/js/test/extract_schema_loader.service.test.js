@@ -34,7 +34,7 @@ describe('ExtractSchemaLoader', function() {
     it('should fetch the schema', function(){
       var result;
 
-      $httpBackend.whenGET('/search/api/extract/').respond(columns);
+      $httpBackend.whenGET('/api/v0.1/extract-schema/').respond(columns);
       extractSchemaLoader.load().then(
           function(r){ result = r; }
       );
@@ -46,7 +46,7 @@ describe('ExtractSchemaLoader', function() {
 
     it('should alert if the http request errors', function(){
       var result;
-      $httpBackend.whenGET('/search/api/extract/').respond(500, 'NO');
+      $httpBackend.whenGET('/api/v0.1/extract-schema/').respond(500, 'NO');
       extractSchemaLoader.load().then( function(r){ result = r; } );
       $httpBackend.flush();
       $rootScope.$apply();

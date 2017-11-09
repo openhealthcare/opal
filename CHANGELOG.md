@@ -1,22 +1,5 @@
 ### 0.9.0 (Major Release)
 
-#### Extracts Search into its own plugin
-
-Search is no completely pluggable, you need to have *some* angular controller
-called SearchCtrl, but apart from that you can plugin your own implementation
-
-#### Exclude prefixes now work on actual paths
-
-Previously they only worked with angular paths, now they work
-with a combination of actual paths and angular url paths (e.g. /search/#/extract)
-
-
-#### We've got time on our side
-
-Adds in the {% timepicker %} template tag, that follows the same convention as
-the other template tags, ie {% timepicker field="Dinner.time" %}
-
-
 #### Good bye date_of_episode, discharge_date, date_of_admission
 
 And hello `episode.start` and `episode.end`. These fields on the `Episode` model
@@ -33,7 +16,23 @@ you should update to use the Episode model fields. This logic should be moved in
 your flows and you'll need to put in a migration to populate existing
 episodes.
 
-start and end are both cast to moments (rather than raw js Dates) on episode.initialisation
+We also remove the episode fields `date_of_episode` `discharge_date`, and
+`date_of_admission`.
+Warning: Backwards migrations will not migrate back to `date_of_episode` but to
+a admission and discharge. Take backups before running these migrations!
+
+The fields `start` and `end` are both cast to moments (rather than raw js Dates) on
+episode.initialisation
+
+#### Pathway
+
+Moves the opal-pathway module into the opal core. Pathways is an extensible way
+of creating forms that involve multiple subrecords.
+
+#### We've got time on our side
+
+Adds in the {% timepicker %} template tag, that follows the same convention as
+the other template tags, ie {% timepicker field="Dinner.time" %}
 
 #### Removes a js global declaration of categories
 
@@ -54,10 +53,15 @@ display patient lists, detail views, menus and forms amongst other things.
 
 For full documentation, consult the theming guide in the documentation.
 
-#### Pathway
+#### Makes search fully pluggable
 
-Moves the opal-pathway module into the opal core. Pathways is an extensible way
-of creating forms that involve multiple subrecords.
+Search is now completely pluggable, you need to have *some* angular controller
+called SearchCtrl, but apart from that you can plugin your own implementation.
+
+#### Exclude prefixes now work on actual paths
+
+Previously they only worked with angular paths, now they work
+with a combination of actual paths and angular url paths (e.g. /search/#/extract)
 
 #### Misc Changes
 

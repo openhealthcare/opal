@@ -25,8 +25,7 @@ PAGINATION_AMOUNT = 10
 
 class SearchIndexView(LoginRequiredMixin, TemplateView):
     """
-    Main entrypoint into the pathway portal service.
-    This is the entry point that loads in the pathway.
+    The base Search page
     """
     template_name = 'search/index.html'
 
