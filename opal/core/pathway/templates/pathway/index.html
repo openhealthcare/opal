@@ -4,5 +4,6 @@
 
 {% block ngapp %}opal.pathway{% endblock %}
 {% block angularapp %}
+  {{ block.super }}
   {% plugin_javascripts 'opal.pathway' %}
 {% endblock %}

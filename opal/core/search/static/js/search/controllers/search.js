@@ -6,7 +6,6 @@ angular.module('opal.controllers').controller(
   "use strict";
 
   var searchUrl = "/search";
-  var inSearch = $location.path() === searchUrl;
   $scope.query = {searchTerm: '', autocompleteSearchTerm: ''};
   $scope.searchColumns = ['query'];
   $scope.limit = 10;
@@ -62,9 +61,7 @@ angular.module('opal.controllers').controller(
     }
   };
 
-  if($location.path() === searchUrl){
-    $scope.loadResults();
-  }
+  $scope.loadResults();
 
   // empty the search bar if we click through and we're not running a search
   $scope.$on('$locationChangeStart', function(event, newUrl) {
@@ -82,6 +79,7 @@ angular.module('opal.controllers').controller(
         label: item.categories
       }
     );
+
     $scope.query.autocompleteSearchTerm = "";
     $window.location.href = item.link;
   }
@@ -103,13 +101,7 @@ angular.module('opal.controllers').controller(
       params[c] = $scope.getQueryParam();
     });
 
-    if($window.location.pathname !== "/"){
-      $window.location.href="/#" + searchUrl + "?" + $.param(params);
-    }
-    else{
-      $location.url(searchUrl);
-      $location.search(params);
-    }
+    $window.location.href = searchUrl + '/#/' + "?" + $.param(params);
   };
 
   $scope.getEpisodeID = function(patient){
@@ -119,4 +111,9 @@ angular.module('opal.controllers').controller(
     }
     return epid;
   };
+
+  $scope.jumpToEpisode = function(patient){
+    $location.path('/episode/'+$scope.getEpisodeID(patient));
+  };
+
 });

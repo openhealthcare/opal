@@ -56,20 +56,19 @@ describe('SearchCtrl', function (){
     });
 
     describe('getQueryParam()', function() {
-      it('should return autocomplete if there is no searchTerm', function() {
-        $httpBackend.expectGET('/search/simple/?query=jane').respond(
-            {object_list: [{categories: []}]}
-        );
-        $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
-        expect($scope.query.searchTerm.length).toBe(0);
-        $scope.query.autocompleteSearchTerm = 'jane';
-        expect($scope.getQueryParam()).toEqual('jane');
-        $httpBackend.flush();
-      });
+        it('should return autocomplete if there is no searchTerm', function() {
+            $httpBackend.expectGET('/search/simple/?query=jane').respond(
+                {object_list: [{categories: []}]}
+            );
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
+            expect($scope.query.searchTerm.length).toBe(0);
+            $scope.query.autocompleteSearchTerm = 'jane';
+            expect($scope.getQueryParam()).toEqual('jane');
+            $httpBackend.flush();
+        });
     });
 
     describe('setters', function() {
-
         it('should set state', function() {
             $scope.disableShortcuts();
             expect($scope.state).toEqual('search');
@@ -79,7 +78,6 @@ describe('SearchCtrl', function (){
             $scope.enableShortcuts();
             expect($scope.state).toEqual('normal');
         });
-
     });
 
     describe('Autocomplete selected()', function() {
@@ -105,7 +103,6 @@ describe('SearchCtrl', function (){
               }
             );
         });
-
     });
 
     describe('We should query for hospital number or name()', function (){
@@ -125,12 +122,12 @@ describe('SearchCtrl', function (){
             $httpBackend.flush();
         });
 
-        it("should redirect to the search page if we're not in search", function(){
+        it("should redirect to the search page", function(){
             locationDetails.href = "";
             locationDetails.pathname = "/somewhere";
             $scope.query.searchTerm = "Bond";
             $scope.search();
-            var expectedUrl = "/#/search?query=Bond";
+            var expectedUrl = "/search/#/?query=Bond";
             expect(locationDetails.href).toEqual(expectedUrl);
         });
 
@@ -139,20 +136,8 @@ describe('SearchCtrl', function (){
             locationDetails.pathname = "/somewhere";
             $scope.query.searchTerm = "Bond";
             $scope.search(3);
-            var expectedUrl = "/#/search?page_number=3&query=Bond";
+            var expectedUrl = "/search/#/?page_number=3&query=Bond";
             expect(locationDetails.href).toEqual(expectedUrl);
-        });
-
-        it("should update the url if on the search page", function(){
-            locationDetails.href = "unchanged";
-            locationDetails.pathname = "/";
-            $scope.query.searchTerm = "Bond";
-            $scope.search();
-            var expectedSearch = {
-                query: "Bond",
-            };
-            expect(location.search()).toEqual(expectedSearch);
-            expect(locationDetails.href).toEqual("unchanged");
         });
     });
 
@@ -184,4 +169,12 @@ describe('SearchCtrl', function (){
         });
 
     });
+
+    describe('jumpToEpisode()', function (){
+        it('Should call location.path()', function () {
+            $scope.jumpToEpisode({active_episode_id: 555});
+            expect(location.path).toHaveBeenCalledWith('/episode/555');
+        });
+    });
+
 });

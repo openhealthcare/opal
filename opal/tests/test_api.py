@@ -43,7 +43,6 @@ class LoginRequredTestCase(OpalTestCase):
     def get_urls(self):
         return [
             reverse('record-list', request=self.request),
-            reverse('extract-schema-list', request=self.request),
             reverse('referencedata-list', request=self.request),
             reverse('metadata-list', request=self.request),
             reverse('episode-list', request=self.request),
@@ -112,14 +111,6 @@ class RecordTestCase(TestCase):
     def test_records(self, schemas):
         schemas.list_records.return_value = [{}]
         self.assertEqual([{}], api.RecordViewSet().list(None).data)
-
-
-class ExtractSchemaTestCase(TestCase):
-
-    @patch('opal.core.api.schemas')
-    def test_records(self, schemas):
-        schemas.extract_schema.return_value = [{}]
-        self.assertEqual([{}], api.ExtractSchemaViewSet().list(None).data)
 
 
 class ReferenceDataViewSetTestCase(OpalTestCase):

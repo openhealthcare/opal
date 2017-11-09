@@ -212,7 +212,7 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
                 "James", "Bond", str(i)
             )
 
-        with self.assertNumQueries(35):
+        with self.assertNumQueries(36):
             self.get_response('{}/?query=Bond'.format(self.url))
 
         for i in range(20):
@@ -220,7 +220,7 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
                 "James", "Blofelt", str(i)
             )
 
-        with self.assertNumQueries(35):
+        with self.assertNumQueries(36):
             self.get_response('{}/?query=Blofelt'.format(self.url))
 
     def test_with_multiple_patient_episodes(self):

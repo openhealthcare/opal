@@ -32,7 +32,7 @@ angular.module('opal.controllers').controller(
 
     $scope.criteria = [_.clone($scope.model)];
 
-    $scope.readableQueryType = function(someQuery){
+    $scope.readableQuery = function(someQuery){
       if(!someQuery){
         return someQuery;
       }
@@ -42,9 +42,6 @@ angular.module('opal.controllers').controller(
       }
       if(someQuery === "Before" || someQuery === "After"){
         result = "is " + result;
-      }
-      if(someQuery === "All Of" || someQuery === "Any Of"){
-        result = "is"
       }
 
       return result.toLowerCase();
@@ -127,7 +124,7 @@ angular.module('opal.controllers').controller(
 
     $scope.findField = function(columnName, fieldName){
       /*
-      * returns the field object from the schema when given column.name and field.name
+      * returns the field object from the extractSchema when given column.name and field.name
       */
       var column = $scope.findColumn(columnName);
       if(!column){return;}
@@ -179,10 +176,6 @@ angular.module('opal.controllers').controller(
 
     $scope.isSelect = function(column, field){
         return $scope.isType(column, field, "many_to_many");
-    };
-
-    $scope.isSelectMany = function(column, field){
-        return $scope.isType(column, field, "many_to_many_multi_select");
     };
 
     $scope.isDate = function(column, field){
@@ -350,4 +343,9 @@ angular.module('opal.controllers').controller(
         $scope.filters.push(result);
       });
     };
+
+    $scope.jumpToEpisode = function(episode){
+        window.open('#/episode/'+episode.id, '_blank');
+    };
+
 });

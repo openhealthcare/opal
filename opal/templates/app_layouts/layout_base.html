@@ -28,9 +28,11 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="main-navbar">
       {% menu %}
-      {% if user.profile.can_see_pid %}
-        {% include 'partials/_nav_search.html' %}
-      {% endif %}
+      {% block nav_search %}
+        {% if user.profile.can_see_pid %}
+          {% include 'partials/_nav_search.html' %}
+        {% endif %}
+      {% endblock %}
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
