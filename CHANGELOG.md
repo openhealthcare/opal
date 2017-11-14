@@ -70,6 +70,13 @@ Add the allow_add_patient and allow_edit_teams options to the patient lists.
 We added support for a `--file` or `-f` option for the `load_lookup_lists` command which
 allows the user to specify a particular file outside of the default locations.
 
+The default `Location` record display template will no longer include references
+to `Episode.start`. and `Episode.stop` labelled as admisssion and discharge to support
+the majority case where an episode relates to something other than an inpatient episode!
+
+Applications wishing to retaint this functionality should update their own temaplates
+to display start/stop details.
+
 #### Removes Deprecated functionality in ReferenceData, Metadata, UserProfile and recordLoader
 
 Previously these would make their http request when imported into a file. They now require you to call .load()
