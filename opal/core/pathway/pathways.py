@@ -9,7 +9,7 @@ from opal.core import discoverable, subrecords
 from opal.models import Patient
 from opal.utils import AbstractBase
 from opal.core.views import OpalSerializer
-from opal.core.pathway import Step
+from opal.core.pathway.steps import Step
 
 
 class RedirectsToPatientMixin(object):
