@@ -1,5 +1,6 @@
 import mock
 import json
+import datetime
 
 from opal.core.exceptions import InitializationError
 from django.utils import timezone
@@ -29,7 +30,6 @@ class PathwayExample(pathways.Pathway):
         Demographics,
         Step(model=DogOwner),
     )
-
 
 class ColourPathway(Pathway):
     display_name = "colour"

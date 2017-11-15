@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from opal.core.views import _get_request_data, json_response
-from opal.core.pathway.pathways import Pathway
+from opal.core.pathway import Pathway
 from rest_framework.permissions import IsAuthenticated
 from opal.models import Patient, Episode
 
