@@ -2,7 +2,7 @@
 Views for the pathway OPAL Plugin
 """
 from django.views.generic import TemplateView
-from opal.core.pathway.pathways import Pathway
+from opal.core.pathway import Pathway
 from opal.core.views import LoginRequiredMixin
 
 
