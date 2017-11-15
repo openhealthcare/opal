@@ -30,11 +30,11 @@
     </script>
 
     <script type="text/javascript">
-      var initials = "{{request.user.first_name|slice:":1"}} {{request.user.last_name}}"
+      var initials = "{{request.user.first_name|slice:":1"}} {{request.user.last_name}}";
       var settings = {
-      LOG_OUT_DURATION: {{OPAL_LOG_OUT_DURATION}}
-      }
-      var version = '{{VERSION_NUMBER}}';
+        LOG_OUT_DURATION: {{ OPAL_LOG_OUT_DURATION }}
+      };
+      var version = '{{ VERSION_NUMBER }}';
     </script>
     <!-- google analytics -->
     <script>
