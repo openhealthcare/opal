@@ -1,31 +1,31 @@
 describe('SaveFilterCtrl', function() {
     "use strict";
 
-    var $scope, $httpBackend, $controller, $rootScope, $modal;
-    var modalInstance;
-    var mock_ng_progress;
+    var $scope, $httpBackend, $controller, $rootScope, $modal, $window;
+    var modalInstance, ngProgressLite;
 
 
     beforeEach(function(){
         module('opal.controllers');
 
         inject(function($injector){
-            $httpBackend = $injector.get('$httpBackend');
-            $rootScope   = $injector.get('$rootScope');
-            $scope       = $rootScope.$new();
-            $controller  = $injector.get('$controller');
-            $modal       = $injector.get('$modal');
+            $httpBackend     = $injector.get('$httpBackend');
+            $rootScope       = $injector.get('$rootScope');
+            $scope           = $rootScope.$new();
+            $controller      = $injector.get('$controller');
+            $modal           = $injector.get('$modal');
+            ngProgressLite   = $injector.get('ngProgressLite');
+            $window          = $injector.get('$window');
+
         });
 
         modalInstance = $modal.open({template: 'notatemplate'});
-        mock_ng_progress = {
-
-        }
 
         $controller('SaveFilterCtrl', {
             $scope: $scope,
             $modalInstance: modalInstance,
-            params: {}
+            params: {},
+            ngProgressLite: ngProgressLite
         })
     });
 
@@ -37,6 +37,16 @@ describe('SaveFilterCtrl', function() {
             $scope.save();
             $rootScope.$apply();
             $httpBackend.flush();
+        });
+
+        it('should kill the progressbar if we error', function() {
+            $httpBackend.expectPOST('/search/filters/').respond(500)
+            spyOn(ngProgressLite, 'done');
+            spyOn($window, 'alert');
+            $scope.save();
+            $rootScope.$apply();
+            $httpBackend.flush();
+            expect(ngProgressLite.done).toHaveBeenCalledWith();
         });
 
     });

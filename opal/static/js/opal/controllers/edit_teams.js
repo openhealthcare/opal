@@ -19,12 +19,17 @@ angular.module('opal.controllers').controller(
         // Save the teams.
         //
   	    $scope.save = function(result) {
-              ngProgressLite.set(0);
-              ngProgressLite.start();
-              episode.tagging[0].save($scope.editing.tagging).then(function() {
-                ngProgressLite.done();
+            ngProgressLite.set(0);
+            ngProgressLite.start();
+            episode.tagging[0].save($scope.editing.tagging).then(
+                function() {
+                    ngProgressLite.done();
       			    $modalInstance.close(result);
-  		    });
+  		        },
+                function() {
+                    ngProgressLite.done();
+                }
+            );
   	    };
 
         // Let's have a nice way to kill the modal.

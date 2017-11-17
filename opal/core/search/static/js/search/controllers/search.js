@@ -53,11 +53,16 @@ angular.module('opal.controllers').controller(
         ngProgressLite.set(0);
         ngProgressLite.start();
         var queryParams = $location.search();
-        queryBackend(queryParams).then(function(response){
-            ngProgressLite.done();
-            $scope.searched = true;
-            $scope.paginator = new Paginator($scope.search, response.data);
-        });
+        queryBackend(queryParams).then(
+            function(response){
+                ngProgressLite.done();
+                $scope.searched = true;
+                $scope.paginator = new Paginator($scope.search, response.data);
+            },
+            function(){
+                ngProgressLite.done();
+            }
+        );
     }
   };
 
