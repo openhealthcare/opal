@@ -3,6 +3,11 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+### 0.8.3 -> 0.9.0
+episode.date_of_episode, episode.date_of_admission, episode.discharge_date are all deprecated.
+
+Instead we use episode.start and episode.end, for episode.date_of_episode, these are the same.
+
 ### 0.8.2 -> 0.8.3
 No changes.
 
