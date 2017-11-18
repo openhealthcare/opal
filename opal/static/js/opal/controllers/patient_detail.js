@@ -6,7 +6,9 @@ angular.module('opal.controllers').controller(
     ){
         $scope.profile = profile;
         $scope.patient = patient;
-        $scope.episode = patient.episodes[0];
+        if($scope.patient != null){
+            $scope.episode = patient.episodes[0];
+        }
         $scope.view = null;
 
         $scope.refresh = function(){
@@ -72,7 +74,8 @@ angular.module('opal.controllers').controller(
 			    $rootScope.state = 'normal';
 		    });
 	    };
-
-      $scope.initialise();
+        if($scope.patient != null){
+            $scope.initialise();
+        }
     }
 );
