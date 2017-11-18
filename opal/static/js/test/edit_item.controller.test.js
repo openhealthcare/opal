@@ -24,17 +24,17 @@ describe('EditItemCtrl', function (){
             $timeout       = $injector.get('$timeout');
             $modal         = $injector.get('$modal');
             ngProgressLite = $injector.get('ngProgressLite');
-            $rootScope = $injector.get('$rootScope');
+            $rootScope     = $injector.get('$rootScope');
             $modal         = $injector.get('$modal');
             opalTestHelper = $injector.get('opalTestHelper');
         });
 
-        episode = opalTestHelper.newEpisode($rootScope);
-        metadataCopy = opalTestHelper.getMetaData();
-        profile = opalTestHelper.getUserProfile();
+        episode       = opalTestHelper.newEpisode($rootScope);
+        metadataCopy  = opalTestHelper.getMetaData();
+        profile       = opalTestHelper.getUserProfile();
         referencedata = opalTestHelper.getReferenceData();
-        $scope = $rootScope.$new();
-        item = new Item(
+        $scope        = $rootScope.$new();
+        item          = new Item(
             {columnName: 'investigation'},
             episode,
             $rootScope.fields.investigation
@@ -55,8 +55,8 @@ describe('EditItemCtrl', function (){
             profile       : profile,
             episode       : episode,
             ngProgressLite: ngProgressLite,
-            referencedata: referencedata,
-            $analytics: $analytics
+            referencedata : referencedata,
+            $analytics    : $analytics
         });
 
     });
@@ -135,6 +135,18 @@ describe('EditItemCtrl', function (){
             callArgs = episode.save.calls.mostRecent().args;
             expect(callArgs.length).toBe(1);
             expect(callArgs[0]).toBe($scope.episode);
+        });
+
+        it('should cancel the progressbar if we fail to save', function() {
+            var deferred = $q.defer();
+            spyOn(ngProgressLite, 'done');
+            spyOn(item, 'save').and.callFake(function() {
+                return deferred.promise;
+            });
+            $scope.save('save');
+            deferred.reject("Failure !!!");
+            $scope.$digest();
+            expect(ngProgressLite.done).toHaveBeenCalledWith();
         });
 
     });

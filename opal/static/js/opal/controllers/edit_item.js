@@ -104,11 +104,15 @@ angular.module('opal.controllers').controller(
                 if(!angular.equals($scope.the_episode.makeCopy(), $scope.episode)){
                     to_save.push($scope.the_episode.save($scope.episode));
                 }
-
-                $q.all(to_save).then(function() {
-                ngProgressLite.done();
-      			    $modalInstance.close(result);
-		        });
+                $q.all(to_save).then(
+                    function() {
+                        ngProgressLite.done();
+      			        $modalInstance.close(result);
+		            },
+                    function(){
+                        ngProgressLite.done();
+                    }
+                );
 	        };
 
             // Let's have a nice way to kill the modal.
