@@ -2,7 +2,11 @@
 
 ### Misc Changes
 
-Fixes some instances of progressbars not being set if unexpected error states occur.
+Fixes some instances of progressbars not being reset if unexpected error states
+occur.
+
+Improves the rendering of patient detail pages where no patient with the ID from
+route params exits. (Displays a polite message instead of erroring.)
 
 ### 0.9.0 (Major Release)
 

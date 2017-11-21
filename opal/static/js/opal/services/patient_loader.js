@@ -23,7 +23,7 @@ angular.module('opal.services').factory('patientLoader', function(
       function(){
         // handle error better
         $window.alert('Patient could not be loaded');
-        deferred.resolve();
+        deferred.resolve(null);
     });
 
     return deferred.promise;
