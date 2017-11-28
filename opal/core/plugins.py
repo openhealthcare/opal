@@ -1,5 +1,5 @@
 """
-OPAL PLugin - base class and helpers
+Opal PLugin - base class and helpers
 """
 import inspect
 import os
