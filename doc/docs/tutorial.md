@@ -186,7 +186,9 @@ which provides us with some extra functionality:
 Next, we're going to let Opal take care of the boilerplate that we'll need to use this
 model in our application. From the commandline:
 
-    $ opal scaffold mynewapp
+```sh
+opal scaffold mynewapp
+```
 
 Let's take a look at what that did:
 
@@ -276,9 +278,13 @@ application.
 For us, you'll notice that the value of `TODOItem.completed` simply displays as false -
 which is not particularly useful. So let's update that using the Opal
 [Boxed filter](/reference/javascript_helpers/). In `mynewapp/templates/records/todo_item.html`
-change the last line to look like this:
+change the last `span` to look like this:
 
-    <span ng-show="item.completed">[[ item.completed | boxed ]] <br /></span>
+```html
+<span ng-show="item.completed">
+  [[ item.completed | boxed ]]
+</span>
+```
 
 #### Set an Icon for your model
 
