@@ -80,7 +80,7 @@ areas that are enabled by default - team lists, search and the admin area.
 <img src="/img/tutorial-welcome.png" width="600" style="margin: 12px auto; border: 1px solid black;"/>
 
 Opal applications are a collection of single page Angular apps that talk to the Django
-server-side layer via JSON APIs. The Team Lists and Search options here are two examples of
+server-side layer via JSON APIs. The team lists and search options here are two examples of
 front-end Angular single page apps.
 
 ### Team lists
@@ -130,8 +130,9 @@ cases.
 You'll need to import the data for a terminology before you can start to take advantage of that.
 For now, let's use the reference data from elCID (An Opal application maintained by Open Health Care):
 
-    wget https://raw.githubusercontent.com/openhealthcare/elcid/master/data/lookuplists/lookuplists.json -P mynewapp/data/lookuplists
-
+```sh
+wget https://raw.githubusercontent.com/openhealthcare/elcid/master/data/lookuplists/lookuplists.json -P mynewapp/data/lookuplists
+```
 
 <blockquote><small>
 By convention, we store data in the <code>./data/lookuplists</code> directory of our project.
@@ -139,7 +140,9 @@ By convention, we store data in the <code>./data/lookuplists</code> directory of
 
 Now let's import the data:
 
-    python manage.py load_lookup_lists
+```sh
+python manage.py load_lookup_lists
+```
 
 Now refresh your application and try adding a new diagnosis to your patient. As you start to type in
 the condition field, you'll see that the conditions we just imported appear as suggestions:
