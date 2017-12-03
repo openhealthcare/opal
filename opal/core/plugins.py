@@ -1,5 +1,5 @@
 """
-OPAL PLugin - base class and helpers
+Opal Plugin - base class and helpers
 """
 import inspect
 import os
