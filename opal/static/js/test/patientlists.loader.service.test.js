@@ -13,7 +13,6 @@ describe('PatientListLoaderTest', function(){
             $httpBackend      = $injector.get('$httpBackend');
         });
 
-        $httpBackend.expectGET('/api/v0.1/userprofile/').respond({})
         $httpBackend.expectGET('/api/v0.1/record/').respond({})
     })
 

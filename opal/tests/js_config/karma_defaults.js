@@ -38,6 +38,7 @@ module.exports = function(includedFiles, baseDir, coverageFiles){
       'opal/services/flow.js',
       'opal/controllers_module.js',
       'opal/controllers/*.js',
+      'test/test_helper.js'
     ];
 
     var preprocessors = {};

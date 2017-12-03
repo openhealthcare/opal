@@ -7,29 +7,6 @@ describe('ExtractSchemaLoader', function() {
 
     beforeEach(function() {
       module('opal');
-      columns = {
-        "fields": {
-          'demographics': {
-              name: "demographics",
-              single: true,
-              fields: [
-                  {name: 'first_name', type: 'string'},
-                  {name: 'surname', type: 'string'},
-                  {name: 'date_of_birth', type: 'date'},
-              ]
-          },
-          "diagnosis": {
-            name: "diagnosis",
-            single: false,
-            sort: 'date_of_diagnosis',
-            fields: [
-                {name: 'date_of_diagnosis', type: 'date'},
-                {name: 'condition', type: 'string'},
-                {name: 'provisional', type: 'boolean'},
-            ]
-          }
-        }
-      };
 
       inject(function($injector){
         extractSchemaLoader = $injector.get('extractSchemaLoader');
@@ -39,6 +16,18 @@ describe('ExtractSchemaLoader', function() {
         $window            = $injector.get('$window');
       });
 
+      columns = {
+          'demographics': {
+              name: "demographics",
+              fields: [
+                  {name: 'first_name', type: 'string'},
+                  {name: 'surname', type: 'string'},
+                  {name: 'date_of_birth', type: 'date'},
+              ]
+        }
+      };
+
+
       spyOn($window, "alert");
     });
 
@@ -46,21 +35,21 @@ describe('ExtractSchemaLoader', function() {
       var result;
 
       $httpBackend.whenGET('/api/v0.1/extract-schema/').respond(columns);
-      extractSchemaLoader.then(
+      extractSchemaLoader.load().then(
           function(r){ result = r; }
       );
-      $rootScope.$apply();
       $httpBackend.flush();
+      $rootScope.$apply();
 
-      expect(result.columns).toEqual(columns);
+      expect(!!result.columns).toEqual(true);
     });
 
     it('should alert if the http request errors', function(){
       var result;
       $httpBackend.whenGET('/api/v0.1/extract-schema/').respond(500, 'NO');
-      extractSchemaLoader.then( function(r){ result = r; } );
-      $rootScope.$apply();
+      extractSchemaLoader.load().then( function(r){ result = r; } );
       $httpBackend.flush();
+      $rootScope.$apply();
 
       expect($window.alert).toHaveBeenCalledWith(
         'Extract schema could not be loaded'

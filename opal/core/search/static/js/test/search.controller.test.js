@@ -5,29 +5,7 @@ describe('SearchCtrl', function (){
     var location;
     var Flow;
     var profile, schema, options, locationDetails, controller;
-    var PatientSummary;
-
-    beforeEach(function(){
-        module('opal', function($provide) {
-            $provide.value('$analytics', function(){
-                return {
-                    pageTrack: function(x){}
-                };
-            });
-
-            $provide.provider('$analytics', function(){
-                this.$get = function() {
-                    return {
-                        virtualPageviews: function(x){},
-                        settings: {
-                            pageTracking: false,
-                        },
-                        pageTrack: function(x){}
-                    };
-                };
-            });
-        });
-    });
+    var PatientSummary, $analytics;
 
     beforeEach(module('opal.controllers'));
 
@@ -49,6 +27,7 @@ describe('SearchCtrl', function (){
             $httpBackend   = $injector.get('$httpBackend');
             location       = $injector.get('$location');
             $window        = $injector.get('$window');
+            $analytics     = $injector.get('$analytics');
 
             schema  = {};
             options = {};
@@ -64,10 +43,10 @@ describe('SearchCtrl', function (){
                 options        : options,
                 schema         : schema,
                 profile        : profile,
-                PatientSummary : PatientSummary
+                PatientSummary : PatientSummary,
+                $analytics: $analytics
             });
 
-            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
 
         });});
 
@@ -77,33 +56,28 @@ describe('SearchCtrl', function (){
     });
 
     describe('getQueryParam()', function() {
-
         it('should return autocomplete if there is no searchTerm', function() {
             $httpBackend.expectGET('/search/simple/?query=jane').respond(
                 {object_list: [{categories: []}]}
             );
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
             expect($scope.query.searchTerm.length).toBe(0);
             $scope.query.autocompleteSearchTerm = 'jane';
             expect($scope.getQueryParam()).toEqual('jane');
             $httpBackend.flush();
         });
-
     });
 
     describe('setters', function() {
-
         it('should set state', function() {
             $scope.disableShortcuts();
             expect($scope.state).toEqual('search');
-            $httpBackend.flush();
         });
 
         it('should set state', function() {
             $scope.enableShortcuts();
             expect($scope.state).toEqual('normal');
-            $httpBackend.flush();
         });
-
     });
 
     describe('Autocomplete selected()', function() {
@@ -112,9 +86,23 @@ describe('SearchCtrl', function (){
             $scope.selected({link: '/#/foo/bar'});
             expect($scope.query.autocompleteSearchTerm).toEqual("");
             expect($window.location.href).toEqual('/#/foo/bar');
-            $httpBackend.flush();
         });
 
+        it('should register to analytics', function(){
+            spyOn($analytics, 'eventTrack');
+            $scope.selected({
+              link: '/#/foo/123',
+              patientId: 123,
+              categories: "Inpatient, OPAT"
+            });
+            expect($analytics.eventTrack).toHaveBeenCalledWith(
+              "AutocompleteSearch-123",
+              {
+                category: "AutocompleteSearch",
+                label: "Inpatient, OPAT"
+              }
+            );
+        });
     });
 
     describe('We should query for hospital number or name()', function (){
@@ -134,14 +122,13 @@ describe('SearchCtrl', function (){
             $httpBackend.flush();
         });
 
-        it("should redirect to the search page if we're not in search", function(){
+        it("should redirect to the search page", function(){
             locationDetails.href = "";
             locationDetails.pathname = "/somewhere";
             $scope.query.searchTerm = "Bond";
             $scope.search();
-            var expectedUrl = "/#/search?query=Bond";
+            var expectedUrl = "/search/#/?query=Bond";
             expect(locationDetails.href).toEqual(expectedUrl);
-            $httpBackend.flush();
         });
 
         it('should take page numbers into account', function() {
@@ -149,22 +136,8 @@ describe('SearchCtrl', function (){
             locationDetails.pathname = "/somewhere";
             $scope.query.searchTerm = "Bond";
             $scope.search(3);
-            var expectedUrl = "/#/search?page_number=3&query=Bond";
+            var expectedUrl = "/search/#/?page_number=3&query=Bond";
             expect(locationDetails.href).toEqual(expectedUrl);
-            $httpBackend.flush();
-        });
-
-        it("should update the url if on the search page", function(){
-            locationDetails.href = "unchanged";
-            locationDetails.pathname = "/";
-            $scope.query.searchTerm = "Bond";
-            $scope.search();
-            var expectedSearch = {
-                query: "Bond",
-            };
-            expect(location.search()).toEqual(expectedSearch);
-            expect(locationDetails.href).toEqual("unchanged");
-            $httpBackend.flush();
         });
     });
 
@@ -193,7 +166,6 @@ describe('SearchCtrl', function (){
                 }
             }
             expect($scope.getEpisodeID(patient)).toEqual('42');
-            $httpBackend.flush();
         });
 
     });
@@ -202,7 +174,6 @@ describe('SearchCtrl', function (){
         it('Should call location.path()', function () {
             $scope.jumpToEpisode({active_episode_id: 555});
             expect(location.path).toHaveBeenCalledWith('/episode/555');
-            $httpBackend.flush();
         });
     });
 

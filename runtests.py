@@ -25,6 +25,7 @@ test_settings_config = dict(
     DATE_INPUT_FORMATS=['%d/%m/%Y'],
     DATETIME_FORMAT='d/m/Y H:i:s',
     DATETIME_INPUT_FORMATS=['%d/%m/%Y %H:%M:%S'],
+    TIME_FORMAT = "H:i:s",
     STATIC_URL='/assets/',
     COMPRESS_ROOT='/tmp/',
     TIME_ZONE='UTC',
@@ -53,8 +54,10 @@ test_settings_config = dict(
         'axes',
         'djcelery',
         'opal',
+        'opal.tests',
         'opal.core.search',
-        'opal.tests'
+        'opal.core.pathway.tests.pathway_test',
+        'opal.core.pathway',
     ),
     MIGRATION_MODULES={
         'opal': 'opal.nomigrations'
@@ -75,11 +78,6 @@ test_settings_config = dict(
             }
         },
         'handlers': {
-            'console': {
-                'level': 'ERROR',
-                'filters': ['require_debug_false'],
-                'class': 'logging.StreamHandler'
-            },
             'mail_admins': {
                 'level': 'ERROR',
                 'filters': ['require_debug_false'],
@@ -88,7 +86,7 @@ test_settings_config = dict(
         },
         'loggers': {
             'django.request': {
-                'handlers': ['console', 'mail_admins'],
+                'handlers': ['mail_admins'],
                 'level': 'ERROR',
                 'propagate': True,
             },

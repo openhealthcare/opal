@@ -110,13 +110,6 @@ class PatientGeneratorTestCase(OpalTestCase):
     def setUp(self):
         self.gen = crd.PatientGenerator()
 
-    def test_get_name(self):
-        name = self.gen.get_name()
-        frist, last = name.split()
-        self.assertIsInstance(name, str)
-        self.assertIn(frist, crd.first_names)
-        self.assertIn(last, crd.last_names)
-
     def test_get_birth_date_returns_date(self):
         self.assertIsInstance(self.gen.get_birth_date(), datetime.date)
 

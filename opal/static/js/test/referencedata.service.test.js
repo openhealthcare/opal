@@ -10,13 +10,7 @@ describe('Referencedata', function(){
     beforeEach(function(){
         mock = { alert: jasmine.createSpy() };
 
-        module('opal.services', function($provide) {
-            $provide.value('UserProfile', {
-              load: {
-                then: function(fn){ return fn(profile); }
-              }
-            });
-        });
+        module('opal.services');
 
         module(function($provide){
             $provide.value('$window', mock);
@@ -29,19 +23,6 @@ describe('Referencedata', function(){
             $log = $injector.get('$log');
         });
         spyOn($log, "warn");
-    });
-
-    it('then should call through to load', function(){
-        spyOn(Referencedata, "load").and.callThrough();
-        var result;
-        $httpBackend.whenGET('/api/v0.1/referencedata/').respond(referencedata);
-        Referencedata.then(function(r){ result = r; });
-        $rootScope.$apply();
-        $httpBackend.flush();
-        expect(result.get('foo')).toEqual(['bar']);
-        expect($log.warn).toHaveBeenCalledWith(
-          'This API is being deprecated and will be removed in 0.9.0. Please use Referencedata.load()'
-        );
     });
 
     it('should fetch the referencedata', function(){

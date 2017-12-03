@@ -136,7 +136,7 @@ class ListRecordsTestCase(TestCase):
 class ExtractSchemaTestCase(TestCase):
     @patch('opal.core.schemas.subrecords')
     @patch('opal.core.schemas.models.Tagging.build_field_schema')
-    def test_list_records(self, tagging, subrecords):
+    def test_extract_schema(self, tagging, subrecords):
         subrecords.return_value = [Colour]
         tagging.return_value = []
         self.assertEqual(episode_serialised, schemas.extract_schema()[0])

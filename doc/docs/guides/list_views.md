@@ -85,7 +85,7 @@ list. On occasion we require a more dynamic queryset, in which case we can overr
     class MyWeeklyList(patient_lists.PatientList):
         def get_queryset(self):
             one_week_ago = datetime.date.today() - datetime.timedelta(days=1)
-            return Episode.objects.filter(date_of_admission__gte=one_week_ago)
+            return Episode.objects.filter(start__gte=one_week_ago)
 
 ### Ordering Lists
 
@@ -146,7 +146,8 @@ set to false, users will not be able to add the tag for this list.
 
 ### Customising Sort order of Episodes
 
-By default, PatientLists sort according to the Angular method `Episode.compare`. You may override this
+By default, PatientLists sort according by `start`, then `first_name`, then `surname` using
+the Angular method `Episode.compare`. You may override this
 on a list-by-list basis by setting the `comparator_service` attribute.
 
 ```python

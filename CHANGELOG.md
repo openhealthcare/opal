@@ -1,3 +1,87 @@
+### 0.9.0 (Major Release)
+
+#### Good bye date_of_episode, discharge_date, date_of_admission
+
+And hello `episode.start` and `episode.end`. These fields on the `Episode` model
+replace the multiple ways of recording Episode duration in Opal.
+
+There is a migration that sets `start` to date_of_episode if it  exists, otherwise
+it uses date of admission.
+
+`end` will be date_of_episode if it exists, otherwise it will use discharge_date.
+
+Note that this means we no longer refer to start and end properties on the
+Episode category. If you override `start` and `end` in a custom episode category
+you should update to use the Episode model fields. This logic should be moved into
+your flows and you'll need to put in a migration to populate existing
+episodes.
+
+We also remove the episode fields `date_of_episode` `discharge_date`, and
+`date_of_admission`.
+Warning: Backwards migrations will not migrate back to `date_of_episode` but to
+a admission and discharge. Take backups before running these migrations!
+
+The fields `start` and `end` are both cast to moments (rather than raw js Dates) on
+episode.initialisation
+
+#### Pathway
+
+Moves the opal-pathway module into the opal core. Pathways is an extensible way
+of creating forms that involve multiple subrecords.
+
+#### We've got time on our side
+
+Adds in the {% timepicker %} template tag, that follows the same convention as
+the other template tags, ie {% timepicker field="Dinner.time" %}
+
+#### Removes a js global declaration of categories
+
+Previously we declared CATEGORIES globally. This has now been removed
+
+#### Order Order
+
+Episodes in the patient list are now ordered by start, first_name and surname
+
+#### Theming support
+
+Improvements and better documentation and guides for theming applications. Particularly
+of note are changes to `opal.html` and `base.html`, as well as the addition of the
+`static_page.html` template.
+
+This version also includes extensive improved support for customising the templates that
+display patient lists, detail views, menus and forms amongst other things.
+
+For full documentation, consult the theming guide in the documentation.
+
+#### Makes search fully pluggable
+
+Search is now completely pluggable, you need to have *some* angular controller
+called SearchCtrl, but apart from that you can plugin your own implementation.
+
+#### Exclude prefixes now work on actual paths
+
+Previously they only worked with angular paths, now they work
+with a combination of actual paths and angular url paths (e.g. /search/#/extract)
+
+#### Misc Changes
+
+Add the allow_add_patient and allow_edit_teams options to the patient lists.
+
+We added support for a `--file` or `-f` option for the `load_lookup_lists` command which
+allows the user to specify a particular file outside of the default locations.
+
+The default `Location` record display template will no longer include references
+to `Episode.start`. and `Episode.stop` labelled as admisssion and discharge to support
+the majority case where an episode relates to something other than an inpatient episode!
+
+Applications wishing to retaint this functionality should update their own temaplates
+to display start/stop details.
+
+#### Removes Deprecated functionality in ReferenceData, Metadata, UserProfile and recordLoader
+
+Previously these would make their http request when imported into a file. They now require you to call .load()
+for them to return the promise that loads in their respective data.
+
 ### 0.8.3 (Minor Release)
 
 #### opal.log.ConfidentialEmailer

@@ -6,8 +6,20 @@ from django import template
 from django.db import models
 from opal.core.subrecords import get_subrecord_from_model_name
 from opal.core import fields
+from opal.core.views import OpalSerializer
 
 register = template.Library()
+
+
+def get_style(kwargs):
+    """
+    Return the style of this widget.
+    """
+    style = kwargs.get('style', 'horizontal')
+    valid_styles = ['horizontal', 'vertical']
+    if style not in valid_styles:
+        raise ValueError('{0} is not a valid form style!'.format(style))
+    return style
 
 
 def _visibility_clauses(show, hide):
@@ -77,7 +89,7 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
     enum = model.get_field_enum(field_name)
 
     if enum:
-        ctx["lookuplist"] = json.dumps(enum)
+        ctx["lookuplist"] = json.dumps(enum, cls=OpalSerializer)
     else:
         lookuplist_api_name = model.get_lookup_list_api_name(field_name)
         if lookuplist_api_name:
@@ -127,7 +139,7 @@ def extract_common_args(kwargs):
     args["visibility"] = _visibility_clauses(
         kwargs.pop('show', None), kwargs.pop('hide', None)
     )
-
+    args["style"] = get_style(kwargs)
     # required could have been set via the model
     args["required"] = kwargs.pop('required', args.pop("required", False))
     disabled = kwargs.pop('disabled', None)
@@ -205,6 +217,11 @@ def datepicker(*args, **kwargs):
     if 'mindate' in kwargs:
         context['mindate'] = kwargs['mindate']
     return context
+
+
+@register.inclusion_tag('_helpers/timepicker.html')
+def timepicker(*args, **kwargs):
+    return extract_common_args(kwargs)
 
 
 @register.inclusion_tag('_helpers/radio.html')
@@ -294,8 +311,12 @@ def icon(name):
 
 
 @register.inclusion_tag('_helpers/date_of_birth_field.html')
-def date_of_birth_field(model_name="editing.demographics.date_of_birth"):
-    return dict(model_name=model_name)
+def date_of_birth_field(**kwargs):
+    model_name = kwargs.get('model_name', "editing.demographics.date_of_birth")
+    return dict(
+        model_name=model_name,
+        style=get_style(kwargs)
+    )
 
 
 @register.inclusion_tag('_helpers/process_steps.html')

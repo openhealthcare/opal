@@ -63,4 +63,4 @@ Opal comes with a set of clinical terminology data models out of the box. - we o
 want to link our records to one of these - for example to record a type of condition
 a patient might have, or a drug they are taking.
 
-Full documentation of these is available in the [Lookup lists](lookup_lists.md) documentation.
+Full documentation of these is available in the [Reference Data](referencedata.md) documentation.

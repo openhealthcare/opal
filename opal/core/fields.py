@@ -1,6 +1,8 @@
-from opal.utils import camelcase_to_underscore
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
+from six import b
+
+from opal.utils import camelcase_to_underscore
 
 
 def is_numeric(field):
@@ -13,6 +15,13 @@ def is_numeric(field):
     )
 
     return field.__class__ in numeric_fields
+
+
+def enum(*args):
+    """
+    Given ARGS, return a Django style choices tuple-of-tuples
+    """
+    return tuple((i, i) for i in args)
 
 
 class ForeignKeyOrFreeText(property):
@@ -62,7 +71,7 @@ class ForeignKeyOrFreeText(property):
         fk_field = models.ForeignKey(self.foreign_model, **fk_kwargs)
         fk_field.contribute_to_class(cls, self.fk_field_name)
         ft_field = models.CharField(
-            max_length=255, blank=True, null=True, default=''
+            max_length=255, blank=True, null=True, default=b('')
         )
         ft_field.contribute_to_class(cls, self.ft_field_name)
 

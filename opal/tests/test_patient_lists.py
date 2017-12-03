@@ -1,6 +1,7 @@
 """
 Unittests for opal.core.patient_lists
 """
+from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from mock import MagicMock, PropertyMock, patch
 
@@ -18,6 +19,7 @@ from opal.core.patient_lists import (
 """
 Begin discoverable definitions for test cases
 """
+
 
 class TaggingTestPatientList(TaggedPatientList):
     display_name = "Herbivores"
@@ -56,6 +58,7 @@ class TaggingTestSameTagPatientList(TaggedPatientList):
             models.Demographics,
         ]
 
+
 class InvisibleList(TaggedPatientList):
     tag    = 'eater'
     subtag = 'shh'
@@ -80,9 +83,11 @@ class TestTabbedPatientListGroup(TabbedPatientListGroup):
 class TestEmptyTabbedPatientListGroup(TabbedPatientListGroup):
     member_lists = [InvisibleList]
 
+
 """
 Begin Tests
 """
+
 
 class ColumnTestCase(OpalTestCase):
 
@@ -176,7 +181,6 @@ class TestPatientList(OpalTestCase):
 
         self.assertEqual(e.id, All().to_dict(self.user)[0]['id'])
 
-
     def test_visible_to(self):
         self.assertTrue(TaggingTestPatientList.visible_to(self.user))
 
@@ -184,7 +188,7 @@ class TestPatientList(OpalTestCase):
         dicts = [
             {
                 'detail_template_path': 'records/demographics_detail.html',
-                'icon': '',
+                'icon': 'fa fa-user',
                 'list_limit': None,
                 'name': 'demographics',
                 'single': True,
@@ -361,7 +365,6 @@ class TabbedPatientListGroupTestCase(OpalTestCase):
             TabbedPatientListGroup.for_list('Carnivores')
         with self.assertRaises(ValueError):
             TabbedPatientListGroup.for_list(OpalTestCase)
-
 
     def test_visible_to(self):
         self.assertTrue(TestTabbedPatientListGroup.visible_to(self.user))

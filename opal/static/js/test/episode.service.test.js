@@ -3,124 +3,11 @@ describe('Episode', function() {
 
     var Episode, EpisodeResource, Item, $scope, $rootScope, columns, $window;
     var episode, episodeData, resource, tag_hierarchy, fields;
-    var $routeParams;
+    var $routeParams, opalTestHelper;
 
     beforeEach(function() {
-        module('opal.services', function($provide) {
-            $provide.value('UserProfile', {
-              load: function(){ return profile; }
-            });
-        });
-
-        tag_hierarchy = {
-            'mine'    : [],
-            'tropical': [],
-            'micro'   : [
-                'ortho', 'haem'
-            ]
-        };
-
-        columns = {
-            "fields": {
-                'demographics': {
-                    name: "demographics",
-                    single: true,
-                    fields: [
-                        {name: 'first_name', type: 'string'},
-                        {name: 'surname', type: 'string'},
-                        {name: 'date_of_birth', type: 'date'},
-                    ]
-                },
-                "diagnosis": {
-                    name: "diagnosis",
-                    single: false,
-                    sort: 'date_of_diagnosis',
-                    fields: [
-                        {name: 'date_of_diagnosis', type: 'date'},
-                        {name: 'condition', type: 'string'},
-                        {name: 'provisional', type: 'boolean'},
-                    ]
-                },
-                microbiology_test: {
-                    name: "microbiology_test",
-                    single: false,
-                    fields: [
-                        {name: 'date_ordered', type: 'date'}
-                    ]
-                },
-                general_note: {
-                    name: 'general_note',
-                    fields: [
-                        {name: 'date', type: 'date'}
-                    ]
-                },
-                microbiology_input: {
-                    name: 'microbiology_input',
-                    fields: [
-                        {name: 'initials', type: 'string'},
-                        {name: 'when', type: 'datetime'}
-                    ]
-                },
-                antimicrobial: {
-                    name: 'antimicrobial',
-                    fields: [
-                        {name: 'start_date', type: 'date'}
-                    ]
-                }
-            },
-            "list_schema": {
-                "default": [
-                    'demographics',
-                    'diagnosis'
-                ]
-            }
-        };
-
-        episodeData = {
-            id: 123,
-            date_of_admission: "19/11/2013",
-            category_name: 'inpatient',
-            active: true,
-            discharge_date: "25/05/2016",
-            date_of_episode: "20/11/2013",
-            start: "19/11/2013",
-            end: "25/05/2016",
-            tagging: [{
-                mine: true,
-                tropical: true
-                }],
-            demographics: [{
-                id: 101,
-                patient_id: 99,
-                first_name: 'John',
-                surname: "Smith",
-                date_of_birth: '31/07/1980',
-                hospital_number: '555'
-            }],
-            location: [{
-                category: 'Inepisode',
-                hospital: 'UCH',
-                ward: 'T10',
-                bed: '15',
-                date_of_admission: '01/08/2013'
-            }],
-            diagnosis: [{
-                id: 102,
-                condition: 'Dengue',
-                provisional: true,
-                date_of_diagnosis: '20/04/2007'
-            }, {
-                id: 103,
-                condition: 'Malaria',
-                provisional: false,
-                date_of_diagnosis: '03/19/2006'
-            }]
-        };
-
-        fields = {};
-        _.each(columns.fields, function(c){
-            fields[c.name] = c;
-        });
+        module('opal.services');
+        module('opal.test');
 
         inject(function($injector) {
             Episode = $injector.get('Episode');
@@ -129,10 +16,10 @@ describe('Episode', function() {
             $scope      = $rootScope.$new();
             $routeParams = $injector.get('$routeParams');
             $window      = $injector.get('$window');
+            opalTestHelper = $injector.get('opalTestHelper');
         });
-        $rootScope.fields = fields;
-
-        episode = new Episode(angular.copy(episodeData));
+        episode = opalTestHelper.newEpisode($rootScope);
+        episodeData = opalTestHelper.getEpisodeData();
     });
 
     describe('initialisation', function() {
@@ -142,48 +29,141 @@ describe('Episode', function() {
         });
 
         it('should cast dates on the episode if appropriate', function(){
-            var episodeDataCloned = angular.copy(episodeData);
-            var newEpisode = new Episode(episodeDataCloned);
-            expect(moment(newEpisode.date_of_admission).format('DD/MM/YYYY')).toEqual("19/11/2013");
+            var newEpisode = new Episode(episodeData);
             expect(moment(newEpisode.start).format('DD/MM/YYYY')).toEqual("19/11/2013");
             expect(moment(newEpisode.end).format('DD/MM/YYYY')).toEqual("25/05/2016");
-            expect(moment(newEpisode.date_of_episode).format('DD/MM/YYYY')).toEqual("20/11/2013");
-            expect(moment(newEpisode.discharge_date).format('DD/MM/YYYY')).toEqual("25/05/2016");
         });
     });
 
-    it('should compare comparators that are different', function() {
-        var datacopy = angular.copy(episodeData);
-        datacopy.location[0].bed = '87';
-        var first       = new Episode(episodeData);
-        var second      = new Episode(datacopy);
-        expect(first.compare(second)).toEqual(-1);
-        expect(second.compare(first)).toEqual(1);
-    });
+    describe('compare', function(){
+      it('should allow custom comparators to be passed.', function() {
+          var comparators = [jasmine.createSpy().and.returnValue(-1000)];
+          var first       = new Episode(episodeData);
+          var second      = new Episode(episodeData);
+          expect(first.compare(second, comparators)).toEqual(0);
+          expect(comparators[0]).toHaveBeenCalledWith(first)
+          expect(comparators[0]).toHaveBeenCalledWith(second)
+      });
 
-    it('should be equal for non UCH hospitals', function() {
-        var datacopy = angular.copy(episodeData);
-        datacopy.location[0].hospital = 'RFH';
-        var first       = new Episode(datacopy);
-        var second      = new Episode(datacopy);
+      it('should compare on start equal', function(){
+        var first = new Episode(episodeData);
+        var second = new Episode(episodeData);
         expect(first.compare(second)).toEqual(0);
-    });
+      });
 
-    it('should allow custom comparators to be passed.', function() {
-        var comparators = [jasmine.createSpy().and.returnValue(-1000)];
-        var first       = new Episode(episodeData);
-        var second      = new Episode(episodeData);
-        expect(first.compare(second, comparators)).toEqual(0);
-        expect(comparators[0]).toHaveBeenCalledWith(first)
-        expect(comparators[0]).toHaveBeenCalledWith(second)
+      it('should compare on start positive', function(){
+        var first = new Episode(episodeData);
+        first.start = moment(new Date(2017, 11, 1));
+        var second = new Episode(episodeData);
+        second.start = moment(new Date(2017, 12, 1));
+        expect(first.compare(second)).toEqual(1);
+      });
+
+      it('should compare on start negative', function(){
+        var first = new Episode(episodeData);
+        first.start = moment(new Date(2017, 11, 1));
+        var second = new Episode(episodeData);
+        second.start = moment(new Date(2017, 10, 1));
+        expect(first.compare(second)).toEqual(-1);
+      });
+
+      it('should compare on first_name equal', function(){
+        var first = new Episode(episodeData);
+        first.first_name = "Jane"
+        var second = new Episode(episodeData);
+        second.first_name = "Jane"
+        expect(first.compare(second)).toEqual(0);
+      });
+
+      it('should compare on first_name negative', function(){
+        var first = new Episode(episodeData);
+        first.first_name = "Jane"
+        var second = new Episode(episodeData);
+        second.first_name = "Steve"
+        expect(first.compare(second)).toEqual(-1);
+      });
+
+      it('should compare on first_name positive', function(){
+        var first = new Episode(episodeData);
+        first.first_name = "Steve"
+        var second = new Episode(episodeData);
+        second.first_name = "Jane"
+        expect(first.compare(second)).toEqual(1);
+      });
+
+      it('should compare on surname equal', function(){
+        var first = new Episode(episodeData);
+        first.sirname = "Marlowe"
+        var second = new Episode(episodeData);
+        second.sirname = "Marlowe"
+        expect(first.compare(second)).toEqual(0);
+      });
+
+      it('should compare on surname positive', function(){
+        var first = new Episode(episodeData);
+        first.surname = "Shakespeare"
+        var second = new Episode(episodeData);
+        second.surname = "Marlowe"
+        expect(first.compare(second)).toEqual(1);
+      });
+
+      it('should compare on surname negative', function(){
+        var first = new Episode(episodeData);
+        first.surname = "Marlowe"
+        var second = new Episode(episodeData);
+        second.surname = "Shakespeare"
+        expect(first.compare(second)).toEqual(-1);
+      });
     });
 
     it('Should have access to the attributes', function () {
         expect(episode.active).toEqual(true);
     });
 
-    it('Should convert date attributes to Date objects', function () {
-        expect(episode.date_of_admission).toEqual(new Date(2013, 10, 19));
+    it('Should convert date attributes to moment objects', function () {
+        expect(episode.start.toDate()).toEqual(new Date(2013, 10, 19));
+    });
+
+    it('Should raise an error if they try to get discharge date', function(){
+        var shouldThrow = function(){episode.discharge_date; };
+        expect(shouldThrow).toThrow(
+          "Discharge date is deprecated in opal 0.9.0, use end"
+        );
+    });
+
+    it('Should raise an error if they try to set discharge date', function(){
+      var shouldThrow = function(){episode.discharge_date = "as";}
+      expect(shouldThrow).toThrow(
+        "Discharge date is deprecated in opal 0.9.0, use end"
+      );
+    });
+
+    it('Should raise an error if they try to set date of admission', function(){
+      var shouldThrow = function(){episode.date_of_admission = "as";}
+      expect(shouldThrow).toThrow(
+        "Date of admission is deprecated in opal 0.9.0, use start"
+      );
+    });
+
+    it('Should raise an error if they try to get date of admission', function(){
+      var shouldThrow = function(){episode.date_of_admission; };
+      expect(shouldThrow).toThrow(
+        "Date of admission is deprecated in opal 0.9.0, use start"
+      );
+    });
+
+    it('Should raise an error if they try to get date of episode', function(){
+      var shouldThrow = function(){episode.date_of_episode = "as";}
+      expect(shouldThrow).toThrow(
+        "Date of episode is deprecated in opal 0.9.0, use start"
+      );
+    });
+
+    it('Should raise an error if they try to set date of episode', function(){
+      var shouldThrow = function(){episode.date_of_episode; };
+      expect(shouldThrow).toThrow(
+        "Date of episode is deprecated in opal 0.9.0, use start"
+      );
     });
 
     it('should create Items', function() {
@@ -251,7 +231,7 @@ describe('Episode', function() {
             {id: 104, condition: 'Ebola', provisional: false,
              date_of_diagnosis: '19/02/2005'},
             episode,
-            columns.fields.diagnosis
+            opalTestHelper.getRecordLoaderData().diagnosis
         );
         expect(episode.getNumberOfItems('diagnosis')).toBe(2);
         episode.addItem(item);
@@ -264,6 +244,11 @@ describe('Episode', function() {
         expect(episode.notareal_column).toEqual([item]);
     });
 
+    it('should sort items by their "sort" field if available' , function(){
+        expect(episode.diagnosis[0].id).toBe(103);
+        expect(episode.diagnosis[1].id).toBe(102);
+    });
+
     it('removeItem() should remove an item from our episode', function() {
         // Note: Diagnoses end up ordered differently to the declared order
         // above as they are sorted by date.
@@ -274,14 +259,23 @@ describe('Episode', function() {
     });
 
     it('Should be able to produce a copy of attributes', function () {
-        expect(episode.makeCopy()).toEqual({
-            id: 123,
-            date_of_admission: new Date(2013, 10, 19),
-            date_of_episode: new Date(2013, 10, 20),
-            discharge_date: new Date(2016, 4, 25),
-            category_name: 'inpatient',
-            consistency_token: undefined
-        });
+        var copy = episode.makeCopy();
+        expect(copy.id).toBe(123);
+        expect(copy.category_name).toBe('Inpatient');
+        expect(copy.consistency_token).toBe(undefined);
+        expect(copy.start).toEqual(new Date(2013, 10, 19));
+        expect(copy.end).toEqual(new Date(2016, 4, 25));
+    });
+
+    it('start and end should be null if not set', function(){
+      var copy = episode.makeCopy();
+      delete copy.start;
+      delete copy.end;
+      expect(copy.id).toBe(123);
+      expect(copy.category_name).toBe('Inpatient');
+      expect(copy.consistency_token).toBe(undefined);
+      expect(copy.start).toEqual(undefined);
+      expect(copy.end).toEqual(undefined);
     });
 
     describe('communicating with server', function (){
@@ -306,8 +300,8 @@ describe('Episode', function() {
                 attrsJsonDate = {
                     id               : 555,
                     active           : true,
-                    date_of_admission: '20/11/2013',
-                    discharge_date   : null,
+                    start: '20/11/2013',
+                    end: null,
                     demographics: [{
                         id: 101,
                         patient_id: 99,
@@ -335,12 +329,12 @@ describe('Episode', function() {
                 $httpBackend.expectPUT('/api/v0.1/episode/555/', attrsJsonDate);
                 episode.save(attrsJsonDate);
                 $httpBackend.flush();
-                expect(episode.date_of_admission).toEqual(new Date(2013, 10, 20))
+                expect(episode.start.toDate()).toEqual(new Date(2013, 10, 20));
             });
 
             it('Should translate dates to strings', function () {
                 var toSave = angular.copy(attrsJsonDate);
-                toSave.date_of_admission = new Date(2013, 10, 20);
+                toSave.start = new Date(2013, 10, 20);
                 $httpBackend.expectPUT('/api/v0.1/episode/555/', attrsJsonDate);
                 episode.save(toSave);
                 $httpBackend.flush();
@@ -367,11 +361,9 @@ describe('Episode', function() {
         });
 
         describe('isDischarged()', function() {
-
             it('should return true', function() {
                 expect(episode.isDischarged()).toEqual(true);
             });
-
         });
 
         describe('findByHospitalNumber()', function (){
@@ -387,6 +379,36 @@ describe('Episode', function() {
                 $scope.$digest(); // Fire actual resolving
                 expect(mock_new).toHaveBeenCalled();
             });
+
+            it('Should call the error callback on error', function () {
+                var mock_new = jasmine.createSpy('Mock for new patient')
+                var search_url = '/search/patient/';
+                search_url += '?hospital_number=notarealnumber'
+                $httpBackend.expectGET(search_url).respond([1, 2, 3]);
+                var err = jasmine.createSpy();
+
+                Episode.findByHospitalNumber('notarealnumber', {
+                  newPatient: mock_new,
+                  error: err
+                })
+
+                $httpBackend.flush();
+                $scope.$digest();
+                expect(err).toHaveBeenCalled();
+            });
+
+            it('should handle the case where no number is passed in', function(){
+              var mock_new = jasmine.createSpy('Mock for new patient');
+
+              Episode.findByHospitalNumber(null, {
+                newPatient: mock_new
+              });
+
+              $scope.$digest();
+
+              expect(mock_new).toHaveBeenCalled();
+            });
+
 
             it('Should cast the new patient and call the newForPatient callback', function () {
                 var mock_new = jasmine.createSpy('Mock for new patient')

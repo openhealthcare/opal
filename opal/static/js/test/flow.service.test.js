@@ -117,7 +117,6 @@ describe('Flow ', function(){
     describe('with custom service', function() {
 
         describe('enter', function() {
-
             it('should call the custom service', function() {
                 Flow.enter({hospital_number: '555-456'}, {some: "context"});
                 expect(mock_flow_service.enter).toHaveBeenCalled();
@@ -130,6 +129,18 @@ describe('Flow ', function(){
             it('should call the custom service', function() {
                 Flow.exit({hospital_number: '555-456'}, {some: "context"});
                 expect(mock_flow_service.exit).toHaveBeenCalled();
+            });
+
+            it('should resolve the promise with the result of the modal', function(){
+                spyOn($modal, 'open').and.returnValue({result: "discharged"});
+                var exitPromise = Flow.exit({hospital_number: '555-456'}, {some: "context"});
+                var expected;
+
+                exitPromise.then(function(x){
+                  expected = x;
+                });
+                $rootScope.$apply();
+                expect(expected).toBe('discharged');
             });
 
         });

@@ -4,6 +4,7 @@ source =
 omit =
     opal/tests/*
     opal/core/search/tests/*
+    opal/core/pathway/tests/*
     */migrations/*
 
 [report]

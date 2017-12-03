@@ -21,7 +21,8 @@ The following reference guides are available:
 [opal.core.patient_lists](patient_list.md)|Patient Lists - defining different types of list|
 [opal.core.plugin](plugin.md)| Plugins - defining plugins to package reusable functionality
 [opal.core.menus](core_menus.md)| Menus - declaring application menus
-[opal.core.log](core_log.md)| Log Helpers - custom email error loggers
+[opal.core.log](loggers.md)| Log Helpers - custom email error loggers
+[opal.core.fields](core_fields)| Field helpers - custom field types and utility functions|
 
 ### Angular Services
 |
@@ -44,11 +45,12 @@ The following reference guides are available:
 [The menus Templatetag library](menus_templatetags.md) | Rendering application menus
 [Javascript Helpers](javascript/javascript_helpers.md)| Angular directives, filters and $rootScope methods
 
-### Opal Search module
+### Opal core modules
 
 |
 -|-
 [Making Search Queries](search_queries.md) | Search query backends and helper functions
+[Pathway](pathways.md)|Simple or complicated multilayed forms|
 
 
 ### Miscellaneous documentation

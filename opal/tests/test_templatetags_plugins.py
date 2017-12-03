@@ -1,8 +1,6 @@
 """
 Unittests for the opal.templatetags.plugins module
 """
-import warnings
-
 from mock import patch
 
 from opal.core import plugins
@@ -21,6 +19,9 @@ class PluginTestCase(OpalTestCase):
             head_extra = ['notareal_template.html']
             menuitems = [{'display': 'test'}]
             angular_module_deps = ['js/test.angular.mod.js']
+            opal_angular_exclude_tracking_qs = [
+                "/patient_details",
+            ]
 
         class TestPlugin2(plugins.OpalPlugin):
             stylesheets = ['css/test/notreal.scss']
@@ -54,39 +55,14 @@ class PluginTestCase(OpalTestCase):
         templates = list(context['head_extra']())
         self.assertEqual(['notareal_template.html'], templates)
 
-    def test_plugin_angular_deps(self, plugins):
-        plugins.return_value = [self.plugin1]
-        deps = list(opalplugins.plugin_opal_angular_deps()['deps']())
-        expected = ['js/test.angular.mod.js']
-        self.assertEqual(expected, deps)
-
     def test_prefixes(self, plugins):
         plugins.return_value = [self.plugin1]
         expected_prefix = []
         expected_qs = [
-            "/search",
-            "/extract",
+            "/patient_details",
         ]
         context = opalplugins.plugin_opal_angular_tracking_exclude()
         prefixes = list(context['excluded_tracking_prefix'])
         qs = list(context['excluded_tracking_qs'])
         self.assertEqual(expected_prefix, prefixes)
         self.assertEqual(expected_qs, qs)
-
-    def test_plugin_menuitems(self, plugins):
-        with warnings.catch_warnings(record=True):
-            plugins.return_value = [self.plugin1]
-            menuitems = opalplugins.plugin_menuitems()['items']
-            expected = [{'display': 'test'}]
-            self.assertEqual(expected, menuitems)
-
-
-class MenuItemOrderingTest(OpalTestCase):
-    def test_with_fields_some_with_index(self):
-        td = [
-            dict(display="a", index=10),
-            dict(display="b", index=10),
-            dict(display="c", index=9),
-            dict(display="d"),
-        ]
-        self.assertEqual(opalplugins.sort_menu_items(td), [td[2], td[0], td[1], td[3]])

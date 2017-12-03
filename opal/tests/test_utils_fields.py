@@ -2,8 +2,9 @@
 Test util fields
 """
 from django.test import TestCase
-from opal.tests.models import DogOwner, Dog
+from six import b
 
+from opal.tests.models import DogOwner, Dog
 
 class FKorFTTest(TestCase):
     def setUp(self):
@@ -17,4 +18,4 @@ class FKorFTTest(TestCase):
         instance = self.Model()
         instance.dog = None
 
-        self.assertEqual('', instance.dog)
+        self.assertEqual(b(''), instance.dog)

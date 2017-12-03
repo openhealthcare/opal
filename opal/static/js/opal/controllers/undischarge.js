@@ -6,7 +6,7 @@ angular.module('opal.controllers').controller(
 
         $scope.confirm = function(){
 
-            $scope.episode.discharge_date = null;
+            $scope.episode.end = null;
             $scope.episode.save(episode.makeCopy()).then(function(){
                 var location = $scope.episode.location[0].makeCopy();
 

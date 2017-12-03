@@ -3,7 +3,11 @@ docs_dir: docs
 pages:
   - Home: index.md
   - installation.md
-  - tutorial.md
+  - Tutorial: tutorial.md
+  - Tutorials:
+    # Early steps with Opal
+    - tutorials/pathway_tutorial.md
+    - tutorials/theming_tutorial.md
   - Guides: guides/topic-guides.md
   - Reference: reference/reference_guides.md
 
@@ -27,6 +31,7 @@ pages:
       - JSON API: guides/json_api.md
 
       # Presentation and templating
+      - Theming: guides/theming.md
       - Templates: guides/templates.md
       - Context Processors: guides/context_processors.md
       - Static Files: guides/static_files.md
@@ -36,6 +41,7 @@ pages:
 
       # Optional components
       - Search Overview: guides/search.md
+      - Pathway Overview: guides/pathways.md
       - Django Admin: guides/django_admin.md
 
       # Working on Opal itself
@@ -63,6 +69,8 @@ pages:
       - OpalPlugin: reference/plugin.md
       - Core.Views: reference/core_views.md
       - Menus: reference/core_menus.md
+      - Log: reference/loggers.md
+      - Fields: reference/core_fields.md
 
       # Angular Services
       - reference/javascript/patient_service.md
@@ -83,6 +91,9 @@ pages:
       # Search
       - Search Queries: reference/search_queries.md
 
+      # Pathways
+      - Pathway: reference/pathways.md
+
       # Misc
       - Settings: reference/settings.md
       - Changelog: reference/changelog.md
@@ -102,7 +113,7 @@ dev_addr: 0.0.0.0:8965
 include_next_prev: false
 
 extra:
-  version: v0.8.3
+  version: v0.9.0
 
 markdown_extensions:
     - fenced_code

@@ -2,7 +2,7 @@ describe('UndischargeCtrl', function() {
     "use strict";
 
     var $rootScope, $scope, $httpBackend, $modal, $window, $controller;
-    var Episode;
+    var Episode, opalTestHelper;
     var modalInstance, episode, episodeData;
 
     episodeData = {
@@ -48,6 +48,7 @@ describe('UndischargeCtrl', function() {
 
     beforeEach(function(){
         module('opal.controllers');
+        module('opal.test');
 
         inject(function($injector){
             $httpBackend = $injector.get('$httpBackend');
@@ -57,12 +58,14 @@ describe('UndischargeCtrl', function() {
             $modal       = $injector.get('$modal');
             $window      = $injector.get('$window');
             Episode      = $injector.get('Episode');
+            opalTestHelper = $injector.get('opalTestHelper');
         });
 
         $rootScope.fields = fields;
         modalInstance = $modal.open({template: 'notatemplate'});
 
-        episode = new Episode(episodeData);
+        // episode = new Episode(episodeData);
+        episode = opalTestHelper.newEpisode($rootScope);
 
         $controller('UndischargeCtrl', {
             $scope        : $scope,
@@ -73,8 +76,7 @@ describe('UndischargeCtrl', function() {
 
     describe('confirm', function() {
         it('should confirm', function() {
-            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
-            $httpBackend.expectPUT('/api/v0.1/episode/221/').respond(episodeData);
+            $httpBackend.expectPUT('/api/v0.1/episode/123/').respond(episodeData);
             $httpBackend.expectPUT('/api/v0.1/location/12/').respond({});
             $scope.confirm();
             $rootScope.$apply();

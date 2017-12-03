@@ -1,6 +1,7 @@
 """
 Unittests for opal.core.menus
 """
+import operator
 import warnings
 
 from mock import patch, MagicMock
@@ -41,6 +42,48 @@ class MenuItemTestCase(OpalTestCase):
         item = menus.MenuItem(href="/wat/")
         self.assertEqual("<Opal MenuItem href: '/wat/'>", item.__repr__())
 
+    def test_equality(self):
+        item1 = menus.MenuItem(
+            template_name='menu.html',
+            activepattern='/item1',
+            href='/item1/',
+            icon='fa-item1',
+            display="Item1",
+            index=0
+        )
+
+        item1dup = menus.MenuItem(
+            template_name='menu.html',
+            activepattern='/item1',
+            href='/item1/',
+            icon='fa-item1',
+            display="Item1",
+            index=0
+        )
+
+        item2 = menus.MenuItem(
+            template_name='menu.html',
+            activepattern='/item2',
+            href='/item2/',
+            icon='fa-item2',
+            display="Item2",
+            index=0
+        )
+
+        self.assertTrue(item1 == item1)
+        self.assertTrue(operator.eq(item1, item1))
+        self.assertTrue(item1 == item1dup)
+        self.assertTrue(operator.eq(item1, item1dup))
+        self.assertTrue(item1dup == item1)
+        self.assertTrue(operator.eq(item1dup, item1))
+        self.assertTrue(item1 != item2)
+        self.assertTrue(operator.ne(item1, item2))
+        self.assertFalse(operator.ne(item1, item1dup))
+        self.assertFalse(item1 == 1)
+        self.assertFalse(1 == item2)
+        self.assertTrue(1 != item2)
+        self.assertTrue(item2 != 1)
+
 
 @patch('opal.core.plugins.OpalPlugin.list')
 @patch('opal.core.application.get_app')
@@ -72,26 +115,6 @@ class MenuTestCase(OpalTestCase):
         plugin_list.return_value = [mock_plugin]
         menu = menus.Menu(user=self.user)
         self.assertEqual(menu_items, menu.items)
-
-    def test_sets_items_from_app_dict(self, get_app, plugin_list):
-        with warnings.catch_warnings(record=True):
-            get_app.return_value = self.app
-            plugin_list.return_value = []
-            menu_items = [{'display': 'Display Name'}]
-            self.app.get_menu_items.return_value = menu_items
-            menu = menus.Menu(user=self.user)
-            self.assertEqual('Display Name', menu.items[0].display)
-
-    def test_sets_items_from_plugin_dict(self, get_app, plugin_list):
-        with warnings.catch_warnings(record=True):
-            get_app.return_value = self.app
-            menu_items = [{'display': 'Display Name'}]
-            mock_plugin = MagicMock(name='Plugin')
-            mock_plugin.menuitems = menu_items
-            plugin_list.return_value = [mock_plugin]
-            menu = menus.Menu(user=self.user)
-            self.assertEqual('Display Name', menu.items[0].display)
-
 
     def test_iter_sorts(self, get_app, plugin_list):
         get_app.return_value = self.app

@@ -7,8 +7,10 @@ try { angular.module("opal.config") } catch(err) { /* failed to require */ angul
 OPAL.module = function(namespace, dependencies){
     dependencies = dependencies || [];
 
+    var OPAL_ANGULAR_DEPS = window.OPAL_ANGULAR_DEPS;
+
     if(OPAL_ANGULAR_DEPS === undefined){
-        var OPAL_ANGULAR_DEPS = [];
+        OPAL_ANGULAR_DEPS = [];
     }
 
     var implicit_dependencies = [
@@ -85,18 +87,18 @@ OPAL.run = function(app){
         '$modal',
         '$location',
         '$analytics',
+        '$window',
         OPAL._run
     ]);
 };
 
-OPAL._track = function($location, $analytics){
+OPAL._track = function($location, $analytics, $window){
     var track, not_qs, path;
 
     if(this.tracking.manualTrack){
-        path = $location.path();
+        path = $window.location.pathname + $window.location.hash;
 
         track = _.some(this.tracking.opal_angular_exclude_tracking_prefix, function(prefix){
-
             return path.indexOf((prefix)) === 0;
         });
 
@@ -115,14 +117,14 @@ OPAL._track = function($location, $analytics){
     }
 };
 
-OPAL._run = function($rootScope, ngProgressLite, $modal, $location, $analytics) {
+OPAL._run = function($rootScope, ngProgressLite, $modal, $location, $analytics, $window) {
 
     // Let's allow people to know what version they're running
     $rootScope.OPAL_VERSION = version;
 
     // When route started to change.
     $rootScope.$on('$routeChangeStart', function() {
-        OPAL._track($location, $analytics);
+        OPAL._track($location, $analytics, $window);
         ngProgressLite.set(0);
         ngProgressLite.start();
     });
@@ -161,38 +163,8 @@ OPAL._run = function($rootScope, ngProgressLite, $modal, $location, $analytics) 
     };
 };
 
-
-// From http://stackoverflow.com/questions/3629183/why-doesnt-indexof-work-on-an-array-ie8
-_indexof = function(elt /*, from*/)
-	{
-		var len = this.length >>> 0;
-		var from = Number(arguments[1]) || 0;
-		from = (from < 0)
-		    ? Math.ceil(from)
-		    : Math.floor(from);
-		if (from < 0)
-			from += len;
-
-		for (; from < len; from++)
-		{
-			if (from in this &&
-			    this[from] === elt)
-				return from;
-		}
-		return -1;
-	};
-
-if (!Array.prototype.indexOf) {	Array.prototype.indexOf = _indexof };
-
 // From http://stackoverflow.com/a/3937924/2463201
 jQuery.support.placeholder = (function(){
 	var i = document.createElement('input');
 	return 'placeholder' in i;
 })();
-
-// Fuck you Internet Explorer 8
-_trim = function() {
-	return this.replace(/^\s+|\s+$/g, '');
-}
-
-if (typeof String.prototype.trim !== 'function') { String.prototype.trim = _trim };

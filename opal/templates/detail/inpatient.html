@@ -4,7 +4,7 @@
     <div class="panel-heading text-center">
       <h3>
         Inpatient admission
-        [[ episode.date_of_admission | shortDate]]<span ng-show="episode.discharge_date"> - [[ episode.discharge_date | shortDate ]]</span>
+        [[ episode.start | shortDate]]<span ng-show="episode.end"> - [[ episode.end | shortDate ]]</span>
       </h3>
     </div>
     <div class="panel-body">
@@ -14,7 +14,7 @@
            ng-click="dischargeEpisode(episode)"
            class="btn btn-primary btn-lg">
           <i class="fa fa-home"></i>
-          <span ng-show="episode.discharge_date">Confirm</span>
+          <span ng-show="episode.end">Confirm</span>
           Discharge
         </button>
       </center>
@@ -39,28 +39,20 @@
           [[ episode.category_name ]]
         </div>
       </div>
-      <div class="row" ng-show="episode.date_of_admission">
+      <div class="row" ng-show="episode.start">
         <div class="col-md-4">
           <b>Admitted</b>
         </div>
         <div class="col-md-8">
-          [[ episode.date_of_admission | shortDate ]]
+          [[ episode.start | shortDate ]]
         </div>
       </div>
-      <div class="row" ng-show="episode.discharge_date">
+      <div class="row" ng-show="episode.end">
         <div class="col-md-4">
           <b>Discharged</b>
         </div>
         <div class="col-md-8">
-          [[ episode.discharge_date | shortDate ]]
-        </div>
-      </div>
-      <div class="row" ng-show="episode.date_of_episode">
-        <div class="col-md-4">
-          <b>Date</b>
-        </div>
-        <div class="col-md-8">
-          [[ episode.date_of_episode | shortDate ]]
+          [[ episode.end | shortDate ]]
         </div>
       </div>
       <div class="row">

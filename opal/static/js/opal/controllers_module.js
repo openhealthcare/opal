@@ -13,6 +13,4 @@ controllers.controller('RootCtrl', function($scope, $location) {
 	$scope.keydown = function(e) {
 		$scope.$broadcast('keydown', e);
 	};
-
-    if(typeof collaborator != 'undefined'){ collaborator($scope) };
 });

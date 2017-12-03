@@ -16,10 +16,34 @@ How we want to refer to this list on screen to users.
 
 A custom comparator service to set sort order within a list. Defaults to None.
 
+
+#### PatientList.allow_add_patient
+
+Whether we should show the add patient button.
+
+Defaults to `True`.
+
+#### PatientList.allow_edit_teams
+
+Whether we should allow the user to edit teams.
+
+Defaults to `True`
+
 ## TaggedPatientList
 
 Tagged Patient Lists inherit from Patient Lists - as such they have all of the same methods and properties
 of Patient Lists.
+
+## Card Patient List Template
+Change your patientlist template_name to "patient_lists/card_list.html".
+
+This will display the patient list as a series of 'cards', more analagous to a twitter stream than a spreadsheet like the default list.
+
+## Table Patient list Template
+Change your patientlist template_name to "patient_lists/card_list.html".
+
+This will display the patient list as a series of 'cards', more analagous to a twitter stream than a spreadsheet like the default list.
+
 
 ### Properties
 

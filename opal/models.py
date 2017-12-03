@@ -20,7 +20,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.core.urlresolvers import reverse
 from django.core.exceptions import FieldDoesNotExist
-from django.utils.functional import cached_property
+from django.utils.encoding import force_str
+from six import b
 
 from opal.core import (
     application, exceptions, lookuplists, plugins, patient_lists, tagging
@@ -49,6 +50,15 @@ def deserialize_datetime(value):
     return value
 
 
+def deserialize_time(value):
+    input_format = settings.TIME_INPUT_FORMATS[0]
+    value = timezone.make_aware(datetime.datetime.strptime(
+        value, input_format
+    ), timezone.get_current_timezone()).time()
+
+    return value
+
+
 def deserialize_date(value):
     input_format = settings.DATE_INPUT_FORMATS[0]
     dt = datetime.datetime.strptime(
@@ -56,38 +66,6 @@ def deserialize_date(value):
     )
     dt = timezone.make_aware(dt, timezone.get_current_timezone())
     return dt.date()
-
-
-def generate_prefixes_category_or_list(
-    method_name, patient_list=None, episode_category=None
-):
-    """ this method is used to translate the deprecated method
-        of passing in patient list or category to
-        Subrecord.get_display_template
-        Subrecord.get_detail_template
-        Subrecord.get_form_template
-
-        into the new method of passing in a prefix.
-        It also warns the user about the deprecation
-    """
-
-    warnthem = """
-    opal.models.Subrecord.{} will longer take
-    patient_list or episode_type in 0.9.0.
-
-    Please pass in a a list of prefixes instead
-    """.format(method_name)
-
-    prefixes = []
-    warnings.warn(warnthem, DeprecationWarning, stacklevel=2)
-
-    if patient_list:
-        prefixes = patient_list.get_template_prefixes()
-
-    if episode_category:
-        prefixes = [episode_category.lower()]
-
-    return prefixes
 
 
 class SerialisableFields(object):
@@ -198,7 +176,7 @@ class SerialisableFields(object):
         enum = cls.get_field_enum(field_name)
 
         if enum:
-            return "One of {}".format(",".join(enum))
+            return "One of {}".format(",".join([force_str(e) for e in enum]))
 
         else:
             return "Text Field"
@@ -433,6 +411,8 @@ class UpdatesFromDictMixin(SerialisableFields):
                             value = deserialize_date(value)
                         elif value and field_type == DateTimeField:
                             value = deserialize_datetime(value)
+                        elif value and field_type == models.fields.TimeField:
+                            value = deserialize_time(value)
 
                         setattr(self, name, value)
 
@@ -519,8 +499,8 @@ class Macro(models.Model):
     enter "github-style" #foo text blocks from an admin defined
     list and then have them expand to cover frequent entries.
     """
-    HELP_TITLE = "The text that will display in the dropdown. No spaces!"
-    HELP_EXPANDED = "This is thte text that it will expand to."
+    HELP_TITLE = b("The text that will display in the dropdown. No spaces!")
+    HELP_EXPANDED = b("This is the text that it will expand to.")
 
     title    = models.CharField(max_length=200, help_text=HELP_TITLE)
     expanded = models.TextField(help_text=HELP_EXPANDED)
@@ -731,10 +711,8 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     )
     patient           = models.ForeignKey(Patient)
     active            = models.BooleanField(default=False)
-    date_of_admission = models.DateField(null=True, blank=True)
-    # TODO rename to date_of_discharge?
-    discharge_date    = models.DateField(null=True, blank=True)
-    date_of_episode   = models.DateField(blank=True, null=True)
+    start             = models.DateField(null=True, blank=True)
+    end               = models.DateField(blank=True, null=True)
     consistency_token = models.CharField(max_length=8)
 
     # stage is at what stage of an episode flow is the
@@ -751,14 +729,13 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
             return '%s | %s | %s' % (demographics.hospital_number,
                                      demographics.name,
-                                     self.date_of_admission)
+                                     self.start)
         except models.ObjectDoesNotExist:
-            return self.date_of_admission
+            return self.start
         except AttributeError:
             return 'Episode: {0}'.format(self.pk)
-        except Exception as e:
-            print(e.__class__)
-            return self.date_of_admission
+        except Exception:
+            return self.start
 
     def save(self, *args, **kwargs):
         created = not bool(self.id)
@@ -767,20 +744,6 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
             for subclass in episode_subrecords():
                 if subclass._is_singleton:
                     subclass.objects.create(episode=self)
-
-    @classmethod
-    def _get_fieldnames_to_serialize(cls):
-        fields = super(Episode, cls)._get_fieldnames_to_serialize()
-        fields.extend(["start", "end"])
-        return fields
-
-    @cached_property
-    def start(self):
-        return self.category.start
-
-    @cached_property
-    def end(self):
-        return self.category.end
 
     @property
     def category(self):
@@ -877,7 +840,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         """
         from opal.core.search.queries import episodes_for_user
 
-        order = 'date_of_episode', 'date_of_admission', 'discharge_date'
+        order = 'start', 'end'
         episode_history = self.patient.episode_set.order_by(*order)
         episode_history = episodes_for_user(episode_history, user)
         return [e.to_dict(user, shallow=True) for e in episode_history]
@@ -890,9 +853,6 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
             'id'               : self.id,
             'category_name'    : self.category_name,
             'active'           : self.active,
-            'date_of_admission': self.date_of_admission,
-            'date_of_episode'  : self.date_of_episode,
-            'discharge_date'   : self.discharge_date,
             'consistency_token': self.consistency_token,
             'start'            : self.start,
             'end'              : self.end,
@@ -972,51 +932,12 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
         return find_template(template_locations)
 
     @classmethod
-    def _build_template_selection(cls, episode_type=None, patient_list=None,
-                                  suffix=None, prefix=None):
-        warnthem = """
-        This method will no longer be availabe in 0.9.0,
-        please use Subrecord._get_template instead
-        """
-        warnings.warn(warnthem, DeprecationWarning, stacklevel=2)
-
-        name = cls.get_api_name()
-
-        templates = []
-        if patient_list and episode_type:
-            raise ValueError(
-                "you can not get both a patient list and episode type"
-            )
-        if patient_list:
-            list_prefixes = patient_list.get_template_prefixes()
-
-            for list_prefix in list_prefixes:
-                templates.append('{0}/{1}/{2}{3}'.format(prefix, list_prefix,
-                                                         name, suffix))
-        if episode_type:
-            templates.append('{0}/{1}/{2}{3}'.format(prefix,
-                                                     episode_type.lower(),
-                                                     name, suffix))
-
-        templates.append('{0}/{1}{2}'.format(prefix, name, suffix))
-        return templates
-
-    @classmethod
-    def get_display_template(
-        cls, episode_type=None, patient_list=None, prefixes=None
-    ):
+    def get_display_template(cls, prefixes=None):
         """
         Return the active display template for our record
         """
         if prefixes is None:
             prefixes = []
-
-        if patient_list or episode_type:
-            prefixes = prefixes + generate_prefixes_category_or_list(
-                "get_display_template",
-                patient_list=patient_list,
-                episode_category=episode_type
-            )
 
         return cls._get_template(
             os.path.join("records", "{}.html"),
@@ -1024,9 +945,7 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
         )
 
     @classmethod
-    def get_detail_template(
-        cls, patient_list=None, episode_type=None, prefixes=None
-    ):
+    def get_detail_template(cls, prefixes=None):
         """
         Return the active detail template for our record
         """
@@ -1037,13 +956,6 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
 
         if prefixes is None:
             prefixes = []
-
-        if patient_list or episode_type:
-            prefixes = prefixes + generate_prefixes_category_or_list(
-                "get_detail_template",
-                patient_list=patient_list,
-                episode_category=episode_type
-            )
 
         templates = []
 
@@ -1060,18 +972,9 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
         return find_template(templates)
 
     @classmethod
-    def get_form_template(
-        cls, prefixes=None, patient_list=None, episode_type=None
-    ):
+    def get_form_template(cls, prefixes=None):
         if prefixes is None:
             prefixes = []
-
-        if patient_list or episode_type:
-            prefixes = prefixes + generate_prefixes_category_or_list(
-                "get_form_template",
-                patient_list=patient_list,
-                episode_category=episode_type
-            )
 
         return cls._get_template(
             template=os.path.join("forms", "{}_form.html"),
@@ -1083,21 +986,12 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
         return reverse("form_view", kwargs=dict(model=cls.get_api_name()))
 
     @classmethod
-    def get_modal_template(
-        cls, prefixes=None, patient_list=None, episode_type=None
-    ):
+    def get_modal_template(cls, prefixes=None):
         """
         Return the active form template for our record
         """
         if prefixes is None:
             prefixes = []
-
-        if patient_list or episode_type:
-            prefixes = prefixes + generate_prefixes_category_or_list(
-                "get_form_template",
-                patient_list=patient_list,
-                episode_category=episode_type
-            )
 
         result = cls._get_template(
             template=os.path.join("modals", "{}_modal.html"),
@@ -1481,10 +1375,10 @@ class Demographics(PatientSubrecord):
 
     hospital_number = models.CharField(
         max_length=255, blank=True,
-        help_text="The unique identifier for this patient at the hospital."
+        help_text=b("The unique identifier for this patient at the hospital.")
     )
     nhs_number = models.CharField(
-        max_length=255, blank=True, null=True, verbose_name="NHS Number"
+        max_length=255, blank=True, null=True, verbose_name=b("NHS Number")
     )
 
     surname = models.CharField(max_length=255, blank=True)
@@ -1492,23 +1386,24 @@ class Demographics(PatientSubrecord):
     middle_name = models.CharField(max_length=255, blank=True, null=True)
     title = ForeignKeyOrFreeText(Title)
     date_of_birth = models.DateField(
-        null=True, blank=True, verbose_name="Date of Birth"
+        null=True, blank=True, verbose_name=b("Date of Birth")
     )
     marital_status = ForeignKeyOrFreeText(MaritalStatus)
     religion = models.CharField(max_length=255, blank=True, null=True)
     date_of_death = models.DateField(
-        null=True, blank=True, verbose_name="Date of Death"
+        null=True, blank=True, verbose_name=b("Date of Death")
     )
     post_code = models.CharField(max_length=20, blank=True, null=True)
     gp_practice_code = models.CharField(
-        max_length=20, blank=True, null=True, verbose_name="GP Practice Code"
+        max_length=20, blank=True, null=True,
+        verbose_name=b("GP Practice Code")
     )
     birth_place = ForeignKeyOrFreeText(Destination,
-                                       verbose_name="Country of Birth")
+                                       verbose_name=b("Country of Birth"))
     ethnicity = ForeignKeyOrFreeText(Ethnicity)
     death_indicator = models.BooleanField(
         default=False,
-        help_text="This field will be True if the patient is deceased."
+        help_text=b("This field will be True if the patient is deceased.")
     )
 
     sex = ForeignKeyOrFreeText(Gender)
@@ -1559,7 +1454,7 @@ treatment."
     route         = ForeignKeyOrFreeText(Drugroute)
     start_date    = models.DateField(
         null=True, blank=True,
-        help_text=HELP_START
+        help_text=b(HELP_START)
     )
     end_date      = models.DateField(null=True, blank=True)
     frequency     = ForeignKeyOrFreeText(Drugfreq)
@@ -1570,11 +1465,13 @@ treatment."
 
 class Allergies(PatientSubrecord):
     _icon = 'fa fa-warning'
+    HELP_PROVISIONAL = "True if the allergy is only suspected. \
+Defaults to False."
 
     drug        = ForeignKeyOrFreeText(Drug)
     provisional = models.BooleanField(
-        default=False, verbose_name="Suspected?",
-        help_text="True if the allergy is only suspected. Defaults to False."
+        default=False, verbose_name=b("Suspected?"),
+        help_text=b(HELP_PROVISIONAL)
     )
     details     = models.CharField(max_length=255, blank=True)
 
@@ -1594,8 +1491,8 @@ class Diagnosis(EpisodeSubrecord):
     condition         = ForeignKeyOrFreeText(Condition)
     provisional       = models.BooleanField(
         default=False,
-        verbose_name="Provisional?",
-        help_text="True if the diagnosis is provisional. Defaults to False"
+        verbose_name=b("Provisional?"),
+        help_text=b("True if the diagnosis is provisional. Defaults to False")
     )
     details           = models.CharField(max_length=255, blank=True)
     date_of_diagnosis = models.DateField(blank=True, null=True)
@@ -1699,13 +1596,13 @@ class UserProfile(models.Model):
 
     user                  = models.OneToOneField(User, related_name='profile')
     force_password_change = models.BooleanField(default=True,
-                                                help_text=HELP_PW)
+                                                help_text=b(HELP_PW))
     can_extract           = models.BooleanField(default=False,
-                                                help_text=HELP_EXTRACT)
+                                                help_text=b(HELP_EXTRACT))
     readonly              = models.BooleanField(default=False,
-                                                help_text=HELP_READONLY)
+                                                help_text=b(HELP_READONLY))
     restricted_only       = models.BooleanField(default=False,
-                                                help_text=HELP_RESTRICTED)
+                                                help_text=b(HELP_RESTRICTED))
     roles                 = models.ManyToManyField(Role, blank=True)
 
     def to_dict(self):
@@ -1829,7 +1726,7 @@ class PatientConsultation(EpisodeSubrecord):
     when = models.DateTimeField(null=True, blank=True)
     initials = models.CharField(
         max_length=255, blank=True,
-        help_text="The initials of the user who gave the consult."
+        help_text=b("The initials of the user who gave the consult.")
     )
     reason_for_interaction = ForeignKeyOrFreeText(
         PatientConsultationReasonForInteraction
@@ -1855,14 +1752,14 @@ class SymptomComplex(EpisodeSubrecord):
         Symptom, related_name="symptoms", blank=True
     )
     DURATION_CHOICES = (
-        ('3 days or less', '3 days or less',),
-        ('4-10 days', '4-10 days',),
-        ('11-21 days', '11-21 days',),
-        ('22 days to 3 months', '22 days to 3 months',),
-        ('over 3 months', 'over 3 months',),
+        (b('3 days or less'), b('3 days or less')),
+        (b('4-10 days'), b('4-10 days')),
+        (b('11-21 days'), b('11-21 days')),
+        (b('22 days to 3 months'), b('22 days to 3 months')),
+        (b('over 3 months'), b('over 3 months'))
     )
-    HELP_DURATION = "The duration for which the patient had been experiencing \
-these symptoms when recorded."
+    HELP_DURATION = b("The duration for which the patient had been experiencing \
+these symptoms when recorded.")
 
     duration = models.CharField(
         max_length=255,

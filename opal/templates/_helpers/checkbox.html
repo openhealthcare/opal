@@ -1,4 +1,4 @@
-<div class="checkbox checkbox-primary col-sm-offset-3">
+<div class="checkbox checkbox-primary {% ifequal style "horizontal" %}col-sm-offset-3{% endifequal %}">
   <input {% if disabled %}ng-disabled="{{ disabled }}"{% endif %}
          class="" id="checkbox_[[ {{ element_name }} ]]"
          type="checkbox"

@@ -4,6 +4,7 @@ describe('ExtractCtrl', function(){
 
     var $scope, $httpBackend, schema, $window, $timeout, $modal, Item;
     var PatientSummary, $controller, Schema, controller, $rootScope;
+    var ExtractSchema;
 
 
     var optionsData = {
@@ -304,12 +305,12 @@ describe('ExtractCtrl', function(){
             $modal       = $injector.get('$modal');
             $timeout     = $injector.get('$timeout');
             $controller  = $injector.get('$controller');
-            Schema = $injector.get('Schema');
+            ExtractSchema = $injector.get('ExtractSchema');
             PatientSummary = $injector.get('PatientSummary');
             Item = $injector.get('Item');
         });
 
-        var schema = new Schema(columnsData);
+        var extractSchema = new ExtractSchema(columnsData);
 
         var controller = $controller('ExtractCtrl',  {
             $scope : $scope,
@@ -317,14 +318,15 @@ describe('ExtractCtrl', function(){
             profile: {},
             options: optionsData,
             filters: [],
-            schema : schema,
+            extractSchema : extractSchema,
             PatientSummary: PatientSummary,
             referencedata: referencedata
         });
 
-        $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
+        // $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
         $scope.$apply();
-        $httpBackend.flush();
+        $httpBackend.verifyNoOutstandingExpectation();
+        $httpBackend.verifyNoOutstandingRequest();
     });
 
     describe('set up', function(){
@@ -601,7 +603,6 @@ describe('ExtractCtrl', function(){
     });
 
     describe('Search', function(){
-
         it('should ask the server for results', function(){
             $httpBackend.expectPOST("/search/extract/").respond({
                 page_number: 1,
@@ -611,7 +612,7 @@ describe('ExtractCtrl', function(){
                     {categories: []}
                 ]
             });
-            // $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
+            $httpBackend.expectGET('/api/v0.1/userprofile/').respond({roles: {default: []}});
             $scope.criteria[0] = {
                 combine    : "and",
                 column     : "symptoms",

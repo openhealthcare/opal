@@ -5,14 +5,16 @@ module.exports = function(config){
     var coverageFiles = [
       'opal/**/*.js',
       '../../core/search/static/js/search/**/*.js',
+      '../../core/pathway/static/js/pathway/**/*.js',
     ];
     var includedFiles = [
       'opal/app.js',
       'opal/routes.js',
-      '../../core/search/static/js/search/controllers/*',
-      '../../core/search/static/js/search/services/*',
+      '../../core/pathway/static/js/pathway/**/*.js',
+      '../../core/search/static/js/search/**/*.js',
       'test/*.js',
       '../../core/search/static/js/test/*',
+      '../../core/pathway/static/js/test/*',
     ];
 
     var defaultConfig = karmaDefaults(includedFiles, baseDir, coverageFiles);

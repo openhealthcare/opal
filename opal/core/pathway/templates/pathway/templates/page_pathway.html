@@ -1,0 +1,7 @@
+{% extends "pathway/templates/pathway_base.html" %}
+{% load forms %}
+{% block pathway_body %}
+  {% for step in pathway.get_steps %}
+    {% include step.get_base_template %}
+  {% endfor %}
+{% endblock pathway_body %}

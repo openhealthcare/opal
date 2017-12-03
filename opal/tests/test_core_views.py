@@ -1,11 +1,13 @@
 """
 Unittests for opal.core.views
 """
-import warnings
+import datetime
+import six
 
 from opal.core import test
 
 from opal.core import views
+
 
 class SerializerTestCase(test.OpalTestCase):
 
@@ -14,14 +16,13 @@ class SerializerTestCase(test.OpalTestCase):
         with self.assertRaises(TypeError):
             s.default(None)
 
+    def test_binaries_become_utf_8(self):
+        s = views.OpalSerializer()
+        binary = six.b('Hello beautiful world. I am a binary.')
+        serialized = s.default(binary)
+        self.assertIsInstance(serialized, six.text_type)
 
-class BuildJSONResponseTestCase(test.OpalTestCase):
-
-    def test_underscore_spelling_warns(self):
-        with warnings.catch_warnings(record=True) as w:
-            warnings.simplefilter('always')
-            r = views._build_json_response({})
-            self.assertEqual(200, r.status_code)
-            assert len(w) == 1
-            assert issubclass(w[-1].category, DeprecationWarning)
-            assert "will be removed" in str(w[-1].message)
+    def test_time_serialisation(self):
+        s = views.OpalSerializer()
+        serialised = s.default(datetime.time(20))
+        self.assertEqual(serialised, "20:00:00")

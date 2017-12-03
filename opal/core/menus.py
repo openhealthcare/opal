@@ -1,9 +1,6 @@
 """
 Helpers for constructing extensible menus in Opal applications
 """
-import warnings
-
-warnings.simplefilter('once', DeprecationWarning)
 
 
 class MenuItem(object):
@@ -19,6 +16,23 @@ class MenuItem(object):
     def __repr__(self):
         return u"<Opal MenuItem href: '{0}'>".format(self.href)
 
+    def __eq__(self, other):
+        if not isinstance(other, MenuItem):
+            return NotImplemented
+
+        return (self.template_name == other.template_name and
+                self.activepattern == other.activepattern and
+                self.href == other.href and
+                self.icon == other.icon and
+                self.display == other.display and
+                self.index == other.index)
+
+    def __ne__(self, other):
+        if not isinstance(other, MenuItem):
+            return NotImplemented
+
+        return not self == other
+
 
 class Menu(object):
 
@@ -33,31 +47,12 @@ class Menu(object):
         # list attached to the active Application class.
         # Which is suboptimal.
         app_items = app.get_menu_items(user=self.user)
-        warnthem = """
-Declaring Opal menu items as python dicts will no longer work in Opal 0.9.0.
-
-Menu items should be instances of opal.core.menus.MenuItem
-
-You should convert {0}
-
-Please consult the Opal documentation on menus for more information.
-"""
         for item in app_items:
-            if isinstance(item, MenuItem):
-                self.items.append(item)
-            else:
-                self.items.append(MenuItem(**item))
-                warnings.warn(warnthem.format(item), DeprecationWarning,
-                              stacklevel=2)
+            self.items.append(item)
 
         for plugin in plugins.OpalPlugin.list():
             for item in plugin.menuitems:
-                if isinstance(item, MenuItem):
-                    self.items.append(item)
-                else:
-                    self.items.append(MenuItem(**item))
-                    warnings.warn(warnthem.format(item), DeprecationWarning,
-                                  stacklevel=2)
+                self.items.append(item)
 
     def __iter__(self):
 

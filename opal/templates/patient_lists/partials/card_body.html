@@ -1,0 +1,43 @@
+{% load forms %}
+<div class="panel-body">
+  <div class="row">
+    <div class="col-md-6">
+      {% for column in columns %}
+        {% if forloop.counter0|divisibleby:2 %}
+          <div class="row">
+            <div class="col-md-12">
+              <h4><strong>
+                {% if column.icon %}
+                  {% icon column.icon %}
+                {% endif %}
+                {{ column.title }}
+              </strong></h4>
+              <p ng-repeat="item in row.{{column.name}}">
+                  {% include column.template_path %}
+              </p>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    <div class="col-md-6">
+      {% for column in columns %}
+        <div class="row">
+          <div class="col-md-12">
+            {% if not forloop.counter0|divisibleby:2 %}
+              <h4><strong>
+                {% if column.icon %}
+                  {% icon column.icon %}
+                {% endif %}
+                {{ column.title }}
+              </strong></h4>
+              <p ng-repeat="item in row.{{column.name}}">
+                {% include column.detail_template_path %}
+              </p>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>

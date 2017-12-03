@@ -12,7 +12,6 @@ from opal.models import (
 )
 from opal.core import application, exceptions, metadata, plugins, schemas
 from opal.core.lookuplists import LookupList
-from opal.utils import camelcase_to_underscore
 from opal.core.subrecords import subrecords
 from opal.core.views import json_response
 from opal.core.patient_lists import PatientList
@@ -86,16 +85,6 @@ class RecordViewSet(LoginRequiredViewset):
 
     def list(self, request):
         return json_response(schemas.list_records())
-
-
-class ExtractSchemaViewSet(LoginRequiredViewset):
-    """
-    Returns the schema to build our extract query builder
-    """
-    base_name = 'extract-schema'
-
-    def list(self, request):
-        return json_response(schemas.extract_schema())
 
 
 class ReferenceDataViewSet(LoginRequiredViewset):
@@ -208,7 +197,6 @@ class SubrecordViewSet(LoginRequiredViewset):
             request.data['patient_id'] = patient_id
 
         subrecord.update_from_dict(request.data, request.user)
-        episode = Episode.objects.get(pk=episode.pk)
 
         return json_response(
             subrecord.to_dict(request.user),
@@ -400,7 +388,6 @@ class PatientListViewSet(LoginRequiredViewset):
 router.register('patient', PatientViewSet)
 router.register('episode', EpisodeViewSet)
 router.register('record', RecordViewSet)
-router.register('extract-schema', ExtractSchemaViewSet)
 router.register('userprofile', UserProfileViewSet)
 router.register('user', UserViewSet)
 router.register('tagging', TaggingViewSet)
@@ -411,7 +398,7 @@ router.register('referencedata', ReferenceDataViewSet)
 router.register('metadata', MetadataViewSet)
 
 for subrecord in subrecords():
-    sub_name = camelcase_to_underscore(subrecord.__name__)
+    sub_name = subrecord.get_api_name()
 
     class SubViewSet(SubrecordViewSet):
         base_name = sub_name

@@ -2,68 +2,60 @@ describe('services', function() {
     "use strict";
 
     var $rootScope, FieldTranslater, patientData, jsPatientData;
+    var opalTestHelper;
 
-    beforeEach(module('opal.services'));
+    beforeEach(function(){
+      module('opal.services');
+      module('opal.test');
+      inject(function($injector){
+          $rootScope   = $injector.get('$rootScope');
+          FieldTranslater = $injector.get('FieldTranslater');
+          opalTestHelper = $injector.get('opalTestHelper')
+      })
 
-    beforeEach(inject(function($injector){
-        $rootScope   = $injector.get('$rootScope');
-        FieldTranslater = $injector.get('FieldTranslater');
-    }));
+      var recordLoaderData = opalTestHelper.getRecordLoaderData();
+      recordLoaderData.demographics.fields.push(
+        {name: 'age', type: 'integer'}
+      )
+      recordLoaderData.demographics.fields.push(
+        {name: 'weight', type: 'float'}
+      )
+      $rootScope.fields = recordLoaderData;
+      patientData = {
+          id: 123,
+          date_of_admission: "19/11/2013",
+          active: true,
+          discharge_date: null,
+          date_of_episode: null,
+          demographics: [{
+              id: 101,
+              name: 'John Smith',
+              date_of_birth: '31/07/1980',
+              hospital_number: '555',
+              created: "07/04/2015 11:45:00",
+              age: "36",
+              weight: "20.2",
+              sex: null
+          }],
+      };
 
-    beforeEach(function() {
-        var columns = {
-            "fields": {
-                'demographics': {
-                    name: "demographics",
-                    single: true,
-                    fields: [
-                        {name: 'name', type: 'string'},
-                        {name: 'date_of_birth', type: 'date'},
-                        {name: 'created', type: 'date_time'},
-                        {name: 'age', type: 'integer'},
-                        {name: 'weight', type: 'float'},
-                    ]
-                },
-            }
-        };
-        $rootScope.fields = columns.fields;
-
-        patientData = {
-            id: 123,
-            date_of_admission: "19/11/2013",
-            active: true,
-            discharge_date: null,
-            date_of_episode: null,
-            demographics: [{
-                id: 101,
-                name: 'John Smith',
-                date_of_birth: '31/07/1980',
-                hospital_number: '555',
-                created: "07/04/2015 11:45:00",
-                age: "36",
-                weight: "20.2",
-                sex: null
-            }],
-        };
-
-
-        jsPatientData = {
-            id: 123,
-            date_of_admission: moment(new Date(2013, 10, 19)),
-            active: true,
-            discharge_date: null,
-            date_of_episode: null,
-            demographics: {
-                id: 101,
-                name: 'John Smith',
-                date_of_birth: moment(new Date(1980, 6, 31)),
-                hospital_number: '555',
-                created: moment(new Date(2015, 3, 7, 11, 45, 0)),
-                age: "36",
-                weight: "20.2",
-                sex: null
-            },
-        };
+      jsPatientData = {
+          id: 123,
+          date_of_admission: moment(new Date(2013, 10, 19)),
+          active: true,
+          discharge_date: null,
+          date_of_episode: null,
+          demographics: {
+              id: 101,
+              name: 'John Smith',
+              date_of_birth: moment(new Date(1980, 6, 31)),
+              hospital_number: '555',
+              created: moment(new Date(2015, 3, 7, 11, 45, 0)),
+              age: "36",
+              weight: "20.2",
+              sex: null
+          },
+      };
     });
 
     describe('translateFieldsToJs()', function() {

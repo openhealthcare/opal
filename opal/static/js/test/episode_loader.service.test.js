@@ -5,15 +5,11 @@ describe('episodeLoader', function() {
     "use strict"
 
     var $httpBackend, $route, $rootScope, $window;
-    var episodeLoader, episodeData;
-
-    episodeData = {
-        demographics: [{patient_id: 1234}],
-        tagging: [{}]
-    }
+    var episodeLoader, episodeData, opalTestHelper;
 
     beforeEach(function(){
         module('opal');
+        module('opal.test');
 
         inject(function($injector){
             episodeLoader = $injector.get('episodeLoader');
@@ -21,18 +17,17 @@ describe('episodeLoader', function() {
             $rootScope    = $injector.get('$rootScope');
             $httpBackend  = $injector.get('$httpBackend');
             $window       = $injector.get('$window');
+            opalTestHelper = $injector.get('opalTestHelper');
         });
-
-        $httpBackend.expectGET('/api/v0.1/userprofile/').respond({})
-        $httpBackend.expectGET('/api/v0.1/record/').respond({})
-    })
+        episodeData = opalTestHelper.getEpisodeData();
+    });
 
 
     describe('fetch episodes', function() {
 
         it('should hit the api', function() {
             $route.current = { params: { id: 123 } }
-
+            $httpBackend.expectGET('/api/v0.1/record/').respond({});
             $httpBackend.expectGET('/api/v0.1/episode/123/').respond(episodeData);
             var promise = episodeLoader();
             $rootScope.$apply();
@@ -43,6 +38,7 @@ describe('episodeLoader', function() {
             $route.current = { params: { id: 123 } }
             spyOn($window, 'alert');
 
+            $httpBackend.expectGET('/api/v0.1/record/').respond({});
             $httpBackend.expectGET('/api/v0.1/episode/123/').respond(500);
             var promise = episodeLoader();
             $rootScope.$apply();

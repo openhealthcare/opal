@@ -30,18 +30,17 @@ describe('filtersLoader', function(){
         it('should save existing filters', function(){
             $httpBackend.whenGET('/search/filters/').respond([{id: 1, name: 'afilter'}]);
 
-            filtersLoader()
-            $rootScope.$apply();
+            filtersLoader.load();
             $httpBackend.flush();
+            $rootScope.$apply();
         });
 
         it('should handle errors', function(){
             $httpBackend.whenGET('/search/filters/').respond(500, 'failure');
 
-            filtersLoader();
-
-            $rootScope.$apply();
+            filtersLoader.load();
             $httpBackend.flush();
+            $rootScope.$apply();
             expect(mockWindow.alert).toHaveBeenCalled();
         });
 

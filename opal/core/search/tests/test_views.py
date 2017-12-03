@@ -7,9 +7,10 @@ from datetime import date
 from django.core.serializers.json import DjangoJSONEncoder
 from django.contrib.auth.models import AnonymousUser
 from django.core.exceptions import PermissionDenied
-from mock import patch, MagicMock, mock_open
+from mock import patch, mock_open
 
 from opal import models
+from opal.tests import models as tmodels
 from opal.core.test import OpalTestCase
 from opal.core.search import views
 
@@ -125,9 +126,12 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
             "total_pages": 1,
             "total_count": 0
         }
-        self.episode.date_of_episode = date(
+        dt = date(
             day=15, month=10, year=2015
         )
+        self.episode.date_of_episode = dt
+        self.episode.start = dt
+        self.episode.end = dt
         self.episode.save()
 
     def test_not_logged_in(self):
@@ -195,6 +199,58 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
         self.assertEqual(len(data), 1)
         self.assertEqual(data[0]["first_name"], "James")
         self.assertEqual(data[0]["surname"], "Bond")
+
+    def test_number_of_queries(self):
+        """ Pagination should make sure we
+            do the same number of queries
+            despite the number of results.
+        """
+        # we need to make sure we're all logged in before we start
+        self.assertIsNotNone(self.user)
+        for i in range(100):
+            self.create_patient(
+                "James", "Bond", str(i)
+            )
+
+        with self.assertNumQueries(36):
+            self.get_response('{}/?query=Bond'.format(self.url))
+
+        for i in range(20):
+            self.create_patient(
+                "James", "Blofelt", str(i)
+            )
+
+        with self.assertNumQueries(36):
+            self.get_response('{}/?query=Blofelt'.format(self.url))
+
+    def test_with_multiple_patient_episodes(self):
+        self.patient.create_episode()
+        blofeld_patient, blofeld_episode = self.create_patient(
+            "Ernst", "Blofeld", "23422"
+        )
+        response = json.loads(
+            self.get_response(
+                '{}/?query=Blofeld'.format(self.url)
+            ).content.decode('UTF-8')
+        )
+        expected = {
+            "total_pages": 1,
+            "object_list": [{
+                "count": 1,
+                "first_name": "Ernst",
+                "surname": "Blofeld",
+                "start": None,
+                "patient_id": 2,
+                "hospital_number": "23422",
+                "date_of_birth": None,
+                "end": None,
+                "id": 2,
+                "categories": ["Inpatient"]
+            }],
+            "page_number": 1,
+            "total_count": 1
+        }
+        self.assertEqual(response, expected)
 
 
 class SearchTemplateTestCase(OpalTestCase):

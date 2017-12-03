@@ -2,29 +2,8 @@ describe('AddEpisodeCtrl', function (){
     "use strict";
 
     var $scope, $httpBackend, $rootScope;
-    var Schema
+    var opalTestHelper;
     var modalInstance;
-    var fields = {
-        'demographics': {
-            name: "demographics",
-            single: true,
-            fields: [
-                {name: 'name', type: 'string'},
-                {name: 'date_of_birth', type: 'date'},
-                {name: 'created', type: 'date_time'},
-            ],
-        },
-        "diagnosis": {
-            name: "diagnosis",
-            single: false,
-            sort: 'date_of_diagnosis',
-            fields: [
-                {name: 'date_of_diagnosis', type: 'date'},
-                {name: 'condition', type: 'string', default: 'flu'},
-                {name: 'provisional', type: 'boolean'},
-            ]
-        }
-    };
 
     var referencedata = {
         dogs: ['Poodle', 'Dalmation'],
@@ -37,6 +16,8 @@ describe('AddEpisodeCtrl', function (){
 
     beforeEach(function(){
         module('opal');
+        module('opal.test');
+
         var $controller, $modal;
         $scope = {};
 
@@ -44,12 +25,11 @@ describe('AddEpisodeCtrl', function (){
             $controller  = $injector.get('$controller');
             $modal       = $injector.get('$modal');
             $httpBackend = $injector.get('$httpBackend');
-            Schema       = $injector.get('Schema');
             $rootScope   = $injector.get('$rootScope');
+            opalTestHelper = $injector.get('opalTestHelper');
         });
-        $rootScope.fields = fields;
+        $rootScope.fields = opalTestHelper.getRecordLoaderData();
 
-        // var schema = new Schema(columns.default);
         modalInstance = $modal.open({template: 'Notatemplate'});
         $scope = $rootScope.$new();
 
@@ -60,11 +40,6 @@ describe('AddEpisodeCtrl', function (){
             demographics  : {},
             tags          : {tag: 'id', subtag: 'id_inpatients'}
         });
-
-        $httpBackend.expectGET('/api/v0.1/userprofile/').respond({});
-        $scope.$apply();
-        $httpBackend.flush();
-
     });
 
     describe('save()', function(){
@@ -73,10 +48,10 @@ describe('AddEpisodeCtrl', function (){
               "tagging":{"id":true,"id_inpatients":true},
               "location":{},
               "demographics":{"date_of_birth":"22/01/1970"},
-              "date_of_admission":"22/01/2000"
+              "start": "22/01/2000"
             };
             $httpBackend.expectPOST('/api/v0.1/episode/', expected).respond({demographics:[{patient_id: 1}]});
-            $scope.editing.date_of_admission = new Date(2000, 0, 22);
+            $scope.editing.start = new Date(2000, 0, 22);
             $scope.editing.demographics.date_of_birth = new Date(1970, 0, 22);
             $scope.save();
             $httpBackend.flush();

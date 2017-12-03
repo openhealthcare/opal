@@ -62,10 +62,7 @@ class OpalApplication(object):
             "js/opal/services/patient.js",
             "js/opal/services/episode_visibility.js",
             "js/opal/services/episode_loader.js",
-            "js/opal/services/patient_summary.js",
             "js/opal/services/record_loader.js",
-            "js/opal/services/extract_schema_loader.js",
-            "js/opal/services/schema.js",
             "js/opal/services/patient_loader.js",
             "js/opal/services/episode_resource.js",
             "js/opal/services/record_editor.js",
@@ -95,10 +92,11 @@ class OpalApplication(object):
             "js/opal/controllers/lookup_list_reference.js"
         ]
     }
-    javascripts   = []
-    styles        = []
-    actions       = []
-    menuitems     = [
+    angular_module_deps = []
+    javascripts = []
+    styles = []
+    actions = []
+    menuitems = [
         menus.MenuItem(
             href="/#/list/", activepattern="/list/",
             icon="fa-table", display="Lists",
@@ -106,11 +104,6 @@ class OpalApplication(object):
         )
     ]
     default_episode_category = 'Inpatient'
-
-    opal_angular_exclude_tracking_qs = [
-        "/search",
-        "/extract",
-    ]
 
     @classmethod
     def get_core_javascripts(klass, namespace):
@@ -169,6 +162,13 @@ class OpalApplication(object):
         Return the filesystem path to the app directory
         """
         return os.path.realpath(os.path.dirname(inspect.getfile(cls)))
+
+    @classmethod
+    def get_all_angular_module_deps(cls):
+        all_angular_module_deps = []
+        for i in get_all_components():
+            all_angular_module_deps.extend(i.angular_module_deps)
+        return all_angular_module_deps
 
 
 def get_app():
