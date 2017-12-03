@@ -1,8 +1,8 @@
 Opal
 ====
 
-[![Build Status](https://travis-ci.org/openhealthcare/opal.svg?branch=v0.9.0)](https://travis-ci.org/openhealthcare/opal)
-[![Coverage Status](https://coveralls.io/repos/github/openhealthcare/opal/badge.svg?branch=v0.9.0)](https://coveralls.io/github/openhealthcare/opal?branch=v0.9.0)
+[![Build Status](https://travis-ci.org/openhealthcare/opal.svg?branch=v0.9.1)](https://travis-ci.org/openhealthcare/opal)
+[![Coverage Status](https://coveralls.io/repos/github/openhealthcare/opal/badge.svg?branch=v0.9.1)](https://coveralls.io/github/openhealthcare/opal?branch=v0.9.1)
 [![PyPI version](https://badge.fury.io/py/opal.svg)](https://badge.fury.io/py/opal)
 
 
