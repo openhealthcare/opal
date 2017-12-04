@@ -19,11 +19,10 @@ class ConfidentialEmailer(AdminEmailHandler):
         detail = ""
         if hasattr(record, "request") and record.request:
             user = "anonymous"
-            
+
             if hasattr(record.request, "user"):
                 if record.request.user.is_authenticated():
                     user = record.request.user.username
-
 
             m = "Request to host {0} on application {1} from user {2} with {3}"
 
