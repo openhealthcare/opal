@@ -72,6 +72,10 @@ describe('EditItemCtrl', function (){
           expect($scope.metadata).toBe(metadataCopy);
       });
 
+      it('Should set episode_category from episode.category_name', function() {
+          expect($scope.episode_category).toBe("Inpatient");
+      })
+
       it('should track analytics data', function(){
           expect($analytics.eventTrack).toHaveBeenCalledWith(
             "investigation", {category: "EditItem", label: "Inpatient"}

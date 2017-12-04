@@ -9,7 +9,7 @@ angular.module('opal.controllers').controller(
             $scope.episode = episode.makeCopy();
             // Some fields should only be shown for certain categories.
             // Make that category available to the template.
-            $scope.episode_category = episode.category;
+            $scope.episode_category = episode.category_name;
             $scope.editing = {};
             $scope.item = item;
             $scope.editing[item.columnName] = item.makeCopy();
