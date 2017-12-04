@@ -35,6 +35,7 @@ from opal.core.subrecords import (
 
 warnings.simplefilter('once', DeprecationWarning)
 
+
 def get_default_episode_type():
     app = application.get_app()
     return app.default_episode_category
