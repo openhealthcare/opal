@@ -6,11 +6,7 @@ class PathwaysContextProcessor(object):
     def __init__(self):
         for i in Pathway.list():
             setattr(self, i.__name__, i)
-
-
-def hello(request):
-    return {"hello": "there"}
-
+            
 
 def pathways(request):
     return {
