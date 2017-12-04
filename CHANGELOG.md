@@ -1,5 +1,7 @@
 ### 0.9.1 (Minor Release)
 
+Bugfix: in edit_item.js $scope.episode_category is now set from episode.category_name as opposed to episode.category (which was alwasy null)
+
 ### Misc Changes
 
 Fixes some instances of progressbars not being reset if unexpected error states
