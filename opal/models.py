@@ -1190,7 +1190,8 @@ class Ward(lookuplists.LookupList):
 
 
 class Speciality(lookuplists.LookupList):
-    pass
+    class Meta:
+        verbose_name_plural = "Specialities"
 
 
 # These should probably get refactored into opal-opat in 0.5
@@ -1215,7 +1216,8 @@ class Line_type(lookuplists.LookupList):
 
 
 class MaritalStatus(lookuplists.LookupList):
-    pass
+    class Meta:
+        verbose_name_plural = "Marital statuses"
 
 
 class Micro_test_c_difficile(lookuplists.LookupList):
@@ -1413,6 +1415,7 @@ class Demographics(PatientSubrecord):
 
     class Meta:
         abstract = True
+        verbose_name_plural = "Demographics"
 
 
 class Location(EpisodeSubrecord):
@@ -1476,6 +1479,7 @@ Defaults to False."
 
     class Meta:
         abstract = True
+        verbose_name_plural = "Allergies"
 
 
 class Diagnosis(EpisodeSubrecord):
@@ -1498,6 +1502,7 @@ class Diagnosis(EpisodeSubrecord):
 
     class Meta:
         abstract = True
+        verbose_name_plural = "Diagnoses"
 
     def __unicode__(self):
         return 'Diagnosis for {0}: {1} - {2}'.format(
@@ -1518,6 +1523,7 @@ class PastMedicalHistory(EpisodeSubrecord):
 
     class Meta:
         abstract = True
+        verbose_name_plural = "Past medical histories"
 
 
 class Investigation(EpisodeSubrecord):
@@ -1746,6 +1752,7 @@ class SymptomComplex(EpisodeSubrecord):
 
     class Meta:
         abstract = True
+        verbose_name_plural = "Symptom complexes"
 
     symptoms = models.ManyToManyField(
         Symptom, related_name="symptoms", blank=True
