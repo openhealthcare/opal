@@ -1,6 +1,14 @@
 ### 0.9.1 (Minor Release)
 
-Bugfix: in edit_item.js $scope.episode_category is now set from episode.category_name as opposed to episode.category (which was alwasy null)
+Bugfix: in edit_item.js $scope.episode_category is now set from episode.category_name as opposed to episode.category (which was always null)
+
+#### Pathways ContextProcessor
+
+The 'opal.core.pathways.context_processors.pathways' Context Processor will allow you to access your
+pathways from templates without having to explicitly load them in a view. In turn,
+this allows patterns like:
+
+    {% include pathways.YourPathway.get_display_name %}
 
 ### Misc Changes
 
