@@ -1,6 +1,6 @@
 ### 0.9.1 (Minor Release)
 
-Bugfix: in edit_item.js $scope.episode_category is now set from episode.category_name as opposed to episode.category (which was alwasy null)
+Bugfix: in edit_item.js $scope.episode_category is now set from episode.category_name as opposed to episode.category (which was always null)
 
 ### Misc Changes
 
@@ -9,6 +9,8 @@ occur.
 
 Improves the rendering of patient detail pages where no patient with the ID from
 route params exits. (Displays a polite message instead of erroring.)
+
+Incorrect pluralisation of subrecord names in the Admin view has been fixed.
 
 ### 0.9.0 (Major Release)
 
