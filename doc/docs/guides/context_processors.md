@@ -1,6 +1,6 @@
 ## Default context processors
 
-Context processors are part of the Django template language. The context processor is applied *after* the context for a given request. In Opal we use this to give all templates access to some generic information about the internals of Opal applications.
+Context processors are part of the Django template language. In Opal we use this to give all templates access to some generic information about the internals of Opal applications.
 
 ### Settings
 All Opal settings are copied into the context of the template.
