@@ -1,1 +1,2 @@
-mkdocs
+mkdocs==0.15.3
+markdown==2.6.6
