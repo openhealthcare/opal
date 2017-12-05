@@ -45,7 +45,7 @@ pages:
       - Django Admin: guides/django_admin.md
 
       # Working on Opal itself
-      - Contributing: guides/contributing.md
+      - Contributing: guides/CONTRIBUTING.md
       - Development environment: guides/development_environment.md
 
       # Other guides
@@ -96,7 +96,7 @@ pages:
 
       # Misc
       - Settings: reference/settings.md
-      - Changelog: reference/changelog.md
+      - Changelog: reference/CHANGELOG.md
       - Testing: reference/testing.md
       - Javascript dependencies: reference/javascript/javascript_dependencies.md
       - Upgrading: reference/upgrading.md
