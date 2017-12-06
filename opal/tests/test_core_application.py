@@ -3,6 +3,7 @@ Unittests for opal.core.application
 """
 import copy
 
+from django.contrib.auth.models import AnonymousUser
 from mock import patch, MagicMock
 
 from opal.core.test import OpalTestCase
@@ -67,16 +68,19 @@ class OpalApplicationTestCase(OpalTestCase):
 
     def test_get_menu_items_includes_logout_for_authenticated_users(self):
         user = self.user
-        user.is_authenticated = True
         menuitems = application.OpalApplication.get_menu_items(user=user)
         self.assertEqual(1, len([m for m in menuitems if m.icon == 'fa-sign-out']))
 
     def test_get_menu_items_includes_admin_for_superuser(self):
         user = self.user
-        user.is_authenticated = True
         user.is_staff = True
         menuitems = application.OpalApplication.get_menu_items(user=user)
         self.assertEqual(1, len([m for m in menuitems if m.href == '/admin/']))
+
+    def test_get_menu_items_empty_for_anonymous_user(self):
+        user = AnonymousUser()
+        menuitems = application.OpalApplication.get_menu_items(user=user)
+        self.assertEqual([], menuitems)
 
     def test_get_menu(self):
         menu = application.OpalApplication.get_menu()
