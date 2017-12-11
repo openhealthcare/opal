@@ -3,6 +3,21 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+### 9.0 -> 9.1
+
+#### Upgrading Opal
+
+How you do this depends on how you have configured your application, but updating your
+requirements.txt to update the version should work.
+
+    # requirements.txt
+    opal==0.9.1
+
+After re-installing (via for instance `pip install -r requirements.txt`) you will need to
+run the migrations for Opal 0.9.1
+
+    $ python manage.py migrate opal
+
 ### 0.8.3 -> 0.9.0
 episode.date_of_episode, episode.date_of_admission, episode.discharge_date are all deprecated.
 

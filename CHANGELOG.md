@@ -18,6 +18,8 @@ occur.
 Improves the rendering of patient detail pages where no patient with the ID from
 route params exits. (Displays a polite message instead of erroring.)
 
+Incorrect pluralisation of subrecord names in the Admin view has been fixed. (Migrations will have to be run in all models which extend the changed core Opal models (this is due to a minor upstream Django bug)
+
 ### 0.9.0 (Major Release)
 
 #### Good bye date_of_episode, discharge_date, date_of_admission
