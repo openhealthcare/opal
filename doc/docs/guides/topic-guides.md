@@ -53,7 +53,7 @@ A list of all available topic guides.
 ### Working on Opal itself
 |||
 |--|--|
-[Contributing](contributing.md) | Contributing to Opal
+[Contributing](CONTRIBUTING.md) | Contributing to Opal
 [Development environment](development_environment.md) | Setting up the Opal development environment
 
 ### Other Guides
