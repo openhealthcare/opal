@@ -563,6 +563,10 @@ describe('OPAL Directives', function(){
           );
         })
 
+        it('should have a placeholder which displays the desired date format', function(){
+            expect($(input).attr("placeholder")).toEqual("DD/MM/YYYY");
+        });
+
         it('should change change the core moment into a date string', function(){
             expect(testScope.value).toEqual("10/12/1999");
         });

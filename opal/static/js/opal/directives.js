@@ -351,7 +351,7 @@ directives.directive("dateOfBirth", function(){
   return {
     require: "?ngModel",
     scope: true,
-    template: "<input name='date_of_birth' class='form-control' ng-pattern='numberCheck' ng-model='value' ng-model-options=\"{ updateOn: 'blur' }\" ng-change='onChange()'>",
+    template: "<input name='date_of_birth' class='form-control' ng-pattern='numberCheck' ng-model='value' ng-model-options=\"{ updateOn: 'blur' }\" ng-change='onChange()' placeholder='DD/MM/YYYY'>",
     link: function(scope, element, attrs, ngModel){
       if (!ngModel){
         throw("date-of-birth requires an ng-model to be set");
