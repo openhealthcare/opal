@@ -4,6 +4,9 @@
 
 Fixes some instances of progressbars not being set if unexpected error states occur.
 
+Minor change to the diagnosis form.
+
+
 ### 0.9.0 (Major Release)
 
 #### Good bye date_of_episode, discharge_date, date_of_admission
