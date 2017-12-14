@@ -667,11 +667,13 @@ class TrackedModel(models.Model):
     updated = models.DateTimeField(blank=True, null=True)
     created_by = models.ForeignKey(
         User, blank=True, null=True,
-        related_name="created_%(app_label)s_%(class)s_subrecords"
+        related_name="created_%(app_label)s_%(class)s_subrecords",
+        on_delete=models.SET_NULL
     )
     updated_by = models.ForeignKey(
         User, blank=True, null=True,
-        related_name="updated_%(app_label)s_%(class)s_subrecords"
+        related_name="updated_%(app_label)s_%(class)s_subrecords",
+        on_delete=models.SET_NULL
     )
 
     class Meta:
