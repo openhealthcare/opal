@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from six import b
+from django.db.models.signals import pre_delete
 
 from opal.utils import camelcase_to_underscore
 
@@ -68,12 +69,27 @@ class ForeignKeyOrFreeText(property):
         fk_kwargs = dict(blank=True, null=True)
         if self.related_name:
             fk_kwargs['related_name'] = self.related_name
-        fk_field = models.ForeignKey(self.foreign_model, **fk_kwargs)
+        fk_field = models.ForeignKey(
+            self.foreign_model,
+            on_delete=models.SET_NULL,
+            **fk_kwargs
+        )
         fk_field.contribute_to_class(cls, self.fk_field_name)
         ft_field = models.CharField(
             max_length=255, blank=True, null=True, default=b('')
         )
         ft_field.contribute_to_class(cls, self.ft_field_name)
+
+        def on_delete_cb(sender, instance, *args, **kwargs):
+            cls.objects.filter(**{
+                self.fk_field_name: instance
+            }).update(**{
+                self.ft_field_name: instance.name
+            })
+
+        pre_delete.connect(
+            on_delete_cb, sender=self.foreign_model, weak=False
+        )
 
     def get_default(self):
         if callable(self.default):
