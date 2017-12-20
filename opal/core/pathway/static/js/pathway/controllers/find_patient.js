@@ -25,10 +25,11 @@ angular.module('opal.controllers').controller('FindPatientCtrl',
 
     scope.new_patient = function(result){
         scope.state = 'editing_demographics';
+        scope.editing.demographics = [{}];
     };
 
     scope.new_for_patient = function(patient){
-        scope.demographics = patient.demographics[0];
+        scope.editing.helper.update(patient);
         scope.state   = 'has_demographics';
     };
     scope.showNext = function(editing){

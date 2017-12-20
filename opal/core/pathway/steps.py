@@ -64,6 +64,7 @@ class Step(object):
     step_controller = "DefaultStep"
     base_template = "pathway/steps/step_base_template.html"
     multiple_template = "pathway/steps/multi_save.html"
+    single_templte = "pathway/steps/singe_instance.html"
 
     def __init__(self, model=None, multiple=None, **kwargs):
         self.model = model
@@ -109,7 +110,7 @@ class Step(object):
         if self.multiple:
             return self.multiple_template
         else:
-            return self.model.get_form_template()
+            return self.single_template
 
     @extract_pathway_field
     def get_display_name(self):

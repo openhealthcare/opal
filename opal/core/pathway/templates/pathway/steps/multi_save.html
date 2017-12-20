@@ -1,2 +1,19 @@
 {% load pathways %}
-{% multisave step.model %}
+{% load forms %}
+<div ng-repeat="{{ step.model.get_api_name }} in editing.{{ step.model.get_api_name }}">
+  <div class="row">
+    <div class="col-md-12">
+      {% include step.model.get_form_template %}
+      <div ng-show="$index !== 0" class="pull-right">
+        <div ng-click="editing.helper.remove('{{ step.model.get_api_name }}', $index)" class="btn btn-secondary">
+          {% icon 'fa-trash' %}
+          Remove
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr ng-show="!$last" />
+  <div ng-hide="!$last" class="text-center row">
+    <a ng-click="editing.helper.addRecord('{{ step.model.get_api_name }}')" class="text-center btn btn-primary">{% icon "glyphicon-plus" %} Add Another</a>
+  </div>
+</div>

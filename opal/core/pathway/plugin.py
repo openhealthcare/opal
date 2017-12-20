@@ -17,6 +17,7 @@ class PathwayPlugin(plugins.OpalPlugin):
             'js/pathway/services/pathway.js',
             'js/pathway/services/wizard_pathway.js',
             'js/pathway/services/pathway_loader.js',
+            'js/pathway/services/editing_episode.js',
         ],
         'opal.controllers': [
             'js/pathway/app.js',

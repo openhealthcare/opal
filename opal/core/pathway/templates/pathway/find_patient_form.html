@@ -23,17 +23,17 @@
 <div class="row" ng-if="state == 'editing_demographics'">
   <div class="row">
     <div class="col-md-12">
-      <form class="form-horizontal">
+      <form ng-repeat="demographics in [editing.demographics]" class="form-horizontal">
         <div class="form-group">
           <label class="control-label col-sm-3">Hospital</label>
-                <label class="control-label col-sm-8 text-left">
-                  [[ demographics.hospital_number ]]
-                </label>
+          <label class="control-label col-sm-8 text-left">
+            [[ demographics.hospital_number ]]
+          </label>
         </div>
-        {% input "autofocus" field="Demographics.first_name" model="demographics.first_name" %}
-        {% input field="Demographics.surname" model="demographics.surname" %}
-        {% date_of_birth_field model_name="demographics.date_of_birth" %}
-        {% select field="Demographics.sex" model="demographics.sex" %}
+        {% input "autofocus" field="Demographics.first_name" %}
+        {% input field="Demographics.surname" %}
+        {% date_of_birth_field %}
+        {% select field="Demographics.sex" %}
       </form>
     </div>
   </diV>

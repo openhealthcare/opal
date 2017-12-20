@@ -2,7 +2,9 @@
   {% block modal_body %}
     <form name="form" ng-submit="" class="form-horizontal" novalidate>
       {% block form %}
-        {% include column.get_form_template %}
+        <div ng-repeat="{{ column.get_api_name }} in [editing.{{ column.get_api_name}}]">
+          {% include column.get_form_template %}
+        </div>
       {% endblock form %}
     </form>
   {% endblock %}
