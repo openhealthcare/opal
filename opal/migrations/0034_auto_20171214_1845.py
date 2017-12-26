@@ -9,7 +9,7 @@ from django.conf import settings
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('opal', '0032_auto_20171020_1058'),
+        ('opal', '0033_auto_20171205_1553'),
     ]
 
     operations = [
