@@ -1,16 +1,17 @@
 ### 0.9.1 (Minor Release)
 
-Bugfix: in edit_item.js $scope.episode_category is now set from episode.category_name as opposed to episode.category (which was always null)
-
 #### Pathways ContextProcessor
 
-The 'opal.core.pathways.context_processors.pathways' Context Processor will allow you to access your
-pathways from templates without having to explicitly load them in a view. In turn,
-this allows patterns like:
+The 'opal.core.pathways.context_processors.pathways' Context Processor will allow you to
+access your pathways from templates without having to explicitly load them in a view. In
+turn, this allows patterns like:
 
     {% include pathways.YourPathway.get_display_name %}
 
 ### Misc Changes
+
+Bugfix: in edit_item.js $scope.episode_category is now set from episode.category_name
+as opposed to episode.category (which was always null)
 
 Fixes some instances of progressbars not being reset if unexpected error states
 occur.
@@ -18,7 +19,9 @@ occur.
 Improves the rendering of patient detail pages where no patient with the ID from
 route params exits. (Displays a polite message instead of erroring.)
 
-Incorrect pluralisation of subrecord names in the Admin view has been fixed. (Migrations will have to be run in all models which extend the changed core Opal models (this is due to a minor upstream Django bug)
+Incorrect pluralisation of subrecord names in the Admin view has been fixed. (Migrations
+will have to be run in all models which extend the changed core Opal models (this is due
+to a minor upstream Django bug)
 
 Minor change to the diagnosis form.
 
