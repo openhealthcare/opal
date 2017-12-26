@@ -36,6 +36,9 @@ to a minor upstream Django bug)
 
 Minor change to the diagnosis form.
 
+When you delete a user, it will no longer delete all related episodes and subrecords
+
+
 ### 0.9.0 (Major Release)
 
 #### Good bye date_of_episode, discharge_date, date_of_admission
