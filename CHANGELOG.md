@@ -29,6 +29,8 @@ to a minor upstream Django bug)
 Minor change to the diagnosis form.
 
 
+When we delete and look up list instance, we no longer delete all subrecords that use that instance. Instead we set the look up list instances name in the free text field on the subrecord.
+
 ### 0.9.0 (Major Release)
 
 #### Good bye date_of_episode, discharge_date, date_of_admission
