@@ -74,7 +74,6 @@ angular.module('opal.services').service('Pathway', function(
       preSave: function(editing){},
       valid: function(editing){ return true; },
       finish: function(editing){
-        debugger;
         var self = this;
         editing = angular.copy(editing);
 

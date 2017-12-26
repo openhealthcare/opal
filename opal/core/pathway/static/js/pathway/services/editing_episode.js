@@ -50,10 +50,10 @@ angular.module('opal.services').factory('EditingEpisode', function($rootScope){
           }
         }
       },
-      update: function(patient){
+      update: function(episode){
         var parent = this.parent;
         _.each($rootScope.fields, function(value, key){
-          delete parent[key];
+          delete episode[key];
           var copies = _.map(
             episode[key],
             function(record){
