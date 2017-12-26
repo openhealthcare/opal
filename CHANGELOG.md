@@ -9,6 +9,8 @@ When we delete and look up list instance, we no longer delete all subrecords tha
 that instance. Instead we set the look up list instances name in the free text field on
 the subrecord.
 
+When you delete a user, it will no longer delete all related episodes and subrecords
+
 ### 0.9.1 (Minor Release)
 
 #### Pathways ContextProcessor
@@ -35,9 +37,6 @@ will have to be run in all models which extend the changed core Opal models (thi
 to a minor upstream Django bug)
 
 Minor change to the diagnosis form.
-
-When you delete a user, it will no longer delete all related episodes and subrecords
-
 
 ### 0.9.0 (Major Release)
 
