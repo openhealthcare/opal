@@ -1,16 +1,28 @@
-### 0.9.1 (Minor Release)
+### 0.10.0 (Major Release)
 
-Bugfix: in edit_item.js $scope.episode_category is now set from episode.category_name as opposed to episode.category (which was always null)
+#### Deletion cascade behaviour
+
+Opal 0.10 changes several behaviours related to cascading deletions which, despite
+being Django defaults, were confusing to users and developers in our use case.
+
+When we delete and look up list instance, we no longer delete all subrecords that use
+that instance. Instead we set the look up list instances name in the free text field on
+the subrecord.
+
+### 0.9.1 (Minor Release)
 
 #### Pathways ContextProcessor
 
-The 'opal.core.pathways.context_processors.pathways' Context Processor will allow you to access your
-pathways from templates without having to explicitly load them in a view. In turn,
-this allows patterns like:
+The 'opal.core.pathways.context_processors.pathways' Context Processor will allow you to
+access your pathways from templates without having to explicitly load them in a view. In
+turn, this allows patterns like:
 
     {% include pathways.YourPathway.get_display_name %}
 
 ### Misc Changes
+
+Bugfix: in edit_item.js $scope.episode_category is now set from episode.category_name
+as opposed to episode.category (which was always null)
 
 Fixes some instances of progressbars not being reset if unexpected error states
 occur.
@@ -18,7 +30,11 @@ occur.
 Improves the rendering of patient detail pages where no patient with the ID from
 route params exits. (Displays a polite message instead of erroring.)
 
-Incorrect pluralisation of subrecord names in the Admin view has been fixed. (Migrations will have to be run in all models which extend the changed core Opal models (this is due to a minor upstream Django bug)
+Incorrect pluralisation of subrecord names in the Admin view has been fixed. (Migrations
+will have to be run in all models which extend the changed core Opal models (this is due
+to a minor upstream Django bug)
+
+Minor change to the diagnosis form.
 
 ### 0.9.0 (Major Release)
 
