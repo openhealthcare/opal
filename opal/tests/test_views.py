@@ -374,7 +374,6 @@ class RecordTemplateViewTestCase(BaseViewTestCase):
             username=self.user.username, password=self.PASSWORD
         )
 
-
     def test_test_view(self):
         record_template = testmodels.Colour.get_display_template()
 

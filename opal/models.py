@@ -115,7 +115,7 @@ class SerialisableFields(object):
     @classmethod
     def _get_field_type(cls, name):
         try:
-            return type(cls._meta.get_field_by_name(name)[0])
+            return type(cls._meta.get_field(name))
         except models.FieldDoesNotExist:
             pass
 

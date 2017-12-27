@@ -1,12 +1,11 @@
 """
 Urls for Opal's search functionality
 """
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 from opal.core.search import views
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^search/$', views.SearchIndexView.as_view(), name="search_index"),
     url(r'^search/templates/search.html/?$',
         views.SearchTemplateView.as_view()),
@@ -40,4 +39,4 @@ urlpatterns = patterns(
 
     url(r'^search/extract/download/(?P<task_id>[a-zA-Z0-9-]*)',
         views.ExtractFileView.as_view(), name='extract_file'),
-)
+]

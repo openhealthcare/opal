@@ -315,14 +315,14 @@ class PatientSubrecordGenerator(SubRecordGenerator):
 
 
 class Command(BaseCommand):
-    option_list = BaseCommand.option_list + (
-        make_option(
-            "-n",
-            "--number",
-            dest="number",
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--number',
+            dest='number',
             help="how many would you like to create",
-        ),
-    )
+            default=100
+        )
 
     def handle(self, *args, **options):
         # create 100 patients, give each between 1-5 episodes

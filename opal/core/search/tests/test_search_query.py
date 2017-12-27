@@ -577,7 +577,7 @@ class DatabaseQueryTestCase(OpalTestCase):
     def test_filter_restricted_only_user(self):
         self.user.profile.restricted_only = True
         self.user.profile.save()
-        self.patient.create_episode(category='Inpatient')
+        self.patient.create_episode(category_name='Inpatient')
         query = queries.DatabaseQuery(self.user, self.name_criteria)
         self.assertEqual([], query.get_episodes())
 
