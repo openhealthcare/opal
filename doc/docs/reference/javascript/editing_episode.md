@@ -13,15 +13,15 @@ pattern, to the [Episode](episode_service.md).
 
 The EditingEpisode has a helper that has the following methods
 
-#### Helper.addRecord('subrecord api name')
+#### EditingEpisode.helper.addRecord('subrecord api name')
 Adds a subrecord to the attatched editing object
 
 
-#### Helper.remove('subrecord api name', idx)
+#### EditingEpisode.helper.remove('subrecord api name', idx)
 Removes a subrecord of idx from the editing object
 e.g. `editing.helper.remove('condition', 0)` will
 remove the first condition
 
-#### Helper.update(episode)
+#### EditingEpisode.helper.update(episode)
 Replaces what is currently on 'editing', with a
 version of episode converted for use in a form.

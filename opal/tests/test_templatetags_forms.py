@@ -124,6 +124,15 @@ class ExtractCommonArgsTestCase(TestCase):
         self.assertEqual(ctx["element_type"], "text")
 
 
+class JsModelTestCase(TestCase):
+    def test_js_model(self):
+        template = Template("{%load forms %}{% js_model 'Demographics.first_name' %}")
+        rendered = template.render(Context({}))
+        print 'hello'
+        print rendered
+        self.assertEqual("demographics.first_name", rendered)
+
+
 class TextareaTest(TestCase):
     def setUp(self):
         self.template = Template('{% load forms %}{% textarea label="hai" model="bai"%}')

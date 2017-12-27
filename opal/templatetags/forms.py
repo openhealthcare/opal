@@ -153,6 +153,7 @@ def extract_common_args(kwargs):
 @register.simple_tag()
 def js_model(subRecordFieldPath):
     model, field = _model_and_field_from_path(subRecordFieldPath)
+    return "{}.{}".format(model.get_api_name(), field.name)
 
 
 @register.inclusion_tag('_helpers/datetime_picker.html')
