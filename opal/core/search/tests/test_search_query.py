@@ -6,7 +6,7 @@ from datetime import date
 from django.db import transaction
 from django.contrib.contenttypes.models import ContentType
 from mock import patch, MagicMock
-import reversion
+from reversion import revisions as reversion
 from opal.tests.episodes import RestrictedEpisodeCategory
 
 from opal.core.search.search_rule import SearchRule

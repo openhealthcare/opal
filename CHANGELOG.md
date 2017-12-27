@@ -1,5 +1,9 @@
 ### 0.10.0 (Major Release)
 
+This is a major release with breaking chnges from upstream dependencies.
+You are almost certain to require changes to your application. Please see
+the upgrade guide for further details.
+
 #### Deletion cascade behaviour
 
 Opal 0.10 changes several behaviours related to cascading deletions which, despite
@@ -8,6 +12,12 @@ being Django defaults, were confusing to users and developers in our use case.
 When we delete and look up list instance, we no longer delete all subrecords that use
 that instance. Instead we set the look up list instances name in the free text field on
 the subrecord.
+
+#### Updates to the Dependency Graph
+
+Django: 1.8.13 -> 1.9.13
+Django Reversion: 1.8.7 -> 1.10.2
+Django Rest Framework: 3.2.2 -> 3.3.3
 
 ### 0.9.1 (Minor Release)
 

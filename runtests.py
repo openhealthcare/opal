@@ -85,7 +85,7 @@ test_settings_config = dict(
             },
         },
         'loggers': {
-            'django.request': {
+            'django': {
                 'handlers': ['mail_admins'],
                 'level': 'ERROR',
                 'propagate': True,

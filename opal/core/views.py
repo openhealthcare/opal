@@ -11,7 +11,6 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
-from rest_framework import mixins, viewsets
 import six
 
 
@@ -68,6 +67,7 @@ def with_no_caching(view):
 
     return no_cache
 
+from rest_framework import mixins, viewsets
 
 class ModelViewSet(
         mixins.CreateModelMixin,

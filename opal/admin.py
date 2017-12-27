@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 from django.utils.html import format_html
 from django import forms
 
-import reversion
+from reversion.admin import VersionAdmin
 
 from opal import models
 from opal.models import Synonym
@@ -43,11 +43,11 @@ class UserProfileAdmin(UserAdmin):
     inlines = [UserProfileInline, FilterInline, ]
 
 
-class MyAdmin(reversion.VersionAdmin):
+class MyAdmin(VersionAdmin):
     pass
 
 
-class EpisodeAdmin(reversion.VersionAdmin):
+class EpisodeAdmin(VersionAdmin):
     list_display = [
         'patient',
         'active',
@@ -76,7 +76,7 @@ class EpisodeAdmin(reversion.VersionAdmin):
     episode_detail_url.short_description = "Episode Detail URL"
 
 
-class PatientAdmin(reversion.VersionAdmin):
+class PatientAdmin(VersionAdmin):
     list_display = ('__str__', 'patient_detail_link')
 
     search_fields = [
@@ -99,7 +99,7 @@ class PatientAdmin(reversion.VersionAdmin):
     patient_detail_url.short_description = "Patient Detail Url"
 
 
-class EpisodeSubrecordAdmin(reversion.VersionAdmin):
+class EpisodeSubrecordAdmin(VersionAdmin):
     search_fields = [
         'episode__patient__demographics__first_name',
         'episode__patient__demographics__surname',
@@ -107,7 +107,7 @@ class EpisodeSubrecordAdmin(reversion.VersionAdmin):
     ]
 
 
-class TaggingAdmin(reversion.VersionAdmin):
+class TaggingAdmin(VersionAdmin):
     search_fields = [
         'episode__patient__demographics__first_name',
         'episode__patient__demographics__surname',
@@ -117,7 +117,7 @@ class TaggingAdmin(reversion.VersionAdmin):
     list_display = ['value', 'episode']
 
 
-class PatientSubrecordAdmin(reversion.VersionAdmin):
+class PatientSubrecordAdmin(VersionAdmin):
     search_fields = [
         'patient__demographics__first_name',
         'patient__demographics__surname',
