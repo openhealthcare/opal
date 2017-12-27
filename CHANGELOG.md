@@ -1,5 +1,97 @@
 ### 0.10.0 (Major Release)
 
+#### Subrecord variables in the forms
+
+It used to be that we would have 'editing.demographics' to be the variable representing the demographics model in the form scope.
+
+```
+{% input field="Demographics.hospital_number" %}
+```
+
+used to be equivalent to
+```
+{% input field="Demographics.hospital_number" model="editing.demographics.hospital_number" %}
+```
+
+however this is now simplified translate to
+```
+{% input field="Demographics.hospital_number" model="demographics.hospital_number" %}
+```
+
+in pathways, episode is now translated into an EditingEpisode object, that is structured like
+one of our javascript episodes, ie
+
+```js
+{
+  demographics: [{first_name: "Martha", hospital_number: "123"}]
+}
+```
+
+#### Multi save is dead, long live multi saving (in pathways).
+
+We used to have the directive saveMultipleWrapper. This used to be so that we can translate
+a data structure like:
+
+```js
+{
+  editing: {condition: [{name: "lurgy"}, {name: "cough"}]}
+}
+```
+
+into
+
+```js
+  [
+    {editing: {condition: {name: "lurgy"}}},
+    {editing: {condition: {name: "cough"}}},
+  ]
+```
+
+Now as noted above we live in simpler times. The form templates no longer
+expect a variable called 'editing.condition.name', the now expected 'condition.name'.
+
+We no longer need a complicated directive to re order the scope variables we can just do
+
+```html
+<div ng-repeat="condition in editing.condition">
+  {% include models.Condition.get_form_template %}
+</div>
+```
+
+If you want to add another, the 'editing' part now has a helper object lets you add or remove
+subrecords.
+
+```
+  editing.helper.addRecord('condition');
+```
+
+will add a condition to the `editing` object.
+
+```
+  editing.helper.remove('condition', 0);
+```
+
+will remove the first condition from the `editing`.
+
+
+#### js_model template tag
+```
+{% js_model "Demographics.first_name" %}
+```
+
+will return
+
+```
+  demographics.first_name
+```
+
+in many ways, we've just increased the amount of typing, well done!
+
+However you can still just write 'demographics.first_name', but what the
+template tag means is it will check on the model Demographics that it has
+a field, first_name. Otherwise the page will 500.
+
+
 #### Deletion cascade behaviour
 
 Opal 0.10 changes several behaviours related to cascading deletions which, despite

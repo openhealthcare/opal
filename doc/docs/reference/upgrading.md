@@ -3,6 +3,15 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+### 9.1 -> 10.0
+
+the scope of variables in form has been changed from, for example editing.demographics.name to demographics.name.
+
+Any form template tag that declares model='' may have to be changed.
+
+Show hide logic that hits a js model will also need to be changed.
+
+
 ### 9.0 -> 9.1
 
 #### Upgrading Opal

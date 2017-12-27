@@ -29,6 +29,7 @@ The following reference guides are available:
 -|-
 [Patient](javascript/patient_service.md) | Patient objects
 [Episode](javascript/episode_service.md) | Episode objects
+[EditingEpisode](javascript/editing_episode.md) | Episode form objects
 [Item](javascript/item_service.md) |  Subrecord objects
 [User](javascript/user_service.md) | User objects
 [PatientSummary](javascript/patient_summary_service.md) | Patient search result summaries
