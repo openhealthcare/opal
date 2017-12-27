@@ -3,9 +3,11 @@ describe('ModalPathwayCtrl', function() {
   var $scope,  $controller, controller, metadata, testHelper;
   var referencedata, pathwayDefinition, pathwayCallback;
   var $modalInstance, $window, $analytics, mkController, $rootScope;
+  var opalTestHelper;
 
   beforeEach(function(){
     module('opal.controllers');
+    module('opal.test');
 
     referencedata = jasmine.createSpyObj(["toLookuplists"]);
     referencedata.toLookuplists.and.returnValue({some: "data"});
@@ -16,6 +18,7 @@ describe('ModalPathwayCtrl', function() {
       $rootScope = $injector.get('$rootScope');
       $controller = $injector.get('$controller');
       $window = $injector.get('$window');
+      opalTestHelper = $injector.get('opalTestHelper');
     });
 
     $scope = $rootScope.$new();
@@ -26,10 +29,10 @@ describe('ModalPathwayCtrl', function() {
     metadata = {"fake": "metadata"};
     pathwayCallback = jasmine.createSpy();
 
-    mkController = function(){
+    mkController = function(episode){
       $controller('ModalPathwayCtrl', {
           $scope: $scope,
-          episode: null,
+          episode: episode,
           referencedata: referencedata,
           metadata: metadata,
           pathwayDefinition: pathwayDefinition,
@@ -52,6 +55,12 @@ describe('ModalPathwayCtrl', function() {
     expect($analytics.eventTrack).toHaveBeenCalledWith(
       'somePathway', {category: "ModalPathway"}
     );
+  });
+
+  it('should put an editing episode on the scope', function(){
+    var episode = opalTestHelper.newEpisode($rootScope);
+    mkController(episode)
+    expect(episode.demographics[0].first_name).toBe("John");
   });
 
   it('should log analytics with episode category if provided', function(){

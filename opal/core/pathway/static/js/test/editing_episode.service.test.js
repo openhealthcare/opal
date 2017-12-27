@@ -75,7 +75,7 @@ describe('EditingEpisode', function(){
       };
       var episode = {demographics: [demographics], antimicrobials: [], treatment: [treatment]};
       var editingEpisode = new EditingEpisode(episode);
-      expect(editingEpisode.demographics).toEqual({first_name: "Wilma"});
+      expect(editingEpisode.demographics).toEqual([{first_name: "Wilma"}]);
       expect(editingEpisode.antimicrobials).toEqual([]);
       expect(editingEpisode.treatment).toEqual( [{drug: "aspirin"}]);
       expect(demographics.makeCopy).toHaveBeenCalledWith();

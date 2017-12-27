@@ -19,27 +19,6 @@ angular.module('opal.services').service('Pathway', function(
         var step = _.findWhere(this.steps, {api_name: apiName});
         step.scope = stepScope;
       },
-      populateEditingDict: function(episode){
-        var editing = {};
-        if(episode){
-          var self = this;
-          _.each($rootScope.fields, function(value, key){
-            var copies = _.map(
-              episode[key],
-              function(record){
-                return record.makeCopy();
-            });
-            if(value.single){
-              editing[key] = copies[0];
-            }
-            else{
-              editing[key] = copies;
-            }
-          });
-        }
-
-        return editing;
-      },
       cancel: function(){
         this.pathwayResult.resolve();
       },

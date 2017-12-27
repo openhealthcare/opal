@@ -1,17 +1,23 @@
 describe('FindPatientCtrl', function() {
   "use strict";
-  var scope, Episode, $controller, controller, $window;
+  var scope, Episode, $controller, controller, $window, EditingEpisode;
+  var opalTestHelper, $rootScope;
 
   beforeEach(function(){
     module('opal.controllers');
+    module('opal.test');
     inject(function($injector){
-      var $rootScope = $injector.get('$rootScope');
+      $rootScope = $injector.get('$rootScope');
       scope = $rootScope.$new();
       Episode = $injector.get('Episode');
       $controller = $injector.get('$controller');
+      EditingEpisode = $injector.get('EditingEpisode');
+      opalTestHelper = $injector.get('opalTestHelper');
     });
 
     $window = {alert: jasmine.createSpy()};
+    scope.editing = new EditingEpisode();
+    $rootScope.fields = opalTestHelper.getRecordLoaderData();
 
     scope.pathway = {
       save_url: "/some_url"
@@ -36,6 +42,9 @@ describe('FindPatientCtrl', function() {
     expect(scope.state).toBe('initial');
     scope.new_patient();
     expect(scope.state).toBe('editing_demographics');
+
+    // hoist an empty array on to the scope
+    expect(scope.editing.demographics).toEqual([{}]);
   });
 
   it("should look up hospital numbers", function(){
@@ -86,9 +95,12 @@ describe('FindPatientCtrl', function() {
 
   it("should update the demographics if a patient is found", function(){
     var fakePatient = {demographics: [{hospital_number: "1"}]};
+    fakePatient.demographics[0].makeCopy = function(){
+      return fakePatient.demographics[0];
+    }
     scope.new_for_patient(fakePatient);
     expect(scope.state).toBe('has_demographics');
-    expect(scope.demographics).toBe(fakePatient.demographics[0]);
+    expect(scope.editing.demographics[0]).toBe(fakePatient.demographics[0]);
   });
 
   it("should hoist demographics to editing before saving", function(){

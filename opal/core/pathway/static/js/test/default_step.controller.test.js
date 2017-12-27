@@ -1,4 +1,4 @@
-fdescribe('DefaultStep', function(){
+describe('DefaultStep', function(){
   "use strict";
   var $controller, $rootScope, scope;
 

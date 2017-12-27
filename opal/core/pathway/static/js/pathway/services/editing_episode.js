@@ -53,18 +53,13 @@ angular.module('opal.services').factory('EditingEpisode', function($rootScope){
       update: function(episode){
         var parent = this.parent;
         _.each($rootScope.fields, function(value, key){
-          delete episode[key];
+          parent[key];
           var copies = _.map(
             episode[key],
             function(record){
               return record.makeCopy();
           });
-          if(value.single){
-            parent[key] = copies[0];
-          }
-          else{
-            parent[key] = copies;
-          }
+          parent[key] = copies;
         });
       }
     };
