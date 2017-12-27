@@ -3,7 +3,6 @@ Randomise our admission dates over the last year.
 """
 from datetime import datetime, date, timedelta
 import logging
-from optparse import make_option
 import random
 
 from django.core.management.base import BaseCommand
