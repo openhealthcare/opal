@@ -7,14 +7,54 @@ application to a later version where there are extra steps required.
 
 #### Upgrading Opal
 
-How you do this depends on how you have configured your application, but updating your
-requirements.txt to update the version should work.
+How you do this depends on how you have configured your application. You will need to
+update both the Opal version, and versions of dependencies upgraded dependencies if
+you have specified them in for instance, a requirements.txt.
+
+(This will be the case if you use the requriements.txt originally provided by
+`opal starproject`)
 
     # requirements.txt
+    django==1.9.13
+    django-reversion==1.10.2
+    djangorestframework==3.3.3
     opal==0.10.0
 
-After re-installing (via for instance `pip install -r requirements.txt`) you will need to
-run the migrations for Opal 0.10.0
+
+After re-installing (via for instance `pip install -r requirements.txt`) you
+
+##### Breaking changes from dependencies
+
+The jump in Django versions introduces some breaking changes. Some common problems are
+outlined here.
+
+*Early imports of models*
+
+Importing models in a package __init__.py file is no longer allowed - if you see
+`django.core.exceptions.AppRegistryNotReady` this is the likely cause.
+
+*Django reversion*
+
+Reversion has reorganized it's package structure to avoid importing models.
+Specificly:
+
+```python
+# Old-style import for accessing the admin class.
+import reversion
+# New-style import for accesssing admin class.
+from reversion.admin import VersionAdmin
+
+# Old-style import for accessing the low-level API.
+import reversion
+# New-style import for accesssing the low-level API.
+from reversion import revisions as reversion
+```
+
+You should examin your `admin.py` to see whether you do this.
+
+##### Migrations
+
+You will need to run the migrations for Opal 0.10.0
 
     $ python manage.py migrate opal
 
@@ -23,6 +63,7 @@ need to run a makemigrations command to update your subrecords.
 
     python manage.py makemigrations yourapp
     python manage.py migrate yourapp
+
 
 ### 0.9.0 -> 0.9.1
 
