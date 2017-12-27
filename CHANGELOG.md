@@ -13,6 +13,8 @@ When we delete and look up list instance, we no longer delete all subrecords tha
 that instance. Instead we set the look up list instances name in the free text field on
 the subrecord.
 
+When you delete a user, it will no longer delete all related episodes and subrecords
+
 #### Updates to the Dependency Graph
 
 Django: 1.8.13 -> 1.9.13

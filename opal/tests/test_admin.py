@@ -1,15 +1,109 @@
-from opal.admin import LookupListForm, PatientAdmin, EpisodeAdmin
+"""
+Unittests for opal.admin
+"""
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.admin.sites import AdminSite
+
 from opal.core.test import OpalTestCase
 from opal.tests.models import Hat
 from opal.models import Synonym, Patient, Episode
-from django.contrib.contenttypes.models import ContentType
-from django.contrib.admin.sites import AdminSite
+
+from opal.admin import (LookupListForm, PatientAdmin, EpisodeAdmin,
+                        UserProfileAdmin)
 
 
 class HatForm(LookupListForm):
     class Meta:
         model = Hat
         fields = '__all__'
+
+
+class AdminTestCase(OpalTestCase):
+    """
+    A helper class that creates a patient, episode and the
+    relevant Django sites framework object to pass into your
+    admin instance.
+    """
+    def setUp(self):
+        self.patient, self.episode = self.new_patient_and_episode_please()
+        self.site = AdminSite()
+
+
+class UserProfileAdminTestCase(AdminTestCase):
+
+    def test_get_actions(self):
+        request = self.rf.get('/admin/meh/')
+        actions = UserProfileAdmin(self.user, self.site).get_actions(request)
+        self.assertNotIn('delete_selected', actions)
+
+    def test_delete_permission_obj_is_none(self):
+        request = self.rf.get('/admin/meh/')
+        request.user = self.user
+        admin = UserProfileAdmin(self.user, self.site)
+        has_perm = admin.has_delete_permission(request)
+        self.assertTrue(has_perm)
+
+    def test_delete_permission_has_created_subrecord(self):
+        dem = self.patient.demographics_set.get()
+        dem.created_by = self.user
+        dem.save()
+        request = self.rf.get('/admin/meh/')
+        request.user = self.user
+        admin = UserProfileAdmin(self.user, self.site)
+        has_perm = admin.has_delete_permission(request, obj=self.user)
+        self.assertFalse(has_perm)
+
+    def test_delete_permission_has_updated_subrecord(self):
+        dem = self.patient.demographics_set.get()
+        dem.updated_by = self.user
+        dem.save()
+        request = self.rf.get('/admin/meh/')
+        request.user = self.user
+        admin = UserProfileAdmin(self.user, self.site)
+        has_perm = admin.has_delete_permission(request, obj=self.user)
+        self.assertFalse(has_perm)
+
+    def test_delete_permission_has_created_episode(self):
+        self.episode.created_by = self.user
+        self.episode.save()
+        request = self.rf.get('/admin/meh/')
+        request.user = self.user
+        admin = UserProfileAdmin(self.user, self.site)
+        has_perm = admin.has_delete_permission(request, obj=self.user)
+        self.assertFalse(has_perm)
+
+    def test_delete_permission_has_updated_episode(self):
+        self.episode.updated_by = self.user
+        self.episode.save()
+        request = self.rf.get('/admin/meh/')
+        request.user = self.user
+        admin = UserProfileAdmin(self.user, self.site)
+        has_perm = admin.has_delete_permission(request, obj=self.user)
+        self.assertFalse(has_perm)
+
+    def test_delete_permission_has_created_tagging(self):
+        self.episode.set_tag_names(['sssssh'], user=self.user)
+        request = self.rf.get('/admin/meh/')
+        request.user = self.user
+        admin = UserProfileAdmin(self.user, self.site)
+        has_perm = admin.has_delete_permission(request, obj=self.user)
+        self.assertFalse(has_perm)
+
+    def test_delete_permission_has_updated_tagging(self):
+        self.episode.set_tag_names(['sssssh'], user=self.user)
+        self.episode.set_tag_names([], user=self.user)
+        request = self.rf.get('/admin/meh/')
+        request.user = self.user
+        admin = UserProfileAdmin(self.user, self.site)
+        has_perm = admin.has_delete_permission(request, obj=self.user)
+        self.assertFalse(has_perm)
+
+    def test_delete_permission_has_been_lazy_and_done_nothing(self):
+        request = self.rf.get('/admin/meh/')
+        request.user = self.user
+        admin = UserProfileAdmin(self.user, self.site)
+        has_perm = admin.has_delete_permission(request, obj=self.user)
+        self.assertTrue(has_perm)
 
 
 class LookupListFormTestCase(OpalTestCase):
@@ -35,10 +129,6 @@ class LookupListFormTestCase(OpalTestCase):
         self.assertEqual("Stetson", form.clean_name())
 
 
-class AdminTestCase(OpalTestCase):
-    def setUp(self):
-        self.patient, self.episode = self.new_patient_and_episode_please()
-        self.site = AdminSite()
 
 
 class EpisodeAdminTestCase(AdminTestCase):

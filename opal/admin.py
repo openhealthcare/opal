@@ -6,16 +6,18 @@ from django.contrib.contenttypes.admin import GenericTabularInline
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.utils.html import format_html
 from django import forms
 
 from reversion.admin import VersionAdmin
 
 from opal import models
-from opal.models import Synonym
-from opal.models import UserProfile
 from opal.core.lookuplists import LookupList, synonym_exists
 from opal.core.subrecords import episode_subrecords, patient_subrecords
+from opal.models import Synonym
+from opal.models import UserProfile
+from opal.utils import _itersubclasses
 
 admin.site.unregister(User)
 
@@ -41,6 +43,25 @@ class UserProfileAdmin(UserAdmin):
         }),
     )
     inlines = [UserProfileInline, FilterInline, ]
+
+    def get_actions(self, request):
+        actions = super(UserProfileAdmin, self).get_actions(request)
+        del actions['delete_selected']
+        return actions
+
+    def has_delete_permission(self, request, obj=None):
+        if obj is None:
+            return True
+
+        for sub in _itersubclasses(models.TrackedModel):
+            if not hasattr(sub, 'objects'):
+                continue  # It's another abstract model!
+            instances = sub.objects.filter(
+                Q(created_by=obj) | Q(updated_by=obj)
+            ).count()
+            if instances > 0:
+                return False
+        return True
 
 
 class MyAdmin(VersionAdmin):

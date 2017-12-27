@@ -3,7 +3,28 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
-### 9.0 -> 9.1
+### 0.9.1 -> 0.10.0
+
+#### Upgrading Opal
+
+How you do this depends on how you have configured your application, but updating your
+requirements.txt to update the version should work.
+
+    # requirements.txt
+    opal==0.10.0
+
+After re-installing (via for instance `pip install -r requirements.txt`) you will need to
+run the migrations for Opal 0.10.0
+
+    $ python manage.py migrate opal
+
+As Opal 0.10.0 contains changes to the cascading deletion behaviour of subrecords, you will
+need to run a makemigrations command to update your subrecords.
+
+    python manage.py makemigrations yourapp
+    python manage.py migrate yourapp
+
+### 0.9.0 -> 0.9.1
 
 #### Upgrading Opal
 
@@ -19,6 +40,7 @@ run the migrations for Opal 0.9.1
     $ python manage.py migrate opal
 
 ### 0.8.3 -> 0.9.0
+
 episode.date_of_episode, episode.date_of_admission, episode.discharge_date are all deprecated.
 
 Instead we use episode.start and episode.end, for episode.date_of_episode, these are the same.
@@ -27,14 +49,13 @@ Instead we use episode.start and episode.end, for episode.date_of_episode, these
 No changes.
 
 ### 0.8.1 -> 0.8.2
+
 The application menu API, previously python dicts stored in attributes on either plugin or
 application subclasses, now consists of the new `opal.core.menus.MenuItem` class, enabling
 enhanced customisation and flexibility.
 
 If you previously were adding Menu Items with the dictionary format. These should be
 coverted to use a `MenuItem` class.
-
-
 
 ### 0.8.0 -> 0.8.1
 
