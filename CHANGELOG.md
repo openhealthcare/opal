@@ -17,9 +17,9 @@ When you delete a user, it will no longer delete all related episodes and subrec
 
 #### Updates to the Dependency Graph
 
-Django: 1.8.13 -> 1.9.13
+Django: 1.8.13 -> 1.10.8
 Django Reversion: 1.8.7 -> 1.10.2
-Django Rest Framework: 3.2.2 -> 3.3.3
+Django Rest Framework: 3.2.2 -> 3.4.7
 
 ### 0.9.1 (Minor Release)
 
