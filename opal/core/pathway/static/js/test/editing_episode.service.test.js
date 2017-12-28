@@ -39,6 +39,25 @@ describe('EditingEpisode', function(){
       expect(editingEpisode.helper.isRecordFilledIn(someRecord)).toBe(true);
     });
 
+    it('should record if a date on subrecord has been populated', function(){
+      var someRecord = {
+        $someAngluarVar: "as",
+        _client: {completed: false},
+        greeting: new Date()
+      }
+      expect(editingEpisode.helper.isRecordFilledIn(someRecord)).toBe(true);
+    });
+
+    it('should record if an array on subrecord has been populated', function(){
+    var someRecord = {
+      $someAngluarVar: "as",
+      _client: {completed: false},
+      greeting: ['hello']
+    }
+    expect(editingEpisode.helper.isRecordFilledIn(someRecord)).toBe(true);
+  });
+
+
     it('should record if a subrecord has not been populated', function(){
       var someRecord = {
         $someAngluarVar: "as",

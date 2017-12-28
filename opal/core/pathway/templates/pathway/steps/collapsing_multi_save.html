@@ -1,33 +1,35 @@
 {% load pathways %}
-<div ng-repeat="{{ model.get_api_name }} in editing.{{ model.get_api_name }}">
+{% load forms %}
+<div ng-repeat="{{ step.model.get_api_name }} in editing.{{ step.model.get_api_name }}">
   <div class="row">
     <div class="col-md-12">
-      <div ng-show="!{{ model.get_api_name  }}._client.completed" class="form-horizontal">
-        {% include model.get_form_template %}
+      <div ng-show="!{{ step.model.get_api_name  }}._client.completed" class="form-horizontal">
+        {% include step.model.get_form_template %}
       </div>
-      <div ng-show="{{ model }}._client.completed">
-        <div ng-repeat="item in [{{ model }}]">
-          {% include model.get_detail_template %}
+      <div ng-show="{{ step.model.get_api_name }}._client.completed">
+        <div ng-repeat="item in [{{ step.model.get_api_name }}]">
+          {% include step.model.get_detail_template %}
         </div>
       </div>
       <div class="pull-right">
-        <div ng-show="{{ model.get_api_name  }}._client.completed" ng-click="{{ model }}._client.completed = false" class="btn btn-primary">
+        <div ng-show="{{ step.model.get_api_name  }}._client.completed" ng-click="{{ step.model.get_api_name }}._client.completed = false" class="btn btn-primary">
           {% icon 'fa-edit' %}
           Edit
         </div>
-        <div ng-disabled="!recordFilledIn({{ model.get_api_name  }})" class="btn btn-primary" ng-click="{{ model.get_api_name  }}._client.completed = true" ng-show="!{{ model.get_api_name  }}._client.completed">
+        <div ng-disabled="!editing.helper.isRecordFilledIn({{ step.model.get_api_name  }})" class="btn btn-primary" ng-click="{{ step.model.get_api_name  }}._client.completed = true" ng-show="!{{ step.model.get_api_name  }}._client.completed">
             {% icon 'fa-check-square' %}
             Done
         </div>
-        <div ng-click="editing.remove({{ model.get_api_name }}, $index)" class="btn btn-secondary">
+        <div ng-click="editing.helper.remove('{{ step.model.get_api_name }}', $index)" class="btn btn-secondary">
           {% icon 'fa-trash' %}
           Remove
         </div>
       </div>
     </div>
   </div>
+
   <hr ng-show="!$last" />
-  <div class="text-center row">
-    <a ng-click="editing.addRecord({{ model.get_api_name }})" class="text-center btn btn-primary">{% icon "glyphicon-plus" %} Add Another</a>
+  <div ng-show="$last" class="text-center row">
+    <a ng-disabled="!editing.helper.isRecordFilledIn({{ step.model.get_api_name  }})" ng-click="editing.helper.addRecord('{{ step.model.get_api_name }}')" class="text-center btn btn-primary">{% icon "glyphicon-plus" %} Add Another</a>
   </div>
 </div>

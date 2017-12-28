@@ -21,12 +21,15 @@ angular.module('opal.services').factory('EditingEpisode', function($rootScope){
         var subrecordKeys = _.keys(subrecord);
         return !!_.filter(subrecordKeys, function(k){
           if(k == "_client" || k.indexOf("$") == 0){
+            return false;
+          }
+          if(_.isString(subrecord[k]) || _.isArray(subrecord[k])){
+            return subrecord[k].length
+          }
+          else{
+            return subrecord[k];
+          }
           return false;
-          }
-          if(_.isString(subrecord[k]) && !subrecord[k].length){
-           return false;
-          }
-          return true;
         }).length;
       },
       addRecord: function(modelApiName){
