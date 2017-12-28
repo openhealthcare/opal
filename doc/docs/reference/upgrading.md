@@ -21,7 +21,9 @@ you have specified them in for instance, a requirements.txt.
     opal==0.10.0
 
 
-After re-installing (via for instance `pip install -r requirements.txt`) you
+After re-installing (via for instance `pip install -r requirements.txt`) you will
+likely need to make some changes to your application code to fix errors that arise as
+a result of upstream breaking changes.
 
 ##### Breaking changes from dependencies
 
