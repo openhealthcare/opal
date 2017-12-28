@@ -84,12 +84,6 @@ test_settings_config = dict(
             },
         },
     ],
-    TEMPLATE_LOADERS = ((
-        'django.template.loaders.cached.Loader', (
-            'django.template.loaders.filesystem.Loader',
-            'django.template.loaders.app_directories.Loader',
-        )
-    ),),
     CELERY_ALWAYS_EAGER=True,
     LOGGING = {
         'version': 1,
