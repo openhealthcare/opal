@@ -536,6 +536,8 @@ class Patient(models.Model):
             raise
 
     def create_episode(self, **kwargs):
+        if 'created' not in kwargs:
+            kwargs['created'] = timezone.now()
         return self.episode_set.create(**kwargs)
 
     def get_active_episode(self):
@@ -578,7 +580,7 @@ class Patient(models.Model):
         # save.
         #
         if not self.episode_set.exists():
-            episode = self.create_episode(created=timezone.now())
+            episode = self.create_episode()
 
         for api_name, list_of_upgrades in dict_of_list_of_upgrades.items():
 

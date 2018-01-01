@@ -11,7 +11,8 @@ the subrecord.
 
 #### Misc Changes
 
-Fixes a bug with `Patient.bulk_update` not setting created timestamps for new episodes.
+Fixes a bug with `Patient.bulk_update` and `Patient.create_episode` not setting created
+timestamps for new episodes.
 
 ### 0.9.1 (Minor Release)
 
