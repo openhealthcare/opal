@@ -91,6 +91,7 @@ class PatientTestCase(OpalTestCase):
                 {"name": "purple"},
             ]
         }
+        self.assertEqual(0, original_patient.episode_set.count())
         original_patient.bulk_update(d, self.user)
 
         patient = Patient.objects.get()
