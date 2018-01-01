@@ -32,24 +32,25 @@ describe('FindPatientCtrl', function() {
   });
 
   it("should initialise the scope", function(){
-    var fakeScope = {};
-    controller.initialise(fakeScope);
-    expect(fakeScope.demographics.hospital_number).toBe(undefined);
-    expect(fakeScope.state).toBe('initial');
+    controller.initialise(scope);
+    expect(scope.editing.demographics.length).toBe(1);
+    expect(scope.state).toBe('initial');
   });
 
   it("should change scope if we're unable to find a patient", function(){
+    controller.initialise(scope);
     expect(scope.state).toBe('initial');
     scope.new_patient();
     expect(scope.state).toBe('editing_demographics');
 
     // hoist an empty array on to the scope
-    expect(scope.editing.demographics).toEqual([{}]);
+    expect(scope.editing.demographics.length).toEqual(1);
   });
 
   it("should look up hospital numbers", function(){
     spyOn(Episode, "findByHospitalNumber");
-    scope.demographics.hospital_number = "12";
+    controller.initialise(scope);
+    scope.editing.demographics[0].hospital_number = "12";
     scope.lookup_hospital_number();
     var allCallArgs = Episode.findByHospitalNumber.calls.all();
     expect(allCallArgs.length).toBe(1);
@@ -61,7 +62,8 @@ describe('FindPatientCtrl', function() {
 
   it("should throw an error if the hospital number isn't found", function(){
     spyOn(Episode, "findByHospitalNumber");
-    scope.demographics.hospital_number = "12";
+    scope.editing = new EditingEpisode();
+    controller.initialise(scope);
     scope.lookup_hospital_number();
     var allCallArgs = Episode.findByHospitalNumber.calls.all();
     expect(allCallArgs.length).toBe(1);
@@ -83,8 +85,7 @@ describe('FindPatientCtrl', function() {
   });
 
   it('should update the next save_url if an patient is found', function(){
-    scope.demographics = {patient_id: 1};
-    scope.preSave({});
+    scope.preSave({demographics: {patient_id: 1}});
     expect(scope.pathway.save_url).toBe("/some_url/1");
   });
 
@@ -101,12 +102,5 @@ describe('FindPatientCtrl', function() {
     scope.new_for_patient(fakePatient);
     expect(scope.state).toBe('has_demographics');
     expect(scope.editing.demographics[0]).toBe(fakePatient.demographics[0]);
-  });
-
-  it("should hoist demographics to editing before saving", function(){
-    scope.demographics = {hospital_number: "1"};
-    var editing = {};
-    scope.preSave(editing);
-    expect(editing.demographics).toEqual(scope.demographics);
   });
 });

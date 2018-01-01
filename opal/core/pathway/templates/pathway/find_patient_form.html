@@ -1,9 +1,9 @@
 {% load forms %}
 <div class="row" ng-if="state == 'initial'">
-    <div class="col-sm-8">
+    <div ng-repeat="demographics in editing.demographics" class="col-sm-8">
       <h4>Hospital number</h4>
       <input required autofocus class="form-control" type="text"
-             ng-model="demographics.hospital_number"
+             ng-model="{% js_model 'Demographics.hospital_number' %}"
              ng-keypress="$event.keyCode == 13 && lookup_hospital_number()"
              />
       <br />
@@ -23,58 +23,58 @@
 <div class="row" ng-if="state == 'editing_demographics'">
   <div class="row">
     <div class="col-md-12">
-      <form ng-repeat="demographics in editing.demographics" class="form-horizontal">
+      <div ng-repeat="demographics in editing.demographics" class="form-horizontal">
         <div class="form-group">
-          <label class="control-label col-sm-3">Hospital</label>
+          <label class="control-label col-sm-3">Hospital #</label>
           <label class="control-label col-sm-8 text-left">
-            [[ demographics.hospital_number ]]
+            [[ {% js_model "Demographics.hospital_number" %} ]]
           </label>
         </div>
         {% input "autofocus" field="Demographics.first_name" %}
         {% input field="Demographics.surname" %}
         {% date_of_birth_field %}
         {% select field="Demographics.sex" %}
-      </form>
+      </div>
     </div>
   </diV>
 </div>
-<span ng-if="state === 'has_demographics'">
-<div class="row">
-  <div class="col-sm-8">
-    <div class="row">
-      <div class="col-md-4">
-        <b>Hospital #[[ demographics.hospital_number ]]</b>
+<span ng-repeat="demographics in editing.demographics" ng-if="state === 'has_demographics'">
+  <div class="row">
+    <div class="col-sm-8">
+      <div class="row">
+        <div class="col-md-4">
+          <b>Hospital #</b>
+        </div>
+        <div class="col-md-8">
+          [[ {% js_model "Demographics.hospital_number" %} ]]
+        </div>
       </div>
-      <div class="col-md-8">
-        [[ demographics.hospital_number ]]
+      <div class="row">
+        <div class="col-md-4">
+          <b>Name</b>
+        </div>
+        <div class="col-md-8">
+          [[ {% js_model "Demographics.first_name" %} ]]
+          [[ {% js_model "Demographics.surname" %} ]]
+        </div>
       </div>
-    </div>
-    <div class="row">
-      <div class="col-md-4">
-        <b>Name</b>
-      </div>
-      <div class="col-md-8">
-        [[ demographics.first_name ]]
-        [[ demographics.surname ]]
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-4">
+      <div class="row">
+        <div class="col-md-4">
         <b>Date of Birth</b>
+        </div>
+        <div class="col-md-8">
+          [[ {% js_model "Demographics.date_of_birth" %} | shortDate ]]
+        </div>
       </div>
-      <div class="col-md-8">
-        [[ demographics.date_of_birth | shortDate ]]
+      <div class="row">
+        <div class="col-md-4">
+          <b>Gender</b>
+        </div>
+        <div class="col-md-8">
+          [[ {% js_model "Demographics.sex" %} ]]
+        </div>
       </div>
+      <br />
     </div>
-    <div class="row">
-      <div class="col-md-4">
-        <b>Gender</b>
-      </div>
-      <div class="col-md-8">
-        [[ demographics.sex ]]
-      </div>
-    </div>
-    <br />
-  </div>
   </div>
 </span>

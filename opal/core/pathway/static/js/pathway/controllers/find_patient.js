@@ -4,7 +4,7 @@ angular.module('opal.controllers').controller('FindPatientCtrl',
 
     scope.lookup_hospital_number = function() {
         Episode.findByHospitalNumber(
-            scope.demographics.hospital_number,
+            scope.editing.demographics[0].hospital_number,
             {
                 newPatient:    scope.new_patient,
                 newForPatient: scope.new_for_patient,
@@ -17,15 +17,13 @@ angular.module('opal.controllers').controller('FindPatientCtrl',
 
     this.initialise = function(scope){
       scope.state = 'initial';
-
-      scope.demographics = {
-        hospital_number: undefined
-      };
+      if(!scope.editing.demographics || !scope.editing.demographics.length){
+        scope.editing.helper.addRecord('demographics');
+      }
     };
 
     scope.new_patient = function(result){
         scope.state = 'editing_demographics';
-        scope.editing.demographics = [{}];
     };
 
     scope.new_for_patient = function(patient){
@@ -37,8 +35,6 @@ angular.module('opal.controllers').controller('FindPatientCtrl',
     };
 
     scope.preSave = function(editing){
-        // this is not great
-        editing.demographics = scope.demographics;
         if(editing.demographics && editing.demographics.patient_id){
           scope.pathway.save_url = scope.pathway.save_url + "/" + editing.demographics.patient_id;
         }
