@@ -9,6 +9,10 @@ When we delete and look up list instance, we no longer delete all subrecords tha
 that instance. Instead we set the look up list instances name in the free text field on
 the subrecord.
 
+#### Misc Changes
+
+Fixes a bug with `Patient.bulk_update` not setting created timestamps for new episodes.
+
 ### 0.9.1 (Minor Release)
 
 #### Pathways ContextProcessor
