@@ -605,7 +605,7 @@ class TaggingTestCase(TestCase):
         self.episode.set_tag_names(['micro'], self.user)
         self.mock_request.data = {'micro': False, 'inpatient': True}
         response = api.TaggingViewSet().update(self.mock_request, pk=self.episode.pk)
-        self.assertEqual(list(self.episode.get_tag_names(self.user)), ['inpatient'])
+        self.assertEqual(['inpatient'], self.episode.get_tag_names(self.user))
 
     def test_tag_nonexistent_episode(self):
         response = api.TaggingViewSet().update(self.mock_request, pk=56576)
