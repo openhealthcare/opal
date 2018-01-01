@@ -578,7 +578,7 @@ class Patient(models.Model):
         # save.
         #
         if not self.episode_set.exists():
-            episode = self.create_episode()
+            episode = self.create_episode(created=timezone.now())
 
         for api_name, list_of_upgrades in dict_of_list_of_upgrades.items():
 

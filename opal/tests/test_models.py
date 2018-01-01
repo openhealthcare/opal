@@ -77,6 +77,27 @@ class PatientTestCase(OpalTestCase):
         self.assertEqual(len(colours), 2)
         self.assertTrue(patient.episode_set.exists())
 
+    def test_bulk_update_sets_created_timestamps(self):
+        original_patient = models.Patient()
+        original_patient.save()
+        d = {
+            "demographics": [{
+                "first_name": "Samantha",
+                "surname": "Sun",
+                "hospital_number": "123312"
+            }],
+            "patient_colour": [
+                {"name": "green"},
+                {"name": "purple"},
+            ]
+        }
+        original_patient.bulk_update(d, self.user)
+
+        patient = Patient.objects.get()
+        self.assertIsNotNone(patient.episode_set.get().created)
+        colour = patient.patientcolour_set.first()
+        self.assertIsNotNone(colour.created)
+
     def test_bulk_update_patient_subrecords_respects_order(self):
         patient = models.Patient()
 
