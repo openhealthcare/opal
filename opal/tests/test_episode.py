@@ -71,6 +71,28 @@ class EpisodeTest(OpalTestCase):
         self.episode.set_tag_names(['mine'], self.user)
         self.assertTrue(self.episode.active)
 
+    def test_set_tag_names_from_tagging_dict(self):
+        self.episode.set_tag_names_from_tagging_dict({'inpatient': True}, self.user)
+        self.assertEqual(['inpatient'], self.episode.get_tag_names(self.user))
+
+    def test_set_tag_names_from_tagging_dict_falsy_tags(self):
+        self.episode.set_tag_names_from_tagging_dict(
+            {'inpatient': True, 'outpatient': False},
+            self.user
+        )
+        self.assertEqual(['inpatient'], self.episode.get_tag_names(self.user))
+
+    def test_tagging_dict(self):
+        self.episode.set_tag_names(['inpatient'], self.user)
+        self.assertEqual(
+            [{'inpatient': True, 'id': 1}],
+            self.episode.tagging_dict(self.user)
+        )
+
+    def test_get_tag_names(self):
+        self.episode.set_tag_names(['inpatient'], self.user)
+        self.assertEqual(['inpatient'], self.episode.get_tag_names(self.user))
+
     def test_to_dict_fields(self):
         as_dict = self.episode.to_dict(self.user)
         expected = [

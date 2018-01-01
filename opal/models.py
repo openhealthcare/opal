@@ -818,6 +818,14 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
             tagg.save()
 
+    def set_tag_names_from_tagging_dict(self, tagging_dict, user):
+        """
+        Given a dictionary of {tag_name: True} pairs, set tag names
+        according to those tags which are truthy.
+        """
+        tag_names = [n for n, v in list(tagging_dict.items()) if v == True]
+        return self.set_tag_names(tag_names, user)
+
     def tagging_dict(self, user):
         tag_names = self.get_tag_names(user)
         tagging_dict = {i: True for i in tag_names}
@@ -832,7 +840,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         if not historic:
             qs = qs.filter(archived=False)
 
-        return qs.values_list("value", flat=True)
+        return list(qs.values_list("value", flat=True))
 
     def _episode_history_to_dict(self, user):
         """
