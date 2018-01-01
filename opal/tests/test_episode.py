@@ -82,6 +82,14 @@ class EpisodeTest(OpalTestCase):
         )
         self.assertEqual(['inpatient'], self.episode.get_tag_names(self.user))
 
+    def test_set_tag_names_from_tagging_dict_id_1(self):
+        self.episode.set_tag_names_from_tagging_dict(
+            # 1 == True in Python so boolean checks on values are not enough
+            {'inpatient': True, 'id': 1},
+            self.user
+        )
+        self.assertEqual(['inpatient'], self.episode.get_tag_names(self.user))
+
     def test_tagging_dict(self):
         self.episode.set_tag_names(['inpatient'], self.user)
         self.assertEqual(
