@@ -1023,7 +1023,7 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
 
         if cls._is_singleton:
             if len(list_of_dicts) > 1:
-                msg = "attempted creation of multiple fields on a singleton {}"
+                msg = "Attempted creation of multiple fields on a singleton {}"
                 raise ValueError(msg.format(cls.__name__))
 
         result = []
