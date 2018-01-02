@@ -9,6 +9,18 @@ When we delete and look up list instance, we no longer delete all subrecords tha
 that instance. Instead we set the look up list instances name in the free text field on
 the subrecord.
 
+#### Template removals
+
+We remove a number of stale unused templates:
+
+* changelog.html
+* contact.html
+* extract_footer.html
+* tagging_detail.html
+* _helpers/inline_form.html
+* responsive/_phone_episode_list.html'
+* responsive/_tablet_episode_list.html
+
 ### 0.9.1 (Minor Release)
 
 #### Pathways ContextProcessor
