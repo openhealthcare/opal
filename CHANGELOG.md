@@ -32,6 +32,7 @@ We remove a number of stale unused templates:
 Django: 1.8.13 -> 1.10.8
 Django Reversion: 1.8.7 -> 1.10.2
 Django Rest Framework: 3.2.2 -> 3.4.7
+Psycopg2: 2.5 -> 2.7
 
 ### 0.9.1 (Minor Release)
 

@@ -18,6 +18,7 @@ you have specified them in for instance, a requirements.txt.
     django==1.10.8
     django-reversion==1.10.2
     djangorestframework==3.4.7
+    psycopg==2.7
     opal==0.10.0
 
 
