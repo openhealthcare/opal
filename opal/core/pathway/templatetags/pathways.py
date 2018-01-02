@@ -1,15 +1,10 @@
-import copy
-
 from django import template
 register = template.Library()
 
 
 def add_common_context(context, subrecord):
-    context = copy.copy(context)
-    ctx = {}
-    ctx["subrecord"] = subrecord
-    ctx["model"] = "editing.{}".format(subrecord.get_api_name())
-    context.update(ctx)
+    context["subrecord"] = subrecord
+    context["model"] = "editing.{}".format(subrecord.get_api_name())
     return context
 
 
