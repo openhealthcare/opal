@@ -600,6 +600,13 @@ class TaggingTestCase(TestCase):
         self.assertEqual(202, response.status_code)
         self.assertEqual(list(self.episode.get_tag_names(self.user)), [])
 
+    def test_mixed_tagging_truthiness(self):
+        self.assertEqual(list(self.episode.get_tag_names(self.user)), [])
+        self.episode.set_tag_names(['micro'], self.user)
+        self.mock_request.data = {'micro': False, 'inpatient': True}
+        response = api.TaggingViewSet().update(self.mock_request, pk=self.episode.pk)
+        self.assertEqual(['inpatient'], self.episode.get_tag_names(self.user))
+
     def test_tag_nonexistent_episode(self):
         response = api.TaggingViewSet().update(self.mock_request, pk=56576)
         self.assertEqual(404, response.status_code)
@@ -780,6 +787,29 @@ class EpisodeTestCase(OpalTestCase):
         self.assertEqual(u'micro', tags[0])
         self.assertEqual(1, len(tags))
 
+    def test_create_sets_tagging_with_falsy_tags(self):
+        pcount = models.Patient.objects.filter(
+            demographics__hospital_number="9999000999").count()
+        self.assertEqual(0, pcount)
+        self.mock_request.data = {
+            "tagging"                : { "micro":True, 'inpatient': False },
+            "start"      : "14/01/2015",
+            "demographics" : {
+                "hospital_number": "9999000999",
+            },
+            "location": {
+                "ward": "West",
+                "bed" : "7"
+            }
+        }
+        response = api.EpisodeViewSet().create(self.mock_request)
+        patient = models.Patient.objects.get(
+            demographics__hospital_number="9999000999")
+        episode = patient.episode_set.get()
+        tags = episode.get_tag_names(self.user)
+        self.assertEqual(['micro'], tags)
+        self.assertEqual(1, len(tags))
+
     def test_update(self):
         patient, episode = self.new_patient_and_episode_please()
         self.assertEqual(None, episode.start)
@@ -793,7 +823,6 @@ class EpisodeTestCase(OpalTestCase):
             len(response_dict["demographics"]),
             1
         )
-
 
     def test_update_nonexistent(self):
         self.mock_request.data = {"start": "14/01/2015"}

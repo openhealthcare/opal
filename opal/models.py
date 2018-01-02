@@ -582,9 +582,12 @@ class Patient(models.Model):
 
         for api_name, list_of_upgrades in dict_of_list_of_upgrades.items():
 
-            # for the moment we'll ignore tagging as it's weird
             if(api_name == "tagging"):
+                episode.set_tag_names_from_tagging_dict(
+                    list_of_upgrades[0], user
+                )
                 continue
+
             model = get_subrecord_from_api_name(api_name=api_name)
             if model in episode_subrecords():
                 if episode is None:
@@ -818,6 +821,14 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
             tagg.save()
 
+    def set_tag_names_from_tagging_dict(self, tagging_dict, user):
+        """
+        Given a dictionary of {tag_name: True} pairs, set tag names
+        according to those tags which are truthy.
+        """
+        tag_names = [n for n, v in list(tagging_dict.items()) if v is True]
+        return self.set_tag_names(tag_names, user)
+
     def tagging_dict(self, user):
         tag_names = self.get_tag_names(user)
         tagging_dict = {i: True for i in tag_names}
@@ -832,7 +843,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         if not historic:
             qs = qs.filter(archived=False)
 
-        return qs.values_list("value", flat=True)
+        return list(qs.values_list("value", flat=True))
 
     def _episode_history_to_dict(self, user):
         """

@@ -279,8 +279,7 @@ class TaggingViewSet(LoginRequiredViewset):
     def update(self, request, episode):
         if 'id' in request.data:
             del request.data['id']
-        tag_names = [n for n, v in list(request.data.items()) if v]
-        episode.set_tag_names(tag_names, request.user)
+        episode.set_tag_names_from_tagging_dict(request.data, request.user)
         return json_response(
             episode.tagging_dict(request.user)[0],
             status_code=status.HTTP_202_ACCEPTED
@@ -329,7 +328,7 @@ class EpisodeViewSet(LoginRequiredViewset):
         episode.update_from_dict(request.data, request.user)
         location = episode.location_set.get()
         location.update_from_dict(location_data, request.user)
-        episode.set_tag_names(list(tagging.keys()), request.user)
+        episode.set_tag_names_from_tagging_dict(tagging, request.user)
         serialised = episode.to_dict(request.user)
 
         return json_response(
