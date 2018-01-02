@@ -17,6 +17,7 @@ We remove a number of stale unused templates:
 * contact.html
 * extract_footer.html
 * tagging_detail.html
+* _helpers/inline_form.html
 
 ### 0.9.1 (Minor Release)
 
