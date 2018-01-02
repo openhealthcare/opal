@@ -67,7 +67,7 @@ class Menu(object):
         def index_sorting(x):
             return x.index
 
-        print( self.items)
+        print(self.items)
         items = sorted(sorted(self.items, key=alphabetic), key=index_sorting)
 
         return (i for i in items)
