@@ -536,6 +536,8 @@ class Patient(models.Model):
             raise
 
     def create_episode(self, **kwargs):
+        if 'created' not in kwargs:
+            kwargs['created'] = timezone.now()
         return self.episode_set.create(**kwargs)
 
     def get_active_episode(self):

@@ -38,6 +38,19 @@ class PatientRecordAccessTestCase(OpalTestCase):
 
 class PatientTestCase(OpalTestCase):
 
+    def test_create_episode(self):
+        patient = models.Patient()
+        patient.save()
+        episode = patient.create_episode()
+        self.assertEqual(models.Episode, episode.__class__)
+        self.assertEqual(patient, episode.patient)
+
+    def test_create_episode_sets_created_timestamp(self):
+        patient = models.Patient()
+        patient.save()
+        episode = patient.create_episode()
+        self.assertIsNotNone(episode.created)
+
     @patch("opal.models.application.get_app")
     def test_created_with_the_default_episode(self, get_app):
         test_app = MagicMock()
@@ -76,6 +89,28 @@ class PatientTestCase(OpalTestCase):
         colours = patient.patientcolour_set.all()
         self.assertEqual(len(colours), 2)
         self.assertTrue(patient.episode_set.exists())
+
+    def test_bulk_update_sets_created_timestamps(self):
+        original_patient = models.Patient()
+        original_patient.save()
+        d = {
+            "demographics": [{
+                "first_name": "Samantha",
+                "surname": "Sun",
+                "hospital_number": "123312"
+            }],
+            "patient_colour": [
+                {"name": "green"},
+                {"name": "purple"},
+            ]
+        }
+        self.assertEqual(0, original_patient.episode_set.count())
+        original_patient.bulk_update(d, self.user)
+
+        patient = Patient.objects.get()
+        self.assertIsNotNone(patient.episode_set.get().created)
+        colour = patient.patientcolour_set.first()
+        self.assertIsNotNone(colour.created)
 
     def test_bulk_update_patient_subrecords_respects_order(self):
         patient = models.Patient()

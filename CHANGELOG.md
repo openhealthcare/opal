@@ -21,6 +21,11 @@ We remove a number of stale unused templates:
 * responsive/_phone_episode_list.html'
 * responsive/_tablet_episode_list.html
 
+#### Misc Changes
+
+Fixes a bug with `Patient.bulk_update` and `Patient.create_episode` not setting created
+timestamps for new episodes.
+
 ### 0.9.1 (Minor Release)
 
 #### Pathways ContextProcessor
