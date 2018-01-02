@@ -18,6 +18,8 @@ We remove a number of stale unused templates:
 * extract_footer.html
 * tagging_detail.html
 * _helpers/inline_form.html
+* responsive/_phone_episode_list.html'
+* responsive/_tablet_episode_list.html
 
 ### 0.9.1 (Minor Release)
 
