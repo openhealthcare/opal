@@ -16,6 +16,7 @@ We remove a number of stale unused templates:
 * changelog.html
 * contact.html
 * extract_footer.html
+* tagging_detail.html
 
 ### 0.9.1 (Minor Release)
 
