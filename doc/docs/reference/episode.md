@@ -72,11 +72,25 @@ Arguments:
 * `tag_names` The list of tags that we want to be active for this Episode.
 * `user` The user for whom we want the tag names.
 
-Return the current active tag names for this Episode as strings.
+Set tags for this Episode.
 
-    episode.set_tag_names(['mine', 'infectioncontrol'], user)
+```python
+episode.set_tag_names(['mine', 'infectioncontrol'], user)
+```
+
+#### Episode.set_tag_names_from_tagging_dict
+
+Arguments:
 
 
+* `tagging_dict` The dictionary of {tag_name: boolean} tags to set
+* `user` The user for whom we want the tag names.
+
+Set tags for this Episode.
+
+```python
+episode.set_tag_names_from_tagging_dict({'inpatient': True}, user)
+```
 
 ### Manager
 

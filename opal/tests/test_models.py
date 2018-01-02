@@ -141,7 +141,7 @@ class PatientTestCase(OpalTestCase):
             original_patient.demographics_set.first().hospital_number, ""
         )
 
-    def test_bulk_update_tagging_ignored(self):
+    def test_bulk_update_tagging(self):
         original_patient = models.Patient()
         original_patient.save()
 
@@ -152,12 +152,12 @@ class PatientTestCase(OpalTestCase):
                 "hospital_number": "123312"
             }],
             "tagging": [
-                {"id": 1},
+                {"id": 1, 'inpatient': True},
             ]
         }
         original_patient.bulk_update(d, self.user)
         episode = original_patient.episode_set.first()
-        self.assertEqual(list(episode.get_tag_names(self.user)), [])
+        self.assertEqual(['inpatient'], episode.get_tag_names(self.user))
 
     def test_bulk_update_episode_subrecords_without_episode(self):
         original_patient = models.Patient()
