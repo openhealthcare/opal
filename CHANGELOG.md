@@ -15,6 +15,18 @@ the subrecord.
 
 When you delete a user, it will no longer delete all related episodes and subrecords
 
+#### Template removals
+
+We remove a number of stale unused templates:
+
+* changelog.html
+* contact.html
+* extract_footer.html
+* tagging_detail.html
+* _helpers/inline_form.html
+* responsive/_phone_episode_list.html'
+* responsive/_tablet_episode_list.html
+
 #### Updates to the Dependency Graph
 
 Django: 1.8.13 -> 1.10.8

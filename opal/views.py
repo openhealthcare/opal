@@ -178,7 +178,7 @@ class FormTemplateView(LoginRequiredMixin, TemplateView):
     This view renders the form template for our field.
 
     These are generated for subrecords, but can also be used
-    by plugins for other mdoels.
+    by plugins for other models.
     """
     template_name = "form_base.html"
 
