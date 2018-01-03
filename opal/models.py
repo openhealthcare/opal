@@ -115,7 +115,7 @@ class SerialisableFields(object):
     @classmethod
     def _get_field_type(cls, name):
         try:
-            return type(cls._meta.get_field_by_name(name)[0])
+            return type(cls._meta.get_field(name))
         except models.FieldDoesNotExist:
             pass
 
@@ -670,11 +670,13 @@ class TrackedModel(models.Model):
     updated = models.DateTimeField(blank=True, null=True)
     created_by = models.ForeignKey(
         User, blank=True, null=True,
-        related_name="created_%(app_label)s_%(class)s_subrecords"
+        related_name="created_%(app_label)s_%(class)s_subrecords",
+        on_delete=models.SET_NULL
     )
     updated_by = models.ForeignKey(
         User, blank=True, null=True,
-        related_name="updated_%(app_label)s_%(class)s_subrecords"
+        related_name="updated_%(app_label)s_%(class)s_subrecords",
+        on_delete=models.SET_NULL
     )
 
     class Meta:

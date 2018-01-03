@@ -1,5 +1,8 @@
+"""
+Steps for Opal pathways
+"""
 from functools import wraps
-from opal.models import EpisodeSubrecord, PatientSubrecord
+
 from opal.utils import camelcase_to_underscore
 from opal.core import exceptions
 from opal.core.exceptions import InitializationError
@@ -9,6 +12,10 @@ def delete_others(data, model, patient=None, episode=None):
     """
     Deletes all subrecords that are not in data
     """
+    # We can't import these at module load because we're imported by
+    # opal.core.pathways.__init__
+    from opal.models import EpisodeSubrecord, PatientSubrecord
+
     if issubclass(model, EpisodeSubrecord):
         existing = model.objects.filter(episode=episode)
     elif issubclass(model, PatientSubrecord):

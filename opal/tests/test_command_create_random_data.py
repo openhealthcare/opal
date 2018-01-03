@@ -162,6 +162,17 @@ class SubrecordGeneratorTestCase(OpalTestCase):
 
 class CommandTestCase(OpalTestCase):
 
+    def test_add_arguments(self):
+        c = crd.Command()
+        parser = MagicMock()
+        c.add_arguments(parser)
+        parser.add_argument.assert_called_once_with(
+            '--number',
+            dest='number',
+            help="how many would you like to create",
+            default=100
+        )
+
     def test_handle(self):
         com = crd.Command()
         with patch.object(crd.PatientGenerator, 'make') as maker:

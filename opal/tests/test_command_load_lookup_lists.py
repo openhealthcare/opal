@@ -18,6 +18,16 @@ class CommandTestCase(OpalTestCase):
         self.assertEqual(0, c.created)
         self.assertEqual(0, c.synonyms)
 
+    def test_add_arguments(self):
+        c = loader.Command()
+        parser = MagicMock()
+        c.add_arguments(parser)
+        parser.add_argument.assert_called_once_with(
+            '--file',
+            help="Specify import file",
+            dest="filename"
+        )
+
     def test_from_path_does_not_exist(self):
         mock_path = MagicMock()
         if hasattr(mock_path, '__bool__'):

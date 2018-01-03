@@ -1,5 +1,9 @@
 ### 0.10.0 (Major Release)
 
+This is a major release with breaking chnges from upstream dependencies.
+You are almost certain to require changes to your application. Please see
+the upgrade guide for further details.
+
 #### Deletion cascade behaviour
 
 Opal 0.10 changes several behaviours related to cascading deletions which, despite
@@ -8,6 +12,8 @@ being Django defaults, were confusing to users and developers in our use case.
 When we delete and look up list instance, we no longer delete all subrecords that use
 that instance. Instead we set the look up list instances name in the free text field on
 the subrecord.
+
+When you delete a user, it will no longer delete all related episodes and subrecords
 
 #### Template removals
 
@@ -20,6 +26,13 @@ We remove a number of stale unused templates:
 * _helpers/inline_form.html
 * responsive/_phone_episode_list.html'
 * responsive/_tablet_episode_list.html
+
+#### Updates to the Dependency Graph
+
+Django: 1.8.13 -> 1.10.8
+Django Reversion: 1.8.7 -> 1.10.2
+Django Rest Framework: 3.2.2 -> 3.4.7
+Psycopg2: 2.5 -> 2.7
 
 ### 0.9.1 (Minor Release)
 
