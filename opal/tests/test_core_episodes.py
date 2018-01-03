@@ -16,7 +16,9 @@ class EpisodeCategoryTestCase(test.OpalTestCase):
             user=self.restricted_user, restricted_only=True
         )
         self.patient = Patient.objects.create()
-        self.inpatient_episode = self.patient.create_episode(category=episodes.InpatientEpisode)
+        self.inpatient_episode = self.patient.create_episode(
+            category_name=episodes.InpatientEpisode
+        )
 
     def test_episode_categories(self):
         self.assertIn(episodes.InpatientEpisode, episodes.EpisodeCategory.list())
