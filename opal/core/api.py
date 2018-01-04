@@ -10,8 +10,8 @@ from opal.models import (
     Episode, Synonym, Patient, PatientRecordAccess,
     PatientSubrecord, UserProfile
 )
-from opal.core import application, exceptions, metadata, plugins, schemas
-from opal.core.lookuplists import LookupList
+from opal.core import (application, exceptions, lookuplists, metadata, plugins,
+                       schemas)
 from opal.core.subrecords import subrecords
 from opal.core.views import json_response
 from opal.core.patient_lists import PatientList
@@ -95,7 +95,7 @@ class ReferenceDataViewSet(LoginRequiredViewset):
 
     def list(self, request):
         data = {}
-        subclasses = LookupList.__subclasses__()
+        subclasses = list(lookuplists.lookuplists())
         for model in subclasses:
             options = list(model.objects.all().values_list("name", flat=True))
             data[model.get_api_name()] = options
@@ -116,7 +116,7 @@ class ReferenceDataViewSet(LoginRequiredViewset):
 
     def retrieve(self, request, pk=None):
         the_list = None
-        for lookuplist in LookupList.__subclasses__():
+        for lookuplist in lookuplists.lookuplists():
             if lookuplist.get_api_name() == pk:
                 the_list = lookuplist
                 break
