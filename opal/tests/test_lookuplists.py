@@ -1,8 +1,11 @@
+"""
+Unittests for opal.core.lookuplists
+"""
 from opal.core.test import OpalTestCase
 from opal.models import Synonym
 from opal.tests.models import Hat
 from django.contrib.contenttypes.models import ContentType
-from opal.core.lookuplists import load_lookuplist
+from opal.core.lookuplists import load_lookuplist, lookuplists
 
 
 class AbstractLookupListTestCase(OpalTestCase):
@@ -63,3 +66,9 @@ class LookupListClassTestCase(AbstractLookupListTestCase):
     def test_save_normal(self):
         Hat.objects.create(name="Bowler")
         self.assertTrue(Hat.objects.filter(name="Bowler").exists())
+
+
+class LookuplistsTestCase(AbstractLookupListTestCase):
+    def test_lookuplists(self):
+        all_lists = list(lookuplists())
+        self.assertIn(Hat, all_lists)
