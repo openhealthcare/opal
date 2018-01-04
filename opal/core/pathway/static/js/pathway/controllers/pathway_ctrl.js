@@ -4,7 +4,6 @@ angular.module('opal.controllers').controller('PathwayCtrl', function(
     episode,
     referencedata,
     metadata,
-    EditingEpisode,
     $injector,
     $window
 ){
@@ -16,7 +15,7 @@ angular.module('opal.controllers').controller('PathwayCtrl', function(
         pathwayDefinition.pathway_service
     );
     $scope.pathway = new pathwayService(pathwayDefinition, episode);
-    $scope.editing = new EditingEpisode(episode);
+    $scope.editing = $scope.pathway.populateEditingDict(episode);
     $scope.pathway.pathwayPromise.then(function(response){
       $window.location.href = response.redirect_url;
     }, function(error){

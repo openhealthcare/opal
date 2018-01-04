@@ -15,9 +15,55 @@ angular.module('opal.services').service('Pathway', function(
     };
 
     Pathway.prototype = {
+      getNewRecord: function(modelApiName){
+        // this is used to create a completely clean subrecord
+        // if an episode does not exist
+        return {
+          _client: {
+            completed: false,
+            id: _.uniqueId(modelApiName)
+          }
+        }
+      },
+      addRecord: function(modelApiName){
+        if(!this.parent[modelApiName]){
+          this.parent[modelApiName] = [];
+        }
+
+        if(this.episode){
+          var newItem = this.episode.newItem(modelApiName);
+          this.parent[modelApiName].push(newItem.makeCopy());
+        }
+        else{
+          this.parent[modelApiName].push(this.getNewRecord(modelApiName));
+        }
+      },
+
+
       register: function(apiName, stepScope){
         var step = _.findWhere(this.steps, {api_name: apiName});
         step.scope = stepScope;
+      },
+      populateEditingDict: function(episode){
+        var editing = {};
+        if(episode){
+          var self = this;
+          _.each($rootScope.fields, function(value, key){
+            var copies = _.map(
+              episode[key],
+              function(record){
+                return record.makeCopy();
+            });
+            if(value.single){
+              editing[key] = copies[0];
+            }
+            else{
+              editing[key] = copies;
+            }
+          });
+        }
+
+        return editing;
       },
       cancel: function(){
         this.pathwayResult.resolve();
@@ -29,13 +75,10 @@ angular.module('opal.services').service('Pathway', function(
 
         // remove all nulls that are in arrays
         var compactEditing = _.mapObject(editing, function(v, k){
-          if(k === "helper"){
-            return;
-          }
           if(_.isArray(v)){
             return _.compact(v);
           }
-          return v;
+          return v
         });
 
         // if we have empty objects or empty arrays, remove them
@@ -53,42 +96,42 @@ angular.module('opal.services').service('Pathway', function(
       preSave: function(editing){},
       valid: function(editing){ return true; },
       finish: function(editing){
-        var self = this;
-        editing = angular.copy(editing);
+          var self = this;
+          editing = angular.copy(editing);
 
-        _.each(self.steps, function(step){
-            if(step.scope.preSave){
-                step.scope.preSave(editing);
-            }
-        });
-
-        var compactedEditing = self.compactEditing(editing);
-
-        // cast the item to the fields for the server
-        var toSave = _.mapObject(compactedEditing, function(val, key){
-          var result;
-          if(_.isArray(val)){
-            result = _.map(val, function(x){
-              delete x._client;
-              return FieldTranslater.jsToSubrecord(x, key);
-            });
-          }
-          else{
-            delete val._client;
-            result = [FieldTranslater.jsToSubrecord(val, key)];
-          }
-          return _.filter(result, function(subrecord){
-              return _.size(subrecord);
+          _.each(self.steps, function(step){
+              if(step.scope.preSave){
+                  step.scope.preSave(editing);
+              }
           });
-        });
-        var endpoint = this.save_url;
-        var result = $http.post(endpoint, toSave).then(
-           function(response){
-              self.pathwayResult.resolve(response.data);
-         }, function(error){
-             $window.alert("unable to save patient");
-         });
-         return result;
+
+          var compactedEditing = self.compactEditing(editing);
+
+          // cast the item to the fields for the server
+          var toSave = _.mapObject(compactedEditing, function(val, key){
+            var result;
+            if(_.isArray(val)){
+              result = _.map(val, function(x){
+                delete x._client;
+                return FieldTranslater.jsToSubrecord(x, key);
+              });
+            }
+            else{
+              delete val._client;
+              result = [FieldTranslater.jsToSubrecord(val, key)];
+            }
+            return _.filter(result, function(subrecord){
+                return _.size(subrecord);
+            });
+          });
+          var endpoint = this.save_url;
+          var result = $http.post(endpoint, toSave).then(
+             function(response){
+                self.pathwayResult.resolve(response.data);
+           }, function(error){
+               $window.alert("unable to save patient");
+           });
+           return result;
       }
     };
 
