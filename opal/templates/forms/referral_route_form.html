@@ -6,6 +6,6 @@
 
 {% checkbox field="ReferralRoute.internal" %}
 
-<div ng-show="{% js_model "ReferralRoute.internal" %}">
-  {% input  field="ReferralRoute.referral_team"  %}
+<div ng-show="{{ models.ReferralRoute.get_api_name }}.internal">
+  {% input field="ReferralRoute.referral_team"  %}
 </div>

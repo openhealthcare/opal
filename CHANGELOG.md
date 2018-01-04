@@ -74,24 +74,6 @@ will add a condition to the `editing` object.
 will remove the first condition from the `editing`.
 
 
-#### js_model template tag
-```
-{% js_model "Demographics.first_name" %}
-```
-
-will return
-
-```
-  demographics.first_name
-```
-
-in many ways, we've just increased the amount of typing, well done!
-
-However you can still just write 'demographics.first_name', but what the
-template tag means is it will check on the model Demographics that it has
-a field, first_name. Otherwise the page will 500.
-
-
 #### Deletion cascade behaviour
 
 Opal 0.10 changes several behaviours related to cascading deletions which, despite

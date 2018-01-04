@@ -3,7 +3,7 @@
     <div ng-repeat="demographics in editing.demographics" class="col-sm-8">
       <h4>Hospital number</h4>
       <input required autofocus class="form-control" type="text"
-             ng-model="{% js_model 'Demographics.hospital_number' %}"
+             ng-model="demographics.hospital_number"
              ng-keypress="$event.keyCode == 13 && lookup_hospital_number()"
              />
       <br />
@@ -27,7 +27,7 @@
         <div class="form-group">
           <label class="control-label col-sm-3">Hospital #</label>
           <label class="control-label col-sm-8 text-left">
-            [[ {% js_model "Demographics.hospital_number" %} ]]
+            [[ demographics.hospital_number ]]
           </label>
         </div>
         {% input "autofocus" field="Demographics.first_name" %}
@@ -46,7 +46,7 @@
           <b>Hospital #</b>
         </div>
         <div class="col-md-8">
-          [[ {% js_model "Demographics.hospital_number" %} ]]
+          [[ demographics.hospital_number ]]
         </div>
       </div>
       <div class="row">
@@ -54,8 +54,8 @@
           <b>Name</b>
         </div>
         <div class="col-md-8">
-          [[ {% js_model "Demographics.first_name" %} ]]
-          [[ {% js_model "Demographics.surname" %} ]]
+          [[ demographics.first_name ]]
+          [[ demographics.surname ]]
         </div>
       </div>
       <div class="row">
@@ -63,7 +63,7 @@
         <b>Date of Birth</b>
         </div>
         <div class="col-md-8">
-          [[ {% js_model "Demographics.date_of_birth" %} | shortDate ]]
+          [[ demographics.date_of_birth | shortDate ]]
         </div>
       </div>
       <div class="row">
@@ -71,7 +71,7 @@
           <b>Gender</b>
         </div>
         <div class="col-md-8">
-          [[ {% js_model "Demographics.sex" %} ]]
+          [[ demographics.sex ]]
         </div>
       </div>
       <br />
