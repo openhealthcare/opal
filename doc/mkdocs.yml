@@ -71,6 +71,7 @@ pages:
       - Menus: reference/core_menus.md
       - Log: reference/loggers.md
       - Fields: reference/core_fields.md
+      - Lookuplists: reference/core_lookuplists.md
 
       # Angular Services
       - reference/javascript/patient_service.md
