@@ -1,7 +1,7 @@
 """
 Urls for the pathway OPAL plugin
 """
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 from opal.core.pathway import views, api
 
@@ -9,8 +9,7 @@ PATHWAY_REGEX = "(?P<name>[a-z_]+)"
 PATIENT_ID_REGEX = "(?P<patient_id>[0-9]+)"
 EPISODE_ID_REGEX = "(?P<episode_id>[0-9]+)"
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^pathway/$', views.PathwayIndexView.as_view(), name="pathway_index"),
     url(
         r'^pathway/templates/{}.html$'.format(PATHWAY_REGEX),
@@ -42,4 +41,4 @@ urlpatterns = patterns(
         }),
         name="pathway"
     ),
-)
+]

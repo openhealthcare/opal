@@ -1,8 +1,15 @@
+"""
+Unittests for the opal.core.log module
+"""
 import logging
+
 import mock
-from django.test import override_settings
 from django.conf import settings
+from django.contrib.auth.models import AnonymousUser
+from django.test import override_settings
+
 from opal.core.test import OpalTestCase
+
 from opal.core.log import ConfidentialEmailer
 
 
@@ -61,17 +68,13 @@ class LogOutputTestCase(OpalTestCase):
         record.filename = "some_file.py"
         record.lineno = 20
         request = self.rf.get("/some/url")
-        request.user = self.user
-
+        request.user = AnonymousUser()
         request.session = {}
         record.request = request
         record.request.META = mock.MagicMock()
         mock_meta_dict = dict(HTTP_HOST="somewhere", REQUEST_METHOD="GET")
         record.request.META.get.side_effect = lambda x: mock_meta_dict[x]
-
-        with mock.patch.object(request.user, "is_authenticated") as is_authenticated:
-            is_authenticated.return_value = False
-            emailer.emit(record)
+        emailer.emit(record)
         self.assertEqual(
             emitter.call_args[0][0].exc_text,
             "Exception raised at some_file.py:20\nRequest to host somewhere on application Amazing Opal App from user anonymous with GET"

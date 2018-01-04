@@ -1,6 +1,7 @@
 """
 Module entrypoint for core Opal views
 """
+from django.core.urlresolvers import reverse
 from django.contrib.auth.views import login
 from django.http import HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
@@ -128,7 +129,7 @@ def check_password_reset(request, *args, **kwargs):
             profile = request.user.profile
             if profile and profile.force_password_change:
                 return redirect(
-                    'django.contrib.auth.views.password_change'
+                    reverse('change-password')
                 )
         except models.UserProfile.DoesNotExist:
             # TODO: This probably doesn't do any harm, but
@@ -137,7 +138,7 @@ def check_password_reset(request, *args, **kwargs):
             models.UserProfile.objects.create(
                 user=request.user, force_password_change=True)
             return redirect(
-                'django.contrib.auth.views.password_change'
+                reverse('change-password')
             )
     return response
 
@@ -177,7 +178,7 @@ class FormTemplateView(LoginRequiredMixin, TemplateView):
     This view renders the form template for our field.
 
     These are generated for subrecords, but can also be used
-    by plugins for other mdoels.
+    by plugins for other models.
     """
     template_name = "form_base.html"
 

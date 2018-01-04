@@ -512,26 +512,24 @@ class UserProfileTestCase(TestCase):
         self.mock_request.user = self.user
 
     def test_user_profile(self):
-        with patch.object(self.user, 'is_authenticated', return_value=True):
-            response = api.UserProfileViewSet().list(self.mock_request)
-            expected = {
-                'readonly'   : False,
-                'can_extract': False,
-                'filters'    : [],
-                'roles'      : {'default': []},
-                'full_name'  : '',
-                'avatar_url' : 'http://gravatar.com/avatar/5d9c68c6c50ed3d02a2fcf54f63993b6?s=80&r=g&d=identicon',
-                'user_id'    : 1
-            }
-            self.assertEqual(expected, response.data)
+        response = api.UserProfileViewSet().list(self.mock_request)
+        expected = {
+            'readonly'   : False,
+            'can_extract': False,
+            'filters'    : [],
+            'roles'      : {'default': []},
+            'full_name'  : '',
+            'avatar_url' : 'http://gravatar.com/avatar/5d9c68c6c50ed3d02a2fcf54f63993b6?s=80&r=g&d=identicon',
+            'user_id'    : 1
+        }
+        self.assertEqual(expected, response.data)
 
     def test_user_profile_readonly(self):
-        with patch.object(self.user, 'is_authenticated', return_value=True):
-            profile = self.user.profile
-            profile.readonly = True
-            profile.save()
-            response = api.UserProfileViewSet().list(self.mock_request)
-            self.assertEqual(True, response.data['readonly'])
+        profile = self.user.profile
+        profile.readonly = True
+        profile.save()
+        response = api.UserProfileViewSet().list(self.mock_request)
+        self.assertEqual(True, response.data['readonly'])
 
 
 class UserTestCase(TestCase):
@@ -543,14 +541,12 @@ class UserTestCase(TestCase):
         self.mock_request.user = self.user
 
     def test_list(self):
-        with patch.object(self.user, 'is_authenticated', return_value=True):
-            response = api.UserViewSet().list(self.mock_request)
-            self.assertEqual([self.user.profile.to_dict()], response.data)
+        response = api.UserViewSet().list(self.mock_request)
+        self.assertEqual([self.user.profile.to_dict()], response.data)
 
     def test_retrieve(self):
-        with patch.object(self.user, 'is_authenticated', return_value=True):
-            response = api.UserViewSet().retrieve(self.mock_request, pk=1)
-            self.assertEqual(self.user.profile.to_dict(), response.data)
+        response = api.UserViewSet().retrieve(self.mock_request, pk=1)
+        self.assertEqual(self.user.profile.to_dict(), response.data)
 
 
 class TaggingTestCase(TestCase):
@@ -599,6 +595,13 @@ class TaggingTestCase(TestCase):
         response = api.TaggingViewSet().update(self.mock_request, pk=self.episode.pk)
         self.assertEqual(202, response.status_code)
         self.assertEqual(list(self.episode.get_tag_names(self.user)), [])
+
+    def test_mixed_tagging_truthiness(self):
+        self.assertEqual(list(self.episode.get_tag_names(self.user)), [])
+        self.episode.set_tag_names(['micro'], self.user)
+        self.mock_request.data = {'micro': False, 'inpatient': True}
+        response = api.TaggingViewSet().update(self.mock_request, pk=self.episode.pk)
+        self.assertEqual(['inpatient'], self.episode.get_tag_names(self.user))
 
     def test_tag_nonexistent_episode(self):
         response = api.TaggingViewSet().update(self.mock_request, pk=56576)
@@ -780,6 +783,29 @@ class EpisodeTestCase(OpalTestCase):
         self.assertEqual(u'micro', tags[0])
         self.assertEqual(1, len(tags))
 
+    def test_create_sets_tagging_with_falsy_tags(self):
+        pcount = models.Patient.objects.filter(
+            demographics__hospital_number="9999000999").count()
+        self.assertEqual(0, pcount)
+        self.mock_request.data = {
+            "tagging"                : { "micro":True, 'inpatient': False },
+            "start"      : "14/01/2015",
+            "demographics" : {
+                "hospital_number": "9999000999",
+            },
+            "location": {
+                "ward": "West",
+                "bed" : "7"
+            }
+        }
+        response = api.EpisodeViewSet().create(self.mock_request)
+        patient = models.Patient.objects.get(
+            demographics__hospital_number="9999000999")
+        episode = patient.episode_set.get()
+        tags = episode.get_tag_names(self.user)
+        self.assertEqual(['micro'], tags)
+        self.assertEqual(1, len(tags))
+
     def test_update(self):
         patient, episode = self.new_patient_and_episode_please()
         self.assertEqual(None, episode.start)
@@ -793,7 +819,6 @@ class EpisodeTestCase(OpalTestCase):
             len(response_dict["demographics"]),
             1
         )
-
 
     def test_update_nonexistent(self):
         self.mock_request.data = {"start": "14/01/2015"}

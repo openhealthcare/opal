@@ -1,3 +1,6 @@
+"""
+Opal Pathways
+"""
 import inspect
 import json
 from collections import defaultdict
@@ -5,8 +8,8 @@ from collections import defaultdict
 from django.core.urlresolvers import reverse
 from django.db import models, transaction
 from django.utils.text import slugify
+
 from opal.core import discoverable, subrecords
-from opal.models import Patient
 from opal.utils import AbstractBase
 from opal.core.views import OpalSerializer
 from opal.core.pathway import Step
@@ -67,6 +70,10 @@ class Pathway(discoverable.DiscoverableFeature):
         if patient:
             data = self.remove_unchanged_subrecords(episode, data, user)
         else:
+            # We can't import these at module load because we're imported by
+            # opal.core.pathways.__init__
+            from opal.models import Patient
+
             patient = Patient()
 
         patient.bulk_update(data, user, episode=episode)
