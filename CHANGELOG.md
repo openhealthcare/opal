@@ -15,6 +15,11 @@ the subrecord.
 
 When you delete a user, it will no longer delete all related episodes and subrecords
 
+#### lookuplists.lookuplists
+
+Adds the utility generator `lookuplists.lookuplists()` which wil yield every lookuplist
+currently available.
+
 #### Template removals
 
 We remove a number of stale unused templates:
