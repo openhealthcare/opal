@@ -38,6 +38,13 @@ class PatientRecordAccessTestCase(OpalTestCase):
 
 class PatientTestCase(OpalTestCase):
 
+    def test_create_episode(self):
+        patient = models.Patient()
+        patient.save()
+        episode = patient.create_episode()
+        self.assertEqual(models.Episode, episode.__class__)
+        self.assertEqual(patient, episode.patient)
+
     @patch("opal.models.application.get_app")
     def test_created_with_the_default_episode(self, get_app):
         test_app = MagicMock()
@@ -225,9 +232,10 @@ class PatientTestCase(OpalTestCase):
         original_patient.create_episode()
         self.assertEqual(1, original_patient.episode_set.count())
         original_patient.bulk_update(d, self.user)
-
-        patient = Patient.objects.get()
         self.assertEqual(2, original_patient.episode_set.count())
+        self.assertEqual(models.Episode.objects.count(), 2)
+        location = original_patient.episode_set.last().location_set.first()
+        self.assertEqual(location.ward, "a ward")
 
 
 class SubrecordTestCase(OpalTestCase):

@@ -591,7 +591,7 @@ class Patient(models.Model):
             model = get_subrecord_from_api_name(api_name=api_name)
             if model in episode_subrecords():
                 if episode is None:
-                    episode = self.create_episode(patient=self)
+                    episode = self.create_episode()
                     episode.save()
 
                 model.bulk_update_from_dicts(episode, list_of_upgrades, user,
