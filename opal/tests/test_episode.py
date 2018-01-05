@@ -6,6 +6,7 @@ from mock import patch, MagicMock
 
 from django.contrib.auth.models import User
 
+from opal.core import application
 from opal.core.episodes import InpatientEpisode
 from opal.core.test import OpalTestCase
 from opal.models import Patient, Episode, Tagging, UserProfile
@@ -24,6 +25,13 @@ class EpisodeTest(OpalTestCase):
 
     def test_singleton_subrecord_created(self):
         self.assertEqual(1, self.episode.episodename_set.count())
+
+    @patch('opal.models.application.get_app')
+    def test_default_category_name(self, getter):
+        mock_app = getter.return_value
+        mock_app.default_episode_category = 'MyEpisodeCategory'
+        episode = self.patient.create_episode()
+        self.assertEqual('MyEpisodeCategory', episode.category_name)
 
     def test_category(self):
         self.episode.category_name = 'Inpatient'
