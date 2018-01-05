@@ -4,7 +4,7 @@ angular.module('opal.services').service('Pathway', function(
     "use strict";
     var Pathway = function(pathwayDefinition, episode){
       this.save_url = pathwayDefinition.save_url;
-      this.steps = pathwayDefinition.steps;
+      this.steps = angular.copy(pathwayDefinition.steps);
       this.display_name = pathwayDefinition.display_name;
       this.icon = pathwayDefinition.icon;
       this.finish_button_text = pathwayDefinition.finish_button_text;
@@ -15,6 +15,10 @@ angular.module('opal.services').service('Pathway', function(
     };
 
     Pathway.prototype = {
+      remove: function(editing, modelApiName, index){
+        // removes an element from the editing dictionary
+        editing[modelApiName].splice(index, 1);
+      },
       getNewRecord: function(modelApiName){
         // this is used to create a completely clean subrecord
         // if an episode does not exist
@@ -25,21 +29,36 @@ angular.module('opal.services').service('Pathway', function(
           }
         }
       },
-      addRecord: function(modelApiName){
-        if(!this.parent[modelApiName]){
-          this.parent[modelApiName] = [];
+      addRecord: function(editing, modelApiName){
+        // adds a record to the editing object
+        if(!editing[modelApiName]){
+          editing[modelApiName] = [];
         }
 
         if(this.episode){
           var newItem = this.episode.newItem(modelApiName);
-          this.parent[modelApiName].push(newItem.makeCopy());
+          editing[modelApiName].push(newItem.makeCopy());
         }
         else{
-          this.parent[modelApiName].push(this.getNewRecord(modelApiName));
+          editing[modelApiName].push(this.getNewRecord(modelApiName));
         }
       },
-
-
+      isRecordFilledIn: function(subrecord){
+        // validates if a subrecord has been populated
+        var subrecordKeys = _.keys(subrecord);
+        return !!_.filter(subrecordKeys, function(k){
+          if(k == "_client" || k.indexOf("$") == 0){
+            return false;
+          }
+          if(_.isString(subrecord[k]) || _.isArray(subrecord[k])){
+            return subrecord[k].length
+          }
+          else{
+            return subrecord[k];
+          }
+          return false;
+        }).length;
+      },
       register: function(apiName, stepScope){
         var step = _.findWhere(this.steps, {api_name: apiName});
         step.scope = stepScope;

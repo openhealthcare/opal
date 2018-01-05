@@ -194,7 +194,7 @@ angular.module('opal.controllers').controller('FindPatientCtrl',
 });
 ```
 
-oWe can pass in custom controllers to individual steps. Custom
+We can pass in custom controllers to individual steps. Custom
 controllers are sandboxed, they share `scope.editing` with other scopes but
 nothing else.
 
@@ -215,31 +215,58 @@ here if required to e.g. add implicit data points not contained in the form.
 
 ## Complex Steps With Multiple Instances Per Subrecord
 
-If we need to also save multiple types of the same subrecord e.g. `Treatment` in this step,
-we simply use the `multisave` template tag.
+The pathway scope provides an array of subrecords on editing if they exist. For
+example a patient might be serialised to.
 
-```html
-{% load pathways %}
-
-{% include models.Demographics.get_form_template %}
-{% include models.Diagnosis.get_form_template %}
-{% multisave models.Treatment %}
+```js
+{
+  editing: {
+    demographics: [{id: 1, first_name: "Larry", patient_id: 1}],
+    diagnosis: [
+      {
+        id: 1, episode_id: 1, condition: "cough"
+      },
+      {
+        id: 2, episode_id: 1, condition: "chills"
+      }
+    ]
+  }
+}
 ```
 
-Alternatively you may want to create your own multisave step forms, you can use the
-directive `multi-save-wrapper` for this.
+we can then iterate over editing to show forms of all of the, for example
+diagnosis.
 
 ```html
+  <div ng-repeat="diagnosis in editing.diagnosis">
+    {% include models.Diagnosis.get_form_template %}
+  </div>
+```
 
-<div save-multiple-wrapper="editing.treatment">
-  <div ng-repeat="editing in model.subrecords">
-    {% input field="Treatment.drug" %}
-    <button ng-click="remove($index)"></button>
+Pathways provides functions for `addRecord` and `remove`. To add or remove records
+for example.
+
+```html
+  <div ng-repeat="diagnosis in editing.diagnosis">
+    {% include models.Diagnosis.get_form_template %}
+    <a ng-click="pathway.remove(editing, 'diagnosis', $index)">Remove</a>
+  </div>
+  <a ng-click="pathway.addRecord(editing, 'diagnosis'">Add Record</a>
+```
+
+It also provides `isRecordFilledIn` that tells us whether a record has been populated
+so if we wanted to make sure, for example demographics was filled in, we could do
+
+```html
+  <div ng-repeat="demographics in editing.demographics">
+    {% include models.Demographics.get_form_template %}
+  </div>
+  <div ng-show="pathway.isRecordFilledIn(editing.demographics[0])">
+    Thanks for filling in demograhpics!
   </div>
 
-  <button ng-click="addAnother()"></button>
-</div>
 ```
+
 
 ## Validation
 
