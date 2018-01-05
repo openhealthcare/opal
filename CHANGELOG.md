@@ -22,14 +22,6 @@ however this is now simplified translate to
 {% input field="Demographics.hospital_number" model="demographics.hospital_number" %}
 ```
 
-in pathways, episode is now translated into an EditingEpisode object, that is structured like
-one of our javascript episodes, ie
-
-```js
-{
-  demographics: [{first_name: "Martha", hospital_number: "123"}]
-}
-```
 
 #### Multi save is dead, long live multi saving (in pathways).
 
@@ -62,17 +54,16 @@ We no longer need a complicated directive to re order the scope variables we can
 </div>
 ```
 
-If you want to add another, the 'editing' part now has a helper object lets you add or remove
-subrecords.
+If you want to add another, the pathway on scope, gives you the functionality
 
 ```
-  editing.helper.addRecord('condition');
+  pathway.addRecord(editing, 'condition');
 ```
 
 will add a condition to the `editing` object.
 
 ```
-  editing.helper.remove('condition', 0);
+  pathway.remove(editing, 'condition', 0)
 ```
 
 will remove the first condition from the `editing`.

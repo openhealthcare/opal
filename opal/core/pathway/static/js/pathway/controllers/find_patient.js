@@ -1,5 +1,5 @@
 angular.module('opal.controllers').controller('FindPatientCtrl',
-  function(scope, Episode, step, episode, $window) {
+  function(scope, Patient, Episode, step, episode, $window) {
     "use strict";
 
     scope.lookup_hospital_number = function() {
@@ -18,7 +18,7 @@ angular.module('opal.controllers').controller('FindPatientCtrl',
     this.initialise = function(scope){
       scope.state = 'initial';
       if(!scope.editing.demographics || !scope.editing.demographics.length){
-        scope.editing.helper.addRecord('demographics');
+        scope.pathway.addRecord(scope.editing, 'demographics');
       }
     };
 
@@ -27,8 +27,8 @@ angular.module('opal.controllers').controller('FindPatientCtrl',
     };
 
     scope.new_for_patient = function(patient){
-        scope.editing.helper.update(patient);
-        scope.state   = 'has_demographics';
+        scope.pathway.updatePatientEditing(scope.editing, new Patient(patient));
+        scope.state = 'has_demographics';
     };
     scope.showNext = function(editing){
         return scope.state === 'has_demographics' || scope.state === 'editing_demographics';

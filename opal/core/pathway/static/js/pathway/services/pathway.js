@@ -73,16 +73,22 @@ angular.module('opal.services').service('Pathway', function(
               function(record){
                 return record.makeCopy();
             });
-            if(value.single){
-              editing[key] = copies[0];
-            }
-            else{
-              editing[key] = copies;
-            }
+            editing[key] = copies;
           });
         }
 
         return editing;
+      },
+      updatePatientEditing: function(editing, patient){
+        // updates the editing dictionary. It doesn't delete
+        // existing as these could have been made by previous steps
+        // it assumes what it is passed is a Patient object
+        var newEditing = this.populateEditingDict(patient);
+        _.each(newEditing, function(value, key){
+          if(key !== "episodes"){
+            editing[key] = value;
+          }
+        });
       },
       cancel: function(){
         this.pathwayResult.resolve();

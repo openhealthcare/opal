@@ -10,7 +10,7 @@ describe('DefaultStep', function(){
     });
     scope = $rootScope.$new();
     scope.editing = {};
-    scope.editing.helper = jasmine.createSpyObj(['addRecord']);
+    scope.pathway = jasmine.createSpyObj(['addRecord']);
   });
 
   it('should add an empty instance if we have a model name', function(){
@@ -19,7 +19,7 @@ describe('DefaultStep', function(){
       step: {model_api_name: "something"},
       episode: {}
     });
-    expect(scope.editing.helper.addRecord).toHaveBeenCalledWith('something');
+    expect(scope.pathway.addRecord).toHaveBeenCalledWith({}, 'something');
 
   });
 
@@ -29,7 +29,7 @@ describe('DefaultStep', function(){
       step: {},
       episode: {}
     });
-    expect(scope.editing.helper.addRecord).not.toHaveBeenCalled();
+    expect(scope.pathway.addRecord).not.toHaveBeenCalled();
   });
 
   it("should not add an instance if we already have an instance", function(){
@@ -39,7 +39,7 @@ describe('DefaultStep', function(){
       step: {model_api_name: "something"},
       episode: {model_api_name: "something"}
     });
-    expect(scope.editing.helper.addRecord).not.toHaveBeenCalled();
+    expect(scope.pathway.addRecord).not.toHaveBeenCalled();
   });
 
 });

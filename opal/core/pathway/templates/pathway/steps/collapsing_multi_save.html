@@ -15,11 +15,11 @@
           {% icon 'fa-edit' %}
           Edit
         </div>
-        <div ng-disabled="!editing.helper.isRecordFilledIn({{ step.model.get_api_name  }})" class="btn btn-primary" ng-click="{{ step.model.get_api_name  }}._client.completed = true" ng-show="!{{ step.model.get_api_name  }}._client.completed">
+        <div ng-disabled="!pathway.isRecordFilledIn({{ step.model.get_api_name  }})" class="btn btn-primary" ng-click="{{ step.model.get_api_name  }}._client.completed = true" ng-show="!{{ step.model.get_api_name  }}._client.completed">
             {% icon 'fa-check-square' %}
             Done
         </div>
-        <div ng-click="editing.helper.remove('{{ step.model.get_api_name }}', $index)" class="btn btn-secondary">
+        <div ng-click="pathway.remove(editing, '{{ step.model.get_api_name }}', $index)" class="btn btn-secondary">
           {% icon 'fa-trash' %}
           Remove
         </div>
@@ -29,6 +29,6 @@
 
   <hr ng-show="!$last" />
   <div ng-show="$last" class="text-center row">
-    <a ng-disabled="!editing.helper.isRecordFilledIn({{ step.model.get_api_name  }})" ng-click="editing.helper.addRecord('{{ step.model.get_api_name }}')" class="text-center btn btn-primary">{% icon "glyphicon-plus" %} Add Another</a>
+    <a ng-disabled="!pathway.isRecordFilledIn({{ step.model.get_api_name  }})" ng-click="pathway.addRecord(editing, '{{ step.model.get_api_name }}')" class="text-center btn btn-primary">{% icon "glyphicon-plus" %} Add Another</a>
   </div>
 </div>

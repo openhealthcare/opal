@@ -1,7 +1,31 @@
 describe('FindPatientCtrl', function() {
   "use strict";
-  var scope, Episode, $controller, controller, $window, EditingEpisode;
-  var opalTestHelper, $rootScope;
+  var scope, Episode, $controller, controller, $window;
+  var opalTestHelper, $rootScope, Pathway;
+
+  var pathwayDefinition = {
+    icon: undefined,
+    save_url: '/some_url',
+    pathway_service: 'Pathway',
+    finish_button_icon: "fa fa-save",
+    finish_button_text: "Save",
+    steps: [
+      {
+        'step_controller': 'FindPatientCtrl',
+        'icon': 'fa fa-user',
+        'template_url': '/templates/pathway/find_patient_form.html',
+        'title': 'Find Patient'
+      },
+      {
+        'api_name': 'location',
+        'step_controller': 'DefaultStep',
+        'icon': 'fa fa-map-marker',
+        'template_url': '/templates/pathway/blood_culture_location.html',
+        'title': 'Location'
+      }
+    ],
+    display_name: 'Add Patient'
+  };
 
   beforeEach(function(){
     module('opal.controllers');
@@ -10,18 +34,16 @@ describe('FindPatientCtrl', function() {
       $rootScope = $injector.get('$rootScope');
       scope = $rootScope.$new();
       Episode = $injector.get('Episode');
+      Pathway = $injector.get('Pathway');
       $controller = $injector.get('$controller');
-      EditingEpisode = $injector.get('EditingEpisode');
       opalTestHelper = $injector.get('opalTestHelper');
     });
 
     $window = {alert: jasmine.createSpy()};
-    scope.editing = new EditingEpisode();
+    scope.editing = {};
+    scope.pathway = new Pathway(pathwayDefinition);
     $rootScope.fields = opalTestHelper.getRecordLoaderData();
 
-    scope.pathway = {
-      save_url: "/some_url"
-    };
     controller = $controller('FindPatientCtrl', {
       scope: scope,
       Episode: Episode,
@@ -62,7 +84,7 @@ describe('FindPatientCtrl', function() {
 
   it("should throw an error if the hospital number isn't found", function(){
     spyOn(Episode, "findByHospitalNumber");
-    scope.editing = new EditingEpisode();
+    scope.editing = {};
     controller.initialise(scope);
     scope.lookup_hospital_number();
     var allCallArgs = Episode.findByHospitalNumber.calls.all();
@@ -95,12 +117,10 @@ describe('FindPatientCtrl', function() {
   });
 
   it("should update the demographics if a patient is found", function(){
-    var fakePatient = {demographics: [{hospital_number: "1"}]};
-    fakePatient.demographics[0].makeCopy = function(){
-      return fakePatient.demographics[0];
-    }
-    scope.new_for_patient(fakePatient);
+    var newPatient = opalTestHelper.getPatientData();
+    newPatient.demographics[0].first_name = "Larry";
+    scope.new_for_patient(newPatient);
     expect(scope.state).toBe('has_demographics');
-    expect(scope.editing.demographics[0]).toBe(fakePatient.demographics[0]);
+    expect(scope.editing.demographics[0].first_name).toBe("Larry");
   });
 });

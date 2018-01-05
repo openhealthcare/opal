@@ -193,7 +193,7 @@ describe('Pathway', function() {
       var episode = {demographics: [demographics], antimicrobials: [], treatment: [treatment]};
       var result = pathway.populateEditingDict(episode);
       expect(result).toEqual({
-        demographics: {first_name: "Wilma"},
+        demographics: [{first_name: "Wilma"}],
         antimicrobials: [],
         treatment: [{drug: "aspirin"}]
       });
@@ -204,6 +204,16 @@ describe('Pathway', function() {
     it("should populate an empty dictionary if an episode isn't provided", function(){
       var result = pathway.populateEditingDict();
       expect(result).toEqual({});
+    });
+  });
+
+  describe('updatePatientEditing', function(){
+    it("should update the editing dictionary, ignoring episode", function(){
+      var patient = opalTestHelper.newPatient($rootScope);
+      var editing = {};
+      pathway.updatePatientEditing(editing, patient);
+      expect(editing.episodes).toBe(undefined);
+      expect(editing.demographics[0].first_name).toBe(patient.demographics[0].first_name)
     });
   });
 

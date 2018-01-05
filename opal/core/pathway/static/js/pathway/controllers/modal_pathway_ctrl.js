@@ -9,7 +9,6 @@ angular.module('opal.controllers').controller('ModalPathwayCtrl', function(
     referencedata,
     metadata,
     $injector,
-    EditingEpisode,
     $window
 ){
     "use strict";
@@ -20,7 +19,7 @@ angular.module('opal.controllers').controller('ModalPathwayCtrl', function(
         pathwayDefinition.pathway_service
     );
     $scope.pathway = new pathwayService(pathwayDefinition, episode);
-    $scope.editing = new EditingEpisode(episode);
+    $scope.editing = {};
     var analyticsKwargs = {
       category: "ModalPathway"
     }
