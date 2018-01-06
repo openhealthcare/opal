@@ -1,7 +1,12 @@
-from opal.core.test import OpalTestCase
-from opal.tests.models import Colour
+"""
+unittests for the opal.core.pathways.templatetags package
+"""
 from django.template import Template, Context
 from mock import patch
+
+from opal.core.test import OpalTestCase
+from opal.tests.models import Colour
+
 from opal.core.pathway.templatetags import pathways as template_tags
 
 
@@ -40,7 +45,3 @@ class MultSaveTest(OpalTestCase):
         ctx = template_tags.multisave({}, Colour)
         self.assertEqual(ctx["subrecord"], Colour)
         self.assertEqual(ctx["model"], "editing.colour")
-
-    def test_collapsed_multisave(self, get_form_template):
-        ctx = template_tags.collapsed_multisave({}, Colour)
-        self.assertEqual(ctx["subrecord"], Colour)
