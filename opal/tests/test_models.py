@@ -512,7 +512,7 @@ class BulkUpdateFromDictsTest(OpalTestCase):
             {"words": "A towel is the most important item"},
         ]
 
-        with self.assertRaises(exceptions.APIError):
+        with self.assertRaises(exceptions.MissingConsistencyTokenError):
             FamousLastWords.bulk_update_from_dicts(
                 patient, famous_last_words, self.user
             )

@@ -360,7 +360,6 @@ class UpdatesFromDictMixin(SerialisableFields):
         logging.info("updating {0} with {1} for {2}".format(
             self.__class__.__name__, data, user
         ))
-
         if fields is None:
             fields = set(self._get_fieldnames_to_serialize())
 
@@ -369,7 +368,7 @@ class UpdatesFromDictMixin(SerialisableFields):
                 consistency_token = data.pop('consistency_token')
             except KeyError:
                 msg = 'Missing field (consistency_token) for {}'
-                raise exceptions.APIError(
+                raise exceptions.MissingConsistencyTokenError(
                     msg.format(self.__class__.__name__)
                 )
 

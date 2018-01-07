@@ -15,6 +15,15 @@ the subrecord.
 
 When you delete a user, it will no longer delete all related episodes and subrecords
 
+#### Missing consistency token errors
+
+`.update_from_dict()` will now raise the new error
+`opal.core.errors.MissingConsistencyTokenError` if it is called without a consistency
+token when one is set on the model. Previously it would raise `APIError`.
+
+The JSON API will now return a more specific message in the response boday, explaining
+that the problem is a missing consistency token.
+
 #### Template removals
 
 We remove a number of stale unused templates:
