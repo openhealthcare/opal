@@ -360,6 +360,21 @@ class SubrecordTestCase(OpalTestCase):
         response = self.viewset().update(mock_request, pk=colour.pk)
         self.assertEqual(400, response.status_code)
 
+    def test_update_no_consistency_token(self):
+        colour = Colour.objects.create(name='blue', episode=self.episode)
+        colour.set_consistency_token()
+        colour.save()
+        mock_request = MagicMock(name='mock request')
+        mock_request.data = {
+            'name'             : 'green',
+            'episode_id'       : self.episode.pk,
+            'id'               : colour.pk,
+        }
+        mock_request.user = self.user
+        response = self.viewset().update(mock_request, pk=colour.pk)
+        message = json.loads(response.content)
+        self.assertEqual(message['error'], 'Missing consistency token')
+
     def test_delete(self):
         colour = Colour.objects.create(episode=self.episode)
         mock_request = MagicMock(name='mock request')
@@ -824,6 +839,18 @@ class EpisodeTestCase(OpalTestCase):
         self.mock_request.data = {"start": "14/01/2015"}
         response = api.EpisodeViewSet().update(self.mock_request, pk=8993939)
         self.assertEqual(404, response.status_code)
+
+    def test_update_missing_consistency_token(self):
+        p, e = self.new_patient_and_episode_please()
+        e.set_consistency_token()
+        e.save()
+        self.mock_request.data = {
+            "start": "14/01/2015"
+        }
+        response = api.EpisodeViewSet().update(self.mock_request, pk=e.pk)
+        message = json.loads(response.content)
+        self.assertEqual(message['error'], 'Missing consistency token')
+        self.assertEqual(400, response.status_code)
 
     def test_update_consistency_error(self):
         patient, episode = self.new_patient_and_episode_please()
