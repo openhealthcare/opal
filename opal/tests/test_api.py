@@ -372,7 +372,7 @@ class SubrecordTestCase(OpalTestCase):
         }
         mock_request.user = self.user
         response = self.viewset().update(mock_request, pk=colour.pk)
-        message = json.loads(response.content)
+        message = json.loads(response.content.decode('UTF-8'))
         self.assertEqual(message['error'], 'Missing consistency token')
 
     def test_delete(self):
@@ -848,7 +848,7 @@ class EpisodeTestCase(OpalTestCase):
             "start": "14/01/2015"
         }
         response = api.EpisodeViewSet().update(self.mock_request, pk=e.pk)
-        message = json.loads(response.content)
+        message = json.loads(response.content.decode('UTF-8'))
         self.assertEqual(message['error'], 'Missing consistency token')
         self.assertEqual(400, response.status_code)
 
