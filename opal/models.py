@@ -8,7 +8,6 @@ import itertools
 import json
 import logging
 import random
-import warnings
 import os
 
 from django.conf import settings
@@ -32,8 +31,6 @@ from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.subrecords import (
     episode_subrecords, patient_subrecords, get_subrecord_from_api_name
 )
-
-warnings.simplefilter('once', DeprecationWarning)
 
 
 def get_default_episode_type():
