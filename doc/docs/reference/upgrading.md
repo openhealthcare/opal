@@ -11,8 +11,8 @@ How you do this depends on how you have configured your application. You will ne
 update both the Opal version, and versions of dependencies upgraded dependencies if
 you have specified them in for instance, a requirements.txt.
 
-(This will be the case if you use the requriements.txt originally provided by
-`opal starproject`)
+(This will be the case if you use the requirements.txt originally provided by
+`opal startproject`)
 
     # requirements.txt
     django==1.10.8
@@ -38,8 +38,8 @@ Importing models in a package __init__.py file is no longer allowed - if you see
 
 *Django reversion*
 
-Reversion has reorganized it's package structure to avoid importing models.
-Specificly:
+Reversion has reorganized its package structure to avoid importing models.
+Specifically:
 
 ```python
 # Old-style import for accessing the admin class.
@@ -53,7 +53,7 @@ import reversion
 from reversion import revisions as reversion
 ```
 
-You should examin your `admin.py` to see whether you do this.
+You should examine your `admin.py` to see whether you do this.
 
 *Urlpatterns*
 

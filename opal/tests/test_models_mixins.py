@@ -1,5 +1,5 @@
 """
-Unittests for opal.models.mixins
+Unittests for mixins in opal.models
 """
 import datetime
 import pytz
@@ -223,3 +223,11 @@ class UpdatesFromDictMixinTestCase(OpalTestCase):
 
                 result = instance.update_from_dict(data, None)
                 self.assertEqual(expected, instance.datetime)
+
+    def test_update_from_dict_no_consistency_token(self):
+        instance = UpdatableModelInstance(foo='foo', bar='bar')
+        instance.set_consistency_token()
+        instance.save()
+        data = {'foo': 'Hah', 'bar': 'Hah'}
+        with self.assertRaises(exceptions.MissingConsistencyTokenError):
+            instance.update_from_dict(data, self.user)

@@ -20,6 +20,15 @@ When you delete a user, it will no longer delete all related episodes and subrec
 Adds the utility generator `lookuplists.lookuplists()` which wil yield every lookuplist
 currently available.
 
+#### Missing consistency token errors
+
+`.update_from_dict()` will now raise the new error
+`opal.core.errors.MissingConsistencyTokenError` if it is called without a consistency
+token when one is set on the model. Previously it would raise `APIError`.
+
+The JSON API will now return a more specific message in the response boday, explaining
+that the problem is a missing consistency token.
+
 #### Template removals
 
 We remove a number of stale unused templates:
@@ -38,6 +47,7 @@ Django: 1.8.13 -> 1.10.8
 Django Reversion: 1.8.7 -> 1.10.2
 Django Rest Framework: 3.2.2 -> 3.4.7
 Psycopg2: 2.5 -> 2.7
+Jinja2: 2.9.6 -> 2.10
 
 ### 0.9.1 (Minor Release)
 

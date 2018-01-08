@@ -8,7 +8,6 @@ import itertools
 import json
 import logging
 import random
-import warnings
 import os
 
 from django.conf import settings
@@ -32,8 +31,6 @@ from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.subrecords import (
     episode_subrecords, patient_subrecords, get_subrecord_from_api_name
 )
-
-warnings.simplefilter('once', DeprecationWarning)
 
 
 def get_default_episode_type():
@@ -363,7 +360,6 @@ class UpdatesFromDictMixin(SerialisableFields):
         logging.info("updating {0} with {1} for {2}".format(
             self.__class__.__name__, data, user
         ))
-
         if fields is None:
             fields = set(self._get_fieldnames_to_serialize())
 
@@ -372,7 +368,7 @@ class UpdatesFromDictMixin(SerialisableFields):
                 consistency_token = data.pop('consistency_token')
             except KeyError:
                 msg = 'Missing field (consistency_token) for {}'
-                raise exceptions.APIError(
+                raise exceptions.MissingConsistencyTokenError(
                     msg.format(self.__class__.__name__)
                 )
 
@@ -591,7 +587,7 @@ class Patient(models.Model):
             model = get_subrecord_from_api_name(api_name=api_name)
             if model in episode_subrecords():
                 if episode is None:
-                    episode = self.create_episode(patient=self)
+                    episode = self.create_episode()
                     episode.save()
 
                 model.bulk_update_from_dicts(episode, list_of_upgrades, user,

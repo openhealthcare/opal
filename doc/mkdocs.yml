@@ -82,7 +82,6 @@ pages:
       - Search JS Services: reference/javascript/search_js_services.md
       - reference/javascript/loaders.md
 
-
       # Helper libraries
       - Form helpers: reference/form_templatetags.md
       - Panel Template tags: reference/panels_templatetags.md
@@ -101,6 +100,7 @@ pages:
       - Testing: reference/testing.md
       - Javascript dependencies: reference/javascript/javascript_dependencies.md
       - Upgrading: reference/upgrading.md
+      - Management commands: reference/management_commands.md
 
 
 

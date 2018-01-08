@@ -214,6 +214,9 @@ class SubrecordViewSet(LoginRequiredViewset):
         except exceptions.APIError:
             return json_response({'error': 'Unexpected field name'},
                                  status_code=status.HTTP_400_BAD_REQUEST)
+        except exceptions.MissingConsistencyTokenError:
+            return json_response({'error': 'Missing consistency token'},
+                                 status_code=status.HTTP_400_BAD_REQUEST)
         except exceptions.ConsistencyError:
             return json_response(
                 {'error': 'Item has changed'},
@@ -344,6 +347,9 @@ class EpisodeViewSet(LoginRequiredViewset):
             )
         except exceptions.ConsistencyError:
             return json_response({'error': 'Item has changed'}, 409)
+        except exceptions.MissingConsistencyTokenError:
+            return json_response({'error': 'Missing consistency token'},
+                                 status_code=status.HTTP_400_BAD_REQUEST)
 
     @episode_from_pk
     def retrieve(self, request, episode):
