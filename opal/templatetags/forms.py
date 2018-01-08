@@ -72,11 +72,11 @@ def infer_from_subrecord_field_path(subRecordFieldPath):
 
     ctx = {}
     ctx["label"] = model._get_field_title(field_name)
-    ctx["model"] = "editing.{0}.{1}".format(
+    ctx["model"] = "{0}.{1}".format(
         model.get_api_name(),
         field_name
     )
-    ctx['element_name'] = "editing.{0}._client.id + '_{1}'".format(
+    ctx['element_name'] = "{0}._client.id + '_{1}'".format(
         model.get_api_name(),
         field_name
     )
@@ -293,8 +293,7 @@ def static(fieldname):
     _, field_name = fieldname.split('.')
     model, field = _model_and_field_from_path(fieldname)
     return dict(
-        model="editing.{0}.{1}".format(model.get_api_name(),
-                                       field_name),
+        model="{0}.{1}".format(model.get_api_name(), field_name),
         label=model._get_field_title(field_name),
         datep=isinstance(field, models.DateField)
     )
@@ -312,7 +311,7 @@ def icon(name):
 
 @register.inclusion_tag('_helpers/date_of_birth_field.html')
 def date_of_birth_field(**kwargs):
-    model_name = kwargs.get('model_name', "editing.demographics.date_of_birth")
+    model_name = kwargs.get('model_name', "demographics.date_of_birth")
     return dict(
         model_name=model_name,
         style=get_style(kwargs)

@@ -1,8 +1,73 @@
 ### 0.10.0 (Major Release)
 
-This is a major release with breaking chnges from upstream dependencies.
+This is a major release with breaking changes from upstream dependencies.
 You are almost certain to require changes to your application. Please see
 the upgrade guide for further details.
+
+#### Subrecord variables in the forms
+
+It used to be that we would have 'editing.demographics' to be the variable representing the demographics model in the form scope.
+
+```
+{% input field="Demographics.hospital_number" %}
+```
+
+used to be equivalent to
+```
+{% input field="Demographics.hospital_number" model="editing.demographics.hospital_number" %}
+```
+
+however this is now simplified translate to
+```
+{% input field="Demographics.hospital_number" model="demographics.hospital_number" %}
+```
+
+
+#### Multi save is dead, long live multi saving (in pathways).
+
+We used to have the directive saveMultipleWrapper. This used to be so that we can translate
+a data structure like:
+
+```js
+{
+  editing: {condition: [{name: "lurgy"}, {name: "cough"}]}
+}
+```
+
+into
+
+```js
+  [
+    {editing: {condition: {name: "lurgy"}}},
+    {editing: {condition: {name: "cough"}}},
+  ]
+```
+
+Now as noted above we live in simpler times. The form templates no longer
+expect a variable called 'editing.condition.name', the now expected 'condition.name'.
+
+We no longer need a complicated directive to re order the scope variables we can just do
+
+```html
+<div ng-repeat="condition in editing.condition">
+  {% include models.Condition.get_form_template %}
+</div>
+```
+
+If you want to add another, the pathway on scope, gives you the functionality
+
+```
+  pathway.addRecord(editing, 'condition');
+```
+
+will add a condition to the `editing` object.
+
+```
+  pathway.remove(editing, 'condition', 0)
+```
+
+will remove the first condition from the `editing`.
+
 
 #### Deletion cascade behaviour
 

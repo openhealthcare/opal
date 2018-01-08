@@ -26,6 +26,29 @@ After re-installing (via for instance `pip install -r requirements.txt`) you wil
 likely need to make some changes to your application code to fix errors that arise as
 a result of upstream breaking changes.
 
+##### Angular model name changes in form templates
+The scope of variables in form has been changed from removing the editing.prefix.
+
+For example editing.demographics.name to demographics.name.
+
+Any form template tag that declares model='' may have to be changed.
+
+Show hide logic that explicitly references js model will also need to be changed.
+
+```
+{% input field="Demographics.hospital_number" %}
+```
+
+used to be equivalent to
+```
+{% input field="Demographics.hospital_number" model="editing.demographics.hospital_number" %}
+```
+
+however this is now simplified to be equivalent to
+```
+{% input field="Demographics.hospital_number" model="demographics.hospital_number" %}
+```
+
 ##### Breaking changes from dependencies
 
 The jump in Django versions introduces some breaking changes. Some common problems are

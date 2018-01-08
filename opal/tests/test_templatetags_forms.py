@@ -35,7 +35,7 @@ class TestInferFromSubrecordPath(TestCase):
         ctx = infer_from_subrecord_field_path("DogOwner.name")
         self.assertEqual(ctx["label"], "Name")
         self.assertTrue("lookuplist" not in ctx)
-        self.assertEqual(ctx["model"], "editing.dog_owner.name")
+        self.assertEqual(ctx["model"], "dog_owner.name")
 
     def test_infer_required_fields(self):
         ctx = infer_from_subrecord_field_path("DogOwner.name")
@@ -44,7 +44,7 @@ class TestInferFromSubrecordPath(TestCase):
     def test_infer_foreign_key_for_free_text(self):
         ctx = infer_from_subrecord_field_path("DogOwner.dog")
         self.assertEqual(ctx["label"], "Dog")
-        self.assertEqual(ctx["model"], "editing.dog_owner.dog")
+        self.assertEqual(ctx["model"], "dog_owner.dog")
         self.assertEqual(ctx["lookuplist"], "dog_list")
         self.assertFalse(ctx["required"])
 
@@ -55,7 +55,7 @@ class TestInferFromSubrecordPath(TestCase):
     def test_infer_many_to_many_fields(self):
         ctx = infer_from_subrecord_field_path("HatWearer.hats")
         self.assertEqual(ctx["label"], "Hats")
-        self.assertEqual(ctx["model"], "editing.hat_wearer.hats")
+        self.assertEqual(ctx["model"], "hat_wearer.hats")
         self.assertEqual(ctx["lookuplist"], "hat_list")
 
     def test_infer_blank_fields(self):
@@ -84,7 +84,7 @@ class TestInferFromSubrecordPath(TestCase):
         ctx = infer_from_subrecord_field_path("Birthday.birth_date")
         self.assertEquals(
             ctx["element_name"],
-            "editing.birthday._client.id + '_birth_date'"
+            "birthday._client.id + '_birth_date'"
         )
 
     def test_infer_element_type_number(self):
@@ -149,7 +149,7 @@ class InputTest(TestCase):
     def test_load_from_model(self):
         tpl = Template('{% load forms %}{% input field="DogOwner.dog" %}')
         rendered = tpl.render(Context({}))
-        self.assertIn("editing.dog_owner.dog", rendered)
+        self.assertIn("dog_owner.dog", rendered)
         self.assertIn("dog_list", rendered)
 
     def test_element_type(self):
@@ -165,9 +165,9 @@ class InputTest(TestCase):
         self.assertIn("Hound", rendered)
 
     def test_override_from_model(self):
-        tpl = Template('{% load forms %}{% input label="Cat" model="editing.cat_owner.cat" lookuplist="cat_list" field="DogOwner.dog" %}')
+        tpl = Template('{% load forms %}{% input label="Cat" model="cat_owner.cat" lookuplist="cat_list" field="DogOwner.dog" %}')
         rendered = tpl.render(Context({}))
-        self.assertIn("editing.cat_owner.cat", rendered)
+        self.assertIn("cat_owner.cat", rendered)
         self.assertIn("cat_list", rendered)
         self.assertIn("Cat", rendered)
 
@@ -330,7 +330,7 @@ class DateTimePickerTestCase(TestCase):
     def test_generic(self):
         template = Template('{% load forms %}{% datetimepicker field="Colour.name" %}')
         rendered = template.render(Context({}))
-        self.assertEqual(rendered.count('editing.colour.name'), 2)
+        self.assertEqual(rendered.count('colour.name'), 2)
 
     def test_label_date(self):
         template = Template('{% load forms %}{% datetimepicker field="Colour.name" date_label="something" %}')
@@ -426,13 +426,13 @@ class SelectTestCase(TestCase):
     def test_load_from_model(self):
         tpl = Template('{% load forms %}{% select field="DogOwner.dog" %}')
         rendered = tpl.render(Context({}))
-        self.assertIn("editing.dog_owner.dog", rendered)
+        self.assertIn("dog_owner.dog", rendered)
         self.assertIn("dog_list", rendered)
 
     def test_override_from_model(self):
-        tpl = Template('{% load forms %}{% select label="Cat" model="editing.cat_owner.cat" lookuplist="cat_list" field="DogOwner.dog" %}')
+        tpl = Template('{% load forms %}{% select label="Cat" model="cat_owner.cat" lookuplist="cat_list" field="DogOwner.dog" %}')
         rendered = tpl.render(Context({}))
-        self.assertIn("editing.cat_owner.cat", rendered)
+        self.assertIn("cat_owner.cat", rendered)
         self.assertIn("cat_list", rendered)
         self.assertIn("Cat", rendered)
 
@@ -457,12 +457,12 @@ class StaticTestCase(TestCase):
     def test_static(self):
         tpl = Template('{% load forms %}{% static "DogOwner.name" %}')
         rendered = tpl.render(Context({}))
-        self.assertIn('editing.dog_owner.name', rendered)
+        self.assertIn('dog_owner.name', rendered)
 
     def test_date(self):
         tpl = Template('{% load forms %}{% static "Demographics.date_of_birth" %}')
         rendered = tpl.render(Context({}))
-        self.assertIn('editing.demographics.date_of_birth', rendered)
+        self.assertIn('demographics.date_of_birth', rendered)
         self.assertIn('shortDate', rendered)
 
 
@@ -515,7 +515,7 @@ class DateOfBirthTestCase(TestCase):
     def test_default(self):
         ctx = date_of_birth_field()
         expected = dict(
-            model_name="editing.demographics.date_of_birth",
+            model_name="demographics.date_of_birth",
             style='horizontal'
         )
         self.assertEqual(expected, ctx)
@@ -523,4 +523,4 @@ class DateOfBirthTestCase(TestCase):
     def test_render(self):
         tpl = Template('{% load forms %}{% date_of_birth_field %}')
         rendered = tpl.render(Context({}))
-        self.assertIn("editing.demographics.date_of_birth", rendered)
+        self.assertIn("demographics.date_of_birth", rendered)

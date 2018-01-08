@@ -19,7 +19,7 @@ angular.module('opal.controllers').controller('ModalPathwayCtrl', function(
         pathwayDefinition.pathway_service
     );
     $scope.pathway = new pathwayService(pathwayDefinition, episode);
-    $scope.editing = $scope.pathway.populateEditingDict(episode);
+    $scope.editing = {};
     var analyticsKwargs = {
       category: "ModalPathway"
     }

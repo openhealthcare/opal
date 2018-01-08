@@ -1,0 +1,34 @@
+{% load forms %}
+<div ng-repeat="{{ step.model.get_api_name }} in editing.{{ step.model.get_api_name }}">
+  <div class="row">
+    <div class="col-md-12">
+      <div ng-show="!{{ step.model.get_api_name  }}._client.completed" class="form-horizontal">
+        {% include step.model.get_form_template %}
+      </div>
+      <div ng-show="{{ step.model.get_api_name }}._client.completed">
+        <div ng-repeat="item in [{{ step.model.get_api_name }}]">
+          {% include step.model.get_detail_template %}
+        </div>
+      </div>
+      <div class="pull-right">
+        <div ng-show="{{ step.model.get_api_name  }}._client.completed" ng-click="{{ step.model.get_api_name }}._client.completed = false" class="btn btn-primary">
+          {% icon 'fa-edit' %}
+          Edit
+        </div>
+        <div ng-disabled="!pathway.isRecordFilledIn({{ step.model.get_api_name  }})" class="btn btn-primary" ng-click="{{ step.model.get_api_name  }}._client.completed = true" ng-show="!{{ step.model.get_api_name  }}._client.completed">
+            {% icon 'fa-check-square' %}
+            Done
+        </div>
+        <div ng-click="pathway.remove(editing, '{{ step.model.get_api_name }}', $index)" class="btn btn-secondary">
+          {% icon 'fa-trash' %}
+          Remove
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr ng-show="!$last" />
+  <div ng-show="$last" class="text-center row">
+    <a ng-disabled="!pathway.isRecordFilledIn({{ step.model.get_api_name  }})" ng-click="pathway.addRecord(editing, '{{ step.model.get_api_name }}')" class="text-center btn btn-primary">{% icon "glyphicon-plus" %} Add Another</a>
+  </div>
+</div>

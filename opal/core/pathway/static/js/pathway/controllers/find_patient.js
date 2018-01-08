@@ -1,10 +1,10 @@
 angular.module('opal.controllers').controller('FindPatientCtrl',
-  function(scope, Episode, step, episode, $window) {
+  function(scope, Patient, Episode, step, episode, $window) {
     "use strict";
 
     scope.lookup_hospital_number = function() {
         Episode.findByHospitalNumber(
-            scope.demographics.hospital_number,
+            scope.editing.demographics[0].hospital_number,
             {
                 newPatient:    scope.new_patient,
                 newForPatient: scope.new_for_patient,
@@ -17,10 +17,9 @@ angular.module('opal.controllers').controller('FindPatientCtrl',
 
     this.initialise = function(scope){
       scope.state = 'initial';
-
-      scope.demographics = {
-        hospital_number: undefined
-      };
+      if(!scope.editing.demographics || !scope.editing.demographics.length){
+        scope.pathway.addRecord(scope.editing, 'demographics');
+      }
     };
 
     scope.new_patient = function(result){
@@ -28,16 +27,14 @@ angular.module('opal.controllers').controller('FindPatientCtrl',
     };
 
     scope.new_for_patient = function(patient){
-        scope.demographics = patient.demographics[0];
-        scope.state   = 'has_demographics';
+        scope.pathway.updatePatientEditing(scope.editing, new Patient(patient));
+        scope.state = 'has_demographics';
     };
     scope.showNext = function(editing){
         return scope.state === 'has_demographics' || scope.state === 'editing_demographics';
     };
 
     scope.preSave = function(editing){
-        // this is not great
-        editing.demographics = scope.demographics;
         if(editing.demographics && editing.demographics.patient_id){
           scope.pathway.save_url = scope.pathway.save_url + "/" + editing.demographics.patient_id;
         }

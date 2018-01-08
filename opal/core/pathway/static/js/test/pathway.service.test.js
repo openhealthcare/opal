@@ -1,7 +1,7 @@
 describe('Pathway', function() {
   "use strict";
   var pathway, Pathway, $httpBackend, $rootScope;
-  var FieldTranslater, pathwayScope, $window;
+  var FieldTranslater, pathwayScope, $window, opalTestHelper;
 
   var pathwayDefinition = {
     icon: undefined,
@@ -32,7 +32,9 @@ describe('Pathway', function() {
     module('opal.controllers', function($provide){
       $provide.service('$window', function(){ return $window});
     });
+    module('opal.test');
     inject(function($injector) {
+      opalTestHelper = $injector.get('opalTestHelper');
       Pathway = $injector.get('Pathway');
       $httpBackend = $injector.get('$httpBackend');
       $rootScope = $injector.get('$rootScope');
@@ -61,6 +63,79 @@ describe('Pathway', function() {
     it('should put scopes on the steps of that api name', function(){
       pathway.register("location", "some scope");
       expect(pathway.steps[1].scope).toEqual("some scope");
+    });
+  });
+
+  describe('remove', function(){
+    it('should remove an element from the editing dictionary', function(){
+      var editing = {}
+      editing.greeting = [
+        {
+          name: 'hello'
+        },
+        {
+          name: 'bonjour'
+        }
+      ];
+      pathway.remove(editing, 'greeting', 0);
+      expect(editing.greeting).toEqual([{name: 'bonjour'}]);
+    });
+  });
+
+  describe('isPopulated', function(){
+    it('should record if a subrecord has been populated', function(){
+      var someRecord = {
+        $someAngluarVar: "as",
+        _client: {completed: false},
+        greeting: 'hello'
+      }
+      expect(pathway.isRecordFilledIn(someRecord)).toBe(true);
+    });
+
+    it('should record if a date on subrecord has been populated', function(){
+      var someRecord = {
+        $someAngluarVar: "as",
+        _client: {completed: false},
+        greeting: new Date()
+      }
+      expect(pathway.isRecordFilledIn(someRecord)).toBe(true);
+    });
+
+    it('should record if an array on subrecord has been populated', function(){
+      var someRecord = {
+        $someAngluarVar: "as",
+        _client: {completed: false},
+        greeting: ['hello']
+      }
+      expect(pathway.isRecordFilledIn(someRecord)).toBe(true);
+    });
+
+    it('should record if a subrecord has not been populated', function(){
+      var someRecord = {
+        $someAngluarVar: "as",
+        _client: {completed: false},
+      }
+      expect(pathway.isRecordFilledIn(someRecord)).toBe(false);
+    });
+  });
+
+  describe('addRecord', function(){
+    it('should create a new subrecord from the episode', function(){
+      var episode = opalTestHelper.newEpisode($rootScope);
+      var pd = angular.copy(pathwayDefinition);
+      pd.episode = episode;
+      pathway = new Pathway(pd);
+      var editing = pathway.populateEditingDict(episode);
+      var beforeDiagnosisLength = editing.diagnosis.length;
+      pathway.addRecord(editing, 'diagnosis');
+      expect(editing.diagnosis.length).toBe(beforeDiagnosisLength + 1);
+    });
+
+    it('should create a new subrecord without an episode', function(){
+      var editing = {};
+      pathway.addRecord(editing, 'diagnosis');
+      expect(editing.diagnosis.length).toBe(1);
+      expect(!!_.last(editing.diagnosis)._client).toBe(true);
     });
   });
 
@@ -118,7 +193,7 @@ describe('Pathway', function() {
       var episode = {demographics: [demographics], antimicrobials: [], treatment: [treatment]};
       var result = pathway.populateEditingDict(episode);
       expect(result).toEqual({
-        demographics: {first_name: "Wilma"},
+        demographics: [{first_name: "Wilma"}],
         antimicrobials: [],
         treatment: [{drug: "aspirin"}]
       });
@@ -129,6 +204,16 @@ describe('Pathway', function() {
     it("should populate an empty dictionary if an episode isn't provided", function(){
       var result = pathway.populateEditingDict();
       expect(result).toEqual({});
+    });
+  });
+
+  describe('updatePatientEditing', function(){
+    it("should update the editing dictionary, ignoring episode", function(){
+      var patient = opalTestHelper.newPatient($rootScope);
+      var editing = {};
+      pathway.updatePatientEditing(editing, patient);
+      expect(editing.episodes).toBe(undefined);
+      expect(editing.demographics[0].first_name).toBe(patient.demographics[0].first_name)
     });
   });
 
