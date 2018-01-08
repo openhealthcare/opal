@@ -44,6 +44,11 @@ Django Rest Framework: 3.2.2 -> 3.4.7
 Psycopg2: 2.5 -> 2.7
 Jinja2: 2.9.6 -> 2.10
 
+### Misc Changes
+
+Removes the undocumented `collapsed_multisave` tag from the `pathways` templatetag
+library.
+
 ### 0.9.1 (Minor Release)
 
 #### Pathways ContextProcessor
