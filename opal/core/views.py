@@ -7,7 +7,6 @@ import datetime
 
 from django.utils.dateformat import format
 from django.http import HttpResponse
-from django.utils.decorators import method_decorator
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
 from rest_framework import mixins, viewsets
