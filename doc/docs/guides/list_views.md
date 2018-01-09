@@ -14,7 +14,7 @@ A basic list needs only define it's `display_name` a `queryset` of episodes to d
 a `schema` of subrecords to show for each episode.
 
     # patient_lists.py
-    from opal.models import Episore
+    from opal.models import Episode
     from opal.core import patient_lists
 
     from myapplication import models
