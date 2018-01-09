@@ -13,7 +13,7 @@ from django import forms
 from reversion.admin import VersionAdmin
 
 from opal import models
-from opal.core.lookuplists import LookupList, synonym_exists
+from opal.core.lookuplists import lookuplists, synonym_exists
 from opal.core.subrecords import episode_subrecords, patient_subrecords
 from opal.models import Synonym
 from opal.models import UserProfile
@@ -170,7 +170,7 @@ class OptionAdmin(admin.ModelAdmin):
     inlines = [SynonymInline]
 
 
-for model in LookupList.__subclasses__():
+for model in lookuplists():
     admin.site.register(model, OptionAdmin)
 
 admin.site.register(User, UserProfileAdmin)

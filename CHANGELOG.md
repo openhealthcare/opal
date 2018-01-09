@@ -15,6 +15,11 @@ the subrecord.
 
 When you delete a user, it will no longer delete all related episodes and subrecords
 
+#### lookuplists.lookuplists
+
+Adds the utility generator `lookuplists.lookuplists()` which wil yield every lookuplist
+currently available.
+
 #### Missing consistency token errors
 
 `.update_from_dict()` will now raise the new error
