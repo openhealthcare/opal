@@ -78,6 +78,12 @@ need to run a makemigrations command to update your subrecords.
     python manage.py migrate yourapp
 
 
+##### LoginRequiredMixin
+
+Django now ships with `django.contrib.auth.mixins.LoginRequriedMixin`. Accordingly we have
+removed `opal.core.views.LoginRequriedMixin`. A direct swith to the Django class should
+work seamlessly without any functional differences.
+
 ### 0.9.0 -> 0.9.1
 
 #### Upgrading Opal

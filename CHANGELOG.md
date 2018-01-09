@@ -36,6 +36,11 @@ We remove a number of stale unused templates:
 * responsive/_phone_episode_list.html'
 * responsive/_tablet_episode_list.html
 
+#### Removing LoginRequiredMixin
+
+As Django ships with a `LoginRequiredMixin` of its own we no longer roll our own
+in `opal.core.views.
+
 #### Updates to the Dependency Graph
 
 Django: 1.8.13 -> 1.10.8
