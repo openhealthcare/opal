@@ -2,6 +2,7 @@
 Module entrypoint for core Opal views
 """
 from django.core.urlresolvers import reverse
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import login
 from django.http import HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
@@ -15,7 +16,7 @@ from opal.core.patient_lists import PatientList, TabbedPatientListGroup
 from opal.core.subrecords import (
     episode_subrecords, get_subrecord_from_api_name
 )
-from opal.core.views import LoginRequiredMixin, json_response
+from opal.core.views import json_response
 from opal.utils import camelcase_to_underscore
 from opal.utils.banned_passwords import banned
 

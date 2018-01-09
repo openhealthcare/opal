@@ -5,18 +5,18 @@ import datetime
 import json
 from functools import wraps
 
-from django.core.exceptions import PermissionDenied
-from django.conf import settings
 from django.http import HttpResponse, HttpResponseNotFound
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.conf import settings
+from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator
 from django.views.decorators.http import require_http_methods
 from django.views.generic import View, TemplateView
-from django.core.paginator import Paginator
 
 from rest_framework import status
 
 from opal import models
-from opal.core.views import (LoginRequiredMixin, json_response,
-                             _get_request_data, with_no_caching)
+from opal.core.views import json_response, _get_request_data, with_no_caching
 from opal.core.search import queries
 from opal.core.search.extract import zip_archive, async_extract
 
