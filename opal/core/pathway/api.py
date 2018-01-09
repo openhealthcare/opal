@@ -17,7 +17,7 @@ class PathwayApi(viewsets.ViewSet):
     def create(self, request, **kwargs):
         # actually saves the pathway
         pathway = Pathway.get(self.name)()
-        data = _get_request_data(request)
+        data = request.data
 
         before_patient = None
         before_episode = None
