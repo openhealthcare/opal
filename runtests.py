@@ -129,4 +129,4 @@ if len(sys.argv) == 2:
 else:
     failures = test_runner.run_tests(['opal', ])
     if failures:
-        sys.exit(failures)
+        sys.exit(bool(failures))
