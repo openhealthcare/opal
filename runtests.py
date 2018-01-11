@@ -1,5 +1,5 @@
 """
-Standalone test runner for OPAL plugin
+Standalone test runner for Opal
 """
 import os
 import sys
