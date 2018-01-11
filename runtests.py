@@ -121,9 +121,14 @@ django.setup()
 from opal.core import celery
 celery.app.config_from_object('django.conf:settings')
 
+try:
+    sys.argv.remove('--failfast')
+    failfast = True
+except ValueError:
+    failfast = False
 
 from django.test.runner import DiscoverRunner
-test_runner = DiscoverRunner(verbosity=1)
+test_runner = DiscoverRunner(verbosity=1, failfast=failfast)
 if len(sys.argv) == 2:
     failures = test_runner.run_tests([sys.argv[-1], ])
 else:
