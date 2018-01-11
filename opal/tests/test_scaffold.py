@@ -1,6 +1,7 @@
 """
 Unittests for opal.core.scaffold
 """
+import os
 import shutil
 import subprocess
 
@@ -353,9 +354,9 @@ class GetTemplateDirFromRecordTestCase(OpalTestCase):
 
     def test_get_template_dir_from_record(self):
         with patch.object(scaffold.inspect, 'getfile') as getter:
-            getter.return_value = 'me/you.pyc'
+            getter.return_value = os.path.join('me', 'you.pyc')
             d = scaffold._get_template_dir_from_record(MagicMock())
-            self.assertEqual('me/templates', str(d))
+            self.assertEqual(os.path.join('me', 'templates'), str(d))
 
 
 

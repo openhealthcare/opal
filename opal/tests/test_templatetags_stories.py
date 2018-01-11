@@ -1,6 +1,8 @@
 """
 Unittests for opal.templatetags.stories
 """
+import os
+
 from django.test import override_settings
 from mock import patch
 from opal.core.test import OpalTestCase
@@ -40,7 +42,7 @@ class StoryTestCase(OpalTestCase):
                 mockwalk.return_value = [
                     ('/foo', ('bar',), ('baz~','baz')),
                 ]
-                expected = dict(label='test', stories=['foo/baz'])
+                expected = dict(label='test', stories=[os.path.join('foo', 'baz')])
                 self.assertEqual(expected, stories.story('test', 'foo'))
 
 

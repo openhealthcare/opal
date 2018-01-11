@@ -1,6 +1,7 @@
 """
 Unittests for opal.management.commands.load_lookup_lists
 """
+import os
 import ffs
 from mock import patch, MagicMock
 
@@ -53,9 +54,9 @@ class CommandTestCase(OpalTestCase):
         c.from_component(application.get_app())
         calls = [c[0][0] for c in path.call_args_list]
         expected = [
-            'data/lookuplists/lookuplists.json',
-            'data/lookuplists/drug.json',
-            'data/lookuplists/condition.json'
+            os.path.join('data', 'lookuplists', 'lookuplists.json'),
+            os.path.join('data', 'lookuplists', 'drug.json'),
+            os.path.join('data', 'lookuplists', 'condition.json'),
         ]
         for e in expected:
             self.assertTrue(len([c for c in calls if c.endswith(e)]) == 1)

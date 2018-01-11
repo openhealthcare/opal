@@ -3,6 +3,7 @@ Unittests for opal.core.search.extract
 """
 import datetime
 import json
+import os
 
 from django.core.urlresolvers import reverse
 from django.test import override_settings
@@ -118,18 +119,18 @@ class GenerateFilesTestCase(OpalTestCase):
             "somewhere", models.Episode.objects.all(), self.user
         )
         expected = [
-            ('somewhere/data_dictionary.html', 'data_dictionary.html'),
-            ('somewhere/episodes.csv', 'episodes.csv'),
-            ('somewhere/hat_wearer.csv', 'hat_wearer.csv'),
-            ('somewhere/house_owner.csv', 'house_owner.csv')
+            (os.path.join('somewhere', 'data_dictionary.html'), 'data_dictionary.html'),
+            (os.path.join('somewhere', 'episodes.csv'), 'episodes.csv'),
+            (os.path.join('somewhere', 'hat_wearer.csv'), 'hat_wearer.csv'),
+            (os.path.join('somewhere', 'house_owner.csv'), 'house_owner.csv')
         ]
         self.assertEqual(expected, results)
         self.assertEqual(
             write_data_dictionary.call_args[0][0],
-            'somewhere/data_dictionary.html'
+            os.path.join('somewhere', 'data_dictionary.html'),
         )
         self.assertEqual(
-            write_to_file.call_args[0], ('somewhere/house_owner.csv',)
+            write_to_file.call_args[0], (os.path.join('somewhere', 'house_owner.csv'),)
         )
 
     @patch('opal.core.search.extract.subrecords')
