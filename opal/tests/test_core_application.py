@@ -1,6 +1,7 @@
 """
 Unittests for opal.core.application
 """
+import os
 import copy
 
 from django.contrib.auth.models import AnonymousUser
@@ -99,7 +100,7 @@ class OpalApplicationTestCase(OpalTestCase):
     @patch("opal.core.application.inspect.getfile")
     def test_directory(self, getfile):
         getfile.return_value = "/"
-        self.assertEqual(application.OpalApplication.directory(), "/")
+        self.assertEqual(application.OpalApplication.directory(), os.path.abspath(os.sep))
 
     @patch('opal.core.application.get_all_components')
     def test_opal_angular_deps(self, get_all_components):

@@ -1,6 +1,7 @@
 """
 Unittests for opal.core.plugins
 """
+import os
 import copy
 
 from mock import patch
@@ -48,7 +49,7 @@ class OpalPluginTestCase(OpalTestCase):
     def test_directory(self, getfile):
         getfile.return_value = "/"
         plugin = list(plugins.OpalPlugin.list())[0]
-        self.assertEqual(plugin.directory(), "/")
+        self.assertEqual(plugin.directory(), os.path.abspath(os.sep))
 
     def test_get_css_styles(self):
         self.assertEqual(
