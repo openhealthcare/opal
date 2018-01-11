@@ -2,7 +2,6 @@
 Unittests for opal.core.scaffold
 """
 import os
-import shutil
 import subprocess
 
 from mock import patch, MagicMock, Mock
@@ -29,10 +28,10 @@ class StartpluginTestCase(OpalTestCase):
     def tearDown(self):
         ffs.rm_r(self.path)
 
-    @patch("opal.core.scaffold.shutil.copytree", side_effect=shutil.copytree)
-    def test_tree_copied(self, shutil, os):
+    @patch("ffs.nix.cp_r", side_effect=ffs.nix.cp_r)
+    def test_tree_copied(self, cp_r, os):
         scaffold.start_plugin(self.args, self.path)
-        self.assertTrue(shutil.called)
+        self.assertTrue(cp_r.called)
 
     def test_creates_the_app_directory(self, os):
         test_plugin = self.path/'opal-testplugin/testplugin'

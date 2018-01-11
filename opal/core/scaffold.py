@@ -5,7 +5,6 @@ import inspect
 import os
 import subprocess
 import sys
-import shutil
 from django.utils.crypto import get_random_string
 import ffs
 from ffs import nix
@@ -77,7 +76,7 @@ def start_plugin(name, USERLAND):
     root = USERLAND/reponame
 
     # 1. Copy across scaffold
-    shutil.copytree(PLUGIN_SCAFFOLD, root)
+    nix.cp_r(PLUGIN_SCAFFOLD, root)
 
     # 2n. Interpolate scaffold
     interpolate_dir(root, name=name, version=opal.__version__)
