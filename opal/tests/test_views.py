@@ -1,6 +1,8 @@
 """
 Unittests for opal.views
 """
+import os
+
 from django import http
 from django.core.urlresolvers import reverse
 from mock import patch, MagicMock
@@ -187,8 +189,8 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
                 single = False,
                 icon = 'fa fa-comments',
                 list_limit = None,
-                template_path = 'records/colour.html',
-                detail_template_path = 'records/colour.html',
+                template_path = os.path.join('records', 'colour.html'),
+                detail_template_path = os.path.join('records', 'colour.html'),
                 model_column=True,
             )
         ]

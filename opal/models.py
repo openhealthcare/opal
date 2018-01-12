@@ -959,8 +959,8 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
         Return the active detail template for our record
         """
         file_locations = [
-            'records/{0}_detail.html',
-            'records/{0}.html'
+            os.path.join('records', '{0}_detail.html'),
+            os.path.join('records', '{0}.html'),
         ]
 
         if prefixes is None:

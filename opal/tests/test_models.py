@@ -320,7 +320,7 @@ class SubrecordTestCase(OpalTestCase):
     @patch('opal.models.find_template')
     def test_display_template(self, find):
         Subrecord.get_display_template()
-        find.assert_called_with(['records/subrecord.html'])
+        find.assert_called_with([os.path.join('records', 'subrecord.html')])
 
     def test_detail_template_does_not_exist(self):
         self.assertEqual(None, Subrecord.get_detail_template())
@@ -329,8 +329,8 @@ class SubrecordTestCase(OpalTestCase):
     def test_detail_template(self, find):
         Subrecord.get_detail_template()
         find.assert_called_with([
-            'records/subrecord_detail.html',
-            'records/subrecord.html'
+            os.path.join('records', 'subrecord_detail.html'),
+            os.path.join('records', 'subrecord.html'),
         ])
 
     @patch('opal.models.find_template')
@@ -340,10 +340,10 @@ class SubrecordTestCase(OpalTestCase):
         self.assertEqual(
             find.call_args_list[0][0][0],
             [
-                'records/onions/subrecord_detail.html',
-                'records/onions/subrecord.html',
-                'records/subrecord_detail.html',
-                'records/subrecord.html'
+                os.path.join('records', 'onions', 'subrecord_detail.html'),
+                os.path.join('records', 'onions', 'subrecord.html'),
+                os.path.join('records', 'subrecord_detail.html'),
+                os.path.join('records', 'subrecord.html'),
             ]
         )
 
@@ -353,7 +353,7 @@ class SubrecordTestCase(OpalTestCase):
     @patch('opal.models.find_template')
     def test_form_template(self, find):
         Subrecord.get_form_template()
-        find.assert_called_with(['forms/subrecord_form.html'])
+        find.assert_called_with([os.path.join('forms', 'subrecord_form.html')])
 
     def test_get_form_url(self):
         url = Subrecord.get_form_url()
@@ -363,8 +363,8 @@ class SubrecordTestCase(OpalTestCase):
     def test_form_template_prefixes(self, find):
         Subrecord.get_form_template(prefixes=['onions'])
         find.assert_called_with([
-            'forms/onions/subrecord_form.html',
-            'forms/subrecord_form.html'
+            os.path.join('forms', 'onions', 'subrecord_form.html'),
+            os.path.join('forms', 'subrecord_form.html'),
         ])
 
     def test_get_modal_template_does_not_exist(self):
@@ -375,7 +375,7 @@ class SubrecordTestCase(OpalTestCase):
     def test_modal_template_no_form_template(self, modal, find):
         modal.return_value = None
         Subrecord.get_modal_template()
-        find.assert_called_with(['modals/subrecord_modal.html'])
+        find.assert_called_with([os.path.join('modals', 'subrecord_modal.html')])
 
     def test_get_normal_field_title(self):
         name_title = PatientColour._get_field_title("name")

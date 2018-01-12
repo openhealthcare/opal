@@ -46,9 +46,11 @@ class Command(BaseCommand):
         self.load(self.from_path(filename))
         # then work throught the lookuplists we know about
         for lookuplist in lookuplists.lookuplists():
-            path = ffs.Path("{0}/data/lookuplists/{1}.json".format(
+            path = ffs.Path(os.path.join(
                 application.get_app().directory(),
-                lookuplist.get_api_name()
+                'data',
+                'lookuplists',
+                '{}.json'.format(lookuplist.get_api_name())
             ))
             self.load(self.from_path(path))
 

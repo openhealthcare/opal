@@ -1,6 +1,8 @@
 """
 Unittests for opal.core.patient_lists
 """
+import os
+
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from mock import MagicMock, PropertyMock, patch
@@ -187,12 +189,12 @@ class TestPatientList(OpalTestCase):
     def test_schema_to_dicts(self):
         dicts = [
             {
-                'detail_template_path': 'records/demographics_detail.html',
+                'detail_template_path': os.path.join('records', 'demographics_detail.html'),
                 'icon': 'fa fa-user',
                 'list_limit': None,
                 'name': 'demographics',
                 'single': True,
-                'template_path': 'records/demographics.html',
+                'template_path': os.path.join('records', 'demographics.html'),
                 'title': 'Demographics',
                 'model_column': True
             }

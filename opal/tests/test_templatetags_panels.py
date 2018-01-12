@@ -1,6 +1,8 @@
 """
 Tests create_singletons command
 """
+import os
+
 from django.template import Template, Context
 from opal.core.test import OpalTestCase
 from opal.templatetags import panels
@@ -14,7 +16,7 @@ class RecordPanelTestCase(OpalTestCase):
             name='demographics',
             singleton=True,
             title='Demographics',
-            detail_template='records/demographics_detail.html',
+            detail_template=os.path.join('records', 'demographics_detail.html'),
             icon='fa fa-user',
             editable=1,
             angular_filter=None,
@@ -77,7 +79,7 @@ class RecordTimelineTestCase(OpalTestCase):
         expected = dict(
             name='demographics',
             title='Demographics',
-            detail_template='records/demographics_detail.html',
+            detail_template=os.path.join('records', 'demographics_detail.html'),
             icon='fa fa-user',
             editable=True,
             whenfield='when'
