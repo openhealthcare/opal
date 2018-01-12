@@ -1,3 +1,3 @@
 """
-Unit tests for OPAL.
+Unit tests for Opal.
 """

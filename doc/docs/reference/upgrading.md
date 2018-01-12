@@ -116,7 +116,7 @@ application subclasses, now consists of the new `opal.core.menus.MenuItem` class
 enhanced customisation and flexibility.
 
 If you previously were adding Menu Items with the dictionary format. These should be
-coverted to use a `MenuItem` class.
+converted to use a `MenuItem` class.
 
 ### 0.8.0 -> 0.8.1
 
