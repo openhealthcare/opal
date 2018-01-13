@@ -99,6 +99,25 @@ class DiscoverableFeature(with_metaclass(DiscoverableMeta, object)):
         raise ValueError('No {0} implementation with slug {1}'.format(
             klass, name))
 
+    @classmethod
+    def filter(klass, *args, **kwargs):
+        """
+        Return all matching instances of a feature based on a Django
+        Queryset-like interface.
+        """
+        def feature_filter(feature):
+            match = True
+            for attribute in kwargs:
+                if not hasattr(feature, attribute):
+                    msg = "Invalid Query: At least one {0} implementation " \
+                          "does not have a {1} attribute."
+                    raise ValueError(msg.format(klass, attribute))
+                if getattr(feature, attribute) != kwargs[attribute]:
+                    match = False
+            return match
+
+        return [f for f in klass.list() if feature_filter(f)]
+
 
 class SortableFeature(object):
     module_name = None
