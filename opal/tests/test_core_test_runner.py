@@ -185,6 +185,7 @@ class RunJSTestsTestCase(OpalTestCase):
         mock_args.coverage = False
         mock_args.test = None
         mock_args.failfast = True
+        test_runner.TRAVIS = False
         test_runner._run_js_tests(mock_args)
         self.assertEqual(
             [
