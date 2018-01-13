@@ -1,11 +1,12 @@
 # Opal Search overview
 
-The Opal Search backend is switchable using the settings value Opal_SEARCH_BACKEND.
+The Opal Search backend is switchable using the settings value OPAL_SEARCH_BACKEND.
 
 By default it will do a database query.
 
 The backend takes in a dictionary with the following fields
 
+```
 {
       "queryType": either "Equals" or "Contains",
       "field": the label of the column that will be queried, e.g. Hospital Number,
@@ -13,34 +14,38 @@ The backend takes in a dictionary with the following fields
       'combine': whether the query is 'and' or 'or' in conjunction with other dictionaries
       'column': the model to be queried e.g. 'demographics'
 }
+```
 
+## The Advanced search interface
 
-### The Advanced search interface
+The Opal advanced search interface at `/#/extract` allows users to specify rules
+by which to query for episodes.
 
-The Opal advanced search interface at `/#/extract` allows users to specify rules by which to query for episodes.
+By default this allows users to construct simple logical queries based on the
+values of any subrecord field.
 
-By default this allows users to construct simple logical queries based on the values of any subrecord field.
+The interface respects the types of fields - for instance using before/after for
+date fields or equals/contains for text fields.
 
-The interface respects the types of fields - for instance using before/after for date fields or equals/contains
-for text fields.
+This screen also allows users to download episode data for the cohort that matches
+the specified rules.
 
-This screen also allows users to download episode data for the cohort that matches the specified rules.
+## Custom Search Rules
 
-### Custom Search Rules
+These rules are extensible, allowing custom rules that perform more advanced
+queries to be inserted.
 
-These rules are extensible, allowing custom rules that perform more advanced queries to be inserted.
-
-#### opal.core.search.SearchRule
+### opal.core.search.SearchRule
 
 Is a [discoverable](../guides/discoverable.md).
 
-It is defined with a group of SearchRuleFields that appear like subrecord model fields in the
-front end.
+It is defined with a group of SearchRuleFields that appear like subrecord model
+fields in the front end.
 
 The SearchRuleField has a query method that returns a list of Episodes.
 
-The SearchRuleField must define a field_type, these then provide the following operators
-to the front end
+The SearchRuleField must define a field_type, these then provide the following
+operators to the front end
 
 |  field_type | queryType   |
 |---|---|
@@ -72,4 +77,15 @@ class SomeField(SearchRuleField):
 class MyCustomQuery(SearchRule):
     display_name = "My Custom Query"
     fields = (SomeField,)
+```
+
+## Autocomplete search
+
+Opal contains autocomplete search functionality for the navbar search box.
+
+You can enable it with the setting `OPAL_AUTOCOMPLETE_SEARCH` (defaults to False).
+
+```python
+# yourapp/settings.py
+OPAL_AUTOCOMPLETE_SEARCH = True
 ```
