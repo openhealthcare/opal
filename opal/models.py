@@ -749,7 +749,9 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     @property
     def category(self):
         from opal.core import episodes
-        category = episodes.EpisodeCategory.get(self.category_name.lower())
+        category = episodes.EpisodeCategory.filter(
+            display_name=self.category_name
+        )[0]
         return category(self)
 
     def visible_to(self, user):
