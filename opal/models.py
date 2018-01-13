@@ -762,6 +762,21 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         """
         return self.category.episode_visible_to(self, user)
 
+    def set_stage(self, stage, user, data):
+        """
+        Setter for Episode.stage
+
+        Validates that the stage being set is appropriate for the category
+        and raises ValueError if not.
+        """
+        if not self.category.has_stage(stage):
+            if stage is not None:
+                msg = "Can't set stage to {0} for {1} Episode".format(
+                    stage, self.category.display_name
+                )
+                raise ValueError(msg)
+        self.stage = stage
+
     def set_tag_names(self, tag_names, user):
         """
         1. Set the episode.active status
