@@ -55,8 +55,8 @@ OPAL_LOCATION
 
 ## Test Coverage
 
-The Opal test runner has a `-c` option which runs coverage reports for both Python and J
-avascript code:
+The Opal test runner has a `-c` option which runs coverage reports for both Python and
+Javascript code:
 
 ```bash
 opal test -c
