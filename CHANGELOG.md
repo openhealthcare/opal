@@ -54,7 +54,16 @@ Django Rest Framework: 3.2.2 -> 3.4.7
 Psycopg2: 2.5 -> 2.7
 Jinja2: 2.9.6 -> 2.10
 
-### Misc Changes
+#### Testing options
+
+Adds a `--failfast` option to the test harness to stop test runs on the first
+failure.
+
+If you are a plugin developer upgrading an existing plugin you will have to
+manually add support for `--failfast` passthrough to your `runtests.py`.
+
+
+#### Misc Changes
 
 Removes the undocumented `collapsed_multisave` tag from the `pathways` templatetag
 library.
