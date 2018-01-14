@@ -8,7 +8,7 @@ liaison, an appointment at a clinic, or any other arbitrarily defined period of 
 
 ### Episode.category
 
-The category of this episode - e.g. inpatient, outpatient et cetera.
+The [category](episode_categories) of this episode - e.g. inpatient, outpatient et cetera.
 This defaults to whatever is set on your application's subclass of
 `opal.core.application.OpalApplication` - which itself defaults to 'inpatient'.
 

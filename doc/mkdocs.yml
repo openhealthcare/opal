@@ -21,6 +21,7 @@ pages:
 
       # Data and business logic
       - Data Model: guides/datamodel.md
+      - Episodes: guides/episodes.md
       - Archetypes: guides/archetypes.md
       - Referencedata: guides/referencedata.md
       - Metadata: guides/metadata.md
