@@ -47,6 +47,24 @@ InpatientEpisode.episode_visible_to(episode, user)
 
 ** Methods **
 
+### EpisodeCategory.get_stages()
+
+Returns a list of stages for this category as strings.
+
+```python
+InpatientEpisode(episode).get_stages()
+# -> ['Inpatient', 'Followup', 'Discharged']
+```
+
+### EpisodeCategory.has_stage(stage)
+
+Predicate function to determine whether a string is a valid stage for this category.
+
+```python
+InpatientEpisode(episode).has_stage('Inpatient')
+# -> True
+```
+
 ## InpatientEpisode
 
 This is the default EpisodeCategory imlpementation - applications started with Opal's
