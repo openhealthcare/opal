@@ -2,8 +2,8 @@
 
 ## EpisodeCategory
 
-Opal Episodes have an associated category. These categories are implemented as subclasses
-of `opal.core.episodes.EpisodeCategory`. This class is an Opal
+Opal [Episodes](../guides/episodes.md) have an associated category. These categories are
+implemented as subclasses of `opal.core.episodes.EpisodeCategory`. This class is an Opal
 [DiscoverableFeature](../guides/discoverable.md) and thus inherits all of the core
 Discoverable API.
 
