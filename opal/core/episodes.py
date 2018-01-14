@@ -73,6 +73,7 @@ class InpatientEpisode(EpisodeCategory):
         'Discharged'
     ]
 
+
 class OutpatientEpisode(EpisodeCategory):
     display_name = 'Outpatient'
     stages       = [
