@@ -24,6 +24,7 @@ The following reference guides are available:
 [opal.core.log](loggers.md)| Log Helpers - custom email error loggers
 [opal.core.fields](core_fields)| Field helpers - custom field types and utility functions|
 [opal.core.lookuplists](core_lookuplists.md) | Utilities for working with lookuplists |
+[opal.core.discoverable](core_discoverable.md) | Reusable feature groups for plugins and applications |
 
 ### Angular Services
 |

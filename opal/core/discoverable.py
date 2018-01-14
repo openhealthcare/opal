@@ -120,6 +120,9 @@ class DiscoverableFeature(with_metaclass(DiscoverableMeta, object)):
 
 
 class SortableFeature(object):
+    """
+    Mixin class to provide ordering for features
+    """
     module_name = None
 
     @classmethod
