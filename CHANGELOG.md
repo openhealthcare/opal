@@ -26,6 +26,11 @@ while `Episode` has a `set_stage` setter which is used by the JSON API.
 Adds the utility generator `lookuplists.lookuplists()` which wil yield every lookuplist
 currently available.
 
+#### Discoverable.filter()
+
+Disoverable features now have a `filter` method which allows you to filter features
+with matching attributes.
+
 #### Missing consistency token errors
 
 `.update_from_dict()` will now raise the new error
