@@ -80,8 +80,8 @@ need to run a makemigrations command to update your subrecords.
 
 ##### LoginRequiredMixin
 
-Django now ships with `django.contrib.auth.mixins.LoginRequriedMixin`. Accordingly we have
-removed `opal.core.views.LoginRequriedMixin`. A direct swith to the Django class should
+Django now ships with `django.contrib.auth.mixins.LoginRequiredMixin`. Accordingly we have
+removed `opal.core.views.LoginRequiredMixin`. A direct switch to the Django class should
 work seamlessly without any functional differences.
 
 ### 0.9.0 -> 0.9.1
