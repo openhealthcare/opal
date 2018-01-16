@@ -187,7 +187,7 @@ def start_project(name, USERLAND_HERE):
 
     # We have this here because it uses name from above.
     def manage(command):
-        args = ['python', '{0}/manage.py'.format(name)]
+        args = ['python', os.path.join(name, 'manage.py')]
         args += command.split()
         args.append('--traceback')
 
