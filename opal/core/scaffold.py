@@ -205,6 +205,7 @@ def start_project(name, USERLAND_HERE):
     manage('migrate')
 
     # 9. Create a superuser
+    write('Creating superuser')
     sys.path.append(os.path.join(os.path.abspath('.'), name))
     _set_settings_module(name)
 
