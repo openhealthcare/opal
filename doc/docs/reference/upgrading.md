@@ -19,6 +19,7 @@ you have specified them in for instance, a requirements.txt.
     django-reversion==1.10.2
     djangorestframework==3.4.7
     psycopg==2.7
+    ffs==0.0.8.2
     opal==0.10.0
 
 
@@ -102,7 +103,7 @@ run the migrations for Opal 0.9.1
 
 `episode.date_of_episode`, `episode.date_of_admission` and `episode.discharge_date` are all deprecated.
 
-We now expect episodes to use `episode.start` and `episode.end`. You should search your codebase for any 
+We now expect episodes to use `episode.start` and `episode.end`. You should search your codebase for any
 instances where the three variables are used and switch to the start/end properties.
 
 ### 0.8.2 -> 0.8.3

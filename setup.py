@@ -41,7 +41,7 @@ setup(
     author_email='hello@openhealthcare.org.uk',
     scripts=['bin/opal'],
     install_requires=[
-        'ffs>=0.0.8.1',
+        'ffs>=0.0.8.2',
         'letter==0.4.1',
         'jinja2==2.10',
         'requests==2.7.0',
