@@ -191,9 +191,11 @@ def start_project(name, USERLAND_HERE):
         args += command.split()
         args.append('--traceback')
 
+        write("Calling: {}".format(' '.join(args)))
         try:
             subprocess.check_call(args)
         except subprocess.CalledProcessError:
+            write("Failed to run: {}".format(' '.join(args)))
             sys.exit(1)
         return
 
