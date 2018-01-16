@@ -5,6 +5,7 @@ import inspect
 import os
 import subprocess
 import sys
+from django.core.management import call_command
 from django.utils.crypto import get_random_string
 import ffs
 from ffs import nix
@@ -130,7 +131,7 @@ def start_project(name, USERLAND_HERE):
 
     # 1. Run Django Startproject
     write("Creating project dir at {0}".format(project_dir))
-    os.system('django-admin.py startproject {0}'.format(name))
+    call_command('startproject', name)
 
     write("Bootstrapping your Opal project...")
 
