@@ -213,13 +213,13 @@ class StartprojectTestCase(OpalTestCase):
     def test_if_subprocess_errors(self, exiter, call_command, subpr):
         subpr.side_effect = subprocess.CalledProcessError(None, None)
         scaffold.start_project(self.args, self.path)
-        subpr.assert_any_call(['python', 'testapp/manage.py',
+        subpr.assert_any_call(['python', os.path.join('testapp', 'manage.py'),
                                   'makemigrations', 'testapp', '--traceback'])
         exiter.assert_any_call(1)
 
     def test_runs_migrate(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
-        subpr.assert_any_call(['python', 'testapp/manage.py',
+        subpr.assert_any_call(['python', os.path.join('testapp', 'manage.py'),
                                'migrate', '--traceback'])
 
     def test_sets_settings(self, call_command, subpr):
