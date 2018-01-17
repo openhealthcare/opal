@@ -5,7 +5,6 @@ from functools import wraps
 
 from opal.utils import camelcase_to_underscore
 from opal.core import exceptions
-from opal.core.exceptions import InitializationError
 
 
 def delete_others(data, model, patient=None, episode=None):
@@ -102,21 +101,27 @@ class Step(object):
                         'A step needs either a display_name'
                         ' or a model'
                     )
-                    raise InitializationError(er)
+                    raise exceptions.InitializationError(er)
             if not getattr(self, "template", None):
                 if "template" not in kwargs:
                     er = (
                         'A step needs either a template'
                         ' or a model'
                     )
-                    raise InitializationError(er)
+                    raise exceptions.InitializationError(er)
 
     @extract_pathway_field
     def get_template(self):
         if self.multiple:
-            return self.multiple_template
+            t =  self.multiple_template
         else:
-            return self.model.get_form_template()
+            t = self.model.get_form_template()
+        if t is None:
+            msg = "Unable to locate form template for subrecord: {0}".format(
+                self.model.get_display_name()
+            )
+            raise exceptions.MissingTemplateError(msg)
+        return t
 
     @extract_pathway_field
     def get_display_name(self):
