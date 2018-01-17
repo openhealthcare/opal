@@ -1,5 +1,5 @@
 """
-Urls for the pathway OPAL plugin
+Urls for the pathway Opal plugin
 """
 from django.conf.urls import url
 

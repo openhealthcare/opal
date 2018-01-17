@@ -10,11 +10,11 @@ Opal patient lists are subclasses of `opal.core.patient_lists.PatientList`.
 Typically these are found in a `patient_lists.py` module of your application or plugin. (Lists _can_ be
 defined elsewhere, but may not be auto discovered.)
 
-A basic list needs only define it's `display_name` a `queryset` of episodes to display, and
+A basic list needs only define its `display_name` a `queryset` of episodes to display, and
 a `schema` of subrecords to show for each episode.
 
     # patient_lists.py
-    from opal.models import Episore
+    from opal.models import Episode
     from opal.core import patient_lists
 
     from myapplication import models
