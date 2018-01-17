@@ -113,15 +113,15 @@ class Step(object):
     @extract_pathway_field
     def get_template(self):
         if self.multiple:
-            t =  self.multiple_template
+            template =  self.multiple_template
         else:
-            t = self.model.get_form_template()
-        if t is None:
+            template = self.model.get_form_template()
+        if template is None:
             msg = "Unable to locate form template for subrecord: {0}".format(
                 self.model.get_display_name()
             )
             raise exceptions.MissingTemplateError(msg)
-        return t
+        return template
 
     @extract_pathway_field
     def get_display_name(self):
