@@ -34,9 +34,14 @@
                 <td class="table-link-cell">
                   <a title="[[ row.demographics[0].first_name ]] [[ row.demographics[0].surname ]]" class="table-link" href="{% block row_link %}[[ '/#/patient/' + row.demographics[0].patient_id ]]{% endblock %}">
                     <div class="container">
+                      {% if column.model_column %}
                       <div class="row" ng-repeat="item in row.{{column.name}}">
+                        {{ column.template_path }}
                         {% include column.template_path %}
                       </div>
+                      {% else %}
+                        {% include column.template_path %}
+                      {% endif %}
                     </div>
                   </a>
                 </td>
