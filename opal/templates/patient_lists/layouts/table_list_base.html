@@ -36,7 +36,6 @@
                     <div class="container">
                       {% if column.model_column %}
                       <div class="row" ng-repeat="item in row.{{column.name}}">
-                        {{ column.template_path }}
                         {% include column.template_path %}
                       </div>
                       {% else %}
