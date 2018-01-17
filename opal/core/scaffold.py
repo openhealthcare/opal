@@ -131,7 +131,7 @@ def start_project(name, USERLAND_HERE):
 
     # 1. Run Django Startproject
     write("Creating project dir at {0}".format(project_dir))
-    call_command('startproject', name)
+    call_command('startproject', name, USERLAND_HERE)
 
     write("Bootstrapping your Opal project...")
 
