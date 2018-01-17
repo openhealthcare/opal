@@ -125,7 +125,7 @@ class StartprojectTestCase(OpalTestCase):
 
     def test_run_django_start_project(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
-        os.assert_any_call('django-admin.py startproject testapp')
+        call_command.assert_any_call('startproject', 'testapp', self.path)
 
     def test_has_lookuplists_dir(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
