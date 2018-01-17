@@ -113,7 +113,7 @@ class Step(object):
     @extract_pathway_field
     def get_template(self):
         if self.multiple:
-            template =  self.multiple_template
+            template = self.multiple_template
         else:
             template = self.model.get_form_template()
         if template is None:
