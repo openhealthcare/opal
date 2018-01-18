@@ -16,8 +16,9 @@ A list of all available topic guides.
 ### Data and Business Logic
 
 |||
-|---------------------------|-------------------------------------------------------------------------------|
+|---------------------------|--------------------------------------------------------------------|
 |[Data Model](datamodel.md) | How Opal models clinical reality|
+|[Episodes](episodes)|Opal Episodes and how to customise them|
 |[Core Clinical Model](archetypes.md)| The core clinical data model available to Opal applications|
 |[Reference data](referencedata.md) | Canonical coded terms and reference data|
 |[App metadata](metadata.md) | Working with Metadata on the front end  |

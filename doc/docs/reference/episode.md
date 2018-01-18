@@ -1,42 +1,42 @@
-## opal.models.Episode
+# opal.models.Episode
 
-The `opal.models.Episode` class represents an episode of care for a patient. This can be either
-an inpatient stay, an outpatient treatment, a telephone liaison, an appointment at a clinic,
-or any other arbitrarily defined period of care.
+The `opal.models.Episode` class represents an episode of care for a patient.
+This can be either an inpatient stay, an outpatient treatment, a telephone
+liaison, an appointment at a clinic, or any other arbitrarily defined period of care.
 
-### Fields
+## Fields
 
-#### Episode.category
+### Episode.category
 
-The category of this episode - e.g. inpatient, outpatient et cetera.
+The [category](episode_categories) of this episode - e.g. inpatient, outpatient et cetera.
 This defaults to whatever is set on your application's subclass of
 `opal.core.application.OpalApplication` - which itself defaults to 'inpatient'.
 
-#### Episode.patient
+### Episode.patient
 
 A foreign key relationship to the patient for whom this episode concerns.
 
-#### Episode.active
+### Episode.active
 
 A boolean to provide a quick lookup for whether this is an active or closed episode.
 
-#### Episode.start
+### Episode.start
 
 This should be the start of the episode. If this is an inpatient episode, the date of admission.
 
-#### Episode.end
+### Episode.end
 
 This should be the end of the episode. If this is an inpatient episode, the date of discharge.
 
-#### Episode.consistency_token
+### Episode.consistency_token
 
 A (automatically generated) hash of the above fields. This is used for detecting concurrent edits.
 
-### Methods
+## Methods
 
 The Episode model has the following methods:
 
-#### Episode.to_dict
+### Episode.to_dict
 
 Return a dictionary of field value pairs for this episode
 
@@ -51,7 +51,7 @@ Keywords:
 * `shallow` Boolean to indicate whether we want just this episode, or also a sorted set of
 previous and subsequent episodes
 
-#### Episode.get_tag_names
+### Episode.get_tag_names(user)
 
 
 Arguments:
@@ -64,7 +64,7 @@ Return the current active tag names for this Episode as strings.
     # ['mine', 'infectioncontrol']
 
 
-#### Episode.set_tag_names
+### Episode.set_tag_names(tag_names, user)
 
 
 Arguments:
@@ -78,7 +78,7 @@ Set tags for this Episode.
 episode.set_tag_names(['mine', 'infectioncontrol'], user)
 ```
 
-#### Episode.set_tag_names_from_tagging_dict
+### Episode.set_tag_names_from_tagging_dict(tagging_dict, user)
 
 Arguments:
 
@@ -92,12 +92,23 @@ Set tags for this Episode.
 episode.set_tag_names_from_tagging_dict({'inpatient': True}, user)
 ```
 
-### Manager
+### Episode.set_stage(stage, user, data)
+
+Setter function for episode stage. Will validate that the stage given is
+valid for the current `EpisodeCategory` and raise `ValueError` if it is invalid.
+
+```python
+episode.set_stage('Discharged', user, {})
+episode.stage
+# -> 'Discharged'
+```
+
+## Manager
 
 The custom manager for Episodes has the following methods:
 
 
-#### Episode.objects.serialised()
+### Episode.objects.serialised()
 
 Return a set of serialised episodes.
 
@@ -113,12 +124,12 @@ Keywords:
 * `historic_tags` A boolean to indicate whether the user desires historic or just current tags to
 be serialised
 
-#### Episode.objects.search
+### Episode.objects.search
 
 As a useful utility, the episode manager has a search method that will search on first name, last name and/or hospital number, under the hood it uses [Patient search](patient.md#patientobjectssearch)
 
 
-### opal.core.api.EpisodeViewSet
+## opal.core.api.EpisodeViewSet
 
 Gives you an api for create/update/list/retrieve apis for episodes. Its recommended that you use [opal.core.patient_lists](patient_list.md) rather than the list api, as this gives you more flexibility.
 
