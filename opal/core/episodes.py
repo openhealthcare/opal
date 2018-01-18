@@ -63,6 +63,28 @@ class EpisodeCategory(DiscoverableFeature):
         """
         return stage in self.get_stages()
 
+    def next_stage(self):
+        """
+        Return the next stage for this episode or None if there is
+        no future stage.
+        """
+        stages = self.get_stages()
+        stage_index = stages.index(self.episode.stage)
+        next_stage = stage_index + 1
+        if next_stage + 1 == len(stages):
+            return None
+        return stages[next_stage]
+
+    def advance_stage(self):
+        """
+        Update the episode to be at the next stage.
+        """
+        next_stage = self.next_stage()
+        if next_stage:
+            self.episode.stage = next_stage
+            self.episode.save()
+
+
 
 class InpatientEpisode(EpisodeCategory):
     display_name    = 'Inpatient'
