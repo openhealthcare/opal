@@ -65,6 +65,18 @@ InpatientEpisode(episode).has_stage('Inpatient')
 # -> True
 ```
 
+
+### EpisodeCategory.set_stage(stage, user, data)
+
+Sets the stage on the episode. It gets passed the user, and the
+rest of the data that's been used to update the episode.
+
+```python
+InpatientEpisode(episode).set_stage('Discharged', user, data_dict)
+# -> True
+```
+
+
 ## InpatientEpisode
 
 This is the default EpisodeCategory imlpementation - applications started with Opal's
