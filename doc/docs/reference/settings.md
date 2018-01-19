@@ -2,6 +2,10 @@
 
 Opal applications provide a number of settings in the `settings.py` of your application.
 
+## OPAL_AUTOCOMPLETE_SEARCH
+
+Whether to enable autocomplete on search from the navbar. Defaults to False.
+
 ## OPAL_BRAND_NAME
 
 The human readable form of your application name.
