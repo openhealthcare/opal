@@ -33,3 +33,7 @@ class UnexpectedFieldNameError(Error):
 
 class InitializationError(Error):
     pass
+
+
+class MissingTemplateError(Error):
+    pass
