@@ -67,8 +67,6 @@ def scaffold(args):
     """
     app = args.app
     name = find_application_name()
-    scaffold_utils._set_settings_module(name)
-    sys.path.append(os.path.abspath('.'))
 
     # 1. Let's run a Django migration
     dry_run = ''
