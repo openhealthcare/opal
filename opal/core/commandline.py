@@ -66,7 +66,6 @@ def scaffold(args):
     3. Create forms
     """
     app = args.app
-    name = find_application_name()
 
     # 1. Let's run a Django migration
     dry_run = ''
