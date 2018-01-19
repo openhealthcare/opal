@@ -19,7 +19,7 @@ from opal.core.scaffold import (
 )
 from opal.core import scaffold
 
-@patch('os.system')
+@patch('subprocess.check_call')
 class StartpluginTestCase(OpalTestCase):
     def setUp(self):
         self.path = ffs.Path.newdir()
@@ -29,60 +29,60 @@ class StartpluginTestCase(OpalTestCase):
         ffs.rm_r(self.path)
 
     @patch("ffs.nix.cp_r", side_effect=ffs.nix.cp_r)
-    def test_tree_copied(self, cp_r, os):
+    def test_tree_copied(self, cp_r, subpr):
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(cp_r.called)
 
-    def test_creates_the_app_directory(self, os):
+    def test_creates_the_app_directory(self, subpr):
         test_plugin = self.path/'opal-testplugin/testplugin'
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(test_plugin.is_dir)
 
-    def test_creates_appropriate_directory_with_opal_prefix(self, os):
+    def test_creates_appropriate_directory_with_opal_prefix(self, subpr):
         test_plugin = self.path/'opal-testplugin/testplugin'
         scaffold.start_plugin("opal-testplugin", self.path)
         self.assertTrue(test_plugin.is_dir)
 
-    def test_creates_template_directory(self, os):
+    def test_creates_template_directory(self, subpr):
         template_dir = self.path/'opal-testplugin/testplugin/templates'
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(template_dir.is_dir)
 
-    def test_creates_static_directory(self, os):
+    def test_creates_static_directory(self, subpr):
         static_dir = self.path/'opal-testplugin/testplugin/static'
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(static_dir.is_dir)
 
-    def test_calls_interpolate_dir(self, os):
+    def test_calls_interpolate_dir(self, subpr):
         with patch.object(scaffold, 'interpolate_dir') as interpolate:
             scaffold.start_plugin(self.args, self.path)
             self.assertEqual(interpolate.call_args[1]["name"], "testplugin")
             self.assertIn("version", interpolate.call_args[1])
 
-    def test_creates_css_directory(self, os):
+    def test_creates_css_directory(self, subpr):
         css_dir = self.path/'opal-testplugin/testplugin/static/css'
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(css_dir.is_dir)
 
-    def test_creates_controllers_directory(self, os):
+    def test_creates_controllers_directory(self, subpr):
         rpath = 'opal-testplugin/testplugin/static/js/testplugin/controllers'
         controllers_dir = self.path/rpath
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(controllers_dir.is_dir)
 
-    def test_creates_services_directory(self, os):
+    def test_creates_services_directory(self, subpr):
         rpath = 'opal-testplugin/testplugin/static/js/testplugin/services'
         services_dir = self.path/rpath
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(services_dir.is_dir)
 
-    def test_has_lookuplists_dir(self, os):
+    def test_has_lookuplists_dir(self, subpr):
         rpath = 'opal-testplugin/testplugin/data/lookuplists/'
         lookuplists = self.path/rpath
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(bool(lookuplists))
 
-    def test_creates_manifest(self, os):
+    def test_creates_manifest(self, subpr):
         rpath = 'opal-testplugin/MANIFEST.in'
         manifest = self.path/rpath
         scaffold.start_plugin(self.args, self.path)
@@ -92,11 +92,11 @@ class StartpluginTestCase(OpalTestCase):
             self.assertIn("recursive-include testplugin/static *", contents)
             self.assertIn("recursive-include testplugin/templates *", contents)
 
-    def test_initialize_git(self, os):
+    def test_initialize_git(self, subpr):
         scaffold.start_plugin(self.args, self.path)
-        os.assert_any_call('cd opal-testplugin; git init')
+        subpr.assert_any_call('cd opal-testplugin; git init')
 
-    def test_creates_requirements(self, os):
+    def test_creates_requirements(self, subpr):
         rpath = 'opal-testplugin/requirements.txt'
         requirements = self.path/rpath
         scaffold.start_plugin(self.args, self.path)
