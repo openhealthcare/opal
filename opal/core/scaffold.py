@@ -63,6 +63,15 @@ def create_lookuplists(root_dir):
     lookuplists_dir.mkdir()
 
 
+def call(cmd, **kwargs):
+    write("Calling: {}".format(' '.join(cmd)))
+    try:
+        subprocess.check_call(cmd, **kwargs)
+    except subprocess.CalledProcessError:
+        write("Failed to run: {}".format(' '.join(cmd)))
+        sys.exit(1)
+
+
 def start_plugin(name, USERLAND):
     name = name
 
@@ -101,7 +110,7 @@ def start_plugin(name, USERLAND):
     services = jsdir/'services'
     services.mkdir()
     # 5. Initialize git repo
-    subprocess.check_call(('git', 'init'), cwd=reponame)
+    call(('git', 'init'), cwd=reponame)
 
     write('Plugin complete at {0}'.format(reponame))
     return
@@ -190,14 +199,7 @@ def start_project(name, USERLAND_HERE):
         args = ['python', os.path.join(name, 'manage.py')]
         args += command.split()
         args.append('--traceback')
-
-        write("Calling: {}".format(' '.join(args)))
-        try:
-            subprocess.check_call(args)
-        except subprocess.CalledProcessError:
-            write("Failed to run: {}".format(' '.join(args)))
-            sys.exit(1)
-        return
+        call(args)
 
     # 8. Run Django's migrations
     write('Creating Database')
@@ -221,7 +223,7 @@ def start_project(name, USERLAND_HERE):
     profile.save()
 
     # 11. Initialise git repo
-    subprocess.check_call(('git', 'init'), cwd=name)
+    call(('git', 'init'), cwd=name)
 
 
 def _strip_non_user_fields(schema):
