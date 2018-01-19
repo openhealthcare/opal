@@ -49,15 +49,6 @@ def interpolate_dir(directory, **context):
     return
 
 
-def _set_settings_module(name):
-    os.environ['DJANGO_SETTINGS_MODULE'] = '{0}.settings'.format(name)
-    if '.' not in sys.path:
-        sys.path.append('.')
-    import django
-    django.setup()
-    return
-
-
 def create_lookuplists(root_dir):
     lookuplists_dir = root_dir/'data/lookuplists'
     lookuplists_dir.mkdir()
@@ -206,19 +197,7 @@ def start_project(name, USERLAND_HERE):
 
     # 9. Create a superuser
     write('Creating superuser')
-    sys.path.append(os.path.join(os.path.abspath('.'), name))
-    _set_settings_module(name)
-
-    from django.contrib.auth.models import User
-    user = User(username='super')
-    user.set_password('super1')
-    user.is_superuser = True
-    user.is_staff = True
-    user.save()
-    from opal.models import UserProfile
-    profile, _ = UserProfile.objects.get_or_create(user=user)
-    profile.force_password_change = False
-    profile.save()
+    manage('createopalsuperuser')
 
     # 11. Initialise git repo
     call(('git', 'init'), cwd=project_dir, stdout=subprocess.PIPE)
