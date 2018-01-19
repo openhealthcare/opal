@@ -229,7 +229,9 @@ class StartprojectTestCase(OpalTestCase):
 
     def test_initialize_git(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
-        subpr.assert_any_call(('git', 'init'), cwd=os.path.join(self.path, 'testapp'))
+        subpr.assert_any_call(('git', 'init'),
+                              cwd=os.path.join(self.path, 'testapp'),
+                              stdout=subprocess.PIPE)
 
     def test_creates_requirements(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
