@@ -15,10 +15,21 @@ the subrecord.
 
 When you delete a user, it will no longer delete all related episodes and subrecords
 
+#### Episode Category stages
+
+Episode categories now enforce a set of valid `Episode.stage` values.
+`EpisodeCategory` now includes the `.get_stages()` and `.has_stage(stage)` methods,
+while `Episode` has a `set_stage` setter which is used by the JSON API.
+
 #### lookuplists.lookuplists
 
 Adds the utility generator `lookuplists.lookuplists()` which wil yield every lookuplist
 currently available.
+
+#### Discoverable.filter()
+
+Disoverable features now have a `filter` method which allows you to filter features
+with matching attributes.
 
 #### Missing consistency token errors
 

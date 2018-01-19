@@ -20,7 +20,7 @@ class EpisodeTest(OpalTestCase):
 
     def setUp(self):
         self.patient, self.episode = self.new_patient_and_episode_please()
-        self.episode.stage = "Active TB"
+        self.episode.stage = "Inpatient"
         self.episode.save()
 
     def test_singleton_subrecord_created(self):
@@ -40,6 +40,26 @@ class EpisodeTest(OpalTestCase):
 
     def test_visible_to(self):
         self.assertTrue(self.episode.visible_to(self.user))
+
+    def test_set_stage(self):
+        self.episode.set_stage('Discharged', self.user, {})
+        self.assertEqual('Discharged', self.episode.stage)
+
+    def test_set_stage_for_none(self):
+        self.episode.set_stage(None, self.user, {})
+        self.assertEqual(None, self.episode.stage)
+
+    def test_set_stage_raises_if_invalid(self):
+        with self.assertRaises(ValueError):
+            self.episode.set_stage('Whoops', self.user, {})
+
+    def test_update_from_dict_raises_if_invalid_stage(self):
+        data = dict(
+            stage='Whoops',
+            id=self.episode.id
+        )
+        with self.assertRaises(ValueError):
+            self.episode.update_from_dict(data, self.user)
 
     def test_can_set_tag_names(self):
         test_cases = [
@@ -118,7 +138,7 @@ class EpisodeTest(OpalTestCase):
         for field in expected:
             self.assertIn(field, as_dict)
 
-        self.assertEqual(as_dict["stage"], "Active TB")
+        self.assertEqual(as_dict["stage"], "Inpatient")
 
     def test_get_field_names_to_extract(self):
         # field names to extract should be the same

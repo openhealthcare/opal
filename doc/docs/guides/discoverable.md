@@ -57,27 +57,27 @@ We can make our feature sortable via an `order` property by including
  `discoverable.SortableFeature` as a parent class. This will ensure that `MyFeature.list()`
  respects the `.order` number of any subclass.
 
+```python
+class MyFeature(discoverable.DiscoverableFeature,
+                discoverable.SortableFeature):
+    module_name = 'myfeature'
 
-    class MyFeature(discoverable.DiscoverableFeature,
-                     discoverable.SortableFeature):
-         module_name = 'myfeature'
+class ThirdFeature(MyFeature):
+    order = 3
 
-    class ThirdFeature(MyFeature):
-        order = 3
+class FirstFeature(MyFeature):
+    order = 1
 
-    class FirstFeature(MyFeature):
-        order = 1
+class SecondFeature(MyFeature):
+    order = 2
 
-    class SecondFeature(MyFeature):
-        order = 2
+for f in MyFeature.list():
+    print f, f.order
 
-    for f in MyFeature.list():
-        print f.order, f
-
-    # <class '*.*.FirstFeature'>, 1
-    # <class '*.*.SecondFeature'>, 2
-    # <class '*.*.ThirdFeature'>, 3
-
+# <class '*.*.FirstFeature'>, 1
+# <class '*.*.SecondFeature'>, 2
+# <class '*.*.ThirdFeature'>, 3
+```
 
 ### Restrictable Features
 

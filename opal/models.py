@@ -749,7 +749,9 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     @property
     def category(self):
         from opal.core import episodes
-        category = episodes.EpisodeCategory.get(self.category_name.lower())
+        category = episodes.EpisodeCategory.filter(
+            display_name=self.category_name
+        )[0]
         return category(self)
 
     def visible_to(self, user):
@@ -761,6 +763,21 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         opal.core.episodes.EpisodeCategory implementations.
         """
         return self.category.episode_visible_to(self, user)
+
+    def set_stage(self, stage, user, data):
+        """
+        Setter for Episode.stage
+
+        Validates that the stage being set is appropriate for the category
+        and raises ValueError if not.
+        """
+        if not self.category.has_stage(stage):
+            if stage is not None:
+                msg = "Can't set stage to {0} for {1} Episode".format(
+                    stage, self.category.display_name
+                )
+                raise ValueError(msg)
+        self.stage = stage
 
     def set_tag_names(self, tag_names, user):
         """
