@@ -140,11 +140,9 @@ def start_project(name, USERLAND_HERE):
 
     write("Bootstrapping your Opal project...")
 
-    if not project_dir:
-        project_dir.mkdir()
-
     # 1. Run Django Startproject
     write("Creating project dir at {0}".format(project_dir))
+    project_dir.mkdir()
     management.call_command('startproject', name, project_dir)
 
     # Copy across the scaffold
