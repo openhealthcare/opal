@@ -208,7 +208,7 @@ class StartprojectTestCase(OpalTestCase):
 
     def test_runs_makemigrations(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
-        subpr.assert_any_call(['python', 'testapp/manage.py',
+        subpr.assert_any_call(['python', os.path.join('testapp', 'manage.py'),
                                   'makemigrations', 'testapp', '--traceback'])
 
     @patch.object(scaffold.sys, 'exit')
