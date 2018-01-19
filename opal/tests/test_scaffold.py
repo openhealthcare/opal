@@ -225,10 +225,10 @@ class StartprojectTestCase(OpalTestCase):
         subpr.assert_any_call(['python', os.path.join('testapp', 'manage.py'),
                                'migrate', '--traceback'])
 
-    def test_sets_settings(self, call_command, subpr):
-        with patch.object(scaffold, '_set_settings_module') as settings:
-            scaffold.start_project(self.args, self.path)
-            settings.assert_called_with('testapp')
+    def test_runs_createopalsuperuser(self, call_command, subpr):
+        scaffold.start_project(self.args, self.path)
+        subpr.assert_any_call(['python', os.path.join('testapp', 'manage.py'),
+                               'createopalsuperuser', '--traceback'])
 
     def test_initialize_git(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
