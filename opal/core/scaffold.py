@@ -138,14 +138,14 @@ def start_project(name, USERLAND_HERE):
         write("Please remove it or choose a new name.\n\n")
         sys.exit(1)
 
-    # 1. Run Django Startproject
-    write("Creating project dir at {0}".format(project_dir))
-    management.call_command('startproject', name, USERLAND_HERE)
-
     write("Bootstrapping your Opal project...")
 
     if not project_dir:
         project_dir.mkdir()
+
+    # 1. Run Django Startproject
+    write("Creating project dir at {0}".format(project_dir))
+    management.call_command('startproject', name, project_dir)
 
     # Copy across the scaffold
     with SCAFFOLD:
