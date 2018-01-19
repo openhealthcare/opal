@@ -44,6 +44,9 @@ test module, case or method to run.
 
    $ opal test py -t opal.tests.test_models
 
+The `--failfast` option will end the test run on the first failing test rather than
+continuing with the entire run.
+
 ### checkout
 
 Ensure that all of our application plugins and packages are on the correct branch.

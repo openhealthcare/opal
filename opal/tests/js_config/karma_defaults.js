@@ -47,8 +47,27 @@ module.exports = function(includedFiles, baseDir, coverageFiles){
       preprocessors[a] = 'coverage';
     });
 
+    var FailFastReporter = function(){
+      this.onSpecComplete = function (browser, result) {
+        console.log('failfast oncomplete')
+        if (result.success === false) {
+          throw new Error(result.log);
+        }
+      }
+    }
+
+    var plugins = [
+      "karma-coverage",
+      "karma-jasmine",
+      {
+        'reporter:failfast': ['type', FailFastReporter]
+      }
+    ];
+
     if(process.env.TRAVIS){
         browsers = ["Firefox"];
+        plugins.push("karma-firefox-launcher");
+        plugins.push("karma-coveralls");
         if(useCoverage){
           coverageReporter = {
               type: 'lcovonly', // lcov or lcovonly are required for generating lcov.info files
@@ -58,6 +77,7 @@ module.exports = function(includedFiles, baseDir, coverageFiles){
     }
     else{
         browsers = ['PhantomJS'];
+        plugins.push("karma-phantomjs-launcher");
         if(useCoverage){
           coverageReporter = {
               type : 'html',
@@ -66,13 +86,11 @@ module.exports = function(includedFiles, baseDir, coverageFiles){
         }
     }
 
-
     var defaults = {
         frameworks: ['jasmine'],
         browsers: browsers,
         basePath:  basePath,
         files: OPAL_DEPENDENCIES.concat(includedFiles),
-
         // Stolen from http://oligofren.wordpress.com/2014/05/27/running-karma-tests-on-browserstack/
         browserDisconnectTimeout : 10000, // default 2000
         browserDisconnectTolerance : 1, // default 0
@@ -80,6 +98,7 @@ module.exports = function(includedFiles, baseDir, coverageFiles){
         captureTimeout : 4*60*1000, //default 60000
         preprocessors: preprocessors,
         reporters: ['progress'],
+        plugins: plugins,
     };
 
     if(useCoverage){
@@ -87,5 +106,11 @@ module.exports = function(includedFiles, baseDir, coverageFiles){
       defaults.coverageReporter = coverageReporter;
     }
 
-    return defaults;
+
+    if(process.argv.indexOf('--failfast') != -1){
+      defaults.reporters.push('failfast')
+    }
+
+  return defaults;
+
 };
