@@ -41,17 +41,10 @@ class EpisodeTest(OpalTestCase):
     def test_visible_to(self):
         self.assertTrue(self.episode.visible_to(self.user))
 
-    def test_set_stage(self):
+    @patch('opal.core.episodes.EpisodeCategory.set_stage')
+    def test_defers_episode_set_stage(self, set_stage):
         self.episode.set_stage('Discharged', self.user, {})
-        self.assertEqual('Discharged', self.episode.stage)
-
-    def test_set_stage_for_none(self):
-        self.episode.set_stage(None, self.user, {})
-        self.assertEqual(None, self.episode.stage)
-
-    def test_set_stage_raises_if_invalid(self):
-        with self.assertRaises(ValueError):
-            self.episode.set_stage('Whoops', self.user, {})
+        set_stage.assert_called_once_with('Discharged', self.user, {})
 
     def test_update_from_dict_raises_if_invalid_stage(self):
         data = dict(
@@ -230,3 +223,15 @@ class EpisodeCategoryTestCase(OpalTestCase):
         self.assertTrue(
             self.episode.category.episode_visible_to(self.episode, user)
         )
+
+    def test_set_stage(self):
+        self.episode.category.set_stage('Discharged', self.user, {})
+        self.assertEqual('Discharged', self.episode.stage)
+
+    def test_set_stage_for_none(self):
+        self.episode.category.set_stage(None, self.user, {})
+        self.assertEqual(None, self.episode.stage)
+
+    def test_set_stage_raises_if_invalid(self):
+        with self.assertRaises(ValueError):
+            self.episode.category.set_stage('Whoops', self.user, {})
