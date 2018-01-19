@@ -110,7 +110,7 @@ def start_plugin(name, USERLAND):
     services = jsdir/'services'
     services.mkdir()
     # 5. Initialize git repo
-    call(('git', 'init'), cwd=reponame)
+    call(('git', 'init'), cwd=root)
 
     write('Plugin complete at {0}'.format(reponame))
     return
@@ -223,7 +223,7 @@ def start_project(name, USERLAND_HERE):
     profile.save()
 
     # 11. Initialise git repo
-    call(('git', 'init'), cwd=name)
+    call(('git', 'init'), cwd=project_dir)
 
 
 def _strip_non_user_fields(schema):
