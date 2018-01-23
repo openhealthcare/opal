@@ -29,6 +29,12 @@ token when one is set on the model. Previously it would raise `APIError`.
 The JSON API will now return a more specific message in the response boday, explaining
 that the problem is a missing consistency token.
 
+#### dump_lookup_lists --many-files
+
+Adds the `--many-files` option to the `dump_lookup_lists` command which will write
+each installed lookup list to a separate file in the `./data/lookuplists` directory
+of the application.
+
 #### Template removals
 
 We remove a number of stale unused templates:

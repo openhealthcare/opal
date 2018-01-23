@@ -46,6 +46,10 @@ python manage.py detect_duplicates
 
 ## dump_lookup_lists
 
+*Arguments*:
+
+* `--many-files` - write lookuplists to separate files instead of printing them to stdout.
+
 Prints current lookuplist and synonym values as JSON to stdout. Suitable to be used
 as the input to `load_lookup_lists`
 

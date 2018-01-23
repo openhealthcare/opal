@@ -107,10 +107,14 @@ Opal ships with some management commands for importing and exporting lookup list
 
 Prints all loockuplists as JSON to stdout.
 
+When the `--many-files` argument is passd, the command will write each installed
+lookup list to a separate file in the `./data/lookuplists` directory of the
+application.
+
 #### load_lookup_lists
 
-Loads lookup lists from all plugins/apps in the Opal JSON format. The lookup lists are expected to be in
-`{{ app }}/data/lookuplists/lookuplists.json`
+Loads lookup lists from all plugins/apps in the Opal JSON format. The lookup
+lists are expected to be in `{{ app }}/data/lookuplists/lookuplists.json`
 
 Optionally you can pass in an explicit filename with the `-f` argument.
 
