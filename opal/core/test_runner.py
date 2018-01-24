@@ -28,11 +28,13 @@ def _run_py_tests(args):
     write("Running Python Unit Tests")
     test_args = None
 
-    # We have a custom test runner - e.g. it's OPAL itself or a plugin.
+    # We have a custom test runner - e.g. it's Opal itself or a plugin.
     if _has_file(args.userland_here, 'runtests.py'):
         test_args = ['python', 'runtests.py']
+
         if args.test:
             test_args.append(args.test)
+
         if args.coverage:
             test_args = ['coverage', 'run', 'runtests.py']
 
@@ -51,6 +53,9 @@ def _run_py_tests(args):
         write("We can't figure out how to run your tests :(\n")
         write("Are you in the root directory? \n\n")
         sys.exit(1)
+
+    if args.failfast:
+        test_args.append('--failfast')
 
     if test_args:
         try:
@@ -91,6 +96,8 @@ def _run_js_tests(args):
         'config/karma.conf.js',
         '--single-run',
     ]
+    if args.failfast:
+        sub_args.append('--failfast')
 
     try:
         subprocess.check_call(sub_args, env=env)

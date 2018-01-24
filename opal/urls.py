@@ -18,7 +18,8 @@ urlpatterns = [
     url(r'^accounts/login/$', views.check_password_reset, name='login'),
 
     url(r'^accounts/logout/$',
-        logout, {'next_page': '/'}),
+        logout, {'next_page': '/'},
+        name='logout'),
 
     url(r'^accounts/change-password/?$',
         password_change,

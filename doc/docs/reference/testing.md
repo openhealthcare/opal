@@ -6,15 +6,15 @@ Opal provides some utilities to make testing your application even easier.
 
 ## Command Line test runner
 
-The `opal` command line tool has a `test` command which will run unittests for both the server and client
-side components of your application.
+The `opal` command line tool has a `test` command which will run unittests for both the server
+and client side components of your application.
 
 ## Javascript testing
 
 By default, we recommend using Jasmine and Karma to test your javascript code.
 <blockquote><small>
-Of course you can use any test framework you choose, although Opal doesn't currently ship with helpers
-for any other frameworks.
+Of course you can use any test framework you choose, although Opal doesn't currently ship with
+helpers for any other frameworks.
 </small></blockquote>
 
 ### Installing javascript testing tools
@@ -55,13 +55,15 @@ OPAL_LOCATION
 
 ## Test Coverage
 
-The Opal test runner has a `-c` option which runs coverage reports for both Python and Javascript code:
+The Opal test runner has a `-c` option which runs coverage reports for both Python and
+Javascript code:
 
 ```bash
 opal test -c
 ```
 
-Python test coverage uses the `coverage` tool and you may want to set include/excludes in a `.coveragerc`.
+Python test coverage uses the `coverage` tool and you may want to set include/excludes in
+a `.coveragerc`.
 
 Javascript test files to be reported on should be passed as an extra argument to `karmaDefaults`:
 
@@ -72,4 +74,5 @@ Javascript test files to be reported on should be passed as an extra argument to
   var defaultConfig = karmaDefaults(includedFiles, baseDir, coverageFiles);
 ```
 
-HTML test coverage reports will be output to the directory `htmlcov` and `htmlcov/js` at the root of your application.
+HTML test coverage reports will be output to the directory `htmlcov` and `htmlcov/js` at the
+root of your application.

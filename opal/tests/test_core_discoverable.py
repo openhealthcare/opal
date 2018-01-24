@@ -136,6 +136,47 @@ class DiscoverableFeatureTestCase(OpalTestCase):
     def test_get_exists(self):
         self.assertEqual(RedColour, ColourFeature.get('red'))
 
+    def test_filter(self):
+        self.assertEqual(
+            [BlueColour],
+            ColourFeature.filter(display_name='Blue')
+        )
+
+    def test_filter_returns_many(self):
+        self.assertEqual(
+            [BlueColour, RedColour, SeaGreenColour],
+            ColourFeature.filter(module_name='colours')
+        )
+
+    def test_filter_not_an_attr(self):
+        with self.assertRaises(ValueError):
+            ColourFeature.filter(notarealthing='Homeopathy')
+
+    def test_filter_many_attributes(self):
+        self.assertEqual(
+            [MySlugFeature],
+            SlugFeature.filter(
+                slug='my-slug',
+                display_name='My Slug Defined Slug'
+            )
+        )
+
+    def test_filter_no_results(self):
+        self.assertEqual(
+            [],
+            SlugFeature.filter(
+                slug='lol-nobody-would-choose-this-as-a-slug',
+            )
+        )
+
+    def test_filter_many_attributes_one_not_an_attr(self):
+        self.assertEqual(
+            [],
+            SlugFeature.filter(
+                slug='not-my-slug',
+                display_name='My Slug Defined Slug'
+            )
+        )
 
     def test_abstract_discoverable(self):
         class A(discoverable.DiscoverableFeature):

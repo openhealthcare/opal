@@ -15,10 +15,21 @@ the subrecord.
 
 When you delete a user, it will no longer delete all related episodes and subrecords
 
+#### Episode Category stages
+
+Episode categories now enforce a set of valid `Episode.stage` values.
+`EpisodeCategory` now includes the `.get_stages()` and `.has_stage(stage)` methods,
+while `Episode` has a `set_stage` setter which is used by the JSON API.
+
 #### lookuplists.lookuplists
 
 Adds the utility generator `lookuplists.lookuplists()` which wil yield every lookuplist
 currently available.
+
+#### Discoverable.filter()
+
+Disoverable features now have a `filter` method which allows you to filter features
+with matching attributes.
 
 #### Missing consistency token errors
 
@@ -59,8 +70,18 @@ Django Reversion: 1.8.7 -> 1.10.2
 Django Rest Framework: 3.2.2 -> 3.4.7
 Psycopg2: 2.5 -> 2.7
 Jinja2: 2.9.6 -> 2.10
+Ffs: 0.0.8.1 -> 0.0.8.2
 
-### Misc Changes
+#### Testing options
+
+Adds a `--failfast` option to the test harness to stop test runs on the first
+failure.
+
+If you are a plugin developer upgrading an existing plugin you will have to
+manually add support for `--failfast` passthrough to your `runtests.py`.
+
+
+#### Misc Changes
 
 Removes the undocumented `collapsed_multisave` tag from the `pathways` templatetag
 library.

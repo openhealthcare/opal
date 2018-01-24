@@ -32,11 +32,16 @@
             {% block table_row %}
               {% for column in columns %}
                 <td class="table-link-cell">
-                  <a title="[[ row.demographics[0].first_name ]] [[ row.demographics[0].surname ]]" class="table-link" href="{% block row_link %}[[ '/#/patient/' + row.demographics[0].patient_id ]]{% endblock %}">
-                    <div class="container">
+                  <a title="[[ row.demographics[0].first_name ]] [[ row.demographics[0].surname ]]"
+                     class="table-link" href="{% block row_link %}[[ '/#/patient/' + row.demographics[0].patient_id + '/' + row.id ]]{% endblock %}">
+                    <div>
+                      {% if column.model_column %}
                       <div class="row" ng-repeat="item in row.{{column.name}}">
                         {% include column.template_path %}
                       </div>
+                      {% else %}
+                        {% include column.template_path %}
+                      {% endif %}
                     </div>
                   </a>
                 </td>
