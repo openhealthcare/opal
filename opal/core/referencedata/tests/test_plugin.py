@@ -6,6 +6,7 @@ from opal.core import plugins
 
 from opal.core.referencedata import plugin
 
+
 class PluginTestCase(OpalTestCase):
 
     def test_plugin_instance_exists(self):

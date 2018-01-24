@@ -17,8 +17,8 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument(
             '--many-files',
-            help="Write the lookuplists to many different files in " \
-"./data/lookuplists",
+            help="Write the lookuplists to many different files in "
+            "./data/lookuplists",
             action="store_true",
             dest="many_files"
         )
