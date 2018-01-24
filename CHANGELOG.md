@@ -4,6 +4,11 @@ This is a major release with breaking chnges from upstream dependencies.
 You are almost certain to require changes to your application. Please see
 the upgrade guide for further details.
 
+#### Referencedata in new applications
+
+Opal now includes core lookuplist data in an `opal.core.referencedata` plugin
+which is installed and loaded by default by the `startproject` scaffolding.
+
 #### Deletion cascade behaviour
 
 Opal 0.10 changes several behaviours related to cascading deletions which, despite
