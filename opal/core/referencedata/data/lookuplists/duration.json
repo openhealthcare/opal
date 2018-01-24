@@ -1,0 +1,20 @@
+{
+  "duration": [
+    {
+      "synonyms": [], 
+      "name": "2 days \u2013\u00a02 weeks"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "2 weeks \u2013\u00a03 months"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "< 2 days"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "> 3 months"
+    }
+  ]
+}
