@@ -1,0 +1,1251 @@
+{
+  "drug": [
+    {
+      "synonyms": [],
+      "name": "Abacavir"
+    },
+    {
+      "synonyms": [
+        "ACV"
+      ],
+      "name": "Aciclovir"
+    },
+    {
+      "synonyms": [],
+      "name": "Adefovir"
+    },
+    {
+      "synonyms": [],
+      "name": "Albendazole"
+    },
+    {
+      "synonyms": [],
+      "name": "Amantadine"
+    },
+    {
+      "synonyms": [
+        "Liposomal amphotericin"
+      ],
+      "name": "Ambisome"
+    },
+    {
+      "synonyms": [
+        "AK"
+      ],
+      "name": "Amikacin"
+    },
+    {
+      "synonyms": [],
+      "name": "Amodiaquine"
+    },
+    {
+      "synonyms": [
+        "AML"
+      ],
+      "name": "Amoxicillin"
+    },
+    {
+      "synonyms": [],
+      "name": "Amphotericin"
+    },
+    {
+      "synonyms": [],
+      "name": "Ampicillin"
+    },
+    {
+      "synonyms": [],
+      "name": "Amprenavir"
+    },
+    {
+      "synonyms": [],
+      "name": "Anidulafungin"
+    },
+    {
+      "synonyms": [],
+      "name": "Artemether"
+    },
+    {
+      "synonyms": [],
+      "name": "Artesunate"
+    },
+    {
+      "synonyms": [],
+      "name": "Aspergillosis"
+    },
+    {
+      "synonyms": [],
+      "name": "Atazanavir"
+    },
+    {
+      "synonyms": [],
+      "name": "Ataznavir"
+    },
+    {
+      "synonyms": [],
+      "name": "Atovaquone"
+    },
+    {
+      "synonyms": [],
+      "name": "Atripla"
+    },
+    {
+      "synonyms": [],
+      "name": "Azithromycin"
+    },
+    {
+      "synonyms": [],
+      "name": "Azlocillin"
+    },
+    {
+      "synonyms": [],
+      "name": "Aztreonam"
+    },
+    {
+      "synonyms": [],
+      "name": "Bacampicillin"
+    },
+    {
+      "synonyms": [],
+      "name": "Bedaquiline"
+    },
+    {
+      "synonyms": [],
+      "name": "Benethamine"
+    },
+    {
+      "synonyms": [],
+      "name": "Benzathine"
+    },
+    {
+      "synonyms": [],
+      "name": "Benznidazole"
+    },
+    {
+      "synonyms": [
+        "Ben-Pen",
+        "BZP"
+      ],
+      "name": "Benzylpenicillin"
+    },
+    {
+      "synonyms": [],
+      "name": "Bephenium"
+    },
+    {
+      "synonyms": [],
+      "name": "Bocepravir"
+    },
+    {
+      "synonyms": [],
+      "name": "Boceprevir"
+    },
+    {
+      "synonyms": [],
+      "name": "CANESTEN"
+    },
+    {
+      "synonyms": [],
+      "name": "CEFACLOR"
+    },
+    {
+      "synonyms": [],
+      "name": "COLOMYCIN"
+    },
+    {
+      "synonyms": [],
+      "name": "CYCLOSERINE"
+    },
+    {
+      "synonyms": [],
+      "name": "Calcium"
+    },
+    {
+      "synonyms": [],
+      "name": "Capreomycin"
+    },
+    {
+      "synonyms": [],
+      "name": "Carbenicillin"
+    },
+    {
+      "synonyms": [],
+      "name": "Carfecillin"
+    },
+    {
+      "synonyms": [],
+      "name": "Caspofungin"
+    },
+    {
+      "synonyms": [],
+      "name": "Cefadroxil"
+    },
+    {
+      "synonyms": [],
+      "name": "Cefalexin"
+    },
+    {
+      "synonyms": [],
+      "name": "Cefaloridine"
+    },
+    {
+      "synonyms": [],
+      "name": "Cefalotin"
+    },
+    {
+      "synonyms": [],
+      "name": "Cefamandole"
+    },
+    {
+      "synonyms": [],
+      "name": "Cefazolin"
+    },
+    {
+      "synonyms": [],
+      "name": "Cefixime"
+    },
+    {
+      "synonyms": [],
+      "name": "Cefodizime"
+    },
+    {
+      "synonyms": [],
+      "name": "Cefotaxime"
+    },
+    {
+      "synonyms": [],
+      "name": "Cefoxitin"
+    },
+    {
+      "synonyms": [],
+      "name": "Cefpirome"
+    },
+    {
+      "synonyms": [],
+      "name": "Cefpodoxime"
+    },
+    {
+      "synonyms": [],
+      "name": "Cefprozil"
+    },
+    {
+      "synonyms": [],
+      "name": "Cefradine"
+    },
+    {
+      "synonyms": [],
+      "name": "Cefsulodin"
+    },
+    {
+      "synonyms": [
+        "ZINFORO"
+      ],
+      "name": "Ceftaroline"
+    },
+    {
+      "synonyms": [
+        "CAZ"
+      ],
+      "name": "Ceftazidime"
+    },
+    {
+      "synonyms": [],
+      "name": "Ceftibuten"
+    },
+    {
+      "synonyms": [],
+      "name": "Ceftizoxime"
+    },
+    {
+      "synonyms": [
+        "CRO",
+        "CTX"
+      ],
+      "name": "Ceftriaxone"
+    },
+    {
+      "synonyms": [
+        "CXM"
+      ],
+      "name": "Cefuroxime"
+    },
+    {
+      "synonyms": [],
+      "name": "Chloramphenicol"
+    },
+    {
+      "synonyms": [],
+      "name": "Chlorhexidine"
+    },
+    {
+      "synonyms": [],
+      "name": "Chloroquine"
+    },
+    {
+      "synonyms": [],
+      "name": "Chlortetracycline"
+    },
+    {
+      "synonyms": [],
+      "name": "Ciclacillin"
+    },
+    {
+      "synonyms": [],
+      "name": "Cidofovir"
+    },
+    {
+      "synonyms": [],
+      "name": "Cinoxacin"
+    },
+    {
+      "synonyms": [
+        "CIP"
+      ],
+      "name": "Ciprofloxacin"
+    },
+    {
+      "synonyms": [
+        "CLA"
+      ],
+      "name": "Clarithromycin"
+    },
+    {
+      "synonyms": [],
+      "name": "Clavulanic"
+    },
+    {
+      "synonyms": [],
+      "name": "Clindamycin"
+    },
+    {
+      "synonyms": [],
+      "name": "Clofazimine"
+    },
+    {
+      "synonyms": [],
+      "name": "Clomocycline"
+    },
+    {
+      "synonyms": [],
+      "name": "Clotrimazole"
+    },
+    {
+      "synonyms": [],
+      "name": "Cloxacillin"
+    },
+    {
+      "synonyms": [
+        "Augmentin",
+        "AMC"
+      ],
+      "name": "Co-Amoxiclav"
+    },
+    {
+      "synonyms": [],
+      "name": "Co-Fluampicil"
+    },
+    {
+      "synonyms": [
+        "Septrin",
+        "SXT"
+      ],
+      "name": "Co-Trimoxazole"
+    },
+    {
+      "synonyms": [],
+      "name": "Cobicistat"
+    },
+    {
+      "synonyms": [],
+      "name": "Colistimethate"
+    },
+    {
+      "synonyms": [
+        "COL"
+      ],
+      "name": "Colistin"
+    },
+    {
+      "synonyms": [],
+      "name": "Combivir"
+    },
+    {
+      "synonyms": [],
+      "name": "DAKTARIN"
+    },
+    {
+      "synonyms": [],
+      "name": "Daclatasvir"
+    },
+    {
+      "synonyms": [],
+      "name": "Daktacort"
+    },
+    {
+      "synonyms": [],
+      "name": "Dalfopristin"
+    },
+    {
+      "synonyms": [],
+      "name": "Dapsone"
+    },
+    {
+      "synonyms": [],
+      "name": "Daptomycin"
+    },
+    {
+      "synonyms": [],
+      "name": "Darunavir"
+    },
+    {
+      "synonyms": [],
+      "name": "Dasabuvir"
+    },
+    {
+      "synonyms": [],
+      "name": "Delamanid"
+    },
+    {
+      "synonyms": [],
+      "name": "Demeclocycline"
+    },
+    {
+      "synonyms": [],
+      "name": "Didanosine"
+    },
+    {
+      "synonyms": [],
+      "name": "Diethylcarbamazine"
+    },
+    {
+      "synonyms": [],
+      "name": "Diloxanide"
+    },
+    {
+      "synonyms": [],
+      "name": "Docosanol"
+    },
+    {
+      "synonyms": [],
+      "name": "Dolutegravir"
+    },
+    {
+      "synonyms": [],
+      "name": "Doripenem"
+    },
+    {
+      "synonyms": [],
+      "name": "Doxycycline"
+    },
+    {
+      "synonyms": [],
+      "name": "Efavirenz"
+    },
+    {
+      "synonyms": [],
+      "name": "Elvitegravir"
+    },
+    {
+      "synonyms": [],
+      "name": "Emtricitabine"
+    },
+    {
+      "synonyms": [],
+      "name": "Enfurvitide"
+    },
+    {
+      "synonyms": [],
+      "name": "Enfuvirtide"
+    },
+    {
+      "synonyms": [],
+      "name": "Enoxacin"
+    },
+    {
+      "synonyms": [],
+      "name": "Entecavir"
+    },
+    {
+      "synonyms": [
+        "ETP"
+      ],
+      "name": "Ertapenem"
+    },
+    {
+      "synonyms": [
+        "ERY"
+      ],
+      "name": "Erythromycin"
+    },
+    {
+      "synonyms": [],
+      "name": "Ethambutol"
+    },
+    {
+      "synonyms": [],
+      "name": "Ethionamide"
+    },
+    {
+      "synonyms": [],
+      "name": "Etravirine"
+    },
+    {
+      "synonyms": [],
+      "name": "FOSCAVIR"
+    },
+    {
+      "synonyms": [],
+      "name": "FUCIDIN"
+    },
+    {
+      "synonyms": [],
+      "name": "FUNGIZONE"
+    },
+    {
+      "synonyms": [],
+      "name": "Famciclovir"
+    },
+    {
+      "synonyms": [],
+      "name": "Fansidar"
+    },
+    {
+      "synonyms": [],
+      "name": "Fidaxomicin"
+    },
+    {
+      "synonyms": [
+        "FLU"
+      ],
+      "name": "Flucloxacillin"
+    },
+    {
+      "synonyms": [],
+      "name": "Fluconazole"
+    },
+    {
+      "synonyms": [],
+      "name": "Flucytosine"
+    },
+    {
+      "synonyms": [],
+      "name": "Fosamprenavir"
+    },
+    {
+      "synonyms": [],
+      "name": "Foscarnet"
+    },
+    {
+      "synonyms": [],
+      "name": "Fosfomycin"
+    },
+    {
+      "synonyms": [],
+      "name": "Framycetin"
+    },
+    {
+      "synonyms": [
+        "Fucidate"
+      ],
+      "name": "Fusidate"
+    },
+    {
+      "synonyms": [],
+      "name": "Fusidic"
+    },
+    {
+      "synonyms": [],
+      "name": "Ganciclovir"
+    },
+    {
+      "synonyms": [
+        "CN"
+      ],
+      "name": "Gentamicin"
+    },
+    {
+      "synonyms": [],
+      "name": "Grepafloxacin"
+    },
+    {
+      "synonyms": [],
+      "name": "Griseofulvin"
+    },
+    {
+      "synonyms": [],
+      "name": "HEPSERA"
+    },
+    {
+      "synonyms": [],
+      "name": "Halofantrine"
+    },
+    {
+      "synonyms": [],
+      "name": "Human"
+    },
+    {
+      "synonyms": [
+        "IMI"
+      ],
+      "name": "Imipenem"
+    },
+    {
+      "synonyms": [],
+      "name": "Indinavir"
+    },
+    {
+      "synonyms": [],
+      "name": "Inosine"
+    },
+    {
+      "synonyms": [
+        "INH"
+      ],
+      "name": "Isoniazid"
+    },
+    {
+      "synonyms": [],
+      "name": "Itraconazole"
+    },
+    {
+      "synonyms": [],
+      "name": "Ivermectin"
+    },
+    {
+      "synonyms": [],
+      "name": "KIVEXA"
+    },
+    {
+      "synonyms": [],
+      "name": "Kaletra"
+    },
+    {
+      "synonyms": [],
+      "name": "Kanamycin"
+    },
+    {
+      "synonyms": [],
+      "name": "Ketoconazole"
+    },
+    {
+      "synonyms": [],
+      "name": "Kivexxa"
+    },
+    {
+      "synonyms": [],
+      "name": "Lamivudine"
+    },
+    {
+      "synonyms": [],
+      "name": "Lansoprazole"
+    },
+    {
+      "synonyms": [],
+      "name": "Latamoxef"
+    },
+    {
+      "synonyms": [],
+      "name": "Ledipasvir"
+    },
+    {
+      "synonyms": [],
+      "name": "Levamisole"
+    },
+    {
+      "synonyms": [],
+      "name": "Levofloxacin"
+    },
+    {
+      "synonyms": [],
+      "name": "Lincomycin"
+    },
+    {
+      "synonyms": [
+        "LZD",
+        "Zyvox"
+      ],
+      "name": "Linezolid"
+    },
+    {
+      "synonyms": [],
+      "name": "Lopinavir"
+    },
+    {
+      "synonyms": [],
+      "name": "Lumefantrine"
+    },
+    {
+      "synonyms": [],
+      "name": "Lymecycline"
+    },
+    {
+      "synonyms": [],
+      "name": "Malarone"
+    },
+    {
+      "synonyms": [],
+      "name": "Maraviroc"
+    },
+    {
+      "synonyms": [],
+      "name": "Mebendazole"
+    },
+    {
+      "synonyms": [],
+      "name": "Mecillinam"
+    },
+    {
+      "synonyms": [
+        "Lariam"
+      ],
+      "name": "Mefloquine"
+    },
+    {
+      "synonyms": [],
+      "name": "Mepacrine"
+    },
+    {
+      "synonyms": [
+        "MEM"
+      ],
+      "name": "Meropenem"
+    },
+    {
+      "synonyms": [],
+      "name": "Metacycline"
+    },
+    {
+      "synonyms": [],
+      "name": "Methenamine"
+    },
+    {
+      "synonyms": [],
+      "name": "Meticillin"
+    },
+    {
+      "synonyms": [
+        "MTZ"
+      ],
+      "name": "Metronidazole"
+    },
+    {
+      "synonyms": [],
+      "name": "Mezlocillin"
+    },
+    {
+      "synonyms": [],
+      "name": "Micafungin"
+    },
+    {
+      "synonyms": [],
+      "name": "Miconazole"
+    },
+    {
+      "synonyms": [],
+      "name": "Miltefosine"
+    },
+    {
+      "synonyms": [],
+      "name": "Minocycline"
+    },
+    {
+      "synonyms": [],
+      "name": "Moxifloxacin"
+    },
+    {
+      "synonyms": [],
+      "name": "Mupirocin"
+    },
+    {
+      "synonyms": [
+        "NO KNOWN ANTIMICROBIAL ALLERGIES"
+      ],
+      "name": "NKDA"
+    },
+    {
+      "synonyms": [],
+      "name": "Nalidixic"
+    },
+    {
+      "synonyms": [],
+      "name": "Nelfinavir"
+    },
+    {
+      "synonyms": [],
+      "name": "Neomycin"
+    },
+    {
+      "synonyms": [],
+      "name": "Netilmicin"
+    },
+    {
+      "synonyms": [],
+      "name": "Nevirapine"
+    },
+    {
+      "synonyms": [],
+      "name": "Niclosamide"
+    },
+    {
+      "synonyms": [],
+      "name": "Nifurtimox"
+    },
+    {
+      "synonyms": [],
+      "name": "Nimorazole"
+    },
+    {
+      "synonyms": [],
+      "name": "Nitazoxanide"
+    },
+    {
+      "synonyms": [
+        "NFU"
+      ],
+      "name": "Nitrofurantoin"
+    },
+    {
+      "synonyms": [],
+      "name": "Norfloxacin"
+    },
+    {
+      "synonyms": [],
+      "name": "Noxythiolin"
+    },
+    {
+      "synonyms": [],
+      "name": "Nystatin"
+    },
+    {
+      "synonyms": [],
+      "name": "Ofloxacin"
+    },
+    {
+      "synonyms": [],
+      "name": "Ombitasvir"
+    },
+    {
+      "synonyms": [],
+      "name": "Oseltamivir"
+    },
+    {
+      "synonyms": [],
+      "name": "Oxamniquine"
+    },
+    {
+      "synonyms": [],
+      "name": "Oxytetracycline"
+    },
+    {
+      "synonyms": [],
+      "name": "Palivizumab"
+    },
+    {
+      "synonyms": [],
+      "name": "Para-Aminosalicylic"
+    },
+    {
+      "synonyms": [],
+      "name": "Paromomycin"
+    },
+    {
+      "synonyms": [],
+      "name": "Peg-Interferon"
+    },
+    {
+      "synonyms": [
+        "PEN"
+      ],
+      "name": "Penicillin"
+    },
+    {
+      "synonyms": [],
+      "name": "Penicillin V"
+    },
+    {
+      "synonyms": [],
+      "name": "Pentamidine"
+    },
+    {
+      "synonyms": [],
+      "name": "Phenazopyridine"
+    },
+    {
+      "synonyms": [],
+      "name": "Phenethicillin"
+    },
+    {
+      "synonyms": [],
+      "name": "Phenoxymethylpenicillin"
+    },
+    {
+      "synonyms": [],
+      "name": "Phthalylsulfathiazole"
+    },
+    {
+      "synonyms": [],
+      "name": "Piperacillin"
+    },
+    {
+      "synonyms": [
+        "Tazocin",
+        "TZP"
+      ],
+      "name": "Piperacillin Tazobactam"
+    },
+    {
+      "synonyms": [],
+      "name": "Piperaquine"
+    },
+    {
+      "synonyms": [],
+      "name": "Piperazine"
+    },
+    {
+      "synonyms": [],
+      "name": "Pivampicillin"
+    },
+    {
+      "synonyms": [],
+      "name": "Pivmecillinam"
+    },
+    {
+      "synonyms": [],
+      "name": "Polymyxin"
+    },
+    {
+      "synonyms": [],
+      "name": "Posaconazole"
+    },
+    {
+      "synonyms": [],
+      "name": "Praziquantel"
+    },
+    {
+      "synonyms": [],
+      "name": "Prednisolone"
+    },
+    {
+      "synonyms": [],
+      "name": "Primaquine"
+    },
+    {
+      "synonyms": [],
+      "name": "Pristinamycin"
+    },
+    {
+      "synonyms": [],
+      "name": "Procaine"
+    },
+    {
+      "synonyms": [],
+      "name": "Procaine Benzylpenicillin"
+    },
+    {
+      "synonyms": [],
+      "name": "Proguanil"
+    },
+    {
+      "synonyms": [],
+      "name": "Protionamide"
+    },
+    {
+      "synonyms": [],
+      "name": "Pyrantel"
+    },
+    {
+      "synonyms": [],
+      "name": "Pyrazinamide"
+    },
+    {
+      "synonyms": [],
+      "name": "Pyrimethamine"
+    },
+    {
+      "synonyms": [],
+      "name": "Quinine"
+    },
+    {
+      "synonyms": [],
+      "name": "Quinupristin"
+    },
+    {
+      "synonyms": [],
+      "name": "RIFATER"
+    },
+    {
+      "synonyms": [],
+      "name": "Raltegravir"
+    },
+    {
+      "synonyms": [
+        "Co-artem",
+        "Artemether lumefantrine"
+      ],
+      "name": "Riamet"
+    },
+    {
+      "synonyms": [],
+      "name": "Ribavarin"
+    },
+    {
+      "synonyms": [],
+      "name": "Ribavirin"
+    },
+    {
+      "synonyms": [],
+      "name": "Rifabutin"
+    },
+    {
+      "synonyms": [
+        "RIF"
+      ],
+      "name": "Rifampicin"
+    },
+    {
+      "synonyms": [],
+      "name": "Rifaximin"
+    },
+    {
+      "synonyms": [],
+      "name": "Rifinah"
+    },
+    {
+      "synonyms": [],
+      "name": "Rifinah 150"
+    },
+    {
+      "synonyms": [],
+      "name": "Rifinah 300"
+    },
+    {
+      "synonyms": [],
+      "name": "Rilpivirine"
+    },
+    {
+      "synonyms": [],
+      "name": "Ritonavir"
+    },
+    {
+      "synonyms": [],
+      "name": "Rosoxacin"
+    },
+    {
+      "synonyms": [],
+      "name": "SYNERCID"
+    },
+    {
+      "synonyms": [],
+      "name": "Saquinavir"
+    },
+    {
+      "synonyms": [],
+      "name": "Simeprevir"
+    },
+    {
+      "synonyms": [],
+      "name": "Sodium"
+    },
+    {
+      "synonyms": [],
+      "name": "Sodium stibogluconate"
+    },
+    {
+      "synonyms": [],
+      "name": "Sofosbuvir"
+    },
+    {
+      "synonyms": [],
+      "name": "Sparfloxacin"
+    },
+    {
+      "synonyms": [],
+      "name": "Spectinomycin"
+    },
+    {
+      "synonyms": [],
+      "name": "Spiramycin"
+    },
+    {
+      "synonyms": [],
+      "name": "Stavudine"
+    },
+    {
+      "synonyms": [],
+      "name": "Streptomycin"
+    },
+    {
+      "synonyms": [],
+      "name": "Sulfacarbamide"
+    },
+    {
+      "synonyms": [],
+      "name": "Sulfadiazine"
+    },
+    {
+      "synonyms": [],
+      "name": "Sulfadimethoxine"
+    },
+    {
+      "synonyms": [],
+      "name": "Sulfadimidine"
+    },
+    {
+      "synonyms": [],
+      "name": "Sulfadoxine"
+    },
+    {
+      "synonyms": [],
+      "name": "Sulfafurazole"
+    },
+    {
+      "synonyms": [],
+      "name": "Sulfaguanidine"
+    },
+    {
+      "synonyms": [],
+      "name": "Sulfamethoxazole"
+    },
+    {
+      "synonyms": [],
+      "name": "Sulfamethoxypyridazine"
+    },
+    {
+      "synonyms": [],
+      "name": "Sulfametopyrazine"
+    },
+    {
+      "synonyms": [],
+      "name": "Sultamicillin"
+    },
+    {
+      "synonyms": [],
+      "name": "Talampicillin"
+    },
+    {
+      "synonyms": [],
+      "name": "Tedizolid"
+    },
+    {
+      "synonyms": [],
+      "name": "Teicoplanin"
+    },
+    {
+      "synonyms": [],
+      "name": "Telaprevir"
+    },
+    {
+      "synonyms": [],
+      "name": "Telavancin"
+    },
+    {
+      "synonyms": [],
+      "name": "Telbivudine"
+    },
+    {
+      "synonyms": [],
+      "name": "Telithromycin"
+    },
+    {
+      "synonyms": [],
+      "name": "Temafloxacin"
+    },
+    {
+      "synonyms": [],
+      "name": "Temocillin"
+    },
+    {
+      "synonyms": [],
+      "name": "Tenofovir"
+    },
+    {
+      "synonyms": [],
+      "name": "Terbinafine"
+    },
+    {
+      "synonyms": [],
+      "name": "Tetracycline"
+    },
+    {
+      "synonyms": [],
+      "name": "Tiabendazole"
+    },
+    {
+      "synonyms": [],
+      "name": "Ticarcillin"
+    },
+    {
+      "synonyms": [],
+      "name": "Tigecycline"
+    },
+    {
+      "synonyms": [],
+      "name": "Tinidazole"
+    },
+    {
+      "synonyms": [],
+      "name": "Tipranavir"
+    },
+    {
+      "synonyms": [],
+      "name": "Tobramycin"
+    },
+    {
+      "synonyms": [],
+      "name": "Triclabendazole"
+    },
+    {
+      "synonyms": [
+        "TRIM"
+      ],
+      "name": "Trimethoprim"
+    },
+    {
+      "synonyms": [],
+      "name": "Trimetrexate"
+    },
+    {
+      "synonyms": [],
+      "name": "Trizivir"
+    },
+    {
+      "synonyms": [],
+      "name": "Truvada"
+    },
+    {
+      "synonyms": [],
+      "name": "Valaciclovir"
+    },
+    {
+      "synonyms": [],
+      "name": "Valganciclovir"
+    },
+    {
+      "synonyms": [],
+      "name": "Vancomycin"
+    },
+    {
+      "synonyms": [],
+      "name": "Vidarabine"
+    },
+    {
+      "synonyms": [],
+      "name": "Voriconazole"
+    },
+    {
+      "synonyms": [],
+      "name": "Zalcitabine"
+    },
+    {
+      "synonyms": [],
+      "name": "Zanamavir"
+    },
+    {
+      "synonyms": [],
+      "name": "Zanamivir"
+    },
+    {
+      "synonyms": [],
+      "name": "Zidovudine"
+    }
+  ]
+}

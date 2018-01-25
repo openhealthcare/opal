@@ -127,24 +127,9 @@ also allowing synonymous terms, and a free text override. That means that we can
 we record high quality coded data, while allowing users an easy way to enter unusual edge
 cases.
 
-You'll need to import the data for a terminology before you can start to take advantage of that.
-For now, let's use the reference data from elCID (An Opal application maintained by Open Health Care):
+Opal has a referencedata package which is installed by default for new applications.
 
-```sh
-wget https://raw.githubusercontent.com/openhealthcare/elcid/master/data/lookuplists/lookuplists.json -P mynewapp/data/lookuplists
-```
-
-<blockquote><small>
-By convention, we store data in the <code>./data/lookuplists</code> directory of our project.
-</small></blockquote>
-
-Now let's import the data:
-
-```sh
-python manage.py load_lookup_lists
-```
-
-Now refresh your application and try adding a new diagnosis to your patient. As you start to type in
+To see them in action, try adding a new diagnosis to your patient. As you start to type in
 the condition field, you'll see that the conditions we just imported appear as suggestions:
 
 <img src="/img/tutorial-conditions.png" style="margin: 12px auto; border: 1px solid black;"/>
