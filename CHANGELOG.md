@@ -4,6 +4,11 @@ This is a major release with breaking chnges from upstream dependencies.
 You are almost certain to require changes to your application. Please see
 the upgrade guide for further details.
 
+#### Referencedata in new applications
+
+Opal now includes core lookuplist data in an `opal.core.referencedata` plugin
+which is installed and loaded by default by the `startproject` scaffolding.
+
 #### Deletion cascade behaviour
 
 Opal 0.10 changes several behaviours related to cascading deletions which, despite
@@ -39,6 +44,12 @@ token when one is set on the model. Previously it would raise `APIError`.
 
 The JSON API will now return a more specific message in the response boday, explaining
 that the problem is a missing consistency token.
+
+#### dump_lookup_lists --many-files
+
+Adds the `--many-files` option to the `dump_lookup_lists` command which will write
+each installed lookup list to a separate file in the `./data/lookuplists` directory
+of the application.
 
 #### Template removals
 

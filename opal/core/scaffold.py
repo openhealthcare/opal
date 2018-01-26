@@ -120,6 +120,7 @@ def start_project(name, USERLAND_HERE):
     8. Run Django's migrations
     9. Create a superuser
     10. Initialise our git repo
+    11. Load referencedata shipped with Opal
     """
 
     project_dir = USERLAND_HERE/name
@@ -137,7 +138,7 @@ def start_project(name, USERLAND_HERE):
     if not project_dir:
         project_dir.mkdir()
 
-    # Copy across the scaffold
+    # 3. Copy across the scaffold
     with SCAFFOLD:
         for p in SCAFFOLD.ls():
             target = project_dir/p[-1]
@@ -147,18 +148,18 @@ def start_project(name, USERLAND_HERE):
     gitignore = project_dir/'gitignore'
     gitignore.mv(project_dir/'.gitignore')
 
-    # Interpolate the project data
+    # 4. Interpolate the project data
     interpolate_dir(project_dir, name=name, secret_key=get_random_secret_key(),
                     version=opal.__version__)
 
     app_dir = project_dir/name
 
-    # Django Startproject creates some things - let's kill them &
+    # 5. Django Startproject creates some things - let's kill them &
     # replace with our own things.
     nix.rm(app_dir, recursive=True, force=True)
     nix.mv(project_dir/'app', app_dir)
 
-    #  Create extra directories we need
+    #  7. Create extra directories we need
     js = app_dir/'static/js/{0}'.format(name)
     css = app_dir/'static/css'
     js.mkdir()
@@ -181,7 +182,7 @@ def start_project(name, USERLAND_HERE):
     This means that we can run collectstatic OK.
     """
 
-    # Create lookup lists
+    # 2. Create lookup lists
     create_lookuplists(app_dir)
 
     # We have this here because it uses name from above.
@@ -216,8 +217,11 @@ def start_project(name, USERLAND_HERE):
     profile.force_password_change = False
     profile.save()
 
-    # 11. Initialise git repo
+    # 10. Initialise git repo
     os.system('cd {0}; git init'.format(name))
+
+    # 11. Load referencedata shipped with Opal
+    manage('load_lookup_lists')
 
 
 def _strip_non_user_fields(schema):

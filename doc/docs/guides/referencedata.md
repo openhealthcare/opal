@@ -1,9 +1,15 @@
-## Reference data
+# Reference data
 
 Lookup Lists allow us to create or reference canonical lists of available terminology as a
 foreign key, while also allowing synonymous terms, and a free text override.
 
-### Adding a lookup list
+## Core referencedata
+
+By default, Opal will install some lookuplists for common things such as countries, drugs,
+conditions, and symptoms amongst others. The data for these is found in the
+`opal.core.referencedata` package.
+
+## Adding a lookup list
 
 Lookup lists are subclasses of `opal.core.lookuplists.LookupList`. Typically, a specific named
 lookup list will not need to do anything other than define a class that inherits from the base
@@ -37,7 +43,7 @@ $ python manage.py migrate yourapp
 
 The lookup list will automatically be added to the admin, where you can manually add entries.
 
-### Reference data JSON API
+## Reference data JSON API
 
 Reference data is available over the Opal JSON API.
 
@@ -47,7 +53,7 @@ individual lookuplists by name - for example all diagnoses from `/api/v0.1/refer
 The reference data API also loads all synonyms in a flat list - the conversion of synonyms to their
 canonical form is handled by the save mechanism of subrecords using `ForeignKeyOrFreeText` fields.
 
-### Working with reference data on the front end
+## Working with reference data on the front end
 
 The Angular service `Referencedata` can be used to fetch all lookuplists at once - for instance
 loaded in the Angular routing for a controller in your application
@@ -63,7 +69,7 @@ when('/my/route', {
 
 Lookuplists will then be available either as properties of the `referencedata` object.
 
-### Using referencedata in forms
+## Using referencedata in forms
 
 The Opal [form templatetag library](../reference/form_templatetags.md) allow us to easily incorporate
 referencedata into the forms we build, either by detecting their use automatically when we have
@@ -75,11 +81,12 @@ referencedata into the forms we build, either by detecting their use automatical
 {% select label="List of Conditions" lookuplist="referencedata.diagnosis" %}
 ```
 
-### Providing data for lookuplists
+## Providing data for lookuplists
 
 Reference data can be provided at application or plugin level in a file named `lookuplists.json` found in the
 `{{ app_or_plugin }}/data/lookuplists` directory. This data should be in the Opal JSON format. The name value
-of each lookuplist should be the return value of that lookuplist's `get_api_name()` method (otherwise they will fail to load), these can be found via [Schemas](../reference/schemas.md)
+of each lookuplist should be the return value of that lookuplist's `get_api_name()` method (otherwise they
+will fail to load), these can be found via [Schemas](../reference/schemas.md)
 
 ```JSON
 {
@@ -99,21 +106,25 @@ Once this data is stored in the lookuplists file, we can batch load it into our 
 python manage.py load_lookup_lists
 ```
 
-### Management commands
+## Management commands
 
 Opal ships with some management commands for importing and exporting lookup lists
 
-#### dump_lookup_lists
+### dump_lookup_lists
 
 Prints all loockuplists as JSON to stdout.
 
-#### load_lookup_lists
+When the `--many-files` argument is passd, the command will write each installed
+lookup list to a separate file in the `./data/lookuplists` directory of the
+application.
 
-Loads lookup lists from all plugins/apps in the Opal JSON format. The lookup lists are expected to be in
-`{{ app }}/data/lookuplists/lookuplists.json`
+### load_lookup_lists
+
+Loads lookup lists from all plugins/apps in the Opal JSON format. The lookup
+lists are expected to be in `{{ app }}/data/lookuplists/lookuplists.json`
 
 Optionally you can pass in an explicit filename with the `-f` argument.
 
-#### delete_all_lookup_lists
+### delete_all_lookup_lists
 
 Deletes all currently lookuplist values and related synonyms

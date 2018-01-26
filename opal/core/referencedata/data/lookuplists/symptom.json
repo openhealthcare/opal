@@ -1,0 +1,370 @@
+{
+  "symptom": [
+    {
+      "synonyms": [
+        "Abdo Pain"
+      ], 
+      "name": "Abdominal Pain"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Abdominal Swelling"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Abnormal Investigation"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Abnormal blood tests"
+    }, 
+    {
+      "synonyms": [
+        "Parasthesia"
+      ], 
+      "name": "Altered Sensation"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Anxiety"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Arm Pain"
+    }, 
+    {
+      "synonyms": [
+        "Joint Pain"
+      ], 
+      "name": "Arthalgia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Arthritis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Back Pain"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Bloody Diarrhoea"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Change in Behaviour"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Chest Pain"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Colitis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Collapse"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Confusion"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Constipation"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Coryzal Symptoms"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Cough"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Deliberate self-harm"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Diarrhoea"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Difficulty passing urine"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Dyspareunia"
+    }, 
+    {
+      "synonyms": [
+        "Difficulty Swallowing"
+      ], 
+      "name": "Dysphagia"
+    }, 
+    {
+      "synonyms": [
+        "Slurred Speech"
+      ], 
+      "name": "Dysphasia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Dysuria"
+    }, 
+    {
+      "synonyms": [
+        "Otalgia"
+      ], 
+      "name": "Ear pain"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Epidemiological exposure"
+    }, 
+    {
+      "synonyms": [
+        "Nose Bleed"
+      ], 
+      "name": "Epistaxis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Erythema"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Facial Pain"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Fall"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Fever"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Flank Pain"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Gait abnormality"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Genital discharge"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Genital ulceration"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Haematemesis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Haematuria"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Haemoptysis"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Head injury"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Headache"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hearing loss"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hoarseness"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Insect bite"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Involuntary movements"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Jaundice"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Joint Swelling"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Leg Pain"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Limb Swelling"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Limb weakness"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Loin Pain"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Malaena"
+    }, 
+    {
+      "synonyms": [
+        "Fatigue", 
+        "Lethargy", 
+        "Tiredness"
+      ], 
+      "name": "Malaise"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Memory Loss"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Mouth Ulcer"
+    }, 
+    {
+      "synonyms": [
+        "Muscle Pain"
+      ], 
+      "name": "Myalgia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Nausea"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Neck Stiffness"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Neck pain"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Night Sweats"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Nocturia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Overdose"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Palpitations"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Peripheral Odema"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Photophopbia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Polydypsia"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Polyuria"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pre-Syncope"
+    }, 
+    {
+      "synonyms": [
+        "Itching"
+      ], 
+      "name": "Pruritus"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Rash"
+    }, 
+    {
+      "synonyms": [
+        "PR Bleeding"
+      ], 
+      "name": "Rectal Bleeding"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Reduced Conciousness"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Rigors"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Seizure"
+    }, 
+    {
+      "synonyms": [
+        "Breathlessness"
+      ], 
+      "name": "Shortness of Breath"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Sore throat"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Stridor"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Testicular Pain"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Unsteadiness"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Urinary Frequency"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Visual disturbance"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Vomiting"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Weakness"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Weight Loss"
+    }
+  ]
+}
