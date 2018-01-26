@@ -81,6 +81,21 @@ class ForeignKeyOrFreeText(property):
         )
         ft_field.contribute_to_class(cls, self.ft_field_name)
 
+        # when we delete an instance in a lookup list, we want the
+        # value to be retained, even if though we've deleted the instance
+
+        # for example:
+        # if we have a condition, name='chest infection'
+        # we have diagnosis with fkft -> Condition
+        # then we have a patient with diagnosis.condition = 'Cough'
+        # at the db level this looks like
+        # then we have a patient who has
+        # diagnosis.condition = 'cough'
+        # ie diagnosis.condition_fk = Condition(name='cough')
+        # then we delete Condition(name='cough')
+        # we go through and change all diagnosis so that
+        # diagnosis.condition = 'cough' still
+        # but it wil be diagnosis.condition_ft = 'cough'
         def on_delete_cb(sender, instance, *args, **kwargs):
             if not cls._meta.abstract:
                 cls.objects.filter(**{
