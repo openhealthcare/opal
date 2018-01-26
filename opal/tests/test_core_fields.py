@@ -37,6 +37,7 @@ class TestEnum(OpalTestCase):
         )
         self.assertEqual(choices, fields.enum('one', '2', 'III'))
 
+
 class TestForeignKeyOrFreeText(OpalTestCase):
 
     def test_unset_verbose_name(self):
@@ -87,6 +88,54 @@ class TestForeignKeyOrFreeText(OpalTestCase):
         alsation.delete()
 
         alsation_owner = test_models.DogOwner.objects.get()
+
+        self.assertEqual(
+            alsation_owner.dog, "Alsation"
+        )
+
+        self.assertEqual(
+            alsation_owner.dog_ft, "Alsation"
+        )
+
+    def test_delete_with_abstract(self):
+        alsation = test_models.Dog.objects.create(name="Alsation")
+        _, episode = self.new_patient_and_episode_please()
+        alsation_owner = test_models.SpanielOwner.objects.create(episode=episode)
+        alsation_owner.dog = alsation.name
+        alsation_owner.save()
+
+        # sanity checks that we're testing the right thing
+        self.assertEqual(alsation_owner.dog_ft, '')
+        self.assertEqual(alsation_owner.dog_fk.id, alsation.id)
+
+        alsation.delete()
+
+        alsation_owner = test_models.SpanielOwner.objects.get()
+
+        self.assertEqual(
+            alsation_owner.dog, "Alsation"
+        )
+
+        self.assertEqual(
+            alsation_owner.dog_ft, "Alsation"
+        )
+
+    def test_delete_with_proxy(self):
+        alsation = test_models.Dog.objects.create(name="Alsation")
+        _, episode = self.new_patient_and_episode_please()
+        alsation_owner = test_models.CockerSpanielOwner.objects.create(
+            episode=episode
+        )
+        alsation_owner.dog = alsation.name
+        alsation_owner.save()
+
+        # sanity checks that we're testing the right thing
+        self.assertEqual(alsation_owner.dog_ft, '')
+        self.assertEqual(alsation_owner.dog_fk.id, alsation.id)
+
+        alsation.delete()
+
+        alsation_owner = test_models.CockerSpanielOwner.objects.get()
 
         self.assertEqual(
             alsation_owner.dog, "Alsation"
