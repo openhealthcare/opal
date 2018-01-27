@@ -39,7 +39,11 @@ setup(
     url='http://opal.openhealthcare.org.uk/',
     author='Open Health Care UK',
     author_email='hello@openhealthcare.org.uk',
-    scripts=['bin/opal'],
+    entry_points={
+        'console_scripts': [
+            'opal = opal.core.commandline:main'
+        ]
+    },
     install_requires=[
         'ffs>=0.0.8.2',
         'letter==0.4.1',
