@@ -1,16 +1,21 @@
-from opal.core.test import OpalTestCase
+"""
+unittests for opal.core.pathway.steps
+"""
 from django.core.urlresolvers import reverse
+from mock import MagicMock
+
+from opal.core import exceptions
+from opal.core.test import OpalTestCase
 from opal.tests import models as test_models
 
 from opal.core.pathway import Step, HelpTextStep, PagePathway
-from opal.core.pathway.steps import InitializationError
 from opal.core.pathway.tests.pathway_test.pathways import SomeComplicatedStep
 
 
 class StepTestCase(OpalTestCase):
 
     def test_step_cant_be_multiple_without_a_model(self):
-        with self.assertRaises(InitializationError):
+        with self.assertRaises(exceptions.InitializationError):
             Step(multiple=True)
 
     def test_to_dict_model_passed_in(self):
@@ -89,7 +94,7 @@ class StepTestCase(OpalTestCase):
         )
 
     def test_no_display_name(self):
-        with self.assertRaises(InitializationError) as er:
+        with self.assertRaises(exceptions.InitializationError) as er:
             Step(
                 template="some_template.html"
             )
@@ -98,13 +103,20 @@ class StepTestCase(OpalTestCase):
         )
 
     def test_no_template(self):
-        with self.assertRaises(InitializationError) as er:
+        with self.assertRaises(exceptions.InitializationError) as er:
             Step(
                 display_name="no template"
             )
         self.assertEqual(
             str(er.exception), "A step needs either a template or a model"
         )
+
+    def test_model_has_no_form_template(self):
+        mock_model = MagicMock(name='Model')
+        mock_model.get_form_template.return_value = None
+        step = Step(model=mock_model)
+        with self.assertRaises(exceptions.MissingTemplateError):
+            step.get_template()
 
 
 class HelpTextStepTestCase(OpalTestCase):

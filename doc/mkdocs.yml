@@ -21,6 +21,7 @@ pages:
 
       # Data and business logic
       - Data Model: guides/datamodel.md
+      - Episodes: guides/episodes.md
       - Archetypes: guides/archetypes.md
       - Referencedata: guides/referencedata.md
       - Metadata: guides/metadata.md
@@ -72,6 +73,7 @@ pages:
       - Log: reference/loggers.md
       - Fields: reference/core_fields.md
       - Lookuplists: reference/core_lookuplists.md
+      - Discoverable: reference/core_discoverable.md
 
       # Angular Services
       - reference/javascript/patient_service.md

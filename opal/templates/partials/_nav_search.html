@@ -21,7 +21,7 @@
     <form class="navbar-form navbar-right" ng-submit="search()" role="search">
       <div class="form-group nav-bar-search">
         <input
-          {% if AUTOCOMPLETE_SEARCH %}
+          {% if OPAL_AUTOCOMPLETE_SEARCH %}
           ng-model="query.autocompleteSearchTerm"
           typeahead-on-select="selected($item, $model, $label)"
           typeahead-template-url="searchSuggestTemplate.html"

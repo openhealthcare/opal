@@ -27,8 +27,8 @@ Properties available on an OpalApplication:
 
 #### OpalApplication.default_episode_category
 
-The default category is 'Inpatient', but can be overridden in the
-[OpalApplication](opal_application.md) subclass for your implementation.
+The default category is 'Inpatient', but can be overridden in the OpalApplication
+subclass for your implementation.
 
 #### OpalApplication.angular_module_deps
 

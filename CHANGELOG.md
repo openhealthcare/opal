@@ -4,6 +4,11 @@ This is a major release with breaking chnges from upstream dependencies.
 You are almost certain to require changes to your application. Please see
 the upgrade guide for further details.
 
+#### Referencedata in new applications
+
+Opal now includes core lookuplist data in an `opal.core.referencedata` plugin
+which is installed and loaded by default by the `startproject` scaffolding.
+
 #### Deletion cascade behaviour
 
 Opal 0.10 changes several behaviours related to cascading deletions which, despite
@@ -15,10 +20,21 @@ the subrecord.
 
 When you delete a user, it will no longer delete all related episodes and subrecords
 
+#### Episode Category stages
+
+Episode categories now enforce a set of valid `Episode.stage` values.
+`EpisodeCategory` now includes the `.get_stages()` and `.has_stage(stage)` methods,
+while `Episode` has a `set_stage` setter which is used by the JSON API.
+
 #### lookuplists.lookuplists
 
 Adds the utility generator `lookuplists.lookuplists()` which wil yield every lookuplist
 currently available.
+
+#### Discoverable.filter()
+
+Disoverable features now have a `filter` method which allows you to filter features
+with matching attributes.
 
 #### Missing consistency token errors
 
@@ -28,6 +44,12 @@ token when one is set on the model. Previously it would raise `APIError`.
 
 The JSON API will now return a more specific message in the response boday, explaining
 that the problem is a missing consistency token.
+
+#### dump_lookup_lists --many-files
+
+Adds the `--many-files` option to the `dump_lookup_lists` command which will write
+each installed lookup list to a separate file in the `./data/lookuplists` directory
+of the application.
 
 #### Template removals
 
@@ -55,7 +77,16 @@ Psycopg2: 2.5 -> 2.7
 Jinja2: 2.9.6 -> 2.10
 Ffs: 0.0.8.1 -> 0.0.8.2
 
-### Misc Changes
+#### Testing options
+
+Adds a `--failfast` option to the test harness to stop test runs on the first
+failure.
+
+If you are a plugin developer upgrading an existing plugin you will have to
+manually add support for `--failfast` passthrough to your `runtests.py`.
+
+
+#### Misc Changes
 
 Removes the undocumented `collapsed_multisave` tag from the `pathways` templatetag
 library.

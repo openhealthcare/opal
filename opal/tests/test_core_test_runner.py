@@ -18,6 +18,7 @@ class RunPyTestsTestCase(OpalTestCase):
         mock_args.userland_here = ffs.Path('.')
         mock_args.coverage = False
         mock_args.test = None
+        mock_args.failfast = False
         test_runner._run_py_tests(mock_args)
         check_call.assert_called_once_with(['python', 'runtests.py'])
 
@@ -28,6 +29,7 @@ class RunPyTestsTestCase(OpalTestCase):
         mock_args.userland_here = ffs.Path('.')
         mock_args.coverage = False
         mock_args.test = None
+        mock_args.failfast = False
         check_call.side_effect = subprocess.CalledProcessError(None, None)
         test_runner._run_py_tests(mock_args)
         exiter.assert_called_once_with(1)
@@ -38,6 +40,7 @@ class RunPyTestsTestCase(OpalTestCase):
         mock_args.userland_here = ffs.Path('.')
         mock_args.coverage = False
         mock_args.test = 'opal.tests.foo'
+        mock_args.failfast = False
         test_runner._run_py_tests(mock_args)
         check_call.assert_called_once_with(['python', 'runtests.py', 'opal.tests.foo'])
 
@@ -47,6 +50,7 @@ class RunPyTestsTestCase(OpalTestCase):
         mock_args.userland_here = ffs.Path('.')
         mock_args.coverage = True
         mock_args.test = None
+        mock_args.failfast = False
         test_runner._run_py_tests(mock_args)
         calls = [
             call(['coverage', 'run', 'runtests.py']),
@@ -62,6 +66,7 @@ class RunPyTestsTestCase(OpalTestCase):
         mock_args.userland_here = ffs.Path('.')
         mock_args.coverage = True
         mock_args.test = None
+        mock_args.failfast = False
         check_call.side_effect = [None, subprocess.CalledProcessError(None, None)]
         test_runner._run_py_tests(mock_args)
         self.assertEqual(2, check_call.call_count)
@@ -73,6 +78,7 @@ class RunPyTestsTestCase(OpalTestCase):
         mock_args = MagicMock(name="args")
         mock_args.userland_here = ffs.Path('.')
         mock_args.coverage = True
+        mock_args.failfast = False
         mock_args.test = None
 
         has_file.side_effect = lambda a, b: b == 'manage.py'
@@ -91,12 +97,23 @@ class RunPyTestsTestCase(OpalTestCase):
         mock_args = MagicMock(name="args")
         mock_args.userland_here = ffs.Path('.')
         mock_args.coverage = False
+        mock_args.failfast = False
         mock_args.test = 'foo.tests.bar'
 
         has_file.side_effect = lambda a, b: b == 'manage.py'
 
         test_runner._run_py_tests(mock_args)
         check_call.assert_called_with(['python', 'manage.py', 'test', 'foo.tests.bar'])
+
+    @patch('subprocess.check_call')
+    def test_run_tests_failfast(self, check_call):
+        mock_args = MagicMock(name='args')
+        mock_args.userland_here = ffs.Path('.')
+        mock_args.coverage = False
+        mock_args.test = False
+        mock_args.failfast = True
+        test_runner._run_py_tests(mock_args)
+        check_call.assert_called_with(['python', 'runtests.py', '--failfast'])
 
     @patch.object(test_runner, '_has_file')
     @patch.object(test_runner, 'write')
@@ -106,6 +123,7 @@ class RunPyTestsTestCase(OpalTestCase):
         mock_args.userland_here = ffs.Path('.')
         mock_args.coverage = False
         mock_args.test = None
+        mock_args.failfast = False
 
         has_file.return_value = False
 
@@ -128,6 +146,7 @@ class RunJSTestsTestCase(OpalTestCase):
         mock_args.userland_here = ffs.Path('.')
         mock_args.coverage = False
         mock_args.test = None
+        mock_args.failfast = False
         test_runner.TRAVIS = False
         test_runner._run_js_tests(mock_args)
         self.assertEqual(
@@ -141,6 +160,7 @@ class RunJSTestsTestCase(OpalTestCase):
         mock_args.userland_here = ffs.Path('.')
         mock_args.coverage = False
         mock_args.test = None
+        mock_args.failfast = False
         test_runner.TRAVIS = True
         test_runner._run_js_tests(mock_args)
         self.assertEqual(
@@ -156,6 +176,26 @@ class RunJSTestsTestCase(OpalTestCase):
 
         self.assertTrue(
             isinstance(check_call.call_args[1]["env"]["OPAL_LOCATION"], str)
+        )
+
+    @patch.object(test_runner.subprocess, 'check_call')
+    def test_run_tests_failfast(self, check_call):
+        mock_args = MagicMock(name="args")
+        mock_args.userland_here = ffs.Path('.')
+        mock_args.coverage = False
+        mock_args.test = None
+        mock_args.failfast = True
+        test_runner.TRAVIS = False
+        test_runner._run_js_tests(mock_args)
+        self.assertEqual(
+            [
+                'karma',
+                'start',
+                'config/karma.conf.js',
+                '--single-run',
+                '--failfast'
+            ],
+            check_call.call_args[0][0]
         )
 
     @patch.object(test_runner.subprocess, 'check_call')

@@ -821,6 +821,41 @@ class EpisodeTestCase(OpalTestCase):
         self.assertEqual(['micro'], tags)
         self.assertEqual(1, len(tags))
 
+    def test_can_set_stage(self):
+        self.mock_request.data = {
+            "tagging"      : { "micro":True },
+            "start"        : "14/01/2015",
+            "stage"        : "Inpatient",
+            "demographics" : {
+                "hospital_number": "9999000999",
+            },
+            "location"     : {
+                "ward": "West",
+                "bed" : "7"
+            }
+        }
+        response = api.EpisodeViewSet().create(self.mock_request)
+        patient = models.Patient.objects.get(
+            demographics__hospital_number="9999000999")
+        episode = patient.episode_set.get()
+        self.assertEqual('Inpatient', episode.stage)
+
+    def test_cant_set_invalid_stage(self):
+        self.mock_request.data = {
+            "tagging"      : { "micro":True },
+            "start"        : "14/01/2015",
+            "stage"        : "Whoops",
+            "demographics" : {
+                "hospital_number": "9999000999",
+            },
+            "location"     : {
+                "ward": "West",
+                "bed" : "7"
+            }
+        }
+        with self.assertRaises(ValueError):
+            response = api.EpisodeViewSet().create(self.mock_request)
+
     def test_update(self):
         patient, episode = self.new_patient_and_episode_please()
         self.assertEqual(None, episode.start)

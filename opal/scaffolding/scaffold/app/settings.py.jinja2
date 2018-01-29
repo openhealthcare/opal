@@ -174,6 +174,7 @@ INSTALLED_APPS = (
     'opal',
     'opal.core.search',
     'opal.core.pathway',
+    'opal.core.referencedata',
     '{{ name }}',
     'django.contrib.admin',
 )
@@ -254,6 +255,9 @@ OPAL_LOG_OUT_DURATION = OPAL_LOG_OUT_MINUTES*60*1000
 
 # Uncomment this if you want to implement custom dynamic flows.
 # OPAL_FLOW_SERVICE = 'AppFlow'
+
+# Enable/Disable autocomplete from navbar search
+OPAL_AUTOCOMPLETE_SEARCH = False
 
 INTEGRATING = False
 

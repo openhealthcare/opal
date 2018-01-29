@@ -252,6 +252,10 @@ def parse_args(args):
         '-c', '--coverage', action='store_true',
         help='Generate a test coverage report'
     )
+    parser_test.add_argument(
+        '--failfast', action='store_true',
+        help="Stop the test run on the first failing test"
+    )
     parser_test.set_defaults(func=test)
 
     parser_checkout = subparsers.add_parser("checkout")
