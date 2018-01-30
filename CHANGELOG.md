@@ -91,6 +91,9 @@ manually add support for `--failfast` passthrough to your `runtests.py`.
 Removes the undocumented `collapsed_multisave` tag from the `pathways` templatetag
 library.
 
+The ReferralRoute form (referral_route_form.html) has had its appearance tweaked
+and improved.
+
 ### 0.9.1 (Minor Release)
 
 #### Pathways ContextProcessor
