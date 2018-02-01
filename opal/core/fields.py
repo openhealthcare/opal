@@ -82,7 +82,7 @@ class ForeignKeyOrFreeText(property):
         ft_field.contribute_to_class(cls, self.ft_field_name)
 
         # When we delete an instance in a lookup list, we want the
-        # value to be retained, even though we've deleted the entry 
+        # value to be retained, even though we've deleted the entry
         # in the lookuplist.
         # Re-setting the value converts it to a free text entry of
         # the same value as the original.

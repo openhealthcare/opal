@@ -5,6 +5,7 @@ import inspect
 import os
 import subprocess
 import sys
+from django.core import management
 from django.utils.crypto import get_random_string
 import ffs
 from ffs import nix
@@ -48,18 +49,18 @@ def interpolate_dir(directory, **context):
     return
 
 
-def _set_settings_module(name):
-    os.environ['DJANGO_SETTINGS_MODULE'] = '{0}.settings'.format(name)
-    if '.' not in sys.path:
-        sys.path.append('.')
-    import django
-    django.setup()
-    return
-
-
 def create_lookuplists(root_dir):
     lookuplists_dir = root_dir/'data/lookuplists'
     lookuplists_dir.mkdir()
+
+
+def call(cmd, **kwargs):
+    write("Calling: {}".format(' '.join(cmd)))
+    try:
+        subprocess.check_call(cmd, **kwargs)
+    except subprocess.CalledProcessError:
+        write("Failed to run: {}".format(' '.join(cmd)))
+        sys.exit(1)
 
 
 def start_plugin(name, USERLAND):
@@ -100,7 +101,7 @@ def start_plugin(name, USERLAND):
     services = jsdir/'services'
     services.mkdir()
     # 5. Initialize git repo
-    os.system('cd {0}; git init'.format(reponame))
+    call(('git', 'init'), cwd=root, stdout=subprocess.PIPE)
 
     write('Plugin complete at {0}'.format(reponame))
     return
@@ -129,14 +130,12 @@ def start_project(name, USERLAND_HERE):
         write("Please remove it or choose a new name.\n\n")
         sys.exit(1)
 
-    # 1. Run Django Startproject
-    write("Creating project dir at {0}".format(project_dir))
-    os.system('django-admin.py startproject {0}'.format(name))
-
     write("Bootstrapping your Opal project...")
 
-    if not project_dir:
-        project_dir.mkdir()
+    # 1. Run Django Startproject
+    write("Creating project dir at {0}".format(project_dir))
+    project_dir.mkdir()
+    management.call_command('startproject', name, project_dir)
 
     # 3. Copy across the scaffold
     with SCAFFOLD:
@@ -187,15 +186,10 @@ def start_project(name, USERLAND_HERE):
 
     # We have this here because it uses name from above.
     def manage(command):
-        args = ['python', '{0}/manage.py'.format(name)]
+        args = ['python', os.path.join(name, 'manage.py')]
         args += command.split()
         args.append('--traceback')
-
-        try:
-            subprocess.check_call(args)
-        except subprocess.CalledProcessError:
-            sys.exit(1)
-        return
+        call(args)
 
     # 8. Run Django's migrations
     write('Creating Database')
@@ -203,22 +197,11 @@ def start_project(name, USERLAND_HERE):
     manage('migrate')
 
     # 9. Create a superuser
-    sys.path.append(os.path.join(os.path.abspath('.'), name))
-    _set_settings_module(name)
-
-    from django.contrib.auth.models import User
-    user = User(username='super')
-    user.set_password('super1')
-    user.is_superuser = True
-    user.is_staff = True
-    user.save()
-    from opal.models import UserProfile
-    profile, _ = UserProfile.objects.get_or_create(user=user)
-    profile.force_password_change = False
-    profile.save()
+    write('Creating superuser')
+    manage('createopalsuperuser')
 
     # 10. Initialise git repo
-    os.system('cd {0}; git init'.format(name))
+    call(('git', 'init'), cwd=project_dir, stdout=subprocess.PIPE)
 
     # 11. Load referencedata shipped with Opal
     manage('load_lookup_lists')

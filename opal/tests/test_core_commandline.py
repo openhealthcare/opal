@@ -158,7 +158,8 @@ class TestTestCase(OpalTestCase):
         with patch.object(commandline.test_runner, 'run_tests') as rt:
             commandline.test(mock_args)
             mock_args_call = rt.call_args[0][0]
-            self.assertTrue(mock_args_call.userland_here.endswith("opal"))
+            self.assertTrue(mock_args_call.userland_here.endswith("opal"),
+                            "Not running tests from root directory")
             self.assertTrue(mock_args_call.opal_location.endswith("opal"))
             rt.assert_called_with(mock_args)
 
