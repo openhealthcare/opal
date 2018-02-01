@@ -1,8 +1,6 @@
 """
 Plugin definition for the {{ name }} Opal plugin
 """
-import os
-
 from opal.core import plugins
 
 from {{ name }}.urls import urlpatterns
@@ -15,9 +13,9 @@ class {{ name.title() }}Plugin(plugins.OpalPlugin):
     javascripts = {
         # Add your javascripts here!
         'opal.{{ name }}': [
-            # os.path.join('js', '{{ name }}', 'app.js'),
-            # os.path.join('js', '{{ name }}', 'controllers', 'larry.js'),
-            # os.path.join('js', '{{ name }}', 'services', 'larry.js'),
+            # 'js/{{ name }}/app.js',
+            # 'js/{{ name }}/controllers/larry.js',
+            # 'js/{{ name }}/services/larry.js',
         ]
     }
 
