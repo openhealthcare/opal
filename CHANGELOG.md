@@ -1,6 +1,6 @@
 ### 0.10.0 (Major Release)
 
-This is a major release with breaking chnges from upstream dependencies.
+This is a major release with breaking changes from upstream dependencies.
 You are almost certain to require changes to your application. Please see
 the upgrade guide for further details.
 
