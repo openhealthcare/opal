@@ -6,3 +6,4 @@ coveralls
 celery==3.1.19
 django-celery==3.1.17
 flake8==3.2.1
+requests==2.18.4

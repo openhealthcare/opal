@@ -76,6 +76,7 @@ in `opal.core.views.
 * Psycopg2: 2.5 -> 2.7
 * Jinja2: 2.9.6 -> 2.10
 * Ffs: 0.0.8.1 -> 0.0.8.2
+* Requests: 2.7.0 -> 2.18.4
 
 #### Testing options
 
