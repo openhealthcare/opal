@@ -21,6 +21,7 @@ you have specified them in for instance, a requirements.txt.
     psycopg==2.7
     ffs==0.0.8.2
     opal==0.10.0
+    requests==2.18.4
 
 
 After re-installing (via for instance `pip install -r requirements.txt`) you will
