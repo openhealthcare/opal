@@ -10,7 +10,7 @@ Tutorial Outline (WIP)
 
 ## Changing logos
 
-We can change the logo and favicon of our application by changing setttings.
+We can change the logo and favicon of our application by changing settings.
 Create a logo and a favicon, place them in `./yourapp/static/img/` and then
 update the following settings:
 
