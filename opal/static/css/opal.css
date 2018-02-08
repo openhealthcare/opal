@@ -466,18 +466,7 @@ i.delete,
     color: white;
 }
 
-.modal .btn,
-.modal select,
-.modal input {
-  font-size: 18px;
-}
-.modal .form-control {
-  height: 44px;
-}
 
-.modal textarea.form-control {
-    height: auto
-}
 
 @media (max-width: 800px){
     .modal-dialog{
@@ -1118,4 +1107,21 @@ hr.bold{
 
 .text-avatar{
     height: 20px;
+}
+
+.checkbox {
+  font-size: 16px;
+}
+
+.form-control {
+  font-size: 18px;
+  height: 44px;
+}
+
+textarea.form-control {
+    height: auto
+}
+
+.btn{
+  font-size: 18px;
 }
