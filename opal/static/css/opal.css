@@ -458,6 +458,12 @@ i.delete,
 .patient-list-group ul li { padding-top: 0px; padding-bottom: 0px; background-color: white; }
 
 
+/* Page pathways */
+.panel-pathway select,
+.panel-pathway input{
+  font-size: 16px;
+}
+
 /*  Modals  */
 
 .modal-header {
@@ -467,17 +473,15 @@ i.delete,
 }
 
 .modal .btn,
-.panel-pathway select,
-.panel-pathway input,
 .modal select,
 .modal input {
   font-size: 18px;
 }
-.panel-pathway .form-control, .modal .form-control {
+.modal .form-control {
   height: 44px;
 }
 
-.panel-pathway textarea.form-control .modal textarea.form-control {
+.modal textarea.form-control {
     height: auto
 }
 
