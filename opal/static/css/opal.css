@@ -466,6 +466,9 @@ i.delete,
     color: white;
 }
 
+.modal .btn{
+  font-size: 18px;
+}
 
 
 @media (max-width: 800px){
@@ -1109,6 +1112,7 @@ hr.bold{
     height: 20px;
 }
 
+
 .checkbox {
   font-size: 16px;
 }
@@ -1120,8 +1124,4 @@ hr.bold{
 
 textarea.form-control {
     height: auto
-}
-
-.btn{
-  font-size: 18px;
 }
