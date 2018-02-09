@@ -72,7 +72,7 @@
     {% endcompress %}
 
 
-    <link rel="shortcut icon" href="{% static 'img/ohc-icon.png' %}">
+    <link rel="shortcut icon" href="{% if OPAL_FAVICON_PATH %}{% static OPAL_FAVICON_PATH %}{% else %}{% static 'img/ohc-icon.png' %}{% endif %}">
 
     <script id="templates/growl/growl.html" type="text/ng-template">
       <div class="growl-container" ng-class="wrapperClasses()">

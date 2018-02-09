@@ -47,7 +47,7 @@ class Command(BaseCommand):
         # then work throught the lookuplists we know about
         for lookuplist in lookuplists.lookuplists():
             path = ffs.Path(os.path.join(
-                application.get_app().directory(),
+                component.directory(),
                 'data',
                 'lookuplists',
                 '{}.json'.format(lookuplist.get_api_name())

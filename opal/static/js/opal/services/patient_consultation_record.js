@@ -1,6 +1,6 @@
 angular.module('opal.services').service('PatientConsultationRecord', function($window){
     return function(item){
-      if(!item.initial){
+      if(!item.initials){
         item.initials = $window.initials;
       }
 

@@ -39,12 +39,16 @@ setup(
     url='http://opal.openhealthcare.org.uk/',
     author='Open Health Care UK',
     author_email='hello@openhealthcare.org.uk',
-    scripts=['bin/opal'],
+    entry_points={
+        'console_scripts': [
+            'opal = opal.core.commandline:main'
+        ]
+    },
     install_requires=[
         'ffs>=0.0.8.2',
         'letter==0.4.1',
         'jinja2==2.10',
-        'requests==2.7.0',
+        'requests==2.18.4',
         'django==1.10.8',
         'django-reversion==1.10.2',
         'django-axes==1.7.0',
