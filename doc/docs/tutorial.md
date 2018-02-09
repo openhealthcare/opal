@@ -24,7 +24,7 @@ From the commandline:
 
     $ opal startproject mynewapp
 
-This will create a mynewap directory where your new project lives.
+This will create a mynewapp directory where your new project lives.
 
 Let's have a look at what that created for you:
 
