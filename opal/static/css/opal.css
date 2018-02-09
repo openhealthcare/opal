@@ -466,16 +466,22 @@ i.delete,
     color: white;
 }
 
+
 .modal .btn,
+.main-search input,
+.panel-pathway select,
+.panel-pathway input,
+select.lg-text,
+input.lg-text,
 .modal select,
 .modal input {
   font-size: 18px;
 }
-.modal .form-control {
+.panel-pathway .form-control, .modal .form-control {
   height: 44px;
 }
 
-.modal textarea.form-control {
+.panel-pathway textarea.form-control .modal textarea.form-control {
     height: auto
 }
 
