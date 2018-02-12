@@ -1,26 +1,24 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from opal.core import scaffold as core_scaffold
-from django.apps import apps
 
 
 class Command(BaseCommand):
+    help = "creates migrations, migrates, and create record and form templates \
+for subrecords in an app"
+
     def add_arguments(self, parser):
         parser.add_argument('app', help="Specify an app")
         parser.add_argument(
-            '--dry_run',
+            '--dry-run',
             action='store_true'
         )
         parser.add_argument(
-            '--no_migrations',
+            '--no-migrations',
             action='store_true'
         )
 
     def handle(self, *args, **options):
-        if options['app'] not in apps.all_models:
-            raise CommandError(
-                'App "{}" does not exist'.format(options['app'])
-            )
-        core_scaffold.buildout(
+        core_scaffold.scaffold_subrecords(
             options['app'],
             migrations=not options['no_migrations'],
             dry_run=options['dry_run']

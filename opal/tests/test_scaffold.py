@@ -3,21 +3,23 @@ Unittests for opal.core.scaffold
 """
 import os
 import subprocess
+import tempfile
 
-from mock import patch, MagicMock, Mock
+from mock import patch, MagicMock
 import ffs
 import opal
+from opal.tests import models
 
 from django.conf import settings
 
 from opal.core.test import OpalTestCase
-from opal.tests.models import Colour, Dinner
+from opal.tests.models import Colour
 from opal.core import scaffold
 from opal.core.scaffold import (
     create_form_template_for,
     create_display_template_for
 )
-from opal.core import scaffold
+
 
 @patch('subprocess.check_call')
 class StartpluginTestCase(OpalTestCase):
@@ -363,99 +365,200 @@ class GetTemplateDirFromRecordTestCase(OpalTestCase):
             self.assertEqual(os.path.join('me', 'templates'), str(d))
 
 
-@patch('subprocess.check_call')
-@patch('os.system')
-class BuildOutTestCase(OpalTestCase):
+@patch('opal.core.scaffold.write')
+@patch('opal.core.scaffold.apps')
+@patch('opal.core.scaffold.create_display_template_for')
+@patch('opal.core.scaffold.create_form_template_for')
+@patch('opal.core.scaffold.management.call_command')
+class ScaffoldTestCase(OpalTestCase):
+    def test_scaffold(
+        self,
+        call_command,
+        form_template,
+        display_template,
+        apps,
+        write
+    ):
+        apps.all_models = {"opal": {'dinner': models.Dinner}}
+        scaffold.scaffold_subrecords('opal')
+        self.assertEqual(call_command.call_count, 2)
+        call_args = call_command.call_args_list
+        self.assertEqual(
+            call_args[0][0],
+            (
+                "makemigrations",
+                "opal",
+                "--traceback"
+            )
+        )
 
-    def test_scaffold(self, os, sub):
-        mock_args = MagicMock(name='Mock Args')
-        mock_args.app = 'opal'
-        mock_args.dry_run = False
-        mock_args.nomigrations = False
-        with patch.object(commandline, 'find_application_name') as namer:
-            namer.return_value = 'opal.tests'
-            commandline.scaffold(mock_args)
-            os.assert_any_call('python manage.py makemigrations opal --traceback ')
-            os.assert_any_call('python manage.py migrate opal --traceback')
+        self.assertEqual(
+            call_args[1][0],
+            (
+                "migrate",
+                "opal",
+                "--traceback"
+            )
+        )
+        self.assertEqual(
+            form_template.call_count,
+            1
+        )
+        self.assertEqual(
+            form_template.call_args[0][0],
+            models.Dinner
+        )
 
-    def test_dry_run(self, os, sub):
-        mock_args = MagicMock(name='Mock Args')
-        mock_args.app = 'opal'
-        mock_args.dry_run = True
-        mock_args.nomigrations = False
-        with patch.object(commandline, 'find_application_name') as namer:
-            namer.return_value = 'opal.tests'
-            commandline.scaffold(mock_args)
-            os.assert_any_call('python manage.py makemigrations opal --traceback --dry-run')
+        self.assertEqual(
+            display_template.call_count,
+            1
+        )
+        self.assertEqual(
+            display_template.call_args[0][0],
+            models.Dinner
+        )
+        self.assertFalse(write.called)
 
-    def test_nomigrations(self, os, sub):
-        mock_args = MagicMock(name='Mock Args')
-        mock_args.app = 'opal'
-        mock_args.dry_run = True
-        mock_args.nomigrations = True
-        with patch.object(commandline, 'find_application_name') as namer:
-            namer.return_value = 'opal.tests'
-            commandline.scaffold(mock_args)
-            #os.assert_any_call('python manage.py makemigrations opal --traceback --dry-run')
-            self.assertFalse(os.called)
+    def test_scaffold_raises_an_error(
+        self,
+        call_command,
+        form_template,
+        display_template,
+        apps,
+        write
+    ):
+        apps.all_models = []
+        with self.assertRaises(ValueError) as e:
+            scaffold.scaffold_subrecords('unreal')
+
+        self.assertEqual(
+            "Unable to find app unreal in settings.INSTALLED_APPS",
+            str(e.exception)
+        )
 
 
-    @patch('opal.models.EpisodeSubrecord.get_display_template')
-    def test_episode_subrecord_no_display_template(self, episub, os, sub):
-        from opal import models
 
-        episub.return_value = False
-        mock_args = MagicMock(name='Mock Args')
-        mock_args.app = 'opal'
-        mock_args.dry_run = False
-        with patch.object(commandline, 'find_application_name') as namer:
-            with patch.object(commandline.scaffold_utils, 'create_display_template_for') as c:
-                namer.return_value = 'opal.tests'
-                commandline.scaffold(mock_args)
-                c.assert_any_call(models.Diagnosis, commandline.SCAFFOLDING_BASE)
+    def test_dry_run(
+        self,
+        call_command,
+        form_template,
+        display_template,
+        apps,
+        write
+    ):
+        apps.all_models = {"opal": {'dinner': models.Dinner}}
+        scaffold.scaffold_subrecords('opal', dry_run=True)
+        self.assertEqual(call_command.call_count, 1)
+        call_args = call_command.call_args_list
+        self.assertEqual(
+            call_args[0][0],
+            (
+                "makemigrations",
+                "opal",
+                "--traceback",
+                "--dry-run"
+            )
+        )
 
-    @patch('opal.models.EpisodeSubrecord.get_display_template')
-    def test_episode_subrecord_no_display_template_dry_run(self, episub, os, sub):
-        from opal import models
+        self.assertEqual(write.call_count, 2)
+        call_args = write.call_args_list
+        self.assertEqual(
+            call_args[0][0],
+            ("No Display template for {}".format(models.Dinner),)
+        )
 
-        episub.return_value = False
-        mock_args = MagicMock(name='Mock Args')
-        mock_args.app = 'opal'
-        mock_args.dry_run = True
-        with patch.object(commandline, 'find_application_name') as namer:
-            with patch.object(commandline, 'write') as writer:
-                namer.return_value = 'opal.tests'
-                commandline.scaffold(mock_args)
-                writer.assert_any_call("No Display template for <class 'opal.models.Diagnosis'>")
+        self.assertEqual(
+            call_args[1][0],
+            ("No Form template for {}".format(models.Dinner),)
+        )
 
-    @patch('opal.models.EpisodeSubrecord.get_form_template')
-    def test_episode_subrecord_no_form_template(self, episub, os, sub):
-        from opal import models
+    def test_no_migrations(
+        self,
+        call_command,
+        form_template,
+        display_template,
+        apps,
+        write
+    ):
+        apps.all_models = {"opal": {'dinner': models.Dinner}}
+        scaffold.scaffold_subrecords('opal', migrations=False)
+        self.assertFalse(call_command.called)
 
-        episub.return_value = False
-        mock_args = MagicMock(name='Mock Args')
-        mock_args.app = 'opal'
-        mock_args.dry_run = False
-        with patch.object(commandline, 'find_application_name') as namer:
-            with patch.object(commandline.scaffold_utils, 'create_form_template_for') as c:
-                namer.return_value = 'opal.tests'
-                commandline.scaffold(mock_args)
-                c.assert_any_call(models.Diagnosis, commandline.SCAFFOLDING_BASE)
+        self.assertEqual(
+            form_template.call_count,
+            1
+        )
+        self.assertEqual(
+            form_template.call_args[0][0],
+            models.Dinner
+        )
 
-    @patch('opal.models.EpisodeSubrecord.get_form_template')
-    def test_episode_subrecord_no_form_template_dry_run(self, episub, os, sub):
-        from opal import models
+        self.assertEqual(
+            display_template.call_count,
+            1
+        )
+        self.assertEqual(
+            display_template.call_args[0][0],
+            models.Dinner
+        )
+        self.assertFalse(write.called)
 
-        episub.return_value = False
-        mock_args = MagicMock(name='Mock Args')
-        mock_args.app = 'opal'
-        mock_args.dry_run = True
-        with patch.object(commandline, 'find_application_name') as namer:
-            with patch.object(commandline, 'write') as writer:
-                namer.return_value = 'opal.tests'
-                commandline.scaffold(mock_args)
-                writer.assert_any_call("No Form template for <class 'opal.models.Diagnosis'>")
+    def test_episode_subrecord_display_template(
+        self,
+        call_command,
+        form_template,
+        display_template,
+        apps,
+        write
+    ):
+        apps.all_models = {"opal": {'dinner': models.Dinner}}
+        with patch.object(
+            models.Dinner, "get_display_template"
+        ) as get_display_template:
+            get_display_template.return_value = True
+            scaffold.scaffold_subrecords('opal')
+        self.assertFalse(display_template.called)
 
+    def test_episode_subrecord_form_template(
+        self,
+        call_command,
+        form_template,
+        display_template,
+        apps,
+        write
+    ):
+        apps.all_models = {"opal": {'dinner': models.Dinner}}
+        with patch.object(
+            models.Dinner, "get_form_template"
+        ) as get_display_template:
+            get_display_template.return_value = True
+            scaffold.scaffold_subrecords('opal')
+        self.assertFalse(form_template.called)
+
+
+class ScaffoldIntegrationTestCase(OpalTestCase):
+    @patch('opal.core.scaffold._get_template_dir_from_record')
+    def test_integration(self, get_template_dir):
+        """
+            A quick cover all test that, um doesn't cover everything
+            apart from django migrations/makemigrations
+            can we confirm with a superficial test
+            that no other apis internal or external
+            that we are using have changed.
+        """
+        tmp_dir = tempfile.mkdtemp()
+        get_template_dir.return_value = ffs.Path(tmp_dir)
+        scaffold.scaffold_subrecords('tests', migrations=False)
+        self.assertTrue(
+            os.path.isfile(
+                os.path.join(tmp_dir, "records", "hat_wearer.html")
+            )
+        )
+        self.assertTrue(
+            os.path.isfile(
+                os.path.join(tmp_dir, "forms", "hat_wearer_form.html")
+            )
+        )
 
 
 @patch("ffs.Path.__lshift__")

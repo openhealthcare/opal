@@ -34,6 +34,7 @@ class HatWearer(models.EpisodeSubrecord):
 
 class InvisibleHatWearer(models.EpisodeSubrecord):
     _exclude_from_subrecords = True
+
     class Meta:
         verbose_name = 'Invisible Wearer of Hats'
 

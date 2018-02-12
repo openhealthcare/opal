@@ -109,7 +109,9 @@ def start_plugin(name, USERLAND):
     return
 
 
-def buildout(app, migrations=True, dry_run=False):
+def scaffold_subrecords(
+    app, migrations=True, dry_run=False, dir=SCAFFOLDING_BASE
+):
     """
     In which we scaffold an django app (opal plugin or application).
 
@@ -118,9 +120,22 @@ def buildout(app, migrations=True, dry_run=False):
     3. Create Form Templates of all subrecords in the models
     4. Create Record Templates of all subrecords in the models
     """
+    if app not in apps.all_models:
+        err = "Unable to find app {} in settings.INSTALLED_APPS"
+        raise ValueError(
+            err.format(app)
+        )
+
     if migrations:
-        management.call_command('makemigrations', app, traceback=dry_run)
-        management.call_command('migrate', app, traceback=dry_run)
+        if dry_run:
+            management.call_command(
+                'makemigrations', app, "--traceback", "--dry-run"
+            )
+        else:
+            management.call_command(
+                'makemigrations', app, "--traceback"
+            )
+            management.call_command('migrate', app, "--traceback")
 
     models = apps.all_models[app]
     all_subrecords = set(i for i in subrecords.subrecords())
