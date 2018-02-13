@@ -12,6 +12,7 @@ from opal.core.test import OpalTestCase
 from opal.models import Patient, Episode, Tagging, UserProfile
 
 from opal.tests import test_patient_lists # ensure the lists are loaded
+from opal.models import Episode
 from opal.tests.models import (
     Hat, HatWearer, Dog, DogOwner, InvisibleHatWearer
 )
@@ -45,6 +46,14 @@ class EpisodeTest(OpalTestCase):
     def test_defers_episode_set_stage(self, set_stage):
         self.episode.set_stage('Discharged', self.user, {})
         set_stage.assert_called_once_with('Discharged', self.user, {})
+
+    def test_update_from_dict_new_episode(self):
+        episode = Episode(patient=self.patient)
+        data = dict(
+            stage='Inpatient',
+        )
+        episode.update_from_dict(data, self.user)
+        self.assertEqual(Episode.objects.last().stage, "Inpatient")
 
     def test_update_from_dict_raises_if_invalid_stage(self):
         data = dict(
