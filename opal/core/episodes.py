@@ -21,6 +21,8 @@ Flow
 By registering episode category, plugins and applications can achieve a huge
 degree of flexibility over the behaviour of their episodes.
 """
+from django.db import transaction
+from django.utils import timezone
 from opal.core.discoverable import DiscoverableFeature
 
 
@@ -63,20 +65,36 @@ class EpisodeCategory(DiscoverableFeature):
         """
         return stage in self.get_stages()
 
-    def set_stage(self, stage, user, data):
+    @transaction.atomic
+    def set_stage(self, stage_value, user, data):
         """
         Setter for Episode.stage
 
         Validates that the stage being set is appropriate for the category
         and raises ValueError if not.
         """
-        if not self.has_stage(stage):
-            if stage is not None:
+        if not self.has_stage(stage_value):
+            if stage_value is not None:
                 msg = "Can't set stage to {0} for {1} Episode".format(
-                    stage, self.display_name
+                    stage_value, self.display_name
                 )
                 raise ValueError(msg)
-        self.episode.stage = stage
+
+        current_stage = self.episode.stage_set.filter(stopped=None).last()
+        now = timezone.now()
+        if current_stage:
+            current_stage.stopped = now
+            current_stage.updated = now
+            current_stage.updated_by = user
+            current_stage.save()
+
+        if stage_value:
+            self.episode.stage_set.create(
+                value=stage_value,
+                started=now,
+                created=now,
+                created_by=user,
+            )
 
 
 class InpatientEpisode(EpisodeCategory):

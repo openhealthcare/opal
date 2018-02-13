@@ -20,7 +20,6 @@ class EpisodeTest(OpalTestCase):
 
     def setUp(self):
         self.patient, self.episode = self.new_patient_and_episode_please()
-        self.episode.stage = "Inpatient"
         self.episode.save()
 
     def test_singleton_subrecord_created(self):
@@ -123,6 +122,9 @@ class EpisodeTest(OpalTestCase):
         self.assertEqual(['inpatient'], self.episode.get_tag_names(self.user))
 
     def test_to_dict_fields(self):
+        self.episode.set_stage(
+            "Inpatient", None, self.user
+        )
         as_dict = self.episode.to_dict(self.user)
         expected = [
             'id', 'category_name', 'active',

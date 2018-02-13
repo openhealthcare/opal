@@ -754,6 +754,12 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         )[0]
         return category(self)
 
+    @property
+    def stage(self):
+        s = self.stage_set.filter(stopped=None).last()
+        if s:
+            return s.value
+
     def visible_to(self, user):
         """
         Predicate function to determine whether this episode is visible to
@@ -901,6 +907,14 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
         d['episode_history'] = self._episode_history_to_dict(user)
         return d
+
+    @classmethod
+    def _get_fieldnames_to_serialize(cls, *args, **kwargs):
+        field_names = super(cls, Episode)._get_fieldnames_to_serialize(
+            *args, **kwargs
+        )
+        field_names.append('stage')
+        return field_names
 
 
 class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
@@ -1682,6 +1696,19 @@ class UserProfile(models.Model):
         all_roles = itertools.chain(*list(self.get_roles().values()))
         # TODO: Remove these hardcoded role anmes
         return any(r for r in all_roles if r == "scientist")
+
+
+class Stage(TrackedModel):
+    """ An episode can have many stages, but should have no more than
+        one with no stop date any time.
+
+        This is expected to be set by the episode_category
+        which determines what stages are available to an episode.
+    """
+    episode = models.ForeignKey(Episode, null=False)
+    started = models.DateTimeField()
+    stopped = models.DateTimeField(blank=True, null=True)
+    value = models.CharField(max_length=256)
 
 
 class InpatientAdmission(PatientSubrecord, ExternallySourcedModel):
