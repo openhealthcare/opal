@@ -24,7 +24,7 @@ When you delete a user, it will no longer delete all related episodes and subrec
 
 Episode categories now enforce a set of valid `Episode.stage` values.
 `EpisodeCategory` now includes the `.get_stages()` and `.has_stage(stage)` methods,
-while `Episode` has a `set_stage` setter which is used by the JSON API.
+while `Episode` has a `set_stage` setter which is used by the UpdateFromDictMixin JSON API.
 
 #### lookuplists.lookuplists
 

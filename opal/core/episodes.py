@@ -63,6 +63,21 @@ class EpisodeCategory(DiscoverableFeature):
         """
         return stage in self.get_stages()
 
+    def set_stage(self, stage, user, data):
+        """
+        Setter for Episode.stage
+
+        Validates that the stage being set is appropriate for the category
+        and raises ValueError if not.
+        """
+        if not self.has_stage(stage):
+            if stage is not None:
+                msg = "Can't set stage to {0} for {1} Episode".format(
+                    stage, self.display_name
+                )
+                raise ValueError(msg)
+        self.episode.stage = stage
+
 
 class InpatientEpisode(EpisodeCategory):
     display_name    = 'Inpatient'
