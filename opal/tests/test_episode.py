@@ -2,11 +2,11 @@
 Unittests for opal.models.Episode
 """
 import datetime
-from mock import patch, MagicMock
+from mock import patch
 
 from django.contrib.auth.models import User
+from django.utils import timezone
 
-from opal.core import application
 from opal.core.episodes import InpatientEpisode
 from opal.core.test import OpalTestCase
 from opal.models import Patient, Episode, Tagging, UserProfile
@@ -15,6 +15,7 @@ from opal.tests import test_patient_lists # ensure the lists are loaded
 from opal.tests.models import (
     Hat, HatWearer, Dog, DogOwner, InvisibleHatWearer
 )
+
 
 class EpisodeTest(OpalTestCase):
 
@@ -150,7 +151,6 @@ class EpisodeTest(OpalTestCase):
         to_dict = episode.to_dict(self.user)
         self.assertNotIn(InvisibleHatWearer.get_api_name(), to_dict)
 
-
     def test_to_dict_with_multiple_episodes(self):
         self.episode.start = datetime.date(2015, 7, 25)
         self.episode.save()
@@ -226,13 +226,81 @@ class EpisodeCategoryTestCase(OpalTestCase):
             self.episode.category.episode_visible_to(self.episode, user)
         )
 
-    def test_set_stage(self):
+    @patch("opal.core.episodes.timezone")
+    def test_set_stage(self, tz):
+        expected = timezone.now() - datetime.timedelta(1)
+        tz.now.return_value = expected
         self.episode.category.set_stage('Discharged', self.user, {})
         self.assertEqual('Discharged', self.episode.stage)
+        current_stage = self.episode.stage_set.get()
+        self.assertEqual(current_stage.created, expected)
+        self.assertEqual(current_stage.created_by, self.user)
+        self.assertIsNone(current_stage.updated)
+        self.assertIsNone(current_stage.updated_by)
+        self.assertEqual(current_stage.started, expected)
+        self.assertIsNone(current_stage.stopped)
+
+    def test_set_stage_stops_previous_stage(self):
+        user_2 = User.objects.create(username="Donald")
+        with patch("opal.core.episodes.timezone") as tz:
+            yesterday = timezone.now() - datetime.timedelta(1)
+            tz.now.return_value = yesterday
+            self.episode.category.set_stage('Inpatient', self.user, {})
+
+        self.assertEqual('Inpatient', self.episode.stage)
+        self.assertEqual(
+            self.episode.stage_set.first().value,
+            "Inpatient"
+        )
+
+        with patch("opal.core.episodes.timezone") as tz:
+            today = timezone.now()
+            tz.now.return_value = today
+            self.episode.category.set_stage('Discharged', user_2, {})
+
+        self.assertEqual(self.episode.stage_set.count(), 2)
+        inpatient_stage = self.episode.stage_set.first()
+        discharged_stage = self.episode.stage_set.last()
+
+        self.assertEqual(inpatient_stage.created, yesterday)
+        self.assertEqual(inpatient_stage.created_by, self.user)
+        self.assertEqual(inpatient_stage.updated, today)
+        self.assertEqual(inpatient_stage.updated_by, user_2)
+        self.assertEqual(inpatient_stage.started, yesterday)
+        self.assertEqual(inpatient_stage.stopped, today)
+
+        self.assertEqual(discharged_stage.created, today)
+        self.assertEqual(discharged_stage.created_by, user_2)
+        self.assertIsNone(discharged_stage.updated)
+        self.assertIsNone(discharged_stage.updated_by)
+        self.assertEqual(discharged_stage.started, today)
+        self.assertIsNone(discharged_stage.stopped)
 
     def test_set_stage_for_none(self):
+        self.assertFalse(self.episode.stage_set.exists())
         self.episode.category.set_stage(None, self.user, {})
         self.assertEqual(None, self.episode.stage)
+        self.assertFalse(self.episode.stage_set.exists())
+
+    def test_set_stage_for_none_closes_existing(self):
+        yesterday = timezone.now() - datetime.timedelta(1)
+        today = timezone.now()
+        user_2 = User.objects.create(username="Donald")
+        with patch("opal.core.episodes.timezone") as tz:
+            tz.now.return_value = yesterday
+            self.episode.category.set_stage('Inpatient', self.user, {})
+
+        with patch("opal.core.episodes.timezone") as tz:
+            tz.now.return_value = today
+            self.episode.category.set_stage(None, user_2, {})
+
+        inpatient_stage = self.episode.stage_set.get()
+        self.assertEqual(inpatient_stage.created, yesterday)
+        self.assertEqual(inpatient_stage.created_by, self.user)
+        self.assertEqual(inpatient_stage.updated, today)
+        self.assertEqual(inpatient_stage.updated_by, user_2)
+        self.assertEqual(inpatient_stage.started, yesterday)
+        self.assertEqual(inpatient_stage.stopped, today)
 
     def test_set_stage_raises_if_invalid(self):
         with self.assertRaises(ValueError):
