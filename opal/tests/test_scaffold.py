@@ -3,21 +3,23 @@ Unittests for opal.core.scaffold
 """
 import os
 import subprocess
+import tempfile
 
-from mock import patch, MagicMock, Mock
+from mock import patch, MagicMock
 import ffs
 import opal
+from opal.tests import models
 
 from django.conf import settings
 
 from opal.core.test import OpalTestCase
-from opal.tests.models import Colour, Dinner
+from opal.tests.models import Colour
 from opal.core import scaffold
 from opal.core.scaffold import (
     create_form_template_for,
     create_display_template_for
 )
-from opal.core import scaffold
+
 
 @patch('subprocess.check_call')
 class StartpluginTestCase(OpalTestCase):
@@ -362,6 +364,201 @@ class GetTemplateDirFromRecordTestCase(OpalTestCase):
             d = scaffold._get_template_dir_from_record(MagicMock())
             self.assertEqual(os.path.join('me', 'templates'), str(d))
 
+
+@patch('opal.core.scaffold.write')
+@patch('opal.core.scaffold.apps')
+@patch('opal.core.scaffold.create_display_template_for')
+@patch('opal.core.scaffold.create_form_template_for')
+@patch('opal.core.scaffold.management.call_command')
+class ScaffoldTestCase(OpalTestCase):
+    def test_scaffold(
+        self,
+        call_command,
+        form_template,
+        display_template,
+        apps,
+        write
+    ):
+        apps.all_models = {"opal": {'dinner': models.Dinner}}
+        scaffold.scaffold_subrecords('opal')
+        self.assertEqual(call_command.call_count, 2)
+        call_args = call_command.call_args_list
+        self.assertEqual(
+            call_args[0][0],
+            (
+                "makemigrations",
+                "opal",
+                "--traceback"
+            )
+        )
+
+        self.assertEqual(
+            call_args[1][0],
+            (
+                "migrate",
+                "opal",
+                "--traceback"
+            )
+        )
+        self.assertEqual(
+            form_template.call_count,
+            1
+        )
+        self.assertEqual(
+            form_template.call_args[0][0],
+            models.Dinner
+        )
+
+        self.assertEqual(
+            display_template.call_count,
+            1
+        )
+        self.assertEqual(
+            display_template.call_args[0][0],
+            models.Dinner
+        )
+        self.assertFalse(write.called)
+
+    def test_scaffold_raises_an_error(
+        self,
+        call_command,
+        form_template,
+        display_template,
+        apps,
+        write
+    ):
+        apps.all_models = []
+        with self.assertRaises(ValueError) as e:
+            scaffold.scaffold_subrecords('unreal')
+
+        self.assertEqual(
+            "Unable to find app unreal in settings.INSTALLED_APPS",
+            str(e.exception)
+        )
+
+
+
+    def test_dry_run(
+        self,
+        call_command,
+        form_template,
+        display_template,
+        apps,
+        write
+    ):
+        apps.all_models = {"opal": {'dinner': models.Dinner}}
+        scaffold.scaffold_subrecords('opal', dry_run=True)
+        self.assertEqual(call_command.call_count, 1)
+        call_args = call_command.call_args_list
+        self.assertEqual(
+            call_args[0][0],
+            (
+                "makemigrations",
+                "opal",
+                "--traceback",
+                "--dry-run"
+            )
+        )
+
+        self.assertEqual(write.call_count, 2)
+        call_args = write.call_args_list
+        self.assertEqual(
+            call_args[0][0],
+            ("No Display template for {}".format(models.Dinner),)
+        )
+
+        self.assertEqual(
+            call_args[1][0],
+            ("No Form template for {}".format(models.Dinner),)
+        )
+
+    def test_no_migrations(
+        self,
+        call_command,
+        form_template,
+        display_template,
+        apps,
+        write
+    ):
+        apps.all_models = {"opal": {'dinner': models.Dinner}}
+        scaffold.scaffold_subrecords('opal', migrations=False)
+        self.assertFalse(call_command.called)
+
+        self.assertEqual(
+            form_template.call_count,
+            1
+        )
+        self.assertEqual(
+            form_template.call_args[0][0],
+            models.Dinner
+        )
+
+        self.assertEqual(
+            display_template.call_count,
+            1
+        )
+        self.assertEqual(
+            display_template.call_args[0][0],
+            models.Dinner
+        )
+        self.assertFalse(write.called)
+
+    def test_episode_subrecord_display_template(
+        self,
+        call_command,
+        form_template,
+        display_template,
+        apps,
+        write
+    ):
+        apps.all_models = {"opal": {'dinner': models.Dinner}}
+        with patch.object(
+            models.Dinner, "get_display_template"
+        ) as get_display_template:
+            get_display_template.return_value = True
+            scaffold.scaffold_subrecords('opal')
+        self.assertFalse(display_template.called)
+
+    def test_episode_subrecord_form_template(
+        self,
+        call_command,
+        form_template,
+        display_template,
+        apps,
+        write
+    ):
+        apps.all_models = {"opal": {'dinner': models.Dinner}}
+        with patch.object(
+            models.Dinner, "get_form_template"
+        ) as get_display_template:
+            get_display_template.return_value = True
+            scaffold.scaffold_subrecords('opal')
+        self.assertFalse(form_template.called)
+
+
+class ScaffoldIntegrationTestCase(OpalTestCase):
+    @patch('opal.core.scaffold._get_template_dir_from_record')
+    def test_integration(self, get_template_dir):
+        """
+            A quick cover all test that, um doesn't cover everything
+            apart from django migrations/makemigrations
+            can we confirm with a superficial test
+            that no other apis internal or external
+            that we are using have changed.
+        """
+        tmp_dir = tempfile.mkdtemp()
+        get_template_dir.return_value = ffs.Path(tmp_dir)
+        scaffold.scaffold_subrecords('tests', migrations=False)
+        self.assertTrue(
+            os.path.isfile(
+                os.path.join(tmp_dir, "records", "hat_wearer.html")
+            )
+        )
+        self.assertTrue(
+            os.path.isfile(
+                os.path.join(tmp_dir, "forms", "hat_wearer_form.html")
+            )
+        )
 
 
 @patch("ffs.Path.__lshift__")

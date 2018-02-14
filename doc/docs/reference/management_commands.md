@@ -73,3 +73,13 @@ By default this command will look in `./yourapp/data/lookuplists.json` as well a
 ```bash
 python manage.py load_lookup_lists
 ```
+
+
+### scaffold &lt;appname&gt;
+
+Use with new record models.
+
+Creates and runs automatic migrations, creates display and form (modal) templates.
+
+Running with `--dry-run` will run makemigrations with `--dry-run` and print display
+and form templates that would be generated.

@@ -86,6 +86,13 @@ failure.
 If you are a plugin developer upgrading an existing plugin you will have to
 manually add support for `--failfast` passthrough to your `runtests.py`.
 
+
+#### Moves scaffold to be a django management command
+
+The rest of the api is still the same but now
+we run `python manage.py scaffold {my_app_name}`
+
+
 #### Misc Changes
 
 Removes the undocumented `collapsed_multisave` tag from the `pathways` templatetag
