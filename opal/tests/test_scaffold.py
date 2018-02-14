@@ -358,11 +358,25 @@ class RecordRenderTestCase(OpalTestCase):
 
 class GetTemplateDirFromRecordTestCase(OpalTestCase):
 
-    def test_get_template_dir_from_record(self):
+    def test_get_template_dir_from_record_with_pyc(self):
         with patch.object(scaffold.inspect, 'getfile') as getter:
-            getter.return_value = os.path.join('me', 'you.pyc')
+            getter.return_value = os.path.join('me', 'models.pyc')
             d = scaffold._get_template_dir_from_record(MagicMock())
             self.assertEqual(os.path.join('me', 'templates'), str(d))
+
+    def test_get_template_dir_from_package_models(self):
+        with patch.object(scaffold.inspect, 'getfile') as getter:
+            getter.return_value = os.path.join('me', 'models', 'clinic.py')
+            d = scaffold._get_template_dir_from_record(MagicMock())
+            self.assertEqual(os.path.join('me', 'templates'), str(d))
+
+    def test_template_dir_not_found(self):
+        with patch.object(scaffold.sys, 'exit') as exiter:
+            with patch.object(scaffold.inspect, 'getfile') as getter:
+                getter.return_value = os.path.join('me', 'you', 'clinic.py')
+                d = scaffold._get_template_dir_from_record(MagicMock())
+                exiter.asser_called_with(1)
+
 
 
 @patch('opal.core.scaffold.write')

@@ -273,9 +273,22 @@ def _get_template_dir_from_record(record):
     modelsfile = inspect.getfile(record)
     if modelsfile.endswith('.pyc'):
         modelsfile = modelsfile.replace('.pyc', '.py')
-    appdir = ffs.Path(modelsfile)[:-1]
-    templates = appdir/'templates'
-    return templates
+
+    appdir = None
+    if modelsfile.endswith('models.py'):
+        appdir = ffs.Path(modelsfile)[:-1]
+    else:
+        if ffs.Path(modelsfile)[-2] == 'models':
+            appdir = ffs.Path(modelsfile)[:-2]
+
+    if appdir is None:
+        write("\n\nCripes!\n")
+        write("We can't figure out what the correct directory to \n")
+        write("put templates for {0} is :( \n\n".format(record))
+        sys.exit(1)
+    else:
+        templates = appdir/'templates'
+        return templates
 
 
 def create_display_template_for(record, scaffold_base):
