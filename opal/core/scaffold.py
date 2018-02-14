@@ -276,9 +276,13 @@ def _get_template_dir_from_record(record):
 
     appdir = None
     if modelsfile.endswith('models.py'):
+        # We're assuming the app in question has models in
+        # ./app/models.py
         appdir = ffs.Path(modelsfile)[:-1]
     else:
         if ffs.Path(modelsfile)[-2] == 'models':
+            # We're assuming the app in question has models
+            # in ./app/models/here.py
             appdir = ffs.Path(modelsfile)[:-2]
 
     if appdir is None:
