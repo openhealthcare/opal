@@ -481,7 +481,7 @@ input.lg-text,
   height: 44px;
 }
 
-.panel-pathway textarea.form-control .modal textarea.form-control {
+.panel-pathway textarea.form-control, .modal textarea.form-control {
     height: auto
 }
 
