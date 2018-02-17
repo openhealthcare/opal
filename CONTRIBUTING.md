@@ -4,7 +4,7 @@ Opal is developed as an open source project, and as such we welcome contribution
 
 ### Reporting bugs
 
-If you find what looks like a bug, add an issue to the [Github Issue tracker](http://github.com/opal/issues).
+If you find what looks like a bug, add an issue to the [Github Issue tracker](https://github.com/openhealthcare/opal/issues).
 
 Unclear documentation, unexpected error messages definitely count as bugs - feel free to raise issues about them.
 
@@ -34,7 +34,7 @@ That said, we won't merge your pull request if:
 Don't worry though - we're happy to guide new contributors through this process.
 
 If you want to discuss ideas you have for changes before making them, you can always propose enhancements on
-the [Github Issue tracker](http://github.com/opal/issues) or post questions and open discussions on the
+the [Github Issue tracker](https://github.com/openhealthcare/opal/issues) or post questions and open discussions on the
 [mailing list](https://groups.google.com/forum/?ohc-dev#!forum/ohc-opal).
 
 ### Issues suitable for new contributors
