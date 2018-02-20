@@ -34,6 +34,7 @@ class HatWearer(models.EpisodeSubrecord):
 
 class InvisibleHatWearer(models.EpisodeSubrecord):
     _exclude_from_subrecords = True
+
     class Meta:
         verbose_name = 'Invisible Wearer of Hats'
 
@@ -90,6 +91,27 @@ class InvisibleDog(models.PatientSubrecord):
 
 class AbstractDog(models.PatientSubrecord, AbstractBase):
     name = dmodels.CharField(max_length=200)
+
+
+class AbstractDogOwner(models.EpisodeSubrecord):
+    name = dmodels.CharField(
+        max_length=200, default="Catherine"
+    )
+    dog = fields.ForeignKeyOrFreeText(
+        Dog, default="spaniel", help_text="good dog"
+    )
+
+    class Meta:
+        abstract = True
+
+
+class SpanielOwner(AbstractDogOwner):
+    pass
+
+
+class CockerSpanielOwner(SpanielOwner):
+    class Meta:
+        proxy = True
 
 
 class Colour(models.EpisodeSubrecord):

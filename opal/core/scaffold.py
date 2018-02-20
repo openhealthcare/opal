@@ -5,7 +5,10 @@ import inspect
 import os
 import subprocess
 import sys
+from django.core import management
 from django.utils.crypto import get_random_string
+from django.apps import apps
+from opal.core import subrecords
 import ffs
 from ffs import nix
 from ffs.contrib import mold
@@ -48,18 +51,18 @@ def interpolate_dir(directory, **context):
     return
 
 
-def _set_settings_module(name):
-    os.environ['DJANGO_SETTINGS_MODULE'] = '{0}.settings'.format(name)
-    if '.' not in sys.path:
-        sys.path.append('.')
-    import django
-    django.setup()
-    return
-
-
 def create_lookuplists(root_dir):
     lookuplists_dir = root_dir/'data/lookuplists'
     lookuplists_dir.mkdir()
+
+
+def call(cmd, **kwargs):
+    write("Calling: {}".format(' '.join(cmd)))
+    try:
+        subprocess.check_call(cmd, **kwargs)
+    except subprocess.CalledProcessError:
+        write("Failed to run: {}".format(' '.join(cmd)))
+        sys.exit(1)
 
 
 def start_plugin(name, USERLAND):
@@ -100,10 +103,59 @@ def start_plugin(name, USERLAND):
     services = jsdir/'services'
     services.mkdir()
     # 5. Initialize git repo
-    os.system('cd {0}; git init'.format(reponame))
+    call(('git', 'init'), cwd=root, stdout=subprocess.PIPE)
 
     write('Plugin complete at {0}'.format(reponame))
     return
+
+
+def scaffold_subrecords(
+    app, migrations=True, dry_run=False, dir=SCAFFOLDING_BASE
+):
+    """
+    In which we scaffold an django app (opal plugin or application).
+
+    1. Make migrations
+    2. Migrate
+    3. Create Form Templates of all subrecords in the models
+    4. Create Record Templates of all subrecords in the models
+    """
+    if app not in apps.all_models:
+        err = "Unable to find app {} in settings.INSTALLED_APPS"
+        raise ValueError(
+            err.format(app)
+        )
+
+    if migrations:
+        if dry_run:
+            management.call_command(
+                'makemigrations', app, "--traceback", "--dry-run"
+            )
+        else:
+            management.call_command(
+                'makemigrations', app, "--traceback"
+            )
+            management.call_command('migrate', app, "--traceback")
+
+    models = apps.all_models[app]
+    all_subrecords = set(i for i in subrecords.subrecords())
+
+    for model in models.values():
+        if model in all_subrecords:
+            if not model.get_display_template():
+                if dry_run:
+                    write('No Display template for {0}'.format(model))
+                else:
+                    create_display_template_for(
+                        model, SCAFFOLDING_BASE
+                    )
+            if not model.get_form_template():
+                if dry_run:
+                    write('No Form template for {0}'.format(model))
+                else:
+                    create_form_template_for(
+                        model, SCAFFOLDING_BASE
+                    )
 
 
 def start_project(name, USERLAND_HERE):
@@ -120,6 +172,7 @@ def start_project(name, USERLAND_HERE):
     8. Run Django's migrations
     9. Create a superuser
     10. Initialise our git repo
+    11. Load referencedata shipped with Opal
     """
 
     project_dir = USERLAND_HERE/name
@@ -128,16 +181,14 @@ def start_project(name, USERLAND_HERE):
         write("Please remove it or choose a new name.\n\n")
         sys.exit(1)
 
-    # 1. Run Django Startproject
-    write("Creating project dir at {0}".format(project_dir))
-    os.system('django-admin.py startproject {0}'.format(name))
-
     write("Bootstrapping your Opal project...")
 
-    if not project_dir:
-        project_dir.mkdir()
+    # 1. Run Django Startproject
+    write("Creating project dir at {0}".format(project_dir))
+    project_dir.mkdir()
+    management.call_command('startproject', name, project_dir)
 
-    # Copy across the scaffold
+    # 3. Copy across the scaffold
     with SCAFFOLD:
         for p in SCAFFOLD.ls():
             target = project_dir/p[-1]
@@ -147,18 +198,18 @@ def start_project(name, USERLAND_HERE):
     gitignore = project_dir/'gitignore'
     gitignore.mv(project_dir/'.gitignore')
 
-    # Interpolate the project data
+    # 4. Interpolate the project data
     interpolate_dir(project_dir, name=name, secret_key=get_random_secret_key(),
                     version=opal.__version__)
 
     app_dir = project_dir/name
 
-    # Django Startproject creates some things - let's kill them &
+    # 5. Django Startproject creates some things - let's kill them &
     # replace with our own things.
     nix.rm(app_dir, recursive=True, force=True)
     nix.mv(project_dir/'app', app_dir)
 
-    #  Create extra directories we need
+    #  7. Create extra directories we need
     js = app_dir/'static/js/{0}'.format(name)
     css = app_dir/'static/css'
     js.mkdir()
@@ -181,20 +232,15 @@ def start_project(name, USERLAND_HERE):
     This means that we can run collectstatic OK.
     """
 
-    # Create lookup lists
+    # 2. Create lookup lists
     create_lookuplists(app_dir)
 
     # We have this here because it uses name from above.
     def manage(command):
-        args = ['python', '{0}/manage.py'.format(name)]
+        args = ['python', os.path.join(name, 'manage.py')]
         args += command.split()
         args.append('--traceback')
-
-        try:
-            subprocess.check_call(args)
-        except subprocess.CalledProcessError:
-            sys.exit(1)
-        return
+        call(args)
 
     # 8. Run Django's migrations
     write('Creating Database')
@@ -202,22 +248,14 @@ def start_project(name, USERLAND_HERE):
     manage('migrate')
 
     # 9. Create a superuser
-    sys.path.append(os.path.join(os.path.abspath('.'), name))
-    _set_settings_module(name)
+    write('Creating superuser')
+    manage('createopalsuperuser')
 
-    from django.contrib.auth.models import User
-    user = User(username='super')
-    user.set_password('super1')
-    user.is_superuser = True
-    user.is_staff = True
-    user.save()
-    from opal.models import UserProfile
-    profile, _ = UserProfile.objects.get_or_create(user=user)
-    profile.force_password_change = False
-    profile.save()
+    # 10. Initialise git repo
+    call(('git', 'init'), cwd=project_dir, stdout=subprocess.PIPE)
 
-    # 11. Initialise git repo
-    os.system('cd {0}; git init'.format(name))
+    # 11. Load referencedata shipped with Opal
+    manage('load_lookup_lists')
 
 
 def _strip_non_user_fields(schema):
@@ -235,9 +273,26 @@ def _get_template_dir_from_record(record):
     modelsfile = inspect.getfile(record)
     if modelsfile.endswith('.pyc'):
         modelsfile = modelsfile.replace('.pyc', '.py')
-    appdir = ffs.Path(modelsfile)[:-1]
-    templates = appdir/'templates'
-    return templates
+
+    appdir = None
+    if modelsfile.endswith('models.py'):
+        # We're assuming the app in question has models in
+        # ./app/models.py
+        appdir = ffs.Path(modelsfile)[:-1]
+    else:
+        if ffs.Path(modelsfile)[-2] == 'models':
+            # We're assuming the app in question has models
+            # in ./app/models/here.py
+            appdir = ffs.Path(modelsfile)[:-2]
+
+    if appdir is None:
+        write("\n\nCripes!\n")
+        write("We can't figure out what the correct directory to \n")
+        write("put templates for {0} is :( \n\n".format(record))
+        sys.exit(1)
+    else:
+        templates = appdir/'templates'
+        return templates
 
 
 def create_display_template_for(record, scaffold_base):
@@ -268,7 +323,7 @@ def create_form_template_for(record, scaffold_base):
     """
     Create a form template for RECORD.
     """
-    write('Creating form template for{0}'.format(record))
+    write('Creating form template for {0}'.format(record))
     name = record.get_api_name()
 
     templates = _get_template_dir_from_record(record)

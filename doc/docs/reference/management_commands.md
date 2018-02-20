@@ -46,6 +46,10 @@ python manage.py detect_duplicates
 
 ## dump_lookup_lists
 
+*Arguments*:
+
+* `--many-files` - write lookuplists to separate files instead of printing them to stdout.
+
 Prints current lookuplist and synonym values as JSON to stdout. Suitable to be used
 as the input to `load_lookup_lists`
 
@@ -69,3 +73,13 @@ By default this command will look in `./yourapp/data/lookuplists.json` as well a
 ```bash
 python manage.py load_lookup_lists
 ```
+
+
+### scaffold &lt;appname&gt;
+
+Use with new record models.
+
+Creates and runs automatic migrations, creates display and form (modal) templates.
+
+Running with `--dry-run` will run makemigrations with `--dry-run` and print display
+and form templates that would be generated.

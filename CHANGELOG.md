@@ -1,8 +1,13 @@
 ### 0.10.0 (Major Release)
 
-This is a major release with breaking chnges from upstream dependencies.
+This is a major release with breaking changes from upstream dependencies.
 You are almost certain to require changes to your application. Please see
 the upgrade guide for further details.
+
+#### Referencedata in new applications
+
+Opal now includes core lookuplist data in an `opal.core.referencedata` plugin
+which is installed and loaded by default by the `startproject` scaffolding.
 
 #### Deletion cascade behaviour
 
@@ -40,6 +45,12 @@ token when one is set on the model. Previously it would raise `APIError`.
 The JSON API will now return a more specific message in the response boday, explaining
 that the problem is a missing consistency token.
 
+#### dump_lookup_lists --many-files
+
+Adds the `--many-files` option to the `dump_lookup_lists` command which will write
+each installed lookup list to a separate file in the `./data/lookuplists` directory
+of the application.
+
 #### Template removals
 
 We remove a number of stale unused templates:
@@ -59,12 +70,13 @@ in `opal.core.views.
 
 #### Updates to the Dependency Graph
 
-Django: 1.8.13 -> 1.10.8
-Django Reversion: 1.8.7 -> 1.10.2
-Django Rest Framework: 3.2.2 -> 3.4.7
-Psycopg2: 2.5 -> 2.7
-Jinja2: 2.9.6 -> 2.10
-Ffs: 0.0.8.1 -> 0.0.8.2
+* Django: 1.8.13 -> 1.10.8
+* Django Reversion: 1.8.7 -> 1.10.2
+* Django Rest Framework: 3.2.2 -> 3.4.7
+* Psycopg2: 2.5 -> 2.7
+* Jinja2: 2.9.6 -> 2.10
+* Ffs: 0.0.8.1 -> 0.0.8.2
+* Requests: 2.7.0 -> 2.18.4
 
 #### Testing options
 
@@ -75,10 +87,18 @@ If you are a plugin developer upgrading an existing plugin you will have to
 manually add support for `--failfast` passthrough to your `runtests.py`.
 
 
+#### Moves scaffold to be a django management command
+
+The rest of the api is still the same but now
+we run `python manage.py scaffold {my_app_name}`
+
+
 #### Misc Changes
 
 Removes the undocumented `collapsed_multisave` tag from the `pathways` templatetag
 library.
+
+Adds a setting `OPAL_FAVICON_PATH` to specify the application Favicon to use.
 
 ### 0.9.1 (Minor Release)
 

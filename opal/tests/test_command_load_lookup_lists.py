@@ -2,7 +2,6 @@
 Unittests for opal.management.commands.load_lookup_lists
 """
 import os
-import ffs
 from mock import patch, MagicMock
 
 from opal.core import application
@@ -10,6 +9,7 @@ from opal.core.test import OpalTestCase
 from opal.tests.models import Dog
 
 from opal.management.commands import load_lookup_lists as loader
+
 
 class CommandTestCase(OpalTestCase):
 

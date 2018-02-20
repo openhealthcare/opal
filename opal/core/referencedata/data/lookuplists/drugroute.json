@@ -1,0 +1,16 @@
+{
+  "drugroute": [
+    {
+      "synonyms": [
+        "Oral"
+      ],
+      "name": "PO"
+    },
+    {
+      "synonyms": [
+        "Intravenous"
+      ],
+      "name": "IV"
+    }
+  ]
+}

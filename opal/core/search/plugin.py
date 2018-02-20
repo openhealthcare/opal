@@ -7,7 +7,7 @@ from opal.core import plugins
 
 class SearchPlugin(plugins.OpalPlugin):
     """
-    The plugin entrypoint for OPAL's core search functionality
+    The plugin entrypoint for Opal's core search functionality
     """
     urls = urls.urlpatterns
     stylesheets = ["css/search.css"]
