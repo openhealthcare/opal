@@ -207,8 +207,30 @@ describe('PatientListCtrl', function() {
 
     });
 
+  describe('refresh()', function() {
+      it('should update .episodes with what the server thinks is the episode', function() {
+        var updated = angular.copy(episodeData)
+        updated.active = false;
+
+        $httpBackend.expectGET('/api/v0.1/record/').respond({})
+        $httpBackend.expectGET('/api/v0.1/episode/123/').respond(updated);
+        $scope.refresh(123);
+
+        $httpBackend.flush();
+        $rootScope.$apply();
+
+        //
+        // We just check against the active property because this means
+        // that the object we're accessing has definitely been cycled
+        // from the server response
+        //
+        expect($scope.episodes['123'].active).toBe(false);
+        expect($scope.rows[0].active).toEqual(false);
+      });
+  });
+
     describe('isSelectedEpisode()', function() {
-        it('should say yes when given the episode', function() {
+      it('should say yes when given the episode', function() {
             expect($scope.isSelectedEpisode($scope.episode)).toBe(true);
         });
 
