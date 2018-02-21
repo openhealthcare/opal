@@ -208,7 +208,7 @@ describe('PatientListCtrl', function() {
     });
 
   describe('refresh()', function() {
-      fit('should update .episodes with what the server thinks is the episode', function() {
+      it('should update .episodes with what the server thinks is the episode', function() {
         var updated = angular.copy(episodeData)
         updated.active = false;
 
