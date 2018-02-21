@@ -691,6 +691,7 @@ class EpisodeTestCase(OpalTestCase):
             }
         }
         response = api.EpisodeViewSet().create(self.mock_request)
+        self.assertEqual(201, response.status_code)
         episode = models.Episode.objects.get(
             patient__demographics__hospital_number="999000999"
         )
@@ -714,7 +715,6 @@ class EpisodeTestCase(OpalTestCase):
             response.data["tagging"][0]["micro"]
         )
 
-        self.assertEqual(201, response.status_code)
         pcount = models.Patient.objects.filter(
             demographics__hospital_number="999000999").count()
         self.assertEqual(1, pcount)

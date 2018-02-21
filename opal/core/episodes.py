@@ -73,8 +73,6 @@ class EpisodeCategory(DiscoverableFeature):
         Validates that the stage being set is appropriate for the category
         and raises ValueError if not.
         """
-        if not self.episode.id:
-            self.episode.save()
         if not self.has_stage(stage_value):
             if stage_value is not None:
                 msg = "Can't set stage to {0} for {1} Episode".format(

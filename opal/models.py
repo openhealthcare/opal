@@ -871,6 +871,15 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         episode_history = episodes_for_user(episode_history, user)
         return [e.to_dict(user, shallow=True) for e in episode_history]
 
+    def update_from_dict(self, data, user, force=False, fields=None):
+        # stage is a related model so episode
+        # needs to have been saved before we can
+        stage = data.pop("stage", None)
+        super(Episode, self).update_from_dict(
+            data, user, force=force, fields=fields
+        )
+        self.set_stage(stage, user, data)
+
     def to_dict(self, user, shallow=False):
         """
         Serialisation to JSON for Episodes
