@@ -7,7 +7,8 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
-from opal import utils, exceptions
+from opal import utils
+from opal.core import exceptions
 
 
 def load_lookuplist_item(model, item):
@@ -81,7 +82,7 @@ def synonym_exists(lookuplist, name):
 class LookupList(models.Model):
     name     = models.CharField(max_length=255, unique=True)
     synonyms = GenericRelation('opal.Synonym')
-    code     = models.ForeignKey('opal.core.referencedata.CodeableConcept',
+    code     = models.ForeignKey('referencedata.CodeableConcept',
                                  blank=True, null=True, unique=True)
 
     class Meta:
