@@ -27,9 +27,12 @@ def load_lookuplist_item(model, item):
             code_value = item['coding']['code']
             system     = item['coding']['system']
 
-            code, _ = CodeableConcept.objects.get_or_create(
+            code, created = CodeableConcept.objects.get_or_create(
                 code=code_value, system=system
             )
+            if created:
+                code.display=item['name']
+                code.save()
         except KeyError:
             msg = """
 Coding entries in lookuplists must contain both `coding` and `system` values

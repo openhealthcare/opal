@@ -9,5 +9,7 @@ class CodeableConcept(models.Model):
     """
     display       = models.CharField(max_length=255, blank=True, null=True)
     system        = models.CharField(max_length=255, blank=True, null=True)
-    version       = models.CharField(max_length=255, blank=True, null=True)
     code          = models.CharField(max_length=255, blank=True, null=True)
+    # We don't particularly use this in the current implementation, but we
+    # include it in the model for the sake of FHIR CodeableConcept compatibility
+    version       = models.CharField(max_length=255, blank=True, null=True)
