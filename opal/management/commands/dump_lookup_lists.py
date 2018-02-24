@@ -53,7 +53,13 @@ class Command(BaseCommand):
                 synonyms = [s.name for s in
                             Synonym.objects.filter(content_type=content_type,
                                                    object_id=item.id)]
-                items.append({'name': item.name, 'synonyms': synonyms})
+                entry = {'name': item.name, 'synonyms': synonyms}
+                if item.code:
+                    entry['coding'] = {
+                        'code': item.code.code,
+                        'system', item.code.system
+                    }
+                items.append(entry)
             data[model.__name__.lower()] = items
 
         if options.get('many_files', False):

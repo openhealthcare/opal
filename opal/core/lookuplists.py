@@ -7,15 +7,45 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
-from opal import utils
+from opal import utils, exceptions
 
 
 def load_lookuplist_item(model, item):
-    from opal.models import Synonym
-    content_type = ContentType.objects.get_for_model(model)
-    instance, created = model.objects.get_or_create(name=item['name'])
-    synonyms_created = 0
+    """
+    Load an individual lookuplist item into the database
 
+    Takes a Lookuplist instance and a dictionary in our
+    expected lookuplist data structure
+    """
+    from opal.models import Synonym
+    from opal.core.reference.models import CodeableConcept
+
+    # If we have an upstream code, fetch that first.
+    code = None
+    if item.getattr('coding', None):
+        try:
+            code_value = item['coding']['code']
+            system     = item['coding']['system']
+
+            code, _ = CodeableConcept.objects.get_or_create(
+                code=code_value, system=system
+            )
+        except KeyError:
+            msg = """
+Coding entries in lookuplists must contain both `coding` and `system` values
+The following lookuplist item was missing one or both values:
+{0}
+""".format(str(item))
+            raise execeptions.InvalidDataError(msg)
+
+    # Create the lookuplist entry or retrieve if it exists
+    instance, created = model.objects.get_or_create(
+        name=item['name'], code=None
+    )
+
+    # Handle user visible synonyms
+    synonyms_created = 0
+    content_type = ContentType.objects.get_for_model(model)
     for synonym in item['synonyms']:
         syn, created_synonym = Synonym.objects.get_or_create(
             content_type=content_type,
@@ -24,6 +54,7 @@ def load_lookuplist_item(model, item):
         )
         if created_synonym:
             synonyms_created += 1
+
     return int(created), synonyms_created
 
 
@@ -41,8 +72,10 @@ def synonym_exists(lookuplist, name):
 
 
 class LookupList(models.Model):
-    name = models.CharField(max_length=255, unique=True)
+    name     = models.CharField(max_length=255, unique=True)
     synonyms = GenericRelation('opal.Synonym')
+    code     = models.ForeignKey('opal.core.referencedata.CodeableConcept',
+                                 blank=True, null=True, unique=True)
 
     class Meta:
         ordering = ['name']
