@@ -20,6 +20,10 @@ def load_lookuplist_item(model, item):
     from opal.models import Synonym
     from opal.core.reference.models import CodeableConcept
 
+    name = item.getattr('name', None)
+    if name is None:
+        raise InvalidDataError('Lookuplist entries must have a name')
+
     # If we have an upstream code, fetch that first.
     code = None
     if item.getattr('coding', None):
@@ -31,7 +35,7 @@ def load_lookuplist_item(model, item):
                 code=code_value, system=system
             )
             if created:
-                code.display=item['name']
+                code.display=name
                 code.save()
         except KeyError:
             msg = """
@@ -43,7 +47,7 @@ The following lookuplist item was missing one or both values:
 
     # Create the lookuplist entry or retrieve if it exists
     instance, created = model.objects.get_or_create(
-        name=item['name'], code=None
+        name=name, code=None
     )
 
     # Handle user visible synonyms
