@@ -19,15 +19,13 @@ Some platforms require favicons to be .ico format, however .png also works
 
 ## Adding your own CSS file to change the default colours, fonts, layouts and more
 
-To change the CSS used for the Opal interface, you can create a CSS file which overrides the defaults in Opal, and enable this CSS in Opal, as in this example:
+To change the CSS used for the Opal interface, first create a CSS file with your custom application styling:
 
 ```css
 /* ./yourapp/static/yourapp.css */
 body {
   /*main text style*/
   font-family: 'Franklin Gothic Book', Arial;
-  /*background: #e7ebee;*/
-  height: calc(100% - 50px);
 }
 
 .bg-primary {
@@ -36,6 +34,7 @@ body {
 .bg-secondary {
   background-color: #0084FF; }
 ```
+Then include this CSS file in your Application definition:
 
 ```python
 # ./yourapp/__init__.py
