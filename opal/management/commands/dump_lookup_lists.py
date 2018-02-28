@@ -54,10 +54,10 @@ class Command(BaseCommand):
                             Synonym.objects.filter(content_type=content_type,
                                                    object_id=item.id)]
                 entry = {'name': item.name, 'synonyms': synonyms}
-                if item.code:
+                if item.code and item.system:
                     entry['coding'] = {
-                        'code': item.code.code,
-                        'system', item.code.system
+                        'code': item.code,
+                        'system', item.system
                     }
                 items.append(entry)
             data[model.__name__.lower()] = items

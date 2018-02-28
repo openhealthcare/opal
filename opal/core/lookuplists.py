@@ -11,6 +11,36 @@ from opal import utils
 from opal.core import exceptions
 
 
+def get_or_create_lookuplist_item(model, name, code, system):
+    """
+    Given a lookuplist MODEL, the NAME of an entry, and possibly
+    the associated CODE and SYSTEM pair, return an instance.
+
+    If a preexisting uncoded entry with this name/display value
+    exists, treat this as an opportunity to code it.
+
+    If there is a preexisting entry with this code which has a
+    different name/display value, raise an exception as we can't
+    guess the correct thing to do in that scenario.
+    """
+    try:
+        instance = model.objects.get(name=name, code=code, system=system)
+        return instance, False
+    except model.objects.DoesNotExist:
+        try:
+            instance = model.objects.get(name=name)
+            if model.objects.filter(code=code, system=system).count() > 0:
+                raise exceptions.Error() # something else coded with this
+            instance.code = code
+            instance.system = system
+            instance.save()
+            return instance, False
+        except model.objects.DoesNotExist:
+            instance = model(name=name, code=code, system=system)
+            instance.save()
+            return instance, True
+
+
 def load_lookuplist_item(model, item):
     """
     Load an individual lookuplist item into the database
@@ -19,25 +49,15 @@ def load_lookuplist_item(model, item):
     expected lookuplist data structure
     """
     from opal.models import Synonym
-    from opal.core.reference.models import CodeableConcept
 
     name = item.getattr('name', None)
     if name is None:
         raise InvalidDataError('Lookuplist entries must have a name')
 
-    # If we have an upstream code, fetch that first.
-    code = None
+    code, system = None, None
     if item.getattr('coding', None):
-        try:
-            code_value = item['coding']['code']
-            system     = item['coding']['system']
-
-            code, created = CodeableConcept.objects.get_or_create(
-                code=code_value, system=system
-            )
-            if created:
-                code.display=name
-                code.save()
+            code   = item['coding']['code']
+            system = item['coding']['system']
         except KeyError:
             msg = """
 Coding entries in lookuplists must contain both `coding` and `system` values
@@ -46,10 +66,7 @@ The following lookuplist item was missing one or both values:
 """.format(str(item))
             raise execeptions.InvalidDataError(msg)
 
-    # Create the lookuplist entry or retrieve if it exists
-    instance, created = model.objects.get_or_create(
-        name=name, code=None
-    )
+    instance, created = get_or_create_lookuplist_item(model, name, code, system)
 
     # Handle user visible synonyms
     synonyms_created = 0
@@ -80,14 +97,20 @@ def synonym_exists(lookuplist, name):
 
 
 class LookupList(models.Model):
-    name     = models.CharField(max_length=255, unique=True)
-    synonyms = GenericRelation('opal.Synonym')
-    code     = models.ForeignKey('referencedata.CodeableConcept',
-                                 blank=True, null=True, unique=True)
+    # For the purposes of FHIR CodeableConcept, .name is .display
+    # We keep it as .name for Opal backwards compatibility
+    name          = models.CharField(max_length=255, unique=True)
+    synonyms      = GenericRelation('opal.Synonym')
+    system        = models.CharField(max_length=255, blank=True, null=True)
+    code          = models.CharField(max_length=255, blank=True, null=True)
+    # We don't particularly use .version in the current implementation, but we
+    # include it in the model for the sake of FHIR CodeableConcept compatibility
+    version       = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
         ordering = ['name']
         abstract = True
+        unique_together = ('code', 'system')
 
     def __unicode__(self):
         return self.name
