@@ -46,7 +46,7 @@ class Application(application.OpalApplication):
     ]
 ```
 
-Many of the classes are standard Bootstrap CSS classes, which can be identify in the Bootstrap documentation, or via the inspector in your browser's developer tools.
+Many of the classes are standard Bootstrap CSS classes, which can be identified in the Bootstrap documentation, or via the inspector in your browser's developer tools.
 
 ## Key overrides and a .sass template to reset key colours
 
