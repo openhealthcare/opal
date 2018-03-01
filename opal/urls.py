@@ -37,7 +37,7 @@ urlpatterns = [
     url(r'^episode/(?P<pk>\d+)/actions/copyto/(?P<category>[a-zA-Z_\-]+)/?$',
         views.EpisodeCopyToCategoryView.as_view()),
 
-    # Template vires
+    # Template views
     url(r'^templates/patient_list.html/(?P<slug>[0-9a-z_\-]+)/?$',
         views.PatientListTemplateView.as_view(),
         name="patient_list_template_view"),
@@ -71,10 +71,10 @@ urlpatterns = [
     # New Public facing API urls
     url(r'api/v0.1/', include(api.router.urls)),
 
-    url(r'^templates/record/(?P<model>[a-z_\-]+).html$',
+    url(r'^templates/record/(?P<model>[0-9a-z_\-]+).html$',
         views.RecordTemplateView.as_view(), name="record_view"),
 
-    url(r'^templates/forms/(?P<model>[a-z_\-]+).html/?$',
+    url(r'^templates/forms/(?P<model>[0-9a-z_\-]+).html/?$',
         views.FormTemplateView.as_view(), name="form_view"),
 
     url(r'^design-patterns/$',
