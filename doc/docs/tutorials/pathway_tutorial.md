@@ -68,7 +68,7 @@ class SimplePathway(pathway.PagePathway):
     )
 ```
 
-Pathways is smart enough to provide a single form step pathway if the model is a model or a pathway that allows a user to edit/add/remove multiple models if its not.
+Pathways is smart enough to provide a single form step pathway if the model is a [singleton model](../reference/subrecords.md), or a pathway that allows a user to edit/add/remove multiple models if its not a singleton model.
 
 
 ### Viewing The Pathway
