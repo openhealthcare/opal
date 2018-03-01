@@ -74,4 +74,4 @@ form.
 
 ## RedirectsToPatientMixin
 
-Redirect to the patient detail page for this patient, viewing the last episode for this patient.
+After saving, redirect the browser to the patient detail page for the relevant patient.
