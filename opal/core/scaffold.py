@@ -7,6 +7,8 @@ import subprocess
 import sys
 from django.core import management
 from django.utils.crypto import get_random_string
+from django.apps import apps
+from opal.core import subrecords
 import ffs
 from ffs import nix
 from ffs.contrib import mold
@@ -105,6 +107,55 @@ def start_plugin(name, USERLAND):
 
     write('Plugin complete at {0}'.format(reponame))
     return
+
+
+def scaffold_subrecords(
+    app, migrations=True, dry_run=False, dir=SCAFFOLDING_BASE
+):
+    """
+    In which we scaffold an django app (opal plugin or application).
+
+    1. Make migrations
+    2. Migrate
+    3. Create Form Templates of all subrecords in the models
+    4. Create Record Templates of all subrecords in the models
+    """
+    if app not in apps.all_models:
+        err = "Unable to find app {} in settings.INSTALLED_APPS"
+        raise ValueError(
+            err.format(app)
+        )
+
+    if migrations:
+        if dry_run:
+            management.call_command(
+                'makemigrations', app, "--traceback", "--dry-run"
+            )
+        else:
+            management.call_command(
+                'makemigrations', app, "--traceback"
+            )
+            management.call_command('migrate', app, "--traceback")
+
+    models = apps.all_models[app]
+    all_subrecords = set(i for i in subrecords.subrecords())
+
+    for model in models.values():
+        if model in all_subrecords:
+            if not model.get_display_template():
+                if dry_run:
+                    write('No Display template for {0}'.format(model))
+                else:
+                    create_display_template_for(
+                        model, SCAFFOLDING_BASE
+                    )
+            if not model.get_form_template():
+                if dry_run:
+                    write('No Form template for {0}'.format(model))
+                else:
+                    create_form_template_for(
+                        model, SCAFFOLDING_BASE
+                    )
 
 
 def start_project(name, USERLAND_HERE):
@@ -222,9 +273,26 @@ def _get_template_dir_from_record(record):
     modelsfile = inspect.getfile(record)
     if modelsfile.endswith('.pyc'):
         modelsfile = modelsfile.replace('.pyc', '.py')
-    appdir = ffs.Path(modelsfile)[:-1]
-    templates = appdir/'templates'
-    return templates
+
+    appdir = None
+    if modelsfile.endswith('models.py'):
+        # We're assuming the app in question has models in
+        # ./app/models.py
+        appdir = ffs.Path(modelsfile)[:-1]
+    else:
+        if ffs.Path(modelsfile)[-2] == 'models':
+            # We're assuming the app in question has models
+            # in ./app/models/here.py
+            appdir = ffs.Path(modelsfile)[:-2]
+
+    if appdir is None:
+        write("\n\nCripes!\n")
+        write("We can't figure out what the correct directory to \n")
+        write("put templates for {0} is :( \n\n".format(record))
+        sys.exit(1)
+    else:
+        templates = appdir/'templates'
+        return templates
 
 
 def create_display_template_for(record, scaffold_base):
@@ -255,7 +323,7 @@ def create_form_template_for(record, scaffold_base):
     """
     Create a form template for RECORD.
     """
-    write('Creating form template for{0}'.format(record))
+    write('Creating form template for {0}'.format(record))
     name = record.get_api_name()
 
     templates = _get_template_dir_from_record(record)

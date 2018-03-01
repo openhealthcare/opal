@@ -4,7 +4,6 @@ Opal comandline tool.
 In which we expose useful commandline functionality to our users.
 """
 import argparse
-import inspect
 import os
 import subprocess
 import sys
@@ -14,14 +13,10 @@ import ffs
 import opal
 from opal.core import scaffold as scaffold_utils
 from opal.core import test_runner
-from opal.utils import stringport, write
+from opal.utils import write
 
 USERLAND_HERE    = ffs.Path('.').abspath
-SCRIPT_HERE      = ffs.Path(__file__).parent
 OPAL             = ffs.Path(opal.__file__).parent
-SCAFFOLDING_BASE = OPAL/'scaffolding'
-SCAFFOLD         = SCAFFOLDING_BASE/'scaffold'
-PLUGIN_SCAFFOLD  = SCAFFOLDING_BASE/'plugin_scaffold'
 
 
 def find_application_name():
@@ -54,59 +49,6 @@ def startplugin(args):
     * Create template/static directories
     """
     scaffold_utils.start_plugin(args.name, USERLAND_HERE)
-    return
-
-
-def scaffold(args):
-    """
-    Create record boilierplates:
-
-    1. Run a south auto migration
-    2. Create display templates
-    3. Create forms
-    """
-    app = args.app
-
-    # 1. Let's run a Django migration
-    dry_run = ''
-    if args.dry_run:
-        dry_run = '--dry-run'
-
-    if not args.nomigrations:
-        makemigrations_cmd = "python manage.py makemigrations {app} " \
-                             "--traceback {dry_run}"
-        makemigrations_cmd = makemigrations_cmd.format(
-            app=app, dry_run=dry_run)
-        migrate_cmd = 'python manage.py migrate {app} --traceback'.format(
-            app=app)
-
-        os.system(makemigrations_cmd)
-        if not args.dry_run:
-            os.system(migrate_cmd)
-
-    # 2. Let's create some display templates
-    from opal.models import Subrecord, EpisodeSubrecord, PatientSubrecord
-
-    models = stringport('{0}.models'.format(app))
-    for i in dir(models):
-        thing = getattr(models, i)
-        if inspect.isclass(thing) and issubclass(thing, Subrecord):
-            if thing in [Subrecord, EpisodeSubrecord, PatientSubrecord]:
-                continue
-            if not thing.get_display_template():
-                if args.dry_run:
-                    write('No Display template for {0}'.format(thing))
-                else:
-                    scaffold_utils.create_display_template_for(
-                        thing, SCAFFOLDING_BASE
-                    )
-            if not thing.get_modal_template():
-                if args.dry_run:
-                    write('No Form template for {0}'.format(thing))
-                else:
-                    scaffold_utils.create_form_template_for(
-                        thing, SCAFFOLDING_BASE
-                    )
     return
 
 
@@ -226,21 +168,6 @@ def parse_args(args):
         'name', help="name of your plugin"
     )
     parser_plugin.set_defaults(func=startplugin)
-
-    parser_scaffold = subparsers.add_parser("scaffold")
-    parser_scaffold.add_argument('app', help='Django app to scaffold')
-    scaffold_help = "Just print the templates we would create - don't " \
-                    "actually create them"
-    parser_scaffold.add_argument(
-        '--dry-run',
-        action='store_true',
-        help=scaffold_help)
-    parser_scaffold.add_argument(
-        '--nomigrations',
-        action='store_true',
-        help="Don't run Django migration related commands"
-    )
-    parser_scaffold.set_defaults(func=scaffold)
 
     parser_test = subparsers.add_parser("test")
     parser_test.add_argument(

@@ -367,6 +367,17 @@ class SubrecordTestCase(OpalTestCase):
             os.path.join('forms', 'subrecord_form.html'),
         ])
 
+    @patch('opal.models.find_template')
+    @patch('opal.models.Subrecord.get_form_template')
+    @patch('opal.models.Subrecord._get_template')
+    def test_modal_template(self, get_template, get_form_template, find):
+        get_form_template.return_value = "some_template"
+        get_template.return_value = None
+        Subrecord.get_modal_template()
+        find.assert_called_with(
+            ["base_templates/form_modal_base.html"]
+        )
+
     def test_get_modal_template_does_not_exist(self):
         self.assertEqual(None, Subrecord.get_modal_template())
 
