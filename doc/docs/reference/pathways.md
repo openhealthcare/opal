@@ -74,5 +74,4 @@ form.
 
 ## RedirectsToPatientMixin
 
-Redirect to the patient detail page for this patient.
-he patient detail page, viewing the last episode for this patient.
+Redirect to the patient detail page for this patient, viewing the last episode for this patient.
