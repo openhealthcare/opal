@@ -155,11 +155,23 @@ angular.module('opal.services')
 
             makeCopy: function(){
                 var start, end;
+                /*
+                * undefined is not serailised.
+                * we explicitly set to null, to set
+                * fields that were populated to null
+                */
                 if(this.start){
                   start = moment(this.start).toDate();
                 }
+                else if("start" in this){
+                  start = null;
+                }
+
                 if(this.end){
                   end = moment(this.end).toDate();
+                }
+                else if("end" in this){
+                  end = null;
                 }
                 var copy = {
                     id               : this.id,

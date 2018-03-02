@@ -33,6 +33,7 @@ describe('Episode', function() {
             expect(moment(newEpisode.start).format('DD/MM/YYYY')).toEqual("19/11/2013");
             expect(moment(newEpisode.end).format('DD/MM/YYYY')).toEqual("25/05/2016");
         });
+
     });
 
     describe('compare', function(){
@@ -274,8 +275,8 @@ describe('Episode', function() {
       expect(copy.id).toBe(123);
       expect(copy.category_name).toBe('Inpatient');
       expect(copy.consistency_token).toBe(undefined);
-      expect(copy.start).toEqual(undefined);
-      expect(copy.end).toEqual(undefined);
+      expect(copy.start).toEqual(null);
+      expect(copy.end).toEqual(null);
     });
 
     describe('communicating with server', function (){
