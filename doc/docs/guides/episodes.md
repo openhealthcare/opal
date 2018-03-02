@@ -66,7 +66,7 @@ Opal stores the stage of an episode as a string in the `stage` property of an
 `get_stages` method of the category.
 
 ```
-episode.catetory.get_stages()
+episode.category.get_stages()
 # ['Inpatient', 'Followup', 'Discharged']
 
 episode.category.has_stage('Followup')
