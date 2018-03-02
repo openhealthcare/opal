@@ -60,8 +60,11 @@ Inherits from `opal.core.pathway.Pathway`, this displays all steps as one long f
 
 ## Step
 
-Steps are a single section within a form
+Steps are a single section within a form, and can be instances of either `opal.models.Subrecord` or
+`pathway.Step` subclasses. You can use both types of Step in a given Pathway.
 
+More detail on Steps is given in the [Guides section on Pathways](../guides/pathways.md)
+        
 ## HelpTextStep
 
 A Step subclass with help text to the side of the form
