@@ -269,9 +269,9 @@ describe('Episode', function() {
     });
 
     it('start and end should be null if not set', function(){
+      episode.start = undefined;
+      episode.end = undefined;
       var copy = episode.makeCopy();
-      delete copy.start;
-      delete copy.end;
       expect(copy.id).toBe(123);
       expect(copy.category_name).toBe('Inpatient');
       expect(copy.consistency_token).toBe(undefined);
