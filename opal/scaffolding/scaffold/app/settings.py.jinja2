@@ -1,6 +1,5 @@
 # Django settings for {{ name }} project.
 import os
-import sys
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -59,6 +58,7 @@ MIDDLEWARE_CLASSES = [
 ]
 
 ROOT_URLCONF = '{{ name }}.urls'
+APPEND_SLASH = False
 
 TEMPLATES = [
     {
@@ -156,27 +156,21 @@ STATICFILES_FINDERS = (
 # Django Site identifier
 SITE_ID = 1
 
-
-# Begins custom settings
-
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-
-DATE_FORMAT = 'd/m/Y'
-DATE_INPUT_FORMATS = ['%d/%m/%Y']
+# Date and Time Formatting
+# https://docs.djangoproject.com/en/{{ docs_version }}/ref/settings/#date-format
 DATETIME_FORMAT = 'd/m/Y H:i:s'
 DATETIME_INPUT_FORMATS = ['%d/%m/%Y %H:%M:%S']
+DATE_FORMAT = 'd/m/Y'
+DATE_INPUT_FORMATS = ['%d/%m/%Y']
 TIME_FORMAT = "H:i:s"
 
-CSRF_COOKIE_NAME = 'XSRF-TOKEN'
-APPEND_SLASH = False
 
-AXES_LOCK_OUT_AT_FAILURE = False
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-
+# Emails
+# https://docs.djangoproject.com/en/{{ docs_version }}/ref/settings/#email-backend
 EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
 if not DEBUG:
     EMAIL_HOST_USER = os.environ.get('SENDGRID_USERNAME', '')
-    EMAIL_HOST= 'smtp.sendgrid.net'
+    EMAIL_HOST = 'smtp.sendgrid.net'
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
     EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_PASSWORD', '')
@@ -184,22 +178,54 @@ else:
     EMAIL_PORT = 1025
     EMAIL_HOST = 'localhost'
 
-COVERAGE_EXCLUDE_MODULES = ('{{ name }}.migrations', '{{ name }}.tests',
-                            '{{ name }}.local_settings',
-                            'opal.migrations', 'opal.tests',
-                            'opal.wsgi')
+
+# HTTPS support
+# https://docs.djangoproject.com/en/{{ docs_version }}/ref/settings/#secure-proxy-ssl-header
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
-# Begins OPAL Settings
+# Sessions
+# https://docs.djangoproject.com/en/{{ docs_version }}/topics/http/sessions/#browser-length-sessions-vs-persistent-sessions
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+
+# CSRF
+# https://docs.djangoproject.com/en/{{ docs_version }}/ref/settings/#csrf-cookie-name
+CSRF_COOKIE_NAME = 'XSRF-TOKEN'
+
+
+# ========== THIRD PARTY ==========
+# Django Axes
+AXES_LOCK_OUT_AT_FAILURE = False
+
+
+# Rest Framework
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    )
+}
+
+
+# ========== OPAL ==========
+# Testing
+COVERAGE_EXCLUDE_MODULES = (
+    '{{ name }}.migrations',
+    '{{ name }}.tests',
+    '{{ name }}.local_settings',
+    'opal.migrations',
+    'opal.tests',
+    'opal.wsgi',
+)
 
 OPAL_LOG_OUT_MINUTES = 15
 OPAL_LOG_OUT_DURATION = OPAL_LOG_OUT_MINUTES*60*1000
 
-# Begins OPAL optional settings
 # OPAL_EXTRA_HEADER = ''
 # OPAL_EXTRA_APPLICATION = ''
 
-# Uncomment this to swap out the logo used by this application
+# Uncomment this if you want to swap the logo used by this application.
 # OPAL_LOGO_PATH = 'img/ohc-trans.png'
 
 # Uncomment this if you want to implement custom dynamic flows.
@@ -210,23 +236,15 @@ OPAL_AUTOCOMPLETE_SEARCH = False
 
 INTEGRATING = False
 
-# OPAL required Django settings you should edit
-
+# OPAL-required Django settings you should edit
 CONTACT_EMAIL = []
 DEFAULT_FROM_EMAIL = 'hello@example.com'
 DEFAULT_DOMAIN = 'http://{{ name }}.com/'
 
-# Begins OPAL Settings you should edit !
 
+# ========== PROJECT ==========
 OPAL_BRAND_NAME = '{{ name }}'
 VERSION_NUMBER  = '<0.0.1'
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    )
-}
 
 # if you want sass, uncomment the below and gem install sass
 # COMPRESS_PRECOMPILERS = (
