@@ -60,24 +60,10 @@ MIDDLEWARE_CLASSES = [
 
 ROOT_URLCONF = '{{ name }}.urls'
 
-if DEBUG:
-    TEMPLATE_LOADERS = (
-        'django.template.loaders.filesystem.Loader',
-        'django.template.loaders.app_directories.Loader',
-    )
-else:
-    TEMPLATE_LOADERS = (
-        ('django.template.loaders.cached.Loader', (
-            'django.template.loaders.filesystem.Loader',
-            'django.template.loaders.app_directories.Loader',
-            )),
-    )
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [os.path.join(PROJECT_PATH, 'templates')],
-        'APP_DIRS': True,
         'OPTIONS': {
             'debug': DEBUG,
             'context_processors': [
@@ -93,6 +79,14 @@ TEMPLATES = [
                 'opal.context_processors.models',
                 'opal.core.pathway.context_processors.pathways',
             ],
+            'loaders': [(
+                # TODO: Django 1.11 makes turns this loader on by default, so
+                # this section and `debug` can be removed then.
+                'django.template.loaders.cached.Loader', [
+                    'django.template.loaders.filesystem.Loader',
+                    'django.template.loaders.app_directories.Loader',
+                ],
+            )],
         },
     },
 ]
