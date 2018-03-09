@@ -14,3 +14,4 @@ coverage-js
 *.bak
 node_modules
 *.swp
+doc/site
