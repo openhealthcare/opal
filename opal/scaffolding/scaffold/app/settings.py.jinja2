@@ -6,7 +6,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
 
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/{{ docs_version }}/howto/deployment/checklist/
+# See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # Make this unique, and don't share it with anybody.
@@ -94,7 +94,7 @@ TEMPLATES = [
 WSGI_APPLICATION = '{{ name }}.wsgi.application'
 
 # Database
-# https://docs.djangoproject.com/en/{{ docs_version }}/ref/settings/#databases
+# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 try:
     import dj_database_url
 
@@ -114,7 +114,7 @@ except ImportError:
     }
 
 # Password validation
-# https://docs.djangoproject.com/en/{{ docs_version }}/ref/settings/#auth-password-validators
+# https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -132,7 +132,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/{{ docs_version }}/topics/i18n/
+# https://docs.djangoproject.com/en/1.10/topics/i18n/
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
@@ -141,7 +141,7 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/{{ docs_version }}/howto/static-files/
+# https://docs.djangoproject.com/en/1.10/howto/static-files/
 STATIC_URL = '/assets/'
 STATIC_ROOT = os.path.join(PROJECT_PATH, 'assets')
 STATICFILES_DIRS = [
@@ -157,7 +157,7 @@ STATICFILES_FINDERS = (
 SITE_ID = 1
 
 # Date and Time Formatting
-# https://docs.djangoproject.com/en/{{ docs_version }}/ref/settings/#date-format
+# https://docs.djangoproject.com/en/1.10/ref/settings/#date-format
 DATETIME_FORMAT = 'd/m/Y H:i:s'
 DATETIME_INPUT_FORMATS = ['%d/%m/%Y %H:%M:%S']
 DATE_FORMAT = 'd/m/Y'
@@ -166,7 +166,7 @@ TIME_FORMAT = "H:i:s"
 
 
 # Emails
-# https://docs.djangoproject.com/en/{{ docs_version }}/ref/settings/#email-backend
+# https://docs.djangoproject.com/en/1.10/ref/settings/#email-backend
 EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
 if not DEBUG:
     EMAIL_HOST_USER = os.environ.get('SENDGRID_USERNAME', '')
@@ -180,17 +180,17 @@ else:
 
 
 # HTTPS support
-# https://docs.djangoproject.com/en/{{ docs_version }}/ref/settings/#secure-proxy-ssl-header
+# https://docs.djangoproject.com/en/1.10/ref/settings/#secure-proxy-ssl-header
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
 # Sessions
-# https://docs.djangoproject.com/en/{{ docs_version }}/topics/http/sessions/#browser-length-sessions-vs-persistent-sessions
+# https://docs.djangoproject.com/en/1.10/topics/http/sessions/#browser-length-sessions-vs-persistent-sessions
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 
 # CSRF
-# https://docs.djangoproject.com/en/{{ docs_version }}/ref/settings/#csrf-cookie-name
+# https://docs.djangoproject.com/en/1.10/ref/settings/#csrf-cookie-name
 CSRF_COOKIE_NAME = 'XSRF-TOKEN'
 
 
