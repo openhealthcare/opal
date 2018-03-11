@@ -1125,3 +1125,13 @@ hr.bold{
 .text-avatar{
     height: 20px;
 }
+
+.form-group .ui-select-container.ui-select-multiple {
+    height: auto;
+}
+
+.select2-choices {
+  min-height: 150px;
+  max-height: 150px;
+  overflow-y: auto;
+}
