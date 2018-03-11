@@ -80,7 +80,7 @@ class LookuplistsIteratorTestCase(AbstractLookupListTestCase):
         all_lists = list(lookuplists())
         self.assertNotIn(EtherialHat, all_lists)
 
-    def test_includes_leaf_nodes(self):
+    def test_includes_subclasses_of_abstract_lookuplists(self):
         """
         make sure we include things that don't
         directly inherit from lookup lists
