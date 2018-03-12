@@ -81,6 +81,9 @@ urlpatterns = [
         TemplateView.as_view(template_name='design_patterns.html'),
         name='design_patterns'),
 
+    # Import/Export views
+    url(r'^export/episode/(?P<episode_id>\w)/$',
+        views.ExportEpisodeView.as_view(), name='export_episode'),
 ]
 
 

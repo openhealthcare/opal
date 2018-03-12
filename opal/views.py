@@ -2,6 +2,7 @@
 Module entrypoint for core Opal views
 """
 from django.core.urlresolvers import reverse
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import login
 from django.http import HttpResponseNotFound
@@ -295,3 +296,23 @@ class RawTemplateView(LoginRequiredMixin, TemplateView):
         except TemplateDoesNotExist:
             return HttpResponseNotFound()
         return super(RawTemplateView, self).get(*args, **kw)
+
+
+class ExportEpisodeView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        episode_id = self.kwargs['episode_id']
+
+        try:
+            episode = models.Episode.objects.get(pk=episode_id)
+        except models.Episode.DoesNotExist:
+            msg = 'Cannot find Episode with ID: {}'.format(episode_id)
+            messages.error(request, msg)
+            return redirect(reverse('admin:opal_episode_changelist'))
+
+        data = episode.to_dict(request.user)
+        response = json_response(data)
+
+        demographics = episode.patient.demographics_set.get()
+        filename = '{} {}.json'.format(episode.id, demographics.name)
+        response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
+        return response
