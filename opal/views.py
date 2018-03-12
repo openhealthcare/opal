@@ -299,7 +299,7 @@ class RawTemplateView(LoginRequiredMixin, TemplateView):
 
 def csrf_failure(request, reason):
     if request.POST:
-        next_url = request.POST.get('next', '/')
+        next_url = request.GET.get('next', '/')
         return redirect(next_url)
 
     return HttpResponseForbidden
