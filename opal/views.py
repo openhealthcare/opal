@@ -329,11 +329,17 @@ class ImportEpisodeView(LoginRequiredMixin, FormView):
     template_name = 'import_episode.html'
 
     def form_valid(self, form):
-        data = self.request.FILES['episode_file'].read()
-        episode_dict = json.loads(data)
+        raw_data = self.request.FILES['episode_file'].read()
+        data = json.loads(raw_data)
+        episode_dict = {
+            k: v
+            for k, v in data.items()
+            if isinstance(v, basestring)
+        }
 
-        patient = self._get_patient(episode_dict['demographics'][0])
-        print(patient)
+        patient = self._get_patient(data['demographics'][0])
+        episode = models.Episode(patient=patient)
+        episode.update_from_dict(episode_dict, self.request.user)
 
         return super(ImportEpisodeView, self).form_valid(form)
 
