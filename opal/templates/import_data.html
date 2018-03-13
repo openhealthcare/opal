@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block application %}
-<form action="{% url 'import_episode' %}" method="POST" enctype="multipart/form-data">
+<form action="{{ import_url }}" method="POST" enctype="multipart/form-data">
 
   {% csrf_token %}
   {{ form }}

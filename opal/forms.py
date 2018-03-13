@@ -40,5 +40,5 @@ class ChangePasswordForm(AdminPasswordChangeForm):
         return self.user
 
 
-class ImportEpisodeForm(Form):
-    episode_file = FileField()
+class ImportDataForm(Form):
+    data_file = FileField()

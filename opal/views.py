@@ -22,7 +22,7 @@ from opal.core.subrecords import (
     get_subrecord_from_model_name,
 )
 from opal.core.views import json_response
-from opal.forms import ImportEpisodeForm
+from opal.forms import ImportDataForm
 from opal.utils import camelcase_to_underscore
 from opal.utils.banned_passwords import banned
 
@@ -324,12 +324,12 @@ class ExportEpisodeView(LoginRequiredMixin, View):
 
 
 class ImportEpisodeView(LoginRequiredMixin, FormView):
-    form_class = ImportEpisodeForm
+    form_class = ImportDataForm
     success_url = reverse_lazy('admin:opal_episode_changelist')
-    template_name = 'import_episode.html'
+    template_name = 'import_data.html'
 
     def form_valid(self, form):
-        raw_data = self.request.FILES['episode_file'].read()
+        raw_data = self.request.FILES['data_file'].read()
         data = json.loads(raw_data)
         episode_dict = {
             k: v
@@ -342,6 +342,11 @@ class ImportEpisodeView(LoginRequiredMixin, FormView):
         episode.update_from_dict(episode_dict, self.request.user)
 
         return super(ImportEpisodeView, self).form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(ImportEpisodeView, self).get_context_data(**kwargs)
+        context['import_url'] = reverse('import_episode')
+        return context
 
     def _get_patient(self, demographic):
         """
