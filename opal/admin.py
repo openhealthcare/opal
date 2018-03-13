@@ -69,8 +69,8 @@ class MyAdmin(VersionAdmin):
 
 
 class EpisodeAdmin(VersionAdmin):
-    change_form_template = 'admin/change_form_template.html'
-    change_list_template = 'admin/change_list_template.html'
+    change_form_template = 'admin/episode_change_form.html'
+    change_list_template = 'admin/episode_change_list.html'
     list_display = [
         'patient',
         'active',
