@@ -323,6 +323,67 @@ class ExportEpisodeView(LoginRequiredMixin, View):
         return response
 
 
+class ExportPatientView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        patient_id = self.kwargs['patient_id']
+
+        try:
+            patient = models.Patient.objects.get(pk=patient_id)
+        except models.Patient.DoesNotExist:
+            msg = 'Cannot find Patient with ID: {}'.format(patient_id)
+            messages.error(request, msg)
+            return redirect(reverse('admin:opal_patient_changelist'))
+
+        data = patient.to_dict(request.user)
+        response = json_response(data)
+
+        demographics = patient.demographics_set.get()
+        filename = 'patient-{}-{}.json'.format(patient.id, demographics.name)
+        response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
+        return response
+
+
+def reconcile_or_create_patient(demographic, user):
+    """
+    Get a Patient record using demographics data
+
+    Attempt the lookup using three methods:
+        1. NHS Number
+        2. DoB, First name, & Surname
+        3. Create a new Demographic record
+    """
+    Demographics = get_subrecord_from_model_name('Demographics')
+    nhs_number = demographic.get('nhs_number')
+    if nhs_number:
+        try:
+            return Demographics.objects.get(nhs_number=nhs_number).patient
+        except Demographics.DoesNotExist:
+            pass
+
+    dob = demographic.get('date_of_birth')
+    first_name = demographic.get('first_name')
+    surname = demographic.get('surname')
+    if all([dob, first_name, surname]):
+        date_of_birth = datetime.strptime(dob, "%d/%m/%Y").date()
+        try:
+            return Demographics.objects.get(
+                date_of_birth=date_of_birth,
+                first_name=first_name,
+                surname=surname,
+            ).patient
+        except Demographics.DoesNotExist:
+            pass
+
+    # Remove data we don't want to save
+    if 'id' in demographic:
+        del demographic['id']
+
+    patient = models.Patient.objects.create()
+    d = Demographics(patient=patient)
+    d.update_from_dict(demographic, user)
+    return patient
+
+
 class ImportEpisodeView(LoginRequiredMixin, FormView):
     form_class = ImportDataForm
     success_url = reverse_lazy('admin:opal_episode_changelist')
@@ -337,7 +398,10 @@ class ImportEpisodeView(LoginRequiredMixin, FormView):
             if isinstance(v, basestring)
         }
 
-        patient = self._get_patient(data['demographics'][0])
+        patient = reconcile_or_create_patient(
+            data['demographics'][0],
+            self.request.user,
+        )
         episode = models.Episode(patient=patient)
         episode.update_from_dict(episode_dict, self.request.user)
 
@@ -348,42 +412,25 @@ class ImportEpisodeView(LoginRequiredMixin, FormView):
         context['import_url'] = reverse('import_episode')
         return context
 
-    def _get_patient(self, demographic):
-        """
-        Get a Patient record using demographics data
 
-        Attempt the lookup using three methods:
-            1. NHS Number
-            2. DoB, First name, & Surname
-            3. Create a new Demographic record
-        """
-        Demographics = get_subrecord_from_model_name('Demographics')
-        nhs_number = demographic.get('nhs_number')
-        if nhs_number:
-            try:
-                return Demographics.objects.get(nhs_number=nhs_number).patient
-            except Demographics.DoesNotExist:
-                pass
+class ImportPatientView(LoginRequiredMixin, FormView):
+    form_class = ImportDataForm
+    success_url = reverse_lazy('admin:opal_patient_changelist')
+    template_name = 'import_data.html'
 
-        dob = demographic.get('date_of_birth')
-        first_name = demographic.get('first_name')
-        surname = demographic.get('surname')
-        if all([dob, first_name, surname]):
-            date_of_birth = datetime.strptime(dob, "%d/%m/%Y").date()
-            try:
-                return Demographics.objects.get(
-                    date_of_birth=date_of_birth,
-                    first_name=first_name,
-                    surname=surname,
-                ).patient
-            except Demographics.DoesNotExist:
-                pass
+    def form_valid(self, form):
+        raw_data = self.request.FILES['data_file'].read()
+        data = json.loads(raw_data)
 
-        # Remove data we don't want to save
-        if 'id' in demographic:
-            del demographic['id']
+        patient = reconcile_or_create_patient(
+            data['demographics'][0],
+            self.request.user,
+        )
+        messages.success(self.request, 'Imported {}'.format(patient))
 
-        patient = models.Patient.objects.create()
-        d = Demographics(patient=patient)
-        d.update_from_dict(demographic, self.request.user)
-        return patient
+        return super(ImportPatientView, self).form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(ImportPatientView, self).get_context_data(**kwargs)
+        context['import_url'] = reverse('import_patient')
+        return context

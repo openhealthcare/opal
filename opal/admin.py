@@ -100,6 +100,8 @@ class EpisodeAdmin(VersionAdmin):
 
 
 class PatientAdmin(VersionAdmin):
+    change_form_template = 'admin/patient_change_form.html'
+    change_list_template = 'admin/patient_change_list.html'
     list_display = ('__str__', 'patient_detail_link')
 
     search_fields = [
