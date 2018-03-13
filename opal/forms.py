@@ -1,7 +1,7 @@
 """
 Custom forms for Opal!
 """
-from django.forms import ValidationError
+from django.forms import FileField, Form, ValidationError
 from django.contrib.auth.forms import AdminPasswordChangeForm
 
 from opal.utils.banned_passwords import banned
@@ -38,3 +38,7 @@ class ChangePasswordForm(AdminPasswordChangeForm):
         profile.force_password_change = False
         profile.save()
         return self.user
+
+
+class ImportEpisodeForm(Form):
+    episode_file = FileField()

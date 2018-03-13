@@ -1,7 +1,10 @@
 """
 Module entrypoint for core Opal views
 """
-from django.core.urlresolvers import reverse
+import json
+from datetime import datetime
+
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import login
@@ -9,15 +12,17 @@ from django.http import HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import get_template
 from django.template import TemplateDoesNotExist
-from django.views.generic import TemplateView, View
+from django.views.generic import FormView, TemplateView, View
 
 from opal import models
 from opal.core import application, detail, episodes
 from opal.core.patient_lists import PatientList, TabbedPatientListGroup
 from opal.core.subrecords import (
-    episode_subrecords, get_subrecord_from_api_name
+    episode_subrecords, get_subrecord_from_api_name,
+    get_subrecord_from_model_name,
 )
 from opal.core.views import json_response
+from opal.forms import ImportEpisodeForm
 from opal.utils import camelcase_to_underscore
 from opal.utils.banned_passwords import banned
 
@@ -316,3 +321,58 @@ class ExportEpisodeView(LoginRequiredMixin, View):
         filename = '{} {}.json'.format(episode.id, demographics.name)
         response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
         return response
+
+
+class ImportEpisodeView(LoginRequiredMixin, FormView):
+    form_class = ImportEpisodeForm
+    success_url = reverse_lazy('admin:opal_episode_changelist')
+    template_name = 'import_episode.html'
+
+    def form_valid(self, form):
+        data = self.request.FILES['episode_file'].read()
+        episode_dict = json.loads(data)
+
+        patient = self._get_patient(episode_dict['demographics'][0])
+        print(patient)
+
+        return super(ImportEpisodeView, self).form_valid(form)
+
+    def _get_patient(self, demographic):
+        """
+        Get a Patient record using demographics data
+
+        Attempt the lookup using three methods:
+            1. NHS Number
+            2. DoB, First name, & Surname
+            3. Create a new Demographic record
+        """
+        Demographics = get_subrecord_from_model_name('Demographics')
+        nhs_number = demographic.get('nhs_number')
+        if nhs_number:
+            try:
+                return Demographics.objects.get(nhs_number=nhs_number).patient
+            except Demographics.DoesNotExist:
+                pass
+
+        dob = demographic.get('date_of_birth')
+        first_name = demographic.get('first_name')
+        surname = demographic.get('surname')
+        if all([dob, first_name, surname]):
+            date_of_birth = datetime.strptime(dob, "%d/%m/%Y").date()
+            try:
+                return Demographics.objects.get(
+                    date_of_birth=date_of_birth,
+                    first_name=first_name,
+                    surname=surname,
+                ).patient
+            except Demographics.DoesNotExist:
+                pass
+
+        # Remove data we don't want to save
+        if 'id' in demographic:
+            del demographic['id']
+
+        patient = models.Patient.objects.create()
+        d = Demographics(patient=patient)
+        d.update_from_dict(demographic, self.request.user)
+        return patient
