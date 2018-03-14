@@ -12,6 +12,7 @@ from django.http import HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import get_template
 from django.template import TemplateDoesNotExist
+from django.utils.text import slugify
 from django.views.generic import FormView, TemplateView, View
 
 from opal import models
@@ -318,7 +319,8 @@ class ExportEpisodeView(LoginRequiredMixin, View):
         response = json_response(data)
 
         demographics = episode.patient.demographics_set.get()
-        filename = '{} {}.json'.format(episode.id, demographics.name)
+        name = slugify(demographics.name)
+        filename = 'episode-{}-{}.json'.format(episode.id, name)
         response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
         return response
 
@@ -338,7 +340,8 @@ class ExportPatientView(LoginRequiredMixin, View):
         response = json_response(data)
 
         demographics = patient.demographics_set.get()
-        filename = 'patient-{}-{}.json'.format(patient.id, demographics.name)
+        name = slugify(demographics.name)
+        filename = 'patient-{}-{}.json'.format(patient.id, name)
         response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
         return response
 
