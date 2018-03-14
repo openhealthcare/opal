@@ -343,7 +343,7 @@ class ExportPatientView(LoginRequiredMixin, View):
         return response
 
 
-def reconcile_or_create_patient(demographic, user):
+def match_or_create_patient(demographic, user):
     """
     Get a Patient record using demographics data
 
@@ -398,7 +398,7 @@ class ImportEpisodeView(LoginRequiredMixin, FormView):
             if isinstance(v, basestring)
         }
 
-        patient = reconcile_or_create_patient(
+        patient = match_or_create_patient(
             data['demographics'][0],
             self.request.user,
         )
@@ -422,7 +422,7 @@ class ImportPatientView(LoginRequiredMixin, FormView):
         raw_data = self.request.FILES['data_file'].read()
         data = json.loads(raw_data)
 
-        patient = reconcile_or_create_patient(
+        patient = match_or_create_patient(
             data['demographics'][0],
             self.request.user,
         )
