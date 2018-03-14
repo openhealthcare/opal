@@ -340,7 +340,8 @@ class ExportEpisodeView(LoginRequiredMixin, View):
         demographics = episode.patient.demographics_set.get()
         name = slugify(demographics.name)
         filename = 'episode-{}-{}.json'.format(episode.id, name)
-        response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
+        header_value = 'attachment; filename={}'.format(filename)
+        response['Content-Disposition'] = header_value
         return response
 
 
@@ -365,7 +366,8 @@ class ExportPatientView(LoginRequiredMixin, View):
         demographics = patient.demographics_set.get()
         name = slugify(demographics.name)
         filename = 'patient-{}-{}.json'.format(patient.id, name)
-        response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
+        header_value = 'attachment; filename={}'.format(filename)
+        response['Content-Disposition'] = header_value
         return response
 
 
