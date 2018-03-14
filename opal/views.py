@@ -1,6 +1,7 @@
 """
 Module entrypoint for core Opal views
 """
+import collections
 import json
 from datetime import datetime
 
@@ -304,6 +305,20 @@ class RawTemplateView(LoginRequiredMixin, TemplateView):
         return super(RawTemplateView, self).get(*args, **kw)
 
 
+def remove_key(d, key):
+    """Remove the given key from the given dictionary recursively"""
+    for k, v in d.iteritems():
+        if k == key:
+            continue
+
+        if isinstance(v, collections.Mapping):
+            yield k, remove_key(v, key)
+        elif isinstance(v, list):
+            yield k, [dict(remove_key(x, key)) for x in v]
+        else:
+            yield k, v
+
+
 class ExportEpisodeView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         episode_id = self.kwargs['episode_id']
@@ -316,6 +331,10 @@ class ExportEpisodeView(LoginRequiredMixin, View):
             return redirect(reverse('admin:opal_episode_changelist'))
 
         data = episode.to_dict(request.user)
+
+        # Remove all "id" keys from the data
+        data = dict(remove_key(data, 'id'))
+
         response = json_response(data)
 
         demographics = episode.patient.demographics_set.get()
@@ -337,6 +356,10 @@ class ExportPatientView(LoginRequiredMixin, View):
             return redirect(reverse('admin:opal_patient_changelist'))
 
         data = patient.to_dict(request.user)
+
+        # Remove all "id" keys from the data
+        data = dict(remove_key(data, 'id'))
+
         response = json_response(data)
 
         demographics = patient.demographics_set.get()
