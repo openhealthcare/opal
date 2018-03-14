@@ -420,18 +420,61 @@ class ImportEpisodeView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         raw_data = self.request.FILES['data_file'].read()
         data = json.loads(raw_data)
-        episode_dict = {
-            k: v
-            for k, v in data.items()
-            if isinstance(v, basestring)
-        }
+
+        demographics = data.pop('demographics', None)
+
+        if demographics is None:
+            messages.error('No Demographics found, aborted import')
+            return super(ImportEpisodeView, self).form_valid(form)
 
         patient = match_or_create_patient(
-            data['demographics'][0],
+            demographics[0],
             self.request.user,
         )
-        episode = models.Episode(patient=patient)
-        episode.update_from_dict(episode_dict, self.request.user)
+        episode = models.Episode.objects.create(patient=patient)
+
+        episode_history = data.pop('episode_history', None)
+        for d in episode_history:
+            ep = models.Episode(patient=patient)
+            ep.update_from_dict(d, self.request.user)
+
+        investigation_dicts = data.pop('investigation', None)
+        if investigation_dicts is not None:
+            Investigation = get_subrecord_from_model_name('Investigation')
+            Investigation.bulk_update_from_dicts(
+                parent=episode,
+                list_of_dicts=investigation_dicts,
+                user=self.request.user,
+            )
+
+        location_dicts = data.pop('location', None)
+        if location_dicts is not None:
+            Location = get_subrecord_from_model_name('Location')
+            Location.bulk_update_from_dicts(
+                parent=episode,
+                list_of_dicts=location_dicts,
+                user=self.request.user,
+            )
+
+        data.pop('tagging', None)
+        # tagging_dicts = data.pop('tagging', None)
+        # if tagging_dicts is not None:
+        #     models.Tagging.bulk_update_from_dicts(
+        #         parent=episode,
+        #         list_of_dicts=tagging_dicts,
+        #         user=self.request.user,
+        #     )
+
+        treatment_dicts = data.pop('treatment', None)
+        if treatment_dicts is not None:
+            Treatment = get_subrecord_from_model_name('Treatment')
+            Treatment.bulk_update_from_dicts(
+                parent=episode,
+                list_of_dicts=treatment_dicts,
+                user=self.request.user,
+            )
+
+        episode.update_from_dict(data, self.request.user)
 
         return super(ImportEpisodeView, self).form_valid(form)
 
@@ -454,6 +497,7 @@ class ImportPatientView(LoginRequiredMixin, FormView):
             data['demographics'][0],
             self.request.user,
         )
+        patient.update_from_dict(data, self.request.use)
         messages.success(self.request, 'Imported {}'.format(patient))
 
         return super(ImportPatientView, self).form_valid(form)
