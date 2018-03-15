@@ -867,7 +867,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
     def update_from_dict(self, data, user, force=False, fields=None):
         # stage is a related model so episode
-        # needs to have been saved before we can
+        # needs to have been saved before we can set it.
         stage = data.pop("stage", None)
         super(Episode, self).update_from_dict(
             data, user, force=force, fields=fields
