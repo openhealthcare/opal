@@ -26,6 +26,7 @@ A list of all available topic guides.
 |[Angular models](working_with_data_in_angular.md)|Working with Clinical data in Angular|
 |[Roles & Permissions](roles_and_permissions.md)| How we handle authorization in Opal|
 |[Tagging](tagging.md) | Tagging episodes in Opal |
+|[Stage](stage.md) | Episodes stages in Opal |
 |[JSON API](json_api.md) | The Opal JSON API |
 
 

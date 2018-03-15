@@ -18,13 +18,15 @@ When we delete and look up list instance, we no longer delete all subrecords tha
 that instance. Instead we set the look up list instances name in the free text field on
 the subrecord.
 
-When you delete a user, it will no longer delete all related episodes and subrecords
+When you delete a user, it will no longer delete all relqwated episodes and subrecords
 
 #### Episode Category stages
 
 Episode categories now enforce a set of valid `Episode.stage` values.
 `EpisodeCategory` now includes the `.get_stages()` and `.has_stage(stage)` methods,
 while `Episode` has a `set_stage` setter which is used by the UpdateFromDictMixin JSON API.
+
+Stages are stored in the stage model which keeps a log of the stage history of an episode.
 
 #### lookuplists.lookuplists
 

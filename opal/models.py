@@ -12,7 +12,7 @@ import os
 
 from django.conf import settings
 from django.utils import timezone
-from django.db import models, transaction
+from django.db import models, transaction, IntegrityError
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -715,13 +715,6 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     start             = models.DateField(null=True, blank=True)
     end               = models.DateField(blank=True, null=True)
     consistency_token = models.CharField(max_length=8)
-
-    # stage is at what stage of an episode flow is the
-    # patient at
-    stage             = models.CharField(
-        max_length=256, null=True, blank=True
-    )
-
     objects = managers.EpisodeQueryset.as_manager()
 
     def __unicode__(self):
@@ -740,6 +733,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
     def save(self, *args, **kwargs):
         created = not bool(self.id)
+
         super(Episode, self).save(*args, **kwargs)
         if created:
             for subclass in episode_subrecords():
@@ -1718,6 +1712,22 @@ class Stage(TrackedModel):
     started = models.DateTimeField()
     stopped = models.DateTimeField(blank=True, null=True)
     value = models.CharField(max_length=256)
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        """ An episode should not have multiple open stages.
+            raise exceptions and roll back if anyone tries
+            any funny business.
+        """
+        super(Stage, self).save(*args, **kwargs)
+        existing = Stage.objects.filter(episode=self.episode)
+        existing = existing.filter(stopped=None)
+        if existing.count() > 1:
+            err = "for episode {}, stage {}, An episode cannot have multiple \
+open stages"
+            raise IntegrityError(
+                err.format(self.episode.id, self.value)
+            )
 
 
 class InpatientAdmission(PatientSubrecord, ExternallySourcedModel):

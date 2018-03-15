@@ -29,6 +29,7 @@ pages:
       - Flow: guides/flow.md
       - Roles & Permissions: guides/roles_and_permissions.md
       - Tagging: guides/tagging.md
+      - Stage: guides/stage.md
       - JSON API: guides/json_api.md
 
       # Presentation and templating
