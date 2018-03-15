@@ -143,6 +143,11 @@ class TextareaTest(TestCase):
         rendered = tpl.render(Context({}))
         self.assertIn('ng-change="doStuff"', rendered)
 
+    def test_rows(self):
+        tpl = Template('{% load forms %}{% textarea label="hai" model="bai" rows=2 element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('rows="2"', rendered)
+
 
 class InputTest(TestCase):
 

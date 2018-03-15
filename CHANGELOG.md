@@ -100,6 +100,9 @@ library.
 
 Adds a setting `OPAL_FAVICON_PATH` to specify the application Favicon to use.
 
+Adds the `rows` option to the textarea template tag which just fills in the html textarea `rows` attribute. Text areas are defaulted to 5 rows (the same as before).
+
+
 ### 0.9.1 (Minor Release)
 
 #### Pathways ContextProcessor
