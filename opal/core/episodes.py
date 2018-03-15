@@ -81,12 +81,21 @@ class EpisodeCategory(DiscoverableFeature):
                 raise ValueError(msg)
 
         current_stage = self.episode.stage_set.filter(stopped=None).last()
+
+        # if the stage hasn't changed, don't do anything
+        if current_stage and current_stage.value == stage_value:
+            return
+
         now = timezone.now()
         if current_stage:
             current_stage.stopped = now
             current_stage.updated = now
             current_stage.updated_by = user
             current_stage.save()
+
+        if current_stage and not stage_value:
+            raise ValueError(
+                "A stage cannot be removed after one has been set")
 
         if stage_value:
             self.episode.stage_set.create(
