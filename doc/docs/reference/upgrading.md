@@ -22,6 +22,8 @@ you have specified them in for instance, a requirements.txt.
     ffs==0.0.8.2
     opal==0.10.0
     requests==2.18.4
+    django-celery==3.2.2
+    celery==3.1.25
 
 
 After re-installing (via for instance `pip install -r requirements.txt`) you will
