@@ -77,6 +77,8 @@ in `opal.core.views.
 * Jinja2: 2.9.6 -> 2.10
 * Ffs: 0.0.8.1 -> 0.0.8.2
 * Requests: 2.7.0 -> 2.18.4
+* django-celery: 3.1.17 -> 3.2.2
+* celery: 3.1.19 -> 3.1.25
 
 #### Testing options
 
