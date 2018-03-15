@@ -163,14 +163,14 @@ angular.module('opal.services')
                 if(this.start){
                   start = moment(this.start).toDate();
                 }
-                else if("start" in this){
+                else{
                   start = null;
                 }
 
                 if(this.end){
                   end = moment(this.end).toDate();
                 }
-                else if("end" in this){
+                else{
                   end = null;
                 }
                 var copy = {
