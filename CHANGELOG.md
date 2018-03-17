@@ -102,6 +102,8 @@ library.
 
 Adds a setting `OPAL_FAVICON_PATH` to specify the application Favicon to use.
 
+Configures the setting `CSRF_FAILURE_VIEW` to use the bundled `opal.views.csrf_failure` view.
+
 ### 0.9.1 (Minor Release)
 
 #### Pathways ContextProcessor

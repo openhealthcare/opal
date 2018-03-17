@@ -93,6 +93,16 @@ Django now ships with `django.contrib.auth.mixins.LoginRequiredMixin`. According
 removed `opal.core.views.LoginRequiredMixin`. A direct switch to the Django class should
 work seamlessly without any functional differences.
 
+##### CSRF_FAILURE_VIEW
+We now ship the `opal.views.csrf_failure` view which can be enabled by adding
+`CSRF_FAILURE_VIEW = 'opal.views.csrf_failure'` in your settings.py. This will
+redirect a user to their intended destination on a CSRF failure. This mitigates
+an edge case where an unauthenticated user opens two pages at the same time.
+Both pages will get redirected to the login form and whichever page the user
+logs into second will throw a CSRF failure because Django invalidates CSRF
+tokens on login.
+
+
 ### 0.9.0 -> 0.9.1
 
 #### Upgrading Opal
