@@ -55,8 +55,8 @@ setup(
         'djangorestframework==3.4.7',
         'django-compressor==1.5',
         'python-dateutil==2.4.2',
-        'django-celery==3.1.17',
-        'celery==3.1.19',
+        'django-celery==3.2.2',
+        'celery==3.1.25',
         'six>=1.10.0',
         ],
     classifiers = [
