@@ -281,6 +281,7 @@ def select(*args, **kwargs):
 @register.inclusion_tag('_helpers/textarea.html')
 def textarea(*args, **kwargs):
     ctx = extract_common_args(kwargs)
+    ctx["rows"] = kwargs.pop("rows", 5)
     ctx.update({
         'macros': kwargs.pop('macros', False),
     })

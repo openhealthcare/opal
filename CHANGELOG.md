@@ -88,6 +88,9 @@ failure.
 If you are a plugin developer upgrading an existing plugin you will have to
 manually add support for `--failfast` passthrough to your `runtests.py`.
 
+If you are a plugin developer upgrading an existing plugin you will have to
+manually add support for `--failfast` passthrough to your `runtests.py`.
+
 
 #### Moves scaffold to be a django management command
 
@@ -102,7 +105,10 @@ library.
 
 Adds a setting `OPAL_FAVICON_PATH` to specify the application Favicon to use.
 
+Adds the `rows` option to the textarea template tag which just fills in the html textarea `rows` attribute. Text areas are defaulted to 5 rows (the same as before).
+
 Configures the setting `CSRF_FAILURE_VIEW` to use the bundled `opal.views.csrf_failure` view.
+
 
 ### 0.9.1 (Minor Release)
 
