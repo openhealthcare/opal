@@ -56,6 +56,7 @@ A list of all available topic guides.
 |--|--|
 [Contributing](CONTRIBUTING.md) | Contributing to Opal
 [Development environment](development_environment.md) | Setting up the Opal development environment
+[Making a Release](releasing.md) | Releasing a version of Opal
 
 ### Other Guides
 |||

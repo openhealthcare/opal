@@ -4,7 +4,7 @@ Module entrypoint for core Opal views
 from django.core.urlresolvers import reverse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import login
-from django.http import HttpResponseNotFound
+from django.http import HttpResponseForbidden, HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import get_template
 from django.template import TemplateDoesNotExist
@@ -295,3 +295,11 @@ class RawTemplateView(LoginRequiredMixin, TemplateView):
         except TemplateDoesNotExist:
             return HttpResponseNotFound()
         return super(RawTemplateView, self).get(*args, **kw)
+
+
+def csrf_failure(request, reason):
+    if request.POST:
+        next_url = request.GET.get('next', '/')
+        return redirect(next_url)
+
+    return HttpResponseForbidden

@@ -1,0 +1,3 @@
+mkdocs-bootstrap==0.1.1
+mkdocs-bootswatch==0.4.0
+mkdocs==0.15.3

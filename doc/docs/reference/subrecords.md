@@ -95,6 +95,17 @@ This is used when creating data extracts to exclude PID from e.g. CSV downloads.
 
 ### Methods
 
+#### Subrecord.get_api_name()
+
+Classmethod that returns a snake case version of the API name for this subrecord.
+This will be used in the URL for the subrecord API, and as a property name in Javascript
+representations of the data.
+
+```python
+>>> Demographics.get_api_name()
+"demographics"
+```
+
 #### Subrecord.get_display_template()
 
 Classmethod to locate the display template for our record. By default this
