@@ -3,7 +3,7 @@ pytz
 python-dateutil==2.4.2
 coverage
 coveralls
-celery==3.1.19
-django-celery==3.1.17
+celery==3.1.25
+django-celery==3.2.2
 flake8==3.2.1
 requests==2.18.4

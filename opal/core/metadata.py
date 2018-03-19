@@ -90,6 +90,7 @@ class MicroTestDefaultsMetadata(Metadata):
                     'metapneumovirus': 'pending',
                     'rsv': 'pending',
                     'adenovirus': 'pending',
+                    'rhinovirus': 'pending',
                 },
                 'micro_test_stool_pcr': {
                     'norovirus': 'pending',
