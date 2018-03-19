@@ -23,6 +23,15 @@ class Hat(lookuplists.LookupList):
     pass
 
 
+class EtherialHat(lookuplists.LookupList):
+    class Meta:
+        abstract = True
+
+
+class GhostHat(EtherialHat):
+    pass
+
+
 class HatWearer(models.EpisodeSubrecord):
     _sort = 'name'
     _title = 'Wearer of Hats'
