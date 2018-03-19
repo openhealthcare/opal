@@ -1601,11 +1601,8 @@ class Investigation(EpisodeSubrecord):
     giardia               = models.CharField(max_length=20, blank=True)
     entamoeba_histolytica = models.CharField(max_length=20, blank=True)
     cryptosporidium       = models.CharField(max_length=20, blank=True)
-    rhinovirus = models.CharField(
-        max_length=20,
-        blank=True,
-        choices=POS_NEG_PENDING,
-    )
+    rhinovirus            = models.CharField(
+        max_length=20, blank=True, choices=POS_NEG_PENDING)
 
     class Meta:
         abstract = True
