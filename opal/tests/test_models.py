@@ -780,7 +780,8 @@ class TaggingTestCase(OpalTestCase):
         patient_list.return_value = [test_patient_lists.TaggingTestPatientList]
         expected = [
             {'name': 'eater', 'title': 'Eater', 'type': 'boolean'},
-            {'type': 'boolean', 'name': 'herbivore', 'title': 'Herbivore'}
+            {'type': 'boolean', 'name': 'herbivore', 'title': 'Herbivore'},
+            {'name': 'mine', 'title': 'Mine', 'type': 'boolean'}
         ]
         schema = Tagging.build_field_schema()
         self.assertEqual(expected, schema)

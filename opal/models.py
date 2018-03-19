@@ -1127,6 +1127,13 @@ class Tagging(TrackedModel, models.Model):
                 'type': 'boolean',
                 'title': tag.replace("_", " ").title()
             })
+
+        result.append({
+            'name': 'mine',
+            'type': 'boolean',
+            'title': 'Mine'
+        })
+
         return result
 
 

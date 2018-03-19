@@ -100,6 +100,9 @@ library.
 
 Adds a setting `OPAL_FAVICON_PATH` to specify the application Favicon to use.
 
+Adds `mine` to the Tagging models field schema, in a similar way to how it is added
+via TaggedPatientListMetadata,
+
 ### 0.9.1 (Minor Release)
 
 #### Pathways ContextProcessor
