@@ -4,6 +4,13 @@ Opal comes with a selection of templatetags that can help you with the
 repetitive task of generating Bootstrap and Opal compatible markup for
 your forms.
 
+To use these in your HTML templates you need to load them:
+
+```html
+<!-- myapp/templates/forms/mytemplate.html -->
+{% load forms %}
+...
+```
 
 ### {% checkbox ... %}
 
