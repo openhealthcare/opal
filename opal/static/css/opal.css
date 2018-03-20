@@ -474,7 +474,8 @@ i.delete,
 select.lg-text,
 input.lg-text,
 .modal select,
-.modal input {
+.modal input,
+input[type='password'] {
   font-size: 18px;
 }
 .panel-pathway .form-control, .modal .form-control {
