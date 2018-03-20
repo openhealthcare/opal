@@ -215,6 +215,25 @@ class TabbedPatientListGroup(discoverable.DiscoverableFeature):
     """
     module_name   = 'patient_lists'
     member_lists  = []
+    # defaults to including all member_lists in the PatientListSwitcher
+    include_member_lists_in_patient_list_switcher = True
+
+    @classmethod
+    def is_valid(klass):
+        if klass.include_member_lists_in_patient_list_switcher is False:
+            if not klass.display_name:
+                msg = "display_name is required if `include_member_lists_in_patient_list_switcher` is set to 'False'"
+                raise InvalidDiscoverableFeatureError(msg)
+
+    # arbitrarily the first member list's slug becomes the slug for the tabbed group
+    # if all the the tabbed group members are not being shown in the list switcher
+    @classmethod
+    def get_slug(klass):
+        try:
+            return klass.member_lists[0].get_slug()
+        except IndexError:
+            msg = "member_lists should contain at least one PatientList object"
+            raise InvalidDiscoverableFeatureError(msg)
 
     @classmethod
     def for_list(klass, patient_list):

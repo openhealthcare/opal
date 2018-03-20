@@ -55,7 +55,7 @@ class PatientListTemplateView(LoginRequiredMixin, TemplateView):
             list_slug = self.patient_list.get_slug()
         context['list_slug'] = list_slug
         context['patient_list'] = self.patient_list
-        context['lists'] = list(PatientList.for_user(self.request.user))
+        context['lists'] = self.get_list_switcher_items(self.request.user)
         context['num_lists'] = len(context['lists'])
 
         context['list_group'] = None
@@ -67,6 +67,13 @@ class PatientListTemplateView(LoginRequiredMixin, TemplateView):
 
         context['columns'] = self.get_column_context(**kwargs)
         return context
+
+    def get_list_switcher_items(self, user):
+        # the majority of the list-switcher objects is populated from this lookup
+        list_items = list(PatientList.for_user(user))
+        # remove any list items which are not required, by display_name
+        list_items = [item for item in list_items if item.display_name != "Walkin Nurse Triage"]
+        return list_items
 
     def get_template_names(self):
         if self.patient_list:
