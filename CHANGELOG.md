@@ -109,6 +109,8 @@ Adds the `rows` option to the textarea template tag which just fills in the html
 
 Configures the setting `CSRF_FAILURE_VIEW` to use the bundled `opal.views.csrf_failure` view.
 
+Adds `mine` to the Tagging models field schema, in a similar way to how it is added
+via TaggedPatientListMetadata,
 
 ### 0.9.1 (Minor Release)
 
