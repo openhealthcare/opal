@@ -868,11 +868,22 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     def update_from_dict(self, data, user, force=False, fields=None):
         # stage is a related model so episode
         # needs to have been saved before we can set it.
-        stage = data.pop("stage", None)
+        set_stage = False
+
+        if "stage" in data:
+            set_stage = True
+            stage = data.pop("stage")
+
+        # we remove stage as we set this ourselves
+        fields = fields or set(self._get_fieldnames_to_serialize())
+        fields.remove("stage")
+
         super(Episode, self).update_from_dict(
             data, user, force=force, fields=fields
         )
-        self.set_stage(stage, user, data)
+
+        if set_stage:
+            self.set_stage(stage, user, data)
 
     def to_dict(self, user, shallow=False):
         """
@@ -1719,15 +1730,15 @@ class Stage(TrackedModel):
             raise exceptions and roll back if anyone tries
             any funny business.
         """
+        if not self.id:
+            if(self.episode.stage_set.filter(stopped=None).exists()):
+                if not self.stopped:
+                    err = "for episode {}, stage {}. An episode cannot have \
+multiple open stages"
+                    raise IntegrityError(
+                        err.format(self.episode.id, self.value)
+                    )
         super(Stage, self).save(*args, **kwargs)
-        existing = Stage.objects.filter(episode=self.episode)
-        existing = existing.filter(stopped=None)
-        if existing.count() > 1:
-            err = "for episode {}, stage {}, An episode cannot have multiple \
-open stages"
-            raise IntegrityError(
-                err.format(self.episode.id, self.value)
-            )
 
 
 class InpatientAdmission(PatientSubrecord, ExternallySourcedModel):

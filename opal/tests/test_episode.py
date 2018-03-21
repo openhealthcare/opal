@@ -47,6 +47,13 @@ class EpisodeTest(OpalTestCase):
         self.episode.set_stage('Discharged', self.user, {})
         set_stage.assert_called_once_with('Discharged', self.user, {})
 
+    @patch('opal.core.episodes.EpisodeCategory.set_stage')
+    def test_does_not_call_set_stage_if_no_stage(self, set_stage):
+        episode = Episode(patient=self.patient)
+        data = dict()
+        episode.update_from_dict(data, self.user)
+        self.assertFalse(set_stage.called)
+
     def test_update_from_dict_new_episode(self):
         episode = Episode(patient=self.patient)
         data = dict(

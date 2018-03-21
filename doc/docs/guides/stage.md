@@ -1,7 +1,8 @@
 # Stage
 
-Episodes in Opal may have a stage. This is a mechanism to chart a patients
-flow through a system.
+Episodes in Opal may progress through a clinical work flow with a series of stages.
+For example referred/inpatient/discharge. We keep track of these stages on the Episode
+model.
 
 The process of this flow is managed by the [episode category](episode_categories).
 

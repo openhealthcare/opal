@@ -86,24 +86,37 @@ class EpisodeCategory(DiscoverableFeature):
         if current_stage and current_stage.value == stage_value:
             return
 
+        # some models won't have stages yet, but if an episode category
+        # has been migrated to use stages,
+        # then it should once an episode has a stage it should
+        # always have a stage.
+
+        if current_stage and not stage_value:
+            raise ValueError(
+                "A stage cannot be removed after one has been set"
+            )
+
+        # this is the stage for when an episode category
+        # has not been migrated to use stages yet
+        # so we can just ignore this.
+        if not stage_value:
+            return
+
         now = timezone.now()
+
+        # close out the old stage and add a new stage
         if current_stage:
             current_stage.stopped = now
             current_stage.updated = now
             current_stage.updated_by = user
             current_stage.save()
 
-        if current_stage and not stage_value:
-            raise ValueError(
-                "A stage cannot be removed after one has been set")
-
-        if stage_value:
-            self.episode.stage_set.create(
-                value=stage_value,
-                started=now,
-                created=now,
-                created_by=user,
-            )
+        self.episode.stage_set.create(
+            value=stage_value,
+            started=now,
+            created=now,
+            created_by=user,
+        )
 
 
 class InpatientEpisode(EpisodeCategory):

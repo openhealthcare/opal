@@ -802,6 +802,20 @@ class StageTestCase(OpalTestCase):
             Stage.objects.get().value, "stage_1"
         )
 
+    def test_resave_stage(self):
+        stage = Stage.objects.create(
+            value="stage_1",
+            started=timezone.now(),
+            episode=self.episode
+        )
+        before = timezone.now() - datetime.timedelta(hours=1)
+        stage.started = before
+        stage.save()
+        self.assertEqual(
+            Stage.objects.get().started,
+            before
+        )
+
     def test_stage_save_raises(self):
         Stage.objects.create(
             value="stage_1",
@@ -815,13 +829,13 @@ class StageTestCase(OpalTestCase):
                 started=timezone.now(),
                 episode=self.episode
             )
-            self.assertEqual(
-                str(i.error),
-                "".join([
-                    "for episode 1 stage stage_2, "
-                    "An episode cannot have multiple open stages"
-                ])
-            )
+        self.assertEqual(
+            str(i.exception),
+            "".join([
+                "for episode 1, stage stage_2. "
+                "An episode cannot have multiple open stages"
+            ])
+        )
 
         # test roll back
         self.assertTrue(
@@ -848,6 +862,7 @@ class StageTestCase(OpalTestCase):
         Stage.objects.create(
             value="stage_1",
             started=timezone.now(),
+            stopped=timezone.now(),
             episode=self.episode
         )
         try:
