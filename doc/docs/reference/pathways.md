@@ -14,7 +14,7 @@ full page pathways.
 #### Pathway.slug
 
 The slug to use in the URL for accessing an individual pathway, and the string that can
-be passed to `Pathway.get()` that will return i.t
+be passed to `Pathway.get()` that will return it.
 
 #### Pathway.steps
 
