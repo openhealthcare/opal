@@ -25,7 +25,7 @@ from opal.core import pathway
 
 class MyPathway(pathway.PagePathway):
     display_name = 'My Awesome Pathway'
-    slug         = 'awesomest-pathway'
+    slug         = 'awesomest_pathway'
 ```
 
 ### Taking Our First Steps
