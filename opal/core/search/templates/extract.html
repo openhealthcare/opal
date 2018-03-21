@@ -152,7 +152,7 @@
                                         tooltip-trigger="focus"
                                         ng-keypress="$event.keyCode == 13 && search()"
                                         tooltip-placement="top" uib-tooltip="4. Select one of the below">
-                                    <option ng-repeat="i in query.lookup_list track by $index">[[ i ]]</option>
+                                    <option ng-repeat="i in getChoices(query.column, query.field) track by $index">[[ i ]]</option>
                                 </select>
                             </span>
                         </div>
