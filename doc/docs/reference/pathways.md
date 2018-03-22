@@ -14,7 +14,7 @@ full page pathways.
 #### Pathway.slug
 
 The slug to use in the URL for accessing an individual pathway, and the string that can
-be passed to `Pathway.get()` that will return it.
+be passed to `Pathway.get()` that will return it. You can use alphanumeric characters and underscores (`_`), but for reasons of consistency with other parts of Opal, hyphens (`-`) cannot be used in `slug`. 
 
 #### Pathway.steps
 
