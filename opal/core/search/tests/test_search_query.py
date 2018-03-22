@@ -4,6 +4,7 @@ Unittests for opal.core.search.queries
 from datetime import date
 
 from django.db import transaction
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from mock import patch, MagicMock
 from reversion import revisions as reversion
@@ -614,6 +615,34 @@ class DatabaseQueryTestCase(OpalTestCase):
             other_episode.set_tag_names([], self.user)
 
         self.assertEqual([other_episode], query.get_episodes())
+
+    def test_gets_mine_only(self):
+        # an episode tagged with 'mine' should return
+        # only episodes that I have tagged with mine
+        team_query = [dict(
+            column="tagging",
+            field='mine',
+            combine='and',
+            query=None,
+            lookup_list=[],
+            queryType=None
+        )]
+
+        other_user = User.objects.create(username="other")
+        _, other_users_episode = self.new_patient_and_episode_please()
+
+        with transaction.atomic(), reversion.create_revision():
+            episode = self.patient.create_episode()
+            episode.set_tag_names(['mine'], self.user)
+            other_users_episode.set_tag_names(['mine'], other_user)
+            query = queries.DatabaseQuery(self.user, team_query)
+
+        self.assertEqual([episode], query.get_episodes())
+
+        with transaction.atomic(), reversion.create_revision():
+            episode.set_tag_names([], self.user)
+
+        self.assertEqual([episode], query.get_episodes())
 
     def test_get_episodes(self):
         query = queries.DatabaseQuery(self.user, self.name_criteria)
