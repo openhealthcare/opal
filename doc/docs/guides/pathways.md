@@ -125,7 +125,7 @@ class SimplePathway(pathway.Pathway):
     display_name = 'A simple pathway'
     slug         = 'simples'
     steps        = (
-        pathways.Step(model=models.Allergies, delete_others=True),
+        pathway.Step(model=models.Allergies, delete_others=True),
         models.Treatment,
         models.PastMedicalHistory
     )
