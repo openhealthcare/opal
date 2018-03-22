@@ -9,7 +9,7 @@ Pathway is the base class for most complex forms in Opal applications.
 #### Pathway.display_name
 
 The human readable display name for this pathway. Will be used in the base template for
-full page pathways
+full page pathways.
 
 #### Pathway.slug
 
