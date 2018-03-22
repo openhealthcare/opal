@@ -109,6 +109,8 @@ Adds the `rows` option to the textarea template tag which just fills in the html
 
 Configures the setting `CSRF_FAILURE_VIEW` to use the bundled `opal.views.csrf_failure` view.
 
+Pathway slugs may now include hyphens as well as numbers, lower case letters and underscores.
+
 
 ### 0.9.1 (Minor Release)
 
