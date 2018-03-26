@@ -52,6 +52,7 @@
     </a>
     {% endif %}
   </div>
+  {% block sidebar %}
   <ul class="list-group">
     <li class="list-group-item" ng-show="profile.can_see_pid()">
       <p>
@@ -80,8 +81,11 @@
     <li class="list-group-item">
       {% include 'partials/_episode_actions.html' %}
     </li>
-    {% endblock %}
+    {% endblock %} <!-- block episode_actions -->
+    {% block  %}
+    {% endblock %} <!-- block  -->
   </ul>
+  {% endblock %} <!-- block sidebar -->
 </div>
 <div class="panel panel-default screen-only hidden-sm"
      ng-hide="!profile.can_see_pid()"
