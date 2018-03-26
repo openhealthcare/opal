@@ -66,7 +66,7 @@ The child tag for this list. Should be lowercase, with no numbers or dashes. Und
 
 ## `class TabbedPatientListGroup`
 Groups Patient Lists together, to display as tabs at the top of any list in the group.
-![patientlist-tabbed-view](..img/patientlist-tabbed-view.png)
+![patientlist-tabbed-view](../img/patientlist-tabbed-view.png)
 
 ### Properties and Class Methods
 
