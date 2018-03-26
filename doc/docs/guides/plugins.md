@@ -7,7 +7,7 @@ models for the client.
 
 The Opal commandline tool will bootstrap your plugin for you - just run:
 
-```python
+```bash
 $ opal startplugin yourcoolplugin
 ```
 
@@ -148,7 +148,7 @@ class YourPlugin(OpalPlugin):
 
 ### Installing plugins
 
-* Add the plugin'a name to the `INSTALLED_APPS` list in your `settings.py`
+* Add the plugin's name to the `INSTALLED_APPS` list in your `settings.py`
 
 * Add the plugin's name to `requirements.txt` and run `pip install -r requirements.txt` (if appropriate, eg if you are distributing your plugin via Pypi or GitHub) 
 
