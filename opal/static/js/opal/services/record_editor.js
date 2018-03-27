@@ -50,8 +50,6 @@ angular.module('opal.services').factory('RecordEditor', function(
 
     self.openEditItemModal = function(item, name){
 
-      console.log("modal" + Date.now() );
-
       $rootScope.state = 'modal';
       var template_url = '/templates/modals/' + name + '.html/';
 
@@ -99,7 +97,6 @@ angular.module('opal.services').factory('RecordEditor', function(
 
     self.editItem = function(name, iix){
       var item = self.getItem(name, iix);
-      console.log("click" + Date.now() )
       return self.debouncedOpenEditItemModal(item, name);
     };
 
