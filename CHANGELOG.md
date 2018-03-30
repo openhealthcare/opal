@@ -116,6 +116,7 @@ for a method named `get_$attr` and will call that if it exists.
 Adds the method `.get_absolute_url()` to `opal.core.pathways.Pathway` and
 `opal.core.patient_lists.PatientList`.
 
+Adds the Opal error `SignatureError`.
 
 ### 0.9.1 (Minor Release)
 
