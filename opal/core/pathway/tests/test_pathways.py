@@ -430,6 +430,12 @@ class TestPathwayMethods(OpalTestCase):
     def setUp(self):
         self.patient, self.episode = self.new_patient_and_episode_please()
 
+    def test_get_slug(self):
+        self.assertEqual('colourpathway', ColourPathway.get_slug())
+
+    def test_get_slug_from_attribute(self):
+        self.assertEqual('dog_owner', PathwayExample.get_slug())
+
     def test_slug(self):
         self.assertEqual('colourpathway', ColourPathway().slug)
 

@@ -39,6 +39,15 @@ If set, this template will be used if your pathway is opened in a modal. If its 
 
 ### Methods
 
+#### `Pathway.get_slug()`
+
+Returns a string which should be used as the slug for this Pathway.
+
+```
+MyPathwy.get_slug()
+"mypathway"
+```
+
 #### `Pathway.redirect_url(self, patient, episde)`
 
 Returns a string that we should redirect to on success. Defaults to
@@ -64,7 +73,7 @@ Steps are a single section within a form, and can be instances of either `opal.m
 `pathway.Step` subclasses. You can use both types of Step in a given Pathway.
 
 More detail on Steps is given in the [Guides section on Pathways](../guides/pathways.md)
-        
+
 ## HelpTextStep
 
 A Step subclass with help text to the side of the form
