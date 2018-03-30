@@ -10,6 +10,7 @@ from django.template.loader import select_template
 
 from opal.core import exceptions
 
+
 def camelcase_to_underscore(string):
     return re.sub(
         '(((?<=[a-z])[A-Z])|([A-Z](?![A-Z]|$)))', '_\\1', string
