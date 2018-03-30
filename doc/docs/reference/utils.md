@@ -24,3 +24,30 @@ test runs.
 >>> write('hai')
 hai
 ```
+
+## get( object, attribute, default=None )
+
+Similar to the `getattr` builtin, `get` will fetch an attribute of on object.
+
+If there is a `get_` method defined, `get` will use that in preference to
+direct object accesss.
+
+If there is no `get_` method defined and DEFAULT is passed, use
+that as the default option for `getattr()`.
+
+```python
+class PoliteConversation(object):
+
+    formal_greeting = 'Hello'
+
+    @classmethod
+    def get_greeting(klass):
+        return 'Hi'
+
+
+get(PoliteConversation, 'formal_greeting')
+"Hello"
+
+get(PoliteConversation, 'greeting')
+"Hi"
+```

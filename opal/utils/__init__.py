@@ -84,3 +84,21 @@ def write(what):
     if 'runtests.py' in sys.argv:
         return
     sys.stdout.write("{0}\n".format(what))
+
+
+def get(obj, attr, default=None):
+    """
+    Get an attribute named ATTR from OBJ.
+
+    If there is a `get_` method defined, use that in preference to
+    direct object accesss.
+
+    If there is no `get_` method defined and DEFAULT is passed, use
+    that as the default option for `getattr()`.
+    """
+    getter = getattr(obj, 'get_' + attr, None)
+    if getter:
+        return getter()
+    if default:
+        return getattr(obj, attr, default)
+    return getattr(obj, attr)
