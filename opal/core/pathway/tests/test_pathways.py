@@ -444,7 +444,7 @@ class TestPathwayMethods(OpalTestCase):
         self.assertEqual('colourpathway', ColourPathway.get_slug())
 
     def test_get_slug_from_attribute(self):
-        self.assertEqual('dog_owner', PathwayExample.get_slug())
+        self.assertEqual('dog-owner', PathwayExample.get_slug())
 
     def test_get_absolute_url(self):
         self.assertEqual('/pathway/#/colourpathway/', ColourPathway.get_absolute_url())
