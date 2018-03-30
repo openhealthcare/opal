@@ -16,7 +16,6 @@ How we want to refer to this list on screen to users.
 
 A custom comparator service to set sort order within a list. Defaults to None.
 
-
 #### PatientList.allow_add_patient
 
 Whether we should show the add patient button.
@@ -28,6 +27,17 @@ Defaults to `True`.
 Whether we should allow the user to edit teams.
 
 Defaults to `True`
+
+### Classmethods
+
+#### `PatientList.get_absolute_url()`
+
+Returns a string which is the absolute URL of this list.
+
+```python
+MyList.get_absolute_url()
+"/#/list/my_list"
+```
 
 ## TaggedPatientList
 

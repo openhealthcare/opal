@@ -113,7 +113,8 @@ Configures the setting `CSRF_FAILURE_VIEW` to use the bundled `opal.views.csrf_f
 Adds the utility function `opal.utils.get`. Similar to the `getattr` builtin, `get` looks
 for a method named `get_$attr` and will call that if it exists.
 
-Adds the method `.get_absolute_url()` to `opal.core.Pathway`.
+Adds the method `.get_absolute_url()` to `opal.core.pathways.Pathway` and
+`opal.core.patient_lists.PatientList`.
 
 
 ### 0.9.1 (Minor Release)

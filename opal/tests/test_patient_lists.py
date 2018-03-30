@@ -156,6 +156,9 @@ class TestPatientList(OpalTestCase):
         with self.assertRaises(ValueError):
             queryset = PatientList().queryset
 
+    def test_get_absolute_url(self):
+        self.assertEqual('/#/list/carnivore', TaggingTestNotSubTag.get_absolute_url())
+
     def test_get_queryset_default(self):
         mock_queryset = MagicMock('Mock Queryset')
         with patch.object(PatientList, 'queryset',

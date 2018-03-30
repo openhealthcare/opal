@@ -84,6 +84,13 @@ class PatientList(discoverable.DiscoverableFeature,
     allow_edit_teams = True
 
     @classmethod
+    def get_absolute_url(klass, **kwargs):
+        """
+        Return the absolute URL for this list
+        """
+        return '/#/list/{0}'.format(klass.get_slug())
+
+    @classmethod
     def list(klass):
         """
         Return an iterable of Patient Lists.
