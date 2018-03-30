@@ -37,16 +37,27 @@ The name of the pathway template, it must include a div/span with the class .to_
 
 If set, this template will be used if your pathway is opened in a modal. If its not set the template attribute will be used.
 
-### Methods
+### Class Methods
 
 #### `Pathway.get_slug()`
 
 Returns a string which should be used as the slug for this Pathway.
 
-```
+```python
 MyPathwy.get_slug()
 "mypathway"
 ```
+
+#### `Pathway.get_absolute_url()`
+
+Returns a string which is the absolute URL of this Pathway.
+
+```python
+MyPathway.get_absolute_url()
+"/pathway/#/mypathway/"
+```
+
+### Methods
 
 #### `Pathway.redirect_url(self, patient, episde)`
 

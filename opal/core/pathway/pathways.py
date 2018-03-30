@@ -41,6 +41,13 @@ class Pathway(discoverable.DiscoverableFeature):
                 return slugattr
         return slugify(klass.__name__)
 
+    @classmethod
+    def get_absolute_url(klass, **kwargs):
+        """
+        Returns a string which is the absolute URL of this Pathway.
+        """
+        return '{0}#/{1}/'.format(reverse('pathway_index'), klass.get_slug())
+
     def get_pathway_service(self, is_modal):
         return self.pathway_service
 
