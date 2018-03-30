@@ -68,18 +68,6 @@ We remove a number of stale unused templates:
 As Django ships with a `LoginRequiredMixin` of its own we no longer roll our own
 in `opal.core.views.
 
-#### Updates to the Dependency Graph
-
-* Django: 1.8.13 -> 1.10.8
-* Django Reversion: 1.8.7 -> 1.10.2
-* Django Rest Framework: 3.2.2 -> 3.4.7
-* Psycopg2: 2.5 -> 2.7
-* Jinja2: 2.9.6 -> 2.10
-* Ffs: 0.0.8.1 -> 0.0.8.2
-* Requests: 2.7.0 -> 2.18.4
-* django-celery: 3.1.17 -> 3.2.2
-* celery: 3.1.19 -> 3.1.25
-
 #### Testing options
 
 Adds a `--failfast` option to the test harness to stop test runs on the first
@@ -91,12 +79,28 @@ manually add support for `--failfast` passthrough to your `runtests.py`.
 If you are a plugin developer upgrading an existing plugin you will have to
 manually add support for `--failfast` passthrough to your `runtests.py`.
 
-
 #### Moves scaffold to be a django management command
 
 The rest of the api is still the same but now
 we run `python manage.py scaffold {my_app_name}`
 
+#### as_menuitem helpers
+
+Applications using Opal Menuitems often wish to add menu items for Patient Lists.
+To aid this, the `.as_menuitem()` method now creates one from the target class with
+sensible but overridable defaults.
+
+#### Updates to the Dependency Graph
+
+* Django: 1.8.13 -> 1.10.8
+* Django Reversion: 1.8.7 -> 1.10.2
+* Django Rest Framework: 3.2.2 -> 3.4.7
+* Psycopg2: 2.5 -> 2.7
+* Jinja2: 2.9.6 -> 2.10
+* Ffs: 0.0.8.1 -> 0.0.8.2
+* Requests: 2.7.0 -> 2.18.4
+* django-celery: 3.1.17 -> 3.2.2
+* celery: 3.1.19 -> 3.1.25
 
 #### Misc Changes
 

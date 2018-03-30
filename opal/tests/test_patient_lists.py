@@ -86,6 +86,25 @@ class TestEmptyTabbedPatientListGroup(TabbedPatientListGroup):
     member_lists = [InvisibleList]
 
 
+class IconicList(PatientList):
+    slug = 'disillusionment'
+    order = 800
+
+    @classmethod
+    def get_icon(k):
+        return "fa-james-dean"
+
+
+class DisplayList(PatientList):
+    slug = 'gastropod-mollusc'
+    order = 200
+
+    @classmethod
+    def get_display_name(k):
+        return 'Everyone'
+
+
+
 """
 Begin Tests
 """
@@ -189,6 +208,32 @@ class TestPatientList(OpalTestCase):
     def test_visible_to(self):
         self.assertTrue(TaggingTestPatientList.visible_to(self.user))
 
+    def test_as_menuitem(self):
+        href = TaggingTestPatientList.get_absolute_url()
+        menu = TaggingTestPatientList.as_menuitem()
+        self.assertEqual(menu.href, href)
+        self.assertEqual(menu.activepattern, href)
+        self.assertEqual(menu.icon, None)
+        self.assertEqual(menu.display, 'Herbivores')
+
+    def test_as_menuitem_from_kwargs(self):
+        menu = IconicList.as_menuitem(
+            href="/foo", activepattern="/f",
+            icon="fa-foo", display="Foo"
+        )
+        self.assertEqual(menu.href, '/foo')
+        self.assertEqual(menu.activepattern, '/f')
+        self.assertEqual(menu.icon, 'fa-foo')
+        self.assertEqual(menu.display, 'Foo')
+
+    def test_as_menuitem_uses_getter_for_icon(self):
+        menu = IconicList.as_menuitem()
+        self.assertEqual('fa-james-dean', menu.icon)
+
+    def test_as_menuitem_uses_getter_for_display(self):
+        menu = DisplayList.as_menuitem()
+        self.assertEqual('Everyone', menu.display)
+
     def test_schema_to_dicts(self):
         dicts = [
             {
@@ -249,6 +294,8 @@ class TestPatientList(OpalTestCase):
             TaggingTestPatientList,
             TaggingTestSameTagPatientList,
             InvisibleList,
+            DisplayList,
+            IconicList
         ]
         self.assertEqual(expected, list(PatientList.list()))
 

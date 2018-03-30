@@ -38,16 +38,21 @@ Returns a string which is the absolute URL of this list.
 MyList.get_absolute_url()
 "/#/list/my_list"
 ```
+#### `PatientList.as_menuitem(href=None, activepattern=None, icon=None, display=None)`
+
+Return an instance of `opal.core.menus.MenuItem` that will direct the user to this
+patient list.
 
 ## TaggedPatientList
 
-Tagged Patient Lists inherit from Patient Lists - as such they have all of the same methods and properties
-of Patient Lists.
+Tagged Patient Lists inherit from Patient Lists - as such they have all of the same methods and
+properties of Patient Lists.
 
 ## Card Patient List Template
 Change your patientlist template_name to "patient_lists/card_list.html".
 
-This will display the patient list as a series of 'cards', more analagous to a twitter stream than a spreadsheet like the default list.
+This will display the patient list as a series of 'cards', more analagous to a twitter stream
+than a spreadsheet like the default list.
 
 ## Table Patient list Template
 Change your patientlist template_name to "patient_lists/card_list.html".
