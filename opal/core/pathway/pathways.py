@@ -8,9 +8,10 @@ from collections import defaultdict
 from django.core.urlresolvers import reverse
 from django.db import models, transaction
 from django.utils.text import slugify
+from six import string_types
 
-from opal.core import discoverable, subrecords
-from opal.utils import AbstractBase
+from opal.core import discoverable, menus, subrecords
+from opal.utils import AbstractBase, get
 from opal.core.views import OpalSerializer
 from opal.core.pathway import Step
 
@@ -28,6 +29,33 @@ class Pathway(discoverable.DiscoverableFeature):
 
     # any iterable will do, this should be overridden
     steps = []
+
+    @classmethod
+    def get_slug(klass):
+        """
+        Returns a string which should be used as the slug for this pathway
+        """
+        slugattr = getattr(klass, 'slug', None)
+        if slugattr:
+            if isinstance(slugattr, string_types):
+                return slugattr
+        return slugify(klass.__name__)
+
+    @classmethod
+    def get_absolute_url(klass, **kwargs):
+        """
+        Returns a string which is the absolute URL of this Pathway.
+        """
+        return '{0}#/{1}/'.format(reverse('pathway_index'), klass.get_slug())
+
+    @classmethod
+    def as_menuitem(kls, **kwargs):
+        return menus.MenuItem(
+            href=kwargs.get('href', kls.get_absolute_url()),
+            activepattern=kwargs.get('activepattern', kls.get_absolute_url()),
+            icon=kwargs.get('icon', get(kls, 'icon')),
+            display=kwargs.get('display', get(kls, 'display_name')),
+        )
 
     def get_pathway_service(self, is_modal):
         return self.pathway_service

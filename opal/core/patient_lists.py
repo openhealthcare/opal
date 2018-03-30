@@ -2,7 +2,8 @@
 This module defines the base PatientList classes.
 """
 from opal import utils
-from opal.core import discoverable, exceptions, metadata
+from opal.utils import get
+from opal.core import discoverable, exceptions, menus, metadata
 
 
 class Column(object):
@@ -84,6 +85,13 @@ class PatientList(discoverable.DiscoverableFeature,
     allow_edit_teams = True
 
     @classmethod
+    def get_absolute_url(klass, **kwargs):
+        """
+        Return the absolute URL for this list
+        """
+        return '/#/list/{0}'.format(klass.get_slug())
+
+    @classmethod
     def list(klass):
         """
         Return an iterable of Patient Lists.
@@ -99,6 +107,19 @@ class PatientList(discoverable.DiscoverableFeature,
             return False
 
         return True
+
+    @classmethod
+    def as_menuitem(kls, **kwargs):
+        """
+        Return an instance of `opal.core.menus.MenuItem` that will
+        direct the user to this patient list.
+        """
+        return menus.MenuItem(
+            href=kwargs.get('href', kls.get_absolute_url()),
+            activepattern=kwargs.get('activepattern', kls.get_absolute_url()),
+            icon=kwargs.get('icon', get(kls, 'icon', None)),
+            display=kwargs.get('display', get(kls, 'display_name')),
+        )
 
     def get_template_prefixes(self):
         """ a patient list can return templates particular to themselves

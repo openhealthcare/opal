@@ -7,6 +7,7 @@ from django.test import TestCase
 from django.db.models import ForeignKey, CharField
 from mock import patch
 
+from opal.core import exceptions
 from opal.core.test import OpalTestCase
 
 from opal import utils
@@ -73,3 +74,76 @@ class WriteTestCase(OpalTestCase):
             mocksys.argv = ['not', 'te$targs']
             utils.write('this')
             mocksys.stdout.write.assert_called_with('this\n')
+
+
+class GetTestCase(OpalTestCase):
+
+    def test_get_attribute(self):
+
+        class A(object):
+            request = 'Straight, no chaser'
+
+        self.assertEqual('Straight, no chaser', utils.get(A, 'request'))
+
+    def test_get_getter(self):
+
+        class A(object):
+
+            @classmethod
+            def get_request(kls):
+                return 'Straight, no chaser'
+
+        self.assertEqual('Straight, no chaser', utils.get(A, 'request'))
+
+
+    def test_get_default(self):
+
+        class A(object):
+            pass
+
+        self.assertEqual(
+            'In The Still Of The Night',
+            utils.get(A, 'request', 'In The Still Of The Night')
+        )
+
+    def test_get_falsy_default(self):
+
+        class A(object):
+            pass
+
+        self.assertEqual(False, utils.get(A, 'predicate', False))
+
+    def test_get_none_default(self):
+
+        class A(object):
+            pass
+
+        self.assertEqual(None, utils.get(A, 'predicate', None))
+
+    def test_get_attribute_missing_no_default(self):
+
+        class A(object):
+            pass
+
+        with self.assertRaises(AttributeError):
+            utils.get(A, 'request')
+
+
+    def test_get_attribute_and_getter(self):
+
+        class A(object):
+            request = "I've Got You Under My Skin"
+
+            @classmethod
+            def get_request(kls):
+                return 'What Is This Thing Called Love'
+
+        self.assertEqual('What Is This Thing Called Love', utils.get(A, 'request'))
+
+    def test_too_many_args(self):
+        with self.assertRaises(exceptions.SignatureError):
+            utils.get(1,2,3,3)
+
+    def test_too_few_args(self):
+        with self.assertRaises(exceptions.SignatureError):
+            utils.get(1)
