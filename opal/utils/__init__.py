@@ -8,6 +8,7 @@ import sys
 from django.template import TemplateDoesNotExist
 from django.template.loader import select_template
 
+from opal.core import exceptions
 
 def camelcase_to_underscore(string):
     return re.sub(
@@ -86,7 +87,7 @@ def write(what):
     sys.stdout.write("{0}\n".format(what))
 
 
-def get(obj, attr, default=None):
+def get(*args):
     """
     Get an attribute named ATTR from OBJ.
 
@@ -96,9 +97,23 @@ def get(obj, attr, default=None):
     If there is no `get_` method defined and DEFAULT is passed, use
     that as the default option for `getattr()`.
     """
+    if len(args) < 2:
+        msg = "Too few arguments to opal.utils.get"
+        raise exceptions.SignatureError(msg)
+    elif len(args) > 3:
+        msg = "Too many arguments to opal.utils.get"
+        raise exceptions.SignatureError(msg)
+
+    if len(args) == 3:
+        obj, attr, default = args
+        default_passed = True
+    elif len(args) == 2:
+        obj, attr = args
+        default_passed = False
+
     getter = getattr(obj, 'get_' + attr, None)
     if getter:
         return getter()
-    if default:
+    if default_passed:
         return getattr(obj, attr, default)
     return getattr(obj, attr)

@@ -7,6 +7,7 @@ from django.test import TestCase
 from django.db.models import ForeignKey, CharField
 from mock import patch
 
+from opal.core import exceptions
 from opal.core.test import OpalTestCase
 
 from opal import utils
@@ -105,6 +106,19 @@ class GetTestCase(OpalTestCase):
             utils.get(A, 'request', 'In The Still Of The Night')
         )
 
+    def test_get_falsy_default(self):
+
+        class A(object):
+            pass
+
+        self.assertEqual(False, utils.get(A, 'predicate', False))
+
+    def test_get_none_default(self):
+
+        class A(object):
+            pass
+
+        self.assertEqual(None, utils.get(A, 'predicate', None))
 
     def test_get_attribute_missing_no_default(self):
 
@@ -125,3 +139,11 @@ class GetTestCase(OpalTestCase):
                 return 'What Is This Thing Called Love'
 
         self.assertEqual('What Is This Thing Called Love', utils.get(A, 'request'))
+
+    def test_too_many_args(self):
+        with self.assertRaises(exceptions.SignatureError):
+            utils.get(1,2,3,3)
+
+    def test_too_few_args(self):
+        with self.assertRaises(exceptions.SignatureError):
+            utils.get(1)
