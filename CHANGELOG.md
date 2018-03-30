@@ -124,6 +124,9 @@ Adds the method `.get_absolute_url()` to `opal.core.pathways.Pathway` and
 
 Adds the Opal error `SignatureError`.
 
+Pathway slugs may now include hyphens as well as numbers, lower case letters and underscores.
+
+
 ### 0.9.1 (Minor Release)
 
 #### Pathways ContextProcessor
