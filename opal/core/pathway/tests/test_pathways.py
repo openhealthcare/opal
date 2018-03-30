@@ -40,6 +40,16 @@ class ColourPathway(Pathway):
         FamousLastWords,
     )
 
+class OveridePathway(Pathway):
+
+    @classmethod
+    def get_icon(kls):
+        return 'fa-django'
+
+    @classmethod
+    def get_display_name(kls):
+        return 'Overridden'
+
 
 class RedirectsToPatientMixinTestCase(OpalTestCase):
 
@@ -438,6 +448,31 @@ class TestPathwayMethods(OpalTestCase):
 
     def test_get_absolute_url(self):
         self.assertEqual('/pathway/#/colourpathway/', ColourPathway.get_absolute_url())
+
+    def test_as_menuitem(self):
+        menu = ColourPathway.as_menuitem()
+        self.assertEqual('/pathway/#/colourpathway/', menu.href)
+        self.assertEqual('/pathway/#/colourpathway/', menu.activepattern)
+        self.assertEqual('fa fa-something', menu.icon)
+        self.assertEqual('colour', menu.display)
+
+    def test_as_menuitem_from_kwargs(self):
+        menu = ColourPathway.as_menuitem(
+            href="/Blue", activepattern="/B",
+            icon="fa-sea", display="Bleu"
+        )
+        self.assertEqual('/Blue', menu.href)
+        self.assertEqual('/B', menu.activepattern)
+        self.assertEqual('fa-sea', menu.icon)
+        self.assertEqual('Bleu', menu.display)
+
+    def test_as_menuitem_uses_getter_for_icon(self):
+        menu = OveridePathway.as_menuitem()
+        self.assertEqual('fa-django', menu.icon)
+
+    def test_as_menuitem_uses_getter_for_display(self):
+        menu = OveridePathway.as_menuitem()
+        self.assertEqual('Overridden', menu.display)
 
     def test_slug(self):
         self.assertEqual('colourpathway', ColourPathway().slug)

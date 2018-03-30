@@ -86,7 +86,9 @@ we run `python manage.py scaffold {my_app_name}`
 
 #### as_menuitem helpers
 
-Applications using Opal Menuitems often wish to add menu items for Patient Lists.
+Applications using Opal Menuitems often wish to add menu items for Patient Lists and
+Pathways.
+
 To aid this, the `.as_menuitem()` method now creates one from the target class with
 sensible but overridable defaults.
 
