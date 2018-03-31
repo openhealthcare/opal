@@ -22,6 +22,8 @@ you have specified them in for instance, a requirements.txt.
     ffs==0.0.8.2
     opal==0.10.0
     requests==2.18.4
+    django-celery==3.2.2
+    celery==3.1.25
 
 
 After re-installing (via for instance `pip install -r requirements.txt`) you will
@@ -90,6 +92,16 @@ need to run a makemigrations command to update your subrecords.
 Django now ships with `django.contrib.auth.mixins.LoginRequiredMixin`. Accordingly we have
 removed `opal.core.views.LoginRequiredMixin`. A direct switch to the Django class should
 work seamlessly without any functional differences.
+
+##### CSRF_FAILURE_VIEW
+We now ship the `opal.views.csrf_failure` view which can be enabled by adding
+`CSRF_FAILURE_VIEW = 'opal.views.csrf_failure'` in your settings.py. This will
+redirect a user to their intended destination on a CSRF failure. This mitigates
+an edge case where an unauthenticated user opens two pages at the same time.
+Both pages will get redirected to the login form and whichever page the user
+logs into second will throw a CSRF failure because Django invalidates CSRF
+tokens on login.
+
 
 ### 0.9.0 -> 0.9.1
 

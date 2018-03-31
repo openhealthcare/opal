@@ -48,6 +48,7 @@ pages:
       # Working on Opal itself
       - Contributing: guides/CONTRIBUTING.md
       - Development environment: guides/development_environment.md
+      - Releasing: guides/releasing.md
 
       # Other guides
       - Deployment: guides/deployment.md

@@ -125,7 +125,7 @@ class SimplePathway(pathway.Pathway):
     display_name = 'A simple pathway'
     slug         = 'simples'
     steps        = (
-        pathways.Step(model=models.Allergies, delete_others=True),
+        pathway.Step(model=models.Allergies, delete_others=True),
         models.Treatment,
         models.PastMedicalHistory
     )
@@ -134,7 +134,8 @@ class SimplePathway(pathway.Pathway):
 In this case, the pathway will delete any existing instances of the given Subrecord Model that
 are not sent back to the API in the JSON data.
 
-## Complex Steps
+
+## Complex Steps
 
 If we want to save multiple types of subrecords at the same step, we can do that by including the
 relevant form templates in a custom step template.

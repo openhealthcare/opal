@@ -77,11 +77,16 @@ in `opal.core.views.
 * Jinja2: 2.9.6 -> 2.10
 * Ffs: 0.0.8.1 -> 0.0.8.2
 * Requests: 2.7.0 -> 2.18.4
+* django-celery: 3.1.17 -> 3.2.2
+* celery: 3.1.19 -> 3.1.25
 
 #### Testing options
 
 Adds a `--failfast` option to the test harness to stop test runs on the first
 failure.
+
+If you are a plugin developer upgrading an existing plugin you will have to
+manually add support for `--failfast` passthrough to your `runtests.py`.
 
 If you are a plugin developer upgrading an existing plugin you will have to
 manually add support for `--failfast` passthrough to your `runtests.py`.
@@ -99,6 +104,13 @@ Removes the undocumented `collapsed_multisave` tag from the `pathways` templatet
 library.
 
 Adds a setting `OPAL_FAVICON_PATH` to specify the application Favicon to use.
+
+Adds the `rows` option to the textarea template tag which just fills in the html textarea `rows` attribute. Text areas are defaulted to 5 rows (the same as before).
+
+Configures the setting `CSRF_FAILURE_VIEW` to use the bundled `opal.views.csrf_failure` view.
+
+Pathway slugs may now include hyphens as well as numbers, lower case letters and underscores.
+
 
 ### 0.9.1 (Minor Release)
 

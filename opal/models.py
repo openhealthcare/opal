@@ -1552,6 +1552,12 @@ class Investigation(EpisodeSubrecord):
     _sort = 'date_ordered'
     _icon = 'fa fa-crosshairs'
 
+    POS_NEG_PENDING = (
+        ("pending", "pending",),
+        ("positive", "positive",),
+        ("negative", "negative",),
+    )
+
     test                  = models.CharField(max_length=255)
     date_ordered          = models.DateField(null=True, blank=True)
     details               = models.CharField(max_length=255, blank=True)
@@ -1595,6 +1601,8 @@ class Investigation(EpisodeSubrecord):
     giardia               = models.CharField(max_length=20, blank=True)
     entamoeba_histolytica = models.CharField(max_length=20, blank=True)
     cryptosporidium       = models.CharField(max_length=20, blank=True)
+    rhinovirus            = models.CharField(
+        max_length=20, blank=True, choices=POS_NEG_PENDING)
 
     class Meta:
         abstract = True

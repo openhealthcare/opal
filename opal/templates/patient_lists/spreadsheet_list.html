@@ -52,6 +52,8 @@
     </a>
     {% endif %}
   </div>
+
+  {% block sidebar %}
   <ul class="list-group">
     <li class="list-group-item" ng-show="profile.can_see_pid()">
       <p>
@@ -76,10 +78,16 @@
         <a href="/#/list/[[ metadata.tags[tag].slug ]]" >[[ metadata.tags[tag].display_name ]]</a>
       </h4>
     </li>
+
+    {% block episode_actions %}
     <li class="list-group-item">
       {% include 'partials/_episode_actions.html' %}
     </li>
+    {% endblock %}
+
   </ul>
+  {% endblock %}
+
 </div>
 <div class="panel panel-default screen-only hidden-sm"
      ng-hide="!profile.can_see_pid()"

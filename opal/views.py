@@ -9,7 +9,7 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import login
-from django.http import HttpResponseNotFound
+from django.http import HttpResponseForbidden, HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import get_template
 from django.template import TemplateDoesNotExist
@@ -506,3 +506,11 @@ class ImportPatientView(LoginRequiredMixin, FormView):
         context = super(ImportPatientView, self).get_context_data(**kwargs)
         context['import_url'] = reverse('import_patient')
         return context
+
+
+def csrf_failure(request, reason):
+    if request.POST:
+        next_url = request.GET.get('next', '/')
+        return redirect(next_url)
+
+    return HttpResponseForbidden

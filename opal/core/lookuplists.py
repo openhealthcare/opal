@@ -76,7 +76,8 @@ def lookuplists():
     Generator function for lookuplists
     """
     for lookuplist in utils._itersubclasses(LookupList):
-        yield lookuplist
+        if not lookuplist._meta.abstract:
+            yield lookuplist
 
 
 def load_lookuplist(data):

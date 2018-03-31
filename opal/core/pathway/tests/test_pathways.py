@@ -22,7 +22,7 @@ from opal.core.pathway import pathways, Pathway, WizardPathway
 
 class PathwayExample(pathways.Pathway):
     display_name = "Dog Owner"
-    slug = 'dog_owner'
+    slug = 'dog-owner'
     icon = "fa fa-something"
     template_url = "/somewhere"
 
@@ -153,7 +153,7 @@ class TestSavePathway(PathwayTestCase):
 
     def setUp(self):
         self.url = reverse(
-            "pathway", kwargs=dict(name="dog_owner")
+            "pathway", kwargs=dict(name="dog-owner")
         )
         super(TestSavePathway, self).setUp()
 
@@ -433,13 +433,16 @@ class TestPathwayMethods(OpalTestCase):
     def test_slug(self):
         self.assertEqual('colourpathway', ColourPathway().slug)
 
+    def test_get_by_hyphenated_slug(self):
+        self.assertEqual(PathwayExample, Pathway.get('dog-owner'))
+
     def test_vanilla_to_dict(self):
         as_dict = PathwayExample().to_dict(is_modal=False)
         self.assertEqual(len(as_dict["steps"]), 2)
         self.assertEqual(as_dict["display_name"], "Dog Owner")
         self.assertEqual(as_dict["icon"], "fa fa-something")
         self.assertEqual(as_dict["save_url"], reverse(
-            "pathway", kwargs=dict(name="dog_owner")
+            "pathway", kwargs=dict(name="dog-owner")
         ))
         self.assertEqual(as_dict["pathway_service"], "Pathway")
         self.assertEqual(as_dict["finish_button_text"], "Save")

@@ -7,8 +7,9 @@ models for the client.
 
 The Opal commandline tool will bootstrap your plugin for you - just run:
 
-    $ opal startplugin yourcoolplugin
-
+```bash
+$ opal startplugin yourcoolplugin
+```
 
 ### Adding Discoverable Functionality
 
@@ -20,29 +21,32 @@ For example, if you're creating an appointments plugin that helps people to book
 appointments in clinics, you would create a base `Clinic` class that can be subclassed to
 create specific clinics.
 
-    class Clinic(opal.core.discoverable.DiscoverableFeature):
-        module_name = 'clinics'
+```python
+class Clinic(opal.core.discoverable.DiscoverableFeature):
+    module_name = 'clinics'
+```
 
 We can then create clinics in any installed app, and they will be available from `Clinic.list()`
 
-    class OutpatientsClinic(Clinic):
-        name = 'Outpatients'
+```python
+class OutpatientsClinic(Clinic):
+    name = 'Outpatients'
 
-        # Add your custom clinic functionality here e.g.
-        def book_appointment(self, date, patient):
-            pass
+    # Add your custom clinic functionality here e.g.
+    def book_appointment(self, date, patient):
+        pass
 
 
-    Clinic.list()
-    # -> Generator including OutPatientsClinic
+Clinic.list()
+# -> Generator including OutPatientsClinic
 
-    Clinic.get('outpatients)
-    # -> OutpatientsClinic
+Clinic.get('outpatients)
+# -> OutpatientsClinic
+```
 
 ### Getting a plugin directory
 
-Each plugin has a `directory()` method that returns
-the file system location of the module.
+Each plugin has a `directory()` method that returns the file system location of the module.
 
 ### Adding URLS
 
@@ -94,9 +98,9 @@ Rest Framework permission class IsAuthenticated to your viewset.
 
 
 ```python
-    class PingViewSet(LoginRequiredViewset):
-        def list(self, request):
-            return Response('pong')
+class PingViewSet(LoginRequiredViewset):
+    def list(self, request):
+        return Response('pong')
 ```
 
 ### Adding Actions to the sidebar
@@ -113,12 +117,14 @@ class Plugin(OpalPlugin):
 
 And then in the template:
 
-    <p ng-show="episode.category == 'YourEpisodeCategory'">
-      <button class="btn btn-primary" ng-click="alert('Boom!')">
-        <i href="fa fa-warning"></i>
-        ALERT ME
-      </button>
-    </p>
+```html
+<p ng-show="episode.category == 'YourEpisodeCategory'">
+  <button class="btn btn-primary" ng-click="alert('Boom!')">
+    <i href="fa fa-warning"></i>
+    ALERT ME
+  </button>
+</p>
+```
 
 ### Adding dependencies globally to our angular modules
 
@@ -142,8 +148,9 @@ class YourPlugin(OpalPlugin):
 
 ### Installing plugins
 
-Add to installed apps
-Add to requirements if appropriate
+* Add the plugin's name to the `INSTALLED_APPS` list in your `settings.py`
+
+* Add the plugin's name to `requirements.txt` and run `pip install -r requirements.txt` (if appropriate, eg if you are distributing your plugin via Pypi or GitHub) 
 
 ### Adding extra markup to the <head> tag
 
