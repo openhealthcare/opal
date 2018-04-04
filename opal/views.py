@@ -361,6 +361,9 @@ class ExportPatientView(LoginRequiredMixin, View):
 
         data = patient.to_dict(request.user)
 
+        # Active episode is not a concept which makes sense for a second system
+        del data['active_episode_id']
+
         # Remove all "id" keys from the data
         data = dict(remove_key(data, 'id'))
 
