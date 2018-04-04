@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import login
+from django.db import transaction
 from django.http import HttpResponseForbidden, HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import get_template
@@ -417,6 +418,7 @@ class ImportEpisodeView(LoginRequiredMixin, FormView):
     success_url = reverse_lazy('admin:opal_episode_changelist')
     template_name = 'import_data.html'
 
+    @transaction.atomic()
     def form_valid(self, form):
         raw_data = self.request.FILES['data_file'].read()
         data = json.loads(raw_data)
