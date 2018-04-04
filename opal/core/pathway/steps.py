@@ -1,14 +1,20 @@
+"""
+Steps for Opal pathways
+"""
 from functools import wraps
-from opal.models import EpisodeSubrecord, PatientSubrecord
+
 from opal.utils import camelcase_to_underscore
 from opal.core import exceptions
-from opal.core.exceptions import InitializationError
 
 
 def delete_others(data, model, patient=None, episode=None):
     """
     Deletes all subrecords that are not in data
     """
+    # We can't import these at module load because we're imported by
+    # opal.core.pathways.__init__
+    from opal.models import EpisodeSubrecord, PatientSubrecord
+
     if issubclass(model, EpisodeSubrecord):
         existing = model.objects.filter(episode=episode)
     elif issubclass(model, PatientSubrecord):
@@ -95,21 +101,27 @@ class Step(object):
                         'A step needs either a display_name'
                         ' or a model'
                     )
-                    raise InitializationError(er)
+                    raise exceptions.InitializationError(er)
             if not getattr(self, "template", None):
                 if "template" not in kwargs:
                     er = (
                         'A step needs either a template'
                         ' or a model'
                     )
-                    raise InitializationError(er)
+                    raise exceptions.InitializationError(er)
 
     @extract_pathway_field
     def get_template(self):
         if self.multiple:
-            return self.multiple_template
+            template = self.multiple_template
         else:
-            return self.model.get_form_template()
+            template = self.model.get_form_template()
+        if template is None:
+            msg = "Unable to locate form template for subrecord: {0}".format(
+                self.model.get_display_name()
+            )
+            raise exceptions.MissingTemplateError(msg)
+        return template
 
     @extract_pathway_field
     def get_display_name(self):

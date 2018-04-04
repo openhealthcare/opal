@@ -33,6 +33,7 @@ describe('Episode', function() {
             expect(moment(newEpisode.start).format('DD/MM/YYYY')).toEqual("19/11/2013");
             expect(moment(newEpisode.end).format('DD/MM/YYYY')).toEqual("25/05/2016");
         });
+
     });
 
     describe('compare', function(){
@@ -122,48 +123,6 @@ describe('Episode', function() {
 
     it('Should convert date attributes to moment objects', function () {
         expect(episode.start.toDate()).toEqual(new Date(2013, 10, 19));
-    });
-
-    it('Should raise an error if they try to get discharge date', function(){
-        var shouldThrow = function(){episode.discharge_date; };
-        expect(shouldThrow).toThrow(
-          "Discharge date is deprecated in opal 0.9.0, use end"
-        );
-    });
-
-    it('Should raise an error if they try to set discharge date', function(){
-      var shouldThrow = function(){episode.discharge_date = "as";}
-      expect(shouldThrow).toThrow(
-        "Discharge date is deprecated in opal 0.9.0, use end"
-      );
-    });
-
-    it('Should raise an error if they try to set date of admission', function(){
-      var shouldThrow = function(){episode.date_of_admission = "as";}
-      expect(shouldThrow).toThrow(
-        "Date of admission is deprecated in opal 0.9.0, use start"
-      );
-    });
-
-    it('Should raise an error if they try to get date of admission', function(){
-      var shouldThrow = function(){episode.date_of_admission; };
-      expect(shouldThrow).toThrow(
-        "Date of admission is deprecated in opal 0.9.0, use start"
-      );
-    });
-
-    it('Should raise an error if they try to get date of episode', function(){
-      var shouldThrow = function(){episode.date_of_episode = "as";}
-      expect(shouldThrow).toThrow(
-        "Date of episode is deprecated in opal 0.9.0, use start"
-      );
-    });
-
-    it('Should raise an error if they try to set date of episode', function(){
-      var shouldThrow = function(){episode.date_of_episode; };
-      expect(shouldThrow).toThrow(
-        "Date of episode is deprecated in opal 0.9.0, use start"
-      );
     });
 
     it('should create Items', function() {
@@ -268,14 +227,14 @@ describe('Episode', function() {
     });
 
     it('start and end should be null if not set', function(){
+      episode.start = undefined;
+      episode.end = undefined;
       var copy = episode.makeCopy();
-      delete copy.start;
-      delete copy.end;
       expect(copy.id).toBe(123);
       expect(copy.category_name).toBe('Inpatient');
       expect(copy.consistency_token).toBe(undefined);
-      expect(copy.start).toEqual(undefined);
-      expect(copy.end).toEqual(undefined);
+      expect(copy.start).toEqual(null);
+      expect(copy.end).toEqual(null);
     });
 
     describe('communicating with server', function (){

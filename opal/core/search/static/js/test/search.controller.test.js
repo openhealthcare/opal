@@ -2,6 +2,7 @@ describe('SearchCtrl', function (){
     "use strict";
 
     var $scope, $httpBackend, $window, $rootScope, $controller;
+    var ngProgressLite
     var location;
     var Flow;
     var profile, schema, options, locationDetails, controller;
@@ -19,20 +20,20 @@ describe('SearchCtrl', function (){
 
         inject(function($injector){
 
-            $rootScope     = $injector.get('$rootScope');
-            $scope         = $rootScope.$new();
-            $controller    = $injector.get('$controller');
-            Flow           = $injector.get('Flow');
-            PatientSummary = $injector.get('PatientSummary');
-            $httpBackend   = $injector.get('$httpBackend');
-            location       = $injector.get('$location');
-            $window        = $injector.get('$window');
-            $analytics     = $injector.get('$analytics');
+            $rootScope       = $injector.get('$rootScope');
+            $scope           = $rootScope.$new();
+            $controller      = $injector.get('$controller');
+            Flow             = $injector.get('Flow');
+            PatientSummary   = $injector.get('PatientSummary');
+            $httpBackend     = $injector.get('$httpBackend');
+            location         = $injector.get('$location');
+            $window          = $injector.get('$window');
+            $analytics       = $injector.get('$analytics');
+            ngProgressLite   = $injector.get('ngProgressLite');
 
             schema  = {};
             options = {};
             profile = {};
-
 
             spyOn(location, 'path').and.returnValue("/search");
 
@@ -44,9 +45,8 @@ describe('SearchCtrl', function (){
                 schema         : schema,
                 profile        : profile,
                 PatientSummary : PatientSummary,
-                $analytics: $analytics
+                $analytics     : $analytics
             });
-
 
         });});
 
@@ -120,6 +120,20 @@ describe('SearchCtrl', function (){
             });
             $scope.loadResults();
             $httpBackend.flush();
+        });
+
+        it('loadResults() should reset the progressbar if we error.', function() {
+            location.search({
+                query: "Bond",
+                page_number: 1
+            });
+
+            var expectedUrl = "/search/simple/?query=Bond&page_number=1";
+            $httpBackend.expectGET().respond(500);
+            spyOn(ngProgressLite, 'done');
+            $scope.loadResults();
+            $httpBackend.flush();
+            expect(ngProgressLite.done).toHaveBeenCalledWith();
         });
 
         it("should redirect to the search page", function(){

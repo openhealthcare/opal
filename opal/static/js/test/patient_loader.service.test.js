@@ -61,6 +61,7 @@ describe('patientLoader', function() {
     });
 
     describe('patient API errors', function() {
+
       it('should alert() the user', function() {
         $httpBackend.expectGET('/api/v0.1/patient/123/').respond(500);
         $httpBackend.expectGET('/api/v0.1/record/').respond({});
@@ -70,6 +71,17 @@ describe('patientLoader', function() {
         $rootScope.$apply();
         $httpBackend.flush();
       });
+
+      it('should resolve with null', function() {
+        $httpBackend.expectGET('/api/v0.1/patient/123/').respond(500);
+        $httpBackend.expectGET('/api/v0.1/record/').respond({});
+        patientLoader().then(function(patient){
+          expect(patient).toBe(null);
+        });
+        $rootScope.$apply();
+        $httpBackend.flush();
+      });
+
     });
 
     describe('No patient id found', function() {

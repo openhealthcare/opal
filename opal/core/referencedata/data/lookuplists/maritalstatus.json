@@ -1,0 +1,28 @@
+{
+  "maritalstatus": [
+    {
+      "synonyms": [], 
+      "name": "Single"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Married/Civil Partner"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Divorced/Civil Partnership dissolved"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Widow/Surviving Civil Partner"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Separated"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Not Disclosed"
+    }
+  ]
+}

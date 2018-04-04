@@ -19,15 +19,6 @@ with Opal, creating directories and code boilerplate, and running initial migrat
 
 Creates boilerplate code, and directory structures for a new Opal plugin.
 
-### scaffold &lt;appname&gt;
-
-Use with new record models.
-
-Creates and runs automatic migrations, creates display and form (modal) templates.
-
-Running with `--dry-run` will run makemigrations with `--dry-run` and print display
-and form templates that would be generated.
-
 ### test &lt;what&gt;
 
 Run our tests suites.
@@ -43,6 +34,9 @@ When running Python tests, the `-t` or `--test` option allows the user to specif
 test module, case or method to run.
 
    $ opal test py -t opal.tests.test_models
+
+The `--failfast` option will end the test run on the first failing test rather than
+continuing with the entire run.
 
 ### checkout
 

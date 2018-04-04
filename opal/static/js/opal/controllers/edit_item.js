@@ -9,7 +9,7 @@ angular.module('opal.controllers').controller(
             $scope.episode = episode.makeCopy();
             // Some fields should only be shown for certain categories.
             // Make that category available to the template.
-            $scope.episode_category = episode.category;
+            $scope.episode_category = episode.category_name;
             $scope.editing = {};
             $scope.item = item;
             $scope.editing[item.columnName] = item.makeCopy();
@@ -104,11 +104,15 @@ angular.module('opal.controllers').controller(
                 if(!angular.equals($scope.the_episode.makeCopy(), $scope.episode)){
                     to_save.push($scope.the_episode.save($scope.episode));
                 }
-
-                $q.all(to_save).then(function() {
-                ngProgressLite.done();
-      			    $modalInstance.close(result);
-		        });
+                $q.all(to_save).then(
+                    function() {
+                        ngProgressLite.done();
+      			        $modalInstance.close(result);
+		            },
+                    function(){
+                        ngProgressLite.done();
+                    }
+                );
 	        };
 
             // Let's have a nice way to kill the modal.

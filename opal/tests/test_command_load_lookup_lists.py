@@ -1,7 +1,7 @@
 """
 Unittests for opal.management.commands.load_lookup_lists
 """
-import ffs
+import os
 from mock import patch, MagicMock
 
 from opal.core import application
@@ -10,6 +10,7 @@ from opal.tests.models import Dog
 
 from opal.management.commands import load_lookup_lists as loader
 
+
 class CommandTestCase(OpalTestCase):
 
     def test_init_sets_counter(self):
@@ -17,6 +18,16 @@ class CommandTestCase(OpalTestCase):
         self.assertEqual(0, c.num)
         self.assertEqual(0, c.created)
         self.assertEqual(0, c.synonyms)
+
+    def test_add_arguments(self):
+        c = loader.Command()
+        parser = MagicMock()
+        c.add_arguments(parser)
+        parser.add_argument.assert_called_once_with(
+            '--file',
+            help="Specify import file",
+            dest="filename"
+        )
 
     def test_from_path_does_not_exist(self):
         mock_path = MagicMock()
@@ -43,9 +54,9 @@ class CommandTestCase(OpalTestCase):
         c.from_component(application.get_app())
         calls = [c[0][0] for c in path.call_args_list]
         expected = [
-            'data/lookuplists/lookuplists.json',
-            'data/lookuplists/drug.json',
-            'data/lookuplists/condition.json'
+            os.path.join('data', 'lookuplists', 'lookuplists.json'),
+            os.path.join('data', 'lookuplists', 'drug.json'),
+            os.path.join('data', 'lookuplists', 'condition.json'),
         ]
         for e in expected:
             self.assertTrue(len([c for c in calls if c.endswith(e)]) == 1)

@@ -8,7 +8,6 @@ import itertools
 import json
 import logging
 import random
-import warnings
 import os
 
 from django.conf import settings
@@ -32,8 +31,6 @@ from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.subrecords import (
     episode_subrecords, patient_subrecords, get_subrecord_from_api_name
 )
-
-warnings.simplefilter('once', DeprecationWarning)
 
 
 def get_default_episode_type():
@@ -115,7 +112,7 @@ class SerialisableFields(object):
     @classmethod
     def _get_field_type(cls, name):
         try:
-            return type(cls._meta.get_field_by_name(name)[0])
+            return type(cls._meta.get_field(name))
         except models.FieldDoesNotExist:
             pass
 
@@ -363,7 +360,6 @@ class UpdatesFromDictMixin(SerialisableFields):
         logging.info("updating {0} with {1} for {2}".format(
             self.__class__.__name__, data, user
         ))
-
         if fields is None:
             fields = set(self._get_fieldnames_to_serialize())
 
@@ -372,7 +368,7 @@ class UpdatesFromDictMixin(SerialisableFields):
                 consistency_token = data.pop('consistency_token')
             except KeyError:
                 msg = 'Missing field (consistency_token) for {}'
-                raise exceptions.APIError(
+                raise exceptions.MissingConsistencyTokenError(
                     msg.format(self.__class__.__name__)
                 )
 
@@ -582,13 +578,16 @@ class Patient(models.Model):
 
         for api_name, list_of_upgrades in dict_of_list_of_upgrades.items():
 
-            # for the moment we'll ignore tagging as it's weird
             if(api_name == "tagging"):
+                episode.set_tag_names_from_tagging_dict(
+                    list_of_upgrades[0], user
+                )
                 continue
+
             model = get_subrecord_from_api_name(api_name=api_name)
             if model in episode_subrecords():
                 if episode is None:
-                    episode = self.create_episode(patient=self)
+                    episode = self.create_episode()
                     episode.save()
 
                 model.bulk_update_from_dicts(episode, list_of_upgrades, user,
@@ -667,11 +666,13 @@ class TrackedModel(models.Model):
     updated = models.DateTimeField(blank=True, null=True)
     created_by = models.ForeignKey(
         User, blank=True, null=True,
-        related_name="created_%(app_label)s_%(class)s_subrecords"
+        related_name="created_%(app_label)s_%(class)s_subrecords",
+        on_delete=models.SET_NULL
     )
     updated_by = models.ForeignKey(
         User, blank=True, null=True,
-        related_name="updated_%(app_label)s_%(class)s_subrecords"
+        related_name="updated_%(app_label)s_%(class)s_subrecords",
+        on_delete=models.SET_NULL
     )
 
     class Meta:
@@ -748,7 +749,9 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     @property
     def category(self):
         from opal.core import episodes
-        category = episodes.EpisodeCategory.get(self.category_name.lower())
+        category = episodes.EpisodeCategory.filter(
+            display_name=self.category_name
+        )[0]
         return category(self)
 
     def visible_to(self, user):
@@ -760,6 +763,15 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         opal.core.episodes.EpisodeCategory implementations.
         """
         return self.category.episode_visible_to(self, user)
+
+    def set_stage(self, stage, user, data):
+        """
+        Setter for Episode.stage
+
+        Validates that the stage being set is appropriate for the category
+        and raises ValueError if not.
+        """
+        self.category.set_stage(stage, user, data)
 
     def set_tag_names(self, tag_names, user):
         """
@@ -818,6 +830,14 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
             tagg.save()
 
+    def set_tag_names_from_tagging_dict(self, tagging_dict, user):
+        """
+        Given a dictionary of {tag_name: True} pairs, set tag names
+        according to those tags which are truthy.
+        """
+        tag_names = [n for n, v in list(tagging_dict.items()) if v is True]
+        return self.set_tag_names(tag_names, user)
+
     def tagging_dict(self, user):
         tag_names = self.get_tag_names(user)
         tagging_dict = {i: True for i in tag_names}
@@ -832,7 +852,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         if not historic:
             qs = qs.filter(archived=False)
 
-        return qs.values_list("value", flat=True)
+        return list(qs.values_list("value", flat=True))
 
     def _episode_history_to_dict(self, user):
         """
@@ -950,8 +970,8 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
         Return the active detail template for our record
         """
         file_locations = [
-            'records/{0}_detail.html',
-            'records/{0}.html'
+            os.path.join('records', '{0}_detail.html'),
+            os.path.join('records', '{0}.html'),
         ]
 
         if prefixes is None:
@@ -1023,7 +1043,7 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
 
         if cls._is_singleton:
             if len(list_of_dicts) > 1:
-                msg = "attempted creation of multiple fields on a singleton {}"
+                msg = "Attempted creation of multiple fields on a singleton {}"
                 raise ValueError(msg.format(cls.__name__))
 
         result = []
@@ -1191,7 +1211,8 @@ class Ward(lookuplists.LookupList):
 
 
 class Speciality(lookuplists.LookupList):
-    pass
+    class Meta:
+        verbose_name_plural = "Specialities"
 
 
 # These should probably get refactored into opal-opat in 0.5
@@ -1216,7 +1237,8 @@ class Line_type(lookuplists.LookupList):
 
 
 class MaritalStatus(lookuplists.LookupList):
-    pass
+    class Meta:
+        verbose_name_plural = "Marital statuses"
 
 
 class Micro_test_c_difficile(lookuplists.LookupList):
@@ -1414,6 +1436,7 @@ class Demographics(PatientSubrecord):
 
     class Meta:
         abstract = True
+        verbose_name_plural = "Demographics"
 
 
 class Location(EpisodeSubrecord):
@@ -1477,6 +1500,7 @@ Defaults to False."
 
     class Meta:
         abstract = True
+        verbose_name_plural = "Allergies"
 
 
 class Diagnosis(EpisodeSubrecord):
@@ -1499,6 +1523,7 @@ class Diagnosis(EpisodeSubrecord):
 
     class Meta:
         abstract = True
+        verbose_name_plural = "Diagnoses"
 
     def __unicode__(self):
         return 'Diagnosis for {0}: {1} - {2}'.format(
@@ -1519,12 +1544,19 @@ class PastMedicalHistory(EpisodeSubrecord):
 
     class Meta:
         abstract = True
+        verbose_name_plural = "Past medical histories"
 
 
 class Investigation(EpisodeSubrecord):
     _title = 'Investigations'
     _sort = 'date_ordered'
     _icon = 'fa fa-crosshairs'
+
+    POS_NEG_PENDING = (
+        ("pending", "pending",),
+        ("positive", "positive",),
+        ("negative", "negative",),
+    )
 
     test                  = models.CharField(max_length=255)
     date_ordered          = models.DateField(null=True, blank=True)
@@ -1569,6 +1601,8 @@ class Investigation(EpisodeSubrecord):
     giardia               = models.CharField(max_length=20, blank=True)
     entamoeba_histolytica = models.CharField(max_length=20, blank=True)
     cryptosporidium       = models.CharField(max_length=20, blank=True)
+    rhinovirus            = models.CharField(
+        max_length=20, blank=True, choices=POS_NEG_PENDING)
 
     class Meta:
         abstract = True
@@ -1747,6 +1781,7 @@ class SymptomComplex(EpisodeSubrecord):
 
     class Meta:
         abstract = True
+        verbose_name_plural = "Symptom complexes"
 
     symptoms = models.ManyToManyField(
         Symptom, related_name="symptoms", blank=True

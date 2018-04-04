@@ -4,6 +4,7 @@ Unittests for the opal.templatetags.plugins module
 from mock import patch
 
 from opal.core import plugins
+from opal.core import menus
 from opal.core.test import OpalTestCase
 from opal.templatetags import plugins as opalplugins
 
@@ -17,7 +18,7 @@ class PluginTestCase(OpalTestCase):
             }
             stylesheets = ['css/test/notreal.css']
             head_extra = ['notareal_template.html']
-            menuitems = [{'display': 'test'}]
+            menuitems = [menus.MenuItem(display='test')]
             angular_module_deps = ['js/test.angular.mod.js']
             opal_angular_exclude_tracking_qs = [
                 "/patient_details",

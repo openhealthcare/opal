@@ -2,6 +2,10 @@
 
 Opal applications provide a number of settings in the `settings.py` of your application.
 
+## OPAL_AUTOCOMPLETE_SEARCH
+
+Whether to enable autocomplete on search from the navbar. Defaults to False.
+
 ## OPAL_BRAND_NAME
 
 The human readable form of your application name.
@@ -17,6 +21,11 @@ Scaffolded applications set this to 15 minutes by default. Unit is milliseconds.
 
 If `OPAL_LOGO_PATH` is set, the value is passed to the `{% static %}` templatetag to set the
 `src` attribute of an image in the default application header and login screen.
+
+## OPAL_FAVICON_PATH
+
+If `OPAL_FAVICON_PATH` is set, the value is passed to the `{% static %}` templatetag
+to set the `href` attribute for the favicon tag in the default application `<head>`
 
 ## VERSION_NUMBER
 

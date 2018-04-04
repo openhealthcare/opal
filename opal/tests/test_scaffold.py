@@ -1,25 +1,27 @@
 """
 Unittests for opal.core.scaffold
 """
-import shutil
+import os
 import subprocess
+import tempfile
 
-from mock import patch, MagicMock, Mock
+from mock import patch, MagicMock
 import ffs
 import opal
+from opal.tests import models
 
 from django.conf import settings
 
 from opal.core.test import OpalTestCase
-from opal.tests.models import Colour, Dinner
+from opal.tests.models import Colour
 from opal.core import scaffold
 from opal.core.scaffold import (
     create_form_template_for,
     create_display_template_for
 )
-from opal.core import scaffold
 
-@patch('os.system')
+
+@patch('subprocess.check_call')
 class StartpluginTestCase(OpalTestCase):
     def setUp(self):
         self.path = ffs.Path.newdir()
@@ -28,61 +30,61 @@ class StartpluginTestCase(OpalTestCase):
     def tearDown(self):
         ffs.rm_r(self.path)
 
-    @patch("opal.core.scaffold.shutil.copytree", side_effect=shutil.copytree)
-    def test_tree_copied(self, shutil, os):
+    @patch("ffs.nix.cp_r", side_effect=ffs.nix.cp_r)
+    def test_tree_copied(self, cp_r, subpr):
         scaffold.start_plugin(self.args, self.path)
-        self.assertTrue(shutil.called)
+        self.assertTrue(cp_r.called)
 
-    def test_creates_the_app_directory(self, os):
+    def test_creates_the_app_directory(self, subpr):
         test_plugin = self.path/'opal-testplugin/testplugin'
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(test_plugin.is_dir)
 
-    def test_creates_appropriate_directory_with_opal_prefix(self, os):
+    def test_creates_appropriate_directory_with_opal_prefix(self, subpr):
         test_plugin = self.path/'opal-testplugin/testplugin'
         scaffold.start_plugin("opal-testplugin", self.path)
         self.assertTrue(test_plugin.is_dir)
 
-    def test_creates_template_directory(self, os):
+    def test_creates_template_directory(self, subpr):
         template_dir = self.path/'opal-testplugin/testplugin/templates'
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(template_dir.is_dir)
 
-    def test_creates_static_directory(self, os):
+    def test_creates_static_directory(self, subpr):
         static_dir = self.path/'opal-testplugin/testplugin/static'
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(static_dir.is_dir)
 
-    def test_calls_interpolate_dir(self, os):
+    def test_calls_interpolate_dir(self, subpr):
         with patch.object(scaffold, 'interpolate_dir') as interpolate:
             scaffold.start_plugin(self.args, self.path)
             self.assertEqual(interpolate.call_args[1]["name"], "testplugin")
             self.assertIn("version", interpolate.call_args[1])
 
-    def test_creates_css_directory(self, os):
+    def test_creates_css_directory(self, subpr):
         css_dir = self.path/'opal-testplugin/testplugin/static/css'
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(css_dir.is_dir)
 
-    def test_creates_controllers_directory(self, os):
+    def test_creates_controllers_directory(self, subpr):
         rpath = 'opal-testplugin/testplugin/static/js/testplugin/controllers'
         controllers_dir = self.path/rpath
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(controllers_dir.is_dir)
 
-    def test_creates_services_directory(self, os):
+    def test_creates_services_directory(self, subpr):
         rpath = 'opal-testplugin/testplugin/static/js/testplugin/services'
         services_dir = self.path/rpath
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(services_dir.is_dir)
 
-    def test_has_lookuplists_dir(self, os):
+    def test_has_lookuplists_dir(self, subpr):
         rpath = 'opal-testplugin/testplugin/data/lookuplists/'
         lookuplists = self.path/rpath
         scaffold.start_plugin(self.args, self.path)
         self.assertTrue(bool(lookuplists))
 
-    def test_creates_manifest(self, os):
+    def test_creates_manifest(self, subpr):
         rpath = 'opal-testplugin/MANIFEST.in'
         manifest = self.path/rpath
         scaffold.start_plugin(self.args, self.path)
@@ -92,11 +94,13 @@ class StartpluginTestCase(OpalTestCase):
             self.assertIn("recursive-include testplugin/static *", contents)
             self.assertIn("recursive-include testplugin/templates *", contents)
 
-    def test_initialize_git(self, os):
+    def test_initialize_git(self, subpr):
         scaffold.start_plugin(self.args, self.path)
-        os.assert_any_call('cd opal-testplugin; git init')
+        subpr.assert_any_call(('git', 'init'),
+                              cwd=self.path/'opal-testplugin',
+                              stdout=subprocess.PIPE)
 
-    def test_creates_requirements(self, os):
+    def test_creates_requirements(self, subpr):
         rpath = 'opal-testplugin/requirements.txt'
         requirements = self.path/rpath
         scaffold.start_plugin(self.args, self.path)
@@ -106,7 +110,7 @@ class StartpluginTestCase(OpalTestCase):
             self.assertIn('opal=={}'.format(opal.__version__), contents)
 
 @patch('subprocess.check_call')
-@patch('os.system')
+@patch.object(scaffold.management, 'call_command')
 class StartprojectTestCase(OpalTestCase):
 
     def setUp(self):
@@ -116,28 +120,29 @@ class StartprojectTestCase(OpalTestCase):
     def tearDown(self):
         ffs.rm_r(self.path)
 
-    def test_bail_if_exists(self, os, sub):
+    def test_bail_if_exists(self, call_command, sub):
         preexisting = self.path/'testapp'
         preexisting.mkdir()
         with patch.object(scaffold.sys, 'exit') as exiter:
             scaffold.start_project(self.args, self.path)
             exiter.assert_called_with(1)
 
-    def test_run_django_start_project(self, os, subpr):
+    def test_run_django_start_project(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
-        os.assert_any_call('django-admin.py startproject testapp')
+        call_command.assert_any_call('startproject', 'testapp',
+                                     self.path/'testapp')
 
-    def test_has_lookuplists_dir(self, os, subpr):
+    def test_has_lookuplists_dir(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
         lookuplists = self.path/'testapp/testapp/data/lookuplists/'
         self.assertTrue(bool(lookuplists))
 
-    def test_has_gitignore(self, os, subpr):
+    def test_has_gitignore(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
         gitignore = self.path/'testapp/.gitignore'
         self.assertTrue(gitignore.is_file)
 
-    def test_calls_interpolate_dir(self, os, subpr):
+    def test_calls_interpolate_dir(self, call_command, subpr):
         with patch.object(scaffold, 'interpolate_dir') as interpolate:
             with patch.object(scaffold, 'get_random_secret_key') as rnd:
                 rnd.return_value = 'foobarbaz'
@@ -146,12 +151,12 @@ class StartprojectTestCase(OpalTestCase):
                                             secret_key='foobarbaz',
                                             version=opal.__version__)
 
-    def test_settings_is_our_settings(self, os, subpr):
+    def test_settings_is_our_settings(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
         settings = self.path/'testapp/testapp/settings.py'
         self.assertTrue('opal' in settings.contents)
 
-    def test_sets_random_secret_key(self, os, subpr):
+    def test_sets_random_secret_key(self, call_command, subpr):
         with patch.object(scaffold, 'get_random_secret_key') as rnd:
             rnd.return_value = 'MyRandomKey'
             scaffold.start_project(self.args, self.path)
@@ -159,42 +164,42 @@ class StartprojectTestCase(OpalTestCase):
             self.assertTrue("SECRET_KEY = 'MyRandomKey'" in settings.contents)
             rnd.assert_called_with()
 
-    def test_has_js_dir(self, os, subpr):
+    def test_has_js_dir(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
         js_dir = self.path/'testapp/testapp/static/js'
         self.assertTrue(js_dir.is_dir)
 
-    def test_has_css_dir(self, os, subpr):
+    def test_has_css_dir(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
         css_dir = self.path/'testapp/testapp/static/css'
         self.assertTrue(css_dir.is_dir)
 
-    def test_has_js_routes(self, os, subpr):
+    def test_has_js_routes(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
         routes = self.path/'testapp/testapp/static/js/testapp/routes.js'
         self.assertTrue(routes.is_file)
 
-    def test_js_has_flow(self, os, subpr):
+    def test_js_has_flow(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
         flow = self.path/'testapp/testapp/static/js/testapp/flow.js'
         self.assertTrue(flow.is_file)
 
-    def test_has_named_templates_dir(self, os, subpr):
+    def test_has_named_templates_dir(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
         templates = self.path/'testapp/testapp/templates/testapp'
         self.assertTrue(templates.is_dir)
 
-    def test_has_assets_dir(self, os, subpr):
+    def test_has_assets_dir(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
         assets = self.path/'testapp/testapp/assets'
         self.assertTrue(assets.is_dir)
 
-    def test_has_assets_readme(self, os, subpr):
+    def test_has_assets_readme(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
         readme = self.path/'testapp/testapp/assets/README.md'
         self.assertTrue(readme.is_file)
 
-    def test_creates_manifest(self, os, subpr):
+    def test_creates_manifest(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
         manifest = self.path/'testapp/MANIFEST.in'
         self.assertTrue(bool(manifest))
@@ -204,34 +209,36 @@ class StartprojectTestCase(OpalTestCase):
             self.assertIn("recursive-include testapp/templates *", contents)
             self.assertIn("recursive-include testapp/assets *", contents)
 
-    def test_runs_makemigrations(self, os, subpr):
+    def test_runs_makemigrations(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
-        subpr.assert_any_call(['python', 'testapp/manage.py',
+        subpr.assert_any_call(['python', os.path.join('testapp', 'manage.py'),
                                   'makemigrations', 'testapp', '--traceback'])
 
     @patch.object(scaffold.sys, 'exit')
-    def test_if_subprocess_errors(self, exiter, os, subpr):
+    def test_if_subprocess_errors(self, exiter, call_command, subpr):
         subpr.side_effect = subprocess.CalledProcessError(None, None)
         scaffold.start_project(self.args, self.path)
-        subpr.assert_any_call(['python', 'testapp/manage.py',
+        subpr.assert_any_call(['python', os.path.join('testapp', 'manage.py'),
                                   'makemigrations', 'testapp', '--traceback'])
         exiter.assert_any_call(1)
 
-    def test_runs_migrate(self, os, subpr):
+    def test_runs_migrate(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
-        subpr.assert_any_call(['python', 'testapp/manage.py',
+        subpr.assert_any_call(['python', os.path.join('testapp', 'manage.py'),
                                'migrate', '--traceback'])
 
-    def test_sets_settings(self, os, subpr):
-        with patch.object(scaffold, '_set_settings_module') as settings:
-            scaffold.start_project(self.args, self.path)
-            settings.assert_called_with('testapp')
-
-    def test_initialize_git(self, os, subpr):
+    def test_runs_createopalsuperuser(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
-        os.assert_any_call('cd testapp; git init')
+        subpr.assert_any_call(['python', os.path.join('testapp', 'manage.py'),
+                               'createopalsuperuser', '--traceback'])
 
-    def test_creates_requirements(self, os, subpr):
+    def test_initialize_git(self, call_command, subpr):
+        scaffold.start_project(self.args, self.path)
+        subpr.assert_any_call(('git', 'init'),
+                              cwd=self.path/'testapp',
+                              stdout=subprocess.PIPE)
+
+    def test_creates_requirements(self, call_command, subpr):
         scaffold.start_project(self.args, self.path)
         requirements = self.path/'testapp/requirements.txt'
         self.assertTrue(bool(requirements))
@@ -351,12 +358,221 @@ class RecordRenderTestCase(OpalTestCase):
 
 class GetTemplateDirFromRecordTestCase(OpalTestCase):
 
-    def test_get_template_dir_from_record(self):
+    def test_get_template_dir_from_record_with_pyc(self):
         with patch.object(scaffold.inspect, 'getfile') as getter:
-            getter.return_value = 'me/you.pyc'
+            getter.return_value = os.path.join('me', 'models.pyc')
             d = scaffold._get_template_dir_from_record(MagicMock())
-            self.assertEqual('me/templates', str(d))
+            self.assertEqual(os.path.join('me', 'templates'), str(d))
 
+    def test_get_template_dir_from_package_models(self):
+        with patch.object(scaffold.inspect, 'getfile') as getter:
+            getter.return_value = os.path.join('me', 'models', 'clinic.py')
+            d = scaffold._get_template_dir_from_record(MagicMock())
+            self.assertEqual(os.path.join('me', 'templates'), str(d))
+
+    def test_template_dir_not_found(self):
+        with patch.object(scaffold.sys, 'exit') as exiter:
+            with patch.object(scaffold.inspect, 'getfile') as getter:
+                getter.return_value = os.path.join('me', 'you', 'clinic.py')
+                d = scaffold._get_template_dir_from_record(MagicMock())
+                exiter.asser_called_with(1)
+
+
+
+@patch('opal.core.scaffold.write')
+@patch('opal.core.scaffold.apps')
+@patch('opal.core.scaffold.create_display_template_for')
+@patch('opal.core.scaffold.create_form_template_for')
+@patch('opal.core.scaffold.management.call_command')
+class ScaffoldTestCase(OpalTestCase):
+    def test_scaffold(
+        self,
+        call_command,
+        form_template,
+        display_template,
+        apps,
+        write
+    ):
+        apps.all_models = {"opal": {'dinner': models.Dinner}}
+        scaffold.scaffold_subrecords('opal')
+        self.assertEqual(call_command.call_count, 2)
+        call_args = call_command.call_args_list
+        self.assertEqual(
+            call_args[0][0],
+            (
+                "makemigrations",
+                "opal",
+                "--traceback"
+            )
+        )
+
+        self.assertEqual(
+            call_args[1][0],
+            (
+                "migrate",
+                "opal",
+                "--traceback"
+            )
+        )
+        self.assertEqual(
+            form_template.call_count,
+            1
+        )
+        self.assertEqual(
+            form_template.call_args[0][0],
+            models.Dinner
+        )
+
+        self.assertEqual(
+            display_template.call_count,
+            1
+        )
+        self.assertEqual(
+            display_template.call_args[0][0],
+            models.Dinner
+        )
+        self.assertFalse(write.called)
+
+    def test_scaffold_raises_an_error(
+        self,
+        call_command,
+        form_template,
+        display_template,
+        apps,
+        write
+    ):
+        apps.all_models = []
+        with self.assertRaises(ValueError) as e:
+            scaffold.scaffold_subrecords('unreal')
+
+        self.assertEqual(
+            "Unable to find app unreal in settings.INSTALLED_APPS",
+            str(e.exception)
+        )
+
+
+
+    def test_dry_run(
+        self,
+        call_command,
+        form_template,
+        display_template,
+        apps,
+        write
+    ):
+        apps.all_models = {"opal": {'dinner': models.Dinner}}
+        scaffold.scaffold_subrecords('opal', dry_run=True)
+        self.assertEqual(call_command.call_count, 1)
+        call_args = call_command.call_args_list
+        self.assertEqual(
+            call_args[0][0],
+            (
+                "makemigrations",
+                "opal",
+                "--traceback",
+                "--dry-run"
+            )
+        )
+
+        self.assertEqual(write.call_count, 2)
+        call_args = write.call_args_list
+        self.assertEqual(
+            call_args[0][0],
+            ("No Display template for {}".format(models.Dinner),)
+        )
+
+        self.assertEqual(
+            call_args[1][0],
+            ("No Form template for {}".format(models.Dinner),)
+        )
+
+    def test_no_migrations(
+        self,
+        call_command,
+        form_template,
+        display_template,
+        apps,
+        write
+    ):
+        apps.all_models = {"opal": {'dinner': models.Dinner}}
+        scaffold.scaffold_subrecords('opal', migrations=False)
+        self.assertFalse(call_command.called)
+
+        self.assertEqual(
+            form_template.call_count,
+            1
+        )
+        self.assertEqual(
+            form_template.call_args[0][0],
+            models.Dinner
+        )
+
+        self.assertEqual(
+            display_template.call_count,
+            1
+        )
+        self.assertEqual(
+            display_template.call_args[0][0],
+            models.Dinner
+        )
+        self.assertFalse(write.called)
+
+    def test_episode_subrecord_display_template(
+        self,
+        call_command,
+        form_template,
+        display_template,
+        apps,
+        write
+    ):
+        apps.all_models = {"opal": {'dinner': models.Dinner}}
+        with patch.object(
+            models.Dinner, "get_display_template"
+        ) as get_display_template:
+            get_display_template.return_value = True
+            scaffold.scaffold_subrecords('opal')
+        self.assertFalse(display_template.called)
+
+    def test_episode_subrecord_form_template(
+        self,
+        call_command,
+        form_template,
+        display_template,
+        apps,
+        write
+    ):
+        apps.all_models = {"opal": {'dinner': models.Dinner}}
+        with patch.object(
+            models.Dinner, "get_form_template"
+        ) as get_display_template:
+            get_display_template.return_value = True
+            scaffold.scaffold_subrecords('opal')
+        self.assertFalse(form_template.called)
+
+
+class ScaffoldIntegrationTestCase(OpalTestCase):
+    @patch('opal.core.scaffold._get_template_dir_from_record')
+    def test_integration(self, get_template_dir):
+        """
+            A quick cover all test that, um doesn't cover everything
+            apart from django migrations/makemigrations
+            can we confirm with a superficial test
+            that no other apis internal or external
+            that we are using have changed.
+        """
+        tmp_dir = tempfile.mkdtemp()
+        get_template_dir.return_value = ffs.Path(tmp_dir)
+        scaffold.scaffold_subrecords('tests', migrations=False)
+        self.assertTrue(
+            os.path.isfile(
+                os.path.join(tmp_dir, "records", "hat_wearer.html")
+            )
+        )
+        self.assertTrue(
+            os.path.isfile(
+                os.path.join(tmp_dir, "forms", "hat_wearer_form.html")
+            )
+        )
 
 
 @patch("ffs.Path.__lshift__")

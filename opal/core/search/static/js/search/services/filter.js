@@ -33,6 +33,7 @@ recently changed it - refresh the page and try again');
 		            } else {
 			            $window.alert('Item could not be saved');
 		            };
+                    deferred.reject()
 		        }
             );
             return deferred.promise;

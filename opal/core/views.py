@@ -7,18 +7,10 @@ import datetime
 
 from django.utils.dateformat import format
 from django.http import HttpResponse
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 from django.core.serializers.json import DjangoJSONEncoder
 from django.conf import settings
 from rest_framework import mixins, viewsets
 import six
-
-
-class LoginRequiredMixin(object):
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)
 
 
 class OpalSerializer(DjangoJSONEncoder):

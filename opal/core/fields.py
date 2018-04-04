@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from six import b
+from django.db.models.signals import pre_delete
+from opal.utils import _itersubclasses
 
 from opal.utils import camelcase_to_underscore
 
@@ -68,12 +70,42 @@ class ForeignKeyOrFreeText(property):
         fk_kwargs = dict(blank=True, null=True)
         if self.related_name:
             fk_kwargs['related_name'] = self.related_name
-        fk_field = models.ForeignKey(self.foreign_model, **fk_kwargs)
+        fk_field = models.ForeignKey(
+            self.foreign_model,
+            on_delete=models.SET_NULL,
+            **fk_kwargs
+        )
         fk_field.contribute_to_class(cls, self.fk_field_name)
         ft_field = models.CharField(
             max_length=255, blank=True, null=True, default=b('')
         )
         ft_field.contribute_to_class(cls, self.ft_field_name)
+
+        # When we delete an instance in a lookup list, we want the
+        # value to be retained, even though we've deleted the entry
+        # in the lookuplist.
+        # Re-setting the value converts it to a free text entry of
+        # the same value as the original.
+        def on_delete_cb(sender, instance, *args, **kwargs):
+            if not cls._meta.abstract:
+                cls.objects.filter(**{
+                    self.fk_field_name: instance
+                }).update(**{
+                    self.ft_field_name: instance.name
+                })
+            else:
+                subclasses = _itersubclasses(cls)
+                for sub_class in subclasses:
+                    if not sub_class._meta.proxy or sub_class._meta.abstract:
+                        sub_class.objects.filter(**{
+                            self.fk_field_name: instance
+                        }).update(**{
+                            self.ft_field_name: instance.name
+                        })
+
+        pre_delete.connect(
+            on_delete_cb, sender=self.foreign_model, weak=False
+        )
 
     def get_default(self):
         if callable(self.default):

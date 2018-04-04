@@ -7,6 +7,8 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
+from opal import utils
+
 
 def load_lookuplist_item(model, item):
     from opal.models import Synonym
@@ -23,32 +25,6 @@ def load_lookuplist_item(model, item):
         if created_synonym:
             synonyms_created += 1
     return int(created), synonyms_created
-
-
-def load_lookuplist(data):
-    """
-        returns num, total_created, total_synonyms_created
-        where
-        num is the number of lookup lists models we look at
-        created is the number of instances of lookup list created
-        synonym is the total number of synonyms created
-    """
-    num = 0
-    total_created = 0
-    total_synonyms_created = 0
-
-    for model in LookupList.__subclasses__():
-        name = model.__name__.lower()
-        if name in data:
-            logging.info('Loading {0}'.format(name))
-            num += 1
-
-            for item in data[name]:
-                created, synonyms_created = load_lookuplist_item(model, item)
-                total_created += created
-                total_synonyms_created += synonyms_created
-
-    return num, total_created, total_synonyms_created
 
 
 def synonym_exists(lookuplist, name):
@@ -93,3 +69,38 @@ class LookupList(models.Model):
             class_name = self.__class__.__name__
             raise ValueError(err_str.format(class_name, self.name))
         return super(LookupList, self).save(*args, **kwargs)
+
+
+def lookuplists():
+    """
+    Generator function for lookuplists
+    """
+    for lookuplist in utils._itersubclasses(LookupList):
+        if not lookuplist._meta.abstract:
+            yield lookuplist
+
+
+def load_lookuplist(data):
+    """
+        returns num, total_created, total_synonyms_created
+        where
+        num is the number of lookup lists models we look at
+        created is the number of instances of lookup list created
+        synonym is the total number of synonyms created
+    """
+    num = 0
+    total_created = 0
+    total_synonyms_created = 0
+
+    for model in lookuplists():
+        name = model.__name__.lower()
+        if name in data:
+            logging.info('Loading {0}'.format(name))
+            num += 1
+
+            for item in data[name]:
+                created, synonyms_created = load_lookuplist_item(model, item)
+                total_created += created
+                total_synonyms_created += synonyms_created
+
+    return num, total_created, total_synonyms_created

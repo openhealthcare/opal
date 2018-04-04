@@ -1,9 +1,9 @@
 """
-Views for the pathway OPAL Plugin
+Views for the pathway Opal Plugin
 """
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from opal.core.pathway import Pathway
-from opal.core.views import LoginRequiredMixin
 
 
 class PathwayIndexView(LoginRequiredMixin, TemplateView):

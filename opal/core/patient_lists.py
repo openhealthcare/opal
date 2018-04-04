@@ -330,12 +330,6 @@ class TaggedPatientListMetadata(metadata.Metadata):
             if tag and hasattr(tagging, 'subtag'):
                 data["tags"][tag]["parent_tag"] = tagging.tag
 
-        data["tags"]["mine"] = dict(
-            name="mine",
-            display_name="Mine",
-            slug="mine",
-            direct_add=True,
-        )
         return data
 
 

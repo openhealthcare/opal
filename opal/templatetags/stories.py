@@ -17,8 +17,13 @@ def story(label, story_dir):
     }
 
     template_files = []
-    for template_dir in (settings.TEMPLATE_DIRS + get_app_template_dirs('')):
-        story_path = os.path.join(template_dir, story_dir)
+    if settings.TEMPLATES[0]['APP_DIRS']:
+        directories = get_app_template_dirs('')
+    else:
+        directories = settings.TEMPLATES[0]['DIRS']
+
+    for template_dir in directories:
+        story_path = os.path.join(template_dir, 'templates', story_dir)
         for dir, dirnames, filenames in os.walk(story_path):
             for filename in filenames:
                 if filename.endswith('~'):

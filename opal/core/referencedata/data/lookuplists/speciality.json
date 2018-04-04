@@ -1,0 +1,140 @@
+{
+  "speciality": [
+    {
+      "synonyms": [], 
+      "name": "Cardiology"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Cardiothoracic Surgery"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Care of the Elderly"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Critical Care"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Dermatology"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Emergency Department"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Endocrine/Diabetes"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "ENT & Head and neck surgery"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Gastroenterology"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "General and Acute Medicine"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "General paediatrics"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "General Surgery"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Haematology"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Hepatobiliary"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "HIV & GUM"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Immunology"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Infectious Diseases"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Maxillo facial surgery & dentistry"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Microbiology"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Neurology"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Neurosurgery"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Obstetrics & Gynaecology"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Oncology/Palliative Care"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "OPAT Centre referral from another organisation"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Ophthalmology"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Orthopaedics & Trauma"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Paediatric Surgery"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Plastic Surgery"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Primary Care"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Renal medicine and transplantation"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Respiratory Medicine"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Rheumatology"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Urological surgery"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Vascular Surgery"
+    }
+  ]
+}

@@ -3,7 +3,6 @@ Load a series of lookup lists into our instance.
 """
 import os
 import ffs
-from optparse import make_option
 
 from django.core.management.base import BaseCommand
 from django.db import transaction
@@ -23,15 +22,12 @@ class Command(BaseCommand):
         self.set_counter()
         return super(Command, self).__init__(*a, **k)
 
-    option_list = BaseCommand.option_list + (
-        make_option(
-            "-f",
-            "--file",
-            dest="filename",
-            help="specify import file",
-            metavar="FILE"
-        ),
-    )
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--file',
+            help="Specify import file",
+            dest="filename"
+        )
 
     def set_counter(self):
         self.num = 0
@@ -49,10 +45,12 @@ class Command(BaseCommand):
         filename = ffs.Path(LOOKUPLIST_LOCATION.format(component.directory()))
         self.load(self.from_path(filename))
         # then work throught the lookuplists we know about
-        for lookuplist in lookuplists.LookupList.__subclasses__():
-            path = ffs.Path("{0}/data/lookuplists/{1}.json".format(
-                application.get_app().directory(),
-                lookuplist.get_api_name()
+        for lookuplist in lookuplists.lookuplists():
+            path = ffs.Path(os.path.join(
+                component.directory(),
+                'data',
+                'lookuplists',
+                '{}.json'.format(lookuplist.get_api_name())
             ))
             self.load(self.from_path(path))
 

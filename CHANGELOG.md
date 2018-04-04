@@ -1,3 +1,153 @@
+### 0.10.0 (Major Release)
+
+This is a major release with breaking changes from upstream dependencies.
+You are almost certain to require changes to your application. Please see
+the upgrade guide for further details.
+
+#### Referencedata in new applications
+
+Opal now includes core lookuplist data in an `opal.core.referencedata` plugin
+which is installed and loaded by default by the `startproject` scaffolding.
+
+#### Deletion cascade behaviour
+
+Opal 0.10 changes several behaviours related to cascading deletions which, despite
+being Django defaults, were confusing to users and developers in our use case.
+
+When we delete and look up list instance, we no longer delete all subrecords that use
+that instance. Instead we set the look up list instances name in the free text field on
+the subrecord.
+
+When you delete a user, it will no longer delete all related episodes and subrecords
+
+#### Episode Category stages
+
+Episode categories now enforce a set of valid `Episode.stage` values.
+`EpisodeCategory` now includes the `.get_stages()` and `.has_stage(stage)` methods,
+while `Episode` has a `set_stage` setter which is used by the UpdateFromDictMixin JSON API.
+
+#### lookuplists.lookuplists
+
+Adds the utility generator `lookuplists.lookuplists()` which wil yield every lookuplist
+currently available.
+
+#### Discoverable.filter()
+
+Disoverable features now have a `filter` method which allows you to filter features
+with matching attributes.
+
+#### Pathways ContextProcessor
+
+The 'opal.core.pathways.context_processors.pathways' Context Processor will allow you to
+access your pathways from templates without having to explicitly load them in a view. In
+turn, this allows patterns like:
+
+    {% include pathways.YourPathway.get_display_name %}
+
+
+#### Missing consistency token errors
+
+`.update_from_dict()` will now raise the new error
+`opal.core.errors.MissingConsistencyTokenError` if it is called without a consistency
+token when one is set on the model. Previously it would raise `APIError`.
+
+The JSON API will now return a more specific message in the response boday, explaining
+that the problem is a missing consistency token.
+
+#### dump_lookup_lists --many-files
+
+Adds the `--many-files` option to the `dump_lookup_lists` command which will write
+each installed lookup list to a separate file in the `./data/lookuplists` directory
+of the application.
+
+#### Template removals
+
+We remove a number of stale unused templates:
+
+* changelog.html
+* contact.html
+* extract_footer.html
+* tagging_detail.html
+* _helpers/inline_form.html
+* responsive/_phone_episode_list.html'
+* responsive/_tablet_episode_list.html
+
+#### Removing LoginRequiredMixin
+
+As Django ships with a `LoginRequiredMixin` of its own we no longer roll our own
+in `opal.core.views.
+
+#### Testing options
+
+Adds a `--failfast` option to the test harness to stop test runs on the first
+failure.
+
+If you are a plugin developer upgrading an existing plugin you will have to
+manually add support for `--failfast` passthrough to your `runtests.py`.
+
+If you are a plugin developer upgrading an existing plugin you will have to
+manually add support for `--failfast` passthrough to your `runtests.py`.
+
+#### Moves scaffold to be a django management command
+
+The rest of the api is still the same but now
+we run `python manage.py scaffold {my_app_name}`
+
+#### Deprecations completed
+
+As previously noted in console warnings, the Angular Episode service no longer
+supports the `discharge_date`, `date_of_admission`, `date_of_episode` properties.
+These were replaced by `.start` and `.end`.
+
+#### Updates to the Dependency Graph
+
+* Django: 1.8.13 -> 1.10.8
+* Django Reversion: 1.8.7 -> 1.10.2
+* Django Rest Framework: 3.2.2 -> 3.4.7
+* Psycopg2: 2.5 -> 2.7
+* Jinja2: 2.9.6 -> 2.10
+* Ffs: 0.0.8.1 -> 0.0.8.2
+* Requests: 2.7.0 -> 2.18.4
+* django-celery: 3.1.17 -> 3.2.2
+* celery: 3.1.19 -> 3.1.25
+
+#### Misc Changes
+
+Removes the undocumented `collapsed_multisave` tag from the `pathways` templatetag
+library.
+
+Adds a setting `OPAL_FAVICON_PATH` to specify the application Favicon to use.
+
+Adds the `rows` option to the textarea template tag which just fills in the html textarea
+`rows` attribute. Text areas are defaulted to 5 rows (the same as before).
+
+Configures the setting `CSRF_FAILURE_VIEW` to use the bundled `opal.views.csrf_failure` view.
+
+Adds the utility function `opal.utils.get`. Similar to the `getattr` builtin, `get` looks
+for a method named `get_$attr` and will call that if it exists.
+
+Adds the method `.get_absolute_url()` to `opal.core.pathways.Pathway` and
+`opal.core.patient_lists.PatientList`.
+
+Adds the Opal error `SignatureError`.
+
+Pathway slugs may now include hyphens as well as numbers, lower case letters and underscores.
+
+Bugfix: in edit_item.js $scope.episode_category is now set from episode.category_name
+as opposed to episode.category (which was always null)
+
+Fixes some instances of progressbars not being reset if unexpected error states
+occur.
+
+Improves the rendering of patient detail pages where no patient with the ID from
+route params exits. (Displays a polite message instead of erroring.)
+
+Incorrect pluralisation of subrecord names in the Admin view has been fixed. (Migrations
+will have to be run in all models which extend the changed core Opal models (this is due
+to a minor upstream Django bug)
+
+Minor change to the diagnosis form.
+
 ### 0.9.0 (Major Release)
 
 #### Good bye date_of_episode, discharge_date, date_of_admission

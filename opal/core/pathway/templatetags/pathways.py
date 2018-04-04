@@ -1,3 +1,6 @@
+"""
+Templatetags for opal.pathways
+"""
 import copy
 
 from django import template
@@ -15,11 +18,4 @@ def add_common_context(context, subrecord):
 
 @register.inclusion_tag('_helpers/multisave.html', takes_context=True)
 def multisave(context, subrecord):
-    return add_common_context(context, subrecord)
-
-
-@register.inclusion_tag(
-    '_helpers/collapsed_multisave.html', takes_context=True
-)
-def collapsed_multisave(context, subrecord):
     return add_common_context(context, subrecord)

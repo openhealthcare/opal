@@ -1,8 +1,10 @@
 """
 Module entrypoint for core Opal views
 """
+from django.core.urlresolvers import reverse
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import login
-from django.http import HttpResponseNotFound
+from django.http import HttpResponseForbidden, HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import get_template
 from django.template import TemplateDoesNotExist
@@ -14,7 +16,7 @@ from opal.core.patient_lists import PatientList, TabbedPatientListGroup
 from opal.core.subrecords import (
     episode_subrecords, get_subrecord_from_api_name
 )
-from opal.core.views import LoginRequiredMixin, json_response
+from opal.core.views import json_response
 from opal.utils import camelcase_to_underscore
 from opal.utils.banned_passwords import banned
 
@@ -128,7 +130,7 @@ def check_password_reset(request, *args, **kwargs):
             profile = request.user.profile
             if profile and profile.force_password_change:
                 return redirect(
-                    'django.contrib.auth.views.password_change'
+                    reverse('change-password')
                 )
         except models.UserProfile.DoesNotExist:
             # TODO: This probably doesn't do any harm, but
@@ -137,7 +139,7 @@ def check_password_reset(request, *args, **kwargs):
             models.UserProfile.objects.create(
                 user=request.user, force_password_change=True)
             return redirect(
-                'django.contrib.auth.views.password_change'
+                reverse('change-password')
             )
     return response
 
@@ -177,7 +179,7 @@ class FormTemplateView(LoginRequiredMixin, TemplateView):
     This view renders the form template for our field.
 
     These are generated for subrecords, but can also be used
-    by plugins for other mdoels.
+    by plugins for other models.
     """
     template_name = "form_base.html"
 
@@ -293,3 +295,11 @@ class RawTemplateView(LoginRequiredMixin, TemplateView):
         except TemplateDoesNotExist:
             return HttpResponseNotFound()
         return super(RawTemplateView, self).get(*args, **kw)
+
+
+def csrf_failure(request, reason):
+    if request.POST:
+        next_url = request.GET.get('next', '/')
+        return redirect(next_url)
+
+    return HttpResponseForbidden

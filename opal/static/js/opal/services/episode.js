@@ -20,25 +20,6 @@ angular.module('opal.services')
         var date_fields = ['start', 'end'];
 
         Episode.prototype = {
-            get discharge_date(){
-              throw "Discharge date is deprecated in opal 0.9.0, use end";
-            },
-            set discharge_date(x){
-              throw "Discharge date is deprecated in opal 0.9.0, use end";
-            },
-            get date_of_admission (){
-              throw "Date of admission is deprecated in opal 0.9.0, use start";
-            },
-            set date_of_admission (x){
-              throw "Date of admission is deprecated in opal 0.9.0, use start";
-            },
-            get date_of_episode (){
-              throw "Date of episode is deprecated in opal 0.9.0, use start";
-            },
-            set date_of_episode (x){
-              throw "Date of episode is deprecated in opal 0.9.0, use start";
-            },
-
             // Constructor to update from attrs and parse datish fields
             initialise: function(data){
                 var self = this;
@@ -155,11 +136,23 @@ angular.module('opal.services')
 
             makeCopy: function(){
                 var start, end;
+                /*
+                * undefined is not serailised.
+                * we explicitly set to null, to set
+                * fields that were populated to null
+                */
                 if(this.start){
                   start = moment(this.start).toDate();
                 }
+                else{
+                  start = null;
+                }
+
                 if(this.end){
                   end = moment(this.end).toDate();
+                }
+                else{
+                  end = null;
                 }
                 var copy = {
                     id               : this.id,

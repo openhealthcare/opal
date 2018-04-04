@@ -1,8 +1,13 @@
 """
 Unittests for opal.views
 """
+import os
+
 from django import http
 from django.core.urlresolvers import reverse
+from django.http import QueryDict
+from django.test import TestCase
+from django.test.client import RequestFactory
 from mock import patch, MagicMock
 
 from opal import models, views
@@ -10,6 +15,7 @@ from opal.core import detail, patient_lists
 from opal.core.subrecords import subrecords
 from opal.core.episodes import InpatientEpisode
 from opal.core.test import OpalTestCase
+from opal.views import csrf_failure
 
 # this is used just to import the class for EpisodeListApiTestCase
 from opal.tests.test_patient_lists import TaggingTestPatientList, TestTabbedPatientListGroup # flake8: noqa
@@ -187,8 +193,8 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
                 single = False,
                 icon = 'fa fa-comments',
                 list_limit = None,
-                template_path = 'records/colour.html',
-                detail_template_path = 'records/colour.html',
+                template_path = os.path.join('records', 'colour.html'),
+                detail_template_path = os.path.join('records', 'colour.html'),
                 model_column=True,
             )
         ]
@@ -374,7 +380,6 @@ class RecordTemplateViewTestCase(BaseViewTestCase):
             username=self.user.username, password=self.PASSWORD
         )
 
-
     def test_test_view(self):
         record_template = testmodels.Colour.get_display_template()
 
@@ -437,3 +442,28 @@ class CopyToCategoryViewTestCase(BaseViewTestCase):
         self.assertEqual(
             new_episode.episodename_set.filter(name="episode name").count(), 0
         )
+
+
+class CSRFFailureTestCase(TestCase):
+    def test_get(self):
+        factory = RequestFactory()
+        request = factory.get('/')
+        response = csrf_failure(request, '')
+        self.assertEqual(response.status_code, 403)
+
+    def test_post_with_next_arg(self):
+        factory = RequestFactory()
+        request = factory.post('/test', data={'test': 'data'})
+        request.GET = QueryDict('next=/foo')
+        response = csrf_failure(request, '')
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, '/foo')
+
+    def test_post_without_next_arg(self):
+        factory = RequestFactory()
+        request = factory.post('/test', data={'test': 'data'})
+        response = csrf_failure(request, '')
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, '/')

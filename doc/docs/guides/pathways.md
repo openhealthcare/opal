@@ -9,7 +9,7 @@ Typically pathways are forms that allow the user to enter information that spans
 The pathway provides Wizards, long multi-model forms, custom validation and much more,
 all usable either in full page or modal contexts.
 
-If you're new to using pathways you might like to go through the
+If you're new to using pathways, you might like to go through the
 [Pathway tutorial](../tutorials/pathway_tutorial.md).
 
 <blockquote><small>
@@ -49,7 +49,7 @@ lets the user create a patient with their demographics and past medical history
 ## Customising Steps
 
 When passed a model, a step will infer the details of form templates, display names et
-cetera from the subrecord. However a model is not requried - you can also pass arbitrary
+cetera from the subrecord. However a model is not required - you can also pass arbitrary
 chunks of html with the two required fields:
 
 ``` python
@@ -125,7 +125,7 @@ class SimplePathway(pathway.Pathway):
     display_name = 'A simple pathway'
     slug         = 'simples'
     steps        = (
-        pathways.Step(model=models.Allergies, delete_others=True),
+        pathway.Step(model=models.Allergies, delete_others=True),
         models.Treatment,
         models.PastMedicalHistory
     )
@@ -134,7 +134,8 @@ class SimplePathway(pathway.Pathway):
 In this case, the pathway will delete any existing instances of the given Subrecord Model that
 are not sent back to the API in the JSON data.
 
-## Complex Steps
+
+## Complex Steps
 
 If we want to save multiple types of subrecords at the same step, we can do that by including the
 relevant form templates in a custom step template.

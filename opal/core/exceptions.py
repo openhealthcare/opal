@@ -15,6 +15,10 @@ class ConsistencyError(Error):
     pass
 
 
+class MissingConsistencyTokenError(Error):
+    pass
+
+
 class FTWLarryError(Error):
     pass
 
@@ -28,4 +32,8 @@ class UnexpectedFieldNameError(Error):
 
 
 class InitializationError(Error):
+    pass
+
+
+class MissingTemplateError(Error):
     pass

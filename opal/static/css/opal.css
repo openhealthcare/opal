@@ -466,16 +466,23 @@ i.delete,
     color: white;
 }
 
+
 .modal .btn,
+.main-search input,
+.panel-pathway select,
+.panel-pathway input,
+select.lg-text,
+input.lg-text,
 .modal select,
-.modal input {
+.modal input,
+input[type='password'] {
   font-size: 18px;
 }
-.modal .form-control {
+.panel-pathway .form-control, .modal .form-control {
   height: 44px;
 }
 
-.modal textarea.form-control {
+.panel-pathway textarea.form-control, .modal textarea.form-control {
     height: auto
 }
 
@@ -1118,4 +1125,14 @@ hr.bold{
 
 .text-avatar{
     height: 20px;
+}
+
+.form-group .ui-select-container.ui-select-multiple {
+    height: auto;
+}
+
+.select2-choices {
+  min-height: 150px;
+  max-height: 150px;
+  overflow-y: auto;
 }

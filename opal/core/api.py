@@ -10,8 +10,8 @@ from opal.models import (
     Episode, Synonym, Patient, PatientRecordAccess,
     PatientSubrecord, UserProfile
 )
-from opal.core import application, exceptions, metadata, plugins, schemas
-from opal.core.lookuplists import LookupList
+from opal.core import (application, exceptions, lookuplists, metadata, plugins,
+                       schemas)
 from opal.core.subrecords import subrecords
 from opal.core.views import json_response
 from opal.core.patient_lists import PatientList
@@ -95,7 +95,7 @@ class ReferenceDataViewSet(LoginRequiredViewset):
 
     def list(self, request):
         data = {}
-        subclasses = LookupList.__subclasses__()
+        subclasses = list(lookuplists.lookuplists())
         for model in subclasses:
             options = list(model.objects.all().values_list("name", flat=True))
             data[model.get_api_name()] = options
@@ -116,7 +116,7 @@ class ReferenceDataViewSet(LoginRequiredViewset):
 
     def retrieve(self, request, pk=None):
         the_list = None
-        for lookuplist in LookupList.__subclasses__():
+        for lookuplist in lookuplists.lookuplists():
             if lookuplist.get_api_name() == pk:
                 the_list = lookuplist
                 break
@@ -214,6 +214,9 @@ class SubrecordViewSet(LoginRequiredViewset):
         except exceptions.APIError:
             return json_response({'error': 'Unexpected field name'},
                                  status_code=status.HTTP_400_BAD_REQUEST)
+        except exceptions.MissingConsistencyTokenError:
+            return json_response({'error': 'Missing consistency token'},
+                                 status_code=status.HTTP_400_BAD_REQUEST)
         except exceptions.ConsistencyError:
             return json_response(
                 {'error': 'Item has changed'},
@@ -279,8 +282,7 @@ class TaggingViewSet(LoginRequiredViewset):
     def update(self, request, episode):
         if 'id' in request.data:
             del request.data['id']
-        tag_names = [n for n, v in list(request.data.items()) if v]
-        episode.set_tag_names(tag_names, request.user)
+        episode.set_tag_names_from_tagging_dict(request.data, request.user)
         return json_response(
             episode.tagging_dict(request.user)[0],
             status_code=status.HTTP_202_ACCEPTED
@@ -329,7 +331,7 @@ class EpisodeViewSet(LoginRequiredViewset):
         episode.update_from_dict(request.data, request.user)
         location = episode.location_set.get()
         location.update_from_dict(location_data, request.user)
-        episode.set_tag_names(list(tagging.keys()), request.user)
+        episode.set_tag_names_from_tagging_dict(tagging, request.user)
         serialised = episode.to_dict(request.user)
 
         return json_response(
@@ -345,6 +347,9 @@ class EpisodeViewSet(LoginRequiredViewset):
             )
         except exceptions.ConsistencyError:
             return json_response({'error': 'Item has changed'}, 409)
+        except exceptions.MissingConsistencyTokenError:
+            return json_response({'error': 'Missing consistency token'},
+                                 status_code=status.HTTP_400_BAD_REQUEST)
 
     @episode_from_pk
     def retrieve(self, request, episode):

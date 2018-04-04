@@ -6,16 +6,18 @@ from django.contrib.contenttypes.admin import GenericTabularInline
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 from django.core.exceptions import ValidationError
+from django.db.models import Q
 from django.utils.html import format_html
 from django import forms
 
-import reversion
+from reversion.admin import VersionAdmin
 
 from opal import models
+from opal.core.lookuplists import lookuplists, synonym_exists
+from opal.core.subrecords import episode_subrecords, patient_subrecords
 from opal.models import Synonym
 from opal.models import UserProfile
-from opal.core.lookuplists import LookupList, synonym_exists
-from opal.core.subrecords import episode_subrecords, patient_subrecords
+from opal.utils import _itersubclasses
 
 admin.site.unregister(User)
 
@@ -42,12 +44,31 @@ class UserProfileAdmin(UserAdmin):
     )
     inlines = [UserProfileInline, FilterInline, ]
 
+    def get_actions(self, request):
+        actions = super(UserProfileAdmin, self).get_actions(request)
+        del actions['delete_selected']
+        return actions
 
-class MyAdmin(reversion.VersionAdmin):
+    def has_delete_permission(self, request, obj=None):
+        if obj is None:
+            return True
+
+        for sub in _itersubclasses(models.TrackedModel):
+            if not hasattr(sub, 'objects'):
+                continue  # It's another abstract model!
+            instances = sub.objects.filter(
+                Q(created_by=obj) | Q(updated_by=obj)
+            ).count()
+            if instances > 0:
+                return False
+        return True
+
+
+class MyAdmin(VersionAdmin):
     pass
 
 
-class EpisodeAdmin(reversion.VersionAdmin):
+class EpisodeAdmin(VersionAdmin):
     list_display = [
         'patient',
         'active',
@@ -76,7 +97,7 @@ class EpisodeAdmin(reversion.VersionAdmin):
     episode_detail_url.short_description = "Episode Detail URL"
 
 
-class PatientAdmin(reversion.VersionAdmin):
+class PatientAdmin(VersionAdmin):
     list_display = ('__str__', 'patient_detail_link')
 
     search_fields = [
@@ -99,7 +120,7 @@ class PatientAdmin(reversion.VersionAdmin):
     patient_detail_url.short_description = "Patient Detail Url"
 
 
-class EpisodeSubrecordAdmin(reversion.VersionAdmin):
+class EpisodeSubrecordAdmin(VersionAdmin):
     search_fields = [
         'episode__patient__demographics__first_name',
         'episode__patient__demographics__surname',
@@ -107,7 +128,7 @@ class EpisodeSubrecordAdmin(reversion.VersionAdmin):
     ]
 
 
-class TaggingAdmin(reversion.VersionAdmin):
+class TaggingAdmin(VersionAdmin):
     search_fields = [
         'episode__patient__demographics__first_name',
         'episode__patient__demographics__surname',
@@ -117,7 +138,7 @@ class TaggingAdmin(reversion.VersionAdmin):
     list_display = ['value', 'episode']
 
 
-class PatientSubrecordAdmin(reversion.VersionAdmin):
+class PatientSubrecordAdmin(VersionAdmin):
     search_fields = [
         'patient__demographics__first_name',
         'patient__demographics__surname',
@@ -149,7 +170,7 @@ class OptionAdmin(admin.ModelAdmin):
     inlines = [SynonymInline]
 
 
-for model in LookupList.__subclasses__():
+for model in lookuplists():
     admin.site.register(model, OptionAdmin)
 
 admin.site.register(User, UserProfileAdmin)

@@ -1,7 +1,7 @@
 """
 Opal Episode categories
 
-An episode of care in OPAL can be one of many things:
+An episode of care in Opal can be one of many things:
 
 An inpatient admission
 A course of outpatient treatment
@@ -12,7 +12,7 @@ A research study enrollment
 (Non exhaustive list)
 
 An Episode category has various properties it can use to customise the way
-episodes of it's category behave in OPAL applications - for instance:
+episodes of it's category behave in Opal applications - for instance:
 
 Display
 Permissions
@@ -28,6 +28,7 @@ class EpisodeCategory(DiscoverableFeature):
     module_name     = "episode_categories"
     display_name    = None
     detail_template = None
+    stages          = []
 
     @classmethod
     def episode_visible_to(kls, episode, user):
@@ -49,15 +50,56 @@ class EpisodeCategory(DiscoverableFeature):
     def __init__(self, episode):
         self.episode = episode
 
+    def get_stages(self):
+        """
+        Return the list of string stages for this category
+        """
+        return [s for s in self.stages]
+
+    def has_stage(self, stage):
+        """
+        Predicate function to determine whether STAGE is a valid stage
+        for this category.
+        """
+        return stage in self.get_stages()
+
+    def set_stage(self, stage, user, data):
+        """
+        Setter for Episode.stage
+
+        Validates that the stage being set is appropriate for the category
+        and raises ValueError if not.
+        """
+        if not self.has_stage(stage):
+            if stage is not None:
+                msg = "Can't set stage to {0} for {1} Episode".format(
+                    stage, self.display_name
+                )
+                raise ValueError(msg)
+        self.episode.stage = stage
+
 
 class InpatientEpisode(EpisodeCategory):
     display_name    = 'Inpatient'
     detail_template = 'detail/inpatient.html'
+    stages          = [
+        'Inpatient',
+        'Followup',
+        'Discharged'
+    ]
 
 
 class OutpatientEpisode(EpisodeCategory):
     display_name = 'Outpatient'
+    stages       = [
+        'Outpatient',
+        'Discharged'
+    ]
 
 
 class LiaisonEpisode(EpisodeCategory):
     display_name = 'Liaison'
+    stages       = [
+        'Review',
+        'Unfollow'
+    ]

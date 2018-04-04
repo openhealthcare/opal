@@ -25,9 +25,9 @@
 {% input label="RPR" model="editing.investigation.rpr" show="testType == 'micro_test_syphilis_serology'" %}
 {% radio label="TPPA" model="editing.investigation.tppa" show="testType == 'micro_test_syphilis_serology'" lookuplist="['pending', 'positive', 'negative']" %}
 
-{% radio label="Result" model="editing.investigation.result" show="testType == 'micro_test_single_test_pos_neg'" lookuplist="['pending', 'positive', 'negative']" %}
+{% radio label="Result" model="editing.investigation.result" show="testType == 'micro_test_single_test_pos_neg'" lookuplist="['pending', 'positive', 'negative']" element_name="test_pos_neg" %}
 
-{% radio label="Result" model="editing.investigation.result" show="testType == 'micro_test_single_test_pos_neg_equiv'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
+{% radio label="Result" model="editing.investigation.result" show="testType == 'micro_test_single_test_pos_neg_equiv'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" element_name="test_pos_neg_equiv" %}
 
 {% radio label="IgG" model="editing.investigation.igg" show="testType == 'micro_test_single_igg_test'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
 
@@ -101,17 +101,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.investigation.result">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.result" name="leish_pcr">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.investigation.result">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.result" name="leish_pcr">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.investigation.result">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.result" name="leish_pcr">
         negative
       </label>
 
@@ -301,7 +301,6 @@
 
     </div>
   </div>
-
   <div class="form-group">
     <label class="control-label col-sm-3">Parainfluenza</label>
     <div class="col-sm-8">
@@ -323,6 +322,8 @@
 
     </div>
   </div>
+
+  {% radio field="MicrobiologyTest.rhinovirus" %}
 
   <div class="form-group">
     <label class="control-label col-sm-3">Metapneumovirus</label>

@@ -1,5 +1,5 @@
 """
-Standalone test runner for OPAL plugin
+Standalone test runner for Opal
 """
 import os
 import sys
@@ -62,12 +62,28 @@ test_settings_config = dict(
     MIGRATION_MODULES={
         'opal': 'opal.nomigrations'
     },
-    TEMPLATE_LOADERS = ((
-        'django.template.loaders.cached.Loader', (
-            'django.template.loaders.filesystem.Loader',
-            'django.template.loaders.app_directories.Loader',
-        )
-    ),),
+    TEMPLATES = [
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'DIRS': [],
+            'APP_DIRS': True,
+            'OPTIONS': {
+                'context_processors': [
+                    'django.contrib.auth.context_processors.auth',
+                    'django.template.context_processors.debug',
+                    'django.template.context_processors.i18n',
+                    'django.template.context_processors.media',
+                    'django.template.context_processors.request',
+                    'django.template.context_processors.static',
+                    'django.template.context_processors.tz',
+                    'django.contrib.messages.context_processors.messages',
+                    'opal.context_processors.settings',
+                    'opal.context_processors.models'
+                ],
+                # ... some options here ...
+            },
+        },
+    ],
     CELERY_ALWAYS_EAGER=True,
     LOGGING = {
         'version': 1,
@@ -85,7 +101,7 @@ test_settings_config = dict(
             },
         },
         'loggers': {
-            'django.request': {
+            'django': {
                 'handlers': ['mail_admins'],
                 'level': 'ERROR',
                 'propagate': True,
@@ -105,12 +121,17 @@ django.setup()
 from opal.core import celery
 celery.app.config_from_object('django.conf:settings')
 
+try:
+    sys.argv.remove('--failfast')
+    failfast = True
+except ValueError:
+    failfast = False
 
 from django.test.runner import DiscoverRunner
-test_runner = DiscoverRunner(verbosity=1)
+test_runner = DiscoverRunner(verbosity=1, failfast=failfast)
 if len(sys.argv) == 2:
     failures = test_runner.run_tests([sys.argv[-1], ])
 else:
     failures = test_runner.run_tests(['opal', ])
     if failures:
-        sys.exit(failures)
+        sys.exit(bool(failures))

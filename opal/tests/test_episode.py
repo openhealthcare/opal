@@ -6,6 +6,7 @@ from mock import patch, MagicMock
 
 from django.contrib.auth.models import User
 
+from opal.core import application
 from opal.core.episodes import InpatientEpisode
 from opal.core.test import OpalTestCase
 from opal.models import Patient, Episode, Tagging, UserProfile
@@ -19,11 +20,18 @@ class EpisodeTest(OpalTestCase):
 
     def setUp(self):
         self.patient, self.episode = self.new_patient_and_episode_please()
-        self.episode.stage = "Active TB"
+        self.episode.stage = "Inpatient"
         self.episode.save()
 
     def test_singleton_subrecord_created(self):
         self.assertEqual(1, self.episode.episodename_set.count())
+
+    @patch('opal.models.application.get_app')
+    def test_default_category_name(self, getter):
+        mock_app = getter.return_value
+        mock_app.default_episode_category = 'MyEpisodeCategory'
+        episode = self.patient.create_episode()
+        self.assertEqual('MyEpisodeCategory', episode.category_name)
 
     def test_category(self):
         self.episode.category_name = 'Inpatient'
@@ -32,6 +40,19 @@ class EpisodeTest(OpalTestCase):
 
     def test_visible_to(self):
         self.assertTrue(self.episode.visible_to(self.user))
+
+    @patch('opal.core.episodes.EpisodeCategory.set_stage')
+    def test_defers_episode_set_stage(self, set_stage):
+        self.episode.set_stage('Discharged', self.user, {})
+        set_stage.assert_called_once_with('Discharged', self.user, {})
+
+    def test_update_from_dict_raises_if_invalid_stage(self):
+        data = dict(
+            stage='Whoops',
+            id=self.episode.id
+        )
+        with self.assertRaises(ValueError):
+            self.episode.update_from_dict(data, self.user)
 
     def test_can_set_tag_names(self):
         test_cases = [
@@ -71,6 +92,36 @@ class EpisodeTest(OpalTestCase):
         self.episode.set_tag_names(['mine'], self.user)
         self.assertTrue(self.episode.active)
 
+    def test_set_tag_names_from_tagging_dict(self):
+        self.episode.set_tag_names_from_tagging_dict({'inpatient': True}, self.user)
+        self.assertEqual(['inpatient'], self.episode.get_tag_names(self.user))
+
+    def test_set_tag_names_from_tagging_dict_falsy_tags(self):
+        self.episode.set_tag_names_from_tagging_dict(
+            {'inpatient': True, 'outpatient': False},
+            self.user
+        )
+        self.assertEqual(['inpatient'], self.episode.get_tag_names(self.user))
+
+    def test_set_tag_names_from_tagging_dict_id_1(self):
+        self.episode.set_tag_names_from_tagging_dict(
+            # 1 == True in Python so boolean checks on values are not enough
+            {'inpatient': True, 'id': 1},
+            self.user
+        )
+        self.assertEqual(['inpatient'], self.episode.get_tag_names(self.user))
+
+    def test_tagging_dict(self):
+        self.episode.set_tag_names(['inpatient'], self.user)
+        self.assertEqual(
+            [{'inpatient': True, 'id': 1}],
+            self.episode.tagging_dict(self.user)
+        )
+
+    def test_get_tag_names(self):
+        self.episode.set_tag_names(['inpatient'], self.user)
+        self.assertEqual(['inpatient'], self.episode.get_tag_names(self.user))
+
     def test_to_dict_fields(self):
         as_dict = self.episode.to_dict(self.user)
         expected = [
@@ -80,7 +131,7 @@ class EpisodeTest(OpalTestCase):
         for field in expected:
             self.assertIn(field, as_dict)
 
-        self.assertEqual(as_dict["stage"], "Active TB")
+        self.assertEqual(as_dict["stage"], "Inpatient")
 
     def test_get_field_names_to_extract(self):
         # field names to extract should be the same
@@ -172,3 +223,15 @@ class EpisodeCategoryTestCase(OpalTestCase):
         self.assertTrue(
             self.episode.category.episode_visible_to(self.episode, user)
         )
+
+    def test_set_stage(self):
+        self.episode.category.set_stage('Discharged', self.user, {})
+        self.assertEqual('Discharged', self.episode.stage)
+
+    def test_set_stage_for_none(self):
+        self.episode.category.set_stage(None, self.user, {})
+        self.assertEqual(None, self.episode.stage)
+
+    def test_set_stage_raises_if_invalid(self):
+        with self.assertRaises(ValueError):
+            self.episode.category.set_stage('Whoops', self.user, {})

@@ -38,6 +38,13 @@ class PatientRecordAccessTestCase(OpalTestCase):
 
 class PatientTestCase(OpalTestCase):
 
+    def test_create_episode(self):
+        patient = models.Patient()
+        patient.save()
+        episode = patient.create_episode()
+        self.assertEqual(models.Episode, episode.__class__)
+        self.assertEqual(patient, episode.patient)
+
     @patch("opal.models.application.get_app")
     def test_created_with_the_default_episode(self, get_app):
         test_app = MagicMock()
@@ -141,7 +148,7 @@ class PatientTestCase(OpalTestCase):
             original_patient.demographics_set.first().hospital_number, ""
         )
 
-    def test_bulk_update_tagging_ignored(self):
+    def test_bulk_update_tagging(self):
         original_patient = models.Patient()
         original_patient.save()
 
@@ -152,12 +159,12 @@ class PatientTestCase(OpalTestCase):
                 "hospital_number": "123312"
             }],
             "tagging": [
-                {"id": 1},
+                {"id": 1, 'inpatient': True},
             ]
         }
         original_patient.bulk_update(d, self.user)
         episode = original_patient.episode_set.first()
-        self.assertEqual(list(episode.get_tag_names(self.user)), [])
+        self.assertEqual(['inpatient'], episode.get_tag_names(self.user))
 
     def test_bulk_update_episode_subrecords_without_episode(self):
         original_patient = models.Patient()
@@ -225,9 +232,10 @@ class PatientTestCase(OpalTestCase):
         original_patient.create_episode()
         self.assertEqual(1, original_patient.episode_set.count())
         original_patient.bulk_update(d, self.user)
-
-        patient = Patient.objects.get()
         self.assertEqual(2, original_patient.episode_set.count())
+        self.assertEqual(models.Episode.objects.count(), 2)
+        location = original_patient.episode_set.last().location_set.first()
+        self.assertEqual(location.ward, "a ward")
 
 
 class SubrecordTestCase(OpalTestCase):
@@ -312,7 +320,7 @@ class SubrecordTestCase(OpalTestCase):
     @patch('opal.models.find_template')
     def test_display_template(self, find):
         Subrecord.get_display_template()
-        find.assert_called_with(['records/subrecord.html'])
+        find.assert_called_with([os.path.join('records', 'subrecord.html')])
 
     def test_detail_template_does_not_exist(self):
         self.assertEqual(None, Subrecord.get_detail_template())
@@ -321,8 +329,8 @@ class SubrecordTestCase(OpalTestCase):
     def test_detail_template(self, find):
         Subrecord.get_detail_template()
         find.assert_called_with([
-            'records/subrecord_detail.html',
-            'records/subrecord.html'
+            os.path.join('records', 'subrecord_detail.html'),
+            os.path.join('records', 'subrecord.html'),
         ])
 
     @patch('opal.models.find_template')
@@ -332,10 +340,10 @@ class SubrecordTestCase(OpalTestCase):
         self.assertEqual(
             find.call_args_list[0][0][0],
             [
-                'records/onions/subrecord_detail.html',
-                'records/onions/subrecord.html',
-                'records/subrecord_detail.html',
-                'records/subrecord.html'
+                os.path.join('records', 'onions', 'subrecord_detail.html'),
+                os.path.join('records', 'onions', 'subrecord.html'),
+                os.path.join('records', 'subrecord_detail.html'),
+                os.path.join('records', 'subrecord.html'),
             ]
         )
 
@@ -345,7 +353,7 @@ class SubrecordTestCase(OpalTestCase):
     @patch('opal.models.find_template')
     def test_form_template(self, find):
         Subrecord.get_form_template()
-        find.assert_called_with(['forms/subrecord_form.html'])
+        find.assert_called_with([os.path.join('forms', 'subrecord_form.html')])
 
     def test_get_form_url(self):
         url = Subrecord.get_form_url()
@@ -355,9 +363,20 @@ class SubrecordTestCase(OpalTestCase):
     def test_form_template_prefixes(self, find):
         Subrecord.get_form_template(prefixes=['onions'])
         find.assert_called_with([
-            'forms/onions/subrecord_form.html',
-            'forms/subrecord_form.html'
+            os.path.join('forms', 'onions', 'subrecord_form.html'),
+            os.path.join('forms', 'subrecord_form.html'),
         ])
+
+    @patch('opal.models.find_template')
+    @patch('opal.models.Subrecord.get_form_template')
+    @patch('opal.models.Subrecord._get_template')
+    def test_modal_template(self, get_template, get_form_template, find):
+        get_form_template.return_value = "some_template"
+        get_template.return_value = None
+        Subrecord.get_modal_template()
+        find.assert_called_with(
+            ["base_templates/form_modal_base.html"]
+        )
 
     def test_get_modal_template_does_not_exist(self):
         self.assertEqual(None, Subrecord.get_modal_template())
@@ -367,7 +386,7 @@ class SubrecordTestCase(OpalTestCase):
     def test_modal_template_no_form_template(self, modal, find):
         modal.return_value = None
         Subrecord.get_modal_template()
-        find.assert_called_with(['modals/subrecord_modal.html'])
+        find.assert_called_with([os.path.join('modals', 'subrecord_modal.html')])
 
     def test_get_normal_field_title(self):
         name_title = PatientColour._get_field_title("name")
@@ -504,7 +523,7 @@ class BulkUpdateFromDictsTest(OpalTestCase):
             {"words": "A towel is the most important item"},
         ]
 
-        with self.assertRaises(exceptions.APIError):
+        with self.assertRaises(exceptions.MissingConsistencyTokenError):
             FamousLastWords.bulk_update_from_dicts(
                 patient, famous_last_words, self.user
             )

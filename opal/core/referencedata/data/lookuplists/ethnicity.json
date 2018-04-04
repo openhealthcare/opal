@@ -1,0 +1,72 @@
+{
+  "ethnicity": [
+    {
+      "synonyms": [], 
+      "name": "African"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Any other Asian background"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Any other Black background"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Any other White background"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Any other ethnic group"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Any other mixed background"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Bangladeshi"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "British"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Caribbean"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Chinese"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Indian"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Irish"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Not stated"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "Pakistani"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "White and Asian"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "White and Black African"
+    }, 
+    {
+      "synonyms": [], 
+      "name": "White and Black Caribbean"
+    }
+  ]
+}

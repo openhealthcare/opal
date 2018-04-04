@@ -4,6 +4,13 @@ Opal comes with a selection of templatetags that can help you with the
 repetitive task of generating Bootstrap and Opal compatible markup for
 your forms.
 
+To use these in your HTML templates you need to load them:
+
+```html
+<!-- myapp/templates/forms/mytemplate.html -->
+{% load forms %}
+...
+```
 
 ### {% checkbox ... %}
 
@@ -150,6 +157,7 @@ Keywords:
 * `hide`  A string that contains an Angular expression for the ng-hide directive
 * `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html element
 * `style` The form style to render this widget with. Possible values are `['horizontal', 'vertical']`. Defaults to 'horizontal'
+* `rows` The number of rows in the textarea. Used to fill the html textarea row attribute. Defaults to 5.
 
 
 #### Inference from subrecord fields

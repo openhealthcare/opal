@@ -21,6 +21,7 @@ pages:
 
       # Data and business logic
       - Data Model: guides/datamodel.md
+      - Episodes: guides/episodes.md
       - Archetypes: guides/archetypes.md
       - Referencedata: guides/referencedata.md
       - Metadata: guides/metadata.md
@@ -45,8 +46,9 @@ pages:
       - Django Admin: guides/django_admin.md
 
       # Working on Opal itself
-      - Contributing: guides/contributing.md
+      - Contributing: guides/CONTRIBUTING.md
       - Development environment: guides/development_environment.md
+      - Releasing: guides/releasing.md
 
       # Other guides
       - Deployment: guides/deployment.md
@@ -71,6 +73,8 @@ pages:
       - Menus: reference/core_menus.md
       - Log: reference/loggers.md
       - Fields: reference/core_fields.md
+      - Lookuplists: reference/core_lookuplists.md
+      - Discoverable: reference/core_discoverable.md
 
       # Angular Services
       - reference/javascript/patient_service.md
@@ -80,7 +84,6 @@ pages:
       - reference/javascript/patient_summary_service.md
       - Search JS Services: reference/javascript/search_js_services.md
       - reference/javascript/loaders.md
-
 
       # Helper libraries
       - Form helpers: reference/form_templatetags.md
@@ -96,10 +99,11 @@ pages:
 
       # Misc
       - Settings: reference/settings.md
-      - Changelog: reference/changelog.md
+      - Changelog: reference/CHANGELOG.md
       - Testing: reference/testing.md
       - Javascript dependencies: reference/javascript/javascript_dependencies.md
       - Upgrading: reference/upgrading.md
+      - Management commands: reference/management_commands.md
 
 
 
@@ -113,7 +117,7 @@ dev_addr: 0.0.0.0:8965
 include_next_prev: false
 
 extra:
-  version: v0.9.0
+  version: v0.10.0
 
 markdown_extensions:
     - fenced_code

@@ -378,10 +378,19 @@ class DatabaseQuery(QueryBackend):
             kw = {queryset_path: query['query']}
 
             if Mod == models.Tagging:
-                tag_name = query['field'].replace(" ", "_").title()
-                eps = models.Episode.objects.filter(
-                    tagging__value__iexact=tag_name
-                )
+                if query['field'] == "mine":
+                    tags = models.Tagging.objects.filter(
+                        value="mine",
+                        user=self.user
+                    )
+                    eps = models.Episode.objects.filter(
+                        tagging__in=tags
+                    )
+                else:
+                    tag_name = query['field'].replace(" ", "_").title()
+                    eps = models.Episode.objects.filter(
+                        tagging__value__iexact=tag_name
+                    )
 
             elif issubclass(Mod, models.EpisodeSubrecord):
                 eps = models.Episode.objects.filter(**kw)
