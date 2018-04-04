@@ -82,7 +82,7 @@ urlpatterns = [
         name='design_patterns'),
 
     # Import/Export views
-    url(r'^export/episode/(?P<episode_id>\w)/$',
+    url(r'^export/episode/(?P<episode_id>\d+)/$',
         views.ExportEpisodeView.as_view(), name='export_episode'),
 
     url(r'^import/episode/$',
