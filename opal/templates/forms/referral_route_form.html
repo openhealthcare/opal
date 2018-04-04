@@ -1,11 +1,19 @@
 {% load forms %}
 {% datepicker field="ReferralRoute.date_of_referral"  %}
-{% select field="ReferralRoute.referral_type"  %}
-{% input field="ReferralRoute.referral_organisation"  %}
-{% input field="ReferralRoute.referral_name"  %}
 
-{% checkbox field="ReferralRoute.internal" %}
+<div class="form-group">
+  <div class="col-sm-8 col-sm-push-3">
+    <div class="row text-center">
+      <label class="btn btn-default" ng-model="editing.referral_route.internal" btn-radio="true">Internal</label>
+      <label class="btn btn-default" ng-model="editing.referral_route.internal" btn-radio="false">External</label>
+    </div>
+  </div>
+</div>
 
 <div ng-show="editing.referral_route.internal">
-  {% input  field="ReferralRoute.referral_team"  %}
+  {% input field="ReferralRoute.referral_team"  %}
+</div>
+<div ng-show="editing.referral_route.internal == false">
+  {% select field="ReferralRoute.referral_type"  %}
+  {% input field="ReferralRoute.referral_organisation"  %}
 </div>

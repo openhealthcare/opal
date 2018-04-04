@@ -116,6 +116,9 @@ These were replaced by `.start` and `.end`.
 Removes the undocumented `collapsed_multisave` tag from the `pathways` templatetag
 library.
 
+The ReferralRoute form (referral_route_form.html) has had its appearance tweaked
+and improved.
+
 Adds a setting `OPAL_FAVICON_PATH` to specify the application Favicon to use.
 
 Adds the `rows` option to the textarea template tag which just fills in the html textarea
