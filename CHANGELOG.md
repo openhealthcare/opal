@@ -36,6 +36,15 @@ currently available.
 Disoverable features now have a `filter` method which allows you to filter features
 with matching attributes.
 
+#### Pathways ContextProcessor
+
+The 'opal.core.pathways.context_processors.pathways' Context Processor will allow you to
+access your pathways from templates without having to explicitly load them in a view. In
+turn, this allows patterns like:
+
+    {% include pathways.YourPathway.get_display_name %}
+
+
 #### Missing consistency token errors
 
 `.update_from_dict()` will now raise the new error
@@ -123,19 +132,6 @@ Adds the method `.get_absolute_url()` to `opal.core.pathways.Pathway` and
 Adds the Opal error `SignatureError`.
 
 Pathway slugs may now include hyphens as well as numbers, lower case letters and underscores.
-
-
-### 0.9.1 (Minor Release)
-
-#### Pathways ContextProcessor
-
-The 'opal.core.pathways.context_processors.pathways' Context Processor will allow you to
-access your pathways from templates without having to explicitly load them in a view. In
-turn, this allows patterns like:
-
-    {% include pathways.YourPathway.get_display_name %}
-
-### Misc Changes
 
 Bugfix: in edit_item.js $scope.episode_category is now set from episode.category_name
 as opposed to episode.category (which was always null)
