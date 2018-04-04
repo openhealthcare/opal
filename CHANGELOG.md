@@ -84,14 +84,6 @@ manually add support for `--failfast` passthrough to your `runtests.py`.
 The rest of the api is still the same but now
 we run `python manage.py scaffold {my_app_name}`
 
-#### as_menuitem helpers
-
-Applications using Opal Menuitems often wish to add menu items for Patient Lists and
-Pathways.
-
-To aid this, the `.as_menuitem()` method now creates one from the target class with
-sensible but overridable defaults.
-
 #### Deprecations completed
 
 As previously noted in console warnings, the Angular Episode service no longer
