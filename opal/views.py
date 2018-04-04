@@ -491,6 +491,20 @@ class ImportEpisodeView(LoginRequiredMixin, FormView):
         return context
 
 
+def import_patient(data):
+    """
+    Given a datastructure representing a Patient, import that patient.
+    """
+    patient = match_or_create_patient(
+        data['demographics'][0],
+        self.request.user,
+    )
+    episodes = data.pop('episodes')
+
+    patient.update_from_dict(data, self.request.use)
+    messages.success(self.request, 'Imported {}'.format(patient))
+    return
+
 class ImportPatientView(LoginRequiredMixin, FormView):
     form_class = ImportDataForm
     success_url = reverse_lazy('admin:opal_patient_changelist')
@@ -499,14 +513,7 @@ class ImportPatientView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         raw_data = self.request.FILES['data_file'].read()
         data = json.loads(raw_data)
-
-        patient = match_or_create_patient(
-            data['demographics'][0],
-            self.request.user,
-        )
-        patient.update_from_dict(data, self.request.use)
-        messages.success(self.request, 'Imported {}'.format(patient))
-
+        import_patient(data)
         return super(ImportPatientView, self).form_valid(form)
 
     def get_context_data(self, **kwargs):
