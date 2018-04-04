@@ -307,13 +307,15 @@ class RawTemplateView(LoginRequiredMixin, TemplateView):
 
 
 def remove_key(d, key):
-    """Remove the given key from the given dictionary recursively"""
+    """
+    Remove the given key from the given dictionary recursively
+    """
     for k, v in d.iteritems():
         if k == key:
             continue
 
         if isinstance(v, collections.Mapping):
-            yield k, remove_key(v, key)
+            yield k, dict(remove_key(v, key))
         elif isinstance(v, list):
             yield k, [dict(remove_key(x, key)) for x in v]
         else:
