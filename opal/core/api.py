@@ -1,6 +1,7 @@
 """
 Public facing API views
 """
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import routers, status, viewsets
@@ -300,6 +301,7 @@ class EpisodeViewSet(LoginRequiredViewset):
             [e.to_dict(request.user) for e in Episode.objects.all()]
         )
 
+    @transaction.atomic
     def create(self, request):
         """
         Create a new episode, optionally implicitly creating a patient.

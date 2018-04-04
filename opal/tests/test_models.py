@@ -4,6 +4,7 @@ Unittests for opal.models
 import os
 import datetime
 from mock import patch, MagicMock
+from django import db
 
 from django.conf import settings
 from django.utils import timezone
@@ -11,7 +12,7 @@ from django.utils import timezone
 from opal import models
 from opal.core import exceptions
 from opal.models import (
-    Subrecord, Tagging, Patient, InpatientAdmission, Symptom,
+    Subrecord, Tagging, Patient, InpatientAdmission, Symptom, Stage
 )
 from opal.core.test import OpalTestCase
 from opal.core import patient_lists
@@ -784,6 +785,95 @@ class TaggingTestCase(OpalTestCase):
         ]
         schema = Tagging.build_field_schema()
         self.assertEqual(expected, schema)
+
+
+class StageTestCase(OpalTestCase):
+    def setUp(self, *args, **kwargs):
+        _, self.episode = self.new_patient_and_episode_please()
+        super(StageTestCase, self).setUp(*args, **kwargs)
+
+    def test_stage_normal_save(self):
+        Stage.objects.create(
+            value="stage_1",
+            started=timezone.now(),
+            episode=self.episode
+        )
+        self.assertEqual(
+            Stage.objects.get().value, "stage_1"
+        )
+
+    def test_resave_stage(self):
+        stage = Stage.objects.create(
+            value="stage_1",
+            started=timezone.now(),
+            episode=self.episode
+        )
+        before = timezone.now() - datetime.timedelta(hours=1)
+        stage.started = before
+        stage.save()
+        self.assertEqual(
+            Stage.objects.get().started,
+            before
+        )
+
+    def test_stage_save_raises(self):
+        Stage.objects.create(
+            value="stage_1",
+            started=timezone.now(),
+            episode=self.episode
+        )
+
+        with self.assertRaises(db.IntegrityError) as i:
+            Stage.objects.create(
+                value="stage_2",
+                started=timezone.now(),
+                episode=self.episode
+            )
+        self.assertEqual(
+            str(i.exception),
+            "".join([
+                "for episode 1, stage stage_2. "
+                "An episode cannot have multiple open stages"
+            ])
+        )
+
+        # test roll back
+        self.assertTrue(
+            Stage.objects.get().value, "stage_1"
+        )
+
+    def test_stage_save_with_others_with_stopped(self):
+        Stage.objects.create(
+            value="stage_1",
+            started=timezone.now(),
+            stopped=timezone.now(),
+            episode=self.episode
+        )
+        try:
+            Stage.objects.create(
+                value="stage_2",
+                started=timezone.now(),
+                episode=self.episode
+            )
+        except:
+            self.fail()
+
+    def test_save_stage_when_stopped_is_none(self):
+        Stage.objects.create(
+            value="stage_1",
+            started=timezone.now(),
+            stopped=timezone.now(),
+            episode=self.episode
+        )
+        try:
+            Stage.objects.create(
+                value="stage_2",
+                started=timezone.now(),
+                stopped=timezone.now(),
+                episode=self.episode
+            )
+        except:
+            self.fail()
 
 
 class AbstractDemographicsTestCase(OpalTestCase):

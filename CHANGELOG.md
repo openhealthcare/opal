@@ -26,6 +26,8 @@ Episode categories now enforce a set of valid `Episode.stage` values.
 `EpisodeCategory` now includes the `.get_stages()` and `.has_stage(stage)` methods,
 while `Episode` has a `set_stage` setter which is used by the UpdateFromDictMixin JSON API.
 
+Stages are stored in the stage model which keeps a log of the stage history of an episode.
+
 #### lookuplists.lookuplists
 
 Adds the utility generator `lookuplists.lookuplists()` which wil yield every lookuplist

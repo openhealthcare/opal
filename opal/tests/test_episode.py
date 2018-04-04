@@ -2,25 +2,26 @@
 Unittests for opal.models.Episode
 """
 import datetime
-from mock import patch, MagicMock
+from mock import patch
 
 from django.contrib.auth.models import User
+from django.utils import timezone
 
-from opal.core import application
 from opal.core.episodes import InpatientEpisode
 from opal.core.test import OpalTestCase
 from opal.models import Patient, Episode, Tagging, UserProfile
 
 from opal.tests import test_patient_lists # ensure the lists are loaded
+from opal.models import Episode, Stage
 from opal.tests.models import (
     Hat, HatWearer, Dog, DogOwner, InvisibleHatWearer
 )
+
 
 class EpisodeTest(OpalTestCase):
 
     def setUp(self):
         self.patient, self.episode = self.new_patient_and_episode_please()
-        self.episode.stage = "Inpatient"
         self.episode.save()
 
     def test_singleton_subrecord_created(self):
@@ -45,6 +46,21 @@ class EpisodeTest(OpalTestCase):
     def test_defers_episode_set_stage(self, set_stage):
         self.episode.set_stage('Discharged', self.user, {})
         set_stage.assert_called_once_with('Discharged', self.user, {})
+
+    @patch('opal.core.episodes.EpisodeCategory.set_stage')
+    def test_does_not_call_set_stage_if_no_stage(self, set_stage):
+        episode = Episode(patient=self.patient)
+        data = dict()
+        episode.update_from_dict(data, self.user)
+        self.assertFalse(set_stage.called)
+
+    def test_update_from_dict_new_episode(self):
+        episode = Episode(patient=self.patient)
+        data = dict(
+            stage='Inpatient',
+        )
+        episode.update_from_dict(data, self.user)
+        self.assertEqual(Episode.objects.last().stage, "Inpatient")
 
     def test_update_from_dict_raises_if_invalid_stage(self):
         data = dict(
@@ -123,6 +139,9 @@ class EpisodeTest(OpalTestCase):
         self.assertEqual(['inpatient'], self.episode.get_tag_names(self.user))
 
     def test_to_dict_fields(self):
+        self.episode.set_stage(
+            "Inpatient", None, self.user
+        )
         as_dict = self.episode.to_dict(self.user)
         expected = [
             'id', 'category_name', 'active',
@@ -147,7 +166,6 @@ class EpisodeTest(OpalTestCase):
         _, episode = self.new_patient_and_episode_please()
         to_dict = episode.to_dict(self.user)
         self.assertNotIn(InvisibleHatWearer.get_api_name(), to_dict)
-
 
     def test_to_dict_with_multiple_episodes(self):
         self.episode.start = datetime.date(2015, 7, 25)
@@ -209,6 +227,7 @@ class EpisodeCategoryTestCase(OpalTestCase):
         _, self.episode = self.new_patient_and_episode_please()
         self.today = datetime.date.today()
         self.yesterday = self.today - datetime.timedelta(1)
+        super(EpisodeCategoryTestCase, self).setUp()
 
     def test_episode_visible_false(self):
         user = User.objects.create()
@@ -224,13 +243,86 @@ class EpisodeCategoryTestCase(OpalTestCase):
             self.episode.category.episode_visible_to(self.episode, user)
         )
 
-    def test_set_stage(self):
+    @patch("opal.core.episodes.timezone")
+    def test_set_stage(self, tz):
+        expected = timezone.now() - datetime.timedelta(1)
+        tz.now.return_value = expected
         self.episode.category.set_stage('Discharged', self.user, {})
         self.assertEqual('Discharged', self.episode.stage)
+        current_stage = self.episode.stage_set.get()
+        self.assertEqual(current_stage.created, expected)
+        self.assertEqual(current_stage.created_by, self.user)
+        self.assertIsNone(current_stage.updated)
+        self.assertIsNone(current_stage.updated_by)
+        self.assertEqual(current_stage.started, expected)
+        self.assertIsNone(current_stage.stopped)
+
+    def test_set_stage_stops_previous_stage(self):
+        user_2 = User.objects.create(username="Donald")
+        with patch("opal.core.episodes.timezone") as tz:
+            yesterday = timezone.now() - datetime.timedelta(1)
+            tz.now.return_value = yesterday
+            self.episode.category.set_stage('Inpatient', self.user, {})
+
+        self.assertEqual('Inpatient', self.episode.stage)
+        self.assertEqual(
+            self.episode.stage_set.first().value,
+            "Inpatient"
+        )
+
+        with patch("opal.core.episodes.timezone") as tz:
+            today = timezone.now()
+            tz.now.return_value = today
+            self.episode.category.set_stage('Discharged', user_2, {})
+
+        self.assertEqual(self.episode.stage_set.count(), 2)
+        inpatient_stage = self.episode.stage_set.first()
+        discharged_stage = self.episode.stage_set.last()
+
+        self.assertEqual(inpatient_stage.created, yesterday)
+        self.assertEqual(inpatient_stage.created_by, self.user)
+        self.assertEqual(inpatient_stage.updated, today)
+        self.assertEqual(inpatient_stage.updated_by, user_2)
+        self.assertEqual(inpatient_stage.started, yesterday)
+        self.assertEqual(inpatient_stage.stopped, today)
+
+        self.assertEqual(discharged_stage.created, today)
+        self.assertEqual(discharged_stage.created_by, user_2)
+        self.assertIsNone(discharged_stage.updated)
+        self.assertIsNone(discharged_stage.updated_by)
+        self.assertEqual(discharged_stage.started, today)
+        self.assertIsNone(discharged_stage.stopped)
 
     def test_set_stage_for_none(self):
+        self.assertFalse(self.episode.stage_set.exists())
         self.episode.category.set_stage(None, self.user, {})
         self.assertEqual(None, self.episode.stage)
+        self.assertFalse(self.episode.stage_set.exists())
+
+    def test_one_cannot_set_stage_to_none_if_a_stage_is_already_set(self):
+        # you can have no stage, but after you've set one
+        # then you should not be able to 'None' out the stages
+        Stage.objects.create(
+            episode=self.episode,
+            started=timezone.now(),
+            value="Discharged"
+        )
+        with self.assertRaises(ValueError) as ve:
+            self.episode.category.set_stage(None, self.user, {})
+
+        self.assertEqual(
+            str(ve.exception),
+            "A stage cannot be removed after one has been set"
+        )
+
+    def test_state_is_not_updated_if_set_to_the_same_value(self):
+        # even if we update twice with the same value
+        # we should only have one stage saved
+        self.episode.set_stage("Discharged", self.user, {})
+        self.episode.set_stage("Discharged", self.user, {})
+        self.assertEqual(
+            Stage.objects.get().value, "Discharged"
+        )
 
     def test_set_stage_raises_if_invalid(self):
         with self.assertRaises(ValueError):

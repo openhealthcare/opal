@@ -12,7 +12,7 @@ import os
 
 from django.conf import settings
 from django.utils import timezone
-from django.db import models, transaction
+from django.db import models, transaction, IntegrityError
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -715,13 +715,6 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
     start             = models.DateField(null=True, blank=True)
     end               = models.DateField(blank=True, null=True)
     consistency_token = models.CharField(max_length=8)
-
-    # stage is at what stage of an episode flow is the
-    # patient at
-    stage             = models.CharField(
-        max_length=256, null=True, blank=True
-    )
-
     objects = managers.EpisodeQueryset.as_manager()
 
     def __unicode__(self):
@@ -740,6 +733,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
     def save(self, *args, **kwargs):
         created = not bool(self.id)
+
         super(Episode, self).save(*args, **kwargs)
         if created:
             for subclass in episode_subrecords():
@@ -753,6 +747,12 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
             display_name=self.category_name
         )[0]
         return category(self)
+
+    @property
+    def stage(self):
+        s = self.stage_set.filter(stopped=None).last()
+        if s:
+            return s.value
 
     def visible_to(self, user):
         """
@@ -865,6 +865,26 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         episode_history = episodes_for_user(episode_history, user)
         return [e.to_dict(user, shallow=True) for e in episode_history]
 
+    def update_from_dict(self, data, user, force=False, fields=None):
+        # stage is a related model so episode
+        # needs to have been saved before we can set it.
+        set_stage = False
+
+        if "stage" in data:
+            set_stage = True
+            stage = data.pop("stage")
+
+        # we remove stage as we set this ourselves
+        fields = fields or set(self._get_fieldnames_to_serialize())
+        fields.remove("stage")
+
+        super(Episode, self).update_from_dict(
+            data, user, force=force, fields=fields
+        )
+
+        if set_stage:
+            self.set_stage(stage, user, data)
+
     def to_dict(self, user, shallow=False):
         """
         Serialisation to JSON for Episodes
@@ -901,6 +921,14 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
         d['episode_history'] = self._episode_history_to_dict(user)
         return d
+
+    @classmethod
+    def _get_fieldnames_to_serialize(cls, *args, **kwargs):
+        field_names = super(cls, Episode)._get_fieldnames_to_serialize(
+            *args, **kwargs
+        )
+        field_names.append('stage')
+        return field_names
 
 
 class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
@@ -1690,6 +1718,35 @@ class UserProfile(models.Model):
         all_roles = itertools.chain(*list(self.get_roles().values()))
         # TODO: Remove these hardcoded role anmes
         return any(r for r in all_roles if r == "scientist")
+
+
+class Stage(TrackedModel):
+    """ An episode can have many stages, but should have no more than
+        one with no stop date any time.
+
+        This is expected to be set by the episode_category
+        which determines what stages are available to an episode.
+    """
+    episode = models.ForeignKey(Episode, null=False)
+    started = models.DateTimeField()
+    stopped = models.DateTimeField(blank=True, null=True)
+    value = models.CharField(max_length=256)
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        """ An episode should not have multiple open stages.
+            raise exceptions and roll back if anyone tries
+            any funny business.
+        """
+        if not self.id:
+            if(self.episode.stage_set.filter(stopped=None).exists()):
+                if not self.stopped:
+                    err = "for episode {}, stage {}. An episode cannot have \
+multiple open stages"
+                    raise IntegrityError(
+                        err.format(self.episode.id, self.value)
+                    )
+        super(Stage, self).save(*args, **kwargs)
 
 
 class InpatientAdmission(PatientSubrecord, ExternallySourcedModel):
