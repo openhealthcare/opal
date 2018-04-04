@@ -47,7 +47,9 @@ angular.module('opal.services').factory('RecordEditor', function(
       }
     };
 
+
     self.openEditItemModal = function(item, name){
+
       $rootScope.state = 'modal';
       var template_url = '/templates/modals/' + name + '.html/';
 
@@ -75,6 +77,8 @@ angular.module('opal.services').factory('RecordEditor', function(
               }
           };
 
+
+
           var modal = $modal.open(modal_opts);
 
           modal.result.then(function(result) {
@@ -87,9 +91,13 @@ angular.module('opal.services').factory('RecordEditor', function(
       return deferred.promise;
     };
 
+    // _debounce() prevents multiple modals opening on accidental double click
+    var debounceTime = 200 // milliseconds
+    self.debouncedOpenEditItemModal = _.debounce(self.openEditItemModal, debounceTime, true);
+
     self.editItem = function(name, iix){
       var item = self.getItem(name, iix);
-      return self.openEditItemModal(item, name);
+      return self.debouncedOpenEditItemModal(item, name);
     };
 
     self.newItem = function(name){
@@ -101,7 +109,7 @@ angular.module('opal.services').factory('RecordEditor', function(
         deferred.resolve();
         return deferred.promise;
       }
-      return self.openEditItemModal(item, name);
+      return self.debouncedOpenEditItemModal(item, name);
     };
   };
 
