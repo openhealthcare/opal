@@ -1,10 +1,9 @@
 ### 0.10.1 (Minor Release)
 
-#### Plugin api end points can now override application end points
+#### Plugin API end points can now override application end points
 
-This changes the order that plugin apis (ie apis that are declared in plugin.py)
-are registered so that they can now override, the core opal application apis.
-(if you declare an api with the same name)
+A change to the order that APIs are registered with Django Rest Framework allows
+plugins to now override the core Opal application APIs.
 
 ### 0.10.0 (Major Release)
 
