@@ -1,3 +1,0 @@
-"""
-Templatetags for Opal
-"""
