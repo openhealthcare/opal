@@ -1,3 +1,11 @@
+### 0.10.1 (Minor Release)
+
+#### Plugin api end points can now override application end points
+
+This changes the order that plugin apis (ie apis that are declared in plugin.py)
+are registered so that they can now override, the core opal application apis.
+(if you declare an api with the same name)
+
 ### 0.10.0 (Major Release)
 
 This is a major release with breaking changes from upstream dependencies.
