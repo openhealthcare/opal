@@ -968,51 +968,13 @@ class RegisterTestCase(OpalTestCase):
 
     @patch("opal.core.api.router.register")
     @patch('opal.core.api.plugins.OpalPlugin.list')
-    def test_register_order(self, plugins, register):
+    def test_register_plugin_order(self, plugins, register):
+        # plugins should be registered first
         mock_plugin = MagicMock(name='Mock Plugin')
         mock_plugin.get_apis.return_value = [('thingapi', None)]
         plugins.return_value = [mock_plugin]
-        api.initialise_router()
+        api.initialize_router()
+        call_args_list = register.call_args_list
         self.assertEqual(
             register.call_args_list[0][0][0], "thingapi"
-        )
-
-        self.assertEqual(
-            register.call_args_list[1][0][0], "patient"
-        )
-
-        self.assertEqual(
-            register.call_args_list[2][0][0], "episode"
-        )
-
-        self.assertEqual(
-            register.call_args_list[3][0][0], "record"
-        )
-
-        self.assertEqual(
-            register.call_args_list[4][0][0], "userprofile"
-        )
-
-        self.assertEqual(
-            register.call_args_list[5][0][0], "user"
-        )
-
-        self.assertEqual(
-            register.call_args_list[6][0][0], "tagging"
-        )
-
-        self.assertEqual(
-            register.call_args_list[7][0][0], "patientlist"
-        )
-
-        self.assertEqual(
-            register.call_args_list[8][0][0], "patientrecordaccess"
-        )
-
-        self.assertEqual(
-            register.call_args_list[9][0][0], "referencedata"
-        )
-
-        self.assertEqual(
-            register.call_args_list[10][0][0], "metadata"
         )

@@ -407,7 +407,9 @@ def register_subrecords():
         router.register(sub_name, SubViewSet)
 
 
-def initialise_router():
+def initialize_router():
+    # plugin apis get initialised first, so that plugins
+    # can
     register_plugin_apis()
     router.register('patient', PatientViewSet)
     router.register('episode', EpisodeViewSet)
@@ -422,4 +424,5 @@ def initialise_router():
     router.register('metadata', MetadataViewSet)
     register_subrecords()
 
-initialise_router()
+
+initialize_router()
