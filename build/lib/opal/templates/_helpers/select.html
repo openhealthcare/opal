@@ -1,0 +1,58 @@
+{% load forms %}
+<div class="form-group" {% if visibility %} {{ visibility|safe }} {% endif %} >
+  <span ng-class="{ 'errored-state': {{ formname }}[{{ element_name }}].$dirty && !{{ formname }}[{{ element_name }}].$valid }">
+    {% if label %}
+    <label class="control-label {% ifequal style "horizontal" %}col-sm-3{% endifequal %}">
+      {{ label }}
+    </label>
+    {% endif %}
+    <div class="{% ifequal style "horizontal" %}col-sm-8{% endifequal %}"
+         ng-class='{"has-error": {{ formname }}.$submitted && {{ formname }}[{{ element_name }}].$error.required}'>
+    {% if multiple %}
+      <ui-select {% if tagging %}tagging {% endif %}multiple {% if autofocus %}autofocus {% endif %} {% if change %} ng-change="{{ change }}" {% endif %}{% if disabled %}ng-disabled="{{ disabled }}" {% endif %}name="[[ {{ element_name }} ]]" {% if required %}required{% endif %} ng-model="{{ model }}" theme="bootstrap" {% for d in directives %}{{ d }} {% endfor %} style="min-width: 300px;">
+        <ui-select-match {% if placeholder %}placeholder="{{ placeholder }}"{% endif %}>{% if multiple %}[[ $item ]]{% else %}[[ $select.selected ]]{% endif %}</ui-select-match>
+        <ui-select-choices repeat="i in {{ lookuplist }} | filter:$select.search {% if not multiple %}track by $index{% endif %}">
+          <div ng-bind-html="i | highlight: $select.search"></div>
+        </ui-select-choices>
+      </ui-select>
+      {% else %}
+      <select {% if autofocus %}autofocus {% endif %}name="[[ {{ element_name }} ]]" {% if required %}required{% endif %} class="form-control" ng-model="{{ model }}" {% if change %} ng-change="{{ change }}" {% endif %} {% if disabled %}ng-disabled="{{ disabled }}" {% endif %} {% for d in directives %}{{ d }} {% endfor %}>
+        {% if default_null %}
+        <option value="" selected>---------</option>
+        {% endif %}
+        <option ng-repeat="i in {{ lookuplist }} track by $index">[[ i ]]</option>
+        {% if other %}<option>Other</option>{% endif %}
+      </select>
+    {% endif %}
+    {% if required %}
+      <span ng-show="{{ formname }}.$submitted && {{ formname }}[{{ element_name }}].$error.required" class="help-block">
+        {{ label }} is required
+      </span>
+      {% endif %}
+      {% if help_text %}
+      <p class="text-center text-muted">
+        {{ help_text }}
+      </p>
+      {% endif %}
+      {% if help_template %}
+      <p class="text-muted pointer"
+         popover-title="Help"
+         popover-placement="bottom"
+         data-auto-close="true"
+         uib-popover-template="'{{ help_template }}'"
+         name="{{ model }}"
+
+         >
+        <i class="fa fa-question-circle"></i>
+        More details about {{ label }}
+      </p>
+      <script type="text/ng-template" id="{{ help_template }}">
+        {% include help_template %}
+      </script>
+      {% endif %}
+    </div>
+  </span>
+</div>
+{% if other %}
+{% input model=model label=other_label show=other_show  %}
+{% endif %}

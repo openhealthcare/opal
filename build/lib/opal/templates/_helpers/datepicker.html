@@ -1,0 +1,30 @@
+<div class="form-group"
+     {% if visibility %} {{ visibility|safe }} {% endif %}
+     >
+  <label
+    class="control-label {% ifequal style "horizontal" %}col-sm-3{% endifequal %}">
+    {{ label }}
+  </label>
+  <div
+    {% ifequal style "horizontal" %}
+    class="col-sm-8"
+    {% endifequal %}
+    >
+    <input type="text" class="form-control"
+           uib-datepicker-popup="dd/MM/yyyy"
+           ng-model="{{ model }}"
+           is-open="{{ formname }}[{{ element_name }} + '_open']"
+           min-date="{{ mindate}}"
+           max-date="maxDate"
+           show-button-bar="false"
+           show-weeks="false"
+           name="[[ {{ element_name}} ]]"
+           datepicker-options="{startingDay: 1}"
+           ng-focus="{{ formname }}[{{ element_name }} + '_open']=true"
+           close-text="Close"
+           {% if change %}
+           ng-change="{{ change }}"
+           {% endif %}
+           />
+  </div>
+</div>

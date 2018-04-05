@@ -1,0 +1,10 @@
+<div class="form-group"
+     {% if visibility %} {{ visibility|safe }} {% endif %}
+     >
+  <label class="control-label {% ifequal style "horizontal" %}col-sm-3{% endifequal %}">{{ label }}</label>
+  <div class="{% ifequal style "horizontal" %}col-sm-8{% endifequal %}">
+    <div {% if change %}time-set-change="{{ change }}" {% endif %}time-set="{{ model }}">
+      <uib-timepicker ng-model="internal.time_field"></uib-timepicker>
+    </div>
+  </div>
+</div>

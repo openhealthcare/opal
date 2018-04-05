@@ -1,0 +1,15 @@
+{% extends 'base_templates/modal_base.html' %}
+{% block icon_name %}fa fa-home{% endblock %}
+{% block title %}Discharge {% endblock %}
+{% block modal_body %}
+  <form class="form form-horizontal">
+    {% include "_includes/discharge_form.html" %}
+  </form>
+{% endblock %}
+{% block modal_save %}
+  <button class="btn btn-primary" ng-click="discharge()">
+    <i class="fa fa-home"></i>
+    Discharge
+  </button>
+{% endblock %}
+{% block modal_another %}{% endblock %}

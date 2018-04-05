@@ -1,0 +1,30 @@
+@media print{
+	@page {
+		size: landscape;
+	}
+    .patient-list-container {
+        overflow: visible;
+        overflow-y: visible;
+    }
+}
+
+li {
+	padding-top: 0px;
+	padding-bottom: 0px;
+    line-height: 12px;
+}
+
+.screen-only {
+	display: none;
+}
+
+/*
+* it needs important because bootstrap
+*/
+.always-on-print-block{
+	display: block !important;
+}
+
+table {
+    font-size: 12px
+}

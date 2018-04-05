@@ -1,0 +1,33 @@
+"""
+Plugin definition for the {{ name }} Opal plugin
+"""
+from opal.core import plugins
+
+from {{ name }}.urls import urlpatterns
+
+class {{ name.title() }}Plugin(plugins.OpalPlugin):
+    """
+    Main entrypoint to expose this plugin to our Opal application.
+    """
+    urls = urlpatterns
+    javascripts = {
+        # Add your javascripts here!
+        'opal.{{ name }}': [
+            # 'js/{{ name }}/app.js',
+            # 'js/{{ name }}/controllers/larry.js',
+            # 'js/{{ name }}/services/larry.js',
+        ]
+    }
+
+    def list_schemas(self):
+        """
+        Return any patient list schemas that our plugin may define.
+        """
+        return {}
+
+    def roles(self, user):
+        """
+        Given a (Django) USER object, return any extra roles defined
+        by our plugin.
+        """
+        return {}

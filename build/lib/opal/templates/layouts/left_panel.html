@@ -1,0 +1,18 @@
+<div class="container-fluid content-offset">
+  {% block heading %}
+
+  {% endblock %}
+
+  <div class="row content-offset-25"> <!-- Main Panel -->
+    <div class="col-md-2 screen-only"> <!-- Action Panels -->
+        {% block left_panel %}{% endblock %}
+    </div>
+
+    <div class="col-md-10"> <!-- Detail panels -->
+
+      {% block content %}{% endblock %}
+    </div> <!-- Ends Main Panel -->
+      {% block footer %}{% endblock %}
+
+  </div>
+</div> <!-- Ends Action Panels -->

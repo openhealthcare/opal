@@ -1,0 +1,22 @@
+{% load forms %}
+<div pathway-step="{{ step.get_api_name }}">
+  <div class="row">
+    <div class="{% block width_classes %}col-md-10 col-md-push-1{% endblock %}">
+      <div class="panel panel-default">
+        {% block heading %}
+        <div class="panel-heading">
+          <h3>
+            {% if step.get_icon %}
+              {% icon step.get_icon %}
+            {% endif %}
+            {{ step.get_display_name }}
+          </h3>
+        </div>
+        {% endblock %}
+        <div class="panel-body">
+            {% include step.get_template %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

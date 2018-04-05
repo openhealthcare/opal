@@ -1,3 +1,10 @@
+### 0.10.1 (Minor Release)
+
+#### Plugin API end points can now override application end points
+
+A change to the order that APIs are registered with Django Rest Framework allows
+plugins to now override the core Opal application APIs.
+
 ### 0.10.0 (Major Release)
 
 This is a major release with breaking changes from upstream dependencies.

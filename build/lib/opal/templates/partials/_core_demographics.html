@@ -1,0 +1,15 @@
+{% load forms %}
+{% static "Demographics.hospital_number" %}
+<div ng-show="editing.demographics.external_system" class="form-group">
+  <label class="control-label col-sm-3">Name</label>
+  <p class="form-control-static col-sm-8">
+    [[ editing.demographics.title ]]
+    [[ editing.demographics.first_name ]]
+    [[ editing.demographics.surname ]]
+  </p>
+</div>
+<div ng-hide="editing.demographics.external_system">
+  {% input field="Demographics.first_name"%}
+  {% input field="Demographics.surname" %}
+</div>
+{% date_of_birth_field %}

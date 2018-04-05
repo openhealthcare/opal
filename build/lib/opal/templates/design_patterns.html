@@ -1,0 +1,208 @@
+{% extends 'opal.html' %}
+
+
+{% load forms %}
+{% load panels %}
+{% load staticfiles %}
+
+{% block angularapp %}{% endblock %}
+
+{% block content %}
+<script type="text/javascript" src="{% static "js/lib/highlight/highlight.pack.js" %}"></script>
+
+<link href="{% static "js/lib/highlight/styles/default.css" %}" rel="stylesheet" media="all">
+
+
+<div class="container content-offset">
+  <div class="panel">
+    <!-- Default panel contents -->
+    <div class="panel-heading">
+      <h2>
+        OPAL Design Patterns
+      </h2>
+      <hr />
+    </div>
+
+    <div class="panel-body">
+
+      <div class="row">
+        <div class="col-md-12">
+          <p class="lead">
+            Living documentation of the available design patterns for OPAL applications
+          </p>
+
+          <h3>Presentation</h3>
+          <ul class="list-inline lead">
+            <li><a href="#Panels">Panels</a></li>
+            <li><a href="#AlignedPair">Aligned Pairs</a></li>
+          </ul>
+
+          <h3>Interaction</h3>
+          <ul class="list-inline lead">
+            <li><a href="#Modals">Modals</a></li>
+          </ul>
+
+          <h3>Forms</h3>
+          <ul class="list-inline lead">
+            <li><a href="#Buttons">Buttons</a></li>
+            <li><a href="#Checkboxes">Checkboxes</a></li>
+          </ul>
+        </div>
+      </div> <!-- Row -->
+
+    </div> <!-- PAnel body -->
+  </div><!-- panel -->
+
+
+  <div class="panel">
+    <div class="panel-heading">
+      <h2>Presentation</h2>
+      <hr />
+    </div>
+    <div class="panel-body">
+
+      {% include "patterns/panels.html" %}
+      <hr />
+
+      <a class="anchor" name="AlignedPair"></a>
+      <div class="row">
+        <div class="col-md-8">
+          <h3>Aligned Pairs <a href="#AlignedPair">{% icon 'fa-paragraph' %}</a></h3>
+          <p class="lead">
+            Use on occasions when we want to display information in key - value pairs to
+            users but that data is not tabular.
+          </p>
+          <div class="row col-md-offset-3">
+            <div class="col-md-12">
+              {% aligned_pair model="43" label="First Data Point" %}
+              {% aligned_pair model="22" label="Next Data Point" %}
+            </div>
+          </div>
+        </div>
+      </div> <!-- row -->
+      <div class="row">
+        <div class="col-md-8">
+          <h3>Usage:</h3>
+          <pre><code class="python hljs">
+{% templatetag openblock %} load panels {% templatetag closeblock %}
+{% templatetag openblock %} aligned_pair model="43" label="First Data Point" {% templatetag closeblock %}
+{% templatetag openblock %} aligned_pair model="22" label="Next Data Point" {% templatetag closeblock %}
+          </code></pre>
+        </div>
+      </div>
+
+
+    </div> <!-- PAnel body -->
+  </div><!-- panel -->
+
+
+  <div class="panel ">
+    <div class="panel-heading">
+      <h2>Interaction</h2>
+      <hr />
+    </div>
+    <div class="panel-body">
+
+      <a class="anchor" name="Modals"></a>
+      <div class="row">
+        <div class="col-md-8">
+          <h3>Modals <a href="#Modals">{% icon 'fa-paragraph' %}</a></h3>
+          <p class="lead">
+            Present the user with an atomic interaction. Modals are based on the
+            <a href="http://angular-ui.github.io/bootstrap/#/modal">Angular UI-Bootstrap Modal</a>.
+          </p>
+          <!-- Demo -->
+          <div class="row col-md-offset-3">
+            <div class="col-md-12 modal-lg">
+              <div class="modal-header">
+                <button type="button" class="close" ng-click="cancel()">×</button>
+                <h3>
+                  <i class="glyphicon glyphicon-plus"></i>
+                  Modal Header
+                </h3>
+              </div>
+              <div class="modal-body">
+                <p class="lead">
+                  This area - the <b>Modal Body</b> typically contains either a form or a detailed
+                  view of some data pertaining to the parent context.
+                </p>
+              </div>
+              <div class="modal-footer">
+                <button class="btn btn-primary">
+                  <i class="fa fa-save"></i>
+                  Primary button
+                </button>
+                <button class="btn">Cancel button</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+
+    </div> <!-- PAnel body -->
+  </div><!-- panel -->
+
+
+  <div class="panel">
+    <div class="panel-heading">
+      <h2>Forms</h2>
+      <hr />
+    </div>
+    <div class="panel-body">
+
+      <a class="anchor" name="Buttons"></a>
+      <div class="row">
+        <div class="col-md-8">
+          <h3>Buttons <a href="#Buttons">{% icon 'fa-paragraph' %}</a></h3>
+          <p class="lead">
+            Buttons lead with icons chosen from Font Awesome.
+          </p>
+          <div class="col-md-offset-3">
+            <button class="btn btn-primary">
+              <i class="fa fa-search-plus"></i>
+              Primary Button
+            </button>
+
+            <button class="btn btn-secondary">
+              <i class="fa fa-search-plus"></i>
+              Secondary Button
+            </button>
+
+            <button class="btn" ng-click="cancel()">Cancel Button</button>
+          </div>
+        </div>
+      </div>
+      <hr />
+
+      <a name="Checkboxes" class="anchor"></a>
+      <div class="row">
+        <div class="col-md-8">
+          <h3>Checkboxes <a href="#Checkboxes">{% icon 'fa-paragraph' %}</a></h3>
+          <p class="lead">
+            Fields which have a boolean state
+          </p>
+          <!-- Demo -->
+          <div class="row col-md-offset-3">
+            <form class="form form-horizontal">
+              {% checkbox label="Make it so" model="dummy_model" %}
+            </form>
+          </div>
+          <!-- Demo -->
+        </div>
+      </div>
+
+
+      <hr />
+
+
+    </div>
+  </div>
+  <script>
+    var shiftWindow = function() { scrollBy(0, -100) };
+    if (location.hash) shiftWindow();
+    window.addEventListener("hashchange", shiftWindow);
+  </script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  {% endblock %}

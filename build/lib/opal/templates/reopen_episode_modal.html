@@ -1,0 +1,30 @@
+      <div class="modal-header">
+        <button type="button" class="close" ng-click="cancel()">×</button>
+        <h3>Archived episodes found</h3>
+      </div>
+      <div class="modal-body">
+        <p>[[ episodes.length ]] archived
+	      <span ng-show="episodes.length > 1">episodes were</span>
+	      <span ng-hide="episodes.length > 1">episode was</span>
+          found:</p>
+          <form>
+	        <label ng-repeat="episode in episodes" class="radio">
+		      <input type="radio" ng-model="model.episodeId" value="[[ episode.id ]]">
+		      <span ng-show="episode.location[0].hospital">[[ episode.location[0].hospital ]]</span>
+		      <span ng-show="episode.date_of_admission">[[ episode.date_of_admission | shortDate ]]</span>
+		      -
+		      <span ng-show="episode.end">[[ episode.end | shortDate ]]</span>
+              <span ng-hide="episode.end">UNKNOWN</span>
+	        </label>
+	        <label class="radio">
+		      <input type="radio" ng-model="model.episodeId" value="None">
+		      Open new episode
+	        </label>
+          </form>
+          Select an episode to reopen it, or "Open new episode" to open a new episode.
+      </div>
+      <div class="modal-footer">
+        <button ng-show="model.episodeId == 'None'" class="btn btn-primary" ng-click="openNew()">Open new episode</button>
+        <button ng-hide="model.episodeId == 'None'" class="btn btn-primary" ng-click="reopen()">Reopen episode</button>
+        <button class="btn" ng-click="cancel()">Cancel</button>
+      </div>

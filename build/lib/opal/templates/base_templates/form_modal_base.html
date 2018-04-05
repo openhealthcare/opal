@@ -1,0 +1,17 @@
+{% extends 'base_templates/modal_base.html' %}
+  {% block modal_body %}
+    <form name="form" ng-submit="" class="form-horizontal" novalidate>
+      {% block form %}
+        {% include column.get_form_template %}
+      {% endblock form %}
+    </form>
+  {% endblock %}
+  {% block modal_save %}
+    <span ng-show="form">
+      <button check-form="form" class="btn btn-primary" ng-click="form.$valid && save('save')">
+        <i class="fa fa-save"></i>
+        Save
+      </button>
+    </span>
+  {% endblock %}
+</div>

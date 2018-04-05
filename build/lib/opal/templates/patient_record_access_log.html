@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container content-offset">
+  <div class="panel panel-primary">
+    <!-- Default panel contents -->
+    <div class="panel-heading">
+      <h2>
+        <i class="fa fa-th-list"></i>
+        Access Log
+      </h2>
+    </div>
+
+    <div class="panel-body" style="height: 500px; overflow-y: scroll">
+      <div class="row" ng-repeat="attempt in access_log">
+        <div class="col-md-4 col-md-offset-4">
+          <h3>
+            [[ attempt.datetime ]]
+          </h3>
+          <p>
+            <b>[[ attempt.username ]]</b>
+            Accessed the patient record for [[ patient.demographics[0].name ]]
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

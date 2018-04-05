@@ -1,0 +1,13 @@
+{% raw %}
+{% load forms %}
+{% endraw %}
+{% for f in fields %}{% if f['name'] != 'consistency_token' %}
+{% if f['type'] == 'string' %}{{ '{' + '% input' }} field="{{ f["model"] }}.{{ f["name"] }}" {{'%' +'}' }}{% endif %}
+{% if f['type'] == 'time' %}{{ '{' + '% timepicker' }} field="{{ f["model"] }}.{{ f["name"] }}" {{'%' +'}' }}{% endif %}
+{% if f['type'] == 'date' %}{{ '{' + '% datepicker' }} field="{{ f["model"] }}.{{ f["name"] }}" {{'%' +'}' }}{% endif %}
+{% if f['type'] == 'date_time' %}{{ '{' + '% datetimepicker' }} field="{{ f["model"] }}.{{ f["name"] }}" {{'%' +'}' }}{% endif %}
+{% if f['type'] == 'text' %}{{ '{' + '% textarea' }} field="{{ f["model"] }}.{{ f["name"] }}" {{'%' +'}' }}{% endif %}
+{% if f['type'] == 'boolean' or f['type'] == 'null_boolean' %}{{ '{' + '% checkbox' }} field="{{ f["model"] }}.{{ f["name"] }}" {{'%' +'}' }}{% endif %}
+{% if f['type'] == 'float' %}{{ '{' + '% input' }} field="{{ f["model"] }}.{{ f["name"] }}" {{'%' +'}' }}{% endif %}
+{% if f['type'] == 'integer' %}{{ '{' + '% input' }} field="{{ f["model"] }}.{{ f["name"] }}" {{'%' +'}' }}{% endif %}
+{% endif %}{% endfor %}

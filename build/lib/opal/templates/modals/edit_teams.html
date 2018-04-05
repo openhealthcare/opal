@@ -1,0 +1,15 @@
+{% extends 'base_templates/modal_base.html' %}
+{% load forms %}
+
+{% block icon_name %}fa fa-users{% endblock %}
+{% block title %}
+Change Teams
+<span ng-show="profile.can_see_pid() && editingName">
+  ([[ editingName]])
+</span>
+{% endblock %}
+{% block modal_body %}
+<form class="form-horizontal">
+  {% include 'partials/_teams_select.html' %}
+</form>
+{% endblock %}

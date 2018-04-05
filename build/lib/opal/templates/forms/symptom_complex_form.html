@@ -1,0 +1,4 @@
+{% load forms %}
+{% select autofocus field="SymptomComplex.symptoms" multiple=True tagging=False help_text="If a symptom isn't in the list, add it in the details box" %}
+{% select field="SymptomComplex.duration" %}
+{% textarea field="SymptomComplex.details" %}
