@@ -5,6 +5,11 @@
 A change to the order that APIs are registered with Django Rest Framework allows
 plugins to now override the core Opal application APIs.
 
+#### removes the episode_history flag from episode serialization
+removes it from `opal.managers.EpisodeQueryset.serialised` and `opal.models.Episode.to_dict` also removes the acompannying method
+`opal.models.Episode._episode_history_to_dict`
+
+
 ### 0.10.0 (Major Release)
 
 This is a major release with breaking changes from upstream dependencies.
