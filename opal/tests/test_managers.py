@@ -125,7 +125,7 @@ class EpisodeManagerTestCase(OpalTestCase):
         """ Serialised is an optimisation
         """
         as_dict = Episode.objects.serialised(
-            self.user, [self.episode], episode_history=True
+            self.user, [self.episode]
         )
 
         expected = self.episode.to_dict(self.user)
@@ -138,6 +138,6 @@ class EpisodeManagerTestCase(OpalTestCase):
         user2 = self.make_user('the password', username='user2')
         self.episode.set_tag_names(tags, user2)
         as_dict = Episode.objects.serialised(
-            self.user, [self.episode], episode_history=False
+            self.user, [self.episode]
         )
         self.assertEqual(as_dict[0]['tagging'][0], {'id': 1})

@@ -644,8 +644,6 @@ class EpisodeTestCase(OpalTestCase):
         self.expected = self.episode.to_dict(self.user)
         self.expected["start"] = "14/01/2014"
         self.expected["end"] = "15/01/2014"
-        self.expected["episode_history"][0]["end"] = "15/01/2014"
-        self.expected["episode_history"][0]["start"] = "14/01/2014"
 
     def test_retrieve_episode(self):
         response = json.loads(api.EpisodeViewSet().retrieve(self.mock_request, pk=self.episode.pk).content.decode('UTF-8'))
