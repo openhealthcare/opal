@@ -5,6 +5,19 @@
 A change to the order that APIs are registered with Django Rest Framework allows
 plugins to now override the core Opal application APIs.
 
+#### Fonts are now locally sourced
+
+Fonts are now served from Opal's static assets rather than from the Google CDN.
+
+#### print/screen stylesheets have been collapsed into opal.css
+
+Print/screen differences are now in opal.css with media tags.
+
+#### google analytics is now deferred
+
+The loading in of Google Analytics is now deferred to the bottom of the body
+tag to allow the page to load without waiting on analytics scripts to load.
+
 ### 0.10.0 (Major Release)
 
 This is a major release with breaking changes from upstream dependencies.
