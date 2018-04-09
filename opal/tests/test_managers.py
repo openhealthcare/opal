@@ -240,6 +240,16 @@ class EpisodeSubrecordQuerysetTestCase(OpalTestCase):
 
 
 class PatientSubrecordQuerysetTestCase(OpalTestCase):
+    def test_for_patient(self):
+        patient, _ = self.new_patient_and_episode_please()
+        test_models.InvisibleDog.objects.create(
+            name="Fido", patient=patient
+        )
+        result = test_models.InvisibleDog.objects.for_patient(
+            patient
+        )
+        self.assertEqual(result.get().name, "Fido")
+
     def test_for_episode(self):
         patient, episode = self.new_patient_and_episode_please()
         test_models.InvisibleDog.objects.create(

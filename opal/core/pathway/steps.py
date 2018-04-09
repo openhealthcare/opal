@@ -16,9 +16,9 @@ def delete_others(data, model, patient=None, episode=None):
     from opal.models import EpisodeSubrecord, PatientSubrecord
 
     if issubclass(model, EpisodeSubrecord):
-        existing = model.objects.filter(episode=episode)
+        existing = model.objects.for_episode(episode=episode)
     elif issubclass(model, PatientSubrecord):
-        existing = model.objects.filter(patient=patient)
+        existing = model.objects.for_patient(patient=patient)
     else:
         err = "Delete others called with {} requires a subrecord"
         raise exceptions.APIError(err.format(model.__name__))

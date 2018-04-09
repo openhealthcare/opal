@@ -6,9 +6,15 @@ These now have querysets that we use for serializing and episode
 to json.
 
 ##### PatientSubrecordQueryset.for_patients and EpisodeSubrecordQueryset.for_episodes
+Returns all subrecord for an iterable of episodes.
 These methods are used for the serialisation Episode querysets to json.
 
+##### PatientSubrecordQueryset.for_patient
+Returns all patient subrecords for a specific patient
+
+
 ##### PatientSubrecordQueryset.for_episode and EpisodeSubrecordQueryset.for_episode
+Returns all subrecords for a specific episode.
 These methods are used for the serialisation of a Patient.
 
 #### Plugin API end points can now override application end points

@@ -137,12 +137,17 @@ def prefetch(qs):
 
 
 class PatientSubrecordQueryset(models.QuerySet):
+    def for_patient(self, patient):
+        """
+        """
+        return self.filter(patient=patient)
+
     def for_episode(self, episode):
         """
             returns all subrecords related to an
             episode.
         """
-        return self.filter(patient__episode=episode)
+        return self.for_patient(episode.patient)
 
     def for_patients(self, patients):
         """
