@@ -28,8 +28,11 @@ from opal.core import (
 from opal import managers
 from opal.utils import camelcase_to_underscore, find_template
 from opal.core.fields import ForeignKeyOrFreeText
+from opal.core.subrecords import subrecords as subrecord_iterator
 from opal.core.subrecords import (
-    episode_subrecords, patient_subrecords, get_subrecord_from_api_name
+    episode_subrecords,
+    patient_subrecords,
+    get_subrecord_from_api_name,
 )
 
 
@@ -882,15 +885,8 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         if shallow:
             return d
 
-        for model in patient_subrecords():
-            subrecords = model.objects.filter(patient_id=self.patient.id)
-
-            if subrecords:
-                d[model.get_api_name()] = [
-                    subrecord.to_dict(user) for subrecord in subrecords
-                ]
-        for model in episode_subrecords():
-            subrecords = model.objects.filter(episode_id=self.id)
+        for model in subrecord_iterator():
+            subrecords = model.objects.for_episode(self)
 
             if subrecords:
                 d[model.get_api_name()] = [
@@ -1065,6 +1061,8 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
 
 
 class PatientSubrecord(Subrecord):
+    objects = managers.PatientSubrecordQueryset.as_manager()
+
     patient = models.ForeignKey(Patient)
 
     class Meta:
@@ -1073,6 +1071,7 @@ class PatientSubrecord(Subrecord):
 
 class EpisodeSubrecord(Subrecord):
     _clonable = True
+    objects = managers.EpisodeSubrecordQueryset.as_manager()
 
     episode = models.ForeignKey(Episode, null=False)
 

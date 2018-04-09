@@ -3,6 +3,7 @@ Custom managers for query optimisations
 """
 from collections import defaultdict
 import operator
+from opal.core.fields import ForeignKeyOrFreeText
 
 from django.db import models
 from django.db.models import Q
@@ -51,10 +52,7 @@ class EpisodeQueryset(models.QuerySet):
 
         for model in episode_subrecords():
             name = model.get_api_name()
-            subrecords = model.objects.filter(episode__in=episodes)
-
-            for related in model._meta.many_to_many:
-                subrecords = subrecords.prefetch_related(related.attname)
+            subrecords = model.objects.for_episodes(episodes)
 
             for sub in subrecords:
                 episode_subs[sub.episode_id][name].append(sub.to_dict(user))
@@ -68,13 +66,17 @@ class EpisodeQueryset(models.QuerySet):
         If HISTORIC_TAGS is Truthy, return deleted tags as well.
         If EPISODE_HISTORY is Truthy return historic episodes as well.
         """
+        from opal.models import Tagging
+        from opal.models import Patient
+
         patient_ids = [e.patient_id for e in episodes]
+        patients = Patient.objects.filter(id__in=patient_ids)
         patient_subs = defaultdict(lambda: defaultdict(list))
 
         episode_subs = self.serialised_episode_subrecords(episodes, user)
         for model in patient_subrecords():
             name = model.get_api_name()
-            subrecords = model.objects.filter(patient__in=patient_ids)
+            subrecords = model.objects.for_patients(patients)
 
             for sub in subrecords:
                 patient_subs[sub.patient_id][name].append(sub.to_dict(user))
@@ -82,7 +84,6 @@ class EpisodeQueryset(models.QuerySet):
         # We do this here because it's an order of magnitude quicker than
         # hitting episode.tagging_dict() for each episode in a loop.
         taggings = defaultdict(dict)
-        from opal.models import Tagging
         qs = Tagging.objects.filter(episode__in=episodes)
 
         if not historic_tags:
@@ -123,3 +124,54 @@ class EpisodeQueryset(models.QuerySet):
         episodes = self.filter(**filters)
         as_dict = self.serialised(user, episodes)
         return as_dict
+
+
+def prefetch(qs):
+    for name, value in list(vars(qs.model).items()):
+        if isinstance(value, ForeignKeyOrFreeText):
+            qs = qs.select_related(value.fk_field_name)
+
+    for related in qs.model._meta.many_to_many:
+        qs = qs.prefetch_related(related.attname)
+    return qs
+
+
+class PatientSubrecordQueryset(models.QuerySet):
+    def for_episode(self, episode):
+        """
+            returns all subrecords related to an
+            episode.
+        """
+        return self.filter(patient__episode=episode)
+
+    def for_patients(self, patients):
+        """
+            returns all subrecords related to an
+            iterable of patients with the related
+            fk and ft fields and many to many
+            keys prefetched.
+        """
+        return prefetch(
+            self.filter(patient__in=patients)
+        )
+
+
+class EpisodeSubrecordQueryset(models.QuerySet):
+    def for_episodes(self, episodes):
+        """
+            returns all subrecords related to an
+            iterable of episodes with the related
+            fk and ft fields and many to many
+            keys prefetched.
+        """
+
+        return prefetch(
+            self.filter(episode__in=episodes)
+        )
+
+    def for_episode(self, episode):
+        """
+            returns all subrecords related to an
+            episode.
+        """
+        return self.filter(episode=episode)
