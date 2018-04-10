@@ -42,7 +42,7 @@ class EpisodeQueryset(models.QuerySet):
         )
         return self.filter(patient_id__in=patients)
 
-    def serialised_episode_subrecords(self, episodes, user):
+    def serialised_episode_subrecords(self, episodes, user, prefetch):
         """
         Return all serialised subrecords for this set of EPISODES
         in a nested hashtable where the outer key is the episode id,
@@ -52,13 +52,15 @@ class EpisodeQueryset(models.QuerySet):
 
         for model in episode_subrecords():
             name = model.get_api_name()
-            subrecords = model.objects.for_episodes(episodes)
+            subrecords = model.objects.for_episodes(
+                episodes, prefetch_switch=prefetch
+            )
 
             for sub in subrecords:
                 episode_subs[sub.episode_id][name].append(sub.to_dict(user))
         return episode_subs
 
-    def serialised(self, user, episodes,
+    def serialised(self, user, episodes, prefetch=True,
                    historic_tags=False, episode_history=False):
         """
         Return a set of serialised EPISODES.
@@ -73,10 +75,14 @@ class EpisodeQueryset(models.QuerySet):
         patients = Patient.objects.filter(id__in=patient_ids)
         patient_subs = defaultdict(lambda: defaultdict(list))
 
-        episode_subs = self.serialised_episode_subrecords(episodes, user)
+        episode_subs = self.serialised_episode_subrecords(
+            episodes, user, prefetch
+        )
         for model in patient_subrecords():
             name = model.get_api_name()
-            subrecords = model.objects.for_patients(patients)
+            subrecords = model.objects.for_patients(
+                patients, prefetch_switch=prefetch
+            )
 
             for sub in subrecords:
                 patient_subs[sub.patient_id][name].append(sub.to_dict(user))
@@ -149,30 +155,35 @@ class PatientSubrecordQueryset(models.QuerySet):
         """
         return self.for_patient(episode.patient)
 
-    def for_patients(self, patients):
+    def for_patients(self, patients, prefetch_switch=True):
         """
             returns all subrecords related to an
             iterable of patients with the related
             fk and ft fields and many to many
             keys prefetched.
         """
-        return prefetch(
-            self.filter(patient__in=patients)
-        )
+        if prefetch_switch:
+            return prefetch(
+                self.filter(patient__in=patients)
+            )
+        else:
+            return self.filter(patient__in=patients)
 
 
 class EpisodeSubrecordQueryset(models.QuerySet):
-    def for_episodes(self, episodes):
+    def for_episodes(self, episodes, prefetch_switch=True):
         """
             returns all subrecords related to an
             iterable of episodes with the related
             fk and ft fields and many to many
             keys prefetched.
         """
-
-        return prefetch(
-            self.filter(episode__in=episodes)
-        )
+        if prefetch_switch:
+            return prefetch(
+                self.filter(episode__in=episodes)
+            )
+        else:
+            return self.filter(episode__in=episodes)
 
     def for_episode(self, episode):
         """
