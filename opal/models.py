@@ -610,7 +610,7 @@ class Patient(models.Model):
         }
 
         for model in patient_subrecords():
-            subrecords = model.objects.filter(patient_id=self.id)
+            subrecords = model.objects.for_patient(self)
             d[model.get_api_name()] = [
                 subrecord.to_dict(user) for subrecord in subrecords
             ]
