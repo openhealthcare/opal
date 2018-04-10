@@ -227,3 +227,17 @@ fields external_system and external_identifier to allow us to track where
 they come from and how they are referenced by that system.
 
 These fields are then often used in forms to make the data read only
+
+### Subrecord manager methods
+
+#### PatientSubrecordQueryset.for_patients and EpisodeSubrecordQueryset.for_episodes
+Returns all subrecord for an iterable of episodes.
+These methods are used for the serialisation Episode querysets to json. The preselect many to many
+keys and free text or foreign key relationships.
+
+#### PatientSubrecordQueryset.for_episode and EpisodeSubrecordQueryset.for_episode
+Returns all subrecords for a specific episode.
+These methods are used for the serialisation of a Patient.
+
+#### PatientSubrecordQueryset.for_patient
+Returns all patient subrecords for a specific patient
