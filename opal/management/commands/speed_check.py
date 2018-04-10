@@ -11,10 +11,11 @@ from opal.models import Episode
 
 class Command(BaseCommand):
     def test_run(self, prefetch):
+        last_hundred = Episode.objects.count() - 100
         before = time.time()
         Episode.objects.serialised(
             User.objects.first(),
-            Episode.objects.all(),
+            Episode.objects.filter(id__gte=last_hundred),
             prefetch=prefetch
         )
         return time.time() - before
@@ -27,7 +28,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         times = []
-        for i in xrange(100):
+        for i in xrange(20):
             times.append(self.test_run(options["prefetch"]))
 
         print "=" * 10
