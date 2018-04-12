@@ -18,6 +18,14 @@ Print/screen differences are now in opal.css with media tags.
 The loading in of Google Analytics is now deferred to the bottom of the body
 tag to allow the page to load without waiting on analytics scripts to load.
 
+#### Episode.objects.serialised now uses select_related
+
+`ForeignKeyOrFreeText` fields now have their ForeignKey items preselected when
+we use `Episode.objects.serialised`. This provides a speed boost for applications
+with moderately heavy `ForeignKeyOrFreeText` usage.
+
+(Approx 30-40% in our tests.)
+
 ### 0.10.0 (Major Release)
 
 This is a major release with breaking changes from upstream dependencies.
