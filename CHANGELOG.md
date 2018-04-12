@@ -1,3 +1,41 @@
+### 0.11.0 (Major Release)
+
+#### as_menuitem helpers
+
+Applications using Opal Menuitems often wish to add menu items for Patient Lists and
+Pathways.
+
+To aid this, the `.as_menuitem()` method now creates one from the target class with
+sensible but overridable defaults.
+
+### 0.10.1 (Minor Release)
+
+#### Plugin API end points can now override application end points
+
+A change to the order that APIs are registered with Django Rest Framework allows
+plugins to now override the core Opal application APIs.
+
+#### Fonts are now locally sourced
+
+Fonts are now served from Opal's static assets rather than from the Google CDN.
+
+#### print/screen stylesheets have been collapsed into opal.css
+
+Print/screen differences are now in opal.css with media tags.
+
+#### google analytics is now deferred
+
+The loading in of Google Analytics is now deferred to the bottom of the body
+tag to allow the page to load without waiting on analytics scripts to load.
+
+#### Episode.objects.serialised now uses select_related
+
+`ForeignKeyOrFreeText` fields now have their ForeignKey items preselected when
+we use `Episode.objects.serialised`. This provides a speed boost for applications
+with moderately heavy `ForeignKeyOrFreeText` usage.
+
+(Approx 30-40% in our tests.)
+
 ### 0.10.0 (Major Release)
 
 This is a major release with breaking changes from upstream dependencies.
@@ -35,6 +73,15 @@ currently available.
 
 Disoverable features now have a `filter` method which allows you to filter features
 with matching attributes.
+
+#### Pathways ContextProcessor
+
+The 'opal.core.pathways.context_processors.pathways' Context Processor will allow you to
+access your pathways from templates without having to explicitly load them in a view. In
+turn, this allows patterns like:
+
+    {% include pathways.YourPathway.get_display_name %}
+
 
 #### Missing consistency token errors
 
@@ -84,13 +131,11 @@ manually add support for `--failfast` passthrough to your `runtests.py`.
 The rest of the api is still the same but now
 we run `python manage.py scaffold {my_app_name}`
 
-#### as_menuitem helpers
+#### Deprecations completed
 
-Applications using Opal Menuitems often wish to add menu items for Patient Lists and
-Pathways.
-
-To aid this, the `.as_menuitem()` method now creates one from the target class with
-sensible but overridable defaults.
+As previously noted in console warnings, the Angular Episode service no longer
+supports the `discharge_date`, `date_of_admission`, `date_of_episode` properties.
+These were replaced by `.start` and `.end`.
 
 #### Updates to the Dependency Graph
 
@@ -118,6 +163,7 @@ Configures the setting `CSRF_FAILURE_VIEW` to use the bundled `opal.views.csrf_f
 
 Adds the utility function `opal.utils.get`. Similar to the `getattr` builtin, `get` looks
 for a method named `get_$attr` and will call that if it exists.
+<<<<<<< HEAD
 
 Adds the method `.get_absolute_url()` to `opal.core.pathways.Pathway` and
 `opal.core.patient_lists.PatientList`.
@@ -126,18 +172,15 @@ Adds the Opal error `SignatureError`.
 
 Pathway slugs may now include hyphens as well as numbers, lower case letters and underscores.
 
+=======
+>>>>>>> v0.11.0
 
-### 0.9.1 (Minor Release)
+Adds the method `.get_absolute_url()` to `opal.core.pathways.Pathway` and
+`opal.core.patient_lists.PatientList`.
 
-#### Pathways ContextProcessor
+Adds the Opal error `SignatureError`.
 
-The 'opal.core.pathways.context_processors.pathways' Context Processor will allow you to
-access your pathways from templates without having to explicitly load them in a view. In
-turn, this allows patterns like:
-
-    {% include pathways.YourPathway.get_display_name %}
-
-### Misc Changes
+Pathway slugs may now include hyphens as well as numbers, lower case letters and underscores.
 
 Bugfix: in edit_item.js $scope.episode_category is now set from episode.category_name
 as opposed to episode.category (which was always null)
