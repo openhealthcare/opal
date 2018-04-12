@@ -1,3 +1,7 @@
+### 0.11.0 (Major Release)
+
+
+
 ### 0.10.1 (Minor Release)
 
 #### Plugin API end points can now override application end points

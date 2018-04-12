@@ -3,6 +3,15 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+### 0.10.1 -> 0.11.0
+
+#### Upgrading Opal
+
+How you do this depends on how you have configured your application, but updating your
+requirements.txt to update the version should work.
+
+    # requirements.txt
+    opal==0.10.1
 
 ### 0.10.0 -> 0.10.1
 
