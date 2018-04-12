@@ -3,7 +3,30 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
-### 0.9.1 -> 0.10.0
+### 0.10.1 -> 0.11.0
+
+#### Upgrading Opal
+
+How you do this depends on how you have configured your application, but updating your
+requirements.txt to update the version should work.
+
+    # requirements.txt
+    opal==0.10.1
+
+### 0.10.0 -> 0.10.1
+
+#### Upgrading Opal
+
+How you do this depends on how you have configured your application, but updating your
+requirements.txt to update the version should work.
+
+    # requirements.txt
+    opal==0.10.1
+
+There are no migrations or additional commands for this upgrae, and we are not aware of
+any backwards incompatible changes.
+
+### 0.9.0 -> 0.10.0
 
 #### Upgrading Opal
 
@@ -102,21 +125,6 @@ Both pages will get redirected to the login form and whichever page the user
 logs into second will throw a CSRF failure because Django invalidates CSRF
 tokens on login.
 
-
-### 0.9.0 -> 0.9.1
-
-#### Upgrading Opal
-
-How you do this depends on how you have configured your application, but updating your
-requirements.txt to update the version should work.
-
-    # requirements.txt
-    opal==0.9.1
-
-After re-installing (via for instance `pip install -r requirements.txt`) you will need to
-run the migrations for Opal 0.9.1
-
-    $ python manage.py migrate opal
 
 ### 0.8.3 -> 0.9.0
 
