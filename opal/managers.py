@@ -36,9 +36,9 @@ class PatientQueryset(models.QuerySet):
 def prefetch(qs):
     """
     Given a Queryset QS, examine the model for `ForeignKeyOrFreetext`
-    fields or `ManyToMany` fields and add `select_related` or 
+    fields or `ManyToMany` fields and add `select_related` or
     `prefetch_related` calls to the queryset as appropriate to reduce
-    the total number of database queries required to serialise the 
+    the total number of database queries required to serialise the
     contents of the queryset.
     """
     for name, value in list(vars(qs.model).items()):
