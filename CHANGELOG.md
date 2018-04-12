@@ -19,10 +19,12 @@ The loading in of Google Analytics is now deferred to the bottom of the body
 tag to allow the page to load without waiting on analytics scripts to load.
 
 #### Episode.objects.serialised now uses select_related
-ForeignKeyOrFreeText now have their ForeignKey items preselected when
-we use Episode.objects.serialised. This gives a not insignificant speed boost
-(approx 30-40% on some of our real data although obviously this depends on
-your ForeignKeyOrFreeText useage).
+
+`ForeignKeyOrFreeText` fields now have their ForeignKey items preselected when
+we use `Episode.objects.serialised`. This provides a speed boost for applications
+with moderately heavy `ForeignKeyOrFreeText` usage.
+
+(Approx 30-40% in our tests.)
 
 ### 0.10.0 (Major Release)
 
