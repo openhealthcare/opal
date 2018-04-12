@@ -2,9 +2,11 @@
 Opal scaffolding and code generation
 """
 import inspect
+import errno
 import os
 import subprocess
 import sys
+
 from django.core import management
 from django.utils.crypto import get_random_string
 from django.apps import apps
@@ -81,7 +83,7 @@ def call_if_exists(cmd, failure_message, **kwargs):
         call(cmd, **kwargs)
         return True
     except OSError as e:
-        if e.errno == 2:
+        if e.errno == errno.ENOENT:
             write(failure_message)
             return False
         else:
