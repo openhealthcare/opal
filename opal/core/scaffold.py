@@ -57,6 +57,9 @@ def create_lookuplists(root_dir):
 
 
 def call(cmd, **kwargs):
+    """
+    Call an external program in a subprocess
+    """
     write("Calling: {}".format(' '.join(cmd)))
     try:
         subprocess.check_call(cmd, **kwargs)

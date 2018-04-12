@@ -22,6 +22,24 @@ from opal.core.scaffold import (
 
 
 @patch('subprocess.check_call')
+class CallTestCase(OpalTestCase):
+    def test_writes_message(self, cc):
+        with patch.object(scaffold, 'write'):
+            scaffold.call(('yes', 'please'))
+            scaffold.write.assert_called_with('Calling: yes please')
+
+    def test_calls_with_args(self, cc):
+        scaffold.call(('yes', 'please'))
+        cc.assert_called_with(('yes', 'please'))
+
+    def test_exits_on_error(self, cc):
+        with patch.object(scaffold.sys, 'exit') as exiter:
+            cc.side_effect = subprocess.CalledProcessError(None, None)
+            scaffold.call(('oh' 'noes'))
+            exiter.assert_called_with(1)
+
+
+@patch('subprocess.check_call')
 class StartpluginTestCase(OpalTestCase):
     def setUp(self):
         self.path = ffs.Path.newdir()
@@ -108,6 +126,7 @@ class StartpluginTestCase(OpalTestCase):
         with open(requirements) as r:
             contents = r.read()
             self.assertIn('opal=={}'.format(opal.__version__), contents)
+
 
 @patch('subprocess.check_call')
 @patch.object(scaffold.management, 'call_command')
