@@ -126,7 +126,11 @@ def start_plugin(name, USERLAND):
     services = jsdir/'services'
     services.mkdir()
     # 5. Initialize git repo
-    call(('git', 'init'), cwd=root, stdout=subprocess.PIPE)
+    call_if_exists(
+        ('git', 'init'),
+        'Unable to locate git; Skipping git repository initialization.',
+        cwd=root, stdout=subprocess.PIPE
+    )
 
     write('Plugin complete at {0}'.format(reponame))
     return
@@ -275,7 +279,11 @@ def start_project(name, USERLAND_HERE):
     manage('createopalsuperuser')
 
     # 10. Initialise git repo
-    call(('git', 'init'), cwd=project_dir, stdout=subprocess.PIPE)
+    call_if_exists(
+        ('git', 'init'),
+        'Unable to locate git; Skipping git repository initialization.',
+        cwd=project_dir, stdout=subprocess.PIPE
+    )
 
     # 11. Load referencedata shipped with Opal
     manage('load_lookup_lists')
