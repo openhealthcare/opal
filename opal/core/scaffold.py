@@ -68,6 +68,26 @@ def call(cmd, **kwargs):
         sys.exit(1)
 
 
+def call_if_exists(cmd, failure_message, **kwargs):
+    """
+    Call an external program in a subprocess if it exists.
+
+    Returns True.
+
+    If it does not exist, write a failure message and return False
+    without raising an exception
+    """
+    try:
+        call(cmd, **kwargs)
+        return True
+    except OSError as e:
+        if e.errno == 2:
+            write(failure_message)
+            return False
+        else:
+            raise
+
+
 def start_plugin(name, USERLAND):
     name = name
 

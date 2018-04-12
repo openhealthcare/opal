@@ -39,6 +39,44 @@ class CallTestCase(OpalTestCase):
             exiter.assert_called_with(1)
 
 
+@patch('opal.core.scaffold.call')
+class CallIfExistsTestCase(OpalTestCase):
+    def test_success(self, c):
+        self.assertEqual(
+            True,
+            scaffold.call_if_exists(('hello', 'world'), 'Sorry, no greetings')
+        )
+
+    def test_file_not_found_err(self, c):
+        if getattr(__builtins__, 'FileNotFoundError', None):
+            c.side_effect = FileNotFoundError(2, os.strerror(2))
+            with patch.object(scaffold, 'write'):
+                return_value = scaffold.call_if_exists(
+                    ('hello', 'world'),
+                    'Sorry no greetings'
+                )
+                self.assertEqual(False, return_value)
+                scaffold.write.assert_any_call('Sorry no greetings')
+
+    def test_oserror(self, c):
+        c.side_effect = OSError(2, os.strerror(2))
+        with patch.object(scaffold, 'write'):
+            return_value = scaffold.call_if_exists(
+                ('hello', 'world'),
+                'Sorry no greetings'
+            )
+            self.assertEqual(False, return_value)
+            scaffold.write.assert_any_call('Sorry no greetings')
+
+    def test_other_oserror(self, c):
+        with self.assertRaises(OSError):
+            c.side_effect = OSError(3, os.strerror(3))
+            scaffold.call_if_exists(
+                ('hello', 'world'),
+                'No such process would be a weird error to get here'
+            )
+
+
 @patch('subprocess.check_call')
 class StartpluginTestCase(OpalTestCase):
     def setUp(self):
