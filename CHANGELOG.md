@@ -24,6 +24,15 @@ The `startplugin` and `startproject` commands initialize a git repository by
 default. If we (The `subprocess` module) cannot find the `git` command, we now
 continue with a message printed to screen rather than raising an exception.
 
+#### Episode.objects.serialised now uses select_related
+
+`ForeignKeyOrFreeText` fields now have their ForeignKey items preselected when
+we use `Episode.objects.serialised`. This provides a speed boost for applications
+with moderately heavy `ForeignKeyOrFreeText` usage.
+
+(Approx 30-40% in our tests.)
+
+
 ### 0.10.0 (Major Release)
 
 This is a major release with breaking changes from upstream dependencies.
