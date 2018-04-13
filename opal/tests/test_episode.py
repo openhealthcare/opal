@@ -148,50 +148,6 @@ class EpisodeTest(OpalTestCase):
         to_dict = episode.to_dict(self.user)
         self.assertNotIn(InvisibleHatWearer.get_api_name(), to_dict)
 
-
-    def test_to_dict_with_multiple_episodes(self):
-        self.episode.start = datetime.date(2015, 7, 25)
-        self.episode.save()
-        prev = self.patient.create_episode()
-        prev.start = datetime.date(2012, 7, 25)
-        prev.end = datetime.date(2012, 8, 12)
-        prev.active=False
-        prev.save()
-
-        serialised = self.episode.to_dict(self.user)
-        self.assertEqual(2, len(serialised['episode_history']))
-        self.assertEqual(datetime.date(2012, 7, 25),
-                         serialised['episode_history'][0]['start'])
-
-    def test_to_dict_episode_ordering(self):
-        patient = Patient.objects.create()
-        prev = patient.create_episode()
-        prev.start = datetime.date(2012, 7, 25)
-        prev.end = datetime.date(2012, 8, 12)
-        prev.active = False
-        prev.save()
-
-        previouser = patient.create_episode()
-        previouser.start = datetime.date(2011, 7, 25)
-        previouser.active = False
-        previouser.save()
-
-        episode = patient.create_episode()
-        episode.start = datetime.date(2014, 6, 23)
-        episode.save()
-
-        serialised = episode.to_dict(self.user)
-        self.assertEqual(3, len(serialised['episode_history']))
-        self.assertEqual(datetime.date(2011, 7, 25),
-                         serialised['episode_history'][0]['start'])
-        self.assertEqual(datetime.date(2012, 7, 25),
-                         serialised['episode_history'][1]['start'])
-
-    def test_to_dict_episode_history_includes_no_dates(self):
-        prev = self.patient.create_episode()
-        serialised = self.episode.to_dict(self.user)
-        self.assertEqual(2, len(serialised['episode_history']))
-
     @patch('opal.models.episode_subrecords')
     def test_to_dict_episode_with_many_to_many(self, episode_subrecords):
         episode_subrecords.return_value = [HatWearer]
@@ -201,7 +157,9 @@ class EpisodeTest(OpalTestCase):
         hw = HatWearer.objects.create(episode=prev)
         hw.hats.add(bowler, top)
         serialised = prev.to_dict(self.user)
-        self.assertEqual(serialised["hat_wearer"][0]["hats"], [u'bowler', u'top'])
+        self.assertEqual(
+            serialised["hat_wearer"][0]["hats"], [u'bowler', u'top']
+        )
 
 
 class EpisodeCategoryTestCase(OpalTestCase):

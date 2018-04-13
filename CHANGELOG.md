@@ -1,5 +1,13 @@
 ### 0.11.0 (Major Release)
 
+#### Removes "episode_history" from episode serialization
+
+Serialised episodes previously contained a "shallow" copy of all other episodes in 
+a property named `episode_history`. This was primarially useful before we switched
+from episode-oriented to patient-oriented detail views by default.
+
+This also includes a change to the signature of the `.serialised()` method of the 
+Episode manager, which no longer accepts a `episode_history` kwarg.
 
 
 ### 0.10.1 (Minor Release)
@@ -29,6 +37,7 @@ we use `Episode.objects.serialised`. This provides a speed boost for application
 with moderately heavy `ForeignKeyOrFreeText` usage.
 
 (Approx 30-40% in our tests.)
+
 
 ### 0.10.0 (Major Release)
 
