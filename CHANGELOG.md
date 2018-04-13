@@ -8,6 +8,25 @@ Pathways.
 To aid this, the `.as_menuitem()` method now creates one from the target class with
 sensible but overridable defaults.
 
+#### Removes "episode_history" from episode serialization
+
+Serialised episodes previously contained a "shallow" copy of all other episodes in 
+a property named `episode_history`. This was primarially useful before we switched
+from episode-oriented to patient-oriented detail views by default.
+
+This also includes a change to the signature of the `.serialised()` method of the 
+Episode manager, which no longer accepts a `episode_history` kwarg.
+
+#### Misc Changes
+
+Adds the utility function `opal.utils.get`. Similar to the `getattr` builtin, `get` looks
+for a method named `get_$attr` and will call that if it exists.
+
+Adds the method `.get_absolute_url()` to `opal.core.pathways.Pathway` and
+`opal.core.patient_lists.PatientList`.
+
+Adds the Opal error `SignatureError`.
+
 ### 0.10.1 (Minor Release)
 
 #### Plugin API end points can now override application end points
@@ -35,6 +54,7 @@ we use `Episode.objects.serialised`. This provides a speed boost for application
 with moderately heavy `ForeignKeyOrFreeText` usage.
 
 (Approx 30-40% in our tests.)
+
 
 ### 0.10.0 (Major Release)
 
@@ -160,25 +180,6 @@ Adds the `rows` option to the textarea template tag which just fills in the html
 `rows` attribute. Text areas are defaulted to 5 rows (the same as before).
 
 Configures the setting `CSRF_FAILURE_VIEW` to use the bundled `opal.views.csrf_failure` view.
-
-Adds the utility function `opal.utils.get`. Similar to the `getattr` builtin, `get` looks
-for a method named `get_$attr` and will call that if it exists.
-<<<<<<< HEAD
-
-Adds the method `.get_absolute_url()` to `opal.core.pathways.Pathway` and
-`opal.core.patient_lists.PatientList`.
-
-Adds the Opal error `SignatureError`.
-
-Pathway slugs may now include hyphens as well as numbers, lower case letters and underscores.
-
-=======
->>>>>>> v0.11.0
-
-Adds the method `.get_absolute_url()` to `opal.core.pathways.Pathway` and
-`opal.core.patient_lists.PatientList`.
-
-Adds the Opal error `SignatureError`.
 
 Pathway slugs may now include hyphens as well as numbers, lower case letters and underscores.
 

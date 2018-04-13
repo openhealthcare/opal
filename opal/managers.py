@@ -80,13 +80,11 @@ class EpisodeQueryset(models.QuerySet):
                 episode_subs[sub.episode_id][name].append(sub.to_dict(user))
         return episode_subs
 
-    def serialised(self, user, episodes,
-                   historic_tags=False, episode_history=False):
+    def serialised(self, user, episodes, historic_tags=False):
         """
         Return a set of serialised EPISODES.
 
         If HISTORIC_TAGS is Truthy, return deleted tags as well.
-        If EPISODE_HISTORY is Truthy return historic episodes as well.
         """
         patient_ids = [e.patient_id for e in episodes]
         patient_subs = defaultdict(lambda: defaultdict(list))
@@ -128,10 +126,6 @@ class EpisodeQueryset(models.QuerySet):
             d['tagging'] = [taggings[e.id]]
             d['tagging'][0]['id'] = e.id
             serialised.append(d)
-
-            if episode_history:
-                d['episode_history'] = e._episode_history_to_dict(user)
-
         return serialised
 
     def serialised_active(self, user, **kw):
