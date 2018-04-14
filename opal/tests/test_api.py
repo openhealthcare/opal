@@ -33,7 +33,7 @@ from opal.core import api
 
 class LoginRequredTestCase(OpalTestCase):
     """
-        we expect almost all views to 401
+    We expect almost all views to 401
     """
     def setUp(self):
         self.patient, self.episode = self.new_patient_and_episode_please()
@@ -285,6 +285,7 @@ class SubrecordTestCase(OpalTestCase):
         with patch.object(self.model, "get_api_name") as mock_api_name:
             mock_api_name.return_value = "something"
             reload_module(api)
+            api.initialize_router()
             router = api.router
             self.assertIn(
                 "something",
