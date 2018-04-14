@@ -3,17 +3,18 @@ Unittests for opal.models.Episode
 """
 import datetime
 from mock import patch, MagicMock
+import six
 
 from django.contrib.auth.models import User
 
-from opal.core import application
+from opal.core import application, subrecords
 from opal.core.episodes import InpatientEpisode
 from opal.core.test import OpalTestCase
 from opal.models import Patient, Episode, Tagging, UserProfile
 
 from opal.tests import test_patient_lists # ensure the lists are loaded
 from opal.tests.models import (
-    Hat, HatWearer, Dog, DogOwner, InvisibleHatWearer
+    Hat, HatWearer, Dog, DogOwner, InvisibleHatWearer, Birthday, Dinner
 )
 
 class EpisodeTest(OpalTestCase):
@@ -133,6 +134,27 @@ class EpisodeTest(OpalTestCase):
 
         self.assertEqual(as_dict["stage"], "Inpatient")
 
+    def test_to_dict_has_empty_patient_subrecord_keys(self):
+        name = Birthday.get_api_name()
+        self.assertEqual(0, Birthday.objects.filter(patient=self.episode.patient).count())
+        as_dict = self.episode.to_dict(self.user)
+        self.assertIn(name, as_dict)
+
+    def test_to_dict_has_empty_episode_subrecord_keys(self):
+        name = Dinner.get_api_name()
+        self.assertEqual(0, Dinner.objects.filter(episode=self.episode).count())
+        as_dict = self.episode.to_dict(self.user)
+        self.assertIn(name, as_dict)
+
+    def test_to_dict_equal_to_manager_method(self):
+        self.maxDiff = None
+        as_dict = self.episode.to_dict(self.user)
+        from_manager = Episode.objects.serialised(self.user, [self.episode])[0]
+        self.assertEqual(
+            as_dict,
+            from_manager
+        )
+
     def test_get_field_names_to_extract(self):
         # field names to extract should be the same
         # as the field names to serialise
@@ -141,9 +163,7 @@ class EpisodeTest(OpalTestCase):
             Episode._get_fieldnames_to_extract()
         )
 
-    @patch('opal.models.episode_subrecords')
-    def test_not_bulk_serialisable_episode_subrecords(self, episode_subrecords):
-        episode_subrecords.return_value = [InvisibleHatWearer]
+    def test_not_bulk_serialisable_episode_subrecords(self):
         _, episode = self.new_patient_and_episode_please()
         to_dict = episode.to_dict(self.user)
         self.assertNotIn(InvisibleHatWearer.get_api_name(), to_dict)

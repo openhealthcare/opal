@@ -874,27 +874,27 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         for model in patient_subrecords():
             subrecords = model.objects.filter(patient_id=self.patient.id)
 
-            if subrecords:
-                d[model.get_api_name()] = [
-                    subrecord.to_dict(user) for subrecord in subrecords
-                ]
+            d[model.get_api_name()] = [
+                subrecord.to_dict(user) for subrecord in subrecords
+            ]
+
         for model in episode_subrecords():
             subrecords = model.objects.filter(episode_id=self.id)
 
-            if subrecords:
-                d[model.get_api_name()] = [
-                    subrecord.to_dict(user) for subrecord in subrecords
-                ]
+            d[model.get_api_name()] = [
+                subrecord.to_dict(user) for subrecord in subrecords
+            ]
 
         d['tagging'] = self.tagging_dict(user)
         return d
 
 
 class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
-    consistency_token = models.CharField(max_length=8)
-    _is_singleton = False
-    _advanced_searchable = True
+    _is_singleton            = False
+    _advanced_searchable     = True
     _exclude_from_subrecords = False
+
+    consistency_token = models.CharField(max_length=8)
 
     class Meta:
         abstract = True
