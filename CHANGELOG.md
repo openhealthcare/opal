@@ -2,12 +2,17 @@
 
 #### Removes "episode_history" from episode serialization
 
-Serialised episodes previously contained a "shallow" copy of all other episodes in 
+Serialised episodes previously contained a "shallow" copy of all other episodes in
 a property named `episode_history`. This was primarially useful before we switched
 from episode-oriented to patient-oriented detail views by default.
 
-This also includes a change to the signature of the `.serialised()` method of the 
+This also includes a change to the signature of the `.serialised()` method of the
 Episode manager, which no longer accepts a `episode_history` kwarg.
+
+#### Core API registration
+
+A refactor in the way that the core APIs are registered by Opal means that
+importing `opal.core.api` in a plugin API no longer results in circular imports.
 
 
 ### 0.10.1 (Minor Release)

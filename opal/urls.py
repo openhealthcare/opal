@@ -11,6 +11,7 @@ from opal import views
 from opal.core import api, subrecords, plugins
 from opal.forms import ChangePasswordForm
 
+api.initialize_router()
 
 urlpatterns = [
     url(r'^$', views.IndexView.as_view()),
