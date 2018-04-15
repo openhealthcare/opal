@@ -1,3 +1,49 @@
+### 0.11.0 (Major Release)
+
+#### Removes "episode_history" from episode serialization
+
+Serialised episodes previously contained a "shallow" copy of all other episodes in
+a property named `episode_history`. This was primarially useful before we switched
+from episode-oriented to patient-oriented detail views by default.
+
+This also includes a change to the signature of the `.serialised()` method of the
+Episode manager, which no longer accepts a `episode_history` kwarg.
+
+#### Core API registration
+
+A refactor in the way that the core APIs are registered by Opal means that
+importing `opal.core.api` in a plugin API no longer results in circular imports.
+
+
+### 0.10.1 (Minor Release)
+
+#### Plugin API end points can now override application end points
+
+A change to the order that APIs are registered with Django Rest Framework allows
+plugins to now override the core Opal application APIs.
+
+#### Fonts are now locally sourced
+
+Fonts are now served from Opal's static assets rather than from the Google CDN.
+
+#### print/screen stylesheets have been collapsed into opal.css
+
+Print/screen differences are now in opal.css with media tags.
+
+#### google analytics is now deferred
+
+The loading in of Google Analytics is now deferred to the bottom of the body
+tag to allow the page to load without waiting on analytics scripts to load.
+
+#### Episode.objects.serialised now uses select_related
+
+`ForeignKeyOrFreeText` fields now have their ForeignKey items preselected when
+we use `Episode.objects.serialised`. This provides a speed boost for applications
+with moderately heavy `ForeignKeyOrFreeText` usage.
+
+(Approx 30-40% in our tests.)
+
+
 ### 0.10.0 (Major Release)
 
 This is a major release with breaking changes from upstream dependencies.
@@ -36,6 +82,15 @@ currently available.
 Disoverable features now have a `filter` method which allows you to filter features
 with matching attributes.
 
+#### Pathways ContextProcessor
+
+The 'opal.core.pathways.context_processors.pathways' Context Processor will allow you to
+access your pathways from templates without having to explicitly load them in a view. In
+turn, this allows patterns like:
+
+    {% include pathways.YourPathway.get_display_name %}
+
+
 #### Missing consistency token errors
 
 `.update_from_dict()` will now raise the new error
@@ -68,6 +123,28 @@ We remove a number of stale unused templates:
 As Django ships with a `LoginRequiredMixin` of its own we no longer roll our own
 in `opal.core.views.
 
+#### Testing options
+
+Adds a `--failfast` option to the test harness to stop test runs on the first
+failure.
+
+If you are a plugin developer upgrading an existing plugin you will have to
+manually add support for `--failfast` passthrough to your `runtests.py`.
+
+If you are a plugin developer upgrading an existing plugin you will have to
+manually add support for `--failfast` passthrough to your `runtests.py`.
+
+#### Moves scaffold to be a django management command
+
+The rest of the api is still the same but now
+we run `python manage.py scaffold {my_app_name}`
+
+#### Deprecations completed
+
+As previously noted in console warnings, the Angular Episode service no longer
+supports the `discharge_date`, `date_of_admission`, `date_of_episode` properties.
+These were replaced by `.start` and `.end`.
+
 #### Updates to the Dependency Graph
 
 * Django: 1.8.13 -> 1.10.8
@@ -80,24 +157,6 @@ in `opal.core.views.
 * django-celery: 3.1.17 -> 3.2.2
 * celery: 3.1.19 -> 3.1.25
 
-#### Testing options
-
-Adds a `--failfast` option to the test harness to stop test runs on the first
-failure.
-
-If you are a plugin developer upgrading an existing plugin you will have to
-manually add support for `--failfast` passthrough to your `runtests.py`.
-
-If you are a plugin developer upgrading an existing plugin you will have to
-manually add support for `--failfast` passthrough to your `runtests.py`.
-
-
-#### Moves scaffold to be a django management command
-
-The rest of the api is still the same but now
-we run `python manage.py scaffold {my_app_name}`
-
-
 #### Misc Changes
 
 Removes the undocumented `collapsed_multisave` tag from the `pathways` templatetag
@@ -105,24 +164,20 @@ library.
 
 Adds a setting `OPAL_FAVICON_PATH` to specify the application Favicon to use.
 
-Adds the `rows` option to the textarea template tag which just fills in the html textarea `rows` attribute. Text areas are defaulted to 5 rows (the same as before).
+Adds the `rows` option to the textarea template tag which just fills in the html textarea
+`rows` attribute. Text areas are defaulted to 5 rows (the same as before).
 
 Configures the setting `CSRF_FAILURE_VIEW` to use the bundled `opal.views.csrf_failure` view.
 
+Adds the utility function `opal.utils.get`. Similar to the `getattr` builtin, `get` looks
+for a method named `get_$attr` and will call that if it exists.
+
+Adds the method `.get_absolute_url()` to `opal.core.pathways.Pathway` and
+`opal.core.patient_lists.PatientList`.
+
+Adds the Opal error `SignatureError`.
+
 Pathway slugs may now include hyphens as well as numbers, lower case letters and underscores.
-
-
-### 0.9.1 (Minor Release)
-
-#### Pathways ContextProcessor
-
-The 'opal.core.pathways.context_processors.pathways' Context Processor will allow you to
-access your pathways from templates without having to explicitly load them in a view. In
-turn, this allows patterns like:
-
-    {% include pathways.YourPathway.get_display_name %}
-
-### Misc Changes
 
 Bugfix: in edit_item.js $scope.episode_category is now set from episode.category_name
 as opposed to episode.category (which was always null)

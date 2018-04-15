@@ -33,7 +33,7 @@ from opal.core import api
 
 class LoginRequredTestCase(OpalTestCase):
     """
-        we expect almost all views to 401
+    We expect almost all views to 401
     """
     def setUp(self):
         self.patient, self.episode = self.new_patient_and_episode_please()
@@ -285,6 +285,7 @@ class SubrecordTestCase(OpalTestCase):
         with patch.object(self.model, "get_api_name") as mock_api_name:
             mock_api_name.return_value = "something"
             reload_module(api)
+            api.initialize_router()
             router = api.router
             self.assertIn(
                 "something",
@@ -644,8 +645,6 @@ class EpisodeTestCase(OpalTestCase):
         self.expected = self.episode.to_dict(self.user)
         self.expected["start"] = "14/01/2014"
         self.expected["end"] = "15/01/2014"
-        self.expected["episode_history"][0]["end"] = "15/01/2014"
-        self.expected["episode_history"][0]["start"] = "14/01/2014"
 
     def test_retrieve_episode(self):
         response = json.loads(api.EpisodeViewSet().retrieve(self.mock_request, pk=self.episode.pk).content.decode('UTF-8'))
@@ -947,13 +946,34 @@ class PatientListTestCase(TestCase):
         self.assertEqual(404, response.status_code)
 
 
-class RegisterPluginsTestCase(OpalTestCase):
+class RegisterTestCase(OpalTestCase):
 
     @patch('opal.core.api.plugins.OpalPlugin.list')
-    def test_register(self, plugins):
+    def test_register_plugins(self, plugins):
         mock_plugin = MagicMock(name='Mock Plugin')
         mock_plugin.get_apis.return_value = [('thingapi', None)]
         plugins.return_value = [mock_plugin]
         with patch.object(api.router, 'register') as register:
             api.register_plugin_apis()
             register.assert_called_with('thingapi', None)
+
+    @patch("opal.core.api.router.register")
+    @patch("opal.core.api.subrecords")
+    def test_register_subrecords(self, subrecords, register):
+        subrecords.return_value = [HatWearer]
+        api.register_subrecords()
+        self.assertEqual(register.call_count, 1)
+        self.assertTrue(register.call_args[0][0][0], HatWearer.get_api_name())
+
+    @patch("opal.core.api.router.register")
+    @patch('opal.core.api.plugins.OpalPlugin.list')
+    def test_register_plugin_order(self, plugins, register):
+        # plugins should be registered first
+        mock_plugin = MagicMock(name='Mock Plugin')
+        mock_plugin.get_apis.return_value = [('thingapi', None)]
+        plugins.return_value = [mock_plugin]
+        api.initialize_router()
+        call_args_list = register.call_args_list
+        self.assertEqual(
+            register.call_args_list[0][0][0], "thingapi"
+        )
