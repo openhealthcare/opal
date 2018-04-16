@@ -8,13 +8,21 @@
 <html {% block angulardefinition %}xmlns:ng="http://angularjs.org" id="ng-app" ng-app="{% block ngapp %}opal{% endblock %}" ng-controller="RootCtrl" ng-keydown="keydown($event)"{% endblock %}>
   <head>
 
-	<!--[if lte IE 8]>
-		<script type="text/javascript" src="{% static "js/lib/utils/json3.min.js" %}"></script>
-		<![endif]-->
-	<meta charset="utf-8">
+    <!--[if lte IE 8]>
+	<script type="text/javascript" src="{% static "js/lib/utils/json3.min.js" %}"></script>
+    <![endif]-->
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/> <!--320-->
-	<title>{{ OPAL_BRAND_NAME }}</title>
+    <title>{{ OPAL_BRAND_NAME }}</title>
 
+    <script type="text/javascript">
+      var initials = "{{request.user.first_name|slice:":1"}} {{request.user.last_name}}"
+      var settings = {
+      LOG_OUT_DURATION: {{OPAL_LOG_OUT_DURATION}}
+      }
+      var version = '{{VERSION_NUMBER}}';
+    </script>	  
+	  
     {% compress js %}
     {% core_javascripts 'opal.upstream.deps' %}
     {% block opal_js %}
@@ -27,14 +35,6 @@
       'OPAL_FLOW_SERVICE',
       {% if OPAL_FLOW_SERVICE %}'{{ OPAL_FLOW_SERVICE }}'{% else %}null{% endif %}
       );
-    </script>
-
-    <script type="text/javascript">
-      var initials = "{{request.user.first_name|slice:":1"}} {{request.user.last_name}}"
-      var settings = {
-      LOG_OUT_DURATION: {{OPAL_LOG_OUT_DURATION}}
-      }
-      var version = '{{VERSION_NUMBER}}';
     </script>
     <!-- google analytics -->
     <script>

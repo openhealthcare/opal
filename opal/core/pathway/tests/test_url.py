@@ -9,3 +9,9 @@ class PathwayReverseUrlTests(OpalTestCase):
             '/pathway/templates/numerical10.html',
             reverse('pathway_template', kwargs={'name': 'numerical10'})
         )
+
+    def test_reverse_pathway_url_with_hyphens(self):
+        self.assertEqual(
+            '/pathway/templates/o-m-g.html',
+            reverse('pathway_template', kwargs={'name': 'o-m-g'})
+        )

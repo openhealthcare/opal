@@ -125,48 +125,6 @@ describe('Episode', function() {
         expect(episode.start.toDate()).toEqual(new Date(2013, 10, 19));
     });
 
-    it('Should raise an error if they try to get discharge date', function(){
-        var shouldThrow = function(){episode.discharge_date; };
-        expect(shouldThrow).toThrow(
-          "Discharge date is deprecated in opal 0.9.0, use end"
-        );
-    });
-
-    it('Should raise an error if they try to set discharge date', function(){
-      var shouldThrow = function(){episode.discharge_date = "as";}
-      expect(shouldThrow).toThrow(
-        "Discharge date is deprecated in opal 0.9.0, use end"
-      );
-    });
-
-    it('Should raise an error if they try to set date of admission', function(){
-      var shouldThrow = function(){episode.date_of_admission = "as";}
-      expect(shouldThrow).toThrow(
-        "Date of admission is deprecated in opal 0.9.0, use start"
-      );
-    });
-
-    it('Should raise an error if they try to get date of admission', function(){
-      var shouldThrow = function(){episode.date_of_admission; };
-      expect(shouldThrow).toThrow(
-        "Date of admission is deprecated in opal 0.9.0, use start"
-      );
-    });
-
-    it('Should raise an error if they try to get date of episode', function(){
-      var shouldThrow = function(){episode.date_of_episode = "as";}
-      expect(shouldThrow).toThrow(
-        "Date of episode is deprecated in opal 0.9.0, use start"
-      );
-    });
-
-    it('Should raise an error if they try to set date of episode', function(){
-      var shouldThrow = function(){episode.date_of_episode; };
-      expect(shouldThrow).toThrow(
-        "Date of episode is deprecated in opal 0.9.0, use start"
-      );
-    });
-
     it('should create Items', function() {
         expect(episode.demographics.length).toBe(1);
         expect(episode.diagnosis.length).toBe(2);
