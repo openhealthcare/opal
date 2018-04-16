@@ -14,10 +14,9 @@ Episode manager, which no longer accepts a `episode_history` kwarg.
 A refactor in the way that the core APIs are registered by Opal means that
 importing `opal.core.api` in a plugin API no longer results in circular imports.
 
-#### Episode serialization consistency
-
 Fixes a bug whereby episodes were serialising differently depending on whether
 the code path went via `.to_dict()` or `.objects.serialised()`.
+
 
 ### 0.10.1 (Minor Release)
 
