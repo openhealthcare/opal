@@ -22,6 +22,62 @@ from opal.core.scaffold import (
 
 
 @patch('subprocess.check_call')
+class CallTestCase(OpalTestCase):
+    def test_writes_message(self, cc):
+        with patch.object(scaffold, 'write'):
+            scaffold.call(('yes', 'please'))
+            scaffold.write.assert_called_with('Calling: yes please')
+
+    def test_calls_with_args(self, cc):
+        scaffold.call(('yes', 'please'))
+        cc.assert_called_with(('yes', 'please'))
+
+    def test_exits_on_error(self, cc):
+        with patch.object(scaffold.sys, 'exit') as exiter:
+            cc.side_effect = subprocess.CalledProcessError(None, None)
+            scaffold.call(('oh' 'noes'))
+            exiter.assert_called_with(1)
+
+
+@patch('opal.core.scaffold.call')
+class CallIfExistsTestCase(OpalTestCase):
+    def test_success(self, c):
+        self.assertEqual(
+            True,
+            scaffold.call_if_exists(('hello', 'world'), 'Sorry, no greetings')
+        )
+
+    def test_file_not_found_err(self, c):
+        if getattr(__builtins__, 'FileNotFoundError', None):
+            c.side_effect = FileNotFoundError(2, os.strerror(2))
+            with patch.object(scaffold, 'write'):
+                return_value = scaffold.call_if_exists(
+                    ('hello', 'world'),
+                    'Sorry no greetings'
+                )
+                self.assertEqual(False, return_value)
+                scaffold.write.assert_any_call('Sorry no greetings')
+
+    def test_oserror(self, c):
+        c.side_effect = OSError(2, os.strerror(2))
+        with patch.object(scaffold, 'write'):
+            return_value = scaffold.call_if_exists(
+                ('hello', 'world'),
+                'Sorry no greetings'
+            )
+            self.assertEqual(False, return_value)
+            scaffold.write.assert_any_call('Sorry no greetings')
+
+    def test_other_oserror(self, c):
+        with self.assertRaises(OSError):
+            c.side_effect = OSError(3, os.strerror(3))
+            scaffold.call_if_exists(
+                ('hello', 'world'),
+                'No such process would be a weird error to get here'
+            )
+
+
+@patch('subprocess.check_call')
 class StartpluginTestCase(OpalTestCase):
     def setUp(self):
         self.path = ffs.Path.newdir()
@@ -108,6 +164,7 @@ class StartpluginTestCase(OpalTestCase):
         with open(requirements) as r:
             contents = r.read()
             self.assertIn('opal=={}'.format(opal.__version__), contents)
+
 
 @patch('subprocess.check_call')
 @patch.object(scaffold.management, 'call_command')
