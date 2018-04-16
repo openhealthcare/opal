@@ -77,8 +77,6 @@ angular.module('opal.services').factory('RecordEditor', function(
               }
           };
 
-
-
           var modal = $modal.open(modal_opts);
 
           modal.result.then(function(result) {
@@ -91,7 +89,7 @@ angular.module('opal.services').factory('RecordEditor', function(
       return deferred.promise;
     };
 
-    // _debounce() prevents multiple modals opening on accidental double click
+    // _.debounce() prevents multiple modals opening on accidental double click
     var debounceTime = 200 // milliseconds
     self.debouncedOpenEditItemModal = _.debounce(self.openEditItemModal, debounceTime, true);
 
