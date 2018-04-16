@@ -203,6 +203,18 @@ describe('RecordEditor', function(){
               expect($rootScope.state).toBe('normal');
           });
 
+          it('should not be possible to open two EditItem modals at the same time', function() {
+            var deferred, callArgs;
+            deferred = $q.defer();
+            deferred.resolve();
+            var modalPromise = deferred.promise;
+            spyOn($modal, 'open').and.returnValue({result: modalPromise}  );
+            episode.recordEditor.editItem('diagnosis', 1);
+            episode.recordEditor.editItem('diagnosis', 1);
+            $scope.$digest();
+            var modalCallsCount = $modal.open.calls.count();
+            expect(modalCallsCount).toBe(1);
+        });
       });
 
       describe('delete item', function(){
