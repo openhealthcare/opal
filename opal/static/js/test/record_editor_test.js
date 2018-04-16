@@ -117,7 +117,7 @@ describe('RecordEditor', function(){
               deferred = $q.defer();
               deferred.resolve();
               var modalPromise = deferred.promise;
-              var fakeMetadaa = {
+              var fakeMetadata = {
                 load: function(){ return "some metadata"; }
               };
 
@@ -135,7 +135,7 @@ describe('RecordEditor', function(){
               var resolves = callArgs[0].resolve;
               expect(resolves.item()).toEqual(episode.recordEditor.getItem('diagnosis', 1));
               expect(resolves.episode()).toEqual(episode);
-              expect(resolves.metadata(fakeMetadaa)).toEqual("some metadata");
+              expect(resolves.metadata(fakeMetadata)).toEqual("some metadata");
               expect(resolves.referencedata(fakeReferencedata)).toEqual( "some reference data");
           });
 
