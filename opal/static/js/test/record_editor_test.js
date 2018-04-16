@@ -203,12 +203,14 @@ describe('RecordEditor', function(){
               expect($rootScope.state).toBe('normal');
           });
 
+          // tests the _.debounce behaviour in RecordEditor.debouncedOpenEditItemModal()
           it('should not be possible to open two EditItem modals at the same time', function() {
             var deferred, callArgs;
             deferred = $q.defer();
             deferred.resolve();
             var modalPromise = deferred.promise;
             spyOn($modal, 'open').and.returnValue({result: modalPromise}  );
+            // try to open the modal twice
             episode.recordEditor.editItem('diagnosis', 1);
             episode.recordEditor.editItem('diagnosis', 1);
             $scope.$digest();
