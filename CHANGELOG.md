@@ -16,7 +16,7 @@ importing `opal.core.api` in a plugin API no longer results in circular imports.
 
 #### Debouncing of modal opening in Detail views
 
-It was occasionally possibly to accidentally open multiple editItem modals when clicking the Edit button in 'spreadsheet'-style lists. This was usually only noticed by the user when they closed the first modal and were presented with the second modal. We have implemented behaviour which 'debounces' clicks, preventing multiple modals being opened.
+It was occasionally possible to accidentally open multiple editItem modals when clicking the Edit button in 'spreadsheet'-style lists. This was usually only noticed by the user when they closed the first modal and were presented with the second modal. We have implemented behaviour which 'debounces' clicks, preventing multiple modals being opened.
 
 
 ### 0.10.1 (Minor Release)
