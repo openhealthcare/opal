@@ -232,8 +232,8 @@ describe('RecordEditor', function(){
 
             function edit_item_assert_calls_incremented_by_one(){
               incantation_count += 1;
-              $scope.$digest();
               episode.recordEditor.editItem('diagnosis', 1);
+              $scope.$digest();
               var modalCallsCount = $modal.open.calls.count();
               expect(modalCallsCount - call_count).toEqual(1);
               call_count += 1;
