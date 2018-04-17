@@ -18,27 +18,6 @@ from opal.core import subrecords
 """
 Utilities
 """
-class MagicModule(types.ModuleType):
-    def __getattr__(self, attr):
-        from opal.core import subrecords
-        try:
-            return subrecords.get_subrecord_from_model_name(attr)
-        except ValueError:
-            pass # No subrecord found - use the default response
-        return getattr(types.ModuleType, attr)
-
-
-class ImportMagic(object):
-    def find_module(self, fullname, path=None):
-        if fullname == 'opal.application_subrecords':
-            return self
-        return None
-
-    def load_module(self, name):
-        return MagicModule(name)
-
-
-sys.meta_path.append(ImportMagic())
 
 
 def _remove_key(d, key):
@@ -80,7 +59,7 @@ def match_or_create_patient(demographic, user):
         2. DoB, First name, & Surname
         3. Create a new Demographic record
     """
-    from opal.application_subrecords import Demographics
+    Demographics = subrecords.get_subrecord_from_model_name('Demographics')
 
     nhs_number = demographic.get('nhs_number')
     if nhs_number:
