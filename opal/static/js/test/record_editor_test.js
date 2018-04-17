@@ -1,7 +1,7 @@
 describe('RecordEditor', function(){
     "use strict";
 
-    var $scope, $modal, $routeParams;
+    var $scope, $modal, $routeParams, $httpBackend;
     var $rootScope, $q, $controller;
     var Flow, Episode, episode;
     var controller, UserProfile;
@@ -91,6 +91,7 @@ describe('RecordEditor', function(){
             $routeParams = $injector.get('$routeParams');
             $controller = $injector.get('$controller');
             $modal = $injector.get('$modal');
+            $httpBackend = $injector.get('$httpBackend');
             Episode = $injector.get('Episode');
             $q = $injector.get('$q');
             UserProfile = $injector.get('UserProfile');
@@ -203,20 +204,50 @@ describe('RecordEditor', function(){
               expect($rootScope.state).toBe('normal');
           });
 
-          // tests the _.debounce behaviour in RecordEditor.debouncedOpenEditItemModal()
+        describe('Debounce behaviour on RecordEditor.editItem()', function() {
+
+            beforeEach(function(){
+              $httpBackend.expectGET('/templates/modals/diagnosis.html/').respond('Not a real template');
+              $httpBackend.expectGET('/api/v0.1/metadata/').respond({});
+              $httpBackend.expectGET('/api/v0.1/referencedata/').respond({});
+            });
+
           it('should not be possible to open two EditItem modals at the same time', function() {
-            var deferred, callArgs;
-            deferred = $q.defer();
-            deferred.resolve();
-            var modalPromise = deferred.promise;
-            spyOn($modal, 'open').and.returnValue({result: modalPromise}  );
+            spyOn($modal, 'open').and.callThrough();
             // try to open the modal twice
+            var then = Date.now()
             episode.recordEditor.editItem('diagnosis', 1);
             episode.recordEditor.editItem('diagnosis', 1);
+            var diff = Date.now() - then
+            expect(diff < 200).toBe(true);
             $scope.$digest();
             var modalCallsCount = $modal.open.calls.count();
             expect(modalCallsCount).toBe(1);
+          });
+
+          it('should allow a second call 200ms later', function(done) {
+            spyOn($modal, 'open').and.callThrough();
+            var incantation_count = 0;
+            var call_count = 0;
+
+            function edit_item_assert_calls_incremented_by_one(){
+              incantation_count += 1;
+              $scope.$digest();
+              episode.recordEditor.editItem('diagnosis', 1);
+              var modalCallsCount = $modal.open.calls.count();
+              expect(modalCallsCount - call_count).toEqual(1);
+              call_count += 1;
+              if(incantation_count == 2){
+                done();
+              }
+            }
+
+            edit_item_assert_calls_incremented_by_one();
+            setTimeout(edit_item_assert_calls_incremented_by_one, 300);
+          });
+
         });
+
       });
 
       describe('delete item', function(){
