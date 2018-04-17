@@ -45,6 +45,11 @@ class PatientTestCase(OpalTestCase):
         self.assertEqual(models.Episode, episode.__class__)
         self.assertEqual(patient, episode.patient)
 
+    def test_to_dict_episode_identical_to_episode_to_dict(self):
+        patient, episode = self.new_patient_and_episode_please()
+        episode_dict = episode.to_dict(self.user)
+        self.assertEqual(episode_dict, patient.to_dict(self.user)['episodes'][episode.id])
+
     @patch("opal.models.application.get_app")
     def test_created_with_the_default_episode(self, get_app):
         test_app = MagicMock()

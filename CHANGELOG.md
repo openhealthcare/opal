@@ -14,6 +14,9 @@ Episode manager, which no longer accepts a `episode_history` kwarg.
 A refactor in the way that the core APIs are registered by Opal means that
 importing `opal.core.api` in a plugin API no longer results in circular imports.
 
+Fixes a bug whereby episodes were serialising differently depending on whether
+the code path went via `.to_dict()` or `.objects.serialised()`.
+
 
 ### 0.10.1 (Minor Release)
 
@@ -30,10 +33,16 @@ Fonts are now served from Opal's static assets rather than from the Google CDN.
 
 Print/screen differences are now in opal.css with media tags.
 
-#### google analytics is now deferred
+#### Google Analytics is now deferred
 
 The loading in of Google Analytics is now deferred to the bottom of the body
 tag to allow the page to load without waiting on analytics scripts to load.
+
+#### Scaffold version control failures
+
+The `startplugin` and `startproject` commands initialize a git repository by
+default. If we (The `subprocess` module) cannot find the `git` command, we now
+continue with a message printed to screen rather than raising an exception.
 
 #### Episode.objects.serialised now uses select_related
 
