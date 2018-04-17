@@ -2,14 +2,46 @@
 Utilities for import/export of patients and episodes
 """
 import collections
+import copy
+import datetime
+import imp
+import sys
+import types
+
+from django.db import transaction
 
 from opal import models
 from opal.core import subrecords
 
+
+
 """
 Utilities
 """
-def remove_key(d, key):
+class MagicModule(types.ModuleType):
+    def __getattr__(self, attr):
+        from opal.core import subrecords
+        try:
+            return subrecords.get_subrecord_from_model_name(attr)
+        except ValueError:
+            pass # No subrecord found - use the default response
+        return getattr(types.ModuleType, attr)
+
+
+class ImportMagic(object):
+    def find_module(self, fullname, path=None):
+        if fullname == 'opal.application_subrecords':
+            return self
+        return None
+
+    def load_module(self, name):
+        return MagicModule(name)
+
+
+sys.meta_path.append(ImportMagic())
+
+
+def _remove_key(d, key):
     """
     Remove the given key from the given dictionary recursively
     """
@@ -18,11 +50,21 @@ def remove_key(d, key):
             continue
 
         if isinstance(v, collections.Mapping):
-            yield k, dict(remove_key(v, key))
+            yield k, dict(_remove_key(v, key))
         elif isinstance(v, list):
-            yield k, [dict(remove_key(x, key)) for x in v]
+            yield k, [dict(_remove_key(x, key)) for x in v]
         else:
             yield k, v
+
+def remove_keys(d, *keys):
+    """
+    Recursively remove many keys from a dictionary
+    """
+    if len(keys) == 0:
+        return d
+    if len(keys) == 1:
+        return dict(_remove_key(d, keys[0]))
+    return remove_keys(dict(remove_keys(d, keys[0])), *keys[1:])
 
 
 """
@@ -38,38 +80,69 @@ def match_or_create_patient(demographic, user):
         2. DoB, First name, & Surname
         3. Create a new Demographic record
     """
-    Demographics = subrecords.get_subrecord_from_model_name('Demographics')
+    from opal.application_subrecords import Demographics
+
     nhs_number = demographic.get('nhs_number')
     if nhs_number:
         try:
             return Demographics.objects.get(nhs_number=nhs_number).patient
-        except Demographics.DoesNotExist:
+        except (Demographics.DoesNotExist, models.Patient.DoesNotExist):
             pass
 
-    dob = demographic.get('date_of_birth')
+    dob        = demographic.get('date_of_birth')
     first_name = demographic.get('first_name')
-    surname = demographic.get('surname')
+    surname    = demographic.get('surname')
 
     if all([dob, first_name, surname]):
-        date_of_birth = datetime.strptime(dob, "%d/%m/%Y").date()
+        date_of_birth = datetime.datetime.strptime(dob, "%d/%m/%Y").date()
         try:
             return Demographics.objects.get(
                 date_of_birth=date_of_birth,
                 first_name=first_name,
                 surname=surname,
             ).patient
-        except Demographics.DoesNotExist:
+        except (Demographics.DoesNotExist, models.Patient.DoesNotExist):
             pass
 
-    # Remove data we don't want to save
-    if 'id' in demographic:
-        del demographic['id']
-
     patient = models.Patient.objects.create()
-    d = Demographics(patient=patient)
-    d.update_from_dict(demographic, user)
+    patient.demographics_set.get().update_from_dict(demographic, user)
     return patient
 
+
+def import_patient_subrecord_data(api_name, data, patient, user=None):
+    """
+    Given the API_NAME of a patient subrecord, some DATA containing n
+    instances of that subrecord, and a patient, save that data to the
+    patient.
+
+    If required, pass in the user as a kwarg
+    """
+    subrecord = subrecords.get_subrecord_from_api_name(api_name)
+    return subrecord.bulk_update_from_dicts(patient, data, user)
+
+
+def create_episode_for_patient(patient, episode_data, user=None):
+    """
+    Given a PATIENT, some EPISODE_DATA and maybe a USER, create
+    that episode.
+    """
+    episode_fields = models.Episode._get_fieldnames_to_serialize()
+    episode_dict = {}
+    episode_subrecords = {}
+
+    for key, value in episode_data.items():
+        if key in episode_fields:
+            episode_dict[key] = value
+        else:
+            episode_subrecords[key] = value
+
+    episode = patient.create_episode()
+    episode.update_from_dict(episode_dict, user)
+
+    patient.bulk_update(episode_subrecords, user, episode=episode)
+
+
+@transaction.atomic
 def import_patient(data, user=None):
     """
     Given a datastructure representing a Patient, import that patient.
@@ -83,9 +156,17 @@ def import_patient(data, user=None):
         data['demographics'][0],
         user,
     )
+
     episodes = data.pop('episodes')
 
-    patient.update_from_dict(data, user)
+    for episode in episodes.values():
+        create_episode_for_patient(patient, episode, user=user)
+
+    for key, value in data.items():
+        if key == 'demographics':
+            continue  # We already did that one.
+        import_patient_subrecord_data(key, value, patient, user=user)
+
     return
 
 
@@ -93,7 +174,7 @@ def import_patient(data, user=None):
 Exports
 """
 
-def patient_id_to_json(patient_id, user=None):
+def patient_id_to_json(patient_id, user=None, exclude=None):
     """
     Given a PATIENT_ID return the JSON export of that patient and the
     patient as a tuple:
@@ -111,7 +192,23 @@ def patient_id_to_json(patient_id, user=None):
     # Active episode is not a concept which makes sense for a second system
     del data['active_episode_id']
 
-    # Remove all "id" keys from the data
-    data = dict(remove_key(data, 'id'))
+    # Remove all "id", and consistency data
+    data = remove_keys(
+        data, 'id', 'patient_id', 'episode_id',
+        'consistency_token',
+        'consistency_token',
+        'created_by_id', 'updated_by_id'
+    )
+
+    # Only include patient subrecords once - at the patient subrecord level
+    for subrecord in subrecords.patient_subrecords():
+        name = subrecord.get_api_name()
+        for episode_id, episode in data['episodes'].items():
+            if name in episode:
+                del episode[name]
+
+    if exclude is not None:
+        for api_name in exclude.split(','):
+            data = remove_keys(data, api_name)
 
     return data, patient

@@ -1,5 +1,5 @@
 """
-Export something
+Export something - a commandline utility
 """
 import json
 
@@ -23,17 +23,22 @@ class Command(BaseCommand):
             help='ID of the patient you would like to export',
             default=None
         )
+        parser.add_argument(
+            '--exclude',
+            dest='exclude',
+            help='Comma separated list of subrecord api_names to exclude',
+            default=""
+        )
 
     def handle(self, *args, **options):
         """
         Commandline entrypoint
         """
-        patient_id = options.get('patient', None)
+        patient_id = options['patient']
         if not patient_id:
-            raise ValueError('What do you want to export?')
-
+            raise ValueError('What do you want to export? Try using the --patient argument')
         try:
-            data, patient = trade.patient_id_to_json(patient_id)
+            data, patient = trade.patient_id_to_json(patient_id, exclude=options.get('exclude'))
         except Patient.DoesNotExist:
             msg = 'Cannot find Patient with ID: {}'.format(patient_id)
             raise ValueError(msg)
