@@ -100,6 +100,25 @@ class PatientList(discoverable.DiscoverableFeature,
 
         return True
 
+    @classmethod
+    def switcher_items(klass, user, current_list_slug):
+        items = klass.for_user(user)
+        result = []
+        for item in items:
+            if TabbedPatientListGroup.for_list(item):
+                if TabbedPatientListGroup.for_list(item) not in result:
+                    result.append(
+                        TabbedPatientListGroup.for_list(item)
+                    )
+            else:
+                result.append(item)
+        if current_list_slug:
+            current_list = klass.get(current_list_slug)
+            current_list_group = TabbedPatientListGroup.for_list(current_list)
+            if current_list_group:
+                result = [i for i in result if not i == current_list_group]
+        return result
+
     def get_template_prefixes(self):
         """ a patient list can return templates particular to themselves
             or indeed used by other patient lists
@@ -234,6 +253,13 @@ class TabbedPatientListGroup(discoverable.DiscoverableFeature):
         except IndexError:
             msg = "member_lists should contain at least one PatientList object"
             raise exceptions.InvalidDiscoverableFeatureError(msg)
+
+    @classmethod
+    def get_slug(klass):
+        # returns the slug of the first member PatientList by default
+        s = super(discoverable.DiscoverableFeature, klass).get_slug(klass.member_lists[0])
+        return s
+        # return klass.default_tab.get_slug
 
     @classmethod
     def for_list(klass, patient_list):

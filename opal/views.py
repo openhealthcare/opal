@@ -51,21 +51,18 @@ class PatientListTemplateView(LoginRequiredMixin, TemplateView):
             PatientListTemplateView, self
         ).get_context_data(**kwargs)
         list_slug = None
-        if self.patient_list:
-            list_slug = self.patient_list.get_slug()
-        context['list_slug'] = list_slug
         context['patient_list'] = self.patient_list
-        context['lists'] = self.get_list_switcher_items(self.request.user)
-        context['num_lists'] = len(context['lists'])
-
         context['list_group'] = None
         if self.patient_list:
+            list_slug = self.patient_list.get_slug()
             group = TabbedPatientListGroup.for_list(self.patient_list)
             if group:
                 if group.visible_to(self.request.user):
                     context['list_group'] = group
-
         context['columns'] = self.get_column_context(**kwargs)
+        context['lists'] = PatientList.switcher_items(self.request.user, list_slug)
+        context['num_lists'] = len(context['lists'])
+        context['list_slug'] = list_slug
         return context
 
     def get_list_switcher_items(self, user):
