@@ -10,6 +10,7 @@ from django.db.models import Q
 from opal.core.subrecords import (
     episode_subrecords, patient_subrecords
 )
+from opal.core.fields import ForeignKeyOrFreeText
 from functools import reduce
 
 
@@ -32,6 +33,23 @@ class PatientQueryset(models.QuerySet):
         return qs
 
 
+def prefetch(qs):
+    """
+    Given a Queryset QS, examine the model for `ForeignKeyOrFreetext`
+    fields or `ManyToMany` fields and add `select_related` or
+    `prefetch_related` calls to the queryset as appropriate to reduce
+    the total number of database queries required to serialise the
+    contents of the queryset.
+    """
+    for name, value in list(vars(qs.model).items()):
+        if isinstance(value, ForeignKeyOrFreeText):
+            qs = qs.select_related(value.fk_field_name)
+
+    for related in qs.model._meta.many_to_many:
+        qs = qs.prefetch_related(related.attname)
+    return qs
+
+
 class EpisodeQueryset(models.QuerySet):
 
     def search(self, some_query):
@@ -51,7 +69,9 @@ class EpisodeQueryset(models.QuerySet):
 
         for model in episode_subrecords():
             name = model.get_api_name()
-            subrecords = model.objects.filter(episode__in=episodes)
+            subrecords = prefetch(
+                model.objects.filter(episode__in=episodes)
+            )
 
             for related in model._meta.many_to_many:
                 subrecords = subrecords.prefetch_related(related.attname)
@@ -74,7 +94,9 @@ class EpisodeQueryset(models.QuerySet):
         episode_subs = self.serialised_episode_subrecords(episodes, user)
         for model in patient_subrecords():
             name = model.get_api_name()
-            subrecords = model.objects.filter(patient__in=patient_ids)
+            subrecords = prefetch(
+                model.objects.filter(patient__in=patient_ids)
+            )
 
             for sub in subrecords:
                 patient_subs[sub.patient_id][name].append(sub.to_dict(user))
