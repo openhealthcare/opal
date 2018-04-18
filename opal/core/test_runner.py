@@ -32,21 +32,21 @@ def _run_py_tests(args):
     if _has_file(args.userland_here, 'runtests.py'):
         test_args = ['python', 'runtests.py']
 
-        if args.test:
-            test_args.append(args.test)
-
         if args.coverage:
             test_args = ['coverage', 'run', 'runtests.py']
+
+        if args.test:
+            test_args.append(args.test)
 
     # We have a manage.py script - assume that we're in an application
     elif _has_file(args.userland_here, 'manage.py'):
         test_args = ['python', 'manage.py', 'test']
 
-        if args.test:
-            test_args.append(args.test)
-
         if args.coverage:
             test_args = ['coverage', 'run', 'manage.py', 'test', ]
+
+        if args.test:
+            test_args.append(args.test)
 
     else:
         write("\n\nCripes!\n")

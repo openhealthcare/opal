@@ -60,6 +60,19 @@ class RunPyTestsTestCase(OpalTestCase):
         check_call.assert_has_calls(calls)
 
     @patch('subprocess.check_call')
+    def test_run_tests_with_coverage_and_test_arg(self, check_call):
+        mock_args = MagicMock(name="args")
+        mock_args.userland_here = ffs.Path('.')
+        mock_args.coverage = True
+        mock_args.test = 'opal.tests.foo'
+        mock_args.failfast = False
+        test_runner._run_py_tests(mock_args)
+        calls = [
+            call(['coverage', 'run', 'runtests.py', 'opal.tests.foo']),
+            call(['coverage', 'html'])
+        ]
+
+    @patch('subprocess.check_call')
     @patch.object(test_runner.sys, 'exit')
     def test_run_tests_with_coverage_errors(self, exiter, check_call):
         mock_args = MagicMock(name="args")
