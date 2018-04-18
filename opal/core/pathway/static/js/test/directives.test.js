@@ -5,6 +5,7 @@ describe('pathway directives', function(){
   var referencedata, metadata, pathwayLoader;
   beforeEach(module('opal.controllers'));
   beforeEach(module('opal.directives', function($provide){
+
     mockModal = {open: function(){}};
     spyOn(mockModal, "open").and.returnValue({
       result: {
@@ -41,11 +42,11 @@ describe('pathway directives', function(){
   }));
 
   beforeEach(inject(function($injector){
-    var $rootScope = $injector.get('$rootScope');
-    scope = $rootScope.$new();
-    $httpBackend = $injector.get('$httpBackend');
-    $compile = $injector.get('$compile');
-    $parse = $injector.get('$parse');
+    $rootScope    = $injector.get('$rootScope');
+    scope         = $rootScope.$new();
+    $httpBackend  = $injector.get('$httpBackend');
+    $compile      = $injector.get('$compile');
+    $parse        = $injector.get('$parse');
     pathwayLoader = $injector.get('pathwayLoader');
   }));
 
@@ -141,6 +142,37 @@ describe('pathway directives', function(){
       var resolves = mockModal.open.calls.mostRecent().args[0].resolve;
       expect(resolves.episode()).toBe('trees');
     });
+
+    it('should set up the state variable', function() {
+      var markup = '<a href="#" open-pathway="someFakePathway"></a>';
+      mockModal.open.and.returnValue({result: {then:function(cb, eb){
+        // Conspicuously not calling cb();
+      }}})
+      element = $compile(markup)(scope);
+      $(element).click();
+      expect($rootScope.state).toEqual('modal');
+    });
+
+    it('should reset the state variable', function() {
+      var markup = '<a href="#" open-pathway="someFakePathway"></a>';
+      element = $compile(markup)(scope);
+      scope.$digest();
+      $(element).click();
+      scope.$digest();
+      expect($rootScope.state).toEqual('normal');
+    });
+
+    it('should reset the state variable in case of rejection', function() {
+      var markup = '<a href="#" open-pathway="someFakePathway"></a>';
+      mockModal.open.and.returnValue({result: {then:function(cb, eb){
+        eb() // Conspicuously calling the rejection case
+      }}})
+      element = $compile(markup)(scope);
+      $(element).click();
+      scope.$digest();
+      expect($rootScope.state).toEqual('normal');
+    });
+
   });
 
 
