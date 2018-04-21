@@ -1,6 +1,7 @@
 """
 Generic Opal utilities
 """
+import collections
 import importlib
 import re
 import sys
@@ -80,3 +81,29 @@ def write(what):
     if 'runtests.py' in sys.argv:
         return
     sys.stdout.write("{0}\n".format(what))
+
+
+def _remove_key(d, key):
+    """
+    Remove the given key from the given dictionary recursively
+    """
+    for k, v in d.items():
+        if k == key:
+            continue
+
+        if isinstance(v, collections.Mapping):
+            yield k, dict(_remove_key(v, key))
+        elif isinstance(v, list):
+            yield k, [dict(_remove_key(x, key)) for x in v]
+        else:
+            yield k, v
+
+def remove_keys(d, *keys):
+    """
+    Recursively remove many keys from a dictionary
+    """
+    if len(keys) == 0:
+        return d
+    if len(keys) == 1:
+        return dict(_remove_key(d, keys[0]))
+    return remove_keys(dict(remove_keys(d, keys[0])), *keys[1:])

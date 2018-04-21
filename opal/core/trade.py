@@ -1,8 +1,6 @@
 """
 Utilities for import/export of patients and episodes
 """
-import collections
-import copy
 import datetime
 import imp
 import sys
@@ -12,40 +10,7 @@ from django.db import transaction
 
 from opal import models
 from opal.core import subrecords
-
-
-
-"""
-Utilities
-"""
-
-
-def _remove_key(d, key):
-    """
-    Remove the given key from the given dictionary recursively
-    """
-    for k, v in d.iteritems():
-        if k == key:
-            continue
-
-        if isinstance(v, collections.Mapping):
-            yield k, dict(_remove_key(v, key))
-        elif isinstance(v, list):
-            yield k, [dict(_remove_key(x, key)) for x in v]
-        else:
-            yield k, v
-
-def remove_keys(d, *keys):
-    """
-    Recursively remove many keys from a dictionary
-    """
-    if len(keys) == 0:
-        return d
-    if len(keys) == 1:
-        return dict(_remove_key(d, keys[0]))
-    return remove_keys(dict(remove_keys(d, keys[0])), *keys[1:])
-
-
+from opal.utils import remove_keys
 """
 Imports
 """
