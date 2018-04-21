@@ -118,7 +118,7 @@ def import_patient(data, user=None):
 Exports
 """
 
-def patient_id_to_json(patient_id, user=None, exclude=None):
+def patient_id_to_json(patient_id, user=None, excludes=None):
     """
     Given a PATIENT_ID return the JSON export of that patient and the
     patient as a tuple:
@@ -126,6 +126,8 @@ def patient_id_to_json(patient_id, user=None, exclude=None):
     return (DATA, PATIENT)
 
     If requried, pass in the active user as a kwarg.
+    If required, pass in an interable of api_names as a kwarg to limit
+    the subrecords you export.
 
     If the patient does not exist, raise Patient.DoesNotExist.
     """
@@ -140,7 +142,6 @@ def patient_id_to_json(patient_id, user=None, exclude=None):
     data = remove_keys(
         data, 'id', 'patient_id', 'episode_id',
         'consistency_token',
-        'consistency_token',
         'created_by_id', 'updated_by_id'
     )
 
@@ -151,8 +152,8 @@ def patient_id_to_json(patient_id, user=None, exclude=None):
             if name in episode:
                 del episode[name]
 
-    if exclude is not None:
-        for api_name in exclude.split(','):
+    if excludes is not None:
+        for api_name in excludes:
             data = remove_keys(data, api_name)
 
     return data, patient

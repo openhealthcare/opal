@@ -38,7 +38,8 @@ class Command(BaseCommand):
         if not patient_id:
             raise ValueError('What do you want to export? Try using the --patient argument')
         try:
-            data, patient = trade.patient_id_to_json(patient_id, exclude=options.get('exclude'))
+            excludes = options.get('exclude').split(',')
+            data, patient = trade.patient_id_to_json(patient_id, excludes=excludes)
         except Patient.DoesNotExist:
             msg = 'Cannot find Patient with ID: {}'.format(patient_id)
             raise ValueError(msg)
