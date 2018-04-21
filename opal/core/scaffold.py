@@ -2,9 +2,11 @@
 Opal scaffolding and code generation
 """
 import inspect
+import errno
 import os
 import subprocess
 import sys
+
 from django.core import management
 from django.utils.crypto import get_random_string
 from django.apps import apps
@@ -57,12 +59,35 @@ def create_lookuplists(root_dir):
 
 
 def call(cmd, **kwargs):
+    """
+    Call an external program in a subprocess
+    """
     write("Calling: {}".format(' '.join(cmd)))
     try:
         subprocess.check_call(cmd, **kwargs)
     except subprocess.CalledProcessError:
         write("Failed to run: {}".format(' '.join(cmd)))
         sys.exit(1)
+
+
+def call_if_exists(cmd, failure_message, **kwargs):
+    """
+    Call an external program in a subprocess if it exists.
+
+    Returns True.
+
+    If it does not exist, write a failure message and return False
+    without raising an exception
+    """
+    try:
+        call(cmd, **kwargs)
+        return True
+    except OSError as e:
+        if e.errno == errno.ENOENT:
+            write(failure_message)
+            return False
+        else:
+            raise
 
 
 def start_plugin(name, USERLAND):
@@ -103,7 +128,11 @@ def start_plugin(name, USERLAND):
     services = jsdir/'services'
     services.mkdir()
     # 5. Initialize git repo
-    call(('git', 'init'), cwd=root, stdout=subprocess.PIPE)
+    call_if_exists(
+        ('git', 'init'),
+        'Unable to locate git; Skipping git repository initialization.',
+        cwd=root, stdout=subprocess.PIPE
+    )
 
     write('Plugin complete at {0}'.format(reponame))
     return
@@ -252,7 +281,11 @@ def start_project(name, USERLAND_HERE):
     manage('createopalsuperuser')
 
     # 10. Initialise git repo
-    call(('git', 'init'), cwd=project_dir, stdout=subprocess.PIPE)
+    call_if_exists(
+        ('git', 'init'),
+        'Unable to locate git; Skipping git repository initialization.',
+        cwd=project_dir, stdout=subprocess.PIPE
+    )
 
     # 11. Load referencedata shipped with Opal
     manage('load_lookup_lists')
