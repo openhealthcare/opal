@@ -18,7 +18,7 @@ class Command(BaseCommand):
     """
     def add_arguments(self, parser):
         parser.add_argument(
-            '--patient',
+            '--patient', '-p',
             dest='patient_file',
             help='Path to file containing a patient',
             default=None

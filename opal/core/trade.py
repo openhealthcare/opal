@@ -2,18 +2,11 @@
 Utilities for import/export of patients and episodes
 """
 import datetime
-import imp
-import sys
-import types
-
 from django.db import transaction
 
 from opal import models
-from opal.core import subrecords
+from opal.core import match, subrecords
 from opal.utils import remove_keys
-"""
-Imports
-"""
 
 def match_or_create_patient(demographic, user):
     """
@@ -24,8 +17,6 @@ def match_or_create_patient(demographic, user):
         2. DoB, First name, & Surname
         3. Create a new Demographic record
     """
-    Demographics = subrecords.get_subrecord_from_model_name('Demographics')
-
     nhs_number = demographic.get('nhs_number')
     if nhs_number:
         try:
@@ -53,6 +44,25 @@ def match_or_create_patient(demographic, user):
     return patient
 
 
+class OpalExportMatcher(match.Matcher):
+    """
+    Matcher for data in the Opal portable export format.
+    """
+    direct_match_field     = 'nhs_number'
+    attribute_match_fields = [
+        'date_of_birth',
+        'first_name',
+        'surname',
+    ]
+
+    def get_demographic_dict(self):
+        self.data['date_of_birth'] = self.data['date_of_birth'].strftime('%d/%m/%Y')
+        return self.data
+
+
+"""
+Imports
+"""
 def import_patient_subrecord_data(api_name, data, patient, user=None):
     """
     Given the API_NAME of a patient subrecord, some DATA containing n
@@ -96,10 +106,12 @@ def import_patient(data, user=None):
     1. Match or create the patient
     2. Iterate through episodes in the patient data, creating them as required
     """
-    patient = match_or_create_patient(
-        data['demographics'][0],
-        user,
+    demographics = data['demographics'][0]
+    demographics['date_of_birth'] = models.deserialize_date(
+        demographics['date_of_birth']
     )
+    matcher = OpalExportMatcher(demographics)
+    patient, created = matcher.match_or_create(user=user)
 
     episodes = data.pop('episodes')
 

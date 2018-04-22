@@ -37,3 +37,7 @@ class InitializationError(Error):
 
 class MissingTemplateError(Error):
     pass
+
+
+class PatientNotFoundError(Error):
+    pass
