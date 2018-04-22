@@ -1,5 +1,5 @@
 """
-Unittests for opal.core.views
+Unittests for opal.core.serialization
 """
 import datetime
 import six

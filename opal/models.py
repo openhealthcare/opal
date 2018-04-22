@@ -27,6 +27,7 @@ from opal.core import (
 )
 from opal import managers
 from opal.utils import camelcase_to_underscore, find_template
+from opal.core import serialization
 from opal.core.fields import ForeignKeyOrFreeText
 from opal.core.subrecords import (
     episode_subrecords, patient_subrecords, get_subrecord_from_api_name
@@ -36,33 +37,6 @@ from opal.core.subrecords import (
 def get_default_episode_type():
     app = application.get_app()
     return app.default_episode_category
-
-
-def deserialize_datetime(value):
-    input_format = settings.DATETIME_INPUT_FORMATS[0]
-    value = timezone.make_aware(datetime.datetime.strptime(
-        value, input_format
-    ), timezone.get_current_timezone())
-
-    return value
-
-
-def deserialize_time(value):
-    input_format = settings.TIME_INPUT_FORMATS[0]
-    value = timezone.make_aware(datetime.datetime.strptime(
-        value, input_format
-    ), timezone.get_current_timezone()).time()
-
-    return value
-
-
-def deserialize_date(value):
-    input_format = settings.DATE_INPUT_FORMATS[0]
-    dt = datetime.datetime.strptime(
-        value, input_format
-    )
-    dt = timezone.make_aware(dt, timezone.get_current_timezone())
-    return dt.date()
 
 
 class SerialisableFields(object):
@@ -404,11 +378,11 @@ class UpdatesFromDictMixin(SerialisableFields):
                     else:
                         DateTimeField = models.fields.DateTimeField
                         if value and field_type == models.fields.DateField:
-                            value = deserialize_date(value)
+                            value = serialization.deserialize_date(value)
                         elif value and field_type == DateTimeField:
-                            value = deserialize_datetime(value)
+                            value = serialization.deserialize_datetime(value)
                         elif value and field_type == models.fields.TimeField:
-                            value = deserialize_time(value)
+                            value = serialization.deserialize_time(value)
 
                         setattr(self, name, value)
 
@@ -1757,7 +1731,7 @@ class PatientConsultation(EpisodeSubrecord):
 
     def set_when(self, incoming_value, user, *args, **kwargs):
         if incoming_value:
-            self.when = deserialize_datetime(incoming_value)
+            self.when = serialization.deserialize_datetime(incoming_value)
         else:
             self.when = timezone.make_aware(datetime.datetime.now())
 
