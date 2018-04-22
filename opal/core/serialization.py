@@ -14,6 +14,9 @@ def deserialize_datetime(value):
     """
     Given a VALUE, deserialize it to a datetime
     """
+    if isinstance(value, datetime.datetime):
+        return value
+
     input_format = settings.DATETIME_INPUT_FORMATS[0]
     value = timezone.make_aware(datetime.datetime.strptime(
         value, input_format
@@ -26,6 +29,9 @@ def deserialize_time(value):
     """
     Given a VALUE, deserialize it to a time
     """
+    if isinstance(value, datetime.time):
+        return value
+
     input_format = settings.TIME_INPUT_FORMATS[0]
     value = timezone.make_aware(datetime.datetime.strptime(
         value, input_format
@@ -38,6 +44,9 @@ def deserialize_date(value):
     """
     Given a VALUE, deserialize it to a date
     """
+    if isinstance(value, datetime.date):
+        return value
+
     input_format = settings.DATE_INPUT_FORMATS[0]
     dt = datetime.datetime.strptime(
         value, input_format
