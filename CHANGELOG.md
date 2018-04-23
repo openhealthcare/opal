@@ -17,6 +17,14 @@ importing `opal.core.api` in a plugin API no longer results in circular imports.
 Fixes a bug whereby episodes were serialising differently depending on whether
 the code path went via `.to_dict()` or `.objects.serialised()`.
 
+#### Spreadsheet View template refactor
+
+The spreadsheet_list.html template was duplicated in
+`opal/templates/patient_lists/layouts/spreadsheet_list.html` and also in
+`opal/templates/patient_lists/spreadsheet_list.html`. These have now been refactored
+into a single template, `layouts/spreadsheet_list_base.html` and uses the
+newer inheritance pattern which allows customisation of `layouts/spreadsheet_list.html`
+
 
 ### 0.10.1 (Minor Release)
 
