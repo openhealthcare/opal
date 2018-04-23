@@ -34,7 +34,8 @@ Further information is available in the [Guides section](../guides/list_views.md
 Further information is available in the [Guides section](../guides/list_views.md#slug).
 
 #### PatientList.template_name
-If you want to over-ride the default Patient List template `opal/templates/patient_list/spreadsheet.html` with a custom template, or set the Card or Table PatientList templates, you can specify the path of the custom template (relative to `/myapp/templates/`) in this property.
+
+If you want to over-ride a default Patient List template `opal/templates/patient_list/layouts/spreadsheet_list.html` with a custom template, or set the included Card or Table PatientList templates, you can specify the path of the custom template (relative to `/myapp/templates/`) in this property.
 
 ```python
 # myapp/patient_lists.py
@@ -44,6 +45,18 @@ class MyPatientList(PatientList):
 ```
 
 Will look for a template at `/myapp/templates/my_layout.html`.
+
+All the standard Opal patient list templates (Spreadsheet View, Card View, Table View) use Django templating `{% extends %}` syntax to extend their `base` templates respectively. Each of these `base` templates contains Django `{% block %}`s, so you can override selected parts of the base template by creating a new file in `patient_lists/layouts/` called, for example `spreadsheet_list.html`, and redefining the content of those blocks.
+
+```html
+<!-- patient_lists/layouts/spreadsheet_list.html -->
+{% extends 'patient_lists/layouts/spreadsheet_list_base.html' %}
+
+{% block content %}
+... my new block content ...
+{% endblock content %}
+```
+
 
 #### PatientList.visible_to
 Further information is available in the [Guides section](../guides/list_views.md#access-control).
