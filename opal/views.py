@@ -72,17 +72,27 @@ class PatientListTemplateView(LoginRequiredMixin, TemplateView):
 
     def get_switcher_items(self, current_user, currently_displayed_list):
         # get all the PatientList items that the current user can 'see'
-        items = list(PatientList.for_user(current_user))
-        # get all the TabbedPatientListGroup items that the current user can 'see'
+        all_items = list(PatientList.for_user(current_user))
 
-        # remove the current list from switcher items
-        if currently_displayed_list in items:
-            items.remove(currently_displayed_list)
+        # remove Switcher items where the item is part of a TabbedPatientListGroup
+        # and add instead the TabbedPatientListGroup itself, once, in the same place
+        for index, item in enumerate(all_items):
+            tab_group = TabbedPatientListGroup.for_list(item)
+            if tab_group is not None:
+                all_items[index] = tab_group
 
-        # list switcher is suppressed in the template if there are no items
+        switcher_items = []
+        # remove duplicates from the all_items list
+        for item in all_items:
+            if item not in switcher_items:
+                switcher_items.append(item)
 
-        # pass a processed list of switcher items to the front end
-        return items
+        # remove the currently displayed list from the switcher items
+        if currently_displayed_list in switcher_items:
+            switcher_items.remove(currently_displayed_list)
+
+        # NOTE: list switcher is suppressed in the template if there are no switcher_items
+        return switcher_items
 
     def get_template_names(self):
         if self.patient_list:

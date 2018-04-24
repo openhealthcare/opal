@@ -1,12 +1,17 @@
 {% load forms %}
+
 <!-- suppress the Switcher if there are no items in it -->
-<!-- {% if switcher_items != None %}
+{% if switcher_items != None %}
 <div class="btn-group pull-left" uib-dropdown is-open="status.isopen">
+
+  <!-- displays the name of the currently viewed item on the Switcher button -->
   <button type="button" class="btn btn-secondary" uib-dropdown-toggle ng-disabled="disabled" id="list-dropdown">
     <i class="fa fa-user-md"></i>
     {{ patient_list.display_name }}
     <i class="fa fa-angle-down"></i>
   </button>
+
+  <!-- displays the available Switcher items in the dropdown menu -->
   <ul class="uib-dropdown-menu slides" role="menu" aria-labelledby="list-dropdown">
     {% for item in switcher_items %}
     <li>
@@ -16,5 +21,6 @@
     </li>
     {% endfor %}
   </ul>
+
 </div>
-{% endif %} -->
+{% endif %}

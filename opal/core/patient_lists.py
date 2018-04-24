@@ -211,7 +211,10 @@ Sometimes we group lists for display purposes.
 class TabbedPatientListGroup(discoverable.DiscoverableFeature):
     """
     Groups of Patient Lists to display as tabs at the top of
-    any list in the group
+    any list in the group.
+
+    display_name for the Tab Group must be defined
+    default_tab for the Tab Group must be defined
     """
     module_name   = 'patient_lists'
     member_lists  = []
@@ -232,6 +235,16 @@ class TabbedPatientListGroup(discoverable.DiscoverableFeature):
         for group in klass.list():
             if patient_list in group.get_member_lists():
                 return group
+
+    # uses the value of default_tab to return a default slug
+    # last viewed tab is cached by the frontend and replaces default_tab once set
+    @classmethod
+    def get_slug(klass):
+        msg = 'TabbedPatientListGroup must have a default_tab property'
+        if klass.default_tab:
+            return klass.default_tab.get_slug()
+        else:
+            raise ValueError(msg)
 
     @classmethod
     def get_member_lists(klass):
@@ -262,6 +275,7 @@ class TabbedPatientListGroup(discoverable.DiscoverableFeature):
         if len(list(klass.get_member_lists_for_user(user))) > 1:
             return True
         return False
+
 
 
 """
