@@ -22,6 +22,14 @@ the code path went via `.to_dict()` or `.objects.serialised()`.
 A number of helpers related to serialization and deserialization have been brought
 together in the new module `opal.core.serialization`.
 
+#### Template removals
+
+We removed a number of superfluous templates:
+
+* opal/templates/patient_lists/spreadsheet_list.html
+* opal/templates/layouts/left-panel.html
+
+
 ### 0.10.1 (Minor Release)
 
 #### Plugin API end points can now override application end points
