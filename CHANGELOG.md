@@ -17,6 +17,14 @@ importing `opal.core.api` in a plugin API no longer results in circular imports.
 Fixes a bug whereby episodes were serialising differently depending on whether
 the code path went via `.to_dict()` or `.objects.serialised()`.
 
+#### Template removals
+
+We removed a number of superfluous templates:
+
+* opal/templates/patient_lists/spreadsheet_list.html
+* opal/templates/layouts/left-panel.html
+
+
 
 ### 0.10.1 (Minor Release)
 
