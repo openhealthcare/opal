@@ -1,5 +1,6 @@
 {% load forms %}
-{% if num_lists > 1 %}
+<!-- suppress the Switcher if there are no items in it -->
+<!-- {% if switcher_items != None %}
 <div class="btn-group pull-left" uib-dropdown is-open="status.isopen">
   <button type="button" class="btn btn-secondary" uib-dropdown-toggle ng-disabled="disabled" id="list-dropdown">
     <i class="fa fa-user-md"></i>
@@ -7,15 +8,13 @@
     <i class="fa fa-angle-down"></i>
   </button>
   <ul class="uib-dropdown-menu slides" role="menu" aria-labelledby="list-dropdown">
-    {% for list in lists %}
-    {% if list.get_slug != list_slug %}
+    {% for item in switcher_items %}
     <li>
-      <a href="#/list/{{ list.get_slug }}">
-        {{ list.display_name }}
+      <a href="#/list/{{ item.get_slug }}">
+        {{ item.display_name }}
       </a>
     </li>
-    {% endif %}
     {% endfor %}
   </ul>
 </div>
-{% endif %}
+{% endif %} -->

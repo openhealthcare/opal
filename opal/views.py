@@ -50,14 +50,16 @@ class PatientListTemplateView(LoginRequiredMixin, TemplateView):
         context = super(
             PatientListTemplateView, self
         ).get_context_data(**kwargs)
-        list_slug = None
-        if self.patient_list:
-            list_slug = self.patient_list.get_slug()
-        context['list_slug'] = list_slug
+        # list_slug = None
+        # if self.patient_list:
+        #     list_slug = self.patient_list.get_slug()
+        # context['list_slug'] = list_slug
         context['patient_list'] = self.patient_list
-        context['lists'] = list(PatientList.for_user(self.request.user))
-        context['num_lists'] = len(context['lists'])
-
+        context['switcher_items'] = self.get_switcher_items(
+                                        self.request.user,
+                                        self.patient_list,
+                                    )
+        # context['num_lists'] = len(context['lists'])
         context['list_group'] = None
         if self.patient_list:
             group = TabbedPatientListGroup.for_list(self.patient_list)
@@ -67,6 +69,20 @@ class PatientListTemplateView(LoginRequiredMixin, TemplateView):
 
         context['columns'] = self.get_column_context(**kwargs)
         return context
+
+    def get_switcher_items(self, current_user, currently_displayed_list):
+        # get all the PatientList items that the current user can 'see'
+        items = list(PatientList.for_user(current_user))
+        # get all the TabbedPatientListGroup items that the current user can 'see'
+
+        # remove the current list from switcher items
+        if currently_displayed_list in items:
+            items.remove(currently_displayed_list)
+
+        # list switcher is suppressed in the template if there are no items
+
+        # pass a processed list of switcher items to the front end
+        return items
 
     def get_template_names(self):
         if self.patient_list:
