@@ -114,6 +114,9 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
 
         context_data = view.get_context_data(slug="eater-herbivore")
         expected = list(patient_lists.PatientList.for_user(self.user))
+        # this test is failing because the `expected` items no longer match the
+        # values returned by the new get_context_data() method. I'm not sure whether to
+        # replicate the processing of get_switcher_items() in here, or not. Discuss.
         self.assertEqual(expected, list(context_data['switcher_items']))
 
     def test_get_context_data_list_group(self):
