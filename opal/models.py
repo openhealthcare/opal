@@ -10,7 +10,6 @@ import logging
 import random
 import os
 
-from django.conf import settings
 from django.utils import timezone
 from django.db import models, transaction
 from django.db.models import Q

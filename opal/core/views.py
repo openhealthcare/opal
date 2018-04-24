@@ -3,12 +3,12 @@ Re-usable view components
 """
 import functools
 import json
-import datetime
 
 from django.http import HttpResponse
 from rest_framework import mixins, viewsets
 
 from opal.core.serialization import OpalSerializer
+
 
 def _get_request_data(request):
     data = request.read()
