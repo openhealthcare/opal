@@ -36,11 +36,13 @@
             </span>
           </b>
           {% if request.user.is_staff %}
+          {% block stafftools %}
           <br>
           <a href="/admin/opal/episode/[[ episode.id ]]/" target="_blank">
             <i class="fa fa-cogs"></i>
             Admin
           </a>
+          {% endblock stafftools %}
           {% endif %}
         </div>
 
