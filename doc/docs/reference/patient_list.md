@@ -80,6 +80,12 @@ The child tag for this list. Should be lowercase, with no numbers or dashes. Und
 Groups Patient Lists together, to display as tabs at the top of any list in the group.
 ![patientlist-tabbed-view](../img/patientlist-tabbed-view.png).
 
+#### TabbedPatientListGroup.default_tab
+**Required** property which specifies which of the member `PatientList`s should be shown when the tab is selected. Must be a `PatientList` and must be in `member_lists`.
+
+#### TabbedPatientListGroup.display_name
+**Required** property which defines the name to be displayed in the list Switcher to represent the TabbedPatientListGroup
+
 #### TabbedPatientListGroup.for_list
 Returns the group for a given PatientList. Raises ValueError if not passed a PatientList.
 
@@ -94,6 +100,7 @@ A list containing the `PatientList` subclasses in this group.
 
 #### TabbedPatientListGroup.visible_to
 Predicate function to determine whether this list is meaningfully visible to this user.
+
 
 
 
