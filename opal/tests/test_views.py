@@ -150,15 +150,6 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
         context_data = view.get_context_data(slug="carnivore")
         self.assertEqual(None, context_data['list_group'])
 
-    def test_get_context_data_list_slug_no_list(self):
-        url = reverse("patient_list_template_view", kwargs=dict(slug="eater-herbivore"))
-        request = self.get_request(url)
-        view = self.setup_view(views.PatientListTemplateView, request, slug="eater-herbivore")
-        view.patient_list = None
-
-        context_data = view.get_context_data()
-        self.assertEqual(None, context_data['list_slug'])
-
     def test_get_column_context_no_list(self):
         view = views.PatientListTemplateView()
         view.patient_list = None
