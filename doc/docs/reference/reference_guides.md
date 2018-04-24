@@ -25,6 +25,7 @@ The following reference guides are available:
 [opal.core.fields](core_fields)| Field helpers - custom field types and utility functions|
 [opal.core.lookuplists](core_lookuplists.md) | Utilities for working with lookuplists |
 [opal.core.discoverable](core_discoverable.md) | Reusable feature groups for plugins and applications |
+[opal.core.serialization](core_serialization.md) | Helpers for serializing and deserializing data
 
 ### Angular Services
 |
