@@ -11,7 +11,7 @@ from django.utils.text import slugify
 
 from opal.core import discoverable, subrecords
 from opal.utils import AbstractBase
-from opal.core.views import OpalSerializer
+from opal.core.serialization import OpalSerializer
 from opal.core.pathway import Step
 
 

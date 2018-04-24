@@ -3,31 +3,11 @@ Re-usable view components
 """
 import functools
 import json
-import datetime
 
-from django.utils.dateformat import format
 from django.http import HttpResponse
-from django.core.serializers.json import DjangoJSONEncoder
-from django.conf import settings
 from rest_framework import mixins, viewsets
-import six
 
-
-class OpalSerializer(DjangoJSONEncoder):
-    def default(self, o):
-        if isinstance(o, six.binary_type):
-            return o.decode('utf-8')
-        if isinstance(o, datetime.time):
-            return format(o, settings.TIME_FORMAT)
-        elif isinstance(o, datetime.datetime):
-            return format(o, settings.DATETIME_FORMAT)
-        elif isinstance(o, datetime.date):
-            return format(
-                datetime.datetime.combine(
-                    o, datetime.datetime.min.time()
-                ), settings.DATE_FORMAT
-            )
-        super(OpalSerializer, self).default(o)
+from opal.core.serialization import OpalSerializer
 
 
 def _get_request_data(request):

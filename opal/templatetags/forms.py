@@ -6,7 +6,7 @@ from django import template
 from django.db import models
 from opal.core.subrecords import get_subrecord_from_model_name
 from opal.core import fields
-from opal.core.views import OpalSerializer
+from opal.core.serialization import OpalSerializer
 
 register = template.Library()
 

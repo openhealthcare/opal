@@ -75,6 +75,7 @@ pages:
       - Fields: reference/core_fields.md
       - Lookuplists: reference/core_lookuplists.md
       - Discoverable: reference/core_discoverable.md
+      - Serialization: reference/core_serialization.md
 
       # Angular Services
       - reference/javascript/patient_service.md
