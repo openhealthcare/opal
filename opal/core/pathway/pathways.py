@@ -52,7 +52,7 @@ class Pathway(discoverable.DiscoverableFeature):
 
         return reverse("pathway", kwargs=kwargs)
 
-    def redirect_url(save, user=None, patient=None, episode=None):
+    def redirect_url(self, user=None, patient=None, episode=None):
         episode = patient.episode_set.last()
         return "/#/patient/{0}/{1}".format(patient.id, episode.id)
 
