@@ -1,5 +1,5 @@
 """
-Import something - a commandline utility
+Load something - a commandline utility
 """
 import json
 
@@ -12,7 +12,7 @@ from opal.utils import write
 
 class Command(BaseCommand):
     """
-    manage.py import --patient path/to/file.json
+    manage.py load --patient path/to/file.json
 
     Import a patient from a JSON file
     """

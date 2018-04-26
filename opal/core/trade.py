@@ -8,41 +8,6 @@ from opal import models
 from opal.core import match, subrecords
 from opal.utils import remove_keys
 
-def match_or_create_patient(demographic, user):
-    """
-    Get a Patient record using demographics data
-
-    Attempt the lookup using three methods:
-        1. NHS Number
-        2. DoB, First name, & Surname
-        3. Create a new Demographic record
-    """
-    nhs_number = demographic.get('nhs_number')
-    if nhs_number:
-        try:
-            return Demographics.objects.get(nhs_number=nhs_number).patient
-        except (Demographics.DoesNotExist, models.Patient.DoesNotExist):
-            pass
-
-    dob        = demographic.get('date_of_birth')
-    first_name = demographic.get('first_name')
-    surname    = demographic.get('surname')
-
-    if all([dob, first_name, surname]):
-        date_of_birth = datetime.datetime.strptime(dob, "%d/%m/%Y").date()
-        try:
-            return Demographics.objects.get(
-                date_of_birth=date_of_birth,
-                first_name=first_name,
-                surname=surname,
-            ).patient
-        except (Demographics.DoesNotExist, models.Patient.DoesNotExist):
-            pass
-
-    patient = models.Patient.objects.create()
-    patient.demographics_set.get().update_from_dict(demographic, user)
-    return patient
-
 
 class OpalExportMatcher(match.Matcher):
     """
@@ -56,7 +21,6 @@ class OpalExportMatcher(match.Matcher):
     ]
 
     def get_demographic_dict(self):
-        self.data['date_of_birth'] = self.data['date_of_birth'].strftime('%d/%m/%Y')
         return self.data
 
 
