@@ -55,6 +55,10 @@ class Matcher(object):
         if isinstance(self.direct_match_field, Mapping):
             key    = self.direct_match_field.demographics_fieldname
             value  = self.data[self.direct_match_field.data_fieldname]
+            if not value:
+                raise exceptions.PatientNotFoundError(
+                    'Blank direct match attribute in data'
+                )
             kwargs = {key: value}
         else:
             kwargs = {
