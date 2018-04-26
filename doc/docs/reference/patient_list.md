@@ -34,7 +34,8 @@ Further information is available in the [Guides section](../guides/list_views.md
 Further information is available in the [Guides section](../guides/list_views.md#slug).
 
 #### PatientList.template_name
-If you want to over-ride the default Patient List template `opal/templates/patient_list/spreadsheet.html` with a custom template, or set the Card or Table PatientList templates, you can specify the path of the custom template (relative to `/myapp/templates/`) in this property.
+
+To override the default Patient List template `opal/templates/patient_list/layouts/spreadsheet_list.html` with a custom template specify the path of the custom template (relative to `/myapp/templates/`) with this property.
 
 ```python
 # myapp/patient_lists.py
@@ -44,6 +45,20 @@ class MyPatientList(PatientList):
 ```
 
 Will look for a template at `/myapp/templates/my_layout.html`.
+
+Opal includes three patient lists out of the box: `spreadsheet_list.html`, `card_list.html`, and `table_list.html`. See *Built-in PatientList Templates* below for further details.
+
+All these patient list layout templates use Django `{% extends %}` syntax to extend their `base` templates respectively. Each of these `base` templates contains Django `{% block %}`s, so you can override selected parts of the base template by creating a new file in `patient_lists/layouts/` called, for example `spreadsheet_list.html`, and redefining the content of those blocks.
+
+```html
+<!-- patient_lists/layouts/spreadsheet_list.html -->
+{% extends 'patient_lists/layouts/spreadsheet_list_base.html' %}
+
+{% block content %}
+... my new block content ...
+{% endblock content %}
+```
+
 
 #### PatientList.visible_to
 Further information is available in the [Guides section](../guides/list_views.md#access-control).
@@ -83,23 +98,29 @@ A list containing the `PatientList` subclasses in this group.
 Predicate function to determine whether this list is meaningfully visible to this user.
 
 
-
 ## Built-in PatientList Templates
 
-### 'Spreadsheet' PatientList Template
-This is the default template, which gives you a 'spreadsheet'-like view of the patient list, with the standard Opal sidebar, containing the default demographic info, tags and action tools.
+Opal includes three patient lists out of the box: `spreadsheet_list.html`, `card_list.html`, and `table_list.html`. 
+
+All these patient list layout templates use Django `{% extends %}` syntax to extend their `base` templates respectively. Each of these `base` templates contains Django `{% block %}`s, so you can override selected parts of the base template by creating a new file in `patient_lists/layouts/` called, for example `spreadsheet_list.html`, and redefining the content of those blocks.
+
+### 'Spreadsheet' PatientList layout
+
+This is the default template, which gives you a 'spreadsheet'-like view of the patient list, with a sidebar containing default demographic info, tags and action tools.
 
 ![patientlist-spreadsheet-template](../img/patientlist-spreadsheet-template.png)
 
-### 'Card' PatientList Template
+### 'Card' PatientList layout
+
 This will display the patient list as a series of 'cards', more analogous to a Twitter stream than the spreadsheet-like appearance of the default list.
 
 ![patientlist-card-template](../img/patientlist-card-template.png)
 
 To use this layout, change your PatientList `template_name` to "patient_lists/layouts/card_list.html".
 
-### 'Table' PatientList Template
-This will display the patient list as a wide 'table', similar to the spreadsheet-like appearance of the default list, but without the sidebar.
+### 'Table' PatientList Layout
+
+This will display the patient list as a wide 'table', similar to the spreadsheet-like appearance of the default list, but without the sidebar and without the ability to edit individual items from this view. This view is commonly used when the user action is to click through to a patient detail view, or to provide action buttons in a column.
 
 ![patientlist-table-template](../img/patientlist-table-template.png)
 
