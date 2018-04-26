@@ -40,7 +40,8 @@ class Matcher(object):
         demographics = {}
         for field in self.demographics_fields:
             if isinstance(field, Mapping):
-                demographics[field.demographics_fieldname] = data_fieldname
+                value = self.data[field.data_fieldname]
+                demographics[field.demographics_fieldname] = value
             else:
                 demographics[field] = self.data[field]
         return demographics
@@ -53,7 +54,7 @@ class Matcher(object):
         """
         if isinstance(self.direct_match_field, Mapping):
             key    = self.direct_match_field.demographics_fieldname
-            value  = self.direct_match_field.data_fieldname
+            value  = self.data[self.direct_match_field.data_fieldname]
             kwargs = {key: value}
         else:
             kwargs = {
@@ -71,7 +72,7 @@ class Matcher(object):
         for demographics_field in self.attribute_match_fields:
             if isinstance(demographics_field, Mapping):
                 key         = demographics_field.demographics_fieldname
-                value       = demographics_fieldname.data_fieldname
+                value       = self.data.get(demographics_field.data_fieldname)
                 kwargs[key] = value
             else:
                 kwargs[demographics_field] = self.data.get(demographics_field)
