@@ -5,7 +5,7 @@ import datetime
 from django.db import transaction
 
 from opal import models
-from opal.core import match, subrecords
+from opal.core import match, subrecords, serialization
 from opal.utils import remove_keys
 
 
@@ -71,7 +71,7 @@ def import_patient(data, user=None):
     2. Iterate through episodes in the patient data, creating them as required
     """
     demographics = data['demographics'][0]
-    demographics['date_of_birth'] = models.deserialize_date(
+    demographics['date_of_birth'] = serialization.deserialize_date(
         demographics['date_of_birth']
     )
     matcher = OpalExportMatcher(demographics)
