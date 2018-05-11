@@ -1,5 +1,9 @@
 ### 0.11.0 (Major Release)
 
+#### Adds in a radio_vertical template tag
+This displays the label and then the radio
+buttons as a vertical list.
+
 #### Removes "episode_history" from episode serialization
 
 Serialised episodes previously contained a "shallow" copy of all other episodes in
