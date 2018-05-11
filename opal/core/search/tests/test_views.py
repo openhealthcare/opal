@@ -85,6 +85,15 @@ class PatientSearchTestCase(BaseSearchTestCase):
         expected = json.loads(json.dumps(expected, cls=DjangoJSONEncoder))
         self.assertEqual(expected, data)
 
+    def test_patient_number_with_hash(self):
+        self.patient.demographics_set.update(hospital_number="#007")
+        url = '/search/patient/?hospital_number=%23007'
+        resp = self.get_response(url)
+        data = json.loads(resp.content.decode('UTF-8'))
+        expected = [self.patient.to_dict(self.user)]
+        expected = json.loads(json.dumps(expected, cls=DjangoJSONEncoder))
+        self.assertEqual(expected, data)
+
     # TODO:
     # Searching for a patient that exists but only has episodes that are
     # restricted teams that the user is not a member of.
