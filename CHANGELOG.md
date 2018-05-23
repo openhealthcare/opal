@@ -1,8 +1,12 @@
-### 0.10.2 (Minor Release)
+### 0.10.2 (Bugfix Release)
 
-Bumps compressor version from 1.5 to 2.2. The previous django bump stopped compressor minifying files
-when DEBUG is set to False. This fixes that issue by bringing compressor up to date
+The previous Django updgrade stopped compressor minifying files
+when DEBUG is set to False. This fixes that issue by upgrading Django compressor to
+a version that supports Django 1.10.
 
+#### Updates to the Dependency Graph
+
+* Django compressor: 1.5 -> 2.2
 
 ### 0.10.1 (Minor Release)
 
