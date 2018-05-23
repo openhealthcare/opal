@@ -1,3 +1,13 @@
+### 0.10.2 (Bugfix Release)
+
+The previous Django upgrade stopped compressor minifying files
+when DEBUG is set to False. This fixes that issue by upgrading Django compressor to
+a version that supports Django 1.10.
+
+#### Updates to the Dependency Graph
+
+* Django compressor: 1.5 -> 2.2
+
 ### 0.10.1 (Minor Release)
 
 #### Plugin API end points can now override application end points
