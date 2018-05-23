@@ -5,15 +5,10 @@ application to a later version where there are extra steps required.
 
 ### 0.10.1 -> 0.10.2
 
-The previous Django upgrade stopped compressor minifying files When DEBUG is set to False.
+Please upgrade django-compressor version to 2.2, ie update your requirements to
 
-This fixes that issue by upgrading Django compressor to
-a version that supports Django 1.10. This occured during the 0.9.0 -> 0.10.0 version change.
-The fix has been retroactively applied below, but please fix if now if upgrading from v0.10.*.
-
-  # requirements.txt
-  django-compressor==2.2
-
+# requirements.txt
+django-compressor==2.2
 
 ### 0.10.0 -> 0.10.1
 
