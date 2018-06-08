@@ -1,5 +1,8 @@
 ### 0.11.0 (Major Release)
 
+#### Adds options of `today` and `yesterday` in the date picker
+If you pass in `options=1` to the date picker. You will be provided with options to select today or yesterday in the form tag.
+
 #### Removes "episode_history" from episode serialization
 
 Serialised episodes previously contained a "shallow" copy of all other episodes in

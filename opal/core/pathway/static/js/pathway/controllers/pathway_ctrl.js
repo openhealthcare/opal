@@ -11,6 +11,8 @@ angular.module('opal.controllers').controller('PathwayCtrl', function(
     $scope.metadata = metadata;
     _.extend($scope, referencedata.toLookuplists());
     $scope.episode = episode;
+    $scope.now = new Date();
+    $scope.yesterday = moment().subtract(1, 'days').toDate();
     var pathwayService = $injector.get(
         pathwayDefinition.pathway_service
     );
