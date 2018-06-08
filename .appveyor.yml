@@ -5,9 +5,7 @@ environment:
 
 install:
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
-  # This is only pinning to a version rather than --upgrade pip until
-  # such times as the latest Pip doesn't error out with `cannot import name main`
-  - "pip install --disable-pip-version-check --user pip==9.0.3"
+  - "c:\\python27\\python.exe -m pip install --disable-pip-version-check --user --upgrade pip"
   - "%CMD_IN_ENV% python setup.py develop"
   - "pip install -r test-requirements.txt"
 
