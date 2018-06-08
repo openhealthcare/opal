@@ -51,6 +51,17 @@ class SubrecordsTestCase(OpalTestCase):
         self.assertIn(tmodels.HatWearer, all_subrecords)
 
 
+class SingletonsTestCase(OpalTestCase):
+
+    def test_singletons(self):
+        singletons = [i for i in subrecords.singletons()]
+        self.assertIn(tmodels.FamousLastWords, singletons)
+
+    def test_non_singletons(self):
+        singletons = [i for i in subrecords.singletons()]
+        self.assertNotIn(tmodels.HatWearer, singletons)
+
+
 class GetSubrecordFromAPINameTestCase(OpalTestCase):
 
     def test_get_get_subrecord_from_api_name(self):

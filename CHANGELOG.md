@@ -29,6 +29,11 @@ We removed a number of superfluous templates:
 * opal/templates/patient_lists/spreadsheet_list.html
 * opal/templates/layouts/left-panel.html
 
+#### Misc Changes
+
+* Adds the utility function `opal.core.subrecords.singletons()` which returns
+a generator function which will yield all subrecord singletons.
+
 
 ### 0.10.1 (Minor Release)
 
