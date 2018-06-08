@@ -32,3 +32,6 @@ enum('one', '2', 'III')
 
 A field that stores it's value as a generic foreign key to an Opal LookupList
 or as the value in a CharField.
+
+By default this is case insensitive, pass in `case_sensitive=True` to make
+it case sensitive when matching against lookup lists or synonyms.

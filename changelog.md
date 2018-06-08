@@ -38,6 +38,12 @@ hand craft data files for new applications.
 Use of `Model._title` to set a display name of a subrecord has issued a warning for several
 releases - this has now been removed and will no longer work.
 
+
+#### Free text or foreign key fields are now, by default case insensitive
+
+This can be adjusted with a flag on the field.
+
+
 #### Misc Changes
 
 * The undocumented Reopen Episode flow included in Opal < 0.8.0 has now been completely removed,
