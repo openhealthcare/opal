@@ -1,5 +1,14 @@
 ### 0.11.0 (Major Release)
 
+#### Changes all models
+
+#### Free text or foreign key fields are now, by default case insensitive
+This can be adjusted with a flag on the field.
+
+
+#### Deprecates the _title property
+In future we will use the standard `verbose_name` property as the display name. The abstract models have been changed to account for this.
+
 #### Removes "episode_history" from episode serialization
 
 Serialised episodes previously contained a "shallow" copy of all other episodes in
