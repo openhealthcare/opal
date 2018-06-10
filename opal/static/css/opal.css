@@ -196,9 +196,6 @@ h1.larger { font-size: 52px; }
 .content-offset-below-10 {
     margin-bottom: 10px;
 }
-.content-offset-5{
-    margin-top: 5px;
-}
 .content-offset-75 {margin-top: 75px; }
 .content-centered { padding-top: 20%; height: 100%; }
 .heading { position: fixed; top: 50px; width: 100%; z-index: 3; }
@@ -1219,7 +1216,6 @@ hr.bold{
   overflow-y: auto;
 }
 
-.btn.btn-opal-xs{
-  font-size: 12px;
-  padding: 2px 5px;
+.input-group-btn .btn{
+  padding: 8.5px 12px;
 }

@@ -10,31 +10,31 @@
     class="col-sm-8"
     {% endifequal %}
     >
-    <input type="text" class="form-control"
-           uib-datepicker-popup="dd/MM/yyyy"
-           ng-model="{{ model }}"
-           is-open="{{ formname }}[{{ element_name }} + '_open']"
-           min-date="{{ mindate}}"
-           max-date="maxDate"
-           show-button-bar="false"
-           show-weeks="false"
-           name="[[ {{ element_name}} ]]"
-           datepicker-options="{startingDay: 1}"
-           ng-focus="{{ formname }}[{{ element_name }} + '_open']=true"
-           close-text="Close"
-           {% if change %}
-           ng-change="{{ change }}"
-           {% endif %}
-           />
+    {% if options %}
+      <div class="input-group">
+    {% endif %}
+        <input type="text" class="form-control"
+               uib-datepicker-popup="dd/MM/yyyy"
+               ng-model="{{ model }}"
+               is-open="{{ formname }}[{{ element_name }} + '_open']"
+               min-date="{{ mindate}}"
+               max-date="maxDate"
+               show-button-bar="false"
+               show-weeks="false"
+               name="[[ {{ element_name}} ]]"
+               datepicker-options="{startingDay: 1}"
+               ng-focus="{{ formname }}[{{ element_name }} + '_open']=true"
+               close-text="Close"
+               {% if change %}
+               ng-change="{{ change }}"
+               {% endif %}
+               />
+     {% if options %}
+         <span class="input-group-btn">
+           <button type="button" class="btn btn-default" ng-click="{{ model }} = now" href="">Today</a>
+           <button type="button" class="btn btn-default" ng-click="{{ model }} = yesterday" href="">Yesterday</a>
+         </span>
+       </div>
+     {% endif %}
   </div>
-  {% if options %}
-    <div class="row">
-      <div class="col-sm-12 content-offset-5">
-        <div class="col-sm-8 col-sm-push-3">
-          <a ng-class="{active: ({{ model }}|sameDate: now)}" class="btn btn-primary btn-opal-xs" ng-click="{{ model }} = now" href="">Today</a>
-          <a ng-class="{active: ({{ model }}|sameDate: yesterday)}" class="btn btn-primary btn-opal-xs" ng-click="{{ model }} = yesterday" href="">Yesterday</a>
-        </div>
-      </div>
-    </div>
-  {% endif %}
 </div>
