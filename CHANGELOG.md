@@ -1,10 +1,5 @@
 ### 0.11.0 (Major Release)
 
-#### HelpTextStep can now use a custom template
-The `opal.core.pathway.steps.HelpTextStep` can now have a `help_text_template` passed in.
-
-This is the template for what will be placed in the side bar.
-
 #### Removes "episode_history" from episode serialization
 
 Serialised episodes previously contained a "shallow" copy of all other episodes in
@@ -22,6 +17,15 @@ importing `opal.core.api` in a plugin API no longer results in circular imports.
 Fixes a bug whereby episodes were serialising differently depending on whether
 the code path went via `.to_dict()` or `.objects.serialised()`.
 
+#### HelpTextStep can now use a custom template
+The `opal.core.pathway.steps.HelpTextStep` can now have a `help_text_template` passed in.
+
+This is the template for what will be placed in the side bar.
+
+#### Adds in a radio_vertical template tag
+This displays the label and then the radio
+buttons as a vertical list.
+
 #### opal.core.serialization
 
 A number of helpers related to serialization and deserialization have been brought
@@ -33,6 +37,11 @@ We removed a number of superfluous templates:
 
 * opal/templates/patient_lists/spreadsheet_list.html
 * opal/templates/layouts/left-panel.html
+
+#### Misc Changes
+
+* Adds the utility function `opal.core.subrecords.singletons()` which returns
+a generator function which will yield all subrecord singletons.
 
 
 ### 0.10.1 (Minor Release)
