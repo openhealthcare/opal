@@ -1,10 +1,5 @@
 ### 0.11.0 (Major Release)
 
-#### Changes all models
-
-#### Deprecates the _title property
-In future we will use the standard `verbose_name` property as the display name. The abstract models have been changed to account for this.
-
 #### Removes "episode_history" from episode serialization
 
 Serialised episodes previously contained a "shallow" copy of all other episodes in
@@ -13,6 +8,9 @@ from episode-oriented to patient-oriented detail views by default.
 
 This also includes a change to the signature of the `.serialised()` method of the
 Episode manager, which no longer accepts a `episode_history` kwarg.
+
+#### Deprecates the _title property
+In future we will use the standard `verbose_name` property as the display name. The abstract models have been changed to account for this.
 
 #### Core API registration
 
