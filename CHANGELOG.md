@@ -1,5 +1,10 @@
 ### 0.11.0 (Major Release)
 
+#### HelpTextStep can now use a custom template
+The `opal.core.pathway.steps.HelpTextStep` can now have a `help_text_template` passed in.
+
+This is the template for what will be placed in the side bar.
+
 #### Removes "episode_history" from episode serialization
 
 Serialised episodes previously contained a "shallow" copy of all other episodes in
