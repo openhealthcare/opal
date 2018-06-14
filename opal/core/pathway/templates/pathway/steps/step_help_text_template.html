@@ -19,11 +19,15 @@
       </div>
     </div> <!-- Col -->
     <div class="col-md-4">
-      <p markdown class="sidebar-help content-offset">
-        {% block side_bar %}
-          {{ step.get_help_text }}
-        {% endblock %}
-      </p>
+      {% block side_bar %}
+        {% if step.get_help_text_template %}
+          {% include step.get_help_text_template %}
+        {% else %}
+          <p markdown class="sidebar-help content-offset">
+            {{ step.get_help_text }}
+          </p>
+        {% endif %}
+      {% endblock %}
     </div>
   </div>
 </div>
