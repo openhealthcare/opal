@@ -99,10 +99,14 @@ representations of the data.
 
 #### Subrecord.get_display_name()
 
-Classmethod that returns the display name of the class. This is used
-to display the name of the class. This is used in, for example, reference panels and modals.
+Classmethod that returns the display name of the subrecord.
 
-By default this defers to the [verbose_name](https://docs.djangoproject.com/en/dev/ref/models/options/#verbose-name) property
+This is used as the user visible title of subrecord panels and modals amongst other places.
+
+By default this uses the Django
+[Meta verbose_name](https://docs.djangoproject.com/en/dev/ref/models/options/#verbose-name) 
+property
+
 ```python
 >>> PastMedicalHistory.get_display_name()
 "PMH"
