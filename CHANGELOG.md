@@ -40,6 +40,12 @@ technologies that were in widespread use after say, 2006.
 We have altered `base.html` to specify `"X-UA-Compatible" content="IE=Edge"`. If you
 override `base.html`in your application we advise that you add this `<meta>` tag.
 
+#### Misc Changes
+
+* Adds the utility function `opal.core.subrecords.singletons()` which returns
+a generator function which will yield all subrecord singletons.
+
+
 ### 0.10.1 (Minor Release)
 
 #### Plugin API end points can now override application end points
