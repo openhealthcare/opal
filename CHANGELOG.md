@@ -9,6 +9,9 @@ from episode-oriented to patient-oriented detail views by default.
 This also includes a change to the signature of the `.serialised()` method of the
 Episode manager, which no longer accepts a `episode_history` kwarg.
 
+#### Deprecates the _title property
+In future we will use the standard `verbose_name` property as the display name. The abstract models have been changed to account for this.
+
 #### Core API registration
 
 A refactor in the way that the core APIs are registered by Opal means that
