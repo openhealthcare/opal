@@ -109,7 +109,8 @@ available by using the unit argument e.g.
 
 ### {% radio ... %}
 
-Generates an inline radio input. Ie the options are put from left to right.
+Generates an inline radio input.
+Options are rendered in rows with multiple options on each row.
 
 Keywords:
 
@@ -126,7 +127,8 @@ Keywords:
 
 ### {% radio_vertical ... %}
 
-Generates a vertical radio input. Ie the options are listed from top to bottom.
+Generates a vertical radio input.
+Options are rendered one option per row.
 
 Keywords:
 
