@@ -1215,3 +1215,7 @@ hr.bold{
   max-height: 150px;
   overflow-y: auto;
 }
+
+.input-group-btn .btn{
+  padding: 8.5px 12px;
+}

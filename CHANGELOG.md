@@ -1,5 +1,13 @@
 ### 0.11.0 (Major Release)
 
+
+#### Adds options of `today` and `yesterday` in the date picker
+If you pass in `user_options=True` to the date picker. You will be provided with options to select today or yesterday in the form tag.
+
+#### Adds `dateHelper` to the rootScope
+The dateHelper has the functions `now` and `yesterday` that return javascript Dates for
+the current time and the current time - 1 day.
+
 #### Removes "episode_history" from episode serialization
 
 Serialised episodes previously contained a "shallow" copy of all other episodes in
