@@ -10,7 +10,9 @@ This also includes a change to the signature of the `.serialised()` method of th
 Episode manager, which no longer accepts a `episode_history` kwarg.
 
 #### Deprecates the _title property
-In future we will use the standard `verbose_name` property as the display name. The abstract models have been changed to account for this.
+
+In future we will use the standard `verbose_name` property as the display name.
+The abstract models have been changed to account for this.
 
 #### Core API registration
 
@@ -41,7 +43,7 @@ We removed a number of superfluous templates:
 * opal/templates/patient_lists/spreadsheet_list.html
 * opal/templates/layouts/left-panel.html
 
-#### Static asset minification
+#### Static asset minification
 
 The Django upgrade in Opal 0.10 stopped compressor minifying files
 when DEBUG is set to False. This fixes that issue by upgrading Django compressor to
@@ -62,6 +64,8 @@ override `base.html`in your application we advise that you add this `<meta>` tag
 
 * Adds the utility function `opal.core.subrecords.singletons()` which returns
 a generator function which will yield all subrecord singletons.
+* Fixes a URI encoding bug in the `Episode.findByHospitalNumber()` method that
+made hospital numbers including `#` or `/` raise an error.
 
 #### Updates to the Dependency Graph
 
