@@ -105,7 +105,6 @@ class Pathway(discoverable.DiscoverableFeature):
         if patient and not episode:
             episode = patient.create_episode()
 
-
             for step in self.get_steps():
                 step.pre_save(
                     data, user, patient=patient, episode=episode
