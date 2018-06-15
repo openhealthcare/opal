@@ -37,7 +37,3 @@ class InitializationError(Error):
 
 class MissingTemplateError(Error):
     pass
-
-
-class SignatureError(Error):
-    pass
