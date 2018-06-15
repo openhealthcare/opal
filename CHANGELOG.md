@@ -1,5 +1,39 @@
 ### 0.11.0 (Major Release)
 
+#### Removes "episode_history" from episode serialization
+
+Serialised episodes previously contained a "shallow" copy of all other episodes in
+a property named `episode_history`. This was primarially useful before we switched
+from episode-oriented to patient-oriented detail views by default.
+
+This also includes a change to the signature of the `.serialised()` method of the
+Episode manager, which no longer accepts a `episode_history` kwarg.
+
+#### Deprecates the _title property
+In future we will use the standard `verbose_name` property as the display name. The abstract models have been changed to account for this.
+
+#### Core API registration
+
+A refactor in the way that the core APIs are registered by Opal means that
+importing `opal.core.api` in a plugin API no longer results in circular imports.
+
+Fixes a bug whereby episodes were serialising differently depending on whether
+the code path went via `.to_dict()` or `.objects.serialised()`.
+
+#### HelpTextStep can now use a custom template
+The `opal.core.pathway.steps.HelpTextStep` can now have a `help_text_template` passed in.
+
+This is the template for what will be placed in the side bar.
+
+#### Adds in a radio_vertical template tag
+This displays the label and then the radio
+buttons as a vertical list.
+
+#### opal.core.serialization
+
+A number of helpers related to serialization and deserialization have been brought
+together in the new module `opal.core.serialization`.
+
 #### as_menuitem helpers
 
 Applications using Opal Menuitems often wish to add menu items for Patient Lists and
@@ -7,6 +41,40 @@ Pathways.
 
 To aid this, the `.as_menuitem()` method now creates one from the target class with
 sensible but overridable defaults.
+
+#### Template removals
+
+We removed a number of superfluous templates:
+
+* opal/templates/patient_lists/spreadsheet_list.html
+* opal/templates/layouts/left-panel.html
+
+#### Static asset minification
+
+The Django upgrade in Opal 0.10 stopped compressor minifying files
+when DEBUG is set to False. This fixes that issue by upgrading Django compressor to
+a version that supports Django 1.10.
+
+#### The return of an old friend: IE Document modes
+
+Users report that their system administrators sometimes configure Internet Explorer
+in such a way that it uses e.g. IE7 Document mode by default.
+
+This is problematical for Opal applications which do in fact make use of internet
+technologies that were in widespread use after say, 2006.
+
+We have altered `base.html` to specify `"X-UA-Compatible" content="IE=Edge"`. If you
+override `base.html`in your application we advise that you add this `<meta>` tag.
+
+#### Misc Changes
+
+* Adds the utility function `opal.core.subrecords.singletons()` which returns
+a generator function which will yield all subrecord singletons.
+
+#### Updates to the Dependency Graph
+
+* Django compressor: 1.5 -> 2.2
+
 
 ### 0.10.1 (Minor Release)
 
@@ -23,10 +91,16 @@ Fonts are now served from Opal's static assets rather than from the Google CDN.
 
 Print/screen differences are now in opal.css with media tags.
 
-#### google analytics is now deferred
+#### Google Analytics is now deferred
 
 The loading in of Google Analytics is now deferred to the bottom of the body
 tag to allow the page to load without waiting on analytics scripts to load.
+
+#### Scaffold version control failures
+
+The `startplugin` and `startproject` commands initialize a git repository by
+default. If we (The `subprocess` module) cannot find the `git` command, we now
+continue with a message printed to screen rather than raising an exception.
 
 #### Episode.objects.serialised now uses select_related
 
@@ -35,6 +109,7 @@ we use `Episode.objects.serialised`. This provides a speed boost for application
 with moderately heavy `ForeignKeyOrFreeText` usage.
 
 (Approx 30-40% in our tests.)
+
 
 ### 0.10.0 (Major Release)
 

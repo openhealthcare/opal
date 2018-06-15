@@ -6,7 +6,7 @@ from django import template
 from django.db import models
 from opal.core.subrecords import get_subrecord_from_model_name
 from opal.core import fields
-from opal.core.views import OpalSerializer
+from opal.core.serialization import OpalSerializer
 
 register = template.Library()
 
@@ -224,11 +224,20 @@ def timepicker(*args, **kwargs):
     return extract_common_args(kwargs)
 
 
-@register.inclusion_tag('_helpers/radio.html')
-def radio(*args, **kwargs):
+def _radio(*args, **kwargs):
     ctx = extract_common_args(kwargs)
     ctx["lookuplist"] = kwargs.pop("lookuplist", ctx.get("lookuplist", None))
     return ctx
+
+
+@register.inclusion_tag('_helpers/radio.html')
+def radio(*args, **kwargs):
+    return _radio(*args, **kwargs)
+
+
+@register.inclusion_tag('_helpers/radio_vertical.html')
+def radio_vertical(*args, **kwargs):
+    return _radio(*args, **kwargs)
 
 
 @register.inclusion_tag('_helpers/select.html')

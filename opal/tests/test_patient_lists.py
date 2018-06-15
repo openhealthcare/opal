@@ -300,7 +300,7 @@ class TestPatientList(OpalTestCase):
         self.assertEqual(expected, list(PatientList.list()))
 
     def test_get_template_names_default(self):
-        self.assertEqual(['patient_lists/spreadsheet_list.html'],
+        self.assertEqual(['patient_lists/layouts/spreadsheet_list.html'],
                          PatientList().get_template_names())
 
     def test_get_template_names_overridden_proerty(self):

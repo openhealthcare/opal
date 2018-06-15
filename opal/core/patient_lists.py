@@ -75,7 +75,7 @@ class PatientList(discoverable.DiscoverableFeature,
     define the columns shown and a queryset that defines the episodes shown
     """
     module_name        = 'patient_lists'
-    template_name      = 'patient_lists/spreadsheet_list.html'
+    template_name      = 'patient_lists/layouts/spreadsheet_list.html'
     order              = 0
     comparator_service = None
     # whether we display the add patient button

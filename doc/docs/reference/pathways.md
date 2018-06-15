@@ -91,7 +91,13 @@ More detail on Steps is given in the [Guides section on Pathways](../guides/path
 
 ## HelpTextStep
 
-A Step subclass with help text to the side of the form
+A Step subclass with help text to the side of the form.
+
+As arguments these takes either `help_text` or `help_text_template`.
+
+`help_text` will be displayed in a side bar next to the step.
+
+`help_text_template` will completely replace the normal side bar template with the template that you pass in.
 
 ## FindPatientStep
 

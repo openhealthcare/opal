@@ -12,7 +12,7 @@ from six import string_types
 
 from opal.core import discoverable, menus, subrecords
 from opal.utils import AbstractBase, get
-from opal.core.views import OpalSerializer
+from opal.core.serialization import OpalSerializer
 from opal.core.pathway import Step
 
 
@@ -80,7 +80,7 @@ class Pathway(discoverable.DiscoverableFeature):
 
         return reverse("pathway", kwargs=kwargs)
 
-    def redirect_url(save, user=None, patient=None, episode=None):
+    def redirect_url(self, user=None, patient=None, episode=None):
         episode = patient.episode_set.last()
         return "/#/patient/{0}/{1}".format(patient.id, episode.id)
 
@@ -89,7 +89,8 @@ class Pathway(discoverable.DiscoverableFeature):
         if patient and not episode:
             episode = patient.create_episode()
 
-        for step in self.get_steps():
+
+            for step in self.get_steps():
             step.pre_save(
                 data, user, patient=patient, episode=episode
             )

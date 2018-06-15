@@ -408,8 +408,8 @@ def register_subrecords():
 
 
 def initialize_router():
-    # plugin apis get initialised first, so that plugins
-    # can
+    # Plugin APIs get initialized first, so that plugins
+    # can override core Opal APIs if they need to.
     register_plugin_apis()
     router.register('patient', PatientViewSet)
     router.register('episode', EpisodeViewSet)
@@ -423,6 +423,3 @@ def initialize_router():
     router.register('referencedata', ReferenceDataViewSet)
     router.register('metadata', MetadataViewSet)
     register_subrecords()
-
-
-initialize_router()
