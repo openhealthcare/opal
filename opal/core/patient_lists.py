@@ -2,7 +2,6 @@
 This module defines the base PatientList classes.
 """
 from opal import utils
-from opal.utils import get
 from opal.core import discoverable, exceptions, menus, metadata
 
 
@@ -78,6 +77,8 @@ class PatientList(discoverable.DiscoverableFeature,
     template_name      = 'patient_lists/layouts/spreadsheet_list.html'
     order              = 0
     comparator_service = None
+    icon               = None
+    display_name       = None
     # whether we display the add patient button
     allow_add_patient  = True
 
@@ -90,6 +91,20 @@ class PatientList(discoverable.DiscoverableFeature,
         Return the absolute URL for this list
         """
         return '/#/list/{0}'.format(klass.get_slug())
+
+    @classmethod
+    def get_icon(klass):
+        """
+        Default getter function - returns the `icon` proprety
+        """
+        return klass.icon
+
+    @classmethod
+    def get_display_name(klass):
+        """
+        Default getter function - returns the `display_name` property
+        """
+        return klass.display_name
 
     @classmethod
     def list(klass):
@@ -117,8 +132,8 @@ class PatientList(discoverable.DiscoverableFeature,
         return menus.MenuItem(
             href=kwargs.get('href', kls.get_absolute_url()),
             activepattern=kwargs.get('activepattern', kls.get_absolute_url()),
-            icon=kwargs.get('icon', get(kls, 'icon', None)),
-            display=kwargs.get('display', get(kls, 'display_name')),
+            icon=kwargs.get('icon', kls.get_icon()),
+            display=kwargs.get('display', kls.get_display_name()),
         )
 
     def get_template_prefixes(self):

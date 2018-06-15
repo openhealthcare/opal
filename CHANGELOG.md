@@ -71,6 +71,12 @@ override `base.html`in your application we advise that you add this `<meta>` tag
 * Adds the utility function `opal.core.subrecords.singletons()` which returns
 a generator function which will yield all subrecord singletons.
 
+* Adds the method `.get_absolute_url()` to `opal.core.pathways.Pathway` and
+`opal.core.patient_lists.PatientList`.
+
+* Adds the Opal error `SignatureError`.
+
+
 #### Updates to the Dependency Graph
 
 * Django compressor: 1.5 -> 2.2
@@ -235,25 +241,6 @@ Adds the `rows` option to the textarea template tag which just fills in the html
 `rows` attribute. Text areas are defaulted to 5 rows (the same as before).
 
 Configures the setting `CSRF_FAILURE_VIEW` to use the bundled `opal.views.csrf_failure` view.
-
-Adds the utility function `opal.utils.get`. Similar to the `getattr` builtin, `get` looks
-for a method named `get_$attr` and will call that if it exists.
-<<<<<<< HEAD
-
-Adds the method `.get_absolute_url()` to `opal.core.pathways.Pathway` and
-`opal.core.patient_lists.PatientList`.
-
-Adds the Opal error `SignatureError`.
-
-Pathway slugs may now include hyphens as well as numbers, lower case letters and underscores.
-
-=======
->>>>>>> v0.11.0
-
-Adds the method `.get_absolute_url()` to `opal.core.pathways.Pathway` and
-`opal.core.patient_lists.PatientList`.
-
-Adds the Opal error `SignatureError`.
 
 Pathway slugs may now include hyphens as well as numbers, lower case letters and underscores.
 
