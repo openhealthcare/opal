@@ -295,6 +295,16 @@ class DatepickerTestCase(TestCase):
         self.assertIn('ng-model="bai"', rendered)
         self.assertIn('hai', rendered)
 
+    def test_datepicker_options_default(self):
+        template = Template('{% load forms %}{% datepicker label="hai" model="bai" mindate="Date(2013, 12, 22)" %}')
+        rendered = template.render(Context({}))
+        self.assertNotIn('bai = now', rendered)
+
+    def test_datepicker_options_on(self):
+        template = Template('{% load forms %}{% datepicker label="hai" model="bai" mindate="Date(2013, 12, 22)" user_options=True %}')
+        rendered = template.render(Context({}))
+        self.assertIn('bai = dateHelper.now()', rendered)
+
     def test_datepicker_min_date(self):
         template = Template('{% load forms %}{% datepicker label="hai" model="bai" mindate="Date(2013, 12, 22)" %}')
         rendered = template.render(Context({}))
