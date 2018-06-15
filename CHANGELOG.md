@@ -41,7 +41,9 @@ We removed a number of superfluous templates:
 * opal/templates/patient_lists/spreadsheet_list.html
 * opal/templates/layouts/left-panel.html
 
-The previous Django upgrade stopped compressor minifying files
+#### Static asset minification
+
+The Django upgrade in Opal 0.10 stopped compressor minifying files
 when DEBUG is set to False. This fixes that issue by upgrading Django compressor to
 a version that supports Django 1.10.
 
