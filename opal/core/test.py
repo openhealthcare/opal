@@ -8,7 +8,7 @@ from django.test import TestCase
 from django.test.client import RequestFactory
 from django.utils.functional import cached_property
 
-from opal.core.views import OpalSerializer
+from opal.core.serialization import OpalSerializer
 from opal.models import UserProfile, Patient
 
 

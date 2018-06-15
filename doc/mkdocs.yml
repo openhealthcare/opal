@@ -75,6 +75,8 @@ pages:
       - Fields: reference/core_fields.md
       - Lookuplists: reference/core_lookuplists.md
       - Discoverable: reference/core_discoverable.md
+      - Serialization: reference/core_serialization.md
+      - Subrecords: reference/core_subrecords.md
 
       # Angular Services
       - reference/javascript/patient_service.md
@@ -117,7 +119,7 @@ dev_addr: 0.0.0.0:8965
 include_next_prev: false
 
 extra:
-  version: v0.10.1
+  version: v0.11.0
 
 markdown_extensions:
     - fenced_code
