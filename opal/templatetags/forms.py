@@ -216,6 +216,7 @@ def datepicker(*args, **kwargs):
     context = _input(*args, **kwargs)
     if 'mindate' in kwargs:
         context['mindate'] = kwargs['mindate']
+    context["options"] = kwargs.pop("options", False)
     return context
 
 

@@ -164,6 +164,14 @@ filters.filter('daysSince', function(daysToFilter){
     };
 });
 
+filters.filter('sameDate', function(toMomentFilter){
+		return function(d1, d2){
+			if(d1 & d2){
+				return toMomentFilter(d1).isSame(toMomentFilter(d2, 'day'));
+			}
+		};
+});
+
 
 filters.filter('future', function(){
     return function(i, includeToday){
