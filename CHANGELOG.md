@@ -41,6 +41,17 @@ We removed a number of superfluous templates:
 * opal/templates/patient_lists/spreadsheet_list.html
 * opal/templates/layouts/left-panel.html
 
+#### The return of an old friend: IE Document modes
+
+Users report that their system administrators sometimes configure Internet Explorer
+in such a way that it uses e.g. IE7 Document mode by default.
+
+This is problematical for Opal applications which do in fact make use of internet
+technologies that were in widespread use after say, 2006.
+
+We have altered `base.html` to specify `"X-UA-Compatible" content="IE=Edge"`. If you
+override `base.html`in your application we advise that you add this `<meta>` tag.
+
 #### Misc Changes
 
 * Adds the utility function `opal.core.subrecords.singletons()` which returns
