@@ -1,5 +1,12 @@
 ### 0.11.0 (Major Release)
 
+#### Adds options of `today` and `yesterday` in the date picker
+If you pass in `user_options=True` to the date picker. You will be provided with options to select today or yesterday in the form tag.
+
+#### Adds `dateHelper` to the rootScope
+The dateHelper has the functions `now` and `yesterday` that return javascript Dates for
+the current time and the current time - 1 day.
+
 #### Deprecates the _title property
 In future we will use the standard `verbose_name` property as the display name. The abstract models have been changed to account for this.
 
