@@ -41,6 +41,12 @@ We removed a number of superfluous templates:
 * opal/templates/patient_lists/spreadsheet_list.html
 * opal/templates/layouts/left-panel.html
 
+#### Static asset minification
+
+The Django upgrade in Opal 0.10 stopped compressor minifying files
+when DEBUG is set to False. This fixes that issue by upgrading Django compressor to
+a version that supports Django 1.10.
+
 #### The return of an old friend: IE Document modes
 
 Users report that their system administrators sometimes configure Internet Explorer
@@ -56,6 +62,10 @@ override `base.html`in your application we advise that you add this `<meta>` tag
 
 * Adds the utility function `opal.core.subrecords.singletons()` which returns
 a generator function which will yield all subrecord singletons.
+
+#### Updates to the Dependency Graph
+
+* Django compressor: 1.5 -> 2.2
 
 
 ### 0.10.1 (Minor Release)
