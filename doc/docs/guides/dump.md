@@ -28,12 +28,6 @@ _is_singleton is a boolean property that ensures that there is only one of this 
 
 Effectively this defaults to False.
 
-### _title
-
-_title sets the column headings in list view.
-
-Effectively this defaults to camel_case_to_underscore() on the class name.
-
 ### _sort
 
 _sort names a field by which we would like to sort the display of subrecords.

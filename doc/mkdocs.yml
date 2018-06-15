@@ -76,6 +76,7 @@ pages:
       - Lookuplists: reference/core_lookuplists.md
       - Discoverable: reference/core_discoverable.md
       - Serialization: reference/core_serialization.md
+      - Subrecords: reference/core_subrecords.md
 
       # Angular Services
       - reference/javascript/patient_service.md

@@ -891,6 +891,11 @@ class Subrecord(UpdatesFromDictMixin, ToDictMixin, TrackedModel, models.Model):
     @classmethod
     def get_display_name(cls):
         if hasattr(cls, '_title'):
+            w = "_title has been deprecated and will be removed in v0.12.0, "
+            w = w + "please use verbose_name in Meta instead for {}"
+            logging.warning(
+                w.format(cls.__name__)
+            )
             return cls._title
         if cls._meta.verbose_name.islower():
             return cls._meta.verbose_name.title()
@@ -1043,7 +1048,6 @@ class EpisodeSubrecord(Subrecord):
 class Tagging(TrackedModel, models.Model):
     _is_singleton = True
     _advanced_searchable = True
-    _title = 'Teams'
 
     user     = models.ForeignKey(User, null=True, blank=True)
     episode  = models.ForeignKey(Episode, null=False)
@@ -1052,6 +1056,7 @@ class Tagging(TrackedModel, models.Model):
 
     class Meta:
         unique_together = (('value', 'episode', 'user'))
+        verbose_name = "Teams"
 
     def __unicode__(self):
         if self.user is not None:
@@ -1468,7 +1473,6 @@ class Diagnosis(EpisodeSubrecord):
     This is a working-diagnosis list, will often contain things that are
     not technically diagnoses, but is for historical reasons, called diagnosis.
     """
-    _title = 'Diagnosis / Issues'
     _sort = 'date_of_diagnosis'
     _icon = 'fa fa-stethoscope'
 
@@ -1483,6 +1487,7 @@ class Diagnosis(EpisodeSubrecord):
 
     class Meta:
         abstract = True
+        verbose_name = 'Diagnosis / Issues'
         verbose_name_plural = "Diagnoses"
 
     def __unicode__(self):
@@ -1494,7 +1499,6 @@ class Diagnosis(EpisodeSubrecord):
 
 
 class PastMedicalHistory(EpisodeSubrecord):
-    _title = 'PMH'
     _sort = 'year'
     _icon = 'fa fa-history'
 
@@ -1504,11 +1508,11 @@ class PastMedicalHistory(EpisodeSubrecord):
 
     class Meta:
         abstract = True
+        verbose_name = "PMH"
         verbose_name_plural = "Past medical histories"
 
 
 class Investigation(EpisodeSubrecord):
-    _title = 'Investigations'
     _sort = 'date_ordered'
     _icon = 'fa fa-crosshairs'
 
@@ -1566,6 +1570,7 @@ class Investigation(EpisodeSubrecord):
 
     class Meta:
         abstract = True
+        verbose_name = 'Investigations'
 
 
 class Role(models.Model):
@@ -1653,7 +1658,6 @@ class UserProfile(models.Model):
 
 
 class InpatientAdmission(PatientSubrecord, ExternallySourcedModel):
-    _title = "Inpatient Admissions"
     _icon = 'fa fa-map-marker'
     _sort = "-admitted"
     _advanced_searchable = False
@@ -1665,6 +1669,9 @@ class InpatientAdmission(PatientSubrecord, ExternallySourcedModel):
     room_code = models.CharField(max_length=255, blank=True)
     bed_code = models.CharField(max_length=255, blank=True)
     admission_diagnosis = models.CharField(max_length=255, blank=True)
+
+    class Meta:
+        verbose_name = 'Inpatient Admissions'
 
     def update_from_dict(self, data, *args, **kwargs):
         if "id" not in data:
@@ -1683,12 +1690,12 @@ class InpatientAdmission(PatientSubrecord, ExternallySourcedModel):
 
 
 class ReferralRoute(EpisodeSubrecord):
-    _title = "Referral Route"
     _icon = 'fa fa-level-up'
     _is_singleton = True
 
     class Meta:
         abstract = True
+        verbose_name = 'Referral Route'
 
     internal = models.NullBooleanField()
 
@@ -1711,11 +1718,11 @@ class PatientConsultation(EpisodeSubrecord):
     _sort = 'when'
     _icon = 'fa fa-comments'
     _list_limit = 3
-    _title = "Patient Consultation"
     _angular_service = 'PatientConsultationRecord'
 
     class Meta:
         abstract = True
+        verbose_name = "Patient Consultation"
 
     when = models.DateTimeField(null=True, blank=True)
     initials = models.CharField(
@@ -1736,11 +1743,11 @@ class PatientConsultation(EpisodeSubrecord):
 
 
 class SymptomComplex(EpisodeSubrecord):
-    _title = 'Symptoms'
     _icon = 'fa fa-stethoscope'
 
     class Meta:
         abstract = True
+        verbose_name = "Symptoms"
         verbose_name_plural = "Symptom complexes"
 
     symptoms = models.ManyToManyField(
