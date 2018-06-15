@@ -61,6 +61,25 @@ MyPathway.get_absolute_url()
 "/pathway/#/mypathway/"
 ```
 
+#### `Pathway.get_icon()`
+
+Returns a string which is the icon for this pathway. Defaults to None.
+
+```python
+MyPathway.get_icon()
+"fa-wave"
+```
+
+#### `Pathway.get_display_name()`
+
+Returns a string which is the display name for this pathway. Defaults to None
+
+```python
+MyPathway.get_display_name()
+"The Form"
+```
+
+
 ### Methods
 
 #### `Pathway.redirect_url(self, patient, episde)`

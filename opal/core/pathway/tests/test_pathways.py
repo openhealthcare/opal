@@ -23,7 +23,7 @@ from opal.core.pathway import pathways, Pathway, WizardPathway
 class PathwayExample(pathways.Pathway):
     display_name = "Dog Owner"
     slug = 'dog-owner'
-    icon = "fa fa-something"
+    icon = "fa fa-tintin"
     template_url = "/somewhere"
 
     steps = (
@@ -449,6 +449,12 @@ class TestPathwayMethods(OpalTestCase):
     def test_get_absolute_url(self):
         self.assertEqual('/pathway/#/colourpathway/', ColourPathway.get_absolute_url())
 
+    def test_get_icon(self):
+        self.assertEqual('fa fa-tintin', PathwayExample.get_icon())
+
+    def test_get_display_name(self):
+        self.assertEqual('Dog Owner', PathwayExample.get_display_name())
+
     def test_as_menuitem(self):
         menu = ColourPathway.as_menuitem()
         self.assertEqual('/pathway/#/colourpathway/', menu.href)
@@ -484,7 +490,7 @@ class TestPathwayMethods(OpalTestCase):
         as_dict = PathwayExample().to_dict(is_modal=False)
         self.assertEqual(len(as_dict["steps"]), 2)
         self.assertEqual(as_dict["display_name"], "Dog Owner")
-        self.assertEqual(as_dict["icon"], "fa fa-something")
+        self.assertEqual(as_dict["icon"], "fa fa-tintin")
         self.assertEqual(as_dict["save_url"], reverse(
             "pathway", kwargs=dict(name="dog-owner")
         ))

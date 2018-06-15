@@ -24,10 +24,11 @@ Begin discoverable definitions for test cases
 
 
 class TaggingTestPatientList(TaggedPatientList):
-    display_name = "Herbivores"
-    tag = "eater"
-    subtag = "herbivore"
-    order = 4
+    display_name       = "Herbivores"
+    tag                = "eater"
+    subtag             = "herbivore"
+    order              = 4
+    icon               = 'fa-diplodocus'
     comparator_service = 'HerbivoresSortOrder'
 
     schema = [
@@ -178,6 +179,12 @@ class TestPatientList(OpalTestCase):
     def test_get_absolute_url(self):
         self.assertEqual('/#/list/carnivore', TaggingTestNotSubTag.get_absolute_url())
 
+    def test_get_icon(self):
+        self.assertEqual('fa-diplodocus', TaggingTestPatientList.get_icon())
+
+    def test_get_display_name(self):
+        self.assertEqual('Herbivores', TaggingTestPatientList.get_display_name())
+
     def test_get_queryset_default(self):
         mock_queryset = MagicMock('Mock Queryset')
         with patch.object(PatientList, 'queryset',
@@ -213,7 +220,7 @@ class TestPatientList(OpalTestCase):
         menu = TaggingTestPatientList.as_menuitem()
         self.assertEqual(menu.href, href)
         self.assertEqual(menu.activepattern, href)
-        self.assertEqual(menu.icon, None)
+        self.assertEqual(menu.icon, 'fa-diplodocus')
         self.assertEqual(menu.display, 'Herbivores')
 
     def test_as_menuitem_from_kwargs(self):

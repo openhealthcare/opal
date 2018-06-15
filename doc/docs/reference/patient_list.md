@@ -71,6 +71,26 @@ Returns a string which is the absolute URL of this list.
 MyList.get_absolute_url()
 "/#/list/my_list"
 ```
+
+#### `PatientList.get_icon()`
+
+Returns a string which is the icon for this list. Defaults to None.
+
+```python
+MyList.get_icon()
+"fa-wave"
+```
+
+#### `PatientList.get_display_name()`
+
+Returns a string which is the display name for this list. Defaults to None
+
+```python
+MyList.get_display_name()
+"The List"
+```
+
+
 #### `PatientList.as_menuitem(href=None, activepattern=None, icon=None, display=None)`
 
 Return an instance of `opal.core.menus.MenuItem` that will direct the user to this

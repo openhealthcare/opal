@@ -71,8 +71,8 @@ override `base.html`in your application we advise that you add this `<meta>` tag
 * Adds the utility function `opal.core.subrecords.singletons()` which returns
 a generator function which will yield all subrecord singletons.
 
-* Adds the method `.get_absolute_url()` to `opal.core.pathways.Pathway` and
-`opal.core.patient_lists.PatientList`.
+* Adds the methods `.get_absolute_url()`, `.get_icon()` and `get_display_name()`
+to `opal.core.pathways.Pathway` and `opal.core.patient_lists.PatientList`.
 
 * Adds the Opal error `SignatureError`.
 
