@@ -208,21 +208,14 @@ def field_to_dict(subrecord, field_name):
 def get_data_dictionary():
     schema = {}
     for subrecord in subrecords():
+        if getattr(subrecord, '_exclude_from_extract', False):
+            continue
+
         field_names = subrecord._get_fieldnames_to_extract()
         record_schema = [field_to_dict(subrecord, i) for i in field_names]
         schema[subrecord.get_display_name()] = record_schema
     field_names = Episode._get_fieldnames_to_extract()
-    field_names.remove("start")
-    field_names.remove("end")
     schema["Episode"] = [field_to_dict(Episode, i) for i in field_names]
-    schema["Episode"].append(dict(
-        display_name="Start",
-        type_display_name="Date & Time"
-    ))
-    schema["Episode"].append(dict(
-        display_name="End",
-        type_display_name="Date & Time"
-    ))
     return OrderedDict(sorted(schema.items(), key=lambda t: t[0]))
 
 
