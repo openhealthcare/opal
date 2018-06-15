@@ -145,19 +145,16 @@ Opal includes three patient lists out of the box: `spreadsheet_list.html`, `card
 
 All these patient list layout templates use Django `{% extends %}` syntax to extend their `base` templates respectively. Each of these `base` templates contains Django `{% block %}`s, so you can override selected parts of the base template by creating a new file in `patient_lists/layouts/` called, for example `spreadsheet_list.html`, and redefining the content of those blocks.
 
-### 'Spreadsheet' PatientList layout
+### 'Spreadsheet' PatientList Layout
 
 This is the default template, which gives you a 'spreadsheet'-like view of the patient list, with a sidebar containing default demographic info, tags and action tools.
 
 ![patientlist-spreadsheet-template](../img/patientlist-spreadsheet-template.png)
 
-<<<<<<< HEAD
-### 'Card' PatientList Template
-=======
-### 'Card' PatientList layout
->>>>>>> 4cec37e8a4dac82a8dc819efbc6a2c9ed7f76804
+### 'Card' PatientList Layout
 
-This will display the patient list as a series of 'cards', more analogous to a Twitter stream than the spreadsheet-like appearance of the default list.
+This will display the patient list as a series of 'cards', more analogous to a Twitter
+stream than the spreadsheet-like appearance of the default list.
 
 ![patientlist-card-template](../img/patientlist-card-template.png)
 
