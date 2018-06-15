@@ -1,14 +1,5 @@
 ### 0.11.0 (Major Release)
 
-#### Removes "episode_history" from episode serialization
-
-Serialised episodes previously contained a "shallow" copy of all other episodes in
-a property named `episode_history`. This was primarially useful before we switched
-from episode-oriented to patient-oriented detail views by default.
-
-This also includes a change to the signature of the `.serialised()` method of the
-Episode manager, which no longer accepts a `episode_history` kwarg.
-
 #### Deprecates the _title property
 In future we will use the standard `verbose_name` property as the display name. The abstract models have been changed to account for this.
 
@@ -34,6 +25,15 @@ buttons as a vertical list.
 A number of helpers related to serialization and deserialization have been brought
 together in the new module `opal.core.serialization`.
 
+#### Removes "episode_history" from episode serialization
+
+Serialised episodes previously contained a "shallow" copy of all other episodes in
+a property named `episode_history`. This was primarially useful before we switched
+from episode-oriented to patient-oriented detail views by default.
+
+This also includes a change to the signature of the `.serialised()` method of the
+Episode manager, which no longer accepts a `episode_history` kwarg.
+
 #### as_menuitem helpers
 
 Applications using Opal Menuitems often wish to add menu items for Patient Lists and
@@ -41,6 +41,16 @@ Pathways.
 
 To aid this, the `.as_menuitem()` method now creates one from the target class with
 sensible but overridable defaults.
+
+#### Misc Changes
+
+Adds the utility function `opal.utils.get`. Similar to the `getattr` builtin, `get` looks
+for a method named `get_$attr` and will call that if it exists.
+
+Adds the method `.get_absolute_url()` to `opal.core.pathways.Pathway` and
+`opal.core.patient_lists.PatientList`.
+
+Adds the Opal error `SignatureError`.
 
 #### Template removals
 
