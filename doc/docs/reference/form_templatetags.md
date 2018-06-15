@@ -44,6 +44,7 @@ Keywords:
 * `mindate` Angular Javascript expression to return the minimum possible date
 * `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html element
 * `style` The form style to render this widget with. Possible values are `['horizontal', 'vertical']`. Defaults to 'horizontal'
+* `options` If set to `True` this will add the default options of `today`, ie the current date, or `yesterday`, ie t-1.
 
 
 ### {% timepicker ... %}

@@ -315,6 +315,34 @@ describe('filters', function() {
 
     });
 
+    describe('sameDate', function(){
+
+      var sameDateFilter, today, yesterday, tomorrow;
+
+      beforeEach(function(){
+          inject(function($injector){
+              sameDateFilter = $injector.get('sameDateFilter');
+          });
+          today = moment().toDate();
+          yesterday = moment().subtract(1, 'days').toDate();
+      });
+
+      it('should return undefined if either of the dates is not set', function(){
+        expect(sameDateFilter(undefined, today)).toBe(undefined);
+        expect(sameDateFilter(today, undefined)).toBe(undefined);
+        expect(sameDateFilter(undefined, undefined)).toBe(undefined);
+      });
+
+      it("should return false if the dates are not the same", function(){
+        expect(sameDateFilter(yesterday, today)).toBe(false);
+        expect(sameDateFilter(today, yesterday)).toBe(false);
+      });
+
+      it("should return true if the dates are not the same", function(){
+        expect(sameDateFilter(moment().toDate(), today)).toBe(true);
+      });
+    });
+
     describe('future', function(){
         var futureFilter, today;
 

@@ -81,6 +81,18 @@ describe('EditItemCtrl', function (){
             "investigation", {category: "EditItem", label: "Inpatient"}
           );
       });
+
+      it('should put now on the scope', function(){
+        expect(!!$scope.now).toBe(true);
+        var now = moment($scope.now);
+        expect(now.isSame(moment(), 'minute')).toBe(true);
+      });
+
+      it('should put now on the scope', function(){
+        expect(!!$scope.yesterday).toBe(true);
+        var yesterday = moment().subtract(1, "day");
+        expect(moment($scope.yesterday).isSame(yesterday, 'minute')).toBe(true);
+      });
     })
 
     describe('editingMode()', function() {

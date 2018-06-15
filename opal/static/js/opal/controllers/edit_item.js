@@ -15,6 +15,8 @@ angular.module('opal.controllers').controller(
             $scope.editing[item.columnName] = item.makeCopy();
             $scope.metadata = metadata
 
+            $scope.now = new Date();
+            $scope.yesterday = moment().subtract(1, 'days').toDate();
             $scope.editingMode = function(){
                 return !_.isUndefined($scope.editing[item.columnName].id);
             };

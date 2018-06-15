@@ -19,6 +19,8 @@ angular.module('opal.controllers').controller('ModalPathwayCtrl', function(
         pathwayDefinition.pathway_service
     );
     $scope.pathway = new pathwayService(pathwayDefinition, episode);
+    $scope.now = new Date();
+    $scope.yesterday = moment().subtract(1, 'days').toDate();
     $scope.editing = $scope.pathway.populateEditingDict(episode);
     var analyticsKwargs = {
       category: "ModalPathway"

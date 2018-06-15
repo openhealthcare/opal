@@ -27,4 +27,14 @@
            {% endif %}
            />
   </div>
+  {% if options %}
+    <div class="row">
+      <div class="col-sm-12 content-offset-5">
+        <div class="col-sm-8 col-sm-push-3">
+          <a ng-class="{active: ({{ model }}|sameDate: now)}" class="btn btn-primary btn-opal-xs" ng-click="{{ model }} = now" href="">Today</a>
+          <a ng-class="{active: ({{ model }}|sameDate: yesterday)}" class="btn btn-primary btn-opal-xs" ng-click="{{ model }} = yesterday" href="">Yesterday</a>
+        </div>
+      </div>
+    </div>
+  {% endif %}
 </div>
