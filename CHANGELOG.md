@@ -9,6 +9,9 @@ from episode-oriented to patient-oriented detail views by default.
 This also includes a change to the signature of the `.serialised()` method of the
 Episode manager, which no longer accepts a `episode_history` kwarg.
 
+#### Deprecates the _title property
+In future we will use the standard `verbose_name` property as the display name. The abstract models have been changed to account for this.
+
 #### Core API registration
 
 A refactor in the way that the core APIs are registered by Opal means that
@@ -16,6 +19,15 @@ importing `opal.core.api` in a plugin API no longer results in circular imports.
 
 Fixes a bug whereby episodes were serialising differently depending on whether
 the code path went via `.to_dict()` or `.objects.serialised()`.
+
+#### HelpTextStep can now use a custom template
+The `opal.core.pathway.steps.HelpTextStep` can now have a `help_text_template` passed in.
+
+This is the template for what will be placed in the side bar.
+
+#### Adds in a radio_vertical template tag
+This displays the label and then the radio
+buttons as a vertical list.
 
 #### opal.core.serialization
 
@@ -28,6 +40,32 @@ We removed a number of superfluous templates:
 
 * opal/templates/patient_lists/spreadsheet_list.html
 * opal/templates/layouts/left-panel.html
+
+#### Static asset minification
+
+The Django upgrade in Opal 0.10 stopped compressor minifying files
+when DEBUG is set to False. This fixes that issue by upgrading Django compressor to
+a version that supports Django 1.10.
+
+#### The return of an old friend: IE Document modes
+
+Users report that their system administrators sometimes configure Internet Explorer
+in such a way that it uses e.g. IE7 Document mode by default.
+
+This is problematical for Opal applications which do in fact make use of internet
+technologies that were in widespread use after say, 2006.
+
+We have altered `base.html` to specify `"X-UA-Compatible" content="IE=Edge"`. If you
+override `base.html`in your application we advise that you add this `<meta>` tag.
+
+#### Misc Changes
+
+* Adds the utility function `opal.core.subrecords.singletons()` which returns
+a generator function which will yield all subrecord singletons.
+
+#### Updates to the Dependency Graph
+
+* Django compressor: 1.5 -> 2.2
 
 
 ### 0.10.1 (Minor Release)

@@ -128,7 +128,15 @@ class HelpTextStepTestCase(OpalTestCase):
             s.get_help_text(), "interesting"
         )
 
-    def test_step_render(self):
+    def test_get_help_test_with_no_argument(self):
+        s = HelpTextStep(
+            display_name="fake", template=""
+        )
+        self.assertEqual(
+            s.get_help_text(), ''
+        )
+
+    def test_step_help_text_render(self):
         class SomePathway(PagePathway):
             display_name = "some pathway"
             slug = "some_pathway"
@@ -139,3 +147,34 @@ class HelpTextStepTestCase(OpalTestCase):
             )
         url = reverse("pathway_template", kwargs=dict(name="some_pathway"))
         self.assertStatusCode(url, 200)
+
+    def test_step_help_text_render_with_no_arg(self):
+        class SomePathway(PagePathway):
+            display_name = "some pathway"
+            slug = "some_pathway"
+            steps = (
+                HelpTextStep(
+                    display_name="fake", template=""
+                ),
+            )
+        url = reverse("pathway_template", kwargs=dict(name="some_pathway"))
+        self.assertStatusCode(url, 200)
+
+    def test_get_help_text_template(self):
+        s = HelpTextStep(
+            display_name="fake",
+            template="",
+            help_text_template="/pathways/something.html"
+        )
+        self.assertEqual(
+            s.get_help_text_template(), "/pathways/something.html"
+        )
+
+    def test_get_help_text_template_with_no_arg(self):
+        s = HelpTextStep(
+            display_name="fake",
+            template="",
+        )
+        self.assertEqual(
+            s.get_help_text_template(), ''
+        )
