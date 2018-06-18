@@ -282,7 +282,7 @@ recently changed it - refresh the page and try again');
 
             if(number){
                 // The user entered a hospital number
-                $http.get('/search/patient/?hospital_number=' + number)
+                $http.get('/search/patient/?hospital_number=' + encodeURIComponent(number))
                     .success(function(response) {
                         // We have retrieved patient records matching the hospital number
                         result.patients = response;

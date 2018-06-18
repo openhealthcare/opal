@@ -339,6 +339,42 @@ describe('Episode', function() {
                 expect(mock_new).toHaveBeenCalled();
             });
 
+            it("Should encode URIs to handle hashes", function(){
+                var mock_new = jasmine.createSpy('Mock for new patient')
+                $httpBackend.expectGET('/search/patient/?hospital_number=%23123').respond([]);
+                Episode.findByHospitalNumber('#123', {newPatient: mock_new})
+                $httpBackend.flush();
+                $scope.$digest(); // Fire actual resolving
+                expect(mock_new).toHaveBeenCalled();
+            });
+
+            it("Should encode URIs to handle slashes", function(){
+                var mock_new = jasmine.createSpy('Mock for new patient')
+                $httpBackend.expectGET('/search/patient/?hospital_number=%2F123').respond([]);
+                Episode.findByHospitalNumber('/123', {newPatient: mock_new})
+                $httpBackend.flush();
+                $scope.$digest(); // Fire actual resolving
+                expect(mock_new).toHaveBeenCalled();
+            });
+
+            it("Should encode URIs to handle question marks", function(){
+                var mock_new = jasmine.createSpy('Mock for new patient')
+                $httpBackend.expectGET('/search/patient/?hospital_number=%3F123').respond([]);
+                Episode.findByHospitalNumber('?123', {newPatient: mock_new})
+                $httpBackend.flush();
+                $scope.$digest(); // Fire actual resolving
+                expect(mock_new).toHaveBeenCalled();
+            });
+
+            it("Should encode URIs to handle ampersands", function(){
+                var mock_new = jasmine.createSpy('Mock for new patient')
+                $httpBackend.expectGET('/search/patient/?hospital_number=%26123').respond([]);
+                Episode.findByHospitalNumber('&123', {newPatient: mock_new})
+                $httpBackend.flush();
+                $scope.$digest(); // Fire actual resolving
+                expect(mock_new).toHaveBeenCalled();
+            });
+
             it('Should call the error callback on error', function () {
                 var mock_new = jasmine.createSpy('Mock for new patient')
                 var search_url = '/search/patient/';
