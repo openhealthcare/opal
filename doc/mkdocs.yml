@@ -102,7 +102,7 @@ pages:
 
       # Misc
       - Settings: reference/settings.md
-      - Changelog: reference/CHANGELOG.md
+      - Changelog: reference/changelog.md
       - Testing: reference/testing.md
       - Javascript dependencies: reference/javascript/javascript_dependencies.md
       - Upgrading: reference/upgrading.md
