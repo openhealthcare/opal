@@ -211,7 +211,6 @@ class SerialisableFields(object):
         elif cls._get_field_type(name) == models.fields.NullBooleanField:
             return yes_no + ["Unknown"]
 
-
     @classmethod
     def get_lookup_list_api_name(cls, field_name):
         lookup_list = None
