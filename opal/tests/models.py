@@ -37,6 +37,7 @@ class HatWearer(models.EpisodeSubrecord):
     name = dmodels.CharField(max_length=200)
     hats = dmodels.ManyToManyField(Hat, related_name="hat_wearers")
     wearing_a_hat = dmodels.BooleanField(default=True)
+    suits_a_hat = dmodels.NullBooleanField()
 
     class Meta:
         verbose_name = 'Wearer of Hats'

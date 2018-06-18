@@ -200,10 +200,17 @@ class SerialisableFields(object):
     @classmethod
     def get_field_enum(cls, name):
         field = cls._get_field(name)
-        choices = getattr(field, "choices", [])
 
+        choices = getattr(field, "choices", [])
         if choices:
             return [i[1] for i in choices]
+
+        yes_no = ["Yes", "No"]
+        if cls._get_field_type(name) == models.fields.BooleanField:
+            return yes_no
+        elif cls._get_field_type(name) == models.fields.NullBooleanField:
+            return yes_no + ["Unknown"]
+
 
     @classmethod
     def get_lookup_list_api_name(cls, field_name):

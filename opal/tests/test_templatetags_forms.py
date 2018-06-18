@@ -449,6 +449,20 @@ class RadioTestCase(TestCase):
         rendered = template.render(Context({}))
         self.assertIn('purple', rendered)
 
+    def test_radio_infer_lookuplists_with_boolean(self):
+        template = Template('{% load forms %}{% radio field="HatWearer.wearing_a_hat" %}')
+        rendered = template.render(Context({}))
+        self.assertIn('Yes', rendered)
+        self.assertIn('No', rendered)
+        self.assertNotIn('Unknown', rendered)
+
+    def test_radio_infer_lookuplists_with_quantum_boolean(self):
+        template = Template('{% load forms %}{% radio field="HatWearer.suits_a_hat" %}')
+        rendered = template.render(Context({}))
+        self.assertIn('Yes', rendered)
+        self.assertIn('No', rendered)
+        self.assertIn('Unknown', rendered)
+
     def test_element_name(self):
         tpl = Template('{% load forms %}{% radio label="hai" model="bai" element_name="onions"%}')
         rendered = tpl.render(Context({}))
