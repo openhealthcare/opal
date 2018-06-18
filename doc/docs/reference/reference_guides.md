@@ -48,6 +48,7 @@ The following reference guides are available:
 [The panels Templatetag library](panels_templatetags.md) | Rendering record panels
 [The menus Templatetag library](menus_templatetags.md) | Rendering application menus
 [Javascript Helpers](javascript/javascript_helpers.md)| Angular directives, filters and $rootScope methods
+[Utils module](utils.md)| The `opal.utils` module - miscellaneous helpful python utilities
 
 ### Opal core modules
 

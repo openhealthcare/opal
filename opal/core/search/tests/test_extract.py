@@ -290,7 +290,6 @@ class TestBasicCsvRenderer(PatientEpisodeTestCase):
                 ["Blue"]
             )
 
-
     def test_get_row_uses_fields_arg(self):
         _, episode = self.new_patient_and_episode_please()
         colour = Colour.objects.create(name="Blue", episode=episode)
@@ -468,3 +467,37 @@ class TestEpisodeSubrecordCsvRenderer(PatientEpisodeTestCase):
         )
         rendered = renderer.get_row(self.colour)
         self.assertEqual(["1", "1", "blue"], rendered)
+
+
+@patch('opal.core.search.extract.subrecords')
+class GetDataDictionaryTestCase(OpalTestCase):
+    def test_excludes_from_data_dictionary(self, subrecords):
+        subrecords.return_value = [Colour]
+        result = extract.get_data_dictionary()
+        result.pop('Episode')
+        # without result we should be empty
+        self.assertFalse(bool(result))
+
+    def test_episode_data_dictionary(self, subrecords):
+        subrecords.return_value = []
+        dd = extract.get_data_dictionary()
+        episode = dd.pop('Episode')
+        start = next(i for i in episode if i["display_name"] == 'Start')
+        self.assertEqual(
+            start['type_display_name'], 'Date'
+        )
+
+    def test_subrecord_data_dictionary(self, subrecords):
+        subrecords.return_value = [HatWearer]
+        dd = extract.get_data_dictionary()
+        hat_wearer = dd.pop(HatWearer.get_display_name())
+        hats = next(i for i in hat_wearer if i["display_name"] == 'Hats')
+        self.assertEqual(
+            hats['type_display_name'], 'Some of the Hats'
+        )
+        wearing_a_hat = next(
+            i for i in hat_wearer if i["display_name"] == 'Wearing A Hat'
+        )
+        self.assertEqual(
+            wearing_a_hat['type_display_name'], 'Either True or False'
+        )

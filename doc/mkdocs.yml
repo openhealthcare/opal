@@ -92,6 +92,7 @@ pages:
       - Panel Template tags: reference/panels_templatetags.md
       - Menu Template tag: reference/menus_templatetags.md
       - Javascript helpers: reference/javascript/javascript_helpers.md
+      - Utils module: reference/utils.md
 
       # Search
       - Search Queries: reference/search_queries.md

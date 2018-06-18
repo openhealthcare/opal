@@ -5,18 +5,17 @@
 #### Free text or foreign key fields are now, by default case insensitive
 This can be adjusted with a flag on the field.
 
+Existing fk_or_ft fields could therefor still have the field set as free text.
 
-#### Deprecates the _title property
-In future we will use the standard `verbose_name` property as the display name. The abstract models have been changed to account for this.
+This change is not accompanied by a retrospective migration so your existing fk_or_ft may be stored in a case sensitive manner. It is recommended you migrate all of your fk_or_ft fields as this will give you consistent behaviour.
 
-#### Removes "episode_history" from episode serialization
+##### For example.
+Prior to this change if I had an allergy for "paracetomol" but an entry in the models.Drug table of "Paracetomol", it would be stored as free text in the `Allergies.drug` field, because it was case sensitive. Going forward after this change it will be saved as a foreign key. This change will not be made retrospecively however so you would need to add a migration that resaved the Allergies.drug.
 
-Serialised episodes previously contained a "shallow" copy of all other episodes in
-a property named `episode_history`. This was primarially useful before we switched
-from episode-oriented to patient-oriented detail views by default.
 
-This also includes a change to the signature of the `.serialised()` method of the
-Episode manager, which no longer accepts a `episode_history` kwarg.
+#### Adds `dateHelper` to the rootScope
+The dateHelper has the functions `now` and `yesterday` that return javascript Dates for
+the current time and the current time - 1 day.
 
 #### Deprecates the _title property
 In future we will use the standard `verbose_name` property as the display name. The abstract models have been changed to account for this.
@@ -42,6 +41,32 @@ buttons as a vertical list.
 
 A number of helpers related to serialization and deserialization have been brought
 together in the new module `opal.core.serialization`.
+
+#### Removes "episode_history" from episode serialization
+
+Serialised episodes previously contained a "shallow" copy of all other episodes in
+a property named `episode_history`. This was primarially useful before we switched
+from episode-oriented to patient-oriented detail views by default.
+
+This also includes a change to the signature of the `.serialised()` method of the
+Episode manager, which no longer accepts a `episode_history` kwarg.
+
+#### as_menuitem helpers
+
+Applications using Opal Menuitems often wish to add menu items for Patient Lists and
+Pathways.
+
+To aid this, the `.as_menuitem()` method now creates one from the target class with
+sensible but overridable defaults.
+
+#### Misc Changes
+
+Adds the utility function `opal.utils.get`. Similar to the `getattr` builtin, `get` looks
+for a method named `get_$attr` and will call that if it exists.
+
+Adds the method `.get_absolute_url()` to `opal.core.pathways.Pathway` and
+`opal.core.patient_lists.PatientList`.
+
 
 #### Template removals
 
@@ -71,6 +96,10 @@ override `base.html`in your application we advise that you add this `<meta>` tag
 
 * Adds the utility function `opal.core.subrecords.singletons()` which returns
 a generator function which will yield all subrecord singletons.
+
+* Adds the methods `.get_absolute_url()`, `.get_icon()` and `get_display_name()`
+to `opal.core.pathways.Pathway` and `opal.core.patient_lists.PatientList`.
+
 
 #### Updates to the Dependency Graph
 
@@ -236,14 +265,6 @@ Adds the `rows` option to the textarea template tag which just fills in the html
 `rows` attribute. Text areas are defaulted to 5 rows (the same as before).
 
 Configures the setting `CSRF_FAILURE_VIEW` to use the bundled `opal.views.csrf_failure` view.
-
-Adds the utility function `opal.utils.get`. Similar to the `getattr` builtin, `get` looks
-for a method named `get_$attr` and will call that if it exists.
-
-Adds the method `.get_absolute_url()` to `opal.core.pathways.Pathway` and
-`opal.core.patient_lists.PatientList`.
-
-Adds the Opal error `SignatureError`.
 
 Pathway slugs may now include hyphens as well as numbers, lower case letters and underscores.
 
