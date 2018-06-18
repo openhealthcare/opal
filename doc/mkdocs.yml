@@ -46,7 +46,7 @@ pages:
       - Django Admin: guides/django_admin.md
 
       # Working on Opal itself
-      - Contributing: guides/CONTRIBUTING.md
+      - Contributing: guides/contributing.md
       - Development environment: guides/development_environment.md
       - Releasing: guides/releasing.md
 
