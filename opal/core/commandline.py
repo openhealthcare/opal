@@ -11,7 +11,6 @@ import sys
 
 from django.core import management
 import ffs
-import six
 
 import opal
 from opal.core import scaffold as scaffold_utils
