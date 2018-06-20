@@ -68,6 +68,31 @@ class SetupDjangoTestCase(OpalTestCase):
 
         setup.assert_called_once_with()
 
+    def test_sys_path_adds_dot(self, name, setup):
+        with patch.object(commandline.sys, 'path', []):
+
+            name.return_value = 'testapp'
+            @commandline.setup_django
+            def go():
+                pass
+
+            go()
+
+            self.assertIn('.', commandline.sys.path)
+
+    def test_sys_path_only_adds_dot_once(self, name, setup):
+        with patch.object(commandline.sys, 'path', []):
+
+            commandline.sys.path.append('.')
+            name.return_value = 'testapp'
+            @commandline.setup_django
+            def go():
+                pass
+
+            go()
+
+            self.assertEqual(1, len([p for p in commandline.sys.path if p == '.']))
+
 
 class StartprojectTestCase(OpalTestCase):
 

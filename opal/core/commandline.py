@@ -53,6 +53,9 @@ def setup_django(fn):
             module = '{0}.settings'.format(find_application_name())
             os.environ['DJANGO_SETTINGS_MODULE'] = module
 
+        if '.' not in sys.path:
+            sys.path.append('.')
+
         import django
         django.setup()
         return fn(*a, **k)
