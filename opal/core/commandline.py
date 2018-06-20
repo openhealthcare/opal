@@ -4,10 +4,12 @@ Opal comandline tool.
 In which we expose useful commandline functionality to our users.
 """
 import argparse
+import functools
 import os
 import subprocess
 import sys
 
+from django.core import management
 import ffs
 
 import opal
@@ -33,6 +35,28 @@ def find_application_name():
     write("Are you in the application root directory? \n\n")
     sys.exit(1)
 
+
+def setup_django(fn):
+    """
+    Decorator that will initialize Django in the context of
+    the application from which `opal x` is run.
+
+    Note that this is not used to _switch_ settings, but to
+    initialize them for the first time and allow us to e.g.
+    import models, run django management commands etc
+    """
+
+    @functools.wraps(fn)
+    def setup(*a, **k):
+        if 'DJANGO_SETTINGS_MODULE' not in os.environ:
+            module = '{0}.settings'.format(find_application_name())
+            os.environ['DJANGO_SETTINGS_MODULE'] = module
+
+        import django
+        django.setup()
+        return fn(*a,  **k)
+
+    return setup
 
 def startproject(args):
     scaffold_utils.start_project(args.name, USERLAND_HERE)
@@ -66,7 +90,7 @@ def check_for_uncommitted():
 
 def get_requirements():
     """
-    looks for a requirements file in the same directory as the
+    Looks for a requirements file in the same directory as the
     fabfile. Parses it,
     """
 
@@ -88,7 +112,7 @@ def get_requirements():
 
 def parse_github_url(some_url):
     """
-    takes in something that looks like a Github url in a requirements.txt
+    Takes in something that looks like a Github url in a requirements.txt
     file and returns the package name
     """
 
@@ -136,6 +160,14 @@ def checkout(args):
                 return
 
 
+@setup_django
+def serve(args):
+    """
+    Opal wrapper around Django runserver
+    """
+    management.call_command('runserver', args.addrport[0], '--traceback')
+
+
 def parse_args(args):
     """
     Set up Argparse argument parser and route ourselves to the
@@ -148,6 +180,7 @@ def parse_args(args):
         usage="opal <command> [<args>]",
         epilog="Brought to you by Open Health Care UK"
     )
+    # opal -v
     parser.add_argument(
         '--version', '-v',
         action='version',
@@ -155,6 +188,7 @@ def parse_args(args):
     )
     subparsers = parser.add_subparsers(help="Opal Commands")
 
+    # opal startproject
     parser_project = subparsers.add_parser(
         'startproject'
     )
@@ -163,12 +197,14 @@ def parse_args(args):
     )
     parser_project.set_defaults(func=startproject)
 
+    # opal startplugin
     parser_plugin = subparsers.add_parser('startplugin')
     parser_plugin.add_argument(
         'name', help="name of your plugin"
     )
     parser_plugin.set_defaults(func=startplugin)
 
+    # opal test
     parser_test = subparsers.add_parser("test")
     parser_test.add_argument(
         'what', default='all', choices=['all', 'py', 'js'], nargs='*')
@@ -185,8 +221,17 @@ def parse_args(args):
     )
     parser_test.set_defaults(func=test)
 
+    # opal checkout
     parser_checkout = subparsers.add_parser("checkout")
     parser_checkout.set_defaults(func=checkout)
+
+    # opal serve
+    parser_serve = subparsers.add_parser("serve")
+    parser_serve.add_argument(
+        'addrport', default='localhost:8000', nargs='*',
+        help='Optional port number, or ipaddr:port'
+    )
+    parser_serve.set_defaults(func=serve)
 
     args = parser.parse_args(args)
     args.func(args)
