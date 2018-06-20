@@ -11,6 +11,7 @@ import sys
 
 from django.core import management
 import ffs
+import six
 
 import opal
 from opal.core import scaffold as scaffold_utils
@@ -229,7 +230,7 @@ def parse_args(args):
     # opal serve
     parser_serve = subparsers.add_parser("serve")
     parser_serve.add_argument(
-        'addrport', default='localhost:8000', nargs='*',
+        'addrport', default=['localhost:8000'], nargs='*',
         help='Optional port number, or ipaddr:port'
     )
     parser_serve.set_defaults(func=serve)
