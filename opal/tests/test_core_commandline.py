@@ -1,6 +1,7 @@
 """
 Unittests for opal.core.commandline
 """
+import os
 import sys
 
 from mock import patch, MagicMock
@@ -35,6 +36,37 @@ class FindApplicationNameTestCase(OpalTestCase):
         with patch.object(commandline.sys, 'exit') as exiter:
             commandline.find_application_name()
             exiter.assert_called_with(1)
+
+
+@patch('django.setup')
+@patch.object(commandline, 'find_application_name')
+@patch.dict(commandline.os.environ,{'mytemp':'mytemp'}, clear=True)
+class SetupDjangoTestCase(OpalTestCase):
+
+    def test_settings_module(self, name, setup):
+
+        name.return_value = 'testapp'
+        @commandline.setup_django
+        def go():
+            pass
+
+        go()
+
+        self.assertEqual(
+            commandline.os.environ['DJANGO_SETTINGS_MODULE'],
+            'testapp.settings'
+        )
+
+    def test_setup_called(self, name, setup):
+
+        name.return_value = 'testapp'
+        @commandline.setup_django
+        def go():
+            pass
+
+        go()
+
+        setup.assert_called_once_with()
 
 
 class StartprojectTestCase(OpalTestCase):
@@ -136,6 +168,20 @@ Django==1.9.1
                     commandline.checkout(mock_args)
                     writer.assert_any_call('We have uncommitted changes in opal')
                     writer.assert_any_call('Abandonning attempt to check out to requirements.txt')
+
+
+
+class ServeTestCase(OpalTestCase):
+
+    def test_serve(self):
+        with patch.object(commandline.management, 'call_command') as call:
+            with patch.object(commandline, 'find_application_name') as name:
+                name.return_value = 'testapp'
+
+                mock_args = MagicMock(name='Mock args')
+                mock_args.addrport=['localhost:8000']
+                commandline.serve(mock_args)
+                call.assert_called_once_with('runserver', 'localhost:8000', '--traceback')
 
 
 class ParseArgsTestCase(OpalTestCase):

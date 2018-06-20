@@ -54,9 +54,10 @@ def setup_django(fn):
 
         import django
         django.setup()
-        return fn(*a,  **k)
+        return fn(*a, **k)
 
     return setup
+
 
 def startproject(args):
     scaffold_utils.start_project(args.name, USERLAND_HERE)
