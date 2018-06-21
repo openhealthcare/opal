@@ -23,7 +23,7 @@ from opal.core.pathway import pathways, Pathway, WizardPathway
 class PathwayExample(pathways.Pathway):
     display_name = "Dog Owner"
     slug = 'dog-owner'
-    icon = "fa fa-something"
+    icon = "fa fa-tintin"
     template_url = "/somewhere"
 
     steps = (
@@ -39,6 +39,16 @@ class ColourPathway(Pathway):
     steps = (
         FamousLastWords,
     )
+
+class OveridePathway(Pathway):
+
+    @classmethod
+    def get_icon(kls):
+        return 'fa-django'
+
+    @classmethod
+    def get_display_name(kls):
+        return 'Overridden'
 
 
 class RedirectsToPatientMixinTestCase(OpalTestCase):
@@ -430,6 +440,46 @@ class TestPathwayMethods(OpalTestCase):
     def setUp(self):
         self.patient, self.episode = self.new_patient_and_episode_please()
 
+    def test_get_slug(self):
+        self.assertEqual('colourpathway', ColourPathway.get_slug())
+
+    def test_get_slug_from_attribute(self):
+        self.assertEqual('dog-owner', PathwayExample.get_slug())
+
+    def test_get_absolute_url(self):
+        self.assertEqual('/pathway/#/colourpathway/', ColourPathway.get_absolute_url())
+
+    def test_get_icon(self):
+        self.assertEqual('fa fa-tintin', PathwayExample.get_icon())
+
+    def test_get_display_name(self):
+        self.assertEqual('Dog Owner', PathwayExample.get_display_name())
+
+    def test_as_menuitem(self):
+        menu = ColourPathway.as_menuitem()
+        self.assertEqual('/pathway/#/colourpathway/', menu.href)
+        self.assertEqual('/pathway/#/colourpathway/', menu.activepattern)
+        self.assertEqual('fa fa-something', menu.icon)
+        self.assertEqual('colour', menu.display)
+
+    def test_as_menuitem_from_kwargs(self):
+        menu = ColourPathway.as_menuitem(
+            href="/Blue", activepattern="/B",
+            icon="fa-sea", display="Bleu"
+        )
+        self.assertEqual('/Blue', menu.href)
+        self.assertEqual('/B', menu.activepattern)
+        self.assertEqual('fa-sea', menu.icon)
+        self.assertEqual('Bleu', menu.display)
+
+    def test_as_menuitem_uses_getter_for_icon(self):
+        menu = OveridePathway.as_menuitem()
+        self.assertEqual('fa-django', menu.icon)
+
+    def test_as_menuitem_uses_getter_for_display(self):
+        menu = OveridePathway.as_menuitem()
+        self.assertEqual('Overridden', menu.display)
+
     def test_slug(self):
         self.assertEqual('colourpathway', ColourPathway().slug)
 
@@ -440,7 +490,7 @@ class TestPathwayMethods(OpalTestCase):
         as_dict = PathwayExample().to_dict(is_modal=False)
         self.assertEqual(len(as_dict["steps"]), 2)
         self.assertEqual(as_dict["display_name"], "Dog Owner")
-        self.assertEqual(as_dict["icon"], "fa fa-something")
+        self.assertEqual(as_dict["icon"], "fa fa-tintin")
         self.assertEqual(as_dict["save_url"], reverse(
             "pathway", kwargs=dict(name="dog-owner")
         ))

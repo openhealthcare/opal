@@ -37,6 +37,49 @@ The name of the pathway template, it must include a div/span with the class .to_
 
 If set, this template will be used if your pathway is opened in a modal. If its not set the template attribute will be used.
 
+### Class Methods
+
+#### `Pathway.as_menuitem(href=None, activepattern=None, icon=None, display=None)`
+
+Return an instance of `opal.core.menus.MenuItem` that will direct the user to this pathway.
+
+#### `Pathway.get_slug()`
+
+Returns a string which should be used as the slug for this Pathway.
+
+```python
+MyPathwy.get_slug()
+"mypathway"
+```
+
+#### `Pathway.get_absolute_url()`
+
+Returns a string which is the absolute URL of this Pathway.
+
+```python
+MyPathway.get_absolute_url()
+"/pathway/#/mypathway/"
+```
+
+#### `Pathway.get_icon()`
+
+Returns a string which is the icon for this pathway. Defaults to None.
+
+```python
+MyPathway.get_icon()
+"fa-wave"
+```
+
+#### `Pathway.get_display_name()`
+
+Returns a string which is the display name for this pathway. Defaults to None
+
+```python
+MyPathway.get_display_name()
+"The Form"
+```
+
+
 ### Methods
 
 #### `Pathway.redirect_url(self, patient, episde)`
@@ -64,10 +107,16 @@ Steps are a single section within a form, and can be instances of either `opal.m
 `pathway.Step` subclasses. You can use both types of Step in a given Pathway.
 
 More detail on Steps is given in the [Guides section on Pathways](../guides/pathways.md)
-        
+
 ## HelpTextStep
 
-A Step subclass with help text to the side of the form
+A Step subclass with help text to the side of the form.
+
+As arguments these takes either `help_text` or `help_text_template`.
+
+`help_text` will be displayed in a side bar next to the step.
+
+`help_text_template` will completely replace the normal side bar template with the template that you pass in.
 
 ## FindPatientStep
 

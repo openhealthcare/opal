@@ -216,6 +216,7 @@ def datepicker(*args, **kwargs):
     context = _input(*args, **kwargs)
     if 'mindate' in kwargs:
         context['mindate'] = kwargs['mindate']
+    context["user_options"] = kwargs.pop("user_options", False)
     return context
 
 
@@ -224,11 +225,20 @@ def timepicker(*args, **kwargs):
     return extract_common_args(kwargs)
 
 
-@register.inclusion_tag('_helpers/radio.html')
-def radio(*args, **kwargs):
+def _radio(*args, **kwargs):
     ctx = extract_common_args(kwargs)
     ctx["lookuplist"] = kwargs.pop("lookuplist", ctx.get("lookuplist", None))
     return ctx
+
+
+@register.inclusion_tag('_helpers/radio.html')
+def radio(*args, **kwargs):
+    return _radio(*args, **kwargs)
+
+
+@register.inclusion_tag('_helpers/radio_vertical.html')
+def radio_vertical(*args, **kwargs):
+    return _radio(*args, **kwargs)
 
 
 @register.inclusion_tag('_helpers/select.html')

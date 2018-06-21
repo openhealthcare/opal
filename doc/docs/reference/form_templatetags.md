@@ -44,7 +44,7 @@ Keywords:
 * `mindate` Angular Javascript expression to return the minimum possible date
 * `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html element
 * `style` The form style to render this widget with. Possible values are `['horizontal', 'vertical']`. Defaults to 'horizontal'
-
+* `user_options` If set to `True` this will add the default options of `today`, ie the current date, or `yesterday`, ie t-1.
 
 ### {% timepicker ... %}
 
@@ -109,7 +109,26 @@ available by using the unit argument e.g.
 
 ### {% radio ... %}
 
-Generates an inline radio input
+Generates an inline radio input.
+Options are rendered in rows with multiple options on each row.
+
+Keywords:
+
+* `field` a string of the models api name '.' field from this it calculates the label, model and will infer the lookuplist if required. For example {% radio field="DogOwner.dog" %}
+* `label` The Label with which to describe this input
+* `model` The model which we are editing (This is a string that references an in-scope Angular variable)
+* `change`  A javascript function that fires if the field has changed
+* `show`  A string that contains an Angular expression for the ng-show directive
+* `hide`  A string that contains an Angular expression for the ng-hide directive
+* `lookuplist` an Angular expression that evaluates to an array containing the radio values
+* `element_name` If this exists this is an Angular expression that is set to the 'name' attribute of the html element
+* `style` The form style to render this widget with. Possible values are `['horizontal', 'vertical']`. Defaults to 'horizontal'
+
+
+### {% radio_vertical ... %}
+
+Generates a vertical radio input.
+Options are rendered one option per row.
 
 Keywords:
 

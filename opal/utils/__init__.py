@@ -78,6 +78,10 @@ def find_template(template_list):
 
 
 def write(what):
+    """
+    Writes the argument to `sys.stdout` unless it detects an active test run.
+    If run during tests, it should do nothing.
+    """
     if 'runtests.py' in sys.argv:
         return
     sys.stdout.write("{0}\n".format(what))

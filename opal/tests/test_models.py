@@ -19,7 +19,8 @@ from opal.tests import test_patient_lists
 from opal.tests.models import (
     FamousLastWords, PatientColour, ExternalSubRecord, SymptomComplex,
     PatientConsultation, Birthday, DogOwner, HatWearer, InvisibleHatWearer,
-    HouseOwner, HoundOwner, Colour, FavouriteColour, Dinner
+    HouseOwner, HoundOwner, Colour, FavouriteColour, Dinner,
+    EntitledHatWearer
 )
 
 
@@ -263,8 +264,15 @@ class SubrecordTestCase(OpalTestCase):
         ])
         self.assertEqual(result, "found")
 
-    def test_get_display_name_from_property(self):
-        self.assertEqual('Wearer of Hats', HatWearer.get_display_name())
+    @patch('opal.models.logging')
+    def test_get_display_name_from_property(self, logging):
+        display_name = EntitledHatWearer.get_display_name()
+        self.assertEqual('Entitled Wearer of Hats', display_name)
+        self.assertTrue(logging.warning)
+        logging.warning.assert_called_once_with(
+            "_title has been deprecated and will be removed in v0.12.0, please \
+use verbose_name in Meta instead for EntitledHatWearer"
+        )
 
     def test_get_display_name_from_meta_verbose_name(self):
         self.assertEqual(
@@ -281,7 +289,7 @@ class SubrecordTestCase(OpalTestCase):
     def test_date_time_deserialisation(self):
         patient, _ = self.new_patient_and_episode_please()
         birthday_date = "10/1/2000"
-        birthday_party= "11/2/2016 20:30:10"
+        birthday_party = "11/2/2016 20:30:10"
         birthday = Birthday()
         birthday.update_from_dict(dict(
             birth_date=birthday_date,
