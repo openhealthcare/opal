@@ -18,7 +18,7 @@ from opal.core.test import OpalTestCase
 from opal.views import csrf_failure
 
 # this is used just to import the class for EpisodeListApiTestCase
-from opal.tests.test_patient_lists import TaggingTestPatientList, TestTabbedPatientListGroup # flake8: noqa
+from opal.tests.test_patient_lists import TaggingTestPatientList, TestTabbedPatientListGroup, TaggingTestNotSubTag # flake8: noqa
 from opal.tests import models as testmodels
 
 class BaseViewTestCase(OpalTestCase):
@@ -178,13 +178,7 @@ class PatientListTemplateViewTestCase(BaseViewTestCase):
     def test_get_column_context(self):
         view = views.PatientListTemplateView()
 
-        class PL(patient_lists.PatientList):
-            schema = [testmodels.Colour]
-
-            @classmethod
-            def get_slug(k): return 'the-slug'
-
-        view.patient_list = PL
+        view.patient_list = TaggingTestNotSubTag
 
         expected = [
             dict(

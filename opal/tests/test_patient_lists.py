@@ -44,7 +44,7 @@ class TaggingTestNotSubTag(TaggedPatientList):
     template_name = 'carnivore.html'
 
     schema = [
-        models.Demographics,
+        models.Colour,
     ]
 
 
