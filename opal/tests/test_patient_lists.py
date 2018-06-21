@@ -168,53 +168,42 @@ class TestPatientList(OpalTestCase):
             user=self.restricted_user, restricted_only=True
         )
 
-    def test_unimplemented_schema(self):
-        with self.assertRaises(ValueError):
-            schema = PatientList().schema
-
-    def test_unimplemented_queryset(self):
-        with self.assertRaises(ValueError):
-            queryset = PatientList().queryset
-
+    # get_absolute_url()
     def test_get_absolute_url(self):
         self.assertEqual('/#/list/carnivore', TaggingTestNotSubTag.get_absolute_url())
 
+    # get_icon()
     def test_get_icon(self):
         self.assertEqual('fa-diplodocus', TaggingTestPatientList.get_icon())
 
+    # get_display_name()
     def test_get_display_name(self):
         self.assertEqual('Herbivores', TaggingTestPatientList.get_display_name())
 
-    def test_get_queryset_default(self):
-        mock_queryset = MagicMock('Mock Queryset')
-        with patch.object(PatientList, 'queryset',
-                          new_callable=PropertyMock) as queryset:
-            queryset.return_value = mock_queryset
-            self.assertEqual(mock_queryset, PatientList().get_queryset())
+    # list()
+    def test_order_respected_by_list(self):
+        expected = [
+            TaggingTestNotSubTag,
+            TaggingTestPatientList,
+            TaggingTestSameTagPatientList,
+            InvisibleList,
+            DisplayList,
+            IconicList
+        ]
+        self.assertEqual(expected, list(PatientList.list()))
 
-    @patch('opal.models.Episode.objects.serialised')
-    def test_to_dict_passes_queryset(self, serialised):
-        serialised.return_value = {}
-        with patch.object(PatientList, 'get_queryset') as gq:
-            with patch.object(PatientList, 'queryset', new_callable=PropertyMock) as q:
-                dicted = PatientList().to_dict('my_user')
-                gq.assert_called_with(user='my_user')
-                self.assertEqual({}, dicted)
+    def test_known_abstract_subclasses_not_in_list(self):
+        lists = list(PatientList.list())
+        self.assertNotIn(TaggedPatientList, lists)
 
-    def test_to_dict_inactive_episodes(self):
-        p, e = self.new_patient_and_episode_please()
-        e.active = False
-        e.save()
-
-        class All(patient_lists.PatientList):
-            display_name = 'all'
-            queryset = Episode.objects.all()
-
-        self.assertEqual(e.id, All().to_dict(self.user)[0]['id'])
-
+    # visible_to()
     def test_visible_to(self):
         self.assertTrue(TaggingTestPatientList.visible_to(self.user))
 
+    def test_visible_to_restricted_only(self):
+        self.assertFalse(TaggingTestPatientList.visible_to(self.restricted_user))
+
+    # as_menuitem()
     def test_as_menuitem(self):
         href = TaggingTestPatientList.get_absolute_url()
         menu = TaggingTestPatientList.as_menuitem()
@@ -241,6 +230,17 @@ class TestPatientList(OpalTestCase):
         menu = DisplayList.as_menuitem()
         self.assertEqual('Everyone', menu.display)
 
+    # get_teplate_prefixes()
+    def test_get_template_prefixes_default(self):
+        prefixes = PatientList.get_template_prefixes()
+        self.assertEqual([], prefixes)
+
+    # schema()
+    def test_unimplemented_schema(self):
+        with self.assertRaises(ValueError):
+            schema = PatientList().schema
+
+    # schema_to_dicts()
     def test_schema_to_dicts(self):
         dicts = [
             {
@@ -279,9 +279,50 @@ class TestPatientList(OpalTestCase):
         ]
         self.assertEqual(dicts, ColList.schema_to_dicts())
 
-    def test_visible_to_restricted_only(self):
-        self.assertFalse(TaggingTestPatientList.visible_to(self.restricted_user))
 
+    # queryset()
+    def test_unimplemented_queryset(self):
+        with self.assertRaises(ValueError):
+            queryset = PatientList().queryset
+
+    # get_queryset()
+    def test_get_queryset_default(self):
+        mock_queryset = MagicMock('Mock Queryset')
+        with patch.object(PatientList, 'queryset',
+                          new_callable=PropertyMock) as queryset:
+            queryset.return_value = mock_queryset
+            self.assertEqual(mock_queryset, PatientList().get_queryset())
+
+    # get_template_names()
+    def test_get_template_names_default(self):
+        self.assertEqual(['patient_lists/layouts/spreadsheet_list.html'],
+                         PatientList().get_template_names())
+
+    def test_get_template_names_overridden_proerty(self):
+        self.assertEqual(['carnivore.html'], TaggingTestNotSubTag().get_template_names())
+
+    # to_dict()
+    @patch('opal.models.Episode.objects.serialised')
+    def test_to_dict_passes_queryset(self, serialised):
+        serialised.return_value = {}
+        with patch.object(PatientList, 'get_queryset') as gq:
+            with patch.object(PatientList, 'queryset', new_callable=PropertyMock) as q:
+                dicted = PatientList().to_dict('my_user')
+                gq.assert_called_with(user='my_user')
+                self.assertEqual({}, dicted)
+
+    def test_to_dict_inactive_episodes(self):
+        p, e = self.new_patient_and_episode_please()
+        e.active = False
+        e.save()
+
+        class All(patient_lists.PatientList):
+            display_name = 'all'
+            queryset = Episode.objects.all()
+
+        self.assertEqual(e.id, All().to_dict(self.user)[0]['id'])
+
+    # Methods from parent classes
     def test_for_user(self):
         self.assertIn(TaggingTestPatientList, list(PatientList.for_user(self.user)))
         self.assertIn(TaggingTestNotSubTag, list(PatientList.for_user(self.user)))
@@ -295,27 +336,7 @@ class TestPatientList(OpalTestCase):
     def test_order_unimplemented(self):
         self.assertEqual(0, PatientList.order)
 
-    def test_order_respected_by_list(self):
-        expected = [
-            TaggingTestNotSubTag,
-            TaggingTestPatientList,
-            TaggingTestSameTagPatientList,
-            InvisibleList,
-            DisplayList,
-            IconicList
-        ]
-        self.assertEqual(expected, list(PatientList.list()))
 
-    def test_get_template_names_default(self):
-        self.assertEqual(['patient_lists/layouts/spreadsheet_list.html'],
-                         PatientList().get_template_names())
-
-    def test_get_template_names_overridden_proerty(self):
-        self.assertEqual(['carnivore.html'], TaggingTestNotSubTag().get_template_names())
-
-    def test_known_abstract_subclasses_not_in_list(self):
-        lists = list(PatientList.list())
-        self.assertNotIn(TaggedPatientList, lists)
 
 
 class TestTaggedPatientList(OpalTestCase):

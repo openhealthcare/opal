@@ -136,9 +136,11 @@ class PatientList(discoverable.DiscoverableFeature,
             display=kwargs.get('display', kls.get_display_name()),
         )
 
-    def get_template_prefixes(self):
-        """ a patient list can return templates particular to themselves
-            or indeed used by other patient lists
+    @classmethod
+    def get_template_prefixes(kls):
+        """
+        A patient list can return templates particular to themselves
+        or indeed used by other patient lists
         """
         return []
 
