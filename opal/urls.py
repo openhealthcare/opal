@@ -83,17 +83,17 @@ urlpatterns = [
         name='design_patterns'),
 
     # Import/Export views
-    url(r'^export/episode/(?P<episode_id>\d+)/$',
-        views.ExportEpisodeView.as_view(), name='export_episode'),
+    # url(r'^export/episode/(?P<episode_id>\d+)/$',
+    #     views.ExportEpisodeView.as_view(), name='export_episode'),
 
-    url(r'^import/episode/$',
-        views.ImportEpisodeView.as_view(), name='import_episode'),
+    # url(r'^import/episode/$',
+    #     views.ImportEpisodeView.as_view(), name='import_episode'),
 
-    url(r'^export/patient/(?P<patient_id>\d+)/$',
-        views.ExportPatientView.as_view(), name='export_patient'),
+    # url(r'^export/patient/(?P<patient_id>\d+)/$',
+    #     views.ExportPatientView.as_view(), name='export_patient'),
 
-    url(r'^import/patient/$',
-        views.ImportPatientView.as_view(), name='import_patient'),
+    # url(r'^import/patient/$',
+    #     views.ImportPatientView.as_view(), name='import_patient'),
 ]
 
 
