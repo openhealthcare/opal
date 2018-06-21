@@ -7,7 +7,7 @@ module.exports = function(config){
   var baseDir = __dirname + '/..';
 
   var coverageFiles = [
-    __dirname + '/../{{ name }}/static/js/{{ name }}/*',
+    __dirname + '/../{{ name }}/static/js/{{ name }}/**/*.js',
     // Add code to include on test runs here ...
   ];
 
@@ -15,7 +15,7 @@ module.exports = function(config){
     'opal/app.js',
 
     // Add test cases here
-    __dirname + '/../{{ name }}/static/js/tests/*.js',
+    __dirname + '/../{{ name }}/static/js/tests/**/*.js',
   ].concat(coverageFiles);
 
   var defaultConfig = karmaDefaults(includedFiles, baseDir, coverageFiles);
