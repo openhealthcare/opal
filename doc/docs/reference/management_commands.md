@@ -74,6 +74,18 @@ By default this command will look in `./yourapp/data/lookuplists.json` as well a
 python manage.py load_lookup_lists
 ```
 
+## serve &lt;addrport&gt;
+
+Run the development server.
+
+By default this will start a web server on `localhost:8000`. Users may specify either
+a port or an addr port pair to change this.
+
+```
+opal serve # server on localhost:8000
+opal serve 7798 # server on localhost:7798
+opal serve 0.0.0.0:8080 # server on 0.0.0.0:8080
+```
 
 ### scaffold &lt;appname&gt;
 
