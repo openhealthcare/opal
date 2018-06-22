@@ -7,7 +7,12 @@ application to a later version where there are extra steps required.
 
 Please upgrade django-compressor version to 2.2, ie update your requirements to
 
-# requirements.txt
+
+#### Free text or foreign key fields are now, by default case insensitive
+
+It is recommended you resave all model values for fk_or_ft fields as this will give you consistent behaviour. Otherwise fk_ft values wihch differ from fkt values only by case prior to this upgrade will be stored as ft and those afterwards will be stored as the relevant fk.
+
+##### requirements.txt
 django-compressor==2.2
 
 ### 0.10.0 -> 0.10.1
