@@ -4,7 +4,7 @@ Utilities for import/export of patients and episodes
 from django.db import transaction
 
 from opal import models
-from opal.core import match, subrecords, serialization
+from opal.core import episodes, exceptions, match, subrecords, serialization
 from opal.utils import remove_keys, remove_empty_lists
 
 
@@ -26,6 +26,31 @@ class OpalExportMatcher(match.Matcher):
 """
 Imports
 """
+
+
+def validate_import_data(data):
+    """
+    Given some patient DATA to import, attempt to validate that we are
+    able to import this data.
+
+    Makes the following checks:
+
+    * (InvalidEpisodeCategoryError) Do all episodes have an episode category?
+    * (InvalidEpisodeCategoryError) Are all episode categories a category that
+      exists in this application?
+    """
+    categories = [c.display_name for c in episodes.EpisodeCategory.list()]
+
+    for k, v in data['episodes'].items():
+        try:
+            if v['category_name'] not in categories:
+                msg = "Sorry, we can't import episodes of the category {0}".format(
+                    v['category_name']
+                )
+                raise exceptions.InvalidEpisodeCategoryError(msg)
+        except KeyError:
+            msg = 'Episodes must have a category_name in order to be rendered'
+            raise exceptions.InvalidEpisodeCategoryError(msg)
 
 
 def import_patient_subrecord_data(api_name, data, patient, user=None):
@@ -71,6 +96,8 @@ def import_patient(data, user=None):
     1. Match or create the patient
     2. Iterate through episodes in the patient data, creating them as required
     """
+    validate_import_data(data)
+
     demographics = data['demographics'][0]
     demographics['date_of_birth'] = serialization.deserialize_date(
         demographics['date_of_birth']

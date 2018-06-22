@@ -6,6 +6,8 @@ import datetime
 
 from mock import patch
 
+from opal.core.episodes import EpisodeCategory
+from opal.core import exceptions
 from opal.core.test import OpalTestCase
 from opal.models import Patient, Episode
 from opal.tests.models import Birthday
@@ -20,6 +22,7 @@ class AbstractSpikeMilliganTestCase(OpalTestCase):
             '239789': {
                 'start': '22/02/2018',
                 'end'  : '28/02/2018',
+                'category_name': 'Inpatient',
                 'colour': [
                     {'name': 'Blue'}, {'name': 'Red'}, {'name': 'Green'}
                 ]
@@ -41,7 +44,7 @@ class AbstractSpikeMilliganTestCase(OpalTestCase):
     }
 
     def data(self):
-        return copy.copy(self._data)
+        return copy.deepcopy(self._data)
 
 
 
@@ -52,6 +55,33 @@ class ExportMatcherTestCase(OpalTestCase):
         self.assertEqual(
             {'hello': 'world'}, matcher.get_demographic_dict()
         )
+
+
+class ValidateImportDataTestCase(OpalTestCase):
+
+    def test_validate_episode_categories(self):
+        data = {'episodes': {
+            12: {'category_name': 'Inpatient'},
+            22: {'category_name': 'Outpatient'}
+        }}
+        trade.validate_import_data(data)
+
+    def test_validate_episode_categories_category_not_known(self):
+        data = {'episodes': {
+            12: {'category_name': 'Inpatient'},
+            22: {'category_name': 'Homoepathy'}
+        }}
+        with self.assertRaises(exceptions.InvalidEpisodeCategoryError):
+            trade.validate_import_data(data)
+
+    def test_must_have_episode_category(self):
+        data = {'episodes': {
+            12: {},
+            22: {'category_name': 'Homeopathy'}
+        }}
+        with self.assertRaises(exceptions.InvalidEpisodeCategoryError):
+            trade.validate_import_data(data)
+
 
 
 class ImportPatientSubrecordDataTestCase(OpalTestCase):
@@ -156,6 +186,15 @@ class ImportPatientTestCase(AbstractSpikeMilliganTestCase):
 
         words = patient.famouslastwords_set.get()
         self.assertEqual('I told you I was ill.', words.words)
+
+    def test_import_patient_invalid_data_never_saved(self):
+        data = self.data()
+        data['episodes']['239789']['category_name'] = 'Homoepathy'
+
+        with self.assertRaises(exceptions.InvalidEpisodeCategoryError):
+
+            trade.import_patient(data)
+        self.assertEqual(0, Patient.objects.count())
 
 
 class PatientIDToJSONTestCase(AbstractSpikeMilliganTestCase):

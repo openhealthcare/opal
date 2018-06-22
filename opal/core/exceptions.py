@@ -41,3 +41,7 @@ class MissingTemplateError(Error):
 
 class PatientNotFoundError(Error):
     pass
+
+
+class InvalidEpisodeCategoryError(Error):
+    pass
