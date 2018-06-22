@@ -5,7 +5,7 @@ import json
 
 from django.core.management.base import BaseCommand
 
-from opal.core import exceptions, trade, views
+from opal.core import trade, views
 from opal.models import Patient
 
 
@@ -36,10 +36,14 @@ class Command(BaseCommand):
         """
         patient_id = options.get('patient', None)
         if not patient_id:
-            raise ValueError('What do you want to export? Try using the --patient argument')
+            msg = 'What do you want to export? '\
+                  'Try using the --patient argument'
+            raise ValueError(msg)
         try:
             excludes = options.get('exclude', '').split(',')
-            data, patient = trade.patient_id_to_json(patient_id, excludes=excludes)
+            data, patient = trade.patient_id_to_json(
+                patient_id, excludes=excludes
+            )
         except Patient.DoesNotExist:
             msg = 'Cannot find Patient with ID: {}'.format(patient_id)
             raise LookupError(msg)

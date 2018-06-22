@@ -1,7 +1,6 @@
 """
 Utilities for import/export of patients and episodes
 """
-import datetime
 from django.db import transaction
 
 from opal import models
@@ -27,6 +26,8 @@ class OpalExportMatcher(match.Matcher):
 """
 Imports
 """
+
+
 def import_patient_subrecord_data(api_name, data, patient, user=None):
     """
     Given the API_NAME of a patient subrecord, some DATA containing n
@@ -93,6 +94,7 @@ def import_patient(data, user=None):
 """
 Exports
 """
+
 
 def patient_id_to_json(patient_id, user=None, excludes=None):
     """

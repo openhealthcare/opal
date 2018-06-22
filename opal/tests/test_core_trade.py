@@ -95,6 +95,7 @@ class CreateEpisodeForPatientTestCase(OpalTestCase):
 
 class ImportPatientTestCase(AbstractSpikeMilliganTestCase):
 
+
     def test_import_patient(self):
 
         trade.import_patient(self.data())

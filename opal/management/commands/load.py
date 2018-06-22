@@ -6,7 +6,6 @@ import json
 from django.core.management.base import BaseCommand
 
 from opal.core import trade
-from opal.models import Patient
 from opal.utils import write
 
 
@@ -30,7 +29,9 @@ class Command(BaseCommand):
         """
         patient_file = options.get('patient_file', None)
         if patient_file is None:
-            raise ValueError('What do you want to import ? Try using the --patient argument')
+            msg = 'What do you want to import ? '\
+                  'Try using the --patient argument'
+            raise ValueError(msg)
 
         with open(patient_file, 'r') as fh:
             data = json.loads(fh.read())

@@ -2,7 +2,6 @@
 Patient matching
 """
 import collections
-import datetime
 
 from opal import models
 from opal.core import exceptions, subrecords
@@ -54,15 +53,18 @@ class Matcher(object):
         """
         if isinstance(self.direct_match_field, Mapping):
             key    = self.direct_match_field.demographics_fieldname
-            value  = self.data.get(self.direct_match_field.data_fieldname, None)
+            value  = self.data.get(
+                self.direct_match_field.data_fieldname, None
+            )
             if not value:
                 raise exceptions.PatientNotFoundError(
                     'Blank direct match attribute in data'
                 )
             kwargs = {key: value}
         else:
+            value = self.data.get(self.direct_match_field, None)
             kwargs = {
-                self.direct_match_field: self.data.get(self.direct_match_field, None)
+                self.direct_match_field: value
             }
         return self._get_patient_from_demographics_kwargs(kwargs)
 

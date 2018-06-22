@@ -1,31 +1,29 @@
 """
 Module entrypoint for core Opal views
 """
-import collections
-import json
-from datetime import datetime
+# from datetime import datetime
 
-from django.core.urlresolvers import reverse, reverse_lazy
-from django.contrib import messages
+from django.core.urlresolvers import reverse  # , reverse_lazy
+# from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import login
-from django.db import transaction
+# from django.db import transaction
 from django.http import HttpResponseForbidden, HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import get_template
 from django.template import TemplateDoesNotExist
-from django.utils.text import slugify
-from django.views.generic import FormView, TemplateView, View
+# from django.utils.text import slugify
+from django.views.generic import TemplateView, View  # , FormView
 
 from opal import models
-from opal.core import application, detail, episodes, trade
+from opal.core import application, detail, episodes  # , trade
 from opal.core.patient_lists import PatientList, TabbedPatientListGroup
 from opal.core.subrecords import (
     episode_subrecords, get_subrecord_from_api_name,
-    get_subrecord_from_model_name,
+    #    get_subrecord_from_model_name,
 )
 from opal.core.views import json_response
-from opal.forms import ImportDataForm
+# from opal.forms import ImportDataForm
 from opal.utils import camelcase_to_underscore
 from opal.utils.banned_passwords import banned
 
@@ -338,7 +336,9 @@ class RawTemplateView(LoginRequiredMixin, TemplateView):
 #         patient_id = self.kwargs['patient_id']
 
 #         try:
-#             data, patient = trade.patient_id_to_json(patient_id, user=request.user)
+#             data, patient = trade.patient_id_to_json(
+#                 patient_id, user=request.user
+#                 )
 #         except models.Patient.DoesNotExist:
 #             msg = 'Cannot find Patient with ID: {}'.format(patient_id)
 #             messages.error(request, msg)
@@ -426,8 +426,6 @@ class RawTemplateView(LoginRequiredMixin, TemplateView):
 #         context['import_url'] = reverse('import_episode')
 #         return context
 
-
-
 # class ImportPatientView(LoginRequiredMixin, FormView):
 #     form_class = ImportDataForm
 #     success_url = reverse_lazy('admin:opal_patient_changelist')
@@ -444,7 +442,6 @@ class RawTemplateView(LoginRequiredMixin, TemplateView):
 #         context = super(ImportPatientView, self).get_context_data(**kwargs)
 #         context['import_url'] = reverse('import_patient')
 #         return context
-
 
 def csrf_failure(request, reason):
     if request.POST:
