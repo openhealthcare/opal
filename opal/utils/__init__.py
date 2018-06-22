@@ -102,6 +102,7 @@ def _remove_key(d, key):
         else:
             yield k, v
 
+
 def remove_keys(d, *keys):
     """
     Recursively remove many keys from a dictionary
@@ -111,3 +112,15 @@ def remove_keys(d, *keys):
     if len(keys) == 1:
         return dict(_remove_key(d, keys[0]))
     return remove_keys(dict(remove_keys(d, keys[0])), *keys[1:])
+
+
+def remove_empty_lists(d):
+    """
+    Recursively remove any keys which are an empty list from a dictionary
+    """
+    if isinstance(d, collections.Mapping):
+        return {k: remove_empty_lists(v) for k, v in d.items() if v != []}
+    if isinstance(d, list):
+        return [remove_empty_lists(i) for i in d if i != []]
+    else:
+        return d

@@ -120,3 +120,20 @@ class RemoveKeysTestCase(OpalTestCase):
         d = dict(greetings=dict(hello='world'))
         removed = utils.remove_keys(d)
         self.assertEqual(d, removed)
+
+
+class TestRemoveEmptyListsTestCase(OpalTestCase):
+
+    def test_removes_empty_lists(self):
+        data = {'key': [], 'lock': [11]}
+        result = utils.remove_empty_lists(data)
+        self.assertEqual({'lock': [11]}, result)
+
+    def test_removes_empty_lists_recursively(self):
+        data = {'key': [], 'lock': [11], 'what': {
+            'is': [],
+            'this': 'thing',
+            'called': {}
+        }}
+        result = utils.remove_empty_lists(data)
+        self.assertEqual({'lock': [11], 'what': {'this': 'thing', 'called': {}}}, result)
