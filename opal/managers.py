@@ -3,8 +3,6 @@ Custom managers for query optimisations
 """
 from collections import defaultdict
 import operator
-
-
 from django.db import models
 from django.db.models import Q
 from django.contrib.contenttypes.models import ContentType
@@ -171,11 +169,11 @@ class LookupListQueryset(models.QuerySet):
         """
         from opal.models import Synonym
         content_type = self.get_content_type()
-        modifier = self.get_query_modifier(contains, case_sensitive)
+        query_arg = self.get_query_arg(contains, case_sensitive)
         q_objects = []
         for some_str in some_strs:
             kwargs = {
-                "name{}".format(modifier): some_str,
+                query_arg: some_str,
                 "content_type": content_type
             }
             q_objects.append(Q(**kwargs))
@@ -183,14 +181,14 @@ class LookupListQueryset(models.QuerySet):
             reduce(operator.or_, q_objects)
         ).values_list("object_id", flat=True).distinct()
 
-    def get_query_modifier(self, contains, case_sensitive):
+    def get_query_arg(self, contains, case_sensitive):
         if contains and not case_sensitive:
-            return "__icontains"
+            return "name__icontains"
         if contains and case_sensitive:
-            return "__contains"
+            return "name__contains"
         if not contains and not case_sensitive:
-            return "__iexact"
-        return ""
+            return "name__iexact"
+        return "name"
 
     def search(self, some_str, contains=False, case_sensitive=False):
         """
@@ -209,11 +207,11 @@ class LookupListQueryset(models.QuerySet):
             contains=contains,
             case_sensitive=case_sensitive
         )
-        modifier = self.get_query_modifier(contains, case_sensitive)
+        query_arg = self.get_query_arg(contains, case_sensitive)
         q_objects = [Q(id__in=ids_with_relevant_synonyms)]
         for some_str in some_strs:
             search_model_kwargs = {
-                "name{}".format(modifier): some_str
+                query_arg: some_str
             }
             q_objects.append(Q(**search_model_kwargs))
 
