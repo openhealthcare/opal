@@ -25,18 +25,29 @@ class ExportTestCase(OpalTestCase):
             help='Comma separated list of subrecord api_names to exclude',
             default=""
         )
+        parser.add_argument.assert_any_call(
+            '--episode',
+            dest='episode',
+            help='ID of the episode you would like to export',
+            default=None
+        )
+
+    def test_handle_no_patient_or_episode_argument(self):
+        c = export.Command()
+        with self.assertRaises(ValueError):
+            c.handle()
 
     def test_handle_patient_does_not_exist(self):
         c = export.Command()
         with self.assertRaises(LookupError):
             c.handle(patient='123')
 
-    def test_handle_no_patient_argument(self):
+    def test_handle_episode_does_not_exist(self):
         c = export.Command()
-        with self.assertRaises(ValueError):
-            c.handle()
+        with self.assertRaises(LookupError):
+            c.handle(episode='123')
 
-    def test_handle_writes_json_output(self):
+    def test_handle_writes_json_output_for_patient(self):
         p, e = self.new_patient_and_episode_please()
         c = export.Command()
         with patch.object(c.stdout, 'write') as writer:
@@ -50,13 +61,39 @@ class ExportTestCase(OpalTestCase):
                     json.loads((writer.call_args[0][0]))
                 )
 
-    def test_handle_passes_through_excludes(self):
+    def test_handle_passes_through_excludes_for_patient(self):
         p, e = self.new_patient_and_episode_please()
         c = export.Command()
         with patch.object(c.stdout, 'write') as writer:
             with patch.object(export.trade, 'patient_id_to_json') as serializer:
                 serializer.return_value = dict(hello='world'), None
                 c.handle(patient=str(p.id), exclude='allergies')
+                self.assertEqual(
+                    ['allergies'],
+                    serializer.call_args[1]['excludes']
+                )
+
+    def test_handle_writes_json_output_for_episode(self):
+        p, e = self.new_patient_and_episode_please()
+        c = export.Command()
+        with patch.object(c.stdout, 'write') as writer:
+            with patch.object(export.trade, 'episode_id_to_json') as serializer:
+                serializer.return_value = dict(hello='world'), None
+
+                c.handle(episode=str(e.id))
+                self.assertEqual(1, writer.call_count)
+                self.assertEqual(
+                    dict(hello='world'),
+                    json.loads((writer.call_args[0][0]))
+                )
+
+    def test_handle_passes_through_excludes_for_episode(self):
+        p, e = self.new_patient_and_episode_please()
+        c = export.Command()
+        with patch.object(c.stdout, 'write') as writer:
+            with patch.object(export.trade, 'episode_id_to_json') as serializer:
+                serializer.return_value = dict(hello='world'), None
+                c.handle(episode=str(e.id), exclude='allergies')
                 self.assertEqual(
                     ['allergies'],
                     serializer.call_args[1]['excludes']
