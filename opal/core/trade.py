@@ -6,7 +6,7 @@ from django.db import transaction
 
 from opal import models
 from opal.core import match, subrecords, serialization
-from opal.utils import remove_keys
+from opal.utils import remove_keys, remove_empty_lists
 
 
 class OpalExportMatcher(match.Matcher):
@@ -118,7 +118,8 @@ def patient_id_to_json(patient_id, user=None, excludes=None):
     data = remove_keys(
         data, 'id', 'patient_id', 'episode_id',
         'consistency_token',
-        'created_by_id', 'updated_by_id'
+        'created_by_id', 'updated_by_id',
+        'created', 'updated'
     )
 
     # Only include patient subrecords once - at the patient subrecord level
@@ -131,5 +132,7 @@ def patient_id_to_json(patient_id, user=None, excludes=None):
     if excludes is not None:
         for api_name in excludes:
             data = remove_keys(data, api_name)
+
+    data = remove_empty_lists(data)
 
     return data, patient

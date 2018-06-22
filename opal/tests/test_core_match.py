@@ -3,6 +3,7 @@ Unittests for the opal.core.match module
 """
 from opal.core.test import OpalTestCase
 from opal.core import exceptions
+from opal.models import Patient
 
 from opal.core import match
 
@@ -193,3 +194,113 @@ class MatcherTestCase(OpalTestCase):
 
         with self.assertRaises(exceptions.PatientNotFoundError):
             patient = m.attribute_match()
+
+    # match()
+    def test_match_direct_match(self):
+        p = self.create_patient()
+
+        class MyMatcher(match.Matcher):
+            direct_match_field = 'hospital_number'
+            attribute_match_fields = ['first_name', 'surname']
+
+        m = MyMatcher({'hospital_number': '8/923893'})
+
+        patient = m.match()
+
+        self.assertEqual(p.id, patient.id)
+
+    def test_match_attribute_match(self):
+        p = self.create_patient()
+
+        class MyMatcher(match.Matcher):
+            direct_match_field = 'hospital_number'
+            attribute_match_fields = ['first_name', 'surname']
+
+        m = MyMatcher({'first_name': 'Tony', 'surname': 'Williams'})
+
+        patient = m.match()
+
+        self.assertEqual(p.id, patient.id)
+
+    def test_match_not_found(self):
+
+        class MyMatcher(match.Matcher):
+            direct_match_field = 'hospital_number'
+            attribute_match_fields = ['first_name', 'surname']
+
+        m = MyMatcher(
+            {
+                'first_name'     : 'Tony',
+                'surname'        : 'Williams',
+                'hospital_number': '8/923893'
+            }
+        )
+        with self.assertRaises(exceptions.PatientNotFoundError):
+            patient = m.match()
+
+
+    # create()
+    def test_creates_patient(self):
+
+        class MyMatcher(match.Matcher):
+            direct_match_field = 'hospital_number'
+            attribute_match_fields = ['first_name', 'surname']
+            demographics_fields = ['hospital_number', 'first_name', 'surname']
+
+        m = MyMatcher(
+            {
+                'first_name'     : 'Tony',
+                'surname'        : 'Williams',
+                'hospital_number': '8/923893'
+            }
+        )
+
+        m.create()
+        patient = Patient.objects.get(demographics__hospital_number='8/923893')
+        self.assertEqual(patient.demographics_set.get().first_name, 'Tony')
+        self.assertEqual(patient.demographics_set.get().surname, 'Williams')
+
+    # match_or_create()
+    def test_match_patient(self):
+        p = self.create_patient()
+
+        class MyMatcher(match.Matcher):
+            direct_match_field = 'hospital_number'
+            attribute_match_fields = ['first_name', 'surname']
+            demographics_fields = ['hospital_number', 'first_name', 'surname']
+
+        m = MyMatcher(
+            {
+                'first_name'     : 'Tony',
+                'surname'        : 'Williams',
+                'hospital_number': '8/923893'
+            }
+        )
+
+        patient, created = m.match_or_create()
+        self.assertEqual(p.id, patient.id)
+        self.assertEqual(created, False)
+
+    def test_creates_patient(self):
+
+        class MyMatcher(match.Matcher):
+            direct_match_field = 'hospital_number'
+            attribute_match_fields = ['first_name', 'surname']
+            demographics_fields = ['hospital_number', 'first_name', 'surname']
+
+        m = MyMatcher(
+            {
+                'first_name'     : 'Tony',
+                'surname'        : 'Williams',
+                'hospital_number': '8/923893'
+            }
+        )
+
+        patient, created = m.match_or_create()
+        self.assertEqual(patient.demographics_set.get().first_name, 'Tony')
+        self.assertEqual(patient.demographics_set.get().surname, 'Williams')
+        self.assertEqual(True, created)
+
+        patient = Patient.objects.get(demographics__hospital_number='8/923893')
+        self.assertEqual(patient.demographics_set.get().first_name, 'Tony')
+        self.assertEqual(patient.demographics_set.get().surname, 'Williams')
