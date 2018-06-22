@@ -5,7 +5,7 @@ import copy
 import datetime
 
 from opal.core.test import OpalTestCase
-from opal.models import Patient
+from opal.models import Patient, Episode
 from opal.tests.models import Birthday
 
 from opal.core import trade
@@ -200,8 +200,6 @@ class PatientIDToJSONTestCase(AbstractSpikeMilliganTestCase):
             [{'words': 'I told you I was ill.'}],
             data['famous_last_words']
         )
-        data['favourite_colour']
-
 
     def test_patient_to_json_excludes(self):
         p, e = self.new_patient_and_episode_please()
@@ -217,6 +215,79 @@ class PatientIDToJSONTestCase(AbstractSpikeMilliganTestCase):
         data, patient = trade.patient_id_to_json(p.id, excludes=['favourite_number'])
 
         self.assertNotIn('favourite_number', data)
+
+    def test_patient_to_json_no_patient(self):
+        with self.assertRaises(Patient.DoesNotExist):
+            data, patient = trade.patient_id_to_json(43)
+
+
+
+class EpisodeIDToJSONTestCase(OpalTestCase):
+
+    def test_episode_id_to_json(self):
+        p, e = self.new_patient_and_episode_please()
+        p.demographics_set.update(
+            first_name='Spike',
+            surname='Milligan',
+            date_of_birth='1918-04-16'
+        )
+        p.favouritenumber_set.create(number=23)
+        p.favouritenumber_set.create(number=7)
+        p.favouritenumber_set.create(number=13)
+        p.famouslastwords_set.update(words='I told you I was ill.')
+        e.start = datetime.date(2018, 02, 22)
+        e.end   = datetime.date(2018, 02, 28)
+        e.save()
+        e.colour_set.create(name='Blue')
+        e.colour_set.create(name='Red')
+        e.colour_set.create(name='Green')
+
+        data, episode = trade.episode_id_to_json(e.id)
+
+        self.assertEqual('Spike', data['demographics'][0]['first_name'])
+        self.assertEqual('Milligan', data['demographics'][0]['surname'])
+        self.assertEqual(datetime.date(2018, 02, 22), data['episodes'][e.id]['start'])
+        self.assertEqual(datetime.date(2018, 02, 28), data['episodes'][e.id]['end'])
+        self.assertEqual(
+            [
+                {'name': 'Blue'}, {'name': 'Red'}, {'name': 'Green'}
+            ],
+            data['episodes'][e.id]['colour']
+        )
+        self.assertEqual(
+             [
+                 {'number': 23}, {'number': 7}, {'number': 13}
+             ],
+            data['favourite_number']
+        )
+        self.assertEqual(
+            [{'words': 'I told you I was ill.'}],
+            data['famous_last_words']
+        )
+
+    def test_episode_to_json_excludes_other_episodes(self):
+        p, e = self.new_patient_and_episode_please()
+        e.start = datetime.date(2018, 2, 22)
+        e.end   = datetime.date(2018, 2, 28)
+        e.save()
+        e2 = p.create_episode(
+            start=datetime.date(2017, 8, 19),
+            end=datetime.date(2017, 8, 23)
+        )
+
+        data, episode = trade.episode_id_to_json(e.id)
+
+        self.assertNotIn(e2.id, data['episodes'])
+
+    def test_episode_to_json_no_episode(self):
+        with self.assertRaises(Episode.DoesNotExist):
+            data, episode = trade.episode_id_to_json(8273)
+
+
+
+"""
+More integration level tests for import export features
+"""
 
 
 class ExportImportPatientEndToEndTestCase(OpalTestCase):
