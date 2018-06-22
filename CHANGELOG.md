@@ -51,6 +51,12 @@ Pathways.
 To aid this, the `.as_menuitem()` method now creates one from the target class with
 sensible but overridable defaults.
 
+#### `opal serve` command
+
+We add `opal serve` to the Opal commandline tool. Currently this simply wraps the
+Django runserver management command. It is envisaged that in the future this will
+also initialize e.g. sass precompilers with a single command.
+
 #### Misc Changes
 
 Adds the utility function `opal.utils.get`. Similar to the `getattr` builtin, `get` looks
