@@ -3,11 +3,13 @@ Opal Lookuplists
 """
 import logging
 
+
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
 from opal import utils
+from opal import managers
 
 
 def load_lookuplist_item(model, item):
@@ -43,6 +45,8 @@ def synonym_exists(lookuplist, name):
 class LookupList(models.Model):
     name = models.CharField(max_length=255, unique=True)
     synonyms = GenericRelation('opal.Synonym')
+
+    objects = managers.LookupListQueryset.as_manager()
 
     class Meta:
         ordering = ['name']

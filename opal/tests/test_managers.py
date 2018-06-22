@@ -1,6 +1,9 @@
 """
 Unittests for opal.managers
 """
+from django.contrib.contenttypes.models import ContentType
+
+from opal.models import Synonym
 from opal.core.test import OpalTestCase
 from opal.models import Patient, Episode
 from opal.tests import models as test_models
@@ -205,3 +208,71 @@ class EpisodeManagerTestCase(OpalTestCase):
             self.user, [self.episode]
         )
         self.assertEqual(as_dict[0]['tagging'][0], {'id': 1})
+
+
+class LookupListQuerysetTestCase(OpalTestCase):
+    def create_synonym(self, instance, synonym):
+        ct = ContentType.objects.get_for_model(Hat)
+        return Synonym.objects.create(
+            name=synonym,
+            object_id=instance.id,
+            content_type=ct
+        )
+
+    def create_instance(self, name):
+        return Hat.objects.create(name=name)
+        pass
+
+    def create_model_and_synonym(self, name, *synonyms):
+        instance = self.create_instance(name)
+        for synonym in synonyms:
+            self.create_synonym(instance, synonum)
+        return instance
+
+    def test_get_content_type(self):
+        pass
+
+    def test_find_from_synonyms(self):
+        pass
+
+    def test_find_from_synonyms_case_insensive(self):
+        pass
+
+    def test_find_from_synonyms_contains(self):
+        pass
+
+    def test_find_from_synonyms_case_sensitive_and_contains(self):
+        pass
+
+    def test_find_from_synonyms_distinct(self):
+        pass
+
+    def test_get_query_modifier_standard(self):
+        pass
+
+    def test_get_query_modifier_contains(self):
+        pass
+
+    def test_get_query_modifier_case_sensitive(self):
+        pass
+
+    def test_get_query_modifier_case_sensitive_and_contains(self):
+        pass
+
+    def test_search(self):
+        pass
+
+    def test_search_many(self):
+        pass
+
+    def test_search_many_case_sensitive_name(self):
+        pass
+
+    def test_search_many_contains_name(self):
+        pass
+
+    def test_search_many_case_sensitive_search_name(self):
+        pass
+
+    def test_multiple_search_and_synonym_results(self):
+        pass
