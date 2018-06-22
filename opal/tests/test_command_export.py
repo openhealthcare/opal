@@ -7,6 +7,7 @@ from opal.core.test import OpalTestCase
 
 from opal.management.commands import export
 
+
 class ExportTestCase(OpalTestCase):
 
     def test_add_arguments(self):

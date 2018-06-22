@@ -58,7 +58,6 @@ class Command(BaseCommand):
             msg = 'Cannot find Episode with ID: {}'.format(patient_id)
             raise LookupError(msg)
 
-
     def handle(self, *args, **options):
         """
         Commandline entrypoint

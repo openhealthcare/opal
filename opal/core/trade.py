@@ -154,7 +154,7 @@ def episode_id_to_json(episode_id, user=None, excludes=None):
     If the episode does not exist raise Episode.DoesNotExist
     """
     episode = models.Episode.objects.get(pk=episode_id)
-    data, patient = patient_id_to_json(episode.patient.id)
+    data, patient = patient_id_to_json(episode.patient.id, user=user, excludes=excludes)
     data['episodes'] = {
         k: v for k, v in data['episodes'].items()
         if int(k) == int(episode_id)

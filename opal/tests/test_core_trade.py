@@ -4,6 +4,8 @@ Unittests for opal.core.trade
 import copy
 import datetime
 
+from mock import patch
+
 from opal.core.test import OpalTestCase
 from opal.models import Patient, Episode
 from opal.tests.models import Birthday
@@ -283,6 +285,15 @@ class EpisodeIDToJSONTestCase(OpalTestCase):
         with self.assertRaises(Episode.DoesNotExist):
             data, episode = trade.episode_id_to_json(8273)
 
+    def test_episode_to_json_passes_through_excludes(self):
+        p, e = self.new_patient_and_episode_please()
+
+        with patch.object(trade, 'patient_id_to_json') as serializer:
+            serializer.return_value = {'episodes': {}}, None
+
+            data, episode = trade.episode_id_to_json(e.id, excludes=['lab_test'])
+
+            serializer.assert_called_with(e.id, user=None, excludes=['lab_test'])
 
 
 """
