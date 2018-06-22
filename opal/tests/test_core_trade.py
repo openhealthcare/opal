@@ -217,3 +217,39 @@ class PatientIDToJSONTestCase(AbstractSpikeMilliganTestCase):
         data, patient = trade.patient_id_to_json(p.id, excludes=['favourite_number'])
 
         self.assertNotIn('favourite_number', data)
+
+
+class ExportImportPatientEndToEndTestCase(OpalTestCase):
+
+    def test_end_to_end_demographics(self):
+        p, e = self.new_patient_and_episode_please()
+
+        p.demographics_set.update(
+            first_name='Sonny',
+            surname='Stitt',
+            date_of_birth='1924-02-02'
+        )
+        e.colour_set.create(name='Blue')
+
+        patient_id = p.id
+
+        data, patient = trade.patient_id_to_json(patient_id)
+
+        p.delete()
+
+        self.assertEqual(
+            0,
+            Patient.objects.filter(
+                demographics__first_name='Sonny',
+                demographics__surname='Stitt',
+                demographics__date_of_birth='1924-02-02').count()
+        )
+
+        trade.import_patient(data)
+
+        patient = Patient.objects.get(
+            demographics__first_name='Sonny',
+            demographics__surname='Stitt',
+            demographics__date_of_birth='1924-02-02')
+
+        self.assertEqual('Blue', patient.episode_set.get().colour_set.first().name)
