@@ -115,7 +115,7 @@ class EpisodeTest(OpalTestCase):
     def test_tagging_dict(self):
         self.episode.set_tag_names(['inpatient'], self.user)
         self.assertEqual(
-            [{'inpatient': True, 'id': 1}],
+            [{'inpatient': True, 'id': self.episode.id}],
             self.episode.tagging_dict(self.user)
         )
 

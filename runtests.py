@@ -60,10 +60,10 @@ test_settings_config = dict(
         'opal.core.pathway',
     ),
     MIGRATION_MODULES={
-        'auth': 'auth.nomigrations',
-        'contenttypes': 'contenttypes.nomigrations',
-        'staticfiles': 'staticfiles.nomigrations',
-        'reversion': 'reversion.nomigrations',
+        'auth': 'opal.nomigrations',
+        'contenttypes': 'opal.nomigrations',
+        'staticfiles': 'opal.nomigrations',
+        'reversion': 'opal.nomigrations',
         'opal': 'opal.nomigrations'
     },
     TEMPLATES = [
