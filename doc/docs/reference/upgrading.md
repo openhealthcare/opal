@@ -7,6 +7,32 @@ application to a later version where there are extra steps required.
 
 Please upgrade django-compressor version to 2.2, ie update your requirements to
 
+Please add the following to your settings `TEMPLATE["options"]` config.
+
+```
+  'builtins': [
+    'opal.templatetags.forms',
+    'opal.templatetags.panels',
+    'opal.templatetags.pathways',
+  ]
+```
+
+This will add all opal template libraries to templates by default.
+
+#### In your plugin
+You will need to change your plugin `runtests.py` to use the `TEMPLATES-*` [relevant section of the Django documentation](https://docs.djangoproject.com/en/1.10/ref/templates/upgrading/#the-templates-settings) that was brought in in Django 1.10.
+
+Similar to applications, in your runtests.py Please also add the below to the `TEMPLATE["options"]` config.
+
+```
+'builtins': [
+  'opal.templatetags.forms',
+  'opal.templatetags.panels',
+  'opal.templatetags.pathways',
+]
+```
+
+
 # requirements.txt
 django-compressor==2.2
 

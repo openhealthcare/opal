@@ -80,7 +80,11 @@ test_settings_config = dict(
                     'opal.context_processors.settings',
                     'opal.context_processors.models'
                 ],
-                # ... some options here ...
+                'builtins': [
+                  'opal.templatetags.forms',
+                  'opal.templatetags.panels',
+                  'opal.core.pathway.templatetags.pathways',
+                ],
             },
         },
     ],

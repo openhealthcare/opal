@@ -5,40 +5,114 @@ import os
 import sys
 from django.conf import settings
 
-settings.configure(DEBUG=True,
-                   DATABASES={
-                       'default': {
-                           'ENGINE': 'django.db.backends.sqlite3',
-                       }
-                   },
-                   ROOT_URLCONF='opal.urls',
-                   STATIC_URL='/assets/',
-                   COMPRESS_ROOT=os.path.join(os.sep, 'tmp'),
-                   DATE_FORMAT = 'd/m/Y',
-                   DATE_INPUT_FORMATS = ['%d/%m/%Y'],
-                   DATETIME_FORMAT = 'd/m/Y H:i:s',
-                   DATETIME_INPUT_FORMATS = ['%d/%m/%Y %H:%M:%S'],
-                   TIME_FORMAT = "H:i:s",
-                   MIDDLEWARE_CLASSES = (
-                       'django.middleware.common.CommonMiddleware',
-                       'django.contrib.sessions.middleware.SessionMiddleware',
-                       'opal.middleware.AngularCSRFRename',
-                       'django.middleware.csrf.CsrfViewMiddleware',
-                       'django.contrib.auth.middleware.AuthenticationMiddleware',
-                       'django.contrib.messages.middleware.MessageMiddleware',
-                       'opal.middleware.DjangoReversionWorkaround',
-                       'reversion.middleware.RevisionMiddleware',
-                       'axes.middleware.FailedLoginMiddleware',
-                   ),
-                   INSTALLED_APPS=('django.contrib.auth',
-                                   'django.contrib.contenttypes',
-                                   'django.contrib.sessions',
-                                   'django.contrib.staticfiles',
-                                   'django.contrib.admin',
-                                   'compressor',
-                                   'opal',
-                                   '{{ name }}',))
+PROJECT_PATH = os.path.join(
+    os.path.realpath(os.path.dirname(__file__)), "opal"
+)
 
+test_settings_config = dict(
+    DATABASES={
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+        }
+    },
+    PROJECT_PATH=PROJECT_PATH,
+    ROOT_URLCONF='opal.urls',
+    USE_TZ=True,
+    OPAL_EXTRA_APPLICATION='',
+    DATE_FORMAT='d/m/Y',
+    DATE_INPUT_FORMATS=['%d/%m/%Y'],
+    DATETIME_FORMAT='d/m/Y H:i:s',
+    DATETIME_INPUT_FORMATS=['%d/%m/%Y %H:%M:%S'],
+    TIME_FORMAT = "H:i:s",
+    STATIC_URL='/assets/',
+    COMPRESS_ROOT='/tmp/',
+    TIME_ZONE='UTC',
+    OPAL_BRAND_NAME = 'opal',
+    INTEGRATING=False,
+    DEFAULT_DOMAIN='localhost',
+    MIDDLEWARE_CLASSES=(
+        'django.middleware.common.CommonMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'opal.middleware.AngularCSRFRename',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'opal.middleware.DjangoReversionWorkaround',
+        'reversion.middleware.RevisionMiddleware',
+        'axes.middleware.FailedLoginMiddleware',
+    ),
+    INSTALLED_APPS=(
+        'django.contrib.auth',
+        'django.contrib.contenttypes',
+        'django.contrib.staticfiles',
+        'django.contrib.sessions',
+        'django.contrib.admin',
+        'reversion',
+        'compressor',
+        'axes',
+        'djcelery',
+        'opal',
+        'opal.core.search',
+        'opal.core.pathway.tests.pathway_test',
+        'opal.core.pathway',
+        '{{ name }}',
+    ),
+    MIGRATION_MODULES={
+        'opal': 'opal.nomigrations'
+    },
+    TEMPLATES = [
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'DIRS': [],
+            'APP_DIRS': True,
+            'OPTIONS': {
+                'context_processors': [
+                    'django.contrib.auth.context_processors.auth',
+                    'django.template.context_processors.debug',
+                    'django.template.context_processors.i18n',
+                    'django.template.context_processors.media',
+                    'django.template.context_processors.request',
+                    'django.template.context_processors.static',
+                    'django.template.context_processors.tz',
+                    'django.contrib.messages.context_processors.messages',
+                    'opal.context_processors.settings',
+                    'opal.context_processors.models'
+                ],
+                'builtins': [
+                  'opal.templatetags.forms',
+                  'opal.templatetags.panels',
+                  'opal.core.pathway.templatetags.pathways',
+                ],
+            },
+        },
+    ],
+    CELERY_ALWAYS_EAGER=True,
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'filters': {
+            'require_debug_false': {
+                '()': 'django.utils.log.RequireDebugFalse'
+            }
+        },
+        'handlers': {
+            'mail_admins': {
+                'level': 'ERROR',
+                'filters': ['require_debug_false'],
+                'class': 'opal.core.log.ConfidentialEmailer'
+            },
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['mail_admins'],
+                'level': 'ERROR',
+                'propagate': True,
+            },
+        }
+    }
+)
+
+settings.configure(**test_settings_config)
 import django
 django.setup()
 

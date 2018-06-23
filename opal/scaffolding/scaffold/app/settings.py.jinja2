@@ -87,6 +87,11 @@ TEMPLATES = [
                     'django.template.loaders.app_directories.Loader',
                 ],
             )],
+            'builtins': [
+              'opal.templatetags.forms',
+              'opal.templatetags.panels',
+              'opal.core.pathway.templatetags.pathways',
+            ],
         },
     },
 ]

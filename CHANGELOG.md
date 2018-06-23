@@ -1,5 +1,11 @@
 ### 0.11.0 (Major Release)
 
+#### Opal templates tags are included automatically in newly scaffolded apps.
+
+All apps created by `opal startproject` will come automatically loaded into templates by default through the settings property `TEMPLATES["OPTIONS"]["builtins"]`.
+
+In the 0.12.0 release the template tags forms, patnels and pathways `{% load ... %}` statements will be removed from the templates that ship with opal.
+
 #### Adds options of `today` and `yesterday` in the date picker
 If you pass in `user_options=True` to the date picker. You will be provided with options to select today or yesterday in the form tag.
 
