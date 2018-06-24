@@ -629,7 +629,7 @@ class EpisodeTestCase(OpalTestCase):
     def setUp(self):
         super(EpisodeTestCase, self).setUp()
         self.patient, self.episode = self.new_patient_and_episode_please()
-        self.demographics = self.patient.demographics
+        self.demographics = self.patient.demographics()
 
         # add a date to make sure serialisation works as expected
         self.demographics.date_of_birth = date(2010, 1, 1)
@@ -747,7 +747,7 @@ class EpisodeTestCase(OpalTestCase):
         patient = models.Patient.objects.get(
             demographics__hospital_number="9999000999"
         )
-        demographics = patient.demographics
+        demographics = patient.demographics()
         self.assertEqual("Alain", demographics.first_name)
         self.assertEqual("Anderson", demographics.surname)
         self.assertEqual("Male", demographics.sex)

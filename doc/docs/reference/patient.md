@@ -1,12 +1,10 @@
 ## opal.models.Patient
 
-### properties
+### methods
 
-#### `Patient.demographics`
+#### `Patient.demographics()`
 
 Returns the relevant Demographics instance for the patient.
-
-### methods
 
 #### `Patient.create_episode()`
 

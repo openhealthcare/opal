@@ -72,14 +72,14 @@ class PrefetchTestCase(OpalTestCase):
 class PatientManagerTestCase(OpalTestCase):
     def setUp(self):
         self.patient_1 = Patient.objects.create()
-        demographics1 = self.patient_1.demographics
+        demographics1 = self.patient_1.demographics()
         demographics1.first_name="je ne"
         demographics1.surname="regrette"
         demographics1.hospital_number="rien"
         demographics1.save()
 
         self.patient_2 = Patient.objects.create()
-        demographics2 = self.patient_2.demographics
+        demographics2 = self.patient_2.demographics()
         demographics2.first_name="je joue"
         demographics2.surname="au",
         demographics2.hospital_number="football"
@@ -152,14 +152,14 @@ class EpisodeManagerTestCase(OpalTestCase):
     def test_search_returns_both_episodes(self):
         self.patient_1, self.episode_1_1 = self.new_patient_and_episode_please()
         self.episode_1_2 = self.patient_1.create_episode()
-        demographics1 = self.patient_1.demographics
+        demographics1 = self.patient_1.demographics()
         demographics1.first_name="je ne"
         demographics1.surname="regrette"
         demographics1.hospital_number="rien"
         demographics1.save()
 
         self.patient_2, self.episode_2_1 = self.new_patient_and_episode_please()
-        demographics2 = self.patient_2.demographics
+        demographics2 = self.patient_2.demographics()
         demographics2.first_name="je joue"
         demographics2.surname="au"
         demographics2.hospital_number="football"

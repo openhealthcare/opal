@@ -232,7 +232,7 @@ class TestSavePathway(PathwayTestCase):
 
     def test_existing_patient_new_episode_save(self):
         patient, episode = self.new_patient_and_episode_please()
-        demographics = patient.demographics
+        demographics = patient.demographics()
         demographics.hospital_number = "1231232"
         demographics.save()
 
@@ -252,7 +252,7 @@ class TestSavePathway(PathwayTestCase):
         patient, episode = self.new_patient_and_episode_please()
         post_data = {"demographics": [{"hospital_number": "101"}]}
         pathway.save(data=post_data, user=self.user, patient=patient)
-        demographics = patient.demographics
+        demographics = patient.demographics()
         self.assertEqual(
             demographics.hospital_number,
             "101"
@@ -272,7 +272,7 @@ class TestSavePathway(PathwayTestCase):
 
     def test_existing_patient_existing_episode_save(self):
         patient, episode = self.new_patient_and_episode_please()
-        demographics = patient.demographics
+        demographics = patient.demographics()
         demographics.hospital_number = "1231232"
         demographics.save()
         url = reverse(

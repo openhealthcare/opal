@@ -34,7 +34,7 @@ class PatientSummary(object):
         self.episode_ids = set([episode.id])
         self.patient_id = episode.patient.id
         self.categories = set([episode.category_name])
-        self.id = episode.patient.demographics.id
+        self.id = episode.patient.demographics().id
 
     def update(self, episode):
         if not self.start:

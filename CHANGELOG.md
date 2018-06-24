@@ -102,7 +102,7 @@ a generator function which will yield all subrecord singletons.
 made hospital numbers including `#` or `/` raise an error.
 * Adds the methods `.get_absolute_url()`, `.get_icon()` and `get_display_name()`
 to `opal.core.pathways.Pathway` and `opal.core.patient_lists.PatientList`.
-* Adds a property `.demographics` to `opal.models.Patient` which returns the relevant
+* Adds a method `.demographics()` to `opal.models.Patient` which returns the relevant
 demographics instance.
 
 #### Updates to the Dependency Graph

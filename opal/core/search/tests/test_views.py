@@ -19,7 +19,7 @@ class BaseSearchTestCase(OpalTestCase):
 
     def create_patient(self, first_name, last_name, hospital_number):
         patient, episode = self.new_patient_and_episode_please()
-        demographics = patient.demographics
+        demographics = patient.demographics()
         demographics.first_name = first_name
         demographics.surname = last_name
         demographics.hospital_number = hospital_number
@@ -86,7 +86,7 @@ class PatientSearchTestCase(BaseSearchTestCase):
         self.assertEqual(expected, data)
 
     def test_patient_number_with_hash(self):
-        demographics = self.patient.demographics
+        demographics = self.patient.demographics()
         demographics.hospital_number = "#007"
         demographics.save()
         url = '/search/patient/?hospital_number=%23007'
@@ -97,7 +97,7 @@ class PatientSearchTestCase(BaseSearchTestCase):
         self.assertEqual(expected, data)
 
     def test_patient_number_with_slash(self):
-        demographics = self.patient.demographics
+        demographics = self.patient.demographics()
         demographics.hospital_number = "/007"
         demographics.save()
         url = '/search/patient/?hospital_number=%2F007'
@@ -108,7 +108,7 @@ class PatientSearchTestCase(BaseSearchTestCase):
         self.assertEqual(expected, data)
 
     def test_patient_number_with_question_mark(self):
-        demographics = self.patient.demographics
+        demographics = self.patient.demographics()
         demographics.hospital_number = "?007"
         demographics.save()
         url = '/search/patient/?hospital_number=%3F007'
@@ -119,7 +119,7 @@ class PatientSearchTestCase(BaseSearchTestCase):
         self.assertEqual(expected, data)
 
     def test_patient_number_with_ampersand(self):
-        demographics = self.patient.demographics
+        demographics = self.patient.demographics()
         demographics.hospital_number = "&007"
         demographics.save()
         url = '/search/patient/?hospital_number=%26007'
