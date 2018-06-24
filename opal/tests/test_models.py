@@ -94,7 +94,7 @@ class PatientTestCase(OpalTestCase):
         original_patient.bulk_update(d, self.user)
 
         patient = Patient.objects.get()
-        demographics = patient.demographics_set.get()
+        demographics = patient.demographics
         self.assertEqual(demographics.first_name, "Samantha")
         self.assertEqual(demographics.surname, "Sun")
         self.assertEqual(demographics.hospital_number, "123312")
@@ -141,7 +141,7 @@ class PatientTestCase(OpalTestCase):
         original_patient.bulk_update(d, self.user)
 
         patient = Patient.objects.get()
-        demographics = patient.demographics_set.get()
+        demographics = patient.demographics
         self.assertEqual(demographics.first_name, "Samantha")
         self.assertEqual(demographics.surname, "Sun")
         self.assertEqual(demographics.hospital_number, "123312")
@@ -164,7 +164,7 @@ class PatientTestCase(OpalTestCase):
 
         original_patient.bulk_update(d, self.user)
         self.assertEqual(
-            original_patient.demographics_set.first().hospital_number, ""
+            original_patient.demographics.hospital_number, ""
         )
 
     def test_bulk_update_tagging(self):
@@ -209,7 +209,7 @@ class PatientTestCase(OpalTestCase):
         original_patient.bulk_update(d, self.user)
 
         patient = Patient.objects.get()
-        demographics = patient.demographics_set.get()
+        demographics = patient.demographics
         self.assertEqual(demographics.first_name, "Samantha")
         self.assertEqual(demographics.surname, "Sun")
         self.assertEqual(demographics.hospital_number, "123312")

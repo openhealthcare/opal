@@ -10,7 +10,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.stdout.write("Duplicate detection starting...")
-        klass = Patient.objects.all()[0].demographics_set.get().__class__
+        klass = Patient.objects.all()[0].demographics.__class__
         demographics = klass.objects.all()
         patients = Patient.objects.count()
         suspicious = []
@@ -20,7 +20,7 @@ class Command(BaseCommand):
             progress = '({0}% - {1} found)'.format(
                 int(float(i + 1) / patients * 100), len(suspicious)
             )
-            patient_demographics = patient.demographics_set.get()
+            patient_demographics = patient.demographics
             self.stdout.write(
                 '{0} Examining {1} {2}'.format(
                     progress,
@@ -62,15 +62,15 @@ class Command(BaseCommand):
             self.stdout.write("Suspicious Pair:")
 
             msg_1 = '{0} {1} {2}'.format(
-                pair[0].demographics_set.get().first_name,
-                pair[0].demographics_set.get().surname,
+                pair[0].demographics.first_name,
+                pair[0].demographics.surname,
                 pair[0].id
             )
             self.stdout.write(msg_1)
 
             msg_2 = '{0} {1} {2}'.format(
-                pair[1].demographics_set.get().first_name,
-                pair[1].demographics_set.get().surname,
+                pair[1].demographics.first_name,
+                pair[1].demographics.surname,
                 pair[1].id
             )
             self.stdout.write(msg_2)
