@@ -9,7 +9,7 @@ from django.conf import settings
 from django.utils import timezone
 
 from opal import models
-from opal.core import exceptions
+from opal.core import exceptions, subrecords
 from opal.models import (
     Subrecord, Tagging, Patient, InpatientAdmission, Symptom,
 )
@@ -38,6 +38,19 @@ class PatientRecordAccessTestCase(OpalTestCase):
 
 
 class PatientTestCase(OpalTestCase):
+
+    def test_demographics(self):
+        patient = models.Patient.objects.create()
+        self.assertEqual(patient.demographics_set.get(), patient.demographics())
+
+    def test_demographics_does_not_exist(self):
+        # This is one of those things that should not exist, but let's make
+        # doubly sure that we raise an exception if it does happen !
+        patient = models.Patient.objects.create()
+        patient.demographics_set.get().delete()
+        Demographics = subrecords.get_subrecord_from_model_name('Demographics')
+        with self.assertRaises(Demographics.DoesNotExist):
+            demographics = patient.demographics()
 
     def test_create_episode(self):
         patient = models.Patient()
@@ -81,7 +94,7 @@ class PatientTestCase(OpalTestCase):
         original_patient.bulk_update(d, self.user)
 
         patient = Patient.objects.get()
-        demographics = patient.demographics_set.get()
+        demographics = patient.demographics()
         self.assertEqual(demographics.first_name, "Samantha")
         self.assertEqual(demographics.surname, "Sun")
         self.assertEqual(demographics.hospital_number, "123312")
@@ -128,7 +141,7 @@ class PatientTestCase(OpalTestCase):
         original_patient.bulk_update(d, self.user)
 
         patient = Patient.objects.get()
-        demographics = patient.demographics_set.get()
+        demographics = patient.demographics()
         self.assertEqual(demographics.first_name, "Samantha")
         self.assertEqual(demographics.surname, "Sun")
         self.assertEqual(demographics.hospital_number, "123312")
@@ -151,7 +164,7 @@ class PatientTestCase(OpalTestCase):
 
         original_patient.bulk_update(d, self.user)
         self.assertEqual(
-            original_patient.demographics_set.first().hospital_number, ""
+            original_patient.demographics().hospital_number, ""
         )
 
     def test_bulk_update_tagging(self):
@@ -196,7 +209,7 @@ class PatientTestCase(OpalTestCase):
         original_patient.bulk_update(d, self.user)
 
         patient = Patient.objects.get()
-        demographics = patient.demographics_set.get()
+        demographics = patient.demographics()
         self.assertEqual(demographics.first_name, "Samantha")
         self.assertEqual(demographics.surname, "Sun")
         self.assertEqual(demographics.hospital_number, "123312")

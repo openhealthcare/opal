@@ -19,7 +19,7 @@ class BaseSearchTestCase(OpalTestCase):
 
     def create_patient(self, first_name, last_name, hospital_number):
         patient, episode = self.new_patient_and_episode_please()
-        demographics = patient.demographics_set.get()
+        demographics = patient.demographics()
         demographics.first_name = first_name
         demographics.surname = last_name
         demographics.hospital_number = hospital_number
@@ -86,7 +86,9 @@ class PatientSearchTestCase(BaseSearchTestCase):
         self.assertEqual(expected, data)
 
     def test_patient_number_with_hash(self):
-        self.patient.demographics_set.update(hospital_number="#007")
+        demographics = self.patient.demographics()
+        demographics.hospital_number = "#007"
+        demographics.save()
         url = '/search/patient/?hospital_number=%23007'
         resp = self.get_response(url)
         data = json.loads(resp.content.decode('UTF-8'))
@@ -95,7 +97,9 @@ class PatientSearchTestCase(BaseSearchTestCase):
         self.assertEqual(expected, data)
 
     def test_patient_number_with_slash(self):
-        self.patient.demographics_set.update(hospital_number="/007")
+        demographics = self.patient.demographics()
+        demographics.hospital_number = "/007"
+        demographics.save()
         url = '/search/patient/?hospital_number=%2F007'
         resp = self.get_response(url)
         data = json.loads(resp.content.decode('UTF-8'))
@@ -104,7 +108,9 @@ class PatientSearchTestCase(BaseSearchTestCase):
         self.assertEqual(expected, data)
 
     def test_patient_number_with_question_mark(self):
-        self.patient.demographics_set.update(hospital_number="?007")
+        demographics = self.patient.demographics()
+        demographics.hospital_number = "?007"
+        demographics.save()
         url = '/search/patient/?hospital_number=%3F007'
         resp = self.get_response(url)
         data = json.loads(resp.content.decode('UTF-8'))
@@ -113,7 +119,9 @@ class PatientSearchTestCase(BaseSearchTestCase):
         self.assertEqual(expected, data)
 
     def test_patient_number_with_ampersand(self):
-        self.patient.demographics_set.update(hospital_number="&007")
+        demographics = self.patient.demographics()
+        demographics.hospital_number = "&007"
+        demographics.save()
         url = '/search/patient/?hospital_number=%26007'
         resp = self.get_response(url)
         data = json.loads(resp.content.decode('UTF-8'))

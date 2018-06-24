@@ -44,7 +44,7 @@ class UserProfileAdminTestCase(AdminTestCase):
         self.assertTrue(has_perm)
 
     def test_delete_permission_has_created_subrecord(self):
-        dem = self.patient.demographics_set.get()
+        dem = self.patient.demographics()
         dem.created_by = self.user
         dem.save()
         request = self.rf.get('/admin/meh/')
@@ -54,7 +54,7 @@ class UserProfileAdminTestCase(AdminTestCase):
         self.assertFalse(has_perm)
 
     def test_delete_permission_has_updated_subrecord(self):
-        dem = self.patient.demographics_set.get()
+        dem = self.patient.demographics()
         dem.updated_by = self.user
         dem.save()
         request = self.rf.get('/admin/meh/')

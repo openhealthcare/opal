@@ -78,7 +78,7 @@ class DatabaseQueryTestCase(OpalTestCase):
         self.episode.start = self.DATE_OF_EPISODE
         self.episode.end = self.DATE_OF_EPISODE
         self.episode.save()
-        self.demographics = self.patient.demographics_set.get()
+        self.demographics = self.patient.demographics()
         self.demographics.first_name = "Sally"
         self.demographics.surname = "Stevens"
         self.demographics.sex = "Female"
@@ -344,7 +344,7 @@ class DatabaseQueryTestCase(OpalTestCase):
         )
         unknown = Gender(name='Unknown')
         unknown.save()
-        demographics = self.patient.demographics_set.first()
+        demographics = self.patient.demographics()
         demographics.sex = 'Unknown'
         demographics.save()
         query = queries.DatabaseQuery(self.user, [criteria])
@@ -357,7 +357,7 @@ class DatabaseQueryTestCase(OpalTestCase):
         )
         unknown = Gender(name='Unknown')
         unknown.save()
-        demographics = self.patient.demographics_set.first()
+        demographics = self.patient.demographics()
         demographics.sex = 'Unknown'
         demographics.save()
         query = queries.DatabaseQuery(self.user, [criteria])
@@ -688,7 +688,7 @@ class DatabaseQueryTestCase(OpalTestCase):
         female = Gender.objects.create(name="Female")
         ct = ContentType.objects.get_for_model(Gender)
         Synonym.objects.create(content_type=ct, name="F", object_id=female.id)
-        demographics = self.patient.demographics_set.get()
+        demographics = self.patient.demographics()
         demographics.sex = "F"
         demographics.save()
         self.assertEqual("Female", demographics.sex)
