@@ -244,8 +244,13 @@ class TestSavePathway(PathwayTestCase):
         )
         self.post_data(url=url)
         self.assertEqual(patient.episode_set.count(), 2)
+        new_episode = patient.episode_set.last()
+
+        # just validate that we definitely have created a new episode
+        self.assertNotEqual(episode.id, new_episode.id)
+
         self.assertEqual(
-            DogOwner.objects.filter(episode_id=episode.id + 1).count(), 2
+            DogOwner.objects.filter(episode_id=new_episode.id).count(), 2
         )
         self.assertFalse(
             DogOwner.objects.filter(episode_id=episode.id).exists()
