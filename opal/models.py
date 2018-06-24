@@ -504,6 +504,13 @@ class Patient(models.Model):
             print(self.id)
             raise
 
+    @property
+    def demographics(self):
+        """
+        Shortcut property to return this patient's demographics.
+        """
+        return self.demographics_set.get()
+
     def create_episode(self, **kwargs):
         return self.episode_set.create(**kwargs)
 
