@@ -1,7 +1,10 @@
-### 0.11.0 (Major Release)
+### 0.12.0 (Major Release)
 
 #### Adds in a default Lookup List Manager
 The lookup list manager has a `search` and `search_many` methods that allow easy searching across the lookup list itself and any synonyms its members have.
+
+
+### 0.11.0 (Major Release)
 
 #### Adds options of `today` and `yesterday` in the date picker
 If you pass in `user_options=True` to the date picker. You will be provided with options to select today or yesterday in the form tag.

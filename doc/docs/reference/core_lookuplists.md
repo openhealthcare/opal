@@ -23,9 +23,9 @@ A manager method that takes a string and will search accross the lookup list its
 insensitive, to change this behaviour query with `case_sensitive=True`
 
 ```python
-from opal.core import Antimicrobial
+from opal.core import Symptom
 
-Antimicrobial.objects.search("Difficulty Swallowing")
+Symptom.objects.search("Difficulty Swallowing")
 ## returns the Antimicrobial Dysphagia
 ```
 
