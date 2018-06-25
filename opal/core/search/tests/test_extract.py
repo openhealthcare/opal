@@ -370,7 +370,10 @@ class TestEpisodeCsvRenderer(PatientEpisodeTestCase):
         self.episode.set_tag_names(["trees"], self.user)
         # make sure we keep historic tags
         self.episode.set_tag_names(["leaves"], self.user)
-        self.assertIn("trees;leaves", renderer.get_row(self.episode))
+        row = renderer.get_row(self.episode)
+        self.assertTrue(
+            "trees;leaves" in row or "leaves;trees" in row
+        )
 
 
 @patch.object(PatientColour, "_get_fieldnames_to_extract")
@@ -381,6 +384,8 @@ class TestPatientSubrecordCsvRenderer(PatientEpisodeTestCase):
         self.patient_colour = PatientColour.objects.create(
             name="blue", patient=self.patient
         )
+        self.pid_str = str(self.patient.id)
+        self.eid_str = str(self.episode.id)
 
     def test_get_header(self, field_names_to_extract):
         field_names_to_extract.return_value = [
@@ -403,7 +408,9 @@ class TestPatientSubrecordCsvRenderer(PatientEpisodeTestCase):
             self.user
         )
         rendered = renderer.get_row(self.patient_colour, self.episode.id)
-        self.assertEqual(["1", "1", "blue"], rendered)
+        self.assertEqual(
+            [str(self.episode.id), str(self.patient.id), "blue"], rendered
+        )
 
     def test_get_rows(self, field_names_to_extract):
         field_names_to_extract.return_value = [
@@ -417,10 +424,13 @@ class TestPatientSubrecordCsvRenderer(PatientEpisodeTestCase):
         rendered = list(
             renderer.get_rows()
         )
-        self.assertEqual([["1", "1", "blue"]], rendered)
+        expected = [[self.eid_str, self.pid_str, "blue"]]
+        self.assertEqual(expected, rendered)
 
     def test_get_rows_same_patient(self, field_names_to_extract):
         self.patient.create_episode()
+        first_episode = self.patient.episode_set.first()
+        last_episode = self.patient.episode_set.last()
         field_names_to_extract.return_value = [
             "patient_id", "name", "consistency_token", "id"
         ]
@@ -434,18 +444,20 @@ class TestPatientSubrecordCsvRenderer(PatientEpisodeTestCase):
             renderer.get_rows()
         )
         self.assertEqual([
-            ["1", "1", "blue"],
-            ["2", "1", "blue"]
+            [str(first_episode.id), str(self.patient.id), "blue"],
+            [str(last_episode.id), str(self.patient.id), "blue"]
         ], rendered)
 
 
 @patch.object(Colour, "_get_fieldnames_to_extract")
 class TestEpisodeSubrecordCsvRenderer(PatientEpisodeTestCase):
     def setUp(self):
-        _, self.episode = self.new_patient_and_episode_please()
+        self.patient, self.episode = self.new_patient_and_episode_please()
         self.colour = Colour.objects.create(
             name="blue", episode=self.episode
         )
+        self.eid_str = str(self.episode.id)
+        self.pid_str = str(self.patient.id)
 
     def test_get_header(self, field_names_to_extract):
         field_names_to_extract.return_value = [
@@ -466,7 +478,8 @@ class TestEpisodeSubrecordCsvRenderer(PatientEpisodeTestCase):
             Colour, models.Episode.objects.all(), self.user
         )
         rendered = renderer.get_row(self.colour)
-        self.assertEqual(["1", "1", "blue"], rendered)
+        expected = [self.pid_str, self.eid_str, "blue"]
+        self.assertEqual(expected, rendered)
 
 
 @patch('opal.core.search.extract.subrecords')

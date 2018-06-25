@@ -129,8 +129,6 @@ class LookupListFormTestCase(OpalTestCase):
         self.assertEqual("Stetson", form.clean_name())
 
 
-
-
 class EpisodeAdminTestCase(AdminTestCase):
     def setUp(self):
         super(EpisodeAdminTestCase, self).setUp()
@@ -139,13 +137,15 @@ class EpisodeAdminTestCase(AdminTestCase):
     def test_episode_detail_link(self):
         self.assertEqual(
             self.admin.episode_detail_link(self.episode),
-            "<a href='/#/patient/1/1'>/#/patient/1/1</a>"
+            "<a href='/#/patient/{0}/{1}'>/#/patient/{0}/{1}</a>".format(
+                self.patient.id, self.episode.id
+            )
         )
 
     def test_view_on_site(self):
         self.assertEqual(
             self.admin.view_on_site(self.episode),
-            '/#/patient/1/1'
+            '/#/patient/{}/{}'.format(self.patient.id, self.episode.id)
         )
 
 
@@ -157,11 +157,13 @@ class PatientAdminTestCase(AdminTestCase):
     def test_patient_detail_link(self):
         self.assertEqual(
             self.admin.patient_detail_link(self.patient),
-            "<a href='/#/patient/1'>/#/patient/1</a>"
+            "<a href='/#/patient/{0}'>/#/patient/{0}</a>".format(
+                self.patient.id
+            )
         )
 
     def test_view_on_site(self):
         self.assertEqual(
             self.admin.view_on_site(self.patient),
-            '/#/patient/1'
+            '/#/patient/{}'.format(self.patient.id)
         )
