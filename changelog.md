@@ -1,3 +1,10 @@
+### 0.12.0 (Major Release)
+
+#### Misc Changes
+
+* Adds a method `.demographics()` to `opal.models.Patient` which returns the relevant demographics instance.
+
+
 ### 0.11.0 (Major Release)
 
 #### Adds options of `today` and `yesterday` in the date picker
@@ -102,8 +109,6 @@ a generator function which will yield all subrecord singletons.
 made hospital numbers including `#` or `/` raise an error.
 * Adds the methods `.get_absolute_url()`, `.get_icon()` and `get_display_name()`
 to `opal.core.pathways.Pathway` and `opal.core.patient_lists.PatientList`.
-* Adds a method `.demographics()` to `opal.models.Patient` which returns the relevant
-demographics instance.
 
 #### Updates to the Dependency Graph
 
