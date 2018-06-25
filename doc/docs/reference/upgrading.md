@@ -23,6 +23,8 @@ requirements.txt to update the version should work.
 There are no migrations or additional commands for this upgrae, and we are not aware of
 any backwards incompatible changes.
 
+Please change any custom managers/querysets you have on your lookup lists to inherit from the `opal.managers.LookupListQueryset`.
+
 ### 0.9.0 -> 0.10.0
 
 #### Upgrading Opal

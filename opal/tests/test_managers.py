@@ -1,6 +1,11 @@
 """
 Unittests for opal.managers
 """
+from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
+import mock
+
+from opal.models import Synonym
 from opal.core.test import OpalTestCase
 from opal.models import Patient, Episode
 from opal.tests import models as test_models
@@ -205,3 +210,222 @@ class EpisodeManagerTestCase(OpalTestCase):
             self.user, [self.episode]
         )
         self.assertEqual(as_dict[0]['tagging'][0], {'id': 1})
+
+
+class LookupListQuerysetTestCase(OpalTestCase):
+    def setUp(self, *args, **kwargs):
+        super(LookupListQuerysetTestCase, self).setUp(*args, **kwargs)
+        self.hat = self.create_model_and_synonym("Top Hat", "High Hat")
+
+    def create_synonym(self, instance, synonym):
+        ct = ContentType.objects.get_for_model(test_models.Hat)
+        return Synonym.objects.create(
+            name=synonym,
+            object_id=instance.id,
+            content_type=ct
+        )
+
+    def create_instance(self, name):
+        return test_models.Hat.objects.create(name=name)
+
+    def create_model_and_synonym(self, name, *synonyms):
+        instance = self.create_instance(name)
+        for synonym in synonyms:
+            self.create_synonym(instance, synonym)
+        return instance
+
+    def test_get_content_type(self):
+        ct = ContentType.objects.get_for_model(test_models.Hat)
+        self.assertEqual(
+            ct, test_models.Hat.objects.get_content_type()
+        )
+
+    def test_find_ids_from_synonyms(self):
+        ids = test_models.Hat.objects.find_ids_from_synonyms(
+            ["high hat"]
+        )
+        self.assertEqual(len(ids), 1)
+        self.assertEqual(
+            self.hat.id, ids[0]
+        )
+
+        ids = test_models.Hat.objects.find_ids_from_synonyms(
+            ["tree"]
+        )
+        self.assertEqual(len(ids), 0)
+
+    def test_find_ids_from_synonyms_case_sensive(self):
+        ids = test_models.Hat.objects.find_ids_from_synonyms(
+            ["High Hat"], case_sensitive=True
+        )
+        self.assertEqual(len(ids), 1)
+        self.assertEqual(
+            self.hat.id, ids[0]
+        )
+
+        ids = test_models.Hat.objects.find_ids_from_synonyms(
+            ["high hat"], case_sensitive=True
+        )
+        self.assertEqual(len(ids), 0)
+
+    def test_find_ids_from_synonyms_contains(self):
+        ids = test_models.Hat.objects.find_ids_from_synonyms(
+            ["igh"], contains=True
+        )
+        self.assertEqual(len(ids), 1)
+        self.assertEqual(
+            self.hat.id, ids[0]
+        )
+
+        ids = test_models.Hat.objects.find_ids_from_synonyms(
+            ["figh"], contains=True
+        )
+        self.assertEqual(len(ids), 0)
+
+    def test_find_ids_from_synonyms_case_sensitive_and_contains(self):
+        # sqlite does not support case insensitive LIKE clauses
+        if settings.DATABASES["default"]["ENGINE"].endswith("sqlite3"):
+            return
+
+        ids = test_models.Hat.objects.find_ids_from_synonyms(
+            ["igh"], contains=True, case_sensitive=True
+        )
+        self.assertEqual(len(ids), 1)
+        self.assertEqual(
+            self.hat.id, ids[0]
+        )
+
+        ids = test_models.Hat.objects.find_ids_from_synonyms(
+            ["Igh"], contains=True, case_sensitive=True
+        )
+        self.assertEqual(len(ids), 0)
+
+    def test_find_ids_from_synonyms_distinct(self):
+        bowler = self.create_model_and_synonym(
+            "Bowler", "Bob Hat", "Bob Cap"
+        )
+        ids = test_models.Hat.objects.find_ids_from_synonyms(
+            ["Bob"], contains=True
+        )
+        self.assertEqual(len(ids), 1)
+        self.assertEqual(ids[0], bowler.id)
+
+    def test_get_query_arg_standard(self):
+        query_arg = test_models.Hat.objects.get_query_arg(
+            contains=False, case_sensitive=False
+        )
+        self.assertEqual(
+            query_arg, "name__iexact"
+        )
+
+    def test_get_query_arg_contains(self):
+        query_arg = test_models.Hat.objects.get_query_arg(
+            contains=True, case_sensitive=False
+        )
+        self.assertEqual(
+            query_arg, "name__icontains"
+        )
+
+    def test_get_query_arg_case_sensitive(self):
+        query_arg = test_models.Hat.objects.get_query_arg(
+            contains=False, case_sensitive=True
+        )
+        self.assertEqual(
+            query_arg, "name"
+        )
+
+    def test_get_query_arg_case_sensitive_and_contains(self):
+        query_arg = test_models.Hat.objects.get_query_arg(
+            case_sensitive=True, contains=True
+        )
+        self.assertEqual(
+            query_arg, "name__contains"
+        )
+
+    def test_search(self):
+        with mock.patch("opal.managers.LookupListQueryset.search_many") as s:
+            test_models.Hat.objects.search("hello")
+        s.assert_called_once_with(
+            ["hello"], contains=False, case_sensitive=False
+        )
+
+        with mock.patch("opal.managers.LookupListQueryset.search_many") as s:
+            test_models.Hat.objects.search("hello", contains=True)
+        s.assert_called_once_with(
+            ["hello"], contains=True, case_sensitive=False
+        )
+
+        with mock.patch("opal.managers.LookupListQueryset.search_many") as s:
+            test_models.Hat.objects.search("hello", case_sensitive=True)
+        s.assert_called_once_with(
+            ["hello"], contains=False, case_sensitive=True
+        )
+
+    def test_search_many(self):
+        bowler = self.create_model_and_synonym(
+            "Bowler", "Bob Hat", "Bob Cap"
+        )
+        self.create_model_and_synonym(
+            "other", "unused"
+        )
+        hats = test_models.Hat.objects.search_many(["bob hat", "top hat"])
+        self.assertTrue(
+            hats.filter(id=bowler.id).exists()
+        )
+        self.assertTrue(
+            hats.filter(id=self.hat.id).exists()
+        )
+        self.assertTrue(
+            hats.count(), 2
+        )
+
+    def test_search_many_case_sensitive_name(self):
+        bowler = self.create_model_and_synonym(
+            "Bowler", "Bob Hat", "Bob Cap"
+        )
+        self.create_model_and_synonym(
+            "other", "unused"
+        )
+        hats = test_models.Hat.objects.search_many(
+            ["Bob Hat", "Top Hat"], case_sensitive=True
+        )
+        self.assertTrue(
+            hats.filter(id=bowler.id).exists()
+        )
+        self.assertTrue(
+            hats.filter(id=self.hat.id).exists()
+        )
+        self.assertTrue(
+            hats.count(), 2
+        )
+        if settings.DATABASES["default"]["ENGINE"].endswith("sqlite3"):
+            return
+
+        hats = test_models.Hat.objects.search_many(
+            ["bob hat", "top hat"], case_sensitive=False
+        )
+        self.assertFalse(hats.exists())
+
+    def test_search_many_contains_name(self):
+        bowler = self.create_model_and_synonym(
+            "Bowler", "Bob Hat", "Bob Cap"
+        )
+        self.create_model_and_synonym(
+            "other", "unused"
+        )
+        hats = test_models.Hat.objects.search_many(
+            ["hat", "cap"], contains=True
+        )
+        self.assertTrue(
+            hats.filter(id=bowler.id).exists()
+        )
+        self.assertTrue(
+            hats.filter(id=self.hat.id).exists()
+        )
+        self.assertTrue(
+            hats.count(), 2
+        )
+
+    def test_multiple_search_missing_results(self):
+        result = test_models.Hat.objects.search_many(["High Hat", "Bob Cap"])
+        self.assertEqual(result.get(), self.hat)

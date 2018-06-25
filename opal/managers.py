@@ -3,9 +3,9 @@ Custom managers for query optimisations
 """
 from collections import defaultdict
 import operator
-
 from django.db import models
 from django.db.models import Q
+from django.contrib.contenttypes.models import ContentType
 
 from opal.core.subrecords import (
     episode_subrecords, patient_subrecords
@@ -150,3 +150,71 @@ class EpisodeQueryset(models.QuerySet):
         episodes = self.filter(**filters)
         as_dict = self.serialised(user, episodes)
         return as_dict
+
+
+class LookupListQueryset(models.QuerySet):
+    def get_content_type(self):
+        return ContentType.objects.get_for_model(self.model)
+
+    def find_ids_from_synonyms(
+        self, some_strs, contains=False, case_sensitive=False
+    ):
+        """
+        Searches through synonyms and returns
+        the related object ids
+        e.g.
+        if instance top_hat had the synonym topper
+        and some_strs = ['topper']
+        we would return ValuesList(top_hat.id)
+        """
+        from opal.models import Synonym
+        content_type = self.get_content_type()
+        query_arg = self.get_query_arg(contains, case_sensitive)
+        q_objects = []
+        for some_str in some_strs:
+            kwargs = {
+                query_arg: some_str,
+                "content_type": content_type
+            }
+            q_objects.append(Q(**kwargs))
+        return Synonym.objects.filter(
+            reduce(operator.or_, q_objects)
+        ).values_list("object_id", flat=True).distinct()
+
+    def get_query_arg(self, contains, case_sensitive):
+        if contains and not case_sensitive:
+            return "name__icontains"
+        if contains and case_sensitive:
+            return "name__contains"
+        if not contains and not case_sensitive:
+            return "name__iexact"
+        return "name"
+
+    def search(self, some_str, contains=False, case_sensitive=False):
+        """
+        Searches through a lookup list and its synonyms for a value.
+
+        contains runs a contains query rather than an exactly equal
+        query.
+        """
+        return self.search_many(
+            [some_str], contains=contains, case_sensitive=case_sensitive
+        )
+
+    def search_many(self, some_strs, contains=False, case_sensitive=False):
+        ids_with_relevant_synonyms = self.find_ids_from_synonyms(
+            some_strs,
+            contains=contains,
+            case_sensitive=case_sensitive
+        )
+        query_arg = self.get_query_arg(contains, case_sensitive)
+        q_objects = [Q(id__in=ids_with_relevant_synonyms)]
+        for some_str in some_strs:
+            search_model_kwargs = {
+                query_arg: some_str
+            }
+            q_objects.append(Q(**search_model_kwargs))
+
+        return self.filter(
+            reduce(operator.or_, q_objects)
+        ).distinct()
