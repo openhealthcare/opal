@@ -7,7 +7,8 @@
 
 <html {% block angulardefinition %}xmlns:ng="http://angularjs.org" id="ng-app" ng-app="{% block ngapp %}opal{% endblock %}" ng-controller="RootCtrl" ng-keydown="keydown($event)"{% endblock %}>
   <head>
-
+    <!-- Sometimes your system administrater will helpfully configure IE to use old document modes by default. You don't want that here. -->
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <!--[if lte IE 8]>
 	<script type="text/javascript" src="{% static "js/lib/utils/json3.min.js" %}"></script>
     <![endif]-->

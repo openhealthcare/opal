@@ -3,6 +3,12 @@
 This document provides instructions for specific steps required to upgrading your Opal
 application to a later version where there are extra steps required.
 
+### 0.10.1 -> 0.11.0
+
+Please upgrade django-compressor version to 2.2, ie update your requirements to
+
+# requirements.txt
+django-compressor==2.2
 
 ### 0.10.0 -> 0.10.1
 
@@ -38,6 +44,7 @@ you have specified them in for instance, a requirements.txt.
     requests==2.18.4
     django-celery==3.2.2
     celery==3.1.25
+    django-compressor==2.2
 
 
 After re-installing (via for instance `pip install -r requirements.txt`) you will

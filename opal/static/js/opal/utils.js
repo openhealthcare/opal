@@ -139,6 +139,13 @@ OPAL._run = function($rootScope, ngProgressLite, $modal, $location, $analytics, 
         ngProgressLite.set(0);
     });
 
+    $rootScope.dateHelper = {
+      now: function(){ return new Date(); },
+      yesterday: function(){
+        return moment().subtract(1, 'days').toDate();
+      }
+    }
+
     $rootScope.open_modal = function(controller, template, resolves){
         $rootScope.state = 'modal';
 

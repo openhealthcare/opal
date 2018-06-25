@@ -33,7 +33,7 @@ from opal.core import api
 
 class LoginRequredTestCase(OpalTestCase):
     """
-        we expect almost all views to 401
+    We expect almost all views to 401
     """
     def setUp(self):
         self.patient, self.episode = self.new_patient_and_episode_please()
@@ -285,6 +285,7 @@ class SubrecordTestCase(OpalTestCase):
         with patch.object(self.model, "get_api_name") as mock_api_name:
             mock_api_name.return_value = "something"
             reload_module(api)
+            api.initialize_router()
             router = api.router
             self.assertIn(
                 "something",
@@ -644,8 +645,6 @@ class EpisodeTestCase(OpalTestCase):
         self.expected = self.episode.to_dict(self.user)
         self.expected["start"] = "14/01/2014"
         self.expected["end"] = "15/01/2014"
-        self.expected["episode_history"][0]["end"] = "15/01/2014"
-        self.expected["episode_history"][0]["start"] = "14/01/2014"
 
     def test_retrieve_episode(self):
         response = json.loads(api.EpisodeViewSet().retrieve(self.mock_request, pk=self.episode.pk).content.decode('UTF-8'))

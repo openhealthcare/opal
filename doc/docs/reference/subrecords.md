@@ -58,15 +58,6 @@ Name of the field by which we want to sort these records when displaying.
         _sort = 'start_date'
 ```
 
-#### Subrecord._title
-
-String we would like to use for user-facing display of this record type.
-
-```python
-    class Antimicrobial(EpisodeSubrecord):
-        _title = 'Abx'
-```
-
 #### Subrecord._clonable
 
 A Boolean that is True by default used by `opal.views.EpisodeCopyToCategoryView`
@@ -105,6 +96,22 @@ representations of the data.
 >>> Demographics.get_api_name()
 "demographics"
 ```
+
+#### Subrecord.get_display_name()
+
+Classmethod that returns the display name of the subrecord.
+
+This is used as the user visible title of subrecord panels and modals amongst other places.
+
+By default this uses the Django
+[Meta verbose_name](https://docs.djangoproject.com/en/dev/ref/models/options/#verbose-name) 
+property
+
+```python
+>>> PastMedicalHistory.get_display_name()
+"PMH"
+```
+
 
 #### Subrecord.get_display_template()
 
