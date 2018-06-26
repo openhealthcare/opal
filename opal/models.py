@@ -492,7 +492,7 @@ class Patient(models.Model):
 
     def __unicode__(self):
         try:
-            demographics = self.demographics_set.get()
+            demographics = self.demographics()
             return '%s | %s %s' % (
                 demographics.hospital_number,
                 demographics.first_name,
@@ -503,6 +503,12 @@ class Patient(models.Model):
         except:
             print(self.id)
             raise
+
+    def demographics(self):
+        """
+        Shortcut method to return this patient's demographics.
+        """
+        return self.demographics_set.get()
 
     def create_episode(self, **kwargs):
         return self.episode_set.create(**kwargs)
@@ -587,8 +593,7 @@ class Patient(models.Model):
         return d
 
     def update_from_demographics_dict(self, demographics_data, user):
-        demographics = self.demographics_set.get()
-        demographics.update_from_dict(demographics_data, user)
+        self.demographics().update_from_dict(demographics_data, user)
 
     def save(self, *args, **kwargs):
         created = not bool(self.id)
@@ -699,7 +704,7 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
     def __unicode__(self):
         try:
-            demographics = self.patient.demographics_set.get()
+            demographics = self.patient.demographics()
 
             return '%s | %s | %s' % (demographics.hospital_number,
                                      demographics.name,
@@ -1419,7 +1424,7 @@ class Location(EpisodeSubrecord):
         abstract = True
 
     def __unicode__(self):
-        demographics = self.episode.patient.demographics_set.get()
+        demographics = self.episode.patient.demographics()
         return 'Location for {0}({1}) {2} {3} {4} {5}'.format(
             demographics.name,
             demographics.hospital_number,
@@ -1492,7 +1497,7 @@ class Diagnosis(EpisodeSubrecord):
 
     def __unicode__(self):
         return 'Diagnosis for {0}: {1} - {2}'.format(
-            self.episode.patient.demographics_set.get().name,
+            self.episode.patient.demographics().name,
             self.condition,
             self.date_of_diagnosis
         )
