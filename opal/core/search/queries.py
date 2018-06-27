@@ -127,6 +127,9 @@ class DatabaseQuery(QueryBackend):
         """
         some_query = self.query
         patients = models.Patient.objects.search(some_query)
+        return self.sort_patients(patients)
+
+    def sort_patients(self, patients):
         patients = patients.annotate(
             max_episode_id=Max('episode__id')
         )
@@ -402,6 +405,8 @@ class DatabaseQuery(QueryBackend):
         return eps
 
     def get_aggregate_patients_from_episodes(self, episodes):
+        # we are changing this to use -episode_id
+        # w
         # at the moment we use start/end only
         patient_summaries = {}
 
@@ -472,6 +477,12 @@ class DatabaseQuery(QueryBackend):
     def get_patients(self):
         patients = set(e.patient for e in self.get_episodes())
         return list(patients)
+
+    def new_get_patients(self):
+        patient_ids = self.get_episodes().values_list("patient_id", flat=True)
+        return self.sort_patients(
+            models.Patient.objects.filter(id__in=patient_ids)
+        )
 
     def description(self):
         """

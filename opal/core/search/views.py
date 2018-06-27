@@ -75,6 +75,7 @@ def _add_pagination(eps, page_number):
 @require_http_methods(['GET'])
 @ajax_login_required
 def patient_search_view(request):
+    page_number = int(request.GET.get("page_number", 1))
     hospital_number = request.GET.get("hospital_number")
 
     if hospital_number is None:
@@ -88,8 +89,43 @@ def patient_search_view(request):
         'column': u'demographics',
     }]
 
+    import time
+    ts = time()
     query = queries.create_query(request.user, criteria)
-    return json_response(query.patients_as_json())
+
+        result = f(*args, **kw)
+        te = time()
+        logger.info('timing_func: %r %2.4f sec' % (
+            f.__name__, te-ts
+        ))
+        return result
+
+    if settings.OPTIMISED_SEARCH:
+        patients = query.new_get_patients()
+        paginated = _add_pagination(patients, page_number)
+        paginated_patients = paginated["object_list"]
+
+        # on postgres it blows up if we don't manually manage this
+        if not paginated_patients:
+            paginated_patients = models.Patient.objects.none()
+        episodes = models.Episode.objects.filter(
+            id__in=paginated_patients.values_list("episode__id", flat=True)
+        )
+        paginated["object_list"] = query.get_aggregate_patients_from_episodes(
+            episodes
+        )
+        logging.info("")
+
+        response = json_response(paginated)
+    else:
+        response = json_response(query.patients_as_json())
+
+    te = time()
+
+    logger.info('search optiised %s: %2.4f sec' % (
+        settings.OPTIMISED_SEARCH, te-ts
+    ))
+    return response
 
 
 @with_no_caching
