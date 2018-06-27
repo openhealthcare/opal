@@ -204,4 +204,4 @@ class EpisodeManagerTestCase(OpalTestCase):
         as_dict = Episode.objects.serialised(
             self.user, [self.episode]
         )
-        self.assertEqual(as_dict[0]['tagging'][0], {'id': 1})
+        self.assertEqual(as_dict[0]['tagging'][0], {'id': self.episode.id})

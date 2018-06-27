@@ -119,8 +119,9 @@ class PatientTestCase(OpalTestCase):
         }
         patient.bulk_update(d, self.user)
         colours = patient.patientcolour_set.all()
-        self.assertEqual(colours[0].name, "green")
-        self.assertEqual(colours[1].name, "purple")
+        expected = set(["green", "purple"])
+        found = set([colours[0].name, colours[1].name])
+        self.assertEqual(expected, found)
 
     def test_bulk_update_with_existing_patient_episode(self):
         original_patient = models.Patient()
@@ -148,8 +149,10 @@ class PatientTestCase(OpalTestCase):
 
         colours = patient.patientcolour_set.all()
         self.assertEqual(len(colours), 2)
-        self.assertEqual(colours[0].name, "green")
-        self.assertEqual(colours[1].name, "purple")
+        self.assertEqual(
+            set([colours[0].name, colours[1].name]),
+            set(["green", "purple"]),
+        )
         self.assertTrue(patient.episode_set.get(), original_episode)
 
     def test_bulk_update_without_demographics(self):
@@ -218,8 +221,11 @@ class PatientTestCase(OpalTestCase):
 
         hat_wearers = episode.hatwearer_set.all()
         self.assertEqual(len(hat_wearers), 2)
-        self.assertEqual(hat_wearers[0].name, "bowler")
-        self.assertEqual(hat_wearers[1].name, "wizard")
+        expected = set(["bowler", "wizard"])
+        found = set([hat_wearers[0].name, hat_wearers[1].name])
+        self.assertEqual(
+            expected, found
+        )
         self.assertEqual(hat_wearers[0].episode, episode)
         self.assertEqual(hat_wearers[1].episode, episode)
 
@@ -765,7 +771,7 @@ class SymptomComplexTestCase(OpalTestCase):
             symptoms=["alertness", "apathy"],
             duration="a week",
             details="information",
-            episode_id=1,
+            episode_id=self.symptom_complex.episode.id,
             updated=None,
             updated_by_id=None,
             created=None,

@@ -210,8 +210,12 @@ class SubrecordTestCase(OpalTestCase):
         self.assertEqual([], json.loads(response.content.decode('UTF-8')))
 
     def test_list_with_some_contents(self):
-        c1 = Colour(name="blue", episode=self.episode).save()
-        c2 = Colour(name="red", episode=self.episode).save()
+        c1 = Colour.objects.create(
+            name="blue", episode=self.episode
+        )
+        c2 = Colour.objects.create(
+            name="red", episode=self.episode
+        )
         mock_request = MagicMock(name='mock request')
         mock_request.user = self.user
         response = self.viewset().list(mock_request)
@@ -220,8 +224,8 @@ class SubrecordTestCase(OpalTestCase):
                 u'consistency_token': u'',
                 u'created': None,
                 u'created_by_id': None,
-                u'episode_id': 1,
-                u'id': 1,
+                u'episode_id': self.episode.id,
+                u'id': c1.id,
                 u'name': u'blue',
                 u'updated': None,
                 u'updated_by_id': None
@@ -230,8 +234,8 @@ class SubrecordTestCase(OpalTestCase):
                 u'consistency_token': u'',
                 u'created': None,
                 u'created_by_id': None,
-                u'episode_id': 1,
-                u'id': 2,
+                u'episode_id': self.episode.id,
+                u'id': c2.id,
                 u'name': u'red',
                 u'updated': None,
                 u'updated_by_id': None
@@ -536,7 +540,7 @@ class UserProfileTestCase(TestCase):
             'roles'      : {'default': []},
             'full_name'  : '',
             'avatar_url' : 'http://gravatar.com/avatar/5d9c68c6c50ed3d02a2fcf54f63993b6?s=80&r=g&d=identicon',
-            'user_id'    : 1
+            'user_id'    : self.user.id
         }
         self.assertEqual(expected, response.data)
 
@@ -561,7 +565,9 @@ class UserTestCase(TestCase):
         self.assertEqual([self.user.profile.to_dict()], response.data)
 
     def test_retrieve(self):
-        response = api.UserViewSet().retrieve(self.mock_request, pk=1)
+        response = api.UserViewSet().retrieve(
+            self.mock_request, pk=self.user.id
+        )
         self.assertEqual(self.user.profile.to_dict(), response.data)
 
 

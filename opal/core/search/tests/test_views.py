@@ -151,11 +151,11 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
             u'page_number': 1,
             u'object_list': [{
                 u'count': 1,
-                u'id': self.patient.id,
+                u'id': self.patient.demographics_set.first().id,
                 u'first_name': u'Sean',
                 u'surname': u'Connery',
                 u'end': u'15/10/2015',
-                u'patient_id': 1,
+                u'patient_id': self.patient.id,
                 u'hospital_number': u'007',
                 u'date_of_birth': None,
                 u'start': u'15/10/2015',
@@ -285,11 +285,11 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
                 "first_name": "Ernst",
                 "surname": "Blofeld",
                 "start": None,
-                "patient_id": 2,
+                "patient_id": blofeld_patient.id,
                 "hospital_number": "23422",
                 "date_of_birth": None,
                 "end": None,
-                "id": 2,
+                "id": blofeld_patient.demographics_set.first().id,
                 "categories": ["Inpatient"]
             }],
             "page_number": 1,
@@ -367,7 +367,9 @@ class FilterViewTestCase(BaseSearchTestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_get(self):
-        models.Filter(user=self.user, name='testfilter', criteria='[]').save()
+        filter = models.Filter.objects.create(
+            user=self.user, name='testfilter', criteria='[]'
+        )
         self.assertEqual(1, models.Filter.objects.count())
 
         view = views.FilterView()
@@ -375,7 +377,9 @@ class FilterViewTestCase(BaseSearchTestCase):
         view.request.user = self.user
 
         data = json.loads(view.get().content.decode('UTF-8'))
-        self.assertEqual([{'name': 'testfilter', 'criteria': [], 'id': 1}], data)
+        self.assertEqual(
+            [{'name': filter.name, 'criteria': [], 'id': filter.id}], data
+        )
 
     def test_post(self):
         view = views.FilterView()

@@ -341,7 +341,7 @@ class TestTaggedPatientList(OpalTestCase):
         )
         serialized = patient_list.to_dict(self.user)
         self.assertEqual(len(serialized), 1)
-        self.assertEqual(serialized[0]["id"], 2)
+        self.assertEqual(serialized[0]["id"], self.episode_2.id)
 
     def test_tagging_set_without_subtag(self):
         ''' given an episode with certain tags and the required request we should
@@ -355,7 +355,7 @@ class TestTaggedPatientList(OpalTestCase):
         )
         serialized = patient_list.to_dict(self.user)
         self.assertEqual(len(serialized), 1)
-        self.assertEqual(serialized[0]["id"], 2)
+        self.assertEqual(serialized[0]["id"], self.episode_2.id)
 
     def test_list(self):
         expected = [
