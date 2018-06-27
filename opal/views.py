@@ -50,23 +50,46 @@ class PatientListTemplateView(LoginRequiredMixin, TemplateView):
         context = super(
             PatientListTemplateView, self
         ).get_context_data(**kwargs)
-        list_slug = None
-        if self.patient_list:
-            list_slug = self.patient_list.get_slug()
-        context['list_slug'] = list_slug
         context['patient_list'] = self.patient_list
-        context['lists'] = list(PatientList.for_user(self.request.user))
-        context['num_lists'] = len(context['lists'])
+        context['switcher_items'] = self.get_switcher_items()
+        context['list_group'] = self.get_list_group_context()
+        context['columns'] = self.get_column_context(**kwargs)
+        return context
 
-        context['list_group'] = None
+    # builds a list of Switcher items filtered for user, tab groups and current item viewed
+    def get_switcher_items(self):
+        # get all the PatientList items that the current user can 'see'
+        all_items = list(PatientList.for_user(self.request.user))
+
+        # remove Switcher items where the item is part of a TabbedPatientListGroup
+        # and add instead the TabbedPatientListGroup itself, once, in the same place
+        for index, item in enumerate(all_items):
+            tab_group = TabbedPatientListGroup.for_list(item)
+            if tab_group is not None:
+                all_items[index] = tab_group
+        switcher_items = []
+
+        # remove duplicates from the all_items list
+        for item in all_items:
+            if item not in switcher_items:
+                switcher_items.append(item)
+
+        # remove the currently displayed list from the switcher items
+        if self.patient_list in switcher_items:
+            switcher_items.remove(self.patient_list)
+
+        # NOTE: list switcher is suppressed in the template if there are no switcher_items
+        return switcher_items
+
+    # if a PatientList is part of a list group this returns the TabbedPatientListGroup
+    def get_list_group_context(self):
         if self.patient_list:
             group = TabbedPatientListGroup.for_list(self.patient_list)
             if group:
                 if group.visible_to(self.request.user):
-                    context['list_group'] = group
-
-        context['columns'] = self.get_column_context(**kwargs)
-        return context
+                    return group
+            else:
+                return None
 
     def get_template_names(self):
         if self.patient_list:

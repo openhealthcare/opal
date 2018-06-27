@@ -200,7 +200,11 @@ top of any list in the group.
 
 ### Defining a Tabbed Patient List Group
 
-Defining a group can be as simple as declaring member lists in a property.
+To define a group, declare the `member_lists` in Python list. Each item in the `member_lists` should be an object of class PatientList.
+
+You also need to define a `default_tab`, which specifies which of the member PatientLists you want  be shown initially by default when you select the Tab Group in the dropdown list Switcher.
+
+And finally, also specify a `display_name` for the TabbedPatientListGroup, which is what will be shown in the list Switcher dropdown menu.
 
 ```python
 # yourapp/patient_lists.py
@@ -211,6 +215,8 @@ from opal.core import patient_lists
 
 class MyListGroup(patient_lists.TabbedPatientListGroup):
     member_lists = [MyFirstPatientList, MySecondPatientList, ...]
+    display_name = "My Tabbed Group"
+    default_tab = MySecondPatientList
 ```
 
 
