@@ -1,0 +1,40 @@
+{% extends 'base_templates/modal_base.html' %}
+{% load forms %}
+{% block icon_name %}fa fa-exclamation-circle{% endblock %}
+{% block title %}Active inpatient episode found {% endblock %}
+{% block modal_body %}
+  <table class="table table-bordered table-hover search">
+    <thead>
+      <tr>
+        <td>Hospital #</td>
+        <td>Name</td>
+        <td>Admitted</td>
+        <td>Discharged</td>
+        <td></td>
+      </tr>
+    </thead>
+    <tbody>
+	  <tr class="pointer"
+          ng-click="jump_to_episode(patient.active_episode_id)"
+          >
+	    <td>[[patient.demographics[0].hospital_number]]</td>
+	    <td>[[patient.demographics[0].first_name]] [[patient.demographics[0].surname]]</td>
+	    <td>[[ patient.episodes[patient.active_episode_id].start | shortDate ]]</td>
+        <td>[[ patient.episodes[patient.active_episode_id].end | shortDate ]]</td>
+	    <td>
+          <i class="glyphicon glyphicon-new-window"></i>
+        </td>
+	  </tr>
+    </tbody>
+  </table>
+{% endblock %}
+{% block modal_save %}
+  <button class="btn btn-primary" ng-click="open_new()">
+    {% icon "glyphicon-plus" %}
+    Open new episode
+  </button>
+  <button class="btn btn-primary" ng-click="import_existing()">
+    {% icon "fa-folder-open-o" %}
+    Import from episode
+  </button>
+{% endblock %}

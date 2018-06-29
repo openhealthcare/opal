@@ -1,0 +1,91 @@
+<span class="[[item.date_ordered == null && 'italic']]">
+
+[[item.date_ordered | shortDate]]
+[[item.test]] <span ng-show="item.details">([[item.details]])</span>
+
+<!-- testType == 'micro_test_other'" -->
+<!-- testType == 'micro_test_hiv'" -->
+<!-- testType == 'micro_test_single_test_pos_neg'" -->
+<!-- testType == 'micro_test_single_test_pos_neg_equiv'" -->
+<!-- testType == 'micro_test_leishmaniasis_pcr'" -->
+<span ng-show="item.result && item.result != 'pending'" class="break-word">
+  ([[item.result | microresult]])
+</span>
+
+<ul>
+
+	<!-- testType == 'micro_test_mcs'" -->
+	<li ng-show="item.microscopy">Microscopy: [[item.microscopy]]</li>
+	<li ng-show="item.organism">Culture: [[item.organism]]</li>
+	<li ng-show="item.sensitive_antibiotics">SENS: [[item.sensitive_antibiotics]]</li>
+	<li ng-show="item.resistant_antibiotics">RES: [[item.resistant_antibiotics]]</li>
+
+	<!-- testType == 'micro_test_serology'" -->
+	<li ng-show="item.igm && item.igm != 'pending'">IgM: [[item.igm | microresult]]</li>
+
+	<!-- testType == 'micro_test_serology'" or testType == 'micro_test_single_igg_test'" -->
+	<li ng-show="item.igg && item.igg != 'pending'">IgG: [[item.igg | microresult]]</li>
+
+	<!-- testType == 'micro_test_ebv_serology'" -->
+	<li ng-show="item.vca_igm && item.vca_igm != 'pending'">VCA IgM: [[item.vca_igm | microresult]]</li>
+	<li ng-show="item.vca_igg && item.vca_igg != 'pending'">VCA IgG: [[item.vca_igg | microresult]]</li>
+	<li ng-show="item.ebna_igg && item.ebna_igg != 'pending'">EBNA IgG: [[item.ebna_igg | microresult]]</li>
+
+	<!-- testType == 'micro_test_hepititis_b_serology'" -->
+	<li ng-show="item.hbsag && item.hbsag != 'pending'">HBsAg: [[item.hbsag | microresult]]</li>
+	<li ng-show="item.anti_hbs && item.anti_hbs != 'pending'">anti-HbS: [[item.anti_hbs | microresult]]</li>
+	<li ng-show="item.anti_hbcore_igm && item.anti_hbcore_igm != 'pending'">anti-HbCore IgM: [[item.anti_hbcore_igm | microresult]]</li>
+	<li ng-show="item.anti_hbcore_igg && item.anti_hbcore_igg != 'pending'">anti-HbCore IgG: [[item.anti_hbcore_igg | microresult]]</li>
+
+	<!-- testType == 'micro_test_syphilis_serology'" -->
+	<li ng-show="item.rpr">RPR: [[item.rpr | microresult]]</li>
+	<li ng-show="item.tppa && item.tppa != 'pending'">TPPA: [[item.tppa | microresult]]</li>
+
+	<!-- testType == 'micro_test_viral_load'" -->
+	<li ng-show="item.viral_load">Viral load: [[item.viral_load]]</li>
+
+	<!-- testType == 'micro_test_parasitaemia'" -->
+	<li ng-show="item.parasitaemia">Parasitaemia: [[item.parasitaemia]]</li>
+
+	<!-- testType == 'micro_test_swab_pcr'" -->
+	<li ng-show="item.hsv && item.hsv != 'pending'">HSV: [[item.hsv | microresult]]</li>
+	<li ng-show="item.syphilis && item.syphilis != 'pending'">Syphilis: [[item.syphilis | microresult]]</li>
+
+	<!-- testType == 'micro_test_c_difficile'" -->
+	<li ng-show="item.c_difficile_antigen && item.c_difficile_antigen != 'pending'">C. difficile antigen: [[item.c_difficile_antigen | microresult]]</li>
+	<li ng-show="item.c_difficile_toxin && item.c_difficile_toxin != 'pending'">C. difficile toxin: [[item.c_difficile_toxin | microresult]]</li>
+
+	<!-- testType == 'micro_test_leishmaniasis_pcr'" -->
+	<li ng-show="item.species">Species: [[item.species]]</li>
+
+	<!-- testType == 'micro_test_csf_pcr'" -->
+	<li ng-show="item.hsv_1 && item.hsv_1 != 'pending'">HSV-1: [[item.hsv_1 | microresult]]</li>
+	<li ng-show="item.hsv_2 && item.hsv_2 != 'pending'">HSV-2: [[item.hsv_2 | microresult]]</li>
+	<li ng-show="item.enterovirus && item.enterovirus != 'pending'">Enterovirus: [[item.enterovirus | microresult]]</li>
+	<li ng-show="item.cmv && item.cmv != 'pending'">CMV: [[item.cmv | microresult]]</li>
+	<li ng-show="item.ebv && item.ebv != 'pending'">EBV: [[item.ebv | microresult]]</li>
+
+	<!-- testType == 'micro_test_csf_pcr'" or testType == 'micro_test_swab_pcr' -->
+	<li ng-show="item.vzv && item.vzv != 'pending'">VZV: [[item.vzv | microresult]]</li>
+
+	<!-- testType == 'micro_test_respiratory_virus_pcr'" -->
+	<li ng-show="item.influenza_a && item.influenza_a != 'pending'">Influenza-A: [[item.influenza_a | microresult]]</li>
+	<li ng-show="item.influenza_b && item.influenza_b != 'pending'">Influenza-B: [[item.influenza_b | microresult]]</li>
+	<li ng-show="item.parainfluenza && item.parainfluenza != 'pending'">Parainfluenza: [[item.parainfluenza | microresult]]</li>
+	<li ng-show="item.rhinovirus && item.rhinovirus != 'pending'">Rhinovirus: [[item.rhinovirus | microresult]]</li>
+	<li ng-show="item.metapneumovirus && item.metapneumovirus != 'pending'">Metapneumovirus: [[item.metapneumovirus | microresult]]</li>
+	<li ng-show="item.rsv && item.rsv != 'pending'">RSV: [[item.rsv | microresult]]</li>
+
+	<!-- testType == 'micro_test_stool_pcr'" -->
+	<li ng-show="item.norovirus && item.norovirus != 'pending'">Norovirus: [[item.norovirus | microresult]]</li>
+	<li ng-show="item.rotavirus && item.rotavirus != 'pending'">Rotavirus: [[item.rotavirus | microresult]]</li>
+
+	<!-- testType == 'micro_test_stool_pcr'" or testType == 'micro_test_respiratory_virus_pcr -->
+	<li ng-show="item.adenovirus && item.adenovirus != 'pending'">Adenovirus: [[item.adenovirus | microresult]]</li>
+
+	<!-- testType == 'micro_test_stool_parasitology_pcr'" -->
+	<li ng-show="item.giardia && item.giardia != 'pending'">Giardia: [[item.giardia | microresult]]</li>
+	<li ng-show="item.entamoeba_histolytica && item.entamoeba_histolytica != 'pending'">Entamoeba Histolytica: [[item.entamoeba_histolytica | microresult]]</li>
+	<li ng-show="item.cryptosporidium && item.cryptosporidium != 'pending'">Cryptosporidium: [[item.cryptosporidium | microresult]]</li>
+</ul>
+</span>

@@ -1,0 +1,120 @@
+{% load staticfiles %}
+{% load compress %}
+{% load application %}
+{% load plugins %}
+
+<!doctype html>
+
+<html {% block angulardefinition %}xmlns:ng="http://angularjs.org" id="ng-app" ng-app="{% block ngapp %}opal{% endblock %}" ng-controller="RootCtrl" ng-keydown="keydown($event)"{% endblock %}>
+  <head>
+    <!-- Sometimes your system administrater will helpfully configure IE to use old document modes by default. You don't want that here. -->
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <!--[if lte IE 8]>
+	<script type="text/javascript" src="{% static "js/lib/utils/json3.min.js" %}"></script>
+    <![endif]-->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/> <!--320-->
+    <title>{{ OPAL_BRAND_NAME }}</title>
+
+    <script type="text/javascript">
+      var initials = "{{request.user.first_name|slice:":1"}} {{request.user.last_name}}"
+      var settings = {
+      LOG_OUT_DURATION: {{OPAL_LOG_OUT_DURATION}}
+      }
+      var version = '{{VERSION_NUMBER}}';
+    </script>
+
+    {% compress js %}
+    {% core_javascripts 'opal.upstream.deps' %}
+    {% block opal_js %}
+    {% plugin_javascripts 'opal.upstream.deps' %}
+    {% opal_angular_deps %}
+    {% plugin_opal_angular_tracking_exclude %}
+
+    <script type="text/javascript">
+      angular.module('opal.config', []).value(
+      'OPAL_FLOW_SERVICE',
+      {% if OPAL_FLOW_SERVICE %}'{{ OPAL_FLOW_SERVICE }}'{% else %}null{% endif %}
+      );
+    </script>
+
+    {% core_javascripts 'opal.utils' %}
+    {% core_javascripts 'opal.services' %}
+    {% plugin_javascripts 'opal.services' %}
+    {% core_javascripts 'opal.controllers' %}
+    {% plugin_javascripts 'opal.controllers' %}
+
+    {% block angularapp %}
+    <script type="text/javascript" src="{% static "js/opal/app.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/opal/routes.js" %}"></script>
+    {% endblock %}
+
+    {% application_javascripts %}
+    <script type="text/javascript" src="{% static "js/opal/timer.js" %}"></script>
+    {% endblock opal_js %}
+    {% endcompress %}
+
+  <link href="{% static "js/lib/c3-0.4.10/c3.css" %}" rel="stylesheet" media="all">
+	<link href="{% static "bootstrap-3.1.0/css/bootstrap.css" %}" rel="stylesheet" media="all">
+	<link href="{% static "css/select.css" %}" rel="stylesheet" media="all">
+	<link href="{% static "css/bootstrap-datepicker.css" %}" rel="stylesheet" media="all">
+	<link href="{% static "css/font-awesome/css/font-awesome.css" %}" rel="stylesheet" media="all">
+	<link href="{% static "css/awesome-bootstrap-checkbox.css" %}" rel="stylesheet" media="all">
+  <link href="{% static "css/ngprogress-lite.css" %}" rel="stylesheet" media="screen">
+	<link href="{% static "js/lib/bower_components/angular-growl-v2/build/angular-growl.css" %}" rel="stylesheet" media="screen">
+
+  {% compress css %}
+  <link href="{% static "css/opal.css" %}" rel="stylesheet" media="all">
+  {% plugin_stylesheets %}
+  {% application_stylesheets %}
+  {% endcompress %}
+
+
+    <link rel="shortcut icon" href="{% if OPAL_FAVICON_PATH %}{% static OPAL_FAVICON_PATH %}{% else %}{% static 'img/ohc-icon.png' %}{% endif %}">
+
+    <script id="templates/growl/growl.html" type="text/ng-template">
+      <div class="growl-container" ng-class="wrapperClasses()">
+        <div class="growl-item alert" ng-repeat="message in growlMessages.directives[referenceId].messages" ng-class="alertClasses(message)" ng-click="stopTimeoutClose(message)">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true" ng-click="growlMessages.deleteMessage(message)" ng-show="!message.disableCloseButton">&times;</button>
+          <h4 class="growl-title" ng-show="message.title" ng-bind="message.title"></h4>
+          <div class="growl-message" ng-bind-html="message.text"></div>
+        </div>
+      </div>
+    </script>
+
+    {% plugin_head_extra %}
+
+  </head>
+  <body>
+    {% block application %}{% endblock %}
+    <script>
+      // temporary for try outs
+      jQuery(function($){
+
+      // Touch Device Detection
+      var isTouchDevice = 'ontouchstart' in document.documentElement;
+      if( isTouchDevice ) {
+      $('body').addClass('touch');
+      }
+
+      });
+    </script>
+
+    <!-- google analytics -->
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      {% if OPAL_ANALYTICS_NODOMAIN %}
+      ga('create', '{{ OPAL_ANALYTICS_ID }}', {
+      'cookieDomain': 'none'
+      });
+      {% else %}
+      ga('create', '{{ OPAL_ANALYTICS_ID }}', 'auto');
+      {% endif %}
+    </script>
+  </body>
+
+</html>

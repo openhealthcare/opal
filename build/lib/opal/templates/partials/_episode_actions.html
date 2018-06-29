@@ -1,0 +1,14 @@
+{% load application %}
+<p
+   ng-hide="episode.category_name != 'Inpatient' || hide_discharge_action == true"
+   >
+
+  <button
+     ng-hide="profile.readonly"
+     ng-click="dischargeEpisode(episode)"
+     class="btn btn-primary">
+        <span ng-show="episode.end"><i class="fa fa-home"></i> Confirm Discharge</span>
+        <span ng-hide="episode.end"><i class="fa fa-home"></i> Discharge</span>
+  </button>
+</p>
+{% application_actions %}

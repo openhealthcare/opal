@@ -1,0 +1,12 @@
+<script>
+var OPAL_ANGULAR_EXCLUDE_TRACKING_PREFIX = [
+  {% for prefix in excluded_tracking_prefix %}
+  '{{ prefix }}'{% if not forloop.last %},{% endif %}
+  {% endfor %}
+]
+var OPAL_ANGULAR_EXCLUDE_TRACKING_QS = [
+  {% for prefix in excluded_tracking_qs %}
+  '{{ prefix }}'{% if not forloop.last %},{% endif %}
+  {% endfor %}
+]
+</script>

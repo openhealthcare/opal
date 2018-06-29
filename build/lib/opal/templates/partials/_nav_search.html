@@ -1,0 +1,43 @@
+<script type="text/ng-template" id="searchSuggestTemplate.html">
+  <div class="search-suggest">
+    <h4 class="inline orange">
+      [[ match.label.first_name ]] [[ match.label.surname ]]
+    </h4>
+    <span ng-show="match.label.dateOfBirth">
+    ([[ match.label.dateOfBirth | shortDate ]])
+    </span>
+    <div>
+      [[ match.label.hospitalNumber ]]
+      <br />
+      [[ match.label.count ]] Episode<span ng-show="match.label.count > 1">s</span> ([[ match.label.categories|title ]]) [[ match.label.years ]]
+    </div>
+  </div>
+  </div>
+</script>
+
+
+<div ng-show="$location.path().indexOf('/search')">
+  <div ng-controller="SearchCtrl">
+    <form class="navbar-form navbar-right" ng-submit="search()" role="search">
+      <div class="form-group nav-bar-search">
+        <input
+          {% if OPAL_AUTOCOMPLETE_SEARCH %}
+          ng-model="query.autocompleteSearchTerm"
+          typeahead-on-select="selected($item, $model, $label)"
+          typeahead-template-url="searchSuggestTemplate.html"
+          typeahead-focus-first="false"
+          uib-typeahead="i for i in results | limitTo:8"
+          {% else %}
+            ng-model="query.searchTerm"
+          {% endif %}
+          slash-key-focus="!state || state==='normal'"
+          ng-blur="enableShortcuts()"
+          ng-focus="disableShortcuts()"
+          type="text"
+          class="form-control"
+          placeholder="Search"
+        />
+      </div>
+    </form>
+  </div>
+</div>

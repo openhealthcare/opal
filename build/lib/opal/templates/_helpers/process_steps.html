@@ -1,0 +1,17 @@
+<div class="smpl-step" >
+    <!-- add complete active or disabled classes-->
+    <div class="smpl-step-step" ng-class="{ active: {{ active }}, complete: {{ complete }}, disabled: {{ disabled }} }" ng-repeat="progress_step in {{ process_steps }}">
+        {% if show_index %}
+            <div class="text-center smpl-step-num">[[ $index + 1 ]]</div>
+        {% endif %}
+        <div style="z-index: [[ 20 - $index ]]" class="progress">
+            <div class="progress-bar"></div>
+        </div>
+        <span class="smpl-step-icon">
+          <i class="[[ progress_step.icon ]]"></i>
+        </span>
+        {% if show_titles %}
+            <div class="smpl-step-info text-center">[[ progress_step.display_name ]]</div>
+        {% endif %}
+    </div>
+</div>

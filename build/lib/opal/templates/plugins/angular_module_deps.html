@@ -1,0 +1,7 @@
+<script>
+var OPAL_ANGULAR_DEPS = [
+  {% for dep in deps %}
+  '{{ dep }}'{% if not forloop.last %},{% endif %}
+  {% endfor %}
+]
+</script>

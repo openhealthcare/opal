@@ -1,0 +1,11 @@
+{% load forms %}
+{% datepicker field="ReferralRoute.date_of_referral"  %}
+{% select field="ReferralRoute.referral_type"  %}
+{% input field="ReferralRoute.referral_organisation"  %}
+{% input field="ReferralRoute.referral_name"  %}
+
+{% checkbox field="ReferralRoute.internal" %}
+
+<div ng-show="editing.referral_route.internal">
+  {% input  field="ReferralRoute.referral_team"  %}
+</div>

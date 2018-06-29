@@ -1,0 +1,6 @@
+<ui-select class="col-sm-8" multiple ng-model="value" on-remove="onRemove($item, $model)" on-select="onSelect($item, $model)" theme="bootstrap">
+  <ui-select-match>[[ $item.display_name ]]</ui-select-match>
+  <ui-select-choices repeat="i.name as i in tagsList | filter:$select.search" value="[[ $select.selected.name ]]">
+    <div ng-bind-html="i.display_name | highlight: $select.search"></div>
+  </ui-select-choices>
+</ui-select>

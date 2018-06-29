@@ -1,0 +1,53 @@
+<div class="modal-header">
+  <!-- <button type="button" class="close" ng-click="cancel()">×</button> -->
+  <h3>
+    {% block icon %}<i class="{% block icon_name %}{{ icon }}{% endblock %}"></i>{% endblock %}
+    {% block title %}
+    {{title}}
+    <span ng-show="profile.can_see_pid() && editingName">
+      ([[ editingName]])
+    </span>
+    {% endblock %}
+  </h3>
+    {% block process_steps %}
+    {% endblock %}
+</div>
+<div class="modal-body" {% block modal_body_extra %}{% endblock %}>
+  {% block modal_body %}
+  {% endblock %}
+</div>
+<div class="modal-footer">
+  {% block pop_buttons %}{% endblock %}
+  {% if not single %}
+      {% block modal_delete %}
+        <span class="float-left" ng-show="editingMode()">
+            <button class="btn btn-secondary" ng-click="delete('delete')">
+              <i class="fa fa-trash-o"></i>
+                Delete
+             </button>
+         </span>
+      {% endblock %}
+  {% endif %}
+
+  {% block modal_save %}
+
+  <span ng-show="form">
+    <button check-form="form" class="btn btn-primary" ng-click="form.$valid && save('save')">
+      <i class="fa fa-save"></i> Save
+    </button>
+  </span>
+  <span ng-hide="form">
+    <button class="btn btn-primary" ng-click="save('save')">
+      <i class="fa fa-save"></i> Save
+    </button>
+  </span>
+
+
+  {% endblock %}
+  {% block modal_cancel %}
+  <button class="btn" ng-click="cancel()">Cancel</button>
+  {% endblock %}
+  {% if column.get_modal_footer_template %}
+    {% include column.get_modal_footer_template %}
+  {% endif %}
+</div>

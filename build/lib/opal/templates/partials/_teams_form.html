@@ -1,0 +1,46 @@
+{% if teams %}
+  <div class="control-group">
+    <div >
+	  {% for team in teams %}
+        {% if not team.parent %}
+          {% if team.direct_add %}
+
+            {% if team.has_subteams %}
+              {% for subteam in team.team_set.all %}
+                <!-- Subteam -->
+                {% if subteam.active and subteam.visible_in_list %}
+                  {% if subteam.direct_add %}
+
+                    <div class="checkbox checkbox-primary">
+                      <input type="checkbox" id="checkbox_{{subteam.name}}"
+                             ng-model="{% if tagging %}{{ tagging }}{% else %}editing{% endif %}.{{ subteam.name }}">
+                      <label for="checkbox_{{subteam.name}}">
+                        {{ team.title }} / {{ subteam.title }}
+                      </label>
+                      <i class="fa fa-users pull-right"></i>
+                    </div>
+                  {% endif %}
+               {% endif %}
+               <!-- Subteam -->
+              {% endfor %}
+              <hr />
+
+            {% else %} <!-- No subteams -->
+               <div class="checkbox checkbox-primary">
+                 <input type="checkbox" id="checkbox_{{team.name}}"
+                             ng-model="{% if tagging %}{{ tagging }}{% else %}editing{% endif %}.{{ team.name }}">
+                 <label for="checkbox_{{team.name}}">
+                   {{ team.title }}
+                 </label>
+                 <i class="fa fa-users pull-right"></i>
+               </div>
+               <hr />
+          {% endif %}
+
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+    </div>
+  </div>
+  <!-- Was editing.tagging[0] -->
+{% endif %}

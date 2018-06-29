@@ -1,0 +1,26 @@
+<div class="modal-header">
+  <button type="button" class="close" ng-click="cancel()">×</button>
+  <h3>
+    <i class="fa fa-save"></i>    
+    Save this search
+  </h3>
+</div>
+<div class="modal-body">
+  <form role="form">
+    <div class="form-group">
+      <label for="name">Name</label>
+      <input type="text" class="form-control"
+             id="name" placeholder="Name for this search"
+             ng-model="model.name"
+             autofocus>
+    </div>
+  </form>
+</div>
+
+<div class="modal-footer">
+  <button class="btn btn-primary" ng-click="save('save')">
+    <i class="fa fa-save"></i>
+    Save
+  </button>
+  <button class="btn" ng-click="cancel()">Cancel</button>
+</div>

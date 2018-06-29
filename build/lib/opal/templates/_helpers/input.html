@@ -1,0 +1,60 @@
+<div class="form-group"
+     {% if visibility %} {{ visibility|safe }} {% endif %}
+     >
+  <label
+    {% ifequal style "horizontal" %}
+    class="control-label col-sm-3"
+    {% endifequal %}
+    >
+    {% if icon %}<i class="{{icon}}"></i> {% endif %}
+    {{ label }}
+  </label>
+  <div ng-class="{{ formname }}.$submitted && {{ formname }}[{{ element_name }}].$error.required"
+       {% ifequal style "horizontal" %}
+       class="col-sm-{% if unit %}2{% else %}8{% endif %}"
+       {% endifequal %}
+       >
+
+	<input class="form-control" type="{{ element_type }}" ng-model="{{ model }}"
+           autocomplete="off"
+           {% for d in directives %}{{ d }} {% endfor %}
+           {% if lookuplist %}
+           uib-typeahead="i for i in {{ lookuplist }} | filter:$viewValue | limitTo:8"
+           {% endif %}
+           name="[[ {{ element_name }} ]]"
+           {% if required %}
+           required
+           {% endif %}
+           {% if change %}
+           ng-change="{{ change }}"
+           {% endif %}
+           {% if data %}
+           {% for key, val in data %}
+           data-{{key}}="{{ val }}"
+           {% endfor %}
+           {% endif %}
+           {% if enter %}
+           ng-keypress="$event.keyCode == 13 && {{ enter }}"
+           {% endif %}
+           {% if maxlength %}
+           ng-maxlength="{{ maxlength }}"
+           {% endif %}
+           {% if disabled %}
+           ng-disabled="{{ disabled}}"
+           {% endif %}
+           />
+    {% if maxlength %}
+        <span class="help-block" ng-show="({{ formname }}.$submitted || {{ formname }}[{{ element_name }}].$invalid) && {{ formname }}[{{ element_name }}].$error.maxlength">
+          Maximum length is {{ maxlength }}
+        </span>
+    {% endif %}
+    {% if required %}
+      <span class="help-block" ng-show="({{ formname }}[{{ element_name }}].$dirty || {{ formname }}.$submitted) && {{ formname }}[{{ element_name }}].$error.required">
+        {{ label }} is required
+      </span>
+    {% endif %}
+  </div>
+  {% if unit %}
+  <label class="control-label"><small>({{ unit }})</small></label>
+  {% endif %}
+</div>

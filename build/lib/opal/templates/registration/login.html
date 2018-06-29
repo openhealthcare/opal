@@ -1,0 +1,67 @@
+{% extends "opal.html" %}
+{% load static %}
+{% block angularapp %}{% endblock %}
+{% block angulardefinition %}{% endblock %}
+{% block opal_js %}{% endblock %}
+{% block navbar %}{% endblock %}
+{% block content %}
+<div class="content-offset container">
+  <div class="row content-centered">
+    <div class="col-md-4 col-md-offset-4">
+
+      <div class="panel panel-primary login">
+        <div class="panel-heading">
+          <h1>
+            <img src="{% if OPAL_LOGO_PATH %}{% static OPAL_LOGO_PATH %}{% else %}{% static 'img/ohc-trans.png' %}{% endif %}" />
+            {{OPAL_BRAND_NAME}}
+          </h1>
+        </div>
+
+        <div class="panel-body">
+          {% if form.errors %}
+          <p>Your username and password didn't match. Please try again.</p>
+          {% endif %}
+
+          <form method="post" action="{% url 'login' %}?next=/" class="form-horizontal">
+	        {% csrf_token %}
+	        <div class="form-group">
+		      <div class="col-sm-12">
+                <input type="text" id="username" name="username"  placeholder="Username"
+                       autocomplete="off"
+                       class="form-control lg-text"
+                       autofocus="autofocus"
+                       />
+		      </div>
+            </div>
+
+            <div class="form-group">
+		      <div class="col-sm-12 lg-text">
+                <input type="password" name="password" id="password" placeholder="Password" class="form-control">
+		      </div>
+            </div>
+
+            <div class="form-group">
+              <div class="col-sm-12">
+	            <button type="submit" class="btn btn-lg btn-primary pull-right" id="login"><i class="fa fa-key"></i> Sign in</button>
+              </div>
+            </div>
+
+            <input type="hidden" name="next" value="{{ next }}" />
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+  $(document).ready(function() {
+  $('#id_username').focus();
+  $('#login').click(
+  function(){
+  $('.login').addClass('submitted')
+  })
+  });
+</script>
+{% endblock %}
+{% block loading %}
+{% endblock %}

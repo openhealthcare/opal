@@ -1,0 +1,39 @@
+<div class="container content-offset">
+
+  <div class="panel panel-primary">
+    <!-- Default panel contents -->
+    <div class="panel-heading">
+      <h2>Your Account</h2>
+    </div>
+    <div class="panel-body">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+          <ul>
+            <li>
+              <b>First name:</b>
+              {{ request.user.first_name }}
+            </li>
+            <li>
+              <b>Last name:</b>
+              {{ request.user.last_name }}
+            </li>
+            <li>
+              <b>Username:</b>
+              {{ request.user.username }}
+            </li>
+            <li>
+              <b>Email:</b>
+              {{ request.user.email }}
+            </li>
+
+          </ul>
+          <hr />
+          <a class="btn-secondary btn-lg" href="{% url 'change-password' %}">
+            <i class="fa fa-key"></i>
+            Reset Password
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

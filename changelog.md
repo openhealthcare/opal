@@ -1,3 +1,6 @@
+### 0.11.1 (Minor bug fix)
+Fixes the user_options in the date picker tag to display the options as part of the text input.
+
 ### 0.11.0 (Major Release)
 
 #### Adds options of `today` and `yesterday` in the date picker

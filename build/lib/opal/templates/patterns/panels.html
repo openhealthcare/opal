@@ -1,0 +1,19 @@
+{% load forms %}
+<a class="anchor" name="Panels"></a>
+<div class="row">
+  <div class="col-md-8">
+    <h3>Panels <a href="#Panels">{% icon 'fa-paragraph' %}</a></h3>
+    <p class="lead">
+      A way of presenting discrete units of information.
+    </p>
+    <div class="well">
+      <p>
+        OPAL panels are very close Bootstrap 3 panels with some additional
+        styles and common uses.
+      </p>
+    </div>
+    {% include "patterns/panel_primary.html" %}
+    {% include "patterns/panel_default.html" %}
+    {% include "patterns/panel_active.html" %}
+  </div>
+</div>
