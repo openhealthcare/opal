@@ -1,12 +1,21 @@
+### 0.12.0 (Major Release)
+
+#### Misc Changes
+
+* Adds a method `.demographics()` to `opal.models.Patient` which returns the relevant demographics instance.
+
 ### 0.11.1 (Minor bug fix)
 Fixes the user_options in the date picker tag to display the options as part of the text input.
 
 ### 0.11.0 (Major Release)
 
 #### Adds options of `today` and `yesterday` in the date picker
-If you pass in `user_options=True` to the date picker. You will be provided with options to select today or yesterday in the form tag.
+
+If you pass in `user_options=True` to the date picker. You will be provided with
+options to select today or yesterday in the form tag.
 
 #### Adds `dateHelper` to the rootScope
+
 The dateHelper has the functions `now` and `yesterday` that return javascript Dates for
 the current time and the current time - 1 day.
 
@@ -24,11 +33,13 @@ Fixes a bug whereby episodes were serialising differently depending on whether
 the code path went via `.to_dict()` or `.objects.serialised()`.
 
 #### HelpTextStep can now use a custom template
+
 The `opal.core.pathway.steps.HelpTextStep` can now have a `help_text_template` passed in.
 
 This is the template for what will be placed in the side bar.
 
 #### Adds in a radio_vertical template tag
+
 This displays the label and then the radio
 buttons as a vertical list.
 
@@ -68,7 +79,6 @@ for a method named `get_$attr` and will call that if it exists.
 Adds the method `.get_absolute_url()` to `opal.core.pathways.Pathway` and
 `opal.core.patient_lists.PatientList`.
 
-
 #### Template removals
 
 We removed a number of superfluous templates:
@@ -99,10 +109,8 @@ override `base.html`in your application we advise that you add this `<meta>` tag
 a generator function which will yield all subrecord singletons.
 * Fixes a URI encoding bug in the `Episode.findByHospitalNumber()` method that
 made hospital numbers including `#` or `/` raise an error.
-
 * Adds the methods `.get_absolute_url()`, `.get_icon()` and `get_display_name()`
 to `opal.core.pathways.Pathway` and `opal.core.patient_lists.PatientList`.
-
 
 #### Updates to the Dependency Graph
 

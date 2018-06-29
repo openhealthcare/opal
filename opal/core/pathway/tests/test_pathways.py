@@ -56,7 +56,7 @@ class RedirectsToPatientMixinTestCase(OpalTestCase):
     def test_redirect(self):
         p, e = self.new_patient_and_episode_please()
         url = pathways.RedirectsToPatientMixin().redirect_url(patient=p)
-        self.assertEqual('/#/patient/1', url)
+        self.assertEqual('/#/patient/{}'.format(p.id), url)
 
 
 class PathwayTestCase(OpalTestCase):
@@ -232,27 +232,36 @@ class TestSavePathway(PathwayTestCase):
 
     def test_existing_patient_new_episode_save(self):
         patient, episode = self.new_patient_and_episode_please()
-        demographics = patient.demographics_set.get()
+        demographics = patient.demographics()
         demographics.hospital_number = "1231232"
         demographics.save()
 
         url = reverse(
             "pathway", kwargs=dict(
                 name="dog_owner",
-                patient_id=1
+                patient_id=patient.id
             )
         )
         self.post_data(url=url)
         self.assertEqual(patient.episode_set.count(), 2)
-        self.assertEqual(DogOwner.objects.filter(episode_id=2).count(), 2)
-        self.assertFalse(DogOwner.objects.filter(episode_id=episode.id).exists())
+        new_episode = patient.episode_set.last()
+
+        # just validate that we definitely have created a new episode
+        self.assertNotEqual(episode.id, new_episode.id)
+
+        self.assertEqual(
+            DogOwner.objects.filter(episode_id=new_episode.id).count(), 2
+        )
+        self.assertFalse(
+            DogOwner.objects.filter(episode_id=episode.id).exists()
+        )
 
     def test_users_patient_passed_in(self):
         pathway = PagePathwayExample()
         patient, episode = self.new_patient_and_episode_please()
         post_data = {"demographics": [{"hospital_number": "101"}]}
         pathway.save(data=post_data, user=self.user, patient=patient)
-        demographics = patient.demographics_set.get()
+        demographics = patient.demographics()
         self.assertEqual(
             demographics.hospital_number,
             "101"
@@ -272,14 +281,14 @@ class TestSavePathway(PathwayTestCase):
 
     def test_existing_patient_existing_episode_save(self):
         patient, episode = self.new_patient_and_episode_please()
-        demographics = patient.demographics_set.get()
+        demographics = patient.demographics()
         demographics.hospital_number = "1231232"
         demographics.save()
         url = reverse(
             "pathway", kwargs=dict(
                 name="dog_owner",
-                episode_id=1,
-                patient_id=1
+                episode_id=episode.id,
+                patient_id=patient.id
             )
         )
         self.post_data(url=url)
@@ -309,7 +318,7 @@ class TestRemoveUnChangedSubrecords(OpalTestCase):
     def test_dont_update_subrecords_that_havent_changed(self, subrecords):
         subrecords.return_value = [Colour]
         colour = Colour.objects.create(
-            consistency_token="unchanged",
+            consistency_token="unchange",
             name="Red",
             episode=self.episode,
             created=timezone.now()
@@ -340,7 +349,7 @@ class TestRemoveUnChangedSubrecords(OpalTestCase):
     def test_update_changed_subrecords(self, subrecords):
         subrecords.return_value = [Colour]
         colour = Colour.objects.create(
-            consistency_token="unchanged",
+            consistency_token="unchange",
             name="Blue",
             episode=self.episode,
         )
@@ -365,12 +374,12 @@ class TestRemoveUnChangedSubrecords(OpalTestCase):
     def test_only_change_one_in_a_list(self, subrecords):
         subrecords.return_value = [Colour]
         colour_1 = Colour.objects.create(
-            consistency_token="unchanged",
+            consistency_token="unchange",
             name="Blue",
             episode=self.episode,
         )
         colour_2 = Colour.objects.create(
-            consistency_token="unchanged",
+            consistency_token="unchange",
             name="Orange",
             episode=self.episode,
         )

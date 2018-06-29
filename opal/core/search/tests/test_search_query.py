@@ -78,7 +78,7 @@ class DatabaseQueryTestCase(OpalTestCase):
         self.episode.start = self.DATE_OF_EPISODE
         self.episode.end = self.DATE_OF_EPISODE
         self.episode.save()
-        self.demographics = self.patient.demographics_set.get()
+        self.demographics = self.patient.demographics()
         self.demographics.first_name = "Sally"
         self.demographics.surname = "Stevens"
         self.demographics.sex = "Female"
@@ -264,7 +264,9 @@ class DatabaseQueryTestCase(OpalTestCase):
         hatwearer.save()
 
         query = queries.DatabaseQuery(self.user, [criteria])
-        self.assertEqual([self.episode, other_episode], query.get_episodes())
+        expected = set([self.episode.id, other_episode.id])
+        found = set([i.id for i in query.get_episodes()])
+        self.assertEqual(expected, found)
 
     def test_fuzzy_query(self):
         """ It should return the patients that
@@ -344,7 +346,7 @@ class DatabaseQueryTestCase(OpalTestCase):
         )
         unknown = Gender(name='Unknown')
         unknown.save()
-        demographics = self.patient.demographics_set.first()
+        demographics = self.patient.demographics()
         demographics.sex = 'Unknown'
         demographics.save()
         query = queries.DatabaseQuery(self.user, [criteria])
@@ -357,7 +359,7 @@ class DatabaseQueryTestCase(OpalTestCase):
         )
         unknown = Gender(name='Unknown')
         unknown.save()
-        demographics = self.patient.demographics_set.first()
+        demographics = self.patient.demographics()
         demographics.sex = 'Unknown'
         demographics.save()
         query = queries.DatabaseQuery(self.user, [criteria])
@@ -525,7 +527,9 @@ class DatabaseQueryTestCase(OpalTestCase):
         hound_owner.dog = "Dalwinion"
         hound_owner.save()
         query = queries.DatabaseQuery(self.user, [criteria])
-        self.assertEqual([self.episode, episode_2], query.get_episodes())
+        expected = set([self.episode.id, episode_2.id])
+        found = set(i.id for i in query.get_episodes())
+        self.assertEqual(expected, found)
 
     def test_episodes_for_criteria_episode_subrecord_string_field(self):
         criteria = [
@@ -688,7 +692,7 @@ class DatabaseQueryTestCase(OpalTestCase):
         female = Gender.objects.create(name="Female")
         ct = ContentType.objects.get_for_model(Gender)
         Synonym.objects.create(content_type=ct, name="F", object_id=female.id)
-        demographics = self.patient.demographics_set.get()
+        demographics = self.patient.demographics()
         demographics.sex = "F"
         demographics.save()
         self.assertEqual("Female", demographics.sex)
@@ -715,7 +719,7 @@ class DatabaseQueryTestCase(OpalTestCase):
         query = queries.DatabaseQuery(self.user, self.name_criteria)
         summaries = query.get_patient_summaries()
         expected = [{
-            'id': self.patient.id,
+            'id': self.patient.demographics_set.first().id,
             'count': 1,
             'hospital_number': u'0',
             'date_of_birth': self.DATE_OF_BIRTH,
@@ -723,7 +727,7 @@ class DatabaseQueryTestCase(OpalTestCase):
             'surname': u'Stevens',
             'end': self.DATE_OF_EPISODE,
             'start': self.DATE_OF_EPISODE,
-            'patient_id': 1,
+            'patient_id': self.patient.id,
             'categories': [u'Inpatient']
         }]
         self.assertEqual(expected, summaries)
@@ -743,7 +747,7 @@ class DatabaseQueryTestCase(OpalTestCase):
         query = queries.DatabaseQuery(self.user, self.name_criteria)
         summaries = query.get_patient_summaries()
         expected = [{
-            'id': self.patient.id,
+            'id': self.patient.demographics_set.first().id,
             'count': 3,
             'hospital_number': u'0',
             'date_of_birth': self.DATE_OF_BIRTH,
@@ -751,7 +755,7 @@ class DatabaseQueryTestCase(OpalTestCase):
             'surname': u'Stevens',
             'end': end_date,
             'start': start_date,
-            'patient_id': 1,
+            'patient_id': self.patient.id,
             'categories': [u'Inpatient']
         }]
         self.assertEqual(expected, summaries)
