@@ -7,4 +7,5 @@ recursive-include opal/core/search/static *
 recursive-include opal/core/search/templates *
 recursive-include opal/core/pathway/static *
 recursive-include opal/core/pathway/templates *
+recursive-include opal/core/referencedata/data/lookuplists *
 recursive-include opal/tests/js_config *
