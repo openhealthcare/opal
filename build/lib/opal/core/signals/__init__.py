@@ -1,3 +1,0 @@
-"""
-Make this a package.
-"""
