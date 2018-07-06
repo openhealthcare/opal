@@ -4,7 +4,11 @@
 
 * Adds a method `.demographics()` to `opal.models.Patient` which returns the relevant demographics instance.
 
-### 0.11.1 (Minor bug fix)
+### 0.11.2 (Bugfix Release)
+
+Includes referencedata JSON files in Manifest.
+
+### 0.11.1 (Bugfix Release)
 Fixes the user_options in the date picker tag to display the options as part of the text input.
 
 ### 0.11.0 (Major Release)
