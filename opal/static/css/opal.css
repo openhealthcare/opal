@@ -1,3 +1,82 @@
+/* lato-300 - latin */
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 300;
+  src: url('../fonts/lato-v14-latin-300.eot'); /* IE9 Compat Modes */
+  src: local('Lato Light'), local('Lato-Light'),
+       url('../fonts/lato-v14-latin-300.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../fonts/lato-v14-latin-300.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../fonts/lato-v14-latin-300.woff') format('woff'), /* Modern Browsers */
+       url('../fonts/lato-v14-latin-300.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../fonts/lato-v14-latin-300.svg#Lato') format('svg'); /* Legacy iOS */
+}
+/* lato-regular - latin */
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../fonts/lato-v14-latin-regular.eot'); /* IE9 Compat Modes */
+  src: local('Lato Regular'), local('Lato-Regular'),
+       url('../fonts/lato-v14-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../fonts/lato-v14-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../fonts/lato-v14-latin-regular.woff') format('woff'), /* Modern Browsers */
+       url('../fonts/lato-v14-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../fonts/lato-v14-latin-regular.svg#Lato') format('svg'); /* Legacy iOS */
+}
+/* lato-700 - latin */
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 700;
+  src: url('../fonts/lato-v14-latin-700.eot'); /* IE9 Compat Modes */
+  src: local('Lato Bold'), local('Lato-Bold'),
+       url('../fonts/lato-v14-latin-700.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../fonts/lato-v14-latin-700.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../fonts/lato-v14-latin-700.woff') format('woff'), /* Modern Browsers */
+       url('../fonts/lato-v14-latin-700.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../fonts/lato-v14-latin-700.svg#Lato') format('svg'); /* Legacy iOS */
+}
+
+
+@media print{
+  @page {
+  	size: landscape;
+  }
+  .patient-list-container {
+      overflow: visible;
+      overflow-y: visible;
+  }
+
+  li {
+  	padding-top: 0px;
+  	padding-bottom: 0px;
+      line-height: 12px;
+  }
+
+  .screen-only {
+  	display: none;
+  }
+
+  /*
+  * it needs important because bootstrap
+  */
+  .always-on-print-block{
+  	display: block !important;
+  }
+
+  table {
+      font-size: 12px
+  }
+}
+
+@media screen{
+  .print-only {
+  	display: none;
+  }
+}
+
+
 /* Bootstrap resets */
 html, .outer-container{
     height: 100%;
@@ -474,7 +553,8 @@ i.delete,
 select.lg-text,
 input.lg-text,
 .modal select,
-.modal input {
+.modal input,
+input[type='password'] {
   font-size: 18px;
 }
 .panel-pathway .form-control, .modal .form-control {
@@ -1124,4 +1204,18 @@ hr.bold{
 
 .text-avatar{
     height: 20px;
+}
+
+.form-group .ui-select-container.ui-select-multiple {
+    height: auto;
+}
+
+.select2-choices {
+  min-height: 150px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.input-group-btn .btn{
+  padding: 8.5px 12px;
 }

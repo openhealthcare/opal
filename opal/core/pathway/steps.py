@@ -182,3 +182,6 @@ class HelpTextStep(Step):
 
     def get_help_text(self):
         return self.other_args.get("help_text", "").strip()
+
+    def get_help_text_template(self):
+        return self.other_args.get("help_text_template", "").strip()

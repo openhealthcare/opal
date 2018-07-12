@@ -46,6 +46,26 @@ describe('Utils.OPAL._run', function (){
         passedFunction();
         expect(mock_scope.state).toBe('normal');
     });
+
+    it('Should add dateHelper to the root scope.', function () {
+        var mock_scope = { $on: function(){} };
+        OPAL._run(mock_scope, {}, {})
+        expect(mock_scope.dateHelper).toBeDefined();
+    });
+
+    it('Should provide the current datetime when dateHelper.now() is called', function () {
+        var mock_scope = { $on: function(){} };
+        OPAL._run(mock_scope, {}, {});
+        var now = moment(mock_scope.dateHelper.now());
+        expect(now.isSame(moment(), 'minute')).toBe(true);
+    });
+
+    it('Should provide the yesterdays datetime when dateHelper.yesterday() is called', function () {
+        var mock_scope = { $on: function(){} };
+        OPAL._run(mock_scope, {}, {})
+        var yesterday = moment().subtract(1, "day");
+        expect(moment(mock_scope.dateHelper.yesterday()).isSame(yesterday, 'minute')).toBe(true);
+    });
 });
 
 describe('utils.OPAL._track', function(){

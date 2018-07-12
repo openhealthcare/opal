@@ -1,7 +1,8 @@
+from opal.core import serialization
 from opal.core.discoverable import DiscoverableFeature
 from opal.core.exceptions import Error
 from opal.utils import camelcase_to_underscore
-from opal.models import Episode, deserialize_date
+from opal.models import Episode
 
 
 class SearchException(Error):
@@ -81,7 +82,7 @@ class EpisodeStart(SearchRuleField):
     field_type = "date_time"
 
     def query(self, given_query):
-        val = deserialize_date(given_query['query'])
+        val = serialization.deserialize_date(given_query['query'])
         qs = Episode.objects.exclude(start=None)
         if given_query['queryType'] == 'Before':
             return qs.filter(start__lte=val)
@@ -98,7 +99,7 @@ class EpisodeEnd(SearchRuleField):
     field_type = "date_time"
 
     def query(self, given_query):
-        val = deserialize_date(given_query['query'])
+        val = serialization.deserialize_date(given_query['query'])
         qs = Episode.objects.exclude(end=None)
         if given_query['queryType'] == 'Before':
             return qs.filter(end__lte=val)

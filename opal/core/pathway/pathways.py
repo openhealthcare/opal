@@ -8,10 +8,11 @@ from collections import defaultdict
 from django.core.urlresolvers import reverse
 from django.db import models, transaction
 from django.utils.text import slugify
+from six import string_types
 
-from opal.core import discoverable, subrecords
+from opal.core import discoverable, menus, subrecords
 from opal.utils import AbstractBase
-from opal.core.views import OpalSerializer
+from opal.core.serialization import OpalSerializer
 from opal.core.pathway import Step
 
 
@@ -21,13 +22,56 @@ class RedirectsToPatientMixin(object):
 
 
 class Pathway(discoverable.DiscoverableFeature):
-    module_name = "pathways"
-    pathway_service = "Pathway"
+    module_name        = "pathways"
+    pathway_service    = "Pathway"
     finish_button_text = "Save"
     finish_button_icon = "fa fa-save"
+    icon               = None
+    display_name       = None
 
     # any iterable will do, this should be overridden
     steps = []
+
+    @classmethod
+    def get_slug(klass):
+        """
+        Returns a string which should be used as the slug for this pathway
+        """
+        slugattr = getattr(klass, 'slug', None)
+        if slugattr:
+            if isinstance(slugattr, string_types):
+                return slugattr
+        return slugify(klass.__name__)
+
+    @classmethod
+    def get_absolute_url(klass, **kwargs):
+        """
+        Returns a string which is the absolute URL of this Pathway.
+        """
+        return '{0}#/{1}/'.format(reverse('pathway_index'), klass.get_slug())
+
+    @classmethod
+    def get_icon(klass):
+        """
+        Default getter function - returns the `icon` property
+        """
+        return klass.icon
+
+    @classmethod
+    def get_display_name(klass):
+        """
+        Default getter function - returns the `display_name` property
+        """
+        return klass.display_name
+
+    @classmethod
+    def as_menuitem(kls, **kwargs):
+        return menus.MenuItem(
+            href=kwargs.get('href', kls.get_absolute_url()),
+            activepattern=kwargs.get('activepattern', kls.get_absolute_url()),
+            icon=kwargs.get('icon', kls.get_icon()),
+            display=kwargs.get('display', kls.get_display_name()),
+        )
 
     def get_pathway_service(self, is_modal):
         return self.pathway_service
@@ -52,7 +96,7 @@ class Pathway(discoverable.DiscoverableFeature):
 
         return reverse("pathway", kwargs=kwargs)
 
-    def redirect_url(save, user=None, patient=None, episode=None):
+    def redirect_url(self, user=None, patient=None, episode=None):
         episode = patient.episode_set.last()
         return "/#/patient/{0}/{1}".format(patient.id, episode.id)
 
@@ -149,8 +193,8 @@ class Pathway(discoverable.DiscoverableFeature):
             steps=steps_info,
             finish_button_text=self.finish_button_text,
             finish_button_icon=self.finish_button_icon,
-            display_name=self.display_name,
-            icon=getattr(self, "icon", None),
+            display_name=self.get_display_name(),
+            icon=self.get_icon(),
             save_url=self.save_url(patient=patient, episode=episode),
             pathway_service=self.get_pathway_service(is_modal),
         )

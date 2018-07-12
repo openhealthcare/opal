@@ -23,13 +23,31 @@ class Hat(lookuplists.LookupList):
     pass
 
 
+class EtherialHat(lookuplists.LookupList):
+    class Meta:
+        abstract = True
+
+
+class GhostHat(EtherialHat):
+    pass
+
+
 class HatWearer(models.EpisodeSubrecord):
     _sort = 'name'
-    _title = 'Wearer of Hats'
-
     name = dmodels.CharField(max_length=200)
     hats = dmodels.ManyToManyField(Hat, related_name="hat_wearers")
     wearing_a_hat = dmodels.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = 'Wearer of Hats'
+
+
+class EntitledHatWearer(models.EpisodeSubrecord):
+    _title = 'Entitled Wearer of Hats'
+    _advanced_searchable = False
+    _exclude_from_extract = True
+
+    name = dmodels.CharField(max_length=200)
 
 
 class InvisibleHatWearer(models.EpisodeSubrecord):

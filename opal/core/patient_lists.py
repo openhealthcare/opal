@@ -2,7 +2,7 @@
 This module defines the base PatientList classes.
 """
 from opal import utils
-from opal.core import discoverable, exceptions, metadata
+from opal.core import discoverable, exceptions, menus, metadata
 
 
 class Column(object):
@@ -74,14 +74,37 @@ class PatientList(discoverable.DiscoverableFeature,
     define the columns shown and a queryset that defines the episodes shown
     """
     module_name        = 'patient_lists'
-    template_name      = 'patient_lists/spreadsheet_list.html'
+    template_name      = 'patient_lists/layouts/spreadsheet_list.html'
     order              = 0
     comparator_service = None
+    icon               = None
+    display_name       = None
     # whether we display the add patient button
     allow_add_patient  = True
 
     # whether we allow the user to edit the teams the patient is under
     allow_edit_teams = True
+
+    @classmethod
+    def get_absolute_url(klass, **kwargs):
+        """
+        Return the absolute URL for this list
+        """
+        return '/#/list/{0}'.format(klass.get_slug())
+
+    @classmethod
+    def get_icon(klass):
+        """
+        Default getter function - returns the `icon` proprety
+        """
+        return klass.icon
+
+    @classmethod
+    def get_display_name(klass):
+        """
+        Default getter function - returns the `display_name` property
+        """
+        return klass.display_name
 
     @classmethod
     def list(klass):
@@ -99,6 +122,19 @@ class PatientList(discoverable.DiscoverableFeature,
             return False
 
         return True
+
+    @classmethod
+    def as_menuitem(kls, **kwargs):
+        """
+        Return an instance of `opal.core.menus.MenuItem` that will
+        direct the user to this patient list.
+        """
+        return menus.MenuItem(
+            href=kwargs.get('href', kls.get_absolute_url()),
+            activepattern=kwargs.get('activepattern', kls.get_absolute_url()),
+            icon=kwargs.get('icon', kls.get_icon()),
+            display=kwargs.get('display', kls.get_display_name()),
+        )
 
     def get_template_prefixes(self):
         """ a patient list can return templates particular to themselves
@@ -330,12 +366,6 @@ class TaggedPatientListMetadata(metadata.Metadata):
             if tag and hasattr(tagging, 'subtag'):
                 data["tags"][tag]["parent_tag"] = tagging.tag
 
-        data["tags"]["mine"] = dict(
-            name="mine",
-            display_name="Mine",
-            slug="mine",
-            direct_add=True,
-        )
         return data
 
 
