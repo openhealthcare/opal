@@ -27,6 +27,14 @@ class InvalidDiscoverableFeatureError(Error):
     pass
 
 
+class InvalidRegisterableNamespaceError(Error):
+    pass
+
+
+class DuplicateNameError(Error):
+    pass
+
+
 class UnexpectedFieldNameError(Error):
     pass
 
