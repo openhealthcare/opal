@@ -59,7 +59,9 @@ def load_lookuplist_item(model, item):
 
     name = item.get('name', None)
     if name is None:
-        raise exceptions.InvalidDataError('Lookuplist entries must have a name')
+        raise exceptions.InvalidDataError(
+            'Lookuplist entries must have a name'
+        )
 
     code, system = None, None
     if item.get('coding', None):
@@ -74,7 +76,9 @@ The following lookuplist item was missing one or both values:
 """.format(str(item))
             raise exceptions.InvalidDataError(msg)
 
-    instance, created = get_or_create_lookuplist_item(model, name, code, system)
+    instance, created = get_or_create_lookuplist_item(
+        model, name, code, system
+    )
 
     # Handle user visible synonyms
     synonyms_created = 0
@@ -112,7 +116,7 @@ class LookupList(models.Model):
     system        = models.CharField(max_length=255, blank=True, null=True)
     code          = models.CharField(max_length=255, blank=True, null=True)
     # We don't particularly use .version in the current implementation, but we
-    # include it in the model for the sake of FHIR CodeableConcept compatibility
+    # included for the sake of FHIR CodeableConcept compatibility
     version       = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
