@@ -56,8 +56,8 @@ class Command(BaseCommand):
                 entry = {'name': item.name, 'synonyms': synonyms}
                 if item.code and item.system:
                     entry['coding'] = {
-                        'code': item.code,
-                        'system', item.system
+                        'code'  : item.code,
+                        'system': item.system
                     }
                 items.append(entry)
             data[model.__name__.lower()] = items

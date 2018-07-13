@@ -26,16 +26,23 @@ def get_or_create_lookuplist_item(model, name, code, system):
     try:
         instance = model.objects.get(name=name, code=code, system=system)
         return instance, False
-    except model.objects.DoesNotExist:
+    except model.DoesNotExist:
+        if code is not None and system is not None:
+            if model.objects.filter(code=code, system=system).count() > 0:
+                msg = 'Tried to create a lookuplist item with value {0} '
+                msg += 'and code {1} but this code already exists with '
+                msg += 'value {2} and code {3}'
+                existing = model.objects.get(code=code, system=system)
+                msg = msg.format(name, code, existing.name, existing.code)
+                raise exceptions.InvalidDataError(msg)
+
         try:
             instance = model.objects.get(name=name)
-            if model.objects.filter(code=code, system=system).count() > 0:
-                raise exceptions.Error() # something else coded with this
             instance.code = code
             instance.system = system
             instance.save()
             return instance, False
-        except model.objects.DoesNotExist:
+        except model.DoesNotExist:
             instance = model(name=name, code=code, system=system)
             instance.save()
             return instance, True
@@ -50,12 +57,13 @@ def load_lookuplist_item(model, item):
     """
     from opal.models import Synonym
 
-    name = item.getattr('name', None)
+    name = item.get('name', None)
     if name is None:
         raise InvalidDataError('Lookuplist entries must have a name')
 
     code, system = None, None
-    if item.getattr('coding', None):
+    if item.get('coding', None):
+        try:
             code   = item['coding']['code']
             system = item['coding']['system']
         except KeyError:
