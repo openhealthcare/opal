@@ -59,7 +59,7 @@ def load_lookuplist_item(model, item):
 
     name = item.get('name', None)
     if name is None:
-        raise InvalidDataError('Lookuplist entries must have a name')
+        raise exceptions.InvalidDataError('Lookuplist entries must have a name')
 
     code, system = None, None
     if item.get('coding', None):
@@ -72,7 +72,7 @@ Coding entries in lookuplists must contain both `coding` and `system` values
 The following lookuplist item was missing one or both values:
 {0}
 """.format(str(item))
-            raise execeptions.InvalidDataError(msg)
+            raise exceptions.InvalidDataError(msg)
 
     instance, created = get_or_create_lookuplist_item(model, name, code, system)
 

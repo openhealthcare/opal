@@ -9,7 +9,8 @@ from opal.models import Synonym
 from opal.tests.models import Hat, EtherialHat, GhostHat
 
 from opal.core.lookuplists import (
-    load_lookuplist, lookuplists, get_or_create_lookuplist_item
+    load_lookuplist, lookuplists, get_or_create_lookuplist_item,
+    load_lookuplist_item
 )
 
 
@@ -74,34 +75,67 @@ class GetOrCreateLookuplistItemTestCase(OpalTestCase):
         ).count())
 
 
-class LookupListLoadingTestCase(AbstractLookupListTestCase):
-    def test_create_instance(self):
-        data = {"hat": [dict(name="Bowler", synonyms=[])]}
-        _, created, _ = load_lookuplist(data)
-        self.assertEqual(created, 1)
+class LoadLookuplistItemTestCase(OpalTestCase):
 
-    def test_dont_create_instance(self):
-        data = {"hat": [dict(name="Cowboy", synonyms=[])]}
-        _, created, _ = load_lookuplist(data)
-        self.assertEqual(created, 0)
+    def data(self):
+        return {
+            'name'    : 'Pork Pie Hat',
+            'coding'  : {
+                'code'  :'PPH',
+                'system': 'TLA'
+            },
+            'synonyms': [
+                "Theme for Lester Young"
+            ]
+        }
 
-    def test_create_synonym(self):
-        data = {"hat": [dict(name="Cowboy", synonyms=["Ten Gallon"])]}
-        _, created, synonyms = load_lookuplist(data)
-        self.assertEqual(created, 0)
-        self.assertEqual(synonyms, 1)
+    def test_data_has_no_name(self):
+        item = self.data()
+        del item['name']
+        with self.assertRaises(exceptions.InvalidDataError):
+            load_lookuplist_item(Hat, item)
 
-    def test_dont_create_synonym(self):
-        data = {"hat": [dict(name="Cowboy", synonyms=["Stetson"])]}
-        _, created, synonyms = load_lookuplist(data)
-        self.assertEqual(created, 0)
-        self.assertEqual(synonyms, 0)
+    def test_item_has_coding_without_system(self):
+        item = self.data()
+        del item['coding']['system']
+        with self.assertRaises(exceptions.InvalidDataError):
+            load_lookuplist_item(Hat, item)
 
-    def test_create_instance_and_synonym(self):
-        data = {"hat": [dict(name="Bowler", synonyms=["Derby"])]}
-        _, created, synonyms = load_lookuplist(data)
-        self.assertEqual(created, 1)
-        self.assertEqual(synonyms, 1)
+    def test_item_created_just_name(self):
+        item = self.data()
+        del item['coding']
+
+        self.assertEqual(0, Hat.objects.filter(name='Pork Pie Hat').count())
+
+        created, synonyms_created = load_lookuplist_item(Hat, item)
+
+        self.assertEqual(1, created)
+        self.assertEqual(1, Hat.objects.filter(name='Pork Pie Hat').count())
+
+    def test_item_created_name_and_coding_system(self):
+        item = self.data()
+        self.assertEqual(0, Hat.objects.filter(name='Pork Pie Hat').count())
+
+        created, synonyms_created = load_lookuplist_item(Hat, item)
+
+        self.assertEqual(1, created)
+        self.assertEqual(1, Hat.objects.filter(
+            name='Pork Pie Hat', code='PPH', system='TLA'
+        ).count())
+
+    def test_synonyms_created(self):
+        item = self.data()
+        self.assertEqual(0, Hat.objects.filter(name='Pork Pie Hat').count())
+
+        created, synonyms_created = load_lookuplist_item(Hat, item)
+
+        self.assertEqual(1, synonyms_created)
+
+        pph = Hat.objects.get(name='Pork Pie Hat')
+        synonyms = pph.synonyms.all()
+
+        self.assertEqual(1, len(synonyms))
+        self.assertEqual('Theme for Lester Young', synonyms[0].name)
 
 
 class LookupListClassTestCase(AbstractLookupListTestCase):
@@ -142,3 +176,33 @@ class LookuplistsIteratorTestCase(AbstractLookupListTestCase):
         """
         all_lists = list(lookuplists())
         self.assertIn(GhostHat, all_lists)
+
+
+class LookupListLoadingTestCase(AbstractLookupListTestCase):
+    def test_create_instance(self):
+        data = {"hat": [dict(name="Bowler", synonyms=[])]}
+        _, created, _ = load_lookuplist(data)
+        self.assertEqual(created, 1)
+
+    def test_dont_create_instance(self):
+        data = {"hat": [dict(name="Cowboy", synonyms=[])]}
+        _, created, _ = load_lookuplist(data)
+        self.assertEqual(created, 0)
+
+    def test_create_synonym(self):
+        data = {"hat": [dict(name="Cowboy", synonyms=["Ten Gallon"])]}
+        _, created, synonyms = load_lookuplist(data)
+        self.assertEqual(created, 0)
+        self.assertEqual(synonyms, 1)
+
+    def test_dont_create_synonym(self):
+        data = {"hat": [dict(name="Cowboy", synonyms=["Stetson"])]}
+        _, created, synonyms = load_lookuplist(data)
+        self.assertEqual(created, 0)
+        self.assertEqual(synonyms, 0)
+
+    def test_create_instance_and_synonym(self):
+        data = {"hat": [dict(name="Bowler", synonyms=["Derby"])]}
+        _, created, synonyms = load_lookuplist(data)
+        self.assertEqual(created, 1)
+        self.assertEqual(synonyms, 1)
