@@ -116,7 +116,7 @@ class LookupList(models.Model):
     system        = models.CharField(max_length=255, blank=True, null=True)
     code          = models.CharField(max_length=255, blank=True, null=True)
     # We don't particularly use .version in the current implementation, but we
-    # included for the sake of FHIR CodeableConcept compatibility
+    # include here for the sake of FHIR CodeableConcept compatibility
     version       = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
