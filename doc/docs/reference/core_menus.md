@@ -15,6 +15,9 @@ An item in an application menu.
 * display - the text to display in this menu item
 * index - a number to use as the primary sort order for your menu items
 
+**Methods**
+* for_user - a method that takes a user and returns True by default. Override this if you want menu items hidden for certain users.
+
 ## opal.core.Menu
 
 The menu for an Opal application. On initialization it will construct a menu

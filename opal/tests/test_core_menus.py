@@ -42,6 +42,10 @@ class MenuItemTestCase(OpalTestCase):
         item = menus.MenuItem(href="/wat/")
         self.assertEqual("<Opal MenuItem href: '/wat/'>", item.__repr__())
 
+    def test_for_user(self):
+        item = menus.MenuItem(href="/wat/")
+        self.assertTrue(item.for_user(self.user))
+
     def test_equality(self):
         item1 = menus.MenuItem(
             template_name='menu.html',
@@ -88,7 +92,6 @@ class MenuItemTestCase(OpalTestCase):
 @patch('opal.core.plugins.OpalPlugin.list')
 @patch('opal.core.application.get_app')
 class MenuTestCase(OpalTestCase):
-
     def setUp(self):
         self.app = MagicMock(name='App')
         self.app.get_menu_items.return_value = []
@@ -107,6 +110,19 @@ class MenuTestCase(OpalTestCase):
         menu = menus.Menu(user=self.user)
         self.assertEqual(menu_items, menu.items)
 
+    def test_excludes_items_from_app_if_for_user_is_false(
+        self, get_app, plugin_list
+    ):
+        get_app.return_value = self.app
+        plugin_list.return_value = []
+        menu_item = menus.MenuItem()
+        menu_items = [menu_item]
+        self.app.get_menu_items.return_value = menu_items
+        with patch.object(menu_item, "for_user") as for_user:
+            for_user.return_value = False
+            menu = menus.Menu(user=self.user)
+            self.assertEqual([], menu.items)
+
     def test_sets_items_from_plugin(self, get_app, plugin_list):
         get_app.return_value = self.app
         menu_items = [menus.MenuItem()]
@@ -115,6 +131,20 @@ class MenuTestCase(OpalTestCase):
         plugin_list.return_value = [mock_plugin]
         menu = menus.Menu(user=self.user)
         self.assertEqual(menu_items, menu.items)
+
+    def test_excludes_items_from_plugin_if_for_user_is_false(
+        self, get_app, plugin_list
+    ):
+        get_app.return_value = self.app
+        menu_item = menus.MenuItem()
+        menu_items = [menu_item]
+        mock_plugin = MagicMock(name='Plugin')
+        mock_plugin.menuitems = menu_items
+        plugin_list.return_value = [mock_plugin]
+        with patch.object(menu_item, "for_user") as for_user:
+            for_user.return_value = False
+            menu = menus.Menu(user=self.user)
+            self.assertEqual([], menu.items)
 
     def test_iter_sorts(self, get_app, plugin_list):
         get_app.return_value = self.app
