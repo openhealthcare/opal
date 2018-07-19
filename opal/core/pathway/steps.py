@@ -70,11 +70,13 @@ class Step(object):
     step_controller = "DefaultStep"
     base_template = "pathway/steps/step_base_template.html"
     multiple_template = "pathway/steps/multi_save.html"
+    model = None
 
-    def __init__(self, model=None, multiple=None, **kwargs):
-        self.model = model
+    def __init__(self, model=None, multiple=None, save_data=True, **kwargs):
+        self.model = model or self.model
         self.other_args = kwargs
         self.multiple = multiple
+        self.save_data = save_data
 
         # We only infer from the model if the user did not pass in a value
         if self.multiple is None and self.model:
@@ -165,9 +167,25 @@ class Step(object):
         result.update(self.other_args)
         return result
 
-    def pre_save(self, data, user, patient=None, episode=None):
-        if self.multiple and self.delete_others:
-            delete_others(data, self.model, patient=patient, episode=episode)
+    def get_model_data(self, raw_data):
+        if self.model.get_api_name() in raw_data:
+            return raw_data[self.model.get_api_name()]
+        return []
+
+    def pre_save(self, data, raw_data, user, patient=None, episode=None):
+        if self.save_data:
+            if self.model:
+                data[self.model.get_api_name()] = self.get_model_data(raw_data)
+            else:
+                raise NotImplementedError(
+                    "No pre_save step defined for {}".format(
+                        self.get_api_name()
+                    )
+                )
+            if self.multiple and self.delete_others:
+                delete_others(
+                    data, self.model, patient=patient, episode=episode
+                )
 
 
 class FindPatientStep(Step):

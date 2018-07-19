@@ -80,6 +80,15 @@ class StepTestCase(OpalTestCase):
             step_dict["model_api_name"], "some_model_api_step"
         )
 
+    def test_model_default(self):
+        class SomeStep(Step):
+            model = test_models.Colour
+
+        a = SomeStep()
+        self.assertEqual(
+            a.model, test_models.Colour
+        )
+
     def test_to_dict_use_class_attributes(self):
         expected = dict(
             api_name="somecomplicatedstep",
