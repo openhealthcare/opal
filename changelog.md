@@ -4,6 +4,8 @@
 
 * Adds a method `.demographics()` to `opal.models.Patient` which returns the relevant demographics instance.
 
+* Adds in a footer updated/created by to the form base template
+
 ### 0.11.2 (Bugfix Release)
 
 Includes referencedata JSON files in Manifest.

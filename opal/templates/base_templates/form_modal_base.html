@@ -5,6 +5,7 @@
         {% include column.get_form_template %}
       {% endblock form %}
     </form>
+    {% include "partials/_item_created_updated_by.html" %}
   {% endblock %}
   {% block modal_save %}
     <span ng-show="form">
