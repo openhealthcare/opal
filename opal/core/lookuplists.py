@@ -28,7 +28,7 @@ def get_or_create_lookuplist_item(model, name, code, system):
         return instance, False
     except model.DoesNotExist:
         if code is not None and system is not None:
-            if model.objects.filter(code=code, system=system).count() > 0:
+            if model.objects.filter(code=code, system=system).exists():
                 msg = 'Tried to create a lookuplist item with value {0} '
                 msg += 'and code {1} but this code already exists with '
                 msg += 'value {2} and code {3}'
