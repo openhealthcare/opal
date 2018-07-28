@@ -13,7 +13,9 @@ from opal.models import Demographics, Patient
 from opal.tests.models import (
     DogOwner, Colour, PatientColour, FamousLastWords
 )
-from opal.core.pathway.tests.pathway_test.pathways import PagePathwayExample
+from opal.core.pathway.tests.pathway_test.pathways import (
+    PagePathwayExample, WizardPathwayExample
+)
 
 from opal.core.pathway.steps import Step, delete_others
 
@@ -31,14 +33,16 @@ class PathwayExample(pathways.Pathway):
         Step(model=DogOwner),
     )
 
-class ColourPathway(Pathway):
-    display_name = "colour"
+
+class FamousLastWordsPathway(Pathway):
+    display_name = "Famous Last Words"
     icon = "fa fa-something"
     template_url = "/somewhere"
 
     steps = (
         FamousLastWords,
     )
+
 
 class OveridePathway(Pathway):
 
@@ -147,14 +151,22 @@ class MultipleTestCase(OpalTestCase):
     def test_pre_save_no_delete(self):
         multi_save = Step(model=Colour, multiple=True, delete_others=False)
         multi_save.pre_save(
-            {'colour': []}, Colour, patient=self.patient, episode=self.episode
+            {},
+            {'colour': []},
+            Colour,
+            patient=self.patient,
+            episode=self.episode
         )
         self.assertEqual(Colour.objects.get().id, self.existing_colour.id)
 
     def test_pre_save_with_delete(self):
         multi_save = Step(model=Colour, multiple=True)
         multi_save.pre_save(
-            {'colour': []}, Colour, patient=self.patient, episode=self.episode
+            {},
+            {'colour': []},
+            Colour,
+            patient=self.patient,
+            episode=self.episode
         )
         self.assertEqual(Colour.objects.count(), 0)
 
@@ -256,11 +268,19 @@ class TestSavePathway(PathwayTestCase):
             DogOwner.objects.filter(episode_id=episode.id).exists()
         )
 
+    def test_pre_save_called(self):
+        pathway = PathwayExample()
+        with mock.patch.object(pathway, 'pre_save') as ps:
+            patient, episode = self.new_patient_and_episode_please()
+            post_data = {"demographics": [{"hospital_number": "101"}]}
+            pathway.save(raw_data=post_data, user=self.user, patient=patient)
+        self.assertTrue(ps.called)
+
     def test_users_patient_passed_in(self):
-        pathway = PagePathwayExample()
+        pathway = PathwayExample()
         patient, episode = self.new_patient_and_episode_please()
         post_data = {"demographics": [{"hospital_number": "101"}]}
-        pathway.save(data=post_data, user=self.user, patient=patient)
+        pathway.save(raw_data=post_data, user=self.user, patient=patient)
         demographics = patient.demographics()
         self.assertEqual(
             demographics.hospital_number,
@@ -272,7 +292,10 @@ class TestSavePathway(PathwayTestCase):
         patient, episode = self.new_patient_and_episode_please()
         post_data = {"dog_owner": [{"name": "fido"}]}
         pathway.save(
-            data=post_data, user=self.user, patient=patient, episode=episode
+            raw_data=post_data,
+            user=self.user,
+            patient=patient,
+            episode=episode
         )
         self.assertEqual(
             episode.dogowner_set.get().name,
@@ -313,7 +336,7 @@ class TestSavePathway(PathwayTestCase):
 class TestRemoveUnChangedSubrecords(OpalTestCase):
     def setUp(self):
         self.patient, self.episode = self.new_patient_and_episode_please()
-        self.pathway_example = ColourPathway()
+        self.pathway_example = FamousLastWordsPathway()
 
     def test_dont_update_subrecords_that_havent_changed(self, subrecords):
         subrecords.return_value = [Colour]
@@ -430,7 +453,7 @@ class TestRemoveUnChangedSubrecords(OpalTestCase):
         )
         dumped = json.loads(json.dumps(provided_dict, cls=OpalSerializer))
 
-        self.pathway_example.save(
+        WizardPathwayExample().save(
             dumped, self.user, self.patient, self.episode
         )
 
@@ -450,13 +473,18 @@ class TestPathwayMethods(OpalTestCase):
         self.patient, self.episode = self.new_patient_and_episode_please()
 
     def test_get_slug(self):
-        self.assertEqual('colourpathway', ColourPathway.get_slug())
+        self.assertEqual(
+            'famouslastwordspathway', FamousLastWordsPathway.get_slug()
+        )
 
     def test_get_slug_from_attribute(self):
         self.assertEqual('dog-owner', PathwayExample.get_slug())
 
     def test_get_absolute_url(self):
-        self.assertEqual('/pathway/#/colourpathway/', ColourPathway.get_absolute_url())
+        self.assertEqual(
+            '/pathway/#/famouslastwordspathway/',
+            FamousLastWordsPathway.get_absolute_url()
+        )
 
     def test_get_icon(self):
         self.assertEqual('fa fa-tintin', PathwayExample.get_icon())
@@ -465,14 +493,14 @@ class TestPathwayMethods(OpalTestCase):
         self.assertEqual('Dog Owner', PathwayExample.get_display_name())
 
     def test_as_menuitem(self):
-        menu = ColourPathway.as_menuitem()
-        self.assertEqual('/pathway/#/colourpathway/', menu.href)
-        self.assertEqual('/pathway/#/colourpathway/', menu.activepattern)
+        menu = FamousLastWordsPathway.as_menuitem()
+        self.assertEqual('/pathway/#/famouslastwordspathway/', menu.href)
+        self.assertEqual('/pathway/#/famouslastwordspathway/', menu.activepattern)
         self.assertEqual('fa fa-something', menu.icon)
-        self.assertEqual('colour', menu.display)
+        self.assertEqual('Famous Last Words', menu.display)
 
     def test_as_menuitem_from_kwargs(self):
-        menu = ColourPathway.as_menuitem(
+        menu = FamousLastWordsPathway.as_menuitem(
             href="/Blue", activepattern="/B",
             icon="fa-sea", display="Bleu"
         )
@@ -490,7 +518,9 @@ class TestPathwayMethods(OpalTestCase):
         self.assertEqual('Overridden', menu.display)
 
     def test_slug(self):
-        self.assertEqual('colourpathway', ColourPathway().slug)
+            self.assertEqual(
+                'famouslastwordspathway', FamousLastWordsPathway().slug
+            )
 
     def test_get_by_hyphenated_slug(self):
         self.assertEqual(PathwayExample, Pathway.get('dog-owner'))

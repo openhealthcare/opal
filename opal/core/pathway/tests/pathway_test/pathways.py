@@ -8,6 +8,9 @@ class SomeComplicatedStep(steps.Step):
     step_controller = "SomeController"
     template = "Sometemplate.html"
 
+    def pre_save(self, *args, **kwargs):
+        pass
+
 
 class PagePathwayExample(pathways.PagePathway):
     display_name = "Dog Owner"

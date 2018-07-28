@@ -104,24 +104,6 @@ class Pathway(discoverable.DiscoverableFeature):
     def pre_save(self, data, raw_data, user, patient=None, episode=None):
         pass
 
-    def sanity_check_data(self, data, raw_data, episode, user):
-        """ A Sanity check to make sure that what we're
-            saving now is the same as what we would have
-            been saving before the step change.
-        """
-        data_copy = copy.copy(raw_data)
-        if episode:
-            data_copy = self.remove_unchanged_subrecords(
-                episode, data_copy, user
-            )
-        for k, v in data_copy.items():
-            if v and k not in data:
-                raise ValueError(
-                    "Data has changed for {} with {}".format(
-                        self.slug, k
-                    )
-                )
-
     @transaction.atomic
     def save(self, raw_data, user=None, patient=None, episode=None):
         if patient and not episode:
@@ -146,7 +128,6 @@ class Pathway(discoverable.DiscoverableFeature):
 
             patient = Patient()
 
-        self.sanity_check_data(data, raw_data, episode, user)
         patient.bulk_update(data, user, episode=episode)
 
         if not episode and patient.episode_set.count() == 1:

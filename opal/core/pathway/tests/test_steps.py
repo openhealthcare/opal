@@ -1,6 +1,7 @@
 """
 unittests for opal.core.pathway.steps
 """
+import copy
 from django.core.urlresolvers import reverse
 from mock import MagicMock
 
@@ -126,6 +127,41 @@ class StepTestCase(OpalTestCase):
         step = Step(model=mock_model)
         with self.assertRaises(exceptions.MissingTemplateError):
             step.get_template()
+
+    def test_pre_save_defined(self):
+        step = Step(
+            template="some_template.html",
+            display_name="A Step",
+            api_name="a_step"
+        )
+
+        with self.assertRaises(NotImplementedError) as er:
+            step.pre_save({}, {}, self.user)
+        self.assertEqual(
+            str(er.exception),
+            "No pre_save step defined for a_step"
+        )
+
+    def test_pre_save(self):
+        class SomeStep(Step):
+            model = test_models.Colour
+
+        step = SomeStep()
+        data = {}
+        colour_data = {
+            test_models.Colour.get_api_name(): [
+                dict(name="blue"),
+                dict(name="green")
+            ],
+        }
+        raw_data = copy.copy(colour_data)
+        raw_data["other"] = [
+            {"other": "data"}
+        ]
+        step.pre_save(data, raw_data, self.user)
+        self.assertEqual(
+            data, colour_data
+        )
 
 
 class HelpTextStepTestCase(OpalTestCase):
