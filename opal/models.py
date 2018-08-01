@@ -536,7 +536,7 @@ class Patient(models.Model):
 
     def get_active_episode(self):
         for episode in self.episode_set.order_by('id').reverse():
-            if episode.active:
+            if episode.category.is_active():
                 return episode
         return None
 
@@ -711,10 +711,12 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
         max_length=200, default=get_default_episode_type
     )
     patient           = models.ForeignKey(Patient)
-    active            = models.BooleanField(default=False)
     start             = models.DateField(null=True, blank=True)
     end               = models.DateField(blank=True, null=True)
     consistency_token = models.CharField(max_length=8)
+
+    # this field will be deprecated
+    active            = models.BooleanField(default=False)
 
     # stage is at what stage of an episode flow is the
     # patient at

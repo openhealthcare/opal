@@ -50,6 +50,9 @@ class EpisodeCategory(DiscoverableFeature):
     def __init__(self, episode):
         self.episode = episode
 
+    def is_active(self):
+        return self.episode.tagging_set.exclude(archived=True).exists()
+
     def get_stages(self):
         """
         Return the list of string stages for this category

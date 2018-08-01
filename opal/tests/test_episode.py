@@ -235,3 +235,11 @@ class EpisodeCategoryTestCase(OpalTestCase):
     def test_set_stage_raises_if_invalid(self):
         with self.assertRaises(ValueError):
             self.episode.category.set_stage('Whoops', self.user, {})
+
+    def test_is_active_true(self):
+        self.episode.set_tag_names(["someTag"], None)
+        self.assertTrue(self.episode.category.is_active())
+
+    def test_is_active_false(self):
+        self.episode.set_tag_names([], None)
+        self.assertFalse(self.episode.category.is_active())

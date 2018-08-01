@@ -16,10 +16,6 @@ This defaults to whatever is set on your application's subclass of
 
 A foreign key relationship to the patient for whom this episode concerns.
 
-### Episode.active
-
-A boolean to provide a quick lookup for whether this is an active or closed episode.
-
 ### Episode.start
 
 This should be the start of the episode. If this is an inpatient episode, the date of admission.

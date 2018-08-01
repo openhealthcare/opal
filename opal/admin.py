@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 from django.core.exceptions import ValidationError
 from django.db.models import Q
+from django.contrib.admin import SimpleListFilter
 from django.utils.html import format_html
 from django import forms
 
@@ -68,20 +69,44 @@ class MyAdmin(VersionAdmin):
     pass
 
 
+class ActiveEpisodeFilter(SimpleListFilter):
+    title = "Active"
+    parameter_name = "active"
+
+    def lookups(self, request, model_admin):
+        return (
+            ("Yes", "Yes",),
+            ("No", "No",),
+        )
+
+    def queryset(self, request, queryset):
+        active_episode_ids = [i.id for i in queryset if i.category.is_active()]
+
+        if self.value() == "Yes":
+            return queryset.filter(id__in=active_episode_ids)
+        else:
+            return queryset.exclude(id__in=active_episode_ids)
+
+
 class EpisodeAdmin(VersionAdmin):
     list_display = [
         'patient',
-        'active',
+        'is_active',
         'start',
         'end',
         'episode_detail_link'
     ]
-    list_filter = ['active', ]
+    list_filter = (ActiveEpisodeFilter,)
     search_fields = [
         'patient__demographics__first_name',
         'patient__demographics__surname',
         'patient__demographics__hospital_number'
     ]
+
+    def is_active(self, obj):
+        return obj.category.is_active()
+
+    is_active.boolean = True
 
     def episode_detail_url(self, obj):
         return "/#/patient/{0}/{1}".format(obj.patient_id, obj.id)

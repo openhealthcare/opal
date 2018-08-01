@@ -76,6 +76,9 @@ InpatientEpisode(episode).set_stage('Discharged', user, data_dict)
 # -> True
 ```
 
+### EpisodeCategory.is_active()
+A boolean to provide a quick lookup for whether this is an active or closed episode.
+
 
 ## InpatientEpisode
 

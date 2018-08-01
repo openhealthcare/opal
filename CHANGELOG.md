@@ -1,3 +1,9 @@
+### 0.10.2 (Minor Release)
+Deprecates the `active` field on Episode and defers it to the episode category.
+
+By default the episode category will return True if the episode is tagged and false if it is not.
+
+
 ### 0.10.1 (Minor Release)
 
 #### Plugin API end points can now override application end points

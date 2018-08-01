@@ -1,6 +1,7 @@
 """
 Unittests for opal.admin
 """
+import mock
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.admin.sites import AdminSite
 
@@ -9,7 +10,7 @@ from opal.tests.models import Hat
 from opal.models import Synonym, Patient, Episode
 
 from opal.admin import (LookupListForm, PatientAdmin, EpisodeAdmin,
-                        UserProfileAdmin)
+                        UserProfileAdmin, ActiveEpisodeFilter)
 
 
 class HatForm(LookupListForm):
@@ -129,12 +130,65 @@ class LookupListFormTestCase(OpalTestCase):
         self.assertEqual("Stetson", form.clean_name())
 
 
+class EpisodeActiveFilterTestCase(AdminTestCase):
+
+    def setUp(self):
+        self.list_filter = ActiveEpisodeFilter()
+
+    def test_lookups(self):
+        expected = (
+            ("Yes", "Yes",),
+            ("No", "No",),
+        )
+
+        self.assertEqual(
+            self.list_filter.lookups(None, None), expected
+        )
+
+    def test_yes(self):
+        episode_1 = mock.MagicMock()
+        episode_2 = mock.MagicMock()
+        with mock.patch.object(self.list_filter, "value") as v:
+            v.return_value = "Yes"
+            episode_1.category.is_active.return_value = False
+            episode_2.category.is_active.return_value = True
+            queryset = [episode_1, episode_2]
+            result = self.list_filter.queryset(None, queryset)
+            self.assertEqual(
+                result[0], episode_2
+            )
+
+    def test(no):
+        episode_1 = mock.MagicMock()
+        episode_2 = mock.MagicMock()
+        with mock.patch.object(self.list_filter, "value") as v:
+            v.return_value = "No"
+            episode_1.category.is_active.return_value = False
+            episode_2.category.is_active.return_value = True
+            queryset = [episode_1, episode_2]
+            result = self.list_filter.queryset(None, queryset)
+            self.assertEqual(
+                result[0], episode_2
+            )
 
 
 class EpisodeAdminTestCase(AdminTestCase):
     def setUp(self):
         super(EpisodeAdminTestCase, self).setUp()
         self.admin = EpisodeAdmin(Episode, self.site)
+
+    def test_is_active(self):
+        episode_mock = mock.MagicMock()
+        self.admin.is_active(episode_mock)
+        self.assertTrue(
+            episode.category.is_active.called
+        )
+
+    def test_is_active_integration(self):
+        # We don't actually validate anything just make sure
+        # that the api won't blow up
+        _, episode = self.new_patient_and_episode_please()
+        self.admin.is_active(episode)
 
     def test_episode_detail_link(self):
         self.assertEqual(
