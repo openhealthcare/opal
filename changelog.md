@@ -1,5 +1,11 @@
 ### 0.12.0 (Major Release)
 
+#### Pathway Save
+* Pathways steps define what subrecords are saved. By default this is whatever is defined as the `model`
+* The method definition of the pre_save step has changed so that it takes now takes `data` and `raw_data` as the first two arguments. `raw_data` being what is brought in by the server and `data` being what is eventually saved.
+* Pathways now have a `pre_save` method
+
+
 #### Misc Changes
 
 * Adds a method `.demographics()` to `opal.models.Patient` which returns the relevant demographics instance.

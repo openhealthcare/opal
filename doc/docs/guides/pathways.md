@@ -44,23 +44,25 @@ class SimplePathway(pathway.PagePathway):
 ```
 
 This will give you form at `http://localhost:8000/pathway/#/simples` that
-lets the user create a patient with their demographics and past medical history
+lets the user create a patient with their demographics and past medical history. It will save any demographics or past medical history subrecords that have changed.
 
 ## Customising Steps
 
-When passed a model, a step will infer the details of form templates, display names et
-cetera from the subrecord. However a model is not required - you can also pass arbitrary
-chunks of html with the two required fields:
+When passed a model, a step will infer the details of form templates, display names, icons and will know to save that subrecord. However a model is not required - you can also pass arbitrary chunks of html with the two required fields:
 
 ``` python
 Step(
   template="pathway/steps/my_step.html"
-  display_name="My Display Only Step"
+  display_name="My Display Only Step",
+  save_data=False
 )
 ```
 
+This will display the template and will not save any data related to the step.
+
 Alternatively, you can override any fields that it would usually take from the model.
-The below example, will override the template and not just use the Demographics form template.
+
+The below example, will override the template and not use the Demographics form template.
 
 ``` python
 Step(
@@ -82,10 +84,16 @@ Step(
 )
 ```
 
-If you want to add any custom save logic for your step, you can put in a `pre_save` method.
-This is passed the full data dictionary that has been received from the client and the patient
-and episode that the pathways been saved for, if they exist (If you're saving a pathway for a
-new patient/episode, they won't have been created at this time).
+By default the `pre_save` method copies the data that the step will save onto the `data` variable (passed in to the method). If you wish to change what data will be saved here is a good place to do it.
+
+`pre_save` is passed:
+
+* `data` - the data that will be saved,
+* `raw_data` - the data that has been sent back from the front end.
+* `user` - the currently logged in user.
+* `patient` and `episode` if this is not saving a new patient/episode. If you're saving a pathway for a
+new patient/episode, they won't have been created at this time.
+
 
 ## Loading Data From Existing Episodes
 

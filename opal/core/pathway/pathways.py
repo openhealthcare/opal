@@ -3,7 +3,6 @@ Opal Pathways
 """
 import inspect
 import json
-import copy
 from collections import defaultdict
 
 from django.core.urlresolvers import reverse
