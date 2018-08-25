@@ -49,15 +49,10 @@ class Menu(object):
         # If we don't += this here, we start appending to the
         # list attached to the active Application class.
         # Which is suboptimal.
-        app_items = app.get_menu_items(user=self.user)
-        for item in app_items:
-            if item.for_user(user):
-                self.items.append(item)
+        self.items = app.get_menu_items(self.user)
 
         for plugin in plugins.OpalPlugin.list():
-            for item in plugin.menuitems:
-                if item.for_user(user):
-                    self.items.append(item)
+            self.items.extend(plugin.get_menu_items(self.user))
 
     def __iter__(self):
 

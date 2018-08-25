@@ -25,6 +25,7 @@
     </script>
 
     {% compress js %}
+    {% block all_javascripts %}
     {% core_javascripts 'opal.upstream.deps' %}
     {% block opal_js %}
     {% plugin_javascripts 'opal.upstream.deps' %}
@@ -52,6 +53,7 @@
     {% application_javascripts %}
     <script type="text/javascript" src="{% static "js/opal/timer.js" %}"></script>
     {% endblock opal_js %}
+    {% endblock all_javascripts %}
     {% endcompress %}
 
   <link href="{% static "js/lib/c3-0.4.10/c3.css" %}" rel="stylesheet" media="all">

@@ -117,7 +117,7 @@ class MenuTestCase(OpalTestCase):
         plugin_list.return_value = []
         menu_item = menus.MenuItem()
         menu_items = [menu_item]
-        self.app.get_menu_items.return_value = menu_items
+        self.app.menuitems = menu_items
         with patch.object(menu_item, "for_user") as for_user:
             for_user.return_value = False
             menu = menus.Menu(user=self.user)
@@ -127,7 +127,7 @@ class MenuTestCase(OpalTestCase):
         get_app.return_value = self.app
         menu_items = [menus.MenuItem()]
         mock_plugin = MagicMock(name='Plugin')
-        mock_plugin.menuitems = menu_items
+        mock_plugin.get_menu_items.return_value = menu_items
         plugin_list.return_value = [mock_plugin]
         menu = menus.Menu(user=self.user)
         self.assertEqual(menu_items, menu.items)
