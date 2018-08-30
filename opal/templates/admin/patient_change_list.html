@@ -1,0 +1,11 @@
+{% extends "reversion/change_list.html" %}
+
+{% block object-tools-items %}
+
+  <li>
+    <a href="{% url 'import_patient' %}">Import</a>
+  </li>
+
+  {{ block.super }}
+
+{% endblock object-tools-items %}

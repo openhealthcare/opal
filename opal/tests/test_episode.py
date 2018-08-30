@@ -3,17 +3,18 @@ Unittests for opal.models.Episode
 """
 import datetime
 from mock import patch, MagicMock
+import six
 
 from django.contrib.auth.models import User
 
-from opal.core import application
+from opal.core import application, subrecords
 from opal.core.episodes import InpatientEpisode
 from opal.core.test import OpalTestCase
 from opal.models import Patient, Episode, Tagging, UserProfile
 
 from opal.tests import test_patient_lists # ensure the lists are loaded
 from opal.tests.models import (
-    Hat, HatWearer, Dog, DogOwner, InvisibleHatWearer
+    Hat, HatWearer, Dog, DogOwner, InvisibleHatWearer, Birthday, Dinner
 )
 
 class EpisodeTest(OpalTestCase):
@@ -114,7 +115,7 @@ class EpisodeTest(OpalTestCase):
     def test_tagging_dict(self):
         self.episode.set_tag_names(['inpatient'], self.user)
         self.assertEqual(
-            [{'inpatient': True, 'id': 1}],
+            [{'inpatient': True, 'id': self.episode.id}],
             self.episode.tagging_dict(self.user)
         )
 
@@ -133,6 +134,27 @@ class EpisodeTest(OpalTestCase):
 
         self.assertEqual(as_dict["stage"], "Inpatient")
 
+    def test_to_dict_has_empty_patient_subrecord_keys(self):
+        name = Birthday.get_api_name()
+        self.assertEqual(0, Birthday.objects.filter(patient=self.episode.patient).count())
+        as_dict = self.episode.to_dict(self.user)
+        self.assertIn(name, as_dict)
+
+    def test_to_dict_has_empty_episode_subrecord_keys(self):
+        name = Dinner.get_api_name()
+        self.assertEqual(0, Dinner.objects.filter(episode=self.episode).count())
+        as_dict = self.episode.to_dict(self.user)
+        self.assertIn(name, as_dict)
+
+    def test_to_dict_equal_to_manager_method(self):
+        self.maxDiff = None
+        as_dict = self.episode.to_dict(self.user)
+        from_manager = Episode.objects.serialised(self.user, [self.episode])[0]
+        self.assertEqual(
+            as_dict,
+            from_manager
+        )
+
     def test_get_field_names_to_extract(self):
         # field names to extract should be the same
         # as the field names to serialise
@@ -141,56 +163,10 @@ class EpisodeTest(OpalTestCase):
             Episode._get_fieldnames_to_extract()
         )
 
-    @patch('opal.models.episode_subrecords')
-    def test_not_bulk_serialisable_episode_subrecords(self, episode_subrecords):
-        episode_subrecords.return_value = [InvisibleHatWearer]
+    def test_not_bulk_serialisable_episode_subrecords(self):
         _, episode = self.new_patient_and_episode_please()
         to_dict = episode.to_dict(self.user)
         self.assertNotIn(InvisibleHatWearer.get_api_name(), to_dict)
-
-
-    def test_to_dict_with_multiple_episodes(self):
-        self.episode.start = datetime.date(2015, 7, 25)
-        self.episode.save()
-        prev = self.patient.create_episode()
-        prev.start = datetime.date(2012, 7, 25)
-        prev.end = datetime.date(2012, 8, 12)
-        prev.active=False
-        prev.save()
-
-        serialised = self.episode.to_dict(self.user)
-        self.assertEqual(2, len(serialised['episode_history']))
-        self.assertEqual(datetime.date(2012, 7, 25),
-                         serialised['episode_history'][0]['start'])
-
-    def test_to_dict_episode_ordering(self):
-        patient = Patient.objects.create()
-        prev = patient.create_episode()
-        prev.start = datetime.date(2012, 7, 25)
-        prev.end = datetime.date(2012, 8, 12)
-        prev.active = False
-        prev.save()
-
-        previouser = patient.create_episode()
-        previouser.start = datetime.date(2011, 7, 25)
-        previouser.active = False
-        previouser.save()
-
-        episode = patient.create_episode()
-        episode.start = datetime.date(2014, 6, 23)
-        episode.save()
-
-        serialised = episode.to_dict(self.user)
-        self.assertEqual(3, len(serialised['episode_history']))
-        self.assertEqual(datetime.date(2011, 7, 25),
-                         serialised['episode_history'][0]['start'])
-        self.assertEqual(datetime.date(2012, 7, 25),
-                         serialised['episode_history'][1]['start'])
-
-    def test_to_dict_episode_history_includes_no_dates(self):
-        prev = self.patient.create_episode()
-        serialised = self.episode.to_dict(self.user)
-        self.assertEqual(2, len(serialised['episode_history']))
 
     @patch('opal.models.episode_subrecords')
     def test_to_dict_episode_with_many_to_many(self, episode_subrecords):
@@ -201,7 +177,9 @@ class EpisodeTest(OpalTestCase):
         hw = HatWearer.objects.create(episode=prev)
         hw.hats.add(bowler, top)
         serialised = prev.to_dict(self.user)
-        self.assertEqual(serialised["hat_wearer"][0]["hats"], [u'bowler', u'top'])
+        self.assertEqual(
+            serialised["hat_wearer"][0]["hats"], [u'bowler', u'top']
+        )
 
 
 class EpisodeCategoryTestCase(OpalTestCase):

@@ -295,6 +295,16 @@ class DatepickerTestCase(TestCase):
         self.assertIn('ng-model="bai"', rendered)
         self.assertIn('hai', rendered)
 
+    def test_datepicker_options_default(self):
+        template = Template('{% load forms %}{% datepicker label="hai" model="bai" mindate="Date(2013, 12, 22)" %}')
+        rendered = template.render(Context({}))
+        self.assertNotIn('bai = now', rendered)
+
+    def test_datepicker_options_on(self):
+        template = Template('{% load forms %}{% datepicker label="hai" model="bai" mindate="Date(2013, 12, 22)" user_options=True %}')
+        rendered = template.render(Context({}))
+        self.assertIn('bai = dateHelper.now()', rendered)
+
     def test_datepicker_min_date(self):
         template = Template('{% load forms %}{% datepicker label="hai" model="bai" mindate="Date(2013, 12, 22)" %}')
         rendered = template.render(Context({}))
@@ -365,6 +375,58 @@ class DateTimePickerTestCase(TestCase):
         )
         rendered = tpl.render(Context({}))
         self.assertIn('ng-hide="onions"', rendered)
+
+
+@patch("opal.templatetags.forms.extract_common_args")
+class RadioArgExractTestCase(TestCase):
+    def test_radio_lookuplists(self, extract_common_args):
+        extract_common_args.return_value = {}
+        result = forms._radio(lookuplist="something")
+        self.assertEqual(
+            result, dict(lookuplist="something")
+        )
+
+    def test_extract_common_args(self, extract_common_args):
+        extract_common_args.return_value = {"something": "else"}
+        self.assertEqual(
+            forms._radio(),
+            {"something": "else", "lookuplist": None}
+        )
+
+
+class RadioVerticalTestCase(TestCase):
+    def test_radio(self):
+        template = Template('{% load forms %}{% radio_vertical label="hai" model="bai"%}')
+        rendered = template.render(Context({}))
+        self.assertIn('ng-model="bai"', rendered)
+        self.assertIn('hai', rendered)
+
+    def test_radio_lookuplists(self):
+        template = Template('{% load forms %}{% radio_vertical field="FavouriteColour.name" lookuplist="[\'rainbow\']" %}')
+        rendered = template.render(Context({}))
+        self.assertIn('rainbow', rendered)
+        # make sure we're overwriting the existing choice field
+        self.assertNotIn('purple', rendered)
+
+    def test_radio_infer_lookuplists(self):
+        template = Template('{% load forms %}{% radio_vertical field="FavouriteColour.name" %}')
+        rendered = template.render(Context({}))
+        self.assertIn('purple', rendered)
+
+    def test_element_name(self):
+        tpl = Template('{% load forms %}{% radio_vertical label="hai" model="bai" element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('name="[[ onions ]]"', rendered)
+
+    def test_element_name_required(self):
+        tpl = Template('{% load forms %}{% radio_vertical label="hai" model="bai" element_name="onions" required=True %}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('form.$submitted && form[onions].$error.required"', rendered)
+
+    def test_change(self):
+        tpl = Template('{% load forms %}{% radio_vertical label="hai" change="doStuff" model="bai" element_name="onions"%}')
+        rendered = tpl.render(Context({}))
+        self.assertIn('ng-change="doStuff"', rendered)
 
 
 class RadioTestCase(TestCase):

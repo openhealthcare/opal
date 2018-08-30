@@ -19,7 +19,7 @@ class BaseSearchTestCase(OpalTestCase):
 
     def create_patient(self, first_name, last_name, hospital_number):
         patient, episode = self.new_patient_and_episode_please()
-        demographics = patient.demographics_set.get()
+        demographics = patient.demographics()
         demographics.first_name = first_name
         demographics.surname = last_name
         demographics.hospital_number = hospital_number
@@ -85,6 +85,51 @@ class PatientSearchTestCase(BaseSearchTestCase):
         expected = json.loads(json.dumps(expected, cls=DjangoJSONEncoder))
         self.assertEqual(expected, data)
 
+    def test_patient_number_with_hash(self):
+        demographics = self.patient.demographics()
+        demographics.hospital_number = "#007"
+        demographics.save()
+        url = '/search/patient/?hospital_number=%23007'
+        resp = self.get_response(url)
+        data = json.loads(resp.content.decode('UTF-8'))
+        expected = [self.patient.to_dict(self.user)]
+        expected = json.loads(json.dumps(expected, cls=DjangoJSONEncoder))
+        self.assertEqual(expected, data)
+
+    def test_patient_number_with_slash(self):
+        demographics = self.patient.demographics()
+        demographics.hospital_number = "/007"
+        demographics.save()
+        url = '/search/patient/?hospital_number=%2F007'
+        resp = self.get_response(url)
+        data = json.loads(resp.content.decode('UTF-8'))
+        expected = [self.patient.to_dict(self.user)]
+        expected = json.loads(json.dumps(expected, cls=DjangoJSONEncoder))
+        self.assertEqual(expected, data)
+
+    def test_patient_number_with_question_mark(self):
+        demographics = self.patient.demographics()
+        demographics.hospital_number = "?007"
+        demographics.save()
+        url = '/search/patient/?hospital_number=%3F007'
+        resp = self.get_response(url)
+        data = json.loads(resp.content.decode('UTF-8'))
+        expected = [self.patient.to_dict(self.user)]
+        expected = json.loads(json.dumps(expected, cls=DjangoJSONEncoder))
+        self.assertEqual(expected, data)
+
+    def test_patient_number_with_ampersand(self):
+        demographics = self.patient.demographics()
+        demographics.hospital_number = "&007"
+        demographics.save()
+        url = '/search/patient/?hospital_number=%26007'
+        resp = self.get_response(url)
+        data = json.loads(resp.content.decode('UTF-8'))
+        expected = [self.patient.to_dict(self.user)]
+        expected = json.loads(json.dumps(expected, cls=DjangoJSONEncoder))
+        self.assertEqual(expected, data)
+
+
     # TODO:
     # Searching for a patient that exists but only has episodes that are
     # restricted teams that the user is not a member of.
@@ -106,11 +151,11 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
             u'page_number': 1,
             u'object_list': [{
                 u'count': 1,
-                u'id': self.patient.id,
+                u'id': self.patient.demographics_set.first().id,
                 u'first_name': u'Sean',
                 u'surname': u'Connery',
                 u'end': u'15/10/2015',
-                u'patient_id': 1,
+                u'patient_id': self.patient.id,
                 u'hospital_number': u'007',
                 u'date_of_birth': None,
                 u'start': u'15/10/2015',
@@ -240,11 +285,11 @@ class SimpleSearchViewTestCase(BaseSearchTestCase):
                 "first_name": "Ernst",
                 "surname": "Blofeld",
                 "start": None,
-                "patient_id": 2,
+                "patient_id": blofeld_patient.id,
                 "hospital_number": "23422",
                 "date_of_birth": None,
                 "end": None,
-                "id": 2,
+                "id": blofeld_patient.demographics_set.first().id,
                 "categories": ["Inpatient"]
             }],
             "page_number": 1,
@@ -322,7 +367,9 @@ class FilterViewTestCase(BaseSearchTestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_get(self):
-        models.Filter(user=self.user, name='testfilter', criteria='[]').save()
+        filter = models.Filter.objects.create(
+            user=self.user, name='testfilter', criteria='[]'
+        )
         self.assertEqual(1, models.Filter.objects.count())
 
         view = views.FilterView()
@@ -330,7 +377,9 @@ class FilterViewTestCase(BaseSearchTestCase):
         view.request.user = self.user
 
         data = json.loads(view.get().content.decode('UTF-8'))
-        self.assertEqual([{'name': 'testfilter', 'criteria': [], 'id': 1}], data)
+        self.assertEqual(
+            [{'name': filter.name, 'criteria': [], 'id': filter.id}], data
+        )
 
     def test_post(self):
         view = views.FilterView()

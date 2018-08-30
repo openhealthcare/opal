@@ -319,7 +319,7 @@ class EpisodeViewSet(LoginRequiredViewset):
             patient, created = Patient.objects.get_or_create(
                 demographics__hospital_number=hospital_number)
             if created:
-                demographics = patient.demographics_set.get()
+                demographics = patient.demographics()
                 demographics.hospital_number = hospital_number
                 demographics.save()
         else:
@@ -390,32 +390,36 @@ class PatientListViewSet(LoginRequiredViewset):
         return json_response(patientlist.to_dict(request.user))
 
 
-router.register('patient', PatientViewSet)
-router.register('episode', EpisodeViewSet)
-router.register('record', RecordViewSet)
-router.register('userprofile', UserProfileViewSet)
-router.register('user', UserViewSet)
-router.register('tagging', TaggingViewSet)
-router.register('patientlist', PatientListViewSet)
-router.register('patientrecordaccess', PatientRecordAccessViewSet)
-
-router.register('referencedata', ReferenceDataViewSet)
-router.register('metadata', MetadataViewSet)
-
-for subrecord in subrecords():
-    sub_name = subrecord.get_api_name()
-
-    class SubViewSet(SubrecordViewSet):
-        base_name = sub_name
-        model     = subrecord
-
-    router.register(sub_name, SubViewSet)
-
-
 def register_plugin_apis():
     for plugin in plugins.OpalPlugin.list():
         for api in plugin.get_apis():
             router.register(*api)
 
 
-register_plugin_apis()
+def register_subrecords():
+    for subrecord in subrecords():
+        sub_name = subrecord.get_api_name()
+
+        class SubViewSet(SubrecordViewSet):
+            base_name = sub_name
+            model     = subrecord
+
+        router.register(sub_name, SubViewSet)
+
+
+def initialize_router():
+    # Plugin APIs get initialized first, so that plugins
+    # can override core Opal APIs if they need to.
+    register_plugin_apis()
+    router.register('patient', PatientViewSet)
+    router.register('episode', EpisodeViewSet)
+    router.register('record', RecordViewSet)
+    router.register('userprofile', UserProfileViewSet)
+    router.register('user', UserViewSet)
+    router.register('tagging', TaggingViewSet)
+    router.register('patientlist', PatientListViewSet)
+    router.register('patientrecordaccess', PatientRecordAccessViewSet)
+
+    router.register('referencedata', ReferenceDataViewSet)
+    router.register('metadata', MetadataViewSet)
+    register_subrecords()

@@ -33,7 +33,7 @@ from opal.core import api
 
 class LoginRequredTestCase(OpalTestCase):
     """
-        we expect almost all views to 401
+    We expect almost all views to 401
     """
     def setUp(self):
         self.patient, self.episode = self.new_patient_and_episode_please()
@@ -210,8 +210,12 @@ class SubrecordTestCase(OpalTestCase):
         self.assertEqual([], json.loads(response.content.decode('UTF-8')))
 
     def test_list_with_some_contents(self):
-        c1 = Colour(name="blue", episode=self.episode).save()
-        c2 = Colour(name="red", episode=self.episode).save()
+        c1 = Colour.objects.create(
+            name="blue", episode=self.episode
+        )
+        c2 = Colour.objects.create(
+            name="red", episode=self.episode
+        )
         mock_request = MagicMock(name='mock request')
         mock_request.user = self.user
         response = self.viewset().list(mock_request)
@@ -220,8 +224,8 @@ class SubrecordTestCase(OpalTestCase):
                 u'consistency_token': u'',
                 u'created': None,
                 u'created_by_id': None,
-                u'episode_id': 1,
-                u'id': 1,
+                u'episode_id': self.episode.id,
+                u'id': c1.id,
                 u'name': u'blue',
                 u'updated': None,
                 u'updated_by_id': None
@@ -230,8 +234,8 @@ class SubrecordTestCase(OpalTestCase):
                 u'consistency_token': u'',
                 u'created': None,
                 u'created_by_id': None,
-                u'episode_id': 1,
-                u'id': 2,
+                u'episode_id': self.episode.id,
+                u'id': c2.id,
                 u'name': u'red',
                 u'updated': None,
                 u'updated_by_id': None
@@ -285,6 +289,7 @@ class SubrecordTestCase(OpalTestCase):
         with patch.object(self.model, "get_api_name") as mock_api_name:
             mock_api_name.return_value = "something"
             reload_module(api)
+            api.initialize_router()
             router = api.router
             self.assertIn(
                 "something",
@@ -535,7 +540,7 @@ class UserProfileTestCase(TestCase):
             'roles'      : {'default': []},
             'full_name'  : '',
             'avatar_url' : 'http://gravatar.com/avatar/5d9c68c6c50ed3d02a2fcf54f63993b6?s=80&r=g&d=identicon',
-            'user_id'    : 1
+            'user_id'    : self.user.id
         }
         self.assertEqual(expected, response.data)
 
@@ -560,7 +565,9 @@ class UserTestCase(TestCase):
         self.assertEqual([self.user.profile.to_dict()], response.data)
 
     def test_retrieve(self):
-        response = api.UserViewSet().retrieve(self.mock_request, pk=1)
+        response = api.UserViewSet().retrieve(
+            self.mock_request, pk=self.user.id
+        )
         self.assertEqual(self.user.profile.to_dict(), response.data)
 
 
@@ -628,7 +635,7 @@ class EpisodeTestCase(OpalTestCase):
     def setUp(self):
         super(EpisodeTestCase, self).setUp()
         self.patient, self.episode = self.new_patient_and_episode_please()
-        self.demographics = self.patient.demographics_set.get()
+        self.demographics = self.patient.demographics()
 
         # add a date to make sure serialisation works as expected
         self.demographics.date_of_birth = date(2010, 1, 1)
@@ -644,8 +651,6 @@ class EpisodeTestCase(OpalTestCase):
         self.expected = self.episode.to_dict(self.user)
         self.expected["start"] = "14/01/2014"
         self.expected["end"] = "15/01/2014"
-        self.expected["episode_history"][0]["end"] = "15/01/2014"
-        self.expected["episode_history"][0]["start"] = "14/01/2014"
 
     def test_retrieve_episode(self):
         response = json.loads(api.EpisodeViewSet().retrieve(self.mock_request, pk=self.episode.pk).content.decode('UTF-8'))
@@ -748,7 +753,7 @@ class EpisodeTestCase(OpalTestCase):
         patient = models.Patient.objects.get(
             demographics__hospital_number="9999000999"
         )
-        demographics = patient.demographics_set.get()
+        demographics = patient.demographics()
         self.assertEqual("Alain", demographics.first_name)
         self.assertEqual("Anderson", demographics.surname)
         self.assertEqual("Male", demographics.sex)
@@ -947,13 +952,34 @@ class PatientListTestCase(TestCase):
         self.assertEqual(404, response.status_code)
 
 
-class RegisterPluginsTestCase(OpalTestCase):
+class RegisterTestCase(OpalTestCase):
 
     @patch('opal.core.api.plugins.OpalPlugin.list')
-    def test_register(self, plugins):
+    def test_register_plugins(self, plugins):
         mock_plugin = MagicMock(name='Mock Plugin')
         mock_plugin.get_apis.return_value = [('thingapi', None)]
         plugins.return_value = [mock_plugin]
         with patch.object(api.router, 'register') as register:
             api.register_plugin_apis()
             register.assert_called_with('thingapi', None)
+
+    @patch("opal.core.api.router.register")
+    @patch("opal.core.api.subrecords")
+    def test_register_subrecords(self, subrecords, register):
+        subrecords.return_value = [HatWearer]
+        api.register_subrecords()
+        self.assertEqual(register.call_count, 1)
+        self.assertTrue(register.call_args[0][0][0], HatWearer.get_api_name())
+
+    @patch("opal.core.api.router.register")
+    @patch('opal.core.api.plugins.OpalPlugin.list')
+    def test_register_plugin_order(self, plugins, register):
+        # plugins should be registered first
+        mock_plugin = MagicMock(name='Mock Plugin')
+        mock_plugin.get_apis.return_value = [('thingapi', None)]
+        plugins.return_value = [mock_plugin]
+        api.initialize_router()
+        call_args_list = register.call_args_list
+        self.assertEqual(
+            register.call_args_list[0][0][0], "thingapi"
+        )

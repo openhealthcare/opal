@@ -1,22 +1,29 @@
 """
 Module entrypoint for core Opal views
 """
-from django.core.urlresolvers import reverse
+# from datetime import datetime
+
+from django.core.urlresolvers import reverse  # , reverse_lazy
+# from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import login
+# from django.db import transaction
 from django.http import HttpResponseForbidden, HttpResponseNotFound
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import get_template
 from django.template import TemplateDoesNotExist
-from django.views.generic import TemplateView, View
+# from django.utils.text import slugify
+from django.views.generic import TemplateView, View  # , FormView
 
 from opal import models
-from opal.core import application, detail, episodes
+from opal.core import application, detail, episodes  # , trade
 from opal.core.patient_lists import PatientList, TabbedPatientListGroup
 from opal.core.subrecords import (
-    episode_subrecords, get_subrecord_from_api_name
+    episode_subrecords, get_subrecord_from_api_name,
+    #    get_subrecord_from_model_name,
 )
 from opal.core.views import json_response
+# from opal.forms import ImportDataForm
 from opal.utils import camelcase_to_underscore
 from opal.utils.banned_passwords import banned
 
@@ -296,6 +303,145 @@ class RawTemplateView(LoginRequiredMixin, TemplateView):
             return HttpResponseNotFound()
         return super(RawTemplateView, self).get(*args, **kw)
 
+
+# class ExportEpisodeView(LoginRequiredMixin, View):
+
+#     def get(self, request, *args, **kwargs):
+#         episode_id = self.kwargs['episode_id']
+
+#         try:
+#             episode = models.Episode.objects.get(pk=episode_id)
+#         except models.Episode.DoesNotExist:
+#             msg = 'Cannot find Episode with ID: {}'.format(episode_id)
+#             messages.error(request, msg)
+#             return redirect(reverse('admin:opal_episode_changelist'))
+
+#         data = episode.to_dict(request.user)
+
+#         # Remove all "id" keys from the data
+#         data = dict(trade.remove_key(data, 'id'))
+
+#         response = json_response(data)
+
+#         demographics = episode.patient.demographics_set.get()
+#         name = slugify(demographics.name)
+#         filename = 'episode-{}-{}.json'.format(episode.id, name)
+#         header_value = 'attachment; filename={}'.format(filename)
+#         response['Content-Disposition'] = header_value
+#         return response
+
+
+# class ExportPatientView(LoginRequiredMixin, View):
+#     def get(self, request, *args, **kwargs):
+#         patient_id = self.kwargs['patient_id']
+
+#         try:
+#             data, patient = trade.patient_id_to_json(
+#                 patient_id, user=request.user
+#                 )
+#         except models.Patient.DoesNotExist:
+#             msg = 'Cannot find Patient with ID: {}'.format(patient_id)
+#             messages.error(request, msg)
+#             return redirect(reverse('admin:opal_patient_changelist'))
+
+#         response = json_response(data)
+
+#         demographics = patient.demographics_set.get()
+#         name = slugify(demographics.name)
+#         filename = 'patient-{}-{}.json'.format(patient.id, name)
+#         header_value = 'attachment; filename={}'.format(filename)
+#         response['Content-Disposition'] = header_value
+#         return response
+
+
+# class ImportEpisodeView(LoginRequiredMixin, FormView):
+#     form_class = ImportDataForm
+#     success_url = reverse_lazy('admin:opal_episode_changelist')
+#     template_name = 'import_data.html'
+
+#     @transaction.atomic()
+#     def form_valid(self, form):
+#         raw_data = self.request.FILES['data_file'].read()
+#         data = json.loads(raw_data)
+
+#         demographics = data.pop('demographics', None)
+
+#         if demographics is None:
+#             messages.error('No Demographics found, aborted import')
+#             return super(ImportEpisodeView, self).form_valid(form)
+
+#         patient = match_or_create_patient(
+#             demographics[0],
+#             self.request.user,
+#         )
+#         episode = models.Episode.objects.create(patient=patient)
+
+#         episode_history = data.pop('episode_history', None)
+#         for d in episode_history:
+#             ep = models.Episode(patient=patient)
+#             ep.update_from_dict(d, self.request.user)
+
+#         investigation_dicts = data.pop('investigation', None)
+#         if investigation_dicts is not None:
+#             Investigation = get_subrecord_from_model_name('Investigation')
+#             Investigation.bulk_update_from_dicts(
+#                 parent=episode,
+#                 list_of_dicts=investigation_dicts,
+#                 user=self.request.user,
+#             )
+
+#         location_dicts = data.pop('location', None)
+#         if location_dicts is not None:
+#             Location = get_subrecord_from_model_name('Location')
+#             Location.bulk_update_from_dicts(
+#                 parent=episode,
+#                 list_of_dicts=location_dicts,
+#                 user=self.request.user,
+#             )
+
+#         data.pop('tagging', None)
+#         # tagging_dicts = data.pop('tagging', None)
+#         # if tagging_dicts is not None:
+#         #     models.Tagging.bulk_update_from_dicts(
+#         #         parent=episode,
+#         #         list_of_dicts=tagging_dicts,
+#         #         user=self.request.user,
+#         #     )
+
+#         treatment_dicts = data.pop('treatment', None)
+#         if treatment_dicts is not None:
+#             Treatment = get_subrecord_from_model_name('Treatment')
+#             Treatment.bulk_update_from_dicts(
+#                 parent=episode,
+#                 list_of_dicts=treatment_dicts,
+#                 user=self.request.user,
+#             )
+
+#         episode.update_from_dict(data, self.request.user)
+
+#         return super(ImportEpisodeView, self).form_valid(form)
+
+#     def get_context_data(self, **kwargs):
+#         context = super(ImportEpisodeView, self).get_context_data(**kwargs)
+#         context['import_url'] = reverse('import_episode')
+#         return context
+
+# class ImportPatientView(LoginRequiredMixin, FormView):
+#     form_class = ImportDataForm
+#     success_url = reverse_lazy('admin:opal_patient_changelist')
+#     template_name = 'import_data.html'
+
+#     def form_valid(self, form):
+#         raw_data = self.request.FILES['data_file'].read()
+#         data = json.loads(raw_data)
+#         trade.import_patient(data, user=self.request.user)
+#         messages.success(self.request, 'Imported {}'.format(patient))
+#         return super(ImportPatientView, self).form_valid(form)
+
+#     def get_context_data(self, **kwargs):
+#         context = super(ImportPatientView, self).get_context_data(**kwargs)
+#         context['import_url'] = reverse('import_patient')
+#         return context
 
 def csrf_failure(request, reason):
     if request.POST:

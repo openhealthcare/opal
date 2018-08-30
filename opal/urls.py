@@ -11,6 +11,7 @@ from opal import views
 from opal.core import api, subrecords, plugins
 from opal.forms import ChangePasswordForm
 
+api.initialize_router()
 
 urlpatterns = [
     url(r'^$', views.IndexView.as_view()),
@@ -81,6 +82,18 @@ urlpatterns = [
         TemplateView.as_view(template_name='design_patterns.html'),
         name='design_patterns'),
 
+    # Import/Export views
+    # url(r'^export/episode/(?P<episode_id>\d+)/$',
+    #     views.ExportEpisodeView.as_view(), name='export_episode'),
+
+    # url(r'^import/episode/$',
+    #     views.ImportEpisodeView.as_view(), name='import_episode'),
+
+    # url(r'^export/patient/(?P<patient_id>\d+)/$',
+    #     views.ExportPatientView.as_view(), name='export_patient'),
+
+    # url(r'^import/patient/$',
+    #     views.ImportPatientView.as_view(), name='import_patient'),
 ]
 
 
