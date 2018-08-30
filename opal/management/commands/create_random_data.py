@@ -155,7 +155,7 @@ class PatientGenerator(object):
         )
 
     def create_episode(self, patient):
-        dob = patient.demographics_set.first().date_of_birth
+        dob = patient.demographics().date_of_birth
         kwargs = dict(start=date_generator(start_date=dob))
         episode_finished = random.choice([True, False])
 
@@ -171,7 +171,7 @@ class PatientGenerator(object):
         sexes = ['Female', 'Male', 'Not Known', 'Not Specified']
 
         patient                      = models.Patient.objects.create()
-        demographics                 = patient.demographics_set.get()
+        demographics                 = patient.demographics()
         hospital_number              = random.randint(1000, 2000000)
         hospital_number              = str(hospital_number)
         demographics.first_name      = random.choice(first_names)
@@ -282,7 +282,7 @@ class EpisodeSubrecordGenerator(SubRecordGenerator):
 
     @cached_property
     def start_date(self):
-        return self.episode.patient.demographics_set.first().date_of_birth
+        return self.episode.patient.demographics().date_of_birth
 
     def get_instance(self):
         if self.model._is_singleton:
@@ -301,7 +301,7 @@ class PatientSubrecordGenerator(SubRecordGenerator):
 
     @cached_property
     def start_date(self):
-        return self.patient.demographics_set.first().date_of_birth
+        return self.patient.demographics().date_of_birth
 
     def get_instance(self):
         if self.model._is_singleton:
