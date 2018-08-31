@@ -10,7 +10,9 @@
     <span ng-show="form">
       <button check-form="form" class="btn btn-primary" ng-click="form.$valid && save('save')">
         <i class="fa fa-save"></i>
+        {% block modal_save_button_text %}
         Save
+        {% endblock %}
       </button>
     </span>
   {% endblock %}
