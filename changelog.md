@@ -1,6 +1,9 @@
 ### 0.12.0 (Major Release)
 
 #### Misc Changes
+* Adds the {% block analytics %} in the base template (opal/templates/base.html) that by default contains the google analytics code.
+
+* Adds the block {% block javascripts %} in the base template (opal/templates/base.html) that will compress all javascripts.
 
 * Adds a method `.demographics()` to `opal.models.Patient` which returns the relevant demographics instance.
 
