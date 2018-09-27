@@ -6,6 +6,7 @@ from django.test import TestCase
 from opal import context_processors
 from opal.core.subrecords import subrecords
 
+
 class SettingsTestCase(TestCase):
     def test_settings(self):
         from django.conf import settings

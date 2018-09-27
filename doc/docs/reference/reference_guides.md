@@ -16,15 +16,17 @@ The following reference guides are available:
 -|-
 [opal.core.application](opal_application.md) | Opal Application objects|
 [opal.core.detail](detail_views.md)|Detail Views - Custom views over one or many episodes.|
-[opal.core.episodes](episode_categories.md)|Episode Categories - Controlling the behaviour of different types of episode|
-[opal.core.schemas](schemas.md)|Schemas - Dynamic columns for the table views|
-[opal.core.patient_lists](patient_list.md)|Patient Lists - defining different types of list|
-[opal.core.plugin](plugin.md)| Plugins - defining plugins to package reusable functionality
-[opal.core.menus](core_menus.md)| Menus - declaring application menus
-[opal.core.log](loggers.md)| Log Helpers - custom email error loggers
-[opal.core.fields](core_fields)| Field helpers - custom field types and utility functions|
-[opal.core.lookuplists](core_lookuplists.md) | Utilities for working with lookuplists |
 [opal.core.discoverable](core_discoverable.md) | Reusable feature groups for plugins and applications |
+[opal.core.episodes](episode_categories.md)|Episode Categories - Controlling the behaviour of different types of episode|
+[opal.core.fields](core_fields)| Field helpers - custom field types and utility functions|
+[opal.core.patient_lists](patient_list.md)|Patient Lists - defining different types of list|
+[opal.core.log](loggers.md)| Log Helpers - custom email error loggers
+[opal.core.lookuplists](core_lookuplists.md) | Utilities for working with lookuplists |
+[opal.core.menus](core_menus.md)| Menus - declaring application menus
+[opal.core.plugin](plugin.md)| Plugins - defining plugins to package reusable functionality
+[opal.core.schemas](schemas.md)|Schemas - Dynamic columns for the table views|
+[opal.core.serialization](core_serialization.md) | Helpers for serializing and deserializing data
+[opal.core.subrecords](core_subrecords.md) | Helpers for working with subrecords
 
 ### Angular Services
 |
@@ -46,6 +48,7 @@ The following reference guides are available:
 [The panels Templatetag library](panels_templatetags.md) | Rendering record panels
 [The menus Templatetag library](menus_templatetags.md) | Rendering application menus
 [Javascript Helpers](javascript/javascript_helpers.md)| Angular directives, filters and $rootScope methods
+[Utils module](utils.md)| The `opal.utils` module - miscellaneous helpful python utilities
 
 ### Opal core modules
 
@@ -60,7 +63,7 @@ The following reference guides are available:
 |
 -|-
 [Settings](settings.md) | Opal settings|
-[Changelog](CHANGELOG.md) | Opal Changelog|
+[Changelog](changelog.md) | Opal Changelog|
 [Upgrading](upgrading.md) | Upgrading between Opal versions|
 [Javascript dependencies](javascript/javascript_dependencies.md)| External javascript libraries available |
 [Testing](testing.md) | Testing|

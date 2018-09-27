@@ -7,7 +7,7 @@ help:
 
 docs:
 	pip install -r doc/requirements.txt
-	mkdocs serve
+	cd doc && mkdocs serve
 
 release:
 	rm -rf dist/*

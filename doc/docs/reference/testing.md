@@ -37,7 +37,7 @@ The function takes in the files you want to include and runs karma tests on them
 // config/karma.config.js
 
 module.exports = function(config){
-  var opalPath = '../../opal';
+  var opalPath = process.env.OPAL_LOCATION;
 
   var karmaDefaults = require(opalPath + '/config/karma_defaults.js');
   var baseDir = __dirname + '/..';

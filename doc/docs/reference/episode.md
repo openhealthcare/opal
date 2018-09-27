@@ -12,6 +12,13 @@ The [category](episode_categories) of this episode - e.g. inpatient, outpatient 
 This defaults to whatever is set on your application's subclass of
 `opal.core.application.OpalApplication` - which itself defaults to 'inpatient'.
 
+### Episode.stage
+An episode category should declare a list of stages that an episode
+can have. This documents the flow of an episode through a system. For
+example `Outpatient` and `Discharged`. This is a property that returns
+the current stage that has no `stopped` field.
+
+
 ### Episode.patient
 
 A foreign key relationship to the patient for whom this episode concerns.

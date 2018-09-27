@@ -200,7 +200,9 @@ directives.directive("pathwayLink", function($parse){
   };
 });
 
-directives.directive("openPathway", function($parse, $rootScope, Referencedata, Metadata, $modal, episodeLoader){
+directives.directive("openPathway", function($parse, $rootScope, $modal, $q,
+                                             Referencedata, Metadata,
+                                             episodeLoader){
   /*
   * the open modal pathway directive will open a modal pathway for you
   * you can if you use the attribute pathway-callback="{{ some_function }}"
@@ -230,7 +232,10 @@ directives.directive("openPathway", function($parse, $rootScope, Referencedata, 
           pathwayCallback = function(){};
         }
         var template = "/pathway/templates/" + pathwaySlug + ".html?is_modal=True";
-        return $modal.open({
+
+        var deferred = $q.defer();
+
+        $modal.open({
           controller : 'ModalPathwayCtrl',
           templateUrl: template,
           size       : 'lg',
@@ -254,7 +259,18 @@ directives.directive("openPathway", function($parse, $rootScope, Referencedata, 
             metadata: function(){ return Metadata.load(); },
             referencedata: function(){ return Referencedata.load(); },
           }
-        });
+        }).result.then(
+          function(what){
+            $rootScope.state = 'normal';
+            deferred.resolve(what);
+          },
+          function(what_now){
+            $rootScope.state = 'normal';
+            deferred.resolve(what_now);
+          }
+        )
+
+        return deferred.promise;
       });
     }
   };

@@ -15,7 +15,7 @@
 {% radio label="IgG" model="editing.investigation.vca_igg" show="testType == 'micro_test_ebv_serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
 {% radio label="EBNA IgG" model="editing.investigation.ebna_igg" show="testType == 'micro_test_ebv_serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
 
-{% radio label="Result" model="editing.investigation.result" show="testType == 'micro_test_hiv'" lookuplist="['pending', 'antibody positive', 'p24 antigen only', 'negative']" %}
+{% radio label="Result" model="editing.investigation.result" show="testType == 'micro_test_hiv'" lookuplist="['pending', 'antibody positive', 'p24 antigen only', 'negative']" element_name="micro_test_hiv" %}
 
 {% radio label="HBsAg" model="editing.investigation.hbsag" show="testType == 'micro_test_hepititis_b_serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
 {% radio label="anti-HbS" model="editing.investigation.anti_hbs" show="testType == 'micro_test_hepititis_b_serology'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
@@ -25,9 +25,9 @@
 {% input label="RPR" model="editing.investigation.rpr" show="testType == 'micro_test_syphilis_serology'" %}
 {% radio label="TPPA" model="editing.investigation.tppa" show="testType == 'micro_test_syphilis_serology'" lookuplist="['pending', 'positive', 'negative']" %}
 
-{% radio label="Result" model="editing.investigation.result" show="testType == 'micro_test_single_test_pos_neg'" lookuplist="['pending', 'positive', 'negative']" element_name="test_pos_neg" %}
+{% radio label="Result" model="editing.investigation.result" show="testType == 'micro_test_single_test_pos_neg'" lookuplist="['pending', 'positive', 'negative']" element_name="micro_test_single_test_pos_neg" %}
 
-{% radio label="Result" model="editing.investigation.result" show="testType == 'micro_test_single_test_pos_neg_equiv'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" element_name="test_pos_neg_equiv" %}
+{% radio label="Result" model="editing.investigation.result" show="testType == 'micro_test_single_test_pos_neg_equiv'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" element_name="micro_test_single_test_pos_neg_equiv" %}
 
 {% radio label="IgG" model="editing.investigation.igg" show="testType == 'micro_test_single_igg_test'" lookuplist="['pending', 'positive', 'negative', 'equivocal', 'not done']" %}
 
@@ -101,17 +101,17 @@
     <div class="col-sm-8">
 
       <label class="radio-inline">
-        <input class="" type="radio" value="pending" ng-model="editing.investigation.result" name="leish_pcr">
+        <input class="" type="radio" value="pending" ng-model="editing.investigation.result" name="micro_test_leishmaniasis_pcr">
         pending
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="positive" ng-model="editing.investigation.result" name="leish_pcr">
+        <input class="" type="radio" value="positive" ng-model="editing.investigation.result" name="micro_test_leishmaniasis_pcr">
         positive
       </label>
 
       <label class="radio-inline">
-        <input class="" type="radio" value="negative" ng-model="editing.investigation.result" name="leish_pcr">
+        <input class="" type="radio" value="negative" ng-model="editing.investigation.result" name="micro_test_leishmaniasis_pcr">
         negative
       </label>
 
@@ -538,7 +538,7 @@
   <div class="form-group">
     <label class="control-label col-sm-3">Result</label>
     <div class="col-sm-8">
-      <input class="form-control" type="text" ng-model="editing.investigation.result">
+      <input class="form-control" type="text" ng-model="editing.investigation.result" name="micro_test_other">
     </div>
   </div>
 

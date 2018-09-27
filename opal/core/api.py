@@ -1,6 +1,7 @@
 """
 Public facing API views
 """
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.contrib.contenttypes.models import ContentType
 from rest_framework import routers, status, viewsets
@@ -300,6 +301,7 @@ class EpisodeViewSet(LoginRequiredViewset):
             [e.to_dict(request.user) for e in Episode.objects.all()]
         )
 
+    @transaction.atomic
     def create(self, request):
         """
         Create a new episode, optionally implicitly creating a patient.
@@ -319,7 +321,7 @@ class EpisodeViewSet(LoginRequiredViewset):
             patient, created = Patient.objects.get_or_create(
                 demographics__hospital_number=hospital_number)
             if created:
-                demographics = patient.demographics_set.get()
+                demographics = patient.demographics()
                 demographics.hospital_number = hospital_number
                 demographics.save()
         else:
@@ -408,8 +410,8 @@ def register_subrecords():
 
 
 def initialize_router():
-    # plugin apis get initialised first, so that plugins
-    # can
+    # Plugin APIs get initialized first, so that plugins
+    # can override core Opal APIs if they need to.
     register_plugin_apis()
     router.register('patient', PatientViewSet)
     router.register('episode', EpisodeViewSet)
@@ -423,6 +425,3 @@ def initialize_router():
     router.register('referencedata', ReferenceDataViewSet)
     router.register('metadata', MetadataViewSet)
     register_subrecords()
-
-
-initialize_router()

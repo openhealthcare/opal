@@ -2,7 +2,11 @@
 
 ### methods
 
-#### create_episode
+#### `Patient.demographics()`
+
+Returns the relevant Demographics instance for the patient.
+
+#### `Patient.create_episode()`
 
 Returns a new `Episode` for this patient.
 
