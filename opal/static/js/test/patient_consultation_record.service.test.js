@@ -15,10 +15,8 @@ describe('PatientConsultation', function() {
   });
 
   it('should add initials off the window and when if not set', function(){
-    var today = moment().format("DD/MM/YYYY");
     var patient_consultation_record = {};
     PatientConsultationRecord(patient_consultation_record);
-    expect(patient_consultation_record.when.format("DD/MM/YYYY")).toEqual(today);
     expect(patient_consultation_record.initials).toEqual("J Fonda");
   });
 
@@ -26,6 +24,20 @@ describe('PatientConsultation', function() {
     var patient_consultation_record = {initials: 'JFK'};
     PatientConsultationRecord(patient_consultation_record);
     expect(patient_consultation_record.initials).toEqual("JFK");
+  });
+
+  it('should populate the when field as a moment if its not set', function(){
+    var today = moment().format("DD/MM/YYYY");
+    var patient_consultation_record = {};
+    PatientConsultationRecord(patient_consultation_record);
+    expect(patient_consultation_record.when.format("DD/MM/YYYY")).toEqual(today);
+  });
+
+  it("should populate the when field as a moment if it is set", function(){
+    var someDate = moment();
+    var patient_consultation_record = {when: someDate};
+    PatientConsultationRecord(patient_consultation_record);
+    expect(patient_consultation_record.when).toEqual(someDate);
   });
 
 });

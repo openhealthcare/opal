@@ -832,17 +832,6 @@ class Episode(UpdatesFromDictMixin, TrackedModel):
 
         return list(qs.values_list("value", flat=True))
 
-    def _episode_history_to_dict(self, user):
-        """
-        Return a serialised version of this patient's episode history
-        """
-        from opal.core.search.queries import episodes_for_user
-
-        order = 'start', 'end'
-        episode_history = self.patient.episode_set.order_by(*order)
-        episode_history = episodes_for_user(episode_history, user)
-        return [e.to_dict(user, shallow=True) for e in episode_history]
-
     def update_from_dict(self, data, user, force=False, fields=None):
         # stage is a related model so episode
         # needs to have been saved before we can set it.
